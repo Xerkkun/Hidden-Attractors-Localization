@@ -1,0 +1,538 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{hyperref}
+
+\geometry{letterpaper,margin=2.4cm}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+
+\newcommand{\CaputoD}{\,{}^{C}D_t^q}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\R}{\mathbb{R}}
+
+\title{Reporte matemático del pipeline unificado para el sistema de Chua fraccionario}
+\author{Hidden Attractors Fractional Order}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Propósito y alcance}
+
+Este documento resume y audita la matemática implementada en el pipeline
+\texttt{unified\_nyquist\_hidden\_pipeline.py}. El flujo completo es:
+equilibrios y estabilidad local, forma de Lur'e, transferencia fraccionaria,
+función descriptiva, cálculo de frecuencias candidatas, construcción de
+semillas armónicas, continuación numérica en el parámetro \(\varepsilon\),
+integración causal de Caputo mediante EFORK con memoria truncada, cuencas de
+atracción y verificación operacional de ocultedad.
+
+Una advertencia conceptual atraviesa todo el reporte: en un sistema autónomo
+de Caputo no se debe afirmar la existencia de órbitas periódicas exactas no
+constantes sólo porque el balance armónico produzca una señal periódica. En el
+pipeline, la oscilación periódica se interpreta como solución/semilla
+asintótica en el marco de Weyl--Liouville-Weyl. El atractor candidato se valida
+después por integración causal de Caputo y por pruebas de cuencas.
+
+\section{Sistema de Chua y forma de Lur'e}
+
+El sistema usado en las corridas actuales es
+\begin{align}
+\CaputoD x &= \alpha\bigl(y-x-f(x)\bigr),\\
+\CaputoD y &= x-y+z,\\
+\CaputoD z &= -\beta y-\gamma z,
+\end{align}
+donde \(0<q\leq 1\) y la no linealidad no suave de Chua es
+\begin{equation}
+f(x)=m_1x+\frac{m_0-m_1}{2}\left(|x+1|-|x-1|\right).
+\end{equation}
+Los parámetros de la corrida principal actual son
+\[
+\alpha=8.4562,\qquad
+\beta=12.0732,\qquad
+\gamma=0.0052,\qquad
+m_0=-0.1768,\qquad
+m_1=-1.1468.
+\]
+
+Para usar función descriptiva, el código separa la pendiente externa \(m_1\)
+de la saturación. Con \(X=(x,y,z)^T\), \(\sigma=r^TX=x\),
+\[
+\CaputoD X = PX+q_v\psi(r^TX),
+\]
+donde
+\[
+P=
+\begin{pmatrix}
+-\alpha(1+m_1) & \alpha & 0\\
+1&-1&1\\
+0&-\beta&-\gamma
+\end{pmatrix},\qquad
+q_v=
+\begin{pmatrix}
+-\alpha\\0\\0
+\end{pmatrix},\qquad
+r=
+\begin{pmatrix}
+1\\0\\0
+\end{pmatrix},
+\]
+y
+\[
+\psi(\sigma)=(m_0-m_1)\operatorname{sat}(\sigma).
+\]
+Esta descomposición es consistente con \texttt{chua\_initial\_cond.py} y con
+los backends de cuenca/verificación.
+
+\section{Equilibrios y estabilidad local}
+
+Los equilibrios satisfacen \(y=x+f(x)\), \(z=f(x)\) y
+\(-\beta y-\gamma z=0\). Por tanto
+\[
+f(x^\ast)=-\frac{\beta}{\beta+\gamma}x^\ast.
+\]
+El equilibrio central es \(E_0=(0,0,0)\). En las ramas externas
+\(|x^\ast|>1\),
+\[
+x_+ =
+-\frac{m_0-m_1}{m_1+\beta/(\beta+\gamma)},\qquad
+E_+=(x_+,x_+ + f(x_+),f(x_+)),\qquad
+E_-=-E_+.
+\]
+Para los parámetros actuales:
+\[
+E_+=(6.588307887,\;0.002836402,\;-6.585471484),\qquad
+E_-=(-6.588307887,\;-0.002836402,\;6.585471484).
+\]
+
+El jacobiano por tramos es
+\[
+J(E)=
+\begin{pmatrix}
+-\alpha-\alpha s_E & \alpha & 0\\
+1&-1&1\\
+0&-\beta&-\gamma
+\end{pmatrix},
+\qquad
+s_E=
+\begin{cases}
+m_0,& |x_E|<1,\\
+m_1,& |x_E|>1.
+\end{cases}
+\]
+Para el sistema lineal fraccionario conmensurado, el criterio de Matignon dice
+que el equilibrio linealizado es localmente asintóticamente estable si
+\[
+|\arg(\lambda_i)|>\frac{q\pi}{2}
+\quad\text{para todos los autovalores } \lambda_i.
+\]
+En \(q=0.99\), el chequeo numérico da:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+Equilibrio & Autovalores principales & \(\alpha_{\min}\) vs. \(q\pi/2\) & Diagnóstico \\
+\midrule
+\(E_0\) &
+\(-7.95873,\,-0.003809\pm3.24945i\) &
+\(1.57197>1.55509\) &
+estable fraccionario \\
+\(E_+\) &
+\(2.21935,\,-0.99159\pm2.40676i\) &
+\(0<1.55509\) &
+inestable \\
+\(E_-\) &
+\(2.21935,\,-0.99159\pm2.40676i\) &
+\(0<1.55509\) &
+inestable \\
+\bottomrule
+\end{tabular}
+\caption{Chequeo local para la corrida principal \(q=0.99\).}
+\end{table}
+
+\textbf{Auditoría.} La fórmula de equilibrios usada por los backends C y por
+\texttt{run\_hidden\_verify\_frac\_hybrid.py} es consistente con esta
+derivación. La estabilidad local aparece implementada de forma explícita en
+\texttt{formal\_nyquist\_df\_chua.py}; el pipeline unificado usa los
+equilibrios para distancias, cuencas y verificación, pero todavía no incorpora
+una tabla formal de Matignon en el resumen principal.
+
+\section{Transferencia fraccionaria}
+
+Para una señal periódica en el marco de Weyl, se usa la convención de rama
+principal
+\[
+(\ii\omega)^q=\omega^q\left[\cos\left(\frac{q\pi}{2}\right)
++\ii\sin\left(\frac{q\pi}{2}\right)\right],
+\qquad \omega>0.
+\]
+La transferencia escalar de la parte lineal de Lur'e es
+\[
+W_q(\ii\omega)=
+r^T\left(P-(\ii\omega)^qI\right)^{-1}q_v.
+\]
+Esta es una respuesta frecuencial de Weyl, no una prueba de periodicidad
+exacta en Caputo. Su función en el pipeline es localizar una oscilación
+dominante candidata que luego se convierte en condición inicial.
+
+\section{Función descriptiva y cierre armónico}
+
+Para una entrada \(\sigma(t)=a\sin\theta\), la componente fundamental de
+\(\psi(a\sin\theta)\) se escribe
+\[
+A_1(a)=\frac{1}{\pi}\int_0^{2\pi}\psi(a\sin\theta)\sin\theta\,d\theta,
+\qquad
+B_1(a)=\frac{1}{\pi}\int_0^{2\pi}\psi(a\sin\theta)\cos\theta\,d\theta.
+\]
+Como \(\psi\) es impar y sin memoria, \(B_1=0\). La función descriptiva real
+es
+\[
+N(a)=\frac{A_1(a)}{a}.
+\]
+Para \(\psi(\sigma)=A\operatorname{sat}(\sigma)\), con \(A=m_0-m_1\),
+\[
+N(a)=
+\begin{cases}
+A, & 0<a\leq 1,\\[4pt]
+\displaystyle
+\frac{2A}{\pi}\left[
+\arcsin\left(\frac{1}{a}\right)
++\frac{\sqrt{a^2-1}}{a^2}
+\right], & a>1.
+\end{cases}
+\]
+
+El cierre armónico de la forma de Lur'e usa
+\[
+1+N(a)W_q(\ii\omega)=0.
+\]
+Como \(N(a)\) es real en esta saturación, el código busca
+\[
+\operatorname{Im} W_q(\ii\omega_0)=0,\qquad
+k=-\frac{1}{\operatorname{Re}W_q(\ii\omega_0)},\qquad
+N(a_0)=k.
+\]
+Sólo se aceptan ramas con \(k>0\). En la corrida \(q=0.99\), la rama elegida
+cumple
+\[
+\omega_0=2.0991692817,\quad
+k=0.2185231229,\quad
+a_0=5.6218222898,
+\]
+y el residual guardado por el pipeline es
+\[
+\operatorname{Im} W_q(\ii\omega_0)\approx -4.69\times10^{-16},
+\qquad
+N(a_0)-k\approx 6.30\times10^{-15}.
+\]
+Esto valida numéricamente el cierre Nyquist/función descriptiva para esa
+rama. No valida por sí solo caos, atractor ni ocultedad.
+
+\section{Construcción de la semilla armónica}
+
+Con \(k=N(a_0)\), el pipeline define
+\[
+P_0=P+kq_vr^T
+\]
+y busca un autovector \(v\) asociado a \((\ii\omega_0)^q\):
+\[
+\left(P_0-(\ii\omega_0)^qI\right)v\approx 0,
+\qquad r^Tv=1.
+\]
+La condición inicial usada para la continuación es
+\[
+X_{\mathrm{seed}}=a_0\operatorname{Re}(v).
+\]
+La trayectoria armónica aproximada correspondiente sería
+\[
+X_{\mathrm{harm}}(t)=a_0\operatorname{Re}\left(v e^{\ii\omega_0 t}\right),
+\]
+pero en el pipeline se usa principalmente su fase \(t=0\) como semilla.
+Esta semilla es una predicción por balance armónico/Weyl; el atractor
+observado se decide sólo después de integrar el sistema original de Caputo.
+
+\section{Continuación numérica en \(\varepsilon\)}
+
+La familia de continuación es
+\[
+\CaputoD X
+=P_0X+\varepsilon q_v\delta(r^TX),
+\qquad
+\delta(\sigma)=\psi(\sigma)-k\sigma,
+\qquad
+\varepsilon\in[0,1].
+\]
+Para \(\varepsilon=0\) se obtiene la aproximación lineal cerrada que motivó la
+semilla. Para \(\varepsilon=1\):
+\[
+P_0X+q_v\delta(r^TX)
+=PX+q_v\psi(r^TX),
+\]
+es decir, el sistema original.
+
+La continuación actual usa los valores
+\[
+\varepsilon=0.1,0.2,\ldots,1.0.
+\]
+En cada paso se integra un transitorio y luego una ventana de observación con
+EFORK. El contrato numérico efectivo de la corrida principal \(q=0.99\) es
+\[
+h=0.01,\qquad L_m=8.0,\qquad T_{\mathrm{trans}}=100,\qquad
+T_{\mathrm{keep}}=100.
+\]
+En el barrido \texttt{q\_sweep} usado para la tabla de este reporte, el
+contrato efectivo fue
+\[
+h=0.01,\qquad L_m=8.0,\qquad T_{\mathrm{trans}}=100,\qquad
+T_{\mathrm{keep}}=70.
+\]
+
+\subsection{EFORK y memoria truncada}
+
+El integrador EFORK aproxima el sistema fraccionario causal con memoria finita
+\(L_m\). En cada componente aparece una corrección histórica de la forma
+\[
+M_n \approx
+\frac{1}{h\,\Gamma(2-q)}
+\sum_{j=\max(0,n-\nu)}^{n-1}
+\left(x_{j+1}-x_j\right)
+\left[
+(t_n-t_j)^{1-q}-(t_n-t_{j+1})^{1-q}
+\right],
+\qquad
+\nu=\left\lceil\frac{L_m}{h}\right\rceil.
+\]
+Los pesos EFORK dependen de \(\Gamma(1+q)\), \(\Gamma(1+2q)\) y
+\(\Gamma(1+3q)\). El uso de \(L_m<\infty\) es una aproximación de memoria
+corta: acelera el cálculo, pero introduce una diferencia conceptual frente a
+Caputo con historia completa.
+
+\subsection{Continuación con memoria y sin memoria}
+
+El pipeline distingue dos modos:
+\begin{itemize}
+\item \texttt{memory\_mode=point}: el siguiente \(\varepsilon\) recibe sólo el
+último estado \(X_{\mathrm{out}}\). Es la continuación más antigua y barata,
+pero reinicia artificialmente la historia fraccionaria en cada paso.
+\item \texttt{memory\_mode=window}: el siguiente \(\varepsilon\) recibe una
+ventana de prehistoria de longitud aproximada \(L_m\). Esto respeta mejor que
+Caputo no es Markoviano en el estado puntual.
+\end{itemize}
+Además, \texttt{memory\_update\_source=transient} transporta la memoria al
+final del transitorio, mientras que \texttt{observed} la transporta al final
+de la ventana observada. Las corridas actuales de barrido usan
+\texttt{window/observed}.
+
+\textbf{Auditoría.} La continuación con ventana es matemáticamente más
+defendible que la continuación puntual. Aun así, no es una continuación exacta
+de soluciones de Caputo al cambiar \(\varepsilon\), porque el sistema cambia y
+la memoria se trunca. Debe leerse como método numérico para obtener semillas
+robustas.
+
+\section{Barrido en \(q\): parámetros y semillas encontradas}
+
+La siguiente tabla resume las corridas \texttt{q\_sweep} disponibles para
+\(q\geq0.985\). Todas usan rama \texttt{branch\_index=0},
+\texttt{memory\_mode=window}, \texttt{memory\_update\_source=observed},
+\(h=0.01\), \(L_m=8.0\), \(T_{\mathrm{trans}}=100\) y
+\(T_{\mathrm{keep}}=70\). El estado final corresponde al último punto de la
+continuación en \(\varepsilon=1\) dentro del barrido; no debe confundirse con
+la corrida principal balanceada de \(q=0.99\), que usó \(T_{\mathrm{keep}}=100\).
+
+\begin{longtable}{@{}c c c c p{3.8cm} p{3.8cm}@{}}
+\caption{Resumen de \texttt{q\_sweep} para \(q\geq0.985\).}\\
+\toprule
+\(q\) & \(\omega_0\) & \(k\) & \(a_0\) & Semilla armónica \(X_{\mathrm{seed}}\) & Estado final sweep \(X_{\varepsilon=1}\) \\
+\midrule
+\endfirsthead
+\toprule
+\(q\) & \(\omega_0\) & \(k\) & \(a_0\) & Semilla armónica \(X_{\mathrm{seed}}\) & Estado final sweep \(X_{\varepsilon=1}\) \\
+\midrule
+\endhead
+0.985 & 2.133661 & 0.223687 & 5.490625 &
+\((5.490625,\;0.454427,\;-7.901516)\) &
+\((3.468484,\;-0.072063,\;-7.034179)\) \\
+0.990 & 2.099169 & 0.218523 & 5.621822 &
+\((5.621822,\;0.424973,\;-8.068624)\) &
+\((-2.671723,\;-1.513886,\;2.153228)\) \\
+0.995 & 2.067835 & 0.213955 & 5.743134 &
+\((5.743134,\;0.396671,\;-8.222903)\) &
+\((-3.421000,\;0.679861,\;7.040672)\) \\
+1.000 & 2.039187 & 0.209867 & 5.856145 &
+\((5.856145,\;0.369332,\;-8.366536)\) &
+\((-1.841607,\;0.379814,\;6.008818)\) \\
+\bottomrule
+\end{longtable}
+
+Las métricas \(\mathrm{range}_x,\mathrm{range}_y,\mathrm{range}_z\) y las
+razones de covarianza guardadas en \texttt{q\_sweep\_summary.csv} son
+diagnósticos geométricos para seleccionar candidatos. No son pruebas de
+periodicidad ni de ocultedad.
+
+\section{Cuencas de atracción}
+
+Las cuencas se calculan con \texttt{chua\_basin\_lib.c}. Para cada punto de
+una malla, se integra el sistema original de Caputo aproximado por EFORK con
+memoria truncada. El contrato efectivo de la corrida principal sincroniza
+\(q,h,L_m\) y el mismo transitorio entre continuación, verificación,
+cuencas, bifurcaciones y Lyapunov. Las cuencas pueden usar una ventana
+post-transitoria más corta si se configura explícitamente.
+
+El corte principal es \(xy\) con
+\[
+z_0 = z_{\mathrm{final}},
+\]
+por defecto. Esto evita proyectar silenciosamente la semilla sobre \(z=0\)
+cuando la semilla real está en otro plano. También se generan cortes \(xy\),
+\(xz\) y \(yz\) fijando la coordenada restante en el estado final.
+
+La clasificación operacional de cuenca usa las clases:
+\[
+\texttt{EQ},\quad
+\texttt{HIDDEN\_POS},\quad
+\texttt{HIDDEN\_NEG},\quad
+\texttt{DIV},\quad
+\texttt{UNKNOWN}.
+\]
+Después del transitorio, si la trayectoria permanece cerca de un equilibrio
+por \(\texttt{CAP\_WIN}\) pasos se clasifica como \texttt{EQ}. Si rebasa el
+radio \(\texttt{R\_DIV}\), se clasifica como divergente. Si queda acotada
+dentro de \(\texttt{R\_BOUND}\), el signo de la media de \(x\) separa
+candidatos positivos y negativos. Esta clasificación es útil para mapas de
+cuenca, pero no prueba por sí sola que un atractor sea oculto.
+
+\section{Verificación operacional de ocultedad}
+
+La verificación de ocultedad la coordina
+\texttt{run\_hidden\_verify\_frac\_hybrid.py} y la parte pesada corre en
+\texttt{chua\_hidden\_backend.c}. El procedimiento es:
+\begin{enumerate}
+\item Calcular \(E_0,E_+,E_-\).
+\item Integrar la semilla objetivo \(X_\ast\) en el sistema original.
+\item Construir una nube de referencia sobre la sección \(x=0\), con cruce
+\(x_{k-1}<0\), \(x_k\geq0\) y \(\dot{x}>0\), después de
+\(\texttt{TBURN\_REF}\).
+\item Muestrear bolas \(B(E_j,r)\) alrededor de cada equilibrio, para radios
+\(\texttt{RADII}\) y \(\texttt{NSAMPLES\_PER\_RADIUS}\) condiciones iniciales.
+\item Integrar cada condición inicial de prueba.
+\item Clasificar cada trayectoria como:
+\(\texttt{EQ}\), si cae/se mantiene cerca de un equilibrio;
+\(\texttt{DIV}\), si excede \(\texttt{R\_DIV}\);
+\(\texttt{TARGET}\), si su sección tiene al menos
+\(\texttt{HIT\_FRAC\_REQ}\) de puntos a distancia menor que
+\(\texttt{SEC\_TOL}\) de la nube de referencia;
+\(\texttt{OTHER}\), si tiene sección suficiente pero no coincide con la
+referencia;
+\(\texttt{UNKNOWN}\), si no hay evidencia suficiente.
+\end{enumerate}
+
+El criterio conservador recomendado para declarar
+\texttt{numerically\_supported\_hidden\_attractor} es:
+\begin{itemize}
+\item la semilla objetivo produce una referencia robusta y no converge a un
+equilibrio ni diverge;
+\item para todos los equilibrios y todos los radios de verificación
+seleccionados se obtiene \(\texttt{TARGET}=0\);
+\item la fracción de \(\texttt{UNKNOWN}\) es pequeña o se resuelve aumentando
+tiempos, memoria, muestras y/o refinando \(h\);
+\item se documenta que la evidencia es numérica y dependiente de umbrales.
+\end{itemize}
+Si aparece \(\texttt{TARGET}>0\) desde vecindades de algún equilibrio, el
+atractor no debe etiquetarse automáticamente como oculto. La etiqueta
+conservadora pasa a ser \texttt{self\_excited\_attractor} si los radios son
+suficientemente pequeños y reproducibles, o \texttt{inconclusive} si la
+evidencia depende de radios/umbrales y requiere refinamiento.
+
+\subsection{Resultado de la corrida principal actual}
+
+La corrida principal actual tiene \(q=0.99\) y semilla objetivo posterior a la
+continuación
+\[
+X_\ast=(-2.602483593,\;-0.866187167,\;4.667744294).
+\]
+La referencia seccional contiene 23 puntos. El resumen de verificación reporta
+19 trayectorias \texttt{TARGET}. Los casos no triviales son:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}c c r r r r r@{}}
+\toprule
+Equilibrio & Radio & EQ & DIV & TARGET & OTHER & UNKNOWN \\
+\midrule
+\(E_+\) & \(3\times10^{-3}\) & 8 & 9 & 0 & 7 & 0\\
+\(E_+\) & \(10^{-2}\) & 3 & 10 & 0 & 11 & 0\\
+\(E_-\) & \(3\times10^{-3}\) & 11 & 6 & 7 & 0 & 0\\
+\(E_-\) & \(10^{-2}\) & 3 & 9 & 12 & 0 & 0\\
+\bottomrule
+\end{tabular}
+\caption{Filas con salidas no triviales en \texttt{summary\_by\_radius.csv}.}
+\end{table}
+
+Por el criterio anterior, esta corrida \emph{no} debe reportarse como
+\texttt{numerically\_supported\_hidden\_attractor}. La evidencia actual dice:
+para radios hasta \(10^{-3}\) no hubo \texttt{TARGET}, pero para radios
+\(3\times10^{-3}\) y \(10^{-2}\) alrededor de \(E_-\) sí hubo trayectorias que
+coinciden con el atractor objetivo. La etiqueta científicamente prudente es
+\texttt{inconclusive} con evidencia de intersección de cuenca cerca de
+\(E_-\), o bien no pasa la prueba de ocultedad bajo los radios incluidos.
+
+\textbf{Auditoría importante.} En \texttt{chua\_hidden\_backend.c}, la rutina
+\texttt{classify\_equilibrium\_or\_divergence} puede clasificar como
+\texttt{EQ} si la trayectoria permanece dentro de \(\texttt{EPS\_EQ}\) durante
+\(\texttt{CAP\_WIN}\) pasos desde el inicio. Como \(E_+\) y \(E_-\) son
+inestables por Matignon, una condición inicial extremadamente cercana puede
+quedarse dentro de la bola durante un tiempo finito antes de escapar. Por
+eso, las filas \(\texttt{EQ}=24\) en radios muy pequeños alrededor de
+equilibrios inestables deben leerse como ``no escapó antes del criterio
+finito'', no como convergencia asintótica probada. Para una verificación más
+estricta conviene mover el criterio \texttt{EQ} al tramo final/después de
+\(\texttt{TBURN\_TEST}\), o exigir persistencia terminal además de
+\(\texttt{CAP\_WIN}\).
+
+\section{Conclusiones de auditoría matemática}
+
+\begin{enumerate}
+\item La forma de Lur'e, la transferencia \(W_q(\ii\omega)\), la rama
+principal de \((\ii\omega)^q\), el cierre \(1+N(a)W_q(\ii\omega)=0\) y la
+construcción de la semilla armónica son matemáticamente consistentes con la
+convención implementada.
+\item El cierre Nyquist/función descriptiva de la corrida \(q=0.99\) está
+verificado numéricamente por residuales de orden \(10^{-15}\).
+\item La continuación con \texttt{memory\_mode=window} es la opción correcta
+para un sistema fraccionario con memoria truncada; \texttt{point} debe
+mantenerse sólo como comparación o modo heredado.
+\item El barrido \texttt{q\_sweep} sirve para seleccionar candidatos, no para
+declarar ocultedad.
+\item La cuenca operacional y la prueba de ocultedad deben interpretarse como
+evidencia numérica dependiente de umbrales, tiempos, \(h\), \(L_m\) y radios de
+muestreo.
+\item Con los archivos actuales, la prueba de ocultedad de \(q=0.99\) no
+autoriza la etiqueta \texttt{numerically\_supported\_hidden\_attractor},
+porque se detectaron trayectorias \texttt{TARGET} desde vecindades muestreadas
+de \(E_-\).
+\item Para fortalecer el reporte científico, se recomienda incorporar al
+pipeline principal una tabla automática de equilibrios, autovalores y
+criterio de Matignon, y ajustar la clasificación \texttt{EQ} de la verificación
+para que no pueda detenerse prematuramente cerca de equilibrios inestables.
+\end{enumerate}
+
+\section*{Referencias conceptuales}
+
+Este reporte sigue la distinción de Leonov--Kuznetsov entre atractores
+self-excited y hidden, la verificación por cuencas usada en trabajos de Danca,
+el balance armónico tipo Genesio--Tesi, la función descriptiva fraccionaria de
+Tavazoei--Haeri, la interpretación Weyl/Liouville-Weyl para señales periódicas
+en derivadas fraccionarias, y el criterio de Matignon para estabilidad local de
+sistemas fraccionarios lineales conmensurados.
+
+\end{document}
