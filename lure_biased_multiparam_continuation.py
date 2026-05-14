@@ -825,6 +825,8 @@ def run_robustness(
     raw_path = outdir / "robustness_survivors.csv"
     if raw_path.exists() and not resume:
         raw_path.unlink()
+    if not raw_path.exists():
+        write_csv(raw_path, [], ROBUST_FIELDS)
     rows = [dict(r) for r in read_csv_rows(raw_path)] if resume else []
     done = {(r.get("candidate_id"), r.get("case_id")) for r in rows}
     q = float(cfg["q"])
@@ -1125,6 +1127,8 @@ def run_continuation_pipeline(
     execute: bool = True,
     execute_early: bool | None = None,
     execute_robustness: bool | None = None,
+    post_continuation_only: bool = False,
+    survivor_ids: set[str] | None = None,
 ) -> Dict[str, Any]:
     cfg = load_config(config_path)
     q = require_q09998(cfg, context=str(config_path))
@@ -1135,7 +1139,7 @@ def run_continuation_pipeline(
     items = selected_seed_items(cfg, candidates, seeds)
     planned = count_planned_simulations(cfg, len(items))
     enforce_cost_guard(cfg, planned, force)
-    if not execute:
+    if not execute and not post_continuation_only:
         files_written = [rel(outdir / "continuation_cost_plan.json")]
         (outdir / "continuation_cost_plan.json").write_text(
             json.dumps(
@@ -1159,37 +1163,37 @@ def run_continuation_pipeline(
             "n_passed_Eplus_filter": len([r for r in read_csv_rows(outdir / "early_equilibrium_filter_summary.csv") if r.get("hiddenness_status") == "passed_early_equilibrium_filter"]),
             "n_robust_survivors": len({r.get("candidate_id") for r in read_csv_rows(outdir / "robustness_survivors.csv") if truthy(r.get("robust_attractor"))}),
         }
-    reset_stage_files(outdir, resume)
-    resume_rows = read_csv_rows(outdir / "continuation_summary.csv") if resume else []
-    files_written = [rel(outdir / "continuation_summary.csv"), rel(outdir / "continuation_paths.csv"), rel(outdir / "continuation_survivors.csv")]
-    survivors: List[Dict[str, Any]] = []
-    first_elapsed: float | None = None
-    for idx, item in enumerate(items):
-        print(f"continuation item {idx + 1}/{len(items)} {item['candidate_id']} {item['seed_id']}", flush=True)
-        rows, _paths, survivor, elapsed = run_one_continuation_item(item, cfg, p, eqs, outdir, resume_rows)
-        if first_elapsed is None and elapsed is not None:
-            first_elapsed = elapsed
-            remaining = max(planned - 1, 0)
-            estimated_total_sec = first_elapsed * max(planned, 1)
-            max_hours = float(cfg.get("cost_guard", {}).get("max_estimated_hours_without_force", 12.0))
-            (outdir / "cost_estimate_continuation.json").write_text(
-                json.dumps(
-                    {
-                        "measured_first_simulation_sec": first_elapsed,
-                        "planned_simulations": planned,
-                        "remaining_simulations_after_measurement": remaining,
-                        "estimated_total_sec": estimated_total_sec,
-                        "estimated_total_hours": estimated_total_sec / 3600.0,
-                    },
-                    indent=2,
-                ),
-                encoding="utf-8",
-            )
-            files_written.append(rel(outdir / "cost_estimate_continuation.json"))
-            if estimated_total_sec > max_hours * 3600.0 and not force:
-                raise RuntimeError(f"Cost guard: measured estimate {estimated_total_sec / 3600.0:.3f} h exceeds {max_hours} h. Use --force.")
-        if survivor is not None:
-            survivors.append(survivor)
+    if post_continuation_only:
+        files_written = []
+    else:
+        reset_stage_files(outdir, resume)
+        resume_rows = read_csv_rows(outdir / "continuation_summary.csv") if resume else []
+        files_written = [rel(outdir / "continuation_summary.csv"), rel(outdir / "continuation_paths.csv"), rel(outdir / "continuation_survivors.csv")]
+        first_elapsed: float | None = None
+        for idx, item in enumerate(items):
+            print(f"continuation item {idx + 1}/{len(items)} {item['candidate_id']} {item['seed_id']}", flush=True)
+            _rows, _paths, survivor, elapsed = run_one_continuation_item(item, cfg, p, eqs, outdir, resume_rows)
+            if first_elapsed is None and elapsed is not None:
+                first_elapsed = elapsed
+                remaining = max(planned - 1, 0)
+                estimated_total_sec = first_elapsed * max(planned, 1)
+                max_hours = float(cfg.get("cost_guard", {}).get("max_estimated_hours_without_force", 12.0))
+                (outdir / "cost_estimate_continuation.json").write_text(
+                    json.dumps(
+                        {
+                            "measured_first_simulation_sec": first_elapsed,
+                            "planned_simulations": planned,
+                            "remaining_simulations_after_measurement": remaining,
+                            "estimated_total_sec": estimated_total_sec,
+                            "estimated_total_hours": estimated_total_sec / 3600.0,
+                        },
+                        indent=2,
+                    ),
+                    encoding="utf-8",
+                )
+                files_written.append(rel(outdir / "cost_estimate_continuation.json"))
+                if estimated_total_sec > max_hours * 3600.0 and not force:
+                    raise RuntimeError(f"Cost guard: measured estimate {estimated_total_sec / 3600.0:.3f} h exceeds {max_hours} h. Use --force.")
     if not (outdir / "continuation_summary.csv").exists():
         write_csv(outdir / "continuation_summary.csv", [], CONT_FIELDS)
     if not (outdir / "continuation_paths.csv").exists():
@@ -1197,16 +1201,25 @@ def run_continuation_pipeline(
     if not (outdir / "continuation_survivors.csv").exists():
         write_csv(outdir / "continuation_survivors.csv", [], SURVIVOR_FIELDS)
     survivor_rows = read_csv_rows(outdir / "continuation_survivors.csv")
+    if survivor_ids:
+        survivor_rows = [row for row in survivor_rows if str(row.get("candidate_id", "")) in survivor_ids]
     do_early = bool(cfg.get("early_equilibrium_filter", {}).get("enabled", False)) if execute_early is None else bool(execute_early)
     do_robust = bool(cfg.get("robustness", {}).get("enabled", False)) if execute_robustness is None else bool(execute_robustness)
     early_summary: List[Dict[str, Any]] = []
     if do_early:
+        cfg.setdefault("early_equilibrium_filter", {})["enabled"] = True
         _raw, early_summary = run_early_filter(survivor_rows, cfg, p, eqs, outdir, resume)
         files_written.extend([rel(outdir / "early_equilibrium_filter_raw.csv"), rel(outdir / "early_equilibrium_filter_summary.csv")])
+    elif (outdir / "early_equilibrium_filter_summary.csv").exists():
+        early_summary = read_csv_rows(outdir / "early_equilibrium_filter_summary.csv")
     if do_robust:
-        run_robustness(survivor_rows, early_summary, cfg, p, outdir, resume)
+        cfg.setdefault("robustness", {})["enabled"] = True
+        robust_rows = run_robustness(survivor_rows, early_summary, cfg, p, outdir, resume)
         files_written.append(rel(outdir / "robustness_survivors.csv"))
-    compare_with_machado(survivor_rows, outdir)
+    else:
+        robust_rows = read_csv_rows(outdir / "robustness_survivors.csv")
+    robust_ids = {str(r.get("candidate_id", "")) for r in robust_rows if truthy(r.get("robust_attractor"))}
+    compare_with_machado([row for row in survivor_rows if str(row.get("candidate_id", "")) in robust_ids], outdir)
     files_written.append(rel(outdir / "lure_biased_vs_machado_comparison.csv"))
     update_final_report(outdir, cfg, files_written)
     files_written.extend([rel(outdir / "lure_biased_multiparam_report.md"), rel(outdir / "lure_biased_multiparam_summary.json")])
@@ -1224,6 +1237,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--execute-continuation", action="store_true", help="Actually run continuation integrations. Without this, only a cost plan is written.")
+    parser.add_argument("--post-continuation-only", action="store_true", help="Use existing continuation_survivors.csv and run only post-continuation stages.")
+    parser.add_argument("--survivor-id", action="append", default=[], help="Limit post-continuation stages to this survivor candidate id. Can be repeated.")
     parser.add_argument("--execute-early-filter", action="store_true")
     parser.add_argument("--execute-robustness", action="store_true")
     return parser.parse_args()
@@ -1238,6 +1253,8 @@ def main() -> None:
         execute=args.execute_continuation,
         execute_early=args.execute_early_filter,
         execute_robustness=args.execute_robustness,
+        post_continuation_only=args.post_continuation_only,
+        survivor_ids=set(args.survivor_id or []),
     )
     print(f"q_global={TARGET_Q:.5f}")
     print("q_consistency_status=ok_q_0p9998")
