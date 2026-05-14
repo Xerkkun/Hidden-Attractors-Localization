@@ -97,13 +97,46 @@ def require_q09998(cfg: Dict[str, Any], *, context: str) -> float:
     return q
 
 
+def is_allowed_timestamped_outdir(root: Path, base: Path) -> bool:
+    """Validate reproducible output folders for one Lure q=0.9998 run.
+
+    Purpose:
+        Keep this fixed-q exploration from writing into unrelated historical
+        folders while allowing clean timestamped reruns.
+    Parameters:
+        root: Candidate output directory resolved from the run configuration.
+        base: Canonical output directory for the q=0.9998 exploration.
+    Returns:
+        True when root is base itself or a sibling named
+        ``base.name_YYYYMMDD_HHMMSS``.
+    Warning:
+        This only validates the storage target; it does not relax the q,
+        parameter-range, or numerical-method guards.
+    """
+
+    root_resolved = root.resolve()
+    base_resolved = base.resolve()
+    if root_resolved == base_resolved:
+        return True
+    if root_resolved.parent != base_resolved.parent:
+        return False
+    prefix = f"{base_resolved.name}_"
+    if not root_resolved.name.startswith(prefix):
+        return False
+    stamp = root_resolved.name[len(prefix) :]
+    return len(stamp) == 15 and stamp[8] == "_" and stamp[:8].isdigit() and stamp[9:].isdigit()
+
+
 def ensure_outdir(cfg: Dict[str, Any]) -> Path:
     root = Path(cfg.get("outputs", {}).get("root", "outputs/lure_biased_multiparam_q09998"))
     if not root.is_absolute():
         root = ROOT / root
     expected = OUTPUT_DIR.resolve()
-    if root.resolve() != expected:
-        raise ValueError(f"Output dir must be {rel(expected)} for this exploration, got {rel(root)}.")
+    if not is_allowed_timestamped_outdir(root, expected):
+        raise ValueError(
+            f"Output dir must be {rel(expected)} or a timestamped sibling "
+            f"{expected.name}_YYYYMMDD_HHMMSS for this exploration, got {rel(root)}."
+        )
     forbidden = [
         ROOT / "outputs" / "lure_route",
         ROOT / "outputs" / "extended_search" / "corrida1",

@@ -221,12 +221,45 @@ def require_q09998(cfg: Dict[str, Any], *, context: str) -> float:
     return q
 
 
+def is_allowed_timestamped_outdir(outdir: Path, base: Path) -> bool:
+    """Validate storage folders for one Lure q=0.9998 continuation run.
+
+    Purpose:
+        Preserve the fixed-q exploration guard while allowing clean
+        timestamped reruns that do not collide with previous CSV outputs.
+    Parameters:
+        outdir: Output directory read from the run configuration.
+        base: Canonical output directory for this q=0.9998 route.
+    Returns:
+        True when outdir is base itself or a sibling named
+        ``base.name_YYYYMMDD_HHMMSS``.
+    Warning:
+        This does not change the continuation, early-filter, robustness, or
+        q-consistency checks.
+    """
+
+    outdir_resolved = outdir.resolve()
+    base_resolved = base.resolve()
+    if outdir_resolved == base_resolved:
+        return True
+    if outdir_resolved.parent != base_resolved.parent:
+        return False
+    prefix = f"{base_resolved.name}_"
+    if not outdir_resolved.name.startswith(prefix):
+        return False
+    stamp = outdir_resolved.name[len(prefix) :]
+    return len(stamp) == 15 and stamp[8] == "_" and stamp[:8].isdigit() and stamp[9:].isdigit()
+
+
 def outdir_from_config(cfg: Dict[str, Any]) -> Path:
     outdir = Path(cfg.get("outputs", {}).get("root", "outputs/lure_biased_multiparam_q09998"))
     if not outdir.is_absolute():
         outdir = ROOT / outdir
-    if outdir.resolve() != OUTDIR.resolve():
-        raise ValueError(f"Output dir must be {rel(OUTDIR)}; got {rel(outdir)}")
+    if not is_allowed_timestamped_outdir(outdir, OUTDIR):
+        raise ValueError(
+            f"Output dir must be {rel(OUTDIR)} or a timestamped sibling "
+            f"{OUTDIR.name}_YYYYMMDD_HHMMSS; got {rel(outdir)}"
+        )
     outdir.mkdir(parents=True, exist_ok=True)
     return outdir
 
