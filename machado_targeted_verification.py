@@ -312,6 +312,37 @@ def memory_points(memory_length: float, h: float) -> int:
     return max(1, int(math.ceil(float(memory_length) / float(h)))) + 1
 
 
+def enforce_memory_contract(cfg: Dict[str, Any]) -> None:
+    """Validate the short-memory contract used for hardware-oriented tests.
+
+    The EFORK implementation uses a finite memory horizon Lm to approximate the
+    Caputo history.  For embedded targets such as STM32, Lm is part of the
+    experimental hypothesis rather than a tunable accuracy knob; all hiddenness,
+    reproduction, and robustness stages must therefore stay inside the same
+    configured memory bound.
+    """
+    contract = cfg.get("memory_contract", {})
+    if "max_memory_length" not in contract:
+        return
+    max_lm = float(contract["max_memory_length"])
+    if max_lm <= 0.0:
+        raise ValueError("memory_contract.max_memory_length must be positive.")
+    checks: List[Tuple[str, float]] = []
+    for section in ("reference_attractor", "targeted_equilibrium_controls"):
+        params = cfg.get(section, {})
+        if "memory_length" in params:
+            checks.append((f"{section}.memory_length", float(params["memory_length"])))
+    for idx, lm in enumerate(cfg.get("reproduction", {}).get("memory_length_values", []), start=1):
+        checks.append((f"reproduction.memory_length_values[{idx}]", float(lm)))
+    for case_id, params in cfg.get("attractor_robustness", {}).get("cases", {}).items():
+        if "memory_length" in params:
+            checks.append((f"attractor_robustness.cases.{case_id}.memory_length", float(params["memory_length"])))
+    offenders = [(name, lm) for name, lm in checks if lm <= 0.0 or lm > max_lm]
+    if offenders:
+        details = "; ".join(f"{name}={lm:g}" for name, lm in offenders)
+        raise ValueError(f"Memory contract violation: max Lm is {max_lm:g}, but {details}.")
+
+
 def class_config(cfg: Dict[str, Any]) -> Dict[str, Any]:
     c = dict(cfg.get("classification", {}))
     return {
@@ -645,10 +676,19 @@ def run_targeted_controls(
         raw_rows = []
     done = {raw_key(r) for r in raw_rows}
     plan = build_targeted_plan(candidates, cfg, p, eqs)
+    stop_after_target = bool(cfg.get("cost_guard", {}).get("stop_after_first_target_hit_in_controls", True))
+    blocked_candidates = {
+        str(r.get("candidate_id", ""))
+        for r in raw_rows
+        if stop_after_target and (truthy(r.get("target_hit")) or str(r.get("final_class", "")) == "target_attractor")
+    }
     ref_cache: Dict[Tuple[str, float, float, float], Tuple[np.ndarray, str]] = {}
     c_cfg = class_config(cfg)
     executed_now = 0
     for item in plan:
+        cid = str(item.get("candidate_id", ""))
+        if cid in blocked_candidates:
+            continue
         if item_key(item) in done:
             continue
         if max_to_run is not None and executed_now >= max_to_run:
@@ -663,6 +703,8 @@ def run_targeted_controls(
             f"{item['direction_label']} class={out_row['final_class']} target={out_row['target_hit']}",
             flush=True,
         )
+        if stop_after_target and (truthy(out_row.get("target_hit")) or str(out_row.get("final_class", "")) == "target_attractor"):
+            blocked_candidates.add(cid)
     summary = aggregate_targeted(raw_rows)
     write_csv(summary_path, summary, SUMMARY_FIELDS)
     return raw_rows, summary, executed_now
@@ -1525,6 +1567,7 @@ def write_cost_plan(outdir: Path, selected: Dict[str, int], full_route: Dict[str
         "notes": [
             "The full directed route is designed to stay in the hundreds of trajectories, not the old 49344 random-grid plan.",
             "Each candidate first reconstructs a reference attractor from target_seed or seed before equilibrium controls.",
+            "Equilibrium controls short-circuit a candidate after the first TARGET contact unless stop_after_first_target_hit_in_controls is set to false.",
             "Reproduction trajectories are added only if TARGET contacts appear.",
             "Robustness is skipped for candidates with reproduced equilibrium-neighborhood TARGET contacts.",
         ],
@@ -1536,6 +1579,7 @@ def write_cost_plan(outdir: Path, selected: Dict[str, int], full_route: Dict[str
 def main() -> None:
     args = parse_args()
     cfg = load_config(args.config)
+    enforce_memory_contract(cfg)
     cfg["q"] = float(cfg.get("q", 0.9998))
     if abs(float(cfg["q"]) - 0.9998) > 5e-10:
         raise ValueError("This targeted Machado route is fixed to q=0.9998.")
