@@ -151,6 +151,44 @@ ROBUST_RAW_FIELDS = [
     "notes",
 ]
 
+REFERENCE_FIELDS = [
+    "candidate_id",
+    "q",
+    "mu",
+    "theta",
+    "branch",
+    "h",
+    "memory_length",
+    "memory_points",
+    "t_final",
+    "start_source",
+    "start_x",
+    "start_y",
+    "start_z",
+    "bounded",
+    "final_class",
+    "max_norm",
+    "final_x",
+    "final_y",
+    "final_z",
+    "range_x",
+    "range_y",
+    "range_z",
+    "mean_x_tail",
+    "mean_y_tail",
+    "mean_z_tail",
+    "var_x_tail",
+    "var_y_tail",
+    "var_z_tail",
+    "fft_peak",
+    "psd_entropy",
+    "section_fingerprint_count",
+    "numerical_status",
+    "trajectory_csv",
+    "reference_status",
+    "notes",
+]
+
 ROBUST_SUMMARY_FIELDS = [
     "candidate_id",
     "executed_cases",
@@ -691,7 +729,16 @@ def run_reproduction(
         return raw_rows, []
     c_cfg = class_config(cfg)
     ref_cache: Dict[Tuple[str, float, float, float], Tuple[np.ndarray, str]] = {}
+    stop_after_reproduced = bool(cfg.get("cost_guard", {}).get("stop_after_first_reproduced_target", True))
+    blocked_repro_candidates = {
+        str(r.get("candidate_id", ""))
+        for r in raw_rows
+        if stop_after_reproduced and (truthy(r.get("target_hit")) or str(r.get("final_class", "")) == "target_attractor")
+    }
     for target in target_rows:
+        cid = str(target.get("candidate_id", ""))
+        if cid in blocked_repro_candidates:
+            continue
         src_key = source_run_key(target)
         for idx, memory_length in enumerate(repro.get("memory_length_values", [40, 80]), start=1):
             stage = "B" if idx == 1 else "C"
@@ -706,6 +753,9 @@ def run_reproduction(
             out["robust_target_hit"] = bool(truthy(out.get("target_hit")))
             raw_rows.append(out)
             append_csv(raw_path, out, REPRO_RAW_FIELDS)
+            if stop_after_reproduced and out["robust_target_hit"]:
+                blocked_repro_candidates.add(cid)
+                break
     summary = aggregate_reproduction(raw_rows)
     write_csv(summary_path, summary, REPRO_SUMMARY_FIELDS)
     return raw_rows, summary
@@ -807,9 +857,92 @@ def robustness_start(candidate: Dict[str, Any]) -> Tuple[np.ndarray, str]:
     return np.asarray(candidate["seed"], dtype=float), "candidate_seed"
 
 
+def run_reference_attractors(
+    candidates: Sequence[Dict[str, Any]],
+    cfg: Dict[str, Any],
+    p: Dict[str, Any],
+    eqs: Dict[str, np.ndarray],
+    outdir: Path,
+    *,
+    resume: bool,
+    skip: bool,
+) -> List[Dict[str, Any]]:
+    path = outdir / "reference_attractor_summary.csv"
+    ensure_csv(path, REFERENCE_FIELDS)
+    if skip or not bool(cfg.get("reference_attractor", {}).get("enabled", True)):
+        return read_rows(path)
+    if not resume:
+        write_csv(path, [], REFERENCE_FIELDS)
+    rows = [dict(r) for r in read_rows(path)] if resume else []
+    done = {str(r.get("candidate_id", "")) for r in rows}
+    params = cfg.get("reference_attractor", {})
+    h = float(params.get("h", 0.01))
+    Lm = float(params.get("memory_length", 40))
+    t_final = float(params.get("t_final", 1500))
+    for cand in candidates:
+        cid = cand["candidate_id"]
+        if cid in done:
+            continue
+        x0, start_source = robustness_start(cand)
+        try:
+            traj = integrate_original(x0, p, float(cand["q"]), h, Lm, t_final)
+            stats = classify_attractor_traj(traj, p, eqs, float(cand["q"]), h, cfg)
+            traj_path = save_reduced_trajectory(outdir / "trajectories" / f"{cid}_reference_attractor.csv", traj)
+            reference_status = "reference_bounded_nontrivial" if truthy(stats.get("bounded")) and stats.get("final_class") == "bounded_nontrivial" else "reference_failed"
+            notes = "Reference attractor reconstruction run; no hidden_verified."
+        except Exception as exc:
+            stats = {
+                "bounded": False,
+                "final_class": "numerical_failure",
+                "max_norm": "",
+                "final_x": "",
+                "final_y": "",
+                "final_z": "",
+                "range_x": "",
+                "range_y": "",
+                "range_z": "",
+                "mean_x_tail": "",
+                "mean_y_tail": "",
+                "mean_z_tail": "",
+                "var_x_tail": "",
+                "var_y_tail": "",
+                "var_z_tail": "",
+                "fft_peak": "",
+                "psd_entropy": "",
+                "section_fingerprint_count": "",
+                "numerical_status": "exception",
+            }
+            traj_path = ""
+            reference_status = "reference_failed"
+            notes = str(exc)
+        row = {
+            "candidate_id": cid,
+            "q": float(cand["q"]),
+            "mu": float(cand["mu"]),
+            "theta": float(cand["theta"]),
+            "branch": cand.get("branch", ""),
+            "h": h,
+            "memory_length": Lm,
+            "memory_points": memory_points(Lm, h),
+            "t_final": t_final,
+            "start_source": start_source,
+            "start_x": float(x0[0]),
+            "start_y": float(x0[1]),
+            "start_z": float(x0[2]),
+            **stats,
+            "trajectory_csv": traj_path,
+            "reference_status": reference_status,
+            "notes": notes,
+        }
+        rows.append(row)
+        append_csv(path, row, REFERENCE_FIELDS)
+    return read_rows(path)
+
+
 def run_robustness(
     candidates: Sequence[Dict[str, Any]],
     blocked_candidate_ids: set[str],
+    reference_failed_candidate_ids: set[str],
     cfg: Dict[str, Any],
     p: Dict[str, Any],
     eqs: Dict[str, np.ndarray],
@@ -833,6 +966,23 @@ def run_robustness(
         for cand in candidates:
             if cand["candidate_id"] in blocked_candidate_ids:
                 continue
+            if cand["candidate_id"] in reference_failed_candidate_ids:
+                summary.append(
+                    {
+                        "candidate_id": cand["candidate_id"],
+                        "executed_cases": 0,
+                        "all_bounded_nontrivial": False,
+                        "no_equilibrium_convergence": False,
+                        "no_divergence": False,
+                        "range_relative_spread": "",
+                        "fft_relative_spread": "",
+                        "var_tail_collapsed": "",
+                        "robust_attractor": False,
+                        "robustness_status": "skipped_due_to_reference_attractor_failure",
+                        "notes": "Reference attractor did not classify as bounded_nontrivial.",
+                    }
+                )
+                continue
             summary.append(
                 {
                     "candidate_id": cand["candidate_id"],
@@ -853,7 +1003,7 @@ def run_robustness(
     cases = cfg["attractor_robustness"].get("cases", {})
     for cand in candidates:
         cid = cand["candidate_id"]
-        if cid in blocked_candidate_ids:
+        if cid in blocked_candidate_ids or cid in reference_failed_candidate_ids:
             continue
         x0, start_source = robustness_start(cand)
         for case_id, params in cases.items():
@@ -909,7 +1059,7 @@ def run_robustness(
             }
             raw_rows.append(row)
             append_csv(raw_path, row, ROBUST_RAW_FIELDS)
-    summary = summarize_robustness(raw_rows, candidates, blocked_candidate_ids, set(cases.keys()))
+    summary = summarize_robustness(raw_rows, candidates, blocked_candidate_ids, reference_failed_candidate_ids, set(cases.keys()))
     write_csv(summary_path, summary, ROBUST_SUMMARY_FIELDS)
     return raw_rows, summary
 
@@ -922,6 +1072,7 @@ def summarize_robustness(
     raw_rows: Sequence[Dict[str, Any]],
     candidates: Sequence[Dict[str, Any]],
     blocked_candidate_ids: set[str],
+    reference_failed_candidate_ids: set[str],
     expected_cases: set[str],
 ) -> List[Dict[str, Any]]:
     grouped: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
@@ -944,6 +1095,23 @@ def summarize_robustness(
                     "robust_attractor": False,
                     "robustness_status": "skipped_due_to_reproduced_target",
                     "notes": "Equilibrium TARGET reproduced; long robustness skipped.",
+                }
+            )
+            continue
+        if cid in reference_failed_candidate_ids:
+            out.append(
+                {
+                    "candidate_id": cid,
+                    "executed_cases": 0,
+                    "all_bounded_nontrivial": False,
+                    "no_equilibrium_convergence": False,
+                    "no_divergence": False,
+                    "range_relative_spread": "",
+                    "fft_relative_spread": "",
+                    "var_tail_collapsed": "",
+                    "robust_attractor": False,
+                    "robustness_status": "skipped_due_to_reference_attractor_failure",
+                    "notes": "Reference attractor did not classify as bounded_nontrivial.",
                 }
             )
             continue
@@ -993,10 +1161,24 @@ def summarize_robustness(
     return out
 
 
-def count_planned(candidates: Sequence[Dict[str, Any]], cfg: Dict[str, Any], p: Dict[str, Any], eqs: Dict[str, np.ndarray], skip_controls: bool, skip_robustness: bool) -> Dict[str, int]:
+def count_planned(
+    candidates: Sequence[Dict[str, Any]],
+    cfg: Dict[str, Any],
+    p: Dict[str, Any],
+    eqs: Dict[str, np.ndarray],
+    skip_reference: bool,
+    skip_controls: bool,
+    skip_robustness: bool,
+) -> Dict[str, int]:
+    reference = 0 if skip_reference else len(candidates)
     controls = 0 if skip_controls else len(build_targeted_plan(candidates, cfg, p, eqs))
     robustness = 0 if skip_robustness else len(candidates) * len(cfg.get("attractor_robustness", {}).get("cases", {}))
-    return {"targeted_equilibrium_controls": controls, "attractor_robustness": robustness, "total_without_reproduction": controls + robustness}
+    return {
+        "reference_attractor": reference,
+        "targeted_equilibrium_controls": controls,
+        "attractor_robustness": robustness,
+        "total_without_reproduction": reference + controls + robustness,
+    }
 
 
 def enforce_cost_guard(planned: int, cfg: Dict[str, Any], max_trajectories: int | None, force: bool) -> int:
@@ -1020,11 +1202,13 @@ def rows_by_candidate(rows: Sequence[Dict[str, Any]]) -> Dict[str, List[Dict[str
 def build_decisions(
     candidates: Sequence[Dict[str, Any]],
     previous: Dict[str, Dict[str, Any]],
+    reference_rows: Sequence[Dict[str, Any]],
     targeted_rows: Sequence[Dict[str, Any]],
     repro_summary: Sequence[Dict[str, Any]],
     robustness_summary: Sequence[Dict[str, Any]],
     skipped_by_cost: set[str],
 ) -> List[Dict[str, Any]]:
+    reference_by_cand = {str(row.get("candidate_id", "")): row for row in reference_rows}
     targeted_by_cand = rows_by_candidate(targeted_rows)
     repro_by_cand = rows_by_candidate(repro_summary)
     robust_by_cand = {row.get("candidate_id", ""): row for row in robustness_summary}
@@ -1039,7 +1223,12 @@ def build_decisions(
         robust_row = robust_by_cand.get(cid, {})
         robust_attractor = truthy(robust_row.get("robust_attractor"))
         robustness_status = str(robust_row.get("robustness_status", "not_run"))
-        if len(rows) == 0:
+        reference_row = reference_by_cand.get(cid, {})
+        reference_status = str(reference_row.get("reference_status", ""))
+        if reference_status and reference_status != "reference_bounded_nontrivial":
+            final_status = "not_ready_due_to_reference_attractor_failure"
+            next_action = "inspect_reference_seed_or_reintegrate_before_equilibrium_controls"
+        elif len(rows) == 0:
             final_status = "not_evaluated"
             next_action = "run_targeted_controls_only_before_any_random_sampling"
         elif robust_target_hit:
@@ -1097,7 +1286,12 @@ def read_reduced_traj(path: str | Path, max_points: int = 12000) -> np.ndarray:
     return arr
 
 
-def candidate_plot_points(candidate: Dict[str, Any], robust_rows: Sequence[Dict[str, Any]]) -> np.ndarray:
+def candidate_plot_points(candidate: Dict[str, Any], reference_rows: Sequence[Dict[str, Any]], robust_rows: Sequence[Dict[str, Any]]) -> np.ndarray:
+    for row in reference_rows:
+        if row.get("candidate_id") == candidate["candidate_id"] and row.get("trajectory_csv"):
+            arr = read_reduced_traj(row["trajectory_csv"])
+            if arr.shape[0] > 0:
+                return arr[:, 1:4]
     for row in robust_rows:
         if row.get("candidate_id") == candidate["candidate_id"] and row.get("trajectory_csv"):
             arr = read_reduced_traj(row["trajectory_csv"])
@@ -1113,6 +1307,7 @@ def plot_outputs(
     eqs: Dict[str, np.ndarray],
     targeted_summary: Sequence[Dict[str, Any]],
     targeted_rows: Sequence[Dict[str, Any]],
+    reference_rows: Sequence[Dict[str, Any]],
     robust_rows: Sequence[Dict[str, Any]],
     cfg: Dict[str, Any],
     p: Dict[str, Any],
@@ -1132,7 +1327,7 @@ def plot_outputs(
     }
     for cand in candidates:
         cid = cand["candidate_id"]
-        pts = candidate_plot_points(cand, robust_rows)
+        pts = candidate_plot_points(cand, reference_rows, robust_rows)
         fig = plt.figure(figsize=(7.2, 5.4))
         ax = fig.add_subplot(111, projection="3d")
         if pts.shape[0] > 1:
@@ -1231,9 +1426,11 @@ def write_report(
     previous: Dict[str, Dict[str, Any]],
     planned: Dict[str, int],
     eq_checks: Dict[str, Any],
+    reference_rows: Sequence[Dict[str, Any]],
     decisions: Sequence[Dict[str, Any]],
     files_written: Sequence[str],
 ) -> None:
+    reference_by_cand = {str(row.get("candidate_id", "")): row for row in reference_rows}
     lines = [
         "# Machado targeted verification",
         "",
@@ -1247,8 +1444,10 @@ def write_report(
         f"- source_summary: `{cfg['source_summary']}`",
         f"- previous_corrida1_dir: `{cfg['previous_corrida1_dir']}`",
         f"- output_dir: `{cfg['output_dir']}`",
+        f"- selected_planned_reference_attractor: `{planned['selected']['reference_attractor']}`",
         f"- selected_planned_targeted_equilibrium_controls: `{planned['selected']['targeted_equilibrium_controls']}`",
         f"- selected_planned_attractor_robustness: `{planned['selected']['attractor_robustness']}`",
+        f"- full_route_reference_attractor: `{planned['full_route']['reference_attractor']}`",
         f"- full_route_targeted_equilibrium_controls: `{planned['full_route']['targeted_equilibrium_controls']}`",
         f"- full_route_attractor_robustness: `{planned['full_route']['attractor_robustness']}`",
         "",
@@ -1260,6 +1459,13 @@ def write_report(
         lines.append(
             f"- `{cand['candidate_id']}`: completed={prev.get('previous_completed_trajectories', 0)}, "
             f"target_hits={prev.get('previous_target_hits', 0)}, status=`{prev.get('previous_hiddenness_status', '')}`"
+        )
+    lines.extend(["", "## Reference Attractor Gate", ""])
+    for cand in candidates:
+        row = reference_by_cand.get(cand["candidate_id"], {})
+        lines.append(
+            f"- `{cand['candidate_id']}`: reference_status=`{row.get('reference_status', 'not_run')}`, "
+            f"final_class=`{row.get('final_class', 'not_run')}`"
         )
     lines.extend(["", "## Equilibrium check", ""])
     for eq_id, check in eq_checks.items():
@@ -1288,6 +1494,7 @@ def write_report(
         "q": float(cfg["q"]),
         "planned": planned,
         "equilibrium_checks": eq_checks,
+        "reference_attractor": list(reference_rows),
         "decisions": list(decisions),
         "hidden_verified": False,
         "files_written": list(dict.fromkeys(files_written + [rel(outdir / "machado_targeted_report.md")])),
@@ -1302,6 +1509,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", default=None)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--force", action="store_true")
+    parser.add_argument("--skip-reference-attractor", action="store_true")
     parser.add_argument("--skip-robustness", action="store_true")
     parser.add_argument("--skip-equilibrium-controls", action="store_true")
     parser.add_argument("--max-trajectories", type=int, default=None)
@@ -1316,6 +1524,7 @@ def write_cost_plan(outdir: Path, selected: Dict[str, int], full_route: Dict[str
         "max_trajectories": int(limit),
         "notes": [
             "The full directed route is designed to stay in the hundreds of trajectories, not the old 49344 random-grid plan.",
+            "Each candidate first reconstructs a reference attractor from target_seed or seed before equilibrium controls.",
             "Reproduction trajectories are added only if TARGET contacts appear.",
             "Robustness is skipped for candidates with reproduced equilibrium-neighborhood TARGET contacts.",
         ],
@@ -1340,12 +1549,13 @@ def main() -> None:
     p = chua_ic_params(run_cfg)
     previous = previous_stats(cfg)
     eqs, _eq_rows, eq_checks = write_equilibria(p, float(cfg["q"]), outdir)
-    selected_plan = count_planned(candidates, cfg, p, eqs, args.skip_equilibrium_controls, args.skip_robustness)
-    full_plan = count_planned(candidates, cfg, p, eqs, False, False)
+    selected_plan = count_planned(candidates, cfg, p, eqs, args.skip_reference_attractor, args.skip_equilibrium_controls, args.skip_robustness)
+    full_plan = count_planned(candidates, cfg, p, eqs, False, False, False)
     total_limit = int(args.max_trajectories or cfg.get("cost_guard", {}).get("max_trajectories_without_force", 1000))
     cost_plan_file = write_cost_plan(outdir, selected_plan, full_plan, total_limit)
     enforce_cost_guard(selected_plan["total_without_reproduction"], cfg, args.max_trajectories, args.force)
     print(
+        f"planned_reference_attractor={selected_plan['reference_attractor']} "
         f"planned_targeted_equilibrium_controls={selected_plan['targeted_equilibrium_controls']} "
         f"planned_attractor_robustness={selected_plan['attractor_robustness']} "
         f"planned_total_without_reproduction={selected_plan['total_without_reproduction']} "
@@ -1356,29 +1566,53 @@ def main() -> None:
     planned = {"selected": selected_plan, "full_route": full_plan}
     files_written = [rel(outdir / "equilibria_targeted_summary.csv"), cost_plan_file]
 
+    reference_rows = run_reference_attractors(
+        candidates,
+        cfg,
+        p,
+        eqs,
+        outdir,
+        resume=args.resume,
+        skip=args.skip_reference_attractor,
+    )
+    files_written.append(rel(outdir / "reference_attractor_summary.csv"))
+    reference_by_cand = {str(row.get("candidate_id", "")): row for row in reference_rows}
+    if args.skip_reference_attractor or not reference_rows:
+        control_candidates = list(candidates)
+        reference_failed: set[str] = set()
+    else:
+        ready_ids = {
+            cid
+            for cid, row in reference_by_cand.items()
+            if str(row.get("reference_status", "")) == "reference_bounded_nontrivial"
+        }
+        reference_failed = {cand["candidate_id"] for cand in candidates if cand["candidate_id"] not in ready_ids}
+        control_candidates = [cand for cand in candidates if cand["candidate_id"] in ready_ids]
+
     if args.skip_equilibrium_controls or not bool(cfg.get("targeted_equilibrium_controls", {}).get("enabled", True)):
         ensure_csv(outdir / "targeted_equilibrium_raw.csv", RAW_FIELDS)
         ensure_csv(outdir / "targeted_equilibrium_summary.csv", SUMMARY_FIELDS)
         targeted_raw = read_rows(outdir / "targeted_equilibrium_raw.csv")
         targeted_summary = read_rows(outdir / "targeted_equilibrium_summary.csv")
     else:
-        targeted_raw, targeted_summary, _executed = run_targeted_controls(candidates, cfg, p, eqs, outdir, resume=args.resume)
+        targeted_raw, targeted_summary, _executed = run_targeted_controls(control_candidates, cfg, p, eqs, outdir, resume=args.resume)
     files_written.extend([rel(outdir / "targeted_equilibrium_raw.csv"), rel(outdir / "targeted_equilibrium_summary.csv")])
 
     candidates_by_id = {cand["candidate_id"]: cand for cand in candidates}
-    targets = target_rows(targeted_raw)
+    control_candidate_ids = {cand["candidate_id"] for cand in control_candidates}
+    targets = [row for row in target_rows(targeted_raw) if row.get("candidate_id") in control_candidate_ids]
     repro_raw, repro_summary = run_reproduction(targets, candidates_by_id, cfg, p, eqs, outdir, resume=args.resume)
     files_written.extend([rel(outdir / "target_reproduction_raw.csv"), rel(outdir / "target_reproduction_summary.csv")])
     blocked = {row["candidate_id"] for row in repro_summary if truthy(row.get("robust_target_hit"))}
-    robust_raw, robust_summary = run_robustness(candidates, blocked, cfg, p, eqs, outdir, resume=args.resume, skip=args.skip_robustness)
+    robust_raw, robust_summary = run_robustness(control_candidates, blocked, reference_failed, cfg, p, eqs, outdir, resume=args.resume, skip=args.skip_robustness)
     files_written.extend([rel(outdir / "attractor_robustness_raw.csv"), rel(outdir / "attractor_robustness_summary.csv")])
     skipped_by_cost: set[str] = set()
-    decisions = build_decisions(candidates, previous, targeted_raw, repro_summary, robust_summary, skipped_by_cost)
+    decisions = build_decisions(candidates, previous, reference_rows, targeted_raw, repro_summary, robust_summary, skipped_by_cost)
     write_csv(outdir / "machado_targeted_decision.csv", decisions, DECISION_FIELDS)
     files_written.append(rel(outdir / "machado_targeted_decision.csv"))
-    plot_files = plot_outputs(candidates, eqs, targeted_summary, targeted_raw, robust_raw, cfg, p, outdir)
+    plot_files = plot_outputs(candidates, eqs, targeted_summary, targeted_raw, reference_rows, robust_raw, cfg, p, outdir)
     files_written.extend(plot_files)
-    write_report(outdir, cfg, candidates, previous, planned, eq_checks, decisions, files_written)
+    write_report(outdir, cfg, candidates, previous, planned, eq_checks, reference_rows, decisions, files_written)
     files_written.extend([rel(outdir / "machado_targeted_report.md"), rel(outdir / "machado_targeted_summary.json")])
     for row in decisions:
         print(f"candidate_id={row['candidate_id']}")

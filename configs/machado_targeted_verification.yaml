@@ -7,6 +7,12 @@ candidates:
   - branch_0_mu_4p00000_theta_0p00000
   - branch_0_mu_2p00000_theta_3p92699
 
+reference_attractor:
+  enabled: true
+  h: 0.01
+  memory_length: 40
+  t_final: 1500
+
 targeted_equilibrium_controls:
   enabled: true
   equilibria:
