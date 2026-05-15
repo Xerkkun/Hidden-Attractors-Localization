@@ -11,6 +11,9 @@ New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 $stamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $logPath = Join-Path $logDir "machado_targeted_lm10_$stamp.log"
 
+$env:OMP_NUM_THREADS = "1"
+$env:OMP_THREAD_LIMIT = "1"
+
 $python = if (Get-Command python3 -ErrorAction SilentlyContinue) {
   "python3"
 } elseif (Get-Command python -ErrorAction SilentlyContinue) {

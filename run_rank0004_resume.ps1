@@ -11,6 +11,9 @@ New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 $stdout = Join-Path $outDir "rank0004_resume_stdout.log"
 $stderr = Join-Path $outDir "rank0004_resume_stderr.log"
 
+$env:OMP_NUM_THREADS = "1"
+$env:OMP_THREAD_LIMIT = "1"
+
 $argsList = @(
     "lure_biased_multiparam_continuation.py",
     "--config", "configs/lure_biased_multiparam_q09998.yaml",

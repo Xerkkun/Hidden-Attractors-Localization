@@ -44,6 +44,7 @@ from matplotlib.patches import Patch
 from scipy.integrate import quad
 from scipy.optimize import brentq
 
+from parallel_policy import compile_c_target
 import run_hidden_verify_frac_hybrid as hv
 
 
@@ -1644,8 +1645,11 @@ def plot_hiddenness_illustration(
     return summary
 
 
-def compile_shared_library(source: str, openmp: bool = True) -> Path:
-    src = ROOT / source
+def compile_shared_library(source: str, openmp: bool = True):
+    src = Path(source)
+    if not src.is_absolute():
+        src = ROOT / src
+    src = src.resolve()
     system = platform.system().lower()
     if system == "windows":
         ext = ".dll"
@@ -1654,29 +1658,17 @@ def compile_shared_library(source: str, openmp: bool = True) -> Path:
     else:
         ext = ".so"
     out = NATIVE_DIR / f"chua_basin_integer{ext}"
-    cmd = ["gcc", "-O3", "-shared"]
-    if system != "windows":
-        cmd.append("-fPIC")
-    if openmp:
-        cmd.insert(2, "-fopenmp")
-    cmd += ["-o", str(out), str(src), "-lm"]
-    log(f"Compiling basin C library: {' '.join(cmd)}")
-    try:
-        subprocess.run(cmd, check=True, capture_output=bool(openmp), text=True)
-    except subprocess.CalledProcessError:
-        if not openmp or "-fopenmp" not in cmd:
-            raise
-        fallback_cmd = [part for part in cmd if part != "-fopenmp"]
-        log("OpenMP is not available in this compiler; retrying the basin library without -fopenmp.")
-        subprocess.run(fallback_cmd, check=True)
-    return out
+    return compile_c_target(src, out, target_kind="shared", openmp=openmp, logger=log)
 
 
 def load_basin_library(cfg: Dict[str, Any]):
     global BASIN_LIBRARY_CACHE
     if BASIN_LIBRARY_CACHE is not None:
         return BASIN_LIBRARY_CACHE
-    libpath = compile_shared_library(cfg["basin"]["source"], bool(cfg["basin"]["openmp"]))
+    compile_result = compile_shared_library(cfg["basin"]["source"], bool(cfg["basin"]["openmp"]))
+    cfg.setdefault("basin", {})["openmp_active"] = bool(compile_result.openmp_active)
+    cfg.setdefault("basin", {})["compile_command"] = compile_result.command
+    libpath = compile_result.path
     if platform.system().lower() == "windows" and hasattr(os, "add_dll_directory"):
         candidate_dirs = [libpath.parent]
         gcc_path = shutil.which("gcc")
@@ -1690,6 +1682,9 @@ def load_basin_library(cfg: Dict[str, Any]):
     lib = ctypes.CDLL(str(libpath.resolve()))
     lib.set_chua_params.argtypes = [ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double]
     lib.set_chua_params.restype = None
+    if hasattr(lib, "set_basin_workers"):
+        lib.set_basin_workers.argtypes = [ctypes.c_int]
+        lib.set_basin_workers.restype = None
     lib.get_equilibria.argtypes = [np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS")]
     lib.get_equilibria.restype = None
     lib.compute_basin_xy.argtypes = [
@@ -1715,10 +1710,19 @@ def compute_basin(cfg: Dict[str, Any], z0: float | None = None) -> Tuple[np.ndar
     p = cfg["params"]
     b = cfg["basin"]
     lib.set_chua_params(float(p["alpha_chua"]), float(p["beta"]), float(p["gamma_chua"]), float(p["m0"]), float(p["m1"]))
+    if hasattr(lib, "set_basin_workers"):
+        workers = max(1, int(b.get("workers", 1)))
+        active = bool(b.get("openmp_active", b.get("openmp", False)))
+        lib.set_basin_workers(workers if active else 1)
     nx, ny = int(b["nx"]), int(b["ny"])
     z_plane = float(b["z0"] if z0 is None else z0)
     out = np.empty(nx * ny, dtype=np.int32)
-    log(f"Basin C: grid={nx}x{ny}, z0={z_plane}, q=1.0, TMAX={b['TMAX']}.")
+    log(
+        f"Basin C: grid={nx}x{ny}, z0={z_plane}, q=1.0, TMAX={b['TMAX']}; "
+        f"python_workers=1; omp_threads={int(b.get('workers', 1)) if b.get('openmp_active', b.get('openmp', False)) else 1}; "
+        f"backend_openmp_active={b.get('openmp_active', b.get('openmp', False))}; "
+        "seed_strategy=independent_grid_points; stage_kind=embarrassingly_parallel."
+    )
     rc = lib.compute_basin_xy(
         nx, ny, float(b["xmin"]), float(b["xmax"]), float(b["ymin"]), float(b["ymax"]),
         z_plane, 1.0, float(b["h"]), float(b["Lm"]), float(b["TMAX"]), float(b["TBURN"]),

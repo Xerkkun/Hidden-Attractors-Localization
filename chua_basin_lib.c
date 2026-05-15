@@ -405,7 +405,9 @@ API_EXPORT int compute_basin_xy(
 
     int rows_done = 0;
 
+    #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic) num_threads(G_WORKERS > 0 ? G_WORKERS : omp_get_max_threads())
+    #endif
     for (int i = 0; i < ny; ++i) {
         const double y = ymin + (double)i * dy;
         for (int j = 0; j < nx; ++j) {
@@ -416,11 +418,15 @@ API_EXPORT int compute_basin_xy(
             );
         }
 
+        #ifdef _OPENMP
         #pragma omp atomic
+        #endif
         rows_done++;
 
         if ((rows_done % 10) == 0 || rows_done == ny) {
+            #ifdef _OPENMP
             #pragma omp critical
+            #endif
             {
                 fprintf(stderr, "[basin C xy %4d/%4d] %5.1f%%\n", rows_done, ny,
                         100.0 * (double)rows_done / (double)ny);
@@ -463,7 +469,9 @@ API_EXPORT int compute_basin_plane(
 
     int rows_done = 0;
 
+    #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic) num_threads(G_WORKERS > 0 ? G_WORKERS : omp_get_max_threads())
+    #endif
     for (int i = 0; i < ny; ++i) {
         const double v = vmin + (double)i * dv;
         for (int j = 0; j < nx; ++j) {
@@ -482,11 +490,15 @@ API_EXPORT int compute_basin_plane(
             );
         }
 
+        #ifdef _OPENMP
         #pragma omp atomic
+        #endif
         rows_done++;
 
         if ((rows_done % 10) == 0 || rows_done == ny) {
+            #ifdef _OPENMP
             #pragma omp critical
+            #endif
             {
                 const char *names[3] = {"xy", "xz", "yz"};
                 fprintf(stderr, "[basin C %s %4d/%4d] %5.1f%%\n", names[plane], rows_done, ny,

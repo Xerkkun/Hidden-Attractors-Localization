@@ -82,6 +82,12 @@ from matplotlib.patches import Patch, Wedge
 from matplotlib.lines import Line2D
 from matplotlib.colors import ListedColormap, BoundaryNorm
 
+from parallel_policy import (
+    compile_c_target,
+    force_single_openmp_thread_current_process,
+    parallel_contract,
+)
+
 
 ROOT = Path(__file__).resolve().parent
 
@@ -495,6 +501,7 @@ CONFIG["bifurcation"] = {
     "parallel": True,
     "workers": max(1, min(8, os.cpu_count() or 1)),
     "chunksize": 1,
+    "seed_strategy": "continuation",
 }
 
 CONFIG["basin_python"] = {
@@ -669,6 +676,8 @@ CANONICAL_ENV_NAMES: Tuple[str, ...] = (
     "HIDDEN_ATTRACTORS_LYAPUNOV_STRICT",
     "HIDDEN_ATTRACTORS_BIF_WORKERS",
     "HIDDEN_ATTRACTORS_BIF_PARALLEL",
+    "HIDDEN_ATTRACTORS_BIF_SEED_STRATEGY",
+    "ALLOW_NO_OPENMP",
     "HIDDEN_ATTRACTORS_ALPHA_CHUA",
     "HIDDEN_ATTRACTORS_BETA",
     "HIDDEN_ATTRACTORS_GAMMA_CHUA",
@@ -821,6 +830,63 @@ def default_basin_workers() -> int:
     return max(1, min(8, os.cpu_count() or 1))
 
 
+def normalize_bifurcation_seed_strategy(raw: Any) -> str:
+    text = str(raw or "continuation").strip().lower().replace("-", "_")
+    if text in {"continued", "continue", "causal", "secuencial", "sequential"}:
+        text = "continuation"
+    if text in {"independent", "independiente", "parallel"}:
+        text = "independent"
+    if text not in {"continuation", "independent"}:
+        raise ValueError("bifurcation.seed_strategy debe ser 'continuation' o 'independent'.")
+    return text
+
+
+def refresh_parallel_runtime_contract(cfg: Dict[str, Any]) -> None:
+    contract = cfg.setdefault("runtime_contract", {})
+    previous_parallelism = dict(contract.get("parallelism", {}))
+    basin = cfg.get("basin", {})
+    bif = cfg.get("bifurcation", {})
+    native = cfg.get("native_efork", {})
+    seed_strategy = normalize_bifurcation_seed_strategy(bif.get("seed_strategy", "continuation"))
+    bif_workers = int(bif.get("workers", 1))
+    basin_workers = int(basin.get("workers", 1))
+    basin_openmp_active = bool(basin.get("openmp_active", basin.get("openmp", False)))
+    native_openmp_active = bool(native.get("openmp_active", native.get("openmp", False)))
+    hidden_contract = previous_parallelism.get("hidden_verification")
+    if not hidden_contract or hidden_contract.get("backend_openmp_active") == "external_backend_config":
+        hidden_contract = {
+            "python_workers": 1,
+            "omp_threads": int(cfg.get("verify_hidden", {}).get("max_threads", 1)),
+            "backend_openmp_active": "external_backend_config",
+            "seed_strategy": "independent_equilibrium_samples",
+            "stage_kind": "embarrassingly_parallel",
+        }
+    contract["parallelism"] = {
+        "continuation": parallel_contract(
+            python_workers=1,
+            omp_threads=1,
+            backend_openmp_active=False,
+            seed_strategy="causal_memory_chain",
+            stage_kind="causal",
+        ),
+        "hidden_verification": hidden_contract,
+        "basin": parallel_contract(
+            python_workers=1,
+            omp_threads=basin_workers if basin_openmp_active else 1,
+            backend_openmp_active=basin_openmp_active,
+            seed_strategy="independent_grid_points",
+            stage_kind="embarrassingly_parallel",
+        ),
+        "bifurcation": parallel_contract(
+            python_workers=1,
+            omp_threads=bif_workers if seed_strategy == "independent" and native_openmp_active else 1,
+            backend_openmp_active=native_openmp_active,
+            seed_strategy=seed_strategy,
+            stage_kind="causal" if seed_strategy == "continuation" else "embarrassingly_parallel",
+        ),
+    }
+
+
 def configure_basin_parallelism(cfg: Dict[str, Any]) -> None:
     bcfg = cfg["basin"]
     raw_workers = os.environ.get("HIDDEN_ATTRACTORS_BASIN_WORKERS")
@@ -837,10 +903,15 @@ def configure_basin_parallelism(cfg: Dict[str, Any]) -> None:
         bool(bcfg.get("parallel", bcfg["workers"] > 1)),
     )
     bcfg["openmp"] = bool(bcfg.get("openmp", True)) and bool(bcfg["parallel"]) and int(bcfg["workers"]) > 1
+    refresh_parallel_runtime_contract(cfg)
 
 
 def configure_bifurcation_parallelism(cfg: Dict[str, Any]) -> None:
     bcfg = cfg["bifurcation"]
+    strategy = normalize_bifurcation_seed_strategy(
+        os.environ.get("HIDDEN_ATTRACTORS_BIF_SEED_STRATEGY", bcfg.get("seed_strategy", "continuation"))
+    )
+    bcfg["seed_strategy"] = strategy
     raw_workers = os.environ.get("HIDDEN_ATTRACTORS_BIF_WORKERS")
     if raw_workers is None:
         workers = int(bcfg.get("workers", default_bifurcation_workers()))
@@ -854,6 +925,14 @@ def configure_bifurcation_parallelism(cfg: Dict[str, Any]) -> None:
         "HIDDEN_ATTRACTORS_BIF_PARALLEL",
         bool(bcfg.get("parallel", bcfg["workers"] > 1)),
     )
+    if strategy == "continuation":
+        bcfg["workers"] = 1
+        bcfg["parallel"] = False
+        bcfg["continue_seed"] = 1
+    else:
+        bcfg["continue_seed"] = 0
+        bcfg["parallel"] = bool(bcfg["parallel"]) and int(bcfg["workers"]) > 1
+    refresh_parallel_runtime_contract(cfg)
 
 
 def _apply_system_parameter_env_overrides(cfg: Dict[str, Any]) -> None:
@@ -1046,6 +1125,7 @@ def synchronize_runtime_contract(cfg: Dict[str, Any]) -> None:
             "shorter post-transient windows."
         ),
     }
+    refresh_parallel_runtime_contract(cfg)
 
 
 def _format_float(value: Any) -> str:
@@ -1149,14 +1229,30 @@ def log_runtime_contract(cfg: Dict[str, Any], *, header: str = "Contrato numeric
         f"t_total={_format_float(bif['t_total'])}; "
         f"t_keep={_format_float(contract.get('bifurcation_t_keep', _stage_keep_time(bif['t_total'], bif['t_burn'])))}; "
         f"q_values={len(bif['q_values'])}; alpha_values={len(bif['alpha_values'])}; "
-        f"beta_values={len(bif['beta_values'])}."
+        f"beta_values={len(bif['beta_values'])}; "
+        f"seed_strategy={normalize_bifurcation_seed_strategy(bif.get('seed_strategy', 'continuation'))}."
     )
     native = cfg.get("native_efork", {})
     log(
         "  "
         f"EFORK nativo C: habilitado={bool(native.get('enabled', True))}; "
-        f"workers={int(native.get('workers', 1))}; OpenMP={bool(native.get('openmp', True))}."
+        f"workers_configurados={int(native.get('workers', 1))}; "
+        f"OpenMP_solicitado={bool(native.get('openmp', True))}; "
+        f"OpenMP_activo={native.get('openmp_active', 'pendiente_compilacion')}."
     )
+    refresh_parallel_runtime_contract(cfg)
+    parallelism = cfg.get("runtime_contract", {}).get("parallelism", {})
+    for stage_name in ("continuation", "hidden_verification", "basin", "bifurcation"):
+        pc = parallelism.get(stage_name, {})
+        log(
+            "  "
+            f"paralelismo {stage_name}: "
+            f"python_workers={pc.get('python_workers', 1)}; "
+            f"omp_threads={pc.get('omp_threads', 1)}; "
+            f"backend_openmp_active={pc.get('backend_openmp_active', False)}; "
+            f"seed_strategy={pc.get('seed_strategy', 'not_applicable')}; "
+            f"stage_kind={pc.get('stage_kind', 'unknown')}."
+        )
     t_keep = float(contract.get("t_keep", cont["t_keep"]))
     basin_keep = float(contract.get("basin_t_keep", _stage_keep_time(basin["TMAX"], basin["TBURN"])))
     bif_keep = float(contract.get("bifurcation_t_keep", _stage_keep_time(bif["t_total"], bif["t_burn"])))
@@ -1664,6 +1760,7 @@ def continuation_in_epsilon_c(
 ) -> List[Dict[str, Any]]:
     lib = load_fractional_backend(cfg)
     configure_fractional_backend_for_case(lib, cfg)
+    lib.set_frac_backend_workers(1)
     cont = cfg["continuation"]
     eps_arr = np.asarray(eps_values, dtype=np.float64)
     seed = np.asarray(xseed, dtype=np.float64)
@@ -1680,6 +1777,10 @@ def continuation_in_epsilon_c(
     traj = np.empty(n_eps * keep_rows * 4, dtype=np.float64)
     memory_mode = 1 if str(cont.get("memory_mode", "window")).strip().lower() == "window" else 0
     update_source = 1 if str(cont.get("memory_update_source", "observed")).strip().lower() == "observed" else 0
+    log(
+        "Continuacion EFORK C: etapa causal con memoria; "
+        "python_workers=1; omp_threads=1; seed_strategy=causal_memory_chain."
+    )
 
     rc = int(lib.compute_continuation_efork3(
         eps_arr, n_eps, seed, float(qord), float(k0), float(cont["h"]), float(cont["Lm"]),
@@ -2034,6 +2135,21 @@ def run_hidden_verify_with_seed(cfg: Dict[str, Any], final_state: np.ndarray) ->
     log_hidden_backend_config("Backend C ocultedad")
     log("Backend C ocultedad: compilando.")
     hv.compile_backend(hidden_cfg)
+    hidden_openmp_active = bool(hidden_cfg.get("backend", {}).get("openmp_active", hidden_cfg.get("backend", {}).get("openmp", False)))
+    hidden_threads = max(1, int(hidden_cfg.get("safety", {}).get("max_threads", 1))) if hidden_openmp_active else 1
+    cfg.setdefault("runtime_contract", {}).setdefault("parallelism", {})["hidden_verification"] = parallel_contract(
+        python_workers=1,
+        omp_threads=hidden_threads,
+        backend_openmp_active=hidden_openmp_active,
+        seed_strategy="independent_equilibrium_samples",
+        stage_kind="embarrassingly_parallel",
+    )
+    log(
+        "Backend C ocultedad: contrato de paralelismo efectivo; "
+        f"python_workers=1; omp_threads={hidden_threads}; "
+        f"backend_openmp_active={hidden_openmp_active}; "
+        "seed_strategy=independent_equilibrium_samples; stage_kind=embarrassingly_parallel."
+    )
     log("Backend C ocultedad: ejecutando integraciones.")
     retry_used = False
     try:
@@ -2131,7 +2247,7 @@ def _lib_filename() -> str:
     return "libchua_basin.so"
 
 
-def compile_shared_library(source: str, openmp: bool = True) -> Path:
+def compile_shared_library(source: str, openmp: bool = True):
     src = Path(source)
     if not src.is_absolute():
         src = ROOT / src
@@ -2140,27 +2256,7 @@ def compile_shared_library(source: str, openmp: bool = True) -> Path:
     out = NATIVE_DIR / _lib_filename()
     if not src.exists():
         raise FileNotFoundError(f"No existe el archivo fuente: {src}")
-    cmd = ["gcc", "-O3", "-shared"]
-    system = platform.system().lower()
-    if system == "windows":
-        cmd += ["-o", str(out), str(src), "-lm"]
-    else:
-        cmd += ["-fPIC", "-o", str(out), str(src), "-lm"]
-    if openmp:
-        cmd.insert(2, "-fopenmp")
-    log(f"Compilando biblioteca de cuenca C: {' '.join(cmd)}")
-    try:
-        subprocess.run(cmd, check=True, capture_output=bool(openmp), text=True)
-    except subprocess.CalledProcessError:
-        if not openmp or "-fopenmp" not in cmd:
-            raise
-        fallback_cmd = [part for part in cmd if part != "-fopenmp"]
-        log(
-            "OpenMP no esta disponible en este compilador; "
-            "reintentando biblioteca de cuenca C sin -fopenmp."
-        )
-        subprocess.run(fallback_cmd, check=True)
-    return out
+    return compile_c_target(src, out, target_kind="shared", openmp=openmp, logger=log)
 
 
 def _frac_backend_filename() -> str:
@@ -2172,7 +2268,7 @@ def _frac_backend_filename() -> str:
     return "libchua_frac_backend.so"
 
 
-def compile_fractional_backend_library(cfg: Dict[str, Any]) -> Path:
+def compile_fractional_backend_library(cfg: Dict[str, Any]):
     backend = cfg.get("native_efork", {})
     src = Path(backend.get("source", "chua_frac_backend_lib.c"))
     if not src.is_absolute():
@@ -2182,24 +2278,13 @@ def compile_fractional_backend_library(cfg: Dict[str, Any]) -> Path:
     NATIVE_DIR.mkdir(parents=True, exist_ok=True)
     if not src.exists():
         raise FileNotFoundError(f"No existe el backend EFORK C: {src}")
-    cmd = ["gcc", "-O3", "-shared"]
-    system = platform.system().lower()
-    if system == "windows":
-        cmd += ["-o", str(out), str(src), "-lm"]
-    else:
-        cmd += ["-fPIC", "-o", str(out), str(src), "-lm"]
-    if bool(backend.get("openmp", True)):
-        cmd.insert(2, "-fopenmp")
-    log(f"Compilando backend EFORK C: {' '.join(cmd)}")
-    try:
-        subprocess.run(cmd, check=True, capture_output=bool(backend.get("openmp", True)), text=True)
-    except subprocess.CalledProcessError:
-        if not bool(backend.get("openmp", True)) or "-fopenmp" not in cmd:
-            raise
-        fallback_cmd = [part for part in cmd if part != "-fopenmp"]
-        log("OpenMP no esta disponible; reintentando backend EFORK C sin -fopenmp.")
-        subprocess.run(fallback_cmd, check=True)
-    return out
+    return compile_c_target(
+        src,
+        out,
+        target_kind="shared",
+        openmp=bool(backend.get("openmp", True)),
+        logger=log,
+    )
 
 
 def load_fractional_backend(cfg: Dict[str, Any]):
@@ -2208,7 +2293,11 @@ def load_fractional_backend(cfg: Dict[str, Any]):
         raise RuntimeError("El backend EFORK C esta deshabilitado.")
     if FRACTIONAL_BACKEND_CACHE is not None:
         return FRACTIONAL_BACKEND_CACHE
-    libpath = compile_fractional_backend_library(cfg)
+    compile_result = compile_fractional_backend_library(cfg)
+    cfg.setdefault("native_efork", {})["openmp_active"] = bool(compile_result.openmp_active)
+    cfg.setdefault("native_efork", {})["compile_command"] = compile_result.command
+    refresh_parallel_runtime_contract(cfg)
+    libpath = compile_result.path
     if platform.system().lower() == "windows" and hasattr(os, "add_dll_directory"):
         candidate_dirs = [libpath.parent]
         gcc_path = shutil.which("gcc")
@@ -2293,7 +2382,11 @@ def load_basin_library(cfg: Dict[str, Any]):
     global BASIN_LIBRARY_CACHE
     if BASIN_LIBRARY_CACHE is not None:
         return BASIN_LIBRARY_CACHE
-    libpath = compile_shared_library(cfg["basin"]["source"], openmp=bool(cfg["basin"]["openmp"]))
+    compile_result = compile_shared_library(cfg["basin"]["source"], openmp=bool(cfg["basin"]["openmp"]))
+    cfg.setdefault("basin", {})["openmp_active"] = bool(compile_result.openmp_active)
+    cfg.setdefault("basin", {})["compile_command"] = compile_result.command
+    refresh_parallel_runtime_contract(cfg)
+    libpath = compile_result.path
     if platform.system().lower() == "windows" and hasattr(os, "add_dll_directory"):
         candidate_dirs = [libpath.parent]
         gcc_path = shutil.which("gcc")
@@ -2359,7 +2452,8 @@ def configure_basin_library_for_case(lib: Any, cfg: Dict[str, Any]) -> None:
         lib.set_chua_arctan_params(float(p.get("a1", 0.4)), float(p.get("a2", -1.5585)), float(p.get("rho", 1.0)))
     if hasattr(lib, "set_basin_workers"):
         workers = int(cfg["basin"].get("workers", 1))
-        lib.set_basin_workers(workers if bool(cfg["basin"].get("parallel", True)) else 1)
+        active = bool(cfg["basin"].get("openmp_active", cfg["basin"].get("openmp", False)))
+        lib.set_basin_workers(workers if active and bool(cfg["basin"].get("parallel", True)) else 1)
 
 
 def nearest_basin_cell_class(cfg: Dict[str, Any], basin: np.ndarray, final_state: np.ndarray) -> Dict[str, Any]:
@@ -2436,6 +2530,7 @@ def compute_basin_and_eq(cfg: Dict[str, Any], final_state: np.ndarray):
         f"grid={nx}x{ny}, z0={z0_eff:.10g}, q={validate_fractional_order(cfg['frac_order'])}, "
         f"TMAX={b['TMAX']}, TBURN={b['TBURN']}, "
         f"workers={int(b.get('workers', 1))}, OpenMP={bool(b['openmp'])}, "
+        f"OpenMP_activo={b.get('openmp_active', 'pendiente_compilacion')}, "
         f"modelo={cfg['model']['kind']}."
     )
     log(
@@ -3274,6 +3369,7 @@ def _bifurcation_peaks_from_seed(
 
 
 def _bifurcation_worker(task: Tuple[Any, ...]) -> Tuple[int, float, List[float], List[float]]:
+    force_single_openmp_thread_current_process()
     idx, param_name, value, seed_pos, seed_neg, base_params, frac_order, bcfg = task
     params, qord = _bifurcation_param_setup(param_name, float(value), base_params, float(frac_order))
     pos_peaks = _bifurcation_peaks_from_seed(seed_pos, params, qord, bcfg)
@@ -3310,12 +3406,13 @@ def compute_bifurcation_sweep_parallel(
     ]
     log(
         f"Bifurcacion {param_name}: modo paralelo con {workers} procesos; "
-        "cada parametro usa las mismas semillas iniciales."
+        "cada parametro usa las mismas semillas iniciales; "
+        "OMP_NUM_THREADS=1 y OMP_THREAD_LIMIT=1 dentro de cada worker."
     )
     records: List[Tuple[int, float, List[float], List[float]]] = []
     done = 0
     started = time.perf_counter()
-    with ProcessPoolExecutor(max_workers=workers) as pool:
+    with ProcessPoolExecutor(max_workers=workers, initializer=force_single_openmp_thread_current_process) as pool:
         for record in pool.map(_bifurcation_worker, tasks, chunksize=chunksize):
             records.append(record)
             done += 1
@@ -3374,9 +3471,12 @@ def compute_bifurcation_sweep_c(
 
     lib = load_fractional_backend(cfg)
     configure_fractional_backend_for_case(lib, cfg)
+    seed_strategy = normalize_bifurcation_seed_strategy(bcfg.get("seed_strategy", "continuation"))
     workers = int(bcfg.get("workers", cfg.get("native_efork", {}).get("workers", 1)))
+    if seed_strategy == "continuation":
+        workers = 1
     lib.set_frac_backend_workers(workers)
-    continue_seed = 0 if bool(bcfg.get("parallel", False)) and workers > 1 and nvals > 1 else 1
+    continue_seed = 1 if seed_strategy == "continuation" else 0
     pos_x = np.empty(nvals * max_peaks, dtype=np.float64)
     pos_y = np.empty(nvals * max_peaks, dtype=np.float64)
     neg_x = np.empty(nvals * max_peaks, dtype=np.float64)
@@ -3388,7 +3488,10 @@ def compute_bifurcation_sweep_c(
 
     log(
         f"Bifurcacion {param_name}: backend C EFORK-3; valores={nvals}; "
-        f"workers={workers}; modo={'secuencial-continuado' if continue_seed else 'paralelo'}."
+        f"python_workers=1; omp_threads={workers if not continue_seed else 1}; "
+        f"backend_openmp_active={bool(cfg.get('native_efork', {}).get('openmp_active', cfg.get('native_efork', {}).get('openmp', False)))}; "
+        f"seed_strategy={seed_strategy}; "
+        f"stage_kind={'causal' if continue_seed else 'embarrassingly_parallel'}."
     )
     started = time.perf_counter()
     rc = int(lib.compute_bifurcation_sweep_efork3(
@@ -3435,18 +3538,29 @@ def compute_bifurcation_sweep(param_name: str, values: Iterable[float], seed_pos
     bcfg = cfg["bifurcation"]
     nvals = len(vals)
     progress_every = max(1, int(bcfg.get("progress_every", max(1, nvals // 10))))
-    log(f"Bifurcacion {param_name}: {nvals} valores x 2 semillas; t_total={bcfg['t_total']}, h={bcfg['h']}.")
+    seed_strategy = normalize_bifurcation_seed_strategy(bcfg.get("seed_strategy", "continuation"))
+    log(
+        f"Bifurcacion {param_name}: {nvals} valores x 2 semillas; "
+        f"t_total={bcfg['t_total']}, h={bcfg['h']}; seed_strategy={seed_strategy}."
+    )
     if bool(cfg.get("native_efork", {}).get("enabled", True)):
         return compute_bifurcation_sweep_c(param_name, vals, seed_pos, seed_neg, cfg)
     workers = int(bcfg.get("workers", 1))
-    if bool(bcfg.get("parallel", False)) and workers > 1 and nvals > 1:
+    if seed_strategy == "independent" and bool(bcfg.get("parallel", False)) and workers > 1 and nvals > 1:
         return compute_bifurcation_sweep_parallel(param_name, vals, seed_pos, seed_neg, cfg)
+    if seed_strategy == "independent":
+        log(
+            f"Bifurcacion {param_name}: modo independiente secuencial; "
+            "workers=1 efectivo porque no hay paralelismo Python habilitado."
+        )
     pts_pos_x: List[float] = []
     pts_pos_y: List[float] = []
     pts_neg_x: List[float] = []
     pts_neg_y: List[float] = []
     x0_pos = np.asarray(seed_pos, dtype=float).copy()
     x0_neg = np.asarray(seed_neg, dtype=float).copy()
+    base_pos = x0_pos.copy()
+    base_neg = x0_neg.copy()
     started = time.perf_counter()
     for idx, v in enumerate(vals, start=1):
         if idx == 1 or idx % progress_every == 0 or idx == nvals:
@@ -3465,9 +3579,14 @@ def compute_bifurcation_sweep(param_name: str, values: Iterable[float], seed_pos
             p["beta"] = np.float64(v)
         else:
             raise ValueError("param_name debe ser 'q', 'alpha' o 'beta'")
-        for current_seed, xs, ys in ((x0_pos, pts_pos_x, pts_pos_y), (x0_neg, pts_neg_x, pts_neg_y)):
+        seed_triplets = (
+            (x0_pos if seed_strategy == "continuation" else base_pos, pts_pos_x, pts_pos_y),
+            (x0_neg if seed_strategy == "continuation" else base_neg, pts_neg_x, pts_neg_y),
+        )
+        for current_seed, xs, ys in seed_triplets:
             T = integrate_original(current_seed, p, qord=qord, h=float(bcfg["h"]), Lm=float(bcfg["Lm"]), t_total=float(bcfg["t_total"]))
-            current_seed[:] = T[-1, 1:4]
+            if seed_strategy == "continuation":
+                current_seed[:] = T[-1, 1:4]
             tail = T[T[:, 0] >= float(bcfg["t_burn"])]
             if tail.size == 0:
                 continue
@@ -5432,6 +5551,7 @@ def apply_basin_only_contract_from_summary(cfg: Dict[str, Any], summary: Dict[st
             "only basin resolution, basin z0 and basin post-transient window are intended overrides."
         ),
     }
+    refresh_parallel_runtime_contract(cfg)
 
 
 def run_basin_only(cfg: Dict[str, Any]) -> Dict[str, Any]:

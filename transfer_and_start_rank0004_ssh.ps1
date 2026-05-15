@@ -21,7 +21,7 @@ mkdir -p $RemoteDir
 unzip -o $remoteZip -d $RemoteDir
 cd $RemoteDir
 mkdir -p outputs/lure_biased_multiparam_q09998
-nohup python3 lure_biased_multiparam_continuation.py \
+OMP_NUM_THREADS=1 OMP_THREAD_LIMIT=1 nohup python3 lure_biased_multiparam_continuation.py \
   --config configs/lure_biased_multiparam_q09998.yaml \
   --post-continuation-only \
   --resume \

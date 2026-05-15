@@ -35,6 +35,8 @@ from typing import Dict, List
 import numpy as np
 import matplotlib.pyplot as plt
 
+from parallel_policy import compile_c_target, parallel_contract
+
 
 ROOT = Path(__file__).resolve().parent
 PROJECT_SLUG = "hidden_attractors_fractional_order"
@@ -778,24 +780,33 @@ def compile_backend(cfg: dict) -> None:
     src, exe = normalize_backend_paths(cfg)
 
     if not backend.get("compile", True) and exe.exists():
+        backend["openmp_active"] = bool(backend.get("openmp", True))
+        cfg.setdefault("diagnostics", {})["compile_backend"] = {
+            "target_kind": "executable",
+            "openmp_requested": bool(backend.get("openmp", True)),
+            "openmp_active": bool(backend["openmp_active"]),
+            "command": "preexisting_binary",
+        }
         return
 
     if not src.exists():
         raise FileNotFoundError(f"No se encontró el backend en C: {src}")
 
-    cmd = ["gcc", "-O3", str(src), "-lm", "-o", str(exe)]
-    if backend.get("openmp", True):
-        cmd.insert(2, "-fopenmp")
-
-    print("Compilando backend en C...")
-    try:
-        subprocess.run(cmd, check=True, capture_output=bool(backend.get("openmp", True)), text=True)
-    except subprocess.CalledProcessError:
-        if "-fopenmp" not in cmd:
-            raise
-        fallback_cmd = [part for part in cmd if part != "-fopenmp"]
-        print("OpenMP no está disponible en este compilador; reintentando backend C sin -fopenmp.")
-        subprocess.run(fallback_cmd, check=True)
+    result = compile_c_target(
+        src,
+        exe,
+        target_kind="executable",
+        openmp=bool(backend.get("openmp", True)),
+        logger=lambda message: print(message, flush=True),
+    )
+    backend["openmp_active"] = bool(result.openmp_active)
+    cfg.setdefault("diagnostics", {})["compile_backend"] = {
+        "target_kind": result.target_kind,
+        "compiler": result.compiler,
+        "openmp_requested": result.openmp_requested,
+        "openmp_active": result.openmp_active,
+        "command": result.command,
+    }
 
 
 def build_backend_command(cfg: dict):
@@ -862,13 +873,31 @@ def run_backend(cfg: dict) -> None:
     max_threads = max(1, int(safety.get("max_threads", 1)))
     timeout = int(safety.get("timeout_sec", 0) or 0)
     env = os.environ.copy()
-    env["OMP_NUM_THREADS"] = str(max_threads)
-    env["OMP_THREAD_LIMIT"] = str(max_threads)
     eq_filter = str(cfg.get("sampling", {}).get("EQ_FILTER", "") or "").strip()
     if eq_filter:
         env["HIDDEN_VERIFY_EQ_FILTER"] = eq_filter
+    backend_openmp_active = bool(cfg.get("backend", {}).get("openmp_active", cfg.get("backend", {}).get("openmp", False)))
+    contract = parallel_contract(
+        python_workers=1,
+        omp_threads=max_threads if backend_openmp_active else 1,
+        backend_openmp_active=backend_openmp_active,
+        seed_strategy="independent_equilibrium_samples",
+        stage_kind="embarrassingly_parallel",
+    )
+    cfg.setdefault("diagnostics", {})["parallel_contract"] = contract
+    env["OMP_NUM_THREADS"] = str(contract["omp_threads"])
+    env["OMP_THREAD_LIMIT"] = str(contract["omp_threads"])
     print("Ejecutando backend numerico en C...", flush=True)
-    print(f"OMP_NUM_THREADS={max_threads}", flush=True)
+    print(
+        "Contrato de paralelismo: "
+        f"python_workers={contract['python_workers']}; "
+        f"omp_threads={contract['omp_threads']}; "
+        f"backend_openmp_active={contract['backend_openmp_active']}; "
+        f"seed_strategy={contract['seed_strategy']}; "
+        f"stage_kind={contract['stage_kind']}.",
+        flush=True,
+    )
+    print(f"OMP_NUM_THREADS={contract['omp_threads']}", flush=True)
     try:
         subprocess.run(cmd, check=True, env=env, timeout=timeout if timeout > 0 else None)
     except subprocess.TimeoutExpired as exc:
