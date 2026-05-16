@@ -1,0 +1,32 @@
+{
+  "stamp": "20260515_195444",
+  "dry_run": false,
+  "backend": "popen",
+  "policy": "Independent OS processes; Danca ABM keeps full Caputo history, no finite-memory truncation; Python workers use processes when available and OMP_NUM_THREADS=1.",
+  "jobs": [
+    {
+      "name": "lure_rank0003_rank0005_missing_controls",
+      "label": "com.hiddenattractors.danca2017.lure_missing.20260515_195444",
+      "argv": [
+        "/usr/local/bin/python3",
+        "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/lure_biased_multiparam_continuation.py",
+        "--config",
+        "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/logs/danca2017_launch_20260515_195444/lure_biased_multiparam_q09998_timestamped_config.json",
+        "--post-continuation-only",
+        "--survivor-id",
+        "lure_biased_q_0p99980_rank_0003",
+        "--survivor-id",
+        "lure_biased_q_0p99980_rank_0005",
+        "--execute-early-filter",
+        "--execute-robustness",
+        "--force"
+      ],
+      "output_dir": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/outputs/lure_biased_multiparam_q09998_20260515_195444",
+      "stdout": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/logs/danca2017_launch_20260515_195444/job_logs/lure_rank0003_rank0005_missing_controls.out",
+      "stderr": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/logs/danca2017_launch_20260515_195444/job_logs/lure_rank0003_rank0005_missing_controls.err",
+      "launched": true,
+      "backend": "popen",
+      "pid": 84650
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "stamp": "20260515_181713",
+  "dry_run": true,
+  "policy": "macOS launchd agents; independent OS processes; Python workers use processes and OMP_NUM_THREADS=1.",
+  "jobs": [
+    {
+      "name": "danca_abm_fig3_hiddenness",
+      "label": "com.hiddenattractors.danca2017.abm.20260515_181713",
+      "argv": [
+        "/usr/local/bin/python3",
+        "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/danca2017_chua_abm_replication.py",
+        "--output-dir",
+        "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/outputs/danca2017_chua_abm_20260515_181713",
+        "--job",
+        "all",
+        "--workers",
+        "2",
+        "--h",
+        "0.08",
+        "--t-final",
+        "40.0",
+        "--transient",
+        "20.0",
+        "--local-samples-per-unstable-eq",
+        "4",
+        "--figure-local-trajectories",
+        "4",
+        "--store-stride",
+        "2"
+      ],
+      "output_dir": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/outputs/danca2017_chua_abm_20260515_181713",
+      "stdout": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/logs/danca2017_launch_20260515_181713/job_logs/danca_abm_fig3_hiddenness.out",
+      "stderr": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/logs/danca2017_launch_20260515_181713/job_logs/danca_abm_fig3_hiddenness.err",
+      "plist": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/logs/danca2017_launch_20260515_181713/danca_abm_fig3_hiddenness.plist",
+      "launched": false,
+      "dry_run": true
+    },
+    {
+      "name": "machado_lm10_targeted_robustness",
+      "label": "com.hiddenattractors.danca2017.machado_lm10.20260515_181713",
+      "argv": [
+        "/usr/local/bin/python3",
+        "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/machado_targeted_verification.py",
+        "--candidate-id",
+        "all",
+        "--config",
+        "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/configs/machado_targeted_verification_lm10.yaml",
+        "--output-dir",
+        "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/outputs/extended_search/machado_targeted_verification_lm10_20260515_181713",
+        "--max-trajectories",
+        "1000",
+        "--force"
+      ],
+      "output_dir": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/outputs/extended_search/machado_targeted_verification_lm10_20260515_181713",
+      "stdout": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/logs/danca2017_launch_20260515_181713/job_logs/machado_lm10_targeted_robustness.out",
+      "stderr": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/logs/danca2017_launch_20260515_181713/job_logs/machado_lm10_targeted_robustness.err",
+      "plist": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/logs/danca2017_launch_20260515_181713/machado_lm10_targeted_robustness.plist",
+      "launched": false,
+      "dry_run": true
+    },
+    {
+      "name": "lure_rank0003_rank0005_missing_controls",
+      "label": "com.hiddenattractors.danca2017.lure_missing.20260515_181713",
+      "argv": [
+        "/usr/local/bin/python3",
+        "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/lure_biased_multiparam_continuation.py",
+        "--config",
+        "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/logs/danca2017_launch_20260515_181713/lure_biased_multiparam_q09998_timestamped_config.json",
+        "--post-continuation-only",
+        "--survivor-id",
+        "lure_biased_q_0p99980_rank_0003",
+        "--survivor-id",
+        "lure_biased_q_0p99980_rank_0005",
+        "--execute-early-filter",
+        "--execute-robustness",
+        "--force"
+      ],
+      "output_dir": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/outputs/lure_biased_multiparam_q09998_20260515_181713",
+      "stdout": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/logs/danca2017_launch_20260515_181713/job_logs/lure_rank0003_rank0005_missing_controls.out",
+      "stderr": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/logs/danca2017_launch_20260515_181713/job_logs/lure_rank0003_rank0005_missing_controls.err",
+      "plist": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/codigo_mac/logs/danca2017_launch_20260515_181713/lure_rank0003_rank0005_missing_controls.plist",
+      "launched": false,
+      "dry_run": true
+    }
+  ]
+}
