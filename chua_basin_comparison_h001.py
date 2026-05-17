@@ -402,6 +402,94 @@ def run_project_basin(outdir: Path) -> Path:
     return outdir / "project_best_basin_grid.csv"
 
 
+def run_project_chunk(outdir: Path, chunk_id: int, chunks: int) -> Path:
+    """Classify one independent chunk of the project basin grid.
+
+    Mathematical purpose:
+        Evaluate the same EFORK finite-memory basin classifier used by the C
+        backend, but over an assigned subset of grid points so several OS
+        processes can run independently.
+    Equations:
+        The C routine classifies each point with EFORK memory length Lm and the
+        same target/equilibrium/divergence thresholds as the full-grid backend.
+    Parameters:
+        A prepared comparison directory and chunk partition.
+    Output:
+        A CSV with class labels for this chunk.
+    Validity warning:
+        This is not the ABM-Danca contract; it preserves the project's EFORK
+        finite-memory basin contract and records Lm explicitly.
+    """
+
+    force_single_openmp_thread_current_process()
+    cfg = read_json(outdir / "basin_comparison_config.json")
+    pcfg = cfg["project"]
+    lib = load_project_basin_library()
+    lib.set_chua_model(0)
+    lib.set_chua_params(8.4562, 12.0732, 0.0052, -0.1768, -1.1468)
+    lib.classify_basin_point.argtypes = [
+        ctypes.c_double,
+        ctypes.c_double,
+        ctypes.c_double,
+        ctypes.c_double,
+        ctypes.c_double,
+        ctypes.c_double,
+        ctypes.c_double,
+        ctypes.c_double,
+        ctypes.c_double,
+        ctypes.c_double,
+        ctypes.c_double,
+        ctypes.c_int,
+        ctypes.c_double,
+    ]
+    lib.classify_basin_point.restype = ctypes.c_int
+    grid = int(cfg["grid"])
+    xvals = np.linspace(float(cfg["xlim"][0]), float(cfg["xlim"][1]), grid)
+    yvals = np.linspace(float(cfg["ylim"][0]), float(cfg["ylim"][1]), grid)
+    rows: List[Dict[str, Any]] = []
+    for iy, y in enumerate(yvals):
+        for ix, x in enumerate(xvals):
+            idx = iy * grid + ix
+            if idx % int(chunks) != int(chunk_id):
+                continue
+            cid = int(
+                lib.classify_basin_point(
+                    float(x),
+                    float(y),
+                    float(pcfg["z_plane"]),
+                    float(pcfg["q"]),
+                    float(pcfg["h"]),
+                    float(pcfg["Lm"]),
+                    float(pcfg["t_final"]),
+                    float(pcfg["t_burn"]),
+                    float(cfg["classification"]["divergence_norm"]),
+                    float(cfg["classification"]["r_bound"]),
+                    float(cfg["classification"]["equilibrium_tol"]),
+                    150,
+                    float(cfg["classification"]["mean_x_gap"]),
+                )
+            )
+            rows.append(
+                {
+                    "ix": ix,
+                    "iy": iy,
+                    "x0": float(x),
+                    "y0": float(y),
+                    "z0": float(pcfg["z_plane"]),
+                    "class_id": cid,
+                    "class_label": CLASS_LABELS.get(cid, f"class_{cid}"),
+                }
+            )
+            write_csv(outdir / f"project_basin_chunk_{chunk_id:03d}.csv", rows)
+    path = outdir / f"project_basin_chunk_{chunk_id:03d}.csv"
+    write_csv(path, rows)
+    (outdir / f"project_basin_chunk_{chunk_id:03d}.done").write_text(
+        json.dumps({"chunk_id": int(chunk_id), "rows": len(rows), "completed_at": time.strftime("%Y-%m-%dT%H:%M:%S")}),
+        encoding="utf-8",
+    )
+    return path
+
+
 def danca_grid_from_chunks(outdir: Path, cfg: Dict[str, Any]) -> Tuple[np.ndarray, List[Dict[str, Any]]]:
     rows: List[Dict[str, Any]] = []
     for path in sorted(outdir.glob("danca_basin_chunk_*.csv")):
@@ -442,9 +530,14 @@ def plot_grid(grid: np.ndarray, cfg: Dict[str, Any], path: Path, *, title: str, 
 def aggregate(outdir: Path, *, wait: bool = False, poll_sec: float = 60.0) -> Path:
     cfg = read_json(outdir / "basin_comparison_config.json")
     chunks = int(cfg["chunks"])
+    project_chunks = int(cfg.get("project_chunks", 0))
     while wait:
         present = [outdir / f"danca_basin_chunk_{idx:03d}.done" for idx in range(chunks)]
-        if all(path.exists() for path in present) and (outdir / "project_best_basin_grid.done").exists():
+        if project_chunks > 0:
+            project_done = all((outdir / f"project_basin_chunk_{idx:03d}.done").exists() for idx in range(project_chunks))
+        else:
+            project_done = (outdir / "project_best_basin_grid.done").exists()
+        if all(path.exists() for path in present) and project_done:
             break
         time.sleep(float(poll_sec))
     danca_grid, danca_rows = danca_grid_from_chunks(outdir, cfg)
@@ -459,7 +552,21 @@ def aggregate(outdir: Path, *, wait: bool = False, poll_sec: float = 60.0) -> Pa
         z_plane=float(cfg["danca"]["z_plane"]),
     )
     project_path = outdir / "project_best_basin_grid.csv"
-    project_grid = np.load(outdir / "project_best_basin_grid.npy") if (outdir / "project_best_basin_grid.npy").exists() else None
+    project_grid = None
+    if project_chunks > 0:
+        project_grid, project_rows = project_grid_from_chunks(outdir, cfg, project_chunks)
+        write_csv(project_path, project_rows)
+        np.save(outdir / "project_best_basin_grid.npy", project_grid)
+        plot_grid(
+            project_grid,
+            cfg,
+            outdir / "project_best_basin_xy.png",
+            title=f"project {cfg['project']['candidate_id']} EFORK h={cfg['project']['h']} Lm={cfg['project']['Lm']}",
+            seed=np.asarray(cfg["project"]["seed"], dtype=float),
+            z_plane=float(cfg["project"]["z_plane"]),
+        )
+    elif (outdir / "project_best_basin_grid.npy").exists():
+        project_grid = np.load(outdir / "project_best_basin_grid.npy")
     counts = {
         "danca": class_counts(danca_grid),
         "project": class_counts(project_grid) if project_grid is not None else {},
@@ -490,8 +597,22 @@ def class_counts(grid: np.ndarray | None) -> Dict[str, int]:
     return {CLASS_LABELS.get(int(v), f"class_{int(v)}"): int(c) for v, c in zip(vals, counts)}
 
 
+def project_grid_from_chunks(outdir: Path, cfg: Dict[str, Any], project_chunks: int) -> Tuple[np.ndarray, List[Dict[str, Any]]]:
+    rows: List[Dict[str, Any]] = []
+    for idx in range(project_chunks):
+        rows.extend(read_csv_rows(outdir / f"project_basin_chunk_{idx:03d}.csv"))
+    grid = int(cfg["grid"])
+    arr = np.full((grid, grid), 5, dtype=np.int32)
+    for row in rows:
+        arr[int(row["iy"]), int(row["ix"])] = int(row["class_id"])
+    rows.sort(key=lambda r: (int(r["iy"]), int(r["ix"])))
+    return arr, rows
+
+
 def launch(outdir: Path, args: argparse.Namespace) -> Path:
     cfg = make_plan(outdir, args)
+    cfg["project_chunks"] = int(args.project_chunks)
+    write_json(outdir / "basin_comparison_config.json", cfg)
     logs = outdir / "logs"
     logs.mkdir(parents=True, exist_ok=True)
     env = force_single_openmp_thread_env(os.environ.copy())
@@ -522,8 +643,44 @@ def launch(outdir: Path, args: argparse.Namespace) -> Path:
             close_fds=True,
         )
         jobs.append({"name": f"danca_chunk_{chunk_id:03d}", "pid": proc.pid, "argv": argv})
+    if int(args.project_chunks) > 0:
+        for chunk_id in range(int(args.project_chunks)):
+            argv = [
+                sys.executable,
+                str(Path(__file__).resolve()),
+                "--job",
+                "project-chunk",
+                "--output-dir",
+                str(outdir),
+                "--chunk-id",
+                str(chunk_id),
+                "--chunks",
+                str(args.project_chunks),
+            ]
+            proc = subprocess.Popen(
+                argv,
+                cwd=str(ROOT),
+                env=env,
+                stdout=(logs / f"project_chunk_{chunk_id:03d}.out").open("ab"),
+                stderr=(logs / f"project_chunk_{chunk_id:03d}.err").open("ab"),
+                start_new_session=True,
+                close_fds=True,
+            )
+            jobs.append({"name": f"project_chunk_{chunk_id:03d}", "pid": proc.pid, "argv": argv})
+    else:
+        argv = [sys.executable, str(Path(__file__).resolve()), "--job", "project-basin", "--output-dir", str(outdir)]
+        proc = subprocess.Popen(
+            argv,
+            cwd=str(ROOT),
+            env=env,
+            stdout=(logs / "project-basin.out").open("ab"),
+            stderr=(logs / "project-basin.err").open("ab"),
+            start_new_session=True,
+            close_fds=True,
+        )
+        jobs.append({"name": "project-basin", "pid": proc.pid, "argv": argv})
+
     for job_name, extra in [
-        ("project-basin", []),
         ("aggregate", ["--wait"]),
     ]:
         argv = [sys.executable, str(Path(__file__).resolve()), "--job", job_name, "--output-dir", str(outdir), *extra]
@@ -548,9 +705,46 @@ def launch(outdir: Path, args: argparse.Namespace) -> Path:
     return outdir / "launch_manifest.json"
 
 
+def launch_project_only(outdir: Path, args: argparse.Namespace) -> Path:
+    """Prepare and launch only the project candidate basin as a detached process."""
+    cfg = make_plan(outdir, args)
+    logs = outdir / "logs"
+    logs.mkdir(parents=True, exist_ok=True)
+    env = force_single_openmp_thread_env(os.environ.copy())
+    env["PYTHONUNBUFFERED"] = "1"
+    env["MPLCONFIGDIR"] = str(_CACHE_ROOT / "matplotlib")
+    env["XDG_CACHE_HOME"] = str(_CACHE_ROOT / "xdg_cache")
+    argv = [
+        sys.executable,
+        str(Path(__file__).resolve()),
+        "--job",
+        "project-basin",
+        "--output-dir",
+        str(outdir),
+    ]
+    proc = subprocess.Popen(
+        argv,
+        cwd=str(ROOT),
+        env=env,
+        stdout=(logs / "project-basin.out").open("ab"),
+        stderr=(logs / "project-basin.err").open("ab"),
+        start_new_session=True,
+        close_fds=True,
+    )
+    manifest = {
+        "status": "launched_project_only",
+        "outdir": str(outdir),
+        "config": cfg,
+        "jobs": [{"name": "project-basin", "pid": proc.pid, "argv": argv}],
+    }
+    write_json(outdir / "launch_manifest.json", manifest)
+    print(json.dumps(json_safe(manifest), indent=2), flush=True)
+    return outdir / "launch_manifest.json"
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Basin comparison: Danca ABM h=0.01 vs best project candidate.")
-    parser.add_argument("--job", choices=["prepare", "launch", "danca-chunk", "project-basin", "aggregate"], default="launch")
+    parser.add_argument("--job", choices=["prepare", "launch", "launch-project", "danca-chunk", "project-basin", "project-chunk", "aggregate"], default="launch")
     parser.add_argument("--output-dir", default=str(ROOT / "outputs" / f"basin_compare_danca_project_h001_{timestamp()}"))
     parser.add_argument("--grid", type=int, default=21)
     parser.add_argument("--xmin", type=float, default=-9.0)
@@ -558,6 +752,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--ymin", type=float, default=-3.5)
     parser.add_argument("--ymax", type=float, default=3.5)
     parser.add_argument("--chunks", type=int, default=2)
+    parser.add_argument("--project-chunks", type=int, default=0)
     parser.add_argument("--chunk-id", type=int, default=0)
     parser.add_argument("--danca-h", type=float, default=0.01)
     parser.add_argument("--danca-t-final", type=float, default=500.0)
@@ -583,10 +778,14 @@ def main() -> None:
         make_plan(outdir, args)
     elif args.job == "launch":
         launch(outdir, args)
+    elif args.job == "launch-project":
+        launch_project_only(outdir, args)
     elif args.job == "danca-chunk":
         run_danca_chunk(outdir, int(args.chunk_id), int(args.chunks))
     elif args.job == "project-basin":
         run_project_basin(outdir)
+    elif args.job == "project-chunk":
+        run_project_chunk(outdir, int(args.chunk_id), int(args.chunks))
     elif args.job == "aggregate":
         aggregate(outdir, wait=bool(args.wait))
 
