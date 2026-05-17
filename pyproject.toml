@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hidden-attractors-fo"
+version = "0.1.0"
+description = "Numerical workflows for locating and verifying hidden attractor candidates in fractional-order systems."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "Hidden Attractors Fractional Order project" }
+]
+dependencies = [
+  "matplotlib",
+  "numpy",
+]
+
+[tool.setuptools.packages.find]
+include = ["hidden_attractors*"]

@@ -1,9 +1,0 @@
-machado_mu4_pid=48498
-machado_mu2_pid=48499
-lure_biased_pid=48500
-stamp=20260514_165830
-logdir=logs/parallel_rerun_20260514_165830
-mu4Out=outputs/extended_search/machado_targeted_verification_mu4_20260514_165830
-mu2Out=outputs/extended_search/machado_targeted_verification_mu2_20260514_165830
-lureOut=outputs/lure_biased_multiparam_q09998_20260514_165830
-lureCfg=configs/lure_biased_multiparam_q09998_parallel_20260514_165830.yaml
