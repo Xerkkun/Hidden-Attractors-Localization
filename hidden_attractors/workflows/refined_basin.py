@@ -190,12 +190,14 @@ def make_config(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
     root.mkdir(parents=True, exist_ok=True)
     source_dir = Path(args.source_dir).resolve()
     source_cfg = read_json(source_dir / "basin_comparison_config.json")
+    nx = int(source_cfg.get("nx", source_cfg.get("grid")))
+    ny = int(source_cfg.get("ny", source_cfg.get("grid")))
     source_rows = read_csv_rows(source_dir / "project_best_basin_grid.csv")
     unknown_rows = [row for row in source_rows if row.get("class_label") == "unknown"]
     if int(args.max_unknowns) > 0:
         unknown_rows = unknown_rows[: int(args.max_unknowns)]
     for row in unknown_rows:
-        row["case_index"] = int(row["iy"]) * int(source_cfg["grid"]) + int(row["ix"])
+        row["case_index"] = int(row["iy"]) * nx + int(row["ix"])
         row["old_class_id"] = row.get("class_id", "")
         row["old_class_label"] = row.get("class_label", "")
     write_csv(root / "unknown_refinement_plan.csv", unknown_rows)
@@ -207,7 +209,9 @@ def make_config(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
         "source_dir": str(source_dir),
         "source_grid_csv": str(source_dir / "project_best_basin_grid.csv"),
         "source_png": str(source_dir / "project_best_basin_xy.png"),
-        "grid": int(source_cfg["grid"]),
+        "nx": nx,
+        "ny": ny,
+        "grid": nx,
         "xlim": source_cfg["xlim"],
         "ylim": source_cfg["ylim"],
         "plane": source_cfg.get("plane", "xy"),
@@ -382,8 +386,9 @@ def plot_grid(outdir: Path, cfg: dict[str, Any], rows: Sequence[dict[str, Any]])
     from matplotlib.colors import BoundaryNorm, ListedColormap
     from matplotlib.patches import Patch
 
-    grid = int(cfg["grid"])
-    arr = np.full((grid, grid), 5, dtype=np.int32)
+    nx = int(cfg.get("nx", cfg["grid"]))
+    ny = int(cfg.get("ny", cfg["grid"]))
+    arr = np.full((ny, nx), 5, dtype=np.int32)
     for row in rows:
         arr[_int(row["iy"]), _int(row["ix"])] = _int(row["class_id"], 5)
     np.save(outdir / "project_best_basin_refined_grid.npy", arr)
