@@ -36,6 +36,24 @@ python examples/aggregate_existing_robustness_overlay.py outputs/robustness_over
 
 Purpose: regenerate summary tables and plots from an existing output folder.
 
+## Dynamical Analysis Gallery
+
+```bash
+python examples/dynamical_analysis_gallery.py
+```
+
+Purpose: generate phase-space, phase-projection, time-series, and
+post-processed bifurcation figures using the public API.
+
+With an existing project trajectory:
+
+```bash
+python examples/dynamical_analysis_gallery.py --trajectory-csv outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/trajectories/branch_0_mu_4p00000_theta_0p00000_reference_attractor.csv
+```
+
+The example writes figures and tabular bifurcation points under
+`outputs/examples/dynamical_analysis_gallery/`.
+
 ## Adding Examples
 
 New examples should:

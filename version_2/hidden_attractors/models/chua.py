@@ -4,6 +4,13 @@ The functions in this module define only the vector field and algebraic
 equilibria.  Fractional memory and numerical integration live in solver/native
 modules so that model equations stay independent from a particular numerical
 contract.
+
+Reference notes:
+    - R. N. Madan and L. O. Chua, "Chaos in Chua's Circuit".
+    - M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems".
+    - D. Matignon, "Stability Results for Fractional Differential Equations
+      with Applications to Control Processing" for fractional local stability.
+    See ``docs/code_reference_map.md`` for the full method-to-code map.
 """
 
 from __future__ import annotations

@@ -9,9 +9,13 @@ jobs unless the filename and help text make that clear.
 ```bash
 python examples/quickstart_equilibria.py
 python examples/list_final_candidates.py
+python examples/dynamical_analysis_gallery.py
 python examples/create_robustness_overlay_config.py
 python examples/aggregate_existing_robustness_overlay.py outputs/robustness_overlay_c_trajectories_20260517
 ```
+
+`dynamical_analysis_gallery.py` can also plot a real trajectory from `outputs/`
+when passed `--trajectory-csv path/to/trajectory.csv`.
 
 ## Rules
 

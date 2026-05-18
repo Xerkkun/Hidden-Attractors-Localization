@@ -15,6 +15,7 @@ venv/
 .env
 build/
 dist/
+site/
 *.egg-info/
 
 # Native build artifacts

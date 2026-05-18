@@ -1,0 +1,623 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands,es-tabla]{babel}
+\usepackage[a4paper,margin=2.15cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  urlcolor=blue!55!black,
+  citecolor=blue!55!black
+}
+
+\setlength{\emergencystretch}{2em}
+\renewcommand{\arraystretch}{1.12}
+\graphicspath{{assets/figures/chua_fractional_report/}}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\DeclareRobustCommand{\codepath}[1]{\begingroup\Urlmuskip=0mu plus 2mu\path{#1}\endgroup}
+\newcommand{\CaputoD}{\,{}^{C}D_t^q}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\TARGET}{\texttt{TARGET}}
+
+\title{Documentacion unificada de la libreria\\
+\large Hidden Attractors Fractional Order: teoria, codigo, ejemplos y figuras}
+\author{Hidden Attractors Fractional Order}
+\date{Actualizado: \today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{Proposito del documento}
+
+Este reporte unifica el material tecnico que antes estaba separado en varios
+archivos \LaTeX{} dentro de \codepath{version_2/docs}. La organizacion sigue un
+indice tematico: teoria matematica, referencias, funciones de la libreria,
+ejemplos reproducibles, figuras generadas y lectura cientifica de las salidas.
+
+La regla documental del proyecto es conservadora: ninguna funcion descriptiva,
+grafica o diagnostico numerico declara por si solo la existencia de un atractor
+oculto. La lectura de ocultedad se basa en la clasificacion de
+Leonov--Kuznetsov y requiere analizar si la cuenca del atractor candidato
+intersecta vecindades de los equilibrios.
+
+\section{Indice tematico de los documentos previos}
+
+\begin{longtable}{@{}L{0.31\textwidth}L{0.61\textwidth}@{}}
+\toprule
+Documento previo & Contenido consolidado aqui \\
+\midrule
+\endhead
+\codepath{reporte_matematico_pipeline.tex} &
+Teoria del sistema de Chua fraccionario, forma de Lur'e, transferencia
+fraccionaria, funcion descriptiva, continuacion, cuencas y advertencias de
+interpretacion. \\
+\codepath{reporte_detallado_pipeline_hidden_attractors.tex} &
+Auditoria de archivos historicos, rutas Lur'e/Machado, Matignon, verificacion
+de ocultedad y checklist tecnico. \\
+\codepath{machado_chua_fraccionario.tex} &
+Extension tipo Machado usada como generador de semillas armonicas auxiliares. \\
+\codepath{resumen_verificacion_danca_lure_machado.tex} &
+Resumen de replicacion Danca, candidatos Lur'e y candidatos Machado. \\
+\codepath{resumen_chua_no_suave_arctan.tex} &
+Comparacion entre Chua no suave y variante arctan. \\
+\codepath{resumen_chua_corridas_extraidas.tex} &
+Inventario de corridas disponibles y figuras extraidas. \\
+\bottomrule
+\end{longtable}
+
+\section{Sistema de Chua fraccionario}
+
+El sistema base usado en las corridas principales es el Chua no suave de orden
+fraccionario:
+\begin{align}
+\CaputoD x &= \alpha\bigl(y-x-f(x)\bigr),\\
+\CaputoD y &= x-y+z,\\
+\CaputoD z &= -\beta y-\gamma z,
+\end{align}
+donde \(0<q\leq 1\). La no linealidad por tramos es
+\begin{equation}
+f(x)=m_1x+\frac{m_0-m_1}{2}\left(|x+1|-|x-1|\right).
+\end{equation}
+
+El modelo de Chua se documenta contra \emph{Chaos in Chua's Circuit}. La
+extension fraccionaria, los parametros de la prueba no suave y el uso de ABM
+como referencia de comparacion se documentan contra \emph{Hidden Chaotic
+Attractors in Fractional-Order Systems}. La derivada de Caputo remite a
+\emph{Linear Models of Dissipation whose Q is almost Frequency
+Independent-II}.
+
+\section{Estabilidad local y criterio de Matignon}
+
+Para sistemas fraccionarios conmensurados linealizados,
+\[
+\CaputoD X = A X,
+\]
+el criterio de Matignon establece estabilidad local asintotica cuando los
+autovalores cumplen
+\[
+|\arg(\lambda_i)| > \frac{q\pi}{2}.
+\]
+Este criterio se cita a partir de \emph{Stability Results for Fractional
+Differential Equations with Applications to Control Processing}. En el proyecto
+se usa como diagnostico local de equilibrios; no reemplaza la prueba global de
+cuencas.
+
+\section{Forma de Lur'e, funcion descriptiva y semillas}
+
+La ruta de semillas se basa en escribir el sistema como una forma tipo Lur'e:
+\[
+\CaputoD X = PX + b\,\psi(r^T X),
+\]
+y cerrar una condicion armonica mediante una transferencia fraccionaria
+evaluada en \(\lambda=(\ii\omega)^q\). Esta etapa sigue el enfoque de balance
+armonico/frecuencia usado en \emph{A Frequency Approach for Analyzing and
+Controlling Chaos in Nonlinear Circuits}.
+
+La extension tipo Machado se documenta como una familia auxiliar de semillas,
+no como demostracion de periodicidad exacta en Caputo. La advertencia
+conceptual se apoya en la literatura sobre no existencia de soluciones
+periodicas exactas no constantes en sistemas fraccionarios autonomos, incluida
+\emph{A Proof for Non Existence of Periodic Solutions in Time Invariant
+Fractional Order Systems}.
+
+\section{Verificacion de ocultedad}
+
+La distincion usada por la libreria es:
+\[
+\text{self-excited}
+\quad\Longleftrightarrow\quad
+\text{la cuenca intersecta vecindades de equilibrios},
+\]
+\[
+\text{hidden}
+\quad\Longleftrightarrow\quad
+\text{la cuenca no intersecta esas vecindades bajo el contrato probado}.
+\]
+Esta lectura sigue \emph{Hidden Attractors in Dynamical Systems: From Hidden
+Oscillations in Hilbert-Kolmogorov, Aizerman, and Kalman Problems to Hidden
+Chaotic Attractor in Chua Circuits} y \emph{Hidden Attractors in Dynamical
+Systems: Systems with No Equilibria, Multistability and Coexisting Attractors}.
+
+En codigo, esto se traduce en una secuencia conservadora:
+\[
+\text{semilla armonica}
+\Rightarrow
+\text{atractor observado}
+\Rightarrow
+\text{comparacion con target}
+\Rightarrow
+\text{robustez}
+\Rightarrow
+\text{pruebas desde vecindades de equilibrios}
+\Rightarrow
+\text{lectura de ocultedad}.
+\]
+Si aparece una trayectoria \TARGET{} desde una vecindad de equilibrio, el
+candidato no debe etiquetarse como oculto bajo ese contrato.
+
+\section{Funciones publicas de la libreria}
+
+\begin{longtable}{@{}L{0.37\textwidth}L{0.53\textwidth}@{}}
+\toprule
+Funcion & Uso documental \\
+\midrule
+\endhead
+\codepath{hidden_attractors.models.equilibria_piecewise} &
+Calcular \(E_0,E_+,E_-\) para el sistema de Chua no suave. \\
+\codepath{hidden_attractors.models.rhs_piecewise} &
+Evaluar el campo vectorial usado por integradores Caputo/EFORK. \\
+\codepath{hidden_attractors.io.load_trajectory_csv} &
+Cargar trayectorias reales con columnas \codepath{t,x,y,z}. \\
+\codepath{hidden_attractors.plotting.plot_phase_space} &
+Graficar espacio de fases 2D o 3D. \\
+\codepath{hidden_attractors.plotting.plot_phase_projections} &
+Graficar proyecciones \(xy\), \(xz\), \(yz\). \\
+\codepath{hidden_attractors.plotting.plot_time_series} &
+Graficar coordenadas contra el tiempo. \\
+\codepath{hidden_attractors.analysis.bifurcation_points_from_trajectories} &
+Extraer maximos, minimos o muestras post-transitorias para diagramas de
+bifurcacion desde trayectorias ya calculadas. \\
+\codepath{hidden_attractors.integrations.compute_complexity_measures} &
+Delegar medidas de complejidad a paquetes externos como \codepath{nolds} o
+\codepath{antropy}. \\
+\bottomrule
+\end{longtable}
+
+El mapa completo codigo--referencia vive en
+\codepath{docs/code_reference_map.md}.
+
+\section{Ejemplo ejecutable con trayectoria real}
+
+El ejemplo reproducible para las figuras de esta seccion es:
+\begin{verbatim}
+python examples/dynamical_analysis_gallery.py \
+  --trajectory-csv outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/trajectories/branch_0_mu_4p00000_theta_0p00000_reference_attractor.csv \
+  --output-dir outputs/examples/dynamical_analysis_real_trajectory_smoke
+\end{verbatim}
+
+Internamente usa:
+\begin{verbatim}
+from hidden_attractors.io import load_trajectory_csv
+from hidden_attractors.plotting import plot_phase_space
+from hidden_attractors.plotting import plot_phase_projections
+from hidden_attractors.plotting import plot_time_series
+from hidden_attractors.analysis import bifurcation_points_from_trajectories
+from hidden_attractors.plotting import plot_bifurcation_diagram
+\end{verbatim}
+
+\section{Figuras integradas y secciones de graficacion}
+
+Esta seccion ya no usa solo una galeria minima. Reune figuras reales tomadas de
+\codepath{outputs/} y figuras regeneradas con la API publica de la libreria. La
+intencion es que cada familia de graficas tenga una lectura matematica, una
+funcion o workflow asociado, y una indicacion clara de si la figura ya esta
+disponible o queda pendiente de recalculo.
+
+\subsection{Galeria API: trayectoria real cargada desde CSV}
+
+Estas figuras se regeneraron con \codepath{examples/dynamical_analysis_gallery.py}
+usando una trayectoria real de
+\codepath{outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/trajectories/}.
+La llamada documentada fue:
+\begin{verbatim}
+python examples/dynamical_analysis_gallery.py ^
+  --trajectory-csv outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/trajectories/branch_0_mu_4p00000_theta_0p00000_reference_attractor.csv ^
+  --output-dir outputs/examples/dynamical_analysis_real_trajectory_smoke
+\end{verbatim}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.74\textwidth]{phase_space_3d.png}
+\caption{Espacio de fases 3D generado con \codepath{plot_phase_space}. La figura usa una trayectoria real con columnas \codepath{t,x,y,z}.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.96\textwidth]{phase_projections.png}
+\caption{Proyecciones \(xy\), \(xz\) y \(yz\) generadas con \codepath{plot_phase_projections}. Estas vistas son utiles para comparar geometria sin depender de la perspectiva 3D.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.90\textwidth]{time_series.png}
+\caption{Series temporales \(x(t),y(t),z(t)\) generadas con \codepath{plot_time_series}. La lectura principal es boundedness, no ocultedad.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.78\textwidth]{bifurcation_diagram.png}
+\caption{Diagrama de bifurcacion post-procesado con \codepath{bifurcation_points_from_trajectories} y \codepath{plot_bifurcation_diagram}. Esta figura no sustituye continuacion numerica.}
+\end{figure}
+
+\clearpage
+\subsection{Replica Danca y candidatos de referencia}
+
+El bloque Danca compara el atractivo reportado con las semillas candidatas del
+proyecto. La replica ABM usa historia completa de Caputo, mientras que los
+candidatos del proyecto usan contratos EFORK con memoria truncada. Por eso las
+figuras son comparables como evidencia geometrica, pero no metodo-identicas.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.96\textwidth]{danca_abm_fig03.png}
+\caption{Replica local del atractor de Chua fraccionario no suave reportado por Danca en \emph{Hidden Chaotic Attractors in Fractional-Order Systems}.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{project_lure_rank0001.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{project_machado_mu4.png}
+\end{minipage}
+\caption{Comparacion visual de candidatos del proyecto: ruta Lur'e sesgada \codepath{rank_0001} y ruta tipo Machado \codepath{branch_0_mu_4p00000_theta_0p00000}.}
+\end{figure}
+
+\clearpage
+\subsection{Cuencas y refinamiento de regiones}
+
+Las cuencas son el bloque mas importante para la lectura de ocultedad. Un
+atractor candidato robusto no es necesariamente oculto: si la cuenca intersecta
+una vecindad de equilibrio, el candidato debe leerse como autoexcitado bajo el
+contrato probado.
+
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{basin_danca_abm_xy.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{basin_project_best_xy.png}
+\end{minipage}
+\caption{Cortes de cuenca \(xy\): replica Danca ABM con historia completa y candidato del proyecto clasificado con el contrato EFORK/C.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.72\textwidth]{basin_project_refined_xy.png}
+\caption{Cuenca refinada del candidato del proyecto para celdas previamente no resueltas. Esta grafica corresponde al workflow \codepath{hidden_attractors.workflows.refined_basin}.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.92\textwidth]{equilibria_target_explanation.png}
+\caption{Explicacion visual de clases target/no-target alrededor de equilibrios. Esta familia de figuras conecta directamente la clasificacion de cuenca con la definicion operacional de ocultedad.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{project_E0_zoom.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{project_Eminus_zoom.png}
+\end{minipage}
+\caption{Zooms de cuenca alrededor de \(E_0\) y \(E_-\). Estas figuras deben leerse junto con los radios, tiempos, memoria y tolerancias del contrato numerico.}
+\end{figure}
+
+\clearpage
+\subsection{Verificacion dirigida Machado}
+
+La ruta Machado usa una funcion descriptiva fraccionaria auxiliar como
+generador de semillas. El parametro \(\mu\) de Machado no cambia el orden
+fraccionario \(q\) del sistema causal; solo modifica la busqueda de semillas.
+La decision final sigue dependiendo de las trayectorias Caputo/EFORK y de los
+controles desde vecindades de equilibrios.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.92\textwidth]{hiddenness_machado_mu4_article.png}
+\caption{Verificacion dirigida estilo articulo para \codepath{branch_0_mu_4p00000_theta_0p00000}. La figura resume contacto target/no-target desde vecindades de equilibrio.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.92\textwidth]{hiddenness_machado_mu2_article.png}
+\caption{Verificacion dirigida estilo articulo para \codepath{branch_0_mu_2p00000_theta_3p92699}.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{machado_mu4_attractor_equilibria_3d.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{machado_mu2_attractor_equilibria_3d.png}
+\end{minipage}
+\caption{Atractores candidatos Machado y posicion de equilibrios. Estas vistas muestran geometria global, no deciden ocultedad por si solas.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{machado_mu4_classes_by_equilibrium.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{machado_mu2_classes_by_equilibrium.png}
+\end{minipage}
+\caption{Clases por equilibrio para los dos candidatos Machado principales. La aparicion de clases target desde un equilibrio bloquea la etiqueta de ocultedad bajo ese contrato.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{machado_mu4_target_hits_vs_radius.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{machado_mu2_target_hits_vs_radius.png}
+\end{minipage}
+\caption{Contactos target contra radio para los dos candidatos Machado. Esta lectura debe dominar sobre una conclusion basada solo en retratos de fase.}
+\end{figure}
+
+\clearpage
+\subsection{Corrida refinada Machado}
+
+Las figuras de \codepath{outputs/extended_search/corrida1/plots/} agregan una
+capa mas estricta: radios, fracciones de clases y muestras locales en el plano
+de vecindad. Esta familia se usa para separar ``no observado en esta muestra''
+de ``bloqueado por contacto dirigido reproducido''.
+
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{corrida1_class_fraction_candidate1.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{corrida1_class_fraction_candidate2.png}
+\end{minipage}
+\caption{Fraccion de clases por radio y equilibrio para los candidatos refinados.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{corrida1_neighborhood_candidate1.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{corrida1_neighborhood_candidate2.png}
+\end{minipage}
+\caption{Muestras de vecindad usadas en la verificacion refinada Machado.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{corrida1_target_hits_candidate1.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{corrida1_target_hits_candidate2.png}
+\end{minipage}
+\caption{Contactos target contra radio desde \(E_-\) en la corrida refinada.}
+\end{figure}
+
+\clearpage
+\subsection{Robustez geometrica por contratos numericos}
+
+La robustez cambia \(h\), \(L_m\) y tiempo final para observar persistencia de
+la geometria del atractor. Esta seccion no prueba ocultedad; prueba si el
+atractor observado es numericamente persistente bajo variaciones del contrato.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.82\textwidth]{robustness_overlay_lure.png}
+\caption{Superposicion de trayectorias de robustez para el candidato Lur'e sesgado.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{robustness_overlay_machado_mu4.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{robustness_overlay_machado_mu2.png}
+\end{minipage}
+\caption{Superposiciones de robustez para los dos candidatos Machado principales.}
+\end{figure}
+
+\clearpage
+\subsection{Geometria esferica alrededor de equilibrios}
+
+La prueba por esferas muestrea cascarones alrededor de equilibrios y revisa si
+las trayectorias entran a una clase target. Esta evidencia es util para
+cartografiar la cuenca, pero no cancela un contacto dirigido ya reproducido.
+
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{sphere_overview_lure.png}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{sphere_overview_machado_mu4.png}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{sphere_overview_machado_mu2.png}
+\end{minipage}
+\caption{Resumen de geometria esferica para los tres candidatos top-3: Lur'e sesgado y dos candidatos Machado.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{sphere_lure_Eplus.png}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{sphere_lure_Eminus.png}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{sphere_lure_E0.png}
+\end{minipage}
+\caption{Geometria esferica por equilibrio para el candidato Lur'e sesgado \codepath{rank_0001}.}
+\end{figure}
+
+\clearpage
+\subsection{Figuras pendientes de regeneracion}
+
+El inventario de \codepath{GUIA_CODIGOS_PIPELINE.txt} define familias de
+figuras que deben quedar en la documentacion final. En el estado actual de
+\codepath{version_2/outputs} no aparecen todas con nombres canonicos, por lo
+que se dejan secciones explicitas para la siguiente corrida:
+
+\begin{longtable}{@{}L{0.31\textwidth}L{0.58\textwidth}@{}}
+\toprule
+Familia pendiente & Como generarla o incorporarla \\
+\midrule
+\endhead
+Nyquist/DF \codepath{fig01_nyquist_df} y zoom \codepath{fig01b_nyquist_zoom_x} &
+Ejecutar el pipeline legado o migrar el generador a \codepath{hidden_attractors.plotting}. Debe citar Genesio--Tesi y la forma de Lur'e usada. \\
+Continuacion \codepath{fig02_continuation_progress} y \codepath{fig02b_continuation_story} &
+Regenerar desde \codepath{unified_nyquist_hidden_pipeline.py} o crear una API publica para leer \codepath{unified_continuation_summary.json}. \\
+Seccion de referencia \codepath{fig04_reference_section} y sondas \codepath{fig05_probe_summary} &
+Migrar la visualizacion de secciones y conteos a funciones publicas. Debe quedar conectada a \codepath{section_points}. \\
+Bifurcaciones densas \codepath{fig07_q}, \codepath{fig08_alpha}, \codepath{fig09_beta} &
+La API publica ya tiene post-procesamiento simple; falta exponer una corrida densa de parametros con CSV reproducible. \\
+Cuencas \(xz\) y \(yz\), \codepath{fig10b}, \codepath{fig10c} &
+Ejecutar \codepath{basin_only} o migrar \codepath{compute_basin_planes_c} a workflow publico documentado. \\
+FFT/PSD, \codepath{fig11b_fft_spectrum}, \codepath{fig11_psd_welch} &
+Regenerar con \codepath{HIDDEN_ATTRACTORS_PSD=1}; citar que FFT/PSD caracterizan frecuencia, no ocultedad. \\
+Lyapunov, \codepath{fig12_lyapunov_convergence} &
+Ejecutar backend Benettin solo bajo contrato explicito; citar los dos articulos de Benettin et al. \\
+TISEAN/exportes externos &
+Mantener como adaptador opcional, con ruta de datos reproducible y cita al paquete/herramienta usada. \\
+\bottomrule
+\end{longtable}
+
+\section{Referencias por metodo}
+
+\begin{longtable}{@{}L{0.24\textwidth}L{0.66\textwidth}@{}}
+\toprule
+Metodo o bloque & Articulo de referencia que debe citarse \\
+\midrule
+\endhead
+Chua no suave & \emph{Chaos in Chua's Circuit}; \emph{Hidden Chaotic Attractors in Fractional-Order Systems}. \\
+Derivada de Caputo & \emph{Linear Models of Dissipation whose Q is almost Frequency Independent-II}. \\
+Estabilidad fraccionaria & \emph{Stability Results for Fractional Differential Equations with Applications to Control Processing}. \\
+Hidden/self-excited & \emph{Hidden Attractors in Dynamical Systems: From Hidden Oscillations in Hilbert-Kolmogorov, Aizerman, and Kalman Problems to Hidden Chaotic Attractor in Chua Circuits}; \emph{Hidden Attractors in Dynamical Systems: Systems with No Equilibria, Multistability and Coexisting Attractors}. \\
+ABM fraccionario & \emph{A Predictor-Corrector Approach for the Numerical Solution of Fractional Differential Equations}. \\
+Lur'e/armonic balance & \emph{A Frequency Approach for Analyzing and Controlling Chaos in Nonlinear Circuits}. \\
+Lyapunov & \emph{Lyapunov Characteristic Exponents for Smooth Dynamical Systems and for Hamiltonian Systems; A Method for Computing All of Them. Part 1: Theory} y \emph{Part 2: Numerical Application}. \\
+Machado-style seeds & Documento local \codepath{machado_chua_fraccionario.tex}; la cita completa debe fijarse antes de publicar si se usa como referencia externa primaria. \\
+\bottomrule
+\end{longtable}
+
+\section{Bibliografia minima}
+
+\begin{thebibliography}{99}
+
+\bibitem{Chua1986}
+R. N. Madan and L. O. Chua.
+\emph{Chaos in Chua's Circuit}.
+IEE Proceedings D: Control Theory and Applications, 1986.
+
+\bibitem{Caputo1967}
+M. Caputo.
+\emph{Linear Models of Dissipation whose Q is almost Frequency Independent-II}.
+Geophysical Journal International, 1967.
+
+\bibitem{Matignon1996}
+D. Matignon.
+\emph{Stability Results for Fractional Differential Equations with Applications to Control Processing}.
+Computational Engineering in Systems Applications, 1996.
+
+\bibitem{Danca2017}
+M. F. Danca.
+\emph{Hidden Chaotic Attractors in Fractional-Order Systems}.
+Nonlinear Dynamics, 2017.
+
+\bibitem{LeonovKuznetsov2013}
+G. A. Leonov and N. V. Kuznetsov.
+\emph{Hidden Attractors in Dynamical Systems: From Hidden Oscillations in Hilbert-Kolmogorov, Aizerman, and Kalman Problems to Hidden Chaotic Attractor in Chua Circuits}.
+International Journal of Bifurcation and Chaos, 2013.
+
+\bibitem{Kuznetsov2016}
+N. V. Kuznetsov.
+\emph{Hidden Attractors in Dynamical Systems: Systems with No Equilibria, Multistability and Coexisting Attractors}.
+Physics Reports, 2016.
+
+\bibitem{GenesioTesi1993}
+R. Genesio, A. Tesi, and F. Villoresi.
+\emph{A Frequency Approach for Analyzing and Controlling Chaos in Nonlinear Circuits}.
+IEEE Transactions on Circuits and Systems I, 1993.
+
+\bibitem{DiethelmFordFreed2002}
+K. Diethelm, N. J. Ford, and A. D. Freed.
+\emph{A Predictor-Corrector Approach for the Numerical Solution of Fractional Differential Equations}.
+Nonlinear Dynamics, 2002.
+
+\bibitem{Benettin1980a}
+G. Benettin, L. Galgani, A. Giorgilli, and J.-M. Strelcyn.
+\emph{Lyapunov Characteristic Exponents for Smooth Dynamical Systems and for Hamiltonian Systems; A Method for Computing All of Them. Part 1: Theory}.
+Meccanica, 1980.
+
+\bibitem{Benettin1980b}
+G. Benettin, L. Galgani, A. Giorgilli, and J.-M. Strelcyn.
+\emph{Lyapunov Characteristic Exponents for Smooth Dynamical Systems and for Hamiltonian Systems; A Method for Computing All of Them. Part 2: Numerical Application}.
+Meccanica, 1980.
+
+\bibitem{TavazoeiHaeri2009}
+M. S. Tavazoei and M. Haeri.
+\emph{A Proof for Non Existence of Periodic Solutions in Time Invariant Fractional Order Systems}.
+Automatica, 2009.
+
+\end{thebibliography}
+
+\end{document}

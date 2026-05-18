@@ -29,6 +29,17 @@ dependencies = [
 dev = [
   "pytest",
 ]
+analysis = [
+  "antropy",
+  "nolds",
+]
+docs = [
+  "mkdocs",
+  "mkdocs-material",
+]
+pydstool = [
+  "PyDSTool",
+]
 
 [project.urls]
 Homepage = "https://github.com/<owner>/hidden-attractors-fo"

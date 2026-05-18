@@ -15,6 +15,9 @@ This notebook covers:
 - loading final candidate records;
 - computing a lightweight trajectory diagnostic on synthetic sample data.
 
+For phase-space plots, bifurcation post-processing, and optional complexity
+metrics, mirror the documented workflow in [Dynamical Analysis](dynamical_analysis.md).
+
 ## Notebook Rules
 
 - Keep the first cells self-contained and explanatory.

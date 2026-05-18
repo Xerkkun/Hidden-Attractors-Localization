@@ -1,0 +1,72 @@
+# Code Reference Map
+
+Every calculation-facing function should be traceable to one of three sources:
+a published reference, a local numerical contract documented in the report, or
+a clearly marked utility role. This page is the first audit table for that
+policy.
+
+## Core Model
+
+| Code | Purpose | Reference source |
+|---|---|---|
+| `hidden_attractors.models.chua.ChuaParameters` | Parameter container for the non-smooth fractional Chua case | M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems"; R. N. Madan and L. O. Chua, "Chaos in Chua's Circuit" |
+| `hidden_attractors.models.chua.nonlinearity_piecewise` | Piecewise-linear Chua nonlinearity | R. N. Madan and L. O. Chua, "Chaos in Chua's Circuit"; Danca's non-smooth fractional Chua example |
+| `hidden_attractors.models.chua.rhs_piecewise` | Vector field used inside Caputo/EFORK integrations | M. Caputo, "Linear Models of Dissipation whose Q is almost Frequency Independent-II"; M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems" |
+| `hidden_attractors.models.chua.equilibria_piecewise` | Equilibria of the piecewise Chua model | Chua circuit model plus the fractional stability interpretation of D. Matignon, "Stability Results for Fractional Differential Equations with Applications to Control Processing" |
+
+## Trajectory Diagnostics
+
+| Code | Purpose | Reference source |
+|---|---|---|
+| `hidden_attractors.analysis.trajectory.component_fft` | Dominant FFT frequency and spectral entropy proxy | Standard spectral analysis; used as a diagnostic only, not as hiddenness proof |
+| `hidden_attractors.analysis.trajectory.section_points` | Poincare-style section points for trajectory-cloud comparison | Operational section geometry documented in `reporte_unificado_chua_fraccionario.tex`; not a proof of hiddenness |
+| `hidden_attractors.analysis.trajectory.cloud_median_distance` | Symmetric nearest-neighbor cloud distance | Local geometric comparison contract documented in the report |
+| `hidden_attractors.analysis.trajectory.trajectory_metrics` | Boundedness, range, variance, spectral, section, and cloud diagnostics | Local robustness contract; hiddenness reading follows Leonov--Kuznetsov hidden/self-excited classification |
+
+## Bifurcation And Plots
+
+| Code | Purpose | Reference source |
+|---|---|---|
+| `hidden_attractors.analysis.bifurcation.bifurcation_points_from_trajectories` | Extract maxima, minima, or samples from parameter scans | Post-processing convention for bifurcation diagrams; continuation should be delegated to tools such as PyDSTool when needed |
+| `hidden_attractors.plotting.dynamics.plot_phase_space` | Phase-space view of `t,x,y,z` trajectories | Standard dynamical-systems visualization |
+| `hidden_attractors.plotting.dynamics.plot_phase_projections` | `xy`, `xz`, `yz` projections | Standard dynamical-systems visualization |
+| `hidden_attractors.plotting.dynamics.plot_time_series` | Time series for selected observables | Standard numerical diagnostics |
+| `hidden_attractors.plotting.dynamics.plot_bifurcation_diagram` | Scatter plot of extracted bifurcation points | Post-processing visualization, not numerical continuation |
+
+## Native And Workflow Contracts
+
+| Code | Purpose | Reference source |
+|---|---|---|
+| `hidden_attractors.native.FractionalChuaBackend` | Wrapper for C/EFORK fractional Chua integration | Caputo fractional model; local EFORK contract documented in the reports |
+| `hidden_attractors.native.BasinBackend` | Wrapper for basin classification backend | Leonov--Kuznetsov hidden/self-excited classification plus local finite-time basin contract |
+| `hidden_attractors.workflows.robustness_overlay` | Overlay trajectories under changes of `h`, `Lm`, and `t_final` | Local robustness contract; robustness does not imply hiddenness |
+| `hidden_attractors.workflows.sphere_controls` | Spherical controls around equilibria | Leonov--Kuznetsov basin criterion; finite-sample numerical control |
+| `hidden_attractors.workflows.refined_basin` | Refine unresolved basin cells by trajectory geometry | Local target-reference geometry contract |
+
+## Optional External Methods
+
+| Code | Purpose | Reference source |
+|---|---|---|
+| `hidden_attractors.integrations.compute_complexity_measures(..., backend="nolds")` | Delegate entropy, dimension, Lyapunov, Hurst, and DFA metrics to `nolds` | External `nolds` package; Lyapunov-spectrum methods should cite Benettin et al., "Lyapunov Characteristic Exponents for Smooth Dynamical Systems and for Hamiltonian Systems" |
+| `hidden_attractors.integrations.compute_complexity_measures(..., backend="antropy")` | Delegate entropy and fractal measures to `antropy` | External `antropy` package; do not copy implementations into this repo |
+| `hidden_attractors.integrations.external_tool_report` | Registry of optional tools | PyDSTool documentation; pyComplexity notebook reference; local adapter policy |
+
+## Legacy Scripts Still Under Review
+
+| Code | Purpose | Reference source |
+|---|---|---|
+| `tools/legacy/danca2017_chua_abm_replication.py` | Replicate Danca's non-smooth fractional Chua example with ABM | M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems"; K. Diethelm, N. J. Ford, and A. D. Freed, "A Predictor-Corrector Approach for the Numerical Solution of Fractional Differential Equations" |
+| `tools/legacy/unified_nyquist_hidden_pipeline.py` | Historical full pipeline for Lur'e/Nyquist, EFORK, basins, bifurcation, and Lyapunov diagnostics | Leonov--Kuznetsov hidden attractors, Genesio--Tesi frequency-domain harmonic-balance approach, Matignon stability, Benettin Lyapunov method |
+| `tools/legacy/chua_initial_cond.py` | Historical Lur'e/transfer/describing-function seed generation | Genesio, Tesi, and Villoresi, "A Frequency Approach for Analyzing and Controlling Chaos in Nonlinear Circuits"; Tavazoei--Haeri fractional-order periodicity caution |
+| `docs/machado_chua_fraccionario.tex` | Machado-style extension used as seed generator | Tenreiro Machado fractional describing-function family; local use is heuristic and must not be read as proof of Caputo cycles |
+
+## Policy For New Calculation Code
+
+When adding a new calculation module:
+
+1. Add the article title and source in the module docstring or in this table.
+2. State whether the method is exact theory, finite-time numerical evidence, or
+   an operational diagnostic.
+3. If a maintained external package already implements the algorithm, add an
+   adapter and citation instead of copying the algorithm.
+4. Add a small example that writes reproducible figures or CSV/JSON artifacts.

@@ -14,6 +14,11 @@ nav:
   - Getting Started: getting_started.md
   - API Reference: api_reference.md
   - Examples: examples.md
+  - Dynamical Analysis: dynamical_analysis.md
+  - External Tools: external_tools.md
+  - Unified Report: unified_report.md
+  - Figure Gallery: figure_gallery.md
+  - Code Reference Map: code_reference_map.md
   - Notebooks: notebooks.md
   - Workflows: workflows.md
   - Testing: testing.md
@@ -23,6 +28,8 @@ nav:
   - Research Notes:
       - Library Structure: library_structure.md
       - Lure Candidate Route: lure_candidate_route.md
+      - Versioning Policy: versioning.md
+      - Analysis Index: research/analysis.md
       - Physical Separation: physical_separation.md
 markdown_extensions:
   - admonition

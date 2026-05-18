@@ -9,12 +9,17 @@ contribution notes.
 - [Installation](installation.md)
 - [Getting Started](getting_started.md)
 - [Examples](examples.md)
+- [Dynamical Analysis](dynamical_analysis.md)
+- [External Tools](external_tools.md)
+- [Unified Report](unified_report.md)
+- [Figure Gallery](figure_gallery.md)
 - [Notebooks](notebooks.md)
 - [Workflows](workflows.md)
 
 ## Reference
 
 - [API Reference](api_reference.md)
+- [Code Reference Map](code_reference_map.md)
 - [Repository Layout](repository_layout.md)
 - [Testing](testing.md)
 - [Citation](citation.md)

@@ -109,3 +109,37 @@ def read_csv_rows(path: str | Path) -> List[Dict[str, str]]:
         return []
     with target.open("r", newline="", encoding="utf-8") as f:
         return [dict(row) for row in csv.DictReader(f)]
+
+
+def load_trajectory_csv(path: str | Path, columns: Sequence[str] = ("t", "x", "y", "z")) -> np.ndarray:
+    """Load a trajectory CSV into the package convention ``t,x,y,z``.
+
+    The project's generated trajectory files normally use a header with the
+    columns ``t,x,y,z``. Headerless numeric CSV files are also accepted when
+    they already follow that column order.
+    """
+
+    target = Path(path)
+    if not target.exists():
+        raise FileNotFoundError(target)
+
+    with target.open("r", encoding="utf-8") as f:
+        first_line = f.readline()
+    if not first_line:
+        raise ValueError(f"trajectory CSV is empty: {target}")
+    has_header = any(ch.isalpha() or ch == "_" for ch in first_line)
+    if has_header:
+        data = np.genfromtxt(target, delimiter=",", names=True, dtype=float)
+        names = data.dtype.names or ()
+        missing = [name for name in columns if name not in names]
+        if missing:
+            raise ValueError(f"trajectory CSV is missing columns: {missing}")
+        return np.column_stack([np.asarray(data[name], dtype=float) for name in columns])
+
+    raw = np.genfromtxt(target, delimiter=",", dtype=float)
+    X = np.asarray(raw, dtype=float)
+    if X.ndim == 1:
+        X = X.reshape(1, -1)
+    if X.shape[1] < len(columns):
+        raise ValueError(f"trajectory CSV must contain at least {len(columns)} columns")
+    return X[:, : len(columns)]

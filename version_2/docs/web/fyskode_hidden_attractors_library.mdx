@@ -1,0 +1,110 @@
+---
+title: "Hidden Attractors Fractional Order: una libreria para estudiar Chua fraccionario"
+description: "Documentacion tecnica, referencias y ejemplos reproducibles para una libreria Python orientada a atractores ocultos en sistemas fraccionarios."
+pubDate: 2026-05-18
+author: "Xerkkun"
+authorImage: "/images/authors/Xerkkun.jpg"
+image: "/images/posts/hidden-attractors/phase_space_3d.png"
+category: "Ciencia del Caos"
+subCategory: "Hidden Attractors"
+readTime: "10 min de lectura"
+featured: false
+tags: ["caos", "chua", "sistemas dinamicos", "python", "fraccional"]
+---
+
+Esta pagina presenta la primera version documental de `hidden-attractors-fo`,
+una libreria Python organizada para reproducir, auditar y extender experimentos
+numericos con candidatos a atractores ocultos en sistemas de Chua fraccionarios.
+
+La idea no es esconder el origen de los metodos dentro del codigo. Cada bloque
+de calculo queda asociado con su referencia: Leonov--Kuznetsov para la
+distincion entre atractores ocultos y autoexcitados, Danca para el ejemplo de
+Chua fraccionario no suave, Matignon para estabilidad local fraccionaria,
+Benettin para exponentes de Lyapunov, y Caputo para la derivada fraccionaria
+causal.
+
+## Que hace la libreria
+
+La libreria separa cuatro tareas:
+
+- definir el sistema de Chua no suave;
+- cargar trayectorias reales generadas por los workflows;
+- graficar espacio de fases, proyecciones, series temporales y diagramas de bifurcacion;
+- documentar que diagnosticos son evidencia numerica y cuales no prueban ocultedad.
+
+El contrato de trayectoria usado por los ejemplos es simple:
+
+```text
+t,x,y,z
+```
+
+Con eso se puede cargar una trayectoria CSV del proyecto y generar figuras:
+
+```python
+from hidden_attractors.io import load_trajectory_csv
+from hidden_attractors.plotting import plot_phase_space
+
+trajectory = load_trajectory_csv("outputs/.../reference_attractor.csv")
+plot_phase_space(trajectory, "outputs/my_case/phase_space_3d.png")
+```
+
+## Espacio de fases
+
+![Espacio de fases del Chua fraccionario](/images/posts/hidden-attractors/phase_space_3d.png)
+
+La figura anterior fue generada desde una trayectoria real del proyecto. No es
+una ilustracion decorativa: sale del ejemplo `examples/dynamical_analysis_gallery.py`.
+
+## Proyecciones
+
+![Proyecciones del espacio de fases](/images/posts/hidden-attractors/phase_projections.png)
+
+Las proyecciones `xy`, `xz` y `yz` permiten comparar geometria sin depender de
+una sola vista 3D.
+
+## Series temporales
+
+![Series temporales del sistema](/images/posts/hidden-attractors/time_series.png)
+
+Las series temporales son utiles para verificar si una trayectoria permanece
+acotada, si colapsa a equilibrio o si conviene revisar el contrato numerico.
+
+## Bifurcacion como post-procesamiento
+
+![Diagrama de bifurcacion post-procesado](/images/posts/hidden-attractors/bifurcation_diagram.png)
+
+Este diagrama se obtiene extrayendo maximos locales de trayectorias ya
+calculadas. No sustituye una continuacion numerica completa. Para continuacion
+real conviene usar herramientas dedicadas, por ejemplo PyDSTool, cuando el
+entorno de Python sea compatible.
+
+## Referencias visibles desde el codigo
+
+El repositorio ahora incluye:
+
+- `docs/references.bib`;
+- `docs/code_reference_map.md`;
+- `docs/reporte_unificado_chua_fraccionario.tex`;
+- `docs/reporte_unificado_chua_fraccionario.pdf`.
+
+La regla es directa: si una funcion hace calculos, debe indicar si viene de un
+articulo, de un contrato numerico local o de una libreria externa.
+
+## Lectura cientifica conservadora
+
+Una trayectoria bonita no basta para declarar un atractor oculto. La secuencia
+documentada es:
+
+```text
+semilla armonica
+-> atractor observado
+-> comparacion con target
+-> robustez numerica
+-> pruebas desde vecindades de equilibrios
+-> lectura de ocultedad
+```
+
+Si aparece una trayectoria `TARGET` desde una vecindad de equilibrio, el
+candidato no debe llamarse oculto bajo ese contrato. Esa separacion es la que
+hace que la libreria sea util como herramienta cientifica y no solo como
+generador de figuras.

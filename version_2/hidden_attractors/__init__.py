@@ -12,6 +12,7 @@ robustness are always numerical post-checks on the causal Caputo model.
 from .analysis import RobustnessCase, trajectory_metrics
 from .basins import CLASS_LABELS, TARGET_CLASS_IDS, class_label, is_target_class
 from .candidates import CandidateRecord, load_final_candidate_records
+from .io import load_trajectory_csv
 from .models.chua import ChuaParameters, chua_piecewise_parameters, equilibria_piecewise, rhs_piecewise
 
 __all__ = [
@@ -24,6 +25,7 @@ __all__ = [
     "chua_piecewise_parameters",
     "equilibria_piecewise",
     "is_target_class",
+    "load_trajectory_csv",
     "load_final_candidate_records",
     "rhs_piecewise",
     "trajectory_metrics",

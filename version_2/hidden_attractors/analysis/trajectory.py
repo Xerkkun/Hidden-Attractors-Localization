@@ -1,4 +1,14 @@
-"""Trajectory diagnostics for chaotic fractional systems."""
+"""Trajectory diagnostics for chaotic fractional systems.
+
+Reference notes:
+    - Hidden/self-excited interpretation follows Leonov--Kuznetsov hidden
+      attractor terminology.
+    - Lyapunov-style diagnostics, when delegated to external tools or native
+      backends, should cite Benettin et al., "Lyapunov Characteristic
+      Exponents for Smooth Dynamical Systems and for Hamiltonian Systems".
+    - Cloud, section, FFT, and range metrics are local finite-time diagnostics,
+      not proofs of hiddenness. See ``docs/code_reference_map.md``.
+"""
 
 from __future__ import annotations
 

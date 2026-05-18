@@ -19,8 +19,10 @@ of the public API are kept under `tools/legacy/`.
 
 - Chua piecewise model definitions and equilibrium helpers.
 - Final candidate loaders for the current reference outputs.
-- Geometry and spectral trajectory diagnostics.
+- Geometry, spectral, phase-space, and bifurcation post-processing diagnostics.
 - Basin classification labels and plotting helpers.
+- Optional adapters for external nonlinear time-series tools such as `nolds`
+  and `antropy`, with PyDSTool documented as a companion continuation tool.
 - C/EFORK wrapper classes with local build policy.
 - Workflow entry points for robustness overlays, sphere controls, and refined
   basin classification.
@@ -61,6 +63,7 @@ Run an included example:
 ```bash
 python examples/quickstart_equilibria.py
 python examples/list_final_candidates.py
+python examples/dynamical_analysis_gallery.py
 ```
 
 After editable installation, the same candidate listing is available as:
@@ -76,6 +79,11 @@ hidden-attractors-list-candidates
 - [Getting Started](docs/getting_started.md)
 - [API Reference](docs/api_reference.md)
 - [Examples](docs/examples.md)
+- [Dynamical Analysis](docs/dynamical_analysis.md)
+- [External Tools](docs/external_tools.md)
+- [Unified Report](docs/unified_report.md)
+- [Figure Gallery](docs/figure_gallery.md)
+- [Code Reference Map](docs/code_reference_map.md)
 - [Notebooks](docs/notebooks.md)
 - [Workflows](docs/workflows.md)
 - [Testing](docs/testing.md)
@@ -114,6 +122,7 @@ imports, model inspection, candidate loading, and lightweight diagnostics.
 python -m compileall hidden_attractors examples tests tools/cli
 python examples/quickstart_equilibria.py
 python examples/list_final_candidates.py
+python examples/dynamical_analysis_gallery.py
 python -m pytest -q
 ```
 
