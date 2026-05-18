@@ -1,0 +1,32 @@
+site_name: hidden-attractors-fo
+site_description: Numerical workflows for hidden-attractor candidates in fractional-order systems.
+repo_url: https://github.com/<owner>/hidden-attractors-fo
+repo_name: <owner>/hidden-attractors-fo
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Getting Started: getting_started.md
+  - API Reference: api_reference.md
+  - Examples: examples.md
+  - Notebooks: notebooks.md
+  - Workflows: workflows.md
+  - Testing: testing.md
+  - Repository Layout: repository_layout.md
+  - Contributing: contributing.md
+  - Citation: citation.md
+  - Research Notes:
+      - Library Structure: library_structure.md
+      - Lure Candidate Route: lure_candidate_route.md
+      - Physical Separation: physical_separation.md
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - tables
+  - fenced_code

@@ -25,31 +25,25 @@ crecer como librería Python y no como una colección de scripts independientes.
 - `plotting`: funciones de figura reutilizables.
 - `workflows`: flujos compuestos que pueden exponerse por CLI.
 
-## Versiones
+## Scripts y herramientas
 
-La separacion operativa queda fijada asi:
+La raiz de V2 se mantiene limpia como una libreria Python:
 
-- `version_1/` documenta la etapa historica y los scripts raiz que se conservan
-  para reproducibilidad.
-- `version_2/` es la version activa. Las modificaciones nuevas de ejemplos y
-  analisis deben quedar registradas en `version_2/examples/` y
-  `version_2/analysis/`.
-- El codigo reusable de V2 debe vivir en `hidden_attractors/`; los scripts raiz
-  nuevos solo deben ser wrappers CLI delgados cuando haga falta mantener nombres
-  de ejecucion antiguos.
+- `tools/cli/`: wrappers mantenidos para workflows publicos.
+- `tools/legacy/`: scripts historicos preservados para trazabilidad.
+- `artifacts/`: binarios o resultados migrados desde la estructura anterior.
 
-## Scripts raíz
-
-Los scripts raíz se conservan como entradas reproducibles de investigación.
-Cuando un script empiece a duplicar lógica, el patrón recomendado es:
+Cuando un script de `tools/legacy/` empiece a duplicar lógica, el patrón
+recomendado es:
 
 1. mover la función reusable a `hidden_attractors/`;
-2. dejar el script como wrapper CLI;
-3. agregar un ejemplo pequeño en `version_2/examples/`;
+2. dejar un wrapper CLI en `tools/cli/` si el comando importa;
+3. agregar un ejemplo pequeño en `examples/`;
 4. documentar el contrato numérico y las salidas.
 
-`robustness_overlay_c_trajectories.py` y `lure_top3_sphere_robustness.py` ya
-siguen ese patrón: la lógica vive en `hidden_attractors.workflows`.
+`robustness_overlay_c_trajectories.py`, `lure_top3_sphere_robustness.py` y
+`refine_project_basin_classification.py` ya siguen ese patrón: la lógica vive
+en `hidden_attractors.workflows` y los wrappers viven en `tools/cli/`.
 
 ## Resultados y ejemplos
 

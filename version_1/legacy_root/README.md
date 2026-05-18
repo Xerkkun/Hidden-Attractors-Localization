@@ -8,6 +8,18 @@ dispersas en scripts de experimento: modelos, backends C/EFORK, cargadores de
 candidatos, métricas de trayectoria, clasificación de cuencas, graficación y
 workflows reproducibles.
 
+## Versiones del proyecto
+
+- `version_1/`: referencia de la etapa historica. Conserva el mapa de scripts
+  raiz y se trata como una version congelada para reproducir corridas previas.
+- `version_2/`: version activa. Todo ejemplo nuevo, nota de analisis nueva o
+  workflow reutilizable debe documentarse aqui y, cuando sea codigo reusable,
+  vivir en `hidden_attractors/`.
+
+Los scripts antiguos de la raiz no se mueven de golpe porque muchas corridas
+dependen de rutas relativas y nombres de salida ya usados en reportes. La regla
+actual es: V1 documenta lo historico; V2 concentra las modificaciones nuevas.
+
 ## Instalación local
 
 Desde esta carpeta:
@@ -28,7 +40,9 @@ Python puede importar el paquete directamente desde el directorio actual.
 - `hidden_attractors/analysis/`: métricas geométricas, espectrales y de sección.
 - `hidden_attractors/plotting/`: figuras reutilizables.
 - `hidden_attractors/workflows/`: flujos completos con CLI delgada.
-- `examples/`: ejemplos pequeños que muestran el uso importable.
+- `version_2/examples/`: ejemplos canonicos de la version activa.
+- `version_2/analysis/`: indice de analisis nuevos y pendientes de migracion.
+- `examples/`: wrappers de compatibilidad para comandos antiguos.
 
 Los scripts históricos siguen en la raíz como workflows de investigación. La
 ruta nueva es mover gradualmente la lógica común al paquete y dejar esos
@@ -49,13 +63,13 @@ scripts como entradas CLI reproducibles.
 Listar candidatos finales:
 
 ```bash
-python3 examples/list_final_candidates.py
+python3 version_2/examples/list_final_candidates.py
 ```
 
 Crear solo la configuración de overlays de robustez:
 
 ```bash
-python3 examples/create_robustness_overlay_config.py
+python3 version_2/examples/create_robustness_overlay_config.py
 ```
 
 Lanzar el workflow completo de overlays con procesos independientes:

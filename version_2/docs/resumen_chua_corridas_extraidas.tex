@@ -1,0 +1,208 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[a4paper,margin=2.0cm]{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  urlcolor=blue!55!black
+}
+
+\newcommand{\img}[2]{%
+  \begingroup
+  \pdfximage width #1 {#2}%
+  \pdfrefximage\pdflastximage
+  \endgroup
+}
+\newcommand{\pathcell}[1]{\texttt{\footnotesize #1}}
+\newcommand{\bad}{\textcolor{red!65!black}{no oculta}}
+\newcommand{\explore}{\textcolor{blue!55!black}{exploratoria}}
+
+\title{Extraccion de corridas: Chua no suave y carpeta arctan}
+\author{Resumen desde JSON, CSV y figuras producidas}
+\date{8 de mayo de 2026}
+
+\begin{document}
+\maketitle
+
+
+La lectura principal es la siguiente: hay varias corridas donde si se ejecuto
+la verificacion de ocultamiento, pero todas detectan trayectorias
+\pathcell{TARGET}. Por tanto, ninguna de esas corridas queda soportada como
+atractor oculto bajo la muestra usada. 
+
+\section*{Corridas con verificacion de ocultamiento}
+
+\begin{table}[H]
+\centering
+\caption{Corridas que si produjeron \pathcell{hidden\_target\_summary.json}.}
+\scriptsize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.1cm}cccclX}
+\toprule
+ID & Modelo & \(q\) & Muestras & TARGET & Contacto detectado & Conclusion \\
+\midrule
+V1 base &
+piecewise & 0.999 & 84 & 5 &
+\pathcell{E+:3, E-:2} &
+\bad: muestra inicial ya conecta con el atractor desde \(E_+\) y \(E_-\). \\
+V2 q=0.99 &
+piecewise & 0.990 & 126 & 4 &
+\pathcell{E+:1, E-:3} &
+\bad: el candidato de \(q=0.99\) tambien tiene contacto desde equilibrios. \\
+V3 q=0.99 ref. &
+piecewise & 0.990 & 240 & 35 &
+\pathcell{E+:17, E-:18} &
+\bad: la refinacion fortalece la evidencia en contra del ocultamiento. \\
+V4 E- ref. &
+piecewise & 0.999 & 108 & 13 &
+\pathcell{E-:13} &
+\bad: la vecindad de \(E_-\) alcanza el candidato en varias muestras. \\
+V5 E+ ref. &
+piecewise & 0.999 & 108 & 40 &
+\pathcell{E+:40} &
+\bad: \(E_+\) es el contacto mas fuerte; no hay soporte para oculto. \\
+V6 no suave &
+piecewise & 0.990 & 72 & 2 &
+\pathcell{E+:2} &
+\bad: es el mejor candidato acotado, pero falla como oculto fuerte. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\noindent
+ La corrida menos mala es
+V6, con solo 2 contactos TARGET de 72 muestras, ambos desde \(E_+\).
+
+\begin{figure}[H]
+\centering
+\img{0.78\textwidth}{../chua_no_suave_q0p99_run/chua_piecewise/final_pdf_figs/fig05b_hiddenness_overview.png}
+\caption{No suave, \(q=0.99\): atractor candidato, equilibrios y trayectorias desde vecindades. Los contactos TARGET aparecen desde \(E_+\).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\img{0.78\textwidth}{../chua_arctan/hidden_verify_q_0p99000_refined/hidden_verify/fig05b_hiddenness_q0p99000_refined_overview.png}
+\caption{Verificacion refinada \(q=0.99\) encontrada en \pathcell{chua\_arctan}. El JSON la identifica como \pathcell{piecewise}; la refinacion detecta 35 contactos TARGET.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\img{0.78\textwidth}{../chua_arctan/hidden_verify_refined/fig05b_hiddenness_refined_overview.png}
+\caption{Resumen refinado \(q=0.999\) en \pathcell{chua\_arctan}: 53 contactos TARGET agregados entre \(E_+\) y \(E_-\).}
+\end{figure}
+
+\section*{Corridas exploratorias o sin buen resultado}
+
+\begin{table}[H]
+\centering
+\caption{Exploraciones que no dan una validacion positiva de ocultamiento.}
+\scriptsize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.8cm}c>{\raggedright\arraybackslash}p{3.0cm}X}
+\toprule
+ID & Modelo & Evidencia producida & Por que no es buen resultado \\
+\midrule
+A1 arctan real &
+arctan &
+\pathcell{continuation summary} y figuras iniciales &
+La continuacion diverge. El estado final en \(\epsilon=1\) es de orden
+\(10^{10}\), y no se produjo \pathcell{hidden\_target\_summary.json}. \\
+A2 sweep \(h=0.0075\) &
+piecewise &
+\begin{tabular}[t]{@{}l@{}}barrido \(q=0.99,0.995\)\\\(0.9975,0.999,1.0\)\end{tabular} &
+Fue exploratorio: genera atractores candidatos por \(q\), pero no verifica
+ocultamiento dentro del barrido. Los \(q=0.99\) y \(q=0.999\) luego fueron
+verificados/refinados y resultaron \bad. \\
+A3 sweep no suave &
+piecewise &
+\begin{tabular}[t]{@{}l@{}}barrido \(q=0.97,0.98,0.985\)\\\(0.99,0.995,1.0\)\end{tabular} &
+Tambien fue exploratorio: las corridas terminaron \pathcell{ok}, pero no son
+prueba de ocultamiento. El \(q=0.99\) completo fue verificado y dio 2 TARGET. \\
+A4 completa no suave &
+piecewise &
+corrida completa con cuencas, FFT, bifurcaciones y verificacion &
+Es el conjunto mas completo, pero la verificacion cuantitativa lo descarta como
+oculto fuerte por los contactos desde \(E_+\). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section*{Barridos \(q\)}
+
+\begin{table}[H]
+\centering
+\caption{Barrido exploratorio en \pathcell{chua\_arctan/runs\_q\_sweep\_h0075\_lm8} (JSON: \pathcell{model=piecewise}).}
+\scriptsize
+\begin{tabular}{cccccc}
+\toprule
+\(q\) & Estado & \(a_0\) & \(x_f\) & \(y_f\) & \(z_f\) \\
+\midrule
+0.9900 & ok & 5.6218 & 4.4084 & -0.7921 & -7.0765 \\
+0.9950 & ok & 5.7431 & 0.9894 & 1.3710 & 2.2759 \\
+0.9975 & ok & 5.8006 & -2.9673 & 0.7480 & 6.7329 \\
+0.9990 & ok & 5.8341 & 3.4246 & -0.9771 & -6.1702 \\
+1.0000 & ok & 5.8561 & 0.8509 & 1.4704 & 1.2217 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Barrido exploratorio en \pathcell{chua\_no\_suave\_q0p99\_run/q\_order\_sweep}.}
+\scriptsize
+\begin{tabular}{cccccc}
+\toprule
+\(q\) & Estado & \(a_0\) & \(x_f\) & \(y_f\) & \(z_f\) \\
+\midrule
+0.9700 & ok & 5.0114 & 2.5820 & -0.4106 & -6.5096 \\
+0.9800 & ok & 5.3474 & 3.5202 & 1.4020 & -3.9536 \\
+0.9850 & ok & 5.4906 & 3.4685 & -0.0721 & -7.0342 \\
+0.9900 & ok & 5.6218 & -2.6717 & -1.5139 & 2.1532 \\
+0.9950 & ok & 5.7431 & -3.4210 & 0.6799 & 7.0407 \\
+1.0000 & ok & 5.8561 & -1.8416 & 0.3798 & 6.0088 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{Caso arctan}
+
+Nyquist/DF encontro dos pares y selecciono la rama 0:
+\[
+\omega_0=2.0991692817,\qquad k=-1.3282768771,\qquad a_0=0.9019225739.
+\]
+Pero la continuacion no fue acotada. En \(\epsilon=1\) el estado final fue
+\[
+(-1.3415{\times}10^{10},\ -2.1666{\times}10^{10},\
+-2.3332{\times}10^{10}),
+\]
+por lo que no hay verificacion oculta valida para ese modelo.
+
+\begin{figure}[H]
+\centering
+\img{0.76\textwidth}{../chua_arctan_run/chua_arctan/final_pdf_figs/fig02_continuation_progress.png}
+\caption{Modelo \pathcell{arctan}: progreso de continuacion. La rama seleccionada no entrega un candidato acotado.}
+\end{figure}
+
+
+\section*{Conclusion}
+
+
+\begin{itemize}
+  \item Un candidato no suave \(q=0.99\) relativamente cercano a ser interesante,
+  pero rechazado por 2 contactos TARGET desde \(E_+\).
+  \item Una familia piecewise refinada en \pathcell{chua\_arctan} con muchos mas
+  contactos TARGET, especialmente en \(q=0.999\), por lo que queda peor como
+  candidato oculto.
+  \item Un arctan real en \pathcell{chua\_arctan\_run} que no llega a candidato
+  valido porque diverge antes de la verificacion.
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,50 @@
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+.env
+build/
+dist/
+*.egg-info/
+
+# Native build artifacts
+*.dll
+*.exe
+*.obj
+*.o
+*.so
+*.dylib
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+
+# Generated project outputs
+outputs/
+runs*/
+hidden_verify/
+chua_piecewise/
+native/
+.tmp.driveupload/
+__codex_dir_test/
+.runtime_cache/
+.runtime_native/

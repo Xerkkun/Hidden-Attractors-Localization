@@ -1,0 +1,575 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands,es-tabla]{babel}
+\usepackage[a4paper,margin=2.05cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  urlcolor=blue!55!black,
+  citecolor=blue!55!black
+}
+
+\setlength{\emergencystretch}{2em}
+\renewcommand{\arraystretch}{1.12}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\codepath}[1]{\begingroup\Urlmuskip=0mu plus 2mu\path{#1}\endgroup}
+\newcommand{\status}[1]{\texttt{\small #1}}
+\newcommand{\target}{\texttt{TARGET}}
+\newcommand{\hiddenverified}{\texttt{hidden\_verified}}
+\newcommand{\qmain}{0.9998}
+\newcommand{\Ezero}{E_0}
+\newcommand{\Eplus}{E_+}
+\newcommand{\Eminus}{E_-}
+
+\title{Resumen de verificaciones de ocultedad y candidatos Lur'e/Machado}
+\author{Documento generado desde salidas CSV/JSON del repositorio}
+\date{Datos consultados al 18 de mayo de 2026; salidas principales del 17 de mayo de 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Este documento resume los datos disponibles hasta ahora para tres bloques:
+la replicacion/verificacion del atractor reportado por Danca en el sistema de
+Chua fraccionario no suave, los mejores candidatos generados por la ruta
+Lur'e/funcion descriptiva sesgada, y los mejores candidatos generados por la
+extension tipo Machado. No se incluyen imagenes porque las figuras aun estan
+en ajuste. La lectura central es deliberadamente conservadora: ninguna salida
+actual debe llamarse \hiddenverified. Las semillas armonicas produjeron
+atractores acotados no triviales, pero las pruebas de vecindad de equilibrio
+detectaron contactos \target{} en casos clave.
+\end{abstract}
+
+\section{Convencion de lectura}
+
+En este proyecto se separan cuatro niveles:
+\[
+\text{prediccion armonica}
+\;\Longrightarrow\;
+\text{semilla numerica}
+\;\Longrightarrow\;
+\text{atractor observado en Caputo}
+\;\Longrightarrow\;
+\text{verificacion de ocultedad}.
+\]
+La funcion descriptiva clasica o tipo Machado solo ocupa los dos primeros
+niveles. Una trayectoria clasificada como \target{} desde una vecindad pequena
+de algun equilibrio bloquea la interpretacion como atractor oculto bajo el
+contrato probado. Una salida sin contactos \target{} se reporta como
+compatibilidad bajo la muestra y radios evaluados, no como demostracion.
+
+\begin{table}[h]
+\centering
+\caption{Etiquetas usadas en las salidas y su interpretacion.}
+\small
+\begin{tabularx}{\textwidth}{L{0.29\textwidth}L{0.64\textwidth}}
+\toprule
+Etiqueta & Interpretacion cientifica \\
+\midrule
+\status{target\_attractor} o \target{} &
+La trayectoria fue clasificada como perteneciente al atractor candidato o a su
+geometria de referencia. Si parte de una vecindad de equilibrio, es evidencia
+en contra de ocultedad. \\
+\status{compatible\_with\_hiddenness\_under\_tested\_radii} &
+No se encontraron contactos \target{} en las trayectorias completadas. Es
+evidencia operativa limitada; no equivale a \hiddenverified. \\
+\status{compatible\_with\_hiddenness\_under\_tested\_spheres} &
+No hubo contactos \target{} en cascarones esfericos discretos. No descarta
+contactos dirigidos o no muestreados. \\
+\status{not\_supported\_by\_...} &
+Se encontro por lo menos una trayectoria desde vecindad de equilibrio que llega
+al candidato. La ocultedad no queda soportada por esa prueba. \\
+\status{unknown} &
+La trayectoria no se pudo clasificar con el contrato actual; requiere mayor
+tiempo, refinamiento o criterio geometrico adicional. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Resumen directo de condiciones iniciales y distancias}
+
+La tabla siguiente concentra, antes del detalle metodologico, cuantas
+condiciones iniciales o trayectorias se lanzaron, cuantas salieron \target{} y
+que tan cerca estaban de los equilibrios al iniciar. Cuando la prueba no parte
+de vecindades de equilibrio, se marca como ``no aplica''.
+
+\begin{longtable}{@{}L{0.25\textwidth}L{0.13\textwidth}L{0.11\textwidth}L{0.22\textwidth}L{0.23\textwidth}@{}}
+\caption{Conteo operativo de condiciones iniciales, targets y distancia al equilibrio.}\\
+\toprule
+Prueba & Trayectorias/CI & \target{} & Distancia inicial a equilibrio & Lectura \\
+\midrule
+\endfirsthead
+\toprule
+Prueba & Trayectorias/CI & \target{} & Distancia inicial a equilibrio & Lectura \\
+\midrule
+\endhead
+Replica local Danca ABM &
+200 & 102 &
+\(0.01\) desde \(\Eplus\) y \(\Eminus\) &
+Falla la prueba de ocultedad local: 54/100 targets desde \(\Eplus\) y 48/100
+desde \(\Eminus\). \\
+Corte de cuenca Danca ABM &
+10201 & 976 &
+No es una prueba local; corte \(xy\) completo &
+Sirve para ver cuenca, no para decidir ocultedad por si solo. \\
+Corte de cuenca proyecto EFORK &
+10201 & 3 &
+No es una prueba local; corte \(xy\) completo &
+Clasificador con memoria finita; muchos puntos terminan en infinito o
+desconocido. \\
+Filtro temprano Lur'e &
+25 direcciones unicas, 28 filas crudas & 13 direcciones &
+\(10^{-5}\) desde \(\Eplus,\Eminus,\Ezero\) &
+Bloquea \hiddenverified{} para \status{rank\_0001} y \status{rank\_0004}. \\
+Corrida 1 refinada Machado &
+1622 & 0 &
+Bola/cascaron en \(\Ezero\), radios \(10^{-5}\) y \(3\times10^{-5}\) &
+Compatible solo bajo los radios completados; no evalua completamente el segundo
+candidato. \\
+Machado dirigido LM10 &
+2 dirigidas + 2 reproducciones & 2 dirigidas + 2 reproducidas &
+\(10^{-5}\) desde \(\Eminus\), direccion \status{axis\_p\_x} &
+Bloquea ocultedad para los dos candidatos Machado top. \\
+Top-3 cascarones esfericos &
+4500 & 0 &
+Radios \(10^{-5},3\times10^{-5},10^{-4},3\times10^{-4},10^{-3}\) desde
+\(\Ezero,\Eplus,\Eminus\) &
+No observa target en cascarones aleatorios, pero no cancela los contactos
+dirigidos. \\
+Robustez por reclasificacion top-3 &
+12 & 0 &
+No aplica; parte de estados del candidato &
+No robusto como target bajo contratos alternos. \\
+Superposicion geometrica C &
+18 & no clasifica target &
+No aplica; parte de estados del candidato &
+Mide persistencia geometrica acotada, no ocultedad. \\
+\bottomrule
+\end{longtable}
+
+\section{Sistema y equilibrios}
+
+Los analisis resumidos aqui usan el sistema de Chua no suave de Danca 2017:
+\[
+{}^C D_t^q x = \alpha(y-x-f(x)),\qquad
+{}^C D_t^q y = x-y+z,\qquad
+{}^C D_t^q z = -\beta y-\gamma z,
+\]
+con
+\[
+\alpha=8.4562,\quad \beta=12.0732,\quad \gamma=0.0052,\quad
+m_0=-0.1768,\quad m_1=-1.1468,\quad q=\qmain.
+\]
+Los equilibrios calculados y usados por las pruebas son:
+\[
+\Eminus=(-6.588307887,-0.002836402,6.585471484),\quad
+\Ezero=(0,0,0),\quad
+\Eplus=(6.588307887,0.002836402,-6.585471484).
+\]
+El criterio de Matignon da \(\Ezero\) estable localmente y \(\Eminus,\Eplus\)
+inestables para \(q=\qmain\). Por eso la verificacion de ocultedad debe
+muestrear vecindades de los tres equilibrios, no solo observar separacion
+visual del atractor.
+
+\section{Atractor reportado por Danca}
+
+\subsection{Contrato numerico}
+
+La replicacion disponible usa el integrador Adams--Bashforth--Moulton para
+Caputo con historia completa, sin truncamiento de memoria:
+\[
+h=0.05,\qquad t_{\mathrm{final}}=500,\qquad
+t_{\mathrm{trans}}=250,\qquad \delta=0.01.
+\]
+El PDF usado no publica la condicion inicial de la Fig. 3; por ello se localizo
+una semilla compatible, identificada como
+\status{machado\_mu2\_seed\_project}. La semilla produjo una trayectoria
+\status{bounded\_nontrivial} y fue usada como referencia numerica del atractor
+de Danca.
+
+\begin{table}[h]
+\centering
+\caption{Prueba local tipo Danca: trayectorias desde vecindades de los equilibrios inestables.}
+\small
+\begin{tabular}{lrrrrl}
+\toprule
+Equilibrio & Distancia inicial & Trayectorias & \target{} & Infinito & Decision \\
+\midrule
+\(\Eplus\)  & \(1.0\times10^{-2}\) & 100 & 54 & 46 & \status{not\_supported\_by\_Danca\_delta\_test} \\
+\(\Eminus\) & \(1.0\times10^{-2}\) & 100 & 48 & 52 & \status{not\_supported\_by\_Danca\_delta\_test} \\
+\midrule
+Total & -- & 200 & 102 & 98 & no soportado como oculto \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Todas las condiciones iniciales de esta prueba estan a distancia
+\(\delta=0.01\) del equilibrio correspondiente. Entre las trayectorias que
+terminaron en \target{}, la distancia final al equilibrio mas cercano quedo
+aproximadamente entre \(0.275\) y \(0.738\), con medianas \(0.667\) para
+\(\Eplus\) y \(0.680\) para \(\Eminus\). Esto indica que la trayectoria sale de
+una vecindad local muy pequena y termina lejos del equilibrio, en la region
+clasificada como atractor candidato.
+
+\subsection{Corte de cuenca Danca vs candidato del proyecto}
+
+Tambien se ejecuto un corte \(xy\) de \(101\times101=10201\) condiciones
+iniciales para comparar el contrato ABM de Danca contra el clasificador EFORK
+del candidato del proyecto. Los cortes no son metodo-identicos: Danca usa ABM
+con historia completa y el proyecto usa EFORK con memoria finita.
+
+\begin{table}[h]
+\centering
+\caption{Conteos del corte de cuenca \(101\times101\).}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Contrato & Equilibrio & Target + & Target - & Infinito & Desconocido \\
+\midrule
+Danca ABM & 1 & 514 & 462 & 8747 & 477 \\
+Proyecto EFORK & 0 & 1 & 2 & 9097 & 1101 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La lectura es que el corte muestra regiones que alcanzan clases tipo target,
+pero el criterio de ocultedad queda decidido por las vecindades de equilibrio:
+con \(\delta=0.01\), Danca no queda soportado como oculto en esta replicacion.
+
+\section{Ruta Lur'e sesgada}
+
+\subsection{Busqueda armonica}
+
+La exploracion Lur'e sesgada se ejecuto con \(q=\qmain\). La funcion
+descriptiva se uso como generador de semillas de primer armonico, no como
+prueba de ciclos exactos en Caputo. La evaluacion principal produjo:
+
+\begin{table}[h]
+\centering
+\caption{Resumen de la exploracion Lur'e sesgada.}
+\small
+\begin{tabular}{lr}
+\toprule
+Cantidad & Valor \\
+\midrule
+Evaluaciones crudas & 5208 \\
+Candidatos filtrados & 121 \\
+Semillas generadas & 968 \\
+Filas de continuacion registradas & 38 \\
+Supervivientes de continuacion & 4 \\
+Candidatos que pasaron filtro temprano desde \(E_+\) & 0 \\
+Supervivientes robustos registrados & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El mejor candidato por residual fue
+\status{lure\_biased\_q\_0p99980\_rank\_0001}, con
+\[
+A=5.8517686,\quad \sigma_0\approx -9.75\times10^{-11},\quad
+\omega=2.0402861,\quad |R|=6.82\times10^{-13},\quad
+\rho_H=0.123874.
+\]
+El residual pequeno solo confirma consistencia de la semilla armonica de primer
+orden. La validacion posterior debe mirar las trayectorias de Caputo.
+
+\subsection{Continuacion y filtro temprano}
+
+Cuatro candidatos sobrevivieron la continuacion como
+\status{bounded\_nontrivial}, con memoria transportada y confiabilidad alta:
+\status{rank\_0001}, \status{rank\_0003}, \status{rank\_0004} y
+\status{rank\_0005}. Sin embargo, el filtro temprano desde equilibrios encontro
+contactos \target{}.
+
+\begin{table}[h]
+\centering
+\caption{Contactos desde vecindades de equilibrio en la ruta Lur'e.}
+\small
+\begin{tabular}{llrrl}
+\toprule
+Candidato & Equilibrio & Distancia inicial & Direcciones \target{} & Conclusion \\
+\midrule
+\status{rank\_0001} & \(\Eplus\) & \(1.0\times10^{-5}\) & 1 & bloquea ocultedad \\
+\status{rank\_0004} & \(\Eplus\) & \(1.0\times10^{-5}\) & 8 & bloquea ocultedad \\
+\status{rank\_0004} & \(\Eminus\) & \(1.0\times10^{-5}\) & 4 & bloquea ocultedad \\
+\status{rank\_0004} & \(\Ezero\) & \(1.0\times10^{-5}\) & 0 & sin contacto target en ese equilibrio \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Para \status{rank\_0001}, basta una sola direccion desde \(\Eplus\), a
+distancia \(10^{-5}\), para impedir una declaracion de atractor oculto. Para
+\status{rank\_0004}, las direcciones \target{} desde \(\Eplus\) y \(\Eminus\)
+son todavia mas fuertes.
+
+\section{Ruta Machado}
+
+\subsection{Barridos de semillas}
+
+La ruta Machado usa una funcion descriptiva fraccionaria auxiliar como
+generador de semillas. El parametro \(\mu\) de Machado no es el orden de
+Caputo: \(q\) se mantuvo en \(\qmain\) para la corrida principal.
+
+\begin{table}[h]
+\centering
+\caption{Barridos Machado disponibles.}
+\small
+\begin{tabularx}{\textwidth}{lrrrrX}
+\toprule
+Barrido & \(q\) & Registros & OK & Fallidos & Lectura \\
+\midrule
+\status{machado\_sweep} & 0.9998 & 552 & 264 & 288 &
+Barrido principal. Todos los registros OK quedaron
+\status{not\_supported\_by\_sample}; los mejores tuvieron al menos un contacto
+\target{}. \\
+\status{machado\_sweep\_fast} & 0.99 & 72 & 36 & 36 &
+Barrido auxiliar/historico con otro \(q\). No debe mezclarse con las
+conclusiones de \(q=0.9998\). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+En el barrido principal, la regla de seleccion fue: menor numero de contactos
+\target{}, desempate por mayor rango en \(x\) y menor norma de semilla. Los dos
+mejores candidatos fueron:
+
+\begin{table}[h]
+\centering
+\caption{Mejores candidatos Machado del barrido principal.}
+\small
+\begin{tabular}{lrrrrrl}
+\toprule
+Candidato & \(\mu\) & \(\theta\) & \(\omega\) & \(A\) & \target{} muestra & Estado inicial \\
+\midrule
+\status{branch\_0\_mu\_4p00000\_theta\_0p00000}
+& 4.0 & 0.0 & 2.040286 & 1.714948 & 1 & \status{not\_supported\_by\_sample} \\
+\status{branch\_0\_mu\_2p00000\_theta\_3p92699}
+& 2.0 & 3.926991 & 2.040286 & 2.628434 & 1 & \status{not\_supported\_by\_sample} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Corrida 1 refinada}
+
+La primera reverificacion fina intento reemplazar la lectura de barrido por
+muestreos mas densos en vecindades. La corrida planificada era grande:
+49344 simulaciones para la etapa A si se cubrian candidatos, radios, modos de
+muestreo y equilibrios. En la ejecucion disponible se completaron 1622 filas
+crudas, todas para el candidato \(\mu=4,\theta=0\) en vecindades de \(\Ezero\).
+
+\begin{table}[h]
+\centering
+\caption{Estado de Corrida 1 refinada.}
+\small
+\begin{tabularx}{\textwidth}{L{0.34\textwidth}rrrrX}
+\toprule
+Candidato & Trayectorias & Radios efectivos & \target{} & Distancia inicial & Decision \\
+\midrule
+\status{branch\_0\_mu\_4p00000\_theta\_0p00000}
+& 1622 & \(10^{-5},3\times10^{-5}\) & 0 &
+bola/cascaron alrededor de \(\Ezero\) &
+\status{compatible\_with\_hiddenness\_under\_tested\_radii}; no es \hiddenverified. \\
+\status{branch\_0\_mu\_2p00000\_theta\_3p92699}
+& 0 & -- & 0 & -- &
+\status{not\_evaluated\_cost\_guard}; no se puede concluir desde esta corrida. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+La compatibilidad de la primera fila era local y parcial: cubria solamente los
+radios y trayectorias que llegaron a completarse. Por eso se ejecuto una ruta
+dirigida posterior.
+
+\subsection{Verificacion dirigida Machado con memoria corta}
+
+La verificacion dirigida uso un contrato EFORK de memoria corta:
+\[
+q=0.9998,\qquad h=0.01,\qquad L_m=10,\qquad t_{\mathrm{final}}=3000
+\]
+para reconstruir los atractores de referencia. Se hicieron dos reconstrucciones
+de atractor, una por candidato, ambas \status{bounded\_nontrivial}. Luego se
+probaron direcciones dirigidas desde vecindades de equilibrio y se reprodujo el
+contacto con un contrato mas estricto.
+
+\begin{table}[h]
+\centering
+\caption{Prueba dirigida y reproduccion de contactos Machado.}
+\small
+\begin{tabularx}{\textwidth}{L{0.34\textwidth}lrrrrX}
+\toprule
+Candidato & Eq. & Distancia inicial & Tests dirigidos & \target{} & Reproducidos & Resultado \\
+\midrule
+\status{branch\_0\_mu\_4p00000\_theta\_0p00000}
+& \(\Eminus\) & \(1.0\times10^{-5}\) & 1 & 1 & 1 &
+\status{not\_supported\_by\_equilibrium\_neighborhood\_test}. \\
+\status{branch\_0\_mu\_2p00000\_theta\_3p92699}
+& \(\Eminus\) & \(1.0\times10^{-5}\) & 1 & 1 & 1 &
+\status{not\_supported\_by\_equilibrium\_neighborhood\_test}. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+La direccion fue \status{axis\_p\_x} desde \(\Eminus\). En ambos casos la
+condicion inicial estaba a distancia \(9.9999999996\times10^{-6}\) de
+\(\Eminus\). La trayectoria \target{} dirigida termino a distancia aproximada
+2.795 del equilibrio mas cercano, es decir, no se quedo localmente pegada al
+equilibrio; salio de la vecindad y alcanzo la geometria del candidato. La
+reproduccion B uso \(h=0.005\), \(L_m=1\), \(t_{\mathrm{final}}=3000\), y
+volvio a dar \target{} para ambos candidatos. Por eso la robustez larga se
+omitio: ya habia un contacto reproducido desde equilibrio.
+
+\section{Prueba top-3 con cascarones esfericos}
+
+Para los tres candidatos que se estaban comparando
+\[
+\status{branch\_0\_mu\_4p00000\_theta\_0p00000},\quad
+\status{branch\_0\_mu\_2p00000\_theta\_3p92699},\quad
+\status{lure\_biased\_q\_0p99980\_rank\_0001},
+\]
+se lanzaron cascarones esfericos alrededor de \(\Ezero,\Eplus,\Eminus\) con
+radios
+\[
+10^{-5},\quad 3\times10^{-5},\quad 10^{-4},\quad 3\times10^{-4},\quad 10^{-3}.
+\]
+Cada combinacion candidato--equilibrio--radio tuvo 100 condiciones iniciales,
+por lo que cada candidato uso \(3\times5\times100=1500\) trayectorias y el
+experimento completo tuvo 4500 trayectorias.
+
+\begin{table}[h]
+\centering
+\caption{Resultado agregado de los cascarones esfericos top-3.}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Candidato & Trayectorias & \target{} & Equilibrio & Infinito & Desconocido \\
+\midrule
+\status{branch\_0\_mu\_4p00000\_theta\_0p00000} & 1500 & 0 & 275 & 498 & 727 \\
+\status{branch\_0\_mu\_2p00000\_theta\_3p92699} & 1500 & 0 & 277 & 512 & 711 \\
+\status{lure\_biased\_q\_0p99980\_rank\_0001} & 1500 & 0 & 284 & 502 & 714 \\
+\midrule
+Total & 4500 & 0 & 836 & 1512 & 2152 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Esta prueba es compatible con ocultedad bajo esos cascarones discretos, pero no
+domina a las pruebas dirigidas: para los candidatos Machado ya existe un
+contacto reproducido desde \(\Eminus\) a distancia \(10^{-5}\), y para Lur'e
+existe un contacto temprano desde \(\Eplus\) a distancia \(10^{-5}\). La
+ausencia de \target{} en los cascarones aleatorios debe leerse como ``no se
+observo contacto en esa muestra'', no como refutacion de los contactos
+dirigidos.
+
+Los archivos de geometria de esferas usados para graficar no agregan nuevas
+clasificaciones. Muestrean, por visualizacion, hasta 36 condiciones iniciales
+por combinacion dentro de la esfera de radio maximo \(10^{-3}\) y recortan
+segmentos cortos de trayectoria. Esas figuras quedan pendientes de inclusion.
+
+\section{Pruebas de robustez y superposicion}
+
+Se ejecutaron dos clases de prueba de robustez para los tres candidatos top-3.
+La primera intenta reclasificar el candidato bajo cambios numericos; la segunda
+superpone nubes de trayectoria para medir persistencia geometrica sin decidir
+ocultedad.
+
+\begin{table}[h]
+\centering
+\caption{Robustez por reclasificacion EFORK en top-3.}
+\small
+\begin{tabular}{lrrrl}
+\toprule
+Candidato & Casos & Casos target & No target & Estado \\
+\midrule
+\status{branch\_0\_mu\_4p00000\_theta\_0p00000} & 4 & 0 & 4 & \status{not\_robust\_under\_tested\_contracts} \\
+\status{branch\_0\_mu\_2p00000\_theta\_3p92699} & 4 & 0 & 4 & \status{not\_robust\_under\_tested\_contracts} \\
+\status{lure\_biased\_q\_0p99980\_rank\_0001} & 4 & 0 & 4 & \status{not\_robust\_under\_tested\_contracts} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La superposicion geometrica C lanzo 18 trayectorias: 3 candidatos por 6
+contratos numericos. Los contratos incluyeron \(h=0.005,0.01,0.02\),
+\(L_m=5,10,20\) y \(t_{\mathrm{final}}=1500,3000\). Esta prueba no clasifica
+\target{} ni decide ocultedad. En ella todas las trayectorias fueron acotadas,
+sin divergencia, sin colapso a equilibrio y con varianza no colapsada. El caso
+\(L_m=20\) debe leerse como sensibilidad numerica, no como contrato STM32 de
+memoria corta.
+
+\section{Conclusiones operativas}
+
+\begin{enumerate}
+\item El atractor reportado por Danca fue reproducido como dinamica acotada no
+trivial bajo ABM con historia completa, pero la prueba local \(\delta=0.01\)
+produjo 102 contactos \target{} de 200 trayectorias desde \(\Eplus\) y
+\(\Eminus\). En esta replicacion no queda soportado como oculto.
+
+\item El mejor candidato Lur'e,
+\status{lure\_biased\_q\_0p99980\_rank\_0001}, tiene residual armonico muy
+pequeno y sobrevive continuacion EFORK, pero una condicion inicial a distancia
+\(10^{-5}\) de \(\Eplus\) llega a \target{}. Por tanto no debe etiquetarse
+como \hiddenverified.
+
+\item Los dos mejores candidatos Machado de \(q=\qmain\) sobreviven como
+atractores acotados no triviales, pero la verificacion dirigida encontro y
+reprodujo contactos \target{} a distancia \(10^{-5}\) de \(\Eminus\). La
+conclusion recomendada es documentarlos como candidatos autoexcitados o no
+ocultos bajo el contrato probado, no como atractores ocultos.
+
+\item La prueba de cascarones esfericos top-3 lanzo 4500 trayectorias y no
+encontro \target{}. Esa evidencia es util para mapear geometria de cuencas, pero
+no cancela los contactos dirigidos, que son mas especificos y reproducidos.
+
+\item Las pruebas de robustez geometrica muestran persistencia de trayectorias
+acotadas bajo cambios de \(h\), \(L_m\) y tiempo total, pero robustez del
+atractor y ocultedad son criterios distintos. La robustez no convierte un
+candidato con contacto desde equilibrio en oculto.
+\end{enumerate}
+
+\section{Artefactos consultados}
+
+\begin{longtable}{@{}L{0.42\textwidth}L{0.50\textwidth}@{}}
+\toprule
+Archivo & Uso en este reporte \\
+\midrule
+\endhead
+\codepath{outputs/danca2017_chua_abm_20260515_182354/danca_hiddenness_summary.csv} &
+Conteos de trayectorias locales desde \(\Eplus\) y \(\Eminus\). \\
+\codepath{outputs/danca2017_chua_abm_20260515_182354/danca_hiddenness_raw.csv} &
+Distancias iniciales y clases finales de la prueba Danca. \\
+\codepath{outputs/danca2017_chua_abm_20260515_182354/danca_reference_summary.json} &
+Contrato ABM y semilla de referencia localizada. \\
+\codepath{outputs/basin_compare_danca_project_h001_grid101_20260517/basin_comparison_summary.json} &
+Conteos del corte de cuenca Danca/proyecto. \\
+\codepath{outputs/lure_biased_multiparam_q09998/lure_biased_multiparam_summary.json} &
+Resumen global de busqueda Lur'e. \\
+\codepath{outputs/lure_biased_multiparam_q09998/continuation_survivors.csv} &
+Supervivientes de continuacion Lur'e. \\
+\codepath{outputs/lure_biased_multiparam_q09998/early_equilibrium_filter_summary.csv} &
+Contactos tempranos desde vecindades de equilibrio en Lur'e. \\
+\codepath{runs_machado_sweep_fast/chua_piecewise/machado_sweep/machado_sweep_summary.json} &
+Barrido Machado principal con \(q=0.9998\). \\
+\codepath{outputs/extended_search/corrida1/refined_hiddenness_decision.csv} &
+Estado de Corrida 1 refinada. \\
+\codepath{outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/machado_targeted_decision.csv} &
+Decision final de verificacion dirigida Machado. \\
+\codepath{outputs/top3_machado_lure_sphere_C_20260517_v2/sphere_decision.csv} &
+Decision de cascarones esfericos top-3. \\
+\codepath{outputs/top3_machado_lure_sphere_C_20260517_v2/sphere_raw.csv} &
+Conteos agregados por clase y distancias de radios esfericos. \\
+\codepath{outputs/robustness_overlay_c_trajectories_20260517/robustness_overlay_metrics.csv} &
+Persistencia geometrica bajo cambios de contrato numerico. \\
+\bottomrule
+\end{longtable}
+
+\end{document}
