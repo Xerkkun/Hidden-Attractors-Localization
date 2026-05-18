@@ -112,6 +112,29 @@ def read_json(path: Path) -> Dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _existing_case_indices(outdir: Path, prefix: str) -> set[int]:
+    """Return case indices already present in any chunk CSV for a relaunch.
+
+    Mathematical purpose:
+        A basin sweep is a grid of independent initial conditions.  If a long
+        run is interrupted or relaunched with more workers, completed grid
+        points can be reused without changing the numerical contract.
+
+    Validity warning:
+        This only avoids duplicated grid points.  It does not validate that old
+        rows were produced with the same config; the relaunch must preserve the
+        existing ``positive_x_basin_config.json`` contract.
+    """
+
+    done: set[int] = set()
+    for path in sorted(outdir.glob(f"{prefix}_*.csv")):
+        for row in read_csv_rows(path):
+            raw = row.get("case_index")
+            if raw not in (None, ""):
+                done.add(int(raw))
+    return done
+
+
 def _danca_class_id(row: Dict[str, Any], cfg: Dict[str, Any]) -> int:
     if row.get("status") != "ok":
         return 5
@@ -326,7 +349,7 @@ def make_plan(outdir: Path, args: argparse.Namespace) -> Dict[str, Any]:
     return cfg
 
 
-def run_danca_chunk(outdir: Path, chunk_id: int, chunks: int) -> Path:
+def run_danca_chunk(outdir: Path, chunk_id: int, chunks: int, *, skip_existing: bool = False) -> Path:
     force_single_openmp_thread_current_process()
     cfg = read_json(outdir / "positive_x_basin_config.json")
     plan = read_csv_rows(outdir / "positive_x_basin_plan.csv")
@@ -342,10 +365,13 @@ def run_danca_chunk(outdir: Path, chunk_id: int, chunks: int) -> Path:
     eqs = solve_equilibria(dcfg.params())
     rhs = chua_rhs_factory(dcfg)
     path = outdir / f"danca_basin_chunk_{chunk_id:03d}.csv"
-    if path.exists():
+    if path.exists() and not skip_existing:
         path.unlink()
+    completed = _existing_case_indices(outdir, "danca_basin_chunk") if skip_existing else set()
     for item in plan:
         idx = int(item["case_index"])
+        if idx in completed:
+            continue
         if idx % int(chunks) != int(chunk_id):
             continue
         x0 = np.array([float(item["x0"]), float(item["y0"]), float(item["z0"])], dtype=float)
@@ -393,17 +419,20 @@ def run_danca_chunk(outdir: Path, chunk_id: int, chunks: int) -> Path:
     return path
 
 
-def run_project_chunk(outdir: Path, chunk_id: int, chunks: int) -> Path:
+def run_project_chunk(outdir: Path, chunk_id: int, chunks: int, *, skip_existing: bool = False) -> Path:
     force_single_openmp_thread_current_process()
     cfg = read_json(outdir / "positive_x_basin_config.json")
     pcfg = cfg["project"]
     plan = read_csv_rows(outdir / "positive_x_basin_plan.csv")
     backend = BasinBackend.build(output_name=f"chua_basin_posx_{int(chunk_id):03d}")
     path = outdir / f"project_basin_chunk_{chunk_id:03d}.csv"
-    if path.exists():
+    if path.exists() and not skip_existing:
         path.unlink()
+    completed = _existing_case_indices(outdir, "project_basin_chunk") if skip_existing else set()
     for item in plan:
         idx = int(item["case_index"])
+        if idx in completed:
+            continue
         if idx % int(chunks) != int(chunk_id):
             continue
         cid = backend.classify_point(
@@ -595,8 +624,33 @@ def refine_after_aggregate(outdir: Path, *, wait: bool = True, poll_sec: float =
     return outdir / "project_refinement_launch.json"
 
 
+def _config_for_existing_plan_relaunch(outdir: Path, args: argparse.Namespace) -> Dict[str, Any]:
+    cfg_path = outdir / "positive_x_basin_config.json"
+    cfg = read_json(cfg_path)
+    backup = outdir / f"positive_x_basin_config.before_relaunch_{timestamp()}.json"
+    write_json(backup, cfg)
+    cfg["chunks"] = int(args.chunks)
+    cfg["project_chunks"] = int(args.project_chunks)
+    cfg["refine_chunks"] = int(args.refine_chunks)
+    cfg.setdefault("relaunch_history", [])
+    cfg["relaunch_history"].append(
+        {
+            "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "mode": "use_existing_plan_skip_existing",
+            "chunks": int(args.chunks),
+            "project_chunks": int(args.project_chunks),
+            "refine_chunks": int(args.refine_chunks),
+            "skip_existing": bool(args.skip_existing),
+            "config_backup": str(backup),
+        }
+    )
+    write_json(cfg_path, cfg)
+    write_json(outdir / "basin_comparison_config.json", cfg)
+    return cfg
+
+
 def launch(outdir: Path, args: argparse.Namespace) -> Path:
-    cfg = make_plan(outdir, args)
+    cfg = _config_for_existing_plan_relaunch(outdir, args) if bool(args.use_existing_plan) else make_plan(outdir, args)
     logs = outdir / "logs"
     logs.mkdir(parents=True, exist_ok=True)
     env = force_single_openmp_thread_env(os.environ.copy())
@@ -606,10 +660,14 @@ def launch(outdir: Path, args: argparse.Namespace) -> Path:
     jobs: List[Dict[str, Any]] = []
     for chunk_id in range(int(args.chunks)):
         argv = [sys.executable, str(Path(__file__).resolve()), "--job", "danca-chunk", "--output-dir", str(outdir), "--chunk-id", str(chunk_id), "--chunks", str(args.chunks)]
+        if bool(args.skip_existing):
+            argv.append("--skip-existing")
         proc = subprocess.Popen(argv, cwd=str(ROOT), env=env, stdout=(logs / f"danca_chunk_{chunk_id:03d}.out").open("ab"), stderr=(logs / f"danca_chunk_{chunk_id:03d}.err").open("ab"), start_new_session=True, close_fds=True)
         jobs.append({"name": f"danca_chunk_{chunk_id:03d}", "pid": proc.pid, "argv": argv})
     for chunk_id in range(int(args.project_chunks)):
         argv = [sys.executable, str(Path(__file__).resolve()), "--job", "project-chunk", "--output-dir", str(outdir), "--chunk-id", str(chunk_id), "--chunks", str(args.project_chunks)]
+        if bool(args.skip_existing):
+            argv.append("--skip-existing")
         proc = subprocess.Popen(argv, cwd=str(ROOT), env=env, stdout=(logs / f"project_chunk_{chunk_id:03d}.out").open("ab"), stderr=(logs / f"project_chunk_{chunk_id:03d}.err").open("ab"), start_new_session=True, close_fds=True)
         jobs.append({"name": f"project_chunk_{chunk_id:03d}", "pid": proc.pid, "argv": argv})
     for job in ["aggregate", "refine-after-aggregate"]:
@@ -649,6 +707,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--mean-x-gap", type=float, default=0.08)
     parser.add_argument("--chain-project-refinement", action="store_true", default=True)
     parser.add_argument("--no-chain-project-refinement", dest="chain_project_refinement", action="store_false")
+    parser.add_argument("--use-existing-plan", action="store_true", help="Relaunch from an existing output directory without rewriting the grid plan.")
+    parser.add_argument("--skip-existing", action="store_true", help="Skip case_index values already present in chunk CSVs.")
     parser.add_argument("--wait", action="store_true")
     return parser.parse_args()
 
@@ -661,9 +721,9 @@ def main() -> None:
     elif args.job == "launch":
         launch(outdir, args)
     elif args.job == "danca-chunk":
-        run_danca_chunk(outdir, int(args.chunk_id), int(args.chunks))
+        run_danca_chunk(outdir, int(args.chunk_id), int(args.chunks), skip_existing=bool(args.skip_existing))
     elif args.job == "project-chunk":
-        run_project_chunk(outdir, int(args.chunk_id), int(args.chunks))
+        run_project_chunk(outdir, int(args.chunk_id), int(args.chunks), skip_existing=bool(args.skip_existing))
     elif args.job == "aggregate":
         aggregate(outdir, wait=bool(args.wait))
     elif args.job == "refine-after-aggregate":
