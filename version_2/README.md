@@ -24,8 +24,11 @@ of the public API are kept under `tools/legacy/`.
 - Optional adapters for external nonlinear time-series tools such as `nolds`
   and `antropy`, with PyDSTool documented as a companion continuation tool.
 - C/EFORK wrapper classes with local build policy.
-- Workflow entry points for robustness overlays, sphere controls, and refined
-  basin classification.
+- Workflow entry points for robustness overlays, sphere controls, refined basin
+  classification, and the unified Chua pipeline without manual environment
+  variables.
+- Public seed-generation helpers for classical, biased, and Machado
+  describing-function seeds.
 - Small examples and smoke tests for users who install from GitHub.
 
 ## Installation
@@ -70,7 +73,11 @@ After editable installation, the same candidate listing is available as:
 
 ```bash
 hidden-attractors-list-candidates
+hidden-attractors-unified-chua --help
 ```
+
+Heavy numerical stages use the packaged C backends. Python helpers are for
+configuration, seed construction, post-processing, plotting, and IO.
 
 ## Documentation Map
 
@@ -100,7 +107,7 @@ tests/                  package smoke tests
 configs/                workflow configurations
 docs/                   user and developer documentation
 tools/cli/              compatibility command wrappers
-tools/legacy/           historical scripts not yet public API
+tools/legacy/           historical scripts kept for traceability and transition
 outputs/                reference outputs used by examples/loaders
 artifacts/              migrated runtime/prebuilt artifacts
 ```

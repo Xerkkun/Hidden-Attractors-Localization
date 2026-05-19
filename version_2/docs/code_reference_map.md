@@ -14,6 +14,14 @@ policy.
 | `hidden_attractors.models.chua.rhs_piecewise` | Vector field used inside Caputo/EFORK integrations | M. Caputo, "Linear Models of Dissipation whose Q is almost Frequency Independent-II"; M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems" |
 | `hidden_attractors.models.chua.equilibria_piecewise` | Equilibria of the piecewise Chua model | Chua circuit model plus the fractional stability interpretation of D. Matignon, "Stability Results for Fractional Differential Equations with Applications to Control Processing" |
 
+## Seed Generation
+
+| Code | Purpose | Reference source |
+|---|---|---|
+| `hidden_attractors.seed_generation.find_harmonic_seed` | Classical or Machado describing-function seed construction | Genesio--Tesi frequency-domain harmonic-balance approach; Tenreiro Machado fractional describing-function family; local Weyl-to-Caputo warning in the report |
+| `hidden_attractors.seed_generation.reconstruct_biased_lure_seed` | Biased Lur'e seed reconstruction from DC and first harmonic equations | Local biased describing-function contract documented in the Chua report |
+| `hidden_attractors.solvers.FractionalHistory` | EFORK-compatible finite memory window container | Local finite-memory EFORK contract; heavy integration is delegated to C backends |
+
 ## Trajectory Diagnostics
 
 | Code | Purpose | Reference source |
@@ -37,11 +45,12 @@ policy.
 
 | Code | Purpose | Reference source |
 |---|---|---|
-| `hidden_attractors.native.FractionalChuaBackend` | Wrapper for C/EFORK fractional Chua integration | Caputo fractional model; local EFORK contract documented in the reports |
+| `hidden_attractors.native.FractionalChuaBackend` | Wrapper for C/EFORK fractional Chua integration | Caputo fractional model; local EFORK contract documented in `reporte_unificado_chua_fraccionario.tex` |
 | `hidden_attractors.native.BasinBackend` | Wrapper for basin classification backend | Leonov--Kuznetsov hidden/self-excited classification plus local finite-time basin contract |
 | `hidden_attractors.workflows.robustness_overlay` | Overlay trajectories under changes of `h`, `Lm`, and `t_final` | Local robustness contract; robustness does not imply hiddenness |
 | `hidden_attractors.workflows.sphere_controls` | Spherical controls around equilibria | Leonov--Kuznetsov basin criterion; finite-sample numerical control |
 | `hidden_attractors.workflows.refined_basin` | Refine unresolved basin cells by trajectory geometry | Local target-reference geometry contract |
+| `hidden_attractors.workflows.unified_chua` | Explicit Python/CLI wrapper for the unified Chua workflow without manual environment variables | Local workflow contract; heavy stages must use C backends |
 
 ## Optional External Methods
 
@@ -57,8 +66,8 @@ policy.
 |---|---|---|
 | `tools/legacy/danca2017_chua_abm_replication.py` | Replicate Danca's non-smooth fractional Chua example with ABM | M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems"; K. Diethelm, N. J. Ford, and A. D. Freed, "A Predictor-Corrector Approach for the Numerical Solution of Fractional Differential Equations" |
 | `tools/legacy/unified_nyquist_hidden_pipeline.py` | Historical full pipeline for Lur'e/Nyquist, EFORK, basins, bifurcation, and Lyapunov diagnostics | Leonov--Kuznetsov hidden attractors, Genesio--Tesi frequency-domain harmonic-balance approach, Matignon stability, Benettin Lyapunov method |
-| `tools/legacy/chua_initial_cond.py` | Historical Lur'e/transfer/describing-function seed generation | Genesio, Tesi, and Villoresi, "A Frequency Approach for Analyzing and Controlling Chaos in Nonlinear Circuits"; Tavazoei--Haeri fractional-order periodicity caution |
-| `docs/machado_chua_fraccionario.tex` | Machado-style extension used as seed generator | Tenreiro Machado fractional describing-function family; local use is heuristic and must not be read as proof of Caputo cycles |
+| `tools/legacy/chua_initial_cond.py` | Historical Lur'e/transfer/describing-function script kept for reproducibility; new seed calls should use `hidden_attractors.seed_generation` | Genesio, Tesi, and Villoresi, "A Frequency Approach for Analyzing and Controlling Chaos in Nonlinear Circuits"; Tavazoei--Haeri fractional-order periodicity caution |
+| `tools/legacy/biased_describing_function.py` | Historical biased/Machado seed script kept for reproducibility; new calls should use `hidden_attractors.seed_generation` | Tenreiro Machado fractional describing-function family plus the local heuristic contract documented in `reporte_unificado_chua_fraccionario.tex`; must not be read as proof of Caputo cycles |
 
 ## Policy For New Calculation Code
 
@@ -69,4 +78,7 @@ When adding a new calculation module:
    an operational diagnostic.
 3. If a maintained external package already implements the algorithm, add an
    adapter and citation instead of copying the algorithm.
-4. Add a small example that writes reproducible figures or CSV/JSON artifacts.
+4. If the method integrates many trajectories, classifies basins, estimates
+   Lyapunov exponents, or runs bifurcation sweeps, use or add a C backend rather
+   than a heavy Python implementation.
+5. Add a small example that writes reproducible figures or CSV/JSON artifacts.

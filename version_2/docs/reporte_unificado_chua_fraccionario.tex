@@ -53,27 +53,32 @@ oculto. La lectura de ocultedad se basa en la clasificacion de
 Leonov--Kuznetsov y requiere analizar si la cuenca del atractor candidato
 intersecta vecindades de los equilibrios.
 
-\section{Indice tematico de los documentos previos}
+\section{Indice tematico consolidado}
+
+Este archivo es el reporte activo unico. Los documentos LaTeX anteriores se
+absorbieron aqui para evitar mantener resumenes paralelos con resultados
+desfasados. La tabla siguiente registra que contenido quedo consolidado y en
+que parte del reporte se usa.
 
 \begin{longtable}{@{}L{0.31\textwidth}L{0.61\textwidth}@{}}
 \toprule
-Documento previo & Contenido consolidado aqui \\
+Contenido absorbido & Ubicacion en este reporte \\
 \midrule
 \endhead
-\codepath{reporte_matematico_pipeline.tex} &
+\codepath{reporte_matematico_pipeline} &
 Teoria del sistema de Chua fraccionario, forma de Lur'e, transferencia
 fraccionaria, funcion descriptiva, continuacion, cuencas y advertencias de
 interpretacion. \\
-\codepath{reporte_detallado_pipeline_hidden_attractors.tex} &
+\codepath{reporte_detallado_pipeline_hidden_attractors} &
 Auditoria de archivos historicos, rutas Lur'e/Machado, Matignon, verificacion
 de ocultedad y checklist tecnico. \\
-\codepath{machado_chua_fraccionario.tex} &
+\codepath{machado_chua_fraccionario} &
 Extension tipo Machado usada como generador de semillas armonicas auxiliares. \\
-\codepath{resumen_verificacion_danca_lure_machado.tex} &
+\codepath{resumen_verificacion_danca_lure_machado} &
 Resumen de replicacion Danca, candidatos Lur'e y candidatos Machado. \\
-\codepath{resumen_chua_no_suave_arctan.tex} &
+\codepath{resumen_chua_no_suave_arctan} &
 Comparacion entre Chua no suave y variante arctan. \\
-\codepath{resumen_chua_corridas_extraidas.tex} &
+\codepath{resumen_chua_corridas_extraidas} &
 Inventario de corridas disponibles y figuras extraidas. \\
 \bottomrule
 \end{longtable}
@@ -153,20 +158,368 @@ Systems: Systems with No Equilibria, Multistability and Coexisting Attractors}.
 
 En codigo, esto se traduce en una secuencia conservadora:
 \[
-\text{semilla armonica}
-\Rightarrow
-\text{atractor observado}
-\Rightarrow
-\text{comparacion con target}
-\Rightarrow
-\text{robustez}
-\Rightarrow
-\text{pruebas desde vecindades de equilibrios}
-\Rightarrow
-\text{lectura de ocultedad}.
+\begin{aligned}
+\text{semilla armonica} &\Rightarrow \text{atractor observado}
+\Rightarrow \text{comparacion con target}\\
+&\Rightarrow \text{robustez}
+\Rightarrow \text{pruebas desde vecindades de equilibrios}\\
+&\Rightarrow \text{lectura de ocultedad}.
+\end{aligned}
 \]
 Si aparece una trayectoria \TARGET{} desde una vecindad de equilibrio, el
 candidato no debe etiquetarse como oculto bajo ese contrato.
+
+\section{Resultados consolidados del caso no suave}
+
+El caso principal del repositorio es el Chua fraccionario no suave con
+\[
+\alpha=8.4562,\quad \beta=12.0732,\quad \gamma=0.0052,\quad
+m_0=-0.1768,\quad m_1=-1.1468,\quad q=0.9998.
+\]
+El proposito de los analisis no fue declarar ocultedad desde una semilla
+armonica, sino someter candidatos a una cadena de pruebas: reproduccion de
+atractor, continuacion, comparacion seccional, controles desde vecindades de
+equilibrios, cuencas, robustez numerica y comparacion con la replica tipo
+Danca.
+
+\begin{longtable}{@{}L{0.24\textwidth}L{0.33\textwidth}L{0.34\textwidth}@{}}
+\caption{Lectura global de las corridas principales del Chua no suave.}\\
+\toprule
+Bloque & Evidencia disponible & Decision conservadora \\
+\midrule
+\endfirsthead
+\toprule
+Bloque & Evidencia disponible & Decision conservadora \\
+\midrule
+\endhead
+Pipeline no suave \codepath{chua_piecewise} &
+Verificacion EFORK/C con \(504\) trayectorias de detalle y \(22\) contactos
+\TARGET{} desde radios muestreados alrededor de \(E_+\) y \(E_-\). &
+\codepath{not_supported_by_sample}; hay atractor numerico, pero no se debe
+etiquetar como oculto bajo esa muestra. \\
+Replica Danca ABM &
+ABM con historia completa, \(h=0.05\), \(t_f=500\), \(\delta=0.01\). La
+referencia localizada fue \codepath{bounded_nontrivial}; desde vecindades de
+equilibrios inestables aparecieron \(102/200\) contactos \TARGET{}. &
+La replica reproduce dinamica acotada tipo Danca, pero no soporta ocultedad:
+\(54/100\) contactos desde \(E_+\) y \(48/100\) desde \(E_-\). \\
+Ruta Lur'e sesgada &
+\(5208\) evaluaciones crudas, \(121\) candidatos filtrados, \(968\) semillas y
+\(4\) supervivientes de continuacion. El mejor por residual fue
+\codepath{lure_biased_q_0p99980_rank_0001}. &
+No hay \codepath{hidden_verified}: \codepath{rank_0001} toca \TARGET{} desde
+\(E_+\) a distancia \(10^{-5}\); \codepath{rank_0004} toca desde \(E_+\) y
+\(E_-\). \\
+Ruta Machado &
+Barrido principal con \(552\) registros. Los dos candidatos top fueron
+\codepath{branch_0_mu_4p00000_theta_0p00000} y
+\codepath{branch_0_mu_2p00000_theta_3p92699}. &
+Ambos quedan bloqueados como ocultos: una prueba dirigida desde \(E_-\), a
+distancia \(10^{-5}\), encontro y reprodujo contacto \TARGET{} en cada caso. \\
+Cascarones esfericos top-3 &
+\(4500\) trayectorias: \(1500\) por candidato para dos Machado y un Lur'e, en
+radios \(10^{-5}\) a \(10^{-3}\) alrededor de \(E_0,E_+,E_-\). No hubo
+\TARGET{} en esos cascarones. &
+Resultado compatible solo con esa muestra esferica; no cancela contactos
+dirigidos mas especificos ya reproducidos. \\
+Robustez geometrica &
+\(18\) trayectorias de superposicion: \(3\) candidatos por \(6\) contratos
+numericos con cambios en \(h\), \(L_m\) y \(t_f\). &
+Sirve para persistencia geometrica. No decide ocultedad ni convierte un
+candidato con contacto desde equilibrio en oculto. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Mejores candidatos y lectura}
+
+\begin{longtable}{@{}L{0.28\textwidth}L{0.28\textwidth}L{0.35\textwidth}@{}}
+\caption{Candidatos que concentraron el analisis posterior.}\\
+\toprule
+Candidato & Por que fue seleccionado & Resultado posterior \\
+\midrule
+\endfirsthead
+\toprule
+Candidato & Por que fue seleccionado & Resultado posterior \\
+\midrule
+\endhead
+\codepath{lure_biased_q_0p99980_rank_0001} &
+Mejor residual de la busqueda Lur'e sesgada:
+\(|R|\approx6.82\times10^{-13}\), \(\omega=2.0402861\),
+\(A=5.8517686\), \(\rho_H=0.123874\). &
+Sobrevivio continuacion como \codepath{bounded_nontrivial}, pero una condicion
+inicial desde \(E_+\) a \(10^{-5}\) llega a \TARGET{}. No es
+\codepath{hidden_verified}. \\
+\codepath{lure_biased_q_0p99980_rank_0004} &
+Superviviente Lur'e de continuacion, revisado porque era el unico candidato
+no descartado inmediatamente por redundancia visual con \codepath{rank_0001}. &
+El filtro temprano encontro \(8\) direcciones \TARGET{} desde \(E_+\) y \(4\)
+desde \(E_-\), todas a distancia \(10^{-5}\). \\
+\codepath{branch_0_mu_4p00000_theta_0p00000} &
+Mejor candidato Machado por la regla de seleccion: menor numero de contactos
+en barrido, mayor rango en \(x\) y menor norma de semilla. &
+Corrida refinada parcial: \(1622\) filas, \(0\) \TARGET{} en \(E_0\) para
+radios completados. Luego la prueba dirigida desde \(E_-\) encontro y reprodujo
+\TARGET{}; se documenta como autoexcitado/no oculto bajo el contrato probado. \\
+\codepath{branch_0_mu_2p00000_theta_3p92699} &
+Segundo candidato Machado top; tambien reproduce geometria acotada y fue
+usado como semilla compatible para la replica visual Danca. &
+La prueba dirigida desde \(E_-\) encontro y reprodujo \TARGET{} a distancia
+\(10^{-5}\). No debe reportarse como oculto. \\
+\codepath{machado_mu2_seed_project} &
+Semilla localizada para reproducir la figura Danca cuando el articulo no
+publica la condicion inicial exacta de su Fig. 3. &
+ABM con historia completa produce una referencia acotada no trivial, pero la
+prueba local Danca \(\delta=0.01\) produce \(102/200\) contactos desde
+equilibrios inestables. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Calificacion numerica por candidato}
+
+La calificacion usada en esta tabla separa dos preguntas. Un candidato puede
+ser \emph{bueno como atractor numerico} si produce una trayectoria acotada no
+trivial y persistente. Ese mismo candidato puede ser \emph{malo como atractor
+oculto} si alguna trayectoria lanzada desde una vecindad de equilibrio llega a
+la clase \TARGET{}. En este reporte, ``malo como oculto'' no significa que la
+dinamica sea inutil; significa que falla la definicion operacional de
+ocultedad bajo el contrato probado.
+
+\begin{longtable}{@{}L{0.23\textwidth}L{0.18\textwidth}L{0.23\textwidth}L{0.27\textwidth}@{}}
+\caption{Calificacion por candidato con resultados numericos principales.}\\
+\toprule
+Candidato & Atractor observado & Pruebas lanzadas y targets & Calificacion final \\
+\midrule
+\endfirsthead
+\toprule
+Candidato & Atractor observado & Pruebas lanzadas y targets & Calificacion final \\
+\midrule
+\endhead
+\codepath{chua_piecewise} / semilla objetivo actual &
+Si. Semilla de verificacion
+\((-4.1141,-0.3339,7.1949)\); referencia con \(22\) puntos seccionales. &
+\(504\) trayectorias locales: \(168\) desde cada equilibrio. Total:
+\(22\) \TARGET{}; \(12\) desde \(E_+\) y \(10\) desde \(E_-\). &
+Bueno como atractor numerico del caso no suave; malo como oculto bajo la
+muestra, \codepath{not_supported_by_sample}. \\
+\codepath{machado_mu2_seed_project} / replica Danca ABM &
+Si. ABM con historia completa, \(h=0.05\), \(t_f=500\);
+\codepath{bounded_nontrivial}; rangos de cola
+\((11.344,3.292,17.036)\). &
+\(200\) trayectorias locales: \(54/100\) \TARGET{} desde \(E_+\) y
+\(48/100\) desde \(E_-\). Corte \(xy\): \(10201\) CI, \(976\) targets
+ABM. &
+Bueno como replica visual/numerica de Danca; malo como oculto en esta
+replicacion porque la cuenca toca vecindades inestables. \\
+\codepath{lure_biased_q_0p99980_rank_0001} &
+Si. Superviviente EFORK \codepath{bounded_nontrivial}; rango
+\((13.504,3.378,18.630)\); entropia PSD \(0.207\). &
+Busqueda: \(5208\) evaluaciones, \(121\) filtrados, \(968\) semillas.
+Filtro local: \(1/1\) \TARGET{} desde \(E_+\) a \(10^{-5}\). Esferas:
+\(0/1500\) \TARGET{}. Robustez: \(6/6\) acotadas. &
+Muy bueno como semilla armonica (\(|R|=6.82\times10^{-13}\)); malo como
+oculto por contacto desde \(E_+\). \\
+\codepath{lure_biased_q_0p99980_rank_0003} &
+Si. Superviviente EFORK \codepath{bounded_nontrivial}; rango
+\((13.467,3.376,18.645)\). &
+No se registro filtro local posterior especifico en las salidas actuales. La
+prioridad bajo el flujo actual quedo por debajo de \codepath{rank_0001} y
+\codepath{rank_0004}. &
+Bueno como superviviente numerico; no calificado como oculto. Se conserva como
+evidencia secundaria/redundante, no como mejor candidato. \\
+\codepath{lure_biased_q_0p99980_rank_0004} &
+Si. Superviviente EFORK \codepath{bounded_nontrivial}; rango
+\((13.454,3.372,18.638)\). &
+Filtro local: \(27\) trayectorias crudas. Desde \(E_+\): \(11/11\) filas
+\TARGET{} (\(8\) direcciones unicas). Desde \(E_-\): \(4/8\) \TARGET{}.
+Desde \(E_0\): \(0/8\). &
+Bueno como atractor numerico; malo como oculto, bloqueado con evidencia mas
+fuerte que \codepath{rank_0001}. \\
+\codepath{lure_biased_q_0p99980_rank_0005} &
+Si. Superviviente EFORK \codepath{bounded_nontrivial}; rango
+\((13.394,3.379,18.606)\). &
+No se registro filtro local posterior especifico en las salidas actuales; se
+considero candidato de menor prioridad frente a los contactos ya detectados en
+la familia Lur'e. &
+Bueno como superviviente numerico; no se debe promover a oculto ni gastar
+computo adicional sin una razon nueva. \\
+\codepath{branch_0_mu_4p00000_theta_0p00000} &
+Si. Mejor Machado por regla de seleccion; rango
+\((13.499,3.379,18.665)\). &
+Barrido: \(1\) \TARGET{} en muestra. Corrida refinada parcial:
+\(1622\) trayectorias desde \(E_0\), \(0\) \TARGET{}. Prueba dirigida:
+\(1/1\) \TARGET{} desde \(E_-\); reproduccion: \(1/1\). Esferas:
+\(0/1500\). Robustez: \(6/6\) acotadas. &
+Bueno como atractor numerico y figura; malo como oculto por contacto dirigido
+reproducido desde \(E_-\). \\
+\codepath{branch_0_mu_2p00000_theta_3p92699} &
+Si. Segundo Machado top; usado tambien para localizar la referencia visual
+Danca. &
+Barrido: \(1\) \TARGET{} en muestra. Corrida refinada grande: no ejecutada por
+guardia de costo. Prueba dirigida: \(1/1\) \TARGET{} desde \(E_-\);
+reproduccion: \(1/1\). Esferas: \(0/1500\). Robustez: \(6/6\) acotadas. &
+Bueno como atractor numerico; malo como oculto por contacto dirigido
+reproducido desde \(E_-\). \\
+\bottomrule
+\end{longtable}
+
+\subsection{Detalle numerico de la replica Danca}
+
+La replica de Danca se corrio con ABM de Caputo e historia completa, no con
+memoria truncada. El articulo no da la condicion inicial exacta de la Fig. 3,
+por lo que se registro la mejor semilla localizada en las salidas:
+\[
+x_0=(3.039383585,\,-0.241686207,\,-6.873467365).
+\]
+Con \(h=0.05\), \(t_f=500\), transitorio \(250\), \(\delta=0.01\) y
+semilla \codepath{machado_mu2_seed_project}, la trayectoria de referencia fue
+\codepath{bounded_nontrivial}. Sus valores numericos principales fueron:
+\[
+\|X_f\|=9.495281,\quad d(X_f,E_-)=1.834312,\quad
+\Delta_{\rm tail}=(11.344069,\;3.292309,\;17.035874),
+\]
+\[
+\text{FFT peak}=0.369963,\qquad \text{PSD entropy}=0.162207.
+\]
+
+\begin{table}[h]
+\centering
+\caption{Danca ABM: prueba local desde equilibrios inestables.}
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+Eq. & \(\delta\) & Lanzadas & \TARGET{} & Infinito & Fallas & Decision \\
+\midrule
+\(E_+\) & \(0.01\) & 100 & 54 & 46 & 0 &
+\codepath{not_supported_by_Danca_delta_test} \\
+\(E_-\) & \(0.01\) & 100 & 48 & 52 & 0 &
+\codepath{not_supported_by_Danca_delta_test} \\
+\midrule
+Total & -- & 200 & 102 & 98 & 0 & no oculto bajo esta prueba \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Para las trayectorias Danca que si terminaron como \TARGET{}, la distancia al
+equilibrio mas cercano al final quedo lejos de la vecindad inicial:
+\[
+E_+:\; n=54,\quad d_{\min}=0.275450,\quad d_{\rm med}=0.666168,\quad
+d_{\max}=0.737682,
+\]
+\[
+E_-:\; n=48,\quad d_{\min}=0.279070,\quad d_{\rm med}=0.677771,\quad
+d_{\max}=0.738392.
+\]
+Esto es importante: los targets no son pequenas oscilaciones pegadas al punto
+de equilibrio, sino trayectorias que salen de una vecindad de radio \(0.01\) y
+terminan en la geometria clasificada como atractor.
+
+\begin{table}[h]
+\centering
+\caption{Danca ABM contra clasificador del proyecto en corte \(xy\), malla \(101\times101\).}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Contrato & Equilibrio & Target + & Target - & Infinito & Desconocido \\
+\midrule
+Danca ABM, historia completa & 1 & 514 & 462 & 8747 & 477 \\
+Proyecto EFORK/C, memoria finita & 0 & 1 & 2 & 9097 & 1101 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Trayectorias lanzadas y targets}
+
+La tabla siguiente es la bitacora numerica compacta de los controles que
+decidieron la calificacion. Las filas de ``esferas'' son controles aleatorios
+por cascarones; las filas ``dirigidas'' son mas fuertes para bloquear
+ocultedad porque salen de una direccion concreta a distancia \(10^{-5}\) de un
+equilibrio.
+
+\begin{longtable}{@{}L{0.27\textwidth}L{0.12\textwidth}L{0.16\textwidth}r r L{0.25\textwidth}@{}}
+\caption{Trayectorias/condiciones iniciales lanzadas y contactos \TARGET{}.}\\
+\toprule
+Candidato o prueba & Eq. & Radio/contrato & Lanzadas & \TARGET{} & Lectura \\
+\midrule
+\endfirsthead
+\toprule
+Candidato o prueba & Eq. & Radio/contrato & Lanzadas & \TARGET{} & Lectura \\
+\midrule
+\endhead
+\codepath{chua_piecewise} &
+\(E_0\) & \(10^{-5}\) a \(10^{-2}\) & 168 & 0 &
+Todas quedaron como equilibrio operacional. \\
+\codepath{chua_piecewise} &
+\(E_+\) & \(10^{-5}\) a \(10^{-2}\) & 168 & 12 &
+Bloqueo de ocultedad: \(4\) targets en \(r=0.003\) y \(8\) en \(r=0.01\). \\
+\codepath{chua_piecewise} &
+\(E_-\) & \(10^{-5}\) a \(10^{-2}\) & 168 & 10 &
+Bloqueo adicional: \(3\) targets en \(r=0.003\) y \(7\) en \(r=0.01\). \\
+Replica Danca ABM &
+\(E_+\) & \(\delta=0.01\) & 100 & 54 &
+No soporta ocultedad local tipo Danca. \\
+Replica Danca ABM &
+\(E_-\) & \(\delta=0.01\) & 100 & 48 &
+No soporta ocultedad local tipo Danca. \\
+Corte Danca ABM \(xy\) &
+-- & malla \(101\times101\) & 10201 & 976 &
+Cuenca visual: \(514\) target positivo y \(462\) target negativo. \\
+Corte proyecto EFORK \(xy\) &
+-- & malla \(101\times101\) & 10201 & 3 &
+Comparacion no metodo-identica; muchos puntos divergen o quedan desconocidos. \\
+\codepath{rank_0001} Lur'e &
+\(E_+\) & dirigido \(10^{-5}\) & 1 & 1 &
+Una trayectoria basta para descartar ocultedad bajo ese contrato. \\
+\codepath{rank_0004} Lur'e &
+\(E_+\) & dirigido \(10^{-5}\) & 11 & 11 &
+\(8\) direcciones \TARGET{} unicas; evidencia fuerte contra ocultedad. \\
+\codepath{rank_0004} Lur'e &
+\(E_0\) & dirigido \(10^{-5}\) & 8 & 0 &
+Sin target desde \(E_0\), pero esto no compensa \(E_+\) y \(E_-\). \\
+\codepath{rank_0004} Lur'e &
+\(E_-\) & dirigido \(10^{-5}\) & 8 & 4 &
+Contacto desde equilibrio inestable; bloquea ocultedad. \\
+\codepath{branch_0_mu_4p00000_theta_0p00000} &
+\(E_0\) & Corrida 1 parcial & 1622 & 0 &
+Compatible solo en radios completados; no es \codepath{hidden_verified}. \\
+\codepath{branch_0_mu_4p00000_theta_0p00000} &
+\(E_-\) & dirigido \(10^{-5}\) & 1 & 1 &
+Contacto dirigido que bloquea ocultedad. \\
+\codepath{branch_0_mu_4p00000_theta_0p00000} &
+\(E_-\) & reproduccion \(h=0.005,L_m=1\) & 1 & 1 &
+Reproduce el bloqueo con contrato mas estricto. \\
+\codepath{branch_0_mu_2p00000_theta_3p92699} &
+\(E_-\) & dirigido \(10^{-5}\) & 1 & 1 &
+Contacto dirigido que bloquea ocultedad. \\
+\codepath{branch_0_mu_2p00000_theta_3p92699} &
+\(E_-\) & reproduccion \(h=0.005,L_m=1\) & 1 & 1 &
+Reproduce el bloqueo con contrato mas estricto. \\
+Esferas top-3: \codepath{rank_0001} &
+\(E_0,E_+,E_-\) & radios \(10^{-5}\) a \(10^{-3}\) & 1500 & 0 &
+No observa target en cascarones; no cancela el contacto dirigido desde \(E_+\). \\
+Esferas top-3: Machado \(\mu=4\) &
+\(E_0,E_+,E_-\) & radios \(10^{-5}\) a \(10^{-3}\) & 1500 & 0 &
+No observa target en cascarones; no cancela el contacto dirigido desde \(E_-\). \\
+Esferas top-3: Machado \(\mu=2\) &
+\(E_0,E_+,E_-\) & radios \(10^{-5}\) a \(10^{-3}\) & 1500 & 0 &
+No observa target en cascarones; no cancela el contacto dirigido desde \(E_-\). \\
+Robustez geometrica top-3 &
+-- & \(6\) contratos por candidato & 18 & -- &
+\(18/18\) acotadas, sin divergencia ni colapso; caracteriza persistencia, no
+ocultedad. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Comparacion con la variante arctan}
+
+La variante \codepath{arctan} se mantiene como caso seleccionable del pipeline,
+pero no es el foco de resultados de este reporte. La corrida historica con el
+mismo perfil rapido que el no suave encontro cruces Nyquist/DF, pero la rama
+seleccionada divergio durante la continuacion: el estado final quedo del orden
+de \(10^{10}\). Por eso no habia referencia robusta para ejecutar la
+verificacion de ocultedad. La conclusion operacional es que el Chua no suave
+es el unico de esos dos casos que produjo un candidato acotado y analizable; el
+caso \codepath{arctan} requiere nueva rama, parametros o contrato numerico
+antes de compararlo cientificamente.
 
 \section{Funciones publicas de la libreria}
 
@@ -201,10 +554,14 @@ El mapa completo codigo--referencia vive en
 
 \section{Ejemplo ejecutable con trayectoria real}
 
-El ejemplo reproducible para las figuras de esta seccion es:
+El ejemplo reproducible para las figuras de esta seccion usa la trayectoria:
+\begin{quote}\small
+\codepath{outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/trajectories/branch_0_mu_4p00000_theta_0p00000_reference_attractor.csv}
+\end{quote}
+La llamada tiene esta forma:
 \begin{verbatim}
 python examples/dynamical_analysis_gallery.py \
-  --trajectory-csv outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/trajectories/branch_0_mu_4p00000_theta_0p00000_reference_attractor.csv \
+  --trajectory-csv <trajectory_csv> \
   --output-dir outputs/examples/dynamical_analysis_real_trajectory_smoke
 \end{verbatim}
 
@@ -234,7 +591,7 @@ usando una trayectoria real de
 La llamada documentada fue:
 \begin{verbatim}
 python examples/dynamical_analysis_gallery.py ^
-  --trajectory-csv outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/trajectories/branch_0_mu_4p00000_theta_0p00000_reference_attractor.csv ^
+  --trajectory-csv <trajectory_csv> ^
   --output-dir outputs/examples/dynamical_analysis_real_trajectory_smoke
 \end{verbatim}
 
@@ -509,6 +866,48 @@ cartografiar la cuenca, pero no cancela un contacto dirigido ya reproducido.
 \caption{Geometria esferica por equilibrio para el candidato Lur'e sesgado \codepath{rank_0001}.}
 \end{figure}
 
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{sphere_machado_mu4_Eplus.png}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{sphere_machado_mu4_Eminus.png}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{sphere_machado_mu4_E0.png}
+\end{minipage}
+\caption{Trayectorias locales en volumenes esfericos para el candidato Machado \(\mu=4,\theta=0\), alrededor de \(E_+\), \(E_-\) y \(E_0\).}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{sphere_machado_mu2_Eplus.png}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{sphere_machado_mu2_Eminus.png}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{sphere_machado_mu2_E0.png}
+\end{minipage}
+\caption{Trayectorias locales en volumenes esfericos para el candidato Machado \(\mu=2,\theta=3.92699\), alrededor de \(E_+\), \(E_-\) y \(E_0\).}
+\end{figure}
+
+Estas graficas usan \codepath{sphere_geometry_plot_window_segments_v2}: radio
+maximo \(10^{-3}\), ventanas locales de ancho \(0.02\), segmentos EFORK cortos
+de \(t=2\), hasta \(90\) puntos por segmento y hasta \(180\) trayectorias por
+grafica local. En los cascarones completos hubo \(1500\) trayectorias por
+candidato y \(0\) \TARGET{} en los tres candidatos top-3, pero esas figuras son
+visuales: no invalidan los contactos dirigidos que si aparecieron desde
+equilibrios.
+
 \clearpage
 \subsection{Figuras pendientes de regeneracion}
 
@@ -533,7 +932,7 @@ La API publica ya tiene post-procesamiento simple; falta exponer una corrida den
 Cuencas \(xz\) y \(yz\), \codepath{fig10b}, \codepath{fig10c} &
 Ejecutar \codepath{basin_only} o migrar \codepath{compute_basin_planes_c} a workflow publico documentado. \\
 FFT/PSD, \codepath{fig11b_fft_spectrum}, \codepath{fig11_psd_welch} &
-Regenerar con \codepath{HIDDEN_ATTRACTORS_PSD=1}; citar que FFT/PSD caracterizan frecuencia, no ocultedad. \\
+Regenerar con \codepath{hidden-attractors-unified-chua --psd}; citar que FFT/PSD caracterizan frecuencia, no ocultedad. \\
 Lyapunov, \codepath{fig12_lyapunov_convergence} &
 Ejecutar backend Benettin solo bajo contrato explicito; citar los dos articulos de Benettin et al. \\
 TISEAN/exportes externos &
@@ -555,7 +954,7 @@ Hidden/self-excited & \emph{Hidden Attractors in Dynamical Systems: From Hidden 
 ABM fraccionario & \emph{A Predictor-Corrector Approach for the Numerical Solution of Fractional Differential Equations}. \\
 Lur'e/armonic balance & \emph{A Frequency Approach for Analyzing and Controlling Chaos in Nonlinear Circuits}. \\
 Lyapunov & \emph{Lyapunov Characteristic Exponents for Smooth Dynamical Systems and for Hamiltonian Systems; A Method for Computing All of Them. Part 1: Theory} y \emph{Part 2: Numerical Application}. \\
-Machado-style seeds & Documento local \codepath{machado_chua_fraccionario.tex}; la cita completa debe fijarse antes de publicar si se usa como referencia externa primaria. \\
+Machado-style seeds & Seccion ``Forma de Lur'e, funcion descriptiva y semillas'' de este reporte; la cita completa debe fijarse antes de publicar si se usa como referencia externa primaria. \\
 \bottomrule
 \end{longtable}
 

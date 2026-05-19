@@ -444,7 +444,7 @@ def N_sat_machado(a, p, mu):
     """
     Funcion descriptiva fraccionaria auxiliar tipo Machado.
 
-    Para el Chua no suave usado en docs/machado_chua_fraccionario.tex se tiene
+    Para el Chua no suave descrito en version_2/docs/reporte_unificado_chua_fraccionario.tex se tiene
     N_psi(a)>0 y se usa N_{psi,mu}(a) = N_psi(a)^mu, mu>0.
     """
     mu = float(mu)

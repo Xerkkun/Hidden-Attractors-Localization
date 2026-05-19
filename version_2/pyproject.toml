@@ -48,6 +48,7 @@ Repository = "https://github.com/<owner>/hidden-attractors-fo"
 
 [project.scripts]
 hidden-attractors-list-candidates = "hidden_attractors.cli:list_candidates"
+hidden-attractors-unified-chua = "hidden_attractors.workflows.unified_chua:main"
 hidden-attractors-robustness-overlay = "hidden_attractors.workflows.robustness_overlay:main"
 hidden-attractors-sphere-controls = "hidden_attractors.workflows.sphere_controls:main"
 hidden-attractors-refined-basin = "hidden_attractors.workflows.refined_basin:main"

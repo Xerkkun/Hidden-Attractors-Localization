@@ -4947,7 +4947,7 @@ def run_describing_function_comparison(cfg: Dict[str, Any]) -> Dict[str, Any]:
         "selection_rule": "menor total_target_hits; empate por mayor rango_x y menor norma de semilla",
         "notes": [
             "La DF clasica es el caso mu=1.",
-            "La alternativa tipo Machado usa la formulacion N_mu(a)=N(a)^mu descrita en docs/machado_chua_fraccionario.tex y en Tenreiro Machado.",
+            "La alternativa tipo Machado usa la formulacion N_mu(a)=N(a)^mu descrita en version_2/docs/reporte_unificado_chua_fraccionario.tex y en Tenreiro Machado.",
             "Si best_candidate tiene total_target_hits > 0, el candidato no queda soportado como oculto bajo esta muestra.",
         ],
     }

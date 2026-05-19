@@ -1,6 +1,6 @@
 # Unified Report
 
-The current unified LaTeX source is:
+The canonical LaTeX source is:
 
 ```text
 docs/reporte_unificado_chua_fraccionario.tex
@@ -16,6 +16,9 @@ It consolidates the previous `.tex` files into a thematic structure:
 - pending figure sections for Nyquist, continuation, dense bifurcation,
   spectral diagnostics, and Lyapunov diagnostics;
 - conservative interpretation of hiddenness.
+
+The older standalone LaTeX reports were retired to avoid repeated, stale
+results. Keep result updates in `reporte_unificado_chua_fraccionario.tex`.
 
 ## Build
 

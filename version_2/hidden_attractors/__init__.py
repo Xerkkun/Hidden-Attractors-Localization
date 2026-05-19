@@ -13,20 +13,26 @@ from .analysis import RobustnessCase, trajectory_metrics
 from .basins import CLASS_LABELS, TARGET_CLASS_IDS, class_label, is_target_class
 from .candidates import CandidateRecord, load_final_candidate_records
 from .io import load_trajectory_csv
-from .models.chua import ChuaParameters, chua_piecewise_parameters, equilibria_piecewise, rhs_piecewise
+from .models.chua import ChuaParameters, chua_parameters, chua_piecewise_parameters, equilibria_piecewise, rhs_piecewise
+from .seed_generation import HarmonicSeed, find_harmonic_seed, find_omega_gain_candidates, validate_fractional_order
 
 __all__ = [
     "CLASS_LABELS",
     "CandidateRecord",
     "ChuaParameters",
+    "HarmonicSeed",
     "RobustnessCase",
     "TARGET_CLASS_IDS",
     "class_label",
     "chua_piecewise_parameters",
+    "chua_parameters",
     "equilibria_piecewise",
+    "find_harmonic_seed",
+    "find_omega_gain_candidates",
     "is_target_class",
     "load_trajectory_csv",
     "load_final_candidate_records",
     "rhs_piecewise",
     "trajectory_metrics",
+    "validate_fractional_order",
 ]

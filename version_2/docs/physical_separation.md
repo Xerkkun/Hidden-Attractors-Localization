@@ -6,8 +6,8 @@ La separacion fisica ya esta hecha de forma conservadora:
 - `version_2/` contiene la copia activa autocontenida.
 - `version_2/pyproject.toml` instala el paquete desde `version_2/`.
 - `version_2/examples/` es la ubicacion canonica para ejemplos nuevos.
-- `version_2/docs/` es la ubicacion canonica para documentacion y notas de
-  analisis.
+- `version_2/docs/` es la unica ubicacion canonica para documentacion, notas
+  de analisis, figuras y reportes.
 - `version_2/tools/legacy/` contiene los scripts historicos migrados fuera de
   la raiz de V2.
 
@@ -35,6 +35,6 @@ python version_2/examples/list_final_candidates.py
 Si quieres conservar el repositorio Git, no borres `.git/`.
 
 Los demas archivos y carpetas que queden fuera de `version_1/` y `version_2/`
-son duplicados de la raiz vieja despues de esta separacion. Borralos solo
-despues de confirmar que no necesitas una ruta antigua exacta para algun script
-externo o acceso directo.
+son duplicados de la raiz vieja despues de esta separacion. La carpeta
+documental activa debe mantenerse solo en `version_2/docs/`; no se deben crear
+copias paralelas de reportes en la raiz ni en `version_1/legacy_root/docs/`.

@@ -1,0 +1,847 @@
+
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands,es-tabla]{babel}
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts,mathtools}
+\usepackage{booktabs,longtable,tabularx,array}
+\usepackage{ragged2e}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{listings}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  urlcolor=blue!55!black,
+  citecolor=blue!55!black
+}
+
+\setlength{\emergencystretch}{2em}
+\renewcommand{\arraystretch}{1.14}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+\DeclareRobustCommand{\codepath}[1]{\begingroup\Urlmuskip=0mu plus 2mu\path{#1}\endgroup}
+\pdfstringdefDisableCommands{\def\codepath#1{#1}}
+
+\newcommand{\CaputoD}{{}^{C}D_t^q}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\med}{\operatorname{median}}
+\newcommand{\TARGET}{\texttt{TARGET}}
+
+\lstdefinestyle{terminal}{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  columns=fullflexible
+}
+\lstset{style=terminal}
+
+\title{Complemento matematico y operativo del reporte de la libreria\\
+\large \texttt{hidden-attractors-fo}, \texttt{version\_2}}
+\author{Revision tecnica del reporte unificado y cruce contra codigo activo}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{Objetivo de este complemento}
+
+El archivo \codepath{version_2/docs/reporte_unificado_chua_fraccionario.tex}
+ya contiene el sustento general del proyecto: modelo de Chua fraccionario,
+criterio de Matignon, forma de Lur'e, funcion descriptiva, ruta Machado,
+verificacion de ocultedad y lectura de figuras. Sin embargo, al cruzarlo contra
+los modulos activos de \codepath{version_2/hidden_attractors/}, conviene
+agregar varias piezas que si estan codificadas pero no quedan suficientemente
+formalizadas en el reporte.
+
+Este documento no reemplaza el reporte principal. Esta escrito como bloque
+complementario listo para integrarse despues de las secciones de teoria y antes
+de las secciones de figuras/resultados.
+
+\section{Hallazgos de auditoria}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}L{0.24\textwidth}L{0.28\textwidth}Y@{}}
+\toprule
+Elemento revisado & Estado en el reporte actual & Complemento recomendado \\
+\midrule
+Parametros exactos de la libreria & Aparecen de forma indirecta o en algunos workflows. & Agregar tabla de parametros oficiales usados por \codepath{ChuaParameters}. \\
+Equilibrios implementados & Se menciona que se calculan equilibrios, pero falta derivacion algebraica desde el codigo. & Agregar derivacion de \(E_0,E_+,E_-\) con la pendiente \(s_c=-\beta/(\beta+\gamma)\). \\
+Jacobiano por regiones & El reporte cita Matignon, pero no fija claramente la matriz por pendiente local. & Agregar \(J(a)\), \(a\in\{m_0,m_1\}\), y el criterio fraccionario. \\
+Forma Lur'e efectiva usada por el modelo no suave & El reporte la discute en general. & Agregar \(P,b,r,\psi\) compatibles con la funcion de Chua por tramos. \\
+Transferencia fraccionaria & El reporte ya advierte que se usa \(s^q\). & Agregar determinante, cofactores y expresion racional exacta de \(\widehat W_q(\lambda)\). \\
+Diferencia entre modelo y contrato numerico & Falta enfatizar que \(q,h,L_m,T,t_{\rm burn}\) no pertenecen al dataclass del modelo. & Agregar separacion: campo vectorial \(F(X)\) versus contrato Caputo/EFORK. \\
+Metricas de trayectoria & El reporte menciona FFT, PSD, secciones y nubes, pero no define las formulas usadas. & Agregar definiciones de rango, varianza, entropia espectral, seccion \(x=0\), distancia de nubes. \\
+Clases de cuenca & Estan descritas conceptualmente. & Agregar tabla exacta de \codepath{CLASS_LABELS}: equilibrio, target positivo, target negativo, infinito, desconocido, falla numerica. \\
+Workflow \codepath{robustness_overlay} & Se menciona robustez. & Agregar casos \(R_0,\ldots,R_5\) y aclarar que no decide ocultedad. \\
+Workflow \codepath{sphere_controls} & Se menciona verificacion por esferas. & Agregar construccion \(X_0=E_i+\rho v\), salida \codepath{sphere_decision.csv} y significado de \codepath{hiddenness_status}. \\
+Workflow \codepath{refined_basin} & Se menciona refinamiento. & Agregar funcion de puntuacion contra referencias positiva/negativa y umbrales. \\
+Adaptadores externos & El reporte lista herramientas. & Agregar que \codepath{nolds} y \codepath{antropy} son adaptadores opcionales, no implementaciones propias. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Sistema implementado: separacion entre modelo y contrato numerico}
+
+La libreria separa dos niveles que en el reporte conviene distinguir
+explicitamente:
+
+\begin{enumerate}[label=\textbf{Nivel \arabic*.},leftmargin=2.2cm]
+\item \textbf{Modelo algebraico.} Define solamente el campo vectorial
+\[
+F(X)=
+\begin{bmatrix}
+\alpha(y-x-f(x))\\
+x-y+z\\
+-\beta y-\gamma z
+\end{bmatrix},
+\qquad X=(x,y,z)^T.
+\]
+\item \textbf{Contrato fraccionario/numerico.} Define como se integra
+\[
+\CaputoD X=F(X),
+\]
+con orden \(q\), paso \(h\), memoria finita \(L_m\), tiempo final \(T\),
+tiempo de descarte \(t_{\rm burn}\), backend y tolerancias de clasificacion.
+\end{enumerate}
+
+Esta separacion es importante porque en el codigo \codepath{ChuaParameters} no
+contiene \(q\). El orden fraccionario pertenece a la simulacion Caputo/EFORK y
+a los workflows, no al objeto que define el campo vectorial.
+
+\subsection{Parametros oficiales del modelo de Chua no suave}
+
+El dataclass \codepath{ChuaParameters} fija, por defecto,
+\[
+\alpha=8.4562,\qquad
+\beta=12.0732,\qquad
+\gamma=0.0052,\qquad
+m_0=-0.1768,\qquad
+m_1=-1.1468.
+\]
+La no linealidad implementada es
+\begin{equation}
+\label{eq:chua_piecewise_impl}
+f(x)=m_1x+\frac{m_0-m_1}{2}\bigl(|x+1|-|x-1|\bigr).
+\end{equation}
+Por regiones:
+\[
+f(x)=
+\begin{cases}
+m_1x-(m_0-m_1), & x<-1,\\[2mm]
+m_0x, & |x|\leq 1,\\[2mm]
+m_1x+(m_0-m_1), & x>1.
+\end{cases}
+\]
+
+\section{Equilibrios implementados}
+
+Los equilibrios satisfacen \(F(X)=0\). De las dos ultimas ecuaciones:
+\[
+0=x-y+z,\qquad 0=-\beta y-\gamma z.
+\]
+De la tercera ecuacion,
+\[
+z=-\frac{\beta}{\gamma}y,
+\]
+y al sustituir en la segunda:
+\[
+x-y-\frac{\beta}{\gamma}y=0
+\quad\Longrightarrow\quad
+x=\frac{\beta+\gamma}{\gamma}y.
+\]
+Por tanto,
+\begin{equation}
+\label{eq:y_z_equilibrium_relation}
+y=\frac{\gamma}{\beta+\gamma}x,
+\qquad
+z=-\frac{\beta}{\beta+\gamma}x.
+\end{equation}
+La primera ecuacion exige
+\[
+0=\alpha(y-x-f(x))
+\quad\Longrightarrow\quad
+f(x)=y-x.
+\]
+Usando \eqref{eq:y_z_equilibrium_relation},
+\[
+f(x)=\frac{\gamma}{\beta+\gamma}x-x
+=-\frac{\beta}{\beta+\gamma}x.
+\]
+Definimos la pendiente de cierre
+\begin{equation}
+\label{eq:closing_slope}
+s_c=-\frac{\beta}{\beta+\gamma}.
+\end{equation}
+Entonces los equilibrios se obtienen resolviendo
+\begin{equation}
+\label{eq:equilibrium_scalar_condition}
+f(x)=s_cx.
+\end{equation}
+
+\subsection{Equilibrio central}
+
+En la region \(|x|\leq 1\), \(f(x)=m_0x\). Entonces
+\[
+m_0x=s_cx
+\quad\Longrightarrow\quad
+(m_0-s_c)x=0.
+\]
+Si \(m_0\neq s_c\), se obtiene
+\begin{equation}
+\label{eq:E0}
+E_0=(0,0,0)^T.
+\end{equation}
+
+\subsection{Equilibrios externos}
+
+Para \(x>1\),
+\[
+m_1x+(m_0-m_1)=s_cx,
+\]
+de donde
+\[
+(m_1-s_c)x=-(m_0-m_1).
+\]
+Por tanto,
+\begin{equation}
+\label{eq:xplus}
+x_+=-\frac{m_0-m_1}{m_1-s_c}.
+\end{equation}
+Para \(x<-1\),
+\[
+m_1x-(m_0-m_1)=s_cx,
+\]
+de donde
+\[
+(m_1-s_c)x=m_0-m_1,
+\]
+y
+\begin{equation}
+\label{eq:xminus}
+x_-=\frac{m_0-m_1}{m_1-s_c}.
+\end{equation}
+La funcion auxiliar del codigo construye cada equilibrio como
+\[
+E(x)=
+\begin{bmatrix}
+x\\
+x+f(x)\\
+f(x)
+\end{bmatrix}.
+\]
+Esto coincide con \eqref{eq:y_z_equilibrium_relation}, porque en equilibrio
+\(f(x)=s_cx=z\) y \(y=x+f(x)\). Asi,
+\begin{equation}
+\label{eq:Epm}
+E_+=
+\begin{bmatrix}
+x_+\\
+x_+ + f(x_+)\\
+f(x_+)
+\end{bmatrix},
+\qquad
+E_-=
+\begin{bmatrix}
+x_-\\
+x_- + f(x_-)\\
+f(x_-)
+\end{bmatrix}.
+\end{equation}
+
+\section{Jacobiano por regiones y criterio fraccionario}
+
+La pendiente local de \(f\) es
+\[
+a=f'(x)=
+\begin{cases}
+m_1, & |x|>1,\\
+m_0, & |x|<1,
+\end{cases}
+\]
+sin definir en \(x=\pm1\). Lejos de las superficies de quiebre, el Jacobiano es
+\begin{equation}
+\label{eq:jacobian_region}
+J(a)=
+\begin{bmatrix}
+-\alpha(1+a) & \alpha & 0\\
+1 & -1 & 1\\
+0 & -\beta & -\gamma
+\end{bmatrix},
+\qquad a\in\{m_0,m_1\}.
+\end{equation}
+Para \(E_0\) se usa \(a=m_0\), siempre que \(E_0\) este en la region central.
+Para \(E_\pm\) se usa \(a=m_1\), siempre que los puntos externos satisfagan
+\(|x_\pm|>1\).
+
+En un sistema fraccionario conmensurado
+\[
+\CaputoD \xi = J(a)\xi,
+\]
+la condicion local tipo Matignon es
+\begin{equation}
+\label{eq:matignon}
+|\arg(\lambda_i(J(a)))|>\frac{q\pi}{2}
+\qquad
+\forall i.
+\end{equation}
+Si algun autovalor viola \eqref{eq:matignon}, el equilibrio no es localmente
+asintoticamente estable bajo ese orden \(q\). Esta prueba es local; no decide
+si un atractor observado es oculto.
+
+\section{Forma de Lur'e compatible con el codigo}
+
+A partir de \eqref{eq:chua_piecewise_impl}, se separa
+\[
+f(x)=m_1x+\psi(x),
+\]
+donde
+\begin{equation}
+\label{eq:psi_chua_lure}
+\psi(x)=\frac{m_0-m_1}{2}\bigl(|x+1|-|x-1|\bigr).
+\end{equation}
+Entonces
+\[
+\CaputoD X = PX+b\,\psi(r^TX),
+\]
+con
+\begin{equation}
+\label{eq:Pbr_lure}
+P=
+\begin{bmatrix}
+-\alpha(1+m_1)&\alpha&0\\
+1&-1&1\\
+0&-\beta&-\gamma
+\end{bmatrix},
+\qquad
+b=
+\begin{bmatrix}
+-\alpha\\0\\0
+\end{bmatrix},
+\qquad
+r=
+\begin{bmatrix}
+1\\0\\0
+\end{bmatrix}.
+\end{equation}
+La salida escalar de la no linealidad es
+\[
+\sigma=r^T X=x.
+\]
+
+\section{Transferencia fraccionaria y calculo explicito}
+
+La transferencia del bloque lineal fraccionario se escribe
+\begin{equation}
+\label{eq:Wq}
+W_q(s)=r^T(s^qI-P)^{-1}b.
+\end{equation}
+Para evitar confundir el eje de frecuencia entero con el fraccionario, se
+introduce
+\[
+\lambda=s^q,
+\qquad
+\widehat W_q(\lambda)=r^T(\lambda I-P)^{-1}b.
+\]
+En frecuencia:
+\begin{equation}
+\label{eq:lambda_fractional_frequency}
+\lambda=(\ii\omega)^q
+=\omega^q\left(
+\cos\frac{q\pi}{2}
++\ii\sin\frac{q\pi}{2}
+\right).
+\end{equation}
+
+Con \eqref{eq:Pbr_lure},
+\[
+\lambda I-P=
+\begin{bmatrix}
+\lambda+\alpha(1+m_1)&-\alpha&0\\
+-1&\lambda+1&-1\\
+0&\beta&\lambda+\gamma
+\end{bmatrix}.
+\]
+Definimos
+\begin{equation}
+\label{eq:Nlambda}
+N(\lambda)=(\lambda+1)(\lambda+\gamma)+\beta
+=\lambda^2+(1+\gamma)\lambda+(\beta+\gamma).
+\end{equation}
+El determinante se obtiene expandiendo por la primera fila:
+\begin{align}
+\Delta(\lambda)
+&=\det(\lambda I-P)\\
+&=
+\bigl(\lambda+\alpha(1+m_1)\bigr)
+\det
+\begin{bmatrix}
+\lambda+1&-1\\
+\beta&\lambda+\gamma
+\end{bmatrix}
+-(-\alpha)
+\det
+\begin{bmatrix}
+-1&-1\\
+0&\lambda+\gamma
+\end{bmatrix}\\
+&=
+\bigl(\lambda+\alpha(1+m_1)\bigr)N(\lambda)
+-\alpha(\lambda+\gamma).
+\end{align}
+Como \(b=(-\alpha,0,0)^T\), se necesita la entrada \((1,1)\) de
+\((\lambda I-P)^{-1}\). Por cofactores,
+\[
+[(\lambda I-P)^{-1}]_{11}
+=
+\frac{C_{11}}{\Delta(\lambda)}
+=
+\frac{N(\lambda)}{\Delta(\lambda)}.
+\]
+Por tanto,
+\begin{equation}
+\label{eq:W_hat_explicit}
+\widehat W_q(\lambda)
+=
+-\alpha\,
+\frac{N(\lambda)}{\Delta(\lambda)}.
+\end{equation}
+La condicion armonica de primer orden se interpreta como
+\begin{equation}
+\label{eq:harmonic_condition}
+1+N_{\rm DF}(A)\,
+\widehat W_q\!\left((\ii\omega)^q\right)=0,
+\end{equation}
+donde \(N_{\rm DF}(A)\) es una funcion descriptiva aproximada. En el uso del
+proyecto, \eqref{eq:harmonic_condition} genera semillas; no prueba ciclos
+periodicos exactos del sistema causal de Caputo.
+
+\section{Puente Weyl--Caputo para justificar el uso armonico}
+
+El balance armonico y la funcion descriptiva trabajan naturalmente con señales
+periodicas estacionarias. En calculo fraccionario esto corresponde mejor al
+marco de Weyl/Liouville--Weyl que al problema causal de Caputo iniciado en
+\(t_0\). La lectura usada por la libreria debe formularse asi:
+
+\begin{enumerate}[label=\textbf{(\roman*)},leftmargin=1.6cm]
+\item Caputo modela la dinamica causal con memoria desde \(t_0\).
+\item Weyl/Liouville--Weyl permite representar respuestas periodicas ideales
+sobre historia infinita.
+\item La discrepancia Caputo--Weyl aparece como un termino de memoria
+dependiente de la historia inicial.
+\item Por tanto, el calculo armonico produce una semilla asintotica o
+aproximada para explorar el sistema Caputo, no una solucion periodica exacta
+garantizada.
+\end{enumerate}
+
+Este punto debe agregarse cerca de la seccion de funcion descriptiva para
+evitar una conclusion mas fuerte que la evidencia.
+
+\section{Funcion descriptiva de Machado como generador auxiliar de semillas}
+
+La extension tipo Machado debe documentarse como una deformacion compleja de
+una funcion descriptiva clasica:
+\begin{equation}
+\label{eq:machado_fdf_general}
+N_{\star,\mu}(A)=\exp\{\mu\,\operatorname{Log}N_\star(A)\},
+\qquad \mu>0,
+\end{equation}
+donde \(\star\) identifica la no linealidad base y \(\operatorname{Log}\) debe
+fijar una rama compleja. En particular:
+\[
+\mu=1
+\quad\Longrightarrow\quad
+N_{\star,\mu}(A)=N_\star(A).
+\]
+Valores \(\mu\neq1\) no cambian el orden de Caputo \(q\). Solo deforman la
+ganancia compleja usada para proponer semillas. En consecuencia, los candidatos
+Machado deben pasar por las mismas pruebas EFORK, robustez y cuencas que los
+candidatos Lur'e clasicos.
+
+\section{Metricas de trayectoria implementadas}
+
+Las trayectorias se leen bajo la convencion
+\[
+\texttt{t,x,y,z}.
+\]
+Despues de un tiempo de analisis \(t_{\rm start}\), se usa la cola
+\[
+\mathcal T_{\rm tail}
+=
+\{X(t_k):t_k\geq t_{\rm start}\}.
+\]
+
+\subsection{Rangos y varianzas}
+
+Para \(u\in\{x,y,z\}\),
+\begin{equation}
+\label{eq:range_u}
+R_u=\max_{t_k\geq t_{\rm start}} u(t_k)
+-\min_{t_k\geq t_{\rm start}} u(t_k).
+\end{equation}
+Tambien se calcula
+\[
+\operatorname{var}_u
+=
+\operatorname{Var}\{u(t_k):t_k\geq t_{\rm start}\}.
+\]
+Estas cantidades detectan colapso a equilibrio o dinamica no trivial, pero no
+son pruebas de caos.
+
+\subsection{Frecuencia dominante y entropia espectral}
+
+La funcion \codepath{component_fft} centra la senal, aplica ventana de Hann y
+calcula potencia espectral:
+\[
+\tilde u_n=w_n(u_n-\bar u),
+\qquad
+P_k=|\mathcal F(\tilde u)_k|^2.
+\]
+La frecuencia dominante ignora la componente \(k=0\):
+\[
+k_\ast=\arg\max_{k\geq1}P_k,
+\qquad
+f_\ast=f_{k_\ast}.
+\]
+La entropia espectral normalizada se calcula como
+\begin{equation}
+\label{eq:spectral_entropy}
+H_{\rm PSD}
+=
+-\frac{1}{\log M}
+\sum_{k=1}^{M}p_k\log(p_k+10^{-300}),
+\qquad
+p_k=\frac{P_k}{\sum_{\ell=1}^{M}P_\ell}.
+\end{equation}
+Esta metrica indica dispersion espectral; no reemplaza el calculo de exponentes
+de Lyapunov.
+
+\subsection{Seccion de Poincare operacional}
+
+La libreria usa cruces ascendentes de \(x=0\). Para dos puntos consecutivos con
+\[
+x_{k-1}<0\leq x_k,
+\]
+se exige ademas
+\[
+F_1(X_k)>0.
+\]
+El punto \((y,z)\) de la seccion se interpola linealmente:
+\[
+\eta=\frac{0-x_{k-1}}{x_k-x_{k-1}},
+\]
+\[
+y_\Sigma=y_{k-1}+\eta(y_k-y_{k-1}),
+\qquad
+z_\Sigma=z_{k-1}+\eta(z_k-z_{k-1}).
+\]
+La nube de seccion es
+\[
+\Sigma=\{(y_\Sigma,z_\Sigma)\}.
+\]
+
+\subsection{Distancia simetrica entre nubes}
+
+Para comparar dos nubes \(A\) y \(B\), el codigo usa una distancia mediana de
+vecino mas cercano:
+\begin{equation}
+\label{eq:cloud_median_distance}
+d_{\rm cloud}(A,B)
+=
+\med\left(
+\left\{
+\min_{b\in B}\|a-b\|:a\in A
+\right\}
+\cup
+\left\{
+\min_{a\in A}\|b-a\|:b\in B
+\right\}
+\right).
+\end{equation}
+Se usa para comparar geometria post-transitoria, no para probar igualdad
+punto a punto entre trayectorias caoticas.
+
+\section{Clases de cuenca y lectura operacional}
+
+La clasificacion de cuencas usa etiquetas enteras. La tabla exacta que debe
+aparecer en el reporte es:
+
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}cL{0.24\textwidth}Y@{}}
+\toprule
+ID & Etiqueta & Lectura operacional \\
+\midrule
+0 & \texttt{equilibrium} & La trayectoria cae o queda cerca de un equilibrio.\\
+1 & \texttt{target\_positive} & Clase target positiva, bounded no trivial.\\
+2 & \texttt{target\_negative} & Clase target negativa, bounded no trivial.\\
+3 & \texttt{infinity} & Divergencia o salida de cota.\\
+4 & \texttt{unknown} & No clasificada bajo el contrato usado.\\
+5 & \texttt{numerical\_failure} & Falla numerica o error del backend.\\
+6 & \texttt{bounded\_other} & Solo en refinamiento: bounded no colapsada, pero no cercana al target.\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Los IDs target son
+\[
+\mathcal C_{\rm target}=\{1,2\}.
+\]
+Un \codepath{target_hit} significa
+\[
+\operatorname{class\_id}(X_0)\in\{1,2\}.
+\]
+Esto no prueba que el atractor sea oculto; al contrario, si ocurre desde una
+vecindad de algun equilibrio, es evidencia contra la ocultedad bajo el contrato
+probado.
+
+\section{Workflow \texttt{robustness\_overlay}}
+
+El workflow \codepath{robustness_overlay} compara trayectorias iniciadas desde
+el mismo candidato bajo variaciones de \(h\), \(L_m\) y \(T\). La familia
+estandar es:
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+Caso & \(q\) & \(h\) & \(L_m\) & \(T\) \\
+\midrule
+\(R_0\) base & \(q\) & 0.01 & 10 & 1500\\
+\(R_1\) paso fino & \(q\) & 0.005 & 10 & 1500\\
+\(R_2\) paso grueso & \(q\) & 0.02 & 10 & 1500\\
+\(R_3\) memoria menor & \(q\) & 0.01 & 5 & 1500\\
+\(R_4\) memoria mayor & \(q\) & 0.01 & 20 & 1500\\
+\(R_5\) tiempo largo & \(q\) & 0.01 & 10 & 3000\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Su salida principal es \codepath{robustness_overlay_metrics.csv}.
+La lectura correcta es:
+\[
+\text{geometria persistente bajo perturbaciones}
+\not\Longrightarrow
+\text{atractor oculto}.
+\]
+Solo indica que el atractor observado no desaparece facilmente al modificar el
+contrato numerico probado.
+
+\section{Workflow \texttt{sphere\_controls}}
+
+El workflow \codepath{sphere_controls} prueba condiciones iniciales sobre
+esferas alrededor de cada equilibrio:
+\begin{equation}
+\label{eq:sphere_initial_condition}
+X_0=E_i+\rho v,
+\qquad
+\|v\|=1,
+\qquad
+E_i\in\{E_0,E_+,E_-\}.
+\end{equation}
+Los radios por defecto son
+\[
+\rho\in\{10^{-5},3\cdot10^{-5},10^{-4},3\cdot10^{-4},10^{-3}\}.
+\]
+El resultado se resume en \codepath{sphere_decision.csv}. La regla de decision
+codificada es:
+\begin{itemize}
+\item si \codepath{total_target_hits} es positivo, entonces \codepath{hiddenness_status=not_supported_by_sphere_equilibrium_test};
+\item si \codepath{total_target_hits} es cero, entonces \codepath{hiddenness_status=compatible_with_hiddenness_under_tested_spheres}.
+\end{itemize}
+
+La segunda salida no significa ``oculto demostrado''. Solo significa que la
+muestra de esferas y radios no encontro contacto con la cuenca target.
+
+\section{Workflow \texttt{refined\_basin}}
+
+El workflow \codepath{refined_basin} revisa celdas previamente etiquetadas como
+\codepath{unknown}. Para cada celda reintegra el punto inicial y compara la
+geometria con atractores de referencia positivo y negativo.
+
+Para una trayectoria candidata y una referencia \(R\), calcula:
+\[
+d_{\rm cloud}^{\rm norm},\qquad
+d_{\Sigma}^{\rm norm},\qquad
+d_{\rm range},\qquad
+d_{\rm FFT}.
+\]
+El puntaje se puede escribir como
+\begin{equation}
+\label{eq:refined_score}
+S_R=
+\frac{
+w_c d_{\rm cloud}^{\rm norm}
++w_r d_{\rm range}
++w_f \min(d_{\rm FFT},2)
++w_s d_{\Sigma}^{\rm norm}
+}{
+w_c+w_r+w_f+w_s
+},
+\end{equation}
+usando los terminos disponibles. Por defecto:
+\[
+w_c=1,\qquad w_r=0.35,\qquad w_f=0.20,\qquad w_s=0.35.
+\]
+La referencia ganadora es
+\[
+R_\ast=\arg\min_{R\in\{+,-\}}S_R.
+\]
+Una celda se reclasifica como target si satisface simultaneamente los umbrales
+del contrato:
+\[
+S_{R_\ast}\leq0.95,\qquad
+d_{\rm cloud}^{\rm norm}\leq0.85,\qquad
+d_{\rm range}\leq1.50,\qquad
+d_{\rm FFT}\leq1.00,\qquad
+d_\Sigma^{\rm norm}\leq1.20.
+\]
+Si es bounded y no colapsada pero no cumple esos umbrales, recibe clase
+\[
+\texttt{bounded\_other}.
+\]
+
+\section{Candidatos: que representa realmente un \texttt{CandidateRecord}}
+
+Un registro candidato almacena informacion de semilla, ruta y punto final de
+continuacion. Matematicamente, debe leerse como
+\[
+\mathcal R=
+(\text{id},\text{ruta},q,X_{\rm seed},X_{\rm robust},A,\sigma_0,\omega,\rho_H,\ldots).
+\]
+Los campos principales son:
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Campo & Interpretacion \\
+\midrule
+\codepath{candidate_id} & Identificador reproducible del candidato.\\
+\codepath{route} & Ruta de origen: Lur'e, Machado/FDF, etc.\\
+\codepath{q} & Orden fraccionario usado en la corrida asociada.\\
+\codepath{seed} & Semilla inicial propuesta por funcion descriptiva/continuacion.\\
+\codepath{robust_start} & Punto desde el cual se hacen pruebas de robustez.\\
+\codepath{A}, \codepath{omega} & Amplitud y frecuencia armonica aproximadas, si existen.\\
+\codepath{rho_H} & Diagnostico heuristico de alejamiento/contacto, si existe.\\
+\codepath{source} & Archivo de salida desde donde se cargo el registro.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Un \codepath{CandidateRecord} no es evidencia de ocultedad. Es un paquete de
+metadatos para lanzar verificaciones posteriores.
+
+\section{Adaptadores externos y alcance}
+
+Los modulos de integracion externa no implementan desde cero algoritmos de
+complejidad. Delegan a paquetes opcionales como \codepath{nolds} y
+\codepath{antropy}.
+Esto implica que cualquier resultado de entropia, dimension de correlacion,
+DFA, Hurst o Lyapunov tipo Rosenstein debe citar tambien el paquete externo y
+su metodo, no solo la libreria local.
+
+Para bifurcaciones, la funcion local
+\codepath{bifurcation_points_from_trajectories} solo postprocesa trayectorias ya calculadas. No hace continuacion numerica ni
+seguimiento de ramas. Si se usa continuacion real, debe documentarse la
+herramienta externa correspondiente.
+
+\section{Regla de lectura final}
+
+La ruta completa que debe defenderse en el reporte es:
+\[
+\boxed{
+\begin{gathered}
+\text{semilla}
+\to
+\text{integracion Caputo/EFORK}
+\to
+\text{atractor bounded no trivial}
+\to
+\text{robustez}\\
+\to
+\text{cuencas}
+\to
+\text{pruebas desde equilibrios}
+\to
+\text{lectura de ocultedad}
+\end{gathered}
+}
+\]
+La funcion descriptiva y la ruta Machado pertenecen al primer bloque:
+\[
+\text{generacion de semillas}.
+\]
+La decision de ocultedad pertenece al ultimo bloque:
+\[
+\text{cuencas alrededor de todos los equilibrios}.
+\]
+Por tanto, en el reporte no debe escribirse:
+\begin{quote}
+``La funcion descriptiva encontro un atractor oculto''.
+\end{quote}
+Debe escribirse:
+\begin{quote}
+``La funcion descriptiva genero una semilla que, bajo el contrato numerico probado, conduce a un atractor candidato; la ocultedad se evalua mediante cuencas''.
+\end{quote}
+
+\section{Texto breve para insertar como advertencia metodologica}
+
+\begin{quote}
+Todas las etiquetas producidas por los workflows son etiquetas numericas bajo
+un contrato finito de simulacion. En particular,
+\codepath{compatible\_with\_hiddenness\_under\_tested\_spheres} no significa
+``atractor oculto demostrado'', sino ``no se encontro interseccion con las
+vecindades de equilibrio muestreadas bajo los radios, tiempos, memoria,
+tolerancias y backend usados''. La conclusion debe mantenerse condicionada al
+contrato numerico y a la resolucion de la cuenca explorada.
+\end{quote}
+
+\section{Bibliografia adicional recomendada para completar el reporte}
+
+\begin{thebibliography}{99}
+
+\bibitem{Machado2014}
+J. Tenreiro Machado.
+\emph{Fractional order describing functions}.
+Signal Processing, 2014.
+DOI: 10.1016/j.sigpro.2014.05.012.
+
+\bibitem{LeonovKuznetsov2013}
+G. A. Leonov and N. V. Kuznetsov.
+\emph{Hidden Attractors in Dynamical Systems: From Hidden Oscillations in
+Hilbert--Kolmogorov, Aizerman, and Kalman Problems to Hidden Chaotic Attractor
+in Chua Circuits}.
+International Journal of Bifurcation and Chaos, 2013.
+
+\bibitem{Kuznetsov2016}
+N. V. Kuznetsov.
+\emph{Hidden Attractors in Dynamical Systems: Systems with No Equilibria,
+Multistability and Coexisting Attractors}.
+Physics Reports, 2016.
+
+\bibitem{Matignon1996}
+D. Matignon.
+\emph{Stability Results for Fractional Differential Equations with Applications
+to Control Processing}.
+Computational Engineering in Systems Applications, 1996.
+
+\bibitem{DiethelmFordFreed2002}
+K. Diethelm, N. J. Ford, and A. D. Freed.
+\emph{A Predictor-Corrector Approach for the Numerical Solution of Fractional
+Differential Equations}.
+Nonlinear Dynamics, 2002.
+
+\bibitem{TavazoeiHaeri2009}
+M. S. Tavazoei and M. Haeri.
+\emph{A Proof for Non Existence of Periodic Solutions in Time Invariant
+Fractional Order Systems}.
+Automatica, 2009.
+
+\end{thebibliography}
+
+\end{document}

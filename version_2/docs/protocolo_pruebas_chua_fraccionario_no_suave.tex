@@ -1,0 +1,2291 @@
+﻿
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands,es-tabla]{babel}
+\usepackage[a4paper,margin=2.1cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{graphicx}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  urlcolor=blue!55!black,
+  citecolor=blue!55!black
+}
+
+\setlength{\emergencystretch}{2em}
+\renewcommand{\arraystretch}{1.15}
+\setlist[itemize]{leftmargin=1.2em}
+\setlist[enumerate]{leftmargin=1.4em}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\DeclareRobustCommand{\codepath}[1]{\begingroup\Urlmuskip=0mu plus 2mu\path{#1}\endgroup}
+\newcommand{\CaputoD}{\,{}^{C}D_t^q}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\TARGET}{\texttt{TARGET}}
+
+\lstdefinestyle{cmd}{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  columns=fullflexible,
+  frame=single,
+  rulecolor=\color{black!25},
+  backgroundcolor=\color{black!3}
+}
+\lstset{style=cmd}
+
+\title{Protocolo de pruebas para el caso de estudio\\
+\large Chua fraccionario no suave, candidatos Lur'e/Machado y comparaciÃ³n con Danca}
+\author{Hidden Attractors Fractional Order}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{Objetivo del documento}
+
+Este documento describe cÃ³mo ejecutar, documentar e interpretar todas las pruebas disponibles en el repositorio para el caso de estudio del sistema de Chua fraccionario no suave. No sustituye el reporte matemÃ¡tico general; su funciÃ³n es convertir la teorÃ­a y los mÃ³dulos de cÃ³digo en una ruta de trabajo reproducible.
+
+El caso de referencia externa es el atractor oculto reportado por Danca en el sistema de Chua no suave de orden fraccionario. La comparaciÃ³n debe hacerse con cautela: Danca usa integraciÃ³n Caputo mediante Adams--Bashforth--Moulton con historia completa, mientras que la ruta principal del repositorio usa EFORK con memoria truncada \(L_m\). Por tanto, la comparaciÃ³n es geomÃ©trica, numÃ©rica y metodolÃ³gica; no es identidad exacta de algoritmos.
+
+\section{Estructura operativa del repositorio}
+
+La versiÃ³n de librerÃ­a estÃ¡ en:
+
+\begin{lstlisting}
+version_2/
+\end{lstlisting}
+
+La estructura mÃ­nima que se usa en este protocolo es:
+
+\begin{longtable}{@{}L{0.35\textwidth}L{0.56\textwidth}@{}}
+\toprule
+Ruta & Papel dentro del protocolo\\
+\midrule
+\endhead
+\codepath{hidden_attractors/} & Paquete importable. Incluye modelo, anÃ¡lisis, grÃ¡ficas, clasificadores, workflows y backends nativos.\\
+\codepath{examples/} & Ejemplos cortos para verificar instalaciÃ³n, equilibrios, candidatos y grÃ¡ficas.\\
+\codepath{tools/cli/} & Envolturas CLI mantenidas para workflows pÃºblicos.\\
+\codepath{tools/legacy/} & Scripts de investigaciÃ³n todavÃ­a Ãºtiles para bÃºsqueda Lur'e, bÃºsqueda sesgada, Machado, Danca y corridas histÃ³ricas. No todo es API pÃºblica.\\
+\codepath{outputs/} & Corridas, CSV, JSON, trayectorias, figuras y candidatos ya generados.\\
+\codepath{configs/} & Configuraciones YAML para corridas largas o bÃºsquedas extendidas.\\
+\bottomrule
+\end{longtable}
+
+Antes de ejecutar pruebas largas conviene instalar la librerÃ­a en modo editable:
+
+\begin{lstlisting}
+cd version_2
+python -m pip install -e .
+\end{lstlisting}
+
+Para pruebas de desarrollo:
+
+\begin{lstlisting}
+python -m pip install -e ".[dev]"
+python -m pytest -q
+\end{lstlisting}
+
+Para habilitar anÃ¡lisis externos opcionales:
+
+\begin{lstlisting}
+python -m pip install -e ".[analysis]"
+\end{lstlisting}
+
+\section{Sistema de Chua fraccionario no suave}
+
+El sistema estudiado es
+
+\begin{align}
+{}^C D_t^q x &= \alpha\left(y-x-f(x)\right),\\
+{}^C D_t^q y &= x-y+z,\\
+{}^C D_t^q z &= -\beta y-\gamma z,
+\end{align}
+
+con \(0<q\leq 1\), y no linealidad no suave
+
+\begin{equation}
+f(x)=m_1x+\frac{m_0-m_1}{2}\left(|x+1|-|x-1|\right).
+\end{equation}
+
+Equivalente en forma saturada,
+
+\begin{equation}
+f(x)=m_1x+(m_0-m_1)\operatorname{sat}(x),
+\qquad
+\operatorname{sat}(x)=
+\begin{cases}
+-1,&x<-1,\\
+x,&|x|\leq 1,\\
+1,&x>1.
+\end{cases}
+\end{equation}
+
+La librerÃ­a separa el campo vectorial del contrato fraccionario. El campo \(F(X)\) se evalÃºa en Python mediante funciones como \codepath{rhs_piecewise}; el orden \(q\), el paso \(h\), la memoria \(L_m\), el tiempo final \(T\) y el burn-in pertenecen al integrador o workflow.
+
+\subsection{ParÃ¡metros por defecto de la librerÃ­a}
+
+En la parte pÃºblica de \codepath{version_2}, los parÃ¡metros por defecto del modelo no suave son
+
+\begin{equation}
+\alpha=8.4562,\qquad
+\beta=12.0732,\qquad
+\gamma=0.0052,\qquad
+m_0=-0.1768,\qquad
+m_1=-1.1468.
+\end{equation}
+
+Una forma directa de verlos es:
+
+\begin{lstlisting}
+python examples/quickstart_equilibria.py
+\end{lstlisting}
+
+O desde Python:
+
+\begin{lstlisting}
+from hidden_attractors import chua_piecewise_parameters
+
+p = chua_piecewise_parameters()
+print(p)
+\end{lstlisting}
+
+\section{Ver la grÃ¡fica del atractor}
+
+\subsection{Usar una trayectoria ya generada}
+
+La librerÃ­a trabaja con trayectorias en formato CSV con columnas:
+
+\begin{equation}
+(t,x,y,z).
+\end{equation}
+
+Ejemplo:
+
+\begin{lstlisting}
+python examples/dynamical_analysis_gallery.py ^
+  --trajectory-csv outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/trajectories/branch_0_mu_4p00000_theta_0p00000_reference_attractor.csv ^
+  --output-dir outputs/examples/chua_nonsmooth_gallery
+\end{lstlisting}
+
+En Linux/macOS:
+
+\begin{lstlisting}
+python examples/dynamical_analysis_gallery.py \
+  --trajectory-csv outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/trajectories/branch_0_mu_4p00000_theta_0p00000_reference_attractor.csv \
+  --output-dir outputs/examples/chua_nonsmooth_gallery
+\end{lstlisting}
+
+Este ejemplo genera, tÃ­picamente:
+
+\begin{itemize}
+\item \codepath{phase_space_3d.png};
+\item \codepath{phase_projections.png};
+\item \codepath{time_series.png};
+\item \codepath{bifurcation_diagram.png};
+\item \codepath{summary.json};
+\item \codepath{bifurcation_points.csv}.
+\end{itemize}
+
+\subsection{CÃ³digo mÃ­nimo para graficar una trayectoria}
+
+\begin{lstlisting}
+from hidden_attractors.io import load_trajectory_csv
+from hidden_attractors.plotting import (
+    plot_phase_space,
+    plot_phase_projections,
+    plot_time_series,
+)
+
+traj = load_trajectory_csv("ruta/a/trayectoria.csv")
+
+plot_phase_space(traj, "salidas/atractor_3d.png")
+plot_phase_projections(traj, "salidas/proyecciones.png")
+plot_time_series(traj, "salidas/series_temporales.png")
+\end{lstlisting}
+
+Lectura correcta: una grÃ¡fica de atractor muestra que la trayectoria es acotada y no trivial bajo el contrato numÃ©rico usado. No demuestra ocultedad.
+
+\section{Puntos de equilibrio}
+
+\subsection{DerivaciÃ³n algebraica}
+
+En equilibrio se cumple
+
+\begin{equation}
+0=\alpha(y-x-f(x)),\qquad
+0=x-y+z,\qquad
+0=-\beta y-\gamma z.
+\end{equation}
+
+De la tercera ecuaciÃ³n,
+
+\begin{equation}
+z=-\frac{\beta}{\gamma}y,
+\end{equation}
+
+y de la segunda,
+
+\begin{equation}
+z=y-x.
+\end{equation}
+
+Entonces,
+
+\begin{equation}
+y-x=-\frac{\beta}{\gamma}y
+\quad\Longrightarrow\quad
+(\beta+\gamma)y=\gamma x
+\quad\Longrightarrow\quad
+y=\frac{\gamma}{\beta+\gamma}x.
+\end{equation}
+
+AdemÃ¡s, de la primera ecuaciÃ³n,
+
+\begin{equation}
+y=x+f(x).
+\end{equation}
+
+Por tanto,
+
+\begin{equation}
+f(x)=y-x=\frac{\gamma}{\beta+\gamma}x-x
+=
+-\frac{\beta}{\beta+\gamma}x.
+\end{equation}
+
+Si \(x=0\), se obtiene
+
+\begin{equation}
+E_0=(0,0,0).
+\end{equation}
+
+En las ramas exteriores, para \(x>1\),
+
+\begin{equation}
+f(x)=m_1x+(m_0-m_1),
+\end{equation}
+
+y para \(x<-1\),
+
+\begin{equation}
+f(x)=m_1x-(m_0-m_1).
+\end{equation}
+
+Sea
+
+\begin{equation}
+s=-\frac{\beta}{\beta+\gamma}.
+\end{equation}
+
+La condiciÃ³n escalar exterior es
+
+\begin{equation}
+m_1x\pm(m_0-m_1)=sx.
+\end{equation}
+
+AsÃ­,
+
+\begin{equation}
+x_+=-\frac{m_0-m_1}{m_1-s},
+\qquad
+x_-=\frac{m_0-m_1}{m_1-s}.
+\end{equation}
+
+Finalmente,
+
+\begin{equation}
+E_\pm =
+\left(
+x_\pm,\,
+x_\pm+f(x_\pm),\,
+f(x_\pm)
+\right).
+\end{equation}
+
+\subsection{LÃ­neas para calcularlos con la librerÃ­a}
+
+\begin{lstlisting}
+from hidden_attractors import chua_piecewise_parameters
+from hidden_attractors.models import equilibria_piecewise, rhs_piecewise
+import numpy as np
+
+p = chua_piecewise_parameters()
+eqs = equilibria_piecewise(p)
+
+for name, point in eqs.items():
+    residual = np.linalg.norm(rhs_piecewise(point, p))
+    print(name, point, residual)
+\end{lstlisting}
+
+O directamente:
+
+\begin{lstlisting}
+python examples/quickstart_equilibria.py
+\end{lstlisting}
+
+\section{Jacobiano y estabilidad fraccionaria local}
+
+La pendiente local de la no linealidad por tramos es
+
+\begin{equation}
+a(x)=
+\begin{cases}
+m_1,& |x|>1,\\
+m_0,& |x|<1.
+\end{cases}
+\end{equation}
+
+El Jacobiano por regiÃ³n es
+
+\begin{equation}
+J(a)=
+\begin{bmatrix}
+-\alpha(1+a)&\alpha&0\\
+1&-1&1\\
+0&-\beta&-\gamma
+\end{bmatrix}.
+\end{equation}
+
+Para un sistema fraccionario conmensurado
+
+\begin{equation}
+{}^C D_t^q \xi=J(a)\xi,
+\end{equation}
+
+el criterio de Matignon exige
+
+\begin{equation}
+|\arg(\lambda_i)|>\frac{q\pi}{2}
+\end{equation}
+
+para estabilidad local asintÃ³tica. Si un equilibrio viola esa condiciÃ³n, es localmente inestable. Sin embargo, que un equilibrio sea inestable no implica que el atractor candidato sea autoexcitado; para eso se necesita verificar si su cuenca intersecta alguna vecindad de equilibrio.
+
+\section{Forma Lur'e del sistema}
+
+Escribimos
+
+\begin{equation}
+X=
+\begin{bmatrix}
+x\\y\\z
+\end{bmatrix},
+\qquad
+\sigma=r^T X=x,
+\qquad
+r=
+\begin{bmatrix}
+1\\0\\0
+\end{bmatrix}.
+\end{equation}
+
+Separando la parte lineal con pendiente exterior \(m_1\),
+
+\begin{equation}
+P=
+\begin{bmatrix}
+-\alpha(1+m_1)&\alpha&0\\
+1&-1&1\\
+0&-\beta&-\gamma
+\end{bmatrix},
+\qquad
+b=
+\begin{bmatrix}
+-\alpha\\0\\0
+\end{bmatrix}.
+\end{equation}
+
+La no linealidad escalar compatible es
+
+\begin{equation}
+\psi(\sigma)=(m_0-m_1)\operatorname{sat}(\sigma).
+\end{equation}
+
+Entonces
+
+\begin{equation}
+{}^C D_t^q X=PX+b\,\psi(r^TX).
+\end{equation}
+
+\section{FunciÃ³n de transferencia fraccionaria}
+
+Para el bloque lineal fraccionario,
+
+\begin{equation}
+{}^C D_t^q X=PX+bu,\qquad \sigma=r^TX,
+\end{equation}
+
+la transferencia formal es
+
+\begin{equation}
+W_q(s)=r^T(s^q I-P)^{-1}b.
+\end{equation}
+
+Usando el parÃ¡metro espectral
+
+\begin{equation}
+\lambda=s^q,
+\end{equation}
+
+se define
+
+\begin{equation}
+\widehat W_q(\lambda)=r^T(\lambda I-P)^{-1}b.
+\end{equation}
+
+En frecuencia,
+
+\begin{equation}
+\lambda=(\ii\omega)^q
+=
+\omega^q
+\left(
+\cos\frac{q\pi}{2}
++
+\ii\sin\frac{q\pi}{2}
+\right).
+\end{equation}
+
+El cÃ³digo histÃ³rico usa tambiÃ©n la convenciÃ³n
+
+\begin{equation}
+W_{\rm code}(\omega)=r^T(P-\lambda I)^{-1}b,
+\end{equation}
+
+por lo que
+
+\begin{equation}
+W_{\rm code}(\omega)=-\widehat W_q(\lambda).
+\end{equation}
+
+Esta diferencia de signo debe cuidarse al comparar ecuaciones del reporte con residuos emitidos por el cÃ³digo.
+
+\section{FunciÃ³n descriptiva centrada clÃ¡sica}
+
+Para una entrada centrada
+
+\begin{equation}
+\sigma(t)=A\cos(\omega t),
+\end{equation}
+
+la funciÃ³n descriptiva clÃ¡sica de la saturaciÃ³n escalada es
+
+\begin{equation}
+N(A)=\frac{Y_1}{A},
+\end{equation}
+
+donde \(Y_1\) es el primer armÃ³nico de \(\psi(A\cos\theta)\).
+
+Para el caso no suave,
+
+\begin{equation}
+\psi(\sigma)=M\operatorname{sat}(\sigma),
+\qquad
+M=m_0-m_1.
+\end{equation}
+
+Si \(0<A\leq 1\),
+
+\begin{equation}
+N(A)=M.
+\end{equation}
+
+Si \(A>1\),
+
+\begin{equation}
+N(A)=\frac{2M}{\pi}
+\left[
+\arcsin\left(\frac{1}{A}\right)
++
+\frac{\sqrt{A^2-1}}{A^2}
+\right].
+\end{equation}
+
+La condiciÃ³n armÃ³nica, usando la convenciÃ³n de reporte, es
+
+\begin{equation}
+1+\widehat W_q((\ii\omega)^q)N(A)=0.
+\end{equation}
+
+Con la convenciÃ³n histÃ³rica del cÃ³digo,
+
+\begin{equation}
+1+W_{\rm code}(\omega)N(A)=0,
+\end{equation}
+
+pero recordando que \(W_{\rm code}=-\widehat W_q\). En el cÃ³digo, primero se resuelve
+
+\begin{equation}
+\Im W_{\rm code}(\omega)=0,
+\end{equation}
+
+y luego
+
+\begin{equation}
+k=-\frac{1}{\Re W_{\rm code}(\omega)}.
+\end{equation}
+
+La amplitud se obtiene resolviendo
+
+\begin{equation}
+N(A)=k.
+\end{equation}
+
+\subsection{LÃ­neas para obtener semillas centradas}
+
+Desde el flujo extendido:
+
+\begin{lstlisting}
+cd version_2
+python tools/legacy/run_extended_search.py ^
+  --config configs/chua_fractional_nonsmooth.yaml
+\end{lstlisting}
+
+En Linux/macOS:
+
+\begin{lstlisting}
+cd version_2
+python tools/legacy/run_extended_search.py \
+  --config configs/chua_fractional_nonsmooth.yaml
+\end{lstlisting}
+
+La parte centrada usa internamente:
+
+\begin{itemize}
+\item \codepath{find_omega_k_candidates};
+\item \codepath{centered_candidates_from_nyquist};
+\item \codepath{solve_amplitude_from_k};
+\item \codepath{build_fractional_seed}.
+\end{itemize}
+
+Archivos esperados:
+
+\begin{itemize}
+\item \codepath{rho_H_diagnostics.csv};
+\item \codepath{biased_df_candidates.csv};
+\item \codepath{continuation_summary.csv};
+\item \codepath{continuation_paths.csv};
+\item \codepath{extended_search_report.md}.
+\end{itemize}
+
+Aunque el archivo \codepath{biased_df_candidates.csv} contiene la familia sesgada, el flujo extendido tambiÃ©n construye candidatos centrados desde Nyquist antes de la continuaciÃ³n.
+
+\section{FunciÃ³n descriptiva sesgada}
+
+La funciÃ³n descriptiva sesgada usa
+
+\begin{equation}
+\sigma(t)=\sigma_0+A\cos(\omega t).
+\end{equation}
+
+La salida
+
+\begin{equation}
+y(t)=\psi(\sigma_0+A\cos(\omega t))
+\end{equation}
+
+se expande en Fourier:
+
+\begin{equation}
+y(t)=y_{\rm mean}+\sum_{k=1}^{K}
+\left(a_k\cos(k\omega t)+b_k\sin(k\omega t)\right).
+\end{equation}
+
+El cÃ³digo define el coeficiente complejo
+
+\begin{equation}
+Y_k=a_k-\ii b_k.
+\end{equation}
+
+Por tanto,
+
+\begin{equation}
+N(A,\sigma_0)=\frac{Y_1}{A}.
+\end{equation}
+
+La ventaja frente a la funciÃ³n descriptiva centrada es que explora oscilaciones alrededor de una media distinta de cero. Esto es importante en sistemas con atractores desplazados respecto al origen.
+
+\subsection{CondiciÃ³n armÃ³nica sesgada}
+
+La condiciÃ³n usada para filtrar candidatos es
+
+\begin{equation}
+R(A,\sigma_0,\omega)
+=
+1+W_{\rm code}(\omega)N(A,\sigma_0),
+\end{equation}
+
+y se busca
+
+\begin{equation}
+|R(A,\sigma_0,\omega)|\ll 1.
+\end{equation}
+
+AdemÃ¡s se calcula un diagnÃ³stico de armÃ³nicos superiores:
+
+\begin{equation}
+\rho_H=
+\frac{\sum_{k=2}^{K}|W_q(k\omega)|\,|Y_k|}
+{|W_q(\omega)|\,|Y_1|+\varepsilon}.
+\end{equation}
+
+InterpretaciÃ³n:
+
+\begin{itemize}
+\item \(\rho_H\) pequeÃ±o: la aproximaciÃ³n de primer armÃ³nico es mÃ¡s razonable;
+\item \(\rho_H\) grande: la funciÃ³n descriptiva pierde confiabilidad como generador de semilla;
+\item \(\rho_H\) no prueba existencia de atractor ni ocultedad.
+\end{itemize}
+
+\subsection{LÃ­neas para bÃºsqueda sesgada}
+
+El script principal es el mismo:
+
+\begin{lstlisting}
+python tools/legacy/run_extended_search.py ^
+  --config configs/chua_fractional_nonsmooth.yaml
+\end{lstlisting}
+
+La bÃºsqueda sesgada usa internamente:
+
+\begin{itemize}
+\item una malla en \((A,\sigma_0,\omega)\);
+\item opcionalmente Latin Hypercube Sampling;
+\item familias \codepath{classical_biased} y \codepath{machado_biased};
+\item filtro por \codepath{residual_abs};
+\item desempate por \(\rho_H\).
+\end{itemize}
+
+Archivos relevantes:
+
+\begin{itemize}
+\item \codepath{biased_df_all_evaluations.csv}: todas las evaluaciones;
+\item \codepath{biased_df_candidates.csv}: mejores candidatos seleccionados;
+\item \codepath{rho_H_diagnostics.csv}: diagnÃ³stico armÃ³nico;
+\item \codepath{plots/rho_H_vs_A.png};
+\item \codepath{plots/rho_H_vs_omega.png};
+\item \codepath{plots/harmonic_spectrum_candidate_*.png}.
+\end{itemize}
+
+\section{FunciÃ³n descriptiva tipo Machado}
+
+La familia tipo Machado se usa como generador auxiliar de semillas. Si \(N(A)\) es la funciÃ³n descriptiva base, se define
+
+\begin{equation}
+N_{\mu}(A)=\exp\{\mu\operatorname{Log}N(A)\},
+\qquad \mu>0.
+\end{equation}
+
+En el caso no suave centrado, si \(N(A)>0\), se usa la rama real:
+
+\begin{equation}
+N_{\mu}(A)=N(A)^\mu.
+\end{equation}
+
+En el caso sesgado, como \(N(A,\sigma_0)\) puede ser complejo, el cÃ³digo usa
+
+\begin{equation}
+N_{\mu}(A,\sigma_0)
+=
+\exp\left(\mu\operatorname{Log}_{\ell}N(A,\sigma_0)\right),
+\end{equation}
+
+donde \(\ell\) es la rama seleccionada del logaritmo complejo.
+
+\subsection{Advertencia teÃ³rica}
+
+El parÃ¡metro \(\mu\) no es el orden fraccionario del sistema. El sistema causal sigue teniendo orden \(q\). El parÃ¡metro \(\mu\) solo deforma la funciÃ³n descriptiva usada para generar semillas. Por tanto:
+
+\begin{equation}
+\mu\neq q.
+\end{equation}
+
+La ruta Machado no prueba ciclos exactos de Caputo. Produce candidatos que deben simularse y verificarse con cuencas.
+
+\subsection{LÃ­neas para activar Machado}
+
+En la configuraciÃ³n YAML deben existir valores como:
+
+\begin{lstlisting}
+machado:
+  mu_values: [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0]
+  branch: 0
+  zero_eps: 1.0e-12
+
+biased_search:
+  families:
+    - classical_biased
+    - machado_biased
+\end{lstlisting}
+
+DespuÃ©s:
+
+\begin{lstlisting}
+python tools/legacy/run_extended_search.py ^
+  --config configs/chua_fractional_nonsmooth.yaml
+\end{lstlisting}
+
+Para una verificaciÃ³n refinada de corridas Machado:
+
+\begin{lstlisting}
+python tools/legacy/run_extended_search.py ^
+  --config configs/chua_fractional_nonsmooth.yaml ^
+  --mode corrida1_refined_verification
+\end{lstlisting}
+
+\section{Otras rutas de generaciÃ³n que no conviene olvidar}
+
+AdemÃ¡s de la funciÃ³n descriptiva centrada, sesgada y Machado, el repositorio incluye o conserva estas rutas:
+
+\begin{longtable}{@{}L{0.32\textwidth}L{0.56\textwidth}@{}}
+\toprule
+Ruta & Papel\\
+\midrule
+\endhead
+\(\rho_H\)-diagnostics & No genera una semilla nueva por sÃ­ solo, pero filtra la confiabilidad armÃ³nica de una semilla.\\
+Seed cloud search & Simula nubes de condiciones iniciales evitando vecindades de equilibrio para detectar candidatos no triviales.\\
+ContinuaciÃ³n en \(\eta\) & Transporta una semilla desde una no linealidad suavizada o aproximada hasta la no linealidad original.\\
+ContinuaciÃ³n multiparamÃ©trica & Cambia \(\eta\), \(q\), \(\sigma_0\) o \(\mu\) segÃºn la familia del candidato.\\
+Danca ABM replication & Ruta independiente para reproducir el caso reportado por Danca con predictor--corrector ABM.\\
+Refined basin classification & Reanaliza celdas desconocidas comparÃ¡ndolas con trayectorias target.\\
+Robustness overlay & Cambia \(h,L_m,T\) para revisar persistencia geomÃ©trica.\\
+Sphere controls & Lanza trayectorias desde esferas alrededor de los equilibrios.\\
+External complexity tools & Usa \codepath{nolds} o \codepath{antropy} para entropÃ­as, dimensiones o indicadores de series temporales.\\
+\bottomrule
+\end{longtable}
+
+\section{Modo sweep: barridos sistemÃ¡ticos antes de elegir candidatos}
+
+El modo \emph{sweep} no debe confundirse con una prueba final de ocultedad. Su papel es exploratorio: recorre una familia de parÃ¡metros, genera semillas o trayectorias candidatas, calcula residuos y diagnÃ³sticos, y deja archivos resumidos para decidir quÃ© casos merecen continuaciÃ³n larga, cuencas y verificaciÃ³n alrededor de equilibrios.
+
+La idea general es:
+\begin{equation}
+\mathcal P=\{p_1,p_2,\ldots,p_N\}
+\quad\Longrightarrow\quad
+\{\text{semilla}(p_i),\text{residuo}(p_i),\rho_H(p_i),\text{clase}(p_i)\}_{i=1}^N.
+\end{equation}
+
+En este repositorio existen varios barridos. Los mÃ¡s importantes para el Chua fraccionario no suave son:
+
+\begin{longtable}{@{}L{0.27\textwidth}L{0.62\textwidth}@{}}
+\toprule
+Modo & QuÃ© explora\\
+\midrule
+\endhead
+\codepath{q_sweep} & Barre el orden fraccionario \(q\). Para cada \(q\), calcula Nyquist/DF, semilla, continuaciÃ³n y atractor final ligero. Sirve para saber en quÃ© Ã³rdenes fraccionarios el cierre armÃ³nico y la continuaciÃ³n son mÃ¡s prometedores.\\
+\codepath{df_compare} & Compara la funciÃ³n descriptiva clÃ¡sica contra la extensiÃ³n tipo Machado para uno o varios valores de \(\mu\). Sirve para saber si Machado aporta semillas distintas de las clÃ¡sicas.\\
+\codepath{machado_sweep} & Barrido completo de ramas, valores de \(\mu\) y fases \(\theta\). Es mÃ¡s costoso y estÃ¡ pensado para exploraciÃ³n amplia del Chua no suave.\\
+\codepath{machado_sweep_fast} & VersiÃ³n reducida del barrido Machado. Usa una malla menor de \(\mu\) y \(\theta\), por lo que sirve como prueba previa antes de una corrida completa.\\
+\codepath{positive_x_basin_sweep} & Barrido heredado sobre regiones de cuenca, Ãºtil para explorar quÃ© zonas iniciales caen en clases target. Debe tratarse como herramienta de cartografÃ­a de cuenca, no como prueba independiente de ocultedad.\\
+\bottomrule
+\end{longtable}
+
+\subsection{Barrido del orden fraccionario \texorpdfstring{\(q\)}{q}}
+
+El modo \codepath{q_sweep} responde a la pregunta:
+
+\begin{quote}
+Â¿Para quÃ© valores de \(q\) la ruta Nyquist/funciÃ³n descriptiva genera semillas continuables hacia un atractor no trivial?
+\end{quote}
+
+Con la entrada publica sin variables de entorno:
+
+\begin{lstlisting}
+hidden-attractors-unified-chua --run-mode q_sweep --q-values 0.97,0.98,0.985,0.99,0.995,1.0
+\end{lstlisting}
+
+Con malla uniforme:
+
+\begin{lstlisting}
+hidden-attractors-unified-chua --run-mode q_sweep --q-values linspace:0.96:1.0:17
+\end{lstlisting}
+
+La forma equivalente con modulo de Python es:
+
+\begin{lstlisting}
+python -m hidden_attractors.workflows.unified_chua --run-mode q_sweep --q-values 0.97,0.98,0.985,0.99,0.995,1.0
+\end{lstlisting}
+
+Las salidas esperadas son:
+
+\begin{lstlisting}
+q_order_sweep/
+  q_sweep_summary.csv
+  q_sweep_summary.json
+  q_0p98500/
+    fig01_nyquist_df_q_0p98500.pdf
+    fig02_continuation_progress_q_0p98500.pdf
+    fig03_final_attractor_q_0p98500.pdf
+    continuation_summary_q_0p98500.json
+    final_attractor_q_0p98500.csv
+    final_attractor_q_0p98500.npz
+    nyquist_df_samples_q_0p98500.csv
+\end{lstlisting}
+
+Lectura recomendada: elegir los valores de \(q\) donde el residuo armÃ³nico sea pequeÃ±o, la continuaciÃ³n no diverja y el atractor final sea acotado y no trivial. DespuÃ©s de esa preselecciÃ³n se ejecutan pruebas de robustez, cuencas y esferas alrededor de equilibrios. No se debe escribir ``atractor oculto'' Ãºnicamente a partir de \codepath{q_sweep}.
+
+\subsection{ComparaciÃ³n clÃ¡sica contra Machado: \codepath{df_compare}}
+
+Este modo compara dos familias de semillas:
+
+\begin{equation}
+N_{\rm cl}(A),
+\qquad
+N_{\mu}(A)=N_{\rm cl}(A)^\mu.
+\end{equation}
+
+Se ejecuta, para cada familia, la cadena:
+
+\begin{equation}
+\text{Nyquist/DF}\rightarrow \text{semilla}\rightarrow \text{continuaciÃ³n}\rightarrow \text{verificaciÃ³n de ocultedad}.
+\end{equation}
+
+Comando bÃ¡sico:
+
+\begin{lstlisting}
+hidden-attractors-unified-chua --run-mode df_compare --q 0.99 --machado-mu 0.5
+\end{lstlisting}
+
+Para varios valores de \(\mu\):
+
+\begin{lstlisting}
+hidden-attractors-unified-chua --run-mode df_compare --q 0.99 --machado-mu-values 0.5,0.75,1.0,1.25,1.5,2.0,3.0
+\end{lstlisting}
+
+Salidas principales:
+
+\begin{lstlisting}
+df_seed_comparison/
+  df_seed_comparison_summary.csv
+  df_seed_comparison_summary.json
+  classic/
+  machado_mu_0p50000/
+\end{lstlisting}
+
+La comparaciÃ³n debe responder:
+\begin{itemize}
+\item si Machado produce amplitudes diferentes;
+\item si la semilla resultante llega a una trayectoria acotada;
+\item si la verificaciÃ³n preliminar detecta contacto con vecindades de equilibrio;
+\item si la geometrÃ­a final es distinta o equivalente a la semilla clÃ¡sica.
+\end{itemize}
+
+\subsection{Barrido Machado completo}
+
+El modo \codepath{machado_sweep} recorre ramas de Nyquist, Ã³rdenes descriptivos \(\mu\) y fases \(\theta\). Para cada combinaciÃ³n se construye
+
+\begin{equation}
+X_{\rm seed}^{(j,\mu,\theta)}
+=
+A_{j,\mu}\operatorname{Re}\left(v_j e^{i\theta}\right),
+\end{equation}
+
+donde \(j\) identifica la rama de Nyquist. La condiciÃ³n de compatibilidad usada en el barrido es
+
+\begin{equation}
+0<k_j<\Delta^\mu,
+\qquad
+\Delta=m_0-m_1.
+\end{equation}
+
+Comando completo:
+
+\begin{lstlisting}
+hidden-attractors-unified-chua --run-mode machado_sweep --model piecewise --output-dir runs_machado_sweep --q 0.99 --h 0.01 --memory-length 8 --t-transient 80 --t-keep 100
+\end{lstlisting}
+
+Salidas principales:
+
+\begin{lstlisting}
+machado_sweep/
+  machado_sweep_summary.csv
+  machado_sweep_summary.json
+  branch_*/mu_*/theta_*/
+\end{lstlisting}
+
+Este barrido debe usarse cuando la bÃºsqueda centrada/sesgada no produce candidatos suficientemente buenos o cuando se quiere justificar una exploraciÃ³n mÃ¡s amplia de fases.
+
+\subsection{Barrido Machado rÃ¡pido}
+
+El modo \codepath{machado_sweep_fast} es la versiÃ³n recomendada para una primera corrida. Usa una malla reducida:
+
+\begin{align}
+\text{rama 0: }&\mu\in\{0.75,1.00,1.25,1.50,2.00,3.00\},\\
+\text{rama 1: }&\mu\in\{0.50,0.75,1.00,1.10,1.25,1.40\},\\
+&\theta\in\left\{0,\frac{\pi}{3},\frac{2\pi}{3},\pi,\frac{4\pi}{3},\frac{5\pi}{3}\right\}.
+\end{align}
+
+Comando:
+
+\begin{lstlisting}
+hidden-attractors-unified-chua --run-mode machado_sweep_fast --model piecewise --output-dir runs_machado_sweep_fast --q 0.99 --h 0.01 --memory-length 8 --t-transient 80 --t-keep 100
+\end{lstlisting}
+
+Para una prueba mÃ­nima:
+
+\begin{lstlisting}
+hidden-attractors-unified-chua --run-mode machado_sweep_fast --machado-sweep-max-candidates 1
+\end{lstlisting}
+
+Salidas:
+
+\begin{lstlisting}
+machado_sweep_fast/
+  machado_sweep_fast_summary.csv
+  machado_sweep_fast_summary.json
+  branch_*/mu_*/theta_*/
+\end{lstlisting}
+
+\subsection{CÃ³mo filtrar un sweep}
+
+Un sweep puede generar muchos candidatos. El filtrado recomendado es:
+
+\begin{enumerate}
+\item eliminar candidatos invÃ¡lidos por incompatibilidad de ganancia;
+\item ordenar por \codepath{residual_abs};
+\item exigir \(\rho_H\) pequeÃ±o cuando estÃ© disponible;
+\item conservar Ãºnicamente trayectorias acotadas y no colapsadas;
+\item descartar candidatos que converjan a equilibrio;
+\item revisar contacto preliminar con vecindades de equilibrio;
+\item pasar solo los mejores a continuaciÃ³n larga, robustez y cuencas.
+\end{enumerate}
+
+Operativamente, una tabla de sweep debe leerse asÃ­:
+
+\begin{longtable}{@{}L{0.30\textwidth}L{0.58\textwidth}@{}}
+\toprule
+Columna & InterpretaciÃ³n\\
+\midrule
+\endhead
+\codepath{branch} & Rama de Nyquist usada para construir la semilla.\\
+\codepath{mu} & Orden descriptivo auxiliar Machado. No es el orden de Caputo.\\
+\codepath{theta} & Fase usada para colocar la semilla sobre la aproximaciÃ³n armÃ³nica.\\
+\codepath{residual_abs} & TamaÃ±o del error de cierre armÃ³nico \(|1+W_qN|\). Menor es mejor.\\
+\codepath{rho_H} & Medida relativa de armÃ³nicos superiores. Menor indica mejor consistencia de primer armÃ³nico.\\
+\codepath{survived} & Indica si la continuaciÃ³n o simulaciÃ³n preliminar no divergiÃ³.\\
+\codepath{hiddenness_status} & Etiqueta operacional. No equivale por sÃ­ sola a prueba matemÃ¡tica.\\
+\bottomrule
+\end{longtable}
+
+\subsection{RelaciÃ³n entre sweep y comparaciÃ³n con Danca}
+
+Para comparar con Danca, el sweep sirve para localizar candidatos internos bajo el mismo sistema y un orden \(q\) cercano al reportado. La comparaciÃ³n debe separar tres cosas:
+
+\begin{equation}
+\text{Danca/ABM con historia completa}
+\neq
+\text{EFORK con memoria truncada}
+\neq
+\text{semilla armÃ³nica tipo Weyl}.
+\end{equation}
+
+Por tanto, el reporte debe presentar:
+\begin{itemize}
+\item el atractor reportado/replicado por Danca;
+\item el mejor candidato encontrado por \codepath{q_sweep}, \codepath{df_compare} o \codepath{machado_sweep_fast};
+\item sus parÃ¡metros \(q,h,L_m,T,t_{\rm burn}\);
+\item sus residuos armÃ³nicos y \(\rho_H\), si existen;
+\item sus pruebas de cuenca y esfera alrededor de equilibrios;
+\item una conclusiÃ³n conservadora: compatible, descartado o pendiente de verificaciÃ³n, no ``demostrado'' salvo que todas las pruebas de cuenca lo respalden.
+\end{itemize}
+
+
+\section{ContinuaciÃ³n numÃ©rica de un parÃ¡metro}
+
+La continuaciÃ³n implementada en \codepath{multiparameter_continuation.py} usa una familia
+
+\begin{equation}
+{}^C D_t^q X=P X+b\,\psi_{\eta}(r^TX),
+\qquad \eta\in[0,1].
+\end{equation}
+
+Para el modelo no suave, se usa una transiciÃ³n entre saturaciÃ³n suavizada y saturaciÃ³n exacta:
+
+\begin{equation}
+\psi_{\eta}(\sigma)
+=
+M\left[(1-\eta)\tanh\left(\frac{\sigma}{w}\right)
++
+\eta\,\operatorname{sat}(\sigma)\right],
+\qquad M=m_0-m_1.
+\end{equation}
+
+Casos:
+
+\begin{equation}
+\eta=0:\quad \psi_0(\sigma)=M\tanh(\sigma/w),
+\end{equation}
+
+\begin{equation}
+\eta=1:\quad \psi_1(\sigma)=M\operatorname{sat}(\sigma).
+\end{equation}
+
+\subsection{Memoria en la continuaciÃ³n}
+
+En sistemas de Caputo no basta pasar el Ãºltimo punto de una etapa a la siguiente. El cÃ³digo conserva una ventana discreta de historia:
+
+\begin{equation}
+\mathcal H_n=
+\{(t_{n-M},X_{n-M}),\ldots,(t_n,X_n)\},
+\qquad
+M=\left\lceil\frac{L_m}{h}\right\rceil.
+\end{equation}
+
+Esta ventana se transporta mediante \codepath{FractionalHistory}. La continuaciÃ³n sigue siendo una heurÃ­stica numÃ©rica, no una prueba de existencia exacta.
+
+\subsection{Archivos de salida}
+
+\begin{itemize}
+\item \codepath{continuation_summary.csv}: una fila por paso de continuaciÃ³n;
+\item \codepath{continuation_paths.csv}: ruta de estados finales;
+\item columnas relevantes:
+\begin{itemize}
+\item \codepath{eta};
+\item \codepath{q};
+\item \codepath{chi_name};
+\item \codepath{chi_value};
+\item \codepath{bounded};
+\item \codepath{diverged};
+\item \codepath{equilibrium_hit};
+\item \codepath{attractor_label};
+\item \codepath{memory_carried};
+\item \codepath{fft_dominant_frequency};
+\item \codepath{psd_entropy}.
+\end{itemize}
+\end{itemize}
+
+\section{ContinuaciÃ³n multiparamÃ©trica}
+
+El cronograma de continuaciÃ³n se forma con tres posibles direcciones:
+
+\begin{equation}
+q_{\rm start}\to q_{\rm target},
+\end{equation}
+
+\begin{equation}
+\chi_{\rm start}\to \chi_{\rm target},
+\end{equation}
+
+\begin{equation}
+\eta_{\rm start}\to \eta_{\rm target}.
+\end{equation}
+
+La variable \(\chi\) depende de la familia del candidato:
+
+\begin{equation}
+\chi=
+\begin{cases}
+\mu,&\text{familia Machado},\\
+\sigma_0,&\text{familia sesgada clÃ¡sica}.
+\end{cases}
+\end{equation}
+
+La configuraciÃ³n tÃ­pica contiene:
+
+\begin{lstlisting}
+continuation:
+  eta_start: 0.0
+  eta_target: 1.0
+  eta_steps: 6
+  q_start: 0.9998
+  q_target: 0.9998
+  q_steps: 1
+  chi_steps: 1
+  h: 0.01
+  memory_length: 10.0
+  t_step: 60.0
+  smooth_width: 0.2
+  max_candidates: 10
+\end{lstlisting}
+
+\section{Candidatos finales y filtrado}
+
+La librerÃ­a pÃºblica carga tres candidatos finales mediante
+
+\begin{lstlisting}
+hidden-attractors-list-candidates
+\end{lstlisting}
+
+o
+
+\begin{lstlisting}
+python examples/list_final_candidates.py
+\end{lstlisting}
+
+Desde Python:
+
+\begin{lstlisting}
+from hidden_attractors import load_final_candidate_records
+
+records = load_final_candidate_records()
+
+for r in records:
+    print(r.candidate_id, r.route, r.q, r.seed, r.robust_start)
+\end{lstlisting}
+
+\subsection{Criterios de filtrado recomendados}
+
+Un candidato no debe seleccionarse solo por verse bien. El orden sugerido es:
+
+\begin{enumerate}
+\item Residuo armÃ³nico pequeÃ±o:
+\[
+|1+W_qN|\ll 1.
+\]
+\item \(\rho_H\) pequeÃ±o:
+\[
+\rho_H<\rho_{\rm max}.
+\]
+\item Semilla finita:
+\[
+\|X_0\|<\infty.
+\]
+\item ContinuaciÃ³n sobreviviente:
+\[
+\texttt{bounded=True},\qquad \texttt{diverged=False}.
+\]
+\item No convergencia a equilibrio:
+\[
+\texttt{equilibrium\_hit=False}.
+\]
+\item Rango post-transitorio no trivial:
+\[
+\max\{\operatorname{range}_x,\operatorname{range}_y,\operatorname{range}_z\}>\varepsilon.
+\]
+\item Robustez bajo cambios de \(h,L_m,T\).
+\item Ausencia de contacto target desde vecindades de equilibrios bajo radios probados.
+\end{enumerate}
+
+\section{Pruebas de ocultedad}
+
+La definiciÃ³n operacional es:
+
+\begin{quote}
+Un atractor es oculto si su cuenca de atracciÃ³n no intersecta ninguna vecindad abierta de los puntos de equilibrio. Si sÃ­ intersecta alguna vecindad de un equilibrio, es autoexcitado.
+\end{quote}
+
+En cÃ³mputo finito no se prueba una vecindad abierta completa. Se prueban radios y muestras:
+
+\begin{equation}
+X_0=E_i+r u_j,
+\qquad
+\|u_j\|=1,
+\qquad
+r\in\mathcal R.
+\end{equation}
+
+Si alguna trayectoria desde \(E_i+r u_j\) cae en la clase target, entonces hay evidencia contra la ocultedad bajo ese contrato.
+
+\section{Cuencas de atracciÃ³n}
+
+Las cuencas se clasifican con etiquetas operativas:
+
+\begin{longtable}{@{}cL{0.32\textwidth}L{0.46\textwidth}@{}}
+\toprule
+ID & Etiqueta & InterpretaciÃ³n\\
+\midrule
+\endhead
+0 & \codepath{equilibrium} & La trayectoria converge o queda cerca de un equilibrio.\\
+1 & \codepath{target_positive} & La trayectoria cae en la clase target positiva.\\
+2 & \codepath{target_negative} & La trayectoria cae en la clase target negativa.\\
+3 & \codepath{infinity} & La trayectoria diverge o excede cota.\\
+4 & \codepath{unknown} & La clasificaciÃ³n gruesa no decide.\\
+5 & \codepath{numerical_failure} & Fallo numÃ©rico o datos no finitos.\\
+6 & \codepath{bounded_other} & Clase refinada: acotada pero no suficientemente cercana al target.\\
+\bottomrule
+\end{longtable}
+
+El corte de cuenca tÃ­pico se hace en un plano, por ejemplo:
+
+\begin{equation}
+z=z_\ast,
+\qquad
+(x_0,y_0)\in[x_{\min},x_{\max}]\times[y_{\min},y_{\max}].
+\end{equation}
+
+Si quedan celdas \codepath{unknown}, se usa \codepath{refined_basin}.
+
+\section{Prueba por esferas alrededor de equilibrios}
+
+\subsection{EjecuciÃ³n}
+
+\begin{lstlisting}
+hidden-attractors-sphere-controls --help
+\end{lstlisting}
+
+EjecuciÃ³n con parÃ¡metros explÃ­citos:
+
+\begin{lstlisting}
+hidden-attractors-sphere-controls ^
+  --top-n 3 ^
+  --radii 1e-5,3e-5,1e-4,3e-4,1e-3 ^
+  --samples-per-radius 500 ^
+  --chunks 6 ^
+  --q 0.9998 ^
+  --h 0.01 ^
+  --memory-length 10.0 ^
+  --t-final 1500.0 ^
+  --t-burn 100.0
+\end{lstlisting}
+
+En Linux/macOS:
+
+\begin{lstlisting}
+hidden-attractors-sphere-controls \
+  --top-n 3 \
+  --radii 1e-5,3e-5,1e-4,3e-4,1e-3 \
+  --samples-per-radius 500 \
+  --chunks 6 \
+  --q 0.9998 \
+  --h 0.01 \
+  --memory-length 10.0 \
+  --t-final 1500.0 \
+  --t-burn 100.0
+\end{lstlisting}
+
+\subsection{Archivos que produce}
+
+\begin{itemize}
+\item \codepath{sphere_plan.csv}: todas las condiciones iniciales sobre esferas;
+\item \codepath{sphere_raw_chunk_*.csv}: resultados parciales por proceso;
+\item \codepath{sphere_raw.csv}: todos los resultados;
+\item \codepath{sphere_cumulative_summary.csv}: conteos acumulados;
+\item \codepath{sphere_decision.csv}: decisiÃ³n operacional por candidato;
+\item \codepath{attractor_robustness_raw.csv}: clasificaciÃ³n de robustez desde el punto robusto;
+\item \codepath{attractor_robustness_summary.csv};
+\item \codepath{top3_sphere_robustness_summary.json}.
+\end{itemize}
+
+\subsection{CÃ³mo leer \codepath{sphere_decision.csv}}
+
+Columnas importantes:
+
+\begin{itemize}
+\item \codepath{candidate_id};
+\item \codepath{total_sphere_trajectories};
+\item \codepath{total_target_hits};
+\item \codepath{smallest_radius_with_target_hit};
+\item \codepath{hiddenness_status}.
+\end{itemize}
+
+Lectura:
+
+\begin{equation}
+\texttt{total\_target\_hits}>0
+\quad\Longrightarrow\quad
+\text{no se sostiene ocultedad bajo esas esferas}.
+\end{equation}
+
+\begin{equation}
+\texttt{total\_target\_hits}=0
+\quad\Longrightarrow\quad
+\text{compatible con ocultedad bajo radios y muestras probados}.
+\end{equation}
+
+No debe escribirse ``atractor oculto demostrado'' solo con esta condiciÃ³n.
+
+\section{Pruebas de robustez}
+
+\subsection{Robustness overlay}
+
+Este workflow no prueba ocultedad. Compara la geometrÃ­a del atractor al modificar:
+
+\begin{equation}
+h,\qquad L_m,\qquad T.
+\end{equation}
+
+EjecuciÃ³n:
+
+\begin{lstlisting}
+hidden-attractors-robustness-overlay --help
+\end{lstlisting}
+
+Ejemplo:
+
+\begin{lstlisting}
+hidden-attractors-robustness-overlay ^
+  --q 0.9998 ^
+  --divergence-norm 120.0 ^
+  --equilibrium-tol 1e-3 ^
+  --max-store-points 6000 ^
+  --max-metric-points 1000 ^
+  --max-section-points 300
+\end{lstlisting}
+
+\subsection{Casos de robustez tÃ­picos}
+
+\begin{longtable}{@{}L{0.22\textwidth}cccL{0.26\textwidth}@{}}
+\toprule
+Caso & \(h\) & \(L_m\) & \(T\) & Lectura\\
+\midrule
+\endhead
+\codepath{R0_base} & 0.01 & 10 & 1500 & Contrato base.\\
+\codepath{R1_h_finer} & 0.005 & 10 & 1500 & Paso mÃ¡s fino.\\
+\codepath{R2_h_coarser} & 0.02 & 10 & 1500 & Paso mÃ¡s grueso.\\
+\codepath{R3_Lm_lower} & 0.01 & 5 & 1500 & Menor memoria.\\
+\codepath{R4_Lm_higher} & 0.01 & 20 & 1500 & Mayor memoria.\\
+\codepath{R5_t_longer} & 0.01 & 10 & 3000 & Tiempo mÃ¡s largo.\\
+\bottomrule
+\end{longtable}
+
+\subsection{Archivos de salida}
+
+\begin{itemize}
+\item \codepath{robustness_overlay_config.json};
+\item \codepath{metrics_<candidate>.csv};
+\item \codepath{robustness_overlay_metrics.csv};
+\item \codepath{robustness_overlay_summary.json};
+\item \codepath{plots/overlay_<candidate>.png}.
+\end{itemize}
+
+\subsection{CÃ³mo decidir si un candidato es robusto}
+
+Un candidato es robusto bajo estos contratos si:
+
+\begin{equation}
+\texttt{bounded=True},
+\qquad
+\texttt{diverged=False},
+\qquad
+\texttt{equilibrium\_like=False},
+\end{equation}
+
+y las distancias relativas son pequeÃ±as:
+
+\begin{equation}
+\texttt{range\_relative\_distance}\ll 1,
+\end{equation}
+
+\begin{equation}
+\texttt{cloud\_median\_distance\_norm}\ll 1,
+\end{equation}
+
+\begin{equation}
+\texttt{section\_median\_distance\_norm}\ll 1.
+\end{equation}
+
+\section{Refinamiento de cuencas desconocidas}
+
+Si una cuenca tiene muchas celdas \codepath{unknown}, se usa:
+
+\begin{lstlisting}
+hidden-attractors-refined-basin --help
+\end{lstlisting}
+
+Ejemplo:
+
+\begin{lstlisting}
+hidden-attractors-refined-basin ^
+  --source-dir outputs/basin_compare_danca_project_h001_grid101_20260517 ^
+  --chunks 8 ^
+  --tail-fraction-start 0.5 ^
+  --max-cloud-points 700 ^
+  --max-section-points 250 ^
+  --max-score 0.95
+\end{lstlisting}
+
+El mÃ©todo reintegra cada celda desconocida y compara contra dos referencias:
+
+\begin{equation}
+\mathcal A_+,\qquad \mathcal A_-.
+\end{equation}
+
+Calcula:
+
+\begin{itemize}
+\item distancia entre nubes de cola;
+\item distancia entre secciones de PoincarÃ©;
+\item distancia relativa de rangos;
+\item diferencia relativa de frecuencia FFT dominante;
+\item score ponderado.
+\end{itemize}
+
+La decisiÃ³n se expresa como:
+
+\begin{equation}
+\texttt{matched\_target\_reference}
+\end{equation}
+
+o
+
+\begin{equation}
+\texttt{bounded\_noncollapsed\_reference\_mismatch}.
+\end{equation}
+
+\section{AnÃ¡lisis adicionales implementados}
+
+\subsection{FFT y entropÃ­a espectral}
+
+Para una seÃ±al \(x_n\), se resta la media y se usa una ventana de Hann:
+
+\begin{equation}
+\tilde x_n=(x_n-\bar x)w_n.
+\end{equation}
+
+El espectro de potencia discreto es
+
+\begin{equation}
+S_k=|\operatorname{rFFT}(\tilde x)_k|^2.
+\end{equation}
+
+La frecuencia dominante es
+
+\begin{equation}
+f_{\max}=f_{\arg\max_{k\geq 1}S_k}.
+\end{equation}
+
+La entropÃ­a espectral normalizada se calcula como
+
+\begin{equation}
+H_{\rm PSD}
+=
+-\frac{1}{\log N}
+\sum_k p_k\log(p_k+\varepsilon),
+\qquad
+p_k=\frac{S_k}{\sum_j S_j}.
+\end{equation}
+
+\subsection{SecciÃ³n de PoincarÃ© operacional}
+
+El cÃ³digo usa cruces hacia arriba del plano \(x=0\):
+
+\begin{equation}
+x_{n-1}<0\leq x_n,
+\qquad
+\dot x_n>0.
+\end{equation}
+
+En un sistema fraccionario no se interpreta esta secciÃ³n como mapa de PoincarÃ© exacto con propiedad de semigrupo. Se usa como nube geomÃ©trica para comparar atractores.
+
+\subsection{Distancia entre nubes}
+
+Dadas dos nubes \(A\) y \(B\), se define una distancia simÃ©trica basada en vecinos mÃ¡s cercanos:
+
+\begin{equation}
+d(A,B)=
+\operatorname{median}
+\left(
+\{\min_{b\in B}\|a-b\|:a\in A\}
+\cup
+\{\min_{a\in A}\|b-a\|:b\in B\}
+\right).
+\end{equation}
+
+\subsection{BifurcaciÃ³n por postprocesamiento}
+
+La librerÃ­a extrae mÃ¡ximos, mÃ­nimos o muestras de trayectorias ya calculadas:
+
+\begin{lstlisting}
+from hidden_attractors.analysis import bifurcation_points_from_trajectories
+from hidden_attractors.plotting import plot_bifurcation_diagram
+\end{lstlisting}
+
+Esto no es continuaciÃ³n numÃ©rica formal. Sirve para diagramas exploratorios.
+
+\subsection{Medidas externas de complejidad}
+
+Si se instala \codepath{nolds} o \codepath{antropy}:
+
+\begin{lstlisting}
+from hidden_attractors.integrations import compute_complexity_measures
+
+metrics = compute_complexity_measures(traj[:, 1], backend="auto")
+print(metrics)
+\end{lstlisting}
+
+Estas medidas pueden incluir entropÃ­a de permutaciÃ³n, entropÃ­a muestral, dimensiÃ³n de correlaciÃ³n, DFA o estimadores de Lyapunov de serie temporal. No son prueba de ocultedad.
+
+\section{CÃ³mo elegir el mejor candidato}
+
+Un ranking razonable puede organizarse asÃ­:
+
+\begin{longtable}{@{}cL{0.42\textwidth}L{0.36\textwidth}@{}}
+\toprule
+Prioridad & Criterio & Archivo\\
+\midrule
+\endhead
+1 & Residuo armÃ³nico pequeÃ±o & \codepath{biased_df_candidates.csv}, \codepath{rho_H_diagnostics.csv}\\
+2 & ArmÃ³nicos superiores atenuados & \codepath{rho_H_diagnostics.csv}\\
+3 & Supervivencia por continuaciÃ³n & \codepath{continuation_summary.csv}\\
+4 & No convergencia a equilibrio & \codepath{continuation_summary.csv}\\
+5 & Trayectoria acotada no trivial & \codepath{metrics_*.csv}, \codepath{trajectory_metrics}\\
+6 & Robustez ante \(h,L_m,T\) & \codepath{robustness_overlay_metrics.csv}\\
+7 & No contacto desde esferas & \codepath{sphere_decision.csv}\\
+8 & Cuenca refinada sin contacto local & \codepath{refined_basin_summary.json}\\
+9 & ComparaciÃ³n geomÃ©trica contra Danca & \codepath{danca2017_vs_project_candidates_report.md}\\
+\bottomrule
+\end{longtable}
+
+Una regla conservadora:
+
+\begin{equation}
+\text{mejor candidato}
+=
+\arg\min
+\left[
+w_1|R|+
+w_2\rho_H+
+w_3d_{\rm cloud}+
+w_4d_{\rm section}
++
+w_5 I_{\rm contact}
+\right],
+\end{equation}
+
+donde \(I_{\rm contact}=+\infty\) si hay contacto target desde vecindades de equilibrio. En tÃ©rminos prÃ¡cticos: cualquier contacto target desde una vecindad de equilibrio pesa mÃ¡s que una buena grÃ¡fica 3D.
+
+\section{GrÃ¡ficas recomendadas para cada candidato}
+
+Para cada candidato final debe generarse:
+
+\begin{enumerate}
+\item atractor 3D;
+\item proyecciones \(xy,xz,yz\);
+\item series temporales;
+\item espectro FFT o PSD;
+\item secciÃ³n \(x=0\);
+\item overlay de robustez;
+\item cuenca \(xy\);
+\item cuencas \(xz\) y \(yz\), si estÃ¡n disponibles;
+\item zoom alrededor de \(E_0,E_+,E_-\);
+\item esferas alrededor de \(E_0,E_+,E_-\);
+\item target hits contra radio;
+\item tabla final de contratos numÃ©ricos.
+\end{enumerate}
+
+\section{ComparaciÃ³n con el atractor reportado por Danca}
+
+\subsection{Ruta Danca}
+
+El script especÃ­fico es:
+
+\begin{lstlisting}
+python tools/legacy/danca2017_chua_abm_replication.py --help
+\end{lstlisting}
+
+EjecuciÃ³n rÃ¡pida no cientÃ­fica:
+
+\begin{lstlisting}
+python tools/legacy/danca2017_chua_abm_replication.py ^
+  --job all ^
+  --quick ^
+  --workers 4 ^
+  --output-dir outputs/danca_quick_test
+\end{lstlisting}
+
+EjecuciÃ³n mÃ¡s seria:
+
+\begin{lstlisting}
+python tools/legacy/danca2017_chua_abm_replication.py ^
+  --job all ^
+  --workers 4 ^
+  --q 0.9998 ^
+  --h 0.05 ^
+  --t-final 500.0 ^
+  --transient 250.0 ^
+  --delta 0.01 ^
+  --local-samples-per-unstable-eq 100 ^
+  --figure-local-trajectories 80 ^
+  --output-dir outputs/danca2017_chua_abm_reproduction
+\end{lstlisting}
+
+\subsection{QuÃ© produce}
+
+\begin{itemize}
+\item \codepath{run_config.json};
+\item \codepath{danca_reference_summary.json};
+\item \codepath{danca_hiddenness_decision.json};
+\item \codepath{fig03_danca2017_chua_abm_replica.png};
+\item \codepath{fig03_danca2017_chua_abm_replica.pdf};
+\item \codepath{project_best_two_figure_summary.csv};
+\item \codepath{danca2017_vs_project_candidates_report.md}.
+\end{itemize}
+
+\subsection{Diferencias metodolÃ³gicas}
+
+\begin{longtable}{@{}L{0.28\textwidth}L{0.29\textwidth}L{0.31\textwidth}@{}}
+\toprule
+Aspecto & Danca & Repositorio\\
+\midrule
+\endhead
+Integrador & ABM predictor--corrector & EFORK con memoria truncada; ABM solo en script de rÃ©plica\\
+Memoria & Historia completa de Caputo & Ventana finita \(L_m\)\\
+LocalizaciÃ³n & BÃºsqueda por prueba y error reportada & Semillas por Lur'e, DF centrada, DF sesgada, Machado y nubes\\
+Ocultedad & Vecindades de equilibrios con \(\delta=0.01\) & Esferas, cuencas, refinamiento y comparaciÃ³n target\\
+Salida & Figura y argumento del artÃ­culo & CSV/JSON/figuras reproducibles\\
+Lectura & Atractor oculto reportado & Candidato compatible/no compatible bajo contrato\\
+\bottomrule
+\end{longtable}
+
+\subsection{ComparaciÃ³n mÃ­nima que debe aparecer en el reporte}
+
+Para comparar un candidato del repositorio con Danca, incluir una tabla:
+
+\begin{longtable}{@{}L{0.24\textwidth}L{0.27\textwidth}L{0.36\textwidth}@{}}
+\toprule
+Bloque & Dato & InterpretaciÃ³n\\
+\midrule
+\endhead
+Modelo & mismos \(\alpha,\beta,\gamma,m_0,m_1,q\) & ComparaciÃ³n vÃ¡lida a nivel de sistema\\
+Integrador & ABM vs EFORK & No son numÃ©ricamente idÃ©nticos\\
+CondiciÃ³n inicial & semilla Danca localizada o no publicada & Si no estÃ¡ publicada, declararlo\\
+Atrayente observado & rangos, FFT, nube, secciÃ³n & ComparaciÃ³n geomÃ©trica\\
+Equilibrios & \(E_0,E_+,E_-\) & Base de prueba de ocultedad\\
+Pruebas locales & \(\delta\) Danca vs radios \(\mathcal R\) & Comparar tamaÃ±os de vecindad\\
+Resultado & target/no target desde vecindades & Decide compatibilidad con ocultedad\\
+\bottomrule
+\end{longtable}
+
+\section{Flujo completo recomendado}
+
+\begin{enumerate}
+\item Instalar la librerÃ­a:
+\begin{lstlisting}
+cd version_2
+python -m pip install -e ".[dev]"
+\end{lstlisting}
+
+\item Verificar equilibrios:
+\begin{lstlisting}
+python examples/quickstart_equilibria.py
+\end{lstlisting}
+
+\item Graficar una trayectoria existente:
+\begin{lstlisting}
+python examples/dynamical_analysis_gallery.py ^
+  --trajectory-csv ruta/a/trayectoria.csv ^
+  --output-dir outputs/examples/galeria_prueba
+\end{lstlisting}
+
+\item Ejecutar bÃºsqueda extendida Lur'e/DF/Machado:
+\begin{lstlisting}
+python tools/legacy/run_extended_search.py ^
+  --config configs/chua_fractional_nonsmooth.yaml
+\end{lstlisting}
+
+\item Revisar candidatos:
+\begin{lstlisting}
+python examples/list_final_candidates.py
+hidden-attractors-list-candidates
+\end{lstlisting}
+
+\item Ejecutar robustez:
+\begin{lstlisting}
+hidden-attractors-robustness-overlay
+\end{lstlisting}
+
+\item Ejecutar esferas de equilibrio:
+\begin{lstlisting}
+hidden-attractors-sphere-controls ^
+  --top-n 3 ^
+  --samples-per-radius 500 ^
+  --chunks 6
+\end{lstlisting}
+
+\item Refinar cuenca si existen celdas \codepath{unknown}:
+\begin{lstlisting}
+hidden-attractors-refined-basin ^
+  --source-dir outputs/basin_compare_danca_project_h001_grid101_20260517 ^
+  --chunks 8
+\end{lstlisting}
+
+\item Reproducir Danca:
+\begin{lstlisting}
+python tools/legacy/danca2017_chua_abm_replication.py ^
+  --job all ^
+  --workers 4 ^
+  --output-dir outputs/danca2017_chua_abm_reproduction
+\end{lstlisting}
+
+\item Comparar Danca contra candidatos del proyecto:
+\begin{lstlisting}
+python tools/legacy/danca2017_chua_abm_replication.py ^
+  --job report ^
+  --output-dir outputs/danca2017_chua_abm_reproduction
+\end{lstlisting}
+\end{enumerate}
+
+\section{Criterio final de redacciÃ³n cientÃ­fica}
+
+La conclusiÃ³n debe redactarse con niveles de evidencia:
+
+\begin{itemize}
+\item ``La funciÃ³n descriptiva predice una semilla'' si solo se resolviÃ³ la condiciÃ³n armÃ³nica.
+\item ``La continuaciÃ³n produce una trayectoria acotada no trivial'' si sobreviviÃ³ la homotopÃ­a.
+\item ``El candidato es robusto bajo los contratos probados'' si persiste al cambiar \(h,L_m,T\).
+\item ``El candidato es compatible con ocultedad bajo los radios probados'' si no hay target hits desde esferas.
+\item ``El candidato no estÃ¡ soportado como oculto bajo este contrato'' si hay target hits desde alguna vecindad de equilibrio.
+\item ``Atractor oculto verificado numÃ©ricamente'' solo si se documentan todos los equilibrios, radios, cuencas, robustez, integraciÃ³n y ausencia de intersecciÃ³n de cuenca con vecindades probadas. Aun asÃ­, debe decirse que es verificaciÃ³n numÃ©rica finita.
+\end{itemize}
+
+\section{Checklist para una corrida defendible}
+
+\begin{enumerate}
+\item Â¿Se fijaron \(\alpha,\beta,\gamma,m_0,m_1,q\)?
+\item Â¿Se reportÃ³ el integrador?
+\item Â¿Se reportaron \(h,L_m,T,t_{\rm burn}\)?
+\item Â¿Se calcularon \(E_0,E_+,E_-\)?
+\item Â¿Se revisÃ³ Matignon localmente?
+\item Â¿Se documentÃ³ cÃ³mo se obtuvo la semilla?
+\item Â¿Se guardÃ³ \(|1+W_qN|\)?
+\item Â¿Se guardÃ³ \(\rho_H\)?
+\item Â¿Se realizÃ³ continuaciÃ³n con memoria?
+\item Â¿Se probÃ³ robustez?
+\item Â¿Se generaron cuencas?
+\item Â¿Se probaron esferas alrededor de cada equilibrio?
+\item Â¿Se comparÃ³ contra Danca con el mismo sistema y explicando diferencias de integrador?
+\item Â¿Se evitÃ³ declarar ocultedad solo por una grÃ¡fica?
+\end{enumerate}
+
+
+\section{Balance armÃ³nico implementado en el repositorio}
+\label{sec:balance_armonico_detallado}
+
+El balance armÃ³nico es la etapa que convierte la forma de Lur'e en una condiciÃ³n algebraica aproximada para proponer semillas iniciales. No es una prueba de existencia de ciclos lÃ­mite exactos de Caputo. En el repositorio se usa como aproximaciÃ³n estacionaria tipo Weyl para construir una condiciÃ³n inicial que despuÃ©s se valida con integraciÃ³n causal de Caputo/EFORK o ABM.
+
+Partimos de
+\begin{equation}
+\CaputoD X=PX+b\psi(r^TX),
+\qquad \sigma=r^TX.
+\end{equation}
+Para un rÃ©gimen dominante supuesto,
+\begin{equation}
+\sigma(t)\approx \sigma_0+A\cos(\omega t),
+\end{equation}
+la no linealidad se expande como
+\begin{equation}
+\psi(\sigma_0+A\cos \theta)
+=Y_0+\sum_{k=1}^{\infty}
+\left(a_k\cos(k\theta)+b_k\sin(k\theta)\right),
+\qquad \theta=\omega t.
+\end{equation}
+El cÃ³digo usa coeficientes complejos
+\begin{equation}
+Y_k=a_k-\ii b_k.
+\end{equation}
+La funciÃ³n descriptiva de primer armÃ³nico es
+\begin{equation}
+N(A,\sigma_0)=\frac{Y_1}{A}.
+\end{equation}
+En el caso centrado, \(\sigma_0=0\), se escribe simplemente \(N(A)\).
+
+La evaluaciÃ³n frecuencial del bloque lineal fraccionario no se hace con \(s=\ii\omega\) directamente, sino con
+\begin{equation}
+\lambda=(\ii\omega)^q=\omega^q\exp\left(\ii\frac{q\pi}{2}\right).
+\end{equation}
+Con la convenciÃ³n de reporte,
+\begin{equation}
+\widehat W_q(\lambda)=r^T(\lambda I-P)^{-1}b.
+\end{equation}
+El cierre de primer armÃ³nico queda
+\begin{equation}
+1+\widehat W_q((\ii\omega)^q)N(A,\sigma_0)=0.
+\end{equation}
+La convenciÃ³n histÃ³rica del cÃ³digo define
+\begin{equation}
+W_{\rm code}(\omega)=r^T(P-(\ii\omega)^qI)^{-1}b
+=-\widehat W_q((\ii\omega)^q).
+\end{equation}
+Por eso, en los CSV histÃ³ricos el residuo aparece como
+\begin{equation}
+R(A,\sigma_0,\omega)=1+W_{\rm code}(\omega)N(A,\sigma_0).
+\end{equation}
+Al interpretar resultados del cÃ³digo debe respetarse esa convenciÃ³n de signo.
+
+\subsection{CondiciÃ³n de Nyquist usada para semillas centradas}
+
+Para la funciÃ³n descriptiva centrada se busca primero una frecuencia \(\omega_0\) tal que
+\begin{equation}
+\Im W_{\rm code}(\omega_0)=0.
+\end{equation}
+DespuÃ©s se calcula
+\begin{equation}
+k=-\frac{1}{\Re W_{\rm code}(\omega_0)}.
+\end{equation}
+La amplitud se obtiene de
+\begin{equation}
+N(A)=k.
+\end{equation}
+Si \(k\) no pertenece al rango admisible de la funciÃ³n descriptiva, la rama se descarta. Para la saturaciÃ³n no suave con \(M=m_0-m_1>0\), el cÃ³digo exige
+\begin{equation}
+0<k\leq M.
+\end{equation}
+
+\subsection{DiagnÃ³stico de armÃ³nicos superiores}
+
+La condiciÃ³n armÃ³nica sÃ³lo conserva el primer armÃ³nico. Para medir la severidad de esa aproximaciÃ³n se calcula
+\begin{equation}
+\rho_H=
+\frac{\displaystyle\sum_{k=2}^{K}|W_q(k\omega)|\,|Y_k|}
+{|W_q(\omega)|\,|Y_1|+\varepsilon}.
+\end{equation}
+La lectura correcta es:
+\begin{itemize}
+\item \(\rho_H\) pequeÃ±o: la semilla armÃ³nica es mÃ¡s razonable como punto inicial;
+\item \(\rho_H\) grande: los armÃ³nicos superiores no estÃ¡n suficientemente atenuuados;
+\item \(\rho_H\) no prueba caos, ocultedad ni existencia de ciclo periÃ³dico exacto.
+\end{itemize}
+
+En el flujo extendido, los campos importantes son:
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Campo & Significado\\
+\midrule
+\codepath{residual_abs} & \(|1+W_{\rm code}N|\).\\
+\codepath{rho_H} & RazÃ³n de armÃ³nicos superiores.\\
+\codepath{harmonic_energy_ratio} & EnergÃ­a relativa fuera del primer armÃ³nico.\\
+\codepath{accepted_by_rhoH} & Filtro lÃ³gico comparado contra el umbral del YAML.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{CÃ¡lculo explÃ­cito de semillas iniciales}
+\label{sec:calculo_semillas_detallado}
+
+El repositorio contiene tres mecanismos principales de semilla: centrada clÃ¡sica, sesgada y Machado. AdemÃ¡s conserva bÃºsqueda por nubes de semillas externas a vecindades de equilibrio.
+
+\subsection{Semilla centrada clÃ¡sica}
+
+Una vez obtenidos \((\omega_0,k,A)\), se introduce el bloque lineal modificado
+\begin{equation}
+P_0=P+kb r^T.
+\end{equation}
+La semilla armÃ³nica se construye con el autovector asociado a
+\begin{equation}
+\lambda_0=(\ii\omega_0)^q.
+\end{equation}
+El problema que se usa es
+\begin{equation}
+(P_0-\lambda_0 I)v\approx 0,
+\qquad r^Tv=1.
+\end{equation}
+Luego, para una fase \(\theta\),
+\begin{equation}
+X_{\rm seed}(\theta)=A\Re\{v e^{\ii\theta}\}.
+\end{equation}
+En cÃ³digo, esta ruta corresponde a:
+\begin{itemize}
+\item \codepath{find_omega_k_candidates};
+\item \codepath{solve_amplitude_from_k};
+\item \codepath{build_fractional_seed}.
+\end{itemize}
+
+\subsection{Semilla sesgada}
+
+Para una semilla sesgada se usa
+\begin{equation}
+\sigma(t)=\sigma_0+A\cos(\omega t).
+\end{equation}
+La componente media de la no linealidad, \(Y_0=y_{\rm mean}\), produce un equilibrio medio aproximado \(\bar X\). El cÃ³digo lo obtiene por mÃ­nimos cuadrados imponiendo simultÃ¡neamente
+\begin{equation}
+P\bar X+bY_0=0,
+\qquad r^T\bar X=\sigma_0.
+\end{equation}
+La componente fundamental compleja \(V\) se obtiene resolviendo
+\begin{equation}
+(\lambda I-P)V=bY_1,
+\qquad r^TV=A.
+\end{equation}
+La semilla sesgada queda
+\begin{equation}
+X_{\rm seed}(\theta)=\bar X+\Re\{Ve^{\ii\theta}\}.
+\end{equation}
+Esta ruta evita asumir que el atractor oscila alrededor del origen. Es especialmente Ãºtil cuando el candidato se localiza en una regiÃ³n desplazada de fase.
+
+En cÃ³digo, esta construcciÃ³n corresponde a:
+\begin{itemize}
+\item \codepath{fourier_coefficients_psi};
+\item \codepath{N_biased};
+\item \codepath{reconstruct_biased_lure_seed};
+\item \codepath{search_biased_candidates}.
+\end{itemize}
+
+\subsection{Semilla Machado centrada}
+
+Para el caso centrado no suave, la extensiÃ³n tipo Machado usa
+\begin{equation}
+N_{\mu}(A)=N(A)^\mu,
+\qquad \mu>0.
+\end{equation}
+Para cada rama de Nyquist se conserva la misma \(\omega_j\) y la misma ganancia lineal \(k_j\\), pero la amplitud se recalcula con
+\begin{equation}
+N(A_\mu)^\mu=k_j,
+\qquad\text{o equivalentemente}\qquad
+N(A_\mu)=k_j^{1/\mu}.
+\end{equation}
+La compatibilidad exigida es
+\begin{equation}
+0<k_j<M^{\mu}.
+\end{equation}
+DespuÃ©s se usa el mismo autovector fraccionario:
+\begin{equation}
+X_{{\rm seed},\mu,j}(\theta)=A_{\mu,j}\Re\{v_j e^{\ii\theta}\}.
+\end{equation}
+
+\subsection{Semilla Machado sesgada}
+
+Cuando \(N(A,\sigma_0)\) es complejo, se usa
+\begin{equation}
+N_{\mu}(A,\sigma_0)=
+\exp\left(\mu\operatorname{Log}_{\ell}N(A,\sigma_0)\right),
+\end{equation}
+donde \(\ell\) fija la rama del logaritmo complejo. Esta ruta es mÃ¡s delicada porque puede introducir discontinuidades de rama. Por eso el cÃ³digo descarta valores cercanos a cero con \codepath{zero_eps}.
+
+\subsection{Nubes de semillas}
+
+La bÃºsqueda por nubes no usa funciÃ³n descriptiva. Genera condiciones iniciales en una caja
+\begin{equation}
+[x_{\min},x_{\max}]\times[y_{\min},y_{\max}]\times[z_{\min},z_{\max}],
+\end{equation}
+mezclando malla cartesiana y Latin Hypercube Sampling. DespuÃ©s elimina puntos demasiado cercanos a los equilibrios:
+\begin{equation}
+\min_i\|X_0-E_i\|>\delta_{\rm eq}.
+\end{equation}
+La clasificaciÃ³n preliminar puede producir etiquetas como \codepath{candidate_hidden_like}, pero esa etiqueta sÃ³lo significa que la trayectoria observada fue acotada, no trivial y no pasÃ³ cerca de los equilibrios bajo el contrato corto probado. No equivale a \codepath{hidden_verified}.
+
+\section{Criterios de robustez: pruebas implementadas y lectura}
+\label{sec:robustez_todas_pruebas}
+
+El repositorio implementa varias familias de robustez. Conviene distinguirlas porque no responden la misma pregunta.
+
+\subsection{Robustez por superposiciÃ³n de trayectorias}
+
+El workflow pÃºblico \codepath{robustness_overlay} compara la geometrÃ­a del mismo candidato cuando se cambia el contrato numÃ©rico. La lista estÃ¡ndar es:
+\begin{center}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+Caso & \(h\) & \(L_m\) & \(T\) & Lectura\\
+\midrule
+\codepath{R0_base} & 0.01 & 10 & 1500 & Referencia.\\
+\codepath{R1_h_finer} & 0.005 & 10 & 1500 & Sensibilidad a paso mÃ¡s fino.\\
+\codepath{R2_h_coarser} & 0.02 & 10 & 1500 & Sensibilidad a paso mÃ¡s grueso.\\
+\codepath{R3_Lm_lower} & 0.01 & 5 & 1500 & Sensibilidad a memoria menor.\\
+\codepath{R4_Lm_higher} & 0.01 & 20 & 1500 & Sensibilidad a memoria mayor.\\
+\codepath{R5_t_longer} & 0.01 & 10 & 3000 & Persistencia en tiempo largo.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Para cada caso se guardan mÃ©tricas:
+\begin{itemize}
+\item \codepath{bounded}, \codepath{diverged}, \codepath{equilibrium_like};
+\item rangos \codepath{range_x}, \codepath{range_y}, \codepath{range_z};
+\item varianzas de cola;
+\item frecuencia FFT dominante;
+\item entropÃ­a espectral;
+\item nÃºmero de puntos de secciÃ³n;
+\item distancia relativa de rangos frente a \codepath{R0_base};
+\item diferencia relativa de FFT;
+\item distancia mediana entre nubes de cola;
+\item distancia mediana entre secciones de PoincarÃ©.
+\end{itemize}
+
+Un candidato es robusto sÃ³lo en sentido operativo si, al menos:
+\begin{equation}
+\texttt{bounded=True},\qquad
+\texttt{diverged=False},\qquad
+\texttt{equilibrium\_like=False},
+\end{equation}
+para todos los casos probados, y ademÃ¡s las distancias geomÃ©tricas respecto de la referencia no son desproporcionadas. El cÃ³digo no convierte automÃ¡ticamente esta comparaciÃ³n en prueba de ocultedad.
+
+\subsection{Robustez por clasificador de cuenca desde el punto candidato}
+
+El workflow \codepath{sphere_controls} incluye una prueba adicional desde el punto final robusto de cada candidato. Usa cuatro contratos:
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Caso & Cambio & Objetivo & Salida\\
+\midrule
+\codepath{R0_baseline} & contrato base & clase target inicial & \codepath{attractor_robustness_raw.csv}\\
+\codepath{R1_longer} & aumenta \(T\) & persistencia temporal & \codepath{attractor_robustness_summary.csv}\\
+\codepath{R2_shorter_memory} & reduce \(L_m\) & sensibilidad a memoria & \codepath{attractor_robustness_summary.csv}\\
+\codepath{R3_refined_h} & reduce \(h\) & sensibilidad a paso & \codepath{attractor_robustness_summary.csv}\\
+\bottomrule
+\end{tabular}
+\end{center}
+El campo \codepath{robust_attractor=True} significa que el candidato cayÃ³ en clase target bajo todos esos contratos. No significa que sea oculto.
+
+\subsection{Robustez por esferas alrededor de equilibrios}
+
+La prueba decisiva contra ocultedad es local alrededor de cada equilibrio. Para cada equilibrio \(E_i\), cada radio \(r_j\) y cada direcciÃ³n unitaria \(u_k\), se integra desde
+\begin{equation}
+X_0=E_i+r_j u_k.
+\end{equation}
+Si alguna trayectoria se clasifica como \codepath{target_positive} o \codepath{target_negative}, entonces existe evidencia contra la ocultedad bajo ese contrato:
+\begin{equation}
+\exists i,j,k:
+\quad X_0=E_i+r_ju_k\longrightarrow \TARGET.
+\end{equation}
+La lectura del archivo \codepath{sphere_decision.csv} es:
+\begin{itemize}
+\item \codepath{not_supported_by_sphere_equilibrium_test}: hubo contacto target desde alguna vecindad de equilibrio;
+\item \codepath{compatible_with_hiddenness_under_tested_spheres}: no se observÃ³ contacto target bajo los radios y muestras probados.
+\end{itemize}
+La segunda etiqueta no es demostraciÃ³n formal; sÃ³lo resume una prueba finita.
+
+\subsection{Robustez por refinamiento de cuencas desconocidas}
+
+El workflow \codepath{refined_basin} reintegra celdas previamente clasificadas como \codepath{unknown}. Compara cada trayectoria contra referencias target positiva y negativa mediante un puntaje de geometrÃ­a:
+\begin{equation}
+S=\frac{w_c d_c+w_r d_r+w_f d_f+w_s d_s}{w_c+w_r+w_f+w_s},
+\end{equation}
+donde \(d_c\) es distancia de nube de cola, \(d_r\) distancia relativa de rangos, \(d_f\) diferencia relativa de FFT y \(d_s\) distancia de secciÃ³n. Con los valores por defecto, se acepta target sÃ³lo si se satisfacen simultÃ¡neamente umbrales como:
+\begin{equation}
+S\leq 0.95,
+\qquad d_c\leq0.85,
+\qquad d_r\leq1.50,
+\qquad d_f\leq1.00,
+\qquad d_s\leq1.20.
+\end{equation}
+Estos umbrales son contratos operativos de clasificaciÃ³n, no teoremas.
+
+\section{AnÃ¡lisis espectral, Lyapunov, bifurcaciones y Matignon}
+\label{sec:analisis_adicionales_disponibles}
+
+\subsection{FFT dominante y entropÃ­a espectral}
+
+La API activa calcula FFT sobre la cola de la trayectoria. Para una serie \(x_n\), primero se remueve la media y se aplica ventana de Hann:
+\begin{equation}
+\tilde x_n=(x_n-\bar x)w_n.
+\end{equation}
+Luego
+\begin{equation}
+S_k=|\operatorname{rFFT}(\tilde x)_k|^2.
+\end{equation}
+La frecuencia dominante es
+\begin{equation}
+f_{\max}=f_{k^*},
+\qquad k^*=\arg\max_{k\geq1}S_k.
+\end{equation}
+La entropÃ­a espectral normalizada es
+\begin{equation}
+H=-\frac{1}{\log N_f}\sum_{k\geq1}p_k\log(p_k+\varepsilon),
+\qquad
+p_k=\frac{S_k}{\sum_{j\geq1}S_j}.
+\end{equation}
+El campo correspondiente en los CSV suele aparecer como \codepath{fft_peak} o \codepath{fft_dominant_frequency}; la entropÃ­a aparece como \codepath{psd_entropy}, aunque en la API activa puede provenir de la FFT con ventana y no necesariamente de Welch.
+
+\subsection{PSD de Welch}
+
+La PSD de Welch estÃ¡ conservada como anÃ¡lisis opcional en el pipeline legado. Se activa con:
+\begin{lstlisting}
+hidden-attractors-unified-chua --run-mode balanced --spectral --psd
+\end{lstlisting}
+En Linux/macOS:
+\begin{lstlisting}
+python -m hidden_attractors.workflows.unified_chua --run-mode balanced --spectral --psd
+\end{lstlisting}
+La lectura correcta es: FFT y PSD caracterizan contenido frecuencial y ayudan a comparar persistencia espectral, pero no prueban caos ni ocultedad.
+
+\subsection{Exponentes de Lyapunov}
+
+El repositorio conserva un backend C tipo Benettin para estimaciÃ³n operacional de exponentes de Lyapunov. Se activa desde el pipeline legado con:
+\begin{lstlisting}
+hidden-attractors-unified-chua --run-mode balanced --lyapunov
+\end{lstlisting}
+Para hacer que un fallo detenga la corrida:
+\begin{lstlisting}
+hidden-attractors-unified-chua --run-mode balanced --lyapunov --lyapunov-strict
+\end{lstlisting}
+La interpretaciÃ³n mÃ­nima es:
+\begin{equation}
+\lambda_{\max}>0
+\quad\Rightarrow\quad
+\text{evidencia operacional de sensibilidad caÃ³tica bajo el contrato probado.}
+\end{equation}
+No sustituye la prueba de ocultedad, porque la ocultedad es una propiedad de la cuenca respecto de los equilibrios, no sÃ³lo de la dinÃ¡mica sobre el atractor.
+
+\subsection{Diagramas de bifurcaciÃ³n}
+
+La API activa contiene post-procesamiento para diagramas de bifurcaciÃ³n. No hace continuaciÃ³n de ramas en sentido estricto; toma trayectorias ya integradas para distintos parÃ¡metros y extrae mÃ¡ximos, mÃ­nimos o muestras de una observable. MatemÃ¡ticamente, para cada parÃ¡metro \(\rho_i\), se conserva una colecciÃ³n
+\begin{equation}
+\mathcal B_i=\{x(t_k;\rho_i):t_k\geq t_{\rm burn},\ x(t_k)\text{ mÃ¡ximo local}\}.
+\end{equation}
+La funciÃ³n pÃºblica es:
+\begin{lstlisting}
+from hidden_attractors.analysis import bifurcation_points_from_trajectories
+from hidden_attractors.plotting import plot_bifurcation_diagram
+\end{lstlisting}
+Modos disponibles:
+\begin{itemize}
+\item \codepath{maxima}: mÃ¡ximos locales;
+\item \codepath{minima}: mÃ­nimos locales;
+\item \codepath{both}: mÃ¡ximos y mÃ­nimos;
+\item \codepath{sample}: muestra directa de la cola.
+\end{itemize}
+
+\subsection{Equilibrios y grÃ¡fica Matignon}
+
+El script de anÃ¡lisis de equilibrios calcula para cada equilibrio:
+\begin{itemize}
+\item regiÃ³n: central, saturaciÃ³n izquierda, saturaciÃ³n derecha o frontera de conmutaciÃ³n;
+\item autovalores del Jacobiano local;
+\item margen fraccionario
+\begin{equation}
+\mu_{\rm Matignon}=\min_i\left(|\arg(\lambda_i)|-\frac{q\pi}{2}\right);
+\end{equation}
+\item etiqueta \codepath{matignon_stable}.
+\end{itemize}
+El archivo producido es
+\begin{equation}
+\codepath{equilibria_summary.csv}.
+\end{equation}
+Una grÃ¡fica defendible debe mostrar, para cada equilibrio, si
+\begin{equation}
+\mu_{\rm Matignon}>0
+\end{equation}
+o no. Un ejemplo mÃ­nimo para generar una grÃ¡fica a partir del CSV es:
+\begin{lstlisting}
+import csv
+import matplotlib.pyplot as plt
+
+rows = list(csv.DictReader(open('equilibria_summary.csv', newline='')))
+labels = [r['eq_id'] for r in rows]
+margins = [float(r['min_arg_margin']) for r in rows]
+
+plt.figure(figsize=(6,4))
+plt.axhline(0.0, color='k', lw=0.8)
+plt.bar(labels, margins)
+plt.ylabel(r'$\min_i(|\arg\lambda_i|-q\pi/2)$')
+plt.xlabel('equilibrio')
+plt.tight_layout()
+plt.savefig('matignon_equilibria_margin.png', dpi=220)
+\end{lstlisting}
+Esta figura no dice si el atractor es oculto; sÃ³lo clasifica estabilidad local de los equilibrios.
+
+\section{Inventario de funciones disponibles, activas y opcionales}
+\label{sec:inventario_funciones_disponibles}
+
+El repositorio contiene una API activa en \codepath{hidden_attractors/} y scripts legacy todavÃ­a Ãºtiles en \codepath{tools/legacy/}. La siguiente tabla resume quÃ© existe y cÃ³mo debe leerse.
+
+\begin{longtable}{@{}L{0.28\textwidth}L{0.24\textwidth}L{0.38\textwidth}@{}}
+\toprule
+Bloque & Estado & FunciÃ³n disponible\\
+\midrule
+\endhead
+\codepath{models.chua} & API activa & ParÃ¡metros, campo vectorial y equilibrios del Chua no suave.\\
+\codepath{analysis.trajectory} & API activa & Rangos, varianza, FFT, entropÃ­a espectral, secciones, distancias de nubes y casos de robustez.\\
+\codepath{analysis.bifurcation} & API activa & ExtracciÃ³n de puntos para diagramas de bifurcaciÃ³n desde trayectorias ya calculadas.\\
+\codepath{plotting.dynamics} & API activa & Retratos de fase, proyecciones, series temporales y diagramas de bifurcaciÃ³n.\\
+\codepath{basins.classification} & API activa & Etiquetas \codepath{equilibrium}, \codepath{target_positive}, \codepath{target_negative}, \codepath{infinity}, \codepath{unknown}, \codepath{numerical_failure}.\\
+\codepath{workflows.robustness_overlay} & CLI mantenida & SuperposiciÃ³n de trayectorias al variar \(h,L_m,T\).\\
+\codepath{workflows.sphere_controls} & CLI mantenida & Pruebas desde esferas alrededor de todos los equilibrios y robustez del candidato.\\
+\codepath{workflows.refined_basin} & CLI mantenida & ReclasificaciÃ³n de celdas \codepath{unknown} mediante geometrÃ­a contra referencias target.\\
+\codepath{seed_generation} & API activa ligera & DF centrada, semilla sesgada y semillas Machado sin variables de entorno.\\
+\codepath{solvers.FractionalHistory} & API activa ligera & Ventana de memoria EFORK; la integracion pesada se ejecuta con backend C.\\
+\codepath{workflows.unified_chua} & CLI/API mantenida & Entrada publica sin \codepath{\$env}; delega calculos pesados al backend C.\\
+\codepath{integrations.external_tools} & API activa opcional & Adaptadores para \codepath{nolds}, \codepath{antropy}, PyDSTool y referencias externas.\\
+\codepath{tools/legacy/run_extended_search.py} & Legacy Ãºtil & BÃºsqueda centrada, sesgada, Machado, \(\rho_H\), continuaciÃ³n multiparamÃ©trica y nubes de semillas.\\
+\codepath{tools/legacy/unified_nyquist_hidden_pipeline.py} & Legacy amplio & Pipeline completo con modos \codepath{balanced}, \codepath{fast}, \codepath{basin_only}, \codepath{q_sweep}, \codepath{df_compare}, \codepath{machado_sweep}, \codepath{machado_sweep_fast}.\\
+\codepath{tools/legacy/danca2017_chua_abm_replication.py} & Legacy de referencia & RÃ©plica ABM de Danca y comparaciÃ³n contra candidatos del proyecto.\\
+\codepath{tools/legacy/positive_x_basin_sweep.py} & Pendiente de migraciÃ³n & Barrido de cuenca en regiÃ³n \(x>0\), especialmente alrededor de \(E_+\).\\
+\codepath{tools/legacy/chua_frac_lyapunov_efork_benettin.c} & Opcional nativo & EstimaciÃ³n operacional de exponentes de Lyapunov.\\
+\bottomrule
+\end{longtable}
+
+\subsection{Funciones opcionales desactivadas por defecto}
+
+Varias capacidades existen pero no siempre se ejecutan en una corrida normal:
+\begin{longtable}{@{}L{0.32\textwidth}L{0.25\textwidth}L{0.33\textwidth}@{}}
+\toprule
+Capacidad & ActivaciÃ³n tÃ­pica & Salida esperada\\
+\midrule
+\endhead
+PSD de Welch & \codepath{hidden-attractors-unified-chua --psd} & \codepath{unified_psd_summary.json}, figuras PSD.\\
+ExportaciÃ³n TISEAN & \codepath{hidden-attractors-unified-chua --tisean} & Series exportadas para anÃ¡lisis externo.\\
+Lyapunov operativo & \codepath{hidden-attractors-unified-chua --lyapunov} & Resumen de exponentes y convergencia.\\
+Lyapunov estricto & \codepath{hidden-attractors-unified-chua --lyapunov-strict} & Falla la corrida si el cÃ¡lculo falla.\\
+Planos extra de cuenca & \codepath{hidden-attractors-unified-chua --basin-planes} & Cortes \(xy,xz,yz\).\\
+Cuenca 3D o vistas extra & \codepath{pendiente C} & Figuras adicionales.\\
+IlustraciÃ³n de ocultedad & \codepath{hidden-attractors-unified-chua --hidden-illustration} & Figuras de vecindades y target/no-target.\\
+Sweep de \(q\) & \codepath{hidden-attractors-unified-chua --run-mode q_sweep} & \codepath{q_order_sweep/}.\\
+ComparaciÃ³n DF/Machado & \codepath{hidden-attractors-unified-chua --run-mode df_compare} & \codepath{df_seed_comparison/}.\\
+Sweep Machado completo & \codepath{hidden-attractors-unified-chua --run-mode machado_sweep} & \codepath{machado_sweep/}.\\
+Sweep Machado rÃ¡pido & \codepath{hidden-attractors-unified-chua --run-mode machado_sweep_fast} & \codepath{machado_sweep_fast/}.\\
+\bottomrule
+\end{longtable}
+
+\section{Ruta completa recomendada actualizada}
+\label{sec:ruta_completa_actualizada}
+
+Para el caso Chua fraccionario no suave se recomienda ejecutar y documentar en este orden:
+
+\begin{enumerate}
+\item Fijar sistema, parÃ¡metros, \(q,h,L_m,T,t_{\rm burn}\) y versiÃ³n de cÃ³digo.
+\item Calcular equilibrios, Jacobianos, autovalores y margen de Matignon.
+\item Generar grÃ¡fica de mÃ¡rgenes de Matignon por equilibrio.
+\item Ejecutar \codepath{q_sweep} para detectar Ã³rdenes \(q\) prometedores.
+\item Ejecutar \codepath{df_compare} para comparar semilla clÃ¡sica y Machado.
+\item Ejecutar \codepath{machado_sweep_fast}; si hay candidatos, ejecutar \codepath{machado_sweep} completo.
+\item Ejecutar \codepath{run_extended_search.py} para combinar centradas, sesgadas, Machado, \(\rho_H\), continuaciÃ³n y nubes de semillas.
+\item Filtrar candidatos por \codepath{residual_abs}, \(\rho_H\), no divergencia, no convergencia a equilibrio y geometrÃ­a acotada no trivial.
+\item Reintegrar candidatos seleccionados con tiempo largo.
+\item Calcular FFT, entropÃ­a espectral y, si se activa, PSD de Welch.
+\item Calcular exponentes de Lyapunov si se requiere evidencia adicional de caos.
+\item Construir diagramas de bifurcaciÃ³n para parÃ¡metros relevantes \(q,\alpha,\beta,\gamma,m_0,m_1\) si hay trayectorias por barrido.
+\item Ejecutar \codepath{robustness_overlay} para \(h,L_m,T\).
+\item Ejecutar \codepath{sphere_controls} para todos los equilibrios, radios y muestras.
+\item Generar cuencas \(xy\), y si estÃ¡ habilitado, \(xz\), \(yz\) o cortes locales.
+\item Ejecutar \codepath{refined_basin} si hay muchas celdas \codepath{unknown}.
+\item Comparar todo contra la rÃ©plica ABM de Danca, separando diferencias de mÃ©todo: ABM con historia completa frente a EFORK con memoria truncada.
+\item Redactar conclusiÃ³n con nivel de evidencia, sin promover a \codepath{hidden_verified} salvo que no haya contacto target desde vecindades de todos los equilibrios bajo los contratos probados.
+\end{enumerate}
+
+
+\begin{thebibliography}{99}
+
+\bibitem{Danca2017}
+M. F. Danca.
+\emph{Hidden chaotic attractors in fractional-order systems}.
+Nonlinear Dynamics, 89(1), 2017, 577.
+DOI relacionado: \texttt{10.1007/s11071-017-3472-7}.
+Preprint: \texttt{arXiv:1804.10769}.
+
+\bibitem{Caputo1967}
+M. Caputo.
+\emph{Linear Models of Dissipation whose Q is almost Frequency Independent-II}.
+Geophysical Journal International, 1967.
+
+\bibitem{Matignon1996}
+D. Matignon.
+\emph{Stability Results for Fractional Differential Equations with Applications to Control Processing}.
+Computational Engineering in Systems Applications, 1996.
+
+\bibitem{DiethelmFordFreed2002}
+K. Diethelm, N. J. Ford, and A. D. Freed.
+\emph{A Predictor-Corrector Approach for the Numerical Solution of Fractional Differential Equations}.
+Nonlinear Dynamics, 2002.
+
+\bibitem{LeonovKuznetsov2013}
+G. A. Leonov and N. V. Kuznetsov.
+\emph{Hidden Attractors in Dynamical Systems: From Hidden Oscillations in Hilbert-Kolmogorov, Aizerman, and Kalman Problems to Hidden Chaotic Attractor in Chua Circuits}.
+International Journal of Bifurcation and Chaos, 2013.
+
+\bibitem{TavazoeiHaeri2009}
+M. S. Tavazoei and M. Haeri.
+\emph{A Proof for Non Existence of Periodic Solutions in Time Invariant Fractional Order Systems}.
+Automatica, 2009.
+
+\bibitem{Machado2015}
+J. Tenreiro Machado.
+\emph{Fractional order describing functions}.
+Signal Processing, 2015.
+
+\end{thebibliography}
+
+\end{document}
+
+

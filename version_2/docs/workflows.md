@@ -58,6 +58,26 @@ hidden-attractors-refined-basin --help
 Purpose: revisit `unknown` basin cells and compare trajectory geometry against
 reference target trajectories.
 
+## Unified Fractional Chua Pipeline
+
+Module:
+
+```python
+hidden_attractors.workflows.unified_chua
+```
+
+CLI:
+
+```bash
+hidden-attractors-unified-chua --help
+python -m hidden_attractors.workflows.unified_chua --help
+```
+
+Purpose: run the Chua fractional workflow with explicit command-line or Python
+configuration instead of manual `$env:HIDDEN_ATTRACTORS_*` setup. Heavy stages
+must use the packaged C backends: EFORK integration, basin classification,
+hiddenness verification, bifurcation sweeps, and Lyapunov estimation.
+
 ## Numerical Contract
 
 Every workflow output should record:
@@ -69,3 +89,5 @@ Every workflow output should record:
 - integration horizon and burn-in;
 - backend and compiler policy;
 - thresholds used for classification or scoring.
+
+Do not add new heavy Python integration or basin routes when a C backend exists.

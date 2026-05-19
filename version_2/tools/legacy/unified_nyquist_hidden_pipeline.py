@@ -56,6 +56,7 @@ No ejecuta nada por sÃ­ solo fuera de lo que le pidas como usuaria.
 from __future__ import annotations
 
 import csv
+import argparse
 import copy
 import importlib.util
 import json
@@ -92,6 +93,78 @@ from parallel_policy import (
 ROOT = Path(__file__).resolve().parent
 
 PROJECT_SLUG = "hidden_attractors_fractional_order"
+
+
+def _bootstrap_cli_options_into_env(argv: List[str] | None = None) -> None:
+    """Compatibility bridge: explicit CLI options replace PowerShell env setup.
+
+    The legacy script still reads its historical ``HIDDEN_ATTRACTORS_*`` keys in
+    the configuration layer.  This bootstrap is intentionally kept at the very
+    top so users and library wrappers can call the script with normal arguments
+    while old environment-based runs remain reproducible.
+    """
+
+    parser = argparse.ArgumentParser(
+        description="Unified fractional Chua pipeline. Prefer explicit options over HIDDEN_ATTRACTORS_* environment variables.",
+        add_help=True,
+    )
+    parser.add_argument("--ignore-env", action="store_true", help="Clear existing HIDDEN_ATTRACTORS_* variables before applying CLI options.")
+    value_options = {
+        "output_dir": ("--output-dir", "HIDDEN_ATTRACTORS_OUTPUT_DIR"),
+        "model": ("--model", "HIDDEN_ATTRACTORS_MODEL"),
+        "run_mode": ("--run-mode", "HIDDEN_ATTRACTORS_RUN_MODE"),
+        "q": ("--q", "HIDDEN_ATTRACTORS_FRAC_ORDER"),
+        "q_values": ("--q-values", "HIDDEN_ATTRACTORS_Q_VALUES"),
+        "h": ("--h", "HIDDEN_ATTRACTORS_H"),
+        "memory_length": ("--memory-length", "HIDDEN_ATTRACTORS_LM"),
+        "t_transient": ("--t-transient", "HIDDEN_ATTRACTORS_T_TRANSIENT"),
+        "t_keep": ("--t-keep", "HIDDEN_ATTRACTORS_T_KEEP"),
+        "basin_grid": ("--basin-grid", "HIDDEN_ATTRACTORS_BASIN_GRID"),
+        "basin_planes_grid": ("--basin-planes-grid", "HIDDEN_ATTRACTORS_BASIN_PLANES_GRID"),
+        "basin_z0": ("--basin-z0", "HIDDEN_ATTRACTORS_BASIN_Z0"),
+        "basin_workers": ("--basin-workers", "HIDDEN_ATTRACTORS_BASIN_WORKERS"),
+        "bif_workers": ("--bif-workers", "HIDDEN_ATTRACTORS_BIF_WORKERS"),
+        "native_efork_workers": ("--native-efork-workers", "HIDDEN_ATTRACTORS_NATIVE_EFORK_WORKERS"),
+        "verify_nsamples": ("--verify-nsamples", "HIDDEN_ATTRACTORS_VERIFY_NSAMPLES"),
+        "verify_radii": ("--verify-radii", "HIDDEN_ATTRACTORS_VERIFY_RADII"),
+        "machado_mu": ("--machado-mu", "HIDDEN_ATTRACTORS_MACHADO_MU"),
+        "machado_mu_values": ("--machado-mu-values", "HIDDEN_ATTRACTORS_MACHADO_MU_VALUES"),
+        "machado_sweep_max_candidates": ("--machado-sweep-max-candidates", "HIDDEN_ATTRACTORS_MACHADO_SWEEP_MAX_CANDIDATES"),
+        "df_compare_branch_index": ("--df-compare-branch-index", "HIDDEN_ATTRACTORS_DF_COMPARE_BRANCH_INDEX"),
+    }
+    for dest, (flag, _) in value_options.items():
+        parser.add_argument(flag, dest=dest)
+    bool_options = {
+        "spectral": "HIDDEN_ATTRACTORS_SPECTRAL",
+        "psd": "HIDDEN_ATTRACTORS_PSD",
+        "tisean": "HIDDEN_ATTRACTORS_TISEAN",
+        "lyapunov": "HIDDEN_ATTRACTORS_LYAPUNOV",
+        "lyapunov_strict": "HIDDEN_ATTRACTORS_LYAPUNOV_STRICT",
+        "bifurcation": "HIDDEN_ATTRACTORS_BIFURCATION",
+        "basin_planes": "HIDDEN_ATTRACTORS_BASIN_PLANES",
+        "hidden_illustration": "HIDDEN_ATTRACTORS_HIDDEN_ILLUSTRATION",
+        "style_only": "HIDDEN_ATTRACTORS_STYLE_ONLY",
+        "native_efork": "HIDDEN_ATTRACTORS_NATIVE_EFORK",
+    }
+    for dest in bool_options:
+        parser.add_argument(f"--{dest.replace('_', '-')}", dest=dest, default=None, action=argparse.BooleanOptionalAction)
+
+    args, _ = parser.parse_known_args(argv)
+    if args.ignore_env:
+        for key in list(os.environ):
+            if key.startswith("HIDDEN_ATTRACTORS_"):
+                os.environ.pop(key, None)
+    for dest, (_, env_name) in value_options.items():
+        value = getattr(args, dest)
+        if value is not None:
+            os.environ[env_name] = str(value)
+    for dest, env_name in bool_options.items():
+        value = getattr(args, dest)
+        if value is not None:
+            os.environ[env_name] = "1" if bool(value) else "0"
+
+
+_bootstrap_cli_options_into_env(sys.argv[1:])
 
 
 # CONFIGURACION DE CARPETAS DE CORRIDA
@@ -428,8 +501,7 @@ CONFIG: Dict[str, Any] = {
 CONFIG["article_style"] = {
     "enabled": True,
     "basin_planes_enabled": True,
-    # Fallback diagnostico de alto costo en Python. Por defecto se usa C para xy/xz/yz.
-    "python_basin_enabled": False,
+    # Los cortes de cuenca se calculan con backend C; no hay fallback pesado en Python.
     "max_cont_curves": 6,
 }
 
@@ -668,7 +740,6 @@ CANONICAL_ENV_NAMES: Tuple[str, ...] = (
     "HIDDEN_ATTRACTORS_VERIFY_TEST_MAX_SEC",
     "HIDDEN_ATTRACTORS_STYLE_ONLY",
     "HIDDEN_ATTRACTORS_BASIN_PLANES",
-    "HIDDEN_ATTRACTORS_PYTHON_BASIN",
     "HIDDEN_ATTRACTORS_SPECTRAL",
     "HIDDEN_ATTRACTORS_PSD",
     "HIDDEN_ATTRACTORS_TISEAN",
@@ -1355,7 +1426,11 @@ def configure_runtime_profile(cfg: Dict[str, Any]) -> None:
     )
     cfg["style_only"] = _env_flag("HIDDEN_ATTRACTORS_STYLE_ONLY", False)
     cfg["article_style"]["basin_planes_enabled"] = _env_flag("HIDDEN_ATTRACTORS_BASIN_PLANES", True)
-    cfg["article_style"]["python_basin_enabled"] = _env_flag("HIDDEN_ATTRACTORS_PYTHON_BASIN", False)
+    if "HIDDEN_ATTRACTORS_PYTHON_BASIN" in os.environ:
+        raise ValueError(
+            "HIDDEN_ATTRACTORS_PYTHON_BASIN fue retirado. "
+            "Los cortes de cuenca pesados deben ejecutarse con backend C; usa --basin-planes/--no-basin-planes."
+        )
     cfg["spectral"]["enabled"] = _env_flag("HIDDEN_ATTRACTORS_SPECTRAL", True)
     cfg["psd"]["enabled"] = _env_flag("HIDDEN_ATTRACTORS_PSD", False)
     cfg["tisean"]["enabled"] = _env_flag("HIDDEN_ATTRACTORS_TISEAN", False)
@@ -3634,51 +3709,7 @@ def plot_article_style_bifurcation(data: Dict[str, np.ndarray], xlabel: str, yla
 
 
 
-def compute_python_basin_cuts(seed_pos: np.ndarray, cfg: Dict[str, Any]) -> Dict[str, Any]:
-    bcfg = cfg["basin_python"]
-    total_traj = 3 * int(bcfg["nx"]) * int(bcfg["ny"])
-    progress_rows = max(1, int(bcfg.get("progress_rows", 5)))
-    log(
-        "Cuenca Python opcional: "
-        f"3 planos x {bcfg['nx']}x{bcfg['ny']} = {total_traj} trayectorias; "
-        f"t_total={bcfg['t_total']}, h={bcfg['h']}."
-    )
-    p = dict(chua_ic.PARAMS)
-    eqs = chua_equilibria_for_params(p)
-    qord = validate_fractional_order(chua_ic.QORD)
-    planes = {
-        "xy": (np.linspace(*bcfg["xlim"], int(bcfg["nx"])), np.linspace(*bcfg["ylim"], int(bcfg["ny"])), float(seed_pos[2])),
-        "xz": (np.linspace(*bcfg["xlim"], int(bcfg["nx"])), np.linspace(*bcfg["zlim"], int(bcfg["ny"])), float(seed_pos[1])),
-        "yz": (np.linspace(*bcfg["ylim"], int(bcfg["nx"])), np.linspace(*bcfg["zlim"], int(bcfg["ny"])), float(seed_pos[0])),
-    }
-    seed_uv = {
-        "xy": (float(seed_pos[0]), float(seed_pos[1])),
-        "xz": (float(seed_pos[0]), float(seed_pos[2])),
-        "yz": (float(seed_pos[1]), float(seed_pos[2])),
-    }
-    out = {}
-    for plane, (uvals, vvals, fixed) in planes.items():
-        log(f"Cuenca Python plano {plane}: iniciando {len(vvals)} filas x {len(uvals)} columnas.")
-        grid = np.full((len(vvals), len(uvals)), 3, dtype=np.int32)
-        for j, v in enumerate(vvals):
-            for i, u in enumerate(uvals):
-                if plane == "xy":
-                    x0 = np.array([u, v, fixed], dtype=float)
-                elif plane == "xz":
-                    x0 = np.array([u, fixed, v], dtype=float)
-                else:
-                    x0 = np.array([fixed, u, v], dtype=float)
-                T = integrate_original(x0, p, qord=qord, h=float(bcfg["h"]), Lm=float(bcfg["Lm"]), t_total=float(bcfg["t_total"]))
-                grid[j, i] = classify_trajectory(T, eqs, div_threshold=float(bcfg["div_threshold"]), eq_tol=float(bcfg["eq_tol"]), hidden_amp_threshold=float(bcfg["hidden_amp_threshold"]))
-            if (j + 1) == 1 or (j + 1) % progress_rows == 0 or (j + 1) == len(vvals):
-                log(f"Cuenca Python plano {plane}: fila {j + 1}/{len(vvals)} completada.")
-        out[plane] = {"uvals": uvals, "vvals": vvals, "grid": grid, "fixed": fixed, "seed_uv": seed_uv[plane]}
-        log(f"Cuenca Python plano {plane}: terminado.")
-    return out
-
-
-
-def plot_python_basin_planes(basin_data: Dict[str, Any], path: Path):
+def plot_basin_planes(basin_data: Dict[str, Any], path: Path):
     cmap, norm = basin_cmap_norm()
     fig, axs = plt.subplots(1, 3, figsize=(12.4, 3.6))
     labels = {"xy": ("x", "y"), "xz": ("x", "z"), "yz": ("y", "z")}
@@ -4347,30 +4378,20 @@ def run_basin_plane_figures(cfg: Dict[str, Any], final_state: np.ndarray) -> Dic
     extra_keys: List[str] = []
     if bool(cfg["article_style"].get("basin_planes_enabled", True)):
         basin_data = compute_basin_planes_c(cfg, seed_pos)
-        plot_python_basin_planes(basin_data, cfg["outputs"]["basin_planes_pdf"])
+        plot_basin_planes(basin_data, cfg["outputs"]["basin_planes_pdf"])
         plot_single_basin_plane(basin_data["xy"], "xy", cfg["outputs"]["basin_xy_pdf"])
         plot_single_basin_plane(basin_data["xz"], "xz", cfg["outputs"]["basin_xz_pdf"])
         plot_single_basin_plane(basin_data["yz"], "yz", cfg["outputs"]["basin_yz_pdf"])
         basin_generated = True
         basin_backend = "c"
-    elif bool(cfg["article_style"].get("python_basin_enabled", False)):
-        basin_data = compute_python_basin_cuts(seed_pos, cfg)
-        plot_python_basin_planes(basin_data, cfg["outputs"]["basin_planes_pdf"])
-        plot_single_basin_plane(basin_data["xy"], "xy", cfg["outputs"]["basin_xy_pdf"])
-        plot_single_basin_plane(basin_data["xz"], "xz", cfg["outputs"]["basin_xz_pdf"])
-        plot_single_basin_plane(basin_data["yz"], "yz", cfg["outputs"]["basin_yz_pdf"])
-        basin_generated = True
-        basin_backend = "python"
     else:
-        log("Cuenca de 3 planos omitida. Activa HIDDEN_ATTRACTORS_BASIN_PLANES=1 si necesitas fig10.")
+        log("Cuenca de 3 planos omitida. Activa --basin-planes si necesitas fig10.")
     if basin_generated:
         extra_keys = ["basin_planes_pdf", "basin_xy_pdf", "basin_xz_pdf", "basin_yz_pdf"]
     return {
         "status": "ok" if basin_generated else "skipped",
         "basin_planes_enabled": bool(cfg["article_style"].get("basin_planes_enabled", True)),
         "basin_planes_backend": basin_backend,
-        "python_basin_enabled": bool(cfg["article_style"].get("python_basin_enabled", False)),
-        "python_basin_generated": basin_generated,
         "extra_figures": _pdf_figure_map(cfg, extra_keys),
         "notes": ["Cortes de cuenca en planos xy/xz/yz, combinados y separados."] if basin_generated else [],
     }
@@ -4481,22 +4502,14 @@ def run_article_style_figures(cfg: Dict[str, Any], nyq_data: Dict[str, Any]) -> 
     basin_backend = "none"
     if bool(cfg["article_style"].get("basin_planes_enabled", True)):
         basin_data = compute_basin_planes_c(cfg, seed_pos)
-        plot_python_basin_planes(basin_data, cfg["outputs"]["basin_planes_pdf"])
+        plot_basin_planes(basin_data, cfg["outputs"]["basin_planes_pdf"])
         plot_single_basin_plane(basin_data["xy"], "xy", cfg["outputs"]["basin_xy_pdf"])
         plot_single_basin_plane(basin_data["xz"], "xz", cfg["outputs"]["basin_xz_pdf"])
         plot_single_basin_plane(basin_data["yz"], "yz", cfg["outputs"]["basin_yz_pdf"])
         basin_generated = True
         basin_backend = "c"
-    elif bool(cfg["article_style"].get("python_basin_enabled", False)):
-        basin_data = compute_python_basin_cuts(seed_pos, cfg)
-        plot_python_basin_planes(basin_data, cfg["outputs"]["basin_planes_pdf"])
-        plot_single_basin_plane(basin_data["xy"], "xy", cfg["outputs"]["basin_xy_pdf"])
-        plot_single_basin_plane(basin_data["xz"], "xz", cfg["outputs"]["basin_xz_pdf"])
-        plot_single_basin_plane(basin_data["yz"], "yz", cfg["outputs"]["basin_yz_pdf"])
-        basin_generated = True
-        basin_backend = "python"
     else:
-        log("Cuenca de 3 planos omitida. Activa HIDDEN_ATTRACTORS_BASIN_PLANES=1 si necesitas fig10.")
+        log("Cuenca de 3 planos omitida. Activa --basin-planes si necesitas fig10.")
     extra_keys = [
         "nyquist_zoom_pdf",
         "linear_vs_original_pdf",
@@ -4517,8 +4530,6 @@ def run_article_style_figures(cfg: Dict[str, Any], nyq_data: Dict[str, Any]) -> 
         },
         "basin_planes_enabled": bool(cfg["article_style"].get("basin_planes_enabled", True)),
         "basin_planes_backend": basin_backend,
-        "python_basin_enabled": bool(cfg["article_style"].get("python_basin_enabled", False)),
-        "python_basin_generated": basin_generated,
         "notes": [
             "Nyquist adicional con acercamiento en eje x.",
             "Comparación linealizado (eps=0) vs original.",
@@ -4947,7 +4958,7 @@ def run_describing_function_comparison(cfg: Dict[str, Any]) -> Dict[str, Any]:
         "selection_rule": "menor total_target_hits; empate por mayor rango_x y menor norma de semilla",
         "notes": [
             "La DF clasica es el caso mu=1.",
-            "La alternativa tipo Machado usa la formulacion N_mu(a)=N(a)^mu descrita en docs/machado_chua_fraccionario.tex y en Tenreiro Machado.",
+            "La alternativa tipo Machado usa la formulacion N_mu(a)=N(a)^mu descrita en docs/reporte_unificado_chua_fraccionario.tex y en Tenreiro Machado.",
             "Si best_candidate tiene total_target_hits > 0, el candidato no queda soportado como oculto bajo esta muestra.",
         ],
     }
@@ -5576,7 +5587,7 @@ def run_basin_only(cfg: Dict[str, Any]) -> Dict[str, Any]:
     if bool(cfg.get("article_style", {}).get("basin_planes_enabled", True)):
         log("basin_only: regenerando fig10_basin_planes.pdf y cortes xy/xz/yz.")
         basin_planes = compute_basin_planes_c(cfg, final_state)
-        plot_python_basin_planes(basin_planes, cfg["outputs"]["basin_planes_pdf"])
+        plot_basin_planes(basin_planes, cfg["outputs"]["basin_planes_pdf"])
         plot_single_basin_plane(basin_planes["xy"], "xy", cfg["outputs"]["basin_xy_pdf"])
         plot_single_basin_plane(basin_planes["xz"], "xz", cfg["outputs"]["basin_xz_pdf"])
         plot_single_basin_plane(basin_planes["yz"], "yz", cfg["outputs"]["basin_yz_pdf"])
@@ -5640,8 +5651,6 @@ def main():
         return
     if CONFIG.get("run_mode") == "fast":
         log("Modo fast activo: menos puntos, integraciones mas cortas y cuenca C de menor resolucion.")
-    if bool(CONFIG.get("article_style", {}).get("python_basin_enabled", False)):
-        log("Aviso: HIDDEN_ATTRACTORS_PYTHON_BASIN=1; se ejecutara la cuenca Python de alto costo.")
 
     ensure_current_chua_params(CONFIG)
     log("Etapa 1/8: Nyquist/DF, continuacion numerica y figuras base.")

@@ -21,9 +21,35 @@ from typing import Dict
 import numpy as np
 
 
+def normalize_chua_model(raw: str | int | None = "piecewise") -> str:
+    """Normalize project aliases for the supported Chua nonlinearities."""
+
+    if raw is None:
+        return "piecewise"
+    if not isinstance(raw, str):
+        return "arctan" if int(raw) == 1 else "piecewise"
+    text = raw.strip().lower().replace("-", "_")
+    aliases = {
+        "pwl": "piecewise",
+        "nonsmooth": "piecewise",
+        "non_smooth": "piecewise",
+        "no_suave": "piecewise",
+        "piecewise_linear": "piecewise",
+        "tramos": "piecewise",
+        "atan": "arctan",
+        "arc_tan": "arctan",
+        "smooth": "arctan",
+        "suave": "arctan",
+    }
+    value = aliases.get(text, text)
+    if value not in {"piecewise", "arctan"}:
+        raise ValueError("model must be 'piecewise' or 'arctan'.")
+    return value
+
+
 @dataclass(frozen=True)
 class ChuaParameters:
-    """Parameters for the nonsmooth Chua system used in the project.
+    """Parameters for the Chua systems used in the project.
 
     Equations:
         f(x) = m1*x + 0.5*(m0-m1)*(|x+1|-|x-1|)
@@ -36,23 +62,99 @@ class ChuaParameters:
         belongs to the numerical contract of a Caputo integration.
     """
 
+    model: str = "piecewise"
     alpha: float = 8.4562
     beta: float = 12.0732
     gamma: float = 0.0052
     m0: float = -0.1768
     m1: float = -1.1468
+    a1: float = 0.4
+    a2: float = -1.5585
+    rho: float = 1.0
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "model", normalize_chua_model(self.model))
+        if self.alpha <= 0.0:
+            raise ValueError("alpha must be positive.")
+        if self.beta <= 0.0:
+            raise ValueError("beta must be positive.")
+        if self.rho <= 0.0:
+            raise ValueError("rho must be positive.")
+
+
+def chua_parameters(
+    *,
+    model: str = "piecewise",
+    alpha: float = 8.4562,
+    beta: float = 12.0732,
+    gamma: float = 0.0052,
+    m0: float = -0.1768,
+    m1: float = -1.1468,
+    a1: float = 0.4,
+    a2: float = -1.5585,
+    rho: float = 1.0,
+) -> ChuaParameters:
+    """Build an explicit Chua parameter object.
+
+    Purpose:
+        Provide a library-level replacement for legacy modules that selected
+        the model and coefficients through environment variables.
+    """
+
+    return ChuaParameters(
+        model=model,
+        alpha=float(alpha),
+        beta=float(beta),
+        gamma=float(gamma),
+        m0=float(m0),
+        m1=float(m1),
+        a1=float(a1),
+        a2=float(a2),
+        rho=float(rho),
+    )
 
 
 def chua_piecewise_parameters() -> ChuaParameters:
     """Return the project-default piecewise Chua parameters."""
 
-    return ChuaParameters()
+    return chua_parameters(model="piecewise")
+
+
+def chua_arctan_parameters() -> ChuaParameters:
+    """Return the project-default smooth arctan Chua parameters."""
+
+    return chua_parameters(model="arctan")
 
 
 def nonlinearity_piecewise(x: float, p: ChuaParameters) -> float:
     """Evaluate the piecewise-linear Chua nonlinearity."""
 
     return p.m1 * float(x) + 0.5 * (p.m0 - p.m1) * (abs(float(x) + 1.0) - abs(float(x) - 1.0))
+
+
+def nonlinearity_arctan(x: float, p: ChuaParameters) -> float:
+    """Evaluate the smooth arctan Chua nonlinearity used in the project."""
+
+    return p.a1 * float(x) + p.a2 * float(np.arctan(p.rho * float(x)))
+
+
+def nonlinearity_chua(x: float, p: ChuaParameters) -> float:
+    """Evaluate the selected Chua nonlinearity."""
+
+    if normalize_chua_model(p.model) == "arctan":
+        return nonlinearity_arctan(x, p)
+    return nonlinearity_piecewise(x, p)
+
+
+def rhs_chua(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndarray:
+    """Evaluate the selected Chua vector field."""
+
+    params = p or chua_piecewise_parameters()
+    x, y, z = np.asarray(state, dtype=float)
+    fx = params.alpha * (y - x - nonlinearity_chua(x, params))
+    fy = x - y + z
+    fz = -params.beta * y - params.gamma * z
+    return np.array([fx, fy, fz], dtype=float)
 
 
 def rhs_piecewise(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndarray:
@@ -69,11 +171,17 @@ def rhs_piecewise(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndar
     """
 
     params = p or chua_piecewise_parameters()
-    x, y, z = np.asarray(state, dtype=float)
-    fx = params.alpha * (y - x - nonlinearity_piecewise(x, params))
-    fy = x - y + z
-    fz = -params.beta * y - params.gamma * z
-    return np.array([fx, fy, fz], dtype=float)
+    return rhs_chua(state, chua_parameters(
+        model="piecewise",
+        alpha=params.alpha,
+        beta=params.beta,
+        gamma=params.gamma,
+        m0=params.m0,
+        m1=params.m1,
+        a1=params.a1,
+        a2=params.a2,
+        rho=params.rho,
+    ))
 
 
 def equilibria_piecewise(p: ChuaParameters | None = None) -> Dict[str, np.ndarray]:

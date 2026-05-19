@@ -6,5 +6,6 @@ migrated out of legacy experiment scripts.
 """
 
 from ..native.backends import FractionalChuaBackend
+from .history import FractionalHistory
 
-__all__ = ["FractionalChuaBackend"]
+__all__ = ["FractionalChuaBackend", "FractionalHistory"]

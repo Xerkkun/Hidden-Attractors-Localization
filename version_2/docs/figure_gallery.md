@@ -62,6 +62,24 @@ They come from either `outputs/` artifacts or from the public example
 
 ![Machado mu2 sphere overview](assets/figures/chua_fractional_report/sphere_overview_machado_mu2.png)
 
+![Lure sphere Eplus](assets/figures/chua_fractional_report/sphere_lure_Eplus.png)
+
+![Lure sphere Eminus](assets/figures/chua_fractional_report/sphere_lure_Eminus.png)
+
+![Lure sphere E0](assets/figures/chua_fractional_report/sphere_lure_E0.png)
+
+![Machado mu4 sphere Eplus](assets/figures/chua_fractional_report/sphere_machado_mu4_Eplus.png)
+
+![Machado mu4 sphere Eminus](assets/figures/chua_fractional_report/sphere_machado_mu4_Eminus.png)
+
+![Machado mu4 sphere E0](assets/figures/chua_fractional_report/sphere_machado_mu4_E0.png)
+
+![Machado mu2 sphere Eplus](assets/figures/chua_fractional_report/sphere_machado_mu2_Eplus.png)
+
+![Machado mu2 sphere Eminus](assets/figures/chua_fractional_report/sphere_machado_mu2_Eminus.png)
+
+![Machado mu2 sphere E0](assets/figures/chua_fractional_report/sphere_machado_mu2_E0.png)
+
 ## Pending Figure Families
 
 The unified report reserves sections for figure families that should be
