@@ -1,4 +1,4 @@
-﻿\documentclass[11pt]{article}
+\documentclass[11pt]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -11,13 +11,14 @@
 \usepackage{enumitem}
 \usepackage{listings}
 \usepackage{graphicx}
+\usepackage{ragged2e}
 
 \hypersetup{colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!55!black,citecolor=blue!55!black}
 \setlength{\emergencystretch}{2em}
 \renewcommand{\arraystretch}{1.12}
 \setlist[itemize]{leftmargin=1.2em}
 \setlist[enumerate]{leftmargin=1.35em}
-\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
 
 \lstdefinestyle{cmd}{
   basicstyle=\ttfamily\small,
@@ -35,9 +36,9 @@
 \newcommand{\TARGET}{\texttt{TARGET}}
 
 \title{Protocolo secuencial de pruebas\\
-\large Caso de estudio: Chua fraccionario no suave y comparaciÃ³n con Danca}
+\large Caso de estudio: Chua fraccionario no suave y comparación con Danca}
 \author{Hidden Attractors Fractional Order}
-\date{VersiÃ³n de trabajo: \today}
+\date{Versión de trabajo: \today}
 
 \begin{document}
 \maketitle
@@ -47,24 +48,18 @@
 
 Este documento fija el orden de trabajo para estudiar candidatos a atractores ocultos en el sistema de Chua fraccionario no suave. El flujo se organiza de forma secuencial:
 \[
-\text{modelo}
-\to \text{equilibrios}
-\to \text{semillas}
-\to \text{sweep}
-\to \text{continuaciÃ³n}
-\to \text{filtrado}
-\to \text{replicabilidad del target}
-\to \text{robustez}
-\to \text{ocultedad}
-\to \text{diagnÃ³sticos complementarios}
-\to \text{comparaciÃ³n Danca}.
+\begin{gathered}
+\text{modelo}\to\text{equilibrios}\to\text{semillas}\to\text{sweep}\to\text{continuación}\\
+\to\text{filtrado}\to\text{replicabilidad del target}\to\text{robustez}\to\text{ocultedad}\\
+\to\text{diagnósticos complementarios}\to\text{comparación Danca}.
+\end{gathered}
 \]
 
-La funciÃ³n descriptiva, el balance armÃ³nico y la extensiÃ³n tipo Machado se usan como generadores heurÃ­sticos de semillas. La verificaciÃ³n final debe hacerse con simulaciones causales de Caputo/EFORK o ABM y con pruebas de cuencas alrededor de todos los equilibrios.
+La función descriptiva, el balance armónico y la extensión tipo Machado se usan como generadores heurísticos de semillas. La verificación final debe hacerse con simulaciones causales de Caputo/EFORK o ABM y con pruebas de cuencas alrededor de todos los equilibrios.
 
-\section{PreparaciÃ³n del entorno}
+\section{Preparación del entorno}
 
-Trabajar desde la carpeta activa de la librerÃ­a:
+Trabajar desde la carpeta activa de la librería:
 \begin{lstlisting}
 cd version_2
 python -m pip install -e .
@@ -87,7 +82,7 @@ Comando de compatibilidad para ver la llamada completa del pipeline sin usar var
 hidden-attractors-unified-chua --model piecewise --q 0.9998 --print-command
 \end{lstlisting}
 
-\section{DefiniciÃ³n del sistema de Chua fraccionario no suave}
+\section{Definición del sistema de Chua fraccionario no suave}
 
 El sistema usado como caso de estudio es
 \begin{align}
@@ -107,19 +102,12 @@ x,&|x|\le 1,\\
 \end{cases}
 \end{equation}
 
-Los parÃ¡metros de referencia de Danca son
+Los parámetros de referencia de Danca son
 \begin{equation}
-\alpha=8.4562,
-\qquad
-\beta=12.0732,
-\qquad
-\gamma=0.0052,
-\qquad
-m_0=-0.1768,
-\qquad
-m_1=-1.1468,
-\qquad
-q=0.9998.
+\begin{aligned}
+\alpha&=8.4562, & \beta&=12.0732, & \gamma&=0.0052,\\
+m_0&=-0.1768, & m_1&=-1.1468, & q&=0.9998.
+\end{aligned}
 \end{equation}
 
 En forma Lur'e se separa
@@ -150,7 +138,7 @@ En equilibrio se impone
 0=\alpha(y-x-f(x)),\qquad 0=x-y+z,
 \qquad 0=-\beta y-\gamma z.
 \]
-De las dos Ãºltimas ecuaciones,
+De las dos últimas ecuaciones,
 \begin{equation}
  y=\frac{\gamma}{\beta+\gamma}x,
 \qquad
@@ -174,7 +162,7 @@ con
 \begin{equation}
  x_+=-\frac{(\beta+\gamma)(m_0-m_1)}{(\beta+\gamma)m_1+\beta}.
 \end{equation}
-Estos puntos se aceptan sÃ³lo si pertenecen a su regiÃ³n: \(x_+>1\), \(x_-<-1\).
+Estos puntos se aceptan sí sólo si pertenecen a su región: \(x_+>1\), \(x_-<-1\).
 
 El Jacobiano regional es
 \begin{equation}
@@ -185,7 +173,7 @@ J(a)=
 0&-\beta&-\gamma
 \end{bmatrix},
 \end{equation}
-donde \(a=m_0\) en la regiÃ³n central y \(a=m_1\) en las regiones externas, bajo la convenciÃ³n del modelo anterior. Para un sistema fraccionario conmensurado, el criterio de Matignon exige
+donde \(a=m_0\) en la región central y \(a=m_1\) en las regiones externas, bajo la convención del modelo anterior. Para un sistema fraccionario conmensurado, el criterio de Matignon exige
 \begin{equation}
  |\arg(\lambda_i(J))|>\frac{q\pi}{2}
  \qquad \forall i.
@@ -196,29 +184,29 @@ Comando recomendado:
 python examples/quickstart_equilibria.py
 \end{lstlisting}
 
-Salida esperada: puntos \(E_0,E_+,E_-\), autovalores, margen mÃ­nimo de Matignon y clasificaciÃ³n local. La grÃ¡fica recomendada compara cada autovalor con las rectas frontera
+Salida esperada: puntos \(E_0,E_+,E_-\), autovalores, margen mínimo de Matignon y clasificación local. La gráfica recomendada compara cada autovalor con las rectas frontera
 \begin{equation}
  \arg(\lambda)=\pm\frac{q\pi}{2}.
 \end{equation}
 
-\section{Etapa 2: atractor de referencia para parÃ¡metros dados}
+\section{Etapa 2: atractor de referencia para parámetros dados}
 
-Antes de buscar ocultedad se debe verificar que el sistema produce una trayectoria acotada no trivial con los parÃ¡metros fijados. Para usar una trayectoria ya calculada:
+Antes de buscar ocultedad se debe verificar que el sistema produce una trayectoria acotada no trivial con los parámetros fijados. Para usar una trayectoria ya calculada:
 \begin{lstlisting}
 python examples/dynamical_analysis_gallery.py ^
   --trajectory-csv outputs/.../trajectory.csv ^
   --output-dir outputs/examples/chua_case_gallery
 \end{lstlisting}
 
-Las figuras mÃ­nimas son: atractor 3D, proyecciones \(xy,xz,yz\), series temporales y secciÃ³n. Esta etapa no prueba ocultedad; sÃ³lo verifica que existe dinÃ¡mica no trivial para una condiciÃ³n inicial dada.
+Las figuras mínimas son: atractor 3D, proyecciones \(xy,xz,yz\), series temporales y sección. Esta etapa no prueba ocultedad; sí sólo verifica que existe diámica no trivial para una condición inicial dada.
 
-\section{Etapa 3: transferencia fraccionaria y balance armÃ³nico}
-
+\section{Etapa 3: transferencia fraccionaria y balance armónico}
+f
 La transferencia del bloque lineal fraccionario se escribe como
 \begin{equation}
 W_q(s)=r^T(s^qI-P)^{-1}b.
 \end{equation}
-Equivalente, usando el parÃ¡metro espectral,
+Equivalente, usando el parámetro espectral,
 \begin{equation}
 \widehat W_q(\lambda)=r^T(\lambda I-P)^{-1}b,
 \qquad
@@ -230,7 +218,7 @@ En frecuencia no se usa \(\lambda=\ii\omega\), sino
 =\omega^q\left(\cos\frac{q\pi}{2}+\ii\sin\frac{q\pi}{2}\right).
 \end{equation}
 
-Para el balance armÃ³nico centrado se propone
+Para el balance armónico centrado se propone
 \begin{equation}
 \sigma(t)=A\cos(\omega t).
 \end{equation}
@@ -240,11 +228,11 @@ La salida no lineal se expande como
 =\sum_{k\ge 1}Y_k\cos(k\theta+\phi_k),
 \qquad \theta=\omega t.
 \end{equation}
-La funciÃ³n descriptiva clÃ¡sica toma sÃ³lo el primer armÃ³nico:
+La función descriptiva clásica toma sí sólo el primer armónico:
 \begin{equation}
 N(A)=\frac{Y_1e^{\ii\phi_1}}{A}.
 \end{equation}
-El cierre armÃ³nico queda
+El cierre armónico queda
 \begin{equation}
 1+\widehat W_q((\ii\omega)^q)N(A)=0.
 \end{equation}
@@ -256,11 +244,11 @@ Separando parte imaginaria y real:
 
 \subsection{Puente Weyl--Caputo}
 
-El balance armÃ³nico se interpreta como una aproximaciÃ³n estacionaria tipo Weyl. El sistema real integrado es de Caputo, causal, con memoria desde \(t_0\). Por tanto, la soluciÃ³n armÃ³nica no demuestra un ciclo periÃ³dico exacto de Caputo; produce una semilla inicial para simulaciÃ³n y continuaciÃ³n.
+El balance armónico se interpreta como una aproximació estacionaria tipo Weyl. El sistema real integrado es de Caputo, causal, con memoria desde \(t_0\). Por tanto, la solución armÃónica no demuestra un ciclo periódico exacto de Caputo; produce una semilla inicial para simulación y continuación.
 
-\section{Etapa 4: cÃ¡lculo de semillas iniciales}
+\section{Etapa 4: cálculo de semillas iniciales}
 
-\subsection{Semilla centrada clÃ¡sica}
+\subsection{Semilla centrada clásica}
 
 Se buscan frecuencias \(\omega_j\) tales que
 \begin{equation}
@@ -274,7 +262,7 @@ Si existe \(A_j\) tal que
 \begin{equation}
  N(A_j)=k_j,
 \end{equation}
-se calcula el vector armÃ³nico \(v_j\) resolviendo
+se calcula el vector armónico \(v_j\) resolviendo
 \begin{equation}
 (P_0-(\ii\omega_j)^qI)v_j=0,
 \qquad
@@ -299,11 +287,11 @@ print(seed.seed, seed.omega, seed.gain, seed.amplitude)
 
 \subsection{Semilla sesgada}
 
-La funciÃ³n descriptiva sesgada usa
+La función descriptiva sesgada usa
 \begin{equation}
 \sigma(t)=\sigma_0+A\cos(\omega t).
 \end{equation}
-Se calculan numÃ©ricamente los coeficientes de Fourier de
+Se calculan numéricamente los coeficientes de Fourier de
 \begin{equation}
  y(\theta)=\psi(\sigma_0+A\cos\theta),
 \end{equation}
@@ -313,7 +301,7 @@ Y_k=a_k-\ii b_k,
 \qquad
 N(A,\sigma_0)=\frac{Y_1}{A}.
 \end{equation}
-Para reconstruir la semilla se resuelve una parte constante y una parte armÃ³nica:
+Para reconstruir la semilla se resuelve una parte constante y una parte armónica:
 \begin{align}
 P\bar X+b\bar y&=0,
 & r^T\bar X&=\sigma_0,\\
@@ -339,12 +327,12 @@ biased = reconstruct_biased_lure_seed(
 
 \subsection{Semilla tipo Machado}
 
-La extensiÃ³n tipo Machado usa una funciÃ³n descriptiva auxiliar
+La extensión tipo Machado usa una función descriptiva auxiliar
 \begin{equation}
 N_\mu(A)=\exp\{\mu\operatorname{Log}N(A)\},
 \qquad \mu>0.
 \end{equation}
-En la implementaciÃ³n real para el Chua no suave se usa la rama real cuando \(N(A)>0\):
+En la implementación real para el Chua no suave se usa la rama real cuando \(N(A)>0\):
 \begin{equation}
 N_\mu(A)=N(A)^\mu.
 \end{equation}
@@ -356,7 +344,7 @@ La semilla final conserva la forma
 \begin{equation}
 X_{\rm seed}^{(\mu)}(\theta)=A_\mu\Re\{v_je^{\ii\theta}\}.
 \end{equation}
-El parÃ¡metro \(\mu\) no es el orden fraccionario \(q\) del sistema de Caputo; sÃ³lo modifica la familia de semillas.
+El parámetro \(\mu\) no es el orden fraccionario \(q\) del sistema de Caputo; sí sólo modifica la familia de semillas.
 
 Llamada de libreria:
 \begin{lstlisting}
@@ -365,22 +353,21 @@ from hidden_attractors.seed_generation import find_harmonic_seed
 machado = find_harmonic_seed(q=0.9998, method="machado", mu=2.0)
 \end{lstlisting}
 
-\section{Etapa 5: diagnÃ³sticos armÃ³nicos y filtro \texorpdfstring{$\rho_H$}{rhoH}}
+\section{Etapa 5: diagnósticos armónicos y filtro \texorpdfstring{$\rho_H$}{rhoH}}
 
-Para evitar semillas dominadas por armÃ³nicos superiores se calcula
+Para evitar semillas dominadas por armónicos superiores se calcula
 \begin{equation}
-\rho_H=rac{\sum_{k=2}^{K}|\widehat W_q((\ii k\omega)^q)|\,|Y_k|}
-{|\widehat W_q((\ii\omega)^q)|\,|Y_1|+\varepsilon}.
+\rho_H=\frac{\sum_{k=2}^{K}|\widehat W_q((\ii k\omega)^q)|\,|Y_k|}{|\widehat W_q((\ii\omega)^q)|\,|Y_1|+\varepsilon}.
 \end{equation}
-La semilla es mÃ¡s confiable si \(\rho_H\) es pequeÃ±o. El umbral usado en configuraciones rÃ¡pidas suele ser
+La semilla es más confiable si \(\rho_H\) es pequeño. El umbral usado en configuraciones rápidas suele ser
 \begin{equation}
 \rho_H<0.1.
 \end{equation}
-Este criterio no verifica ocultedad; sÃ³lo descarta semillas armÃ³nicas pobres.
+Este criterio no verifica ocultedad; sí sólo descarta semillas armónicas pobres.
 
 \section{Etapa 6: modos sweep}
 
-Los barridos se usan antes de invertir tiempo en verificaciÃ³n larga.
+Los barridos se usan antes de invertir tiempo en verificación larga.
 
 \subsection{Barrido del orden fraccionario}
 
@@ -397,9 +384,9 @@ q_order_sweep/q_sweep_summary.csv
 q_order_sweep/q_sweep_summary.json
 \end{lstlisting}
 
-Uso: detectar valores de \(q\) donde hay cruces Nyquist, semillas con buena continuaciÃ³n y atractores persistentes.
+Uso: detectar valores de \(q\) donde hay cruces Nyquist, semillas con buena continuación y atractores persistentes.
 
-\subsection{ComparaciÃ³n clÃ¡sica contra Machado}
+\subsection{Comparación clásica contra Machado}
 
 \begin{lstlisting}
 hidden-attractors-unified-chua ^
@@ -413,9 +400,9 @@ Salida principal:
 df_seed_comparison/df_seed_comparison_summary.csv
 \end{lstlisting}
 
-Uso: comparar si la semilla clÃ¡sica o una semilla Machado produce mejor continuaciÃ³n.
+Uso: comparar si la semilla clásica o una semilla Machado produce mejor continuación.
 
-\subsection{Barrido Machado completo y rÃ¡pido}
+\subsection{Barrido Machado completo y rápido}
 
 \begin{lstlisting}
 hidden-attractors-unified-chua ^
@@ -424,28 +411,28 @@ hidden-attractors-unified-chua ^
   --output-dir runs_machado_sweep_fast
 \end{lstlisting}
 
-El barrido completo usa mÃ¡s valores de \(\mu\) y mÃ¡s fases \(\theta\). El barrido rÃ¡pido reduce la malla. En ambos casos se exploran ramas, Ã³rdenes descriptivos auxiliares y fases.
+El barrido completo usa más valores de \(\mu\) y más fases \(\theta\). El barrido rápido reduce la malla. En ambos casos se exploran ramas, órdenes descriptivos auxiliares y fases.
 
-\section{Etapa 7: continuaciÃ³n numÃ©rica}
+\section{Etapa 7: continuación numérica}
 
-La continuaciÃ³n transporta una semilla desde un sistema auxiliar hacia el sistema objetivo. La familia implementada usa
+La continuación transporta una semilla desde un sistema auxiliar hacia el sistema objetivo. La familia implementada usa
 \begin{equation}
 \CaputoD X=P X+b\psi_\eta(r^TX),
 \qquad \eta\in[0,1],
 \end{equation}
-donde \(\eta=0\) representa una aproximaciÃ³n suavizada o auxiliar y \(\eta=1\) representa el sistema no suave original.
+donde \(\eta=0\) representa una aproximación suavizada o auxiliar y \(\eta=1\) representa el sistema no suave original.
 
-La continuaciÃ³n multiparÃ¡metro permite variar, segÃºn la ruta,
+La continuación multiparámetro permite variar, según la ruta,
 \begin{equation}
 \eta,	imes q,	imes \chi,
 \end{equation}
 donde \(\chi\) puede ser \(\sigma_0\) para la ruta sesgada o \(\mu\) para la ruta Machado.
 
-En sistemas de Caputo no se debe reiniciar cada etapa sÃ³lo con el Ãºltimo punto. Se transporta una ventana discreta de memoria:
+En sistemas de Caputo no se debe reiniciar cada etapa sí sólo con el último punto. Se transporta una ventana discreta de memoria:
 \begin{equation}
-\mathcal H_k=\{X(t_k-M),\ldots,X(t_k)\\}.
+\mathcal H_k=X(t_k-M),\ldots,X(t_k).
 \end{equation}
-En el cÃ³digo esta ventana aparece como \code{FractionalHistory} o como una historia EFORK con columnas \(t,x,y,z\).
+En el código esta ventana aparece como \code{FractionalHistory} o como una historia EFORK con columnas \(t,x,y,z\).
 
 La extraccion de la ventana es API publica y ligera; la integracion pesada se
 ejecuta con backend C:
@@ -461,7 +448,7 @@ history = FractionalHistory.from_trajectory(
 efork_history = history.as_efork_history()
 \end{lstlisting}
 
-Comando de bÃºsqueda extendida:
+Comando de búsqueda extendida:
 \begin{lstlisting}
 python tools/legacy/run_extended_search.py --config configs/chua_fractional_nonsmooth.yaml
 \end{lstlisting}
@@ -479,23 +466,23 @@ extended_search_report.md
 
 \section{Etapa 8: filtrado de candidatos finales}
 
-Un candidato pasa al bloque de robustez si cumple, como mÃ­nimo:
+Un candidato pasa al bloque de robustez si cumple, como mínimo:
 \begin{enumerate}
-\item residual armÃ³nico bajo;
+\item residual armónico bajo;
 \item \(\rho_H\) aceptable;
 \item semilla finita;
-\item continuaciÃ³n sobreviviente hasta \(\eta=1\);
+\item continuación sobreviviente hasta \(\eta=1\);
 \item trayectoria acotada;
 \item no convergencia inmediata a equilibrio;
 \item rango o varianza postransitoria no colapsada.
 \end{enumerate}
 
-Una etiqueta como \code{candidate_bounded_nontrivial} significa que existe un candidato dinÃ¡mico para verificar. No significa \code{hidden_verified}.
+Una etiqueta como \code{candidate\_bounded\_nontrivial} significa que existe un candidato dinámico para verificar. No significa \code{hidden\_verified}.
 
-\section{Etapa 9: construcciÃ³n y replicabilidad del target}
+\section{Etapa 9: construcción y replicabilidad del target}
 \label{sec:target_replicability}
 
-Antes de preguntar si el atractor es oculto, se debe comprobar si el atractor candidato se reproduce como target. La idea es fijar una referencia \(\mathcal A_\star\), obtenida desde la semilla candidata o desde una corrida previa, y despuÃ©s comparar otras trayectorias contra ella.
+Antes de preguntar si el atractor es oculto, se debe comprobar si el atractor candidato se reproduce como target. La idea es fijar una referencia \(\mathcal A_\star\), obtenida desde la semilla candidata o desde una corrida previa, y después comparar otras trayectorias contra ella.
 
 \subsection{Referencia target}
 
@@ -503,7 +490,7 @@ Sea \(X_\star(t)\) la trayectoria generada desde la semilla candidata. Se descar
 \begin{equation}
 \mathcal C_\star=\{X_\star(t_k):t_k\ge t_{\rm burn}\}.
 \end{equation}
-TambiÃ©n se construye una secciÃ³n tipo PoincarÃ©:
+También se construye una sección tipo Poincaré:
 \begin{equation}
 \Sigma_\star=\{(y,z):x=0,\dot x>0,t\ge t_{\rm burn}\}.
 \end{equation}
@@ -517,7 +504,7 @@ Dada otra trayectoria \(X_i(t)\), se calculan los estimadores:
 d_{\rm cloud}&=\operatorname{median}\{d_{NN}(\mathcal C_i,\mathcal C_\star),d_{NN}(\mathcal C_\star,\mathcal C_i)\},\\
 d_{\Sigma}&=\operatorname{median}\{d_{NN}(\Sigma_i,\Sigma_\star),d_{NN}(\Sigma_\star,\Sigma_i)\}.
 \end{align}
-AdemÃ¡s se revisa:
+Además se revisa:
 \begin{equation}
 \text{bounded}=1,
 \qquad
@@ -528,9 +515,9 @@ AdemÃ¡s se revisa:
 \text{noncollapsed\_variance}=1.
 \end{equation}
 
-La trayectoria reproduce el target si permanece acotada, no colapsa a equilibrio y sus mÃ©tricas geomÃ©tricas/espectrales son compatibles con la referencia. Esta comparaciÃ³n es estadÃ­stica y geomÃ©trica; no se exige coincidencia punto a punto porque el sistema es caÃ³tico.
+La trayectoria reproduce el target si permanece acotada, no colapsa a equilibrio y sus métricas geométricas/espectrales son compatibles con la referencia. Esta comparación es estadística y geométrica; no se exige coincidencia punto a punto porque el sistema es caótico.
 
-\subsection{Prueba de hit de target por secciÃ³n}
+\subsection{Prueba de hit de target por sección}
 
 En las pruebas refinadas se usa una regla adicional basada en secciones. Para una trayectoria de prueba se calcula
 \begin{equation}
@@ -542,18 +529,18 @@ Si
 \qquad
 h_\Sigma\ge h_{\min},
 \end{equation}
-la trayectoria se etiqueta como \code{target_attractor}. En configuraciones usadas por el proyecto aparecen valores como \(N_{\min}=20\) y \(h_{\min}=0.70\), pero deben leerse desde el archivo YAML de cada corrida.
+la trayectoria se etiqueta como \code{target\_attractor}. En configuraciones usadas por el proyecto aparecen valores como \(N_{\min}=20\) y \(h_{\min}=0.70\), pero deben leerse desde el archivo YAML de cada corrida.
 
 \section{Etapa 10: robustez del candidato}
 
-La robustez responde: Â¿el candidato sigue llegando al mismo target bajo cambios del contrato numÃ©rico? No responde todavÃ­a si el atractor es oculto.
+La robustez responde: ¿él candidato sigue llegando al mismo target bajo cambios del contrato numérico? No responde todavía si el atractor es oculto.
 
-\subsection{Casos estÃ¡ndar de robustez}
+\subsection{Casos estándar de robustez}
 
-El conjunto estÃ¡ndar compara:
+El conjunto estándar compara:
 \begin{longtable}{@{}lll@{}}
 \toprule
-Caso & Cambio & PropÃ³sito \\
+Caso & Cambio & Propósito \\
 \midrule
 \endhead
 \code{R0\_base} & contrato base & referencia del candidato \\
@@ -585,17 +572,17 @@ Para cada caso \(R_i\) se compara contra \(R_0\). El candidato es robusto si:
 \item todas las trayectorias relevantes son acotadas;
 \item ninguna colapsa a equilibrio;
 \item las varianzas postransitorias no colapsan;
-\item la distancia relativa de rangos es pequeÃ±a;
+\item la distancia relativa de rangos es pequeña;
 \item la frecuencia dominante no cambia de forma incompatible;
 \item la distancia de nubes y de secciones permanece controlada;
-\item la superposiciÃ³n visual conserva la misma geometrÃ­a global.
+\item la superposición visual conserva la misma geometría global.
 \end{enumerate}
 
-Una falla de robustez no prueba que el candidato sea falso, pero bloquea una afirmaciÃ³n fuerte. Una robustez positiva tampoco prueba ocultedad.
+Una falla de robustez no prueba que el candidato sea falso, pero bloquea una afirmación fuerte. Una robustez positiva tampoco prueba ocultedad.
 
 \section{Etapa 11: pruebas de ocultedad desde vecindades de equilibrios}
 
-DespuÃ©s de demostrar que el target es reproducible, se prueba si su cuenca intersecta vecindades de algÃºn equilibrio. Para cada equilibrio \(E_i\) se generan condiciones iniciales
+Después de demostrar que el target es reproducible, se prueba si su cuenca intersecta vecindades de algún equilibrio. Para cada equilibrio \(E_i\) se generan condiciones iniciales
 \begin{equation}
 X_0=E_i+\rho u,
 \qquad \|u\|=1
@@ -608,7 +595,7 @@ X_0=E_i+\rho r^{1/3}u,
 
 Si alguna trayectoria desde una vecindad de equilibrio reproduce el target, entonces el candidato no debe declararse oculto bajo ese contrato.
 
-Comando API pÃºblica:
+Comando API pública:
 \begin{lstlisting}
 python tools/cli/lure_top3_sphere_robustness.py --help
 \end{lstlisting}
@@ -631,39 +618,39 @@ Un solo hit target puede ser un evento aislado. Por eso se marca \code{robust\_t
 \item el hit persiste en una etapa de mayor tiempo final.
 \end{enumerate}
 
-Si \code{robust\_target\_hit=True}, la decisiÃ³n correcta es bloquear la etiqueta de ocultedad. Si sÃ³lo hay hits aislados, la decisiÃ³n debe ser \code{inconclusive\_isolated\_hit}. Si no hay hits en los radios probados, la conclusiÃ³n mÃ¡xima es \code{compatible\_with\_hiddenness\_under\_tested\_radii}, no \code{hidden\_verified}.
+Si \code{robust\_target\_hit=True}, la decisión correcta es bloquear la etiqueta de ocultedad. Si sólo hay hits aislados, la decisión debe ser \code{inconclusive\_isolated\_hit}. Si no hay hits en los radios probados, la conclusión máxima es \code{compatible\_with\_hiddenness\_under\_tested\_radii}, no \code{hidden\_verified}.
 
-\section{Etapa 12: cuencas de atracciÃ³n}
+\section{Etapa 12: cuencas de atracción}
 
-Las cuencas se calculan despuÃ©s de la robustez y antes de la discusiÃ³n final. Deben incluir cortes:
+Las cuencas se calculan después de la robustez y antes de la discusión final. Deben incluir cortes:
 \begin{equation}
 xy,
 \qquad xz,
 \qquad yz,
 \end{equation}
-y, si estÃ¡ habilitado, visualizaciones 3D.
+y, si está habilitado, visualizaciones 3D.
 
-Las clases tÃ­picas son:
+Las clases típicas son:
 \begin{center}
 \begin{tabular}{cl}
 \toprule
-Clase & InterpretaciÃ³n \\
+Clase & Interpretación \\
 \midrule
 0 & equilibrio \\
 1 & target positivo \\
 2 & target negativo \\
 3 & infinito/divergente \\
 4 & desconocido \\
-5 & falla numÃ©rica \\
+5 & falla numérica \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Las celdas desconocidas se refinan con \code{refined_basin}, comparando trayectorias contra referencias target mediante nubes, secciones, rangos y frecuencia dominante.
+Las celdas desconocidas se refinan con \code{refined\_basin}, comparando trayectorias contra referencias target mediante nubes, secciones, rangos y frecuencia dominante.
 
-\section{Etapa 13: anÃ¡lisis complementarios}
+\section{Etapa 13: análisis complementarios}
 
-Estos anÃ¡lisis ayudan a caracterizar el candidato, pero no deciden ocultedad por sÃ­ solos.
+Estos análisis ayudan a caracterizar el candidato, pero no deciden ocultedad por sí solos.
 
 \subsection{FFT y PSD}
 
@@ -671,7 +658,7 @@ FFT dominante:
 \begin{equation}
  f_{\rm peak}=\arg\max_{f>0}|\mathcal F[x(t)]|^2.
 \end{equation}
-EntropÃ­a espectral normalizada:
+Entropía espectral normalizada:
 \begin{equation}
 H_s=-\frac{\sum_k p_k\log(p_k+\varepsilon)}{\log N}.
 \end{equation}
@@ -687,17 +674,17 @@ Activar el estimador operacional:
 hidden-attractors-unified-chua --run-mode balanced --lyapunov
 \end{lstlisting}
 
-La lectura mÃ­nima es:
+La lectura mínima es:
 \begin{equation}
 \lambda_{\max}>0
 \quad \Rightarrow \quad
-\text{evidencia numÃ©rica de sensibilidad caÃ³tica}.
+\text{evidencia numérica de sensibilidad caótica}.
 \end{equation}
 Para sistemas fraccionarios con memoria, este valor debe reportarse junto con \(q,h,L_m,T,t_{\rm burn}\) y el backend usado.
 
-\subsection{Diagramas de bifurcaciÃ³n}
+\subsection{Diagramas de bifurcación}
 
-Los diagramas se hacen por post-procesamiento de trayectorias. Para un parÃ¡metro \(\rho\), se extraen mÃ¡ximos, mÃ­nimos o muestras postransitorias:
+Los diagramas se hacen por post-procesamiento de trayectorias. Para un parámetro \(\rho\), se extraen máximos, mínimos o muestras postransitorias:
 \begin{equation}
 (\rho_j,x_{\max,k}),
 \qquad
@@ -705,56 +692,56 @@ Los diagramas se hacen por post-procesamiento de trayectorias. Para un parÃ¡me
 \qquad
 (\rho_j,x(t_k)).
 \end{equation}
-No son continuaciÃ³n formal de ramas; sÃ³lo resumen cambios de observables.
+No son continuación formal de ramas; sólo resumen cambios de observables.
 
-\subsection{ExportaciÃ³n TISEAN y medidas externas}
+\subsection{Exportación TISEAN y medidas externas}
 
-Si se activa exportaciÃ³n externa:
+Si se activa exportación externa:
 \begin{lstlisting}
 hidden-attractors-unified-chua --run-mode balanced --tisean
 \end{lstlisting}
-Las medidas externas como entropÃ­a, dimensiÃ³n de correlaciÃ³n, DFA o Lyapunov por series temporales deben citar el paquete usado y no mezclarse con el criterio de ocultedad.
+Las medidas externas como entropía, dimensión de correlación, DFA o Lyapunov por series temporales deben citar el paquete usado y no mezclarse con el criterio de ocultedad.
 
-\section{Etapa 14: comparaciÃ³n con Danca}
+\section{Etapa 14: comparación con Danca}
 
-La comparaciÃ³n con Danca debe mantenerse separada de la ruta EFORK del proyecto.
+La comparación con Danca debe mantenerse separada de la ruta EFORK del proyecto.
 
-Danca usa ABM predictor-corrector con historia completa de Caputo. La rÃ©plica local se ejecuta con:
+Danca usa ABM predictor-corrector con historia completa de Caputo. La réplica local se ejecuta con:
 \begin{lstlisting}
 python tools/legacy/danca2017_chua_abm_replication.py ^
   --job all --workers 4 --q 0.9998 --h 0.05 ^
   --t-final 500 --transient 250 --delta 0.01
 \end{lstlisting}
 
-La comparaciÃ³n debe reportar:
+La comparación debe reportar:
 \begin{enumerate}
-\item mismos parÃ¡metros \((\alpha,\beta,\gamma,m_0,m_1,q)\);
-\item mÃ©todo numÃ©rico: ABM completo contra EFORK con memoria truncada;
-\item condiciÃ³n inicial usada para la rÃ©plica;
-\item geometrÃ­a del atractor;
+\item mismos parámetros \((\alpha,\beta,\gamma,m_0,m_1,q)\);
+\item método numérico: ABM completo contra EFORK con memoria truncada;
+\item condición inicial usada para la réplica;
+\item geometría del atractor;
 \item comportamiento desde vecindades de equilibrios;
 \item si la cuenca del target intersecta o no vecindades de equilibrio;
-\item diferencias debidas al contrato numÃ©rico.
+\item diferencias debidas al contrato numérico.
 \end{enumerate}
 
-\section{Etapa 15: criterio final de decisiÃ³n}
+\section{Etapa 15: criterio final de decisión}
 
-La conclusiÃ³n debe seguir esta tabla:
+La conclusión debe seguir esta tabla:
 
 \begin{longtable}{@{}L{0.28\textwidth}L{0.62\textwidth}@{}}
 \toprule
 Resultado observado & Lectura permitida \\
 \midrule
 \endhead
-La semilla no continÃºa o diverge & candidato descartado \\
+La semilla no continúa o diverge & candidato descartado \\
 Trayectoria acotada, pero no reproduce target bajo robustez & candidato no robusto \\
 Target reproducible, pero hay \code{robust\_target\_hit} desde equilibrio & no soporta ocultedad; candidato autoexcitado bajo el contrato probado \\
 Target reproducible, sin hits target en radios probados & compatible con ocultedad bajo radios probados; no es prueba definitiva \\
-Cuencas, esferas, robustez y comparaciÃ³n Danca son consistentes & candidato fuerte; aÃºn debe reportarse como evidencia numÃ©rica, no teorema \\
+Cuencas, esferas, robustez y comparación Danca son consistentes & candidato fuerte; aún debe reportarse como evidencia numérica, no teorema \\
 \bottomrule
 \end{longtable}
 
-\section{Resumen de comandos en orden de ejecuciÃ³n}
+\section{Resumen de comandos en orden de ejecución}
 
 \begin{lstlisting}
 # 1. Instalacion y prueba minima
@@ -794,28 +781,28 @@ python tools/legacy/danca2017_chua_abm_replication.py --job all --workers 4
 Bloque & Estado & Uso \\
 \midrule
 \endhead
-Modelo Chua y equilibrios & API pÃºblica & \code{hidden_attractors.models.chua} \\
-DF centrada, sesgada y Machado & API pÃºblica ligera & \code{hidden_attractors.seed_generation} \\
-Historia fraccionaria EFORK & API pÃºblica ligera & \code{hidden_attractors.solvers.FractionalHistory} \\
-Trayectorias, FFT, secciones, nubes & API pÃºblica & \code{hidden_attractors.analysis.trajectory} \\
-Diagramas de bifurcaciÃ³n por post-proceso & API pÃºblica & \code{hidden_attractors.analysis.bifurcation} \\
-Robustez overlay & Workflow activo & \code{hidden_attractors.workflows.robustness_overlay} \\
-Controles esfÃ©ricos & Workflow activo & \code{hidden_attractors.workflows.sphere_controls} \\
-Cuenca refinada & Workflow activo & \code{hidden_attractors.workflows.refined_basin} \\
-Backends C EFORK/cuencas & Backend nativo & \code{hidden_attractors.native} y \code{tools/legacy/*.c} \\
-Pipeline unificado Chua & Wrapper API/CLI & \code{hidden_attractors.workflows.unified_chua}; ejecuta integracion/cuencas por C \\
-ContinuaciÃ³n multiparÃ¡metro & Legacy mantenido & \code{multiparameter_continuation.py}; pendiente de migracion completa a backend C \\
-Lyapunov Benettin EFORK & Backend C opcional & \code{chua_frac_lyapunov_efork_benettin.c} \\
+Modelo Chua y equilibrios & API pública & \code{hidden\_attractors.models.chua} \\
+DF centrada, sesgada y Machado & API pública ligera & \code{hidden\_attractors.seed\_generation} \\
+Historia fraccionaria EFORK & API pública ligera & \code{hidden\_attractors.solvers.FractionalHistory} \\
+Trayectorias, FFT, secciones, nubes & API pública & \code{hidden\_attractors.analysis.trajectory} \\
+Diagramas de bifurcación por post-proceso & API pública & \code{hidden\_attractors.analysis.bifurcation} \\
+Robustez overlay & Workflow activo & \code{hidden\_attractors.workflows.robustness\_overlay} \\
+Controles esféricos & Workflow activo & \code{hidden\_attractors.workflows.sphere\_controls} \\
+Cuenca refinada & Workflow activo & \code{hidden\_attractors.workflows.refined\_basin} \\
+Backends C EFORK/cuencas & Backend nativo & \code{hidden\_attractors.native} y \code{tools/legacy/*.c} \\
+Pipeline unificado Chua & Wrapper API/CLI & \code{hidden\_attractors.workflows.unified\_chua}; ejecuta integracion/cuencas por C \\
+Continuación multiparámetro & Legacy mantenido & \code{multiparameter\_continuation.py}; pendiente de migración completa a backend C \\
+Lyapunov Benettin EFORK & Backend C opcional & \code{chua\_frac\_lyapunov\_efork\_benettin.c} \\
 PSD Welch & Opcion CLI & \code{hidden-attractors-unified-chua --psd} \\
-TISEAN/exportaciÃ³n externa & Opcion CLI & \code{hidden-attractors-unified-chua --tisean} \\
-RÃ©plica Danca ABM & Legacy de referencia & \code{danca2017_chua_abm_replication.py} \\
-Medidas externas nolds/antropy & Adaptador opcional & \code{hidden_attractors.integrations.external_tools} \\
+TISEAN/exportación externa & Opcion CLI & \code{hidden-attractors-unified-chua --tisean} \\
+Réplica Danca ABM & Legacy de referencia & \code{danca2017\_chua\_abm\_replication.py} \\
+Medidas externas nolds/antropy & Adaptador opcional & \code{hidden\_attractors.integrations.external\_tools} \\
 \bottomrule
 \end{longtable}
 
 \section{Advertencia final}
 
-El orden correcto evita redundancias: primero se construye y reproduce el target; despuÃ©s se mide su robustez; sÃ³lo entonces se verifica si la cuenca del target toca vecindades de equilibrios. Un atractor robusto puede ser autoexcitado. Un candidato sin contactos observados con equilibrios es compatible con ocultedad sÃ³lo bajo el contrato numÃ©rico probado.
+El orden correcto evita redundancias: primero se construye y reproduce el target; después se mide su robustez; sólo entonces se verifica si la cuenca del target toca vecindades de equilibrios. Un atractor robusto puede ser autoexcitado. Un candidato sin contactos observados con equilibrios es compatible con ocultedad sólo bajo el contrato numérico probado.
 
 \begin{thebibliography}{99}
 
@@ -841,7 +828,7 @@ Nonlinear Dynamics, 2002.
 
 \bibitem{LeonovKuznetsov}
 G. A. Leonov and N. V. Kuznetsov.
-Trabajos sobre atractores ocultos y autoexcitados en sistemas dinÃ¡micos.
+Trabajos sobre atractores ocultos y autoexcitados en sistemas dinámicos.
 
 \bibitem{Benettin1980}
 G. Benettin, L. Galgani, A. Giorgilli, J.-M. Strelcyn.

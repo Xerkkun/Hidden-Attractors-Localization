@@ -23,6 +23,12 @@
   citecolor=blue!55!black
 }
 
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\CaputoD}{\,{}^{C}D_t^q}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\TARGET}{\texttt{TARGET}}
+
 \setlength{\emergencystretch}{2em}
 \renewcommand{\arraystretch}{1.15}
 \setlist[itemize]{leftmargin=1.2em}
@@ -30,10 +36,7 @@
 
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \DeclareRobustCommand{\codepath}[1]{\begingroup\Urlmuskip=0mu plus 2mu\path{#1}\endgroup}
-\newcommand{\CaputoD}{\,{}^{C}D_t^q}
-\newcommand{\ii}{\mathrm{i}}
-\newcommand{\R}{\mathbb{R}}
-\newcommand{\TARGET}{\texttt{TARGET}}
+
 
 \lstdefinestyle{cmd}{
   basicstyle=\ttfamily\small,
@@ -46,7 +49,7 @@
 \lstset{style=cmd}
 
 \title{Protocolo de pruebas para el caso de estudio\\
-\large Chua fraccionario no suave, candidatos Lur'e/Machado y comparaciÃ³n con Danca}
+\large Chua fraccionario no suave, candidatos Lur'e/Machado y comparación con Danca}
 \author{Hidden Attractors Fractional Order}
 \date{\today}
 
@@ -56,35 +59,35 @@
 
 \section{Objetivo del documento}
 
-Este documento describe cÃ³mo ejecutar, documentar e interpretar todas las pruebas disponibles en el repositorio para el caso de estudio del sistema de Chua fraccionario no suave. No sustituye el reporte matemÃ¡tico general; su funciÃ³n es convertir la teorÃ­a y los mÃ³dulos de cÃ³digo en una ruta de trabajo reproducible.
+Este documento describe cómo ejecutar, documentar e interpretar todas las pruebas disponibles en el repositorio para el caso de estudio del sistema de Chua fraccionario no suave. No sustituye el reporte matemático general; su función es convertir la teoría y los módulos de código en una ruta de trabajo reproducible.
 
-El caso de referencia externa es el atractor oculto reportado por Danca en el sistema de Chua no suave de orden fraccionario. La comparaciÃ³n debe hacerse con cautela: Danca usa integraciÃ³n Caputo mediante Adams--Bashforth--Moulton con historia completa, mientras que la ruta principal del repositorio usa EFORK con memoria truncada \(L_m\). Por tanto, la comparaciÃ³n es geomÃ©trica, numÃ©rica y metodolÃ³gica; no es identidad exacta de algoritmos.
+El caso de referencia externa es el atractor oculto reportado por Danca en el sistema de Chua no suave de orden fraccionario. La comparación debe hacerse con cautela: Danca usa integración Caputo mediante Adams--Bashforth--Moulton con historia completa, mientras que la ruta principal del repositorio usa EFORK con memoria truncada \(L_m\). Por tanto, la comparación es geométrica, numérica y metodológica; no es identidad exacta de algoritmos.
 
 \section{Estructura operativa del repositorio}
 
-La versiÃ³n de librerÃ­a estÃ¡ en:
+La versión de librería está en:
 
 \begin{lstlisting}
 version_2/
 \end{lstlisting}
 
-La estructura mÃ­nima que se usa en este protocolo es:
+La estructura mínima que se usa en este protocolo es:
 
 \begin{longtable}{@{}L{0.35\textwidth}L{0.56\textwidth}@{}}
 \toprule
 Ruta & Papel dentro del protocolo\\
 \midrule
 \endhead
-\codepath{hidden_attractors/} & Paquete importable. Incluye modelo, anÃ¡lisis, grÃ¡ficas, clasificadores, workflows y backends nativos.\\
-\codepath{examples/} & Ejemplos cortos para verificar instalaciÃ³n, equilibrios, candidatos y grÃ¡ficas.\\
-\codepath{tools/cli/} & Envolturas CLI mantenidas para workflows pÃºblicos.\\
-\codepath{tools/legacy/} & Scripts de investigaciÃ³n todavÃ­a Ãºtiles para bÃºsqueda Lur'e, bÃºsqueda sesgada, Machado, Danca y corridas histÃ³ricas. No todo es API pÃºblica.\\
+\codepath{hidden_attractors/} & Paquete importable. Incluye modelo, análisis, gráficas, clasificadores, workflows y backends nativos.\\
+\codepath{examples/} & Ejemplos cortos para verificar instalación, equilibrios, candidatos y gráficas.\\
+\codepath{tools/cli/} & Envolturas CLI mantenidas para workflows públicos.\\
+\codepath{tools/legacy/} & Scripts de investigación todavía útiles para búsqueda Lur'e, búsqueda sesgada, Machado, Danca y corridas históricas. No todo es API pública.\\
 \codepath{outputs/} & Corridas, CSV, JSON, trayectorias, figuras y candidatos ya generados.\\
-\codepath{configs/} & Configuraciones YAML para corridas largas o bÃºsquedas extendidas.\\
+\codepath{configs/} & Configuraciones YAML para corridas largas o búsquedas extendidas.\\
 \bottomrule
 \end{longtable}
 
-Antes de ejecutar pruebas largas conviene instalar la librerÃ­a en modo editable:
+Antes de ejecutar pruebas largas conviene instalar la librería en modo editable:
 
 \begin{lstlisting}
 cd version_2
@@ -133,11 +136,11 @@ x,&|x|\leq 1,\\
 \end{cases}
 \end{equation}
 
-La librerÃ­a separa el campo vectorial del contrato fraccionario. El campo \(F(X)\) se evalÃºa en Python mediante funciones como \codepath{rhs_piecewise}; el orden \(q\), el paso \(h\), la memoria \(L_m\), el tiempo final \(T\) y el burn-in pertenecen al integrador o workflow.
+La librería separa el campo vectorial del contrato fraccionario. El campo \(F(X)\) se evalúa en Python mediante funciones como \codepath{rhs_piecewise}; el orden \(q\), el paso \(h\), la memoria \(L_m\), el tiempo final \(T\) y el burn-in pertenecen al integrador o workflow.
 
-\subsection{ParÃ¡metros por defecto de la librerÃ­a}
+\subsection{Parámetros por defecto de la librería}
 
-En la parte pÃºblica de \codepath{version_2}, los parÃ¡metros por defecto del modelo no suave son
+En la parte pública de \codepath{version_2}, los parámetros por defecto del modelo no suave son
 
 \begin{equation}
 \alpha=8.4562,\qquad
@@ -162,11 +165,11 @@ p = chua_piecewise_parameters()
 print(p)
 \end{lstlisting}
 
-\section{Ver la grÃ¡fica del atractor}
+\section{Ver la gráfica del atractor}
 
 \subsection{Usar una trayectoria ya generada}
 
-La librerÃ­a trabaja con trayectorias en formato CSV con columnas:
+La librería trabaja con trayectorias en formato CSV con columnas:
 
 \begin{equation}
 (t,x,y,z).
@@ -188,7 +191,7 @@ python examples/dynamical_analysis_gallery.py \
   --output-dir outputs/examples/chua_nonsmooth_gallery
 \end{lstlisting}
 
-Este ejemplo genera, tÃ­picamente:
+Este ejemplo genera, típicamente:
 
 \begin{itemize}
 \item \codepath{phase_space_3d.png};
@@ -199,7 +202,7 @@ Este ejemplo genera, tÃ­picamente:
 \item \codepath{bifurcation_points.csv}.
 \end{itemize}
 
-\subsection{CÃ³digo mÃ­nimo para graficar una trayectoria}
+\subsection{Código mínimo para graficar una trayectoria}
 
 \begin{lstlisting}
 from hidden_attractors.io import load_trajectory_csv
@@ -216,11 +219,11 @@ plot_phase_projections(traj, "salidas/proyecciones.png")
 plot_time_series(traj, "salidas/series_temporales.png")
 \end{lstlisting}
 
-Lectura correcta: una grÃ¡fica de atractor muestra que la trayectoria es acotada y no trivial bajo el contrato numÃ©rico usado. No demuestra ocultedad.
+Lectura correcta: una gráfica de atractor muestra que la trayectoria es acotada y no trivial bajo el contrato numérico usado. No demuestra ocultedad.
 
 \section{Puntos de equilibrio}
 
-\subsection{DerivaciÃ³n algebraica}
+\subsection{Derivación algebraica}
 
 En equilibrio se cumple
 
@@ -230,7 +233,7 @@ En equilibrio se cumple
 0=-\beta y-\gamma z.
 \end{equation}
 
-De la tercera ecuaciÃ³n,
+De la tercera ecuación,
 
 \begin{equation}
 z=-\frac{\beta}{\gamma}y,
@@ -252,7 +255,7 @@ y-x=-\frac{\beta}{\gamma}y
 y=\frac{\gamma}{\beta+\gamma}x.
 \end{equation}
 
-AdemÃ¡s, de la primera ecuaciÃ³n,
+Además, de la primera ecuación,
 
 \begin{equation}
 y=x+f(x).
@@ -290,13 +293,13 @@ Sea
 s=-\frac{\beta}{\beta+\gamma}.
 \end{equation}
 
-La condiciÃ³n escalar exterior es
+La condición escalar exterior es
 
 \begin{equation}
 m_1x\pm(m_0-m_1)=sx.
 \end{equation}
 
-AsÃ­,
+Así,
 
 \begin{equation}
 x_+=-\frac{m_0-m_1}{m_1-s},
@@ -315,7 +318,7 @@ f(x_\pm)
 \right).
 \end{equation}
 
-\subsection{LÃ­neas para calcularlos con la librerÃ­a}
+\subsection{Líneas para calcularlos con la librería}
 
 \begin{lstlisting}
 from hidden_attractors import chua_piecewise_parameters
@@ -371,7 +374,7 @@ el criterio de Matignon exige
 |\arg(\lambda_i)|>\frac{q\pi}{2}
 \end{equation}
 
-para estabilidad local asintÃ³tica. Si un equilibrio viola esa condiciÃ³n, es localmente inestable. Sin embargo, que un equilibrio sea inestable no implica que el atractor candidato sea autoexcitado; para eso se necesita verificar si su cuenca intersecta alguna vecindad de equilibrio.
+para estabilidad local asintótica. Si un equilibrio viola esa condición, es localmente inestable. Sin embargo, que un equilibrio sea inestable no implica que el atractor candidato sea autoexcitado; para eso se necesita verificar si su cuenca intersecta alguna vecindad de equilibrio.
 
 \section{Forma Lur'e del sistema}
 
@@ -419,7 +422,7 @@ Entonces
 {}^C D_t^q X=PX+b\,\psi(r^TX).
 \end{equation}
 
-\section{FunciÃ³n de transferencia fraccionaria}
+\section{Función de transferencia fraccionaria}
 
 Para el bloque lineal fraccionario,
 
@@ -433,7 +436,7 @@ la transferencia formal es
 W_q(s)=r^T(s^q I-P)^{-1}b.
 \end{equation}
 
-Usando el parÃ¡metro espectral
+Usando el parámetro espectral
 
 \begin{equation}
 \lambda=s^q,
@@ -458,7 +461,7 @@ En frecuencia,
 \right).
 \end{equation}
 
-El cÃ³digo histÃ³rico usa tambiÃ©n la convenciÃ³n
+El código histórico usa tambien la convención
 
 \begin{equation}
 W_{\rm code}(\omega)=r^T(P-\lambda I)^{-1}b,
@@ -470,9 +473,9 @@ por lo que
 W_{\rm code}(\omega)=-\widehat W_q(\lambda).
 \end{equation}
 
-Esta diferencia de signo debe cuidarse al comparar ecuaciones del reporte con residuos emitidos por el cÃ³digo.
+Esta diferencia de signo debe cuidarse al comparar ecuaciones del reporte con residuos emitidos por el código.
 
-\section{FunciÃ³n descriptiva centrada clÃ¡sica}
+\section{Función descriptiva centrada clásica}
 
 Para una entrada centrada
 
@@ -480,13 +483,13 @@ Para una entrada centrada
 \sigma(t)=A\cos(\omega t),
 \end{equation}
 
-la funciÃ³n descriptiva clÃ¡sica de la saturaciÃ³n escalada es
+la función descriptiva clásica de la saturación escalada es
 
 \begin{equation}
 N(A)=\frac{Y_1}{A},
 \end{equation}
 
-donde \(Y_1\) es el primer armÃ³nico de \(\psi(A\cos\theta)\).
+donde \(Y_1\) es el primer armónico de \(\psi(A\cos\theta)\).
 
 Para el caso no suave,
 
@@ -513,7 +516,7 @@ N(A)=\frac{2M}{\pi}
 \right].
 \end{equation}
 
-La condiciÃ³n armÃ³nica, usando la convenciÃ³n de reporte, es
+La condición armónica, usando la convención de reporte, es
 
 \begin{equation}
 1+\widehat W_q((\ii\omega)^q)N(A)=0.
@@ -1920,9 +1923,9 @@ Para el caso centrado no suave, la extensiÃ³n tipo Machado usa
 N_{\mu}(A)=N(A)^\mu,
 \qquad \mu>0.
 \end{equation}
-Para cada rama de Nyquist se conserva la misma \(\omega_j\) y la misma ganancia lineal \(k_j\\), pero la amplitud se recalcula con
+Para cada rama de Nyquist se conserva la misma \(\omega_j\) y la misma ganancia lineal \(k_j\), pero la amplitud se recalcula con
 \begin{equation}
-N(A_\mu)^\mu=k_j,
+N{(A_\mu)}^\mu=k_j,
 \qquad\text{o equivalentemente}\qquad
 N(A_\mu)=k_j^{1/\mu}.
 \end{equation}
@@ -2139,15 +2142,12 @@ El script de anÃ¡lisis de equilibrios calcula para cada equilibrio:
 \end{equation}
 \item etiqueta \codepath{matignon_stable}.
 \end{itemize}
-El archivo producido es
-\begin{equation}
-\codepath{equilibria_summary.csv}.
-\end{equation}
-Una grÃ¡fica defendible debe mostrar, para cada equilibrio, si
+El archivo producido es \code{equilibria\_summary.csv}.
+Una gráfica defendible debe mostrar, para cada equilibrio, si
 \begin{equation}
 \mu_{\rm Matignon}>0
 \end{equation}
-o no. Un ejemplo mÃ­nimo para generar una grÃ¡fica a partir del CSV es:
+o no. Un ejemplo mínimo para generar una grÃ¡fica a partir del CSV es:
 \begin{lstlisting}
 import csv
 import matplotlib.pyplot as plt
