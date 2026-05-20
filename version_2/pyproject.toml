@@ -42,9 +42,9 @@ pydstool = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/<owner>/hidden-attractors-fo"
-Documentation = "https://github.com/<owner>/hidden-attractors-fo/tree/main/docs"
-Repository = "https://github.com/<owner>/hidden-attractors-fo"
+Homepage = "https://github.com/Xerkkun/Hidden-Attractors-Localization/tree/main/version_2"
+Documentation = "https://github.com/Xerkkun/Hidden-Attractors-Localization/tree/main/version_2/docs"
+Repository = "https://github.com/Xerkkun/Hidden-Attractors-Localization"
 
 [project.scripts]
 hidden-attractors-list-candidates = "hidden_attractors.cli:list_candidates"
@@ -61,3 +61,7 @@ hidden_attractors = ["native/csrc/*.c"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = [
+  "-p",
+  "no:cacheprovider",
+]

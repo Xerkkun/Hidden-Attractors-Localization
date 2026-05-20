@@ -66,6 +66,7 @@ Run an included example:
 ```bash
 python examples/quickstart_equilibria.py
 python examples/list_final_candidates.py
+python examples/minimal_chua_protocol.py
 python examples/dynamical_analysis_gallery.py
 ```
 
@@ -129,6 +130,7 @@ imports, model inspection, candidate loading, and lightweight diagnostics.
 python -m compileall hidden_attractors examples tests tools/cli
 python examples/quickstart_equilibria.py
 python examples/list_final_candidates.py
+python examples/minimal_chua_protocol.py
 python examples/dynamical_analysis_gallery.py
 python -m pytest -q
 ```

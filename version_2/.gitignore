@@ -8,6 +8,7 @@ Thumbs.db
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.pytest_tmp/
 .mypy_cache/
 .ruff_cache/
 .venv/
@@ -44,7 +45,8 @@ outputs/
 runs*/
 hidden_verify/
 chua_piecewise/
-native/
+/native/
+artifacts/reference_runs/native/
 .tmp.driveupload/
 __codex_dir_test/
 .runtime_cache/

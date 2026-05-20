@@ -40,6 +40,6 @@ outputs/
 runs*/
 hidden_verify/
 chua_piecewise/
-native/
+/native/
 .tmp.driveupload/
 __codex_dir_test/

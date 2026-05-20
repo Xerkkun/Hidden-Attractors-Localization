@@ -31,7 +31,5 @@ Requirements:
 Once published, the expected install command is:
 
 ```bash
-python -m pip install "git+https://github.com/<owner>/hidden-attractors-fo.git"
+python -m pip install "git+https://github.com/Xerkkun/Hidden-Attractors-Localization.git#subdirectory=version_2"
 ```
-
-Replace `<owner>` with the real GitHub organization or username before release.

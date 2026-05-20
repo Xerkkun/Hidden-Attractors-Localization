@@ -20,6 +20,18 @@ python examples/list_final_candidates.py
 Purpose: load the reference candidates from `outputs/` using the public
 candidate API.
 
+## Minimal Chua Protocol
+
+```bash
+python examples/minimal_chua_protocol.py
+python examples/minimal_chua_protocol.py --run
+```
+
+Purpose: create a small, explicit contract for the unified fractional Chua
+workflow, keeping heavy numerical stages delegated to the packaged C-backed
+entry point. The default command only writes the JSON contract and shell command;
+`--run` launches the workflow.
+
 ## Create a Robustness Overlay Config
 
 ```bash
