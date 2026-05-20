@@ -15,6 +15,7 @@
 \usepackage{enumitem}
 \usepackage{listings}
 \usepackage{graphicx}
+\usepackage{ragged2e}
 
 \hypersetup{
   colorlinks=true,
@@ -23,19 +24,25 @@
   citecolor=blue!55!black
 }
 
-\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\code}[1]{\path{#1}}
 \newcommand{\CaputoD}{\,{}^{C}D_t^q}
 \newcommand{\ii}{\mathrm{i}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\TARGET}{\texttt{TARGET}}
 
-\setlength{\emergencystretch}{2em}
+\setlength{\emergencystretch}{3em}
+\setlength{\tabcolsep}{4pt}
 \renewcommand{\arraystretch}{1.15}
 \setlist[itemize]{leftmargin=1.2em}
 \setlist[enumerate]{leftmargin=1.4em}
 
-\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
 \DeclareRobustCommand{\codepath}[1]{\begingroup\Urlmuskip=0mu plus 2mu\path{#1}\endgroup}
+\pdfstringdefDisableCommands{%
+  \def\codepath#1{#1}%
+  \def\code#1{#1}%
+  \def\TARGET{TARGET}%
+}
 
 
 \lstdefinestyle{cmd}{
@@ -73,11 +80,12 @@ version_2/
 
 La estructura mínima que se usa en este protocolo es:
 
-\begin{longtable}{@{}L{0.35\textwidth}L{0.56\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.35\textwidth}L{0.56\textwidth}@{}}
 \toprule
 Ruta & Papel dentro del protocolo\\
 \midrule
-\endhead
 \codepath{hidden_attractors/} & Paquete importable. Incluye modelo, análisis, gráficas, clasificadores, workflows y backends nativos.\\
 \codepath{examples/} & Ejemplos cortos para verificar instalación, equilibrios, candidatos y gráficas.\\
 \codepath{tools/cli/} & Envolturas CLI mantenidas para workflows públicos.\\
@@ -85,7 +93,8 @@ Ruta & Papel dentro del protocolo\\
 \codepath{outputs/} & Corridas, CSV, JSON, trayectorias, figuras y candidatos ya generados.\\
 \codepath{configs/} & Configuraciones YAML para corridas largas o búsquedas extendidas.\\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 Antes de ejecutar pruebas largas conviene instalar la librería en modo editable:
 
@@ -752,11 +761,12 @@ python tools/legacy/run_extended_search.py ^
 
 AdemÃ¡s de la funciÃ³n descriptiva centrada, sesgada y Machado, el repositorio incluye o conserva estas rutas:
 
-\begin{longtable}{@{}L{0.32\textwidth}L{0.56\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.32\textwidth}L{0.56\textwidth}@{}}
 \toprule
 Ruta & Papel\\
 \midrule
-\endhead
 \(\rho_H\)-diagnostics & No genera una semilla nueva por sÃ­ solo, pero filtra la confiabilidad armÃ³nica de una semilla.\\
 Seed cloud search & Simula nubes de condiciones iniciales evitando vecindades de equilibrio para detectar candidatos no triviales.\\
 ContinuaciÃ³n en \(\eta\) & Transporta una semilla desde una no linealidad suavizada o aproximada hasta la no linealidad original.\\
@@ -767,7 +777,8 @@ Robustness overlay & Cambia \(h,L_m,T\) para revisar persistencia geomÃ©trica.
 Sphere controls & Lanza trayectorias desde esferas alrededor de los equilibrios.\\
 External complexity tools & Usa \codepath{nolds} o \codepath{antropy} para entropÃ­as, dimensiones o indicadores de series temporales.\\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \section{Modo sweep: barridos sistemÃ¡ticos antes de elegir candidatos}
 
@@ -782,18 +793,20 @@ La idea general es:
 
 En este repositorio existen varios barridos. Los mÃ¡s importantes para el Chua fraccionario no suave son:
 
-\begin{longtable}{@{}L{0.27\textwidth}L{0.62\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.27\textwidth}L{0.62\textwidth}@{}}
 \toprule
 Modo & QuÃ© explora\\
 \midrule
-\endhead
 \codepath{q_sweep} & Barre el orden fraccionario \(q\). Para cada \(q\), calcula Nyquist/DF, semilla, continuaciÃ³n y atractor final ligero. Sirve para saber en quÃ© Ã³rdenes fraccionarios el cierre armÃ³nico y la continuaciÃ³n son mÃ¡s prometedores.\\
 \codepath{df_compare} & Compara la funciÃ³n descriptiva clÃ¡sica contra la extensiÃ³n tipo Machado para uno o varios valores de \(\mu\). Sirve para saber si Machado aporta semillas distintas de las clÃ¡sicas.\\
 \codepath{machado_sweep} & Barrido completo de ramas, valores de \(\mu\) y fases \(\theta\). Es mÃ¡s costoso y estÃ¡ pensado para exploraciÃ³n amplia del Chua no suave.\\
 \codepath{machado_sweep_fast} & VersiÃ³n reducida del barrido Machado. Usa una malla menor de \(\mu\) y \(\theta\), por lo que sirve como prueba previa antes de una corrida completa.\\
 \codepath{positive_x_basin_sweep} & Barrido heredado sobre regiones de cuenca, Ãºtil para explorar quÃ© zonas iniciales caen en clases target. Debe tratarse como herramienta de cartografÃ­a de cuenca, no como prueba independiente de ocultedad.\\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \subsection{Barrido del orden fraccionario \texorpdfstring{\(q\)}{q}}
 
@@ -839,7 +852,7 @@ q_order_sweep/
 
 Lectura recomendada: elegir los valores de \(q\) donde el residuo armÃ³nico sea pequeÃ±o, la continuaciÃ³n no diverja y el atractor final sea acotado y no trivial. DespuÃ©s de esa preselecciÃ³n se ejecutan pruebas de robustez, cuencas y esferas alrededor de equilibrios. No se debe escribir ``atractor oculto'' Ãºnicamente a partir de \codepath{q_sweep}.
 
-\subsection{ComparaciÃ³n clÃ¡sica contra Machado: \codepath{df_compare}}
+\subsection[ComparaciÃ³n clÃ¡sica contra Machado: df\_compare]{ComparaciÃ³n clÃ¡sica contra Machado: \codepath{df_compare}}
 
 Este modo compara dos familias de semillas:
 
@@ -967,11 +980,12 @@ Un sweep puede generar muchos candidatos. El filtrado recomendado es:
 
 Operativamente, una tabla de sweep debe leerse asÃ­:
 
-\begin{longtable}{@{}L{0.30\textwidth}L{0.58\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.30\textwidth}L{0.58\textwidth}@{}}
 \toprule
 Columna & InterpretaciÃ³n\\
 \midrule
-\endhead
 \codepath{branch} & Rama de Nyquist usada para construir la semilla.\\
 \codepath{mu} & Orden descriptivo auxiliar Machado. No es el orden de Caputo.\\
 \codepath{theta} & Fase usada para colocar la semilla sobre la aproximaciÃ³n armÃ³nica.\\
@@ -980,18 +994,19 @@ Columna & InterpretaciÃ³n\\
 \codepath{survived} & Indica si la continuaciÃ³n o simulaciÃ³n preliminar no divergiÃ³.\\
 \codepath{hiddenness_status} & Etiqueta operacional. No equivale por sÃ­ sola a prueba matemÃ¡tica.\\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \subsection{RelaciÃ³n entre sweep y comparaciÃ³n con Danca}
 
 Para comparar con Danca, el sweep sirve para localizar candidatos internos bajo el mismo sistema y un orden \(q\) cercano al reportado. La comparaciÃ³n debe separar tres cosas:
 
 \begin{equation}
-\text{Danca/ABM con historia completa}
-\neq
-\text{EFORK con memoria truncada}
-\neq
-\text{semilla armÃ³nica tipo Weyl}.
+\begin{gathered}
+\text{Danca/ABM con historia completa}\neq
+\text{EFORK con memoria truncada}\\
+\neq\text{semilla armÃ³nica tipo Weyl}.
+\end{gathered}
 \end{equation}
 
 Por tanto, el reporte debe presentar:
@@ -1195,11 +1210,12 @@ Si alguna trayectoria desde \(E_i+r u_j\) cae en la clase target, entonces hay e
 
 Las cuencas se clasifican con etiquetas operativas:
 
-\begin{longtable}{@{}cL{0.32\textwidth}L{0.46\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}cL{0.32\textwidth}L{0.46\textwidth}@{}}
 \toprule
 ID & Etiqueta & InterpretaciÃ³n\\
 \midrule
-\endhead
 0 & \codepath{equilibrium} & La trayectoria converge o queda cerca de un equilibrio.\\
 1 & \codepath{target_positive} & La trayectoria cae en la clase target positiva.\\
 2 & \codepath{target_negative} & La trayectoria cae en la clase target negativa.\\
@@ -1208,7 +1224,8 @@ ID & Etiqueta & InterpretaciÃ³n\\
 5 & \codepath{numerical_failure} & Fallo numÃ©rico o datos no finitos.\\
 6 & \codepath{bounded_other} & Clase refinada: acotada pero no suficientemente cercana al target.\\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 El corte de cuenca tÃ­pico se hace en un plano, por ejemplo:
 
@@ -1271,7 +1288,7 @@ hidden-attractors-sphere-controls \
 \item \codepath{top3_sphere_robustness_summary.json}.
 \end{itemize}
 
-\subsection{CÃ³mo leer \codepath{sphere_decision.csv}}
+\subsection[CÃ³mo leer sphere\_decision.csv]{CÃ³mo leer \codepath{sphere_decision.csv}}
 
 Columnas importantes:
 
@@ -1329,11 +1346,12 @@ hidden-attractors-robustness-overlay ^
 
 \subsection{Casos de robustez tÃ­picos}
 
-\begin{longtable}{@{}L{0.22\textwidth}cccL{0.26\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.22\textwidth}cccL{0.26\textwidth}@{}}
 \toprule
 Caso & \(h\) & \(L_m\) & \(T\) & Lectura\\
 \midrule
-\endhead
 \codepath{R0_base} & 0.01 & 10 & 1500 & Contrato base.\\
 \codepath{R1_h_finer} & 0.005 & 10 & 1500 & Paso mÃ¡s fino.\\
 \codepath{R2_h_coarser} & 0.02 & 10 & 1500 & Paso mÃ¡s grueso.\\
@@ -1341,7 +1359,8 @@ Caso & \(h\) & \(L_m\) & \(T\) & Lectura\\
 \codepath{R4_Lm_higher} & 0.01 & 20 & 1500 & Mayor memoria.\\
 \codepath{R5_t_longer} & 0.01 & 10 & 3000 & Tiempo mÃ¡s largo.\\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \subsection{Archivos de salida}
 
@@ -1514,11 +1533,12 @@ Estas medidas pueden incluir entropÃ­a de permutaciÃ³n, entropÃ­a muestral
 
 Un ranking razonable puede organizarse asÃ­:
 
-\begin{longtable}{@{}cL{0.42\textwidth}L{0.36\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}cL{0.42\textwidth}L{0.36\textwidth}@{}}
 \toprule
 Prioridad & Criterio & Archivo\\
 \midrule
-\endhead
 1 & Residuo armÃ³nico pequeÃ±o & \codepath{biased_df_candidates.csv}, \codepath{rho_H_diagnostics.csv}\\
 2 & ArmÃ³nicos superiores atenuados & \codepath{rho_H_diagnostics.csv}\\
 3 & Supervivencia por continuaciÃ³n & \codepath{continuation_summary.csv}\\
@@ -1529,7 +1549,8 @@ Prioridad & Criterio & Archivo\\
 8 & Cuenca refinada sin contacto local & \codepath{refined_basin_summary.json}\\
 9 & ComparaciÃ³n geomÃ©trica contra Danca & \codepath{danca2017_vs_project_candidates_report.md}\\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 Una regla conservadora:
 
@@ -1618,11 +1639,12 @@ python tools/legacy/danca2017_chua_abm_replication.py ^
 
 \subsection{Diferencias metodolÃ³gicas}
 
-\begin{longtable}{@{}L{0.28\textwidth}L{0.29\textwidth}L{0.31\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.28\textwidth}L{0.29\textwidth}L{0.31\textwidth}@{}}
 \toprule
 Aspecto & Danca & Repositorio\\
 \midrule
-\endhead
 Integrador & ABM predictor--corrector & EFORK con memoria truncada; ABM solo en script de rÃ©plica\\
 Memoria & Historia completa de Caputo & Ventana finita \(L_m\)\\
 LocalizaciÃ³n & BÃºsqueda por prueba y error reportada & Semillas por Lur'e, DF centrada, DF sesgada, Machado y nubes\\
@@ -1630,17 +1652,19 @@ Ocultedad & Vecindades de equilibrios con \(\delta=0.01\) & Esferas, cuencas, re
 Salida & Figura y argumento del artÃ­culo & CSV/JSON/figuras reproducibles\\
 Lectura & Atractor oculto reportado & Candidato compatible/no compatible bajo contrato\\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \subsection{ComparaciÃ³n mÃ­nima que debe aparecer en el reporte}
 
 Para comparar un candidato del repositorio con Danca, incluir una tabla:
 
-\begin{longtable}{@{}L{0.24\textwidth}L{0.27\textwidth}L{0.36\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.24\textwidth}L{0.27\textwidth}L{0.36\textwidth}@{}}
 \toprule
 Bloque & Dato & InterpretaciÃ³n\\
 \midrule
-\endhead
 Modelo & mismos \(\alpha,\beta,\gamma,m_0,m_1,q\) & ComparaciÃ³n vÃ¡lida a nivel de sistema\\
 Integrador & ABM vs EFORK & No son numÃ©ricamente idÃ©nticos\\
 CondiciÃ³n inicial & semilla Danca localizada o no publicada & Si no estÃ¡ publicada, declararlo\\
@@ -1649,7 +1673,8 @@ Equilibrios & \(E_0,E_+,E_-\) & Base de prueba de ocultedad\\
 Pruebas locales & \(\delta\) Danca vs radios \(\mathcal R\) & Comparar tamaÃ±os de vecindad\\
 Resultado & target/no target desde vecindades & Decide compatibilidad con ocultedad\\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \section{Flujo completo recomendado}
 
@@ -2171,11 +2196,12 @@ Esta figura no dice si el atractor es oculto; sÃ³lo clasifica estabilidad loca
 
 El repositorio contiene una API activa en \codepath{hidden_attractors/} y scripts legacy todavÃ­a Ãºtiles en \codepath{tools/legacy/}. La siguiente tabla resume quÃ© existe y cÃ³mo debe leerse.
 
-\begin{longtable}{@{}L{0.28\textwidth}L{0.24\textwidth}L{0.38\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.28\textwidth}L{0.24\textwidth}L{0.38\textwidth}@{}}
 \toprule
 Bloque & Estado & FunciÃ³n disponible\\
 \midrule
-\endhead
 \codepath{models.chua} & API activa & ParÃ¡metros, campo vectorial y equilibrios del Chua no suave.\\
 \codepath{analysis.trajectory} & API activa & Rangos, varianza, FFT, entropÃ­a espectral, secciones, distancias de nubes y casos de robustez.\\
 \codepath{analysis.bifurcation} & API activa & ExtracciÃ³n de puntos para diagramas de bifurcaciÃ³n desde trayectorias ya calculadas.\\
@@ -2194,29 +2220,32 @@ Bloque & Estado & FunciÃ³n disponible\\
 \codepath{tools/legacy/positive_x_basin_sweep.py} & Pendiente de migraciÃ³n & Barrido de cuenca en regiÃ³n \(x>0\), especialmente alrededor de \(E_+\).\\
 \codepath{tools/legacy/chua_frac_lyapunov_efork_benettin.c} & Opcional nativo & EstimaciÃ³n operacional de exponentes de Lyapunov.\\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \subsection{Funciones opcionales desactivadas por defecto}
 
 Varias capacidades existen pero no siempre se ejecutan en una corrida normal:
-\begin{longtable}{@{}L{0.32\textwidth}L{0.25\textwidth}L{0.33\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.30\textwidth}L{0.36\textwidth}L{0.24\textwidth}@{}}
 \toprule
 Capacidad & ActivaciÃ³n tÃ­pica & Salida esperada\\
 \midrule
-\endhead
-PSD de Welch & \codepath{hidden-attractors-unified-chua --psd} & \codepath{unified_psd_summary.json}, figuras PSD.\\
-ExportaciÃ³n TISEAN & \codepath{hidden-attractors-unified-chua --tisean} & Series exportadas para anÃ¡lisis externo.\\
-Lyapunov operativo & \codepath{hidden-attractors-unified-chua --lyapunov} & Resumen de exponentes y convergencia.\\
-Lyapunov estricto & \codepath{hidden-attractors-unified-chua --lyapunov-strict} & Falla la corrida si el cÃ¡lculo falla.\\
-Planos extra de cuenca & \codepath{hidden-attractors-unified-chua --basin-planes} & Cortes \(xy,xz,yz\).\\
+PSD de Welch & \codepath{hidden-attractors-unified-chua}\newline\codepath{--psd} & \codepath{unified_psd_summary.json}, figuras PSD.\\
+ExportaciÃ³n TISEAN & \codepath{hidden-attractors-unified-chua}\newline\codepath{--tisean} & Series exportadas para anÃ¡lisis externo.\\
+Lyapunov operativo & \codepath{hidden-attractors-unified-chua}\newline\codepath{--lyapunov} & Resumen de exponentes y convergencia.\\
+Lyapunov estricto & \codepath{hidden-attractors-unified-chua}\newline\codepath{--lyapunov-strict} & Falla la corrida si el cÃ¡lculo falla.\\
+Planos extra de cuenca & \codepath{hidden-attractors-unified-chua}\newline\codepath{--basin-planes} & Cortes \(xy,xz,yz\).\\
 Cuenca 3D o vistas extra & \codepath{pendiente C} & Figuras adicionales.\\
-IlustraciÃ³n de ocultedad & \codepath{hidden-attractors-unified-chua --hidden-illustration} & Figuras de vecindades y target/no-target.\\
-Sweep de \(q\) & \codepath{hidden-attractors-unified-chua --run-mode q_sweep} & \codepath{q_order_sweep/}.\\
-ComparaciÃ³n DF/Machado & \codepath{hidden-attractors-unified-chua --run-mode df_compare} & \codepath{df_seed_comparison/}.\\
-Sweep Machado completo & \codepath{hidden-attractors-unified-chua --run-mode machado_sweep} & \codepath{machado_sweep/}.\\
-Sweep Machado rÃ¡pido & \codepath{hidden-attractors-unified-chua --run-mode machado_sweep_fast} & \codepath{machado_sweep_fast/}.\\
+IlustraciÃ³n de ocultedad & \codepath{hidden-attractors-unified-chua}\newline\codepath{--hidden-illustration} & Figuras de vecindades y target/no-target.\\
+Sweep de \(q\) & \codepath{hidden-attractors-unified-chua}\newline\codepath{--run-mode q_sweep} & \codepath{q_order_sweep/}.\\
+ComparaciÃ³n DF/Machado & \codepath{hidden-attractors-unified-chua}\newline\codepath{--run-mode df_compare} & \codepath{df_seed_comparison/}.\\
+Sweep Machado completo & \codepath{hidden-attractors-unified-chua}\newline\codepath{--run-mode machado_sweep} & \codepath{machado_sweep/}.\\
+Sweep Machado rÃ¡pido & \codepath{hidden-attractors-unified-chua}\newline\codepath{--run-mode machado_sweep_fast} & \codepath{machado_sweep_fast/}.\\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \section{Ruta completa recomendada actualizada}
 \label{sec:ruta_completa_actualizada}

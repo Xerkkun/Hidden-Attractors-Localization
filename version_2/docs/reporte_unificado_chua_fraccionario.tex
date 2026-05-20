@@ -12,6 +12,7 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{xcolor}
+\usepackage{ragged2e}
 
 \hypersetup{
   colorlinks=true,
@@ -20,12 +21,20 @@
   citecolor=blue!55!black
 }
 
-\setlength{\emergencystretch}{2em}
+\setlength{\emergencystretch}{3em}
 \renewcommand{\arraystretch}{1.12}
-\graphicspath{{assets/figures/chua_fractional_report/}}
+\setlength{\tabcolsep}{4pt}
+\graphicspath{{figures/chua_fractional_report/}}
 
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \DeclareRobustCommand{\codepath}[1]{\begingroup\Urlmuskip=0mu plus 2mu\path{#1}\endgroup}
+\newcommand{\maybeincludegraphics}[2][]{%
+  \IfFileExists{figures/chua_fractional_report/#2}{%
+    \includegraphics[#1]{#2}%
+  }{%
+    \fbox{\parbox[c][0.28\textheight][c]{0.78\linewidth}{\centering\small Figura pendiente de regeneracion:\\ \codepath{#2}}}%
+  }%
+}
 \newcommand{\CaputoD}{\,{}^{C}D_t^q}
 \newcommand{\ii}{\mathrm{i}}
 \newcommand{\R}{\mathbb{R}}
@@ -60,11 +69,11 @@ absorbieron aqui para evitar mantener resumenes paralelos con resultados
 desfasados. La tabla siguiente registra que contenido quedo consolidado y en
 que parte del reporte se usa.
 
-\begin{longtable}{@{}L{0.31\textwidth}L{0.61\textwidth}@{}}
+\begin{center}
+\begin{tabular}{@{}L{0.31\textwidth}L{0.61\textwidth}@{}}
 \toprule
 Contenido absorbido & Ubicacion en este reporte \\
 \midrule
-\endhead
 \codepath{reporte_matematico_pipeline} &
 Teoria del sistema de Chua fraccionario, forma de Lur'e, transferencia
 fraccionaria, funcion descriptiva, continuacion, cuencas y advertencias de
@@ -81,7 +90,8 @@ Comparacion entre Chua no suave y variante arctan. \\
 \codepath{resumen_chua_corridas_extraidas} &
 Inventario de corridas disponibles y figuras extraidas. \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \section{Sistema de Chua fraccionario}
 
@@ -182,16 +192,12 @@ atractor, continuacion, comparacion seccional, controles desde vecindades de
 equilibrios, cuencas, robustez numerica y comparacion con la replica tipo
 Danca.
 
-\begin{longtable}{@{}L{0.24\textwidth}L{0.33\textwidth}L{0.34\textwidth}@{}}
-\caption{Lectura global de las corridas principales del Chua no suave.}\\
-\toprule
+\noindent\textbf{Lectura global de las corridas principales del Chua no suave.}\par\smallskip
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.24\textwidth}L{0.33\textwidth}L{0.34\textwidth}@{}}\toprule
 Bloque & Evidencia disponible & Decision conservadora \\
 \midrule
-\endfirsthead
-\toprule
-Bloque & Evidencia disponible & Decision conservadora \\
-\midrule
-\endhead
 Pipeline no suave \codepath{chua_piecewise} &
 Verificacion EFORK/C con \(504\) trayectorias de detalle y \(22\) contactos
 \TARGET{} desde radios muestreados alrededor de \(E_+\) y \(E_-\). &
@@ -228,20 +234,17 @@ numericos con cambios en \(h\), \(L_m\) y \(t_f\). &
 Sirve para persistencia geometrica. No decide ocultedad ni convierte un
 candidato con contacto desde equilibrio en oculto. \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \subsection{Mejores candidatos y lectura}
 
-\begin{longtable}{@{}L{0.28\textwidth}L{0.28\textwidth}L{0.35\textwidth}@{}}
-\caption{Candidatos que concentraron el analisis posterior.}\\
-\toprule
+\noindent\textbf{Candidatos que concentraron el analisis posterior.}\par\smallskip
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.28\textwidth}L{0.28\textwidth}L{0.35\textwidth}@{}}\toprule
 Candidato & Por que fue seleccionado & Resultado posterior \\
 \midrule
-\endfirsthead
-\toprule
-Candidato & Por que fue seleccionado & Resultado posterior \\
-\midrule
-\endhead
 \codepath{lure_biased_q_0p99980_rank_0001} &
 Mejor residual de la busqueda Lur'e sesgada:
 \(|R|\approx6.82\times10^{-13}\), \(\omega=2.0402861\),
@@ -272,7 +275,8 @@ ABM con historia completa produce una referencia acotada no trivial, pero la
 prueba local Danca \(\delta=0.01\) produce \(102/200\) contactos desde
 equilibrios inestables. \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \subsection{Calificacion numerica por candidato}
 
@@ -284,19 +288,17 @@ la clase \TARGET{}. En este reporte, ``malo como oculto'' no significa que la
 dinamica sea inutil; significa que falla la definicion operacional de
 ocultedad bajo el contrato probado.
 
-\begin{longtable}{@{}L{0.23\textwidth}L{0.18\textwidth}L{0.23\textwidth}L{0.27\textwidth}@{}}
-\caption{Calificacion por candidato con resultados numericos principales.}\\
+\begin{table}[p]
+\centering
+\caption{Calificacion por candidato con resultados numericos principales.}
+\footnotesize
+\begin{tabular}{@{}L{0.22\textwidth}L{0.20\textwidth}L{0.25\textwidth}L{0.25\textwidth}@{}}
 \toprule
 Candidato & Atractor observado & Pruebas lanzadas y targets & Calificacion final \\
 \midrule
-\endfirsthead
-\toprule
-Candidato & Atractor observado & Pruebas lanzadas y targets & Calificacion final \\
-\midrule
-\endhead
 \codepath{chua_piecewise} / semilla objetivo actual &
 Si. Semilla de verificacion
-\((-4.1141,-0.3339,7.1949)\); referencia con \(22\) puntos seccionales. &
+\((-4.1141,\allowbreak -0.3339,\allowbreak 7.1949)\); referencia con \(22\) puntos seccionales. &
 \(504\) trayectorias locales: \(168\) desde cada equilibrio. Total:
 \(22\) \TARGET{}; \(12\) desde \(E_+\) y \(10\) desde \(E_-\). &
 Bueno como atractor numerico del caso no suave; malo como oculto bajo la
@@ -304,7 +306,7 @@ muestra, \codepath{not_supported_by_sample}. \\
 \codepath{machado_mu2_seed_project} / replica Danca ABM &
 Si. ABM con historia completa, \(h=0.05\), \(t_f=500\);
 \codepath{bounded_nontrivial}; rangos de cola
-\((11.344,3.292,17.036)\). &
+\((11.344,\allowbreak 3.292,\allowbreak 17.036)\). &
 \(200\) trayectorias locales: \(54/100\) \TARGET{} desde \(E_+\) y
 \(48/100\) desde \(E_-\). Corte \(xy\): \(10201\) CI, \(976\) targets
 ABM. &
@@ -312,7 +314,7 @@ Bueno como replica visual/numerica de Danca; malo como oculto en esta
 replicacion porque la cuenca toca vecindades inestables. \\
 \codepath{lure_biased_q_0p99980_rank_0001} &
 Si. Superviviente EFORK \codepath{bounded_nontrivial}; rango
-\((13.504,3.378,18.630)\); entropia PSD \(0.207\). &
+\((13.504,\allowbreak 3.378,\allowbreak 18.630)\); entropia PSD \(0.207\). &
 Busqueda: \(5208\) evaluaciones, \(121\) filtrados, \(968\) semillas.
 Filtro local: \(1/1\) \TARGET{} desde \(E_+\) a \(10^{-5}\). Esferas:
 \(0/1500\) \TARGET{}. Robustez: \(6/6\) acotadas. &
@@ -320,7 +322,7 @@ Muy bueno como semilla armonica (\(|R|=6.82\times10^{-13}\)); malo como
 oculto por contacto desde \(E_+\). \\
 \codepath{lure_biased_q_0p99980_rank_0003} &
 Si. Superviviente EFORK \codepath{bounded_nontrivial}; rango
-\((13.467,3.376,18.645)\). &
+\((13.467,\allowbreak 3.376,\allowbreak 18.645)\). &
 No se registro filtro local posterior especifico en las salidas actuales. La
 prioridad bajo el flujo actual quedo por debajo de \codepath{rank_0001} y
 \codepath{rank_0004}. &
@@ -328,7 +330,7 @@ Bueno como superviviente numerico; no calificado como oculto. Se conserva como
 evidencia secundaria/redundante, no como mejor candidato. \\
 \codepath{lure_biased_q_0p99980_rank_0004} &
 Si. Superviviente EFORK \codepath{bounded_nontrivial}; rango
-\((13.454,3.372,18.638)\). &
+\((13.454,\allowbreak 3.372,\allowbreak 18.638)\). &
 Filtro local: \(27\) trayectorias crudas. Desde \(E_+\): \(11/11\) filas
 \TARGET{} (\(8\) direcciones unicas). Desde \(E_-\): \(4/8\) \TARGET{}.
 Desde \(E_0\): \(0/8\). &
@@ -336,7 +338,7 @@ Bueno como atractor numerico; malo como oculto, bloqueado con evidencia mas
 fuerte que \codepath{rank_0001}. \\
 \codepath{lure_biased_q_0p99980_rank_0005} &
 Si. Superviviente EFORK \codepath{bounded_nontrivial}; rango
-\((13.394,3.379,18.606)\). &
+\((13.394,\allowbreak 3.379,\allowbreak 18.606)\). &
 No se registro filtro local posterior especifico en las salidas actuales; se
 considero candidato de menor prioridad frente a los contactos ya detectados en
 la familia Lur'e. &
@@ -344,7 +346,7 @@ Bueno como superviviente numerico; no se debe promover a oculto ni gastar
 computo adicional sin una razon nueva. \\
 \codepath{branch_0_mu_4p00000_theta_0p00000} &
 Si. Mejor Machado por regla de seleccion; rango
-\((13.499,3.379,18.665)\). &
+\((13.499,\allowbreak 3.379,\allowbreak 18.665)\). &
 Barrido: \(1\) \TARGET{} en muestra. Corrida refinada parcial:
 \(1622\) trayectorias desde \(E_0\), \(0\) \TARGET{}. Prueba dirigida:
 \(1/1\) \TARGET{} desde \(E_-\); reproduccion: \(1/1\). Esferas:
@@ -360,7 +362,8 @@ reproduccion: \(1/1\). Esferas: \(0/1500\). Robustez: \(6/6\) acotadas. &
 Bueno como atractor numerico; malo como oculto por contacto dirigido
 reproducido desde \(E_-\). \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{table}
 
 \subsection{Detalle numerico de la replica Danca}
 
@@ -381,7 +384,7 @@ semilla \codepath{machado_mu2_seed_project}, la trayectoria de referencia fue
 \text{FFT peak}=0.369963,\qquad \text{PSD entropy}=0.162207.
 \]
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Danca ABM: prueba local desde equilibrios inestables.}
 \small
@@ -413,7 +416,7 @@ Esto es importante: los targets no son pequenas oscilaciones pegadas al punto
 de equilibrio, sino trayectorias que salen de una vecindad de radio \(0.01\) y
 terminan en la geometria clasificada como atractor.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Danca ABM contra clasificador del proyecto en corte \(xy\), malla \(101\times101\).}
 \small
@@ -435,16 +438,14 @@ por cascarones; las filas ``dirigidas'' son mas fuertes para bloquear
 ocultedad porque salen de una direccion concreta a distancia \(10^{-5}\) de un
 equilibrio.
 
-\begin{longtable}{@{}L{0.27\textwidth}L{0.12\textwidth}L{0.16\textwidth}r r L{0.25\textwidth}@{}}
-\caption{Trayectorias/condiciones iniciales lanzadas y contactos \TARGET{}.}\\
+\begin{table}[p]
+\centering
+\caption{Trayectorias/condiciones iniciales lanzadas y contactos \TARGET{}.}
+\footnotesize
+\begin{tabular}{@{}L{0.20\textwidth}L{0.11\textwidth}L{0.13\textwidth}L{0.09\textwidth}L{0.08\textwidth}L{0.29\textwidth}@{}}
 \toprule
 Candidato o prueba & Eq. & Radio/contrato & Lanzadas & \TARGET{} & Lectura \\
 \midrule
-\endfirsthead
-\toprule
-Candidato o prueba & Eq. & Radio/contrato & Lanzadas & \TARGET{} & Lectura \\
-\midrule
-\endhead
 \codepath{chua_piecewise} &
 \(E_0\) & \(10^{-5}\) a \(10^{-2}\) & 168 & 0 &
 Todas quedaron como equilibrio operacional. \\
@@ -507,7 +508,8 @@ Robustez geometrica top-3 &
 \(18/18\) acotadas, sin divergencia ni colapso; caracteriza persistencia, no
 ocultedad. \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{table}
 
 \subsection{Comparacion con la variante arctan}
 
@@ -523,11 +525,12 @@ antes de compararlo cientificamente.
 
 \section{Funciones publicas de la libreria}
 
-\begin{longtable}{@{}L{0.37\textwidth}L{0.53\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.37\textwidth}L{0.53\textwidth}@{}}
 \toprule
 Funcion & Uso documental \\
 \midrule
-\endhead
 \codepath{hidden_attractors.models.equilibria_piecewise} &
 Calcular \(E_0,E_+,E_-\) para el sistema de Chua no suave. \\
 \codepath{hidden_attractors.models.rhs_piecewise} &
@@ -547,7 +550,8 @@ bifurcacion desde trayectorias ya calculadas. \\
 Delegar medidas de complejidad a paquetes externos como \codepath{nolds} o
 \codepath{antropy}. \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 El mapa completo codigo--referencia vive en
 \codepath{docs/code_reference_map.md}.
@@ -597,25 +601,25 @@ python examples/dynamical_analysis_gallery.py ^
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=0.74\textwidth]{phase_space_3d.png}
+\maybeincludegraphics[width=0.74\textwidth]{phase_space_3d.png}
 \caption{Espacio de fases 3D generado con \codepath{plot_phase_space}. La figura usa una trayectoria real con columnas \codepath{t,x,y,z}.}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=0.96\textwidth]{phase_projections.png}
+\maybeincludegraphics[width=0.96\textwidth]{phase_projections.png}
 \caption{Proyecciones \(xy\), \(xz\) y \(yz\) generadas con \codepath{plot_phase_projections}. Estas vistas son utiles para comparar geometria sin depender de la perspectiva 3D.}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=0.90\textwidth]{time_series.png}
+\maybeincludegraphics[width=0.90\textwidth]{time_series.png}
 \caption{Series temporales \(x(t),y(t),z(t)\) generadas con \codepath{plot_time_series}. La lectura principal es boundedness, no ocultedad.}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=0.78\textwidth]{bifurcation_diagram.png}
+\maybeincludegraphics[width=0.78\textwidth]{bifurcation_diagram.png}
 \caption{Diagrama de bifurcacion post-procesado con \codepath{bifurcation_points_from_trajectories} y \codepath{plot_bifurcation_diagram}. Esta figura no sustituye continuacion numerica.}
 \end{figure}
 
@@ -629,7 +633,7 @@ figuras son comparables como evidencia geometrica, pero no metodo-identicas.
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=0.96\textwidth]{danca_abm_fig03.png}
+\maybeincludegraphics[width=0.96\textwidth]{danca_abm_fig03.png}
 \caption{Replica local del atractor de Chua fraccionario no suave reportado por Danca en \emph{Hidden Chaotic Attractors in Fractional-Order Systems}.}
 \end{figure}
 
@@ -637,11 +641,11 @@ figuras son comparables como evidencia geometrica, pero no metodo-identicas.
 \centering
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{project_lure_rank0001.png}
+\maybeincludegraphics[width=\linewidth]{project_lure_rank0001.png}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{project_machado_mu4.png}
+\maybeincludegraphics[width=\linewidth]{project_machado_mu4.png}
 \end{minipage}
 \caption{Comparacion visual de candidatos del proyecto: ruta Lur'e sesgada \codepath{rank_0001} y ruta tipo Machado \codepath{branch_0_mu_4p00000_theta_0p00000}.}
 \end{figure}
@@ -658,24 +662,24 @@ contrato probado.
 \centering
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{basin_danca_abm_xy.png}
+\maybeincludegraphics[width=\linewidth]{basin_danca_abm_xy.png}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{basin_project_best_xy.png}
+\maybeincludegraphics[width=\linewidth]{basin_project_best_xy.png}
 \end{minipage}
 \caption{Cortes de cuenca \(xy\): replica Danca ABM con historia completa y candidato del proyecto clasificado con el contrato EFORK/C.}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=0.72\textwidth]{basin_project_refined_xy.png}
+\maybeincludegraphics[width=0.72\textwidth]{basin_project_refined_xy.png}
 \caption{Cuenca refinada del candidato del proyecto para celdas previamente no resueltas. Esta grafica corresponde al workflow \codepath{hidden_attractors.workflows.refined_basin}.}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=0.92\textwidth]{equilibria_target_explanation.png}
+\maybeincludegraphics[width=0.92\textwidth]{equilibria_target_explanation.png}
 \caption{Explicacion visual de clases target/no-target alrededor de equilibrios. Esta familia de figuras conecta directamente la clasificacion de cuenca con la definicion operacional de ocultedad.}
 \end{figure}
 
@@ -683,11 +687,11 @@ contrato probado.
 \centering
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{project_E0_zoom.png}
+\maybeincludegraphics[width=\linewidth]{project_E0_zoom.png}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{project_Eminus_zoom.png}
+\maybeincludegraphics[width=\linewidth]{project_Eminus_zoom.png}
 \end{minipage}
 \caption{Zooms de cuenca alrededor de \(E_0\) y \(E_-\). Estas figuras deben leerse junto con los radios, tiempos, memoria y tolerancias del contrato numerico.}
 \end{figure}
@@ -703,13 +707,13 @@ controles desde vecindades de equilibrios.
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=0.92\textwidth]{hiddenness_machado_mu4_article.png}
+\maybeincludegraphics[width=0.92\textwidth]{hiddenness_machado_mu4_article.png}
 \caption{Verificacion dirigida estilo articulo para \codepath{branch_0_mu_4p00000_theta_0p00000}. La figura resume contacto target/no-target desde vecindades de equilibrio.}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=0.92\textwidth]{hiddenness_machado_mu2_article.png}
+\maybeincludegraphics[width=0.92\textwidth]{hiddenness_machado_mu2_article.png}
 \caption{Verificacion dirigida estilo articulo para \codepath{branch_0_mu_2p00000_theta_3p92699}.}
 \end{figure}
 
@@ -717,11 +721,11 @@ controles desde vecindades de equilibrios.
 \centering
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{machado_mu4_attractor_equilibria_3d.png}
+\maybeincludegraphics[width=\linewidth]{machado_mu4_attractor_equilibria_3d.png}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{machado_mu2_attractor_equilibria_3d.png}
+\maybeincludegraphics[width=\linewidth]{machado_mu2_attractor_equilibria_3d.png}
 \end{minipage}
 \caption{Atractores candidatos Machado y posicion de equilibrios. Estas vistas muestran geometria global, no deciden ocultedad por si solas.}
 \end{figure}
@@ -730,11 +734,11 @@ controles desde vecindades de equilibrios.
 \centering
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{machado_mu4_classes_by_equilibrium.png}
+\maybeincludegraphics[width=\linewidth]{machado_mu4_classes_by_equilibrium.png}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{machado_mu2_classes_by_equilibrium.png}
+\maybeincludegraphics[width=\linewidth]{machado_mu2_classes_by_equilibrium.png}
 \end{minipage}
 \caption{Clases por equilibrio para los dos candidatos Machado principales. La aparicion de clases target desde un equilibrio bloquea la etiqueta de ocultedad bajo ese contrato.}
 \end{figure}
@@ -743,11 +747,11 @@ controles desde vecindades de equilibrios.
 \centering
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{machado_mu4_target_hits_vs_radius.png}
+\maybeincludegraphics[width=\linewidth]{machado_mu4_target_hits_vs_radius.png}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{machado_mu2_target_hits_vs_radius.png}
+\maybeincludegraphics[width=\linewidth]{machado_mu2_target_hits_vs_radius.png}
 \end{minipage}
 \caption{Contactos target contra radio para los dos candidatos Machado. Esta lectura debe dominar sobre una conclusion basada solo en retratos de fase.}
 \end{figure}
@@ -764,11 +768,11 @@ de ``bloqueado por contacto dirigido reproducido''.
 \centering
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{corrida1_class_fraction_candidate1.png}
+\maybeincludegraphics[width=\linewidth]{corrida1_class_fraction_candidate1.png}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{corrida1_class_fraction_candidate2.png}
+\maybeincludegraphics[width=\linewidth]{corrida1_class_fraction_candidate2.png}
 \end{minipage}
 \caption{Fraccion de clases por radio y equilibrio para los candidatos refinados.}
 \end{figure}
@@ -777,11 +781,11 @@ de ``bloqueado por contacto dirigido reproducido''.
 \centering
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{corrida1_neighborhood_candidate1.png}
+\maybeincludegraphics[width=\linewidth]{corrida1_neighborhood_candidate1.png}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{corrida1_neighborhood_candidate2.png}
+\maybeincludegraphics[width=\linewidth]{corrida1_neighborhood_candidate2.png}
 \end{minipage}
 \caption{Muestras de vecindad usadas en la verificacion refinada Machado.}
 \end{figure}
@@ -790,11 +794,11 @@ de ``bloqueado por contacto dirigido reproducido''.
 \centering
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{corrida1_target_hits_candidate1.png}
+\maybeincludegraphics[width=\linewidth]{corrida1_target_hits_candidate1.png}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{corrida1_target_hits_candidate2.png}
+\maybeincludegraphics[width=\linewidth]{corrida1_target_hits_candidate2.png}
 \end{minipage}
 \caption{Contactos target contra radio desde \(E_-\) en la corrida refinada.}
 \end{figure}
@@ -808,7 +812,7 @@ atractor observado es numericamente persistente bajo variaciones del contrato.
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=0.82\textwidth]{robustness_overlay_lure.png}
+\maybeincludegraphics[width=0.82\textwidth]{robustness_overlay_lure.png}
 \caption{Superposicion de trayectorias de robustez para el candidato Lur'e sesgado.}
 \end{figure}
 
@@ -816,11 +820,11 @@ atractor observado es numericamente persistente bajo variaciones del contrato.
 \centering
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{robustness_overlay_machado_mu4.png}
+\maybeincludegraphics[width=\linewidth]{robustness_overlay_machado_mu4.png}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{robustness_overlay_machado_mu2.png}
+\maybeincludegraphics[width=\linewidth]{robustness_overlay_machado_mu2.png}
 \end{minipage}
 \caption{Superposiciones de robustez para los dos candidatos Machado principales.}
 \end{figure}
@@ -836,15 +840,15 @@ cartografiar la cuenca, pero no cancela un contacto dirigido ya reproducido.
 \centering
 \begin{minipage}{0.32\textwidth}
 \centering
-\includegraphics[width=\linewidth]{sphere_overview_lure.png}
+\maybeincludegraphics[width=\linewidth]{sphere_overview_lure.png}
 \end{minipage}\hfill
 \begin{minipage}{0.32\textwidth}
 \centering
-\includegraphics[width=\linewidth]{sphere_overview_machado_mu4.png}
+\maybeincludegraphics[width=\linewidth]{sphere_overview_machado_mu4.png}
 \end{minipage}\hfill
 \begin{minipage}{0.32\textwidth}
 \centering
-\includegraphics[width=\linewidth]{sphere_overview_machado_mu2.png}
+\maybeincludegraphics[width=\linewidth]{sphere_overview_machado_mu2.png}
 \end{minipage}
 \caption{Resumen de geometria esferica para los tres candidatos top-3: Lur'e sesgado y dos candidatos Machado.}
 \end{figure}
@@ -853,15 +857,15 @@ cartografiar la cuenca, pero no cancela un contacto dirigido ya reproducido.
 \centering
 \begin{minipage}{0.32\textwidth}
 \centering
-\includegraphics[width=\linewidth]{sphere_lure_Eplus.png}
+\maybeincludegraphics[width=\linewidth]{sphere_lure_Eplus.png}
 \end{minipage}\hfill
 \begin{minipage}{0.32\textwidth}
 \centering
-\includegraphics[width=\linewidth]{sphere_lure_Eminus.png}
+\maybeincludegraphics[width=\linewidth]{sphere_lure_Eminus.png}
 \end{minipage}\hfill
 \begin{minipage}{0.32\textwidth}
 \centering
-\includegraphics[width=\linewidth]{sphere_lure_E0.png}
+\maybeincludegraphics[width=\linewidth]{sphere_lure_E0.png}
 \end{minipage}
 \caption{Geometria esferica por equilibrio para el candidato Lur'e sesgado \codepath{rank_0001}.}
 \end{figure}
@@ -870,15 +874,15 @@ cartografiar la cuenca, pero no cancela un contacto dirigido ya reproducido.
 \centering
 \begin{minipage}{0.32\textwidth}
 \centering
-\includegraphics[width=\linewidth]{sphere_machado_mu4_Eplus.png}
+\maybeincludegraphics[width=\linewidth]{sphere_machado_mu4_Eplus.png}
 \end{minipage}\hfill
 \begin{minipage}{0.32\textwidth}
 \centering
-\includegraphics[width=\linewidth]{sphere_machado_mu4_Eminus.png}
+\maybeincludegraphics[width=\linewidth]{sphere_machado_mu4_Eminus.png}
 \end{minipage}\hfill
 \begin{minipage}{0.32\textwidth}
 \centering
-\includegraphics[width=\linewidth]{sphere_machado_mu4_E0.png}
+\maybeincludegraphics[width=\linewidth]{sphere_machado_mu4_E0.png}
 \end{minipage}
 \caption{Trayectorias locales en volumenes esfericos para el candidato Machado \(\mu=4,\theta=0\), alrededor de \(E_+\), \(E_-\) y \(E_0\).}
 \end{figure}
@@ -887,15 +891,15 @@ cartografiar la cuenca, pero no cancela un contacto dirigido ya reproducido.
 \centering
 \begin{minipage}{0.32\textwidth}
 \centering
-\includegraphics[width=\linewidth]{sphere_machado_mu2_Eplus.png}
+\maybeincludegraphics[width=\linewidth]{sphere_machado_mu2_Eplus.png}
 \end{minipage}\hfill
 \begin{minipage}{0.32\textwidth}
 \centering
-\includegraphics[width=\linewidth]{sphere_machado_mu2_Eminus.png}
+\maybeincludegraphics[width=\linewidth]{sphere_machado_mu2_Eminus.png}
 \end{minipage}\hfill
 \begin{minipage}{0.32\textwidth}
 \centering
-\includegraphics[width=\linewidth]{sphere_machado_mu2_E0.png}
+\maybeincludegraphics[width=\linewidth]{sphere_machado_mu2_E0.png}
 \end{minipage}
 \caption{Trayectorias locales en volumenes esfericos para el candidato Machado \(\mu=2,\theta=3.92699\), alrededor de \(E_+\), \(E_-\) y \(E_0\).}
 \end{figure}
@@ -916,11 +920,12 @@ figuras que deben quedar en la documentacion final. En el estado actual de
 \codepath{version_2/outputs} no aparecen todas con nombres canonicos, por lo
 que se dejan secciones explicitas para la siguiente corrida:
 
-\begin{longtable}{@{}L{0.31\textwidth}L{0.58\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.29\textwidth}L{0.61\textwidth}@{}}
 \toprule
 Familia pendiente & Como generarla o incorporarla \\
 \midrule
-\endhead
 Nyquist/DF \codepath{fig01_nyquist_df} y zoom \codepath{fig01b_nyquist_zoom_x} &
 Ejecutar el pipeline legado o migrar el generador a \codepath{hidden_attractors.plotting}. Debe citar Genesio--Tesi y la forma de Lur'e usada. \\
 Continuacion \codepath{fig02_continuation_progress} y \codepath{fig02b_continuation_story} &
@@ -938,15 +943,17 @@ Ejecutar backend Benettin solo bajo contrato explicito; citar los dos articulos 
 TISEAN/exportes externos &
 Mantener como adaptador opcional, con ruta de datos reproducible y cita al paquete/herramienta usada. \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \section{Referencias por metodo}
 
-\begin{longtable}{@{}L{0.24\textwidth}L{0.66\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.20\textwidth}L{0.70\textwidth}@{}}
 \toprule
 Metodo o bloque & Articulo de referencia que debe citarse \\
 \midrule
-\endhead
 Chua no suave & \emph{Chaos in Chua's Circuit}; \emph{Hidden Chaotic Attractors in Fractional-Order Systems}. \\
 Derivada de Caputo & \emph{Linear Models of Dissipation whose Q is almost Frequency Independent-II}. \\
 Estabilidad fraccionaria & \emph{Stability Results for Fractional Differential Equations with Applications to Control Processing}. \\
@@ -956,7 +963,8 @@ Lur'e/armonic balance & \emph{A Frequency Approach for Analyzing and Controlling
 Lyapunov & \emph{Lyapunov Characteristic Exponents for Smooth Dynamical Systems and for Hamiltonian Systems; A Method for Computing All of Them. Part 1: Theory} y \emph{Part 2: Numerical Application}. \\
 Machado-style seeds & Seccion ``Forma de Lur'e, funcion descriptiva y semillas'' de este reporte; la cita completa debe fijarse antes de publicar si se usa como referencia externa primaria. \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \section{Bibliografia minima}
 

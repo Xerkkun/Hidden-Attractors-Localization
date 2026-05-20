@@ -5,7 +5,7 @@
 \usepackage[spanish,es-noshorthands,es-tabla]{babel}
 \usepackage[a4paper,margin=2.1cm]{geometry}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{booktabs,longtable,tabularx,array}
+\usepackage{booktabs,array}
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{enumitem}
@@ -14,11 +14,12 @@
 \usepackage{ragged2e}
 
 \hypersetup{colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!55!black,citecolor=blue!55!black}
+\urlstyle{tt}
 \setlength{\emergencystretch}{2em}
 \renewcommand{\arraystretch}{1.12}
 \setlist[itemize]{leftmargin=1.2em}
 \setlist[enumerate]{leftmargin=1.35em}
-\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 
 \lstdefinestyle{cmd}{
   basicstyle=\ttfamily\small,
@@ -29,7 +30,7 @@
 }
 \lstset{style=cmd}
 
-\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\code}[1]{\path{#1}}
 \newcommand{\CaputoD}{\,{}^{C}D_t^q}
 \newcommand{\ii}{\mathrm{i}}
 \newcommand{\R}{\mathbb{R}}
@@ -538,11 +539,11 @@ La robustez responde: ¿él candidato sigue llegando al mismo target bajo cambio
 \subsection{Casos estándar de robustez}
 
 El conjunto estándar compara:
-\begin{longtable}{@{}lll@{}}
+\begin{center}
+\begin{tabular}{@{}lll@{}}
 \toprule
 Caso & Cambio & Propósito \\
 \midrule
-\endhead
 \code{R0\_base} & contrato base & referencia del candidato \\
 \code{R1\_h\_finer} & \(h\) menor & sensibilidad a paso fino \\
 \code{R2\_h\_coarser} & \(h\) mayor & sensibilidad a paso grueso \\
@@ -550,7 +551,8 @@ Caso & Cambio & Propósito \\
 \code{R4\_Lm\_higher} & \(L_m\) mayor & sensibilidad a memoria larga \\
 \code{R5\_t\_longer} & \(T\) mayor & persistencia temporal \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 Comando:
 \begin{lstlisting}
@@ -728,18 +730,19 @@ La comparación debe reportar:
 
 La conclusión debe seguir esta tabla:
 
-\begin{longtable}{@{}L{0.28\textwidth}L{0.62\textwidth}@{}}
+\begin{center}
+\begin{tabular}{@{}L{0.28\textwidth}L{0.62\textwidth}@{}}
 \toprule
 Resultado observado & Lectura permitida \\
 \midrule
-\endhead
 La semilla no continúa o diverge & candidato descartado \\
 Trayectoria acotada, pero no reproduce target bajo robustez & candidato no robusto \\
 Target reproducible, pero hay \code{robust\_target\_hit} desde equilibrio & no soporta ocultedad; candidato autoexcitado bajo el contrato probado \\
 Target reproducible, sin hits target en radios probados & compatible con ocultedad bajo radios probados; no es prueba definitiva \\
 Cuencas, esferas, robustez y comparación Danca son consistentes & candidato fuerte; aún debe reportarse como evidencia numérica, no teorema \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \section{Resumen de comandos en orden de ejecución}
 
@@ -776,11 +779,12 @@ python tools/legacy/danca2017_chua_abm_replication.py --job all --workers 4
 
 \section{Inventario funcional: disponible, activable o legacy}
 
-\begin{longtable}{@{}L{0.25\textwidth}L{0.22\textwidth}L{0.43\textwidth}@{}}
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.20\textwidth}L{0.16\textwidth}L{0.56\textwidth}@{}}
 \toprule
 Bloque & Estado & Uso \\
 \midrule
-\endhead
 Modelo Chua y equilibrios & API pública & \code{hidden\_attractors.models.chua} \\
 DF centrada, sesgada y Machado & API pública ligera & \code{hidden\_attractors.seed\_generation} \\
 Historia fraccionaria EFORK & API pública ligera & \code{hidden\_attractors.solvers.FractionalHistory} \\
@@ -798,7 +802,8 @@ TISEAN/exportación externa & Opcion CLI & \code{hidden-attractors-unified-chua 
 Réplica Danca ABM & Legacy de referencia & \code{danca2017\_chua\_abm\_replication.py} \\
 Medidas externas nolds/antropy & Adaptador opcional & \code{hidden\_attractors.integrations.external\_tools} \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{center}
 
 \section{Advertencia final}
 
