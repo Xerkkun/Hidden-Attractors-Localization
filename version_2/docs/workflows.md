@@ -10,6 +10,18 @@ Registered systems can advertise their workflow commands:
 hidden-attractors-systems --system chua-piecewise
 ```
 
+Reusable workflows must also declare their experiment-level inputs through a
+`WorkflowInputSpec`: solver contract, destination classifier, target reference,
+sphere controls, basin slice, strict-refinement thresholds, trajectory
+diagnostics, parameter sweeps, and robustness cases.  See
+[Adapting New Systems](adapting_new_systems.md) and inspect requirements with:
+
+```bash
+hidden-attractors-workflow-requirements
+hidden-attractors-workflow-requirements --workflow strict-refinement --system chua-piecewise
+hidden-attractors-workflow-requirements --example-spec
+```
+
 ## Robustness Overlay
 
 Module:
@@ -46,6 +58,11 @@ hidden-attractors-sphere-controls --help
 Purpose: probe equilibrium-neighborhood initial conditions on spheres and
 record whether they enter target-attractor basins.
 
+For new systems, the required reusable inputs are `ChaoticSystem.equilibria`,
+`WorkflowInputSpec.integrator`, `DestinationClassifierSpec`, and
+`TargetReferenceSpec`.  System-specific scripts may keep historical defaults,
+but generic runs should write the effective spec next to the output artifacts.
+
 ## Refined Basin Classification
 
 Module:
@@ -63,6 +80,38 @@ hidden-attractors-refined-basin --help
 
 Purpose: revisit `unknown` basin cells and compare trajectory geometry against
 reference target trajectories.
+
+The stricter target-reference refinement used by recent Chua/Danca runs is
+available as:
+
+```bash
+python tools/cli/strict_target_refinement.py --help
+hidden-attractors-strict-target-refinement --help
+```
+
+It is still Chua/Danca-aware internally, but its inputs mirror the reusable
+`TargetReferenceSpec` and `StrictRefinementSpec` contract.
+
+## Danca ABM Sphere Controls
+
+Module:
+
+```python
+hidden_attractors.workflows.danca_abm_sphere_controls
+```
+
+CLI:
+
+```bash
+python tools/cli/danca_abm_sphere_controls.py --help
+hidden-attractors-danca-abm-sphere-controls --help
+```
+
+Purpose: run Danca's published fractional Chua example with ABM full memory,
+sample the same kind of equilibrium-centered spheres used by the project
+candidate controls, then refine only unresolved outcomes.  This remains a
+system-specific compatibility workflow and should not be used as a generic
+adapter without replacing the system, solver, classifier, and target reference.
 
 ## Unified Fractional Chua Pipeline
 
@@ -130,6 +179,11 @@ hidden-attractors-nyquist-pipeline --help
 These commands preserve reproducibility. New reusable workflow logic should go
 under `hidden_attractors.workflows` and, when it is system-specific, be attached
 to a registered `ChaoticSystem`.
+
+Legacy scripts that gain new behavior should build or load a
+`WorkflowInputSpec`, write that spec to the output directory, and delegate
+reusable calculations to package modules.  This keeps historical defaults
+traceable without letting the stable API become script-specific.
 
 ## Numerical Contract
 

@@ -50,7 +50,11 @@ policy.
 | `hidden_attractors.workflows.robustness_overlay` | Overlay trajectories under changes of `h`, `Lm`, and `t_final` | Local robustness contract; robustness does not imply hiddenness |
 | `hidden_attractors.workflows.sphere_controls` | Spherical controls around equilibria | Leonov--Kuznetsov basin criterion; finite-sample numerical control |
 | `hidden_attractors.workflows.refined_basin` | Refine unresolved basin cells by trajectory geometry | Local target-reference geometry contract |
+| `hidden_attractors.workflows.strict_target_refinement` | Stricter target-reference refinement for unresolved Chua/Danca basin or sphere rows | Local finite-time trajectory-similarity contract with negative controls; still numerical evidence, not proof |
+| `hidden_attractors.workflows.danca_abm_sphere_controls` | Danca ABM full-history spherical controls followed by strict refinement of unknown outcomes | Danca fractional Chua example plus Diethelm--Ford--Freed ABM predictor-corrector; compatibility workflow for published-style controls |
 | `hidden_attractors.workflows.unified_chua` | Explicit Python/CLI wrapper for the unified Chua workflow without manual environment variables | Local workflow contract; heavy stages must use C backends |
+| `hidden_attractors.workflows.specs.WorkflowInputSpec` | Shared input contract for reusable CLIs and migrated legacy scripts | Local reproducibility contract: records solver, classifier, target, basin, sphere, and refinement assumptions |
+| `hidden_attractors.systems.requirements` | Capability and requirement checklist for applying workflows to new systems | Local library-extension policy; distinguishes vector-field registration from hiddenness evidence workflows |
 
 ## Optional External Methods
 

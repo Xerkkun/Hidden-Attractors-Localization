@@ -29,7 +29,20 @@ from .seed_generation import (
     validate_fractional_order,
 )
 from .systems import ChaoticSystem, LureSystem, get_system, list_systems, register_system
+from .systems.requirements import check_system_capability, known_workflows, requirements_for
 from .workflows.contracts import FullWorkflowContract, NumericalContract, validate_full_workflow_system
+from .workflows.specs import (
+    BasinSliceSpec,
+    DestinationClassifierSpec,
+    IntegratorSpec,
+    ParameterSweepSpec,
+    RobustnessCaseSpec,
+    SphereControlSpec,
+    StrictRefinementSpec,
+    TargetReferenceSpec,
+    TrajectoryDiagnosticsSpec,
+    WorkflowInputSpec,
+)
 from .workflows.integer_lure import (
     continue_integer_lure_seed,
     final_integer_lure_attractor,
@@ -40,17 +53,28 @@ from .workflows.integer_lure import (
 
 __all__ = [
     "CLASS_LABELS",
+    "BasinSliceSpec",
     "CandidateRecord",
     "ChaoticSystem",
     "ChuaParameters",
+    "DestinationClassifierSpec",
     "HarmonicSeed",
     "FullWorkflowContract",
+    "IntegratorSpec",
     "LureSystem",
     "LyapunovResult",
     "NumericalContract",
+    "ParameterSweepSpec",
+    "RobustnessCaseSpec",
     "RobustnessCase",
+    "SphereControlSpec",
+    "StrictRefinementSpec",
     "TARGET_CLASS_IDS",
+    "TargetReferenceSpec",
+    "TrajectoryDiagnosticsSpec",
+    "WorkflowInputSpec",
     "class_label",
+    "check_system_capability",
     "chua_piecewise_parameters",
     "chua_parameters",
     "continue_integer_lure_seed",
@@ -65,10 +89,12 @@ __all__ = [
     "integer_system_lyapunov_exponents",
     "integrate_integer_lure",
     "is_target_class",
+    "known_workflows",
     "list_systems",
     "load_trajectory_csv",
     "load_final_candidate_records",
     "register_system",
+    "requirements_for",
     "rhs_piecewise",
     "run_integer_lure_hiddenness_controls",
     "trajectory_metrics",

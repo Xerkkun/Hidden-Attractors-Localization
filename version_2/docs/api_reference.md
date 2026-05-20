@@ -8,13 +8,24 @@ and installable compatibility commands.
 
 ```python
 from hidden_attractors import (
+    BasinSliceSpec,
     ChuaParameters,
     CandidateRecord,
     ChaoticSystem,
+    DestinationClassifierSpec,
     HarmonicSeed,
+    IntegratorSpec,
     LureSystem,
     NumericalContract,
+    ParameterSweepSpec,
+    RobustnessCaseSpec,
     RobustnessCase,
+    SphereControlSpec,
+    StrictRefinementSpec,
+    TargetReferenceSpec,
+    TrajectoryDiagnosticsSpec,
+    WorkflowInputSpec,
+    check_system_capability,
     chua_parameters,
     chua_piecewise_parameters,
     continue_integer_lure_seed,
@@ -26,10 +37,12 @@ from hidden_attractors import (
     get_system,
     integer_lure_seed,
     integer_system_lyapunov_exponents,
+    known_workflows,
     list_systems,
     load_trajectory_csv,
     load_final_candidate_records,
     register_system,
+    requirements_for,
     rhs_piecewise,
     run_integer_lure_hiddenness_controls,
     trajectory_metrics,
@@ -53,12 +66,19 @@ from hidden_attractors import (
 - `hidden_attractors.systems.register_system`
 - `hidden_attractors.systems.get_system`
 - `hidden_attractors.systems.list_systems`
+- `hidden_attractors.systems.known_workflows`
+- `hidden_attractors.systems.requirements_for`
+- `hidden_attractors.systems.check_system_capability`
 
 The system registry is the extension point for adding new chaotic systems.
 Built-ins currently include `chua-piecewise` and `chua-arctan`.
 `ChaoticSystem` can expose a vector field, parameters, equilibria, Jacobian,
 workflow names, and a manual `LureSystem`.  `LureSystem` is mandatory for the
 full Nyquist/DF route.
+
+`requirements_for` and `check_system_capability` document which extra inputs
+are needed before a registered system can be used in sphere controls, basin
+cuts, strict refinement, continuation, Lyapunov, or full hiddenness protocols.
 
 ## Seed Generation
 
@@ -169,11 +189,29 @@ heavy Python integrator.
 - `hidden_attractors.workflows.unified_chua`
 - `hidden_attractors.workflows.integer_lure`
 - `hidden_attractors.workflows.contracts.FullWorkflowContract`
+- `hidden_attractors.workflows.specs.WorkflowInputSpec`
+- `hidden_attractors.workflows.specs.IntegratorSpec`
+- `hidden_attractors.workflows.specs.DestinationClassifierSpec`
+- `hidden_attractors.workflows.specs.TargetReferenceSpec`
+- `hidden_attractors.workflows.specs.SphereControlSpec`
+- `hidden_attractors.workflows.specs.BasinSliceSpec`
+- `hidden_attractors.workflows.specs.StrictRefinementSpec`
+- `hidden_attractors.workflows.specs.TrajectoryDiagnosticsSpec`
+- `hidden_attractors.workflows.specs.ParameterSweepSpec`
+- `hidden_attractors.workflows.specs.RobustnessCaseSpec`
+- `hidden_attractors.workflows.specs.write_workflow_spec`
+- `hidden_attractors.workflows.specs.load_workflow_spec`
 
 Use the workflow modules for reusable Python calls and `tools/cli/` or console
 entry points for command-line execution. The unified Chua workflow is available
 as `hidden-attractors-unified-chua` and replaces manual `$env:HIDDEN_ATTRACTORS_*`
 setup for new runs.
+
+`WorkflowInputSpec` is the shared contract for maintained CLIs and migrated
+legacy scripts. It records solver, memory, classifier, target-reference,
+sphere, basin, strict-refinement, trajectory-diagnostics, parameter-sweep, and
+robustness-case inputs so new systems can be audited without copying
+Chua/Danca-specific scripts.
 
 `integer_lure` generalizes the Chua integer example to other integer-order
 systems in Lur'e form: seed generation, continuation, final trajectory,
@@ -195,4 +233,5 @@ hidden-attractors-nyquist-pipeline --help
 ```
 
 Use these commands for reproducibility while migrating reusable logic into
-`hidden_attractors/`.
+`hidden_attractors/`. New legacy behavior should build or load a
+`WorkflowInputSpec` and write the effective spec next to output artifacts.

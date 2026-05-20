@@ -53,3 +53,25 @@ version, use a separate supported Python environment for these scripts.
 
 When a script here needs new functionality, migrate the reusable part into
 `hidden_attractors/` and add an example or workflow wrapper.
+
+## Migration Contract
+
+Legacy scripts may keep fixed Danca/Chua defaults when that is required to
+reproduce old artifacts.  New behavior should still follow the package
+contract:
+
+1. load or build `hidden_attractors.workflows.WorkflowInputSpec`;
+2. write the effective spec next to outputs;
+3. document fixed-system assumptions in `--help` and run metadata;
+4. delegate reusable calculations to `hidden_attractors/`;
+5. keep historical numerical contracts unchanged unless the user requests a
+   new run profile explicitly.
+
+Use:
+
+```bash
+hidden-attractors-workflow-requirements --help
+```
+
+to inspect which inputs a workflow needs before a legacy script is migrated
+into a generic command.

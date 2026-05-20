@@ -51,6 +51,9 @@ register_system(
 ```
 
 See `examples/custom_system_definition.py` for a runnable example.
+See also `examples/new_system_workflow_spec.py` for the next layer: writing a
+`WorkflowInputSpec` that records solver, classifier, target-reference, basin,
+and refinement inputs before launching reusable workflows.
 
 ## Workflow Contract
 
@@ -73,6 +76,17 @@ complete workflow still needs:
 
 For heavy numerical work, add a C backend or an adapter to a proven external
 solver before exposing the workflow as stable.
+
+The package-level readiness checker makes this distinction explicit:
+
+```bash
+hidden-attractors-workflow-requirements --workflow basin --system chua-piecewise
+hidden-attractors-workflow-requirements --workflow strict-refinement --system chua-piecewise
+```
+
+If the checker reports missing `integrator`, `target-reference`, or
+`basin-slice`, add those fields to a `WorkflowInputSpec`; do not add them to
+the vector-field definition itself.
 
 ## Lur'e Requirement
 

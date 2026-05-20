@@ -11,6 +11,7 @@ python examples/quickstart_equilibria.py
 python examples/list_final_candidates.py
 python examples/minimal_chua_protocol.py
 python examples/custom_system_definition.py
+python examples/new_system_workflow_spec.py
 python examples/integer_lure_chua_protocol.py
 python examples/dynamical_analysis_gallery.py
 python examples/create_robustness_overlay_config.py
@@ -26,6 +27,11 @@ numerical protocol.
 
 `custom_system_definition.py` shows how a user can register another chaotic
 system through the public `hidden_attractors.systems` API.
+
+`new_system_workflow_spec.py` shows the next step after registration: writing a
+`WorkflowInputSpec` that records the solver, classifier, target-reference,
+basin, and strict-refinement inputs required before reusable workflows can be
+audited.
 
 `integer_lure_chua_protocol.py` is the small order-one example. It exercises
 the generic Lur'e route: classical DF seed, epsilon continuation, final
