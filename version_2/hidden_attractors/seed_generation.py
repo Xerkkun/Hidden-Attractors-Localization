@@ -13,6 +13,7 @@ from typing import Iterable, Literal
 import numpy as np
 
 from .models.chua import ChuaParameters, chua_piecewise_parameters, normalize_chua_model
+from .systems.lure import LureSystem
 
 
 real_dtype = np.float64
@@ -92,6 +93,309 @@ def fractional_iomega_power(omega: float, q: float) -> complex:
         raise ValueError("omega must be positive and finite.")
     q_value = validate_fractional_order(q)
     return complex_dtype((w**q_value) * np.exp(1j * np.pi * q_value / 2.0))
+
+
+def build_lure_linearized_matrix(system: LureSystem, gain: float) -> np.ndarray:
+    """Return ``A + k b c^T`` for a Lur'e describing-function gain ``k``."""
+
+    return np.asarray(system.matrix, dtype=real_dtype) + float(gain) * np.outer(
+        np.asarray(system.input_vector, dtype=real_dtype),
+        np.asarray(system.output_vector, dtype=real_dtype),
+    )
+
+
+def lure_transfer_function(omega: float, q: float, system: LureSystem) -> complex:
+    """Return ``c^T (A - (i omega)^q I)^(-1) b`` for a Lur'e system."""
+
+    matrix = np.asarray(system.matrix, dtype=complex_dtype)
+    bvec = np.asarray(system.input_vector, dtype=complex_dtype)
+    cvec = np.asarray(system.output_vector, dtype=complex_dtype)
+    lhs = matrix - fractional_iomega_power(omega, q) * np.eye(system.dimension, dtype=complex_dtype)
+    value = (cvec.reshape(1, -1) @ np.linalg.inv(lhs) @ bvec.reshape(-1, 1))[0, 0]
+    return complex_dtype(value)
+
+
+def find_lure_omega_gain_candidates(
+    q: float,
+    system: LureSystem,
+    *,
+    wmin: float = 1.0e-4,
+    wmax: float = 10.0,
+    nscan: int = 20_000,
+    compatible_only: bool = True,
+) -> list[tuple[float, float]]:
+    """Find Lur'e frequency/gain candidates from ``Im(W_q(i omega)) = 0``.
+
+    This is the system-independent part of the Chua Nyquist/DF seed search.
+    It only assumes a scalar-feedback Lur'e split.
+    """
+
+    q_value = validate_fractional_order(q)
+    if wmin <= 0.0 or wmax <= wmin:
+        raise ValueError("expected 0 < wmin < wmax.")
+    if int(nscan) < 8:
+        raise ValueError("nscan must be at least 8.")
+
+    ws = np.linspace(float(wmin), float(wmax), int(nscan))
+    vals = np.array([np.imag(lure_transfer_function(w, q_value, system)) for w in ws], dtype=float)
+    roots: list[float] = []
+    for i in range(len(ws) - 1):
+        f1 = vals[i]
+        f2 = vals[i + 1]
+        if not np.isfinite(f1) or not np.isfinite(f2):
+            continue
+        if f1 == 0.0:
+            roots.append(float(ws[i]))
+        elif f1 * f2 < 0.0:
+            roots.append(
+                float(_bisect_root(lambda w: np.imag(lure_transfer_function(w, q_value, system)), ws[i], ws[i + 1]))
+            )
+
+    unique_roots: list[float] = []
+    for root in sorted(roots):
+        if not unique_roots or abs(root - unique_roots[-1]) > 1.0e-7:
+            unique_roots.append(root)
+
+    pairs: list[tuple[float, float]] = []
+    for omega in unique_roots:
+        response = lure_transfer_function(omega, q_value, system)
+        re_value = float(np.real(response))
+        if abs(re_value) < 1.0e-12:
+            continue
+        gain = -1.0 / re_value
+        if compatible_only and not system.is_gain_compatible(gain):
+            continue
+        pairs.append((float(omega), float(gain)))
+    return sorted(pairs, key=lambda item: item[1])
+
+
+def lure_describing_function(amplitude: float, system: LureSystem) -> complex:
+    """Evaluate the system's classical first-harmonic describing function."""
+
+    amp = float(amplitude)
+    if amp <= 0.0 or not np.isfinite(amp):
+        raise ValueError("amplitude must be positive and finite.")
+    return complex_dtype(system.describing_function(amp))
+
+
+def lure_machado_describing_function(amplitude: float, system: LureSystem, mu: float) -> float:
+    """Return the real Machado family ``N_mu(A)=N(A)^mu``.
+
+    The public generic form admits systems whose base describing function is
+    real and strictly positive on the tested amplitude range.  Complex or
+    sign-changing variants need an explicit branch convention and should be
+    implemented by a custom amplitude solver before being used in a workflow.
+    """
+
+    exponent = float(mu)
+    if not np.isfinite(exponent) or exponent <= 0.0:
+        raise ValueError("mu must be positive and finite.")
+    value = complex(system.machado_describing_function(float(amplitude), exponent))
+    if abs(float(np.imag(value))) > 1.0e-12:
+        raise ValueError("Machado workflow currently requires a real-valued branch.")
+    return float(np.real(value))
+
+
+def fourier_coefficients_lure(
+    amplitude: float,
+    sigma0: float,
+    system: LureSystem,
+    *,
+    harmonics: int = 10,
+    n_quad: int = 4096,
+) -> dict[str, object]:
+    """Compute Fourier coefficients of ``psi(sigma0 + A cos(theta))``."""
+
+    amp = float(amplitude)
+    center = float(sigma0)
+    kmax = int(harmonics)
+    n = int(n_quad)
+    if amp <= 0.0 or not np.isfinite(amp):
+        raise ValueError("amplitude must be positive and finite.")
+    if kmax < 1:
+        raise ValueError("harmonics must be at least 1.")
+    if n < max(64, 8 * kmax):
+        raise ValueError("n_quad is too small for the requested number of harmonics.")
+
+    theta = np.linspace(0.0, 2.0 * np.pi, n, endpoint=False, dtype=real_dtype)
+    values = np.array([system.nonlinearity(center + amp * np.cos(th)) for th in theta], dtype=real_dtype)
+    coeffs: dict[int, dict[str, object]] = {}
+    for k in range(1, kmax + 1):
+        ak = 2.0 * float(np.mean(values * np.cos(k * theta)))
+        bk = 2.0 * float(np.mean(values * np.sin(k * theta)))
+        coeffs[k] = {"a": ak, "b": bk, "Y": complex_dtype(ak - 1j * bk)}
+    return {
+        "amplitude": amp,
+        "sigma0": center,
+        "harmonics": kmax,
+        "n_quad": n,
+        "y_mean": float(np.mean(values)),
+        "coefficients": coeffs,
+    }
+
+
+def biased_lure_describing_function(
+    amplitude: float,
+    sigma0: float,
+    system: LureSystem,
+    *,
+    harmonics: int = 10,
+    n_quad: int = 4096,
+) -> complex:
+    """Return the biased Lur'e describing function ``N(A,sigma0)=Y_1/A``."""
+
+    data = fourier_coefficients_lure(
+        amplitude,
+        sigma0,
+        system,
+        harmonics=max(1, int(harmonics)),
+        n_quad=n_quad,
+    )
+    y1 = complex(data["coefficients"][1]["Y"])  # type: ignore[index]
+    return complex_dtype(y1 / float(amplitude))
+
+
+def solve_lure_amplitude_from_gain(
+    gain: float,
+    system: LureSystem,
+    *,
+    method: Literal["classic", "machado"] = "classic",
+    mu: float = 1.0,
+    amin: float = 1.0 + 1.0e-9,
+    amax: float = 100.0,
+    nscan: int = 20_000,
+) -> float:
+    """Solve an amplitude relation for a generic Lur'e system."""
+
+    k = float(gain)
+    if method == "classic" and system.amplitude_from_gain is not None:
+        return system.solve_amplitude(k)
+    if method == "classic":
+        evaluator = lambda a: float(np.real(lure_describing_function(a, system)))
+    elif method == "machado":
+        evaluator = lambda a: lure_machado_describing_function(a, system, mu)
+    else:
+        raise ValueError("method must be 'classic' or 'machado'.")
+    return _solve_scalar_gain(k, evaluator, amin=amin, amax=amax, nscan=nscan)
+
+
+def build_lure_fractional_seed(
+    q: float,
+    system: LureSystem,
+    omega: float,
+    gain: float,
+    amplitude: float,
+    *,
+    theta: float = 0.0,
+) -> tuple[np.ndarray, np.ndarray, complex]:
+    """Build the harmonic initial state associated with one Lur'e DF branch."""
+
+    q_value = validate_fractional_order(q)
+    linearized = build_lure_linearized_matrix(system, gain).astype(complex_dtype)
+    lam = fractional_iomega_power(omega, q_value)
+    eigvals, eigvecs = np.linalg.eig(linearized)
+    idx = int(np.argmin(np.abs(eigvals - lam)))
+    vector = eigvecs[:, idx]
+    scale = complex(np.asarray(system.output_vector, dtype=complex_dtype) @ vector)
+    if abs(scale) < 1.0e-14:
+        raise RuntimeError("cannot normalize eigenvector with c^T v = 1.")
+    vector = vector / scale
+    seed = float(amplitude) * np.real(vector * np.exp(1j * float(theta)))
+    return seed.astype(real_dtype), vector.astype(complex_dtype), complex(eigvals[idx])
+
+
+def find_lure_harmonic_seed(
+    *,
+    q: float,
+    system: LureSystem,
+    branch_index: int = 0,
+    method: Literal["classic", "machado"] = "classic",
+    mu: float = 1.0,
+    theta: float = 0.0,
+    wmin: float = 1.0e-4,
+    wmax: float = 10.0,
+    nscan: int = 20_000,
+) -> HarmonicSeed:
+    """Locate a Lur'e DF branch and return a finite harmonic seed."""
+
+    pairs = find_lure_omega_gain_candidates(q, system, wmin=wmin, wmax=wmax, nscan=nscan, compatible_only=(method == "classic"))
+    if not pairs:
+        raise RuntimeError("no omega/gain candidate was found.")
+    index = int(branch_index)
+    if index < 0 or index >= len(pairs):
+        raise IndexError("branch_index is outside the available candidate list.")
+    omega, gain = pairs[index]
+    amplitude = solve_lure_amplitude_from_gain(gain, system, method=method, mu=mu)
+    seed, vector, matched = build_lure_fractional_seed(q, system, omega, gain, amplitude, theta=theta)
+    return HarmonicSeed(
+        seed=seed,
+        eigenvector=vector,
+        matched_eigenvalue=matched,
+        omega=float(omega),
+        gain=float(gain),
+        amplitude=float(amplitude),
+        branch_index=index,
+        method=method,
+        mu=float(mu) if method == "machado" else None,
+    )
+
+
+def reconstruct_biased_lure_seed_from_system(
+    *,
+    q: float,
+    system: LureSystem,
+    amplitude: float,
+    sigma0: float,
+    omega: float,
+    theta: float = 0.0,
+    harmonics: int = 10,
+    n_quad: int = 4096,
+) -> BiasedHarmonicSeed:
+    """Reconstruct a biased Lur'e seed from DC and first-harmonic equations."""
+
+    q_value = validate_fractional_order(q)
+    fourier = fourier_coefficients_lure(
+        amplitude,
+        sigma0,
+        system,
+        harmonics=max(1, int(harmonics)),
+        n_quad=n_quad,
+    )
+    y1 = complex(fourier["coefficients"][1]["Y"])  # type: ignore[index]
+    y_mean = float(fourier["y_mean"])
+    pmat = np.asarray(system.matrix, dtype=real_dtype)
+    bvec = np.asarray(system.input_vector, dtype=real_dtype)
+    cvec = np.asarray(system.output_vector, dtype=real_dtype)
+
+    lhs_dc = np.vstack([pmat, cvec.reshape(1, -1)]).astype(real_dtype)
+    rhs_dc = np.concatenate([-bvec * y_mean, np.array([float(sigma0)], dtype=real_dtype)])
+    mean_state, *_ = np.linalg.lstsq(lhs_dc, rhs_dc, rcond=None)
+
+    lam = fractional_iomega_power(omega, q_value)
+    lhs_h = np.vstack(
+        [
+            lam * np.eye(system.dimension, dtype=complex_dtype) - pmat.astype(complex_dtype),
+            cvec.astype(complex_dtype).reshape(1, -1),
+        ]
+    )
+    rhs_h = np.concatenate(
+        [
+            bvec.astype(complex_dtype) * y1,
+            np.array([complex(float(amplitude), 0.0)], dtype=complex_dtype),
+        ]
+    )
+    harmonic_vector, *_ = np.linalg.lstsq(lhs_h, rhs_h, rcond=None)
+    seed = np.asarray(mean_state, dtype=real_dtype) + np.real(harmonic_vector * np.exp(1j * float(theta)))
+    return BiasedHarmonicSeed(
+        seed=seed.astype(real_dtype),
+        mean_state=np.asarray(mean_state, dtype=real_dtype),
+        harmonic_vector=harmonic_vector.astype(complex_dtype),
+        fourier=fourier,
+        amplitude=float(amplitude),
+        sigma0=float(sigma0),
+        omega=float(omega),
+        theta=float(theta),
+    )
 
 
 def chua_gain(params: ChuaParameters) -> float:
@@ -522,20 +826,31 @@ __all__ = [
     "BiasedHarmonicSeed",
     "HarmonicSeed",
     "biased_describing_function",
+    "biased_lure_describing_function",
+    "build_lure_fractional_seed",
     "build_fractional_seed",
+    "build_lure_linearized_matrix",
     "build_linearized_matrix",
     "chua_gain",
     "chua_matrices",
     "describing_function",
     "find_harmonic_seed",
+    "find_lure_harmonic_seed",
+    "find_lure_omega_gain_candidates",
     "find_omega_gain_candidates",
     "format_seed_report",
+    "fourier_coefficients_lure",
     "fourier_coefficients_psi",
     "fractional_iomega_power",
     "is_describing_gain_compatible",
+    "lure_describing_function",
+    "lure_machado_describing_function",
+    "lure_transfer_function",
     "machado_describing_function",
     "psi_sigma",
+    "reconstruct_biased_lure_seed_from_system",
     "reconstruct_biased_lure_seed",
+    "solve_lure_amplitude_from_gain",
     "solve_amplitude_from_gain",
     "solve_machado_amplitude_from_gain",
     "transfer_function",

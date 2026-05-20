@@ -7,5 +7,6 @@ migrated out of legacy experiment scripts.
 
 from ..native.backends import FractionalChuaBackend
 from .history import FractionalHistory
+from .integer import efork_q1_integrate, efork_q1_step
 
-__all__ = ["FractionalChuaBackend", "FractionalHistory"]
+__all__ = ["FractionalChuaBackend", "FractionalHistory", "efork_q1_integrate", "efork_q1_step"]

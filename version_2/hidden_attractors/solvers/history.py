@@ -25,8 +25,14 @@ class FractionalHistory:
 
         return int(self.x_window.shape[0])
 
+    @property
+    def dimension(self) -> int:
+        """State dimension stored in the history window."""
+
+        return int(self.x_window.shape[1])
+
     def as_efork_history(self) -> np.ndarray:
-        """Return columns ``t,x,y,z`` accepted by the EFORK wrappers."""
+        """Return columns ``t,state...`` accepted by continuation wrappers."""
 
         return np.column_stack([self.t_window, self.x_window]).astype(float)
 
@@ -42,14 +48,14 @@ class FractionalHistory:
     ) -> "FractionalHistory":
         """Extract the last ``ceil(memory_length / h)+1`` samples.
 
-        ``trajectory`` must contain columns ``t,x,y,z``.  Times are shifted so
+        ``trajectory`` must contain columns ``t,state...``.  Times are shifted so
         the final sample is at ``t=0``; this is the convention used by the
-        migrated EFORK continuation routines.
+        migrated continuation routines.
         """
 
         traj = np.asarray(trajectory, dtype=float)
-        if traj.ndim != 2 or traj.shape[1] != 4 or traj.shape[0] < 1:
-            raise ValueError("trajectory must have shape (N, 4) with columns t,x,y,z.")
+        if traj.ndim != 2 or traj.shape[1] < 2 or traj.shape[0] < 1:
+            raise ValueError("trajectory must have shape (N, d+1) with columns t,state....")
         h_value = float(h)
         memory = float(memory_length)
         if h_value <= 0.0:
@@ -63,12 +69,12 @@ class FractionalHistory:
         f_window = None
         if rhs is not None:
             try:
-                f_window = np.vstack([rhs(row[1:4]) for row in window]).astype(float)
+                f_window = np.vstack([rhs(row[1:]) for row in window]).astype(float)
             except Exception:
                 f_window = None
         return cls(
             t_window=window[:, 0].copy(),
-            x_window=window[:, 1:4].copy(),
+            x_window=window[:, 1:].copy(),
             f_window=f_window,
             q=float(q),
             h=h_value,

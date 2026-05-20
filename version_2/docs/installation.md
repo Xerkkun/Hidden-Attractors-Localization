@@ -14,6 +14,15 @@ For development:
 python -m pip install -e ".[dev]"
 ```
 
+For the historical scripts in `tools/legacy/`:
+
+```bash
+python -m pip install -e ".[legacy]"
+```
+
+Those scripts remain outside the public API, but some reproducibility workflows
+still need SciPy and PyYAML.
+
 ## Native Backends
 
 The package contains C sources in `hidden_attractors/native/csrc/` and compiles

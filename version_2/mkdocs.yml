@@ -1,7 +1,7 @@
 site_name: hidden-attractors-fo
 site_description: Numerical workflows for hidden-attractor candidates in fractional-order systems.
-repo_url: https://github.com/<owner>/hidden-attractors-fo
-repo_name: <owner>/hidden-attractors-fo
+repo_url: https://github.com/Xerkkun/Hidden-Attractors-Localization
+repo_name: Xerkkun/Hidden-Attractors-Localization
 theme:
   name: material
   features:
@@ -14,6 +14,7 @@ nav:
   - Getting Started: getting_started.md
   - API Reference: api_reference.md
   - Examples: examples.md
+  - Systems: systems.md
   - Dynamical Analysis: dynamical_analysis.md
   - External Tools: external_tools.md
   - Unified Report: unified_report.md

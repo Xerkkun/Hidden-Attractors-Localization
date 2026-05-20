@@ -1,0 +1,26 @@
+{
+  "status": "ok",
+  "method": "visualization of hidden verification probes from backend CSV",
+  "detail_csv": "chua_integer_runs/balanced/hidden_verify/hidden_target_check_integer.csv",
+  "total_counts": {
+    "EQ": 369,
+    "DIV": 69,
+    "TARGET": 0,
+    "OTHER": 66,
+    "UNKNOWN": 0
+  },
+  "selected_counts": {
+    "EQ": 54,
+    "DIV": 53,
+    "TARGET": 0,
+    "OTHER": 53,
+    "UNKNOWN": 0
+  },
+  "outputs": {
+    "overview_pdf": "chua_integer_runs/balanced/final_pdf_figs/fig05b_hiddenness_overview.pdf",
+    "overview_png": "chua_integer_runs/balanced/final_pdf_figs/fig05b_hiddenness_overview.png",
+    "zoom_pdf": "chua_integer_runs/balanced/final_pdf_figs/fig05c_hiddenness_zoom.pdf",
+    "zoom_png": "chua_integer_runs/balanced/final_pdf_figs/fig05c_hiddenness_zoom.png"
+  },
+  "interpretation": "No TARGET hits were reported in the sampled equilibrium neighborhoods."
+}

@@ -1,0 +1,2 @@
+"""Thin compatibility command modules."""
+

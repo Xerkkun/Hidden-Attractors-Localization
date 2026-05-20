@@ -1,0 +1,42 @@
+{
+  "enabled": true,
+  "status": "ok",
+  "method": "EFORK-3 q=1.0 C backend chua_frac_lyapunov_efork_benettin.c",
+  "interpretation": "Operational integer-order Benettin/variational estimate using the same EFORK q=1 numerical process as the integer pipeline.",
+  "initial_state": [
+    2.6601114820711684,
+    -0.2266243990429491,
+    -6.533936842798876
+  ],
+  "lyapunov_exponents": [
+    0.18045687061063076,
+    -0.03363509798699217,
+    -1.3397866669829277
+  ],
+  "final_state_reported": [
+    -5.854047603279237,
+    0.323255306841286,
+    8.566911673598364
+  ],
+  "config": {
+    "q": 1.0,
+    "h": 0.01,
+    "Lm": 1.0,
+    "t_burn": 60.0,
+    "n_blocks": 300,
+    "t_block": 0.5,
+    "source_c": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/chua_frac_lyapunov_efork_benettin.c",
+    "exe": "/Users/Xerk/Desktop/Proyectos/Hidden Attractors Fractional Order/chua_integer_runs/balanced/native/chua_integer_lyapunov_benettin"
+  },
+  "outputs": {
+    "csv": "chua_integer_runs/balanced/chua_integer_le_convergence.csv",
+    "pdf": "chua_integer_runs/balanced/final_pdf_figs/fig13_lyapunov_convergence.pdf"
+  },
+  "raw_stdout": "# LE_frac_standard 0.18045687061063076 -0.033635097986992171 -1.3397866669829277\n# final_state -5.8540476032792368 0.32325530684128601 8.5669116735983639\n",
+  "notes": [
+    "The C file name is fractional because it is shared with the fractional pipeline.",
+    "Here the backend is called with q=1.0 for the integer-order Chua run.",
+    "This is consistent with continuation, final-attractor, comparison, bifurcation and hiddenness-illustration trajectories, which also use EFORK q=1.",
+    "The exponents are numerical evidence and should be interpreted together with attractor, basin and spectral figures."
+  ]
+}

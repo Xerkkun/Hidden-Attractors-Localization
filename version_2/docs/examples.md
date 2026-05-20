@@ -32,6 +32,16 @@ workflow, keeping heavy numerical stages delegated to the packaged C-backed
 entry point. The default command only writes the JSON contract and shell command;
 `--run` launches the workflow.
 
+## Custom System Definition
+
+```bash
+python examples/custom_system_definition.py
+hidden-attractors-systems
+```
+
+Purpose: show how a user registers a new chaotic system through the public
+`ChaoticSystem` contract.
+
 ## Create a Robustness Overlay Config
 
 ```bash
@@ -71,6 +81,8 @@ The example writes figures and tabular bifurcation points under
 New examples should:
 
 - import from `hidden_attractors`;
+- register new systems through `hidden_attractors.systems` when they introduce
+  a model not already built in;
 - avoid duplicating workflow internals;
 - write to a new folder under `outputs/` or require `--output-dir`;
 - document whether they launch long numerical jobs.

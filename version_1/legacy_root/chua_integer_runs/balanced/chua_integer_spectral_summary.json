@@ -1,0 +1,158 @@
+{
+  "enabled": true,
+  "status": "ok",
+  "sample_step": 0.009999999999999787,
+  "omega0_nyquist_df": 2.039186939959001,
+  "fft_summary": {
+    "omega_d_primary": 2.3035786594481804,
+    "f_d_primary_hz": 0.3666259304521797,
+    "relative_mismatch_eta": 0.12965545939328907,
+    "primary_component": "x",
+    "summary_by_component": {
+      "x": {
+        "dominant_frequency_hz": 0.3666259304521797,
+        "dominant_frequency_rad_s": 2.3035786594481804,
+        "peak_amplitude": 4.35883214171157,
+        "n_samples": 9001,
+        "window": "hann",
+        "frequency_resolution_hz": 0.011109876680369083,
+        "top_frequencies": [
+          {
+            "frequency_hz": 0.3666259304521797,
+            "frequency_rad_s": 2.3035786594481804,
+            "value": 4.35883214171157
+          },
+          {
+            "frequency_hz": 0.37773580713254884,
+            "frequency_rad_s": 2.3733840733708527,
+            "value": 3.003047958010405
+          },
+          {
+            "frequency_hz": 0.35551605377181067,
+            "frequency_rad_s": 2.2337732455255086,
+            "value": 1.5312350194500972
+          },
+          {
+            "frequency_hz": 0.17775802688590533,
+            "frequency_rad_s": 1.1168866227627543,
+            "value": 0.3776724108688359
+          },
+          {
+            "frequency_hz": 0.18886790356627442,
+            "frequency_rad_s": 1.1866920366854263,
+            "value": 0.3564308092585992
+          }
+        ]
+      },
+      "y": {
+        "dominant_frequency_hz": 0.3666259304521797,
+        "dominant_frequency_rad_s": 2.3035786594481804,
+        "peak_amplitude": 1.4241267964206414,
+        "n_samples": 9001,
+        "window": "hann",
+        "frequency_resolution_hz": 0.011109876680369083,
+        "top_frequencies": [
+          {
+            "frequency_hz": 0.3666259304521797,
+            "frequency_rad_s": 2.3035786594481804,
+            "value": 1.4241267964206414
+          },
+          {
+            "frequency_hz": 0.37773580713254884,
+            "frequency_rad_s": 2.3733840733708527,
+            "value": 0.9813662831440051
+          },
+          {
+            "frequency_hz": 0.35551605377181067,
+            "frequency_rad_s": 2.2337732455255086,
+            "value": 0.4995426807762743
+          },
+          {
+            "frequency_hz": 0.7332518609043595,
+            "frequency_rad_s": 4.607157318896361,
+            "value": 0.13101606182342831
+          },
+          {
+            "frequency_hz": 0.7443617375847286,
+            "frequency_rad_s": 4.6769627328190335,
+            "value": 0.12137482534190472
+          }
+        ]
+      },
+      "z": {
+        "dominant_frequency_hz": 0.3666259304521797,
+        "dominant_frequency_rad_s": 2.3035786594481804,
+        "peak_amplitude": 7.415574042004725,
+        "n_samples": 9001,
+        "window": "hann",
+        "frequency_resolution_hz": 0.011109876680369083,
+        "top_frequencies": [
+          {
+            "frequency_hz": 0.3666259304521797,
+            "frequency_rad_s": 2.3035786594481804,
+            "value": 7.415574042004725
+          },
+          {
+            "frequency_hz": 0.37773580713254884,
+            "frequency_rad_s": 2.3733840733708527,
+            "value": 5.110150908495004
+          },
+          {
+            "frequency_hz": 0.35551605377181067,
+            "frequency_rad_s": 2.2337732455255086,
+            "value": 2.60213024706158
+          },
+          {
+            "frequency_hz": 0.17775802688590533,
+            "frequency_rad_s": 1.1168866227627543,
+            "value": 0.41793156535274434
+          },
+          {
+            "frequency_hz": 0.3888456838129179,
+            "frequency_rad_s": 2.443189487293525,
+            "value": 0.4038008616340431
+          }
+        ]
+      }
+    }
+  },
+  "psd_summary": {
+    "enabled": true,
+    "omega_d_primary": 2.300971181828511,
+    "f_d_primary_hz": 0.3662109375000078,
+    "relative_mismatch_eta": 0.12837677445834053,
+    "primary_component": "x",
+    "summary_by_component": {
+      "x": {
+        "dominant_frequency_hz": 0.3662109375000078,
+        "dominant_frequency_rad_s": 2.300971181828511,
+        "peak_psd": 271.59833990191476,
+        "n_samples": 9001
+      },
+      "y": {
+        "dominant_frequency_hz": 0.3662109375000078,
+        "dominant_frequency_rad_s": 2.300971181828511,
+        "peak_psd": 29.002561088337885,
+        "n_samples": 9001
+      },
+      "z": {
+        "dominant_frequency_hz": 0.3662109375000078,
+        "dominant_frequency_rad_s": 2.300971181828511,
+        "peak_psd": 786.3331647477999,
+        "n_samples": 9001
+      }
+    }
+  },
+  "extra_figures": {
+    "fft_x_pdf": "chua_integer_runs/balanced/final_pdf_figs/fig11a_fft_x.pdf",
+    "fft_y_pdf": "chua_integer_runs/balanced/final_pdf_figs/fig11b_fft_y.pdf",
+    "fft_z_pdf": "chua_integer_runs/balanced/final_pdf_figs/fig11c_fft_z.pdf",
+    "psd_x_pdf": "chua_integer_runs/balanced/final_pdf_figs/fig11d_psd_x.pdf",
+    "psd_y_pdf": "chua_integer_runs/balanced/final_pdf_figs/fig11e_psd_y.pdf",
+    "psd_z_pdf": "chua_integer_runs/balanced/final_pdf_figs/fig11f_psd_z.pdf"
+  },
+  "notes": [
+    "The direct FFT is the primary spectral artifact and is zoomed around the dominant frequencies.",
+    "Welch PSD is optional; it smooths power over windows and is not used as a proof of hiddenness."
+  ]
+}

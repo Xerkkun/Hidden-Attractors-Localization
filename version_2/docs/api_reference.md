@@ -1,7 +1,8 @@
 # API Reference
 
 This is the current stable public surface. Scripts in `tools/legacy/` are not
-public API.
+preferred public API, but they are available through `hidden_attractors.legacy`
+and installable compatibility commands.
 
 ## Top-Level Imports
 
@@ -9,17 +10,30 @@ public API.
 from hidden_attractors import (
     ChuaParameters,
     CandidateRecord,
+    ChaoticSystem,
     HarmonicSeed,
+    LureSystem,
+    NumericalContract,
     RobustnessCase,
     chua_parameters,
     chua_piecewise_parameters,
+    continue_integer_lure_seed,
     equilibria_piecewise,
     find_harmonic_seed,
+    find_lure_harmonic_seed,
+    find_lure_omega_gain_candidates,
     find_omega_gain_candidates,
+    get_system,
+    integer_lure_seed,
+    integer_system_lyapunov_exponents,
+    list_systems,
     load_trajectory_csv,
     load_final_candidate_records,
+    register_system,
     rhs_piecewise,
+    run_integer_lure_hiddenness_controls,
     trajectory_metrics,
+    trajectory_metrics_for_system,
     validate_fractional_order,
 )
 ```
@@ -32,18 +46,37 @@ from hidden_attractors import (
 - `hidden_attractors.models.equilibria_piecewise`
 - `hidden_attractors.models.rhs_piecewise`
 
+## Systems
+
+- `hidden_attractors.systems.ChaoticSystem`
+- `hidden_attractors.systems.LureSystem`
+- `hidden_attractors.systems.register_system`
+- `hidden_attractors.systems.get_system`
+- `hidden_attractors.systems.list_systems`
+
+The system registry is the extension point for adding new chaotic systems.
+Built-ins currently include `chua-piecewise` and `chua-arctan`.
+`ChaoticSystem` can expose a vector field, parameters, equilibria, Jacobian,
+workflow names, and a manual `LureSystem`.  `LureSystem` is mandatory for the
+full Nyquist/DF route.
+
 ## Seed Generation
 
 - `hidden_attractors.seed_generation.HarmonicSeed`
 - `hidden_attractors.seed_generation.find_harmonic_seed`
+- `hidden_attractors.seed_generation.find_lure_harmonic_seed`
+- `hidden_attractors.seed_generation.find_lure_omega_gain_candidates`
 - `hidden_attractors.seed_generation.find_omega_gain_candidates`
 - `hidden_attractors.seed_generation.reconstruct_biased_lure_seed`
+- `hidden_attractors.seed_generation.reconstruct_biased_lure_seed_from_system`
 - `hidden_attractors.seed_generation.describing_function`
 - `hidden_attractors.seed_generation.machado_describing_function`
+- `hidden_attractors.seed_generation.lure_describing_function`
+- `hidden_attractors.seed_generation.lure_machado_describing_function`
 
 These helpers perform light seed construction and algebraic diagnostics only.
-Long EFORK integrations, basins, hiddenness verification, bifurcation sweeps,
-and Lyapunov estimation should use the C-backed workflow/backend APIs.
+The `lure_*` helpers are generic for systems in manually supplied Lur'e form.
+The Chua-named helpers are compatibility wrappers.
 
 ## Candidates
 
@@ -59,7 +92,13 @@ and Lyapunov estimation should use the C-backed workflow/backend APIs.
 - `hidden_attractors.analysis.RobustnessCase`
 - `hidden_attractors.analysis.default_robustness_cases`
 - `hidden_attractors.analysis.trajectory_metrics`
+- `hidden_attractors.analysis.trajectory_metrics_for_system`
 - `hidden_attractors.analysis.cloud_median_distance`
+- `hidden_attractors.analysis.integer_system_lyapunov_exponents`
+- `hidden_attractors.analysis.integer_lyapunov_exponents`
+- `hidden_attractors.analysis.trajectory_component_spectra`
+- `hidden_attractors.analysis.fft_spectrum`
+- `hidden_attractors.analysis.psd_welch`
 
 ## Plotting
 
@@ -68,6 +107,12 @@ and Lyapunov estimation should use the C-backed workflow/backend APIs.
 - `hidden_attractors.plotting.plot_time_series`
 - `hidden_attractors.plotting.plot_bifurcation_diagram`
 - `hidden_attractors.plotting.plot_trajectory_overlay`
+- `hidden_attractors.plotting.plot_lure_nyquist_describing_function`
+- `hidden_attractors.plotting.plot_integer_lure_continuation`
+- `hidden_attractors.plotting.plot_integer_hiddenness_controls`
+- `hidden_attractors.plotting.plot_trajectory_spectra`
+- `hidden_attractors.plotting.plot_spectrum`
+- `hidden_attractors.plotting.plot_lyapunov_convergence`
 
 ## IO
 
@@ -98,13 +143,20 @@ libraries instead of duplicating their algorithms.
 
 - `hidden_attractors.native.FractionalChuaBackend`
 - `hidden_attractors.native.BasinBackend`
+- `hidden_attractors.native.NativeIntegrationBackend`
+- `hidden_attractors.native.NativeLyapunovBackend`
+- `hidden_attractors.native.IntegrationRequest`
+- `hidden_attractors.native.IntegrationResult`
 
-Native backends compile C sources from `hidden_attractors/native/csrc/` into
-`.runtime_native/`.
+Current compiled C implementations are Chua-specific.  The native contracts are
+the reusable interface for adding system-specific integer or fractional C
+engines, including Lyapunov estimators.
 
 ## Solver Contracts
 
 - `hidden_attractors.solvers.FractionalHistory`
+- `hidden_attractors.solvers.efork_q1_integrate`
+- `hidden_attractors.solvers.efork_q1_step`
 
 `FractionalHistory` stores EFORK-compatible memory windows. It does not run a
 heavy Python integrator.
@@ -115,8 +167,32 @@ heavy Python integrator.
 - `hidden_attractors.workflows.sphere_controls`
 - `hidden_attractors.workflows.refined_basin`
 - `hidden_attractors.workflows.unified_chua`
+- `hidden_attractors.workflows.integer_lure`
+- `hidden_attractors.workflows.contracts.FullWorkflowContract`
 
 Use the workflow modules for reusable Python calls and `tools/cli/` or console
 entry points for command-line execution. The unified Chua workflow is available
 as `hidden-attractors-unified-chua` and replaces manual `$env:HIDDEN_ATTRACTORS_*`
 setup for new runs.
+
+`integer_lure` generalizes the Chua integer example to other integer-order
+systems in Lur'e form: seed generation, continuation, final trajectory,
+hiddenness controls, reusable figures, and Lyapunov smoke estimates.
+
+## Legacy Facade
+
+- `hidden_attractors.legacy.legacy_script_names`
+- `hidden_attractors.legacy.legacy_script_path`
+- `hidden_attractors.legacy.run_legacy_script`
+
+Command form:
+
+```bash
+hidden-attractors-legacy --list
+hidden-attractors-legacy extended-search --help
+hidden-attractors-danca2017 --help
+hidden-attractors-nyquist-pipeline --help
+```
+
+Use these commands for reproducibility while migrating reusable logic into
+`hidden_attractors/`.

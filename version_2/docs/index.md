@@ -9,6 +9,7 @@ contribution notes.
 - [Installation](installation.md)
 - [Getting Started](getting_started.md)
 - [Examples](examples.md)
+- [Systems](systems.md)
 - [Dynamical Analysis](dynamical_analysis.md)
 - [External Tools](external_tools.md)
 - [Unified Report](unified_report.md)

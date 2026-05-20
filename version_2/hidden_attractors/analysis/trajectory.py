@@ -19,6 +19,7 @@ from typing import Any, Dict, Iterable, List, Tuple
 import numpy as np
 
 from ..models.chua import ChuaParameters, chua_piecewise_parameters, equilibria_piecewise, rhs_piecewise
+from ..systems.base import ChaoticSystem
 
 
 @dataclass(frozen=True)
@@ -86,6 +87,121 @@ def component_fft(values: np.ndarray, h: float) -> Tuple[float, float]:
     prob = spec[1:] / max(float(np.sum(spec[1:])), 1e-300)
     entropy = -float(np.sum(prob * np.log(prob + 1e-300))) / max(math.log(prob.size), 1e-300)
     return float(freq[idx]), entropy
+
+
+def state_view(traj: np.ndarray) -> np.ndarray:
+    """Return state columns from ``traj`` with shape ``(N, d)``.
+
+    Trajectories may be passed as either ``state`` arrays or as
+    ``t,state...`` arrays.  A 2-D array with at least four columns is treated as
+    time plus states for backward compatibility with the Chua workflow.
+    """
+
+    X = np.asarray(traj, dtype=float)
+    if X.ndim != 2:
+        return np.empty((0, 0), dtype=float)
+    if X.shape[1] >= 4:
+        return X[:, 1:]
+    return X
+
+
+def min_distance_to_points(state: np.ndarray, points: Iterable[np.ndarray]) -> float:
+    """Distance from ``state`` to the nearest point in ``points``."""
+
+    s = np.asarray(state, dtype=float)
+    pts = [np.asarray(point, dtype=float) for point in points]
+    if not pts:
+        return float("nan")
+    return float(min(np.linalg.norm(s - point) for point in pts))
+
+
+def system_equilibria(system: ChaoticSystem, parameters: Dict[str, Any] | None = None) -> dict[str, np.ndarray]:
+    """Return equilibria from a registered system, raising if unavailable."""
+
+    equilibria = system.equilibrium_points(parameters)
+    if not equilibria:
+        raise ValueError(f"{system.name} must define equilibria for hiddenness checks.")
+    return equilibria
+
+
+def classify_trajectory_against_equilibria(
+    traj: np.ndarray,
+    equilibria: Dict[str, np.ndarray],
+    *,
+    divergence_norm: float = 120.0,
+    equilibrium_tol: float = 1.0e-3,
+    t_start: float | None = None,
+) -> Dict[str, Any]:
+    """Classify boundedness and final equilibrium contact for any dimension."""
+
+    X = np.asarray(traj, dtype=float)
+    if t_start is not None and X.ndim == 2 and X.shape[1] >= 2:
+        X = X[X[:, 0] >= float(t_start)]
+    states = state_view(X)
+    finite = bool(states.size > 0 and np.all(np.isfinite(states)))
+    norms = np.linalg.norm(states, axis=1) if states.size else np.array([float("inf")])
+    final = states[-1] if states.size else np.full(1, float("nan"))
+    distances = {
+        name: float(np.linalg.norm(final - np.asarray(eq, dtype=float)))
+        for name, eq in equilibria.items()
+        if np.asarray(eq, dtype=float).shape == final.shape
+    }
+    closest_eq = min(distances, key=distances.get) if distances else ""
+    closest_dist = distances[closest_eq] if closest_eq else float("nan")
+    diverged = bool((not finite) or float(np.max(norms)) > float(divergence_norm))
+    equilibrium_hit = bool(finite and np.isfinite(closest_dist) and closest_dist <= float(equilibrium_tol))
+    return {
+        "bounded": bool(finite and not diverged),
+        "diverged": diverged,
+        "equilibrium_hit": equilibrium_hit,
+        "closest_equilibrium": closest_eq,
+        "closest_equilibrium_distance": closest_dist,
+        "final_class": f"equilibrium_{closest_eq}" if equilibrium_hit else ("diverged" if diverged else "bounded_nontrivial"),
+        "final_norm": float(np.linalg.norm(final)),
+        "max_norm": float(np.max(norms)),
+    }
+
+
+def trajectory_metrics_for_system(
+    traj: np.ndarray,
+    *,
+    system: ChaoticSystem | None = None,
+    equilibria: Dict[str, np.ndarray] | None = None,
+    h: float,
+    t_start: float,
+    divergence_norm: float = 120.0,
+    equilibrium_tol: float = 1.0e-3,
+) -> Dict[str, Any]:
+    """Compute dimension-agnostic trajectory metrics for a registered system."""
+
+    if equilibria is None:
+        if system is None:
+            raise ValueError("provide either system or equilibria.")
+        equilibria = system_equilibria(system)
+    X = np.asarray(traj, dtype=float)
+    tail = tail_view(X, t_start=t_start)
+    states = state_view(tail if tail.shape[0] else X)
+    cls = classify_trajectory_against_equilibria(
+        X,
+        equilibria,
+        divergence_norm=divergence_norm,
+        equilibrium_tol=equilibrium_tol,
+        t_start=t_start,
+    )
+    ranges = np.ptp(states, axis=0) if states.size else np.empty(0, dtype=float)
+    variances = np.var(states, axis=0) if states.size else np.empty(0, dtype=float)
+    peak, entropy = component_fft(states[:, 0], h) if states.shape[0] and states.shape[1] else (float("nan"), float("nan"))
+    out: Dict[str, Any] = {
+        **cls,
+        "dimension": int(states.shape[1]) if states.ndim == 2 else 0,
+        "fft_peak_component_0": peak,
+        "psd_entropy_component_0": entropy,
+    }
+    for idx, value in enumerate(ranges):
+        out[f"range_{idx}"] = float(value)
+    for idx, value in enumerate(variances):
+        out[f"var_{idx}_tail"] = float(value)
+    return out
 
 
 def trajectory_ranges(traj: np.ndarray) -> Dict[str, float]:

@@ -7,13 +7,14 @@
 
 `hidden-attractors-fo` is a Python research library for reproducing, auditing,
 and extending numerical workflows for hidden-attractor candidates in
-fractional-order Chua/Lur'e systems.
+integer- and fractional-order Chua/Lur'e systems.
 
 The package turns the previous script collection into a reusable library:
 models, candidate loaders, trajectory diagnostics, basin labels, plotting
 helpers, native C/EFORK backends, and reproducible workflows live under
-`hidden_attractors/`. Research scripts that are still useful but not yet part
-of the public API are kept under `tools/legacy/`.
+`hidden_attractors/`. Historical scripts are exposed through installable
+compatibility commands while their reusable pieces are migrated into package
+modules.
 
 ## Features
 
@@ -23,12 +24,18 @@ of the public API are kept under `tools/legacy/`.
 - Basin classification labels and plotting helpers.
 - Optional adapters for external nonlinear time-series tools such as `nolds`
   and `antropy`, with PyDSTool documented as a companion continuation tool.
-- C/EFORK wrapper classes with local build policy.
+- C/EFORK wrapper classes with local build policy and backend contracts for
+  future system-specific native engines.
 - Workflow entry points for robustness overlays, sphere controls, refined basin
   classification, and the unified Chua pipeline without manual environment
   variables.
+- A system registry for built-in and user-defined chaotic systems. Full
+  Nyquist/DF workflows require a manual Lur'e form.
 - Public seed-generation helpers for classical, biased, and Machado
   describing-function seeds.
+- Generic order-one Lur'e helpers for seed generation, epsilon continuation,
+  hiddenness controls, reusable figures, and Lyapunov estimates.
+- Installable compatibility commands for historical workflows.
 - Small examples and smoke tests for users who install from GitHub.
 
 ## Installation
@@ -43,6 +50,12 @@ For development and tests:
 
 ```bash
 python -m pip install -e ".[dev]"
+```
+
+For the historical research scripts kept under `tools/legacy/`:
+
+```bash
+python -m pip install -e ".[legacy]"
 ```
 
 The native workflows compile C sources on demand. On Windows this expects a C
@@ -67,6 +80,8 @@ Run an included example:
 python examples/quickstart_equilibria.py
 python examples/list_final_candidates.py
 python examples/minimal_chua_protocol.py
+python examples/custom_system_definition.py
+python examples/integer_lure_chua_protocol.py
 python examples/dynamical_analysis_gallery.py
 ```
 
@@ -74,11 +89,20 @@ After editable installation, the same candidate listing is available as:
 
 ```bash
 hidden-attractors-list-candidates
+hidden-attractors-systems
 hidden-attractors-unified-chua --help
+hidden-attractors-integer-chua --help
+hidden-attractors-legacy --list
 ```
 
 Heavy numerical stages use the packaged C backends. Python helpers are for
 configuration, seed construction, post-processing, plotting, and IO.
+
+For systems beyond the built-in Chua cases, the user must provide the equations
+and, for the full DF route, the Lur'e split `A, b, c, psi(c^T x)`, the
+classical describing function, the Machado branch, equilibria, and preferably a
+Jacobian. Current C backends are Chua-specific; reusable native contracts are
+available for adding system-specific integer or fractional engines.
 
 ## Documentation Map
 
@@ -87,6 +111,7 @@ configuration, seed construction, post-processing, plotting, and IO.
 - [Getting Started](docs/getting_started.md)
 - [API Reference](docs/api_reference.md)
 - [Examples](docs/examples.md)
+- [Systems](docs/systems.md)
 - [Dynamical Analysis](docs/dynamical_analysis.md)
 - [External Tools](docs/external_tools.md)
 - [Unified Report](docs/unified_report.md)
@@ -103,12 +128,14 @@ configuration, seed construction, post-processing, plotting, and IO.
 
 ```text
 hidden_attractors/      importable Python package
+hidden_attractors/systems/ extensible chaotic-system registry
+hidden_attractors/workflows/integer_lure.py generic order-one Lur'e workflow
 examples/               short, user-facing examples
 tests/                  package smoke tests
 configs/                workflow configurations
 docs/                   user and developer documentation
 tools/cli/              compatibility command wrappers
-tools/legacy/           historical scripts kept for traceability and transition
+tools/legacy/           packaged historical scripts behind installable commands
 outputs/                reference outputs used by examples/loaders
 artifacts/              migrated runtime/prebuilt artifacts
 ```
@@ -131,6 +158,8 @@ python -m compileall hidden_attractors examples tests tools/cli
 python examples/quickstart_equilibria.py
 python examples/list_final_candidates.py
 python examples/minimal_chua_protocol.py
+python examples/custom_system_definition.py
+python examples/integer_lure_chua_protocol.py
 python examples/dynamical_analysis_gallery.py
 python -m pytest -q
 ```
