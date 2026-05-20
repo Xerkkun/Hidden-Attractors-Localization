@@ -471,9 +471,17 @@ def _grid_from_rows(rows: Sequence[Dict[str, Any]], nx: int, ny: int) -> np.ndar
 
 
 def _load_chunk_rows(outdir: Path, prefix: str, chunks: int) -> List[Dict[str, str]]:
-    rows: List[Dict[str, str]] = []
+    by_case: Dict[int, Dict[str, str]] = {}
     for idx in range(chunks):
-        rows.extend(read_csv_rows(outdir / f"{prefix}_{idx:03d}.csv"))
+        for row in read_csv_rows(outdir / f"{prefix}_{idx:03d}.csv"):
+            raw = row.get("case_index")
+            if raw in (None, ""):
+                continue
+            # A relaunched independent worker can briefly overlap with an old
+            # worker.  The grid point is deterministic under the same config,
+            # so aggregation keeps one row per initial condition.
+            by_case[int(raw)] = row
+    rows = list(by_case.values())
     rows.sort(key=lambda r: (int(r["iy"]), int(r["ix"])))
     return rows
 

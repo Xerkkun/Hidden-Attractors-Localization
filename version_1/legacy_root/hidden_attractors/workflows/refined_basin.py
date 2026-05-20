@@ -113,6 +113,28 @@ def _int(value: Any, default: int = 0) -> int:
         return default
 
 
+def _existing_refined_case_indices(path: Path) -> set[int]:
+    """Return refined ``case_index`` values already written to a chunk CSV.
+
+    Mathematical purpose:
+        The refined basin test is a set of independent integrations from
+        previously unresolved initial conditions.  Reusing completed rows after
+        an interruption preserves the same numerical contract while avoiding a
+        silent restart from scratch.
+
+    Validity warning:
+        This is only a resume guard.  It assumes the output directory still
+        belongs to the same source grid and refined-basin configuration.
+    """
+
+    done: set[int] = set()
+    for row in read_csv_rows(path):
+        raw = row.get("case_index")
+        if raw not in (None, ""):
+            done.add(_int(raw))
+    return done
+
+
 def _load_reference_seed(source_cfg: dict[str, Any]) -> np.ndarray:
     project = source_cfg["project"]
     seed = np.asarray(project["seed"], dtype=float)
@@ -312,7 +334,7 @@ def classify_refined(traj: np.ndarray, cfg: dict[str, Any], refs: dict[str, dict
     }
 
 
-def run_chunk(outdir: str | Path, chunk_id: int, chunks: int) -> Path:
+def run_chunk(outdir: str | Path, chunk_id: int, chunks: int, *, skip_existing: bool = False) -> Path:
     """Reintegrate and refine one chunk of previously unknown cells."""
 
     force_single_openmp_thread_current_process()
@@ -322,15 +344,19 @@ def run_chunk(outdir: str | Path, chunk_id: int, chunks: int) -> Path:
     backend = FractionalChuaBackend.build(output_name=f"chua_frac_refined_basin_{int(chunk_id):03d}")
     refs = _reference_payloads(cfg, backend)
     path = root / f"unknown_refined_chunk_{chunk_id:03d}.csv"
-    if path.exists():
+    if path.exists() and not skip_existing:
         path.unlink()
     done = root / f"unknown_refined_chunk_{chunk_id:03d}.done"
     if done.exists():
         done.unlink()
+    completed = _existing_refined_case_indices(path) if skip_existing else set()
     rows_done = 0
     contract = cfg["project_contract"]
     for row in plan:
-        if int(row["case_index"]) % int(chunks) != int(chunk_id):
+        case_index = int(row["case_index"])
+        if case_index % int(chunks) != int(chunk_id):
+            continue
+        if case_index in completed:
             continue
         started = time.time()
         out: dict[str, Any]
@@ -367,7 +393,16 @@ def run_chunk(outdir: str | Path, chunk_id: int, chunks: int) -> Path:
         rows_done += 1
         if rows_done % 10 == 0:
             print(f"refined chunk {chunk_id}: {rows_done} rows", flush=True)
-    write_json(done, {"chunk_id": int(chunk_id), "rows": rows_done, "completed_at": time.strftime("%Y-%m-%dT%H:%M:%S")})
+    write_json(
+        done,
+        {
+            "chunk_id": int(chunk_id),
+            "rows": len(completed) + rows_done,
+            "rows_added": rows_done,
+            "skip_existing": bool(skip_existing),
+            "completed_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        },
+    )
     return path
 
 
@@ -478,6 +513,8 @@ def launch(outdir: str | Path, args: argparse.Namespace) -> Path:
     launched: list[dict[str, Any]] = []
     for idx in range(int(args.chunks)):
         cmd = [sys.executable, str(script), "--job", "chunk", "--output-dir", str(root), "--chunk-id", str(idx), "--chunks", str(args.chunks)]
+        if bool(args.skip_existing):
+            cmd.append("--skip-existing")
         stdout = (logs / f"chunk_{idx:03d}.out").open("ab")
         stderr = (logs / f"chunk_{idx:03d}.err").open("ab")
         proc = subprocess.Popen(cmd, cwd=str(PROJECT_ROOT), env=env, stdout=stdout, stderr=stderr, start_new_session=True)
@@ -517,6 +554,7 @@ def make_parser() -> argparse.ArgumentParser:
     parser.add_argument("--weight-fft", type=float, default=0.20)
     parser.add_argument("--weight-section", type=float, default=0.35)
     parser.add_argument("--max-unknowns", type=int, default=0, help="Debug cap; 0 means all unknown cells.")
+    parser.add_argument("--skip-existing", action="store_true", help="Keep existing refined chunk rows and only integrate missing case_index values.")
     parser.add_argument("--wait", action="store_true")
     parser.add_argument("--script-path", default=str(PROJECT_ROOT / "refine_project_basin_classification.py"))
     return parser
@@ -528,6 +566,6 @@ def main(argv: Sequence[str] | None = None) -> None:
     if args.job == "launch":
         launch(outdir, args)
     elif args.job == "chunk":
-        run_chunk(outdir, int(args.chunk_id), int(args.chunks))
+        run_chunk(outdir, int(args.chunk_id), int(args.chunks), skip_existing=bool(args.skip_existing))
     elif args.job == "aggregate":
         aggregate(outdir, wait=bool(args.wait))

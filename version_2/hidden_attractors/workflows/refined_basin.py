@@ -8,9 +8,17 @@ positive/negative reference attractor trajectories through tail-cloud distance,
 coordinate ranges, dominant FFT frequency, and a Poincare-section cloud when
 available.
 
-The workflow is conservative: it does not invent a hiddenness claim.  It only
-relabels cells when the trajectory geometry is close enough to a reference
-target under the explicit numerical contract.
+The refined decision is intentionally discriminating.  A target label requires
+absolute closeness to the selected target reference, a clear score margin
+against the symmetric counterpart, and, when enabled, separation from local
+equilibrium-neighborhood control trajectories.  This reduces false positives in
+which a bounded trajectory shares broad chaotic statistics with the candidate
+but is not cleanly distinguishable from equilibrium-neighborhood behavior.
+
+Validity warning:
+    The workflow still does not prove hiddenness.  It only relabels trajectories
+    under a recorded numerical contract.  Hiddenness remains a separate
+    equilibrium-neighborhood basin statement.
 """
 
 from __future__ import annotations
@@ -40,6 +48,8 @@ DEFAULT_SOURCE_DIR = OUTPUTS / "basin_compare_danca_project_h001_grid101_2026051
 REFINED_CLASS_LABELS = {
     **CLASS_LABELS,
     6: "bounded_other",
+    7: "ambiguous_target_pair",
+    8: "control_like",
 }
 CLASS_COLORS = {
     0: "#111827",
@@ -49,6 +59,8 @@ CLASS_COLORS = {
     4: "#9ca3af",
     5: "#f59e0b",
     6: "#7c3aed",
+    7: "#f97316",
+    8: "#0891b2",
 }
 
 REFINED_FIELDS = [
@@ -67,6 +79,10 @@ REFINED_FIELDS = [
     "best_score",
     "score_positive",
     "score_negative",
+    "reference_margin",
+    "best_control",
+    "best_control_score",
+    "control_margin",
     "cloud_norm_positive",
     "cloud_norm_negative",
     "section_norm_positive",
@@ -110,6 +126,16 @@ def _int(value: Any, default: int = 0) -> int:
         return int(float(value))
     except Exception:
         return default
+
+
+def _truthy(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().lower() not in {"", "0", "false", "no", "off", "none"}
+
+
+def _csv_tokens(value: Any) -> list[str]:
+    return [item.strip() for item in str(value).split(",") if item.strip()]
 
 
 def _load_reference_seed(source_cfg: dict[str, Any]) -> np.ndarray:
@@ -156,6 +182,23 @@ def _score_against(payload: dict[str, Any], ref: dict[str, Any], weights: dict[s
     }
 
 
+def _metric_ok(value: float, threshold: float, *, missing_ok: bool = False) -> bool:
+    if not math.isfinite(value):
+        return bool(missing_ok)
+    return float(value) <= float(threshold)
+
+
+def _deterministic_control_directions() -> dict[str, np.ndarray]:
+    return {
+        "+x": np.array([1.0, 0.0, 0.0], dtype=float),
+        "-x": np.array([-1.0, 0.0, 0.0], dtype=float),
+        "+y": np.array([0.0, 1.0, 0.0], dtype=float),
+        "-y": np.array([0.0, -1.0, 0.0], dtype=float),
+        "+z": np.array([0.0, 0.0, 1.0], dtype=float),
+        "-z": np.array([0.0, 0.0, -1.0], dtype=float),
+    }
+
+
 def _reference_payloads(cfg: dict[str, Any], backend: FractionalChuaBackend) -> dict[str, dict[str, Any]]:
     seed = np.asarray(cfg["reference"]["positive_seed"], dtype=float)
     contract = cfg["project_contract"]
@@ -180,6 +223,63 @@ def _reference_payloads(cfg: dict[str, Any], backend: FractionalChuaBackend) -> 
         )
         refs[label] = {**payload, "metrics": metrics}
     return refs
+
+
+def _negative_control_payloads(cfg: dict[str, Any], backend: FractionalChuaBackend) -> dict[str, dict[str, Any]]:
+    """Build local equilibrium-neighborhood controls for target separation.
+
+    Mathematical purpose:
+        A trajectory is not accepted as a target solely because it resembles the
+        candidate in broad bounded-chaotic descriptors.  It must also be
+        closer to the target reference than to deterministic probes launched
+        from small neighborhoods of equilibria under the same EFORK contract.
+
+    Validity warning:
+        These controls are a discriminant for refined basin labels, not a
+        replacement for a full hiddenness test over sampled equilibrium
+        neighborhoods.
+    """
+
+    analysis = cfg["analysis"]
+    control_cfg = analysis.get("negative_controls", {})
+    if not _truthy(control_cfg.get("enabled", True)):
+        return {}
+    radius = float(control_cfg.get("radius", 1.0e-4))
+    if not (radius > 0.0):
+        return {}
+    eq_names = _csv_tokens(control_cfg.get("equilibria", "E0,E+,E-"))
+    if not eq_names:
+        return {}
+    directions = _deterministic_control_directions()
+    contract = cfg["project_contract"]
+    analysis_start = _analysis_start(cfg)
+    equilibria = backend.equilibria()
+    controls: dict[str, dict[str, Any]] = {}
+    for eq_name in eq_names:
+        if eq_name not in equilibria:
+            continue
+        eq = np.asarray(equilibria[eq_name], dtype=float)
+        for direction_name, direction in directions.items():
+            label = f"{eq_name}:{direction_name}"
+            x0 = eq + radius * direction
+            traj = backend.integrate_efork3(
+                x0,
+                q=float(contract["q"]),
+                h=float(contract["h"]),
+                Lm=float(contract["Lm"]),
+                t_final=float(contract["t_final"]),
+            )
+            metrics, payload = trajectory_metrics(
+                traj,
+                h=float(contract["h"]),
+                t_start=analysis_start,
+                divergence_norm=float(analysis["divergence_norm"]),
+                equilibrium_tol=float(analysis["equilibrium_tol"]),
+                max_section_points=int(analysis["max_section_points"]),
+                max_cloud_points=int(analysis["max_cloud_points"]),
+            )
+            controls[label] = {**payload, "metrics": metrics}
+    return controls
 
 
 def make_config(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
@@ -238,6 +338,14 @@ def make_config(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
             "max_range_rel": float(args.max_range_rel),
             "max_fft_rel": float(args.max_fft_rel),
             "max_section_norm": float(args.max_section_norm),
+            "min_reference_margin": float(args.min_reference_margin),
+            "min_control_margin": float(args.min_control_margin),
+            "negative_controls": {
+                "enabled": not bool(args.disable_negative_controls),
+                "radius": float(args.negative_control_radius),
+                "equilibria": str(args.negative_control_equilibria),
+                "directions": "axis_six",
+            },
             "score_weights": {
                 "cloud": float(args.weight_cloud),
                 "range": float(args.weight_range),
@@ -252,8 +360,25 @@ def make_config(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
     return cfg
 
 
-def classify_refined(traj: np.ndarray, cfg: dict[str, Any], refs: dict[str, dict[str, Any]]) -> dict[str, Any]:
-    """Classify one trajectory using target-reference geometry."""
+def classify_refined(
+    traj: np.ndarray,
+    cfg: dict[str, Any],
+    refs: dict[str, dict[str, Any]],
+    controls: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Classify one trajectory using stricter target-reference geometry.
+
+    Mathematical purpose:
+        Accept a target label only when the tail geometry is close to the
+        positive/negative candidate attractor, clearly separated from the
+        symmetric counterpart, and, when controls are enabled, closer to the
+        target than to local equilibrium-neighborhood controls.
+
+    Output:
+        Operational basin label plus diagnostic scores.  A ``target_*`` label
+        is evidence of target-like basin membership under the numerical
+        contract, not a proof of hiddenness.
+    """
 
     contract = cfg["project_contract"]
     analysis = cfg["analysis"]
@@ -278,19 +403,46 @@ def classify_refined(traj: np.ndarray, cfg: dict[str, Any], refs: dict[str, dict
     weights = {k: float(v) for k, v in analysis["score_weights"].items()}
     pos = _score_against(payload, refs["positive"], weights)
     neg = _score_against(payload, refs["negative"], weights)
-    best_label, best = ("positive", pos) if pos["score"] <= neg["score"] else ("negative", neg)
-    score_ok = best["score"] <= float(analysis["max_score"])
-    cloud_ok = best["cloud_norm"] <= float(analysis["max_cloud_norm"]) if math.isfinite(best["cloud_norm"]) else False
-    range_ok = best["range_rel"] <= float(analysis["max_range_rel"]) if math.isfinite(best["range_rel"]) else False
-    fft_ok = best["fft_rel"] <= float(analysis["max_fft_rel"]) if math.isfinite(best["fft_rel"]) else True
-    section_ok = best["section_norm"] <= float(analysis["max_section_norm"]) if math.isfinite(best["section_norm"]) else True
+    if pos["score"] <= neg["score"]:
+        best_label, best, other = "positive", pos, neg
+    else:
+        best_label, best, other = "negative", neg, pos
+    reference_margin = float(other["score"] - best["score"])
+    score_ok = _metric_ok(best["score"], float(analysis["max_score"]))
+    cloud_ok = _metric_ok(best["cloud_norm"], float(analysis["max_cloud_norm"]))
+    range_ok = _metric_ok(best["range_rel"], float(analysis["max_range_rel"]))
+    fft_ok = _metric_ok(best["fft_rel"], float(analysis["max_fft_rel"]), missing_ok=True)
+    section_ok = _metric_ok(best["section_norm"], float(analysis["max_section_norm"]), missing_ok=True)
+    margin_ok = reference_margin >= float(analysis["min_reference_margin"])
+
+    best_control_label = ""
+    best_control_score = float("nan")
+    control_margin = float("inf")
+    control_ok = True
+    if controls:
+        control_scores = {
+            label: _score_against(payload, control, weights)["score"]
+            for label, control in controls.items()
+        }
+        finite_controls = {label: score for label, score in control_scores.items() if math.isfinite(score)}
+        if finite_controls:
+            best_control_label, best_control_score = min(finite_controls.items(), key=lambda item: item[1])
+            control_margin = float(best_control_score - best["score"])
+            control_ok = control_margin >= float(analysis["min_control_margin"])
+
     close_to_target = bool(score_ok and cloud_ok and range_ok and fft_ok and section_ok)
     class_id = 1 if best_label == "positive" else 2
-    if close_to_target:
-        refined_status = "matched_target_reference"
-    else:
+    if not close_to_target:
         class_id = 6
         refined_status = "bounded_noncollapsed_reference_mismatch"
+    elif not margin_ok:
+        class_id = 7
+        refined_status = "ambiguous_target_pair"
+    elif not control_ok:
+        class_id = 8
+        refined_status = "target_not_separated_from_equilibrium_controls"
+    else:
+        refined_status = "matched_target_reference"
     return {
         **metrics,
         "class_id": class_id,
@@ -300,6 +452,10 @@ def classify_refined(traj: np.ndarray, cfg: dict[str, Any], refs: dict[str, dict
         "best_score": best["score"],
         "score_positive": pos["score"],
         "score_negative": neg["score"],
+        "reference_margin": reference_margin,
+        "best_control": best_control_label,
+        "best_control_score": best_control_score,
+        "control_margin": control_margin,
         "cloud_norm_positive": pos["cloud_norm"],
         "cloud_norm_negative": neg["cloud_norm"],
         "section_norm_positive": pos["section_norm"],
@@ -320,6 +476,7 @@ def run_chunk(outdir: str | Path, chunk_id: int, chunks: int) -> Path:
     plan = read_csv_rows(root / "unknown_refinement_plan.csv")
     backend = FractionalChuaBackend.build(output_name=f"chua_frac_refined_basin_{int(chunk_id):03d}")
     refs = _reference_payloads(cfg, backend)
+    controls = _negative_control_payloads(cfg, backend)
     path = root / f"unknown_refined_chunk_{chunk_id:03d}.csv"
     if path.exists():
         path.unlink()
@@ -341,7 +498,7 @@ def run_chunk(outdir: str | Path, chunk_id: int, chunks: int) -> Path:
                 Lm=float(contract["Lm"]),
                 t_final=float(contract["t_final"]),
             )
-            out = classify_refined(traj, cfg, refs)
+            out = classify_refined(traj, cfg, refs, controls)
         except Exception as exc:
             out = {
                 "class_id": 5,
@@ -457,7 +614,7 @@ def aggregate(outdir: str | Path, *, wait: bool = False, poll_sec: float = 30.0)
         "notes": [
             "Only cells labeled unknown in the source grid were reintegrated with the enriched classifier.",
             "Non-unknown source labels were preserved.",
-            "Target labels require bounded noncollapsed trajectories and closeness to the positive/negative reference geometry.",
+            "Target labels require bounded noncollapsed trajectories, strict closeness to the selected positive/negative reference, a positive-vs-negative score margin, and separation from enabled equilibrium-neighborhood controls.",
         ],
     }
     write_json(root / "refined_basin_summary.json", summary)
@@ -506,11 +663,16 @@ def make_parser() -> argparse.ArgumentParser:
     parser.add_argument("--tail-fraction-start", type=float, default=0.5)
     parser.add_argument("--max-cloud-points", type=int, default=700)
     parser.add_argument("--max-section-points", type=int, default=250)
-    parser.add_argument("--max-score", type=float, default=0.95)
-    parser.add_argument("--max-cloud-norm", type=float, default=0.85)
-    parser.add_argument("--max-range-rel", type=float, default=1.50)
-    parser.add_argument("--max-fft-rel", type=float, default=1.00)
-    parser.add_argument("--max-section-norm", type=float, default=1.20)
+    parser.add_argument("--max-score", type=float, default=0.45)
+    parser.add_argument("--max-cloud-norm", type=float, default=0.35)
+    parser.add_argument("--max-range-rel", type=float, default=0.60)
+    parser.add_argument("--max-fft-rel", type=float, default=0.35)
+    parser.add_argument("--max-section-norm", type=float, default=0.50)
+    parser.add_argument("--min-reference-margin", type=float, default=0.10, help="Minimum score gap between the selected target side and its symmetric counterpart.")
+    parser.add_argument("--min-control-margin", type=float, default=0.10, help="Minimum score gap between the selected target side and the nearest equilibrium-neighborhood control.")
+    parser.add_argument("--negative-control-radius", type=float, default=1.0e-4, help="Radius for deterministic equilibrium-neighborhood control probes.")
+    parser.add_argument("--negative-control-equilibria", default="E0,E+,E-", help="Comma-separated equilibria used as negative controls.")
+    parser.add_argument("--disable-negative-controls", action="store_true", help="Disable equilibrium-neighborhood control separation.")
     parser.add_argument("--weight-cloud", type=float, default=1.0)
     parser.add_argument("--weight-range", type=float, default=0.35)
     parser.add_argument("--weight-fft", type=float, default=0.20)
