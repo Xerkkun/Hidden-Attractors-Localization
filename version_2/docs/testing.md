@@ -11,6 +11,7 @@ python examples/list_final_candidates.py
 python tools/cli/robustness_overlay_c_trajectories.py --help
 python tools/cli/lure_top3_sphere_robustness.py --help
 python tools/cli/refine_project_basin_classification.py --help
+python tools/cli/check_validation_contract.py --help
 ```
 
 ## Pytest
@@ -48,3 +49,12 @@ Each validation stage should include:
 
 The final report should cite the stage summaries and selected artifacts instead
 of embedding all raw data.
+
+Run the contract checker from `version_2/` after evidence has been promoted:
+
+```bash
+hidden-attractors-check-validation
+```
+
+The checker intentionally fails on the initial template-only tree because the
+real CSV, JSON, figures, and final report have not been generated yet.

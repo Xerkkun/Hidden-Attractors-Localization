@@ -84,6 +84,7 @@ version_2/
       basin_xy.csv
       basin_xy.png
       refined_basin_summary.json
+      hiddenness_validation_summary.json
 
     07_robustness/
       robustness_validation.md
@@ -116,33 +117,41 @@ stage_directory/
 
 Use one summary JSON per stage. Do not create one JSON file for every small
 calculation unless the raw artifact is too large or structured for CSV.
+Each stage in `configs/validation_contract.json` has both an ordered `id` and a
+plain `slug`. The `id` names the directory, while the `slug` generates names
+such as `<slug>_validation.md` and `<slug>_validation_summary.json`.
 
 ```json
 {
-  "stage": "algebra",
-  "status": "passed",
-  "system": "fractional_nonsmooth_chua",
-  "parameters": {
-    "alpha": 8.4562,
-    "beta": 12.0732,
-    "gamma": 0.0052,
-    "m0": -0.1768,
-    "m1": -1.1468,
-    "q": 0.9998
-  },
-  "checks": {
-    "equilibria_residual_max": 2.1e-14,
-    "jacobian_finite_difference_error_max": 4.8e-8,
-    "matignon_margins_computed": true
-  },
-  "tolerances": {
-    "equilibria_residual": 1e-10,
-    "jacobian_error": 1e-6
-  },
-  "files": {
-    "equilibria_summary": "equilibria_summary.csv",
-    "jacobian_check": "jacobian_check.csv",
-    "matignon_plot": "matignon_margins.png"
+  "id": "01_algebra",
+  "slug": "algebra",
+  "summary": "algebra_validation_summary.json",
+  "example_summary": {
+    "stage": "algebra",
+    "status": "passed",
+    "system": "fractional_nonsmooth_chua",
+    "parameters": {
+      "alpha": 8.4562,
+      "beta": 12.0732,
+      "gamma": 0.0052,
+      "m0": -0.1768,
+      "m1": -1.1468,
+      "q": 0.9998
+    },
+    "checks": {
+      "equilibria_residual_max": 2.1e-14,
+      "jacobian_finite_difference_error_max": 4.8e-8,
+      "matignon_margins_computed": true
+    },
+    "tolerances": {
+      "equilibria_residual": 1e-10,
+      "jacobian_error": 1e-6
+    },
+    "files": {
+      "equilibria_summary": "equilibria_summary.csv",
+      "jacobian_check": "jacobian_check.csv",
+      "matignon_plot": "matignon_margins.png"
+    }
   }
 }
 ```
@@ -180,3 +189,17 @@ parameters, and pointers to stage summaries.
 Use JSON for traceability and validation status, CSV for numerical tables,
 PNG/PDF for visual evidence, MD for short stage interpretation, and TEX/PDF for
 the final scientific report.
+
+## Contract Checker
+
+After promoting real evidence into `validation/`, run:
+
+```bash
+hidden-attractors-check-validation
+```
+
+The command reads `configs/validation_contract.json` and verifies required
+directories, required files, minimum JSON fields, manifest stage paths,
+non-empty CSV tables, declared figure files, and the final report status. The
+template-only tree is expected to fail until the stage artifacts are generated
+or copied into place.

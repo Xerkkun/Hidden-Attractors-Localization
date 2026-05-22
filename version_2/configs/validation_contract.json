@@ -33,6 +33,7 @@
   "stages": [
     {
       "id": "01_algebra",
+      "slug": "algebra",
       "summary": "algebra_validation_summary.json",
       "expected_evidence": [
         "algebra_validation.md",
@@ -44,6 +45,7 @@
     },
     {
       "id": "02_lure_df",
+      "slug": "lure_df",
       "summary": "lure_df_validation_summary.json",
       "expected_evidence": [
         "lure_df_validation.md",
@@ -55,6 +57,7 @@
     },
     {
       "id": "03_integrators",
+      "slug": "integrator",
       "summary": "integrator_validation_summary.json",
       "expected_evidence": [
         "integrator_validation.md",
@@ -66,6 +69,7 @@
     },
     {
       "id": "04_candidates",
+      "slug": "candidate_selection",
       "summary": "candidate_selection_summary.json",
       "expected_evidence": [
         "candidate_selection.md",
@@ -77,6 +81,7 @@
     },
     {
       "id": "05_dynamic_analysis",
+      "slug": "dynamic_analysis",
       "summary": "dynamic_analysis_summary.json",
       "expected_evidence": [
         "dynamic_analysis.md",
@@ -90,6 +95,7 @@
     },
     {
       "id": "06_hiddenness",
+      "slug": "hiddenness",
       "summary": "hiddenness_validation_summary.json",
       "expected_evidence": [
         "hiddenness_validation.md",
@@ -103,6 +109,7 @@
     },
     {
       "id": "07_robustness",
+      "slug": "robustness",
       "summary": "robustness_validation_summary.json",
       "expected_evidence": [
         "robustness_validation.md",
@@ -113,6 +120,7 @@
     },
     {
       "id": "08_literature_comparison",
+      "slug": "literature_comparison",
       "summary": "literature_comparison_summary.json",
       "expected_evidence": [
         "literature_comparison.md",
@@ -120,6 +128,11 @@
         "abm_replication_summary.json"
       ]
     }
+  ],
+  "summary_required_fields": [
+    "stage",
+    "status",
+    "files"
   ],
   "final_report": {
     "source": "validation/final_validation_report.tex",

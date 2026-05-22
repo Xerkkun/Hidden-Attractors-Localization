@@ -8,6 +8,7 @@ python tools/cli/lure_top3_sphere_robustness.py --help
 python tools/cli/refine_project_basin_classification.py --help
 python tools/cli/strict_target_refinement.py --help
 python tools/cli/danca_abm_sphere_controls.py --help
+python tools/cli/check_validation_contract.py --help
 ```
 
 After installation, prefer the console entry points:
@@ -19,6 +20,7 @@ hidden-attractors-refined-basin --help
 hidden-attractors-strict-target-refinement --help
 hidden-attractors-danca-abm-sphere-controls --help
 hidden-attractors-workflow-requirements --help
+hidden-attractors-check-validation --help
 ```
 
 ## Contract For New CLIs

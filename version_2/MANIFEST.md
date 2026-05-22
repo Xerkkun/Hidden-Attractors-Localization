@@ -23,6 +23,8 @@ without reading files from the old project root.
   refinement.
 - `configs/validation_contract.json`: contract for promoted validation
   evidence, manifests, stage summaries, and final reports.
+- `hidden_attractors/validation_contract.py`: checker used by
+  `hidden-attractors-check-validation`.
 - `validation/`: generated validation evidence promoted from ordinary outputs
   into a defensible review package.
 

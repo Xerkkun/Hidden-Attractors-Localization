@@ -1,0 +1,24 @@
+{
+  "validation_id": "chua_fractional_validation_YYYY_MM",
+  "repository_commit": "pending",
+  "package_version": "0.1.0",
+  "python_version": "pending",
+  "platform": "pending",
+  "main_system": "fractional nonsmooth Chua",
+  "main_parameters": {},
+  "stages": {
+    "algebra": "01_algebra/algebra_validation_summary.json",
+    "lure_df": "02_lure_df/lure_df_validation_summary.json",
+    "integrators": "03_integrators/integrator_validation_summary.json",
+    "candidates": "04_candidates/candidate_selection_summary.json",
+    "dynamic_analysis": "05_dynamic_analysis/dynamic_analysis_summary.json",
+    "hiddenness": "06_hiddenness/hiddenness_validation_summary.json",
+    "robustness": "07_robustness/robustness_validation_summary.json",
+    "literature_comparison": "08_literature_comparison/literature_comparison_summary.json"
+  },
+  "final_report": {
+    "status": "pending",
+    "source": "final_validation_report.tex",
+    "compiled": "final_validation_report.pdf"
+  }
+}

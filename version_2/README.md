@@ -112,6 +112,7 @@ After editable installation, the same candidate listing is available as:
 ```bash
 hidden-attractors-list-candidates
 hidden-attractors-systems
+hidden-attractors-check-validation --help
 hidden-attractors-unified-chua --help
 hidden-attractors-integer-chua --help
 hidden-attractors-legacy --list
@@ -185,6 +186,7 @@ python examples/minimal_chua_protocol.py
 python examples/custom_system_definition.py
 python examples/integer_lure_chua_protocol.py
 python examples/dynamical_analysis_gallery.py
+python tools/cli/check_validation_contract.py --help
 python -m pytest -q
 ```
 
