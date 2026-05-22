@@ -12,10 +12,8 @@ by the Scientific Python ecosystem (NumPy, SciPy, Matplotlib, etc.).
 | Minimum supported | 3 years after release |
 | Drop date | 42 months after release |
 
-**Currently supported**: Python ≥ 3.11.  
-Python 3.10 reached end-of-support (SPEC-0) in **October 2025** and has been
-dropped. Python 3.13 will be added to CI once it reaches its first stable
-patch release.
+**Currently supported**: Python ≥ 3.11 and 3.12 (both tested in CI).  
+Python 3.13 will be added to CI once it reaches its first stable patch release.
 
 ---
 

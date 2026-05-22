@@ -21,7 +21,6 @@ concurrency:
 jobs:
   # ────────────────────────────────────────────────────────────────────────────
   # Main test matrix: Ubuntu + Windows + macOS, Python 3.11 + 3.12
-  # (requires-python = ">=3.11" — 3.10 is intentionally excluded)
   # ────────────────────────────────────────────────────────────────────────────
   test:
     name: "${{ matrix.python-version }} · ${{ matrix.os }}"
