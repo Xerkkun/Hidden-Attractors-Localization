@@ -21,6 +21,10 @@ without reading files from the old project root.
   controls.
 - `hidden_attractors/workflows/refined_basin.py`: geometry-based basin
   refinement.
+- `configs/validation_contract.json`: contract for promoted validation
+  evidence, manifests, stage summaries, and final reports.
+- `validation/`: generated validation evidence promoted from ordinary outputs
+  into a defensible review package.
 
 ## User-Facing Examples
 

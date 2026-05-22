@@ -1,0 +1,182 @@
+# Validation Evidence
+
+The validation workflow separates machine-readable evidence from scientific
+interpretation. Keep this separation even when a stage is small.
+
+## File Roles
+
+| File type | Role |
+|-----------|------|
+| JSON | Traceability, run status, parameters, tolerances, software versions, seeds, and paths to generated evidence. |
+| CSV | Numerical result tables that need filtering, comparison, or aggregation. |
+| PNG/PDF | Visual evidence such as phase portraits, basin cuts, spectra, margins, and overlays. |
+| MD | Short human explanation for one validation stage. |
+| TEX/PDF | Final defensible report that cites stage summaries and selected evidence. |
+
+JSON files do not replace the report. They record what a program needs to
+reload a run. CSV files do not replace the JSON summary. They store tabular
+measurements.
+
+## Canonical Layout
+
+Generated validation evidence belongs under `validation/`. The interpretive
+documentation belongs under `docs/`. Reusable run contracts belong under
+`configs/`.
+
+```text
+version_2/
+  configs/
+    validation_contract.json
+
+  validation/
+    00_manifest/
+      validation_manifest.json
+      environment.json
+      software_versions.json
+
+    01_algebra/
+      algebra_validation.md
+      equilibria_summary.csv
+      jacobian_check.csv
+      eigenvalues_matignon_summary.csv
+      matignon_margins.png
+      algebra_validation_summary.json
+
+    02_lure_df/
+      lure_df_validation.md
+      lure_equivalence_check.csv
+      transfer_function_check.csv
+      describing_function_check.csv
+      machado_mu1_check.csv
+      lure_df_validation_summary.json
+
+    03_integrators/
+      integrator_validation.md
+      manufactured_solution_convergence.csv
+      q1_limit_vs_solve_ivp.csv
+      abm_vs_efork_short_time.csv
+      memory_sensitivity.csv
+      integrator_validation_summary.json
+
+    04_candidates/
+      candidate_selection.md
+      q_sweep_summary.csv
+      df_compare_summary.csv
+      machado_sweep_summary.csv
+      selected_candidates.json
+      candidate_selection_summary.json
+
+    05_dynamic_analysis/
+      dynamic_analysis.md
+      trajectory_metrics.csv
+      fft_summary.csv
+      psd_summary.csv
+      lyapunov_summary.csv
+      phase_3d.png
+      projections.png
+      dynamic_analysis_summary.json
+
+    06_hiddenness/
+      hiddenness_validation.md
+      sphere_plan.csv
+      sphere_raw.csv
+      sphere_decision.csv
+      basin_xy.csv
+      basin_xy.png
+      refined_basin_summary.json
+
+    07_robustness/
+      robustness_validation.md
+      robustness_overlay_metrics.csv
+      robustness_summary.json
+      overlay_3d.png
+      robustness_validation_summary.json
+
+    08_literature_comparison/
+      literature_comparison.md
+      danca_comparison_summary.csv
+      abm_replication_summary.json
+      literature_comparison_summary.json
+
+    final_validation_report.tex
+    final_validation_report.pdf
+```
+
+Each stage should follow the same local pattern:
+
+```text
+stage_directory/
+  stage_validation.md
+  numerical_results.csv
+  figures.png
+  stage_validation_summary.json
+```
+
+## Stage Summary JSON
+
+Use one summary JSON per stage. Do not create one JSON file for every small
+calculation unless the raw artifact is too large or structured for CSV.
+
+```json
+{
+  "stage": "algebra",
+  "status": "passed",
+  "system": "fractional_nonsmooth_chua",
+  "parameters": {
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m0": -0.1768,
+    "m1": -1.1468,
+    "q": 0.9998
+  },
+  "checks": {
+    "equilibria_residual_max": 2.1e-14,
+    "jacobian_finite_difference_error_max": 4.8e-8,
+    "matignon_margins_computed": true
+  },
+  "tolerances": {
+    "equilibria_residual": 1e-10,
+    "jacobian_error": 1e-6
+  },
+  "files": {
+    "equilibria_summary": "equilibria_summary.csv",
+    "jacobian_check": "jacobian_check.csv",
+    "matignon_plot": "matignon_margins.png"
+  }
+}
+```
+
+## Global Manifest
+
+The global manifest in `validation/00_manifest/validation_manifest.json` should
+record the validation identity, code version, environment, main system, global
+parameters, and pointers to stage summaries.
+
+```json
+{
+  "validation_id": "chua_fractional_validation_2026_05",
+  "repository_commit": "...",
+  "package_version": "0.1.0",
+  "python_version": "...",
+  "platform": "...",
+  "main_system": "fractional nonsmooth Chua",
+  "main_parameters": {},
+  "stages": {
+    "algebra": "01_algebra/algebra_validation_summary.json",
+    "lure_df": "02_lure_df/lure_df_validation_summary.json",
+    "integrators": "03_integrators/integrator_validation_summary.json",
+    "candidates": "04_candidates/candidate_selection_summary.json",
+    "dynamic_analysis": "05_dynamic_analysis/dynamic_analysis_summary.json",
+    "hiddenness": "06_hiddenness/hiddenness_validation_summary.json",
+    "robustness": "07_robustness/robustness_validation_summary.json",
+    "literature_comparison": "08_literature_comparison/literature_comparison_summary.json"
+  }
+}
+```
+
+## Reporting Rule
+
+Use JSON for traceability and validation status, CSV for numerical tables,
+PNG/PDF for visual evidence, MD for short stage interpretation, and TEX/PDF for
+the final scientific report.

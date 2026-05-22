@@ -135,6 +135,7 @@ available for adding system-specific integer or fractional engines.
 - [Examples](docs/examples.md)
 - [Systems](docs/systems.md)
 - [Dynamical Analysis](docs/dynamical_analysis.md)
+- [Validation Evidence](docs/validation_evidence.md)
 - [External Tools](docs/external_tools.md)
 - [Unified Report](docs/unified_report.md)
 - [Figure Gallery](docs/figure_gallery.md)
@@ -156,6 +157,7 @@ examples/               short, user-facing examples
 tests/                  package smoke tests
 configs/                workflow configurations
 docs/                   user and developer documentation
+validation/             promoted validation evidence and final reports
 tools/cli/              compatibility command wrappers
 tools/legacy/           packaged historical scripts behind installable commands
 outputs/                reference outputs used by examples/loaders

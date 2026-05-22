@@ -1,0 +1,128 @@
+{
+  "contract_name": "chua_fractional_validation_evidence",
+  "version": 1,
+  "purpose": "Directory and file contract for defensible validation evidence.",
+  "output_root": "validation",
+  "manifest": {
+    "directory": "00_manifest",
+    "required_files": [
+      "validation_manifest.json",
+      "environment.json",
+      "software_versions.json"
+    ],
+    "required_fields": [
+      "validation_id",
+      "repository_commit",
+      "package_version",
+      "python_version",
+      "platform",
+      "main_system",
+      "main_parameters",
+      "stages"
+    ]
+  },
+  "stage_pattern": {
+    "human_report": "<stage>_validation.md",
+    "summary": "<stage>_validation_summary.json",
+    "tables": "*.csv",
+    "figures": [
+      "*.png",
+      "*.pdf"
+    ]
+  },
+  "stages": [
+    {
+      "id": "01_algebra",
+      "summary": "algebra_validation_summary.json",
+      "expected_evidence": [
+        "algebra_validation.md",
+        "equilibria_summary.csv",
+        "jacobian_check.csv",
+        "eigenvalues_matignon_summary.csv",
+        "matignon_margins.png"
+      ]
+    },
+    {
+      "id": "02_lure_df",
+      "summary": "lure_df_validation_summary.json",
+      "expected_evidence": [
+        "lure_df_validation.md",
+        "lure_equivalence_check.csv",
+        "transfer_function_check.csv",
+        "describing_function_check.csv",
+        "machado_mu1_check.csv"
+      ]
+    },
+    {
+      "id": "03_integrators",
+      "summary": "integrator_validation_summary.json",
+      "expected_evidence": [
+        "integrator_validation.md",
+        "manufactured_solution_convergence.csv",
+        "q1_limit_vs_solve_ivp.csv",
+        "abm_vs_efork_short_time.csv",
+        "memory_sensitivity.csv"
+      ]
+    },
+    {
+      "id": "04_candidates",
+      "summary": "candidate_selection_summary.json",
+      "expected_evidence": [
+        "candidate_selection.md",
+        "q_sweep_summary.csv",
+        "df_compare_summary.csv",
+        "machado_sweep_summary.csv",
+        "selected_candidates.json"
+      ]
+    },
+    {
+      "id": "05_dynamic_analysis",
+      "summary": "dynamic_analysis_summary.json",
+      "expected_evidence": [
+        "dynamic_analysis.md",
+        "trajectory_metrics.csv",
+        "fft_summary.csv",
+        "psd_summary.csv",
+        "lyapunov_summary.csv",
+        "phase_3d.png",
+        "projections.png"
+      ]
+    },
+    {
+      "id": "06_hiddenness",
+      "summary": "hiddenness_validation_summary.json",
+      "expected_evidence": [
+        "hiddenness_validation.md",
+        "sphere_plan.csv",
+        "sphere_raw.csv",
+        "sphere_decision.csv",
+        "basin_xy.csv",
+        "basin_xy.png",
+        "refined_basin_summary.json"
+      ]
+    },
+    {
+      "id": "07_robustness",
+      "summary": "robustness_validation_summary.json",
+      "expected_evidence": [
+        "robustness_validation.md",
+        "robustness_overlay_metrics.csv",
+        "robustness_summary.json",
+        "overlay_3d.png"
+      ]
+    },
+    {
+      "id": "08_literature_comparison",
+      "summary": "literature_comparison_summary.json",
+      "expected_evidence": [
+        "literature_comparison.md",
+        "danca_comparison_summary.csv",
+        "abm_replication_summary.json"
+      ]
+    }
+  ],
+  "final_report": {
+    "source": "validation/final_validation_report.tex",
+    "compiled": "validation/final_validation_report.pdf"
+  }
+}

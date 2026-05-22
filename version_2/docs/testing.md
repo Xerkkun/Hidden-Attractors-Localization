@@ -31,3 +31,20 @@ Current tests verify:
 
 Native backend tests should be added cautiously. Keep them short, write to a
 temporary output directory, and record whether OpenMP was active.
+
+## Validation Evidence
+
+Tests answer whether the package still behaves as expected. Validation evidence
+answers whether a scientific claim is backed by traceable numerical artifacts.
+
+Use `outputs/` for ordinary generated run products. Promote only selected
+evidence into `validation/`, following `configs/validation_contract.json`.
+Each validation stage should include:
+
+- one short `*_validation.md` interpretation;
+- one `*_validation_summary.json` or equivalent summary JSON;
+- CSV tables for numerical checks;
+- PNG/PDF figures for visual evidence when relevant.
+
+The final report should cite the stage summaries and selected artifacts instead
+of embedding all raw data.
