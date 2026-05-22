@@ -8,9 +8,10 @@ version = "0.1.0"
 description = "Numerical workflows for locating and verifying hidden attractor candidates in fractional-order systems."
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "License pending" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
-  { name = "Hidden Attractors Fractional Order project" }
+  { name = "Hidden Attractors Fractional Order project", email = "xerkkun@fyskode.com" }
 ]
 keywords = ["fractional-order systems", "hidden attractors", "Chua", "Caputo", "EFORK"]
 classifiers = [
@@ -64,6 +65,7 @@ pydstool = [
 Homepage = "https://github.com/Xerkkun/Hidden-Attractors-Localization/tree/main/version_2"
 Documentation = "https://github.com/Xerkkun/Hidden-Attractors-Localization/tree/main/version_2/docs"
 Repository = "https://github.com/Xerkkun/Hidden-Attractors-Localization"
+Issues = "https://github.com/Xerkkun/Hidden-Attractors-Localization/issues"
 
 [project.scripts]
 hidden-attractors-list-candidates = "hidden_attractors.cli:list_candidates"
