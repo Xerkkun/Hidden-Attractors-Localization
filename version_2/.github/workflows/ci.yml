@@ -5,6 +5,7 @@ on:
     branches: ["main", "develop"]
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -29,9 +30,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # ── Python FIRST — must come before any compiler or pip step ────────────
-      # This ensures `python` and `python -m pip` always refer to the matrix
-      # version, not the runner's system Python (which may be 3.10 on Ubuntu).
+      # ── Python FIRST ────────────────────────────────────────────────────────
+      # Must come before any pip command so that `python` and `python -m pip`
+      # always refer to the matrix version, not the runner system Python
+      # (ubuntu-latest ships Python 3.10 as default; windows-latest ships 3.10).
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
@@ -41,11 +43,11 @@ jobs:
         shell: bash
         run: |
           python --version
-          python -c "import sys; assert sys.version_info >= (3, 11), f'Expected >=3.11, got {sys.version_info}'"
+          python -c "import sys; assert sys.version_info >= (3, 11), f'Got {sys.version_info}'"
 
       # ── C compiler ──────────────────────────────────────────────────────────
-      # Ubuntu: gcc is pre-installed. Windows: MSYS2 is pre-installed on the
-      # runner; we only need to add UCRT64/bin to PATH.
+      # Ubuntu: gcc pre-installed.
+      # Windows: MSYS2 is pre-installed on windows-latest; add UCRT64/bin to PATH.
       - name: Expose MSYS2 gcc on PATH (Windows only)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -55,26 +57,27 @@ jobs:
             Write-Host "Adding $gccPath to PATH"
             "$gccPath" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           } else {
-            Write-Host "::warning::gcc.exe not found in $gccPath; C backend tests will be skipped"
+            Write-Host "::warning::gcc.exe not found — C backend will use Python fallback"
           }
 
       - name: Show C compiler (informational)
         shell: bash
-        run: gcc --version || echo "::warning::gcc not found — C backend tests will be skipped"
+        run: gcc --version || echo "::warning::gcc not found — C backend will be skipped"
         continue-on-error: true
 
       # ── Install ─────────────────────────────────────────────────────────────
-      # Always use `python -m pip` (never bare `pip`) so we use the matrix
-      # Python, not whatever pip the runner has as the system default.
+      # Use `python -m pip` (never bare `pip`) to guarantee the matrix Python.
       - name: Install package and dev dependencies
         shell: bash
+        env:
+          MPLBACKEND: Agg
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e ".[dev]"
 
       - name: Install pytest-benchmark (optional)
         shell: bash
-        run: python -m pip install "pytest-benchmark>=4.0" || echo "::warning::pytest-benchmark install failed — benchmark tests will be skipped"
+        run: python -m pip install "pytest-benchmark>=4.0" || echo "::warning::pytest-benchmark install failed"
         continue-on-error: true
 
       # ── Syntax check ────────────────────────────────────────────────────────
@@ -83,28 +86,29 @@ jobs:
         run: python -m compileall -q hidden_attractors examples tests tools/cli
 
       # ── Test suite ──────────────────────────────────────────────────────────
-      # ALLOW_NO_OPENMP=1: build C backends without -fopenmp when libgomp/libomp
-      # is not available. The pure-Python solver is always available as fallback.
       - name: Run pytest
         shell: bash
         env:
           ALLOW_NO_OPENMP: "1"
+          MPLBACKEND: Agg
         run: python -m pytest -q --tb=short
 
       # ── Example smoke tests ─────────────────────────────────────────────────
       - name: Smoke test — quickstart_equilibria
         shell: bash
+        env:
+          MPLBACKEND: Agg
         run: python examples/quickstart_equilibria.py
 
       - name: Smoke test — list_final_candidates
         shell: bash
-        # Candidate data files may not be in the repo; treat absence as warning.
+        env:
+          MPLBACKEND: Agg
         run: python examples/list_final_candidates.py || echo "::warning::list_final_candidates.py found no candidate data files"
         continue-on-error: true
 
   # ────────────────────────────────────────────────────────────────────────────
-  # Dependency floor: verify that the declared minimum versions can be
-  # installed and imported together.
+  # Dependency floor: verify declared minimum versions install + import OK
   # ────────────────────────────────────────────────────────────────────────────
   deps-floor:
     name: "deps-floor / ubuntu / py3.11"
@@ -113,7 +117,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Python FIRST — same reason as above.
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -138,7 +141,7 @@ jobs:
           "
 
   # ────────────────────────────────────────────────────────────────────────────
-  # C backend build report — informational only, never blocks merges.
+  # C backend build report — informational only, never blocks merges
   # ────────────────────────────────────────────────────────────────────────────
   c-backend-report:
     name: "c-backend / ${{ matrix.os }}"
