@@ -14,7 +14,13 @@ from hidden_attractors import load_final_candidate_records
 
 
 def main() -> None:
-    for record in load_final_candidate_records():
+    try:
+        records = list(load_final_candidate_records())
+    except FileNotFoundError:
+        print("No final candidate records found. Skipping display.")
+        return
+
+    for record in records:
         print(
             f"{record.candidate_id} | route={record.route} | "
             f"q={record.q:.4f} | start={record.robust_start.tolist()} | "
