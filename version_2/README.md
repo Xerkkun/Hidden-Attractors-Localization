@@ -4,6 +4,7 @@
 ![Status](https://img.shields.io/badge/status-research%20alpha-orange)
 ![Package](https://img.shields.io/badge/package-editable%20install-green)
 ![License](https://img.shields.io/badge/license-pending-lightgrey)
+[![CI](https://github.com/Xerkkun/Hidden-Attractors-Localization/actions/workflows/ci.yml/badge.svg)](https://github.com/Xerkkun/Hidden-Attractors-Localization/actions/workflows/ci.yml)
 
 `hidden-attractors-fo` is a Python research library for reproducing, auditing,
 and extending numerical workflows for hidden-attractor candidates in
@@ -61,6 +62,27 @@ python -m pip install -e ".[legacy]"
 The native workflows compile C sources on demand. On Windows this expects a C
 compiler such as `gcc` on `PATH`; on macOS, OpenMP builds may require Homebrew
 `libomp` unless the workflow explicitly disables OpenMP.
+
+### Platform Limitations (C backends)
+
+| Platform | Compiler | OpenMP | Status |
+|----------|----------|--------|--------|
+| Linux | `gcc` (system) | Available via `-fopenmp` | ✅ CI tested |
+| Windows | `gcc` (MinGW, must be in `PATH`) | Available via `-fopenmp` | ✅ CI tested |
+| macOS | `clang` (Xcode) | Requires `brew install libomp` | ⚠️ Manual CI only |
+
+- **Windows**: The `PATH` on GitHub Actions runners already includes MinGW `gcc`.
+  For local installs, ensure `gcc --version` works before calling any workflow
+  that triggers native compilation.  The shared library is compiled as `.dll`;
+  pure-Python smoke tests and `pytest` do not require the C compiler.
+- **macOS**: The default `clang` does not bundle OpenMP.  Either install
+  `libomp` via Homebrew (`brew install libomp`) or set `ALLOW_NO_OPENMP=1` to
+  compile without parallelism.  Set `LIBOMP_PREFIX` to override the Homebrew
+  prefix.  macOS is excluded from the automatic CI matrix but can be triggered
+  manually via `workflow_dispatch` on the `ci.yml` workflow.
+- **ALLOW_NO_OPENMP**: Setting `ALLOW_NO_OPENMP=1` lets `compile_c_target`
+  retry the build without `-fopenmp` instead of raising `RuntimeError`.  This
+  is always set in CI to avoid hard failures on platforms where OpenMP is absent.
 
 ## Quick Start
 

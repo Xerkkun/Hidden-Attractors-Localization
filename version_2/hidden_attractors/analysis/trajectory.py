@@ -26,12 +26,26 @@ from ..systems.base import ChaoticSystem
 class RobustnessCase:
     """Numerical contract for one robustness trajectory.
 
-    Purpose:
-        Record exactly what changed when comparing candidate trajectories.
+    Attributes
+    ----------
+    case_id : str
+        Human-readable label, e.g. ``'R0_base'`` or ``'R1_h_finer'``.
+    q : float, default 0.9998
+        Caputo fractional order.
+    h : float, default 0.01
+        Integration step size.
+    Lm : float, default 10.0
+        Memory length (truncation parameter for EFORK).
+    t_final : float, default 1500.0
+        Total integration time.
+    t_burn : float, default 100.0
+        Burn-in time discarded before recording.
 
-    Validity warning:
-        For chaotic attractors, robustness means similarity of invariant or
-        geometric features, not pointwise trajectory agreement.
+    Notes
+    -----
+    For chaotic attractors, robustness means *geometric* similarity of
+    invariant features (attractor shape, section clouds, FFT peak), not
+    pointwise trajectory agreement.
     """
 
     case_id: str
@@ -57,7 +71,28 @@ class RobustnessCase:
 
 
 def default_robustness_cases(q: float = 0.9998) -> list[RobustnessCase]:
-    """Return the standard h/Lm/time perturbation set used in examples."""
+    """Return the standard six-case h/Lm/time perturbation set.
+
+    Parameters
+    ----------
+    q : float, default 0.9998
+        Caputo fractional order shared by all cases.
+
+    Returns
+    -------
+    cases : list[RobustnessCase]
+        Six cases: base, finer step, coarser step, lower memory,
+        higher memory, and longer integration.
+
+    Examples
+    --------
+    >>> from hidden_attractors.analysis.trajectory import default_robustness_cases
+    >>> cases = default_robustness_cases()
+    >>> cases[0].case_id
+    'R0_base'
+    >>> len(cases)
+    6
+    """
 
     return [
         RobustnessCase("R0_base", q=q, h=0.01, Lm=10.0, t_final=1500.0, t_burn=100.0),
@@ -70,7 +105,24 @@ def default_robustness_cases(q: float = 0.9998) -> list[RobustnessCase]:
 
 
 def component_fft(values: np.ndarray, h: float) -> Tuple[float, float]:
-    """Return dominant FFT frequency and normalized spectral entropy."""
+    """Return the dominant FFT frequency and normalised spectral entropy.
+
+    Parameters
+    ----------
+    values : np.ndarray, shape (N,)
+        One-dimensional time series of a state component.
+    h : float
+        Sample step size (seconds).
+
+    Returns
+    -------
+    peak_freq : float
+        Frequency (Hz) at the spectral maximum.  ``nan`` if the series
+        has fewer than 9 finite samples.
+    entropy : float
+        Normalised Shannon entropy of the power spectrum (0–1).
+        ``nan`` if the series is too short or constant.
+    """
 
     data = np.asarray(values, dtype=float)
     data = data[np.isfinite(data)]
@@ -90,11 +142,19 @@ def component_fft(values: np.ndarray, h: float) -> Tuple[float, float]:
 
 
 def state_view(traj: np.ndarray) -> np.ndarray:
-    """Return state columns from ``traj`` with shape ``(N, d)``.
+    """Extract state columns from a trajectory array.
 
-    Trajectories may be passed as either ``state`` arrays or as
-    ``t,state...`` arrays.  A 2-D array with at least four columns is treated as
-    time plus states for backward compatibility with the Chua workflow.
+    Parameters
+    ----------
+    traj : np.ndarray
+        Either a ``(N, d)`` pure-state array or a ``(N, d+1)`` array
+        whose first column is time (i.e. ``(N, ≥4)`` is treated as
+        ``t, states...``).
+
+    Returns
+    -------
+    states : np.ndarray, shape (N, d)
+        State-only columns.  Returns ``(0, 0)`` for non-2-D input.
     """
 
     X = np.asarray(traj, dtype=float)
@@ -106,7 +166,20 @@ def state_view(traj: np.ndarray) -> np.ndarray:
 
 
 def min_distance_to_points(state: np.ndarray, points: Iterable[np.ndarray]) -> float:
-    """Distance from ``state`` to the nearest point in ``points``."""
+    """Return the Euclidean distance from *state* to the nearest point in *points*.
+
+    Parameters
+    ----------
+    state : np.ndarray, shape (d,)
+        Query state vector.
+    points : iterable of np.ndarray
+        Reference points to measure distance to.
+
+    Returns
+    -------
+    dist : float
+        Minimum distance.  ``nan`` if *points* is empty.
+    """
 
     s = np.asarray(state, dtype=float)
     pts = [np.asarray(point, dtype=float) for point in points]
@@ -116,7 +189,25 @@ def min_distance_to_points(state: np.ndarray, points: Iterable[np.ndarray]) -> f
 
 
 def system_equilibria(system: ChaoticSystem, parameters: Dict[str, Any] | None = None) -> dict[str, np.ndarray]:
-    """Return equilibria from a registered system, raising if unavailable."""
+    """Return equilibria from a registered system, raising if none are defined.
+
+    Parameters
+    ----------
+    system : ChaoticSystem
+        System with an equilibrium provider.
+    parameters : dict[str, Any] or None, default None
+        Override parameters for the equilibrium computation.
+
+    Returns
+    -------
+    equilibria : dict[str, np.ndarray]
+        Maps labels to state vectors.
+
+    Raises
+    ------
+    ValueError
+        If ``system.equilibria`` is ``None``.
+    """
 
     equilibria = system.equilibrium_points(parameters)
     if not equilibria:
@@ -132,7 +223,28 @@ def classify_trajectory_against_equilibria(
     equilibrium_tol: float = 1.0e-3,
     t_start: float | None = None,
 ) -> Dict[str, Any]:
-    """Classify boundedness and final equilibrium contact for any dimension."""
+    """Classify a trajectory's boundedness and final proximity to equilibria.
+
+    Parameters
+    ----------
+    traj : np.ndarray, shape (N, ≥4)
+        Trajectory with columns ``(t, states...)``, or a pure state array.
+    equilibria : dict[str, np.ndarray]
+        Named equilibrium points to compare against.
+    divergence_norm : float, default 120.0
+        State norm above which the trajectory is declared diverged.
+    equilibrium_tol : float, default 1e-3
+        Distance threshold for declaring equilibrium contact.
+    t_start : float or None, default None
+        If set, only rows with ``t >= t_start`` are used for classification.
+
+    Returns
+    -------
+    result : dict[str, Any]
+        Keys: ``'bounded'``, ``'diverged'``, ``'equilibrium_hit'``,
+        ``'closest_equilibrium'``, ``'closest_equilibrium_distance'``,
+        ``'final_class'``, ``'final_norm'``, ``'max_norm'``.
+    """
 
     X = np.asarray(traj, dtype=float)
     if t_start is not None and X.ndim == 2 and X.shape[1] >= 2:
@@ -172,7 +284,36 @@ def trajectory_metrics_for_system(
     divergence_norm: float = 120.0,
     equilibrium_tol: float = 1.0e-3,
 ) -> Dict[str, Any]:
-    """Compute dimension-agnostic trajectory metrics for a registered system."""
+    """Compute dimension-agnostic trajectory metrics for a registered system.
+
+    Parameters
+    ----------
+    traj : np.ndarray, shape (N, d+1)
+        Trajectory with time in column 0 and *d* state columns.
+    system : ChaoticSystem or None, default None
+        Used to obtain equilibria if *equilibria* is not supplied.
+    equilibria : dict[str, np.ndarray] or None, default None
+        Named equilibrium points.  If ``None``, fetched from *system*.
+    h : float
+        Integration step size for FFT.
+    t_start : float
+        Burn-in cutoff.
+    divergence_norm : float, default 120.0
+        State norm above which the trajectory is declared diverged.
+    equilibrium_tol : float, default 1e-3
+        Distance threshold for equilibrium contact.
+
+    Returns
+    -------
+    metrics : dict[str, Any]
+        Scalar diagnostics: classification flags, per-component ranges,
+        variances, FFT peak, and spectral entropy.
+
+    Raises
+    ------
+    ValueError
+        If both *system* and *equilibria* are ``None``.
+    """
 
     if equilibria is None:
         if system is None:
@@ -205,7 +346,20 @@ def trajectory_metrics_for_system(
 
 
 def trajectory_ranges(traj: np.ndarray) -> Dict[str, float]:
-    """Compute coordinate ranges for columns ``t,x,y,z`` or state arrays."""
+    """Compute coordinate ranges for the ``x``, ``y``, ``z`` columns.
+
+    Parameters
+    ----------
+    traj : np.ndarray
+        Trajectory array with columns ``(t, x, y, z)`` or a pure state
+        array.  Only the first three state columns are used.
+
+    Returns
+    -------
+    ranges : dict[str, float]
+        Keys ``'range_x'``, ``'range_y'``, ``'range_z'``.  Values are
+        ``nan`` if the state is empty.
+    """
 
     X = np.asarray(traj, dtype=float)
     states = X[:, 1:4] if X.ndim == 2 and X.shape[1] >= 4 else X
@@ -216,7 +370,21 @@ def trajectory_ranges(traj: np.ndarray) -> Dict[str, float]:
 
 
 def tail_view(traj: np.ndarray, *, t_start: float) -> np.ndarray:
-    """Return the part of a trajectory after ``t_start``."""
+    """Return trajectory rows with ``t >= t_start``.
+
+    Parameters
+    ----------
+    traj : np.ndarray, shape (N, ≥4)
+        Full trajectory array with time in column 0.
+    t_start : float
+        Burn-in cutoff.  Rows with ``t < t_start`` are dropped.
+
+    Returns
+    -------
+    tail : np.ndarray, shape (M, 4)
+        Post-burn-in rows.  Returns empty ``(0, 4)`` if *traj* has
+        fewer than 4 columns or is not 2-D.
+    """
 
     X = np.asarray(traj, dtype=float)
     if X.ndim != 2 or X.shape[1] < 4:
@@ -225,7 +393,20 @@ def tail_view(traj: np.ndarray, *, t_start: float) -> np.ndarray:
 
 
 def sample_rows(arr: np.ndarray, max_points: int) -> np.ndarray:
-    """Subsample rows evenly without changing endpoints."""
+    """Subsample rows evenly, preserving the first and last rows.
+
+    Parameters
+    ----------
+    arr : np.ndarray, shape (N, ...)
+        Array to subsample along axis 0.
+    max_points : int
+        Maximum number of rows to keep.
+
+    Returns
+    -------
+    sampled : np.ndarray
+        Subsampled array.  Returned unchanged if ``N <= max_points``.
+    """
 
     X = np.asarray(arr)
     if X.shape[0] <= int(max_points):
@@ -241,11 +422,32 @@ def section_points(
     max_points: int,
     params: ChuaParameters | None = None,
 ) -> np.ndarray:
-    """Compute upward ``x=0`` Poincare-section points ``(y,z)``.
+    """Compute upward ``x=0`` Poincaré-section points ``(y, z)``.
 
-    Purpose:
-        Compare chaotic attractors through section clouds rather than pointwise
-        trajectory agreement.
+    Records the linearly interpolated ``(y, z)`` crossing whenever the
+    trajectory passes through ``x=0`` from below with positive x-velocity.
+
+    Parameters
+    ----------
+    traj : np.ndarray, shape (N, 4)
+        Trajectory array with columns ``(t, x, y, z)``.
+    t_start : float
+        Only crossings after *t_start* are recorded.
+    max_points : int
+        Maximum number of section points to return.
+    params : ChuaParameters or None, default None
+        Chua parameters used to evaluate the x-velocity sign.
+        Defaults to :func:`~hidden_attractors.models.chua.chua_piecewise_parameters`.
+
+    Returns
+    -------
+    pts : np.ndarray, shape (K, 2)
+        Poincaré section points ``(y, z)``.  Empty ``(0, 2)`` if none found.
+
+    Notes
+    -----
+    Section clouds are more informative than raw trajectories for comparing
+    chaotic attractors that cannot be compared pointwise.
     """
 
     p = params or chua_piecewise_parameters()
@@ -268,7 +470,26 @@ def section_points(
 
 
 def cloud_median_distance(a: np.ndarray, b: np.ndarray) -> float:
-    """Symmetric median nearest-neighbor distance between two point clouds."""
+    """Symmetric median nearest-neighbour distance between two point clouds.
+
+    Parameters
+    ----------
+    a : np.ndarray, shape (M, d)
+        First point cloud.
+    b : np.ndarray, shape (N, d)
+        Second point cloud.
+
+    Returns
+    -------
+    dist : float
+        Median of the union of one-way nearest-neighbour distances
+        ``A→B`` and ``B→A``.  ``nan`` if either cloud is empty.
+
+    Notes
+    -----
+    Uses a block-wise computation to bound peak memory to ``O(128 × N)``
+    per block.
+    """
 
     A = np.asarray(a, dtype=float)
     B = np.asarray(b, dtype=float)
@@ -287,7 +508,21 @@ def cloud_median_distance(a: np.ndarray, b: np.ndarray) -> float:
 
 
 def min_equilibrium_distance(state: np.ndarray, params: ChuaParameters | None = None) -> float:
-    """Distance from one state to the nearest Chua equilibrium."""
+    """Distance from *state* to the nearest piecewise Chua equilibrium.
+
+    Parameters
+    ----------
+    state : np.ndarray, shape (3,)
+        Query state vector.
+    params : ChuaParameters or None, default None
+        Chua parameters used to compute equilibria.
+        Defaults to :func:`~hidden_attractors.models.chua.chua_piecewise_parameters`.
+
+    Returns
+    -------
+    dist : float
+        Minimum Euclidean distance to ``E0``, ``E+``, or ``E-``.
+    """
 
     s = np.asarray(state, dtype=float)
     return float(min(np.linalg.norm(s - eq) for eq in equilibria_piecewise(params).values()))
@@ -304,11 +539,44 @@ def trajectory_metrics(
     max_cloud_points: int = 1000,
     reference: Dict[str, Any] | None = None,
 ) -> tuple[Dict[str, Any], Dict[str, Any]]:
-    """Compute geometric/spectral diagnostics for one trajectory.
+    """Compute geometric and spectral diagnostics for one Chua trajectory.
 
-    Output:
-        ``(metrics, payload)`` where payload stores tail cloud and section data
-        for comparison with subsequent cases.
+    Parameters
+    ----------
+    traj : np.ndarray, shape (N, 4)
+        Trajectory array with columns ``(t, x, y, z)``.
+    h : float
+        Integration step size used for FFT frequency axis.
+    t_start : float
+        Burn-in cutoff; only the tail ``t >= t_start`` is used for metrics.
+    divergence_norm : float, default 120.0
+        State norm threshold for declaring divergence.
+    equilibrium_tol : float, default 1e-3
+        Distance threshold for declaring equilibrium proximity.
+    max_section_points : int, default 300
+        Maximum Poincaré section points to collect.
+    max_cloud_points : int, default 1000
+        Maximum tail-cloud rows kept for subsequent comparison.
+    reference : dict[str, Any] or None, default None
+        Payload from a reference trajectory.  When supplied, relative
+        distance metrics are computed against the reference cloud, section,
+        and range vector.
+
+    Returns
+    -------
+    metrics : dict[str, Any]
+        Flat dictionary of scalar diagnostics including ``'bounded'``,
+        ``'diverged'``, ``'equilibrium_like'``, ``'noncollapsed_variance'``,
+        range / variance / FFT / section / cloud-distance entries.
+    payload : dict[str, Any]
+        Stores ``'tail_sample'``, ``'section'``, ``'range_vec'``, and
+        ``'fft_peak'`` for passing as *reference* to subsequent cases.
+
+    Notes
+    -----
+    All metrics are local finite-time diagnostics.  They do not constitute
+    proof of hiddenness; that requires separate equilibrium-neighborhood
+    controls documented in the hiddenness protocol.
     """
 
     X = np.asarray(traj, dtype=float)

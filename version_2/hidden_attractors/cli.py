@@ -1,4 +1,10 @@
-"""Small command-line helpers for installed users."""
+"""Small command-line helpers for installed users.
+
+Stability: internal
+    These functions back the ``hidden-attractors-*`` console scripts.  The
+    command-line interface is the stable contract; the Python function
+    signatures may change between versions.
+"""
 
 from __future__ import annotations
 

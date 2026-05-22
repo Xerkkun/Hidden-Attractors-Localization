@@ -1,5 +1,12 @@
 """Installable command facade for historical research scripts.
 
+Stability: legacy
+    This module is frozen.  No new features will be added and no existing
+    script slug will be removed.  Reusable parts of these scripts are
+    gradually being migrated into stable or experimental sub-modules.
+    Do not use this module in new code; import from the appropriate
+    sub-package instead.
+
 The scripts in ``tools.legacy`` are not the preferred public API, but some
 research workflows still depend on them.  This module gives them the same
 installed-command shape as the newer ``hidden_attractors`` workflows while the

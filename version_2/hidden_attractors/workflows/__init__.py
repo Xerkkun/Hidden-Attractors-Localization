@@ -1,4 +1,10 @@
-"""High-level reproducible workflows built on the library primitives."""
+"""High-level reproducible workflows built on the library primitives.
+
+Stability: experimental
+    Workflow specs and entry points may evolve as new numerical stages are
+    added.  Changes are noted in changelog entries; existing workflow scripts
+    will not be silently broken between minor versions.
+"""
 
 from .contracts import (
     ContinuationResult,

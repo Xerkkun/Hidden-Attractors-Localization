@@ -70,7 +70,15 @@ class CapabilityReport:
     warnings: tuple[str, ...] = field(default_factory=tuple)
 
     def as_lines(self) -> list[str]:
-        """Return a human-readable report for CLI output."""
+        """Return a human-readable report for CLI output.
+
+        Returns
+        -------
+        lines : list[str]
+            One line per attribute: ``system=``, ``workflow=``,
+            ``status=``, one ``missing.*`` line per missing requirement,
+            and one ``warning=`` line per warning.
+        """
 
         status = "ok" if self.ok else "missing-required-inputs"
         lines = [f"system={self.system_name}", f"workflow={self.workflow}", f"status={status}"]
@@ -267,23 +275,80 @@ _BASE_REQUIREMENTS: Mapping[WorkflowName, tuple[Requirement, ...]] = {
 
 
 def requirements_for(workflow: WorkflowName) -> tuple[Requirement, ...]:
-    """Return documented requirements for one workflow."""
+    """Return documented requirements for one workflow.
+
+    Parameters
+    ----------
+    workflow : WorkflowName
+        One of the supported workflow identifiers (e.g.
+        ``'full-hiddenness-protocol'``, ``'describing-function'``).
+
+    Returns
+    -------
+    requirements : tuple[Requirement, ...]
+        Ordered tuple of :class:`Requirement` objects for *workflow*.
+
+    Raises
+    ------
+    KeyError
+        If *workflow* is not in the internal requirements table.
+
+    Examples
+    --------
+    >>> from hidden_attractors.systems.requirements import requirements_for
+    >>> reqs = requirements_for('equilibria')
+    >>> reqs[0].key
+    'equilibria'
+    """
 
     return _BASE_REQUIREMENTS[workflow]
 
 
 def known_workflows() -> tuple[WorkflowName, ...]:
-    """Return workflow names understood by the capability checker."""
+    """Return workflow names understood by the capability checker.
+
+    Returns
+    -------
+    workflows : tuple[WorkflowName, ...]
+        Tuple of all supported workflow identifier strings.
+
+    Examples
+    --------
+    >>> from hidden_attractors.systems.requirements import known_workflows
+    >>> 'full-hiddenness-protocol' in known_workflows()
+    True
+    """
 
     return tuple(_BASE_REQUIREMENTS)
 
 
 def check_system_capability(system: ChaoticSystem, workflow: WorkflowName) -> CapabilityReport:
-    """Check package-level hooks available directly on ``system``.
+    """Check which package-level hooks a registered system provides for *workflow*.
 
-    Solver and candidate-reference checks are intentionally reported as missing
-    unless supplied through a workflow spec.  This prevents a registered RHS
-    from being mistaken for a complete hiddenness protocol.
+    Solver and candidate-reference checks are reported as missing unless
+    supplied through a workflow spec, to prevent a bare RHS from being
+    mistaken for a complete hiddenness protocol.
+
+    Parameters
+    ----------
+    system : ChaoticSystem
+        A registered system instance to inspect.
+    workflow : WorkflowName
+        The workflow to check against.
+
+    Returns
+    -------
+    report : CapabilityReport
+        Result with ``ok``, ``missing``, and ``warnings`` fields.
+        Use :meth:`CapabilityReport.as_lines` for CLI display.
+
+    Examples
+    --------
+    >>> from hidden_attractors.systems import get_system
+    >>> from hidden_attractors.systems.requirements import check_system_capability
+    >>> report = check_system_capability(get_system('chua-fractional'), 'equilibria')
+    >>> report.ok
+    True
     """
 
     missing: list[Requirement] = []

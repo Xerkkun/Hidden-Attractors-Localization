@@ -1,4 +1,9 @@
-"""Optional integrations with external dynamical-systems libraries."""
+"""Optional integrations with external dynamical-systems libraries.
+
+Stability: experimental
+    Adapters for ``nolds``, ``antropy``, and similar optional backends.  The
+    adapter interface may change as new tools are integrated.
+"""
 
 from .external_tools import (
     EXTERNAL_TOOLS,

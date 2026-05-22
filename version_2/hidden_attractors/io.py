@@ -1,4 +1,9 @@
-"""Filesystem and serialization helpers for reproducible numerical runs."""
+"""Filesystem and serialization helpers for reproducible numerical runs.
+
+Stability: stable
+    JSON/CSV read-write helpers and :func:`load_trajectory_csv`.  Signatures
+    are fixed; new helpers may be added without breaking existing calls.
+"""
 
 from __future__ import annotations
 
@@ -12,19 +17,84 @@ import numpy as np
 
 
 def timestamp(fmt: str = "%Y%m%d_%H%M%S") -> str:
-    """Return a timestamp for non-overwriting output folders."""
+    """Return a timestamp string for non-overwriting output folder names.
+
+    Parameters
+    ----------
+    fmt : str, default '%Y%m%d_%H%M%S'
+        :func:`time.strftime` format string.
+
+    Returns
+    -------
+    stamp : str
+        Formatted local time, e.g. ``'20260522_143000'``.
+
+    Examples
+    --------
+    >>> from hidden_attractors.io import timestamp
+    >>> len(timestamp())  # default format has 15 chars
+    15
+    """
 
     return time.strftime(fmt)
 
 
 def safe_name(text: str) -> str:
-    """Return a filesystem-safe identifier while preserving readability."""
+    """Return a filesystem-safe version of *text* with readability preserved.
+
+    Replaces any character that is not alphanumeric, ``'_'``, or ``'-'``
+    with an underscore.
+
+    Parameters
+    ----------
+    text : str
+        Arbitrary string (e.g. a candidate ID or parameter label).
+
+    Returns
+    -------
+    name : str
+        String containing only ``[A-Za-z0-9_-]``.
+
+    Examples
+    --------
+    >>> from hidden_attractors.io import safe_name
+    >>> safe_name('q=0.9998 / run #3')
+    'q_0_9998___run__3'
+    """
 
     return "".join(ch if ch.isalnum() or ch in {"_", "-"} else "_" for ch in str(text))
 
 
 def json_safe(obj: Any) -> Any:
-    """Convert NumPy/scalar objects into values accepted by ``json.dumps``."""
+    """Recursively convert *obj* to types accepted by :func:`json.dumps`.
+
+    Handles NumPy scalars, arrays, complex numbers, dicts, lists, and tuples.
+    All other types are returned unchanged (and will raise at serialisation
+    time if they are not JSON-serialisable).
+
+    Parameters
+    ----------
+    obj : Any
+        Python object to convert.
+
+    Returns
+    -------
+    safe : Any
+        JSON-serialisable representation of *obj*.
+        - ``np.ndarray`` → ``list``
+        - ``np.generic`` → Python scalar via ``.item()``
+        - ``complex`` → ``[real, imag]``
+        - ``dict`` / ``list`` / ``tuple`` → recursively processed.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from hidden_attractors.io import json_safe
+    >>> json_safe(np.array([1.0, 2.0]))
+    [1.0, 2.0]
+    >>> json_safe({'a': np.float32(3.14)})  # doctest: +ELLIPSIS
+    {'a': 3.14...}
+    """
 
     if isinstance(obj, dict):
         return {str(k): json_safe(v) for k, v in obj.items()}
@@ -42,7 +112,30 @@ def json_safe(obj: Any) -> Any:
 
 
 def write_json(path: str | Path, data: Dict[str, Any]) -> None:
-    """Write JSON metadata for a run, creating parent directories."""
+    """Write *data* as JSON, creating parent directories as needed.
+
+    Parameters
+    ----------
+    path : str or Path
+        Destination file path.  Parent directories are created if absent.
+    data : dict[str, Any]
+        Mapping to serialise.  All values must be passable through
+        :func:`json_safe`.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> import tempfile, pathlib
+    >>> from hidden_attractors.io import write_json, read_json
+    >>> with tempfile.TemporaryDirectory() as d:
+    ...     p = pathlib.Path(d) / 'meta.json'
+    ...     write_json(p, {'q': 0.9998})
+    ...     read_json(p)['q']
+    0.9998
+    """
 
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -50,7 +143,25 @@ def write_json(path: str | Path, data: Dict[str, Any]) -> None:
 
 
 def read_json(path: str | Path) -> Dict[str, Any]:
-    """Read a JSON object from disk."""
+    """Read a JSON object from *path*.
+
+    Parameters
+    ----------
+    path : str or Path
+        Path to the JSON file.
+
+    Returns
+    -------
+    data : dict[str, Any]
+        Parsed JSON object.
+
+    Raises
+    ------
+    FileNotFoundError
+        If *path* does not exist.
+    json.JSONDecodeError
+        If the file is not valid JSON.
+    """
 
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
@@ -70,7 +181,27 @@ def _csv_value(value: Any) -> Any:
 
 
 def write_csv(path: str | Path, rows: Sequence[Dict[str, Any]], fields: Sequence[str] | None = None) -> None:
-    """Write tabular run artifacts with stable field ordering."""
+    """Write a sequence of row dicts to a CSV file with stable field ordering.
+
+    Parameters
+    ----------
+    path : str or Path
+        Destination CSV path.  Parent directories are created if absent.
+    rows : sequence of dict[str, Any]
+        Rows to write; each dict maps field names to values.
+    fields : sequence of str or None, default None
+        Column order.  If ``None``, fields are inferred from row keys in
+        insertion order (union across all rows).
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    NumPy arrays, scalars, lists, and complex numbers are converted via
+    :func:`_csv_value` before writing.
+    """
 
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -89,7 +220,21 @@ def write_csv(path: str | Path, rows: Sequence[Dict[str, Any]], fields: Sequence
 
 
 def append_csv(path: str | Path, row: Dict[str, Any], fields: Sequence[str]) -> None:
-    """Append one row to a CSV artifact, writing the header if needed."""
+    """Append one row to a CSV file, writing the header if the file is new.
+
+    Parameters
+    ----------
+    path : str or Path
+        CSV file path.  Created with header if absent.
+    row : dict[str, Any]
+        Single row to append.
+    fields : sequence of str
+        Column names; also controls the header written on first creation.
+
+    Returns
+    -------
+    None
+    """
 
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -102,7 +247,19 @@ def append_csv(path: str | Path, row: Dict[str, Any], fields: Sequence[str]) -> 
 
 
 def read_csv_rows(path: str | Path) -> List[Dict[str, str]]:
-    """Read a CSV artifact into dictionaries; return an empty list if missing."""
+    """Read a CSV file into a list of string dicts.
+
+    Parameters
+    ----------
+    path : str or Path
+        Path to the CSV file.
+
+    Returns
+    -------
+    rows : list[dict[str, str]]
+        One dict per data row; all values are strings as returned by
+        :class:`csv.DictReader`.  Returns ``[]`` if *path* does not exist.
+    """
 
     target = Path(path)
     if not target.exists():
@@ -112,11 +269,42 @@ def read_csv_rows(path: str | Path) -> List[Dict[str, str]]:
 
 
 def load_trajectory_csv(path: str | Path, columns: Sequence[str] = ("t", "x", "y", "z")) -> np.ndarray:
-    """Load a trajectory CSV into the package convention ``t,x,y,z``.
+    """Load a trajectory CSV into the package-standard column layout.
 
-    The project's generated trajectory files normally use a header with the
-    columns ``t,x,y,z``. Headerless numeric CSV files are also accepted when
-    they already follow that column order.
+    Accepts files with a ``t,x,y,z`` header or headerless numeric CSVs
+    already ordered as ``(t, x, y, z)``.
+
+    Parameters
+    ----------
+    path : str or Path
+        Path to the trajectory CSV file.
+    columns : sequence of str, default ('t', 'x', 'y', 'z')
+        Column names to extract, in order.  Used for header-based lookup.
+
+    Returns
+    -------
+    traj : np.ndarray, shape (N, len(columns))
+        Trajectory array with the requested columns.
+
+    Raises
+    ------
+    FileNotFoundError
+        If *path* does not exist.
+    ValueError
+        If the file is empty, missing required header columns, or has
+        fewer columns than requested when headerless.
+
+    Examples
+    --------
+    >>> import numpy as np, tempfile, pathlib
+    >>> from hidden_attractors.io import write_csv, load_trajectory_csv
+    >>> rows = [{'t': i*0.01, 'x': 0.0, 'y': 0.0, 'z': 0.0} for i in range(5)]
+    >>> with tempfile.TemporaryDirectory() as d:
+    ...     p = pathlib.Path(d) / 'traj.csv'
+    ...     write_csv(p, rows)
+    ...     arr = load_trajectory_csv(p)
+    ...     arr.shape
+    (5, 4)
     """
 
     target = Path(path)

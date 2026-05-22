@@ -1,0 +1,236 @@
+# CI mínimo – hidden-attractors-fo
+# Ejecuta smoke checks de sintaxis, pruebas unitarias y ejemplos de usuario.
+#
+# Matriz OS
+# ---------
+# ubuntu-latest : gcc disponible, sin dependencias adicionales de OpenMP.
+# windows-latest: gcc llega con la toolchain de mingw que ya está en el
+#                  PATH de los runners de GitHub.
+#
+# macOS NO está en la matriz automática porque la build de backends C con
+# OpenMP requiere `brew install libomp`, lo que hace la corrida impredecible
+# en runners efímeros.  Está documentado como limitación en README.md y en el
+# trabajo manual `ci-macos` que se puede disparar a mano (workflow_dispatch).
+#
+# Backends C
+# ----------
+# Las compilaciones nativas se omiten en CI (openmp=False está hardcodeado
+# en FractionalChuaBackend.build / BasinBackend.build).  Los smoke tests y
+# ejemplos sólo usan la capa Python; los tests de backends C sólo corren si
+# el runner ya tiene gcc en PATH, lo cual se verifica con `cc-probe`.
+#
+# Variables de entorno
+# --------------------
+# ALLOW_NO_OPENMP=1  – permite que compile_c_target continúe sin OpenMP en
+#                      lugar de lanzar RuntimeError (ver parallel.py).
+# MPLBACKEND=Agg     – evita que matplotlib intente abrir una ventana de GUI.
+
+name: CI
+
+on:
+  push:
+    branches: ["main", "master", "dev", "develop"]
+    paths:
+      - "version_2/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches: ["main", "master", "dev", "develop"]
+    paths:
+      - "version_2/**"
+      - ".github/workflows/ci.yml"
+  workflow_dispatch:          # permite disparar manualmente desde la UI
+
+# Cancela corridas anteriores del mismo PR/branch para ahorrar minutos.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # Trabajo principal: smoke + pytest + ejemplos
+  # ─────────────────────────────────────────────────────────────────────────
+  test:
+    name: "Python ${{ matrix.python-version }} · ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false          # que un OS que falle no cancele el otro
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.10", "3.12"]
+
+    defaults:
+      run:
+        # Todos los pasos se ejecutan desde el subdirectorio del paquete.
+        working-directory: version_2
+
+    env:
+      ALLOW_NO_OPENMP: "1"     # compile_c_target no falla si OpenMP ausente
+      MPLBACKEND: "Agg"        # matplotlib sin GUI
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────
+      - uses: actions/checkout@v4
+
+      # ── 2. Python ────────────────────────────────────────────────────────
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+          cache-dependency-path: version_2/pyproject.toml
+
+      # ── 3. Instalar paquete en modo editable + dependencias dev ──────────
+      - name: Install package (editable + dev extras)
+        run: python -m pip install -e ".[dev]"
+
+      # ── 4. Verificar sintaxis de todos los módulos Python ────────────────
+      - name: Compile-check (syntax smoke)
+        run: python -m compileall hidden_attractors examples tests tools/cli
+
+      # ── 5. Pytest ────────────────────────────────────────────────────────
+      - name: Run pytest
+        run: python -m pytest -q
+
+      # ── 6. Ejemplos de usuario ───────────────────────────────────────────
+      - name: Run quickstart_equilibria example
+        run: python examples/quickstart_equilibria.py
+
+      - name: Run list_final_candidates example
+        run: python examples/list_final_candidates.py
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Trabajo opcional: prueba nativa de backends C (solo si gcc está en PATH)
+  # ─────────────────────────────────────────────────────────────────────────
+  cc-probe:
+    name: "C-backend probe · ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
+    needs: test                 # sólo si los smoke tests pasan
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    defaults:
+      run:
+        working-directory: version_2
+
+    env:
+      ALLOW_NO_OPENMP: "1"
+      MPLBACKEND: "Agg"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: version_2/pyproject.toml
+
+      - name: Install package (editable + dev extras)
+        run: python -m pip install -e ".[dev]"
+
+      # ── Detectar si gcc/cc está disponible ───────────────────────────────
+      - name: Check C compiler availability
+        id: cc_check
+        shell: bash
+        run: |
+          if command -v gcc &>/dev/null; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+            gcc --version
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::gcc not found – C-backend step will be skipped"
+          fi
+
+      # ── Probar que FractionalChuaBackend compila y devuelve filas ────────
+      - name: Build and smoke-test FractionalChuaBackend
+        if: steps.cc_check.outputs.available == 'true'
+        run: |
+          python - <<'EOF'
+          from hidden_attractors.native.backends import FractionalChuaBackend
+          import numpy as np
+          backend = FractionalChuaBackend.build()
+          traj = backend.integrate_efork3(
+              [0.1, 0.0, 0.0], q=0.98, h=0.01, Lm=5.0, t_final=0.5
+          )
+          assert traj.shape[1] == 4, f"Unexpected shape: {traj.shape}"
+          print(f"OK – trajectory shape {traj.shape}, first row: {traj[0]}")
+          EOF
+
+      # ── Probar que BasinBackend compila y devuelve equilibrios ───────────
+      - name: Build and smoke-test BasinBackend
+        if: steps.cc_check.outputs.available == 'true'
+        run: |
+          python - <<'EOF'
+          from hidden_attractors.native.backends import BasinBackend
+          backend = BasinBackend.build()
+          eq = backend.equilibria()
+          print("Equilibria:", {k: v.tolist() for k, v in eq.items()})
+          assert "E0" in eq and "E+" in eq and "E-" in eq
+          print("OK")
+          EOF
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Trabajo MANUAL (workflow_dispatch) – macOS con libomp de Homebrew
+  # No corre en push/PR automático porque brew install libomp es lento e
+  # impredecible en runners efímeros.  Documentado como limitación.
+  # ─────────────────────────────────────────────────────────────────────────
+  ci-macos:
+    name: "macOS · Python 3.12 (manual)"
+    runs-on: macos-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    defaults:
+      run:
+        working-directory: version_2
+
+    env:
+      ALLOW_NO_OPENMP: "1"     # fallback si libomp falla de todas formas
+      MPLBACKEND: "Agg"
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: version_2/pyproject.toml
+
+      # Intentar instalar libomp; si falla, ALLOW_NO_OPENMP=1 hace el fallback.
+      - name: Install libomp (best-effort)
+        run: brew install libomp || echo "::warning::libomp install failed – falling back to no-OpenMP"
+
+      - name: Install package (editable + dev extras)
+        run: python -m pip install -e ".[dev]"
+
+      - name: Compile-check (syntax smoke)
+        run: python -m compileall hidden_attractors examples tests tools/cli
+
+      - name: Run pytest
+        run: python -m pytest -q
+
+      - name: Run quickstart_equilibria example
+        run: python examples/quickstart_equilibria.py
+
+      - name: Run list_final_candidates example
+        run: python examples/list_final_candidates.py
+
+      - name: Build and smoke-test FractionalChuaBackend (macOS)
+        run: |
+          python - <<'EOF'
+          from hidden_attractors.native.backends import FractionalChuaBackend
+          import numpy as np
+          backend = FractionalChuaBackend.build()
+          traj = backend.integrate_efork3(
+              [0.1, 0.0, 0.0], q=0.98, h=0.01, Lm=5.0, t_final=0.5
+          )
+          assert traj.shape[1] == 4
+          print(f"OK – shape {traj.shape}")
+          EOF

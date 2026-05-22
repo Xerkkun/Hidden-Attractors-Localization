@@ -10,7 +10,21 @@ import numpy as np
 
 @dataclass(frozen=True)
 class SpectrumResult:
-    """One component spectrum."""
+    """One component amplitude or power spectrum.
+
+    Attributes
+    ----------
+    frequency_hz : np.ndarray, shape (K,)
+        Frequency axis in hertz.
+    frequency_rad_s : np.ndarray, shape (K,)
+        Frequency axis in rad/s (``2π × frequency_hz``).
+    values : np.ndarray, shape (K,)
+        Amplitude (FFT) or power spectral density (Welch) values.
+    component : int
+        State-component index this spectrum was computed from.
+    method : str
+        ``'fft'`` or ``'psd_welch'``.
+    """
 
     frequency_hz: np.ndarray
     frequency_rad_s: np.ndarray
@@ -20,7 +34,26 @@ class SpectrumResult:
 
 
 def infer_step(times: np.ndarray, fallback: float | None = None) -> float:
-    """Infer a positive sample step from trajectory times."""
+    """Infer a positive sample step from trajectory times.
+
+    Parameters
+    ----------
+    times : np.ndarray
+        Time column of a trajectory array.
+    fallback : float or None, default None
+        Value to return when the step cannot be inferred.  If ``None``
+        and inference fails, a :exc:`ValueError` is raised.
+
+    Returns
+    -------
+    h : float
+        Median of positive finite inter-sample intervals.
+
+    Raises
+    ------
+    ValueError
+        If the step cannot be inferred and *fallback* is ``None``.
+    """
 
     t = np.asarray(times, dtype=float)
     if t.size >= 2:
@@ -34,7 +67,41 @@ def infer_step(times: np.ndarray, fallback: float | None = None) -> float:
 
 
 def fft_spectrum(values: np.ndarray, h: float, *, window: str = "hann", component: int = 0) -> SpectrumResult:
-    """Return one-sided FFT amplitude spectrum for a component."""
+    """Return the one-sided FFT amplitude spectrum for one trajectory component.
+
+    Parameters
+    ----------
+    values : np.ndarray, shape (N,)
+        Time series for one state component.
+    h : float
+        Sample step size (seconds).
+    window : str, default 'hann'
+        Window function: ``'hann'`` (Hanning) or ``'none'`` / ``'boxcar'``
+        (rectangular).
+    component : int, default 0
+        State-component index stored in the result for bookkeeping.
+
+    Returns
+    -------
+    spectrum : SpectrumResult
+        Amplitude spectrum normalised by the window sum.
+        Empty arrays are returned if the series has fewer than 2 finite values.
+
+    Raises
+    ------
+    ValueError
+        If *window* is not ``'hann'``, ``'none'``, or ``'boxcar'``.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from hidden_attractors.analysis.spectral import fft_spectrum
+    >>> t = np.linspace(0, 10, 1000)
+    >>> values = np.sin(2 * np.pi * 2.0 * t)  # 2 Hz sine
+    >>> sp = fft_spectrum(values, h=t[1]-t[0])
+    >>> float(sp.frequency_hz[sp.values.argmax()])  # doctest: +ELLIPSIS
+    2.0...
+    """
 
     data = np.asarray(values, dtype=float)
     data = data[np.isfinite(data)]
@@ -60,7 +127,27 @@ def psd_welch(
     overlap: float = 0.5,
     component: int = 0,
 ) -> SpectrumResult:
-    """Return a simple NumPy Welch PSD estimate."""
+    """Return a simple NumPy Welch power spectral density estimate.
+
+    Parameters
+    ----------
+    values : np.ndarray, shape (N,)
+        Time series for one state component.
+    h : float
+        Sample step size (seconds).
+    nperseg : int, default 512
+        Segment length for Welch averaging.  Clipped to ``[16, N]``.
+    overlap : float, default 0.5
+        Fractional overlap between adjacent segments (0–1).
+    component : int, default 0
+        State-component index stored in the result for bookkeeping.
+
+    Returns
+    -------
+    spectrum : SpectrumResult
+        PSD estimate.  Falls back to :func:`fft_spectrum` if no full
+        segment can be formed.
+    """
 
     data = np.asarray(values, dtype=float)
     data = data[np.isfinite(data)]
@@ -89,7 +176,42 @@ def trajectory_component_spectra(
     h: float | None = None,
     method: str = "fft",
 ) -> list[SpectrumResult]:
-    """Compute FFT or PSD spectra for state components in ``t,state...`` data."""
+    """Compute FFT or Welch PSD spectra for state components in a trajectory.
+
+    Parameters
+    ----------
+    trajectory : np.ndarray, shape (N, d+1)
+        Trajectory array with time in column 0 and *d* state columns.
+    components : sequence of int or None, default None
+        State-component indices to analyse.  If ``None``, all components
+        (columns 1 … d) are processed.
+    h : float or None, default None
+        Sample step.  If ``None``, inferred from the time column via
+        :func:`infer_step`.
+    method : str, default 'fft'
+        Spectral method: ``'fft'`` or ``'psd'`` / ``'welch'`` / ``'psd_welch'``.
+
+    Returns
+    -------
+    spectra : list[SpectrumResult]
+        One :class:`SpectrumResult` per requested component, in order.
+
+    Raises
+    ------
+    ValueError
+        If *trajectory* is not 2-D with at least two columns, or if
+        *method* is unrecognised.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from hidden_attractors.analysis.spectral import trajectory_component_spectra
+    >>> t = np.linspace(0, 10, 500)
+    >>> traj = np.column_stack([t, np.sin(2*np.pi*3*t), np.zeros_like(t)])
+    >>> spectra = trajectory_component_spectra(traj)
+    >>> len(spectra)  # two state components
+    2
+    """
 
     X = np.asarray(trajectory, dtype=float)
     if X.ndim != 2 or X.shape[1] < 2:

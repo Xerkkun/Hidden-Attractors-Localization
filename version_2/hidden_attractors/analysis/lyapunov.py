@@ -13,7 +13,21 @@ from ..systems.base import ChaoticSystem
 
 @dataclass(frozen=True)
 class LyapunovResult:
-    """Finite-time Lyapunov exponent estimate."""
+    """Finite-time Lyapunov exponent estimate.
+
+    Attributes
+    ----------
+    exponents : np.ndarray, shape (n,)
+        Final Lyapunov exponent estimates, one per state dimension.
+    times : np.ndarray, shape (K,)
+        Times at which intermediate estimates were recorded.
+    convergence : np.ndarray, shape (K, n)
+        Running Lyapunov estimates at each reorthonormalisation step.
+    status : str
+        Integration outcome: ``'ok'``, ``'burn_diverged'``,
+        ``'solver_exception'``, ``'nonfinite_solution'``, or
+        ``'diverged'``.
+    """
 
     exponents: np.ndarray
     times: np.ndarray
@@ -27,7 +41,31 @@ def finite_difference_jacobian(
     *,
     eps: float = 1.0e-6,
 ) -> np.ndarray:
-    """Central finite-difference Jacobian for systems without analytic one."""
+    """Estimate the Jacobian of *rhs* by central finite differences.
+
+    Parameters
+    ----------
+    rhs : callable([[np.ndarray], np.ndarray])
+        Right-hand side function ``F(x) -> dxdt``, shape ``(n,) -> (n,)``.
+    state : np.ndarray, shape (n,)
+        Point at which the Jacobian is evaluated.
+    eps : float, default 1e-6
+        Finite-difference step size.
+
+    Returns
+    -------
+    J : np.ndarray, shape (n, n)
+        Approximate Jacobian ``∂F/∂x`` at *state*.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from hidden_attractors.analysis.lyapunov import finite_difference_jacobian
+    >>> rhs = lambda x: np.array([-x[0], x[1]])  # diagonal system
+    >>> J = finite_difference_jacobian(rhs, np.array([1.0, 1.0]))
+    >>> J.shape
+    (2, 2)
+    """
 
     x = np.asarray(state, dtype=float)
     n = x.size
@@ -51,7 +89,66 @@ def integer_lyapunov_exponents(
     jacobian_eps: float = 1.0e-6,
     div_threshold: float | None = None,
 ) -> LyapunovResult:
-    """Estimate integer-order Lyapunov exponents by QR reorthonormalization."""
+    """Estimate integer-order Lyapunov exponents by QR reorthonormalisation.
+
+    Uses the Benettin et al. algorithm: integrate the variational equations
+    for ``reorthonormalize_every`` steps, apply QR, accumulate log-diagonal
+    sums, and divide by elapsed time.
+
+    Parameters
+    ----------
+    rhs : callable
+        Vector field ``F(x) -> dxdt``, shape ``(n,) -> (n,)``.
+    jacobian : callable or None
+        Analytic Jacobian ``J(x) -> (n, n) array``.  If ``None``,
+        :func:`finite_difference_jacobian` is used with *jacobian_eps*.
+    x0 : np.ndarray, shape (n,)
+        Initial state.
+    h : float
+        Integration step size (must be positive).
+    t_final : float
+        Total integration time (burn-in excluded).
+    t_burn : float, default 0.0
+        Burn-in time discarded before accumulating exponents.
+    reorthonormalize_every : int, default 10
+        Number of steps between QR reorthonormalisations.
+    jacobian_eps : float, default 1e-6
+        Finite-difference step used when *jacobian* is ``None``.
+    div_threshold : float or None, default None
+        If set, integration stops when ``‖x‖ >= div_threshold``.
+
+    Returns
+    -------
+    result : LyapunovResult
+        Exponent estimates, convergence history, and status string.
+
+    Raises
+    ------
+    ValueError
+        If *h* is not positive or *x0* is not one-dimensional.
+
+    Notes
+    -----
+    The algorithm integrates a first-order Euler scheme (``q=1``) via
+    :func:`~hidden_attractors.solvers.integer.efork_q1_step`.  For
+    fractional systems the estimates are *approximate*.
+
+    References
+    ----------
+    .. [1] G. Benettin et al., "Lyapunov Characteristic Exponents for
+           Smooth Dynamical Systems and for Hamiltonian Systems",
+           Meccanica 15, 1980.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from hidden_attractors.analysis.lyapunov import integer_lyapunov_exponents
+    >>> rhs = lambda x: np.array([-x[0], -2*x[1]])  # stable linear system
+    >>> res = integer_lyapunov_exponents(rhs, None, np.array([1.0, 1.0]),
+    ...                                  h=0.01, t_final=50.0)
+    >>> res.status
+    'ok'
+    """
 
     h_value = float(h)
     if h_value <= 0.0:
@@ -120,7 +217,47 @@ def integer_system_lyapunov_exponents(
     jacobian_eps: float = 1.0e-6,
     div_threshold: float | None = None,
 ) -> LyapunovResult:
-    """Estimate Lyapunov exponents for a registered integer-order system."""
+    """Estimate Lyapunov exponents for a registered integer-order system.
+
+    Convenience wrapper around :func:`integer_lyapunov_exponents` that reads
+    the RHS and analytic Jacobian directly from a :class:`~hidden_attractors.systems.base.ChaoticSystem`.
+
+    Parameters
+    ----------
+    system : ChaoticSystem
+        Registered system (integer order).  If ``system.jacobian`` is set,
+        the analytic Jacobian is used; otherwise finite differences are used.
+    x0 : np.ndarray, shape (n,)
+        Initial state.
+    h : float
+        Integration step size.
+    t_final : float
+        Total integration time.
+    t_burn : float, default 0.0
+        Burn-in time before accumulating exponents.
+    reorthonormalize_every : int, default 10
+        Steps between QR reorthonormalisations.
+    jacobian_eps : float, default 1e-6
+        Finite-difference step when no analytic Jacobian is available.
+    div_threshold : float or None, default None
+        Divergence threshold on the state norm.
+
+    Returns
+    -------
+    result : LyapunovResult
+        Exponent estimates, convergence history, and status string.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from hidden_attractors.systems import get_system
+    >>> from hidden_attractors.analysis.lyapunov import integer_system_lyapunov_exponents
+    >>> sys = get_system('chua-integer')
+    >>> res = integer_system_lyapunov_exponents(
+    ...     sys, np.array([0.1, 0.2, 0.3]), h=0.01, t_final=50.0)
+    >>> res.status
+    'ok'
+    """
 
     rhs = lambda state: system.evaluate(state)
     jacobian = (lambda state: system.jacobian_matrix(state)) if system.jacobian is not None else None

@@ -1,5 +1,35 @@
 """Numerical tools for hidden-attractor studies in fractional-order systems.
 
+Stability tiers
+---------------
+This package organises its public surface into four tiers.  Every sub-module
+starts with a ``Stability: <tier>`` line in its docstring.
+
+stable
+    Signatures and return types are fixed.  Breaking changes require a version
+    bump and a deprecation cycle.
+    Modules: ``models``, ``systems``, ``basins``, ``io``, ``candidates``.
+
+experimental
+    API is useful and tested but may evolve.  Changes will be noted in a
+    changelog entry.
+    Modules: ``analysis``, ``seed_generation``, ``solvers``, ``plotting``,
+    ``integrations``, ``workflows``.
+
+internal
+    Consumed by workflows and backends; not part of the user-facing surface.
+    May change without notice.
+    Modules: ``native``, ``parallel``, ``paths``, ``cli``.
+
+legacy
+    Frozen compatibility facade over historical scripts.  No new features.
+    Module: ``legacy``.
+
+See ``docs/api_stability.md`` for guarantees, upgrade-path guidance, and how
+to introspect a symbol's tier programmatically.
+
+Background
+----------
 The package collects reusable pieces that were previously spread across
 experiment scripts: Chua models, Caputo/EFORK native backends, trajectory
 diagnostics, candidate loading, plotting, and process-safe IO helpers.
@@ -9,6 +39,34 @@ function objects are treated as seed generators, while hiddenness and
 robustness are always numerical post-checks on the causal Caputo model.
 """
 
+# ── Stability constants (re-exported for convenience) ───────────────────────
+from ._stability import (  # noqa: F401
+    EXPERIMENTAL,
+    INTERNAL,
+    LEGACY,
+    STABLE,
+    api_tier,
+    assert_tier,
+    get_tier,
+)
+
+# ── Stable API ───────────────────────────────────────────────────────────────
+# models — vector fields, parameters, equilibria
+from .models.chua import ChuaParameters, chua_parameters, chua_piecewise_parameters, equilibria_piecewise, rhs_piecewise
+
+# systems — chaotic-system registry and capability checks
+from .systems import ChaoticSystem, LureSystem, get_system, list_systems, register_system
+from .systems.requirements import check_system_capability, known_workflows, requirements_for
+
+# basins — classification labels
+from .basins import CLASS_LABELS, TARGET_CLASS_IDS, class_label, is_target_class
+
+# io / candidates — filesystem helpers and reference-output loaders
+from .candidates import CandidateRecord, load_final_candidate_records
+from .io import load_trajectory_csv
+
+# ── Experimental API ─────────────────────────────────────────────────────────
+# analysis — trajectory diagnostics and Lyapunov estimates
 from .analysis import (
     LyapunovResult,
     RobustnessCase,
@@ -16,10 +74,8 @@ from .analysis import (
     trajectory_metrics,
     trajectory_metrics_for_system,
 )
-from .basins import CLASS_LABELS, TARGET_CLASS_IDS, class_label, is_target_class
-from .candidates import CandidateRecord, load_final_candidate_records
-from .io import load_trajectory_csv
-from .models.chua import ChuaParameters, chua_parameters, chua_piecewise_parameters, equilibria_piecewise, rhs_piecewise
+
+# seed_generation — harmonic-balance seeds (Chua + generic Lur'e)
 from .seed_generation import (
     HarmonicSeed,
     find_harmonic_seed,
@@ -28,8 +84,8 @@ from .seed_generation import (
     find_omega_gain_candidates,
     validate_fractional_order,
 )
-from .systems import ChaoticSystem, LureSystem, get_system, list_systems, register_system
-from .systems.requirements import check_system_capability, known_workflows, requirements_for
+
+# workflows — high-level reproducible numerical pipelines
 from .workflows.contracts import FullWorkflowContract, NumericalContract, validate_full_workflow_system
 from .workflows.specs import (
     BasinSliceSpec,
@@ -52,53 +108,68 @@ from .workflows.integer_lure import (
 )
 
 __all__ = [
-    "CLASS_LABELS",
-    "BasinSliceSpec",
-    "CandidateRecord",
-    "ChaoticSystem",
+    # ── stability ──────────────────────────────────────────────────────────
+    "EXPERIMENTAL",
+    "INTERNAL",
+    "LEGACY",
+    "STABLE",
+    "api_tier",
+    "assert_tier",
+    "get_tier",
+    # ── stable: models ─────────────────────────────────────────────────────
     "ChuaParameters",
-    "DestinationClassifierSpec",
-    "HarmonicSeed",
-    "FullWorkflowContract",
-    "IntegratorSpec",
-    "LureSystem",
-    "LyapunovResult",
-    "NumericalContract",
-    "ParameterSweepSpec",
-    "RobustnessCaseSpec",
-    "RobustnessCase",
-    "SphereControlSpec",
-    "StrictRefinementSpec",
-    "TARGET_CLASS_IDS",
-    "TargetReferenceSpec",
-    "TrajectoryDiagnosticsSpec",
-    "WorkflowInputSpec",
-    "class_label",
-    "check_system_capability",
-    "chua_piecewise_parameters",
     "chua_parameters",
-    "continue_integer_lure_seed",
+    "chua_piecewise_parameters",
     "equilibria_piecewise",
-    "final_integer_lure_attractor",
+    "rhs_piecewise",
+    # ── stable: systems ────────────────────────────────────────────────────
+    "ChaoticSystem",
+    "LureSystem",
+    "check_system_capability",
+    "get_system",
+    "known_workflows",
+    "list_systems",
+    "register_system",
+    "requirements_for",
+    # ── stable: basins ─────────────────────────────────────────────────────
+    "CLASS_LABELS",
+    "TARGET_CLASS_IDS",
+    "class_label",
+    "is_target_class",
+    # ── stable: io / candidates ────────────────────────────────────────────
+    "CandidateRecord",
+    "load_final_candidate_records",
+    "load_trajectory_csv",
+    # ── experimental: analysis ─────────────────────────────────────────────
+    "LyapunovResult",
+    "RobustnessCase",
+    "integer_system_lyapunov_exponents",
+    "trajectory_metrics",
+    "trajectory_metrics_for_system",
+    # ── experimental: seed_generation ──────────────────────────────────────
+    "HarmonicSeed",
     "find_harmonic_seed",
     "find_lure_harmonic_seed",
     "find_lure_omega_gain_candidates",
     "find_omega_gain_candidates",
-    "get_system",
-    "integer_lure_seed",
-    "integer_system_lyapunov_exponents",
-    "integrate_integer_lure",
-    "is_target_class",
-    "known_workflows",
-    "list_systems",
-    "load_trajectory_csv",
-    "load_final_candidate_records",
-    "register_system",
-    "requirements_for",
-    "rhs_piecewise",
-    "run_integer_lure_hiddenness_controls",
-    "trajectory_metrics",
-    "trajectory_metrics_for_system",
-    "validate_full_workflow_system",
     "validate_fractional_order",
+    # ── experimental: workflows ────────────────────────────────────────────
+    "BasinSliceSpec",
+    "DestinationClassifierSpec",
+    "FullWorkflowContract",
+    "IntegratorSpec",
+    "NumericalContract",
+    "ParameterSweepSpec",
+    "RobustnessCaseSpec",
+    "SphereControlSpec",
+    "StrictRefinementSpec",
+    "TargetReferenceSpec",
+    "TrajectoryDiagnosticsSpec",
+    "WorkflowInputSpec",
+    "continue_integer_lure_seed",
+    "final_integer_lure_attractor",
+    "integer_lure_seed",
+    "integrate_integer_lure",
+    "run_integer_lure_hiddenness_controls",
+    "validate_full_workflow_system",
 ]

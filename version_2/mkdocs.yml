@@ -12,7 +12,9 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Getting Started: getting_started.md
-  - API Reference: api_reference.md
+  - Reference:
+      - API Reference: api_reference.md
+      - API Stability Tiers: api_stability.md
   - Examples: examples.md
   - Systems: systems.md
   - Dynamical Analysis: dynamical_analysis.md

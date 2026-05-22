@@ -1,4 +1,9 @@
-"""Canonical repository paths used by examples and workflows."""
+"""Canonical repository paths used by examples and workflows.
+
+Stability: internal
+    Path constants consumed by loaders and workflows.  If the repository
+    layout changes, these constants change with it.
+"""
 
 from __future__ import annotations
 

@@ -24,7 +24,11 @@ C_SOURCE_ROOT = PACKAGE_ROOT / "native" / "csrc"
 
 
 def _shared_suffix() -> str:
-    return ".dylib" if sys.platform == "darwin" else ".so"
+    if sys.platform == "darwin":
+        return ".dylib"
+    if sys.platform == "win32":
+        return ".dll"
+    return ".so"
 
 
 @dataclass

@@ -1,4 +1,10 @@
-"""Plotting helpers for numerical-attractor workflows."""
+"""Plotting helpers for numerical-attractor workflows.
+
+Stability: experimental
+    Plot functions may gain new keyword arguments (colors, axes, figure size)
+    as the gallery grows.  Existing call signatures will not be broken without
+    notice.
+"""
 
 from .dynamics import (
     plot_integer_hiddenness_controls,

@@ -1,4 +1,9 @@
-"""Candidate records and loaders for final-project analyses."""
+"""Candidate records and loaders for final-project analyses.
+
+Stability: stable
+    :class:`CandidateRecord` and :func:`load_final_candidate_records` are the
+    primary user-facing API for loading reference outputs.  Signatures are fixed.
+"""
 
 from __future__ import annotations
 
@@ -23,13 +28,41 @@ def _float(value: Any, default: float = float("nan")) -> float:
 class CandidateRecord:
     """Numerical-attractor candidate used by verification workflows.
 
-    Purpose:
-        Keep seed metadata, describing-function parameters, and continuation
-        reference points in one typed record.
+    Attributes
+    ----------
+    candidate_id : str
+        Unique identifier of the form ``'branch_0_mu_4p00000_theta_0p00000'``
+        or ``'lure_biased_q_0p99980_rank_0001'``.
+    route : str
+        Seed-generation method: ``'Machado_FDF'`` or ``'Lure_rank_0001'``.
+    q : float
+        Caputo fractional order used during seed search.
+    robust_start : np.ndarray, shape (3,)
+        State vector from the continuation run used as the robustness seed.
+    seed : np.ndarray, shape (3,)
+        Harmonic-balance seed state that initiated the continuation.
+    mu : float or None
+        Machado exponent; ``None`` for classical-DF candidates.
+    theta : float or None
+        Phase angle from the Machado DF solution; ``None`` if not applicable.
+    A : float or None
+        Oscillation amplitude from the describing-function solution.
+    sigma0 : float or None
+        Bias offset for biased-DF candidates; ``None`` otherwise.
+    omega : float or None
+        Angular frequency from the DF scan.
+    rho_H : float or None
+        Harmonic balance residual norm.
+    residual_abs : float or None
+        Absolute DF equation residual.
+    source : str, default ''
+        Filesystem path to the CSV/JSON file this record was loaded from.
 
-    Validity warning:
-        A record is not evidence of hiddenness.  Hiddenness and robustness must
-        be established by separate numerical tests.
+    Notes
+    -----
+    A record only captures seed metadata and one continuation endpoint.
+    Hiddenness and robustness must be established by separate numerical
+    tests using the workflow modules.
     """
 
     candidate_id: str
@@ -74,7 +107,27 @@ def load_lure_survivor(
     source_dir: str | Path = OUTPUTS / "lure_biased_multiparam_q09998_20260515_195444",
     candidate_id: str = "lure_biased_q_0p99980_rank_0001",
 ) -> CandidateRecord:
-    """Load a Lur'e continuation survivor from the final q=0.9998 run."""
+    """Load a Lur'e continuation survivor from the final q=0.9998 run.
+
+    Parameters
+    ----------
+    source_dir : str or Path
+        Directory produced by the biased-Lur'e multi-parameter sweep.
+        Defaults to the project-canonical output folder.
+    candidate_id : str, default 'lure_biased_q_0p99980_rank_0001'
+        Key matching ``candidate_id`` in ``biased_lure_candidates.csv``
+        and ``continuation_survivors.csv``.
+
+    Returns
+    -------
+    record : CandidateRecord
+        Frozen record with seed, robust-start, and DF parameters.
+
+    Raises
+    ------
+    FileNotFoundError
+        If *candidate_id* is absent from the CSV files in *source_dir*.
+    """
 
     root = Path(source_dir)
     candidates = read_csv_rows(root / "biased_lure_candidates.csv")
@@ -102,7 +155,26 @@ def load_lure_survivor(
 
 
 def load_machado_candidate(candidate_id: str) -> CandidateRecord:
-    """Load one Machado/FDF candidate from final targeted verification outputs."""
+    """Load one Machado/FDF candidate from the final targeted verification outputs.
+
+    Parameters
+    ----------
+    candidate_id : str
+        Key of the form ``'branch_0_mu_4p00000_theta_0p00000'`` matching
+        entries in ``machado_targeted_summary.json`` and
+        ``corrida1_summary.json``.
+
+    Returns
+    -------
+    record : CandidateRecord
+        Frozen record with Machado exponent, phase, amplitude, and
+        robust-start coordinates.
+
+    Raises
+    ------
+    FileNotFoundError
+        If *candidate_id* is absent from the targeted verification JSON.
+    """
 
     targeted_path = OUTPUTS / "extended_search" / "machado_targeted_verification_lm10_20260515_182252" / "machado_targeted_summary.json"
     corrida1_path = OUTPUTS / "extended_search" / "corrida1" / "corrida1_summary.json"
@@ -134,7 +206,33 @@ def load_machado_candidate(candidate_id: str) -> CandidateRecord:
 def load_final_candidate_records(
     source_dir: str | Path = OUTPUTS / "lure_biased_multiparam_q09998_20260515_195444",
 ) -> List[CandidateRecord]:
-    """Return the three final candidates used in comparative analyses."""
+    """Return the three final candidates used in comparative analyses.
+
+    Loads two Machado/FDF candidates and one biased-Lur'e survivor from the
+    project canonical output directories.
+
+    Parameters
+    ----------
+    source_dir : str or Path
+        Root directory of the biased-Lur'e multi-parameter sweep.
+        Defaults to the project-canonical folder.
+
+    Returns
+    -------
+    records : list[CandidateRecord]
+        Three :class:`CandidateRecord` objects in the following order:
+
+        1. Machado branch 0, μ=4.0, θ=0.
+        2. Machado branch 0, μ=2.0, θ≈3.927.
+        3. Lur'e biased survivor rank 0001.
+
+    Examples
+    --------
+    >>> from hidden_attractors.candidates import load_final_candidate_records
+    >>> records = load_final_candidate_records()  # doctest: +SKIP
+    >>> len(records)
+    3
+    """
 
     return [
         load_machado_candidate("branch_0_mu_4p00000_theta_0p00000"),

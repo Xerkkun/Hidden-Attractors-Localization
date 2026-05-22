@@ -1,4 +1,10 @@
-"""Dynamical-system definitions."""
+"""Dynamical-system definitions.
+
+Stability: stable
+    Chua parameters, vector fields, and equilibria.  Signatures and return
+    types are fixed; breaking changes require a version bump and a deprecation
+    cycle.
+"""
 
 from .chua import (
     ChuaParameters,

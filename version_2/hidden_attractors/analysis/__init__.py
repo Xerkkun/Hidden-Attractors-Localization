@@ -1,4 +1,10 @@
-"""Trajectory diagnostics and hiddenness-support checks."""
+"""Trajectory diagnostics and hiddenness-support checks.
+
+Stability: experimental
+    Lyapunov, spectral, bifurcation, and trajectory metrics are useful and
+    tested.  New diagnostic parameters may be added; function signatures may
+    gain optional keyword arguments without a breaking-change warning.
+"""
 
 from .bifurcation import (
     BifurcationPoint,
