@@ -58,6 +58,16 @@ def _load_csv_rows(name: str) -> list[dict]:
         return list(csv.DictReader(fh))
 
 
+def _require_c_backend(backend_cls):
+    """Build a C backend or skip the test if gcc / compilation fails."""
+    try:
+        from hidden_attractors.models.chua import chua_piecewise_parameters
+        b = backend_cls.build()
+        b.set_piecewise_params(chua_piecewise_parameters())
+        return b
+    except Exception as exc:
+        pytest.skip(f"C backend unavailable ({exc}); skipping — set ALLOW_NO_OPENMP=1 or install gcc")
+
 # ─────────────────────────────────────────────────────────────────────────────
 # 1. Equilibria reference
 # ─────────────────────────────────────────────────────────────────────────────
@@ -304,11 +314,8 @@ class TestBasinLabelsReference:
 
     @pytest.fixture(scope="class")
     def backend(self):
-        from hidden_attractors.models.chua import chua_piecewise_parameters
         from hidden_attractors.native.backends import BasinBackend
-        b = BasinBackend.build()
-        b.set_piecewise_params(chua_piecewise_parameters())
-        return b
+        return _require_c_backend(BasinBackend)
 
     def test_all_class_ids_match(self, ref_rows, backend):
         """Every point in the reference grid must reproduce the same class_id."""

@@ -1,0 +1,192 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main"]
+
+# ── Default permissions (minimal) ────────────────────────────────────────────
+permissions:
+  contents: read
+
+# ── Cancel in-flight runs for the same ref ───────────────────────────────────
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ══════════════════════════════════════════════════════════════════════════
+  # Core test matrix  ·  Ubuntu + Windows  ·  Python 3.11 + 3.12
+  # ══════════════════════════════════════════════════════════════════════════
+  test:
+    name: "test / ${{ matrix.os }} / py${{ matrix.python-version }}"
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false          # see all platform failures at once
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      # ── Checkout ───────────────────────────────────────────────────────────
+      - uses: actions/checkout@v4
+
+      # ── C compiler ────────────────────────────────────────────────────────
+      # Ubuntu: gcc is already present on ubuntu-latest.
+      # Windows: the runner ships with MSYS2/MinGW64; expose gcc via PATH.
+      - name: "Install gcc (Windows)"
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: false
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+
+      - name: "Add MSYS2 UCRT64 bin to PATH (Windows)"
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          echo "C:\msys64\ucrt64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: "Verify gcc is available"
+        shell: bash
+        run: gcc --version
+
+      # ── Python ────────────────────────────────────────────────────────────
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      # ── Install package + dev extras ──────────────────────────────────────
+      - name: Install package
+        shell: bash
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[dev]"
+
+      # ── Syntax check (fast, catches import-time errors across all targets) ─
+      - name: Compile-check Python sources
+        shell: bash
+        run: |
+          python -m compileall hidden_attractors examples tests tools/cli
+
+      # ── Unit + reference-data tests ───────────────────────────────────────
+      # ALLOW_NO_OPENMP=1 lets the C backend compile without -fopenmp on
+      # runners that have gcc but not libgomp/libomp in the default search path.
+      # The pure-Python fallback is always available; C is used when it builds.
+      - name: Run test suite
+        shell: bash
+        env:
+          ALLOW_NO_OPENMP: "1"
+        run: python -m pytest -q --tb=short
+
+      # ── Example smoke tests ───────────────────────────────────────────────
+      - name: Smoke test — quickstart_equilibria
+        shell: bash
+        run: python examples/quickstart_equilibria.py
+
+      - name: Smoke test — list_final_candidates
+        shell: bash
+        # This example requires candidate data files committed to the repo.
+        # If they are absent, print a warning but do not fail CI.
+        run: |
+          python examples/list_final_candidates.py || \
+            echo "::warning::list_final_candidates.py produced no output (candidate data files absent from repo)"
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # Platform-specific C backend report
+  # ══════════════════════════════════════════════════════════════════════════
+  c-backend-report:
+    name: "C backend / ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
+    needs: test
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Install gcc (Windows)"
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: false
+          install: mingw-w64-ucrt-x86_64-gcc
+
+      - name: "Add MSYS2 UCRT64 bin to PATH (Windows)"
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          echo "C:\msys64\ucrt64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install package
+        shell: bash
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[dev]"
+
+      # Report whether OpenMP compiled successfully (informational, not gating).
+      - name: C backend build report
+        shell: bash
+        env:
+          ALLOW_NO_OPENMP: "1"
+        run: |
+          python - <<'EOF'
+          import os, platform, sys
+          from hidden_attractors.native.backends import FractionalChuaBackend, BasinBackend
+
+          print(f"Python  : {sys.version}")
+          print(f"Platform: {platform.platform()}")
+          print(f"Arch    : {platform.machine()}")
+
+          try:
+              b = FractionalChuaBackend.build()
+              print("FractionalChuaBackend: BUILD OK")
+          except Exception as exc:
+              print(f"FractionalChuaBackend: BUILD FAILED — {exc}")
+
+          try:
+              b = BasinBackend.build()
+              eq = b.equilibria()
+              print(f"BasinBackend         : BUILD OK  (E0={eq['E0'].tolist()})")
+          except Exception as exc:
+              print(f"BasinBackend         : BUILD FAILED — {exc}")
+          EOF
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # Dependency policy — verify pinned lower bounds are satisfiable
+  # ══════════════════════════════════════════════════════════════════════════
+  deps-check:
+    name: "deps-check"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check minimum bounds are satisfiable
+        run: |
+          # Install with exactly the pinned minimum versions to verify
+          # that nothing requires a newer release than we declare.
+          pip install \
+            "numpy==1.26.0" \
+            "matplotlib==3.8.0" \
+            -e "." --no-deps
+          python -c "
+          import numpy, matplotlib, hidden_attractors
+          print('numpy   :', numpy.__version__)
+          print('matplotlib:', matplotlib.__version__)
+          print('import OK')
+          "

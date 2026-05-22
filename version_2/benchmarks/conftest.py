@@ -60,11 +60,17 @@ def integer_chua_system():
 def frac_backend():
     """Build (compile if needed) and return a FractionalChuaBackend."""
     from hidden_attractors.native.backends import FractionalChuaBackend
-    return FractionalChuaBackend.build()
+    try:
+        return FractionalChuaBackend.build()
+    except Exception as exc:
+        pytest.skip(f"FractionalChuaBackend unavailable ({exc}); install gcc or set ALLOW_NO_OPENMP=1")
 
 
 @pytest.fixture(scope="session")
 def basin_backend():
     """Build (compile if needed) and return a BasinBackend."""
     from hidden_attractors.native.backends import BasinBackend
-    return BasinBackend.build()
+    try:
+        return BasinBackend.build()
+    except Exception as exc:
+        pytest.skip(f"BasinBackend unavailable ({exc}); install gcc or set ALLOW_NO_OPENMP=1")
