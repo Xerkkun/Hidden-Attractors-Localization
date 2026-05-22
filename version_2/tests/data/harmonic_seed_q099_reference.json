@@ -1,0 +1,43 @@
+{
+  "generated_by": "hidden_attractors.seed_generation.chua.find_harmonic_seed",
+  "q": 0.99,
+  "nscan": 20000,
+  "params": {
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m0": -0.1768,
+    "m1": -1.1468,
+    "model": "piecewise"
+  },
+  "omega_gain_candidates": [
+    [2.0991692817128484, 0.2185231228923735],
+    [3.2213887603568967, 0.8320816632320952]
+  ],
+  "branch_0": {
+    "omega": 2.0991692817128484,
+    "gain": 0.2185231228923735,
+    "amplitude": 5.621822289765948,
+    "method": "classic",
+    "seed": [5.621822289765948, 0.42497324714812573, -8.06862360812761],
+    "matched_eigenvalue_re": 0.03272871882727424,
+    "matched_eigenvalue_im": 2.0834035829716524
+  },
+  "tolerances": {
+    "omega": 1e-4,
+    "gain": 1e-4,
+    "amplitude": 1e-3,
+    "seed_component": 1e-3,
+    "eigenvalue": 1e-3
+  },
+  "notes": [
+    "Harmonic seed for q=0.99, canonical piecewise Chua, branch 0 (lowest gain).",
+    "omega: angular frequency satisfying Im(W_q(i*omega)) = 0.",
+    "gain:  k = -1 / Re(W_q(i*omega)), the describing-function gain.",
+    "amplitude: A satisfying N(A) = k (piecewise saturation DF).",
+    "seed: A * Re(v * exp(i*0)) where v is the dominant eigenvector",
+    "      of (P + k*b*c^T), normalised so that c^T v = 1.",
+    "matched_eigenvalue: eigenvalue of the linearised matrix closest to (i*omega)^q.",
+    "Two candidates exist at q=0.99; branch 0 has the lower gain (more physical)."
+  ]
+}

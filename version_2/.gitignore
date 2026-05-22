@@ -51,3 +51,6 @@ artifacts/reference_runs/native/
 __codex_dir_test/
 .runtime_cache/
 .runtime_native/
+
+# pytest-benchmark baselines (platform-specific; store explicitly when needed)
+.benchmarks/

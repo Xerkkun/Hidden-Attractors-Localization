@@ -1,0 +1,25 @@
+{
+  "generated_by": "hidden_attractors.models.chua.equilibria_piecewise",
+  "params": {
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m0": -0.1768,
+    "m1": -1.1468,
+    "model": "piecewise"
+  },
+  "equilibria": {
+    "E0": [0.0, 0.0, 0.0],
+    "E+": [6.5883078865388685,  0.0028364022560936064, -6.585471484282775],
+    "E-": [-6.5883078865388685, -0.0028364022560936064,  6.585471484282775]
+  },
+  "tolerance": 1e-8,
+  "notes": [
+    "Analytically computed fixed points of the piecewise Chua ODE.",
+    "E0 is the origin (trivial equilibrium).",
+    "E+/E- are the symmetric nontrivial fixed points; they are the",
+    "attractors for initial conditions outside the hidden-attractor basin.",
+    "Verify: inserting each point into rhs_piecewise(x, params) must give",
+    "a zero vector (up to tolerance)."
+  ]
+}

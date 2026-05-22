@@ -32,6 +32,7 @@ nav:
       - Library Structure: library_structure.md
       - Lure Candidate Route: lure_candidate_route.md
       - Versioning Policy: versioning.md
+      - Dependency Policy: dependency_policy.md
       - Analysis Index: research/analysis.md
       - Physical Separation: physical_separation.md
 markdown_extensions:
