@@ -1,0 +1,35 @@
+{
+  "purpose": "Line-only web illustration generated after aligning native EFORK memory evaluation at K2 and K3 with the published reference stages.",
+  "method": "corrected native C EFORK-3 finite-memory trajectory",
+  "model": "nonsmooth",
+  "q": 0.9998,
+  "h": 0.05,
+  "memory_length": 500.0,
+  "t_final": 500.0,
+  "t_burn": 250.0,
+  "initial_state": [
+    3.039383584794975,
+    -0.241686206957716,
+    -6.873467365218827
+  ],
+  "stored_tail_rows": 5001,
+  "classification": "collapsed_toward_E0",
+  "final_distance_to_E0": 2.512153975768422e-07,
+  "tail_range_norm": 2.5046792962573495e-07,
+  "tail_ranges": {
+    "x": [
+      -2.0508043805534054e-07,
+      -1.0235255573426477e-07
+    ],
+    "y": [
+      -4.550471053992012e-07,
+      -2.2780918540940592e-07
+    ],
+    "z": [
+      -5.045707744398933e-08,
+      -2.7131261626729578e-08
+    ]
+  },
+  "figure": "efork_corrected_trajectory_lines.png",
+  "note": "This rerun is not published as an attractor unless a corrected EFORK trajectory remains bounded and nontrivial after transients."
+}

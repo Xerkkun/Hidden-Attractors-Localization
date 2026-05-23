@@ -15,7 +15,7 @@ from typing import Any, Sequence
 
 import numpy as np
 
-from ..models.chua import ChuaParameters, chua_piecewise_parameters
+from ..models.chua import ChuaParameters, chua_nonsmooth_parameters
 from ..parallel import compile_c_target
 from ..paths import NATIVE_CACHE, PACKAGE_ROOT
 
@@ -76,14 +76,19 @@ class FractionalChuaBackend:
         ]
         lib.integrate_chua_efork3.restype = ctypes.c_int
         backend = cls(lib=lib)
-        backend.set_piecewise_params(chua_piecewise_parameters())
+        backend.set_nonsmooth_params(chua_nonsmooth_parameters())
         return backend
 
-    def set_piecewise_params(self, params: ChuaParameters) -> None:
-        """Set the C backend to the piecewise Chua parameters."""
+    def set_nonsmooth_params(self, params: ChuaParameters) -> None:
+        """Set the C backend to the non-smooth Chua parameters."""
 
         self.lib.set_frac_chua_model(0)
         self.lib.set_frac_chua_params(params.alpha, params.beta, params.gamma, params.m0, params.m1)
+
+    def set_piecewise_params(self, params: ChuaParameters) -> None:
+        """Compatibility alias for :meth:`set_nonsmooth_params`."""
+
+        self.set_nonsmooth_params(params)
 
     def integrate_efork3(
         self,
@@ -161,12 +166,17 @@ class BasinBackend:
         ]
         lib.classify_basin_point.restype = ctypes.c_int
         backend = cls(lib=lib)
-        backend.set_piecewise_params(chua_piecewise_parameters())
+        backend.set_nonsmooth_params(chua_nonsmooth_parameters())
         return backend
 
-    def set_piecewise_params(self, params: ChuaParameters) -> None:
+    def set_nonsmooth_params(self, params: ChuaParameters) -> None:
         self.lib.set_chua_model(0)
         self.lib.set_chua_params(params.alpha, params.beta, params.gamma, params.m0, params.m1)
+
+    def set_piecewise_params(self, params: ChuaParameters) -> None:
+        """Compatibility alias for :meth:`set_nonsmooth_params`."""
+
+        self.set_nonsmooth_params(params)
 
     def equilibria(self) -> dict[str, np.ndarray]:
         out = np.zeros(9, dtype=np.float64)

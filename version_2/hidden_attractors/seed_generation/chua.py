@@ -33,7 +33,7 @@ from typing import Literal
 
 import numpy as np
 
-from ..models.chua import ChuaParameters, chua_piecewise_parameters, normalize_chua_model
+from ..models.chua import ChuaParameters, chua_nonsmooth_parameters, normalize_chua_model
 from .core import (
     BiasedHarmonicSeed,
     HarmonicSeed,
@@ -49,12 +49,12 @@ from .core import (
 # ── Chua Lur'e decomposition ─────────────────────────────────────────────────
 
 def chua_gain(params: ChuaParameters) -> float:
-    """Return the saturation gain ``m0 - m1`` for the piecewise Chua model.
+    """Return the saturation gain ``m0 - m1`` for the non-smooth Chua model.
 
     Parameters
     ----------
     params : ChuaParameters
-        Chua circuit parameters; must use the piecewise model.
+        Chua circuit parameters; must use the non-smooth model.
 
     Returns
     -------
@@ -110,7 +110,7 @@ def psi_sigma(sigma: float, params: ChuaParameters) -> float:
     sigma : float
         Feedback coordinate ``\u03c3 = c^T x``.
     params : ChuaParameters
-        Chua circuit parameters; selects piecewise or arctan nonlinearity.
+        Chua circuit parameters; selects non-smooth or arctan nonlinearity.
 
     Returns
     -------
@@ -197,7 +197,7 @@ def find_omega_gain_candidates(
     q : float
         Caputo fractional order.
     params : ChuaParameters or None, default None
-        Chua parameters.  Defaults to :func:`~hidden_attractors.models.chua.chua_piecewise_parameters`.
+        Chua parameters.  Defaults to :func:`~hidden_attractors.models.chua.chua_nonsmooth_parameters`.
     wmin : float, default 1e-4
         Minimum angular frequency to scan.
     wmax : float, default 10.0
@@ -228,7 +228,7 @@ def find_omega_gain_candidates(
     """
 
     q_value = validate_fractional_order(q)
-    p = params or chua_piecewise_parameters()
+    p = params or chua_nonsmooth_parameters()
     if wmin <= 0.0 or wmax <= wmin:
         raise ValueError("expected 0 < wmin < wmax.")
     if int(nscan) < 8:
@@ -285,7 +285,7 @@ def is_describing_gain_compatible(gain: float, params: ChuaParameters) -> bool:
     gain : float
         Describing-function gain ``k``.
     params : ChuaParameters
-        Chua parameters; selects the piecewise or arctan DF model.
+        Chua parameters; selects the non-smooth or arctan DF model.
 
     Returns
     -------
@@ -308,7 +308,7 @@ def describing_function(amplitude: float, params: ChuaParameters) -> float:
     amplitude : float
         Oscillation amplitude ``A > 0``.
     params : ChuaParameters
-        Selects the piecewise or arctan nonlinearity.
+        Selects the non-smooth or arctan nonlinearity.
 
     Returns
     -------
@@ -322,7 +322,7 @@ def describing_function(amplitude: float, params: ChuaParameters) -> float:
 
     Notes
     -----
-    For the piecewise model ``N(A) = k_sat`` when ``A <= 1`` (linear regime)
+    For the non-smooth model ``N(A) = k_sat`` when ``A <= 1`` (linear regime)
     and a smoothly decreasing function of ``A`` for ``A > 1``.
     For the arctan model a different closed-form is used; see
     Gelb & Vander Velde (1968).
@@ -412,7 +412,7 @@ def machado_describing_function(
     amplitude : float
         Oscillation amplitude ``A > 0``.
     params : ChuaParameters
-        Must use the piecewise Chua model.
+        Must use the non-smooth Chua model.
     mu : float
         Machado exponent (must be positive and finite).
 
@@ -425,15 +425,15 @@ def machado_describing_function(
     ------
     ValueError
         If *amplitude* or *mu* are invalid, or if *params* uses the arctan
-        model (Machado DF is piecewise-only).
+        model (Machado DF is available for the non-smooth characteristic only).
     ValueError
         If ``N(A) <= 0`` (real branch not defined).
     """
 
     exponent = float(mu)
-    if normalize_chua_model(params.model) != "piecewise":
+    if normalize_chua_model(params.model) != "nonsmooth":
         raise ValueError(
-            "Machado describing-function seeds are implemented for the piecewise model."
+            "Machado describing-function seeds are implemented for the non-smooth model."
         )
     if not np.isfinite(exponent) or exponent <= 0.0:
         raise ValueError("mu must be positive and finite.")
@@ -459,7 +459,7 @@ def solve_machado_amplitude_from_gain(
     gain : float
         Target Machado describing-function gain (must be positive).
     params : ChuaParameters
-        Must use the piecewise Chua model.
+        Must use the non-smooth Chua model.
     mu : float
         Machado exponent (positive and finite).
     amin : float, default 1.0+1e-9
@@ -477,14 +477,14 @@ def solve_machado_amplitude_from_gain(
     Raises
     ------
     RuntimeError
-        If the model is not piecewise, if no amplitude brackets the root,
+        If the model is not non-smooth, if no amplitude brackets the root,
         or if *gain* is not positive.
     """
 
     k = float(gain)
     exponent = float(mu)
-    if normalize_chua_model(params.model) != "piecewise":
-        raise RuntimeError("Machado amplitude solving applies only to the piecewise model.")
+    if normalize_chua_model(params.model) != "nonsmooth":
+        raise RuntimeError("Machado amplitude solving applies only to the non-smooth model.")
     if exponent <= 0.0 or not np.isfinite(exponent):
         raise ValueError("mu must be positive and finite.")
     if k <= 0.0:
@@ -523,7 +523,7 @@ def fourier_coefficients_psi(
     sigma0 : float
         DC bias of the feedback coordinate.
     params : ChuaParameters
-        Selects the piecewise or arctan nonlinearity.
+        Selects the non-smooth or arctan nonlinearity.
     harmonics : int, default 10
         Number of harmonics to compute (1 through *harmonics*).
     n_quad : int, default 4096
@@ -636,7 +636,7 @@ def reconstruct_biased_lure_seed(
     q : float
         Caputo fractional order.
     params : ChuaParameters or None, default None
-        Chua parameters.  Defaults to :func:`~hidden_attractors.models.chua.chua_piecewise_parameters`.
+        Chua parameters.  Defaults to :func:`~hidden_attractors.models.chua.chua_nonsmooth_parameters`.
     amplitude : float
         Oscillation amplitude ``A``.
     sigma0 : float
@@ -658,7 +658,7 @@ def reconstruct_biased_lure_seed(
     """
 
     q_value = validate_fractional_order(q)
-    p = params or chua_piecewise_parameters()
+    p = params or chua_nonsmooth_parameters()
     fourier = fourier_coefficients_psi(
         amplitude, sigma0, p, harmonics=max(1, int(harmonics)), n_quad=n_quad
     )
@@ -778,7 +778,7 @@ def find_harmonic_seed(
     q : float
         Caputo fractional order.
     params : ChuaParameters or None, default None
-        Chua parameters.  Defaults to the canonical piecewise model.
+        Chua parameters.  Defaults to the canonical non-smooth model.
     branch_index : int, default 0
         Index into the sorted ``(omega, gain)`` candidate list.
     method : {'classic', 'machado'}, default 'classic'
@@ -822,7 +822,7 @@ def find_harmonic_seed(
     True
     """
 
-    p = params or chua_piecewise_parameters()
+    p = params or chua_nonsmooth_parameters()
     pairs = find_omega_gain_candidates(
         q, p, wmin=wmin, wmax=wmax, nscan=nscan, compatible_only=(method == "classic")
     )

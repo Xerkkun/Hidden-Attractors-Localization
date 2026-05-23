@@ -37,7 +37,7 @@ def main() -> None:
     outdir = Path("outputs/examples/integer_lure_chua")
     outdir.mkdir(parents=True, exist_ok=True)
 
-    system = get_system("chua-piecewise")
+    system = get_system("chua-nonsmooth")
     seed = integer_lure_seed(system, nscan=3000, wmax=50.0)
     steps = continue_integer_lure_seed(
         system,

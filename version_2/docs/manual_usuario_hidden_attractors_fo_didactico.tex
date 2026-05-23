@@ -326,7 +326,7 @@ El campo vectorial se escribe como:
 {}^C D_t^q z &= -\beta y-\gamma z.
 \end{align}
 
-En la librería, la función \texttt{rhs\_piecewise} no integra el sistema. Solo evalúa el lado derecho:
+En la librería, la función \texttt{rhs\_nonsmooth} no integra el sistema. Solo evalúa el lado derecho:
 
 \begin{equation}
 F(X)=
@@ -362,7 +362,7 @@ $m_1$ & $-1.1468$ \\
 La función:
 
 \begin{lstlisting}[style=python]
-from hidden_attractors.models import equilibria_piecewise
+from hidden_attractors.models import equilibria_nonsmooth
 \end{lstlisting}
 
 calcula los tres equilibrios del sistema por tramos:
@@ -411,12 +411,12 @@ python examples/quickstart_equilibria.py
 Este script hace internamente:
 
 \begin{lstlisting}[style=python]
-from hidden_attractors import chua_piecewise_parameters
-from hidden_attractors.models import equilibria_piecewise, rhs_piecewise
+from hidden_attractors import chua_nonsmooth_parameters
+from hidden_attractors.models import equilibria_nonsmooth, rhs_nonsmooth
 
-params = chua_piecewise_parameters()
-for name, point in equilibria_piecewise(params).items():
-    residual_norm = norm(rhs_piecewise(point, params))
+params = chua_nonsmooth_parameters()
+for name, point in equilibria_nonsmooth(params).items():
+    residual_norm = norm(rhs_nonsmooth(point, params))
     print(name, point, residual_norm)
 \end{lstlisting}
 
@@ -1230,12 +1230,12 @@ Además de usar comandos de terminal, puedes escribir tus propios scripts.
 
 \begin{lstlisting}[style=python]
 import numpy as np
-from hidden_attractors import chua_piecewise_parameters
-from hidden_attractors.models import equilibria_piecewise, rhs_piecewise
+from hidden_attractors import chua_nonsmooth_parameters
+from hidden_attractors.models import equilibria_nonsmooth, rhs_nonsmooth
 
-params = chua_piecewise_parameters()
-for name, eq in equilibria_piecewise(params).items():
-    print(name, eq, np.linalg.norm(rhs_piecewise(eq, params)))
+params = chua_nonsmooth_parameters()
+for name, eq in equilibria_nonsmooth(params).items():
+    print(name, eq, np.linalg.norm(rhs_nonsmooth(eq, params)))
 \end{lstlisting}
 
 \subsection{Ejemplo 2: cargar candidatos}

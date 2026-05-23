@@ -1,6 +1,6 @@
 # Integer Chua `q=1` Reference
 
-The integer-order piecewise-linear Chua case is the reference system from
+The integer-order non-smooth Chua case, whose characteristic is linear by pieces, is the reference system from
 which the reusable workflow was developed. It exercises the same scientific
 chain later used for fractional systems:
 

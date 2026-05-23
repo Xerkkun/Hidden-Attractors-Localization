@@ -7,11 +7,11 @@ same registry that user-defined systems can use.
 
 ```bash
 hidden-attractors-systems
-hidden-attractors-systems --system chua-piecewise --equilibria --state 0,0,0
+hidden-attractors-systems --system chua-nonsmooth --equilibria --state 0,0,0
 ```
 
-The built-in Chua systems are `chua-piecewise` and `chua-arctan`. The Chua
-piecewise system advertises the current full workflow:
+The built-in Chua systems are `chua-nonsmooth` and `chua-arctan`. The Chua
+non-smooth system advertises the current full workflow:
 
 ```bash
 hidden-attractors-unified-chua --help
@@ -80,8 +80,8 @@ solver before exposing the workflow as stable.
 The package-level readiness checker makes this distinction explicit:
 
 ```bash
-hidden-attractors-workflow-requirements --workflow basin --system chua-piecewise
-hidden-attractors-workflow-requirements --workflow strict-refinement --system chua-piecewise
+hidden-attractors-workflow-requirements --workflow basin --system chua-nonsmooth
+hidden-attractors-workflow-requirements --workflow strict-refinement --system chua-nonsmooth
 ```
 
 If the checker reports missing `integrator`, `target-reference`, or
@@ -133,7 +133,7 @@ from hidden_attractors.workflows.integer_lure import (
     run_integer_lure_hiddenness_controls,
 )
 
-system = get_system("chua-piecewise")
+system = get_system("chua-nonsmooth")
 seed = integer_lure_seed(system)
 steps = continue_integer_lure_seed(system, seed)
 target_seed, trajectory, status = final_integer_lure_attractor(system, steps[-1].x_out)

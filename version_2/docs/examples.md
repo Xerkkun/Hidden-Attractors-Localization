@@ -8,7 +8,7 @@ Examples are intentionally small and import from `hidden_attractors`.
 python examples/quickstart_equilibria.py
 ```
 
-Purpose: verify that the piecewise Chua equilibria are zeros of the vector
+Purpose: verify that the non-smooth Chua equilibria are zeros of the vector
 field.
 
 ## List Final Candidates

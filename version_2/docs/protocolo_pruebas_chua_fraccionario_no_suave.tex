@@ -145,7 +145,7 @@ x,&|x|\leq 1,\\
 \end{cases}
 \end{equation}
 
-La librería separa el campo vectorial del contrato fraccionario. El campo \(F(X)\) se evalúa en Python mediante funciones como \codepath{rhs_piecewise}; el orden \(q\), el paso \(h\), la memoria \(L_m\), el tiempo final \(T\) y el burn-in pertenecen al integrador o workflow.
+La librería separa el campo vectorial del contrato fraccionario. El campo \(F(X)\) se evalúa en Python mediante funciones como \codepath{rhs_nonsmooth}; el orden \(q\), el paso \(h\), la memoria \(L_m\), el tiempo final \(T\) y el burn-in pertenecen al integrador o workflow.
 
 \subsection{Parámetros por defecto de la librería}
 
@@ -168,9 +168,9 @@ python examples/quickstart_equilibria.py
 O desde Python:
 
 \begin{lstlisting}
-from hidden_attractors import chua_piecewise_parameters
+from hidden_attractors import chua_nonsmooth_parameters
 
-p = chua_piecewise_parameters()
+p = chua_nonsmooth_parameters()
 print(p)
 \end{lstlisting}
 
@@ -330,15 +330,15 @@ f(x_\pm)
 \subsection{Líneas para calcularlos con la librería}
 
 \begin{lstlisting}
-from hidden_attractors import chua_piecewise_parameters
-from hidden_attractors.models import equilibria_piecewise, rhs_piecewise
+from hidden_attractors import chua_nonsmooth_parameters
+from hidden_attractors.models import equilibria_nonsmooth, rhs_nonsmooth
 import numpy as np
 
-p = chua_piecewise_parameters()
-eqs = equilibria_piecewise(p)
+p = chua_nonsmooth_parameters()
+eqs = equilibria_nonsmooth(p)
 
 for name, point in eqs.items():
-    residual = np.linalg.norm(rhs_piecewise(point, p))
+    residual = np.linalg.norm(rhs_nonsmooth(point, p))
     print(name, point, residual)
 \end{lstlisting}
 
@@ -528,7 +528,7 @@ N(A)=\frac{2M}{\pi}
 La condición armónica, usando la convención de reporte, es
 
 \begin{equation}
-1+\widehat W_q((\ii\omega)^q)N(A)=0.
+1-\widehat W_q((\ii\omega)^q)N(A)=0.
 \end{equation}
 
 Con la convenciÃ³n histÃ³rica del cÃ³digo,
@@ -919,7 +919,7 @@ donde \(j\) identifica la rama de Nyquist. La condiciÃ³n de compatibilidad usa
 Comando completo:
 
 \begin{lstlisting}
-hidden-attractors-unified-chua --run-mode machado_sweep --model piecewise --output-dir runs_machado_sweep --q 0.99 --h 0.01 --memory-length 8 --t-transient 80 --t-keep 100
+hidden-attractors-unified-chua --run-mode machado_sweep --model nonsmooth --output-dir runs_machado_sweep --q 0.99 --h 0.01 --memory-length 8 --t-transient 80 --t-keep 100
 \end{lstlisting}
 
 Salidas principales:
@@ -946,7 +946,7 @@ El modo \codepath{machado_sweep_fast} es la versiÃ³n recomendada para una prim
 Comando:
 
 \begin{lstlisting}
-hidden-attractors-unified-chua --run-mode machado_sweep_fast --model piecewise --output-dir runs_machado_sweep_fast --q 0.99 --h 0.01 --memory-length 8 --t-transient 80 --t-keep 100
+hidden-attractors-unified-chua --run-mode machado_sweep_fast --model nonsmooth --output-dir runs_machado_sweep_fast --q 0.99 --h 0.01 --memory-length 8 --t-transient 80 --t-keep 100
 \end{lstlisting}
 
 Para una prueba mÃ­nima:
@@ -1819,7 +1819,7 @@ Con la convenciÃ³n de reporte,
 \end{equation}
 El cierre de primer armÃ³nico queda
 \begin{equation}
-1+\widehat W_q((\ii\omega)^q)N(A,\sigma_0)=0.
+1-\widehat W_q((\ii\omega)^q)N(A,\sigma_0)=0.
 \end{equation}
 La convenciÃ³n histÃ³rica del cÃ³digo define
 \begin{equation}

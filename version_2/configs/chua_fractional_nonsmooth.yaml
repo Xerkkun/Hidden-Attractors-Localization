@@ -1,5 +1,5 @@
 {
-  "model": "piecewise",
+  "model": "nonsmooth",
   "params": {
     "alpha_chua": 8.4562,
     "beta": 12.0732,

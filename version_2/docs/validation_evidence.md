@@ -233,6 +233,33 @@ EFORK-3 third stage was aligned with the published ordering
 source; current continuation, Lyapunov, spectrum, basin, and hiddenness
 values come from the corrected rerun.
 
+## Fractional Non-Smooth Chua Algebra Audit
+
+The main fractional case now has a promoted algebra/Lur'e audit for
+`q=0.9998`. Its generated outputs are stored in `validation/01_algebra/` and
+`validation/02_lure_df/`; the interpretive report is
+[`fractional_chua_algebra_validation.md`](fractional_chua_algebra_validation.md).
+
+| Check | Result |
+|---|---|
+| Equilibria | MATLAB and Python reproduce `E0` and the symmetric outer pair at `x = +/-6.588307886539`. |
+| Regional stability | Matignon classifies `E0` as stable and `E+`, `E-` as unstable. |
+| Harmonic branches | MATLAB and Python reproduce two branches: `(omega, k) = (2.040286051079, 0.210022792962)` and `(3.244926730975, 0.956945404928)`. |
+| Transfer convention | `W_code = -W_report`; therefore `1 + k W_code = 0` and `1 - k W_report = 0` are the same check. |
+| Symbolic source | The supplied Wolfram file verifies the symbolic identities after its protected identifier `Tr` is renamed. |
+
+Danca (2017), Section 3.3, is the direct published reference for this exact
+non-smooth model, parameter set, order, and neighborhood-based hiddenness
+experiment. Petras (2008) confirms the fractional PWL Chua model family and
+physical derivation but uses different parameters and orders. Sene (2021)
+supports the reporting methodology for fractional Chua stability and
+dynamical diagnostics, but its model omits the `-gamma z` term; it is not a
+numerical reference for Danca's case.
+
+Only algebra and Lur'e/DF seed generation are marked complete here. Solver
+convergence, independent integration, dynamic diagnostics, and hiddenness
+controls remain separate required stages.
+
 The numerical-method benchmark is stored separately from any chaotic-system
 claim:
 

@@ -11,15 +11,17 @@ from hidden_attractors.systems import ChaoticSystem, get_system, list_systems, r
 
 
 def test_builtin_chua_system_is_registered() -> None:
-    assert "chua-piecewise" in list_systems()
+    assert "chua-nonsmooth" in list_systems()
+    assert "chua-piecewise" not in list_systems()
 
-    system = get_system("chua-piecewise")
+    system = get_system("chua-nonsmooth")
     rhs = system.evaluate([0.0, 0.0, 0.0])
     equilibria = system.equilibrium_points()
 
     assert rhs.shape == (3,)
     assert set(equilibria) == {"E0", "E+", "E-"}
     assert "full" in system.workflows
+    assert get_system("chua-piecewise") is system
 
 
 def test_user_system_can_be_registered() -> None:

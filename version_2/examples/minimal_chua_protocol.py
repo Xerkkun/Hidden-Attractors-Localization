@@ -30,7 +30,7 @@ def parse_args() -> argparse.Namespace:
         default=OUTPUTS / "examples" / f"minimal_chua_protocol_{timestamp()}",
         help="Directory where the protocol contract and workflow outputs are written.",
     )
-    parser.add_argument("--model", choices=["piecewise", "arctan"], default="piecewise")
+    parser.add_argument("--model", choices=["nonsmooth", "arctan"], default="nonsmooth")
     parser.add_argument("--q", type=float, default=0.9998)
     parser.add_argument("--h", type=float, default=0.02)
     parser.add_argument("--memory-length", type=float, default=40.0)

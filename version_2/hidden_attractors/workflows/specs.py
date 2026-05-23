@@ -399,9 +399,9 @@ def example_chua_fractional_spec() -> WorkflowInputSpec:
     """Return a minimal example spec for documentation and tests."""
 
     return WorkflowInputSpec(
-        system_name="chua-piecewise",
+        system_name="chua-nonsmooth",
         dimension=3,
-        parameters={"model": "piecewise"},
+        parameters={"model": "nonsmooth"},
         integrator=IntegratorSpec(
             implementation="hidden_attractors.native.FractionalChuaBackend.integrate_efork3",
             order_kind="caputo",

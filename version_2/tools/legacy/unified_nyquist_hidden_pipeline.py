@@ -173,7 +173,7 @@ _bootstrap_cli_options_into_env(sys.argv[1:])
 #   HIDDEN_ATTRACTORS_OUTPUT_DIR=C:\Users\moren\Desktop\mis_corridas
 #
 # Estructura usada:
-#   RUNS_BASE_DIR / chua_piecewise / ...
+#   RUNS_BASE_DIR / chua_nonsmooth / ...
 #   RUNS_BASE_DIR / chua_arctan    / ...
 RUNS_BASE_DIR_DEFAULT = ROOT
 RUNS_MODEL_SUBDIR_ENABLED = True
@@ -182,30 +182,31 @@ OUTPUT_ROOT_SOURCE = "unresolved"
 
 
 def normalize_chua_model(raw: Any) -> str:
-    text = str(raw or "piecewise").strip().lower().replace("-", "_")
+    text = str(raw or "nonsmooth").strip().lower().replace("-", "_")
     aliases = {
-        "pwl": "piecewise",
-        "nonsmooth": "piecewise",
-        "non_smooth": "piecewise",
-        "no_suave": "piecewise",
-        "tramos": "piecewise",
-        "piecewise_linear": "piecewise",
+        "piecewise": "nonsmooth",
+        "pwl": "nonsmooth",
+        "nonsmooth": "nonsmooth",
+        "non_smooth": "nonsmooth",
+        "no_suave": "nonsmooth",
+        "tramos": "nonsmooth",
+        "piecewise_linear": "nonsmooth",
         "atan": "arctan",
         "arc_tan": "arctan",
         "smooth": "arctan",
         "suave": "arctan",
     }
     text = aliases.get(text, text)
-    if text not in {"piecewise", "arctan"}:
-        raise ValueError("HIDDEN_ATTRACTORS_MODEL debe ser 'piecewise' o 'arctan'.")
+    if text not in {"nonsmooth", "arctan"}:
+        raise ValueError("HIDDEN_ATTRACTORS_MODEL debe ser 'nonsmooth' o 'arctan'.")
     return text
 
 
 CHUA_MODEL_KIND = normalize_chua_model(
-    os.environ.get("HIDDEN_ATTRACTORS_MODEL", os.environ.get("HIDDEN_ATTRACTORS_CHUA_MODEL", "piecewise"))
+    os.environ.get("HIDDEN_ATTRACTORS_MODEL", os.environ.get("HIDDEN_ATTRACTORS_CHUA_MODEL", "nonsmooth"))
 )
 CHUA_MODEL_SLUGS = {
-    "piecewise": "chua_piecewise",
+    "nonsmooth": "chua_nonsmooth",
     "arctan": "chua_arctan",
 }
 CHUA_OUTPUT_SLUG = CHUA_MODEL_SLUGS[CHUA_MODEL_KIND]
@@ -344,7 +345,7 @@ def write_output_layout_files(cfg: Dict[str, Any]) -> Dict[str, str]:
         lines.append(f"{name}: {path}")
     lines.extend([
         "",
-        "Regla: si una corrida es piecewise, todo queda bajo chua_piecewise; "
+        "Regla: si una corrida es no suave, todo queda bajo chua_nonsmooth; "
         "si es arctan, todo queda bajo chua_arctan.",
     ])
     txt_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -1732,7 +1733,7 @@ def pair_to_point(pair: Tuple[float, ...], qord: float, params: Dict[str, np.flo
 def chua_ic_params_from_config(cfg: Dict[str, Any]) -> Dict[str, Any]:
     p = cfg["params"]
     return {
-        "model": normalize_chua_model(cfg.get("model", {}).get("kind", "piecewise")),
+        "model": normalize_chua_model(cfg.get("model", {}).get("kind", "nonsmooth")),
         "alpha": np.float64(p["alpha_chua"]),
         "beta": np.float64(p["beta"]),
         "gamma": np.float64(p["gamma_chua"]),
@@ -1750,7 +1751,7 @@ def hidden_backend_params_from_config(cfg: Dict[str, Any]) -> Dict[str, Any]:
     # aparte como --frac_order y tambien alimenta cfg["basin"]["q"].
     p = cfg["params"]
     return {
-        "model": normalize_chua_model(cfg.get("model", {}).get("kind", "piecewise")),
+        "model": normalize_chua_model(cfg.get("model", {}).get("kind", "nonsmooth")),
         "alpha_chua": float(p["alpha_chua"]),
         "beta": float(p["beta"]),
         "gamma_chua": float(p["gamma_chua"]),
@@ -2438,7 +2439,7 @@ def load_fractional_backend(cfg: Dict[str, Any]):
 
 def configure_fractional_backend_for_case(lib: Any, cfg: Dict[str, Any]) -> None:
     p = cfg["params"]
-    model = normalize_chua_model(cfg.get("model", {}).get("kind", "piecewise"))
+    model = normalize_chua_model(cfg.get("model", {}).get("kind", "nonsmooth"))
     lib.set_frac_chua_params(float(p["alpha_chua"]), float(p["beta"]), float(p["gamma_chua"]), float(p["m0"]), float(p["m1"]))
     lib.set_frac_chua_model(1 if model == "arctan" else 0)
     lib.set_frac_chua_arctan_params(float(p.get("a1", 0.4)), float(p.get("a2", -1.5585)), float(p.get("rho", 1.0)))
@@ -2446,7 +2447,7 @@ def configure_fractional_backend_for_case(lib: Any, cfg: Dict[str, Any]) -> None
 
 
 def configure_fractional_backend_from_params(lib: Any, p: Dict[str, Any], *, workers: int = 1) -> None:
-    model = normalize_chua_model(p.get("model", "piecewise"))
+    model = normalize_chua_model(p.get("model", "nonsmooth"))
     lib.set_frac_chua_params(float(p["alpha"]), float(p["beta"]), float(p["gamma"]), float(p["m0"]), float(p["m1"]))
     lib.set_frac_chua_model(1 if model == "arctan" else 0)
     lib.set_frac_chua_arctan_params(float(p.get("a1", 0.4)), float(p.get("a2", -1.5585)), float(p.get("rho", 1.0)))
@@ -2519,7 +2520,7 @@ def effective_basin_z0(cfg: Dict[str, Any], final_state: np.ndarray) -> float:
 
 def configure_basin_library_for_case(lib: Any, cfg: Dict[str, Any]) -> None:
     p = cfg["params"]
-    model = normalize_chua_model(cfg.get("model", {}).get("kind", "piecewise"))
+    model = normalize_chua_model(cfg.get("model", {}).get("kind", "nonsmooth"))
     lib.set_chua_params(float(p["alpha_chua"]), float(p["beta"]), float(p["gamma_chua"]), float(p["m0"]), float(p["m1"]))
     if hasattr(lib, "set_chua_model"):
         lib.set_chua_model(1 if model == "arctan" else 0)
@@ -2785,7 +2786,7 @@ def arctan_equilibrium_root(p: Dict[str, float]) -> float | None:
 
 
 def chua_equilibria_for_params(p: Dict[str, float]) -> Dict[str, np.ndarray]:
-    if normalize_chua_model(p.get("model", "piecewise")) == "arctan":
+    if normalize_chua_model(p.get("model", "nonsmooth")) == "arctan":
         beta = float(p["beta"])
         gamma = float(p["gamma"])
         out = {"E0": np.array([0.0, 0.0, 0.0], dtype=float)}
@@ -2822,7 +2823,7 @@ def chua_equilibria_for_params(p: Dict[str, float]) -> Dict[str, np.ndarray]:
 
 
 def local_jacobian_at_equilibrium(p: Dict[str, float], eq: np.ndarray) -> np.ndarray:
-    if normalize_chua_model(p.get("model", "piecewise")) == "arctan":
+    if normalize_chua_model(p.get("model", "nonsmooth")) == "arctan":
         alpha = float(p["alpha"])
         beta = float(p["beta"])
         gamma = float(p["gamma"])
@@ -4803,8 +4804,8 @@ def run_describing_function_comparison(cfg: Dict[str, Any]) -> Dict[str, Any]:
     bifurcaciones para mantener aislada la comparacion de semillas.
     """
     ensure_current_chua_params(cfg)
-    if normalize_chua_model(cfg["model"]["kind"]) != "piecewise":
-        raise ValueError("df_compare/Machado esta implementado para el Chua no suave piecewise.")
+    if normalize_chua_model(cfg["model"]["kind"]) != "nonsmooth":
+        raise ValueError("df_compare/Machado esta implementado para el Chua no suave.")
 
     root = Path(cfg["df_compare"]["output_dir"])
     root.mkdir(parents=True, exist_ok=True)
@@ -4991,8 +4992,8 @@ def run_machado_sweep(cfg: Dict[str, Any]) -> Dict[str, Any]:
     Para cada semilla admisible ejecuta continuacion y prueba de ocultedad.
     """
     ensure_current_chua_params(cfg)
-    if normalize_chua_model(cfg["model"]["kind"]) != "piecewise":
-        raise ValueError("machado_sweep esta implementado exclusivamente para el Chua no suave piecewise.")
+    if normalize_chua_model(cfg["model"]["kind"]) != "nonsmooth":
+        raise ValueError("machado_sweep esta implementado exclusivamente para el Chua no suave.")
 
     run_mode = str(cfg.get("run_mode", "machado_sweep_fast"))
     sweep_key = "machado_sweep" if run_mode == "machado_sweep" else "machado_sweep_fast"

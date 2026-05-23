@@ -1,4 +1,4 @@
-model: piecewise
+model: nonsmooth
 q_values: [0.99, 0.999, 0.9998]
 
 source:
@@ -7,7 +7,8 @@ source:
     - .
     - runs
     - runs_machado_sweep_fast
-    - chua_piecewise
+    - chua_nonsmooth
+    - chua_piecewise  # Compatibility with historical run folders.
     - chua_arctan
   reproduce_if_missing: true
 

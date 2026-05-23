@@ -740,6 +740,8 @@ def efork3_integrate(rhs, x0, qord, h, Lm, t_f, history=None, return_full_histor
     gamma2 = gamma(1.0 + 2.0 * float(qord))
     gamma3 = gamma(1.0 + 3.0 * float(qord))
 
+    c2 = (1.0 / (2.0 * gamma1)) ** (1.0 / float(qord))
+    c3 = (1.0 / (4.0 * gamma1)) ** (1.0 / float(qord))
     a21 = 1.0 / (2.0 * gamma1 * gamma1)
     a31 = (gamma1**2 * gamma(2.0 * float(qord) + 1.0)
            + 2.0 * gamma(2.0 * float(qord) + 1.0)**2
@@ -788,12 +790,20 @@ def efork3_integrate(rhs, x0, qord, h, Lm, t_f, history=None, return_full_histor
         f2 = rhs(np.array([x_n + a21 * K1x,
                            y_n + a21 * K1y,
                            z_n + a21 * K1z], dtype=real_dtype))
-        K2x, K2y, K2z = ha * f2[0], ha * f2[1], ha * f2[2]
+        t2 = tn + c2 * float(h)
+        mem2_x = memory_fractional_component(n, t2, vxn, vtn, h, qord, nu) if n > 0 else real_dtype(0.0)
+        mem2_y = memory_fractional_component(n, t2, vyn, vtn, h, qord, nu) if n > 0 else real_dtype(0.0)
+        mem2_z = memory_fractional_component(n, t2, vzn, vtn, h, qord, nu) if n > 0 else real_dtype(0.0)
+        K2x, K2y, K2z = ha * (f2[0] - mem2_x), ha * (f2[1] - mem2_y), ha * (f2[2] - mem2_z)
 
         f3 = rhs(np.array([x_n + a31 * K1x + a32 * K2x,
                            y_n + a31 * K1y + a32 * K2y,
                            z_n + a31 * K1z + a32 * K2z], dtype=real_dtype))
-        K3x, K3y, K3z = ha * f3[0], ha * f3[1], ha * f3[2]
+        t3 = tn + c3 * float(h)
+        mem3_x = memory_fractional_component(n, t3, vxn, vtn, h, qord, nu) if n > 0 else real_dtype(0.0)
+        mem3_y = memory_fractional_component(n, t3, vyn, vtn, h, qord, nu) if n > 0 else real_dtype(0.0)
+        mem3_z = memory_fractional_component(n, t3, vzn, vtn, h, qord, nu) if n > 0 else real_dtype(0.0)
+        K3x, K3y, K3z = ha * (f3[0] - mem3_x), ha * (f3[1] - mem3_y), ha * (f3[2] - mem3_z)
 
         x_n1 = x_n + w1 * K1x + w2 * K2x + w3 * K3x
         y_n1 = y_n + w1 * K1y + w2 * K2y + w3 * K3y

@@ -19,7 +19,7 @@ modules.
 
 ## Features
 
-- Chua piecewise model definitions and equilibrium helpers.
+- Chua non-smooth and arctan model definitions and equilibrium helpers.
 - Final candidate loaders for the current reference outputs.
 - Geometry, spectral, phase-space, and bifurcation post-processing diagnostics.
 - Basin classification labels and plotting helpers.
@@ -87,12 +87,12 @@ compiler such as `gcc` on `PATH`; on macOS, OpenMP builds may require Homebrew
 ## Quick Start
 
 ```python
-from hidden_attractors import chua_piecewise_parameters
-from hidden_attractors.models import equilibria_piecewise, rhs_piecewise
+from hidden_attractors import chua_nonsmooth_parameters
+from hidden_attractors.models import equilibria_nonsmooth, rhs_nonsmooth
 
-params = chua_piecewise_parameters()
-for name, point in equilibria_piecewise(params).items():
-    residual = rhs_piecewise(point, params)
+params = chua_nonsmooth_parameters()
+for name, point in equilibria_nonsmooth(params).items():
+    residual = rhs_nonsmooth(point, params)
     print(name, point, residual)
 ```
 

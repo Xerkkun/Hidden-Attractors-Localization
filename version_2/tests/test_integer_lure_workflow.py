@@ -29,7 +29,7 @@ from hidden_attractors.workflows.integer_lure import (
 
 
 def test_builtin_chua_has_required_lure_form() -> None:
-    system = get_system("chua-piecewise")
+    system = get_system("chua-nonsmooth")
 
     assert system.lure is not None
     pairs = find_lure_omega_gain_candidates(1.0, system.lure, nscan=1500, wmax=50.0)
@@ -40,7 +40,7 @@ def test_builtin_chua_has_required_lure_form() -> None:
 def test_integer_lure_seed_and_short_continuation_are_reusable() -> None:
     outdir = Path("outputs/test_artifacts/integer_lure_seed")
     outdir.mkdir(parents=True, exist_ok=True)
-    system = get_system("chua-piecewise")
+    system = get_system("chua-nonsmooth")
     seed = integer_lure_seed(system, nscan=1500, wmax=50.0)
     steps = continue_integer_lure_seed(
         system,
@@ -68,7 +68,7 @@ def test_integer_lure_seed_and_short_continuation_are_reusable() -> None:
 def test_integer_hiddenness_controls_and_lyapunov_smoke() -> None:
     outdir = Path("outputs/test_artifacts/integer_lure_hiddenness")
     outdir.mkdir(parents=True, exist_ok=True)
-    system = get_system("chua-piecewise")
+    system = get_system("chua-nonsmooth")
     seed = integer_lure_seed(system, nscan=1500, wmax=50.0)
     _target_seed, trajectory, status = final_integer_lure_attractor(
         system,

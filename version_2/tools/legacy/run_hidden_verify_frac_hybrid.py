@@ -45,7 +45,7 @@ DEFAULT_MAX_WORK_UNITS = 4_000_000_000
 
 # CONFIGURACION DE CARPETAS DE CORRIDA
 # Misma regla que unified_nyquist_hidden_pipeline.py:
-#   RUNS_BASE_DIR / chua_piecewise / hidden_verify
+#   RUNS_BASE_DIR / chua_nonsmooth / hidden_verify
 #   RUNS_BASE_DIR / chua_arctan    / hidden_verify
 RUNS_BASE_DIR_DEFAULT = ROOT
 RUNS_MODEL_SUBDIR_ENABLED = True
@@ -53,30 +53,31 @@ RUNS_BASE_DIR_ENV = os.environ.get("HIDDEN_ATTRACTORS_OUTPUT_DIR")
 
 
 def normalize_chua_model(raw) -> str:
-    text = str(raw or "piecewise").strip().lower().replace("-", "_")
+    text = str(raw or "nonsmooth").strip().lower().replace("-", "_")
     aliases = {
-        "pwl": "piecewise",
-        "nonsmooth": "piecewise",
-        "non_smooth": "piecewise",
-        "no_suave": "piecewise",
-        "tramos": "piecewise",
-        "piecewise_linear": "piecewise",
+        "piecewise": "nonsmooth",
+        "pwl": "nonsmooth",
+        "nonsmooth": "nonsmooth",
+        "non_smooth": "nonsmooth",
+        "no_suave": "nonsmooth",
+        "tramos": "nonsmooth",
+        "piecewise_linear": "nonsmooth",
         "atan": "arctan",
         "arc_tan": "arctan",
         "smooth": "arctan",
         "suave": "arctan",
     }
     text = aliases.get(text, text)
-    if text not in {"piecewise", "arctan"}:
-        raise ValueError("HIDDEN_ATTRACTORS_MODEL debe ser 'piecewise' o 'arctan'.")
+    if text not in {"nonsmooth", "arctan"}:
+        raise ValueError("HIDDEN_ATTRACTORS_MODEL debe ser 'nonsmooth' o 'arctan'.")
     return text
 
 
 CHUA_MODEL_KIND = normalize_chua_model(
-    os.environ.get("HIDDEN_ATTRACTORS_MODEL", os.environ.get("HIDDEN_ATTRACTORS_CHUA_MODEL", "piecewise"))
+    os.environ.get("HIDDEN_ATTRACTORS_MODEL", os.environ.get("HIDDEN_ATTRACTORS_CHUA_MODEL", "nonsmooth"))
 )
 CHUA_MODEL_SLUGS = {
-    "piecewise": "chua_piecewise",
+    "nonsmooth": "chua_nonsmooth",
     "arctan": "chua_arctan",
 }
 CHUA_OUTPUT_SLUG = CHUA_MODEL_SLUGS[CHUA_MODEL_KIND]
@@ -136,7 +137,7 @@ DEFAULT_CONFIG_PATH = HIDDEN_VERIFY_DIR / "config_hidden_verify_frac.json"
 
 DEFAULT_CONFIG = {
     "params": {
-        "model": "piecewise",
+        "model": "nonsmooth",
         "alpha_chua": 8.4562,
         "beta": 12.0732,
         "gamma_chua": 0.0052,
@@ -207,7 +208,7 @@ class ChuaParams:
     gamma_chua: float
     m0: float
     m1: float
-    model: str = "piecewise"
+    model: str = "nonsmooth"
     a1: float = 0.4
     a2: float = -1.5585
     rho: float = 1.0
@@ -481,9 +482,9 @@ def maybe_override_target_from_pipeline(cfg: Dict) -> Dict:
             alt_needed = {"alpha", "beta", "gamma", "m0", "m1"}
             summary_model = s.get("model", {})
             if isinstance(summary_model, dict):
-                summary_model = summary_model.get("kind", "piecewise")
+                summary_model = summary_model.get("kind", "nonsmooth")
             common_extra = {
-                "model": str(params.get("model", summary_model or "piecewise")),
+                "model": str(params.get("model", summary_model or "nonsmooth")),
                 "a1": float(params.get("a1", 0.4)),
                 "a2": float(params.get("a2", -1.5585)),
                 "rho": float(params.get("rho", 1.0)),
@@ -525,7 +526,7 @@ def chua_equilibria(p: ChuaParams) -> Dict[str, np.ndarray]:
     E0 = np.array([0.0, 0.0, 0.0], dtype=float)
     A = p.m0 - p.m1
     eqs = {"E0": E0}
-    if str(getattr(p, "model", "piecewise")).strip().lower() in {"arctan", "atan", "smooth"}:
+    if str(getattr(p, "model", "nonsmooth")).strip().lower() in {"arctan", "atan", "smooth"}:
         coeff = 1.0 + p.a1 - p.gamma_chua / (p.beta + p.gamma_chua)
 
         def f(x: float) -> float:
@@ -838,7 +839,7 @@ def build_backend_command(cfg: dict):
         "--gamma_chua", str(p["gamma_chua"]),
         "--m0", str(p["m0"]),
         "--m1", str(p["m1"]),
-        "--model", str(p.get("model", "piecewise")),
+        "--model", str(p.get("model", "nonsmooth")),
         "--a1", str(p.get("a1", 0.4)),
         "--a2", str(p.get("a2", -1.5585)),
         "--rho", str(p.get("rho", 1.0)),

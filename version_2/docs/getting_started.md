@@ -3,8 +3,8 @@
 ## 1. Import the model
 
 ```python
-from hidden_attractors import chua_piecewise_parameters
-from hidden_attractors.models import equilibria_piecewise, rhs_piecewise
+from hidden_attractors import chua_nonsmooth_parameters
+from hidden_attractors.models import equilibria_nonsmooth, rhs_nonsmooth
 ```
 
 ## 2. Inspect equilibria
@@ -12,9 +12,9 @@ from hidden_attractors.models import equilibria_piecewise, rhs_piecewise
 ```python
 import numpy as np
 
-params = chua_piecewise_parameters()
-for name, point in equilibria_piecewise(params).items():
-    print(name, point, np.linalg.norm(rhs_piecewise(point, params)))
+params = chua_nonsmooth_parameters()
+for name, point in equilibria_nonsmooth(params).items():
+    print(name, point, np.linalg.norm(rhs_nonsmooth(point, params)))
 ```
 
 Equivalent command:

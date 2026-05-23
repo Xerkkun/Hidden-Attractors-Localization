@@ -249,6 +249,7 @@ class SystemRegistry:
 
 
 _REGISTRY = SystemRegistry()
+_SYSTEM_ALIASES = {"chua-piecewise": "chua-nonsmooth"}
 
 
 def register_system(system: ChaoticSystem, *, replace: bool = False) -> ChaoticSystem:
@@ -308,7 +309,8 @@ def get_system(name: str) -> ChaoticSystem:
     3
     """
 
-    return _REGISTRY.get(name)
+    key = SystemRegistry.normalize_name(name)
+    return _REGISTRY.get(_SYSTEM_ALIASES.get(key, key))
 
 
 def list_systems() -> list[str]:

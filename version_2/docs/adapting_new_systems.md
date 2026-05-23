@@ -84,7 +84,7 @@ Inspect requirements from the command line:
 ```bash
 hidden-attractors-workflow-requirements
 hidden-attractors-workflow-requirements --workflow sphere-controls
-hidden-attractors-workflow-requirements --workflow strict-refinement --system chua-piecewise
+hidden-attractors-workflow-requirements --workflow strict-refinement --system chua-nonsmooth
 hidden-attractors-workflow-requirements --example-spec
 ```
 
@@ -93,7 +93,7 @@ The same information is available in Python:
 ```python
 from hidden_attractors.systems import get_system, requirements_for, check_system_capability
 
-system = get_system("chua-piecewise")
+system = get_system("chua-nonsmooth")
 for item in requirements_for("sphere-controls"):
     print(item.key, item.add_where)
 print(check_system_capability(system, "sphere-controls").as_lines())

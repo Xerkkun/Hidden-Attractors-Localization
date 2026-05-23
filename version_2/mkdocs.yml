@@ -18,6 +18,7 @@ nav:
   - Examples: examples.md
   - Systems: systems.md
   - Integer Chua q=1 Reference: integer_chua_reference.md
+  - Fractional Chua q=0.9998 Algebra: fractional_chua_algebra_validation.md
   - Dynamical Analysis: dynamical_analysis.md
   - Validation Evidence: validation_evidence.md
   - EFORK-3 Published Validation: efork3_validation.md

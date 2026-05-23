@@ -7,7 +7,7 @@ wrappers live in `tools/cli/` and console scripts are declared in
 Registered systems can advertise their workflow commands:
 
 ```bash
-hidden-attractors-systems --system chua-piecewise
+hidden-attractors-systems --system chua-nonsmooth
 ```
 
 Reusable workflows must also declare their experiment-level inputs through a
@@ -18,7 +18,7 @@ diagnostics, parameter sweeps, and robustness cases.  See
 
 ```bash
 hidden-attractors-workflow-requirements
-hidden-attractors-workflow-requirements --workflow strict-refinement --system chua-piecewise
+hidden-attractors-workflow-requirements --workflow strict-refinement --system chua-nonsmooth
 hidden-attractors-workflow-requirements --example-spec
 ```
 

@@ -28,6 +28,7 @@ typedef struct {
 
 typedef struct {
     double g1, g2, g3;
+    double c2, c3;
     double w1, w2, w3;
     double a21, a31, a32;
     double inv_mem_factor;
@@ -71,6 +72,8 @@ static EFORK3 efork3_coeffs(double q, double h) {
     c.g1 = tgamma(1.0 + q);
     c.g2 = tgamma(1.0 + 2.0 * q);
     c.g3 = tgamma(1.0 + 3.0 * q);
+    c.c2 = pow(1.0 / (2.0 * c.g1), 1.0 / q);
+    c.c3 = pow(1.0 / (4.0 * c.g1), 1.0 / q);
     c.a21 = 1.0 / (2.0 * c.g1 * c.g1);
     c.a31 = ((c.g1 * c.g1) * c.g2 + 2.0 * (c.g2 * c.g2) - c.g3) /
             (4.0 * (c.g1 * c.g1) * (2.0 * (c.g2 * c.g2) - c.g3));
@@ -84,15 +87,14 @@ static EFORK3 efork3_coeffs(double q, double h) {
     return c;
 }
 
-static double memory_component(int k, const double *t, const double *arr, double q, double h, int nu, const EFORK3 *c) {
+static double memory_component(int k, double t_eval, const double *t, const double *arr, double q, double h, int nu, const EFORK3 *c) {
     int start = k - nu;
     if (start < 0) start = 0;
     double sum = 0.0;
-    const double tn = t[k];
     const double expo = 1.0 - q;
     for (int j = start; j < k; ++j) {
-        const double v1 = pow(tn - t[j], expo);
-        const double v2 = pow(tn - t[j + 1], expo);
+        const double v1 = pow(t_eval - t[j], expo);
+        const double v2 = pow(t_eval - t[j + 1], expo);
         sum += (arr[j + 1] - arr[j]) * (v1 - v2);
     }
     (void)h;
@@ -152,9 +154,9 @@ static int integrate_internal(
     for (int n = start_idx; n < start_idx + nsteps; ++n) {
         double mem_x = 0.0, mem_y = 0.0, mem_z = 0.0;
         if (n > 0) {
-            mem_x = memory_component(n, t, x, q, h, nu, &c);
-            mem_y = memory_component(n, t, y, q, h, nu, &c);
-            mem_z = memory_component(n, t, z, q, h, nu, &c);
+            mem_x = memory_component(n, t[n], t, x, q, h, nu, &c);
+            mem_y = memory_component(n, t[n], t, y, q, h, nu, &c);
+            mem_z = memory_component(n, t[n], t, z, q, h, nu, &c);
         }
 
         double state[3], tmp[3], f[3];
@@ -168,17 +170,25 @@ static int integrate_internal(
         tmp[1] = yn + c.a21 * k1y;
         tmp[2] = zn + c.a21 * k1z;
         rhs_epsilon(tmp, p, k, eps, f);
-        const double k2x = hq * f[0];
-        const double k2y = hq * f[1];
-        const double k2z = hq * f[2];
+        const double t2 = t[n] + c.c2 * h;
+        const double mem2x = (n > 0) ? memory_component(n, t2, t, x, q, h, nu, &c) : 0.0;
+        const double mem2y = (n > 0) ? memory_component(n, t2, t, y, q, h, nu, &c) : 0.0;
+        const double mem2z = (n > 0) ? memory_component(n, t2, t, z, q, h, nu, &c) : 0.0;
+        const double k2x = hq * (f[0] - mem2x);
+        const double k2y = hq * (f[1] - mem2y);
+        const double k2z = hq * (f[2] - mem2z);
 
         tmp[0] = xn + c.a31 * k1x + c.a32 * k2x;
         tmp[1] = yn + c.a31 * k1y + c.a32 * k2y;
         tmp[2] = zn + c.a31 * k1z + c.a32 * k2z;
         rhs_epsilon(tmp, p, k, eps, f);
-        const double k3x = hq * f[0];
-        const double k3y = hq * f[1];
-        const double k3z = hq * f[2];
+        const double t3 = t[n] + c.c3 * h;
+        const double mem3x = (n > 0) ? memory_component(n, t3, t, x, q, h, nu, &c) : 0.0;
+        const double mem3y = (n > 0) ? memory_component(n, t3, t, y, q, h, nu, &c) : 0.0;
+        const double mem3z = (n > 0) ? memory_component(n, t3, t, z, q, h, nu, &c) : 0.0;
+        const double k3x = hq * (f[0] - mem3x);
+        const double k3y = hq * (f[1] - mem3y);
+        const double k3z = hq * (f[2] - mem3z);
 
         const double xn1 = xn + c.w1 * k1x + c.w2 * k2x + c.w3 * k3x;
         const double yn1 = yn + c.w1 * k1y + c.w2 * k2y + c.w3 * k3y;

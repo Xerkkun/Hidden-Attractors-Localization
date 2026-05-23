@@ -27,9 +27,9 @@ from hidden_attractors import (
     WorkflowInputSpec,
     check_system_capability,
     chua_parameters,
-    chua_piecewise_parameters,
+    chua_nonsmooth_parameters,
     continue_integer_lure_seed,
-    equilibria_piecewise,
+    equilibria_nonsmooth,
     find_harmonic_seed,
     find_lure_harmonic_seed,
     find_lure_omega_gain_candidates,
@@ -43,7 +43,7 @@ from hidden_attractors import (
     load_final_candidate_records,
     register_system,
     requirements_for,
-    rhs_piecewise,
+    rhs_nonsmooth,
     run_integer_lure_hiddenness_controls,
     trajectory_metrics,
     trajectory_metrics_for_system,
@@ -55,9 +55,10 @@ from hidden_attractors import (
 
 - `hidden_attractors.models.ChuaParameters`
 - `hidden_attractors.models.chua_parameters`
-- `hidden_attractors.models.chua_piecewise_parameters`
-- `hidden_attractors.models.equilibria_piecewise`
-- `hidden_attractors.models.rhs_piecewise`
+- `hidden_attractors.models.chua_nonsmooth_parameters`
+- `hidden_attractors.models.equilibria_nonsmooth`
+- `hidden_attractors.models.jacobian_nonsmooth`
+- `hidden_attractors.models.rhs_nonsmooth`
 
 ## Systems
 
@@ -71,7 +72,9 @@ from hidden_attractors import (
 - `hidden_attractors.systems.check_system_capability`
 
 The system registry is the extension point for adding new chaotic systems.
-Built-ins currently include `chua-piecewise` and `chua-arctan`.
+Built-ins currently include `chua-nonsmooth` and `chua-arctan`.
+The identifier `chua-piecewise` remains accepted only when reopening historical
+scripts or result sets produced before the canonical non-smooth naming.
 `ChaoticSystem` can expose a vector field, parameters, equilibria, Jacobian,
 workflow names, and a manual `LureSystem`.  `LureSystem` is mandatory for the
 full Nyquist/DF route.

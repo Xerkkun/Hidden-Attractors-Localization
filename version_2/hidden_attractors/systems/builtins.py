@@ -6,7 +6,7 @@ from typing import Any, Mapping
 
 import numpy as np
 
-from ..models.chua import chua_parameters, equilibria_piecewise, rhs_chua
+from ..models.chua import chua_parameters, equilibria_nonsmooth, rhs_chua
 from .base import ChaoticSystem, register_system
 from .lure import LureSystem
 
@@ -42,9 +42,9 @@ def _chua_rhs(state: np.ndarray, parameters: Mapping[str, Any]) -> np.ndarray:
 
 def _chua_equilibria(parameters: Mapping[str, Any]) -> dict[str, np.ndarray]:
     params = chua_parameters(**dict(parameters))
-    if params.model != "piecewise":
+    if params.model != "nonsmooth":
         return {"E0": np.zeros(3, dtype=float)}
-    return equilibria_piecewise(params)
+    return equilibria_nonsmooth(params)
 
 
 def _chua_jacobian(state: np.ndarray, parameters: Mapping[str, Any]) -> np.ndarray:
@@ -102,8 +102,8 @@ def _chua_lure_system(parameters: Mapping[str, Any]) -> LureSystem:
         return float((2.0 * sat_gain / np.pi) * (np.arcsin(1.0 / amp) + np.sqrt(amp * amp - 1.0) / (amp * amp)))
 
     def machado_describing_function(amplitude: float, mu: float) -> float:
-        if model != "piecewise":
-            raise ValueError("The real Machado branch is defined here only for piecewise Chua with N(A) > 0.")
+        if model != "nonsmooth":
+            raise ValueError("The real Machado branch is defined here only for non-smooth Chua with N(A) > 0.")
         exponent = float(mu)
         if exponent <= 0.0 or not np.isfinite(exponent):
             raise ValueError("mu must be positive and finite.")
@@ -152,7 +152,7 @@ def _chua_lure_system(parameters: Mapping[str, Any]) -> LureSystem:
     )
 
 
-def chua_system(model: str = "piecewise") -> ChaoticSystem:
+def chua_system(model: str = "nonsmooth") -> ChaoticSystem:
     params = chua_parameters(model=model)
     return ChaoticSystem(
         name=f"chua-{params.model}",
@@ -198,5 +198,5 @@ def chua_system(model: str = "piecewise") -> ChaoticSystem:
 def register_builtin_systems() -> None:
     """Register built-in systems, replacing stale registrations if reloaded."""
 
-    register_system(chua_system("piecewise"), replace=True)
+    register_system(chua_system("nonsmooth"), replace=True)
     register_system(chua_system("arctan"), replace=True)

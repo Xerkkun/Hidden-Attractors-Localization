@@ -1,5 +1,5 @@
 # Clean q=0.9998 configuration for biased Lure multiparameter exploration.
-model: piecewise
+model: nonsmooth
 q: 0.9998
 frac_order: 0.9998
 enforce_q_consistency: true

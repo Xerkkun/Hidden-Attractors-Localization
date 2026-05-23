@@ -74,3 +74,29 @@ def test_q1_step_uses_published_k3_stage_order() -> None:
     k3 = h * rhs(state + 0.5 * k1 - 0.25 * k2)
     expected = state + (2.0 / 3.0) * k1 + (5.0 / 3.0) * k2 - (4.0 / 3.0) * k3
     assert np.allclose(efork_q1_step(rhs, state, h), expected, atol=1.0e-15, rtol=0.0)
+
+
+def test_native_fractional_backend_matches_reference_k3_history_stages() -> None:
+    from hidden_attractors.models import chua_nonsmooth_parameters, rhs_nonsmooth
+    from hidden_attractors.native.backends import FractionalChuaBackend
+
+    try:
+        backend = FractionalChuaBackend.build(output_name="chua_frac_backend_efork_stage_test")
+    except (OSError, RuntimeError) as exc:
+        pytest.skip(f"Native compiler unavailable: {exc}")
+
+    params = chua_nonsmooth_parameters()
+    state0 = np.array([0.31, -0.08, 0.12])
+    q = 0.8
+    h = 0.02
+    t_final = 0.20
+    native = backend.integrate_efork3(state0, q=q, h=h, Lm=t_final, t_final=t_final)
+    times, states = efork3_caputo_integrate(
+        lambda _time, state: rhs_nonsmooth(state, params),
+        state0,
+        alpha=q,
+        h=h,
+        t_final=t_final,
+    )
+    reference = np.column_stack((times, states))
+    assert np.allclose(native, reference, atol=2.0e-12, rtol=0.0)

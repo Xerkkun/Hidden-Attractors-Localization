@@ -27,7 +27,7 @@ class UnifiedChuaConfig:
     """Explicit numerical contract for the unified Chua workflow."""
 
     output_dir: Path | None = None
-    model: str = "piecewise"
+    model: str = "nonsmooth"
     run_mode: str = "balanced"
     q: float = 0.9998
     q_values: Sequence[float] = field(default_factory=tuple)
@@ -125,7 +125,12 @@ def make_parser() -> argparse.ArgumentParser:
 
     parser = argparse.ArgumentParser(description="Run the unified fractional Chua pipeline without PowerShell env variables.")
     parser.add_argument("--output-dir", type=Path)
-    parser.add_argument("--model", default="piecewise", choices=["piecewise", "arctan"])
+    parser.add_argument(
+        "--model",
+        default="nonsmooth",
+        choices=["nonsmooth", "arctan", "piecewise"],
+        help="Chua model. 'piecewise' is accepted only as a legacy alias for 'nonsmooth'.",
+    )
     parser.add_argument("--run-mode", default="balanced")
     parser.add_argument("--q", type=float, default=0.9998)
     parser.add_argument("--q-values", default="")
@@ -175,7 +180,7 @@ def config_from_args(args: argparse.Namespace) -> UnifiedChuaConfig:
 
     return UnifiedChuaConfig(
         output_dir=args.output_dir,
-        model=args.model,
+        model="nonsmooth" if args.model == "piecewise" else args.model,
         run_mode=args.run_mode,
         q=float(args.q),
         q_values=_parse_float_list(args.q_values),

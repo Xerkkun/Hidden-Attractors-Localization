@@ -71,16 +71,16 @@ python examples/list_final_candidates.py
 
 El caso de estudio se fija desde objetos de libreria:
 \begin{lstlisting}
-from hidden_attractors.models import chua_piecewise_parameters
+from hidden_attractors.models import chua_nonsmooth_parameters
 from hidden_attractors.seed_generation import validate_fractional_order
 
-params = chua_piecewise_parameters()
+params = chua_nonsmooth_parameters()
 q = validate_fractional_order(0.9998)
 \end{lstlisting}
 
 Comando de compatibilidad para ver la llamada completa del pipeline sin usar variables de entorno:
 \begin{lstlisting}
-hidden-attractors-unified-chua --model piecewise --q 0.9998 --print-command
+hidden-attractors-unified-chua --model nonsmooth --q 0.9998 --print-command
 \end{lstlisting}
 
 \section{Definición del sistema de Chua fraccionario no suave}
@@ -235,12 +235,12 @@ N(A)=\frac{Y_1e^{\ii\phi_1}}{A}.
 \end{equation}
 El cierre armónico queda
 \begin{equation}
-1+\widehat W_q((\ii\omega)^q)N(A)=0.
+1-\widehat W_q((\ii\omega)^q)N(A)=0.
 \end{equation}
 Separando parte imaginaria y real:
 \begin{align}
 \Im\left\{\widehat W_q((\ii\omega)^q)N(A)\right\}&=0,\\
-\Re\left\{\widehat W_q((\ii\omega)^q)N(A)\right\}&=-1.
+\Re\left\{\widehat W_q((\ii\omega)^q)N(A)\right\}&=1.
 \end{align}
 
 \subsection{Puente Weyl--Caputo}
@@ -257,7 +257,7 @@ Se buscan frecuencias \(\omega_j\) tales que
 \end{equation}
 Luego se define
 \begin{equation}
- k_j=-\frac{1}{\Re\widehat W_q((\ii\omega_j)^q)}.
+ k_j=\frac{1}{\Re\widehat W_q((\ii\omega_j)^q)}.
 \end{equation}
 Si existe \(A_j\) tal que
 \begin{equation}
@@ -375,7 +375,7 @@ Los barridos se usan antes de invertir tiempo en verificación larga.
 \begin{lstlisting}
 hidden-attractors-unified-chua ^
   --run-mode q_sweep ^
-  --model piecewise ^
+  --model nonsmooth ^
   --q-values 0.97,0.98,0.985,0.99,0.995,1.0
 \end{lstlisting}
 
@@ -392,7 +392,7 @@ Uso: detectar valores de \(q\) donde hay cruces Nyquist, semillas con buena cont
 \begin{lstlisting}
 hidden-attractors-unified-chua ^
   --run-mode df_compare ^
-  --model piecewise ^
+  --model nonsmooth ^
   --machado-mu 0.5
 \end{lstlisting}
 
@@ -408,7 +408,7 @@ Uso: comparar si la semilla clásica o una semilla Machado produce mejor continu
 \begin{lstlisting}
 hidden-attractors-unified-chua ^
   --run-mode machado_sweep_fast ^
-  --model piecewise ^
+  --model nonsmooth ^
   --output-dir runs_machado_sweep_fast
 \end{lstlisting}
 

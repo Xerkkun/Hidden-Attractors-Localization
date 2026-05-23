@@ -198,7 +198,7 @@ Danca.
 \begin{tabular}{@{}L{0.24\textwidth}L{0.33\textwidth}L{0.34\textwidth}@{}}\toprule
 Bloque & Evidencia disponible & Decision conservadora \\
 \midrule
-Pipeline no suave \codepath{chua_piecewise} &
+Pipeline no suave \codepath{chua_nonsmooth} &
 Verificacion EFORK/C con \(504\) trayectorias de detalle y \(22\) contactos
 \TARGET{} desde radios muestreados alrededor de \(E_+\) y \(E_-\). &
 \codepath{not_supported_by_sample}; hay atractor numerico, pero no se debe
@@ -296,7 +296,7 @@ ocultedad bajo el contrato probado.
 \toprule
 Candidato & Atractor observado & Pruebas lanzadas y targets & Calificacion final \\
 \midrule
-\codepath{chua_piecewise} / semilla objetivo actual &
+\codepath{chua_nonsmooth} / semilla objetivo actual &
 Si. Semilla de verificacion
 \((-4.1141,\allowbreak -0.3339,\allowbreak 7.1949)\); referencia con \(22\) puntos seccionales. &
 \(504\) trayectorias locales: \(168\) desde cada equilibrio. Total:
@@ -446,13 +446,13 @@ equilibrio.
 \toprule
 Candidato o prueba & Eq. & Radio/contrato & Lanzadas & \TARGET{} & Lectura \\
 \midrule
-\codepath{chua_piecewise} &
+\codepath{chua_nonsmooth} &
 \(E_0\) & \(10^{-5}\) a \(10^{-2}\) & 168 & 0 &
 Todas quedaron como equilibrio operacional. \\
-\codepath{chua_piecewise} &
+\codepath{chua_nonsmooth} &
 \(E_+\) & \(10^{-5}\) a \(10^{-2}\) & 168 & 12 &
 Bloqueo de ocultedad: \(4\) targets en \(r=0.003\) y \(8\) en \(r=0.01\). \\
-\codepath{chua_piecewise} &
+\codepath{chua_nonsmooth} &
 \(E_-\) & \(10^{-5}\) a \(10^{-2}\) & 168 & 10 &
 Bloqueo adicional: \(3\) targets en \(r=0.003\) y \(7\) en \(r=0.01\). \\
 Replica Danca ABM &
@@ -531,9 +531,9 @@ antes de compararlo cientificamente.
 \toprule
 Funcion & Uso documental \\
 \midrule
-\codepath{hidden_attractors.models.equilibria_piecewise} &
+\codepath{hidden_attractors.models.equilibria_nonsmooth} &
 Calcular \(E_0,E_+,E_-\) para el sistema de Chua no suave. \\
-\codepath{hidden_attractors.models.rhs_piecewise} &
+\codepath{hidden_attractors.models.rhs_nonsmooth} &
 Evaluar el campo vectorial usado por integradores Caputo/EFORK. \\
 \codepath{hidden_attractors.io.load_trajectory_csv} &
 Cargar trayectorias reales con columnas \codepath{t,x,y,z}. \\

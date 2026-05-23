@@ -13,8 +13,8 @@ import inspect
 import numpy as np
 import pytest
 
-from hidden_attractors import chua_piecewise_parameters
-from hidden_attractors.models import equilibria_piecewise, rhs_piecewise
+from hidden_attractors import chua_nonsmooth_parameters
+from hidden_attractors.models import equilibria_nonsmooth, rhs_nonsmooth
 from hidden_attractors.native.backends import C_SOURCE_ROOT
 
 
@@ -35,9 +35,9 @@ def _candidate_data_available() -> bool:
 # ── Tests ─────────────────────────────────────────────────────────────────────
 
 def test_chua_equilibria_are_vector_field_zeros() -> None:
-    params = chua_piecewise_parameters()
-    for eq in equilibria_piecewise(params).values():
-        assert np.linalg.norm(rhs_piecewise(eq, params)) < 1.0e-10
+    params = chua_nonsmooth_parameters()
+    for eq in equilibria_nonsmooth(params).values():
+        assert np.linalg.norm(rhs_nonsmooth(eq, params)) < 1.0e-10
 
 
 def test_native_c_sources_are_packaged() -> None:

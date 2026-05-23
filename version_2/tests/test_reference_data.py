@@ -17,7 +17,7 @@ results within a documented tolerance.  These tests are:
 Reference files
 ---------------
 - ``chua_piecewise_equilibria_reference.json``
-    Analytically computed fixed points of the piecewise Chua ODE.
+    Historical filename for analytically computed fixed points of non-smooth Chua.
     Tests: equilibria match to 1e-8; origin is exact; E+/E- are symmetric.
 
 - ``harmonic_seed_q099_reference.json``
@@ -61,9 +61,9 @@ def _load_csv_rows(name: str) -> list[dict]:
 def _require_c_backend(backend_cls):
     """Build a C backend or skip the test if gcc / compilation fails."""
     try:
-        from hidden_attractors.models.chua import chua_piecewise_parameters
+        from hidden_attractors.models.chua import chua_nonsmooth_parameters
         b = backend_cls.build()
-        b.set_piecewise_params(chua_piecewise_parameters())
+        b.set_nonsmooth_params(chua_nonsmooth_parameters())
         return b
     except Exception as exc:
         pytest.skip(f"C backend unavailable ({exc}); skipping — set ALLOW_NO_OPENMP=1 or install gcc")
@@ -73,7 +73,7 @@ def _require_c_backend(backend_cls):
 # ─────────────────────────────────────────────────────────────────────────────
 
 class TestEquilibriaReference:
-    """Verify equilibria_piecewise against the checked-in reference."""
+    """Verify equilibria_nonsmooth against the checked-in reference."""
 
     @pytest.fixture(scope="class")
     def ref(self):
@@ -83,10 +83,10 @@ class TestEquilibriaReference:
     def computed(self, ref):
         from hidden_attractors.models.chua import (
             ChuaParameters,
-            equilibria_piecewise,
+            equilibria_nonsmooth,
         )
         p = ChuaParameters(**ref["params"])
-        return equilibria_piecewise(p)
+        return equilibria_nonsmooth(p)
 
     def test_e0_is_origin(self, ref, computed):
         """E0 must be the zero vector."""
@@ -118,10 +118,10 @@ class TestEquilibriaReference:
 
     def test_equilibria_are_fixed_points(self, ref, computed):
         """Each equilibrium must satisfy rhs_piecewise(x, params) ≈ 0."""
-        from hidden_attractors.models.chua import ChuaParameters, rhs_piecewise
+        from hidden_attractors.models.chua import ChuaParameters, rhs_nonsmooth
         p = ChuaParameters(**ref["params"])
         for name, eq in computed.items():
-            residual = rhs_piecewise(eq, p)
+            residual = rhs_nonsmooth(eq, p)
             assert np.allclose(residual, 0.0, atol=1e-6), (
                 f"rhs({name}) = {residual} is not zero — not a fixed point"
             )
@@ -241,15 +241,15 @@ class TestTinyTrajectoryReference:
     @pytest.fixture(scope="class")
     def computed_traj(self):
         from hidden_attractors.models.chua import (
-            chua_piecewise_parameters,
-            nonlinearity_piecewise,
+            chua_nonsmooth_parameters,
+            nonlinearity_nonsmooth,
         )
         from hidden_attractors.solvers import efork_q1_integrate
 
-        p = chua_piecewise_parameters()
+        p = chua_nonsmooth_parameters()
 
         def rhs(x: np.ndarray) -> np.ndarray:
-            nl = nonlinearity_piecewise(x[0], p)
+            nl = nonlinearity_nonsmooth(x[0], p)
             return np.array([
                 p.alpha * (x[1] - x[0] - nl),
                 x[0] - x[1] + x[2],

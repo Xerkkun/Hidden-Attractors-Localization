@@ -10,9 +10,10 @@ policy.
 | Code | Purpose | Reference source |
 |---|---|---|
 | `hidden_attractors.models.chua.ChuaParameters` | Parameter container for the non-smooth fractional Chua case | M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems"; R. N. Madan and L. O. Chua, "Chaos in Chua's Circuit" |
-| `hidden_attractors.models.chua.nonlinearity_piecewise` | Piecewise-linear Chua nonlinearity | R. N. Madan and L. O. Chua, "Chaos in Chua's Circuit"; Danca's non-smooth fractional Chua example |
-| `hidden_attractors.models.chua.rhs_piecewise` | Vector field used inside Caputo/EFORK integrations | M. Caputo, "Linear Models of Dissipation whose Q is almost Frequency Independent-II"; M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems" |
-| `hidden_attractors.models.chua.equilibria_piecewise` | Equilibria of the piecewise Chua model | Chua circuit model plus the fractional stability interpretation of D. Matignon, "Stability Results for Fractional Differential Equations with Applications to Control Processing" |
+| `hidden_attractors.models.chua.nonlinearity_nonsmooth` | Non-smooth Chua characteristic, linear by pieces | R. N. Madan and L. O. Chua, "Chaos in Chua's Circuit"; Danca's non-smooth fractional Chua example |
+| `hidden_attractors.models.chua.rhs_nonsmooth` | Vector field used inside Caputo/EFORK integrations | M. Caputo, "Linear Models of Dissipation whose Q is almost Frequency Independent-II"; M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems" |
+| `hidden_attractors.models.chua.equilibria_nonsmooth` | Equilibria of the non-smooth Chua model | Chua circuit model plus the fractional stability interpretation of D. Matignon, "Stability Results for Fractional Differential Equations with Applications to Control Processing" |
+| `hidden_attractors.models.chua.jacobian_nonsmooth` | Regional Jacobian and switching-surface guard for the non-smooth model | Danca's non-smooth fractional Chua equilibria/stability table; Matignon local stability criterion |
 
 ## Seed Generation
 
@@ -22,6 +23,7 @@ policy.
 | `hidden_attractors.seed_generation.reconstruct_biased_lure_seed` | Biased Lur'e seed reconstruction from DC and first harmonic equations | Local biased describing-function contract documented in the Chua report |
 | `hidden_attractors.solvers.FractionalHistory` | EFORK-compatible finite memory window container | Local finite-memory EFORK contract; heavy integration is delegated to C backends |
 | `hidden_attractors.solvers.efork3_caputo_integrate` | Three-stage Caputo EFORK reference integrator used for manufactured-solution reproduction | F. Ghoreishi, R. Ghaffari, and N. Saad, "Fractional Order Runge-Kutta Methods," Tables 3, 4, 9, and 10; provided `ejemplo1.py` implementation archived in validation evidence |
+| `tools/validation/validate_chua_fractional_nonsmooth_algebra.py` | Generate algebra and Lur'e/DF evidence for `q=0.9998`, with MATLAB/report sign normalization | Danca (2017) for the exact case; local MATLAB/Wolfram reproductions; Petras (2008) as model-family support only |
 
 ## Trajectory Diagnostics
 

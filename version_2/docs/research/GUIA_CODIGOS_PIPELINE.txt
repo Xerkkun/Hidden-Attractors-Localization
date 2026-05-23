@@ -50,39 +50,39 @@ el usuario tenga que preparar `$env:...`.
 
 Corrida balanceada del Chua no suave:
 
-    hidden-attractors-unified-chua --model piecewise --run-mode balanced --q 0.9998
+    hidden-attractors-unified-chua --model nonsmooth --run-mode balanced --q 0.9998
 
 Corrida rapida:
 
-    hidden-attractors-unified-chua --model piecewise --run-mode fast --q 0.9998
+    hidden-attractors-unified-chua --model nonsmooth --run-mode fast --q 0.9998
 
 Solo cuencas desde el resumen previo:
 
-    hidden-attractors-unified-chua --model piecewise --run-mode basin_only --basin-grid 360x360 --basin-planes
+    hidden-attractors-unified-chua --model nonsmooth --run-mode basin_only --basin-grid 360x360 --basin-planes
 
 Sweep de q:
 
-    hidden-attractors-unified-chua --model piecewise --run-mode q_sweep --q-values 0.97,0.98,0.985,0.99,0.995,1.0
+    hidden-attractors-unified-chua --model nonsmooth --run-mode q_sweep --q-values 0.97,0.98,0.985,0.99,0.995,1.0
 
 Comparacion DF clasica contra Machado:
 
-    hidden-attractors-unified-chua --model piecewise --run-mode df_compare --machado-mu 0.5
+    hidden-attractors-unified-chua --model nonsmooth --run-mode df_compare --machado-mu 0.5
 
 Sweep Machado rapido:
 
-    hidden-attractors-unified-chua --model piecewise --run-mode machado_sweep_fast --output-dir runs_machado_sweep_fast
+    hidden-attractors-unified-chua --model nonsmooth --run-mode machado_sweep_fast --output-dir runs_machado_sweep_fast
 
 Activar PSD de Welch:
 
-    hidden-attractors-unified-chua --model piecewise --run-mode balanced --spectral --psd
+    hidden-attractors-unified-chua --model nonsmooth --run-mode balanced --spectral --psd
 
 Activar Lyapunov operacional C:
 
-    hidden-attractors-unified-chua --model piecewise --run-mode balanced --lyapunov
+    hidden-attractors-unified-chua --model nonsmooth --run-mode balanced --lyapunov
 
 Exportar series para TISEAN:
 
-    hidden-attractors-unified-chua --model piecewise --run-mode balanced --tisean
+    hidden-attractors-unified-chua --model nonsmooth --run-mode balanced --tisean
 
 Control de workers C:
 
@@ -94,7 +94,7 @@ Control de workers C:
 
 Modelo de Chua y equilibrios:
 
-    from hidden_attractors.models import chua_piecewise_parameters, equilibria_piecewise
+    from hidden_attractors.models import chua_nonsmooth_parameters, equilibria_nonsmooth
 
 Semillas por funcion descriptiva clasica o Machado:
 
@@ -210,4 +210,3 @@ estima Lyapunov o repite integraciones largas, debe llamar a C.
 Si el codigo solo arma parametros, calcula una semilla algebraica, carga CSV,
 calcula metricas de una trayectoria ya producida o genera una figura, puede
 vivir como Python puro dentro de `hidden_attractors/`.
-

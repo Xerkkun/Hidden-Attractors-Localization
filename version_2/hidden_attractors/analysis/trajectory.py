@@ -18,7 +18,7 @@ from typing import Any, Dict, Iterable, List, Tuple
 
 import numpy as np
 
-from ..models.chua import ChuaParameters, chua_piecewise_parameters, equilibria_piecewise, rhs_piecewise
+from ..models.chua import ChuaParameters, chua_nonsmooth_parameters, equilibria_nonsmooth, rhs_nonsmooth
 from ..systems.base import ChaoticSystem
 
 
@@ -437,7 +437,7 @@ def section_points(
         Maximum number of section points to return.
     params : ChuaParameters or None, default None
         Chua parameters used to evaluate the x-velocity sign.
-        Defaults to :func:`~hidden_attractors.models.chua.chua_piecewise_parameters`.
+        Defaults to :func:`~hidden_attractors.models.chua.chua_nonsmooth_parameters`.
 
     Returns
     -------
@@ -450,7 +450,7 @@ def section_points(
     chaotic attractors that cannot be compared pointwise.
     """
 
-    p = params or chua_piecewise_parameters()
+    p = params or chua_nonsmooth_parameters()
     X = np.asarray(traj, dtype=float)
     if X.ndim != 2 or X.shape[1] < 4 or X.shape[0] < 2:
         return np.empty((0, 2), dtype=float)
@@ -459,7 +459,7 @@ def section_points(
         if X[k, 0] < float(t_start):
             continue
         xp, x = X[k - 1, 1], X[k, 1]
-        if xp < 0.0 <= x and rhs_piecewise(X[k, 1:4], p)[0] > 0.0:
+        if xp < 0.0 <= x and rhs_nonsmooth(X[k, 1:4], p)[0] > 0.0:
             lam = (0.0 - xp) / ((x - xp) + 1e-300)
             y = X[k - 1, 2] + lam * (X[k, 2] - X[k - 1, 2])
             z = X[k - 1, 3] + lam * (X[k, 3] - X[k - 1, 3])
@@ -508,7 +508,7 @@ def cloud_median_distance(a: np.ndarray, b: np.ndarray) -> float:
 
 
 def min_equilibrium_distance(state: np.ndarray, params: ChuaParameters | None = None) -> float:
-    """Distance from *state* to the nearest piecewise Chua equilibrium.
+    """Distance from *state* to the nearest non-smooth Chua equilibrium.
 
     Parameters
     ----------
@@ -516,7 +516,7 @@ def min_equilibrium_distance(state: np.ndarray, params: ChuaParameters | None = 
         Query state vector.
     params : ChuaParameters or None, default None
         Chua parameters used to compute equilibria.
-        Defaults to :func:`~hidden_attractors.models.chua.chua_piecewise_parameters`.
+        Defaults to :func:`~hidden_attractors.models.chua.chua_nonsmooth_parameters`.
 
     Returns
     -------
@@ -525,7 +525,7 @@ def min_equilibrium_distance(state: np.ndarray, params: ChuaParameters | None = 
     """
 
     s = np.asarray(state, dtype=float)
-    return float(min(np.linalg.norm(s - eq) for eq in equilibria_piecewise(params).values()))
+    return float(min(np.linalg.norm(s - eq) for eq in equilibria_nonsmooth(params).values()))
 
 
 def trajectory_metrics(

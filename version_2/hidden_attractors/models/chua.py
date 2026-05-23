@@ -32,21 +32,20 @@ import numpy as np
 from .._stability import STABLE, api_tier
 
 
-def normalize_chua_model(raw: str | int | None = "piecewise") -> str:
+def normalize_chua_model(raw: str | int | None = "nonsmooth") -> str:
     """Normalize project aliases for the supported Chua nonlinearities.
 
     Parameters
     ----------
-    raw : str or int or None, default 'piecewise'
+    raw : str or int or None, default 'nonsmooth'
         Model name or integer code.  ``None`` and ``0`` map to
-        ``'piecewise'``; ``1`` maps to ``'arctan'``.  String aliases
-        ``'pwl'``, ``'nonsmooth'``, ``'atan'``, ``'smooth'`` (and their
-        Spanish variants) are accepted.
+        ``'nonsmooth'``; ``1`` maps to ``'arctan'``.  Historical aliases
+        ``'piecewise'`` and ``'pwl'`` map to ``'nonsmooth'``.
 
     Returns
     -------
     model : str
-        Canonical model name: ``'piecewise'`` or ``'arctan'``.
+        Canonical model name: ``'nonsmooth'`` or ``'arctan'``.
 
     Raises
     ------
@@ -56,33 +55,34 @@ def normalize_chua_model(raw: str | int | None = "piecewise") -> str:
     Examples
     --------
     >>> normalize_chua_model("pwl")
-    'piecewise'
+    'nonsmooth'
     >>> normalize_chua_model("atan")
     'arctan'
     >>> normalize_chua_model(None)
-    'piecewise'
+    'nonsmooth'
     """
 
     if raw is None:
-        return "piecewise"
+        return "nonsmooth"
     if not isinstance(raw, str):
-        return "arctan" if int(raw) == 1 else "piecewise"
+        return "arctan" if int(raw) == 1 else "nonsmooth"
     text = raw.strip().lower().replace("-", "_")
     aliases = {
-        "pwl": "piecewise",
-        "nonsmooth": "piecewise",
-        "non_smooth": "piecewise",
-        "no_suave": "piecewise",
-        "piecewise_linear": "piecewise",
-        "tramos": "piecewise",
+        "piecewise": "nonsmooth",
+        "pwl": "nonsmooth",
+        "nonsmooth": "nonsmooth",
+        "non_smooth": "nonsmooth",
+        "no_suave": "nonsmooth",
+        "piecewise_linear": "nonsmooth",
+        "tramos": "nonsmooth",
         "atan": "arctan",
         "arc_tan": "arctan",
         "smooth": "arctan",
         "suave": "arctan",
     }
     value = aliases.get(text, text)
-    if value not in {"piecewise", "arctan"}:
-        raise ValueError("model must be 'piecewise' or 'arctan'.")
+    if value not in {"nonsmooth", "arctan"}:
+        raise ValueError("model must be 'nonsmooth' or 'arctan'.")
     return value
 
 
@@ -93,8 +93,8 @@ class ChuaParameters:
 
     Attributes
     ----------
-    model : str, default 'piecewise'
-        Nonlinearity family: ``'piecewise'`` (PWL) or ``'arctan'`` (smooth).
+    model : str, default 'nonsmooth'
+        Nonlinearity family: ``'nonsmooth'`` or ``'arctan'``.
     alpha : float, default 8.4562
         Capacitor-ratio coefficient in the first state equation.
     beta : float, default 12.0732
@@ -102,9 +102,9 @@ class ChuaParameters:
     gamma : float, default 0.0052
         Resistive damping coefficient in the third state equation.
     m0 : float, default -0.1768
-        Inner-segment slope for the piecewise nonlinearity.
+        Inner-segment slope for the non-smooth nonlinearity.
     m1 : float, default -1.1468
-        Outer-segment slope for the piecewise nonlinearity.
+        Outer-segment slope for the non-smooth nonlinearity.
     a1 : float, default 0.4
         Linear coefficient for the arctan nonlinearity.
     a2 : float, default -1.5585
@@ -114,7 +114,7 @@ class ChuaParameters:
 
     Notes
     -----
-    The piecewise system is:
+    The non-smooth system has a piecewise-linear characteristic:
 
     .. math::
 
@@ -134,10 +134,10 @@ class ChuaParameters:
     >>> p.alpha
     8.4562
     >>> p.model
-    'piecewise'
+    'nonsmooth'
     """
 
-    model: str = "piecewise"
+    model: str = "nonsmooth"
     alpha: float = 8.4562
     beta: float = 12.0732
     gamma: float = 0.0052
@@ -160,7 +160,7 @@ class ChuaParameters:
 @api_tier(STABLE)
 def chua_parameters(
     *,
-    model: str = "piecewise",
+    model: str = "nonsmooth",
     alpha: float = 8.4562,
     beta: float = 12.0732,
     gamma: float = 0.0052,
@@ -177,7 +177,7 @@ def chua_parameters(
 
     Parameters
     ----------
-    model : str, default 'piecewise'
+    model : str, default 'nonsmooth'
         Nonlinearity family.  See :func:`normalize_chua_model` for aliases.
     alpha : float, default 8.4562
         Capacitor-ratio coefficient.
@@ -186,9 +186,9 @@ def chua_parameters(
     gamma : float, default 0.0052
         Resistive damping coefficient.
     m0 : float, default -0.1768
-        Inner-segment slope (piecewise model).
+        Inner-segment slope (non-smooth model).
     m1 : float, default -1.1468
-        Outer-segment slope (piecewise model).
+        Outer-segment slope (non-smooth model).
     a1 : float, default 0.4
         Linear coefficient (arctan model).
     a2 : float, default -1.5585
@@ -223,27 +223,27 @@ def chua_parameters(
 
 
 @api_tier(STABLE)
-def chua_piecewise_parameters() -> ChuaParameters:
-    """Return the project-default piecewise Chua parameters.
+def chua_nonsmooth_parameters() -> ChuaParameters:
+    """Return the project-default non-smooth Chua parameters.
 
     Returns
     -------
     params : ChuaParameters
-        Frozen parameter object with ``model='piecewise'`` and the
+        Frozen parameter object with ``model='nonsmooth'`` and the
         project-standard coefficients
         (α=8.4562, β=12.0732, γ=0.0052, m₀=−0.1768, m₁=−1.1468).
 
     Examples
     --------
-    >>> from hidden_attractors.models.chua import chua_piecewise_parameters
-    >>> p = chua_piecewise_parameters()
+    >>> from hidden_attractors.models.chua import chua_nonsmooth_parameters
+    >>> p = chua_nonsmooth_parameters()
     >>> p.model
-    'piecewise'
+    'nonsmooth'
     >>> p.beta
     12.0732
     """
 
-    return chua_parameters(model="piecewise")
+    return chua_parameters(model="nonsmooth")
 
 
 def chua_arctan_parameters() -> ChuaParameters:
@@ -258,8 +258,8 @@ def chua_arctan_parameters() -> ChuaParameters:
     return chua_parameters(model="arctan")
 
 
-def nonlinearity_piecewise(x: float, p: ChuaParameters) -> float:
-    """Evaluate the piecewise-linear Chua nonlinearity.
+def nonlinearity_nonsmooth(x: float, p: ChuaParameters) -> float:
+    """Evaluate the non-smooth Chua characteristic, which is linear by pieces.
 
     Parameters
     ----------
@@ -275,9 +275,9 @@ def nonlinearity_piecewise(x: float, p: ChuaParameters) -> float:
 
     Examples
     --------
-    >>> from hidden_attractors.models.chua import nonlinearity_piecewise, chua_piecewise_parameters
-    >>> p = chua_piecewise_parameters()
-    >>> nonlinearity_piecewise(0.0, p)
+    >>> from hidden_attractors.models.chua import nonlinearity_nonsmooth, chua_nonsmooth_parameters
+    >>> p = chua_nonsmooth_parameters()
+    >>> nonlinearity_nonsmooth(0.0, p)
     0.0
     """
 
@@ -323,12 +323,12 @@ def nonlinearity_chua(x: float, p: ChuaParameters) -> float:
     Returns
     -------
     value : float
-        Result of :func:`nonlinearity_arctan` or :func:`nonlinearity_piecewise`.
+        Result of :func:`nonlinearity_arctan` or :func:`nonlinearity_nonsmooth`.
     """
 
     if normalize_chua_model(p.model) == "arctan":
         return nonlinearity_arctan(x, p)
-    return nonlinearity_piecewise(x, p)
+    return nonlinearity_nonsmooth(x, p)
 
 
 def rhs_chua(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndarray:
@@ -339,7 +339,7 @@ def rhs_chua(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndarray:
     state : np.ndarray, shape (3,)
         Current state ``(x, y, z)``.
     p : ChuaParameters or None, default None
-        System coefficients.  Defaults to :func:`chua_piecewise_parameters`.
+        System coefficients.  Defaults to :func:`chua_nonsmooth_parameters`.
 
     Returns
     -------
@@ -347,7 +347,7 @@ def rhs_chua(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndarray:
         Right-hand side ``(ẋ, ẏ, ż)``.
     """
 
-    params = p or chua_piecewise_parameters()
+    params = p or chua_nonsmooth_parameters()
     x, y, z = np.asarray(state, dtype=float)
     fx = params.alpha * (y - x - nonlinearity_chua(x, params))
     fy = x - y + z
@@ -356,37 +356,37 @@ def rhs_chua(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndarray:
 
 
 @api_tier(STABLE)
-def rhs_piecewise(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndarray:
-    """Evaluate the piecewise Chua vector field for Caputo integrators.
+def rhs_nonsmooth(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndarray:
+    """Evaluate the non-smooth Chua vector field for Caputo integrators.
 
     This is the right-hand side ``F(x)`` in ``^C D_t^q x = F(x)``
-    restricted to the piecewise nonlinearity regardless of ``p.model``.
+    restricted to the non-smooth nonlinearity regardless of ``p.model``.
 
     Parameters
     ----------
     state : np.ndarray, shape (3,)
         Current state ``(x, y, z)``.
     p : ChuaParameters or None, default None
-        System coefficients.  Defaults to :func:`chua_piecewise_parameters`.
-        Non-piecewise coefficients (``a1``, ``a2``, ``rho``) are ignored.
+        System coefficients.  Defaults to :func:`chua_nonsmooth_parameters`.
+        Arctan coefficients (``a1``, ``a2``, ``rho``) are ignored.
 
     Returns
     -------
     dxdt : np.ndarray, shape (3,)
-        Right-hand side ``(ẋ, ẏ, ż)`` using the piecewise nonlinearity.
+        Right-hand side ``(ẋ, ẏ, ż)`` using the non-smooth nonlinearity.
 
     Examples
     --------
     >>> import numpy as np
-    >>> from hidden_attractors.models.chua import rhs_piecewise, chua_piecewise_parameters
-    >>> p = chua_piecewise_parameters()
-    >>> rhs_piecewise(np.array([0.0, 0.0, 0.0]), p)
+    >>> from hidden_attractors.models.chua import rhs_nonsmooth, chua_nonsmooth_parameters
+    >>> p = chua_nonsmooth_parameters()
+    >>> rhs_nonsmooth(np.array([0.0, 0.0, 0.0]), p)
     array([0., 0., 0.])
     """
 
-    params = p or chua_piecewise_parameters()
+    params = p or chua_nonsmooth_parameters()
     return rhs_chua(state, chua_parameters(
-        model="piecewise",
+        model="nonsmooth",
         alpha=params.alpha,
         beta=params.beta,
         gamma=params.gamma,
@@ -399,8 +399,47 @@ def rhs_piecewise(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndar
 
 
 @api_tier(STABLE)
-def equilibria_piecewise(p: ChuaParameters | None = None) -> Dict[str, np.ndarray]:
-    """Compute the three equilibria of the piecewise Chua model.
+def jacobian_nonsmooth(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndarray:
+    """Evaluate the regional Jacobian of the non-smooth Chua vector field.
+
+    Parameters
+    ----------
+    state : np.ndarray, shape (3,)
+        State at which the regional slope is selected.
+    p : ChuaParameters or None, default None
+        System coefficients. Defaults to :func:`chua_nonsmooth_parameters`.
+
+    Returns
+    -------
+    jacobian : np.ndarray, shape (3, 3)
+        Jacobian using ``m0`` in the inner region ``|x| < 1`` and ``m1``
+        in the outer region ``|x| > 1``.
+
+    Raises
+    ------
+    ValueError
+        If ``x`` lies on a switching surface, where the non-smooth
+        vector field does not have a unique classical Jacobian.
+    """
+
+    params = p or chua_nonsmooth_parameters()
+    x = float(np.asarray(state, dtype=float)[0])
+    if np.isclose(abs(x), 1.0, atol=1.0e-14, rtol=0.0):
+        raise ValueError("non-smooth Jacobian is undefined at x = +/-1.")
+    slope = params.m0 if abs(x) < 1.0 else params.m1
+    return np.array(
+        [
+            [-params.alpha * (1.0 + slope), params.alpha, 0.0],
+            [1.0, -1.0, 1.0],
+            [0.0, -params.beta, -params.gamma],
+        ],
+        dtype=float,
+    )
+
+
+@api_tier(STABLE)
+def equilibria_nonsmooth(p: ChuaParameters | None = None) -> Dict[str, np.ndarray]:
+    """Compute the three equilibria of the non-smooth Chua model.
 
     The origin ``E0`` is always an equilibrium.  The outer equilibria
     ``E+`` and ``E−`` exist when the denominator ``m1 − slope`` is
@@ -409,7 +448,7 @@ def equilibria_piecewise(p: ChuaParameters | None = None) -> Dict[str, np.ndarra
     Parameters
     ----------
     p : ChuaParameters or None, default None
-        System coefficients.  Defaults to :func:`chua_piecewise_parameters`.
+        System coefficients.  Defaults to :func:`chua_nonsmooth_parameters`.
 
     Returns
     -------
@@ -429,15 +468,15 @@ def equilibria_piecewise(p: ChuaParameters | None = None) -> Dict[str, np.ndarra
 
     Examples
     --------
-    >>> from hidden_attractors.models.chua import equilibria_piecewise
-    >>> eq = equilibria_piecewise()
+    >>> from hidden_attractors.models.chua import equilibria_nonsmooth
+    >>> eq = equilibria_nonsmooth()
     >>> list(eq.keys())
     ['E0', 'E+', 'E-']
     >>> eq['E0']
     array([0., 0., 0.])
     """
 
-    params = p or chua_piecewise_parameters()
+    params = p or chua_nonsmooth_parameters()
     slope = -params.beta / (params.gamma + params.beta)
     den = params.m1 - slope
     if abs(den) < 1e-15:
@@ -446,7 +485,29 @@ def equilibria_piecewise(p: ChuaParameters | None = None) -> Dict[str, np.ndarra
     x_minus = (params.m0 - params.m1) / den
 
     def eq_from_x(x: float) -> np.ndarray:
-        fx = nonlinearity_piecewise(x, params)
+        fx = nonlinearity_nonsmooth(x, params)
         return np.array([x, x + fx, fx], dtype=float)
 
     return {"E0": np.zeros(3, dtype=float), "E+": eq_from_x(x_plus), "E-": eq_from_x(x_minus)}
+
+
+# Compatibility aliases for notebooks and recorded runs created before
+# ``nonsmooth`` became the canonical public name.
+def chua_piecewise_parameters() -> ChuaParameters:
+    return chua_nonsmooth_parameters()
+
+
+def nonlinearity_piecewise(x: float, p: ChuaParameters) -> float:
+    return nonlinearity_nonsmooth(x, p)
+
+
+def rhs_piecewise(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndarray:
+    return rhs_nonsmooth(state, p)
+
+
+def jacobian_piecewise(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndarray:
+    return jacobian_nonsmooth(state, p)
+
+
+def equilibria_piecewise(p: ChuaParameters | None = None) -> Dict[str, np.ndarray]:
+    return equilibria_nonsmooth(p)

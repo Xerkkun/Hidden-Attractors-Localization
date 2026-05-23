@@ -1,0 +1,33 @@
+{
+  "validation_id": "chua_fractional_algebra_2026_05_23",
+  "repository_commit": "working_tree",
+  "package_version": "0.1.0",
+  "python_version": "3.14.3",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "main_system": "fractional nonsmooth Chua",
+  "main_parameters": {
+    "model": "nonsmooth",
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m0": -0.1768,
+    "m1": -1.1468,
+    "a1": 0.4,
+    "a2": -1.5585,
+    "rho": 1.0,
+    "q": 0.9998
+  },
+  "stages": {
+    "algebra": "01_algebra/algebra_validation_summary.json",
+    "lure_df": "02_lure_df/lure_df_validation_summary.json",
+    "integrators": "pending",
+    "candidates": "pending",
+    "dynamic_analysis": "pending",
+    "hiddenness": "pending",
+    "robustness": "pending",
+    "literature_comparison": "pending"
+  },
+  "final_report": {
+    "status": "pending_full_validation"
+  }
+}

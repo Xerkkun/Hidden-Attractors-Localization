@@ -52,7 +52,19 @@ from ._stability import (  # noqa: F401
 
 # ── Stable API ───────────────────────────────────────────────────────────────
 # models — vector fields, parameters, equilibria
-from .models.chua import ChuaParameters, chua_parameters, chua_piecewise_parameters, equilibria_piecewise, rhs_piecewise
+from .models.chua import (
+    ChuaParameters,
+    chua_nonsmooth_parameters,
+    chua_parameters,
+    equilibria_nonsmooth,
+    jacobian_nonsmooth,
+    rhs_nonsmooth,
+    # Compatibility aliases for recorded runs created with the old label.
+    chua_piecewise_parameters,
+    equilibria_piecewise,
+    jacobian_piecewise,
+    rhs_piecewise,
+)
 
 # systems — chaotic-system registry and capability checks
 from .systems import ChaoticSystem, LureSystem, get_system, list_systems, register_system
@@ -119,9 +131,10 @@ __all__ = [
     # ── stable: models ─────────────────────────────────────────────────────
     "ChuaParameters",
     "chua_parameters",
-    "chua_piecewise_parameters",
-    "equilibria_piecewise",
-    "rhs_piecewise",
+    "chua_nonsmooth_parameters",
+    "equilibria_nonsmooth",
+    "jacobian_nonsmooth",
+    "rhs_nonsmooth",
     # ── stable: systems ────────────────────────────────────────────────────
     "ChaoticSystem",
     "LureSystem",
