@@ -172,9 +172,9 @@ static int integrate_internal(
         const double k2y = hq * f[1];
         const double k2z = hq * f[2];
 
-        tmp[0] = xn + c.a31 * k2x + c.a32 * k1x;
-        tmp[1] = yn + c.a31 * k2y + c.a32 * k1y;
-        tmp[2] = zn + c.a31 * k2z + c.a32 * k1z;
+        tmp[0] = xn + c.a31 * k1x + c.a32 * k2x;
+        tmp[1] = yn + c.a31 * k1y + c.a32 * k2y;
+        tmp[2] = zn + c.a31 * k1z + c.a32 * k2z;
         rhs_epsilon(tmp, p, k, eps, f);
         const double k3x = hq * f[0];
         const double k3y = hq * f[1];

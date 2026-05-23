@@ -25,7 +25,7 @@ def efork_q1_step(rhs: Callable[[np.ndarray], np.ndarray], state: np.ndarray, h:
         raise ValueError("h must be positive.")
     k1 = h_value * np.asarray(rhs(x), dtype=float)
     k2 = h_value * np.asarray(rhs(x + EFORK_Q1_A21 * k1), dtype=float)
-    k3 = h_value * np.asarray(rhs(x + EFORK_Q1_A31 * k2 + EFORK_Q1_A32 * k1), dtype=float)
+    k3 = h_value * np.asarray(rhs(x + EFORK_Q1_A31 * k1 + EFORK_Q1_A32 * k2), dtype=float)
     out = x + EFORK_Q1_W1 * k1 + EFORK_Q1_W2 * k2 + EFORK_Q1_W3 * k3
     if out.shape != x.shape:
         raise ValueError(f"rhs returned incompatible state shape {out.shape}; expected {x.shape}.")

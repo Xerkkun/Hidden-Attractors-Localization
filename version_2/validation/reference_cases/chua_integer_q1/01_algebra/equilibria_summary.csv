@@ -1,0 +1,4 @@
+equilibrium,x,y,z,role
+E0,0.0,0.0,0.0,equilibrium_probe_center
+E+,6.588307886538868,0.0028364022560936064,-6.585471484282774,equilibrium_probe_center
+E-,-6.588307886538868,-0.0028364022560936064,6.585471484282774,equilibrium_probe_center

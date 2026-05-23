@@ -242,7 +242,7 @@ static void run_fractional_le(const double x_init[3], const Params *p, const cha
         for (int i = 0; i < D; ++i) tmp[i] = u[i] + c.a21 * hq * rhs1[i];
 
         rhs_augmented(tmp, rhs2, p);
-        for (int i = 0; i < D; ++i) tmp[i] = u[i] + c.a31 * hq * rhs2[i] + c.a32 * hq * rhs1[i];
+        for (int i = 0; i < D; ++i) tmp[i] = u[i] + c.a31 * hq * rhs1[i] + c.a32 * hq * rhs2[i];
 
         rhs_augmented(tmp, rhs3, p);
 

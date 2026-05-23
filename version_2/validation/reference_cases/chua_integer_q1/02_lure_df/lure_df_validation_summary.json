@@ -1,0 +1,28 @@
+{
+  "stage": "lure_df",
+  "status": "passed_with_matlab_and_published_comparison",
+  "checks": {
+    "selected_branch": 0,
+    "omega0": 2.039186939959001,
+    "k": 0.20986735451508398,
+    "a0": 5.856145086257356,
+    "complex_closure_residual": 9.930136612989092e-16,
+    "paper_relative_difference_percent": {
+      "omega0": 0.000640449245,
+      "k": 0.032104153996,
+      "a0": 0.024838052148
+    },
+    "matlab_absolute_difference": {
+      "omega0": 2e-16,
+      "k": 8e-17,
+      "a0": 1.4e-15
+    }
+  },
+  "files": {
+    "report": "lure_df_validation.md",
+    "results": "lure_df_results.csv",
+    "seed_summary": "chua_integer_seed_summary.json",
+    "figure": "fig01_nyquist_df.png",
+    "transfer_components_figure": "fig01c_transfer_real_imag.png"
+  }
+}

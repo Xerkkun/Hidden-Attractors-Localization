@@ -1,0 +1,66 @@
+{
+  "case": "chua_integer_q1",
+  "sources": [
+    {
+      "id": "moreno_lopez_170526",
+      "kind": "theoretical_report",
+      "title": "Localizacion de atractores ocultos en sistemas caoticos de orden fraccionario mediante funcion descriptiva y continuacion numerica",
+      "date": "2026-05-17",
+      "status": "registered_copy",
+      "integration_dependent_status": "superseded_by_corrected_efork_q1_rerun",
+      "sha256": "4011A7B87D4A45290B64087B60913B0F6EBEC57E42C2BCBB6A77957B8BEEFF55",
+      "file": "sources/reporte_teorico_chua_entero_170526.pdf"
+    },
+    {
+      "id": "matlab_verifica_chua_entero",
+      "kind": "external_tool_source",
+      "tool": "MATLAB",
+      "detected_version": "R2025b",
+      "status": "locally_executed",
+      "sha256": "52DFBDBE5050EC4F6560A800B323433C3E53564840A65CADEC80546FAE951DEE",
+      "file": "sources/verifica_chua_entero.m",
+      "output": "sources/matlab_run/matlab_validation_output.txt",
+      "recorded_results": {
+        "omega0": 2.0391869399590008,
+        "k": 0.2098673545150839,
+        "a0": 5.8561450862573574,
+        "phi_a0": -1.275e-16,
+        "transfer_error": 4.721e-15,
+        "similarity_error_frobenius": 1.804e-14
+      }
+    },
+    {
+      "id": "guan_xie_2025",
+      "kind": "literature",
+      "title": "A review on methods for localization of hidden attractors",
+      "journal": "Nonlinear Dynamics",
+      "volume": 113,
+      "pages": "22223-22255",
+      "year": 2025,
+      "doi": "10.1007/s11071-025-11327-5",
+      "status": "registered_published_comparison",
+      "scope": "Example 6, PDF page 14: displayed integer-Chua values omega0=2.0392, k=0.2098, a0=5.8576, and X0=(5.8576, 0.3694, -8.3686).",
+      "comparison_file": "paper_numeric_comparison.csv"
+    },
+    {
+      "id": "wolfram_integer_chua_symbolic",
+      "kind": "external_tool_source",
+      "tool": "Wolfram Language via wolframscript",
+      "status": "locally_executed_symbolic_only",
+      "sha256": "64E4539CF443460E25FD81FFCB72BCA2CD227434F0F17CFA3AF0E0255E1AE939",
+      "file": "sources/chua_entero_algebraico_sin_numericos.wl",
+      "output": "sources/wolfram_run/wolfram_symbolic_output.txt",
+      "scope": "Symbolic derivation without numerical parameter evaluation."
+    },
+    {
+      "id": "ghoreishi_ghaffari_saad_2023_efork3",
+      "kind": "numerical_method_reference",
+      "title": "Fractional Order Runge-Kutta Methods",
+      "journal": "Fractal and Fractional",
+      "year": 2023,
+      "status": "reproduced_in_separate_reference_case",
+      "scope": "Three-stage EFORK Tables 3, 4, 9, and 10; validates the corrected K3 stage ordering.",
+      "evidence": "../../efork3_ghoreishi_ghaffari/03_integrators/efork3_validation_summary.json"
+    }
+  ]
+}

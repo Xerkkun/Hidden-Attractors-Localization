@@ -15,7 +15,13 @@ from ..analysis.bifurcation import BifurcationPoint, observable_column
 from ..analysis.lyapunov import LyapunovResult
 from ..analysis.spectral import SpectrumResult, trajectory_component_spectra
 from ..analysis.trajectory import sample_rows
-from ..seed_generation import HarmonicSeed, lure_describing_function, lure_machado_describing_function, lure_transfer_function
+from ..seed_generation import (
+    HarmonicSeed,
+    find_lure_omega_gain_candidates,
+    lure_describing_function,
+    lure_machado_describing_function,
+    lure_transfer_function,
+)
 from ..systems.lure import LureSystem
 from ..workflows.integer_lure import IntegerHiddennessProbe, IntegerLureContinuationStep
 
@@ -191,6 +197,68 @@ def plot_lure_nyquist_describing_function(
     ax.set_ylabel(r"Im$(W_q(i\omega))$")
     ax.set_title(title)
     ax.legend(loc="best", fontsize=8)
+    fig.tight_layout()
+    fig.savefig(path, dpi=220)
+    plt.close(fig)
+    return str(path)
+
+
+def plot_lure_transfer_components(
+    system: LureSystem,
+    seed: HarmonicSeed,
+    output_path: str | Path,
+    *,
+    q: float = 1.0,
+    wmin: float = 1.0e-4,
+    wmax: float = 10.2,
+    nscan: int = 5000,
+    title: str = "Lur'e transfer-function closure",
+) -> str:
+    """Plot real and imaginary transfer-function closure conditions.
+
+    The two panels expose the scalar checks used to choose the harmonic seed:
+    ``Re(W_q(i omega_0)) = -1/k`` and ``Im(W_q(i omega_0)) = 0``.
+    """
+
+    path = _output_path(output_path)
+    omega = np.linspace(float(wmin), float(wmax), int(nscan))
+    wvals = np.array([lure_transfer_function(float(w), q, system) for w in omega], dtype=complex)
+    w0 = lure_transfer_function(seed.omega, q, system)
+    pairs = find_lure_omega_gain_candidates(
+        q,
+        system,
+        wmin=wmin,
+        wmax=wmax,
+        nscan=nscan,
+        compatible_only=False,
+    )
+    alternate_roots = [float(root) for root, _gain in pairs if not np.isclose(root, seed.omega)]
+
+    fig, axes = plt.subplots(2, 1, figsize=(9.4, 7.2), sharex=True)
+    fig.suptitle(title)
+
+    axes[0].plot(omega, np.real(wvals), lw=1.6, color="#2563eb", label=r"Re$(W_q(i\omega))$")
+    axes[0].axhline(-1.0 / seed.gain, color="#ef4444", ls="--", lw=1.15, label=r"$-1/k$")
+    axes[0].scatter([seed.omega], [np.real(w0)], s=48, facecolors="white", edgecolors="#ef4444", linewidths=1.4, zorder=4, label="selected closure")
+    axes[0].set_ylabel(r"Re$(W_q(i\omega))$")
+    axes[0].set_title("Real component")
+    axes[0].legend(loc="best", fontsize=8)
+
+    axes[1].plot(omega, np.imag(wvals), lw=1.6, color="#2563eb", label=r"Im$(W_q(i\omega))$")
+    axes[1].axhline(0.0, color="#ef4444", ls="--", lw=1.15, label="zero-crossing condition")
+    axes[1].scatter([seed.omega], [np.imag(w0)], s=48, facecolors="white", edgecolors="#ef4444", linewidths=1.4, zorder=4, label="selected root")
+    axes[1].set_xlabel(r"$\omega$ (rad/s)")
+    axes[1].set_ylabel(r"Im$(W_q(i\omega))$")
+    axes[1].set_title("Imaginary component")
+
+    for ax in axes:
+        ax.axvline(seed.omega, color="#374151", ls=":", lw=0.9)
+        for index, root in enumerate(alternate_roots):
+            label = "alternate root" if index == 0 else None
+            ax.axvline(root, color="#9ca3af", ls=":", lw=0.8, label=label)
+        ax.grid(True, color="#e5e7eb", lw=0.8)
+    axes[1].legend(loc="best", fontsize=8)
+
     fig.tight_layout()
     fig.savefig(path, dpi=220)
     plt.close(fig)

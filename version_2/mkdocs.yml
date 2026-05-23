@@ -17,8 +17,10 @@ nav:
       - API Stability Tiers: api_stability.md
   - Examples: examples.md
   - Systems: systems.md
+  - Integer Chua q=1 Reference: integer_chua_reference.md
   - Dynamical Analysis: dynamical_analysis.md
   - Validation Evidence: validation_evidence.md
+  - EFORK-3 Published Validation: efork3_validation.md
   - External Tools: external_tools.md
   - Unified Report: unified_report.md
   - Figure Gallery: figure_gallery.md

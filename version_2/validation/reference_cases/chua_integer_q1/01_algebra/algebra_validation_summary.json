@@ -1,0 +1,16 @@
+{
+  "stage": "algebra",
+  "status": "passed_with_symbolic_external_check",
+  "checks": {
+    "lure_field_residual": 0.0,
+    "equilibria_registered": 3,
+    "wolfram_mathematica_symbolic_source_executed": true,
+    "wolfram_numeric_reproduction": false
+  },
+  "files": {
+    "report": "algebra_validation.md",
+    "equilibria": "equilibria_summary.csv",
+    "symbolic_source": "../08_literature_comparison/sources/chua_entero_algebraico_sin_numericos.wl",
+    "symbolic_output": "../08_literature_comparison/sources/wolfram_run/wolfram_symbolic_output.txt"
+  }
+}

@@ -23,6 +23,12 @@ Generated validation evidence belongs under `validation/`. The interpretive
 documentation belongs under `docs/`. Reusable run contracts belong under
 `configs/`.
 
+The root contract below remains the fractional non-smooth Chua package. A
+verified baseline for a different order or parameter set must not be mixed
+into that tree. The integer Chua `q=1` baseline is therefore promoted under
+`validation/reference_cases/chua_integer_q1/` and checked with
+`configs/validation_chua_integer_q1.json`.
+
 ```text
 version_2/
   configs/
@@ -203,3 +209,40 @@ directories, required files, minimum JSON fields, manifest stage paths,
 non-empty CSV tables, declared figure files, and the final report status. The
 template-only tree is expected to fail until the stage artifacts are generated
 or copied into place.
+
+The integer-order reference case can be checked independently:
+
+```bash
+hidden-attractors-check-validation \
+  --contract configs/validation_chua_integer_q1.json \
+  --validation-root validation/reference_cases/chua_integer_q1
+```
+
+Its current package registers the theoretical report, library-produced
+artifacts, a locally executed MATLAB reproduction, and a locally executed
+Wolfram Language symbolic derivation. The Wolfram source intentionally omits
+numerical parameter evaluation, so it supports algebraic traceability and is
+not counted as an independent numerical trajectory reproduction. The Guan--Xie
+comparison now includes its displayed Example 6 values for `omega0`, `k`,
+`a0`, and the initial point, with relative differences stored in
+`08_literature_comparison/paper_numeric_comparison.csv`.
+
+The integration-dependent integer artifacts were regenerated after the
+EFORK-3 third stage was aligned with the published ordering
+`K3 = a31*K1 + a32*K2`. The report remains a registered algebraic and seed
+source; current continuation, Lyapunov, spectrum, basin, and hiddenness
+values come from the corrected rerun.
+
+The numerical-method benchmark is stored separately from any chaotic-system
+claim:
+
+```bash
+hidden-attractors-check-validation \
+  --contract configs/validation_efork3_ghoreishi_ghaffari.json \
+  --validation-root validation/reference_cases/efork3_ghoreishi_ghaffari
+```
+
+This reference case reproduces the three-stage EFORK terminal errors in
+Ghoreishi, Ghaffari, and Saad (2023), Tables 3, 4, 9, and 10. The archived
+Python scripts supplied by Dr. Luis Gerardo de la Fraga (CINVESTAV Unidad
+Zacatenco) are registered as implementation provenance.

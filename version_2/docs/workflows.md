@@ -152,6 +152,7 @@ Purpose: make the Chua integer route reusable for other order-one systems in
 manual Lur'e form. The reusable pieces include:
 
 - Nyquist/describing-function seed generation;
+- real/imaginary transfer-function closure figures for the selected seed;
 - classical and Machado DF seed branches;
 - epsilon continuation;
 - final attractor integration;

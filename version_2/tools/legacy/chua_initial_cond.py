@@ -790,9 +790,9 @@ def efork3_integrate(rhs, x0, qord, h, Lm, t_f, history=None, return_full_histor
                            z_n + a21 * K1z], dtype=real_dtype))
         K2x, K2y, K2z = ha * f2[0], ha * f2[1], ha * f2[2]
 
-        f3 = rhs(np.array([x_n + a31 * K2x + a32 * K1x,
-                           y_n + a31 * K2y + a32 * K1y,
-                           z_n + a31 * K2z + a32 * K1z], dtype=real_dtype))
+        f3 = rhs(np.array([x_n + a31 * K1x + a32 * K2x,
+                           y_n + a31 * K1y + a32 * K2y,
+                           z_n + a31 * K1z + a32 * K2z], dtype=real_dtype))
         K3x, K3y, K3z = ha * f3[0], ha * f3[1], ha * f3[2]
 
         x_n1 = x_n + w1 * K1x + w2 * K2x + w3 * K3x

@@ -128,6 +128,7 @@ The Chua-named helpers are compatibility wrappers.
 - `hidden_attractors.plotting.plot_bifurcation_diagram`
 - `hidden_attractors.plotting.plot_trajectory_overlay`
 - `hidden_attractors.plotting.plot_lure_nyquist_describing_function`
+- `hidden_attractors.plotting.plot_lure_transfer_components`
 - `hidden_attractors.plotting.plot_integer_lure_continuation`
 - `hidden_attractors.plotting.plot_integer_hiddenness_controls`
 - `hidden_attractors.plotting.plot_trajectory_spectra`
@@ -175,11 +176,16 @@ engines, including Lyapunov estimators.
 ## Solver Contracts
 
 - `hidden_attractors.solvers.FractionalHistory`
+- `hidden_attractors.solvers.EFORK3Coefficients`
+- `hidden_attractors.solvers.efork3_coefficients`
+- `hidden_attractors.solvers.efork3_caputo_integrate`
 - `hidden_attractors.solvers.efork_q1_integrate`
 - `hidden_attractors.solvers.efork_q1_step`
 
 `FractionalHistory` stores EFORK-compatible memory windows. It does not run a
-heavy Python integrator.
+heavy Python integrator. `efork3_caputo_integrate` is a small published-method
+reference implementation used to reproduce the manufactured-solution tables,
+not the high-throughput backend for attractor searches.
 
 ## Workflows
 

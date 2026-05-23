@@ -1,0 +1,83 @@
+====================================================
+RESULTADOS NUMERICOS DEL PROCEDIMIENTO
+====================================================
+ 
+1) Matrices Lure obtenidas numericamente
+P =
+                1.24137016                    8.4562                         0
+                         1                        -1                         1
+                         0                  -12.0732                   -0.0052
+
+q =
+                   -8.4562
+                         0
+                         0
+
+r =
+     1     0     0
+
+||P*X + q*psi - F|| = 0.000e+00
+ 
+2) Raices positivas de Im(W(i omega))=0
+         omega                  k        
+    ________________    _________________
+
+      2.039186939959    0.209867354515084
+    3.24528728834608    0.959688184945845
+
+ 
+3) Rama seleccionada
+omega0 = 2.0391869399590008
+k      = 0.2098673545150839
+ 
+4) Amplitud armonica
+a0     = 5.8561450862573574
+Phi(a0)= -1.275e-16
+ 
+5) Matriz P0 y autovalores
+P0 =
+        -0.533310163250452                    8.4562                         0
+                         1                        -1                         1
+                         0                  -12.0732                   -0.0052
+
+eig(P0) =
+          -1.53851016325045 +                     0i
+      -1.38777878078145e-16 +        2.039186939959i
+      -1.38777878078145e-16 -        2.039186939959i
+
+d      = 1.5385101632504521
+ 
+6) Parametros canonicos
+h      = 16.7158224589563211
+b1     = 8.2596224589563292
+b2     = 10.4000692247187665
+error transferencia = 4.721e-15
+ 
+7) Matriz S
+S =
+         0.999999999999998      9.80871352607502e-16         -16.7158224589563
+        0.0630673545150838        -0.241146961987535          1.98703256022124
+         -1.42867638098069        -0.369753087652459          15.6457852305676
+
+ 
+8) Condicion inicial obtenida desde X0 = S*[a0;0;0]
+X0 =
+          5.85614508625735
+         0.369331578246759
+           -8.366536168332
+
+ 
+9) Verificaciones finales
+||P0*S - S*A||_F = 1.804e-14
+||S*b - q||      = 4.076e-15
+||r*S - c^T||    = 4.141e-15
+error sistema S  = 2.023e-14
+[Warning: Exported image displays axes toolbar. To remove axes toolbar from image, export again.] 
+
+Resumen simulacion entera:
+Error absoluto final = 1.599176e+01
+Error relativo final = 2.475766e+00
+Error relativo max   = 6.023106e+00
+
+Graficas generadas en la carpeta:
+  chua_entero_outputs

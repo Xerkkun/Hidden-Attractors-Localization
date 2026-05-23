@@ -21,6 +21,7 @@ policy.
 | `hidden_attractors.seed_generation.find_harmonic_seed` | Classical or Machado describing-function seed construction | Genesio--Tesi frequency-domain harmonic-balance approach; Tenreiro Machado fractional describing-function family; local Weyl-to-Caputo warning in the report |
 | `hidden_attractors.seed_generation.reconstruct_biased_lure_seed` | Biased Lur'e seed reconstruction from DC and first harmonic equations | Local biased describing-function contract documented in the Chua report |
 | `hidden_attractors.solvers.FractionalHistory` | EFORK-compatible finite memory window container | Local finite-memory EFORK contract; heavy integration is delegated to C backends |
+| `hidden_attractors.solvers.efork3_caputo_integrate` | Three-stage Caputo EFORK reference integrator used for manufactured-solution reproduction | F. Ghoreishi, R. Ghaffari, and N. Saad, "Fractional Order Runge-Kutta Methods," Tables 3, 4, 9, and 10; provided `ejemplo1.py` implementation archived in validation evidence |
 
 ## Trajectory Diagnostics
 
@@ -40,12 +41,13 @@ policy.
 | `hidden_attractors.plotting.dynamics.plot_phase_projections` | `xy`, `xz`, `yz` projections | Standard dynamical-systems visualization |
 | `hidden_attractors.plotting.dynamics.plot_time_series` | Time series for selected observables | Standard numerical diagnostics |
 | `hidden_attractors.plotting.dynamics.plot_bifurcation_diagram` | Scatter plot of extracted bifurcation points | Post-processing visualization, not numerical continuation |
+| `hidden_attractors.plotting.dynamics.plot_lure_transfer_components` | Real and imaginary transfer-function closure panels for a selected Lur'e seed | Integer Chua `q=1` MATLAB verification view and Guan--Xie Example 6 branch |
 
 ## Native And Workflow Contracts
 
 | Code | Purpose | Reference source |
 |---|---|---|
-| `hidden_attractors.native.FractionalChuaBackend` | Wrapper for C/EFORK fractional Chua integration | Caputo fractional model; local EFORK contract documented in `reporte_unificado_chua_fraccionario.tex` |
+| `hidden_attractors.native.FractionalChuaBackend` | Wrapper for C/EFORK fractional Chua integration | Caputo fractional model; stage ordering aligned with Ghoreishi--Ghaffari--Saad; full fractional external validation remains separate from the verified `q=1` Chua rerun |
 | `hidden_attractors.native.BasinBackend` | Wrapper for basin classification backend | Leonov--Kuznetsov hidden/self-excited classification plus local finite-time basin contract |
 | `hidden_attractors.workflows.robustness_overlay` | Overlay trajectories under changes of `h`, `Lm`, and `t_final` | Local robustness contract; robustness does not imply hiddenness |
 | `hidden_attractors.workflows.sphere_controls` | Spherical controls around equilibria | Leonov--Kuznetsov basin criterion; finite-sample numerical control |
@@ -53,6 +55,7 @@ policy.
 | `hidden_attractors.workflows.strict_target_refinement` | Stricter target-reference refinement for unresolved Chua/Danca basin or sphere rows | Local finite-time trajectory-similarity contract with negative controls; still numerical evidence, not proof |
 | `hidden_attractors.workflows.danca_abm_sphere_controls` | Danca ABM full-history spherical controls followed by strict refinement of unknown outcomes | Danca fractional Chua example plus Diethelm--Ford--Freed ABM predictor-corrector; compatibility workflow for published-style controls |
 | `hidden_attractors.workflows.unified_chua` | Explicit Python/CLI wrapper for the unified Chua workflow without manual environment variables | Local workflow contract; heavy stages must use C backends |
+| `hidden_attractors.workflows.integer_lure` | Reusable order-one Lur'e seed, continuation, final-attractor, and hiddenness controls | Integer Chua `q=1` reference report; Guan--Xie Example 6 displayed-value comparison; locally regenerated evidence package |
 | `hidden_attractors.workflows.specs.WorkflowInputSpec` | Shared input contract for reusable CLIs and migrated legacy scripts | Local reproducibility contract: records solver, classifier, target, basin, sphere, and refinement assumptions |
 | `hidden_attractors.systems.requirements` | Capability and requirement checklist for applying workflows to new systems | Local library-extension policy; distinguishes vector-field registration from hiddenness evidence workflows |
 

@@ -1,0 +1,8 @@
+{
+  "library_surface": "version_2",
+  "integer_pipeline": "tools/legacy/unified_chua_integer_pipeline.py",
+  "matlab_source": "verifica_chua_entero.m",
+  "matlab_detected_locally": "R2025b",
+  "wolfram_source": "chua_entero_algebraico_sin_numericos.wl",
+  "wolframscript_detected_locally": "1.3.0.0"
+}

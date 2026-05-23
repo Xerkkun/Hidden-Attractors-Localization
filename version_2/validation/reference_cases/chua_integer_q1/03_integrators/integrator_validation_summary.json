@@ -1,0 +1,30 @@
+{
+  "stage": "integrator",
+  "status": "passed_corrected_q1_against_published_efork_stage_order",
+  "checks": {
+    "q": 1.0,
+    "operational_integrator": "EFORK-3 explicit operational integrator at q=1.0",
+    "continuation_h": 0.01,
+    "stage_order": "K3 = a31*K1 + a32*K2",
+    "previous_integration_outputs_invalidated": true,
+    "continuation_final_state": [
+      1.992974001564276,
+      1.26397184977323,
+      -2.551063353867033
+    ],
+    "target_seed_after_burn": [
+      4.091872653474984,
+      -0.08387099778707713,
+      -7.509075854668217
+    ],
+    "published_efork_tables_reproduced": [3, 4, 9, 10],
+    "published_efork_max_display_difference": 5.548922380610444e-09,
+    "matlab_ode45_source_registered": true,
+    "same_grid_matlab_trajectory_difference_table": "not_claimed"
+  },
+  "files": {
+    "report": "integrator_validation.md",
+    "pipeline_summary": "chua_integer_pipeline_summary.json",
+    "efork_reference_summary": "../../efork3_ghoreishi_ghaffari/03_integrators/efork3_validation_summary.json"
+  }
+}

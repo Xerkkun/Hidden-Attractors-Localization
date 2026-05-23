@@ -220,9 +220,9 @@ static int classify_point(
     rhs(x2, y2, z2, &dx, &dy, &dz);
     double K2x = ha * dx, K2y = ha * dy, K2z = ha * dz;
 
-    double x3 = x0 + c.a31*K2x + c.a32*K1x;
-    double y3 = y0 + c.a31*K2y + c.a32*K1y;
-    double z3 = z0 + c.a31*K2z + c.a32*K1z;
+    double x3 = x0 + c.a31*K1x + c.a32*K2x;
+    double y3 = y0 + c.a31*K1y + c.a32*K2y;
+    double z3 = z0 + c.a31*K1z + c.a32*K2z;
     rhs(x3, y3, z3, &dx, &dy, &dz);
     double K3x = ha * dx, K3y = ha * dy, K3z = ha * dz;
 
@@ -259,9 +259,9 @@ static int classify_point(
         rhs(x2, y2, z2, &dx, &dy, &dz);
         K2x = ha * dx; K2y = ha * dy; K2z = ha * dz;
 
-        x3 = x[n] + c.a31*K2x + c.a32*K1x;
-        y3 = y[n] + c.a31*K2y + c.a32*K1y;
-        z3 = z[n] + c.a31*K2z + c.a32*K1z;
+        x3 = x[n] + c.a31*K1x + c.a32*K2x;
+        y3 = y[n] + c.a31*K1y + c.a32*K2y;
+        z3 = z[n] + c.a31*K1z + c.a32*K2z;
         rhs(x3, y3, z3, &dx, &dy, &dz);
         K3x = ha * dx; K3y = ha * dy; K3z = ha * dz;
 

@@ -1,0 +1,6 @@
+quantity,python_value,guan_xie_displayed_value,absolute_difference,relative_difference_percent,source_location,note
+omega0,2.039186939959001,2.0392,0.000013060040999,0.000640449245,Example 6 PDF page 14,Paper value displayed to four decimals
+k,0.209867354515084,0.2098,0.000067354515084,0.032104153996,Example 6 PDF page 14,Paper value displayed to four decimals
+a0,5.856145086257356,5.8576,0.001454913742644,0.024838052148,Example 6 PDF page 14,Paper value displayed to four decimals
+X0_y,0.369331578246782,0.3694,0.000068421753218,0.018522402062,Example 6 PDF page 14,Paper value displayed to four decimals
+X0_z,-8.366536168331880,-8.3686,0.002063831668120,0.024661612075,Example 6 PDF page 14,Paper value displayed to four decimals

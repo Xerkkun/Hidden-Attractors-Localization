@@ -19,6 +19,7 @@ from hidden_attractors.plotting import (
     plot_integer_lure_continuation,
     plot_lyapunov_convergence,
     plot_lure_nyquist_describing_function,
+    plot_lure_transfer_components,
     plot_phase_projections,
     plot_phase_space,
     plot_trajectory_spectra,
@@ -78,6 +79,7 @@ def main() -> None:
     )
 
     plot_lure_nyquist_describing_function(system.lure, seed, outdir / "integer_lure_nyquist.png", q=1.0)
+    plot_lure_transfer_components(system.lure, seed, outdir / "integer_lure_transfer_components.png", q=1.0)
     plot_integer_lure_continuation(steps, outdir / "integer_lure_continuation.png")
     plot_phase_space(trajectory, outdir / "integer_lure_attractor.png", title="Integer Lur'e attractor")
     plot_phase_projections(trajectory, outdir / "integer_lure_projections.png", title="Integer Lur'e projections")

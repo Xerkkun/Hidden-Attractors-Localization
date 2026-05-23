@@ -1,0 +1,6 @@
+quantity,value,interpretation
+omega0,2.039186939959001,selected Nyquist frequency
+k,0.20986735451508398,selected equivalent gain
+a0,5.856145086257356,harmonic amplitude
+closure_residual,9.930136612989092e-16,absolute complex closure residual
+lure_field_residual,0.0,implemented Lure equivalence residual

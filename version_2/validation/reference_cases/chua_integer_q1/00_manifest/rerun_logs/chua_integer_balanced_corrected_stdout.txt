@@ -1,0 +1,220 @@
+[chua-integer] Output root: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced
+[chua-integer] Nyquist/DF check: omega0=2.03918694, a0=5.856145086, |W(iw0)+1/N(a0)|=9.930e-16.
+[chua-integer] Saved fig01_nyquist_df.pdf and fig01_nyquist_df.png
+[chua-integer] Saved fig01b_nyquist_zoom_x.pdf and fig01b_nyquist_zoom_x.png
+[chua-integer] Saved fig01c_transfer_real_imag.pdf and fig01c_transfer_real_imag.png
+[chua-integer] Saved fig03d_linear_vs_original_x.pdf and fig03d_linear_vs_original_x.png
+[chua-integer] Saved fig03e_linear_vs_original_y.pdf and fig03e_linear_vs_original_y.png
+[chua-integer] Saved fig03f_linear_vs_original_z.pdf and fig03f_linear_vs_original_z.png
+[chua-integer] Saved fig03g_linear_vs_original_3d.pdf and fig03g_linear_vs_original_3d.png
+[chua-integer] Continuation: 8 epsilon steps.
+[chua-integer] Continuation eps=0.125: x_out=[0.12495204 1.39884902 2.11494262]
+[chua-integer] Continuation eps=0.250: x_out=[-5.16220891  0.26807287  8.19542181]
+[chua-integer] Continuation eps=0.375: x_out=[-5.45081904 -0.52843349  7.6615536 ]
+[chua-integer] Continuation eps=0.500: x_out=[-5.43563411 -0.19175     8.10523917]
+[chua-integer] Continuation eps=0.625: x_out=[-0.46358563  1.29955874  3.60097572]
+[chua-integer] Continuation eps=0.750: x_out=[ 2.63062364 -0.80692919 -6.15002014]
+[chua-integer] Continuation eps=0.875: x_out=[ 1.50614559  1.44606992 -0.62101581]
+[chua-integer] Continuation eps=1.000: x_out=[ 1.992974    1.26397185 -2.55106335]
+[chua-integer] Saved fig02a_continuation_x.pdf and fig02a_continuation_x.png
+[chua-integer] Saved fig02b_continuation_y.pdf and fig02b_continuation_y.png
+[chua-integer] Saved fig02c_continuation_z.pdf and fig02c_continuation_z.png
+[chua-integer] Saved fig02d_continuation_story.pdf and fig02d_continuation_story.png
+[chua-integer] Final attractor: burn=60.0, keep=90.0, dt=0.01.
+[chua-integer] Saved fig03_final_attractor.pdf and fig03_final_attractor.png
+[chua-integer] Saved fig03a_final_attractor_xy.pdf and fig03a_final_attractor_xy.png
+[chua-integer] Saved fig03b_final_attractor_xz.pdf and fig03b_final_attractor_xz.png
+[chua-integer] Saved fig03c_final_attractor_yz.pdf and fig03c_final_attractor_yz.png
+[chua-integer] Spectral stage: direct FFT as the main spectrum; Welch PSD is optional.
+[chua-integer] Saved fig11a_fft_x.pdf and fig11a_fft_x.png
+[chua-integer] Saved fig11b_fft_y.pdf and fig11b_fft_y.png
+[chua-integer] Saved fig11c_fft_z.pdf and fig11c_fft_z.png
+[chua-integer] Saved fig11d_psd_x.pdf and fig11d_psd_x.png
+[chua-integer] Saved fig11e_psd_y.pdf and fig11e_psd_y.png
+[chua-integer] Saved fig11f_psd_z.pdf and fig11f_psd_z.png
+[chua-integer] Lyapunov C: compiling gcc -O3 C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tools\legacy\chua_frac_lyapunov_efork_benettin.c -lm -o C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\native\chua_integer_lyapunov_benettin.exe
+[chua-integer] Lyapunov C: running q=1.0, h=0.01, burn=60.0, blocks=300x0.5.
+[chua-integer] Saved fig13_lyapunov_convergence.pdf and fig13_lyapunov_convergence.png
+[chua-integer] Hidden verification C: TREF=320.0, TTEST=320.0, samples=168.
+Compilando C: gcc -O3 -fopenmp -o C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\chua_piecewise\native\chua_hidden_backend_integer.exe C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tools\legacy\chua_hidden_backend.c -lm
+Ejecutando backend numerico en C...
+Contrato de paralelismo: python_workers=1; omp_threads=2; backend_openmp_active=True; seed_strategy=independent_equilibrium_samples; stage_kind=embarrassingly_parallel.
+OMP_NUM_THREADS=2
+Equilibrios:
+E0 = (0.0000000000, 0.0000000000, 0.0000000000)
+E+ = (6.5883078865, 0.0028364023, -6.5854714843)
+E- = (-6.5883078865, -0.0028364023, 6.5854714843)
+
+Semilla objetivo = (4.0918726535, -0.0838709978, -7.5090758547)
+
+Referencia construida con 89 puntos de sección.
+
+=== Muestreo alrededor de E0 ===
+r=1.0e-05   EQ= 24  DIV=  0  TARGET=  0  OTHER=  0  UNKNOWN=  0
+r=3.0e-05   EQ= 24  DIV=  0  TARGET=  0  OTHER=  0  UNKNOWN=  0
+r=1.0e-04   EQ= 24  DIV=  0  TARGET=  0  OTHER=  0  UNKNOWN=  0
+r=3.0e-04   EQ= 24  DIV=  0  TARGET=  0  OTHER=  0  UNKNOWN=  0
+r=1.0e-03   EQ= 24  DIV=  0  TARGET=  0  OTHER=  0  UNKNOWN=  0
+r=3.0e-03   EQ= 24  DIV=  0  TARGET=  0  OTHER=  0  UNKNOWN=  0
+r=1.0e-02   EQ= 24  DIV=  0  TARGET=  0  OTHER=  0  UNKNOWN=  0
+
+=== Muestreo alrededor de E+ ===
+r=1.0e-05   EQ= 24  DIV=  0  TARGET=  0  OTHER=  0  UNKNOWN=  0
+r=3.0e-05   EQ= 24  DIV=  0  TARGET=  0  OTHER=  0  UNKNOWN=  0
+r=1.0e-04   EQ= 24  DIV=  0  TARGET=  0  OTHER=  0  UNKNOWN=  0
+r=3.0e-04   EQ= 19  DIV=  1  TARGET=  0  OTHER=  4  UNKNOWN=  0
+r=1.0e-03   EQ=  8  DIV=  8  TARGET=  0  OTHER=  8  UNKNOWN=  0
+r=3.0e-03   EQ=  2  DIV= 12  TARGET=  0  OTHER= 10  UNKNOWN=  0
+r=1.0e-02   EQ=  1  DIV= 12  TARGET=  0  OTHER= 11  UNKNOWN=  0
+
+=== Muestreo alrededor de E- ===
+r=1.0e-05   EQ= 24  DIV=  0  TARGET=  0  OTHER=  0  UNKNOWN=  0
+r=3.0e-05   EQ= 24  DIV=  0  TARGET=  0  OTHER=  0  UNKNOWN=  0
+r=1.0e-04   EQ= 24  DIV=  0  TARGET=  0  OTHER=  0  UNKNOWN=  0
+r=3.0e-04   EQ= 19  DIV=  4  TARGET=  0  OTHER=  1  UNKNOWN=  0
+r=1.0e-03   EQ=  5  DIV= 11  TARGET=  0  OTHER=  8  UNKNOWN=  0
+r=3.0e-03   EQ=  1  DIV= 11  TARGET=  0  OTHER= 12  UNKNOWN=  0
+r=1.0e-02   EQ=  2  DIV= 10  TARGET=  0  OTHER= 12  UNKNOWN=  0
+
+Resumen final:
+No se detectaron trayectorias que cayeran en el atractor objetivo desde las vecindades muestreadas de los equilibrios.
+
+Archivos numéricos generados:
+- C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\hidden_verify\hidden_target_check_integer.csv
+- C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\hidden_verify\reference_section_integer.csv
+- C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\hidden_verify\summary_by_radius_integer.csv
+[chua-integer] Saved fig04_reference_section.pdf and fig04_reference_section.png
+[chua-integer] Saved fig05_probe_summary_E0.pdf and fig05_probe_summary_E0.png
+[chua-integer] Saved fig05_probe_summary_E.pdf and fig05_probe_summary_E.png
+[chua-integer] Saved fig05_probe_summary_E.pdf and fig05_probe_summary_E.png
+[chua-integer] Saved fig05b_hiddenness_overview.pdf and fig05b_hiddenness_overview.png
+[chua-integer] Saved fig05c_hiddenness_zoom.pdf and fig05c_hiddenness_zoom.png
+[chua-integer] Compilando C: gcc -O3 -shared -fopenmp -o C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\native\chua_basin_integer.dll C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tools\legacy\chua_basin_lib.c -lm
+[chua-integer] Basin C: grid=180x180, z0=0.0, q=1.0, TMAX=120.0; python_workers=1; omp_threads=8; backend_openmp_active=True; seed_strategy=independent_grid_points; stage_kind=embarrassingly_parallel.
+[chua-integer] Saved fig06a_basin_overlay_z0.pdf and fig06a_basin_overlay_z0.png
+[chua-integer] Basin C: grid=180x180, z0=-7.509075854668217, q=1.0, TMAX=120.0; python_workers=1; omp_threads=8; backend_openmp_active=True; seed_strategy=independent_grid_points; stage_kind=embarrassingly_parallel.
+[chua-integer] Saved fig06b_basin_overlay_zfinal.pdf and fig06b_basin_overlay_zfinal.png
+[chua-integer] Basin cuts C: xy=160x160, xz=160x160, yz=160x160, q=1.0.
+[chua-integer] Basin cut xy: starting.
+[chua-integer] Basin cut xy: done.
+[chua-integer] Basin cut xz: starting.
+[chua-integer] Basin cut xz: done.
+[chua-integer] Basin cut yz: starting.
+[chua-integer] Basin cut yz: done.
+[chua-integer] Saved fig10a_basin_xy_final_state.pdf and fig10a_basin_xy_final_state.png
+[chua-integer] Saved fig10b_basin_xz_final_state.pdf and fig10b_basin_xz_final_state.png
+[chua-integer] Saved fig10c_basin_yz_final_state.pdf and fig10c_basin_yz_final_state.png
+[chua-integer] Basin 3D C: 34x34x34 = 39304 trajectories, q=1.0.
+[chua-integer] Basin 3D C: slice 1/34.
+[chua-integer] Basin 3D C: slice 3/34.
+[chua-integer] Basin 3D C: slice 6/34.
+[chua-integer] Basin 3D C: slice 9/34.
+[chua-integer] Basin 3D C: slice 12/34.
+[chua-integer] Basin 3D C: slice 15/34.
+[chua-integer] Basin 3D C: slice 18/34.
+[chua-integer] Basin 3D C: slice 21/34.
+[chua-integer] Basin 3D C: slice 24/34.
+[chua-integer] Basin 3D C: slice 27/34.
+[chua-integer] Basin 3D C: slice 30/34.
+[chua-integer] Basin 3D C: slice 33/34.
+[chua-integer] Basin 3D C: slice 34/34.
+[chua-integer] Saved fig12_basin_3d_volume.pdf and fig12_basin_3d_volume.png
+[chua-integer] Bifurcation alpha: 221 values x 2 seeds, t_total=140.0.
+[chua-integer] Bifurcation alpha: 1/221 = 8.2
+[chua-integer] Bifurcation alpha: 5/221 = 8.2090909
+[chua-integer] Bifurcation alpha: 10/221 = 8.2204545
+[chua-integer] Bifurcation alpha: 15/221 = 8.2318182
+[chua-integer] Bifurcation alpha: 20/221 = 8.2431818
+[chua-integer] Bifurcation alpha: 25/221 = 8.2545455
+[chua-integer] Bifurcation alpha: 30/221 = 8.2659091
+[chua-integer] Bifurcation alpha: 35/221 = 8.2772727
+[chua-integer] Bifurcation alpha: 40/221 = 8.2886364
+[chua-integer] Bifurcation alpha: 45/221 = 8.3
+[chua-integer] Bifurcation alpha: 50/221 = 8.3113636
+[chua-integer] Bifurcation alpha: 55/221 = 8.3227273
+[chua-integer] Bifurcation alpha: 60/221 = 8.3340909
+[chua-integer] Bifurcation alpha: 65/221 = 8.3454545
+[chua-integer] Bifurcation alpha: 70/221 = 8.3568182
+[chua-integer] Bifurcation alpha: 75/221 = 8.3681818
+[chua-integer] Bifurcation alpha: 80/221 = 8.3795455
+[chua-integer] Bifurcation alpha: 85/221 = 8.3909091
+[chua-integer] Bifurcation alpha: 90/221 = 8.4022727
+[chua-integer] Bifurcation alpha: 95/221 = 8.4136364
+[chua-integer] Bifurcation alpha: 100/221 = 8.425
+[chua-integer] Bifurcation alpha: 105/221 = 8.4363636
+[chua-integer] Bifurcation alpha: 110/221 = 8.4477273
+[chua-integer] Bifurcation alpha: 115/221 = 8.4590909
+[chua-integer] Bifurcation alpha: 120/221 = 8.4704545
+[chua-integer] Bifurcation alpha: 125/221 = 8.4818182
+[chua-integer] Bifurcation alpha: 130/221 = 8.4931818
+[chua-integer] Bifurcation alpha: 135/221 = 8.5045455
+[chua-integer] Bifurcation alpha: 140/221 = 8.5159091
+[chua-integer] Bifurcation alpha: 145/221 = 8.5272727
+[chua-integer] Bifurcation alpha: 150/221 = 8.5386364
+[chua-integer] Bifurcation alpha: 155/221 = 8.55
+[chua-integer] Bifurcation alpha: 160/221 = 8.5613636
+[chua-integer] Bifurcation alpha: 165/221 = 8.5727273
+[chua-integer] Bifurcation alpha: 170/221 = 8.5840909
+[chua-integer] Bifurcation alpha: 175/221 = 8.5954545
+[chua-integer] Bifurcation alpha: 180/221 = 8.6068182
+[chua-integer] Bifurcation alpha: 185/221 = 8.6181818
+[chua-integer] Bifurcation alpha: 190/221 = 8.6295455
+[chua-integer] Bifurcation alpha: 195/221 = 8.6409091
+[chua-integer] Bifurcation alpha: 200/221 = 8.6522727
+[chua-integer] Bifurcation alpha: 205/221 = 8.6636364
+[chua-integer] Bifurcation alpha: 210/221 = 8.675
+[chua-integer] Bifurcation alpha: 215/221 = 8.6863636
+[chua-integer] Bifurcation alpha: 220/221 = 8.6977273
+[chua-integer] Bifurcation alpha: 221/221 = 8.7
+[chua-integer] Saved fig08_bifurcation_alpha.pdf and fig08_bifurcation_alpha.png
+[chua-integer] Bifurcation beta: 221 values x 2 seeds, t_total=140.0.
+[chua-integer] Bifurcation beta: 1/221 = 11.5
+[chua-integer] Bifurcation beta: 5/221 = 11.518182
+[chua-integer] Bifurcation beta: 10/221 = 11.540909
+[chua-integer] Bifurcation beta: 15/221 = 11.563636
+[chua-integer] Bifurcation beta: 20/221 = 11.586364
+[chua-integer] Bifurcation beta: 25/221 = 11.609091
+[chua-integer] Bifurcation beta: 30/221 = 11.631818
+[chua-integer] Bifurcation beta: 35/221 = 11.654545
+[chua-integer] Bifurcation beta: 40/221 = 11.677273
+[chua-integer] Bifurcation beta: 45/221 = 11.7
+[chua-integer] Bifurcation beta: 50/221 = 11.722727
+[chua-integer] Bifurcation beta: 55/221 = 11.745455
+[chua-integer] Bifurcation beta: 60/221 = 11.768182
+[chua-integer] Bifurcation beta: 65/221 = 11.790909
+[chua-integer] Bifurcation beta: 70/221 = 11.813636
+[chua-integer] Bifurcation beta: 75/221 = 11.836364
+[chua-integer] Bifurcation beta: 80/221 = 11.859091
+[chua-integer] Bifurcation beta: 85/221 = 11.881818
+[chua-integer] Bifurcation beta: 90/221 = 11.904545
+[chua-integer] Bifurcation beta: 95/221 = 11.927273
+[chua-integer] Bifurcation beta: 100/221 = 11.95
+[chua-integer] Bifurcation beta: 105/221 = 11.972727
+[chua-integer] Bifurcation beta: 110/221 = 11.995455
+[chua-integer] Bifurcation beta: 115/221 = 12.018182
+[chua-integer] Bifurcation beta: 120/221 = 12.040909
+[chua-integer] Bifurcation beta: 125/221 = 12.063636
+[chua-integer] Bifurcation beta: 130/221 = 12.086364
+[chua-integer] Bifurcation beta: 135/221 = 12.109091
+[chua-integer] Bifurcation beta: 140/221 = 12.131818
+[chua-integer] Bifurcation beta: 145/221 = 12.154545
+[chua-integer] Bifurcation beta: 150/221 = 12.177273
+[chua-integer] Bifurcation beta: 155/221 = 12.2
+[chua-integer] Bifurcation beta: 160/221 = 12.222727
+[chua-integer] Bifurcation beta: 165/221 = 12.245455
+[chua-integer] Bifurcation beta: 170/221 = 12.268182
+[chua-integer] Bifurcation beta: 175/221 = 12.290909
+[chua-integer] Bifurcation beta: 180/221 = 12.313636
+[chua-integer] Bifurcation beta: 185/221 = 12.336364
+[chua-integer] Bifurcation beta: 190/221 = 12.359091
+[chua-integer] Bifurcation beta: 195/221 = 12.381818
+[chua-integer] Bifurcation beta: 200/221 = 12.404545
+[chua-integer] Bifurcation beta: 205/221 = 12.427273
+[chua-integer] Bifurcation beta: 210/221 = 12.45
+[chua-integer] Bifurcation beta: 215/221 = 12.472727
+[chua-integer] Bifurcation beta: 220/221 = 12.495455
+[chua-integer] Bifurcation beta: 221/221 = 12.5
+[chua-integer] Saved fig09_bifurcation_beta.pdf and fig09_bifurcation_beta.png
+[chua-integer] Bifurcation: skipped divergent/failed integrations (alpha=0, beta=30).
+[chua-integer] Pipeline complete.
+Resumen: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\chua_integer_pipeline_summary.json

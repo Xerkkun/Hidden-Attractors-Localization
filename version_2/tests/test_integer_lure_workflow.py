@@ -11,6 +11,7 @@ from hidden_attractors.plotting import (
     plot_integer_hiddenness_controls,
     plot_integer_lure_continuation,
     plot_lure_nyquist_describing_function,
+    plot_lure_transfer_components,
 )
 from hidden_attractors.seed_generation import find_lure_omega_gain_candidates
 from hidden_attractors.systems import ChaoticSystem, get_system
@@ -56,9 +57,11 @@ def test_integer_lure_seed_and_short_continuation_are_reusable() -> None:
     assert steps[-1].x_out.shape == (3,)
 
     plot_lure_nyquist_describing_function(system.lure, seed, outdir / "nyquist.png", q=1.0)
+    plot_lure_transfer_components(system.lure, seed, outdir / "transfer_components.png", q=1.0)
     plot_integer_lure_continuation(steps, outdir / "continuation.png")
 
     assert (outdir / "nyquist.png").exists()
+    assert (outdir / "transfer_components.png").exists()
     assert (outdir / "continuation.png").exists()
 
 

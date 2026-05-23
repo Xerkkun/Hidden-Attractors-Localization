@@ -1,44 +1,45 @@
 ---
-title: "Hidden Attractors Fractional Order: una libreria para estudiar Chua fraccionario"
-description: "Documentacion tecnica, referencias y ejemplos reproducibles para una libreria Python orientada a atractores ocultos en sistemas fraccionarios."
+title: "Hidden Attractors Fractional Order: an auditable library for Chua workflows"
+description: "Technical documentation, references, and reproducible evidence for integer- and fractional-order hidden-attractor studies."
 pubDate: 2026-05-18
 author: "Xerkkun"
 authorImage: "/images/authors/Xerkkun.jpg"
 image: "/images/posts/hidden-attractors/phase_space_3d.png"
-category: "Ciencia del Caos"
+category: "Chaos Science"
 subCategory: "Hidden Attractors"
-readTime: "10 min de lectura"
+readTime: "14 min read"
 featured: false
-tags: ["caos", "chua", "sistemas dinamicos", "python", "fraccional"]
+tags: ["chaos", "chua", "dynamical systems", "python", "fractional order"]
 ---
 
-Esta pagina presenta la primera version documental de `hidden-attractors-fo`,
-una libreria Python organizada para reproducir, auditar y extender experimentos
-numericos con candidatos a atractores ocultos en sistemas de Chua fraccionarios.
+This page introduces `hidden-attractors-fo`, a Python research library
+organized to reproduce, audit, and extend numerical experiments involving
+hidden-attractor candidates in integer- and fractional-order Chua/Lur'e
+systems.
 
-La idea no es esconder el origen de los metodos dentro del codigo. Cada bloque
-de calculo queda asociado con su referencia: Leonov--Kuznetsov para la
-distincion entre atractores ocultos y autoexcitados, Danca para el ejemplo de
-Chua fraccionario no suave, Matignon para estabilidad local fraccionaria,
-Benettin para exponentes de Lyapunov, y Caputo para la derivada fraccionaria
-causal.
+The origin of each method remains visible in the code and documentation:
+Leonov--Kuznetsov for the hidden versus self-excited distinction, Danca for
+the non-smooth fractional Chua example, Matignon for fractional local
+stability, Benettin for Lyapunov exponents, Caputo for the causal fractional
+derivative, and Guan--Xie for the recent review of localization methods.
 
-## Que hace la libreria
+## What The Library Does
 
-La libreria separa cuatro tareas:
+The library separates the work into auditable tasks:
 
-- definir el sistema de Chua no suave;
-- cargar trayectorias reales generadas por los workflows;
-- graficar espacio de fases, proyecciones, series temporales y diagramas de bifurcacion;
-- documentar que diagnosticos son evidencia numerica y cuales no prueban ocultedad.
+- define Chua systems and manually supplied Lur'e decompositions;
+- generate describing-function/Nyquist seeds and continue them numerically;
+- load real trajectories produced by workflows;
+- plot phase spaces, projections, time series, spectra, and bifurcation views;
+- record which diagnostics provide numerical evidence and which do not prove hiddenness.
 
-El contrato de trayectoria usado por los ejemplos es simple:
+The trajectory contract used by the examples is simple:
 
 ```text
 t,x,y,z
 ```
 
-Con eso se puede cargar una trayectoria CSV del proyecto y generar figuras:
+A project trajectory can then be loaded and plotted directly:
 
 ```python
 from hidden_attractors.io import load_trajectory_csv
@@ -48,63 +49,162 @@ trajectory = load_trajectory_csv("outputs/.../reference_attractor.csv")
 plot_phase_space(trajectory, "outputs/my_case/phase_space_3d.png")
 ```
 
-## Espacio de fases
+## The Integer Chua `q=1` Baseline
 
-![Espacio de fases del Chua fraccionario](/images/posts/hidden-attractors/phase_space_3d.png)
+Before extending the workflow to fractional memory, the piecewise-linear Chua
+system was verified as an order-one reference case. The stored model uses:
 
-La figura anterior fue generada desde una trayectoria real del proyecto. No es
-una ilustracion decorativa: sale del ejemplo `examples/dynamical_analysis_gallery.py`.
+| Parameter | Value |
+| :--- | ---: |
+| `alpha` | 8.4562 |
+| `beta` | 12.0732 |
+| `gamma` | 0.0052 |
+| `m0` | -0.1768 |
+| `m1` | -1.1468 |
+| dynamic order | `q=1.0` |
 
-## Proyecciones
+Its Lur'e/Nyquist describing-function closure selects
+`omega0 = 2.03918694`, `k = 0.20986735`, and
+`a0 = 5.85614509`, with an absolute complex closure residual of
+`9.93e-16`.
 
-![Proyecciones del espacio de fases](/images/posts/hidden-attractors/phase_projections.png)
+![Real and imaginary transfer-component closure for integer Chua](/images/docs/hidden-attractors/chua-integer/fig01c_transfer_real_imag.png)
 
-Las proyecciones `xy`, `xz` y `yz` permiten comparar geometria sin depender de
-una sola vista 3D.
+The workflow-generated figure exposes the same scalar closure checks shown by
+the supplied MATLAB verification: `Re(W(i omega0))=-1/k` and
+`Im(W(i omega0))=0`.
 
-## Series temporales
+### Published Numerical Comparison
 
-![Series temporales del sistema](/images/posts/hidden-attractors/time_series.png)
+Guan and Xie (2025), Example 6 on PDF page 14, publish the same parameter set
+and display the values used below. Relative differences are calculated
+against those printed, rounded values:
 
-Las series temporales son utiles para verificar si una trayectoria permanece
-acotada, si colapsa a equilibrio o si conviene revisar el contrato numerico.
+| Quantity | Python result | Guan--Xie displayed value | Relative difference |
+| :--- | ---: | ---: | ---: |
+| `omega0` | 2.039186939959001 | 2.0392 | 0.000640% |
+| `k` | 0.209867354515084 | 0.2098 | 0.032104% |
+| `a0` | 5.856145086257356 | 5.8576 | 0.024838% |
+| `y(0)` | 0.369331578246782 | 0.3694 | 0.018522% |
+| `z(0)` | -8.366536168331880 | -8.3686 | 0.024662% |
 
-## Bifurcacion como post-procesamiento
+The differences include the paper's four-decimal display rounding; they are
+not discrepancies against unpublished full-precision reference values.
 
-![Diagrama de bifurcacion post-procesado](/images/posts/hidden-attractors/bifurcation_diagram.png)
+The harmonic seed is carried to the original nonlinear system by epsilon
+continuation. The regenerated run evaluates the EFORK-3 numerical route at
+`q=1`, keeping the order-one baseline directly comparable with the
+fractional workflow and its native validation stages.
 
-Este diagrama se obtiene extrayendo maximos locales de trayectorias ya
-calculadas. No sustituye una continuacion numerica completa. Para continuacion
-real conviene usar herramientas dedicadas, por ejemplo PyDSTool, cuando el
-entorno de Python sea compatible.
+The EFORK-3 stage order was then checked against Ghoreishi, Ghaffari, and
+Saad (2023) and the validation implementation supplied by Dr. Luis Gerardo
+de la Fraga (CINVESTAV Unidad Zacatenco). The previously stored
+integration-dependent outputs were deleted and this `q=1` run was regenerated
+with `K3 = a31*K1 + a32*K2`.
 
-## Referencias visibles desde el codigo
+![Integer Chua epsilon continuation](/images/docs/hidden-attractors/chua-integer/fig02d_continuation_story.png)
 
-El repositorio ahora incluye:
+The final trajectory retains a dominant spectral component near the seed
+frequency, with the expected shift after continuation into the fully
+nonlinear chaotic regime:
+
+| Estimate | Frequency (rad/s) | Difference from `omega0` |
+| :--- | ---: | ---: |
+| Nyquist/DF seed | 2.039186939959001 | - |
+| FFT of `x(t)` | 2.303578659448180 | 12.9655% |
+| Welch PSD of `x(t)` | 2.300971181828511 | 12.8377% |
+
+![FFT frequency comparison for integer Chua](/images/docs/hidden-attractors/chua-integer/fig11a_fft_x.png)
+
+![PSD frequency comparison for integer Chua](/images/docs/hidden-attractors/chua-integer/fig11d_psd_x.png)
+
+FFT and PSD document spectral consistency; they do not establish hiddenness.
+
+The regenerated final candidate has native Benettin Lyapunov estimates
+`(0.20824618, 0.01373270, -1.36693009)`, including a positive leading
+exponent. Hiddenness controls launched 504 trajectories from neighborhoods of
+the three equilibria and recorded `TARGET=0`.
+
+![Integer Chua hiddenness controls](/images/docs/hidden-attractors/chua-integer/fig05b_hiddenness_overview.png)
+
+This evidence supports the wording **numerical hidden-attractor candidate**
+under the recorded finite sampling and integration horizons. It is not a
+global proof of hiddenness.
+
+## Fractional-Order Outputs
+
+The fractional workflows retain the same evidence-first policy. The following
+phase portrait was generated from a real project trajectory, not from a
+decorative illustration.
+
+![Fractional Chua phase space](/images/posts/hidden-attractors/phase_space_3d.png)
+
+The `xy`, `xz`, and `yz` projections allow geometric comparisons without
+depending on a single three-dimensional view.
+
+![Phase-space projections](/images/posts/hidden-attractors/phase_projections.png)
+
+Time series help determine whether a trajectory remains bounded, collapses to
+an equilibrium, or requires a revised numerical contract.
+
+![System time series](/images/posts/hidden-attractors/time_series.png)
+
+A bifurcation view extracted from previously calculated trajectories is useful
+post-processing evidence; it is not a substitute for full numerical
+continuation.
+
+![Post-processed bifurcation diagram](/images/posts/hidden-attractors/bifurcation_diagram.png)
+
+## Verification Sources
+
+The integer reference package separates each source by its evidentiary role:
+
+| Source | Current status | Role |
+| :--- | :--- | :--- |
+| Library artifacts in `chua_integer_runs/balanced` | regenerated | JSON, CSV, and figures from the corrected `q=1` workflow |
+| Theoretical report dated 17 May 2026 | registered copy | Integer Chua derivation and harmonic seed; its earlier integration outputs are superseded |
+| MATLAB `verifica_chua_entero.m` | locally reproduced | Independent Lur'e, Nyquist/DF, canonical transform, and ODE run |
+| Guan and Xie (2025) | published comparison | Example 6 values for `omega0`, `k`, `a0`, and the initial point |
+| Wolfram Language symbolic derivation | locally executed | Algebraic verification source; intentionally performs no numerical parameter evaluation |
+| Ghoreishi, Ghaffari, and Saad (2023) plus supplied EFORK scripts | reproduced benchmark | Tables 3, 4, 9, and 10 validate the corrected EFORK-3 stage ordering |
+
+Guan and Xie, *A review on methods for localization of hidden attractors*,
+published in *Nonlinear Dynamics* in 2025, identifies Chua's circuit as a
+central historical example and reviews numerical continuation among the
+available localization strategies. Example 6 also publishes the rounded seed
+quantities compared here; higher-precision and spectral results come from the
+registered library run.
+
+## References Visible From The Code
+
+The repository documents its calculation sources through:
 
 - `docs/references.bib`;
 - `docs/code_reference_map.md`;
+- `docs/integer_chua_reference.md`;
 - `docs/reporte_unificado_chua_fraccionario.tex`;
-- `docs/reporte_unificado_chua_fraccionario.pdf`.
+- `validation/reference_cases/chua_integer_q1/`.
+- `validation/reference_cases/efork3_ghoreishi_ghaffari/`.
 
-La regla es directa: si una funcion hace calculos, debe indicar si viene de un
-articulo, de un contrato numerico local o de una libreria externa.
+The rule is straightforward: a calculation must identify whether it derives
+from a published article, a local numerical contract, or an external
+reproduction tool.
 
-## Lectura cientifica conservadora
+## Conservative Scientific Reading
 
-Una trayectoria bonita no basta para declarar un atractor oculto. La secuencia
-documentada es:
+A convincing trajectory is not enough to declare a hidden attractor. The
+documented sequence is:
 
 ```text
-semilla armonica
--> atractor observado
--> comparacion con target
--> robustez numerica
--> pruebas desde vecindades de equilibrios
--> lectura de ocultedad
+harmonic seed
+-> observed attractor
+-> target comparison
+-> numerical robustness
+-> equilibrium-neighborhood probes
+-> hiddenness interpretation
 ```
 
-Si aparece una trayectoria `TARGET` desde una vecindad de equilibrio, el
-candidato no debe llamarse oculto bajo ese contrato. Esa separacion es la que
-hace que la libreria sea util como herramienta cientifica y no solo como
-generador de figuras.
+If a `TARGET` trajectory appears from an equilibrium neighborhood, the
+candidate must not be called hidden under that contract. This separation is
+what makes the library useful as scientific infrastructure rather than only a
+figure generator.

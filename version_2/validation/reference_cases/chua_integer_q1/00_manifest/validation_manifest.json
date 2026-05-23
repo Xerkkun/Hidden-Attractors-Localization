@@ -1,0 +1,37 @@
+{
+  "validation_id": "chua_integer_q1_reference_2026_05",
+  "repository_commit": "bfde30d",
+  "package_version": "0.1.0",
+  "python_version": "3.14.3",
+  "platform": "Windows 11; corrected EFORK-3 rerun plus registered external sources",
+  "main_system": "piecewise-linear Chua, integer order",
+  "main_parameters": {
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m0": -0.1768,
+    "m1": -1.1468,
+    "q": 1.0
+  },
+  "status": "baseline_regenerated_after_efork_stage_correction",
+  "interpretation": "Numerical hidden-attractor candidate under recorded finite probes and integration horizons.",
+  "stages": {
+    "algebra": "01_algebra/algebra_validation_summary.json",
+    "lure_df": "02_lure_df/lure_df_validation_summary.json",
+    "integrator": "03_integrators/integrator_validation_summary.json",
+    "dynamic_analysis": "05_dynamic_analysis/dynamic_analysis_summary.json",
+    "hiddenness": "06_hiddenness/hiddenness_validation_summary.json",
+    "literature_comparison": "08_literature_comparison/literature_comparison_summary.json"
+  },
+  "external_evidence_status": {
+    "theoretical_report_170526": "registered_copy",
+    "matlab_verifica_chua_entero": "locally_executed",
+    "guan_xie_2025": "registered_published_comparison",
+    "wolfram_symbolic_derivation": "locally_executed_symbolic_only",
+    "ghoreishi_ghaffari_saad_efork3": "published_tables_reproduced"
+  },
+  "final_report": {
+    "status": "not_required_for_reference_case",
+    "publication_surface": "docs/integer_chua_reference.md"
+  }
+}

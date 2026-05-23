@@ -1,0 +1,8 @@
+{
+  "promotion_date": "2026-05-23",
+  "host_platform_for_promotion": "Windows",
+  "python_version_on_recheck": "3.14.3",
+  "python_platform_on_recheck": "Windows-11-10.0.26200-SP0",
+  "artifact_origin": "version_1/legacy_root/chua_integer_runs/balanced",
+  "note": "Integration-dependent integer artifacts were regenerated with corrected EFORK-3 K3 ordering; MATLAB and Wolfram symbolic checks validate the seed and algebraic sources."
+}

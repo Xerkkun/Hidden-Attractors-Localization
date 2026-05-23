@@ -141,11 +141,11 @@ probes = run_integer_lure_hiddenness_controls(system, trajectory)
 ```
 
 `examples/integer_lure_chua_protocol.py` is the small runnable Chua integer
-example.  The old Chua integer run in
+example.  The regenerated corrected Chua integer run in
 `version_1/legacy_root/chua_integer_runs/balanced` is the reference artifact
 set for what an integer-order workflow should be able to reproduce or adapt:
 
-- `fig01`: Nyquist/describing-function closure;
+- `fig01`: Nyquist/describing-function and real/imaginary transfer-component closure;
 - `fig02`: continuation in epsilon;
 - `fig03`: final attractor and linearized-versus-original comparison;
 - `fig04` and `fig05`: reference section and hiddenness controls;
@@ -158,3 +158,13 @@ The generic library now exposes the reusable pieces for seed generation,
 continuation, final trajectories, hiddenness controls, plotting, and
 integer-order Lyapunov estimates.  Basin C backends and fractional C backends
 still require a system-specific native implementation or adapter.
+
+The audited parameter set, numerical results, attached theoretical report, and
+evidence-source status are collected in
+[Integer Chua q=1 Reference](integer_chua_reference.md). Promoted validation
+artifacts live under `validation/reference_cases/chua_integer_q1/`; they are
+kept separate from the fractional candidate validation tree.
+
+The EFORK-3 stage formula used for this regenerated run is checked separately
+against the published manufactured-solution benchmarks in
+[EFORK-3 Published Validation](efork3_validation.md).

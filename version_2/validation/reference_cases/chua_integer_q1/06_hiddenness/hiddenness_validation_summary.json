@@ -1,0 +1,26 @@
+{
+  "stage": "hiddenness",
+  "status": "passed_from_corrected_efork_q1_rerun",
+  "checks": {
+    "detail_rows": 504,
+    "equilibria": [
+      "E0",
+      "E+",
+      "E-"
+    ],
+    "global_counts": {
+      "EQ": 369,
+      "DIV": 69,
+      "OTHER": 66,
+      "TARGET": 0,
+      "UNKNOWN": 0
+    },
+    "candidate_reading": "No target-basin hit detected from sampled equilibrium neighborhoods."
+  },
+  "files": {
+    "report": "hiddenness_validation.md",
+    "hiddenness_summary": "hidden_target_summary_integer.json",
+    "counts_by_radius": "summary_by_radius_integer.csv",
+    "figure": "fig05b_hiddenness_overview.png"
+  }
+}

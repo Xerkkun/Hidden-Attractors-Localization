@@ -452,8 +452,8 @@
     "div_threshold": 120.0,
     "max_peaks": 500
   },
-  "alpha_points": 11466,
-  "beta_points": 10814,
+  "alpha_points": 11460,
+  "beta_points": 10644,
   "alpha_failures": [],
   "beta_failures": [
     {
@@ -599,10 +599,46 @@
       "value": 11.55,
       "branch": "neg",
       "status": "diverged"
+    },
+    {
+      "parameter": "beta",
+      "value": 11.554545454545455,
+      "branch": "pos",
+      "status": "diverged"
+    },
+    {
+      "parameter": "beta",
+      "value": 11.554545454545455,
+      "branch": "neg",
+      "status": "diverged"
+    },
+    {
+      "parameter": "beta",
+      "value": 11.559090909090909,
+      "branch": "pos",
+      "status": "diverged"
+    },
+    {
+      "parameter": "beta",
+      "value": 11.559090909090909,
+      "branch": "neg",
+      "status": "diverged"
+    },
+    {
+      "parameter": "beta",
+      "value": 11.563636363636364,
+      "branch": "pos",
+      "status": "diverged"
+    },
+    {
+      "parameter": "beta",
+      "value": 11.563636363636364,
+      "branch": "neg",
+      "status": "diverged"
     }
   ],
   "figures": {
-    "alpha": "chua_integer_runs/balanced/final_pdf_figs/fig08_bifurcation_alpha.pdf",
-    "beta": "chua_integer_runs/balanced/final_pdf_figs/fig09_bifurcation_beta.pdf"
+    "alpha": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig08_bifurcation_alpha.pdf",
+    "beta": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig09_bifurcation_beta.pdf"
   }
 }

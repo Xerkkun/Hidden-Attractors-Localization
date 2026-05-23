@@ -1,0 +1,42 @@
+{
+  "contract_name": "efork3_ghoreishi_ghaffari_reference_validation",
+  "version": 1,
+  "purpose": "Reproduce the published three-stage EFORK manufactured-solution tables.",
+  "output_root": "validation/reference_cases/efork3_ghoreishi_ghaffari",
+  "manifest": {
+    "directory": "00_manifest",
+    "required_files": [
+      "validation_manifest.json",
+      "source_registry.json"
+    ],
+    "required_fields": [
+      "validation_id",
+      "repository_commit",
+      "package_version",
+      "python_version",
+      "platform",
+      "main_system",
+      "main_parameters",
+      "stages"
+    ]
+  },
+  "stages": [
+    {
+      "id": "03_integrators",
+      "slug": "integrator",
+      "summary": "efork3_validation_summary.json",
+      "expected_evidence": [
+        "integrator_validation.md",
+        "benchmark_results.csv",
+        "convergence_errors.png",
+        "sources/constantes_efork.py",
+        "sources/ejemplo1.py"
+      ]
+    }
+  ],
+  "summary_required_fields": [
+    "stage",
+    "status",
+    "files"
+  ]
+}

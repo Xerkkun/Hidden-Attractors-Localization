@@ -1,0 +1,24 @@
+{
+  "stage": "integrator",
+  "status": "passed_published_efork3_tables",
+  "method": "Three-stage EFORK reference implementation with full known-history evaluation at every stage.",
+  "reference": "Ghoreishi, Ghaffari, and Saad (2023), Fractional Order Runge-Kutta Methods, Tables 3, 4, 9, and 10.",
+  "tables_reproduced": [
+    3,
+    4,
+    9,
+    10
+  ],
+  "max_absolute_difference_from_displayed_values": 5.548922380610444e-09,
+  "acceptance_tolerance": 6e-09,
+  "checks": {
+    "all_rows_within_display_tolerance": true,
+    "stage_order": "K3 uses a31*K1 + a32*K2",
+    "source_script_provenance": "Python validation script supplied by Dr. Luis Gerardo de la Fraga, CINVESTAV Unidad Zacatenco; archived in sources/."
+  },
+  "files": {
+    "report": "integrator_validation.md",
+    "results": "benchmark_results.csv",
+    "plot": "convergence_errors.png"
+  }
+}

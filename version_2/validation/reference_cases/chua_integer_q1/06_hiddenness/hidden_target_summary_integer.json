@@ -1,0 +1,277 @@
+{
+  "params": {
+    "alpha_chua": 8.4562,
+    "beta": 12.0732,
+    "gamma_chua": 0.0052,
+    "m0": -0.1768,
+    "m1": -1.1468,
+    "model": "piecewise",
+    "a1": 0.4,
+    "a2": -1.5585,
+    "rho": 1.0
+  },
+  "frac_order": 1.0,
+  "target_seed": [
+    4.091872653474984,
+    -0.08387099778707713,
+    -7.509075854668217
+  ],
+  "equilibria": {
+    "E0": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "E+": [
+      6.588307886538868,
+      0.0028364022560936064,
+      -6.585471484282774
+    ],
+    "E-": [
+      -6.588307886538868,
+      -0.0028364022560936064,
+      6.585471484282774
+    ]
+  },
+  "reference_points": 89,
+  "total_target_hits": 0,
+  "hiddenness_status": "supported_by_sample",
+  "final_message": "No se detectaron trayectorias que cayeran en el atractor objetivo desde las vecindades muestreadas de los equilibrios.",
+  "safety": {
+    "profile": "safe",
+    "max_threads": 2,
+    "timeout_sec": 1800,
+    "max_work_units": 4000000000,
+    "sync_from_pipeline_summary": true
+  },
+  "diagnostics": {
+    "compile_backend": {
+      "target_kind": "executable",
+      "compiler": "gcc",
+      "openmp_requested": true,
+      "openmp_active": true,
+      "command": [
+        "gcc",
+        "-O3",
+        "-fopenmp",
+        "-o",
+        "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\chua_piecewise\\native\\chua_hidden_backend_integer.exe",
+        "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\tools\\legacy\\chua_hidden_backend.c",
+        "-lm"
+      ]
+    },
+    "parallel_contract": {
+      "python_workers": 1,
+      "omp_threads": 2,
+      "backend_openmp_active": true,
+      "seed_strategy": "independent_equilibrium_samples",
+      "stage_kind": "embarrassingly_parallel"
+    }
+  },
+  "summary_by_radius": [
+    {
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "EQ": 24,
+      "DIV": 0,
+      "TARGET": 0,
+      "OTHER": 0,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 3e-05,
+      "EQ": 24,
+      "DIV": 0,
+      "TARGET": 0,
+      "OTHER": 0,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 0.0001,
+      "EQ": 24,
+      "DIV": 0,
+      "TARGET": 0,
+      "OTHER": 0,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 0.0003,
+      "EQ": 24,
+      "DIV": 0,
+      "TARGET": 0,
+      "OTHER": 0,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "EQ": 24,
+      "DIV": 0,
+      "TARGET": 0,
+      "OTHER": 0,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 0.003,
+      "EQ": 24,
+      "DIV": 0,
+      "TARGET": 0,
+      "OTHER": 0,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "EQ": 24,
+      "DIV": 0,
+      "TARGET": 0,
+      "OTHER": 0,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "EQ": 24,
+      "DIV": 0,
+      "TARGET": 0,
+      "OTHER": 0,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E+",
+      "radius": 3e-05,
+      "EQ": 24,
+      "DIV": 0,
+      "TARGET": 0,
+      "OTHER": 0,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E+",
+      "radius": 0.0001,
+      "EQ": 24,
+      "DIV": 0,
+      "TARGET": 0,
+      "OTHER": 0,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E+",
+      "radius": 0.0003,
+      "EQ": 19,
+      "DIV": 1,
+      "TARGET": 0,
+      "OTHER": 4,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "EQ": 8,
+      "DIV": 8,
+      "TARGET": 0,
+      "OTHER": 8,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E+",
+      "radius": 0.003,
+      "EQ": 2,
+      "DIV": 12,
+      "TARGET": 0,
+      "OTHER": 10,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "EQ": 1,
+      "DIV": 12,
+      "TARGET": 0,
+      "OTHER": 11,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "EQ": 24,
+      "DIV": 0,
+      "TARGET": 0,
+      "OTHER": 0,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 3e-05,
+      "EQ": 24,
+      "DIV": 0,
+      "TARGET": 0,
+      "OTHER": 0,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 0.0001,
+      "EQ": 24,
+      "DIV": 0,
+      "TARGET": 0,
+      "OTHER": 0,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 0.0003,
+      "EQ": 19,
+      "DIV": 4,
+      "TARGET": 0,
+      "OTHER": 1,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "EQ": 5,
+      "DIV": 11,
+      "TARGET": 0,
+      "OTHER": 8,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 0.003,
+      "EQ": 1,
+      "DIV": 11,
+      "TARGET": 0,
+      "OTHER": 12,
+      "UNKNOWN": 0
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "EQ": 2,
+      "DIV": 10,
+      "TARGET": 0,
+      "OTHER": 12,
+      "UNKNOWN": 0
+    }
+  ],
+  "files": {
+    "summary_from_pipeline": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\chua_integer_pipeline_summary.json",
+    "csv_out": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\hidden_target_check_integer.csv",
+    "ref_csv_out": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\reference_section_integer.csv",
+    "summary_csv_out": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\summary_by_radius_integer.csv",
+    "json_out": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\hidden_target_summary_integer.json",
+    "fig_section": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\reference_section_integer.png",
+    "fig_probe": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\probe_summary_integer.png"
+  },
+  "notes": [
+    "Integer-order verification uses the same C backend interface as the fractional pipeline.",
+    "For frac_order=1.0 the C backend is invoked through the shared EFORK-style operational integrator.",
+    "Hiddenness is tested by sampling neighborhoods of equilibria and comparing section fingerprints."
+  ],
+  "n_detail_rows": 504
+}

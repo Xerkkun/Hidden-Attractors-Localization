@@ -1,0 +1,138 @@
+﻿
+==================== DEFINICIONES ====================
+
+B:
+TraditionalForm[(1 + k + m1)*α]
+
+N(p):
+TraditionalForm[p + p^2 + β + γ + p*γ]
+
+P0 escrito con BB:
+TraditionalForm[MatrixForm[{{-BB, α, 0}, {1, -1, 1}, {0, -β, -γ}}]]
+
+==================== DETERMINANTE Y ASIGNACION ESPECTRAL ====================
+
+det(P0 - p I) calculado por Det:
+TraditionalForm[-p^3 - BB*β + p^2*(-1 - BB - γ) - BB*γ + α*γ + p*(-BB + α - β - γ - BB*γ)]
+
+Forma agrupada -(p+BB)N(p)+α(p+γ):
+TraditionalForm[-(BB*p) - p^2 - BB*p^2 - p^3 + p*α - BB*β - p*β - BB*γ - p*γ - BB*p*γ - p^2*γ + α*γ]
+
+Verificacion det - forma agrupada:
+TraditionalForm[0]
+
+det(P0-pI) - [-(p+d)(p^2+w0^2)]:
+TraditionalForm[d*w0^2 - BB*β + p^2*(-1 - BB + d - γ) - BB*γ + α*γ + p*(-BB + w0^2 + α - β - γ - BB*γ)]
+
+Ecuaciones por coeficientes {p^2,p,p^0}:
+TraditionalForm[{-1 - BB + d - γ == 0, -BB + w0^2 + α - β - γ - BB*γ == 0, d*w0^2 - BB*β - BB*γ + α*γ == 0}]
+
+d:
+TraditionalForm[ConditionalExpression[(1 + w0^2 + α - β + γ + γ^2)/(1 + γ), (Element[b1, Reals] && Element[b2, Reals] && Element[h, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals] && β < 1 + w0^2 + γ + γ^2) || (β > 1 + w0^2 + γ + γ^2 && α > -1 - w0^2 + β - γ - γ^2 && Element[b1, Reals] && Element[b2, Reals] && Element[h, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals])]]
+
+BB:
+TraditionalForm[ConditionalExpression[(w0^2 + α - β - γ)/(1 + γ), (Element[b1, Reals] && Element[b2, Reals] && Element[h, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals] && β < 1 + w0^2 + γ + γ^2) || (β > 1 + w0^2 + γ + γ^2 && α > -1 - w0^2 + β - γ - γ^2 && Element[b1, Reals] && Element[b2, Reals] && Element[h, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals])]]
+
+k, usando BB=α(1+m1+k):
+TraditionalForm[ConditionalExpression[-((-w0^2 + m1*α + β + γ + α*γ + m1*α*γ)/(α*(1 + γ))), (Element[b1, Reals] && Element[b2, Reals] && Element[h, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals] && β < 1 + w0^2 + γ + γ^2) || (β > 1 + w0^2 + γ + γ^2 && α > -1 - w0^2 + β - γ - γ^2 && Element[b1, Reals] && Element[b2, Reals] && Element[h, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals])]]
+
+Residual de frecuencia:
+TraditionalForm[ConditionalExpression[(w0^2 + w0^4 + w0^2*α - 2*w0^2*β - α*β + β^2 + 2*β*γ + γ^2 + w0^2*γ^2 + α*γ^2)/(1 + γ), (Element[b1, Reals] && Element[b2, Reals] && Element[h, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals] && β < 1 + w0^2 + γ + γ^2) || (β > 1 + w0^2 + γ + γ^2 && α > -1 - w0^2 + β - γ - γ^2 && Element[b1, Reals] && Element[b2, Reals] && Element[h, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals])]]
+
+Residual multiplicado por (1+γ):
+TraditionalForm[ConditionalExpression[w0^2 + w0^4 + w0^2*α - 2*w0^2*β - α*β + β^2 + 2*β*γ + γ^2 + w0^2*γ^2 + α*γ^2, (Element[b1, Reals] && Element[b2, Reals] && Element[h, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals] && β < 1 + w0^2 + γ + γ^2) || (β > 1 + w0^2 + γ + γ^2 && α > -1 - w0^2 + β - γ - γ^2 && Element[b1, Reals] && Element[b2, Reals] && Element[h, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals])]]
+
+==================== TRANSFERENCIAS Y PARAMETROS h, b1, b2 ====================
+
+A:
+TraditionalForm[MatrixForm[{{0, -w0, 0}, {w0, 0, 0}, {0, 0, -d}}]]
+
+b:
+TraditionalForm[{b1, b2, 1}]
+
+c:
+TraditionalForm[{1, 0, -h}]
+
+WA(p) generado desde c^T(A-pI)^(-1)b:
+TraditionalForm[(-(b1*d*p) - b1*p^2 + h*p^2 + b2*d*w0 + b2*p*w0 + h*w0^2)/((d + p)*(p^2 + w0^2))]
+
+Numerador canonico de W0:
+TraditionalForm[α*(p + p^2 + β + γ + p*γ)]
+
+Numerador de WA generado:
+TraditionalForm[(-b1 + h)*p^2 + p*(-(b1*d) + b2*w0) + w0*(b2*d + h*w0)]
+
+Numerador de WA factorizado:
+TraditionalForm[-(b1*d*p) - b1*p^2 + h*p^2 + b2*d*w0 + b2*p*w0 + h*w0^2]
+
+Verificacion numerador generado - factorizado:
+TraditionalForm[0]
+
+Ecuaciones por coeficientes {p^0,p,p^2}:
+TraditionalForm[{b2*d*w0 + h*w0^2 - α*β - α*γ == 0, -(b1*d) + b2*w0 - α - α*γ == 0, -b1 + h - α == 0}]
+
+h:
+TraditionalForm[ConditionalExpression[(α*(-d + d^2 + β + γ - d*γ))/(d^2 + w0^2), Element[BB, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals]]]
+
+b1:
+TraditionalForm[ConditionalExpression[-((α*(d + w0^2 - β - γ + d*γ))/(d^2 + w0^2)), Element[BB, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals]]]
+
+b2:
+TraditionalForm[ConditionalExpression[-((α*(-w0^2 + d*w0^2 - d*β - d*γ - w0^2*γ))/(w0*(d^2 + w0^2))), Element[BB, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals]]]
+
+==================== MATRIZ S ====================
+
+S con BB:
+TraditionalForm[MatrixForm[{{1, 0, -h}, {BB/α, -(w0/α), (-(BB*h) + d*h)/α}, {(BB - w0^2 - α)/α, (-(BB*β) - BB*γ + w0^2*γ + α*γ)/(w0*α), (-(BB*h) + d*h + BB*d*h - d^2*h + h*α)/α}}]]
+
+S con BB=α(1+m1+k):
+TraditionalForm[MatrixForm[{{1, 0, -h}, {1 + k + m1, -(w0/α), (d*h - h*(1 + k + m1)*α)/α}, {(-w0^2 - α + (1 + k + m1)*α)/α, (-((1 + k + m1)*α*β) + w0^2*γ + α*γ - (1 + k + m1)*α*γ)/(w0*α), (d*h - d^2*h + h*α - h*(1 + k + m1)*α + d*h*(1 + k + m1)*α)/α}}]]
+
+Verificacion r^T S - c^T:
+TraditionalForm[{0, 0, 0}]
+
+S b - qv:
+TraditionalForm[{b1 - h + α, (b1*BB)/α - (BB*h)/α + (d*h)/α - (b2*w0)/α, -b1 + h + (b1*BB)/α - (BB*h)/α + (d*h)/α + (BB*d*h)/α - (d^2*h)/α - (b1*w0^2)/α - (b2*BB*β)/(w0*α) + (b2*γ)/w0 - (b2*BB*γ)/(w0*α) + (b2*w0*γ)/α}]
+
+S b - qv sustituyendo h,b1,b2:
+TraditionalForm[{ConditionalExpression[0, Element[BB, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals]], ConditionalExpression[-1 - BB + d - γ, Element[BB, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals]], ConditionalExpression[(-(d^2*w0^2) - 2*BB*d^2*w0^2 + 2*d^3*w0^2 + BB*d^3*w0^2 - d^4*w0^2 - BB*w0^4 + d*w0^4 + w0^6 + d^2*w0^2*α + w0^4*α - BB*w0^2*β + d*w0^2*β + 2*BB*d*w0^2*β - d^2*w0^2*β - w0^4*β - BB*d*β^2 - BB*w0^2*γ + d*w0^2*γ + 2*BB*d*w0^2*γ - 2*d^2*w0^2*γ - BB*d^2*w0^2*γ + d^3*w0^2*γ + w0^2*α*γ - d*w0^2*α*γ - 2*BB*d*β*γ - BB*w0^2*β*γ + d*w0^2*β*γ + d*α*β*γ - BB*d*γ^2 - BB*w0^2*γ^2 + d*w0^2*γ^2 + w0^4*γ^2 + d*α*γ^2 + w0^2*α*γ^2)/(w0^2*(d^2 + w0^2)), Element[BB, Reals] && Element[k, Reals] && Element[m0, Reals] && Element[m1, Reals] && Element[p, Reals]]}]
+
+P0 S - S A generado:
+TraditionalForm[MatrixForm[{{0, 0, 0}, {0, (w0^2 + BB*w0^2 - BB*β - BB*γ + w0^2*γ + α*γ)/(w0*α), 0}, {0, (BB*w0^2 - w0^4 - w0^2*α + w0^2*β + BB*β*γ + BB*γ^2 - w0^2*γ^2 - α*γ^2)/(w0*α), (-(BB*d*h) + d^2*h + BB*d^2*h - d^3*h + d*h*α + BB*h*β - d*h*β + BB*h*γ - d*h*γ - BB*d*h*γ + d^2*h*γ - h*α*γ)/α}}]]
+
+==================== FUNCION DESCRIPTIVA Y PHI ====================
+
+Bpsi en funcion de th0:
+TraditionalForm[(2*Sqrt[1 - a^(-2)]*(m0 - m1))/Pi + (2*a*(m0 - m1)*th0)/Pi]
+
+Phi en funcion de th0:
+TraditionalForm[2*Sqrt[1 - a^(-2)]*(m0 - m1) - a*k*Pi + 2*a*(m0 - m1)*th0]
+
+Phi con ac=ArcCos(1/a):
+TraditionalForm[2*Sqrt[1 - a^(-2)]*(m0 - m1) - 2*a*ac*(m0 - m1) - a*k*Pi + a*(m0 - m1)*Pi]
+
+Phi para visualizar sin Log:
+TraditionalForm[2*Sqrt[1 - a^(-2)]*(m0 - m1) - a*k*Pi + a*(m0 - m1)*Pi - 2*a*(m0 - m1)*Inactive[ArcCos][a^(-1)]]
+
+dPhi generado antes de simplificar:
+TraditionalForm[-(k*Pi) + (2*m0)/(a^3*R) - (2*m0)/(a*R) - (2*m1)/(a^3*R) + (2*m1)/(a*R) + 2*m0*th0 - 2*m1*th0]
+
+dPhi simplificado en funcion de th0:
+TraditionalForm[-(k*Pi) + 2*(m0 - m1)*(-(R/a) + th0)]
+
+dPhi con ac=ArcCos(1/a):
+TraditionalForm[(-2*Sqrt[1 - a^(-2)]*(m0 - m1))/a - 2*ac*(m0 - m1) - k*Pi + (m0 - m1)*Pi]
+
+dPhi para visualizar sin Log:
+TraditionalForm[(-2*Sqrt[1 - a^(-2)]*(m0 - m1))/a - k*Pi + (m0 - m1)*Pi - 2*(m0 - m1)*Inactive[ArcCos][a^(-1)]]
+
+Ecuacion que define a0:
+TraditionalForm[2*Sqrt[1 - a0^(-2)]*(m0 - m1) - 2*a0*ac*(m0 - m1) - a0*k*Pi + a0*(m0 - m1)*Pi == 0]
+
+Y(0):
+TraditionalForm[{a0, 0, 0}]
+
+X(0)=S Y(0):
+TraditionalForm[{a0, a0 + a0*k + a0*m1, a0*k + a0*m1 - (a0*w0^2)/α}]
+
+==================== RESULTADOS ALGEBRAICOS ORGANIZADOS ====================

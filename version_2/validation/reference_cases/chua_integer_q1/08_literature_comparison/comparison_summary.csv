@@ -1,0 +1,10 @@
+source,kind,status,scope
+version_1/chua_integer_runs/balanced,library_artifacts,regenerated_corrected_efork,q=1 numeric summaries and figures after K3 stage-order correction
+reporte_teorico_chua_entero_170526.pdf,theoretical_report,registered_copy,derivation and harmonic seed; earlier integration-dependent values superseded
+verifica_chua_entero.m,MATLAB_source,locally_executed,Lure Nyquist canonical transform and ode45 comparison
+matlab_validation_output.txt,MATLAB_output,registered,omega0 k a0 and residual output from MATLAB R2025b execution
+matlab_numeric_comparison.csv,MATLAB_comparison,passed,Python versus MATLAB harmonic seed and transfer-check differences
+chua_entero_algebraico_sin_numericos.wl,Wolfram_source,locally_executed_symbolic_only,symbolic Lure transfer and canonical derivation without numerical parameters
+wolfram_symbolic_output.txt,Wolfram_output,registered,printed symbolic identities from wolframscript execution
+Guan_Xie_2025,literature,registered_published_comparison,Example 6 displayed omega0 k a0 and initial-point values plus localization context
+Ghoreishi_Ghaffari_Saad_2023,integrator_literature,reproduced_in_separate_reference_case,EFORK-3 Tables 3 4 9 and 10 with provided-script provenance

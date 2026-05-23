@@ -1,0 +1,26 @@
+{
+  "validation_id": "efork3_ghoreishi_ghaffari_2023_reference",
+  "repository_commit": "working_tree",
+  "package_version": "0.1.0",
+  "python_version": "3.14.3",
+  "platform": "Windows 11",
+  "main_system": "Manufactured scalar Caputo initial-value problems, Examples 1 and 2",
+  "main_parameters": {
+    "method": "three-stage EFORK",
+    "alpha_values": [
+      0.25,
+      0.5
+    ],
+    "t_final": 1.0,
+    "n_steps": [
+      40,
+      80,
+      160,
+      320,
+      640
+    ]
+  },
+  "stages": {
+    "integrator": "03_integrators/efork3_validation_summary.json"
+  }
+}

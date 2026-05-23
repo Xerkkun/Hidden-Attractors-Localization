@@ -1,0 +1,26 @@
+{
+  "stage": "literature_comparison",
+  "status": "passed_for_registered_harmonic_and_algebraic_checks",
+  "checks": {
+    "report_registered": true,
+    "matlab_source_executed": true,
+    "literature_registered": true,
+    "paper_numeric_comparison_registered": true,
+    "efork_method_reference_registered": true,
+    "wolfram_symbolic_source_executed": true,
+    "wolfram_numeric_reproduction": false
+  },
+  "files": {
+    "report": "literature_comparison.md",
+    "comparison_table": "comparison_summary.csv",
+    "paper_numeric_comparison": "paper_numeric_comparison.csv",
+    "matlab_numeric_comparison": "matlab_numeric_comparison.csv",
+    "source_registry": "source_registry.json",
+    "theoretical_report": "sources/reporte_teorico_chua_entero_170526.pdf",
+    "matlab_source": "sources/verifica_chua_entero.m",
+    "matlab_output": "sources/matlab_run/matlab_validation_output.txt",
+    "wolfram_source": "sources/chua_entero_algebraico_sin_numericos.wl",
+    "wolfram_output": "sources/wolfram_run/wolfram_symbolic_output.txt",
+    "efork_reference_summary": "../../efork3_ghoreishi_ghaffari/03_integrators/efork3_validation_summary.json"
+  }
+}

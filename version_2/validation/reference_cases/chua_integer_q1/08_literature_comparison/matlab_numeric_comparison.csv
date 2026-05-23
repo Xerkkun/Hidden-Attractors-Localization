@@ -1,0 +1,6 @@
+quantity,python_value,matlab_value,absolute_difference,interpretation
+omega0,2.039186939959001,2.0391869399590008,2.0e-16,numerically_reproduced
+k,0.20986735451508398,0.2098673545150839,8.0e-17,numerically_reproduced
+a0,5.856145086257356,5.8561450862573574,1.4e-15,numerically_reproduced
+Phi_a0,-2.211772431870429e-16,-1.275e-16,9.36772431870429e-17,both_near_zero
+transfer_error,8.09169049910734e-15,4.721e-15,3.37069049910734e-15,both_below_1e-12

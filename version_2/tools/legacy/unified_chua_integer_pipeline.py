@@ -190,6 +190,7 @@ CONFIG: Dict[str, Any] = {
     "basin": {
         "source": "chua_basin_lib.c",
         "openmp": True,
+        "workers": 1,
         "nx": 300,
         "ny": 300,
         "xmin": -8.0,
@@ -297,6 +298,7 @@ CONFIG: Dict[str, Any] = {
         "dist_csv": RUNTIME_ROOT / "seed_equilibrium_distances_integer.csv",
         "nyquist_pdf": OUTDIR / "fig01_nyquist_df.pdf",
         "nyquist_zoom_pdf": OUTDIR / "fig01b_nyquist_zoom_x.pdf",
+        "transfer_components_pdf": OUTDIR / "fig01c_transfer_real_imag.pdf",
         "cont_progress_x_pdf": OUTDIR / "fig02a_continuation_x.pdf",
         "cont_progress_y_pdf": OUTDIR / "fig02b_continuation_y.pdf",
         "cont_progress_z_pdf": OUTDIR / "fig02c_continuation_z.pdf",
@@ -398,6 +400,7 @@ def synchronize_integer_runtime_contract(cfg: Dict[str, Any]) -> None:
             "backend": "chua_basin_lib.c EFORK-style classifier at q=1.0",
             "z_cuts": [0.0, "final_state"],
             "grid": [int(cfg["basin"]["nx"]), int(cfg["basin"]["ny"])],
+            "workers": int(cfg["basin"].get("workers", 1)),
             "TMAX": float(cfg["basin"]["TMAX"]),
             "TBURN": float(cfg["basin"]["TBURN"]),
         },
@@ -447,6 +450,9 @@ def configure_runtime_profile(cfg: Dict[str, Any]) -> None:
     cfg["hidden_illustration"]["enabled"] = _env_flag("HIDDEN_ATTRACTORS_HIDDEN_ILLUSTRATION", True)
     cfg["lyapunov"]["enabled"] = _env_flag("HIDDEN_ATTRACTORS_LYAPUNOV", False)
     cfg["lyapunov"]["strict"] = _env_flag("HIDDEN_ATTRACTORS_LYAPUNOV_STRICT", False)
+    raw_basin_workers = os.environ.get("HIDDEN_ATTRACTORS_BASIN_WORKERS", "").strip()
+    if raw_basin_workers:
+        cfg["basin"]["workers"] = max(1, int(raw_basin_workers))
 
     if run_mode == "full":
         return
@@ -843,7 +849,7 @@ def efork_q1_step(rhs: Callable[[np.ndarray], np.ndarray], x: np.ndarray, h: flo
     h = float(h)
     k1 = h * np.asarray(rhs(x), dtype=float)
     k2 = h * np.asarray(rhs(x + EFORK_Q1_A21 * k1), dtype=float)
-    k3 = h * np.asarray(rhs(x + EFORK_Q1_A31 * k2 + EFORK_Q1_A32 * k1), dtype=float)
+    k3 = h * np.asarray(rhs(x + EFORK_Q1_A31 * k1 + EFORK_Q1_A32 * k2), dtype=float)
     return x + EFORK_Q1_W1 * k1 + EFORK_Q1_W2 * k2 + EFORK_Q1_W3 * k3
 
 
@@ -1101,6 +1107,38 @@ def plot_seed_figures(cfg: Dict[str, Any], seed: Dict[str, Any]) -> None:
     style_white_axis(ax)
     ax.legend(loc="best", fontsize=8)
     save_figure(fig, cfg["outputs"]["nyquist_zoom_pdf"])
+
+    transfer_omega = np.linspace(
+        float(lure["wmin"]),
+        max(10.0, 5.0 * float(omega0)),
+        5000,
+    )
+    transfer_wvals = np.array([W(float(w)) for w in transfer_omega], dtype=complex)
+
+    fig, axes = plt.subplots(2, 1, figsize=(8.8, 7.1), sharex=True)
+    axes[0].plot(transfer_omega, np.real(transfer_wvals), lw=1.5, color=NYQUIST_W_COLOR, label=r"Re$(W(i\omega))$")
+    axes[0].axhline(-1.0 / k, color=NYQUIST_DF_COLOR, ls="--", lw=1.1, label=r"$-1/k$")
+    axes[0].scatter([omega0], [np.real(W0)], s=55, facecolors="white", edgecolors="#ef4444", linewidths=1.4, zorder=5, label="selected closure")
+    axes[0].set_ylabel(r"Re$(W(i\omega))$")
+    axes[0].set_title("Real component")
+    axes[0].legend(loc="best", fontsize=8)
+
+    axes[1].plot(transfer_omega, np.imag(transfer_wvals), lw=1.5, color=NYQUIST_W_COLOR, label=r"Im$(W(i\omega))$")
+    axes[1].axhline(0.0, color=NYQUIST_DF_COLOR, ls="--", lw=1.1, label="zero-crossing condition")
+    axes[1].scatter([omega0], [np.imag(W0)], s=55, facecolors="white", edgecolors="#ef4444", linewidths=1.4, zorder=5, label="selected root")
+    axes[1].set_xlabel(r"$\omega$ (rad/s)")
+    axes[1].set_ylabel(r"Im$(W(i\omega))$")
+    axes[1].set_title("Imaginary component")
+    axes[1].legend(loc="best", fontsize=8)
+
+    for ax in axes:
+        ax.axvline(omega0, color="#374151", ls=":", lw=0.9)
+        for root in roots:
+            if not np.isclose(float(root), float(omega0)):
+                ax.axvline(float(root), color="#9ca3af", ls=":", lw=0.8)
+        style_white_axis(ax)
+    fig.suptitle("Integer Chua at q=1: transfer-function closure")
+    save_figure(fig, cfg["outputs"]["transfer_components_pdf"])
 
 
 def plot_continuation_figures(cfg: Dict[str, Any], results: List[Dict[str, Any]]) -> None:

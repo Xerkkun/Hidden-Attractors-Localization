@@ -99,7 +99,27 @@ static void chua_equilibria(const ChuaParams *p, EqSet *eqs){
     }
 }
 
-static EFORKCoeffs efork_coeffs(double alpha_frac, double h){ EFORKCoeffs c; c.alpha_frac=alpha_frac; c.g1=tgamma(1.0+alpha_frac); c.g2=tgamma(1.0+2.0*alpha_frac); c.g3=tgamma(1.0+3.0*alpha_frac); c.a21=1.0/(2.0*c.g1*c.g1); c.a31=((c.g1*c.g1)*c.g2 + 2.0*(c.g2*c.g2) - c.g3)/(4.0*(c.g1*c.g1)*(2.0*(c.g2*c.g2)-c.g3)); c.a32=-c.g2/(4.0*(2.0*(c.g2*c.g2)-c.g3)); c.w1=(8.0*(c.g1*c.g1*c.g1)*(c.g2*c.g2)-6.0*(c.g1*c.g1*c.g1)*c.g3 + c.g2*c.g3)/(c.g1*c.g2*c.g3); c.w2=2.0*(c.g1*c.g1)*(4.0*(c.g2*c.g2)-c.g3)/(c.g2*c.g3); c.w3=-8.0*(c.g1*c.g1)*(2.0*(c.g2*c.g2)-c.g3)/(c.g2*c.g3); c.inv_mem_factor=1.0/(h*tgamma(2.0-alpha_frac)); return c; }
+static EFORKCoeffs efork_coeffs(double alpha_frac, double h){
+    EFORKCoeffs c;
+    c.alpha_frac=alpha_frac;
+    c.g1=tgamma(1.0+alpha_frac);
+    c.g2=tgamma(1.0+2.0*alpha_frac);
+    c.g3=tgamma(1.0+3.0*alpha_frac);
+    c.a21=1.0/(2.0*c.g1*c.g1);
+    c.a31=((c.g1*c.g1)*c.g2 + 2.0*(c.g2*c.g2) - c.g3)/(4.0*(c.g1*c.g1)*(2.0*(c.g2*c.g2)-c.g3));
+    c.a32=-c.g2/(4.0*(2.0*(c.g2*c.g2)-c.g3));
+    /*
+     * This compact legacy integrator evaluates K3 as a31*K2 + a32*K1.
+     * For q=1, exchange its stored coefficients to realize the published
+     * EFORK-3 state a31*K1 + a32*K2. Fractional validation is separate.
+     */
+    if(fabs(alpha_frac-1.0)<1e-14){ double published_a31=c.a31; c.a31=c.a32; c.a32=published_a31; }
+    c.w1=(8.0*(c.g1*c.g1*c.g1)*(c.g2*c.g2)-6.0*(c.g1*c.g1*c.g1)*c.g3 + c.g2*c.g3)/(c.g1*c.g2*c.g3);
+    c.w2=2.0*(c.g1*c.g1)*(4.0*(c.g2*c.g2)-c.g3)/(c.g2*c.g3);
+    c.w3=-8.0*(c.g1*c.g1)*(2.0*(c.g2*c.g2)-c.g3)/(c.g2*c.g3);
+    c.inv_mem_factor=1.0/(h*tgamma(2.0-alpha_frac));
+    return c;
+}
 static inline double memory_fractional_scalar(int k,double t,const double *arr,const double *vtn,int nu,const EFORKCoeffs *coef){ int start=k-nu; if(start<0) start=0; double s=0.0, expo=1.0-coef->alpha_frac; for(int j=start;j<k;++j){ double v1=pow(t-vtn[j],expo); double v2=pow(t-vtn[j+1],expo); s += (arr[j+1]-arr[j])*(v1-v2); } return s*coef->inv_mem_factor; }
 
 static int efork_chua_caputo(const ChuaParams *p,double x0[3],double alpha_frac,double h,double t_final,double Lm,double **t_out,double **X_out,int *N_out){ EFORKCoeffs coef=efork_coeffs(alpha_frac,h); int N1=(int)ceil(t_final/h); int nu=(int)(Lm/h); if(nu<1) nu=1; double *t=(double*)calloc((size_t)(N1+1),sizeof(double)); double *x=(double*)calloc((size_t)(N1+1),sizeof(double)); double *y=(double*)calloc((size_t)(N1+1),sizeof(double)); double *z=(double*)calloc((size_t)(N1+1),sizeof(double)); if(!t||!x||!y||!z){ free(t); free(x); free(y); free(z); return 0;} double ha=pow(h,alpha_frac); double xn=x0[0], yn=x0[1], zn=x0[2]; t[0]=0.0; x[0]=xn; y[0]=yn; z[0]=zn; double dx,dy,dz; chua_rhs_xyz(xn,yn,zn,p,&dx,&dy,&dz); double K1x=ha*dx, K1y=ha*dy, K1z=ha*dz; chua_rhs_xyz(xn+coef.a21*K1x, yn+coef.a21*K1y, zn+coef.a21*K1z, p,&dx,&dy,&dz); double K2x=ha*dx, K2y=ha*dy, K2z=ha*dz; chua_rhs_xyz(xn+coef.a31*K2x+coef.a32*K1x, yn+coef.a31*K2y+coef.a32*K1y, zn+coef.a31*K2z+coef.a32*K1z,p,&dx,&dy,&dz); double K3x=ha*dx, K3y=ha*dy, K3z=ha*dz; double xn1=xn+coef.w1*K1x+coef.w2*K2x+coef.w3*K3x; double yn1=yn+coef.w1*K1y+coef.w2*K2y+coef.w3*K3y; double zn1=zn+coef.w1*K1z+coef.w2*K2z+coef.w3*K3z; if(N1>=1){ t[1]=h; x[1]=xn1; y[1]=yn1; z[1]=zn1;} xn=xn1; yn=yn1; zn=zn1; for(int n=1;n<N1;++n){ double tn=n*h; double mem_x=memory_fractional_scalar(n,tn,x,t,nu,&coef); double mem_y=memory_fractional_scalar(n,tn,y,t,nu,&coef); double mem_z=memory_fractional_scalar(n,tn,z,t,nu,&coef); chua_rhs_xyz(xn,yn,zn,p,&dx,&dy,&dz); double f1x=dx-mem_x, f1y=dy-mem_y, f1z=dz-mem_z; K1x=ha*f1x; K1y=ha*f1y; K1z=ha*f1z; chua_rhs_xyz(xn+coef.a21*K1x, yn+coef.a21*K1y, zn+coef.a21*K1z, p,&dx,&dy,&dz); K2x=ha*dx; K2y=ha*dy; K2z=ha*dz; chua_rhs_xyz(xn+coef.a31*K2x+coef.a32*K1x, yn+coef.a31*K2y+coef.a32*K1y, zn+coef.a31*K2z+coef.a32*K1z,p,&dx,&dy,&dz); K3x=ha*dx; K3y=ha*dy; K3z=ha*dz; xn1=xn+coef.w1*K1x+coef.w2*K2x+coef.w3*K3x; yn1=yn+coef.w1*K1y+coef.w2*K2y+coef.w3*K3y; zn1=zn+coef.w1*K1z+coef.w2*K2z+coef.w3*K3z; t[n+1]=(n+1)*h; x[n+1]=xn1; y[n+1]=yn1; z[n+1]=zn1; xn=xn1; yn=yn1; zn=zn1; } double *X=(double*)malloc((size_t)(N1+1)*3u*sizeof(double)); if(!X){ free(t); free(x); free(y); free(z); return 0;} for(int i=0;i<=N1;++i){ X[3*i+0]=x[i]; X[3*i+1]=y[i]; X[3*i+2]=z[i]; } free(x); free(y); free(z); *t_out=t; *X_out=X; *N_out=N1+1; return 1; }

@@ -10,6 +10,8 @@ contribution notes.
 - [Getting Started](getting_started.md)
 - [Examples](examples.md)
 - [Systems](systems.md)
+- [Integer Chua q=1 Reference](integer_chua_reference.md)
+- [EFORK-3 Published Validation](efork3_validation.md)
 - [Adapting New Systems](adapting_new_systems.md)
 - [Dynamical Analysis](dynamical_analysis.md)
 - [External Tools](external_tools.md)
@@ -36,3 +38,6 @@ contribution notes.
 
 The project provides numerical evidence workflows. A simulation result is not a
 formal theorem of hiddenness unless a separate mathematical proof is supplied.
+The promoted integer-order baseline is documented in
+[Integer Chua q=1 Reference](integer_chua_reference.md), including its
+literature and cross-tool evidence status.

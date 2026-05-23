@@ -1,0 +1,26 @@
+{
+  "stage": "dynamic_analysis",
+  "status": "passed_from_corrected_efork_q1_rerun",
+  "checks": {
+    "lyapunov_exponents": [
+      0.2082461785187165,
+      0.013732698332286726,
+      -1.3669300926593664
+    ],
+    "positive_leading_exponent": true,
+    "omega0_nyquist_df": 2.039186939959001,
+    "omega_fft_x": 2.3035786594481804,
+    "fft_relative_mismatch": 0.12965545939328907,
+    "omega_psd_x": 2.300971181828511,
+    "psd_relative_mismatch": 0.12837677445834053
+  },
+  "files": {
+    "report": "dynamic_analysis.md",
+    "lyapunov_summary": "chua_integer_lyapunov_summary.json",
+    "spectral_summary": "chua_integer_spectral_summary.json",
+    "attractor_figure": "fig03_final_attractor.png",
+    "lyapunov_figure": "fig13_lyapunov_convergence.png",
+    "fft_x_figure": "fig11a_fft_x.png",
+    "psd_x_figure": "fig11d_psd_x.png"
+  }
+}

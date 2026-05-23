@@ -1,0 +1,24 @@
+{
+  "sources": [
+    {
+      "type": "published_reference",
+      "citation": "Ghoreishi, Ghaffari, and Saad (2023), Fractional Order Runge-Kutta Methods, Fractal and Fractional, 7, 245.",
+      "scope": "Three-stage EFORK formula, Examples 1 and 2, Tables 3, 4, 9, and 10."
+    },
+    {
+      "type": "provided_implementation",
+      "contributor": "Dr. Luis Gerardo de la Fraga, CINVESTAV Unidad Zacatenco",
+      "files": [
+        {
+          "path": "../03_integrators/sources/constantes_efork.py",
+          "sha256": "66112C70A0E97308E04AC54C2B4C3B4762A37C0F680A838F72EB7BEC48B1D7D5"
+        },
+        {
+          "path": "../03_integrators/sources/ejemplo1.py",
+          "sha256": "A34018E123EDDD1D4F6E4572A9609495E91CEFF5548B5CA02976442C653096B8"
+        }
+      ],
+      "scope": "Independent Python implementation of the EFORK-3 coefficients and Example 1."
+    }
+  ]
+}

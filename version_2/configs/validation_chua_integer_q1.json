@@ -1,0 +1,104 @@
+{
+  "contract_name": "chua_integer_q1_reference_validation",
+  "version": 1,
+  "purpose": "Promoted evidence package for the verified integer-order piecewise Chua baseline.",
+  "output_root": "validation/reference_cases/chua_integer_q1",
+  "manifest": {
+    "directory": "00_manifest",
+    "required_files": [
+      "validation_manifest.json",
+      "environment.json",
+      "software_versions.json",
+      "verification_matrix.md"
+    ],
+    "required_fields": [
+      "validation_id",
+      "repository_commit",
+      "package_version",
+      "python_version",
+      "platform",
+      "main_system",
+      "main_parameters",
+      "stages"
+    ]
+  },
+  "stages": [
+    {
+      "id": "01_algebra",
+      "slug": "algebra",
+      "summary": "algebra_validation_summary.json",
+      "expected_evidence": [
+        "algebra_validation.md",
+        "equilibria_summary.csv"
+      ]
+    },
+    {
+      "id": "02_lure_df",
+      "slug": "lure_df",
+      "summary": "lure_df_validation_summary.json",
+      "expected_evidence": [
+        "lure_df_validation.md",
+        "lure_df_results.csv",
+        "chua_integer_seed_summary.json",
+        "fig01_nyquist_df.png",
+        "fig01c_transfer_real_imag.png"
+      ]
+    },
+    {
+      "id": "03_integrators",
+      "slug": "integrator",
+      "summary": "integrator_validation_summary.json",
+      "expected_evidence": [
+        "integrator_validation.md",
+        "chua_integer_pipeline_summary.json"
+      ]
+    },
+    {
+      "id": "05_dynamic_analysis",
+      "slug": "dynamic_analysis",
+      "summary": "dynamic_analysis_summary.json",
+      "expected_evidence": [
+        "dynamic_analysis.md",
+        "chua_integer_lyapunov_summary.json",
+        "chua_integer_spectral_summary.json",
+        "fig03_final_attractor.png",
+        "fig13_lyapunov_convergence.png",
+        "fig11a_fft_x.png",
+        "fig11d_psd_x.png"
+      ]
+    },
+    {
+      "id": "06_hiddenness",
+      "slug": "hiddenness",
+      "summary": "hiddenness_validation_summary.json",
+      "expected_evidence": [
+        "hiddenness_validation.md",
+        "hidden_target_summary_integer.json",
+        "summary_by_radius_integer.csv",
+        "fig05b_hiddenness_overview.png"
+      ]
+    },
+    {
+      "id": "08_literature_comparison",
+      "slug": "literature_comparison",
+      "summary": "literature_comparison_summary.json",
+      "expected_evidence": [
+        "literature_comparison.md",
+        "comparison_summary.csv",
+        "paper_numeric_comparison.csv",
+        "matlab_numeric_comparison.csv",
+        "source_registry.json",
+        "sources/reporte_teorico_chua_entero_170526.pdf",
+        "sources/verifica_chua_entero.m",
+        "sources/matlab_run/matlab_validation_output.txt",
+        "sources/chua_entero_algebraico_sin_numericos.wl",
+        "sources/wolfram_run/wolfram_symbolic_output.txt"
+      ]
+    }
+  ],
+  "summary_required_fields": [
+    "stage",
+    "status",
+    "files"
+  ]
+}
