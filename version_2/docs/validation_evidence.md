@@ -210,6 +210,12 @@ non-empty CSV tables, declared figure files, and the final report status. The
 template-only tree is expected to fail until the stage artifacts are generated
 or copied into place.
 
+> [!NOTE]
+> **Cierre Incremental de Etapas / Incremental Stage Closure**
+> Las etapas del contrato se pueden cerrar de forma incremental. Las etapas que ya han sido completadas y formalizadas se declaran en el diccionario `stages` de `validation_manifest.json` con sus respectivas rutas. Las etapas pendientes que aún no han sido generadas se declaran en la lista `pending_stages` del manifiesto.
+> El verificador de contrato (`hidden-attractors-check-validation`) reportará únicamente advertencias (`WARNING`), no errores (`ERROR`), para aquellas etapas declaradas explícitamente como pendientes, y solo fallará si una etapa declarada como cerrada no cumple con los requisitos del contrato. 
+> Además, se puede emplear el flag `--allow-pending` para tratar de manera global cualquier etapa ausente como advertencia.
+
 The integer-order reference case can be checked independently:
 
 ```bash

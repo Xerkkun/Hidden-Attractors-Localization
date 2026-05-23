@@ -57,7 +57,7 @@ jobs:
       fail-fast: false          # que un OS que falle no cancele el otro
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ["3.10", "3.12"]
+        python-version: ["3.11", "3.12"]
 
     defaults:
       run:
@@ -98,6 +98,15 @@ jobs:
 
       - name: Run list_final_candidates example
         run: python examples/list_final_candidates.py
+
+      # ── 7. Integración de validación fraccionaria y verificación ─────────
+      - name: Run EFORK integrator validation
+        run: python tools/validation/validate_efork_integrator.py --validation-root /tmp/ha_validation
+        env:
+          PYTHONPATH: .
+
+      - name: Check validation contract with pending allowed
+        run: hidden-attractors-check-validation --validation-root /tmp/ha_validation --allow-pending
 
   # ─────────────────────────────────────────────────────────────────────────
   # Trabajo opcional: prueba nativa de backends C (solo si gcc está en PATH)

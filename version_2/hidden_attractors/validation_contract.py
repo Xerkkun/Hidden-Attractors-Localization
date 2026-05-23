@@ -73,24 +73,29 @@ def _declared_files(summary: dict[str, Any]) -> Iterable[str]:
                 yield item
 
 
-def _check_json_fields(path: Path, fields: Iterable[str]) -> list[ValidationIssue]:
+def _check_json_fields(path: Path, fields: Iterable[str], severity: str = "ERROR") -> list[ValidationIssue]:
     issues: list[ValidationIssue] = []
     data, error = _read_json(path)
     if error:
-        return [ValidationIssue("ERROR", path, error)]
+        return [ValidationIssue(severity, path, error)]
     assert data is not None
     for field in fields:
         if field not in data:
-            issues.append(ValidationIssue("ERROR", path, f"missing required field '{field}'"))
+            issues.append(ValidationIssue(severity, path, f"missing required field '{field}'"))
     if path.name.endswith("_validation_summary.json") or path.name.endswith("_summary.json"):
         for declared in _declared_files(data):
             declared_path = (path.parent / declared).resolve()
             if not declared_path.exists():
-                issues.append(ValidationIssue("ERROR", declared_path, "declared evidence path does not exist"))
+                issues.append(ValidationIssue(severity, declared_path, "declared evidence path does not exist"))
     return issues
 
 
-def _check_manifest_paths(manifest_path: Path, validation_root: Path) -> list[ValidationIssue]:
+def _check_manifest_paths(
+    manifest_path: Path,
+    validation_root: Path,
+    pending_slugs: set[str],
+    allow_pending: bool = False,
+) -> list[ValidationIssue]:
     issues: list[ValidationIssue] = []
     data, error = _read_json(manifest_path)
     if error:
@@ -103,9 +108,13 @@ def _check_manifest_paths(manifest_path: Path, validation_root: Path) -> list[Va
         if not isinstance(relative_path, str):
             issues.append(ValidationIssue("ERROR", manifest_path, f"stage '{stage_name}' path must be a string"))
             continue
+        if relative_path == "pending":
+            continue
         target = validation_root / relative_path
+        is_pending = stage_name in pending_slugs or allow_pending
+        severity = "WARNING" if is_pending else "ERROR"
         if not target.exists():
-            issues.append(ValidationIssue("ERROR", target, f"manifest path for stage '{stage_name}' does not exist"))
+            issues.append(ValidationIssue(severity, target, f"manifest path for stage '{stage_name}' does not exist"))
     return issues
 
 
@@ -125,6 +134,7 @@ def _final_report_status(manifest_path: Path) -> str | None:
 def check_validation_contract(
     contract_path: Path = DEFAULT_CONTRACT,
     validation_root: Path = DEFAULT_VALIDATION_ROOT,
+    allow_pending: bool = False,
 ) -> list[ValidationIssue]:
     """Return contract issues for a validation evidence tree."""
 
@@ -146,6 +156,24 @@ def check_validation_contract(
     if not manifest_dir.exists():
         issues.append(ValidationIssue("ERROR", manifest_dir, "manifest directory does not exist"))
 
+    pending_slugs: set[str] = set()
+    manifest_path = manifest_dir / "validation_manifest.json"
+    if manifest_path.exists():
+        data, _ = _read_json(manifest_path)
+        if data is not None:
+            # 1. Extract pending stages mapped to "pending"
+            stages = data.get("stages", {})
+            if isinstance(stages, dict):
+                for k, v in stages.items():
+                    if v == "pending":
+                        pending_slugs.add(k)
+            # 2. Extract pending stages in the pending_stages array
+            pending_stages = data.get("pending_stages", [])
+            if isinstance(pending_stages, list):
+                for item in pending_stages:
+                    if isinstance(item, str):
+                        pending_slugs.add(item)
+
     for file_name in manifest_info.get("required_files", []):
         path = manifest_dir / file_name
         if not path.exists():
@@ -155,9 +183,8 @@ def check_validation_contract(
             fields = manifest_info.get("required_fields", []) if file_name == "validation_manifest.json" else []
             issues.extend(_check_json_fields(path, fields))
 
-    manifest_path = manifest_dir / "validation_manifest.json"
     if manifest_path.exists():
-        issues.extend(_check_manifest_paths(manifest_path, validation_root))
+        issues.extend(_check_manifest_paths(manifest_path, validation_root, pending_slugs, allow_pending))
 
     summary_required = contract.get("summary_required_fields", [])
     for stage in contract.get("stages", []):
@@ -173,29 +200,33 @@ def check_validation_contract(
         stage_dir = validation_root / stage_id
         if not isinstance(slug, str):
             issues.append(ValidationIssue("ERROR", stage_dir, "stage is missing string field 'slug'"))
+
+        is_pending = slug in pending_slugs or stage_id in pending_slugs or allow_pending
+        severity = "WARNING" if is_pending else "ERROR"
+
         if not stage_dir.exists():
-            issues.append(ValidationIssue("ERROR", stage_dir, "stage directory does not exist"))
+            issues.append(ValidationIssue(severity, stage_dir, "stage directory does not exist"))
             continue
         if not isinstance(summary_name, str):
-            issues.append(ValidationIssue("ERROR", stage_dir, "stage is missing string field 'summary'"))
+            issues.append(ValidationIssue(severity, stage_dir, "stage is missing string field 'summary'"))
         else:
             summary_path = stage_dir / summary_name
             if not summary_path.exists():
-                issues.append(ValidationIssue("ERROR", summary_path, "stage summary JSON is missing"))
+                issues.append(ValidationIssue(severity, summary_path, "stage summary JSON is missing"))
             else:
-                issues.extend(_check_json_fields(summary_path, summary_required))
+                issues.extend(_check_json_fields(summary_path, summary_required, severity=severity))
         for file_name in stage.get("expected_evidence", []):
             if not isinstance(file_name, str):
-                issues.append(ValidationIssue("ERROR", stage_dir, "expected evidence entries must be strings"))
+                issues.append(ValidationIssue(severity, stage_dir, "expected evidence entries must be strings"))
                 continue
             path = stage_dir / file_name
             if not path.exists():
-                issues.append(ValidationIssue("ERROR", path, "expected evidence file is missing"))
+                issues.append(ValidationIssue(severity, path, "expected evidence file is missing"))
                 continue
             if path.suffix.lower() == ".csv" and not _has_csv_rows(path):
-                issues.append(ValidationIssue("ERROR", path, "CSV file is empty"))
+                issues.append(ValidationIssue(severity, path, "CSV file is empty"))
             if path.suffix.lower() in FIGURE_SUFFIXES and path.stat().st_size == 0:
-                issues.append(ValidationIssue("ERROR", path, "figure file is empty"))
+                issues.append(ValidationIssue(severity, path, "figure file is empty"))
 
     final_report = contract.get("final_report", {})
     source = final_report.get("source")
@@ -203,7 +234,9 @@ def check_validation_contract(
     if isinstance(source, str) and isinstance(compiled, str):
         source_path = project_root / source
         compiled_path = project_root / compiled
-        if not (source_path.exists() and compiled_path.exists()) and _final_report_status(manifest_path) != "pending":
+        report_status = _final_report_status(manifest_path)
+        is_report_pending = report_status is not None and report_status.startswith("pending")
+        if not (source_path.exists() and compiled_path.exists()) and not is_report_pending and not allow_pending:
             issues.append(
                 ValidationIssue(
                     "ERROR",
@@ -219,6 +252,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Check validation evidence against configs/validation_contract.json.")
     parser.add_argument("--contract", type=Path, default=DEFAULT_CONTRACT, help="Path to validation_contract.json.")
     parser.add_argument("--validation-root", type=Path, default=DEFAULT_VALIDATION_ROOT, help="Path to validation root.")
+    parser.add_argument("--allow-pending", action="store_true", help="Allow pending stages to report WARNING instead of ERROR.")
     return parser
 
 
@@ -227,7 +261,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     parser = _build_parser()
     args = parser.parse_args(argv)
-    issues = check_validation_contract(args.contract, args.validation_root)
+    issues = check_validation_contract(args.contract, args.validation_root, args.allow_pending)
     root = args.contract.resolve().parent.parent
     if not issues:
         print("validation contract: passed")

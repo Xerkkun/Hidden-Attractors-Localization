@@ -1,6 +1,6 @@
 {
   "validation_id": "chua_fractional_algebra_2026_05_23",
-  "repository_commit": "working_tree",
+  "repository_commit": "2bfe0dd60deb817e2c482b719f0cc45b667ddf75",
   "package_version": "0.1.0",
   "python_version": "3.14.3",
   "platform": "Windows-11-10.0.26200-SP0",
@@ -20,13 +20,15 @@
   "stages": {
     "algebra": "01_algebra/algebra_validation_summary.json",
     "lure_df": "02_lure_df/lure_df_validation_summary.json",
-    "integrators": "pending",
-    "candidates": "pending",
-    "dynamic_analysis": "pending",
-    "hiddenness": "pending",
-    "robustness": "pending",
-    "literature_comparison": "pending"
+    "integrators": "03_integrators/integrator_validation_summary.json"
   },
+  "pending_stages": [
+    "candidate_selection",
+    "dynamic_analysis",
+    "hiddenness",
+    "robustness",
+    "literature_comparison"
+  ],
   "final_report": {
     "status": "pending_full_validation"
   }

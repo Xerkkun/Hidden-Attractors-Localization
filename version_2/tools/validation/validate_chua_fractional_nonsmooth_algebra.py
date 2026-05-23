@@ -514,9 +514,23 @@ def main() -> None:
         "chaotic trajectory or hiddenness.\n",
         encoding="utf-8",
     )
+    try:
+        import subprocess
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
+        # Check if dirty
+        status = subprocess.check_output(["git", "status", "--porcelain"], text=True, stderr=subprocess.DEVNULL).strip()
+        if status:
+            commit = "working_tree_dirty"
+            dirty = True
+        else:
+            dirty = False
+    except Exception:
+        commit = "working_tree"
+        dirty = True
+
     manifest_data = {
         "validation_id": "chua_fractional_algebra_2026_05_23",
-        "repository_commit": "working_tree",
+        "repository_commit": commit,
         "package_version": "0.1.0",
         "python_version": platform.python_version(),
         "platform": platform.platform(),
@@ -525,15 +539,19 @@ def main() -> None:
         "stages": {
             "algebra": "01_algebra/algebra_validation_summary.json",
             "lure_df": "02_lure_df/lure_df_validation_summary.json",
-            "integrators": "pending",
-            "candidates": "pending",
-            "dynamic_analysis": "pending",
-            "hiddenness": "pending",
-            "robustness": "pending",
-            "literature_comparison": "pending",
+            "integrators": "03_integrators/integrator_validation_summary.json",
         },
+        "pending_stages": [
+            "candidates",
+            "dynamic_analysis",
+            "hiddenness",
+            "robustness",
+            "literature_comparison",
+        ],
         "final_report": {"status": "pending_full_validation"},
     }
+    if dirty:
+        manifest_data["dirty"] = True
     (manifest / "validation_manifest.json").write_text(json.dumps(manifest_data, indent=2) + "\n", encoding="utf-8")
     (manifest / "environment.json").write_text(json.dumps({"python": sys.version, "platform": platform.platform()}, indent=2) + "\n", encoding="utf-8")
     (manifest / "software_versions.json").write_text(json.dumps({"numpy": np.__version__, "matplotlib": matplotlib.__version__}, indent=2) + "\n", encoding="utf-8")
