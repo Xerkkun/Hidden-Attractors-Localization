@@ -243,7 +243,9 @@ def test_validate_efork_integrator_runs_on_temp_dir() -> None:
         )
 
         integrator_dir = tmp_path / "03_integrators"
+        manifest_dir = tmp_path / "00_manifest"
         assert integrator_dir.exists()
+        assert manifest_dir.exists()
         
         expected_files = [
             "integrator_validation.md",
@@ -255,6 +257,27 @@ def test_validate_efork_integrator_runs_on_temp_dir() -> None:
         ]
         for f in expected_files:
             assert (integrator_dir / f).exists(), f"Missing expected file: {f}"
+
+        expected_manifest_files = [
+            "validation_manifest.json",
+            "environment.json",
+            "software_versions.json"
+        ]
+        for f in expected_manifest_files:
+            assert (manifest_dir / f).exists(), f"Missing expected manifest file: {f}"
+
+        # Copy real contract to temporary configs dir
+        configs_dir = tmp_path / "configs"
+        configs_dir.mkdir(exist_ok=True)
+        shutil.copy(Path("configs") / "validation_contract.json", configs_dir / "validation_contract.json")
+
+        # Run check_validation_contract to verify that with allow_pending=True it passes cleanly
+        from hidden_attractors.validation_contract import main
+        assert main([
+            "--contract", str(configs_dir / "validation_contract.json"),
+            "--validation-root", str(tmp_path),
+            "--allow-pending"
+        ]) == 0
 
     finally:
         shutil.rmtree(tmp_path, ignore_errors=True)

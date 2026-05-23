@@ -506,6 +506,92 @@ This stage formally validates EFORK-3 as an accurate numerical Caputo fractional
 These scientific and structural properties are evaluated and verified in later stages (`dynamic_analysis`, `hiddenness`, `robustness`).
 """
     (integrator_dir / "integrator_validation.md").write_text(md_content, encoding="utf-8")
+
+    # -------------------------------------------------------------------------
+    # 7. Global Manifest Update
+    # -------------------------------------------------------------------------
+    print("Step 7: Creating or updating global validation manifest...")
+    manifest_path = manifest_dir / "validation_manifest.json"
+    env_path = manifest_dir / "environment.json"
+    soft_path = manifest_dir / "software_versions.json"
+
+    try:
+        import subprocess
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
+    except Exception:
+        commit = "ci_tmp_validation"
+
+    if manifest_path.exists():
+        try:
+            manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except Exception:
+            manifest_data = {}
+    else:
+        manifest_data = {}
+
+    if not isinstance(manifest_data, dict):
+        manifest_data = {}
+
+    manifest_data.setdefault("validation_id", "chua_fractional_validation_evidence")
+    manifest_data.setdefault("repository_commit", commit)
+    manifest_data.setdefault("package_version", "0.1.0")
+    manifest_data.setdefault("python_version", platform.python_version())
+    manifest_data.setdefault("platform", platform.platform())
+    manifest_data.setdefault("main_system", "fractional nonsmooth Chua")
+    
+    if "main_parameters" not in manifest_data:
+        manifest_data["main_parameters"] = {
+            "model": "nonsmooth",
+            "alpha": float(chua_params.alpha),
+            "beta": float(chua_params.beta),
+            "gamma": float(chua_params.gamma),
+            "m0": float(chua_params.m0),
+            "m1": float(chua_params.m1),
+            "a1": float(chua_params.a1),
+            "a2": float(chua_params.a2),
+            "rho": float(chua_params.rho),
+            "q": 0.9998
+        }
+
+    stages = manifest_data.setdefault("stages", {})
+    if not isinstance(stages, dict):
+        stages = {}
+        manifest_data["stages"] = stages
+    stages["integrators"] = "03_integrators/integrator_validation_summary.json"
+
+    pending_stages = manifest_data.setdefault("pending_stages", [
+        "algebra",
+        "lure_df",
+        "candidate_selection",
+        "dynamic_analysis",
+        "hiddenness",
+        "robustness",
+        "literature_comparison"
+    ])
+    if not isinstance(pending_stages, list):
+        pending_stages = []
+        manifest_data["pending_stages"] = pending_stages
+
+    # Filter out integrators from pending
+    pending_stages = [x for x in pending_stages if x not in ("integrator", "integrators", "03_integrators")]
+    manifest_data["pending_stages"] = pending_stages
+
+    final_report = manifest_data.setdefault("final_report", {})
+    if not isinstance(final_report, dict):
+        final_report = {}
+        manifest_data["final_report"] = final_report
+    final_report["status"] = "pending_full_validation"
+
+    manifest_path.write_text(json.dumps(manifest_data, indent=2) + "\n", encoding="utf-8")
+
+    if not env_path.exists():
+        env_data = {"python": sys.version, "platform": platform.platform()}
+        env_path.write_text(json.dumps(env_data, indent=2) + "\n", encoding="utf-8")
+
+    if not soft_path.exists():
+        soft_data = {"numpy": np.__version__, "matplotlib": matplotlib.__version__}
+        soft_path.write_text(json.dumps(soft_data, indent=2) + "\n", encoding="utf-8")
+
     print("Numerical EFORK integrator validation completed successfully!")
 
 
