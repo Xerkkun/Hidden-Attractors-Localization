@@ -1,9 +1,0 @@
-{
-  "method": "Python ligero: barrido algebraico y cuadratura DF, sin integraci\u00f3n temporal",
-  "elapsed_sec": 3.5982179641723633,
-  "n_candidates": 19,
-  "n_screened_in_c": 19,
-  "q": 0.9998,
-  "quadrature_points": 1024,
-  "harmonics": 10
-}

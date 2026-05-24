@@ -170,6 +170,24 @@ def test_native_abm_full_history_matches_diethelm_reference() -> None:
     assert np.allclose(native[:, 1:4], states, atol=2.0e-12, rtol=0.0)
 
 
+def test_native_abm_truncated_reduces_to_full_history_when_window_covers_horizon() -> None:
+    from hidden_attractors.native.backends import FullHistoryABMBackend
+
+    try:
+        backend = FullHistoryABMBackend.build(output_name="chua_abm_truncated_contract_test")
+    except (OSError, RuntimeError) as exc:
+        pytest.skip(f"Native compiler unavailable: {exc}")
+
+    y0 = np.array([0.31, -0.08, 0.12], dtype=float)
+    full = backend.integrate(y0, q=0.9998, h=0.01, t_final=0.20)
+    no_cut = backend.integrate_truncated(y0, q=0.9998, h=0.01, Lm=0.20, t_final=0.20)
+    cut = backend.integrate_truncated(y0, q=0.9998, h=0.01, Lm=0.05, t_final=0.20)
+
+    assert np.allclose(no_cut, full, atol=2.0e-12, rtol=0.0)
+    assert np.all(np.isfinite(cut))
+    assert not np.allclose(cut[:, 1:4], full[:, 1:4], atol=2.0e-12, rtol=0.0)
+
+
 def test_hiddenness_c_backends_use_published_k3_stage_order() -> None:
     from pathlib import Path
 

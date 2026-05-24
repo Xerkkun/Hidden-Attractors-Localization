@@ -1892,6 +1892,96 @@ iniciales. El balance armónico se usa aquí como
 aproximación asintótica y como generador de semillas, no como prueba de
 periodicidad exacta \cite{TavazoeiHaeri2009,KaslikSivasundaram2012,Vigue2019,Haacker2026}.
 
+\subsection{Dos líneas teóricas de generación de semillas armónicas}
+\label{subsec:dos_lineas_df_teoria}
+
+La búsqueda de condiciones iniciales informadas se fundamenta en dos líneas
+de función descriptiva aplicadas al mismo problema auxiliar de Weyl. Ambas
+producen \emph{semillas armónicas}; ninguna de ellas clasifica por sí misma
+un atractor como caótico u oculto. La verificación causal, los criterios de
+elegibilidad y la selección de candidatos se especifican posteriormente en
+la metodología del ejemplo fraccionario.
+
+La primera línea es la función descriptiva tipo Lur'e. Su forma centrada
+emplea \(\sigma(\vartheta)=A\sin\vartheta\). Para permitir oscilaciones
+alrededor de un nivel no nulo, la forma sesgada considera
+\begin{equation}
+\label{eq:biased_input_theory}
+\sigma(\vartheta)=\sigma_0+A\sin\vartheta,
+\qquad A>0,
+\end{equation}
+y define la proyección fundamental
+\begin{equation}
+\label{eq:biased_df_theory}
+\begin{aligned}
+\alpha_1(A,\sigma_0)
+&=\frac{1}{\pi}\int_{-\pi}^{\pi}
+\phi(\sigma_0+A\sin\vartheta)\sin\vartheta\,d\vartheta,\\
+\beta_1(A,\sigma_0)
+&=\frac{1}{\pi}\int_{-\pi}^{\pi}
+\phi(\sigma_0+A\sin\vartheta)\cos\vartheta\,d\vartheta,\\
+N_{\phi}^{\rm L}(A,\sigma_0)
+&=\frac{\alpha_1(A,\sigma_0)-i\beta_1(A,\sigma_0)}{A}.
+\end{aligned}
+\end{equation}
+La formulación centrada es el caso particular \(\sigma_0=0\); cuando además
+\(\phi\) es impar, se recupera la función real de
+\eqref{eq:DF_impar}. Si \(\sigma_0\neq0\), el balance fundamental debe ir
+acompañado por la consistencia de la componente continua asociada al punto
+alrededor del cual se construye la oscilación auxiliar.
+
+La segunda línea es una extensión formal tipo Machado/FDF. A partir de una
+ganancia de primer armónico \(N_{\phi}^{\rm L}\), se introduce la familia
+\begin{equation}
+\label{eq:machado_df_theory}
+\begin{aligned}
+N_{\phi}^{\rm M}(A,\sigma_0;\mu,\theta)
+&=\mathcal N_\mu(A,\sigma_0)e^{i\theta},\\
+\mathcal N_\mu(A,\sigma_0)
+&=\exp\!\left(\mu\operatorname{Log}
+N_{\phi}^{\rm L}(A,\sigma_0)\right),\\
+\mu&>0,\qquad 0\leq\theta<2\pi .
+\end{aligned}
+\end{equation}
+El parámetro \(\mu\) modifica la amplitud efectiva de la proyección y
+\(\theta\) permite explorar una fase auxiliar en el cierre armónico. Estos
+parámetros no son el orden dinámico \(q\), ni sustituyen la memoria del
+operador de Caputo: \(q\) continúa entrando únicamente en el bloque lineal a
+través de \(W_q(i\omega)\).
+
+Para cualquiera de las dos líneas, denotando por
+\(N_{\phi}^{\mathcal F}\) la función descriptiva elegida, el residuo armónico
+toma la forma
+\begin{equation}
+\label{eq:two_family_residual_theory}
+\begin{aligned}
+\eta_{\mathcal F}&=(A,\sigma_0;\mu,\theta),\\
+R_{\mathcal F}(\omega,\eta_{\mathcal F})
+&=1+\chi\,W_q(i\omega)
+N_{\phi}^{\mathcal F}(\eta_{\mathcal F}),\\
+\chi&\in\{-1,1\}.
+\end{aligned}
+\end{equation}
+donde el signo \(\chi\) queda fijado por la convención usada al aislar la
+no linealidad en la representación de Lur'e. Una raíz aproximada de
+\(R_{\mathcal F}=0\), junto con la condición continua cuando corresponde,
+define una órbita auxiliar de Weyl y una semilla modal para la integración
+causal. En consecuencia, el conjunto teórico de semillas puede escribirse
+como
+\begin{equation}
+\label{eq:seed_families_union_theory}
+\mathcal S_{\rm arm}
+=
+\mathcal S_{\rm L}
+\cup
+\mathcal S_{\rm M},
+\end{equation}
+donde \(\mathcal S_{\rm L}\) corresponde a la línea Lur'e y
+\(\mathcal S_{\rm M}\) a la línea Machado/FDF, sin que la pertenencia a una u
+otra familia implique aceptación dinámica. La función descriptiva propone
+semillas; la dinámica causal posterior determina cuáles merecen continuar
+bajo estudio.
+
 
 \subsection{Alcance y límite en orden fraccionario}
 
@@ -3532,238 +3622,11 @@ El procedimiento queda establecido en los siguientes pasos:
 \item al llegar a $\varepsilon=1$, integrar el sistema físico y verificar ocultamiento mediante cuencas alrededor de $X_0^*$ y $X_\pm^*$.
 \end{enumerate}
 
-Los valores numéricos vigentes del Chua fraccionario no suave provienen
-exclusivamente de la corrida
-\path{chua_fractional_nonsmooth_q09998_efork3_20260523_173051}.
-Esta corrida cruza las semillas producidas por las formulaciones de función
-descriptiva con dos contratos de integración \(\text{EFORK-3}\) corregida en
-C: historial completo y ventana finita. El término ``historial completo''
-significa que el horizonte almacenado satisface \(L_m\geq T_{\rm cadena}\),
-por lo que ninguna contribución generada desde \(t=0\) se descarta; no debe
-confundirse con el contrato truncado \(L_m=8\).
-
-\begin{table*}[htbp]
-\centering
-\small
-\caption{Contratos numéricos actuales del caso fraccionario no suave, \(q=0.9998\).}
-\label{tab:chua_frac_ns_contracts_current}
-\begin{tabular}{@{}p{3.0cm}p{5.0cm}p{4.0cm}p{4.2cm}@{}}
-\toprule
-\textbf{Rama} & \textbf{Método y memoria} & \textbf{Observación} & \textbf{Artefacto diagnóstico vigente} \\
-\midrule
-Historial completo &
-\(\text{EFORK-3}\) C, historia homotópica transportada y \(L_m=130.02\geq 50+80\) &
-\(h=0.02,\ T_{\rm obs}=80\) &
-\path{preselected_regimes_rejected.csv} \\
-Ventana finita &
-\(\text{EFORK-3}\) C, ventana terminal transportada, \(L_m=8\) &
-\(h=0.02,\ T_{\rm obs}=80\) &
-\path{preselected_regimes_rejected_finite_window.csv} \\
-Control Danca &
-ABM Caputo C con historial completo; no participa en el ranking EFORK &
-\(h=0.05,\ T=80,\ T_b=40\) &
-\path{abm_replication_summary.json} \\
-\bottomrule
-\end{tabular}
-\end{table*}
-
-La tabla y la discusión numérica que siguen en la versión anterior del
-manuscrito se conservan únicamente como rastro histórico de la formulación
-inicial, pero se excluyen de la salida actual y no sustentan ninguna
-conclusión de esta actualización.
-
-\iffalse
-Siguiendo la estructura de la Tabla~\ref{tab:chua_integer_results_full}, los cálculos del Chua fraccionario no suave se resumen en la Tabla~\ref{tab:chua_frac_ns_results_full}.
-
-\begin{table*}[htbp]
-\centering
-\scriptsize
-\setlength{\tabcolsep}{3pt}
-\renewcommand{\arraystretch}{1.12}
-\caption{Resumen de resultados del Chua fraccionario no suave, organizado con la misma estructura de la Tabla~\ref{tab:chua_integer_results_full}.}
-\label{tab:chua_frac_ns_results_full}
-\begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{@{}L{2.7cm}L{3.4cm}L{4.4cm}L{5.8cm}@{}}
-\toprule
-\textbf{Bloque} &
-\textbf{Procedimiento} &
-\textbf{Resultado} &
-\textbf{Interpretación} \\
-\midrule
-
-Parámetros del sistema &
-Definición del caso fraccionario no suave &
-\(\alpha=8.46,\ \beta=12.07,\ \gamma=0.0052,\ m_0=-0.18,\ m_1=-1.15\) &
-Parámetros de Danca usados para el sistema de Chua con saturación. \\
-
-Orden dinámico &
-Sistema conmensurado de Caputo &
-\(q=0.9998\) &
-Orden fraccionario cercano al caso entero, pero con memoria causal. \\
-
-Operador fraccionario &
-Derivada de Caputo causal &
-\(q=0.9998\) &
-Operador íntegro-diferencial de Caputo con memoria, usando la ventana de historia discretizada. \\
-
-Puente Weyl--Caputo &
-Interpretación del predictor armónico &
-Weyl a Caputo &
-La órbita armónica de Weyl sólo se usa como generadora de semilla para el problema causal de Caputo. \\
-
-Error de memoria &
-Cota o estimación de cola Weyl--Caputo &
-\(\operatorname{err}_L \approx 0.00\) &
-La prehistoria discretizada de Weyl a Caputo se evalúa de manera exacta en la integración inicial. \\
-
-Configuración numérica &
-Integrador fraccionario &
-EFORK-3 (corregido) &
-Integrador explícito de orden 3 corregido con paso \(h=0.05\) y memoria \(L_m=500.0\). \\
-
-Forma Lur'e &
-Separación algebraica &
-\({}^{C}D_t^qX=PX+q_v\psi(r^\top X)\) &
-El campo se separa en bloque lineal y no linealidad escalar saturada. \\
-
-Vectores \(q_v,r\) &
-Forma Lur'e &
-\(q_v=(-8.4562,0,0)^\mathsf{T}\), \(r=(1,0,0)^\mathsf{T}\) &
-La variable de entrada de la no linealidad es \(\sigma=x_1\). \\
-
-Equilibrios &
-Resolución algebraica estacionaria &
-\(X_0^*=(0,0,0)\), \(X_\pm^*\approx(\pm6.58831,\ \pm2.83640\times10^{-3},\ \mp6.58547)\) &
-Puntos usados para la verificación posterior de autoexcitación u ocultedad. \\
-
-Estabilidad local &
-Criterio de Matignon &
-\(X_0^*\) estable; \(X_\pm^*\) inestables &
-La clasificación local guía las vecindades que deben explorarse en cuencas. \\
-
-Raíces candidatas &
-Condición \(\Im\{W_q(i\omega)\}=0\) &
-\((\omega_{0,1},k_1)=(2.04029,0.21002)\), \((\omega_{0,2},k_2)=(3.24493,0.95695)\) &
-Cruces armónicos compatibles con una ganancia real. \\
-
-Rama seleccionada &
-Nyquist, admisibilidad y simulación causal &
-Rama 1 (\(\omega_{0,1}, k_1\)) &
-Rama con frecuencia armónica \(\omega_{0,1} = 2.04029\) y ganancia \(k_1 = 0.21002\) compatible con la amplitud. \\
-
-Amplitudes armónicas &
-Función descriptiva \(N_\psi(A_{0,j})=k_j\) &
-\(A_{0,1}=5.85177\), \(A_{0,2}=1.05302\) &
-Amplitudes candidatas asociadas a las dos ramas armónicas. \\
-
-Cierre armónico &
-Residuo de función descriptiva y transferencia &
-\(\lvert k_1 W_q(i\omega_{0,1}) - 1\rvert \approx 0.00\) &
-El balance de primer armónico se satisface con error numérico prácticamente nulo. \\
-
-Matriz \(P_0\) &
-Linealización armónica modificada &
-\(P_0 = P + k_1 q_v r^\top\) &
-Matriz de la parte lineal modificada para la primera rama armónica. \\
-
-Espectro de \(P_0\) &
-Linealización armónica modificada &
-Rama 1: \(-1.54106,\ 0.00063\pm2.03998i\); rama 2: \(-7.85803,\ 0.00102\pm3.24416i\) &
-El par complejo corresponde a \(\zeta_{0,j}=(i\omega_{0,j})^q\). \\
-
-Semilla rama 1 &
-Modo normalizado \(X_{{\rm seed},1}=A_{0,1}\Re(v^{(1)})\) &
-\(X_{{\rm seed},1}\approx(5.85177,\ 0.37041,\ -8.36097)\) &
-Condición inicial generada por la primera rama armónica. \\
-
-Semilla rama 2 &
-Modo normalizado \(X_{{\rm seed},2}=A_{0,2}\Re(v^{(2)})\) &
-\(X_{{\rm seed},2}\approx(1.05302,\ 0.85322,\ -1.50951)\) &
-Condición inicial generada por la segunda rama armónica. \\
-
-Verificación modal &
-Residuo del problema espectral &
-\(\lVert(P_0 - \zeta_{0,1} I)v^{(1)}\rVert_2 \approx 0.00\) &
-Consistencia del autovalor y autovector complejos de la parte lineal modificada. \\
-
-Continuación causal &
-Homotopía con ventana de memoria &
-\({}^{C}D_t^qX=P_0X+\varepsilon q_v\delta(r^\top X)\), \(\varepsilon\in[0,1]\) &
-Cada semilla debe transportarse con historia terminal para respetar la memoria de Caputo. \\
-
-Estado final de continuación &
-Continuación numérica en \(\varepsilon\) &
-\(X_{\varepsilon=1} = (3.03938, -0.24169, -6.87347)^\mathsf{T}\) &
-Estado alcanzado al final de la continuación homotópica con \(\varepsilon=1\). \\
-
-Semilla efectiva &
-Simulación posterior al transitorio &
-Colapsado a \(E_0\) &
-La simulación prolongada decae a \(E_0\) (distancia \(2.51\times10^{-7}\)), por lo que no existe atractor no trivial. \\
-
-Frecuencia dominante &
-FFT de \(x_1(t)\) &
-No aplicable &
-Al colapsar al equilibrio, el espectro de la señal transitoria decae uniformemente. \\
-
-Desajuste espectral &
-Comparación DF--FFT &
-No aplicable &
-Sin oscilación estable en régimen permanente, el desajuste no está definido. \\
-
-Frecuencia PSD &
-PSD de Welch &
-No aplicable &
-Confirmación espectral de la atenuación de modos transitorios. \\
-
-Exponentes de Lyapunov &
-Algoritmo numérico para sistemas fraccionarios &
-No aplicable &
-La dinámica decae al equilibrio estable, por lo que el espectro de Lyapunov no presenta componente positiva. \\
-
-Sondeos de ocultedad &
-Vecindades de equilibrios &
-No aplicable &
-Sin atractor candidato no trivial acotado, no es factible realizar pruebas de ocultedad en cuencas. \\
-
-Conteos globales &
-Clasificador de destino &
-No aplicable &
-Sin trayectoria de referencia para el atractor, las clases operacionales no se definen. \\
-
-Validación final &
-Integración causal y cuencas &
-Integración causal &
-La trayectoria de integración decae de manera estable hacia el equilibrio central. \\
-
-Clasificación &
-Criterio operacional de cuencas &
-Colapso hacia \(E_0\) &
-Decaimiento dinámico hacia el equilibrio central estable, sin comportamiento caótico o no trivial permanente. \\
-
-\bottomrule
-\end{tabular}
-\end{adjustbox}
-\end{table*}
-
-\subsection{Resultados numéricos de la integración causal y colapso dinámico}
-\label{subsec:resultados_causal_colapso_ns}
-
-Una vez completadas las etapas analíticas y de predictor armónico para el caso de Chua fraccionario no suave con orden conmensurado $q=0.9998$, se procedió a la integración causal de las trayectorias para validar la existencia del atractor caótico oculto. La integración se realizó empleando el integrador fraccionario multi-etapas explícito \(\text{EFORK-3}\). 
-
-Con la semilla armónica de la primera rama \(X_{{\rm seed},1}\approx(5.85177,\ 0.37041,\ -8.36097)^\mathsf{T}\), la trayectoria obtenida al final del proceso de continuación para \(\varepsilon=1\) converge a \(X_{\varepsilon=1} = (3.03938, -0.24169, -6.87347)^\mathsf{T}\). Al prolongar la integración en régimen permanente con paso \(h=0.05\) y una ventana de memoria efectiva de longitud \(L_m = 500.0\), la trayectoria decae completamente hacia el origen \(E_0 = (0,0,0)\).
-
-Este decaimiento se ilustra en la Fig.~\ref{fig:chua_frac_ns_collapse}, la cual muestra la serie temporal de las componentes del sistema. Tras un régimen transitorio oscilatorio inicial generado por la semilla de continuación, la amplitud disminuye de manera monótona hasta colapsar hacia el equilibrio central asintóticamente estable en el sentido de Matignon. La distancia final al equilibrio central es de \(2.51 \times 10^{-7}\) con una norma de rango del residuo residual de \(2.50 \times 10^{-7}\).
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.88\columnwidth]{efork_corrected_trajectory_lines.png}
-\caption{Decaimiento dinámico de la trayectoria del Chua fraccionario no suave hacia el equilibrio central estable \(E_0 = (0,0,0)\) utilizando el integrador \(\text{EFORK-3}\) con paso \(h=0.05\) y memoria \(L_m=500.0\).}
-\label{fig:chua_frac_ns_collapse}
-\end{figure}
-
-Al completarse la integración, el sistema decae a la cuenca de atracción de \(E_0\), la cual es estable al cumplir la condición de Matignon \(|\arg(\lambda_i)| > q\pi/2\) con márgenes espectrales bien definidos. Por lo tanto, bajo las condiciones numéricas ensayadas, el comportamiento transitorio decae y no se verifica la existencia de un régimen caótico persistente o un ciclo no trivial permanente en el sistema.
-\fi
+La selección numérica del caso fraccionario no suave se regenerará
+exclusivamente mediante las corridas vigentes con \(q=0.9998\), EFORK-3
+corregido y la matriz postransitoria descrita en la
+Subsección~\ref{subsec:busqueda_sistematica_ns}. No se reportan aquí valores,
+tablas ni figuras provenientes de ejecuciones anteriores.
 
 \subsection{Extensión tipo Machado para generar semillas armónicas auxiliares}
 \label{subsec:machado_seed_chua_ns}
@@ -4234,310 +4097,133 @@ Debe verificarse que la trayectoria integrada con derivada de Caputo converge
 a un conjunto invariante numéricamente persistente y que su cuenca no
 intersecta ninguna vecindad abierta de los equilibrios. 
 
-\subsection{Búsqueda sistemática y evaluación actual de candidatos}
+\subsection{Búsqueda sistemática y evaluación de candidatos}
 \label{subsec:busqueda_sistematica_ns}
 
-La evidencia numérica reportada en esta sección corresponde solamente a la
-corrida
-\path{chua_fractional_nonsmooth_q09998_efork3_20260523_173051}.
-Se evaluaron \(19\) semillas armónicas con \(q=0.9998\). La generación de
-semillas por función descriptiva se realizó mediante cuadratura ligera en
-Python (\(1024\) puntos, \(10\) armónicos, \(3.598\) s), pues no integra
-trayectorias ni determina por sí misma una conclusión dinámica. Todas las
-continuaciones, observaciones y trayectorias utilizadas en la criba y en los
-diagnósticos posteriores se calcularon en C con
-\texttt{chua\_frac\_backend\_lib.c}.
+Esta versión del manuscrito retira los resultados numéricos de ejecuciones
+anteriores. La función descriptiva sólo generará semillas; la selección de
+candidatos y sus pruebas se poblarán a partir de las corridas finales en
+ejecución bajo el contrato descrito enseguida.
 
-Las familias generadoras consideradas fueron la función descriptiva centrada,
-la formulación de Lur'e sesgada y la extensión de Machado, tanto centrada
-como sesgada. Para cada semilla se efectuó la homotopía
+\subsubsection{Protocolo vigente de búsqueda y criba}
+
+Para la nueva corrida promovible se implementó una ruta que conserva la
+información de las tres familias generadoras: función descriptiva clásica,
+formulación de Lur'e sesgada y extensión Machado/FDF. Esta etapa sólo propone
+semillas. En particular, una raíz de cierre armónico no demuestra la
+existencia de un ciclo periódico exacto de Caputo ni la ocultedad de un
+atractor.
+
+El filtro armónico duro conserva una semilla si cumple
 \begin{equation}
 \begin{aligned}
-{}^{C}D_t^q X
-&=P_0X+\varepsilon q_v
-\bigl[\psi(r^\top X)-k\,r^\top X\bigr],\\
-\varepsilon&\in\{0,0.25,0.50,0.75,1\}.
+ |R_{\rm DF}|&<R_{\rm keep},&\qquad
+ \rho_H&<\rho_{H,\rm keep},\\
+ A&>10^{-4},&
+ \omega&>0.
 \end{aligned}
 \end{equation}
-transportando la historia determinada por el contrato de memoria. El estadio
-corregido del integrador empleado universalmente es
+Si ninguna semilla satisface simultáneamente estas desigualdades, la búsqueda
+no se declara vacía: se retienen semillas exploratorias ordenadas mediante
 \begin{equation}
-K_3=h^q f\!\left(X_n+a_{31}K_1+a_{32}K_2\right),
-\label{eq:efork_k3_current}
+\begin{aligned}
+ S_{\rm seed}&=|R_{\rm DF}|+
+ \lambda_\rho\max\!\left(0,\rho_H-\rho_{H,\rm priority}\right)^2,\\
+ \lambda_\rho&=0.05.
+\end{aligned}
 \end{equation}
-sin el intercambio antiguo de \(K_1\) y \(K_2\).
+con la etiqueta
+\path{best_available_seed_not_accepted}. Esta etiqueta significa únicamente
+que la semilla es la mejor disponible para exploración y no que haya superado
+la criba armónica.
 
-\subsubsection{Decisión de elegibilidad y ordenamiento}
-\label{subsec:eligibilidad_actual_ns}
+Antes de ejecutar una continuación larga, cada semilla reconstruida se somete
+a la matriz de integración causal de la Tabla~\ref{tab:periodicity_matrix_contract}.
+La celda primaria es EFORK sin truncamiento durante todo el horizonte
+simulado; las otras tres celdas cuantifican la sensibilidad al integrador y a
+la política de memoria. En particular, una discrepancia observada únicamente
+en una celda truncada no descarta una semilla de la ruta primaria.
 
-Sea \(c\) una semilla DF y sea \(b\in\{\mathrm{FH},\mathrm{FW}\}\) el
-contrato de memoria, donde \(\mathrm{FH}\) denota historial completo y
-\(\mathrm{FW}\) la ventana finita \(L_m=8\). La trayectoria observada
-\(\mathcal T_{c,b}\) se calcula después de completar la continuación, durante
-\(T_{\rm obs}=80\) con \(h=0.02\). En \(\mathrm{FH}\) se reserva
-\(L_m=130.02\), que excede los \(50\) tiempos de la cadena homotópica más los
-\(80\) tiempos de observación; por tanto, no hay truncamiento. Para calcular
-las métricas se descarta la primera mitad de la observación y se define
-\(\mathcal T_{c,b}^{\rm tail}=\{X(t):40\leq t\leq80\}\).
-
-La primera criba declara no trivial una trayectoria si
-\begin{equation}
-\mathcal E_{\rm nt}(c,b)=I_{\rm fin}\,I_{\rm acot}\,I_{\rm neq}\,
-I_{\rm var}\,I_{\rm amp}=1,
-\end{equation}
-donde
-\begin{align}
-I_{\rm fin}&=\boldsymbol{1}\{X(t)\ \text{es finito en toda la trayectoria}\},\\
-I_{\rm acot}&=\boldsymbol{1}\!\left\{\max_t\|X(t)\|_2\leq120\right\},\\
-I_{\rm neq}&=\boldsymbol{1}\!\left\{\min_{E\in\{E_0,E_+,E_-\}}
-\|X(80)-E\|_2>10^{-3}\right\},\\
-I_{\rm var}&=\boldsymbol{1}\!\left\{\max_i
-\operatorname{Var}_{\mathcal T^{\rm tail}}(X_i)>10^{-6},\
-\max_i\Delta X_i>10^{-2}\right\},\\
-I_{\rm amp}&=\boldsymbol{1}\{\Delta x\geq0.25\},\qquad
-\Delta x=\max_{\mathcal T^{\rm tail}}x-\min_{\mathcal T^{\rm tail}}x.
-\end{align}
-El último umbral elimina colas pequeñas de decaimiento que satisfacen
-formalmente el cierre armónico pero no constituyen un régimen no trivial.
-Sin embargo, esta criba no distingue un régimen caótico de una traza
-prácticamente cerrada. Por ello, después de observar que las gráficas
-obtenidas eran delgadas, se añadió una decisión de exclusión dinámica. Sea
-\(f_d\) el pico dominante de la FFT ligera aplicada a la trayectoria C y sea
-\(\ell_d=\operatorname{round}(1/(hf_d))\) su periodo muestreado. Se define
-\begin{equation}
-\delta_{\rm per}(c,b)=
-\frac{\left[\frac{1}{N-\ell_d}\sum_{j=1}^{N-\ell_d}
-\|X_{j+\ell_d}-X_j\|_2^2\right]^{1/2}}
-{\left[\frac{1}{N}\sum_{j=1}^{N}\|X_j-\overline X\|_2^2\right]^{1/2}},
-\label{eq:period_return_gate_ns}
-\end{equation}
-sobre \(\mathcal T_{c,b}^{\rm tail}\). Una órbita delgada con retorno casi
-cerrado produce \(\delta_{\rm per}\ll1\). La promoción a candidato para
-estudios de caos y ocultedad requiere ahora la condición necesaria
-\begin{equation}
-\mathcal E_{\rm prom}(c,b)=\mathcal E_{\rm nt}(c,b)
-\boldsymbol{1}\{\delta_{\rm per}\geq 0.05\}=1.
-\end{equation}
-Superar este umbral no demuestra caos; únicamente impide promover como
-atractor caótico una oscilación casi cerrada. Dos registros se consideran el
-mismo régimen si sus semillas y estados de salida de continuación difieren
-en norma a lo sumo \(10^{-6}\);
-esta deduplicación evita contar por separado la coincidencia algebraica entre
-Machado con \(\mu=1\) y la DF clásica. Finalmente, entre candidatos elegibles
-y distintos se ordena lexicográficamente por
-\begin{equation}
-\bigl(|R_{\rm DF}|,\ \rho_H,\ -\Delta x\bigr),
-\end{equation}
-donde \(|R_{\rm DF}|\) es el residuo de cierre y \(\rho_H\) mide la energía
-armónica omitida. Este ordenamiento sólo se aplica entre trayectorias que
-superen \(\mathcal E_{\rm prom}\); no demuestra por sí solo caos ni ocultedad.
-
-\subsubsection{Preselecciones descartadas por el diagnóstico de retorno}
-
-\begin{table*}[htbp]
+\begin{table}[htbp]
 \centering
 \scriptsize
-\caption{Tres mejores regímenes según la criba inicial \(\mathcal E_{\rm nt}\), posteriormente descartados en \(\mathrm{FH}\) por retorno casi cerrado; \(h=0.02\), \(T_{\rm obs}=80\), \(L_m=130.02\).}
-\label{tab:current_candidates_full_history}
-\begin{tabular}{@{}clccccc@{}}
+\caption{Matriz contractual para la prueba de periodicidad posterior al transitorio.}
+\label{tab:periodicity_matrix_contract}
+\begin{tabular}{@{}lll@{}}
 \toprule
-\textbf{Rango} & \textbf{Método DF} & \(\boldsymbol{\mu}\) & \(\boldsymbol{|R_{\rm DF}|}\) & \(\boldsymbol{\Delta x}\) & \(\boldsymbol{\delta_{\rm per}}\) & \textbf{Decisión} \\
+\textbf{Caso} & \textbf{Integrador e historia} & \textbf{Uso}\\
 \midrule
-1 & Machado centrada & \(2\) & \(2.558\times10^{-6}\) & \(9.140906\) & \(0.006166\) & Rechazado \\
-2 & DF centrada & --- & \(2.886\times10^{-6}\) & \(9.140441\) & \(0.006666\) & Rechazado \\
-3 & Machado centrada & \(4\) & \(5.320\times10^{-6}\) & \(9.138733\) & \(0.006674\) & Rechazado \\
+\path{efork_full_history} & EFORK-3, sin truncamiento & Decisión primaria\\
+\path{efork_truncated_Lm8} & EFORK-3, \(L_m=8\) & Sensibilidad\\
+\path{abm_full_history} & ABM, historia completa & Comparación Danca\\
+\path{abm_truncated_Lm8} & ABM, \(L_m=8\) & Sensibilidad\\
 \bottomrule
 \end{tabular}
-\end{table*}
+\end{table}
 
-\begin{table*}[htbp]
-\centering
-\scriptsize
-\caption{Tres mejores regímenes según la criba inicial \(\mathcal E_{\rm nt}\), posteriormente descartados en \(\mathrm{FW}\) por retorno casi cerrado; \(h=0.02\), \(T_{\rm obs}=80\), \(L_m=8\).}
-\label{tab:current_candidates_finite_window}
-\begin{tabular}{@{}clccccc@{}}
-\toprule
-\textbf{Rango} & \textbf{Método DF} & \(\boldsymbol{\mu}\) & \(\boldsymbol{|R_{\rm DF}|}\) & \(\boldsymbol{\Delta x}\) & \(\boldsymbol{\delta_{\rm per}}\) & \textbf{Decisión} \\
-\midrule
-1 & Machado centrada & \(2\) & \(2.558\times10^{-6}\) & \(9.140506\) & \(0.006252\) & Rechazado \\
-2 & DF centrada & --- & \(2.886\times10^{-6}\) & \(9.140818\) & \(0.006667\) & Rechazado \\
-3 & Machado centrada & \(4\) & \(5.320\times10^{-6}\) & \(9.139450\) & \(0.006666\) & Rechazado \\
-\bottomrule
-\end{tabular}
-\end{table*}
-
-Los identificadores trazables de estas preselecciones y las semillas DF,
-comunes a ambas ramas antes de transportar la historia correspondiente, son
-\begin{itemize}[leftmargin=1.2em]
-\item \(C_1\): \path{current_centered_machado_b0_mu_2},
-      \(X_{{\rm seed},1}=(2.628434,\ 0.166376,\ -3.755491)^\mathsf{T}\).
-\item \(C_2\): \path{current_centered_classical_b0},
-      \(X_{{\rm seed},2}=(5.851768,\ 0.370409,\ -8.360973)^\mathsf{T}\).
-\item \(C_3\): \path{current_centered_machado_b0_mu_4},
-      \(X_{{\rm seed},3}=(1.714948,\ 0.108554,\ -2.450308)^\mathsf{T}\).
-\end{itemize}
-Los estados finales de continuación y la historia efectiva de cada rama se
-conservan en los archivos JSON promovidos, pues son distintos cuando se
-compara \(\mathrm{FH}\) contra \(\mathrm{FW}\).
-
-Las dos políticas produjeron la misma preselección y el mismo pico espectral
-dominante \(f_x=0.224888\). No obstante, el posdiagnóstico evaluó los \(12\)
-regímenes no triviales de cada política y ninguno superó
-\(\delta_{\rm per}\geq0.05\): en \(\mathrm{FH}\) los valores quedaron entre
-\(0.00525\) y \(0.01206\), y en \(\mathrm{FW}\) entre \(0.00533\) y
-\(0.01079\). La familia Lur'e sesgada fue evaluada y también quedó descartada
-por el mismo criterio. Por consiguiente, esta corrida no entrega tres
-candidatos caóticos promovibles.
-
-\subsubsection{Robustez numérica y diagnóstico dinámico}
-
-La robustez se evaluó reproduciendo la continuación y su tramo de observación
-bajo perturbaciones del paso y del horizonte. En la rama \(\mathrm{FH}\), el
-horizonte de historia se aumentó en cada caso para conservar toda la historia;
-en la rama \(\mathrm{FW}\) se incluyó además el caso \(L_m=12\). Para las dos
-preselecciones, los rangos de la coordenada \(x\) permanecieron aproximadamente entre
-\(9.124\) y \(9.141\) en los cambios de paso/horizonte comparables, y la
-distancia normalizada máxima entre nubes observadas fue \(0.0358\). Esta
-persistencia corresponde a los regímenes casi cerrados rechazados y no puede
-interpretarse como robustez de un atractor caótico.
-
-Los exponentes de Lyapunov no se reportan como resultados actuales. El
-backend disponible para dicho diagnóstico reinicia la historia por bloques;
-por ello, sus valores no se promueven como evidencia para trayectorias que
-nacen de una continuación causal con historia transportada. Su implementación
-causal consistente queda pendiente. Aun antes de esa prueba, el retorno casi
-cerrado excluye las trayectorias actuales de la promoción como candidatos
-caóticos.
-
-\subsubsection{Pruebas actuales de exclusión y ocultedad}
-
-Antes de introducir el filtro \eqref{eq:period_return_gate_ns}, para cada
-preselección y cada política de memoria se integraron, mediante el mismo
-backend C, condiciones iniciales sobre esferas discretas alrededor de
-\(E_0,E_+,E_-\), con radios \(10^{-4}\) y \(10^{-3}\) y las seis direcciones
-coordenadas. Cada preselección acumula así \(3\times2\times6=36\)
-trayectorias de control. El contrato emplea \(h=0.02\), \(T=30\) y
-\(T_b=15\); en \(\mathrm{FH}\) se usa \(L_m=30.02\) y en \(\mathrm{FW}\),
-\(L_m=8\).
-
-Una trayectoria de vecindad se considera coincidencia operacional con el
-régimen de referencia si es acotada, no colapsada y satisface simultáneamente
+En cada integración, el intervalo \(0\leq t\leq T_{\rm tr}\) se descarta
+como transitorio. La observación usada para decidir periodicidad corresponde
+a \(T_{\rm tr}\leq t\leq T_{\rm tr}+T_{\rm obs}\).
+La configuración corregida fija
+\[
+T_{\rm tr}=120,\qquad T_{\rm obs}=120,\qquad h=0.01.
+\]
+La periodicidad se evalúa \emph{exclusivamente} en el tramo de observación.
+Para cada componente centrada en ese tramo
+\(x_j(t_n)=X_j(t_n)-\overline X_j\) se calcula
 \begin{equation}
-d_{\rm nube}^{\rm norm}\leq0.35,\qquad
-\frac{\|\Delta X_{\rm vecindad}-\Delta X_{\rm ref}\|_2}
-{\|\Delta X_{\rm ref}\|_2}\leq0.60.
+\begin{aligned}
+ P_j(\omega_k)&=|\operatorname{FFT}[x_j](\omega_k)|^2,\\
+ p_{jk}&=\frac{P_j(\omega_k)}{\sum_\ell P_j(\omega_\ell)},\\
+ H_j&=-\frac{\sum_kp_{jk}\log p_{jk}}{\log N_f},&
+ C_j&=\frac{\max_kP_j(\omega_k)}{\sum_\ell P_j(\omega_\ell)}.
+\end{aligned}
 \end{equation}
-Si aparece una coincidencia desde la vecindad de un equilibrio, la
-clasificación como atractor oculto se descartaría bajo ese contrato. Se
-registraron \(0/36\) impactos por preselección en cada rama, pero estas
-comparaciones quedan conservadas únicamente como diagnóstico de trayectorias
-rechazadas: al no existir una referencia caótica promovida, no sustentan una
-afirmación de ocultedad.
+La deriva relativa de la frecuencia dominante entre ventanas se define por
+\begin{equation}
+ D_j=\max_{r,s}
+ \frac{|\omega_{j,r}-\omega_{j,s}|}
+ {\max(\omega_{j,r},\omega_{j,s},10^{-12})}.
+\end{equation}
+Se marca \path{rejected_periodic_post_transient} cuando, en la celda primaria
+\path{efork_full_history} y en al menos dos componentes,
+se observa \(H_j<0.25\) y \(C_j>0.65\), o bien
+\(D_j<0.05\) y \(C_j>0.45\); una sección de Poincaré posterior al transitorio con pocos
+conglomerados repetitivos puede reforzar esta decisión. Un pico FFT dominante
+aislado no basta para descartar la semilla, pues una trayectoria caótica puede
+contener una frecuencia dominante.
 
-Como comparación independiente, el candidato asociado a la reproducción de
-Danca se probó con un backend C ABM de historial completo, sin ventana de
-memoria y sin intervenir en la selección EFORK. En el control exploratorio
-actual (\(h=0.05\), \(T=80\), \(T_b=40\), \(\delta=10^{-2}\)) se realizaron
-\(12\) trayectorias alrededor de \(E_+\) y \(E_-\), sin coincidencias
-operacionales en ese conjunto reducido. Este control sólo documenta el
-comportamiento del protocolo ABM ensayado; requiere ampliación antes de
-establecer una conclusión sobre el reporte de Danca.
+Sólo una semilla con estado \path{nonperiodic_post_transient} en
+\path{efork_full_history} podrá entrar a
+continuación y, si persiste como régimen acotado no trivial, recibirá como
+máximo la etiqueta \path{continuation_survivor}. La ocultedad se clasificará
+posteriormente: un contacto con el candidato desde una vecindad de cualquiera
+de los equilibrios produce
+\path{rejected_by_equilibrium_neighborhood}; la ausencia de contactos en los
+radios probados produce
+\path{compatible_with_hiddenness_under_tested_radii}, no
+\path{hidden_verified}. Esta última etiqueta sólo sería admisible después de
+evaluar todos los equilibrios y verificar la no intersección de la cuenca con
+sus vecindades abiertas bajo el contrato reportado.
 
-La búsqueda ampliada de nuevos candidatos caóticos, las cuencas de atracción
-completas y los diagramas de bifurcación permanecen \textbf{pendientes} para
-ambas ramas EFORK y no se utilizaron para modificar esta decisión.
+La corrida ampliada reporta explícitamente
+\(n_{\rm raw}\), \(n_{\rm hard}\), \(n_{\rm fallback}\),
+\(n_{\rm seeds}\), \(n_{\rm rejected,periodic}\),
+\(n_{\rm nonperiodic}\), \(n_{\rm continuation}\),
+\(n_{\rm rejected,eq}\), \(n_{\rm compatible}\) y
+\(n_{\rm hidden\_verified}\). En EFORK se utiliza el backend C
+\path{chua_frac_backend_lib.c}, con el estadio corregido
+\(K_3=h^qf(X_n+a_{31}K_1+a_{32}K_2)\).
+La celda ABM de historia completa usa el backend C
+\path{chua_abm_full_history_lib.c}; su celda truncada es una aproximación ABM
+reiniciada de ventana deslizante y debe reportarse con esa salvedad.
 
-\begin{figure}[htbp]
-\centering
-\subfigure[Historial completo]{\includegraphics[width=0.48\textwidth]{chua_frac_current_full_phase_3d.png}}
-\hfill
-\subfigure[Ventana finita \(L_m=8\)]{\includegraphics[width=0.48\textwidth]{chua_frac_current_window_phase_3d.png}}
-\caption{Retrato de fase del régimen inicialmente mejor ordenado, generado desde el tramo de observación causal \(\text{EFORK-3}\) C. La traza delgada motiva su descarte por \(\delta_{\rm per}<0.05\); no se reporta como atractor caótico.}
-\label{fig:chua_frac_current_phase}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\subfigure[Historial completo]{\includegraphics[width=0.48\textwidth]{chua_frac_current_full_robustness.png}}
-\hfill
-\subfigure[Ventana finita \(L_m=8\)]{\includegraphics[width=0.48\textwidth]{chua_frac_current_window_robustness.png}}
-\caption{Persistencia geométrica del régimen casi cerrado rechazado bajo perturbaciones numéricas en cada contrato de memoria; esta figura no constituye evidencia de robustez caótica.}
-\label{fig:chua_frac_current_robustness}
-\end{figure}
-
-\iffalse
-
-Como se documentó en la subsección \ref{subsec:resultados_causal_colapso_ns}, la integración causal de alta precisión empleando el método \(\text{EFORK-3}\) sobre los parámetros clásicos de Danca demostró el decaimiento dinámico inevitable hacia el origen \(E_0\), lo cual clasifica al supuesto atractor caótico reportado originalmente en la literatura como un pseudo-atractor numérico. Ante este colapso dinámico, se diseñó e implementó en la librería de investigación un esquema de búsqueda y barrido multiparamétrico sistemático con el propósito de localizar nuevos candidatos que efectivamente sostengan comportamiento caótico permanente y persistente en el Chua fraccionario no suave con orden conmensurado \(q=0.9998\).
-
-El procedimiento de búsqueda empleó tres rutas analíticas distintas para la formulación del balance armónico de primer armónico y la subsecuente obtención de semillas:
-\begin{enumerate}
-    \item \textbf{Función descriptiva clásica de Lur'e}: Basada en aproximar la no linealidad por tramos \(\psi(r^\top X)\) por una ganancia armónica lineal equivalente \(N(a)\) asumiendo oscilaciones simétricas respecto al origen.
-    \item \textbf{Función descriptiva sesgada (Biased Describing Function)}: Permite que el balance armónico incorpore un término de offset o sesgo constante \(\sigma_0\) en la oscilación de la variable de control, \(\sigma(t) = \sigma_0 + A\cos(\omega t)\). Esto resulta fundamental dada la asimetría local del espacio de fases del circuito de Chua bajo condiciones extremas de baja disipación.
-    \item \textbf{Función descriptiva fraccionaria de Machado (FDF)}: Basada en modelar la respuesta de la no linealidad introduciendo un exponente de amortiguamiento espectral \(\mu\) y un desfase fraccionario \(\theta\), lo cual flexibiliza la búsqueda de semillas armónicas al desacoplar parcialmente el comportamiento de memoria.
-\end{enumerate}
-
-El barrido numérico arrojó un total de \(121\) candidatos iniciales que fueron refinados mediante filtros locales de vecindad de equilibrios, análisis espectral del decaimiento transitorio y pruebas de robustez geométrica (variaciones en el paso de integración \(h\) y longitud de la ventana de historia \(L_m\)). Este proceso de filtrado condujo a la selección de los \textbf{3 mejores candidatos caóticos}, cuyos detalles matemáticos y operacionales se discuten a continuación:
-
-\subsubsection{Candidato 1: Biased Lur'e Survivor (\texttt{lure\_biased\_q\_0p99980\_rank\_0001})}
-Este candidato se obtuvo a partir de la ruta de función descriptiva sesgada de primer armónico. Destaca por poseer el mejor residual de balance armónico en todo el barrido multiparamétrico, con un error residual absoluto del balance armónico \(\lvert R\rvert \approx 6.82 \times 10^{-13}\). Los parámetros del balance armónico calculados son:
-\[
-A = 5.8517686, \qquad \omega = 2.0402861, \qquad \rho_H = 0.123874.
-\]
-La semilla de continuación armónica inducida es:
-\[
-X_{\mathrm{seed}} = 
-\begin{pmatrix}
-5.85177\\
-0.37041\\
--8.36097
-\end{pmatrix}.
-\]
-Al aplicar la continuación homotópica completa hasta \(\varepsilon=1\) e integrar empleando \(\text{EFORK-3}\) (\(h=0.05, L_m=500\)), el candidato genera una trayectoria acotada no trivial persistente con un espectro de frecuencia complejo y un exponente de Lyapunov principal estimado en \(\lambda_1 \approx 0.207\), lo cual aporta evidencia numérica de caos persistente. No obstante, al someterlo a pruebas locales dirigidas a distancia extrema de \(10^{-5}\) desde el equilibrio inestable \(E_+\), se detectó una trayectoria operacional de tipo \(\text{TARGET}\), lo cual indica operacionalmente que el atractor es de naturaleza autoexcitada y no estrictamente oculta bajo este contrato de prueba.
-
-\subsubsection{Candidato 2: Machado Top 1 (\texttt{branch\_0\_mu\_4p00000\_theta\_0p00000})}
-Este candidato se derivó empleando la aproximación de Machado con exponente de amortiguamiento espectral \(\mu = 4.0\) y desfase \(\theta = 0\). Fue seleccionado como el mejor candidato de la familia Machado debido a que presentó la menor densidad de contactos en el barrido inicial de vecindades, la mayor amplitud física en la coordenada \(x\) (rango de oscilación \([ -13.5, 13.5 ]\)) y la menor norma de semilla inicial. La semilla asociada es:
-\[
-X_{\mathrm{seed}} = 
-\begin{pmatrix}
-5.85177\\
-0.37041\\
--8.36097
-\end{pmatrix}.
-\]
-Bajo integración causal continua, el atractor caótico es numéricamente persistente. Sin embargo, una prueba dirigida fina con condición inicial a radio \(10^{-5}\) desde el equilibrio inestable \(E_-\) logró interceptar la cuenca de atracción y propagar la trayectoria caótica, descartando la clasificación de atractor oculto estricto por autoexcitación.
-
-\subsubsection{Candidato 3: Machado Top 2 (\texttt{branch\_0\_mu\_2p00000\_theta\_3p92699})}
-Derivado mediante la extensión de Machado con parámetros de amortiguamiento \(\mu = 2.0\) y desfase \(\theta = 3.92699\). Este candidato resultó de gran relevancia metodológica en la investigación debido a que su espacio modal y trayectoria de continuación guiaron la localización y el refinamiento de la semilla de Danca para reproducir la morfología geométrica del atractor en el régimen no suave original. La semilla asociada es:
-\[
-X_{\mathrm{seed}} = 
-\begin{pmatrix}
-3.03938\\
--0.24169\\
--6.87347
-\end{pmatrix}.
-\]
-Sostiene una trayectoria caótica persistente con una firma espectral similar al del Candidato 2. Al igual que en los casos anteriores, las pruebas dirigidas desde \(E_-\) a radio \(10^{-5}\) arrojaron contactos operacionales con el atractor caótico objetivo, bloqueando su etiqueta como atractor oculto bajo este contrato estricto.
-
-\subsubsection{Visualizaciones numéricas y espectrales}
-Para caracterizar cuantitativamente la dinámica caótica de estos nuevos candidatos del Chua fraccionario no suave (\(q=0.9998\)), se incluye a continuación la Fig.~\ref{fig:chua_frac_continuation} que muestra el progreso del proceso de continuación homotópica y el retrato de fase de continuación frente al predictor armónico lineal. Asimismo, la Fig.~\ref{fig:chua_frac_fft} ilustra el análisis espectral mediante la FFT del estado final estacionario caótico para la componente \(x(t)\), donde se observa una firma de banda ancha típica de oscilaciones caóticas coherentes alrededor de una frecuencia dominante \(\omega_d \approx 2.04\).
-
-Las cuencas de atracción detalladas en el espacio 3D para estos tres candidatos quedan clasificadas como \textbf{pendientes y postergadas} en esta etapa de la investigación. Esto se debe al elevado costo computacional que exige la integración causal completa de mallas tridimensionales de alta resolución (\(101 \times 101 \times 101\)) utilizando solucionadores Caputo fraccionarios acoplados con ventanas de historia activa extensas de \(L_m = 500\), lo cual requeriría varias semanas continuas de procesamiento intensivo. Por ende, su caracterización exhaustiva se delega a trabajos futuros de optimización numérica paralela.
-
-\begin{figure}[htbp]
-\centering
-\subfigure[Progreso de la continuación homotópica]{\includegraphics[width=0.82\columnwidth]{fig_frac_continuation_progress.png}}\par\medskip
-\subfigure[Retrato de fase homotópico (semilla vs atractor)]{\includegraphics[width=0.82\columnwidth]{fig_frac_continuation_story.png}}
-\caption{Continuación numérica homotópica para el candidato caótico del sistema de Chua fraccionario no suave con \(q=0.9998\). (a) Variación de la amplitud y del residuo armónico en función del parámetro homotópico \(\varepsilon \in [0, 1]\). (b) Retrato de fase que superpone la trayectoria periódica del predictor lineal de balance de primer armónico y el atractor no lineal persistente alcanzado al completarse la continuación homotópica (\(\varepsilon=1\)).}
-\label{fig:chua_frac_continuation}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.82\columnwidth]{fig_frac_fft_x.png}
-\caption{Espectro de frecuencia obtenido mediante la FFT de la componente \(x(t)\) para el atractor caótico no suave de orden fraccionario con \(q=0.9998\), validando una oscilación persistente coherente con frecuencia dominante cercana a la predicción del balance armónico \(\omega_0 \approx 2.04\) y estructura de banda ancha típica de regímenes caóticos.}
-\label{fig:chua_frac_fft}
-\end{figure}
-\fi
+Las dos corridas vigentes de las rutas Lur'e sesgada y Machado/FDF se
+ejecutan independientemente bajo este contrato. Sus conteos, la tabla de los
+tres mejores candidatos y las figuras asociadas sólo se incorporarán después
+de finalizar la matriz postransitoria y la continuación aplicable. Las
+cuencas de atracción completas y los diagramas de bifurcación permanecen
+\textbf{pendientes}.
 
 \section{Ejemplo de estudio II: Chua fraccionario con no linealidad \texorpdfstring{$\arctan$}{arctan}}
 \label{sec:chua_arctan_frac}

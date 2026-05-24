@@ -1,6 +1,6 @@
-# Ruta Lure Clasica
+# Ruta Lur'e Clásica
 
-Esta ruta separa los candidatos obtenidos con funcion descriptiva clasica por transformacion tipo Lure. No usa puntos perpetuos y no mezcla la ruta Machado, salvo para una comparacion de invariantes cuando esos archivos ya existen.
+Esta ruta separa las semillas obtenidas con función descriptiva clásica por transformación tipo Lur'e. No usa puntos perpetuos y no mezcla la ruta Machado, salvo para una comparación de invariantes cuando esos archivos ya existen.
 
 La convencion de transferencia es la interna del repositorio:
 
@@ -69,6 +69,76 @@ Si hay archivos Machado, tambien escribe:
 outputs/lure_route/lure_vs_machado_comparison.csv
 ```
 
+## Semillas y Filtro Temprano
+
+La función descriptiva clásica, sesgada o Machado/FDF es una aproximación de primer armónico: propone semillas, pero no prueba ciclos periódicos exactos de Caputo ni atractores ocultos. La ruta ampliada de Lur'e sesgada está en:
+
+```text
+configs/lure_biased_multiparam_q09998.yaml
+tools/legacy/lure_biased_multiparam_search.py
+```
+
+La ruta Machado/FDF se mantiene separada para no inferir ausencia de semillas Machado a partir de un manifiesto que las excluya:
+
+```text
+configs/machado_candidate_route.yaml
+outputs/machado_lure_route/machado_candidates_manifest.csv
+outputs/machado_lure_route/machado_candidates_manifest.json
+```
+
+El cribado armónico duro acepta un punto si
+
+```text
+residual_abs < residual_keep,  rho_H < rhoH_keep,  A > 1e-4,  omega > 0.
+```
+
+Si no acepta ninguno, no se pierde la información de búsqueda. Se retienen semillas exploratorias por
+
+```text
+score = residual_abs + lambda_rho * max(0, rho_H - rhoH_priority)^2
+```
+
+con etiqueta `best_available_seed_not_accepted`. Ésta no significa evidencia de ocultedad.
+
+Antes de la continuación larga, cada semilla reconstruida se integra bajo una matriz de cuatro contratos numéricos:
+
+| Caso | Integrador | Historia | Papel en la decisión |
+|---|---|---|---|
+| `efork_full_history` | EFORK-3 C corregido | Sin truncamiento durante el horizonte simulado, usando `Lm = t_transient + observation_time` | Celda primaria: habilita o rechaza continuación |
+| `efork_truncated_Lm8` | EFORK-3 C corregido | Ventana finita `Lm = 8` | Comparación de sensibilidad a memoria |
+| `abm_full_history` | ABM C | Historia completa de Caputo | Comparación metodológica y referencia tipo Danca |
+| `abm_truncated_Lm8` | ABM C | Ventana deslizante reiniciada `Lm = 8` | Comparación de sensibilidad a memoria |
+
+La integración de cada celda tiene dos intervalos distintos:
+
+```text
+[0, t_transient]                              transitorio, no se clasifica
+[t_transient, t_transient + observation_time] observación para periodicidad
+```
+
+Las configuraciones actuales establecen `t_transient = 120` y `observation_time = 120`. Por tanto, las FFT, entropías, derivas de frecuencia y secciones de Poincaré no usan el tramo inicial que nace directamente de la construcción armónica. La ejecución priorizada aplica la matriz a los 30 candidatos mejor ordenados; los aceptados duros restantes se registran como diferidos y no se interpretan como rechazados. Para cada componente centrada del intervalo de observación \(x_j(t_n)\), el filtro calcula
+
+```text
+P_j(omega_k) = |FFT[x_j](omega_k)|^2
+H_j = - sum_k p_jk log(p_jk) / log(N_f)
+C_j = max_k P_j(omega_k) / sum_l P_j(omega_l)
+p_jk = P_j(omega_k) / sum_l P_j(omega_l)
+```
+
+Una semilla se marca `rejected_periodic_post_transient` sólo si la celda primaria `efork_full_history` presenta evidencia combinada: baja entropía y concentración alta, o concentración alta con frecuencia dominante estable entre ventanas, en al menos dos componentes cuando así se configura. Un pico FFT aislado no basta para descartar una trayectoria. Una discrepancia observada sólo en una celda truncada se conserva como sensibilidad numérica y no elimina la semilla principal.
+
+Las semillas con `early_periodicity_status=nonperiodic_post_transient` en la celda primaria son las únicas habilitadas para continuación. Los artefactos de esta decisión son:
+
+```text
+biased_lure_all_evaluations.csv
+top_ranked_all_evaluations.csv
+biased_lure_candidates.csv
+biased_lure_seed_bank.csv
+post_transient_periodicity_matrix.csv
+rejected_periodic_post_transient.csv
+early_periodicity_summary.json
+```
+
 ## Verificacion Refinada
 
 Etapa A:
@@ -120,16 +190,20 @@ outputs/lure_route/refined/lure_refined_summary.json
 
 ## Interpretacion
 
-Etiquetas conservadoras:
+Etiquetas conservadoras del flujo nuevo:
 
 ```text
+hard_candidate_accepted
+best_available_seed_not_accepted
+rejected_periodic_post_transient
+nonperiodic_post_transient
+continuation_survivor
+rejected_by_equilibrium_neighborhood
 compatible_with_hiddenness_under_tested_radii
-not_supported_by_refined_neighborhood_test
-inconclusive_isolated_hit
-invalid_or_divergent
+hidden_verified
 ```
 
-La ausencia de contactos en una muestra finita no declara `hidden_verified`. Solo indica compatibilidad bajo los radios y muestras probados. Si una vecindad abierta de un equilibrio alcanza el candidato, el candidato no es oculto bajo la definicion operativa.
+`hidden_verified` queda reservado para una verificación completa: cálculo y estabilidad de todos los equilibrios, simulación desde vecindades pequeñas de todos ellos, comparación con el atractor candidato y evidencia de que la cuenca no intersecta ninguna vecindad abierta bajo los radios probados. La ausencia de contactos en una muestra finita sólo produce `compatible_with_hiddenness_under_tested_radii`. Si una vecindad de cualquier equilibrio alcanza el candidato, se registra `rejected_by_equilibrium_neighborhood`.
 
 ## Lure vs Machado
 
@@ -137,4 +211,4 @@ La comparacion Lure vs Machado contrasta `q`, estado final, rangos, estadisticas
 
 ## Notas Cientificas
 
-La funcion descriptiva y el balance armonico son heuristicas para generar semillas. No prueban un ciclo limite exacto de Caputo. La validacion debe hacerse con el sistema fraccionario causal de Caputo y memoria.
+La función descriptiva propone; la dinámica causal temprana filtra; la continuación transporta; las cuencas deciden ocultedad.

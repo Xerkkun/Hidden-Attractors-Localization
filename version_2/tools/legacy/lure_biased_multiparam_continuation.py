@@ -66,6 +66,8 @@ SURVIVOR_FIELDS = [
     "range_z",
     "fft_peak",
     "psd_entropy",
+    "candidate_status",
+    "early_periodicity_status",
     "hiddenness_status",
     "notes",
 ]
@@ -255,10 +257,17 @@ def outdir_from_config(cfg: Dict[str, Any]) -> Path:
     outdir = Path(cfg.get("outputs", {}).get("root", "outputs/lure_biased_multiparam_q09998"))
     if not outdir.is_absolute():
         outdir = ROOT / outdir
-    if not is_allowed_timestamped_outdir(outdir, OUTDIR):
+    permitted_bases = [OUTDIR.resolve()]
+    manifest_root = cfg.get("manifest", {}).get("output_dir")
+    if manifest_root:
+        configured = Path(str(manifest_root))
+        if not configured.is_absolute():
+            configured = ROOT / configured
+        permitted_bases.append(configured.resolve())
+    if not any(is_allowed_timestamped_outdir(outdir, base) for base in permitted_bases):
         raise ValueError(
-            f"Output dir must be {rel(OUTDIR)} or a timestamped sibling "
-            f"{OUTDIR.name}_YYYYMMDD_HHMMSS; got {rel(outdir)}"
+            "Output dir must be a configured route root or a timestamped "
+            f"sibling for this q=0.9998 continuation; got {rel(outdir)}"
         )
     outdir.mkdir(parents=True, exist_ok=True)
     return outdir
@@ -323,14 +332,26 @@ def selected_seed_items(
     cfg: Dict[str, Any],
     candidates: Sequence[Dict[str, Any]],
     seeds: Sequence[Dict[str, Any]],
+    rejected_seed_ids: set[str] | None = None,
 ) -> List[Dict[str, Any]]:
     cont = cfg["continuation"]
+    rejected_seed_ids = rejected_seed_ids or set()
+    permitted_status = {"hard_candidate_accepted", "best_available_seed_not_accepted"}
     by_candidate: Dict[str, List[Dict[str, Any]]] = {}
     for seed in seeds:
         if not truthy(seed.get("valid_seed")):
             continue
+        if str(seed.get("seed_id", "")) in rejected_seed_ids:
+            continue
+        if str(seed.get("candidate_status", "")) not in permitted_status:
+            continue
+        if str(seed.get("early_periodicity_status", "")) not in {"nonperiodic_post_transient", "nonperiodic_early"}:
+            continue
         by_candidate.setdefault(str(seed.get("candidate_id")), []).append(seed)
-    ranked = list(candidates)[: int(cont.get("max_candidates", 6))]
+    ranked = [
+        candidate for candidate in candidates
+        if str(candidate.get("candidate_status", "")) in permitted_status
+    ][: int(cont.get("max_candidates", 6))]
     items: List[Dict[str, Any]] = []
     for cand in ranked:
         group = by_candidate.get(str(cand.get("candidate_id")), [])
@@ -563,7 +584,6 @@ def run_one_continuation_item(
         if not route_failed and last_cls.get("final_class") == "bounded_nontrivial" and rows:
             last_row = rows[-1]
             reliability = "high" if truthy(last_row.get("memory_carried")) else "low"
-            hiddenness_status = "candidate_hidden_like"
             survivor = {
                 "candidate_id": item["candidate_id"],
                 "seed_id": item["seed_id"],
@@ -580,8 +600,10 @@ def run_one_continuation_item(
                 "range_z": last_cls.get("range_z", ""),
                 "fft_peak": last_cls.get("fft_peak", ""),
                 "psd_entropy": last_cls.get("psd_entropy", ""),
-                "hiddenness_status": hiddenness_status,
-                "notes": "Continuation survivor; not hidden_verified. Reliability low if memory was not carried.",
+                "candidate_status": "continuation_survivor",
+                "early_periodicity_status": "nonperiodic_post_transient",
+                "hiddenness_status": "not_tested",
+                "notes": "Causal continuation survivor; hiddenness has not been tested. Reliability is low if memory was not carried.",
             }
             append_csv(outdir / "continuation_survivors.csv", survivor, SURVIVOR_FIELDS)
             if final_traj is not None:
@@ -792,11 +814,9 @@ def run_early_filter(
                 x0 = eq + rho * normalize(direction)
                 traj = original_integrate(x0, q, p, h, Lm, t_final)
                 cls = classify_target(traj, p, eqs, reference, h, t_final, float(cfg.get("continuation", {}).get("divergence_norm", 120.0)), float(cfg.get("continuation", {}).get("equilibrium_tol", 0.001)))
-                status = "passed_early_equilibrium_filter"
-                if bool(cls.get("target_hit")) and eq_id == "E+":
-                    status = "not_supported_by_Eplus_neighborhood_test"
-                elif bool(cls.get("target_hit")):
-                    status = "not_supported_by_equilibrium_neighborhood_test"
+                status = "compatible_with_hiddenness_under_tested_radii"
+                if bool(cls.get("target_hit")):
+                    status = "rejected_by_equilibrium_neighborhood"
                 row = {
                     "candidate_id": surv["candidate_id"],
                     "seed_id": surv.get("seed_id", ""),
@@ -812,7 +832,10 @@ def run_early_filter(
                     "y0": float(x0[1]),
                     "z0": float(x0[2]),
                     "hiddenness_status": status,
-                    "notes": "TARGET from E+ blocks hiddenness immediately; no hidden_verified.",
+                    "notes": (
+                        "A TARGET contact from any tested equilibrium neighborhood rejects hiddenness "
+                        "under this contract; absence of contacts is finite numerical evidence only."
+                    ),
                     **cls,
                 }
                 raw_rows.append(row)
@@ -831,13 +854,21 @@ def summarize_early(rows: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
         eplus = sum(1 for r in group if r.get("equilibrium_id") == "E+" and truthy(r.get("target_hit")))
         e0 = sum(1 for r in group if r.get("equilibrium_id") == "E0" and truthy(r.get("target_hit")))
         eminus = sum(1 for r in group if r.get("equilibrium_id") == "E-" and truthy(r.get("target_hit")))
-        if eplus > 0:
-            status = "not_supported_by_Eplus_neighborhood_test"
-        elif e0 + eminus > 0:
-            status = "not_supported_by_equilibrium_neighborhood_test"
-        else:
-            status = "passed_early_equilibrium_filter"
-        out.append({"candidate_id": cid, "n_Eplus_TARGET": eplus, "n_E0_TARGET": e0, "n_Eminus_TARGET": eminus, "hiddenness_status": status, "notes": "No hidden_verified."})
+        status = (
+            "rejected_by_equilibrium_neighborhood"
+            if eplus + e0 + eminus > 0
+            else "compatible_with_hiddenness_under_tested_radii"
+        )
+        out.append(
+            {
+                "candidate_id": cid,
+                "n_Eplus_TARGET": eplus,
+                "n_E0_TARGET": e0,
+                "n_Eminus_TARGET": eminus,
+                "hiddenness_status": status,
+                "notes": "La ausencia de contactos en radios probados no declara hidden_verified.",
+            }
+        )
     return out
 
 
@@ -852,7 +883,11 @@ def run_robustness(
     robust = cfg.get("robustness", {})
     if not bool(robust.get("enabled", False)):
         return []
-    allowed = {r["candidate_id"] for r in early_summary if r.get("hiddenness_status") == "passed_early_equilibrium_filter"}
+    allowed = {
+        r["candidate_id"]
+        for r in early_summary
+        if r.get("hiddenness_status") == "compatible_with_hiddenness_under_tested_radii"
+    }
     if not early_summary:
         allowed = {s["candidate_id"] for s in survivors}
     raw_path = outdir / "robustness_survivors.csv"
@@ -1024,13 +1059,37 @@ def update_final_report(outdir: Path, cfg: Dict[str, Any], files_written: Sequen
     robust = read_csv_rows(outdir / "robustness_survivors.csv")
     compare = read_csv_rows(outdir / "lure_biased_vs_machado_comparison.csv")
     robust_survivors = sorted({r.get("candidate_id", "") for r in robust if truthy(r.get("robust_attractor")) and r.get("candidate_id")})
-    passed_eplus = sorted({r.get("candidate_id", "") for r in early if r.get("hiddenness_status") == "passed_early_equilibrium_filter"})
+    compatible_hiddenness = sorted(
+        {
+            r.get("candidate_id", "")
+            for r in early
+            if r.get("hiddenness_status") == "compatible_with_hiddenness_under_tested_radii"
+        }
+    )
+    rejected_hiddenness = sorted(
+        {
+            r.get("candidate_id", "")
+            for r in early
+            if r.get("hiddenness_status") == "rejected_by_equilibrium_neighborhood"
+        }
+    )
+    early_periodicity: Dict[str, Any] = {}
+    early_periodicity_path = outdir / "early_periodicity_summary.json"
+    if early_periodicity_path.exists():
+        try:
+            early_periodicity = json.loads(early_periodicity_path.read_text(encoding="utf-8"))
+        except Exception:
+            early_periodicity = {}
     lines = [
         "# Biased Lure multiparameter exploration q=0.9998",
         "",
         "No `hidden_verified` status is declared.",
         "",
-        "The harmonic calculation is a first-harmonic seed generator, not proof of exact Caputo cycles.",
+        "La función descriptiva clásica, sesgada o Machado/FDF sólo genera semillas por primer armónico; "
+        "no prueba ciclos exactos de Caputo ni atractores ocultos.",
+        "",
+        "La dinámica causal temprana filtra periodicidad estrecha persistente, la continuación transporta "
+        "semillas no periódicas y las pruebas alrededor de todos los equilibrios son necesarias para discutir ocultedad.",
         "",
         "## q consistency",
         "",
@@ -1055,6 +1114,22 @@ def update_final_report(outdir: Path, cfg: Dict[str, Any], files_written: Sequen
             f"- source_hint_samples: `{run_metadata.get('source_hint_samples', '')}`",
             f"- local_refine_top: `{run_metadata.get('local_refine_top', '')}`",
             f"- execution_scope: `{run_metadata.get('execution_scope', '')}`",
+            "",
+            "## Candidate eligibility counters",
+            "",
+            f"- n_raw_evaluated: `{early_periodicity.get('n_raw_evaluated', '')}`",
+            f"- n_hard_accepted: `{early_periodicity.get('n_hard_accepted', '')}`",
+            f"- n_hard_retained_for_early_screen: `{early_periodicity.get('n_hard_retained_for_early_screen', '')}`",
+            f"- n_hard_deferred_after_ranking: `{early_periodicity.get('n_hard_deferred_after_ranking', '')}`",
+            f"- n_fallback_retained: `{early_periodicity.get('n_fallback_retained', '')}`",
+            f"- n_seed_bank_total: `{early_periodicity.get('n_seed_bank_total', '')}`",
+            f"- n_rejected_by_harmonic_filters: `{early_periodicity.get('n_rejected_by_harmonic_filters', '')}`",
+            f"- n_rejected_periodic_post_transient: `{early_periodicity.get('n_rejected_periodic_post_transient', early_periodicity.get('n_rejected_periodic_early', ''))}`",
+            f"- n_nonperiodic_seeds_for_continuation: `{early_periodicity.get('n_nonperiodic_seeds_for_continuation', '')}`",
+            f"- n_continuation_survivors: `{len(cont)}`",
+            f"- n_candidate_rejected_by_equilibrium_neighborhood: `{len(rejected_hiddenness)}`",
+            f"- n_compatible_with_hiddenness_under_tested_radii: `{len(compatible_hiddenness)}`",
+            "- n_hidden_verified: `0`",
         ]
     )
     best_residual = sorted(candidates, key=lambda r: finite_float(r.get("residual_abs")))[:10]
@@ -1073,7 +1148,7 @@ def update_final_report(outdir: Path, cfg: Dict[str, Any], files_written: Sequen
             lines.append(
                 f"| `{row.get('candidate_id')}` | {finite_float(row.get('A')):.6g} | {finite_float(row.get('sigma0')):.6g} | "
                 f"{finite_float(row.get('omega')):.6g} | {finite_float(row.get('residual_abs')):.6g} | {finite_float(row.get('rho_H')):.6g} | "
-                f"{row.get('candidate_status', 'candidate_hidden_like')} |"
+                f"{row.get('candidate_status', '')} |"
             )
     else:
         lines.append("No candidates passed the residual/rho_H filters.")
@@ -1092,7 +1167,7 @@ def update_final_report(outdir: Path, cfg: Dict[str, Any], files_written: Sequen
             "",
             f"- filtered candidates: {len(candidates)}",
             f"- continuation survivors: {len(cont)}",
-            f"- passed early E+ filter: {len(passed_eplus)}",
+            f"- compatible with hiddenness under tested radii: {len(compatible_hiddenness)}",
             f"- robust survivors: {len(robust_survivors)}",
             "",
             "## Continuation survivors",
@@ -1105,7 +1180,7 @@ def update_final_report(outdir: Path, cfg: Dict[str, Any], files_written: Sequen
     else:
         lines.append("- none or not executed")
     lines.extend(["", "## Candidates discarded by E+", ""])
-    eplus_discards = [r for r in early if r.get("hiddenness_status") == "not_supported_by_Eplus_neighborhood_test"]
+    eplus_discards = [r for r in early if r.get("hiddenness_status") == "rejected_by_equilibrium_neighborhood"]
     if eplus_discards:
         for row in eplus_discards:
             lines.append(f"- `{row.get('candidate_id')}`: {row.get('n_Eplus_TARGET')} TARGET contacts from E+")
@@ -1123,16 +1198,37 @@ def update_final_report(outdir: Path, cfg: Dict[str, Any], files_written: Sequen
             lines.append(f"- `{row.get('candidate_id')}` vs `{MACHADO_CANDIDATE_ID}`: same={row.get('likely_same_attractor_as_machado')} distinct={row.get('distinct_candidate')}")
     else:
         lines.append("- no survivor comparison recorded")
-    lines.extend(["", "## Warnings", "", "- Do not declare `hidden_verified` from these runs.", "- Any TARGET contact from E+ at rho=1e-5 blocks hiddenness for that Lure candidate.", "- The Machado candidate line is not modified by this exploration."])
+    lines.extend(
+        [
+            "",
+            "## Warnings",
+            "",
+            "- Do not declare `hidden_verified` from these runs.",
+            "- Any TARGET contact from any tested equilibrium neighborhood rejects hiddenness under that tested contract.",
+            "- Absence of contacts at finite tested radii is only `compatible_with_hiddenness_under_tested_radii`.",
+            "- The Machado candidate route is maintained in its separate manifest.",
+        ]
+    )
     (outdir / "lure_biased_multiparam_report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     summary = {
         "q_global": float(cfg["q"]),
         "q_consistency_status": "ok_q_0p9998",
+        "n_raw_evaluated": early_periodicity.get("n_raw_evaluated", len(read_csv_rows(outdir / "biased_lure_all_evaluations.csv"))),
+        "n_hard_accepted": early_periodicity.get("n_hard_accepted", 0),
+        "n_hard_retained_for_early_screen": early_periodicity.get("n_hard_retained_for_early_screen", 0),
+        "n_hard_deferred_after_ranking": early_periodicity.get("n_hard_deferred_after_ranking", 0),
+        "n_fallback_retained": early_periodicity.get("n_fallback_retained", 0),
+        "n_seed_bank_total": early_periodicity.get("n_seed_bank_total", 0),
+        "n_rejected_by_harmonic_filters": early_periodicity.get("n_rejected_by_harmonic_filters", 0),
+        "n_rejected_periodic_post_transient": early_periodicity.get("n_rejected_periodic_post_transient", early_periodicity.get("n_rejected_periodic_early", 0)),
+        "n_nonperiodic_seeds_for_continuation": early_periodicity.get("n_nonperiodic_seeds_for_continuation", 0),
         "n_candidates_raw": len(read_csv_rows(outdir / "biased_lure_all_evaluations.csv")),
         "n_candidates_filtered": len(candidates),
         "n_seeds": len(read_csv_rows(outdir / "biased_lure_seed_bank.csv")),
         "n_continuation_survivors": len(cont),
-        "n_passed_Eplus_filter": len(passed_eplus),
+        "n_candidate_rejected_by_equilibrium_neighborhood": len(rejected_hiddenness),
+        "n_compatible_with_hiddenness_under_tested_radii": len(compatible_hiddenness),
+        "n_hidden_verified": 0,
         "n_robust_survivors": len(robust_survivors),
         "best_candidate_id": candidates[0].get("candidate_id", "") if candidates else "",
         "best_candidate_status": candidates[0].get("candidate_status", "") if candidates else "",
@@ -1155,6 +1251,7 @@ def reset_stage_files(outdir: Path, resume: bool) -> None:
 def run_continuation_pipeline(
     config_path: str | Path,
     *,
+    output_root: str | None = None,
     resume: bool = False,
     force: bool = False,
     execute: bool = True,
@@ -1164,12 +1261,24 @@ def run_continuation_pipeline(
     survivor_ids: set[str] | None = None,
 ) -> Dict[str, Any]:
     cfg = load_config(config_path)
+    if output_root:
+        cfg.setdefault("outputs", {})["root"] = str(output_root)
     q = require_q09998(cfg, context=str(config_path))
     outdir = outdir_from_config(cfg)
     p = chua_ic_params(cfg)
     eqs = solve_equilibria(p)
     candidates, seeds = load_candidates_and_seeds(outdir, q)
-    items = selected_seed_items(cfg, candidates, seeds)
+    rejected_path = (
+        outdir / "rejected_periodic_post_transient.csv"
+        if (outdir / "rejected_periodic_post_transient.csv").exists()
+        else outdir / "rejected_periodic_early.csv"
+    )
+    rejected_seed_ids = {
+        str(row.get("seed_id", ""))
+        for row in read_csv_rows(rejected_path)
+        if str(row.get("candidate_status", "")) in {"rejected_periodic_post_transient", "rejected_periodic_early", "rejected_dynamic_post_transient"}
+    }
+    items = selected_seed_items(cfg, candidates, seeds, rejected_seed_ids)
     planned = count_planned_simulations(cfg, len(items))
     enforce_cost_guard(cfg, planned, force)
     if not execute and not post_continuation_only:
@@ -1193,7 +1302,7 @@ def run_continuation_pipeline(
         return {
             "files_written": files_written,
             "n_continuation_survivors": len(read_csv_rows(outdir / "continuation_survivors.csv")),
-            "n_passed_Eplus_filter": len([r for r in read_csv_rows(outdir / "early_equilibrium_filter_summary.csv") if r.get("hiddenness_status") == "passed_early_equilibrium_filter"]),
+            "n_compatible_with_hiddenness_under_tested_radii": len([r for r in read_csv_rows(outdir / "early_equilibrium_filter_summary.csv") if r.get("hiddenness_status") == "compatible_with_hiddenness_under_tested_radii"]),
             "n_robust_survivors": len({r.get("candidate_id") for r in read_csv_rows(outdir / "robustness_survivors.csv") if truthy(r.get("robust_attractor"))}),
         }
     if post_continuation_only:
@@ -1259,7 +1368,7 @@ def run_continuation_pipeline(
     return {
         "files_written": files_written,
         "n_continuation_survivors": len(read_csv_rows(outdir / "continuation_survivors.csv")),
-        "n_passed_Eplus_filter": len([r for r in read_csv_rows(outdir / "early_equilibrium_filter_summary.csv") if r.get("hiddenness_status") == "passed_early_equilibrium_filter"]),
+        "n_compatible_with_hiddenness_under_tested_radii": len([r for r in read_csv_rows(outdir / "early_equilibrium_filter_summary.csv") if r.get("hiddenness_status") == "compatible_with_hiddenness_under_tested_radii"]),
         "n_robust_survivors": len({r.get("candidate_id") for r in read_csv_rows(outdir / "robustness_survivors.csv") if truthy(r.get("robust_attractor"))}),
     }
 
@@ -1267,6 +1376,7 @@ def run_continuation_pipeline(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Continuation/filter/robustness for biased Lure q=0.9998 candidates.")
     parser.add_argument("--config", required=True)
+    parser.add_argument("--output-root", default=None, help="Read and write a configured timestamped output sibling.")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--execute-continuation", action="store_true", help="Actually run continuation integrations. Without this, only a cost plan is written.")
@@ -1281,6 +1391,7 @@ def main() -> None:
     args = parse_args()
     result = run_continuation_pipeline(
         args.config,
+        output_root=args.output_root,
         resume=args.resume,
         force=args.force,
         execute=args.execute_continuation,
@@ -1292,7 +1403,7 @@ def main() -> None:
     print(f"q_global={TARGET_Q:.5f}")
     print("q_consistency_status=ok_q_0p9998")
     print(f"n_continuation_survivors={result['n_continuation_survivors']}")
-    print(f"n_passed_Eplus_filter={result['n_passed_Eplus_filter']}")
+    print(f"n_compatible_with_hiddenness_under_tested_radii={result['n_compatible_with_hiddenness_under_tested_radii']}")
     print(f"n_robust_survivors={result['n_robust_survivors']}")
     print("files_written=" + ";".join(result["files_written"]))
 

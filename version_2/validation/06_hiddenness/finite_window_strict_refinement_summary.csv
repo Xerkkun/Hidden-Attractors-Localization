@@ -1,2 +1,0 @@
-candidate_id,equilibrium_id,radius,sample_id,cloud_median_distance_norm,range_relative_distance,fft_relative_delta,matched_candidate_reference,backend,memory_policy,status,input_target_hits
-all_selected_candidates,,,,,,,False,chua_frac_backend_lib.c,finite_caputo_history_window,not_executed_no_target_hits,0

@@ -59,25 +59,32 @@ API_EXPORT int abm_rows(double t_final, double h) {
 }
 
 /*
- * Full-history Diethelm Adams-Bashforth-Moulton PECE method.
+ * Diethelm Adams-Bashforth-Moulton PECE method.
  *
- * The history sums always begin at j=0. There is no finite-memory parameter:
- * each output therefore represents the Caputo initial-value problem on [0,t].
- * The formulas mirror the existing Python ABM reference used for Danca runs.
+ * With truncated_history=0 the history sums always begin at j=0, so each
+ * output represents the Caputo initial-value problem on [0,t].  With
+ * truncated_history=1 the sum begins at the first state retained by a sliding
+ * window of length Lm and that retained state is the local integral anchor.
+ * The latter is an explicitly labelled finite-memory restarted approximation;
+ * it is not the full-history Caputo problem used for the Danca reference.
  */
-API_EXPORT int integrate_chua_abm_full_history(
+static int integrate_chua_abm_impl(
     double x0,
     double y0,
     double z0,
     double q,
     double h,
+    double Lm,
     double t_final,
+    int truncated_history,
     double *out
 ) {
     if (!(q > 0.0 && q <= 1.0) || !(h > 0.0) || t_final < 0.0 || !out) return -1;
+    if (truncated_history && !(Lm > 0.0)) return -1;
     const int nsteps = ceil_steps(t_final, h);
     if (nsteps < 0) return -2;
     const int rows = nsteps + 1;
+    const int nu = truncated_history ? ((int)ceil(Lm / h) > 1 ? (int)ceil(Lm / h) : 1) : nsteps + 1;
 
     double *state = (double*)calloc((size_t)rows * 3u, sizeof(double));
     double *fhist = (double*)calloc((size_t)rows * 3u, sizeof(double));
@@ -100,8 +107,13 @@ API_EXPORT int integrate_chua_abm_full_history(
     const double corr_scale = hq / tgamma(q + 2.0);
 
     for (int i = 0; i < nsteps; ++i) {
-        double predictor[3] = {x0, y0, z0};
-        for (int j = 0; j <= i; ++j) {
+        const int j0 = (truncated_history && i + 1 > nu) ? i + 1 - nu : 0;
+        double predictor[3] = {
+            state[3 * j0 + 0],
+            state[3 * j0 + 1],
+            state[3 * j0 + 2]
+        };
+        for (int j = j0; j <= i; ++j) {
             const int r = i - j;
             const double weight = pow_q[r + 1] - pow_q[r];
             predictor[0] += pred_scale * weight * fhist[3 * j + 0];
@@ -111,17 +123,22 @@ API_EXPORT int integrate_chua_abm_full_history(
 
         double fp[3];
         rhs(predictor, &G_PARAMS, fp);
-        double corrected[3] = {x0, y0, z0};
-        if (i == 0) {
-            corrected[0] += corr_scale * (q * fhist[0] + fp[0]);
-            corrected[1] += corr_scale * (q * fhist[1] + fp[1]);
-            corrected[2] += corr_scale * (q * fhist[2] + fp[2]);
+        double corrected[3] = {
+            state[3 * j0 + 0],
+            state[3 * j0 + 1],
+            state[3 * j0 + 2]
+        };
+        const int local_i = i - j0;
+        if (local_i == 0) {
+            corrected[0] += corr_scale * (q * fhist[3 * j0 + 0] + fp[0]);
+            corrected[1] += corr_scale * (q * fhist[3 * j0 + 1] + fp[1]);
+            corrected[2] += corr_scale * (q * fhist[3 * j0 + 2] + fp[2]);
         } else {
-            const double a0 = pow_q1[i] - ((double)i - q) * pow_q[i + 1];
-            corrected[0] += corr_scale * a0 * fhist[0];
-            corrected[1] += corr_scale * a0 * fhist[1];
-            corrected[2] += corr_scale * a0 * fhist[2];
-            for (int j = 1; j <= i; ++j) {
+            const double a0 = pow_q1[local_i] - ((double)local_i - q) * pow_q[local_i + 1];
+            corrected[0] += corr_scale * a0 * fhist[3 * j0 + 0];
+            corrected[1] += corr_scale * a0 * fhist[3 * j0 + 1];
+            corrected[2] += corr_scale * a0 * fhist[3 * j0 + 2];
+            for (int j = j0 + 1; j <= i; ++j) {
                 const int r = i - j + 1;
                 const double weight = pow_q1[r + 1] + pow_q1[r - 1] - 2.0 * pow_q1[r];
                 corrected[0] += corr_scale * weight * fhist[3 * j + 0];
@@ -148,4 +165,29 @@ API_EXPORT int integrate_chua_abm_full_history(
 
     free(state); free(fhist); free(pow_q); free(pow_q1);
     return 0;
+}
+
+API_EXPORT int integrate_chua_abm_full_history(
+    double x0,
+    double y0,
+    double z0,
+    double q,
+    double h,
+    double t_final,
+    double *out
+) {
+    return integrate_chua_abm_impl(x0, y0, z0, q, h, 0.0, t_final, 0, out);
+}
+
+API_EXPORT int integrate_chua_abm_truncated_history(
+    double x0,
+    double y0,
+    double z0,
+    double q,
+    double h,
+    double Lm,
+    double t_final,
+    double *out
+) {
+    return integrate_chua_abm_impl(x0, y0, z0, q, h, Lm, t_final, 1, out);
 }

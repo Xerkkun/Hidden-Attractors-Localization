@@ -1,2 +1,0 @@
-method,scope,tested_trajectories,target_hits,decision
-Caputo ABM PECE with full history and no finite-memory truncation,Danca-reported route only; excluded from ranking of new EFORK candidates,12,0,compatible_under_current_abm_control

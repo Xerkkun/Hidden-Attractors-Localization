@@ -218,10 +218,11 @@ class FractionalChuaBackend:
 
 @dataclass
 class FullHistoryABMBackend:
-    """Native full-history Caputo ABM backend for the non-smooth Chua system.
+    """Native ABM backend for the non-smooth Chua system.
 
-    Unlike :class:`FractionalChuaBackend`, this backend has no ``Lm`` input:
-    every ABM step accumulates the history from the initial time.
+    :meth:`integrate` retains the complete Caputo history used by the Danca
+    reference. :meth:`integrate_truncated` is a separate sliding restarted
+    finite-memory approximation and must be labelled as such in comparisons.
     """
 
     lib: Any
@@ -252,6 +253,17 @@ class FullHistoryABMBackend:
             np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
         ]
         lib.integrate_chua_abm_full_history.restype = ctypes.c_int
+        lib.integrate_chua_abm_truncated_history.argtypes = [
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double,
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+        ]
+        lib.integrate_chua_abm_truncated_history.restype = ctypes.c_int
         backend = cls(lib=lib)
         backend.set_nonsmooth_params(chua_nonsmooth_parameters())
         return backend
@@ -292,6 +304,38 @@ class FullHistoryABMBackend:
         )
         if rc != 0:
             raise RuntimeError(f"integrate_chua_abm_full_history returned {rc}")
+        return out.reshape((rows, 4))
+
+    def integrate_truncated(
+        self,
+        x0: Sequence[float],
+        *,
+        q: float,
+        h: float,
+        Lm: float,
+        t_final: float,
+    ) -> np.ndarray:
+        """Integrate with a sliding restarted ABM history window of length ``Lm``."""
+
+        rows = int(self.lib.abm_rows(float(t_final), float(h)))
+        if rows <= 0:
+            raise RuntimeError(f"abm_rows returned {rows}")
+        out = np.empty(rows * 4, dtype=np.float64)
+        seed = np.asarray(x0, dtype=float)
+        rc = int(
+            self.lib.integrate_chua_abm_truncated_history(
+                float(seed[0]),
+                float(seed[1]),
+                float(seed[2]),
+                float(q),
+                float(h),
+                float(Lm),
+                float(t_final),
+                out,
+            )
+        )
+        if rc != 0:
+            raise RuntimeError(f"integrate_chua_abm_truncated_history returned {rc}")
         return out.reshape((rows, 4))
 
 
