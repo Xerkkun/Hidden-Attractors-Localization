@@ -312,12 +312,15 @@ API_EXPORT int compute_continuation_efork3(
     double *x_out_out,
     int *history_in_counts,
     int *history_out_counts,
-    double *traj_out
+    double *traj_out,
+    double t_observe,
+    double *observation_out
 ) {
-    if (!eps_values || !x_seed3 || !x_in_out || !x_transient_out || !x_out_out || !traj_out) return -10;
+    if (!eps_values || !x_seed3 || !x_in_out || !x_transient_out || !x_out_out || !traj_out || !observation_out) return -10;
     if (n_eps <= 0) return -11;
     const int keep_steps = ceil_steps(t_keep, h);
-    if (keep_steps < 0) return -12;
+    const int observation_steps = ceil_steps(t_observe, h);
+    if (keep_steps < 0 || observation_steps < 0) return -12;
     int max_hist = (int)ceil(Lm / h) + 1;
     if (max_hist < 2) max_hist = 2;
     double *mem_current = (double*)calloc((size_t)max_hist * 4u, sizeof(double));
@@ -394,6 +397,24 @@ API_EXPORT int compute_continuation_efork3(
             x_out_out[3 * ie + 2] = x_trans[2];
         }
         if (history_out_counts) history_out_counts[ie] = (memory_mode == 1) ? next_count : 0;
+
+        if (ie == n_eps - 1) {
+            double *observe_full = NULL;
+            int observe_rows = 0, observe_seg = 0;
+            rc = integrate_internal(
+                &G_PARAMS, x_keep, q, h, Lm, t_observe, k, eps,
+                (memory_mode == 1 && next_count > 0) ? mem_next : NULL,
+                (memory_mode == 1 && next_count > 0) ? next_count : 0,
+                &observe_full, &observe_rows, &observe_seg
+            );
+            if (rc != 0) {
+                free(xt_full); free(xa_full); free(observe_full);
+                free(mem_current); free(mem_trans); free(mem_keep); free(mem_next);
+                return rc;
+            }
+            write_segment(observe_full, observe_seg, observation_steps, observation_out);
+            free(observe_full);
+        }
 
         x_in[0] = x_out_out[3 * ie + 0];
         x_in[1] = x_out_out[3 * ie + 1];

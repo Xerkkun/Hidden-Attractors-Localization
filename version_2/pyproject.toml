@@ -79,6 +79,7 @@ hidden-attractors-sphere-controls = "hidden_attractors.workflows.sphere_controls
 hidden-attractors-refined-basin = "hidden_attractors.workflows.refined_basin:main"
 hidden-attractors-strict-target-refinement = "hidden_attractors.workflows.strict_target_refinement:main"
 hidden-attractors-danca-abm-sphere-controls = "hidden_attractors.workflows.danca_abm_sphere_controls:main"
+hidden-attractors-fractional-report-run = "hidden_attractors.workflows.fractional_report_run:main"
 hidden-attractors-extended-search = "hidden_attractors.legacy:extended_search"
 hidden-attractors-danca2017 = "hidden_attractors.legacy:danca2017"
 hidden-attractors-nyquist-pipeline = "hidden_attractors.legacy:nyquist_pipeline"

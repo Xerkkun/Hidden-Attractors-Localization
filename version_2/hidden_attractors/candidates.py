@@ -14,7 +14,10 @@ from typing import Any, Dict, List, Sequence
 import numpy as np
 
 from .io import read_csv_rows, read_json
-from .paths import OUTPUTS, PROJECT_ROOT
+from .paths import PROJECT_ROOT
+
+
+PROMOTED_SELECTION = PROJECT_ROOT / "validation" / "04_candidates" / "selected_candidates.json"
 
 
 def _float(value: Any, default: float = float("nan")) -> float:
@@ -104,8 +107,8 @@ def _vec(value: Sequence[Any] | None) -> np.ndarray:
 
 
 def load_lure_survivor(
-    source_dir: str | Path = OUTPUTS / "lure_biased_multiparam_q09998_20260515_195444",
-    candidate_id: str = "lure_biased_q_0p99980_rank_0001",
+    source_dir: str | Path,
+    candidate_id: str,
 ) -> CandidateRecord:
     """Load a Lur'e continuation survivor from the final q=0.9998 run.
 
@@ -154,7 +157,7 @@ def load_lure_survivor(
     raise FileNotFoundError(f"No se encontro {candidate_id} en {root}")
 
 
-def load_machado_candidate(candidate_id: str) -> CandidateRecord:
+def load_machado_candidate(candidate_id: str, targeted_path: str | Path, corrida1_path: str | Path) -> CandidateRecord:
     """Load one Machado/FDF candidate from the final targeted verification outputs.
 
     Parameters
@@ -176,8 +179,8 @@ def load_machado_candidate(candidate_id: str) -> CandidateRecord:
         If *candidate_id* is absent from the targeted verification JSON.
     """
 
-    targeted_path = OUTPUTS / "extended_search" / "machado_targeted_verification_lm10_20260515_182252" / "machado_targeted_summary.json"
-    corrida1_path = OUTPUTS / "extended_search" / "corrida1" / "corrida1_summary.json"
+    targeted_path = Path(targeted_path)
+    corrida1_path = Path(corrida1_path)
     targeted = read_json(targeted_path)
     corrida1 = read_json(corrida1_path)
     ref_by_id = {row["candidate_id"]: row for row in targeted.get("reference_attractor", [])}
@@ -203,39 +206,49 @@ def load_machado_candidate(candidate_id: str) -> CandidateRecord:
     )
 
 
+def _selection_path(source_dir: str | Path | None) -> Path:
+    if source_dir is None:
+        return PROMOTED_SELECTION
+    source = Path(source_dir)
+    return source if source.suffix.lower() == ".json" else source / "selected_candidates.json"
+
+
+def _record_from_selected(row: Dict[str, Any], source: Path) -> CandidateRecord:
+    return CandidateRecord(
+        candidate_id=str(row["candidate_id"]),
+        route=str(row.get("method", row.get("route", ""))),
+        q=_float(row.get("q"), 0.9998),
+        robust_start=_vec(row.get("robust_start")),
+        seed=_vec(row.get("seed")),
+        mu=None if row.get("mu", "") in {"", None} else _float(row.get("mu")),
+        theta=None if row.get("theta", "") in {"", None} else _float(row.get("theta")),
+        A=None if row.get("A", "") in {"", None} else _float(row.get("A")),
+        sigma0=None if row.get("sigma0", "") in {"", None} else _float(row.get("sigma0")),
+        omega=None if row.get("omega", "") in {"", None} else _float(row.get("omega")),
+        rho_H=None if row.get("rho_H", "") in {"", None} else _float(row.get("rho_H")),
+        residual_abs=None if row.get("residual_abs", "") in {"", None} else _float(row.get("residual_abs")),
+        source=str(source),
+    )
+
+
 def load_final_candidate_records(
-    source_dir: str | Path = OUTPUTS / "lure_biased_multiparam_q09998_20260515_195444",
+    source_dir: str | Path | None = None,
 ) -> List[CandidateRecord]:
-    """Return the three final candidates used in comparative analyses.
+    """Return the three candidates promoted from the current validated run.
 
-    Loads two Machado/FDF candidates and one biased-Lur'e survivor from the
-    project canonical output directories.
-
-    Parameters
-    ----------
-    source_dir : str or Path
-        Root directory of the biased-Lur'e multi-parameter sweep.
-        Defaults to the project-canonical folder.
-
-    Returns
-    -------
-    records : list[CandidateRecord]
-        Three :class:`CandidateRecord` objects in the following order:
-
-        1. Machado branch 0, μ=4.0, θ=0.
-        2. Machado branch 0, μ=2.0, θ≈3.927.
-        3. Lur'e biased survivor rank 0001.
-
-    Examples
-    --------
-    >>> from hidden_attractors.candidates import load_final_candidate_records
-    >>> records = load_final_candidate_records()  # doctest: +SKIP
-    >>> len(records)
-    3
+    Historical outputs are not an implicit fallback.  A promoted
+    ``selected_candidates.json`` must exist under the validation tree or in
+    an explicitly provided current run directory.
     """
 
-    return [
-        load_machado_candidate("branch_0_mu_4p00000_theta_0p00000"),
-        load_machado_candidate("branch_0_mu_2p00000_theta_3p92699"),
-        load_lure_survivor(source_dir, "lure_biased_q_0p99980_rank_0001"),
-    ]
+    selection = _selection_path(source_dir)
+    payload = read_json(selection)
+    status = payload.get("selection_status")
+    if status is not None and status != "promoted_for_hiddenness":
+        raise FileNotFoundError(
+            f"La selección actual no está promovida para ocultedad ({status}) en {selection}"
+        )
+    rows = payload.get("selected_candidates", payload.get("candidates", []))
+    if len(rows) < 3:
+        raise FileNotFoundError(f"No hay una terna promovida de candidatos actuales en {selection}")
+    return [_record_from_selected(row, selection) for row in rows[:3]]

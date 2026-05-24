@@ -1,0 +1,100 @@
+{
+  "stage": "hiddenness",
+  "status": "diagnostic_only_reference_rejected_as_near_periodic",
+  "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260523_173051",
+  "files": {
+    "full_history_decision": "sphere_decision.csv",
+    "finite_window_decision": "finite_window_sphere_decision.csv",
+    "full_history_strict": "strict_refinement_summary.csv",
+    "finite_window_strict": "finite_window_strict_refinement_summary.csv"
+  },
+  "branches": {
+    "full_history": {
+      "status": "diagnostic_only_reference_rejected_as_near_periodic",
+      "backend": "chua_frac_backend_lib.c",
+      "efork_stage": "K3 = a31*K1 + a32*K2",
+      "contract": {
+        "q": 0.9998,
+        "h": 0.02,
+        "history_horizon": 30.02,
+        "memory_policy": "full_caputo_history_no_finite_memory_truncation",
+        "t_final": 30.0,
+        "t_burn": 15.0,
+        "radii": [
+          0.0001,
+          0.001
+        ],
+        "directions": "axis_six"
+      },
+      "decisions": [
+        {
+          "candidate_id": "current_centered_machado_b0_mu_2",
+          "tested_trajectories": 36,
+          "target_hits": 0,
+          "hiddenness_status": "not_interpreted_reference_rejected_near_periodic",
+          "contract_note": "Ensayo conservado como diagn\u00f3stico EFORK de historial completo; la referencia fall\u00f3 el filtro aperi\u00f3dico y no sustenta ocultedad."
+        },
+        {
+          "candidate_id": "current_centered_classical_b0",
+          "tested_trajectories": 36,
+          "target_hits": 0,
+          "hiddenness_status": "not_interpreted_reference_rejected_near_periodic",
+          "contract_note": "Ensayo conservado como diagn\u00f3stico EFORK de historial completo; la referencia fall\u00f3 el filtro aperi\u00f3dico y no sustenta ocultedad."
+        },
+        {
+          "candidate_id": "current_centered_machado_b0_mu_4",
+          "tested_trajectories": 36,
+          "target_hits": 0,
+          "hiddenness_status": "not_interpreted_reference_rejected_near_periodic",
+          "contract_note": "Ensayo conservado como diagn\u00f3stico EFORK de historial completo; la referencia fall\u00f3 el filtro aperi\u00f3dico y no sustenta ocultedad."
+        }
+      ],
+      "basins_and_bifurcations": "pending",
+      "interpretation": "La referencia fall\u00f3 el filtro de retorno casi peri\u00f3dico; no se interpreta como prueba de ocultedad."
+    },
+    "finite_window": {
+      "status": "diagnostic_only_reference_rejected_as_near_periodic",
+      "backend": "chua_frac_backend_lib.c",
+      "efork_stage": "K3 = a31*K1 + a32*K2",
+      "contract": {
+        "q": 0.9998,
+        "h": 0.02,
+        "history_horizon": 8.0,
+        "memory_policy": "finite_caputo_history_window",
+        "t_final": 30.0,
+        "t_burn": 15.0,
+        "radii": [
+          0.0001,
+          0.001
+        ],
+        "directions": "axis_six"
+      },
+      "decisions": [
+        {
+          "candidate_id": "current_centered_machado_b0_mu_2",
+          "tested_trajectories": 36,
+          "target_hits": 0,
+          "hiddenness_status": "not_interpreted_reference_rejected_near_periodic",
+          "contract_note": "Ensayo conservado como diagn\u00f3stico EFORK de ventana finita; la referencia fall\u00f3 el filtro aperi\u00f3dico y no sustenta ocultedad."
+        },
+        {
+          "candidate_id": "current_centered_classical_b0",
+          "tested_trajectories": 36,
+          "target_hits": 0,
+          "hiddenness_status": "not_interpreted_reference_rejected_near_periodic",
+          "contract_note": "Ensayo conservado como diagn\u00f3stico EFORK de ventana finita; la referencia fall\u00f3 el filtro aperi\u00f3dico y no sustenta ocultedad."
+        },
+        {
+          "candidate_id": "current_centered_machado_b0_mu_4",
+          "tested_trajectories": 36,
+          "target_hits": 0,
+          "hiddenness_status": "not_interpreted_reference_rejected_near_periodic",
+          "contract_note": "Ensayo conservado como diagn\u00f3stico EFORK de ventana finita; la referencia fall\u00f3 el filtro aperi\u00f3dico y no sustenta ocultedad."
+        }
+      ],
+      "basins_and_bifurcations": "pending",
+      "interpretation": "La referencia fall\u00f3 el filtro de retorno casi peri\u00f3dico; no se interpreta como prueba de ocultedad."
+    }
+  },
+  "interpretation": "These computations are retained as diagnostics of rejected regimes and do not support hidden chaotic attractor claims."
+}

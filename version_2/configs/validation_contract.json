@@ -102,9 +102,7 @@
         "sphere_plan.csv",
         "sphere_raw.csv",
         "sphere_decision.csv",
-        "basin_xy.csv",
-        "basin_xy.png",
-        "refined_basin_summary.json"
+        "strict_refinement_summary.csv"
       ]
     },
     {

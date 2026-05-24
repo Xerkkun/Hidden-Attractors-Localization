@@ -29,7 +29,7 @@ from ..parallel import force_single_openmp_thread_current_process, force_single_
 from ..paths import OUTPUTS, PROJECT_ROOT
 
 
-DEFAULT_SOURCE_DIR = OUTPUTS / "lure_biased_multiparam_q09998_20260515_195444"
+DEFAULT_SOURCE_DIR = PROJECT_ROOT / "validation" / "04_candidates"
 
 RAW_FIELDS = [
     "candidate_id",

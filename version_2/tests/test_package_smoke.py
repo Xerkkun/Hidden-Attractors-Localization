@@ -9,6 +9,7 @@ absent so that CI on a fresh clone always passes.
 from __future__ import annotations
 
 import inspect
+import json
 
 import numpy as np
 import pytest
@@ -21,15 +22,16 @@ from hidden_attractors.native.backends import C_SOURCE_ROOT
 # ── Helper evaluated at collection time ──────────────────────────────────────
 
 def _candidate_data_available() -> bool:
-    """Return True if the runtime candidate output files exist in this checkout."""
-    from hidden_attractors.paths import OUTPUTS
-    targeted = (
-        OUTPUTS
-        / "extended_search"
-        / "machado_targeted_verification_lm10_20260515_182252"
-        / "machado_targeted_summary.json"
+    """Return True only when the current selection is promoted for hiddenness."""
+    from hidden_attractors.candidates import PROMOTED_SELECTION
+
+    if not PROMOTED_SELECTION.exists():
+        return False
+    payload = json.loads(PROMOTED_SELECTION.read_text(encoding="utf-8"))
+    return (
+        payload.get("selection_status") == "promoted_for_hiddenness"
+        and len(payload.get("selected_candidates", [])) >= 3
     )
-    return targeted.exists()
 
 
 # ── Tests ─────────────────────────────────────────────────────────────────────
@@ -60,8 +62,8 @@ def test_final_candidate_loader_api_is_callable() -> None:
 @pytest.mark.skipif(
     not _candidate_data_available(),
     reason=(
-        "Runtime output files (outputs/extended_search/...) are not present. "
-        "Run the full pipeline locally to generate them, then re-run this test."
+        "The current validation tree does not contain three candidates promoted "
+        "for hiddenness."
     ),
 )
 def test_final_candidate_loader_returns_three_records() -> None:

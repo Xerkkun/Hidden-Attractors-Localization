@@ -1,0 +1,4 @@
+candidate_id,status,reason,memory_policy
+current_centered_machado_b0_mu_2,pending_causal_history_lyapunov_backend,El backend Lyapunov actual reinicia la historia y no se promueve para candidatos obtenidos por continuacion causal.,finite_caputo_history_window
+current_centered_classical_b0,pending_causal_history_lyapunov_backend,El backend Lyapunov actual reinicia la historia y no se promueve para candidatos obtenidos por continuacion causal.,finite_caputo_history_window
+current_centered_machado_b0_mu_4,pending_causal_history_lyapunov_backend,El backend Lyapunov actual reinicia la historia y no se promueve para candidatos obtenidos por continuacion causal.,finite_caputo_history_window

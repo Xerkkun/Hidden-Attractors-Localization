@@ -1,0 +1,13 @@
+equilibrium_id,delta,sample_id,x0,target_hit,cloud_median_distance_norm,range_relative_distance,backend,memory_policy
+E+,0.01,0,6.598307886538868;0.0028364022560936064;-6.585471484282775,False,2.100751928652681e+35,6.450927188890026e+73,chua_abm_full_history_lib.c,full_caputo_history_no_finite_memory_truncation
+E+,0.01,1,6.5883078865388685;0.012836402256093607;-6.585471484282775,False,2.0544914893844954e+35,6.308871993616923e+73,chua_abm_full_history_lib.c,full_caputo_history_no_finite_memory_truncation
+E+,0.01,2,6.5883078865388685;0.0028364022560936064;-6.575471484282775,False,9.235540531396884e+34,2.836022602454275e+73,chua_abm_full_history_lib.c,full_caputo_history_no_finite_memory_truncation
+E+,0.01,3,6.578307886538869;0.0028364022560936064;-6.585471484282775,False,0.07190965949836832,0.7017774905047071,chua_abm_full_history_lib.c,full_caputo_history_no_finite_memory_truncation
+E+,0.01,4,6.5883078865388685;-0.007163597743906394;-6.585471484282775,False,0.07230504193883523,0.7012762113827107,chua_abm_full_history_lib.c,full_caputo_history_no_finite_memory_truncation
+E+,0.01,5,6.5883078865388685;0.0028364022560936064;-6.595471484282775,False,0.07194542129108351,0.6997353384860494,chua_abm_full_history_lib.c,full_caputo_history_no_finite_memory_truncation
+E-,0.01,0,-6.578307886538869;-0.0028364022560936064;6.585471484282775,False,0.0722232346492474,0.7017774905047071,chua_abm_full_history_lib.c,full_caputo_history_no_finite_memory_truncation
+E-,0.01,1,-6.5883078865388685;0.007163597743906394;6.585471484282775,False,0.07197009360533169,0.7012762113827107,chua_abm_full_history_lib.c,full_caputo_history_no_finite_memory_truncation
+E-,0.01,2,-6.5883078865388685;-0.0028364022560936064;6.595471484282775,False,0.07211086091125274,0.6997353384860494,chua_abm_full_history_lib.c,full_caputo_history_no_finite_memory_truncation
+E-,0.01,3,-6.598307886538868;-0.0028364022560936064;6.585471484282775,False,2.100751928652681e+35,6.450927188890026e+73,chua_abm_full_history_lib.c,full_caputo_history_no_finite_memory_truncation
+E-,0.01,4,-6.5883078865388685;-0.012836402256093607;6.585471484282775,False,2.0544914893844954e+35,6.308871993616923e+73,chua_abm_full_history_lib.c,full_caputo_history_no_finite_memory_truncation
+E-,0.01,5,-6.5883078865388685;-0.0028364022560936064;6.575471484282775,False,9.235540531396884e+34,2.836022602454275e+73,chua_abm_full_history_lib.c,full_caputo_history_no_finite_memory_truncation

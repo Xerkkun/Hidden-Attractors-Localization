@@ -1,0 +1,4 @@
+candidate_id,tested_trajectories,target_hits,hiddenness_status,contract_note
+current_centered_machado_b0_mu_2,36,0,not_interpreted_reference_rejected_near_periodic,Ensayo conservado como diagnóstico EFORK de ventana finita; la referencia falló el filtro aperiódico y no sustenta ocultedad.
+current_centered_classical_b0,36,0,not_interpreted_reference_rejected_near_periodic,Ensayo conservado como diagnóstico EFORK de ventana finita; la referencia falló el filtro aperiódico y no sustenta ocultedad.
+current_centered_machado_b0_mu_4,36,0,not_interpreted_reference_rejected_near_periodic,Ensayo conservado como diagnóstico EFORK de ventana finita; la referencia falló el filtro aperiódico y no sustenta ocultedad.

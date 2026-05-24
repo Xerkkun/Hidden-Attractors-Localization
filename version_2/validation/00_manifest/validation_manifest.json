@@ -1,6 +1,6 @@
 {
-  "validation_id": "chua_fractional_algebra_2026_05_23",
-  "repository_commit": "2bfe0dd60deb817e2c482b719f0cc45b667ddf75",
+  "validation_id": "chua_fractional_nonsmooth_q09998_efork3_20260523_173051",
+  "repository_commit": "845934604321ec98f94956adc55ee6701c2739cd",
   "package_version": "0.1.0",
   "python_version": "3.14.3",
   "platform": "Windows-11-10.0.26200-SP0",
@@ -20,16 +20,22 @@
   "stages": {
     "algebra": "01_algebra/algebra_validation_summary.json",
     "lure_df": "02_lure_df/lure_df_validation_summary.json",
-    "integrators": "03_integrators/integrator_validation_summary.json"
+    "integrators": "03_integrators/integrator_validation_summary.json",
+    "candidate_selection": "04_candidates/candidate_selection_summary.json",
+    "dynamic_analysis": "05_dynamic_analysis/dynamic_analysis_summary.json",
+    "hiddenness": "06_hiddenness/hiddenness_validation_summary.json",
+    "robustness": "07_robustness/robustness_validation_summary.json",
+    "literature_comparison": "08_literature_comparison/literature_comparison_summary.json"
   },
   "pending_stages": [
-    "candidate_selection",
-    "dynamic_analysis",
-    "hiddenness",
-    "robustness",
-    "literature_comparison"
+    "new_chaotic_candidate_search",
+    "basins",
+    "bifurcations"
   ],
   "final_report": {
-    "status": "pending_full_validation"
-  }
+    "status": "current_run_documents_near_periodic_rejection_no_chaotic_candidates_promoted",
+    "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260523_173051"
+  },
+  "working_tree_dirty": true,
+  "working_tree_diff_sha256": "3644b627feb7279ad3258aedcced6f279635e3b7c0ca3dd4560dc6b72ed2caee"
 }

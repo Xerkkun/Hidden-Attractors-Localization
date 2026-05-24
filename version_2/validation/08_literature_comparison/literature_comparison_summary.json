@@ -1,0 +1,51 @@
+{
+  "stage": "literature_comparison",
+  "status": "passed",
+  "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260523_173051",
+  "files": {
+    "report": "literature_comparison.md",
+    "table": "danca_comparison_summary.csv",
+    "abm": "abm_replication_summary.json"
+  },
+  "danca_abm_control": {
+    "status": "completed_exploratory_current_run",
+    "scope": "Danca-reported route only; excluded from ranking of new EFORK candidates",
+    "candidate_seed_source": "Danca ABM replication locator from prior method setup; all reported metrics are newly recomputed",
+    "backend": "chua_abm_full_history_lib.c",
+    "method": "Caputo ABM PECE with full history and no finite-memory truncation",
+    "contract": {
+      "q": 0.9998,
+      "h": 0.05,
+      "t_final": 80.0,
+      "t_burn": 40.0,
+      "delta": 0.01,
+      "tested_directions_per_unstable_equilibrium": 6
+    },
+    "reference_metrics": {
+      "bounded": true,
+      "diverged": false,
+      "equilibrium_like": false,
+      "noncollapsed_variance": true,
+      "final_norm": 3.7920804086830673,
+      "max_norm": 11.15405768183769,
+      "range_x": 11.31885264511816,
+      "range_y": 3.302761025706284,
+      "range_z": 17.035780842427812,
+      "var_x_tail": 10.94364878620487,
+      "var_y_tail": 1.09964831713783,
+      "var_z_tail": 30.68685814804338,
+      "fft_peak": 0.3745318352059925,
+      "psd_entropy": 0.1913881062091926,
+      "section_points": 15,
+      "range_relative_distance": NaN,
+      "fft_relative_delta": NaN,
+      "cloud_median_distance": NaN,
+      "cloud_median_distance_norm": NaN,
+      "section_median_distance": NaN,
+      "section_median_distance_norm": NaN
+    },
+    "tested_trajectories": 12,
+    "target_hits": 0,
+    "decision": "compatible_under_current_abm_control"
+  }
+}

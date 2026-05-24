@@ -1,0 +1,5 @@
+branch_id,candidate_id,method,mu,selected,status
+full_history,current_centered_machado_b0_mu_2,Machado centrada,2.0,False,preselected_rejected_near_periodic
+full_history,current_centered_machado_b0_mu_4,Machado centrada,4.0,False,preselected_rejected_near_periodic
+finite_window,current_centered_machado_b0_mu_2,Machado centrada,2.0,False,preselected_rejected_near_periodic
+finite_window,current_centered_machado_b0_mu_4,Machado centrada,4.0,False,preselected_rejected_near_periodic

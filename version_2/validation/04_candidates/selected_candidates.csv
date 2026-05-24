@@ -1,0 +1,2 @@
+status,reason,diagnostic_file
+no_promoted_candidate,all_preselected_regimes_rejected_near_periodic_postcheck,../05_dynamic_analysis/periodicity_screen.csv

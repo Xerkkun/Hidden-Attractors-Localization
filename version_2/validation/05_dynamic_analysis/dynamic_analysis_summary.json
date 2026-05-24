@@ -1,0 +1,38 @@
+{
+  "stage": "dynamic_analysis",
+  "status": "completed_near_periodic_rejection",
+  "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260523_173051",
+  "files": {
+    "full_history_metrics": "trajectory_metrics.csv",
+    "finite_window_metrics": "finite_window_trajectory_metrics.csv",
+    "full_history_phase": "phase_3d.png",
+    "finite_window_phase": "finite_window_phase_3d.png",
+    "full_history_periodicity": "periodicity_screen.csv",
+    "finite_window_periodicity": "finite_window_periodicity_screen.csv"
+  },
+  "backends": [
+    "chua_frac_backend_lib.c"
+  ],
+  "lyapunov": "pending_causal_history_backend",
+  "efork_stage": "K3 = a31*K1 + a32*K2",
+  "periodicity_postcheck": {
+    "criterion": "dominant_period_return_ratio >= 0.05",
+    "interpretation": "necessary exclusion gate only; it is not proof of chaos",
+    "branches": {
+      "full_history": {
+        "tested_nontrivial_regimes": 12,
+        "passing_aperiodic_gate": 0,
+        "ratio_min": 0.005247156653848599,
+        "ratio_max": 0.012058591023118615,
+        "file": "periodicity_screen.csv"
+      },
+      "finite_window": {
+        "tested_nontrivial_regimes": 12,
+        "passing_aperiodic_gate": 0,
+        "ratio_min": 0.005334882898447655,
+        "ratio_max": 0.010788262516019354,
+        "file": "finite_window_periodicity_screen.csv"
+      }
+    }
+  }
+}
