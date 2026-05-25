@@ -39,6 +39,9 @@ FULL_HISTORY_POLICY = "full_caputo_history_no_finite_memory_truncation"
 CONTINUATION_POLICY = "full_generated_homotopy_history_carried_without_truncation"
 FINITE_WINDOW_POLICY = "finite_caputo_history_window"
 FINITE_CONTINUATION_POLICY = "finite_terminal_window_carried_across_homotopy"
+HIDDENNESS_RADII = [1.0e-5, 3.0e-5, 1.0e-4, 3.0e-4, 1.0e-3, 1.0e-2]
+HIDDENNESS_SAMPLES_PER_RADIUS = 100
+HIDDENNESS_SAMPLE_GROWTH_PER_RADIUS = 50
 POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD = 0.05
 POST_CONTINUATION_PERIODICITY_CONFIG = {
     "entropy_min": 0.25,
@@ -717,14 +720,22 @@ def _plot_spectrum(traj: np.ndarray, h: float, output: Path) -> None:
     plt.close(fig)
 
 
-def run_robustness_evidence(outdir: Path, selected: Sequence[dict[str, Any]], *, full_history: bool, memory_length: float) -> dict[str, Any]:
+def run_robustness_evidence(
+    outdir: Path,
+    selected: Sequence[dict[str, Any]],
+    *,
+    h: float,
+    full_history: bool,
+    memory_length: float,
+) -> dict[str, Any]:
     suffix = "full" if full_history else "window"
     backend = FractionalChuaBackend.build(output_name=f"fractional_report_robustness_{suffix}_{os.getpid()}")
+    refined_h = 0.005 if float(h) >= 0.01 else float(h)
     if full_history:
-        cases = [("R0_base", 0.02, 80.0, None), ("R1_h_fino", 0.01, 60.0, None), ("R2_h_fino_largo", 0.01, 80.0, None), ("R3_tiempo", 0.02, 120.0, None)]
+        cases = [("R0_base", h, 80.0, None), ("R1_h_fino", refined_h, 60.0, None), ("R2_h_fino_largo", refined_h, 80.0, None), ("R3_tiempo", h, 120.0, None)]
         memory_policy = FULL_HISTORY_POLICY
     else:
-        cases = [("R0_base", 0.02, 80.0, memory_length), ("R1_h_fino", 0.01, 60.0, memory_length), ("R2_memoria", 0.02, 80.0, memory_length * 1.5), ("R3_tiempo", 0.02, 120.0, memory_length)]
+        cases = [("R0_base", h, 80.0, memory_length), ("R1_h_fino", refined_h, 60.0, memory_length), ("R2_memoria", h, 80.0, memory_length * 1.5), ("R3_tiempo", h, 120.0, memory_length)]
         memory_policy = FINITE_WINDOW_POLICY
     rows: list[dict[str, Any]] = []
     best_trajs: list[np.ndarray] = []
@@ -783,6 +794,7 @@ def run_hiddenness_evidence(
     outdir: Path,
     selected: Sequence[dict[str, Any]],
     *,
+    h: float,
     full_history: bool,
     memory_length: float,
     trajectory_source: Path,
@@ -795,24 +807,23 @@ def run_hiddenness_evidence(
     if protocol_path.exists():
         protocol = read_json(protocol_path)
         net_contract = protocol.get("numerical_contract", {})
-        default_radii = [float(r) for r in net_contract.get("hiddenness_radii", [1e-05, 3e-05, 0.0001, 0.0003, 0.001])]
-        default_samples = int(net_contract.get("samples_per_radius", 500))
-        default_growth = int(net_contract.get("sample_growth_per_radius", 100))
+        default_radii = [float(r) for r in net_contract.get("hiddenness_radii", HIDDENNESS_RADII)]
+        default_samples = int(net_contract.get("samples_per_radius", HIDDENNESS_SAMPLES_PER_RADIUS))
+        default_growth = int(net_contract.get("sample_growth_per_radius", HIDDENNESS_SAMPLE_GROWTH_PER_RADIUS))
     else:
-        default_radii = [1.0e-5, 3.0e-5, 1.0e-4, 3.0e-4, 1.0e-3]
-        default_samples = 500
-        default_growth = 100
+        default_radii = list(HIDDENNESS_RADII)
+        default_samples = HIDDENNESS_SAMPLES_PER_RADIUS
+        default_growth = HIDDENNESS_SAMPLE_GROWTH_PER_RADIUS
 
-    radii = [1.0e-4, 1.0e-3]
-    samples_per_radius = 12
-    sample_growth_per_radius = 12
+    radii = default_radii
+    samples_per_radius = default_samples
+    sample_growth_per_radius = default_growth
     is_lightweight = (
         samples_per_radius < default_samples
         or len(radii) < len(default_radii)
     )
 
     rng = np.random.default_rng(20260524 if full_history else 20260525)
-    h = 0.02
     t_final = 30.0
     t_burn = 15.0
     history_horizon = _full_history_horizon(t_final, h) if full_history else memory_length
@@ -903,7 +914,7 @@ def run_hiddenness_evidence(
         "basins_and_bifurcations": "pending",
     }
     write_json(outdir / "hiddenness_run_summary.json", summary)
-    run_strict_refinement(outdir, selected, full_history=full_history, memory_length=memory_length, trajectory_source=trajectory_source)
+    run_strict_refinement(outdir, selected, h=h, full_history=full_history, memory_length=memory_length, trajectory_source=trajectory_source)
     plot_hiddenness_ball_figures(outdir, selected)
     return summary
 
@@ -949,6 +960,7 @@ def run_strict_refinement(
     outdir: Path,
     selected: Sequence[dict[str, Any]],
     *,
+    h: float,
     full_history: bool,
     memory_length: float,
     trajectory_source: Path,
@@ -959,7 +971,6 @@ def run_strict_refinement(
     backend = FractionalChuaBackend.build(output_name=f"fractional_report_strict_refinement_{suffix}_{os.getpid()}")
     raw = read_csv_rows(outdir / "ball_sampling_results.csv")
     rows: list[dict[str, Any]] = []
-    h = 0.02
     t_final = 30.0
     history_horizon = _full_history_horizon(t_final, h) if full_history else memory_length
     memory_policy = FULL_HISTORY_POLICY if full_history else FINITE_WINDOW_POLICY
@@ -1024,48 +1035,50 @@ def run_strict_refinement(
     write_csv(outdir / "strict_refinement_summary.csv", rows, fields)
 
 
-def run_danca_abm_control(outdir: Path) -> dict[str, Any]:
+def run_danca_abm_control(outdir: Path, *, h: float) -> dict[str, Any]:
     """Fresh ABM full-history control for the Danca-reported route only."""
 
     backend = FullHistoryABMBackend.build(output_name=f"danca_abm_full_history_control_{os.getpid()}")
     seed = np.asarray([3.039383584794975, -0.2416862069577155, -6.873467365218827], dtype=float)
-    h = 0.05
     t_final = 80.0
     t_burn = 40.0
     reference_traj = backend.integrate(seed, q=Q, h=h, t_final=t_final)
     reference_metric, reference = trajectory_metrics(reference_traj, h=h, t_start=t_burn)
     _write_trajectory(outdir / "danca_reference_abm_full_history.csv", reference_traj)
     equilibria = backend.equilibria()
-    radius = 1.0e-2
-    samples_per_equilibrium = 12
+    radii = list(HIDDENNESS_RADII)
+    samples_per_radius = HIDDENNESS_SAMPLES_PER_RADIUS
+    sample_growth_per_radius = HIDDENNESS_SAMPLE_GROWTH_PER_RADIUS
     rng = np.random.default_rng(20260526)
     rows: list[dict[str, Any]] = []
     for eq_id in ("E+", "E-"):
         center = equilibria[eq_id]
-        for sample_id, x0 in enumerate(sample_uniform_ball(center, radius, samples_per_equilibrium, rng)):
-            traj = backend.integrate(x0, q=Q, h=h, t_final=t_final)
-            metrics, _payload = trajectory_metrics(traj, h=h, t_start=t_burn, reference=reference)
-            target_hit = bool(
-                metrics["bounded"]
-                and metrics["noncollapsed_variance"]
-                and _finite(metrics.get("cloud_median_distance_norm"), 1e99) <= 0.35
-                and _finite(metrics.get("range_relative_distance"), 1e99) <= 0.60
-            )
-            rows.append(
-                {
-                    "equilibrium_id": eq_id,
-                    "radius": radius,
-                    "sample_id": sample_id,
-                    "sampling_mode": "ball",
-                    "distance_from_equilibrium": float(np.linalg.norm(x0 - center)),
-                    "x0": x0.tolist(),
-                    "target_hit": target_hit,
-                    "cloud_median_distance_norm": metrics["cloud_median_distance_norm"],
-                    "range_relative_distance": metrics["range_relative_distance"],
-                    "backend": "chua_abm_full_history_lib.c",
-                    "memory_policy": FULL_HISTORY_POLICY,
-                }
-            )
+        for radius_index, radius in enumerate(radii):
+            count = samples_per_radius + radius_index * sample_growth_per_radius
+            for sample_id, x0 in enumerate(sample_uniform_ball(center, radius, count, rng)):
+                traj = backend.integrate(x0, q=Q, h=h, t_final=t_final)
+                metrics, _payload = trajectory_metrics(traj, h=h, t_start=t_burn, reference=reference)
+                target_hit = bool(
+                    metrics["bounded"]
+                    and metrics["noncollapsed_variance"]
+                    and _finite(metrics.get("cloud_median_distance_norm"), 1e99) <= 0.35
+                    and _finite(metrics.get("range_relative_distance"), 1e99) <= 0.60
+                )
+                rows.append(
+                    {
+                        "equilibrium_id": eq_id,
+                        "radius": radius,
+                        "sample_id": sample_id,
+                        "sampling_mode": "ball",
+                        "distance_from_equilibrium": float(np.linalg.norm(x0 - center)),
+                        "x0": x0.tolist(),
+                        "target_hit": target_hit,
+                        "cloud_median_distance_norm": metrics["cloud_median_distance_norm"],
+                        "range_relative_distance": metrics["range_relative_distance"],
+                        "backend": "chua_abm_full_history_lib.c",
+                        "memory_policy": FULL_HISTORY_POLICY,
+                    }
+                )
     write_csv(outdir / "danca_abm_hiddenness_controls.csv", rows)
     hits = sum(1 for row in rows if row["target_hit"])
     summary = {
@@ -1079,9 +1092,10 @@ def run_danca_abm_control(outdir: Path) -> dict[str, Any]:
             "h": h,
             "t_final": t_final,
             "t_burn": t_burn,
-            "radius": radius,
+            "radii": radii,
             "sampling_mode": "ball",
-            "samples_per_unstable_equilibrium": samples_per_equilibrium,
+            "samples_per_radius": samples_per_radius,
+            "sample_growth_per_radius": sample_growth_per_radius,
         },
         "reference_metrics": reference_metric,
         "tested_trajectories": len(rows),
@@ -1112,9 +1126,9 @@ def _run_numerical_contract() -> dict[str, Any]:
         "boundedness_thresholds": {"bounded": True, "minimum_range_x": 0.25},
         "equilibrium_distance_thresholds": {"nearest_equilibrium": 1.0e-3},
         "similarity_thresholds": {"cloud_median_distance_norm": 0.35, "range_relative_distance": 0.60},
-        "hiddenness_radii": [1.0e-4, 1.0e-3],
-        "samples_per_radius": 12,
-        "sample_growth_per_radius": 12,
+        "hiddenness_radii": list(HIDDENNESS_RADII),
+        "samples_per_radius": HIDDENNESS_SAMPLES_PER_RADIUS,
+        "sample_growth_per_radius": HIDDENNESS_SAMPLE_GROWTH_PER_RADIUS,
         "random_seed_policy": "fixed_reproducible",
         "output_schema_version": SCHEMA_VERSION,
         "efork_stage": EFORK_STAGE,
@@ -1804,12 +1818,14 @@ def run_efork_branch(
     robustness = run_robustness_evidence(
         robust_dir,
         selected,
+        h=args.h,
         full_history=full_history,
         memory_length=args.memory_length,
     )
     hiddenness = run_hiddenness_evidence(
         hidden_dir,
         selected,
+        h=args.h,
         full_history=full_history,
         memory_length=args.memory_length,
         trajectory_source=root / "trajectories",
@@ -1853,7 +1869,7 @@ def run(args: argparse.Namespace) -> Path:
     if enough_selected:
         danca_dir = root / "danca_abm_control"
         danca_dir.mkdir()
-        danca_summary = run_danca_abm_control(danca_dir)
+        danca_summary = run_danca_abm_control(danca_dir, h=args.h)
 
     write_json(
         root / "run_metadata.json",
@@ -1884,7 +1900,7 @@ def run(args: argparse.Namespace) -> Path:
 def make_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Generate current fractional Chua report evidence with corrected native EFORK backends.")
     parser.add_argument("--run-id", default="")
-    parser.add_argument("--h", type=float, default=0.02)
+    parser.add_argument("--h", type=float, choices=(0.01, 0.005, 0.001), default=0.01, help="Paso admitido para corridas nuevas y sus controles posteriores.")
     parser.add_argument("--memory-length", type=float, default=8.0, help="Ventana Lm usada solamente en la rama finite_window.")
     parser.add_argument("--t-final", type=float, default=80.0)
     parser.add_argument("--biased-lhs-count", type=int, default=24, help="Numero de puntos sesgados por familia en el barrido DF ligero.")

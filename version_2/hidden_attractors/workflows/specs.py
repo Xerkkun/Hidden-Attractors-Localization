@@ -431,8 +431,9 @@ def example_chua_fractional_spec() -> WorkflowInputSpec:
         ),
         sphere_controls=SphereControlSpec(
             equilibria=("E0", "E+", "E-"),
-            radii=(1.0e-5, 3.0e-5, 1.0e-4, 3.0e-4, 1.0e-3),
+            radii=(1.0e-5, 3.0e-5, 1.0e-4, 3.0e-4, 1.0e-3, 1.0e-2),
             samples_per_radius=100,
+            sample_growth_per_radius=50,
         ),
         basin=BasinSliceSpec(
             varying_state_indices=(0, 1),

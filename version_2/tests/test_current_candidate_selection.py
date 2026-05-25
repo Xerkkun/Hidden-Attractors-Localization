@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 
 from hidden_attractors.candidates import load_final_candidate_records
-from hidden_attractors.workflows.fractional_report_run import _dominant_period_return_ratio, _post_continuation_periodicity
+from hidden_attractors.workflows.fractional_report_run import _dominant_period_return_ratio, _post_continuation_periodicity, make_parser
 
 
 def test_current_selection_loader_reads_promoted_json(tmp_path: Path) -> None:
@@ -85,3 +85,13 @@ def test_post_continuation_filter_rejects_periodic_multicomponent_trace() -> Non
     assert result["periodicity_status"] == "periodic_post_transient"
     assert result["periodic_post_transient"] is True
     assert set(result["periodic_components"].split(";")) >= {"x", "y"}
+
+
+def test_fractional_report_new_runs_allow_only_requested_step_sizes() -> None:
+    parser = make_parser()
+
+    assert parser.parse_args([]).h == 0.01
+    assert parser.parse_args(["--h", "0.005"]).h == 0.005
+    assert parser.parse_args(["--h", "0.001"]).h == 0.001
+    with pytest.raises(SystemExit):
+        parser.parse_args(["--h", "0.02"])
