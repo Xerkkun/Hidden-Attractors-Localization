@@ -15,10 +15,7 @@ That convention matches the generated trajectory artifacts under `outputs/`.
 ```python
 from hidden_attractors.io import load_trajectory_csv
 
-trajectory = load_trajectory_csv(
-    "outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/"
-    "trajectories/branch_0_mu_4p00000_theta_0p00000_reference_attractor.csv"
-)
+trajectory = load_trajectory_csv("outputs/my_case/trajectories/reference_attractor.csv")
 ```
 
 Headerless numeric CSV files are also accepted when they already follow the
@@ -121,7 +118,7 @@ python examples/dynamical_analysis_gallery.py
 With one of the project trajectories:
 
 ```bash
-python examples/dynamical_analysis_gallery.py --trajectory-csv outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/trajectories/branch_0_mu_4p00000_theta_0p00000_reference_attractor.csv
+python examples/dynamical_analysis_gallery.py --trajectory-csv <trajectory_csv>
 ```
 
 The script writes figures, `bifurcation_points.csv`, and `summary.json` under

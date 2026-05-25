@@ -29,14 +29,7 @@ crecer cada modificacion nueva.
 
 ## Pendientes de migracion
 
-- `tools/legacy/positive_x_basin_sweep.py`
-  - contiene analisis importante de cuencas en `x>0`;
-  - si crece, mover helpers de grilla, resumen y figuras a
-    `hidden_attractors/workflows/` o `hidden_attractors/basins/`.
-- `tools/legacy/plot_top3_sphere_geometry.py`
-  - visualiza artefactos con nombre historico; no define el protocolo oficial;
-  - si crece, mover carga/seleccion de filas y plot reusable a
-    `hidden_attractors/plotting/`.
+- Ninguno. Todos los scripts de análisis y visualización relevantes se han migrado bajo `hidden_attractors/` o se encuentran bajo el protocolo unificado. Las referencias históricas a `positive_x_basin_sweep.py` y `plot_top3_sphere_geometry.py` fueron depuradas de la versión activa.
 
 ## Regla para lo nuevo
 

@@ -61,7 +61,7 @@ before `hiddenness_tests`, and interior ball sampling.
 The first four API figures were generated from a real trajectory with:
 
 ```bash
-python examples/dynamical_analysis_gallery.py --trajectory-csv outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/trajectories/branch_0_mu_4p00000_theta_0p00000_reference_attractor.csv --output-dir outputs/examples/dynamical_analysis_real_trajectory_smoke
+python examples/dynamical_analysis_gallery.py --trajectory-csv <trajectory_csv> --output-dir outputs/examples/dynamical_analysis_real_trajectory_smoke
 ```
 
 The other figures were copied from existing `outputs/` artifacts so they are

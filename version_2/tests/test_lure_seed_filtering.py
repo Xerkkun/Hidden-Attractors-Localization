@@ -362,11 +362,14 @@ def test_periodicity_matrix_evaluates_four_solver_memory_cells(monkeypatch, tmp_
         "abm_full_history",
         "abm_truncated",
     }
-    assert result["rejected_seeds"][0]["periodicity_case_id"] == "efork_full_history"
+    assert len(result["kept_seeds"]) == 1
+    assert result["kept_seeds"][0]["early_periodicity_status"] == "pre_continuation_periodic"
+    assert result["kept_seeds"][0]["periodicity_case_id"] == "efork_full_history"
 
     resumed = run_early_periodicity_filter([seed], cfg, {}, checkpoint_path=checkpoint, resume=True)
     assert len(resumed["diagnostics"]) == 4
-    assert resumed["summary"]["n_rejected_by_primary_post_transient_gate"] == 1
+    assert resumed["summary"]["n_rejected_by_primary_post_transient_gate"] == 0
+    assert resumed["summary"]["n_seeds_released_to_continuation"] == 1
 
 
 def test_continuation_accepts_only_nonperiodic_unrejected_seeds() -> None:

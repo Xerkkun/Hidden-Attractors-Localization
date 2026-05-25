@@ -386,10 +386,10 @@ def run_early_periodicity_filter(
             account_row(row)
             if str(row.get("periodicity_case_id", "")) == primary_case_id:
                 completed_seed_ids.add(str(row.get("seed_id", "")))
-                if str(row.get("early_periodicity_status", "")) == "nonperiodic_post_transient":
-                    kept.append(row)
-                elif str(row.get("candidate_status", "")).startswith("rejected_"):
+                if str(row.get("candidate_status", "")).startswith("rejected_"):
                     rejected.append(row)
+                else:
+                    kept.append(row)
 
     def save_checkpoint() -> None:
         if checkpoint is None:

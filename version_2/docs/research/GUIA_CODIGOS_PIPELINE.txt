@@ -1,212 +1,68 @@
-GUIA ACTUAL DEL PIPELINE
+GUIA ACTUAL DEL PIPELINE DE PROTOCOLO UNIFICADO
 Hidden Attractors Fractional Order - version_2
 
-Ultima actualizacion: migracion a API publica de Python con backends C como
-ruta obligatoria para calculo numerico pesado.
-
+Última actualización: Migración completa al protocolo canónico unificado de Caputo.
+Toda la búsqueda, continuación y validación de atractores ocultos sigue un orden estricto de 10 etapas.
 
 1. REGLA PRINCIPAL
 ==================
 
-La libreria se usa desde `hidden_attractors/`. Los scripts de `tools/legacy/`
-no deben crecer como API nueva.
+La librería se usa desde `hidden_attractors/`. Los scripts obsoletos o "legacy" no deben usarse ni ampliarse.
+Regla operativa de cálculo:
+    - Preparación ligera, semillas algebraicas, lectura de estados y reporte de métricas: Python API.
+    - Integración de sweeps grandes, cuencas, pruebas de ocultedad y Lyapunov: C backends (FractionalChuaBackend, BasinBackend).
+    - No se rechaza ninguna semilla por ser periódica antes de la continuación (pre_continuation_periodic).
 
-Regla operativa:
+2. COMANDO CANÓNICO UNIFICADO (hidden-attractors-protocol)
+==========================================================
 
-    - Preparacion ligera, lectura de resultados, modelos, semillas armonicas,
-      metricas, tablas y graficas: Python API.
-    - Integracion EFORK, verificacion de ocultedad, cuencas, bifurcaciones y
-      Lyapunov operacional: backend C.
-    - No se debe activar una ruta pesada en Python cuando existe la ruta C.
+El único entrypoint promocionado para la validación es `hidden-attractors-protocol`, el cual expone 8 subcomandos obligatorios correspondientes al orden de etapas oficiales:
 
-La opcion historica `HIDDEN_ATTRACTORS_PYTHON_BASIN` queda retirada. Los cortes
-de cuenca xy/xz/yz se calculan con `chua_basin_lib.c`.
+    hidden-attractors-protocol generate-seeds --help
+    hidden-attractors-protocol soft-precheck --help
+    hidden-attractors-protocol continue --help
+    hidden-attractors-protocol filter-survivors --help
+    hidden-attractors-protocol build-reference --help
+    hidden-attractors-protocol robustness --help
+    hidden-attractors-protocol hiddenness --help
+    hidden-attractors-protocol diagnostics --help
 
+Cada comando genera o procesa un summary.json machine-readable con la misma estructura común de metadatos (schema_version, protocol_version, stage, etc.).
 
-2. ENTRADA RECOMENDADA
-======================
+3. SECUENCIA COMPLETA DEL PROTOCOLO
+===================================
 
-Desde `version_2`:
+Ejemplo de ejecución secuencial usando un contrato (ej: configs/unified_caputo_protocol.json):
 
-    python -m pip install -e .
-    python -m compileall hidden_attractors examples tests tools/cli
-    python examples/quickstart_equilibria.py
-    python examples/list_final_candidates.py
+  a) Búsqueda y Generación de Semillas:
+     hidden-attractors-protocol generate-seeds --contract configs/unified_caputo_protocol.json --output outputs/run/03_seed_generation/summary.json
 
-Comando recomendado para el pipeline fraccionario unificado:
+  b) Precheck Suave (Diagnóstico, no rechaza por periodicidad):
+     hidden-attractors-protocol soft-precheck --contract configs/unified_caputo_protocol.json --payload outputs/run/03_seed_generation/summary.json --output outputs/run/04_soft_precheck/summary.json
 
-    hidden-attractors-unified-chua --help
+  c) Continuación por Parámetro de Homotopía lambda:
+     hidden-attractors-protocol continue --contract configs/unified_caputo_protocol.json --candidate-id candidate_001 --lambda-values 0,0.25,0.5,0.75,1 --output outputs/run/05_continuation/summary.json
 
-Equivalente sin instalar scripts de consola:
+  d) Filtrado Post-Continuación (Aquí se descartan órbitas periódicas):
+     hidden-attractors-protocol filter-survivors --contract configs/unified_caputo_protocol.json --payload outputs/run/05_continuation/summary.json --output outputs/run/06_post_continuation_filter/summary.json
 
-    python -m hidden_attractors.workflows.unified_chua --help
+  e) Creación de Referencia Dinámica:
+     hidden-attractors-protocol build-reference --contract configs/unified_caputo_protocol.json --payload outputs/run/06_post_continuation_filter/summary.json --output outputs/run/07_dynamic_reference/summary.json
 
-Este wrapper recibe argumentos normales y llama al pipeline mantenido sin que
-el usuario tenga que preparar `$env:...`.
+  f) Pruebas de Robustez (Cambios de paso h, Lm, full vs truncated memory):
+     hidden-attractors-protocol robustness --contract configs/unified_caputo_protocol.json --payload outputs/run/07_dynamic_reference/summary.json --output outputs/run/08_robustness/summary.json
 
+  g) Pruebas de Ocultedad (Muestreo interior en bolas y cortes de cuenca):
+     hidden-attractors-protocol hiddenness --contract configs/unified_caputo_protocol.json --payload outputs/run/08_robustness/summary.json --output outputs/run/09_hiddenness_tests/summary.json
 
-3. COMANDOS CANONICOS SIN VARIABLES DE ENTORNO
-==============================================
+  h) Diagnósticos Complementarios (FFT, PSD, Lyapunov):
+     hidden-attractors-protocol diagnostics --contract configs/unified_caputo_protocol.json --payload outputs/run/09_hiddenness_tests/summary.json --output outputs/run/10_diagnostics/summary.json
 
-Corrida balanceada del Chua no suave:
+4. ESTADO DE MIGRACIÓN Y LIMPIEZA
+=================================
 
-    hidden-attractors-unified-chua --model nonsmooth --run-mode balanced --q 0.9998
-
-Corrida rapida:
-
-    hidden-attractors-unified-chua --model nonsmooth --run-mode fast --q 0.9998
-
-Solo cuencas desde el resumen previo:
-
-    hidden-attractors-unified-chua --model nonsmooth --run-mode basin_only --basin-grid 360x360 --basin-planes
-
-Sweep de q:
-
-    hidden-attractors-unified-chua --model nonsmooth --run-mode q_sweep --q-values 0.97,0.98,0.985,0.99,0.995,1.0
-
-Comparacion DF clasica contra Machado:
-
-    hidden-attractors-unified-chua --model nonsmooth --run-mode df_compare --machado-mu 0.5
-
-Sweep Machado rapido:
-
-    hidden-attractors-unified-chua --model nonsmooth --run-mode machado_sweep_fast --output-dir runs_machado_sweep_fast
-
-Activar PSD de Welch:
-
-    hidden-attractors-unified-chua --model nonsmooth --run-mode balanced --spectral --psd
-
-Activar Lyapunov operacional C:
-
-    hidden-attractors-unified-chua --model nonsmooth --run-mode balanced --lyapunov
-
-Exportar series para TISEAN:
-
-    hidden-attractors-unified-chua --model nonsmooth --run-mode balanced --tisean
-
-Control de workers C:
-
-    hidden-attractors-unified-chua --run-mode balanced --basin-workers 8 --bif-workers 8 --native-efork-workers 8
-
-
-4. API PUBLICA YA ACTIVADA
-==========================
-
-Modelo de Chua y equilibrios:
-
-    from hidden_attractors.models import chua_nonsmooth_parameters, equilibria_nonsmooth
-
-Semillas por funcion descriptiva clasica o Machado:
-
-    from hidden_attractors.seed_generation import find_harmonic_seed
-
-    classic = find_harmonic_seed(q=0.9998, method="classic", branch_index=0)
-    machado = find_harmonic_seed(q=0.9998, method="machado", mu=2.0)
-
-Semilla sesgada Lur'e:
-
-    from hidden_attractors.seed_generation import reconstruct_biased_lure_seed
-
-    biased = reconstruct_biased_lure_seed(
-        q=0.9998,
-        amplitude=5.0,
-        sigma0=0.0,
-        omega=2.04,
-    )
-
-Ventana de historia fraccionaria para contratos EFORK:
-
-    from hidden_attractors.solvers import FractionalHistory
-
-    history = FractionalHistory.from_trajectory(
-        trajectory,
-        q=0.9998,
-        h=0.01,
-        memory_length=8.0,
-    )
-    efork_history = history.as_efork_history()
-
-Backends C:
-
-    from hidden_attractors.native import FractionalChuaBackend, BasinBackend
-
-    efork = FractionalChuaBackend.build()
-    basin = BasinBackend.build()
-
-
-5. SALIDAS PRINCIPALES
-======================
-
-El pipeline unificado escribe dentro del output root seleccionado:
-
-    final_pdf_figs/
-    hidden_verify/
-    native/
-    unified_pipeline_summary.json
-    unified_continuation_summary.json
-    seed_equilibrium_distances_unified.csv
-
-El sweep de q escribe:
-
-    q_order_sweep/q_sweep_summary.csv
-    q_order_sweep/q_sweep_summary.json
-    q_order_sweep/q_*/final_attractor_q_*.csv
-
-La comparacion DF/Machado escribe:
-
-    df_seed_comparison/df_seed_comparison_summary.csv
-    df_seed_comparison/df_seed_comparison_summary.json
-
-Los sweep Machado escriben:
-
-    machado_sweep/
-    machado_sweep_fast/
-
-
-6. ESTADO DE `tools/legacy`
-===========================
-
-No se puede borrar toda la carpeta `tools/legacy/` todavia.
-
-Motivo:
-
-    - El wrapper `hidden-attractors-unified-chua` sigue delegando al script
-      amplio `tools/legacy/unified_nyquist_hidden_pipeline.py`.
-    - La replica ABM de Danca sigue en
-      `tools/legacy/danca2017_chua_abm_replication.py`.
-    - Algunas busquedas historicas y reportes reproducibles siguen leyendo
-      artefactos producidos por scripts legacy.
-
-Lo que ya no debe usarse como ruta nueva:
-
-    - Activar variables `$env:HIDDEN_ATTRACTORS_*` manualmente.
-    - Usar rutinas pesadas de cuenca en Python.
-    - Crear nuevos scripts en `tools/legacy/` cuando la logica pueda ir en
-      `hidden_attractors/`.
-
-Lo que si quedo adaptado:
-
-    - DF centrada, Machado y semilla sesgada: `hidden_attractors.seed_generation`.
-    - Historia EFORK transportable: `hidden_attractors.solvers.FractionalHistory`.
-    - Backends C empaquetados: `hidden_attractors.native`.
-    - Entrada de pipeline sin `$env`: `hidden_attractors.workflows.unified_chua`.
-
-Pendiente antes de poder borrar `tools/legacy/`:
-
-    1. Migrar completamente `unified_nyquist_hidden_pipeline.py` a modulos
-       internos pequenos bajo `hidden_attractors.workflows`.
-    2. Migrar o aislar la replica Danca ABM como workflow publico.
-    3. Reemplazar continuaciones multiparametro que todavia llaman EFORK Python
-       por llamadas al backend C.
-    4. Validar que ningun reporte, notebook o prueba dependa de rutas legacy.
-
-
-7. REGLA PARA NUEVO CODIGO
-==========================
-
-Si el codigo calcula muchas trayectorias, barre una malla, clasifica cuencas,
-estima Lyapunov o repite integraciones largas, debe llamar a C.
-
-Si el codigo solo arma parametros, calcula una semilla algebraica, carga CSV,
-calcula metricas de una trayectoria ya producida o genera una figura, puede
-vivir como Python puro dentro de `hidden_attractors/`.
+Las rutas históricas obsoletas han sido eliminadas o unificadas:
+  - Se eliminaron todos los entrypoints antiguos como `hidden-attractors-unified-chua` y `hidden-attractors-machado-targeted`.
+  - Las configuraciones de barrido Machado dirigidas bajo `configs/machado_targeted_verification.yaml` se retiraron. Toda la configuración pasa ahora por `unified_caputo_protocol.json`.
+  - Las réplicas de Danca ABM permanecen bajo `tools/legacy/danca2017_chua_abm_replication.py` únicamente para validación histórica de benchmark y comparación.
+  - La periodicidad antes de la continuación ya no es causa de descarte, garantizando la preservación del espacio de búsqueda para transporte mediante Lur'e.

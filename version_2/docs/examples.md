@@ -70,7 +70,7 @@ post-processed bifurcation figures using the public API.
 With an existing project trajectory:
 
 ```bash
-python examples/dynamical_analysis_gallery.py --trajectory-csv outputs/extended_search/machado_targeted_verification_lm10_20260515_182252/trajectories/branch_0_mu_4p00000_theta_0p00000_reference_attractor.csv
+python examples/dynamical_analysis_gallery.py --trajectory-csv <trajectory_csv>
 ```
 
 The example writes figures and tabular bifurcation points under
