@@ -1,7 +1,9 @@
 {
-  "contract_name": "chua_fractional_validation_evidence",
-  "version": 1,
-  "purpose": "Directory and file contract for defensible validation evidence.",
+  "contract_name": "caputo_hidden_attractors_official_methodology",
+  "version": 2,
+  "protocol_version": "caputo_hidden_attractors_v1",
+  "schema_version": "1.0",
+  "purpose": "Official evidence contract from numerical settings through tested hiddenness conclusions.",
   "output_root": "validation",
   "manifest": {
     "directory": "00_manifest",
@@ -25,112 +27,83 @@
     "human_report": "<stage>_validation.md",
     "summary": "<stage>_validation_summary.json",
     "tables": "*.csv",
-    "figures": [
-      "*.png",
-      "*.pdf"
-    ]
+    "figures": ["*.png", "*.pdf"]
   },
   "stages": [
     {
-      "id": "01_algebra",
-      "slug": "algebra",
-      "summary": "algebra_validation_summary.json",
-      "expected_evidence": [
-        "algebra_validation.md",
-        "equilibria_summary.csv",
-        "jacobian_check.csv",
-        "eigenvalues_matignon_summary.csv",
-        "matignon_margins.png"
-      ]
+      "id": "01_numerical_contract",
+      "slug": "numerical_contract",
+      "summary": "numerical_contract_validation_summary.json",
+      "expected_evidence": ["numerical_contract_validation.md", "effective_contract.json", "integrator_benchmark_summary.csv"]
     },
     {
-      "id": "02_lure_df",
-      "slug": "lure_df",
-      "summary": "lure_df_validation_summary.json",
-      "expected_evidence": [
-        "lure_df_validation.md",
-        "lure_equivalence_check.csv",
-        "transfer_function_check.csv",
-        "describing_function_check.csv",
-        "machado_mu1_check.csv"
-      ]
+      "id": "02_algebraic_validation",
+      "slug": "algebraic_validation",
+      "summary": "algebraic_validation_validation_summary.json",
+      "expected_evidence": ["algebraic_validation_validation.md", "equilibria_summary.csv", "jacobian_check.csv", "eigenvalues_matignon_summary.csv", "transfer_function_check.csv"]
     },
     {
-      "id": "03_integrators",
-      "slug": "integrator",
-      "summary": "integrator_validation_summary.json",
-      "expected_evidence": [
-        "integrator_validation.md",
-        "manufactured_solution_convergence.csv",
-        "q1_limit_vs_solve_ivp.csv",
-        "abm_vs_efork_short_time.csv",
-        "memory_sensitivity.csv"
-      ]
+      "id": "03_seed_generation",
+      "slug": "seed_generation",
+      "summary": "seed_generation_validation_summary.json",
+      "expected_evidence": ["seed_generation_validation.md", "unified_seeds.json", "harmonic_residuals.csv"]
     },
     {
-      "id": "04_candidates",
-      "slug": "candidate_selection",
-      "summary": "candidate_selection_summary.json",
-      "expected_evidence": [
-        "candidate_selection.md",
-        "q_sweep_summary.csv",
-        "df_compare_summary.csv",
-        "machado_sweep_summary.csv",
-        "selected_candidates.json"
-      ]
+      "id": "04_soft_precheck",
+      "slug": "soft_precheck",
+      "summary": "soft_precheck_validation_summary.json",
+      "expected_evidence": ["soft_precheck_validation.md", "precheck_decisions.csv"]
     },
     {
-      "id": "05_dynamic_analysis",
-      "slug": "dynamic_analysis",
-      "summary": "dynamic_analysis_summary.json",
-      "expected_evidence": [
-        "dynamic_analysis.md",
-        "trajectory_metrics.csv",
-        "fft_summary.csv",
-        "psd_summary.csv",
-        "lyapunov_summary.csv",
-        "phase_3d.png",
-        "projections.png"
-      ]
+      "id": "05_continuation",
+      "slug": "continuation",
+      "summary": "continuation_validation_summary.json",
+      "expected_evidence": ["continuation_validation.md", "continuation_plan.json", "continuation_trace.csv"]
     },
     {
-      "id": "06_hiddenness",
-      "slug": "hiddenness",
-      "summary": "hiddenness_validation_summary.json",
-      "expected_evidence": [
-        "hiddenness_validation.md",
-        "sphere_plan.csv",
-        "sphere_raw.csv",
-        "sphere_decision.csv",
-        "strict_refinement_summary.csv"
-      ]
+      "id": "06_post_continuation_filter",
+      "slug": "post_continuation_filter",
+      "summary": "post_continuation_filter_validation_summary.json",
+      "expected_evidence": ["post_continuation_filter_validation.md", "survivor_decisions.csv"]
     },
     {
-      "id": "07_robustness",
+      "id": "07_dynamic_reference",
+      "slug": "dynamic_reference",
+      "summary": "dynamic_reference_validation_summary.json",
+      "expected_evidence": ["dynamic_reference_validation.md", "dynamic_reference.json", "trajectory_metrics.csv", "similarity_signature.json"]
+    },
+    {
+      "id": "08_robustness",
       "slug": "robustness",
       "summary": "robustness_validation_summary.json",
-      "expected_evidence": [
-        "robustness_validation.md",
-        "robustness_overlay_metrics.csv",
-        "robustness_summary.json",
-        "overlay_3d.png"
-      ]
+      "expected_evidence": ["robustness_validation.md", "robustness_metrics.csv", "robustness_verdicts.json", "abm_efork_comparison.csv"]
     },
     {
-      "id": "08_literature_comparison",
-      "slug": "literature_comparison",
-      "summary": "literature_comparison_summary.json",
-      "expected_evidence": [
-        "literature_comparison.md",
-        "danca_comparison_summary.csv",
-        "abm_replication_summary.json"
-      ]
+      "id": "09_hiddenness_tests",
+      "slug": "hiddenness_tests",
+      "summary": "hiddenness_tests_validation_summary.json",
+      "expected_evidence": ["hiddenness_tests_validation.md", "ball_sampling_plan.csv", "ball_sampling_results.csv", "basin_slices_summary.json"]
+    },
+    {
+      "id": "10_diagnostics",
+      "slug": "diagnostics",
+      "summary": "diagnostics_validation_summary.json",
+      "expected_evidence": ["diagnostics_validation.md", "fft_summary.csv", "psd_summary.csv", "lyapunov_summary.csv"]
     }
   ],
   "summary_required_fields": [
+    "schema_version",
+    "protocol_version",
     "stage",
     "status",
-    "files"
+    "system",
+    "numerical_contract",
+    "inputs",
+    "outputs",
+    "metrics",
+    "verdict",
+    "files",
+    "provenance"
   ],
   "final_report": {
     "source": "validation/final_validation_report.tex",

@@ -1,3 +1,7 @@
+# DEPRECATED compatibility input for tools/legacy/lure_candidate_manifest.py.
+# New runs use configs/unified_caputo_protocol.json with official seed families.
+deprecated_replaced_by: configs/unified_caputo_protocol.json
+historical_reproduction_only: true
 model: nonsmooth
 q_values: [0.99, 0.999, 0.9998]
 
@@ -46,8 +50,6 @@ refined:
     - 1.0e-2
   sampling_modes:
     - ball
-    - sphere_shell
-    - eigen_directions
   samples_per_radius: 500
   random_seed: 20260513
   stages:

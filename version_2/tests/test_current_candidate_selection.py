@@ -16,7 +16,7 @@ def test_current_selection_loader_reads_promoted_json(tmp_path: Path) -> None:
     selected = [
         {
             "candidate_id": f"current_candidate_{rank}",
-            "method": "Lur'e sesgada",
+            "method": "lure_classical_biased",
             "q": 0.9998,
             "A": 1.0 + rank,
             "omega": 2.0,

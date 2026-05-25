@@ -242,14 +242,16 @@ def test_validate_efork_integrator_runs_on_temp_dir() -> None:
             env=env
         )
 
-        integrator_dir = tmp_path / "03_integrators"
+        integrator_dir = tmp_path / "01_numerical_contract"
         manifest_dir = tmp_path / "00_manifest"
         assert integrator_dir.exists()
         assert manifest_dir.exists()
         
         expected_files = [
-            "integrator_validation.md",
-            "integrator_validation_summary.json",
+            "numerical_contract_validation.md",
+            "numerical_contract_validation_summary.json",
+            "effective_contract.json",
+            "integrator_benchmark_summary.csv",
             "manufactured_solution_convergence.csv",
             "q1_limit_vs_solve_ivp.csv",
             "abm_vs_efork_short_time.csv",
@@ -281,4 +283,3 @@ def test_validate_efork_integrator_runs_on_temp_dir() -> None:
 
     finally:
         shutil.rmtree(tmp_path, ignore_errors=True)
-

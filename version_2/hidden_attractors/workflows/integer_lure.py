@@ -12,17 +12,25 @@ from ..seed_generation import HarmonicSeed, build_lure_linearized_matrix, find_l
 from ..solvers.integer import efork_q1_integrate
 from ..systems.base import ChaoticSystem
 from ..systems.lure import LureSystem
+from .protocol import ContinuationPlan, sample_uniform_ball
 
 
 @dataclass(frozen=True)
 class IntegerLureContinuationStep:
-    """One epsilon-continuation step from a Lur'e harmonic seed."""
+    """One public lambda-continuation step from a Lur'e harmonic seed."""
 
-    epsilon: float
+    lambda_value: float
     x_in: np.ndarray
     x_out: np.ndarray
     trajectory: np.ndarray
     status: str
+    provenance: Mapping[str, Any] | None = None
+
+    @property
+    def epsilon(self) -> float:
+        """Deprecated alias retained for plots and recorded integer artifacts."""
+
+        return self.lambda_value
 
 
 @dataclass(frozen=True)
@@ -40,6 +48,8 @@ class IntegerHiddennessProbe:
     cloud_distance_norm: float
     trajectory: np.ndarray
     metrics: Mapping[str, Any]
+    sampling_mode: str = "ball"
+    distance_from_equilibrium: float = float("nan")
 
 
 def require_lure(system: ChaoticSystem | LureSystem) -> LureSystem:
@@ -102,11 +112,11 @@ def integer_lure_original_rhs(lure: LureSystem):
     return lambda x: lure.evaluate(np.asarray(x, dtype=float))
 
 
-def integer_lure_epsilon_rhs(lure: LureSystem, gain: float, epsilon: float):
-    """Return the epsilon-family RHS used for continuation to the original system."""
+def integer_lure_lambda_rhs(lure: LureSystem, gain: float, lambda_value: float):
+    """Return the public lambda-family RHS used to reach the target system."""
 
     k = float(gain)
-    eps = float(epsilon)
+    lam = float(lambda_value)
     p0 = build_lure_linearized_matrix(lure, k)
     bvec = np.asarray(lure.input_vector, dtype=float)
     cvec = np.asarray(lure.output_vector, dtype=float)
@@ -115,9 +125,15 @@ def integer_lure_epsilon_rhs(lure: LureSystem, gain: float, epsilon: float):
         state = np.asarray(x, dtype=float)
         sigma = float(cvec @ state)
         delta = float(lure.nonlinearity(sigma)) - k * sigma
-        return p0 @ state + eps * bvec * delta
+        return p0 @ state + lam * bvec * delta
 
     return rhs
+
+
+def integer_lure_epsilon_rhs(lure: LureSystem, gain: float, epsilon: float):
+    """Compatibility alias for historical epsilon terminology."""
+
+    return integer_lure_lambda_rhs(lure, gain, epsilon)
 
 
 def integrate_integer_lure(
@@ -144,19 +160,48 @@ def continue_integer_lure_seed(
     system: ChaoticSystem | LureSystem,
     seed: HarmonicSeed,
     *,
-    eps_values: Iterable[float] = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0),
+    plan: ContinuationPlan | None = None,
+    eps_values: Iterable[float] | None = None,
     t_transient: float = 80.0,
     t_keep: float = 80.0,
     h: float = 0.01,
     div_threshold: float | None = None,
 ) -> list[IntegerLureContinuationStep]:
-    """Run epsilon continuation from a harmonic seed to the original system."""
+    """Run public lambda continuation from a seed to the original system.
+
+    ``eps_values`` remains accepted only as a compatibility adapter for
+    historical integer examples. New calls must pass a ``ContinuationPlan``.
+    """
 
     lure = require_lure(system)
+    if plan is not None and eps_values is not None:
+        raise ValueError("pass plan or deprecated eps_values, not both.")
+    if plan is None and eps_values is None:
+        plan = ContinuationPlan.uniform(11, internal_parameter="epsilon")
+        lambda_values = plan.lambda_values
+    elif plan is not None:
+        errors = plan.validate()
+        if errors:
+            raise ValueError("; ".join(errors))
+        lambda_values = plan.lambda_values
+    else:
+        lambda_values = tuple(float(value) for value in eps_values or ())
+        if not lambda_values:
+            raise ValueError("deprecated eps_values cannot be empty.")
+        public_values = lambda_values if abs(lambda_values[0]) <= 1.0e-12 else (0.0, *lambda_values)
+        plan = ContinuationPlan(
+            public_values,
+            {"public_parameter": "lambda", "internal_parameter": "epsilon", "compatibility_adapter": True},
+        )
+        errors = plan.validate()
+        if errors:
+            raise ValueError("; ".join(errors))
     x_in = np.asarray(seed.seed, dtype=float).copy()
     steps: list[IntegerLureContinuationStep] = []
-    for eps in eps_values:
-        rhs = integer_lure_epsilon_rhs(lure, seed.gain, float(eps))
+    assert plan is not None
+    provenance = {"mapping": dict(plan.mapping), "lambda_values": list(plan.lambda_values)}
+    for lam in lambda_values:
+        rhs = integer_lure_lambda_rhs(lure, seed.gain, float(lam))
         transient, transient_status = efork_q1_integrate(
             rhs,
             x_in,
@@ -167,11 +212,12 @@ def continue_integer_lure_seed(
         if transient_status != "ok":
             steps.append(
                 IntegerLureContinuationStep(
-                    epsilon=float(eps),
+                    lambda_value=float(lam),
                     x_in=x_in.copy(),
                     x_out=transient[-1, 1:].copy(),
                     trajectory=transient,
                     status=transient_status,
+                    provenance=provenance,
                 )
             )
             break
@@ -186,11 +232,12 @@ def continue_integer_lure_seed(
         x_out = kept[-1, 1:].copy()
         steps.append(
             IntegerLureContinuationStep(
-                epsilon=float(eps),
+                lambda_value=float(lam),
                 x_in=x_in.copy(),
                 x_out=x_out,
                 trajectory=kept,
                 status=kept_status,
+                provenance=provenance,
             )
         )
         if kept_status != "ok":
@@ -252,10 +299,13 @@ def run_integer_lure_hiddenness_controls(
     target_cloud_tol: float = 0.08,
     max_cloud_points: int = 1000,
     random_seed: int = 123456789,
+    sampling_mode: str = "ball",
+    sample_growth_per_radius: int = 0,
 ) -> list[IntegerHiddennessProbe]:
     """Run integer-order hiddenness controls from equilibrium neighborhoods.
 
-    A TARGET hit means that a post-burn probe from an equilibrium neighborhood
+    By default, initial conditions are sampled inside balls, rather than only
+    on their surfaces. A TARGET hit means that a post-burn probe from an equilibrium neighborhood
     reaches a bounded nontrivial trajectory whose tail cloud is close to the
     reference attractor tail.  Any TARGET hit weakens or blocks a hiddenness
     claim under the tested numerical contract.
@@ -275,10 +325,15 @@ def run_integer_lure_hiddenness_controls(
         eq_arr = np.asarray(eq, dtype=float)
         if eq_arr.shape != (lure.dimension,):
             raise ValueError(f"equilibrium {eq_name} has shape {eq_arr.shape}, expected ({lure.dimension},).")
-        for radius in radii:
-            directions = _random_unit_vectors(lure.dimension, int(samples_per_radius), rng)
-            for direction in directions:
-                x0 = eq_arr + float(radius) * direction
+        for radius_index, radius in enumerate(radii):
+            count = int(samples_per_radius) + int(sample_growth_per_radius) * radius_index
+            if sampling_mode == "ball":
+                points = sample_uniform_ball(eq_arr, float(radius), count, rng)
+            elif sampling_mode == "sphere":
+                points = eq_arr + float(radius) * _random_unit_vectors(lure.dimension, count, rng)
+            else:
+                raise ValueError("sampling_mode must be 'ball' or legacy 'sphere'.")
+            for x0 in points:
                 traj, status = efork_q1_integrate(
                     rhs,
                     x0,
@@ -316,6 +371,8 @@ def run_integer_lure_hiddenness_controls(
                         cloud_distance_norm=float(cloud_norm),
                         trajectory=traj,
                         metrics=cls,
+                        sampling_mode=sampling_mode,
+                        distance_from_equilibrium=float(np.linalg.norm(x0 - eq_arr)),
                     )
                 )
                 sample_id += 1
@@ -338,6 +395,7 @@ def summarize_integer_hiddenness_controls(probes: Sequence[IntegerHiddennessProb
         "n_probes": total,
         "target_hits": target_hits,
         "hidden_candidate_allowed": bool(total > 0 and target_hits == 0),
+        "sampling_modes": sorted({probe.sampling_mode for probe in probes}),
         "by_equilibrium": by_equilibrium,
     }
 
@@ -348,6 +406,7 @@ __all__ = [
     "continue_integer_lure_seed",
     "final_integer_lure_attractor",
     "integer_lure_epsilon_rhs",
+    "integer_lure_lambda_rhs",
     "integer_lure_original_rhs",
     "integer_lure_seed",
     "integrate_integer_lure",

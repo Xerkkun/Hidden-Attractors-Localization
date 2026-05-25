@@ -336,16 +336,20 @@ def selected_seed_items(
 ) -> List[Dict[str, Any]]:
     cont = cfg["continuation"]
     rejected_seed_ids = rejected_seed_ids or set()
+    gate_before_continuation = bool(cfg.get("early_periodicity_filter", {}).get("gate_before_continuation", False))
     permitted_status = {"hard_candidate_accepted", "best_available_seed_not_accepted"}
     by_candidate: Dict[str, List[Dict[str, Any]]] = {}
     for seed in seeds:
         if not truthy(seed.get("valid_seed")):
             continue
-        if str(seed.get("seed_id", "")) in rejected_seed_ids:
+        if gate_before_continuation and str(seed.get("seed_id", "")) in rejected_seed_ids:
             continue
         if str(seed.get("candidate_status", "")) not in permitted_status:
             continue
-        if str(seed.get("early_periodicity_status", "")) not in {"nonperiodic_post_transient", "nonperiodic_early"}:
+        accepted_dynamic_statuses = {"nonperiodic_post_transient", "nonperiodic_early"}
+        if not gate_before_continuation:
+            accepted_dynamic_statuses.update({"pre_continuation_periodic", "periodic_precontinuation_diagnostic"})
+        if str(seed.get("early_periodicity_status", "")) not in accepted_dynamic_statuses:
             continue
         by_candidate.setdefault(str(seed.get("candidate_id")), []).append(seed)
     ranked = [

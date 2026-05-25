@@ -313,6 +313,13 @@ def run_early_periodicity_filter(
         raise ValueError("Periodicidad requiere t_transient >= 0 y observation_time > 0.")
     t_final = t_transient + observation_time
     discard = bool(settings.get("discard_if_periodic", True))
+    gate_before_continuation = bool(settings.get("gate_before_continuation", False))
+    if gate_before_continuation and not bool(settings.get("historical_reproduction_mode", False)):
+        raise ValueError(
+            "gate_before_continuation is deprecated for official runs; "
+            "use diagnostic soft_precheck or set historical_reproduction_mode=true "
+            "only to reproduce an archived route."
+        )
     primary_case_id, cases = _configured_cases(settings)
     case_ids = {str(case["case_id"]) for case in cases}
     if primary_case_id not in case_ids:
@@ -446,7 +453,7 @@ def run_early_periodicity_filter(
         if primary_row is None:
             continue
         status = str(primary_row.get("periodicity_status", "post_transient_integration_failed"))
-        if discard and status != "nonperiodic_post_transient":
+        if gate_before_continuation and discard and status != "nonperiodic_post_transient":
             if status == "periodic_post_transient":
                 primary_row["candidate_status"] = "rejected_periodic_post_transient"
                 primary_row["notes"] = (
@@ -457,11 +464,26 @@ def run_early_periodicity_filter(
                 primary_row["candidate_status"] = "rejected_dynamic_post_transient"
                 primary_row["notes"] = "Discarded before continuation because the primary post-transient integration was not usable."
             rejected.append(primary_row)
+        elif status == "periodic_post_transient":
+            primary_row["early_periodicity_status"] = "pre_continuation_periodic"
+            primary_row["notes"] = (
+                "Direct integration of the harmonic seed is periodic before continuation; "
+                "this is diagnostic only because the seed must first be transported through "
+                "the Lure continuation to the nonlinear target system."
+            )
+            kept.append(primary_row)
+        elif status != "nonperiodic_post_transient":
+            primary_row["early_periodicity_status"] = "unusable_precontinuation_diagnostic"
+            primary_row["notes"] = (
+                "Direct pre-continuation integration was not usable; retained only for "
+                "traceability and must not be promoted without a usable continuation output."
+            )
+            kept.append(primary_row)
         else:
             primary_row["early_periodicity_status"] = "nonperiodic_post_transient"
             primary_row["notes"] = (
-                "Seed passed post-transient periodicity exclusion in the primary full-history "
-                "EFORK case; comparison cells do not establish hiddenness."
+                "Direct pre-continuation integration is nonperiodic in the primary full-history "
+                "EFORK case; this prioritizes but does not validate the seed."
             )
             kept.append(primary_row)
         completed_seed_ids.add(str(base_row.get("seed_id", "")))
@@ -483,17 +505,26 @@ def run_early_periodicity_filter(
         "n_seed_bank_total": len(seed_rows),
         "n_rejected_periodic_post_transient": n_periodic_primary,
         "n_rejected_by_primary_post_transient_gate": len(rejected),
-        "n_nonperiodic_post_transient_seeds_for_continuation": len(kept),
+        "gate_before_continuation": gate_before_continuation,
+        "n_nonperiodic_post_transient_seeds_for_continuation": sum(
+            str(row.get("early_periodicity_status", "")) == "nonperiodic_post_transient" for row in kept
+        ),
+        "n_seeds_released_to_continuation": len(kept),
         "n_nonperiodic_seeds_for_continuation": len(kept),
         "decision": (
-            "No seed passed the primary full-history EFORK post-transient periodicity gate."
-            if not kept else "Post-transient nonperiodic seeds retained for continuation."
+            "No seed is dynamically usable for continuation."
+            if not kept
+            else (
+                "Pre-continuation dynamics recorded diagnostically; harmonic seeds retained for Lure continuation."
+                if not gate_before_continuation
+                else "Post-transient nonperiodic seeds retained for continuation."
+            )
         ),
         "interpretation": (
             "La función descriptiva clásica, sesgada o Machado/FDF sólo propone semillas. "
-            "La periodicidad se evalúa después del transitorio mediante una matriz comparativa "
-            "EFORK/ABM con historial completo y memoria truncada. La celda primaria de decisión "
-            "es EFORK sin truncación sobre el horizonte simulado; ninguna celda prueba ocultedad."
+            "La integración directa de una semilla armónica antes de la continuación se registra "
+            "como diagnóstico, pero no la descarta: la periodicidad decisoria debe evaluarse en "
+            "la salida del sistema objetivo después de la continuación. Ninguna celda prueba ocultedad."
         ),
     }
     return {"kept_seeds": kept, "rejected_seeds": rejected, "diagnostics": diagnostics, "summary": summary}

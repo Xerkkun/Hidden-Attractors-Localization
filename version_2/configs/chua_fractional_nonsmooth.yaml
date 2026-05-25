@@ -1,4 +1,8 @@
 {
+  "protocol_version": "caputo_hidden_attractors_v1",
+  "deprecated_adapter_config": true,
+  "replaced_by": "configs/unified_caputo_protocol.json",
+  "note": "Internal compatibility values; new outputs use official seed family and lambda vocabulary.",
   "model": "nonsmooth",
   "params": {
     "alpha_chua": 8.4562,
@@ -52,6 +56,8 @@
     "seed_phase": 0.0
   },
   "continuation": {
+    "public_parameter": "lambda",
+    "internal_parameter": "eta",
     "max_candidates": 6,
     "eta_start": 0.0,
     "eta_target": 1.0,
@@ -109,7 +115,7 @@
     ],
     "q": 0.9998,
     "radii": [1e-5, 3e-5, 1e-4, 3e-4, 1e-3, 3e-3, 1e-2, 3e-2],
-    "sampling_modes": ["ball", "sphere_shell"],
+    "sampling_modes": ["ball"],
     "samples_per_radius_random": 500,
     "random_seed": 20260513,
     "h_values": 0.01,

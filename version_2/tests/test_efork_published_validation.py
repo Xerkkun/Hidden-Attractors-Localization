@@ -111,7 +111,7 @@ def test_native_continuation_carries_memory_with_corrected_backend() -> None:
         pytest.skip(f"Native compiler unavailable: {exc}")
     result = backend.continue_efork3(
         [0.31, -0.08, 0.12],
-        eps_values=[0.0, 0.5, 1.0],
+        lambda_values=[0.0, 0.5, 1.0],
         q=0.8,
         k=0.2,
         h=0.02,
@@ -124,6 +124,8 @@ def test_native_continuation_carries_memory_with_corrected_backend() -> None:
     assert result["observation"].shape == (6, 4)
     assert result["history_in_counts"][0] == 0
     assert result["history_in_counts"][1] > 0
+    assert result["lambda"].tolist() == [0.0, 0.5, 1.0]
+    assert result["provenance"]["mapping"]["internal_parameter"] == "epsilon"
     assert np.all(np.isfinite(result["x_out"]))
     assert np.all(np.isfinite(result["observation"]))
 
@@ -195,11 +197,34 @@ def test_hiddenness_c_backends_use_published_k3_stage_order() -> None:
     native_fractional = (root / "hidden_attractors" / "native" / "csrc" / "chua_frac_backend_lib.c").read_text(encoding="utf-8")
     assert "c.a31 * k1x + c.a32 * k2x" in native_fractional
     assert "c.a31 * k2x + c.a32 * k1x" not in native_fractional
-    for source in (
-        root / "hidden_attractors" / "native" / "csrc" / "chua_hidden_backend.c",
-        root / "tools" / "legacy" / "chua_hidden_backend.c",
-    ):
+    for source in (root / "hidden_attractors" / "native" / "csrc" / "chua_hidden_backend.c",):
         text = source.read_text(encoding="utf-8")
         assert "coef.a31*K1x+coef.a32*K2x" in text
         assert "coef.a31*K2x+coef.a32*K1x" not in text
         assert "exchange its stored coefficients" not in text
+
+
+def test_every_executable_efork_source_keeps_the_published_k3_order() -> None:
+    from pathlib import Path
+
+    root = Path(__file__).parents[1]
+    required_fragments = {
+        root / "hidden_attractors" / "solvers" / "efork_published.py": "coeff.a31 * k1 + coeff.a32 * k2",
+        root / "hidden_attractors" / "solvers" / "integer.py": "EFORK_Q1_A31 * k1 + EFORK_Q1_A32 * k2",
+        root / "tools" / "legacy" / "chua_initial_cond.py": "a31 * K1x + a32 * K2x",
+        root / "hidden_attractors" / "native" / "csrc" / "chua_frac_backend_lib.c": "c.a31 * k1x + c.a32 * k2x",
+        root / "hidden_attractors" / "native" / "csrc" / "chua_basin_lib.c": "c.a31*K1x + c.a32*K2x",
+        root / "hidden_attractors" / "native" / "csrc" / "chua_frac_lyapunov_efork_benettin.c": "c.a31 * hq * rhs1[i] + c.a32 * hq * rhs2[i]",
+    }
+    forbidden_fragments = (
+        "a31 * k2 +",
+        "a31 * K2x + a32 * K1x",
+        "a31*K2x+",
+        "a31 * k2x + c.a32 * k1x",
+        "a31 * hq * rhs2[i] + c.a32 * hq * rhs1[i]",
+    )
+    for source, expected in required_fragments.items():
+        text = source.read_text(encoding="utf-8")
+        assert expected in text, source
+        for forbidden in forbidden_fragments:
+            assert forbidden not in text, source

@@ -1,6 +1,6 @@
 {
-  "validation_id": "pending_chua_fractional_q09998_posttransient_promotion_20260524",
-  "repository_commit": "845934604321ec98f94956adc55ee6701c2739cd",
+  "validation_id": "pending_caputo_hidden_attractors_official_protocol_20260524",
+  "repository_commit": "pending",
   "package_version": "0.1.0",
   "python_version": "3.14.3",
   "platform": "Windows-11-10.0.26200-SP0",
@@ -17,29 +17,39 @@
     "rho": 1.0,
     "q": 0.9998
   },
+  "protocol_version": "caputo_hidden_attractors_v1",
+  "schema_version": "1.0",
   "stages": {
-    "algebra": "01_algebra/algebra_validation_summary.json",
-    "lure_df": "02_lure_df/lure_df_validation_summary.json",
-    "integrators": "03_integrators/integrator_validation_summary.json",
-    "candidate_selection": "pending",
-    "dynamic_analysis": "pending",
-    "hiddenness": "pending",
+    "numerical_contract": "pending",
+    "algebraic_validation": "pending",
+    "seed_generation": "pending",
+    "soft_precheck": "pending",
+    "continuation": "pending",
+    "post_continuation_filter": "pending",
+    "dynamic_reference": "pending",
     "robustness": "pending",
-    "literature_comparison": "pending"
+    "hiddenness_tests": "pending",
+    "diagnostics": "pending"
   },
   "pending_stages": [
-    "candidate_selection",
-    "dynamic_analysis",
-    "hiddenness",
+    "numerical_contract",
+    "algebraic_validation",
+    "seed_generation",
+    "soft_precheck",
+    "continuation",
+    "post_continuation_filter",
+    "dynamic_reference",
     "robustness",
-    "literature_comparison",
-    "new_chaotic_candidate_search",
-    "basins",
-    "bifurcations"
+    "hiddenness_tests",
+    "diagnostics"
   ],
-  "final_report": {
-    "status": "pending_new_posttransient_candidate_results"
+  "reference_benchmarks": {
+    "purpose": "Motivated benchmark evidence only; it is not labelled as an official-protocol run.",
+    "directory": "reference_cases"
   },
-  "working_tree_dirty": true,
-  "working_tree_diff_sha256": "3644b627feb7279ad3258aedcced6f279635e3b7c0ca3dd4560dc6b72ed2caee"
+  "final_report": {
+    "status": "pending_official_protocol_run",
+    "source": "final_validation_report.tex",
+    "compiled": "final_validation_report.pdf"
+  }
 }

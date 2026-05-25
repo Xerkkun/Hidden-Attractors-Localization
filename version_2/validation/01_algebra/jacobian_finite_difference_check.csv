@@ -1,4 +1,0 @@
-equilibrium,region,finite_difference_step,absolute_frobenius_error,relative_frobenius_error,passes_relative_error_lt_1e-6
-E0,inner,1e-07,2.3586910202766376e-10,1.4388495314539252e-11,True
-E+,outer,1e-07,3.671499195774915e-08,2.4652012739653308e-09,True
-E-,outer,1e-07,3.671499195774915e-08,2.4652012739653308e-09,True

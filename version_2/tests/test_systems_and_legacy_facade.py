@@ -1,4 +1,4 @@
-"""Tests for the installable system registry and legacy facade."""
+"""Tests for the installable system registry."""
 
 from __future__ import annotations
 
@@ -6,7 +6,6 @@ from typing import Any, Mapping
 
 import numpy as np
 
-from hidden_attractors.legacy import legacy_script_path, legacy_script_names, run_legacy_script
 from hidden_attractors.systems import ChaoticSystem, get_system, list_systems, register_system
 
 
@@ -34,11 +33,3 @@ def test_user_system_can_be_registered() -> None:
     )
 
     assert get_system("toy-1d").evaluate([3.0]).tolist() == [-6.0]
-
-
-def test_legacy_facade_exposes_packaged_scripts() -> None:
-    assert "nyquist-pipeline" in legacy_script_names()
-    assert legacy_script_path("nyquist-pipeline").exists()
-
-    proc = run_legacy_script("nyquist-pipeline", ["--help"])
-    assert proc.returncode == 0

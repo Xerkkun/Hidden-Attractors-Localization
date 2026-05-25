@@ -12,6 +12,7 @@ python tools/cli/robustness_overlay_c_trajectories.py --help
 python tools/cli/lure_top3_sphere_robustness.py --help
 python tools/cli/refine_project_basin_classification.py --help
 python tools/cli/check_validation_contract.py --help
+python -m hidden_attractors.protocol_cli --help
 ```
 
 ## Pytest
@@ -27,6 +28,12 @@ Current tests verify:
 
 - Chua equilibria are zeros of the vector field;
 - final candidate loading returns the expected reference records.
+- the official ten-stage order and uniform JSON envelope;
+- periodic pre-continuation seeds remain eligible for continuation;
+- hiddenness cannot receive its strongest label without ball sampling, robust
+  reproduction, all equilibria, and all basin planes;
+- every executable Python and C EFORK source uses
+  `K3 = a31*K1 + a32*K2`.
 
 ## Native Backends
 

@@ -312,20 +312,31 @@ def evaluate_point(
     mu: float | None = None,
     theta: float | None = None,
     machado_branch: int = 0,
+    precomputed_Y: np.ndarray | None = None,
+    precomputed_W: Sequence[complex] | None = None,
 ) -> Dict[str, Any]:
     notes: List[str] = []
     try:
         if A <= 1.0e-4 or omega <= 0.0:
             raise ValueError("A and omega must be positive.")
-        Y, _y_mean = fourier_y(A, sigma0, p, quad)
+        Y = (
+            np.asarray(precomputed_Y, dtype=np.complex128)
+            if precomputed_Y is not None
+            else fourier_y(A, sigma0, p, quad)[0]
+        )
         Y1 = complex(Y[0])
         base_N = Y1 / float(A)
         N = (
             complex(chua.machado_complex_power(base_N, float(mu), branch=int(machado_branch)))
+            * np.exp(1j * float(0.0 if theta is None else theta))
             if "machado" in str(df_family)
             else base_N
         )
-        W1 = complex(chua.W_frac(omega, q, p))
+        W1 = (
+            complex(precomputed_W[0])
+            if precomputed_W is not None
+            else complex(chua.W_frac(omega, q, p))
+        )
         residual = 1.0 + W1 * N
         denom = abs(W1) * abs(Y1) + 1.0e-14
         higher = 0.0
@@ -333,7 +344,11 @@ def evaluate_point(
         total_energy = abs(Y1) ** 2
         for idx in range(2, quad.K + 1):
             Yk = complex(Y[idx - 1])
-            Wk = complex(chua.W_frac(idx * float(omega), q, p))
+            Wk = (
+                complex(precomputed_W[idx - 1])
+                if precomputed_W is not None
+                else complex(chua.W_frac(idx * float(omega), q, p))
+            )
             higher += abs(Wk) * abs(Yk)
             higher_energy += abs(Yk) ** 2
             total_energy += abs(Yk) ** 2
@@ -439,6 +454,62 @@ def configured_families(cfg: Dict[str, Any]) -> List[Tuple[str, float | None]]:
     return out
 
 
+def configured_machado_theta_values(cfg: Dict[str, Any]) -> List[float]:
+    values = [float(value) for value in cfg.get("machado", {}).get("theta_values", [0.0])]
+    return values or [0.0]
+
+
+def evaluate_family_point(
+    *,
+    candidate_id: str,
+    A: float,
+    sigma0: float,
+    omega: float,
+    q: float,
+    p: Dict[str, Any],
+    quad: Quadrature,
+    source_hint: str,
+    stage: str,
+    df_family: str,
+    mu: float | None,
+    cfg: Dict[str, Any],
+    precomputed_Y: np.ndarray | None = None,
+    precomputed_W: Sequence[complex] | None = None,
+) -> Dict[str, Any]:
+    theta_values: List[float | None] = (
+        configured_machado_theta_values(cfg)
+        if "machado" in str(df_family)
+        else [None]
+    )
+    rows = [
+        evaluate_point(
+            candidate_id=candidate_id,
+            A=A,
+            sigma0=sigma0,
+            omega=omega,
+            q=q,
+            p=p,
+            quad=quad,
+            source_hint=source_hint,
+            stage=stage,
+            df_family=df_family,
+            mu=mu,
+            theta=theta,
+            machado_branch=int(cfg.get("machado", {}).get("branch", 0)),
+            precomputed_Y=precomputed_Y,
+            precomputed_W=precomputed_W,
+        )
+        for theta in theta_values
+    ]
+    best = min(rows, key=lambda row: (finite_float(row.get("residual_abs"), 1.0e300), finite_float(row.get("rho_H"), 1.0e300)))
+    if "machado" in str(df_family):
+        best["notes"] = (
+            f"{best.get('notes', '')} theta selected from "
+            f"{len(theta_values)}-point Machado/FDF closure-phase grid."
+        ).strip()
+    return best
+
+
 def local_refine(
     rows: Sequence[Dict[str, Any]],
     cfg: Dict[str, Any],
@@ -483,7 +554,7 @@ def local_refine(
         for val, (lo, hi) in zip((A, sigma0, omega), bounds):
             if val < lo or val > hi:
                 return 1.0e3 + sum(abs(val - np.clip(val, lo, hi)) for val, (lo, hi) in zip((A, sigma0, omega), bounds))
-        row = evaluate_point(
+        row = evaluate_family_point(
             candidate_id="objective",
             A=A,
             sigma0=sigma0,
@@ -495,7 +566,7 @@ def local_refine(
             stage="S1_objective",
             df_family=df_family,
             mu=mu,
-            machado_branch=int(cfg.get("machado", {}).get("branch", 0)),
+            cfg=cfg,
         )
         residual = finite_float(row.get("residual_abs"), 1.0e3)
         rho = finite_float(row.get("rho_H"), 1.0e3)
@@ -520,7 +591,7 @@ def local_refine(
             x = x0
             source_hint = str(row.get("source_hint", ""))
             notes = f"S1 optimizer failed: {exc}"
-        refined_row = evaluate_point(
+        refined_row = evaluate_family_point(
             candidate_id=f"lure_biased_refine_tmp_{idx:04d}",
             A=float(x[0]),
             sigma0=float(x[1]),
@@ -532,7 +603,7 @@ def local_refine(
             stage="S1_local_refine",
             df_family=df_family,
             mu=mu,
-            machado_branch=int(cfg.get("machado", {}).get("branch", 0)),
+            cfg=cfg,
         )
         refined_row["notes"] = f"{refined_row.get('notes', '')} {notes}".strip()
         refined.append(refined_row)
@@ -661,7 +732,7 @@ def reconstruct_seed_bank(candidates: Sequence[Dict[str, Any]], cfg: Dict[str, A
                     "omega": float(cand["omega"]),
                     "df_family": cand.get("df_family", "classical_biased"),
                     "mu": cand.get("mu", ""),
-                    "theta": phi if "machado" in str(cand.get("df_family", "")) else "",
+                    "theta": cand.get("theta", ""),
                     "phi": phi,
                     "x0": float(seed[0]),
                     "y0": float(seed[1]),
@@ -673,7 +744,7 @@ def reconstruct_seed_bank(candidates: Sequence[Dict[str, Any]], cfg: Dict[str, A
                     "candidate_status": cand.get("candidate_status", ""),
                     "hiddenness_status": "not_tested",
                     "early_periodicity_status": "not_tested",
-                    "notes": "DF/FDF seed reconstructed; awaiting post-transient periodicity matrix.",
+                    "notes": "DF/FDF closure phase is theta; phi is the reconstructed initial-orbit phase. Awaiting post-transient periodicity matrix.",
                 }
             except Exception as exc:
                 row = {
@@ -685,7 +756,7 @@ def reconstruct_seed_bank(candidates: Sequence[Dict[str, Any]], cfg: Dict[str, A
                     "omega": float(cand["omega"]),
                     "df_family": cand.get("df_family", "classical_biased"),
                     "mu": cand.get("mu", ""),
-                    "theta": phi if "machado" in str(cand.get("df_family", "")) else "",
+                    "theta": cand.get("theta", ""),
                     "phi": phi,
                     "x0": "",
                     "y0": "",
@@ -979,7 +1050,7 @@ def run_search(config_path: str | Path, args: argparse.Namespace) -> Dict[str, A
         cfg.setdefault("outputs", {})["root"] = str(args.output_root)
     q = require_q09998(cfg, context=str(config_path))
     outdir = ensure_outdir(cfg)
-    if args.resume and (outdir / "biased_lure_candidates.csv").exists() and (outdir / "biased_lure_seed_bank.csv").exists():
+    if args.resume and args.search_worker_index is None and not args.aggregate_search_workers and not args.periodicity_only and not args.aggregate_periodicity_workers and (outdir / "biased_lure_candidates.csv").exists() and (outdir / "biased_lure_seed_bank.csv").exists():
         candidates = read_csv_rows(outdir / "biased_lure_candidates.csv")
         seed_rows = read_csv_rows(outdir / "biased_lure_seed_bank.csv")
         all_rows = read_csv_rows(outdir / "biased_lure_all_evaluations.csv")
@@ -997,84 +1068,215 @@ def run_search(config_path: str | Path, args: argparse.Namespace) -> Dict[str, A
 
     p = chua_ic_params(cfg)
     quad = Quadrature(int(cfg["search"].get("K_rhoH", 20)), int(cfg["search"].get("quadrature_points", 4096)))
-    points = sample_stage0(cfg, args)
-    configured_n_samples = int(cfg["search"].get("n_samples", 5000))
-    executed_lhs_samples = int(args.n_samples if args.n_samples is not None else configured_n_samples)
-    source_hint_samples = int(sum(1 for item in points if str(item[3]).startswith("source_hint_only_q_mismatch")))
-    run_metadata = {
-        "run_id": str(args.run_id or outdir.name),
-        "output_root": rel(outdir),
-        "configured_n_samples": configured_n_samples,
-        "executed_lhs_samples": executed_lhs_samples,
-        "source_hint_samples": source_hint_samples,
-        "total_stage0_points": int(len(points)),
-        "local_refine_top": int(cfg["search"].get("local_refine_top", 100)),
-        "quadrature_points": int(cfg["search"].get("quadrature_points", 4096)),
-        "K_rhoH": int(cfg["search"].get("K_rhoH", 20)),
-        "execution_scope": "smoke_override" if args.n_samples is not None and int(args.n_samples) != configured_n_samples else "configured_full_search",
-    }
     t0 = time.time()
-    rows: List[Dict[str, Any]] = []
-    family_specs = configured_families(cfg)
-    run_metadata["families"] = [family if mu is None else f"{family}:mu={mu:g}" for family, mu in family_specs]
-    run_metadata["n_family_evaluations_per_point"] = len(family_specs)
-    for idx, item in enumerate(points):
-        A, sigma0, omega = float(item[0]), float(item[1]), float(item[2])
-        source_hint = str(item[3])
-        for df_family, mu in family_specs:
-            suffix = str(df_family).replace(" ", "_")
-            if mu is not None:
-                suffix = f"{suffix}_mu_{q_tag(mu)}"
-            rows.append(
-                evaluate_point(
-                    candidate_id=f"lure_biased_s0_{idx:06d}_{suffix}",
-                    A=A,
-                    sigma0=sigma0,
-                    omega=omega,
-                    q=q,
-                    p=p,
-                    quad=quad,
-                    source_hint=source_hint,
-                    stage="S0_latin_hypercube_or_hint",
-                    df_family=df_family,
-                    mu=mu,
-                    machado_branch=int(cfg.get("machado", {}).get("branch", 0)),
+    if args.periodicity_only or args.aggregate_periodicity_workers:
+        all_rows = read_csv_rows(outdir / "biased_lure_all_evaluations.csv")
+        selected_before_early = read_csv_rows(outdir / "biased_lure_candidates_before_early.csv")
+        seed_rows_all = read_csv_rows(outdir / "biased_lure_seed_bank_before_early.csv")
+        hard_rows = read_csv_rows(outdir / "biased_lure_hard_accepted.csv")
+        fallback_rows = [] if hard_rows else selected_before_early
+        filtered = {
+            "accepted_candidates": hard_rows,
+            "fallback_candidates": fallback_rows,
+            "selected_candidates": selected_before_early,
+            "top_ranked_all_evaluations": read_csv_rows(outdir / "top_ranked_all_evaluations.csv"),
+        }
+        run_metadata = json.loads((outdir / "search_run_metadata.json").read_text(encoding="utf-8"))
+        manifest_cfg = cfg.get("manifest", {})
+        included_families = {str(value) for value in manifest_cfg.get("include_df_family", [])}
+        excluded_families = {str(value) for value in manifest_cfg.get("exclude_df_family", [])}
+        selection_rows = list(all_rows)
+        if included_families:
+            selection_rows = [
+                row for row in all_rows
+                if str(row.get("df_family", "")) in included_families
+                and str(row.get("df_family", "")) not in excluded_families
+            ]
+    else:
+        points = sample_stage0(cfg, args)
+        configured_n_samples = int(cfg["search"].get("n_samples", 5000))
+        executed_lhs_samples = int(args.n_samples if args.n_samples is not None else configured_n_samples)
+        source_hint_samples = int(sum(1 for item in points if str(item[3]).startswith("source_hint_only_q_mismatch")))
+        run_metadata = {
+            "run_id": str(args.run_id or outdir.name),
+            "output_root": rel(outdir),
+            "configured_n_samples": configured_n_samples,
+            "executed_lhs_samples": executed_lhs_samples,
+            "source_hint_samples": source_hint_samples,
+            "total_stage0_points": int(len(points)),
+            "local_refine_top": int(cfg["search"].get("local_refine_top", 100)),
+            "quadrature_points": int(cfg["search"].get("quadrature_points", 4096)),
+            "K_rhoH": int(cfg["search"].get("K_rhoH", 20)),
+            "execution_scope": "smoke_override" if args.n_samples is not None and int(args.n_samples) != configured_n_samples else "configured_full_search",
+        }
+        family_specs = configured_families(cfg)
+        run_metadata["families"] = [family if mu is None else f"{family}:mu={mu:g}" for family, mu in family_specs]
+        run_metadata["machado_theta_values"] = configured_machado_theta_values(cfg)
+        run_metadata["n_family_evaluations_per_point"] = len(family_specs)
+        run_metadata["n_machado_closure_phase_tests_per_family"] = len(configured_machado_theta_values(cfg))
+        run_metadata["phase_grid_policy"] = "For each Machado family/point, retain the theta grid value minimizing the harmonic residual; rho_H is theta-invariant."
+        search_worker_count = int(args.search_worker_count)
+        rows: List[Dict[str, Any]] = []
+        if args.aggregate_search_workers:
+            if search_worker_count < 1:
+                raise ValueError("search worker count must be positive.")
+            for index in range(search_worker_count):
+                shard_path = outdir / f"raw_df_evaluations_worker_{index:02d}_of_{search_worker_count:02d}.csv"
+                if not shard_path.exists():
+                    raise FileNotFoundError(f"Missing DF/FDF search-worker artifact: {shard_path}")
+                rows.extend(read_csv_rows(shard_path))
+            run_metadata["search_worker_count"] = search_worker_count
+            run_metadata["search_aggregation_policy"] = "Raw DF/FDF rows merged from disjoint Latin-hypercube point shards before one global local-refinement pass."
+        else:
+            indexed_points = list(enumerate(points))
+            if args.search_worker_index is not None:
+                if search_worker_count < 1 or int(args.search_worker_index) < 0 or int(args.search_worker_index) >= search_worker_count:
+                    raise ValueError("search worker index must satisfy 0 <= index < search worker count.")
+                indexed_points = indexed_points[int(args.search_worker_index) :: search_worker_count]
+                run_metadata["search_worker_index"] = int(args.search_worker_index)
+                run_metadata["search_worker_count"] = search_worker_count
+            for completed, (idx, item) in enumerate(indexed_points, start=1):
+                A, sigma0, omega = float(item[0]), float(item[1]), float(item[2])
+                source_hint = str(item[3])
+                Y, _mean_y = fourier_y(A, sigma0, p, quad)
+                W = [complex(chua.W_frac(k * omega, q, p)) for k in range(1, quad.K + 1)]
+                for df_family, mu in family_specs:
+                    suffix = str(df_family).replace(" ", "_")
+                    if mu is not None:
+                        suffix = f"{suffix}_mu_{q_tag(mu)}"
+                    rows.append(
+                        evaluate_family_point(
+                            candidate_id=f"lure_biased_s0_{idx:06d}_{suffix}",
+                            A=A,
+                            sigma0=sigma0,
+                            omega=omega,
+                            q=q,
+                            p=p,
+                            quad=quad,
+                            source_hint=source_hint,
+                            stage="S0_latin_hypercube_or_hint",
+                            df_family=df_family,
+                            mu=mu,
+                            cfg=cfg,
+                            precomputed_Y=Y,
+                            precomputed_W=W,
+                        )
+                    )
+                if completed % 1000 == 0:
+                    print(f"S0 worker evaluated {completed}/{len(indexed_points)} points", flush=True)
+            if args.search_worker_index is not None:
+                shard_path = outdir / f"raw_df_evaluations_worker_{int(args.search_worker_index):02d}_of_{search_worker_count:02d}.csv"
+                write_csv(shard_path, rows, EVAL_FIELDS)
+                write_json(
+                    outdir / f"raw_df_evaluations_worker_{int(args.search_worker_index):02d}_of_{search_worker_count:02d}_summary.json",
+                    {**run_metadata, "n_raw_rows_in_shard": len(rows)},
                 )
-            )
-        if (idx + 1) % 1000 == 0:
-            print(f"S0 evaluated {idx + 1}/{len(points)}", flush=True)
-    refined = local_refine(rows, cfg, q, p, quad)
-    all_rows = rows + refined
-    manifest_cfg = cfg.get("manifest", {})
-    included_families = {str(value) for value in manifest_cfg.get("include_df_family", [])}
-    excluded_families = {str(value) for value in manifest_cfg.get("exclude_df_family", [])}
-    selection_rows = list(all_rows)
-    if included_families:
-        selection_rows = [
-            row for row in all_rows
-            if str(row.get("df_family", "")) in included_families
-            and str(row.get("df_family", "")) not in excluded_families
-        ]
-    run_metadata["candidate_selection_families"] = sorted(included_families) if included_families else ["all_evaluated_families"]
-    run_metadata["n_selection_rows"] = len(selection_rows)
-    filtered = candidate_filter(selection_rows, cfg)
-    selected_before_early = filtered["selected_candidates"]
-    seed_rows_all = reconstruct_seed_bank(selected_before_early, cfg, p)
-    # Persist the harmonic decision before any trajectory integration so a
-    # long early screen leaves a traceable, resumable candidate inventory.
-    write_csv(outdir / "biased_lure_all_evaluations.csv", all_rows, EVAL_FIELDS)
-    write_csv(outdir / "top_ranked_all_evaluations.csv", filtered["top_ranked_all_evaluations"], EVAL_FIELDS)
-    write_csv(outdir / "biased_lure_candidates_before_early.csv", selected_before_early, EVAL_FIELDS)
-    write_csv(outdir / "biased_lure_hard_accepted.csv", filtered["accepted_candidates"], EVAL_FIELDS)
-    write_csv(outdir / "biased_lure_seed_bank_before_early.csv", seed_rows_all, SEED_FIELDS)
-    write_json(outdir / "search_run_metadata.json", run_metadata)
+                return {
+                    "cfg": cfg,
+                    "outdir": outdir,
+                    "candidates": [],
+                    "seed_rows": [],
+                    "all_rows": rows,
+                    "filter_summary": {
+                        "n_raw_evaluated": len(rows),
+                        "pipeline_decision": "raw_df_worker_complete",
+                    },
+                    "files_written": [rel(shard_path)],
+                }
+        refined = local_refine(rows, cfg, q, p, quad)
+        all_rows = rows + refined
+        manifest_cfg = cfg.get("manifest", {})
+        included_families = {str(value) for value in manifest_cfg.get("include_df_family", [])}
+        excluded_families = {str(value) for value in manifest_cfg.get("exclude_df_family", [])}
+        selection_rows = list(all_rows)
+        if included_families:
+            selection_rows = [
+                row for row in all_rows
+                if str(row.get("df_family", "")) in included_families
+                and str(row.get("df_family", "")) not in excluded_families
+            ]
+        run_metadata["candidate_selection_families"] = sorted(included_families) if included_families else ["all_evaluated_families"]
+        run_metadata["n_selection_rows"] = len(selection_rows)
+        filtered = candidate_filter(selection_rows, cfg)
+        selected_before_early = filtered["selected_candidates"]
+        seed_rows_all = reconstruct_seed_bank(selected_before_early, cfg, p)
+        # Persist the harmonic decision before any trajectory integration so a
+        # long early screen leaves a traceable, resumable candidate inventory.
+        write_csv(outdir / "biased_lure_all_evaluations.csv", all_rows, EVAL_FIELDS)
+        write_csv(outdir / "top_ranked_all_evaluations.csv", filtered["top_ranked_all_evaluations"], EVAL_FIELDS)
+        write_csv(outdir / "biased_lure_candidates_before_early.csv", selected_before_early, EVAL_FIELDS)
+        write_csv(outdir / "biased_lure_hard_accepted.csv", filtered["accepted_candidates"], EVAL_FIELDS)
+        write_csv(outdir / "biased_lure_seed_bank_before_early.csv", seed_rows_all, SEED_FIELDS)
+        write_json(outdir / "search_run_metadata.json", run_metadata)
+
+    if args.prepare_only:
+        return {
+            "cfg": cfg,
+            "outdir": outdir,
+            "candidates": selected_before_early,
+            "seed_rows": seed_rows_all,
+            "all_rows": all_rows,
+            "filter_summary": {
+                "n_raw_evaluated": len(all_rows),
+                "n_hard_accepted": len(filtered["accepted_candidates"]),
+                "n_seed_bank_total": len(seed_rows_all),
+                "pipeline_decision": "prepared_for_post_transient_workers",
+            },
+            "files_written": [rel(outdir / "biased_lure_candidates_before_early.csv"), rel(outdir / "biased_lure_seed_bank_before_early.csv")],
+        }
+
+    worker_count = int(args.periodicity_worker_count)
+    worker_index = args.periodicity_worker_index
+    if worker_index is not None:
+        if worker_count < 1 or int(worker_index) < 0 or int(worker_index) >= worker_count:
+            raise ValueError("periodicity worker index must satisfy 0 <= index < worker count.")
+        worker_seed_rows = seed_rows_all[int(worker_index) :: worker_count]
+        checkpoint_path = outdir / f"post_transient_periodicity_matrix_worker_{int(worker_index):02d}_of_{worker_count:02d}.json"
+        periodicity = run_early_periodicity_filter(
+            worker_seed_rows,
+            cfg,
+            p,
+            checkpoint_path=checkpoint_path,
+            resume=args.resume,
+        )
+        shard_summary = {
+            **periodicity["summary"],
+            "worker_index": int(worker_index),
+            "worker_count": worker_count,
+            "n_global_seed_bank_total": len(seed_rows_all),
+        }
+        write_json(outdir / f"post_transient_periodicity_worker_{int(worker_index):02d}_of_{worker_count:02d}_summary.json", shard_summary)
+        return {
+            "cfg": cfg,
+            "outdir": outdir,
+            "candidates": [],
+            "seed_rows": periodicity["kept_seeds"],
+            "all_rows": all_rows,
+            "filter_summary": shard_summary,
+            "files_written": [rel(checkpoint_path)],
+        }
+
     checkpoint_path = outdir / "post_transient_periodicity_matrix_checkpoint.json"
+    periodicity_resume = args.resume
+    if args.aggregate_periodicity_workers:
+        merged: List[Dict[str, Any]] = []
+        contract: Dict[str, Any] | None = None
+        for index in range(worker_count):
+            shard_path = outdir / f"post_transient_periodicity_matrix_worker_{index:02d}_of_{worker_count:02d}.json"
+            payload = json.loads(shard_path.read_text(encoding="utf-8"))
+            if contract is None:
+                contract = payload["contract"]
+            elif payload["contract"] != contract:
+                raise ValueError("Periodicity worker checkpoint contracts differ.")
+            merged.extend(dict(row) for row in payload.get("diagnostics", []))
+        write_json(checkpoint_path, {"contract": contract, "diagnostics": merged})
+        periodicity_resume = True
     periodicity = run_early_periodicity_filter(
         seed_rows_all,
         cfg,
         p,
         checkpoint_path=checkpoint_path,
-        resume=args.resume,
+        resume=periodicity_resume,
     )
     seed_rows = periodicity["kept_seeds"]
     rejected_rows = periodicity["rejected_seeds"]
@@ -1190,6 +1392,10 @@ def print_console_summary(result: Dict[str, Any]) -> None:
     print(f"n_hard_deferred_after_ranking={filter_summary.get('n_hard_deferred_after_ranking', 0)}")
     print(f"n_fallback_retained={filter_summary.get('n_fallback_retained', 0)}")
     print(f"n_seed_bank_total={filter_summary.get('n_seed_bank_total', len(seed_rows))}")
+    if filter_summary.get("pipeline_decision") in {"prepared_for_post_transient_workers", "raw_df_worker_complete"}:
+        print(f"pipeline_decision={filter_summary.get('pipeline_decision')}")
+        print("files_written=" + ";".join(files_written))
+        return
     print(f"n_rejected_by_harmonic_filters={filter_summary.get('n_rejected_by_harmonic_filters', 0)}")
     print(f"n_rejected_periodic_post_transient={filter_summary.get('n_rejected_periodic_post_transient', 0)}")
     print(f"n_nonperiodic_seeds_for_continuation={filter_summary.get('n_nonperiodic_seeds_for_continuation', len(seed_rows))}")
@@ -1213,6 +1419,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--n-samples", type=int, default=None, help="Override S0 sample count for smoke runs.")
     parser.add_argument("--output-root", default=None, help="Write this execution to a configured timestamped output sibling.")
     parser.add_argument("--run-id", default=None, help="Traceable identifier recorded in search metadata.")
+    parser.add_argument("--search-worker-index", type=int, default=None, help="Process only this zero-based raw DF/FDF sample shard.")
+    parser.add_argument("--search-worker-count", type=int, default=1, help="Number of independent raw DF/FDF sample shards.")
+    parser.add_argument("--aggregate-search-workers", action="store_true", help="Merge raw DF/FDF worker rows before global refinement and seed construction.")
+    parser.add_argument("--prepare-only", action="store_true", help="Run DF/FDF candidate generation and write the pre-periodicity seed bank only.")
+    parser.add_argument("--periodicity-only", action="store_true", help="Load an existing pre-periodicity seed bank instead of repeating DF/FDF generation.")
+    parser.add_argument("--periodicity-worker-index", type=int, default=None, help="Process only this zero-based seed shard and write an independent periodicity checkpoint.")
+    parser.add_argument("--periodicity-worker-count", type=int, default=1, help="Number of independent seed shards for post-transient periodicity screening.")
+    parser.add_argument("--aggregate-periodicity-workers", action="store_true", help="Merge independent periodicity worker checkpoints and write final candidate artifacts.")
     return parser.parse_args()
 
 

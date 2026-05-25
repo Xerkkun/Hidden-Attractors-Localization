@@ -11,10 +11,10 @@ hidden-attractors-systems --system chua-nonsmooth --equilibria --state 0,0,0
 ```
 
 The built-in Chua systems are `chua-nonsmooth` and `chua-arctan`. The Chua
-non-smooth system advertises the current full workflow:
+non-smooth system advertises the official protocol interface:
 
 ```bash
-hidden-attractors-unified-chua --help
+hidden-attractors-protocol --help
 ```
 
 ## Define a New System
@@ -58,17 +58,17 @@ and refinement inputs before launching reusable workflows.
 ## Workflow Contract
 
 A system definition is not automatically a full hidden-attractor workflow. A
-complete workflow still needs:
+complete workflow follows the fixed official order and still needs:
 
 - a manual Lur'e form when the DF/Nyquist route is used:
   `D^q x = A x + b psi(c^T x)`;
 - a classical describing function `N(A)` for the scalar nonlinearity;
 - a Machado describing-function branch `N_mu(A, mu)` when Machado seeds or
   sweeps are requested;
-- a numerical continuation map from the harmonic linearization to the original
-  nonlinear system;
+- a `ContinuationPlan(lambda_values=...)` map from the auxiliary harmonic or
+  smoothed system (`lambda=0`) to the original nonlinear system (`lambda=1`);
 - equilibrium or target-neighborhood checks;
-- hiddenness controls from equilibrium neighborhoods;
+- hiddenness controls sampled inside balls centered at every equilibrium;
 - basin classification or a documented replacement criterion;
 - trajectory diagnostics and report outputs;
 - an explicit numerical contract: model, parameters, time horizon, step size,
@@ -108,7 +108,8 @@ The package does not infer that split automatically.  The user must provide:
 - equilibria for hiddenness tests;
 - a Jacobian if Lyapunov exponents should be robust and fast.
 
-The generic Machado branch currently expects a real-valued branch.  The
+The generic Machado branch currently expects a real-valued branch. It extends
+the seed space only and never constitutes hiddenness evidence. The
 standard admitted form is:
 
 ```text
@@ -133,20 +134,26 @@ from hidden_attractors.workflows.integer_lure import (
     run_integer_lure_hiddenness_controls,
 )
 
+from hidden_attractors import ContinuationPlan
+
 system = get_system("chua-nonsmooth")
 seed = integer_lure_seed(system)
-steps = continue_integer_lure_seed(system, seed)
+steps = continue_integer_lure_seed(
+    system,
+    seed,
+    plan=ContinuationPlan.uniform(9, internal_parameter="epsilon"),
+)
 target_seed, trajectory, status = final_integer_lure_attractor(system, steps[-1].x_out)
 probes = run_integer_lure_hiddenness_controls(system, trajectory)
 ```
 
 `examples/integer_lure_chua_protocol.py` is the small runnable Chua integer
 example.  The regenerated corrected Chua integer run in
-`version_1/legacy_root/chua_integer_runs/balanced` is the reference artifact
-set for what an integer-order workflow should be able to reproduce or adapt:
+`validation/reference_cases/chua_integer_q1/` is the promoted reference
+artifact set for what an integer-order workflow should be able to reproduce or adapt:
 
 - `fig01`: Nyquist/describing-function and real/imaginary transfer-component closure;
-- `fig02`: continuation in epsilon;
+- `fig02`: continuation (its archived filename predates the public `lambda` vocabulary);
 - `fig03`: final attractor and linearized-versus-original comparison;
 - `fig04` and `fig05`: reference section and hiddenness controls;
 - `fig06`, `fig10`, and `fig12`: basin cuts and 3D basin summaries;

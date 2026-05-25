@@ -1,7 +1,7 @@
-"""Sphere-neighborhood controls and coarse robustness workflow.
+"""Equilibrium-neighborhood controls and coarse robustness workflow.
 
-This workflow probes whether trajectories initialized on spheres around Chua
-equilibria are classified into the target-attractor basin.  A target hit from
+This workflow probes whether trajectories initialized within balls around Chua
+equilibria are classified into the target-attractor basin. A target hit from
 an equilibrium neighborhood is evidence against the tested hiddenness claim.
 The workflow also runs a coarse backend-classifier robustness pass from each
 candidate continuation endpoint.
@@ -27,9 +27,10 @@ from ..io import append_csv, read_csv_rows, read_json, timestamp, write_csv, wri
 from ..native.backends import BasinBackend
 from ..parallel import force_single_openmp_thread_current_process, force_single_openmp_thread_env
 from ..paths import OUTPUTS, PROJECT_ROOT
+from .protocol import sample_uniform_ball
 
 
-DEFAULT_SOURCE_DIR = PROJECT_ROOT / "validation" / "04_candidates"
+DEFAULT_SOURCE_DIR = PROJECT_ROOT / "validation" / "06_post_continuation_filter"
 
 RAW_FIELDS = [
     "candidate_id",
@@ -138,16 +139,6 @@ def load_equilibria_from_c() -> dict[str, np.ndarray]:
     return BasinBackend.build(output_name="chua_basin_sphere_controls").equilibria()
 
 
-def unit_sphere_direction(rng: np.random.Generator) -> np.ndarray:
-    """Sample a unit vector uniformly enough for local control probes."""
-
-    v = rng.normal(size=3)
-    norm = float(np.linalg.norm(v))
-    if norm == 0.0:
-        return np.array([1.0, 0.0, 0.0], dtype=float)
-    return v / norm
-
-
 def robustness_cases(args: argparse.Namespace) -> list[dict[str, Any]]:
     """Return the classifier-based robustness contracts."""
 
@@ -168,10 +159,10 @@ def robustness_cases(args: argparse.Namespace) -> list[dict[str, Any]]:
 
 
 def make_plan(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
-    """Create sphere-control seeds and persist the run configuration.
+    """Create ball-neighborhood seeds and persist the run configuration.
 
     Mathematical purpose:
-        Generate initial conditions on spheres around every equilibrium.  These
+        Generate initial conditions inside balls around every equilibrium. These
         are the local probes used to test whether the candidate target basin
         intersects equilibrium neighborhoods under the tested numerical
         contract.
@@ -200,11 +191,15 @@ def make_plan(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
     rng = np.random.default_rng(int(args.seed))
     rows: list[dict[str, Any]] = []
     index = 0
+    samples_by_radius = {
+        str(radius): int(args.samples_per_radius) + idx * int(args.sample_growth_per_radius)
+        for idx, radius in enumerate(radii)
+    }
     for cand in candidates:
         for eq_id, center in eqs.items():
             for radius in radii:
-                for sample_id in range(int(args.samples_per_radius)):
-                    x0 = center + radius * unit_sphere_direction(rng)
+                points = sample_uniform_ball(center, radius, samples_by_radius[str(radius)], rng)
+                for sample_id, x0 in enumerate(points):
                     rows.append(
                         {
                             "case_index": index,
@@ -232,13 +227,16 @@ def make_plan(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
                     index += 1
     cfg = {
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-        "method": "sphere_neighborhood_controls_plus_c_efork_robustness",
+        "method": "ball_neighborhood_controls_plus_c_efork_robustness",
         "classification": "target_hit means class_id in {1, 2}, the EFORK nontrivial bounded target class used by the basin backend",
         "candidates": candidates,
         "equilibria": {k: v.tolist() for k, v in eqs.items()},
         "radii": radii,
         "samples_per_radius": int(args.samples_per_radius),
-        "cumulative_batches": [100],
+        "sample_growth_per_radius": int(args.sample_growth_per_radius),
+        "samples_by_radius": samples_by_radius,
+        "sampling_mode": "ball",
+        "cumulative_batches": sorted(set(samples_by_radius.values())),
         "sphere_contract": sphere_contract,
         "robustness_cases": robustness_cases(args),
         "chunks": int(args.chunks),
@@ -406,17 +404,22 @@ def aggregate(outdir: str | Path, *, wait: bool = False, poll_sec: float = 30.0)
     write_csv(root / "sphere_cumulative_summary.csv", summary_rows, SUMMARY_FIELDS)
     decisions = []
     for cand in cfg["candidates"]:
-        rows = [r for r in summary_rows if r["candidate_id"] == cand["candidate_id"] and int(r["cumulative_samples"]) == int(cfg["samples_per_radius"])]
+        rows = [
+            r for r in summary_rows
+            if r["candidate_id"] == cand["candidate_id"]
+            and int(r["cumulative_samples"]) == int(cfg["samples_by_radius"][str(float(r["radius"]))])
+        ]
         target_total = sum(int(r["n_target_hits"]) for r in rows)
         smallest = min([float(r["radius"]) for r in rows if int(r["n_target_hits"]) > 0], default=float("nan"))
         decisions.append(
             {
                 "candidate_id": cand["candidate_id"],
                 "total_sphere_trajectories": sum(int(r["n_executed"]) for r in rows),
+                "total_neighborhood_trajectories": sum(int(r["n_executed"]) for r in rows),
                 "total_target_hits": target_total,
                 "smallest_radius_with_target_hit": "" if math.isnan(smallest) else smallest,
-                "hiddenness_status": "not_supported_by_sphere_equilibrium_test" if target_total > 0 else "compatible_with_hiddenness_under_tested_spheres",
-                "notes": "Sphere test uses EFORK target class; not a proof either way.",
+                "hiddenness_status": "rejected_self_excited_contact" if target_total > 0 else "compatible_with_hiddenness_under_tested_radii",
+                "notes": "Ball-neighborhood test uses EFORK target class; it is sufficient only within the declared tested radii.",
             }
         )
     write_csv(root / "sphere_decision.csv", decisions)
@@ -469,13 +472,14 @@ def launch(outdir: str | Path, args: argparse.Namespace) -> Path:
 def make_parser() -> argparse.ArgumentParser:
     """Return the CLI parser for the compatibility script."""
 
-    parser = argparse.ArgumentParser(description="Top-3 Lure/Machado sphere controls and classifier robustness.")
+    parser = argparse.ArgumentParser(description="Equilibrium-ball hiddenness controls and classifier robustness.")
     parser.add_argument("--job", choices=["launch", "sphere-chunk", "robustness", "aggregate"], default="launch")
     parser.add_argument("--output-dir", default="")
     parser.add_argument("--source-dir", default=str(DEFAULT_SOURCE_DIR))
     parser.add_argument("--top-n", type=int, default=3)
     parser.add_argument("--radii", default="1e-5,3e-5,1e-4,3e-4,1e-3")
     parser.add_argument("--samples-per-radius", type=int, default=500)
+    parser.add_argument("--samples-growth-per-radius", dest="sample_growth_per_radius", type=int, default=100)
     parser.add_argument("--seed", type=int, default=20260517)
     parser.add_argument("--chunks", type=int, default=3)
     parser.add_argument("--chunk-id", type=int, default=0)

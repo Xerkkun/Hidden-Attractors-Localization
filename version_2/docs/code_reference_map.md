@@ -52,13 +52,13 @@ policy.
 | `hidden_attractors.native.FractionalChuaBackend` | Wrapper for C/EFORK fractional Chua integration | Caputo fractional model; stage ordering aligned with Ghoreishi--Ghaffari--Saad; full fractional external validation remains separate from the verified `q=1` Chua rerun |
 | `hidden_attractors.native.BasinBackend` | Wrapper for basin classification backend | Leonov--Kuznetsov hidden/self-excited classification plus local finite-time basin contract |
 | `hidden_attractors.workflows.robustness_overlay` | Overlay trajectories under changes of `h`, `Lm`, and `t_final` | Local robustness contract; robustness does not imply hiddenness |
-| `hidden_attractors.workflows.sphere_controls` | Spherical controls around equilibria | Leonov--Kuznetsov basin criterion; finite-sample numerical control |
+| `hidden_attractors.workflows.sphere_controls` | Compatibility adapter now sampling inside equilibrium-centred balls | Leonov--Kuznetsov basin criterion; finite-sample numerical control |
 | `hidden_attractors.workflows.refined_basin` | Refine unresolved basin cells by trajectory geometry | Local target-reference geometry contract |
-| `hidden_attractors.workflows.strict_target_refinement` | Stricter target-reference refinement for unresolved Chua/Danca basin or sphere rows | Local finite-time trajectory-similarity contract with negative controls; still numerical evidence, not proof |
-| `hidden_attractors.workflows.danca_abm_sphere_controls` | Danca ABM full-history spherical controls followed by strict refinement of unknown outcomes | Danca fractional Chua example plus Diethelm--Ford--Freed ABM predictor-corrector; compatibility workflow for published-style controls |
-| `hidden_attractors.workflows.unified_chua` | Explicit Python/CLI wrapper for the unified Chua workflow without manual environment variables | Local workflow contract; heavy stages must use C backends |
+| `hidden_attractors.workflows.strict_target_refinement` | Stricter target-reference refinement for unresolved Chua/Danca basin or equilibrium-ball rows | Local finite-time trajectory-similarity contract with negative controls; still numerical evidence, not proof |
+| `hidden_attractors.workflows.danca_abm_sphere_controls` | Compatibility alias for Danca ABM full-history ball sampling under robustness | Danca fractional Chua example plus Diethelm--Ford--Freed ABM predictor-corrector; not a competing hiddenness route |
+| `hidden_attractors.protocol_cli` | Canonical stage-envelope CLI for the single official methodology | Local protocol contract; numerical payloads may use corrected C backends |
 | `hidden_attractors.workflows.integer_lure` | Reusable order-one Lur'e seed, continuation, final-attractor, and hiddenness controls | Integer Chua `q=1` reference report; Guan--Xie Example 6 displayed-value comparison; locally regenerated evidence package |
-| `hidden_attractors.workflows.specs.WorkflowInputSpec` | Shared input contract for reusable CLIs and migrated legacy scripts | Local reproducibility contract: records solver, classifier, target, basin, sphere, and refinement assumptions |
+| `hidden_attractors.workflows.specs.WorkflowInputSpec` | Shared input contract for reusable CLIs and migrated adapters | Local reproducibility contract: records solver, classifier, target, basin, ball-sampling, and refinement assumptions |
 | `hidden_attractors.systems.requirements` | Capability and requirement checklist for applying workflows to new systems | Local library-extension policy; distinguishes vector-field registration from hiddenness evidence workflows |
 
 ## Optional External Methods
@@ -69,14 +69,13 @@ policy.
 | `hidden_attractors.integrations.compute_complexity_measures(..., backend="antropy")` | Delegate entropy and fractal measures to `antropy` | External `antropy` package; do not copy implementations into this repo |
 | `hidden_attractors.integrations.external_tool_report` | Registry of optional tools | PyDSTool documentation; pyComplexity notebook reference; local adapter policy |
 
-## Legacy Scripts Still Under Review
+## Internal Transition Dependencies
 
 | Code | Purpose | Reference source |
 |---|---|---|
-| `tools/legacy/danca2017_chua_abm_replication.py` | Replicate Danca's non-smooth fractional Chua example with ABM | M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems"; K. Diethelm, N. J. Ford, and A. D. Freed, "A Predictor-Corrector Approach for the Numerical Solution of Fractional Differential Equations" |
-| `tools/legacy/unified_nyquist_hidden_pipeline.py` | Historical full pipeline for Lur'e/Nyquist, EFORK, basins, bifurcation, and Lyapunov diagnostics | Leonov--Kuznetsov hidden attractors, Genesio--Tesi frequency-domain harmonic-balance approach, Matignon stability, Benettin Lyapunov method |
-| `tools/legacy/chua_initial_cond.py` | Historical Lur'e/transfer/describing-function script kept for reproducibility; new seed calls should use `hidden_attractors.seed_generation` | Genesio, Tesi, and Villoresi, "A Frequency Approach for Analyzing and Controlling Chaos in Nonlinear Circuits"; Tavazoei--Haeri fractional-order periodicity caution |
-| `tools/legacy/biased_describing_function.py` | Historical biased/Machado seed script kept for reproducibility; new calls should use `hidden_attractors.seed_generation` | Tenreiro Machado fractional describing-function family plus the local heuristic contract documented in `reporte_unificado_chua_fraccionario.tex`; must not be read as proof of Caputo cycles |
+| `tools/legacy/danca2017_chua_abm_replication.py` | Temporary ABM numerical dependency used by the maintained robustness comparison | M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems"; K. Diethelm, N. J. Ford, and A. D. Freed, "A Predictor-Corrector Approach for the Numerical Solution of Fractional Differential Equations" |
+| `tools/legacy/chua_initial_cond.py` and DF helpers | Temporary calculation dependencies used by `fractional_report_run`; no public route | Genesio--Tesi seed mechanism; it must not be read as proof of hiddenness |
+| `tools/legacy/early_periodicity_filter.py` | Migration adapter tested to prevent pre-continuation periodic rejection | Official `soft_precheck` rule |
 
 ## Policy For New Calculation Code
 

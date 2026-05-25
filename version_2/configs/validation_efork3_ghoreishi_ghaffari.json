@@ -2,6 +2,8 @@
   "contract_name": "efork3_ghoreishi_ghaffari_reference_validation",
   "version": 1,
   "purpose": "Reproduce the published three-stage EFORK manufactured-solution tables.",
+  "reference_case_only": true,
+  "official_protocol_role": "numerical_contract benchmark evidence; not a standalone methodology route",
   "output_root": "validation/reference_cases/efork3_ghoreishi_ghaffari",
   "manifest": {
     "directory": "00_manifest",

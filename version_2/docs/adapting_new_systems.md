@@ -8,7 +8,7 @@ layers:
 2. a `WorkflowInputSpec`, which defines the numerical experiment.
 
 This separation is intentional.  A vector field is not enough to claim that
-sphere controls, basin cuts, strict refinement, continuation, Lyapunov
+equilibrium-ball controls, basin cuts, strict refinement, continuation, Lyapunov
 estimates, or hiddenness checks are meaningful.  Each workflow must record the
 extra ingredients it needs.
 
@@ -63,8 +63,8 @@ The spec records the experiment-level inputs:
   infinity, equilibrium, and unknown outcomes;
 - `TargetReferenceSpec`: candidate attractor seed, recorded reference
   trajectory, symmetry rule, and target definition;
-- `SphereControlSpec`: equilibrium names, radii, sampling mode, and samples per
-  radius;
+- `SphereControlSpec`: compatibility type name for equilibrium-centered ball
+  samples, radii, and sample growth per radius;
 - `BasinSliceSpec`: plane/grid definition and fixed coordinates;
 - `StrictRefinementSpec`: trajectory-similarity thresholds and negative
   control policy;
@@ -112,9 +112,8 @@ New maintained CLI commands should follow this pattern:
 2. accept `--spec path/to/workflow_spec.json` when the run needs explicit
    solver, basin, target, or threshold configuration;
 3. write the effective spec next to outputs as JSON;
-4. write a separate result summary with labels such as
-   `candidate_hidden_attractor`, `numerically_supported_hidden_attractor`,
-   `self_excited_attractor`, or `inconclusive`;
+4. write a stage summary using only the official envelope and verdict labels
+   from `hidden_attractors.workflows.protocol`;
 5. use the same spec pattern for robustness, bifurcation, Lyapunov,
    continuation, and diagnostics, not only basins/refinement/spheres;
 6. avoid environment-only configuration except as a compatibility layer.
@@ -125,14 +124,15 @@ inside `tools/legacy/`.
 
 ## Legacy Policy
 
-Legacy scripts are allowed to keep historical names and defaults for
-reproducibility.  When adding new behavior to a legacy script:
+Legacy adapters may keep installed command names for reproducibility. They may
+not publish new runs with historical methodology labels. When adding behavior
+to a retained adapter:
 
 1. move reusable mathematical or numerical logic into `hidden_attractors/`;
 2. make the legacy script a thin wrapper around that package function;
 3. build or load a `WorkflowInputSpec` and save it in the output directory;
 4. declare any fixed-system assumption in the help text and output metadata;
-5. do not silently change a historical numerical contract.
+5. route new summaries through the official protocol contract.
 
 This keeps old artifacts reproducible while preventing the library API from
 becoming a collection of one-off scripts.
@@ -169,14 +169,15 @@ For describing-function or Nyquist routes:
 
 ## Existing System-Specific Workflows
 
-The current strict refinement and Danca ABM sphere-control workflows remain
-available because they encode published or historical numerical contracts:
+The current strict refinement and Danca ABM command names remain available
+because they encode published or recorded numerical comparisons. Official
+hiddenness evidence nevertheless uses interior ball samples:
 
 ```bash
 hidden-attractors-strict-target-refinement --help
 hidden-attractors-danca-abm-sphere-controls --help
 ```
 
-They should be treated as templates for the reusable contract.  A future
-generic implementation should take `WorkflowInputSpec` directly and dispatch to
-the registered system, solver backend, classifier, and target reference.
+They are compatibility adapters, not competing methodologies. New runs should
+enter through `hidden-attractors-protocol` and dispatch to the registered
+system, solver backend, classifier, and dynamic reference.

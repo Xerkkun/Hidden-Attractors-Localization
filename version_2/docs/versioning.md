@@ -1,38 +1,25 @@
-# Versioning policy
+# Versioning Policy
 
-Este proyecto queda separado en dos superficies de trabajo.
+`version_2/` is the only maintained and executable library surface. New code,
+documentation, configurations and validation summaries must use the official
+Caputo protocol defined in `hidden_attractors.workflows.protocol`.
 
-## Version 1
+Historical numerical evidence that remains useful as a benchmark is promoted
+under `validation/reference_cases/` and identified as archived evidence. It is
+not a competing methodology and it is not relabelled as a run under the new
+protocol.
 
-`version_1/` describe la etapa historica del repositorio: scripts raiz largos,
-salidas ya usadas en reportes y corridas que dependen de nombres o rutas
-existentes. No es el lugar para agregar ejemplos o analisis nuevos.
+`tools/legacy/` remains temporarily packaged only because a small set of
+maintained adapters still imports its numerical engines. Those engines are
+covered by the corrected EFORK regression tests and must not publish new
+methodology names. New entry points use `hidden-attractors-protocol`.
 
-Se permite tocar V1 solo para:
+## Migration Rule
 
-- reproducir una corrida anterior;
-- corregir un bug que impide ejecutar un resultado historico;
-- dejar un wrapper de compatibilidad hacia una implementacion de V2.
+When a compatibility adapter duplicates official logic:
 
-## Version 2
-
-`version_2/` es la version activa. A partir de esta separacion:
-
-- ejemplos nuevos van en `version_2/examples/`;
-- notas e indices de analisis nuevos van en `version_2/docs/`;
-- codigo reusable va en `hidden_attractors/analysis/`,
-  `hidden_attractors/workflows/`, `hidden_attractors/plotting/`,
-  `hidden_attractors/models/`, `hidden_attractors/native/` o
-  `hidden_attractors/basins/`, segun corresponda;
-- wrappers CLI nuevos van en `tools/cli/` y solo cuando haga falta conservar un
-  nombre de comando.
-
-## Migration rule
-
-Cuando un script raiz empiece a duplicar logica:
-
-1. extraer la funcion reusable a `hidden_attractors/`;
-2. dejar el wrapper en `tools/cli/`;
-3. agregar un ejemplo minimo en `examples/`;
-4. registrar el analisis o contrato numerico en `docs/`;
-5. mantener salidas nuevas bajo `outputs/` con carpeta propia o timestamp.
+1. Move the reusable implementation into `hidden_attractors/`.
+2. Preserve only a narrow adapter if an installed command still depends on it.
+3. Write outputs with the official JSON envelope and verdict vocabulary.
+4. Delete the compatibility source when no maintained import or evidence build
+   uses it.

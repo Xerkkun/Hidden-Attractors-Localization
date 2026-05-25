@@ -28,13 +28,14 @@ nav:
   - Code Reference Map: code_reference_map.md
   - Notebooks: notebooks.md
   - Workflows: workflows.md
+  - Methodology Migration: migration_unified_methodology.md
   - Testing: testing.md
   - Repository Layout: repository_layout.md
   - Contributing: contributing.md
   - Citation: citation.md
   - Research Notes:
       - Library Structure: library_structure.md
-      - Lure Candidate Route: lure_candidate_route.md
+      - Seed Generation Families: lure_candidate_route.md
       - Versioning Policy: versioning.md
       - Dependency Policy: dependency_policy.md
       - Analysis Index: research/analysis.md

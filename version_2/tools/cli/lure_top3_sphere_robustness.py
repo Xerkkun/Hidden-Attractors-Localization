@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Compatibility CLI for top-candidate sphere controls and robustness.
+"""Compatibility CLI for top-candidate equilibrium-ball controls and robustness.
 
 The reusable implementation lives in
 ``hidden_attractors.workflows.sphere_controls``.  The CLI name and output
-artifact names are preserved for reproducibility with previous runs.
+artifact names are preserved for previous job manifests; generated samples are
+inside balls, not restricted to sphere surfaces.
 """
 
 from __future__ import annotations

@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 
 LEGACY_ROOT = Path(__file__).resolve().parents[1] / "tools" / "legacy"
@@ -14,7 +15,7 @@ if str(LEGACY_ROOT) not in sys.path:
 
 from early_periodicity_filter import classify_early_periodicity, run_early_periodicity_filter  # noqa: E402
 from lure_biased_multiparam_continuation import selected_seed_items  # noqa: E402
-from lure_biased_multiparam_search import candidate_filter  # noqa: E402
+from lure_biased_multiparam_search import Quadrature, candidate_filter, evaluate_family_point, evaluate_point  # noqa: E402
 
 
 def _filter_cfg() -> dict:
@@ -83,6 +84,80 @@ def test_hard_filter_limits_candidates_sent_to_early_screen() -> None:
     assert len(result["selected_candidates"]) == 1
 
 
+def test_machado_fdf_closure_applies_configured_theta(monkeypatch) -> None:
+    quad = Quadrature(2, 64)
+    precomputed_y = np.array([2.0 + 0.0j, 0.0 + 0.0j])
+    precomputed_w = [-0.5 + 0.0j, 0.0 + 0.0j]
+    monkeypatch.setattr(
+        "lure_biased_multiparam_search.chua.machado_complex_power",
+        lambda base_n, _mu, branch=0: complex(base_n),
+    )
+    params = {"alpha_chua": 1.0}
+
+    zero_phase = evaluate_point(
+        candidate_id="theta_zero",
+        A=1.0,
+        sigma0=0.0,
+        omega=1.0,
+        q=0.9998,
+        p=params,
+        quad=quad,
+        source_hint="test",
+        stage="test",
+        df_family="machado_biased",
+        mu=1.0,
+        theta=0.0,
+        precomputed_Y=precomputed_y,
+        precomputed_W=precomputed_w,
+    )
+    opposite_phase = evaluate_point(
+        candidate_id="theta_pi",
+        A=1.0,
+        sigma0=0.0,
+        omega=1.0,
+        q=0.9998,
+        p=params,
+        quad=quad,
+        source_hint="test",
+        stage="test",
+        df_family="machado_biased",
+        mu=1.0,
+        theta=np.pi,
+        precomputed_Y=precomputed_y,
+        precomputed_W=precomputed_w,
+    )
+
+    assert zero_phase["residual_abs"] == pytest.approx(0.0, abs=1.0e-12)
+    assert opposite_phase["residual_abs"] == pytest.approx(2.0, abs=1.0e-12)
+
+
+def test_machado_fdf_selects_best_theta_from_configured_grid(monkeypatch) -> None:
+    quad = Quadrature(2, 64)
+    monkeypatch.setattr(
+        "lure_biased_multiparam_search.chua.machado_complex_power",
+        lambda base_n, _mu, branch=0: complex(base_n),
+    )
+    best = evaluate_family_point(
+        candidate_id="theta_grid",
+        A=1.0,
+        sigma0=0.0,
+        omega=1.0,
+        q=0.9998,
+        p={"alpha_chua": 1.0},
+        quad=quad,
+        source_hint="test",
+        stage="test",
+        df_family="machado_biased",
+        mu=1.0,
+        cfg={"machado": {"theta_values": [np.pi, 0.0]}},
+        precomputed_Y=np.array([2.0 + 0.0j, 0.0 + 0.0j]),
+        precomputed_W=[-0.5 + 0.0j, 0.0 + 0.0j],
+    )
+
+    assert best["theta"] == pytest.approx(0.0)
+    assert best["residual_abs"] == pytest.approx(0.0, abs=1.0e-12)
+
+
 def test_periodic_post_transient_classification_uses_multiple_components() -> None:
     h = 0.01
     t = np.arange(0.0, 30.0, h)
@@ -146,6 +221,8 @@ def test_post_transient_filter_rejects_periodic_primary_case(monkeypatch) -> Non
         "q": 0.9998,
         "early_periodicity_filter": {
             "enabled": True,
+            "gate_before_continuation": True,
+            "historical_reproduction_mode": True,
             "backend": "python_legacy",
             "h": h,
             "memory_length": 8.0,
@@ -168,6 +245,48 @@ def test_post_transient_filter_rejects_periodic_primary_case(monkeypatch) -> Non
     assert result["kept_seeds"] == []
     assert result["rejected_seeds"][0]["candidate_status"] == "rejected_periodic_post_transient"
     assert result["summary"]["n_nonperiodic_seeds_for_continuation"] == 0
+
+
+def test_periodic_direct_seed_is_diagnostic_without_precontinuation_gate(monkeypatch) -> None:
+    h = 0.01
+    t = np.arange(0.0, 30.0, h)
+    traj = np.column_stack([t, np.sin(2.0 * np.pi * t), np.cos(2.0 * np.pi * t), np.sin(2.0 * np.pi * t)])
+    monkeypatch.setattr("early_periodicity_filter.chua.efork3_integrate", lambda *_args, **_kwargs: traj)
+    cfg = {
+        "q": 0.9998,
+        "early_periodicity_filter": {
+            "enabled": True,
+            "gate_before_continuation": False,
+            "backend": "python_legacy",
+            "h": h,
+            "memory_length": 8.0,
+            "t_transient": 5.0,
+            "observation_time": 25.0,
+            "discard_if_periodic": True,
+            "entropy_min": 0.25,
+            "dominant_ratio_max": 0.55,
+            "relaxed_dominant_ratio": 0.40,
+            "freq_drift_max": 0.05,
+            "n_windows": 3,
+            "components": ["x", "y", "z"],
+            "require_two_components": True,
+        },
+    }
+    seed = {
+        "seed_id": "s1",
+        "candidate_id": "c1",
+        "candidate_status": "hard_candidate_accepted",
+        "valid_seed": True,
+        "x0": 0.1,
+        "y0": 0.2,
+        "z0": 0.3,
+    }
+
+    result = run_early_periodicity_filter([seed], cfg, {})
+
+    assert result["rejected_seeds"] == []
+    assert result["kept_seeds"][0]["early_periodicity_status"] == "pre_continuation_periodic"
+    assert result["summary"]["n_seeds_released_to_continuation"] == 1
 
 
 def test_periodicity_matrix_evaluates_four_solver_memory_cells(monkeypatch, tmp_path: Path) -> None:
@@ -286,3 +405,29 @@ def test_continuation_accepts_only_nonperiodic_unrejected_seeds() -> None:
     )
 
     assert [row["seed_id"] for row in selected] == ["s_keep"]
+
+
+def test_continuation_accepts_periodic_diagnostic_seed_when_gate_is_disabled() -> None:
+    candidates = [{"candidate_id": "periodic", "candidate_status": "hard_candidate_accepted"}]
+    seeds = [{
+        "candidate_id": "periodic",
+        "seed_id": "s_periodic",
+        "candidate_status": "hard_candidate_accepted",
+        "early_periodicity_status": "pre_continuation_periodic",
+        "valid_seed": True,
+        "x0": 1.0,
+        "y0": 1.0,
+        "z0": 1.0,
+    }]
+
+    selected = selected_seed_items(
+        {
+            "early_periodicity_filter": {"gate_before_continuation": False},
+            "continuation": {"max_candidates": 6, "max_seeds_per_candidate": 1},
+        },
+        candidates,
+        seeds,
+        {"s_periodic"},
+    )
+
+    assert [row["seed_id"] for row in selected] == ["s_periodic"]

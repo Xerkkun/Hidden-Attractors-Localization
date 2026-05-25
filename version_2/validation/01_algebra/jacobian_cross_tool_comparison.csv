@@ -1,5 +1,0 @@
-tool,region,relative_frobenius_error,passes_relative_error_lt_1e-10
-MATLAB,inner,0.0,True
-MATLAB,outer,2.981804509548768e-17,True
-Wolfram,inner,0.0,True
-Wolfram,outer,0.0,True

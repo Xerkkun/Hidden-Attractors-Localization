@@ -5,8 +5,9 @@ which the reusable workflow was developed. It exercises the same scientific
 chain later used for fractional systems:
 
 ```text
-manual Lur'e split -> describing function/Nyquist closure -> harmonic seed
--> epsilon continuation -> dynamic diagnostics -> equilibrium-neighborhood controls
+numerical_contract -> algebraic_validation -> seed_generation
+-> soft_precheck -> continuation(lambda) -> post_continuation_filter
+-> dynamic_reference -> robustness -> hiddenness_tests -> diagnostics
 ```
 
 The result is reported as a **numerical hidden-attractor candidate** under the
@@ -95,12 +96,14 @@ against unrounded reference data.
 
 ## Continuation And Dynamic Evidence
 
-The eight continuation steps advance `epsilon` from `0.125` through `1.0`.
-At `epsilon=1`, the stored final state is
+In the promoted historical artifact, eight internal homotopy steps were stored
+under the name `epsilon`. Under the official interface these are represented as
+`ContinuationPlan(lambda_values=...)`; `lambda=1` is the target system. At
+`lambda=1`, the stored final state is
 `(1.99297400, 1.26397185, -2.55106335)`. After burn-in, the effective
 reference seed is `(4.09187265, -0.08387100, -7.50907585)`.
 
-![Integer Chua epsilon continuation](assets/figures/chua_integer_q1/fig02d_continuation_story.png)
+![Integer Chua continuation, public parameter lambda](assets/figures/chua_integer_q1/fig02d_continuation_story.png)
 
 The C-backed Benettin computation evaluated on the same `q=1` numerical route
 records Lyapunov exponents
@@ -132,9 +135,11 @@ criterion.
 
 ## Hiddenness Controls
 
-The validation artifacts contain 504 trajectories sampled around the three
+The archived validation artifacts contain 504 trajectories sampled around the three
 equilibria `E0`, `E+`, and `E-`, using seven radii from `1e-5` through
-`1e-2`. The stored global classification is:
+`1e-2`. This older result is preserved as baseline evidence; new official
+hiddenness runs sample the interior of balls and generate `xy`, `xz`, and
+`yz` basin slices at close and large windows. The stored global classification is:
 
 | Class | Count |
 |-------|------:|
@@ -155,7 +160,7 @@ times.
 
 | Source | Evidence status | Use in this package |
 |--------|-----------------|---------------------|
-| `version_1/legacy_root/chua_integer_runs/balanced/` | regenerated | Machine-readable JSON/CSV and figures for the corrected `q=1` run. |
+| `validation/reference_cases/chua_integer_q1/` | promoted baseline | Machine-readable JSON/CSV and figures for the corrected `q=1` run. |
 | Report `170526.pdf`, dated 17 May 2026 | registered copy | Theoretical derivation and harmonic-seed record; earlier integration-dependent numbers are superseded by the corrected run. |
 | MATLAB `verifica_chua_entero.m` | locally executed | Independent Lur'e, Nyquist/DF, canonical-transform, and ODE comparison script; its logged `omega0`, `k`, and `a0` reproduce the stored branch. |
 | Guan and Xie (2025) | published comparison | Example 6 supplies the displayed `omega0`, `k`, `a0`, and starting-point values used in the relative-error table. |

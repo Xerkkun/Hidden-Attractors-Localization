@@ -17,7 +17,7 @@ from hidden_attractors.native.backends import FractionalChuaBackend
 
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_OUTPUT = ROOT / "validation" / "05_dynamic_analysis" / "web_illustration"
+DEFAULT_OUTPUT = ROOT / "validation" / "10_diagnostics" / "web_illustration"
 DEFAULT_SEED = np.array([3.039383584794975, -0.241686206957716, -6.873467365218827])
 
 

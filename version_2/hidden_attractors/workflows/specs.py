@@ -25,7 +25,7 @@ from ..io import read_json, write_json
 
 OrderKind = Literal["integer", "caputo", "liouville-weyl-seed", "external"]
 MemoryPolicy = Literal["not_applicable", "full_history", "finite_memory", "external"]
-SamplingMode = Literal["sphere", "ball", "axis", "eigen_directions", "grid"]
+SamplingMode = Literal["ball", "sphere", "axis", "eigen_directions", "grid"]
 SeedPolicy = Literal["independent", "continuation", "final_state", "manual"]
 
 
@@ -119,12 +119,17 @@ class TargetReferenceSpec:
 
 @dataclass(frozen=True)
 class SphereControlSpec:
-    """Equilibrium-neighborhood sphere sampling contract."""
+    """Equilibrium-neighborhood sampling contract.
+
+    The historical class name is retained for compatibility. The official
+    hiddenness protocol samples within balls, not only sphere surfaces.
+    """
 
     equilibria: tuple[str, ...]
     radii: tuple[float, ...]
     samples_per_radius: int
-    sampling_mode: SamplingMode = "sphere"
+    sampling_mode: SamplingMode = "ball"
+    sample_growth_per_radius: int = 0
     random_seed: int = 20260517
     source: str = "generated"
 
@@ -136,6 +141,10 @@ class SphereControlSpec:
             errors.append("sphere_controls.radii must be positive.")
         if int(self.samples_per_radius) <= 0:
             errors.append("sphere_controls.samples_per_radius must be positive.")
+        if self.sampling_mode != "ball":
+            errors.append("official hiddenness tests require sphere_controls.sampling_mode='ball'.")
+        if int(self.sample_growth_per_radius) < 0:
+            errors.append("sphere_controls.sample_growth_per_radius cannot be negative.")
         return errors
 
 

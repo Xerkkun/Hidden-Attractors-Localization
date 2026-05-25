@@ -8,20 +8,7 @@ from typing import Any, Callable, Mapping, Protocol
 import numpy as np
 
 from ..systems.base import ChaoticSystem
-
-
-@dataclass(frozen=True)
-class NumericalContract:
-    """Numerical settings that must be explicit in reproducible workflows."""
-
-    q: float
-    h: float
-    memory_length: float
-    t_final: float
-    t_burn: float = 0.0
-    divergence_norm: float = 120.0
-    equilibrium_tol: float = 1.0e-3
-    metadata: Mapping[str, Any] = field(default_factory=dict)
+from .protocol import NumericalContract
 
 
 @dataclass(frozen=True)

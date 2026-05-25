@@ -3112,7 +3112,7 @@ y la ecuación armónica sólo admite soluciones compatibles con
 \begin{equation}
 0<k<0.9700.
 \end{equation}
-\subsection{Construcción de la semilla}
+\subsection{Ruta clásica de Lur'e: construcción de semillas}
 
 Una vez determinados los parámetros armónicos
 \[
@@ -3462,7 +3462,7 @@ A_0
 \end{pmatrix}.
 \end{equation}
 
-\subsection{Usando los parámetros de ejemplo}
+\subsection{Ruta clásica de Lur'e con los parámetros del ejemplo}
 
 Considérense los parámetros de Danca
 \begin{equation}
@@ -3586,49 +3586,7 @@ X_{{\rm seed},2}\approx
 \end{equation}
 Ambas semillas deben probarse por separado. La selección definitiva no debe hacerse sólo por cercanía geométrica a un equilibrio o por amplitud armónica, sino por integración causal, continuación y clasificación de cuencas.
 
-Para la continuación se usa la descomposición
-\begin{equation}
-\label{eq:delta_ns}
-\psi(\sigma)=k\sigma+\delta(\sigma),
-\qquad
-\delta(\sigma)=\psi(\sigma)-k\sigma,
-\end{equation}
-que induce la familia homotópica
-\begin{equation}
-\label{eq:homotopy_ns}
-{}^{C}D_t^qX=P_0X+\varepsilon q_v\delta(r^\top X),
-\qquad \varepsilon\in[0,1].
-\end{equation}
-Si el integrador usa una memoria efectiva $L_m$, se transporta la ventana
-\begin{equation}
-\label{eq:history_window_ns}
-\mathcal H_j=\{X_j(t):t\in[t_{\rm end}-L_m,t_{\rm end}]\},
-\end{equation}
-mediante la prescripción
-\begin{equation}
-\label{eq:history_transfer_ns}
-X_{j+1}(t_{\rm start}+\theta)=X_j(t_{\rm end}+\theta),
-\qquad -L_m\leq\theta\leq0.
-\end{equation}
-
-El procedimiento queda establecido en los siguientes pasos:
-\begin{enumerate}[leftmargin=1.8em,label=\arabic*)]
-\item fijar los parámetros de \eqref{eq:danca_params_ns}, el orden $q$, el paso $h$, el integrador y la longitud de memoria $L_m$;
-\item resolver \eqref{eq:Fomega_ns} y calcular $k$ mediante \eqref{eq:k_omega_ns};
-\item resolver la ecuación de amplitud \eqref{eq:amp_ns};
-\item construir las semillas \eqref{eq:seed_ns_1} y \eqref{eq:seed_ns_2};
-\item integrar \eqref{eq:homotopy_ns} sobre una malla $0=\varepsilon_0<\varepsilon_1<\cdots<\varepsilon_N=1$;
-\item transferir en cada paso la ventana \eqref{eq:history_window_ns} mediante \eqref{eq:history_transfer_ns};
-\item al llegar a $\varepsilon=1$, integrar el sistema físico y verificar ocultamiento mediante cuencas alrededor de $X_0^*$ y $X_\pm^*$.
-\end{enumerate}
-
-La selección numérica del caso fraccionario no suave se regenerará
-exclusivamente mediante las corridas vigentes con \(q=0.9998\), EFORK-3
-corregido y la matriz postransitoria descrita en la
-Subsección~\ref{subsec:busqueda_sistematica_ns}. No se reportan aquí valores,
-tablas ni figuras provenientes de ejecuciones anteriores.
-
-\subsection{Extensión tipo Machado para generar semillas armónicas auxiliares}
+\subsection{Ruta auxiliar Machado/FDF para generar semillas armónicas}
 \label{subsec:machado_seed_chua_ns}
 
 En las secciones anteriores se usó la función descriptiva clásica de la
@@ -3640,6 +3598,30 @@ prueba de existencia de ciclos límite exactos en el sistema autónomo de Caputo
 sino como un mecanismo adicional para generar condiciones iniciales candidatas
 que posteriormente deben validarse mediante integración causal, continuación
 numérica y análisis de cuencas.
+
+La derivación explícita que sigue corresponde a la subfamilia centrada y real
+\(\sigma_0=0\), \(\theta=0\), que permite presentar la ecuación de amplitud
+en forma escalar. La ruta computacional vigente no se limita a este caso:
+evalúa la forma sesgada \(N_{\phi}^{\rm L}(A,\sigma_0)\) y, para cada
+\((A,\sigma_0,\omega,\mu)\), aplica la fase de cierre Machado/FDF mediante
+\begin{equation}
+\label{eq:machado_operational_closure_ns}
+\begin{aligned}
+N_{\phi}^{\rm M}(A,\sigma_0;\mu,\theta_\ell)
+&=\exp\!\left(\mu\operatorname{Log}
+N_{\phi}^{\rm L}(A,\sigma_0)\right)e^{i\theta_\ell},\\
+\theta_\ell&=\frac{2\pi\ell}{24},\qquad \ell=0,\ldots,23,\\
+R_{\rm M}(A,\sigma_0,\omega;\mu,\theta_\ell)
+&=1+\chi W_q(i\omega)N_{\phi}^{\rm M}(A,\sigma_0;\mu,\theta_\ell).
+\end{aligned}
+\end{equation}
+Se conservan para el ordenamiento los valores de \(\theta_\ell\) que
+minimizan \(\lvert R_{\rm M}\rvert\) en cada punto evaluado; el indicador de
+armónicos superiores \(\rho_H\) no cambia por esta rotación global de fase.
+Este \(\theta_\ell\) pertenece al cierre FDF y se registra en la tabla del
+candidato. No debe confundirse con \(\phi\), la fase orbital que se recorre
+después para reconstruir distintas condiciones iniciales a partir de una
+misma semilla armónica.
 
 El sistema en forma de Lur'e se escribe como
 \begin{equation}
@@ -4097,13 +4079,60 @@ Debe verificarse que la trayectoria integrada con derivada de Caputo converge
 a un conjunto invariante numéricamente persistente y que su cuenca no
 intersecta ninguna vecindad abierta de los equilibrios. 
 
+\subsection{Continuación causal de las semillas propuestas}
+
+Una vez obtenida una semilla por la línea Lur'e o por la línea Machado/FDF, se
+usa la ganancia armónica correspondiente \(k\) para escribir
+\begin{equation}
+\label{eq:delta_ns}
+\psi(\sigma)=k\sigma+\delta(\sigma),
+\qquad
+\delta(\sigma)=\psi(\sigma)-k\sigma,
+\end{equation}
+lo que induce la familia homotópica
+\begin{equation}
+\label{eq:homotopy_ns}
+{}^{C}D_t^qX=P_0X+\varepsilon q_v\delta(r^\top X),
+\qquad \varepsilon\in[0,1].
+\end{equation}
+Si el integrador usa una memoria efectiva $L_m$, se transporta la ventana
+\begin{equation}
+\label{eq:history_window_ns}
+\mathcal H_j=\{X_j(t):t\in[t_{\rm end}-L_m,t_{\rm end}]\},
+\end{equation}
+mediante la prescripción
+\begin{equation}
+\label{eq:history_transfer_ns}
+X_{j+1}(t_{\rm start}+\theta)=X_j(t_{\rm end}+\theta),
+\qquad -L_m\leq\theta\leq0.
+\end{equation}
+
+El procedimiento común queda establecido en los siguientes pasos:
+\begin{enumerate}[leftmargin=1.8em,label=\arabic*)]
+\item fijar los parámetros de \eqref{eq:danca_params_ns}, el orden $q$, el paso $h$, el integrador y la política de memoria;
+\item elegir la línea de función descriptiva y resolver sus condiciones de cierre y amplitud;
+\item reconstruir las semillas armónicas producidas por dicha línea;
+\item integrar cada semilla durante un transitorio y una ventana de observación causal con la matriz EFORK/ABM de la Subsección~\ref{subsec:busqueda_sistematica_ns}, descartando las señales periódicas persistentes sólo después del transitorio;
+\item conservar únicamente semillas \path{nonperiodic_post_transient} en la celda primaria EFORK sin truncamiento e integrar \eqref{eq:homotopy_ns} sobre una malla $0=\varepsilon_0<\varepsilon_1<\cdots<\varepsilon_N=1$;
+\item transportar en cada paso la historia completa o la ventana \eqref{eq:history_window_ns}, de acuerdo con el contrato evaluado;
+\item al llegar a $\varepsilon=1$, integrar el sistema físico y aplicar las pruebas de vecindades de los equilibrios y de cuencas requeridas para discutir ocultedad.
+\end{enumerate}
+
+La selección numérica del caso fraccionario no suave se regenerará
+exclusivamente mediante las corridas vigentes con \(q=0.9998\), EFORK-3
+corregido y la matriz postransitoria descrita en la
+Subsección~\ref{subsec:busqueda_sistematica_ns}. No se incorporan como
+resultados valores ni figuras provenientes de ejecuciones anteriores.
+
 \subsection{Búsqueda sistemática y evaluación de candidatos}
 \label{subsec:busqueda_sistematica_ns}
 
 Esta versión del manuscrito retira los resultados numéricos de ejecuciones
 anteriores. La función descriptiva sólo generará semillas; la selección de
 candidatos y sus pruebas se poblarán a partir de las corridas finales en
-ejecución bajo el contrato descrito enseguida.
+ejecución bajo el contrato descrito enseguida. La tabla de síntesis del caso
+se conserva para mantener la estructura comparativa del reporte y marca como
+pendientes los campos que dependen de esas corridas.
 
 \subsubsection{Protocolo vigente de búsqueda y criba}
 
@@ -4113,6 +4142,24 @@ formulación de Lur'e sesgada y extensión Machado/FDF. Esta etapa sólo propone
 semillas. En particular, una raíz de cierre armónico no demuestra la
 existencia de un ciclo periódico exacto de Caputo ni la ocultedad de un
 atractor.
+
+En la ruta Machado/FDF, la búsqueda numérica recorre
+\begin{equation}
+\begin{gathered}
+A\in[0.25,20],\qquad \sigma_0\in[-8,8],\\
+\omega\in[10^{-4},10],\qquad \ell=0,\ldots,23,\\
+\mu\in\{0.25,0.5,0.75,1,1.25,\\
+\hphantom{\mu\in\{}1.5,2,3,4,5\},\\
+\theta_\ell=\dfrac{2\pi\ell}{24}.
+\end{gathered}
+\end{equation}
+Estas son las \(24\) fases \(\theta_\ell\) de
+\eqref{eq:machado_operational_closure_ns}. En particular, la malla de
+\(\theta_\ell\) participa en la evaluación del residuo FDF; no se usa sólo
+como fase de reconstrucción de la condición inicial. Una vez elegido un
+punto \((A,\sigma_0,\omega,\mu,\theta_\ell)\), la reconstrucción recorre por
+separado fases orbitales \(\phi\), conservando en los artefactos ambos
+parámetros para mantener trazabilidad matemática.
 
 El filtro armónico duro conserva una semilla si cumple
 \begin{equation}
@@ -4224,6 +4271,108 @@ tres mejores candidatos y las figuras asociadas sólo se incorporarán después
 de finalizar la matriz postransitoria y la continuación aplicable. Las
 cuencas de atracción completas y los diagramas de bifurcación permanecen
 \textbf{pendientes}.
+
+\subsection{Tabla de resultados del Chua fraccionario no suave}
+
+De manera análoga a la Tabla~\ref{tab:chua_integer_results_full}, la
+Tabla~\ref{tab:chua_frac_ns_results_full} conserva la estructura de resultados
+del caso fraccionario no suave. Los parámetros y contratos metodológicos son
+los vigentes; los valores dinámicos se completarán únicamente desde las
+corridas postransitorias actuales.
+
+\begin{table*}[htbp]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Resumen de resultados y campos de validación pendientes para el Chua fraccionario no suave con \(q=0.9998\).}
+\label{tab:chua_frac_ns_results_full}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}L{2.7cm}L{3.4cm}L{4.4cm}L{5.8cm}@{}}
+\toprule
+\textbf{Bloque} &
+\textbf{Procedimiento} &
+\textbf{Resultado o estado vigente} &
+\textbf{Interpretación} \\
+\midrule
+
+Parámetros del sistema &
+Definición del caso no suave &
+\(\alpha=8.4562,\ \beta=12.0732,\ \gamma=0.0052,\ m_0=-0.1768,\ m_1=-1.1468\) &
+Sistema fraccionario no suave evaluado en la búsqueda actual. \\
+
+Orden dinámico &
+Sistema conmensurado de Caputo &
+\(q=0.9998\) &
+Orden obligatorio para la terna fraccionaria que se reportará. \\
+
+Forma Lur'e &
+Separación algebraica &
+\({}^{C}D_t^qX=PX+q_v\psi(r^\top X)\) &
+La función descriptiva actúa como generadora de semillas, no como prueba de ocultedad. \\
+
+Rutas de semilla &
+DF/FDF de primer armónico &
+Lur'e clásica/sesgada y Machado/FDF &
+Las dos líneas se exploran antes de aplicar filtros dinámicos. \\
+
+Integrador principal &
+EFORK-3 corregido en C &
+\(K_3=h^q f(X_n+a_{31}K_1+a_{32}K_2)\) &
+La decisión primaria se toma con EFORK sin truncamiento de historia. \\
+
+Matriz de sensibilidad &
+EFORK y ABM, con y sin truncamiento &
+\(\begin{array}{c}
+\mathrm{EFORK}_{\rm FH},\ \mathrm{EFORK}_{L_m=8}\\
+\mathrm{ABM}_{\rm FH},\ \mathrm{ABM}_{L_m=8}
+\end{array}\) &
+ABM se usa como comparación; la promoción de candidatos corresponde a EFORK. \\
+
+Tramo de evaluación &
+Criba de periodicidad posterior al transitorio &
+\(T_{\rm tr}=120,\ T_{\rm obs}=120,\ h=0.01\) &
+La periodicidad no se decide con la parte transitoria de la trayectoria. \\
+
+Semillas armónicas &
+Búsqueda y reconstrucción DF/FDF &
+\textbf{Pendiente de promoción} &
+Se reportarán identificador, método, parámetros DF/FDF y condición inicial desde la corrida vigente. \\
+
+Tres mejores candidatos &
+Filtro dinámico y ranking &
+\textbf{Pendiente de promoción} &
+La tabla final distinguirá la ruta generadora y el contrato EFORK aplicado. \\
+
+Continuación causal &
+Homotopía con historia transportada &
+\textbf{Pendiente} &
+Sólo semillas no periódicas después del transitorio podrán continuar. \\
+
+Diagnóstico dinámico &
+Trayectoria, FFT/PSD y Lyapunov &
+\textbf{Pendiente} &
+Las métricas se incorporarán sólo para sobrevivientes de continuación. \\
+
+Robustez &
+Variaciones de paso, horizonte y memoria &
+\textbf{Pendiente} &
+Se compararán EFORK sin truncamiento y la sensibilidad bajo ventana finita. \\
+
+Sondeos de ocultedad &
+Vecindades de todos los equilibrios &
+\textbf{Pendiente} &
+No se usará \path{hidden_verified} sin completar el contrato de vecindades. \\
+
+Cuencas y bifurcaciones &
+Validación final &
+\textbf{Pendiente} &
+Se realizarán al final y no intervienen en la selección inicial de semillas. \\
+
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table*}
 
 \section{Ejemplo de estudio II: Chua fraccionario con no linealidad \texorpdfstring{$\arctan$}{arctan}}
 \label{sec:chua_arctan_frac}
@@ -4905,54 +5054,20 @@ X_{{\rm seed},2}\approx
 \end{equation}
 Estas dos semillas deben integrarse por separado. La rama de mayor amplitud puede ser relevante si la cuenca de atracción es delgada o está alejada de los equilibrios.
 
-\subsection{Homotopía y continuación con ventana de memoria}
+\subsection{Resumen analítico de semillas de la ruta clásica}
 
-La descomposición
-\begin{equation}
-\label{eq:delta_arctan}
-\psi(\sigma)=k\sigma+\delta(\sigma),
-\qquad
-\delta(\sigma)=\psi(\sigma)-k\sigma,
-\end{equation}
-produce la familia
-\begin{equation}
-\label{eq:homotopy_caputo_arctan}
-{}^{C}D_t^qX=P_0X+\varepsilon q_v\delta(r^\top X),
-\qquad \varepsilon\in[0,1].
-\end{equation}
-La continuación que se implementa con EFORK es una continuación causal de trayectorias en Caputo. Por ello, el transporte entre pasos de continuación no debe hacerse únicamente con el último punto de la trayectoria anterior.
-
-Si el integrador usa una memoria efectiva $L_m$, el dato que debe pasar del paso $\varepsilon_j$ al paso $\varepsilon_{j+1}$ es la ventana terminal
-\begin{equation}
-\label{eq:history_window_arctan}
-\mathcal H_j=\{X_j(t):t\in[t_{\rm end}-L_m,t_{\rm end}]\}.
-\end{equation}
-Equivalentemente, para $-L_m\leq\theta\leq0$ se prescribe
-\begin{equation}
-\label{eq:history_transfer_arctan}
-X_{j+1}(t_{\rm start}+\theta)=X_j(t_{\rm end}+\theta),
-\end{equation}
-y después se integra con el nuevo valor de $\varepsilon_{j+1}$. Esta regla extiende al caso $\arctan$ el mismo protocolo aplicado en el Chua no suave.
-
-El procedimiento operativo queda establecido en los siguientes pasos:
-\begin{enumerate}[leftmargin=1.8em,label=\arabic*)]
-\item fijar los parámetros de \eqref{eq:wu_params}, el orden $q$, el paso $h$, el integrador y la longitud de memoria $L_m$;
-\item resolver \eqref{eq:freq_scalar_arctan} y calcular $k$ mediante \eqref{eq:omega_k_correcto_arctan};
-\item resolver la ecuación de amplitud \eqref{eq:amp_eq_arctan};
-\item construir las semillas \eqref{eq:seed_arctan_1} y \eqref{eq:seed_arctan_2};
-\item integrar \eqref{eq:homotopy_caputo_arctan} sobre una malla $0=\varepsilon_0<\varepsilon_1<\cdots<\varepsilon_N=1$;
-\item transferir en cada paso la ventana \eqref{eq:history_window_arctan} mediante \eqref{eq:history_transfer_arctan};
-\item al llegar a $\varepsilon=1$, integrar el sistema físico y verificar ocultamiento mediante cuencas alrededor de $X_0^*$ y $X_\pm^*$.
-\end{enumerate}
-
-De manera análoga a la Tabla~\ref{tab:chua_integer_results_full}, los cálculos disponibles para el sistema fraccionario con no linealidad \(\arctan\) se resumen en la Tabla~\ref{tab:chua_frac_arctan_results_full}.
+De manera análoga a la Tabla~\ref{tab:chua_integer_results_full}, los
+cálculos analíticos disponibles para la ruta clásica del sistema fraccionario
+con no linealidad \(\arctan\) se resumen en la
+Tabla~\ref{tab:chua_frac_arctan_results_full}. Las filas dinámicas permanecen
+sin completar mientras no exista una corrida promovida de este ejemplo.
 
 \begin{table*}[htbp]
 \centering
 \scriptsize
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.12}
-\caption{Resumen de resultados del Chua fraccionario con no linealidad \(\arctan\), organizado con la misma estructura de la Tabla~\ref{tab:chua_integer_results_full}.}
+\caption{Resumen analítico y campos de validación pendientes para la ruta clásica del Chua fraccionario con no linealidad \(\arctan\).}
 \label{tab:chua_frac_arctan_results_full}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{@{}L{2.7cm}L{3.4cm}L{4.4cm}L{5.8cm}@{}}
@@ -5123,15 +5238,14 @@ Fila final para reportar si el régimen queda como oculto, autoexcitado, coexist
 \end{adjustbox}
 \end{table*}
 
-\subsection{Extensión tipo Machado para la búsqueda de semillas en el sistema de Chua fraccionario con no linealidad \texorpdfstring{\(\arctan\)}{arctan}}
+\subsection{Ruta auxiliar Machado/FDF para generar semillas con no linealidad \texorpdfstring{\(\arctan\)}{arctan}}
 
-En el análisis anterior se aplicó la función descriptiva clásica al sistema
-fraccionario de Chua con no linealidad \(\arctan\). Si dicha búsqueda no
-produce un candidato satisfactorio de atractor oculto, se introduce una
-extensión auxiliar basada en la propuesta de Machado. Esta extensión no
-sustituye el análisis de Lur'e ni la condición de Nyquist ya empleada; su
-papel es ampliar el conjunto de semillas iniciales mediante una deformación
-fraccionaria de la ganancia armónica equivalente del bloque no lineal.
+Además de la función descriptiva clásica, se considera una extensión auxiliar
+basada en la propuesta de Machado para ampliar el conjunto de semillas del
+sistema fraccionario de Chua con no linealidad \(\arctan\). Esta ruta se
+plantea en paralelo con la línea de Lur'e: no la sustituye ni reemplaza la
+condición de Nyquist, sino que deforma la ganancia armónica equivalente del
+bloque no lineal antes de la misma validación causal.
 
 Se considera una forma Lur'e del sistema
 \begin{equation}
@@ -5705,9 +5819,9 @@ las soluciones \((a_0,\omega_0)\) no se interpretan como ciclos periódicos
 exactos del sistema autónomo fraccionario, sino como semillas para localizar
 regímenes oscilatorios o caóticos.
 
-\subsubsection{Uso operativo después de una búsqueda clásica fallida}
+\subsubsection{Relación operativa entre las dos líneas}
 
-Si la búsqueda clásica con \(\mu=1\) no encontró un buen candidato, se
+Al explorar conjuntamente la ruta clásica y la extensión Machado/FDF se
 distinguen dos casos:
 
 \[
@@ -5761,10 +5875,60 @@ X_0^{\mathrm{seed}}
 Solo si la cuenca del atractor candidato no intersecta ninguna vecindad
 abierta de los equilibrios se puede clasificar como atractor oculto.
 
+\subsection{Homotopía y continuación causal de las semillas}
+
+Una vez construida una semilla mediante cualquiera de las dos rutas, la
+descomposición
+\begin{equation}
+\label{eq:delta_arctan}
+\psi(\sigma)=k\sigma+\delta(\sigma),
+\qquad
+\delta(\sigma)=\psi(\sigma)-k\sigma,
+\end{equation}
+produce la familia
+\begin{equation}
+\label{eq:homotopy_caputo_arctan}
+{}^{C}D_t^qX=P_0X+\varepsilon q_v\delta(r^\top X),
+\qquad \varepsilon\in[0,1].
+\end{equation}
+La continuación que se implementa con EFORK es causal en Caputo. Por ello,
+el transporte entre pasos no debe hacerse únicamente con el último punto de
+la trayectoria anterior.
+
+Si el integrador usa una memoria efectiva $L_m$, el dato que debe pasar del
+paso $\varepsilon_j$ al paso $\varepsilon_{j+1}$ es la ventana terminal
+\begin{equation}
+\label{eq:history_window_arctan}
+\mathcal H_j=\{X_j(t):t\in[t_{\rm end}-L_m,t_{\rm end}]\}.
+\end{equation}
+Equivalentemente, para $-L_m\leq\theta\leq0$ se prescribe
+\begin{equation}
+\label{eq:history_transfer_arctan}
+X_{j+1}(t_{\rm start}+\theta)=X_j(t_{\rm end}+\theta),
+\end{equation}
+y después se integra con el nuevo valor de $\varepsilon_{j+1}$. Esta regla
+extiende al caso $\arctan$ el mismo protocolo aplicado en el Chua no suave.
+
+El procedimiento operativo común queda establecido en los siguientes pasos:
+\begin{enumerate}[leftmargin=1.8em,label=\arabic*)]
+\item fijar los parámetros de \eqref{eq:wu_params}, el orden $q$, el paso $h$, el integrador y la política de memoria;
+\item seleccionar la ruta clásica o Machado/FDF y resolver sus ecuaciones de cierre y amplitud;
+\item construir las semillas asociadas a la ruta seleccionada;
+\item integrar \eqref{eq:homotopy_caputo_arctan} sobre una malla $0=\varepsilon_0<\varepsilon_1<\cdots<\varepsilon_N=1$;
+\item transferir en cada paso la historia requerida mediante \eqref{eq:history_window_arctan} y \eqref{eq:history_transfer_arctan};
+\item al llegar a $\varepsilon=1$, integrar el sistema físico y verificar ocultamiento mediante vecindades de todos los equilibrios y, posteriormente, cuencas de atracción.
+\end{enumerate}
+
 \section{Resultados numéricos}
 \label{sec:resultados_numericos}
 
-% Los resultados numéricos de ambos casos de estudio ya quedaron integrados en las subsecciones específicas de cada ejemplo, por lo que no se repiten en un bloque separado.
+Los resultados numéricos promovidos del caso entero se presentan en su
+sección correspondiente. Para el Chua fraccionario no suave con
+\(q=0.9998\), los resultados se incorporarán exclusivamente después de
+completar las corridas postransitorias vigentes y su continuación causal. El
+caso con no linealidad \(\arctan\) permanece en esta actualización como
+desarrollo metodológico para generación de semillas, sin resultados dinámicos
+finales promovidos.
 
 \section{Alcance de la metodología y sistemas candidatos}
 

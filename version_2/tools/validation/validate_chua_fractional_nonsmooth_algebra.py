@@ -404,8 +404,8 @@ def main() -> None:
     parser.add_argument("--validation-root", type=Path, default=DEFAULT_ROOT)
     args = parser.parse_args()
     root = args.validation_root.resolve()
-    algebra = root / "01_algebra"
-    lure = root / "02_lure_df"
+    algebra = root / "02_algebraic_validation"
+    lure = algebra
     manifest = root / "00_manifest"
     for path in (algebra, lure, manifest):
         path.mkdir(parents=True, exist_ok=True)
@@ -434,15 +434,19 @@ def main() -> None:
         and eigenvalue_cross_tool_pass
     )
     algebra_summary = {
-        "stage": "algebra",
+        "schema_version": "1.0",
+        "protocol_version": "caputo_hidden_attractors_v1",
+        "stage": "algebraic_validation",
         "status": "passed_python_matlab_wolfram" if algebra_pass else "incomplete_or_failed_tolerance_check",
-        "q": Q,
-        "tolerances": {
+        "system": "fractional_nonsmooth_chua",
+        "numerical_contract": {"q": Q, "tolerances": {
             "equilibrium_rhs_norm_max": TOL_RHS,
             "jacobian_finite_difference_relative_error_max": TOL_JACOBIAN_FD,
             "eigenvalue_cross_tool_relative_error_max": TOL_EIGENVALUE,
-        },
-        "checks": {
+        }},
+        "inputs": {},
+        "outputs": {"seed_family_role": "seed_generation_only_not_hiddenness_evidence"},
+        "metrics": {
             "rhs_residual_max": rhs_residual_max,
             "rhs_residual_pass": rhs_residual_max < TOL_RHS,
             "equilibrium_cross_tool_pass": equilibrium_cross_tool_pass,
@@ -454,7 +458,7 @@ def main() -> None:
             "outer_equilibria_unstable_by_matignon": any(not bool(row["stable_mode"]) for row in eig_rows if row["equilibrium"] == "E+"),
         },
         "files": {
-            "report": "algebra_validation.md",
+            "report": "algebraic_validation_validation.md",
             "equilibria": "equilibria_summary.csv",
             "equilibria_cross_tool": "equilibria_cross_tool_residuals.csv",
             "jacobians": "jacobian_check.csv",
@@ -466,9 +470,8 @@ def main() -> None:
             "complex_plane_figure": "matignon_complex_plane.png",
         },
     }
-    (algebra / "algebra_validation_summary.json").write_text(json.dumps(algebra_summary, indent=2) + "\n", encoding="utf-8")
-    (algebra / "algebra_validation.md").write_text(
-        "# Algebra Validation\n\n"
+    (algebra / "algebraic_validation_validation.md").write_text(
+        "# Algebraic Validation\n\n"
         "The non-smooth fractional Chua model at `q=0.9998` reproduces Danca's "
         "parameter set and the MATLAB validation values. Python returns the same "
         "three equilibria, zero vector-field residuals to floating-point precision, "
@@ -485,27 +488,17 @@ def main() -> None:
     write_csv(lure / "transfer_function_check.csv", transfer_rows)
     write_csv(lure / "describing_function_check.csv", describing_rows)
     write_csv(lure / "machado_mu1_check.csv", machado_rows)
-    lure_summary = {
-        "stage": "lure_df",
+    seed_family_checks = {
         "status": "passed_python_matlab_after_sign_normalization",
-        "q": Q,
         "sign_convention": "W_code = -W_report; 1 + k*W_code = 0 is equivalent to 1 - k*W_report = 0.",
         "checks": {
             "max_lure_rhs_residual": max(float(row["max_abs_rhs_minus_lure"]) for row in lure_rows_out),
             "max_report_closure_residual": max(float(row["abs_report_closure_1_minus_kW"]) for row in transfer_rows),
             "max_amplitude_difference_from_matlab": max(float(row["abs_amplitude_minus_matlab"]) for row in describing_rows),
         },
-        "files": {
-            "report": "lure_df_validation.md",
-            "lure": "lure_equivalence_check.csv",
-            "transfer": "transfer_function_check.csv",
-            "describing_function": "describing_function_check.csv",
-            "machado_mu1": "machado_mu1_check.csv",
-        },
     }
-    (lure / "lure_df_validation_summary.json").write_text(json.dumps(lure_summary, indent=2) + "\n", encoding="utf-8")
-    (lure / "lure_df_validation.md").write_text(
-        "# Lure And Describing-Function Validation\n\n"
+    (lure / "describing_function_families.md").write_text(
+        "# Describing-Function Families\n\n"
         "The manual Lur'e split reproduces the non-smooth vector field. The two "
         "centered branches at `q=0.9998` match MATLAB after normalizing the "
         "transfer sign: Python uses `1 + k*W_code = 0`, while the report/MATLAB "
@@ -514,6 +507,19 @@ def main() -> None:
         "chaotic trajectory or hiddenness.\n",
         encoding="utf-8",
     )
+    algebra_summary["outputs"]["describing_function_families"] = seed_family_checks
+    algebra_summary["files"].update(
+        {
+            "transfer_function": "transfer_function_check.csv",
+            "lure_equivalence": "lure_equivalence_check.csv",
+            "describing_function": "describing_function_check.csv",
+            "machado_mu1": "machado_mu1_check.csv",
+            "seed_family_appendix": "describing_function_families.md",
+        }
+    )
+    algebra_summary["verdict"] = None
+    algebra_summary["provenance"] = {"generator": "tools/validation/validate_chua_fractional_nonsmooth_algebra.py"}
+    (algebra / "algebraic_validation_validation_summary.json").write_text(json.dumps(algebra_summary, indent=2) + "\n", encoding="utf-8")
     try:
         import subprocess
         commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
@@ -537,25 +543,38 @@ def main() -> None:
         "main_system": "fractional nonsmooth Chua",
         "main_parameters": {**params.__dict__, "q": Q},
         "stages": {
-            "algebra": "01_algebra/algebra_validation_summary.json",
-            "lure_df": "02_lure_df/lure_df_validation_summary.json",
-            "integrators": "03_integrators/integrator_validation_summary.json",
+            "numerical_contract": "pending",
+            "algebraic_validation": "02_algebraic_validation/algebraic_validation_validation_summary.json",
+            "seed_generation": "pending",
+            "soft_precheck": "pending",
+            "continuation": "pending",
+            "post_continuation_filter": "pending",
+            "dynamic_reference": "pending",
+            "robustness": "pending",
+            "hiddenness_tests": "pending",
+            "diagnostics": "pending",
         },
         "pending_stages": [
-            "candidates",
-            "dynamic_analysis",
-            "hiddenness",
+            "numerical_contract",
+            "seed_generation",
+            "soft_precheck",
+            "continuation",
+            "post_continuation_filter",
+            "dynamic_reference",
             "robustness",
-            "literature_comparison",
+            "hiddenness_tests",
+            "diagnostics",
         ],
-        "final_report": {"status": "pending_full_validation"},
+        "schema_version": "1.0",
+        "protocol_version": "caputo_hidden_attractors_v1",
+        "final_report": {"status": "pending_full_protocol"},
     }
     if dirty:
         manifest_data["dirty"] = True
     (manifest / "validation_manifest.json").write_text(json.dumps(manifest_data, indent=2) + "\n", encoding="utf-8")
     (manifest / "environment.json").write_text(json.dumps({"python": sys.version, "platform": platform.platform()}, indent=2) + "\n", encoding="utf-8")
     (manifest / "software_versions.json").write_text(json.dumps({"numpy": np.__version__, "matplotlib": matplotlib.__version__}, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({"algebra": algebra_summary, "lure_df": lure_summary}, indent=2))
+    print(json.dumps({"algebraic_validation": algebra_summary}, indent=2))
 
 
 if __name__ == "__main__":

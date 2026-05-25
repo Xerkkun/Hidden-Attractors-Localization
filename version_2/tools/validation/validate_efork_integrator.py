@@ -131,7 +131,7 @@ def main() -> None:
     parser.add_argument("--validation-root", type=Path, default=DEFAULT_VALIDATION_ROOT)
     args = parser.parse_args()
     root = args.validation_root.resolve()
-    integrator_dir = root / "03_integrators"
+    integrator_dir = root / "01_numerical_contract"
     manifest_dir = root / "00_manifest"
 
     for path in (integrator_dir, manifest_dir):
@@ -426,42 +426,88 @@ def main() -> None:
         write_csv(integrator_dir / "memory_sensitivity.csv", sensitivity_rows)
 
     # -------------------------------------------------------------------------
-    # 5. Integrator Validation Summary JSON
+    # 5. Numerical-contract EFORK evidence summary
     # -------------------------------------------------------------------------
-    print("Step 5: Writing integrator_validation_summary.json...")
+    print("Step 5: Writing numerical_contract_validation_summary.json...")
+    effective_contract = {
+        "protocol_version": "caputo_hidden_attractors_v1",
+        "schema_version": "1.0",
+        "stage": "numerical_contract",
+        "backend": "efork_python_reference_and_native_c",
+        "reference_backend": "abm_full_history",
+        "memory_policy": "full_history_reference_with_finite_memory_sensitivity_variant",
+        "efork_stage": "K3 = F(... + a31*K1 + a32*K2)",
+    }
+    (integrator_dir / "effective_contract.json").write_text(
+        json.dumps(effective_contract, indent=2) + "\n", encoding="utf-8"
+    )
+    write_csv(
+        integrator_dir / "integrator_benchmark_summary.csv",
+        [
+            {
+                "check": "published_error_reproduction",
+                "backend": "python_efork_reference",
+                "passed": bool(published_reproduction_pass),
+                "efork_stage": effective_contract["efork_stage"],
+            },
+            {
+                "check": "q1_stage_order",
+                "backend": "python_efork_reference",
+                "passed": bool(q1_stage_order_pass),
+                "efork_stage": effective_contract["efork_stage"],
+            },
+            {
+                "check": "native_python_stage_parity",
+                "backend": "native_c_efork",
+                "passed": native_backend_python_reference_pass,
+                "efork_stage": effective_contract["efork_stage"],
+            },
+        ],
+    )
     summary = {
-        "stage": "integrator",
+        "schema_version": "1.0",
+        "protocol_version": "caputo_hidden_attractors_v1",
+        "stage": "numerical_contract",
         "status": "passed_available_efork_checks",
-        "method": "EFORK3 finite-memory Caputo approximation",
-        "checks": {
+        "system": "fractional_nonsmooth_chua",
+        "numerical_contract": effective_contract,
+        "inputs": {},
+        "outputs": {"method": "EFORK3 Caputo validation and ABM comparison"},
+        "metrics": {
             "published_error_reproduction_pass": bool(published_reproduction_pass),
             "q1_stage_order_pass": bool(q1_stage_order_pass),
             "native_backend_python_reference_pass": native_backend_python_reference_pass,
             "abm_short_time_available": True,
-            "memory_sensitivity_generated": bool(memory_sensitivity_generated)
+            "memory_sensitivity_generated": bool(memory_sensitivity_generated),
         },
-        "tolerances": {
-            "reproduction_atol": 6.0e-9,
-            "q1_stage_order_atol": 1.0e-15,
-            "decay_theoretical_atol": 1.0e-5
-        },
+        "verdict": None,
         "files": {
-            "report": "integrator_validation.md",
+            "report": "numerical_contract_validation.md",
+            "contract": "effective_contract.json",
+            "integrator_benchmark": "integrator_benchmark_summary.csv",
             "manufactured_solution_convergence": "manufactured_solution_convergence.csv",
             "q1_limit_vs_solve_ivp": "q1_limit_vs_solve_ivp.csv",
             "abm_vs_efork_short_time": "abm_vs_efork_short_time.csv",
-            "memory_sensitivity": "memory_sensitivity.csv"
-        }
+            "memory_sensitivity": "memory_sensitivity.csv",
+        },
+        "provenance": {
+            "efork_stage": effective_contract["efork_stage"],
+            "tolerances": {
+                "reproduction_atol": 6.0e-9,
+                "q1_stage_order_atol": 1.0e-15,
+                "decay_theoretical_atol": 1.0e-5,
+            },
+        },
     }
-    (integrator_dir / "integrator_validation_summary.json").write_text(
+    (integrator_dir / "numerical_contract_validation_summary.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
     )
 
     # -------------------------------------------------------------------------
-    # 6. Integrator Validation Report Markdown
+    # 6. Numerical Contract Report Markdown
     # -------------------------------------------------------------------------
-    print("Step 6: Writing integrator_validation.md...")
-    md_content = """# Integrator Validation
+    print("Step 6: Writing numerical_contract_validation.md...")
+    md_content = """# Numerical Contract: Integrator Validation
 
 The Caputo fractional-order EFORK-3 numerical integration backend is validated under several complementary contracts.
 
@@ -503,9 +549,9 @@ This stage formally validates EFORK-3 as an accurate numerical Caputo fractional
 - Attractor hiddenness or localized basin decisions.
 - Global parameter robustness or physical circuit implementation.
 
-These scientific and structural properties are evaluated and verified in later stages (`dynamic_analysis`, `hiddenness`, `robustness`).
+These scientific and structural properties are evaluated in later stages (`dynamic_reference`, `robustness`, `hiddenness_tests`, `diagnostics`).
 """
-    (integrator_dir / "integrator_validation.md").write_text(md_content, encoding="utf-8")
+    (integrator_dir / "numerical_contract_validation.md").write_text(md_content, encoding="utf-8")
 
     # -------------------------------------------------------------------------
     # 7. Global Manifest Update
@@ -557,23 +603,27 @@ These scientific and structural properties are evaluated and verified in later s
     if not isinstance(stages, dict):
         stages = {}
         manifest_data["stages"] = stages
-    stages["integrators"] = "03_integrators/integrator_validation_summary.json"
+    manifest_data["schema_version"] = "1.0"
+    manifest_data["protocol_version"] = "caputo_hidden_attractors_v1"
+    stages["numerical_contract"] = "01_numerical_contract/numerical_contract_validation_summary.json"
 
     pending_stages = manifest_data.setdefault("pending_stages", [
-        "algebra",
-        "lure_df",
-        "candidate_selection",
-        "dynamic_analysis",
-        "hiddenness",
+        "algebraic_validation",
+        "seed_generation",
+        "soft_precheck",
+        "continuation",
+        "post_continuation_filter",
+        "dynamic_reference",
         "robustness",
-        "literature_comparison"
+        "hiddenness_tests",
+        "diagnostics",
     ])
     if not isinstance(pending_stages, list):
         pending_stages = []
         manifest_data["pending_stages"] = pending_stages
 
-    # Filter out integrators from pending
-    pending_stages = [x for x in pending_stages if x not in ("integrator", "integrators", "03_integrators")]
+    # Remove the completed official stage from the pending set.
+    pending_stages = [x for x in pending_stages if x not in ("numerical_contract", "integrator", "integrators", "03_integrators")]
     manifest_data["pending_stages"] = pending_stages
 
     final_report = manifest_data.setdefault("final_report", {})

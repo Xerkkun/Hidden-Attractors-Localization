@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0",
+  "protocol_version": "caputo_hidden_attractors_v1",
+  "system": "fractional_nonsmooth_chua",
+  "numerical_contract": {
+    "q": 0.9998,
+    "h": 0.01,
+    "t_final": 3000.0,
+    "t_transient": 120.0,
+    "backend": "efork_c",
+    "memory_policy": "finite_memory",
+    "memory_length": 40.0,
+    "tolerances": {
+      "equilibrium_residual": 1e-10,
+      "jacobian_error": 1e-06
+    },
+    "boundedness_thresholds": {
+      "divergence_norm": 120.0,
+      "nontrivial_range": 0.01
+    },
+    "equilibrium_distance_thresholds": {
+      "collapsed_distance": 0.001
+    },
+    "harmonic_residual_thresholds": {
+      "residual_keep": 0.05,
+      "rho_H_keep": 0.3
+    },
+    "similarity_thresholds": {
+      "target_cloud_norm": 0.08
+    },
+    "hiddenness_radii": [1e-05, 3e-05, 0.0001, 0.0003, 0.001],
+    "samples_per_radius": 500,
+    "sample_growth_per_radius": 100,
+    "random_seed_policy": "fixed_reproducible",
+    "random_seed": 20260517,
+    "output_schema_version": "1.0"
+  },
+  "backend_policy": {
+    "large_sweeps": "efork_c_preferred_after_validation",
+    "final_candidate_benchmark": "abm_full_history",
+    "memory_truncation_role": "robustness_and_scalability_variant"
+  },
+  "stages": [
+    "numerical_contract",
+    "algebraic_validation",
+    "seed_generation",
+    "soft_precheck",
+    "continuation",
+    "post_continuation_filter",
+    "dynamic_reference",
+    "robustness",
+    "hiddenness_tests",
+    "diagnostics"
+  ],
+  "seed_generation": {
+    "families": [
+      "lure_classical_centered",
+      "lure_classical_biased",
+      "machado_centered",
+      "machado_biased"
+    ],
+    "interpretation": "seed_generation_only_not_hiddenness_evidence"
+  },
+  "soft_precheck": {
+    "periodic_seed_label": "pre_continuation_periodic",
+    "periodic_seed_is_admissible": true,
+    "hard_rejection_reasons": [
+      "invalid_configuration",
+      "invalid_amplitude_frequency",
+      "nan_or_inf",
+      "catastrophic_numerical_failure",
+      "exact_duplicate"
+    ]
+  },
+  "continuation": {
+    "public_parameter": "lambda",
+    "lambda_values": [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0],
+    "internal_mapping": {
+      "legacy_parameter": "eta",
+      "meaning": "nonlinearity_deformation"
+    }
+  },
+  "robustness": {
+    "required_comparisons": [
+      "finer_h",
+      "longer_t_final",
+      "different_memory_length",
+      "full_history_vs_finite_memory",
+      "efork_vs_abm_when_feasible",
+      "perturbed_x0",
+      "reconstruction_phase_when_available"
+    ],
+    "verdicts": [
+      "robust_target_hit",
+      "weak_target_hit",
+      "not_reproduced",
+      "numerical_failure"
+    ]
+  },
+  "hiddenness_tests": {
+    "sampling_mode": "ball",
+    "basin_planes": ["xy", "xz", "yz"],
+    "windows": ["close", "large"],
+    "requires_all_equilibria": true,
+    "requires_robust_reference": true
+  }
+}

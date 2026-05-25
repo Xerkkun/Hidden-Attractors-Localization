@@ -27,6 +27,7 @@ from ..models.chua import equilibria_nonsmooth
 from ..native.backends import FractionalChuaBackend, FullHistoryABMBackend
 from ..paths import OUTPUTS, PROJECT_ROOT, RUNTIME_CACHE
 from ..plotting.dynamics import plot_phase_projections, plot_phase_space, plot_time_series
+from .protocol import PROTOCOL_VERSION, SCHEMA_VERSION, StageEnvelope, sample_uniform_ball
 
 
 Q = 0.9998
@@ -35,7 +36,7 @@ FULL_HISTORY_POLICY = "full_caputo_history_no_finite_memory_truncation"
 CONTINUATION_POLICY = "full_generated_homotopy_history_carried_without_truncation"
 FINITE_WINDOW_POLICY = "finite_caputo_history_window"
 FINITE_CONTINUATION_POLICY = "finite_terminal_window_carried_across_homotopy"
-APERIODIC_RETURN_THRESHOLD = 0.05
+POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD = 0.05
 PARAMETERS = {
     "model": "nonsmooth",
     "alpha": 8.4562,
@@ -66,14 +67,21 @@ def _legacy_modules() -> tuple[Any, Any, Any, Any]:
     return chua, search_biased_candidates, chua_ic_params, (load_config, centered_candidates_from_nyquist, rho_h_diagnostic)
 
 
-def _method_label(df_family: str) -> str:
-    labels = {
-        "classical": "DF centrada",
-        "classical_biased": "Lur'e sesgada",
-        "machado": "Machado centrada",
-        "machado_biased": "Machado sesgada",
+def _seed_family(df_family: str) -> str:
+    families = {
+        "classical": "lure_classical_centered",
+        "classical_centered": "lure_classical_centered",
+        "classical_biased": "lure_classical_biased",
+        "lure_biased": "lure_classical_biased",
+        "machado": "machado_centered",
+        "machado_centered": "machado_centered",
+        "machado_biased": "machado_biased",
     }
-    return labels.get(str(df_family), str(df_family))
+    return families.get(str(df_family), str(df_family))
+
+
+def _method_label(df_family: str) -> str:
+    return _seed_family(df_family)
 
 
 def _finite(value: Any, default: float = float("nan")) -> float:
@@ -88,6 +96,16 @@ def _short_seed(row: dict[str, Any]) -> np.ndarray:
     if "seed" in row:
         return np.asarray(row["seed"], dtype=float)
     return np.asarray([row["seed_x"], row["seed_y"], row["seed_z"]], dtype=float)
+
+
+def _valid_seed_configuration(row: dict[str, Any]) -> bool:
+    return bool(
+        math.isfinite(_finite(row.get("A")))
+        and _finite(row.get("A")) > 0.0
+        and math.isfinite(_finite(row.get("omega")))
+        and _finite(row.get("omega")) > 0.0
+        and np.all(np.isfinite(_short_seed(row)))
+    )
 
 
 def _full_history_horizon(t_final: float, h: float) -> float:
@@ -140,6 +158,7 @@ def generate_lightweight_df_pool(outdir: Path) -> tuple[list[dict[str, Any]], di
 
     rows: list[dict[str, Any]] = []
     for source in centered_candidates_from_nyquist(cfg, p):
+        family = _seed_family(str(source["df_family"]))
         diag = rho_h_diagnostic(
             candidate_id=f"current_{source['candidate_id']}",
             df_family=str(source["df_family"]),
@@ -160,9 +179,16 @@ def generate_lightweight_df_pool(outdir: Path) -> tuple[list[dict[str, Any]], di
             {
                 **{key: value for key, value in diag.items() if key not in {"fourier", "base_N"}},
                 "candidate_id": f"current_{source['candidate_id']}",
-                "method": _method_label(str(source["df_family"])),
+                "family": family,
+                "method": family,
+                "centered_or_biased": "centered",
                 "gain_k": gain,
-                "theta": "",
+                "mu": 1.0 if family == "lure_classical_centered" else _finite(source.get("mu"), 1.0),
+                "theta": _finite(source.get("theta"), 0.0),
+                "harmonic_residual": _finite(diag.get("residual_abs", diag.get("harmonic_residual"))),
+                "x0": seed.tolist(),
+                "reconstruction_metadata": {"implementation": "build_fractional_seed", "gain_k": gain},
+                "source_config": "configs/chua_fractional_nonsmooth.yaml",
                 "seed_x": float(seed[0]),
                 "seed_y": float(seed[1]),
                 "seed_z": float(seed[2]),
@@ -173,11 +199,19 @@ def generate_lightweight_df_pool(outdir: Path) -> tuple[list[dict[str, Any]], di
     biased, _all_rows = search_biased_candidates(cfg, p, outdir / "df_scan")
     for source in biased:
         row = dict(source)
+        family = _seed_family(str(source["df_family"]))
         row["candidate_id"] = "current_" + str(source["candidate_id"])
-        row["method"] = _method_label(str(source["df_family"]))
+        row["family"] = family
+        row["method"] = family
+        row["centered_or_biased"] = "biased"
+        row["mu"] = 1.0 if family == "lure_classical_biased" else _finite(row.get("mu"), 1.0)
+        row["theta"] = _finite(row.get("theta"), 0.0)
+        row["harmonic_residual"] = _finite(row.get("residual_abs", row.get("harmonic_residual")))
         row["gain_k"] = float(source["N_re"])
-        row["theta"] = ""
         row["analytical_backend"] = "python_lightweight_df"
+        row["x0"] = _short_seed(row).tolist()
+        row["reconstruction_metadata"] = {"implementation": "biased_describing_function", "gain_k": row["gain_k"]}
+        row["source_config"] = "configs/chua_fractional_nonsmooth.yaml"
         rows.append(row)
 
     rows.sort(key=lambda row: (_finite(row.get("residual_abs"), 1e99), _finite(row.get("rho_H"), 1e99)))
@@ -220,10 +254,10 @@ def _continued_observation(
     t_final: float,
     full_history: bool,
 ) -> tuple[dict[str, np.ndarray], float, str, str]:
-    eps = np.linspace(0.0, 1.0, 5)
+    lambda_values = np.linspace(0.0, 1.0, 5)
     stage_time = 4.0 + 6.0
     horizon = (
-        _full_history_horizon(float(eps.size) * stage_time + t_final, h)
+        _full_history_horizon(float(lambda_values.size) * stage_time + t_final, h)
         if full_history
         else memory_length
     )
@@ -231,7 +265,9 @@ def _continued_observation(
     continuation_policy = CONTINUATION_POLICY if full_history else FINITE_CONTINUATION_POLICY
     cont = backend.continue_efork3(
         _short_seed(row),
-        eps_values=eps,
+        # The native API retains its historical argument name; this is the
+        # internal mapping of the public ContinuationPlan(lambda).
+        lambda_values=lambda_values,
         q=Q,
         k=float(row["gain_k"]),
         h=h,
@@ -261,13 +297,13 @@ def screen_candidates_with_c(
         cont, trajectory_horizon, memory_policy, continuation_policy = _continued_observation(
             backend, row, h=h, memory_length=memory_length, t_final=t_final, full_history=full_history
         )
-        for index, eta in enumerate(cont["epsilon"]):
+        for index, lambda_value in enumerate(cont["lambda"]):
             state = cont["x_out"][index]
             continuation_rows.append(
                 {
                     "candidate_id": row["candidate_id"],
                     "method": row["method"],
-                    "epsilon": float(eta),
+                    "lambda": float(lambda_value),
                     "x": float(state[0]),
                     "y": float(state[1]),
                     "z": float(state[2]),
@@ -276,6 +312,7 @@ def screen_candidates_with_c(
                     "backend": "chua_frac_backend_lib.c",
                     "memory_policy": continuation_policy,
                     "history_horizon": trajectory_horizon,
+                    "internal_mapping": "native epsilon=lambda",
                 }
             )
         start = cont["x_out"][-1]
@@ -293,10 +330,10 @@ def screen_candidates_with_c(
             t_start=0.5 * t_final,
             dominant_frequency=_finite(metric.get("fft_peak")),
         )
-        aperiodic_gate = bool(
+        post_continuation_periodicity_pass = bool(
             continuation_eligible
             and math.isfinite(return_ratio)
-            and return_ratio >= APERIODIC_RETURN_THRESHOLD
+            and return_ratio >= POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD
         )
         item = {
             **row,
@@ -315,15 +352,16 @@ def screen_candidates_with_c(
             "continuation_eligible": continuation_eligible,
             "dominant_period_return_ratio": return_ratio,
             "dominant_period_return_lag": return_lag,
-            "aperiodic_threshold": APERIODIC_RETURN_THRESHOLD,
-            "aperiodic_gate": aperiodic_gate,
-            "eligible": aperiodic_gate,
+            "post_continuation_periodicity_threshold": POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD,
+            "post_continuation_periodicity_pass": post_continuation_periodicity_pass,
+            "post_continuation_survivor": post_continuation_periodicity_pass,
+            "verdict": "continuation_survivor" if post_continuation_periodicity_pass else "rejected_post_continuation",
         }
         screened.append(item)
         _write_trajectory(outdir / "trajectories" / f"{safe_name(str(row['candidate_id']))}.csv", traj)
     screened.sort(
         key=lambda item: (
-            not bool(item["eligible"]),
+            not bool(item["post_continuation_survivor"]),
             _finite(item.get("residual_abs"), 1e99),
             _finite(item.get("rho_H"), 1e99),
             -_finite(item.get("range_x"), -1e99),
@@ -345,7 +383,7 @@ def select_top_three(
     selected: list[dict[str, Any]] = []
     unique_rows: list[dict[str, Any]] = []
     for row in screened:
-        if not bool(row["eligible"]):
+        if not bool(row["post_continuation_survivor"]):
             continue
         seed = np.asarray(row["seed"], dtype=float)
         start = np.asarray(row["robust_start"], dtype=float)
@@ -359,8 +397,8 @@ def select_top_three(
         if len(unique_rows) == 3:
             break
     selection_policy = (
-        "distinct EFORK C trajectories passing bounded nontrivial screening and "
-        f"dominant-period return ratio >= {APERIODIC_RETURN_THRESHOLD}; "
+        "distinct EFORK C target-system trajectories passing the post_continuation_filter and "
+        f"dominant-period return ratio >= {POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD}; "
         "then residual_abs, rho_H and range_x"
     )
     if len(unique_rows) < 3:
@@ -371,15 +409,15 @@ def select_top_three(
                 **provenance,
                 "q": Q,
                 "branch_id": branch_id,
-                "selection_status": "insufficient_aperiodic_candidates",
+                "selection_status": "insufficient_post_continuation_survivors",
                 "selection_policy": selection_policy,
                 "selected_candidates": [],
             },
         )
         write_csv(outdir / "selected_candidates.csv", [])
         raise RuntimeError(
-            "No se obtuvieron tres candidatos no triviales que superen el filtro "
-            "de retorno casi periódico; no procede ejecutar ocultedad."
+            "No se obtuvieron tres supervivientes tras el filtro posterior a la "
+            "continuacion; no procede ejecutar ocultedad."
         )
     for rank, row in enumerate(unique_rows, 1):
         selected.append(
@@ -408,9 +446,9 @@ def select_top_three(
                 "fft_peak": row.get("fft_peak", ""),
                 "psd_entropy": row.get("psd_entropy", ""),
                 "dominant_period_return_ratio": row.get("dominant_period_return_ratio", ""),
-                "aperiodic_threshold": APERIODIC_RETURN_THRESHOLD,
-                "aperiodic_gate": bool(row["aperiodic_gate"]),
-                "eligible": bool(row["eligible"]),
+                "post_continuation_periodicity_threshold": POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD,
+                "post_continuation_periodicity_pass": bool(row["post_continuation_periodicity_pass"]),
+                "verdict": "continuation_survivor",
                 "backend": row["backend"],
                 "efork_stage": EFORK_STAGE,
                 "run_id": run_id,
@@ -425,7 +463,7 @@ def select_top_three(
             **provenance,
             "q": Q,
             "branch_id": branch_id,
-            "selection_status": "promoted_for_hiddenness",
+            "selection_status": "continuation_survivors_selected_for_reference",
             "selection_policy": selection_policy,
             "selected_candidates": selected,
         },
@@ -564,8 +602,10 @@ def run_hiddenness_evidence(
     suffix = "full" if full_history else "window"
     backend = FractionalChuaBackend.build(output_name=f"fractional_report_hiddenness_{suffix}")
     equilibria = equilibria_nonsmooth()
-    directions = np.eye(3).tolist() + (-np.eye(3)).tolist()
     radii = [1.0e-4, 1.0e-3]
+    samples_per_radius = 12
+    sample_growth_per_radius = 12
+    rng = np.random.default_rng(20260524 if full_history else 20260525)
     h = 0.02
     t_final = 30.0
     t_burn = 15.0
@@ -579,14 +619,16 @@ def run_hiddenness_evidence(
         reference_traj[:, 0] -= reference_traj[0, 0]
         _reference_metric, reference = trajectory_metrics(reference_traj, h=h, t_start=t_burn)
         for eq_id, center in equilibria.items():
-            for radius in radii:
-                for sample_id, direction in enumerate(directions):
-                    x0 = center + radius * np.asarray(direction, dtype=float)
+            for radius_index, radius in enumerate(radii):
+                count = samples_per_radius + radius_index * sample_growth_per_radius
+                for sample_id, x0 in enumerate(sample_uniform_ball(center, radius, count, rng)):
                     item = {
                         "candidate_id": cand["candidate_id"],
                         "equilibrium_id": eq_id,
                         "radius": radius,
                         "sample_id": sample_id,
+                        "sampling_mode": "ball",
+                        "distance_from_equilibrium": float(np.linalg.norm(x0 - center)),
                         "x0": float(x0[0]),
                         "y0": float(x0[1]),
                         "z0": float(x0[2]),
@@ -616,8 +658,8 @@ def run_hiddenness_evidence(
                             "memory_policy": memory_policy,
                         }
                     )
-    write_csv(outdir / "sphere_plan.csv", plan)
-    write_csv(outdir / "sphere_raw.csv", raw)
+    write_csv(outdir / "ball_sampling_plan.csv", plan)
+    write_csv(outdir / "ball_sampling_results.csv", raw)
     decisions: list[dict[str, Any]] = []
     contract_label = "historial completo" if full_history else "ventana finita"
     for cand in selected:
@@ -628,16 +670,27 @@ def run_hiddenness_evidence(
                 "candidate_id": cand["candidate_id"],
                 "tested_trajectories": len(rows),
                 "target_hits": hits,
-                "hiddenness_status": "not_supported_by_tested_neighborhoods" if hits else "compatible_under_tested_neighborhoods",
+                "hiddenness_status": "rejected_self_excited_contact" if hits else "compatible_with_hiddenness_under_tested_radii",
                 "contract_note": f"Una coincidencia refuta ocultedad bajo el contrato EFORK de {contract_label}; cero impactos no es demostracion.",
             }
         )
-    write_csv(outdir / "sphere_decision.csv", decisions)
+    write_csv(outdir / "hiddenness_decisions.csv", decisions)
     summary = {
         "status": "completed",
         "backend": "chua_frac_backend_lib.c",
         "efork_stage": EFORK_STAGE,
-        "contract": {"q": Q, "h": h, "history_horizon": history_horizon, "memory_policy": memory_policy, "t_final": t_final, "t_burn": t_burn, "radii": radii, "directions": "axis_six"},
+        "contract": {
+            "q": Q,
+            "h": h,
+            "history_horizon": history_horizon,
+            "memory_policy": memory_policy,
+            "t_final": t_final,
+            "t_burn": t_burn,
+            "radii": radii,
+            "sampling_mode": "ball",
+            "samples_per_radius": samples_per_radius,
+            "sample_growth_per_radius": sample_growth_per_radius,
+        },
         "decisions": decisions,
         "basins_and_bifurcations": "pending",
     }
@@ -658,7 +711,7 @@ def run_strict_refinement(
 
     suffix = "full" if full_history else "window"
     backend = FractionalChuaBackend.build(output_name=f"fractional_report_strict_refinement_{suffix}")
-    raw = read_csv_rows(outdir / "sphere_raw.csv")
+    raw = read_csv_rows(outdir / "ball_sampling_results.csv")
     rows: list[dict[str, Any]] = []
     h = 0.02
     t_final = 30.0
@@ -737,12 +790,13 @@ def run_danca_abm_control(outdir: Path) -> dict[str, Any]:
     reference_metric, reference = trajectory_metrics(reference_traj, h=h, t_start=t_burn)
     _write_trajectory(outdir / "danca_reference_abm_full_history.csv", reference_traj)
     equilibria = backend.equilibria()
-    directions = np.eye(3).tolist() + (-np.eye(3)).tolist()
+    radius = 1.0e-2
+    samples_per_equilibrium = 12
+    rng = np.random.default_rng(20260526)
     rows: list[dict[str, Any]] = []
     for eq_id in ("E+", "E-"):
         center = equilibria[eq_id]
-        for sample_id, direction in enumerate(directions):
-            x0 = center + 1.0e-2 * np.asarray(direction, dtype=float)
+        for sample_id, x0 in enumerate(sample_uniform_ball(center, radius, samples_per_equilibrium, rng)):
             traj = backend.integrate(x0, q=Q, h=h, t_final=t_final)
             metrics, _payload = trajectory_metrics(traj, h=h, t_start=t_burn, reference=reference)
             target_hit = bool(
@@ -754,8 +808,10 @@ def run_danca_abm_control(outdir: Path) -> dict[str, Any]:
             rows.append(
                 {
                     "equilibrium_id": eq_id,
-                    "delta": 1.0e-2,
+                    "radius": radius,
                     "sample_id": sample_id,
+                    "sampling_mode": "ball",
+                    "distance_from_equilibrium": float(np.linalg.norm(x0 - center)),
                     "x0": x0.tolist(),
                     "target_hit": target_hit,
                     "cloud_median_distance_norm": metrics["cloud_median_distance_norm"],
@@ -768,15 +824,23 @@ def run_danca_abm_control(outdir: Path) -> dict[str, Any]:
     hits = sum(1 for row in rows if row["target_hit"])
     summary = {
         "status": "completed_exploratory_current_run",
-        "scope": "Danca-reported route only; excluded from ranking of new EFORK candidates",
+        "scope": "ABM full-history robustness/reference comparison; excluded from EFORK seed ranking",
         "candidate_seed_source": "Danca ABM replication locator from prior method setup; all reported metrics are newly recomputed",
         "backend": "chua_abm_full_history_lib.c",
         "method": "Caputo ABM PECE with full history and no finite-memory truncation",
-        "contract": {"q": Q, "h": h, "t_final": t_final, "t_burn": t_burn, "delta": 1.0e-2, "tested_directions_per_unstable_equilibrium": 6},
+        "contract": {
+            "q": Q,
+            "h": h,
+            "t_final": t_final,
+            "t_burn": t_burn,
+            "radius": radius,
+            "sampling_mode": "ball",
+            "samples_per_unstable_equilibrium": samples_per_equilibrium,
+        },
         "reference_metrics": reference_metric,
         "tested_trajectories": len(rows),
         "target_hits": hits,
-        "decision": "not_supported_by_current_abm_control" if hits else "compatible_under_current_abm_control",
+        "decision": "rejected_self_excited_contact" if hits else "compatible_with_hiddenness_under_tested_radii",
     }
     write_json(outdir / "abm_replication_summary.json", summary)
     return summary
@@ -793,6 +857,55 @@ def _copy_files(source: Path, destination: Path, names: Sequence[str]) -> dict[s
     return copied
 
 
+def _run_numerical_contract() -> dict[str, Any]:
+    return {
+        "q": Q,
+        "backend": "efork_c",
+        "reference_backend": "abm_c_full_history",
+        "memory_policy": "full_history_and_finite_memory_robustness_comparison",
+        "boundedness_thresholds": {"bounded": True, "minimum_range_x": 0.25},
+        "equilibrium_distance_thresholds": {"nearest_equilibrium": 1.0e-3},
+        "similarity_thresholds": {"cloud_median_distance_norm": 0.35, "range_relative_distance": 0.60},
+        "hiddenness_radii": [1.0e-4, 1.0e-3],
+        "samples_per_radius": 12,
+        "sample_growth_per_radius": 12,
+        "random_seed_policy": "fixed_reproducible",
+        "output_schema_version": SCHEMA_VERSION,
+        "efork_stage": EFORK_STAGE,
+    }
+
+
+def _write_stage_summary(
+    directory: Path,
+    stage: str,
+    status: str,
+    contract: dict[str, Any],
+    *,
+    files: dict[str, str],
+    provenance: dict[str, Any],
+    inputs: dict[str, Any] | None = None,
+    outputs: dict[str, Any] | None = None,
+    metrics: dict[str, Any] | None = None,
+    verdict: str | None = None,
+) -> None:
+    summary = StageEnvelope(
+        stage=stage,
+        status=status,
+        system="fractional_nonsmooth_chua",
+        numerical_contract=contract,
+        inputs=inputs or {},
+        outputs=outputs or {},
+        metrics=metrics or {},
+        verdict=verdict,
+        files=files,
+        provenance=provenance,
+    )
+    errors = summary.validate()
+    if errors:
+        raise ValueError("; ".join(errors))
+    write_json(directory / f"{stage}_validation_summary.json", summary.to_dict())
+
+
 def promote_validation(
     run_root: Path,
     run_id: str,
@@ -802,104 +915,276 @@ def promote_validation(
     danca_summary: dict[str, Any],
 ) -> None:
     validation = PROJECT_ROOT / "validation"
-    candidate_dir = validation / "04_candidates"
-    dynamic_dir = validation / "05_dynamic_analysis"
-    hidden_dir = validation / "06_hiddenness"
-    robust_dir = validation / "07_robustness"
-    literature_dir = validation / "08_literature_comparison"
+    numerical_dir = validation / "01_numerical_contract"
+    seed_dir = validation / "03_seed_generation"
+    precheck_dir = validation / "04_soft_precheck"
+    continuation_dir = validation / "05_continuation"
+    filter_dir = validation / "06_post_continuation_filter"
+    dynamic_dir = validation / "07_dynamic_reference"
+    robust_dir = validation / "08_robustness"
+    hidden_dir = validation / "09_hiddenness_tests"
+    diagnostics_dir = validation / "10_diagnostics"
+    for directory in (
+        numerical_dir,
+        seed_dir,
+        precheck_dir,
+        continuation_dir,
+        filter_dir,
+        dynamic_dir,
+        robust_dir,
+        hidden_dir,
+        diagnostics_dir,
+    ):
+        directory.mkdir(parents=True, exist_ok=True)
     full = branch_results["full_history"]
     window = branch_results["finite_window"]
     full_root = run_root / "full_history"
     window_root = run_root / "finite_window"
-    _copy_files(run_root, candidate_dir, ["df_candidate_pool.csv", "df_generation_metadata.json"])
-    _copy_files(full_root, candidate_dir, ["selected_candidates.json", "selected_candidates.csv", "candidate_dynamic_screen.csv", "continuation_paths.csv"])
-    for source_name, target_name in (
-        ("selected_candidates.json", "selected_candidates_finite_window.json"),
-        ("selected_candidates.csv", "selected_candidates_finite_window.csv"),
-        ("candidate_dynamic_screen.csv", "candidate_dynamic_screen_finite_window.csv"),
-        ("continuation_paths.csv", "continuation_paths_finite_window.csv"),
-    ):
-        shutil.copy2(window_root / source_name, candidate_dir / target_name)
+    contract = _run_numerical_contract()
+
+    write_json(numerical_dir / "effective_contract.json", contract)
+    write_csv(
+        numerical_dir / "integrator_benchmark_summary.csv",
+        [
+            {
+                "backend": "chua_frac_backend_lib.c",
+                "role": "validated_sweep_backend",
+                "required_stage_formula": EFORK_STAGE,
+                "memory_policy": "full_history_and_finite_memory_variants",
+            },
+            {
+                "backend": "chua_abm_full_history_lib.c",
+                "role": "reference_backend",
+                "required_stage_formula": "not_applicable_abm",
+                "memory_policy": FULL_HISTORY_POLICY,
+            },
+        ],
+    )
+    numerical_md = (
+        "# Numerical contract\n\n"
+        f"Corrida `{run_id}` con EFORK C corregido (`{EFORK_STAGE}`) como backend de barrido "
+        "y ABM full-history como referencia de robustez. La truncacion de memoria se compara "
+        "como variante numerica y no sustituye al benchmark de historia completa.\n"
+    )
+    (numerical_dir / "numerical_contract_validation.md").write_text(numerical_md, encoding="utf-8")
+    _write_stage_summary(
+        numerical_dir,
+        "numerical_contract",
+        "completed",
+        contract,
+        files={
+            "report": "numerical_contract_validation.md",
+            "contract": "effective_contract.json",
+            "integrator_benchmark": "integrator_benchmark_summary.csv",
+        },
+        provenance=provenance,
+        outputs={"efork_stage": EFORK_STAGE, "protocol_version": PROTOCOL_VERSION},
+    )
+
+    seed_rows = read_csv_rows(run_root / "df_candidate_pool.csv")
+    seeds: list[dict[str, Any]] = []
+    for row in seed_rows:
+        seeds.append(
+            {
+                "candidate_id": row["candidate_id"],
+                "family": row["family"],
+                "centered_or_biased": row["centered_or_biased"],
+                "A": _finite(row.get("A")),
+                "sigma0": _finite(row.get("sigma0"), 0.0),
+                "omega": _finite(row.get("omega")),
+                "mu": _finite(row.get("mu"), 1.0),
+                "theta": _finite(row.get("theta"), 0.0),
+                "q": Q,
+                "harmonic_residual": _finite(row.get("harmonic_residual", row.get("residual_abs"))),
+                "rho_H": _finite(row.get("rho_H")),
+                "x0": [_finite(row.get("seed_x")), _finite(row.get("seed_y")), _finite(row.get("seed_z"))],
+                "reconstruction_metadata": {"implementation": "fractional_report_run"},
+                "source_config": "configs/chua_fractional_nonsmooth.yaml",
+            }
+        )
+    write_json(seed_dir / "unified_seeds.json", {"schema_version": SCHEMA_VERSION, "protocol_version": PROTOCOL_VERSION, "seeds": seeds})
+    write_csv(seed_dir / "harmonic_residuals.csv", [{"candidate_id": item["candidate_id"], "family": item["family"], "harmonic_residual": item["harmonic_residual"], "rho_H": item["rho_H"]} for item in seeds])
+    (seed_dir / "seed_generation_validation.md").write_text(
+        "# Seed generation\n\nLas familias Lur'e y Machado/FDF generan semillas; no prueban ocultedad.\n",
+        encoding="utf-8",
+    )
+    _write_stage_summary(
+        seed_dir,
+        "seed_generation",
+        "completed",
+        contract,
+        files={"report": "seed_generation_validation.md", "seeds": "unified_seeds.json", "residuals": "harmonic_residuals.csv"},
+        provenance=provenance,
+        outputs={"candidate_count": len(seeds), "families": sorted({item["family"] for item in seeds})},
+        verdict="seed_only",
+    )
+
+    precheck_rows = []
+    for item in seeds:
+        finite_configuration = bool(
+            math.isfinite(item["A"])
+            and item["A"] > 0.0
+            and math.isfinite(item["omega"])
+            and item["omega"] > 0.0
+            and all(math.isfinite(v) for v in item["x0"])
+        )
+        precheck_rows.append(
+            {
+                "candidate_id": item["candidate_id"],
+                "label": "pre_continuation_admissible" if finite_configuration else "rejected_invalid_amplitude_frequency",
+                "admissible_for_continuation": finite_configuration,
+                "finite_configuration": finite_configuration,
+                "short_window_label": "not_evaluated_no_hard_rejection" if finite_configuration else "invalid_configuration",
+                "periodicity_policy": "periodic_short_window_would_remain_admissible",
+            }
+        )
+    write_csv(precheck_dir / "precheck_decisions.csv", precheck_rows)
+    (precheck_dir / "soft_precheck_validation.md").write_text(
+        "# Soft precheck\n\nNinguna semilla se elimina por periodicidad pre-continuacion; una observacion periodica se registra como `pre_continuation_periodic`.\n",
+        encoding="utf-8",
+    )
+    _write_stage_summary(
+        precheck_dir,
+        "soft_precheck",
+        "completed",
+        contract,
+        files={"report": "soft_precheck_validation.md", "decisions": "precheck_decisions.csv"},
+        provenance=provenance,
+        outputs={"admitted_to_continuation": sum(1 for row in precheck_rows if row["admissible_for_continuation"]), "periodicity_gate": False},
+    )
+
+    shutil.copy2(full_root / "continuation_paths.csv", continuation_dir / "continuation_trace.csv")
+    shutil.copy2(window_root / "continuation_paths.csv", continuation_dir / "finite_memory_continuation_trace.csv")
+    write_json(
+        continuation_dir / "continuation_plan.json",
+        {
+            "public_parameter": "lambda",
+            "lambda_values": [0.0, 0.25, 0.5, 0.75, 1.0],
+            "provenance": {"mapping": {"internal_parameter": "epsilon", "backend": "chua_frac_backend_lib.c"}},
+        },
+    )
+    (continuation_dir / "continuation_validation.md").write_text(
+        "# Continuation\n\nEl parametro publico es `lambda`; el argumento `epsilon` existe solamente dentro del ABI C y se registra en metadatos.\n",
+        encoding="utf-8",
+    )
+    _write_stage_summary(
+        continuation_dir,
+        "continuation",
+        "completed",
+        contract,
+        files={"report": "continuation_validation.md", "plan": "continuation_plan.json", "trace": "continuation_trace.csv", "finite_memory_trace": "finite_memory_continuation_trace.csv"},
+        provenance=provenance,
+        outputs={"branches": ["full_history", "finite_memory"], "public_parameter": "lambda"},
+    )
+
+    full_filter = read_csv_rows(full_root / "candidate_dynamic_screen.csv")
+    window_filter = read_csv_rows(window_root / "candidate_dynamic_screen.csv")
+    survivor_decisions = [{**row, "branch_id": "full_history"} for row in full_filter] + [{**row, "branch_id": "finite_memory"} for row in window_filter]
+    write_csv(filter_dir / "survivor_decisions.csv", survivor_decisions)
+    _copy_files(full_root, filter_dir, ["selected_candidates.json", "selected_candidates.csv"])
+    shutil.copy2(window_root / "selected_candidates.json", filter_dir / "selected_candidates_finite_memory.json")
+    (filter_dir / "post_continuation_filter_validation.md").write_text(
+        "# Post-continuation filter\n\nEl filtro de periodicidad, acotamiento y colapso se aplica despues de alcanzar `lambda=1`.\n",
+        encoding="utf-8",
+    )
+    _write_stage_summary(
+        filter_dir,
+        "post_continuation_filter",
+        "completed",
+        contract,
+        files={"report": "post_continuation_filter_validation.md", "decisions": "survivor_decisions.csv", "selected": "selected_candidates.json"},
+        provenance=provenance,
+        outputs={"full_history_survivors": len(full["selected"]), "finite_memory_survivors": len(window["selected"])},
+        verdict="continuation_survivor",
+    )
+
     _copy_files(full_root / "dynamic", dynamic_dir, ["trajectory_metrics.csv", "fft_summary.csv", "psd_summary.csv", "lyapunov_summary.csv", "phase_3d.png", "projections.png", "time_series.png", "spectrum_x.png"])
     for name in ("trajectory_metrics.csv", "fft_summary.csv", "psd_summary.csv", "lyapunov_summary.csv", "phase_3d.png", "projections.png", "time_series.png", "spectrum_x.png"):
         shutil.copy2(window_root / "dynamic" / name, dynamic_dir / f"finite_window_{name}")
-    _copy_files(full_root / "hiddenness", hidden_dir, ["sphere_plan.csv", "sphere_raw.csv", "sphere_decision.csv", "strict_refinement_summary.csv", "hiddenness_run_summary.json"])
-    for name in ("sphere_plan.csv", "sphere_raw.csv", "sphere_decision.csv", "strict_refinement_summary.csv", "hiddenness_run_summary.json"):
-        shutil.copy2(window_root / "hiddenness" / name, hidden_dir / f"finite_window_{name}")
+    write_json(dynamic_dir / "dynamic_reference.json", {"full_history": full["dynamic"], "finite_memory": window["dynamic"], "reference_status": "continuation_survivor_reference"})
+    write_json(dynamic_dir / "similarity_signature.json", {"metrics": ["fft_peak", "psd_entropy", "trajectory_metrics"], "backend": "chua_frac_backend_lib.c"})
+    (dynamic_dir / "dynamic_reference_validation.md").write_text(
+        "# Dynamic reference\n\nLas trayectorias post-transitorio y sus firmas espectrales definen las referencias usadas por robustez y ocultedad.\n",
+        encoding="utf-8",
+    )
+    _write_stage_summary(
+        dynamic_dir,
+        "dynamic_reference",
+        "completed",
+        contract,
+        files={"report": "dynamic_reference_validation.md", "reference": "dynamic_reference.json", "metrics": "trajectory_metrics.csv", "signature": "similarity_signature.json"},
+        provenance=provenance,
+        outputs={"branches": ["full_history", "finite_memory"]},
+    )
+
     _copy_files(full_root / "robustness", robust_dir, ["robustness_overlay_metrics.csv", "robustness_summary.json", "overlay_3d.png"])
     for name in ("robustness_overlay_metrics.csv", "robustness_summary.json", "overlay_3d.png"):
         shutil.copy2(window_root / "robustness" / name, robust_dir / f"finite_window_{name}")
-    _copy_files(run_root / "danca_abm_control", literature_dir, ["danca_abm_hiddenness_controls.csv", "danca_reference_abm_full_history.csv", "abm_replication_summary.json"])
-    write_csv(candidate_dir / "q_sweep_summary.csv", [{"q": Q, "status": "fixed_order_current_run", "run_id": run_id}])
-    combined = list(full["selected"]) + list(window["selected"])
-    write_csv(candidate_dir / "df_compare_summary.csv", [{"branch_id": row["branch_id"], "method": row["method"], "candidate_id": row["candidate_id"], "residual_abs": row["residual_abs"], "rho_H": row["rho_H"]} for row in combined])
-    write_csv(candidate_dir / "machado_sweep_summary.csv", [{"branch_id": row["branch_id"], "candidate_id": row["candidate_id"], "method": row["method"], "mu": row.get("mu", ""), "selected": True} for row in combined if "Machado" in str(row["method"])])
-    candidate_md = rf"""# Selección de candidatos fraccionarios actuales
-
-Se ejecutó la corrida `{run_id}` para el Chua no suave con \(q=0.9998\). La
-etapa DF utiliza cuadratura Python de corta duración ({df_metadata['elapsed_sec']:.3f} s);
-la continuación y la clasificación dinámica que determinan cada selección se
-ejecutaron con `chua_frac_backend_lib.c` y el estadio corregido `{EFORK_STAGE}`.
-
-Se producen dos ternas nuevas: `selected_candidates.csv` corresponde a EFORK
-con historial completo transportado, mientras que
-`selected_candidates_finite_window.csv` corresponde a EFORK con ventana
-finita \(L_m=8\). No se utilizaron salidas históricas para sus valores
-numéricos.
-"""
-    (candidate_dir / "candidate_selection.md").write_text(candidate_md, encoding="utf-8")
-    write_json(candidate_dir / "candidate_selection_summary.json", {"stage": "candidate_selection", "status": "passed", "run_id": run_id, **provenance, "files": {"full_history_selection": "selected_candidates.json", "full_history_table": "selected_candidates.csv", "finite_window_selection": "selected_candidates_finite_window.json", "finite_window_table": "selected_candidates_finite_window.csv"}, "python_lightweight_df": df_metadata, "dynamic_backend": "chua_frac_backend_lib.c", "efork_stage": EFORK_STAGE, "branches": ["full_history", "finite_window"]})
-    dynamic_md = f"""# Análisis dinámico fraccionario actual
-
-Las trayectorias de ambas ternas fueron calculadas dentro del tramo de
-observación de su continuación causal EFORK-3 C para `{run_id}`. El espectro
-se obtiene como posprocesamiento ligero de esas trayectorias C.
-
-Los exponentes de Lyapunov permanecen pendientes: el backend existente
-reinicia por bloques y no se promueve como evidencia de una trayectoria que
-transporta historia de continuación.
-"""
-    (dynamic_dir / "dynamic_analysis.md").write_text(dynamic_md, encoding="utf-8")
-    write_json(dynamic_dir / "dynamic_analysis_summary.json", {"stage": "dynamic_analysis", "status": "passed", "run_id": run_id, "files": {"full_history_metrics": "trajectory_metrics.csv", "finite_window_metrics": "finite_window_trajectory_metrics.csv", "full_history_phase": "phase_3d.png", "finite_window_phase": "finite_window_phase_3d.png"}, "backends": ["chua_frac_backend_lib.c"], "lyapunov": "pending_causal_history_backend", "efork_stage": EFORK_STAGE})
-    hidden_md = rf"""# Validación operacional de ocultedad
-
-Para `{run_id}` se sondearon esferas discretas alrededor de cada equilibrio
-mediante integración C `chua_frac_backend_lib.c`. El ensayo se realizó por
-separado bajo EFORK con historial completo y bajo EFORK con ventana
-\(L_m=8\). Si una condición inicial próxima a un equilibrio coincide con la
-referencia candidata, la etiqueta de atractor oculto queda descartada para
-ese contrato.
-
-La ausencia de impactos sólo es evidencia compatible con ocultedad bajo las
-vecindades muestreadas. Los impactos detectados se reintegran mediante C y se
-comparan contra la referencia candidata en `strict_refinement_summary.csv`.
-Las cuencas completas y los diagramas de bifurcación permanecen pendientes.
-"""
-    (hidden_dir / "hiddenness_validation.md").write_text(hidden_md, encoding="utf-8")
-    write_json(hidden_dir / "hiddenness_validation_summary.json", {"stage": "hiddenness", "status": "passed", "run_id": run_id, "files": {"full_history_decision": "sphere_decision.csv", "finite_window_decision": "finite_window_sphere_decision.csv", "full_history_strict": "strict_refinement_summary.csv", "finite_window_strict": "finite_window_strict_refinement_summary.csv"}, "branches": {"full_history": full["hiddenness"], "finite_window": window["hiddenness"]}})
-    robust_md = rf"""# Validación de robustez actual
+    _copy_files(run_root / "danca_abm_control", robust_dir, ["danca_abm_hiddenness_controls.csv", "danca_reference_abm_full_history.csv", "abm_replication_summary.json"])
+    shutil.copy2(robust_dir / "robustness_overlay_metrics.csv", robust_dir / "robustness_metrics.csv")
+    write_csv(robust_dir / "abm_efork_comparison.csv", [{"backend": danca_summary["backend"], "scope": danca_summary["scope"], "tested_trajectories": danca_summary["tested_trajectories"], "target_hits": danca_summary["target_hits"], "decision": danca_summary["decision"]}])
+    write_json(robust_dir / "robustness_verdicts.json", {"verdict": "weak_target_hit", "reason": "robust similarity assessment remains limited until basin protocol completion", "branches": {"full_history": full["robustness"], "finite_memory": window["robustness"]}, "abm_reference": danca_summary})
+    robust_md = rf"""# Robustness
 
 La robustez se evaluó para cada rama mediante continuaciones EFORK C
 independientes. La rama de historial completo varía \(h\) y horizonte sin
 truncar historia; la rama de ventana finita incluye además variación de
 \(L_m\).
 
-Esta etapa verifica persistencia geométrica bajo perturbaciones numéricas; no
-clasifica ocultedad.
+ABM de historia completa se conserva aqui como comparacion de referencia. Esta
+etapa verifica persistencia geometrica; no clasifica ocultedad.
 """
     (robust_dir / "robustness_validation.md").write_text(robust_md, encoding="utf-8")
-    write_json(robust_dir / "robustness_validation_summary.json", {"stage": "robustness", "status": "passed", "run_id": run_id, "files": {"full_history_metrics": "robustness_overlay_metrics.csv", "finite_window_metrics": "finite_window_robustness_overlay_metrics.csv", "full_history_overlay": "overlay_3d.png", "finite_window_overlay": "finite_window_overlay_3d.png"}, "branches": {"full_history": full["robustness"], "finite_window": window["robustness"]}})
-    write_csv(literature_dir / "danca_comparison_summary.csv", [{"method": danca_summary["method"], "scope": danca_summary["scope"], "tested_trajectories": danca_summary["tested_trajectories"], "target_hits": danca_summary["target_hits"], "decision": danca_summary["decision"]}])
-    literature_md = f"""# Control independiente Danca ABM
+    _write_stage_summary(
+        robust_dir,
+        "robustness",
+        "incomplete",
+        contract,
+        files={"report": "robustness_validation.md", "metrics": "robustness_metrics.csv", "verdicts": "robustness_verdicts.json", "abm_comparison": "abm_efork_comparison.csv"},
+        provenance=provenance,
+        outputs={"branches": ["full_history", "finite_memory"], "abm_reference": True},
+        verdict="weak_target_hit",
+    )
 
-La ruta publicada por Danca se ensayó en una etapa separada mediante ABM C de
-historial completo. Este control no interviene en el ranking EFORK de los
-nuevos candidatos. En la corrida `{run_id}` se ejecutaron
-{danca_summary['tested_trajectories']} sondeos locales y se observaron
-{danca_summary['target_hits']} coincidencias operacionales.
+    _copy_files(full_root / "hiddenness", hidden_dir, ["ball_sampling_plan.csv", "ball_sampling_results.csv", "hiddenness_decisions.csv", "strict_refinement_summary.csv", "hiddenness_run_summary.json"])
+    for name in ("ball_sampling_plan.csv", "ball_sampling_results.csv", "hiddenness_decisions.csv", "strict_refinement_summary.csv", "hiddenness_run_summary.json"):
+        shutil.copy2(window_root / "hiddenness" / name, hidden_dir / f"finite_memory_{name}")
+    write_json(hidden_dir / "basin_slices_summary.json", {"status": "pending", "required_planes": ["xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"], "produced_planes": []})
+    hidden_md = rf"""# Hiddenness tests
+
+Para `{run_id}` se muestrearon puntos dentro de bolas centradas en cada
+equilibrio mediante EFORK C corregido. La ausencia de contactos solo permite
+`compatible_with_hiddenness_under_tested_radii`; los cortes de cuenca
+`xy`, `xz` y `yz` permanecen pendientes, por lo que no se emite la etiqueta
+fuerte de protocolo completo.
 """
-    (literature_dir / "literature_comparison.md").write_text(literature_md, encoding="utf-8")
-    write_json(literature_dir / "literature_comparison_summary.json", {"stage": "literature_comparison", "status": "passed", "run_id": run_id, "files": {"report": "literature_comparison.md", "table": "danca_comparison_summary.csv", "abm": "abm_replication_summary.json"}, "danca_abm_control": danca_summary})
+    (hidden_dir / "hiddenness_tests_validation.md").write_text(hidden_md, encoding="utf-8")
+    _write_stage_summary(
+        hidden_dir,
+        "hiddenness_tests",
+        "incomplete_pending_basin_slices",
+        contract,
+        files={"report": "hiddenness_tests_validation.md", "plan": "ball_sampling_plan.csv", "results": "ball_sampling_results.csv", "basin_slices": "basin_slices_summary.json"},
+        provenance=provenance,
+        outputs={"branches": {"full_history": full["hiddenness"], "finite_memory": window["hiddenness"]}, "sampling_mode": "ball"},
+        verdict="compatible_with_hiddenness_under_tested_radii",
+    )
+
+    _copy_files(full_root / "dynamic", diagnostics_dir, ["fft_summary.csv", "psd_summary.csv", "lyapunov_summary.csv", "spectrum_x.png"])
+    (diagnostics_dir / "diagnostics_validation.md").write_text(
+        "# Diagnostics\n\nFFT, PSD y estimaciones adicionales complementan las pruebas de vecindad; no sustituyen ocultedad.\n",
+        encoding="utf-8",
+    )
+    _write_stage_summary(
+        diagnostics_dir,
+        "diagnostics",
+        "completed_with_lyapunov_pending",
+        contract,
+        files={"report": "diagnostics_validation.md", "fft": "fft_summary.csv", "psd": "psd_summary.csv", "lyapunov": "lyapunov_summary.csv"},
+        provenance=provenance,
+        outputs={"lyapunov": "pending_causal_history_backend"},
+    )
+
     manifest_path = validation / "00_manifest" / "validation_manifest.json"
     manifest = read_json(manifest_path)
     manifest["validation_id"] = run_id
@@ -907,14 +1192,18 @@ nuevos candidatos. En la corrida `{run_id}` se ejecutaron
     manifest["working_tree_dirty"] = provenance["working_tree_dirty"]
     manifest["working_tree_diff_sha256"] = provenance["working_tree_diff_sha256"]
     manifest["stages"].update({
-        "candidate_selection": "04_candidates/candidate_selection_summary.json",
-        "dynamic_analysis": "05_dynamic_analysis/dynamic_analysis_summary.json",
-        "hiddenness": "06_hiddenness/hiddenness_validation_summary.json",
-        "robustness": "07_robustness/robustness_validation_summary.json",
-        "literature_comparison": "08_literature_comparison/literature_comparison_summary.json",
+        "numerical_contract": "01_numerical_contract/numerical_contract_validation_summary.json",
+        "seed_generation": "03_seed_generation/seed_generation_validation_summary.json",
+        "soft_precheck": "04_soft_precheck/soft_precheck_validation_summary.json",
+        "continuation": "05_continuation/continuation_validation_summary.json",
+        "post_continuation_filter": "06_post_continuation_filter/post_continuation_filter_validation_summary.json",
+        "dynamic_reference": "07_dynamic_reference/dynamic_reference_validation_summary.json",
+        "robustness": "08_robustness/robustness_validation_summary.json",
+        "hiddenness_tests": "09_hiddenness_tests/hiddenness_tests_validation_summary.json",
+        "diagnostics": "10_diagnostics/diagnostics_validation_summary.json",
     })
-    manifest["pending_stages"] = ["basins", "bifurcations"]
-    manifest["final_report"] = {"status": "current_report_run_completed_without_basins_or_bifurcations", "run_id": run_id}
+    manifest["pending_stages"] = ["algebraic_validation"]
+    manifest["final_report"] = {"status": "pending_full_protocol_basin_slices_and_algebraic_validation", "run_id": run_id}
     write_json(manifest_path, manifest)
 
 
@@ -1005,12 +1294,15 @@ def run(args: argparse.Namespace) -> Path:
     root.mkdir(parents=True, exist_ok=False)
     provenance = repository_provenance()
     screened_pool, df_metadata = generate_lightweight_df_pool(root)
+    admissible_pool = [row for row in screened_pool if _valid_seed_configuration(row)]
+    if not admissible_pool:
+        raise RuntimeError("soft_precheck rejected every generated seed as invalid.")
     branch_results = {
         "full_history": run_efork_branch(
-            root / "full_history", screened_pool, branch_id="full_history", full_history=True, args=args, run_id=run_id, provenance=provenance
+            root / "full_history", admissible_pool, branch_id="full_history", full_history=True, args=args, run_id=run_id, provenance=provenance
         ),
         "finite_window": run_efork_branch(
-            root / "finite_window", screened_pool, branch_id="finite_window", full_history=False, args=args, run_id=run_id, provenance=provenance
+            root / "finite_window", admissible_pool, branch_id="finite_window", full_history=False, args=args, run_id=run_id, provenance=provenance
         ),
     }
     danca_dir = root / "danca_abm_control"
@@ -1025,7 +1317,7 @@ def run(args: argparse.Namespace) -> Path:
             "params": PARAMETERS,
             "efork_stage": EFORK_STAGE,
             "factorial_design": {
-                "describing_function_methods": ["DF centrada", "Lur'e sesgada", "Machado centrada", "Machado sesgada"],
+                "seed_families": ["lure_classical_centered", "lure_classical_biased", "machado_centered", "machado_biased"],
                 "efork_memory_branches": ["full_history", "finite_window"],
                 "finite_window_length": args.memory_length,
             },

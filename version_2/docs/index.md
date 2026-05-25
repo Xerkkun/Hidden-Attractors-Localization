@@ -19,6 +19,7 @@ contribution notes.
 - [Figure Gallery](figure_gallery.md)
 - [Notebooks](notebooks.md)
 - [Workflows](workflows.md)
+- [Migration To The Unified Methodology](migration_unified_methodology.md)
 
 ## Reference
 

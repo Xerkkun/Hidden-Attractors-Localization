@@ -1,6 +1,13 @@
 # Validation Evidence
 
-This directory is reserved for generated validation evidence.
+This directory is reserved for generated validation evidence under the single
+official protocol:
+
+```text
+numerical_contract -> algebraic_validation -> seed_generation
+-> soft_precheck -> continuation -> post_continuation_filter
+-> dynamic_reference -> robustness -> hiddenness_tests -> diagnostics
+```
 
 Keep the roles separate:
 
@@ -13,10 +20,18 @@ Keep the roles separate:
 
 The detailed contract is documented in `docs/validation_evidence.md` and the
 machine-readable layout contract is `configs/validation_contract.json`.
+Every official stage summary uses the JSON envelope in
+`official_stage_summary.template.json`.
 
 Do not store broad exploratory sweeps here by default. Use `outputs/` for
 ordinary run products, then promote only the selected evidence needed for a
 defensible validation package.
+
+The existing `01_algebra`, `02_lure_df`, and `03_integrators` material predates
+the unified protocol. It is retained as recorded reference evidence and is not
+presented in `00_manifest/validation_manifest.json` as a completed official
+run. New promoted evidence uses the numbered directories
+`01_numerical_contract` through `10_diagnostics`.
 
 ## Reference Cases
 

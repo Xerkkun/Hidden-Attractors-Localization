@@ -1,40 +1,22 @@
-# Physical separation status
+# Repository Cleanup Status
 
-La separacion fisica ya esta hecha de forma conservadora:
+The repository has one maintained library surface: `version_2/`.
 
-- `version_1/legacy_root/` contiene una copia reproducible de la raiz antigua.
-- `version_2/` contiene la copia activa autocontenida.
-- `version_2/pyproject.toml` instala el paquete desde `version_2/`.
-- `version_2/examples/` es la ubicacion canonica para ejemplos nuevos.
-- `version_2/docs/` es la unica ubicacion canonica para documentacion, notas
-  de analisis, figuras y reportes.
-- `version_2/tools/legacy/` contiene los scripts historicos migrados fuera de
-  la raiz de V2.
+- `hidden_attractors/` contains public and reusable implementations.
+- `configs/unified_caputo_protocol.json` defines the only protocol for new runs.
+- `docs/` is the single documentation and report tree.
+- `validation/` contains promoted evidence and explicitly marked reference cases.
+- `tools/legacy/` is retained only where an installed compatibility adapter
+  still imports an engine; it is not a separate supported methodology.
 
-## Verificacion realizada
+The previous duplicate source tree is removed. Reference artifacts needed for
+traceability are already stored under `validation/reference_cases/`; their
+stored provenance paths document origin and do not make that deleted source
+tree executable.
 
-Desde `version_2/`:
+All executable EFORK sources still reachable from `version_2/`, both Python
+and C, are guarded by tests enforcing the published third stage:
 
-```bash
-python -m compileall hidden_attractors examples tests tools/cli
-python examples/list_final_candidates.py
-python tools/cli/robustness_overlay_c_trajectories.py --help
-python tools/cli/lure_top3_sphere_robustness.py --help
-python tools/cli/refine_project_basin_classification.py --help
-python examples/create_robustness_overlay_config.py
+```text
+K3 = F(... + a31*K1 + a32*K2)
 ```
-
-Tambien se verifico desde la carpeta superior:
-
-```bash
-python version_2/examples/list_final_candidates.py
-```
-
-## Limpieza
-
-Si quieres conservar el repositorio Git, no borres `.git/`.
-
-Los demas archivos y carpetas que queden fuera de `version_1/` y `version_2/`
-son duplicados de la raiz vieja despues de esta separacion. La carpeta
-documental activa debe mantenerse solo en `version_2/docs/`; no se deben crear
-copias paralelas de reportes en la raiz ni en `version_1/legacy_root/docs/`.

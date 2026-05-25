@@ -1,7 +1,8 @@
 # Configurations
 
-Workflow configuration files live here. They are examples of the numerical
-contracts used in the current project outputs.
+`unified_caputo_protocol.json` is the only configuration contract for new
+hidden-attractor candidate studies. Historical YAML files remain temporarily
+only when an existing adapter or recorded artifact requires them.
 
 When adding a new config, include enough context to identify:
 
@@ -12,6 +13,8 @@ When adding a new config, include enough context to identify:
 - output directory policy;
 - whether the run is exploratory, verification, or reporting.
 
-`validation_contract.json` defines the promoted validation evidence layout. It
-does not contain numerical results; it records the expected manifest, stage
-summary, table, figure, and report names used under `validation/`.
+`validation_contract.json` defines the promoted evidence order:
+`numerical_contract`, `algebraic_validation`, `seed_generation`,
+`soft_precheck`, `continuation`, `post_continuation_filter`,
+`dynamic_reference`, `robustness`, `hiddenness_tests`, `diagnostics`.
+All stage summaries must use the official JSON envelope.

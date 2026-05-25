@@ -39,20 +39,31 @@ Equivalent command:
 python examples/list_final_candidates.py
 ```
 
-## 4. Run workflow help
+## 4. Run Workflow Help
 
-Long workflows expose command-line help without launching simulations:
+The official protocol exposes one command family. These commands validate and
+write stage summaries without changing the methodology:
 
 ```bash
-python tools/cli/robustness_overlay_c_trajectories.py --help
-python tools/cli/lure_top3_sphere_robustness.py --help
-python tools/cli/refine_project_basin_classification.py --help
+hidden-attractors-protocol generate-seeds --help
+hidden-attractors-protocol soft-precheck --help
+hidden-attractors-protocol continue --help
+hidden-attractors-protocol filter-survivors --help
+hidden-attractors-protocol build-reference --help
+hidden-attractors-protocol robustness --help
+hidden-attractors-protocol hiddenness --help
+hidden-attractors-protocol diagnostics --help
 ```
 
-After installation, console entry points are also available:
+Compatibility adapters remain available while their numerical engines are
+migrated behind the protocol interface:
 
 ```bash
 hidden-attractors-robustness-overlay --help
 hidden-attractors-sphere-controls --help
 hidden-attractors-refined-basin --help
 ```
+
+`hidden-attractors-sphere-controls` now samples inside equilibrium-centered
+balls. Its installed name is retained for compatibility, not as a
+surface-only hiddenness method.

@@ -27,7 +27,7 @@ from ..parallel import force_single_openmp_thread_current_process, force_single_
 from ..paths import OUTPUTS, PROJECT_ROOT, RUNTIME_CACHE
 
 
-DEFAULT_SOURCE_DIR = PROJECT_ROOT / "validation" / "04_candidates"
+DEFAULT_SOURCE_DIR = PROJECT_ROOT / "validation" / "06_post_continuation_filter"
 
 METRIC_FIELDS = [
     "candidate_id",

@@ -2,6 +2,8 @@
   "contract_name": "chua_integer_q1_reference_validation",
   "version": 1,
   "purpose": "Promoted evidence package for the verified integer-order piecewise Chua baseline.",
+  "reference_case_only": true,
+  "official_protocol_role": "algebraic and numerical baseline benchmark; not a second Caputo hiddenness workflow",
   "output_root": "validation/reference_cases/chua_integer_q1",
   "manifest": {
     "directory": "00_manifest",

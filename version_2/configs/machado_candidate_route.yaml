@@ -1,4 +1,7 @@
-# Ruta separada para semillas Machado/FDF del Chua fraccionario no suave.
+# DEPRECATED reproduction config. Machado/FDF is not a separate methodology.
+# New runs use configs/unified_caputo_protocol.json and family=machado_biased.
+deprecated_replaced_by: configs/unified_caputo_protocol.json
+historical_reproduction_only: true
 model: nonsmooth
 q: 0.9998
 frac_order: 0.9998
@@ -121,6 +124,9 @@ seeds:
 
 early_periodicity_filter:
   enabled: true
+  # Diagnostic only before continuation; do not reject a harmonic construction
+  # before its route has reached the nonlinear target system.
+  gate_before_continuation: false
   max_candidates_for_screen: 30
   h: 0.01
   memory_length: 8.0
@@ -168,6 +174,8 @@ continuation:
   eta_start: 0.0
   eta_target: 1.0
   eta_steps: 9
+  # Historical internal mapping only: official outputs call this parameter lambda.
+  public_parameter: lambda
   q_fixed: 0.9998
   h: 0.01
   memory_length: 20

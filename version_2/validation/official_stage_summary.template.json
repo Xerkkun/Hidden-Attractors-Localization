@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "protocol_version": "caputo_hidden_attractors_v1",
+  "stage": "replace_with_official_stage_slug",
+  "status": "pending",
+  "candidate_id": null,
+  "system": "fractional nonsmooth Chua",
+  "numerical_contract": {},
+  "inputs": {},
+  "outputs": {},
+  "metrics": {},
+  "verdict": null,
+  "files": {},
+  "provenance": {}
+}

@@ -154,7 +154,8 @@ class FractionalChuaBackend:
         self,
         x0: Sequence[float],
         *,
-        eps_values: Sequence[float],
+        lambda_values: Sequence[float] | None = None,
+        eps_values: Sequence[float] | None = None,
         q: float,
         k: float,
         h: float,
@@ -163,12 +164,22 @@ class FractionalChuaBackend:
         t_keep: float,
         t_observe: float = 0.0,
         carry_memory: bool = True,
-    ) -> dict[str, np.ndarray]:
-        """Run native C epsilon continuation while carrying finite memory."""
+    ) -> dict[str, Any]:
+        """Run public ``lambda`` continuation through the native C ABI.
 
-        eps = np.ascontiguousarray(eps_values, dtype=np.float64)
+        ``eps_values`` is retained only as a historical-reproduction input
+        alias; official outputs expose ``lambda`` and record the internal
+        mapping as metadata.
+        """
+
+        if lambda_values is not None and eps_values is not None:
+            raise ValueError("provide lambda_values only; eps_values is a historical alias.")
+        selected_values = lambda_values if lambda_values is not None else eps_values
+        if selected_values is None:
+            raise ValueError("lambda_values must contain the continuation stages.")
+        eps = np.ascontiguousarray(selected_values, dtype=np.float64)
         if eps.size == 0:
-            raise ValueError("eps_values must contain at least one continuation stage.")
+            raise ValueError("lambda_values must contain at least one continuation stage.")
         seed = np.ascontiguousarray(x0, dtype=np.float64)
         keep_rows = int(self.lib.efork_rows(float(t_keep), float(h)))
         x_in = np.empty(eps.size * 3, dtype=np.float64)
@@ -205,7 +216,7 @@ class FractionalChuaBackend:
         if rc != 0:
             raise RuntimeError(f"compute_continuation_efork3 returned {rc}")
         return {
-            "epsilon": eps,
+            "lambda": eps,
             "x_in": x_in.reshape((-1, 3)),
             "x_transient": x_transient.reshape((-1, 3)),
             "x_out": x_out.reshape((-1, 3)),
@@ -213,6 +224,7 @@ class FractionalChuaBackend:
             "history_out_counts": history_out,
             "trajectories": traj.reshape((eps.size, keep_rows, 4)),
             "observation": observation.reshape((observation_rows, 4)),
+            "provenance": {"mapping": {"public_parameter": "lambda", "internal_parameter": "epsilon"}},
         }
 
 

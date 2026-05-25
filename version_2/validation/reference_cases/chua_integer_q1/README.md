@@ -6,7 +6,8 @@ contract in `validation/`.
 
 Sources are separated by role:
 
-- numeric artifacts copied from `version_1/legacy_root/chua_integer_runs/balanced/`;
+- numeric artifacts promoted into this directory from the superseded source
+  tree before that duplicate tree was removed;
 - the supplied theoretical report, registered under
   `08_literature_comparison/sources/`;
 - the existing MATLAB reproduction source;

@@ -19,7 +19,7 @@ crecer cada modificacion nueva.
 - `hidden_attractors.workflows.robustness_overlay`
   - comparacion de trayectorias bajo cambios de `h`, `Lm` y tiempo.
 - `hidden_attractors.workflows.sphere_controls`
-  - pruebas dirigidas desde vecindades de equilibrios.
+  - adaptador compatible cuyo calculo vigente muestrea bolas interiores alrededor de equilibrios.
 
 ## Analisis integrados con CLI mantenida
 
@@ -34,7 +34,7 @@ crecer cada modificacion nueva.
   - si crece, mover helpers de grilla, resumen y figuras a
     `hidden_attractors/workflows/` o `hidden_attractors/basins/`.
 - `tools/legacy/plot_top3_sphere_geometry.py`
-  - visualiza controles esfericos ya producidos;
+  - visualiza artefactos con nombre historico; no define el protocolo oficial;
   - si crece, mover carga/seleccion de filas y plot reusable a
     `hidden_attractors/plotting/`.
 

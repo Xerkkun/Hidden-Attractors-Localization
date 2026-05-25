@@ -386,19 +386,10 @@ def priority_for(row: Dict[str, Any], divergence_norm: float) -> Tuple[str, bool
     return "insufficient_data", True
 
 
-def import_pipeline():
-    spec = importlib.util.spec_from_file_location("lure_pipeline_mod", str(ROOT / "unified_nyquist_hidden_pipeline.py"))
-    if spec is None or spec.loader is None:
-        raise ImportError("No se pudo cargar unified_nyquist_hidden_pipeline.py")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules["lure_pipeline_mod"] = module
-    spec.loader.exec_module(module)
-    return module
-
-
 def official_chua_params() -> Dict[str, Any]:
-    pipeline = import_pipeline()
-    return pipeline.chua_ic_params_from_config(pipeline.CONFIG)
+    from extended_search_utils import chua_ic_params, load_config
+
+    return chua_ic_params(load_config(ROOT.parent.parent / "configs" / "chua_fractional_nonsmooth.yaml"))
 
 
 def recompute_missing(row: Dict[str, Any]) -> None:

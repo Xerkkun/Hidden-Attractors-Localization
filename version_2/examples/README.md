@@ -34,8 +34,9 @@ basin, and strict-refinement inputs required before reusable workflows can be
 audited.
 
 `integer_lure_chua_protocol.py` is the small order-one example. It exercises
-the generic Lur'e route: classical DF seed, epsilon continuation, final
-trajectory, hiddenness controls, Lyapunov estimate, and reusable plots. The
+the unified seed and validation stages: a `lure_classical_centered` DF seed,
+`ContinuationPlan(lambda_values=...)`, final trajectory, equilibrium-ball
+controls, Lyapunov estimate, and reusable plots. The
 same functions are intended for other integer-order systems that provide a
 manual Lur'e form and the required describing functions.
 

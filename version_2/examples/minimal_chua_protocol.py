@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare or execute a minimal C-backed fractional Chua protocol.
-
-The default mode writes the exact command and a JSON run contract without
-launching a long numerical job. Pass ``--run`` when you want the example to
-execute the maintained unified workflow.
-"""
+"""Write a minimal official protocol contract and optional stage envelope."""
 
 from __future__ import annotations
 
@@ -19,7 +14,8 @@ if str(ROOT) not in sys.path:
 
 from hidden_attractors.io import timestamp, write_json
 from hidden_attractors.paths import OUTPUTS
-from hidden_attractors.workflows.unified_chua import LEGACY_PIPELINE, UnifiedChuaConfig, run_unified_chua
+from hidden_attractors.protocol_cli import main as protocol_main
+from hidden_attractors.workflows.protocol import OFFICIAL_STAGE_ORDER, NumericalContract
 
 
 def parse_args() -> argparse.Namespace:
@@ -28,84 +24,63 @@ def parse_args() -> argparse.Namespace:
         "--output-dir",
         type=Path,
         default=OUTPUTS / "examples" / f"minimal_chua_protocol_{timestamp()}",
-        help="Directory where the protocol contract and workflow outputs are written.",
     )
-    parser.add_argument("--model", choices=["nonsmooth", "arctan"], default="nonsmooth")
     parser.add_argument("--q", type=float, default=0.9998)
     parser.add_argument("--h", type=float, default=0.02)
     parser.add_argument("--memory-length", type=float, default=40.0)
     parser.add_argument("--t-transient", type=float, default=40.0)
-    parser.add_argument("--t-keep", type=float, default=20.0)
-    parser.add_argument("--basin-grid", type=int, default=32)
-    parser.add_argument("--workers", type=int, default=1)
-    parser.add_argument("--verify-nsamples", type=int, default=32)
-    parser.add_argument("--run", action="store_true", help="Execute the unified workflow instead of only writing the command.")
+    parser.add_argument("--t-final", type=float, default=80.0)
+    parser.add_argument("--run", action="store_true", help="Emit a seed_generation stage envelope; no long integration is run.")
     return parser.parse_args()
-
-
-def build_config(args: argparse.Namespace) -> UnifiedChuaConfig:
-    return UnifiedChuaConfig(
-        output_dir=args.output_dir,
-        model=args.model,
-        run_mode="balanced",
-        q=args.q,
-        h=args.h,
-        memory_length=args.memory_length,
-        t_transient=args.t_transient,
-        t_keep=args.t_keep,
-        basin_grid=(args.basin_grid, args.basin_grid),
-        basin_workers=args.workers,
-        bif_workers=args.workers,
-        native_efork_workers=args.workers,
-        verify_nsamples=args.verify_nsamples,
-        spectral=False,
-        psd=False,
-        tisean=False,
-        lyapunov=False,
-        bifurcation=False,
-        basin_planes=False,
-        hidden_illustration=False,
-        native_efork=True,
-    )
-
-
-def command_for(config: UnifiedChuaConfig) -> list[str]:
-    return [sys.executable, str(LEGACY_PIPELINE), *config.to_argv()]
 
 
 def main() -> None:
     args = parse_args()
-    config = build_config(args)
-    command = command_for(config)
     args.output_dir.mkdir(parents=True, exist_ok=True)
-
-    contract = {
-        "purpose": "minimal_fractional_chua_protocol",
-        "heavy_numerics": "delegated_to_c_backed_unified_workflow",
-        "output_dir": str(args.output_dir),
-        "command": command,
-        "command_string": subprocess.list2cmdline(command),
-        "config": {
-            "model": config.model,
-            "run_mode": config.run_mode,
-            "q": config.q,
-            "h": config.h,
-            "memory_length": config.memory_length,
-            "t_transient": config.t_transient,
-            "t_keep": config.t_keep,
-            "basin_grid": config.basin_grid,
-            "workers": args.workers,
-            "verify_nsamples": config.verify_nsamples,
-            "native_efork": config.native_efork,
+    contract = NumericalContract(
+        q=args.q,
+        h=args.h,
+        t_final=args.t_final,
+        t_transient=args.t_transient,
+        backend="efork_c",
+        memory_policy="finite_memory",
+        memory_length=args.memory_length,
+        hiddenness_radii=(1.0e-4, 1.0e-3),
+        samples_per_radius=100,
+        sample_growth_per_radius=50,
+        random_seed_policy="fixed_reproducible",
+        random_seed=20260524,
+    )
+    errors = contract.validate()
+    if errors:
+        raise ValueError("; ".join(errors))
+    contract_path = args.output_dir / "minimal_chua_protocol.json"
+    summary_path = args.output_dir / "seed_generation_summary.json"
+    write_json(
+        contract_path,
+        {
+            "system": "fractional_nonsmooth_chua",
+            "official_stage_order": list(OFFICIAL_STAGE_ORDER),
+            "numerical_contract": contract.to_dict(),
+            "scientific_boundary": "describing-function families generate seeds only; hiddenness requires the full protocol.",
         },
-    }
-    write_json(args.output_dir / "minimal_chua_protocol.json", contract)
-    (args.output_dir / "minimal_chua_protocol_command.txt").write_text(contract["command_string"] + "\n", encoding="utf-8")
-
-    print(f"contract={args.output_dir / 'minimal_chua_protocol.json'}")
-    print(f"command={contract['command_string']}")
+    )
+    command = [
+        sys.executable,
+        "-m",
+        "hidden_attractors.protocol_cli",
+        "generate-seeds",
+        "--contract",
+        str(contract_path),
+        "--output",
+        str(summary_path),
+    ]
+    command_text = subprocess.list2cmdline(command)
+    (args.output_dir / "minimal_chua_protocol_command.txt").write_text(command_text + "\n", encoding="utf-8")
+    print(f"contract={contract_path}")
+    print(f"command={command_text}")
     if args.run:
-        run_unified_chua(config)
+        protocol_main(command[3:])
 
 
 if __name__ == "__main__":

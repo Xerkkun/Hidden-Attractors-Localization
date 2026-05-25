@@ -91,8 +91,9 @@ against those printed, rounded values:
 The differences include the paper's four-decimal display rounding; they are
 not discrepancies against unpublished full-precision reference values.
 
-The harmonic seed is carried to the original nonlinear system by epsilon
-continuation. The regenerated run evaluates the EFORK-3 numerical route at
+The harmonic seed is carried to the original nonlinear system by continuation.
+The archived output recorded its internal parameter as `epsilon`; the public
+methodology now calls it `lambda`. The regenerated run evaluates the EFORK-3 numerical route at
 `q=1`, keeping the order-one baseline directly comparable with the
 fractional workflow and its native validation stages.
 
@@ -102,7 +103,7 @@ de la Fraga (CINVESTAV Unidad Zacatenco). The previously stored
 integration-dependent outputs were deleted and this `q=1` run was regenerated
 with `K3 = a31*K1 + a32*K2`.
 
-![Integer Chua epsilon continuation](/images/docs/hidden-attractors/chua-integer/fig02d_continuation_story.png)
+![Integer Chua continuation](/images/docs/hidden-attractors/chua-integer/fig02d_continuation_story.png)
 
 The final trajectory retains a dominant spectral component near the seed
 frequency, with the expected shift after continuation into the fully

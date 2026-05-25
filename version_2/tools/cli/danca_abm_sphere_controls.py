@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CLI for Danca ABM full-history sphere controls."""
+"""Compatibility CLI for Danca ABM full-history equilibrium-ball controls."""
 
 from __future__ import annotations
 

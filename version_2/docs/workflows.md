@@ -1,204 +1,103 @@
-# Workflows
+# Official Workflow
 
-Workflows are reusable modules under `hidden_attractors.workflows`. Command
-wrappers live in `tools/cli/` and console scripts are declared in
-`pyproject.toml`.
+All maintained Caputo hidden-attractor work follows one sequence:
 
-Registered systems can advertise their workflow commands:
+```text
+numerical_contract
+-> algebraic_validation
+-> seed_generation
+-> soft_precheck
+-> continuation
+-> post_continuation_filter
+-> dynamic_reference
+-> robustness
+-> hiddenness_tests
+-> diagnostics
+```
+
+The public contracts are in `hidden_attractors.workflows.protocol`. Machine
+summaries use the same envelope at every stage:
+
+```text
+schema_version, protocol_version, stage, status, candidate_id, system,
+numerical_contract, inputs, outputs, metrics, verdict, files, provenance
+```
+
+## CLI
+
+The official promotion interface is:
 
 ```bash
-hidden-attractors-systems --system chua-nonsmooth
+hidden-attractors-protocol generate-seeds --contract configs/unified_caputo_protocol.json --output outputs/run/03_seed_generation/summary.json
+hidden-attractors-protocol soft-precheck --contract configs/unified_caputo_protocol.json --payload precheck.json --output outputs/run/04_soft_precheck/summary.json
+hidden-attractors-protocol continue --contract configs/unified_caputo_protocol.json --candidate-id candidate_001 --lambda-values 0,0.25,0.5,0.75,1 --output outputs/run/05_continuation/summary.json
+hidden-attractors-protocol filter-survivors --contract configs/unified_caputo_protocol.json --payload decisions.json --output outputs/run/06_post_continuation_filter/summary.json
+hidden-attractors-protocol build-reference --contract configs/unified_caputo_protocol.json --payload reference.json --output outputs/run/07_dynamic_reference/summary.json
+hidden-attractors-protocol robustness --contract configs/unified_caputo_protocol.json --payload robustness.json --output outputs/run/08_robustness/summary.json
+hidden-attractors-protocol hiddenness --contract configs/unified_caputo_protocol.json --payload hiddenness.json --output outputs/run/09_hiddenness_tests/summary.json
+hidden-attractors-protocol diagnostics --contract configs/unified_caputo_protocol.json --payload diagnostics.json --output outputs/run/10_diagnostics/summary.json
 ```
 
-Reusable workflows must also declare their experiment-level inputs through a
-`WorkflowInputSpec`: solver contract, destination classifier, target reference,
-sphere controls, basin slice, strict-refinement thresholds, trajectory
-diagnostics, parameter sweeps, and robustness cases.  See
-[Adapting New Systems](adapting_new_systems.md) and inspect requirements with:
+Native numerical adapters may produce the payloads, but only official
+envelopes are eligible for promoted validation evidence.
 
-```bash
-hidden-attractors-workflow-requirements
-hidden-attractors-workflow-requirements --workflow strict-refinement --system chua-nonsmooth
-hidden-attractors-workflow-requirements --example-spec
-```
+## Stage Rules
 
-## Robustness Overlay
+`numerical_contract` fixes `q`, time discretization, transient duration,
+backend, memory policy, numerical thresholds, similarity thresholds,
+hiddenness radii and reproducible random sampling. EFORK/C is preferred for
+validated sweeps. ABM full-history remains the benchmark for final candidates
+and Danca-style replication. Finite-memory runs measure scalability and
+robustness; they are not the sole truth source.
 
-Module:
+`algebraic_validation` records the Caputo Lur'e representation, equilibria,
+piecewise Jacobians when needed, Matignon classification, fractional transfer
+function and describing-function families.
 
-```python
-hidden_attractors.workflows.robustness_overlay
-```
+`seed_generation` has one schema and four families:
 
-CLI:
+| Family | Definition |
+|---|---|
+| `lure_classical_centered` | `sigma0=0`, `mu=1` |
+| `lure_classical_biased` | free `sigma0`, `mu=1` |
+| `machado_centered` | `sigma0=0`, variable `mu`, variable `theta` |
+| `machado_biased` | free `sigma0`, variable `mu`, variable `theta` |
 
-```bash
-python tools/cli/robustness_overlay_c_trajectories.py --help
-hidden-attractors-robustness-overlay --help
-```
+Classical centered describing function and centered Lur'e are one family.
+Machado/FDF enlarges the seed search; it does not establish hiddenness.
 
-Purpose: compare trajectory geometry and spectra under changes in `h`, `Lm`,
-and integration time. This is a robustness workflow, not a hiddenness proof.
+`soft_precheck` rejects only invalid configuration, impossible
+amplitude/frequency, NaN/Inf or catastrophic numerical failure, and exact
+duplicates. A periodic-looking direct seed receives
+`pre_continuation_periodic` and remains admissible for continuation.
 
-## Sphere Controls
+`continuation` uses `ContinuationPlan(lambda_values=...)`: `lambda=0` is the
+auxiliary start system and `lambda=1` is the target system. Historical
+implementations may internally map `lambda` to epsilon, eta or smoothing, but
+official output never exposes those as competing protocols.
 
-Module:
+`post_continuation_filter` is where hard periodicity and long target-system
+dynamics are evaluated. Survivors advance as `continuation_survivor`.
 
-```python
-hidden_attractors.workflows.sphere_controls
-```
+`dynamic_reference` constructs the target object for comparison: trajectory,
+geometry, equilibrium distances, spectral/recurrence information, optional
+Lyapunov estimate and similarity signature.
 
-CLI:
+`robustness` requires controlled changes in step size, horizon, memory policy,
+backend when feasible, initial point and reconstruction phase. Its allowed
+verdicts are `robust_target_hit`, `weak_target_hit`, `not_reproduced` and
+`numerical_failure`.
 
-```bash
-python tools/cli/lure_top3_sphere_robustness.py --help
-hidden-attractors-sphere-controls --help
-```
+`hiddenness_tests` runs only on robust survivors. It samples within balls
+around every equilibrium, with declared radii and increasing sample counts,
+and generates close and large `xy`, `xz` and `yz` basin slices. A strong final
+label is invalid unless every declared test passes.
 
-Purpose: probe equilibrium-neighborhood initial conditions on spheres and
-record whether they enter target-attractor basins.
+`diagnostics` includes FFT, PSD, Lyapunov and bifurcation views. These
+quantities complement, but never replace, neighborhood and basin tests.
 
-For new systems, the required reusable inputs are `ChaoticSystem.equilibria`,
-`WorkflowInputSpec.integrator`, `DestinationClassifierSpec`, and
-`TargetReferenceSpec`.  System-specific scripts may keep historical defaults,
-but generic runs should write the effective spec next to the output artifacts.
+## Compatibility
 
-## Refined Basin Classification
-
-Module:
-
-```python
-hidden_attractors.workflows.refined_basin
-```
-
-CLI:
-
-```bash
-python tools/cli/refine_project_basin_classification.py --help
-hidden-attractors-refined-basin --help
-```
-
-Purpose: revisit `unknown` basin cells and compare trajectory geometry against
-reference target trajectories.
-
-The stricter target-reference refinement used by recent Chua/Danca runs is
-available as:
-
-```bash
-python tools/cli/strict_target_refinement.py --help
-hidden-attractors-strict-target-refinement --help
-```
-
-It is still Chua/Danca-aware internally, but its inputs mirror the reusable
-`TargetReferenceSpec` and `StrictRefinementSpec` contract.
-
-## Danca ABM Sphere Controls
-
-Module:
-
-```python
-hidden_attractors.workflows.danca_abm_sphere_controls
-```
-
-CLI:
-
-```bash
-python tools/cli/danca_abm_sphere_controls.py --help
-hidden-attractors-danca-abm-sphere-controls --help
-```
-
-Purpose: run Danca's published fractional Chua example with ABM full memory,
-sample the same kind of equilibrium-centered spheres used by the project
-candidate controls, then refine only unresolved outcomes.  This remains a
-system-specific compatibility workflow and should not be used as a generic
-adapter without replacing the system, solver, classifier, and target reference.
-
-## Unified Fractional Chua Pipeline
-
-Module:
-
-```python
-hidden_attractors.workflows.unified_chua
-```
-
-CLI:
-
-```bash
-hidden-attractors-unified-chua --help
-python -m hidden_attractors.workflows.unified_chua --help
-```
-
-Purpose: run the Chua fractional workflow with explicit command-line or Python
-configuration instead of manual `$env:HIDDEN_ATTRACTORS_*` setup. Heavy stages
-must use the packaged C backends: EFORK integration, basin classification,
-hiddenness verification, bifurcation sweeps, and Lyapunov estimation.
-
-## Generic Integer Lur'e Workflow
-
-Module:
-
-```python
-hidden_attractors.workflows.integer_lure
-```
-
-Example:
-
-```bash
-python examples/integer_lure_chua_protocol.py
-hidden-attractors-integer-chua --help
-```
-
-Purpose: make the Chua integer route reusable for other order-one systems in
-manual Lur'e form. The reusable pieces include:
-
-- Nyquist/describing-function seed generation;
-- real/imaginary transfer-function closure figures for the selected seed;
-- classical and Machado DF seed branches;
-- epsilon continuation;
-- final attractor integration;
-- equilibrium-neighborhood hiddenness controls;
-- reusable Nyquist, continuation, attractor, and hiddenness figures;
-- integer-order Lyapunov estimates through `hidden_attractors.analysis`.
-
-The existing `hidden-attractors-integer-chua` command remains a compatibility
-wrapper for the full historical Chua run. For a different system, register a
-`ChaoticSystem` with `lure=...`, equilibria, and preferably an analytic
-Jacobian.
-
-## Historical Workflows
-
-Historical scripts are exposed through a common installable facade:
-
-```bash
-hidden-attractors-legacy --list
-hidden-attractors-legacy extended-search --help
-hidden-attractors-extended-search --help
-hidden-attractors-danca2017 --help
-hidden-attractors-nyquist-pipeline --help
-```
-
-These commands preserve reproducibility. New reusable workflow logic should go
-under `hidden_attractors.workflows` and, when it is system-specific, be attached
-to a registered `ChaoticSystem`.
-
-Legacy scripts that gain new behavior should build or load a
-`WorkflowInputSpec`, write that spec to the output directory, and delegate
-reusable calculations to package modules.  This keeps historical defaults
-traceable without letting the stable API become script-specific.
-
-## Numerical Contract
-
-Every workflow output should record:
-
-- model and parameter set;
-- order type (`integer` or `fractional`) and fractional order `q` when used;
-- step size `h`;
-- finite memory length `Lm` for fractional runs;
-- integration horizon and burn-in;
-- backend and compiler policy;
-- thresholds used for classification or scoring.
-
-Do not add new heavy Python integration or basin routes when a suitable C
-backend exists. For non-Chua systems, add a system-specific native backend or
-an adapter implementing `hidden_attractors.native.NativeIntegrationBackend` and
-`NativeLyapunovBackend`.
+`tools/legacy/` remains temporarily because maintained wrappers still depend
+on the native fractional Chua and Danca adapters there. It is not an
+alternative methodology. See [Migration To The Unified Methodology](migration_unified_methodology.md).

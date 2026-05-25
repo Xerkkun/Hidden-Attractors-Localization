@@ -1,4 +1,4 @@
-"""Strict target-reference refinement for basin and sphere-control rows.
+"""Strict target-reference refinement for basin and equilibrium-ball rows.
 
 This workflow re-integrates selected initial conditions and accepts a
 ``target_positive`` or ``target_negative`` label only when finite-time
@@ -32,6 +32,7 @@ from ..io import append_csv, read_csv_rows, read_json, write_csv, write_json
 from ..native.backends import BasinBackend, FractionalChuaBackend
 from ..parallel import force_single_openmp_thread_current_process, force_single_openmp_thread_env
 from ..paths import PROJECT_ROOT
+from .protocol import sample_uniform_ball
 
 
 LEGACY_ROOT = PROJECT_ROOT / "tools" / "legacy"
@@ -134,17 +135,6 @@ def _seed_from_row(row: dict[str, Any]) -> np.ndarray:
 
 def _analysis_start(contract: dict[str, Any], analysis: dict[str, Any]) -> float:
     return max(float(contract.get("t_burn", 0.0)), float(analysis["tail_fraction_start"]) * float(contract["t_final"]))
-
-
-def _directions() -> dict[str, np.ndarray]:
-    return {
-        "+x": np.array([1.0, 0.0, 0.0], dtype=float),
-        "-x": np.array([-1.0, 0.0, 0.0], dtype=float),
-        "+y": np.array([0.0, 1.0, 0.0], dtype=float),
-        "-y": np.array([0.0, -1.0, 0.0], dtype=float),
-        "+z": np.array([0.0, 0.0, 1.0], dtype=float),
-        "-z": np.array([0.0, 0.0, -1.0], dtype=float),
-    }
 
 
 def _score_against(payload: dict[str, Any], ref: dict[str, Any], weights: dict[str, float]) -> dict[str, float]:
@@ -345,12 +335,14 @@ def _control_payloads(cfg: dict[str, Any], eq_backend: Any, integrate: Any) -> d
         return {}
     equilibria = eq_backend.equilibria()
     controls: dict[str, dict[str, Any]] = {}
+    rng = np.random.default_rng(int(control_cfg.get("random_seed", 20260524)))
+    count = int(control_cfg.get("samples_per_equilibrium", 12))
     for eq_name in eq_names:
         if eq_name not in equilibria:
             continue
         center = np.asarray(equilibria[eq_name], dtype=float)
-        for direction_name, direction in _directions().items():
-            traj = integrate(center + radius * direction)
+        for sample_id, point in enumerate(sample_uniform_ball(center, radius, count, rng)):
+            traj = integrate(point)
             _metrics, payload = trajectory_metrics(
                 traj,
                 h=float(cfg["contract"]["sample_h"]),
@@ -360,7 +352,7 @@ def _control_payloads(cfg: dict[str, Any], eq_backend: Any, integrate: Any) -> d
                 max_section_points=int(analysis["max_section_points"]),
                 max_cloud_points=int(analysis["max_cloud_points"]),
             )
-            controls[f"{eq_name}:{direction_name}"] = payload
+            controls[f"{eq_name}:ball_{sample_id:04d}"] = payload
     return controls
 
 
@@ -528,7 +520,9 @@ def make_config(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
                 "enabled": not bool(args.disable_negative_controls),
                 "radius": float(args.negative_control_radius),
                 "equilibria": str(args.negative_control_equilibria),
-                "directions": "axis_six",
+                "sampling_mode": "ball",
+                "samples_per_equilibrium": 12,
+                "random_seed": 20260524,
             },
             "score_weights": {
                 "cloud": float(args.weight_cloud),
@@ -638,7 +632,7 @@ def aggregate(outdir: str | Path, *, wait: bool = False, poll_sec: float = 60.0)
         "refined_rows": len(rows),
         "target_hits_after_strict_refinement": int(target_hits),
         "status": "partial" if len(rows) != int(cfg["planned_rows"]) else "ok",
-        "hiddenness_interpretation": "not_supported_by_strict_equilibrium_refinement" if target_hits else "no_strict_target_hits_in_refined_rows",
+        "hiddenness_interpretation": "rejected_self_excited_contact" if target_hits else "compatible_with_hiddenness_under_tested_radii",
         "notes": [
             "Only selected source rows were re-integrated and reclassified.",
             "A strict target hit is numerical evidence of target-like basin membership, not a proof of hiddenness.",
@@ -676,7 +670,7 @@ def launch(outdir: str | Path, args: argparse.Namespace) -> Path:
 
 
 def make_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Strict target-reference refinement for basin and sphere-control outputs.")
+    parser = argparse.ArgumentParser(description="Strict target-reference refinement for basin and equilibrium-ball outputs.")
     parser.add_argument("--job", choices=["launch", "chunk", "aggregate"], default="launch")
     parser.add_argument("--mode", choices=["basin-project", "basin-danca", "sphere-project", "sphere-danca"], required=False, default="basin-project")
     parser.add_argument("--source-dir", default=str(ROOT_OUTPUTS / "equilibrium_zoom_Eplus_160_20260517"))

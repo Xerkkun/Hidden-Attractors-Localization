@@ -64,8 +64,8 @@ central equilibrium is stable and the external equilibria are unstable:
 | Eigenvalues in Python, MATLAB, Wolfram | relative error `< 1e-8` | below `1e-15` | passed |
 | Matignon classification at `q=0.9998` | same signed margin/classification | `E0` stable; `E+`, `E-` unstable | passed |
 
-The machine-readable evidence is in
-`validation/01_algebra/equilibria_cross_tool_residuals.csv`,
+The machine-readable evidence generated under the official protocol is in
+`validation/02_algebraic_validation/equilibria_cross_tool_residuals.csv`,
 `jacobian_cross_tool_comparison.csv`,
 `jacobian_finite_difference_check.csv`, and
 `eigenvalues_cross_tool_comparison.csv`.

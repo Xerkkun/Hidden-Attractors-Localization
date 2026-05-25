@@ -17,7 +17,7 @@ from .io import read_csv_rows, read_json
 from .paths import PROJECT_ROOT
 
 
-PROMOTED_SELECTION = PROJECT_ROOT / "validation" / "04_candidates" / "selected_candidates.json"
+PROMOTED_SELECTION = PROJECT_ROOT / "validation" / "06_post_continuation_filter" / "selected_candidates.json"
 
 
 def _float(value: Any, default: float = float("nan")) -> float:
@@ -37,7 +37,8 @@ class CandidateRecord:
         Unique identifier of the form ``'branch_0_mu_4p00000_theta_0p00000'``
         or ``'lure_biased_q_0p99980_rank_0001'``.
     route : str
-        Seed-generation method: ``'Machado_FDF'`` or ``'Lure_rank_0001'``.
+        Official seed family, such as ``'machado_centered'`` or
+        ``'lure_classical_biased'``.
     q : float
         Caputo fractional order used during seed search.
     robust_start : np.ndarray, shape (3,)
@@ -141,7 +142,7 @@ def load_lure_survivor(
         surv = survivors[candidate_id]
         return CandidateRecord(
             candidate_id=candidate_id,
-            route="Lure_rank_0001",
+            route="lure_classical_biased",
             q=_float(row.get("q"), 0.9998),
             mu=None,
             theta=None,
@@ -191,7 +192,7 @@ def load_machado_candidate(candidate_id: str, targeted_path: str | Path, corrida
         raise FileNotFoundError(f"No se encontro {candidate_id} en {targeted_path}")
     return CandidateRecord(
         candidate_id=candidate_id,
-        route="Machado_FDF",
+        route="machado_centered",
         q=_float(ref.get("q"), 0.9998),
         mu=_float(ref.get("mu")),
         theta=_float(ref.get("theta")),
@@ -244,7 +245,7 @@ def load_final_candidate_records(
     selection = _selection_path(source_dir)
     payload = read_json(selection)
     status = payload.get("selection_status")
-    if status is not None and status != "promoted_for_hiddenness":
+    if status is not None and status != "continuation_survivors_selected_for_reference":
         raise FileNotFoundError(
             f"La selección actual no está promovida para ocultedad ({status}) en {selection}"
         )

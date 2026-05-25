@@ -1,8 +1,7 @@
 # API Reference
 
-This is the current stable public surface. Scripts in `tools/legacy/` are not
-preferred public API, but they are available through `hidden_attractors.legacy`
-and installable compatibility commands.
+This is the current stable public surface. The remaining files under
+`tools/legacy/` are internal transition dependencies and are not public API.
 
 ## Top-Level Imports
 
@@ -10,20 +9,28 @@ and installable compatibility commands.
 from hidden_attractors import (
     BasinSliceSpec,
     ChuaParameters,
+    ContinuationPlan,
+    ContinuationTrace,
     CandidateRecord,
     ChaoticSystem,
     DestinationClassifierSpec,
     HarmonicSeed,
+    HiddennessTestResult,
     IntegratorSpec,
     LureSystem,
     NumericalContract,
+    OFFICIAL_STAGE_ORDER,
     ParameterSweepSpec,
     RobustnessCaseSpec,
+    RobustnessVerdict,
     RobustnessCase,
     SphereControlSpec,
+    SoftPrecheckResult,
+    StageEnvelope,
     StrictRefinementSpec,
     TargetReferenceSpec,
     TrajectoryDiagnosticsSpec,
+    UnifiedSeedRecord,
     WorkflowInputSpec,
     check_system_capability,
     chua_parameters,
@@ -80,7 +87,7 @@ workflow names, and a manual `LureSystem`.  `LureSystem` is mandatory for the
 full Nyquist/DF route.
 
 `requirements_for` and `check_system_capability` document which extra inputs
-are needed before a registered system can be used in sphere controls, basin
+are needed before a registered system can be used in equilibrium-ball controls, basin
 cuts, strict refinement, continuation, Lyapunov, or full hiddenness protocols.
 
 ## Seed Generation
@@ -195,7 +202,6 @@ not the high-throughput backend for attractor searches.
 - `hidden_attractors.workflows.robustness_overlay`
 - `hidden_attractors.workflows.sphere_controls`
 - `hidden_attractors.workflows.refined_basin`
-- `hidden_attractors.workflows.unified_chua`
 - `hidden_attractors.workflows.integer_lure`
 - `hidden_attractors.workflows.contracts.FullWorkflowContract`
 - `hidden_attractors.workflows.specs.WorkflowInputSpec`
@@ -211,14 +217,12 @@ not the high-throughput backend for attractor searches.
 - `hidden_attractors.workflows.specs.write_workflow_spec`
 - `hidden_attractors.workflows.specs.load_workflow_spec`
 
-Use the workflow modules for reusable Python calls and `tools/cli/` or console
-entry points for command-line execution. The unified Chua workflow is available
-as `hidden-attractors-unified-chua` and replaces manual `$env:HIDDEN_ATTRACTORS_*`
-setup for new runs.
+Use the workflow modules for reusable Python calls and
+`hidden-attractors-protocol` for official stage output.
 
 `WorkflowInputSpec` is the shared contract for maintained CLIs and migrated
 legacy scripts. It records solver, memory, classifier, target-reference,
-sphere, basin, strict-refinement, trajectory-diagnostics, parameter-sweep, and
+equilibrium-ball, basin, strict-refinement, trajectory-diagnostics, parameter-sweep, and
 robustness-case inputs so new systems can be audited without copying
 Chua/Danca-specific scripts.
 
@@ -226,21 +230,9 @@ Chua/Danca-specific scripts.
 systems in Lur'e form: seed generation, continuation, final trajectory,
 hiddenness controls, reusable figures, and Lyapunov smoke estimates.
 
-## Legacy Facade
+## Transition Dependencies
 
-- `hidden_attractors.legacy.legacy_script_names`
-- `hidden_attractors.legacy.legacy_script_path`
-- `hidden_attractors.legacy.run_legacy_script`
-
-Command form:
-
-```bash
-hidden-attractors-legacy --list
-hidden-attractors-legacy extended-search --help
-hidden-attractors-danca2017 --help
-hidden-attractors-nyquist-pipeline --help
-```
-
-Use these commands for reproducibility while migrating reusable logic into
-`hidden_attractors/`. New legacy behavior should build or load a
-`WorkflowInputSpec` and write the effective spec next to output artifacts.
+The official CLI does not expose historical routes. A small set of internal
+transition helpers remains only because the maintained fractional report and
+ABM comparison still import numerical utilities from it; outputs promoted as
+official evidence must use the stage envelope and official vocabulary.

@@ -1,3 +1,7 @@
+# DEPRECATED compatibility input for tools/legacy/machado_targeted_verification.py.
+# New runs use configs/unified_caputo_protocol.json with family=machado_biased.
+deprecated_replaced_by: configs/unified_caputo_protocol.json
+historical_reproduction_only: true
 q: 0.9998
 source_summary: runs_machado_sweep_fast/chua_piecewise/machado_sweep/machado_sweep_summary.json
 previous_corrida1_dir: outputs/extended_search/corrida1

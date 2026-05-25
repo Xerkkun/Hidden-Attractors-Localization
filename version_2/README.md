@@ -27,15 +27,15 @@ modules.
   and `antropy`, with PyDSTool documented as a companion continuation tool.
 - C/EFORK wrapper classes with local build policy and backend contracts for
   future system-specific native engines.
-- Workflow entry points for robustness overlays, sphere controls, refined basin
+- Workflow entry points for robustness overlays, equilibrium-ball controls, refined basin
   classification, and the unified Chua pipeline without manual environment
   variables.
 - A system registry for built-in and user-defined chaotic systems. Full
   Nyquist/DF workflows require a manual Lur'e form.
-- Public seed-generation helpers for classical, biased, and Machado
-  describing-function seeds.
-- Generic order-one Lur'e helpers for seed generation, epsilon continuation,
-  hiddenness controls, reusable figures, and Lyapunov estimates.
+- Public seed-generation helpers normalized into classical centered, classical
+  biased, Machado centered, and Machado biased seed families.
+- Official Caputo workflow contracts, JSON envelopes, lambda continuation,
+  interior-ball hiddenness tests, and complementary diagnostics.
 - Installable compatibility commands for historical workflows.
 - Small examples and smoke tests for users who install from GitHub.
 
@@ -113,9 +113,10 @@ After editable installation, the same candidate listing is available as:
 hidden-attractors-list-candidates
 hidden-attractors-systems
 hidden-attractors-check-validation --help
-hidden-attractors-unified-chua --help
-hidden-attractors-integer-chua --help
-hidden-attractors-legacy --list
+hidden-attractors-protocol --help
+hidden-attractors-protocol --help
+hidden-attractors-fractional-report-run --help
+hidden-attractors-check-validation --help
 ```
 
 Heavy numerical stages use the packaged C backends. Python helpers are for
@@ -143,6 +144,7 @@ available for adding system-specific integer or fractional engines.
 - [Code Reference Map](docs/code_reference_map.md)
 - [Notebooks](docs/notebooks.md)
 - [Workflows](docs/workflows.md)
+- [Migration To The Unified Methodology](docs/migration_unified_methodology.md)
 - [Testing](docs/testing.md)
 - [Repository Layout](docs/repository_layout.md)
 - [Contributing](docs/contributing.md)
@@ -210,6 +212,35 @@ The library records numerical contracts. It does not turn finite-time
 simulations into mathematical proofs of hiddenness. Any reported result must
 state the model, `q`, step size, memory length, integration time, burn-in,
 backend, and classification thresholds.
+
+## Official Methodology
+
+All new Caputo hidden-attractor studies use this fixed order:
+
+```text
+numerical_contract -> algebraic_validation -> seed_generation -> soft_precheck
+-> continuation -> post_continuation_filter -> dynamic_reference -> robustness
+-> hiddenness_tests -> diagnostics
+```
+
+The numerical contract fixes `q`, `h`, integration horizon, transient,
+backend, memory policy, thresholds, sampling radii and output schema. Native
+EFORK/C is preferred for validated large sweeps; ABM full-history remains the
+reference comparison for final candidates and Danca-style replication.
+Finite-memory integration is a robustness/scalability variant.
+
+`seed_generation` unifies classical centered Lur'e, classical biased Lur'e,
+Machado centered and Machado biased constructions. Describing functions,
+Lur'e reconstruction and Machado/FDF only produce seeds; none is evidence of
+hiddenness. A periodic-looking direct seed is labelled
+`pre_continuation_periodic` in `soft_precheck` and is not rejected before
+`ContinuationPlan(lambda_values=...)` reaches the target system.
+
+Only post-continuation survivors may become dynamic references. Only robustly
+reproduced references advance to hiddenness tests, which sample inside
+increasing balls around every equilibrium and generate close and large `xy`,
+`xz` and `yz` basin slices. FFT, PSD, Lyapunov estimates and bifurcation
+figures are diagnostics; they do not substitute for those tests.
 
 ## Citation
 

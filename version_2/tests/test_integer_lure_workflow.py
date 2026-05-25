@@ -19,6 +19,7 @@ from hidden_attractors.workflows.contracts import (
     FullWorkflowContract,
     validate_full_workflow_system,
 )
+from hidden_attractors.workflows.protocol import ContinuationPlan
 from hidden_attractors.workflows.integer_lure import (
     continue_integer_lure_seed,
     final_integer_lure_attractor,
@@ -45,7 +46,7 @@ def test_integer_lure_seed_and_short_continuation_are_reusable() -> None:
     steps = continue_integer_lure_seed(
         system,
         seed,
-        eps_values=(0.5, 1.0),
+        plan=ContinuationPlan((0.0, 0.5, 1.0), {"internal_parameter": "epsilon"}),
         t_transient=0.05,
         t_keep=0.05,
         h=0.01,
@@ -54,6 +55,8 @@ def test_integer_lure_seed_and_short_continuation_are_reusable() -> None:
 
     assert seed.seed.shape == (3,)
     assert steps
+    assert [step.lambda_value for step in steps] == [0.0, 0.5, 1.0]
+    assert steps[-1].provenance["mapping"]["internal_parameter"] == "epsilon"
     assert steps[-1].x_out.shape == (3,)
 
     plot_lure_nyquist_describing_function(system.lure, seed, outdir / "nyquist.png", q=1.0)
@@ -102,6 +105,8 @@ def test_integer_hiddenness_controls_and_lyapunov_smoke() -> None:
 
     assert status == "ok"
     assert summary["n_probes"] == 3
+    assert summary["sampling_modes"] == ["ball"]
+    assert all(probe.distance_from_equilibrium <= probe.radius for probe in probes)
     assert lyap.exponents.shape == (3,)
 
     plot_integer_hiddenness_controls(trajectory, probes, outdir / "hiddenness.png")

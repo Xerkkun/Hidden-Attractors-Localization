@@ -1,14 +1,12 @@
-"""Danca ABM full-history sphere controls plus strict unknown refinement.
+"""Danca ABM full-history equilibrium-ball controls plus strict refinement.
 
-This workflow reproduces the sphere-neighborhood control geometry used for the
-project EFORK candidate, but integrates every point with the Danca
-Caputo Adams-Bashforth-Moulton solver using full memory.  It then optionally
-launches the strict target-reference refinement only for rows that remain
-``unknown`` under the coarse Danca sphere classifier.
+The module name is retained as an installed compatibility alias. New plans
+sample inside equilibrium-centred balls, and ABM full history is used as a
+robustness/reference comparison rather than as a competing hiddenness route.
 
 Mathematical warning:
     The coarse labels are finite-time basin diagnostics.  A target hit from an
-    equilibrium sphere is evidence against hiddenness under the tested
+    equilibrium ball is evidence against hiddenness under the tested
     numerical contract; absence of such hits is compatibility evidence, not a
     proof.
 """
@@ -30,6 +28,7 @@ from ..basins import class_label
 from ..io import append_csv, read_csv_rows, read_json, write_csv, write_json
 from ..parallel import force_single_openmp_thread_current_process, force_single_openmp_thread_env
 from ..paths import PROJECT_ROOT
+from .protocol import sample_uniform_ball
 
 
 LEGACY_ROOT = PROJECT_ROOT / "tools" / "legacy"
@@ -55,6 +54,8 @@ RAW_FIELDS = [
     "equilibrium_id",
     "radius",
     "sample_id",
+    "sampling_mode",
+    "distance_from_equilibrium",
     "batch_100",
     "x0",
     "y0",
@@ -102,14 +103,6 @@ def _float(value: Any, default: float = float("nan")) -> float:
         return float(value)
     except Exception:
         return default
-
-
-def _unit_direction(rng: np.random.Generator) -> np.ndarray:
-    vec = rng.normal(size=3)
-    norm = float(np.linalg.norm(vec))
-    if norm == 0.0:
-        return np.array([1.0, 0.0, 0.0], dtype=float)
-    return vec / norm
 
 
 def _danca_config(source_dir: Path) -> DancaChuaConfig:
@@ -166,9 +159,9 @@ def make_plan(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
     case_index = 0
     for eq_id in eq_names:
         center = np.asarray(eqs[eq_id], dtype=float)
-        for radius in radii:
-            for sample_id in range(int(args.samples_per_radius)):
-                x0 = center + float(radius) * _unit_direction(rng)
+        for radius_index, radius in enumerate(radii):
+            count = int(args.samples_per_radius) + radius_index * int(args.sample_growth_per_radius)
+            for sample_id, x0 in enumerate(sample_uniform_ball(center, float(radius), count, rng)):
                 rows.append(
                     {
                         "case_index": case_index,
@@ -177,6 +170,8 @@ def make_plan(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
                         "equilibrium_id": eq_id,
                         "radius": float(radius),
                         "sample_id": sample_id,
+                        "sampling_mode": "ball",
+                        "distance_from_equilibrium": float(np.linalg.norm(x0 - center)),
                         "batch_100": int(sample_id // 100 + 1),
                         "x0": float(x0[0]),
                         "y0": float(x0[1]),
@@ -191,13 +186,15 @@ def make_plan(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
             write_json(root / name, read_json(src))
     cfg = {
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-        "method": "danca_abm_full_memory_sphere_controls",
+        "method": "danca_abm_full_memory_ball_controls",
         "danca_source_dir": str(source_dir),
         "candidate_id": "danca2017_reference",
         "equilibria": {key: val.tolist() for key, val in eqs.items()},
         "tested_equilibria": eq_names,
         "radii": radii,
         "samples_per_radius": int(args.samples_per_radius),
+        "sample_growth_per_radius": int(args.sample_growth_per_radius),
+        "sampling_mode": "ball",
         "chunks": int(args.chunks),
         "random_seed": int(args.seed),
         "classification": {
@@ -293,7 +290,7 @@ def run_chunk(outdir: str | Path, chunk_id: int, chunks: int) -> Path:
         append_csv(path, row, RAW_FIELDS)
         rows += 1
         if rows % 25 == 0:
-            print(f"danca ABM sphere chunk {chunk_id}: {rows} rows", flush=True)
+            print(f"danca ABM ball chunk {chunk_id}: {rows} rows", flush=True)
     write_json(done, {"chunk_id": int(chunk_id), "rows": rows, "completed_at": time.strftime("%Y-%m-%dT%H:%M:%S")})
     return path
 
@@ -341,12 +338,12 @@ def aggregate(outdir: str | Path, *, wait: bool = False, poll_sec: float = 60.0)
     total_unknown = sum(int(row["n_unknown"]) for row in summary_rows)
     decision = {
         "candidate_id": cfg["candidate_id"],
-        "total_sphere_trajectories": len(rows),
+        "tested_ball_trajectories": len(rows),
         "planned_rows": int(cfg["planned_rows"]),
         "total_target_hits": total_targets,
         "total_unknown": total_unknown,
-        "hiddenness_status": "not_supported_by_danca_abm_sphere_test" if total_targets > 0 else "compatible_with_hiddenness_under_tested_spheres",
-        "notes": "Danca ABM full-history sphere test; unknown rows should be passed to strict target-reference refinement.",
+        "hiddenness_status": "rejected_self_excited_contact" if total_targets > 0 else "compatible_with_hiddenness_under_tested_radii",
+        "notes": "Danca ABM full-history ball test retained as an ABM reference comparison; unknown rows require strict refinement.",
     }
     write_json(root / "danca_sphere_decision.json", decision)
     summary = {
@@ -444,13 +441,14 @@ def launch(outdir: str | Path, args: argparse.Namespace) -> Path:
 
 
 def make_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Danca ABM full-history sphere controls and strict unknown refinement.")
+    parser = argparse.ArgumentParser(description="Danca ABM full-history equilibrium-ball controls; installed name retained for compatibility.")
     parser.add_argument("--job", choices=["launch", "chunk", "aggregate", "refine-after-aggregate"], default="launch")
     parser.add_argument("--output-dir", default=str(ROOT_OUTPUTS / "danca_abm_sphere_controls_20260520"))
     parser.add_argument("--danca-source-dir", default=str(DEFAULT_DANCA_SOURCE))
     parser.add_argument("--equilibria", default="E0,E+,E-")
     parser.add_argument("--radii", default="1e-5,3e-5,1e-4,3e-4,1e-3")
     parser.add_argument("--samples-per-radius", type=int, default=100)
+    parser.add_argument("--sample-growth-per-radius", type=int, default=100)
     parser.add_argument("--seed", type=int, default=20260517)
     parser.add_argument("--chunks", type=int, default=4)
     parser.add_argument("--chunk-id", type=int, default=0)

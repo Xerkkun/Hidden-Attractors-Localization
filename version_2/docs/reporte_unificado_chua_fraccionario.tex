@@ -62,6 +62,32 @@ oculto. La lectura de ocultedad se basa en la clasificacion de
 Leonov--Kuznetsov y requiere analizar si la cuenca del atractor candidato
 intersecta vecindades de los equilibrios.
 
+\section{Metodologia oficial vigente}
+
+Todo resultado nuevo debe seguir una unica secuencia:
+\[
+\begin{aligned}
+&\texttt{numerical\_contract}\to\texttt{algebraic\_validation}
+\to\texttt{seed\_generation}\to\texttt{soft\_precheck}\\
+&\to\texttt{continuation}\to\texttt{post\_continuation\_filter}
+\to\texttt{dynamic\_reference}\to\texttt{robustness}\\
+&\to\texttt{hiddenness\_tests}\to\texttt{diagnostics}.
+\end{aligned}
+\]
+La funcion descriptiva clasica, Lur'e y Machado/FDF son exclusivamente
+familias de generacion de semillas. Una apariencia periodica antes de la
+continuacion se registra como \codepath{pre_continuation_periodic} y no
+descarta la semilla. La continuacion publica usa
+\(\lambda\in[0,1]\), donde \(\lambda=0\) representa el sistema auxiliar y
+\(\lambda=1\) el sistema fraccionario objetivo.
+
+La conclusion de ocultedad exige primero una
+\codepath{dynamic_reference} reproducida en \codepath{robustness}; despues
+requiere muestreo interior en bolas alrededor de todos los equilibrios y
+cortes de cuenca \(xy\), \(xz\) y \(yz\), cada uno en ventana cercana y
+amplia. EFORK/C es el backend preferente para barridos validados y ABM con
+historia completa permanece como referencia de comparacion final.
+
 \section{Indice tematico consolidado}
 
 Este archivo es el reporte activo unico. Los documentos LaTeX anteriores se
@@ -79,7 +105,7 @@ Teoria del sistema de Chua fraccionario, forma de Lur'e, transferencia
 fraccionaria, funcion descriptiva, continuacion, cuencas y advertencias de
 interpretacion. \\
 \codepath{reporte_detallado_pipeline_hidden_attractors} &
-Auditoria de archivos historicos, rutas Lur'e/Machado, Matignon, verificacion
+Auditoria de archivos previos, familias de semillas Lur'e/Machado, Matignon, verificacion
 de ocultedad y checklist tecnico. \\
 \codepath{machado_chua_fraccionario} &
 Extension tipo Machado usada como generador de semillas armonicas auxiliares. \\
@@ -187,10 +213,10 @@ El caso principal del repositorio es el Chua fraccionario no suave con
 m_0=-0.1768,\quad m_1=-1.1468,\quad q=0.9998.
 \]
 El proposito de los analisis no fue declarar ocultedad desde una semilla
-armonica, sino someter candidatos a una cadena de pruebas: reproduccion de
-atractor, continuacion, comparacion seccional, controles desde vecindades de
-equilibrios, cuencas, robustez numerica y comparacion con la replica tipo
-Danca.
+armonica, sino someter candidatos a pruebas numericas. Las tablas de esta
+seccion preservan resultados producidos antes de fijar la metodologia oficial;
+no son un nuevo resumen con el envelope ni las etiquetas del protocolo
+vigente.
 
 \noindent\textbf{Lectura global de las corridas principales del Chua no suave.}\par\smallskip
 \begin{center}
@@ -209,25 +235,26 @@ referencia localizada fue \codepath{bounded_nontrivial}; desde vecindades de
 equilibrios inestables aparecieron \(102/200\) contactos \TARGET{}. &
 La replica reproduce dinamica acotada tipo Danca, pero no soporta ocultedad:
 \(54/100\) contactos desde \(E_+\) y \(48/100\) desde \(E_-\). \\
-Ruta Lur'e sesgada &
+Familia \codepath{lure_classical_biased}, evidencia previa &
 \(5208\) evaluaciones crudas, \(121\) candidatos filtrados, \(968\) semillas y
 \(4\) supervivientes de continuacion. El mejor por residual fue
 \codepath{lure_biased_q_0p99980_rank_0001}. &
-No hay \codepath{hidden_verified}: \codepath{rank_0001} toca \TARGET{} desde
+No puede promoverse a \codepath{hidden_verified_only_if_full_protocol_passed}:
+\codepath{rank_0001} toca \TARGET{} desde
 \(E_+\) a distancia \(10^{-5}\); \codepath{rank_0004} toca desde \(E_+\) y
 \(E_-\). \\
-Ruta Machado &
+Familia Machado/FDF de semillas, evidencia previa &
 Barrido principal con \(552\) registros. Los dos candidatos top fueron
 \codepath{branch_0_mu_4p00000_theta_0p00000} y
 \codepath{branch_0_mu_2p00000_theta_3p92699}. &
 Ambos quedan bloqueados como ocultos: una prueba dirigida desde \(E_-\), a
 distancia \(10^{-5}\), encontro y reprodujo contacto \TARGET{} en cada caso. \\
-Cascarones esfericos top-3 &
+Cascarones esfericos archivados, no protocolo oficial &
 \(4500\) trayectorias: \(1500\) por candidato para dos Machado y un Lur'e, en
 radios \(10^{-5}\) a \(10^{-3}\) alrededor de \(E_0,E_+,E_-\). No hubo
 \TARGET{} en esos cascarones. &
-Resultado compatible solo con esa muestra esferica; no cancela contactos
-dirigidos mas especificos ya reproducidos. \\
+Resultado descriptivo de una muestra previa; el protocolo vigente requiere
+muestreo interior en bolas y no cancela contactos ya reproducidos. \\
 Robustez geometrica &
 \(18\) trayectorias de superposicion: \(3\) candidatos por \(6\) contratos
 numericos con cambios en \(h\), \(L_m\) y \(t_f\). &
@@ -250,8 +277,8 @@ Mejor residual de la busqueda Lur'e sesgada:
 \(|R|\approx6.82\times10^{-13}\), \(\omega=2.0402861\),
 \(A=5.8517686\), \(\rho_H=0.123874\). &
 Sobrevivio continuacion como \codepath{bounded_nontrivial}, pero una condicion
-inicial desde \(E_+\) a \(10^{-5}\) llega a \TARGET{}. No es
-\codepath{hidden_verified}. \\
+inicial desde \(E_+\) a \(10^{-5}\) llega a \TARGET{}. No puede recibir
+\codepath{hidden_verified_only_if_full_protocol_passed}. \\
 \codepath{lure_biased_q_0p99980_rank_0004} &
 Superviviente Lur'e de continuacion, revisado porque era el unico candidato
 no descartado inmediatamente por redundancia visual con \codepath{rank_0001}. &
@@ -481,7 +508,8 @@ Sin target desde \(E_0\), pero esto no compensa \(E_+\) y \(E_-\). \\
 Contacto desde equilibrio inestable; bloquea ocultedad. \\
 \codepath{branch_0_mu_4p00000_theta_0p00000} &
 \(E_0\) & Corrida 1 parcial & 1622 & 0 &
-Compatible solo en radios completados; no es \codepath{hidden_verified}. \\
+Compatible solo en radios completados; no satisface
+\codepath{hidden_verified_only_if_full_protocol_passed}. \\
 \codepath{branch_0_mu_4p00000_theta_0p00000} &
 \(E_-\) & dirigido \(10^{-5}\) & 1 & 1 &
 Contacto dirigido que bloquea ocultedad. \\
@@ -647,7 +675,7 @@ figuras son comparables como evidencia geometrica, pero no metodo-identicas.
 \centering
 \maybeincludegraphics[width=\linewidth]{project_machado_mu4.png}
 \end{minipage}
-\caption{Comparacion visual de candidatos del proyecto: ruta Lur'e sesgada \codepath{rank_0001} y ruta tipo Machado \codepath{branch_0_mu_4p00000_theta_0p00000}.}
+\caption{Comparacion visual de candidatos del proyecto: familia \codepath{lure_classical_biased} \codepath{rank_0001} y familia Machado/FDF \codepath{branch_0_mu_4p00000_theta_0p00000}.}
 \end{figure}
 
 \clearpage
@@ -699,7 +727,7 @@ contrato probado.
 \clearpage
 \subsection{Verificacion dirigida Machado}
 
-La ruta Machado usa una funcion descriptiva fraccionaria auxiliar como
+La familia de semillas Machado usa una funcion descriptiva fraccionaria auxiliar como
 generador de semillas. El parametro \(\mu\) de Machado no cambia el orden
 fraccionario \(q\) del sistema causal; solo modifica la busqueda de semillas.
 La decision final sigue dependiendo de las trayectorias Caputo/EFORK y de los

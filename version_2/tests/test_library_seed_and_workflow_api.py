@@ -10,7 +10,6 @@ from hidden_attractors.seed_generation import (
     reconstruct_biased_lure_seed,
 )
 from hidden_attractors.solvers import FractionalHistory
-from hidden_attractors.workflows.unified_chua import UnifiedChuaConfig
 
 
 def test_harmonic_seed_generation_is_importable_without_env(monkeypatch) -> None:
@@ -48,22 +47,3 @@ def test_fractional_history_extracts_efork_window() -> None:
     assert history.memory_points == 4
     assert history.as_efork_history().shape == (4, 4)
     assert history.t_window[-1] == 0.0
-
-
-def test_unified_chua_config_uses_cli_arguments_not_hidden_env() -> None:
-    cfg = UnifiedChuaConfig(
-        output_dir="outputs/example_run",
-        run_mode="q_sweep",
-        q_values=(0.99, 0.9998),
-        psd=True,
-        basin_planes=False,
-    )
-
-    args = cfg.to_argv()
-    joined = " ".join(args)
-
-    assert "--run-mode q_sweep" in joined
-    assert "--q-values 0.99,0.9998" in joined
-    assert "--psd" in args
-    assert "--no-basin-planes" in args
-    assert "HIDDEN_ATTRACTORS" not in joined

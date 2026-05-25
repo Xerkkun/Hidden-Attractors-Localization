@@ -1,17 +1,21 @@
 # CLI Wrappers
 
-These scripts preserve command-line access to maintained workflows:
+The official command surface is:
 
 ```bash
-python tools/cli/robustness_overlay_c_trajectories.py --help
-python tools/cli/lure_top3_sphere_robustness.py --help
-python tools/cli/refine_project_basin_classification.py --help
-python tools/cli/strict_target_refinement.py --help
-python tools/cli/danca_abm_sphere_controls.py --help
-python tools/cli/check_validation_contract.py --help
+hidden-attractors-protocol generate-seeds --help
+hidden-attractors-protocol soft-precheck --help
+hidden-attractors-protocol continue --help
+hidden-attractors-protocol filter-survivors --help
+hidden-attractors-protocol build-reference --help
+hidden-attractors-protocol robustness --help
+hidden-attractors-protocol hiddenness --help
+hidden-attractors-protocol diagnostics --help
+hidden-attractors-check-validation --help
 ```
 
-After installation, prefer the console entry points:
+The scripts below are computation adapters while their numerical engines are
+migrated behind the canonical stages:
 
 ```bash
 hidden-attractors-robustness-overlay --help
@@ -19,18 +23,18 @@ hidden-attractors-sphere-controls --help
 hidden-attractors-refined-basin --help
 hidden-attractors-strict-target-refinement --help
 hidden-attractors-danca-abm-sphere-controls --help
-hidden-attractors-workflow-requirements --help
-hidden-attractors-check-validation --help
 ```
+
+Commands containing `sphere` retain old executable names only for previous
+job manifests. Their current plans sample inside equilibrium-centred balls;
+they are not an alternative methodology.
 
 ## Contract For New CLIs
 
-New maintained CLIs should accept either a registered `--system` plus explicit
-workflow options, or a `--spec` JSON file compatible with
-`hidden_attractors.workflows.WorkflowInputSpec`.  The effective spec should be
-written next to every output directory.  This applies to sphere controls,
-basins, strict refinement, continuation, robustness checks, and future
-Lyapunov/bifurcation commands.
+New maintained CLIs emit the official JSON envelope and use only the stage
+vocabulary in `hidden_attractors.workflows.protocol`. This applies to
+equilibrium-ball controls, basin slices, strict refinement, continuation,
+robustness and diagnostics.
 
-System-specific CLIs may remain as compatibility wrappers, but reusable
-mathematical logic belongs in `hidden_attractors/`, not in the wrapper script.
+System-specific adapters may calculate payloads, but promotion into official
+evidence must pass through `hidden-attractors-protocol`.
