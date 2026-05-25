@@ -30,18 +30,62 @@ def trajectory_array(path: Path) -> np.ndarray:
 
 
 def find_traj(run_root: Path, branch: str, candidate_id: str) -> Path:
-    traj_dir = run_root / branch / "trajectories"
-    direct = traj_dir / f"{safe_name(candidate_id)}.csv"
-    if direct.exists():
-        return direct
-    matches = sorted(traj_dir.glob(f"*{safe_name(candidate_id)}*.csv"))
-    if matches:
-        return matches[0]
-    matches = sorted(traj_dir.glob(f"*{candidate_id}*.csv"))
-    if matches:
-        return matches[0]
-    raise FileNotFoundError(f"No encontré trayectoria para {candidate_id} en {traj_dir}")
+    branch_root = run_root / branch
+    candidate_safe = safe_name(candidate_id)
 
+    if not branch_root.exists():
+        raise FileNotFoundError(f"No existe la rama: {branch_root}")
+
+    # 1. Buscar cualquier CSV que contenga el candidate_id o su versión safe_name.
+    patterns = [
+        f"*{candidate_id}*.csv",
+        f"*{candidate_safe}*.csv",
+    ]
+
+    for pattern in patterns:
+        matches = sorted(branch_root.rglob(pattern))
+        matches = [
+            p for p in matches
+            if "selected_candidates" not in p.name
+            and "trajectory_metrics" not in p.name
+            and "continuation_paths" not in p.name
+            and "continuation_summary" not in p.name
+        ]
+        if matches:
+            return matches[0]
+
+    # 2. Si no existe un CSV con el nombre del candidato,
+    # usar selected_1.csv, selected_2.csv, selected_3.csv según el rank.
+    selected_path = branch_root / "selected_candidates.json"
+    if selected_path.exists():
+        data = json.loads(selected_path.read_text(encoding="utf-8"))
+        for item in data.get("selected_candidates", []):
+            if item.get("candidate_id") == candidate_id:
+                rank = int(item.get("rank", 0))
+                rank_patterns = [
+                    f"selected_{rank}.csv",
+                    f"*selected_{rank}*.csv",
+                    f"rank_{rank}.csv",
+                    f"*rank_{rank}*.csv",
+                ]
+
+                for pattern in rank_patterns:
+                    matches = sorted(branch_root.rglob(pattern))
+                    matches = [
+                        p for p in matches
+                        if "selected_candidates" not in p.name
+                    ]
+                    if matches:
+                        return matches[0]
+
+    # 3. Mostrar diagnóstico útil.
+    csv_files = sorted(branch_root.rglob("*.csv"))
+    preview = "\n".join(str(p) for p in csv_files[:30])
+
+    raise FileNotFoundError(
+        f"No encontré trayectoria para {candidate_id} en {branch_root}.\n"
+        f"Primeros CSV encontrados:\n{preview}"
+    )
 
 def load_candidate(run_root: Path, branch: str, candidate_id: str) -> dict:
     if branch == "finite_window":
