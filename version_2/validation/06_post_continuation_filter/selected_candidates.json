@@ -1,9 +1,9 @@
 {
-  "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_205859",
-  "repository_commit": "a62ea6cb27834da21982bbbd7d6953e9ffffe24a",
-  "working_tree_dirty": true,
-  "working_tree_diff_sha256": "d003e114945717b467fed3e1023c81a95d544e8d85c1790a1e169d0a4fb52fb1",
-  "implementation_sources_sha256": "c30ac4ac2443bed4119d784a235f42826baf2117b890cc67dfb3f3572e71ba64",
+  "run_id": "new_candidates_run_20260524",
+  "repository_commit": "4307f1848c196cad4a248f2b95cd21c415cfb052",
+  "working_tree_dirty": false,
+  "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "implementation_sources_sha256": "42f8194cfb022c9bfc0df391c94fcd9f23d73107d9529d31237d69c25de76334",
   "q": 0.9998,
   "branch_id": "full_history",
   "selection_status": "continuation_survivors_selected_for_reference",
@@ -47,9 +47,9 @@
       "verdict": "continuation_survivor",
       "backend": "chua_frac_backend_lib.c",
       "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
-      "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_205859",
-      "repository_commit": "a62ea6cb27834da21982bbbd7d6953e9ffffe24a",
-      "working_tree_diff_sha256": "d003e114945717b467fed3e1023c81a95d544e8d85c1790a1e169d0a4fb52fb1"
+      "run_id": "new_candidates_run_20260524",
+      "repository_commit": "4307f1848c196cad4a248f2b95cd21c415cfb052",
+      "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
       "rank": 2,
@@ -89,9 +89,9 @@
       "verdict": "continuation_survivor",
       "backend": "chua_frac_backend_lib.c",
       "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
-      "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_205859",
-      "repository_commit": "a62ea6cb27834da21982bbbd7d6953e9ffffe24a",
-      "working_tree_diff_sha256": "d003e114945717b467fed3e1023c81a95d544e8d85c1790a1e169d0a4fb52fb1"
+      "run_id": "new_candidates_run_20260524",
+      "repository_commit": "4307f1848c196cad4a248f2b95cd21c415cfb052",
+      "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
       "rank": 3,
@@ -131,9 +131,9 @@
       "verdict": "continuation_survivor",
       "backend": "chua_frac_backend_lib.c",
       "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
-      "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_205859",
-      "repository_commit": "a62ea6cb27834da21982bbbd7d6953e9ffffe24a",
-      "working_tree_diff_sha256": "d003e114945717b467fed3e1023c81a95d544e8d85c1790a1e169d0a4fb52fb1"
+      "run_id": "new_candidates_run_20260524",
+      "repository_commit": "4307f1848c196cad4a248f2b95cd21c415cfb052",
+      "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   ]
 }

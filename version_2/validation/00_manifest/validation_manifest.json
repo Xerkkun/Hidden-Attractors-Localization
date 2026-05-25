@@ -1,6 +1,6 @@
 {
-  "validation_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_205859",
-  "repository_commit": "a62ea6cb27834da21982bbbd7d6953e9ffffe24a",
+  "validation_id": "new_candidates_run_20260524",
+  "repository_commit": "4307f1848c196cad4a248f2b95cd21c415cfb052",
   "package_version": "0.1.0",
   "python_version": "3.14.3",
   "platform": "Windows-11-10.0.26200-SP0",
@@ -38,11 +38,11 @@
   "protocol_version": "caputo_hidden_attractors_v1",
   "final_report": {
     "status": "incomplete_lightweight_exploratory",
-    "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_205859"
+    "run_id": "new_candidates_run_20260524"
   },
   "dirty": true,
-  "working_tree_dirty": true,
-  "working_tree_diff_sha256": "d003e114945717b467fed3e1023c81a95d544e8d85c1790a1e169d0a4fb52fb1",
+  "working_tree_dirty": false,
+  "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "failed_or_incomplete_stages": [
     "algebraic_validation",
     "robustness",
