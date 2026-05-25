@@ -1,0 +1,424 @@
+{
+  "schema_version": "1.0",
+  "protocol_version": "caputo_hidden_attractors_v1",
+  "seeds": [
+    {
+      "candidate_id": "current_centered_machado_b1_mu_0.5",
+      "family": "machado_centered",
+      "centered_or_biased": "centered",
+      "A": 1.1510600636285702,
+      "sigma0": 0.0,
+      "omega": 3.2449267309744005,
+      "mu": 0.5,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 4.330616617531892e-07,
+      "rho_H": 0.05349600773873285,
+      "x0": [
+        1.1510600636285702,
+        0.9326647529010432,
+        -1.650054843461054
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_centered_classical_b1",
+      "family": "lure_classical_centered",
+      "centered_or_biased": "centered",
+      "A": 1.053016610257205,
+      "sigma0": 0.0,
+      "omega": 3.2449267309744005,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 7.682654532548266e-07,
+      "rho_H": 0.018792535939885432,
+      "x0": [
+        1.053016610257205,
+        0.8532234829781592,
+        -1.5095086806525837
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_centered_machado_b1_mu_1",
+      "family": "machado_centered",
+      "centered_or_biased": "centered",
+      "A": 1.053016610257205,
+      "sigma0": 0.0,
+      "omega": 3.2449267309744005,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 7.682654532548266e-07,
+      "rho_H": 0.018792535939885432,
+      "x0": [
+        1.053016610257205,
+        0.8532234829781592,
+        -1.5095086806525837
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_centered_machado_b0_mu_2",
+      "family": "machado_centered",
+      "centered_or_biased": "centered",
+      "A": 2.628433514775448,
+      "sigma0": 0.0,
+      "omega": 2.0402860510795615,
+      "mu": 2.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 2.557557013727063e-06,
+      "rho_H": 0.07788334627785304,
+      "x0": [
+        2.628433514775448,
+        0.16637611315006381,
+        -3.755491038360702
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_centered_classical_b0",
+      "family": "lure_classical_centered",
+      "centered_or_biased": "centered",
+      "A": 5.851767785486093,
+      "sigma0": 0.0,
+      "omega": 2.0402860510795615,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 2.8856223441842137e-06,
+      "rho_H": 0.11735006275057933,
+      "x0": [
+        5.851767785486093,
+        0.37040860030622025,
+        -8.360972934420351
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_centered_machado_b0_mu_1",
+      "family": "machado_centered",
+      "centered_or_biased": "centered",
+      "A": 5.851767785486093,
+      "sigma0": 0.0,
+      "omega": 2.0402860510795615,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 2.8856223441842137e-06,
+      "rho_H": 0.11735006275057933,
+      "x0": [
+        5.851767785486093,
+        0.37040860030622025,
+        -8.360972934420351
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_centered_machado_b0_mu_4",
+      "family": "machado_centered",
+      "centered_or_biased": "centered",
+      "A": 1.714948213140995,
+      "sigma0": 0.0,
+      "omega": 2.0402860510795615,
+      "mu": 4.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 5.320310754397539e-06,
+      "rho_H": 0.04725571887891858,
+      "x0": [
+        1.714948213140995,
+        0.10855378930154218,
+        -2.450308371697173
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_biased_000242_machado_mu_1",
+      "family": "machado_biased",
+      "centered_or_biased": "biased",
+      "A": 6.833333333333333,
+      "sigma0": -4.0,
+      "omega": 0.0001,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 0.013088816283048864,
+      "rho_H": 1.3940720612480237,
+      "x0": [
+        3.4812619544294803,
+        0.031665086276165544,
+        -3.4514915030294926
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_biased_000322_machado_mu_1",
+      "family": "machado_biased",
+      "centered_or_biased": "biased",
+      "A": 6.833333333333333,
+      "sigma0": 4.0,
+      "omega": 0.0001,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 0.013088816283048864,
+      "rho_H": 1.394072061248024,
+      "x0": [
+        10.094202848232676,
+        -0.030066717832993917,
+        -10.12210826529427
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_biased_000240_classical",
+      "family": "lure_classical_biased",
+      "centered_or_biased": "biased",
+      "A": 6.833333333333333,
+      "sigma0": -4.0,
+      "omega": 0.0001,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 0.013088816283049084,
+      "rho_H": 1.3940720612480237,
+      "x0": [
+        3.4812619544294803,
+        0.031665086276165544,
+        -3.4514915030294926
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_biased_000320_classical",
+      "family": "lure_classical_biased",
+      "centered_or_biased": "biased",
+      "A": 6.833333333333333,
+      "sigma0": 4.0,
+      "omega": 0.0001,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 0.013088816283049084,
+      "rho_H": 1.394072061248024,
+      "x0": [
+        10.094202848232676,
+        -0.030066717832993917,
+        -10.12210826529427
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_biased_000285_classical",
+      "family": "lure_classical_biased",
+      "centered_or_biased": "biased",
+      "A": 6.833333333333333,
+      "sigma0": 0.0,
+      "omega": 1.4286571428571428,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 0.1897034839309799,
+      "rho_H": 0.10532134345449685,
+      "x0": [
+        6.953323752024555,
+        0.108444011995092,
+        -8.775502619622761
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_biased_000287_machado_mu_1",
+      "family": "machado_biased",
+      "centered_or_biased": "biased",
+      "A": 6.833333333333333,
+      "sigma0": 0.0,
+      "omega": 1.4286571428571428,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 0.1897034839309799,
+      "rho_H": 0.10532134345449685,
+      "x0": [
+        6.953323752024555,
+        0.108444011995092,
+        -8.775502619622761
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_biased_000247_machado_mu_1",
+      "family": "machado_biased",
+      "centered_or_biased": "biased",
+      "A": 6.833333333333333,
+      "sigma0": -4.0,
+      "omega": 1.4286571428571428,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 0.21680414497866202,
+      "rho_H": 0.3145575755941922,
+      "x0": [
+        3.0977178527269995,
+        0.04448463855351564,
+        -4.806382643474664
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_biased_000327_machado_mu_1",
+      "family": "machado_biased",
+      "centered_or_biased": "biased",
+      "A": 6.833333333333333,
+      "sigma0": 4.0,
+      "omega": 1.4286571428571428,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 0.21680414497866202,
+      "rho_H": 0.31455757559419223,
+      "x0": [
+        9.710658746530196,
+        -0.017247165555643817,
+        -11.476999405739443
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_biased_000245_classical",
+      "family": "lure_classical_biased",
+      "centered_or_biased": "biased",
+      "A": 6.833333333333333,
+      "sigma0": -4.0,
+      "omega": 1.4286571428571428,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 0.21680414497866207,
+      "rho_H": 0.3145575755941922,
+      "x0": [
+        3.0977178527269995,
+        0.04448463855351564,
+        -4.806382643474664
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_biased_000325_classical",
+      "family": "lure_classical_biased",
+      "centered_or_biased": "biased",
+      "A": 6.833333333333333,
+      "sigma0": 4.0,
+      "omega": 1.4286571428571428,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 0.21680414497866207,
+      "rho_H": 0.31455757559419223,
+      "x0": [
+        9.710658746530196,
+        -0.017247165555643817,
+        -11.476999405739443
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_biased_000280_classical",
+      "family": "lure_classical_biased",
+      "centered_or_biased": "biased",
+      "A": 6.833333333333333,
+      "sigma0": 0.0,
+      "omega": 0.0001,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 0.22319116606387368,
+      "rho_H": 0.7084162147598858,
+      "x0": [
+        7.61092404591537,
+        0.039479811706009886,
+        -7.573718031819274
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    },
+    {
+      "candidate_id": "current_biased_000282_machado_mu_1",
+      "family": "machado_biased",
+      "centered_or_biased": "biased",
+      "A": 6.833333333333333,
+      "sigma0": 0.0,
+      "omega": 0.0001,
+      "mu": 1.0,
+      "theta": 0.0,
+      "q": 0.9998,
+      "harmonic_residual": 0.22319116606387368,
+      "rho_H": 0.7084162147598858,
+      "x0": [
+        7.61092404591537,
+        0.039479811706009886,
+        -7.573718031819274
+      ],
+      "reconstruction_metadata": {
+        "implementation": "fractional_report_run"
+      },
+      "source_config": "configs/chua_fractional_nonsmooth.yaml"
+    }
+  ]
+}

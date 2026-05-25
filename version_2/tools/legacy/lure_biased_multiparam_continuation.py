@@ -68,6 +68,7 @@ SURVIVOR_FIELDS = [
     "psd_entropy",
     "candidate_status",
     "early_periodicity_status",
+    "post_continuation_dynamics_status",
     "hiddenness_status",
     "notes",
 ]
@@ -605,7 +606,8 @@ def run_one_continuation_item(
                 "fft_peak": last_cls.get("fft_peak", ""),
                 "psd_entropy": last_cls.get("psd_entropy", ""),
                 "candidate_status": "continuation_survivor",
-                "early_periodicity_status": "nonperiodic_post_transient",
+                "early_periodicity_status": item.get("seed_early_periodicity_status", "not_tested"),
+                "post_continuation_dynamics_status": "nonperiodic_post_transient",
                 "hiddenness_status": "not_tested",
                 "notes": "Causal continuation survivor; hiddenness has not been tested. Reliability is low if memory was not carried.",
             }
@@ -1265,6 +1267,20 @@ def run_continuation_pipeline(
     survivor_ids: set[str] | None = None,
 ) -> Dict[str, Any]:
     cfg = load_config(config_path)
+    if not bool(cfg.get("historical_reproduction_only", False)):
+        raise RuntimeError(
+            "Legacy Route Execution Blocked:\n"
+            "This script belongs to the legacy/historical reproduction pathway. "
+            "To execute it, you must formally declare 'historical_reproduction_only: true' "
+            "in the YAML configuration file to acknowledge this is not part of the official protocol."
+        )
+    print(
+        "WARNING: Running legacy/historical reproduction script. "
+        "This path is reserved for historical comparison and does not represent "
+        "the official unified Caputo protocol.",
+        file=sys.stderr,
+        flush=True
+    )
     if output_root:
         cfg.setdefault("outputs", {})["root"] = str(output_root)
     q = require_q09998(cfg, context=str(config_path))

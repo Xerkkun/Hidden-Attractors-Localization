@@ -1,0 +1,4 @@
+candidate_id,tested_trajectories,target_hits,hiddenness_status,contract_note
+current_centered_machado_b0_mu_2,108,0,compatible_with_hiddenness_under_tested_radii,Una coincidencia refuta ocultedad bajo el contrato EFORK de ventana finita; cero impactos no es demostracion.
+current_centered_classical_b0,108,0,compatible_with_hiddenness_under_tested_radii,Una coincidencia refuta ocultedad bajo el contrato EFORK de ventana finita; cero impactos no es demostracion.
+current_centered_machado_b0_mu_4,108,0,compatible_with_hiddenness_under_tested_radii,Una coincidencia refuta ocultedad bajo el contrato EFORK de ventana finita; cero impactos no es demostracion.

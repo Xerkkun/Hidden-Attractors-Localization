@@ -1,6 +1,6 @@
 {
-  "validation_id": "pending_caputo_hidden_attractors_official_protocol_20260524",
-  "repository_commit": "pending",
+  "validation_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_201939",
+  "repository_commit": "047384f956e072eba277c13364eff1247c03eee1",
   "package_version": "0.1.0",
   "python_version": "3.14.3",
   "platform": "Windows-11-10.0.26200-SP0",
@@ -20,36 +20,26 @@
   "protocol_version": "caputo_hidden_attractors_v1",
   "schema_version": "1.0",
   "stages": {
-    "numerical_contract": "pending",
-    "algebraic_validation": "pending",
-    "seed_generation": "pending",
-    "soft_precheck": "pending",
-    "continuation": "pending",
-    "post_continuation_filter": "pending",
-    "dynamic_reference": "pending",
-    "robustness": "pending",
-    "hiddenness_tests": "pending",
-    "diagnostics": "pending"
+    "numerical_contract": "01_numerical_contract/numerical_contract_validation_summary.json",
+    "algebraic_validation": "02_algebraic_validation/algebraic_validation_validation_summary.json",
+    "seed_generation": "03_seed_generation/seed_generation_validation_summary.json",
+    "soft_precheck": "04_soft_precheck/soft_precheck_validation_summary.json",
+    "continuation": "05_continuation/continuation_validation_summary.json",
+    "post_continuation_filter": "06_post_continuation_filter/post_continuation_filter_validation_summary.json",
+    "dynamic_reference": "07_dynamic_reference/dynamic_reference_validation_summary.json",
+    "robustness": "08_robustness/robustness_validation_summary.json",
+    "hiddenness_tests": "09_hiddenness_tests/hiddenness_tests_validation_summary.json",
+    "diagnostics": "10_diagnostics/diagnostics_validation_summary.json"
   },
-  "pending_stages": [
-    "numerical_contract",
-    "algebraic_validation",
-    "seed_generation",
-    "soft_precheck",
-    "continuation",
-    "post_continuation_filter",
-    "dynamic_reference",
-    "robustness",
-    "hiddenness_tests",
-    "diagnostics"
-  ],
+  "pending_stages": [],
   "reference_benchmarks": {
     "purpose": "Motivated benchmark evidence only; it is not labelled as an official-protocol run.",
     "directory": "reference_cases"
   },
   "final_report": {
-    "status": "pending_official_protocol_run",
-    "source": "final_validation_report.tex",
-    "compiled": "final_validation_report.pdf"
-  }
+    "status": "pending_full_protocol_basin_slices",
+    "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_201939"
+  },
+  "working_tree_dirty": true,
+  "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 }

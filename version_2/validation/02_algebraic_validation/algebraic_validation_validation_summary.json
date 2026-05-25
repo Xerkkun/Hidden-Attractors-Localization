@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "protocol_version": "caputo_hidden_attractors_v1",
+  "stage": "algebraic_validation",
+  "status": "incomplete_or_failed_tolerance_check",
+  "system": "fractional_nonsmooth_chua",
+  "numerical_contract": {
+    "q": 0.9998,
+    "tolerances": {
+      "equilibrium_rhs_norm_max": 1e-10,
+      "jacobian_finite_difference_relative_error_max": 1e-06,
+      "eigenvalue_cross_tool_relative_error_max": 1e-08
+    }
+  },
+  "inputs": {},
+  "outputs": {
+    "seed_family_role": "seed_generation_only_not_hiddenness_evidence",
+    "describing_function_families": {
+      "status": "passed_python_matlab_after_sign_normalization",
+      "sign_convention": "W_code = -W_report; 1 + k*W_code = 0 is equivalent to 1 - k*W_report = 0.",
+      "checks": {
+        "max_lure_rhs_residual": 8.881784197001252e-16,
+        "max_report_closure_residual": 2.0101993839645984e-13,
+        "max_amplitude_difference_from_matlab": 1.482591827084434e-12
+      }
+    }
+  },
+  "metrics": {
+    "rhs_residual_max": 1.096345236817342e-15,
+    "rhs_residual_pass": true,
+    "equilibrium_cross_tool_pass": false,
+    "jacobian_cross_tool_pass": false,
+    "jacobian_finite_difference_relative_error_max": 2.4652012739653308e-09,
+    "jacobian_finite_difference_pass": true,
+    "eigenvalue_cross_tool_pass": false,
+    "origin_stable_by_matignon": true,
+    "outer_equilibria_unstable_by_matignon": true
+  },
+  "files": {
+    "report": "algebraic_validation_validation.md",
+    "equilibria": "equilibria_summary.csv",
+    "equilibria_cross_tool": "equilibria_cross_tool_residuals.csv",
+    "jacobians": "jacobian_check.csv",
+    "jacobian_cross_tool": "jacobian_cross_tool_comparison.csv",
+    "jacobian_finite_differences": "jacobian_finite_difference_check.csv",
+    "eigenvalues": "eigenvalues_matignon_summary.csv",
+    "eigenvalue_cross_tool_comparison": "eigenvalues_cross_tool_comparison.csv",
+    "figure": "matignon_margins.png",
+    "complex_plane_figure": "matignon_complex_plane.png",
+    "transfer_function": "transfer_function_check.csv",
+    "lure_equivalence": "lure_equivalence_check.csv",
+    "describing_function": "describing_function_check.csv",
+    "machado_mu1": "machado_mu1_check.csv",
+    "seed_family_appendix": "describing_function_families.md"
+  },
+  "verdict": null,
+  "provenance": {
+    "generator": "tools/validation/validate_chua_fractional_nonsmooth_algebra.py"
+  }
+}

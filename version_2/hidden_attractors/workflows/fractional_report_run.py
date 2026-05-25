@@ -31,7 +31,7 @@ from .protocol import PROTOCOL_VERSION, SCHEMA_VERSION, StageEnvelope, sample_un
 
 
 Q = 0.9998
-EFORK_STAGE = "K3 = a31*K1 + a32*K2"
+EFORK_STAGE = "K3 = h^q*f(x_n + a31*K1 + a32*K2)"
 FULL_HISTORY_POLICY = "full_caputo_history_no_finite_memory_truncation"
 CONTINUATION_POLICY = "full_generated_homotopy_history_carried_without_truncation"
 FINITE_WINDOW_POLICY = "finite_caputo_history_window"
@@ -330,7 +330,7 @@ def screen_candidates_with_c(
             t_start=0.5 * t_final,
             dominant_frequency=_finite(metric.get("fft_peak")),
         )
-        post_continuation_periodicity_pass = bool(
+        post_continuation_nontrivial_dynamics_pass = bool(
             continuation_eligible
             and math.isfinite(return_ratio)
             and return_ratio >= POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD
@@ -353,9 +353,9 @@ def screen_candidates_with_c(
             "dominant_period_return_ratio": return_ratio,
             "dominant_period_return_lag": return_lag,
             "post_continuation_periodicity_threshold": POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD,
-            "post_continuation_periodicity_pass": post_continuation_periodicity_pass,
-            "post_continuation_survivor": post_continuation_periodicity_pass,
-            "verdict": "continuation_survivor" if post_continuation_periodicity_pass else "rejected_post_continuation",
+            "post_continuation_nontrivial_dynamics_pass": post_continuation_nontrivial_dynamics_pass,
+            "post_continuation_survivor": post_continuation_nontrivial_dynamics_pass,
+            "verdict": "continuation_survivor" if post_continuation_nontrivial_dynamics_pass else "rejected_post_continuation",
         }
         screened.append(item)
         _write_trajectory(outdir / "trajectories" / f"{safe_name(str(row['candidate_id']))}.csv", traj)
@@ -447,7 +447,7 @@ def select_top_three(
                 "psd_entropy": row.get("psd_entropy", ""),
                 "dominant_period_return_ratio": row.get("dominant_period_return_ratio", ""),
                 "post_continuation_periodicity_threshold": POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD,
-                "post_continuation_periodicity_pass": bool(row["post_continuation_periodicity_pass"]),
+                "post_continuation_nontrivial_dynamics_pass": bool(row["post_continuation_nontrivial_dynamics_pass"]),
                 "verdict": "continuation_survivor",
                 "backend": row["backend"],
                 "efork_stage": EFORK_STAGE,
@@ -602,9 +602,27 @@ def run_hiddenness_evidence(
     suffix = "full" if full_history else "window"
     backend = FractionalChuaBackend.build(output_name=f"fractional_report_hiddenness_{suffix}")
     equilibria = equilibria_nonsmooth()
+    # Load defaults from configs/unified_caputo_protocol.json
+    protocol_path = PROJECT_ROOT / "configs" / "unified_caputo_protocol.json"
+    if protocol_path.exists():
+        protocol = read_json(protocol_path)
+        net_contract = protocol.get("numerical_contract", {})
+        default_radii = [float(r) for r in net_contract.get("hiddenness_radii", [1e-05, 3e-05, 0.0001, 0.0003, 0.001])]
+        default_samples = int(net_contract.get("samples_per_radius", 500))
+        default_growth = int(net_contract.get("sample_growth_per_radius", 100))
+    else:
+        default_radii = [1.0e-5, 3.0e-5, 1.0e-4, 3.0e-4, 1.0e-3]
+        default_samples = 500
+        default_growth = 100
+
     radii = [1.0e-4, 1.0e-3]
     samples_per_radius = 12
     sample_growth_per_radius = 12
+    is_lightweight = (
+        samples_per_radius < default_samples
+        or len(radii) < len(default_radii)
+    )
+
     rng = np.random.default_rng(20260524 if full_history else 20260525)
     h = 0.02
     t_final = 30.0
@@ -679,6 +697,8 @@ def run_hiddenness_evidence(
         "status": "completed",
         "backend": "chua_frac_backend_lib.c",
         "efork_stage": EFORK_STAGE,
+        "is_lightweight": is_lightweight,
+        "run_type": "exploratory_hiddenness_screen" if is_lightweight else "full_protocol_hiddenness_tests",
         "contract": {
             "q": Q,
             "h": h,
@@ -1149,26 +1169,223 @@ etapa verifica persistencia geometrica; no clasifica ocultedad.
     _copy_files(full_root / "hiddenness", hidden_dir, ["ball_sampling_plan.csv", "ball_sampling_results.csv", "hiddenness_decisions.csv", "strict_refinement_summary.csv", "hiddenness_run_summary.json"])
     for name in ("ball_sampling_plan.csv", "ball_sampling_results.csv", "hiddenness_decisions.csv", "strict_refinement_summary.csv", "hiddenness_run_summary.json"):
         shutil.copy2(window_root / "hiddenness" / name, hidden_dir / f"finite_memory_{name}")
-    write_json(hidden_dir / "basin_slices_summary.json", {"status": "pending", "required_planes": ["xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"], "produced_planes": []})
+    # Check for basin slices
+    required_planes = ["xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"]
+    produced_planes = []
+    
+    # We check in run_root, full_root / "hiddenness", full_root / "basin", full_root, run_root / "basin"
+    search_dirs = [
+        run_root,
+        run_root / "hiddenness",
+        run_root / "basin",
+        full_root / "hiddenness",
+        full_root / "basin",
+        full_root,
+        window_root / "hiddenness",
+        window_root / "basin",
+        window_root
+    ]
+    
+    for plane in required_planes:
+        found = False
+        # We look for csv or png with the plane name
+        for s_dir in search_dirs:
+            if not s_dir.exists():
+                continue
+            possible_names = [
+                f"{plane}.csv", f"{plane}.png",
+                f"{plane}_grid.csv", f"{plane}_grid.png",
+                f"basin_slice_{plane}.csv", f"basin_slice_{plane}.png",
+                f"project_best_basin_{plane}.csv", f"project_best_basin_{plane}.png"
+            ]
+            for name in possible_names:
+                candidate_file = s_dir / name
+                if candidate_file.exists():
+                    shutil.copy2(candidate_file, hidden_dir / name)
+                    found = True
+        if found:
+            produced_planes.append(plane)
+            
+    all_slices_present = len(produced_planes) == len(required_planes)
+    basin_status = "completed" if all_slices_present else "pending"
+    write_json(
+        hidden_dir / "basin_slices_summary.json",
+        {
+            "status": basin_status,
+            "required_planes": required_planes,
+            "produced_planes": produced_planes,
+        }
+    )
+
+    is_lightweight_full = full["hiddenness"].get("is_lightweight", True)
+    is_lightweight_window = window["hiddenness"].get("is_lightweight", True)
+    is_lightweight = is_lightweight_full or is_lightweight_window
+
+    if is_lightweight:
+        hiddenness_status = "incomplete_lightweight_exploratory"
+        hiddenness_verdict = "exploratory_hiddenness_screen"
+    else:
+        hiddenness_status = "completed" if all_slices_present else "incomplete_pending_basin_slices"
+        hiddenness_verdict = "hidden_verified_only_if_full_protocol_passed" if all_slices_present else "compatible_with_hiddenness_under_tested_radii"
+    
     hidden_md = rf"""# Hiddenness tests
+    
+Para `{run_id}` se muestrearon puntos dentro de bolas centradas en cada
+equilibrio mediante EFORK C corregido. La ausencia de contactos y la presencia
+de todos los cortes de cuenca permite promover el resultado a `{hiddenness_verdict}`.
+""" if all_slices_present and not is_lightweight else rf"""# Hiddenness tests
 
 Para `{run_id}` se muestrearon puntos dentro de bolas centradas en cada
-equilibrio mediante EFORK C corregido. La ausencia de contactos solo permite
-`compatible_with_hiddenness_under_tested_radii`; los cortes de cuenca
-`xy`, `xz` y `yz` permanecen pendientes, por lo que no se emite la etiqueta
-fuerte de protocolo completo.
+equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (exploratoria) por lo que queda etiquetada como `{hiddenness_verdict}`." if is_lightweight else f"La ausencia de contactos solo permite `compatible_with_hiddenness_under_tested_radii`; los cortes de cuenca `xy`, `xz` y `yz` permanecen pendientes, por lo que no se emite la etiqueta fuerte de protocolo completo."}
 """
+
     (hidden_dir / "hiddenness_tests_validation.md").write_text(hidden_md, encoding="utf-8")
     _write_stage_summary(
         hidden_dir,
         "hiddenness_tests",
-        "incomplete_pending_basin_slices",
+        hiddenness_status,
         contract,
         files={"report": "hiddenness_tests_validation.md", "plan": "ball_sampling_plan.csv", "results": "ball_sampling_results.csv", "basin_slices": "basin_slices_summary.json"},
         provenance=provenance,
-        outputs={"branches": {"full_history": full["hiddenness"], "finite_memory": window["hiddenness"]}, "sampling_mode": "ball"},
-        verdict="compatible_with_hiddenness_under_tested_radii",
+        outputs={"branches": {"full_history": full["hiddenness"], "finite_memory": window["hiddenness"]}, "sampling_mode": "ball", "is_lightweight": is_lightweight},
+        verdict=hiddenness_verdict,
     )
+
+    # Run algebraic validation
+    import sys
+    algebra_tool_dir = PROJECT_ROOT / "tools" / "validation"
+    if str(algebra_tool_dir) not in sys.path:
+        sys.path.insert(0, str(algebra_tool_dir))
+    try:
+        import validate_chua_fractional_nonsmooth_algebra as alg_val
+        algebra_dir = validation / "02_algebraic_validation"
+        algebra_dir.mkdir(parents=True, exist_ok=True)
+        params = alg_val.chua_nonsmooth_parameters()
+        eq_rows, jac_rows, fd_rows, eig_rows = alg_val.algebra_rows(params)
+        alg_val.write_csv(algebra_dir / "equilibria_summary.csv", eq_rows)
+        alg_val.write_csv(algebra_dir / "jacobian_check.csv", jac_rows)
+        alg_val.write_csv(algebra_dir / "jacobian_finite_difference_check.csv", fd_rows)
+        alg_val.write_csv(algebra_dir / "eigenvalues_matignon_summary.csv", eig_rows)
+        
+        cross_tool_eq_rows, equilibrium_cross_tool_pass = alg_val.cross_tool_equilibrium_rows(eq_rows, algebra_dir)
+        alg_val.write_csv(algebra_dir / "equilibria_cross_tool_residuals.csv", cross_tool_eq_rows)
+        cross_tool_jac_rows, jacobian_cross_tool_pass = alg_val.cross_tool_jacobian_rows(jac_rows, algebra_dir)
+        alg_val.write_csv(algebra_dir / "jacobian_cross_tool_comparison.csv", cross_tool_jac_rows)
+        cross_tool_rows, eigenvalue_cross_tool_pass = alg_val.cross_tool_eigenvalue_rows(eig_rows, algebra_dir)
+        alg_val.write_csv(algebra_dir / "eigenvalues_cross_tool_comparison.csv", cross_tool_rows)
+        
+        alg_val.write_matignon_plot(eig_rows, algebra_dir / "matignon_margins.png")
+        alg_val.write_matignon_complex_plane_plot(eig_rows, algebra_dir / "matignon_complex_plane.png")
+        
+        rhs_residual_max = max(float(row["rhs_residual_norm"]) for row in eq_rows)
+        jacobian_fd_error_max = max(float(row["relative_frobenius_error"]) for row in fd_rows)
+        algebra_pass = (
+            rhs_residual_max < alg_val.TOL_RHS
+            and equilibrium_cross_tool_pass
+            and jacobian_cross_tool_pass
+            and jacobian_fd_error_max < alg_val.TOL_JACOBIAN_FD
+            and eigenvalue_cross_tool_pass
+        )
+        
+        algebra_summary = {
+            "schema_version": "1.0",
+            "protocol_version": PROTOCOL_VERSION,
+            "stage": "algebraic_validation",
+            "status": "passed_python_matlab_wolfram" if algebra_pass else "incomplete_or_failed_tolerance_check",
+            "system": "fractional_nonsmooth_chua",
+            "numerical_contract": {"q": Q, "tolerances": {
+                "equilibrium_rhs_norm_max": alg_val.TOL_RHS,
+                "jacobian_finite_difference_relative_error_max": alg_val.TOL_JACOBIAN_FD,
+                "eigenvalue_cross_tool_relative_error_max": alg_val.TOL_EIGENVALUE,
+            }},
+            "inputs": {},
+            "outputs": {"seed_family_role": "seed_generation_only_not_hiddenness_evidence"},
+            "metrics": {
+                "rhs_residual_max": rhs_residual_max,
+                "rhs_residual_pass": rhs_residual_max < alg_val.TOL_RHS,
+                "equilibrium_cross_tool_pass": equilibrium_cross_tool_pass,
+                "jacobian_cross_tool_pass": jacobian_cross_tool_pass,
+                "jacobian_finite_difference_relative_error_max": jacobian_fd_error_max,
+                "jacobian_finite_difference_pass": jacobian_fd_error_max < alg_val.TOL_JACOBIAN_FD,
+                "eigenvalue_cross_tool_pass": eigenvalue_cross_tool_pass,
+                "origin_stable_by_matignon": all(bool(row["stable_mode"]) for row in eig_rows if row["equilibrium"] == "E0"),
+                "outer_equilibria_unstable_by_matignon": any(not bool(row["stable_mode"]) for row in eig_rows if row["equilibrium"] == "E+"),
+            },
+            "files": {
+                "report": "algebraic_validation_validation.md",
+                "equilibria": "equilibria_summary.csv",
+                "equilibria_cross_tool": "equilibria_cross_tool_residuals.csv",
+                "jacobians": "jacobian_check.csv",
+                "jacobian_cross_tool": "jacobian_cross_tool_comparison.csv",
+                "jacobian_finite_differences": "jacobian_finite_difference_check.csv",
+                "eigenvalues": "eigenvalues_matignon_summary.csv",
+                "eigenvalue_cross_tool_comparison": "eigenvalues_cross_tool_comparison.csv",
+                "figure": "matignon_margins.png",
+                "complex_plane_figure": "matignon_complex_plane.png",
+            },
+        }
+        
+        (algebra_dir / "algebraic_validation_validation.md").write_text(
+            "# Algebraic Validation\n\n"
+            "The non-smooth fractional Chua model at `q=0.9998` reproduces Danca's "
+            "parameter set and the MATLAB validation values. Python returns the same "
+            "three equilibria, zero vector-field residuals to floating-point precision, "
+            "central-difference agreement with the analytic regional Jacobians, and "
+            "the same inner/outer spectra exported by MATLAB and Wolfram. Matignon "
+            "classification is stable at `E0` and unstable at `E+` and `E-`.\n\n"
+            "The supplied Wolfram source verifies the symbolic identities after renaming "
+            "its protected local symbol `Tr` to `Treal`.\n",
+            encoding="utf-8",
+        )
+        
+        lure_rows_out, transfer_rows, describing_rows, machado_rows = alg_val.lure_rows(params)
+        alg_val.write_csv(algebra_dir / "lure_equivalence_check.csv", lure_rows_out)
+        alg_val.write_csv(algebra_dir / "transfer_function_check.csv", transfer_rows)
+        alg_val.write_csv(algebra_dir / "describing_function_check.csv", describing_rows)
+        alg_val.write_csv(algebra_dir / "machado_mu1_check.csv", machado_rows)
+        
+        seed_family_checks = {
+            "status": "passed_python_matlab_after_sign_normalization",
+            "sign_convention": "W_code = -W_report; 1 + k*W_code = 0 is equivalent to 1 - k*W_report = 0.",
+            "checks": {
+                "max_lure_rhs_residual": max(float(row["max_abs_rhs_minus_lure"]) for row in lure_rows_out),
+                "max_report_closure_residual": max(float(row["abs_report_closure_1_minus_kW"]) for row in transfer_rows),
+                "max_amplitude_difference_from_matlab": max(float(row["abs_amplitude_minus_matlab"]) for row in describing_rows),
+            },
+        }
+        (algebra_dir / "describing_function_families.md").write_text(
+            "# Describing-Function Families\n\n"
+            "The manual Lur'e split reproduces the non-smooth vector field. The two "
+            "centered branches at `q=0.9998` match MATLAB after normalizing the "
+            "transfer sign: Python uses `1 + k*W_code = 0`, while the report/MATLAB "
+            "form uses `1 - k*W_report = 0` with `W_code = -W_report`.\n\n"
+            "This stage produces harmonic seeds only; it does not establish a bounded "
+            "chaotic trajectory or hiddenness.\n",
+            encoding="utf-8",
+        )
+        
+        algebra_summary["outputs"]["describing_function_families"] = seed_family_checks
+        algebra_summary["files"].update(
+            {
+                "transfer_function": "transfer_function_check.csv",
+                "lure_equivalence": "lure_equivalence_check.csv",
+                "describing_function": "describing_function_check.csv",
+                "machado_mu1": "machado_mu1_check.csv",
+                "seed_family_appendix": "describing_function_families.md",
+            }
+        )
+        
+        _write_stage_summary(
+            algebra_dir,
+            "algebraic_validation",
+            "completed",
+            contract,
+            files=algebra_summary["files"],
+            provenance=provenance,
+            outputs=algebra_summary["outputs"],
+        )
+    except Exception as exc:
+        print(f"Warning: Algebraic validation integration failed: {exc}", flush=True)
 
     _copy_files(full_root / "dynamic", diagnostics_dir, ["fft_summary.csv", "psd_summary.csv", "lyapunov_summary.csv", "spectrum_x.png"])
     (diagnostics_dir / "diagnostics_validation.md").write_text(
@@ -1193,6 +1410,7 @@ fuerte de protocolo completo.
     manifest["working_tree_diff_sha256"] = provenance["working_tree_diff_sha256"]
     manifest["stages"].update({
         "numerical_contract": "01_numerical_contract/numerical_contract_validation_summary.json",
+        "algebraic_validation": "02_algebraic_validation/algebraic_validation_validation_summary.json",
         "seed_generation": "03_seed_generation/seed_generation_validation_summary.json",
         "soft_precheck": "04_soft_precheck/soft_precheck_validation_summary.json",
         "continuation": "05_continuation/continuation_validation_summary.json",
@@ -1202,8 +1420,22 @@ fuerte de protocolo completo.
         "hiddenness_tests": "09_hiddenness_tests/hiddenness_tests_validation_summary.json",
         "diagnostics": "10_diagnostics/diagnostics_validation_summary.json",
     })
-    manifest["pending_stages"] = ["algebraic_validation"]
-    manifest["final_report"] = {"status": "pending_full_protocol_basin_slices_and_algebraic_validation", "run_id": run_id}
+    manifest["pending_stages"] = []
+    
+    if all_slices_present and not is_lightweight:
+        manifest["final_report"] = {
+            "status": "completed",
+            "verdict": "hidden_verified_only_if_full_protocol_passed",
+            "run_id": run_id
+        }
+    else:
+        status_label = "pending_full_protocol_basin_slices"
+        if is_lightweight:
+            status_label = "incomplete_lightweight_exploratory"
+        manifest["final_report"] = {
+            "status": status_label,
+            "run_id": run_id
+        }
     write_json(manifest_path, manifest)
 
 

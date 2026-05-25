@@ -1,0 +1,66 @@
+{
+  "verdict": "weak_target_hit",
+  "reason": "robust similarity assessment remains limited until basin protocol completion",
+  "branches": {
+    "full_history": {
+      "status": "completed",
+      "method": "C EFORK trajectory comparison under its stated memory contract",
+      "backend": "chua_frac_backend_lib.c",
+      "efork_stage": "K3 = a31*K1 + a32*K2",
+      "rows": 12,
+      "memory_policy": "full_caputo_history_no_finite_memory_truncation",
+      "notes": "This measures finite-time geometric persistence; hiddenness is evaluated separately with the same memory contract."
+    },
+    "finite_memory": {
+      "status": "completed",
+      "method": "C EFORK trajectory comparison under its stated memory contract",
+      "backend": "chua_frac_backend_lib.c",
+      "efork_stage": "K3 = a31*K1 + a32*K2",
+      "rows": 12,
+      "memory_policy": "finite_caputo_history_window",
+      "notes": "This measures finite-time geometric persistence; hiddenness is evaluated separately with the same memory contract."
+    }
+  },
+  "abm_reference": {
+    "status": "completed_exploratory_current_run",
+    "scope": "ABM full-history robustness/reference comparison; excluded from EFORK seed ranking",
+    "candidate_seed_source": "Danca ABM replication locator from prior method setup; all reported metrics are newly recomputed",
+    "backend": "chua_abm_full_history_lib.c",
+    "method": "Caputo ABM PECE with full history and no finite-memory truncation",
+    "contract": {
+      "q": 0.9998,
+      "h": 0.05,
+      "t_final": 80.0,
+      "t_burn": 40.0,
+      "radius": 0.01,
+      "sampling_mode": "ball",
+      "samples_per_unstable_equilibrium": 12
+    },
+    "reference_metrics": {
+      "bounded": true,
+      "diverged": false,
+      "equilibrium_like": false,
+      "noncollapsed_variance": true,
+      "final_norm": 3.7920804086830673,
+      "max_norm": 11.15405768183769,
+      "range_x": 11.31885264511816,
+      "range_y": 3.302761025706284,
+      "range_z": 17.035780842427812,
+      "var_x_tail": 10.94364878620487,
+      "var_y_tail": 1.09964831713783,
+      "var_z_tail": 30.68685814804338,
+      "fft_peak": 0.3745318352059925,
+      "psd_entropy": 0.1913881062091926,
+      "section_points": 15,
+      "range_relative_distance": NaN,
+      "fft_relative_delta": NaN,
+      "cloud_median_distance": NaN,
+      "cloud_median_distance_norm": NaN,
+      "section_median_distance": NaN,
+      "section_median_distance_norm": NaN
+    },
+    "tested_trajectories": 24,
+    "target_hits": 0,
+    "decision": "compatible_with_hiddenness_under_tested_radii"
+  }
+}

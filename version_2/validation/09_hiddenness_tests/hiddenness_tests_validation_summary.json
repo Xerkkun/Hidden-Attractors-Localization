@@ -1,0 +1,142 @@
+{
+  "schema_version": "1.0",
+  "protocol_version": "caputo_hidden_attractors_v1",
+  "stage": "hiddenness_tests",
+  "status": "incomplete_pending_basin_slices",
+  "candidate_id": null,
+  "system": "fractional_nonsmooth_chua",
+  "numerical_contract": {
+    "q": 0.9998,
+    "backend": "efork_c",
+    "reference_backend": "abm_c_full_history",
+    "memory_policy": "full_history_and_finite_memory_robustness_comparison",
+    "boundedness_thresholds": {
+      "bounded": true,
+      "minimum_range_x": 0.25
+    },
+    "equilibrium_distance_thresholds": {
+      "nearest_equilibrium": 0.001
+    },
+    "similarity_thresholds": {
+      "cloud_median_distance_norm": 0.35,
+      "range_relative_distance": 0.6
+    },
+    "hiddenness_radii": [
+      0.0001,
+      0.001
+    ],
+    "samples_per_radius": 12,
+    "sample_growth_per_radius": 12,
+    "random_seed_policy": "fixed_reproducible",
+    "output_schema_version": "1.0",
+    "efork_stage": "K3 = a31*K1 + a32*K2"
+  },
+  "inputs": {},
+  "outputs": {
+    "branches": {
+      "full_history": {
+        "status": "completed",
+        "backend": "chua_frac_backend_lib.c",
+        "efork_stage": "K3 = a31*K1 + a32*K2",
+        "contract": {
+          "q": 0.9998,
+          "h": 0.02,
+          "history_horizon": 30.02,
+          "memory_policy": "full_caputo_history_no_finite_memory_truncation",
+          "t_final": 30.0,
+          "t_burn": 15.0,
+          "radii": [
+            0.0001,
+            0.001
+          ],
+          "sampling_mode": "ball",
+          "samples_per_radius": 12,
+          "sample_growth_per_radius": 12
+        },
+        "decisions": [
+          {
+            "candidate_id": "current_centered_machado_b0_mu_2",
+            "tested_trajectories": 108,
+            "target_hits": 0,
+            "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
+            "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de historial completo; cero impactos no es demostracion."
+          },
+          {
+            "candidate_id": "current_centered_classical_b0",
+            "tested_trajectories": 108,
+            "target_hits": 0,
+            "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
+            "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de historial completo; cero impactos no es demostracion."
+          },
+          {
+            "candidate_id": "current_centered_machado_b0_mu_4",
+            "tested_trajectories": 108,
+            "target_hits": 0,
+            "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
+            "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de historial completo; cero impactos no es demostracion."
+          }
+        ],
+        "basins_and_bifurcations": "pending"
+      },
+      "finite_memory": {
+        "status": "completed",
+        "backend": "chua_frac_backend_lib.c",
+        "efork_stage": "K3 = a31*K1 + a32*K2",
+        "contract": {
+          "q": 0.9998,
+          "h": 0.02,
+          "history_horizon": 20.0,
+          "memory_policy": "finite_caputo_history_window",
+          "t_final": 30.0,
+          "t_burn": 15.0,
+          "radii": [
+            0.0001,
+            0.001
+          ],
+          "sampling_mode": "ball",
+          "samples_per_radius": 12,
+          "sample_growth_per_radius": 12
+        },
+        "decisions": [
+          {
+            "candidate_id": "current_centered_machado_b0_mu_2",
+            "tested_trajectories": 108,
+            "target_hits": 0,
+            "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
+            "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de ventana finita; cero impactos no es demostracion."
+          },
+          {
+            "candidate_id": "current_centered_classical_b0",
+            "tested_trajectories": 108,
+            "target_hits": 0,
+            "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
+            "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de ventana finita; cero impactos no es demostracion."
+          },
+          {
+            "candidate_id": "current_centered_machado_b0_mu_4",
+            "tested_trajectories": 108,
+            "target_hits": 0,
+            "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
+            "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de ventana finita; cero impactos no es demostracion."
+          }
+        ],
+        "basins_and_bifurcations": "pending"
+      }
+    },
+    "sampling_mode": "ball"
+  },
+  "metrics": {},
+  "verdict": "compatible_with_hiddenness_under_tested_radii",
+  "files": {
+    "report": "hiddenness_tests_validation.md",
+    "plan": "ball_sampling_plan.csv",
+    "results": "ball_sampling_results.csv",
+    "basin_slices": "basin_slices_summary.json"
+  },
+  "provenance": {
+    "repository_commit": "047384f956e072eba277c13364eff1247c03eee1",
+    "working_tree_dirty": false,
+    "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "implementation_sources_sha256": "0df31abede7e23ff80160128251264074ce0970289c97e8c9842f7ad8e80b2d5"
+  }
+}

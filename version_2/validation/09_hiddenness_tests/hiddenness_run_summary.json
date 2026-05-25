@@ -1,0 +1,44 @@
+{
+  "status": "completed",
+  "backend": "chua_frac_backend_lib.c",
+  "efork_stage": "K3 = a31*K1 + a32*K2",
+  "contract": {
+    "q": 0.9998,
+    "h": 0.02,
+    "history_horizon": 30.02,
+    "memory_policy": "full_caputo_history_no_finite_memory_truncation",
+    "t_final": 30.0,
+    "t_burn": 15.0,
+    "radii": [
+      0.0001,
+      0.001
+    ],
+    "sampling_mode": "ball",
+    "samples_per_radius": 12,
+    "sample_growth_per_radius": 12
+  },
+  "decisions": [
+    {
+      "candidate_id": "current_centered_machado_b0_mu_2",
+      "tested_trajectories": 108,
+      "target_hits": 0,
+      "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
+      "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de historial completo; cero impactos no es demostracion."
+    },
+    {
+      "candidate_id": "current_centered_classical_b0",
+      "tested_trajectories": 108,
+      "target_hits": 0,
+      "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
+      "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de historial completo; cero impactos no es demostracion."
+    },
+    {
+      "candidate_id": "current_centered_machado_b0_mu_4",
+      "tested_trajectories": 108,
+      "target_hits": 0,
+      "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
+      "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de historial completo; cero impactos no es demostracion."
+    }
+  ],
+  "basins_and_bifurcations": "pending"
+}

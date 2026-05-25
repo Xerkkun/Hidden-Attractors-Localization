@@ -26,6 +26,7 @@ HIDDENNESS_LABELS = {
     "rejected_by_equilibrium_neighborhood",
     "compatible_with_hiddenness_under_tested_radii",
     "hidden_verified",
+    "exploratory_hiddenness_screen",
 }
 
 EVAL_FIELDS = [
@@ -878,6 +879,7 @@ def ensure_empty_downstream_files(outdir: Path) -> None:
             "psd_entropy",
             "candidate_status",
             "early_periodicity_status",
+            "post_continuation_dynamics_status",
             "hiddenness_status",
             "notes",
         ],
@@ -1046,6 +1048,20 @@ def write_report(
 
 def run_search(config_path: str | Path, args: argparse.Namespace) -> Dict[str, Any]:
     cfg = load_config(config_path)
+    if not bool(cfg.get("historical_reproduction_only", False)):
+        raise RuntimeError(
+            "Legacy Route Execution Blocked:\n"
+            "This script belongs to the legacy/historical reproduction pathway. "
+            "To execute it, you must formally declare 'historical_reproduction_only: true' "
+            "in the YAML configuration file to acknowledge this is not part of the official protocol."
+        )
+    print(
+        "WARNING: Running legacy/historical reproduction script. "
+        "This path is reserved for historical comparison and does not represent "
+        "the official unified Caputo protocol.",
+        file=sys.stderr,
+        flush=True
+    )
     if args.output_root:
         cfg.setdefault("outputs", {})["root"] = str(args.output_root)
     q = require_q09998(cfg, context=str(config_path))

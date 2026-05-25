@@ -1,0 +1,8 @@
+{
+  "metrics": [
+    "fft_peak",
+    "psd_entropy",
+    "trajectory_metrics"
+  ],
+  "backend": "chua_frac_backend_lib.c"
+}

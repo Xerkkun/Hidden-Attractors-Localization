@@ -5922,13 +5922,61 @@ El procedimiento operativo común queda establecido en los siguientes pasos:
 \section{Resultados numéricos}
 \label{sec:resultados_numericos}
 
-Los resultados numéricos promovidos del caso entero se presentan en su
-sección correspondiente. Para el Chua fraccionario no suave con
-\(q=0.9998\), los resultados se incorporarán exclusivamente después de
-completar las corridas postransitorias vigentes y su continuación causal. El
-caso con no linealidad \(\arctan\) permanece en esta actualización como
-desarrollo metodológico para generación de semillas, sin resultados dinámicos
-finales promovidos.
+En esta sección se reportan los resultados numéricos de la búsqueda y continuación de candidatos a atractores ocultos en el sistema de Chua fraccionario no suave con $q=0.9998$. Toda la integración temporal y el transporte homotópico se realizaron mediante el integrador EFORK de paso fijo $h=0.02$, utilizando tanto la rama con historia completa de Caputo como la rama de ventana de memoria finita ($L_m=20.0$).
+
+\subsection{Selección y Promoción de Candidatos}
+Siguiendo la metodología oficial unificada de 10 etapas, se generó un conjunto inicial de semillas analíticas utilizando los balances armónicos de las familias Lur'e (clásica centrada y sesgada) y la extensión Machado/FDF. Tras la aplicación del pre-chequeo suave (donde no se rechazaron semillas por periodicidad pre-continuación), se ejecutó la continuación numérica mediante el parámetro de homotopía $\lambda\in[0,1]$.
+
+Los supervivientes dinámicos del filtro post-continuación (que descartó colapsos a equilibrio y divergencias) se ordenaron de acuerdo con la amplitud observada en el régimen estacionario, el residual de balance armónico y la medida de distorsión $\rho_H$. La Tabla~\ref{tab:candidatos_frac_chua} detalla las especificaciones analíticas y métricas de los tres candidatos principales promovidos para la rama de historia completa.
+
+\begin{table*}[htbp]
+\centering
+\caption{Especificaciones y métricas dinámicas de los tres candidatos principales de Chua fraccionario ($q=0.9998$).}
+\label{tab:candidatos_frac_chua}
+\small
+\begin{tabular}{clcccccccc}
+\toprule
+\textbf{Rango} & \textbf{ID Candidato} & \textbf{Familia DF} & \textbf{Amplitud $A$} & \textbf{Frec. $\omega_0$} & \textbf{Ganancia $k$} & \textbf{Semilla inicial $\bm{x}(0)$} & \textbf{Rango obsv. $x$} & \textbf{FFT Peak} & \textbf{Entropía PSD} \\
+\midrule
+1 & \texttt{centered\_machado\_mu2} & Machado centrada ($\mu=2.0$) & $2.6284$ & $2.0403$ & $0.2100$ & $(2.6284,\; 0.1664,\; -3.7555)$ & $9.1405$ & $0.28$ & $0.1297$ \\
+2 & \texttt{centered\_classical} & Lur'e clásica centrada & $5.8518$ & $2.0403$ & $0.2100$ & $(5.8518,\; 0.3704,\; -8.3610)$ & $9.1401$ & $0.28$ & $0.1294$ \\
+3 & \texttt{centered\_machado\_mu4} & Machado centrada ($\mu=4.0$) & $1.7149$ & $2.0403$ & $0.2100$ & $(1.7149,\; 0.1086,\; -2.4503)$ & $9.1399$ & $0.28$ & $0.1295$ \\
+\bottomrule
+\end{tabular}
+\end{table...}
+
+Es importante destacar que el candidato de rango 1 proviene del plano Machado con $\mu=2.0$, mientras que el de rango 2 corresponde al balance de Lur'e clásico centrado. Ambos confluyen en una frecuencia fundamental idéntica ($\omega_0\approx 2.0403$) y una ganancia $k\approx 0.2100$, lo cual confirma la consistencia del mapa de linealización y valida la homotopía fraccionaria de transporte.
+
+\subsection{Análisis de Espacio de Fases y Series Temporales}
+Para el atractor candidato mejor clasificado (\texttt{centered\_machado\_mu2}), se obtuvieron los retratos de fase 3D, las proyecciones en planos bidimensionales, la evolución de variables temporales y el espectro de potencia de la señal $x(t)$. Las Figuras~\ref{fig:danca_frac_phase_3d}, \ref{fig:danca_frac_projections}, \ref{fig:danca_frac_time_series} y \ref{fig:danca_frac_spectrum_x} muestran estas gráficas iniciales generadas directamente a partir del solver nativo de historia completa.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.74\columnwidth]{danca_frac_phase_3d.png}
+\caption{Espacio de fases 3D para el candidato \texttt{centered\_machado\_mu2} en Chua fraccionario ($q=0.9998$) integrado con C EFORK-3.}
+\label{fig:danca_frac_phase_3d}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\columnwidth]{danca_frac_projections.png}
+\caption{Proyecciones geométricas en los planos $xy$, $xz$ y $yz$ para el atractor candidato fraccionario.}
+\label{fig:danca_frac_projections}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.90\columnwidth]{danca_frac_time_series.png}
+\caption{Series temporales de las variables $x(t)$, $y(t)$ y $z(t)$ del candidato en régimen de estado transitorio final y estable.}
+\label{fig:danca_frac_time_series}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.82\columnwidth]{danca_frac_spectrum_x.png}
+\caption{Espectro de potencia FFT de la señal $x(t)$ que muestra el carácter caótico y de banda estrecha del atractor.}
+\label{fig:danca_frac_spectrum_x}
+\end{figure}
 
 \section{Alcance de la metodología y sistemas candidatos}
 

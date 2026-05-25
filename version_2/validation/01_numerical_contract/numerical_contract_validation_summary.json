@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "protocol_version": "caputo_hidden_attractors_v1",
+  "stage": "numerical_contract",
+  "status": "completed",
+  "candidate_id": null,
+  "system": "fractional_nonsmooth_chua",
+  "numerical_contract": {
+    "q": 0.9998,
+    "backend": "efork_c",
+    "reference_backend": "abm_c_full_history",
+    "memory_policy": "full_history_and_finite_memory_robustness_comparison",
+    "boundedness_thresholds": {
+      "bounded": true,
+      "minimum_range_x": 0.25
+    },
+    "equilibrium_distance_thresholds": {
+      "nearest_equilibrium": 0.001
+    },
+    "similarity_thresholds": {
+      "cloud_median_distance_norm": 0.35,
+      "range_relative_distance": 0.6
+    },
+    "hiddenness_radii": [
+      0.0001,
+      0.001
+    ],
+    "samples_per_radius": 12,
+    "sample_growth_per_radius": 12,
+    "random_seed_policy": "fixed_reproducible",
+    "output_schema_version": "1.0",
+    "efork_stage": "K3 = a31*K1 + a32*K2"
+  },
+  "inputs": {},
+  "outputs": {
+    "efork_stage": "K3 = a31*K1 + a32*K2",
+    "protocol_version": "caputo_hidden_attractors_v1"
+  },
+  "metrics": {},
+  "verdict": null,
+  "files": {
+    "report": "numerical_contract_validation.md",
+    "contract": "effective_contract.json",
+    "integrator_benchmark": "integrator_benchmark_summary.csv"
+  },
+  "provenance": {
+    "repository_commit": "047384f956e072eba277c13364eff1247c03eee1",
+    "working_tree_dirty": false,
+    "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "implementation_sources_sha256": "0df31abede7e23ff80160128251264074ce0970289c97e8c9842f7ad8e80b2d5"
+  }
+}
