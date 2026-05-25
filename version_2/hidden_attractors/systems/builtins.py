@@ -6,7 +6,14 @@ from typing import Any, Mapping
 
 import numpy as np
 
-from ..models.chua import chua_parameters, equilibria_nonsmooth, rhs_chua
+from ..models.chua import (
+    chua_arctan_wu2023_parameters,
+    chua_parameters,
+    equilibria_arctan,
+    equilibria_nonsmooth,
+    jacobian_arctan,
+    rhs_chua,
+)
 from .base import ChaoticSystem, register_system
 from .lure import LureSystem
 
@@ -42,18 +49,17 @@ def _chua_rhs(state: np.ndarray, parameters: Mapping[str, Any]) -> np.ndarray:
 
 def _chua_equilibria(parameters: Mapping[str, Any]) -> dict[str, np.ndarray]:
     params = chua_parameters(**dict(parameters))
-    if params.model != "nonsmooth":
-        return {"E0": np.zeros(3, dtype=float)}
+    if params.model == "arctan":
+        return equilibria_arctan(params)
     return equilibria_nonsmooth(params)
 
 
 def _chua_jacobian(state: np.ndarray, parameters: Mapping[str, Any]) -> np.ndarray:
     params = chua_parameters(**dict(parameters))
-    x = float(np.asarray(state, dtype=float)[0])
     if params.model == "arctan":
-        dphi = params.a1 + params.a2 * params.rho / (1.0 + (params.rho * x) ** 2)
-    else:
-        dphi = params.m0 if abs(x) < 1.0 else params.m1
+        return jacobian_arctan(np.asarray(state, dtype=float), params)
+    x = float(np.asarray(state, dtype=float)[0])
+    dphi = params.m0 if abs(x) < 1.0 else params.m1
     return np.array(
         [
             [-params.alpha * (1.0 + dphi), params.alpha, 0.0],
@@ -195,8 +201,38 @@ def chua_system(model: str = "nonsmooth") -> ChaoticSystem:
     )
 
 
+def chua_arctan_wu2023_system() -> ChaoticSystem:
+    """Return the named registration for the official Wu et al. arctan case."""
+
+    params = chua_arctan_wu2023_parameters()
+    parameters = {
+        "model": params.model,
+        "alpha": params.alpha,
+        "beta": params.beta,
+        "gamma": params.gamma,
+        "m0": params.m0,
+        "m1": params.m1,
+        "a1": params.a1,
+        "a2": params.a2,
+        "rho": params.rho,
+    }
+    return ChaoticSystem(
+        name="fractional_chua_arctan_wu2023",
+        dimension=3,
+        rhs=_chua_rhs,
+        equilibria=_chua_equilibria,
+        jacobian=_chua_jacobian,
+        parameters=parameters,
+        description="Wu et al. (2023) fractional Chua system with arctan nonlinearity.",
+        tags=("chua", "fractional", "arctan", "wu2023", "hidden-attractors"),
+        workflows={"validation": "python examples/chua_arctan_wu2023/run_validation.py"},
+        lure=_chua_lure_system(parameters),
+    )
+
+
 def register_builtin_systems() -> None:
     """Register built-in systems, replacing stale registrations if reloaded."""
 
     register_system(chua_system("nonsmooth"), replace=True)
     register_system(chua_system("arctan"), replace=True)
+    register_system(chua_arctan_wu2023_system(), replace=True)

@@ -22,6 +22,7 @@ from typing import Any, Sequence
 import numpy as np
 
 from ..analysis.trajectory import trajectory_metrics
+from ..diagnostics.periodicity import classify_post_transient_periodicity
 from ..io import read_csv_rows, read_json, safe_name, timestamp, write_csv, write_json
 from ..models.chua import equilibria_nonsmooth
 from ..native.backends import FractionalChuaBackend, FullHistoryABMBackend
@@ -159,17 +160,12 @@ def _dominant_period_return_ratio(
 
 
 def _post_continuation_periodicity(trajectory: np.ndarray, *, h: float, t_final: float) -> dict[str, Any]:
-    """Apply the existing multi-component periodicity classifier after continuation."""
+    """Apply the maintained multi-component periodicity classifier after continuation."""
 
-    legacy = PROJECT_ROOT / "tools" / "legacy"
-    if str(legacy) not in sys.path:
-        sys.path.insert(0, str(legacy))
-    from early_periodicity_filter import classify_early_periodicity  # type: ignore
-
-    return classify_early_periodicity(
+    return classify_post_transient_periodicity(
         trajectory,
-        h,
-        {**POST_CONTINUATION_PERIODICITY_CONFIG, "t_transient": 0.5 * float(t_final)},
+        h=h,
+        config={**POST_CONTINUATION_PERIODICITY_CONFIG, "t_transient": 0.5 * float(t_final)},
     )
 
 

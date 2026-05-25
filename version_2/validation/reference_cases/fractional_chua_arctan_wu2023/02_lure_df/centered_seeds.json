@@ -1,0 +1,94 @@
+{
+  "system": "fractional_chua_arctan_wu2023",
+  "q": 0.99,
+  "method": "classical_centered_arctan",
+  "transfer_function": "r^T ((j*omega)^q I - P)^(-1) b",
+  "balance_equation": "1 - W_q(j*omega)*N(A) = 0",
+  "sign_audit": "With b=[-alpha,0,0]^T and a2<0, 1 + W_q*N(A) = 0 has no admissible centered branch.",
+  "branches": [
+    {
+      "branch": 0,
+      "family": "classical_centered_arctan",
+      "omega": 2.0991692817053975,
+      "k": -1.3282768771086269,
+      "A": 0.901922573914776,
+      "lambda": [
+        0.032728718827026354,
+        2.083403582964422
+      ],
+      "W_q": [
+        -0.7528550840821568,
+        3.633204848085825e-13
+      ],
+      "N_A": -1.3282768771086266,
+      "eigenvalue": [
+        0.03272871882381412,
+        2.0834035829666373
+      ],
+      "eigenvector": [
+        [
+          1.0,
+          -0.0
+        ],
+        [
+          0.07559350424751574,
+          0.24637586421402508
+        ],
+        [
+          -1.4352327754670622,
+          0.41193120819713785
+        ]
+      ],
+      "seed": [
+        0.901922573914776,
+        0.06817948792215694,
+        -1.2944688390161005
+      ],
+      "closure_residual_1_minus_WN": 4.825902500336116e-13,
+      "incompatible_requested_residual_1_plus_WN": 1.9999999999999998
+    },
+    {
+      "branch": 1,
+      "family": "classical_centered_arctan",
+      "omega": 3.2213887603568967,
+      "k": -0.7147183367679052,
+      "A": 3.208954181207794,
+      "lambda": [
+        0.05001090629891382,
+        3.1835313175905866
+      ],
+      "W_q": [
+        -1.3991525731971475,
+        -2.444155988712282e-13
+      ],
+      "N_A": -0.7147183367679051,
+      "eigenvalue": [
+        0.050010906298986024,
+        3.1835313175906372
+      ],
+      "eigenvector": [
+        [
+          1.0,
+          -0.0
+        ],
+        [
+          0.6911957743338885,
+          0.37647303961479606
+        ],
+        [
+          -1.4727506104038908,
+          2.5957441917013124
+        ]
+      ],
+      "seed": [
+        3.208954181207794,
+        2.21801557008189,
+        -4.725989229131896
+      ],
+      "closure_residual_1_minus_WN": 1.746884514246829e-13,
+      "incompatible_requested_residual_1_plus_WN": 1.9999999999999998
+    }
+  ],
+  "hidden_verified": false,
+  "interpretation": "seed_generation_only_not_hiddenness_evidence"
+}

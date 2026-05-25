@@ -66,6 +66,11 @@ from .lure import (
     reconstruct_biased_lure_seed_from_system,
     solve_lure_amplitude_from_gain,
 )
+from .chua_arctan_wu2023 import (
+    find_centered_arctan_wu2023_branches,
+    format_arctan_wu2023_seed_report,
+    transfer_function_arctan_wu2023,
+)
 
 __all__ = [
     # core
@@ -105,4 +110,7 @@ __all__ = [
     "lure_transfer_function",
     "reconstruct_biased_lure_seed_from_system",
     "solve_lure_amplitude_from_gain",
+    "find_centered_arctan_wu2023_branches",
+    "format_arctan_wu2023_seed_report",
+    "transfer_function_arctan_wu2023",
 ]

@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0",
+  "case_id": "fractional_chua_arctan_wu2023",
+  "system": "fractional_chua_arctan_wu2023",
+  "source_reference": "Wu et al. 2023",
+  "model": "arctan",
+  "parameters": {
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m": 0.4,
+    "n": -1.1585,
+    "a1": 0.4,
+    "a2": -1.5585,
+    "rho": 1.0
+  },
+  "numerical_contract": {
+    "q": 0.99,
+    "h": 0.01,
+    "N": 10000,
+    "t_final": 100.0,
+    "memory_policy": "finite_memory",
+    "memory_policy_options": [
+      "full_history",
+      "finite_memory"
+    ],
+    "memory_length": 40.0,
+    "backend": "efork_c_arctan",
+    "hiddenness_radii": [
+      1e-05,
+      3e-05,
+      0.0001,
+      0.0003,
+      0.001,
+      0.01
+    ]
+  },
+  "initial_conditions_reported": {
+    "x0_plus": [
+      13.8,
+      0.7093,
+      -19.8768
+    ],
+    "x0_minus": [
+      -13.8,
+      -0.7093,
+      19.8768
+    ]
+  },
+  "seed_generation": {
+    "families": [
+      "classical_centered_arctan"
+    ],
+    "optional_families": [
+      "classical_biased_arctan"
+    ],
+    "excluded_from_primary_reproduction": [
+      "machado_experimental_complex_branch"
+    ],
+    "transfer_function": "r^T ((j*omega)^q I - P)^(-1) b",
+    "harmonic_balance_equation": "1 - W_q(j*omega)*N(A) = 0",
+    "sign_audit": "The plus-sign balance with the same b and psi has no admissible centered arctan branch."
+  },
+  "post_continuation_periodicity": {
+    "enabled": true,
+    "apply_after_target_system_eta": 1.0,
+    "discard_transient_fraction": 0.5,
+    "require_two_components": true,
+    "entropy_min": 0.25,
+    "dominant_ratio_max": 0.65,
+    "relaxed_dominant_ratio": 0.45,
+    "freq_drift_max": 0.05,
+    "min_range": 0.01,
+    "labels": [
+      "regular_periodic_rejected",
+      "thin_periodic_rejected",
+      "nonperiodic_candidate",
+      "chaotic_candidate_pending_robustness"
+    ]
+  },
+  "hiddenness_protocol": {
+    "requires_all_equilibria": [
+      "E0",
+      "E+",
+      "E-"
+    ],
+    "hidden_verified_default": false,
+    "periodic_orbit_policy": "regular_hidden_like_not_chaotic_when_neighborhood_tests_do_not_contact_it"
+  },
+  "validation_output_root": "validation/reference_cases/fractional_chua_arctan_wu2023"
+}

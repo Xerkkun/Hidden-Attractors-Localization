@@ -60,6 +60,8 @@ class FractionalChuaBackend:
         lib = ctypes.CDLL(str(result.path.resolve()))
         lib.set_frac_chua_params.argtypes = [ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double]
         lib.set_frac_chua_params.restype = None
+        lib.set_frac_chua_arctan_params.argtypes = [ctypes.c_double, ctypes.c_double, ctypes.c_double]
+        lib.set_frac_chua_arctan_params.restype = None
         lib.set_frac_chua_model.argtypes = [ctypes.c_int]
         lib.set_frac_chua_model.restype = None
         lib.efork_rows.argtypes = [ctypes.c_double, ctypes.c_double]
@@ -113,6 +115,21 @@ class FractionalChuaBackend:
         """Compatibility alias for :meth:`set_nonsmooth_params`."""
 
         self.set_nonsmooth_params(params)
+
+    def set_arctan_params(self, params: ChuaParameters) -> None:
+        """Set the C backend to a smooth arctan Chua parameterization."""
+
+        self.lib.set_frac_chua_model(1)
+        self.lib.set_frac_chua_params(params.alpha, params.beta, params.gamma, params.m0, params.m1)
+        self.lib.set_frac_chua_arctan_params(params.a1, params.a2, params.rho)
+
+    def set_params(self, params: ChuaParameters) -> None:
+        """Dispatch parameter loading according to ``params.model``."""
+
+        if params.model == "arctan":
+            self.set_arctan_params(params)
+        else:
+            self.set_nonsmooth_params(params)
 
     def integrate_efork3(
         self,
@@ -369,6 +386,8 @@ class BasinBackend:
         lib = ctypes.CDLL(str(result.path.resolve()))
         lib.set_chua_params.argtypes = [ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double]
         lib.set_chua_params.restype = None
+        lib.set_chua_arctan_params.argtypes = [ctypes.c_double, ctypes.c_double, ctypes.c_double]
+        lib.set_chua_arctan_params.restype = None
         lib.set_chua_model.argtypes = [ctypes.c_int]
         lib.set_chua_model.restype = None
         lib.get_equilibria.argtypes = [np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS")]
@@ -401,6 +420,21 @@ class BasinBackend:
         """Compatibility alias for :meth:`set_nonsmooth_params`."""
 
         self.set_nonsmooth_params(params)
+
+    def set_arctan_params(self, params: ChuaParameters) -> None:
+        """Set the basin backend to a smooth arctan Chua parameterization."""
+
+        self.lib.set_chua_model(1)
+        self.lib.set_chua_params(params.alpha, params.beta, params.gamma, params.m0, params.m1)
+        self.lib.set_chua_arctan_params(params.a1, params.a2, params.rho)
+
+    def set_params(self, params: ChuaParameters) -> None:
+        """Dispatch parameter loading according to ``params.model``."""
+
+        if params.model == "arctan":
+            self.set_arctan_params(params)
+        else:
+            self.set_nonsmooth_params(params)
 
     def equilibria(self) -> dict[str, np.ndarray]:
         out = np.zeros(9, dtype=np.float64)

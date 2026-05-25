@@ -1,0 +1,282 @@
+{
+  "schema_version": "1.0",
+  "case_id": "fractional_chua_arctan_wu2023",
+  "source": "Wu et al. 2023",
+  "stage": "algebraic_validation",
+  "status": "passed",
+  "official_parameters": {
+    "model": "arctan",
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m": 0.4,
+    "n": -1.1585,
+    "a1": 0.4,
+    "a2": -1.5585,
+    "rho": 1.0,
+    "q": 0.99,
+    "h": 0.01,
+    "N": 10000
+  },
+  "equilibria": {
+    "E0": {
+      "state": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "expected_state": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "expected_state_error_norm": 0.0,
+      "equilibrium_residual_norm": 0.0,
+      "jacobian": [
+        [
+          1.3403077000000008,
+          8.4562,
+          0.0
+        ],
+        [
+          1.0,
+          -1.0,
+          1.0
+        ],
+        [
+          0.0,
+          -12.0732,
+          -0.0052
+        ]
+      ],
+      "finite_difference_jacobian_error_norm": 4.440892098500626e-14,
+      "eigenvalues": [
+        [
+          -1.0004421730606339,
+          -2.438870245845308
+        ],
+        [
+          -1.0004421730606339,
+          2.438870245845308
+        ],
+        [
+          2.335992046121269,
+          0.0
+        ]
+      ],
+      "expected_eigenvalue_max_abs_error": 0.0,
+      "matignon": {
+        "q": 0.99,
+        "threshold_radians": 1.5550883635269477,
+        "modes": [
+          {
+            "eigenvalue": [
+              -1.0004421730606339,
+              -2.438870245845308
+            ],
+            "abs_argument": 1.960070940481633,
+            "matignon_margin": 0.4049825769546853,
+            "stable_mode": true
+          },
+          {
+            "eigenvalue": [
+              -1.0004421730606339,
+              2.438870245845308
+            ],
+            "abs_argument": 1.960070940481633,
+            "matignon_margin": 0.4049825769546853,
+            "stable_mode": true
+          },
+          {
+            "eigenvalue": [
+              2.335992046121269,
+              0.0
+            ],
+            "abs_argument": 0.0,
+            "matignon_margin": -1.5550883635269477,
+            "stable_mode": false
+          }
+        ],
+        "equilibrium_stable": false,
+        "classification": "unstable"
+      }
+    },
+    "E+": {
+      "state": [
+        0.6096791169753114,
+        0.00026247941848851,
+        -0.609416637556823
+      ],
+      "expected_state": [
+        0.60967911698,
+        0.00026247941849,
+        -0.60941663756
+      ],
+      "expected_state_error_norm": 5.663588145716181e-12,
+      "equilibrium_residual_norm": 1.880933049547424e-15,
+      "jacobian": [
+        [
+          -2.230963424253349,
+          8.4562,
+          0.0
+        ],
+        [
+          1.0,
+          -1.0,
+          1.0
+        ],
+        [
+          0.0,
+          -12.0732,
+          -0.0052
+        ]
+      ],
+      "finite_difference_jacobian_error_norm": 3.391916525003789e-09,
+      "eigenvalues": [
+        [
+          -3.6492238825396575,
+          0.0
+        ],
+        [
+          0.20653022914315522,
+          -2.707297506337403
+        ],
+        [
+          0.20653022914315522,
+          2.707297506337403
+        ]
+      ],
+      "expected_eigenvalue_max_abs_error": 3.919753410741578e-11,
+      "matignon": {
+        "q": 0.99,
+        "threshold_radians": 1.5550883635269477,
+        "modes": [
+          {
+            "eigenvalue": [
+              -3.6492238825396575,
+              0.0
+            ],
+            "abs_argument": 3.141592653589793,
+            "matignon_margin": 1.5865042900628454,
+            "stable_mode": true
+          },
+          {
+            "eigenvalue": [
+              0.20653022914315522,
+              -2.707297506337403
+            ],
+            "abs_argument": 1.4946573067073377,
+            "matignon_margin": -0.06043105681961003,
+            "stable_mode": false
+          },
+          {
+            "eigenvalue": [
+              0.20653022914315522,
+              2.707297506337403
+            ],
+            "abs_argument": 1.4946573067073377,
+            "matignon_margin": -0.06043105681961003,
+            "stable_mode": false
+          }
+        ],
+        "equilibrium_stable": false,
+        "classification": "unstable"
+      }
+    },
+    "E-": {
+      "state": [
+        -0.6096791169753114,
+        -0.00026247941848851,
+        0.609416637556823
+      ],
+      "expected_state": [
+        -0.60967911698,
+        -0.00026247941849,
+        0.60941663756
+      ],
+      "expected_state_error_norm": 5.663588145716181e-12,
+      "equilibrium_residual_norm": 1.880933049547424e-15,
+      "jacobian": [
+        [
+          -2.230963424253349,
+          8.4562,
+          0.0
+        ],
+        [
+          1.0,
+          -1.0,
+          1.0
+        ],
+        [
+          0.0,
+          -12.0732,
+          -0.0052
+        ]
+      ],
+      "finite_difference_jacobian_error_norm": 3.391916525003789e-09,
+      "eigenvalues": [
+        [
+          -3.6492238825396575,
+          0.0
+        ],
+        [
+          0.20653022914315522,
+          -2.707297506337403
+        ],
+        [
+          0.20653022914315522,
+          2.707297506337403
+        ]
+      ],
+      "expected_eigenvalue_max_abs_error": 3.919753410741578e-11,
+      "matignon": {
+        "q": 0.99,
+        "threshold_radians": 1.5550883635269477,
+        "modes": [
+          {
+            "eigenvalue": [
+              -3.6492238825396575,
+              0.0
+            ],
+            "abs_argument": 3.141592653589793,
+            "matignon_margin": 1.5865042900628454,
+            "stable_mode": true
+          },
+          {
+            "eigenvalue": [
+              0.20653022914315522,
+              -2.707297506337403
+            ],
+            "abs_argument": 1.4946573067073377,
+            "matignon_margin": -0.06043105681961003,
+            "stable_mode": false
+          },
+          {
+            "eigenvalue": [
+              0.20653022914315522,
+              2.707297506337403
+            ],
+            "abs_argument": 1.4946573067073377,
+            "matignon_margin": -0.06043105681961003,
+            "stable_mode": false
+          }
+        ],
+        "equilibrium_stable": false,
+        "classification": "unstable"
+      }
+    }
+  },
+  "matignon_summary": {
+    "threshold_radians": 1.5550883635269477,
+    "stable_equilibria": [],
+    "unstable_equilibria": [
+      "E0",
+      "E+",
+      "E-"
+    ]
+  },
+  "scientific_boundary": {
+    "hidden_verified": false,
+    "reason": "Algebra, local stability and seed generation do not test basins around E0, E+ and E-."
+  }
+}

@@ -54,10 +54,14 @@ from ._stability import (  # noqa: F401
 # models — vector fields, parameters, equilibria
 from .models.chua import (
     ChuaParameters,
+    chua_arctan_wu2023_parameters,
     chua_nonsmooth_parameters,
     chua_parameters,
+    equilibria_arctan,
     equilibria_nonsmooth,
+    jacobian_arctan,
     jacobian_nonsmooth,
+    rhs_arctan,
     rhs_nonsmooth,
     # Compatibility aliases for recorded runs created with the old label.
     chua_piecewise_parameters,
@@ -146,9 +150,13 @@ __all__ = [
     # ── stable: models ─────────────────────────────────────────────────────
     "ChuaParameters",
     "chua_parameters",
+    "chua_arctan_wu2023_parameters",
     "chua_nonsmooth_parameters",
+    "equilibria_arctan",
     "equilibria_nonsmooth",
+    "jacobian_arctan",
     "jacobian_nonsmooth",
+    "rhs_arctan",
     "rhs_nonsmooth",
     # ── stable: systems ────────────────────────────────────────────────────
     "ChaoticSystem",

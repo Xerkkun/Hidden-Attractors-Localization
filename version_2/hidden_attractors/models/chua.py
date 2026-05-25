@@ -258,6 +258,21 @@ def chua_arctan_parameters() -> ChuaParameters:
     return chua_parameters(model="arctan")
 
 
+@api_tier(STABLE)
+def chua_arctan_wu2023_parameters() -> ChuaParameters:
+    """Return the official smooth Chua coefficients reported by Wu et al. (2023)."""
+
+    return chua_parameters(
+        model="arctan",
+        alpha=8.4562,
+        beta=12.0732,
+        gamma=0.0052,
+        a1=0.4,
+        a2=-1.5585,
+        rho=1.0,
+    )
+
+
 def nonlinearity_nonsmooth(x: float, p: ChuaParameters) -> float:
     """Evaluate the non-smooth Chua characteristic, which is linear by pieces.
 
@@ -396,6 +411,92 @@ def rhs_nonsmooth(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndar
         a2=params.a2,
         rho=params.rho,
     ))
+
+
+@api_tier(STABLE)
+def rhs_arctan(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndarray:
+    """Evaluate the smooth arctan Chua vector field, irrespective of ``m0``/``m1``."""
+
+    params = p or chua_arctan_wu2023_parameters()
+    selected = chua_parameters(
+        model="arctan",
+        alpha=params.alpha,
+        beta=params.beta,
+        gamma=params.gamma,
+        m0=params.m0,
+        m1=params.m1,
+        a1=params.a1,
+        a2=params.a2,
+        rho=params.rho,
+    )
+    return rhs_chua(state, selected)
+
+
+@api_tier(STABLE)
+def jacobian_arctan(state: np.ndarray, p: ChuaParameters | None = None) -> np.ndarray:
+    """Evaluate the analytic Jacobian for ``f(x)=a1*x+a2*atan(rho*x)``."""
+
+    params = p or chua_arctan_wu2023_parameters()
+    x = float(np.asarray(state, dtype=float)[0])
+    dphi = params.a1 + params.a2 * params.rho / (1.0 + (params.rho * x) ** 2)
+    return np.array(
+        [
+            [-params.alpha * (1.0 + dphi), params.alpha, 0.0],
+            [1.0, -1.0, 1.0],
+            [0.0, -params.beta, -params.gamma],
+        ],
+        dtype=float,
+    )
+
+
+@api_tier(STABLE)
+def equilibria_arctan(p: ChuaParameters | None = None) -> Dict[str, np.ndarray]:
+    """Compute the origin and symmetric nonzero equilibria for smooth Chua."""
+
+    params = p or chua_arctan_wu2023_parameters()
+    slope = params.beta / (params.beta + params.gamma)
+
+    def residual(x: float) -> float:
+        return (params.a1 + slope) * x + params.a2 * float(np.arctan(params.rho * x))
+
+    grid = np.geomspace(1.0e-10, 1.0e4, 1000)
+    left = float(grid[0])
+    f_left = residual(left)
+    bracket: tuple[float, float] | None = None
+    for right_value in grid[1:]:
+        right = float(right_value)
+        f_right = residual(right)
+        if f_left * f_right < 0.0:
+            bracket = (left, right)
+            break
+        left, f_left = right, f_right
+
+    equilibria = {"E0": np.zeros(3, dtype=float)}
+    if bracket is None:
+        return equilibria
+    left, right = bracket
+    f_left = residual(left)
+    for _ in range(120):
+        middle = 0.5 * (left + right)
+        f_middle = residual(middle)
+        if abs(f_middle) <= 1.0e-15 or abs(right - left) <= 1.0e-14:
+            left = right = middle
+            break
+        if f_left * f_middle <= 0.0:
+            right = middle
+        else:
+            left, f_left = middle, f_middle
+    x_plus = 0.5 * (left + right)
+
+    def state_from_x(x: float) -> np.ndarray:
+        return np.array(
+            [x, params.gamma * x / (params.beta + params.gamma), -params.beta * x / (params.beta + params.gamma)],
+            dtype=float,
+        )
+
+    equilibria["E+"] = state_from_x(x_plus)
+    equilibria["E-"] = state_from_x(-x_plus)
+    return equilibria
 
 
 @api_tier(STABLE)
