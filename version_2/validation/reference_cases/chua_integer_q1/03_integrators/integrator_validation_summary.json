@@ -5,7 +5,7 @@
     "q": 1.0,
     "operational_integrator": "EFORK-3 explicit operational integrator at q=1.0",
     "continuation_h": 0.01,
-    "stage_order": "K3 = a31*K1 + a32*K2",
+    "stage_order": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
     "previous_integration_outputs_invalidated": true,
     "continuation_final_state": [
       1.992974001564276,

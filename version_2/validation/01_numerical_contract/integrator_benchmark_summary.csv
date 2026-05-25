@@ -1,3 +1,3 @@
 backend,role,required_stage_formula,memory_policy
-chua_frac_backend_lib.c,validated_sweep_backend,K3 = a31*K1 + a32*K2,full_history_and_finite_memory_variants
+chua_frac_backend_lib.c,validated_sweep_backend,K3 = h^q*f(x_n + a31*K1 + a32*K2),full_history_and_finite_memory_variants
 chua_abm_full_history_lib.c,reference_backend,not_applicable_abm,full_caputo_history_no_finite_memory_truncation

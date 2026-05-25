@@ -1,7 +1,9 @@
 {
   "status": "completed",
   "backend": "chua_frac_backend_lib.c",
-  "efork_stage": "K3 = a31*K1 + a32*K2",
+  "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
+  "is_lightweight": true,
+  "run_type": "exploratory_hiddenness_screen",
   "contract": {
     "q": 0.9998,
     "h": 0.02,

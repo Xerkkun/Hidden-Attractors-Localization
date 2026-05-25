@@ -22,5 +22,5 @@
   "sample_growth_per_radius": 12,
   "random_seed_policy": "fixed_reproducible",
   "output_schema_version": "1.0",
-  "efork_stage": "K3 = a31*K1 + a32*K2"
+  "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)"
 }

@@ -6,7 +6,7 @@
       "status": "completed",
       "method": "C EFORK trajectory comparison under its stated memory contract",
       "backend": "chua_frac_backend_lib.c",
-      "efork_stage": "K3 = a31*K1 + a32*K2",
+      "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
       "rows": 12,
       "memory_policy": "full_caputo_history_no_finite_memory_truncation",
       "notes": "This measures finite-time geometric persistence; hiddenness is evaluated separately with the same memory contract."
@@ -15,7 +15,7 @@
       "status": "completed",
       "method": "C EFORK trajectory comparison under its stated memory contract",
       "backend": "chua_frac_backend_lib.c",
-      "efork_stage": "K3 = a31*K1 + a32*K2",
+      "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
       "rows": 12,
       "memory_policy": "finite_caputo_history_window",
       "notes": "This measures finite-time geometric persistence; hiddenness is evaluated separately with the same memory contract."

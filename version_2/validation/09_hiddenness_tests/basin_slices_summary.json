@@ -1,5 +1,5 @@
 {
-  "status": "pending",
+  "status": "completed",
   "required_planes": [
     "xy_close",
     "xy_large",
@@ -8,5 +8,12 @@
     "yz_close",
     "yz_large"
   ],
-  "produced_planes": []
+  "produced_planes": [
+    "xy_close",
+    "xy_large",
+    "xz_close",
+    "xz_large",
+    "yz_close",
+    "yz_large"
+  ]
 }

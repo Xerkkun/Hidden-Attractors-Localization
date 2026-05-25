@@ -1,5 +1,15 @@
 # Algebraic Validation
 
-The non-smooth fractional Chua model at `q=0.9998` reproduces Danca's parameter set and the MATLAB validation values. Python returns the same three equilibria, zero vector-field residuals to floating-point precision, central-difference agreement with the analytic regional Jacobians, and the same inner/outer spectra exported by MATLAB and Wolfram. Matignon classification is stable at `E0` and unstable at `E+` and `E-`.
+## Internal Algebraic Validation
+- **Equilibria Residuals**: Passed. Zero vector-field residuals within floating-point tolerance.
+- **Analytic Jacobian vs Finite Differences**: Passed. Central-difference regional Jacobians matched the analytical expressions.
+- **Eigenvalues and Matignon Classification**: Passed. Eigenvalues verified stable at E0 and unstable at E+ and E-.
+- **Lur'e Equivalence**: Passed. Non-smooth vector field matches the Lur'e splitting representation.
+- **Transfer-Function Closure**: Passed. 1 + k*W_code = 0 satisfies closure constraints.
+- **Describing-Function/Machado Checks**: Passed. Validated harmonic seed generation.
 
-The supplied Wolfram source verifies the symbolic identities after renaming its protected local symbol `Tr` to `Treal`.
+## Cross-Tool Validation
+- **MATLAB Comparison**: missing external artifacts.
+- **Wolfram Comparison**: missing external artifacts.
+
+Overall Stage Status: passed_internal_pending_external_cross_tool

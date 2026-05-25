@@ -2,19 +2,52 @@
   "schema_version": "1.0",
   "protocol_version": "caputo_hidden_attractors_v1",
   "stage": "algebraic_validation",
-  "status": "incomplete_or_failed_tolerance_check",
+  "status": "passed_internal_pending_external_cross_tool",
+  "candidate_id": null,
   "system": "fractional_nonsmooth_chua",
   "numerical_contract": {
     "q": 0.9998,
-    "tolerances": {
-      "equilibrium_rhs_norm_max": 1e-10,
-      "jacobian_finite_difference_relative_error_max": 1e-06,
-      "eigenvalue_cross_tool_relative_error_max": 1e-08
-    }
+    "backend": "efork_c",
+    "reference_backend": "abm_c_full_history",
+    "memory_policy": "full_history_and_finite_memory_robustness_comparison",
+    "boundedness_thresholds": {
+      "bounded": true,
+      "minimum_range_x": 0.25
+    },
+    "equilibrium_distance_thresholds": {
+      "nearest_equilibrium": 0.001
+    },
+    "similarity_thresholds": {
+      "cloud_median_distance_norm": 0.35,
+      "range_relative_distance": 0.6
+    },
+    "hiddenness_radii": [
+      0.0001,
+      0.001
+    ],
+    "samples_per_radius": 12,
+    "sample_growth_per_radius": 12,
+    "random_seed_policy": "fixed_reproducible",
+    "output_schema_version": "1.0",
+    "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)"
   },
   "inputs": {},
   "outputs": {
     "seed_family_role": "seed_generation_only_not_hiddenness_evidence",
+    "internal_algebraic_validation": {
+      "status": "passed",
+      "equilibria_residuals": "passed",
+      "analytic_jacobian_vs_finite_differences": "passed",
+      "eigenvalues_and_matignon_classification": "passed",
+      "lure_equivalence": "passed",
+      "transfer_function_closure": "passed",
+      "describing_function_machado_checks": "passed"
+    },
+    "cross_tool_validation": {
+      "status": "missing_external_artifacts",
+      "matlab_comparison": "pending",
+      "wolfram_comparison": "pending"
+    },
     "describing_function_families": {
       "status": "passed_python_matlab_after_sign_normalization",
       "sign_convention": "W_code = -W_report; 1 + k*W_code = 0 is equivalent to 1 - k*W_report = 0.",
@@ -25,17 +58,8 @@
       }
     }
   },
-  "metrics": {
-    "rhs_residual_max": 1.096345236817342e-15,
-    "rhs_residual_pass": true,
-    "equilibrium_cross_tool_pass": false,
-    "jacobian_cross_tool_pass": false,
-    "jacobian_finite_difference_relative_error_max": 2.4652012739653308e-09,
-    "jacobian_finite_difference_pass": true,
-    "eigenvalue_cross_tool_pass": false,
-    "origin_stable_by_matignon": true,
-    "outer_equilibria_unstable_by_matignon": true
-  },
+  "metrics": {},
+  "verdict": null,
   "files": {
     "report": "algebraic_validation_validation.md",
     "equilibria": "equilibria_summary.csv",
@@ -53,8 +77,10 @@
     "machado_mu1": "machado_mu1_check.csv",
     "seed_family_appendix": "describing_function_families.md"
   },
-  "verdict": null,
   "provenance": {
-    "generator": "tools/validation/validate_chua_fractional_nonsmooth_algebra.py"
+    "repository_commit": "a62ea6cb27834da21982bbbd7d6953e9ffffe24a",
+    "working_tree_dirty": true,
+    "working_tree_diff_sha256": "d003e114945717b467fed3e1023c81a95d544e8d85c1790a1e169d0a4fb52fb1",
+    "implementation_sources_sha256": "c30ac4ac2443bed4119d784a235f42826baf2117b890cc67dfb3f3572e71ba64"
   }
 }

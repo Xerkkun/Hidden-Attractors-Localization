@@ -1,9 +1,9 @@
 {
-  "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_201939",
-  "repository_commit": "047384f956e072eba277c13364eff1247c03eee1",
-  "working_tree_dirty": false,
-  "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "implementation_sources_sha256": "0df31abede7e23ff80160128251264074ce0970289c97e8c9842f7ad8e80b2d5",
+  "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_205859",
+  "repository_commit": "a62ea6cb27834da21982bbbd7d6953e9ffffe24a",
+  "working_tree_dirty": true,
+  "working_tree_diff_sha256": "d003e114945717b467fed3e1023c81a95d544e8d85c1790a1e169d0a4fb52fb1",
+  "implementation_sources_sha256": "c30ac4ac2443bed4119d784a235f42826baf2117b890cc67dfb3f3572e71ba64",
   "q": 0.9998,
   "branch_id": "finite_window",
   "selection_status": "continuation_survivors_selected_for_reference",
@@ -29,27 +29,27 @@
         -3.755491038360702
       ],
       "robust_start": [
-        0.0004494663889723083,
-        1.3474238839959845,
-        3.5565064495998486
+        0.0065672910040094346,
+        1.3485599470781087,
+        3.548716447118851
       ],
       "h": 0.02,
-      "memory_length": 20.0,
+      "memory_length": 8.0,
       "memory_policy": "finite_caputo_history_window",
       "continuation_memory_policy": "finite_terminal_window_carried_across_homotopy",
       "t_final": 120.0,
-      "range_x": 9.14322409167328,
+      "range_x": 9.14015202540904,
       "fft_peak": 0.23325558147284237,
-      "psd_entropy": 0.12637529989322335,
-      "dominant_period_return_ratio": 0.22422131012135174,
+      "psd_entropy": 0.12640307733809844,
+      "dominant_period_return_ratio": 0.2243129535451944,
       "post_continuation_periodicity_threshold": 0.05,
       "post_continuation_nontrivial_dynamics_pass": true,
       "verdict": "continuation_survivor",
       "backend": "chua_frac_backend_lib.c",
-      "efork_stage": "K3 = a31*K1 + a32*K2",
-      "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_201939",
-      "repository_commit": "047384f956e072eba277c13364eff1247c03eee1",
-      "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
+      "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_205859",
+      "repository_commit": "a62ea6cb27834da21982bbbd7d6953e9ffffe24a",
+      "working_tree_diff_sha256": "d003e114945717b467fed3e1023c81a95d544e8d85c1790a1e169d0a4fb52fb1"
     },
     {
       "rank": 2,
@@ -71,27 +71,27 @@
         -8.360972934420351
       ],
       "robust_start": [
-        -3.9929838095721277,
-        -0.6777335052957972,
-        6.431409736909866
+        -3.9979319924336396,
+        -0.6764746683873434,
+        6.4381684446242975
       ],
       "h": 0.02,
-      "memory_length": 20.0,
+      "memory_length": 8.0,
       "memory_policy": "finite_caputo_history_window",
       "continuation_memory_policy": "finite_terminal_window_carried_across_homotopy",
       "t_final": 120.0,
-      "range_x": 9.143140413497047,
+      "range_x": 9.140515648004946,
       "fft_peak": 0.23325558147284237,
-      "psd_entropy": 0.1260719175652885,
-      "dominant_period_return_ratio": 0.2231930033851658,
+      "psd_entropy": 0.12608797687292575,
+      "dominant_period_return_ratio": 0.22326987483678898,
       "post_continuation_periodicity_threshold": 0.05,
       "post_continuation_nontrivial_dynamics_pass": true,
       "verdict": "continuation_survivor",
       "backend": "chua_frac_backend_lib.c",
-      "efork_stage": "K3 = a31*K1 + a32*K2",
-      "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_201939",
-      "repository_commit": "047384f956e072eba277c13364eff1247c03eee1",
-      "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
+      "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_205859",
+      "repository_commit": "a62ea6cb27834da21982bbbd7d6953e9ffffe24a",
+      "working_tree_diff_sha256": "d003e114945717b467fed3e1023c81a95d544e8d85c1790a1e169d0a4fb52fb1"
     },
     {
       "rank": 3,
@@ -113,27 +113,27 @@
         -2.450308371697173
       ],
       "robust_start": [
-        3.9983775185045203,
-        0.6765781624383743,
-        -6.438344245168295
+        3.9998679658540723,
+        0.6761948166553782,
+        -6.4404242186999765
       ],
       "h": 0.02,
-      "memory_length": 20.0,
+      "memory_length": 8.0,
       "memory_policy": "finite_caputo_history_window",
       "continuation_memory_policy": "finite_terminal_window_carried_across_homotopy",
       "t_final": 120.0,
-      "range_x": 9.143194809959697,
+      "range_x": 9.139870863111419,
       "fft_peak": 0.23325558147284237,
-      "psd_entropy": 0.12607570977571178,
-      "dominant_period_return_ratio": 0.2232172274685623,
+      "psd_entropy": 0.1260907591338788,
+      "dominant_period_return_ratio": 0.22326514798536445,
       "post_continuation_periodicity_threshold": 0.05,
       "post_continuation_nontrivial_dynamics_pass": true,
       "verdict": "continuation_survivor",
       "backend": "chua_frac_backend_lib.c",
-      "efork_stage": "K3 = a31*K1 + a32*K2",
-      "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_201939",
-      "repository_commit": "047384f956e072eba277c13364eff1247c03eee1",
-      "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
+      "run_id": "chua_fractional_nonsmooth_q09998_efork3_20260524_205859",
+      "repository_commit": "a62ea6cb27834da21982bbbd7d6953e9ffffe24a",
+      "working_tree_diff_sha256": "d003e114945717b467fed3e1023c81a95d544e8d85c1790a1e169d0a4fb52fb1"
     }
   ]
 }

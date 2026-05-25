@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "protocol_version": "caputo_hidden_attractors_v1",
   "stage": "hiddenness_tests",
-  "status": "incomplete_pending_basin_slices",
+  "status": "incomplete_lightweight_exploratory",
   "candidate_id": null,
   "system": "fractional_nonsmooth_chua",
   "numerical_contract": {
@@ -29,7 +29,7 @@
     "sample_growth_per_radius": 12,
     "random_seed_policy": "fixed_reproducible",
     "output_schema_version": "1.0",
-    "efork_stage": "K3 = a31*K1 + a32*K2"
+    "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)"
   },
   "inputs": {},
   "outputs": {
@@ -37,7 +37,9 @@
       "full_history": {
         "status": "completed",
         "backend": "chua_frac_backend_lib.c",
-        "efork_stage": "K3 = a31*K1 + a32*K2",
+        "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
+        "is_lightweight": true,
+        "run_type": "exploratory_hiddenness_screen",
         "contract": {
           "q": 0.9998,
           "h": 0.02,
@@ -81,11 +83,13 @@
       "finite_memory": {
         "status": "completed",
         "backend": "chua_frac_backend_lib.c",
-        "efork_stage": "K3 = a31*K1 + a32*K2",
+        "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
+        "is_lightweight": true,
+        "run_type": "exploratory_hiddenness_screen",
         "contract": {
           "q": 0.9998,
           "h": 0.02,
-          "history_horizon": 20.0,
+          "history_horizon": 8.0,
           "memory_policy": "finite_caputo_history_window",
           "t_final": 30.0,
           "t_burn": 15.0,
@@ -123,10 +127,11 @@
         "basins_and_bifurcations": "pending"
       }
     },
-    "sampling_mode": "ball"
+    "sampling_mode": "ball",
+    "is_lightweight": true
   },
   "metrics": {},
-  "verdict": "compatible_with_hiddenness_under_tested_radii",
+  "verdict": "exploratory_hiddenness_screen",
   "files": {
     "report": "hiddenness_tests_validation.md",
     "plan": "ball_sampling_plan.csv",
@@ -134,9 +139,9 @@
     "basin_slices": "basin_slices_summary.json"
   },
   "provenance": {
-    "repository_commit": "047384f956e072eba277c13364eff1247c03eee1",
-    "working_tree_dirty": false,
-    "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "implementation_sources_sha256": "0df31abede7e23ff80160128251264074ce0970289c97e8c9842f7ad8e80b2d5"
+    "repository_commit": "a62ea6cb27834da21982bbbd7d6953e9ffffe24a",
+    "working_tree_dirty": true,
+    "working_tree_diff_sha256": "d003e114945717b467fed3e1023c81a95d544e8d85c1790a1e169d0a4fb52fb1",
+    "implementation_sources_sha256": "c30ac4ac2443bed4119d784a235f42826baf2117b890cc67dfb3f3572e71ba64"
   }
 }
