@@ -26,7 +26,10 @@ from ..io import read_csv_rows, read_json, safe_name, timestamp, write_csv, writ
 from ..models.chua import equilibria_nonsmooth
 from ..native.backends import FractionalChuaBackend, FullHistoryABMBackend
 from ..paths import OUTPUTS, PROJECT_ROOT, RUNTIME_CACHE
-from ..plotting.dynamics import plot_phase_projections, plot_phase_space, plot_time_series
+from ..plotting.dynamics import plot_lure_nyquist_describing_function, plot_phase_projections, plot_phase_space, plot_time_series, plot_trajectory_spectra
+from ..seed_generation import biased_lure_describing_function, lure_transfer_function
+from ..seed_generation.core import HarmonicSeed
+from ..systems import get_system
 from .protocol import PROTOCOL_VERSION, SCHEMA_VERSION, StageEnvelope, sample_uniform_ball
 
 
@@ -37,6 +40,17 @@ CONTINUATION_POLICY = "full_generated_homotopy_history_carried_without_truncatio
 FINITE_WINDOW_POLICY = "finite_caputo_history_window"
 FINITE_CONTINUATION_POLICY = "finite_terminal_window_carried_across_homotopy"
 POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD = 0.05
+POST_CONTINUATION_PERIODICITY_CONFIG = {
+    "entropy_min": 0.25,
+    "dominant_ratio_max": 0.65,
+    "relaxed_dominant_ratio": 0.45,
+    "freq_drift_max": 0.05,
+    "n_windows": 3,
+    "min_range": 0.01,
+    "divergence_norm": 120.0,
+    "components": ["x", "y", "z"],
+    "require_two_components": True,
+}
 PARAMETERS = {
     "model": "nonsmooth",
     "alpha": 8.4562,
@@ -141,7 +155,27 @@ def _dominant_period_return_ratio(
     return closure / scale, lag
 
 
-def generate_lightweight_df_pool(outdir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def _post_continuation_periodicity(trajectory: np.ndarray, *, h: float, t_final: float) -> dict[str, Any]:
+    """Apply the existing multi-component periodicity classifier after continuation."""
+
+    legacy = PROJECT_ROOT / "tools" / "legacy"
+    if str(legacy) not in sys.path:
+        sys.path.insert(0, str(legacy))
+    from early_periodicity_filter import classify_early_periodicity  # type: ignore
+
+    return classify_early_periodicity(
+        trajectory,
+        h,
+        {**POST_CONTINUATION_PERIODICITY_CONFIG, "t_transient": 0.5 * float(t_final)},
+    )
+
+
+def generate_lightweight_df_pool(
+    outdir: Path,
+    *,
+    biased_lhs_count: int = 24,
+    biased_keep_best: int = 12,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Generate fresh DF seeds without long trajectory integrations."""
 
     started = time.time()
@@ -150,8 +184,8 @@ def generate_lightweight_df_pool(outdir: Path) -> tuple[list[dict[str, Any]], di
     cfg = load_config(PROJECT_ROOT / "configs" / "chua_fractional_nonsmooth.yaml")
     cfg["rho_H"]["n_quad"] = 1024
     cfg["rho_H"]["K"] = 10
-    cfg["biased_search"]["lhs_count"] = 24
-    cfg["biased_search"]["keep_best"] = 12
+    cfg["biased_search"]["lhs_count"] = int(biased_lhs_count)
+    cfg["biased_search"]["keep_best"] = int(biased_keep_best)
     p = chua_ic_params(cfg)
     chua.PARAMS = p
     chua.QORD = np.float64(Q)
@@ -225,6 +259,8 @@ def generate_lightweight_df_pool(outdir: Path) -> tuple[list[dict[str, Any]], di
         "q": Q,
         "quadrature_points": 1024,
         "harmonics": 10,
+        "biased_lhs_count": int(biased_lhs_count),
+        "biased_keep_best": int(biased_keep_best),
     }
     write_json(outdir / "df_generation_metadata.json", metadata)
     return screened, metadata
@@ -289,7 +325,7 @@ def screen_candidates_with_c(
     full_history: bool,
 ) -> list[dict[str, Any]]:
     suffix = "full" if full_history else "window"
-    backend = FractionalChuaBackend.build(output_name=f"fractional_report_efork_{suffix}")
+    backend = FractionalChuaBackend.build(output_name=f"fractional_report_efork_{suffix}_{os.getpid()}")
     continuation_rows: list[dict[str, Any]] = []
     screened: list[dict[str, Any]] = []
     for row in candidates:
@@ -330,10 +366,10 @@ def screen_candidates_with_c(
             t_start=0.5 * t_final,
             dominant_frequency=_finite(metric.get("fft_peak")),
         )
+        periodicity = _post_continuation_periodicity(traj, h=h, t_final=t_final)
         post_continuation_nontrivial_dynamics_pass = bool(
             continuation_eligible
-            and math.isfinite(return_ratio)
-            and return_ratio >= POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD
+            and periodicity["periodicity_status"] == "nonperiodic_post_transient"
         )
         item = {
             **row,
@@ -353,9 +389,20 @@ def screen_candidates_with_c(
             "dominant_period_return_ratio": return_ratio,
             "dominant_period_return_lag": return_lag,
             "post_continuation_periodicity_threshold": POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD,
+            "periodicity_status": periodicity["periodicity_status"],
+            "periodic_post_transient": periodicity["periodic_post_transient"],
+            "periodic_components": periodicity["periodic_components"],
+            "n_periodic_components": periodicity["n_periodic_components"],
+            "periodicity_component_metrics": json.dumps(periodicity["component_metrics"], sort_keys=True),
+            "poincare_repetitive": periodicity["poincare_repetitive"],
+            "section_clusters": periodicity["section_clusters"],
             "post_continuation_nontrivial_dynamics_pass": post_continuation_nontrivial_dynamics_pass,
             "post_continuation_survivor": post_continuation_nontrivial_dynamics_pass,
-            "verdict": "continuation_survivor" if post_continuation_nontrivial_dynamics_pass else "rejected_post_continuation",
+            "verdict": (
+                "continuation_survivor"
+                if post_continuation_nontrivial_dynamics_pass
+                else ("rejected_periodic_post_continuation" if periodicity["periodic_post_transient"] else "rejected_post_continuation")
+            ),
         }
         screened.append(item)
         _write_trajectory(outdir / "trajectories" / f"{safe_name(str(row['candidate_id']))}.csv", traj)
@@ -397,8 +444,8 @@ def select_top_three(
         if len(unique_rows) == 3:
             break
     selection_policy = (
-        "distinct EFORK C target-system trajectories passing the post_continuation_filter and "
-        f"dominant-period return ratio >= {POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD}; "
+        "distinct EFORK C target-system trajectories classified nonperiodic_post_transient "
+        "by the configured multi-component spectral and Poincare filter; "
         "then residual_abs, rho_H and range_x"
     )
     if len(unique_rows) < 3:
@@ -415,10 +462,7 @@ def select_top_three(
             },
         )
         write_csv(outdir / "selected_candidates.csv", [])
-        raise RuntimeError(
-            "No se obtuvieron tres supervivientes tras el filtro posterior a la "
-            "continuacion; no procede ejecutar ocultedad."
-        )
+        return []
     for rank, row in enumerate(unique_rows, 1):
         selected.append(
             {
@@ -426,6 +470,7 @@ def select_top_three(
                 "branch_id": branch_id,
                 "candidate_id": row["candidate_id"],
                 "method": row["method"],
+                "centered_or_biased": row.get("centered_or_biased", ""),
                 "q": Q,
                 "mu": row.get("mu", ""),
                 "theta": row.get("theta", ""),
@@ -446,6 +491,8 @@ def select_top_three(
                 "fft_peak": row.get("fft_peak", ""),
                 "psd_entropy": row.get("psd_entropy", ""),
                 "dominant_period_return_ratio": row.get("dominant_period_return_ratio", ""),
+                "periodicity_status": row.get("periodicity_status", ""),
+                "periodic_components": row.get("periodic_components", ""),
                 "post_continuation_periodicity_threshold": POST_CONTINUATION_PERIODICITY_RETURN_THRESHOLD,
                 "post_continuation_nontrivial_dynamics_pass": bool(row["post_continuation_nontrivial_dynamics_pass"]),
                 "verdict": "continuation_survivor",
@@ -470,6 +517,147 @@ def select_top_three(
     )
     write_csv(outdir / "selected_candidates.csv", selected)
     return selected
+
+
+def generate_candidate_story_figures(
+    branch_root: Path,
+    branch_id: str,
+    selected: Sequence[dict[str, Any]],
+) -> dict[str, Any]:
+    """Generate interpretive figures for each promoted branch candidate."""
+
+    script = PROJECT_ROOT / "tools" / "plot_candidate_story_figures.py"
+    output_dir = branch_root / "candidate_story_figures"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    figure_paths: list[str] = []
+    for row in selected:
+        candidate_id = str(row["candidate_id"])
+        subprocess.run(
+            [
+                sys.executable,
+                str(script),
+                "--run-root",
+                str(branch_root.parent),
+                "--branch",
+                branch_id,
+                "--candidate-id",
+                candidate_id,
+                "--output-dir",
+                str(output_dir),
+            ],
+            check=True,
+            cwd=str(PROJECT_ROOT),
+            capture_output=True,
+            text=True,
+        )
+        candidate_slug = safe_name(candidate_id)
+        for name in (
+            f"fig02d_{candidate_slug}_continuation_story.png",
+            f"fig02d_{candidate_slug}_continuation_story.pdf",
+            f"fig03g_{candidate_slug}_linear_vs_original_3d.png",
+            f"fig03g_{candidate_slug}_linear_vs_original_3d.pdf",
+        ):
+            figure_paths.append(str((output_dir / name).relative_to(branch_root.parent)))
+    return {
+        "script": str(script.relative_to(PROJECT_ROOT)),
+        "output_dir": str(output_dir.relative_to(branch_root.parent)),
+        "candidate_ids": [str(row["candidate_id"]) for row in selected],
+        "files": figure_paths,
+    }
+
+
+def generate_candidate_diagnostic_figures(
+    branch_root: Path,
+    selected: Sequence[dict[str, Any]],
+    *,
+    trajectory_source: Path,
+) -> dict[str, Any]:
+    """Write FFT, PSD, and centered-DF Nyquist figures for selected candidates."""
+
+    output_dir = branch_root / "candidate_diagnostic_figures"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    files: list[str] = []
+    lure_system = get_system("chua-nonsmooth").lure
+    if lure_system is None:
+        raise RuntimeError("chua-nonsmooth does not expose a Lur'e representation.")
+    for row in selected:
+        candidate_id = str(row["candidate_id"])
+        slug = safe_name(candidate_id)
+        traj = _read_trajectory(trajectory_source / f"{slug}.csv")
+        for method in ("fft", "psd"):
+            paths = plot_trajectory_spectra(traj, output_dir, method=method, prefix=slug)
+            files.extend(str(Path(path).relative_to(branch_root.parent)) for path in paths)
+        if str(row.get("centered_or_biased", "")) != "centered":
+            path = _plot_biased_nyquist_df(lure_system, row, output_dir / f"{slug}_nyquist_df.png")
+            files.append(str(Path(path).relative_to(branch_root.parent)))
+            continue
+        mode = "machado" if "machado" in str(row["method"]) else "classic"
+        seed = HarmonicSeed(
+            seed=np.asarray(row["seed"], dtype=float),
+            eigenvector=np.zeros(3, dtype=complex),
+            matched_eigenvalue=0.0j,
+            omega=float(row["omega"]),
+            gain=float(row["gain_k"]),
+            amplitude=float(row["A"]),
+            branch_index=int(row["rank"]) - 1,
+            method=mode,
+            mu=float(row["mu"]) if mode == "machado" else None,
+        )
+        path = plot_lure_nyquist_describing_function(
+            lure_system,
+            seed,
+            output_dir / f"{slug}_nyquist_df.png",
+            q=Q,
+            method=mode,
+            mu=seed.mu,
+            title=f"Nyquist/DF: {candidate_id}",
+        )
+        files.append(str(Path(path).relative_to(branch_root.parent)))
+    return {
+        "output_dir": str(output_dir.relative_to(branch_root.parent)),
+        "files": files,
+    }
+
+
+def _plot_biased_nyquist_df(lure_system: Any, row: dict[str, Any], output: Path) -> str:
+    """Plot the fixed-bias complex DF closure used by biased candidates."""
+
+    import matplotlib.pyplot as plt
+
+    sigma0 = float(row["sigma0"])
+    amplitude = float(row["A"])
+    mu = float(row.get("mu", 1.0))
+    is_machado = "machado" in str(row["method"])
+    omega = np.logspace(-5.0, np.log10(50.0), 1600)
+    wvals = np.array([lure_transfer_function(float(value), Q, lure_system) for value in omega])
+    amplitudes = np.linspace(max(1.0e-5, 0.05 * amplitude), max(50.0, 1.3 * amplitude), 420)
+    base_n = np.array(
+        [biased_lure_describing_function(float(value), sigma0, lure_system, harmonics=10, n_quad=1024) for value in amplitudes]
+    )
+    nvals = np.power(base_n, mu) if is_machado else base_n
+    valid = np.abs(nvals) > 1.0e-14
+    inverse = np.full(nvals.shape, np.nan + 1j * np.nan, dtype=complex)
+    inverse[valid] = -1.0 / nvals[valid]
+    w0 = lure_transfer_function(float(row["omega"]), Q, lure_system)
+    chosen_base = biased_lure_describing_function(amplitude, sigma0, lure_system, harmonics=10, n_quad=2048)
+    chosen_n = chosen_base**mu if is_machado else chosen_base
+
+    fig, ax = plt.subplots(figsize=(7.4, 5.4))
+    ax.plot(np.real(wvals), np.imag(wvals), lw=1.25, color="#0047ff", label=r"$W_q(i\omega)$")
+    ax.plot(np.real(inverse), np.imag(inverse), lw=1.1, color="#ff4a1a", label=r"$-1/N(A,\sigma_0)$")
+    ax.scatter([np.real(w0)], [np.imag(w0)], s=58, facecolors="none", edgecolors="#ef4444", linewidths=1.4, label="chosen closure")
+    if abs(chosen_n) > 1.0e-14:
+        ax.scatter([np.real(-1.0 / chosen_n)], [np.imag(-1.0 / chosen_n)], s=52, c="#ff4a1a", marker="x", linewidths=1.6)
+    ax.axhline(0.0, color="#6b7280", ls="--", lw=0.8)
+    ax.axvline(0.0, color="#9ca3af", ls=":", lw=0.7)
+    ax.set_xlabel(r"Re$(W_q(i\omega))$")
+    ax.set_ylabel(r"Im$(W_q(i\omega))$")
+    ax.set_title(f"Nyquist/DF sesgada: {row['candidate_id']}")
+    ax.legend(loc="best", fontsize=8)
+    fig.tight_layout()
+    fig.savefig(output, dpi=220)
+    plt.close(fig)
+    return str(output)
 
 
 def run_dynamic_evidence(
@@ -531,7 +719,7 @@ def _plot_spectrum(traj: np.ndarray, h: float, output: Path) -> None:
 
 def run_robustness_evidence(outdir: Path, selected: Sequence[dict[str, Any]], *, full_history: bool, memory_length: float) -> dict[str, Any]:
     suffix = "full" if full_history else "window"
-    backend = FractionalChuaBackend.build(output_name=f"fractional_report_robustness_{suffix}")
+    backend = FractionalChuaBackend.build(output_name=f"fractional_report_robustness_{suffix}_{os.getpid()}")
     if full_history:
         cases = [("R0_base", 0.02, 80.0, None), ("R1_h_fino", 0.01, 60.0, None), ("R2_h_fino_largo", 0.01, 80.0, None), ("R3_tiempo", 0.02, 120.0, None)]
         memory_policy = FULL_HISTORY_POLICY
@@ -600,7 +788,7 @@ def run_hiddenness_evidence(
     trajectory_source: Path,
 ) -> dict[str, Any]:
     suffix = "full" if full_history else "window"
-    backend = FractionalChuaBackend.build(output_name=f"fractional_report_hiddenness_{suffix}")
+    backend = FractionalChuaBackend.build(output_name=f"fractional_report_hiddenness_{suffix}_{os.getpid()}")
     equilibria = equilibria_nonsmooth()
     # Load defaults from configs/unified_caputo_protocol.json
     protocol_path = PROJECT_ROOT / "configs" / "unified_caputo_protocol.json"
@@ -716,7 +904,45 @@ def run_hiddenness_evidence(
     }
     write_json(outdir / "hiddenness_run_summary.json", summary)
     run_strict_refinement(outdir, selected, full_history=full_history, memory_length=memory_length, trajectory_source=trajectory_source)
+    plot_hiddenness_ball_figures(outdir, selected)
     return summary
+
+
+def plot_hiddenness_ball_figures(outdir: Path, selected: Sequence[dict[str, Any]]) -> list[str]:
+    """Render computed equilibrium-ball samples, not placeholder basin cuts."""
+
+    import matplotlib.pyplot as plt
+
+    rows = read_csv_rows(outdir / "ball_sampling_results.csv")
+    equilibria = equilibria_nonsmooth()
+    plot_dir = outdir / "ball_sampling_figures"
+    plot_dir.mkdir(parents=True, exist_ok=True)
+    colors = {"target_candidate": "#dc2626", "equilibrium": "#111827", "no_target_match": "#2563eb"}
+    files: list[str] = []
+    for cand in selected:
+        candidate_id = str(cand["candidate_id"])
+        candidate_rows = [row for row in rows if row["candidate_id"] == candidate_id]
+        fig = plt.figure(figsize=(8.0, 6.4))
+        ax = fig.add_subplot(111, projection="3d")
+        for label, color in colors.items():
+            subset = [row for row in candidate_rows if row["class_label"] == label]
+            if subset:
+                points = np.asarray([[float(row["x0"]), float(row["y0"]), float(row["z0"])] for row in subset])
+                ax.scatter(points[:, 0], points[:, 1], points[:, 2], s=13, alpha=0.8, color=color, label=f"{label}: {len(subset)}")
+        for eq_id, center in equilibria.items():
+            ax.scatter([center[0]], [center[1]], [center[2]], s=45, facecolors="white", edgecolors="black")
+            ax.text(center[0], center[1], center[2], f" {eq_id}", fontsize=8)
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+        ax.set_zlabel("z")
+        ax.set_title(f"Muestras en bolas de equilibrio: {candidate_id}")
+        ax.legend(fontsize=7)
+        fig.tight_layout()
+        path = plot_dir / f"{safe_name(candidate_id)}_equilibrium_ball_samples.png"
+        fig.savefig(path, dpi=220)
+        plt.close(fig)
+        files.append(str(path))
+    return files
 
 
 def run_strict_refinement(
@@ -730,7 +956,7 @@ def run_strict_refinement(
     """Reintegrate target hits and compare them with native-C references."""
 
     suffix = "full" if full_history else "window"
-    backend = FractionalChuaBackend.build(output_name=f"fractional_report_strict_refinement_{suffix}")
+    backend = FractionalChuaBackend.build(output_name=f"fractional_report_strict_refinement_{suffix}_{os.getpid()}")
     raw = read_csv_rows(outdir / "ball_sampling_results.csv")
     rows: list[dict[str, Any]] = []
     h = 0.02
@@ -801,7 +1027,7 @@ def run_strict_refinement(
 def run_danca_abm_control(outdir: Path) -> dict[str, Any]:
     """Fresh ABM full-history control for the Danca-reported route only."""
 
-    backend = FullHistoryABMBackend.build(output_name="danca_abm_full_history_control")
+    backend = FullHistoryABMBackend.build(output_name=f"danca_abm_full_history_control_{os.getpid()}")
     seed = np.asarray([3.039383584794975, -0.2416862069577155, -6.873467365218827], dtype=float)
     h = 0.05
     t_final = 80.0
@@ -1546,6 +1772,20 @@ def run_efork_branch(
         full_history=full_history,
     )
     selected = select_top_three(root, screened, run_id, provenance, branch_id=branch_id)
+    if not selected:
+        return {
+            "branch_id": branch_id,
+            "memory_policy": FULL_HISTORY_POLICY if full_history else FINITE_WINDOW_POLICY,
+            "selected": [],
+            "selection_status": "insufficient_nonperiodic_post_continuation_survivors",
+            "candidate_story_figures": {"files": [], "reason": "no valid selected candidates"},
+            "candidate_diagnostic_figures": {"files": [], "reason": "no valid selected candidates"},
+            "dynamic": {"status": "skipped_no_valid_selected_candidates"},
+            "robustness": {"status": "skipped_no_valid_selected_candidates"},
+            "hiddenness": {"status": "skipped_no_valid_selected_candidates"},
+        }
+    candidate_story_figures = generate_candidate_story_figures(root, branch_id, selected)
+    candidate_diagnostic_figures = generate_candidate_diagnostic_figures(root, selected, trajectory_source=root / "trajectories")
     dynamic_dir = root / "dynamic"
     hidden_dir = root / "hiddenness"
     robust_dir = root / "robustness"
@@ -1578,36 +1818,12 @@ def run_efork_branch(
         "branch_id": branch_id,
         "memory_policy": FULL_HISTORY_POLICY if full_history else FINITE_WINDOW_POLICY,
         "selected": selected,
+        "candidate_story_figures": candidate_story_figures,
+        "candidate_diagnostic_figures": candidate_diagnostic_figures,
         "dynamic": dynamic,
         "robustness": robustness,
         "hiddenness": hiddenness,
     }
-
-
-def generate_basin_slices(basin_dir: Path) -> None:
-    basin_dir.mkdir(parents=True, exist_ok=True)
-    required_planes = ["xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"]
-    
-    # Generate valid CSV and matplotlib plot PNG for each plane
-    for plane in required_planes:
-        csv_path = basin_dir / f"{plane}.csv"
-        csv_rows = [
-            {"x0": 0.0, "y0": 0.0, "z0": 0.0, "class_id": 1, "class_label": "target_attractor"},
-            {"x0": 0.1, "y0": -0.1, "z0": 0.0, "class_id": 3, "class_label": "equilibrium_convergence"}
-        ]
-        import csv
-        with csv_path.open("w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=["x0", "y0", "z0", "class_id", "class_label"])
-            writer.writeheader()
-            writer.writerows(csv_rows)
-            
-        png_path = basin_dir / f"{plane}.png"
-        import matplotlib.pyplot as plt
-        fig, ax = plt.subplots(figsize=(4, 4))
-        ax.text(0.5, 0.5, f"Basin Slice {plane}", ha="center", va="center")
-        ax.set_title(f"Corte {plane}")
-        fig.savefig(png_path, dpi=100)
-        plt.close(fig)
 
 
 def run(args: argparse.Namespace) -> Path:
@@ -1616,7 +1832,11 @@ def run(args: argparse.Namespace) -> Path:
     root = OUTPUTS / run_id
     root.mkdir(parents=True, exist_ok=False)
     provenance = repository_provenance()
-    screened_pool, df_metadata = generate_lightweight_df_pool(root)
+    screened_pool, df_metadata = generate_lightweight_df_pool(
+        root,
+        biased_lhs_count=args.biased_lhs_count,
+        biased_keep_best=args.biased_keep_best,
+    )
     admissible_pool = [row for row in screened_pool if _valid_seed_configuration(row)]
     if not admissible_pool:
         raise RuntimeError("soft_precheck rejected every generated seed as invalid.")
@@ -1628,10 +1848,12 @@ def run(args: argparse.Namespace) -> Path:
             root / "finite_window", admissible_pool, branch_id="finite_window", full_history=False, args=args, run_id=run_id, provenance=provenance
         ),
     }
-    danca_dir = root / "danca_abm_control"
-    danca_dir.mkdir()
-    danca_summary = run_danca_abm_control(danca_dir)
-    generate_basin_slices(root / "basin")
+    enough_selected = all(len(branch_results[branch]["selected"]) == 3 for branch in ("full_history", "finite_window"))
+    danca_summary: dict[str, Any] = {"status": "skipped_no_valid_selected_candidates"}
+    if enough_selected:
+        danca_dir = root / "danca_abm_control"
+        danca_dir.mkdir()
+        danca_summary = run_danca_abm_control(danca_dir)
 
     write_json(
         root / "run_metadata.json",
@@ -1650,11 +1872,12 @@ def run(args: argparse.Namespace) -> Path:
             "native_backends": ["chua_frac_backend_lib.c", "chua_abm_full_history_lib.c"],
             "branches": branch_results,
             "danca_abm_control": danca_summary,
-            "basins": "pending",
+            "basins": "pending_requires_valid_nonperiodic_candidates",
             "bifurcations": "pending",
         },
     )
-    promote_validation(root, run_id, provenance, df_metadata, branch_results, danca_summary)
+    if enough_selected and not args.skip_validation_promotion:
+        promote_validation(root, run_id, provenance, df_metadata, branch_results, danca_summary)
     return root
 
 
@@ -1664,12 +1887,40 @@ def make_parser() -> argparse.ArgumentParser:
     parser.add_argument("--h", type=float, default=0.02)
     parser.add_argument("--memory-length", type=float, default=8.0, help="Ventana Lm usada solamente en la rama finite_window.")
     parser.add_argument("--t-final", type=float, default=80.0)
+    parser.add_argument("--biased-lhs-count", type=int, default=24, help="Numero de puntos sesgados por familia en el barrido DF ligero.")
+    parser.add_argument("--biased-keep-best", type=int, default=12, help="Numero de semillas sesgadas conservadas para continuacion.")
+    parser.add_argument("--skip-validation-promotion", action="store_true", help="Conservar artefactos bajo outputs/ sin escribir evidencia compartida en validation/.")
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> None:
-    output = run(make_parser().parse_args(argv))
-    print(str(output))
+    args = make_parser().parse_args(argv)
+    output = run(args)
+    metadata = read_json(output / "run_metadata.json")
+    print(f"run_root={output}")
+    for branch_id, branch in metadata["branches"].items():
+        rows = read_csv_rows(output / branch_id / "candidate_dynamic_screen.csv")
+        rejected_periodic = sum(1 for row in rows if row.get("verdict") == "rejected_periodic_post_continuation")
+        print(
+            f"branch={branch_id} evaluated={len(rows)} "
+            f"rejected_periodic={rejected_periodic} selected={len(branch['selected'])}"
+        )
+        for selected in branch["selected"]:
+            print(f"selected.{branch_id}.{selected['rank']}={selected['candidate_id']}")
+    print(f"danca_abm_control={metadata['danca_abm_control']['status']}")
+    print(f"validation_promotion={'skipped' if args.skip_validation_promotion else 'enabled_when_valid'}")
+    if not all(metadata["branches"][branch]["selected"] for branch in ("full_history", "finite_window")):
+        next_lhs = max(int(args.biased_lhs_count) * 4, 96)
+        next_keep = max(int(args.biased_keep_best) * 2, 24)
+        next_time = max(float(args.t_final), 300.0)
+        print("next_search_reason=no_nonperiodic_candidate_do_not_relax_periodicity_filter")
+        print("next_search_action=expand_biased_df_pool_and_observation_horizon")
+        print(
+            "next_search_command=python -m hidden_attractors.workflows.fractional_report_run "
+            f"--h {args.h:g} --memory-length {args.memory_length:g} --t-final {next_time:g} "
+            f"--biased-lhs-count {next_lhs} --biased-keep-best {next_keep}"
+            + (" --skip-validation-promotion" if args.skip_validation_promotion else "")
+        )
 
 
 if __name__ == "__main__":

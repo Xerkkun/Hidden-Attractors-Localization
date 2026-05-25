@@ -147,7 +147,7 @@ def plot_continuation_story(run_root: Path, branch: str, candidate_id: str, outd
 
     traj_small = downsample(traj, 3500)
     first = downsample(traj[: max(50, min(len(traj), len(traj)//5))], 900)
-    final = downsample(traj[int(0.45 * len(traj)):], 2500)
+    final = downsample(traj[int(0.15 * len(traj)):], 6000)
 
     fig = plt.figure(figsize=(8.0, 7.0))
     ax = fig.add_subplot(111, projection="3d")
@@ -156,9 +156,8 @@ def plot_continuation_story(run_root: Path, branch: str, candidate_id: str, outd
         ax.plot(cont[:, 1], cont[:, 2], cont[:, 3], "k--", lw=1.4, label="entrada epsilon")
         ax.plot(cont[:, 1], cont[:, 2], cont[:, 3], ":", color="0.45", lw=1.4, label="salida epsilon")
 
-    ax.plot(first[:, 1], first[:, 2], first[:, 3], color="blue", lw=2.0, label="primer paso")
-    ax.plot(final[:, 1], final[:, 2], final[:, 3], color="red", lw=1.8, alpha=0.9, label="paso final")
-
+    ax.plot(first[:, 1], first[:, 2], first[:, 3], color="blue", lw=3.0, label="primer paso")
+    ax.plot(final[:, 1], final[:, 2], final[:, 3], color="red", lw=3.0, alpha=0.95, label="paso final")
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_zlabel("z")
@@ -177,14 +176,14 @@ def plot_linear_vs_original(run_root: Path, branch: str, candidate_id: str, outd
     traj = trajectory_array(find_traj(run_root, branch, candidate_id))
     recon = first_harmonic_reconstruction(traj)
 
-    original = downsample(traj[int(0.35 * len(traj)):], 3000)
+    original = downsample(traj[int(0.15 * len(traj)):], 6000)
     linear = downsample(recon, 1600)
 
     fig = plt.figure(figsize=(8.0, 7.0))
     ax = fig.add_subplot(111, projection="3d")
 
-    ax.plot(original[:, 1], original[:, 2], original[:, 3], color="red", lw=1.4, label="original")
-    ax.plot(linear[:, 1], linear[:, 2], linear[:, 3], "--", color="purple", lw=1.5, alpha=0.85, label="linealizada")
+    ax.plot(original[:, 1], original[:, 2], original[:, 3], color="red", lw=3.0, alpha=0.95, label="original")
+    ax.plot(linear[:, 1], linear[:, 2], linear[:, 3], "--", color="purple", lw=2.5, alpha=0.9, label="linealizada")
 
     ax.set_xlabel("x")
     ax.set_ylabel("y")

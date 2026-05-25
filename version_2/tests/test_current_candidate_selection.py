@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 
 from hidden_attractors.candidates import load_final_candidate_records
-from hidden_attractors.workflows.fractional_report_run import _dominant_period_return_ratio
+from hidden_attractors.workflows.fractional_report_run import _dominant_period_return_ratio, _post_continuation_periodicity
 
 
 def test_current_selection_loader_reads_promoted_json(tmp_path: Path) -> None:
@@ -70,3 +70,18 @@ def test_dominant_period_return_ratio_rejects_thin_closed_trace() -> None:
 
     assert lag == 100
     assert ratio < 1.0e-12
+
+
+def test_post_continuation_filter_rejects_periodic_multicomponent_trace() -> None:
+    h = 0.01
+    times = np.arange(0.0, 80.0 + h, h)
+    omega = 2.0 * np.pi
+    trajectory = np.column_stack(
+        [times, np.cos(omega * times), np.sin(omega * times), 0.2 * np.cos(omega * times)]
+    )
+
+    result = _post_continuation_periodicity(trajectory, h=h, t_final=80.0)
+
+    assert result["periodicity_status"] == "periodic_post_transient"
+    assert result["periodic_post_transient"] is True
+    assert set(result["periodic_components"].split(";")) >= {"x", "y"}

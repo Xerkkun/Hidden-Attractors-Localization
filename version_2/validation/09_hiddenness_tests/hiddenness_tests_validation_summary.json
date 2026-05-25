@@ -89,7 +89,7 @@
         "contract": {
           "q": 0.9998,
           "h": 0.02,
-          "history_horizon": 8.0,
+          "history_horizon": 20.0,
           "memory_policy": "finite_caputo_history_window",
           "t_final": 30.0,
           "t_burn": 15.0,
@@ -139,7 +139,7 @@
     "basin_slices": "basin_slices_summary.json"
   },
   "provenance": {
-    "repository_commit": "4307f1848c196cad4a248f2b95cd21c415cfb052",
+    "repository_commit": "d6694319908fbb2650d8ca554f1c9ec13b075f45",
     "working_tree_dirty": false,
     "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "implementation_sources_sha256": "42f8194cfb022c9bfc0df391c94fcd9f23d73107d9529d31237d69c25de76334"

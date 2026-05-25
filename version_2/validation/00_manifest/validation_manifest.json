@@ -1,6 +1,6 @@
 {
-  "validation_id": "new_candidates_run_20260524",
-  "repository_commit": "4307f1848c196cad4a248f2b95cd21c415cfb052",
+  "validation_id": "rerun_candidates_long_h001_t300",
+  "repository_commit": "d6694319908fbb2650d8ca554f1c9ec13b075f45",
   "package_version": "0.1.0",
   "python_version": "3.14.3",
   "platform": "Windows-11-10.0.26200-SP0",
@@ -38,7 +38,7 @@
   "protocol_version": "caputo_hidden_attractors_v1",
   "final_report": {
     "status": "incomplete_lightweight_exploratory",
-    "run_id": "new_candidates_run_20260524"
+    "run_id": "rerun_candidates_long_h001_t300"
   },
   "dirty": true,
   "working_tree_dirty": false,

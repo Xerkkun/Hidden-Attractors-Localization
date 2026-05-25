@@ -7,7 +7,7 @@
   "contract": {
     "q": 0.9998,
     "h": 0.02,
-    "history_horizon": 8.0,
+    "history_horizon": 20.0,
     "memory_policy": "finite_caputo_history_window",
     "t_final": 30.0,
     "t_burn": 15.0,
