@@ -8,7 +8,8 @@ class ChuaArctanSystem:
     D_t^q X = P X + b * psi(r^T X)
     """
     def __init__(self, alpha: float = 8.4562, beta: float = 12.0732, gamma: float = 0.0052,
-                 m: float = 0.4, n: float = -1.1585, q: float = 0.995, system_id: str = "chua_fractional_arctan"):
+                 m: float = 0.4, n: float = -1.1585, q: float = 0.995, system_id: str = "chua_fractional_arctan",
+                 describing_function_mode: str = "closed_form"):
         self.alpha = float(alpha)
         self.beta = float(beta)
         self.gamma = float(gamma)
@@ -16,6 +17,7 @@ class ChuaArctanSystem:
         self.n = float(n)
         self.q = float(q)
         self.system_id = system_id
+        self.describing_function_mode = describing_function_mode
         
         # P matrix
         self.P = np.array([
@@ -37,7 +39,7 @@ class ChuaArctanSystem:
         sigma = float(self.r @ x)
         return self.P @ x + self.b * self.psi(sigma)
 
-    def N_arctan(self, A: float) -> float:
+    def N_arctan_quad(self, A: float) -> float:
         """First-harmonic describing function for arctan nonlinearity by robust numerical quadrature.
         
         N_arctan(A) = (2 / (pi * A)) * integral_0^pi psi(A * cos(theta)) * cos(theta) dtheta
@@ -51,9 +53,23 @@ class ChuaArctanSystem:
         val, _ = quad(integrand, 0.0, np.pi, limit=100)
         return float((2.0 / (np.pi * A)) * val)
 
+    def N_arctan_closed(self, A: float) -> float:
+        """First-harmonic describing function for arctan nonlinearity in closed analytical form.
+        
+        N_arctan(A) = (n - m) * 2 * (sqrt(1 + A^2) - 1) / A^2
+        """
+        if A <= 0.0:
+            raise ValueError("Amplitude A must be positive.")
+        return float((self.n - self.m) * 2.0 * (np.sqrt(1.0 + A**2) - 1.0) / (A**2))
+
     def describing_function(self, A: float) -> float:
-        """Evaluates describes function N(A)"""
-        return self.N_arctan(A)
+        """Evaluates describing function N(A) based on the active mode."""
+        if self.describing_function_mode == "closed_form":
+            return self.N_arctan_closed(A)
+        elif self.describing_function_mode == "quadrature":
+            return self.N_arctan_quad(A)
+        else:
+            raise ValueError(f"Unknown describing_function_mode: {self.describing_function_mode}")
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -63,5 +79,6 @@ class ChuaArctanSystem:
             "m": self.m,
             "n": self.n,
             "q": self.q,
-            "system_id": self.system_id
+            "system_id": self.system_id,
+            "describing_function_mode": self.describing_function_mode
         }

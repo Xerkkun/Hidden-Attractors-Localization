@@ -47,7 +47,7 @@ def solve_equilibria(system: Any) -> Dict[str, np.ndarray]:
         f_right = eq_func(100.0)
         if f_left * f_right < 0.0:
             try:
-                sol = root_scalar(eq_func, bracket=[1e-5, 100.0], method="bisection")
+                sol = root_scalar(eq_func, bracket=[1e-5, 100.0], method="bisect")
                 if sol.converged and sol.root > 1e-4:
                     x_star = sol.root
                     y_star = x_star * gamma / (gamma + beta)

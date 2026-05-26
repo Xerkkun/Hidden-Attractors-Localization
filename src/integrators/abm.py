@@ -1,8 +1,7 @@
 import numpy as np
 from scipy.special import gamma
 from typing import Any, Callable, Dict, Tuple, Optional
-from hidden_attractors.native.backends import FullHistoryABMBackend
-from hidden_attractors.models.chua import ChuaParameters
+from .fractional_c import fractional_integrate
 
 def _python_abm_integrate(
     rhs: Callable[[np.ndarray], np.ndarray],
@@ -120,53 +119,10 @@ def caputo_abm_integrate(
     system: Optional[Any] = None,
     use_c_backend: bool = True
 ) -> Tuple[np.ndarray, np.ndarray, str]:
-    """Integrate with ABM. Uses C backend for saturation systems by default; falls back to Python for arctan."""
+    """Integrate with ABM. Wraps the unified C and Python general solver fractional_integrate."""
     
-    # We can only use the C backend if:
-    # 1. use_c_backend is True
-    # 2. system is provided and is a saturation system (system_id contains 'saturation')
-    # 3. no custom prehistory is passed (prehistory is passed via continuation wrapper, which has C versions too, but for standard single-run we want to support it)
-    is_saturation = system is not None and "saturation" in getattr(system, "system_id", "")
-    
-    # Note: C ABM backend does not support prehistory directly through single-integrate call
-    if use_c_backend and is_saturation and history_times is None:
-        try:
-            backend = FullHistoryABMBackend.build()
-            params = ChuaParameters(
-                model="piecewise",
-                alpha=system.alpha,
-                beta=system.beta,
-                gamma=system.gamma,
-                m0=system.m0,
-                m1=system.m1,
-                a1=0.4,
-                a2=-1.5585,
-                rho=1.0
-            )
-            backend.set_params(params)
-            
-            if memory_mode == "window" and memory_window_length is not None:
-                # Truncated memory
-                Lm = float(memory_window_length) * h
-                traj_c = backend.integrate_truncated(x0.tolist(), q=q, h=h, Lm=Lm, t_final=t_final)
-            else:
-                # Full memory
-                traj_c = backend.integrate(x0.tolist(), q=q, h=h, t_final=t_final)
-                
-            # Check for divergence in C trajectory
-            norms = np.linalg.norm(traj_c[:, 1:], axis=1)
-            status = "ok"
-            if divergence_norm is not None and np.any(norms > divergence_norm):
-                status = "diverged"
-                
-            return traj_c[:, 0], traj_c[:, 1:], status
-        except Exception:
-            # Fallback to Python if C fails
-            pass
-            
-    # For integer order q=1.0 and ABM, let's use a consistent Heun predictor-corrector in Python
+    # Non-fractional order q=1.0 is handled using Heun's method in Python
     if q == 1.0:
-        # Integrador entero ABM (Heun's predictor-corrector PECE)
         h_val = float(h)
         n_steps = int(np.ceil(t_final / h_val))
         dim = x0.size
@@ -184,10 +140,8 @@ def caputo_abm_integrate(
             t_curr = n * h_val
             t_next = (n + 1) * h_val
             try:
-                # Predictor (Euler)
                 f_curr = rhs(x)
                 x_pred = x + h_val * f_curr
-                # Corrector (Trapezoidal)
                 f_next = rhs(x_pred)
                 x_next = x + 0.5 * h_val * (f_curr + f_next)
             except Exception as exc:
@@ -207,13 +161,27 @@ def caputo_abm_integrate(
             last_idx = n + 1
             
         return t_arr[:last_idx + 1], x_arr[:last_idx + 1], status
+
+    # Wrap the single argument rhs(x) for fractional_integrate which expects rhs(t, x)
+    def rhs_t(t_val, x_val):
+        return rhs(x_val)
         
-    # Fallback to Python Caputo ABM
-    return _python_abm_integrate(
-        rhs, x0, q, h, t_final,
-        divergence_norm=divergence_norm,
+    t_arr, x_arr, status, info = fractional_integrate(
+        rhs=rhs_t,
+        x0=x0,
+        q=q,
+        h=h,
+        t_final=t_final,
+        method="abm",
+        memory_mode=memory_mode,
+        memory_window_length=memory_window_length,
         history_times=history_times,
         history_states=history_states,
-        memory_mode=memory_mode,
-        memory_window_length=memory_window_length
+        system=system,
+        use_c_backend=use_c_backend,
+        divergence_norm=divergence_norm if divergence_norm is not None else 120.0,
+        return_history=True,
+        allow_python_fallback=True
     )
+    
+    return t_arr, x_arr, status

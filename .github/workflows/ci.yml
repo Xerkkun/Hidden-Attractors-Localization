@@ -32,11 +32,13 @@ on:
     branches: ["main", "master", "dev", "develop"]
     paths:
       - "version_2/**"
+      - "src/**"
       - ".github/workflows/ci.yml"
   pull_request:
     branches: ["main", "master", "dev", "develop"]
     paths:
       - "version_2/**"
+      - "src/**"
       - ".github/workflows/ci.yml"
   workflow_dispatch:          # permite disparar manualmente desde la UI
 
@@ -88,9 +90,14 @@ jobs:
       - name: Compile-check (syntax smoke)
         run: python -m compileall hidden_attractors examples tests tools/cli
 
-      # ── 5. Pytest ────────────────────────────────────────────────────────
-      - name: Run pytest
+      # ── 5. Pytest para version_2 ─────────────────────────────────────────
+      - name: Run pytest for version_2
         run: python -m pytest -q
+
+      # ── 5b. Pytest para src/ ─────────────────────────────────────────────
+      - name: Run pytest for src/
+        working-directory: .
+        run: python -m pytest src/tests/ -v
 
       # ── 6. Ejemplos de usuario ───────────────────────────────────────────
       - name: Run quickstart_equilibria example

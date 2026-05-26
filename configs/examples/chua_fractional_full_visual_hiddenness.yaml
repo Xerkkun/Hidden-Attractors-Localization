@@ -1,0 +1,62 @@
+# Configuration for Chua Fractional Saturation with Full Visual and Hiddenness Tests
+system_id: chua_fractional_saturation
+q: 0.9998
+
+transfer_mode: fractional
+seed_strategy: k_phi
+seed_construction: modal
+branch_index: 0
+
+continuation_mode: fractional
+dynamics_mode: system
+integrator: efork
+memory_mode: window
+memory_window_length: 4000
+
+h: 0.01
+t_final: 500.0
+t_burn: 120.0
+divergence_norm: 120.0
+workers: 8
+
+plot_enabled: true
+save_figures: true
+plot_attractors: true
+plot_seed_trajectories: true
+max_seed_candidates_to_plot: 3
+
+run_hiddenness_tests: true
+run_sphere_tests: true
+run_basin_slices: true
+run_robustness: false
+
+sphere_tests:
+  enabled: true
+  equilibrium_selection: "all"
+  radii: [1e-5, 1e-4, 1e-3, 1e-2]
+  samples_initial: 20
+  samples_growth_factor: 2.0
+  directions_mode: "sphere_random"
+  random_seed: 42
+  t_final: 500.0
+  t_burn: 120.0
+  h: 0.01
+  trajectory_plot_fraction: 0.25
+  max_trajectories_to_plot: 60
+
+basin:
+  enabled: true
+  planes: ["xy", "xz", "yz"]
+  grid_n: 150
+  x_interval: [-10.0, 10.0]
+  y_interval: [-10.0, 10.0]
+  z_interval: [-10.0, 10.0]
+  fixed_x: 0.0
+  fixed_y: 0.0
+  fixed_z: 0.0
+  around_equilibria: true
+  equilibrium_selection: "all"
+  local_radius: 2.0
+  t_final: 500.0
+  t_burn: 120.0
+  h: 0.01

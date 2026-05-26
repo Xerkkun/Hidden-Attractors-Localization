@@ -1,11 +1,11 @@
 import numpy as np
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
-from typing import Any, Dict, List, Tuple
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Any, Dict, List, Tuple, Optional
 from .hiddenness import run_neighborhood_probe
 
 def _classify_point_worker(args: Tuple) -> Tuple[int, int, int]:
     """Helper worker to run a single point simulation in parallel."""
-    (i, j, x0, system, transfer_mode, integrator, t_final, t_burn, h, ref_tail, stable_eqs, eq_tol, div_norm, metric, tol) = args
+    (i, j, x0, system, transfer_mode, integrator, t_final, t_burn, h, ref_tail, stable_eqs, eq_tol, div_norm, metric, tol, dynamics_mode, memory_mode, memory_window_length) = args
     try:
         res = run_neighborhood_probe(
             system=system,
@@ -20,10 +20,13 @@ def _classify_point_worker(args: Tuple) -> Tuple[int, int, int]:
             equilibrium_tol=eq_tol,
             divergence_norm=div_norm,
             target_match_metric=metric,
-            target_match_tol=tol
+            target_match_tol=tol,
+            dynamics_mode=dynamics_mode,
+            memory_mode=memory_mode,
+            memory_window_length=memory_window_length
         )
         dest = res["destination"]
-        if dest == "equilibrium_stable":
+        if dest in ("stable_equilibrium", "equilibrium_stable"):
             code = 0
         elif dest == "target_attractor":
             code = 1
@@ -33,7 +36,9 @@ def _classify_point_worker(args: Tuple) -> Tuple[int, int, int]:
             code = 3
         else: # numerical_failure
             code = 4
-    except Exception:
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
         code = 4
     return i, j, code
 
@@ -48,43 +53,61 @@ def generate_basin_slice(
     extent: float = 8.0,
     grid_n: int = 40,
     center: Tuple[float, float, float] = (0.0, 0.0, 0.0),
-    t_final: float = 100.0, # shorter times for basins to keep it fast
+    t_final: float = 100.0,
     t_burn: float = 40.0,
     h: float = 0.02,
     workers: int = 1,
     eq_tol: float = 0.5,
     div_norm: float = 120.0,
     metric: str = "centroid_distance",
-    tol: float = 0.5
+    tol: float = 0.5,
+    dynamics_mode: str = "system",
+    memory_mode: str = "full",
+    memory_window_length: Optional[int] = None,
+    # New options for full configurable basins
+    x_interval: Optional[List[float]] = None,
+    y_interval: Optional[List[float]] = None,
+    z_interval: Optional[List[float]] = None,
+    around_equilibria: bool = False,
+    local_radius: float = 2.0,
+    eq_name: str = "global",
+    system_id: str = "chua"
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Generate a 2D basin slice mesh grid and evaluation matrix of classifications.
-    
-    Returns:
-        grid_u: 1D grid for first coordinate
-        grid_v: 1D grid for second coordinate
-        matrix: 2D array of integer codes (grid_n x grid_n)
+    """
+    Generate a 2D basin slice mesh grid and evaluation matrix of classifications,
+    with configurable intervals, centering, and real-time terminal progress printing.
     """
     grid_n = int(grid_n)
     cx, cy, cz = center
     
+    # 1. Determine intervals based on centering mode
+    if around_equilibria:
+        u_lims = [cx - local_radius, cx + local_radius]
+        v_lims = [cy - local_radius, cy + local_radius]
+        w_lims = [cz - local_radius, cz + local_radius]
+    else:
+        u_lims = x_interval if x_interval is not None else [cx - extent, cx + extent]
+        v_lims = y_interval if y_interval is not None else [cy - extent, cy + extent]
+        w_lims = z_interval if z_interval is not None else [cz - extent, cz + extent]
+        
     if plane == "xy":
-        u_grid = np.linspace(cx - extent, cx + extent, grid_n)
-        v_grid = np.linspace(cy - extent, cy + extent, grid_n)
+        u_grid = np.linspace(u_lims[0], u_lims[1], grid_n)
+        v_grid = np.linspace(v_lims[0], v_lims[1], grid_n)
         z_fixed = fixed_values.get("z", cz)
     elif plane == "xz":
-        u_grid = np.linspace(cx - extent, cx + extent, grid_n)
-        v_grid = np.linspace(cz - extent, cz + extent, grid_n)
+        u_grid = np.linspace(u_lims[0], u_lims[1], grid_n)
+        v_grid = np.linspace(w_lims[0], w_lims[1], grid_n)
         y_fixed = fixed_values.get("y", cy)
     elif plane == "yz":
-        u_grid = np.linspace(cy - extent, cy + extent, grid_n)
-        v_grid = np.linspace(cz - extent, cz + extent, grid_n)
+        u_grid = np.linspace(v_lims[0], v_lims[1], grid_n)
+        v_grid = np.linspace(w_lims[0], w_lims[1], grid_n)
         x_fixed = fixed_values.get("x", cx)
     else:
         raise ValueError(f"Unknown plane: {plane}")
         
     matrix = np.zeros((grid_n, grid_n), dtype=int)
     
-    # Build payload list
+    # 2. Build payload list
     payloads = []
     for i, u in enumerate(u_grid):
         for j, v in enumerate(v_grid):
@@ -96,21 +119,45 @@ def generate_basin_slice(
                 x0 = np.array([x_fixed, u, v], dtype=float)
             
             payloads.append((
-                i, j, x0, system, transfer_mode, integrator, t_final, t_burn, h, ref_tail, stable_eqs, eq_tol, div_norm, metric, tol
+                i, j, x0, system, transfer_mode, integrator, t_final, t_burn, h, ref_tail, stable_eqs, eq_tol, div_norm, metric, tol,
+                dynamics_mode, memory_mode, memory_window_length
             ))
             
-    # Run in parallel if workers > 1
+    total_points = len(payloads)
+    completed_points = 0
+    
+    # Track destination stats for final terminal log
+    stats = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0}
+    
+    # Progress printing helper
+    def log_progress(count):
+        pct = (count / total_points) * 100.0
+        print(f"[{system_id}] Cuencas {plane} {eq_name}: {count}/{total_points} puntos, {pct:.1f}%")
+        
+    # Initial print
+    log_progress(0)
+    
+    # 3. Execute sweep
     if workers > 1:
-        # Using ThreadPoolExecutor as standard fallback since it's robust in Windows within vscode envs
-        # and has zero startup overhead compared to ProcessPool
         with ThreadPoolExecutor(max_workers=workers) as executor:
             futures = [executor.submit(_classify_point_worker, payload) for payload in payloads]
             for fut in as_completed(futures):
                 i, j, code = fut.result()
                 matrix[i, j] = code
+                stats[code] += 1
+                completed_points += 1
+                if completed_points % max(1, total_points // 20) == 0 or completed_points == total_points:
+                    log_progress(completed_points)
     else:
         for payload in payloads:
             i, j, code = _classify_point_worker(payload)
             matrix[i, j] = code
+            stats[code] += 1
+            completed_points += 1
+            if completed_points % max(1, total_points // 20) == 0 or completed_points == total_points:
+                log_progress(completed_points)
+                
+    # Final terminated line
+    print(f"[{system_id}] Cuencas {plane} {eq_name}: terminado, TARGET={stats[1]}, EQ={stats[0]}, DIV={stats[3]}, OTHER={stats[2]}, FAIL={stats[4]}")
             
     return u_grid, v_grid, matrix

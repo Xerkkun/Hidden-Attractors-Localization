@@ -35,14 +35,12 @@ def generate_neighborhood_points(
         if len(pts) > num_samples:
             return pts[:num_samples]
         elif len(pts) < num_samples:
-            # Pad with coordinate repetitions or zeros if needed, but usually we just return them
             return pts
         return pts
         
     elif mode == "sphere_random":
         pts = []
         for _ in range(num_samples):
-            # Normal distribution to get uniform sphere direction
             direction = rng.normal(0.0, 1.0, dim)
             direction = direction / np.linalg.norm(direction)
             pts.append(eq_point + radius * direction)
@@ -93,7 +91,6 @@ def evaluate_target_match(
         min_ref = np.min(ref_tail, axis=0)
         max_ref = np.max(ref_tail, axis=0)
         
-        # Check intersection along all axes
         overlap = True
         for d in range(len(min_tr)):
             if max_tr[d] < min_ref[d] or min_tr[d] > max_ref[d]:
@@ -117,40 +114,36 @@ def run_neighborhood_probe(
     equilibrium_tol: float = 0.5,
     divergence_norm: float = 120.0,
     target_match_metric: str = "centroid_distance",
-    target_match_tol: float = 0.5
+    target_match_tol: float = 0.5,
+    dynamics_mode: str = "system",
+    memory_mode: str = "full",
+    memory_window_length: Optional[int] = None
 ) -> Dict[str, Any]:
-    """Integrate a single trajectory from a neighborhood and classify its destination.
-    
-    Destinations:
-        - "equilibrium_stable"
-        - "divergence"
-        - "target_attractor"
-        - "other_attractor"
-        - "numerical_failure"
-    """
+    """Integrate a single trajectory from a neighborhood and classify its destination."""
     x0_arr = np.asarray(x0, dtype=float)
     
-    # 1. Integrate the trajectory
-    if system.q == 1.0 or transfer_mode == "integer":
-        # Integer
-        if integrator == "abm":
-            t_arr, x_arr, status = caputo_abm_integrate(
-                system.evaluate_rhs, x0_arr, q=1.0, h=h, t_final=t_final, divergence_norm=divergence_norm, system=system
-            )
-        else: # efork
-            t_arr, x_arr, status = efork_integrate(
-                system, x0_arr, q=1.0, h=h, t_final=t_final, memory_mode="full"
-            )
+    # Resolve active q according to dynamics_mode
+    if dynamics_mode == "integer":
+        active_q = 1.0
+    elif dynamics_mode == "fractional":
+        active_q = system.q
+    elif dynamics_mode == "system":
+        active_q = 1.0 if system.q == 1.0 else system.q
     else:
-        # Fractional (always full memory for neighborhood checks)
-        if integrator == "abm":
-            t_arr, x_arr, status = caputo_abm_integrate(
-                system.evaluate_rhs, x0_arr, q=system.q, h=h, t_final=t_final, divergence_norm=divergence_norm, system=system
-            )
-        else: # efork
-            t_arr, x_arr, status = efork_integrate(
-                system, x0_arr, q=system.q, h=h, t_final=t_final, memory_mode="full"
-            )
+        raise ValueError(f"Unknown dynamics_mode: {dynamics_mode}")
+        
+    if integrator == "abm":
+        t_arr, x_arr, status = caputo_abm_integrate(
+            system.evaluate_rhs, x0_arr, q=active_q, h=h, t_final=t_final,
+            divergence_norm=divergence_norm, system=system,
+            memory_mode=memory_mode, memory_window_length=memory_window_length
+        )
+    else: # efork
+        t_arr, x_arr, status = efork_integrate(
+            system, x0_arr, q=active_q, h=h, t_final=t_final,
+            memory_mode=memory_mode, memory_window_length=memory_window_length,
+            divergence_norm=divergence_norm
+        )
             
     # 2. Check solver status
     if status == "diverged" or status == "nonfinite_solution":

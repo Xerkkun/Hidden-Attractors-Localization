@@ -1,24 +1,33 @@
-# Configuration for Chua Fractional with Arctan
+# Configuration for Chua Fractional with Smooth Arctan
 system_id: chua_fractional_arctan
-q: 0.995
+q: 0.9998
 transfer_mode: fractional
+seed_strategy: k_phi
+seed_construction: modal
+branch_index: 0
 continuation_mode: fractional
+dynamics_mode: system
 integrator: efork
-memory_mode: full
-run_hiddenness_tests: true
-run_basin_slices: false
-plot_enabled: true
-save_figures: true
-workers: 1
-amplitude_min: 1.0
-amplitude_max: 12.0
-omega_min: 0.1
-omega_max: 5.0
-grid_size_omega: 150
-grid_size_amplitude: 150
-df_residual_tol: 1e-2
-t_final: 200.0
-t_burn: 80.0
+memory_mode: window
+memory_window_length: 4000
+
+alpha: 8.4562
+beta: 12.0732
+gamma: 0.0052
+m: 0.4
+n: -1.1585
+
 h: 0.01
-seed_strategy: nyquist_df
-seed_sign_convention: kuznetsov
+t_final: 500.0
+t_burn: 120.0
+divergence_norm: 120.0
+workers: 1
+
+omega_min: 0.0001
+omega_max: 10.0
+amplitude_min: 1.0
+amplitude_max: 100.0
+grid_size_omega: 20000
+grid_size_amplitude: 20000
+df_residual_tol: 1.0e-8
+root_refinement: true

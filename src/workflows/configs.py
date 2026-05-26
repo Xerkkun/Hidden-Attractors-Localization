@@ -8,21 +8,37 @@ DEFAULT_CONFIG = {
     "q": None,  # Will fallback to system default
     "transfer_mode": "fractional",
     "continuation_mode": "fractional",
+    "dynamics_mode": "system",
     "integrator": "efork",
     "memory_mode": "full",
     "memory_window_length": 4000,
-    "run_hiddenness_tests": True,
+    "run_hiddenness_tests": False,
     "run_basin_slices": False,
+    "run_sphere_tests": False,
     "run_robustness": False,
     "workers": 1,
+    
+    # Plotting configuration
     "plot_enabled": True,
-    "plot_each_phase": False,
     "save_figures": True,
+    "plot_attractors": True,
+    "plot_seed_trajectories": True,
+    "plot_transfer": True,
+    "plot_describing_function": True,
+    "plot_residual_map": True,
+    "plot_continuation": True,
+    "plot_sphere_tests": True,
+    "max_seed_candidates_to_plot": 3,
+    "plot_each_phase": False,
     "output_dir": None,
-    "seed_strategy": "nyquist_df",
+    
+    "seed_strategy": "k_phi",
     "seed_sign_convention": "kuznetsov",
     "seed_construction": "modal",
     "seed_theta": 0.0,
+    "hiddenness_equilibria_filter": "all",
+    "describing_function_mode": "closed_form",
+    "branch_index": 0,
     
     # Grid search and solver tolerances
     "omega_min": 0.01,
@@ -49,14 +65,41 @@ DEFAULT_CONFIG = {
     "target_match_metric": "centroid_distance",
     "target_match_tol": 0.5,
     
-    # Basin Settings
-    "basin_planes": ["xy", "xz", "yz"],
-    "basin_grid_n": 40,
-    "basin_extent": 8.0,
-    "basin_fixed_z": 0.0,
-    "basin_fixed_y": 0.0,
-    "basin_fixed_x": 0.0,
-    "basin_around_equilibria": True
+    # Sphere Probe configuration
+    "sphere_tests": {
+        "enabled": False,
+        "equilibrium_selection": "all",
+        "radii": [1e-5, 1e-4, 1e-3, 1e-2],
+        "samples_initial": 20,
+        "samples_growth_factor": 2.0,
+        "directions_mode": "sphere_random",
+        "random_seed": 42,
+        "t_final": 500.0,
+        "t_burn": 120.0,
+        "h": 0.01,
+        "trajectory_plot_fraction": 0.25,
+        "max_trajectories_to_plot": 60,
+        "samples_per_radius": None
+    },
+    
+    # Basin Probe configuration
+    "basin": {
+        "enabled": False,
+        "planes": ["xy", "xz", "yz"],
+        "grid_n": 150,
+        "x_interval": [-10.0, 10.0],
+        "y_interval": [-10.0, 10.0],
+        "z_interval": [-10.0, 10.0],
+        "fixed_x": 0.0,
+        "fixed_y": 0.0,
+        "fixed_z": 0.0,
+        "around_equilibria": True,
+        "equilibrium_selection": "all",
+        "local_radius": 2.0,
+        "t_final": 500.0,
+        "t_burn": 120.0,
+        "h": 0.01
+    }
 }
 
 def load_and_validate_config(config_path: str) -> Dict[str, Any]:
@@ -70,38 +113,79 @@ def load_and_validate_config(config_path: str) -> Dict[str, Any]:
     if config_data is None:
         config_data = {}
         
-    # Merge defaults
-    config = DEFAULT_CONFIG.copy()
-    config.update(config_data)
+    # Merge defaults recursively for nested dictionary settings (sphere_tests, basin)
+    config = {}
+    for k, v in DEFAULT_CONFIG.items():
+        if isinstance(v, dict):
+            config[k] = v.copy()
+        else:
+            config[k] = v
+            
+    for k, v in config_data.items():
+        if isinstance(v, dict) and k in config and isinstance(config[k], dict):
+            config[k].update(v)
+        else:
+            config[k] = v
     
     # Validate critical keys
     if config["transfer_mode"] not in {"integer", "fractional"}:
         raise ValueError(f"Invalid transfer_mode: {config['transfer_mode']}")
     if config["continuation_mode"] not in {"integer", "fractional"}:
         raise ValueError(f"Invalid continuation_mode: {config['continuation_mode']}")
+    if config["dynamics_mode"] not in {"integer", "fractional", "system"}:
+        raise ValueError(f"Invalid dynamics_mode: {config['dynamics_mode']}")
     if config["integrator"] not in {"abm", "efork"}:
         raise ValueError(f"Invalid integrator: {config['integrator']}")
     if config["memory_mode"] not in {"full", "window"}:
         raise ValueError(f"Invalid memory_mode: {config['memory_mode']}")
-    if config["seed_strategy"] not in {"nyquist_df", "k_phi"}:
+    if config["seed_strategy"] not in {"k_phi", "imw_gain", "nyquist_df"}:
         raise ValueError(f"Invalid seed_strategy: {config['seed_strategy']}")
     if config["seed_sign_convention"] not in {"kuznetsov", "wu"}:
         raise ValueError(f"Invalid seed_sign_convention: {config['seed_sign_convention']}")
     if config["seed_construction"] not in {"modal", "closed_form_integer"}:
         raise ValueError(f"Invalid seed_construction: {config['seed_construction']}")
+    if config["hiddenness_equilibria_filter"] not in {"all", "unstable_only"}:
+        raise ValueError(f"Invalid hiddenness_equilibria_filter: {config['hiddenness_equilibria_filter']}")
+    if config["describing_function_mode"] not in {"closed_form", "quadrature"}:
+        raise ValueError(f"Invalid describing_function_mode: {config['describing_function_mode']}")
         
     # Window checks
     if config["memory_mode"] == "window" and (config["memory_window_length"] is None or config["memory_window_length"] <= 0):
         raise ValueError("memory_window_length must be a positive integer when memory_mode is 'window'.")
         
     # Cast numeric configs to correct types to handle PyYAML notation parsing
-    for float_key in ["omega_min", "omega_max", "amplitude_min", "amplitude_max", "df_residual_tol", "t_final", "t_burn", "h", "divergence_norm", "equilibrium_tol", "target_match_tol", "basin_extent", "radial_growth_factor", "q", "seed_theta"]:
+    for float_key in ["omega_min", "omega_max", "amplitude_min", "amplitude_max", "df_residual_tol", "t_final", "t_burn", "h", "divergence_norm", "equilibrium_tol", "target_match_tol", "q", "seed_theta"]:
         if float_key in config and config[float_key] is not None:
             config[float_key] = float(config[float_key])
             
-    for int_key in ["grid_size_omega", "grid_size_amplitude", "workers", "samples_per_radius", "basin_grid_n", "memory_window_length"]:
+    for int_key in ["grid_size_omega", "grid_size_amplitude", "workers", "samples_per_radius", "memory_window_length", "branch_index", "max_seed_candidates_to_plot"]:
         if int_key in config and config[int_key] is not None:
             config[int_key] = int(config[int_key])
+            
+    # Handle sphere_tests casts
+    st = config["sphere_tests"]
+    for float_key in ["t_final", "t_burn", "h", "trajectory_plot_fraction", "samples_growth_factor"]:
+        if float_key in st and st[float_key] is not None:
+            st[float_key] = float(st[float_key])
+    for int_key in ["samples_initial", "random_seed", "max_trajectories_to_plot"]:
+        if int_key in st and st[int_key] is not None:
+            st[int_key] = int(st[int_key])
+    if "radii" in st and st["radii"] is not None:
+        st["radii"] = [float(r) for r in st["radii"]]
+    if "samples_per_radius" in st and st["samples_per_radius"] is not None:
+        st["samples_per_radius"] = [int(s) for s in st["samples_per_radius"]]
+        
+    # Handle basin casts
+    b = config["basin"]
+    for float_key in ["fixed_x", "fixed_y", "fixed_z", "local_radius", "t_final", "t_burn", "h"]:
+        if float_key in b and b[float_key] is not None:
+            b[float_key] = float(b[float_key])
+    for int_key in ["grid_n"]:
+        if int_key in b and b[int_key] is not None:
+            b[int_key] = int(b[int_key])
+    for list_key in ["x_interval", "y_interval", "z_interval"]:
+        if list_key in b and b[list_key] is not None:
+            b[list_key] = [float(val) for val in b[list_key]]
             
     # Set default output_dir if not specified
     if config["output_dir"] is None:

@@ -8,7 +8,7 @@ from ..systems.registry import get_system_by_id
 from ..lure.decomposition import validate_lure_decomposition
 from ..lure.transfer import W_eval
 from ..lure.nyquist import find_harmonic_candidates
-from ..lure.seeds import build_lure_seed
+from ..lure.seeds import build_lure_seed, build_modal_lure_seed
 from ..continuation.continuation_integer import run_integer_continuation
 from ..continuation.continuation_fractional import run_fractional_continuation
 from ..integrators.abm import caputo_abm_integrate
@@ -23,8 +23,9 @@ from ..verification.classifiers import classify_hiddenness_verdict
 from ..plotting.plot_transfer import plot_nyquist_transfer
 from ..plotting.plot_df import plot_describing_function
 from ..plotting.plot_continuation import plot_continuation_eta
-from ..plotting.plot_trajectories import plot_attractor_trajectories, plot_neighborhood_control_spheres
-from ..plotting.plot_basins import plot_basin_slices
+from ..plotting.plot_trajectories import plot_attractor_trajectories, plot_neighborhood_control_spheres, plot_flexible_attractor_and_projections
+from ..plotting.plot_basins import plot_basin_slices, plot_basin_slice_file
+from ..verification.sphere_tests import run_sphere_probe_sweep
 
 from .configs import DEFAULT_CONFIG
 
@@ -43,10 +44,13 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     # -------------------------------------------------------------------------
     print(f"[{system_id}] Fase 1/7: cargando configuración... 0%")
     
-    # Instantiate the system
+    # Instantiate the system with describing_function_mode forwarded if ChuaArctanSystem
     sys_kwargs = {}
     if config["q"] is not None:
         sys_kwargs["q"] = config["q"]
+    if "chua_fractional_arctan" in system_id:
+        sys_kwargs["describing_function_mode"] = config["describing_function_mode"]
+        
     system = get_system_by_id(system_id, **sys_kwargs)
     q = system.q
     
@@ -109,20 +113,91 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         amplitude_max=config["amplitude_max"],
         grid_size_omega=config["grid_size_omega"],
         grid_size_amplitude=config["grid_size_amplitude"],
-        root_refinement=config["root_refinement"]
+        root_refinement=config["root_refinement"],
+        q=q
     )
     
     n_candidates = len(candidates)
     
     if n_candidates == 0:
         print(f"[{system_id}] No DF seed candidates found.")
-        summary = _build_summary_dict(config, system, equilibria, unstable_eqs, candidates, None, None, None, None, [], "df_seed_not_found")
+        summary = _build_summary_dict(
+            config, system, equilibria, unstable_eqs, candidates, None, None, None, None, [], "df_seed_not_found",
+            final_traj=None, matched_ev=None, target_lam=None, modal_res=None, norm_res=None
+        )
         _save_summary(summary, output_dir)
         return summary
         
-    # Select the first candidate as the primary seed
-    # and generate the positive and negative initial seeds
-    A0, omega0, k = candidates[0]
+    # Plot candidate seed trajectories if plot_enabled is true
+    if config["plot_enabled"] and n_candidates > 0:
+        max_seeds_to_plot = config.get("max_seed_candidates_to_plot", 3)
+        for idx in range(min(n_candidates, max_seeds_to_plot)):
+            c_A0, c_omega0, c_k = candidates[idx]
+            try:
+                # Reconstruct seed
+                c_seed_pos, _ = build_lure_seed(
+                    system, c_A0, c_omega0, c_k,
+                    seed_sign_convention=config["seed_sign_convention"],
+                    q=q,
+                    transfer_mode=config["transfer_mode"],
+                    theta=config.get("seed_theta", 0.0),
+                    seed_construction=config.get("seed_construction", "modal"),
+                )
+                
+                # Decide dynamics q based on dynamics_mode
+                dyn_mode = config["dynamics_mode"]
+                if dyn_mode == "integer":
+                    c_active_q = 1.0
+                elif dyn_mode == "fractional":
+                    c_active_q = q
+                elif dyn_mode == "system":
+                    c_active_q = 1.0 if q == 1.0 else q
+                else:
+                    c_active_q = q
+                
+                # Integrate candidate (using a transient simulation to see where it converges)
+                if c_active_q == 1.0:
+                    if config["integrator"] == "abm":
+                        c_t_fin, c_x_fin, c_status = caputo_abm_integrate(
+                            system.evaluate_rhs, c_seed_pos, q=1.0, h=config["h"], t_final=config["t_final"], divergence_norm=config["divergence_norm"], system=system
+                        )
+                    else:  # efork
+                        c_t_fin, c_x_fin, c_status = efork_integrate(
+                            system, c_seed_pos, q=1.0, h=config["h"], t_final=config["t_final"], memory_mode="full"
+                        )
+                else:
+                    if config["integrator"] == "abm":
+                        c_t_fin, c_x_fin, c_status = caputo_abm_integrate(
+                            system.evaluate_rhs, c_seed_pos, q=c_active_q, h=config["h"], t_final=config["t_final"], divergence_norm=config["divergence_norm"],
+                            memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"], system=system
+                        )
+                    else:  # efork
+                        c_t_fin, c_x_fin, c_status = efork_integrate(
+                            system, c_seed_pos, q=c_active_q, h=config["h"], t_final=config["t_final"],
+                            memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"]
+                        )
+                
+                if c_status == "ok":
+                    c_traj = np.column_stack((c_t_fin, c_x_fin))
+                    plot_flexible_attractor_and_projections(
+                        trajectory=c_traj,
+                        equilibria=equilibria,
+                        config=config,
+                        output_dir=output_dir,
+                        file_prefix=f"seed_candidate_{idx:02d}"
+                    )
+            except Exception as e:
+                print(f"[{system_id}] WARNING: Candidate seed {idx} plotting simulation failed: {e}")
+
+    # Select the candidate based on branch_index
+    branch_idx = config.get("branch_index", 0)
+    if branch_idx >= len(candidates):
+        print(f"[{system_id}] branch_index {branch_idx} out of range (found {len(candidates)} candidates). Selecting index 0.")
+        branch_idx = 0
+        
+    A0, omega0, k = candidates[branch_idx]
+    
+    # Reconstruct the seed
     seed_pos, seed_neg = build_lure_seed(
         system, A0, omega0, k,
         seed_sign_convention=config["seed_sign_convention"],
@@ -131,6 +206,20 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         theta=config.get("seed_theta", 0.0),
         seed_construction=config.get("seed_construction", "modal"),
     )
+    
+    # Compute residuals for modal metrics
+    if config["seed_construction"] == "modal":
+        _, v_norm, matched_ev, target_lam = build_modal_lure_seed(
+            system, A0, omega0, k, q=q, transfer_mode=config["transfer_mode"], theta=config.get("seed_theta", 0.0)
+        )
+        norm_res = float(np.abs(system.r.astype(complex) @ v_norm - 1.0))
+        P0 = system.P.astype(complex) + k * np.outer(system.b.astype(complex), system.r.astype(complex))
+        modal_res = float(np.linalg.norm(P0 @ v_norm - matched_ev * v_norm))
+    else:
+        matched_ev = complex(0.0, omega0)
+        target_lam = complex(0.0, omega0)
+        modal_res = 0.0
+        norm_res = 0.0
     
     # -------------------------------------------------------------------------
     # Fase 5/7: continuación eta... 60%
@@ -178,11 +267,21 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     final_status = "continuation_failed"
     
     if cont_success:
-        # Final point of continuation as initial state
         x_final_seed = cont_steps[-1]["x_out"].copy()
         
+        # Decide dynamics q based on dynamics_mode
+        dyn_mode = config["dynamics_mode"]
+        if dyn_mode == "integer":
+            active_q = 1.0
+        elif dyn_mode == "fractional":
+            active_q = q
+        elif dyn_mode == "system":
+            active_q = 1.0 if q == 1.0 else q
+        else:
+            raise ValueError(f"Unknown dynamics_mode: {dyn_mode}")
+            
         # Long final integration at eta = 1.0
-        if config["continuation_mode"] == "integer":
+        if active_q == 1.0:
             if config["integrator"] == "abm":
                 t_fin, x_fin, final_status = caputo_abm_integrate(
                     system.evaluate_rhs, x_final_seed, q=1.0, h=config["h"], t_final=config["t_final"], divergence_norm=config["divergence_norm"], system=system
@@ -194,12 +293,13 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         else: # fractional
             if config["integrator"] == "abm":
                 t_fin, x_fin, final_status = caputo_abm_integrate(
-                    system.evaluate_rhs, x_final_seed, q=q, h=config["h"], t_final=config["t_final"], divergence_norm=config["divergence_norm"],
+                    system.evaluate_rhs, x_final_seed, q=active_q, h=config["h"], t_final=config["t_final"], divergence_norm=config["divergence_norm"],
                     memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"], system=system
                 )
             else: # efork
                 t_fin, x_fin, final_status = efork_integrate(
-                    system, x_final_seed, q=q, h=config["h"], t_final=config["t_final"], memory_mode="full"
+                    system, x_final_seed, q=active_q, h=config["h"], t_final=config["t_final"],
+                    memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"]
                 )
                 
         if final_status == "ok":
@@ -219,110 +319,160 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
             ref_tail = final_traj[n_burn:, 1:]
             
     # -------------------------------------------------------------------------
-    # Fase 7/7: pruebas de ocultedad... 90%
+    # Fase 7/7: pruebas de ocultedad y cuencas... 90%
     # -------------------------------------------------------------------------
-    print(f"[{system_id}] Fase 7/7: pruebas de ocultedad... 90%")
+    print(f"[{system_id}] Fase 7/7: pruebas de ocultedad y cuencas... 90%")
     
     probe_results = []
     target_hits = 0
     numerical_fails = 0
     seed_reached_attractor = bool(final_traj is not None and final_status == "ok" and len(ref_tail) > 10)
     
-    # Neighborhood / stability settings
-    radii_list = [1e-5, 1e-4, 1e-3, 1e-2] # Default explicit values
-    
-    if config["run_hiddenness_tests"] and seed_reached_attractor:
-        # Generate radii list
-        # We tested equilibria neighborhood sampling
-        for eq_name, eq_pt in equilibria.items():
-            stability_res = eq_stability[eq_name]
-            if stability_res["stable"]:
-                # We skip neighborhood sampling of stable equilibria for hiddenness since they are not source points
-                continue
-                
-            for r_idx, radius in enumerate(radii_list):
-                pts = generate_neighborhood_points(
-                    eq_pt, radius, num_samples=config["samples_per_radius"], mode=config["directions_mode"], seed=config["random_seed"]
-                )
-                for pt in pts:
-                    probe_res = run_neighborhood_probe(
-                        system=system,
-                        x0=pt,
-                        transfer_mode=config["transfer_mode"],
-                        integrator=config["integrator"],
-                        t_final=config["t_final"],
-                        t_burn=config["t_burn"],
-                        h=config["h"],
-                        ref_tail=ref_tail,
-                        stable_equilibria=stable_eqs,
-                        equilibrium_tol=config["equilibrium_tol"],
-                        divergence_norm=config["divergence_norm"],
-                        target_match_metric=config["target_match_metric"],
-                        target_match_tol=config["target_match_tol"]
-                    )
-                    
-                    probe_results.append({
-                        "equilibrium": eq_name,
-                        "radius": radius,
-                        "x0": pt.tolist(),
-                        "destination": probe_res["destination"],
-                        "trajectory": probe_res["trajectory"]
-                    })
-                    
-                    if probe_res["destination"] == "target_attractor":
-                        target_hits += 1
-                    elif probe_res["destination"] == "numerical_failure":
-                        numerical_fails += 1
-                        
-        # Save neighborhood probe raw CSV
-        probe_csv_path = os.path.join(output_dir, "hiddenness_probes.csv")
-        with open(probe_csv_path, "w", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
-            writer.writerow(["equilibrium", "radius", "x0_x", "x0_y", "x0_z", "destination"])
-            for r in probe_results:
-                writer.writerow([r["equilibrium"], r["radius"], r["x0"][0], r["x0"][1], r["x0"][2], r["destination"]])
-                
-    # Classify overall hiddenness verdict
-    if config["run_hiddenness_tests"]:
-        verdict = classify_hiddenness_verdict(
-            target_hits_from_equilibria=target_hits,
-            equilibria_count=len(equilibria),
-            unstable_equilibria_count=len(unstable_eqs),
-            seed_reached_attractor=seed_reached_attractor,
-            numerical_failures=numerical_fails
-        )
+    # Run sphere verification tests (pruebas de esferas / ocultedad)
+    if (config["run_sphere_tests"] or config["run_hiddenness_tests"]):
+        if seed_reached_attractor:
+            sphere_results = run_sphere_probe_sweep(
+                system=system,
+                config=config,
+                equilibria=equilibria,
+                stable_eqs=stable_eqs,
+                ref_tail=ref_tail,
+                output_dir=output_dir,
+                workers=config["workers"]
+            )
+            probe_results = sphere_results["probe_runs"]
+            target_hits = sum(1 for r in probe_results if r["destination"] == "target_attractor")
+            numerical_fails = sum(1 for r in probe_results if r["destination"] == "numerical_failure")
+            
+            verdict = classify_hiddenness_verdict(
+                target_hits_from_equilibria=target_hits,
+                equilibria_count=len(equilibria),
+                unstable_equilibria_count=len(unstable_eqs),
+                seed_reached_attractor=seed_reached_attractor,
+                numerical_failures=numerical_fails
+            )
+        else:
+            print(f"[{system_id}] WARNING: Seed did not reach the target attractor. Skipping sphere tests.")
+            verdict = "df_seed_not_found"
     else:
         verdict = "df_seed_found" if seed_reached_attractor else "df_seed_not_found"
         
     # Evaluate basin slices if enabled
-    basin_data = None
+    basin_data_accum = []
     if config["run_basin_slices"] and seed_reached_attractor:
-        # Compute first plane (e.g. xy)
-        u_grid, v_grid, basin_mat = generate_basin_slice(
-            plane="xy",
-            system=system,
-            transfer_mode=config["transfer_mode"],
-            integrator=config["integrator"],
-            ref_tail=ref_tail,
-            stable_eqs=stable_eqs,
-            fixed_values={"z": config["basin_fixed_z"], "y": config["basin_fixed_y"], "x": config["basin_fixed_x"]},
-            extent=config["basin_extent"],
-            grid_n=config["basin_grid_n"],
-            center=equilibria["E0"].tolist(),
-            workers=config["workers"],
-            eq_tol=config["equilibrium_tol"],
-            div_norm=config["divergence_norm"],
-            metric=config["target_match_metric"],
-            tol=config["target_match_tol"]
-        )
-        basin_data = {"xy": (u_grid, v_grid, basin_mat)}
+        basin_cfg = config.get("basin", {})
+        planes = basin_cfg.get("planes", ["xy", "xz", "yz"])
+        around_eq = basin_cfg.get("around_equilibria", True)
+        eq_sel = basin_cfg.get("equilibrium_selection", "all")
         
-        # Save basin metadata
+        # Determine equilibria selection for basin scans
+        selected_eq_basin = {}
+        if eq_sel == "all":
+            selected_eq_basin = equilibria.copy()
+        elif isinstance(eq_sel, list):
+            for name in eq_sel:
+                if name in equilibria:
+                    selected_eq_basin[name] = equilibria[name]
+        elif isinstance(eq_sel, str):
+            if eq_sel in equilibria:
+                selected_eq_basin[eq_sel] = equilibria[eq_sel]
+                
+        # Perform scans
+        if around_eq:
+            # Centered around each selected equilibrium
+            for eq_name, eq_pt in selected_eq_basin.items():
+                for plane in planes:
+                    u, v, mat = generate_basin_slice(
+                        plane=plane,
+                        system=system,
+                        transfer_mode=config["transfer_mode"],
+                        integrator=config["integrator"],
+                        ref_tail=ref_tail,
+                        stable_eqs=stable_eqs,
+                        fixed_values={"z": float(eq_pt[2]), "y": float(eq_pt[1]), "x": float(eq_pt[0])},
+                        grid_n=basin_cfg.get("grid_n", 150),
+                        center=eq_pt.tolist(),
+                        t_final=basin_cfg.get("t_final", 500.0),
+                        t_burn=basin_cfg.get("t_burn", 120.0),
+                        h=basin_cfg.get("h", 0.01),
+                        workers=config["workers"],
+                        eq_tol=config["equilibrium_tol"],
+                        div_norm=config["divergence_norm"],
+                        metric=config["target_match_metric"],
+                        tol=config["target_match_tol"],
+                        dynamics_mode=config["dynamics_mode"],
+                        memory_mode=config["memory_mode"],
+                        memory_window_length=config["memory_window_length"],
+                        around_equilibria=True,
+                        local_radius=basin_cfg.get("local_radius", 2.0),
+                        eq_name=eq_name,
+                        system_id=system_id
+                    )
+                    # Plot slice
+                    if config["plot_enabled"]:
+                        plot_basin_slice_file(plane, u, v, mat, eq_name, config, output_dir)
+                    # Accumulate for CSV export
+                    for i, u_val in enumerate(u):
+                        for j, v_val in enumerate(v):
+                            basin_data_accum.append([plane, eq_name, float(u_val), float(v_val), int(mat[i, j])])
+        else:
+            # Global coordinates centered at E0 or origin
+            center_pt = equilibria.get("E0", np.zeros(3)).tolist()
+            for plane in planes:
+                u, v, mat = generate_basin_slice(
+                    plane=plane,
+                    system=system,
+                    transfer_mode=config["transfer_mode"],
+                    integrator=config["integrator"],
+                    ref_tail=ref_tail,
+                    stable_eqs=stable_eqs,
+                    fixed_values={"z": basin_cfg.get("fixed_z", 0.0), "y": basin_cfg.get("fixed_y", 0.0), "x": basin_cfg.get("fixed_x", 0.0)},
+                    grid_n=basin_cfg.get("grid_n", 150),
+                    center=center_pt,
+                    t_final=basin_cfg.get("t_final", 500.0),
+                    t_burn=basin_cfg.get("t_burn", 120.0),
+                    h=basin_cfg.get("h", 0.01),
+                    workers=config["workers"],
+                    eq_tol=config["equilibrium_tol"],
+                    div_norm=config["divergence_norm"],
+                    metric=config["target_match_metric"],
+                    tol=config["target_match_tol"],
+                    dynamics_mode=config["dynamics_mode"],
+                    memory_mode=config["memory_mode"],
+                    memory_window_length=config["memory_window_length"],
+                    x_interval=basin_cfg.get("x_interval"),
+                    y_interval=basin_cfg.get("y_interval"),
+                    z_interval=basin_cfg.get("z_interval"),
+                    around_equilibria=False,
+                    eq_name="global",
+                    system_id=system_id
+                )
+                # Plot slice
+                if config["plot_enabled"]:
+                    plot_basin_slice_file(plane, u, v, mat, "global", config, output_dir)
+                # Accumulate for CSV export
+                for i, u_val in enumerate(u):
+                    for j, v_val in enumerate(v):
+                        basin_data_accum.append([plane, "global", float(u_val), float(v_val), int(mat[i, j])])
+                        
+        # Save basin results database CSV
+        if len(basin_data_accum) > 0:
+            basin_csv_path = os.path.join(output_dir, "basin_results.csv")
+            with open(basin_csv_path, "w", newline="", encoding="utf-8") as f:
+                writer = csv.writer(f)
+                writer.writerow(["plane", "equilibrium", "u_val", "v_val", "classification_code"])
+                writer.writerows(basin_data_accum)
+                
+        # Save basin metadata JSON
         basin_meta = {
-            "extent": config["basin_extent"],
-            "grid_n": config["basin_grid_n"],
-            "center": equilibria["E0"].tolist(),
-            "planes": ["xy"]
+            "system_id": system_id,
+            "grid_n": basin_cfg.get("grid_n", 150),
+            "planes": planes,
+            "around_equilibria": around_eq,
+            "local_radius": basin_cfg.get("local_radius", 2.0),
+            "x_interval": basin_cfg.get("x_interval"),
+            "y_interval": basin_cfg.get("y_interval"),
+            "z_interval": basin_cfg.get("z_interval")
         }
         with open(os.path.join(output_dir, "basin_metadata.json"), "w", encoding="utf-8") as f:
             json.dump(basin_meta, f, indent=4)
@@ -334,16 +484,14 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     
     # 1. Trigger plots if enabled
     if config["plot_enabled"]:
-        # Save figures to final_pdf_figs / output_dir
         plot_nyquist_transfer(omega_grid, w_vals, candidates, config, output_dir)
         plot_describing_function(system, candidates, config, output_dir)
         plot_continuation_eta(cont_steps, config, output_dir)
         if final_traj is not None:
-            plot_attractor_trajectories(final_traj, equilibria, config, output_dir)
+            # Saves final_attractor_3d.png and separate xy, xz, yz projection files
+            plot_flexible_attractor_and_projections(final_traj, equilibria, config, output_dir, "final_attractor")
             if len(probe_results) > 0:
                 plot_neighborhood_control_spheres(final_traj, probe_results, equilibria, config, output_dir)
-        if basin_data is not None:
-            plot_basin_slices(basin_data, config, output_dir)
             
     # 2. Build and save summary
     summary = _build_summary_dict(
@@ -358,19 +506,26 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         cont_success=cont_success,
         probe_results=probe_results,
         verdict=verdict,
-        final_traj=final_traj
+        final_traj=final_traj,
+        matched_ev=matched_ev,
+        target_lam=target_lam,
+        modal_res=modal_res,
+        norm_res=norm_res
     )
     _save_summary(summary, output_dir)
     
     # 3. Print Markdown summary table in the terminal
     _print_terminal_table(summary)
     
+    # 4. Print final output folder path
+    print("Resultados guardados en:")
+    print(f"    {output_dir}/\n")
+    
     return summary
 
 def use_c_backend_check(config: Dict[str, Any]) -> bool:
     """Helper to check if C backend should be used."""
-    # EFORK is always C for fractional; ABM uses C by default.
-    return True
+    return config.get("use_c_backend", True)
 
 def _build_summary_dict(
     config: Dict[str, Any],
@@ -384,13 +539,15 @@ def _build_summary_dict(
     cont_success: Optional[bool],
     probe_results: List[Dict[str, Any]],
     verdict: str,
-    final_traj: Optional[np.ndarray] = None
+    final_traj: Optional[np.ndarray],
+    matched_ev: Optional[complex],
+    target_lam: Optional[complex],
+    modal_res: Optional[float],
+    norm_res: Optional[float]
 ) -> Dict[str, Any]:
     n_candidates = len(candidates)
     target_hits = sum(1 for r in probe_results if r["destination"] == "target_attractor")
-    numerical_fails = sum(1 for r in probe_results if r["destination"] == "numerical_failure")
     
-    # Determine final state bounded classification
     final_class = "numerical_failure"
     if final_traj is not None:
         final_norm = np.linalg.norm(final_traj[-1, 1:])
@@ -401,19 +558,31 @@ def _build_summary_dict(
             
     notes = "El balance armónico (DF) es una heurística tipo Weyl; la ocultedad fue probada bajo radios, muestras, tiempo e integrador especificados."
     
+    # Format complex values to string safely
+    def _c_str(val: Optional[complex]) -> str:
+        if val is None:
+            return ""
+        return f"{val.real:+.12f}{val.imag:+.12f}j"
+        
     return {
         "system_id": config["system_id"],
         "transfer_mode": config["transfer_mode"],
+        "seed_strategy": config["seed_strategy"],
+        "seed_construction": config["seed_construction"],
+        "dynamics_mode": config["dynamics_mode"],
         "continuation_mode": config["continuation_mode"],
         "integrator": config["integrator"],
         "memory_mode": config["memory_mode"],
-        "q": system.q,
-        "seed_strategy": config["seed_strategy"],
+        "branch_index": config.get("branch_index", 0),
         "n_df_candidates": n_candidates,
         "selected_seed": "pos" if n_candidates > 0 else "none",
         "omega0": float(omega0) if omega0 is not None else float("nan"),
         "amplitude_a0": float(A0) if A0 is not None else float("nan"),
         "k": float(k) if k is not None else float("nan"),
+        "matched_eigenvalue": _c_str(matched_ev),
+        "lambda0": _c_str(target_lam),
+        "modal_residual": float(modal_res) if modal_res is not None else float("nan"),
+        "normalisation_residual": float(norm_res) if norm_res is not None else float("nan"),
         "continuation_success": cont_success,
         "final_class": final_class if final_traj is not None else "continuation_failed",
         "equilibria_count": len(equilibria),
