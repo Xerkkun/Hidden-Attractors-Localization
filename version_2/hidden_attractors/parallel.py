@@ -183,6 +183,18 @@ def compile_c_target(
     if not src.exists():
         raise FileNotFoundError(f"No existe el archivo C: {src}")
 
+    # If the output DLL already exists, skip compiling to avoid Windows file-locking permission issues
+    if out.exists():
+        cmd = build_c_compile_command(src, out, target_kind=target_kind, openmp=bool(openmp))
+        return CompileResult(
+            path=out,
+            command=cmd,
+            openmp_requested=bool(openmp),
+            openmp_active=bool(openmp),
+            compiler=cmd[0],
+            target_kind=target_kind,
+        )
+
     def log(message: str) -> None:
         if logger is not None:
             logger(message)

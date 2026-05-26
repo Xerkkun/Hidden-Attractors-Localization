@@ -1,0 +1,24 @@
+# Configuration for Chua Integer with Saturation
+system_id: chua_integer_saturation
+q: 1.0
+transfer_mode: integer
+continuation_mode: integer
+integrator: efork
+memory_mode: full
+run_hiddenness_tests: true
+run_basin_slices: false
+plot_enabled: true
+save_figures: true
+workers: 1
+amplitude_min: 1.0
+amplitude_max: 12.0
+omega_min: 0.1
+omega_max: 5.0
+grid_size_omega: 150
+grid_size_amplitude: 150
+df_residual_tol: 1e-2
+t_final: 200.0
+t_burn: 80.0
+h: 0.01
+seed_strategy: nyquist_df
+seed_sign_convention: kuznetsov

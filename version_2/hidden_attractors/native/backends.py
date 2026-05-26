@@ -47,9 +47,12 @@ class FractionalChuaBackend:
     """
 
     lib: Any
+    _cache = {}
 
     @classmethod
     def build(cls, output_name: str = "chua_frac_backend") -> "FractionalChuaBackend":
+        if output_name in cls._cache:
+            return cls._cache[output_name]
         NATIVE_CACHE.mkdir(parents=True, exist_ok=True)
         result = compile_c_target(
             C_SOURCE_ROOT / "chua_frac_backend_lib.c",
@@ -103,6 +106,7 @@ class FractionalChuaBackend:
         lib.compute_continuation_efork3.restype = ctypes.c_int
         backend = cls(lib=lib)
         backend.set_nonsmooth_params(chua_nonsmooth_parameters())
+        cls._cache[output_name] = backend
         return backend
 
     def set_nonsmooth_params(self, params: ChuaParameters) -> None:
@@ -709,3 +713,126 @@ class FractionalLyapunovBackend:
             "stdout": result.stdout,
             "convergence_csv": str(Path(convergence_csv)),
         }
+
+
+@dataclass
+class GeneralFDEBackend:
+    """Wrapper for general FDE solver in C.
+    """
+    lib: Any
+    _cache = {}
+
+    @classmethod
+    def build(cls, output_name: str = "general_fde_solver") -> "GeneralFDEBackend":
+        if output_name in cls._cache:
+            return cls._cache[output_name]
+        NATIVE_CACHE.mkdir(parents=True, exist_ok=True)
+        result = compile_c_target(
+            C_SOURCE_ROOT / "general_fde_solver.c",
+            NATIVE_CACHE / f"{output_name}{_shared_suffix()}",
+            target_kind="shared",
+            openmp=False,
+        )
+        lib = ctypes.CDLL(str(result.path.resolve()))
+        
+        # Callback type: RhsCallback(double t, const double *x, double *f)
+        cls.RHS_CALLBACK = ctypes.CFUNCTYPE(None, ctypes.c_double, ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double))
+        
+        lib.integrate_general_efork_c.argtypes = [
+            cls.RHS_CALLBACK,
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            ctypes.c_int,
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double,
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+        ]
+        lib.integrate_general_efork_c.restype = ctypes.c_int
+
+        lib.integrate_general_abm_c.argtypes = [
+            cls.RHS_CALLBACK,
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            ctypes.c_int,
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double,
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+        ]
+        lib.integrate_general_abm_c.restype = ctypes.c_int
+        
+        backend = cls(lib=lib)
+        cls._cache[output_name] = backend
+        return backend
+
+    def integrate(
+        self,
+        rhs: Any,
+        x0: np.ndarray,
+        q: float,
+        h: float,
+        t_final: float,
+        divergence_norm: float = 120.0,
+        integrator: str = "efork"
+    ) -> tuple[np.ndarray, np.ndarray, str]:
+        x0_arr = np.asarray(x0, dtype=np.float64)
+        dim = x0_arr.size
+        nsteps = int(round(t_final / h))
+        rows = nsteps + 1
+        
+        # Output buffer for [t, x_0, x_1, ...]
+        out = np.empty(rows * (dim + 1), dtype=np.float64)
+        
+        # Construct C-compatible callback
+        def c_rhs(t_val, x_ptr, f_ptr):
+            x_arr = np.ctypeslib.as_array(x_ptr, shape=(dim,))
+            f_arr = np.ctypeslib.as_array(f_ptr, shape=(dim,))
+            try:
+                deriv = np.asarray(rhs(t_val, x_arr), dtype=np.float64)
+            except TypeError:
+                deriv = np.asarray(rhs(x_arr), dtype=np.float64)
+            for d in range(dim):
+                f_arr[d] = deriv[d]
+                
+        c_callback = self.RHS_CALLBACK(c_rhs)
+        
+        if integrator == "efork":
+            rc = int(
+                self.lib.integrate_general_efork_c(
+                    c_callback,
+                    x0_arr,
+                    dim,
+                    q,
+                    h,
+                    t_final,
+                    divergence_norm,
+                    out
+                )
+            )
+        else: # abm
+            rc = int(
+                self.lib.integrate_general_abm_c(
+                    c_callback,
+                    x0_arr,
+                    dim,
+                    q,
+                    h,
+                    t_final,
+                    divergence_norm,
+                    out
+                )
+            )
+            
+        if rc < 0:
+            raise RuntimeError(f"General FDE solver in C returned error code: {rc}")
+            
+        # Re-shape output
+        actual_rows = rc
+        out_res = out.reshape((rows, dim + 1))[:actual_rows]
+        status = "ok"
+        if actual_rows < rows:
+            status = "diverged"
+            
+        return out_res[:, 0], out_res[:, 1:], status
+
