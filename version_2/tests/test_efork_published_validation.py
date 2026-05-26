@@ -190,6 +190,58 @@ def test_native_abm_truncated_reduces_to_full_history_when_window_covers_horizon
     assert not np.allclose(cut[:, 1:4], full[:, 1:4], atol=2.0e-12, rtol=0.0)
 
 
+def test_native_abm_continuation_full_history_transports_all_stages() -> None:
+    from hidden_attractors.native.backends import FullHistoryABMBackend
+
+    try:
+        backend = FullHistoryABMBackend.build(output_name="chua_abm_continuation_full_test")
+    except (OSError, RuntimeError) as exc:
+        pytest.skip(f"Native compiler unavailable: {exc}")
+
+    result = backend.continue_full_history(
+        [0.31, -0.08, 0.12],
+        lambda_values=[0.0, 0.5, 1.0],
+        q=0.8,
+        k=0.2,
+        h=0.02,
+        t_transient=0.10,
+        t_keep=0.10,
+    )
+    assert result["trajectories"].shape == (3, 6, 4)
+    assert result["history_in_counts"].tolist() == [0, 11, 21]
+    assert result["history_out_counts"].tolist() == [11, 21, 31]
+    assert result["final_history"].shape == (31, 4)
+    assert result["final_history_exact"] is True
+    assert np.allclose(result["x_in"][1:], result["x_out"][:-1], atol=0.0, rtol=0.0)
+    assert np.all(np.isfinite(result["final_history"]))
+
+
+def test_native_abm_continuation_truncated_transports_only_declared_window() -> None:
+    from hidden_attractors.native.backends import FullHistoryABMBackend
+
+    try:
+        backend = FullHistoryABMBackend.build(output_name="chua_abm_continuation_truncated_test")
+    except (OSError, RuntimeError) as exc:
+        pytest.skip(f"Native compiler unavailable: {exc}")
+
+    result = backend.continue_truncated_history(
+        [0.31, -0.08, 0.12],
+        lambda_values=[0.0, 0.5, 1.0],
+        q=0.8,
+        k=0.2,
+        h=0.02,
+        Lm=0.04,
+        t_transient=0.10,
+        t_keep=0.10,
+    )
+    assert result["history_in_counts"].tolist() == [0, 3, 3]
+    assert result["history_out_counts"].tolist() == [3, 3, 3]
+    assert result["final_history"].shape == (3, 4)
+    assert np.allclose(result["final_history"][:, 0], [-0.04, -0.02, 0.0], atol=0.0, rtol=0.0)
+    assert result["history_policy"] == "truncated_restarted_window"
+    assert np.all(np.isfinite(result["final_history"]))
+
+
 def test_hiddenness_c_backends_use_published_k3_stage_order() -> None:
     from pathlib import Path
 

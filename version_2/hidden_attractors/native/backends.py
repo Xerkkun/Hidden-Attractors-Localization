@@ -252,6 +252,8 @@ class FullHistoryABMBackend:
     :meth:`integrate` retains the complete Caputo history used by the Danca
     reference. :meth:`integrate_truncated` is a separate sliding restarted
     finite-memory approximation and must be labelled as such in comparisons.
+    Continuation methods transport either the complete chronological Caputo
+    history or the declared finite window across Lur'e deformation stages.
     """
 
     lib: Any
@@ -293,6 +295,28 @@ class FullHistoryABMBackend:
             np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
         ]
         lib.integrate_chua_abm_truncated_history.restype = ctypes.c_int
+        lib.compute_continuation_abm.argtypes = [
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            ctypes.c_int,
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_int,
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            np.ctypeslib.ndpointer(dtype=np.int32, ndim=1, flags="C_CONTIGUOUS"),
+            np.ctypeslib.ndpointer(dtype=np.int32, ndim=1, flags="C_CONTIGUOUS"),
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            ctypes.c_int,
+            np.ctypeslib.ndpointer(dtype=np.int32, ndim=1, flags="C_CONTIGUOUS"),
+        ]
+        lib.compute_continuation_abm.restype = ctypes.c_int
         backend = cls(lib=lib)
         backend.set_nonsmooth_params(chua_nonsmooth_parameters())
         return backend
@@ -366,6 +390,145 @@ class FullHistoryABMBackend:
         if rc != 0:
             raise RuntimeError(f"integrate_chua_abm_truncated_history returned {rc}")
         return out.reshape((rows, 4))
+
+    def _continue_abm(
+        self,
+        x0: Sequence[float],
+        *,
+        lambda_values: Sequence[float],
+        q: float,
+        k: float,
+        h: float,
+        t_transient: float,
+        t_keep: float,
+        truncated_history: bool,
+        Lm: float | None,
+    ) -> dict[str, Any]:
+        """Continue the Lur'e deformation while retaining declared history.
+
+        The public parameter ``lambda`` equals the native deformation
+        parameter ``epsilon``.  A full-history call represents a causal
+        Caputo eta chain.  A truncated call uses the restarted sliding-window
+        approximation of duration ``Lm``; it is not full-history Caputo.
+        """
+
+        values = np.ascontiguousarray(lambda_values, dtype=np.float64)
+        if values.size == 0:
+            raise ValueError("lambda_values must contain at least one continuation stage.")
+        if truncated_history and (Lm is None or float(Lm) <= 0.0):
+            raise ValueError("Lm must be positive for truncated ABM continuation.")
+        seed = np.ascontiguousarray(x0, dtype=np.float64)
+        keep_rows = int(self.lib.abm_rows(float(t_keep), float(h)))
+        transient_rows = int(self.lib.abm_rows(float(t_transient), float(h)))
+        if keep_rows <= 0 or transient_rows <= 0:
+            raise RuntimeError("abm_rows returned a non-positive stage length.")
+        total_rows = 1 + values.size * ((transient_rows - 1) + (keep_rows - 1))
+        history_capacity = (
+            int(np.ceil(float(Lm) / float(h))) + 1
+            if truncated_history
+            else int(total_rows)
+        )
+        x_in = np.empty(values.size * 3, dtype=np.float64)
+        x_transient = np.empty(values.size * 3, dtype=np.float64)
+        x_out = np.empty(values.size * 3, dtype=np.float64)
+        history_in = np.empty(values.size, dtype=np.int32)
+        history_out = np.empty(values.size, dtype=np.int32)
+        trajectories = np.empty(values.size * keep_rows * 4, dtype=np.float64)
+        final_history = np.empty(history_capacity * 4, dtype=np.float64)
+        final_count = np.empty(1, dtype=np.int32)
+        rc = int(
+            self.lib.compute_continuation_abm(
+                values,
+                int(values.size),
+                seed,
+                float(q),
+                float(k),
+                float(h),
+                0.0 if Lm is None else float(Lm),
+                float(t_transient),
+                float(t_keep),
+                int(bool(truncated_history)),
+                x_in,
+                x_transient,
+                x_out,
+                history_in,
+                history_out,
+                trajectories,
+                final_history,
+                int(history_capacity),
+                final_count,
+            )
+        )
+        if rc != 0:
+            raise RuntimeError(f"compute_continuation_abm returned {rc}")
+        count = int(final_count[0])
+        return {
+            "lambda": values,
+            "x_in": x_in.reshape((-1, 3)),
+            "x_transient": x_transient.reshape((-1, 3)),
+            "x_out": x_out.reshape((-1, 3)),
+            "history_in_counts": history_in,
+            "history_out_counts": history_out,
+            "trajectories": trajectories.reshape((values.size, keep_rows, 4)),
+            "final_history": final_history.reshape((-1, 4))[:count].copy(),
+            "final_history_exact": True,
+            "history_policy": "truncated_restarted_window" if truncated_history else "full_caputo_history",
+            "provenance": {
+                "mapping": {"public_parameter": "lambda", "internal_parameter": "epsilon"},
+                "eta_boundary_policy": "right_continuous",
+            },
+        }
+
+    def continue_full_history(
+        self,
+        x0: Sequence[float],
+        *,
+        lambda_values: Sequence[float],
+        q: float,
+        k: float,
+        h: float,
+        t_transient: float,
+        t_keep: float,
+    ) -> dict[str, Any]:
+        """Continue with complete causal Caputo history across eta stages."""
+
+        return self._continue_abm(
+            x0,
+            lambda_values=lambda_values,
+            q=q,
+            k=k,
+            h=h,
+            t_transient=t_transient,
+            t_keep=t_keep,
+            truncated_history=False,
+            Lm=None,
+        )
+
+    def continue_truncated_history(
+        self,
+        x0: Sequence[float],
+        *,
+        lambda_values: Sequence[float],
+        q: float,
+        k: float,
+        h: float,
+        Lm: float,
+        t_transient: float,
+        t_keep: float,
+    ) -> dict[str, Any]:
+        """Continue with an explicit finite restarted memory window ``Lm``."""
+
+        return self._continue_abm(
+            x0,
+            lambda_values=lambda_values,
+            q=q,
+            k=k,
+            h=h,
+            t_transient=t_transient,
+            t_keep=t_keep,
+            truncated_history=True,
+            Lm=Lm,
+        )
 
 
 @dataclass

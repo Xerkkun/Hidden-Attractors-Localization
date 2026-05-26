@@ -190,7 +190,9 @@ def build_manifest(contract: NumericalContract, root: Path) -> dict[str, Any]:
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "purpose": "Comparacion aislada de semillas, continuacion e integracion fraccionaria con memoria completa/truncada.",
         "scope": "No modificar el workflow principal hasta analizar resultados.",
-        "root": str(root),
+        "root": ".",
+        "root_resolved_at_creation": str(root),
+        "path_policy": "task_csv_parent_is_authoritative; portable_after_relocation",
         "contract": asdict(contract),
         "shared_caches": shared,
         "experiments": [asdict(e) for e in exp_list],
@@ -286,8 +288,11 @@ def build_tasks(manifest: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
             "outputs": (
                 f"figures/{exp['exp_id']}/seed_nyquist.png;"
                 f"figures/{exp['exp_id']}/continuation_path.png;"
-                f"figures/{exp['exp_id']}/phase3d.png;"
+                f"figures/{exp['exp_id']}/phase3d_candidate.png;"
+                f"figures/{exp['exp_id']}/equilibrium_neighborhood_trajectories.png;"
                 f"figures/{exp['exp_id']}/basin_slices_xy_xz.png;"
+                f"figures/{exp['exp_id']}/time_series.png;"
+                f"figures/{exp['exp_id']}/fft_psd.png;"
                 f"figures/{exp['exp_id']}/hiddenness_summary.png"
             ),
             "status": "pending",
@@ -337,24 +342,51 @@ No declarar ocultedad si alguna cuenca desde vecindad de equilibrio alcanza el a
 
 
 def write_run_commands(root: Path, workers: int) -> None:
-    commands = f"""$env:OMP_NUM_THREADS="1"
+    powershell_commands = f"""$env:OMP_NUM_THREADS="1"
 $env:MKL_NUM_THREADS="1"
 $env:OPENBLAS_NUM_THREADS="1"
+$MatrixRoot = $PSScriptRoot
+if ($env:HIDDEN_ATTRACTORS_VERSION2_ROOT) {{
+    Set-Location $env:HIDDEN_ATTRACTORS_VERSION2_ROOT
+}}
 
 # 1. Construir caches compartidos
-python experiments/chua_nonsmooth_memory_matrix/run_shared_cache_tasks.py --tasks "{root / 'tasks' / 'shared_cache_tasks.csv'}" --workers {workers}
+python experiments/chua_nonsmooth_memory_matrix/run_shared_cache_tasks.py --tasks (Join-Path $MatrixRoot "tasks/shared_cache_tasks.csv") --workers {workers}
 
 # 2. Ejecutar continuaciones
-python experiments/chua_nonsmooth_memory_matrix/run_continuation_tasks.py --tasks "{root / 'tasks' / 'continuation_tasks.csv'}" --workers {workers}
+python experiments/chua_nonsmooth_memory_matrix/run_continuation_tasks.py --tasks (Join-Path $MatrixRoot "tasks/continuation_tasks.csv") --workers {workers}
 
 # 3. Ejecutar pruebas de ocultedad
-python experiments/chua_nonsmooth_memory_matrix/run_hiddenness_tasks.py --tasks "{root / 'tasks' / 'hiddenness_tasks.csv'}" --workers {workers}
+python experiments/chua_nonsmooth_memory_matrix/run_hiddenness_tasks.py --tasks (Join-Path $MatrixRoot "tasks/hiddenness_tasks.csv") --workers {workers}
 
 # 4. Generar figuras y reporte comparativo
-python experiments/chua_nonsmooth_memory_matrix/run_figure_tasks.py --tasks "{root / 'tasks' / 'figure_tasks.csv'}" --workers {max(1, workers // 2)}
-python experiments/chua_nonsmooth_memory_matrix/aggregate_results.py --root "{root}"
+python experiments/chua_nonsmooth_memory_matrix/run_figure_tasks.py --tasks (Join-Path $MatrixRoot "tasks/figure_tasks.csv") --workers {max(1, workers // 2)}
+python experiments/chua_nonsmooth_memory_matrix/aggregate_results.py --root $MatrixRoot
 """
-    (root / "run_experiments.ps1").write_text(commands, encoding="utf-8")
+    shell_commands = f"""#!/usr/bin/env bash
+set -euo pipefail
+
+MATRIX_ROOT="$(cd "$(dirname "${{BASH_SOURCE[0]}}")" && pwd)"
+VERSION2_ROOT="${{HIDDEN_ATTRACTORS_VERSION2_ROOT:-$(pwd)}}"
+if [[ ! -d "$VERSION2_ROOT/experiments/chua_nonsmooth_memory_matrix" ]]; then
+    echo "Ejecutar desde version_2/ o definir HIDDEN_ATTRACTORS_VERSION2_ROOT." >&2
+    exit 2
+fi
+cd "$VERSION2_ROOT"
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+
+python3 experiments/chua_nonsmooth_memory_matrix/run_shared_cache_tasks.py --tasks "$MATRIX_ROOT/tasks/shared_cache_tasks.csv" --workers {workers}
+python3 experiments/chua_nonsmooth_memory_matrix/run_continuation_tasks.py --tasks "$MATRIX_ROOT/tasks/continuation_tasks.csv" --workers {workers}
+python3 experiments/chua_nonsmooth_memory_matrix/run_hiddenness_tasks.py --tasks "$MATRIX_ROOT/tasks/hiddenness_tasks.csv" --workers {workers}
+python3 experiments/chua_nonsmooth_memory_matrix/run_figure_tasks.py --tasks "$MATRIX_ROOT/tasks/figure_tasks.csv" --workers {max(1, workers // 2)}
+python3 experiments/chua_nonsmooth_memory_matrix/aggregate_results.py --root "$MATRIX_ROOT"
+"""
+    (root / "run_experiments.ps1").write_text(powershell_commands, encoding="utf-8")
+    shell_path = root / "run_experiments.sh"
+    shell_path.write_text(shell_commands, encoding="utf-8")
+    shell_path.chmod(0o755)
 
 
 def main() -> None:
