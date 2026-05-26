@@ -123,7 +123,14 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     # Select the first candidate as the primary seed
     # and generate the positive and negative initial seeds
     A0, omega0, k = candidates[0]
-    seed_pos, seed_neg = build_lure_seed(system, A0, omega0, k, seed_sign_convention=config["seed_sign_convention"])
+    seed_pos, seed_neg = build_lure_seed(
+        system, A0, omega0, k,
+        seed_sign_convention=config["seed_sign_convention"],
+        q=q,
+        transfer_mode=config["transfer_mode"],
+        theta=config.get("seed_theta", 0.0),
+        seed_construction=config.get("seed_construction", "modal"),
+    )
     
     # -------------------------------------------------------------------------
     # Fase 5/7: continuación eta... 60%

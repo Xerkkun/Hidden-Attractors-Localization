@@ -21,6 +21,8 @@ DEFAULT_CONFIG = {
     "output_dir": None,
     "seed_strategy": "nyquist_df",
     "seed_sign_convention": "kuznetsov",
+    "seed_construction": "modal",
+    "seed_theta": 0.0,
     
     # Grid search and solver tolerances
     "omega_min": 0.01,
@@ -85,13 +87,15 @@ def load_and_validate_config(config_path: str) -> Dict[str, Any]:
         raise ValueError(f"Invalid seed_strategy: {config['seed_strategy']}")
     if config["seed_sign_convention"] not in {"kuznetsov", "wu"}:
         raise ValueError(f"Invalid seed_sign_convention: {config['seed_sign_convention']}")
+    if config["seed_construction"] not in {"modal", "closed_form_integer"}:
+        raise ValueError(f"Invalid seed_construction: {config['seed_construction']}")
         
     # Window checks
     if config["memory_mode"] == "window" and (config["memory_window_length"] is None or config["memory_window_length"] <= 0):
         raise ValueError("memory_window_length must be a positive integer when memory_mode is 'window'.")
         
     # Cast numeric configs to correct types to handle PyYAML notation parsing
-    for float_key in ["omega_min", "omega_max", "amplitude_min", "amplitude_max", "df_residual_tol", "t_final", "t_burn", "h", "divergence_norm", "equilibrium_tol", "target_match_tol", "basin_extent", "radial_growth_factor", "q"]:
+    for float_key in ["omega_min", "omega_max", "amplitude_min", "amplitude_max", "df_residual_tol", "t_final", "t_burn", "h", "divergence_norm", "equilibrium_tol", "target_match_tol", "basin_extent", "radial_growth_factor", "q", "seed_theta"]:
         if float_key in config and config[float_key] is not None:
             config[float_key] = float(config[float_key])
             
