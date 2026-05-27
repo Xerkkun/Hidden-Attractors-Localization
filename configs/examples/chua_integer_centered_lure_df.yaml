@@ -59,7 +59,7 @@ run_robustness: false
 basin:
   enabled: true
   planes: ["xy"]
-  grid_n: 50
+  grid_n: 100
   x_interval: [-10.0, 10.0]
   y_interval: [-10.0, 10.0]
   z_interval: [-10.0, 10.0]
@@ -69,6 +69,6 @@ basin:
   around_equilibria: true
   equilibrium_selection: "E+"
   local_radius: 2.0
-  t_final: 100.0
+  t_final: 200.0
   t_burn: 120.0
   h: 0.01

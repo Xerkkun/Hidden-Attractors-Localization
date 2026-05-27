@@ -838,6 +838,16 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     )
     _save_summary(summary, output_dir)
     
+    # Generate publication-grade vector PDF + PNG figures named exactly like final_pdf_figs
+    if config.get("plot_enabled", True):
+        try:
+            from ..plotting.generate_publication_figures import generate_all_publication_figures
+            generate_all_publication_figures(output_dir, config)
+        except Exception as plot_exc:
+            print(f"[{run_id}][{system_id}] WARNING: Publication figures generation failed: {plot_exc}")
+            import traceback
+            traceback.print_exc()
+    
     # 3. Print Markdown summary table in the terminal
     _print_terminal_table(summary)
     

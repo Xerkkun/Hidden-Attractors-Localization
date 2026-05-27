@@ -141,22 +141,15 @@ def plot_timeseries_data(
         writer.writerows(trajectory.tolist())
         
     # Handle maximum timeseries points
-    use_tail = config.get("timeseries_use_tail_after_burn", False)
     max_pts = config.get("timeseries_max_points", 20000)
+    # Recortar la graficacion a los ultimos 50 segundos de forma predeterminada
+    t_final = t[-1]
+    mask_50 = t >= (t_final - 50.0)
+    t_plot = t[mask_50]
+    x_plot = x[mask_50]
+    y_plot = y[mask_50]
+    z_plot = z[mask_50]
     
-    if use_tail:
-        t_burn = config.get("final_simulation", {}).get("t_burn", config.get("t_burn", 120.0))
-        n_burn = int(np.ceil(t_burn / config["h"]))
-        if len(trajectory) > n_burn:
-            t_plot = t[n_burn:]
-            x_plot = x[n_burn:]
-            y_plot = y[n_burn:]
-            z_plot = z[n_burn:]
-        else:
-            t_plot, x_plot, y_plot, z_plot = t, x, y, z
-    else:
-        t_plot, x_plot, y_plot, z_plot = t, x, y, z
-        
     if len(t_plot) > max_pts:
         indices = np.linspace(0, len(t_plot) - 1, max_pts, dtype=int)
         t_plot = t_plot[indices]
@@ -267,6 +260,25 @@ def plot_neighborhood_control_spheres(
     ax.set_zlabel('z', fontsize=10)
     ax.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
     
+    # Compute tight limits around target attractor and equilibria to keep the plot focused close to them
+    all_x = list(target_pts[:, 0]) + [eq[0] for eq in equilibria.values()]
+    all_y = list(target_pts[:, 1]) + [eq[1] for eq in equilibria.values()]
+    all_z = list(target_pts[:, 2]) + [eq[2] for eq in equilibria.values()]
+    
+    x_min, x_max = min(all_x), max(all_x)
+    y_min, y_max = min(all_y), max(all_y)
+    z_min, z_max = min(all_z), max(all_z)
+    
+    x_span = x_max - x_min
+    y_span = y_max - y_min
+    z_span = z_max - z_min
+    
+    pad = 0.05
+    ax.set_xlim(x_min - pad * x_span, x_max + pad * x_span)
+    ax.set_ylim(y_min - pad * y_span, y_max + pad * y_span)
+    ax.set_zlim(z_min - pad * z_span, z_max + pad * z_span)
+    
     plt.tight_layout()
-    fig.savefig(os.path.join(fig_dir, "hiddenness_control_spheres.png"), dpi=300)
+    fig.savefig(os.path.join(fig_dir, "fig05b_hiddenness_overview.png"), dpi=300)
+    fig.savefig(os.path.join(fig_dir, "fig05b_hiddenness_overview.pdf"))
     plt.close(fig)

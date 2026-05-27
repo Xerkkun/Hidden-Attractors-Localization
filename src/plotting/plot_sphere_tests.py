@@ -107,9 +107,11 @@ def plot_sphere_test_results(
     os.makedirs(fig_dir, exist_ok=True)
     
     # Clean filename notation
-    fig_name = f"sphere_test_{eq_name}_r{radius:.0e}.png"
-    fig_path = os.path.join(fig_dir, fig_name)
+    fig_name = f"fig05c_hiddenness_zoom_{eq_name}_r{radius:.0e}"
+    fig_path_png = os.path.join(fig_dir, f"{fig_name}.png")
+    fig_path_pdf = os.path.join(fig_dir, f"{fig_name}.pdf")
     plt.tight_layout()
-    fig.savefig(fig_path, dpi=300)
+    fig.savefig(fig_path_png, dpi=300)
+    fig.savefig(fig_path_pdf)
     plt.close(fig)
-    return fig_path
+    return fig_path_png

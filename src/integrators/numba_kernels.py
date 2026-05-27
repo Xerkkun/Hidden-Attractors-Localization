@@ -70,7 +70,7 @@ _STATUS_TO_STR = {
 # Layer 1 — @njit inner kernel (compiled to machine code)
 # ---------------------------------------------------------------------------
 
-@njit(cache=True, fastmath=True)
+@njit(cache=True, fastmath=True, nogil=True)
 def _eval_rhs_njit(
     x: np.ndarray,
     P: np.ndarray,
@@ -118,7 +118,7 @@ def _eval_rhs_njit(
     return out
 
 
-@njit(cache=True, fastmath=True)
+@njit(cache=True, fastmath=True, nogil=True)
 def efork3_q1_integrate_numba(
     x0: np.ndarray,
     P: np.ndarray,

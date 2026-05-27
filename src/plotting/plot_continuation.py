@@ -68,28 +68,28 @@ def plot_continuation_eta(
     ax_norm.set_xlim(-0.05, 1.05)
     ax_norm.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
     
-    plt.tight_layout()
-    fig_norm.savefig(os.path.join(fig_dir, "continuation_eta_norm.png"), dpi=300)
-    plt.close(fig_norm)
+    # plt.tight_layout()
+    # fig_norm.savefig(os.path.join(fig_dir, "continuation_eta_norm.png"), dpi=300)
+    # plt.close(fig_norm)
     
     # 2. PLOT CONTINUATION ETA vs AMPLITUDE
-    fig_amp, ax_amp = plt.subplots(figsize=(8, 7), dpi=300)
-    ax_amp.grid(True, linestyle='--', linewidth=0.5, color='#cbd5e1')
+    # fig_amp, ax_amp = plt.subplots(figsize=(8, 7), dpi=300)
+    # ax_amp.grid(True, linestyle='--', linewidth=0.5, color='#cbd5e1')
     
-    if len(success_etas) > 0:
-        ax_amp.plot(success_etas, success_amps, color='#2563eb', marker='s', markersize=5, linewidth=1.8, label='Success')
-    if len(failed_etas) > 0:
-        ax_amp.scatter(failed_etas, failed_amps, color='#ef4444', marker='x', s=60, zorder=5, label='Failure')
+    # if len(success_etas) > 0:
+    #     ax_amp.plot(success_etas, success_amps, color='#2563eb', marker='s', markersize=5, linewidth=1.8, label='Success')
+    # if len(failed_etas) > 0:
+    #     ax_amp.scatter(failed_etas, failed_amps, color='#ef4444', marker='x', s=60, zorder=5, label='Failure')
         
-    ax_amp.set_title(f"Numerical Continuation: Amplitude vs $\\eta$\n{config['system_id']}", fontsize=12, fontweight='bold', pad=15)
-    ax_amp.set_xlabel(r'Continuation Parameter ($\eta$)', fontsize=10)
-    ax_amp.set_ylabel(r'Peak-to-Peak Amplitude $A_{pp}(x)$', fontsize=10)
-    ax_amp.set_xlim(-0.05, 1.05)
-    ax_amp.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
+    # ax_amp.set_title(f"Numerical Continuation: Amplitude vs $\\eta$\n{config['system_id']}", fontsize=12, fontweight='bold', pad=15)
+    # ax_amp.set_xlabel(r'Continuation Parameter ($\eta$)', fontsize=10)
+    # ax_amp.set_ylabel(r'Peak-to-Peak Amplitude $A_{pp}(x)$', fontsize=10)
+    # ax_amp.set_xlim(-0.05, 1.05)
+    # ax_amp.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
     
-    plt.tight_layout()
-    fig_amp.savefig(os.path.join(fig_dir, "continuation_eta_amplitude.png"), dpi=300)
-    plt.close(fig_amp)
+    # plt.tight_layout()
+    # fig_amp.savefig(os.path.join(fig_dir, "continuation_eta_amplitude.png"), dpi=300)
+    # plt.close(fig_amp)
     
     # 3. TRIGGER PREMIUM OVERLAYS & COMPARISONS
     if len(cont_steps) >= 2:
@@ -379,9 +379,9 @@ def plot_continuation_tracking(
     ax.set_xlim(-0.02, eta_max)
     ax.legend(handles=legend_handles, loc="best", fontsize=8,
               framealpha=0.9, facecolor="#f8fafc", edgecolor="#e2e8f0")
-    plt.tight_layout()
-    fig.savefig(os.path.join(fig_dir, "continuation_tracking_norm.png"), dpi=300)
-    plt.close(fig)
+    # plt.tight_layout()
+    # fig.savefig(os.path.join(fig_dir, "continuation_tracking_norm.png"), dpi=300)
+    # plt.close(fig)
 
     # ── 2. Status vs eta (categorical) ──────────────────────────────────────
     all_statuses = list(dict.fromkeys(
@@ -409,18 +409,18 @@ def plot_continuation_tracking(
     plt.close(fig)
 
     # ── 3. max||trajectory|| vs eta ─────────────────────────────────────────
-    fig, ax = plt.subplots(figsize=(8, 5), dpi=300)
-    ax.set_facecolor("#f8fafc")
-    ax.grid(True, linestyle="--", linewidth=0.5, color="#cbd5e1")
-    ax.plot(etas, max_norms, color="#0ea5e9", linewidth=1.6, zorder=2, alpha=0.7)
-    ax.scatter(etas, max_norms, c=color_pts, s=50, zorder=3, edgecolors="white", linewidths=0.5)
-    ax.set_title(f"Continuation: Max Trajectory Norm vs $\\eta$\n{sysid}",
-                 fontsize=12, fontweight="bold", pad=12)
-    ax.set_xlabel(r"$\eta$", fontsize=11)
-    ax.set_ylabel(r"$\max_t\,\|x(t)\|$", fontsize=11)
-    ax.set_xlim(-0.02, eta_max)
-    ax.legend(handles=legend_handles, loc="best", fontsize=8,
-              framealpha=0.9, facecolor="#f8fafc", edgecolor="#e2e8f0")
-    plt.tight_layout()
-    fig.savefig(os.path.join(fig_dir, "continuation_tracking_maxnorm.png"), dpi=300)
-    plt.close(fig)
+    # fig, ax = plt.subplots(figsize=(8, 5), dpi=300)
+    # ax.set_facecolor("#f8fafc")
+    # ax.grid(True, linestyle="--", linewidth=0.5, color="#cbd5e1")
+    # ax.plot(etas, max_norms, color="#0ea5e9", linewidth=1.6, zorder=2, alpha=0.7)
+    # ax.scatter(etas, max_norms, c=color_pts, s=50, zorder=3, edgecolors="white", linewidths=0.5)
+    # ax.set_title(f"Continuation: Max Trajectory Norm vs $\\eta$\n{sysid}",
+    #              fontsize=12, fontweight="bold", pad=12)
+    # ax.set_xlabel(r"$\eta$", fontsize=11)
+    # ax.set_ylabel(r"$\max_t\,\|x(t)\|$", fontsize=11)
+    # ax.set_xlim(-0.02, eta_max)
+    # ax.legend(handles=legend_handles, loc="best", fontsize=8,
+    #           framealpha=0.9, facecolor="#f8fafc", edgecolor="#e2e8f0")
+    # plt.tight_layout()
+    # fig.savefig(os.path.join(fig_dir, "continuation_tracking_maxnorm.png"), dpi=300)
+    # plt.close(fig)

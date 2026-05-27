@@ -26,7 +26,7 @@ m1: -1.1468
 
 h: 0.001
 divergence_norm: 120.0
-workers: 1
+workers: 8
 
 final_simulation:
   t_final: 300.0
@@ -40,3 +40,31 @@ grid_size_omega: 200
 grid_size_amplitude: 200
 df_residual_tol: 1.0e-8
 root_refinement: true
+
+plot_enabled: true
+save_figures: true
+plot_attractors: true
+plot_seed_trajectories: true
+max_seed_candidates_to_plot: 1
+
+run_hiddenness_tests: false
+run_sphere_tests: false
+run_basin_slices: true
+run_robustness: false
+
+basin:
+  enabled: true
+  planes: ["xy"]
+  grid_n: 50
+  x_interval: [-10.0, 10.0]
+  y_interval: [-10.0, 10.0]
+  z_interval: [-10.0, 10.0]
+  fixed_x: 0.0
+  fixed_y: 0.0
+  fixed_z: 0.0
+  around_equilibria: true
+  equilibrium_selection: "E+"
+  local_radius: 2.0
+  t_final: 150.0
+  t_burn: 120.0
+  h: 0.001
