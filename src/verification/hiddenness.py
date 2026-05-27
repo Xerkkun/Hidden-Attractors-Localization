@@ -66,33 +66,87 @@ def evaluate_target_match(
     trajectory_tail: np.ndarray,
     ref_tail: np.ndarray,
     metric: str = "centroid_distance",
-    tolerance: float = 0.5
+    tolerance: float = 0.5,
+    nn_percentile: float = 90.0,
 ) -> bool:
-    """Evaluate if the trajectory matches the target attractor tail under the given metric."""
+    """Evaluate if the trajectory tail coincides with the reference attractor tail.
+
+    Parameters
+    ----------
+    trajectory_tail : np.ndarray, shape (T, d)
+        Burn-in-discarded portion of the probe trajectory.
+    ref_tail : np.ndarray, shape (R, d)
+        Burn-in-discarded portion of the reference (seed) trajectory.
+    metric : str
+        One of:
+        - ``"centroid_distance"`` : Euclidean distance between cloud centroids.
+          Fast but fails for elongated or asymmetric attractors.
+        - ``"bbox_overlap"`` : Axis-aligned bounding-box intersection.
+          Only checks volumetric overlap, not cloud proximity.
+        - ``"nn_percentile"`` : For every point in *trajectory_tail* compute
+          the distance to its nearest neighbour in *ref_tail*, then test
+          whether the *nn_percentile*-th percentile of that distribution is
+          ≤ *tolerance*. Robust to shape, rotation, and density differences.
+          Recommended for fractional attractor comparison.
+    tolerance : float
+        Distance threshold used by ``centroid_distance`` and ``nn_percentile``.
+    nn_percentile : float
+        Percentile (0–100) used by the ``nn_percentile`` metric. Default 90
+        (i.e. 90 % of probe points must have a close neighbour in the ref).
+
+    Returns
+    -------
+    bool
+        True if the trajectory matches the reference attractor under the
+        chosen metric and tolerance.
+    """
     if len(trajectory_tail) == 0 or len(ref_tail) == 0:
         return False
-        
+
+    tr = np.asarray(trajectory_tail, dtype=float)
+    ref = np.asarray(ref_tail, dtype=float)
+
     if metric == "centroid_distance":
-        centroid_tr = np.mean(trajectory_tail, axis=0)
-        centroid_ref = np.mean(ref_tail, axis=0)
+        centroid_tr = np.mean(tr, axis=0)
+        centroid_ref = np.mean(ref, axis=0)
         dist = np.linalg.norm(centroid_tr - centroid_ref)
         return bool(dist <= tolerance)
-        
+
     elif metric == "bbox_overlap":
-        min_tr = np.min(trajectory_tail, axis=0)
-        max_tr = np.max(trajectory_tail, axis=0)
-        min_ref = np.min(ref_tail, axis=0)
-        max_ref = np.max(ref_tail, axis=0)
-        
-        overlap = True
+        min_tr = np.min(tr, axis=0)
+        max_tr = np.max(tr, axis=0)
+        min_ref = np.min(ref, axis=0)
+        max_ref = np.max(ref, axis=0)
+
         for d in range(len(min_tr)):
             if max_tr[d] < min_ref[d] or min_tr[d] > max_ref[d]:
-                overlap = False
-                break
-        return overlap
-        
+                return False
+        return True
+
+    elif metric == "nn_percentile":
+        # For each point in the probe cloud, find its nearest neighbour distance
+        # in the reference cloud.  Uses a vectorised pairwise-distance approach
+        # that is memory-efficient for moderate cloud sizes (≤ ~10 k points each).
+        # For larger clouds, sub-sample to 2 000 points to keep cost O(1).
+        MAX_PTS = 2000
+        rng = np.random.default_rng(0)
+
+        tr_use = tr if len(tr) <= MAX_PTS else tr[rng.choice(len(tr), MAX_PTS, replace=False)]
+        ref_use = ref if len(ref) <= MAX_PTS else ref[rng.choice(len(ref), MAX_PTS, replace=False)]
+
+        # Pairwise distances: shape (len(tr_use), len(ref_use))
+        diff = tr_use[:, np.newaxis, :] - ref_use[np.newaxis, :, :]   # (T, R, d)
+        dists = np.sqrt(np.sum(diff ** 2, axis=-1))                   # (T, R)
+        nn_dists = dists.min(axis=1)                                   # (T,)
+
+        threshold = float(np.percentile(nn_dists, nn_percentile))
+        return bool(threshold <= tolerance)
+
     else:
-        raise ValueError(f"Unknown target_match metric: {metric}")
+        raise ValueError(
+            f"Unknown target_match metric: {metric!r}. "
+            "Choose one of: 'centroid_distance', 'bbox_overlap', 'nn_percentile'."
+        )
 
 def run_neighborhood_probe(
     system: Any,
