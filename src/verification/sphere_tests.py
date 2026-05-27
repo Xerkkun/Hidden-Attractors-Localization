@@ -3,7 +3,7 @@ import csv
 import json
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Any, Tuple, Optional
 from .hiddenness import generate_neighborhood_points, run_neighborhood_probe
 from ..plotting.plot_sphere_tests import plot_sphere_test_results
 
@@ -69,7 +69,8 @@ def run_single_sphere_probe(payload: Tuple) -> Tuple[int, Dict[str, Any]]:
             
         dist_target = 9999.0
         if len(ref_tail) > 0:
-            dist_target = float(np.linalg.norm(np.mean(res["trajectory"][-100:, 1:] if len(res["trajectory"]) > 100 else res["trajectory"], axis=0) - np.mean(ref_tail, axis=0)))
+            tail_for_dist = res["trajectory"][-100:] if len(res["trajectory"]) > 100 else res["trajectory"]
+            dist_target = float(np.linalg.norm(np.mean(tail_for_dist, axis=0) - np.mean(ref_tail, axis=0)))
             
         return idx, {
             "x0": x0.tolist(),

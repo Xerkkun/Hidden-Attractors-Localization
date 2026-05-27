@@ -1,7 +1,6 @@
 import numpy as np
 from typing import Any, Dict, List, Tuple, Optional
-from ..integrators.abm import caputo_abm_integrate
-from ..integrators.efork import efork_integrate
+from ..integrators.general import integrate_general
 
 def generate_neighborhood_points(
     eq_point: np.ndarray,
@@ -191,20 +190,24 @@ def run_neighborhood_probe(
     # Get all equilibria for early stopping detection
     all_eqs_list = list(equilibria_dict.values()) if equilibria_dict else stable_equilibria
     
-    if integrator == "abm":
-        t_arr, x_arr, status = caputo_abm_integrate(
-            system.evaluate_rhs, x0_arr, q=active_q, h=h, t_final=t_final,
-            divergence_norm=divergence_norm, system=system,
-            memory_mode=memory_mode, memory_window_length=memory_window_length,
-            early_stop_config=early_stop_config, equilibria=all_eqs_list
-        )
-    else: # efork
-        t_arr, x_arr, status = efork_integrate(
-            system, x0_arr, q=active_q, h=h, t_final=t_final,
-            memory_mode=memory_mode, memory_window_length=memory_window_length,
-            divergence_norm=divergence_norm,
-            early_stop_config=early_stop_config, equilibria=all_eqs_list
-        )
+    # Build a plain rhs(t, x) callable for integrate_general
+    def rhs_probe(t: float, x: np.ndarray) -> np.ndarray:
+        return np.asarray(system.evaluate_rhs(t, x), dtype=float)
+
+    t_arr, x_arr, status = integrate_general(
+        rhs=rhs_probe,
+        x0=x0_arr,
+        q=active_q,
+        h=h,
+        t_final=t_final,
+        integrator=integrator,
+        memory_mode=memory_mode,
+        memory_window_length=memory_window_length,
+        divergence_norm=divergence_norm,
+        system=system,
+        early_stop_config=early_stop_config,
+        equilibria=all_eqs_list,
+    )
             
     # 2. Check solver status for divergence and exceptions
     if status in ("diverged", "diverged_early", "nonfinite_solution"):

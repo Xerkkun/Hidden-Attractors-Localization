@@ -885,6 +885,12 @@ def _build_summary_dict(
     else:
         q_dynamics = getattr(system, "q", 1.0)
 
+    # Resolve q_continuation efectivo (mirrors Phase 1 logic)
+    if config.get("continuation_mode") == "integer":
+        q_continuation = 1.0
+    else:
+        q_continuation = q_dynamics if q_dynamics < 1.0 else getattr(system, "q", 1.0)
+
     # Resolve transfer_mode efectivo para semilla
     if config.get("seed_mode") == "integer":
         seed_transfer_mode = "integer"
@@ -904,6 +910,7 @@ def _build_summary_dict(
         "memory_mode": config["memory_mode"],
         "seed_mode": config.get("seed_mode"),
         "q_seed_effective": q_seed,
+        "q_continuation_effective": q_continuation,
         "q_dynamics_effective": q_dynamics,
         "seed_transfer_mode": seed_transfer_mode,
         "transfer_convention": config.get("transfer_convention"),

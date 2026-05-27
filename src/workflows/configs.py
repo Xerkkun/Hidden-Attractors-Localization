@@ -1,3 +1,4 @@
+import numpy as np
 import yaml
 import os
 import time
@@ -73,7 +74,7 @@ DEFAULT_CONFIG = {
     "h": 0.01,
     "divergence_norm": 120.0,
     "equilibrium_tol": 0.5,
-    "target_match_metric": "centroid_distance",
+    "target_match_metric": "nn_percentile",
     "target_match_tol": 0.5,
     
     # New Nested Configurations
