@@ -5,7 +5,29 @@ from .hiddenness import run_neighborhood_probe
 
 def _classify_point_worker(args: Tuple) -> Tuple[int, int, int]:
     """Helper worker to run a single point simulation in parallel."""
-    (i, j, x0, system, transfer_mode, integrator, t_final, t_burn, h, ref_tail, stable_eqs, eq_tol, div_norm, metric, tol, dynamics_mode, memory_mode, memory_window_length, early_stop_config, equilibria_dict) = args
+    args_list = list(args)
+    i = args_list[0]
+    j = args_list[1]
+    x0 = args_list[2]
+    system = args_list[3]
+    transfer_mode = args_list[4]
+    integrator = args_list[5]
+    t_final = args_list[6]
+    t_burn = args_list[7]
+    h = args_list[8]
+    ref_tail = args_list[9]
+    stable_eqs = args_list[10]
+    eq_tol = args_list[11]
+    div_norm = args_list[12]
+    metric = args_list[13]
+    tol = args_list[14]
+    dynamics_mode = args_list[15]
+    memory_mode = args_list[16]
+    memory_window_length = args_list[17]
+    early_stop_config = args_list[18]
+    equilibria_dict = args_list[19]
+    q_dynamics_effective = args_list[20] if len(args_list) > 20 else None
+    
     try:
         res = run_neighborhood_probe(
             system=system,
@@ -25,7 +47,8 @@ def _classify_point_worker(args: Tuple) -> Tuple[int, int, int]:
             memory_mode=memory_mode,
             memory_window_length=memory_window_length,
             early_stop_config=early_stop_config,
-            equilibria_dict=equilibria_dict
+            equilibria_dict=equilibria_dict,
+            q_dynamics_effective=q_dynamics_effective
         )
         dest = res["destination"]
         if dest in ("stable_equilibrium", "equilibrium_stable"):
@@ -73,12 +96,16 @@ def generate_basin_slice(
     eq_name: str = "global",
     system_id: str = "chua",
     early_stop_config: Optional[dict] = None,
-    equilibria_dict: Optional[Dict[str, np.ndarray]] = None
+    equilibria_dict: Optional[Dict[str, np.ndarray]] = None,
+    q_dynamics_effective: Optional[float] = None
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Generate a 2D basin slice mesh grid and evaluation matrix of classifications,
     with configurable intervals, centering, and real-time terminal progress printing.
     """
+    if q_dynamics_effective is None:
+        import warnings
+        warnings.warn("q_dynamics_effective is omitted, falling back to legacy dynamics_mode logic", UserWarning)
     grid_n = int(grid_n)
     cx, cy, cz = center
     
@@ -122,7 +149,7 @@ def generate_basin_slice(
             
             payloads.append((
                 i, j, x0, system, transfer_mode, integrator, t_final, t_burn, h, ref_tail, stable_eqs, eq_tol, div_norm, metric, tol,
-                dynamics_mode, memory_mode, memory_window_length, early_stop_config, equilibria_dict
+                dynamics_mode, memory_mode, memory_window_length, early_stop_config, equilibria_dict, q_dynamics_effective
             ))
             
     total_points = len(payloads)

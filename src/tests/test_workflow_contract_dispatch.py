@@ -20,7 +20,7 @@ def test_validate_contracts_invalid_integrator_for_integer():
         "harmonic_condition": "1_minus_WN"
     }
     with pytest.raises(ValueError, match="ABM integrator is not allowed for integer-order dynamics"):
-        validate_contracts(config)
+        validate_contracts(config, resolved=True)
 
 def test_validate_contracts_invalid_integrator_for_fractional():
     # q_dynamics = 0.9 and integrator = 'heun' must fail
@@ -35,7 +35,7 @@ def test_validate_contracts_invalid_integrator_for_fractional():
         "harmonic_condition": "1_minus_WN"
     }
     with pytest.raises(ValueError, match="is not allowed for fractional-order dynamics"):
-        validate_contracts(config)
+        validate_contracts(config, resolved=True)
 
 def test_validate_contracts_invalid_continuation_integer():
     # continuation_mode = 'integer' and integrator = 'abm' must fail
@@ -49,7 +49,7 @@ def test_validate_contracts_invalid_continuation_integer():
         "harmonic_condition": "1_minus_WN"
     }
     with pytest.raises(ValueError, match="ABM integrator is not allowed for integer-order dynamics"):
-        validate_contracts(config)
+        validate_contracts(config, resolved=True)
 
 def test_validate_contracts_invalid_continuation_fractional():
     # continuation_mode = 'fractional' and integrator = 'efork_q1' must fail
@@ -64,7 +64,7 @@ def test_validate_contracts_invalid_continuation_fractional():
         "harmonic_condition": "1_minus_WN"
     }
     with pytest.raises(ValueError, match="is not allowed for fractional continuation"):
-        validate_contracts(config)
+        validate_contracts(config, resolved=True)
 
 def test_workflow_prevents_abm_q1(monkeypatch):
     # Mock caputo_abm_integrate to raise an assertion if q=1.0 is passed

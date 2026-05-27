@@ -72,3 +72,4 @@ def test_stability_margin_marginal(monkeypatch):
     res = classify_equilibrium_stability(system, eq_pt, tol=1e-8)
     assert res["stability_class"] == "marginal_or_inconclusive"
     assert abs(res["matignon_margin"]) < 1e-8
+    assert res["stable"] is False

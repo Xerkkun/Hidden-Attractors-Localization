@@ -112,20 +112,27 @@ def run_neighborhood_probe(
     memory_mode: str = "full",
     memory_window_length: Optional[int] = None,
     early_stop_config: Optional[dict] = None,
-    equilibria_dict: Optional[Dict[str, np.ndarray]] = None
+    equilibria_dict: Optional[Dict[str, np.ndarray]] = None,
+    q_dynamics_effective: Optional[float] = None
 ) -> Dict[str, Any]:
     """Integrate a single trajectory from a neighborhood and classify its destination with early stopping."""
     x0_arr = np.asarray(x0, dtype=float)
     
-    # Resolve active q according to dynamics_mode
-    if dynamics_mode == "integer":
-        active_q = 1.0
-    elif dynamics_mode == "fractional":
-        active_q = system.q
-    elif dynamics_mode == "system":
-        active_q = 1.0 if system.q == 1.0 else system.q
+    # Resolve active q
+    if q_dynamics_effective is not None:
+        active_q = q_dynamics_effective
     else:
-        raise ValueError(f"Unknown dynamics_mode: {dynamics_mode}")
+        import warnings
+        warnings.warn("q_dynamics_effective is omitted, falling back to legacy dynamics_mode logic", UserWarning)
+        # Resolve active q according to dynamics_mode
+        if dynamics_mode == "integer":
+            active_q = 1.0
+        elif dynamics_mode == "fractional":
+            active_q = system.q
+        elif dynamics_mode == "system":
+            active_q = 1.0 if system.q == 1.0 else system.q
+        else:
+            raise ValueError(f"Unknown dynamics_mode: {dynamics_mode}")
         
     # Get all equilibria for early stopping detection
     all_eqs_list = list(equilibria_dict.values()) if equilibria_dict else stable_equilibria

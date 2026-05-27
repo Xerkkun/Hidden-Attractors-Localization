@@ -27,6 +27,7 @@ def run_fractional_continuation(
     # Backend policy
     require_c_backend: bool = True,
     allow_python_fallback: bool = False,
+    q: Optional[float] = None,
 ) -> List[Dict[str, Any]]:
     """Execute fractional-order parameter continuation for parameter eta (lambda_values).
 
@@ -77,7 +78,10 @@ def run_fractional_continuation(
             history_states=history_states,
             early_stop_config=early_stop_config,
             equilibria=equilibria,
+            q=q,
         )
+
+    q_effective = q if q is not None else system.q
 
     # For EFORK (or other methods), carry out the standard restart step-by-step continuation.
     x_in = np.asarray(seed_x0, dtype=float).copy()
@@ -113,7 +117,7 @@ def run_fractional_continuation(
             t_tr, x_tr, status_tr, info_tr = fractional_integrate(
                 rhs=rhs_deformed,
                 x0=x_in,
-                q=system.q,
+                q=q_effective,
                 h=h,
                 t_final=t_transient,
                 method=integrator,
@@ -201,7 +205,7 @@ def run_fractional_continuation(
             t_kp, x_kp, status_kp, info_kp = fractional_integrate(
                 rhs=rhs_deformed,
                 x0=x_mid,
-                q=system.q,
+                q=q_effective,
                 h=h,
                 t_final=t_keep,
                 method=integrator,
@@ -287,6 +291,7 @@ def run_fractional_continuation_abm_monolithic(
     history_states: Optional[np.ndarray] = None,
     early_stop_config: Optional[Dict] = None,
     equilibria: Optional[List[np.ndarray]] = None,
+    q: Optional[float] = None,
 ) -> List[Dict[str, Any]]:
     """Monolithic Python ABM fractional continuation.
 
@@ -300,7 +305,8 @@ def run_fractional_continuation_abm_monolithic(
     x0_arr = np.asarray(seed_x0, dtype=float)
     dim = x0_arr.size
     h = float(h)
-    q = float(system.q)
+    q_effective = q if q is not None else system.q
+    q = float(q_effective)
 
     # Calculate step counts for each stage
     nsteps_tr = int(np.ceil(t_transient / h))

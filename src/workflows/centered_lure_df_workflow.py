@@ -228,19 +228,26 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     else:
         q_dynamics = system.q
 
+    # Resolve q_continuation efectivo
+    if config.get("continuation_mode") == "integer":
+        q_continuation = 1.0
+    else:
+        q_continuation = q_dynamics if q_dynamics < 1.0 else system.q
+
     # Resolve transfer_mode efectivo para semilla
     if config.get("seed_mode") == "integer":
         seed_transfer_mode = "integer"
     else:
         seed_transfer_mode = "fractional"
 
-    # Validate contracts
+    # Validate contracts (strongly resolved coherence check)
     validation_config = config.copy()
     validation_config["q_seed"] = q_seed
     validation_config["q_dynamics"] = q_dynamics
+    validation_config["q_continuation"] = q_continuation
     validation_config["seed_transfer_mode"] = seed_transfer_mode
     validation_config["q"] = q
-    validate_contracts(validation_config)
+    validate_contracts(validation_config, resolved=True)
     
     # Save the effective configuration used (both YAML and JSON)
     effective_config_path = os.path.join(output_dir, "effective_config.yaml")
@@ -249,6 +256,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     effective_config["seed_mode"] = config["seed_mode"]
     effective_config["q_seed_effective"] = q_seed
     effective_config["q_dynamics_effective"] = q_dynamics
+    effective_config["q_continuation_effective"] = q_continuation
     effective_config["seed_transfer_mode"] = seed_transfer_mode
     effective_config["transfer_convention"] = config["transfer_convention"]
     effective_config["harmonic_condition"] = config["harmonic_condition"]
@@ -280,13 +288,17 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     eq_stability = {}
     stable_eqs = []
     unstable_eqs = []
+    marginal_eqs = []
     
     for eq_name, eq_pt in equilibria.items():
         stability_res = classify_equilibrium_stability(system, eq_pt)
         eq_stability[eq_name] = stability_res
-        if stability_res["stable"]:
+        if stability_res["stability_class"] == "stable":
             stable_eqs.append(eq_pt)
-        else:
+        elif stability_res["stability_class"] == "marginal_or_inconclusive":
+            marginal_eqs.append(eq_pt)
+            unstable_eqs.append(eq_pt)
+        else: # "unstable"
             unstable_eqs.append(eq_pt)
             
     # -------------------------------------------------------------------------
@@ -352,16 +364,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                     seed_construction=config.get("seed_construction", "modal"),
                 )
                 
-                # Decide dynamics q based on dynamics_mode
-                dyn_mode = config["dynamics_mode"]
-                if dyn_mode == "integer":
-                    c_active_q = 1.0
-                elif dyn_mode == "fractional":
-                    c_active_q = q
-                elif dyn_mode == "system":
-                    c_active_q = 1.0 if q == 1.0 else q
-                else:
-                    c_active_q = q
+                # Decide dynamics q based on q_dynamics contract
+                c_active_q = q_dynamics
                 
                 # Integrate candidate with early stop
                 c_t_fin, c_x_fin, c_status = run_workflow_integration(
@@ -376,20 +380,33 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                 
                 if c_status in ("ok", "diverged_early", "converged_equilibrium_early"):
                     c_traj = np.column_stack((c_t_fin, c_x_fin))
+                    
+                    if c_status == "ok":
+                        target_dir = output_dir
+                        file_prefix = f"seed_candidate_{idx:02d}"
+                    elif c_status == "diverged_early":
+                        target_dir = os.path.join(output_dir, "diagnostics", "diverged_seeds")
+                        file_prefix = f"seed_diverged_{idx:02d}"
+                    else:  # converged_equilibrium_early
+                        target_dir = os.path.join(output_dir, "diagnostics", "equilibrium_converged_seeds")
+                        file_prefix = f"seed_converged_{idx:02d}"
+                        
+                    os.makedirs(target_dir, exist_ok=True)
+                    
                     plot_flexible_attractor_and_projections(
                         trajectory=c_traj,
                         equilibria=equilibria,
                         config=config,
-                        output_dir=output_dir,
-                        file_prefix=f"seed_candidate_{idx:02d}"
+                        output_dir=target_dir,
+                        file_prefix=file_prefix
                     )
                     # Render and save candidate time series and CSV
                     if config.get("plot_timeseries", True):
                         plot_timeseries_data(
                             trajectory=c_traj,
                             config=config,
-                            output_dir=output_dir,
-                            file_prefix=f"seed_candidate_{idx:02d}"
+                            output_dir=target_dir,
+                            file_prefix=file_prefix
                         )
             except Exception as e:
                 print(f"[{run_id}][{system_id}] WARNING: Candidate seed {idx} plotting simulation failed: {e}")
@@ -522,6 +539,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
             equilibria=list(equilibria.values()),
             require_c_backend=cont_cfg.get("require_c_backend", True),
             allow_python_fallback=cont_cfg.get("allow_python_fallback", False),
+            q=q_continuation,
         )
     
     # ── Step logging ──────────────────────────────────────────────────────
@@ -546,16 +564,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     if cont_success:
         x_final_seed = cont_steps[-1]["x_out"].copy()
         
-        # Decide dynamics q based on dynamics_mode
-        dyn_mode = config["dynamics_mode"]
-        if dyn_mode == "integer":
-            active_q = 1.0
-        elif dyn_mode == "fractional":
-            active_q = q
-        elif dyn_mode == "system":
-            active_q = 1.0 if q == 1.0 else q
-        else:
-            raise ValueError(f"Unknown dynamics_mode: {dyn_mode}")
+        # Decide dynamics q based on q_dynamics contract
+        active_q = q_dynamics
             
         # Long final integration at eta = 1.0 with early stop support using our integration helper
         t_fin, x_fin, final_status = run_workflow_integration(
@@ -608,7 +618,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                 stable_eqs=stable_eqs,
                 ref_tail=ref_tail,
                 output_dir=output_dir,
-                workers=config["workers"]
+                workers=config["workers"],
+                q_dynamics_effective=q_dynamics
             )
             probe_results = sphere_results["probe_runs"]
             target_hits = sum(1 for r in probe_results if r["destination"] == "target_attractor")
@@ -677,7 +688,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                         eq_name=eq_name,
                         system_id=system_id,
                         early_stop_config=config.get("early_stop"),
-                        equilibria_dict=equilibria
+                        equilibria_dict=equilibria,
+                        q_dynamics_effective=q_dynamics
                     )
                     # Plot slice
                     if config["plot_enabled"]:
@@ -718,7 +730,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                     eq_name="global",
                     system_id=system_id,
                     early_stop_config=config.get("early_stop"),
-                    equilibria_dict=equilibria
+                    equilibria_dict=equilibria,
+                    q_dynamics_effective=q_dynamics
                 )
                 # Plot slice
                 if config["plot_enabled"]:
@@ -798,7 +811,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         matched_ev=matched_ev,
         target_lam=target_lam,
         modal_res=modal_res,
-        norm_res=norm_res
+        norm_res=norm_res,
+        marginal_eqs=marginal_eqs
     )
     _save_summary(summary, output_dir)
     
@@ -831,7 +845,8 @@ def _build_summary_dict(
     matched_ev: Optional[complex],
     target_lam: Optional[complex],
     modal_res: Optional[float],
-    norm_res: Optional[float]
+    norm_res: Optional[float],
+    marginal_eqs: Optional[List[np.ndarray]] = None
 ) -> Dict[str, Any]:
     n_candidates = len(candidates)
     target_hits = sum(1 for r in probe_results if r["destination"] == "target_attractor")
@@ -908,6 +923,8 @@ def _build_summary_dict(
         "continuation_success": cont_success,
         "final_class": final_class if final_traj is not None else "continuation_failed",
         "equilibria_count": len(equilibria),
+        "marginal_equilibria_count": len(marginal_eqs) if marginal_eqs is not None else 0,
+        "marginal_eqs": [eq.tolist() for eq in marginal_eqs] if marginal_eqs is not None else [],
         "hiddenness_tests_enabled": config["run_hiddenness_tests"],
         "radii_tested": [1e-5, 1e-4, 1e-3, 1e-2] if config["run_hiddenness_tests"] else [],
         "samples_per_radius": config["samples_per_radius"] if config["run_hiddenness_tests"] else 0,

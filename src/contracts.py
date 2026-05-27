@@ -11,10 +11,11 @@ VALID_MEMORY_POLICIES = {"none", "full_caputo", "finite_window"}
 VALID_TRANSFER_CONVENTIONS = {"standard", "opposite_sign"}
 VALID_HARMONIC_CONDITIONS = {"1_minus_WN", "1_plus_WN"}
 
-def validate_contracts(config: Dict[str, Any]) -> None:
+def validate_contracts(config: Dict[str, Any], resolved: bool = False) -> None:
     """Validate all mathematical and numerical contract keys in the configuration.
     
-    Raises ValueError if any config value violates the explicit /src contracts.
+    If resolved is False: performs syntactic and basic syntax early validation.
+    If resolved is True: performs strong dynamic compatibility coherence checks.
     """
     # 1. Seed Mode
     seed_mode = config.get("seed_mode")
@@ -66,39 +67,7 @@ def validate_contracts(config: Dict[str, Any]) -> None:
         except (TypeError, ValueError):
             raise ValueError(f"q_dynamics contract must be a float in (0, 1], got {q_dynamics}.")
             
-    # 10. Coherence checks
-    q_dyn_eff = q_dynamics
-    if q_dyn_eff is None:
-        dyn_mode = config.get("dynamics_mode", "fractional")
-        if dyn_mode == "integer":
-            q_dyn_eff = 1.0
-        else:
-            q_dyn_eff = config.get("q", 1.0)
-            if q_dyn_eff is None:
-                q_dyn_eff = 1.0
-
-    # Rules:
-    # - Si integrator == "abm" y q_dynamics == 1: ValueError
-    if integrator == "abm" and abs(q_dyn_eff - 1.0) < 1e-9:
-        raise ValueError("ABM integrator is not allowed for integer-order dynamics (q_dynamics = 1.0). Use 'efork_q1' or 'heun'.")
-
-    # - Si integrator in {"heun", "efork_q1"} y q_dynamics < 1: ValueError
-    if integrator in {"heun", "efork_q1"} and q_dyn_eff < 1.0:
-        raise ValueError(f"Integrator '{integrator}' is not allowed for fractional-order dynamics (q_dynamics < 1.0). Use 'abm' or 'efork3'.")
-
-    # - Si continuation_mode == "integer" e integrator == "abm": ValueError
-    if cont_mode == "integer" and integrator == "abm":
-        raise ValueError("ABM integrator is not allowed for integer continuation. Use 'efork_q1' or 'heun'.")
-
-    # - Si continuation_mode == "fractional" e integrator in {"heun", "efork_q1"}: ValueError
-    if cont_mode == "fractional" and integrator in {"heun", "efork_q1"}:
-        raise ValueError(f"Integrator '{integrator}' is not allowed for fractional continuation. Use 'abm' or 'efork3'.")
-
-    # - Si memory_policy == "none" y q_dynamics < 1: ValueError
-    if mem_policy == "none" and q_dyn_eff < 1.0:
-        raise ValueError("memory_policy cannot be 'none' when q_dynamics < 1.0.")
-
-    # - Si memory_policy == "full_caputo": memory_mode debe ser "full"
+    # Memory modes consistency
     memory_mode = config.get("memory_mode")
     if mem_policy == "full_caputo" and memory_mode != "full":
         raise ValueError("When memory_policy is 'full_caputo', memory_mode must be 'full'.")
@@ -123,4 +92,48 @@ def validate_contracts(config: Dict[str, Any]) -> None:
     if trans_conv == "opposite_sign" and harm_cond == "1_minus_WN":
         if not allow_nonstandard:
             raise ValueError("Non-standard pairing: transfer_convention='opposite_sign' and harmonic_condition='1_minus_WN' is forbidden unless allow_nonstandard_sign_pairing is True.")
+
+    # 10. Coherence checks (only when resolved=True)
+    if resolved:
+        q_dyn_eff = config.get("q_dynamics")
+        if q_dyn_eff is None:
+            dyn_mode = config.get("dynamics_mode", "fractional")
+            if dyn_mode == "integer":
+                q_dyn_eff = 1.0
+            else:
+                q_dyn_eff = config.get("q", 1.0)
+                if q_dyn_eff is None:
+                    q_dyn_eff = 1.0
+                    
+        q_cont_eff = config.get("q_continuation")
+        if q_cont_eff is None:
+            if config.get("continuation_mode") == "integer":
+                q_cont_eff = 1.0
+            else:
+                q_cont_eff = q_dyn_eff
+
+        # Rules:
+        # - Si integrator == "abm" y q_dynamics == 1: ValueError
+        if integrator == "abm" and abs(q_dyn_eff - 1.0) < 1e-9:
+            raise ValueError("ABM integrator is not allowed for integer-order dynamics (q_dynamics = 1.0). Use 'efork_q1' or 'heun'.")
+
+        # - Si integrator in {"heun", "efork_q1"} y q_dynamics < 1: ValueError
+        if integrator in {"heun", "efork_q1"} and q_dyn_eff < 1.0:
+            raise ValueError(f"Integrator '{integrator}' is not allowed for fractional-order dynamics (q_dynamics < 1.0). Use 'abm' or 'efork3'.")
+
+        # - Si continuation_mode == "integer" e integrator == "abm": ValueError
+        if cont_mode == "integer" and integrator == "abm":
+            raise ValueError("ABM integrator is not allowed for integer continuation. Use 'efork_q1' or 'heun'.")
+
+        # - Si continuation_mode == "fractional" e integrator in {"heun", "efork_q1"}: ValueError
+        if cont_mode == "fractional" and integrator in {"heun", "efork_q1"}:
+            raise ValueError(f"Integrator '{integrator}' is not allowed for fractional continuation. Use 'abm' or 'efork3'.")
+
+        # - Si continuation_mode == "fractional" y q_continuation == 1.0: ValueError
+        if cont_mode == "fractional" and abs(q_cont_eff - 1.0) < 1e-9:
+            raise ValueError("Fractional continuation mode cannot be run with integer-order continuation dynamics (q_continuation = 1.0).")
+
+        # - Si memory_policy == "none" y q_dynamics < 1: ValueError
+        if mem_policy == "none" and q_dyn_eff < 1.0:
+            raise ValueError("memory_policy cannot be 'none' when q_dynamics < 1.0.")
 

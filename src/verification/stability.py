@@ -29,13 +29,14 @@ def classify_equilibrium_stability(system: Any, eq_point: np.ndarray, tol: float
         margins = angles - threshold
         margin_min = float(np.min(margins))
         
-        stable = bool(all(angle > threshold for angle in angles))
-        
         if margin_min > tol:
+            stable = True
             stability_class = "stable"
         elif margin_min < -tol:
+            stable = False
             stability_class = "unstable"
         else:
+            stable = False
             stability_class = "marginal_or_inconclusive"
             
         alpha_min = float(np.min(angles))

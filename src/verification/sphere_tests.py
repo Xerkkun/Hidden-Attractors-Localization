@@ -9,7 +9,28 @@ from ..plotting.plot_sphere_tests import plot_sphere_test_results
 
 def run_single_sphere_probe(payload: Tuple) -> Tuple[int, Dict[str, Any]]:
     """Worker function to simulate a single sphere initial condition."""
-    (idx, system, x0, transfer_mode, integrator, t_final, t_burn, h, ref_tail, stable_eqs, eq_tol, div_norm, metric, tol, dynamics_mode, memory_mode, memory_window_length, early_stop_config, equilibria_dict) = payload
+    # Unpack payload with support for optional q_dynamics_effective at the end
+    payload_list = list(payload)
+    idx = payload_list[0]
+    system = payload_list[1]
+    x0 = payload_list[2]
+    transfer_mode = payload_list[3]
+    integrator = payload_list[4]
+    t_final = payload_list[5]
+    t_burn = payload_list[6]
+    h = payload_list[7]
+    ref_tail = payload_list[8]
+    stable_eqs = payload_list[9]
+    eq_tol = payload_list[10]
+    div_norm = payload_list[11]
+    metric = payload_list[12]
+    tol = payload_list[13]
+    dynamics_mode = payload_list[14]
+    memory_mode = payload_list[15]
+    memory_window_length = payload_list[16]
+    early_stop_config = payload_list[17]
+    equilibria_dict = payload_list[18]
+    q_dynamics_effective = payload_list[19] if len(payload_list) > 19 else None
     
     try:
         res = run_neighborhood_probe(
@@ -30,7 +51,8 @@ def run_single_sphere_probe(payload: Tuple) -> Tuple[int, Dict[str, Any]]:
             memory_mode=memory_mode,
             memory_window_length=memory_window_length,
             early_stop_config=early_stop_config,
-            equilibria_dict=equilibria_dict
+            equilibria_dict=equilibria_dict,
+            q_dynamics_effective=q_dynamics_effective
         )
         dest = res["destination"]
         
@@ -76,13 +98,17 @@ def run_sphere_probe_sweep(
     stable_eqs: List[np.ndarray],
     ref_tail: np.ndarray,
     output_dir: str,
-    workers: int = 1
+    workers: int = 1,
+    q_dynamics_effective: Optional[float] = None
 ) -> Dict[str, Any]:
     """
     Executes the complete equilibrium neighborhood sphere probe sweep with early stopping.
     Saves CSV and JSON results, produces transparent 3D sphere plots,
     and returns a summary dictionary.
     """
+    if q_dynamics_effective is None:
+        import warnings
+        warnings.warn("q_dynamics_effective is omitted, falling back to legacy dynamics_mode logic", UserWarning)
     st_config = config.get("sphere_tests", {})
     if not st_config:
         st_config = {
@@ -157,7 +183,7 @@ def run_sphere_probe_sweep(
                     ref_tail, stable_eqs, config["equilibrium_tol"], config["divergence_norm"],
                     config["target_match_metric"], config["target_match_tol"],
                     config["dynamics_mode"], config["memory_mode"], config["memory_window_length"],
-                    config.get("early_stop"), equilibria
+                    config.get("early_stop"), equilibria, q_dynamics_effective
                 ))
                 
             completed = 0
