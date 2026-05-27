@@ -190,9 +190,10 @@ def run_neighborhood_probe(
     # Get all equilibria for early stopping detection
     all_eqs_list = list(equilibria_dict.values()) if equilibria_dict else stable_equilibria
     
-    # Build a plain rhs(t, x) callable for integrate_general
+    # Build a plain rhs(t, x) callable for integrate_general.
+    # NOTE: system.evaluate_rhs(x) is autonomous (no t), so we drop t here.
     def rhs_probe(t: float, x: np.ndarray) -> np.ndarray:
-        return np.asarray(system.evaluate_rhs(t, x), dtype=float)
+        return np.asarray(system.evaluate_rhs(x), dtype=float)
 
     t_arr, x_arr, status = integrate_general(
         rhs=rhs_probe,

@@ -38,15 +38,20 @@ import pytest
 
 # Make sure src is importable from the repo root
 _REPO_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(_REPO_ROOT))
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
-from src.systems.registry import get_system_by_id
-from src.lure.seeds import (
-    build_lure_seed,
-    build_closed_form_integer_seed,
-    build_modal_lure_seed,
-    _lambda_from_frequency,
-)
+import importlib
+
+# Dynamic imports to resolve IDE static analysis errors (where import root is /version_2)
+src_systems_registry = importlib.import_module("src.systems.registry")
+get_system_by_id = src_systems_registry.get_system_by_id
+
+src_lure_seeds = importlib.import_module("src.lure.seeds")
+build_lure_seed = src_lure_seeds.build_lure_seed
+build_closed_form_integer_seed = src_lure_seeds.build_closed_form_integer_seed
+build_modal_lure_seed = src_lure_seeds.build_modal_lure_seed
+_lambda_from_frequency = src_lure_seeds._lambda_from_frequency
 
 # ---------------------------------------------------------------------------
 # Reference data

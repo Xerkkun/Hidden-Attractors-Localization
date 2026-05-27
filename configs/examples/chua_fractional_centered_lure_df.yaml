@@ -1,15 +1,22 @@
 # Configuration for Chua Fractional with Saturation
 system_id: chua_fractional_saturation
 q: 0.9998
+
+# OJO: si quieres que la semilla DF sea entera, usa seed_mode: integer
 transfer_mode: fractional
+seed_mode: fractional
 seed_strategy: k_phi
 seed_construction: modal
 branch_index: 0
+
 continuation_mode: fractional
 dynamics_mode: system
-integrator: efork
+integrator: efork3
+
 memory_mode: window
-memory_window_length: 4000
+memory_policy: finite_window
+memory_window_length: 400
+memory_window_steps: 400
 
 alpha: 8.4562
 beta: 12.0732
@@ -17,17 +24,19 @@ gamma: 0.0052
 m0: -0.1768
 m1: -1.1468
 
-h: 0.01
-t_final: 500.0
-t_burn: 120.0
+h: 0.001
 divergence_norm: 120.0
 workers: 1
+
+final_simulation:
+  t_final: 300.0
+  t_burn: 120.0
 
 omega_min: 0.0001
 omega_max: 10.0
 amplitude_min: 1.0
 amplitude_max: 100.0
-grid_size_omega: 20000
-grid_size_amplitude: 20000
+grid_size_omega: 200
+grid_size_amplitude: 200
 df_residual_tol: 1.0e-8
 root_refinement: true

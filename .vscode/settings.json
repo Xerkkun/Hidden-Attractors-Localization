@@ -3,5 +3,23 @@
         "src"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "files.exclude": {
+        "**/__pyrefly_virutal__/**": true,
+        "**/__pyrefly_virtual__/**": true
+    },
+    "search.exclude": {
+        "**/__pyrefly_virutal__/**": true,
+        "**/__pyrefly_virtual__/**": true
+    },
+    "python.analysis.exclude": [
+        "**/__pyrefly_virutal__/**",
+        "**/__pyrefly_virtual__/**"
+    ],
+    "python.analysis.extraPaths": [
+        "./version_2"
+    ],
+    "python.autoComplete.extraPaths": [
+        "./version_2"
+    ]
 }

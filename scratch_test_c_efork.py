@@ -51,7 +51,8 @@ def main():
     print(f"| {'System ID':<30} | {'q':<8} | {'Integrator':<10} | {'omega0':<10} | {'Amp A0':<10} | {'Gain k':<10} |")
     print("-" * 90)
     for s in summaries:
-        q_str = f"{s['q']:.4f}"
+        q_val = s.get('q_dynamics_effective', s.get('q_seed_effective', s.get('q_continuation_effective', s.get('q', 1.0))))
+        q_str = f"{q_val:.4f}" if q_val is not None else "N/A"
         w0_str = f"{s['omega0']:.4f}" if s['omega0'] == s['omega0'] else "N/A"
         a0_str = f"{s['amplitude_a0']:.4f}" if s['amplitude_a0'] == s['amplitude_a0'] else "N/A"
         k_str = f"{s['k']:.4f}" if s['k'] == s['k'] else "N/A"

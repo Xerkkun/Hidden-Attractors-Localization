@@ -29,7 +29,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - uses: actions/checkout@v4
@@ -135,15 +135,17 @@ jobs:
       - name: Install at declared minimum versions
         run: |
           python -m pip install --upgrade pip
-          python -m pip install "numpy==1.26.0" "matplotlib==3.8.0"
+          python -m pip install "numpy==1.26.0" "matplotlib==3.8.0" "scipy==1.12.0" "numba==0.63.0"
           python -m pip install -e . --no-deps
 
       - name: Verify import at minimum versions
         run: |
           python -c "
-          import numpy, matplotlib, hidden_attractors
+          import numpy, matplotlib, scipy, numba, hidden_attractors
           print('numpy     :', numpy.__version__)
           print('matplotlib:', matplotlib.__version__)
+          print('scipy     :', scipy.__version__)
+          print('numba     :', numba.__version__)
           print('import OK')
           "
 

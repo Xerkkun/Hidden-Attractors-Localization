@@ -1,11 +1,17 @@
-"""Tests for validation evidence contract checking."""
-
 from __future__ import annotations
 
+import sys
 import json
 import shutil
 import uuid
 from pathlib import Path
+
+# Add workspace root and version_2 to sys.path
+workspace_root = Path(__file__).resolve().parents[2]
+if str(workspace_root / "version_2") not in sys.path:
+    sys.path.insert(0, str(workspace_root / "version_2"))
+if str(workspace_root) not in sys.path:
+    sys.path.insert(1, str(workspace_root))
 
 from hidden_attractors.validation_contract import check_validation_contract
 
@@ -231,9 +237,10 @@ def test_validate_efork_integrator_runs_on_temp_dir() -> None:
     tmp_path = _case_root("validate_efork_tool_run")
     try:
         # Run validate_efork_integrator.py pointing to our temp folder
-        script_path = Path("tools") / "validation" / "validate_efork_integrator.py"
+        _version_2_dir = Path(__file__).resolve().parent.parent
+        script_path = _version_2_dir / "tools" / "validation" / "validate_efork_integrator.py"
         env = os.environ.copy()
-        env["PYTHONPATH"] = "."
+        env["PYTHONPATH"] = f".{os.pathsep}{_version_2_dir}"
         subprocess.run(
             [sys.executable, str(script_path), "--validation-root", str(tmp_path)],
             check=True,
@@ -271,7 +278,7 @@ def test_validate_efork_integrator_runs_on_temp_dir() -> None:
         # Copy real contract to temporary configs dir
         configs_dir = tmp_path / "configs"
         configs_dir.mkdir(exist_ok=True)
-        shutil.copy(Path("configs") / "validation_contract.json", configs_dir / "validation_contract.json")
+        shutil.copy(_version_2_dir / "configs" / "validation_contract.json", configs_dir / "validation_contract.json")
 
         # Run check_validation_contract to verify that with allow_pending=True it passes cleanly
         from hidden_attractors.validation_contract import main

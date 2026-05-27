@@ -169,3 +169,69 @@ def solve_amplitude_from_gain(system: Any, k: float, A_min: float, A_max: float,
         
     sol = root_scalar(obj, bracket=[A_min, A_max], method="bisect")
     return float(sol.root)
+
+
+def evaluate_describing_function_batch(
+    system: Any,
+    A_array: np.ndarray,
+    mode: str = "auto",
+) -> np.ndarray:
+    """Evaluate the describing function N(A) for an entire array of amplitudes.
+
+    For systems that have a closed-form or piecewise closed-form describing
+    function this is fully vectorised (single NumPy call).  For systems that
+    require numerical quadrature it falls back to a sequential loop — scipy's
+    ``quad`` is inherently scalar and cannot be batched further.
+
+    Parameters
+    ----------
+    system : object
+        Lur'e system instance (same requirements as ``evaluate_describing_function``).
+    A_array : array_like, shape (n,)
+        Amplitudes at which to evaluate N.  All values must be positive.
+    mode : str
+        Evaluation mode forwarded to ``evaluate_describing_function``.
+
+    Returns
+    -------
+    np.ndarray, shape (n,)
+        N(A) values as a float array.
+    """
+    A_array = np.asarray(A_array, dtype=float)
+    if np.any(A_array <= 0.0):
+        raise ValueError("All amplitudes in A_array must be positive.")
+
+    caps = get_describing_function_capabilities(system)
+
+    # ── Fast path: closed-form evaluations are vectorisable ──────────────
+    if caps["closed_form"] or caps["piecewise_closed_form"]:
+        if hasattr(system, "describing_function_closed_form"):
+            try:
+                # Try direct call with array — many implementations support it
+                result = system.describing_function_closed_form(A_array)
+                return np.asarray(result, dtype=float)
+            except (TypeError, ValueError):
+                # Scalar-only implementation — use vectorize
+                vf = np.vectorize(system.describing_function_closed_form)
+                return vf(A_array).astype(float)
+        elif hasattr(system, "describing_function_piecewise_closed_form"):
+            try:
+                result = system.describing_function_piecewise_closed_form(A_array)
+                return np.asarray(result, dtype=float)
+            except (TypeError, ValueError):
+                vf = np.vectorize(system.describing_function_piecewise_closed_form)
+                return vf(A_array).astype(float)
+        elif hasattr(system, "describing_function"):
+            try:
+                result = system.describing_function(A_array)
+                return np.asarray(result, dtype=float)
+            except (TypeError, ValueError):
+                vf = np.vectorize(system.describing_function)
+                return vf(A_array).astype(float)
+
+    # ── Slow path: quadrature (scipy.quad is scalar-only) ────────────────
+    return np.array(
+        [evaluate_describing_function(system, float(A), mode=mode).value
+         for A in A_array],
+        dtype=float,
+    )

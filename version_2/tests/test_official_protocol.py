@@ -1,12 +1,17 @@
-"""Contract tests for the single maintained Caputo methodology."""
-
 from __future__ import annotations
 
+import sys
 import json
 from pathlib import Path
-
 import numpy as np
 import pytest
+
+# Add workspace root and version_2 to sys.path
+workspace_root = Path(__file__).resolve().parents[2]
+if str(workspace_root / "version_2") not in sys.path:
+    sys.path.insert(0, str(workspace_root / "version_2"))
+if str(workspace_root) not in sys.path:
+    sys.path.insert(1, str(workspace_root))
 
 from hidden_attractors.workflows.danca_abm_sphere_controls import (
     FINITE_MEMORY_POLICY,
@@ -159,7 +164,8 @@ def test_hiddenness_sampling_is_interior_to_equilibrium_balls() -> None:
 
 def test_sphere_controls_reach_danca_delta_with_requested_growth() -> None:
     expected_radii = [1.0e-5, 3.0e-5, 1.0e-4, 3.0e-4, 1.0e-3, 1.0e-2]
-    configured = json.loads(Path("configs/unified_caputo_protocol.json").read_text(encoding="utf-8"))["numerical_contract"]
+    configs_dir = Path(__file__).resolve().parent.parent / "configs"
+    configured = json.loads((configs_dir / "unified_caputo_protocol.json").read_text(encoding="utf-8"))["numerical_contract"]
 
     assert configured["hiddenness_radii"] == expected_radii
     assert configured["samples_per_radius"] == 100
@@ -220,7 +226,8 @@ def test_strong_hiddenness_label_requires_the_full_protocol() -> None:
 
 
 def test_validation_contract_uses_only_the_official_stage_order() -> None:
-    contract = json.loads(Path("configs/validation_contract.json").read_text(encoding="utf-8"))
+    configs_dir = Path(__file__).resolve().parent.parent / "configs"
+    contract = json.loads((configs_dir / "validation_contract.json").read_text(encoding="utf-8"))
     stages = tuple(stage["slug"] for stage in contract["stages"])
     assert stages == OFFICIAL_STAGE_ORDER
     assert set(contract["summary_required_fields"]) == {

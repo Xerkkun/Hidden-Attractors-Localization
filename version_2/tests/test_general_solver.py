@@ -4,10 +4,17 @@ import numpy as np
 import pytest
 
 workspace_root = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(workspace_root))
+if str(workspace_root) not in sys.path:
+    sys.path.insert(0, str(workspace_root))
 
-from src.integrators.general import integrate_general
-from src.systems.registry import get_system_by_id
+import importlib
+
+# Dynamic imports to resolve IDE static analysis errors (where import root is /version_2)
+src_integrators_general = importlib.import_module("src.integrators.general")
+integrate_general = src_integrators_general.integrate_general
+
+src_systems_registry = importlib.import_module("src.systems.registry")
+get_system_by_id = src_systems_registry.get_system_by_id
 
 def test_integrate_general_linear_system_abm():
     # Test integration of a simple general 2D linear system: D_t^q x = A @ x

@@ -3,18 +3,31 @@ import os
 from pathlib import Path
 import numpy as np
 import pytest
+import importlib
 
 # Add workspace root and version_2 to sys.path
 workspace_root = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(workspace_root / "version_2"))
 sys.path.insert(1, str(workspace_root))
 
-from src.systems.registry import get_system_by_id
-from src.lure.transfer import W_eval
-from src.lure.describing_function import N_quadrature
-from src.verification.stability import classify_equilibrium_stability
-from src.integrators.abm import caputo_abm_integrate
-from src.workflows.centered_lure_df_workflow import run_centered_lure_df_workflow
+# Dynamic imports to resolve IDE static analysis errors (where import root is /version_2)
+src_systems_registry = importlib.import_module("src.systems.registry")
+get_system_by_id = src_systems_registry.get_system_by_id
+
+src_lure_transfer = importlib.import_module("src.lure.transfer")
+W_eval = src_lure_transfer.W_eval
+
+src_lure_df = importlib.import_module("src.lure.describing_function")
+N_quadrature = src_lure_df.N_quadrature
+
+src_stability = importlib.import_module("src.verification.stability")
+classify_equilibrium_stability = src_stability.classify_equilibrium_stability
+
+src_abm = importlib.import_module("src.integrators.abm")
+caputo_abm_integrate = src_abm.caputo_abm_integrate
+
+src_workflow = importlib.import_module("src.workflows.centered_lure_df_workflow")
+run_centered_lure_df_workflow = src_workflow.run_centered_lure_df_workflow
 
 def test_system_matrices_and_parameters():
     # 1. P, b, r correct for each system
@@ -49,7 +62,7 @@ def test_transfer_function():
     s = 1j * omega
     direct_W = sys_int.r.T @ np.linalg.inv(sys_int.P - s * np.eye(3)) @ sys_int.b
     
-    eval_W_int = W_eval(omega, 1.0, "integer", sys_int.P, sys_int.b, sys_int.r)
+    eval_W_int = W_eval(omega, 1.0, "integer", sys_int.P, sys_int.b, sys_int.r, transfer_convention="opposite_sign")
     assert np.allclose(eval_W_int, direct_W)
     
     # 3. W_fractional uses lambda = (i*omega)^q
@@ -57,7 +70,7 @@ def test_transfer_function():
     lam = (omega**q) * np.exp(1j * q * np.pi / 2.0)
     direct_W_frac = sys_frac.r.T @ np.linalg.inv(sys_frac.P - lam * np.eye(3)) @ sys_frac.b
     
-    eval_W_frac = W_eval(omega, q, "fractional", sys_frac.P, sys_frac.b, sys_frac.r)
+    eval_W_frac = W_eval(omega, q, "fractional", sys_frac.P, sys_frac.b, sys_frac.r, transfer_convention="opposite_sign")
     assert np.allclose(eval_W_frac, direct_W_frac)
 
 def test_describing_functions():
@@ -115,7 +128,7 @@ def test_smoke_workflow_short_runs(tmp_path):
         "q": 1.0,
         "transfer_mode": "integer",
         "continuation_mode": "integer",
-        "integrator": "abm",
+        "integrator": "heun",
         "memory_mode": "full",
         "run_hiddenness_tests": False, # 8. run_hiddenness_tests = false skips
         "run_basin_slices": False,

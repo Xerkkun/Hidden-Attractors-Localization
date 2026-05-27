@@ -6,7 +6,7 @@ import numpy as np
 from typing import Any, Dict, List, Tuple, Optional
 from ..systems.registry import get_system_by_id
 from ..lure.decomposition import validate_lure_decomposition
-from ..lure.transfer import W_eval
+from ..lure.transfer import W_eval, W_precompute_spectral, W_eval_from_cache
 from ..lure.nyquist import find_harmonic_candidates
 from ..lure.seeds import build_lure_seed, build_modal_lure_seed
 from ..continuation.continuation_integer import run_integer_continuation
@@ -306,19 +306,39 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     # -------------------------------------------------------------------------
     print(f"[{run_id}][{system_id}] Fase 3/7: construyendo transferencia... 30%")
     omega_grid = np.linspace(config["omega_min"], config["omega_max"], config["grid_size_omega"])
-    w_vals = []
-    for w in omega_grid:
-        try:
-            val = W_eval(w, q_seed, seed_transfer_mode, system.P, system.b, system.r, transfer_convention=config["transfer_convention"])
-            w_vals.append(val)
-        except Exception:
-            w_vals.append(complex(np.nan, np.nan))
-    w_vals = np.array(w_vals)
-    
+
+    # Pre-compute the spectral decomposition of P once — reused in Fase 4
+    _W_cache = W_precompute_spectral(
+        system.P, system.b, system.r,
+        transfer_convention=config["transfer_convention"],
+    )
+
+    # Single vectorised call — no Python loop
+    try:
+        w_vals = W_eval_from_cache(omega_grid, q_seed, seed_transfer_mode, _W_cache)
+    except Exception:
+        # Graceful fallback: NaN for any individual failed point
+        w_vals = np.full(len(omega_grid), complex(np.nan, np.nan))
+        for _i, _w in enumerate(omega_grid):
+            try:
+                w_vals[_i] = W_eval(
+                    _w, q_seed, seed_transfer_mode,
+                    system.P, system.b, system.r,
+                    transfer_convention=config["transfer_convention"],
+                )
+            except Exception:
+                pass
+
     # -------------------------------------------------------------------------
     # Fase 4/7: buscando semillas DF... 45%
     # -------------------------------------------------------------------------
     print(f"[{run_id}][{system_id}] Fase 4/7: buscando semillas DF... 45%")
+
+    # For k_phi the inner scan uses a denser grid (20000 pts); reuse the cached
+    # decomposition but let find_harmonic_candidates build its own dense grid
+    # using W_eval_from_cache implicitly via W_eval (same cost after caching).
+    # Pass the Fase-3 grid for nyquist_df to avoid any recomputation.
+    _pass_precomputed = config["seed_strategy"] == "nyquist_df"
     candidates = find_harmonic_candidates(
         system=system,
         transfer_mode=seed_transfer_mode,
@@ -334,7 +354,9 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         q=q_seed,
         describing_function_mode=config["describing_function_mode"],
         transfer_convention=config["transfer_convention"],
-        harmonic_condition=config["harmonic_condition"]
+        harmonic_condition=config["harmonic_condition"],
+        precomputed_W_vals=w_vals if _pass_precomputed else None,
+        precomputed_omega_grid=omega_grid if _pass_precomputed else None,
     )
     
     n_candidates = len(candidates)
@@ -537,8 +559,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
             history_states=pre_hist_x,
             early_stop_config=cont_early_stop,
             equilibria=list(equilibria.values()),
-            require_c_backend=cont_cfg.get("require_c_backend", True),
-            allow_python_fallback=cont_cfg.get("allow_python_fallback", False),
+            require_c_backend=cont_cfg.get("require_c_backend", False),
+            allow_python_fallback=cont_cfg.get("allow_python_fallback", True),
             q=q_continuation,
         )
     

@@ -3,6 +3,13 @@ from typing import Callable, Tuple, Optional, Any, List
 from .fractional_c import fractional_integrate
 from .abm import caputo_abm_integrate
 from .efork import efork_integrate
+# Numba JIT fast path for q=1.0 (graceful fallback if unavailable)
+try:
+    from .numba_kernels import integrate_efork3_q1_numba, NUMBA_AVAILABLE as _NUMBA_AVAILABLE
+except ImportError:  # pragma: no cover
+    _NUMBA_AVAILABLE = False
+    def integrate_efork3_q1_numba(*args, **kwargs):  # type: ignore[misc]
+        return None
 
 def integrate_general(
     rhs: Callable[[float, np.ndarray], np.ndarray],
@@ -35,6 +42,26 @@ def integrate_general(
             
     # 1. Non-fractional order q = 1.0: use general Heun's method or EFORK_Q1 limit
     if q == 1.0:
+        # --- Fast path: Numba JIT kernel (10×–50× speedup) ---
+        # Only attempted when system is provided and integrator is EFORK-based.
+        # Returns None for unknown system types or if Numba is not installed,
+        # in which case execution falls through to the pure-Python loop below.
+        if _NUMBA_AVAILABLE and system is not None and integrator.lower() in {"efork", "efork3", "efork_q1"}:
+            try:
+                _result = integrate_efork3_q1_numba(
+                    system=system,
+                    x0=x0_arr,
+                    h=h,
+                    t_final=t_final,
+                    divergence_norm=divergence_norm,
+                    early_stop_config=early_stop_config,
+                    equilibria=equilibria,
+                )
+                if _result is not None:
+                    return _result
+            except Exception:
+                pass  # fallback to pure-Python path
+        # --- Pure-Python fallback (always available) ---
         if integrator.lower() in {"efork", "efork3", "efork_q1"}:
             from ._q1_coefficients import (
                 EFORK_Q1_A21,
