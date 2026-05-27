@@ -5,7 +5,7 @@ from .hiddenness import run_neighborhood_probe
 
 def _classify_point_worker(args: Tuple) -> Tuple[int, int, int]:
     """Helper worker to run a single point simulation in parallel."""
-    (i, j, x0, system, transfer_mode, integrator, t_final, t_burn, h, ref_tail, stable_eqs, eq_tol, div_norm, metric, tol, dynamics_mode, memory_mode, memory_window_length) = args
+    (i, j, x0, system, transfer_mode, integrator, t_final, t_burn, h, ref_tail, stable_eqs, eq_tol, div_norm, metric, tol, dynamics_mode, memory_mode, memory_window_length, early_stop_config, equilibria_dict) = args
     try:
         res = run_neighborhood_probe(
             system=system,
@@ -23,7 +23,9 @@ def _classify_point_worker(args: Tuple) -> Tuple[int, int, int]:
             target_match_tol=tol,
             dynamics_mode=dynamics_mode,
             memory_mode=memory_mode,
-            memory_window_length=memory_window_length
+            memory_window_length=memory_window_length,
+            early_stop_config=early_stop_config,
+            equilibria_dict=equilibria_dict
         )
         dest = res["destination"]
         if dest in ("stable_equilibrium", "equilibrium_stable"):
@@ -37,8 +39,6 @@ def _classify_point_worker(args: Tuple) -> Tuple[int, int, int]:
         else: # numerical_failure
             code = 4
     except Exception as e:
-        import traceback
-        traceback.print_exc()
         code = 4
     return i, j, code
 
@@ -71,7 +71,9 @@ def generate_basin_slice(
     around_equilibria: bool = False,
     local_radius: float = 2.0,
     eq_name: str = "global",
-    system_id: str = "chua"
+    system_id: str = "chua",
+    early_stop_config: Optional[dict] = None,
+    equilibria_dict: Optional[Dict[str, np.ndarray]] = None
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Generate a 2D basin slice mesh grid and evaluation matrix of classifications,
@@ -120,7 +122,7 @@ def generate_basin_slice(
             
             payloads.append((
                 i, j, x0, system, transfer_mode, integrator, t_final, t_burn, h, ref_tail, stable_eqs, eq_tol, div_norm, metric, tol,
-                dynamics_mode, memory_mode, memory_window_length
+                dynamics_mode, memory_mode, memory_window_length, early_stop_config, equilibria_dict
             ))
             
     total_points = len(payloads)
@@ -128,14 +130,18 @@ def generate_basin_slice(
     
     # Track destination stats for final terminal log
     stats = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0}
+    last_printed_pct = -5.0
     
-    # Progress printing helper
-    def log_progress(count):
+    # Progress printing helper every 5%
+    def log_progress(count, force=False):
+        nonlocal last_printed_pct
         pct = (count / total_points) * 100.0
-        print(f"[{system_id}] Cuencas {plane} {eq_name}: {count}/{total_points} puntos, {pct:.1f}%")
+        if force or (pct - last_printed_pct >= 5.0) or count == total_points:
+            print(f"[{system_id}] Cuenca {plane} {eq_name}: {count}/{total_points}, {pct:.1f}%, TARGET={stats[1]}, EQ={stats[0]}, DIV={stats[3]}, OTHER={stats[2]}, FAIL={stats[4]}")
+            last_printed_pct = pct
         
     # Initial print
-    log_progress(0)
+    log_progress(0, force=True)
     
     # 3. Execute sweep
     if workers > 1:
@@ -146,18 +152,16 @@ def generate_basin_slice(
                 matrix[i, j] = code
                 stats[code] += 1
                 completed_points += 1
-                if completed_points % max(1, total_points // 20) == 0 or completed_points == total_points:
-                    log_progress(completed_points)
+                log_progress(completed_points)
     else:
         for payload in payloads:
             i, j, code = _classify_point_worker(payload)
             matrix[i, j] = code
             stats[code] += 1
             completed_points += 1
-            if completed_points % max(1, total_points // 20) == 0 or completed_points == total_points:
-                log_progress(completed_points)
+            log_progress(completed_points)
                 
     # Final terminated line
-    print(f"[{system_id}] Cuencas {plane} {eq_name}: terminado, TARGET={stats[1]}, EQ={stats[0]}, DIV={stats[3]}, OTHER={stats[2]}, FAIL={stats[4]}")
+    log_progress(total_points, force=True)
             
     return u_grid, v_grid, matrix

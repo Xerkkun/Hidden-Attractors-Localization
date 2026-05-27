@@ -53,41 +53,49 @@ $$P = \begin{pmatrix} -\alpha(1 + m) & \alpha & 0 \\ 1 & -1 & 1 \\ 0 & -\beta & 
 
 ---
 
-## 2. Integer vs. Fractional Transfer Functions
+## 2. Core Lur'e Parameters & Differences
 
-The transfer function relates the output feedback coordinate $\sigma$ to the input vector $b$:
+The workflow utilizes distinct modes for each simulation layer:
 
-$$W(s) = r^T (s I - P)^{-1} b$$
-
-- **Integer Mode (`transfer_mode = "integer"`)**: Evaluated along the imaginary axis $s = i \omega$:
-  $$W(i \omega) = r^T (i \omega I - P)^{-1} b.$$
-- **Fractional Mode (`transfer_mode = "fractional"`)**: Evaluated along the fractional principal branch $s^q = (i \omega)^q$:
-  $$W_q(i \omega) = r^T (\lambda I - P)^{-1} b, \quad \lambda = (i \omega)^q = \omega^q \exp\left(i q \frac{\pi}{2}\right).$$
-
-*Note: The transfer function is evaluated directly using the spectral parameter $\lambda$ without treating the fractional order as an integer system.*
+| Parameter | Options | Description |
+| :--- | :--- | :--- |
+| **`transfer_mode`** | `integer` or `fractional` | Decides if the linear feedback loop is modeled as an integer or fractional order system. Influences $W(s)$ evaluation along the imaginary axis $s = i\omega$ vs the fractional principal branch $s^q = (i\omega)^q$. |
+| **`seed_construction`** | `modal` or `closed_form_integer` | Configures seed reconstruction. `modal` projects the crossing eigenvectors, while `closed_form_integer` emulates standard sinusoidal approximations. |
+| **`continuation_mode`** | `integer` or `fractional` | Defines how eta continuation steps step $\eta$ from 0 to 1. `integer` uses standard ODE steps; `fractional` retains Caputo causality history. |
+| **`dynamics_mode`** | `integer`, `fractional`, or `system` | Configures the final integration and attractor evaluation. `system` respects the system's actual order $q$; `integer` forces $q=1.0$; `fractional` forces $q < 1.0$. |
 
 ---
 
-## 3. Numerical Continuation Modes
+## 3. Describing Function Evaluation & Resolution
 
-To transport the heuristic describing-function seed to the original system, we deform the linearised system using a parameter $\eta \in [0, 1]$:
+To handle non-smooth systems elegantly without numerical instabilities, the library utilizes a unified Describing Function Manager with 5 evaluation modes:
 
-$$D_t^q X = P_0 X + b \, \eta \, \phi(r^T X),$$
-
-where:
-- $P_0 = P + k b r^T$ (the linearised matrix)
-- $\phi(\sigma) = \psi(\sigma) - k \sigma$ (the nonlinear residual)
-
-- **`continuation_mode = "integer"`**: Uses integer-order ODE integration to step $\eta$ from 0 to 1, regardless of the target fractional order.
-- **`continuation_mode = "fractional"`**: Integrates the Caputo fractional system causal history at each stage, ensuring continuous memory propagation.
+1. **`closed_form`**: Uses the analytical formula directly.
+2. **`piecewise_closed_form`**: Evaluates different closed-form sub-equations depending on regime boundaries.
+3. **`quadrature`**: Resolves the describing function via standard scipy global quadrature `quad(...)`.
+4. **`segmented_quadrature`**: Partitions the integration interval $[0, \pi]$ exactly at the non-smooth regime breakpoints to prevent roundoff error warnings.
+5. **`auto`** (Default): Selects the best method automatically:
+   - If there is a closed-form formula, use it.
+   - If the system is non-smooth (e.g. saturation) and has a piecewise form, use `piecewise_closed_form`.
+   - If the system is non-smooth but has no closed form, use `segmented_quadrature` at the breakpoints.
+   - If the system is smooth, use `closed_form` if registered, else fall back to standard `quadrature`.
 
 ---
 
-## 4. Full vs. Truncated Sliding Window Memory
+## 4. Why Piecewise Closed-Form for Saturation
 
-Because fractional derivatives have non-local memory, simulating them requires keeping a history of states.
-- **Full Memory (`memory_mode = "full"`)**: Retains the entire historical trajectory from the initial step. Accuracy is exact but computational complexity scales quadratically.
-- **Windowed Memory (`memory_mode = "window"`)**: Approximates the fractional integral by truncating the memory summation to only include the last $M = \text{memory\_window\_length}$ steps, significantly accelerating calculations.
+For Saturated Chua, the nonlinearity $\psi(\sigma) = (m_0 - m_1)\operatorname{sat}(\sigma)$ is non-smooth because its derivative is discontinuous at $|\sigma| = 1$.
+
+Evaluating its first-harmonic describing function using global numerical quadrature $N(A) = \frac{2}{\pi A} \int_{0}^{\pi} \psi(A \cos \theta) \cos \theta \, d\theta$ causes the integrator to hit the regime change boundary ($A \cos \theta = \pm 1$), throwing the notorious `IntegrationWarning: The occurrence of roundoff error is detected...`.
+
+To avoid this, we implement the analytical **piecewise closed-form** describing function:
+
+- **For $0 < A \le 1$:** The input lies entirely inside the linear regime:
+  $$N_{\text{sat}}(A) = m_0 - m_1$$
+- **For $A > 1$:** The input crosses into the saturated regime:
+  $$N_{\text{sat}}(A) = \frac{2(m_0 - m_1)}{\pi} \left[ \arcsin\left(\frac{1}{A}\right) + \frac{1}{A}\sqrt{1 - \frac{1}{A^2}} \right]$$
+
+Using this piecewise closed-form representation completely avoids integration roundoff errors, providing an exact, stable, and instantaneous solution.
 
 ---
 
@@ -99,14 +107,3 @@ Because fractional derivatives have non-local memory, simulating them requires k
 > Real physical and numerical simulations of fractional-order initial value problems are computed under causal operators (Caputo fractional derivative). The describing function seeds are approximations and do not mathematically prove the existence of an exact period cycle in Caputo systems. They serve as numerical starting coordinates for parameter continuation and trajectory exploration.
 > 
 > Therefore, describing function crossings and seed generation **never** prove the hiddenness or existence of an attractor on their own. Strong, conservative verification requires rigorous neighborhood sampling around all equilibria and complete basin classifications.
-
----
-
-## 6. Output States & Verdicts
-
-The final execution of the workflow returns one of the following conservative classification labels:
-- `hidden_verified_under_tested_radii`: All equilibria are unstable, and no neighborhood trajectories excited the candidate attractor (0 contact hits).
-- `compatible_with_hiddenness_under_tested_radii`: No contact was detected, but at least one stable equilibrium is present.
-- `self_excited_contact_detected`: At least one trajectory from the neighborhood of an equilibrium point converged to the candidate attractor, proving it is self-excited.
-- `not_supported`: The describing function seed itself failed to converge to the bounded candidate attractor.
-- `numerical_failure`: Numerical overflow, NaN, or solver exception occurred.

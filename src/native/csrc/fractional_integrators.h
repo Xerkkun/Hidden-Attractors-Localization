@@ -51,7 +51,21 @@ API_EXPORT int integrate_fractional_c(
     double *out_times,
     double *out_states,
     int *out_steps,
-    int *status_code
+    int *status_code,
+    
+    // Early stopping parameters
+    int early_stop_enabled,
+    int div_early_enabled,
+    double div_early_norm,
+    int div_consec_steps,
+    double div_growth_factor,
+    int eq_early_enabled,
+    double eq_tol,
+    double eq_deriv_tol,
+    int eq_consec_steps,
+    double eq_min_time,
+    const double *equilibria_pts,
+    int num_equilibria
 );
 
 #endif // FRACTIONAL_INTEGRATORS_H

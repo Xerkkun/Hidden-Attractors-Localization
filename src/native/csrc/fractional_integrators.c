@@ -113,7 +113,21 @@ API_EXPORT int integrate_fractional_c(
     double *out_times,
     double *out_states,
     int *out_steps,
-    int *status_code
+    int *status_code,
+    
+    // Early stopping parameters
+    int early_stop_enabled,
+    int div_early_enabled,
+    double div_early_norm,
+    int div_consec_steps,
+    double div_growth_factor,
+    int eq_early_enabled,
+    double eq_tol,
+    double eq_deriv_tol,
+    int eq_consec_steps,
+    double eq_min_time,
+    const double *equilibria_pts,
+    int num_equilibria
 ) {
     // 1. Basic validation
     if (!rhs || !x0 || dim <= 0 || !(q > 0.0 && q <= 1.0) || !(h > 0.0) || t_final < 0.0 || !out_times || !out_states || !out_steps || !status_code) {
@@ -151,6 +165,16 @@ API_EXPORT int integrate_fractional_c(
     *status_code = 0; // default ok
     int last_idx = H - 1;
 
+    // Early Stop consecutive counter setups
+    int div_consec_count = 0;
+    int growth_consec_count = 0;
+    double prev_norm = -1.0;
+    
+    int *eq_consec_counts = NULL;
+    if (early_stop_enabled && eq_early_enabled && num_equilibria > 0 && equilibria_pts) {
+        eq_consec_counts = (int *)calloc((size_t)num_equilibria, sizeof(int));
+    }
+
     // -------------------------------------------------------------------------
     // Method 0: Adams-Bashforth-Moulton (ABM)
     // -------------------------------------------------------------------------
@@ -164,6 +188,7 @@ API_EXPORT int integrate_fractional_c(
 
         if (!fhist || !pow_q || !pow_q1 || !predictor || !fp || !corrected) {
             free(t); free(x); free(fhist); free(pow_q); free(pow_q1); free(predictor); free(fp); free(corrected);
+            if (eq_consec_counts) free(eq_consec_counts);
             return -3;
         }
 
@@ -232,7 +257,7 @@ API_EXPORT int integrate_fractional_c(
                 }
             }
 
-            // C. Divergence Check
+            // C. Divergence Check & States Storage
             double norm = 0.0;
             for (int d = 0; d < dim; ++d) {
                 norm += corrected[d] * corrected[d];
@@ -247,6 +272,72 @@ API_EXPORT int integrate_fractional_c(
 
             last_idx = i + 1;
 
+            // DIVERGENCIA EARLY STOP
+            if (early_stop_enabled && div_early_enabled) {
+                if (norm > div_early_norm) {
+                    div_consec_count++;
+                } else {
+                    div_consec_count = 0;
+                }
+                if (prev_norm >= 0.0) {
+                    if (norm > div_growth_factor * prev_norm) {
+                        growth_consec_count++;
+                    } else {
+                        growth_consec_count = 0;
+                    }
+                }
+                prev_norm = norm;
+                if (div_consec_count >= div_consec_steps || growth_consec_count >= div_consec_steps) {
+                    *status_code = 3; // diverged_early
+                    break;
+                }
+            } else {
+                prev_norm = norm;
+            }
+
+            // EQUILIBRIUM CONVERGENCE EARLY STOP
+            if (early_stop_enabled && eq_early_enabled && eq_consec_counts && t_next >= eq_min_time) {
+                int converged_idx = -1;
+                for (int k = 0; k < num_equilibria; ++k) {
+                    double diff_norm = 0.0;
+                    for (int d = 0; d < dim; ++d) {
+                        double diff = corrected[d] - equilibria_pts[k * dim + d];
+                        diff_norm += diff * diff;
+                    }
+                    diff_norm = sqrt(diff_norm);
+
+                    // Compute rhs vector norm at the corrected state to test derivative
+                    double deriv_norm = 0.0;
+                    double *dx_tmp = (double *)malloc((size_t)dim * sizeof(double));
+                    if (dx_tmp) {
+                        rhs(t_next, corrected, dx_tmp, dim, params);
+                        for (int d = 0; d < dim; ++d) {
+                            deriv_norm += dx_tmp[d] * dx_tmp[d];
+                        }
+                        deriv_norm = sqrt(deriv_norm);
+                        free(dx_tmp);
+                    } else {
+                        deriv_norm = 9999.0;
+                    }
+
+                    if (diff_norm < eq_tol && deriv_norm < eq_deriv_tol) {
+                        eq_consec_counts[k]++;
+                    } else {
+                        eq_consec_counts[k] = 0;
+                    }
+
+                    if (eq_consec_counts[k] >= eq_consec_steps) {
+                        converged_idx = k;
+                        break;
+                    }
+                }
+                if (converged_idx != -1) {
+                    *status_code = 4; // converged_equilibrium_early
+                    break;
+                }
+            }
+
+            // Standard abort checks
             if (divergence_norm > 0.0 && norm > divergence_norm) {
                 *status_code = 1; // diverged
                 break;
@@ -272,6 +363,7 @@ API_EXPORT int integrate_fractional_c(
 
         if (!k1 || !k2 || !k3 || !tmp || !f || !mem_x) {
             free(t); free(x); free(k1); free(k2); free(k3); free(tmp); free(f); free(mem_x);
+            if (eq_consec_counts) free(eq_consec_counts);
             return -3;
         }
 
@@ -320,6 +412,74 @@ API_EXPORT int integrate_fractional_c(
 
             last_idx = i + 1;
 
+            double *state_ptr = &x[(i + 1) * dim];
+
+            // DIVERGENCIA EARLY STOP
+            if (early_stop_enabled && div_early_enabled) {
+                if (norm > div_early_norm) {
+                    div_consec_count++;
+                } else {
+                    div_consec_count = 0;
+                }
+                if (prev_norm >= 0.0) {
+                    if (norm > div_growth_factor * prev_norm) {
+                        growth_consec_count++;
+                    } else {
+                        growth_consec_count = 0;
+                    }
+                }
+                prev_norm = norm;
+                if (div_consec_count >= div_consec_steps || growth_consec_count >= div_consec_steps) {
+                    *status_code = 3; // diverged_early
+                    break;
+                }
+            } else {
+                prev_norm = norm;
+            }
+
+            // EQUILIBRIUM CONVERGENCE EARLY STOP
+            if (early_stop_enabled && eq_early_enabled && eq_consec_counts && t[i + 1] >= eq_min_time) {
+                int converged_idx = -1;
+                for (int k = 0; k < num_equilibria; ++k) {
+                    double diff_norm = 0.0;
+                    for (int d = 0; d < dim; ++d) {
+                        double diff = state_ptr[d] - equilibria_pts[k * dim + d];
+                        diff_norm += diff * diff;
+                    }
+                    diff_norm = sqrt(diff_norm);
+
+                    // Compute rhs vector norm at the predicted state to test derivative
+                    double deriv_norm = 0.0;
+                    double *dx_tmp = (double *)malloc((size_t)dim * sizeof(double));
+                    if (dx_tmp) {
+                        rhs(t[i + 1], state_ptr, dx_tmp, dim, params);
+                        for (int d = 0; d < dim; ++d) {
+                            deriv_norm += dx_tmp[d] * dx_tmp[d];
+                        }
+                        deriv_norm = sqrt(deriv_norm);
+                        free(dx_tmp);
+                    } else {
+                        deriv_norm = 9999.0;
+                    }
+
+                    if (diff_norm < eq_tol && deriv_norm < eq_deriv_tol) {
+                        eq_consec_counts[k]++;
+                    } else {
+                        eq_consec_counts[k] = 0;
+                    }
+
+                    if (eq_consec_counts[k] >= eq_consec_steps) {
+                        converged_idx = k;
+                        break;
+                    }
+                }
+                if (converged_idx != -1) {
+                    *status_code = 4; // converged_equilibrium_early
+                    break;
+                }
+            }
+
+            // Standard abort checks
             if (divergence_norm > 0.0 && norm > divergence_norm) {
                 *status_code = 1; // diverged
                 break;
@@ -342,6 +502,7 @@ API_EXPORT int integrate_fractional_c(
         }
     }
 
+    if (eq_consec_counts) free(eq_consec_counts);
     free(t); free(x);
     return 0;
 }

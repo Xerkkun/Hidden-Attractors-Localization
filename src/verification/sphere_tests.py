@@ -9,7 +9,7 @@ from ..plotting.plot_sphere_tests import plot_sphere_test_results
 
 def run_single_sphere_probe(payload: Tuple) -> Tuple[int, Dict[str, Any]]:
     """Worker function to simulate a single sphere initial condition."""
-    (idx, system, x0, transfer_mode, integrator, t_final, t_burn, h, ref_tail, stable_eqs, eq_tol, div_norm, metric, tol, dynamics_mode, memory_mode, memory_window_length) = payload
+    (idx, system, x0, transfer_mode, integrator, t_final, t_burn, h, ref_tail, stable_eqs, eq_tol, div_norm, metric, tol, dynamics_mode, memory_mode, memory_window_length, early_stop_config, equilibria_dict) = payload
     
     try:
         res = run_neighborhood_probe(
@@ -28,7 +28,9 @@ def run_single_sphere_probe(payload: Tuple) -> Tuple[int, Dict[str, Any]]:
             target_match_tol=tol,
             dynamics_mode=dynamics_mode,
             memory_mode=memory_mode,
-            memory_window_length=memory_window_length
+            memory_window_length=memory_window_length,
+            early_stop_config=early_stop_config,
+            equilibria_dict=equilibria_dict
         )
         dest = res["destination"]
         
@@ -77,7 +79,7 @@ def run_sphere_probe_sweep(
     workers: int = 1
 ) -> Dict[str, Any]:
     """
-    Executes the complete equilibrium neighborhood sphere probe sweep.
+    Executes the complete equilibrium neighborhood sphere probe sweep with early stopping.
     Saves CSV and JSON results, produces transparent 3D sphere plots,
     and returns a summary dictionary.
     """
@@ -91,12 +93,13 @@ def run_sphere_probe_sweep(
             "samples_growth_factor": 2.0,
             "directions_mode": "sphere_random",
             "random_seed": 42,
-            "t_final": 500.0,
-            "t_burn": 120.0,
+            "t_final": 80.0,
+            "t_burn": 20.0,
             "h": 0.01,
             "trajectory_plot_fraction": 0.25,
             "max_trajectories_to_plot": 60,
-            "samples_per_radius": None
+            "samples_per_radius": None,
+            "early_stop_enabled": True
         }
         
     system_id = config["system_id"]
@@ -150,10 +153,11 @@ def run_sphere_probe_sweep(
             for idx, pt in enumerate(pts):
                 payloads.append((
                     idx, system, pt, config["transfer_mode"], config["integrator"],
-                    st_config.get("t_final", 500.0), st_config.get("t_burn", 120.0), st_config.get("h", 0.01),
+                    st_config.get("t_final", 80.0), st_config.get("t_burn", 20.0), st_config.get("h", 0.01),
                     ref_tail, stable_eqs, config["equilibrium_tol"], config["divergence_norm"],
                     config["target_match_metric"], config["target_match_tol"],
-                    config["dynamics_mode"], config["memory_mode"], config["memory_window_length"]
+                    config["dynamics_mode"], config["memory_mode"], config["memory_window_length"],
+                    config.get("early_stop"), equilibria
                 ))
                 
             completed = 0
@@ -225,7 +229,7 @@ def run_sphere_probe_sweep(
                     run_res["status"],
                     run_res["distance_to_target"],
                     run_res["distance_to_equilibrium"],
-                    st_config.get("t_final", 500.0), st_config.get("t_burn", 120.0),
+                    st_config.get("t_final", 80.0), st_config.get("t_burn", 20.0),
                     config["integrator"], config["memory_mode"]
                 ])
                 

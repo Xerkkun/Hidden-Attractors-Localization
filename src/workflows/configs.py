@@ -28,6 +28,8 @@ DEFAULT_CONFIG = {
     "plot_residual_map": True,
     "plot_continuation": True,
     "plot_sphere_tests": True,
+    "plot_timeseries": True,
+    "plot_matignon": True,
     "max_seed_candidates_to_plot": 3,
     "plot_each_phase": False,
     "output_dir": None,
@@ -37,7 +39,7 @@ DEFAULT_CONFIG = {
     "seed_construction": "modal",
     "seed_theta": 0.0,
     "hiddenness_equilibria_filter": "all",
-    "describing_function_mode": "closed_form",
+    "describing_function_mode": "auto",
     "branch_index": 0,
     
     # Grid search and solver tolerances
@@ -56,14 +58,40 @@ DEFAULT_CONFIG = {
     "directions_mode": "sphere_random",
     "random_seed": 42,
     
-    # Classify settings
-    "t_final": 500.0,
-    "t_burn": 120.0,
     "h": 0.01,
     "divergence_norm": 120.0,
     "equilibrium_tol": 0.5,
     "target_match_metric": "centroid_distance",
     "target_match_tol": 0.5,
+    
+    # New Nested Configurations
+    "attractor_plots": {
+        "enabled": True,
+        "include_equilibria": False,
+        "use_tail_after_burn": True,
+        "max_seed_candidates_to_plot": 3,
+        "line_width": 0.7,
+        "point_size": 0.0
+    },
+    
+    "early_stop": {
+        "enabled": True,
+        "divergence_enabled": True,
+        "divergence_norm": 80.0,
+        "divergence_derivative_norm": None,
+        "divergence_consecutive_steps": 5,
+        "divergence_growth_factor": 1.25,
+        "equilibrium_enabled": True,
+        "equilibrium_tol": 1e-3,
+        "equilibrium_derivative_tol": 1e-4,
+        "equilibrium_consecutive_steps": 200,
+        "equilibrium_min_time": 5.0
+    },
+    
+    "final_simulation": {
+        "t_final": 500.0,
+        "t_burn": 120.0
+    },
     
     # Sphere Probe configuration
     "sphere_tests": {
@@ -74,12 +102,13 @@ DEFAULT_CONFIG = {
         "samples_growth_factor": 2.0,
         "directions_mode": "sphere_random",
         "random_seed": 42,
-        "t_final": 500.0,
-        "t_burn": 120.0,
+        "t_final": 80.0,
+        "t_burn": 20.0,
         "h": 0.01,
         "trajectory_plot_fraction": 0.25,
         "max_trajectories_to_plot": 60,
-        "samples_per_radius": None
+        "samples_per_radius": None,
+        "early_stop_enabled": True
     },
     
     # Basin Probe configuration
@@ -96,9 +125,10 @@ DEFAULT_CONFIG = {
         "around_equilibria": True,
         "equilibrium_selection": "all",
         "local_radius": 2.0,
-        "t_final": 500.0,
-        "t_burn": 120.0,
-        "h": 0.01
+        "t_final": 80.0,
+        "t_burn": 20.0,
+        "h": 0.01,
+        "early_stop_enabled": True
     }
 }
 
@@ -113,7 +143,7 @@ def load_and_validate_config(config_path: str) -> Dict[str, Any]:
     if config_data is None:
         config_data = {}
         
-    # Merge defaults recursively for nested dictionary settings (sphere_tests, basin)
+    # Merge defaults recursively for nested dictionary settings
     config = {}
     for k, v in DEFAULT_CONFIG.items():
         if isinstance(v, dict):
@@ -126,6 +156,14 @@ def load_and_validate_config(config_path: str) -> Dict[str, Any]:
             config[k].update(v)
         else:
             config[k] = v
+            
+    # Backwards compatibility check with warnings
+    if "t_final" in config_data:
+        print("WARNING: Using top-level 't_final' config is deprecated. Please configure 'final_simulation', 'sphere_tests', and 'basin' separately.")
+        config["final_simulation"]["t_final"] = float(config_data["t_final"])
+    if "t_burn" in config_data:
+        print("WARNING: Using top-level 't_burn' config is deprecated. Please configure 'final_simulation', 'sphere_tests', and 'basin' separately.")
+        config["final_simulation"]["t_burn"] = float(config_data["t_burn"])
     
     # Validate critical keys
     if config["transfer_mode"] not in {"integer", "fractional"}:
@@ -146,21 +184,36 @@ def load_and_validate_config(config_path: str) -> Dict[str, Any]:
         raise ValueError(f"Invalid seed_construction: {config['seed_construction']}")
     if config["hiddenness_equilibria_filter"] not in {"all", "unstable_only"}:
         raise ValueError(f"Invalid hiddenness_equilibria_filter: {config['hiddenness_equilibria_filter']}")
-    if config["describing_function_mode"] not in {"closed_form", "quadrature"}:
+    if config["describing_function_mode"] not in {"auto", "closed_form", "piecewise_closed_form", "quadrature", "segmented_quadrature"}:
         raise ValueError(f"Invalid describing_function_mode: {config['describing_function_mode']}")
         
     # Window checks
     if config["memory_mode"] == "window" and (config["memory_window_length"] is None or config["memory_window_length"] <= 0):
         raise ValueError("memory_window_length must be a positive integer when memory_mode is 'window'.")
         
-    # Cast numeric configs to correct types to handle PyYAML notation parsing
-    for float_key in ["omega_min", "omega_max", "amplitude_min", "amplitude_max", "df_residual_tol", "t_final", "t_burn", "h", "divergence_norm", "equilibrium_tol", "target_match_tol", "q", "seed_theta"]:
+    # Cast numeric configs to correct types
+    for float_key in ["omega_min", "omega_max", "amplitude_min", "amplitude_max", "df_residual_tol", "h", "divergence_norm", "equilibrium_tol", "target_match_tol", "q", "seed_theta"]:
         if float_key in config and config[float_key] is not None:
             config[float_key] = float(config[float_key])
             
     for int_key in ["grid_size_omega", "grid_size_amplitude", "workers", "samples_per_radius", "memory_window_length", "branch_index", "max_seed_candidates_to_plot"]:
         if int_key in config and config[int_key] is not None:
             config[int_key] = int(config[int_key])
+            
+    # Handle early_stop casts
+    es = config["early_stop"]
+    for float_key in ["divergence_norm", "divergence_growth_factor", "equilibrium_tol", "equilibrium_derivative_tol", "equilibrium_min_time"]:
+        if float_key in es and es[float_key] is not None:
+            es[float_key] = float(es[float_key])
+    for int_key in ["divergence_consecutive_steps", "equilibrium_consecutive_steps"]:
+        if int_key in es and es[int_key] is not None:
+            es[int_key] = int(es[int_key])
+            
+    # Handle final_simulation casts
+    fs = config["final_simulation"]
+    for float_key in ["t_final", "t_burn"]:
+        if float_key in fs and fs[float_key] is not None:
+            fs[float_key] = float(fs[float_key])
             
     # Handle sphere_tests casts
     st = config["sphere_tests"]

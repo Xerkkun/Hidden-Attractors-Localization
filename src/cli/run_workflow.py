@@ -3,6 +3,8 @@ import os
 import sys
 import csv
 import time
+import random
+import string
 from typing import Any, Dict, List
 from ..workflows.configs import load_and_validate_config
 from ..workflows.centered_lure_df_workflow import run_centered_lure_df_workflow
@@ -34,10 +36,37 @@ def parse_equilibria_selection(v):
         return "all"
     return [x.strip() for x in v.split(",")]
 
+def check_duplicate_flags(argv: List[str]) -> None:
+    """Interceptors to scan for repeated unique CLI flags and print helpful warnings."""
+    seen_flags = {}
+    i = 0
+    while i < len(argv):
+        token = argv[i]
+        if token.startswith("-"):
+            flag_name = token.split("=")[0]
+            if flag_name not in seen_flags:
+                seen_flags[flag_name] = []
+            
+            # Find associated value for log printing
+            if "=" in token:
+                val = token.split("=", 1)[1]
+            elif i + 1 < len(argv) and not argv[i+1].startswith("-"):
+                val = argv[i+1]
+            else:
+                val = "present"
+            seen_flags[flag_name].append(val)
+        i += 1
+        
+    for flag_name, vals in seen_flags.items():
+        if len(vals) > 1:
+            print(f"WARNING: flag {flag_name} was provided {len(vals)} times. Using last value: {vals[-1]}.")
+
 def main(argv: List[str] = None) -> None:
     if argv is None:
         argv = sys.argv[1:]
         
+    check_duplicate_flags(argv)
+    
     parser = argparse.ArgumentParser(description="Centered Lur'e Describing Function Workflow CLI Runner.")
     
     # Config and Preset selects
@@ -161,12 +190,14 @@ def main(argv: List[str] = None) -> None:
                 config["memory_window_length"] = args.memory_window_length
             if args.h is not None:
                 config["h"] = args.h
-            if args.t_final is not None:
-                config["t_final"] = args.t_final
-            if args.t_burn is not None:
-                config["t_burn"] = args.t_burn
             if args.workers is not None:
                 config["workers"] = args.workers
+                
+            # Allow fallback if old keys t-final / t-burn are provided
+            if args.t_final is not None:
+                config["final_simulation"]["t_final"] = args.t_final
+            if args.t_burn is not None:
+                config["final_simulation"]["t_burn"] = args.t_burn
                 
             # Search / Grid Overrides
             if args.omega_min is not None:
@@ -237,6 +268,30 @@ def main(argv: List[str] = None) -> None:
                     b["t_final"] = args.basin_t_final
                 if args.basin_t_burn is not None:
                     b["t_burn"] = args.basin_t_burn
+            
+            # Generate a unique run_id: timestamp + random 4-char suffix
+            timestamp = time.strftime("%Y%m%d_%H%M%S")
+            rand_suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=4))
+            run_id = f"{timestamp}_{rand_suffix}"
+            config["run_id"] = run_id
+            
+            # Adjust output folder path to reflect system_id and timestamp
+            config["output_dir"] = os.path.join("outputs", config["system_id"], timestamp)
+            
+            # Print short table of effective configs
+            print("\n" + "="*80)
+            print(" CONFIGURACIÓN EFECTIVA A EJECUTAR ")
+            print("="*80)
+            keys_to_print = [
+                "system_id", "q", "transfer_mode", "seed_strategy", "seed_construction",
+                "continuation_mode", "dynamics_mode", "integrator", "memory_mode",
+                "memory_window_length", "run_sphere_tests", "run_basin_slices",
+                "output_dir", "run_id"
+            ]
+            for k in keys_to_print:
+                val = config.get(k, "N/A")
+                print(f"| {k:<25} | {str(val):<48} |")
+            print("="*80 + "\n")
             
             # Execute workflow
             sum_res = run_centered_lure_df_workflow(config)

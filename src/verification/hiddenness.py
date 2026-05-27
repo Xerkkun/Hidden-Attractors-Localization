@@ -10,18 +10,11 @@ def generate_neighborhood_points(
     mode: str = "sphere_random",
     seed: Optional[int] = None
 ) -> np.ndarray:
-    """Generate initial conditions in the neighborhood of an equilibrium point.
-    
-    Modes:
-        - "sphere_random": Random points on the sphere surface of radius.
-        - "coordinate_axes": Scaled axes vectors (+-radius * [1,0,0], etc.).
-        - "hybrid": Axes vectors first, then random sphere vectors.
-    """
+    """Generate initial conditions in the neighborhood of an equilibrium point."""
     dim = len(eq_point)
     rng = np.random.default_rng(seed)
     
     if mode == "coordinate_axes":
-        # Generate axes vectors
         axes_pts = []
         for d in range(dim):
             v1 = np.zeros(dim)
@@ -117,9 +110,11 @@ def run_neighborhood_probe(
     target_match_tol: float = 0.5,
     dynamics_mode: str = "system",
     memory_mode: str = "full",
-    memory_window_length: Optional[int] = None
+    memory_window_length: Optional[int] = None,
+    early_stop_config: Optional[dict] = None,
+    equilibria_dict: Optional[Dict[str, np.ndarray]] = None
 ) -> Dict[str, Any]:
-    """Integrate a single trajectory from a neighborhood and classify its destination."""
+    """Integrate a single trajectory from a neighborhood and classify its destination with early stopping."""
     x0_arr = np.asarray(x0, dtype=float)
     
     # Resolve active q according to dynamics_mode
@@ -132,24 +127,43 @@ def run_neighborhood_probe(
     else:
         raise ValueError(f"Unknown dynamics_mode: {dynamics_mode}")
         
+    # Get all equilibria for early stopping detection
+    all_eqs_list = list(equilibria_dict.values()) if equilibria_dict else stable_equilibria
+    
     if integrator == "abm":
         t_arr, x_arr, status = caputo_abm_integrate(
             system.evaluate_rhs, x0_arr, q=active_q, h=h, t_final=t_final,
             divergence_norm=divergence_norm, system=system,
-            memory_mode=memory_mode, memory_window_length=memory_window_length
+            memory_mode=memory_mode, memory_window_length=memory_window_length,
+            early_stop_config=early_stop_config, equilibria=all_eqs_list
         )
     else: # efork
         t_arr, x_arr, status = efork_integrate(
             system, x0_arr, q=active_q, h=h, t_final=t_final,
             memory_mode=memory_mode, memory_window_length=memory_window_length,
-            divergence_norm=divergence_norm
+            divergence_norm=divergence_norm,
+            early_stop_config=early_stop_config, equilibria=all_eqs_list
         )
             
-    # 2. Check solver status
-    if status == "diverged" or status == "nonfinite_solution":
+    # 2. Check solver status for divergence and exceptions
+    if status in ("diverged", "diverged_early", "nonfinite_solution"):
         return {"destination": "divergence", "status": status, "trajectory": x_arr}
     elif status.startswith("solver_exception"):
         return {"destination": "numerical_failure", "status": status, "trajectory": x_arr}
+        
+    # 3. Check early convergence to stable equilibrium
+    if status == "converged_equilibrium_early":
+        final_state = x_arr[-1]
+        eq_name = "stable_equilibrium"
+        if stable_equilibria:
+            dists = [np.linalg.norm(final_state - eq) for eq in stable_equilibria]
+            closest_idx = int(np.argmin(dists))
+            if equilibria_dict:
+                for name, eq_pt in equilibria_dict.items():
+                    if np.allclose(eq_pt, stable_equilibria[closest_idx], atol=equilibrium_tol * 2):
+                        eq_name = name
+                        break
+        return {"destination": "stable_equilibrium", "status": status, "trajectory": x_arr, "equilibrium_name": eq_name}
         
     # Get tail
     n_burn = int(np.ceil(t_burn / h))
@@ -157,15 +171,21 @@ def run_neighborhood_probe(
         n_burn = int(len(x_arr) * 0.5)
     tail = x_arr[n_burn:]
     
-    # 3. Check convergence to stable equilibrium
+    # 4. Check convergence to stable equilibrium (at the end)
     final_state = x_arr[-1]
     for eq in stable_equilibria:
         if np.linalg.norm(final_state - eq) <= equilibrium_tol:
-            return {"destination": "equilibrium_stable", "status": "ok", "trajectory": x_arr}
+            eq_name = "stable_equilibrium"
+            if equilibria_dict:
+                for name, eq_pt in equilibria_dict.items():
+                    if np.allclose(eq_pt, eq, atol=1e-3):
+                        eq_name = name
+                        break
+            return {"destination": "stable_equilibrium", "status": "ok", "trajectory": x_arr, "equilibrium_name": eq_name}
             
-    # 4. Check convergence to target attractor
+    # 5. Check convergence to target attractor
     if evaluate_target_match(tail, ref_tail, metric=target_match_metric, tolerance=target_match_tol):
         return {"destination": "target_attractor", "status": "ok", "trajectory": x_arr}
         
-    # 5. Otherwise other attractor
+    # 6. Otherwise other attractor
     return {"destination": "other_attractor", "status": "ok", "trajectory": x_arr}

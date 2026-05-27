@@ -3,7 +3,7 @@ import os
 import sys
 from pathlib import Path
 import numpy as np
-from typing import Any, Tuple, Optional
+from typing import Any, Tuple, Optional, List
 
 from hidden_attractors.parallel import compile_c_target
 from hidden_attractors.paths import NATIVE_CACHE
@@ -70,7 +70,21 @@ class GeneralFractionalCBackend:
             np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
             np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
             ctypes.POINTER(ctypes.c_int),
-            ctypes.POINTER(ctypes.c_int)
+            ctypes.POINTER(ctypes.c_int),
+            
+            # Early stopping arguments
+            ctypes.c_int,
+            ctypes.c_int,
+            ctypes.c_double,
+            ctypes.c_int,
+            ctypes.c_double,
+            ctypes.c_int,
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_int,
+            ctypes.c_double,
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            ctypes.c_int
         ]
         lib.integrate_fractional_c.restype = ctypes.c_int
         
@@ -95,9 +109,13 @@ def fractional_integrate(
     use_c_backend: bool = True,
     divergence_norm: float = 120.0,
     return_history: bool = False,
-    allow_python_fallback: bool = False
+    allow_python_fallback: bool = False,
+    
+    # Early stopping config
+    early_stop_config: Optional[dict] = None,
+    equilibria: Optional[List[np.ndarray]] = None
 ) -> Tuple[np.ndarray, np.ndarray, str, dict]:
-    """Unified generic integration interface for fractional differential equations."""
+    """Unified generic integration interface for fractional differential equations with early stopping support."""
     x0_arr = np.asarray(x0, dtype=np.float64)
     dim = x0_arr.size
     
@@ -109,6 +127,29 @@ def fractional_integrate(
     mem_val = 0 if memory_mode.lower() == "full" else 1
     win_len = int(memory_window_length) if memory_window_length is not None else 0
     
+    # Parse early stopping config
+    esc = early_stop_config if early_stop_config is not None else {}
+    es_enabled = int(esc.get("enabled", True))
+    
+    # Support both flat and nested fields for early stop config
+    div_enabled = int(esc.get("divergence_enabled", esc.get("divergence", {}).get("enabled", True)))
+    div_norm = float(esc.get("divergence_norm", esc.get("divergence", {}).get("norm", 80.0)))
+    div_consec = int(esc.get("divergence_consecutive_steps", esc.get("divergence", {}).get("consecutive_steps", 5)))
+    div_growth = float(esc.get("divergence_growth_factor", esc.get("divergence", {}).get("growth_factor", 1.25)))
+    
+    eq_enabled = int(esc.get("equilibrium_enabled", esc.get("equilibrium", {}).get("enabled", True)))
+    eq_t = float(esc.get("equilibrium_tol", esc.get("equilibrium", {}).get("tol", 1e-3)))
+    eq_deriv = float(esc.get("equilibrium_derivative_tol", esc.get("equilibrium", {}).get("derivative_tol", 1e-4)))
+    eq_consec = int(esc.get("equilibrium_consecutive_steps", esc.get("equilibrium", {}).get("consecutive_steps", 200)))
+    eq_min_t = float(esc.get("equilibrium_min_time", esc.get("equilibrium", {}).get("min_time", 5.0)))
+    
+    if equilibria is not None and len(equilibria) > 0:
+        eq_pts = np.ascontiguousarray(np.concatenate([np.asarray(eq, dtype=np.float64) for eq in equilibria]), dtype=np.float64)
+        num_eq = len(equilibria)
+    else:
+        eq_pts = np.empty(0, dtype=np.float64)
+        num_eq = 0
+        
     # Handle prehistory normalization
     if history_times is not None and history_states is not None:
         history_times_arr = np.ascontiguousarray(history_times, dtype=np.float64)
@@ -189,7 +230,21 @@ def fractional_integrate(
                 out_times,
                 out_states,
                 ctypes.byref(out_steps_c),
-                ctypes.byref(status_code_c)
+                ctypes.byref(status_code_c),
+                
+                # New early stop parameters
+                es_enabled,
+                div_enabled,
+                div_norm,
+                div_consec,
+                div_growth,
+                eq_enabled,
+                eq_t,
+                eq_deriv,
+                eq_consec,
+                eq_min_t,
+                eq_pts,
+                num_eq
             )
             
             if rc < 0:
@@ -199,11 +254,15 @@ def fractional_integrate(
             times = out_times[:actual_steps]
             states = out_states[:actual_steps * dim].reshape(-1, dim)
             
-            # Interpret status
+            # Interpret status code
             if status_code_c.value == 1:
                 status = "diverged"
             elif status_code_c.value == 2:
                 status = "nonfinite_solution"
+            elif status_code_c.value == 3:
+                status = "diverged_early"
+            elif status_code_c.value == 4:
+                status = "converged_equilibrium_early"
             else:
                 status = "ok"
                 
@@ -245,7 +304,9 @@ def fractional_integrate(
             history_times=history_times,
             history_states=history_states,
             memory_mode=memory_mode,
-            memory_window_length=memory_window_length
+            memory_window_length=memory_window_length,
+            early_stop_config=early_stop_config,
+            equilibria=equilibria
         )
         info["n_steps"] = len(t_arr)
         if return_history:
@@ -256,8 +317,6 @@ def fractional_integrate(
     else:
         # Python EFORK
         if memory_mode == "window":
-            # In Python fallback, EFORK-3 windowed memory is implemented via a simplified slicing
-            # We can run it or raise ValueError if not allowed
             raise ValueError("Python fallback does not support EFORK + windowed memory. C backend is required.")
         else:
             from hidden_attractors.solvers.efork_published import efork3_caputo_integrate
@@ -268,18 +327,77 @@ def fractional_integrate(
                     return rhs(x_val)
             try:
                 t_arr, x_arr = efork3_caputo_integrate(rhs_t, x0_arr, alpha=q, h=h, t_final=t_final)
-                norms = np.linalg.norm(x_arr, axis=1)
+                
+                # Perform post-integration analysis or early stopping emulation
                 status = "ok"
                 last_idx = len(t_arr)
-                if divergence_norm is not None:
-                    div_indices = np.where(norms > divergence_norm)[0]
-                    if len(div_indices) > 0:
+                
+                # Emulate step-by-step checks
+                prev_norm = -1.0
+                div_consec_count = 0
+                growth_consec_count = 0
+                
+                eq_consec_counts = [0] * len(equilibria) if equilibria else []
+                
+                for idx in range(len(t_arr)):
+                    state = x_arr[idx]
+                    norm = np.linalg.norm(state)
+                    
+                    if not np.isfinite(norm):
+                        status = "nonfinite_solution"
+                        last_idx = idx + 1
+                        break
+                        
+                    # Divergence Check
+                    if divergence_norm is not None and norm > divergence_norm:
                         status = "diverged"
-                        last_idx = div_indices[0] + 1
+                        last_idx = idx + 1
+                        break
+                        
+                    # Early stop checks
+                    if es_enabled:
+                        # 1. Divergence checks
+                        if div_enabled:
+                            if norm > div_norm:
+                                div_consec_count += 1
+                            else:
+                                div_consec_count = 0
+                                
+                            if prev_norm >= 0.0:
+                                if norm > div_growth * prev_norm:
+                                    growth_consec_count += 1
+                                else:
+                                    growth_consec_count = 0
+                            prev_norm = norm
+                            
+                            if div_consec_count >= div_consec or growth_consec_count >= div_consec:
+                                status = "diverged_early"
+                                last_idx = idx + 1
+                                break
+                        else:
+                            prev_norm = norm
+                            
+                        # 2. Equilibrium checks
+                        if eq_enabled and equilibria and t_arr[idx] >= eq_min_t:
+                            converged_eq_idx = -1
+                            for k, eq in enumerate(equilibria):
+                                diff_norm = np.linalg.norm(state - eq)
+                                deriv_norm = np.linalg.norm(rhs_t(t_arr[idx], state))
+                                
+                                if diff_norm < eq_t and deriv_norm < eq_deriv:
+                                    eq_consec_counts[k] += 1
+                                else:
+                                    eq_consec_counts[k] = 0
+                                    
+                                if eq_consec_counts[k] >= eq_consec:
+                                    converged_eq_idx = k
+                                    break
+                            if converged_eq_idx != -1:
+                                status = "converged_equilibrium_early"
+                                last_idx = idx + 1
+                                break
+                                
                 info["n_steps"] = last_idx
-                if return_history:
-                    return t_arr[:last_idx], x_arr[:last_idx], status, info
-                else:
-                    return t_arr[:last_idx], x_arr[:last_idx], status, info
+                return t_arr[:last_idx], x_arr[:last_idx], status, info
             except Exception as exc:
                 raise RuntimeError(f"Python EFORK fallback failed: {exc}")

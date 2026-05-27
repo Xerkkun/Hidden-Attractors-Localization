@@ -2,8 +2,9 @@ import os
 import matplotlib
 matplotlib.use("Agg", force=True)
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
-from typing import Any, List
+from typing import Any, List, Dict
 
 def plot_continuation_eta(
     cont_steps: List[dict],
@@ -89,3 +90,219 @@ def plot_continuation_eta(
     plt.tight_layout()
     fig_amp.savefig(os.path.join(fig_dir, "continuation_eta_amplitude.png"), dpi=300)
     plt.close(fig_amp)
+    
+    # 3. TRIGGER PREMIUM OVERLAYS & COMPARISONS
+    if len(cont_steps) >= 2:
+        try:
+            plot_continuation_first_last_comparison(cont_steps, config, output_dir)
+            plot_continuation_timeseries_comparison(cont_steps, config, output_dir)
+            plot_continuation_progression(cont_steps, config, output_dir)
+        except Exception as e:
+            print(f"WARNING: Failed to generate premium continuation plots: {e}")
+
+def plot_continuation_first_last_comparison(
+    cont_steps: List[dict],
+    config: dict,
+    output_dir: str
+) -> None:
+    """Compare the linearized attractor (first step, lambda=0.0) and the final nonlinear attractor (last step, lambda=1.0) in 3D and 2D overlays."""
+    first_step = cont_steps[0]
+    last_step = cont_steps[-1]
+    
+    first_traj = first_step.get("trajectory")
+    last_traj = last_step.get("trajectory")
+    
+    if first_traj is None or last_traj is None or len(first_traj) == 0 or len(last_traj) == 0:
+        return
+        
+    # First step and last step trajectories: shape (N, 4), columns [t, x, y, z]
+    if first_traj.shape[1] == 4:
+        fx, fy, fz = first_traj[:, 1], first_traj[:, 2], first_traj[:, 3]
+    else:
+        fx, fy, fz = first_traj[:, 0], first_traj[:, 1], first_traj[:, 2]
+        
+    if last_traj.shape[1] == 4:
+        lx, ly, lz = last_traj[:, 1], last_traj[:, 2], last_traj[:, 3]
+    else:
+        lx, ly, lz = last_traj[:, 0], last_traj[:, 1], last_traj[:, 2]
+        
+    fig_dir = os.path.join(output_dir, "figures")
+    os.makedirs(fig_dir, exist_ok=True)
+    
+    # 1. 3D PHASE SPACE COMPARISON
+    fig_3d = plt.figure(figsize=(8, 7), dpi=300)
+    ax_3d = fig_3d.add_subplot(111, projection='3d')
+    
+    # Linearized: blue dashed line
+    ax_3d.plot(fx, fy, fz, color='#3b82f6', linestyle='--', linewidth=1.2, alpha=0.9, label=r'Linearized Attractor ($\eta=0.0$)')
+    # Nonlinear: red solid line
+    ax_3d.plot(lx, ly, lz, color='#ef4444', linestyle='-', linewidth=1.2, alpha=0.9, label=r'Nonlinear Attractor ($\eta=1.0$)')
+    
+    ax_3d.set_title(f"Linearized vs Nonlinear Attractor\n{config['system_id']}", fontsize=12, fontweight='bold', pad=15)
+    ax_3d.set_xlabel('x', fontsize=10)
+    ax_3d.set_ylabel('y', fontsize=10)
+    ax_3d.set_zlabel('z', fontsize=10)
+    ax_3d.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
+    
+    plt.tight_layout()
+    fig_3d.savefig(os.path.join(fig_dir, "continuation_first_last_comparison.png"), dpi=300)
+    plt.close(fig_3d)
+    
+    # 2. 2D PROJECTIONS COMPARISON (Multi-panel 1x3 subplot)
+    fig_2d, axes = plt.subplots(1, 3, figsize=(15, 5), dpi=300)
+    
+    projections = [
+        (0, fx, fy, lx, ly, 'x', 'y', 'XY Projection'),
+        (1, fx, fz, lx, lz, 'x', 'z', 'XZ Projection'),
+        (2, fy, fz, ly, lz, 'y', 'z', 'YZ Projection')
+    ]
+    
+    for idx, fu, fv, lu, lv, xlabel, ylabel, title in projections:
+        ax = axes[idx]
+        ax.grid(True, linestyle='--', linewidth=0.5, color='#cbd5e1')
+        ax.plot(fu, fv, color='#3b82f6', linestyle='--', linewidth=1.2, alpha=0.9, label=r'Linearized ($\eta=0.0$)')
+        ax.plot(lu, lv, color='#ef4444', linestyle='-', linewidth=1.2, alpha=0.9, label=r'Nonlinear ($\eta=1.0$)')
+        ax.set_title(title, fontsize=11, fontweight='bold')
+        ax.set_xlabel(xlabel, fontsize=10)
+        ax.set_ylabel(ylabel, fontsize=10)
+        ax.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
+        
+    plt.tight_layout()
+    fig_2d.savefig(os.path.join(fig_dir, "continuation_first_last_projections.png"), dpi=300)
+    plt.close(fig_2d)
+
+def plot_continuation_timeseries_comparison(
+    cont_steps: List[dict],
+    config: dict,
+    output_dir: str
+) -> None:
+    """Compare the time series of the first state variable x(t) between the first cycle (linearized) and last cycle."""
+    first_step = cont_steps[0]
+    last_step = cont_steps[-1]
+    
+    first_traj = first_step.get("trajectory")
+    last_traj = last_step.get("trajectory")
+    
+    if first_traj is None or last_traj is None or len(first_traj) == 0 or len(last_traj) == 0:
+        return
+        
+    fig_dir = os.path.join(output_dir, "figures")
+    os.makedirs(fig_dir, exist_ok=True)
+    
+    # Align time vectors to start at 0
+    t1 = first_traj[:, 0]
+    x1 = first_traj[:, 1]
+    t1_align = t1 - t1[0]
+    
+    t2 = last_traj[:, 0]
+    x2 = last_traj[:, 1]
+    t2_align = t2 - t2[0]
+    
+    fig = plt.figure(figsize=(10, 5), dpi=300)
+    ax = fig.add_subplot(111)
+    ax.grid(True, linestyle='--', linewidth=0.5, color='#cbd5e1')
+    
+    ax.plot(t1_align, x1, color='#3b82f6', linestyle='--', linewidth=1.2, alpha=0.9, label=r'Linearized $x(t)$ ($\eta=0.0$)')
+    ax.plot(t2_align, x2, color='#ef4444', linestyle='-', linewidth=1.2, alpha=0.9, label=r'Nonlinear $x(t)$ ($\eta=1.0$)')
+    
+    ax.set_title(f"Time Series Comparison: $x(t)$\n{config['system_id']}", fontsize=12, fontweight='bold', pad=15)
+    ax.set_xlabel('Aligned Time $t$', fontsize=10)
+    ax.set_ylabel('State Variable $x$', fontsize=10)
+    ax.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
+    
+    plt.tight_layout()
+    fig.savefig(os.path.join(fig_dir, "continuation_timeseries_comparison_x.png"), dpi=300)
+    plt.close(fig)
+
+def plot_continuation_progression(
+    cont_steps: List[dict],
+    config: dict,
+    output_dir: str
+) -> None:
+    """Plot progression of trajectories at each step of continuation, and trace the path followed by their initial conditions."""
+    fig_dir = os.path.join(output_dir, "figures")
+    os.makedirs(fig_dir, exist_ok=True)
+    
+    fig = plt.figure(figsize=(8, 7), dpi=300)
+    ax = fig.add_subplot(111, projection='3d')
+    
+    # 1. DRAW TRAJECTORY FOR EACH STEP
+    lambdas = [step["lambda_value"] for step in cont_steps]
+    lam_min = min(lambdas) if len(lambdas) > 0 else 0.0
+    lam_max = max(lambdas) if len(lambdas) > 0 else 1.0
+    lam_span = max(1e-12, lam_max - lam_min)
+    
+    cmap = plt.get_cmap("plasma")
+    
+    # Loop over all steps and plot
+    for idx, step in enumerate(cont_steps):
+        traj = step.get("trajectory")
+        if traj is None or len(traj) == 0:
+            continue
+            
+        eta = step["lambda_value"]
+        color = cmap((eta - lam_min) / lam_span)
+        
+        # Extract states
+        if traj.shape[1] == 4:
+            x, y, z = traj[:, 1], traj[:, 2], traj[:, 3]
+        else:
+            x, y, z = traj[:, 0], traj[:, 1], traj[:, 2]
+            
+        max_pts = 1500
+        if len(x) > max_pts:
+            indices = np.linspace(0, len(x) - 1, max_pts, dtype=int)
+            x_plot = x[indices]
+            y_plot = y[indices]
+            z_plot = z[indices]
+        else:
+            x_plot, y_plot, z_plot = x, y, z
+            
+        ax.plot(x_plot, y_plot, z_plot, color=color, linewidth=0.8, alpha=0.85, 
+                label=fr"$\eta = {eta:.2f}$" if len(cont_steps) <= 8 else "")
+                
+    # 2. DRAW INITIAL CONDITIONS PATH (epsilon path / lambda path)
+    x_in_pts = []
+    for step in cont_steps:
+        x_in = step.get("x_in")
+        if x_in is not None:
+            x_in_pts.append(x_in)
+            
+    # Include last step's final state x_out to show where the path ends
+    if len(cont_steps) > 0:
+        x_out_final = cont_steps[-1].get("x_out")
+        if x_out_final is not None:
+            x_in_pts.append(x_out_final)
+            
+    if len(x_in_pts) > 0:
+        x_in_arr = np.array(x_in_pts)
+        ax.plot(x_in_arr[:, 0], x_in_arr[:, 1], x_in_arr[:, 2], 
+                color='#475569', linestyle='--', marker='o', markersize=5, linewidth=1.5,
+                zorder=10, label="Initial Conditions Path")
+                
+    ax.set_title(f"Numerical Continuation: Trajectory Progression\n{config['system_id']}", fontsize=11, fontweight='bold', pad=15)
+    ax.set_xlabel('x', fontsize=10)
+    ax.set_ylabel('y', fontsize=10)
+    ax.set_zlabel('z', fontsize=10)
+    
+    # Legend
+    if len(cont_steps) <= 8:
+        ax.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
+    else:
+        handles, labels = ax.get_legend_handles_labels()
+        by_label = dict(zip(labels, handles))
+        if "Initial Conditions Path" in by_label:
+            ax.legend([by_label["Initial Conditions Path"]], ["Initial Conditions Path"], 
+                      loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
+                      
+    # Add colorbar for lambda / eta values
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=lam_min, vmax=lam_max))
+    sm.set_array([])
+    cbar = plt.colorbar(sm, ax=ax, shrink=0.6, pad=0.1)
+    cbar.set_label(r'Continuation Parameter $\eta$', fontsize=9)
+    cbar.ax.tick_params(labelsize=8)
+    
+    plt.tight_layout()
+    fig.savefig(os.path.join(fig_dir, "continuation_progression.png"), dpi=300)
+    plt.close(fig)
+

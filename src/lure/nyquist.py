@@ -1,13 +1,28 @@
 import numpy as np
 from scipy.optimize import minimize, root_scalar
-from scipy.integrate import quad
 from typing import Any, Dict, List, Tuple, Optional
+from dataclasses import dataclass
 from .transfer import W_eval
+from .describing_function import evaluate_describing_function, solve_amplitude_from_gain
+
+@dataclass
+class HarmonicCandidate:
+    A0: float
+    omega0: float
+    k: float
+    df_method_used: str
+    df_warning: Optional[str]
+    residual_gain: float
+
+class CandidateList(list):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.detailed_candidates: List[HarmonicCandidate] = []
 
 def find_harmonic_candidates(
     system: Any,
     transfer_mode: str,
-    seed_strategy: str = "nyquist_df",
+    seed_strategy: str = "k_phi",
     df_residual_tol: float = 1e-2,
     omega_min: float = 0.01,
     omega_max: float = 20.0,
@@ -16,17 +31,19 @@ def find_harmonic_candidates(
     grid_size_omega: int = 200,
     grid_size_amplitude: int = 200,
     root_refinement: bool = True,
-    q: Optional[float] = None
+    q: Optional[float] = None,
+    describing_function_mode: str = "auto"
 ) -> List[Tuple[float, float, float]]:
     """Find all candidate pairs (A0, omega0, k) solving the harmonic condition.
     
     Returns:
         List of tuples: (amplitude, omega, gain) sorted by gain k in ascending order.
+        The returned list also contains an attribute 'detailed_candidates' with more metadata.
     """
     if q is None:
         q = getattr(system, "q", 1.0)
         
-    candidates = []
+    candidates = CandidateList()
     
     if seed_strategy == "nyquist_df":
         # Strategy 1: 2D Grid search + optional refinement of ||W*N + 1||
@@ -37,9 +54,9 @@ def find_harmonic_candidates(
         res = np.zeros((len(as_), len(ws)))
         W_vals = [W_eval(w, q, transfer_mode, system.P, system.b, system.r) for w in ws]
         for i, A in enumerate(as_):
-            N = system.describing_function(A)
+            N_val = evaluate_describing_function(system, A, mode=describing_function_mode).value
             for j, w in enumerate(ws):
-                res[i, j] = np.abs(W_vals[j] * N + 1.0)
+                res[i, j] = np.abs(W_vals[j] * N_val + 1.0)
         
         for i in range(1, len(as_) - 1):
             for j in range(1, len(ws) - 1):
@@ -56,8 +73,8 @@ def find_harmonic_candidates(
                         return 1e6
                     try:
                         W = W_eval(w, q, transfer_mode, system.P, system.b, system.r)
-                        N = system.describing_function(A)
-                        return float(np.abs(W * N + 1.0))
+                        N_val = evaluate_describing_function(system, A, mode=describing_function_mode).value
+                        return float(np.abs(W * N_val + 1.0))
                     except Exception:
                         return 1e6
                 
@@ -69,15 +86,37 @@ def find_harmonic_candidates(
                 )
                 if res_opt.success and res_opt.fun < df_residual_tol:
                     A_ref, w_ref = res_opt.x
-                    k_ref = system.describing_function(A_ref)
+                    df_res = evaluate_describing_function(system, A_ref, mode=describing_function_mode)
+                    k_ref = df_res.value
                     if not any(np.allclose([A_ref, w_ref], [c[0], c[1]], rtol=1e-2) for c in candidates):
                         candidates.append((float(A_ref), float(w_ref), float(k_ref)))
+                        candidates.detailed_candidates.append(
+                            HarmonicCandidate(
+                                A0=float(A_ref),
+                                omega0=float(w_ref),
+                                k=float(k_ref),
+                                df_method_used=df_res.method,
+                                df_warning=df_res.warning,
+                                residual_gain=abs(k_ref - k_ref) # 0.0 by definition here
+                            )
+                        )
             else:
-                k_grid = system.describing_function(A_grid)
+                df_res = evaluate_describing_function(system, A_grid, mode=describing_function_mode)
+                k_grid = df_res.value
                 candidates.append((float(A_grid), float(w_grid), float(k_grid)))
+                candidates.detailed_candidates.append(
+                    HarmonicCandidate(
+                        A0=float(A_grid),
+                        omega0=float(w_grid),
+                        k=float(k_grid),
+                        df_method_used=df_res.method,
+                        df_warning=df_res.warning,
+                        residual_gain=0.0
+                    )
+                )
                 
     elif seed_strategy in {"k_phi", "imw_gain"}:
-        # Strategy 2: 1D phase crossing Im(W) = 0, then solve Phi(A) = 0
+        # Strategy 2: 1D phase crossing Im(W) = 0, then solve N(A0) = k
         scan_n = max(grid_size_omega, 20000)
         ws = np.linspace(omega_min, omega_max, scan_n)
         ims = []
@@ -109,31 +148,36 @@ def find_harmonic_candidates(
                 continue
             k = -1.0 / W0.real
             
-            def phi_func(A):
-                if A <= 0:
-                    return 0.0
-                def integrand(t):
-                    return (system.psi(A * np.cos(w0 * t)) - k * A * np.cos(w0 * t)) * np.cos(w0 * t)
-                val, _ = quad(integrand, 0.0, 2.0 * np.pi / w0, limit=100)
-                return val
-            
-            as_ = np.linspace(amplitude_min, amplitude_max, grid_size_amplitude)
-            phi_vals = [phi_func(a) for a in as_]
-            
-            for i in range(len(as_) - 1):
-                if phi_vals[i] * phi_vals[i+1] < 0.0:
-                    try:
-                        sol_A = root_scalar(phi_func, bracket=[as_[i], as_[i+1]], method="bisect")
-                        if sol_A.converged:
-                            A0 = sol_A.root
-                            if not any(np.allclose([A0, w0], [c[0], c[1]], rtol=1e-2) for c in candidates):
-                                candidates.append((float(A0), float(w0), float(k)))
-                    except Exception:
-                        pass
+            try:
+                # Solve amplitude from gain
+                A0 = solve_amplitude_from_gain(system, k, amplitude_min, amplitude_max, mode=describing_function_mode)
+                df_res = evaluate_describing_function(system, A0, mode=describing_function_mode)
+                
+                if not any(np.allclose([A0, w0], [c[0], c[1]], rtol=1e-2) for c in candidates):
+                    candidates.append((float(A0), float(w0), float(k)))
+                    candidates.detailed_candidates.append(
+                        HarmonicCandidate(
+                            A0=float(A0),
+                            omega0=float(w0),
+                            k=float(k),
+                            df_method_used=df_res.method,
+                            df_warning=df_res.warning,
+                            residual_gain=abs(df_res.value - k)
+                        )
+                    )
+            except Exception:
+                pass
                         
     else:
         raise ValueError(f"Unknown seed_strategy: {seed_strategy}")
         
-    # Sort candidates by gain k in ascending order
-    candidates.sort(key=lambda x: x[2])
+    # Sort candidates and detailed_candidates in tandem by gain k in ascending order
+    sorted_pairs = sorted(zip(candidates, candidates.detailed_candidates), key=lambda pair: pair[0][2])
+    candidates.clear()
+    candidates.detailed_candidates.clear()
+    for cand_tup, detailed_cand in sorted_pairs:
+        candidates.append(cand_tup)
+        candidates.detailed_candidates.append(detailed_cand)
+        
     return candidates
+

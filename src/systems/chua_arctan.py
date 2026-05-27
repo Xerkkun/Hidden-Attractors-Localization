@@ -30,9 +30,30 @@ class ChuaArctanSystem:
         self.b = np.array([-self.alpha, 0.0, 0.0], dtype=float)
         self.r = np.array([1.0, 0.0, 0.0], dtype=float)
 
+        self.describing_function_capabilities = {
+            "closed_form": True,
+            "piecewise_closed_form": False,
+            "quadrature": True,
+            "nonsmooth": False,
+            "breakpoints": None
+        }
+
     def psi(self, sigma: float) -> float:
         """Arctan nonlinearity: psi(sigma) = (n - m) * arctan(sigma)"""
         return float((self.n - self.m) * np.arctan(sigma))
+
+    def is_nonsmooth(self) -> bool:
+        return False
+
+    def has_closed_form_describing_function(self) -> bool:
+        return True
+
+    def describing_function_closed_form(self, A: float) -> float:
+        return self.N_arctan_closed(A)
+
+    def describing_function_quadrature(self, A: float) -> float:
+        return self.N_arctan_quad(A)
+
 
     def evaluate_rhs(self, x: np.ndarray) -> np.ndarray:
         """Full non-linear RHS evaluation: P * X + b * psi(r^T * X)"""

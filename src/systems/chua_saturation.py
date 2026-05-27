@@ -27,6 +27,15 @@ class ChuaSaturationSystem:
         self.b = np.array([-self.alpha, 0.0, 0.0], dtype=float)
         self.r = np.array([1.0, 0.0, 0.0], dtype=float)
 
+        # Describing function capabilities
+        self.describing_function_capabilities = {
+            "closed_form": True,
+            "piecewise_closed_form": True,
+            "quadrature": True,
+            "nonsmooth": True,
+            "breakpoints": self.describing_function_breakpoints
+        }
+
     def psi(self, sigma: float) -> float:
         """Normalized saturation nonlinearity: psi(sigma) = (m0 - m1) * sat(sigma)"""
         sat_val = np.clip(sigma, -1.0, 1.0)
@@ -61,6 +70,22 @@ class ChuaSaturationSystem:
     def describing_function(self, A: float) -> float:
         """Evaluates describes function N(A)"""
         return self.N_sat(A)
+
+    def is_nonsmooth(self) -> bool:
+        return True
+
+    def has_closed_form_describing_function(self) -> bool:
+        return True
+
+    def describing_function_closed_form(self, A: float) -> float:
+        return self.N_sat(A)
+
+    def describing_function_breakpoints(self, A: float) -> list:
+        if A <= 1.0:
+            return [0.0, np.pi]
+        else:
+            theta_c = np.arccos(1.0 / A)
+            return sorted([0.0, theta_c, np.pi])
 
     def to_dict(self) -> Dict[str, Any]:
         return {

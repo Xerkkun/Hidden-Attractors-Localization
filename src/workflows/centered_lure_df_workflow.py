@@ -23,14 +23,13 @@ from ..verification.classifiers import classify_hiddenness_verdict
 from ..plotting.plot_transfer import plot_nyquist_transfer
 from ..plotting.plot_df import plot_describing_function
 from ..plotting.plot_continuation import plot_continuation_eta
-from ..plotting.plot_trajectories import plot_attractor_trajectories, plot_neighborhood_control_spheres, plot_flexible_attractor_and_projections
-from ..plotting.plot_basins import plot_basin_slices, plot_basin_slice_file
+from ..plotting.plot_trajectories import plot_attractor_trajectories, plot_neighborhood_control_spheres, plot_flexible_attractor_and_projections, plot_timeseries_data
 from ..verification.sphere_tests import run_sphere_probe_sweep
 
 from .configs import DEFAULT_CONFIG
 
 def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
-    """Execute the full 7-phase centered Lur'e describing function workflow."""
+    """Execute the full 7-phase centered Lur'e describing function workflow with early stopping and visual updates."""
     # Inject defaults for any missing keys
     for k, v in DEFAULT_CONFIG.items():
         config.setdefault(k, v)
@@ -39,10 +38,12 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     output_dir = config["output_dir"]
     os.makedirs(output_dir, exist_ok=True)
     
+    run_id = config.get("run_id", "no_run_id")
+    
     # -------------------------------------------------------------------------
     # Fase 1/7: cargando configuración... 0%
     # -------------------------------------------------------------------------
-    print(f"[{system_id}] Fase 1/7: cargando configuración... 0%")
+    print(f"[{run_id}][{system_id}] Fase 1/7: cargando configuración... 0%")
     
     # Instantiate the system with describing_function_mode forwarded if ChuaArctanSystem
     sys_kwargs = {}
@@ -54,21 +55,30 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     system = get_system_by_id(system_id, **sys_kwargs)
     q = system.q
     
-    # Save the effective configuration used
+    # Save the effective configuration used (both YAML and JSON)
     effective_config_path = os.path.join(output_dir, "effective_config.yaml")
     effective_config = config.copy()
     effective_config["q"] = q # Store actual q
     with open(effective_config_path, "w", encoding="utf-8") as f:
         yaml.dump(effective_config, f, default_flow_style=False)
         
+    effective_config_json_path = os.path.join(output_dir, "effective_config.json")
+    with open(effective_config_json_path, "w", encoding="utf-8") as f:
+        json.dump(effective_config, f, indent=4)
+        
     # Validate the Lur'e split
     if not validate_lure_decomposition(system):
-        print(f"[{system_id}] WARNING: Lur'e decomposition vector field mismatch.")
+        print(f"[{run_id}][{system_id}] WARNING: Lur'e decomposition vector field mismatch.")
         
+    # Extract separate simulation times
+    fs_cfg = config.get("final_simulation", {})
+    t_final = fs_cfg.get("t_final", config.get("t_final", 500.0))
+    t_burn = fs_cfg.get("t_burn", config.get("t_burn", 120.0))
+    
     # -------------------------------------------------------------------------
     # Fase 2/7: calculando equilibrios... 15%
     # -------------------------------------------------------------------------
-    print(f"[{system_id}] Fase 2/7: calculando equilibrios... 15%")
+    print(f"[{run_id}][{system_id}] Fase 2/7: calculando equilibrios... 15%")
     equilibria = solve_equilibria(system)
     
     eq_stability = {}
@@ -86,8 +96,7 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     # -------------------------------------------------------------------------
     # Fase 3/7: construyendo transferencia... 30%
     # -------------------------------------------------------------------------
-    print(f"[{system_id}] Fase 3/7: construyendo transferencia... 30%")
-    # Prepare frequency grid to log Nyquist behavior
+    print(f"[{run_id}][{system_id}] Fase 3/7: construyendo transferencia... 30%")
     omega_grid = np.linspace(config["omega_min"], config["omega_max"], config["grid_size_omega"])
     w_vals = []
     for w in omega_grid:
@@ -101,7 +110,7 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     # -------------------------------------------------------------------------
     # Fase 4/7: buscando semillas DF... 45%
     # -------------------------------------------------------------------------
-    print(f"[{system_id}] Fase 4/7: buscando semillas DF... 45%")
+    print(f"[{run_id}][{system_id}] Fase 4/7: buscando semillas DF... 45%")
     candidates = find_harmonic_candidates(
         system=system,
         transfer_mode=config["transfer_mode"],
@@ -114,13 +123,14 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         grid_size_omega=config["grid_size_omega"],
         grid_size_amplitude=config["grid_size_amplitude"],
         root_refinement=config["root_refinement"],
-        q=q
+        q=q,
+        describing_function_mode=config["describing_function_mode"]
     )
     
     n_candidates = len(candidates)
     
     if n_candidates == 0:
-        print(f"[{system_id}] No DF seed candidates found.")
+        print(f"[{run_id}][{system_id}] No DF seed candidates found.")
         summary = _build_summary_dict(
             config, system, equilibria, unstable_eqs, candidates, None, None, None, None, [], "df_seed_not_found",
             final_traj=None, matched_ev=None, target_lam=None, modal_res=None, norm_res=None
@@ -155,29 +165,35 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
                 else:
                     c_active_q = q
                 
-                # Integrate candidate (using a transient simulation to see where it converges)
+                # Integrate candidate with early stop
                 if c_active_q == 1.0:
                     if config["integrator"] == "abm":
                         c_t_fin, c_x_fin, c_status = caputo_abm_integrate(
-                            system.evaluate_rhs, c_seed_pos, q=1.0, h=config["h"], t_final=config["t_final"], divergence_norm=config["divergence_norm"], system=system
+                            system.evaluate_rhs, c_seed_pos, q=1.0, h=config["h"], t_final=t_final, divergence_norm=config["divergence_norm"], system=system,
+                            early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
                         )
                     else:  # efork
                         c_t_fin, c_x_fin, c_status = efork_integrate(
-                            system, c_seed_pos, q=1.0, h=config["h"], t_final=config["t_final"], memory_mode="full"
+                            system, c_seed_pos, q=1.0, h=config["h"], t_final=t_final, memory_mode="full",
+                            divergence_norm=config["divergence_norm"],
+                            early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
                         )
                 else:
                     if config["integrator"] == "abm":
                         c_t_fin, c_x_fin, c_status = caputo_abm_integrate(
-                            system.evaluate_rhs, c_seed_pos, q=c_active_q, h=config["h"], t_final=config["t_final"], divergence_norm=config["divergence_norm"],
-                            memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"], system=system
+                            system.evaluate_rhs, c_seed_pos, q=c_active_q, h=config["h"], t_final=t_final, divergence_norm=config["divergence_norm"],
+                            memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"], system=system,
+                            early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
                         )
                     else:  # efork
                         c_t_fin, c_x_fin, c_status = efork_integrate(
-                            system, c_seed_pos, q=c_active_q, h=config["h"], t_final=config["t_final"],
-                            memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"]
+                            system, c_seed_pos, q=c_active_q, h=config["h"], t_final=t_final,
+                            memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"],
+                            divergence_norm=config["divergence_norm"],
+                            early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
                         )
                 
-                if c_status == "ok":
+                if c_status in ("ok", "diverged_early", "converged_equilibrium_early"):
                     c_traj = np.column_stack((c_t_fin, c_x_fin))
                     plot_flexible_attractor_and_projections(
                         trajectory=c_traj,
@@ -186,13 +202,21 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
                         output_dir=output_dir,
                         file_prefix=f"seed_candidate_{idx:02d}"
                     )
+                    # Render and save candidate time series and CSV
+                    if config.get("plot_timeseries", True):
+                        plot_timeseries_data(
+                            trajectory=c_traj,
+                            config=config,
+                            output_dir=output_dir,
+                            file_prefix=f"seed_candidate_{idx:02d}"
+                        )
             except Exception as e:
-                print(f"[{system_id}] WARNING: Candidate seed {idx} plotting simulation failed: {e}")
-
+                print(f"[{run_id}][{system_id}] WARNING: Candidate seed {idx} plotting simulation failed: {e}")
+ 
     # Select the candidate based on branch_index
     branch_idx = config.get("branch_index", 0)
     if branch_idx >= len(candidates):
-        print(f"[{system_id}] branch_index {branch_idx} out of range (found {len(candidates)} candidates). Selecting index 0.")
+        print(f"[{run_id}][{system_id}] branch_index {branch_idx} out of range (found {len(candidates)} candidates). Selecting index 0.")
         branch_idx = 0
         
     A0, omega0, k = candidates[branch_idx]
@@ -224,8 +248,7 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     # -------------------------------------------------------------------------
     # Fase 5/7: continuación eta... 60%
     # -------------------------------------------------------------------------
-    print(f"[{system_id}] Fase 5/7: continuación eta... 60%")
-    # Setup eta/lambda list: 5 points in [0, 1] for fast, robust tracking
+    print(f"[{run_id}][{system_id}] Fase 5/7: continuación eta... 60%")
     lambda_grid = np.linspace(0.0, 1.0, 5)
     
     # Run continuation from the positive seed
@@ -262,7 +285,7 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     # -------------------------------------------------------------------------
     # Fase 6/7: simulación final... 75%
     # -------------------------------------------------------------------------
-    print(f"[{system_id}] Fase 6/7: simulación final... 75%")
+    print(f"[{run_id}][{system_id}] Fase 6/7: simulación final... 75%")
     final_traj = None
     final_status = "continuation_failed"
     
@@ -280,29 +303,35 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         else:
             raise ValueError(f"Unknown dynamics_mode: {dyn_mode}")
             
-        # Long final integration at eta = 1.0
+        # Long final integration at eta = 1.0 with early stop support
         if active_q == 1.0:
             if config["integrator"] == "abm":
                 t_fin, x_fin, final_status = caputo_abm_integrate(
-                    system.evaluate_rhs, x_final_seed, q=1.0, h=config["h"], t_final=config["t_final"], divergence_norm=config["divergence_norm"], system=system
+                    system.evaluate_rhs, x_final_seed, q=1.0, h=config["h"], t_final=t_final, divergence_norm=config["divergence_norm"], system=system,
+                    early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
                 )
             else: # efork
                 t_fin, x_fin, final_status = efork_integrate(
-                    system, x_final_seed, q=1.0, h=config["h"], t_final=config["t_final"], memory_mode="full"
+                    system, x_final_seed, q=1.0, h=config["h"], t_final=t_final, memory_mode="full",
+                    divergence_norm=config["divergence_norm"],
+                    early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
                 )
         else: # fractional
             if config["integrator"] == "abm":
                 t_fin, x_fin, final_status = caputo_abm_integrate(
-                    system.evaluate_rhs, x_final_seed, q=active_q, h=config["h"], t_final=config["t_final"], divergence_norm=config["divergence_norm"],
-                    memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"], system=system
+                    system.evaluate_rhs, x_final_seed, q=active_q, h=config["h"], t_final=t_final, divergence_norm=config["divergence_norm"],
+                    memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"], system=system,
+                    early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
                 )
             else: # efork
                 t_fin, x_fin, final_status = efork_integrate(
-                    system, x_final_seed, q=active_q, h=config["h"], t_final=config["t_final"],
-                    memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"]
+                    system, x_final_seed, q=active_q, h=config["h"], t_final=t_final,
+                    memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"],
+                    divergence_norm=config["divergence_norm"],
+                    early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
                 )
                 
-        if final_status == "ok":
+        if final_status in ("ok", "diverged_early", "converged_equilibrium_early"):
             final_traj = np.column_stack((t_fin, x_fin))
             # Save trajectory CSV
             traj_csv_path = os.path.join(output_dir, "final_attractor.csv")
@@ -314,21 +343,21 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     # Evaluate final tail states
     ref_tail = np.empty((0, 3))
     if final_traj is not None:
-        n_burn = int(np.ceil(config["t_burn"] / config["h"]))
+        n_burn = int(np.ceil(t_burn / config["h"]))
         if len(final_traj) > n_burn:
             ref_tail = final_traj[n_burn:, 1:]
             
     # -------------------------------------------------------------------------
     # Fase 7/7: pruebas de ocultedad y cuencas... 90%
     # -------------------------------------------------------------------------
-    print(f"[{system_id}] Fase 7/7: pruebas de ocultedad y cuencas... 90%")
+    print(f"[{run_id}][{system_id}] Fase 7/7: pruebas de ocultedad y cuencas... 90%")
     
     probe_results = []
     target_hits = 0
     numerical_fails = 0
-    seed_reached_attractor = bool(final_traj is not None and final_status == "ok" and len(ref_tail) > 10)
+    seed_reached_attractor = bool(final_traj is not None and final_status in ("ok", "diverged_early", "converged_equilibrium_early") and len(ref_tail) > 10)
     
-    # Run sphere verification tests (pruebas de esferas / ocultedad)
+    # Run sphere verification tests
     if (config["run_sphere_tests"] or config["run_hiddenness_tests"]):
         if seed_reached_attractor:
             sphere_results = run_sphere_probe_sweep(
@@ -352,7 +381,7 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
                 numerical_failures=numerical_fails
             )
         else:
-            print(f"[{system_id}] WARNING: Seed did not reach the target attractor. Skipping sphere tests.")
+            print(f"[{run_id}][{system_id}] WARNING: Seed did not reach the target attractor. Skipping sphere tests.")
             verdict = "df_seed_not_found"
     else:
         verdict = "df_seed_found" if seed_reached_attractor else "df_seed_not_found"
@@ -377,9 +406,8 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
             if eq_sel in equilibria:
                 selected_eq_basin[eq_sel] = equilibria[eq_sel]
                 
-        # Perform scans
+        # Perform scans with early stopping
         if around_eq:
-            # Centered around each selected equilibrium
             for eq_name, eq_pt in selected_eq_basin.items():
                 for plane in planes:
                     u, v, mat = generate_basin_slice(
@@ -392,8 +420,8 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
                         fixed_values={"z": float(eq_pt[2]), "y": float(eq_pt[1]), "x": float(eq_pt[0])},
                         grid_n=basin_cfg.get("grid_n", 150),
                         center=eq_pt.tolist(),
-                        t_final=basin_cfg.get("t_final", 500.0),
-                        t_burn=basin_cfg.get("t_burn", 120.0),
+                        t_final=basin_cfg.get("t_final", 80.0),
+                        t_burn=basin_cfg.get("t_burn", 20.0),
                         h=basin_cfg.get("h", 0.01),
                         workers=config["workers"],
                         eq_tol=config["equilibrium_tol"],
@@ -406,17 +434,19 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
                         around_equilibria=True,
                         local_radius=basin_cfg.get("local_radius", 2.0),
                         eq_name=eq_name,
-                        system_id=system_id
+                        system_id=system_id,
+                        early_stop_config=config.get("early_stop"),
+                        equilibria_dict=equilibria
                     )
                     # Plot slice
                     if config["plot_enabled"]:
+                        from ..plotting.plot_basins import plot_basin_slice_file
                         plot_basin_slice_file(plane, u, v, mat, eq_name, config, output_dir)
                     # Accumulate for CSV export
                     for i, u_val in enumerate(u):
                         for j, v_val in enumerate(v):
                             basin_data_accum.append([plane, eq_name, float(u_val), float(v_val), int(mat[i, j])])
         else:
-            # Global coordinates centered at E0 or origin
             center_pt = equilibria.get("E0", np.zeros(3)).tolist()
             for plane in planes:
                 u, v, mat = generate_basin_slice(
@@ -429,8 +459,8 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
                     fixed_values={"z": basin_cfg.get("fixed_z", 0.0), "y": basin_cfg.get("fixed_y", 0.0), "x": basin_cfg.get("fixed_x", 0.0)},
                     grid_n=basin_cfg.get("grid_n", 150),
                     center=center_pt,
-                    t_final=basin_cfg.get("t_final", 500.0),
-                    t_burn=basin_cfg.get("t_burn", 120.0),
+                    t_final=basin_cfg.get("t_final", 80.0),
+                    t_burn=basin_cfg.get("t_burn", 20.0),
                     h=basin_cfg.get("h", 0.01),
                     workers=config["workers"],
                     eq_tol=config["equilibrium_tol"],
@@ -445,10 +475,13 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
                     z_interval=basin_cfg.get("z_interval"),
                     around_equilibria=False,
                     eq_name="global",
-                    system_id=system_id
+                    system_id=system_id,
+                    early_stop_config=config.get("early_stop"),
+                    equilibria_dict=equilibria
                 )
                 # Plot slice
                 if config["plot_enabled"]:
+                    from ..plotting.plot_basins import plot_basin_slice_file
                     plot_basin_slice_file(plane, u, v, mat, "global", config, output_dir)
                 # Accumulate for CSV export
                 for i, u_val in enumerate(u):
@@ -480,7 +513,7 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     # -------------------------------------------------------------------------
     # terminado... 100%
     # -------------------------------------------------------------------------
-    print(f"[{system_id}] terminado... 100%")
+    print(f"[{run_id}][{system_id}] terminado... 100%")
     
     # 1. Trigger plots if enabled
     if config["plot_enabled"]:
@@ -490,8 +523,17 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         if final_traj is not None:
             # Saves final_attractor_3d.png and separate xy, xz, yz projection files
             plot_flexible_attractor_and_projections(final_traj, equilibria, config, output_dir, "final_attractor")
+            # Save final time series and CSV
+            if config.get("plot_timeseries", True):
+                plot_timeseries_data(final_traj, config, output_dir, "final")
+                
             if len(probe_results) > 0:
                 plot_neighborhood_control_spheres(final_traj, probe_results, equilibria, config, output_dir)
+                
+        # Save Matignon fractional stability plot
+        if config.get("plot_matignon", True):
+            from ..plotting.plot_matignon import plot_matignon_equilibria
+            plot_matignon_equilibria(system, equilibria, config, output_dir)
             
     # 2. Build and save summary
     summary = _build_summary_dict(
@@ -606,9 +648,9 @@ def _save_summary(summary: Dict[str, Any], output_dir: str) -> None:
     # Save CSV summary
     csv_path = os.path.join(output_dir, "summary.csv")
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow(summary.keys())
-        writer.writerow(summary.values())
+        csv_writer = csv.writer(f)
+        csv_writer.writerow(summary.keys())
+        csv_writer.writerow(summary.values())
 
 def _print_terminal_table(summary: Dict[str, Any]) -> None:
     print("\n" + "="*80)
