@@ -22,13 +22,127 @@ from ..verification.classifiers import classify_hiddenness_verdict
 # Import plotting routines dynamically if enabled
 from ..plotting.plot_transfer import plot_nyquist_transfer
 from ..plotting.plot_df import plot_describing_function
-from ..plotting.plot_continuation import plot_continuation_eta
+from ..plotting.plot_continuation import (
+    plot_continuation_eta,
+    plot_continuation_tracking,
+)
 from ..plotting.plot_trajectories import plot_attractor_trajectories, plot_neighborhood_control_spheres, plot_flexible_attractor_and_projections, plot_timeseries_data
 from ..verification.sphere_tests import run_sphere_probe_sweep
 
 from .configs import DEFAULT_CONFIG
 
-def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def build_eta_grid(cont_cfg: dict) -> np.ndarray:
+    """Build the eta (lambda) grid for numerical continuation.
+
+    Modes
+    -----
+    ``"adaptive"``    : Dense log-like preset that concentrates points near 0
+                        and spreads them toward 1 — ideal for most systems.
+    ``"logarithmic"`` : ``n_eta`` points spaced logarithmically from
+                        ``eta_min`` (or 0) to ``eta_max``.
+    ``"linear"``      : ``n_eta`` points spaced linearly.
+    Manual override   : if ``eta_values`` is not None, it is used directly.
+    """
+    # Manual list takes priority
+    if cont_cfg.get("eta_values") is not None:
+        return np.asarray(cont_cfg["eta_values"], dtype=float)
+
+    mode       = cont_cfg.get("eta_grid_mode", "adaptive")
+    eta_min    = float(cont_cfg.get("eta_min", 1e-3))
+    eta_max    = float(cont_cfg.get("eta_max", 1.0))
+    n_eta      = int(cont_cfg.get("n_eta", 21))
+    start_zero = bool(cont_cfg.get("start_at_zero", False))
+
+    if mode == "adaptive":
+        # Default adaptive preset — matches the plan specification
+        base = np.array([1e-3, 3e-3, 1e-2, 3e-2, 0.07, 0.12,
+                         0.2,  0.35, 0.5,  0.7,  0.85, 1.0], dtype=float)
+        grid = base[(base >= eta_min) & (base <= eta_max)]
+        if len(grid) == 0:
+            grid = np.linspace(eta_min, eta_max, max(n_eta, 5))
+    elif mode == "logarithmic":
+        start = 0.0 if start_zero else eta_min
+        if start <= 0.0:
+            grid = np.geomspace(eta_min, eta_max, n_eta)
+        else:
+            grid = np.geomspace(start, eta_max, n_eta)
+    else:  # linear
+        start = 0.0 if start_zero else eta_min
+        grid = np.linspace(start, eta_max, n_eta)
+
+    if start_zero and grid[0] != 0.0:
+        grid = np.concatenate(([0.0], grid))
+
+    return grid
+
+
+def _save_continuation_trace(cont_steps: list, output_dir: str) -> None:
+    """Save per-step continuation metadata to CSV + JSON and per-step trajectory CSVs."""
+    if not cont_steps:
+        return
+
+    # ── trace CSV ─────────────────────────────────────────────────────────
+    trace_csv = os.path.join(output_dir, "continuation_trace.csv")
+    fieldnames = [
+        "step_idx", "lambda_value", "status",
+        "x_in_norm", "x_out_norm", "max_norm",
+        "n_steps", "t_end",
+        "used_c_backend", "rhs_source", "early_stop_reason",
+    ]
+    rows = []
+    for idx, s in enumerate(cont_steps):
+        rows.append({
+            "step_idx":          idx,
+            "lambda_value":      s.get("lambda_value", float("nan")),
+            "status":            s.get("status", ""),
+            "x_in_norm":         s.get("x_in_norm",  float(np.linalg.norm(s.get("x_in",  [0])))),
+            "x_out_norm":        s.get("x_out_norm", float(np.linalg.norm(s.get("x_out", [0])))),
+            "max_norm":          s.get("max_norm",   float("nan")),
+            "n_steps":           s.get("n_steps",    0),
+            "t_end":             s.get("t_end",      float("nan")),
+            "used_c_backend":    s.get("used_c_backend", False),
+            "rhs_source":        s.get("rhs_source",  ""),
+            "early_stop_reason": s.get("early_stop_reason", ""),
+        })
+
+    with open(trace_csv, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=fieldnames)
+        w.writeheader()
+        w.writerows(rows)
+
+    # ── trace JSON ────────────────────────────────────────────────────────
+    trace_json = os.path.join(output_dir, "continuation_trace.json")
+    json_rows = []
+    for r in rows:
+        jr = {k: (float(v) if isinstance(v, (np.floating, np.integer)) else v)
+              for k, v in r.items()}
+        json_rows.append(jr)
+    with open(trace_json, "w", encoding="utf-8") as f:
+        json.dump(json_rows, f, indent=2)
+
+    # ── per-step trajectory CSVs ──────────────────────────────────────────
+    traj_dir = os.path.join(output_dir, "continuation_steps")
+    os.makedirs(traj_dir, exist_ok=True)
+    for idx, s in enumerate(cont_steps):
+        traj = s.get("trajectory")
+        if traj is None or len(traj) == 0:
+            continue
+        fname = os.path.join(traj_dir, f"continuation_eta_{idx:03d}.csv")
+        # traj shape: (N, 1+dim) → columns t, x, y, z, ...
+        dim = traj.shape[1] - 1
+        header = ["t"] + [f"x{i}" for i in range(dim)]
+        with open(fname, "w", newline="", encoding="utf-8") as f:
+            w2 = csv.writer(f)
+            w2.writerow(header)
+            w2.writerows(traj.tolist())
+
+
+def run_centered_lure_df_workflow(config: dict) -> dict:
     """Execute the full 7-phase centered Lur'e describing function workflow with early stopping and visual updates."""
     # Inject defaults for any missing keys
     for k, v in DEFAULT_CONFIG.items():
@@ -249,7 +363,62 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     # Fase 5/7: continuación eta... 60%
     # -------------------------------------------------------------------------
     print(f"[{run_id}][{system_id}] Fase 5/7: continuación eta... 60%")
-    lambda_grid = np.linspace(0.0, 1.0, 5)
+    
+    cont_cfg = config.get("continuation", {})
+    
+    # ── A2: build the eta grid ─────────────────────────────────────────────
+    lambda_grid = build_eta_grid(cont_cfg)
+    
+    # ── Period-based transient / keep times ───────────────────────────────
+    if cont_cfg.get("use_period_based_times", True) and omega0 is not None and omega0 > 0:
+        T0 = 2.0 * np.pi / omega0
+        t_transient_cont = cont_cfg.get("t_transient") or float(cont_cfg.get("periods_transient", 20)) * T0
+        t_keep_cont      = cont_cfg.get("t_keep")      or float(cont_cfg.get("periods_keep",      10)) * T0
+    else:
+        t_transient_cont = float(cont_cfg.get("t_transient") or 30.0)
+        t_keep_cont      = float(cont_cfg.get("t_keep")      or 30.0)
+    
+    # ── B2-B3: build fractional harmonic prehistory ────────────────────────
+    pre_hist_t = None
+    pre_hist_x = None
+    is_fractional_cont = config["continuation_mode"] == "fractional"
+    
+    if is_fractional_cont and cont_cfg.get("build_fractional_harmonic_history", True):
+        try:
+            _, v_norm_pre, _, _ = build_modal_lure_seed(
+                system, A0, omega0, k,
+                q=q,
+                transfer_mode=config["transfer_mode"],
+                theta=config.get("seed_theta", 0.0)
+            )
+            T0_pre = 2.0 * np.pi / omega0
+            n_hist_periods = int(cont_cfg.get("harmonic_history_periods", 10))
+            h_val = config["h"]
+            
+            # Memory window length in time
+            if config["memory_mode"] == "window" and config["memory_window_length"] is not None:
+                Lm_time = float(config["memory_window_length"]) * h_val
+            else:
+                Lm_time = n_hist_periods * T0_pre
+            
+            # Sample prehistory times t_j in [-Lm_time, 0]
+            n_pre = int(np.ceil(Lm_time / h_val))
+            pre_hist_t = np.linspace(-Lm_time, 0.0, n_pre + 1)
+            # x(t_j) = A0 * Re(v_norm * exp(i*omega0*t_j))
+            pre_hist_x = np.array([
+                A0 * np.real(v_norm_pre * np.exp(1j * omega0 * tj))
+                for tj in pre_hist_t
+            ])
+            print(f"[{run_id}][{system_id}] Prehistoria armónica: {len(pre_hist_t)} puntos, Lm={Lm_time:.2f}s")
+        except Exception as exc_pre:
+            print(f"[{run_id}][{system_id}] WARNING: No se pudo construir prehistoria armónica: {exc_pre}")
+            pre_hist_t = None
+            pre_hist_x = None
+    
+    # ── Continuation early-stop config ────────────────────────────────────
+    cont_early_stop = config.get("early_stop", {}).copy()
+    if not cont_cfg.get("early_stop_enabled", True):
+        cont_early_stop["enabled"] = False
     
     # Run continuation from the positive seed
     if config["continuation_mode"] == "integer":
@@ -258,29 +427,47 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
             seed_x0=seed_pos,
             k_gain=k,
             lambda_values=lambda_grid,
-            t_transient=30.0,
-            t_keep=30.0,
             h=config["h"],
+            t_transient=t_transient_cont,
+            t_keep=t_keep_cont,
             div_threshold=config["divergence_norm"],
-            integrator=config["integrator"]
+            integrator=config["integrator"],
+            early_stop_config=cont_early_stop,
+            equilibria=list(equilibria.values()),
         )
-    else: # fractional
+    else:  # fractional
         cont_steps = run_fractional_continuation(
             system=system,
             seed_x0=seed_pos,
             k_gain=k,
             lambda_values=lambda_grid,
-            t_transient=30.0,
-            t_keep=30.0,
             h=config["h"],
+            t_transient=t_transient_cont,
+            t_keep=t_keep_cont,
             memory_mode=config["memory_mode"],
             memory_window_length=config["memory_window_length"],
             div_threshold=config["divergence_norm"],
             integrator=config["integrator"],
-            use_c_backend=use_c_backend_check(config)
+            use_c_backend=use_c_backend_check(config),
+            history_times=pre_hist_t,
+            history_states=pre_hist_x,
+            early_stop_config=cont_early_stop,
+            equilibria=list(equilibria.values()),
+            require_c_backend=cont_cfg.get("require_c_backend", True),
+            allow_python_fallback=cont_cfg.get("allow_python_fallback", False),
         )
-        
-    cont_success = bool(len(cont_steps) == len(lambda_grid) and cont_steps[-1]["status"] == "ok")
+    
+    # ── Step logging ──────────────────────────────────────────────────────
+    _save_continuation_trace(cont_steps, output_dir)
+    
+    # ── Evaluate success ──────────────────────────────────────────────────
+    # Success = all steps completed with status "ok"
+    successful_steps = [s for s in cont_steps if s["status"] == "ok"]
+    last_status = cont_steps[-1]["status"] if cont_steps else "no_steps"
+    cont_success = bool(
+        len(cont_steps) == len(lambda_grid)
+        and last_status == "ok"
+    )
     
     # -------------------------------------------------------------------------
     # Fase 6/7: simulación final... 75%
@@ -520,6 +707,11 @@ def run_centered_lure_df_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         plot_nyquist_transfer(omega_grid, w_vals, candidates, config, output_dir)
         plot_describing_function(system, candidates, config, output_dir)
         plot_continuation_eta(cont_steps, config, output_dir)
+        if len(cont_steps) >= 1:
+            try:
+                plot_continuation_tracking(cont_steps, config, output_dir)
+            except Exception as exc_track:
+                print(f"[{run_id}][{system_id}] WARNING: tracking plots failed: {exc_track}")
         if final_traj is not None:
             # Saves final_attractor_3d.png and separate xy, xz, yz projection files
             plot_flexible_attractor_and_projections(final_traj, equilibria, config, output_dir, "final_attractor")

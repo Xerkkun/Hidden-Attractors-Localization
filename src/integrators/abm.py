@@ -87,7 +87,7 @@ def _python_abm_integrate(
             s_idx = 0
             
         j_range = np.arange(s_idx, n + 1)
-        b_weights = pow_q[n + 1 - j_range][::-1] - pow_q[n - j_range][::-1]
+        b_weights = pow_q[n + 1 - j_range] - pow_q[n - j_range]
         
         predictor = x_arr[s_idx] + pred_scale * (b_weights @ f_arr[s_idx: n + 1])
         

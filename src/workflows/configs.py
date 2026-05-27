@@ -111,6 +111,26 @@ DEFAULT_CONFIG = {
         "early_stop_enabled": True
     },
     
+    # Continuation configuration
+    "continuation": {
+        "eta_grid_mode": "adaptive",
+        "eta_values": None,
+        "eta_min": 1.0e-3,
+        "eta_max": 1.0,
+        "n_eta": 21,
+        "start_at_zero": False,
+        "t_transient": None,
+        "t_keep": None,
+        "periods_transient": 20,
+        "periods_keep": 10,
+        "use_period_based_times": True,
+        "early_stop_enabled": True,
+        "require_c_backend": True,
+        "allow_python_fallback": False,
+        "build_fractional_harmonic_history": True,
+        "harmonic_history_periods": 10
+    },
+
     # Basin Probe configuration
     "basin": {
         "enabled": False,
@@ -228,6 +248,28 @@ def load_and_validate_config(config_path: str) -> Dict[str, Any]:
     if "samples_per_radius" in st and st["samples_per_radius"] is not None:
         st["samples_per_radius"] = [int(s) for s in st["samples_per_radius"]]
         
+    # Handle continuation casts
+    cont = config["continuation"]
+    for float_key in ["eta_min", "eta_max"]:
+        if float_key in cont and cont[float_key] is not None:
+            cont[float_key] = float(cont[float_key])
+    for int_key in ["n_eta", "periods_transient", "periods_keep", "harmonic_history_periods"]:
+        if int_key in cont and cont[int_key] is not None:
+            cont[int_key] = int(cont[int_key])
+    for bool_key in ["start_at_zero", "early_stop_enabled", "require_c_backend",
+                     "allow_python_fallback", "build_fractional_harmonic_history",
+                     "use_period_based_times"]:
+        if bool_key in cont and cont[bool_key] is not None:
+            cont[bool_key] = bool(cont[bool_key])
+    if "t_transient" in cont and cont["t_transient"] is not None:
+        cont["t_transient"] = float(cont["t_transient"])
+    if "t_keep" in cont and cont["t_keep"] is not None:
+        cont["t_keep"] = float(cont["t_keep"])
+    if "eta_values" in cont and cont["eta_values"] is not None:
+        cont["eta_values"] = [float(v) for v in cont["eta_values"]]
+    if cont.get("eta_grid_mode") not in {"linear", "logarithmic", "adaptive", None}:
+        raise ValueError(f"Invalid continuation.eta_grid_mode: {cont['eta_grid_mode']}")
+
     # Handle basin casts
     b = config["basin"]
     for float_key in ["fixed_x", "fixed_y", "fixed_z", "local_radius", "t_final", "t_burn", "h"]:

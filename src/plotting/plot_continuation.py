@@ -306,3 +306,121 @@ def plot_continuation_progression(
     fig.savefig(os.path.join(fig_dir, "continuation_progression.png"), dpi=300)
     plt.close(fig)
 
+
+# ---------------------------------------------------------------------------
+# Tracking plots (use the enriched step fields from the new continuation engine)
+# ---------------------------------------------------------------------------
+
+_STATUS_ORDER = [
+    "ok",
+    "diverged_early",
+    "diverged",
+    "converged_equilibrium_early",
+    "nonfinite_solution",
+    "backend_failure",
+]
+
+_STATUS_COLORS = {
+    "ok":                          "#22c55e",
+    "diverged_early":              "#f97316",
+    "diverged":                    "#ef4444",
+    "converged_equilibrium_early": "#a855f7",
+    "nonfinite_solution":          "#64748b",
+    "backend_failure":             "#0ea5e9",
+}
+
+
+def plot_continuation_tracking(
+    cont_steps: List[dict],
+    config: dict,
+    output_dir: str,
+) -> None:
+    """Generate three tracking plots for the continuation run.
+
+    1. Final state norm ||x_out|| vs eta
+    2. Categorical status vs eta (colour-coded scatter)
+    3. Maximum trajectory norm vs eta
+    """
+    if len(cont_steps) == 0:
+        return
+
+    fig_dir = os.path.join(output_dir, "figures")
+    os.makedirs(fig_dir, exist_ok=True)
+
+    etas      = [s["lambda_value"] for s in cont_steps]
+    out_norms = [s.get("x_out_norm", float(np.linalg.norm(s["x_out"]))) for s in cont_steps]
+    max_norms = [s.get("max_norm",   float(np.linalg.norm(s["x_out"]))) for s in cont_steps]
+    statuses  = [s.get("status", "ok")                                   for s in cont_steps]
+
+    sysid = config.get("system_id", "")
+    color_pts = [_STATUS_COLORS.get(st, "#64748b") for st in statuses]
+
+    from matplotlib.patches import Patch
+    seen_legend: dict = {}
+    for st, col in zip(statuses, color_pts):
+        seen_legend[st] = col
+    legend_handles = [
+        Patch(facecolor=c, label=st, edgecolor="white")
+        for st, c in seen_legend.items()
+    ]
+
+    eta_max = max(etas) * 1.04 if etas else 1.05
+
+    # ── 1. ||x_out|| vs eta ─────────────────────────────────────────────────
+    fig, ax = plt.subplots(figsize=(8, 5), dpi=300)
+    ax.set_facecolor("#f8fafc")
+    ax.grid(True, linestyle="--", linewidth=0.5, color="#cbd5e1")
+    ax.plot(etas, out_norms, color="#7c3aed", linewidth=1.6, zorder=2, alpha=0.7)
+    ax.scatter(etas, out_norms, c=color_pts, s=50, zorder=3, edgecolors="white", linewidths=0.5)
+    ax.set_title(f"Continuation: $\\|x_{{\\mathrm{{out}}}}\\|$ vs $\\eta$\n{sysid}",
+                 fontsize=12, fontweight="bold", pad=12)
+    ax.set_xlabel(r"$\eta$", fontsize=11)
+    ax.set_ylabel(r"$\|x_{\mathrm{out}}\|$", fontsize=11)
+    ax.set_xlim(-0.02, eta_max)
+    ax.legend(handles=legend_handles, loc="best", fontsize=8,
+              framealpha=0.9, facecolor="#f8fafc", edgecolor="#e2e8f0")
+    plt.tight_layout()
+    fig.savefig(os.path.join(fig_dir, "continuation_tracking_norm.png"), dpi=300)
+    plt.close(fig)
+
+    # ── 2. Status vs eta (categorical) ──────────────────────────────────────
+    all_statuses = list(dict.fromkeys(
+        [s for s in _STATUS_ORDER if s in statuses] +
+        [s for s in statuses if s not in _STATUS_ORDER]
+    ))
+    status_to_y = {st: i for i, st in enumerate(all_statuses)}
+
+    fig_h = max(3.0, len(all_statuses) * 0.9 + 1.5)
+    fig, ax = plt.subplots(figsize=(9, fig_h), dpi=300)
+    ax.set_facecolor("#f8fafc")
+    ax.grid(True, axis="x", linestyle="--", linewidth=0.5, color="#cbd5e1")
+    for st_val, eta_val in zip(statuses, etas):
+        y = status_to_y[st_val]
+        col = _STATUS_COLORS.get(st_val, "#64748b")
+        ax.scatter(eta_val, y, color=col, s=80, zorder=3, edgecolors="white", linewidths=0.6)
+    ax.set_yticks(range(len(all_statuses)))
+    ax.set_yticklabels(all_statuses, fontsize=9)
+    ax.set_title(f"Continuation: Status per Step\n{sysid}",
+                 fontsize=12, fontweight="bold", pad=12)
+    ax.set_xlabel(r"$\eta$", fontsize=11)
+    ax.set_xlim(-0.02, eta_max)
+    plt.tight_layout()
+    fig.savefig(os.path.join(fig_dir, "continuation_tracking_status.png"), dpi=300)
+    plt.close(fig)
+
+    # ── 3. max||trajectory|| vs eta ─────────────────────────────────────────
+    fig, ax = plt.subplots(figsize=(8, 5), dpi=300)
+    ax.set_facecolor("#f8fafc")
+    ax.grid(True, linestyle="--", linewidth=0.5, color="#cbd5e1")
+    ax.plot(etas, max_norms, color="#0ea5e9", linewidth=1.6, zorder=2, alpha=0.7)
+    ax.scatter(etas, max_norms, c=color_pts, s=50, zorder=3, edgecolors="white", linewidths=0.5)
+    ax.set_title(f"Continuation: Max Trajectory Norm vs $\\eta$\n{sysid}",
+                 fontsize=12, fontweight="bold", pad=12)
+    ax.set_xlabel(r"$\eta$", fontsize=11)
+    ax.set_ylabel(r"$\max_t\,\|x(t)\|$", fontsize=11)
+    ax.set_xlim(-0.02, eta_max)
+    ax.legend(handles=legend_handles, loc="best", fontsize=8,
+              framealpha=0.9, facecolor="#f8fafc", edgecolor="#e2e8f0")
+    plt.tight_layout()
+    fig.savefig(os.path.join(fig_dir, "continuation_tracking_maxnorm.png"), dpi=300)
+    plt.close(fig)
