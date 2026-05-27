@@ -70,7 +70,7 @@ def require_external(import_name: str, package_name: str | None = None) -> Any:
 
     try:
         return importlib.import_module(import_name)
-    except ImportError as exc:
+    except Exception as exc:
         pkg = package_name or import_name
         raise ImportError(f"Optional dependency {pkg!r} is required. Install it with `python -m pip install {pkg}`.") from exc
 
@@ -85,7 +85,7 @@ def external_tool_report() -> list[dict[str, Any]]:
             try:
                 importlib.import_module(tool.import_name)
                 available = True
-            except ImportError:
+            except Exception:
                 available = False
         rows.append(
             {
@@ -108,7 +108,7 @@ def available_complexity_backends() -> list[str]:
         try:
             importlib.import_module(import_name)
             names.append(import_name)
-        except ImportError:
+        except Exception:
             continue
     return names
 

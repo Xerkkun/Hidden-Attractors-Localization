@@ -1,15 +1,22 @@
+import sys
+from pathlib import Path
 import unittest
 import os
 import warnings
 import numpy as np
-from ..systems.chua_saturation import ChuaSaturationSystem
-from ..systems.chua_arctan import ChuaArctanSystem
-from ..lure.describing_function import evaluate_describing_function, solve_amplitude_from_gain
-from ..lure.nyquist import find_harmonic_candidates
-from ..cli.run_workflow import check_duplicate_flags
-from ..integrators.general import integrate_general
-from ..plotting.plot_trajectories import plot_flexible_attractor_and_projections
-from ..plotting.plot_matignon import plot_matignon_equilibria
+
+workspace_root = Path(__file__).resolve().parents[2]
+if str(workspace_root) not in sys.path:
+    sys.path.insert(0, str(workspace_root))
+
+from src.systems.chua_saturation import ChuaSaturationSystem
+from src.systems.chua_arctan import ChuaArctanSystem
+from src.lure.describing_function import evaluate_describing_function, solve_amplitude_from_gain
+from src.lure.nyquist import find_harmonic_candidates
+from src.cli.run_workflow import check_duplicate_flags
+from src.integrators.general import integrate_general
+from src.plotting.plot_trajectories import plot_flexible_attractor_and_projections
+from src.plotting.plot_matignon import plot_matignon_equilibria
 
 class TestWorkflowCorrections(unittest.TestCase):
     
