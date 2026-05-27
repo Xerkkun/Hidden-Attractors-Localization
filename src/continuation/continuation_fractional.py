@@ -93,7 +93,7 @@ def run_fractional_continuation(
     nsteps_tr = int(np.ceil(t_transient / h))
     nsteps_kp = int(np.ceil(t_keep / h))
 
-    history_pol = "finite_memory_window" if memory_mode == "window" else "full_caputo_history"
+    history_pol = "finite_window" if memory_mode == "window" else "full_caputo"
 
     for eta in lambda_values:
         eta_f = float(eta)
@@ -143,8 +143,9 @@ def run_fractional_continuation(
                     x_in_norm=x_in_norm, x_out_norm=x_in_norm,
                     early_stop_reason=err_msg,
                     history_policy=history_pol,
+                    carry_state_history=True,
                     carry_derivative_history=False,
-                    eta_boundary_policy="restart_anchor"
+                    eta_boundary_policy="right_continuous"
                 ))
                 break
             raise
@@ -161,8 +162,9 @@ def run_fractional_continuation(
                 x_in_norm=x_in_norm, x_out_norm=x_in_norm,
                 early_stop_reason=err_msg,
                 history_policy=history_pol,
+                carry_state_history=True,
                 carry_derivative_history=False,
-                eta_boundary_policy="restart_anchor"
+                eta_boundary_policy="right_continuous"
             ))
             break
 
@@ -182,8 +184,9 @@ def run_fractional_continuation(
                 max_norm=max_norm, x_in_norm=x_in_norm, x_out_norm=x_out_norm,
                 early_stop_reason=status_tr if status_tr != "ok" else "",
                 history_policy=history_pol,
+                carry_state_history=True,
                 carry_derivative_history=False,
-                eta_boundary_policy="restart_anchor"
+                eta_boundary_policy="right_continuous"
             ))
             break
 
@@ -229,8 +232,9 @@ def run_fractional_continuation(
                 x_in_norm=x_in_norm, x_out_norm=x_out_norm,
                 early_stop_reason=err_msg,
                 history_policy=history_pol,
+                carry_state_history=True,
                 carry_derivative_history=False,
-                eta_boundary_policy="restart_anchor"
+                eta_boundary_policy="right_continuous"
             ))
             break
 
@@ -251,8 +255,9 @@ def run_fractional_continuation(
             max_norm=max_norm, x_in_norm=x_in_norm, x_out_norm=x_out_norm,
             early_stop_reason=status_kp if status_kp != "ok" else "",
             history_policy=history_pol,
+            carry_state_history=True,
             carry_derivative_history=False,
-            eta_boundary_policy="restart_anchor"
+            eta_boundary_policy="right_continuous"
         ))
 
         if status_kp != "ok":
@@ -524,9 +529,10 @@ def run_fractional_continuation_abm_monolithic(
                 n_steps=len(stage_times), t_end=float(stage_times[-1]) if len(stage_times) > 0 else 0.0,
                 max_norm=max_norm, x_in_norm=x_in_norm, x_out_norm=x_out_norm,
                 early_stop_reason=stop_reason,
-                history_policy="finite_memory_window" if memory_mode == "window" else "full_caputo_history",
+                history_policy="finite_window" if memory_mode == "window" else "full_caputo",
+                carry_state_history=True,
                 carry_derivative_history=True,
-                eta_boundary_policy="monolithic_transport"
+                eta_boundary_policy="right_continuous"
             )
             steps_records.append(step_record)
             break
@@ -550,9 +556,10 @@ def run_fractional_continuation_abm_monolithic(
                 n_steps=steps_per_stage, t_end=float(keep_times[-1]),
                 max_norm=max_norm, x_in_norm=x_in_norm, x_out_norm=x_out_norm,
                 early_stop_reason="",
-                history_policy="finite_memory_window" if memory_mode == "window" else "full_caputo_history",
+                history_policy="finite_window" if memory_mode == "window" else "full_caputo",
+                carry_state_history=True,
                 carry_derivative_history=True,
-                eta_boundary_policy="monolithic_transport"
+                eta_boundary_policy="right_continuous"
             )
             steps_records.append(step_record)
 
@@ -575,9 +582,10 @@ def _make_step_dict(
     x_in_norm: float,
     x_out_norm: float,
     early_stop_reason: str,
-    history_policy: str = "full_caputo_history",
+    history_policy: str = "full_caputo",
+    carry_state_history: bool = True,
     carry_derivative_history: bool = False,
-    eta_boundary_policy: str = "restart_anchor",
+    eta_boundary_policy: str = "right_continuous",
 ) -> Dict[str, Any]:
     """Build a standardised continuation step record."""
     return {
@@ -595,6 +603,7 @@ def _make_step_dict(
         "x_out_norm": x_out_norm,
         "early_stop_reason": early_stop_reason,
         "history_policy": history_policy,
+        "carry_state_history": carry_state_history,
         "carry_derivative_history": carry_derivative_history,
         "eta_boundary_policy": eta_boundary_policy,
     }

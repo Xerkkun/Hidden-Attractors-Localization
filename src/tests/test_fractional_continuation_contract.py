@@ -46,7 +46,7 @@ def test_causality_scalar_non_autonomous():
     assert len(steps_records) == 2
     assert steps_records[0]["lambda_value"] == 0.2
     assert steps_records[1]["lambda_value"] == 0.8
-    assert steps_records[0]["eta_boundary_policy"] == "monolithic_transport"
+    assert steps_records[0]["eta_boundary_policy"] == "right_continuous"
     assert steps_records[0]["carry_derivative_history"] is True
     
     # Check that they match the public API dispatch
@@ -93,7 +93,7 @@ def test_monolithic_history_counts():
     # The actual history array in monolithic transport has capacity growing.
     for step in steps_full:
         assert step["status"] == "ok"
-        assert step["history_policy"] == "full_caputo_history"
+        assert step["history_policy"] == "full_caputo"
 
     # 2. Finite window of length 3:
     steps_win = run_fractional_continuation_abm_monolithic(
@@ -109,4 +109,4 @@ def test_monolithic_history_counts():
     )
     for step in steps_win:
         assert step["status"] == "ok"
-        assert step["history_policy"] == "finite_memory_window"
+        assert step["history_policy"] == "finite_window"

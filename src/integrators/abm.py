@@ -73,6 +73,8 @@ def _python_abm_integrate(
     memory_window_length: Optional[int] = None,
     early_stop_config: Optional[dict] = None,
     equilibria: Optional[List[np.ndarray]] = None,
+    memory_window_steps: Optional[int] = None,
+    memory_window_time: Optional[float] = None,
 ) -> Tuple[np.ndarray, np.ndarray, str]:
     """Pure-Python ABM PECE integrator for Caputo FDEs.
 
@@ -101,6 +103,12 @@ def _python_abm_integrate(
     h = float(h)
     t_final = float(t_final)
     n_steps = int(np.ceil(t_final / h))
+
+    if memory_window_steps is None:
+        if memory_window_length is not None:
+            memory_window_steps = int(memory_window_length)
+        elif memory_window_time is not None:
+            memory_window_steps = int(np.round(float(memory_window_time) / h))
 
     x0_arr = np.asarray(x0, dtype=float)
     dim = x0_arr.size
@@ -168,8 +176,8 @@ def _python_abm_integrate(
         # memory_window_length = number of derivative samples to retain.
         # s_idx is chosen so that the window [s_idx, n] contains at most
         # memory_window_length entries (i.e. n - s_idx + 1 <= Lm_samples).
-        if memory_mode == "window" and memory_window_length is not None:
-            s_idx = max(0, n - int(memory_window_length) + 1)
+        if memory_mode == "window" and memory_window_steps is not None:
+            s_idx = max(0, n - int(memory_window_steps) + 1)
         else:
             s_idx = 0  # full Caputo history
 
@@ -296,124 +304,25 @@ def caputo_abm_integrate(
     use_c_backend: bool = True,
     early_stop_config: Optional[dict] = None,
     equilibria: Optional[List[np.ndarray]] = None,
+    memory_window_steps: Optional[int] = None,
+    memory_window_time: Optional[float] = None,
 ) -> Tuple[np.ndarray, np.ndarray, str]:
     """Integrate a Caputo FDE with the ABM predictor-corrector.
 
-    For ``q == 1.0`` (integer order) the method falls back to Heun's
-    trapezoidal predictor-corrector, which is the natural q→1 limit of ABM.
-    This path is labelled ``heun_q1_limit`` and is **not** presented as an
-    ABM Caputo result.  If you specifically need the EFORK-3 q=1 limit
-    coefficients, use ``efork_integrate`` with ``q=1``.
-
-    Parameters
-    ----------
-    rhs :
-        Right-hand side.  Accepts ``rhs(t, x)`` or legacy ``rhs(x)``.
-    memory_window_length :
-        Number of derivative samples retained in window mode (integer sample
-        count, not a time duration).  When ``memory_mode="window"`` this
-        parameter is mandatory.
+    For ``q == 1.0``, raises a ValueError because ABM is defined only for
+    fractional order q < 1.  Use Heun or EFORK_Q1 instead.
     """
-    # q=1 path: Heun (trapezoidal corrector), labelled heun_q1_limit.
     if q == 1.0:
-        h_val = float(h)
-        n_steps = int(np.ceil(t_final / h_val))
-        dim = np.asarray(x0, dtype=float).size
+        raise ValueError(
+            "ABM integrator is only defined for fractional order q < 1. "
+            "For integer order q=1, use integrator='heun' or 'efork_q1'."
+        )
 
-        t_arr = np.zeros(n_steps + 1, dtype=float)
-        x_arr = np.zeros((n_steps + 1, dim), dtype=float)
-        t_arr[0] = 0.0
-        x_arr[0] = np.asarray(x0, dtype=float)
-
-        x = np.asarray(x0, dtype=float).copy()
-        status = "ok"
-        last_idx = 0
-
-        esc = early_stop_config if early_stop_config is not None else {}
-        es_enabled = esc.get("enabled", True)
-        div_enabled = esc.get("divergence_enabled", esc.get("divergence", {}).get("enabled", True))
-        div_norm = esc.get("divergence_norm", esc.get("divergence", {}).get("norm", 80.0))
-        div_consec = esc.get("divergence_consecutive_steps", esc.get("divergence", {}).get("consecutive_steps", 5))
-        div_growth = esc.get("divergence_growth_factor", esc.get("divergence", {}).get("growth_factor", 1.25))
-        eq_enabled = esc.get("equilibrium_enabled", esc.get("equilibrium", {}).get("enabled", True))
-        eq_t = esc.get("equilibrium_tol", esc.get("equilibrium", {}).get("tol", 1e-3))
-        eq_deriv = esc.get("equilibrium_derivative_tol", esc.get("equilibrium", {}).get("derivative_tol", 1e-4))
-        eq_consec = esc.get("equilibrium_consecutive_steps", esc.get("equilibrium", {}).get("consecutive_steps", 200))
-        eq_min_t = esc.get("equilibrium_min_time", esc.get("equilibrium", {}).get("min_time", 5.0))
-
-        div_consec_count = 0
-        growth_consec_count = 0
-        prev_norm = -1.0
-        eq_consec_counts = [0] * len(equilibria) if equilibria else []
-
-        for n in range(n_steps):
-            t_curr = n * h_val
-            t_next = (n + 1) * h_val
-            try:
-                f_curr = eval_rhs(rhs, t_curr, x)
-                x_pred = x + h_val * f_curr
-                f_next = eval_rhs(rhs, t_next, x_pred)
-                x_next = x + 0.5 * h_val * (f_curr + f_next)
-            except Exception as exc:
-                status = f"solver_exception:{exc}"
-                break
-
-            norm = np.linalg.norm(x_next)
-
-            if divergence_norm is not None and norm > divergence_norm:
-                status = "diverged"
-                x_arr[n + 1] = x_next
-                t_arr[n + 1] = t_next
-                last_idx = n + 1
-                break
-
-            x = x_next
-            x_arr[n + 1] = x
-            t_arr[n + 1] = t_next
-            last_idx = n + 1
-
-            if es_enabled:
-                if div_enabled:
-                    if norm > div_norm:
-                        div_consec_count += 1
-                    else:
-                        div_consec_count = 0
-                    if prev_norm >= 0.0:
-                        if norm > div_growth * prev_norm:
-                            growth_consec_count += 1
-                        else:
-                            growth_consec_count = 0
-                    prev_norm = norm
-                    if div_consec_count >= div_consec or growth_consec_count >= div_consec:
-                        status = "diverged_early"
-                        break
-                else:
-                    prev_norm = norm
-
-                if eq_enabled and equilibria and t_next >= eq_min_t:
-                    converged_eq_idx = -1
-                    for k, eq in enumerate(equilibria):
-                        diff_norm = np.linalg.norm(x_next - eq)
-                        try:
-                            deriv_norm = np.linalg.norm(eval_rhs(rhs, t_next, x_next))
-                        except Exception:
-                            deriv_norm = 9999.0
-
-                        if diff_norm < eq_t and deriv_norm < eq_deriv:
-                            eq_consec_counts[k] += 1
-                        else:
-                            eq_consec_counts[k] = 0
-
-                        if eq_consec_counts[k] >= eq_consec:
-                            converged_eq_idx = k
-                            break
-                    if converged_eq_idx != -1:
-                        status = "converged_equilibrium_early"
-                        break
-            else:
-                prev_norm = norm
-
-        return t_arr[:last_idx + 1], x_arr[:last_idx + 1], status
+    if memory_window_steps is None:
+        if memory_window_length is not None:
+            memory_window_steps = int(memory_window_length)
+        elif memory_window_time is not None:
+            memory_window_steps = int(np.round(float(memory_window_time) / h))
 
     # Fractional path: normalise rhs to rhs(t, x) for fractional_integrate.
     def rhs_t(t_val: float, x_val: np.ndarray) -> np.ndarray:
@@ -428,7 +337,7 @@ def caputo_abm_integrate(
         t_final=t_final,
         method="abm",
         memory_mode=memory_mode,
-        memory_window_length=memory_window_length,
+        memory_window_length=memory_window_steps,
         history_times=history_times,
         history_states=history_states,
         system=system,

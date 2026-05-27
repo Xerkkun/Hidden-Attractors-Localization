@@ -32,7 +32,9 @@ def find_harmonic_candidates(
     grid_size_amplitude: int = 200,
     root_refinement: bool = True,
     q: Optional[float] = None,
-    describing_function_mode: str = "auto"
+    describing_function_mode: str = "auto",
+    transfer_convention: str = "standard",
+    harmonic_condition: str = "1_minus_WN"
 ) -> List[Tuple[float, float, float]]:
     """Find all candidate pairs (A0, omega0, k) solving the harmonic condition.
     
@@ -46,17 +48,20 @@ def find_harmonic_candidates(
     candidates = CandidateList()
     
     if seed_strategy == "nyquist_df":
-        # Strategy 1: 2D Grid search + optional refinement of ||W*N + 1||
+        # Strategy 1: 2D Grid search + optional refinement of ||W*N - 1|| or ||W*N + 1||
         ws = np.linspace(omega_min, omega_max, grid_size_omega)
         as_ = np.linspace(amplitude_min, amplitude_max, grid_size_amplitude)
         
         best_pts = []
         res = np.zeros((len(as_), len(ws)))
-        W_vals = [W_eval(w, q, transfer_mode, system.P, system.b, system.r) for w in ws]
+        W_vals = [W_eval(w, q, transfer_mode, system.P, system.b, system.r, transfer_convention=transfer_convention) for w in ws]
         for i, A in enumerate(as_):
             N_val = evaluate_describing_function(system, A, mode=describing_function_mode).value
             for j, w in enumerate(ws):
-                res[i, j] = np.abs(W_vals[j] * N_val + 1.0)
+                if harmonic_condition == "1_minus_WN":
+                    res[i, j] = np.abs(W_vals[j] * N_val - 1.0)
+                else:
+                    res[i, j] = np.abs(W_vals[j] * N_val + 1.0)
         
         for i in range(1, len(as_) - 1):
             for j in range(1, len(ws) - 1):
@@ -72,9 +77,12 @@ def find_harmonic_candidates(
                     if A <= 0.01 or w <= 0.01:
                         return 1e6
                     try:
-                        W = W_eval(w, q, transfer_mode, system.P, system.b, system.r)
+                        W = W_eval(w, q, transfer_mode, system.P, system.b, system.r, transfer_convention=transfer_convention)
                         N_val = evaluate_describing_function(system, A, mode=describing_function_mode).value
-                        return float(np.abs(W * N_val + 1.0))
+                        if harmonic_condition == "1_minus_WN":
+                            return float(np.abs(W * N_val - 1.0))
+                        else:
+                            return float(np.abs(W * N_val + 1.0))
                     except Exception:
                         return 1e6
                 
@@ -122,7 +130,7 @@ def find_harmonic_candidates(
         ims = []
         for w in ws:
             try:
-                val = W_eval(w, q, transfer_mode, system.P, system.b, system.r)
+                val = W_eval(w, q, transfer_mode, system.P, system.b, system.r, transfer_convention=transfer_convention)
                 ims.append(val.imag)
             except Exception:
                 ims.append(np.nan)
@@ -134,7 +142,7 @@ def find_harmonic_candidates(
             if ims[j] * ims[j+1] < 0.0:
                 try:
                     def root_f(w):
-                        return W_eval(w, q, transfer_mode, system.P, system.b, system.r).imag
+                        return W_eval(w, q, transfer_mode, system.P, system.b, system.r, transfer_convention=transfer_convention).imag
                     
                     sol = root_scalar(root_f, bracket=[ws[j], ws[j+1]], method="bisect")
                     if sol.converged:
@@ -143,10 +151,14 @@ def find_harmonic_candidates(
                     pass
         
         for w0 in omega_roots:
-            W0 = W_eval(w0, q, transfer_mode, system.P, system.b, system.r)
+            W0 = W_eval(w0, q, transfer_mode, system.P, system.b, system.r, transfer_convention=transfer_convention)
             if abs(W0.real) < 1e-12:
                 continue
-            k = -1.0 / W0.real
+            
+            if harmonic_condition == "1_minus_WN":
+                k = 1.0 / W0.real
+            else:
+                k = -1.0 / W0.real
             
             try:
                 # Solve amplitude from gain

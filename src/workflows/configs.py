@@ -2,6 +2,7 @@ import yaml
 import os
 import time
 from typing import Any, Dict
+from src.contracts import validate_contracts
 
 DEFAULT_CONFIG = {
     "system_id": "chua_fractional_saturation",
@@ -17,6 +18,17 @@ DEFAULT_CONFIG = {
     "run_sphere_tests": False,
     "run_robustness": False,
     "workers": 1,
+    
+    # Explicit Contracts
+    "seed_mode": "fractional",
+    "memory_policy": "full_caputo",
+    "memory_window_steps": 4000,
+    "memory_window_time": None,
+    "transfer_convention": "standard",
+    "harmonic_condition": "1_minus_WN",
+    "q_seed": None,
+    "q_dynamics": None,
+
     
     # Plotting configuration
     "plot_enabled": True,
@@ -185,6 +197,33 @@ def load_and_validate_config(config_path: str) -> Dict[str, Any]:
         print("WARNING: Using top-level 't_burn' config is deprecated. Please configure 'final_simulation', 'sphere_tests', and 'basin' separately.")
         config["final_simulation"]["t_burn"] = float(config_data["t_burn"])
     
+    # Normalize and map integrator name
+    if config.get("integrator") == "efork":
+        config["integrator"] = "efork3"
+
+    # Map memory policy <-> memory mode
+    if config.get("memory_policy") == "full_caputo":
+        config["memory_mode"] = "full"
+    elif config.get("memory_policy") == "finite_window":
+        config["memory_mode"] = "window"
+
+    if config.get("memory_mode") == "full":
+        config["memory_policy"] = "full_caputo"
+    elif config.get("memory_mode") == "window":
+        config["memory_policy"] = "finite_window"
+
+    if config.get("memory_window_steps") is not None:
+        config["memory_window_length"] = int(config["memory_window_steps"])
+    elif config.get("memory_window_length") is not None:
+        config["memory_window_steps"] = int(config["memory_window_length"])
+
+    if config.get("memory_window_time") is not None and config.get("h") is not None:
+        config["memory_window_steps"] = int(np.round(float(config["memory_window_time"]) / float(config["h"])))
+        config["memory_window_length"] = config["memory_window_steps"]
+
+    # Run central contracts validation
+    validate_contracts(config)
+
     # Validate critical keys
     if config["transfer_mode"] not in {"integer", "fractional"}:
         raise ValueError(f"Invalid transfer_mode: {config['transfer_mode']}")
@@ -192,9 +231,9 @@ def load_and_validate_config(config_path: str) -> Dict[str, Any]:
         raise ValueError(f"Invalid continuation_mode: {config['continuation_mode']}")
     if config["dynamics_mode"] not in {"integer", "fractional", "system"}:
         raise ValueError(f"Invalid dynamics_mode: {config['dynamics_mode']}")
-    if config["integrator"] not in {"abm", "efork"}:
+    if config["integrator"] not in {"abm", "efork3", "efork_q1", "heun"}:
         raise ValueError(f"Invalid integrator: {config['integrator']}")
-    if config["memory_mode"] not in {"full", "window"}:
+    if config["memory_mode"] not in {"full", "window", "none"}:
         raise ValueError(f"Invalid memory_mode: {config['memory_mode']}")
     if config["seed_strategy"] not in {"k_phi", "imw_gain", "nyquist_df"}:
         raise ValueError(f"Invalid seed_strategy: {config['seed_strategy']}")

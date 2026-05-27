@@ -137,12 +137,11 @@ def fractional_integrate(
         0 < q < 1 is accepted; passing ``q=1`` with EFORK raises ``ValueError``
         because the fractional EFORK C kernel is not valid at integer order.
     """
-    # Guard: EFORK is only defined for 0 < q < 1.
-    if method.lower() == "efork" and float(q) >= 1.0:
+    # Guard: Fractional integration is only defined for 0 < q < 1.
+    if float(q) == 1.0:
         raise ValueError(
-            f"fractional_integrate: EFORK requires 0 < q < 1, got q={q}. "
-            "For integer order use efork_integrate (which applies EFORK_Q1 "
-            "limit coefficients) or a standard ODE solver."
+            f"fractional_integrate: Fractional backend is only defined for fractional order q < 1, got q={q}. "
+            "For integer order (q=1) use a standard integer integrator."
         )
     x0_arr = np.asarray(x0, dtype=np.float64)
     dim = x0_arr.size

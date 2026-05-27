@@ -8,15 +8,26 @@ def validate_fractional_order(q: float) -> float:
         raise ValueError(f"Fractional order q must satisfy 0 < q <= 1, got {q}.")
     return q_val
 
-def W_spectral(lam: complex, P: np.ndarray, b: np.ndarray, r: np.ndarray) -> complex:
-    """Spectral form using the repository's internal convention: W_hat(lambda) = r^T * (P - lambda * I)^(-1) * b"""
+def W_spectral(lam: complex, P: np.ndarray, b: np.ndarray, r: np.ndarray, transfer_convention: str = "standard") -> complex:
+    """Spectral form.
+    
+    If transfer_convention == "standard":
+        W_q(omega) = r^T * ((lam * I - P)^(-1)) * b
+    If transfer_convention == "opposite_sign":
+        W_q(omega) = r^T * ((P - lam * I)^(-1)) * b
+    """
     dimension = P.shape[0]
-    # P - lambda * I
-    lhs = P - lam * np.eye(dimension, dtype=complex)
+    if transfer_convention == "standard":
+        lhs = lam * np.eye(dimension, dtype=complex) - P
+    elif transfer_convention == "opposite_sign":
+        lhs = P - lam * np.eye(dimension, dtype=complex)
+    else:
+        raise ValueError(f"Unknown transfer_convention: {transfer_convention}")
+        
     inv_lhs = np.linalg.inv(lhs)
     return complex(r.T @ inv_lhs @ b)
 
-def W_eval(omega: float, q: float, transfer_mode: str, P: np.ndarray, b: np.ndarray, r: np.ndarray) -> complex:
+def W_eval(omega: float, q: float, transfer_mode: str, P: np.ndarray, b: np.ndarray, r: np.ndarray, transfer_convention: str = "standard") -> complex:
     """Evaluates the transfer function at frequency omega.
     
     If transfer_mode == "integer":
@@ -37,4 +48,4 @@ def W_eval(omega: float, q: float, transfer_mode: str, P: np.ndarray, b: np.ndar
     else: # fractional
         lam = (omega**q_val) * np.exp(1j * q_val * np.pi / 2.0)
         
-    return W_spectral(lam, P, b, r)
+    return W_spectral(lam, P, b, r, transfer_convention=transfer_convention)

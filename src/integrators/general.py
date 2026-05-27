@@ -35,7 +35,7 @@ def integrate_general(
             
     # 1. Non-fractional order q = 1.0: use general Heun's method or EFORK_Q1 limit
     if q == 1.0:
-        if integrator.lower() == "efork":
+        if integrator.lower() in {"efork", "efork3", "efork_q1"}:
             from ._q1_coefficients import (
                 EFORK_Q1_A21,
                 EFORK_Q1_A31,
@@ -44,11 +44,16 @@ def integrate_general(
                 EFORK_Q1_W2,
                 EFORK_Q1_W3,
             )
+            use_efork_q1 = True
             status_default = "ok"
-        elif integrator.lower() == "abm":
+        elif integrator.lower() == "heun":
+            use_efork_q1 = False
             status_default = "ok"
         else:
-            raise ValueError(f"Unknown integrator for q=1.0: {integrator}")
+            raise ValueError(
+                f"Integrator '{integrator}' is not supported at q=1.0. "
+                "Use 'heun' or 'efork_q1' / 'efork3'."
+            )
 
         n_steps = int(np.ceil(t_final / h))
         t_arr = np.zeros(n_steps + 1, dtype=float)
@@ -84,12 +89,12 @@ def integrate_general(
             t_curr = n * h
             t_next = (n + 1) * h
             try:
-                if integrator.lower() == "efork":
+                if use_efork_q1:
                     k1 = h * rhs_t(t_curr, x)
                     k2 = h * rhs_t(t_curr + 0.5 * h, x + EFORK_Q1_A21 * k1)
                     k3 = h * rhs_t(t_curr + 0.5 * h, x + EFORK_Q1_A31 * k1 + EFORK_Q1_A32 * k2)
                     x_next = x + EFORK_Q1_W1 * k1 + EFORK_Q1_W2 * k2 + EFORK_Q1_W3 * k3
-                else:  # abm (Heun)
+                else:  # heun
                     f_curr = rhs_t(t_curr, x)
                     x_pred = x + h * f_curr
                     f_next = rhs_t(t_next, x_pred)

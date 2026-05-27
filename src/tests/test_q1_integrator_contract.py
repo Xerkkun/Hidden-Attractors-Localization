@@ -83,7 +83,7 @@ def test_efork_q1_does_not_call_fractional_c():
 
 
 def test_abm_q1_documents_heun_limit():
-    """Verify that ABM at q=1 correctly falls back to Heun with heun_q1_limit status."""
+    """Verify that ABM at q=1 raises a ValueError because it is only for q < 1."""
     def rhs_linear(t, x):
         return -0.8 * x
 
@@ -91,21 +91,14 @@ def test_abm_q1_documents_heun_limit():
     h = 0.1
     t_final = h
 
-    t_arr, x_arr, status = caputo_abm_integrate(
-        rhs=rhs_linear,
-        x0=x0,
-        q=1.0,
-        h=h,
-        t_final=t_final
-    )
-    # Must use heun_q1_limit as status, indicating it's not a Caputo fractional run
-    assert status == "ok"
-    
-    # Calculate exact Heun step:
-    # x_pred = x + h * rhs(x) = 1.0 - 0.08 = 0.92
-    # x_next = x + 0.5 * h * (rhs(x) + rhs(x_pred)) = 1.0 + 0.05 * (-0.8 + -0.8 * 0.92)
-    x_heun = 1.0 + 0.05 * (-0.8 - 0.736)
-    assert np.allclose(x_arr[-1, 0], x_heun, atol=1e-12)
+    with pytest.raises(ValueError):
+        caputo_abm_integrate(
+            rhs=rhs_linear,
+            x0=x0,
+            q=1.0,
+            h=h,
+            t_final=t_final
+        )
 
 
 def test_general_q1_dispatches_correctly():
@@ -119,29 +112,41 @@ def test_general_q1_dispatches_correctly():
     def rhs_linear(t, x):
         return -0.8 * x
 
-    # 1. Dispatching to abm (Heun)
-    t_abm, x_abm, status_abm = integrate_general(
+    # 1. Dispatching to abm (raises ValueError)
+    with pytest.raises(ValueError):
+        integrate_general(
+            rhs=rhs_linear,
+            x0=x0,
+            q=1.0,
+            h=h,
+            t_final=t_final,
+            integrator="abm",
+            system=sys_obj
+        )
+
+    # 2. Dispatching to heun (Heun)
+    t_heun, x_heun, status_heun = integrate_general(
         rhs=rhs_linear,
         x0=x0,
         q=1.0,
         h=h,
         t_final=t_final,
-        integrator="abm",
+        integrator="heun",
         system=sys_obj
     )
-    assert status_abm == "ok"
+    assert status_heun == "ok"
 
-    # 2. Dispatching to efork (EFORK_Q1)
+    # 3. Dispatching to efork3 (EFORK_Q1)
     t_ef, x_ef, status_ef = integrate_general(
         rhs=rhs_linear,
         x0=x0,
         q=1.0,
         h=h,
         t_final=t_final,
-        integrator="efork",
+        integrator="efork3",
         system=sys_obj
     )
     assert status_ef == "ok"
 
     # Verify they produce numerically distinct trajectories due to different q=1 limit schemes
-    assert not np.allclose(x_abm, x_ef, atol=1e-6)
+    assert not np.allclose(x_heun, x_ef, atol=1e-6)
