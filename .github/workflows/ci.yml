@@ -165,6 +165,7 @@ jobs:
       # ── Probar que FractionalChuaBackend compila y devuelve filas ────────
       - name: Build and smoke-test FractionalChuaBackend
         if: steps.cc_check.outputs.available == 'true'
+        shell: bash
         run: |
           python - <<'EOF'
           from hidden_attractors.native.backends import FractionalChuaBackend
@@ -180,6 +181,7 @@ jobs:
       # ── Probar que BasinBackend compila y devuelve equilibrios ───────────
       - name: Build and smoke-test BasinBackend
         if: steps.cc_check.outputs.available == 'true'
+        shell: bash
         run: |
           python - <<'EOF'
           from hidden_attractors.native.backends import BasinBackend
@@ -239,6 +241,7 @@ jobs:
         run: python examples/list_final_candidates.py
 
       - name: Build and smoke-test FractionalChuaBackend (macOS)
+        shell: bash
         run: |
           python - <<'EOF'
           from hidden_attractors.native.backends import FractionalChuaBackend
