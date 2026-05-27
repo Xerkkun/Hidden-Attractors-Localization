@@ -143,6 +143,20 @@ def fractional_integrate(
             f"fractional_integrate: Fractional backend is only defined for fractional order q < 1, got q={q}. "
             "For integer order (q=1) use a standard integer integrator."
         )
+        
+    method_l = method.lower()
+    if method_l in {"heun", "efork_q1"}:
+        raise ValueError(f"Integrator '{method}' is not allowed for fractional-order dynamics (q < 1.0). Use 'abm' or 'efork3'.")
+        
+    if method_l == "abm":
+        meth_val = 0
+    elif method_l in {"efork", "efork3"}:
+        meth_val = 1
+    else:
+        raise ValueError(
+            "fractional_integrate only accepts method='abm' or method='efork3' for 0<q<1."
+        )
+        
     x0_arr = np.asarray(x0, dtype=np.float64)
     dim = x0_arr.size
     
@@ -150,7 +164,6 @@ def fractional_integrate(
     if not callable(rhs):
         raise TypeError("rhs must be a callable function")
         
-    meth_val = 0 if method.lower() == "abm" else 1
     mem_val = 0 if memory_mode.lower() == "full" else 1
     win_len = int(memory_window_length) if memory_window_length is not None else 0
     

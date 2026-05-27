@@ -29,12 +29,5 @@ def classify_hiddenness_verdict(
         return "not_supported"
         
     # If we had 0 target hits, and seed successfully reached the attractor:
-    # Check if there are stable equilibria
-    stable_count = equilibria_count - unstable_equilibria_count
-    
-    if stable_count == 0:
-        # System has only unstable equilibria, and no neighborhood trajectories excited the attractor
-        return "hidden_verified_under_tested_radii"
-    else:
-        # System has at least one stable equilibrium, which is compatible with hiddenness
-        return "compatible_with_hiddenness_under_tested_radii"
+    # return compatible_with_hiddenness_under_sampled_radii since a finite set of radii cannot mathematically verify hiddenness
+    return "compatible_with_hiddenness_under_sampled_radii"

@@ -11,8 +11,8 @@ from ..lure.nyquist import find_harmonic_candidates
 from ..lure.seeds import build_lure_seed, build_modal_lure_seed
 from ..continuation.continuation_integer import run_integer_continuation
 from ..continuation.continuation_fractional import run_fractional_continuation
-from ..integrators.abm import caputo_abm_integrate
-from ..integrators.efork import efork_integrate
+from ..integrators.general import integrate_general
+from ..contracts import validate_contracts
 from ..verification.equilibria import solve_equilibria
 from ..verification.stability import classify_equilibrium_stability
 from ..verification.hiddenness import run_neighborhood_probe, generate_neighborhood_points
@@ -142,6 +142,47 @@ def _save_continuation_trace(cont_steps: list, output_dir: str) -> None:
             w2.writerows(traj.tolist())
 
 
+def run_workflow_integration(system, x0, q_val, h, t_final, config, equilibria):
+    integrator = config["integrator"]
+    memory_mode = config["memory_mode"]
+    memory_window_length = config["memory_window_length"]
+    divergence_norm = config["divergence_norm"]
+    early_stop = config.get("early_stop")
+    
+    if abs(q_val - 1.0) < 1e-9:
+        if integrator == "abm":
+            raise ValueError("ABM integrator is not allowed for integer-order dynamics (q = 1.0). Use 'efork_q1' or 'heun'.")
+        elif integrator in {"efork", "efork3", "efork_q1"}:
+            eff_integrator = "efork_q1"
+        elif integrator == "heun":
+            eff_integrator = "heun"
+        else:
+            raise ValueError(f"Invalid integrator '{integrator}' for integer-order dynamics (q = 1.0).")
+    else: # q_val < 1.0
+        if integrator in {"heun", "efork_q1"}:
+            raise ValueError(f"Integrator '{integrator}' is not allowed for fractional-order dynamics (q < 1.0). Use 'abm' or 'efork3'.")
+        elif integrator in {"abm", "efork3", "efork"}:
+            eff_integrator = integrator
+        else:
+            raise ValueError(f"Invalid integrator '{integrator}' for fractional-order dynamics.")
+            
+    return integrate_general(
+        rhs=system.evaluate_rhs,
+        x0=x0,
+        q=q_val,
+        h=h,
+        t_final=t_final,
+        integrator=eff_integrator,
+        memory_mode=memory_mode,
+        memory_window_length=memory_window_length,
+        divergence_norm=divergence_norm,
+        system=system,
+        use_c_backend=config.get("use_c_backend", True),
+        early_stop_config=early_stop,
+        equilibria=equilibria
+    )
+
+
 def run_centered_lure_df_workflow(config: dict) -> dict:
     """Execute the full 7-phase centered Lur'e describing function workflow with early stopping and visual updates."""
     # Inject defaults for any missing keys
@@ -169,10 +210,51 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     system = get_system_by_id(system_id, **sys_kwargs)
     q = system.q
     
+    # Resolve q_seed efectivo
+    if config.get("q_seed") is not None:
+        q_seed = config["q_seed"]
+    elif config.get("seed_mode") == "integer":
+        q_seed = 1.0
+    else:
+        q_seed = system.q
+
+    # Resolve q_dynamics efectivo
+    if config.get("q_dynamics") is not None:
+        q_dynamics = config["q_dynamics"]
+    elif config.get("dynamics_mode") == "integer":
+        q_dynamics = 1.0
+    elif config.get("dynamics_mode") == "fractional":
+        q_dynamics = system.q
+    else:
+        q_dynamics = system.q
+
+    # Resolve transfer_mode efectivo para semilla
+    if config.get("seed_mode") == "integer":
+        seed_transfer_mode = "integer"
+    else:
+        seed_transfer_mode = "fractional"
+
+    # Validate contracts
+    validation_config = config.copy()
+    validation_config["q_seed"] = q_seed
+    validation_config["q_dynamics"] = q_dynamics
+    validation_config["seed_transfer_mode"] = seed_transfer_mode
+    validation_config["q"] = q
+    validate_contracts(validation_config)
+    
     # Save the effective configuration used (both YAML and JSON)
     effective_config_path = os.path.join(output_dir, "effective_config.yaml")
     effective_config = config.copy()
     effective_config["q"] = q # Store actual q
+    effective_config["seed_mode"] = config["seed_mode"]
+    effective_config["q_seed_effective"] = q_seed
+    effective_config["q_dynamics_effective"] = q_dynamics
+    effective_config["seed_transfer_mode"] = seed_transfer_mode
+    effective_config["transfer_convention"] = config["transfer_convention"]
+    effective_config["harmonic_condition"] = config["harmonic_condition"]
+    effective_config["memory_policy"] = config["memory_policy"]
+    effective_config["history_policy"] = "full_caputo" if config["memory_policy"] == "full_caputo" else ("finite_window" if config["memory_policy"] == "finite_window" else "none")
+    
     with open(effective_config_path, "w", encoding="utf-8") as f:
         yaml.dump(effective_config, f, default_flow_style=False)
         
@@ -215,7 +297,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     w_vals = []
     for w in omega_grid:
         try:
-            val = W_eval(w, q, config["transfer_mode"], system.P, system.b, system.r)
+            val = W_eval(w, q_seed, seed_transfer_mode, system.P, system.b, system.r, transfer_convention=config["transfer_convention"])
             w_vals.append(val)
         except Exception:
             w_vals.append(complex(np.nan, np.nan))
@@ -227,7 +309,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     print(f"[{run_id}][{system_id}] Fase 4/7: buscando semillas DF... 45%")
     candidates = find_harmonic_candidates(
         system=system,
-        transfer_mode=config["transfer_mode"],
+        transfer_mode=seed_transfer_mode,
         seed_strategy=config["seed_strategy"],
         df_residual_tol=config["df_residual_tol"],
         omega_min=config["omega_min"],
@@ -237,8 +319,10 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         grid_size_omega=config["grid_size_omega"],
         grid_size_amplitude=config["grid_size_amplitude"],
         root_refinement=config["root_refinement"],
-        q=q,
-        describing_function_mode=config["describing_function_mode"]
+        q=q_seed,
+        describing_function_mode=config["describing_function_mode"],
+        transfer_convention=config["transfer_convention"],
+        harmonic_condition=config["harmonic_condition"]
     )
     
     n_candidates = len(candidates)
@@ -262,8 +346,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                 c_seed_pos, _ = build_lure_seed(
                     system, c_A0, c_omega0, c_k,
                     seed_sign_convention=config["seed_sign_convention"],
-                    q=q,
-                    transfer_mode=config["transfer_mode"],
+                    q=q_seed,
+                    transfer_mode=seed_transfer_mode,
                     theta=config.get("seed_theta", 0.0),
                     seed_construction=config.get("seed_construction", "modal"),
                 )
@@ -280,32 +364,15 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                     c_active_q = q
                 
                 # Integrate candidate with early stop
-                if c_active_q == 1.0:
-                    if config["integrator"] == "abm":
-                        c_t_fin, c_x_fin, c_status = caputo_abm_integrate(
-                            system.evaluate_rhs, c_seed_pos, q=1.0, h=config["h"], t_final=t_final, divergence_norm=config["divergence_norm"], system=system,
-                            early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
-                        )
-                    else:  # efork
-                        c_t_fin, c_x_fin, c_status = efork_integrate(
-                            system, c_seed_pos, q=1.0, h=config["h"], t_final=t_final, memory_mode="full",
-                            divergence_norm=config["divergence_norm"],
-                            early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
-                        )
-                else:
-                    if config["integrator"] == "abm":
-                        c_t_fin, c_x_fin, c_status = caputo_abm_integrate(
-                            system.evaluate_rhs, c_seed_pos, q=c_active_q, h=config["h"], t_final=t_final, divergence_norm=config["divergence_norm"],
-                            memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"], system=system,
-                            early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
-                        )
-                    else:  # efork
-                        c_t_fin, c_x_fin, c_status = efork_integrate(
-                            system, c_seed_pos, q=c_active_q, h=config["h"], t_final=t_final,
-                            memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"],
-                            divergence_norm=config["divergence_norm"],
-                            early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
-                        )
+                c_t_fin, c_x_fin, c_status = run_workflow_integration(
+                    system=system,
+                    x0=c_seed_pos,
+                    q_val=c_active_q,
+                    h=config["h"],
+                    t_final=t_final,
+                    config=config,
+                    equilibria=list(equilibria.values())
+                )
                 
                 if c_status in ("ok", "diverged_early", "converged_equilibrium_early"):
                     c_traj = np.column_stack((c_t_fin, c_x_fin))
@@ -339,8 +406,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     seed_pos, seed_neg = build_lure_seed(
         system, A0, omega0, k,
         seed_sign_convention=config["seed_sign_convention"],
-        q=q,
-        transfer_mode=config["transfer_mode"],
+        q=q_seed,
+        transfer_mode=seed_transfer_mode,
         theta=config.get("seed_theta", 0.0),
         seed_construction=config.get("seed_construction", "modal"),
     )
@@ -348,7 +415,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     # Compute residuals for modal metrics
     if config["seed_construction"] == "modal":
         _, v_norm, matched_ev, target_lam = build_modal_lure_seed(
-            system, A0, omega0, k, q=q, transfer_mode=config["transfer_mode"], theta=config.get("seed_theta", 0.0)
+            system, A0, omega0, k, q=q_seed, transfer_mode=seed_transfer_mode, theta=config.get("seed_theta", 0.0)
         )
         norm_res = float(np.abs(system.r.astype(complex) @ v_norm - 1.0))
         P0 = system.P.astype(complex) + k * np.outer(system.b.astype(complex), system.r.astype(complex))
@@ -387,8 +454,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         try:
             _, v_norm_pre, _, _ = build_modal_lure_seed(
                 system, A0, omega0, k,
-                q=q,
-                transfer_mode=config["transfer_mode"],
+                q=q_seed,
+                transfer_mode=seed_transfer_mode,
                 theta=config.get("seed_theta", 0.0)
             )
             T0_pre = 2.0 * np.pi / omega0
@@ -490,35 +557,18 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         else:
             raise ValueError(f"Unknown dynamics_mode: {dyn_mode}")
             
-        # Long final integration at eta = 1.0 with early stop support
-        if active_q == 1.0:
-            if config["integrator"] == "abm":
-                t_fin, x_fin, final_status = caputo_abm_integrate(
-                    system.evaluate_rhs, x_final_seed, q=1.0, h=config["h"], t_final=t_final, divergence_norm=config["divergence_norm"], system=system,
-                    early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
-                )
-            else: # efork
-                t_fin, x_fin, final_status = efork_integrate(
-                    system, x_final_seed, q=1.0, h=config["h"], t_final=t_final, memory_mode="full",
-                    divergence_norm=config["divergence_norm"],
-                    early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
-                )
-        else: # fractional
-            if config["integrator"] == "abm":
-                t_fin, x_fin, final_status = caputo_abm_integrate(
-                    system.evaluate_rhs, x_final_seed, q=active_q, h=config["h"], t_final=t_final, divergence_norm=config["divergence_norm"],
-                    memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"], system=system,
-                    early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
-                )
-            else: # efork
-                t_fin, x_fin, final_status = efork_integrate(
-                    system, x_final_seed, q=active_q, h=config["h"], t_final=t_final,
-                    memory_mode=config["memory_mode"], memory_window_length=config["memory_window_length"],
-                    divergence_norm=config["divergence_norm"],
-                    early_stop_config=config.get("early_stop"), equilibria=list(equilibria.values())
-                )
+        # Long final integration at eta = 1.0 with early stop support using our integration helper
+        t_fin, x_fin, final_status = run_workflow_integration(
+            system=system,
+            x0=x_final_seed,
+            q_val=active_q,
+            h=config["h"],
+            t_final=t_final,
+            config=config,
+            equilibria=list(equilibria.values())
+        )
                 
-        if final_status in ("ok", "diverged_early", "converged_equilibrium_early"):
+        if final_status == "ok":
             final_traj = np.column_stack((t_fin, x_fin))
             # Save trajectory CSV
             traj_csv_path = os.path.join(output_dir, "final_attractor.csv")
@@ -529,7 +579,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                 
     # Evaluate final tail states
     ref_tail = np.empty((0, 3))
-    if final_traj is not None:
+    if final_status == "ok" and final_traj is not None:
         n_burn = int(np.ceil(t_burn / config["h"]))
         if len(final_traj) > n_burn:
             ref_tail = final_traj[n_burn:, 1:]
@@ -542,7 +592,11 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     probe_results = []
     target_hits = 0
     numerical_fails = 0
-    seed_reached_attractor = bool(final_traj is not None and final_status in ("ok", "diverged_early", "converged_equilibrium_early") and len(ref_tail) > 10)
+    
+    if final_status == "converged_equilibrium_early":
+        final_status = "converged_to_equilibrium"
+        
+    seed_reached_attractor = bool(final_traj is not None and final_status == "ok" and len(ref_tail) > 10)
     
     # Run sphere verification tests
     if (config["run_sphere_tests"] or config["run_hiddenness_tests"]):
@@ -798,6 +852,32 @@ def _build_summary_dict(
             return ""
         return f"{val.real:+.12f}{val.imag:+.12f}j"
         
+    # Resolve q_seed efectivo
+    if config.get("q_seed") is not None:
+        q_seed = config["q_seed"]
+    elif config.get("seed_mode") == "integer":
+        q_seed = 1.0
+    else:
+        q_seed = getattr(system, "q", 1.0)
+
+    # Resolve q_dynamics efectivo
+    if config.get("q_dynamics") is not None:
+        q_dynamics = config["q_dynamics"]
+    elif config.get("dynamics_mode") == "integer":
+        q_dynamics = 1.0
+    elif config.get("dynamics_mode") == "fractional":
+        q_dynamics = getattr(system, "q", 1.0)
+    else:
+        q_dynamics = getattr(system, "q", 1.0)
+
+    # Resolve transfer_mode efectivo para semilla
+    if config.get("seed_mode") == "integer":
+        seed_transfer_mode = "integer"
+    else:
+        seed_transfer_mode = "fractional"
+        
+    history_policy = "full_caputo" if config.get("memory_policy") == "full_caputo" else ("finite_window" if config.get("memory_policy") == "finite_window" else "none")
+
     return {
         "system_id": config["system_id"],
         "transfer_mode": config["transfer_mode"],
@@ -807,6 +887,14 @@ def _build_summary_dict(
         "continuation_mode": config["continuation_mode"],
         "integrator": config["integrator"],
         "memory_mode": config["memory_mode"],
+        "seed_mode": config.get("seed_mode"),
+        "q_seed_effective": q_seed,
+        "q_dynamics_effective": q_dynamics,
+        "seed_transfer_mode": seed_transfer_mode,
+        "transfer_convention": config.get("transfer_convention"),
+        "harmonic_condition": config.get("harmonic_condition"),
+        "memory_policy": config.get("memory_policy"),
+        "history_policy": history_policy,
         "branch_index": config.get("branch_index", 0),
         "n_df_candidates": n_candidates,
         "selected_seed": "pos" if n_candidates > 0 else "none",

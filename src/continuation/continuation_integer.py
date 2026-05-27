@@ -1,7 +1,6 @@
 import numpy as np
 from typing import Any, Dict, List, Optional, Sequence
-from ..integrators.abm import caputo_abm_integrate
-from ..integrators.efork import efork_integrate
+from ..integrators.general import integrate_general
 
 
 def run_integer_continuation(
@@ -13,7 +12,7 @@ def run_integer_continuation(
     t_transient: float = 30.0,
     t_keep: float = 30.0,
     div_threshold: float = 120.0,
-    integrator: str = "abm",
+    integrator: str = "efork_q1",
     early_stop_config: Optional[Dict] = None,
     equilibria: Optional[List[np.ndarray]] = None,
 ) -> List[Dict[str, Any]]:
@@ -29,7 +28,7 @@ def run_integer_continuation(
     t_transient : Transient duration per step (seconds).
     t_keep : Keep duration per step (seconds).
     div_threshold : Hard divergence norm limit.
-    integrator : "abm" or "efork".
+    integrator : "efork_q1", "efork3", "efork", "heun".
     early_stop_config : Early-stop configuration dict.
     equilibria : List of equilibrium arrays for convergence detection.
 
@@ -39,6 +38,16 @@ def run_integer_continuation(
     used_c_backend, rhs_source, n_steps, t_end, max_norm, x_in_norm, x_out_norm,
     early_stop_reason.
     """
+    if integrator == "abm":
+        raise ValueError("ABM is not available for integer continuation q=1. Use 'efork_q1' or 'heun'.")
+    if integrator not in {"efork_q1", "efork3", "efork", "heun"}:
+        raise ValueError(f"Invalid integrator '{integrator}' for integer continuation q=1. Must be one of {{'efork_q1', 'efork3', 'efork', 'heun'}}.")
+
+    if integrator in {"efork", "efork3", "efork_q1"}:
+        eff_integrator = "efork_q1"
+    else:
+        eff_integrator = "heun"
+
     x_in = np.asarray(seed_x0, dtype=float).copy()
     steps: List[Dict[str, Any]] = []
 
@@ -55,21 +64,11 @@ def run_integer_continuation(
             return p0 @ x + _eta * system.b * delta
 
         # ── 1. Transient stage ─────────────────────────────────────────────
-        if integrator == "abm":
-            t_tr, x_tr, status_tr = caputo_abm_integrate(
-                rhs, x_in, q=1.0, h=h, t_final=t_transient,
-                divergence_norm=div_threshold, system=system,
-                early_stop_config=early_stop_config,
-                equilibria=equilibria,
-            )
-        else:  # efork
-            t_tr, x_tr, status_tr = efork_integrate(
-                system, x_in, q=1.0, h=h, t_final=t_transient,
-                k=k_gain, eps=eta_f,
-                divergence_norm=div_threshold,
-                early_stop_config=early_stop_config,
-                equilibria=equilibria,
-            )
+        t_tr, x_tr, status_tr = integrate_general(
+            rhs=rhs, x0=x_in, q=1.0, h=h, t_final=t_transient,
+            integrator=eff_integrator, divergence_norm=div_threshold,
+            early_stop_config=early_stop_config, equilibria=equilibria
+        )
 
         if status_tr != "ok":
             x_out = x_tr[-1].copy() if len(x_tr) > 0 else x_in.copy()
@@ -88,21 +87,11 @@ def run_integer_continuation(
         x_mid = x_tr[-1].copy()
 
         # ── 2. Keep stage ──────────────────────────────────────────────────
-        if integrator == "abm":
-            t_kp, x_kp, status_kp = caputo_abm_integrate(
-                rhs, x_mid, q=1.0, h=h, t_final=t_keep,
-                divergence_norm=div_threshold, system=system,
-                early_stop_config=early_stop_config,
-                equilibria=equilibria,
-            )
-        else:  # efork
-            t_kp, x_kp, status_kp = efork_integrate(
-                system, x_mid, q=1.0, h=h, t_final=t_keep,
-                k=k_gain, eps=eta_f,
-                divergence_norm=div_threshold,
-                early_stop_config=early_stop_config,
-                equilibria=equilibria,
-            )
+        t_kp, x_kp, status_kp = integrate_general(
+            rhs=rhs, x0=x_mid, q=1.0, h=h, t_final=t_keep,
+            integrator=eff_integrator, divergence_norm=div_threshold,
+            early_stop_config=early_stop_config, equilibria=equilibria
+        )
 
         x_out = x_kp[-1].copy()
         x_out_norm = float(np.linalg.norm(x_out))

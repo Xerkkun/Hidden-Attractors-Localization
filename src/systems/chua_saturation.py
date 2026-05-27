@@ -85,7 +85,7 @@ class ChuaSaturationSystem:
             return [0.0, np.pi]
         else:
             theta_c = np.arccos(1.0 / A)
-            return sorted([0.0, theta_c, np.pi])
+            return sorted([0.0, theta_c, np.pi - theta_c, np.pi])
 
     def to_dict(self) -> Dict[str, Any]:
         return {

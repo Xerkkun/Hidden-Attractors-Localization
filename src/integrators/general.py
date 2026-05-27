@@ -30,7 +30,7 @@ def integrate_general(
     def rhs_t(t: float, x: np.ndarray) -> np.ndarray:
         try:
             return np.asarray(rhs(t, x), dtype=float)
-        except TypeError:
+        except (TypeError, ValueError):
             return np.asarray(rhs(x), dtype=float)
             
     # 1. Non-fractional order q = 1.0: use general Heun's method or EFORK_Q1 limit
