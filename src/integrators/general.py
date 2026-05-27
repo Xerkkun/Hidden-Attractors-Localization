@@ -33,8 +33,23 @@ def integrate_general(
         except TypeError:
             return np.asarray(rhs(x), dtype=float)
             
-    # 1. Non-fractional order q = 1.0: use general Heun's method with early stopping
+    # 1. Non-fractional order q = 1.0: use general Heun's method or EFORK_Q1 limit
     if q == 1.0:
+        if integrator.lower() == "efork":
+            from ._q1_coefficients import (
+                EFORK_Q1_A21,
+                EFORK_Q1_A31,
+                EFORK_Q1_A32,
+                EFORK_Q1_W1,
+                EFORK_Q1_W2,
+                EFORK_Q1_W3,
+            )
+            status_default = "ok"
+        elif integrator.lower() == "abm":
+            status_default = "ok"
+        else:
+            raise ValueError(f"Unknown integrator for q=1.0: {integrator}")
+
         n_steps = int(np.ceil(t_final / h))
         t_arr = np.zeros(n_steps + 1, dtype=float)
         x_arr = np.zeros((n_steps + 1, dim), dtype=float)
@@ -42,7 +57,7 @@ def integrate_general(
         x_arr[0] = x0_arr
         
         x = x0_arr.copy()
-        status = "ok"
+        status = status_default
         last_idx = 0
         
         # Parse early stop configs
@@ -69,10 +84,16 @@ def integrate_general(
             t_curr = n * h
             t_next = (n + 1) * h
             try:
-                f_curr = rhs_t(t_curr, x)
-                x_pred = x + h * f_curr
-                f_next = rhs_t(t_next, x_pred)
-                x_next = x + 0.5 * h * (f_curr + f_next)
+                if integrator.lower() == "efork":
+                    k1 = h * rhs_t(t_curr, x)
+                    k2 = h * rhs_t(t_curr + 0.5 * h, x + EFORK_Q1_A21 * k1)
+                    k3 = h * rhs_t(t_curr + 0.5 * h, x + EFORK_Q1_A31 * k1 + EFORK_Q1_A32 * k2)
+                    x_next = x + EFORK_Q1_W1 * k1 + EFORK_Q1_W2 * k2 + EFORK_Q1_W3 * k3
+                else:  # abm (Heun)
+                    f_curr = rhs_t(t_curr, x)
+                    x_pred = x + h * f_curr
+                    f_next = rhs_t(t_next, x_pred)
+                    x_next = x + 0.5 * h * (f_curr + f_next)
             except Exception as exc:
                 status = f"solver_exception:{exc}"
                 break

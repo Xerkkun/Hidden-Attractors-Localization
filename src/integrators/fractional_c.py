@@ -3,7 +3,20 @@ import os
 import sys
 from pathlib import Path
 import numpy as np
-from typing import Any, Tuple, Optional, List
+from typing import Any, Callable, Tuple, Optional, List
+
+
+def eval_rhs(rhs: Callable, t: float, x: np.ndarray) -> np.ndarray:
+    """Evaluate ``rhs(t, x)`` or fall back to ``rhs(x)`` for legacy callables.
+
+    This helper is used throughout the Python fallback paths so that
+    non-autonomous RHS functions receive the correct current time instead of
+    a frozen ``t=0.0``.
+    """
+    try:
+        return np.asarray(rhs(t, x), dtype=float)
+    except TypeError:
+        return np.asarray(rhs(x), dtype=float)
 
 from hidden_attractors.parallel import compile_c_target
 from hidden_attractors.paths import NATIVE_CACHE
@@ -115,7 +128,22 @@ def fractional_integrate(
     early_stop_config: Optional[dict] = None,
     equilibria: Optional[List[np.ndarray]] = None
 ) -> Tuple[np.ndarray, np.ndarray, str, dict]:
-    """Unified generic integration interface for fractional differential equations with early stopping support."""
+    """Unified generic integration interface for fractional differential equations.
+
+    Parameters
+    ----------
+    method : ``"abm"`` or ``"efork"``.
+    q : Caputo order.  Must satisfy 0 < q <= 1.  For ``method="efork"`` only
+        0 < q < 1 is accepted; passing ``q=1`` with EFORK raises ``ValueError``
+        because the fractional EFORK C kernel is not valid at integer order.
+    """
+    # Guard: EFORK is only defined for 0 < q < 1.
+    if method.lower() == "efork" and float(q) >= 1.0:
+        raise ValueError(
+            f"fractional_integrate: EFORK requires 0 < q < 1, got q={q}. "
+            "For integer order use efork_integrate (which applies EFORK_Q1 "
+            "limit coefficients) or a standard ODE solver."
+        )
     x0_arr = np.asarray(x0, dtype=np.float64)
     dim = x0_arr.size
     
@@ -291,22 +319,18 @@ def fractional_integrate(
     # Standard Python Fallbacks
     if method.lower() == "abm":
         from .abm import _python_abm_integrate
-        # Wrapper to handle t-dependent rhs
-        def rhs_dep(x):
-            try:
-                return rhs(0.0, x)
-            except TypeError:
-                return rhs(x)
-                
+        # Pass rhs directly — _python_abm_integrate uses eval_rhs internally,
+        # which correctly handles both rhs(t, x) and legacy rhs(x) signatures
+        # at each step's actual time (NOT frozen at t=0).
         t_arr, x_arr, status = _python_abm_integrate(
-            rhs_dep, x0_arr, q=q, h=h, t_final=t_final,
+            rhs, x0_arr, q=q, h=h, t_final=t_final,
             divergence_norm=divergence_norm,
             history_times=history_times,
             history_states=history_states,
             memory_mode=memory_mode,
             memory_window_length=memory_window_length,
             early_stop_config=early_stop_config,
-            equilibria=equilibria
+            equilibria=equilibria,
         )
         info["n_steps"] = len(t_arr)
         if return_history:
@@ -315,89 +339,28 @@ def fractional_integrate(
             start_slice = history_len if history_len > 0 else 0
             return t_arr[start_slice:], x_arr[start_slice:], status, info
     else:
-        # Python EFORK
-        if memory_mode == "window":
-            raise ValueError("Python fallback does not support EFORK + windowed memory. C backend is required.")
+        # Python EFORK-3 fallback (supports both full and windowed memory)
+        from .efork import _python_efork3_integrate
+        def rhs_t(t_val: float, x_val: np.ndarray) -> np.ndarray:
+            return eval_rhs(rhs, t_val, x_val)
+        
+        t_arr, x_arr, status = _python_efork3_integrate(
+            rhs=rhs_t,
+            x0=x0_arr,
+            q=q,
+            h=h,
+            t_final=t_final,
+            divergence_norm=divergence_norm,
+            history_times=history_times,
+            history_states=history_states,
+            memory_mode=memory_mode,
+            memory_window_length=memory_window_length,
+            early_stop_config=early_stop_config,
+            equilibria=equilibria,
+        )
+        info["n_steps"] = len(t_arr)
+        if return_history:
+            return t_arr, x_arr, status, info
         else:
-            from hidden_attractors.solvers.efork_published import efork3_caputo_integrate
-            def rhs_t(t_val, x_val):
-                try:
-                    return rhs(t_val, x_val)
-                except TypeError:
-                    return rhs(x_val)
-            try:
-                t_arr, x_arr = efork3_caputo_integrate(rhs_t, x0_arr, alpha=q, h=h, t_final=t_final)
-                
-                # Perform post-integration analysis or early stopping emulation
-                status = "ok"
-                last_idx = len(t_arr)
-                
-                # Emulate step-by-step checks
-                prev_norm = -1.0
-                div_consec_count = 0
-                growth_consec_count = 0
-                
-                eq_consec_counts = [0] * len(equilibria) if equilibria else []
-                
-                for idx in range(len(t_arr)):
-                    state = x_arr[idx]
-                    norm = np.linalg.norm(state)
-                    
-                    if not np.isfinite(norm):
-                        status = "nonfinite_solution"
-                        last_idx = idx + 1
-                        break
-                        
-                    # Divergence Check
-                    if divergence_norm is not None and norm > divergence_norm:
-                        status = "diverged"
-                        last_idx = idx + 1
-                        break
-                        
-                    # Early stop checks
-                    if es_enabled:
-                        # 1. Divergence checks
-                        if div_enabled:
-                            if norm > div_norm:
-                                div_consec_count += 1
-                            else:
-                                div_consec_count = 0
-                                
-                            if prev_norm >= 0.0:
-                                if norm > div_growth * prev_norm:
-                                    growth_consec_count += 1
-                                else:
-                                    growth_consec_count = 0
-                            prev_norm = norm
-                            
-                            if div_consec_count >= div_consec or growth_consec_count >= div_consec:
-                                status = "diverged_early"
-                                last_idx = idx + 1
-                                break
-                        else:
-                            prev_norm = norm
-                            
-                        # 2. Equilibrium checks
-                        if eq_enabled and equilibria and t_arr[idx] >= eq_min_t:
-                            converged_eq_idx = -1
-                            for k, eq in enumerate(equilibria):
-                                diff_norm = np.linalg.norm(state - eq)
-                                deriv_norm = np.linalg.norm(rhs_t(t_arr[idx], state))
-                                
-                                if diff_norm < eq_t and deriv_norm < eq_deriv:
-                                    eq_consec_counts[k] += 1
-                                else:
-                                    eq_consec_counts[k] = 0
-                                    
-                                if eq_consec_counts[k] >= eq_consec:
-                                    converged_eq_idx = k
-                                    break
-                            if converged_eq_idx != -1:
-                                status = "converged_equilibrium_early"
-                                last_idx = idx + 1
-                                break
-                                
-                info["n_steps"] = last_idx
-                return t_arr[:last_idx], x_arr[:last_idx], status, info
-            except Exception as exc:
-                raise RuntimeError(f"Python EFORK fallback failed: {exc}")
+            start_slice = history_len if history_len > 0 else 0
+            return t_arr[start_slice:], x_arr[start_slice:], status, info

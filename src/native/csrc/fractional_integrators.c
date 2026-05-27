@@ -134,6 +134,12 @@ API_EXPORT int integrate_fractional_c(
         return -1;
     }
 
+    // EFORK is only valid for 0 < q < 1
+    if (method == 1 && q >= 1.0) {
+        *status_code = -1;
+        return -1;
+    }
+
     int H = (history_len > 0) ? history_len : 1;
     int nsteps = (int)ceil(t_final / h);
     if (nsteps < 0) nsteps = 0;

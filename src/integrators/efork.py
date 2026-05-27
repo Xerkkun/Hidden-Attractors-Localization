@@ -334,6 +334,15 @@ def efork_integrate(
             delta = float(system.psi(sigma)) - k * sigma
             return p0 @ x + eps * system.b * delta
 
+        from ._q1_coefficients import (
+            EFORK_Q1_A21,
+            EFORK_Q1_A31,
+            EFORK_Q1_A32,
+            EFORK_Q1_W1,
+            EFORK_Q1_W2,
+            EFORK_Q1_W3,
+        )
+
         n_steps = int(np.ceil(t_final / h))
         dim = x0_arr.size
         t_arr = np.zeros(n_steps + 1, dtype=float)
@@ -365,10 +374,10 @@ def efork_integrate(
         for n in range(n_steps):
             t_next = (n + 1) * h
             try:
-                f_curr = rhs_int(x)
-                x_pred = x + h * f_curr
-                f_next = rhs_int(x_pred)
-                x_next = x + 0.5 * h * (f_curr + f_next)
+                k1 = h * rhs_int(x)
+                k2 = h * rhs_int(x + EFORK_Q1_A21 * k1)
+                k3 = h * rhs_int(x + EFORK_Q1_A31 * k1 + EFORK_Q1_A32 * k2)
+                x_next = x + EFORK_Q1_W1 * k1 + EFORK_Q1_W2 * k2 + EFORK_Q1_W3 * k3
             except Exception as exc:
                 status = f"solver_exception:{exc}"
                 break

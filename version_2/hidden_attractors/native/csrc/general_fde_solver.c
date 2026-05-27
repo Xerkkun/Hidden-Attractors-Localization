@@ -108,18 +108,15 @@ API_EXPORT int integrate_general_efork_c(
 
     for (int n = 0; n < nsteps; ++n) {
         // Stage 1
-        double mem_x[100];
-        if (dim <= 100) {
-            if (n > 0) {
-                memory_component_general(n, t[n], t, x, dim, q, h, &c, mem_x);
-            } else {
-                for (int d = 0; d < dim; ++d) mem_x[d] = 0.0;
-            }
+        if (n > 0) {
+            memory_component_general(n, t[n], t, x, dim, q, h, &c, mem);
+        } else {
+            for (int d = 0; d < dim; ++d) mem[d] = 0.0;
         }
         
         rhs(t[n], &x[dim * n], f);
         for (int d = 0; d < dim; ++d) {
-            k1[d] = hq * (f[d] - mem_x[d]);
+            k1[d] = hq * (f[d] - mem[d]);
         }
 
         // Stage 2
@@ -128,13 +125,13 @@ API_EXPORT int integrate_general_efork_c(
         }
         const double t2 = t[n] + c.c2 * h;
         if (n > 0) {
-            memory_component_general(n, t2, t, x, dim, q, h, &c, mem_x);
+            memory_component_general(n, t2, t, x, dim, q, h, &c, mem);
         } else {
-            for (int d = 0; d < dim; ++d) mem_x[d] = 0.0;
+            for (int d = 0; d < dim; ++d) mem[d] = 0.0;
         }
         rhs(t2, tmp, f);
         for (int d = 0; d < dim; ++d) {
-            k2[d] = hq * (f[d] - mem_x[d]);
+            k2[d] = hq * (f[d] - mem[d]);
         }
 
         // Stage 3
@@ -143,13 +140,13 @@ API_EXPORT int integrate_general_efork_c(
         }
         const double t3 = t[n] + c.c3 * h;
         if (n > 0) {
-            memory_component_general(n, t3, t, x, dim, q, h, &c, mem_x);
+            memory_component_general(n, t3, t, x, dim, q, h, &c, mem);
         } else {
-            for (int d = 0; d < dim; ++d) mem_x[d] = 0.0;
+            for (int d = 0; d < dim; ++d) mem[d] = 0.0;
         }
         rhs(t3, tmp, f);
         for (int d = 0; d < dim; ++d) {
-            k3[d] = hq * (f[d] - mem_x[d]);
+            k3[d] = hq * (f[d] - mem[d]);
         }
 
         // Final prediction

@@ -83,8 +83,8 @@ jobs:
           cache-dependency-path: version_2/pyproject.toml
 
       # ── 3. Instalar paquete en modo editable + dependencias dev ──────────
-      - name: Install package (editable + dev extras)
-        run: python -m pip install -e ".[dev]"
+      - name: Install package (editable + dev, analysis, and legacy extras)
+        run: python -m pip install -e ".[dev,analysis,legacy]"
 
       # ── 4. Verificar sintaxis de todos los módulos Python ────────────────
       - name: Compile-check (syntax smoke)
@@ -146,8 +146,8 @@ jobs:
           cache: "pip"
           cache-dependency-path: version_2/pyproject.toml
 
-      - name: Install package (editable + dev extras)
-        run: python -m pip install -e ".[dev]"
+      - name: Install package (editable + dev, analysis, and legacy extras)
+        run: python -m pip install -e ".[dev,analysis,legacy]"
 
       # ── Detectar si gcc/cc está disponible ───────────────────────────────
       - name: Check C compiler availability
@@ -223,8 +223,8 @@ jobs:
       - name: Install libomp (best-effort)
         run: brew install libomp || echo "::warning::libomp install failed – falling back to no-OpenMP"
 
-      - name: Install package (editable + dev extras)
-        run: python -m pip install -e ".[dev]"
+      - name: Install package (editable + dev, analysis, and legacy extras)
+        run: python -m pip install -e ".[dev,analysis,legacy]"
 
       - name: Compile-check (syntax smoke)
         run: python -m compileall hidden_attractors examples tests tools/cli
