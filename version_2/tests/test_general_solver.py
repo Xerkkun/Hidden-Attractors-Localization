@@ -24,35 +24,19 @@ def get_system_by_id(system_id: str, **kwargs) -> Any:
     normalized_sys_id = name_map.get(system_id, system_id)
     system = get_system(normalized_sys_id)
     
-    # Merge overrides and build adapter attributes
+    # Merge overrides
     merged_params = dict(system.parameters)
     merged_params.update(kwargs)
-    system = dataclasses.replace(system, parameters=merged_params)
     
-    if "q" in kwargs:
-        q_val = kwargs["q"]
-    else:
+    if "q" not in merged_params:
         if system_id == "chua_fractional_saturation":
-            q_val = 0.9998
+            merged_params["q"] = 0.9998
         elif system_id == "chua_fractional_arctan":
-            q_val = 0.995
+            merged_params["q"] = 0.995
         else:
-            q_val = 1.0
+            merged_params["q"] = 1.0
             
-    object.__setattr__(system, "q", q_val)
-    for k, v in merged_params.items():
-        try:
-            object.__setattr__(system, k, v)
-        except AttributeError:
-            pass
-            
-    if system.lure is not None:
-        object.__setattr__(system, "P", system.lure.matrix)
-        object.__setattr__(system, "b", system.lure.input_vector)
-        object.__setattr__(system, "r", system.lure.output_vector)
-        object.__setattr__(system, "describing_function", system.lure.describing_function)
-        object.__setattr__(system, "psi", system.lure.nonlinearity)
-    object.__setattr__(system, "evaluate_rhs", lambda x: system.evaluate(x))
+    system = dataclasses.replace(system, parameters=merged_params)
     return system
 
 
@@ -98,7 +82,7 @@ def test_integrate_general_chua_c_backend():
     x0 = np.array([1.0, 1.0, -0.4])
     
     t, x, status = integrate_general(
-        sys_frac.evaluate_rhs, x0, q=sys_frac.q, h=0.01, t_final=1.0,
+        lambda t_val, x_val: sys_frac.evaluate(x_val), x0, q=float(sys_frac.parameters.get("q")), h=0.01, t_final=1.0,
         integrator="efork", system=sys_frac, use_c_backend=True
     )
     

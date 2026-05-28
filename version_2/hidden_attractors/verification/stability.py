@@ -7,7 +7,7 @@ def classify_equilibrium_stability(system: Any, eq_point: np.ndarray, tol: float
     
     Using standard eigenvalue checks for q=1.0 and Matignon's criterion for q < 1.0.
     """
-    q = system.q
+    q = float(system.parameters.get("q", 1.0))
     J = compute_jacobian(system, eq_point)
     eigvals = np.linalg.eigvals(J)
     

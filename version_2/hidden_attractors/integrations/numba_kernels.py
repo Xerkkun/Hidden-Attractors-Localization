@@ -320,31 +320,30 @@ def integrate_efork3_q1_numba(
     if not NUMBA_AVAILABLE:
         return None
 
-    # Resolve system type and extract numeric parameters
-    # Import here to avoid circular imports at module level
-    try:
-        from ..systems.chua_saturation import ChuaSaturationSystem
-        from ..systems.chua_arctan import ChuaArctanSystem
-        from ..systems.chua_polynomial import ChuaPolynomialSystem
-    except ImportError:
-        return None
-
-    if isinstance(system, ChuaSaturationSystem):
+    # Resolve system type and extract numeric parameters from system.parameters
+    model = system.parameters.get("model")
+    if model == "nonsmooth":
         psi_kind  = PSI_SATURATION
-        psi_coeff = float(system.m0 - system.m1)
-    elif isinstance(system, ChuaArctanSystem):
+        psi_coeff = float(system.parameters.get("m0", -0.1768) - system.parameters.get("m1", -1.1468))
+    elif model == "arctan":
         psi_kind  = PSI_ARCTAN
-        psi_coeff = float(system.n - system.m)
-    elif isinstance(system, ChuaPolynomialSystem):
+        psi_coeff = float(system.parameters.get("a2", 0.0))
+        if psi_coeff == 0.0:
+            n = float(system.parameters.get("n", 0.0))
+            m = float(system.parameters.get("m", 0.0))
+            psi_coeff = n - m
+    elif model == "polynomial":
         psi_kind  = PSI_POLYNOMIAL
-        psi_coeff = float(system.coeff)
+        psi_coeff = float(system.parameters.get("coeff", 1.0))
     else:
         # Unknown system type — fall back to Python path
         return None
 
-    # Ensure contiguous float64 arrays (Numba requires C-contiguous)
-    P    = np.ascontiguousarray(system.P, dtype=np.float64)
-    b    = np.ascontiguousarray(system.b, dtype=np.float64)
+    # Ensure contiguous float64 arrays (Numba requires C-contiguous) from system.lure
+    if system.lure is None:
+        return None
+    P    = np.ascontiguousarray(system.lure.matrix, dtype=np.float64)
+    b    = np.ascontiguousarray(system.lure.input_vector, dtype=np.float64)
     x0_a = np.asarray(x0, dtype=np.float64)
 
     n_steps = int(np.ceil(t_final / h))
@@ -412,13 +411,13 @@ def benchmark(n_steps: int = 50_000, n_trials: int = 5):
     import time
 
     try:
-        from ..systems.chua_saturation import ChuaSaturationSystem
+        from ..systems import get_system
         from . import general as gen_mod
     except ImportError:
         print("[benchmark] Could not import system/integrator modules.")
         return
 
-    system = ChuaSaturationSystem()
+    system = get_system("chua-nonsmooth")
     x0     = np.array([0.1, 0.0, 0.0], dtype=np.float64)
     h      = 0.01
     t_final = n_steps * h
@@ -447,7 +446,7 @@ def benchmark(n_steps: int = 50_000, n_trials: int = 5):
     for _ in range(n_trials):
         t0 = time.perf_counter()
         integrate_general(
-            rhs=lambda t, x: system.evaluate_rhs(x),
+            rhs=lambda t, x: system.evaluate(x),
             x0=x0, q=1.0, h=h, t_final=t_final,
             integrator="efork", system=None,  # force Python path
         )

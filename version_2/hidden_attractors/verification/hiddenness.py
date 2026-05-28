@@ -174,16 +174,17 @@ def run_neighborhood_probe(
         if dynamics_mode == "integer":
             active_q = 1.0
         elif dynamics_mode == "fractional":
-            active_q = system.q
+            active_q = system.parameters.get("q", 1.0)
         elif dynamics_mode == "system":
-            active_q = 1.0 if system.q == 1.0 else system.q
+            q_val = system.parameters.get("q", 1.0)
+            active_q = 1.0 if q_val == 1.0 else q_val
         else:
             raise ValueError(f"Unknown dynamics_mode: {dynamics_mode}")
         
     all_eqs_list = list(equilibria_dict.values()) if equilibria_dict else stable_equilibria
     
     def rhs_probe(t: float, x: np.ndarray) -> np.ndarray:
-        return np.asarray(system.evaluate_rhs(x), dtype=float)
+        return np.asarray(system.evaluate(x), dtype=float)
 
     t_arr, x_arr, status = integrate_general(
         rhs=rhs_probe,

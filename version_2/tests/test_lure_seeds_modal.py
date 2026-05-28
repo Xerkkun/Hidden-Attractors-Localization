@@ -58,35 +58,19 @@ def get_system_by_id(system_id: str, **kwargs) -> Any:
     normalized_sys_id = name_map.get(system_id, system_id)
     system = get_system(normalized_sys_id)
     
-    # Merge overrides and build adapter attributes
+    # Merge overrides
     merged_params = dict(system.parameters)
     merged_params.update(kwargs)
-    system = dataclasses.replace(system, parameters=merged_params)
     
-    if "q" in kwargs:
-        q_val = kwargs["q"]
-    else:
+    if "q" not in merged_params:
         if system_id == "chua_fractional_saturation":
-            q_val = 0.9998
+            merged_params["q"] = 0.9998
         elif system_id == "chua_fractional_arctan":
-            q_val = 0.995
+            merged_params["q"] = 0.995
         else:
-            q_val = 1.0
+            merged_params["q"] = 1.0
             
-    object.__setattr__(system, "q", q_val)
-    for k, v in merged_params.items():
-        try:
-            object.__setattr__(system, k, v)
-        except AttributeError:
-            pass
-            
-    if system.lure is not None:
-        object.__setattr__(system, "P", system.lure.matrix)
-        object.__setattr__(system, "b", system.lure.input_vector)
-        object.__setattr__(system, "r", system.lure.output_vector)
-        object.__setattr__(system, "describing_function", system.lure.describing_function)
-        object.__setattr__(system, "psi", system.lure.nonlinearity)
-    object.__setattr__(system, "evaluate_rhs", lambda x: system.evaluate(x))
+    system = dataclasses.replace(system, parameters=merged_params)
     return system
 
 # ---------------------------------------------------------------------------
@@ -278,7 +262,7 @@ def test_modal_eigenvector_residual(sys_fractional):
         f"Difference = {abs(ev_matched - lam0):.3e}"
     )
     # Normalisation: r^T v == 1
-    r = sys_fractional.r.astype(complex)
+    r = sys_fractional.lure.output_vector.astype(complex)
     scale = r @ v
     assert abs(scale - 1.0) < 1e-12, (
         f"r^T v = {scale} but expected 1.0 (error = {abs(scale - 1.0):.3e})"

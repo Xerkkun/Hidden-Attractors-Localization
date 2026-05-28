@@ -29,35 +29,19 @@ def get_system_by_id(system_id: str, **kwargs) -> Any:
     normalized_sys_id = name_map.get(system_id, system_id)
     system = get_system(normalized_sys_id)
     
-    # Merge overrides and build adapter attributes
+    # Merge overrides
     merged_params = dict(system.parameters)
     merged_params.update(kwargs)
-    system = dataclasses.replace(system, parameters=merged_params)
     
-    if "q" in kwargs:
-        q_val = kwargs["q"]
-    else:
+    if "q" not in merged_params:
         if system_id == "chua_fractional_saturation":
-            q_val = 0.9998
+            merged_params["q"] = 0.9998
         elif system_id == "chua_fractional_arctan":
-            q_val = 0.995
+            merged_params["q"] = 0.995
         else:
-            q_val = 1.0
+            merged_params["q"] = 1.0
             
-    object.__setattr__(system, "q", q_val)
-    for k, v in merged_params.items():
-        try:
-            object.__setattr__(system, k, v)
-        except AttributeError:
-            pass
-            
-    if system.lure is not None:
-        object.__setattr__(system, "P", system.lure.matrix)
-        object.__setattr__(system, "b", system.lure.input_vector)
-        object.__setattr__(system, "r", system.lure.output_vector)
-        object.__setattr__(system, "describing_function", system.lure.describing_function)
-        object.__setattr__(system, "psi", system.lure.nonlinearity)
-    object.__setattr__(system, "evaluate_rhs", lambda x: system.evaluate(x))
+    system = dataclasses.replace(system, parameters=merged_params)
     return system
 
 
@@ -67,23 +51,23 @@ def test_system_matrices_and_parameters():
     sys_frac = get_system_by_id("chua_fractional_saturation")
     sys_arctan = get_system_by_id("chua_fractional_arctan")
     
-    assert sys_int.alpha == 8.4562
-    assert sys_frac.q == 0.9998
-    assert sys_arctan.q == 0.995
+    assert sys_int.parameters.get("alpha") == 8.4562
+    assert sys_frac.parameters.get("q") == 0.9998
+    assert sys_arctan.parameters.get("q") == 0.995
     
     # Check dimensions
-    assert sys_int.P.shape == (3, 3)
-    assert sys_int.b.shape == (3,)
-    assert sys_int.r.shape == (3,)
+    assert sys_int.lure.matrix.shape == (3, 3)
+    assert sys_int.lure.input_vector.shape == (3,)
+    assert sys_int.lure.output_vector.shape == (3,)
     
-    assert np.allclose(sys_int.b, [-8.4562, 0.0, 0.0])
-    assert np.allclose(sys_int.r, [1.0, 0.0, 0.0])
+    assert np.allclose(sys_int.lure.input_vector, [-8.4562, 0.0, 0.0])
+    assert np.allclose(sys_int.lure.output_vector, [1.0, 0.0, 0.0])
     
     # Verify specific entries in P
     # P[0, 0] = -alpha * (m1 + 1)
-    assert np.allclose(sys_int.P[0, 0], -8.4562 * (-1.1468 + 1.0))
+    assert np.allclose(sys_int.lure.matrix[0, 0], -8.4562 * (-1.1468 + 1.0))
     # P[0, 0] = -alpha * (1 + m)
-    assert np.allclose(sys_arctan.P[0, 0], -8.4562 * (1.0 + 0.4))
+    assert np.allclose(sys_arctan.lure.matrix[0, 0], -8.4562 * (1.0 + 0.4))
 
 def test_transfer_function():
     sys_int = get_system_by_id("chua_integer_saturation")
@@ -92,17 +76,17 @@ def test_transfer_function():
     # 2. W_integer coincides with direct calculation: r.T @ inv(P - s*I) @ b
     omega = 2.5
     s = 1j * omega
-    direct_W = sys_int.r.T @ np.linalg.inv(sys_int.P - s * np.eye(3)) @ sys_int.b
+    direct_W = sys_int.lure.output_vector.T @ np.linalg.inv(sys_int.lure.matrix - s * np.eye(3)) @ sys_int.lure.input_vector
     
-    eval_W_int = W_eval(omega, 1.0, "integer", sys_int.P, sys_int.b, sys_int.r, transfer_convention="opposite_sign")
+    eval_W_int = W_eval(omega, 1.0, "integer", sys_int.lure.matrix, sys_int.lure.input_vector, sys_int.lure.output_vector, transfer_convention="opposite_sign")
     assert np.allclose(eval_W_int, direct_W)
     
     # 3. W_fractional uses lambda = (i*omega)^q
     q = 0.95
     lam = (omega**q) * np.exp(1j * q * np.pi / 2.0)
-    direct_W_frac = sys_frac.r.T @ np.linalg.inv(sys_frac.P - lam * np.eye(3)) @ sys_frac.b
+    direct_W_frac = sys_frac.lure.output_vector.T @ np.linalg.inv(sys_frac.lure.matrix - lam * np.eye(3)) @ sys_frac.lure.input_vector
     
-    eval_W_frac = W_eval(omega, q, "fractional", sys_frac.P, sys_frac.b, sys_frac.r, transfer_convention="opposite_sign")
+    eval_W_frac = W_eval(omega, q, "fractional", sys_frac.lure.matrix, sys_frac.lure.input_vector, sys_frac.lure.output_vector, transfer_convention="opposite_sign")
     assert np.allclose(eval_W_frac, direct_W_frac)
 
 def test_describing_functions():
@@ -111,13 +95,13 @@ def test_describing_functions():
     
     # 4. N_sat(A) closed form matches quadrature
     for A in [0.5, 1.5, 3.0]:
-        val_closed = sys_int.describing_function(A)
-        val_quad = N_quadrature(A, sys_int.psi)
+        val_closed = sys_int.lure.describing_function(A)
+        val_quad = N_quadrature(A, sys_int.lure.nonlinearity)
         assert np.allclose(val_closed, val_quad, rtol=1e-3)
         
     # 5. N_arctan(A) returns finite values
     for A in [0.5, 2.5, 10.0]:
-        val_arctan = sys_arctan.describing_function(A)
+        val_arctan = sys_arctan.lure.describing_function(A)
         assert np.isfinite(val_arctan)
         assert val_arctan != 0.0
 
@@ -137,9 +121,9 @@ def test_sliding_window_memory():
     
     # Simulate a small run in Python
     t, x, status = caputo_abm_integrate(
-        sys_frac.evaluate_rhs,
+        lambda t_val, x_val: sys_frac.evaluate(x_val),
         x0=np.array([1.0, 1.0, -0.4]),
-        q=sys_frac.q,
+        q=float(sys_frac.parameters.get("q")),
         h=0.02,
         t_final=1.0,
         memory_mode="window",

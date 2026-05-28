@@ -264,16 +264,16 @@ def _get_lure_matrix(system: Any) -> Any:
     return system.lure.matrix if system.lure is not None else getattr(system, "P", None)
 
 def _get_lure_input_vector(system: Any) -> Any:
-    return system.lure.input_vector if system.lure is not None else getattr(system, "b", None)
+    return system.lure.input_vector
 
 def _get_lure_output_vector(system: Any) -> Any:
-    return system.lure.output_vector if system.lure is not None else getattr(system, "r", None)
+    return system.lure.output_vector
 
 def _get_lure_nonlinearity(system: Any) -> Any:
-    return system.lure.nonlinearity if system.lure is not None else getattr(system, "psi", None)
+    return system.lure.nonlinearity
 
 def _get_describing_function(system: Any) -> Any:
-    return system.lure.describing_function if system.lure is not None else getattr(system, "describing_function", None)
+    return system.lure.describing_function
 
 def _evaluate_rhs(system: Any, x: Any) -> Any:
     return system.evaluate(x)
@@ -283,46 +283,6 @@ def _effective_q(config: dict, system: Any) -> float:
     if q is None:
         q = 1.0
     return float(q)
-
-def _apply_compatibility_adapter(system: Any, q: float, merged_params: dict) -> None:
-    """Transitory compatibility adapter attaching legacy properties to the system.
-
-    This function dynamically injects attributes (`q`, parameter fields, `P`,
-    `b`, `r`, `psi`, `describing_function`, `evaluate_rhs`) into the system
-    instance to maintain backwards-compatibility with package modules that
-    perform numerical or algebraic checks under legacy names.
-
-    Why this is required (Active dependencies):
-    -------------------------------------------
-    - `hidden_attractors/lure/seeds.py` (Lure seed generation, expects `system.P`, `system.b`, `system.r`)
-    - `hidden_attractors/lure/decomposition.py` (Lure decomposition, checks `system.evaluate_rhs`)
-    - `hidden_attractors/lure/describing_function.py` (Fourier integration, uses `system.psi` and `system.describing_function`)
-    - `hidden_attractors/integrations/numba_kernels.py` & `hidden_attractors/integrations/efork.py` (Numerical solvers, expect `system.P`, `system.b`, `system.r`, `system.psi` for optimized calculations)
-    - `hidden_attractors/continuation/continuation_integer.py` & `hidden_attractors/continuation/continuation_fractional.py` (Homotopy tracking, uses `system.P`, `system.b`, `system.r`, `system.psi`)
-    - `hidden_attractors/verification/jacobian.py` (Piecewise Jacobian calculations, expect `system.P`)
-    - `hidden_attractors/verification/hiddenness.py` (Verification logic, calls `system.evaluate_rhs`)
-    - `hidden_attractors/plotting/*` (Visualization routines, e.g., plot_df.py, plot_transfer.py, expect `system.P`, `system.b`, `system.r`, `system.describing_function`)
-
-    TODO (Pending Refactoring):
-    --------------------------
-    - Refactor `hidden_attractors/integrations/numba_kernels.py` and `hidden_attractors/integrations/efork.py` to read parameters directly from `system.lure.matrix`, `system.lure.input_vector`, etc., instead of relying on top-level `system.P`.
-    - Adapt `hidden_attractors/lure/seeds.py` and `hidden_attractors/continuation/` to consume the standard `system.lure` sub-object attributes.
-    - Update `hidden_attractors/verification/hiddenness.py` and `hidden_attractors/verification/jacobian.py` to consume the unified `system.evaluate(x)` and `system.lure.matrix` respectively.
-    """
-    object.__setattr__(system, "q", q)
-    for k, v in merged_params.items():
-        try:
-            object.__setattr__(system, k, v)
-        except AttributeError:
-            pass
-            
-    if system.lure is not None:
-        object.__setattr__(system, "P", system.lure.matrix)
-        object.__setattr__(system, "b", system.lure.input_vector)
-        object.__setattr__(system, "r", system.lure.output_vector)
-        object.__setattr__(system, "describing_function", system.lure.describing_function)
-        object.__setattr__(system, "psi", system.lure.nonlinearity)
-    object.__setattr__(system, "evaluate_rhs", lambda x: system.evaluate(x))
 
 def run_workflow_integration(system, x0, q_val, h, t_final, config, equilibria):
     integrator = config["integrator"]
@@ -393,7 +353,9 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     system = dataclasses.replace(system, parameters=merged_params)
     
     q = _effective_q(config, system)
-    _apply_compatibility_adapter(system, q, merged_params)
+    if system.lure is not None:
+        from ..systems.builtins import _chua_lure_system
+        system = dataclasses.replace(system, lure=_chua_lure_system(system.parameters))
     
     if config.get("q_seed") is not None:
         q_seed = config["q_seed"]

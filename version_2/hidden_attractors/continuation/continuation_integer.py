@@ -30,16 +30,16 @@ def run_integer_continuation(
     x_in = np.asarray(seed_x0, dtype=float).copy()
     steps: List[Dict[str, Any]] = []
 
-    p0 = system.P + k_gain * np.outer(system.b, system.r)
+    p0 = system.lure.matrix + k_gain * np.outer(system.lure.input_vector, system.lure.output_vector)
 
     for eta in lambda_values:
         eta_f = float(eta)
         x_in_norm = float(np.linalg.norm(x_in))
 
         def rhs(x, _eta=eta_f):
-            sigma = float(system.r @ x)
-            delta = float(system.psi(sigma)) - k_gain * sigma
-            return p0 @ x + _eta * system.b * delta
+            sigma = float(system.lure.output_vector @ x)
+            delta = float(system.lure.nonlinearity(sigma)) - k_gain * sigma
+            return p0 @ x + _eta * system.lure.input_vector * delta
 
         # ── 1. Transient stage ─────────────────────────────────────────────
         t_tr, x_tr, status_tr = integrate_general(

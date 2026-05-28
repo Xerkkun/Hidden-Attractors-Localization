@@ -8,28 +8,28 @@ def solve_equilibria(system: Any) -> Dict[str, np.ndarray]:
     Returns:
         Dict: {"E0": E0_arr, "E+": Ep_arr, "E-": Em_arr} (Ep and Em only if they exist)
     """
-    alpha = system.alpha
-    beta = system.beta
-    gamma = system.gamma
+    alpha = float(system.parameters.get("alpha", 8.4562))
+    beta = float(system.parameters.get("beta", 12.0))
+    gamma = float(system.parameters.get("gamma", 0.0487))
     
-    model = getattr(system, "model", None)
+    model = system.parameters.get("model")
     if model is None:
-        if hasattr(system, "m0") or hasattr(system, "m1"):
+        if "m0" in system.parameters or "m1" in system.parameters:
             model = "nonsmooth"
-        elif hasattr(system, "a1") or hasattr(system, "a2"):
+        elif "a1" in system.parameters or "a2" in system.parameters:
             model = "arctan"
         else:
-            if hasattr(system, "m") or hasattr(system, "n"):
+            if "m" in system.parameters or "n" in system.parameters:
                 model = "arctan"
             else:
                 model = "nonsmooth"
                 
     if model == "nonsmooth":
-        m_linear = getattr(system, "m1", getattr(system, "m", -1.1468))
-        diff = getattr(system, "m0", -0.1768) - m_linear
+        m_linear = float(system.parameters.get("m1", system.parameters.get("m", -1.1468)))
+        diff = float(system.parameters.get("m0", -0.1768)) - m_linear
         is_sat = True
     else:
-        m_linear = getattr(system, "a1", getattr(system, "m", 0.4))
+        m_linear = float(system.parameters.get("a1", system.parameters.get("m", 0.4)))
         is_sat = False
         
     if is_sat:
@@ -43,13 +43,15 @@ def solve_equilibria(system: Any) -> Dict[str, np.ndarray]:
                 eqs["E+"] = np.array([x_star, y_star, z_star], dtype=float)
                 eqs["E-"] = np.array([-x_star, -y_star, -z_star], dtype=float)
     else:
-        a1 = getattr(system, "a1", getattr(system, "m", 0.4))
-        a2 = getattr(system, "a2", None)
+        a1 = float(system.parameters.get("a1", system.parameters.get("m", 0.4)))
+        a2 = system.parameters.get("a2")
         if a2 is None:
-            n = getattr(system, "n", 0.0)
-            m = getattr(system, "m", 0.0)
+            n = float(system.parameters.get("n", 0.0))
+            m = float(system.parameters.get("m", 0.0))
             a2 = n - m
-        rho = getattr(system, "rho", 1.0)
+        else:
+            a2 = float(a2)
+        rho = float(system.parameters.get("rho", 1.0))
         
         slope = beta / (beta + gamma)
         def eq_func(x):

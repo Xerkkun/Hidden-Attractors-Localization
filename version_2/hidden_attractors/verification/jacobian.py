@@ -7,27 +7,28 @@ def compute_jacobian(system: Any, x: np.ndarray) -> np.ndarray:
     J(x) = P + b * psi'(r^T * x) * r^T
     """
     x_val = float(x[0])
-    alpha = system.alpha
+    params = system.parameters
+    alpha = params.get("alpha", 8.4562)
     
-    model = getattr(system, "model", None)
+    model = params.get("model")
     if model is None:
-        if hasattr(system, "m0") or hasattr(system, "m1"):
+        if "m0" in params or "m1" in params:
             model = "nonsmooth"
         else:
             model = "arctan"
 
     if model == "nonsmooth":
-        diff = getattr(system, "m0", -0.1768) - getattr(system, "m1", -1.1468)
+        diff = params.get("m0", -0.1768) - params.get("m1", -1.1468)
         dpsi = diff if abs(x_val) < 1.0 else 0.0
     else:
-        a2 = getattr(system, "a2", None)
+        a2 = params.get("a2")
         if a2 is None:
-            n = getattr(system, "n", 0.0)
-            m = getattr(system, "m", 0.0)
+            n = params.get("n", 0.0)
+            m = params.get("m", 0.0)
             a2 = n - m
-        rho = getattr(system, "rho", 1.0)
+        rho = params.get("rho", 1.0)
         dpsi = (a2 * rho) / (1.0 + (rho * x_val) ** 2)
         
-    J = system.P.copy()
+    J = system.lure.matrix.copy()
     J[0, 0] += -alpha * dpsi
     return J

@@ -23,7 +23,7 @@ def plot_describing_function(
     n_vals = []
     for a in as_:
         try:
-            n_vals.append(system.describing_function(a))
+            n_vals.append(system.lure.describing_function(a))
         except Exception:
             n_vals.append(np.nan)
             
@@ -66,7 +66,8 @@ def plot_harmonic_residual_map(
     w_evals = []
     for w in ws_grid:
         try:
-            val = W_eval(w, system.q, config["transfer_mode"], system.P, system.b, system.r)
+            q_val = system.parameters.get("q", 1.0)
+            val = W_eval(w, q_val, config["transfer_mode"], system.lure.matrix, system.lure.input_vector, system.lure.output_vector)
             w_evals.append(val)
         except Exception:
             w_evals.append(complex(np.nan, np.nan))
@@ -74,7 +75,7 @@ def plot_harmonic_residual_map(
     n_evals = []
     for a in as_grid:
         try:
-            n_evals.append(system.describing_function(a))
+            n_evals.append(system.lure.describing_function(a))
         except Exception:
             n_evals.append(np.nan)
             

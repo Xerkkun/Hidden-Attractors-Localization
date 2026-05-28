@@ -36,15 +36,15 @@ def build_closed_form_integer_seed(
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Construct the seed using the algebraic closed-form formula for q = 1."""
     a0 = float(A0)
-    alpha = float(system.alpha)
+    alpha = float(system.parameters.get("alpha", 8.4562))
 
-    if hasattr(system, "m1"):
-        m_linear = float(system.m1)
-    elif hasattr(system, "m"):
-        m_linear = float(system.m)
+    if "m1" in system.parameters:
+        m_linear = float(system.parameters["m1"])
+    elif "m" in system.parameters:
+        m_linear = float(system.parameters["m"])
     else:
         raise ValueError(
-            "System must have either 'm1' (saturation) or 'm' (arctan) attributes."
+            "System parameters must contain either 'm1' (saturation) or 'm' (arctan)."
         )
 
     x0 = a0
@@ -72,8 +72,9 @@ def build_modal_lure_seed(
     k = float(k)
     theta = float(theta)
 
-    P0 = system.P.astype(complex) + k * np.outer(
-        system.b.astype(complex), system.r.astype(complex)
+    lure = system.lure
+    P0 = lure.matrix.astype(complex) + k * np.outer(
+        lure.input_vector.astype(complex), lure.output_vector.astype(complex)
     )
 
     lambda0 = _lambda_from_frequency(omega0, q, transfer_mode)
@@ -82,7 +83,7 @@ def build_modal_lure_seed(
     idx = int(np.argmin(np.abs(eigvals - lambda0)))
     v = eigvecs[:, idx].copy()
 
-    scale = system.r.astype(complex) @ v
+    scale = lure.output_vector.astype(complex) @ v
     if abs(scale) < 1e-14:
         raise RuntimeError(
             "Cannot normalise eigenvector: r^T v is essentially zero "
@@ -112,11 +113,12 @@ def build_lure_seed(
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Construct the initial state seed X_seed and its symmetric partner -X_seed."""
     if q is None:
-        if not hasattr(system, "q"):
+        q_val = system.parameters.get("q")
+        if q_val is None:
             raise ValueError(
-                "q was not provided and system does not have a 'q' attribute."
+                "q was not provided and system parameters does not have a 'q' key."
             )
-        q = float(system.q)
+        q = float(q_val)
     else:
         q = float(q)
 

@@ -327,12 +327,12 @@ def efork_integrate(
 
     # ── Integer order: standard predictor-corrector (Heun), q=1 not EFORK-3 ──
     if q == 1.0:
-        p0 = system.P + k * np.outer(system.b, system.r)
+        p0 = system.lure.matrix + k * np.outer(system.lure.input_vector, system.lure.output_vector)
 
         def rhs_int(x: np.ndarray) -> np.ndarray:
-            sigma = float(system.r @ x)
-            delta = float(system.psi(sigma)) - k * sigma
-            return p0 @ x + eps * system.b * delta
+            sigma = float(system.lure.output_vector @ x)
+            delta = float(system.lure.nonlinearity(sigma)) - k * sigma
+            return p0 @ x + eps * system.lure.input_vector * delta
 
         from ._q1_coefficients import (
             EFORK_Q1_A21,
@@ -437,12 +437,12 @@ def efork_integrate(
         return t_arr[:last_idx + 1], x_arr[:last_idx + 1], status
 
     # ── Fractional order 0 < q < 1 ────────────────────────────────────────────
-    p0 = system.P + k * np.outer(system.b, system.r)
+    p0 = system.lure.matrix + k * np.outer(system.lure.input_vector, system.lure.output_vector)
 
     def rhs_deformed(t_val: float, x_val: np.ndarray) -> np.ndarray:
-        sigma = float(system.r @ x_val)
-        delta = float(system.psi(sigma)) - k * sigma
-        return p0 @ x_val + eps * system.b * delta
+        sigma = float(system.lure.output_vector @ x_val)
+        delta = float(system.lure.nonlinearity(sigma)) - k * sigma
+        return p0 @ x_val + eps * system.lure.input_vector * delta
 
     # Pass the registered system only for pure nonlinear (no deformation)
     sys_to_pass = system if (abs(k) < 1e-12 and abs(eps - 1.0) < 1e-12) else None

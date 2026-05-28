@@ -44,7 +44,7 @@ def run_fractional_continuation(
             q=q,
         )
 
-    q_effective = q if q is not None else system.q
+    q_effective = q if q is not None else float(system.parameters.get("q", 1.0))
 
     x_in = np.asarray(seed_x0, dtype=float).copy()
     steps: List[Dict[str, Any]] = []
@@ -52,7 +52,7 @@ def run_fractional_continuation(
     hist_t = history_times
     hist_x = history_states
 
-    p0 = system.P + k_gain * np.outer(system.b, system.r)
+    p0 = system.lure.matrix + k_gain * np.outer(system.lure.input_vector, system.lure.output_vector)
 
     nsteps_tr = int(np.ceil(t_transient / h))
     nsteps_kp = int(np.ceil(t_keep / h))
@@ -63,9 +63,9 @@ def run_fractional_continuation(
         eta_f = float(eta)
 
         def rhs_deformed(t_val, x_val, _eta=eta_f):
-            sigma = float(system.r @ x_val)
-            delta = float(system.psi(sigma)) - k_gain * sigma
-            return p0 @ x_val + _eta * system.b * delta
+            sigma = float(system.lure.output_vector @ x_val)
+            delta = float(system.lure.nonlinearity(sigma)) - k_gain * sigma
+            return p0 @ x_val + _eta * system.lure.input_vector * delta
 
         sys_to_pass = system if (abs(k_gain) < 1e-12 and abs(eta_f - 1.0) < 1e-12) else None
         x_in_norm = float(np.linalg.norm(x_in))
@@ -255,7 +255,7 @@ def run_fractional_continuation_abm_monolithic(
     x0_arr = np.asarray(seed_x0, dtype=float)
     dim = x0_arr.size
     h = float(h)
-    q_effective = q if q is not None else system.q
+    q_effective = q if q is not None else float(system.parameters.get("q", 1.0))
     q = float(q_effective)
 
     nsteps_tr = int(np.ceil(t_transient / h))
@@ -281,13 +281,13 @@ def run_fractional_continuation_abm_monolithic(
     t_arr[:K] = history_times
     x_arr[:K] = history_states
 
-    p0 = system.P + k_gain * np.outer(system.b, system.r)
+    p0 = system.lure.matrix + k_gain * np.outer(system.lure.input_vector, system.lure.output_vector)
 
     def get_stage_rhs(eta_val: float):
         def rhs_deformed(t_val, x_val):
-            sigma = float(system.r @ x_val)
-            delta = float(system.psi(sigma)) - k_gain * sigma
-            return p0 @ x_val + eta_val * system.b * delta
+            sigma = float(system.lure.output_vector @ x_val)
+            delta = float(system.lure.nonlinearity(sigma)) - k_gain * sigma
+            return p0 @ x_val + eta_val * system.lure.input_vector * delta
         return rhs_deformed
 
     first_rhs = get_stage_rhs(float(lambda_values[0]))

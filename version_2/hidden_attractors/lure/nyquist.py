@@ -44,7 +44,7 @@ def find_harmonic_candidates(
 ) -> List[Tuple[float, float, float]]:
     """Find all candidate pairs (A0, omega0, k) solving the harmonic condition."""
     if q is None:
-        q = getattr(system, "q", 1.0)
+        q = float(system.parameters.get("q", 1.0))
 
     candidates = CandidateList()
 
@@ -56,7 +56,7 @@ def find_harmonic_candidates(
             ws = np.linspace(omega_min, omega_max, grid_size_omega)
             W_vals = W_eval(
                 ws, q, transfer_mode,
-                system.P, system.b, system.r,
+                system.lure.matrix, system.lure.input_vector, system.lure.output_vector,
                 transfer_convention=transfer_convention,
             )
 
@@ -94,7 +94,7 @@ def find_harmonic_candidates(
                     try:
                         W = W_eval(
                             w, _q, _tm,
-                            _system.P, _system.b, _system.r,
+                            _system.lure.matrix, _system.lure.input_vector, _system.lure.output_vector,
                             transfer_convention=_tc,
                         )
                         N_val = evaluate_describing_function(
@@ -166,7 +166,7 @@ def find_harmonic_candidates(
             ws = np.linspace(omega_min, omega_max, scan_n)
             W_vals_scan = W_eval(
                 ws, q, transfer_mode,
-                system.P, system.b, system.r,
+                system.lure.matrix, system.lure.input_vector, system.lure.output_vector,
                 transfer_convention=transfer_convention,
             )
 
@@ -179,8 +179,8 @@ def find_harmonic_candidates(
         omega_roots = []
         for j in sign_changes:
             try:
-                def root_f(w, _q=q, _tm=transfer_mode, _P=system.P,
-                           _b=system.b, _r=system.r, _tc=transfer_convention):
+                def root_f(w, _q=q, _tm=transfer_mode, _P=system.lure.matrix,
+                           _b=system.lure.input_vector, _r=system.lure.output_vector, _tc=transfer_convention):
                     return W_eval(w, _q, _tm, _P, _b, _r,
                                   transfer_convention=_tc).imag
 
@@ -194,7 +194,7 @@ def find_harmonic_candidates(
         for w0 in omega_roots:
             W0 = W_eval(
                 w0, q, transfer_mode,
-                system.P, system.b, system.r,
+                system.lure.matrix, system.lure.input_vector, system.lure.output_vector,
                 transfer_convention=transfer_convention,
             )
             if abs(W0.real) < 1e-12:

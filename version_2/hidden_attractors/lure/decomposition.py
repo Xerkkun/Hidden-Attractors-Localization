@@ -10,8 +10,9 @@ def validate_lure_decomposition(system: Any) -> bool:
     rng = np.random.default_rng(42)
     for _ in range(10):
         x = rng.uniform(-10.0, 10.0, 3)
-        rhs_lure = system.P @ x + system.b * system.psi(system.r @ x)
-        rhs_eval = system.evaluate_rhs(x)
+        lure = system.lure
+        rhs_lure = lure.matrix @ x + lure.input_vector * lure.nonlinearity(lure.output_vector @ x)
+        rhs_eval = system.evaluate(x)
         if not np.allclose(rhs_lure, rhs_eval, atol=1e-12):
             return False
     return True
