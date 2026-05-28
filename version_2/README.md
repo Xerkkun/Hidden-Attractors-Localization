@@ -86,37 +86,66 @@ compiler such as `gcc` on `PATH`; on macOS, OpenMP builds may require Homebrew
 
 ## Quick Start
 
-```python
-from hidden_attractors import chua_nonsmooth_parameters
-from hidden_attractors.models import equilibria_nonsmooth, rhs_nonsmooth
+### 1. High-Level CLI Presets
 
-params = chua_nonsmooth_parameters()
-for name, point in equilibria_nonsmooth(params).items():
-    residual = rhs_nonsmooth(point, params)
-    print(name, point, residual)
-```
+After editable installation, the unified `hidden-attractors` CLI is available on your system path.
 
-Run an included example:
-
+#### Initialize configs in the current folder:
 ```bash
-python examples/quickstart_equilibria.py
-python examples/list_final_candidates.py
-python examples/minimal_chua_protocol.py
-python examples/custom_system_definition.py
-python examples/integer_lure_chua_protocol.py
-python examples/dynamical_analysis_gallery.py
+hidden-attractors init --example chua_fractional
 ```
 
-After editable installation, the same candidate listing is available as:
+#### Preview the normalized configuration (with default values and overrides):
+```bash
+hidden-attractors inspect-config --preset chua_fractional
+```
 
+#### Run a workflow preset:
+```bash
+hidden-attractors run --preset chua_fractional
+```
+
+#### Overriding configuration parameters via CLI:
+You can override any parameter in the YAML config from the CLI using nested keys. For example:
+```bash
+hidden-attractors run --preset chua_fractional --final_simulation.t_final 100.0 --h 0.005 --plot_enabled false
+```
+
+The historical utility scripts are also registered on path:
 ```bash
 hidden-attractors-list-candidates
 hidden-attractors-systems
 hidden-attractors-check-validation --help
 hidden-attractors-protocol --help
-hidden-attractors-protocol --help
+hidden-attractors-robustness-overlay --help
 hidden-attractors-fractional-report-run --help
-hidden-attractors-check-validation --help
+```
+
+### 2. Programmatic Python API
+
+For custom scripting, you can load configurations, fetch systems, and run numerical integrations directly:
+
+```python
+from hidden_attractors.workflows.config_loader import load_config
+from hidden_attractors.systems import get_system
+from hidden_attractors.integrations.selector import integrate
+
+# Load, normalize, and validate a configuration YAML
+config = load_config("configs/examples/chua_fractional_centered_lure_df.yaml")
+
+# Get a system definition from the registry (e.g. Chua's system with arctan nonlinearity)
+system = get_system("chua-arctan")
+
+# Run a numerical integration using the unified selector
+times, states, status = integrate(
+    rhs=system.rhs,
+    x0=[0.1, 0.0, 0.0],
+    q=0.99,
+    h=0.01,
+    t_final=50.0,
+    integrator="efork3",
+    system=system
+)
 ```
 
 Heavy numerical stages use the packaged C backends. Python helpers are for

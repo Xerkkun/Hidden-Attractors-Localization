@@ -34,12 +34,25 @@ PRESETS = {
 
 def find_example_config(filename: str) -> Path:
     """Resolve the template configuration path dynamically."""
-    from hidden_attractors.paths import get_packaged_examples_path
+    import importlib.resources
+    import shutil
     
-    # 1. Package path
-    p = get_packaged_examples_path() / filename
-    if p.exists():
-        return p
+    # 1. Package path using importlib.resources
+    try:
+        ref = importlib.resources.files("hidden_attractors").joinpath("configs", "examples", filename)
+        if ref.exists():
+            with importlib.resources.as_file(ref) as p:
+                if p.exists():
+                    if "temp" in str(p).lower() or "tmp" in str(p).lower():
+                        from hidden_attractors.paths import RUNTIME_CACHE
+                        cache_dir = RUNTIME_CACHE / "configs"
+                        cache_dir.mkdir(parents=True, exist_ok=True)
+                        dest = cache_dir / filename
+                        shutil.copy2(p, dest)
+                        return dest
+                    return p
+    except Exception:
+        pass
     
     # 2. Cwd subfolder
     p2 = Path.cwd() / "configs" / "examples" / filename
@@ -53,7 +66,7 @@ def find_example_config(filename: str) -> Path:
         
     raise FileNotFoundError(
         f"Example configuration template '{filename}' not found. "
-        f"Looked in: {p}, {p2}, {p3}"
+        f"Looked in: {p2}, {p3}"
     )
 
 
@@ -181,34 +194,52 @@ def run_cmd(args: argparse.Namespace, extra_args: List[str]) -> None:
 
 def init_cmd(args: argparse.Namespace) -> None:
     """Execute the init subcommand."""
-    from hidden_attractors.paths import get_packaged_examples_path
+    import importlib.resources
+    import shutil
     
-    examples_src = get_packaged_examples_path()
-    if not examples_src.exists():
-        examples_src = Path.cwd() / "version_2" / "configs" / "examples"
-        if not examples_src.exists():
-            examples_src = Path.cwd() / "configs" / "examples"
-            if not examples_src.exists():
-                print(f"Error: Could not find templates directory. Looked in {get_packaged_examples_path()}")
-                sys.exit(1)
+    try:
+        ref_dir = importlib.resources.files("hidden_attractors").joinpath("configs", "examples")
+        yaml_files = [f for f in ref_dir.iterdir() if f.is_file() and f.name.endswith(".yaml")]
+    except Exception:
+        yaml_files = []
+
+    # Fallback to local files if empty/error
+    if not yaml_files:
+        for local_src in (Path.cwd() / "version_2" / "configs" / "examples", Path.cwd() / "configs" / "examples"):
+            if local_src.exists():
+                yaml_files = list(local_src.glob("*.yaml"))
+                break
+
+    if not yaml_files:
+        print("Error: Could not find templates directory.")
+        sys.exit(1)
 
     if args.example:
         filename = PRESETS.get(args.example, args.example)
         if not filename.endswith(".yaml"):
             filename += ".yaml"
-        src_file = examples_src / filename
-        if not src_file.exists():
-            print(f"Error: Template for example '{args.example}' ({filename}) not found in {examples_src}.")
+            
+        src_file = None
+        for f in yaml_files:
+            if f.name == filename:
+                src_file = f
+                break
+                
+        if src_file is None:
+            print(f"Error: Template for example '{args.example}' ({filename}) not found.")
             sys.exit(1)
+            
         dest_file = Path.cwd() / filename
-        shutil.copy2(src_file, dest_file)
+        with importlib.resources.as_file(src_file) as local_file:
+            shutil.copy2(local_file, dest_file)
         print(f"Copied template to {dest_file}")
     else:
         dest_dir = Path.cwd() / "configs" / "examples"
         dest_dir.mkdir(parents=True, exist_ok=True)
         count = 0
-        for f in examples_src.glob("*.yaml"):
-            shutil.copy2(f, dest_dir / f.name)
+        for f in yaml_files:
+            with importlib.resources.as_file(f) as local_file:
+                shutil.copy2(local_file, dest_dir / f.name)
             count += 1
         print(f"Copied {count} example configuration files to {dest_dir}")
 
@@ -262,13 +293,14 @@ def main(argv: Sequence[str] | None = None) -> None:
 
     parser = argparse.ArgumentParser(
         prog="hidden-attractors",
-        description="Unified interface for fractional-order hidden attractor analysis."
+        description="Unified interface for fractional-order hidden attractor analysis.",
+        allow_abbrev=False
     )
     
     subparsers = parser.add_subparsers(dest="command", required=True, help="Subcommand to execute")
     
     # Run subparser
-    run_parser = subparsers.add_parser("run", help="Run an experiment configuration")
+    run_parser = subparsers.add_parser("run", help="Run an experiment configuration", allow_abbrev=False)
     run_parser.add_argument("-c", "--config", type=str, help="Path to YAML configuration file")
     run_parser.add_argument(
         "-p", "--preset", type=str,
@@ -276,14 +308,14 @@ def main(argv: Sequence[str] | None = None) -> None:
     )
     
     # Init subparser
-    init_parser = subparsers.add_parser("init", help="Copy template configs to the current directory")
+    init_parser = subparsers.add_parser("init", help="Copy template configs to the current directory", allow_abbrev=False)
     init_parser.add_argument(
         "-e", "--example", type=str,
         help="Name of a specific example preset to extract"
     )
     
     # Inspect-config subparser
-    inspect_parser = subparsers.add_parser("inspect-config", help="Preview the normalized configuration")
+    inspect_parser = subparsers.add_parser("inspect-config", help="Preview the normalized configuration", allow_abbrev=False)
     inspect_parser.add_argument("-c", "--config", type=str, help="Path to YAML configuration file")
     inspect_parser.add_argument("-p", "--preset", type=str, help="Select a built-in config preset")
 

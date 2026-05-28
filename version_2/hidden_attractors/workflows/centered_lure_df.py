@@ -12,7 +12,7 @@ from ..lure.nyquist import find_harmonic_candidates
 from ..lure.seeds import build_lure_seed, build_modal_lure_seed
 from ..continuation.continuation_integer import run_integer_continuation
 from ..continuation.continuation_fractional import run_fractional_continuation
-from ..integrations.general import integrate_general
+from ..integrations.selector import integrate
 from ..contracts import validate_contracts
 from ..verification.equilibria import solve_equilibria
 from ..verification.stability import classify_equilibrium_stability
@@ -260,42 +260,70 @@ def _save_continuation_trace(cont_steps: list, output_dir: str) -> None:
             w2.writerow(header)
             w2.writerows(traj.tolist())
 
+def _get_lure_matrix(system: Any) -> Any:
+    return system.lure.matrix if system.lure is not None else getattr(system, "P", None)
+
+def _get_lure_input_vector(system: Any) -> Any:
+    return system.lure.input_vector if system.lure is not None else getattr(system, "b", None)
+
+def _get_lure_output_vector(system: Any) -> Any:
+    return system.lure.output_vector if system.lure is not None else getattr(system, "r", None)
+
+def _get_lure_nonlinearity(system: Any) -> Any:
+    return system.lure.nonlinearity if system.lure is not None else getattr(system, "psi", None)
+
+def _get_describing_function(system: Any) -> Any:
+    return system.lure.describing_function if system.lure is not None else getattr(system, "describing_function", None)
+
+def _evaluate_rhs(system: Any, x: Any) -> Any:
+    return system.evaluate(x)
+
+def _effective_q(config: dict, system: Any) -> float:
+    q = config.get("q", system.parameters.get("q", 1.0))
+    if q is None:
+        q = 1.0
+    return float(q)
+
+def _apply_compatibility_adapter(system: Any, q: float, merged_params: dict) -> None:
+    """Temporary compatibility adapter to attach legacy attributes to the system.
+    
+    This is kept isolated for transit compatibility.
+    """
+    object.__setattr__(system, "q", q)
+    for k, v in merged_params.items():
+        try:
+            object.__setattr__(system, k, v)
+        except AttributeError:
+            pass
+            
+    if system.lure is not None:
+        object.__setattr__(system, "P", system.lure.matrix)
+        object.__setattr__(system, "b", system.lure.input_vector)
+        object.__setattr__(system, "r", system.lure.output_vector)
+        object.__setattr__(system, "describing_function", system.lure.describing_function)
+        object.__setattr__(system, "psi", system.lure.nonlinearity)
+    object.__setattr__(system, "evaluate_rhs", lambda x: system.evaluate(x))
+
 def run_workflow_integration(system, x0, q_val, h, t_final, config, equilibria):
     integrator = config["integrator"]
     memory_mode = config["memory_mode"]
-    memory_window_length = config["memory_window_length"]
+    memory_window_length = config.get("memory_window_steps") or config.get("memory_window_length")
     divergence_norm = config["divergence_norm"]
     early_stop = config.get("early_stop")
     
-    if abs(q_val - 1.0) < 1e-9:
-        if integrator == "abm":
-            raise ValueError("ABM integrator is not allowed for integer-order dynamics (q = 1.0). Use 'efork_q1' or 'heun'.")
-        elif integrator in {"efork", "efork3", "efork_q1"}:
-            eff_integrator = "efork_q1"
-        elif integrator == "heun":
-            eff_integrator = "heun"
-        else:
-            raise ValueError(f"Invalid integrator '{integrator}' for integer-order dynamics (q = 1.0).")
-    else:
-        if integrator in {"heun", "efork_q1"}:
-            raise ValueError(f"Integrator '{integrator}' is not allowed for fractional-order dynamics (q < 1.0). Use 'abm' or 'efork3'.")
-        elif integrator in {"abm", "efork3", "efork"}:
-            eff_integrator = integrator
-        else:
-            raise ValueError(f"Invalid integrator '{integrator}' for fractional-order dynamics.")
-            
-    return integrate_general(
-        rhs=system.evaluate_rhs,
+    return integrate(
+        rhs=lambda x: system.evaluate(x),
         x0=x0,
         q=q_val,
         h=h,
         t_final=t_final,
-        integrator=eff_integrator,
+        integrator=integrator,
         memory_mode=memory_mode,
         memory_window_length=memory_window_length,
         divergence_norm=divergence_norm,
         system=system,
         use_c_backend=config.get("use_c_backend", True),
+        allow_python_fallback=config.get("allow_python_fallback", True),
         early_stop_config=early_stop,
         equilibria=equilibria
     )
@@ -344,44 +372,29 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     merged_params.update(sys_kwargs)
     system = dataclasses.replace(system, parameters=merged_params)
     
-    q = config.get("q", system.parameters.get("q", 1.0))
-    if q is None:
-        q = 1.0
-    object.__setattr__(system, "q", q)
-    for k, v in merged_params.items():
-        try:
-            object.__setattr__(system, k, v)
-        except AttributeError:
-            pass
-            
-    if system.lure is not None:
-        object.__setattr__(system, "P", system.lure.matrix)
-        object.__setattr__(system, "b", system.lure.input_vector)
-        object.__setattr__(system, "r", system.lure.output_vector)
-        object.__setattr__(system, "describing_function", system.lure.describing_function)
-        object.__setattr__(system, "psi", system.lure.nonlinearity)
-    object.__setattr__(system, "evaluate_rhs", lambda x: system.evaluate(x))
+    q = _effective_q(config, system)
+    _apply_compatibility_adapter(system, q, merged_params)
     
     if config.get("q_seed") is not None:
         q_seed = config["q_seed"]
     elif config.get("seed_mode") == "integer":
         q_seed = 1.0
     else:
-        q_seed = system.q
+        q_seed = _effective_q(config, system)
 
     if config.get("q_dynamics") is not None:
         q_dynamics = config["q_dynamics"]
     elif config.get("dynamics_mode") == "integer":
         q_dynamics = 1.0
     elif config.get("dynamics_mode") == "fractional":
-        q_dynamics = system.q
+        q_dynamics = _effective_q(config, system)
     else:
-        q_dynamics = system.q
+        q_dynamics = _effective_q(config, system)
 
     if config.get("continuation_mode") == "integer":
         q_continuation = 1.0
     else:
-        q_continuation = q_dynamics if q_dynamics < 1.0 else system.q
+        q_continuation = q_dynamics if q_dynamics < 1.0 else _effective_q(config, system)
 
     if config.get("seed_mode") == "integer":
         seed_transfer_mode = "integer"
@@ -446,7 +459,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     omega_grid = np.linspace(config["omega_min"], config["omega_max"], config["grid_size_omega"])
 
     _W_cache = W_precompute_spectral(
-        system.P, system.b, system.r,
+        _get_lure_matrix(system), _get_lure_input_vector(system), _get_lure_output_vector(system),
         transfer_convention=config["transfer_convention"],
     )
 
@@ -458,7 +471,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
             try:
                 w_vals[_i] = W_eval(
                     _w, q_seed, seed_transfer_mode,
-                    system.P, system.b, system.r,
+                    _get_lure_matrix(system), _get_lure_input_vector(system), _get_lure_output_vector(system),
                     transfer_convention=config["transfer_convention"],
                 )
             except Exception:
@@ -576,8 +589,11 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         _, v_norm, matched_ev, target_lam = build_modal_lure_seed(
             system, A0, omega0, k, q=q_seed, transfer_mode=seed_transfer_mode, theta=config.get("seed_theta", 0.0)
         )
-        norm_res = float(np.abs(system.r.astype(complex) @ v_norm - 1.0))
-        P0 = system.P.astype(complex) + k * np.outer(system.b.astype(complex), system.r.astype(complex))
+        r_vec = _get_lure_output_vector(system)
+        P_mat = _get_lure_matrix(system)
+        b_vec = _get_lure_input_vector(system)
+        norm_res = float(np.abs(r_vec.astype(complex) @ v_norm - 1.0))
+        P0 = P_mat.astype(complex) + k * np.outer(b_vec.astype(complex), r_vec.astype(complex))
         modal_res = float(np.linalg.norm(P0 @ v_norm - matched_ev * v_norm))
     else:
         matched_ev = complex(0.0, omega0)
@@ -972,21 +988,21 @@ def _build_summary_dict(
     elif config.get("seed_mode") == "integer":
         q_seed = 1.0
     else:
-        q_seed = getattr(system, "q", 1.0)
+        q_seed = _effective_q(config, system)
 
     if config.get("q_dynamics") is not None:
         q_dynamics = config["q_dynamics"]
     elif config.get("dynamics_mode") == "integer":
         q_dynamics = 1.0
     elif config.get("dynamics_mode") == "fractional":
-        q_dynamics = getattr(system, "q", 1.0)
+        q_dynamics = _effective_q(config, system)
     else:
-        q_dynamics = getattr(system, "q", 1.0)
+        q_dynamics = _effective_q(config, system)
 
     if config.get("continuation_mode") == "integer":
         q_continuation = 1.0
     else:
-        q_continuation = q_dynamics if q_dynamics < 1.0 else getattr(system, "q", 1.0)
+        q_continuation = q_dynamics if q_dynamics < 1.0 else _effective_q(config, system)
 
     if config.get("seed_mode") == "integer":
         seed_transfer_mode = "integer"

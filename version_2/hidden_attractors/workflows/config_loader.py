@@ -259,11 +259,16 @@ def _flatten_hierarchical(raw: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
     if isinstance(integ, dict):
         flat["integrator"] = integ.get("name", _DEFAULTS["integrator"])
         flat["h"] = integ.get("h", _DEFAULTS["h"])
-        flat["memory_mode"] = integ.get("memory_mode", _DEFAULTS["memory_mode"])
-        flat["memory_policy"] = integ.get("memory_policy", _DEFAULTS["memory_policy"])
-        flat["memory_window_steps"] = integ.get("memory_window_steps",
-                                                  integ.get("memory_window_length", _DEFAULTS["memory_window_steps"]))
-        flat["memory_window_time"] = integ.get("memory_window_time", None)
+        if "memory_mode" in integ:
+            flat["memory_mode"] = integ["memory_mode"]
+        if "memory_policy" in integ:
+            flat["memory_policy"] = integ["memory_policy"]
+        if "memory_window_steps" in integ:
+            flat["memory_window_steps"] = integ["memory_window_steps"]
+        elif "memory_window_length" in integ:
+            flat["memory_window_steps"] = integ["memory_window_length"]
+        if "memory_window_time" in integ:
+            flat["memory_window_time"] = integ["memory_window_time"]
         flat["use_c_backend"] = integ.get("use_c_backend", _DEFAULTS["use_c_backend"])
         flat["allow_python_fallback"] = integ.get("allow_python_fallback", _DEFAULTS["allow_python_fallback"])
     elif isinstance(integ, str):
@@ -592,6 +597,62 @@ def _resolve_output_dir(cfg: Dict[str, Any]) -> str:
     return resolved
 
 
+def _normalize_memory_config(flat: Dict[str, Any]) -> None:
+    """Normalize and infer memory_mode / memory_policy before defaults are applied."""
+    mp = flat.get("memory_policy")
+    mm = flat.get("memory_mode")
+    
+    # Rules:
+    # - Si el usuario define solo memory_policy: full_caputo, inferir memory_mode = full.
+    # - Si el usuario define solo memory_policy: finite_window, inferir memory_mode = window.
+    # - Si el usuario define solo memory_mode: full, inferir memory_policy = full_caputo.
+    # - Si el usuario define solo memory_mode: window, inferir memory_policy = finite_window.
+    if mp is not None and mm is None:
+        if mp == "full_caputo":
+            flat["memory_mode"] = "full"
+        elif mp == "finite_window":
+            flat["memory_mode"] = "window"
+        elif mp == "none":
+            flat["memory_mode"] = "none"
+        else:
+            raise ValueError(f"Unknown memory_policy: '{mp}'")
+    elif mm is not None and mp is None:
+        if mm == "full":
+            flat["memory_policy"] = "full_caputo"
+        elif mm == "window":
+            flat["memory_policy"] = "finite_window"
+        elif mm == "none":
+            flat["memory_policy"] = "none"
+        else:
+            raise ValueError(f"Unknown memory_mode: '{mm}'")
+    elif mm is not None and mp is not None:
+        compat = {
+            ("full", "full_caputo"),
+            ("window", "finite_window"),
+            ("none", "none")
+        }
+        if (mm, mp) not in compat:
+            raise ValueError(f"Incompatible memory settings: memory_mode='{mm}' and memory_policy='{mp}'")
+            
+    # Check if window parameters are required and handle time/steps logic
+    resolved_mm = flat.get("memory_mode")
+    if resolved_mm == "window":
+        mw_steps = flat.get("memory_window_steps")
+        mw_len = flat.get("memory_window_length")
+        mw_time = flat.get("memory_window_time")
+        if mw_steps is None and mw_len is None and mw_time is None:
+            raise ValueError("memory_window_length, memory_window_steps or memory_window_time must be specified when memory_mode='window'.")
+            
+        h = flat.get("h") or _DEFAULTS["h"]
+        if mw_time is not None:
+            steps = int(round(float(mw_time) / float(h)))
+            flat["memory_window_steps"] = steps
+            flat["memory_window_length"] = steps
+        elif mw_steps is not None:
+            flat["memory_window_length"] = int(mw_steps)
+        elif mw_len is not None:
+            flat["memory_window_steps"] = int(mw_len)
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -643,6 +704,7 @@ def load_config(path: str | Path, allow_legacy: bool = True) -> Dict[str, Any]:
             )
         flat = dict(raw)
 
+    _normalize_memory_config(flat)
     cfg = _apply_defaults(flat)
     cfg = _normalize(cfg)
     _validate(cfg)
@@ -703,6 +765,12 @@ def apply_cli_overrides(cfg: Dict[str, Any], overrides: Dict[str, Any]) -> Dict[
     dict
         Updated config.
     """
+    # Clear matching memory parameter if overridden to allow proper inference
+    if "memory_mode" in overrides or "integrator.memory_mode" in overrides:
+        cfg.pop("memory_policy", None)
+    if "memory_policy" in overrides or "integrator.memory_policy" in overrides:
+        cfg.pop("memory_mode", None)
+
     for k, v in overrides.items():
         if v is None:
             continue
@@ -714,6 +782,7 @@ def apply_cli_overrides(cfg: Dict[str, Any], overrides: Dict[str, Any]) -> Dict[
                 continue
         cfg[k] = v
 
+    _normalize_memory_config(cfg)
     cfg = _normalize(cfg)
     _validate(cfg)
     return cfg

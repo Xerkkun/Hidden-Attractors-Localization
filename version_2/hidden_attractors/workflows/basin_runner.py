@@ -147,6 +147,13 @@ def run_basin_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     """
     import dataclasses
 
+    basin_enabled = config.get("run_basin_slices", False) or config.get("basin", {}).get("enabled", False)
+    if not basin_enabled:
+        raise ValueError(
+            "Basin workflow execution requested, but basin stages are disabled in config "
+            "(stages.basin_slices / run_basin_slices or basin.enabled)."
+        )
+
     system_id = config.get("system_id", "chua_fractional_saturation")
     integrator = config.get("integrator", "efork3")
     q = config.get("q")
@@ -156,10 +163,16 @@ def run_basin_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     # System set up
     system = get_system(system_id)
     
-    # Merge custom parameters from config
+    # Merge custom parameters from config and validate
     system_params = {}
-    for p_name in ["alpha", "beta", "gamma", "m", "n", "m0", "m1", "a1", "a2", "rho"]:
+    allowed_override_params = ["alpha", "beta", "gamma", "m0", "m1", "a1", "a2", "rho"]
+    for p_name in allowed_override_params:
         if p_name in config and config[p_name] is not None:
+            if p_name not in system.parameters:
+                raise ValueError(
+                    f"Parameter '{p_name}' is not a valid parameter for system '{system.name}'. "
+                    f"Allowed parameters: {list(system.parameters.keys())}"
+                )
             system_params[p_name] = config[p_name]
     
     if system_params:
@@ -179,7 +192,6 @@ def run_basin_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         if single_ic is not None:
             ics = {"x0": single_ic}
         else:
-            # Default to some standard candidate seed
             ics = {"x0_plus": [13.0, 0.7, -19.0]}
 
     ref_label = list(ics.keys())[0]
@@ -189,8 +201,14 @@ def run_basin_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     t_final_ref = float(config.get("final_simulation", {}).get("t_final", 500.0))
     t_burn_ref = float(config.get("final_simulation", {}).get("t_burn", 120.0))
     div_norm = float(config.get("final_simulation", {}).get("divergence_norm", 120.0))
+    
+    memory_mode = config.get("memory_mode", "full")
+    memory_window = config.get("memory_window_steps") or config.get("memory_window_length")
+    use_c_backend = config.get("use_c_backend", True)
+    allow_python_fallback = config.get("allow_python_fallback", True)
+    early_stop_config = config.get("early_stop")
 
-    # Integrate the target reference trajectory
+    # Integrate the target reference trajectory (single time)
     print(f"  Generating target reference trajectory from {ref_label}...")
     times_ref, states_ref, status_ref = integrate(
         rhs=system.rhs,
@@ -200,14 +218,29 @@ def run_basin_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         t_final=t_final_ref,
         integrator=integrator,
         system=system,
-        use_c_backend=config.get("use_c_backend", True),
-        allow_python_fallback=True,
+        memory_mode=memory_mode,
+        memory_window_length=memory_window,
+        divergence_norm=div_norm,
+        use_c_backend=use_c_backend,
+        allow_python_fallback=allow_python_fallback,
+        early_stop_config=early_stop_config,
+        equilibria=list(system.equilibrium_points().values()),
     )
     if status_ref != "ok":
         raise RuntimeError(f"Reference trajectory generation failed with status: {status_ref}")
 
     n_burn_ref = int(math.ceil(t_burn_ref / h))
     ref_tail = states_ref[n_burn_ref:]
+
+    # Save reference attractor trajectory
+    ref_csv_path = output_dir / "reference_attractor.csv"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    with open(ref_csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["t", "x", "y", "z"])
+        for t_val, state in zip(times_ref[n_burn_ref:], ref_tail):
+            writer.writerow([t_val, state[0], state[1], state[2]])
+    print(f"  Reference attractor saved -> {ref_csv_path}")
 
     # Resolve stable equilibria
     all_eqs = system.equilibrium_points()
@@ -247,68 +280,6 @@ def run_basin_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     metric = config.get("target_match_metric", "centroid_distance")
     tol = float(config.get("target_match_tol", 0.5))
     workers = int(config.get("workers", 1))
-
-    memory_mode = config.get("memory_mode", "full")
-    memory_window = config.get("memory_window_length") or config.get("memory_window_steps")
-    use_c_backend = config.get("use_c_backend", True)
-
-    # Integrate the target reference trajectory
-    print(f"  Generating target reference trajectory from {ref_label}...")
-    times_ref, states_ref, status_ref = integrate(
-        rhs=system.rhs,
-        x0=ref_x0,
-        q=q,
-        h=h,
-        t_final=t_final_ref,
-        integrator=integrator,
-        system=system,
-        memory_mode=memory_mode,
-        memory_window_length=memory_window,
-        use_c_backend=use_c_backend,
-        allow_python_fallback=True,
-    )
-    if status_ref != "ok":
-        raise RuntimeError(f"Reference trajectory generation failed with status: {status_ref}")
-
-    n_burn_ref = int(math.ceil(t_burn_ref / h))
-    ref_tail = states_ref[n_burn_ref:]
-
-    # Save reference attractor trajectory
-    ref_csv_path = output_dir / "reference_attractor.csv"
-    with open(ref_csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow(["t", "x", "y", "z"])
-        for t_val, state in zip(times_ref[n_burn_ref:], ref_tail):
-            writer.writerow([t_val, state[0], state[1], state[2]])
-    print(f"  Reference attractor saved -> {ref_csv_path}")
-
-    # Resolve stable equilibria
-    all_eqs = system.equilibrium_points()
-    stable_eqs = []
-    for name, eq_pt in all_eqs.items():
-        res = classify_equilibrium_stability(system, eq_pt, q)
-        if res["stable"]:
-            stable_eqs.append(eq_pt)
-    print(f"  Found {len(stable_eqs)} stable equilibria out of {len(all_eqs)} total.")
-
-    # Basin config parameters
-    b_cfg = config.get("basin", {})
-    planes = b_cfg.get("planes", ["xy", "xz", "yz"])
-    grid_n = int(b_cfg.get("grid_n", 150))
-    t_final = float(b_cfg.get("t_final", 80.0))
-    t_burn = float(b_cfg.get("t_burn", 20.0))
-    h_basin = float(b_cfg.get("h", 0.01))
-    
-    x_interval = b_cfg.get("x_interval", [-10.0, 10.0])
-    y_interval = b_cfg.get("y_interval", [-10.0, 10.0])
-    z_interval = b_cfg.get("z_interval", [-10.0, 10.0])
-
-    around_equilibria = bool(b_cfg.get("around_equilibria", True))
-    local_radius = float(b_cfg.get("local_radius", 2.0))
-    
-    fixed_x = float(b_cfg.get("fixed_x", 0.0))
-    fixed_y = float(b_cfg.get("fixed_y", 0.0))
-    fixed_z = float(b_cfg.get("fixed_z", 0.0))
 
     # Determine selection targets
     run_targets = []
@@ -490,9 +461,16 @@ def run_basin_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         "system_id": system_id,
         "equilibrium_selection": eq_selection if around_equilibria else "global",
         "grid_n": grid_n,
-        "results": summary_runs,
-        "data_csv": str(data_csv_path),
+        "targets_used": [t[0] for t in run_targets],
+        "planes": planes,
+        "integrator": integrator,
+        "q": q,
+        "memory_mode": memory_mode,
+        "memory_window_length": memory_window,
         "reference_attractor_csv": str(ref_csv_path) if ref_csv_path.exists() else None,
+        "data_csv": str(data_csv_path) if data_csv_path else None,
+        "plot_paths": [run["plot_png"] for run in summary_runs if run.get("plot_png")],
+        "results": summary_runs,
     }
 
     summary_path = output_dir / "basin_summary.json"

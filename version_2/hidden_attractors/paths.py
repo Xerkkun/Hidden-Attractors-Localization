@@ -23,9 +23,12 @@ def get_packaged_examples_path() -> Path:
     import importlib.resources
     try:
         # Modern Python (3.9+)
-        ref = importlib.resources.files("hidden_attractors") / "configs" / "examples"
-        return Path(str(ref))
+        ref = importlib.resources.files("hidden_attractors").joinpath("configs", "examples")
+        p = Path(str(ref))
+        if p.exists():
+            return p
     except Exception:
-        return PACKAGE_ROOT / "configs" / "examples"
+        pass
+    return PACKAGE_ROOT / "configs" / "examples"
 
 

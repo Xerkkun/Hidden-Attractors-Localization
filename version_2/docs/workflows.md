@@ -25,6 +25,24 @@ numerical_contract, inputs, outputs, metrics, verdict, files, provenance
 
 ## CLI
 
+### Simple-level CLI Presets
+
+The high-level unified CLI `hidden-attractors` allows executing preset workflows directly:
+* `hidden-attractors init --example <name>`: Copies configuration templates into the working directory.
+* `hidden-attractors inspect-config --preset <name>`: Previews the fully resolved configuration mapping.
+* `hidden-attractors run --preset <name>`: Executes the workflow preset (e.g., `chua_integer`, `chua_fractional`, `chua_arctan`, `chua_bifurcation`, `chua_basin`).
+
+You can override configuration parameters directly on the CLI command line using nested dot notation overrides (e.g., `--final_simulation.t_final 50.0 --h 0.01`).
+
+### Low-level Programmatic Usage
+
+For advanced custom workflows, the library exposes clean API entry points:
+* `hidden_attractors.workflows.config_loader.load_config(path)`: Loads, normalizes, and validates hierarchical configuration dictionaries.
+* `hidden_attractors.systems.get_system(name)`: Looks up a registered dynamical system definition (such as `chua-arctan` or `chua-nonsmooth`).
+* `hidden_attractors.integrations.selector.integrate(rhs, x0, q, h, t_final, ...)`: Resolves, checks compatibility, and triggers the appropriate integer or fractional solver.
+
+---
+
 The official promotion interface is:
 
 ```bash

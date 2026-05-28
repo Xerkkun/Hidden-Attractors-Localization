@@ -109,6 +109,20 @@ def run_bifurcation_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     x0 = x0_start.copy()
     scans_data = []
 
+    # Get settings to forward to integrate
+    memory_mode = config.get("memory_mode", "full")
+    memory_window_length = config.get("memory_window_steps") or config.get("memory_window_length", 400)
+    divergence_norm = config.get("divergence_norm", 120.0)
+    early_stop_config = config.get("early_stop")
+    use_c_backend = config.get("use_c_backend", True)
+    allow_python_fallback = config.get("allow_python_fallback", True)
+
+    from hidden_attractors.integrations.selector import validate_integrator_compatibility
+
+    n_success = 0
+    n_failed = 0
+    failed_parameter_values = []
+
     for i, p_val in enumerate(p_vals):
         # Override the swept parameter
         q_val = q
@@ -121,32 +135,46 @@ def run_bifurcation_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         # Merge into the system copy
         system_copy = dataclasses.replace(system, parameters=run_params)
         
-        # Integrate
-        times, states, status = integrate(
-            rhs=system_copy.rhs,
-            x0=x0,
-            q=q_val,
-            h=h,
-            t_final=t_final,
-            integrator=integrator,
-            system=system_copy,
-            memory_mode=config.get("memory_mode", "full"),
-            memory_window_length=config.get("memory_window_length", 400),
-            use_c_backend=config.get("use_c_backend", True),
-            allow_python_fallback=config.get("allow_python_fallback", True),
-        )
-        
-        if status in ("ok", "diverged", "diverged_early", "converged_equilibrium_early") and len(times) > 0:
-            # Save the trajectory format (t, x, y, z)
-            traj = np.column_stack([times, states])
-            scans_data.append((p_val, traj, status))
+        try:
+            # Validate integrator/q compatibility
+            validate_integrator_compatibility(integrator, q_val)
             
-            # If continuation is enabled and solve was stable, update x0
-            if continuation and status == "ok":
-                x0 = states[-1].copy()
-        else:
-            # If divergence or failure, reset to base IC for next iteration
+            # Integrate
+            times, states, status = integrate(
+                rhs=system_copy.rhs,
+                x0=x0,
+                q=q_val,
+                h=h,
+                t_final=t_final,
+                integrator=integrator,
+                system=system_copy,
+                memory_mode=memory_mode,
+                memory_window_length=memory_window_length,
+                divergence_norm=divergence_norm,
+                use_c_backend=use_c_backend,
+                allow_python_fallback=allow_python_fallback,
+                early_stop_config=early_stop_config,
+                equilibria=list(system_copy.equilibrium_points().values())
+            )
+            
+            if status == "ok" and len(times) > 0:
+                traj = np.column_stack([times, states])
+                scans_data.append((p_val, traj, status))
+                n_success += 1
+                if continuation:
+                    x0 = states[-1].copy()
+            else:
+                n_failed += 1
+                failed_parameter_values.append(float(p_val))
+                x0 = x0_start.copy()
+                if len(times) > 0:
+                    traj = np.column_stack([times, states])
+                    scans_data.append((p_val, traj, status))
+        except Exception as exc:
+            n_failed += 1
+            failed_parameter_values.append(float(p_val))
             x0 = x0_start.copy()
+            print(f"  Point {p_val} failed: {exc}")
             
         if (i + 1) % max(1, p_n // 10) == 0 or i == p_n - 1:
             print(f"  Progress: {i+1}/{p_n} points swept.")
@@ -212,20 +240,28 @@ def run_bifurcation_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
                 run_status
             ])
 
+    save_csv = bif_cfg.get("save_csv", True)
+    save_plot = bif_cfg.get("save_plot", True)
+    plots_enabled = config.get("plot_enabled", True)
+    plot_bifurcation = config.get("plot_bifurcation", True)
+
     # Save CSV
-    data_csv_path = output_dir / "bifurcation_data.csv"
-    with open(data_csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow([
-            "parameter_name", "parameter_value", "t", "x", "y", "z",
-            "coordinate", "coordinate_value", "sample_type", "status"
-        ])
-        writer.writerows(csv_rows)
-    print(f"  Data saved -> {data_csv_path}")
+    data_csv_path = None
+    if save_csv:
+        data_csv_path = output_dir / "bifurcation_data.csv"
+        with open(data_csv_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                "parameter_name", "parameter_value", "t", "x", "y", "z",
+                "coordinate", "coordinate_value", "sample_type", "status"
+            ])
+            writer.writerows(csv_rows)
+        print(f"  Data saved -> {data_csv_path}")
 
     # Plot
     plot_path = output_dir / "bifurcation_plot.png"
-    if config.get("plot_enabled", True) and config.get("plot_bifurcation", True):
+    should_plot = save_plot and plots_enabled and plot_bifurcation
+    if should_plot:
         plot_bifurcation_diagram(
             pts,
             plot_path,
@@ -242,9 +278,16 @@ def run_bifurcation_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         "system_id": system_id,
         "parameter_swept": param_name,
         "n_swept_points": p_n,
+        "n_success": n_success,
+        "n_failed": n_failed,
+        "failed_parameter_values": failed_parameter_values,
+        "integrator": integrator,
+        "memory_mode": memory_mode,
+        "memory_window_length": memory_window_length,
+        "q_base": q,
         "stats": stats,
-        "data_csv": str(data_csv_path),
-        "plot_path": str(plot_path) if plot_path.exists() else None,
+        "data_csv": str(data_csv_path) if data_csv_path else None,
+        "plot_path": str(plot_path) if (should_plot and plot_path.exists()) else None,
     }
     
     summary_path = output_dir / "bifurcation_summary.json"
