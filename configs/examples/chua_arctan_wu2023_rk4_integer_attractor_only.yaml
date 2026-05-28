@@ -1,0 +1,51 @@
+# configs/examples/chua_arctan_wu2023_rk4_integer_attractor_only.yaml
+#
+# Simulación directa de atractor para el sistema Chua con no-linealidad arctan
+# de orden entero (q=1.0) usando el integrador clásico Runge-Kutta 4to orden (RK4).
+#
+# Sin búsqueda de semillas, sin función descriptiva, sin continuación.
+
+system_id: chua_fractional_arctan
+workflow_mode: simulate_attractor_only
+
+# ── Integrador de orden entero ────────────────────────────────────────────────
+integrator: rk4
+dynamics_order: integer
+
+# ── Parámetros del sistema ────────────────────────────────────────────────────
+alpha: 8.4562
+beta:  12.0732
+gamma: 0.0052
+m:     0.4
+n:    -1.1585
+
+# ── Orden entero ─────────────────────────────────────────────────────────────
+q: 1.0
+
+# ── Integración ──────────────────────────────────────────────────────────────
+h:      0.001       # Paso de tiempo fino para RK4
+N:      100000      # t_final = N * h = 100 s
+t_burn: 50.0
+
+divergence_norm: 120.0
+
+# ── Condiciones iniciales ────────────────────────────────────────────────────
+initial_conditions:
+  x0_plus:   [ 13.8,   0.7093, -19.8768]
+  x0_minus:  [-13.8,  -0.7093,  19.8768]
+  x0_fig:    [ 13.0,   0.7,    -19.0   ]
+
+# ── Salida ───────────────────────────────────────────────────────────────────
+output_dir: outputs/chua_arctan_wu2023_rk4_integer_attractor_only
+
+save_timeseries: true
+save_attractor:  true
+plot_3d:         true
+plot_projections: true
+diagnostics:     true
+
+# ── Etiqueta científica ───────────────────────────────────────────────────────
+scientific_label: >
+  Integer-order (q=1.0) simulation with classical Runge-Kutta 4th-order (RK4).
+  Direct simulation of attractors without descripting function or continuation.
+  hidden_verified is always false from this route.

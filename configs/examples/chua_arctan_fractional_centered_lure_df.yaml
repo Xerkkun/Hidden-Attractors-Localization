@@ -1,15 +1,23 @@
-# Configuration for Chua Fractional with Smooth Arctan
+# configs/examples/chua_arctan_fractional_centered_lure_df.yaml
+
 system_id: chua_fractional_arctan
-q: 0.9998
+q: 0.999          # o 0.9998 si quieres compararlo casi contra el entero
+
 transfer_mode: fractional
+seed_mode: fractional
 seed_strategy: k_phi
 seed_construction: modal
+describing_function_mode: closed_form
 branch_index: 0
+
 continuation_mode: fractional
 dynamics_mode: system
-integrator: efork
+integrator: efork3
+
 memory_mode: window
-memory_window_length: 4000
+memory_policy: finite_window
+memory_window_length: 400
+memory_window_steps: 400
 
 alpha: 8.4562
 beta: 12.0732
@@ -17,11 +25,13 @@ gamma: 0.0052
 m: 0.4
 n: -1.1585
 
-h: 0.01
-t_final: 500.0
-t_burn: 120.0
+h: 0.001
 divergence_norm: 120.0
-workers: 1
+workers: 8
+
+final_simulation:
+  t_final: 500.0
+  t_burn: 120.0
 
 omega_min: 0.0001
 omega_max: 10.0
@@ -31,3 +41,41 @@ grid_size_omega: 20000
 grid_size_amplitude: 20000
 df_residual_tol: 1.0e-8
 root_refinement: true
+
+run_hiddenness_tests: true
+run_sphere_tests: true
+run_basin_slices: true
+run_robustness: false
+
+sphere_tests:
+  enabled: true
+  equilibrium_selection: "E+"
+  radii: [1e-5, 1e-4, 1e-3, 1e-2]
+  samples_initial: 20
+  samples_growth_factor: 2.0
+  directions_mode: "sphere_random"
+  random_seed: 42
+  t_final: 150.0
+  t_burn: 120.0
+  h: 0.001
+  trajectory_plot_fraction: 0.25
+  max_trajectories_to_plot: 60
+
+
+basin:
+  enabled: true
+  planes: ["xy"]
+  grid_n: 50
+  x_interval: [-10.0, 10.0]
+  y_interval: [-10.0, 10.0]
+  z_interval: [-10.0, 10.0]
+  fixed_x: 0.0
+  fixed_y: 0.0
+  fixed_z: 0.0
+  around_equilibria: true
+  equilibrium_selection: "all"
+  local_radius: 2.0
+  t_final: 150.0
+  t_burn: 120.0
+  h: 0.001
+  early_stop_enabled: true

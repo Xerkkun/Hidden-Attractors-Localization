@@ -6,7 +6,7 @@ import numpy as np
 # Valid option sets for contracts
 VALID_SEED_MODES = {"integer", "fractional"}
 VALID_CONTINUATION_MODES = {"integer", "fractional"}
-VALID_INTEGRATORS = {"abm", "efork3", "efork_q1", "heun"}
+VALID_INTEGRATORS = {"abm", "efork3", "efork_q1", "heun", "adm_wu2023", "rk4"}
 VALID_MEMORY_POLICIES = {"none", "full_caputo", "finite_window"}
 VALID_TRANSFER_CONVENTIONS = {"standard", "opposite_sign"}
 VALID_HARMONIC_CONDITIONS = {"1_minus_WN", "1_plus_WN"}

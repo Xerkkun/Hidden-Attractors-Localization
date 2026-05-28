@@ -1,0 +1,84 @@
+# configs/examples/chua_arctan_wu2023_compare_integrators.yaml
+#
+# Configuración comparativa: ADM vs ABM vs EFORK para Wu et al. 2023.
+#
+# Este archivo no ejecuta una comparación simultánea directamente;
+# en cambio, debe correrse tres veces cambiando el integrador y
+# el output_dir, o usando el argumento --integrator de la CLI.
+#
+# Comandos:
+#
+#   # 1. ADM (reproducción del paper)
+#   python -m src.cli.run_workflow \
+#     --config configs/examples/chua_arctan_wu2023_compare_integrators.yaml \
+#     --integrator adm_wu2023 \
+#     --output-dir outputs/chua_arctan_wu2023_compare/adm_wu2023
+#
+#   # 2. ABM (Caputo memoria completa)
+#   python -m src.cli.run_workflow \
+#     --config configs/examples/chua_arctan_wu2023_compare_integrators.yaml \
+#     --integrator abm \
+#     --output-dir outputs/chua_arctan_wu2023_compare/abm
+#
+#   # 3. EFORK (Caputo memoria completa)
+#   python -m src.cli.run_workflow \
+#     --config configs/examples/chua_arctan_wu2023_compare_integrators.yaml \
+#     --integrator efork \
+#     --output-dir outputs/chua_arctan_wu2023_compare/efork
+#
+# Interpretación de resultados
+# ----------------------------
+# Si ADM produce trayectorias caóticas (spectral_entropy alta,
+# zero_one_test ~ 1) pero ABM/EFORK producen trayectorias periódicas
+# (peak_ratio alto, spectral_entropy baja):
+#
+#   - Esto NO prueba un atractor oculto de Caputo con memoria completa.
+#   - Refleja que el ADM local (sin historia) y el ABM/EFORK (con historia
+#     Caputo completa) son métodos numéricamente distintos.
+#   - Para verificar ocultedad se requieren pruebas de vecindades de los
+#     equilibrios E0, E+, E- con integración Caputo de historia completa.
+
+system_id: chua_fractional_arctan
+workflow_mode: simulate_attractor_only
+
+# ── Integrador activo (sobrescribir con --integrator desde CLI) ─────────────
+integrator: adm_wu2023
+
+# ── Parámetros del sistema ───────────────────────────────────────────────────
+alpha: 8.4562
+beta:  12.0732
+gamma: 0.0052
+m:     0.4
+n:    -1.1585
+
+# ── Orden fraccional ─────────────────────────────────────────────────────────
+q: 0.99
+
+# ── Integración ──────────────────────────────────────────────────────────────
+h:      0.01
+N:      10000       # t_final = 100 s (mismo que Wu et al.)
+t_burn: 50.0
+
+divergence_norm: 120.0
+
+# ── Condiciones iniciales (iguales para los tres métodos) ────────────────────
+initial_conditions:
+  x0_plus:   [ 13.8,   0.7093, -19.8768]
+  x0_minus:  [-13.8,  -0.7093,  19.8768]
+  x0_fig:    [ 13.0,   0.7,    -19.0   ]
+
+# ── Salida (sobrescribir con --output-dir desde CLI) ─────────────────────────
+output_dir: outputs/chua_arctan_wu2023_compare/adm_wu2023
+
+save_timeseries: true
+save_attractor:  true
+plot_3d:         true
+plot_projections: true
+diagnostics:     true
+
+# ── Etiqueta científica ───────────────────────────────────────────────────────
+scientific_label: >
+  Comparación de integradores (Wu et al. 2023 parámetros).
+  adm_wu2023 = reproducción ADM local (sin memoria Caputo).
+  abm/efork  = integración Caputo con historia completa.
+  Diferencias en trayectorias entre métodos no implican atractor oculto.

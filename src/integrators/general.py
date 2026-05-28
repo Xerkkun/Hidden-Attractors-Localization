@@ -3,6 +3,7 @@ from typing import Callable, Tuple, Optional, Any, List
 from .fractional_c import fractional_integrate
 from .abm import caputo_abm_integrate
 from .efork import efork_integrate
+from .rk4 import rk4_integrate
 # Numba JIT fast path for q=1.0 (graceful fallback if unavailable)
 try:
     from .numba_kernels import integrate_efork3_q1_numba, NUMBA_AVAILABLE as _NUMBA_AVAILABLE
@@ -76,10 +77,13 @@ def integrate_general(
         elif integrator.lower() == "heun":
             use_efork_q1 = False
             status_default = "ok"
+        elif integrator.lower() == "rk4":
+            use_efork_q1 = False
+            status_default = "ok"
         else:
             raise ValueError(
                 f"Integrator '{integrator}' is not supported at q=1.0. "
-                "Use 'heun' or 'efork_q1' / 'efork3'."
+                "Use 'heun', 'rk4', or 'efork_q1' / 'efork3'."
             )
 
         n_steps = int(np.ceil(t_final / h))
@@ -121,11 +125,17 @@ def integrate_general(
                     k2 = h * rhs_t(t_curr + 0.5 * h, x + EFORK_Q1_A21 * k1)
                     k3 = h * rhs_t(t_curr + 0.5 * h, x + EFORK_Q1_A31 * k1 + EFORK_Q1_A32 * k2)
                     x_next = x + EFORK_Q1_W1 * k1 + EFORK_Q1_W2 * k2 + EFORK_Q1_W3 * k3
-                else:  # heun
+                elif integrator.lower() == "heun":
                     f_curr = rhs_t(t_curr, x)
                     x_pred = x + h * f_curr
                     f_next = rhs_t(t_next, x_pred)
                     x_next = x + 0.5 * h * (f_curr + f_next)
+                elif integrator.lower() == "rk4":
+                    k1 = rhs_t(t_curr, x)
+                    k2 = rhs_t(t_curr + 0.5 * h, x + 0.5 * h * k1)
+                    k3 = rhs_t(t_curr + 0.5 * h, x + 0.5 * h * k2)
+                    k4 = rhs_t(t_next, x + h * k3)
+                    x_next = x + (h / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
             except Exception as exc:
                 status = f"solver_exception:{exc}"
                 break

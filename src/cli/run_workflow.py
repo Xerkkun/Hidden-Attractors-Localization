@@ -9,6 +9,9 @@ from typing import Any, Dict, List
 from ..workflows.configs import load_and_validate_config
 from ..workflows.centered_lure_df_workflow import run_centered_lure_df_workflow
 
+# Ruta B: direct attractor simulation (simulate_attractor_only mode)
+from .simulate_attractor import load_attractor_config, run_simulate_attractor_workflow
+
 def str2bool(v):
     if isinstance(v, bool):
         return v
@@ -64,9 +67,43 @@ def check_duplicate_flags(argv: List[str]) -> None:
 def main(argv: List[str] = None) -> None:
     if argv is None:
         argv = sys.argv[1:]
-        
+
+    # ── Ruta B early dispatch ─────────────────────────────────────────────────
+    # If the YAML config declares workflow_mode: simulate_attractor_only, we
+    # skip all Ruta A machinery (seed search, DF, continuation) and hand off
+    # directly to the simulate_attractor workflow.  No other behaviour changes.
+    _config_arg = None
+    for i, tok in enumerate(argv):
+        if tok in ("--config",) and i + 1 < len(argv):
+            _config_arg = argv[i + 1]
+        elif tok.startswith("--config="):
+            _config_arg = tok.split("=", 1)[1]
+    if _config_arg and os.path.exists(_config_arg):
+        try:
+            import yaml as _yaml
+            with open(_config_arg, "r", encoding="utf-8") as _f:
+                _peek = _yaml.safe_load(_f) or {}
+            if _peek.get("workflow_mode") == "simulate_attractor_only":
+                print("[run_workflow] Detected workflow_mode=simulate_attractor_only -> dispatching to Ruta B")
+                _cfg_b = load_attractor_config(_config_arg)
+                # Allow --output-dir override
+                for i, tok in enumerate(argv):
+                    if tok in ("--output-dir",) and i + 1 < len(argv):
+                        _cfg_b["output_dir"] = argv[i + 1]
+                    elif tok.startswith("--output-dir="):
+                        _cfg_b["output_dir"] = tok.split("=", 1)[1]
+                    elif tok in ("--integrator",) and i + 1 < len(argv):
+                        _cfg_b["integrator"] = argv[i + 1]
+                    elif tok.startswith("--integrator="):
+                        _cfg_b["integrator"] = tok.split("=", 1)[1]
+                run_simulate_attractor_workflow(_cfg_b)
+                return
+        except Exception as _e:
+            print(f"[run_workflow] WARNING: Could not peek at workflow_mode: {_e}")
+    # ─────────────────────────────────────────────────────────────────────────
+
     check_duplicate_flags(argv)
-    
+
     parser = argparse.ArgumentParser(description="Centered Lur'e Describing Function Workflow CLI Runner.")
     
     # Config and Preset selects
@@ -82,7 +119,7 @@ def main(argv: List[str] = None) -> None:
     parser.add_argument("--branch-index", type=int, help="Override branch_index.")
     parser.add_argument("--continuation-mode", type=str, choices=["integer", "fractional"], help="Override continuation_mode.")
     parser.add_argument("--dynamics-mode", type=str, choices=["integer", "fractional", "system"], help="Override dynamics_mode.")
-    parser.add_argument("--integrator", type=str, choices=["abm", "efork"], help="Override integrator.")
+    parser.add_argument("--integrator", type=str, choices=["abm", "efork", "adm_wu2023", "rk4", "heun", "efork_q1"], help="Override integrator.")  # adm_wu2023 and integer solvers are handled by early dispatch
     parser.add_argument("--memory-mode", type=str, choices=["full", "window"], help="Override memory_mode.")
     parser.add_argument("--memory-window-length", type=int, help="Override memory_window_length.")
     parser.add_argument("--h", type=float, help="Override h.")

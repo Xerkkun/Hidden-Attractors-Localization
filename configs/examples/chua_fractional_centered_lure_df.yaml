@@ -1,6 +1,6 @@
 # Configuration for Chua Fractional with Saturation
 system_id: chua_fractional_saturation
-q: 0.9998
+q: 0.998
 
 # OJO: si quieres que la semilla DF sea entera, usa seed_mode: integer
 transfer_mode: fractional

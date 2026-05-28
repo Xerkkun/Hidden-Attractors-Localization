@@ -1,0 +1,65 @@
+# configs/examples/chua_arctan_wu2023_adm_attractor_only.yaml
+#
+# Ruta B — Reproducción ADM del artículo Wu et al. (2023):
+#   "Hidden attractors in a new fractional-order Chua system with arctan
+#    nonlinearity and its DSP implementation."
+#
+# IMPORTANTE: Este workflow integra directamente desde condiciones iniciales
+# explícitas usando el método ADM local.  NO busca semillas, NO aplica
+# función descriptiva, NO corre continuación.
+#
+# Separación científica:
+#   - adm_wu2023  → reproducción del paper (ADM local, sin memoria Caputo)
+#   - Si ADM produce caos pero ABM/EFORK no, esto refleja la diferencia
+#     entre los métodos numéricos, NO prueba la existencia de un atractor
+#     oculto bajo la definición Caputo con memoria completa.
+#
+# Para comparar los tres métodos ver:
+#   configs/examples/chua_arctan_wu2023_compare_integrators.yaml
+
+system_id: chua_fractional_arctan
+workflow_mode: simulate_attractor_only
+
+# ── Integrador ──────────────────────────────────────────────────────────────
+integrator: adm_wu2023
+# Para probar con ABM o EFORK usa:
+#   integrator: abm
+#   integrator: efork
+
+# ── Parámetros del sistema (Wu et al. 2023, Tabla 1) ────────────────────────
+alpha: 8.4562
+beta:  12.0732
+gamma: 0.0052
+m:     0.4
+n:    -1.1585
+
+# ── Orden fraccional ─────────────────────────────────────────────────────────
+q: 0.99
+
+# ── Integración ──────────────────────────────────────────────────────────────
+h:      0.01
+N:      10000       # t_final = N * h = 100 s
+t_burn: 50.0        # Descarta los primeros 50 s como transitorio
+
+divergence_norm: 120.0
+
+# ── Condiciones iniciales (Wu et al. 2023, Fig. 5) ──────────────────────────
+initial_conditions:
+  x0_plus:   [ 13.8,   0.7093, -19.8768]
+  x0_minus:  [-13.8,  -0.7093,  19.8768]
+  x0_fig:    [ 13.0,   0.7,    -19.0   ]
+
+# ── Salida ───────────────────────────────────────────────────────────────────
+output_dir: outputs/chua_arctan_wu2023_adm_attractor_only
+
+save_timeseries: true
+save_attractor:  true
+plot_3d:         true
+plot_projections: true
+diagnostics:     true
+
+# ── Etiqueta científica ───────────────────────────────────────────────────────
+scientific_label: >
+  ADM reproduction of Wu et al. 2023 (local Adomian decomposition, no Caputo
+  full-memory history). NOT equivalent to ABM/EFORK Caputo integration.
+  hidden_verified is always false from this route.
