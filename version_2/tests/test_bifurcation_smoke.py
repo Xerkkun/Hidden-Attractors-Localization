@@ -70,3 +70,45 @@ def test_bifurcation_no_csv(tmp_path):
     
     csv_path = tmp_path / "bifurcation_data.csv"
     assert not csv_path.exists()
+
+
+def test_bifurcation_sweeps_q(tmp_path):
+    config_path = get_packaged_examples_path() / "chua_fractional_bifurcation.yaml"
+    cfg = load_config(config_path)
+    
+    cfg["output_dir"] = str(tmp_path)
+    cfg["plot_enabled"] = False
+    cfg["use_c_backend"] = False
+    
+    cfg["bifurcation"]["parameter"] = "q"
+    cfg["bifurcation"]["values"] = {"min": 0.97, "max": 0.99, "n": 3}
+    cfg["bifurcation"]["discard_time"] = 0.1
+    cfg["bifurcation"]["sample_time"] = 0.1
+    cfg["bifurcation"]["h"] = 0.01
+    cfg["bifurcation"]["save_csv"] = True
+    cfg["bifurcation"]["save_plot"] = False
+    cfg["bifurcation"]["sampling"] = {"method": "raw_tail_samples"}
+    
+    cfg["memory_mode"] = "window"
+    cfg["memory_window_steps"] = 20
+    
+    summary = run_bifurcation_workflow(cfg)
+    
+    assert summary["workflow_mode"] == "bifurcation"
+    assert summary["parameter_swept"] == "q"
+    assert summary["n_swept_points"] == 3
+    
+    csv_path = tmp_path / "bifurcation_data.csv"
+    assert csv_path.exists()
+    
+    import csv
+    with open(csv_path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+        
+    assert len(rows) > 0
+    for row in rows:
+        assert row["parameter_name"] == "q"
+        val = float(row["parameter_value"])
+        assert any(abs(val - target) < 1e-4 for target in [0.97, 0.98, 0.99])
+

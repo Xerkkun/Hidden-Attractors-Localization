@@ -33,18 +33,18 @@ PRESETS = {
 
 
 def find_example_config(filename: str) -> Path:
-    """Resolve the template configuration path dynamically."""
+    """Resolve the template configuration path dynamically, copying to cache if not physically present."""
+    from hidden_attractors.paths import get_example_config_resource, RUNTIME_CACHE
     import importlib.resources
     import shutil
-    
-    # 1. Package path using importlib.resources
+
+    # Try resolving via importlib resources
     try:
-        ref = importlib.resources.files("hidden_attractors").joinpath("configs", "examples", filename)
+        ref = get_example_config_resource(filename)
         if ref.exists():
             with importlib.resources.as_file(ref) as p:
                 if p.exists():
-                    if "temp" in str(p).lower() or "tmp" in str(p).lower():
-                        from hidden_attractors.paths import RUNTIME_CACHE
+                    if "temp" in str(p).lower() or "tmp" in str(p).lower() or "site-packages" in str(p).lower() or ".egg" in str(p).lower():
                         cache_dir = RUNTIME_CACHE / "configs"
                         cache_dir.mkdir(parents=True, exist_ok=True)
                         dest = cache_dir / filename
@@ -53,7 +53,7 @@ def find_example_config(filename: str) -> Path:
                     return p
     except Exception:
         pass
-    
+
     # 2. Cwd subfolder
     p2 = Path.cwd() / "configs" / "examples" / filename
     if p2.exists():
@@ -65,8 +65,7 @@ def find_example_config(filename: str) -> Path:
         return p3
         
     raise FileNotFoundError(
-        f"Example configuration template '{filename}' not found. "
-        f"Looked in: {p2}, {p3}"
+        f"Example configuration template '{filename}' not found."
     )
 
 
@@ -194,21 +193,11 @@ def run_cmd(args: argparse.Namespace, extra_args: List[str]) -> None:
 
 def init_cmd(args: argparse.Namespace) -> None:
     """Execute the init subcommand."""
+    from hidden_attractors.paths import list_packaged_example_configs, get_example_config_resource
     import importlib.resources
     import shutil
     
-    try:
-        ref_dir = importlib.resources.files("hidden_attractors").joinpath("configs", "examples")
-        yaml_files = [f for f in ref_dir.iterdir() if f.is_file() and f.name.endswith(".yaml")]
-    except Exception:
-        yaml_files = []
-
-    # Fallback to local files if empty/error
-    if not yaml_files:
-        for local_src in (Path.cwd() / "version_2" / "configs" / "examples", Path.cwd() / "configs" / "examples"):
-            if local_src.exists():
-                yaml_files = list(local_src.glob("*.yaml"))
-                break
+    yaml_files = list_packaged_example_configs()
 
     if not yaml_files:
         print("Error: Could not find templates directory.")
@@ -219,27 +208,23 @@ def init_cmd(args: argparse.Namespace) -> None:
         if not filename.endswith(".yaml"):
             filename += ".yaml"
             
-        src_file = None
-        for f in yaml_files:
-            if f.name == filename:
-                src_file = f
-                break
-                
-        if src_file is None:
+        if filename not in yaml_files:
             print(f"Error: Template for example '{args.example}' ({filename}) not found.")
             sys.exit(1)
             
         dest_file = Path.cwd() / filename
-        with importlib.resources.as_file(src_file) as local_file:
+        ref = get_example_config_resource(filename)
+        with importlib.resources.as_file(ref) as local_file:
             shutil.copy2(local_file, dest_file)
         print(f"Copied template to {dest_file}")
     else:
         dest_dir = Path.cwd() / "configs" / "examples"
         dest_dir.mkdir(parents=True, exist_ok=True)
         count = 0
-        for f in yaml_files:
-            with importlib.resources.as_file(f) as local_file:
-                shutil.copy2(local_file, dest_dir / f.name)
+        for name in yaml_files:
+            ref = get_example_config_resource(name)
+            with importlib.resources.as_file(ref) as local_file:
+                shutil.copy2(local_file, dest_dir / name)
             count += 1
         print(f"Copied {count} example configuration files to {dest_dir}")
 

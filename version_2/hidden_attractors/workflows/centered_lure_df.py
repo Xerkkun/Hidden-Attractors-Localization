@@ -285,9 +285,29 @@ def _effective_q(config: dict, system: Any) -> float:
     return float(q)
 
 def _apply_compatibility_adapter(system: Any, q: float, merged_params: dict) -> None:
-    """Temporary compatibility adapter to attach legacy attributes to the system.
-    
-    This is kept isolated for transit compatibility.
+    """Transitory compatibility adapter attaching legacy properties to the system.
+
+    This function dynamically injects attributes (`q`, parameter fields, `P`,
+    `b`, `r`, `psi`, `describing_function`, `evaluate_rhs`) into the system
+    instance to maintain backwards-compatibility with package modules that
+    perform numerical or algebraic checks under legacy names.
+
+    Why this is required (Active dependencies):
+    -------------------------------------------
+    - `hidden_attractors/lure/seeds.py` (Lure seed generation, expects `system.P`, `system.b`, `system.r`)
+    - `hidden_attractors/lure/decomposition.py` (Lure decomposition, checks `system.evaluate_rhs`)
+    - `hidden_attractors/lure/describing_function.py` (Fourier integration, uses `system.psi` and `system.describing_function`)
+    - `hidden_attractors/integrations/numba_kernels.py` & `hidden_attractors/integrations/efork.py` (Numerical solvers, expect `system.P`, `system.b`, `system.r`, `system.psi` for optimized calculations)
+    - `hidden_attractors/continuation/continuation_integer.py` & `hidden_attractors/continuation/continuation_fractional.py` (Homotopy tracking, uses `system.P`, `system.b`, `system.r`, `system.psi`)
+    - `hidden_attractors/verification/jacobian.py` (Piecewise Jacobian calculations, expect `system.P`)
+    - `hidden_attractors/verification/hiddenness.py` (Verification logic, calls `system.evaluate_rhs`)
+    - `hidden_attractors/plotting/*` (Visualization routines, e.g., plot_df.py, plot_transfer.py, expect `system.P`, `system.b`, `system.r`, `system.describing_function`)
+
+    TODO (Pending Refactoring):
+    --------------------------
+    - Refactor `hidden_attractors/integrations/numba_kernels.py` and `hidden_attractors/integrations/efork.py` to read parameters directly from `system.lure.matrix`, `system.lure.input_vector`, etc., instead of relying on top-level `system.P`.
+    - Adapt `hidden_attractors/lure/seeds.py` and `hidden_attractors/continuation/` to consume the standard `system.lure` sub-object attributes.
+    - Update `hidden_attractors/verification/hiddenness.py` and `hidden_attractors/verification/jacobian.py` to consume the unified `system.evaluate(x)` and `system.lure.matrix` respectively.
     """
     object.__setattr__(system, "q", q)
     for k, v in merged_params.items():

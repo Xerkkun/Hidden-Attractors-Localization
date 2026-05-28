@@ -16,26 +16,16 @@ from hidden_attractors.paths import get_packaged_examples_path
 
 def test_packaged_yamls():
     """List, load and validate all packaged YAML configurations."""
-    ref_dir = importlib.resources.files("hidden_attractors").joinpath("configs", "examples")
+    from hidden_attractors.paths import list_packaged_example_configs, get_example_config_resource
     
-    yaml_files = []
-    try:
-        yaml_files = [f for f in ref_dir.iterdir() if f.is_file() and f.name.endswith(".yaml")]
-    except Exception:
-        pass
-        
-    if not yaml_files:
-        # Fallback to local files
-        local_src = get_packaged_examples_path()
-        yaml_files = list(local_src.glob("*.yaml"))
+    yaml_filenames = list_packaged_example_configs()
+    assert len(yaml_filenames) > 0, "No packaged YAML example files found!"
 
-    assert len(yaml_files) > 0, "No packaged YAML example files found!"
-
-    for f_path in yaml_files:
-        filename = f_path.name
+    for filename in yaml_filenames:
+        ref = get_example_config_resource(filename)
         
         # Load and parse with config_loader
-        with importlib.resources.as_file(f_path) as local_p:
+        with importlib.resources.as_file(ref) as local_p:
             # Check raw file contents for forbidden legacy keys 'm' or 'n' in the parameters section
             with open(local_p, "r", encoding="utf-8") as fh:
                 raw_text = fh.read()

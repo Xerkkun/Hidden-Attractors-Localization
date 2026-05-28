@@ -750,6 +750,30 @@ def save_effective_config(cfg: Dict[str, Any], output_dir: Optional[str] = None)
     return out
 
 
+def _set_nested(cfg: dict, dotted_key: str, value: Any) -> None:
+    """Set a value in a nested dict from a dotted key string."""
+    parts = dotted_key.split(".")
+    current = cfg
+    for part in parts[:-1]:
+        if part not in current or not isinstance(current[part], dict):
+            current[part] = {}
+        current = current[part]
+    current[parts[-1]] = value
+
+
+_INTEGRATOR_SUBKEY_MAPPING = {
+    "name": "integrator",
+    "h": "h",
+    "memory_mode": "memory_mode",
+    "memory_policy": "memory_policy",
+    "memory_window_steps": "memory_window_steps",
+    "memory_window_length": "memory_window_steps",
+    "memory_window_time": "memory_window_time",
+    "use_c_backend": "use_c_backend",
+    "allow_python_fallback": "allow_python_fallback",
+}
+
+
 def apply_cli_overrides(cfg: Dict[str, Any], overrides: Dict[str, Any]) -> Dict[str, Any]:
     """Apply CLI override values to a loaded config, then re-validate.
 
@@ -765,22 +789,32 @@ def apply_cli_overrides(cfg: Dict[str, Any], overrides: Dict[str, Any]) -> Dict[
     dict
         Updated config.
     """
-    # Clear matching memory parameter if overridden to allow proper inference
-    if "memory_mode" in overrides or "integrator.memory_mode" in overrides:
-        cfg.pop("memory_policy", None)
-    if "memory_policy" in overrides or "integrator.memory_policy" in overrides:
-        cfg.pop("memory_mode", None)
-
+    mapped_overrides = {}
     for k, v in overrides.items():
         if v is None:
             continue
-        # Handle nested keys: "final_simulation.t_final" → cfg["final_simulation"]["t_final"]
-        if "." in k:
-            parts = k.split(".", 1)
-            if parts[0] in cfg and isinstance(cfg[parts[0]], dict):
-                cfg[parts[0]][parts[1]] = v
+        if k.startswith("integrator."):
+            subkey = k.split(".", 1)[1]
+            if subkey in _INTEGRATOR_SUBKEY_MAPPING:
+                mapped_overrides[_INTEGRATOR_SUBKEY_MAPPING[subkey]] = v
                 continue
-        cfg[k] = v
+        elif k.startswith("simulation."):
+            subkey = k.split(".", 1)[1]
+            mapped_overrides[f"final_simulation.{subkey}"] = v
+            continue
+        mapped_overrides[k] = v
+
+    # Clear matching memory parameter if overridden to allow proper inference
+    if "memory_mode" in mapped_overrides:
+        cfg.pop("memory_policy", None)
+    if "memory_policy" in mapped_overrides:
+        cfg.pop("memory_mode", None)
+
+    for k, v in mapped_overrides.items():
+        if "." in k:
+            _set_nested(cfg, k, v)
+        else:
+            cfg[k] = v
 
     _normalize_memory_config(cfg)
     cfg = _normalize(cfg)

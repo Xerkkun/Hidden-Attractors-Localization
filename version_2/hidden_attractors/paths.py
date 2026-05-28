@@ -18,17 +18,43 @@ NATIVE_CACHE = PROJECT_ROOT / ".runtime_native"
 RUNTIME_CACHE = PROJECT_ROOT / ".runtime_cache"
 
 
-def get_packaged_examples_path() -> Path:
-    """Return the absolute path of the packaged examples directory using importlib.resources."""
+def get_packaged_examples_ref():
+    """Return a Traversable reference to the packaged examples configs."""
     import importlib.resources
+    return importlib.resources.files("hidden_attractors").joinpath("configs", "examples")
+
+
+def list_packaged_example_configs() -> list[str]:
+    """List filenames of all packaged example configuration files."""
     try:
-        # Modern Python (3.9+)
-        ref = importlib.resources.files("hidden_attractors").joinpath("configs", "examples")
-        p = Path(str(ref))
-        if p.exists():
-            return p
+        ref = get_packaged_examples_ref()
+        return [f.name for f in ref.iterdir() if f.is_file() and f.name.endswith(".yaml")]
     except Exception:
-        pass
-    return PACKAGE_ROOT / "configs" / "examples"
+        # Fallback to local files if iterdir fails
+        local_dir = PACKAGE_ROOT / "configs" / "examples"
+        if local_dir.exists():
+            return [f.name for f in local_dir.glob("*.yaml")]
+        return []
+
+
+def get_example_config_resource(filename: str):
+    """Return a Traversable reference to a specific example configuration file."""
+    return get_packaged_examples_ref().joinpath(filename)
+
+
+def get_packaged_examples_path() -> Path:
+    """Return the physical path fallback for local/editable installs when available.
+
+    Warning: This returns a local filesystem path which might not exist in zipped installations.
+    For zipped or non-editable installs, use get_packaged_examples_ref() or get_example_config_resource().
+    """
+    p = PACKAGE_ROOT / "configs" / "examples"
+    if p.exists():
+        return p
+    # Fallback to current working directory templates if present
+    p2 = Path.cwd() / "configs" / "examples"
+    if p2.exists():
+        return p2
+    return p
 
 
