@@ -1,0 +1,63 @@
+experiment:
+  name: "Chua Fractional Centered Lure DF"
+  description: "Locating hidden attractor in fractional-order Chua system with saturation using Centered Lure DF method"
+  output_dir: "outputs/chua_fractional_df"
+
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.998
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+modes:
+  transfer_mode: "fractional"
+  seed_mode: "fractional"
+  continuation_mode: "fractional"
+  dynamics_mode: "system"
+
+integrator:
+  name: "efork3"
+  h: 0.001
+  memory_mode: "window"
+  memory_policy: "finite_window"
+  memory_window_steps: 400
+
+stages:
+  seed_search: true
+  continuation: true
+  final_simulation: true
+  hiddenness_tests: false
+  sphere_tests: false
+  basin_slices: false
+  bifurcation: false
+  attractor_only: false
+
+seed_search:
+  strategy: "k_phi"
+  construction: "modal"
+  branch_index: 0
+  omega_min: 0.01
+  omega_max: 20.0
+  amplitude_min: 0.01
+  amplitude_max: 20.0
+  grid_size_omega: 200
+  grid_size_amplitude: 200
+  root_refinement: true
+  df_residual_tol: 1.0e-8
+
+simulation:
+  t_final: 300.0
+  t_burn: 120.0
+
+plots:
+  enabled: true
+  save_figures: true
+  attractor: true
+  timeseries: true
+  transfer: true
+  describing_function: true
+  continuation: true

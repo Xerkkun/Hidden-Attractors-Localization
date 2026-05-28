@@ -73,6 +73,7 @@ Repository = "https://github.com/Xerkkun/Hidden-Attractors-Localization"
 Issues = "https://github.com/Xerkkun/Hidden-Attractors-Localization/issues"
 
 [project.scripts]
+hidden-attractors = "hidden_attractors.cli.run:main"
 hidden-attractors-list-candidates = "hidden_attractors.cli:list_candidates"
 hidden-attractors-systems = "hidden_attractors.cli:systems"
 hidden-attractors-workflow-requirements = "hidden_attractors.cli:workflow_requirements"

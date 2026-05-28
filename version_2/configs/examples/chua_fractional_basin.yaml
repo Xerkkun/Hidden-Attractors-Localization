@@ -1,0 +1,45 @@
+experiment:
+  name: "Chua Fractional Basin"
+  description: "Basin of attraction slice mapping for fractional Chua system"
+  output_dir: "outputs/chua_fractional_basin"
+
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.998
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+stages:
+  seed_search: false
+  continuation: false
+  final_simulation: false
+  hiddenness_tests: false
+  sphere_tests: false
+  basin_slices: true
+  bifurcation: false
+  attractor_only: false
+
+basin:
+  planes: ["xy"]
+  grid_n: 50
+  x_interval: [-10.0, 10.0]
+  y_interval: [-10.0, 10.0]
+  z_interval: [-10.0, 10.0]
+  fixed_x: 0.0
+  fixed_y: 0.0
+  fixed_z: 0.0
+  around_equilibria: true
+  equilibrium_selection: "E+"
+  local_radius: 2.0
+  t_final: 80.0
+  t_burn: 20.0
+  h: 0.002
+
+plots:
+  enabled: true
+  save_figures: true
+  basin: true

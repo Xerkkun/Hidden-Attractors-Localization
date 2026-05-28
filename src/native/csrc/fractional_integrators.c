@@ -91,6 +91,27 @@ static void memory_component_general(int k, double t_eval, const double *t, cons
     }
 }
 
+static void memory_component_precomputed(int k, const double *arr, int dim, const double *pow_expo, const EFORK3 *c, int memory_mode, int memory_window_length, double *out_mem) {
+    for (int d = 0; d < dim; ++d) {
+        out_mem[d] = 0.0;
+    }
+    int j_start = 0;
+    if (memory_mode == 1) { // windowed
+        j_start = k - memory_window_length;
+        if (j_start < 0) j_start = 0;
+    }
+    for (int j = j_start; j < k; ++j) {
+        int r = k - j;
+        const double term = pow_expo[r] - pow_expo[r - 1];
+        for (int d = 0; d < dim; ++d) {
+            out_mem[d] += (arr[dim * (j + 1) + d] - arr[dim * j + d]) * term;
+        }
+    }
+    for (int d = 0; d < dim; ++d) {
+        out_mem[d] *= c->inv_mem_factor;
+    }
+}
+
 // -----------------------------------------------------------------------------
 // Unified General C Fractional Integrator
 // -----------------------------------------------------------------------------
@@ -366,9 +387,15 @@ API_EXPORT int integrate_fractional_c(
         double *tmp = (double *)malloc((size_t)dim * sizeof(double));
         double *f = (double *)malloc((size_t)dim * sizeof(double));
         double *mem_x = (double *)malloc((size_t)dim * sizeof(double));
+        double *pow_expo_s1 = (double *)malloc((size_t)(total_capacity + 2) * sizeof(double));
+        double *pow_expo_s2 = (double *)malloc((size_t)(total_capacity + 2) * sizeof(double));
+        double *pow_expo_s3 = (double *)malloc((size_t)(total_capacity + 2) * sizeof(double));
 
-        if (!k1 || !k2 || !k3 || !tmp || !f || !mem_x) {
+        if (!k1 || !k2 || !k3 || !tmp || !f || !mem_x || !pow_expo_s1 || !pow_expo_s2 || !pow_expo_s3) {
             free(t); free(x); free(k1); free(k2); free(k3); free(tmp); free(f); free(mem_x);
+            if (pow_expo_s1) free(pow_expo_s1);
+            if (pow_expo_s2) free(pow_expo_s2);
+            if (pow_expo_s3) free(pow_expo_s3);
             if (eq_consec_counts) free(eq_consec_counts);
             return -3;
         }
@@ -376,9 +403,16 @@ API_EXPORT int integrate_fractional_c(
         const double hq = pow(h, q);
         const EFORK3 coeffs = efork3_coeffs(q, h);
 
+        const double expo = 1.0 - q;
+        for (int idx = 0; idx < total_capacity + 2; ++idx) {
+            pow_expo_s1[idx] = pow((double)idx * h, expo);
+            pow_expo_s2[idx] = pow(((double)idx + coeffs.c2) * h, expo);
+            pow_expo_s3[idx] = pow(((double)idx + coeffs.c3) * h, expo);
+        }
+
         for (int i = H - 1; i < total_capacity - 1; ++i) {
             // Stage 1
-            memory_component_general(i, t[i], t, x, dim, q, h, &coeffs, memory_mode, memory_window_length, mem_x);
+            memory_component_precomputed(i, x, dim, pow_expo_s1, &coeffs, memory_mode, memory_window_length, mem_x);
             rhs(t[i], &x[i * dim], f, dim, params);
             for (int d = 0; d < dim; ++d) {
                 k1[d] = hq * (f[d] - mem_x[d]);
@@ -389,7 +423,7 @@ API_EXPORT int integrate_fractional_c(
                 tmp[d] = x[i * dim + d] + coeffs.a21 * k1[d];
             }
             double t2 = t[i] + coeffs.c2 * h;
-            memory_component_general(i, t2, t, x, dim, q, h, &coeffs, memory_mode, memory_window_length, mem_x);
+            memory_component_precomputed(i, x, dim, pow_expo_s2, &coeffs, memory_mode, memory_window_length, mem_x);
             rhs(t2, tmp, f, dim, params);
             for (int d = 0; d < dim; ++d) {
                 k2[d] = hq * (f[d] - mem_x[d]);
@@ -400,7 +434,7 @@ API_EXPORT int integrate_fractional_c(
                 tmp[d] = x[i * dim + d] + coeffs.a31 * k1[d] + coeffs.a32 * k2[d];
             }
             double t3 = t[i] + coeffs.c3 * h;
-            memory_component_general(i, t3, t, x, dim, q, h, &coeffs, memory_mode, memory_window_length, mem_x);
+            memory_component_precomputed(i, x, dim, pow_expo_s3, &coeffs, memory_mode, memory_window_length, mem_x);
             rhs(t3, tmp, f, dim, params);
             for (int d = 0; d < dim; ++d) {
                 k3[d] = hq * (f[d] - mem_x[d]);
@@ -497,6 +531,7 @@ API_EXPORT int integrate_fractional_c(
         }
 
         free(k1); free(k2); free(k3); free(tmp); free(f); free(mem_x);
+        free(pow_expo_s1); free(pow_expo_s2); free(pow_expo_s3);
     }
 
     // 4. Copy results back to Python pre-allocated buffers

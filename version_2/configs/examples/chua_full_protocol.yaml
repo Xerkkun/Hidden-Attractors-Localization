@@ -1,0 +1,84 @@
+experiment:
+  name: "Chua Fractional Full Protocol"
+  description: "Complete localized hidden-attractor search including continuation and hiddenness verification checks"
+  output_dir: "outputs/chua_full_protocol"
+
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.9998
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+modes:
+  transfer_mode: "fractional"
+  seed_mode: "fractional"
+  continuation_mode: "fractional"
+  dynamics_mode: "system"
+
+integrator:
+  name: "efork3"
+  h: 0.01
+
+stages:
+  seed_search: true
+  continuation: true
+  final_simulation: true
+  hiddenness_tests: true
+  sphere_tests: true
+  basin_slices: true
+  bifurcation: false
+  attractor_only: false
+
+seed_search:
+  strategy: "k_phi"
+  construction: "modal"
+  branch_index: 0
+  omega_min: 0.1
+  omega_max: 5.0
+  amplitude_min: 1.0
+  amplitude_max: 20.0
+  grid_size_omega: 50
+  grid_size_amplitude: 50
+  root_refinement: true
+  df_residual_tol: 1.0e-6
+
+simulation:
+  t_final: 100.0
+  t_burn: 40.0
+
+sphere_tests:
+  equilibrium_selection: "all"
+  radii: [1e-5, 3e-5, 1e-4, 3e-4, 1e-3, 1e-2]
+  samples_initial: 20
+  samples_growth_factor: 2.0
+  t_final: 80.0
+  t_burn: 20.0
+  h: 0.01
+
+basin:
+  planes: ["xy"]
+  grid_n: 30
+  x_interval: [-10.0, 10.0]
+  y_interval: [-10.0, 10.0]
+  z_interval: [-10.0, 10.0]
+  around_equilibria: true
+  equilibrium_selection: "all"
+  local_radius: 2.0
+  t_final: 80.0
+  t_burn: 20.0
+  h: 0.01
+
+plots:
+  enabled: true
+  save_figures: true
+  attractor: true
+  timeseries: true
+  transfer: true
+  describing_function: true
+  continuation: true
+  sphere_tests: true
+  basin: true

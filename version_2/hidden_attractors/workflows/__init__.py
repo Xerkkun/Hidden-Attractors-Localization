@@ -51,6 +51,11 @@ from .refined_basin import launch as launch_refined_basin
 from .sphere_controls import aggregate as aggregate_sphere_controls
 from .sphere_controls import launch as launch_sphere_controls
 from .sphere_controls import run_sphere_chunk
+from .config_loader import load_config, save_effective_config
+from .attractor_only import run_attractor_only_workflow
+from .bifurcation import run_bifurcation_workflow
+from .basin_runner import run_basin_workflow
+from .simple_runner import run_simple_workflow
 from .specs import (
     BasinSliceSpec,
     DestinationClassifierSpec,
@@ -120,4 +125,10 @@ __all__ = [
     "summarize_integer_hiddenness_controls",
     "validate_full_workflow_system",
     "write_workflow_spec",
+    "load_config",
+    "save_effective_config",
+    "run_attractor_only_workflow",
+    "run_bifurcation_workflow",
+    "run_basin_workflow",
+    "run_simple_workflow",
 ]

@@ -137,6 +137,11 @@ from .workflows.integer_lure import (
     integrate_integer_lure,
     run_integer_lure_hiddenness_controls,
 )
+from .workflows.config_loader import load_config, save_effective_config
+from .workflows.attractor_only import run_attractor_only_workflow
+from .workflows.bifurcation import run_bifurcation_workflow
+from .workflows.basin_runner import run_basin_workflow
+from .workflows.simple_runner import run_simple_workflow
 
 __all__ = [
     # ── stability ──────────────────────────────────────────────────────────
@@ -221,4 +226,10 @@ __all__ = [
     "integrate_integer_lure",
     "run_integer_lure_hiddenness_controls",
     "validate_full_workflow_system",
+    "load_config",
+    "save_effective_config",
+    "run_attractor_only_workflow",
+    "run_bifurcation_workflow",
+    "run_basin_workflow",
+    "run_simple_workflow",
 ]

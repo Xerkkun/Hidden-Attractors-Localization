@@ -249,7 +249,14 @@ class SystemRegistry:
 
 
 _REGISTRY = SystemRegistry()
-_SYSTEM_ALIASES = {"chua-piecewise": "chua-nonsmooth"}
+_SYSTEM_ALIASES = {
+    "chua-piecewise": "chua-nonsmooth",
+    "chua-integer-saturation": "chua-nonsmooth",
+    "chua-fractional-saturation": "chua-nonsmooth",
+    "chua-integer-arctan": "chua-arctan",
+    "chua-fractional-arctan": "chua-arctan",
+    "chua-arctan-wu2023": "fractional-chua-arctan-wu2023",
+}
 
 
 def register_system(system: ChaoticSystem, *, replace: bool = False) -> ChaoticSystem:

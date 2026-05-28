@@ -20,6 +20,8 @@ from .dynamics import (
     plot_trajectory_spectra,
 )
 from .overlays import plot_trajectory_overlay
+from .basin import plot_basin_slices, plot_basin_slice_file
+from .matignon import plot_matignon_equilibria, classify_equilibrium_stability
 
 __all__ = [
     "plot_integer_hiddenness_controls",
@@ -34,4 +36,8 @@ __all__ = [
     "plot_time_series",
     "plot_trajectory_spectra",
     "plot_trajectory_overlay",
+    "plot_basin_slices",
+    "plot_basin_slice_file",
+    "plot_matignon_equilibria",
+    "classify_equilibrium_stability",
 ]

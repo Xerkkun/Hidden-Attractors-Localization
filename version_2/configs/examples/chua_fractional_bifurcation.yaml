@@ -1,0 +1,44 @@
+experiment:
+  name: "Chua Fractional Bifurcation"
+  description: "Bifurcation diagram of fractional Chua system sweeps on beta parameter"
+  output_dir: "outputs/chua_fractional_bifurcation"
+
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.98
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+stages:
+  seed_search: false
+  continuation: false
+  final_simulation: false
+  hiddenness_tests: false
+  sphere_tests: false
+  basin_slices: false
+  bifurcation: true
+  attractor_only: false
+
+bifurcation:
+  parameter: "beta"
+  values:
+    min: 8.0
+    max: 16.0
+    n: 100
+  continuation_between_values: true
+  initial_condition: [0.1, 0.0, 0.0]
+  discard_time: 100.0
+  sample_time: 100.0
+  h: 0.005
+  coordinate: "x"
+  save_csv: true
+  save_plot: true
+
+plots:
+  enabled: true
+  save_figures: true
+  bifurcation: true

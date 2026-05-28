@@ -1,0 +1,42 @@
+experiment:
+  name: "Chua Arctan Attractor Only Integer"
+  description: "Simulating specific integer-order Chua arctan attractor directly"
+  output_dir: "outputs/chua_arctan_attractor_integer"
+
+system:
+  system_id: "chua_integer_arctan"
+  q: 1.0
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m: 0.4
+    n: 1.2
+
+modes:
+  dynamics_mode: "system"
+
+integrator:
+  name: "heun"
+  h: 0.001
+
+stages:
+  seed_search: false
+  continuation: false
+  final_simulation: false
+  hiddenness_tests: false
+  sphere_tests: false
+  basin_slices: false
+  bifurcation: false
+  attractor_only: true
+
+simulation:
+  t_final: 200.0
+  t_burn: 50.0
+  initial_condition: [0.1, 0.1, 0.1]
+
+plots:
+  enabled: true
+  save_figures: true
+  attractor: true
+  timeseries: true

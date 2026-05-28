@@ -60,6 +60,12 @@ def _run_abm(params: dict, x0: np.ndarray, q: float, h: float, N: int,
         m=params["m"], n=params["n"], q=q
     )
     t_final = N * h
+
+    mem_mode = params.get("memory_mode", "full")
+    mem_window = params.get("memory_window_length")
+    if mem_window is not None:
+        mem_window = int(mem_window)
+
     t_arr, x_arr, status = caputo_abm_integrate(
         rhs=system.evaluate_rhs,
         x0=x0,
@@ -68,19 +74,21 @@ def _run_abm(params: dict, x0: np.ndarray, q: float, h: float, N: int,
         t_final=t_final,
         divergence_norm=divergence_norm,
         use_c_backend=True,
+        memory_mode=mem_mode,
+        memory_window_length=mem_window,
     )
     info = {
         "integrator": "abm",
-        "integrator_class": "caputo_full_memory",
+        "integrator_class": "caputo_full_memory" if mem_mode == "full" else "caputo_windowed_memory",
         "scientific_label": (
-            "ABM (Adams-Bashforth-Moulton) with full Caputo memory. "
-            "Rigorous Caputo fractional integration."
+            "ABM (Adams-Bashforth-Moulton) with full Caputo memory. " if mem_mode == "full" else
+            f"ABM with finite memory window of {mem_window} steps. "
         ),
         "hidden_verified": False,
         "q": q, "h": h, "N": N,
         "steps_completed": len(t_arr) - 1,
         "t_final_reached": float(t_arr[-1]),
-        "caputo_memory": "full — Caputo kernel from t=0",
+        "caputo_memory": "full — Caputo kernel from t=0" if mem_mode == "full" else f"windowed — {mem_window} steps",
     }
     return t_arr, x_arr, status, info
 
@@ -95,6 +103,12 @@ def _run_efork(params: dict, x0: np.ndarray, q: float, h: float, N: int,
         m=params["m"], n=params["n"], q=q
     )
     t_final = N * h
+
+    mem_mode = params.get("memory_mode", "full")
+    mem_window = params.get("memory_window_length")
+    if mem_window is not None:
+        mem_window = int(mem_window)
+
     t_arr, x_arr, status = efork_integrate(
         system=system,
         x0=x0,
@@ -103,19 +117,21 @@ def _run_efork(params: dict, x0: np.ndarray, q: float, h: float, N: int,
         t_final=t_final,
         divergence_norm=divergence_norm,
         use_c_backend=True,
+        memory_mode=mem_mode,
+        memory_window_length=mem_window,
     )
     info = {
         "integrator": "efork",
-        "integrator_class": "caputo_full_memory",
+        "integrator_class": "caputo_full_memory" if mem_mode == "full" else "caputo_windowed_memory",
         "scientific_label": (
-            "EFORK-3 with full Caputo memory (Ghoreishi et al. 2023). "
-            "Rigorous Caputo fractional integration."
+            "EFORK-3 with full Caputo memory (Ghoreishi et al. 2023). " if mem_mode == "full" else
+            f"EFORK-3 with finite memory window of {mem_window} steps. "
         ),
         "hidden_verified": False,
         "q": q, "h": h, "N": N,
         "steps_completed": len(t_arr) - 1,
         "t_final_reached": float(t_arr[-1]),
-        "caputo_memory": "full — Caputo kernel from t=0",
+        "caputo_memory": "full — Caputo kernel from t=0" if mem_mode == "full" else f"windowed — {mem_window} steps",
     }
     return t_arr, x_arr, status, info
 
@@ -281,6 +297,13 @@ def _zero_one_test_approx(x: np.ndarray, n_samples: int = 100) -> float:
     This is a simplified approximation using the mean-square displacement growth.
     """
     rng = np.random.default_rng(42)
+
+    # Downsample if array is too long to prevent quadratic complexity slowdown
+    max_points = 5000
+    if len(x) > max_points:
+        step = int(math.ceil(len(x) / max_points))
+        x = x[::step]
+
     N = len(x)
     if N < 100:
         return float("nan")
@@ -432,7 +455,7 @@ def simulate_one(
             result["attractor_csv"] = att_path
 
     # ── Figures ──────────────────────────────────────────────────────────────
-    if (plot_3d or plot_projections) and status in ("ok", "diverged"):
+    if (plot_3d or plot_projections) and status in ("ok", "diverged", "diverged_early", "converged_equilibrium_early"):
         try:
             _plot_attractor(
                 times, states, t_burn, h,
@@ -497,6 +520,8 @@ def run_simulate_attractor_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         "gamma": float(config.get("gamma", 0.0052)),
         "m":     float(config.get("m",     0.4)),
         "n":     float(config.get("n",     -1.1585)),
+        "memory_mode": config.get("memory_mode", "full"),
+        "memory_window_length": config.get("memory_window_length") or config.get("memory_window_steps"),
     }
 
     # ── Initial conditions ───────────────────────────────────────────────────
@@ -511,6 +536,9 @@ def run_simulate_attractor_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         initial_conditions[lbl] = np.asarray(val, dtype=float)
 
     # ── Print header ─────────────────────────────────────────────────────────
+    mem_mode = params.get("memory_mode", "full")
+    mem_window = params.get("memory_window_length")
+
     print()
     print("=" * 72)
     print(" simulate_attractor_only - Ruta B")
@@ -523,6 +551,10 @@ def run_simulate_attractor_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     print(f"  q                = {q}")
     print(f"  h                = {h}")
     print(f"  N                = {N}  (t_final = {N * h:.1f})")
+    if mem_mode == "window":
+        print(f"  Memory mode      = window ({mem_window} steps)")
+    else:
+        print(f"  Memory mode      = full (from t=0)")
     print(f"  t_burn           = {t_burn}")
     print(f"  divergence_norm  = {div_norm}")
     print(f"  output_dir       = {output_dir}")
