@@ -10,24 +10,56 @@ workspace_root = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(workspace_root / "version_2"))
 sys.path.insert(1, str(workspace_root))
 
-# Dynamic imports to resolve IDE static analysis errors (where import root is /version_2)
-src_systems_registry = importlib.import_module("src.systems.registry")
-get_system_by_id = src_systems_registry.get_system_by_id
+from typing import Any
+from hidden_attractors.systems import get_system
+import dataclasses
+from hidden_attractors.lure.transfer import W_eval
+from hidden_attractors.lure.describing_function import N_quadrature
+from hidden_attractors.verification.stability import classify_equilibrium_stability
+from hidden_attractors.integrations.abm import caputo_abm_integrate
+from hidden_attractors.workflows.centered_lure_df import run_centered_lure_df_workflow
 
-src_lure_transfer = importlib.import_module("src.lure.transfer")
-W_eval = src_lure_transfer.W_eval
+def get_system_by_id(system_id: str, **kwargs) -> Any:
+    name_map = {
+        "chua_integer_saturation": "chua-nonsmooth",
+        "chua_fractional_saturation": "chua-nonsmooth",
+        "chua_fractional_arctan": "chua-arctan",
+        "chua_arctan_wu2023": "fractional-chua-arctan-wu2023",
+    }
+    normalized_sys_id = name_map.get(system_id, system_id)
+    system = get_system(normalized_sys_id)
+    
+    # Merge overrides and build adapter attributes
+    merged_params = dict(system.parameters)
+    merged_params.update(kwargs)
+    system = dataclasses.replace(system, parameters=merged_params)
+    
+    if "q" in kwargs:
+        q_val = kwargs["q"]
+    else:
+        if system_id == "chua_fractional_saturation":
+            q_val = 0.9998
+        elif system_id == "chua_fractional_arctan":
+            q_val = 0.995
+        else:
+            q_val = 1.0
+            
+    object.__setattr__(system, "q", q_val)
+    for k, v in merged_params.items():
+        try:
+            object.__setattr__(system, k, v)
+        except AttributeError:
+            pass
+            
+    if system.lure is not None:
+        object.__setattr__(system, "P", system.lure.matrix)
+        object.__setattr__(system, "b", system.lure.input_vector)
+        object.__setattr__(system, "r", system.lure.output_vector)
+        object.__setattr__(system, "describing_function", system.lure.describing_function)
+        object.__setattr__(system, "psi", system.lure.nonlinearity)
+    object.__setattr__(system, "evaluate_rhs", lambda x: system.evaluate(x))
+    return system
 
-src_lure_df = importlib.import_module("src.lure.describing_function")
-N_quadrature = src_lure_df.N_quadrature
-
-src_stability = importlib.import_module("src.verification.stability")
-classify_equilibrium_stability = src_stability.classify_equilibrium_stability
-
-src_abm = importlib.import_module("src.integrators.abm")
-caputo_abm_integrate = src_abm.caputo_abm_integrate
-
-src_workflow = importlib.import_module("src.workflows.centered_lure_df_workflow")
-run_centered_lure_df_workflow = src_workflow.run_centered_lure_df_workflow
 
 def test_system_matrices_and_parameters():
     # 1. P, b, r correct for each system

@@ -1,9 +1,6 @@
 """Plotting helpers for numerical-attractor workflows.
 
 Stability: experimental
-    Plot functions may gain new keyword arguments (colors, axes, figure size)
-    as the gallery grows.  Existing call signatures will not be broken without
-    notice.
 """
 
 from .dynamics import (
@@ -23,6 +20,27 @@ from .overlays import plot_trajectory_overlay
 from .basin import plot_basin_slices, plot_basin_slice_file
 from .matignon import plot_matignon_equilibria, classify_equilibrium_stability
 
+# Migrated functions
+from .plot_transfer import plot_nyquist_transfer
+from .plot_df import plot_describing_function, plot_harmonic_residual_map
+from .plot_continuation import (
+    plot_continuation_eta,
+    plot_continuation_first_last_comparison,
+    plot_continuation_timeseries_comparison,
+    plot_continuation_progression,
+    plot_continuation_tracking,
+)
+from .plot_trajectories import (
+    plot_attractor_trajectories,
+    plot_flexible_attractor_and_projections,
+    plot_timeseries_data,
+    plot_neighborhood_control_spheres,
+)
+from .plot_basins import plot_basin_slice_file as plot_basin_slice_file_migrated
+from .plot_matignon import plot_matignon_equilibria as plot_matignon_equilibria_migrated
+from .plot_sphere_tests import plot_sphere_test_results
+from .generate_publication_figures import generate_all_publication_figures
+
 __all__ = [
     "plot_integer_hiddenness_controls",
     "plot_integer_lure_continuation",
@@ -40,4 +58,20 @@ __all__ = [
     "plot_basin_slice_file",
     "plot_matignon_equilibria",
     "classify_equilibrium_stability",
+    
+    # Migrated
+    "plot_nyquist_transfer",
+    "plot_describing_function",
+    "plot_harmonic_residual_map",
+    "plot_continuation_eta",
+    "plot_continuation_first_last_comparison",
+    "plot_continuation_timeseries_comparison",
+    "plot_continuation_progression",
+    "plot_continuation_tracking",
+    "plot_attractor_trajectories",
+    "plot_flexible_attractor_and_projections",
+    "plot_timeseries_data",
+    "plot_neighborhood_control_spheres",
+    "plot_sphere_test_results",
+    "generate_all_publication_figures",
 ]

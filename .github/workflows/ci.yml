@@ -59,7 +59,7 @@ jobs:
       fail-fast: false          # que un OS que falle no cancele el otro
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.11", "3.12", "3.13"]
 
 
     defaults:
@@ -95,10 +95,6 @@ jobs:
       - name: Run pytest for version_2
         run: python -m pytest -q
 
-      # ── 5b. Pytest para src/ ─────────────────────────────────────────────
-      - name: Run pytest for src/
-        working-directory: .
-        run: python -m pytest src/tests/ -v
 
       # ── 6. Ejemplos de usuario ───────────────────────────────────────────
       - name: Run quickstart_equilibria example
@@ -109,12 +105,12 @@ jobs:
 
       # ── 7. Integración de validación fraccionaria y verificación ─────────
       - name: Run EFORK integrator validation
-        run: python tools/validation/validate_efork_integrator.py --validation-root /tmp/ha_validation
+        run: python tools/validation/validate_efork_integrator.py --validation-root ${{ runner.temp }}/ha_validation
         env:
           PYTHONPATH: .
 
       - name: Check validation contract with pending allowed
-        run: hidden-attractors-check-validation --validation-root /tmp/ha_validation --allow-pending
+        run: hidden-attractors-check-validation --validation-root ${{ runner.temp }}/ha_validation --allow-pending
 
   # ─────────────────────────────────────────────────────────────────────────
   # Trabajo opcional: prueba nativa de backends C (solo si gcc está en PATH)

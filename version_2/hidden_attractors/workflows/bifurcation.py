@@ -22,6 +22,9 @@ from hidden_attractors.analysis.bifurcation import (
     BifurcationPoint,
     bifurcation_points_from_trajectories,
     bifurcation_summary,
+    observable_column,
+    trajectory_tail,
+    local_extrema,
 )
 from hidden_attractors.plotting.dynamics import plot_bifurcation_diagram
 from hidden_attractors.workflows.config_loader import save_effective_config
@@ -68,6 +71,12 @@ def run_bifurcation_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     
     # Set up system
     system = get_system(system_id)
+    if param_name != "q" and param_name not in system.parameters:
+        raise ValueError(
+            f"Swept parameter '{param_name}' is not a valid parameter for system '{system_id}'. "
+            f"Allowed: {list(system.parameters.keys())} or 'q'."
+        )
+
     if q is None:
         q = float(system.parameters.get("q", 0.99))
     else:
@@ -75,9 +84,11 @@ def run_bifurcation_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         
     # Get base parameters
     base_params = {}
-    for p_key in ["alpha", "beta", "gamma", "m", "n", "m0", "m1", "a1", "a2", "rho"]:
+    for p_key in system.parameters:
         if p_key in config and config[p_key] is not None:
             base_params[p_key] = config[p_key]
+        else:
+            base_params[p_key] = system.parameters[p_key]
 
     print()
     print("=" * 72)
@@ -100,8 +111,12 @@ def run_bifurcation_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
 
     for i, p_val in enumerate(p_vals):
         # Override the swept parameter
+        q_val = q
         run_params = dict(base_params)
-        run_params[param_name] = p_val
+        if param_name == "q":
+            q_val = float(p_val)
+        else:
+            run_params[param_name] = p_val
         
         # Merge into the system copy
         system_copy = dataclasses.replace(system, parameters=run_params)
@@ -110,11 +125,13 @@ def run_bifurcation_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         times, states, status = integrate(
             rhs=system_copy.rhs,
             x0=x0,
-            q=q,
+            q=q_val,
             h=h,
             t_final=t_final,
             integrator=integrator,
             system=system_copy,
+            memory_mode=config.get("memory_mode", "full"),
+            memory_window_length=config.get("memory_window_length", 400),
             use_c_backend=config.get("use_c_backend", True),
             allow_python_fallback=config.get("allow_python_fallback", True),
         )
@@ -122,7 +139,7 @@ def run_bifurcation_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         if status in ("ok", "diverged", "diverged_early", "converged_equilibrium_early") and len(times) > 0:
             # Save the trajectory format (t, x, y, z)
             traj = np.column_stack([times, states])
-            scans_data.append((p_val, traj))
+            scans_data.append((p_val, traj, status))
             
             # If continuation is enabled and solve was stable, update x0
             if continuation and status == "ok":
@@ -136,29 +153,74 @@ def run_bifurcation_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
 
     # Extract bifurcation diagram points
     print("  Extracting local extrema...")
+    if sampling_method == "poincare":
+        raise NotImplementedError("Poincare section sampling is not implemented.")
+
     mode_map = {
         "local_maxima": "maxima",
         "local_minima": "minima",
         "both": "both",
+        "raw_tail_samples": "sample",
     }
-    extrema_mode = mode_map.get(sampling_method, "maxima")
+    if sampling_method not in mode_map:
+        raise ValueError(f"Unknown sampling method: {sampling_method}")
+        
+    extrema_mode = mode_map[sampling_method]
+    col_idx = observable_column(observable)
     
-    pts = bifurcation_points_from_trajectories(
-        scans_data,
-        parameter_key="parameter",
-        observable=observable,
-        t_start=discard_time,
-        mode=extrema_mode,
-        max_points_per_parameter=max_pts,
-    )
+    pts = []
+    csv_rows = []
+    
+    for p_val, trajectory, run_status in scans_data:
+        tail = trajectory_tail(trajectory, t_start=discard_time)
+        if tail.size == 0:
+            continue
+        if col_idx >= tail.shape[1]:
+            raise ValueError(f"observable column {col_idx} exceeds trajectory width {tail.shape[1]}")
+            
+        idx = local_extrema(tail[:, col_idx], mode=extrema_mode)
+        if max_pts > 0 and idx.size > max_pts:
+            select = np.linspace(0, idx.size - 1, int(max_pts), dtype=int)
+            idx = idx[select]
+            
+        for idx_val in idx:
+            t = float(tail[idx_val, 0])
+            x = float(tail[idx_val, 1])
+            y = float(tail[idx_val, 2])
+            z = float(tail[idx_val, 3])
+            val = float(tail[idx_val, col_idx])
+            
+            pts.append(
+                BifurcationPoint(
+                    parameter=p_val,
+                    observable=val,
+                    time=t,
+                    index=int(idx_val),
+                    kind=extrema_mode,
+                )
+            )
+            csv_rows.append([
+                param_name,
+                p_val,
+                t,
+                x,
+                y,
+                z,
+                observable,
+                val,
+                sampling_method,
+                run_status
+            ])
 
     # Save CSV
     data_csv_path = output_dir / "bifurcation_data.csv"
     with open(data_csv_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow([param_name, f"{observable}_extremum"])
-        for pt in pts:
-            writer.writerow([pt.parameter, pt.observable])
+        writer.writerow([
+            "parameter_name", "parameter_value", "t", "x", "y", "z",
+            "coordinate", "coordinate_value", "sample_type", "status"
+        ])
+        writer.writerows(csv_rows)
     print(f"  Data saved -> {data_csv_path}")
 
     # Plot

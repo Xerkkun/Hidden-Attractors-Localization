@@ -43,19 +43,26 @@ def _bisect_root(func, left: float, right: float, *, maxiter: int = 100, xtol: f
     return 0.5 * (lo + hi)
 
 
+_CHUA_KEYS = {"model", "alpha", "beta", "gamma", "m0", "m1", "a1", "a2", "rho"}
+
+
+def _filter_chua_params(parameters: Mapping[str, Any]) -> dict[str, Any]:
+    return {k: v for k, v in parameters.items() if k in _CHUA_KEYS}
+
+
 def _chua_rhs(state: np.ndarray, parameters: Mapping[str, Any]) -> np.ndarray:
-    return rhs_chua(state, chua_parameters(**dict(parameters)))
+    return rhs_chua(state, chua_parameters(**_filter_chua_params(parameters)))
 
 
 def _chua_equilibria(parameters: Mapping[str, Any]) -> dict[str, np.ndarray]:
-    params = chua_parameters(**dict(parameters))
+    params = chua_parameters(**_filter_chua_params(parameters))
     if params.model == "arctan":
         return equilibria_arctan(params)
     return equilibria_nonsmooth(params)
 
 
 def _chua_jacobian(state: np.ndarray, parameters: Mapping[str, Any]) -> np.ndarray:
-    params = chua_parameters(**dict(parameters))
+    params = chua_parameters(**_filter_chua_params(parameters))
     if params.model == "arctan":
         return jacobian_arctan(np.asarray(state, dtype=float), params)
     x = float(np.asarray(state, dtype=float)[0])
@@ -71,7 +78,7 @@ def _chua_jacobian(state: np.ndarray, parameters: Mapping[str, Any]) -> np.ndarr
 
 
 def _chua_lure_system(parameters: Mapping[str, Any]) -> LureSystem:
-    params = chua_parameters(**dict(parameters))
+    params = chua_parameters(**_filter_chua_params(parameters))
     model = params.model
     base_slope = params.a1 if model == "arctan" else params.m1
     matrix = np.array(

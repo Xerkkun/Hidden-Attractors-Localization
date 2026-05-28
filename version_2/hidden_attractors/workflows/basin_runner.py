@@ -252,12 +252,91 @@ def run_basin_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     memory_window = config.get("memory_window_length") or config.get("memory_window_steps")
     use_c_backend = config.get("use_c_backend", True)
 
+    # Integrate the target reference trajectory
+    print(f"  Generating target reference trajectory from {ref_label}...")
+    times_ref, states_ref, status_ref = integrate(
+        rhs=system.rhs,
+        x0=ref_x0,
+        q=q,
+        h=h,
+        t_final=t_final_ref,
+        integrator=integrator,
+        system=system,
+        memory_mode=memory_mode,
+        memory_window_length=memory_window,
+        use_c_backend=use_c_backend,
+        allow_python_fallback=True,
+    )
+    if status_ref != "ok":
+        raise RuntimeError(f"Reference trajectory generation failed with status: {status_ref}")
+
+    n_burn_ref = int(math.ceil(t_burn_ref / h))
+    ref_tail = states_ref[n_burn_ref:]
+
+    # Save reference attractor trajectory
+    ref_csv_path = output_dir / "reference_attractor.csv"
+    with open(ref_csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["t", "x", "y", "z"])
+        for t_val, state in zip(times_ref[n_burn_ref:], ref_tail):
+            writer.writerow([t_val, state[0], state[1], state[2]])
+    print(f"  Reference attractor saved -> {ref_csv_path}")
+
+    # Resolve stable equilibria
+    all_eqs = system.equilibrium_points()
+    stable_eqs = []
+    for name, eq_pt in all_eqs.items():
+        res = classify_equilibrium_stability(system, eq_pt, q)
+        if res["stable"]:
+            stable_eqs.append(eq_pt)
+    print(f"  Found {len(stable_eqs)} stable equilibria out of {len(all_eqs)} total.")
+
+    # Basin config parameters
+    b_cfg = config.get("basin", {})
+    planes = b_cfg.get("planes", ["xy", "xz", "yz"])
+    grid_n = int(b_cfg.get("grid_n", 150))
+    t_final = float(b_cfg.get("t_final", 80.0))
+    t_burn = float(b_cfg.get("t_burn", 20.0))
+    h_basin = float(b_cfg.get("h", 0.01))
+    
+    x_interval = b_cfg.get("x_interval", [-10.0, 10.0])
+    y_interval = b_cfg.get("y_interval", [-10.0, 10.0])
+    z_interval = b_cfg.get("z_interval", [-10.0, 10.0])
+
+    around_equilibria = bool(b_cfg.get("around_equilibria", True))
+    local_radius = float(b_cfg.get("local_radius", 2.0))
+    
+    fixed_x = float(b_cfg.get("fixed_x", 0.0))
+    fixed_y = float(b_cfg.get("fixed_y", 0.0))
+    fixed_z = float(b_cfg.get("fixed_z", 0.0))
+
+    # Determine selection targets
+    run_targets = []
+    eq_selection = b_cfg.get("equilibrium_selection", "all")
+    if around_equilibria:
+        if eq_selection == "all":
+            for eq_name, eq_pt in all_eqs.items():
+                run_targets.append((eq_name, eq_pt))
+        elif isinstance(eq_selection, list):
+            for eq_name in eq_selection:
+                if eq_name in all_eqs:
+                    run_targets.append((eq_name, all_eqs[eq_name]))
+        elif isinstance(eq_selection, str):
+            if eq_selection in all_eqs:
+                run_targets.append((eq_selection, all_eqs[eq_selection]))
+    else:
+        run_targets.append(("global", np.array([0.0, 0.0, 0.0])))
+
+    if not run_targets:
+        run_targets.append(("global", np.array([0.0, 0.0, 0.0])))
+
     print()
     print("=" * 72)
     print(" basin_slices - version_2")
     print("=" * 72)
     print(f"  system           = {system_id}")
     print(f"  planes           = {planes}")
+    print(f"  targets          = {[t[0] for t in run_targets]}")
     print(f"  grid_n           = {grid_n} ({grid_n * grid_n} points per slice)")
     print(f"  t_final          = {t_final:.1f}")
     print(f"  integrator       = {integrator}")
@@ -266,108 +345,154 @@ def run_basin_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     print("=" * 72)
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    summary_slices = {}
+    
+    CLASS_LABELS = {
+        0: "equilibrium",
+        1: "attractor",
+        2: "other",
+        3: "divergence",
+        4: "failure",
+    }
+    
+    csv_rows = []
+    summary_runs = []
 
-    for plane in planes:
-        # Determine intervals
-        if around_equilibria:
-            u_lims = [cx - local_radius, cx + local_radius]
-            v_lims = [cy - local_radius, cy + local_radius]
-            w_lims = [cz - local_radius, cz + local_radius]
-        else:
-            u_lims = x_interval
-            v_lims = y_interval
-            w_lims = z_interval
+    for eq_name, center_pt in run_targets:
+        cx, cy, cz = center_pt
+        for plane in planes:
+            # Determine intervals
+            if around_equilibria and eq_name != "global":
+                u_lims = [cx - local_radius, cx + local_radius]
+                v_lims = [cy - local_radius, cy + local_radius]
+                w_lims = [cz - local_radius, cz + local_radius]
+            else:
+                u_lims = x_interval
+                v_lims = y_interval
+                w_lims = z_interval
 
-        if plane == "xy":
-            u_grid = np.linspace(u_lims[0], u_lims[1], grid_n)
-            v_grid = np.linspace(v_lims[0], v_lims[1], grid_n)
-            z_fixed = fixed_z
-        elif plane == "xz":
-            u_grid = np.linspace(u_lims[0], u_lims[1], grid_n)
-            v_grid = np.linspace(w_lims[0], w_lims[1], grid_n)
-            y_fixed = fixed_y
-        elif plane == "yz":
-            u_grid = np.linspace(v_lims[0], v_lims[1], grid_n)
-            v_grid = np.linspace(w_lims[0], w_lims[1], grid_n)
-            x_fixed = fixed_x
-        else:
-            raise ValueError(f"Unknown plane: {plane}")
+            if plane == "xy":
+                u_grid = np.linspace(u_lims[0], u_lims[1], grid_n)
+                v_grid = np.linspace(v_lims[0], v_lims[1], grid_n)
+                z_fixed = fixed_z
+            elif plane == "xz":
+                u_grid = np.linspace(u_lims[0], u_lims[1], grid_n)
+                v_grid = np.linspace(w_lims[0], w_lims[1], grid_n)
+                y_fixed = fixed_y
+            elif plane == "yz":
+                u_grid = np.linspace(v_lims[0], v_lims[1], grid_n)
+                v_grid = np.linspace(w_lims[0], w_lims[1], grid_n)
+                x_fixed = fixed_x
+            else:
+                raise ValueError(f"Unknown plane: {plane}")
 
-        matrix = np.zeros((grid_n, grid_n), dtype=int)
-        payloads = []
+            matrix = np.zeros((grid_n, grid_n), dtype=int)
+            payloads = []
 
-        for i, u in enumerate(u_grid):
-            for j, v in enumerate(v_grid):
-                if plane == "xy":
-                    x0_point = np.array([u, v, z_fixed], dtype=float)
-                elif plane == "xz":
-                    x0_point = np.array([u, y_fixed, v], dtype=float)
-                elif plane == "yz":
-                    x0_point = np.array([x_fixed, u, v], dtype=float)
+            for i, u in enumerate(u_grid):
+                for j, v in enumerate(v_grid):
+                    if plane == "xy":
+                        x0_point = np.array([u, v, z_fixed], dtype=float)
+                    elif plane == "xz":
+                        x0_point = np.array([u, y_fixed, v], dtype=float)
+                    elif plane == "yz":
+                        x0_point = np.array([x_fixed, u, v], dtype=float)
 
-                payloads.append((
-                    i, j, x0_point, system, integrator, q, h_basin, t_final, t_burn,
-                    ref_tail, stable_eqs, eq_tol, div_norm, metric, tol, memory_mode, memory_window, use_c_backend
-                ))
+                    payloads.append((
+                        i, j, x0_point, system, integrator, q, h_basin, t_final, t_burn,
+                        ref_tail, stable_eqs, eq_tol, div_norm, metric, tol, memory_mode, memory_window, use_c_backend
+                    ))
 
-        total_points = len(payloads)
-        completed = 0
-        stats = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0}
+            total_points = len(payloads)
+            completed = 0
+            stats = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0}
 
-        def log_progress(count):
-            if count % max(1, total_points // 20) == 0 or count == total_points:
-                pct = (count / total_points) * 100.0
-                print(f"  [{plane}] {count}/{total_points} ({pct:.1f}%) | EQ={stats[0]} TARGET={stats[1]} OTHER={stats[2]} DIV={stats[3]} FAIL={stats[4]}")
+            def log_progress(count):
+                if count % max(1, total_points // 20) == 0 or count == total_points:
+                    pct = (count / total_points) * 100.0
+                    print(f"  [{eq_name} - {plane}] {count}/{total_points} ({pct:.1f}%) | EQ={stats[0]} TARGET={stats[1]} OTHER={stats[2]} DIV={stats[3]} FAIL={stats[4]}")
 
-        print(f"  Sweeping plane {plane.upper()}...")
-        if workers > 1:
-            with ThreadPoolExecutor(max_workers=workers) as executor:
-                futures = [executor.submit(_classify_point_worker, p) for p in payloads]
-                for fut in as_completed(futures):
-                    i, j, code = fut.result()
+            print(f"  Sweeping plane {plane.upper()} for equilibrium {eq_name}...")
+            if workers > 1:
+                with ThreadPoolExecutor(max_workers=workers) as executor:
+                    futures = [executor.submit(_classify_point_worker, p) for p in payloads]
+                    for fut in as_completed(futures):
+                        i, j, code = fut.result()
+                        matrix[i, j] = code
+                        stats[code] += 1
+                        completed += 1
+                        log_progress(completed)
+            else:
+                for p in payloads:
+                    i, j, code = _classify_point_worker(p)
                     matrix[i, j] = code
                     stats[code] += 1
                     completed += 1
                     log_progress(completed)
-        else:
+
+            # Build detailed CSV rows for this plane-equilibrium pair
             for p in payloads:
-                i, j, code = _classify_point_worker(p)
-                matrix[i, j] = code
-                stats[code] += 1
-                completed += 1
-                log_progress(completed)
+                i, j = p[0], p[1]
+                x0_pt = p[2]
+                code = matrix[i, j]
+                label = CLASS_LABELS[code]
+                u_val = float(u_grid[i])
+                v_val = float(v_grid[j])
+                csv_rows.append([
+                    plane,
+                    eq_name,
+                    u_val,
+                    v_val,
+                    float(x0_pt[0]),
+                    float(x0_pt[1]),
+                    float(x0_pt[2]),
+                    code,
+                    label
+                ])
 
-        # Save numpy data
-        npy_path = output_dir / f"basin_grid_{plane}.npy"
-        np.save(npy_path, matrix)
+            # Save numpy data
+            npy_path = output_dir / f"basin_grid_{eq_name}_{plane}.npy"
+            np.save(npy_path, matrix)
 
-        # Plot
-        plot_path = ""
-        if config.get("plot_enabled", True) and config.get("plot_basin", True):
-            plot_path = plot_basin_slice_file(
-                plane=plane,
-                u=u_grid,
-                v=v_grid,
-                mat=matrix,
-                eq_name="global",
-                system_id=system_id,
-                output_dir=output_dir,
-            )
-            print(f"  Plot saved -> {plot_path}")
+            # Plot
+            plot_path = ""
+            if config.get("plot_enabled", True) and config.get("plot_basin", True):
+                plot_path = plot_basin_slice_file(
+                    plane=plane,
+                    u=u_grid,
+                    v=v_grid,
+                    mat=matrix,
+                    eq_name=eq_name,
+                    system_id=system_id,
+                    output_dir=output_dir,
+                )
+                print(f"  Plot saved -> {plot_path}")
 
-        summary_slices[plane] = {
-            "grid_npy": str(npy_path),
-            "plot_png": plot_path if plot_path else None,
-            "counts": stats,
-        }
+            summary_runs.append({
+                "plane": plane,
+                "equilibrium": eq_name,
+                "grid_npy": str(npy_path),
+                "plot_png": plot_path if plot_path else None,
+                "counts": stats,
+            })
+
+    # Save CSV
+    data_csv_path = output_dir / "basin_data.csv"
+    with open(data_csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow([
+            "plane", "equilibrium", "u", "v", "x0", "y0", "z0", "class_code", "class_label"
+        ])
+        writer.writerows(csv_rows)
+    print(f"  Detailed CSV saved -> {data_csv_path}")
 
     summary = {
         "workflow_mode": "basin",
         "system_id": system_id,
-        "planes": planes,
+        "equilibrium_selection": eq_selection if around_equilibria else "global",
         "grid_n": grid_n,
-        "results": summary_slices,
+        "results": summary_runs,
+        "data_csv": str(data_csv_path),
+        "reference_attractor_csv": str(ref_csv_path) if ref_csv_path.exists() else None,
     }
 
     summary_path = output_dir / "basin_summary.json"

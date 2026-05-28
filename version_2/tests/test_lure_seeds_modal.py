@@ -43,15 +43,51 @@ if str(_REPO_ROOT) not in sys.path:
 
 import importlib
 
-# Dynamic imports to resolve IDE static analysis errors (where import root is /version_2)
-src_systems_registry = importlib.import_module("src.systems.registry")
-get_system_by_id = src_systems_registry.get_system_by_id
+from typing import Any
+from hidden_attractors.systems import get_system
+import dataclasses
+from hidden_attractors.lure.seeds import build_lure_seed, build_closed_form_integer_seed, build_modal_lure_seed, _lambda_from_frequency
 
-src_lure_seeds = importlib.import_module("src.lure.seeds")
-build_lure_seed = src_lure_seeds.build_lure_seed
-build_closed_form_integer_seed = src_lure_seeds.build_closed_form_integer_seed
-build_modal_lure_seed = src_lure_seeds.build_modal_lure_seed
-_lambda_from_frequency = src_lure_seeds._lambda_from_frequency
+def get_system_by_id(system_id: str, **kwargs) -> Any:
+    name_map = {
+        "chua_integer_saturation": "chua-nonsmooth",
+        "chua_fractional_saturation": "chua-nonsmooth",
+        "chua_fractional_arctan": "chua-arctan",
+        "chua_arctan_wu2023": "fractional-chua-arctan-wu2023",
+    }
+    normalized_sys_id = name_map.get(system_id, system_id)
+    system = get_system(normalized_sys_id)
+    
+    # Merge overrides and build adapter attributes
+    merged_params = dict(system.parameters)
+    merged_params.update(kwargs)
+    system = dataclasses.replace(system, parameters=merged_params)
+    
+    if "q" in kwargs:
+        q_val = kwargs["q"]
+    else:
+        if system_id == "chua_fractional_saturation":
+            q_val = 0.9998
+        elif system_id == "chua_fractional_arctan":
+            q_val = 0.995
+        else:
+            q_val = 1.0
+            
+    object.__setattr__(system, "q", q_val)
+    for k, v in merged_params.items():
+        try:
+            object.__setattr__(system, k, v)
+        except AttributeError:
+            pass
+            
+    if system.lure is not None:
+        object.__setattr__(system, "P", system.lure.matrix)
+        object.__setattr__(system, "b", system.lure.input_vector)
+        object.__setattr__(system, "r", system.lure.output_vector)
+        object.__setattr__(system, "describing_function", system.lure.describing_function)
+        object.__setattr__(system, "psi", system.lure.nonlinearity)
+    object.__setattr__(system, "evaluate_rhs", lambda x: system.evaluate(x))
+    return system
 
 # ---------------------------------------------------------------------------
 # Reference data

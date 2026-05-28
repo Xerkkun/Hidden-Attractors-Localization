@@ -403,25 +403,38 @@ def _normalize(cfg: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
     # memory_policy <-> memory_mode
     mp = cfg.get("memory_policy")
     mm = cfg.get("memory_mode")
+    if mp is not None and mm is not None:
+        if mp == "full_caputo" and mm != "full":
+            raise ValueError(f"Incompatible settings: memory_policy='{mp}' and memory_mode='{mm}'")
+        if mp == "finite_window" and mm != "window":
+            raise ValueError(f"Incompatible settings: memory_policy='{mp}' and memory_mode='{mm}'")
+        if mp == "none" and mm != "none":
+            raise ValueError(f"Incompatible settings: memory_policy='{mp}' and memory_mode='{mm}'")
+            
     if mp == "full_caputo":
         cfg["memory_mode"] = "full"
     elif mp == "finite_window":
         cfg["memory_mode"] = "window"
+    elif mp == "none":
+        cfg["memory_mode"] = "none"
+        
     if mm == "full":
         cfg["memory_policy"] = "full_caputo"
     elif mm == "window":
         cfg["memory_policy"] = "finite_window"
+    elif mm == "none":
+        cfg["memory_policy"] = "none"
 
     # memory_window_steps / memory_window_length / memory_window_time
     import numpy as np
-    if cfg.get("memory_window_steps") is not None:
-        cfg["memory_window_length"] = int(cfg["memory_window_steps"])
-    elif cfg.get("memory_window_length") is not None:
-        cfg["memory_window_steps"] = int(cfg["memory_window_length"])
     if cfg.get("memory_window_time") is not None and cfg.get("h") is not None:
         steps = int(round(float(cfg["memory_window_time"]) / float(cfg["h"])))
         cfg["memory_window_steps"] = steps
         cfg["memory_window_length"] = steps
+    elif cfg.get("memory_window_steps") is not None:
+        cfg["memory_window_length"] = int(cfg["memory_window_steps"])
+    elif cfg.get("memory_window_length") is not None:
+        cfg["memory_window_steps"] = int(cfg["memory_window_length"])
 
     # Legacy t_final / t_burn at top level → final_simulation section
     if "t_final" in cfg and not isinstance(cfg.get("final_simulation"), dict):
@@ -540,6 +553,25 @@ def _validate(cfg: Dict[str, Any]) -> None:
     seed_strat = cfg.get("seed_strategy")
     if seed_strat is not None and seed_strat not in {"k_phi", "imw_gain", "nyquist_df"}:
         raise ValueError(f"Invalid seed_strategy: '{seed_strat}'.")
+
+    # System parameters validation
+    system_id = cfg.get("system_id", "chua_fractional_saturation")
+    is_arctan = "arctan" in system_id or "wu2023" in system_id
+    
+    invalid_for_nonsmooth = {"m", "n", "a1", "a2", "rho"}
+    invalid_for_arctan = {"m", "n", "m0", "m1"}
+    
+    if "m" in cfg or "n" in cfg:
+        raise ValueError("Legacy parameter keys 'm' and 'n' are no longer supported. Please use 'a1', 'a2', 'rho' for arctan model, or 'm0', 'm1' for nonsmooth model.")
+        
+    if is_arctan:
+        for k in invalid_for_arctan:
+            if k in cfg:
+                raise ValueError(f"Parameter '{k}' is invalid for arctan system '{system_id}'. Allowed parameters: alpha, beta, gamma, a1, a2, rho.")
+    else:
+        for k in invalid_for_nonsmooth:
+            if k in cfg:
+                raise ValueError(f"Parameter '{k}' is invalid for nonsmooth system '{system_id}'. Allowed parameters: alpha, beta, gamma, m0, m1.")
 
 
 # ---------------------------------------------------------------------------

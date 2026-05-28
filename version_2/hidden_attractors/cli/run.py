@@ -34,10 +34,10 @@ PRESETS = {
 
 def find_example_config(filename: str) -> Path:
     """Resolve the template configuration path dynamically."""
-    from hidden_attractors.paths import CONFIGS
+    from hidden_attractors.paths import get_packaged_examples_path
     
     # 1. Package path
-    p = CONFIGS / "examples" / filename
+    p = get_packaged_examples_path() / filename
     if p.exists():
         return p
     
@@ -181,15 +181,15 @@ def run_cmd(args: argparse.Namespace, extra_args: List[str]) -> None:
 
 def init_cmd(args: argparse.Namespace) -> None:
     """Execute the init subcommand."""
-    from hidden_attractors.paths import CONFIGS
+    from hidden_attractors.paths import get_packaged_examples_path
     
-    examples_src = CONFIGS / "examples"
+    examples_src = get_packaged_examples_path()
     if not examples_src.exists():
         examples_src = Path.cwd() / "version_2" / "configs" / "examples"
         if not examples_src.exists():
             examples_src = Path.cwd() / "configs" / "examples"
             if not examples_src.exists():
-                print(f"Error: Could not find templates directory. Looked in {CONFIGS / 'examples'}")
+                print(f"Error: Could not find templates directory. Looked in {get_packaged_examples_path()}")
                 sys.exit(1)
 
     if args.example:

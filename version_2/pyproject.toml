@@ -90,7 +90,7 @@ hidden-attractors-fractional-report-run = "hidden_attractors.workflows.fractiona
 include = ["hidden_attractors*", "tools*", "benchmarks*"]
 
 [tool.setuptools.package-data]
-hidden_attractors = ["native/csrc/*.c"]
+hidden_attractors = ["native/csrc/*.c", "configs/examples/*.yaml"]
 "tools.legacy" = ["*.c", "*.ps1", "README.md"]
 
 [tool.pytest.ini_options]

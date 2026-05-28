@@ -1,0 +1,9 @@
+{
+  "protocol_version": "caputo_hidden_attractors_v1",
+  "schema_version": "1.0",
+  "stage": "numerical_contract",
+  "backend": "efork_python_reference_and_native_c",
+  "reference_backend": "abm_full_history",
+  "memory_policy": "full_history_reference_with_finite_memory_sensitivity_variant",
+  "efork_stage": "K3 = F(... + a31*K1 + a32*K2)"
+}

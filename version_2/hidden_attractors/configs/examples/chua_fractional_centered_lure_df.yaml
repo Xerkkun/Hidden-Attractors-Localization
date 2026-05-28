@@ -1,18 +1,17 @@
 experiment:
-  name: "Chua Arctan Fractional Centered Lure DF"
-  description: "Locating hidden attractor in fractional-order Chua system with arctan nonlinearity using Centered Lure DF method"
-  output_dir: "outputs/chua_arctan_df"
+  name: "Chua Fractional Centered Lure DF"
+  description: "Locating hidden attractor in fractional-order Chua system with saturation using Centered Lure DF method"
+  output_dir: "outputs/chua_fractional_df"
 
 system:
-  system_id: "chua_fractional_arctan"
-  q: 0.95
+  system_id: "chua_fractional_saturation"
+  q: 0.998
   parameters:
     alpha: 8.4562
     beta: 12.0732
     gamma: 0.0052
-    a1: 0.4
-    a2: 0.8
-    rho: 1.0
+    m0: -0.1768
+    m1: -1.1468
 
 modes:
   transfer_mode: "fractional"
@@ -49,7 +48,6 @@ seed_search:
   grid_size_amplitude: 200
   root_refinement: true
   df_residual_tol: 1.0e-8
-  describing_function_mode: "wu2023"
 
 simulation:
   t_final: 300.0
