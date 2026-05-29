@@ -78,6 +78,12 @@ Por defecto, la validación se enfoca en la consistencia algebraica de transfere
   python validation/python/run_published_reproduction.py --all --run-dynamics
   ```
 
+> [!NOTE]
+> - `run_dynamics=True` solo verifica ejecución numérica básica sin divergencia.
+> - El estado `paper_trajectory_integrated` no significa que el atractor publicado haya sido reproducido geométricamente.
+> - Esta fase no asigna `paper_fully_reproduced` bajo ninguna circunstancia.
+> - Para declarar reproducción dinámica completa se requerirán métricas posteriores tales como: rangos del atractor, proyecciones, exponentes de Lyapunov, PSD/FFT, comparación formal de cuencas o el protocolo de ocultedad.
+
 ---
 
 ## 6. Advertencia Metodológica de Ocultedad

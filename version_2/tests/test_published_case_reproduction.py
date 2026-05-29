@@ -242,7 +242,7 @@ def test_reproduction_outputs_schema() -> None:
 
 def test_dynamics_skipped_by_default() -> None:
     """Verificar que sin run_dynamics, dynamics_reproduction.json contiene status: 'skipped'
-    y no aparece la etiqueta 'paper_trajectory_reproduced' en los statuses del summary.
+    y no aparece la etiqueta 'paper_trajectory_reproduced' ni 'paper_fully_reproduced' en los statuses del summary.
     """
     # Clear outputs first
     for case_id in ["kuznetsov2017_chua_integer", "danca2017_chua_fractional_saturation", "wu2023_chua_fractional_arctan"]:
@@ -255,6 +255,7 @@ def test_dynamics_skipped_by_default() -> None:
 
     for case_id, res in results.items():
         assert "paper_trajectory_reproduced" not in res["statuses"]
+        assert "paper_fully_reproduced" not in res["statuses"]
         
         # Read dynamics file
         dyn_file = OUTPUTS_DIR / case_id / "dynamics_reproduction.json"
@@ -263,3 +264,67 @@ def test_dynamics_skipped_by_default() -> None:
             dyn_data = json.load(f)
         assert dyn_data["status"] == "skipped"
         assert dyn_data["reason"] == "run_dynamics=false"
+
+
+def test_arctan_closed_form_seed_uses_a1_not_m1(monkeypatch) -> None:
+    """Verificar que la semilla cerrada del caso arctan usa a1 y no m1, y no usa eigenvectors."""
+    def broken_eig(*args, **kwargs):
+        raise RuntimeError("np.linalg.eig was called but should be avoided in closed-form mode!")
+
+    monkeypatch.setattr(np.linalg, "eig", broken_eig)
+    monkeypatch.setattr(np.linalg, "eigh", broken_eig)
+
+    path = CASES_DIR / "wu2023_chua_fractional_arctan.yaml"
+    with open(path, "r", encoding="utf-8") as f:
+        cfg = yaml.safe_load(f)
+
+    # Wu 2023 configuration uses a1 = 0.4 and has a default/reconstructed m1 = -1.1468
+    seed_res = compute_seed_for_reproduction(cfg)
+    assert seed_res["status"] == "ok"
+
+    a0 = seed_res["a0"]
+    k = seed_res["k"]
+    seed_plus = seed_res["seed_plus"]
+
+    # y0 expected formula with a1
+    a1 = cfg["expected"]["parameters"]["a1"]
+    y_expected = a0 * (a1 + 1.0 + k)
+    assert abs(abs(seed_plus[1]) - abs(y_expected)) < 1e-10
+
+    # m1 is -1.1468, check that it does not match
+    m1 = -1.1468
+    y_wrong = a0 * (m1 + 1.0 + k)
+    assert abs(abs(seed_plus[1]) - abs(y_wrong)) > 1e-6
+
+
+def test_run_dynamics_does_not_claim_full_reproduction(tmp_path) -> None:
+    """Verificar que la ejecución con run_dynamics=True no añade 'paper_trajectory_reproduced'
+    ni 'paper_fully_reproduced' y usa en su lugar 'paper_trajectory_integrated'.
+    """
+    path = CASES_DIR / "kuznetsov2017_chua_integer.yaml"
+    with open(path, "r", encoding="utf-8") as f:
+        cfg = yaml.safe_load(f)
+
+    # Use a small t_final for fast integration
+    cfg["dynamics"]["t_final"] = 1.0
+
+    # Write to a temporary YAML file
+    temp_yaml = tmp_path / "temp_kuznetsov.yaml"
+    with open(temp_yaml, "w", encoding="utf-8") as f:
+        yaml.safe_dump(cfg, f)
+
+    # Run case reproduction with run_dynamics=True
+    summary = run_case_reproduction(temp_yaml, tmp_path, run_dynamics=True)
+
+    # Verify status lists
+    assert "paper_trajectory_integrated" in summary["statuses"]
+    assert "paper_trajectory_reproduced" not in summary["statuses"]
+    assert "paper_fully_reproduced" not in summary["statuses"]
+    assert summary["hiddenness_certified_by_this_pipeline"] is False
+
+    # Read dynamics reproduction output to check status is not skipped
+    dyn_file = tmp_path / "kuznetsov2017_chua_integer" / "dynamics_reproduction.json"
+    assert dyn_file.exists()
+    with open(dyn_file, "r", encoding="utf-8") as f:
+        dyn_data = json.load(f)
+    assert dyn_data.get("status") != "skipped"

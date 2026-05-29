@@ -54,13 +54,14 @@ def build_published_integer_seed_closed_form(
     """Construct the seed using the algebraic closed-form formula for q = 1 without eigenvectors."""
     alpha = float(system.parameters.get("alpha", 8.4562))
 
-    if "m1" in system.parameters:
-        m_linear = float(system.parameters["m1"])
-    elif "a1" in system.parameters:
+    model = system.parameters.get("model", "nonsmooth")
+    if model == "arctan":
         m_linear = float(system.parameters["a1"])
+    elif model == "nonsmooth":
+        m_linear = float(system.parameters["m1"])
     else:
         raise ValueError(
-            "System parameters must contain either 'm1' (saturation) or 'a1' (arctan)."
+            f"Unknown system model: {model}. Supported models are 'arctan' and 'nonsmooth'."
         )
 
     x0 = a0
@@ -546,28 +547,26 @@ def run_case_reproduction(
         statuses.append("paper_data_missing")
         statuses.append("paper_partially_reproduced_missing_seed_data")
 
-    # Evaluate initial condition and trajectory
+    # Evaluate initial condition
     ic_from_paper = expected.get("initial_conditions_from_paper")
     if ic_from_paper is not None:
         statuses.append("paper_initial_condition_reproduced")
     else:
         statuses.append("paper_partially_reproduced_missing_ic_data")
 
+    # Evaluate trajectory integration
     if run_dynamics and len(trajectories_info) > 0 and trajectory_reproduced:
-        statuses.append("paper_trajectory_reproduced")
+        # Integration status only certifies that the numerical run completed without divergence.
+        # It does not certify reproduction of the published attractor geometry.
+        statuses.append("paper_trajectory_integrated")
 
-    # General reproduction categories
+    # General reproduction categories (conservative rule)
     if "paper_data_missing" in statuses:
         statuses.append("paper_partially_reproduced")
-    elif not run_dynamics:
-        # If dynamics skipped and not fully validated
-        statuses.append("paper_partially_reproduced")
-        if all(s in statuses for s in ["paper_formula_reproduced", "paper_seed_reproduced"]):
-            # No dynamic verification, but formula + seed match
-            pass
-    elif all(s in statuses for s in ["paper_formula_reproduced", "paper_seed_reproduced", "paper_initial_condition_reproduced", "paper_trajectory_reproduced"]):
-        statuses.append("paper_fully_reproduced")
     else:
+        # No missing values/data in case config
+        if all(s in statuses for s in ["paper_formula_reproduced", "paper_seed_reproduced"]):
+            statuses.append("paper_formula_seed_reproduced")
         statuses.append("paper_partially_reproduced")
 
     if len(statuses) == 1 and "paper_formula_reproduced" in statuses:
