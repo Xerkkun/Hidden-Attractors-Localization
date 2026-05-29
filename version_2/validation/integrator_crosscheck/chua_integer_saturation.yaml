@@ -1,0 +1,46 @@
+case_id: chua_integer_saturation_integrator_crosscheck
+system_id: chua_integer_saturation
+q: 1.0
+
+initial_conditions:
+  seed_plus: [5.856145086257324, 0.36933157824675933, -8.36653616833187]
+  seed_minus: [-5.856145086257324, -0.36933157824675933, 8.36653616833187]
+
+time:
+  t_final: 100.0
+  t_burn: 50.0
+
+divergence:
+  max_norm: 120.0
+
+comparison_policy:
+  pointwise_comparison_used: false
+  range_relative_tolerance: 0.35
+  center_relative_tolerance: 0.60
+  scale_relative_tolerance: 0.50
+  cloud_distance_tolerance: 0.35
+  collapse_variance_tolerance: 1.0e-8
+
+# For q=1 there is only EFORK q=1.  We compare different step sizes h.
+integrator_grid:
+  - run_id: efork_q1_h005
+    method: EFORK_Q1
+    memory_mode: not_applicable
+    h: 0.05
+
+  - run_id: efork_q1_h002
+    method: EFORK_Q1
+    memory_mode: not_applicable
+    h: 0.02
+
+  - run_id: efork_q1_h001
+    method: EFORK_Q1
+    memory_mode: not_applicable
+    h: 0.01
+
+reference:
+  run_id: efork_q1_h001
+
+fast_test:
+  t_final: 5.0
+  t_burn: 2.5
