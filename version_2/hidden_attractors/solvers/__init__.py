@@ -14,6 +14,7 @@ from ..native.backends import FractionalChuaBackend
 from .efork_published import EFORK3Coefficients, efork3_caputo_integrate, efork3_coefficients
 from .history import FractionalHistory
 from .integer import efork_q1_integrate, efork_q1_step
+from .rk4 import rk4_integrate, rk4_step
 
 __all__ = [
     "EFORK3Coefficients",
@@ -23,4 +24,6 @@ __all__ = [
     "efork3_coefficients",
     "efork_q1_integrate",
     "efork_q1_step",
+    "rk4_integrate",
+    "rk4_step",
 ]

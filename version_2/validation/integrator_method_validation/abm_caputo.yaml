@@ -1,0 +1,54 @@
+method: ABM
+description: >
+  Diethelm Adams-Bashforth-Moulton predictor-corrector for commensurate
+  Caputo fractional differential equations.  Validated against exact
+  Mittag-Leffler solutions, manufactured solutions t^m, and a diagonal
+  linear vector system.
+
+validation_tests:
+
+  mittag_leffler:
+    description: >
+      D^q y = lambda*y, y(0)=y0.
+      Exact solution: y(t) = y0 * E_q(lambda * t^q).
+    q_values: [0.25, 0.5, 0.8, 0.9998]
+    lambda_values: [-1.0, -5.0]
+    y0: 1.0
+    t_final: 1.0
+    h_values: [0.025, 0.0125, 0.00625, 0.003125]
+    criterion:
+      error_decreasing: true
+      observed_order_positive: true
+      note: >
+        Caputo solutions have initial singularity; strict order not
+        enforced.  Error must decrease for at least the last three meshes
+        and observed order must be positive.
+
+  manufactured_solution:
+    description: >
+      D^q y = -y + forcing(t), exact solution y(t) = t^m.
+      forcing(t) = Gamma(m+1)/Gamma(m+1-q)*t^(m-q) + t^m.
+      y(0) = 0.
+    q_values: [0.25, 0.5, 0.8, 0.9998]
+    m_values: [4, 5]
+    t_final: 1.0
+    h_values: [0.025, 0.0125, 0.00625, 0.003125]
+    criterion:
+      error_decreasing: true
+      observed_order_positive: true
+
+  vector_linear:
+    description: >
+      D^q X = A X, A = diag(-1, -2, -5), X0 = [1, 0.5, -0.25].
+      Exact: X_i(t) = X_i(0) * E_q(lambda_i * t^q).
+    q_values: [0.5, 0.8, 0.9998]
+    eigenvalues: [-1.0, -2.0, -5.0]
+    x0: [1.0, 0.5, -0.25]
+    t_final: 1.0
+    h_values: [0.025, 0.0125, 0.00625]
+    criterion:
+      terminal_norm_error_finite: true
+      error_decreasing: true
+
+hiddenness_certified_by_this_pipeline: false
+no_hidden_verified_claim: true

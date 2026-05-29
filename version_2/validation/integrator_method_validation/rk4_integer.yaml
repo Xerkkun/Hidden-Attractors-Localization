@@ -1,0 +1,58 @@
+method: RK4
+description: >
+  Classical 4th-order Runge-Kutta for integer-order ODEs (q=1 only).
+  Validated against exact solutions and optionally against scipy.solve_ivp.
+  RK4 is NOT used for fractional q < 1.
+
+validation_tests:
+
+  exponential_decay:
+    description: >
+      y' = -y, y(0)=1. Exact: y(t) = exp(-t).
+    t_final: 1.0
+    y0: 1.0
+    h_values: [0.2, 0.1, 0.05, 0.025, 0.0125]
+    criterion:
+      observed_order_min: 3.5
+      observed_order_max: 4.5
+      note: Classic RK4 should show order ~4 on smooth problems.
+
+  harmonic_oscillator:
+    description: >
+      x'=y, y'=-x, [x(0),y(0)]=[1,0]. Exact: x=cos(t), y=-sin(t).
+    t_final: 6.283185307179586
+    x0: [1.0, 0.0]
+    h_values: [0.2, 0.1, 0.05, 0.025]
+    criterion:
+      error_decreasing: true
+      observed_order_positive: true
+      energy_drift_decreasing: true
+
+  vector_linear:
+    description: >
+      X' = A X, A = diag(-1, -2, -3), X0 = [1, 0.5, -0.25].
+      Exact: X_i(t) = X_i(0)*exp(lambda_i*t).
+    eigenvalues: [-1.0, -2.0, -3.0]
+    x0: [1.0, 0.5, -0.25]
+    t_final: 1.0
+    h_values: [0.1, 0.05, 0.025]
+    criterion:
+      error_decreasing: true
+      observed_order_positive: true
+
+  solve_ivp_comparison:
+    description: >
+      Compare RK4 against scipy.solve_ivp (DOP853, rtol=1e-11).
+      Problem: y' = -y + sin(t), y(0)=0, t_final=5.
+      Skipped if scipy unavailable.
+    t_final: 5.0
+    y0: 0.0
+    h_values: [0.05, 0.025]
+    scipy_method: DOP853
+    scipy_rtol: 1.0e-11
+    scipy_atol: 1.0e-13
+    criterion:
+      max_diff_vs_solve_ivp: 1.0e-4
+
+hiddenness_certified_by_this_pipeline: false
+no_hidden_verified_claim: true
