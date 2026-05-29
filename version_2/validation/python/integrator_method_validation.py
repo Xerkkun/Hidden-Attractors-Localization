@@ -140,10 +140,10 @@ def mittag_leffler_q(z: float, q: float) -> float:
 
 
 # ===========================================================================
-# ABM Caputo integrator (local, independent implementation)
+# ABM Caputo integrator (Official Integration Module with Local Reference Fallback)
 # ===========================================================================
 
-def abm_caputo_integrate(
+def _local_reference_abm_caputo_integrate(
     rhs,
     y0: np.ndarray,
     *,
@@ -151,33 +151,7 @@ def abm_caputo_integrate(
     h: float,
     t_final: float,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Integrate a Caputo FDE using the Diethelm ABM predictor-corrector.
-
-    Solves ``^C D_t^q y = rhs(t, y)`` with ``y(0) = y0``.
-
-    ``rhs`` must accept ``(t: float, y: np.ndarray)`` and return an array of
-    the same shape as ``y``.
-
-    Parameters
-    ----------
-    rhs : callable
-        Right-hand side ``f(t, y)``.
-    y0 : array-like, shape (d,) or scalar
-        Initial condition.
-    q : float
-        Fractional order, ``0 < q <= 1``.
-    h : float
-        Step size.
-    t_final : float
-        Integration horizon.
-
-    Returns
-    -------
-    times : np.ndarray, shape (N+1,)
-        Uniform time grid from 0 to t_final.
-    states : np.ndarray, shape (N+1, d)
-        State at each grid point.
-    """
+    """Internal reference pure-Python ABM implementation (optional/fallback)."""
     q = float(q)
     h = float(h)
     n_steps = int(round(t_final / h))
@@ -216,6 +190,31 @@ def abm_caputo_integrate(
         states[i + 1] = corrected
         f_hist[i + 1] = np.atleast_1d(np.asarray(rhs(t_next, corrected), dtype=float))
 
+    return times, states
+
+
+def abm_caputo_integrate(
+    rhs,
+    y0: np.ndarray,
+    *,
+    q: float,
+    h: float,
+    t_final: float,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Integrate a Caputo FDE using the official caputo_abm_integrate module.
+
+    Solves ``^C D_t^q y = rhs(t, y)`` with ``y(0) = y0``.
+    """
+    from hidden_attractors.integrations.abm import caputo_abm_integrate
+    y0_arr = np.atleast_1d(np.asarray(y0, dtype=float))
+    times, states, status = caputo_abm_integrate(
+        rhs=rhs,
+        x0=y0_arr,
+        q=q,
+        h=h,
+        t_final=t_final,
+        use_c_backend=True,
+    )
     return times, states
 
 
@@ -479,9 +478,10 @@ def validate_abm_vector_linear(
 
 def _rk4_integrate_local(rhs, y0, t_final, h):
     """Thin wrapper around the official rk4_integrate for use in validation."""
-    from hidden_attractors.solvers.rk4 import rk4_integrate
+    from hidden_attractors.integrations.rk4 import rk4_integrate
     y0_arr = np.atleast_1d(np.asarray(y0, dtype=float))
-    times, states = rk4_integrate(rhs, y0_arr, t_final, h)
+    N = int(round(t_final / h))
+    times, states, status, info = rk4_integrate(rhs, y0_arr, h, N)
     return times, states
 
 

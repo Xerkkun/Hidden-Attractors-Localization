@@ -929,6 +929,11 @@ def run_integrator_crosscheck_case(
         "geometric_consistency": geometric_consistency,
         "h_sensitivity": h_sens,
         "memory_sensitivity": mem_sens,
+        "method_validation_status": {
+            "EFORK3": "validated_against_published_errors_and_manufactured_solutions",
+            "ABM": "validated_against_exact_solutions",
+            "RK4": "validated_against_exact_solutions_for_q1"
+        },
         **_NO_CLAIM,
     }
 
