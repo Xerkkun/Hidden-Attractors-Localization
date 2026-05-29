@@ -149,6 +149,11 @@ RunChuaSaturationValidation[case_Association] := Module[
     "system_id" -> systemID,
     "nonlinearity" -> "saturation",
     "lure_form" -> <|"P" -> ExprString[P], "b" -> ExprString[qv], "r" -> ExprString[r], "psi" -> "(m0-m1) sat(sigma)", "residual" -> ExprString[lureCheck]|>,
+    "lure_form_numeric" -> <|
+      "P" -> N[P /. params, nPrec],
+      "b" -> N[qv /. params, nPrec],
+      "r" -> N[r, nPrec]
+    |>,
     "transfer" -> <|"Tz" -> ExprString[Tz], "Dz" -> ExprString[Dz], "Wz" -> ExprString[WzExplicit], "fractional_frequency" -> "z=(j omega)^q = omega^q exp(j q pi/2)"|>,
     "canonical_construction" -> <|"method" -> "P0.S == S.Hq with r^T.S={1,0,-h}; seed=a0*S[[All,1]]", "k_q" -> ExprString[kCanonQ], "d_q" -> ExprString[dCanonQ], "h_q" -> ExprString[hCanonQFull], "b_q" -> ExprString[bCanonQConParametros], "S_q" -> ExprString[SCanonQConParametros], "frequency_residual" -> ExprString[residuoFrecuenciaQConstante]|>,
     "describing_function" -> <|"N_small" -> ExprString[Nsmall], "N_large" -> ExprString[Nlarge], "amplitude_condition" -> "N(a0)=k"|>,
@@ -199,7 +204,7 @@ RunChuaSaturationValidation[case_Association] := Module[
     N[amp, nPrec]
   ];
 
-  evaluateCase[qval_] := Module[{omegas, rules, kval, dval, hval, bval, aval, sval, seedPlus, seedMinus, freqResidual, ampResidual, p0val, hmatval, sResidual},
+  evaluateCase[qval_] := Module[{omegas, rules, kval, dval, hval, bval, aval, sval, seedPlus, seedMinus, freqResidual, ampResidual, p0val, hmatval, sResidual, zval, Wval},
     omegas = findPositiveFrequencyRoots[qval];
     If[omegas === {}, Return[{<|"q" -> N[qval, 12], "status" -> "no_positive_frequency_roots"|>}]];
     Table[
@@ -218,8 +223,10 @@ RunChuaSaturationValidation[case_Association] := Module[
         ampResidual = N[(Nlarge /. params /. a -> SetPrecision[aval, wPrec]) - SetPrecision[kval, wPrec], nPrec];
         p0val = N[P0 /. Join[rules, {k -> SetPrecision[kval, wPrec]}], nPrec];
         hmatval = N[HCanonQ /. Join[rules, {d -> SetPrecision[dval, wPrec]}], nPrec];
+        zval = SetPrecision[omegas[[j]], wPrec]^SetPrecision[qval, wPrec] * Exp[I * SetPrecision[qval, wPrec] * Pi / 2];
+        Wval = N[r . Inverse[zval * IdentityMatrix[3] - P] . qv /. params, nPrec];
         sResidual = N[Norm[Flatten[p0val . sval - sval . hmatval]], nPrec];
-        <|"q" -> N[qval, 12], "branch" -> j, "omega0" -> N[omegas[[j]], nPrec], "a0" -> aval, "k" -> kval, "d" -> dval, "h" -> hval, "b" -> bval, "S" -> sval, "seed_plus" -> seedPlus, "seed_minus" -> seedMinus, "frequency_residual" -> freqResidual, "amplitude_residual" -> ampResidual, "similarity_residual" -> sResidual, "seed_construction" -> "a0*S[[All,1]]", "status" -> "ok"|>
+        <|"q" -> N[qval, 12], "branch" -> j, "omega0" -> N[omegas[[j]], nPrec], "a0" -> aval, "k" -> kval, "d" -> dval, "h" -> hval, "b" -> bval, "S" -> sval, "seed_plus" -> seedPlus, "seed_minus" -> seedMinus, "frequency_residual" -> freqResidual, "amplitude_residual" -> ampResidual, "similarity_residual" -> sResidual, "seed_construction" -> "a0*S[[All,1]]", "z_re" -> N[Re[zval], nPrec], "z_im" -> N[Im[zval], nPrec], "W_re" -> N[Re[Wval], nPrec], "W_im" -> N[Im[Wval], nPrec], "status" -> "ok"|>
       ], {j, Length[omegas]}]
   ];
 

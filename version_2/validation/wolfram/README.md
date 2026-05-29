@@ -190,16 +190,38 @@ The template automatically:
 
 ---
 
-## Tolerances
+## Tolerances and Verification Scope
+
+### Tolerances
 
 | Quantity | Symbolic | Numeric |
 |---------|---------|---------|
 | Lur'e residual | Exactly 0 via FullSimplify | — |
-| Equilibrium residual | — | < 1e-30 (high-precision Mathematica) |
+| Chua saturation equilibrium residual | — | < 1e-20 (high-precision Mathematica) |
+| Chua arctan equilibrium residual | — | < 1e-12 (high-precision Mathematica) |
 | ω₀ Python vs Wolfram | — | < 1e-8 |
-| k Python vs Wolfram | — | < 1e-8 |
+| k and W_q differences | — | < 1e-8 |
 | a₀ Python vs Wolfram | — | < 1e-8 |
 | X_seed components | — | < 1e-7 |
 | Eigenvalues | — | < 1e-7 |
-| W(z) | — | < 1e-8 |
-| Similarity residual ‖P₀ S − S Hq‖ | — | < 1e-16 |
+| W(z) transfer function evaluation | — | < 1e-8 |
+| Similarity residual ‖P₀ S − S Hq‖ | — | Matching case `SimilarityTolerance` (< 1e-16) |
+
+### Validation Scope vs. Consistency Verification
+
+It is critical to distinguish between the scope of the Wolfram Language algebraic validation and the Python consistency checks:
+
+1. **Wolfram Language Validation**:
+   - Focuses on mathematical and symbolic proofs (Lur'e form equivalence, exact transfer function derivation, symbolic similarity formulation).
+   - Solves the frequency equation to high precision (using 70-digit working precision) to find candidate seed frequencies ($\omega_0$) and parameters ($k$, $d$, $h$).
+   - Verifies numerical equilibria and similarity transformation residuals.
+
+2. **Python Consistency Checks**:
+   - Cross-checks the exported Wolfram quantities (matrices, equilibria, eigenvalues, transfer function evaluations, seed vectors) against the Python library's implementations to ensure consistency.
+   - Evaluates the describing function and checks that the amplitude residual $|N(a_0) - k|$ satisfies the tolerance ($< 1\text{e-}8$).
+   - Direct matching of eigenvalues and equilibria using permutation distance metrics.
+
+3. **No Attractor Hiddenness Certification**:
+   - Neither the Wolfram validation nor the Python consistency check certifies `hidden_verified` on its own.
+   - These scripts verify the mathematical validity of the seeds and system forms. The verification of the attractor being hidden requires complete simulation, integration, and basin of attraction checks.
+

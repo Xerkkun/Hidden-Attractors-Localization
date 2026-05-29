@@ -275,7 +275,7 @@ def compare_seed_data(
     ----------
     wolfram_seed_json : path to <system_id>_seed_data.json
     system_id         : one of the three built-in case IDs
-    tol_scalar        : tolerance for omega0, k, a0 (default 1e-8)
+    tol_scalar        : tolerance for omega0, k, a0, W (default 1e-8)
     tol_vector        : tolerance per component for X_seed (default 1e-7)
 
     Returns
@@ -283,8 +283,10 @@ def compare_seed_data(
     list of dicts, one per seed row, with keys:
         q, omega0_wolfram, omega0_python, omega0_diff,
         k_wolfram, k_python, k_diff,
-        a0_wolfram, a0_python, a0_diff,
-        seed_plus_max_diff, S_residual_python, passed.
+        W_wolfram_re, W_wolfram_im, W_python_re, W_python_im, W_diff,
+        a0_wolfram, N_a0_python, df_residual,
+        seed_plus_wolfram, seed_plus_python, seed_plus_max_diff,
+        S_residual_python, passed.
 
     Raises
     ------
@@ -312,10 +314,16 @@ def compare_seed_data(
         seed_plus_w = [float(x) for x in row["seed_plus"]]
 
         # --- Transfer function cross-check ---
+        W_re_w = float(row["W_re"])
+        W_im_w = float(row["W_im"])
+        W_w = complex(W_re_w, W_im_w)
+
         if abs(q - 1.0) < 1e-10:
             W_py = compute_transfer_integer_py(omega0_w, P, b_vec, r_vec)
         else:
             W_py = compute_transfer_fractional_py(omega0_w, q, P, b_vec, r_vec)
+
+        W_diff = abs(W_py - W_w)
 
         # k = 1/Re(W) for the k_phi condition
         if abs(W_py.real) > 1e-14:
@@ -327,8 +335,8 @@ def compare_seed_data(
 
         # --- Describing function a0 cross-check ---
         df_result = evaluate_describing_function(sys, a0_w)
-        a0_py = df_result.value  # N(a0) should equal k_w; use Wolfram's a0 value as ref
-        a0_diff = abs(a0_py - k_w)  # N(a0_wolfram) vs k_wolfram (not a0 itself)
+        N_a0_python = df_result.value  # N(a0) should equal k_w; use Wolfram's a0 value as ref
+        df_residual = abs(N_a0_python - k_w)  # N(a0_wolfram) vs k_wolfram
 
         # --- Seed cross-check via similarity ---
         py_seed_data = compute_seed_py(system_id, q, omega0_w, k_w, a0_w, d_w, h_w)
@@ -339,6 +347,8 @@ def compare_seed_data(
 
         passed = (
             k_diff <= tol_scalar
+            and W_diff <= tol_scalar
+            and df_residual <= tol_scalar
             and seed_max_diff <= tol_vector
         )
 
@@ -348,9 +358,14 @@ def compare_seed_data(
             "k_wolfram": k_w,
             "k_python": k_py,
             "k_diff": k_diff,
+            "W_wolfram_re": W_re_w,
+            "W_wolfram_im": W_im_w,
+            "W_python_re": W_py.real,
+            "W_python_im": W_py.imag,
+            "W_diff": W_diff,
             "a0_wolfram": a0_w,
-            "df_N_a0_python": a0_py,
-            "a0_df_residual": a0_diff,
+            "N_a0_python": N_a0_python,
+            "df_residual": df_residual,
             "seed_plus_wolfram": seed_plus_w,
             "seed_plus_python": seed_plus_py,
             "seed_plus_max_diff": seed_max_diff,
@@ -374,12 +389,13 @@ def compare_seed_data(
 def compare_matrix_data(
     wolfram_symbolic_json: str | Path,
     system_id: str,
+    tol: float = 1e-12,
 ) -> dict:
-    """Compare Lur'e matrices P, b, r from Wolfram symbolic summary against library.
+    """Compare Lur'e matrices P, b, r from Wolfram symbolic summary against library numerically.
 
     Returns
     -------
-    dict with keys: P_match, b_match, r_match, passed.
+    dict with keys: P_diff, b_diff, r_diff, passed.
     """
     _require_library()
     sys_obj = _get_system(system_id)
@@ -387,25 +403,97 @@ def compare_matrix_data(
     b_py = sys_obj.lure.input_vector
     r_py = sys_obj.lure.output_vector
 
-    # The symbolic JSON stores P/b/r as string expressions from Mathematica.
-    # We only check that the library has the same Lur'e structure
-    # (same dimension, P is stable for linearisation, etc.).
     data = _load_json(wolfram_symbolic_json)
-    lure_data = data.get("lure_form", {})
+    if "lure_form_numeric" not in data:
+        raise ValueError(f"lure_form_numeric key not found in {wolfram_symbolic_json}")
+
+    lure_numeric = data["lure_form_numeric"]
+    P_w = np.array(lure_numeric["P"], dtype=float)
+    b_w = np.array(lure_numeric["b"], dtype=float)
+    r_w = np.array(lure_numeric["r"], dtype=float)
+
+    P_diff = float(np.max(np.abs(P_py - P_w)))
+    b_diff = float(np.max(np.abs(b_py - b_w)))
+    r_diff = float(np.max(np.abs(r_py - r_w)))
+
+    passed = (P_diff < tol) and (b_diff < tol) and (r_diff < tol)
 
     result = {
         "system_id": system_id,
-        "P_shape": list(P_py.shape),
-        "b_shape": list(b_py.shape),
-        "r_shape": list(r_py.shape),
-        "P_from_library": P_py.tolist(),
-        "b_from_library": b_py.tolist(),
-        "r_from_library": r_py.tolist(),
-        "wolfram_P_expr": lure_data.get("P", ""),
-        "wolfram_b_expr": lure_data.get("b", ""),
-        "wolfram_r_expr": lure_data.get("r", ""),
-        "passed": True,  # Structural check only; symbolic strings need manual review
+        "P_diff": P_diff,
+        "b_diff": b_diff,
+        "r_diff": r_diff,
+        "passed": passed,
     }
+    if not passed:
+        raise AssertionError(
+            f"Lur'e matrix numeric comparison failed for {system_id}:\n"
+            f"P_diff={P_diff:.3e}, b_diff={b_diff:.3e}, r_diff={r_diff:.3e} (tol={tol:.3e})"
+        )
+    return result
+
+
+def compare_equilibria(
+    wolfram_equilibria_csv: str | Path,
+    system_id: str,
+    tol: float = 1e-8,
+) -> dict:
+    """Compare Python equilibria with Wolfram equilibria using distance-based permutation matching.
+
+    Returns
+    -------
+    dict with keys: max_distance, passed.
+    """
+    _require_library()
+    sys_obj = _get_system(system_id)
+
+    # Load Wolfram equilibria from CSV
+    rows = _load_csv(wolfram_equilibria_csv)
+    header = rows[0]
+    data = rows[1:]
+
+    wolfram_pts = []
+    for row_vals in data:
+        row = dict(zip(header, row_vals))
+        x = float(row["x"])
+        y = float(row["y"])
+        z = float(row["z"])
+        wolfram_pts.append(np.array([x, y, z]))
+
+    # Load Python equilibria
+    if system_id in ("chua_integer_saturation", "chua_fractional_saturation"):
+        py_eqs = equilibria_nonsmooth()
+    elif system_id == "chua_fractional_arctan":
+        py_eqs = equilibria_arctan()
+    else:
+        raise ValueError(f"Unknown system_id: {system_id}")
+
+    py_pts = list(py_eqs.values())
+
+    if len(wolfram_pts) != len(py_pts):
+        raise AssertionError(
+            f"Number of equilibria differs: Wolfram={len(wolfram_pts)}, Python={len(py_pts)}"
+        )
+
+    # Perform permutation matching
+    from itertools import permutations
+    best_max_dist = float("inf")
+    for p in permutations(py_pts):
+        dist = max(np.linalg.norm(w - py) for w, py in zip(wolfram_pts, p))
+        if dist < best_max_dist:
+            best_max_dist = float(dist)
+
+    passed = bool(best_max_dist < tol)
+
+    result = {
+        "system_id": system_id,
+        "max_distance": best_max_dist,
+        "passed": passed,
+    }
+    if not passed:
+        raise AssertionError(
+            f"Equilibria comparison failed for {system_id}: max_distance={best_max_dist:.3e} (tol={tol:.3e})"
+        )
     return result
 
 
@@ -418,7 +506,7 @@ def compare_eigenvalues(
 
     Returns
     -------
-    list of dicts, one per row in the CSV, with comparison results.
+    list of dicts, one per region/equilibrium and q, with comparison results.
     """
     _require_library()
     sys_obj = _get_system(system_id)
@@ -427,32 +515,117 @@ def compare_eigenvalues(
     header = rows[0]
     data = rows[1:]
 
-    results = []
+    # Parse and group by (q, region/equilibrium)
+    groups = {}
     for row_vals in data:
         row = dict(zip(header, row_vals))
         q = float(row["q"])
         region = row.get("region", row.get("equilibrium", ""))
-        w_real = float(row["real"])
-        w_imag = float(row["imag"])
-        w_abs_arg = float(row["abs_argument"])
-        threshold = q * math.pi / 2.0
+
+        # Parse abs_argument checking for "Pi" or "-Pi"
+        abs_arg_str = row["abs_argument"].strip()
+        if abs_arg_str == "Pi":
+            abs_arg = math.pi
+        elif abs_arg_str == "-Pi":
+            abs_arg = -math.pi
+        else:
+            abs_arg = float(abs_arg_str)
+
+        real = float(row["real"])
+        imag = float(row["imag"])
+        val = complex(real, imag)
+
+        key = (q, region)
+        if key not in groups:
+            groups[key] = {"eigenvalues": [], "abs_arguments": [], "matignon_margins": []}
+        groups[key]["eigenvalues"].append(val)
+        groups[key]["abs_arguments"].append(abs_arg)
+        groups[key]["matignon_margins"].append(float(row["matignon_margin"]))
+
+    # Sort Python equilibria to match region/equilibrium name mapping if needed
+    eq_map = {}
+    if system_id == "chua_fractional_arctan":
+        # Wolfram name "E0", "E1", "E2" mapped to Python E-, E0, E+ by sorting x coordinate
+        py_eqs = equilibria_arctan()
+        sorted_eqs = sorted(py_eqs.items(), key=lambda item: item[1][0])
+        eq_map = {
+            "E0": sorted_eqs[0][1],  # negative x-coordinate
+            "E1": sorted_eqs[1][1],  # zero x-coordinate
+            "E2": sorted_eqs[2][1],  # positive x-coordinate
+        }
+
+    results = []
+    for (q, region), group_data in groups.items():
+        w_eigs = group_data["eigenvalues"]
+        w_args = group_data["abs_arguments"]
+
+        # Compute Python Jacobian and its eigenvalues
+        if system_id in ("chua_integer_saturation", "chua_fractional_saturation"):
+            if region == "inner":
+                state = np.zeros(3)
+            elif region == "outer":
+                state = np.array([2.0, 0.0, 0.0])
+            else:
+                raise ValueError(f"Unknown region for saturation system: {region}")
+            jac = jacobian_nonsmooth(state)
+        elif system_id == "chua_fractional_arctan":
+            if region not in eq_map:
+                raise ValueError(f"Unknown equilibrium name in CSV: {region}")
+            state = eq_map[region]
+            jac = jacobian_arctan(state)
+        else:
+            raise ValueError(f"Unknown system_id: {system_id}")
+
+        py_eigs = np.linalg.eigvals(jac)
+
+        # Match eigenvalues using permutation to minimize max absolute distance
+        from itertools import permutations
+        best_perm = None
+        best_max_diff = float("inf")
+        for p in permutations(py_eigs):
+            diff = max(abs(w - py) for w, py in zip(w_eigs, p))
+            if diff < best_max_diff:
+                best_max_diff = diff
+                best_perm = p
+
+        # Check matched pairs within tolerance
+        pair_passed = True
+        matched_details = []
+        for w_val, w_arg, py_val in zip(w_eigs, w_args, best_perm):
+            val_diff = abs(w_val - py_val)
+            py_arg = abs(math.atan2(py_val.imag, py_val.real))
+            arg_diff = abs(w_arg - py_arg)
+
+            passed_individual = (val_diff < tol) and (arg_diff < tol)
+            if not passed_individual:
+                pair_passed = False
+
+            matched_details.append({
+                "wolfram_eigenvalue": w_val,
+                "python_eigenvalue": py_val,
+                "eigenvalue_diff": val_diff,
+                "wolfram_abs_argument": w_arg,
+                "python_abs_argument": py_arg,
+                "abs_argument_diff": arg_diff,
+                "passed": passed_individual,
+            })
 
         results.append({
             "q": q,
             "region": region,
-            "wolfram_eigenvalue": complex(w_real, w_imag),
-            "wolfram_abs_argument": w_abs_arg,
-            "matignon_threshold": threshold,
-            "matignon_margin_wolfram": float(row["matignon_margin"]),
-            "passed": True,  # CSV read-back check; numpy comparison done separately
+            "max_eigenvalue_diff": best_max_diff,
+            "matched_details": matched_details,
+            "passed": pair_passed,
         })
+
+    failed = [r for r in results if not r.get("passed", True)]
+    if failed:
+        raise AssertionError(
+            f"Eigenvalue comparison failed for {system_id} on {len(failed)} group(s) (tol={tol:.3e})"
+        )
 
     return results
 
-
-# ---------------------------------------------------------------------------
-# Summary comparison entry point
-# ---------------------------------------------------------------------------
 
 def compare_all(output_dir: str | Path, system_id: str) -> dict:
     """Run all available comparisons for a given system output directory.
@@ -476,40 +649,78 @@ def compare_all(output_dir: str | Path, system_id: str) -> dict:
         "missing_comparisons": [],
     }
 
-    # 1. Matrix structure
+    checks = {
+        "matrix_numeric": False,
+        "equilibria": False,
+        "eigenvalues": False,
+        "seed_data": False,
+    }
+
+    # 1. Matrix structure/numeric comparison
     sym_json = out / f"{system_id}_symbolic_summary.json"
     if sym_json.exists():
         try:
             r = compare_matrix_data(sym_json, system_id)
-            results["comparisons"]["matrix_structure"] = r
+            results["comparisons"]["matrix_numeric"] = r
+            checks["matrix_numeric"] = r["passed"]
         except Exception as e:
-            results["comparisons"]["matrix_structure"] = {"error": str(e), "passed": False}
+            results["comparisons"]["matrix_numeric"] = {"error": str(e), "passed": False}
             results["passed"] = False
     else:
         results["missing_comparisons"].append(str(sym_json))
 
-    # 2. Seed data
-    seed_json = out / f"{system_id}_seed_data.json"
-    if seed_json.exists():
+    # 2. Equilibria comparison
+    eq_csv = out / f"{system_id}_equilibria_residuals.csv"
+    if eq_csv.exists():
         try:
-            r = compare_seed_data(seed_json, system_id)
-            results["comparisons"]["seed_data"] = r
-        except AssertionError as e:
-            results["comparisons"]["seed_data"] = {"error": str(e), "passed": False}
+            r = compare_equilibria(eq_csv, system_id)
+            results["comparisons"]["equilibria"] = r
+            checks["equilibria"] = r["passed"]
+        except Exception as e:
+            results["comparisons"]["equilibria"] = {"error": str(e), "passed": False}
             results["passed"] = False
     else:
-        results["missing_comparisons"].append(str(seed_json))
+        results["missing_comparisons"].append(str(eq_csv))
 
-    # 3. Eigenvalues (read-back only, Matignon margin from CSV)
+    # 3. Eigenvalues comparison
     eig_csv = out / f"{system_id}_eigenvalues_matignon.csv"
     if eig_csv.exists():
         try:
             r = compare_eigenvalues(eig_csv, system_id)
             results["comparisons"]["eigenvalues"] = r
+            checks["eigenvalues"] = all(item["passed"] for item in r)
+            if not checks["eigenvalues"]:
+                results["passed"] = False
         except Exception as e:
             results["comparisons"]["eigenvalues"] = {"error": str(e), "passed": False}
             results["passed"] = False
     else:
         results["missing_comparisons"].append(str(eig_csv))
 
+    # 4. Seed data comparison
+    seed_json = out / f"{system_id}_seed_data.json"
+    if seed_json.exists():
+        try:
+            r = compare_seed_data(seed_json, system_id)
+            results["comparisons"]["seed_data"] = r
+            checks["seed_data"] = all(item.get("passed", True) for item in r)
+            if not checks["seed_data"]:
+                results["passed"] = False
+        except Exception as e:
+            results["comparisons"]["seed_data"] = {"error": str(e), "passed": False}
+            results["passed"] = False
+    else:
+        results["missing_comparisons"].append(str(seed_json))
+
+    # Save python consistency summary
+    summary_path = out / f"{system_id}_python_consistency_summary.json"
+    consistency_summary = {
+        "system_id": system_id,
+        "passed": results["passed"],
+        "checks": checks,
+    }
+    with open(summary_path, "w", encoding="utf-8") as f:
+        json.dump(consistency_summary, f, indent=2, ensure_ascii=False)
+
     return results
+

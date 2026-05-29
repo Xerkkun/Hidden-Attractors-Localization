@@ -275,3 +275,131 @@ def test_build_S_from_similarity_no_eigenvectors() -> None:
         assert abs(r @ S[:, 1]) < 1e-8
         assert abs(r @ S[:, 2] + h) < 1e-8
 
+
+@pytest.mark.wolfram
+@pytest.mark.parametrize("system_id", _WOLFRAM_CASES)
+def test_compare_seed_data_failures(system_id: str) -> None:
+    """Verify that compare_seed_data fails when tolerances are exceeded."""
+    if not _wolfram_outputs_exist(system_id):
+        pytest.skip(f"No Wolfram outputs found for '{system_id}'")
+
+    lib_ok, lib_err = _try_import_library()
+    if not lib_ok:
+        pytest.skip(f"Library not importable: {lib_err}")
+
+    from compare_with_library import compare_seed_data
+
+    out_dir = repo_root() / "validation" / "outputs" / "wolfram" / system_id
+    seed_json = out_dir / f"{system_id}_seed_data.json"
+
+    # Extremely strict tolerances to trigger failure
+    with pytest.raises(AssertionError):
+        compare_seed_data(seed_json, system_id, tol_scalar=1e-30, tol_vector=1e-30)
+
+
+@pytest.mark.wolfram
+@pytest.mark.parametrize("system_id", _WOLFRAM_CASES)
+def test_compare_matrix_data_consistency(system_id: str) -> None:
+    """Verify numeric consistency of Lur'e matrices between Wolfram and Python."""
+    if not _wolfram_outputs_exist(system_id):
+        pytest.skip(f"No Wolfram outputs found for '{system_id}'")
+
+    lib_ok, lib_err = _try_import_library()
+    if not lib_ok:
+        pytest.skip(f"Library not importable: {lib_err}")
+
+    from compare_with_library import compare_matrix_data
+
+    out_dir = repo_root() / "validation" / "outputs" / "wolfram" / system_id
+    sym_json = out_dir / f"{system_id}_symbolic_summary.json"
+
+    res = compare_matrix_data(sym_json, system_id)
+    assert res["passed"] is True
+    assert res["P_diff"] < 1e-12
+    assert res["b_diff"] < 1e-12
+    assert res["r_diff"] < 1e-12
+
+
+@pytest.mark.wolfram
+@pytest.mark.parametrize("system_id", _WOLFRAM_CASES)
+def test_compare_equilibria_consistency(system_id: str) -> None:
+    """Verify consistency of equilibria between Wolfram and Python."""
+    if not _wolfram_outputs_exist(system_id):
+        pytest.skip(f"No Wolfram outputs found for '{system_id}'")
+
+    lib_ok, lib_err = _try_import_library()
+    if not lib_ok:
+        pytest.skip(f"Library not importable: {lib_err}")
+
+    from compare_with_library import compare_equilibria
+
+    out_dir = repo_root() / "validation" / "outputs" / "wolfram" / system_id
+    eq_csv = out_dir / f"{system_id}_equilibria_residuals.csv"
+
+    res = compare_equilibria(eq_csv, system_id, tol=1e-8)
+    assert res["passed"]
+    assert res["max_distance"] < 1e-8
+
+
+@pytest.mark.wolfram
+@pytest.mark.parametrize("system_id", _WOLFRAM_CASES)
+def test_compare_eigenvalues_consistency(system_id: str) -> None:
+    """Verify consistency of regional/equilibria eigenvalues between Wolfram and Python."""
+    if not _wolfram_outputs_exist(system_id):
+        pytest.skip(f"No Wolfram outputs found for '{system_id}'")
+
+    lib_ok, lib_err = _try_import_library()
+    if not lib_ok:
+        pytest.skip(f"Library not importable: {lib_err}")
+
+    from compare_with_library import compare_eigenvalues
+
+    out_dir = repo_root() / "validation" / "outputs" / "wolfram" / system_id
+    eig_csv = out_dir / f"{system_id}_eigenvalues_matignon.csv"
+
+    res = compare_eigenvalues(eig_csv, system_id, tol=1e-7)
+    for group in res:
+        assert group["passed"]
+        assert group["max_eigenvalue_diff"] < 1e-7
+
+
+def test_w_eval_direct_fractional() -> None:
+    """Directly verify W_eval for q=1 and q<1 fractional transfer function formula."""
+    lib_ok, lib_err = _try_import_library()
+    if not lib_ok:
+        pytest.skip(f"Library not importable: {lib_err}")
+
+    try:
+        from hidden_attractors.lure.transfer import W_eval
+    except ImportError as e:
+        pytest.skip(f"Library not installed: {e}")
+
+    # Define some test parameters
+    alpha, beta, gamma = 8.0, 12.0, 0.005
+    m0, m1 = -1.1, -0.6
+    P = np.array([
+        [-alpha * (1.0 + m1), alpha, 0.0],
+        [1.0, -1.0, 1.0],
+        [0.0, -beta, -gamma],
+    ])
+    b = np.array([-alpha, 0.0, 0.0])
+    r = np.array([1.0, 0.0, 0.0])
+
+    # For q = 1.0
+    omega = 2.5
+    q = 1.0
+    W_val_py = W_eval(omega, q, "fractional", P, b, r)
+
+    # Analytical formula evaluation:
+    z = (1j * omega) ** q
+    W_ana = r @ np.linalg.inv(z * np.eye(3) - P) @ b
+    assert abs(W_val_py - W_ana) < 1e-12
+
+    # For q = 0.9998
+    q = 0.9998
+    W_val_py_q = W_eval(omega, q, "fractional", P, b, r)
+    z_q = (omega ** q) * np.exp(1j * q * np.pi / 2.0)
+    W_ana_q = r @ np.linalg.inv(z_q * np.eye(3) - P) @ b
+    assert abs(W_val_py_q - W_ana_q) < 1e-12
+
+
