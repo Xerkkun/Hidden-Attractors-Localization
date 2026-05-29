@@ -1,0 +1,54 @@
+case_id: "wu2023_chua_fractional_arctan"
+reference: "Wu et al. 2023"
+system_id: "chua_fractional_arctan"
+paper:
+  authors:
+    - "X. Wu"
+    - "Y. et al."
+  year: 2023
+  title: "A smooth Chua system with hidden attractors"
+  doi_or_url: "10.1007/s11071-023-xxxxx"
+seed_reproduction:
+  seed_transfer_mode: "published_integer_laplace"
+  z_rule: "z = j*omega"
+  q_dependent_seed: false
+dynamics:
+  derivative: "Caputo"
+  q: 0.99
+  integrator: "EFORK"
+  h: 0.01
+  t_final: 100.0
+  t_burn: 50.0
+expected:
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    a1: 0.4
+    a2: -1.5585
+    rho: 1.0
+  equilibria:
+    E0: [0.0, 0.0, 0.0]
+    E+: [0.60967911698, 0.00026247941849, -0.60941663756]
+    E-: [-0.60967911698, -0.00026247941849, 0.60941663756]
+  matignon:
+    E0: "unstable"
+    E+: "unstable"
+    E-: "unstable"
+  omega0: null
+  k: null
+  a0: null
+  seed_plus: null
+  seed_minus: null
+  initial_conditions_from_paper:
+    x0_plus: [13.8, 0.7093, -19.8768]
+    x0_minus: [-13.8, -0.7093, 19.8768]
+  attractor_type: "hidden"
+  hiddenness_claim: "smooth Chua system with hidden attractors"
+data_status:
+  missing_values:
+    - "paper does not report omega0 explicitly"
+    - "paper does not report describing-function gain k explicitly"
+    - "paper does not report describing-function amplitude a0 explicitly"
+    - "paper does not report exact seed_plus or seed_minus coordinates"
+  notes: "The paper reports initial conditions x0_plus/minus but not the intermediate DF seed parameters."

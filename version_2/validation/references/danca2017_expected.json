@@ -1,0 +1,21 @@
+{
+  "case_id": "danca2017_chua_fractional_saturation",
+  "parameters": {
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m0": -0.1768,
+    "m1": -1.1468
+  },
+  "omega0": null,
+  "k": null,
+  "a0": null,
+  "seed_plus": null,
+  "seed_minus": null,
+  "equilibria": {
+    "E0": [0.0, 0.0, 0.0],
+    "E+": [6.588307886538868, 0.0028364022560936064, -6.585471484282774],
+    "E-": [-6.588307886538868, -0.0028364022560936064, 6.585471484282774]
+  },
+  "initial_conditions_from_paper": null
+}

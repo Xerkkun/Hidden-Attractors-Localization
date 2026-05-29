@@ -1,0 +1,50 @@
+case_id: "kuznetsov2017_chua_integer"
+reference: "Kuznetsov et al. 2017"
+system_id: "chua_integer_saturation"
+paper:
+  authors:
+    - "N.V. Kuznetsov"
+    - "O.A. Kuznetsova"
+    - "G.A. Leonov"
+    - "T.N. Mokaev"
+    - "N.V. Stankevich"
+  year: 2017
+  title: "Hidden Attractors Localization in Chua Circuit via the Describing Function Method"
+  doi_or_url: "10.1016/j.ifacol.2017.08.1633"
+seed_reproduction:
+  seed_transfer_mode: "published_integer_laplace"
+  z_rule: "z = j*omega"
+  q_dependent_seed: false
+dynamics:
+  derivative: "integer"
+  q: 1.0
+  integrator: "EFORK"
+  h: 0.05
+  t_final: 100.0
+  t_burn: 50.0
+expected:
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+  equilibria:
+    E0: [0.0, 0.0, 0.0]
+    E+: [6.588307886538868, 0.0028364022560936064, -6.585471484282774]
+    E-: [-6.588307886538868, -0.0028364022560936064, 6.585471484282774]
+  matignon:
+    E0: "stable"
+    E+: "unstable"
+    E-: "unstable"
+  omega0: 2.039186939959001
+  k: 0.20986735451508398
+  a0: 5.856145086257356
+  seed_plus: [5.856145086257324, 0.36933157824675933, -8.36653616833187]
+  seed_minus: [-5.856145086257324, -0.36933157824675933, 8.36653616833187]
+  initial_conditions_from_paper: [5.8576, 0.3694, -8.3686]
+  attractor_type: "hidden"
+  hiddenness_claim: "hidden attractor localizable by describing function from localized harmonic seed"
+data_status:
+  missing_values: []
+  notes: "Values derived from the paper's reported values and high-precision recomputation."

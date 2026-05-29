@@ -201,7 +201,7 @@ The template automatically:
 | Chua arctan equilibrium residual | — | < 1e-12 (high-precision Mathematica) |
 | ω₀ Python vs Wolfram | — | < 1e-8 |
 | k and W_q differences | — | < 1e-8 |
-| a₀ Python vs Wolfram | — | < 1e-8 |
+| Describing-function residual \|N_py(a₀_WL)−k_WL\| | — | < 1e-8 |
 | X_seed components | — | < 1e-7 |
 | Eigenvalues | — | < 1e-7 |
 | W(z) transfer function evaluation | — | < 1e-8 |

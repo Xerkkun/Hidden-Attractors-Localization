@@ -545,6 +545,7 @@ def compare_eigenvalues(
     # Sort Python equilibria to match region/equilibrium name mapping if needed
     eq_map = {}
     if system_id == "chua_fractional_arctan":
+        # Wolfram roots are sorted by x in findEquilibria[], so E0, E1, E2 correspond to negative, near-zero, and positive x respectively.
         # Wolfram name "E0", "E1", "E2" mapped to Python E-, E0, E+ by sorting x coordinate
         py_eqs = equilibria_arctan()
         sorted_eqs = sorted(py_eqs.items(), key=lambda item: item[1][0])
@@ -601,8 +602,8 @@ def compare_eigenvalues(
                 pair_passed = False
 
             matched_details.append({
-                "wolfram_eigenvalue": w_val,
-                "python_eigenvalue": py_val,
+                "wolfram_eigenvalue": str(w_val),
+                "python_eigenvalue": str(py_val),
                 "eigenvalue_diff": val_diff,
                 "wolfram_abs_argument": w_arg,
                 "python_abs_argument": py_arg,
@@ -716,8 +717,11 @@ def compare_all(output_dir: str | Path, system_id: str) -> dict:
     summary_path = out / f"{system_id}_python_consistency_summary.json"
     consistency_summary = {
         "system_id": system_id,
+        "output_dir": str(out),
         "passed": results["passed"],
         "checks": checks,
+        "comparisons": results["comparisons"],
+        "missing_comparisons": results["missing_comparisons"],
     }
     with open(summary_path, "w", encoding="utf-8") as f:
         json.dump(consistency_summary, f, indent=2, ensure_ascii=False)

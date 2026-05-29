@@ -1,0 +1,51 @@
+case_id: "danca2017_chua_fractional_saturation"
+reference: "Danca 2017"
+system_id: "chua_fractional_saturation"
+paper:
+  authors:
+    - "Marius-F. Danca"
+  year: 2017
+  title: "Hidden Chaotic Attractors in Fractional-Order Systems"
+  doi_or_url: "10.1007/s11071-017-3471-x"
+seed_reproduction:
+  seed_transfer_mode: "published_integer_laplace"
+  z_rule: "z = j*omega"
+  q_dependent_seed: false
+dynamics:
+  derivative: "Caputo"
+  q: 0.9998
+  integrator: "ABM"
+  h: 0.05
+  t_final: 500.0
+  t_burn: 250.0
+expected:
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+  equilibria:
+    E0: [0.0, 0.0, 0.0]
+    E+: [6.588307886538868, 0.0028364022560936064, -6.585471484282774]
+    E-: [-6.588307886538868, -0.0028364022560936064, 6.585471484282774]
+  matignon:
+    E0: "stable"
+    E+: "unstable"
+    E-: "unstable"
+  omega0: null
+  k: null
+  a0: null
+  seed_plus: null
+  seed_minus: null
+  initial_conditions_from_paper: null
+  attractor_type: "hidden"
+  hiddenness_claim: "hidden chaotic attractor at q=0.9998 integrated via ABM"
+data_status:
+  missing_values:
+    - "paper does not report omega0 explicitly"
+    - "paper does not report describing-function gain k explicitly"
+    - "paper does not report describing-function amplitude a0 explicitly"
+    - "paper does not report exact seed_plus or seed_minus coordinates"
+    - "paper does not report hidden-attractor initial condition for Fig. 3 explicitly"
+  notes: "The paper integrates with Diethelm ABM, q=0.9998, delta=0.01, but does not disclose the exact initial condition coordinates or DF parameters."

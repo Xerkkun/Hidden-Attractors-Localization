@@ -11,7 +11,7 @@ yet (the output directory is empty).
 They test the following quantities against tolerances specified in the task:
     omega0   : 1e-8
     k        : 1e-8
-    a0       : 1e-8
+    DF residual |N(a0)-k| : 1e-8
     X_seed   : 1e-7 per component
     W(z)     : 1e-8
 
@@ -144,8 +144,7 @@ def test_wolfram_python_seed_consistency(system_id: str) -> None:
 
 
 @pytest.mark.wolfram
-@pytest.mark.parametrize("system_id", _WOLFRAM_CASES)
-def test_transfer_function_fractional_formula(system_id: str) -> None:
+def test_transfer_function_fractional_formula() -> None:
     """Verify that the library evaluates W_hat_q(z) at z=(j omega)^q, not z=j*omega.
 
     This is a pure-Python test and does NOT require wolframscript.
@@ -174,9 +173,6 @@ def test_transfer_function_fractional_formula(system_id: str) -> None:
     assert abs(W_int - W_frac_q1) < 1e-12, (
         f"For q=1, integer and fractional modes must agree; got diff={abs(W_int-W_frac_q1)}"
     )
-
-    if system_id == "chua_integer_saturation":
-        pytest.skip("Integer case: fractional != integer check only for q<1 cases")
 
     # For q < 1 the two modes must differ
     q = 0.9998
@@ -392,14 +388,47 @@ def test_w_eval_direct_fractional() -> None:
 
     # Analytical formula evaluation:
     z = (1j * omega) ** q
-    W_ana = r @ np.linalg.inv(z * np.eye(3) - P) @ b
+    W_ana = r @ np.linalg.solve(z * np.eye(3) - P, b)
     assert abs(W_val_py - W_ana) < 1e-12
 
     # For q = 0.9998
     q = 0.9998
     W_val_py_q = W_eval(omega, q, "fractional", P, b, r)
     z_q = (omega ** q) * np.exp(1j * q * np.pi / 2.0)
-    W_ana_q = r @ np.linalg.inv(z_q * np.eye(3) - P) @ b
+    W_ana_q = r @ np.linalg.solve(z_q * np.eye(3) - P, b)
     assert abs(W_val_py_q - W_ana_q) < 1e-12
+
+
+@pytest.mark.wolfram
+@pytest.mark.parametrize("system_id", _WOLFRAM_CASES)
+def test_compare_all_summary(system_id: str) -> None:
+    """Verify that compare_all executes correctly and writes a complete summary JSON."""
+    if not _wolfram_outputs_exist(system_id):
+        pytest.skip(f"No Wolfram outputs found for '{system_id}'")
+
+    lib_ok, lib_err = _try_import_library()
+    if not lib_ok:
+        pytest.skip(f"Library not importable: {lib_err}")
+
+    from compare_with_library import compare_all
+
+    out_dir = repo_root() / "validation" / "outputs" / "wolfram" / system_id
+    res = compare_all(out_dir, system_id)
+
+    assert res["passed"]
+    assert res["system_id"] == system_id
+
+    summary_path = out_dir / f"{system_id}_python_consistency_summary.json"
+    assert summary_path.exists()
+
+    with open(summary_path, "r", encoding="utf-8") as f:
+        summary = json.load(f)
+
+    assert summary["system_id"] == system_id
+    assert "output_dir" in summary
+    assert summary["passed"]
+    assert "checks" in summary
+    assert "comparisons" in summary
+    assert "missing_comparisons" in summary
 
 
