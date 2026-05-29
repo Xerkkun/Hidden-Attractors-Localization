@@ -225,3 +225,53 @@ def test_no_hidden_attractor_claim_in_wolfram_outputs() -> None:
             f"Found 'hidden_verified' in Wolfram output {json_file}. "
             "Wolfram algebraic validation must not claim attractor verification."
         )
+
+
+def test_build_S_from_similarity_no_eigenvectors() -> None:
+    """Verify that build_S_from_similarity satisfies the P0 S = S Hq relation
+    and normalisation constraints r^T S = {1, 0, -h} WITHOUT using eigenvectors.
+    """
+    import math
+    from unittest.mock import patch
+    from compare_with_library import build_S_from_similarity
+
+    alpha = 8.4562
+    beta = 12.0732
+    gamma = 0.0052
+    m1 = -1.1468
+    k = 0.2098673545150838
+    omega0 = 2.039186939959001
+    d = 1.538510163250452
+    h = 16.71582245895634
+    q = 1.0
+    r = np.array([1.0, 0.0, 0.0])
+
+    P = np.array([
+        [-alpha * (1.0 + m1), alpha, 0.0],
+        [1.0, -1.0, 1.0],
+        [0.0, -beta, -gamma],
+    ])
+    b = np.array([-alpha, 0.0, 0.0])
+    P0 = P + k * np.outer(b, r)
+
+    with patch("numpy.linalg.eig") as mock_eig, patch("numpy.linalg.eigh") as mock_eigh:
+        mock_eig.side_effect = RuntimeError("np.linalg.eig is forbidden")
+        mock_eigh.side_effect = RuntimeError("np.linalg.eigh is forbidden")
+
+        S = build_S_from_similarity(P0, omega0, q, d, h, r)
+
+        # 1. Check similarity relation
+        zr = (omega0 ** q) * math.cos(q * math.pi / 2.0)
+        zi = (omega0 ** q) * math.sin(q * math.pi / 2.0)
+        Hq = np.array([
+            [zr, -zi, 0.0],
+            [zi,  zr, 0.0],
+            [0.0, 0.0, -d],
+        ])
+
+        assert np.linalg.norm(P0 @ S - S @ Hq) < 1e-8
+        # 2. Check normalization constraints
+        assert abs(r @ S[:, 0] - 1.0) < 1e-8
+        assert abs(r @ S[:, 1]) < 1e-8
+        assert abs(r @ S[:, 2] + h) < 1e-8
+

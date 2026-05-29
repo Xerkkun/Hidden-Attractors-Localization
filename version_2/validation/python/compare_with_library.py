@@ -134,35 +134,63 @@ def build_S_from_similarity(
     h: float,
     r: np.ndarray,
 ) -> np.ndarray:
-    """Build the real transformation matrix S satisfying P0 S = S Hq with the normalization
-    constraints r^T s_1 = 1, r^T s_2 = 0, and r^T s_3 = -h.
+    """Build S by solving P0 S = S Hq with normalization constraints.
+
+    Constraints:
+        r^T s1 = 1
+        r^T s2 = 0
+        r^T s3 = -h
+
+    No eigenvectors are used.
     """
-    zr = (omega0 ** q) * math.cos(q * math.pi / 2)
-    zi = (omega0 ** q) * math.sin(q * math.pi / 2)
-    lambda0 = complex(zr, zi)
+    zr = (omega0 ** q) * math.cos(q * math.pi / 2.0)
+    zi = (omega0 ** q) * math.sin(q * math.pi / 2.0)
 
-    # 1. Complex eigenvector corresponding to lambda0
-    eigvals, eigvecs = np.linalg.eig(P0)
-    idx = int(np.argmin(np.abs(eigvals - lambda0)))
-    v = eigvecs[:, idx].copy()
+    Hq = np.array(
+        [
+            [zr, -zi, 0.0],
+            [zi,  zr, 0.0],
+            [0.0, 0.0, -d],
+        ],
+        dtype=float,
+    )
 
-    # Normalize complex eigenvector so that r^T v = 1
-    scale = r @ v
-    v = v / scale
+    # vec(P0 S - S Hq) = 0
+    # vec(P0 S) = (I kron P0) vec(S)
+    # vec(S Hq) = (Hq.T kron I) vec(S)
+    I3 = np.eye(3)
+    A_sim = np.kron(I3, P0) - np.kron(Hq.T, I3)
+    b_sim = np.zeros(9)
 
-    s_1 = np.real(v)
-    s_2 = -np.imag(v)
+    # Normalization constraints on columns of S.
+    # vec(S) uses column-major order.
+    c1 = np.zeros(9)
+    c2 = np.zeros(9)
+    c3 = np.zeros(9)
 
-    # 2. Real eigenvector corresponding to -d
-    idx_real = int(np.argmin(np.abs(eigvals - (-d))))
-    v_real = np.real(eigvecs[:, idx_real].copy())
-    scale_real = r @ v_real
-    if abs(scale_real) > 1e-14:
-        s_3 = v_real * (-h / scale_real)
-    else:
-        s_3 = v_real
+    c1[0:3] = r
+    c2[3:6] = r
+    c3[6:9] = r
 
-    S = np.column_stack([s_1, s_2, s_3])
+    A = np.vstack([A_sim, c1, c2, c3])
+    b_vec = np.concatenate([b_sim, [1.0, 0.0, -h]])
+
+    sol, residuals, rank, svals = np.linalg.lstsq(A, b_vec, rcond=None)
+    S = sol.reshape((3, 3), order="F")
+
+    residual_norm = np.linalg.norm(P0 @ S - S @ Hq)
+    constraint_norm = np.linalg.norm(
+        np.array([r @ S[:, 0] - 1.0, r @ S[:, 1], r @ S[:, 2] + h])
+    )
+
+    if residual_norm > 1e-8 or constraint_norm > 1e-8:
+        raise ValueError(
+            "Failed to construct S from similarity constraints: "
+            f"similarity_residual={residual_norm:.3e}, "
+            f"constraint_residual={constraint_norm:.3e}, "
+            f"rank={rank}"
+        )
+
     return S
 
 
