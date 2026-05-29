@@ -1,13 +1,22 @@
 case_id: "wu2023_chua_fractional_arctan"
 reference: "Wu et al. 2023"
 system_id: "chua_fractional_arctan"
+reference_data_file: "validation/references/wu2023_expected.json"
+run_dynamics: false
 paper:
   authors:
-    - "X. Wu"
-    - "Y. et al."
+    - "Xianming Wu"
+    - "Longxiang Fu"
+    - "Shaobo He"
+    - "Zhao Yao"
+    - "Huihai Wang"
+    - "Jiayu Han"
   year: 2023
-  title: "A smooth Chua system with hidden attractors"
-  doi_or_url: "10.1007/s11071-023-xxxxx"
+  title: "Hidden attractors in a new fractional-order Chua system with arctan nonlinearity and its DSP implementation"
+  journal: "Results in Physics"
+  volume: "52"
+  article_number: "106866"
+  doi_or_url: "10.1016/j.rinp.2023.106866"
 seed_reproduction:
   seed_transfer_mode: "published_integer_laplace"
   z_rule: "z = j*omega"
@@ -51,4 +60,4 @@ data_status:
     - "paper does not report describing-function gain k explicitly"
     - "paper does not report describing-function amplitude a0 explicitly"
     - "paper does not report exact seed_plus or seed_minus coordinates"
-  notes: "The paper reports initial conditions x0_plus/minus but not the intermediate DF seed parameters."
+  notes: "The paper reports initial conditions x0_plus/minus but not the intermediate DF seed parameters. The commensurate Caputo fractional order is q=0.99."

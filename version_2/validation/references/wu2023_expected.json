@@ -1,5 +1,21 @@
 {
   "case_id": "wu2023_chua_fractional_arctan",
+  "paper": {
+    "authors": [
+      "Xianming Wu",
+      "Longxiang Fu",
+      "Shaobo He",
+      "Zhao Yao",
+      "Huihai Wang",
+      "Jiayu Han"
+    ],
+    "year": 2023,
+    "title": "Hidden attractors in a new fractional-order Chua system with arctan nonlinearity and its DSP implementation",
+    "journal": "Results in Physics",
+    "volume": "52",
+    "article_number": "106866",
+    "doi": "10.1016/j.rinp.2023.106866"
+  },
   "parameters": {
     "alpha": 8.4562,
     "beta": 12.0732,

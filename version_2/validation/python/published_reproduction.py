@@ -33,9 +33,45 @@ def W_fractional_spectral(omega: float, q: float, P: np.ndarray, b: np.ndarray, 
 
     This is the fractional spectral extension of the transfer function.
     """
-    z = (1j * omega) ** q
+    if omega <= 0.0:
+        raise ValueError("omega must be positive and finite for spectral transfer.")
+    if not (0.0 < q <= 1.0):
+        raise ValueError("q must satisfy 0 < q <= 1.")
+    
+    # Use the explicit branch formula
+    z = (omega ** q) * np.exp(1j * q * np.pi / 2.0)
     I = np.eye(len(P))
     return complex(r @ np.linalg.solve(z * I - P, b))
+
+
+def build_published_integer_seed_closed_form(
+    system: any,
+    a0: float,
+    omega0: float,
+    k: float,
+    seed_sign_convention: str = "kuznetsov"
+) -> tuple[np.ndarray, np.ndarray]:
+    """Construct the seed using the algebraic closed-form formula for q = 1 without eigenvectors."""
+    alpha = float(system.parameters.get("alpha", 8.4562))
+
+    if "m1" in system.parameters:
+        m_linear = float(system.parameters["m1"])
+    elif "a1" in system.parameters:
+        m_linear = float(system.parameters["a1"])
+    else:
+        raise ValueError(
+            "System parameters must contain either 'm1' (saturation) or 'a1' (arctan)."
+        )
+
+    x0 = a0
+    y0 = a0 * (m_linear + 1.0 + k)
+    z0 = a0 * (alpha * (m_linear + k) - omega0 ** 2) / alpha
+
+    if seed_sign_convention == "wu":
+        y0 = -y0
+
+    X_seed = np.array([x0, y0, z0], dtype=float)
+    return X_seed, -X_seed
 
 
 def get_reproduction_system(system_id: str, params_dict: dict):
@@ -98,6 +134,9 @@ def compute_seed_for_reproduction(case_config: dict) -> dict:
     params_dict = expected_cfg.get("parameters", {})
 
     sys = get_reproduction_system(system_id, params_dict)
+    P = sys.lure.matrix
+    b = sys.lure.input_vector
+    r = sys.lure.output_vector
     
     # Extract the ChuaParameters object
     p = chua_parameters(
@@ -115,35 +154,70 @@ def compute_seed_for_reproduction(case_config: dict) -> dict:
     if seed_transfer_mode == "published_integer_laplace":
         q_seed = 1.0
         transfer_mode = "integer"
+        z_rule = "z = j*omega"
+        q_dependent_seed = False
+        W_mode_used = "W_pub(j omega) = r^T(j omega I - P)^(-1)b"
     else:
         q_seed = q_dynamics
         transfer_mode = "fractional"
+        z_rule = "z = (j*omega)^q"
+        q_dependent_seed = True
+        W_mode_used = "W_q(j omega) = r^T((j omega)^q I - P)^(-1)b"
 
     try:
-        seed_obj = find_harmonic_seed(
-            q=q_seed,
-            params=p,
-            branch_index=0,
-            method="classic",
-            wmin=1.0e-4,
-            wmax=10.0,
-            nscan=20_000
-        )
-        omega0 = float(seed_obj.omega)
-        k = float(seed_obj.gain)
-        a0 = float(seed_obj.amplitude)
+        if seed_transfer_mode == "published_integer_laplace":
+            from hidden_attractors.seed_generation.chua import find_omega_gain_candidates, solve_amplitude_from_gain
+            pairs = find_omega_gain_candidates(
+                q=q_seed,
+                params=p,
+                wmin=1.0e-4,
+                wmax=10.0,
+                nscan=20_000,
+                compatible_only=True
+            )
+            if not pairs:
+                raise RuntimeError("no omega/gain candidate was found.")
+            omega0, k = pairs[0]
+            a0 = solve_amplitude_from_gain(k, p)
 
-        seed_plus, seed_minus = build_lure_seed(
-            sys,
-            A0=a0,
-            omega0=omega0,
-            k=k,
-            seed_sign_convention="kuznetsov",
-            q=q_seed,
-            transfer_mode=transfer_mode,
-            theta=0.0,
-            seed_construction="modal",
-        )
+            seed_plus, seed_minus = build_published_integer_seed_closed_form(
+                sys,
+                a0=a0,
+                omega0=omega0,
+                k=k,
+                seed_sign_convention=seed_rep.get("seed_sign_convention", "kuznetsov")
+            )
+        else:
+            seed_obj = find_harmonic_seed(
+                q=q_seed,
+                params=p,
+                branch_index=0,
+                method="classic",
+                wmin=1.0e-4,
+                wmax=10.0,
+                nscan=20_000
+            )
+            omega0 = float(seed_obj.omega)
+            k = float(seed_obj.gain)
+            a0 = float(seed_obj.amplitude)
+
+            seed_plus, seed_minus = build_lure_seed(
+                sys,
+                A0=a0,
+                omega0=omega0,
+                k=k,
+                seed_sign_convention=seed_rep.get("seed_sign_convention", "kuznetsov"),
+                q=q_seed,
+                transfer_mode=transfer_mode,
+                theta=0.0,
+                seed_construction="modal",
+            )
+
+        # Calculate W_at_omega0 using the corresponding formula
+        if seed_transfer_mode == "published_integer_laplace":
+            W_val = W_published_integer(omega0, P, b, r)
+        else:
+            W_val = W_fractional_spectral(omega0, q_seed, P, b, r)
 
         return {
             "status": "ok",
@@ -152,12 +226,26 @@ def compute_seed_for_reproduction(case_config: dict) -> dict:
             "k": k,
             "a0": a0,
             "seed_plus": seed_plus.tolist(),
-            "seed_minus": seed_minus.tolist()
+            "seed_minus": seed_minus.tolist(),
+            "seed_transfer_mode": seed_transfer_mode,
+            "z_rule": z_rule,
+            "q_dependent_seed": q_dependent_seed,
+            "dynamics_q": q_dynamics,
+            "W_mode_used": W_mode_used,
+            "W_at_omega0": {
+                "re": float(W_val.real),
+                "im": float(W_val.imag)
+            }
         }
     except Exception as exc:
         return {
             "status": "error",
-            "error": str(exc)
+            "error": str(exc),
+            "seed_transfer_mode": seed_transfer_mode,
+            "z_rule": z_rule,
+            "q_dependent_seed": q_dependent_seed,
+            "dynamics_q": q_dynamics,
+            "W_mode_used": W_mode_used
         }
 
 
@@ -268,11 +356,19 @@ def caputo_abm_integrate(
     return traj, "ok" if not diverged else "diverged"
 
 
-def run_case_reproduction(case_path: str | Path, output_dir: str | Path) -> dict:
+def run_case_reproduction(
+    case_path: str | Path,
+    output_dir: str | Path,
+    run_dynamics: bool | None = None
+) -> dict:
     """Run reproduction steps for a single case YAML file."""
     import yaml
     case_path = Path(case_path)
     output_dir = Path(output_dir)
+
+    # Get repo root dynamically to resolve reference JSON
+    here = Path(__file__).resolve().parent
+    repo_root = here.parents[1]
 
     with open(case_path, "r", encoding="utf-8") as f:
         case_config = yaml.safe_load(f)
@@ -291,7 +387,35 @@ def run_case_reproduction(case_path: str | Path, output_dir: str | Path) -> dict
     h = float(dynamics_cfg.get("h", 0.01))
     t_final = float(dynamics_cfg.get("t_final", 100.0))
 
-    expected = case_config.get("expected", {})
+    # Read run_dynamics from YAML if not specified explicitly as argument
+    if run_dynamics is None:
+        run_dynamics = case_config.get("run_dynamics", False)
+
+    # Load reference JSON file if specified and merge it with expected
+    expected_cfg = case_config.get("expected", {})
+    ref_file = case_config.get("reference_data_file")
+    if ref_file:
+        ref_path = repo_root / ref_file
+        if ref_path.exists():
+            with open(ref_path, "r", encoding="utf-8") as rf:
+                ref_data = json.load(rf)
+            
+            # YAML expected overrides reference JSON
+            base_expected = {}
+            for k, v in ref_data.items():
+                if k not in ["case_id", "paper"]:
+                    base_expected[k] = v
+            
+            for k, v in expected_cfg.items():
+                if v is not None:
+                    if isinstance(v, dict) and isinstance(base_expected.get(k), dict):
+                        base_expected[k] = {**base_expected[k], **v}
+                    else:
+                        base_expected[k] = v
+            expected_cfg = base_expected
+
+    case_config["expected"] = expected_cfg
+    expected = expected_cfg
     params_dict = expected.get("parameters", {})
 
     # Create target directories
@@ -312,7 +436,9 @@ def run_case_reproduction(case_path: str | Path, output_dir: str | Path) -> dict
             formula_ok = False
 
         W_frac_pub = W_fractional_spectral(test_omega, dynamics_q, P, b, r)
-        W_frac_exact = r @ np.linalg.solve(((1j * test_omega) ** dynamics_q) * np.eye(len(P)) - P, b)
+        W_frac_exact = r @ np.linalg.solve(
+            ((test_omega ** dynamics_q) * np.exp(1j * dynamics_q * np.pi / 2.0)) * np.eye(len(P)) - P, b
+        )
         if abs(W_frac_pub - W_frac_exact) > 1e-12:
             formula_ok = False
 
@@ -328,66 +454,72 @@ def run_case_reproduction(case_path: str | Path, output_dir: str | Path) -> dict
     with open(case_output_dir / "seed_reproduction.json", "w", encoding="utf-8") as f:
         json.dump(seed_rep_out, f, indent=2)
 
-    # 3. Simulate Dynamics
+    # 3. Simulate Dynamics (or skip)
     trajectories_info = {}
     trajectory_reproduced = True
     ic_reproduced = False
 
-    # Determine initial conditions to test
-    ic_from_paper = expected.get("initial_conditions_from_paper")
-    ic_list = {}
-    if ic_from_paper is not None:
-        ic_reproduced = True
-        if isinstance(ic_from_paper, dict):
-            for name, ic in ic_from_paper.items():
-                ic_list[name] = ic
-        else:
-            ic_list["paper_ic"] = ic_from_paper
-    else:
-        # Fall back to computed seed
-        if computed_seed.get("status") == "ok":
-            ic_list["seed_plus"] = computed_seed["seed_plus"]
-            ic_list["seed_minus"] = computed_seed["seed_minus"]
-
-    # Define RHS
-    def rhs_func(x):
-        return sys.rhs(x, sys.parameters)
-
-    def rhs_t_y(t, y):
-        return sys.rhs(y, sys.parameters)
-
-    # Run integration for each initial condition
-    for ic_name, x0 in ic_list.items():
-        if derivative == "integer":
-            traj, status = efork_q1_integrate(rhs_func, np.asarray(x0), t_final=t_final, h=h)
-        else:
-            # Caputo
-            if integrator == "ABM":
-                traj, status = caputo_abm_integrate(rhs_func, x0, q=dynamics_q, h=h, t_final=t_final)
+    if run_dynamics:
+        # Determine initial conditions to test
+        ic_from_paper = expected.get("initial_conditions_from_paper")
+        ic_list = {}
+        if ic_from_paper is not None:
+            ic_reproduced = True
+            if isinstance(ic_from_paper, dict):
+                for name, ic in ic_from_paper.items():
+                    ic_list[name] = ic
             else:
-                # EFORK
-                times, states = efork3_caputo_integrate(rhs_t_y, np.asarray(x0), alpha=dynamics_q, h=h, t_final=t_final)
-                traj = np.column_stack((times, states))
-                # Check for divergence
-                last_norm = np.linalg.norm(states[-1])
-                status = "ok" if (last_norm < 120.0 and np.all(np.isfinite(states))) else "diverged"
+                ic_list["paper_ic"] = ic_from_paper
+        else:
+            # Fall back to computed seed
+            if computed_seed.get("status") == "ok":
+                ic_list["seed_plus"] = computed_seed["seed_plus"]
+                ic_list["seed_minus"] = computed_seed["seed_minus"]
 
-        trajectories_info[ic_name] = {
-            "initial_condition": x0,
-            "status": status,
-            "final_state": traj[-1, 1:].tolist() if len(traj) > 0 else None,
-            "max_norm": float(np.max(np.linalg.norm(traj[:, 1:], axis=1))) if len(traj) > 0 else 0.0
+        # Define RHS
+        def rhs_func(x):
+            return sys.rhs(x, sys.parameters)
+
+        def rhs_t_y(t, y):
+            return sys.rhs(y, sys.parameters)
+
+        # Run integration for each initial condition
+        for ic_name, x0 in ic_list.items():
+            if derivative == "integer":
+                traj, status = efork_q1_integrate(rhs_func, np.asarray(x0), t_final=t_final, h=h)
+            else:
+                # Caputo
+                if integrator == "ABM":
+                    traj, status = caputo_abm_integrate(rhs_func, x0, q=dynamics_q, h=h, t_final=t_final)
+                else:
+                    # EFORK
+                    times, states = efork3_caputo_integrate(rhs_t_y, np.asarray(x0), alpha=dynamics_q, h=h, t_final=t_final)
+                    traj = np.column_stack((times, states))
+                    last_norm = np.linalg.norm(states[-1])
+                    status = "ok" if (last_norm < 120.0 and np.all(np.isfinite(states))) else "diverged"
+
+            trajectories_info[ic_name] = {
+                "initial_condition": x0,
+                "status": status,
+                "final_state": traj[-1, 1:].tolist() if len(traj) > 0 else None,
+                "max_norm": float(np.max(np.linalg.norm(traj[:, 1:], axis=1))) if len(traj) > 0 else 0.0
+            }
+            if status != "ok":
+                trajectory_reproduced = False
+
+        dynamics_rep_out = {
+            "derivative": derivative,
+            "q": dynamics_q,
+            "integrator": integrator,
+            "trajectories": trajectories_info
         }
-        if status != "ok":
-            trajectory_reproduced = False
+    else:
+        trajectory_reproduced = False
+        dynamics_rep_out = {
+            "status": "skipped",
+            "reason": "run_dynamics=false"
+        }
 
-    # Save dynamics_reproduction.json
-    dynamics_rep_out = {
-        "derivative": derivative,
-        "q": dynamics_q,
-        "integrator": integrator,
-        "trajectories": trajectories_info
-    }
     with open(case_output_dir / "dynamics_reproduction.json", "w", encoding="utf-8") as f:
         json.dump(dynamics_rep_out, f, indent=2)
 
@@ -406,23 +538,40 @@ def run_case_reproduction(case_path: str | Path, output_dir: str | Path) -> dict
     if formula_ok:
         statuses.append("paper_formula_reproduced")
 
-    if seed_comparison.get("status") == "paper_seed_reproduced":
+    # Evaluate seed reproduction
+    seed_status = seed_comparison.get("status")
+    if seed_status == "paper_seed_reproduced":
         statuses.append("paper_seed_reproduced")
+    elif seed_status == "paper_data_missing":
+        statuses.append("paper_data_missing")
+        statuses.append("paper_partially_reproduced_missing_seed_data")
 
-    if ic_reproduced:
+    # Evaluate initial condition and trajectory
+    ic_from_paper = expected.get("initial_conditions_from_paper")
+    if ic_from_paper is not None:
         statuses.append("paper_initial_condition_reproduced")
+    else:
+        statuses.append("paper_partially_reproduced_missing_ic_data")
 
-    if len(trajectories_info) > 0 and trajectory_reproduced:
+    if run_dynamics and len(trajectories_info) > 0 and trajectory_reproduced:
         statuses.append("paper_trajectory_reproduced")
 
-    # Overall statuses
-    if seed_comparison.get("status") == "paper_data_missing":
-        statuses.append("paper_data_missing")
+    # General reproduction categories
+    if "paper_data_missing" in statuses:
         statuses.append("paper_partially_reproduced")
+    elif not run_dynamics:
+        # If dynamics skipped and not fully validated
+        statuses.append("paper_partially_reproduced")
+        if all(s in statuses for s in ["paper_formula_reproduced", "paper_seed_reproduced"]):
+            # No dynamic verification, but formula + seed match
+            pass
     elif all(s in statuses for s in ["paper_formula_reproduced", "paper_seed_reproduced", "paper_initial_condition_reproduced", "paper_trajectory_reproduced"]):
         statuses.append("paper_fully_reproduced")
     else:
         statuses.append("paper_partially_reproduced")
+
+    if len(statuses) == 1 and "paper_formula_reproduced" in statuses:
+        statuses.append("paper_formula_reproduced_only")
 
     # Save reproduction_summary.json (strictly schema compliant)
     summary_out = {
@@ -433,7 +582,8 @@ def run_case_reproduction(case_path: str | Path, output_dir: str | Path) -> dict
         "dynamics_q": dynamics_q,
         "statuses": statuses,
         "missing_data": missing_data_list,
-        "no_hidden_verified_claim": True
+        "no_hidden_verified_claim": True,
+        "hiddenness_certified_by_this_pipeline": False
     }
     with open(case_output_dir / "reproduction_summary.json", "w", encoding="utf-8") as f:
         json.dump(summary_out, f, indent=2)
@@ -441,17 +591,19 @@ def run_case_reproduction(case_path: str | Path, output_dir: str | Path) -> dict
     return summary_out
 
 
-def run_all_published_cases(output_dir: str | Path = "validation/outputs/published_cases") -> dict:
+def run_all_published_cases(
+    output_dir: str | Path = "validation/outputs/published_cases",
+    run_dynamics: bool = False
+) -> dict:
     """Run reproduction for all registered cases."""
     here = Path(__file__).resolve().parent
     repo_root = here.parents[1]
     
-    # Paths relative to repo root or absolute
     cases_dir = repo_root / "validation" / "published_cases"
     out_dir = repo_root / Path(output_dir)
     
     results = {}
     for case_file in sorted(cases_dir.glob("*.yaml")):
-        summary = run_case_reproduction(case_file, out_dir)
+        summary = run_case_reproduction(case_file, out_dir, run_dynamics=run_dynamics)
         results[summary["case_id"]] = summary
     return results

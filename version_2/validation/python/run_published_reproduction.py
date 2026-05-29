@@ -38,6 +38,11 @@ def main() -> int:
         default="validation/outputs/published_cases",
         help="Directory to save the output reports.",
     )
+    parser.add_argument(
+        "--run-dynamics",
+        action="store_true",
+        help="Run dynamic simulations (Caputo/integer trajectories). Skipping them is default.",
+    )
 
     args = parser.parse_args()
     
@@ -47,7 +52,7 @@ def main() -> int:
     try:
         if args.all:
             print("Running reproduction for all registered cases...")
-            results = run_all_published_cases(out_dir)
+            results = run_all_published_cases(out_dir, run_dynamics=args.run_dynamics)
             for case_id, res in results.items():
                 print(f"  - Case {case_id}: {res['statuses']}")
             print("All cases executed successfully.")
@@ -61,7 +66,7 @@ def main() -> int:
                 return 1
             
             print(f"Running reproduction for case: {case_path.name}...")
-            res = run_case_reproduction(case_path, out_dir)
+            res = run_case_reproduction(case_path, out_dir, run_dynamics=args.run_dynamics)
             print(f"Case {res['case_id']} finished with statuses: {res['statuses']}")
             
         return 0

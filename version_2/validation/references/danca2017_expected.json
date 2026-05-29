@@ -1,5 +1,16 @@
 {
   "case_id": "danca2017_chua_fractional_saturation",
+  "paper": {
+    "authors": [
+      "Marius-F. Danca"
+    ],
+    "year": 2017,
+    "title": "Hidden chaotic attractors in fractional-order systems",
+    "journal": "Nonlinear Dynamics",
+    "volume": "89",
+    "pages": "577-586",
+    "doi": "10.1007/s11071-017-3472-7"
+  },
   "parameters": {
     "alpha": 8.4562,
     "beta": 12.0732,

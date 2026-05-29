@@ -17,6 +17,7 @@ from validation.python.published_reproduction import (
     W_fractional_spectral,
     compute_seed_for_reproduction,
     run_all_published_cases,
+    run_case_reproduction,
 )
 
 CASES_DIR = REPO_ROOT / "validation" / "published_cases"
@@ -35,6 +36,27 @@ def test_published_cases_exist() -> None:
         assert path.exists(), f"Missing expected case config file: {filename}"
 
 
+def test_bibliographic_metadata_correct() -> None:
+    """Verificar que la metadata bibliográfica en los YAML es correcta y precisa."""
+    # 1. Danca 2017
+    with open(CASES_DIR / "danca2017_chua_fractional_saturation.yaml", "r", encoding="utf-8") as f:
+        danca = yaml.safe_load(f)
+    assert danca["paper"]["doi_or_url"] == "10.1007/s11071-017-3472-7"
+    assert danca["paper"]["journal"] == "Nonlinear Dynamics"
+    assert "Marius-F. Danca" in danca["paper"]["authors"]
+
+    # 2. Wu 2023
+    with open(CASES_DIR / "wu2023_chua_fractional_arctan.yaml", "r", encoding="utf-8") as f:
+        wu = yaml.safe_load(f)
+    assert wu["paper"]["doi_or_url"] == "10.1016/j.rinp.2023.106866"
+    assert wu["paper"]["journal"] == "Results in Physics"
+    assert wu["paper"]["title"] == "Hidden attractors in a new fractional-order Chua system with arctan nonlinearity and its DSP implementation"
+    
+    expected_authors = ["Xianming Wu", "Longxiang Fu", "Shaobo He", "Zhao Yao", "Huihai Wang", "Jiayu Han"]
+    for author in expected_authors:
+        assert author in wu["paper"]["authors"]
+
+
 def test_published_fractional_cases_use_integer_seed_transfer() -> None:
     """Para Danca 2017 y Wu 2023:
     assert seed_transfer_mode == "published_integer_laplace"
@@ -48,6 +70,28 @@ def test_published_fractional_cases_use_integer_seed_transfer() -> None:
         seed_rep = cfg.get("seed_reproduction", {})
         assert seed_rep.get("seed_transfer_mode") == "published_integer_laplace"
         assert seed_rep.get("q_dependent_seed") is False
+
+
+def test_published_integer_seed_uses_closed_form_not_modal(monkeypatch) -> None:
+    """Parchear np.linalg.eig y np.linalg.eigh para que fallen, y verificar que
+    compute_seed_for_reproduction con published_integer_laplace funciona (usa fórmula cerrada).
+    """
+    def broken_eig(*args, **kwargs):
+        raise RuntimeError("np.linalg.eig was called but should be avoided in closed-form mode!")
+
+    # Patch both eig and eigh
+    monkeypatch.setattr(np.linalg, "eig", broken_eig)
+    monkeypatch.setattr(np.linalg, "eigh", broken_eig)
+
+    path = CASES_DIR / "kuznetsov2017_chua_integer.yaml"
+    with open(path, "r", encoding="utf-8") as f:
+        cfg = yaml.safe_load(f)
+
+    # Must run successfully without calling eigenvalue solvers!
+    seed_res = compute_seed_for_reproduction(cfg)
+    assert seed_res["status"] == "ok"
+    assert "seed_plus" in seed_res
+    assert len(seed_res["seed_plus"]) == 3
 
 
 def test_published_seed_independent_of_q() -> None:
@@ -78,7 +122,7 @@ def test_published_seed_independent_of_q() -> None:
     assert np.allclose(seed_q1["seed_plus"], seed_q_frac["seed_plus"], atol=1e-12)
 
 
-def test_fractional_extension_seed_is_q_dependent() -> None:
+def test_fractional_extension_seed_is_q_dependent_or_transfer_differs() -> None:
     """Usando seed_transfer_mode = "fractional_spectral":
     - calcular con q = 1;
     - calcular con q = 0.9998;
@@ -141,14 +185,17 @@ def test_W_fractional_spectral_formula() -> None:
     q = 0.9998
 
     W_calc = W_fractional_spectral(omega, q, P, b, r)
-    W_expected = r @ np.linalg.solve(((1j * omega) ** q) * np.eye(len(P)) - P, b)
+    # Check branch formulation
+    W_expected = r @ np.linalg.solve(((omega ** q) * np.exp(1j * q * np.pi / 2.0)) * np.eye(len(P)) - P, b)
     assert np.isclose(W_calc, W_expected, atol=1e-12)
 
 
-def test_no_hidden_verified_claim_in_published_reproduction() -> None:
-    """Los outputs de esta fase no deben contener hidden_verified."""
-    # Ensure they are generated
-    run_all_published_cases(OUTPUTS_DIR)
+def test_outputs_do_not_claim_hidden_verified() -> None:
+    """Los outputs de esta fase no deben contener la clave hidden_verified.
+    Se permite la clave/texto 'hiddenness_claim'.
+    """
+    # Ensure they are generated without dynamics by default
+    run_all_published_cases(OUTPUTS_DIR, run_dynamics=False)
 
     # Scan the directory and verify no generated JSON contains "hidden_verified" as a key
     for p in OUTPUTS_DIR.glob("**/*.json"):
@@ -157,7 +204,7 @@ def test_no_hidden_verified_claim_in_published_reproduction() -> None:
         
         def check_keys(d):
             if isinstance(d, dict):
-                assert "hidden_verified" not in d, f"File {p.name} contains key 'hidden_verified'"
+                assert "hidden_verified" not in d, f"File {p.name} contains forbidden key 'hidden_verified'"
                 for v in d.values():
                     check_keys(v)
             elif isinstance(d, list):
@@ -168,11 +215,8 @@ def test_no_hidden_verified_claim_in_published_reproduction() -> None:
 
 
 def test_reproduction_outputs_schema() -> None:
-    """Verificar que reproduction_summary.json contiene:
-    case_id, reference, seed_transfer_mode, q_dependent_seed, dynamics_q, statuses, missing_data, no_hidden_verified_claim.
-    """
-    # Ensure they are generated
-    run_all_published_cases(OUTPUTS_DIR)
+    """Verificar que reproduction_summary.json contiene las claves requeridas y correctas."""
+    run_all_published_cases(OUTPUTS_DIR, run_dynamics=False)
 
     expected_keys = {
         "case_id",
@@ -183,6 +227,7 @@ def test_reproduction_outputs_schema() -> None:
         "statuses",
         "missing_data",
         "no_hidden_verified_claim",
+        "hiddenness_certified_by_this_pipeline"
     }
 
     for p in OUTPUTS_DIR.glob("**/reproduction_summary.json"):
@@ -191,3 +236,30 @@ def test_reproduction_outputs_schema() -> None:
         
         assert expected_keys.issubset(summary.keys()), f"Missing keys in {p}: {expected_keys - summary.keys()}"
         assert summary["no_hidden_verified_claim"] is True
+        assert summary["hiddenness_certified_by_this_pipeline"] is False
+        assert summary["q_dependent_seed"] is False  # For all initial cases in Laplace transfer mode
+
+
+def test_dynamics_skipped_by_default() -> None:
+    """Verificar que sin run_dynamics, dynamics_reproduction.json contiene status: 'skipped'
+    y no aparece la etiqueta 'paper_trajectory_reproduced' en los statuses del summary.
+    """
+    # Clear outputs first
+    for case_id in ["kuznetsov2017_chua_integer", "danca2017_chua_fractional_saturation", "wu2023_chua_fractional_arctan"]:
+        dyn_file = OUTPUTS_DIR / case_id / "dynamics_reproduction.json"
+        if dyn_file.exists():
+            dyn_file.unlink()
+
+    # Run with run_dynamics=False
+    results = run_all_published_cases(OUTPUTS_DIR, run_dynamics=False)
+
+    for case_id, res in results.items():
+        assert "paper_trajectory_reproduced" not in res["statuses"]
+        
+        # Read dynamics file
+        dyn_file = OUTPUTS_DIR / case_id / "dynamics_reproduction.json"
+        assert dyn_file.exists()
+        with open(dyn_file, "r", encoding="utf-8") as f:
+            dyn_data = json.load(f)
+        assert dyn_data["status"] == "skipped"
+        assert dyn_data["reason"] == "run_dynamics=false"

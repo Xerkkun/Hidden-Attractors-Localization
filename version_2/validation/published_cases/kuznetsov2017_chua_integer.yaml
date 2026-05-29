@@ -1,16 +1,19 @@
 case_id: "kuznetsov2017_chua_integer"
 reference: "Kuznetsov et al. 2017"
 system_id: "chua_integer_saturation"
+reference_data_file: "validation/references/kuznetsov2017_expected.json"
+run_dynamics: false
 paper:
   authors:
-    - "N.V. Kuznetsov"
-    - "O.A. Kuznetsova"
-    - "G.A. Leonov"
-    - "T.N. Mokaev"
-    - "N.V. Stankevich"
+    - "N. V. Kuznetsov"
+    - "O. A. Kuznetsova"
+    - "G. A. Leonov"
+    - "T. N. Mokaev"
+    - "N. V. Stankevich"
   year: 2017
-  title: "Hidden Attractors Localization in Chua Circuit via the Describing Function Method"
+  title: "Localization of hidden Chua attractors by the describing function method"
   doi_or_url: "10.1016/j.ifacol.2017.08.1633"
+  arxiv: "arXiv:1705.02311"
 seed_reproduction:
   seed_transfer_mode: "published_integer_laplace"
   z_rule: "z = j*omega"
