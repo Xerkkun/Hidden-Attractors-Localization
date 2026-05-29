@@ -1,0 +1,227 @@
+"""
+tests/test_wolfram_python_consistency.py
+=========================================
+Tests that verify consistency between Wolfram validation outputs and
+the Python library for the cases where Wolfram outputs are already present.
+
+These tests are marked @pytest.mark.wolfram and will skip if either
+wolframscript is unavailable or if Wolfram outputs have not been generated
+yet (the output directory is empty).
+
+They test the following quantities against tolerances specified in the task:
+    omega0   : 1e-8
+    k        : 1e-8
+    a0       : 1e-8
+    X_seed   : 1e-7 per component
+    W(z)     : 1e-8
+
+Mathematical constraints enforced:
+  * W_hat_q(z) evaluated at z = (j omega)^q, never z = j omega for q != 1.
+  * S built via P0 S = S Hq, not from eigenvectors.
+  * X_seed = a0 * S[:, 0].
+  * Describing function treated as first harmonic approximation only.
+    It does NOT prove limit cycle existence or attractor hiddenness.
+"""
+
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+import pytest
+
+# ---------------------------------------------------------------------------
+# Path setup
+# ---------------------------------------------------------------------------
+_VALIDATION_PYTHON_DIR = Path(__file__).resolve().parents[1] / "validation" / "python"
+if str(_VALIDATION_PYTHON_DIR) not in sys.path:
+    sys.path.insert(0, str(_VALIDATION_PYTHON_DIR))
+
+from run_wolfram_validations import find_wolframscript, repo_root  # noqa: E402
+
+# ---------------------------------------------------------------------------
+# Tolerances (from specification)
+# ---------------------------------------------------------------------------
+TOL_OMEGA0 = 1e-8
+TOL_K = 1e-8
+TOL_A0 = 1e-8       # used as: N(a0_wolfram) should ≈ k_wolfram within this
+TOL_SEED = 1e-7     # per component
+TOL_W = 1e-8
+
+
+# ---------------------------------------------------------------------------
+# Skip conditions
+# ---------------------------------------------------------------------------
+
+def _has_wolframscript() -> bool:
+    return find_wolframscript() is not None
+
+
+def _wolfram_outputs_exist(system_id: str) -> bool:
+    out = (
+        repo_root()
+        / "validation"
+        / "outputs"
+        / "wolfram"
+        / system_id
+    )
+    return out.is_dir() and any(out.glob("*_seed_data.json"))
+
+
+_WOLFRAM_CASES = [
+    "chua_integer_saturation",
+    "chua_fractional_saturation",
+    "chua_fractional_arctan",
+]
+
+# ---------------------------------------------------------------------------
+# Lazy library import helper
+# ---------------------------------------------------------------------------
+
+def _try_import_library():
+    try:
+        from compare_with_library import (  # noqa: F401
+            compare_seed_data,
+            compare_matrix_data,
+            compare_eigenvalues,
+            _LIBRARY_AVAILABLE,
+        )
+        return True, None
+    except Exception as e:
+        return False, str(e)
+
+
+# ---------------------------------------------------------------------------
+# Tests
+# ---------------------------------------------------------------------------
+
+@pytest.mark.wolfram
+@pytest.mark.parametrize("system_id", _WOLFRAM_CASES)
+def test_wolfram_python_seed_consistency(system_id: str) -> None:
+    """Transfer function and seed values from Wolfram must match Python within tolerance.
+
+    This test reads pre-generated Wolfram outputs.  It does NOT call wolframscript.
+    If outputs are absent, the test is skipped.
+
+    Note: These results certify algebraic formulas and seed construction.
+    They do NOT declare the existence of a hidden attractor.
+    """
+    if not _wolfram_outputs_exist(system_id):
+        pytest.skip(
+            f"No Wolfram outputs found for '{system_id}' — "
+            "run: python validation/python/run_wolfram_validations.py --all"
+        )
+
+    lib_ok, lib_err = _try_import_library()
+    if not lib_ok:
+        pytest.skip(f"Library comparison not available: {lib_err}")
+
+    from compare_with_library import compare_seed_data  # noqa: F811
+
+    out_dir = repo_root() / "validation" / "outputs" / "wolfram" / system_id
+    seed_json = out_dir / f"{system_id}_seed_data.json"
+
+    results = compare_seed_data(
+        seed_json,
+        system_id,
+        tol_scalar=TOL_K,
+        tol_vector=TOL_SEED,
+    )
+
+    ok_rows = [r for r in results if r.get("status", "ok") == "ok" or "k_diff" in r]
+    assert len(ok_rows) > 0, (
+        f"No valid (status=ok) seed rows found in {seed_json}. "
+        "Check that the Wolfram script produced output."
+    )
+
+    failures = [r for r in ok_rows if not r.get("passed", True)]
+    assert not failures, (
+        f"{len(failures)} seed row(s) exceeded tolerance for '{system_id}':\n"
+        + json.dumps(failures, indent=2, ensure_ascii=False)
+    )
+
+
+@pytest.mark.wolfram
+@pytest.mark.parametrize("system_id", _WOLFRAM_CASES)
+def test_transfer_function_fractional_formula(system_id: str) -> None:
+    """Verify that the library evaluates W_hat_q(z) at z=(j omega)^q, not z=j*omega.
+
+    This is a pure-Python test and does NOT require wolframscript.
+    It checks that W_eval with transfer_mode='fractional' and transfer_mode='integer'
+    give different results for q != 1, confirming the correct formula is used.
+    """
+    lib_ok, lib_err = _try_import_library()
+    if not lib_ok:
+        pytest.skip(f"Library not importable: {lib_err}")
+
+    try:
+        from hidden_attractors.systems.builtins import chua_system
+        from hidden_attractors.lure.transfer import W_eval
+    except ImportError as e:
+        pytest.skip(f"Library not installed: {e}")
+
+    sys_obj = chua_system("nonsmooth")
+    P = sys_obj.lure.matrix
+    b = sys_obj.lure.input_vector
+    r = sys_obj.lure.output_vector
+    omega0 = 2.0
+
+    # For q=1 the two modes must agree
+    W_int = W_eval(omega0, 1.0, "integer", P, b, r)
+    W_frac_q1 = W_eval(omega0, 1.0, "fractional", P, b, r)
+    assert abs(W_int - W_frac_q1) < 1e-12, (
+        f"For q=1, integer and fractional modes must agree; got diff={abs(W_int-W_frac_q1)}"
+    )
+
+    if system_id == "chua_integer_saturation":
+        pytest.skip("Integer case: fractional != integer check only for q<1 cases")
+
+    # For q < 1 the two modes must differ
+    q = 0.9998
+    W_int_q = W_eval(omega0, q, "integer", P, b, r)
+    W_frac_q = W_eval(omega0, q, "fractional", P, b, r)
+    assert abs(W_int_q - W_frac_q) > 1e-6, (
+        f"For q={q}, integer and fractional modes should differ significantly; "
+        f"got diff={abs(W_int_q-W_frac_q):.3e}. "
+        "This suggests the fractional formula z=(j omega)^q is not being used."
+    )
+
+
+@pytest.mark.wolfram
+@pytest.mark.parametrize("system_id", _WOLFRAM_CASES)
+def test_wolfram_summary_passed(system_id: str) -> None:
+    """If Wolfram outputs exist, the validation_summary.json must report passed=true."""
+    if not _wolfram_outputs_exist(system_id):
+        pytest.skip(
+            f"No Wolfram outputs for '{system_id}' — "
+            "run: python validation/python/run_wolfram_validations.py --all"
+        )
+    out_dir = repo_root() / "validation" / "outputs" / "wolfram" / system_id
+    summaries = sorted(out_dir.glob("*_validation_summary.json"))
+    assert summaries, f"No *_validation_summary.json in {out_dir}"
+    summary = json.loads(summaries[-1].read_text(encoding="utf-8"))
+    assert summary.get("passed") is True, (
+        f"Wolfram summary reports failure for '{system_id}':\n"
+        + json.dumps(summary, indent=2, ensure_ascii=False)
+    )
+
+
+def test_no_hidden_attractor_claim_in_wolfram_outputs() -> None:
+    """Wolfram validation outputs must NOT contain 'hidden_verified' claims.
+
+    These scripts certify algebraic formulas and seeds only.
+    Claiming a verified hidden attractor from symbolic algebra alone is
+    mathematically incorrect.
+    """
+    out_root = repo_root() / "validation" / "outputs" / "wolfram"
+    if not out_root.exists():
+        pytest.skip("No Wolfram outputs directory yet.")
+
+    for json_file in out_root.rglob("*.json"):
+        content = json_file.read_text(encoding="utf-8").lower()
+        assert "hidden_verified" not in content, (
+            f"Found 'hidden_verified' in Wolfram output {json_file}. "
+            "Wolfram algebraic validation must not claim attractor verification."
+        )

@@ -1,0 +1,38 @@
+{
+	"system_id":"chua_fractional_arctan",
+	"output_dir":"C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\validation_outputs\\chua_fractional_arctan",
+	"tests":[
+		{
+			"name":"lure_form",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"transfer_identity",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"p0_determinant_identity",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"equilibrium_residuals_numeric",
+			"passed":true,
+			"details":{
+				"max_rhs_residual_norm":0
+			}
+		},
+		{
+			"name":"seed_similarity_residuals_numeric",
+			"passed":true,
+			"details":{}
+		}
+	],
+	"passed":false,
+	"files":{
+		"symbolic":"chua_fractional_arctan_symbolic_summary.json",
+		"seeds":"chua_fractional_arctan_seed_data.json"
+	}
+}

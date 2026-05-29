@@ -99,6 +99,9 @@ addopts = [
   "-p",
   "no:cacheprovider",
 ]
+markers = [
+  "wolfram: Wolfram Language algebraic/numerical validation (requires wolframscript; skipped if absent)",
+]
 
 [tool.pytest-benchmark]
 disable_gc = true
