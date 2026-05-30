@@ -1,0 +1,104 @@
+# Validation cases for fractional_variational_abm_qr
+#
+# F2 — Lyapunov method validation
+# ================================
+# Method: fractional_variational_abm_qr
+# Phase:  F2 — implemented, NOT yet validated against published benchmarks.
+#
+# Methodological declarations
+# ----------------------------
+# chaos_certified_by_this_pipeline: false
+# hiddenness_certified_by_this_pipeline: false
+# validated_against_published_benchmarks: false
+# validated_against_synthetic_tests: true  (populated by runner)
+#
+# References
+# ----------
+# Danca & Kuznetsov 2018 — Int. J. Bifurcation Chaos 28(5).
+
+method_id: fractional_variational_abm_qr
+derivative_model: caputo
+history_aware_qr: true
+finite_time_local: true
+
+certifications:
+  chaos_certified_by_this_pipeline: false
+  hiddenness_certified_by_this_pipeline: false
+  validated_against_published_benchmarks: false
+
+cases:
+
+  - name: zero_rhs
+    description: >
+      D^q X = 0 for all t, J = 0.
+      Variational equation: D^q Phi = 0, so Phi remains approximately I.
+      Expected: exponents near 0 (finite-time local).
+    system:
+      type: linear_diagonal
+      A: [0.0, 0.0]
+    q: 0.9
+    h: 0.05
+    t_final: 2.0
+    reorthonormalization_time: 0.25
+    x0: [0.5, 0.5]
+    tolerance:
+      lambda_max_abs: 1e-3
+    status: synthetic_only
+    warnings:
+      - finite_time_local_not_asymptotic
+
+  - name: linear_stable_diagonal
+    description: >
+      D^q X = A X, A = diag(-1, -2), q = 0.9.
+      Criterion: lambda_max < 0.01 (non-positive-large).
+      Note: fractional finite-time exponents differ from integer eigenvalues.
+      NOT expected to equal -1, -2 exactly.
+    system:
+      type: linear_diagonal
+      A: [-1.0, -2.0]
+    q: 0.9
+    h: 0.01
+    t_final: 10.0
+    reorthonormalize_every: 10
+    x0: [1.0, 1.0]
+    tolerance:
+      lambda_max: 0.01
+    status: synthetic_only
+    warnings:
+      - finite_time_local_not_asymptotic
+      - fractional_exponents_differ_from_integer_eigenvalues
+
+  - name: chua_fractional_arctan_short
+    description: >
+      Short run of Chua system with arctan nonlinearity (smooth),
+      q = 0.95, h = 0.001, t_final = 20.0.
+      No published benchmark expected at this stage.
+      Purpose: smoke test for non-trivial chaotic-candidate system.
+    system:
+      type: chua_arctan
+    q: 0.95
+    h: 0.001
+    t_final: 20.0
+    reorthonormalize_every: 10
+    status: pending_benchmark
+    warnings:
+      - no_published_benchmark_for_comparison
+      - finite_time_local_not_asymptotic
+
+  - name: chua_fractional_saturation_short
+    description: >
+      Chua system with saturation nonlinearity (non-smooth).
+      Jacobian undefined at switching surfaces.
+      Purpose: non-smooth smoke test.
+    system:
+      type: chua_saturation
+    q: 0.95
+    h: 0.001
+    t_final: 20.0
+    reorthonormalize_every: 10
+    status: pending_benchmark
+    warnings:
+      - piecewise_jacobian_used
+      - derivative_undefined_at_switching_surfaces
+      - not_validated_for_nonsmooth_systems
+      - finite_time_local_not_asymptotic

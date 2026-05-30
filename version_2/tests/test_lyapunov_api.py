@@ -222,7 +222,7 @@ class TestFractionalRegisteredNotImplemented:
 
     @pytest.mark.parametrize(
         "frac_method",
-        ["fractional_variational_abm_qr", "fractional_cloned_dynamics_abm"],
+        ["fractional_cloned_dynamics_abm"],
     )
     def test_raises_not_implemented_error(self, frac_method: str) -> None:
         with pytest.raises(NotImplementedError, match="not yet implemented"):
@@ -241,7 +241,7 @@ class TestFractionalRegisteredNotImplemented:
                 rhs=_rhs,
                 x0=np.array([1.0, 1.0]),
                 q=0.99,
-                method="fractional_variational_abm_qr",
+                method="fractional_cloned_dynamics_abm",
                 h=0.01,
                 t_final=5.0,
             )
@@ -490,9 +490,9 @@ class TestValidateRequestEdgeCases:
 
     def test_fractional_method_not_implemented(self) -> None:
         request = _make_request(
-            method="fractional_variational_abm_qr",
+            method="fractional_cloned_dynamics_abm",
             q=0.99,
-            memory_mode="not_applicable",
+            memory_mode="full",
         )
         ok, status, _ = validate_lyapunov_method_request(request)
         assert ok is False

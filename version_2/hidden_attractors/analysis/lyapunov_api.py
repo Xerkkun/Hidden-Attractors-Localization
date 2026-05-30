@@ -1,36 +1,29 @@
-"""Common Lyapunov API — F1 dispatcher.
+"""Common Lyapunov API — F1/F2 dispatcher.
 
-F1 — Common Lyapunov API
-=========================
+F1/F2 — Common Lyapunov API
+============================
 This module provides a **method-agnostic interface** for computing Lyapunov
 exponent spectra.  Callers select a method by name; the dispatcher validates
 compatibility between method, fractional order *q*, and memory mode, then
 routes to the appropriate implementation.
 
-F1 scope
---------
-* Provides ``compute_lyapunov_spectrum`` as the single public entry point.
-* Validates method/q/memory-mode compatibility via
-  ``validate_lyapunov_method_request``.
-* Routes ``integer_qr_benettin`` to the frozen F0 implementation.
-* Raises ``NotImplementedError`` for registered-but-unimplemented fractional
-  methods so that callers get an informative error instead of silent wrong
-  results.
+F1 (frozen)
+-----------
+* Routes ``integer_qr_benettin`` → F0 implementation.
 
-F1 does NOT implement
----------------------
-* ``fractional_variational_abm_qr``     — registered, NOT implemented.
-* ``fractional_cloned_dynamics_abm``    — registered, NOT implemented.
-* 0–1 test, PSD/FFT, Poincaré sections, ``chaos_validation_summary``.
+F2 (implemented, not yet validated against published benchmarks)
+---------------------------------------------------------------
+* Routes ``fractional_variational_abm_qr`` → Caputo extended-variational ABM-QR.
+* ``memory_mode`` must be ``'full'`` or ``'window'`` (not ``'not_applicable'``).
+* ``q`` must be in (0, 1).
 
-F1 does NOT certify
--------------------
+F1/F2 does NOT certify
+-----------------------
 * chaos_certified_by_this_pipeline: false
 * hiddenness_certified_by_this_pipeline: false
 
 References
 ----------
-F1 inherits the references frozen in F0 (integer_qr_benettin):
 .. [Benettin1980] G. Benettin et al., Meccanica 15, 1980.
 .. [Wolf1985] A. Wolf et al., Physica D 16, 1985.
 .. [Danca2018] M.-F. Danca & N. Kuznetsov, Int. J. Bifurcation Chaos 28(5),
@@ -49,6 +42,7 @@ from .lyapunov import (
     integer_qr_benettin_lyapunov_exponents,
     integer_system_lyapunov_exponents,
 )
+from .lyapunov_fractional import fractional_variational_abm_qr as _frac_abm_qr
 from .lyapunov_methods import LYAPUNOV_METHODS, LyapunovMethodInfo
 
 # ---------------------------------------------------------------------------
@@ -236,6 +230,65 @@ def validate_lyapunov_method_request(
         elif request.jacobian is None:
             # system provided but may not have analytic jacobian — still ok
             pass
+
+    elif request.method == "fractional_variational_abm_qr":
+        # q must be strictly in (0, 1)
+        q_val = float(request.q)
+        if not (0.0 < q_val < 1.0):
+            return (
+                False,
+                "method_not_valid_for_integer_or_out_of_range_q",
+                (
+                    f"fractional_variational_abm_qr requires 0 < q < 1; "
+                    f"received q={request.q}. "
+                    "For q=1, use integer_qr_benettin.",
+                ),
+            )
+        # memory_mode must be 'full' or 'window'
+        if request.memory_mode not in ("full", "window"):
+            return (
+                False,
+                "memory_mode_must_be_full_or_window_for_fractional_method",
+                (
+                    f"fractional_variational_abm_qr requires memory_mode='full' or "
+                    f"'window'; received memory_mode='{request.memory_mode}'.",
+                ),
+            )
+        # memory_window required if memory_mode='window'
+        if request.memory_mode == "window" and (
+            request.memory_window is None or int(request.memory_window) < 1
+        ):
+            return (
+                False,
+                "invalid_parameter",
+                ("memory_window must be a positive int when memory_mode='window'.",),
+            )
+        # Check system.q consistency if system provided
+        if request.system is not None:
+            sys_q = None
+            for attr in ("q", "order", "fractional_order"):
+                try:
+                    v = getattr(request.system, attr, None)
+                    if v is not None:
+                        sys_q = float(v)
+                        break
+                except Exception:
+                    pass
+            if sys_q is not None and abs(sys_q - q_val) > 1e-9:
+                return (
+                    False,
+                    "request_q_does_not_match_system_q",
+                    (
+                        f"request.q={q_val} does not match system.q={sys_q}. "
+                        "Ensure the fractional order is consistent.",
+                    ),
+                )
+        # Jacobian advisory
+        if request.jacobian is None and request.system is None:
+            warnings.append("analytic_jacobian_missing_finite_difference_used")
+        elif request.jacobian is None and request.system is not None:
+            if not callable(getattr(request.system, "jacobian_matrix", None)):
+                warnings.append("analytic_jacobian_missing_finite_difference_used")
 
     # 3. Registered but not implemented
     elif not info.implemented:
@@ -479,11 +532,50 @@ def compute_lyapunov_spectrum(
             raise ValueError(
                 "compute_lyapunov_spectrum: either 'system' or 'rhs' must be provided."
             )
+
+    elif method == "fractional_variational_abm_qr":
+        # Resolve rhs / jacobian from system if needed
+        _rhs = rhs
+        _jac = jacobian
+        if system is not None:
+            if not callable(getattr(system, "evaluate", None)):
+                raise ValueError(
+                    "compute_lyapunov_spectrum: system must expose a callable evaluate(state)."
+                )
+            _rhs = lambda state: system.evaluate(state)
+            if callable(getattr(system, "jacobian_matrix", None)):
+                _jac = lambda state: system.jacobian_matrix(state)
+            else:
+                _jac = None
+        if _rhs is None:
+            raise ValueError(
+                "compute_lyapunov_spectrum: either 'system' or 'rhs' must be provided."
+            )
+        history_aware = extra.get("history_aware_qr", True)
+        qr_epsilon = extra.get("qr_epsilon", 1e-300)
+        result = _frac_abm_qr(
+            _rhs,
+            _jac,
+            request.x0,
+            q=float(q),
+            h=float(h),
+            t_final=float(t_final),
+            t_burn=float(t_burn),
+            reorthonormalization_time=reorthonormalization_time,
+            reorthonormalize_every=resolved_every,
+            memory_mode=memory_mode,
+            memory_window=memory_window,
+            jacobian_eps=float(jacobian_eps),
+            div_threshold=div_threshold,
+            history_aware_qr=bool(history_aware),
+            qr_epsilon=float(qr_epsilon),
+        )
+
     else:
         # Should not reach here (validate catches not-implemented),
         # but defensive fallback:
         raise NotImplementedError(
-            f"Method '{method}' routing is not implemented in F1."
+            f"Method '{method}' routing is not implemented in this version."
         )
 
     return LyapunovComputationSummary(

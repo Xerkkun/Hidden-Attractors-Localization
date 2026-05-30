@@ -26,6 +26,12 @@ from .lyapunov_api import (
     validate_lyapunov_method_request,
     compute_lyapunov_spectrum,
 )
+from .lyapunov_fractional import (
+    FractionalVariationalQRConfig,
+    fractional_variational_abm_qr,
+    pack_extended_state,
+    unpack_extended_state,
+)
 from .spectral import SpectrumResult, fft_spectrum, infer_step, psd_welch, trajectory_component_spectra
 from .trajectory import (
     RobustnessCase,
@@ -55,11 +61,16 @@ __all__ = [
     # Lyapunov — method registry (F0)
     "LyapunovMethodInfo",
     "LYAPUNOV_METHODS",
-    # Lyapunov — common API (F1)
+    # Lyapunov — common API (F1/F2)
     "LyapunovComputationRequest",
     "LyapunovComputationSummary",
     "validate_lyapunov_method_request",
     "compute_lyapunov_spectrum",
+    # Lyapunov — F2 fractional variational ABM-QR
+    "FractionalVariationalQRConfig",
+    "fractional_variational_abm_qr",
+    "pack_extended_state",
+    "unpack_extended_state",
     # Spectral
     "SpectrumResult",
     "fft_spectrum",

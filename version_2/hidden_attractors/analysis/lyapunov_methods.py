@@ -115,19 +115,30 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
         requires_jacobian=True,
         orthonormalization="qr",
         finite_time_local=True,
-        implemented=False,
+        implemented=True,
         validated=False,
         references=(
             "Danca & Kuznetsov 2018 — Matlab Code for Lyapunov Exponents"
-            " of Fractional-Order Systems (Int. J. Bifurcation Chaos 28(5))",
-            "Danca 2021 — Fractional-order systems: stability and Lyapunov"
-            " exponents (reference for future phase only).",
+            " of Fractional-Order Systems (Int. J. Bifurcation Chaos 28(5)):"
+            " primary reference for the extended original–variational Caputo"
+            " system with ABM predictor-corrector and QR reorthonormalisation.",
+            "Benettin et al. 1980 — Lyapunov Characteristic Exponents (Meccanica 15).",
+            "Wolf et al. 1985 — Determining Lyapunov Exponents from a Time Series"
+            " (Physica D 16).",
         ),
         warnings=(
-            "NOT implemented in F0.",
-            "Requires integrating the full original–variational extended"
-            " Caputo system with memory using an ABM predictor-corrector.",
-            "Do not use integer_qr_benettin as a substitute for this method.",
+            "F2 — implemented, NOT yet validated against published benchmarks.",
+            "validated_against_published_benchmarks: false.",
+            "Results are finite-time local Lyapunov exponent estimates, NOT asymptotic proofs.",
+            "Caputo memory: history-aware QR transforms the entire stored variational"
+            " history at each reorthonormalisation step (history_aware_qr=True).",
+            "If history_aware_qr=False (block-restart), method is NOT full-memory"
+            " Caputo-aware; label results accordingly.",
+            "Does not certify chaos; does not certify hiddenness of attractors.",
+            "chaos_certified_by_this_pipeline: false",
+            "hiddenness_certified_by_this_pipeline: false",
+            "Not validated for non-smooth systems (e.g., Chua saturation);"
+            " derivative undefined at switching surfaces.",
         ),
     ),
 

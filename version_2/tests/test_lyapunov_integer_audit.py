@@ -186,6 +186,24 @@ class TestIntegerQrBenettinRejectsFractionalQ:
                 q=0.9,
             )
 
+    def test_fractional_method_not_implemented(self) -> None:
+        """fractional_cloned_dynamics_abm is still unimplemented in F2."""
+        from hidden_attractors.analysis import LyapunovComputationRequest, validate_lyapunov_method_request
+        request = LyapunovComputationRequest(
+            system=None,
+            rhs=_stable_linear_rhs,
+            jacobian=None,
+            x0=np.array([1.0, 1.0]),
+            q=0.99,
+            method="fractional_cloned_dynamics_abm",
+            h=0.01,
+            t_final=5.0,
+            memory_mode="full",
+        )
+        ok, status, _ = validate_lyapunov_method_request(request)
+        assert ok is False
+        assert status == "method_not_implemented"
+
     def test_q_exactly_one_does_not_raise(self) -> None:
         result = integer_qr_benettin_lyapunov_exponents(
             _stable_linear_rhs,
@@ -313,13 +331,10 @@ class TestMethodRegistry:
         info = LYAPUNOV_METHODS["integer_qr_benettin"]
         assert "q=1" in info.q_support
 
-    def test_fractional_variational_abm_qr_not_implemented(self) -> None:
+    def test_fractional_variational_abm_qr_implemented_in_f2(self) -> None:
+        """F2: fractional_variational_abm_qr is now implemented (F2 update)."""
         info = LYAPUNOV_METHODS["fractional_variational_abm_qr"]
-        assert info.implemented is False
-
-    def test_fractional_variational_abm_qr_not_validated(self) -> None:
-        info = LYAPUNOV_METHODS["fractional_variational_abm_qr"]
-        assert info.validated is False
+        assert info.implemented is True
 
     def test_fractional_cloned_dynamics_not_implemented(self) -> None:
         info = LYAPUNOV_METHODS["fractional_cloned_dynamics_abm"]
@@ -552,3 +567,47 @@ class TestF0ClosureSystemLyapunov:
                 t_final=5.0,
             )
 
+
+# ---------------------------------------------------------------------------
+# J. F1 closure — defensive evaluate/jacobian access
+# ---------------------------------------------------------------------------
+
+class TestF1ClosureDefensiveAccess:
+    """J: A1 (F1) — integer_system_lyapunov_exponents handles systems without 'jacobian' attr."""
+
+    class _DummyIntegerSystemNoJacobianAttr:
+        """System with q=1 and evaluate + jacobian_matrix but NO 'jacobian' attribute."""
+        q: float = 1.0
+
+        def evaluate(self, x: np.ndarray) -> np.ndarray:
+            return np.array([-x[0], -2.0 * x[1]])
+
+        def jacobian_matrix(self, x: np.ndarray) -> np.ndarray:
+            return np.diag([-1.0, -2.0])
+
+    class _DummyIntegerSystemNoEvaluate:
+        """System with q=1 but no evaluate — must raise ValueError."""
+        q: float = 1.0
+        jacobian = None
+
+    def test_allows_object_without_jacobian_attr(self) -> None:
+        """System without 'jacobian' attr must run (falls back to finite-diff)."""
+        from hidden_attractors.analysis.lyapunov import integer_system_lyapunov_exponents
+        result = integer_system_lyapunov_exponents(
+            self._DummyIntegerSystemNoJacobianAttr(),
+            np.array([1.0, 1.0]),
+            h=0.01,
+            t_final=10.0,
+        )
+        assert result.status == "ok"
+
+    def test_raises_if_no_evaluate(self) -> None:
+        """System without evaluate() must raise ValueError."""
+        from hidden_attractors.analysis.lyapunov import integer_system_lyapunov_exponents
+        with pytest.raises(ValueError, match="evaluate"):
+            integer_system_lyapunov_exponents(
+                self._DummyIntegerSystemNoEvaluate(),
+                np.array([1.0, 1.0]),
+                h=0.01,
+                t_final=5.0,
+            )

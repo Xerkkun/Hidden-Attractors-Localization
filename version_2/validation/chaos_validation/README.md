@@ -43,14 +43,14 @@
 
 ---
 
-## Future phases (not implemented)
+## Current implementation status of Phase F methods
 
 | Phase | Method ID | Status |
 |---|---|---|
-| F1 | Common API / dispatcher | **Initiated** ✓ |
-| F1 | `integer_qr_benettin` dispatch | **Implemented** ✓ |
-| F1 | `fractional_variational_abm_qr` | NOT implemented · NOT validated |
-| F1 | `fractional_cloned_dynamics_abm` | NOT implemented · NOT validated |
+| F1 | Common API / dispatcher | **Completed** ✓ |
+| F1 | `integer_qr_benettin` dispatch | **Implemented & Validated** ✓ (F0/F1) |
+| F2 | `fractional_variational_abm_qr` | **Implemented ✓ · NOT validated against published benchmarks (F2)** |
+| F2 | `fractional_cloned_dynamics_abm` | NOT implemented · NOT validated |
 | F2 | `zero_one_test` | NOT implemented |
 | F3 | PSD/FFT | NOT implemented |
 | F4 | Boundedness | NOT implemented |
@@ -59,7 +59,7 @@
 
 ## F1 — Common API and method dispatcher
 
-**Status: Initiated**
+**Status: Completed ✓**
 
 | Item | Status |
 |---|---|
@@ -68,26 +68,43 @@
 | `validate_lyapunov_method_request` | ✓ Implemented |
 | `compute_lyapunov_spectrum` dispatcher | ✓ Implemented |
 | `integer_qr_benettin` dispatch path | ✓ Implemented |
-| `fractional_variational_abm_qr` dispatch | NOT implemented (raises `NotImplementedError`) |
+| `fractional_variational_abm_qr` dispatch | ✓ Implemented & Routed (F2) |
 | `fractional_cloned_dynamics_abm` dispatch | NOT implemented (raises `NotImplementedError`) |
 
-### F1 does NOT certify
+---
+
+## F2 — `fractional_variational_abm_qr` Validation
+
+**Status: Implemented, pending benchmark validation**
+
+The `fractional_variational_abm_qr` method estimates the Lyapunov spectrum for Caputo fractional systems $0 < q < 1$. It uses an extended original–variational system solver and history-consistent QR reorthonormalisation.
+
+Validation configurations and metadata are defined in:
+[fractional_variational_abm_qr_validation.yaml](file:///c:/Users/moren/Desktop/Codes/Hidden%20Attractors%20Fractional%20Order/version_2/validation/chaos_validation/lyapunov_methods/fractional_variational_abm_qr_validation.yaml)
+
+### Certifications & Status
+
+* `chaos_certified_by_this_pipeline: false`
+* `hiddenness_certified_by_this_pipeline: false`
+* `validated_against_published_benchmarks: false` (F2 pending)
+
+### F1/F2 does NOT certify
 
 ```
 chaos_certified_by_this_pipeline: false
 hiddenness_certified_by_this_pipeline: false
 ```
 
-Fields `hidden_verified`, `chaos_verified`, `fractional_lyapunov_validated`,
-and `caputo_lyapunov_validated` are **not declared** in F0 or F1.
+Fields `hidden_verified`, `chaos_verified`, `fractional_lyapunov_validated`, and `caputo_lyapunov_validated` are **not declared** in F0, F1, or F2.
 
 ---
 
 ## Notes
 
-`chaos_certified_by_this_pipeline: false`
-`hiddenness_certified_by_this_pipeline: false`
+```
+chaos_certified_by_this_pipeline: false
+hiddenness_certified_by_this_pipeline: false
+```
 
-Fields `hidden_verified`, `chaos_verified`, `fractional_lyapunov_validated`,
-and `caputo_lyapunov_validated` are **not declared** in F0 or F1.
+Fields `hidden_verified`, `chaos_verified`, `fractional_lyapunov_validated`, and `caputo_lyapunov_validated` are **not declared** in F0, F1, or F2.
 

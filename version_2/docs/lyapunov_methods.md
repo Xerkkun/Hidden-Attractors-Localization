@@ -93,26 +93,26 @@ received q=0.99.  Use a fractional Lyapunov method for Caputo q<1
 
 ---
 
-## Future phases (not implemented in F0)
+## Implementation status of methods
 
 | Method ID | Model | Status |
 |---|---|---|
-| `fractional_variational_abm_qr` | Caputo q<1 | NOT implemented · NOT validated |
+| `integer_qr_benettin` | q=1 ODE | Implemented ✓ · Validated ✓ (F0) |
+| `fractional_variational_abm_qr` | Caputo q<1 | Implemented ✓ · NOT validated (F2) |
 | `fractional_cloned_dynamics_abm` | Caputo q<1 | NOT implemented · NOT validated |
 | `zero_one_test` | — | NOT implemented |
 | PSD/FFT analysis | — | NOT implemented |
 | Boundedness checks | — | NOT implemented |
 
-### Fractional methods — design intent
+### Fractional methods — design and integration
 
-Fractional Caputo Lyapunov spectra will require:
-1. An Adams–Bashforth–Moulton (ABM) predictor-corrector integrating the
-   **extended (original + variational) system** with full Caputo memory.
-2. QR or Gram–Schmidt reorthonormalisation applied to the variational block.
-3. Validation against published results (Danca & Kuznetsov 2018).
+Fractional Caputo Lyapunov spectra are computed as follows:
+1. An Adams–Bashforth–Moulton (ABM) predictor-corrector integrates the
+   **extended (original + variational) system** with Caputo memory.
+2. History-aware QR reorthonormalisation is applied to the variational block.
+3. Validation is performed against published results (Danca & Kuznetsov 2018).
 
-These are tracked as `fractional_variational_abm_qr` and
-`fractional_cloned_dynamics_abm` in the method registry
+These are tracked in the method registry
 (`hidden_attractors/analysis/lyapunov_methods.py`).
 
 ---
@@ -229,16 +229,15 @@ to `summary.warnings`.
 }
 ```
 
-### F1 does NOT implement
+### F1/F2 does NOT implement
 
-- `fractional_variational_abm_qr`
-- `fractional_cloned_dynamics_abm`
+- `fractional_cloned_dynamics_abm` (unimplemented in F2)
 - 0–1 test
 - PSD/FFT
 - Poincaré sections
 - `chaos_validation_summary`
 
-### F1 does NOT certify
+### F1/F2 does NOT certify
 
 ```
 chaos_certified_by_this_pipeline: false
@@ -248,3 +247,53 @@ hiddenness_certified_by_this_pipeline: false
 Fields `hidden_verified`, `chaos_verified`, `fractional_lyapunov_validated`,
 and `caputo_lyapunov_validated` are **not present** in
 `LyapunovComputationRequest` or `LyapunovComputationSummary`.
+
+---
+
+## F2 — fractional_variational_abm_qr
+
+**Phase F2** implements the first formal method for estimating Caputo fractional-order Lyapunov exponents by integrating the extended original–variational system.
+
+### Mathematical formulation
+
+We integrate the original–variational system:
+$$
+\begin{aligned}
+{}^C D_t^q X &= F(X), \quad X(0) = X_0 \\
+{}^C D_t^q \Phi &= J(X)\Phi, \quad \Phi(0) = I
+\end{aligned}
+$$
+where $0 < q < 1$, and $J(X)$ is the Jacobian matrix.
+Under Caputo fractional derivatives, the future state depends on the **entire history**.
+
+### Integration with Caputo ABM
+
+Both state $X$ and variational basis $\Phi$ are integrated stepwise using a history-dependent Caputo Adams–Bashforth–Moulton (ABM) predictor-corrector. The integration weights mirror exactly those in the standard fractional solver:
+* Predictor scale: $h^q / \Gamma(q+1)$
+* Corrector scale: $h^q / \Gamma(q+2)$
+* $b_{j,n+1} = (n+1-j)^q - (n-j)^q$
+* $a_0 = n^{q+1} - (n-q)(n+1)^q$
+* $a_j = (n-j+2)^{q+1} + (n-j)^{q+1} - 2(n-j+1)^{q+1}$ for $j > 0$.
+
+### History-consistent (History-aware) QR
+
+At each orthonormalisation step (every `reorthonormalize_every` steps):
+1. Compute the QR decomposition of the current variational block:
+   $$ \Phi(t_k) = Q R $$
+2. Extract the diagonal elements of $R$ to accumulate the Lyapunov exponents:
+   $$ \lambda_i = \frac{1}{T} \sum_{k} \log |R_{ii}^{(k)}| $$
+3. Since Caputo fractional ODEs are non-local, resetting $\Phi(t_k) \leftarrow Q$ without updating the historical steps would create a **history-inconsistent** trajectory. 
+   To maintain coherence with the Caputo memory, we apply the inverse rotation to the **entire history** of variational states stored in the memory window:
+   $$ \Phi_j \leftarrow \Phi_j \cdot R^{-1}, \quad \text{for } j \in [0, k] $$
+4. Recalculate all historical derivative values:
+   $$ G(Y_j) \leftarrow \text{rhs\_ext}(X_j, \Phi_j \cdot R^{-1}) $$
+
+If `history_aware_qr=False`, only the current $\Phi$ is updated, which behaves as a standard block-restart approximation (not Caputo-coherent).
+
+### Methodological warning
+
+> [!WARNING]
+> This routine is **not yet validated against published benchmarks**.
+> Results are finite-time local Lyapunov exponent estimates.
+> Caputo memory requires transforming the entire stored variational history at each QR step (`history_aware_qr=True`). If `history_aware_qr=False` (block-restart), the method is NOT full-memory Caputo-aware; label results accordingly.
+> Does not certify chaos; does not certify hiddenness of attractors.

@@ -593,8 +593,18 @@ def integer_system_lyapunov_exponents(
             "Use a fractional Lyapunov method for Caputo q<1."
         )
 
+    # A1 — F1 closure: defensive attribute access for evaluate / jacobian
+    if not callable(getattr(system, "evaluate", None)):
+        raise ValueError(
+            "integer_system_lyapunov_exponents: system must expose a callable "
+            "evaluate(state) method."
+        )
     rhs = lambda state: system.evaluate(state)
-    jacobian = (lambda state: system.jacobian_matrix(state)) if system.jacobian is not None else None
+    system_jacobian_attr = getattr(system, "jacobian", None)
+    if system_jacobian_attr is not None and callable(getattr(system, "jacobian_matrix", None)):
+        jacobian: Callable[[np.ndarray], np.ndarray] | None = lambda state: system.jacobian_matrix(state)
+    else:
+        jacobian = None
     return integer_lyapunov_exponents(
         rhs,
         jacobian,
