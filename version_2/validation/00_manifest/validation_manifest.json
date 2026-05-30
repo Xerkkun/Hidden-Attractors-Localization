@@ -1,8 +1,8 @@
 {
-  "validation_id": "rerun_candidates_long_h001_t300",
-  "repository_commit": "d6694319908fbb2650d8ca554f1c9ec13b075f45",
+  "validation_id": "chua_fractional_algebra_2026_05_23",
+  "repository_commit": "working_tree_dirty",
   "package_version": "0.1.0",
-  "python_version": "3.14.3",
+  "python_version": "3.12.12",
   "platform": "Windows-11-10.0.26200-SP0",
   "main_system": "fractional nonsmooth Chua",
   "main_parameters": {
@@ -18,34 +18,33 @@
     "q": 0.9998
   },
   "stages": {
-    "numerical_contract": "01_numerical_contract/numerical_contract_validation_summary.json",
+    "numerical_contract": "pending",
     "algebraic_validation": "02_algebraic_validation/algebraic_validation_validation_summary.json",
-    "seed_generation": "03_seed_generation/seed_generation_validation_summary.json",
-    "soft_precheck": "04_soft_precheck/soft_precheck_validation_summary.json",
-    "continuation": "05_continuation/continuation_validation_summary.json",
-    "post_continuation_filter": "06_post_continuation_filter/post_continuation_filter_validation_summary.json",
-    "dynamic_reference": "07_dynamic_reference/dynamic_reference_validation_summary.json",
-    "robustness": "08_robustness/robustness_validation_summary.json",
-    "hiddenness_tests": "09_hiddenness_tests/hiddenness_tests_validation_summary.json",
-    "diagnostics": "10_diagnostics/diagnostics_validation_summary.json"
+    "seed_generation": "pending",
+    "soft_precheck": "pending",
+    "continuation": "pending",
+    "post_continuation_filter": "pending",
+    "dynamic_reference": "pending",
+    "robustness": "pending",
+    "hiddenness_tests": "pending",
+    "diagnostics": "pending"
   },
   "pending_stages": [
-    "algebraic_validation",
+    "numerical_contract",
+    "seed_generation",
+    "soft_precheck",
+    "continuation",
+    "post_continuation_filter",
+    "dynamic_reference",
     "robustness",
-    "hiddenness_tests"
+    "hiddenness_tests",
+    "diagnostics",
+    "algebraic_validation"
   ],
   "schema_version": "1.0",
   "protocol_version": "caputo_hidden_attractors_v1",
   "final_report": {
-    "status": "incomplete_lightweight_exploratory",
-    "run_id": "rerun_candidates_long_h001_t300"
+    "status": "pending_full_protocol"
   },
-  "dirty": true,
-  "working_tree_dirty": false,
-  "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "failed_or_incomplete_stages": [
-    "algebraic_validation",
-    "robustness",
-    "hiddenness_tests"
-  ]
+  "dirty": true
 }

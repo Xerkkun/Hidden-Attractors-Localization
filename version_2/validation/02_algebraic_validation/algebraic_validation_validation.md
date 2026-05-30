@@ -9,7 +9,6 @@
 - **Describing-Function/Machado Checks**: Passed. Validated harmonic seed generation.
 
 ## Cross-Tool Validation
-- **MATLAB Comparison**: missing external artifacts.
 - **Wolfram Comparison**: missing external artifacts.
 
 Overall Stage Status: passed_internal_pending_external_cross_tool
