@@ -1,0 +1,64 @@
+case_id: chua_fractional_saturation_continuation
+system_id: chua_fractional_saturation
+q: 0.9998
+
+description: >
+  Fractional-order Chua circuit with non-smooth (piecewise-linear) nonlinearity.
+  Validates numerical continuation in eta in [0,1] by comparing
+  last_point_restart vs history_window_transport strategies.
+  Does NOT certify hidden attractors or chaos.
+
+initial_condition:
+  source: "published_integer_laplace_seed"
+  x0: [5.856145086257324, 0.36933157824675933, -8.36653616833187]
+
+lure_seed:
+  k: 0.20986735451508398
+  sigma_output: "r^T X"
+
+integrator:
+  method: ABM
+  h: 0.01
+
+time_per_eta:
+  t_final: 20.0
+  t_burn: 10.0
+
+fast_test:
+  t_final: 3.0
+  t_burn: 1.5
+
+eta_grids:
+  - 10
+  - 25
+  - 50
+  - 100
+
+memory_transport:
+  strategies:
+    - last_point_restart
+    - history_window_transport
+  history_windows:
+    - M: 256
+    - M: 512
+    - M: 1024
+  units: "steps"
+
+divergence:
+  max_norm: 120.0
+
+classification:
+  collapse_variance_tolerance: 1.0e-8
+  min_range_tolerance: 1.0e-5
+
+comparison_policy:
+  pointwise_comparison_used: false
+  jump_norm_tolerance: 0.50
+  rho_jump_tolerance: 0.35
+  final_state_relative_tolerance: 0.50
+  range_relative_tolerance: 0.35
+  center_relative_tolerance: 0.60
+
+hiddenness_certified_by_this_pipeline: false
+no_hidden_verified_claim: true
+chaos_certified_by_this_pipeline: false

@@ -1,0 +1,65 @@
+case_id: chua_fractional_arctan_continuation
+system_id: chua_fractional_arctan
+q: 0.99
+
+description: >
+  Fractional-order Chua circuit with smooth arctan nonlinearity (Wu et al. 2023).
+  Validates numerical continuation strategies.
+  k=null: no DF-based seed available; continuation auxiliary marks as unavailable.
+  Only last_point_restart vs history_window_transport on original system (eta=1) is compared.
+  Does NOT certify hidden attractors or chaos.
+
+initial_condition:
+  source: "published_initial_condition_wu2023"
+  x0: [13.8, 0.7093, -19.8768]
+
+lure_seed:
+  k: null
+  sigma_output: "r^T X"
+
+integrator:
+  method: ABM
+  h: 0.01
+
+time_per_eta:
+  t_final: 20.0
+  t_burn: 10.0
+
+fast_test:
+  t_final: 3.0
+  t_burn: 1.5
+
+eta_grids:
+  - 10
+  - 25
+  - 50
+  - 100
+
+memory_transport:
+  strategies:
+    - last_point_restart
+    - history_window_transport
+  history_windows:
+    - M: 256
+    - M: 512
+    - M: 1024
+  units: "steps"
+
+divergence:
+  max_norm: 120.0
+
+classification:
+  collapse_variance_tolerance: 1.0e-8
+  min_range_tolerance: 1.0e-5
+
+comparison_policy:
+  pointwise_comparison_used: false
+  jump_norm_tolerance: 0.50
+  rho_jump_tolerance: 0.35
+  final_state_relative_tolerance: 0.50
+  range_relative_tolerance: 0.35
+  center_relative_tolerance: 0.60
+
+hiddenness_certified_by_this_pipeline: false
+no_hidden_verified_claim: true
+chaos_certified_by_this_pipeline: false
