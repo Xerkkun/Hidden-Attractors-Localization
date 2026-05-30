@@ -1,0 +1,49 @@
+case_id: chua_fractional_arctan_memory
+system_id: chua_fractional_arctan
+q: 0.99
+
+description: >
+  Fractional-order Chua circuit with smooth arctan nonlinearity (Wu et al. 2023).
+  Validates the effect of full Caputo memory vs. finite-window approximations at
+  fractional order q = 0.99. Does NOT certify hidden attractors or chaos.
+
+initial_conditions:
+  x0_plus: [13.8, 0.7093, -19.8768]
+  x0_minus: [-13.8, -0.7093, 19.8768]
+
+integrator:
+  method: ABM
+  h: 0.01
+
+time:
+  t_final: 80.0
+  t_burn: 40.0
+
+fast_test:
+  t_final: 5.0
+  t_burn: 2.5
+
+memory:
+  full_reference: true
+  windows:
+    - M: 256
+    - M: 512
+    - M: 1024
+  units: "steps"
+
+divergence:
+  max_norm: 120.0
+
+classification:
+  collapse_variance_tolerance: 1.0e-8
+  min_range_tolerance: 1.0e-5
+
+comparison_policy:
+  pointwise_comparison_used: false
+  rho_relative_tolerance: 0.25
+  rho_max_relative_tolerance: 0.35
+  range_relative_tolerance: 0.35
+  center_relative_tolerance: 0.60
+
+hiddenness_certified_by_this_pipeline: false
+no_hidden_verified_claim: true
