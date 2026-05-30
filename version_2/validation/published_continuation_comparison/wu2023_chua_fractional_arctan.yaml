@@ -1,0 +1,89 @@
+case_id: "wu2023_chua_fractional_arctan"
+reference_id: "wu2023"
+system_id: "chua_fractional_arctan"
+
+paper:
+  authors:
+    - "Xianming Wu"
+    - "Longxiang Fu"
+    - "Shaobo He"
+    - "Zhao Yao"
+    - "Huihai Wang"
+    - "Jiayu Han"
+  year: 2023
+  title: "Hidden attractors in a new fractional-order Chua system with arctan nonlinearity and its DSP implementation"
+  doi: "10.1016/j.rinp.2023.106866"
+  reports_continuation: false
+  reports_memory_transport: false
+  reports_initial_condition: true
+  reports_seed: false
+  notes: >
+    The paper reports initial conditions x0_plus and x0_minus but does not
+    report DF parameters (omega0, k, a0) or intermediate seed coordinates.
+    No continuation procedure is reported. k is null so deformed Lure
+    continuation cannot be constructed. original_system_strategy_comparison
+    is performed instead using the paper-reported initial conditions.
+
+dynamics:
+  derivative: "Caputo"
+  q: 0.99
+  integrator: "ABM"
+  h: 0.01
+  t_final: 100.0
+  t_burn: 50.0
+
+fast_test:
+  t_final: 5.0
+  t_burn: 2.0
+
+published_data:
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    a1: 0.4
+    a2: -1.5585
+    rho: 1.0
+  initial_conditions:
+    x0_plus: [13.8, 0.7093, -19.8768]
+    x0_minus: [-13.8, -0.7093, 19.8768]
+  seed:
+    seed_plus: null
+    seed_minus: null
+    seed_source: "missing"
+  omega0: null
+  k: null
+  a0: null
+  missing_values:
+    - "paper does not report omega0 explicitly"
+    - "paper does not report describing-function gain k explicitly"
+    - "paper does not report describing-function amplitude a0 explicitly"
+    - "paper does not report exact seed_plus or seed_minus coordinates"
+
+comparison_modes:
+  paper_style_initial_condition_integration: true
+  paper_style_last_point_restart: true
+  deformed_lure_continuation: false
+  original_system_strategy_comparison: true
+  caputo_aware_history_window_transport: true
+
+continuation:
+  eta_grids: [10, 25, 50, 100]
+  history_windows:
+    - M: 256
+    - M: 512
+    - M: 1024
+  units: "steps"
+
+comparison_policy:
+  pointwise_comparison_used: false
+  final_state_relative_tolerance: 0.50
+  rho_relative_tolerance: 0.35
+  range_relative_tolerance: 0.35
+  center_relative_tolerance: 0.60
+  dynamic_class_must_match: false
+
+no_claims:
+  hiddenness_certified_by_this_pipeline: false
+  chaos_certified_by_this_pipeline: false
+  no_hidden_verified_claim: true

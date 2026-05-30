@@ -1,0 +1,82 @@
+case_id: "danca2017_chua_fractional_saturation"
+reference_id: "danca2017"
+system_id: "chua_fractional_saturation"
+
+paper:
+  authors:
+    - "Marius-F. Danca"
+  year: 2017
+  title: "Hidden chaotic attractors in fractional-order systems"
+  doi: "10.1007/s11071-017-3472-7"
+  reports_continuation: false
+  reports_memory_transport: false
+  reports_initial_condition: false
+  reports_seed: false
+  notes: >
+    The paper integrates with Diethelm ABM, q=0.9998, h=0.01, but does not
+    disclose the exact initial condition coordinates, DF parameters (omega0,
+    k, a0), or seed coordinates. No continuation procedure is reported.
+    If no initial condition or seed is available from the library, the
+    comparison must be marked missing.
+
+dynamics:
+  derivative: "Caputo"
+  q: 0.9998
+  integrator: "ABM"
+  h: 0.01
+  t_final: 500.0
+  t_burn: 250.0
+
+fast_test:
+  t_final: 5.0
+  t_burn: 2.0
+
+published_data:
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+  initial_conditions: null
+  seed:
+    seed_plus: null
+    seed_minus: null
+    seed_source: "missing"
+  omega0: null
+  k: null
+  a0: null
+  missing_values:
+    - "paper does not report omega0 explicitly"
+    - "paper does not report describing-function gain k explicitly"
+    - "paper does not report describing-function amplitude a0 explicitly"
+    - "paper does not report exact seed_plus or seed_minus coordinates"
+    - "paper does not report hidden-attractor initial condition coordinates explicitly"
+
+comparison_modes:
+  paper_style_initial_condition_integration: false
+  paper_style_last_point_restart: false
+  deformed_lure_continuation: false
+  original_system_strategy_comparison: false
+  caputo_aware_history_window_transport: false
+
+continuation:
+  eta_grids: [10, 25, 50, 100]
+  history_windows:
+    - M: 256
+    - M: 512
+    - M: 1024
+  units: "steps"
+
+comparison_policy:
+  pointwise_comparison_used: false
+  final_state_relative_tolerance: 0.50
+  rho_relative_tolerance: 0.35
+  range_relative_tolerance: 0.35
+  center_relative_tolerance: 0.60
+  dynamic_class_must_match: false
+
+no_claims:
+  hiddenness_certified_by_this_pipeline: false
+  chaos_certified_by_this_pipeline: false
+  no_hidden_verified_claim: true

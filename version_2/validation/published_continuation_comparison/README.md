@@ -1,0 +1,163 @@
+# Phase E: Published Continuation Comparison
+
+## Overview
+
+This directory contains configurations and outputs for **Phase E** of the
+validation pipeline: `validation/published_continuation_comparison`.
+
+This phase compares the continuation or paper-style strategy of the library
+against what the published articles actually report.
+
+---
+
+## What this phase does NOT do
+
+- Does **not** verify hiddenness (`hidden_verified` is never set).
+- Does **not** certify chaos (`chaos_verified` is never set).
+- Does **not** invent data that is not in the articles (omega0, k, a0, seed,
+  attractor ranges, or continuation paths are never fabricated).
+
+---
+
+## Distinction from other validation phases
+
+| Phase | Purpose |
+|---|---|
+| `published_cases` | Stores bibliographic metadata and known published values per article. |
+| `fractional_memory_validation` | Validates full vs. windowed Caputo memory sensitivity for a given IC. |
+| `continuation_memory_validation` | Validates eta-continuation (deformed Lure path) with history transport. |
+| `integrator_method_validation` | Cross-validates integrator methods (ABM, EFORK, RK4) against each other. |
+| `integrator_crosscheck` | Checks integrator consistency across step sizes and configurations. |
+| **`published_continuation_comparison`** | Compares paper-style integration strategy vs. library history-transport strategy, using only data actually reported by the article. |
+
+---
+
+## What "paper-style" means
+
+If a published article does not specify how memory is transported in a
+numerical continuation, the **paper-style** strategy is:
+
+```
+last_point_restart
+```
+
+i.e., only the final state X(t_final) is carried to the next segment.
+No discrete history is transported.
+
+This reproduces the *inferred* practice of the article when no explicit
+memory-transport protocol is reported.
+
+---
+
+## What "Caputo-aware" means
+
+The **Caputo-aware** strategy is:
+
+```
+history_window_transport
+```
+
+The discrete history window `H_k = {X(t_{k-M}), ..., X(t_k)}` is transported
+between segments, and the RHS is recomputed under the new field. This respects
+the non-local character of the Caputo derivative across segment boundaries.
+
+---
+
+## What happens when the article does not report continuation
+
+If `paper.reports_continuation == false`, the pipeline:
+
+1. Does **not** write `paper_continuation_reproduced`.
+2. Writes instead:
+   ```
+   paper_does_not_report_continuation
+   paper_style_comparison_performed
+   ```
+3. Performs a comparison between paper-style strategy (inferred from
+   published data) and Caputo-aware strategy (if applicable).
+
+---
+
+## What happens when data is missing
+
+If published data (omega0, k, a0, seed, attractor ranges, initial conditions)
+is not reported in the article, those fields are marked `null` or `missing`
+in the YAML and in the output summary:
+
+```
+seed_source: "missing"
+```
+
+The pipeline will **not** invent values to fill missing data.
+
+---
+
+## Case descriptions
+
+### 1. Kuznetsov et al. 2017
+
+- **System**: Chua integer-order with saturation nonlinearity.
+- **q = 1.0** — no Caputo memory, no history transport.
+- **Available data**: IC from paper `[5.8576, 0.3694, -8.3686]`, DF seed,
+  omega0, k, a0, parameters.
+- **Strategy**: `paper_style_initial_condition_integration` from published IC
+  and seed. No deformed Lure continuation (not reported by paper). No
+  history transport (q=1 requires none).
+- **Status field**: `paper_does_not_report_continuation` (article uses DF
+  method for seed location, not numerical continuation).
+
+### 2. Danca 2017
+
+- **System**: Chua fractional saturation (non-smooth), q=0.9998, ABM.
+- **Available data**: parameters, q, h, integrator. All DF seed and IC data
+  are missing from the article.
+- **Strategy**: No paper-style integration possible (missing IC/seed). All
+  comparison modes are disabled. Outputs `published_data_missing`.
+- **Status field**: `paper_does_not_report_continuation`, `published_data_missing`.
+
+### 3. Wu et al. 2023
+
+- **System**: Chua fractional arctan, q=0.99.
+- **Available data**: parameters, q, published ICs `x0_plus`, `x0_minus`.
+  DF parameters (k, a0, omega0) not reported.
+- **Strategy**: `paper_style_initial_condition_integration` from published ICs.
+  `original_system_strategy_comparison` with `paper_style_last_point_restart`
+  vs. `caputo_aware_history_window_transport`. No deformed Lure continuation
+  (k is null — not invented).
+- **Status field**: `paper_does_not_report_continuation`,
+  `continuation_auxiliary_unavailable`,
+  `paper_style_comparison_performed`.
+
+---
+
+## Allowed `overall_status` values
+
+| Status | Condition |
+|---|---|
+| `published_continuation_reproduced` | `paper.reports_continuation == true` AND the reported path was reproduced. |
+| `published_initial_condition_reintegrated` | Paper reports IC, integration gives bounded non-trivial dynamics. |
+| `published_seed_reintegrated` | Paper reports seed, integration gives bounded non-trivial dynamics. |
+| `published_paper_style_comparison_performed` | Paper does not report continuation; paper-style vs. history comparison was run. |
+| `published_comparison_partial_original_only` | k=null, deformed Lure unavailable; original system comparison only. |
+| `published_comparison_inconclusive` | Cannot conclude due to diverged/collapsed/NaN trajectories. |
+| `published_data_missing` | No usable published IC or seed available. |
+| `published_continuation_not_reported` | Paper does not report continuation, no data available to run comparison. |
+
+> [!IMPORTANT]
+> `published_continuation_reproduced` is only valid when
+> `paper.reports_continuation == true`. It must never appear for
+> Danca 2017 or Wu 2023.
+
+---
+
+## No claims
+
+```
+hiddenness_certified_by_this_pipeline: false
+chaos_certified_by_this_pipeline: false
+no_hidden_verified_claim: true
+```
+
+`chaotic_dynamics_candidate_detected: true` means the trajectory is classified
+as `chaotic_candidate_by_geometry` by the classifier heuristics. It does **not**
+mean chaos is proven.

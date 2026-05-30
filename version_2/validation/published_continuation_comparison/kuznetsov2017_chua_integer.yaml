@@ -1,0 +1,81 @@
+case_id: "kuznetsov2017_chua_integer"
+reference_id: "kuznetsov2017"
+system_id: "chua_integer_saturation"
+
+paper:
+  authors:
+    - "N. V. Kuznetsov"
+    - "O. A. Kuznetsova"
+    - "G. A. Leonov"
+    - "T. N. Mokaev"
+    - "N. V. Stankevich"
+  year: 2017
+  title: "Localization of hidden Chua attractors by the describing function method"
+  doi: "10.1016/j.ifacol.2017.08.1633"
+  reports_continuation: false
+  reports_memory_transport: null
+  reports_initial_condition: true
+  reports_seed: true
+  notes: >
+    The paper uses the describing function method to locate hidden Chua
+    attractors. It does NOT perform a numerical continuation procedure;
+    it directly integrates from the DF-derived seed. Integer-order system
+    (q=1), so no Caputo memory is involved.
+
+dynamics:
+  derivative: "integer"
+  q: 1.0
+  integrator: "EFORK_Q1"
+  h: 0.05
+  t_final: 100.0
+  t_burn: 50.0
+
+fast_test:
+  t_final: 5.0
+  t_burn: 2.0
+
+published_data:
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+  initial_conditions:
+    x0_paper: [5.8576, 0.3694, -8.3686]
+  seed:
+    seed_plus: [5.856145086257324, 0.36933157824675933, -8.36653616833187]
+    seed_minus: [-5.856145086257324, -0.36933157824675933, 8.36653616833187]
+    seed_source: "paper_reported_seed"
+  omega0: 2.039186939959001
+  k: 0.20986735451508398
+  a0: 5.856145086257356
+  missing_values: []
+
+comparison_modes:
+  paper_style_initial_condition_integration: true
+  paper_style_last_point_restart: false
+  deformed_lure_continuation: false
+  original_system_strategy_comparison: false
+  caputo_aware_history_window_transport: false
+
+continuation:
+  eta_grids: [10, 25, 50, 100]
+  history_windows:
+    - M: 256
+    - M: 512
+    - M: 1024
+  units: "steps"
+
+comparison_policy:
+  pointwise_comparison_used: false
+  final_state_relative_tolerance: 0.50
+  rho_relative_tolerance: 0.35
+  range_relative_tolerance: 0.35
+  center_relative_tolerance: 0.60
+  dynamic_class_must_match: false
+
+no_claims:
+  hiddenness_certified_by_this_pipeline: false
+  chaos_certified_by_this_pipeline: false
+  no_hidden_verified_claim: true
