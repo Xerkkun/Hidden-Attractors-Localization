@@ -16,7 +16,15 @@ from .lyapunov import (
     LyapunovResult,
     finite_difference_jacobian,
     integer_lyapunov_exponents,
+    integer_qr_benettin_lyapunov_exponents,
     integer_system_lyapunov_exponents,
+)
+from .lyapunov_methods import LyapunovMethodInfo, LYAPUNOV_METHODS
+from .lyapunov_api import (
+    LyapunovComputationRequest,
+    LyapunovComputationSummary,
+    validate_lyapunov_method_request,
+    compute_lyapunov_spectrum,
 )
 from .spectral import SpectrumResult, fft_spectrum, infer_step, psd_welch, trajectory_component_spectra
 from .trajectory import (
@@ -33,27 +41,40 @@ from .trajectory import (
 )
 
 __all__ = [
+    # Bifurcation
     "BifurcationPoint",
-    "LyapunovResult",
-    "RobustnessCase",
-    "SpectrumResult",
     "bifurcation_points_from_trajectories",
     "bifurcation_summary",
+    "local_extrema",
+    # Lyapunov — F0 (frozen)
+    "LyapunovResult",
+    "finite_difference_jacobian",
+    "integer_lyapunov_exponents",
+    "integer_qr_benettin_lyapunov_exponents",
+    "integer_system_lyapunov_exponents",
+    # Lyapunov — method registry (F0)
+    "LyapunovMethodInfo",
+    "LYAPUNOV_METHODS",
+    # Lyapunov — common API (F1)
+    "LyapunovComputationRequest",
+    "LyapunovComputationSummary",
+    "validate_lyapunov_method_request",
+    "compute_lyapunov_spectrum",
+    # Spectral
+    "SpectrumResult",
+    "fft_spectrum",
+    "infer_step",
+    "psd_welch",
+    "trajectory_component_spectra",
+    # Trajectory
+    "RobustnessCase",
     "classify_trajectory_against_equilibria",
     "cloud_median_distance",
     "component_fft",
-    "finite_difference_jacobian",
-    "fft_spectrum",
-    "infer_step",
-    "integer_lyapunov_exponents",
-    "integer_system_lyapunov_exponents",
-    "local_extrema",
     "min_distance_to_points",
-    "psd_welch",
     "section_points",
     "state_view",
     "system_equilibria",
     "trajectory_metrics_for_system",
     "trajectory_metrics",
-    "trajectory_component_spectra",
 ]

@@ -465,6 +465,57 @@ def integer_qr_benettin_lyapunov_exponents(
 
 
 # ---------------------------------------------------------------------------
+# Private helper: defensively infer fractional order from a system object
+# ---------------------------------------------------------------------------
+
+def _infer_system_order(system: object) -> float | None:
+    """Attempt to infer the fractional order *q* from a system object.
+
+    Checks the following attributes in order, returning the first found:
+    - ``system.q``
+    - ``system.order``
+    - ``system.fractional_order``
+    - ``system.metadata.get('q')`` (if ``metadata`` is a mapping)
+    - ``system.params.get('q')``   (if ``params``    is a mapping)
+
+    Returns ``None`` if no order attribute is found (backward-compatible
+    fallback: allow execution without raising).
+
+    Returns
+    -------
+    float or None
+        Inferred fractional order, or ``None`` if undetermined.
+    """
+    # Direct scalar attributes
+    for attr in ("q", "order", "fractional_order"):
+        try:
+            val = getattr(system, attr, None)
+        except Exception:  # noqa: BLE001
+            val = None
+        if val is not None:
+            try:
+                return float(val)
+            except (TypeError, ValueError):
+                pass
+
+    # Mapping attributes: metadata / params
+    for attr in ("metadata", "params"):
+        try:
+            mapping = getattr(system, attr, None)
+        except Exception:  # noqa: BLE001
+            mapping = None
+        if mapping is not None:
+            try:
+                val = mapping.get("q")
+                if val is not None:
+                    return float(val)
+            except (AttributeError, TypeError, ValueError):
+                pass
+
+    return None
+
+
+# ---------------------------------------------------------------------------
 # System-level convenience wrapper
 # ---------------------------------------------------------------------------
 
@@ -532,6 +583,15 @@ def integer_system_lyapunov_exponents(
     >>> res.status
     'ok'
     """
+
+    # A2 — F0 closure: reject fractional systems defensively
+    q_sys = _infer_system_order(system)
+    if q_sys is not None and abs(q_sys - 1.0) > 1e-9:
+        raise ValueError(
+            f"integer_system_lyapunov_exponents uses integer_qr_benettin and is valid only "
+            f"for q=1; the supplied system appears to have q={q_sys:.6g}. "
+            "Use a fractional Lyapunov method for Caputo q<1."
+        )
 
     rhs = lambda state: system.evaluate(state)
     jacobian = (lambda state: system.jacobian_matrix(state)) if system.jacobian is not None else None

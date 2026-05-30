@@ -47,11 +47,39 @@
 
 | Phase | Method ID | Status |
 |---|---|---|
+| F1 | Common API / dispatcher | **Initiated** ✓ |
+| F1 | `integer_qr_benettin` dispatch | **Implemented** ✓ |
 | F1 | `fractional_variational_abm_qr` | NOT implemented · NOT validated |
-| F2 | `fractional_cloned_dynamics_abm` | NOT implemented · NOT validated |
-| F3 | `zero_one_test` | NOT implemented |
-| F4 | PSD/FFT | NOT implemented |
-| F5 | Boundedness | NOT implemented |
+| F1 | `fractional_cloned_dynamics_abm` | NOT implemented · NOT validated |
+| F2 | `zero_one_test` | NOT implemented |
+| F3 | PSD/FFT | NOT implemented |
+| F4 | Boundedness | NOT implemented |
+
+---
+
+## F1 — Common API and method dispatcher
+
+**Status: Initiated**
+
+| Item | Status |
+|---|---|
+| `LyapunovComputationRequest` dataclass | ✓ Implemented |
+| `LyapunovComputationSummary` dataclass | ✓ Implemented |
+| `validate_lyapunov_method_request` | ✓ Implemented |
+| `compute_lyapunov_spectrum` dispatcher | ✓ Implemented |
+| `integer_qr_benettin` dispatch path | ✓ Implemented |
+| `fractional_variational_abm_qr` dispatch | NOT implemented (raises `NotImplementedError`) |
+| `fractional_cloned_dynamics_abm` dispatch | NOT implemented (raises `NotImplementedError`) |
+
+### F1 does NOT certify
+
+```
+chaos_certified_by_this_pipeline: false
+hiddenness_certified_by_this_pipeline: false
+```
+
+Fields `hidden_verified`, `chaos_verified`, `fractional_lyapunov_validated`,
+and `caputo_lyapunov_validated` are **not declared** in F0 or F1.
 
 ---
 
@@ -61,4 +89,5 @@
 `hiddenness_certified_by_this_pipeline: false`
 
 Fields `hidden_verified`, `chaos_verified`, `fractional_lyapunov_validated`,
-and `caputo_lyapunov_validated` are **not declared** in F0.
+and `caputo_lyapunov_validated` are **not declared** in F0 or F1.
+

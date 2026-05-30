@@ -150,3 +150,101 @@ print(info.q_support)    # "q=1 only"
 - Any modification to `validation/continuation_memory_validation`
 - Any modification to `validation/published_continuation_comparison`
 - Hiddenness verification
+
+---
+
+## F1 — Common Lyapunov API
+
+**Phase F1** adds a method-agnostic dispatch layer on top of the frozen F0
+implementation.
+
+### Entry point
+
+```python
+from hidden_attractors.analysis import compute_lyapunov_spectrum
+
+summary = compute_lyapunov_spectrum(
+    rhs=my_rhs,
+    x0=x0,
+    q=1.0,
+    method="integer_qr_benettin",
+    h=0.01,
+    t_final=100.0,
+)
+print(summary.result.exponents)
+print(summary.compatibility_status)   # 'compatible'
+print(summary.method_info.method_id)  # 'integer_qr_benettin'
+```
+
+### How it works
+
+1. Build a `LyapunovComputationRequest` from the arguments.
+2. Call `validate_lyapunov_method_request(request)` → `(ok, status, warnings)`.
+3. If invalid: raise `ValueError` (or `NotImplementedError` for registered-but-unimplemented methods).
+4. Route to the correct implementation.
+5. Return `LyapunovComputationSummary`.
+
+### Method compatibility table (F1)
+
+| Method | q | memory_mode | Implemented | Raises |
+|---|---|---|---|---|
+| `integer_qr_benettin` | 1.0 | `not_applicable` | ✓ | — |
+| `integer_qr_benettin` | < 1.0 | any | ✓ | `ValueError` |
+| `integer_qr_benettin` | 1.0 | `full` | ✓ | `ValueError` |
+| `fractional_variational_abm_qr` | < 1.0 | `full` | ✗ | `NotImplementedError` |
+| `fractional_cloned_dynamics_abm` | < 1.0 | `full` | ✗ | `NotImplementedError` |
+
+### reorthonormalization_time → reorthonormalize_every
+
+Pass `reorthonormalization_time` (physical time units) instead of
+`reorthonormalize_every` (step count):
+
+```python
+summary = compute_lyapunov_spectrum(
+    ...,
+    reorthonormalization_time=1.0,   # convert: every = round(1.0 / h)
+    h=0.01,
+)
+```
+
+If **both** are provided, `reorthonormalize_every` wins and a warning
+`'both_reorthonormalization_time_and_every_provided_using_every'` is added
+to `summary.warnings`.
+
+### Request summary
+
+`summary.request_summary` is a plain dict:
+
+```python
+{
+  "method": "integer_qr_benettin",
+  "q": 1.0,
+  "h": 0.01,
+  "t_final": 100.0,
+  "t_burn": 0.0,
+  "reorthonormalize_every": 10,
+  "reorthonormalization_time": None,
+  "memory_mode": "not_applicable",
+  "memory_window": None,
+}
+```
+
+### F1 does NOT implement
+
+- `fractional_variational_abm_qr`
+- `fractional_cloned_dynamics_abm`
+- 0–1 test
+- PSD/FFT
+- Poincaré sections
+- `chaos_validation_summary`
+
+### F1 does NOT certify
+
+```
+chaos_certified_by_this_pipeline: false
+hiddenness_certified_by_this_pipeline: false
+```
+
+Fields `hidden_verified`, `chaos_verified`, `fractional_lyapunov_validated`,
+and `caputo_lyapunov_validated` are **not present** in
+`LyapunovComputationRequest` or `LyapunovComputationSummary`.

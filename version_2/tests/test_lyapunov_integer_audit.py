@@ -424,3 +424,131 @@ class TestNoForbiddenClaims:
         assert "chaos_verified" not in field_names
         assert "fractional_lyapunov_validated" not in field_names
         assert "caputo_lyapunov_validated" not in field_names
+
+
+# ---------------------------------------------------------------------------
+# H. F0 closure — public API exports from analysis package
+# ---------------------------------------------------------------------------
+
+class TestF0ClosureExports:
+    """H: A1 — analysis package exports F0 symbols correctly."""
+
+    def test_analysis_init_exports_integer_qr_benettin(self) -> None:
+        from hidden_attractors.analysis import integer_qr_benettin_lyapunov_exponents
+        assert callable(integer_qr_benettin_lyapunov_exponents)
+
+    def test_analysis_init_exports_lyapunov_method_info(self) -> None:
+        from hidden_attractors.analysis import LyapunovMethodInfo
+        import dataclasses
+        assert dataclasses.is_dataclass(LyapunovMethodInfo)
+
+    def test_analysis_init_exports_lyapunov_methods_registry(self) -> None:
+        from hidden_attractors.analysis import LYAPUNOV_METHODS
+        assert isinstance(LYAPUNOV_METHODS, dict)
+        assert LYAPUNOV_METHODS["integer_qr_benettin"].implemented is True
+
+    def test_integer_qr_benettin_in_all(self) -> None:
+        import hidden_attractors.analysis as ha
+        assert "integer_qr_benettin_lyapunov_exponents" in ha.__all__
+
+    def test_lyapunov_method_info_in_all(self) -> None:
+        import hidden_attractors.analysis as ha
+        assert "LyapunovMethodInfo" in ha.__all__
+
+    def test_lyapunov_methods_in_all(self) -> None:
+        import hidden_attractors.analysis as ha
+        assert "LYAPUNOV_METHODS" in ha.__all__
+
+
+# ---------------------------------------------------------------------------
+# I. F0 closure — integer_system_lyapunov_exponents rejects fractional systems
+# ---------------------------------------------------------------------------
+
+class TestF0ClosureSystemLyapunov:
+    """I: A2 — integer_system_lyapunov_exponents rejects q<1 system objects."""
+
+    # --- Dummy systems ---
+
+    class _DummyFractionalSystem:
+        """Minimal system with q=0.99 — must be rejected."""
+        q: float = 0.99
+        jacobian = None
+
+        def evaluate(self, state: np.ndarray) -> np.ndarray:
+            return np.array([-state[0], -2.0 * state[1]])
+
+        def jacobian_matrix(self, state: np.ndarray) -> np.ndarray:
+            return np.diag([-1.0, -2.0])
+
+    class _DummyQ1System:
+        """Minimal system with q=1.0 — must be allowed."""
+        q: float = 1.0
+        jacobian = None
+
+        def evaluate(self, state: np.ndarray) -> np.ndarray:
+            return np.array([-state[0], -2.0 * state[1]])
+
+        def jacobian_matrix(self, state: np.ndarray) -> np.ndarray:
+            return np.diag([-1.0, -2.0])
+
+    class _DummyNoOrderSystem:
+        """Minimal system with NO order attribute — backward compat must run."""
+        jacobian = None
+
+        def evaluate(self, state: np.ndarray) -> np.ndarray:
+            return np.array([-state[0], -2.0 * state[1]])
+
+        def jacobian_matrix(self, state: np.ndarray) -> np.ndarray:
+            return np.diag([-1.0, -2.0])
+
+    class _DummyMetadataFractionalSystem:
+        """System with q in metadata dict — must be rejected."""
+        jacobian = None
+        metadata: dict = {"q": 0.95}
+
+        def evaluate(self, state: np.ndarray) -> np.ndarray:
+            return np.array([-state[0], -2.0 * state[1]])
+
+        def jacobian_matrix(self, state: np.ndarray) -> np.ndarray:
+            return np.diag([-1.0, -2.0])
+
+    def test_integer_system_lyapunov_rejects_fractional_system_object(self) -> None:
+        from hidden_attractors.analysis.lyapunov import integer_system_lyapunov_exponents
+        with pytest.raises(ValueError, match="valid only for q=1"):
+            integer_system_lyapunov_exponents(
+                self._DummyFractionalSystem(),
+                np.array([1.0, 1.0]),
+                h=0.01,
+                t_final=5.0,
+            )
+
+    def test_integer_system_lyapunov_allows_q1_system(self) -> None:
+        from hidden_attractors.analysis.lyapunov import integer_system_lyapunov_exponents
+        result = integer_system_lyapunov_exponents(
+            self._DummyQ1System(),
+            np.array([1.0, 1.0]),
+            h=0.01,
+            t_final=10.0,
+        )
+        assert result.status == "ok"
+
+    def test_integer_system_lyapunov_allows_unknown_order_for_backward_compat(self) -> None:
+        from hidden_attractors.analysis.lyapunov import integer_system_lyapunov_exponents
+        result = integer_system_lyapunov_exponents(
+            self._DummyNoOrderSystem(),
+            np.array([1.0, 1.0]),
+            h=0.01,
+            t_final=10.0,
+        )
+        assert result.status == "ok"
+
+    def test_integer_system_lyapunov_rejects_metadata_fractional_system(self) -> None:
+        from hidden_attractors.analysis.lyapunov import integer_system_lyapunov_exponents
+        with pytest.raises(ValueError, match="valid only for q=1"):
+            integer_system_lyapunov_exponents(
+                self._DummyMetadataFractionalSystem(),
+                np.array([1.0, 1.0]),
+                h=0.01,
+                t_final=5.0,
+            )
+
