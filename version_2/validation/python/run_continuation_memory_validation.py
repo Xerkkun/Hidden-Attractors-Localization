@@ -152,10 +152,14 @@ def main() -> int:
             ost = s.get("overall_status", "?")
             warns = s.get("automatic_warnings", [])
             err = s.get("error", None)
+            orig_status = s.get('original_system_restart_vs_history_status', '?')
             print(f"  case_id : {cid}")
             print(f"  overall_status : {ost}")
             print(f"  deformed_lure_continuation_status : {s.get('deformed_lure_continuation_status', '?')}")
-            print(f"  original_system_restart_vs_history_status : {s.get('original_system_restart_vs_history_status', '?')}")
+            print(f"  deformed_lure_restart_vs_history_status : {s.get('deformed_lure_restart_vs_history_status', '?')}")
+            print(f"  original_system_restart_vs_history_status : {orig_status}")
+            if orig_status not in ("original_restart_and_history_consistent", "original_system_comparison_skipped", "?"):
+                print(f"  WARNING : original_system_restart_vs_history_status is not consistent ({orig_status})")
             if err:
                 print(f"  error   : {err}")
             if warns:

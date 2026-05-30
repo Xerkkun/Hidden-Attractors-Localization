@@ -33,6 +33,7 @@ from validation.python.continuation_memory_validation import (
     compare_restart_vs_history,
     compare_eta_grids,
     run_continuation_memory_validation,
+    aggregate_restart_vs_history_status,
     run_eta_path,
     _NO_CLAIM,
     _ALLOWED_DYN_CLASSES,
@@ -358,7 +359,7 @@ class TestRunContinuationMemoryValidationSmoke:
 
         assert (case_out / "continuation_validation_summary.json").exists()
         assert summary["overall_status"] == "continuation_validation_partial_original_only"
-        assert summary["restart_vs_history_status"] == "continuation_auxiliary_unavailable"
+        assert summary["restart_vs_history_status"] == summary["original_system_restart_vs_history_status"]
 
 
 # ===========================================================================
@@ -466,6 +467,69 @@ class TestContinuationModesAndKNull:
         content = readme_path.read_text(encoding="utf-8")
         assert "-1.168" not in content
         assert "k = -1.168" not in content
+
+    def test_aggregate_original_status_warning_not_consistent(self) -> None:
+        rows = [
+            {
+                "continuation_mode": "original_system",
+                "class_changed": False,
+                "final_state_relative_distance": 1.7953,
+                "rho_relative_difference": 0.1,
+                "range_relative_difference": 0.1,
+                "warning": True,
+                "status": "original_restart_and_history_consistent",
+            }
+        ]
+        policy = {"final_state_relative_tolerance": 0.5}
+        status, warns = aggregate_restart_vs_history_status(rows, mode="original_system", comparison_policy=policy)
+        assert status == "original_restart_differs_from_history"
+        assert len(warns) > 0
+        assert any("final_state_relative_distance=1.7953 > 0.5" in w for w in warns)
+
+    def test_aggregate_original_status_class_change_and_warning_artifact(self) -> None:
+        rows = [
+            {
+                "continuation_mode": "original_system",
+                "class_changed": True,
+                "warning": True,
+                "status": "original_restart_differs_from_history",
+            }
+        ]
+        status, warns = aggregate_restart_vs_history_status(rows, mode="original_system")
+        assert status == "original_restart_artifact_possible"
+
+    def test_aggregate_deformed_status_warning_not_consistent(self) -> None:
+        rows = [
+            {
+                "continuation_mode": "deformed_lure",
+                "class_changed": False,
+                "warning": True,
+                "status": "restart_and_history_consistent",
+            }
+        ]
+        status, _ = aggregate_restart_vs_history_status(rows, mode="deformed_lure")
+        assert status == "restart_differs_from_history"
+
+    def test_arctan_summary_warning_not_consistent(self, tmp_path: Path) -> None:
+        summary = run_continuation_memory_validation(
+            config_path=_ARCTAN_YAML,
+            output_dir=tmp_path,
+            fast=True,
+        )
+        orig_status = summary["original_system_restart_vs_history_status"]
+        if summary["automatic_warnings"]:
+            assert orig_status != "original_restart_and_history_consistent"
+            assert orig_status in ("original_restart_differs_from_history", "original_restart_artifact_possible")
+
+    def test_restart_vs_history_status_compatibility_field(self, tmp_path: Path) -> None:
+        summary = run_continuation_memory_validation(
+            config_path=_ARCTAN_YAML,
+            output_dir=tmp_path,
+            fast=True,
+        )
+        assert "deformed_lure_restart_vs_history_status" in summary
+        assert "original_system_restart_vs_history_status" in summary
+        assert "restart_vs_history_status" in summary
 
     def test_summary_no_hidden_or_chaos_verified(self, tmp_path: Path) -> None:
         summary = run_continuation_memory_validation(

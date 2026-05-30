@@ -1114,6 +1114,153 @@ def compare_restart_vs_history(
     return status, comparison_dict, warnings
 
 
+def aggregate_restart_vs_history_status(
+    rows: List[Dict[str, Any]],
+    mode: str,
+    comparison_policy: Optional[Dict[str, Any]] = None,
+) -> Tuple[str, List[str]]:
+    """Aggregate individual comparison row statuses and warnings conservatively.
+
+    Parameters
+    ----------
+    rows : list of dict
+        Comparison rows containing final_state_relative_distance, etc.
+    mode : {"deformed_lure", "original_system"}
+    comparison_policy : dict, optional
+        Used to extract tolerance settings.
+
+    Returns
+    -------
+    status : str
+    warnings : list of str
+    """
+    filtered_rows = [r for r in rows if r.get("continuation_mode") == mode]
+    policy = comparison_policy or {}
+    fs_tol = float(policy.get("final_state_relative_tolerance", 0.50))
+    rho_tol = float(policy.get("rho_jump_tolerance", 0.35))
+    range_tol = float(policy.get("range_relative_tolerance", 0.35))
+
+    warnings_list: List[str] = []
+
+    for r in filtered_rows:
+        fs_dist = r.get("final_state_relative_distance")
+        rho_diff = r.get("rho_relative_difference")
+        range_diff = r.get("range_relative_difference")
+        
+        fs_dist_val = float(fs_dist) if fs_dist is not None else float("nan")
+        rho_diff_val = float(rho_diff) if rho_diff is not None else float("nan")
+        range_diff_val = float(range_diff) if range_diff is not None else float("nan")
+        
+        prefix = "Original-system" if mode == "original_system" else "Deformed-system"
+        
+        if math.isfinite(fs_dist_val) and fs_dist_val > fs_tol:
+            warnings_list.append(
+                f"{prefix} restart/history comparison differs: "
+                f"final_state_relative_distance={fs_dist_val:.4f} > {fs_tol}"
+            )
+        if math.isfinite(rho_diff_val) and rho_diff_val > rho_tol:
+            warnings_list.append(
+                f"{prefix} restart/history comparison differs: "
+                f"rho_relative_difference={rho_diff_val:.4f} > {rho_tol}"
+            )
+        if math.isfinite(range_diff_val) and range_diff_val > range_tol:
+            warnings_list.append(
+                f"{prefix} restart/history comparison differs: "
+                f"range_relative_difference={range_diff_val:.4f} > {range_tol}"
+            )
+        
+        if r.get("class_changed", False):
+            warnings_list.append(
+                f"{prefix} restart/history dynamic class differs: "
+                f"restart='{r.get('restart_dynamic_class')}' vs history='{r.get('history_dynamic_class')}'"
+            )
+
+    if mode == "original_system":
+        if not filtered_rows:
+            return "original_comparison_inconclusive", warnings_list
+
+        has_artifact = False
+        for r in filtered_rows:
+            cc = r.get("class_changed", False)
+            warn = r.get("warning", False)
+            status_val = r.get("status", "")
+            if (cc and warn) or status_val in ("original_restart_artifact_possible", "restart_artifact_possible"):
+                has_artifact = True
+                break
+
+        if has_artifact:
+            return "original_restart_artifact_possible", warnings_list
+
+        differs = False
+        for r in filtered_rows:
+            status_val = r.get("status", "")
+            warn = r.get("warning", False)
+            
+            fs_dist = r.get("final_state_relative_distance")
+            rho_diff = r.get("rho_relative_difference")
+            range_diff = r.get("range_relative_difference")
+            
+            fs_dist_val = float(fs_dist) if fs_dist is not None else float("nan")
+            rho_diff_val = float(rho_diff) if rho_diff is not None else float("nan")
+            range_diff_val = float(range_diff) if range_diff is not None else float("nan")
+            
+            if (status_val in ("original_restart_differs_from_history", "restart_differs_from_history", "paper_style_restart_differs_from_caputo_history_transport")
+                or warn
+                or (math.isfinite(fs_dist_val) and fs_dist_val > fs_tol)
+                or (math.isfinite(rho_diff_val) and rho_diff_val > rho_tol)
+                or (math.isfinite(range_diff_val) and range_diff_val > range_tol)):
+                differs = True
+                break
+
+        if differs:
+            return "original_restart_differs_from_history", warnings_list
+
+        return "original_restart_and_history_consistent", warnings_list
+
+    else:
+        # mode == "deformed_lure"
+        if not filtered_rows:
+            return "comparison_inconclusive", warnings_list
+
+        has_artifact = False
+        for r in filtered_rows:
+            cc = r.get("class_changed", False)
+            warn = r.get("warning", False)
+            status_val = r.get("status", "")
+            if (cc and warn) or status_val == "restart_artifact_possible":
+                has_artifact = True
+                break
+
+        if has_artifact:
+            return "restart_artifact_possible", warnings_list
+
+        differs = False
+        for r in filtered_rows:
+            status_val = r.get("status", "")
+            warn = r.get("warning", False)
+            
+            fs_dist = r.get("final_state_relative_distance")
+            rho_diff = r.get("rho_relative_difference")
+            range_diff = r.get("range_relative_difference")
+            
+            fs_dist_val = float(fs_dist) if fs_dist is not None else float("nan")
+            rho_diff_val = float(rho_diff) if rho_diff is not None else float("nan")
+            range_diff_val = float(range_diff) if range_diff is not None else float("nan")
+            
+            if (status_val in ("restart_differs_from_history", "paper_style_restart_differs_from_caputo_history_transport")
+                or warn
+                or (math.isfinite(fs_dist_val) and fs_dist_val > fs_tol)
+                or (math.isfinite(rho_diff_val) and rho_diff_val > rho_tol)
+                or (math.isfinite(range_diff_val) and range_diff_val > range_tol)):
+                differs = True
+                break
+
+        if differs:
+            return "restart_differs_from_history", warnings_list
+
+        return "restart_and_history_consistent", warnings_list
+
+
 # ===========================================================================
 # Helper: write CSV
 # ===========================================================================
@@ -1282,22 +1429,6 @@ def run_continuation_memory_validation(
             best_N = max(eta_grid_sizes) if eta_grid_sizes else 10
             best_M = max(windows_M) if windows_M else 256
 
-            rr = results_by_mode_N["deformed_lure"].get(best_N, [])
-            hr = history_results_by_mode_N_M["deformed_lure"].get((best_N, best_M), [])
-
-            status, cmp_dict, rv_h_warnings = compare_restart_vs_history(rr, hr, policy)
-            all_warnings.extend(rv_h_warnings)
-
-            # Map status
-            if eta_ref_status == "continuation_unstable":
-                deformed_lure_continuation_status = "deformed_lure_continuation_failed"
-            elif status in ("restart_differs_from_history", "restart_artifact_possible"):
-                deformed_lure_continuation_status = "deformed_lure_continuation_sensitive_to_history"
-            elif status in ("restart_and_history_consistent", "paper_style_restart_differs_from_caputo_history_transport"):
-                deformed_lure_continuation_status = "deformed_lure_continuation_passed"
-            else:
-                deformed_lure_continuation_status = "deformed_lure_continuation_inconclusive"
-
             # Add deformed Lure rows
             for N_eta in eta_grid_sizes:
                 for M in (windows_M if windows_M else [best_M]):
@@ -1334,22 +1465,6 @@ def run_continuation_memory_validation(
         best_N = max(eta_grid_sizes) if eta_grid_sizes else 10
         best_M = max(windows_M) if windows_M else 256
 
-        rr = results_by_mode_N["original_system"].get(best_N, [])
-        hr = history_results_by_mode_N_M["original_system"].get((best_N, best_M), [])
-
-        status, cmp_dict, original_rv_h_warnings = compare_restart_vs_history(rr, hr, policy)
-        all_warnings.extend(original_rv_h_warnings)
-
-        # Map to original_system_restart_vs_history_status
-        if status in ("restart_and_history_consistent", "paper_style_restart_differs_from_caputo_history_transport"):
-            original_system_restart_vs_history_status = "original_restart_and_history_consistent"
-        elif status == "restart_differs_from_history":
-            original_system_restart_vs_history_status = "original_restart_differs_from_history"
-        elif status == "restart_artifact_possible":
-            original_system_restart_vs_history_status = "original_restart_artifact_possible"
-        else:
-            original_system_restart_vs_history_status = "original_comparison_inconclusive"
-
         # Add original system rows
         for N_eta in eta_grid_sizes:
             for M in (windows_M if windows_M else [best_M]):
@@ -1374,6 +1489,47 @@ def run_continuation_memory_validation(
                     "warning": cd.get("warning", False),
                 }
                 restart_vs_history_rows.append(row)
+
+    # -----------------------------------------------------------------------
+    # Aggregate status and warnings
+    # -----------------------------------------------------------------------
+    deformed_lure_restart_vs_history_status = "comparison_inconclusive"
+    if run_deformed:
+        if k_val is None:
+            deformed_lure_restart_vs_history_status = "continuation_auxiliary_unavailable"
+            deformed_lure_continuation_status = "continuation_auxiliary_unavailable"
+        else:
+            deformed_lure_restart_vs_history_status, def_warns = aggregate_restart_vs_history_status(
+                restart_vs_history_rows, "deformed_lure", policy
+            )
+            all_warnings.extend(def_warns)
+            
+            # Map deformed_lure_continuation_status
+            if eta_ref_status == "continuation_unstable":
+                deformed_lure_continuation_status = "deformed_lure_continuation_failed"
+            elif deformed_lure_restart_vs_history_status in ("restart_differs_from_history", "restart_artifact_possible"):
+                deformed_lure_continuation_status = "deformed_lure_continuation_sensitive_to_history"
+            elif deformed_lure_restart_vs_history_status == "restart_and_history_consistent":
+                deformed_lure_continuation_status = "deformed_lure_continuation_passed"
+            else:
+                deformed_lure_continuation_status = "deformed_lure_continuation_inconclusive"
+    else:
+        deformed_lure_restart_vs_history_status = "deformed_lure_continuation_skipped"
+        deformed_lure_continuation_status = "deformed_lure_continuation_skipped"
+
+    if run_original:
+        original_system_restart_vs_history_status, orig_warns = aggregate_restart_vs_history_status(
+            restart_vs_history_rows, "original_system", policy
+        )
+        all_warnings.extend(orig_warns)
+
+    # Compatibility mapping for restart_vs_history_status
+    if deformed_lure_continuation_available:
+        restart_vs_history_status = deformed_lure_restart_vs_history_status
+    elif original_system_strategy_comparison_performed:
+        restart_vs_history_status = original_system_restart_vs_history_status
+    else:
+        restart_vs_history_status = "comparison_inconclusive"
 
     # -----------------------------------------------------------------------
     # Determine overall status
@@ -1401,7 +1557,7 @@ def run_continuation_memory_validation(
         overall_status = "continuation_validation_inconclusive"
 
     # deduplicate warnings
-    all_warnings = list(set(all_warnings))
+    all_warnings = sorted(list(set(all_warnings)))
 
     # -----------------------------------------------------------------------
     # Write outputs
@@ -1428,7 +1584,8 @@ def run_continuation_memory_validation(
 
         "overall_status": overall_status,
         "eta_refinement_status": eta_ref_status,
-        "restart_vs_history_status": deformed_lure_continuation_status if k_val is not None else "continuation_auxiliary_unavailable",
+        "restart_vs_history_status": restart_vs_history_status,
+        "deformed_lure_restart_vs_history_status": deformed_lure_restart_vs_history_status,
         "transported_history": "history_window_transport" in strategies,
         "rhs_history_recomputed_after_eta_change": "history_window_transport" in strategies,
         "automatic_warnings": all_warnings,
