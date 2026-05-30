@@ -7,21 +7,23 @@
 
 ## 1. What This Phase Validates
 
-This phase validates **numerical continuation** in Caputo fractional-order Chua systems
-by comparing two strategies for transporting state information from one eta-step to the next:
+This phase evaluates the numerical sensitivity of memory-preservation strategies during multi-segment integrations. It operates across two distinct validation layers:
 
-1. **`last_point_restart`** — restarts integration from the last state point only.
-   This is the paper-style or control-style approach. It discards the Caputo history.
+### A. Deformed Lur'e Continuation (`deformed_lure_continuation`)
+*Only available if a describing-function gain seed $k \neq \text{null}$ is provided (e.g., Chua saturation).*
+This layer validates the parameter continuation in $\eta \in [0, 1]$ between the auxiliary linear system ($\eta=0$) and the original Chua system ($\eta=1$). It compares:
+1. **`last_point_restart`**: Restarts the simulation at each $\eta_i \to \eta_{i+1}$ step using only the last computed point (Caputo history reset).
+2. **`history_window_transport`**: Carries the discrete history window $H_k = \{X(t_{k-M}), \dots, X(t_k)\}$ to the next continuation segment and recomputes the RHS samples under the new field $F_{\eta_{i+1}}(X_j)$.
 
-2. **`history_window_transport`** — carries a discrete window of the history
-   `H_k = {X(t_{k-M}), ..., X(t_k)}` when transitioning between eta values,
-   and recomputes the RHS history samples using the new field `F_{eta_{i+1}}`.
+### B. Original System Strategy Comparison (`original_system_strategy_comparison`)
+*Available even if $k = \text{null}$ (e.g., Chua arctan).*
+This layer compares the `last_point_restart` vs. `history_window_transport` integration strategies on the **original (undeformed) system** directly. It does **not** claim to be a Lur'e parameter continuation (since there is no $k$ to deform the field), but rather evaluates the sensitivity of the original fractional system integration to Caputo history resets across segment transitions. This comparison is particularly useful when analyzing papers that report initial conditions but do not specify or use a continuation auxiliary system.
 
-The phase compares these two strategies in terms of:
+The phase compares these strategies in terms of:
 - dynamic classification of each trajectory segment;
 - attractor statistics (`rho_attractor`, `rho_max`, range, centroid);
-- jump norms between consecutive eta steps;
-- sensitivity to eta refinement (N = 10, 25, 50, 100 steps).
+- jump norms between consecutive steps;
+- sensitivity to grid refinement ($N_{\eta} = 10, 25, 50, 100$ segments).
 
 This phase does **not** certify hidden attractors, chaos, or Lyapunov exponents.
 
@@ -229,14 +231,23 @@ necessary but not sufficient step toward a hidden attractor localization.
 > References based solely on the Grünwald-Letnikov discretization are not used
 > as primary justification.
 
+### Detailed Notes on $k$ and Continuation Layers
+1. **Gain Equivalent $k$**: For the Chua saturation system, the parameter $k = 0.20986735451508398$ represents the equivalent gain from describing-function analysis used for the seed. It is **not** the local nonlinear slopes ($m_0, m_1$) nor the exterior slope. Sign conventions are strictly preserved to ensure consistency with the deformed vector field $F_{\eta}(X) = P X + b [k \sigma + \eta(\psi(\sigma) - k \sigma)]$.
+2. **Handling $k = \text{null}$ (Chua Arctan)**: No artificial gain $k$ is invented or assumed. The `deformed_lure_continuation` is marked as `continuation_auxiliary_unavailable`. However, strategy comparison (`original_system_strategy_comparison`) is still fully executed on the original system directly to evaluate numerical restart vs history transport sensitivities under Caputo integrations.
+3. **No-Claim Invariants**:
+   - Discarding history (`last_point_restart`) is a control/restart strategy and is not a complete or exact Caputo continuation.
+   - Using finite window transport (`history_window_transport`) is a numerical approximation, not an exact full-history Caputo continuation.
+   - No hidden attractors are certified (`hidden_verified` is never claimed or set in any output).
+   - No chaos is certified (`chaos_certified_by_this_pipeline: false`). If `chaotic_candidate_by_geometry` is reported, it is a geometric classification and does not represent proven mathematical chaos.
+
 ---
 
 ## Cases Validated
 
-| `case_id` | `system_id` | `q` | `k` |
-|-----------|-------------|-----|-----|
-| `chua_fractional_saturation_continuation` | `chua_fractional_saturation` | 0.9998 | 0.20987 |
-| `chua_fractional_arctan_continuation` | `chua_fractional_arctan` | 0.99 | null (unavailable) |
+| `case_id` | `system_id` | `q` | `k` | Continuation Modes |
+|-----------|-------------|-----|-----|--------------------|
+| `chua_fractional_saturation_continuation` | `chua_fractional_saturation` | 0.9998 | 0.20986735451508398 | deformed_lure & original_system |
+| `chua_fractional_arctan_continuation` | `chua_fractional_arctan` | 0.99 | null | original_system comparison only |
 
 ---
 

@@ -12,6 +12,10 @@ initial_condition:
   source: "published_integer_laplace_seed"
   x0: [5.856145086257324, 0.36933157824675933, -8.36653616833187]
 
+continuation_modes:
+  deformed_lure_continuation: true
+  original_system_strategy_comparison: true
+
 lure_seed:
   k: 0.20986735451508398
   sigma_output: "r^T X"

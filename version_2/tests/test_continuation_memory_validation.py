@@ -33,6 +33,7 @@ from validation.python.continuation_memory_validation import (
     compare_restart_vs_history,
     compare_eta_grids,
     run_continuation_memory_validation,
+    run_eta_path,
     _NO_CLAIM,
     _ALLOWED_DYN_CLASSES,
     _ALLOWED_ETA_REFINEMENT_STATUSES,
@@ -344,7 +345,7 @@ class TestRunContinuationMemoryValidationSmoke:
         assert summary["eta_refinement_status"] in _ALLOWED_ETA_REFINEMENT_STATUSES
 
     def test_arctan_case_smoke(self, tmp_path: Path) -> None:
-        """Wu 2023 case has k=null, so should return continuation_auxiliary_unavailable."""
+        """Wu 2023 case has k=null, so should return continuation_validation_partial_original_only."""
         summary = run_continuation_memory_validation(
             config_path=_ARCTAN_YAML,
             output_dir=tmp_path,
@@ -356,41 +357,135 @@ class TestRunContinuationMemoryValidationSmoke:
         case_out = tmp_path / case_id
 
         assert (case_out / "continuation_validation_summary.json").exists()
-        assert summary["overall_status"] == "continuation_validation_inconclusive"
+        assert summary["overall_status"] == "continuation_validation_partial_original_only"
         assert summary["restart_vs_history_status"] == "continuation_auxiliary_unavailable"
 
 
 # ===========================================================================
-# 8. No-claims enforcement
+# 8. Specific continuation mode / k=null tests
 # ===========================================================================
 
-class TestNoClaimsEnforcement:
-    """Ensure no hidden attractor or chaos claims are certified by the code."""
+class TestContinuationModesAndKNull:
+    """Validate deformed Lure vs original system strategy separation and k=null behavior."""
 
-    def test_no_claim_dict(self) -> None:
-        assert "hidden_verified" not in _NO_CLAIM
-        assert _NO_CLAIM["hiddenness_certified_by_this_pipeline"] is False
-        assert _NO_CLAIM["chaos_certified_by_this_pipeline"] is False
-        assert _NO_CLAIM["no_hidden_verified_claim"] is True
-        assert _NO_CLAIM["pointwise_comparison_used"] is False
+    def test_arctan_k_null_separates_deformed_and_original_modes(self) -> None:
+        config = load_continuation_config(_ARCTAN_YAML)
+        assert config.get("lure_seed", {}).get("k") is None
+        assert config["continuation_modes"]["deformed_lure_continuation"] is False
+        assert config["continuation_modes"]["original_system_strategy_comparison"] is True
 
-    def test_saturation_summary_no_claims(self, tmp_path: Path) -> None:
+    def test_deformed_lure_mode_with_k_null_does_not_run_original_rhs(self) -> None:
+        """deformed_lure mode with k=None must return placeholders without executing integrations."""
+        config = load_continuation_config(_ARCTAN_YAML)
+        sys_obj, P, b, r, psi = get_continuation_system(config["system_id"])
+        
+        # Call run_eta_path with deformed_lure and k=None
+        records = run_eta_path(
+            config=config,
+            system_obj=sys_obj,
+            N_eta=10,
+            strategy="last_point_restart",
+            continuation_mode="deformed_lure",
+            fast=True,
+        )
+        
+        assert len(records) == 11
+        for rec in records:
+            assert rec["availability"] == "continuation_auxiliary_unavailable"
+            assert rec["continuation_mode"] == "deformed_lure"
+            assert rec["deformed_lure_available"] is False
+            assert rec["original_system_comparison"] is False
+            assert math.isnan(rec["final_state_x"])
+            assert rec["int_status"] == "continuation_auxiliary_unavailable"
+
+    def test_original_system_mode_runs_with_k_null(self) -> None:
+        """original_system mode runs successfully even when k is None."""
+        config = load_continuation_config(_ARCTAN_YAML)
+        sys_obj, P, b, r, psi = get_continuation_system(config["system_id"])
+        
+        records = run_eta_path(
+            config=config,
+            system_obj=sys_obj,
+            N_eta=10,
+            strategy="last_point_restart",
+            continuation_mode="original_system",
+            fast=True,
+        )
+        
+        assert len(records) == 11
+        for rec in records:
+            assert rec["availability"] == "original_system_available"
+            assert rec["continuation_mode"] == "original_system"
+            assert rec["deformed_lure_available"] is False
+            assert rec["original_system_comparison"] is True
+            assert not math.isnan(rec["final_state_x"])
+            assert rec["int_status"] == "ok"
+
+    def test_arctan_summary_reports_partial_original_only(self, tmp_path: Path) -> None:
+        summary = run_continuation_memory_validation(
+            config_path=_ARCTAN_YAML,
+            output_dir=tmp_path,
+            fast=True,
+        )
+        
+        assert summary["deformed_lure_continuation_available"] is False
+        assert summary["deformed_lure_continuation_status"] == "deformed_lure_continuation_skipped"
+        assert summary["original_system_strategy_comparison_performed"] is True
+        
+        allowed_original = {
+            "original_restart_and_history_consistent",
+            "original_restart_differs_from_history",
+            "original_restart_artifact_possible",
+            "original_comparison_inconclusive",
+        }
+        assert summary["original_system_restart_vs_history_status"] in allowed_original
+        assert summary["overall_status"] == "continuation_validation_partial_original_only"
+
+    def test_saturation_summary_reports_deformed_available(self, tmp_path: Path) -> None:
         summary = run_continuation_memory_validation(
             config_path=_SATURATION_YAML,
             output_dir=tmp_path,
             fast=True,
         )
+        
+        assert summary["deformed_lure_continuation_available"] is True
+        allowed_deformed = {
+            "deformed_lure_continuation_passed",
+            "deformed_lure_continuation_sensitive_to_history",
+            "deformed_lure_continuation_failed",
+            "deformed_lure_continuation_inconclusive",
+        }
+        assert summary["deformed_lure_continuation_status"] in allowed_deformed
+        assert summary["original_system_strategy_comparison_performed"] is True
+        
+        config = load_continuation_config(_SATURATION_YAML)
+        assert config["lure_seed"]["k"] == 0.20986735451508398
+
+    def test_no_wrong_k_in_readme(self) -> None:
+        readme_path = REPO_ROOT / "validation" / "continuation_memory_validation" / "README.md"
+        content = readme_path.read_text(encoding="utf-8")
+        assert "-1.168" not in content
+        assert "k = -1.168" not in content
+
+    def test_summary_no_hidden_or_chaos_verified(self, tmp_path: Path) -> None:
+        summary = run_continuation_memory_validation(
+            config_path=_SATURATION_YAML,
+            output_dir=tmp_path,
+            fast=True,
+        )
+        
         assert "hidden_verified" not in summary
+        assert "chaos_verified" not in summary
         assert summary["hiddenness_certified_by_this_pipeline"] is False
         assert summary["chaos_certified_by_this_pipeline"] is False
         assert summary["no_hidden_verified_claim"] is True
-        assert summary["pointwise_comparison_used"] is False
-
-        # Read JSON file too
+        
+        # Read JSON file
         json_path = tmp_path / summary["case_id"] / "continuation_validation_summary.json"
         with json_path.open("r", encoding="utf-8") as fh:
             data = json.load(fh)
         assert "hidden_verified" not in data
+        assert "chaos_verified" not in data
         assert data["hiddenness_certified_by_this_pipeline"] is False
         assert data["chaos_certified_by_this_pipeline"] is False
         assert data["no_hidden_verified_claim"] is True

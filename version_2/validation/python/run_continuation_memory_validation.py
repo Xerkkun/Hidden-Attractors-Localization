@@ -153,7 +153,9 @@ def main() -> int:
             warns = s.get("automatic_warnings", [])
             err = s.get("error", None)
             print(f"  case_id : {cid}")
-            print(f"  status  : {ost}")
+            print(f"  overall_status : {ost}")
+            print(f"  deformed_lure_continuation_status : {s.get('deformed_lure_continuation_status', '?')}")
+            print(f"  original_system_restart_vs_history_status : {s.get('original_system_restart_vs_history_status', '?')}")
             if err:
                 print(f"  error   : {err}")
             if warns:

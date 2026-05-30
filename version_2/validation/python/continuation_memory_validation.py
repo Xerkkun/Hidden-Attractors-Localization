@@ -112,6 +112,12 @@ _ALLOWED_RESTART_VS_HISTORY = {
     "paper_style_restart_differs_from_caputo_history_transport",
     "comparison_inconclusive",
     "continuation_auxiliary_unavailable",
+    "deformed_lure_continuation_available",
+    "deformed_lure_continuation_skipped",
+    "deformed_lure_continuation_inconclusive",
+    "deformed_lure_continuation_passed",
+    "deformed_lure_continuation_sensitive_to_history",
+    "deformed_lure_continuation_failed",
 }
 
 _ALLOWED_OVERALL_STATUSES = {
@@ -120,6 +126,7 @@ _ALLOWED_OVERALL_STATUSES = {
     "continuation_validation_sensitive_to_history",
     "continuation_validation_inconclusive",
     "continuation_validation_failed",
+    "continuation_validation_partial_original_only",
 }
 
 
@@ -159,10 +166,17 @@ def load_continuation_config(path: str | Path) -> Dict[str, Any]:
         raise ValueError(f"Empty YAML file: {path}")
 
     required = ["case_id", "system_id", "q", "initial_condition",
-                "integrator", "eta_grids", "memory_transport", "comparison_policy"]
+                "integrator", "eta_grids", "memory_transport", "comparison_policy", "continuation_modes"]
     missing = [k for k in required if k not in config]
     if missing:
         raise ValueError(f"Missing required fields in {path}: {missing}")
+
+    modes = config["continuation_modes"]
+    if "deformed_lure_continuation" not in modes or "original_system_strategy_comparison" not in modes:
+        raise ValueError(
+            "continuation_modes must contain deformed_lure_continuation and "
+            "original_system_strategy_comparison"
+        )
 
     q = float(config["q"])
     if not (0.0 < q < 1.0):
@@ -636,10 +650,11 @@ def run_eta_path(
     system_obj: Any,
     N_eta: int,
     strategy: str,
+    continuation_mode: str,
     M: Optional[int] = None,
     fast: bool = False,
 ) -> List[Dict[str, Any]]:
-    """Run one eta path for a given strategy and grid size.
+    """Run one eta path for a given strategy and grid size under a continuation mode.
 
     Parameters
     ----------
@@ -649,6 +664,8 @@ def run_eta_path(
         Number of eta steps. eta_i = i / N_eta.
     strategy : str
         'last_point_restart' or 'history_window_transport'.
+    continuation_mode : str
+        'deformed_lure' or 'original_system'.
     M : int or None
         History window size. Required if strategy == 'history_window_transport'.
     fast : bool
@@ -679,20 +696,11 @@ def run_eta_path(
 
     x0 = np.asarray(config["initial_condition"]["x0"], dtype=float)
 
-    # Build eta values: eta_0=0, eta_1=1/N, ..., eta_N=1
-    eta_values = [float(i) / float(N_eta) for i in range(N_eta + 1)]
-
-    path_records: List[Dict[str, Any]] = []
-    prev_times: Optional[np.ndarray] = None
-    prev_states: Optional[np.ndarray] = None
-    prev_metrics: Optional[Dict[str, Any]] = None
-    x_carry = x0.copy()
-
-    for step_idx, eta in enumerate(eta_values):
-        rhs_eta, availability = build_eta_rhs(system_obj, eta, k_val)
-
-        if availability != "available":
-            # k is null — mark as unavailable and skip eta path
+    # If deformed lure is requested but k is null, return unavailable placeholders immediately
+    if continuation_mode == "deformed_lure" and k_val is None:
+        path_records: List[Dict[str, Any]] = []
+        eta_values = [float(i) / float(N_eta) for i in range(N_eta + 1)]
+        for step_idx, eta in enumerate(eta_values):
             record = _make_unavailable_record(
                 case_id=case_id,
                 system_id=system_id,
@@ -706,14 +714,27 @@ def run_eta_path(
                 t_burn=t_burn,
             )
             path_records.append(record)
-            # For arctan with k=null: we still run strategy comparison using
-            # original system (eta=1 always). Override rhs_eta to original rhs.
-            # Build rhs using eta=1, k=0 (no linearisation, treat as skip).
-            # The comparison still runs last_point vs history using original system.
-            rhs_original = _build_original_rhs(system_obj)
-            rhs_eta = rhs_original
-            # Continue using original RHS for transport
-            availability = "available_original_only"
+        return path_records
+
+    # Build eta values: eta_0=0, eta_1=1/N, ..., eta_N=1
+    eta_values = [float(i) / float(N_eta) for i in range(N_eta + 1)]
+
+    path_records = []
+    prev_times: Optional[np.ndarray] = None
+    prev_states: Optional[np.ndarray] = None
+    prev_metrics: Optional[Dict[str, Any]] = None
+    x_carry = x0.copy()
+
+    for step_idx, eta in enumerate(eta_values):
+        if continuation_mode == "deformed_lure":
+            rhs_eta, availability = build_eta_rhs(system_obj, eta, k_val)
+            deformed_lure_available = True
+            original_system_comparison = False
+        else:
+            rhs_eta = _build_original_rhs(system_obj)
+            availability = "original_system_available"
+            deformed_lure_available = False
+            original_system_comparison = True
 
         # --- Run this segment ---
         if step_idx == 0 or prev_times is None or strategy == "last_point_restart":
@@ -782,6 +803,10 @@ def run_eta_path(
         record = {
             "case_id": case_id,
             "system_id": system_id,
+            "continuation_mode": continuation_mode,
+            "deformed_lure_available": deformed_lure_available,
+            "original_system_comparison": original_system_comparison,
+            "availability": availability,
             "strategy": seg_result["strategy"],
             "N_eta": N_eta,
             "eta_i": eta,
@@ -808,7 +833,6 @@ def run_eta_path(
             "rho_jump": jump["rho_jump"],
             "range_jump": jump["range_jump"],
             "warning": warning,
-            "availability": availability,
         }
         path_records.append(record)
 
@@ -836,6 +860,10 @@ def _make_unavailable_record(
     return {
         "case_id": case_id,
         "system_id": system_id,
+        "continuation_mode": "deformed_lure",
+        "deformed_lure_available": False,
+        "original_system_comparison": False,
+        "availability": "continuation_auxiliary_unavailable",
         "strategy": strategy,
         "N_eta": N_eta,
         "eta_i": eta_i,
@@ -862,7 +890,6 @@ def _make_unavailable_record(
         "rho_jump": float("nan"),
         "range_jump": float("nan"),
         "warning": True,
-        "availability": "continuation_auxiliary_unavailable",
     }
 
 
@@ -1145,6 +1172,10 @@ def run_continuation_memory_validation(
     ]
     policy = config["comparison_policy"]
 
+    modes_cfg = config.get("continuation_modes", {})
+    run_deformed = bool(modes_cfg.get("deformed_lure_continuation", True))
+    run_original = bool(modes_cfg.get("original_system_strategy_comparison", True))
+
     out_root = Path(output_dir)
     case_out = out_root / case_id
     case_out.mkdir(parents=True, exist_ok=True)
@@ -1156,79 +1187,181 @@ def run_continuation_memory_validation(
     # -----------------------------------------------------------------------
     # Run all strategies × N_eta combinations
     # -----------------------------------------------------------------------
-    # Structure: results[(strategy, N_eta, M)] = path_records
     all_grid_rows: List[Dict[str, Any]] = []
-    restart_results_by_N: Dict[int, List[Dict[str, Any]]] = {}
-    history_results_by_N_M: Dict[Tuple[int, int], List[Dict[str, Any]]] = {}
+    results_by_mode_N: Dict[str, Dict[int, List[Dict[str, Any]]]] = {
+        "deformed_lure": {},
+        "original_system": {},
+    }
+    history_results_by_mode_N_M: Dict[str, Dict[Tuple[int, int], List[Dict[str, Any]]]] = {
+        "deformed_lure": {},
+        "original_system": {},
+    }
 
-    for N_eta in eta_grid_sizes:
-        for strategy in strategies:
-            if strategy == "last_point_restart":
-                print(
-                    f"  [run] case={case_id} strategy=restart N={N_eta}"
-                )
-                records = run_eta_path(
-                    config=config,
-                    system_obj=system_obj,
-                    N_eta=N_eta,
-                    strategy="last_point_restart",
-                    M=None,
-                    fast=fast,
-                )
-                all_grid_rows.extend(records)
-                restart_results_by_N[N_eta] = records
+    active_modes = []
+    if run_deformed:
+        active_modes.append("deformed_lure")
+    if run_original:
+        active_modes.append("original_system")
 
-            elif strategy == "history_window_transport":
-                for M in windows_M:
+    for mode in active_modes:
+        for N_eta in eta_grid_sizes:
+            for strategy in strategies:
+                if strategy == "last_point_restart":
                     print(
-                        f"  [run] case={case_id} strategy=history M={M} N={N_eta}"
+                        f"  [run] case={case_id} mode={mode} strategy=restart N={N_eta}"
                     )
                     records = run_eta_path(
                         config=config,
                         system_obj=system_obj,
                         N_eta=N_eta,
-                        strategy="history_window_transport",
-                        M=M,
+                        strategy="last_point_restart",
+                        continuation_mode=mode,
+                        M=None,
                         fast=fast,
                     )
                     all_grid_rows.extend(records)
-                    history_results_by_N_M[(N_eta, M)] = records
+                    results_by_mode_N[mode][N_eta] = records
+
+                elif strategy == "history_window_transport":
+                    for M in windows_M:
+                        print(
+                            f"  [run] case={case_id} mode={mode} strategy=history M={M} N={N_eta}"
+                        )
+                        records = run_eta_path(
+                            config=config,
+                            system_obj=system_obj,
+                            N_eta=N_eta,
+                            strategy="history_window_transport",
+                            continuation_mode=mode,
+                            M=M,
+                            fast=fast,
+                        )
+                        all_grid_rows.extend(records)
+                        history_results_by_mode_N_M[mode][(N_eta, M)] = records
 
     # -----------------------------------------------------------------------
-    # Compare eta grids (restart strategy)
+    # Compare Lure continuation
     # -----------------------------------------------------------------------
-    eta_ref_status, eta_ref_warns = compare_eta_grids(restart_results_by_N)
-
-    # -----------------------------------------------------------------------
-    # Compare restart vs history (use largest N and largest M)
-    # -----------------------------------------------------------------------
+    deformed_lure_continuation_available = False
+    deformed_lure_continuation_status = "deformed_lure_continuation_skipped"
+    eta_ref_status = "continuation_inconclusive"
+    
     restart_vs_history_rows: List[Dict[str, Any]] = []
-    restart_vs_history_status = "comparison_inconclusive"
-    rv_h_warnings: List[str] = []
+    all_warnings: List[str] = []
 
-    if k_val is None:
-        restart_vs_history_status = "continuation_auxiliary_unavailable"
-    else:
+    if run_deformed:
+        if k_val is None:
+            deformed_lure_continuation_status = "continuation_auxiliary_unavailable"
+            deformed_lure_continuation_available = False
+            best_N = max(eta_grid_sizes) if eta_grid_sizes else 10
+            best_M = max(windows_M) if windows_M else 256
+            row = {
+                "case_id": case_id,
+                "system_id": system_id,
+                "continuation_mode": "deformed_lure",
+                "N_eta": best_N,
+                "M": best_M,
+                "restart_dynamic_class": "",
+                "history_dynamic_class": "",
+                "class_changed": False,
+                "final_state_relative_distance": float("nan"),
+                "rho_relative_difference": float("nan"),
+                "range_relative_difference": float("nan"),
+                "status": "continuation_auxiliary_unavailable",
+                "warning": True,
+            }
+            restart_vs_history_rows.append(row)
+        else:
+            deformed_lure_continuation_available = True
+            
+            # Grid refinement check (deformed Lure)
+            eta_ref_status, eta_ref_warns = compare_eta_grids(results_by_mode_N["deformed_lure"])
+            all_warnings.extend(eta_ref_warns)
+
+            # Strategy comparison
+            best_N = max(eta_grid_sizes) if eta_grid_sizes else 10
+            best_M = max(windows_M) if windows_M else 256
+
+            rr = results_by_mode_N["deformed_lure"].get(best_N, [])
+            hr = history_results_by_mode_N_M["deformed_lure"].get((best_N, best_M), [])
+
+            status, cmp_dict, rv_h_warnings = compare_restart_vs_history(rr, hr, policy)
+            all_warnings.extend(rv_h_warnings)
+
+            # Map status
+            if eta_ref_status == "continuation_unstable":
+                deformed_lure_continuation_status = "deformed_lure_continuation_failed"
+            elif status in ("restart_differs_from_history", "restart_artifact_possible"):
+                deformed_lure_continuation_status = "deformed_lure_continuation_sensitive_to_history"
+            elif status in ("restart_and_history_consistent", "paper_style_restart_differs_from_caputo_history_transport"):
+                deformed_lure_continuation_status = "deformed_lure_continuation_passed"
+            else:
+                deformed_lure_continuation_status = "deformed_lure_continuation_inconclusive"
+
+            # Add deformed Lure rows
+            for N_eta in eta_grid_sizes:
+                for M in (windows_M if windows_M else [best_M]):
+                    rr_n = results_by_mode_N["deformed_lure"].get(N_eta, [])
+                    hr_nm = history_results_by_mode_N_M["deformed_lure"].get((N_eta, M), [])
+                    if not rr_n or not hr_nm:
+                        continue
+                    s, cd, _ = compare_restart_vs_history(rr_n, hr_nm, policy)
+                    row = {
+                        "case_id": case_id,
+                        "system_id": system_id,
+                        "continuation_mode": "deformed_lure",
+                        "N_eta": N_eta,
+                        "M": M,
+                        "restart_dynamic_class": cd.get("restart_dynamic_class", ""),
+                        "history_dynamic_class": cd.get("history_dynamic_class", ""),
+                        "class_changed": cd.get("class_changed", False),
+                        "final_state_relative_distance": cd.get("final_state_relative_distance", float("nan")),
+                        "rho_relative_difference": cd.get("rho_relative_difference", float("nan")),
+                        "range_relative_difference": cd.get("range_relative_difference", float("nan")),
+                        "status": s,
+                        "warning": cd.get("warning", False),
+                    }
+                    restart_vs_history_rows.append(row)
+
+    # -----------------------------------------------------------------------
+    # Compare original system
+    # -----------------------------------------------------------------------
+    original_system_strategy_comparison_performed = False
+    original_system_restart_vs_history_status = "original_system_comparison_skipped"
+
+    if run_original:
+        original_system_strategy_comparison_performed = True
         best_N = max(eta_grid_sizes) if eta_grid_sizes else 10
         best_M = max(windows_M) if windows_M else 256
 
-        rr = restart_results_by_N.get(best_N, [])
-        hr = history_results_by_N_M.get((best_N, best_M), [])
+        rr = results_by_mode_N["original_system"].get(best_N, [])
+        hr = history_results_by_mode_N_M["original_system"].get((best_N, best_M), [])
 
-        status, cmp_dict, rv_h_warnings = compare_restart_vs_history(rr, hr, policy)
-        restart_vs_history_status = status
+        status, cmp_dict, original_rv_h_warnings = compare_restart_vs_history(rr, hr, policy)
+        all_warnings.extend(original_rv_h_warnings)
 
-        # Build one comparison row per N_eta x M combination for all windows
+        # Map to original_system_restart_vs_history_status
+        if status in ("restart_and_history_consistent", "paper_style_restart_differs_from_caputo_history_transport"):
+            original_system_restart_vs_history_status = "original_restart_and_history_consistent"
+        elif status == "restart_differs_from_history":
+            original_system_restart_vs_history_status = "original_restart_differs_from_history"
+        elif status == "restart_artifact_possible":
+            original_system_restart_vs_history_status = "original_restart_artifact_possible"
+        else:
+            original_system_restart_vs_history_status = "original_comparison_inconclusive"
+
+        # Add original system rows
         for N_eta in eta_grid_sizes:
             for M in (windows_M if windows_M else [best_M]):
-                rr_n = restart_results_by_N.get(N_eta, [])
-                hr_nm = history_results_by_N_M.get((N_eta, M), [])
+                rr_n = results_by_mode_N["original_system"].get(N_eta, [])
+                hr_nm = history_results_by_mode_N_M["original_system"].get((N_eta, M), [])
                 if not rr_n or not hr_nm:
                     continue
                 s, cd, _ = compare_restart_vs_history(rr_n, hr_nm, policy)
                 row = {
                     "case_id": case_id,
                     "system_id": system_id,
+                    "continuation_mode": "original_system",
                     "N_eta": N_eta,
                     "M": M,
                     "restart_dynamic_class": cd.get("restart_dynamic_class", ""),
@@ -1245,13 +1378,30 @@ def run_continuation_memory_validation(
     # -----------------------------------------------------------------------
     # Determine overall status
     # -----------------------------------------------------------------------
-    overall_status, auto_warnings = _determine_overall_status(
-        eta_refinement_status=eta_ref_status,
-        restart_vs_history_status=restart_vs_history_status,
-        k_available=(k_val is not None),
-    )
+    if run_deformed and k_val is not None:
+        if deformed_lure_continuation_status == "deformed_lure_continuation_failed":
+            overall_status = "continuation_validation_failed"
+        elif deformed_lure_continuation_status == "deformed_lure_continuation_sensitive_to_history":
+            overall_status = "continuation_validation_sensitive_to_history"
+        elif deformed_lure_continuation_status == "deformed_lure_continuation_passed":
+            if eta_ref_status == "continuation_requires_eta_refinement":
+                overall_status = "continuation_validation_passed_with_eta_refinement"
+            else:
+                overall_status = "continuation_validation_passed"
+        else:
+            overall_status = "continuation_validation_inconclusive"
+    elif run_deformed and k_val is None:
+        if original_system_strategy_comparison_performed:
+            overall_status = "continuation_validation_partial_original_only"
+        else:
+            overall_status = "continuation_validation_inconclusive"
+    elif run_original:
+        overall_status = "continuation_validation_partial_original_only"
+    else:
+        overall_status = "continuation_validation_inconclusive"
 
-    all_warnings = list(set(eta_ref_warns + rv_h_warnings + auto_warnings))
+    # deduplicate warnings
+    all_warnings = list(set(all_warnings))
 
     # -----------------------------------------------------------------------
     # Write outputs
@@ -1267,12 +1417,20 @@ def run_continuation_memory_validation(
         "eta_grids": eta_grid_sizes,
         "strategies": strategies,
         "history_windows": windows_M,
+        
+        "deformed_lure_continuation_requested": run_deformed,
+        "deformed_lure_continuation_available": deformed_lure_continuation_available,
+        "deformed_lure_continuation_status": deformed_lure_continuation_status,
+        
+        "original_system_strategy_comparison_requested": run_original,
+        "original_system_strategy_comparison_performed": original_system_strategy_comparison_performed,
+        "original_system_restart_vs_history_status": original_system_restart_vs_history_status,
+
         "overall_status": overall_status,
         "eta_refinement_status": eta_ref_status,
-        "restart_vs_history_status": restart_vs_history_status,
+        "restart_vs_history_status": deformed_lure_continuation_status if k_val is not None else "continuation_auxiliary_unavailable",
         "transported_history": "history_window_transport" in strategies,
         "rhs_history_recomputed_after_eta_change": "history_window_transport" in strategies,
-        "continuation_auxiliary_available": k_val is not None,
         "automatic_warnings": all_warnings,
         "pointwise_comparison_used": False,
         "hiddenness_certified_by_this_pipeline": False,
@@ -1284,44 +1442,6 @@ def run_continuation_memory_validation(
         json.dump(summary, fh, indent=2)
 
     return summary
-
-
-def _determine_overall_status(
-    eta_refinement_status: str,
-    restart_vs_history_status: str,
-    k_available: bool,
-) -> Tuple[str, List[str]]:
-    """Determine overall validation status."""
-    warnings: List[str] = []
-
-    if not k_available:
-        return "continuation_validation_inconclusive", [
-            "Continuation auxiliary unavailable (k=null). "
-            "Cannot compare restart vs history for deformed field."
-        ]
-
-    if eta_refinement_status == "continuation_unstable":
-        warnings.append("Continuation is unstable across eta grids.")
-        return "continuation_validation_failed", warnings
-
-    if restart_vs_history_status in ("restart_artifact_possible", "restart_differs_from_history"):
-        warnings.append(
-            f"Restart vs history comparison: {restart_vs_history_status}"
-        )
-        return "continuation_validation_sensitive_to_history", warnings
-
-    if eta_refinement_status == "continuation_requires_eta_refinement":
-        return "continuation_validation_passed_with_eta_refinement", warnings
-
-    if eta_refinement_status in ("continuation_stable_under_eta_refinement", "continuation_inconclusive"):
-        if restart_vs_history_status in (
-            "restart_and_history_consistent",
-            "paper_style_restart_differs_from_caputo_history_transport",
-            "continuation_auxiliary_unavailable",
-        ):
-            return "continuation_validation_passed", warnings
-
-    return "continuation_validation_inconclusive", warnings
 
 
 # ===========================================================================

@@ -13,6 +13,10 @@ initial_condition:
   source: "published_initial_condition_wu2023"
   x0: [13.8, 0.7093, -19.8768]
 
+continuation_modes:
+  deformed_lure_continuation: false
+  original_system_strategy_comparison: true
+
 lure_seed:
   k: null
   sigma_output: "r^T X"

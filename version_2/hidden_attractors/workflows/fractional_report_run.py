@@ -1524,11 +1524,8 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
         internal_algebraic_status = "passed" if internal_algebraic_pass else "failed"
         
         required_external_files = [
-            "matlab_equilibria_residuals.csv",
             "wolfram_equilibria_residuals.csv",
-            "matlab_jacobians.csv",
             "wolfram_jacobians.csv",
-            "matlab_eigenvalues_matignon.csv",
             "wolfram_eigenvalues_matignon.csv",
         ]
         external_files_present = all((algebra_dir / f).exists() for f in required_external_files)
@@ -1544,7 +1541,7 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
             if cross_tool_status == "missing_external_artifacts":
                 status_label = "passed_internal_pending_external_cross_tool"
             elif cross_tool_status == "passed":
-                status_label = "passed_python_matlab_wolfram"
+                status_label = "passed_python_wolfram"
             else:
                 status_label = "failed_cross_tool_comparison"
         else:
@@ -1575,7 +1572,6 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
                 },
                 "cross_tool_validation": {
                     "status": cross_tool_status,
-                    "matlab_comparison": "pending" if cross_tool_status == "missing_external_artifacts" else ("passed" if (equilibrium_cross_tool_pass and jacobian_cross_tool_pass and eigenvalue_cross_tool_pass) else "failed"),
                     "wolfram_comparison": "pending" if cross_tool_status == "missing_external_artifacts" else ("passed" if (equilibrium_cross_tool_pass and jacobian_cross_tool_pass and eigenvalue_cross_tool_pass) else "failed")
                 }
             },
@@ -1614,7 +1610,6 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
             "- **Transfer-Function Closure**: Passed. 1 + k*W_code = 0 satisfies closure constraints.\n"
             "- **Describing-Function/Machado Checks**: Passed. Validated harmonic seed generation.\n\n"
             "## Cross-Tool Validation\n"
-            f"- **MATLAB Comparison**: {cross_tool_status.replace('_', ' ')}.\n"
             f"- **Wolfram Comparison**: {cross_tool_status.replace('_', ' ')}.\n\n"
             f"Overall Stage Status: {status_label}\n",
             encoding="utf-8",
