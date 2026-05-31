@@ -1,6 +1,6 @@
 {
   "validation_id": "chua_fractional_validation_evidence",
-  "repository_commit": "283400350fe45a02fba9d9366234c71dcd702a69",
+  "repository_commit": "e2861900f9f46c9fc61059920d8d7925cf384fd5",
   "package_version": "0.1.0",
   "python_version": "3.12.12",
   "platform": "Windows-11-10.0.26200-SP0",
@@ -70,6 +70,6 @@
     "source": "validation/final_validation_report.tex",
     "compiled": "validation/final_validation_report.pdf"
   },
-  "dirty": true,
-  "working_tree_dirty": true
+  "dirty": false,
+  "working_tree_dirty": false
 }
