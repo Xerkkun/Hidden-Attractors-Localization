@@ -20,6 +20,7 @@ import numpy as np
 
 from hidden_attractors.models import chua_nonsmooth_parameters, equilibria_nonsmooth, jacobian_nonsmooth, rhs_nonsmooth
 from hidden_attractors.validation import resolve_wolfram_artifacts
+from hidden_attractors.validation.manifest import regenerate_validation_manifest
 from hidden_attractors.seed_generation.chua import (
     chua_matrices,
     describing_function,
@@ -566,60 +567,11 @@ def main() -> None:
     algebra_summary["verdict"] = None
     algebra_summary["provenance"] = {"generator": "tools/validation/validate_chua_fractional_nonsmooth_algebra.py"}
     write_text(algebra / "algebraic_validation_validation_summary.json", json.dumps(algebra_summary, indent=2) + "\n")
-    try:
-        import subprocess
-        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
-        # Check if dirty
-        status = subprocess.check_output(["git", "status", "--porcelain"], text=True, stderr=subprocess.DEVNULL).strip()
-        if status:
-            commit = "working_tree_dirty"
-            dirty = True
-        else:
-            dirty = False
-    except Exception:
-        commit = "working_tree"
-        dirty = True
-
-    manifest_data = {
-        "validation_id": "chua_fractional_algebra_2026_05_23",
-        "repository_commit": commit,
-        "package_version": "0.1.0",
-        "python_version": platform.python_version(),
-        "platform": platform.platform(),
-        "main_system": "fractional nonsmooth Chua",
-        "main_parameters": {**params.__dict__, "q": Q},
-        "stages": {
-            "numerical_contract": "pending",
-            "algebraic_validation": "02_algebraic_validation/algebraic_validation_validation_summary.json",
-            "seed_generation": "pending",
-            "soft_precheck": "pending",
-            "continuation": "pending",
-            "post_continuation_filter": "pending",
-            "dynamic_reference": "pending",
-            "robustness": "pending",
-            "hiddenness_tests": "pending",
-            "diagnostics": "pending",
-        },
-        "pending_stages": [
-            "numerical_contract",
-            "seed_generation",
-            "soft_precheck",
-            "continuation",
-            "post_continuation_filter",
-            "dynamic_reference",
-            "robustness",
-            "hiddenness_tests",
-            "diagnostics",
-        ] + (["algebraic_validation"] if status_label == "passed_internal_pending_external_cross_tool" or status_label.startswith("failed") else []),
-        "schema_version": "1.0",
-        "protocol_version": "caputo_hidden_attractors_v1",
-        "final_report": {"status": "pending_full_protocol"},
-    }
-    if dirty:
-        manifest_data["dirty"] = True
-    write_text(manifest / "validation_manifest.json", json.dumps(manifest_data, indent=2) + "\n")
-    write_text(manifest / "environment.json", json.dumps({"python": sys.version, "platform": platform.platform()}, indent=2) + "\n")
-    write_text(manifest / "software_versions.json", json.dumps({"numpy": np.__version__, "matplotlib": matplotlib.__version__}, indent=2) + "\n")
+    regenerate_validation_manifest(
+        root,
+        validation_id="chua_fractional_validation_evidence",
+        main_parameters={**params.__dict__, "q": Q},
+    )
     print(json.dumps({"algebraic_validation": algebra_summary}, indent=2))
 
 

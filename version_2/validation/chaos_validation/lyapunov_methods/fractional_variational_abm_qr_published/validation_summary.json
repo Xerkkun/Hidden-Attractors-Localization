@@ -8,6 +8,7 @@
   },
   "notes": [
     "The DK2018 block-restart reproduction lane cannot promote this method.",
-    "Contract-specific published validation is still required."
+    "Contract-specific published validation is still required.",
+    "Fast native smoke tests and DK2018 long runs do not validate fixed_lower_limit_full_history_qr."
   ]
 }

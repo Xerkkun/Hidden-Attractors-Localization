@@ -52,5 +52,11 @@
     "working_tree_dirty": false,
     "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "implementation_sources_sha256": "42f8194cfb022c9bfc0df391c94fcd9f23d73107d9529d31237d69c25de76334"
+  },
+  "evidence_scope": {
+    "classification": "prior_exploratory_run",
+    "current_contract": "configs/unified_caputo_protocol.json",
+    "current_contract_applied": false,
+    "note": "This promoted summary predates the current unified Caputo protocol. It remains historical exploratory evidence and must not be treated as a completed run of configs/unified_caputo_protocol.json."
   }
 }

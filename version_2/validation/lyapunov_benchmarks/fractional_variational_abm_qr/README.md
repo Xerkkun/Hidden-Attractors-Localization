@@ -26,3 +26,17 @@ Each benchmark YAML must specify the following blocks:
 Published extensive calculations set `execution.native_required: true`.
 Python orchestrates configuration and evidence output; the numerical loop,
 RHS and Jacobian execute in C.
+
+## Validation tiers
+
+- Fast CI runs native published-case smoke tests and expects
+  `published_benchmark_smoke_passed`. This proves dispatch and native
+  infrastructure only.
+- Quantitative reproduction is opt-in because of runtime cost. Run with
+  `RUN_PUBLISHED_LYAPUNOV=1`; those tests are marked `slow`, `published`, and
+  `native`.
+- The explicit 2026-05-31 long run passed Lorenz and failed RF only at
+  `lambda_3`. Its official verdict is recorded under
+  `validation/chaos_validation/lyapunov_methods/fractional_variational_dk2018_block_restart_abm_gs_published/`.
+- DK2018 results do not validate the local `fixed_lower_limit_full_history_qr`
+  lane.

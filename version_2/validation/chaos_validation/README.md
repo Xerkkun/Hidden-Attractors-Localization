@@ -108,9 +108,10 @@ block-restart ABM-GS reproduction lane.
 
 ### Status
 - Synthetic benchmarks: **Implemented & Validated** (Zero RHS, Linear Stable)
-- Published RF/Lorenz values: **Extracted into YAML; extensive native runs pending**.
+- Published RF/Lorenz values: **Long native run executed on 2026-05-31**. Lorenz passes quantitatively; RF remains `published_benchmarks_pending_reproduced_discrepancy` because only `lambda_3` exceeds tolerance.
 - Published 4D non-smooth case: **Qualitative only** because the quantitative article data are incomplete.
 - Passing the DK2018 lane does not promote `fractional_variational_abm_qr`.
+- Fast CI executes native smoke tests only. Published quantitative checks require `RUN_PUBLISHED_LYAPUNOV=1`.
 
 ### Methodological boundary
 - `chaos_certified_by_this_pipeline: false`

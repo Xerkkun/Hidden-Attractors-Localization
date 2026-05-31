@@ -1,6 +1,6 @@
 {
-  "validation_id": "chua_fractional_algebra_2026_05_23",
-  "repository_commit": "working_tree_dirty",
+  "validation_id": "chua_fractional_validation_evidence",
+  "repository_commit": "1bb25954d97541235126dd7794c91f1c5a8da9dd",
   "package_version": "0.1.0",
   "python_version": "3.14.3",
   "platform": "Windows-11-10.0.26200-SP0",
@@ -17,33 +17,59 @@
     "rho": 1.0,
     "q": 0.9998
   },
+  "schema_version": "1.0",
+  "protocol_version": "caputo_hidden_attractors_v1",
   "stages": {
-    "numerical_contract": "pending",
+    "numerical_contract": "01_numerical_contract/numerical_contract_validation_summary.json",
     "algebraic_validation": "02_algebraic_validation/algebraic_validation_validation_summary.json",
-    "seed_generation": "pending",
-    "soft_precheck": "pending",
-    "continuation": "pending",
-    "post_continuation_filter": "pending",
-    "dynamic_reference": "pending",
-    "robustness": "pending",
-    "hiddenness_tests": "pending",
-    "diagnostics": "pending"
+    "seed_generation": "03_seed_generation/seed_generation_validation_summary.json",
+    "soft_precheck": "04_soft_precheck/soft_precheck_validation_summary.json",
+    "continuation": "05_continuation/continuation_validation_summary.json",
+    "post_continuation_filter": "06_post_continuation_filter/post_continuation_filter_validation_summary.json",
+    "dynamic_reference": "07_dynamic_reference/dynamic_reference_validation_summary.json",
+    "robustness": "08_robustness/robustness_validation_summary.json",
+    "hiddenness_tests": "09_hiddenness_tests/hiddenness_tests_validation_summary.json",
+    "diagnostics": "10_diagnostics/diagnostics_validation_summary.json"
+  },
+  "stage_statuses": {
+    "numerical_contract": "completed",
+    "algebraic_validation": "passed_python_wolfram",
+    "seed_generation": "completed",
+    "soft_precheck": "completed",
+    "continuation": "completed",
+    "post_continuation_filter": "completed",
+    "dynamic_reference": "completed",
+    "robustness": "incomplete",
+    "hiddenness_tests": "incomplete_lightweight_exploratory",
+    "diagnostics": "completed_with_lyapunov_pending"
+  },
+  "stage_evidence_scopes": {
+    "numerical_contract": "prior_exploratory_run",
+    "algebraic_validation": "prior_exploratory_run",
+    "seed_generation": "prior_exploratory_run",
+    "soft_precheck": "prior_exploratory_run",
+    "continuation": "prior_exploratory_run",
+    "post_continuation_filter": "prior_exploratory_run",
+    "dynamic_reference": "prior_exploratory_run",
+    "robustness": "prior_exploratory_run",
+    "hiddenness_tests": "prior_exploratory_run",
+    "diagnostics": "prior_exploratory_run"
   },
   "pending_stages": [
-    "numerical_contract",
-    "seed_generation",
-    "soft_precheck",
-    "continuation",
-    "post_continuation_filter",
-    "dynamic_reference",
     "robustness",
     "hiddenness_tests",
     "diagnostics"
   ],
-  "schema_version": "1.0",
-  "protocol_version": "caputo_hidden_attractors_v1",
+  "failed_or_incomplete_stages": [
+    "robustness",
+    "hiddenness_tests",
+    "diagnostics"
+  ],
   "final_report": {
-    "status": "pending_full_protocol"
+    "status": "pending_full_protocol",
+    "source": "validation/final_validation_report.tex",
+    "compiled": "validation/final_validation_report.pdf"
   },
-  "dirty": true
+  "dirty": true,
+  "working_tree_dirty": true
 }

@@ -6,6 +6,7 @@ import sys
 import json
 import argparse
 import glob
+from datetime import datetime, timezone
 from typing import List, Dict, Any
 
 # Ensure project root is in PYTHONPATH
@@ -95,6 +96,9 @@ def main():
                 item["computed_exponents"] = str(item["computed_exponents"])
             else:
                 item["computed_exponents"] = ""
+            for key in ("expected_exponents", "absolute_differences", "failing_components"):
+                if key in item and item[key] is not None:
+                    item[key] = str(item[key])
             processed_results.append(item)
             
         with open(csv_path, "w", newline="", encoding="utf-8") as f:
@@ -128,11 +132,11 @@ def main():
     ) if quantitative_published else False
 
     if any_failed:
-        global_status = "fractional_variational_abm_qr_validation_failed"
+        global_status = "dk2018_published_benchmarks_pending_reproduced_discrepancy"
     elif any_missing and synthetic_passed:
-        global_status = "fractional_variational_abm_qr_published_pending"
+        global_status = "dk2018_published_benchmarks_pending"
     elif synthetic_passed and published_passed and published_results:
-        global_status = "fractional_variational_abm_qr_published_validated"
+        global_status = "dk2018_published_quantitative_validated"
     elif synthetic_passed and not published_results:
         global_status = "fractional_variational_abm_qr_synthetic_validated"
     else:
@@ -140,8 +144,13 @@ def main():
 
     summary = {
         "global_status": global_status,
-        "method_id": "fractional_variational_abm_qr",
+        "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
+        "local_full_history_qr_method_id": "fractional_variational_abm_qr",
         "published_reproduction_method_id": "fractional_variational_dk2018_block_restart_abm_gs",
+        "validation_run_class": "published_smoke_fast" if args.fast else "published_quantitative_long",
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "quick_ci_guarantee": "native_smoke_only_not_published_quantitative_validation",
+        "published_quantitative_opt_in": "RUN_PUBLISHED_LYAPUNOV=1",
         "certifications": {
             "chaos_certified_by_this_pipeline": False,
             "hiddenness_certified_by_this_pipeline": False,
@@ -152,6 +161,18 @@ def main():
         "published_cases_passed_qualitative": sum(1 for r in results if r["status"] == "published_benchmark_passed_qualitative"),
         "published_cases_pending_missing_data": sum(1 for r in results if r["status"].startswith("published_reference_data_missing")),
         "failures": sum(1 for r in results if "failed" in r["status"]),
+        "published_case_verdicts": [
+            {
+                "case_id": r["case_id"],
+                "status": r["status"],
+                "computed_exponents": r.get("computed_exponents"),
+                "expected_exponents": r.get("expected_exponents"),
+                "absolute_differences": r.get("absolute_differences"),
+                "absolute_tolerance": r.get("absolute_tolerance"),
+                "failing_components": r.get("failing_components", []),
+            }
+            for r in published_results
+        ],
         "inconclusive": sum(1 for r in results if r["status"] == "benchmark_inconclusive")
     }
 

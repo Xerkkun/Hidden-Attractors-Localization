@@ -208,6 +208,24 @@ def test_pending_stages_not_empty_if_any_stage_incomplete() -> None:
         for stage in incomplete_stages:
             assert stage in pending, f"{stage} is incomplete and must be in pending_stages"
 
+
+def test_official_manifest_pending_stages_match_real_stage_summaries() -> None:
+    root = Path(__file__).resolve().parents[1]
+    contract = json.loads((root / "configs" / "validation_contract.json").read_text(encoding="utf-8"))
+    manifest = json.loads((root / "validation" / "00_manifest" / "validation_manifest.json").read_text(encoding="utf-8"))
+    closed_statuses = {"completed", "passed_python_wolfram"}
+    expected_pending = []
+    for stage in contract["stages"]:
+        summary_path = root / "validation" / stage["id"] / stage["summary"]
+        if not summary_path.exists():
+            expected_pending.append(stage["slug"])
+            continue
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        if summary.get("status") not in closed_statuses:
+            expected_pending.append(stage["slug"])
+    assert manifest["pending_stages"] == expected_pending
+
+
 def test_algebraic_validation_failed_cross_tool_cannot_be_closed() -> None:
     # Verify that if algebraic_validation fails cross-tool comparison, it remains in failed_or_incomplete_stages or pending_stages
     manifest_path = Path(__file__).resolve().parents[1] / "validation" / "00_manifest" / "validation_manifest.json"
@@ -247,4 +265,3 @@ def test_lightweight_hiddenness_cannot_be_promoted_to_full() -> None:
     )
     assert len(res.validate()) > 0
     assert "hidden_verified_only_if_full_protocol_passed requires the complete tested protocol" in res.validate()[0]
-

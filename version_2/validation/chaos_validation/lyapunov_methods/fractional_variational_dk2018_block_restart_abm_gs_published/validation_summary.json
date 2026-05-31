@@ -2,46 +2,75 @@
   "schema_version": "1.0",
   "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
   "status": "published_benchmarks_pending_reproduced_discrepancy",
+  "validation_run_class": "published_quantitative_long",
+  "generated_at_utc": "2026-05-31T06:34:28.523792+00:00",
   "required_cases": [
-    "published_dk2018_rabinovich_fabrikant_q0999",
-    "published_dk2018_lorenz_q0985"
+    "published_dk2018_lorenz_q0985",
+    "published_dk2018_rabinovich_fabrikant_q0999"
   ],
+  "published_case_verdicts": [
+    {
+      "case_id": "published_dk2018_lorenz_q0985",
+      "status": "published_benchmark_passed_quantitative",
+      "validation_run_class": "published_quantitative_long",
+      "numerical_route": "native_c",
+      "execution_contract": "dk2018_block_restart_abm_gs",
+      "computed_exponents": [
+        -0.0027791531620369172,
+        -0.0868071712238951,
+        -1.6224574503102536
+      ],
+      "expected_exponents": [
+        -0.0026,
+        -0.087,
+        -1.6225
+      ],
+      "absolute_differences": [
+        0.00017915316203691734,
+        0.00019282877610489468,
+        4.2549689746484987e-05
+      ],
+      "absolute_tolerance": 0.05,
+      "failing_components": []
+    },
+    {
+      "case_id": "published_dk2018_rabinovich_fabrikant_q0999",
+      "status": "published_benchmark_failed",
+      "validation_run_class": "published_quantitative_long",
+      "numerical_route": "native_c",
+      "execution_contract": "dk2018_block_restart_abm_gs",
+      "computed_exponents": [
+        0.06111650301597507,
+        0.0038981398659820223,
+        -1.8324646836344436
+      ],
+      "expected_exponents": [
+        0.0749,
+        0.0018,
+        -2.085
+      ],
+      "absolute_differences": [
+        0.013783496984024923,
+        0.0020981398659820224,
+        0.2525353163655564
+      ],
+      "absolute_tolerance": 0.05,
+      "failing_components": [
+        "lambda_3"
+      ]
+    }
+  ],
+  "quick_ci_guarantee": "native_smoke_only_not_published_quantitative_validation",
+  "published_quantitative_opt_in": "RUN_PUBLISHED_LYAPUNOV=1",
+  "local_full_history_qr_status": "published_benchmarks_pending_separate_contract_required",
   "certifications": {
     "chaos_certified_by_this_pipeline": false,
     "hiddenness_certified_by_this_pipeline": false
   },
-  "observed_discrepancy": {
-    "case_id": "published_dk2018_rabinovich_fabrikant_q0999",
-    "absolute_tolerance": 0.05,
-    "published_exponents": [
-      0.0749,
-      0.0018,
-      -2.085
-    ],
-    "matlab_fde12_exponents": [
-      0.0611165016657,
-      0.00389813962371,
-      -1.83246468204
-    ],
-    "native_c_exponents": [
-      0.06111650301597507,
-      0.0038981398659820223,
-      -1.8324646836344436
-    ],
-    "native_c_absolute_differences_from_published": [
-      0.013783496984024937,
-      0.0020981398659820224,
-      0.2525353163655564
-    ],
-    "failing_components": [
-      "lambda_3"
-    ],
-    "lorenz_case_status": "not_run_rf_already_blocks_promotion"
-  },
   "notes": [
-    "No official numeric CSV files are tracked until both native quantitative runs pass.",
-    "An independent MATLAB R2025b oracle using Garrappa fde12.m revisions from 2012 and 2025 matched the native C RF result but did not recover the RF vector printed in the 2018 article.",
-    "Only RF lambda_3 remains outside the published absolute tolerance of 0.05, so no numeric CSV files are promoted.",
+    "This records a real long native run for the DK2018 block-restart ABM-GS lane.",
+    "The RF discrepancy is independently reproduced by the MATLAB fde12 oracle; see validation/matlab/README.md.",
+    "Fast CI and smoke tests do not establish published quantitative validation.",
     "This lane does not validate fractional_variational_abm_qr."
   ]
 }

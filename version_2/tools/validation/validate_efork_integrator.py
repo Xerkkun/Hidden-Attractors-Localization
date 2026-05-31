@@ -23,6 +23,7 @@ from hidden_attractors.solvers import (
     efork_q1_integrate,
     efork_q1_step,
 )
+from hidden_attractors.validation.manifest import regenerate_validation_manifest
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_VALIDATION_ROOT = ROOT / "validation"
@@ -557,36 +558,10 @@ These scientific and structural properties are evaluated in later stages (`dynam
     # 7. Global Manifest Update
     # -------------------------------------------------------------------------
     print("Step 7: Creating or updating global validation manifest...")
-    manifest_path = manifest_dir / "validation_manifest.json"
-    env_path = manifest_dir / "environment.json"
-    soft_path = manifest_dir / "software_versions.json"
-
-    try:
-        import subprocess
-        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
-    except Exception:
-        commit = "ci_tmp_validation"
-
-    if manifest_path.exists():
-        try:
-            manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
-        except Exception:
-            manifest_data = {}
-    else:
-        manifest_data = {}
-
-    if not isinstance(manifest_data, dict):
-        manifest_data = {}
-
-    manifest_data.setdefault("validation_id", "chua_fractional_validation_evidence")
-    manifest_data.setdefault("repository_commit", commit)
-    manifest_data.setdefault("package_version", "0.1.0")
-    manifest_data.setdefault("python_version", platform.python_version())
-    manifest_data.setdefault("platform", platform.platform())
-    manifest_data.setdefault("main_system", "fractional nonsmooth Chua")
-    
-    if "main_parameters" not in manifest_data:
-        manifest_data["main_parameters"] = {
+    regenerate_validation_manifest(
+        root,
+        validation_id="chua_fractional_validation_evidence",
+        main_parameters={
             "model": "nonsmooth",
             "alpha": float(chua_params.alpha),
             "beta": float(chua_params.beta),
@@ -596,51 +571,9 @@ These scientific and structural properties are evaluated in later stages (`dynam
             "a1": float(chua_params.a1),
             "a2": float(chua_params.a2),
             "rho": float(chua_params.rho),
-            "q": 0.9998
-        }
-
-    stages = manifest_data.setdefault("stages", {})
-    if not isinstance(stages, dict):
-        stages = {}
-        manifest_data["stages"] = stages
-    manifest_data["schema_version"] = "1.0"
-    manifest_data["protocol_version"] = "caputo_hidden_attractors_v1"
-    stages["numerical_contract"] = "01_numerical_contract/numerical_contract_validation_summary.json"
-
-    pending_stages = manifest_data.setdefault("pending_stages", [
-        "algebraic_validation",
-        "seed_generation",
-        "soft_precheck",
-        "continuation",
-        "post_continuation_filter",
-        "dynamic_reference",
-        "robustness",
-        "hiddenness_tests",
-        "diagnostics",
-    ])
-    if not isinstance(pending_stages, list):
-        pending_stages = []
-        manifest_data["pending_stages"] = pending_stages
-
-    # Remove the completed official stage from the pending set.
-    pending_stages = [x for x in pending_stages if x not in ("numerical_contract", "integrator", "integrators", "03_integrators")]
-    manifest_data["pending_stages"] = pending_stages
-
-    final_report = manifest_data.setdefault("final_report", {})
-    if not isinstance(final_report, dict):
-        final_report = {}
-        manifest_data["final_report"] = final_report
-    final_report["status"] = "pending_full_validation"
-
-    manifest_path.write_text(json.dumps(manifest_data, indent=2) + "\n", encoding="utf-8")
-
-    if not env_path.exists():
-        env_data = {"python": sys.version, "platform": platform.platform()}
-        env_path.write_text(json.dumps(env_data, indent=2) + "\n", encoding="utf-8")
-
-    if not soft_path.exists():
-        soft_data = {"numpy": np.__version__, "matplotlib": matplotlib.__version__}
-        soft_path.write_text(json.dumps(soft_data, indent=2) + "\n", encoding="utf-8")
+            "q": 0.9998,
+        },
+    )
 
     print("Numerical EFORK integrator validation completed successfully!")
 

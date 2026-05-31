@@ -96,5 +96,11 @@
   "verdict": null,
   "provenance": {
     "generator": "tools/validation/validate_chua_fractional_nonsmooth_algebra.py"
+  },
+  "evidence_scope": {
+    "classification": "prior_exploratory_run",
+    "current_contract": "configs/unified_caputo_protocol.json",
+    "current_contract_applied": false,
+    "note": "This promoted summary predates the current unified Caputo protocol. It remains historical exploratory evidence and must not be treated as a completed run of configs/unified_caputo_protocol.json."
   }
 }

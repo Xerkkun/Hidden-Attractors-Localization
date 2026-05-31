@@ -101,3 +101,9 @@ Phase-F Lyapunov evidence lives under `validation/chaos_validation/`. The
 local `fractional_variational_abm_qr` fixed-lower-limit full-history contract
 and the DK2018 block-restart ABM-GS reproduction contract are promoted
 independently. Neither contract alone certifies chaos or hiddenness.
+
+The fast suite runs native smoke checks only. DK2018 quantitative reproduction
+is an explicit opt-in run with `RUN_PUBLISHED_LYAPUNOV=1`. The long native run
+recorded on 2026-05-31 passed Lorenz and left RF pending because only
+`lambda_3` exceeds absolute tolerance `0.05`. This does not promote the local
+full-history QR method.

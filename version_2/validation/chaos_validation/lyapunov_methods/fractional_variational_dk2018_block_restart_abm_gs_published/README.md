@@ -22,5 +22,16 @@ published RF and Lorenz values before promotion; MATLAB parity alone is
 insufficient. In the RF run, `lambda_1` and `lambda_2` are within absolute
 tolerance `0.05`; only `lambda_3` fails (`0.2525353` absolute difference).
 
+The explicit long native run recorded on 2026-05-31 produced:
+
+| Case | Long-run verdict | Failing components |
+|---|---|---|
+| Lorenz `q=0.985` | `published_benchmark_passed_quantitative` | none |
+| RF `q=0.999` | `published_benchmark_failed` | `lambda_3` |
+
+Fast CI executes native smoke cases only. Published quantitative tests are
+marked `slow`, `published`, and `native`; they run only when
+`RUN_PUBLISHED_LYAPUNOV=1`.
+
 Passing this lane does not validate `fractional_variational_abm_qr`, does not
 certify chaos, and does not certify hiddenness.

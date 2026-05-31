@@ -31,7 +31,7 @@ from ..plotting.dynamics import plot_lure_nyquist_describing_function, plot_phas
 from ..seed_generation import biased_lure_describing_function, lure_transfer_function
 from ..seed_generation.core import HarmonicSeed
 from ..systems import get_system
-from ..validation import resolve_wolfram_artifacts
+from ..validation import regenerate_validation_manifest, resolve_wolfram_artifacts
 from .protocol import PROTOCOL_VERSION, SCHEMA_VERSION, StageEnvelope, sample_uniform_ball
 
 
@@ -1677,59 +1677,11 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
         outputs={"lyapunov": "pending_causal_history_backend"},
     )
 
-    manifest_path = validation / "00_manifest" / "validation_manifest.json"
-    manifest = read_json(manifest_path)
-    manifest["validation_id"] = run_id
-    manifest["repository_commit"] = provenance["repository_commit"]
-    manifest["working_tree_dirty"] = provenance["working_tree_dirty"]
-    manifest["working_tree_diff_sha256"] = provenance["working_tree_diff_sha256"]
-    manifest["stages"].update({
-        "numerical_contract": "01_numerical_contract/numerical_contract_validation_summary.json",
-        "algebraic_validation": "02_algebraic_validation/algebraic_validation_validation_summary.json",
-        "seed_generation": "03_seed_generation/seed_generation_validation_summary.json",
-        "soft_precheck": "04_soft_precheck/soft_precheck_validation_summary.json",
-        "continuation": "05_continuation/continuation_validation_summary.json",
-        "post_continuation_filter": "06_post_continuation_filter/post_continuation_filter_validation_summary.json",
-        "dynamic_reference": "07_dynamic_reference/dynamic_reference_validation_summary.json",
-        "robustness": "08_robustness/robustness_validation_summary.json",
-        "hiddenness_tests": "09_hiddenness_tests/hiddenness_tests_validation_summary.json",
-        "diagnostics": "10_diagnostics/diagnostics_validation_summary.json",
-    })
-    stage_statuses = {
-        "numerical_contract": "completed",
-        "algebraic_validation": locals().get("algebra_summary", {}).get("status", "incomplete_or_failed_tolerance_check") if "algebra_summary" in locals() else "incomplete_or_failed_tolerance_check",
-        "seed_generation": "completed",
-        "soft_precheck": "completed",
-        "continuation": "completed",
-        "post_continuation_filter": "completed",
-        "dynamic_reference": "completed",
-        "robustness": "incomplete",
-        "hiddenness_tests": hiddenness_status,
-        "diagnostics": "completed_with_lyapunov_pending",
-    }
-    failed_or_incomplete = []
-    for s_name, s_status in stage_statuses.items():
-        if s_status.startswith("incomplete") or s_status.startswith("failed") or s_status == "passed_internal_pending_external_cross_tool":
-            failed_or_incomplete.append(s_name)
-            
-    manifest["failed_or_incomplete_stages"] = failed_or_incomplete
-    manifest["pending_stages"] = failed_or_incomplete
-    
-    if all_slices_present and not is_lightweight:
-        manifest["final_report"] = {
-            "status": "completed",
-            "verdict": "hidden_verified_only_if_full_protocol_passed",
-            "run_id": run_id
-        }
-    else:
-        status_label = "pending_full_protocol_basin_slices"
-        if is_lightweight:
-            status_label = "incomplete_lightweight_exploratory"
-        manifest["final_report"] = {
-            "status": status_label,
-            "run_id": run_id
-        }
-    write_json(manifest_path, manifest)
+    regenerate_validation_manifest(
+        validation,
+        validation_id=run_id,
+        provenance=provenance,
+    )
 
 
 

@@ -169,6 +169,7 @@ def test_published_native_cases_smoke_without_quantitative_promotion(filename: s
     assert res["status"] == "published_benchmark_smoke_passed"
     assert res["numerical_route"] == "native_c"
     assert res["execution_contract"] == "dk2018_block_restart_abm_gs"
+    assert res["validation_run_class"] == "published_smoke_fast"
 
 
 def test_nonsmooth_4d_case_remains_qualitative_only() -> None:

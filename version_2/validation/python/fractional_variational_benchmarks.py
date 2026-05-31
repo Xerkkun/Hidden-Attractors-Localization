@@ -224,6 +224,9 @@ def run_benchmark_case(
     qualitative_only = exp_config.get("qualitative_only", False)
 
     outcome = "benchmark_inconclusive"
+    expected_exponents = None
+    absolute_differences = None
+    failing_components = []
 
     if btype == "synthetic":
         if case_id == "synthetic_zero_rhs":
@@ -261,11 +264,18 @@ def run_benchmark_case(
                 outcome = "published_benchmark_failed"
         else:
             expected_exps = np.asarray(expected_exps, dtype=float)
+            expected_exponents = [float(x) for x in expected_exps]
             # Match sizes
             if len(expected_exps) != len(computed_exps):
                 outcome = "published_benchmark_failed"
             else:
                 diffs = np.abs(computed_exps - expected_exps)
+                absolute_differences = [float(x) for x in diffs]
+                failing_components = [
+                    f"lambda_{index + 1}"
+                    for index, difference in enumerate(diffs)
+                    if difference >= tol_abs
+                ]
                 if np.all(diffs < tol_abs):
                     outcome = "published_benchmark_passed_quantitative"
                 elif qualitative_only:
@@ -307,5 +317,10 @@ def run_benchmark_case(
         "computed_exponents": [float(x) for x in computed_exps],
         "execution_contract": execution.get("execution_contract", "fixed_lower_limit_full_history_qr"),
         "numerical_route": "native_c" if native_required else "python_reference_short",
+        "validation_run_class": "published_quantitative_long" if btype == "published" and not fast else ("published_smoke_fast" if btype == "published" else "synthetic"),
+        "expected_exponents": expected_exponents,
+        "absolute_differences": absolute_differences,
+        "absolute_tolerance": float(tol_abs),
+        "failing_components": failing_components,
         "message": f"Execution completed with outcome: {outcome}"
     }

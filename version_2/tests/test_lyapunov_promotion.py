@@ -16,6 +16,7 @@ if str(_VALIDATION_PYTHON) not in sys.path:
     sys.path.insert(0, str(_VALIDATION_PYTHON))
 
 from update_lyapunov_method_validation_status import REQUIRED_CASES, promote  # noqa: E402
+from record_dk2018_published_validation_run import record  # noqa: E402
 
 
 @pytest.fixture
@@ -80,3 +81,58 @@ def test_promotion_accepts_two_native_quantitative_results(artifact_root: Path) 
     assert (official / "published_benchmark_results.csv").exists()
     assert (official / "manifest.json").exists()
     assert len(list((official / "convergence").glob("*.csv"))) == 2
+
+
+def test_record_long_run_keeps_discrepancy_pending_without_promoting_csv(artifact_root: Path) -> None:
+    runtime = artifact_root / "runtime"
+    runtime.mkdir()
+    with (runtime / "benchmark_cases.csv").open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=[
+                "case_id",
+                "status",
+                "validation_run_class",
+                "numerical_route",
+                "execution_contract",
+                "computed_exponents",
+                "expected_exponents",
+                "absolute_differences",
+                "absolute_tolerance",
+                "failing_components",
+            ],
+        )
+        writer.writeheader()
+        writer.writerow(
+            {
+                "case_id": "published_dk2018_lorenz_q0985",
+                "status": "published_benchmark_passed_quantitative",
+                "validation_run_class": "published_quantitative_long",
+                "numerical_route": "native_c",
+                "execution_contract": "dk2018_block_restart_abm_gs",
+                "computed_exponents": "[-0.0027, -0.0868, -1.6224]",
+                "expected_exponents": "[-0.0026, -0.087, -1.6225]",
+                "absolute_differences": "[0.0001, 0.0002, 0.0001]",
+                "absolute_tolerance": "0.05",
+                "failing_components": "[]",
+            }
+        )
+        writer.writerow(
+            {
+                "case_id": "published_dk2018_rabinovich_fabrikant_q0999",
+                "status": "published_benchmark_failed",
+                "validation_run_class": "published_quantitative_long",
+                "numerical_route": "native_c",
+                "execution_contract": "dk2018_block_restart_abm_gs",
+                "computed_exponents": "[0.0611, 0.0039, -1.8325]",
+                "expected_exponents": "[0.0749, 0.0018, -2.085]",
+                "absolute_differences": "[0.0138, 0.0021, 0.2525]",
+                "absolute_tolerance": "0.05",
+                "failing_components": "['lambda_3']",
+            }
+        )
+    official = artifact_root / "official"
+    summary = record(runtime, official)
+    assert summary["status"] == "published_benchmarks_pending_reproduced_discrepancy"
+    assert summary["local_full_history_qr_status"] == "published_benchmarks_pending_separate_contract_required"
+    assert not (official / "published_benchmark_results.csv").exists()
