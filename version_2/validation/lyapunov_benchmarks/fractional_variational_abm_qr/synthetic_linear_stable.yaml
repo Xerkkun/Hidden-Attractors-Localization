@@ -1,0 +1,36 @@
+case_id: synthetic_linear_stable
+benchmark_type: synthetic
+method_id: fractional_variational_abm_qr
+
+system:
+  kind: linear_diagonal
+  dimension: 2
+  parameters: [-1.0, -2.0]
+  q: 0.9
+  x0: [1.0, 1.0]
+
+integration:
+  h: 0.01
+  t_final: 10.0
+  t_burn: 0.0
+  reorthonormalization_time: 0.10
+  memory_mode: full
+  memory_window: null
+
+expected:
+  exponents: null
+  lambda_max: 0.01
+  sign_pattern: nonpositive
+  tolerance_abs: 0.01
+  tolerance_rel: null
+  qualitative_only: false
+
+reference:
+  authors: Antigravity Synthetic Suite
+  year: 2026
+  title: Linear Diagonal Stable Caputo System
+  doi: null
+  table_or_figure: null
+  notes: System with eigenvalues [-1, -2]. Finite-time fractional exponents are negative.
+  data_complete: true
+  missing_fields: []

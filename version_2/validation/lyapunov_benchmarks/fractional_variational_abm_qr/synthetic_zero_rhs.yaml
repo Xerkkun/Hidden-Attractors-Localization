@@ -1,0 +1,36 @@
+case_id: synthetic_zero_rhs
+benchmark_type: synthetic
+method_id: fractional_variational_abm_qr
+
+system:
+  kind: zero_rhs
+  dimension: 2
+  parameters: []
+  q: 0.9
+  x0: [0.5, 0.5]
+
+integration:
+  h: 0.05
+  t_final: 2.0
+  t_burn: 0.0
+  reorthonormalization_time: 0.25
+  memory_mode: full
+  memory_window: null
+
+expected:
+  exponents: [0.0, 0.0]
+  lambda_max: 0.0
+  sign_pattern: null
+  tolerance_abs: 0.001
+  tolerance_rel: null
+  qualitative_only: false
+
+reference:
+  authors: Antigravity Synthetic Suite
+  year: 2026
+  title: Zero Right-Hand Side Caputo System
+  doi: null
+  table_or_figure: null
+  notes: Trivial system where all derivatives are zero; exponents must be zero.
+  data_complete: true
+  missing_fields: []

@@ -297,3 +297,17 @@ If `history_aware_qr=False`, only the current $\Phi$ is updated, which behaves a
 > Results are finite-time local Lyapunov exponent estimates.
 > Caputo memory requires transforming the entire stored variational history at each QR step (`history_aware_qr=True`). If `history_aware_qr=False` (block-restart), the method is NOT full-memory Caputo-aware; label results accordingly.
 > Does not certify chaos; does not certify hiddenness of attractors.
+
+---
+
+## F2.1 — Benchmark validation
+
+The benchmark layer checks the implementation of `fractional_variational_abm_qr` using automated synthetic and published cases.
+
+- **Methodological Rules**:
+  - The F2 implementation can be used to run published benchmarks.
+  - Setting `validated=False` in the main registry means that the published benchmarks replication has not yet been fully completed.
+  - Passing synthetic benchmarks (such as zero RHS or linear stable systems) does **not** count as full published validation.
+  - A published quantitative benchmark requires complete reference data (coefficients, step sizes, simulation times, initial conditions).
+  - If a published benchmark is missing any of these required data fields, it is marked as `published_reference_data_missing` and global validation remains pending.
+

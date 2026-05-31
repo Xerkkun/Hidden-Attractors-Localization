@@ -530,3 +530,33 @@ class TestNoForbiddenFieldsInLyapunovResult:
             assert forbidden not in field_names, (
                 f"'{forbidden}' found in LyapunovResult — must not be present."
             )
+
+
+# ---------------------------------------------------------------------------
+# 15. Non-aligned burn time elapsed handling
+# ---------------------------------------------------------------------------
+
+class TestNonAlignedBurnTimeElapsed:
+    """15: Handles non-aligned burn-in times correctly without negative or bad elapsed time."""
+
+    def test_fractional_variational_elapsed_handles_nonaligned_burn(self) -> None:
+        n = 2
+        rhs = lambda x: np.array([-x[0], -2.0 * x[1]])
+        jac = lambda x: np.diag([-1.0, -2.0])
+        result = fractional_variational_abm_qr(
+            rhs,
+            jac,
+            np.ones(n),
+            q=0.9,
+            h=0.02,
+            t_burn=0.13,
+            t_final=0.5,
+            reorthonormalization_time=0.10,
+        )
+        assert result.status == "ok"
+        if len(result.times) > 0:
+            diffs = np.diff(result.times)
+            assert np.all(diffs > 0), f"result.times is not strictly increasing: {result.times}"
+            assert result.times[-1] > 0, f"result.times[-1] <= 0: {result.times[-1]}"
+            assert np.all(np.isfinite(result.exponents))
+

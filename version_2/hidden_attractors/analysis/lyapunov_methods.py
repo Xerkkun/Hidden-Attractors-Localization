@@ -63,6 +63,10 @@ class LyapunovMethodInfo:
     validated: bool
     references: tuple[str, ...]
     warnings: tuple[str, ...]
+    validated_against_synthetic_tests: bool = True
+    validated_against_published_benchmarks: bool = False
+    benchmark_status: str = "published_benchmarks_pending"
+
 
 
 # ---------------------------------------------------------------------------
@@ -103,6 +107,10 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
             "chaos_certified_by_this_pipeline: false",
             "hiddenness_certified_by_this_pipeline: false",
         ),
+        validated_against_synthetic_tests=True,
+        validated_against_published_benchmarks=True,
+        benchmark_status="validated_against_published_benchmarks",
+
     ),
 
     # ------------------------------------------------------------------
@@ -129,6 +137,10 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
         warnings=(
             "F2 — implemented, NOT yet validated against published benchmarks.",
             "validated_against_published_benchmarks: false.",
+            "synthetic benchmark infrastructure available",
+            "published benchmark validation pending unless completed",
+            "does not certify chaos",
+            "does not certify hiddenness",
             "Results are finite-time local Lyapunov exponent estimates, NOT asymptotic proofs.",
             "Caputo memory: history-aware QR transforms the entire stored variational"
             " history at each reorthonormalisation step (history_aware_qr=True).",
@@ -140,6 +152,10 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
             "Not validated for non-smooth systems (e.g., Chua saturation);"
             " derivative undefined at switching surfaces.",
         ),
+        validated_against_synthetic_tests=True,
+        validated_against_published_benchmarks=False,
+        benchmark_status="published_benchmarks_pending",
+
     ),
 
     "fractional_cloned_dynamics_abm": LyapunovMethodInfo(
@@ -160,6 +176,10 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
             "Cloned dynamics method: does not require Jacobian but needs"
             " multiple copies of the fractional system integrated with memory.",
         ),
+        validated_against_synthetic_tests=False,
+        validated_against_published_benchmarks=False,
+        benchmark_status="not_implemented",
+
     ),
 }
 

@@ -1,0 +1,42 @@
+case_id: published_danca_kuznetsov2018_template
+benchmark_type: published
+method_id: fractional_variational_abm_qr
+
+system:
+  kind: chua
+  dimension: 3
+  parameters: [10.0, 14.87, 0.15]
+  q: 0.95
+  x0: null
+
+integration:
+  h: null
+  t_final: null
+  t_burn: null
+  reorthonormalization_time: null
+  memory_mode: full
+  memory_window: null
+
+expected:
+  exponents: null
+  lambda_max: null
+  sign_pattern: null
+  tolerance_abs: null
+  tolerance_rel: null
+  qualitative_only: false
+
+reference:
+  authors: Danca & Kuznetsov
+  year: 2018
+  title: Matlab Code for Lyapunov Exponents of Fractional-Order Systems
+  doi: null
+  table_or_figure: null
+  notes: Template for future quantitative validation once exact parameters are extracted.
+  data_complete: false
+  missing_fields:
+    - expected_exponents
+    - exact_h
+    - exact_t_final
+    - exact_t_burn
+    - exact_initial_condition
+    - reorthonormalization_time

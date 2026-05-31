@@ -99,12 +99,17 @@ Fields `hidden_verified`, `chaos_verified`, `fractional_lyapunov_validated`, and
 
 ---
 
-## Notes
+## F2.1 — `fractional_variational_abm_qr` Benchmark Validation Layer
 
-```
-chaos_certified_by_this_pipeline: false
-hiddenness_certified_by_this_pipeline: false
-```
+The F2.1 benchmark layer provides automated testing against synthetic and published templates.
 
-Fields `hidden_verified`, `chaos_verified`, `fractional_lyapunov_validated`, and `caputo_lyapunov_validated` are **not declared** in F0, F1, or F2.
+### Status
+- Synthetic benchmarks: **Implemented & Validated** (Zero RHS, Linear Stable)
+- Published benchmarks: **Template implemented, validation pending** (Danca & Kuznetsov 2018)
+- Published validation status: **Pending** until exact parameters and exponents from the literature are fully integrated (marked as `published_reference_data_missing`).
+
+### Methodological boundary
+- `chaos_certified_by_this_pipeline: false`
+- `hiddenness_certified_by_this_pipeline: false`
+
 

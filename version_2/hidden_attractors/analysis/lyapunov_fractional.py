@@ -671,10 +671,12 @@ def fractional_variational_abm_qr(
     # so the basis Φ starts orthonormal for the accumulation phase.
     burn_steps = int(max(0, round(t_burn / h)))
     accu_steps = int(max(0, round(t_final / h)))
+    t_burn_effective = burn_steps * h
 
     sums = np.zeros(n, dtype=float)
     times_out: list[float] = []
     convergence_out: list[np.ndarray] = []
+    last_accumulation_time = t_burn_effective
     elapsed = 0.0
     status = "ok"
     qr_ill_count = 0
@@ -800,11 +802,13 @@ def fractional_variational_abm_qr(
 
             # Accumulate only during the accumulation phase
             if not in_burn and not at_burn_end:
-                elapsed += interval * h if at_qr_boundary else 0.0
-                sums += log_diag
-                if elapsed > 0.0:
-                    times_out.append(t_new - burn_steps * h)
+                delta_t = t_new - last_accumulation_time
+                if delta_t > 0:
+                    elapsed += delta_t
+                    sums += log_diag
                     convergence_out.append(sums / elapsed)
+                    times_out.append(elapsed)
+                    last_accumulation_time = t_new
 
     # Final elapsed correction: count QR steps that actually fired
     # (simpler: elapsed = total reorthonormalisation intervals × (interval × h))
