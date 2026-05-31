@@ -15,7 +15,7 @@ def test_diagnostics_partial_scope() -> None:
     assert summary09_data["stage"] == "hiddenness_tests"
     assert summary09_data["status"] == "hiddenness_exploratory_only"
     assert summary09_data["evidence_scope"]["current_contract_applied"] is True
-    assert summary09_data["evidence_scope"]["classification"] == "official_validation_run"
+    assert summary09_data["evidence_scope"]["classification"] == "official_summary_for_current_protocol"
     
     # 2. Verify stage 10 (diagnostics) is diagnostics_partial_current_protocol
     summary10_path = PROJECT_ROOT / "validation" / "10_diagnostics" / "diagnostics_validation_summary.json"

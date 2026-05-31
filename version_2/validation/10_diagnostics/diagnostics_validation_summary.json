@@ -7,27 +7,35 @@
   "system": "fractional_nonsmooth_chua",
   "numerical_contract": {
     "q": 0.9998,
+    "h": 0.01,
+    "t_final": 3000.0,
+    "t_transient": 120.0,
     "backend": "efork_c",
-    "reference_backend": "abm_c_full_history",
-    "memory_policy": "full_history_and_finite_memory_robustness_comparison",
+    "memory_policy": "finite_memory",
+    "memory_length": 40.0,
+    "tolerances": {
+      "equilibrium_residual": 1e-10,
+      "jacobian_error": 1e-06
+    },
     "boundedness_thresholds": {
-      "bounded": true,
-      "minimum_range_x": 0.25
+      "divergence_norm": 120.0,
+      "nontrivial_range": 0.01
     },
     "equilibrium_distance_thresholds": {
-      "nearest_equilibrium": 0.001
+      "collapsed_distance": 0.001
+    },
+    "harmonic_residual_thresholds": {
+      "residual_keep": 0.05,
+      "rho_H_keep": 0.3
     },
     "similarity_thresholds": {
-      "cloud_median_distance_norm": 0.35,
-      "range_relative_distance": 0.6
+      "target_cloud_norm": 0.08
     },
-    "hiddenness_radii": [
-      0.0001,
-      0.001
-    ],
-    "samples_per_radius": 12,
-    "sample_growth_per_radius": 12,
+    "hiddenness_radii": [1e-05, 3e-05, 0.0001, 0.0003, 0.001, 0.01],
+    "samples_per_radius": 100,
+    "sample_growth_per_radius": 50,
     "random_seed_policy": "fixed_reproducible",
+    "random_seed": 20260517,
     "output_schema_version": "1.0",
     "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)"
   },
