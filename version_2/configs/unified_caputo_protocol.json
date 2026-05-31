@@ -103,5 +103,18 @@
     "windows": ["close", "large"],
     "requires_all_equilibria": true,
     "requires_robust_reference": true
+  },
+  "classical_lure_defaults": {
+    "note": "Flags que controlan qué está activo en la ruta clásica por defecto",
+    "describing_function": "classical_centered_only",
+    "machado_enabled": false,
+    "biased_enabled": false,
+    "seed_filter_enabled": false,
+    "robustness_enabled": false,
+    "basin_enabled": false,
+    "bifurcation_enabled": false,
+    "transfer_mode_note": "fractional para el workflow objetivo; integer solo para reproducción de valores publicados",
+    "route_reference": "classical_lure_describing_function_continuation_hiddenness",
+    "config_file": "configs/chua_classical_lure_default.yaml"
   }
 }

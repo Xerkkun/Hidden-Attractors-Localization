@@ -93,6 +93,21 @@ _DEFAULTS: Dict[str, Any] = {
     "q_seed": None,
     "q_dynamics": None,
 
+    # ── Classical route feature flags ────────────────────────────────────────────
+    # machado_enabled: Machado generalised DF with mu parameter.
+    # Default False: not in the published classical route.
+    "machado_enabled": False,
+    # biased_enabled: biased seeds with sigma0 != 0.
+    # Default False: only centred seeds in the classical published route.
+    "biased_enabled": False,
+    # seed_filter: post-search quality filter on harmonic residual / rho_H.
+    # Default disabled: all candidates from the base search are accepted.
+    "seed_filter": {
+        "enabled": False,
+        "harmonic_residual_keep": 0.05,
+        "rho_H_keep": 0.3,
+    },
+
     # ── Workers / reproducibility ─────────────────────────────────────────────
     "workers": 1,
     "random_seed": 42,
@@ -144,6 +159,10 @@ _DEFAULTS: Dict[str, Any] = {
     },
 
     "continuation": {
+        # lambda_values: explicit list overrides the adaptive eta grid.
+        # When provided, these values are used exactly (no adaptive fallback).
+        # Official contract values: [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0]
+        "lambda_values": None,
         "eta_grid_mode": "adaptive",
         "eta_values": None,
         "eta_min": 1.0e-3,
@@ -218,6 +237,11 @@ _DEFAULTS: Dict[str, Any] = {
         "max_seed_candidates_to_plot": 3,
         "line_width": 0.7,
         "point_size": 0.0,
+    },
+
+    # ── Robustness (second priority, disabled by default) ───────────────────
+    "robustness": {
+        "enabled": False,
     },
 }
 
@@ -304,9 +328,15 @@ def _flatten_hierarchical(raw: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
             ("describing_function_mode", "describing_function_mode"),
             ("seed_sign_convention", "seed_sign_convention"),
             ("seed_theta", "seed_theta"),
+            # Classical route feature flags
+            ("machado_enabled", "machado_enabled"),
+            ("biased_enabled", "biased_enabled"),
         ]:
             if k in ss:
                 flat[dk] = ss[k]
+        # seed_filter is a nested dict — pass through directly
+        if "seed_filter" in ss:
+            flat["seed_filter"] = ss["seed_filter"]
 
     # simulation section
     sim = raw.get("simulation", {})
@@ -337,9 +367,15 @@ def _flatten_hierarchical(raw: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
                                                           _DEFAULTS["max_seed_candidates_to_plot"])
 
     # nested sections passed through directly
-    for section in ("continuation", "sphere_tests", "basin", "bifurcation", "early_stop", "attractor_plots"):
+    for section in ("continuation", "sphere_tests", "basin", "bifurcation", "early_stop", "attractor_plots", "robustness"):
         if section in raw:
             flat[section] = raw[section]
+
+    # If continuation is present in raw and has lambda_values, inject into flat continuation
+    cont_raw = raw.get("continuation", {})
+    if isinstance(cont_raw, dict) and "lambda_values" in cont_raw:
+        flat.setdefault("continuation", {})
+        flat["continuation"]["lambda_values"] = cont_raw["lambda_values"]
 
     return flat
 
@@ -543,6 +579,24 @@ def _validate(cfg: Dict[str, Any]) -> None:
     dm = cfg.get("dynamics_mode")
     if dm is not None and dm not in {"integer", "fractional", "system"}:
         raise ValueError(f"Invalid dynamics_mode: '{dm}'.")
+
+    # Route-separation validation
+    if cfg.get("machado_enabled") and cfg.get("transfer_mode") != "fractional":
+        raise ValueError("Generalised Machado Describing Function is only supported when transfer_mode is 'fractional'.")
+
+    if cfg.get("transfer_mode") == "integer":
+        if cfg.get("seed_mode") == "fractional" or cfg.get("continuation_mode") == "fractional":
+            raise ValueError("Invalid mode mixture: transfer_mode is 'integer' but seed_mode or continuation_mode is 'fractional'. For published integer reproduction, all must be 'integer'.")
+        # Warning when trying to claim fractional outputs with transfer_mode: integer
+        if q is not None and q < 1.0:
+            import warnings
+            warnings.warn(
+                "You are using transfer_mode='integer' on a fractional system (q < 1). "
+                "Ensure that this is only used for published integer reproduction, "
+                "and NEVER mix these results with fractional claims.",
+                UserWarning,
+                stacklevel=2
+            )
 
     mm = cfg.get("memory_mode")
     if mm is not None and mm not in {"full", "window", "none"}:

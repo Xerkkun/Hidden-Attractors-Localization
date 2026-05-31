@@ -50,6 +50,16 @@ DEFAULT_CONFIG = {
     "run_robustness": False,
     "workers": 1,
     "seed_mode": "fractional",
+    "machado_enabled": False,
+    "biased_enabled": False,
+    "seed_filter": {
+        "enabled": False,
+        "harmonic_residual_keep": 0.05,
+        "rho_H_keep": 0.3,
+    },
+    "robustness": {
+        "enabled": False,
+    },
     "memory_policy": "full_caputo",
     "memory_window_steps": 4000,
     "memory_window_time": None,
@@ -175,6 +185,8 @@ DEFAULT_CONFIG = {
 }
 
 def build_eta_grid(cont_cfg: dict) -> np.ndarray:
+    if cont_cfg.get("lambda_values") is not None:
+        return np.asarray(cont_cfg["lambda_values"], dtype=float)
     if cont_cfg.get("eta_values") is not None:
         return np.asarray(cont_cfg["eta_values"], dtype=float)
 
@@ -315,6 +327,13 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     """Execute the full 7-phase centered Lur'e describing function workflow with early stopping."""
     for k, v in DEFAULT_CONFIG.items():
         config.setdefault(k, v)
+        
+    if not config.get("machado_enabled"):
+        if config.get("describing_function_mode") == "machado":
+            raise ValueError("Machado describing function is disabled in the configuration.")
+    if not config.get("biased_enabled"):
+        if config.get("seed_theta") != 0.0 or config.get("seed_sign_convention") == "biased":
+            raise ValueError("Biased seeds are disabled in the configuration.")
         
     system_id = config["system_id"]
     output_dir = config["output_dir"]

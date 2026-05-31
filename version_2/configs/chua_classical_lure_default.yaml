@@ -1,0 +1,295 @@
+# =============================================================================
+# Configuración raíz: Ruta clásica Lur'e con función descriptiva centrada
+# =============================================================================
+#
+# Ruta metodológica publicada (Leonov–Kuznetsov):
+#   Sistema → Forma Lur'e → W(s) o W_hat_q(λ) → N(A) → semilla x0
+#             → continuación (λ: 0→1) → atractor final → [ocultedad]
+#
+# REGLA DE SEPARACIÓN DE RUTAS (no negociable):
+#   transfer_mode controla SOLO cómo se evalúa W para generar la semilla.
+#   El integrador y el criterio de Matignon son SIEMPRE fraccionarios si q < 1.
+#
+#   transfer_mode: fractional → W_hat_q(λ), λ=(jω)^q   [workflow objetivo]
+#   transfer_mode: integer    → W(jω)=r^T(jωI-P)^{-1}b [solo reproducción publicada]
+#
+#   NUNCA mezclar resultados de transfer_mode: integer con afirmaciones
+#   sobre el sistema fraccionario objetivo.
+# =============================================================================
+
+experiment:
+  name: "Chua Fractional — Ruta Clásica Lur'e"
+  description: >
+    Localización de atractor oculto en el sistema de Chua fraccionario no suave
+    usando la ruta clásica Lur'e: función descriptiva centrada → semilla inicial
+    → continuación numérica → verificación del atractor.
+  output_dir: "outputs/chua_classical_lure"
+  random_seed: 20260517
+  # Alternativas para output_dir:
+  #   output_dir: "outputs/chua_classical_lure_integer_repro"  (para reproducción entera)
+  #   output_dir: "outputs/chua_classical_lure_q0998"          (para q=0.998)
+
+# =============================================================================
+# Sistema
+# =============================================================================
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.9998
+  # Para reproducir valores publicados de Leonov–Kuznetsov exactamente,
+  # usar q: 1.0 y transfer_mode: integer (ver sección modes).
+  # Valores confirmados del sistema no suave de Chua:
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+# =============================================================================
+# Modos de transferencia y dinámica
+# =============================================================================
+modes:
+  # transfer_mode: determina W para la semilla.
+  #   "fractional" → W_hat_q(λ) = r^T(λI-P)^{-1}b, λ=(jω)^q  [DEFAULT: workflow objetivo]
+  #   "integer"    → W(jω) = r^T(jωI-P)^{-1}b                 [solo reproducción publicada]
+  transfer_mode: "fractional"
+
+  # seed_mode debe ser coherente con transfer_mode.
+  #   "fractional" → semilla generada con W_hat_q  [DEFAULT]
+  #   "integer"    → semilla generada con W(jω)    [reproducción publicada]
+  seed_mode: "fractional"
+
+  # continuation_mode: modo de la continuación numérica.
+  #   "fractional" → continuación Caputo, historia consistente  [DEFAULT]
+  #   "integer"    → continuación entera, solo para reproducción publicada
+  continuation_mode: "fractional"
+
+  # dynamics_mode: qué q se usa para el integrador.
+  #   "system" → usa el q definido en system.q  [DEFAULT, recomendado]
+  #   "fractional" → fuerza q < 1 aunque system_mode sea integer
+  #   "integer" → fuerza q=1 (NUNCA usar para sistema fraccionario objetivo)
+  dynamics_mode: "system"
+
+# =============================================================================
+# Integrador
+# =============================================================================
+integrator:
+  # name: algoritmo de integración fraccionaria.
+  #   "efork3" → eFork de 3 etapas (C backend, recomendado para sweeps)  [DEFAULT]
+  #   "abm"    → Adams–Bashforth–Moulton full-history (referencia final, más lento)
+  name: "efork3"
+
+  # h: paso de integración.
+  #   0.01  → contrato oficial, balance precisión/costo  [DEFAULT]
+  #   0.005 → mayor precisión (robustez), ~2x más lento
+  #   0.001 → alta precisión (diagnósticos), ~10x más lento
+  h: 0.01
+
+  # memory_policy: política de historia Caputo.
+  #   "full_caputo"    → historia completa desde t=0  [DEFAULT: máxima fidelidad]
+  #   "finite_window"  → ventana finita (robustez/escalabilidad, segunda prioridad)
+  #     Si se usa finite_window, especificar también memory_window_time o memory_window_steps.
+  memory_policy: "full_caputo"
+  # memory_window_time: 40.0  # [solo con finite_window] longitud de ventana en segundos
+
+  use_c_backend: true
+  allow_python_fallback: false
+
+# =============================================================================
+# Etapas activas
+# =============================================================================
+stages:
+  # Etapas del pipeline base (DEFAULT: activas)
+  seed_search: true
+  continuation: true
+  final_simulation: true
+
+  # Pruebas de ocultedad: DESACTIVADAS por defecto.
+  # Para activar: cambiar a true y configurar la sección sphere_tests.
+  hiddenness_tests: false
+  sphere_tests: false
+
+  # Segunda prioridad: DESACTIVADAS por defecto.
+  # Activar solo cuando el atractor base esté validado.
+  basin_slices: false        # cuencas de atracción
+  bifurcation: false         # diagrama de bifurcación
+  attractor_only: false      # solo integración desde x0 fijo (sin semilla)
+
+# =============================================================================
+# Búsqueda de semilla (Función Descriptiva)
+# =============================================================================
+seed_search:
+  # strategy: método de búsqueda armónica.
+  #   "k_phi" → Im[W(jω)]=0, luego k=1/Re[W], luego N(A)=k  [DEFAULT: ruta clásica publicada]
+  #   "nyquist_df" → búsqueda 2D en grilla (A, ω), mínimo |W·N - 1|  [alternativa]
+  strategy: "k_phi"
+
+  # construction: cómo se construye x0 desde (A, ω, k).
+  #   "modal" → usa el vector propio de (P + k·b·r^T) asociado a jω  [DEFAULT]
+  #   "direct" → x0 = A·v donde v es el eigenvector normalizado
+  construction: "modal"
+
+  # branch_index: qué candidato armónico seleccionar si hay varios.
+  #   0 → el primero encontrado (menor k)  [DEFAULT]
+  #   1, 2, ... → candidatos alternativos
+  branch_index: 0
+
+  # Función descriptiva: modo de evaluación.
+  #   "auto"       → closed_form si disponible, quadrature si no  [DEFAULT]
+  #   "closed_form" → fórmula analítica (solo si el sistema la implementa)
+  #   "quadrature" → integración numérica estándar N(A) = (2/πA)∫ψ(A·cosθ)cosθ dθ
+  describing_function_mode: "auto"
+
+  # machado_enabled: función descriptiva generalizada de Machado.
+  #   false → DESACTIVADA  [DEFAULT: no en la ruta clásica publicada]
+  #   true  → activar solo como extensión experimental (segunda prioridad)
+  #           Requiere también configurar machado.mu_values en una sección aparte.
+  machado_enabled: false
+
+  # biased_enabled: semillas sesgadas (σ₀ ≠ 0).
+  #   false → DESACTIVADA  [DEFAULT: solo semillas centradas, ruta publicada]
+  #   true  → activar como extensión (segunda prioridad)
+  biased_enabled: false
+
+  # Rango de frecuencia para la búsqueda.
+  #   omega_min: 0.1   [DEFAULT conservador, evita ω→0 donde W diverge]
+  #   omega_max: 5.0   [DEFAULT: rango de interés para este sistema]
+  # Alternativa: omega_min: 0.01, omega_max: 20.0 (búsqueda amplia)
+  omega_min: 0.1
+  omega_max: 5.0
+
+  # Rango de amplitud.
+  amplitude_min: 0.5
+  amplitude_max: 20.0
+
+  # Tamaño de la grilla de búsqueda.
+  #   200 → DEFAULT conservador, balance costo/cobertura
+  #   500 → más cobertura (más lento ~2.5x)
+  #   50  → exploración rápida (menos cobertura)
+  grid_size_omega: 200
+  grid_size_amplitude: 200
+
+  # root_refinement: refinar los candidatos con optimización local.
+  #   true  → DEFAULT: mejora la precisión de (A₀, ω₀) usando L-BFGS-B
+  #   false → usar solo el punto de la grilla (más rápido, menos preciso)
+  root_refinement: true
+
+  # df_residual_tol: tolerancia máxima del residual armónico |W·N - 1|.
+  #   1.0e-6 → DEFAULT: exigente  [ruta publicada]
+  #   1.0e-4 → exploración rápida
+  #   1.0e-8 → muy exigente (puede no encontrar nada)
+  df_residual_tol: 1.0e-6
+
+  # seed_filter: filtro post-búsqueda por calidad de semilla.
+  #   enabled: false → DESACTIVADO por defecto  [ruta base: se aceptan todos los candidatos]
+  #   enabled: true  → activar para filtrar por rho_H y harmonic_residual (segunda prioridad)
+  seed_filter:
+    enabled: false
+    # Si se activa:
+    # harmonic_residual_keep: 0.05   # rechazar si residual > este umbral
+    # rho_H_keep: 0.3                # rechazar si rho_H > este umbral
+
+# =============================================================================
+# Continuación numérica (λ: 0 → 1)
+# =============================================================================
+continuation:
+  # Valores de λ del contrato oficial (no modificar sin justificación).
+  # λ=0 → sistema lineal puro, λ=1 → sistema completo con no linealidad.
+  lambda_values: [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0]
+  public_parameter: "lambda"
+  internal_parameter: "eta"    # nombre interno legacy, solo metadata
+
+  # Tiempos de integración en cada paso de continuación.
+  #   use_period_based_times: true → duración = N·T₀ donde T₀=2π/ω₀ [DEFAULT]
+  #   Alternativa: use_period_based_times: false y especificar t_transient/t_keep
+  use_period_based_times: true
+  periods_transient: 20   # períodos de transitorio descartados
+  periods_keep: 10        # períodos guardados como referencia de cada paso
+  # t_transient: 30.0     # [alternativa si use_period_based_times: false]
+  # t_keep: 30.0          # [alternativa si use_period_based_times: false]
+
+  # Historia armónica para continuación fraccionaria.
+  #   true → construir prehistoria x(t<0) = A·Re(v·e^{jωt}) para Caputo  [DEFAULT]
+  #   false → iniciar sin historia (menos fiel al modo armónico)
+  build_fractional_harmonic_history: true
+  harmonic_history_periods: 10
+
+  early_stop_enabled: true
+  require_c_backend: true
+  allow_python_fallback: false
+
+# =============================================================================
+# Simulación final del atractor
+# =============================================================================
+simulation:
+  # t_final: tiempo total de integración del atractor candidato.
+  #   3000.0 → DEFAULT del contrato (historia completa con full_caputo)
+  #   500.0  → exploración rápida
+  #   10000.0 → diagnósticos de convergencia
+  t_final: 3000.0
+
+  # t_burn: tiempo de transitorio descartado antes de analizar el atractor.
+  #   120.0 → DEFAULT del contrato
+  t_burn: 120.0
+
+# =============================================================================
+# Pruebas de ocultedad (DESACTIVADAS por defecto)
+# =============================================================================
+sphere_tests:
+  enabled: false
+  # Para activar: cambiar enabled: true y ajustar parámetros.
+  # Parámetros del contrato oficial cuando se ejecute:
+  equilibrium_selection: "all"     # probar TODOS los equilibrios
+  radii: [1.0e-5, 3.0e-5, 1.0e-4, 3.0e-4, 1.0e-3, 1.0e-2]  # radios oficiales
+  samples_initial: 100             # samples_per_radius del contrato
+  samples_growth_factor: 1.5       # → crece 50 por radio (sample_growth_per_radius=50)
+  t_final: 3000.0                  # misma duración que la simulación final
+  t_burn: 120.0
+  h: 0.01
+
+# =============================================================================
+# Robustez (DESACTIVADA — segunda prioridad)
+# =============================================================================
+# Para activar en el futuro, crear una sección robustness: enabled: true
+# con los parámetros del contrato (finer_h, longer_t_final, etc.)
+
+# =============================================================================
+# Cuencas de atracción (DESACTIVADAS — segunda prioridad)
+# =============================================================================
+basin:
+  enabled: false
+  # Para activar: cambiar enabled: true
+  planes: ["xy", "xz", "yz"]
+  grid_n: 150
+  around_equilibria: true
+  equilibrium_selection: "all"
+  local_radius: 2.0
+  t_final: 3000.0
+  t_burn: 120.0
+  h: 0.01
+
+# =============================================================================
+# Diagrama de bifurcación (DESACTIVADO — segunda prioridad)
+# =============================================================================
+bifurcation:
+  enabled: false
+  # Para activar: cambiar enabled: true y configurar el parámetro de barrido.
+  # parameter: "beta"
+  # values: {min: 8.0, max: 16.0, n: 300}
+
+# =============================================================================
+# Gráficas
+# =============================================================================
+plots:
+  enabled: true
+  save_figures: true
+  attractor: true
+  timeseries: true
+  transfer: true           # curva de Nyquist y W(jω)
+  describing_function: true
+  residual_map: true
+  continuation: true
+  matignon: true           # diagrama de Matignon (clasificación de equilibrios)
+  sphere_tests: false      # activar con sphere_tests
+  basin: false             # activar con basin
+  bifurcation: false       # activar con bifurcation

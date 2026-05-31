@@ -1,8 +1,8 @@
 {
   "validation_id": "chua_fractional_validation_evidence",
-  "repository_commit": "1bb25954d97541235126dd7794c91f1c5a8da9dd",
+  "repository_commit": "5d3d5e0b0ae0bb5078fc07a404f91c4deeb9ed58",
   "package_version": "0.1.0",
-  "python_version": "3.14.3",
+  "python_version": "3.12.12",
   "platform": "Windows-11-10.0.26200-SP0",
   "main_system": "fractional nonsmooth Chua",
   "main_parameters": {
@@ -39,21 +39,21 @@
     "continuation": "completed",
     "post_continuation_filter": "completed",
     "dynamic_reference": "completed",
-    "robustness": "incomplete",
-    "hiddenness_tests": "incomplete_lightweight_exploratory",
-    "diagnostics": "completed_with_lyapunov_pending"
+    "robustness": "pending_not_in_scope_current_phase",
+    "hiddenness_tests": "hiddenness_exploratory_only",
+    "diagnostics": "diagnostics_partial_current_protocol"
   },
   "stage_evidence_scopes": {
-    "numerical_contract": "prior_exploratory_run",
-    "algebraic_validation": "prior_exploratory_run",
-    "seed_generation": "prior_exploratory_run",
-    "soft_precheck": "prior_exploratory_run",
-    "continuation": "prior_exploratory_run",
-    "post_continuation_filter": "prior_exploratory_run",
-    "dynamic_reference": "prior_exploratory_run",
-    "robustness": "prior_exploratory_run",
-    "hiddenness_tests": "prior_exploratory_run",
-    "diagnostics": "prior_exploratory_run"
+    "numerical_contract": "official_validation_run",
+    "algebraic_validation": "official_validation_run",
+    "seed_generation": "official_validation_run",
+    "soft_precheck": "official_validation_run",
+    "continuation": "official_validation_run",
+    "post_continuation_filter": "official_validation_run",
+    "dynamic_reference": "official_validation_run",
+    "robustness": "official_validation_run",
+    "hiddenness_tests": "official_validation_run",
+    "diagnostics": "official_validation_run"
   },
   "pending_stages": [
     "robustness",
