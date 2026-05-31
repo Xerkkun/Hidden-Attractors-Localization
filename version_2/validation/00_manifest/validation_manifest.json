@@ -2,7 +2,7 @@
   "validation_id": "chua_fractional_algebra_2026_05_23",
   "repository_commit": "working_tree_dirty",
   "package_version": "0.1.0",
-  "python_version": "3.12.12",
+  "python_version": "3.14.3",
   "platform": "Windows-11-10.0.26200-SP0",
   "main_system": "fractional nonsmooth Chua",
   "main_parameters": {
@@ -38,8 +38,7 @@
     "dynamic_reference",
     "robustness",
     "hiddenness_tests",
-    "diagnostics",
-    "algebraic_validation"
+    "diagnostics"
   ],
   "schema_version": "1.0",
   "protocol_version": "caputo_hidden_attractors_v1",

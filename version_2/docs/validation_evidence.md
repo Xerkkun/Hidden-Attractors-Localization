@@ -94,3 +94,10 @@ hidden-attractors-check-validation --allow-pending
 
 `--allow-pending` permits official stages not yet generated in a current run.
 Completed new runs should be checked without that option.
+
+## Fractional Lyapunov Evidence
+
+Phase-F Lyapunov evidence lives under `validation/chaos_validation/`. The
+local `fractional_variational_abm_qr` fixed-lower-limit full-history contract
+and the DK2018 block-restart ABM-GS reproduction contract are promoted
+independently. Neither contract alone certifies chaos or hiddenness.

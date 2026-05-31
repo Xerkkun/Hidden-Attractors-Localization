@@ -9,16 +9,19 @@ Stability: internal
     surface.
 """
 
-from .backends import BasinBackend, FractionalChuaBackend, FullHistoryABMBackend
-from .contracts import BackendBuildSpec, IntegrationRequest, IntegrationResult, NativeIntegrationBackend, NativeLyapunovBackend
+from .backends import BasinBackend, FractionalChuaBackend, FullHistoryABMBackend, NativeFractionalVariationalBackend
+from .contracts import BackendBuildSpec, FractionalLyapunovRequest, FractionalLyapunovResult, IntegrationRequest, IntegrationResult, NativeIntegrationBackend, NativeLyapunovBackend
 
 __all__ = [
     "BackendBuildSpec",
     "BasinBackend",
     "FractionalChuaBackend",
     "FullHistoryABMBackend",
+    "FractionalLyapunovRequest",
+    "FractionalLyapunovResult",
     "IntegrationRequest",
     "IntegrationResult",
     "NativeIntegrationBackend",
     "NativeLyapunovBackend",
+    "NativeFractionalVariationalBackend",
 ]

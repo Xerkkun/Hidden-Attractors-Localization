@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "method_id": "fractional_variational_abm_qr",
+  "status": "published_benchmarks_pending",
+  "certifications": {
+    "chaos_certified_by_this_pipeline": false,
+    "hiddenness_certified_by_this_pipeline": false
+  },
+  "notes": [
+    "The DK2018 block-restart reproduction lane cannot promote this method.",
+    "Contract-specific published validation is still required."
+  ]
+}

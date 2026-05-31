@@ -129,8 +129,12 @@ or the transfer must be redefined explicitly with the opposite sign.
 
 ## Remaining Validation Stages
 
-The algebraic validation stage is complete. The following remain independent
-validation stages:
+The algebraic validation stage is complete only when the official summary has
+status `passed_python_wolfram`. The validator consumes the prefixed generated
+Wolfram CSV files directly from
+`validation/outputs/wolfram/chua_fractional_saturation/` and records their
+hashes; isolated generated files do not close the stage. The following remain
+independent validation stages:
 
 1. integrator convergence and comparison against an independent method such as
    ABM;

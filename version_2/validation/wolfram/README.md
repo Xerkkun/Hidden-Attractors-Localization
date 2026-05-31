@@ -86,6 +86,13 @@ python validation/python/run_wolfram_validations.py --all
 
 Outputs are written to `validation/outputs/wolfram/<system_id>/`.
 
+For `chua_fractional_saturation`, the official algebraic validator consumes
+the generated prefixed CSV files directly from that ignored output directory.
+It records their hashes and both Wolfram/Python consistency summaries in
+`validation/02_algebraic_validation/algebraic_validation_validation_summary.json`.
+The official stage is closed only when those resolved artifacts exist and
+their comparisons pass.
+
 ### Single Case
 
 ```bash
@@ -224,4 +231,3 @@ It is critical to distinguish between the scope of the Wolfram Language algebrai
 3. **No Attractor Hiddenness Certification**:
    - Neither the Wolfram validation nor the Python consistency check certifies `hidden_verified` on its own.
    - These scripts verify the mathematical validity of the seeds and system forms. The verification of the attractor being hidden requires complete simulation, integration, and basin of attraction checks.
-

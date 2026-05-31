@@ -8,6 +8,7 @@ classifiers behind a Python API suitable for experiments and examples.
 from __future__ import annotations
 
 import ctypes
+import csv
 import os
 import subprocess
 import sys
@@ -20,9 +21,194 @@ import numpy as np
 from ..models.chua import ChuaParameters, chua_nonsmooth_parameters
 from ..parallel import compile_c_target
 from ..paths import NATIVE_CACHE, PACKAGE_ROOT
+from .contracts import FractionalLyapunovRequest, FractionalLyapunovResult
 
 
 C_SOURCE_ROOT = PACKAGE_ROOT / "native" / "csrc"
+
+_FRACTIONAL_SYSTEM_IDS = {"rabinovich_fabrikant": 1, "lorenz": 2}
+_FRACTIONAL_CONTRACT_IDS = {
+    "dk2018_block_restart_abm_gs": 1,
+    "fixed_lower_limit_full_history_qr": 2,
+}
+_FRACTIONAL_CONVOLUTION_IDS = {"direct": 1, "fft_block": 2}
+_FRACTIONAL_STATUS = {
+    0: "ok",
+    -1: "invalid_request",
+    -2: "allocation_failed",
+    -3: "nonfinite_solution",
+    -4: "diverged",
+    -5: "output_buffer_too_small",
+}
+
+
+class _CFractionalLyapunovRequest(ctypes.Structure):
+    _fields_ = [
+        ("abi_version", ctypes.c_int),
+        ("system_id", ctypes.c_int),
+        ("execution_contract", ctypes.c_int),
+        ("convolution_mode", ctypes.c_int),
+        ("fft_block_size", ctypes.c_int),
+        ("q", ctypes.c_double),
+        ("h", ctypes.c_double),
+        ("t_final", ctypes.c_double),
+        ("t_burn", ctypes.c_double),
+        ("reorthonormalization_time", ctypes.c_double),
+        ("divergence_norm", ctypes.c_double),
+        ("x0", ctypes.c_double * 4),
+        ("parameters", ctypes.c_double * 8),
+    ]
+
+
+class _CFractionalLyapunovResult(ctypes.Structure):
+    _fields_ = [
+        ("abi_version", ctypes.c_int),
+        ("status_code", ctypes.c_int),
+        ("steps_completed", ctypes.c_int),
+        ("convergence_rows", ctypes.c_int),
+        ("exponents", ctypes.c_double * 4),
+        ("final_state", ctypes.c_double * 4),
+    ]
+
+
+@dataclass
+class NativeFractionalVariationalBackend:
+    """Native C backend for extensive fractional variational LE calculations."""
+
+    lib: Any
+    build_metadata: dict[str, object]
+    _cache = {}
+
+    @classmethod
+    def build(cls, output_name: str = "fractional_variational_lyapunov") -> "NativeFractionalVariationalBackend":
+        if output_name in cls._cache:
+            return cls._cache[output_name]
+        NATIVE_CACHE.mkdir(parents=True, exist_ok=True)
+        result = compile_c_target(
+            C_SOURCE_ROOT / "fractional_variational_lyapunov_lib.c",
+            NATIVE_CACHE / f"{output_name}{_shared_suffix()}",
+            target_kind="shared",
+            openmp=False,
+        )
+        lib = ctypes.CDLL(str(result.path.resolve()))
+        lib.fractional_lyapunov_abi_version.argtypes = []
+        lib.fractional_lyapunov_abi_version.restype = ctypes.c_int
+        lib.fractional_lyapunov_rhs_jacobian.argtypes = [
+            ctypes.c_int,
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+        ]
+        lib.fractional_lyapunov_rhs_jacobian.restype = ctypes.c_int
+        lib.fractional_lyapunov_run.argtypes = [
+            ctypes.POINTER(_CFractionalLyapunovRequest),
+            ctypes.POINTER(_CFractionalLyapunovResult),
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"),
+            ctypes.c_int,
+        ]
+        lib.fractional_lyapunov_run.restype = ctypes.c_int
+        if int(lib.fractional_lyapunov_abi_version()) != 1:
+            raise RuntimeError("Unsupported fractional Lyapunov native ABI.")
+        backend = cls(
+            lib=lib,
+            build_metadata={
+                "compiler": result.compiler,
+                "compile_command": list(result.command),
+                "openmp_requested": result.openmp_requested,
+                "openmp_active": result.openmp_active,
+                "target_kind": result.target_kind,
+            },
+        )
+        cls._cache[output_name] = backend
+        return backend
+
+    @staticmethod
+    def _parameter_vector(system_id: str, parameters: dict[str, float] | Any) -> np.ndarray:
+        if system_id == "rabinovich_fabrikant":
+            return np.asarray([parameters["a"], parameters["b"]], dtype=np.float64)
+        if system_id == "lorenz":
+            return np.asarray([parameters["sigma"], parameters["beta"], parameters["rho"]], dtype=np.float64)
+        raise ValueError(f"Unsupported native fractional Lyapunov system: {system_id}")
+
+    def rhs_jacobian(
+        self,
+        system_id: str,
+        parameters: dict[str, float],
+        state: Sequence[float],
+    ) -> tuple[np.ndarray, np.ndarray]:
+        params = np.zeros(8, dtype=np.float64)
+        values = self._parameter_vector(system_id, parameters)
+        params[: values.size] = values
+        x = np.ascontiguousarray(state, dtype=np.float64)
+        if x.shape != (3,):
+            raise ValueError("Native fractional Lyapunov systems currently require a 3D state.")
+        rhs = np.empty(3, dtype=np.float64)
+        jacobian = np.empty(9, dtype=np.float64)
+        rc = int(self.lib.fractional_lyapunov_rhs_jacobian(_FRACTIONAL_SYSTEM_IDS[system_id], params, x, rhs, jacobian))
+        if rc != 0:
+            raise RuntimeError(f"Native RHS/Jacobian evaluation failed with status {rc}.")
+        return rhs, jacobian.reshape(3, 3)
+
+    def run(self, request: FractionalLyapunovRequest) -> FractionalLyapunovResult:
+        try:
+            system_value = _FRACTIONAL_SYSTEM_IDS[request.system_id]
+            contract_value = _FRACTIONAL_CONTRACT_IDS[request.execution_contract]
+            convolution_value = _FRACTIONAL_CONVOLUTION_IDS[request.convolution_mode]
+        except KeyError as exc:
+            raise ValueError(f"Unsupported native fractional Lyapunov selector: {exc.args[0]}") from exc
+
+        x0 = np.asarray(request.x0, dtype=float)
+        if x0.shape != (3,):
+            raise ValueError("Native fractional Lyapunov systems currently require x0 with shape (3,).")
+        params = self._parameter_vector(request.system_id, request.parameters)
+        c_request = _CFractionalLyapunovRequest()
+        c_request.abi_version = 1
+        c_request.system_id = system_value
+        c_request.execution_contract = contract_value
+        c_request.convolution_mode = convolution_value
+        c_request.fft_block_size = int(request.fft_block_size)
+        c_request.q = float(request.q)
+        c_request.h = float(request.h)
+        c_request.t_final = float(request.t_final)
+        c_request.t_burn = float(request.t_burn)
+        c_request.reorthonormalization_time = float(request.reorthonormalization_time)
+        c_request.divergence_norm = float(request.divergence_norm)
+        for index, value in enumerate(x0):
+            c_request.x0[index] = float(value)
+        for index, value in enumerate(params):
+            c_request.parameters[index] = float(value)
+
+        interval = max(1, round(float(request.reorthonormalization_time) / float(request.h)))
+        total_steps = round((float(request.t_final) + float(request.t_burn)) / float(request.h))
+        max_rows = max(2, total_steps // interval + 3)
+        times = np.empty(max_rows, dtype=np.float64)
+        convergence = np.empty(max_rows * 3, dtype=np.float64)
+        c_result = _CFractionalLyapunovResult()
+        rc = int(self.lib.fractional_lyapunov_run(ctypes.byref(c_request), ctypes.byref(c_result), times, convergence, max_rows))
+        status = _FRACTIONAL_STATUS.get(rc, f"native_error_{rc}")
+        rows = int(c_result.convergence_rows)
+        result = FractionalLyapunovResult(
+            exponents=np.asarray(c_result.exponents[:3], dtype=float),
+            final_state=np.asarray(c_result.final_state[:3], dtype=float),
+            times=times[:rows].copy(),
+            convergence=convergence[: rows * 3].reshape(rows, 3).copy(),
+            status=status,
+            steps_completed=int(c_result.steps_completed),
+            execution_contract=request.execution_contract,
+            convolution_mode=request.convolution_mode,
+            metadata={**self.build_metadata, "abi_version": int(c_result.abi_version)},
+        )
+        if request.convergence_csv is not None and rows:
+            csv_path = Path(request.convergence_csv)
+            csv_path.parent.mkdir(parents=True, exist_ok=True)
+            with csv_path.open("w", newline="", encoding="utf-8") as handle:
+                writer = csv.writer(handle)
+                writer.writerow(["time", "lambda_0", "lambda_1", "lambda_2"])
+                for time_value, values in zip(result.times, result.convergence):
+                    writer.writerow([time_value, *values])
+        return result
 
 
 def _shared_suffix() -> str:

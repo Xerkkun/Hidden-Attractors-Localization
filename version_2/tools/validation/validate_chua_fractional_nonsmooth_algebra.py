@@ -19,6 +19,7 @@ from matplotlib.patches import Patch, Wedge
 import numpy as np
 
 from hidden_attractors.models import chua_nonsmooth_parameters, equilibria_nonsmooth, jacobian_nonsmooth, rhs_nonsmooth
+from hidden_attractors.validation import resolve_wolfram_artifacts
 from hidden_attractors.seed_generation.chua import (
     chua_matrices,
     describing_function,
@@ -43,10 +44,20 @@ MATLAB_BRANCHES = (
 
 
 def write_csv(path: Path, rows: list[dict[str, object]]) -> None:
+    line_ending = "\r\n" if path.exists() and b"\r\n" in path.read_bytes() else "\n"
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator=line_ending)
         writer.writeheader()
         writer.writerows(rows)
+
+
+def write_text(path: Path, content: str) -> None:
+    """Preserve historical line endings while keeping new evidence on LF."""
+
+    if path.exists() and b"\r\n" in path.read_bytes():
+        content = content.replace("\r\n", "\n").replace("\n", "\r\n")
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        handle.write(content)
 
 
 def central_difference_jacobian(state: np.ndarray, params, step: float = 1.0e-7) -> np.ndarray:
@@ -135,13 +146,13 @@ def _read_external_eigenvalues(path: Path) -> dict[str, list[complex]]:
     return rows
 
 
-def cross_tool_equilibrium_rows(eq_rows: list[dict[str, object]], algebra: Path) -> tuple[list[dict[str, object]], bool]:
+def cross_tool_equilibrium_rows(eq_rows: list[dict[str, object]], algebra: Path, artifacts=None) -> tuple[list[dict[str, object]], bool]:
     comparison_rows = [{"tool": "Python", **row} for row in eq_rows]
     all_pass = all(float(row["rhs_residual_norm"]) < TOL_RHS for row in eq_rows)
     for tool, filename in (
         ("Wolfram", "wolfram_equilibria_residuals.csv"),
     ):
-        path = algebra / filename
+        path = artifacts.files.get(filename, algebra / filename) if artifacts is not None else algebra / filename
         if not path.exists():
             all_pass = False
             comparison_rows.append({"tool": tool, "equilibrium": "missing", "x": "", "y": "", "z": "", "rhs_residual_norm": ""})
@@ -165,12 +176,12 @@ def _jacobian_from_row(row: dict[str, object]) -> np.ndarray:
     )
 
 
-def cross_tool_jacobian_rows(jac_rows: list[dict[str, object]], algebra: Path) -> tuple[list[dict[str, object]], bool]:
+def cross_tool_jacobian_rows(jac_rows: list[dict[str, object]], algebra: Path, artifacts=None) -> tuple[list[dict[str, object]], bool]:
     python_matrices = {str(row["region"]): _jacobian_from_row(row) for row in jac_rows if row["region"] in {"inner", "outer"}}
     comparison_rows: list[dict[str, object]] = []
     all_pass = True
     for tool, filename in (("Wolfram", "wolfram_jacobians.csv"),):
-        path = algebra / filename
+        path = artifacts.files.get(filename, algebra / filename) if artifacts is not None else algebra / filename
         if not path.exists():
             all_pass = False
             comparison_rows.append({"tool": tool, "region": "missing", "relative_frobenius_error": "", "passes_relative_error_lt_1e-10": False})
@@ -197,7 +208,7 @@ def _sort_eigenvalues(values: list[complex]) -> list[complex]:
     return sorted(values, key=lambda value: (round(float(value.real), 10), round(float(value.imag), 10)))
 
 
-def cross_tool_eigenvalue_rows(eig_rows: list[dict[str, object]], algebra: Path) -> tuple[list[dict[str, object]], bool]:
+def cross_tool_eigenvalue_rows(eig_rows: list[dict[str, object]], algebra: Path, artifacts=None) -> tuple[list[dict[str, object]], bool]:
     python_regions: dict[str, list[complex]] = {"inner": [], "outer": []}
     for row in eig_rows:
         if row["equilibrium"] in {"E0", "E+"}:
@@ -207,7 +218,7 @@ def cross_tool_eigenvalue_rows(eig_rows: list[dict[str, object]], algebra: Path)
     for tool, filename in (
         ("Wolfram", "wolfram_eigenvalues_matignon.csv"),
     ):
-        path = algebra / filename
+        path = artifacts.files.get(filename, algebra / filename) if artifacts is not None else algebra / filename
         if not path.exists():
             all_pass = False
             comparison_rows.append(
@@ -414,11 +425,12 @@ def main() -> None:
     write_csv(algebra / "jacobian_check.csv", jac_rows)
     write_csv(algebra / "jacobian_finite_difference_check.csv", fd_rows)
     write_csv(algebra / "eigenvalues_matignon_summary.csv", eig_rows)
-    cross_tool_eq_rows, equilibrium_cross_tool_pass = cross_tool_equilibrium_rows(eq_rows, algebra)
+    wolfram_artifacts = resolve_wolfram_artifacts(root)
+    cross_tool_eq_rows, equilibrium_cross_tool_pass = cross_tool_equilibrium_rows(eq_rows, algebra, wolfram_artifacts)
     write_csv(algebra / "equilibria_cross_tool_residuals.csv", cross_tool_eq_rows)
-    cross_tool_jac_rows, jacobian_cross_tool_pass = cross_tool_jacobian_rows(jac_rows, algebra)
+    cross_tool_jac_rows, jacobian_cross_tool_pass = cross_tool_jacobian_rows(jac_rows, algebra, wolfram_artifacts)
     write_csv(algebra / "jacobian_cross_tool_comparison.csv", cross_tool_jac_rows)
-    cross_tool_rows, eigenvalue_cross_tool_pass = cross_tool_eigenvalue_rows(eig_rows, algebra)
+    cross_tool_rows, eigenvalue_cross_tool_pass = cross_tool_eigenvalue_rows(eig_rows, algebra, wolfram_artifacts)
     write_csv(algebra / "eigenvalues_cross_tool_comparison.csv", cross_tool_rows)
     write_matignon_plot(eig_rows, algebra / "matignon_margins.png")
     write_matignon_complex_plane_plot(eig_rows, algebra / "matignon_complex_plane.png")
@@ -432,16 +444,11 @@ def main() -> None:
     )
     internal_algebraic_status = "passed" if internal_algebraic_pass else "failed"
     
-    required_external_files = [
-        "wolfram_equilibria_residuals.csv",
-        "wolfram_jacobians.csv",
-        "wolfram_eigenvalues_matignon.csv",
-    ]
-    external_files_present = all((algebra / f).exists() for f in required_external_files)
+    external_files_present = wolfram_artifacts.complete
     
     if not external_files_present:
         cross_tool_status = "missing_external_artifacts"
-    elif equilibrium_cross_tool_pass and jacobian_cross_tool_pass and eigenvalue_cross_tool_pass:
+    elif wolfram_artifacts.summaries_pass and equilibrium_cross_tool_pass and jacobian_cross_tool_pass and eigenvalue_cross_tool_pass:
         cross_tool_status = "passed"
     else:
         cross_tool_status = "failed"
@@ -462,6 +469,7 @@ def main() -> None:
         "stage": "algebraic_validation",
         "status": status_label,
         "system": "fractional_nonsmooth_chua",
+        "inputs": {},
         "numerical_contract": {"q": Q, "tolerances": {
             "equilibrium_rhs_norm_max": TOL_RHS,
             "jacobian_finite_difference_relative_error_max": TOL_JACOBIAN_FD,
@@ -480,7 +488,8 @@ def main() -> None:
             },
             "cross_tool_validation": {
                 "status": cross_tool_status,
-                "wolfram_comparison": "pending" if cross_tool_status == "missing_external_artifacts" else ("passed" if (equilibrium_cross_tool_pass and jacobian_cross_tool_pass and eigenvalue_cross_tool_pass) else "failed")
+                "wolfram_comparison": "pending" if cross_tool_status == "missing_external_artifacts" else ("passed" if cross_tool_status == "passed" else "failed"),
+                "wolfram_artifact_provenance": wolfram_artifacts.provenance(relative_to=root),
             }
         },
         "metrics": {
@@ -507,7 +516,7 @@ def main() -> None:
             "complex_plane_figure": "matignon_complex_plane.png",
         },
     }
-    (algebra / "algebraic_validation_validation.md").write_text(
+    write_text(algebra / "algebraic_validation_validation.md",
         "# Algebraic Validation\n\n"
         "## Internal Algebraic Validation\n"
         "- **Equilibria Residuals**: Passed. Zero vector-field residuals within floating-point tolerance.\n"
@@ -519,7 +528,6 @@ def main() -> None:
         "## Cross-Tool Validation\n"
         f"- **Wolfram Comparison**: {cross_tool_status.replace('_', ' ')}.\n\n"
         f"Overall Stage Status: {status_label}\n",
-        encoding="utf-8",
     )
 
     lure_rows_out, transfer_rows, describing_rows, machado_rows = lure_rows(params)
@@ -536,7 +544,7 @@ def main() -> None:
             "max_amplitude_difference_from_matlab": max(float(row["abs_amplitude_minus_matlab"]) for row in describing_rows),
         },
     }
-    (lure / "describing_function_families.md").write_text(
+    write_text(lure / "describing_function_families.md",
         "# Describing-Function Families\n\n"
         "The manual Lur'e split reproduces the non-smooth vector field. The two "
         "centered branches at `q=0.9998` match MATLAB after normalizing the "
@@ -544,7 +552,6 @@ def main() -> None:
         "form uses `1 - k*W_report = 0` with `W_code = -W_report`.\n\n"
         "This stage produces harmonic seeds only; it does not establish a bounded "
         "chaotic trajectory or hiddenness.\n",
-        encoding="utf-8",
     )
     algebra_summary["outputs"]["describing_function_families"] = seed_family_checks
     algebra_summary["files"].update(
@@ -558,7 +565,7 @@ def main() -> None:
     )
     algebra_summary["verdict"] = None
     algebra_summary["provenance"] = {"generator": "tools/validation/validate_chua_fractional_nonsmooth_algebra.py"}
-    (algebra / "algebraic_validation_validation_summary.json").write_text(json.dumps(algebra_summary, indent=2) + "\n", encoding="utf-8")
+    write_text(algebra / "algebraic_validation_validation_summary.json", json.dumps(algebra_summary, indent=2) + "\n")
     try:
         import subprocess
         commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
@@ -610,9 +617,9 @@ def main() -> None:
     }
     if dirty:
         manifest_data["dirty"] = True
-    (manifest / "validation_manifest.json").write_text(json.dumps(manifest_data, indent=2) + "\n", encoding="utf-8")
-    (manifest / "environment.json").write_text(json.dumps({"python": sys.version, "platform": platform.platform()}, indent=2) + "\n", encoding="utf-8")
-    (manifest / "software_versions.json").write_text(json.dumps({"numpy": np.__version__, "matplotlib": matplotlib.__version__}, indent=2) + "\n", encoding="utf-8")
+    write_text(manifest / "validation_manifest.json", json.dumps(manifest_data, indent=2) + "\n")
+    write_text(manifest / "environment.json", json.dumps({"python": sys.version, "platform": platform.platform()}, indent=2) + "\n")
+    write_text(manifest / "software_versions.json", json.dumps({"numpy": np.__version__, "matplotlib": matplotlib.__version__}, indent=2) + "\n")
     print(json.dumps({"algebraic_validation": algebra_summary}, indent=2))
 
 

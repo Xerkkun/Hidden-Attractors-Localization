@@ -1,0 +1,40 @@
+case_id: published_dk2018_rabinovich_fabrikant_q0999
+benchmark_type: published
+method_id: fractional_variational_dk2018_block_restart_abm_gs
+
+system:
+  kind: rabinovich_fabrikant
+  dimension: 3
+  parameters: {a: 0.1, b: 0.98}
+  q: 0.999
+  x0: [0.1, 0.1, 0.1]
+
+integration:
+  h: 0.005
+  t_final: 300.0
+  t_burn: 0.0
+  reorthonormalization_time: 0.02
+  memory_mode: block_restart
+  memory_window: null
+
+execution:
+  native_required: true
+  execution_contract: dk2018_block_restart_abm_gs
+  convolution_mode: fft_block
+  fft_block_size: 256
+
+expected:
+  exponents: [0.0749, 0.0018, -2.0850]
+  tolerance_abs: 0.05
+  tolerance_rel: null
+  qualitative_only: false
+
+reference:
+  authors: Danca & Kuznetsov
+  year: 2018
+  title: Matlab Code for Lyapunov Exponents of Fractional-Order Systems
+  doi: 10.1142/S0218127418500670
+  table_or_figure: Rabinovich-Fabrikant numerical example
+  published_values: [0.0749, 0.0018, -2.0850]
+  data_complete: true
+  missing_fields: []

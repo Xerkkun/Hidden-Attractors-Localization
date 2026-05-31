@@ -133,7 +133,9 @@ def _compiler_and_flags(openmp: bool, target_kind: str) -> tuple[str, List[str],
     if system == "windows":
         compiler = os.environ.get("CC", "gcc")
         flag = ["-fopenmp"] if openmp else []
-        return compiler, flag, []
+        # Keep shared libraries loadable from Python even when the MSYS2 bin
+        # directory is not inherited by the DLL loader.
+        return compiler, flag, ["-static-libgcc"]
 
     compiler = os.environ.get("CC", "gcc")
     flag = ["-fopenmp"] if openmp else []

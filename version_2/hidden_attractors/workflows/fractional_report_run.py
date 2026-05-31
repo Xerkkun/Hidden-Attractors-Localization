@@ -31,6 +31,7 @@ from ..plotting.dynamics import plot_lure_nyquist_describing_function, plot_phas
 from ..seed_generation import biased_lure_describing_function, lure_transfer_function
 from ..seed_generation.core import HarmonicSeed
 from ..systems import get_system
+from ..validation import resolve_wolfram_artifacts
 from .protocol import PROTOCOL_VERSION, SCHEMA_VERSION, StageEnvelope, sample_uniform_ball
 
 
@@ -1503,11 +1504,12 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
         alg_val.write_csv(algebra_dir / "jacobian_finite_difference_check.csv", fd_rows)
         alg_val.write_csv(algebra_dir / "eigenvalues_matignon_summary.csv", eig_rows)
         
-        cross_tool_eq_rows, equilibrium_cross_tool_pass = alg_val.cross_tool_equilibrium_rows(eq_rows, algebra_dir)
+        wolfram_artifacts = resolve_wolfram_artifacts(validation)
+        cross_tool_eq_rows, equilibrium_cross_tool_pass = alg_val.cross_tool_equilibrium_rows(eq_rows, algebra_dir, wolfram_artifacts)
         alg_val.write_csv(algebra_dir / "equilibria_cross_tool_residuals.csv", cross_tool_eq_rows)
-        cross_tool_jac_rows, jacobian_cross_tool_pass = alg_val.cross_tool_jacobian_rows(jac_rows, algebra_dir)
+        cross_tool_jac_rows, jacobian_cross_tool_pass = alg_val.cross_tool_jacobian_rows(jac_rows, algebra_dir, wolfram_artifacts)
         alg_val.write_csv(algebra_dir / "jacobian_cross_tool_comparison.csv", cross_tool_jac_rows)
-        cross_tool_rows, eigenvalue_cross_tool_pass = alg_val.cross_tool_eigenvalue_rows(eig_rows, algebra_dir)
+        cross_tool_rows, eigenvalue_cross_tool_pass = alg_val.cross_tool_eigenvalue_rows(eig_rows, algebra_dir, wolfram_artifacts)
         alg_val.write_csv(algebra_dir / "eigenvalues_cross_tool_comparison.csv", cross_tool_rows)
         
         alg_val.write_matignon_plot(eig_rows, algebra_dir / "matignon_margins.png")
@@ -1523,16 +1525,11 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
         )
         internal_algebraic_status = "passed" if internal_algebraic_pass else "failed"
         
-        required_external_files = [
-            "wolfram_equilibria_residuals.csv",
-            "wolfram_jacobians.csv",
-            "wolfram_eigenvalues_matignon.csv",
-        ]
-        external_files_present = all((algebra_dir / f).exists() for f in required_external_files)
+        external_files_present = wolfram_artifacts.complete
         
         if not external_files_present:
             cross_tool_status = "missing_external_artifacts"
-        elif equilibrium_cross_tool_pass and jacobian_cross_tool_pass and eigenvalue_cross_tool_pass:
+        elif wolfram_artifacts.summaries_pass and equilibrium_cross_tool_pass and jacobian_cross_tool_pass and eigenvalue_cross_tool_pass:
             cross_tool_status = "passed"
         else:
             cross_tool_status = "failed"
@@ -1572,7 +1569,8 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
                 },
                 "cross_tool_validation": {
                     "status": cross_tool_status,
-                    "wolfram_comparison": "pending" if cross_tool_status == "missing_external_artifacts" else ("passed" if (equilibrium_cross_tool_pass and jacobian_cross_tool_pass and eigenvalue_cross_tool_pass) else "failed")
+                    "wolfram_comparison": "pending" if cross_tool_status == "missing_external_artifacts" else ("passed" if cross_tool_status == "passed" else "failed"),
+                    "wolfram_artifact_provenance": wolfram_artifacts.provenance(relative_to=validation_root),
                 }
             },
             "metrics": {

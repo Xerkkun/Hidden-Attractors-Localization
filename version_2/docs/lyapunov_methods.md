@@ -88,7 +88,7 @@ is raised:
 ```
 ValueError: integer_qr_benettin is valid only for q=1 (integer-order ODE);
 received q=0.99.  Use a fractional Lyapunov method for Caputo q<1
-(e.g., fractional_variational_abm_qr — not yet implemented in F0).
+(e.g., fractional_variational_abm_qr).
 ```
 
 ---
@@ -99,6 +99,7 @@ received q=0.99.  Use a fractional Lyapunov method for Caputo q<1
 |---|---|---|
 | `integer_qr_benettin` | q=1 ODE | Implemented ✓ · Validated ✓ (F0) |
 | `fractional_variational_abm_qr` | Caputo q<1 | Implemented ✓ · NOT validated (F2) |
+| `fractional_variational_dk2018_block_restart_abm_gs` | Caputo q<1 | Implemented native reproduction lane · published validation pending |
 | `fractional_cloned_dynamics_abm` | Caputo q<1 | NOT implemented · NOT validated |
 | `zero_one_test` | — | NOT implemented |
 | PSD/FFT analysis | — | NOT implemented |
@@ -136,7 +137,7 @@ print(info.q_support)    # "q=1 only"
 
 ---
 
-## What F0 does NOT implement
+## Historical F0 exclusions
 
 - `fractional_variational_abm_qr`
 - `fractional_variational_abm_gs`
@@ -191,7 +192,7 @@ print(summary.method_info.method_id)  # 'integer_qr_benettin'
 | `integer_qr_benettin` | 1.0 | `not_applicable` | ✓ | — |
 | `integer_qr_benettin` | < 1.0 | any | ✓ | `ValueError` |
 | `integer_qr_benettin` | 1.0 | `full` | ✓ | `ValueError` |
-| `fractional_variational_abm_qr` | < 1.0 | `full` | ✗ | `NotImplementedError` |
+| `fractional_variational_abm_qr` | < 1.0 | `full` | ✓ | — |
 | `fractional_cloned_dynamics_abm` | < 1.0 | `full` | ✗ | `NotImplementedError` |
 
 ### reorthonormalization_time → reorthonormalize_every
@@ -302,12 +303,24 @@ If `history_aware_qr=False`, only the current $\Phi$ is updated, which behaves a
 
 ## F2.1 — Benchmark validation
 
-The benchmark layer checks the implementation of `fractional_variational_abm_qr` using automated synthetic and published cases.
+The benchmark layer keeps two contracts separate:
+
+- `fractional_variational_abm_qr`: fixed-lower-limit, full-history QR. The C
+  backend provides direct and FFT-block convolution modes with short parity
+  tests. Published validation remains pending.
+- `fractional_variational_dk2018_block_restart_abm_gs`: native C reproduction
+  of the supplied `FO_Lyapunov.m` block-restart ABM-GS contract. RF and Lorenz
+  published-value runs can promote only this lane.
 
 - **Methodological Rules**:
-  - The F2 implementation can be used to run published benchmarks.
+  - Extensive published runs must use the native C backend.
+  - Short C-versus-Python ABM parity does not replace comparison with the
+    exact published `FDE12.m` output.
   - Setting `validated=False` in the main registry means that the published benchmarks replication has not yet been fully completed.
   - Passing synthetic benchmarks (such as zero RHS or linear stable systems) does **not** count as full published validation.
   - A published quantitative benchmark requires complete reference data (coefficients, step sizes, simulation times, initial conditions).
   - If a published benchmark is missing any of these required data fields, it is marked as `published_reference_data_missing` and global validation remains pending.
 
+`FO_LE.m` (Danca, 2026) is recorded as a future QR/LIL_nc reference for
+non-commensurate orders. `LIL_nc.m` was not supplied and that third contract is
+not implemented here.

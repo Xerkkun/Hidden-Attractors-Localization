@@ -12,7 +12,7 @@ methods; those live in :mod:`hidden_attractors.analysis.lyapunov`.
 F0 status
 ---------
 * ``integer_qr_benettin``: implemented and validated for q=1 only.
-* All fractional methods: listed as future phases — NOT implemented in F0.
+* Fractional methods: tracked independently by execution contract.
 
 No claim is made about chaos or hiddenness certification.
 
@@ -22,7 +22,34 @@ No claim is made about chaos or hiddenness certification.
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
+from pathlib import Path
+
+
+def _dk2018_published_validation_complete() -> bool:
+    """Read promoted evidence conservatively; missing or malformed means pending."""
+
+    summary = (
+        Path(__file__).resolve().parents[2]
+        / "validation"
+        / "chaos_validation"
+        / "lyapunov_methods"
+        / "fractional_variational_dk2018_block_restart_abm_gs_published"
+        / "validation_summary.json"
+    )
+    try:
+        data = json.loads(summary.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return False
+    return (
+        data.get("status") == "published_quantitative_validated"
+        and data.get("certifications", {}).get("chaos_certified_by_this_pipeline") is False
+        and data.get("certifications", {}).get("hiddenness_certified_by_this_pipeline") is False
+    )
+
+
+_DK2018_PUBLISHED_VALIDATED = _dk2018_published_validation_complete()
 
 
 @dataclass(frozen=True)
@@ -114,7 +141,7 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
     ),
 
     # ------------------------------------------------------------------
-    # Future phase — NOT implemented in F0
+    # F2 — local fixed-lower-limit full-history method
     # ------------------------------------------------------------------
     "fractional_variational_abm_qr": LyapunovMethodInfo(
         method_id="fractional_variational_abm_qr",
@@ -156,6 +183,34 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
         validated_against_published_benchmarks=False,
         benchmark_status="published_benchmarks_pending",
 
+    ),
+
+    "fractional_variational_dk2018_block_restart_abm_gs": LyapunovMethodInfo(
+        method_id="fractional_variational_dk2018_block_restart_abm_gs",
+        derivative_model="caputo",
+        q_support="0 < q < 1",
+        requires_jacobian=True,
+        orthonormalization="gs",
+        finite_time_local=True,
+        implemented=True,
+        validated=_DK2018_PUBLISHED_VALIDATED,
+        references=(
+            "Danca & Kuznetsov 2018 — Matlab Code for Lyapunov Exponents"
+            " of Fractional-Order Systems (Int. J. Bifurcation Chaos 28(5)):"
+            " reproduction contract for block-restarted FDE12 integration and"
+            " Gram-Schmidt renormalisation.",
+        ),
+        warnings=(
+            "Published-value reproduction lane; distinct from fixed-lower-limit"
+            " full-history Caputo QR.",
+            "Passing this lane does not validate fractional_variational_abm_qr.",
+            "Does not certify chaos; does not certify hiddenness of attractors.",
+            "chaos_certified_by_this_pipeline: false",
+            "hiddenness_certified_by_this_pipeline: false",
+        ),
+        validated_against_synthetic_tests=True,
+        validated_against_published_benchmarks=_DK2018_PUBLISHED_VALIDATED,
+        benchmark_status="validated_against_published_benchmarks" if _DK2018_PUBLISHED_VALIDATED else "published_benchmarks_pending",
     ),
 
     "fractional_cloned_dynamics_abm": LyapunovMethodInfo(

@@ -50,6 +50,7 @@
 | F1 | Common API / dispatcher | **Completed** ✓ |
 | F1 | `integer_qr_benettin` dispatch | **Implemented & Validated** ✓ (F0/F1) |
 | F2 | `fractional_variational_abm_qr` | **Implemented ✓ · NOT validated against published benchmarks (F2)** |
+| F2 | `fractional_variational_dk2018_block_restart_abm_gs` | **Implemented native reproduction lane · published validation pending** |
 | F2 | `fractional_cloned_dynamics_abm` | NOT implemented · NOT validated |
 | F2 | `zero_one_test` | NOT implemented |
 | F3 | PSD/FFT | NOT implemented |
@@ -101,15 +102,17 @@ Fields `hidden_verified`, `chaos_verified`, `fractional_lyapunov_validated`, and
 
 ## F2.1 — `fractional_variational_abm_qr` Benchmark Validation Layer
 
-The F2.1 benchmark layer provides automated testing against synthetic and published templates.
+The F2.1 benchmark layer provides synthetic checks for the local full-history
+QR method and explicit RF/Lorenz published-value cases for the separate DK2018
+block-restart ABM-GS reproduction lane.
 
 ### Status
 - Synthetic benchmarks: **Implemented & Validated** (Zero RHS, Linear Stable)
-- Published benchmarks: **Template implemented, validation pending** (Danca & Kuznetsov 2018)
-- Published validation status: **Pending** until exact parameters and exponents from the literature are fully integrated (marked as `published_reference_data_missing`).
+- Published RF/Lorenz values: **Extracted into YAML; extensive native runs pending**.
+- Published 4D non-smooth case: **Qualitative only** because the quantitative article data are incomplete.
+- Passing the DK2018 lane does not promote `fractional_variational_abm_qr`.
 
 ### Methodological boundary
 - `chaos_certified_by_this_pipeline: false`
 - `hiddenness_certified_by_this_pipeline: false`
-
 

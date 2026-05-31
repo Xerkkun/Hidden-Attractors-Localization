@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "allowed_statuses": [
+    "diagnostics_pending",
+    "diagnostics_partial",
+    "chaotic_candidate_numerically_supported",
+    "chaos_not_certified"
+  ],
+  "required_diagnostics": [
+    "boundedness",
+    "fft_psd",
+    "lyapunov_with_validated_method_when_applicable",
+    "step_size_sensitivity",
+    "abm_direct_vs_fft_block"
+  ],
+  "optional_diagnostics": [
+    "zero_one_test",
+    "abm_vs_efork_when_applicable"
+  ],
+  "invariants": {
+    "single_indicator_cannot_certify_chaos": true,
+    "diagnostics_cannot_certify_hiddenness": true
+  }
+}

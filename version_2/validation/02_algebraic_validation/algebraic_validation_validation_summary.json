@@ -2,8 +2,9 @@
   "schema_version": "1.0",
   "protocol_version": "caputo_hidden_attractors_v1",
   "stage": "algebraic_validation",
-  "status": "passed_internal_pending_external_cross_tool",
+  "status": "passed_python_wolfram",
   "system": "fractional_nonsmooth_chua",
+  "inputs": {},
   "numerical_contract": {
     "q": 0.9998,
     "tolerances": {
@@ -24,8 +25,35 @@
       "describing_function_machado_checks": "passed"
     },
     "cross_tool_validation": {
-      "status": "missing_external_artifacts",
-      "wolfram_comparison": "pending"
+      "status": "passed",
+      "wolfram_comparison": "passed",
+      "wolfram_artifact_provenance": {
+        "system_id": "chua_fractional_saturation",
+        "source_kind": "generated_prefixed_outputs",
+        "summaries_pass": true,
+        "artifacts": {
+          "wolfram_equilibria_residuals.csv": {
+            "source": "outputs/wolfram/chua_fractional_saturation/chua_fractional_saturation_equilibria_residuals.csv",
+            "sha256": "5dc4a29d8b6782e7714299e18eb4457ad46579d9bb1f276691cbb1936c381b30"
+          },
+          "wolfram_jacobians.csv": {
+            "source": "outputs/wolfram/chua_fractional_saturation/chua_fractional_saturation_jacobians.csv",
+            "sha256": "742e431d9a9e734906fe3bb0b135a5cb83361bb83f5f2a6a934a47b2ccab68f1"
+          },
+          "wolfram_eigenvalues_matignon.csv": {
+            "source": "outputs/wolfram/chua_fractional_saturation/chua_fractional_saturation_eigenvalues_matignon.csv",
+            "sha256": "623eb0df7c693eb5c792e4bf16c8ffc848fcbc488ede6fa479fcd95aa790d133"
+          }
+        },
+        "validation_summary": {
+          "source": "outputs/wolfram/chua_fractional_saturation/chua_fractional_saturation_validation_summary.json",
+          "sha256": "14b4a391b38a930d34f84e244d662e9f0fb500ccf3808276f09a245524b253df"
+        },
+        "python_consistency_summary": {
+          "source": "outputs/wolfram/chua_fractional_saturation/chua_fractional_saturation_python_consistency_summary.json",
+          "sha256": "e56f4198ecc27a47da2919d5f49a9924666ba9efa21c47f65e1dba9d4984deb1"
+        }
+      }
     },
     "describing_function_families": {
       "status": "passed_python_matlab_after_sign_normalization",
@@ -40,11 +68,11 @@
   "metrics": {
     "rhs_residual_max": 1.096345236817342e-15,
     "rhs_residual_pass": true,
-    "equilibrium_cross_tool_pass": false,
-    "jacobian_cross_tool_pass": false,
+    "equilibrium_cross_tool_pass": true,
+    "jacobian_cross_tool_pass": true,
     "jacobian_finite_difference_relative_error_max": 2.4652012739653308e-09,
     "jacobian_finite_difference_pass": true,
-    "eigenvalue_cross_tool_pass": false,
+    "eigenvalue_cross_tool_pass": true,
     "origin_stable_by_matignon": true,
     "outer_equilibria_unstable_by_matignon": true
   },

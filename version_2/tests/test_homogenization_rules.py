@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import json
+import shutil
 import sys
+import uuid
 from pathlib import Path
 import pytest
 import numpy as np
@@ -54,7 +56,7 @@ def test_legacy_scripts_raise_error_without_historical_reproduction_mode() -> No
         if tmp_file.exists():
             tmp_file.unlink()
 
-def test_survivor_preserves_early_periodicity_status(monkeypatch, tmp_path: Path) -> None:
+def test_survivor_preserves_early_periodicity_status(monkeypatch) -> None:
     # 2. Verify that a survivor correctly retains its early_periodicity_status
     # and records post_continuation_dynamics_status separately
     item = {
@@ -104,9 +106,14 @@ def test_survivor_preserves_early_periodicity_status(monkeypatch, tmp_path: Path
     })
     monkeypatch.setattr("lure_biased_multiparam_continuation.FractionalHistory", FakeHistory)
     
-    rows, path_rows, survivor, elapsed = continuation.run_one_continuation_item(
-        item, cfg, p, eqs, tmp_path, []
-    )
+    output_dir = Path(__file__).resolve().parents[1] / "outputs" / "test_artifacts" / f"continuation_{uuid.uuid4().hex}"
+    output_dir.mkdir(parents=True)
+    try:
+        rows, path_rows, survivor, elapsed = continuation.run_one_continuation_item(
+            item, cfg, p, eqs, output_dir, []
+        )
+    finally:
+        shutil.rmtree(output_dir, ignore_errors=True)
     
     assert survivor is not None
     # Verify early_periodicity_status is preserved and not overwritten to nonperiodic_post_transient
@@ -142,9 +149,12 @@ def test_algebraic_validation_included_in_manifest() -> None:
     
     assert "algebraic_validation" in stages, "algebraic_validation must be in official stages"
     
-    # Under the new logic, since cross-tool validation is pending due to lack of MATLAB/Wolfram CSV files,
-    # it must be present in pending_stages.
-    assert "algebraic_validation" in pending, "algebraic_validation must be in pending_stages list when cross-tool comparison is pending"
+    summary_path = Path(__file__).resolve().parents[1] / "validation" / "02_algebraic_validation" / "algebraic_validation_validation_summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    if summary.get("status") == "passed_python_wolfram":
+        assert "algebraic_validation" not in pending
+    else:
+        assert "algebraic_validation" in pending, "algebraic_validation must remain pending until cross-tool comparison passes"
 
 def test_pre_continuation_periodic_seed_discard_fails_validation() -> None:
     from hidden_attractors.workflows.protocol import SoftPrecheckResult
@@ -237,5 +247,4 @@ def test_lightweight_hiddenness_cannot_be_promoted_to_full() -> None:
     )
     assert len(res.validate()) > 0
     assert "hidden_verified_only_if_full_protocol_passed requires the complete tested protocol" in res.validate()[0]
-
 

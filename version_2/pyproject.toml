@@ -101,6 +101,9 @@ addopts = [
 ]
 markers = [
   "wolfram: Wolfram Language algebraic/numerical validation (requires wolframscript; skipped if absent)",
+  "native: native C backend validation (skipped if the compiler is unavailable)",
+  "published: quantitative validation against explicitly extracted published values",
+  "slow: extensive numerical validation excluded from the quick suite",
 ]
 
 [tool.pytest-benchmark]

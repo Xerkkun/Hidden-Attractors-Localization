@@ -6,6 +6,10 @@ import numpy as np
 from typing import Dict, Any, List, Tuple
 
 from hidden_attractors.analysis import compute_lyapunov_spectrum
+from hidden_attractors.native import (
+    FractionalLyapunovRequest,
+    NativeFractionalVariationalBackend,
+)
 
 def load_benchmark_case(path: str) -> Dict[str, Any]:
     """Load a benchmark case from a YAML file.
@@ -64,6 +68,30 @@ def build_system_functions(system_config: Dict[str, Any]) -> Tuple[Any, Any, int
         )
         rhs = lambda x: rhs_arctan(x, p)
         jacobian = lambda x: jacobian_arctan(x, p)
+    elif kind == "rabinovich_fabrikant":
+        a = float(params["a"])
+        b = float(params["b"])
+        rhs = lambda x: np.asarray([
+            x[1] * (x[2] - 1.0 + x[0] * x[0]) + a * x[0],
+            x[0] * (3.0 * x[2] + 1.0 - x[0] * x[0]) + a * x[1],
+            -2.0 * x[2] * (b + x[0] * x[1]),
+        ])
+        jacobian = lambda x: np.asarray([
+            [2.0 * x[0] * x[1] + a, x[0] * x[0] + x[2] - 1.0, x[1]],
+            [-3.0 * x[0] * x[0] + 3.0 * x[2] + 1.0, a, 3.0 * x[0]],
+            [-2.0 * x[1] * x[2], -2.0 * x[0] * x[2], -2.0 * (x[0] * x[1] + b)],
+        ])
+    elif kind == "lorenz":
+        sigma = float(params["sigma"])
+        beta = float(params["beta"])
+        rho = float(params["rho"])
+        rhs = lambda x: np.asarray([sigma * (x[1] - x[0]), x[0] * (rho - x[2]) - x[1], x[0] * x[1] - beta * x[2]])
+        jacobian = lambda x: np.asarray([[-sigma, sigma, 0.0], [rho - x[2], -1.0, -x[0]], [x[1], x[0], -beta]])
+    elif kind == "dk2018_4d_nonsmooth":
+        raise NotImplementedError(
+            "DK2018 4D nonsmooth case is qualitative-only: the article data are "
+            "incomplete and no quantitative native validation is permitted."
+        )
     elif kind == "custom":
         raise NotImplementedError("Custom system kind is not pre-defined.")
     else:
@@ -99,10 +127,11 @@ def run_benchmark_case(
 
     # 1. Check if data is complete for published benchmarks
     if btype == "published" and not ref_config.get("data_complete", True):
+        qualitative_only = bool(case_data.get("expected", {}).get("qualitative_only", False))
         return {
             "case_id": case_id,
             "benchmark_type": btype,
-            "status": "published_reference_data_missing",
+            "status": "published_reference_data_missing_qualitative_only" if qualitative_only else "published_reference_data_missing",
             "computed_exponents": None,
             "message": "Published benchmark is a template with missing data.",
             "missing_fields": ref_config.get("missing_fields", [])
@@ -125,24 +154,52 @@ def run_benchmark_case(
         # Scale down parameters for fast test runs
         t_burn = min(t_burn, h * 2)
         t_final = h * 10
+        if reorth_time is not None:
+            reorth_time = min(float(reorth_time), h * 5)
 
-    # 4. Compute spectrum
+    # 4. Compute spectrum. Extensive published calculations are native-only.
     q = float(sys_config["q"])
-    summary = compute_lyapunov_spectrum(
-        rhs=rhs,
-        jacobian=jacobian,
-        x0=x0,
-        q=q,
-        method=method_id,
-        h=h,
-        t_final=t_final,
-        t_burn=t_burn,
-        reorthonormalization_time=reorth_time,
-        memory_mode=mem_mode,
-        memory_window=mem_window,
-    )
-
-    result = summary.result
+    execution = case_data.get("execution", {})
+    native_required = bool(execution.get("native_required", False))
+    if native_required:
+        if reorth_time is None:
+            raise ValueError("Native published benchmark requires reorthonormalization_time.")
+        conv_csv = None
+        if output_dir is not None:
+            conv_csv = os.path.join(output_dir, "convergence", f"{case_id}.csv")
+        backend = NativeFractionalVariationalBackend.build()
+        result = backend.run(
+            FractionalLyapunovRequest(
+                system_id=sys_config["kind"],
+                x0=x0,
+                parameters=sys_config["parameters"],
+                q=q,
+                h=h,
+                t_final=t_final,
+                t_burn=t_burn,
+                reorthonormalization_time=float(reorth_time),
+                execution_contract=execution["execution_contract"],
+                convolution_mode=execution.get("convolution_mode", "fft_block"),
+                fft_block_size=int(execution.get("fft_block_size", 256)),
+                divergence_norm=float(execution.get("divergence_norm", 0.0)),
+                convergence_csv=conv_csv,
+            )
+        )
+    else:
+        summary = compute_lyapunov_spectrum(
+            rhs=rhs,
+            jacobian=jacobian,
+            x0=x0,
+            q=q,
+            method=method_id,
+            h=h,
+            t_final=t_final,
+            t_burn=t_burn,
+            reorthonormalization_time=reorth_time,
+            memory_mode=mem_mode,
+            memory_window=mem_window,
+        )
+        result = summary.result
     status = result.status
 
     if status != "ok" or not np.all(np.isfinite(result.exponents)):
@@ -189,6 +246,8 @@ def run_benchmark_case(
         else:
             # General fallback check
             outcome = "synthetic_benchmark_passed"
+    elif fast:
+        outcome = "published_benchmark_smoke_passed"
     else:
         # Published benchmark validation
         expected_exps = exp_config.get("exponents")
@@ -221,7 +280,7 @@ def run_benchmark_case(
                     outcome = "published_benchmark_failed"
 
     # 6. Save convergence and outputs if output_dir is provided
-    if output_dir is not None:
+    if output_dir is not None and not native_required:
         os.makedirs(output_dir, exist_ok=True)
         # Save convergence trajectory
         conv_dir = os.path.join(output_dir, "convergence")
@@ -246,5 +305,7 @@ def run_benchmark_case(
         "benchmark_type": btype,
         "status": outcome,
         "computed_exponents": [float(x) for x in computed_exps],
+        "execution_contract": execution.get("execution_contract", "fixed_lower_limit_full_history_qr"),
+        "numerical_route": "native_c" if native_required else "python_reference_short",
         "message": f"Execution completed with outcome: {outcome}"
     }

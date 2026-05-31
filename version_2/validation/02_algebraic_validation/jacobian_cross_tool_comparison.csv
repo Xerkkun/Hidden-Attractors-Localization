@@ -1,2 +1,3 @@
 tool,region,relative_frobenius_error,passes_relative_error_lt_1e-10
-Wolfram,missing,,False
+Wolfram,inner,5.4180691410913535e-17,True
+Wolfram,outer,0.0,True

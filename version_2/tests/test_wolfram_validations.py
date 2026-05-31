@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import shutil
 import sys
+import uuid
 from pathlib import Path
 
 import pytest
@@ -66,7 +67,7 @@ _SKIP_NO_WOLFRAM = pytest.mark.skipif(
     DEFAULT_CASES,
     ids=[Path(c).stem for c in DEFAULT_CASES],
 )
-def test_wolfram_case_validation(case_relpath: str, tmp_path: Path) -> None:
+def test_wolfram_case_validation(case_relpath: str) -> None:
     """Run a Wolfram validation script and assert that passed=true in the summary JSON.
 
     The output is written to a temporary directory so tests do not pollute the
@@ -74,12 +75,15 @@ def test_wolfram_case_validation(case_relpath: str, tmp_path: Path) -> None:
     """
     root = repo_root()
     case_path = root / case_relpath
-    out_dir = tmp_path / Path(case_relpath).stem
-    result = run_case(case_path, out_dir)
-    assert result["summary"]["passed"] is True, (
-        f"Wolfram validation failed for {case_relpath}:\n"
-        f"{result['summary']}"
-    )
+    out_dir = root / "outputs" / "test_artifacts" / f"wolfram_{uuid.uuid4().hex}" / Path(case_relpath).stem
+    try:
+        result = run_case(case_path, out_dir)
+        assert result["summary"]["passed"] is True, (
+            f"Wolfram validation failed for {case_relpath}:\n"
+            f"{result['summary']}"
+        )
+    finally:
+        shutil.rmtree(out_dir.parent, ignore_errors=True)
 
 
 # ---------------------------------------------------------------------------

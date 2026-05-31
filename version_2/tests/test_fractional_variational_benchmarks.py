@@ -28,7 +28,10 @@ def test_benchmark_yaml_files_exist() -> None:
     expected_files = [
         "synthetic_zero_rhs.yaml",
         "synthetic_linear_stable.yaml",
-        "published_danca_kuznetsov2018_template.yaml"
+        "published_danca_kuznetsov2018_template.yaml",
+        "published_dk2018_rabinovich_fabrikant_q0999.yaml",
+        "published_dk2018_lorenz_q0985.yaml",
+        "published_dk2018_4d_nonsmooth_q098_qualitative.yaml",
     ]
     for filename in expected_files:
         path = os.path.join(BENCHMARKS_DIR, filename)
@@ -143,3 +146,48 @@ def test_non_aligned_burn_time_no_bad_elapsed() -> None:
     assert len(res.times) > 0
     assert np.all(res.times > 0)
     assert np.all(np.isfinite(res.exponents))
+
+
+@pytest.mark.native
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "published_dk2018_rabinovich_fabrikant_q0999.yaml",
+        "published_dk2018_lorenz_q0985.yaml",
+    ],
+)
+def test_published_native_cases_smoke_without_quantitative_promotion(filename: str) -> None:
+    case_data = load_benchmark_case(os.path.join(BENCHMARKS_DIR, filename))
+    res = run_benchmark_case(case_data, fast=True)
+    assert res["status"] == "published_benchmark_smoke_passed"
+    assert res["numerical_route"] == "native_c"
+    assert res["execution_contract"] == "dk2018_block_restart_abm_gs"
+
+
+def test_nonsmooth_4d_case_remains_qualitative_only() -> None:
+    case_data = load_benchmark_case(
+        os.path.join(BENCHMARKS_DIR, "published_dk2018_4d_nonsmooth_q098_qualitative.yaml")
+    )
+    res = run_benchmark_case(case_data, fast=True)
+    assert res["status"] == "published_reference_data_missing_qualitative_only"
+    assert res["computed_exponents"] is None
+
+
+@pytest.mark.slow
+@pytest.mark.published
+@pytest.mark.native
+@pytest.mark.skipif(
+    os.environ.get("RUN_PUBLISHED_LYAPUNOV") != "1",
+    reason="Set RUN_PUBLISHED_LYAPUNOV=1 to run extensive published-value benchmarks.",
+)
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "published_dk2018_rabinovich_fabrikant_q0999.yaml",
+        "published_dk2018_lorenz_q0985.yaml",
+    ],
+)
+def test_published_native_cases_match_extracted_values(filename: str) -> None:
+    case_data = load_benchmark_case(os.path.join(BENCHMARKS_DIR, filename))
+    res = run_benchmark_case(case_data, fast=False)
+    assert res["status"] == "published_benchmark_passed_quantitative"

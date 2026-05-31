@@ -64,7 +64,7 @@ def main():
             print(f" Done. Status: {res['status']}")
             results.append(res)
             
-            if res["status"] == "published_reference_data_missing":
+            if res["status"].startswith("published_reference_data_missing"):
                 missing_data_reports.append({
                     "case_id": res["case_id"],
                     "missing_fields": res.get("missing_fields", [])
@@ -87,10 +87,10 @@ def main():
     import csv
     csv_path = os.path.join(out_dir, "benchmark_cases.csv")
     if results:
-        headers = list(results[0].keys())
+        headers = sorted({key for result in results for key in result})
         processed_results = []
         for r in results:
-            item = r.copy()
+            item = {key: r.get(key, "") for key in headers}
             if "computed_exponents" in item and item["computed_exponents"] is not None:
                 item["computed_exponents"] = str(item["computed_exponents"])
             else:
@@ -115,16 +115,17 @@ def main():
     all_statuses = [r["status"] for r in results]
     
     any_failed = any("failed" in s for s in all_statuses)
-    any_missing = any(s == "published_reference_data_missing" for s in all_statuses)
+    any_missing = any(s.startswith("published_reference_data_missing") for s in all_statuses)
     
     synthetic_results = [r for r in results if r["benchmark_type"] == "synthetic"]
     synthetic_passed = all(r["status"] == "synthetic_benchmark_passed" for r in synthetic_results) if synthetic_results else True
     
     published_results = [r for r in results if r["benchmark_type"] == "published"]
+    quantitative_published = [r for r in published_results if not r["status"].endswith("qualitative_only")]
     published_passed = all(
-        r["status"] in ("published_benchmark_passed_quantitative", "published_benchmark_passed_qualitative")
-        for r in published_results
-    ) if published_results else True
+        r["status"] == "published_benchmark_passed_quantitative"
+        for r in quantitative_published
+    ) if quantitative_published else False
 
     if any_failed:
         global_status = "fractional_variational_abm_qr_validation_failed"
@@ -140,11 +141,16 @@ def main():
     summary = {
         "global_status": global_status,
         "method_id": "fractional_variational_abm_qr",
+        "published_reproduction_method_id": "fractional_variational_dk2018_block_restart_abm_gs",
+        "certifications": {
+            "chaos_certified_by_this_pipeline": False,
+            "hiddenness_certified_by_this_pipeline": False,
+        },
         "cases_run": len(results),
         "synthetic_cases_passed": sum(1 for r in results if r["status"] == "synthetic_benchmark_passed"),
         "published_cases_passed_quantitative": sum(1 for r in results if r["status"] == "published_benchmark_passed_quantitative"),
         "published_cases_passed_qualitative": sum(1 for r in results if r["status"] == "published_benchmark_passed_qualitative"),
-        "published_cases_pending_missing_data": sum(1 for r in results if r["status"] == "published_reference_data_missing"),
+        "published_cases_pending_missing_data": sum(1 for r in results if r["status"].startswith("published_reference_data_missing")),
         "failures": sum(1 for r in results if "failed" in r["status"]),
         "inconclusive": sum(1 for r in results if r["status"] == "benchmark_inconclusive")
     }

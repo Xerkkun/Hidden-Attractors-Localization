@@ -1,0 +1,40 @@
+case_id: published_dk2018_4d_nonsmooth_q098_qualitative
+benchmark_type: published
+method_id: fractional_variational_dk2018_block_restart_abm_gs
+
+system:
+  kind: dk2018_4d_nonsmooth
+  dimension: 4
+  parameters: null
+  q: 0.98
+  x0: null
+
+integration:
+  h: null
+  t_final: null
+  t_burn: null
+  reorthonormalization_time: null
+  memory_mode: block_restart
+  memory_window: null
+
+expected:
+  exponents: null
+  lambda_max: null
+  tolerance_abs: null
+  tolerance_rel: null
+  qualitative_only: true
+
+reference:
+  authors: Danca & Kuznetsov
+  year: 2018
+  title: Matlab Code for Lyapunov Exponents of Fractional-Order Systems
+  doi: 10.1142/S0218127418500670
+  table_or_figure: 4D nonsmooth qualitative example
+  published_values: null
+  data_complete: false
+  missing_fields:
+    - complete_system_parameters
+    - exact_initial_condition
+    - expected_exponents
+    - exact_h
+    - exact_t_final

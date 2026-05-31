@@ -1,0 +1,40 @@
+case_id: published_dk2018_lorenz_q0985
+benchmark_type: published
+method_id: fractional_variational_dk2018_block_restart_abm_gs
+
+system:
+  kind: lorenz
+  dimension: 3
+  parameters: {sigma: 10.0, beta: 2.6666666666666665, rho: 200.0}
+  q: 0.985
+  x0: [0.1, 0.1, 0.1]
+
+integration:
+  h: 0.001
+  t_final: 500.0
+  t_burn: 0.0
+  reorthonormalization_time: 5.0
+  memory_mode: block_restart
+  memory_window: null
+
+execution:
+  native_required: true
+  execution_contract: dk2018_block_restart_abm_gs
+  convolution_mode: fft_block
+  fft_block_size: 256
+
+expected:
+  exponents: [-0.0026, -0.0870, -1.6225]
+  tolerance_abs: 0.05
+  tolerance_rel: null
+  qualitative_only: false
+
+reference:
+  authors: Danca & Kuznetsov
+  year: 2018
+  title: Matlab Code for Lyapunov Exponents of Fractional-Order Systems
+  doi: 10.1142/S0218127418500670
+  table_or_figure: Lorenz numerical example
+  published_values: [-0.0026, -0.0870, -1.6225]
+  data_complete: true
+  missing_fields: []

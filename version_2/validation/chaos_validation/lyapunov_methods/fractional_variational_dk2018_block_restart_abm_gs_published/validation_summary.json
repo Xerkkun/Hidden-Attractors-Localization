@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
+  "status": "published_benchmarks_pending",
+  "required_cases": [
+    "published_dk2018_rabinovich_fabrikant_q0999",
+    "published_dk2018_lorenz_q0985"
+  ],
+  "certifications": {
+    "chaos_certified_by_this_pipeline": false,
+    "hiddenness_certified_by_this_pipeline": false
+  },
+  "notes": [
+    "No official numeric CSV files are tracked until both native quantitative runs pass.",
+    "An independent MATLAB R2025b oracle using Garrappa fde12.m revisions from 2012 and 2025 matched the native C RF result but did not recover the RF vector printed in the 2018 article.",
+    "RF remains outside the published absolute tolerance of 0.05, so no numeric CSV files are promoted.",
+    "This lane does not validate fractional_variational_abm_qr."
+  ]
+}
