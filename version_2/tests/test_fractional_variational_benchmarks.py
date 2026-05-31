@@ -110,6 +110,13 @@ def test_registry_keeps_validated_false_until_published_benchmark() -> None:
     assert info.benchmark_status == "published_benchmarks_pending"
 
 
+def test_dk2018_registry_reports_reproduced_rf_lambda_3_discrepancy() -> None:
+    info = LYAPUNOV_METHODS["fractional_variational_dk2018_block_restart_abm_gs"]
+    assert info.validated is False
+    assert info.validated_against_published_benchmarks is False
+    assert info.benchmark_status == "published_benchmarks_pending_reproduced_discrepancy"
+
+
 # ---------------------------------------------------------------------------
 # 7. test_benchmark_summary_no_chaos_hidden_verified
 # ---------------------------------------------------------------------------

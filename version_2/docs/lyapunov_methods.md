@@ -99,7 +99,7 @@ received q=0.99.  Use a fractional Lyapunov method for Caputo q<1
 |---|---|---|
 | `integer_qr_benettin` | q=1 ODE | Implemented ✓ · Validated ✓ (F0) |
 | `fractional_variational_abm_qr` | Caputo q<1 | Implemented ✓ · NOT validated (F2) |
-| `fractional_variational_dk2018_block_restart_abm_gs` | Caputo q<1 | Implemented native reproduction lane · published validation pending |
+| `fractional_variational_dk2018_block_restart_abm_gs` | Caputo q<1 | Implemented native reproduction lane · `published_benchmarks_pending_reproduced_discrepancy` (`RF lambda_3` only) |
 | `fractional_cloned_dynamics_abm` | Caputo q<1 | NOT implemented · NOT validated |
 | `zero_one_test` | — | NOT implemented |
 | PSD/FFT analysis | — | NOT implemented |

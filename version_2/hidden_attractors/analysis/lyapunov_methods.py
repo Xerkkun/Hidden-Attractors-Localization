@@ -27,8 +27,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
-def _dk2018_published_validation_complete() -> bool:
-    """Read promoted evidence conservatively; missing or malformed means pending."""
+def _dk2018_published_validation_status() -> str:
+    """Read DK2018 evidence conservatively; missing or malformed means pending."""
 
     summary = (
         Path(__file__).resolve().parents[2]
@@ -41,15 +41,19 @@ def _dk2018_published_validation_complete() -> bool:
     try:
         data = json.loads(summary.read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError, OSError):
-        return False
-    return (
-        data.get("status") == "published_quantitative_validated"
-        and data.get("certifications", {}).get("chaos_certified_by_this_pipeline") is False
-        and data.get("certifications", {}).get("hiddenness_certified_by_this_pipeline") is False
-    )
+        return "published_benchmarks_pending"
+    status = data.get("status")
+    if status in {
+        "published_benchmarks_pending",
+        "published_benchmarks_pending_reproduced_discrepancy",
+        "published_quantitative_validated",
+    }:
+        return status
+    return "published_benchmarks_pending"
 
 
-_DK2018_PUBLISHED_VALIDATED = _dk2018_published_validation_complete()
+_DK2018_PUBLISHED_STATUS = _dk2018_published_validation_status()
+_DK2018_PUBLISHED_VALIDATED = _DK2018_PUBLISHED_STATUS == "published_quantitative_validated"
 
 
 @dataclass(frozen=True)
@@ -210,7 +214,11 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
         ),
         validated_against_synthetic_tests=True,
         validated_against_published_benchmarks=_DK2018_PUBLISHED_VALIDATED,
-        benchmark_status="validated_against_published_benchmarks" if _DK2018_PUBLISHED_VALIDATED else "published_benchmarks_pending",
+        benchmark_status=(
+            "validated_against_published_benchmarks"
+            if _DK2018_PUBLISHED_VALIDATED
+            else _DK2018_PUBLISHED_STATUS
+        ),
     ),
 
     "fractional_cloned_dynamics_abm": LyapunovMethodInfo(

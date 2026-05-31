@@ -25,9 +25,10 @@ The native C lane produced:
 [0.06111650301597507, 0.0038981398659820223, -1.8324646836344436]
 ```
 
-The C result therefore matches the independent MATLAB oracle, but neither
-matches the published RF vector `[0.0749, 0.0018, -2.0850]` within absolute
-tolerance `0.05`. This is evidence for a reproduced discrepancy, not grounds
-to promote the published benchmark or relax its tolerance.
+The C result therefore matches the independent MATLAB oracle. Against the
+published RF vector `[0.0749, 0.0018, -2.0850]`, `lambda_1` and `lambda_2`
+are within absolute tolerance `0.05`; only `lambda_3` fails, with absolute
+difference `0.2525353`. This is evidence for a reproduced discrepancy, not
+grounds to promote the published benchmark or relax its tolerance.
 
 This runner does not certify chaos or hiddenness.

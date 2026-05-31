@@ -2,10 +2,14 @@
   "schema_version": "1.0",
   "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
   "execution_contract": "dk2018_block_restart_abm_gs",
-  "status": "published_benchmarks_pending",
+  "status": "published_benchmarks_pending_reproduced_discrepancy",
   "required_cases": [
     "published_dk2018_rabinovich_fabrikant_q0999",
     "published_dk2018_lorenz_q0985"
   ],
-  "numeric_outputs_policy": "generated_only_after_real_native_quantitative_passes"
+  "numeric_outputs_policy": "generated_only_after_real_native_quantitative_passes",
+  "blocking_case": "published_dk2018_rabinovich_fabrikant_q0999",
+  "failing_components": [
+    "lambda_3"
+  ]
 }

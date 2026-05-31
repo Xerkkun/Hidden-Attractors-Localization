@@ -50,7 +50,7 @@
 | F1 | Common API / dispatcher | **Completed** ✓ |
 | F1 | `integer_qr_benettin` dispatch | **Implemented & Validated** ✓ (F0/F1) |
 | F2 | `fractional_variational_abm_qr` | **Implemented ✓ · NOT validated against published benchmarks (F2)** |
-| F2 | `fractional_variational_dk2018_block_restart_abm_gs` | **Implemented native reproduction lane · published validation pending** |
+| F2 | `fractional_variational_dk2018_block_restart_abm_gs` | **Implemented native reproduction lane · `published_benchmarks_pending_reproduced_discrepancy` (`RF lambda_3` only)** |
 | F2 | `fractional_cloned_dynamics_abm` | NOT implemented · NOT validated |
 | F2 | `zero_one_test` | NOT implemented |
 | F3 | PSD/FFT | NOT implemented |
@@ -115,4 +115,3 @@ block-restart ABM-GS reproduction lane.
 ### Methodological boundary
 - `chaos_certified_by_this_pipeline: false`
 - `hiddenness_certified_by_this_pipeline: false`
-
