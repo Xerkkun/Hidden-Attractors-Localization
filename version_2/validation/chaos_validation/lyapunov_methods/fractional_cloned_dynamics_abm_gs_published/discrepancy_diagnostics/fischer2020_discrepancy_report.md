@@ -91,7 +91,7 @@ for near-zero exponents. Use the additional diagnostic field
 ## Recommendations
 
 - Do not promote F3.
-- Execute `T_clone` and `delta` sensitivity sweeps for discrepant rows.
+- Review the completed bounded `T_clone` and `delta` sweeps before extending costly variants.
 - Validate ABM `q=1` against an exact solution.
 - Compare integer jerk against the independent reusable RK4 integrator.
 - Review whether the article uses a transient before clone accumulation.
@@ -102,3 +102,7 @@ for near-zero exponents. Use the additional diagnostic field
 Passing or failing F3 does not validate or invalidate F2.
 F3 does not certify chaos. F3 does not certify hiddenness.
 The current state is `published_benchmarks_pending_discrepancy`.
+
+## Sensitivity sweep results
+
+Controlled diagnostic sweeps recorded `164` unique runs across `delta, gs_policy, h, k, q1_mode, t_clone`. See the [sensitivity analysis report](sensitivity_analysis_report.md) for the run inventory, best improvements, persistent discrepancies, and hypothesis assessment. These sweeps do not promote validation.

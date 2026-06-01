@@ -870,7 +870,9 @@
     "report": "discrepancy_diagnostics/fischer2020_discrepancy_report.md",
     "matrix": "discrepancy_diagnostics/fischer2020_discrepancy_matrix.csv",
     "near_zero_sign_policy": "discrepancy_diagnostics/near_zero_sign_policy.json",
-    "sensitivity_status": "planned_or_partial",
-    "validated_after_diagnostics": false
+    "sensitivity_status": "partial_sweeps_executed_not_validation",
+    "validated_after_diagnostics": false,
+    "sensitivity_summary": "discrepancy_diagnostics/sensitivity_summary.json",
+    "sensitivity_report": "discrepancy_diagnostics/sensitivity_analysis_report.md"
   }
 }

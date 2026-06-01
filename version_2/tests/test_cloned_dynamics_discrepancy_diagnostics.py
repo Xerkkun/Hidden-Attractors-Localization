@@ -82,6 +82,10 @@ def test_official_diagnostic_summary_remains_conservative() -> None:
     assert summary["validated_against_published_benchmarks"] is False
     assert diagnostics["status"] == "diagnostics_added"
     assert diagnostics["validated_after_diagnostics"] is False
+    assert diagnostics["sensitivity_status"] in {
+        "planned_not_executed",
+        "partial_sweeps_executed_not_validation",
+    }
     assert (
         DIAGNOSTICS_DIR / "fischer2020_discrepancy_report.md"
     ).exists()
@@ -104,5 +108,22 @@ def test_tracked_diagnostic_artifacts_exist() -> None:
         "sensitivity_gs_policy.csv",
         "near_zero_sign_policy.json",
         "diagnostic_run_metadata.json",
+        "sensitivity_analysis_report.md",
+        "sensitivity_run_log.json",
     }
     assert required <= {path.name for path in DIAGNOSTICS_DIR.iterdir()}
+
+
+def test_executed_sensitivity_summary_remains_diagnostic_only() -> None:
+    summary = json.loads(
+        (DIAGNOSTICS_DIR / "sensitivity_summary.json").read_text(encoding="utf-8")
+    )
+    assert summary["status"] in {
+        "planned_not_executed",
+        "partial_sweeps_executed_not_validation",
+    }
+    assert summary["validated_after_sensitivity"] is False
+    if summary["status"] == "partial_sweeps_executed_not_validation":
+        assert summary["runs_total"] > 0
+        assert summary["axes_executed"]
+        assert (DIAGNOSTICS_DIR / "sensitivity_analysis_report.md").exists()

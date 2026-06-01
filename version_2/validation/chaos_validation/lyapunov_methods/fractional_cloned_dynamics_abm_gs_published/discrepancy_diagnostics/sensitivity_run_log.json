@@ -1,0 +1,268 @@
+[
+  {
+    "generated_at_utc": "2026-06-01T17:33:42.276679+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --max-runs 12",
+    "axes_requested": [
+      "delta",
+      "t_clone",
+      "gs_policy",
+      "q1_mode"
+    ],
+    "case_files": [
+      "fischer2020_jerk_commensurate.yaml",
+      "fischer2020_jerk_incommensurate.yaml",
+      "fischer2020_four_wing_incommensurate.yaml",
+      "fischer2020_financial_incommensurate.yaml"
+    ],
+    "max_runs": 12,
+    "runs_attempted": 12,
+    "new_unique_rows": 12,
+    "limit_reached": true
+  },
+  {
+    "generated_at_utc": "2026-06-01T17:35:23.444999+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --axis q1_mode --max-runs 20",
+    "axes_requested": [
+      "q1_mode"
+    ],
+    "case_files": [
+      "fischer2020_jerk_commensurate.yaml",
+      "fischer2020_jerk_incommensurate.yaml",
+      "fischer2020_four_wing_incommensurate.yaml",
+      "fischer2020_financial_incommensurate.yaml"
+    ],
+    "max_runs": 20,
+    "runs_attempted": 2,
+    "new_unique_rows": 2,
+    "limit_reached": false
+  },
+  {
+    "generated_at_utc": "2026-06-01T17:47:28.306771+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --axis delta --max-runs 40",
+    "axes_requested": [
+      "delta"
+    ],
+    "case_files": [
+      "fischer2020_jerk_commensurate.yaml",
+      "fischer2020_jerk_incommensurate.yaml",
+      "fischer2020_four_wing_incommensurate.yaml",
+      "fischer2020_financial_incommensurate.yaml"
+    ],
+    "max_runs": 40,
+    "runs_attempted": 40,
+    "new_unique_rows": 40,
+    "limit_reached": false
+  },
+  {
+    "generated_at_utc": "2026-06-01T17:49:18.037423+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_jerk_commensurate.yaml --row-index 2 --axis h --max-runs 3",
+    "axes_requested": [
+      "h"
+    ],
+    "case_files": [
+      "fischer2020_jerk_commensurate.yaml"
+    ],
+    "row_indices": [
+      2
+    ],
+    "max_runs": 3,
+    "runs_attempted": 3,
+    "new_unique_rows": 3,
+    "limit_reached": false
+  },
+  {
+    "generated_at_utc": "2026-06-01T17:51:42.284340+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_jerk_incommensurate.yaml --row-index 1 --row-index 2 --row-index 3 --axis h --max-runs 9",
+    "axes_requested": [
+      "h"
+    ],
+    "case_files": [
+      "fischer2020_jerk_incommensurate.yaml"
+    ],
+    "row_indices": [
+      1,
+      2,
+      3
+    ],
+    "max_runs": 9,
+    "runs_attempted": 9,
+    "new_unique_rows": 9,
+    "limit_reached": false
+  },
+  {
+    "generated_at_utc": "2026-06-01T17:53:35.346013+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_four_wing_incommensurate.yaml --row-index 1 --row-index 2 --row-index 3 --axis h --max-runs 9",
+    "axes_requested": [
+      "h"
+    ],
+    "case_files": [
+      "fischer2020_four_wing_incommensurate.yaml"
+    ],
+    "row_indices": [
+      1,
+      2,
+      3
+    ],
+    "max_runs": 9,
+    "runs_attempted": 9,
+    "new_unique_rows": 9,
+    "limit_reached": false
+  },
+  {
+    "generated_at_utc": "2026-06-01T17:57:20.228517+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_financial_incommensurate.yaml --row-index 0 --axis h --max-runs 3",
+    "axes_requested": [
+      "h"
+    ],
+    "case_files": [
+      "fischer2020_financial_incommensurate.yaml"
+    ],
+    "row_indices": [
+      0
+    ],
+    "max_runs": 3,
+    "runs_attempted": 3,
+    "new_unique_rows": 3,
+    "limit_reached": false
+  },
+  {
+    "generated_at_utc": "2026-06-01T18:07:57.999747+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --axis k --max-runs 40",
+    "axes_requested": [
+      "k"
+    ],
+    "case_files": [
+      "fischer2020_jerk_commensurate.yaml",
+      "fischer2020_jerk_incommensurate.yaml",
+      "fischer2020_four_wing_incommensurate.yaml",
+      "fischer2020_financial_incommensurate.yaml"
+    ],
+    "row_indices": null,
+    "max_runs": 40,
+    "runs_attempted": 33,
+    "new_unique_rows": 33,
+    "limit_reached": false
+  },
+  {
+    "generated_at_utc": "2026-06-01T18:16:27.531327+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --axis gs_policy --max-runs 40",
+    "axes_requested": [
+      "gs_policy"
+    ],
+    "case_files": [
+      "fischer2020_jerk_commensurate.yaml",
+      "fischer2020_jerk_incommensurate.yaml",
+      "fischer2020_four_wing_incommensurate.yaml",
+      "fischer2020_financial_incommensurate.yaml"
+    ],
+    "row_indices": null,
+    "max_runs": 40,
+    "runs_attempted": 30,
+    "new_unique_rows": 30,
+    "limit_reached": false
+  },
+  {
+    "generated_at_utc": "2026-06-01T18:18:10.914789+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_financial_incommensurate.yaml --row-index 0 --axis t_clone --max-runs 2",
+    "axes_requested": [
+      "t_clone"
+    ],
+    "case_files": [
+      "fischer2020_financial_incommensurate.yaml"
+    ],
+    "row_indices": [
+      0
+    ],
+    "max_runs": 2,
+    "runs_attempted": 2,
+    "new_unique_rows": 2,
+    "limit_reached": true
+  },
+  {
+    "generated_at_utc": "2026-06-01T18:20:03.278355+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_four_wing_incommensurate.yaml --row-index 1 --row-index 2 --row-index 3 --axis t_clone --max-runs 9",
+    "axes_requested": [
+      "t_clone"
+    ],
+    "case_files": [
+      "fischer2020_four_wing_incommensurate.yaml"
+    ],
+    "row_indices": [
+      1,
+      2,
+      3
+    ],
+    "max_runs": 9,
+    "runs_attempted": 9,
+    "new_unique_rows": 9,
+    "limit_reached": false
+  },
+  {
+    "generated_at_utc": "2026-06-01T18:20:42.141080+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_jerk_commensurate.yaml --row-index 2 --axis t_clone --max-runs 3",
+    "axes_requested": [
+      "t_clone"
+    ],
+    "case_files": [
+      "fischer2020_jerk_commensurate.yaml"
+    ],
+    "row_indices": [
+      2
+    ],
+    "max_runs": 3,
+    "runs_attempted": 3,
+    "new_unique_rows": 3,
+    "limit_reached": true
+  },
+  {
+    "generated_at_utc": "2026-06-01T18:21:29.251366+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_jerk_incommensurate.yaml --row-index 1 --axis t_clone --max-runs 3",
+    "axes_requested": [
+      "t_clone"
+    ],
+    "case_files": [
+      "fischer2020_jerk_incommensurate.yaml"
+    ],
+    "row_indices": [
+      1
+    ],
+    "max_runs": 3,
+    "runs_attempted": 3,
+    "new_unique_rows": 3,
+    "limit_reached": true
+  },
+  {
+    "generated_at_utc": "2026-06-01T18:22:07.227162+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_jerk_incommensurate.yaml --row-index 2 --axis t_clone --max-runs 3",
+    "axes_requested": [
+      "t_clone"
+    ],
+    "case_files": [
+      "fischer2020_jerk_incommensurate.yaml"
+    ],
+    "row_indices": [
+      2
+    ],
+    "max_runs": 3,
+    "runs_attempted": 3,
+    "new_unique_rows": 3,
+    "limit_reached": true
+  },
+  {
+    "generated_at_utc": "2026-06-01T18:22:46.515832+00:00",
+    "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_jerk_incommensurate.yaml --row-index 3 --axis t_clone --max-runs 3",
+    "axes_requested": [
+      "t_clone"
+    ],
+    "case_files": [
+      "fischer2020_jerk_incommensurate.yaml"
+    ],
+    "row_indices": [
+      3
+    ],
+    "max_runs": 3,
+    "runs_attempted": 3,
+    "new_unique_rows": 3,
+    "limit_reached": true
+  }
+]

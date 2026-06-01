@@ -1,8 +1,575 @@
 {
-  "status": "planned_not_executed",
-  "opt_in": "RUN_F3_DISCREPANCY_SWEEPS=1",
+  "status": "partial_sweeps_executed_not_validation",
+  "generated_at_utc": "2026-06-01T18:25:15.122385+00:00",
   "validated_after_sensitivity": false,
+  "runs_total": 164,
+  "axes_executed": [
+    "delta",
+    "gs_policy",
+    "h",
+    "k",
+    "q1_mode",
+    "t_clone"
+  ],
+  "systems_executed": [
+    "financial",
+    "four_wing",
+    "jerk"
+  ],
+  "full_sweep_status": "not_executed_bounded_partial_due_to_cost",
+  "elapsed_seconds_total": 2928.5879730998713,
+  "gs_policy_max_abs_error_spread": 4.11226608321158e-13,
+  "axis_summary": [
+    {
+      "axis": "delta",
+      "runs": 44,
+      "best_row": "financial Incomm [0.9, 1.0, 1.0] (delta=0.01)",
+      "best_max_abs_error": 0.054553773594228624,
+      "best_lambda_max_abs_error": 0.054553773594228624,
+      "improved_rows": 3,
+      "degraded_rows": 10
+    },
+    {
+      "axis": "gs_policy",
+      "runs": 33,
+      "best_row": "financial Incomm [0.9, 1.0, 1.0] (orthonormalization=qr)",
+      "best_max_abs_error": 0.05476696278812253,
+      "best_lambda_max_abs_error": 0.05476696278812253,
+      "improved_rows": 0,
+      "degraded_rows": 5
+    },
+    {
+      "axis": "h",
+      "runs": 24,
+      "best_row": "financial Incomm [0.9, 1.0, 1.0] (h_clone=0.01)",
+      "best_max_abs_error": 0.05476696278812304,
+      "best_lambda_max_abs_error": 0.05476696278812304,
+      "improved_rows": 2,
+      "degraded_rows": 6
+    },
+    {
+      "axis": "k",
+      "runs": 33,
+      "best_row": "financial Incomm [0.9, 1.0, 1.0] (K=250)",
+      "best_max_abs_error": 0.054013542444831655,
+      "best_lambda_max_abs_error": 0.054013542444831655,
+      "improved_rows": 1,
+      "degraded_rows": 8
+    },
+    {
+      "axis": "q1_mode",
+      "runs": 2,
+      "best_row": "jerk Comm [1.0, 1.0, 1.0] (integration_mode=integer_rk4_reference)",
+      "best_max_abs_error": 0.2633030122369916,
+      "best_lambda_max_abs_error": 0.0014196986907742126,
+      "improved_rows": 0,
+      "degraded_rows": 0
+    },
+    {
+      "axis": "t_clone",
+      "runs": 28,
+      "best_row": "jerk Comm [1.0, 1.0, 1.0] (t_clone=10)",
+      "best_max_abs_error": 0.025781114214319133,
+      "best_lambda_max_abs_error": 0.0024479399244119737,
+      "improved_rows": 2,
+      "degraded_rows": 8
+    }
+  ],
+  "system_summary": [
+    {
+      "system": "financial",
+      "runs": 15,
+      "best_row": "financial Incomm [0.9, 1.0, 1.0] (K=250)",
+      "best_max_abs_error": 0.054013542444831655,
+      "strict_sign_matches": 0,
+      "tolerant_sign_matches": 15
+    },
+    {
+      "system": "four_wing",
+      "runs": 48,
+      "best_row": "four_wing Incomm [0.6, 1.0, 1.0] (h_clone=0.02)",
+      "best_max_abs_error": 0.07206541427310843,
+      "strict_sign_matches": 11,
+      "tolerant_sign_matches": 32
+    },
+    {
+      "system": "jerk",
+      "runs": 101,
+      "best_row": "jerk Comm [1.0, 1.0, 1.0] (t_clone=10)",
+      "best_max_abs_error": 0.025781114214319133,
+      "strict_sign_matches": 35,
+      "tolerant_sign_matches": 71
+    }
+  ],
+  "best_improvements": [
+    {
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 1,
+      "system": "four_wing",
+      "axis": "delta",
+      "variant": "delta=0.0001",
+      "baseline_class": "strict_discrepancy",
+      "improved_class": "sign_pattern_supported_not_quantitative",
+      "max_abs_error": 0.10134512031899134,
+      "lambda_max_abs_error": 0.059616654066354025
+    },
+    {
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 1,
+      "system": "four_wing",
+      "axis": "delta",
+      "variant": "delta=1e-05",
+      "baseline_class": "strict_discrepancy",
+      "improved_class": "sign_pattern_supported_not_quantitative",
+      "max_abs_error": 0.10329676136884958,
+      "lambda_max_abs_error": 0.0628357361383125
+    },
+    {
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 2,
+      "system": "four_wing",
+      "axis": "delta",
+      "variant": "delta=0.0001",
+      "baseline_class": "strict_discrepancy",
+      "improved_class": "sign_pattern_supported_not_quantitative",
+      "max_abs_error": 0.09179879095524957,
+      "lambda_max_abs_error": 0.09179879095524957
+    },
+    {
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 2,
+      "system": "four_wing",
+      "axis": "delta",
+      "variant": "delta=1e-05",
+      "baseline_class": "strict_discrepancy",
+      "improved_class": "sign_pattern_supported_not_quantitative",
+      "max_abs_error": 0.1215057159612466,
+      "lambda_max_abs_error": 0.09198136612724672
+    },
+    {
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 3,
+      "system": "four_wing",
+      "axis": "delta",
+      "variant": "delta=0.0001",
+      "baseline_class": "strict_discrepancy",
+      "improved_class": "sign_pattern_supported_not_quantitative",
+      "max_abs_error": 0.08961464230993804,
+      "lambda_max_abs_error": 0.08961464230993804
+    },
+    {
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 3,
+      "system": "four_wing",
+      "axis": "delta",
+      "variant": "delta=1e-05",
+      "baseline_class": "strict_discrepancy",
+      "improved_class": "sign_pattern_supported_not_quantitative",
+      "max_abs_error": 0.08952192204120629,
+      "lambda_max_abs_error": 0.08952192204120629
+    },
+    {
+      "case_file": "fischer2020_jerk_commensurate.yaml",
+      "row_index": 0,
+      "system": "jerk",
+      "axis": "t_clone",
+      "variant": "t_clone=10",
+      "baseline_class": "sign_pattern_supported_not_quantitative",
+      "improved_class": "quantitative_abs_pass_strict_sign_pass",
+      "max_abs_error": 0.025781114214319133,
+      "lambda_max_abs_error": 0.0024479399244119737
+    },
+    {
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 2,
+      "system": "four_wing",
+      "axis": "t_clone",
+      "variant": "t_clone=2.5",
+      "baseline_class": "strict_discrepancy",
+      "improved_class": "sign_pattern_supported_not_quantitative",
+      "max_abs_error": 0.6533577059855139,
+      "lambda_max_abs_error": 0.08219090588881761
+    },
+    {
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 1,
+      "system": "four_wing",
+      "axis": "h",
+      "variant": "h_clone=0.005",
+      "baseline_class": "strict_discrepancy",
+      "improved_class": "sign_pattern_supported_not_quantitative",
+      "max_abs_error": 0.10372307927888436,
+      "lambda_max_abs_error": 0.07005377057684381
+    },
+    {
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 1,
+      "system": "four_wing",
+      "axis": "h",
+      "variant": "h_clone=0.02",
+      "baseline_class": "strict_discrepancy",
+      "improved_class": "sign_pattern_supported_not_quantitative",
+      "max_abs_error": 0.08016783945454584,
+      "lambda_max_abs_error": 0.07433272605165137
+    },
+    {
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 2,
+      "system": "four_wing",
+      "axis": "h",
+      "variant": "h_clone=0.005",
+      "baseline_class": "strict_discrepancy",
+      "improved_class": "sign_pattern_supported_not_quantitative",
+      "max_abs_error": 0.07676146408277812,
+      "lambda_max_abs_error": 0.07676146408277812
+    },
+    {
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 1,
+      "system": "four_wing",
+      "axis": "k",
+      "variant": "K=100",
+      "baseline_class": "strict_discrepancy",
+      "improved_class": "sign_pattern_supported_not_quantitative",
+      "max_abs_error": 0.09766675570025042,
+      "lambda_max_abs_error": 0.07394616953447158
+    }
+  ],
+  "remaining_discrepancies": [
+    {
+      "case_file": "fischer2020_financial_incommensurate.yaml",
+      "row_index": 0,
+      "system": "financial",
+      "orders": [
+        0.9,
+        1.0,
+        1.0
+      ],
+      "baseline_class": "strict_discrepancy"
+    },
+    {
+      "case_file": "fischer2020_jerk_commensurate.yaml",
+      "row_index": 2,
+      "system": "jerk",
+      "orders": [
+        0.8,
+        0.8,
+        0.8
+      ],
+      "baseline_class": "strict_discrepancy"
+    },
+    {
+      "case_file": "fischer2020_jerk_incommensurate.yaml",
+      "row_index": 1,
+      "system": "jerk",
+      "orders": [
+        0.8,
+        1.0,
+        1.0
+      ],
+      "baseline_class": "strict_discrepancy"
+    },
+    {
+      "case_file": "fischer2020_jerk_incommensurate.yaml",
+      "row_index": 2,
+      "system": "jerk",
+      "orders": [
+        0.7,
+        1.0,
+        1.0
+      ],
+      "baseline_class": "strict_discrepancy"
+    },
+    {
+      "case_file": "fischer2020_jerk_incommensurate.yaml",
+      "row_index": 3,
+      "system": "jerk",
+      "orders": [
+        0.6,
+        1.0,
+        1.0
+      ],
+      "baseline_class": "strict_discrepancy"
+    }
+  ],
+  "dominant_hypotheses": [
+    "H1",
+    "H2",
+    "H5"
+  ],
+  "run_invocations": [
+    {
+      "generated_at_utc": "2026-06-01T17:33:42.276679+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --max-runs 12",
+      "axes_requested": [
+        "delta",
+        "t_clone",
+        "gs_policy",
+        "q1_mode"
+      ],
+      "case_files": [
+        "fischer2020_jerk_commensurate.yaml",
+        "fischer2020_jerk_incommensurate.yaml",
+        "fischer2020_four_wing_incommensurate.yaml",
+        "fischer2020_financial_incommensurate.yaml"
+      ],
+      "max_runs": 12,
+      "runs_attempted": 12,
+      "new_unique_rows": 12,
+      "limit_reached": true
+    },
+    {
+      "generated_at_utc": "2026-06-01T17:35:23.444999+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --axis q1_mode --max-runs 20",
+      "axes_requested": [
+        "q1_mode"
+      ],
+      "case_files": [
+        "fischer2020_jerk_commensurate.yaml",
+        "fischer2020_jerk_incommensurate.yaml",
+        "fischer2020_four_wing_incommensurate.yaml",
+        "fischer2020_financial_incommensurate.yaml"
+      ],
+      "max_runs": 20,
+      "runs_attempted": 2,
+      "new_unique_rows": 2,
+      "limit_reached": false
+    },
+    {
+      "generated_at_utc": "2026-06-01T17:47:28.306771+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --axis delta --max-runs 40",
+      "axes_requested": [
+        "delta"
+      ],
+      "case_files": [
+        "fischer2020_jerk_commensurate.yaml",
+        "fischer2020_jerk_incommensurate.yaml",
+        "fischer2020_four_wing_incommensurate.yaml",
+        "fischer2020_financial_incommensurate.yaml"
+      ],
+      "max_runs": 40,
+      "runs_attempted": 40,
+      "new_unique_rows": 40,
+      "limit_reached": false
+    },
+    {
+      "generated_at_utc": "2026-06-01T17:49:18.037423+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_jerk_commensurate.yaml --row-index 2 --axis h --max-runs 3",
+      "axes_requested": [
+        "h"
+      ],
+      "case_files": [
+        "fischer2020_jerk_commensurate.yaml"
+      ],
+      "row_indices": [
+        2
+      ],
+      "max_runs": 3,
+      "runs_attempted": 3,
+      "new_unique_rows": 3,
+      "limit_reached": false
+    },
+    {
+      "generated_at_utc": "2026-06-01T17:51:42.284340+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_jerk_incommensurate.yaml --row-index 1 --row-index 2 --row-index 3 --axis h --max-runs 9",
+      "axes_requested": [
+        "h"
+      ],
+      "case_files": [
+        "fischer2020_jerk_incommensurate.yaml"
+      ],
+      "row_indices": [
+        1,
+        2,
+        3
+      ],
+      "max_runs": 9,
+      "runs_attempted": 9,
+      "new_unique_rows": 9,
+      "limit_reached": false
+    },
+    {
+      "generated_at_utc": "2026-06-01T17:53:35.346013+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_four_wing_incommensurate.yaml --row-index 1 --row-index 2 --row-index 3 --axis h --max-runs 9",
+      "axes_requested": [
+        "h"
+      ],
+      "case_files": [
+        "fischer2020_four_wing_incommensurate.yaml"
+      ],
+      "row_indices": [
+        1,
+        2,
+        3
+      ],
+      "max_runs": 9,
+      "runs_attempted": 9,
+      "new_unique_rows": 9,
+      "limit_reached": false
+    },
+    {
+      "generated_at_utc": "2026-06-01T17:57:20.228517+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_financial_incommensurate.yaml --row-index 0 --axis h --max-runs 3",
+      "axes_requested": [
+        "h"
+      ],
+      "case_files": [
+        "fischer2020_financial_incommensurate.yaml"
+      ],
+      "row_indices": [
+        0
+      ],
+      "max_runs": 3,
+      "runs_attempted": 3,
+      "new_unique_rows": 3,
+      "limit_reached": false
+    },
+    {
+      "generated_at_utc": "2026-06-01T18:07:57.999747+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --axis k --max-runs 40",
+      "axes_requested": [
+        "k"
+      ],
+      "case_files": [
+        "fischer2020_jerk_commensurate.yaml",
+        "fischer2020_jerk_incommensurate.yaml",
+        "fischer2020_four_wing_incommensurate.yaml",
+        "fischer2020_financial_incommensurate.yaml"
+      ],
+      "row_indices": null,
+      "max_runs": 40,
+      "runs_attempted": 33,
+      "new_unique_rows": 33,
+      "limit_reached": false
+    },
+    {
+      "generated_at_utc": "2026-06-01T18:16:27.531327+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --axis gs_policy --max-runs 40",
+      "axes_requested": [
+        "gs_policy"
+      ],
+      "case_files": [
+        "fischer2020_jerk_commensurate.yaml",
+        "fischer2020_jerk_incommensurate.yaml",
+        "fischer2020_four_wing_incommensurate.yaml",
+        "fischer2020_financial_incommensurate.yaml"
+      ],
+      "row_indices": null,
+      "max_runs": 40,
+      "runs_attempted": 30,
+      "new_unique_rows": 30,
+      "limit_reached": false
+    },
+    {
+      "generated_at_utc": "2026-06-01T18:18:10.914789+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_financial_incommensurate.yaml --row-index 0 --axis t_clone --max-runs 2",
+      "axes_requested": [
+        "t_clone"
+      ],
+      "case_files": [
+        "fischer2020_financial_incommensurate.yaml"
+      ],
+      "row_indices": [
+        0
+      ],
+      "max_runs": 2,
+      "runs_attempted": 2,
+      "new_unique_rows": 2,
+      "limit_reached": true
+    },
+    {
+      "generated_at_utc": "2026-06-01T18:20:03.278355+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_four_wing_incommensurate.yaml --row-index 1 --row-index 2 --row-index 3 --axis t_clone --max-runs 9",
+      "axes_requested": [
+        "t_clone"
+      ],
+      "case_files": [
+        "fischer2020_four_wing_incommensurate.yaml"
+      ],
+      "row_indices": [
+        1,
+        2,
+        3
+      ],
+      "max_runs": 9,
+      "runs_attempted": 9,
+      "new_unique_rows": 9,
+      "limit_reached": false
+    },
+    {
+      "generated_at_utc": "2026-06-01T18:20:42.141080+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_jerk_commensurate.yaml --row-index 2 --axis t_clone --max-runs 3",
+      "axes_requested": [
+        "t_clone"
+      ],
+      "case_files": [
+        "fischer2020_jerk_commensurate.yaml"
+      ],
+      "row_indices": [
+        2
+      ],
+      "max_runs": 3,
+      "runs_attempted": 3,
+      "new_unique_rows": 3,
+      "limit_reached": true
+    },
+    {
+      "generated_at_utc": "2026-06-01T18:21:29.251366+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_jerk_incommensurate.yaml --row-index 1 --axis t_clone --max-runs 3",
+      "axes_requested": [
+        "t_clone"
+      ],
+      "case_files": [
+        "fischer2020_jerk_incommensurate.yaml"
+      ],
+      "row_indices": [
+        1
+      ],
+      "max_runs": 3,
+      "runs_attempted": 3,
+      "new_unique_rows": 3,
+      "limit_reached": true
+    },
+    {
+      "generated_at_utc": "2026-06-01T18:22:07.227162+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_jerk_incommensurate.yaml --row-index 2 --axis t_clone --max-runs 3",
+      "axes_requested": [
+        "t_clone"
+      ],
+      "case_files": [
+        "fischer2020_jerk_incommensurate.yaml"
+      ],
+      "row_indices": [
+        2
+      ],
+      "max_runs": 3,
+      "runs_attempted": 3,
+      "new_unique_rows": 3,
+      "limit_reached": true
+    },
+    {
+      "generated_at_utc": "2026-06-01T18:22:46.515832+00:00",
+      "command": "validation\\python\\run_cloned_dynamics_sensitivity.py --case-file fischer2020_jerk_incommensurate.yaml --row-index 3 --axis t_clone --max-runs 3",
+      "axes_requested": [
+        "t_clone"
+      ],
+      "case_files": [
+        "fischer2020_jerk_incommensurate.yaml"
+      ],
+      "row_indices": [
+        3
+      ],
+      "max_runs": 3,
+      "runs_attempted": 3,
+      "new_unique_rows": 3,
+      "limit_reached": true
+    }
+  ],
   "notes": [
-    "Sensitivity sweeps are diagnostic only and do not promote F3."
+    "Sensitivity sweeps are diagnostic only and do not promote F3.",
+    "F3 remains validated=False.",
+    "No chaos or hiddenness is certified.",
+    "Hypotheses remain hypotheses, not definitive conclusions.",
+    "The unlimited sweep remains pending because bounded runs already showed substantial cost."
   ]
 }

@@ -88,11 +88,13 @@ SENSITIVITY_FIELDS = [
     "published_LE",
     "abs_error",
     "max_abs_error",
+    "lambda_max_abs_error",
     "strict_sign_match",
     "tolerant_sign_match",
     "near_zero_sign_boundary",
     "discrepancy_class",
     "status",
+    "elapsed_seconds",
 ]
 
 
@@ -409,7 +411,7 @@ def _render_report(matrix: list[dict[str, Any]], consistency: dict[str, Any]) ->
             "## Recommendations",
             "",
             "- Do not promote F3.",
-            "- Execute `T_clone` and `delta` sensitivity sweeps for discrepant rows.",
+            "- Review the completed bounded `T_clone` and `delta` sweeps before extending costly variants.",
             "- Validate ABM `q=1` against an exact solution.",
             "- Compare integer jerk against the independent reusable RK4 integrator.",
             "- Review whether the article uses a transient before clone accumulation.",
@@ -521,25 +523,62 @@ def generate_diagnostics(
         json.dumps(row_notes, indent=2) + "\n",
         encoding="utf-8",
     )
+    report = _render_report(matrix, consistency)
+    sensitivity_report_path = diagnostics_dir / "sensitivity_analysis_report.md"
+    if sensitivity_report_path.exists():
+        sensitivity_summary = json.loads(
+            (diagnostics_dir / "sensitivity_summary.json").read_text(encoding="utf-8")
+        )
+        report += (
+            "\n## Sensitivity sweep results\n\n"
+            f"Controlled diagnostic sweeps recorded `{sensitivity_summary['runs_total']}` "
+            f"unique runs across `{', '.join(sensitivity_summary['axes_executed'])}`. See the "
+            "[sensitivity analysis report](sensitivity_analysis_report.md) for "
+            "the run inventory, best improvements, persistent discrepancies, "
+            "and hypothesis assessment. These sweeps do not promote validation.\n"
+        )
     (diagnostics_dir / "fischer2020_discrepancy_report.md").write_text(
-        _render_report(matrix, consistency),
+        report,
         encoding="utf-8",
+    )
+    sensitivity_note = (
+        " Controlled bounded sweeps have been executed; see the "
+        "[sensitivity analysis](sensitivity_analysis_report.md)."
+        if sensitivity_report_path.exists()
+        else ""
     )
     (diagnostics_dir / "README.md").write_text(
         "# F3 Fischer 2020 discrepancy diagnostics\n\n"
         "This directory classifies the recorded F3 discrepancies without promoting\n"
         "validation. See [the report](fischer2020_discrepancy_report.md) and the\n"
-        "reproducible [sensitivity plan](sensitivity_plan.yaml).\n",
+        f"reproducible [sensitivity plan](sensitivity_plan.yaml).{sensitivity_note}\n",
         encoding="utf-8",
+    )
+    existing_diagnostics = summary.get("discrepancy_diagnostics", {})
+    sensitivity_summary_path = diagnostics_dir / "sensitivity_summary.json"
+    sensitivity_summary = (
+        json.loads(sensitivity_summary_path.read_text(encoding="utf-8"))
+        if sensitivity_summary_path.exists()
+        else {}
     )
     summary["discrepancy_diagnostics"] = {
         "status": "diagnostics_added",
         "report": "discrepancy_diagnostics/fischer2020_discrepancy_report.md",
         "matrix": "discrepancy_diagnostics/fischer2020_discrepancy_matrix.csv",
         "near_zero_sign_policy": "discrepancy_diagnostics/near_zero_sign_policy.json",
-        "sensitivity_status": "planned_or_partial",
+        "sensitivity_status": sensitivity_summary.get(
+            "status",
+            existing_diagnostics.get("sensitivity_status", "planned_or_partial"),
+        ),
         "validated_after_diagnostics": False,
     }
+    if sensitivity_report_path.exists():
+        summary["discrepancy_diagnostics"].update(
+            {
+                "sensitivity_summary": "discrepancy_diagnostics/sensitivity_summary.json",
+                "sensitivity_report": "discrepancy_diagnostics/sensitivity_analysis_report.md",
+            }
+        )
     summary_path.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     return {"summary": summary, "matrix": matrix, "metadata": metadata}
 
