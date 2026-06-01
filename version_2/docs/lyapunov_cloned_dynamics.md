@@ -45,7 +45,7 @@ variational system are used.
 
 | Method | Orthonormalization | Status |
 |---|---|---|
-| `fractional_cloned_dynamics_abm_gs_published` | Modified Gram-Schmidt | Implemented, pending published validation |
+| `fractional_cloned_dynamics_abm_gs_published` | Modified Gram-Schmidt | Implemented; `published_benchmarks_pending_discrepancy` |
 | `fractional_cloned_dynamics_abm_qr` | QR | Experimental internal comparison |
 
 The GS method is the Fischer 2020 reproduction lane. The QR method is a more
@@ -120,3 +120,47 @@ RUN_PUBLISHED_CLONED=1 pytest tests/test_cloned_dynamics_fischer_published.py -v
 ```
 
 Until those benchmarks pass, both F3 registry entries remain `validated=False`.
+
+Passing F3 Fischer tests does not validate `fractional_variational_abm_qr`.
+Passing F3 does not certify chaos or hiddenness. F3 and F2 remain separate
+validation lanes.
+
+## Fischer 2020 published benchmark execution status
+
+The published GS lane was executed on `2026-06-01`. The first-row pytest gate
+reported `5 passed, 1 failed`; the exhaustive runner then recorded all rows
+with:
+
+```text
+python validation/python/run_cloned_dynamics_benchmarks.py \
+  --official-summary-dir validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published
+```
+
+| Item | Result |
+|---|---|
+| Rows executed | `24` |
+| Quantitative passes (`all abs_error < 0.05`) | `10` |
+| Sign-pattern support passes | `6` |
+| Quantitative discrepancy rows | `8` |
+| Numerical failures | `0` |
+| Strict sign-pattern gate failures | `10` |
+| Final status | `published_benchmarks_pending_discrepancy` |
+
+The strict all-row test reports `14 passed, 10 failed`. Two rows have
+`all abs_error < 0.05` but still cross the sign boundary for a near-zero
+exponent, so they count as quantitative passes in the summary and as failures
+under the stricter sign-pattern gate.
+
+Discrepancies remain in the financial incommensurate lane, the four-wing
+incommensurate lane, and jerk commensurate/incommensurate rows. The method
+therefore remains `validated=False`.
+
+Auditable runtime outputs:
+
+```text
+validation/outputs/lyapunov_benchmarks/fractional_cloned_dynamics_abm_gs_published/
+```
+
+The directory contains `published_benchmark_results.csv`,
+`published_benchmark_all_rows_results.csv`, `validation_summary.json`,
+`run_metadata.json`, and representative `convergence_by_block.csv`.

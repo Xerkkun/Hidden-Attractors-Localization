@@ -100,16 +100,16 @@ received q=0.99.  Use a fractional Lyapunov method for Caputo q<1
 | `integer_qr_benettin` | q=1 ODE | Implemented ✓ · Validated ✓ (F0) |
 | `fractional_variational_abm_qr` | Caputo q<1 | Implemented ✓ · NOT validated (F2) |
 | `fractional_variational_dk2018_block_restart_abm_gs` | Caputo q<1 | Implemented native reproduction lane · `published_benchmarks_pending_reproduced_discrepancy` (`RF lambda_3` only) |
-| `fractional_cloned_dynamics_abm` | Caputo q<1 | Legacy placeholder; NOT implemented |
-| `fractional_cloned_dynamics_abm_gs_published` | Caputo `0 < q <= 1` | Implemented F3 Fischer 2020 GS lane; pending published validation |
-| `fractional_cloned_dynamics_abm_qr` | Caputo `0 < q <= 1` | Implemented F3 experimental QR lane; pending comparison |
-| `zero_one_test` | — | NOT implemented |
-| PSD/FFT analysis | — | NOT implemented |
-| Boundedness checks | — | NOT implemented |
+| `fractional_cloned_dynamics_abm_gs_published` | integer / Caputo `0 < q <= 1` | Implemented F3 Fischer 2020 GS lane; `published_benchmarks_pending_discrepancy` |
+| `fractional_cloned_dynamics_abm_qr` | integer / Caputo `0 < q <= 1` | Implemented F3 experimental QR lane; pending comparison |
+| `fractional_cloned_dynamics_abm` | legacy placeholder | NOT implemented |
+| `zero_one_test` | diagnostic | NOT implemented |
+| PSD/FFT validation | diagnostic | Partial; diagnostics are not complete |
+| Boundedness checks | diagnostic | Pending; diagnostics are not complete |
 
 ### Fractional methods — design and integration
 
-Fractional Caputo Lyapunov spectra are computed as follows:
+The F2 variational lane computes fractional Caputo Lyapunov spectra as follows:
 1. An Adams–Bashforth–Moulton (ABM) predictor-corrector integrates the
    **extended (original + variational) system** with Caputo memory.
 2. History-aware QR reorthonormalisation is applied to the variational block.
@@ -187,15 +187,16 @@ print(summary.method_info.method_id)  # 'integer_qr_benettin'
 4. Route to the correct implementation.
 5. Return `LyapunovComputationSummary`.
 
-### Method compatibility table (F1)
+### Method compatibility table (F1/F2/F3)
 
-| Method | q | memory_mode | Implemented | Raises |
-|---|---|---|---|---|
-| `integer_qr_benettin` | 1.0 | `not_applicable` | ✓ | — |
-| `integer_qr_benettin` | < 1.0 | any | ✓ | `ValueError` |
-| `integer_qr_benettin` | 1.0 | `full` | ✓ | `ValueError` |
-| `fractional_variational_abm_qr` | < 1.0 | `full` | ✓ | — |
-| `fractional_cloned_dynamics_abm` | < 1.0 | `full` | ✗ | `NotImplementedError` |
+| Method | q | memory_mode | Jacobian | Implemented | Status |
+|---|---:|---|---|---|---|
+| `integer_qr_benettin` | `1` | `not_applicable` | Required | Yes | Validated for integer ODE |
+| `integer_qr_benettin` | `< 1` | any | Required | Yes | Invalid; raises `ValueError` |
+| `fractional_variational_abm_qr` | `0 < q < 1` | `full` / `window` | Required | Yes | Pending published validation |
+| `fractional_cloned_dynamics_abm_gs_published` | `0 < q <= 1` | `published_block_restart` | Not required | Yes | Fischer 2020 discrepancy pending |
+| `fractional_cloned_dynamics_abm_qr` | `0 < q <= 1` | `experimental_qr_block_restart` | Not required | Yes | Internal experimental comparison |
+| `fractional_cloned_dynamics_abm` | `0 < q < 1` | legacy | Not required | No | Placeholder only |
 
 ### reorthonormalization_time → reorthonormalize_every
 
@@ -232,15 +233,15 @@ to `summary.warnings`.
 }
 ```
 
-### F1/F2 does NOT implement
+### F1/F2/F3 does NOT implement
 
-- `fractional_cloned_dynamics_abm` (unimplemented in F2)
+- `fractional_cloned_dynamics_abm` legacy placeholder
 - 0–1 test
-- PSD/FFT
+- completed PSD/FFT validation
 - Poincaré sections
 - `chaos_validation_summary`
 
-### F1/F2 does NOT certify
+### F1/F2/F3 does NOT certify
 
 ```
 chaos_certified_by_this_pipeline: false
@@ -336,6 +337,16 @@ variational system. A fiducial trajectory and one perturbed clone per state
 direction are integrated over a cloning interval. Their endpoint differences
 are orthonormalized and restarted around the evolved fiducial state.
 
+For block `k`, the published lane uses:
+
+```text
+X^(0)(0) = X0
+X^(j)(0) = X0 + delta e_j,  j = 1,...,n
+v_j^(k) = X^(j)(T_C) - X^(0)(T_C)
+{v_1^(k),...,v_n^(k)} -> {u_1^(k),...,u_n^(k)}
+lambda_j = 1/(K T_C) sum_k log(||v_j^(k)|| / delta)
+```
+
 The published reproduction lane is
 `fractional_cloned_dynamics_abm_gs_published`. It uses ABM
 predictor-corrector integration, modified Gram-Schmidt, and
@@ -349,4 +360,31 @@ from Fischer decimal agreement alone.
 Both methods produce finite-time local Lyapunov indicators. They do not certify
 chaos, do not certify hiddenness, and do not close integrated diagnostics.
 
+Passing F3 Fischer tests does not validate `fractional_variational_abm_qr`.
+Passing F3 does not certify chaos or hiddenness. F3 and F2 remain separate
+validation lanes.
+
 See [Cloned Dynamics Lyapunov Indicators](lyapunov_cloned_dynamics.md).
+
+### Fischer 2020 published benchmark execution status
+
+The long GS runner was executed on `2026-06-01`. It recorded `24` rows:
+`10` quantitative passes, `6` sign-pattern support passes, `8` quantitative
+discrepancy rows, and `0` numerical failures. The stricter all-row sign gate
+reports `14 passed, 10 failed` because two near-zero exponents cross sign even
+though their absolute errors remain below `0.05`.
+
+Final status:
+
+```text
+published_benchmarks_pending_discrepancy
+```
+
+The GS lane remains `validated=False`. The QR lane remains experimental, and
+F3 does not validate `fractional_variational_abm_qr`.
+
+Audit outputs are stored under:
+
+```text
+validation/outputs/lyapunov_benchmarks/fractional_cloned_dynamics_abm_gs_published/
+```

@@ -23,7 +23,7 @@ def test_f3_registry_contains_no_positive_certification_claims() -> None:
         assert LYAPUNOV_METHODS[method].no_hiddenness_certification is True
 
 
-def test_f3_summary_stays_pending_without_published_run() -> None:
+def test_f3_summary_remains_conservative() -> None:
     summary = json.loads(
         (
             ROOT
@@ -34,7 +34,12 @@ def test_f3_summary_stays_pending_without_published_run() -> None:
             / "validation_summary.json"
         ).read_text(encoding="utf-8")
     )
-    assert summary["status"] == "published_benchmarks_not_run"
+    assert summary["status"] in {
+        "published_benchmarks_not_run",
+        "published_benchmarks_pending_discrepancy",
+        "published_benchmarks_inconclusive_numerical_failure",
+        "published_sign_pattern_supported_not_quantitatively_validated",
+    }
     assert summary["validated"] is False
     assert summary["validated_against_published_benchmarks"] is False
     assert summary["certifications"]["chaos_certified_by_this_pipeline"] is False

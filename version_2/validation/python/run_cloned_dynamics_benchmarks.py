@@ -27,14 +27,44 @@ def main() -> None:
         type=Path,
         default=PROJECT_ROOT / "validation" / "outputs" / "lyapunov_benchmarks" / "fractional_cloned_dynamics_abm_gs_published",
     )
+    parser.add_argument(
+        "--official-summary-dir",
+        type=Path,
+        help="Also write the conservative tracked summary to this directory.",
+    )
     args = parser.parse_args()
     rows = []
+    executions = []
+    global_parameters = []
     for path in sorted(args.benchmarks_dir.glob("*.yaml")):
         case = load_benchmark_case(path)
-        for row in case["expected"]["rows"]:
-            record, _ = run_benchmark_row(case, row, fast=args.fast)
+        global_parameters.append(
+            {
+                "case_file": path.name,
+                "system": case["system"]["kind"],
+                "integration": case["integration"],
+            }
+        )
+        for row_index, row in enumerate(case["expected"]["rows"]):
+            record, result = run_benchmark_row(
+                case,
+                row,
+                fast=args.fast,
+                case_file=path.name,
+                row_index=row_index,
+            )
             rows.append(record)
-    write_results(args.output_dir, rows)
+            executions.append((record, result))
+    summary = write_results(
+        args.output_dir,
+        rows,
+        executions=executions,
+        fast=args.fast,
+        command=" ".join(sys.argv),
+        global_parameters=global_parameters,
+        official_summary_dir=args.official_summary_dir,
+    )
+    print(f"Recorded {summary['rows_total']} rows with status: {summary['status']}")
 
 
 if __name__ == "__main__":

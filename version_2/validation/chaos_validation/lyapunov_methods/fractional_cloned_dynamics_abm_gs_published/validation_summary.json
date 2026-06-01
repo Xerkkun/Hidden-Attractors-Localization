@@ -1,11 +1,868 @@
 {
+  "schema_version": "1.0",
   "method_id": "fractional_cloned_dynamics_abm_gs_published",
-  "status": "published_benchmarks_not_run",
+  "reference": {
+    "authors": [
+      "C. Fischer",
+      "K. L. A. Zourmba",
+      "A. Mohamadou"
+    ],
+    "year": 2020,
+    "doi": "10.1016/j.apnum.2020.03.027"
+  },
+  "status": "published_benchmarks_pending_discrepancy",
   "validated": false,
   "validated_against_published_benchmarks": false,
   "memory_protocol": "published_block_restart",
+  "benchmarks_run": true,
+  "smoke_only": false,
+  "rows_total": 24,
+  "rows_passed_quantitative": 10,
+  "rows_passed_sign_pattern": 6,
+  "rows_failed": 8,
+  "rows_inconclusive": 0,
+  "rows_sign_mismatch": 10,
+  "rows_strict_initial_gate_failures": 10,
+  "quick_ci_guarantee": "smoke_only_not_published_quantitative_validation",
+  "published_quantitative_opt_in": "RUN_PUBLISHED_CLONED=1",
+  "published_all_rows_opt_in": "RUN_PUBLISHED_CLONED_ALL=1",
+  "execution": {
+    "generated_at_utc": "2026-06-01T16:14:31.135275+00:00",
+    "run_class": "published_quantitative_long",
+    "command": "validation\\python\\run_cloned_dynamics_benchmarks.py --official-summary-dir validation\\chaos_validation\\lyapunov_methods\\fractional_cloned_dynamics_abm_gs_published",
+    "python_version": "3.12.12 (main, Oct 10 2025, 12:42:57)  [GCC UCRT 15.2.0 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "global_parameters": [
+      {
+        "case_file": "fischer2020_financial_commensurate.yaml",
+        "system": "financial",
+        "integration": {
+          "integrator": "abm_predictor_corrector",
+          "memory_protocol": "published_block_restart",
+          "h": 0.05,
+          "T_ref": 5000,
+          "N": 100000,
+          "t_clone": 10,
+          "n_clone": 1000,
+          "h_clone": 0.01,
+          "K": 500,
+          "delta": 0.001
+        }
+      },
+      {
+        "case_file": "fischer2020_financial_incommensurate.yaml",
+        "system": "financial",
+        "integration": {
+          "integrator": "abm_predictor_corrector",
+          "memory_protocol": "published_block_restart",
+          "h": 0.05,
+          "T_ref": 5000,
+          "N": 100000,
+          "t_clone": 10,
+          "n_clone": 1000,
+          "h_clone": 0.01,
+          "K": 500,
+          "delta": 0.001
+        }
+      },
+      {
+        "case_file": "fischer2020_four_wing_commensurate.yaml",
+        "system": "four_wing",
+        "integration": {
+          "integrator": "abm_predictor_corrector",
+          "memory_protocol": "published_block_restart",
+          "h": 0.01,
+          "T_ref": 1000,
+          "N": 100000,
+          "t_clone": 5,
+          "n_clone": 500,
+          "h_clone": 0.01,
+          "K": 200,
+          "delta": 0.001
+        }
+      },
+      {
+        "case_file": "fischer2020_four_wing_incommensurate.yaml",
+        "system": "four_wing",
+        "integration": {
+          "integrator": "abm_predictor_corrector",
+          "memory_protocol": "published_block_restart",
+          "h": 0.01,
+          "T_ref": 1000,
+          "N": 100000,
+          "t_clone": 5,
+          "n_clone": 500,
+          "h_clone": 0.01,
+          "K": 200,
+          "delta": 0.001
+        }
+      },
+      {
+        "case_file": "fischer2020_jerk_commensurate.yaml",
+        "system": "jerk",
+        "integration": {
+          "integrator": "abm_predictor_corrector",
+          "memory_protocol": "published_block_restart",
+          "h": 0.01,
+          "T_ref": 1000,
+          "N": 100000,
+          "t_clone": 1,
+          "n_clone": 100,
+          "h_clone": 0.01,
+          "K": 1000,
+          "delta": 0.001
+        }
+      },
+      {
+        "case_file": "fischer2020_jerk_incommensurate.yaml",
+        "system": "jerk",
+        "integration": {
+          "integrator": "abm_predictor_corrector",
+          "memory_protocol": "published_block_restart",
+          "h": 0.01,
+          "T_ref": 1000,
+          "N": 100000,
+          "t_clone": 1,
+          "n_clone": 100,
+          "h_clone": 0.01,
+          "K": 1000,
+          "delta": 0.001
+        }
+      }
+    ],
+    "commit": "047ec8dc96a71e28ec473d905db156cc37581203",
+    "working_tree_dirty": true
+  },
   "certifications": {
     "chaos_certified_by_this_pipeline": false,
     "hiddenness_certified_by_this_pipeline": false
-  }
+  },
+  "notes": [
+    "Finite-time local Lyapunov indicators only.",
+    "Published_block_restart is not full-memory Caputo-aware.",
+    "Passing F3 does not validate fractional_variational_abm_qr.",
+    "Passing F3 does not certify chaos or hiddenness."
+  ],
+  "results": [
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_financial_commensurate.yaml",
+      "row_index": 0,
+      "system": "financial",
+      "orders": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "type": "Comm",
+      "computed_LE": [
+        0.06204260324120828,
+        0.002749222526436314,
+        -0.3611159522387596
+      ],
+      "published_LE": [
+        0.0891,
+        0.0058,
+        -0.4348
+      ],
+      "abs_error": [
+        0.02705739675879172,
+        0.0030507774735636854,
+        0.07368404776124043
+      ],
+      "sign_match": true,
+      "K01_published": 0.9984,
+      "status": "published_benchmark_passed_sign_pattern"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_financial_commensurate.yaml",
+      "row_index": 1,
+      "system": "financial",
+      "orders": [
+        0.9,
+        0.9,
+        0.9
+      ],
+      "type": "Comm",
+      "computed_LE": [
+        0.0742228527193728,
+        0.004808534717531422,
+        -0.3451612403027875
+      ],
+      "published_LE": [
+        0.1133,
+        -0.003,
+        -0.337
+      ],
+      "abs_error": [
+        0.039077147280627195,
+        0.007808534717531422,
+        0.008161240302787476
+      ],
+      "sign_match": false,
+      "K01_published": 0.9974,
+      "status": "published_benchmark_passed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_financial_commensurate.yaml",
+      "row_index": 2,
+      "system": "financial",
+      "orders": [
+        0.8,
+        0.8,
+        0.8
+      ],
+      "type": "Comm",
+      "computed_LE": [
+        -0.0546787534921729,
+        -0.05492818013618537,
+        -0.26311656987530124
+      ],
+      "published_LE": [
+        -0.0407,
+        -0.0406,
+        -0.2648
+      ],
+      "abs_error": [
+        0.013978753492172903,
+        0.014328180136185371,
+        0.001683430124698737
+      ],
+      "sign_match": true,
+      "K01_published": 0.1325,
+      "status": "published_benchmark_passed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_financial_commensurate.yaml",
+      "row_index": 3,
+      "system": "financial",
+      "orders": [
+        0.7,
+        0.7,
+        0.7
+      ],
+      "type": "Comm",
+      "computed_LE": [
+        -0.21074285102785129,
+        -0.24319562536527384,
+        -0.24322069906355123
+      ],
+      "published_LE": [
+        -0.2125,
+        -0.4539,
+        -0.4539
+      ],
+      "abs_error": [
+        0.0017571489721487088,
+        0.2107043746347262,
+        0.2106793009364488
+      ],
+      "sign_match": true,
+      "K01_published": 0.2491,
+      "status": "published_benchmark_passed_sign_pattern"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_financial_incommensurate.yaml",
+      "row_index": 0,
+      "system": "financial",
+      "orders": [
+        0.9,
+        1.0,
+        1.0
+      ],
+      "type": "Incomm",
+      "computed_LE": [
+        0.08973303721187695,
+        -0.028153377647869984,
+        -0.4926088397473178
+      ],
+      "published_LE": [
+        0.1445,
+        0.0012,
+        -0.4419
+      ],
+      "abs_error": [
+        0.05476696278812304,
+        0.029353377647869983,
+        0.05070883974731777
+      ],
+      "sign_match": false,
+      "K01_published": 0.998,
+      "status": "published_benchmark_failed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_financial_incommensurate.yaml",
+      "row_index": 1,
+      "system": "financial",
+      "orders": [
+        0.8,
+        1.0,
+        1.0
+      ],
+      "type": "Incomm",
+      "computed_LE": [
+        0.11119102954342397,
+        -0.036046484028858364,
+        -0.37145238690089216
+      ],
+      "published_LE": [
+        0.1235,
+        -0.0026,
+        -0.3412
+      ],
+      "abs_error": [
+        0.01230897045657603,
+        0.033446484028858366,
+        0.03025238690089216
+      ],
+      "sign_match": true,
+      "K01_published": 0.9975,
+      "status": "published_benchmark_passed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_financial_incommensurate.yaml",
+      "row_index": 2,
+      "system": "financial",
+      "orders": [
+        0.7,
+        1.0,
+        1.0
+      ],
+      "type": "Incomm",
+      "computed_LE": [
+        0.12034958666790344,
+        -0.06095499645433803,
+        -0.3057987626303327
+      ],
+      "published_LE": [
+        0.0935,
+        -0.0476,
+        -0.29
+      ],
+      "abs_error": [
+        0.026849586667903436,
+        0.013354996454338026,
+        0.015798762630332697
+      ],
+      "sign_match": true,
+      "K01_published": 0.9986,
+      "status": "published_benchmark_passed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_financial_incommensurate.yaml",
+      "row_index": 3,
+      "system": "financial",
+      "orders": [
+        0.6,
+        1.0,
+        1.0
+      ],
+      "type": "Incomm",
+      "computed_LE": [
+        -0.08509376524251691,
+        -0.08569368675995202,
+        -0.3566185222561013
+      ],
+      "published_LE": [
+        -0.0678,
+        -0.068,
+        -0.3308
+      ],
+      "abs_error": [
+        0.017293765242516912,
+        0.017693686759952018,
+        0.025818522256101317
+      ],
+      "sign_match": true,
+      "K01_published": 0.1037,
+      "status": "published_benchmark_passed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_four_wing_commensurate.yaml",
+      "row_index": 0,
+      "system": "four_wing",
+      "orders": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "type": "Comm",
+      "computed_LE": [
+        0.32694032040229154,
+        0.0019453299689527986,
+        -1.2959750157155574
+      ],
+      "published_LE": [
+        0.3358,
+        0.0133,
+        -1.2608
+      ],
+      "abs_error": [
+        0.008859679597708447,
+        0.0113546700310472,
+        0.03517501571555748
+      ],
+      "sign_match": true,
+      "K01_published": 0.998,
+      "status": "published_benchmark_passed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_four_wing_commensurate.yaml",
+      "row_index": 1,
+      "system": "four_wing",
+      "orders": [
+        0.9,
+        0.9,
+        0.9
+      ],
+      "type": "Comm",
+      "computed_LE": [
+        0.22328887366556122,
+        0.0031330969107503685,
+        -0.9740951245838451
+      ],
+      "published_LE": [
+        0.2684,
+        -0.0259,
+        -0.9699
+      ],
+      "abs_error": [
+        0.04511112633443881,
+        0.02903309691075037,
+        0.004195124583845078
+      ],
+      "sign_match": false,
+      "K01_published": 0.9982,
+      "status": "published_benchmark_passed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_four_wing_commensurate.yaml",
+      "row_index": 2,
+      "system": "four_wing",
+      "orders": [
+        0.8,
+        0.8,
+        0.8
+      ],
+      "type": "Comm",
+      "computed_LE": [
+        -0.15520757782935837,
+        -0.15451463490231973,
+        -0.8033552772486244
+      ],
+      "published_LE": [
+        -0.1543,
+        -0.1531,
+        -0.801
+      ],
+      "abs_error": [
+        0.0009075778293583803,
+        0.0014146349023197169,
+        0.002355277248624388
+      ],
+      "sign_match": true,
+      "K01_published": 0.1352,
+      "status": "published_benchmark_passed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_four_wing_commensurate.yaml",
+      "row_index": 3,
+      "system": "four_wing",
+      "orders": [
+        0.7,
+        0.7,
+        0.7
+      ],
+      "type": "Comm",
+      "computed_LE": [
+        -0.48201127279450967,
+        -0.481475404000006,
+        -0.6931072124957449
+      ],
+      "published_LE": [
+        -0.4825,
+        -0.4818,
+        -0.6942
+      ],
+      "abs_error": [
+        0.0004887272054903136,
+        0.0003245959999940151,
+        0.0010927875042551216
+      ],
+      "sign_match": true,
+      "K01_published": 0.1752,
+      "status": "published_benchmark_passed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 0,
+      "system": "four_wing",
+      "orders": [
+        0.9,
+        1.0,
+        1.0
+      ],
+      "type": "Incomm",
+      "computed_LE": [
+        0.31675779640520446,
+        -0.01768375858571109,
+        -1.0727096145068447
+      ],
+      "published_LE": [
+        0.3623,
+        -0.0501,
+        -1.0984
+      ],
+      "abs_error": [
+        0.04554220359479555,
+        0.03241624141428891,
+        0.025690385493155388
+      ],
+      "sign_match": true,
+      "K01_published": 0.9983,
+      "status": "published_benchmark_passed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 1,
+      "system": "four_wing",
+      "orders": [
+        0.8,
+        1.0,
+        1.0
+      ],
+      "type": "Incomm",
+      "computed_LE": [
+        0.2825309682651887,
+        0.012564127537469072,
+        -0.9363665710353944
+      ],
+      "published_LE": [
+        0.346,
+        -0.1048,
+        -0.9196
+      ],
+      "abs_error": [
+        0.06346903173481128,
+        0.11736412753746908,
+        0.016766571035394473
+      ],
+      "sign_match": false,
+      "K01_published": 0.9978,
+      "status": "published_benchmark_failed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 2,
+      "system": "four_wing",
+      "orders": [
+        0.7,
+        1.0,
+        1.0
+      ],
+      "type": "Incomm",
+      "computed_LE": [
+        0.26896645157804416,
+        0.022432747876240354,
+        -0.9758325525647668
+      ],
+      "published_LE": [
+        0.3598,
+        -0.0345,
+        -0.916
+      ],
+      "abs_error": [
+        0.09083354842195585,
+        0.05693274787624036,
+        0.05983255256476672
+      ],
+      "sign_match": false,
+      "K01_published": 0.9976,
+      "status": "published_benchmark_failed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "row_index": 3,
+      "system": "four_wing",
+      "orders": [
+        0.6,
+        1.0,
+        1.0
+      ],
+      "type": "Incomm",
+      "computed_LE": [
+        0.24553986028568808,
+        0.0013552393267474833,
+        -0.9237212725326769
+      ],
+      "published_LE": [
+        0.3371,
+        -0.0628,
+        -0.9076
+      ],
+      "abs_error": [
+        0.09156013971431193,
+        0.06415523932674748,
+        0.016121272532676922
+      ],
+      "sign_match": false,
+      "K01_published": 0.9969,
+      "status": "published_benchmark_failed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_jerk_commensurate.yaml",
+      "row_index": 0,
+      "system": "jerk",
+      "orders": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "type": "Comm",
+      "computed_LE": [
+        0.19701593693569933,
+        0.03479419065633067,
+        -0.7594239506902646
+      ],
+      "published_LE": [
+        0.1899,
+        0.0413,
+        -0.4246
+      ],
+      "abs_error": [
+        0.007115936935699313,
+        0.00650580934366933,
+        0.3348239506902646
+      ],
+      "sign_match": true,
+      "K01_published": 0.9866,
+      "status": "published_benchmark_passed_sign_pattern"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_jerk_commensurate.yaml",
+      "row_index": 1,
+      "system": "jerk",
+      "orders": [
+        0.9,
+        0.9,
+        0.9
+      ],
+      "type": "Comm",
+      "computed_LE": [
+        -0.023996132634775763,
+        -0.13802534359511004,
+        -1.3448387860396034
+      ],
+      "published_LE": [
+        -0.0042,
+        -0.0267,
+        -0.4656
+      ],
+      "abs_error": [
+        0.019796132634775764,
+        0.11132534359511004,
+        0.8792387860396034
+      ],
+      "sign_match": true,
+      "K01_published": 0.0758,
+      "status": "published_benchmark_passed_sign_pattern"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_jerk_commensurate.yaml",
+      "row_index": 2,
+      "system": "jerk",
+      "orders": [
+        0.8,
+        0.8,
+        0.8
+      ],
+      "type": "Comm",
+      "computed_LE": [
+        0.002335858172050658,
+        -0.561171107709096,
+        -1.663224027204686
+      ],
+      "published_LE": [
+        -0.0047,
+        -0.2864,
+        -0.3634
+      ],
+      "abs_error": [
+        0.007035858172050658,
+        0.27477110770909596,
+        1.2998240272046861
+      ],
+      "sign_match": false,
+      "K01_published": 0.0151,
+      "status": "published_benchmark_failed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_jerk_commensurate.yaml",
+      "row_index": 3,
+      "system": "jerk",
+      "orders": [
+        0.7,
+        0.7,
+        0.7
+      ],
+      "type": "Comm",
+      "computed_LE": [
+        -0.0003365891512930038,
+        -0.2981772253710965,
+        -1.5504754267421739
+      ],
+      "published_LE": [
+        -0.0527,
+        -0.0528,
+        -0.2763
+      ],
+      "abs_error": [
+        0.05236341084870699,
+        0.24537722537109646,
+        1.2741754267421739
+      ],
+      "sign_match": true,
+      "K01_published": -0.1425,
+      "status": "published_benchmark_passed_sign_pattern"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_jerk_incommensurate.yaml",
+      "row_index": 0,
+      "system": "jerk",
+      "orders": [
+        0.9,
+        1.0,
+        1.0
+      ],
+      "type": "Incomm",
+      "computed_LE": [
+        0.1960330158996051,
+        0.022706347956377937,
+        -0.7354193179675849
+      ],
+      "published_LE": [
+        0.1744,
+        0.0246,
+        -0.46
+      ],
+      "abs_error": [
+        0.02163301589960509,
+        0.0018936520436220634,
+        0.27541931796758484
+      ],
+      "sign_match": true,
+      "K01_published": 0.9928,
+      "status": "published_benchmark_passed_sign_pattern"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_jerk_incommensurate.yaml",
+      "row_index": 1,
+      "system": "jerk",
+      "orders": [
+        0.8,
+        1.0,
+        1.0
+      ],
+      "type": "Incomm",
+      "computed_LE": [
+        0.1887832406056682,
+        0.020100823835554643,
+        -0.7173866813336057
+      ],
+      "published_LE": [
+        0.081,
+        -0.0162,
+        -0.4017
+      ],
+      "abs_error": [
+        0.1077832406056682,
+        0.03630082383555464,
+        0.3156866813336057
+      ],
+      "sign_match": false,
+      "K01_published": 0.3786,
+      "status": "published_benchmark_failed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_jerk_incommensurate.yaml",
+      "row_index": 2,
+      "system": "jerk",
+      "orders": [
+        0.7,
+        1.0,
+        1.0
+      ],
+      "type": "Incomm",
+      "computed_LE": [
+        0.18126792467455594,
+        0.027604814398622966,
+        -0.7103196590956438
+      ],
+      "published_LE": [
+        -0.0395,
+        -0.0888,
+        -0.2442
+      ],
+      "abs_error": [
+        0.22076792467455594,
+        0.11640481439862296,
+        0.4661196590956438
+      ],
+      "sign_match": false,
+      "K01_published": 0.1543,
+      "status": "published_benchmark_failed_quantitative"
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "case_file": "fischer2020_jerk_incommensurate.yaml",
+      "row_index": 3,
+      "system": "jerk",
+      "orders": [
+        0.6,
+        1.0,
+        1.0
+      ],
+      "type": "Incomm",
+      "computed_LE": [
+        0.17153527350537143,
+        0.02042646592361782,
+        -0.6834844938804613
+      ],
+      "published_LE": [
+        0.0179,
+        -0.0971,
+        -0.2816
+      ],
+      "abs_error": [
+        0.15363527350537143,
+        0.11752646592361782,
+        0.40188449388046127
+      ],
+      "sign_match": false,
+      "K01_published": 0.1329,
+      "status": "published_benchmark_failed_quantitative"
+    }
+  ]
 }

@@ -52,11 +52,11 @@
 | F2 | `fractional_variational_abm_qr` | **Implemented ✓ · NOT validated against published benchmarks (F2)** |
 | F2 | `fractional_variational_dk2018_block_restart_abm_gs` | **Implemented native reproduction lane · `published_benchmarks_pending_reproduced_discrepancy` (`RF lambda_3` only)** |
 | F2 | `fractional_cloned_dynamics_abm` | Legacy placeholder; NOT implemented |
-| F3 | `fractional_cloned_dynamics_abm_gs_published` | **Implemented · `implemented_pending_published_validation`** |
+| F3 | `fractional_cloned_dynamics_abm_gs_published` | **Implemented · `published_benchmarks_pending_discrepancy`** |
 | F3 | `fractional_cloned_dynamics_abm_qr` | **Implemented experimental QR variant · benchmark comparison pending** |
 | F2 | `zero_one_test` | NOT implemented |
-| F3 | PSD/FFT | NOT implemented |
-| F4 | Boundedness | NOT implemented |
+| F3 | PSD/FFT validation | Partial; diagnostics are not complete |
+| F4 | Boundedness checks | Pending; diagnostics are not complete |
 
 ---
 
@@ -125,7 +125,7 @@ block-restart ABM-GS reproduction lane.
 
 ## F3 - Fischer 2020 cloned dynamics
 
-**Status: `implemented_pending_published_validation`**
+**Status: `published_benchmarks_pending_discrepancy`**
 
 The published GS lane and the internal QR comparison lane are implemented.
 They use a fiducial trajectory plus perturbed clones and do not require a
@@ -137,3 +137,29 @@ jerk, financial, and four-wing systems in commensurate and incommensurate
 cases. Long numerical reproduction is protected by `RUN_PUBLISHED_CLONED=1`.
 Until those runs pass, both F3 methods remain `validated=False`, and diagnostics
 remain partial.
+
+Passing F3 Fischer tests does not validate `fractional_variational_abm_qr`.
+Passing F3 does not certify chaos or hiddenness. F3 and F2 remain separate
+validation lanes.
+
+### Fischer 2020 published benchmark execution status
+
+The long GS runner was executed on `2026-06-01` and recorded `24` rows:
+
+| Result class | Count |
+|---|---:|
+| Quantitative passes (`all abs_error < 0.05`) | `10` |
+| Sign-pattern support passes | `6` |
+| Quantitative discrepancy rows | `8` |
+| Numerical failures | `0` |
+| Strict sign-pattern gate failures | `10` |
+
+Final status: `published_benchmarks_pending_discrepancy`.
+
+The strict all-row test reports `14 passed, 10 failed`. Two near-zero
+exponents cross sign while remaining below the quantitative absolute-error
+tolerance. The GS lane remains `validated=False`; the QR lane remains
+experimental.
+
+Auditable CSV/JSON outputs are stored under
+`validation/outputs/lyapunov_benchmarks/fractional_cloned_dynamics_abm_gs_published/`.
