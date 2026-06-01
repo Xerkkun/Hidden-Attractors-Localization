@@ -1,0 +1,11 @@
+{
+  "method_id": "fractional_cloned_dynamics_abm_gs_published",
+  "status": "published_benchmarks_not_run",
+  "validated": false,
+  "validated_against_published_benchmarks": false,
+  "memory_protocol": "published_block_restart",
+  "certifications": {
+    "chaos_certified_by_this_pipeline": false,
+    "hiddenness_certified_by_this_pipeline": false
+  }
+}

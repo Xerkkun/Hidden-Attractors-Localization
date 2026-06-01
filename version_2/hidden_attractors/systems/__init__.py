@@ -12,6 +12,7 @@ from .base import ChaoticSystem, SystemRegistry, get_system, list_systems, regis
 from .builtins import register_builtin_systems
 from .lure import LureSystem
 from .requirements import CapabilityReport, Requirement, check_system_capability, known_workflows, requirements_for
+from .fischer_benchmarks import FISCHER_BENCHMARKS, get_fischer_benchmark
 
 register_builtin_systems()
 
@@ -28,4 +29,6 @@ __all__ = [
     "register_builtin_systems",
     "register_system",
     "requirements_for",
+    "FISCHER_BENCHMARKS",
+    "get_fischer_benchmark",
 ]

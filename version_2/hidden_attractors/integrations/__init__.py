@@ -33,6 +33,7 @@ from .efork import efork_integrate
 from .rk4 import rk4_integrate
 from .adm_wu2023 import adm_wu2023_integrate
 from .fractional_c import fractional_integrate
+from .abm_fractional import integrate_fractional_abm
 
 # ── External complexity adapters ─────────────────────────────────────────────
 from .external_tools import (
@@ -56,6 +57,7 @@ __all__ = [
     "rk4_integrate",
     "adm_wu2023_integrate",
     "fractional_integrate",
+    "integrate_fractional_abm",
     # external adapters
     "EXTERNAL_TOOLS",
     "ExternalTool",

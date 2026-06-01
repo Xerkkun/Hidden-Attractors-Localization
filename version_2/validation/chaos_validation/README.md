@@ -51,7 +51,9 @@
 | F1 | `integer_qr_benettin` dispatch | **Implemented & Validated** ✓ (F0/F1) |
 | F2 | `fractional_variational_abm_qr` | **Implemented ✓ · NOT validated against published benchmarks (F2)** |
 | F2 | `fractional_variational_dk2018_block_restart_abm_gs` | **Implemented native reproduction lane · `published_benchmarks_pending_reproduced_discrepancy` (`RF lambda_3` only)** |
-| F2 | `fractional_cloned_dynamics_abm` | NOT implemented · NOT validated |
+| F2 | `fractional_cloned_dynamics_abm` | Legacy placeholder; NOT implemented |
+| F3 | `fractional_cloned_dynamics_abm_gs_published` | **Implemented · `implemented_pending_published_validation`** |
+| F3 | `fractional_cloned_dynamics_abm_qr` | **Implemented experimental QR variant · benchmark comparison pending** |
 | F2 | `zero_one_test` | NOT implemented |
 | F3 | PSD/FFT | NOT implemented |
 | F4 | Boundedness | NOT implemented |
@@ -71,6 +73,8 @@
 | `integer_qr_benettin` dispatch path | ✓ Implemented |
 | `fractional_variational_abm_qr` dispatch | ✓ Implemented & Routed (F2) |
 | `fractional_cloned_dynamics_abm` dispatch | NOT implemented (raises `NotImplementedError`) |
+| `fractional_cloned_dynamics_abm_gs_published` dispatch | Implemented and routed (F3) |
+| `fractional_cloned_dynamics_abm_qr` dispatch | Implemented and routed (F3 experimental) |
 
 ---
 
@@ -116,3 +120,20 @@ block-restart ABM-GS reproduction lane.
 ### Methodological boundary
 - `chaos_certified_by_this_pipeline: false`
 - `hiddenness_certified_by_this_pipeline: false`
+
+---
+
+## F3 - Fischer 2020 cloned dynamics
+
+**Status: `implemented_pending_published_validation`**
+
+The published GS lane and the internal QR comparison lane are implemented.
+They use a fiducial trajectory plus perturbed clones and do not require a
+Jacobian. Fractional execution uses `memory_protocol: published_block_restart`;
+this is not a full-memory Caputo-aware claim.
+
+The six Fischer YAML specifications include extracted LE and K01 values for
+jerk, financial, and four-wing systems in commensurate and incommensurate
+cases. Long numerical reproduction is protected by `RUN_PUBLISHED_CLONED=1`.
+Until those runs pass, both F3 methods remain `validated=False`, and diagnostics
+remain partial.

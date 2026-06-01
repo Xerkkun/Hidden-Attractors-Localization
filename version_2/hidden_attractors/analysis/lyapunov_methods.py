@@ -97,6 +97,15 @@ class LyapunovMethodInfo:
     validated_against_synthetic_tests: bool = True
     validated_against_published_benchmarks: bool = False
     benchmark_status: str = "published_benchmarks_pending"
+    family: str = "integer"
+    method_type: str = "variational"
+    supports_q_less_than_1: bool = False
+    supports_q_equal_1: bool = True
+    supports_commensurate: bool = True
+    supports_incommensurate: bool | str = False
+    memory_protocol: str = "not_applicable"
+    no_chaos_certification: bool = True
+    no_hiddenness_certification: bool = True
 
 
 
@@ -243,6 +252,82 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
         validated_against_published_benchmarks=False,
         benchmark_status="not_implemented",
 
+    ),
+
+    # ------------------------------------------------------------------
+    # F3 - Fischer et al. 2020 cloned-dynamics lanes
+    # ------------------------------------------------------------------
+    "fractional_cloned_dynamics_abm_gs_published": LyapunovMethodInfo(
+        method_id="fractional_cloned_dynamics_abm_gs_published",
+        derivative_model="caputo",
+        q_support="0 < q <= 1; commensurate and component-wise incommensurate orders",
+        requires_jacobian=False,
+        orthonormalization="gram_schmidt",
+        finite_time_local=True,
+        implemented=True,
+        validated=False,
+        references=(
+            "Fischer, Zourmba, and Mohamadou 2020 - Lyapunov exponents spectrum"
+            " estimation of fractional order nonlinear systems using Cloned Dynamics"
+            " (Applied Numerical Mathematics 154, 187-204;"
+            " DOI: 10.1016/j.apnum.2020.03.027).",
+        ),
+        warnings=(
+            "F3 - implemented, NOT yet validated against published benchmarks.",
+            "Published reproduction lane with ABM predictor-corrector, modified"
+            " Gram-Schmidt, and published_block_restart memory.",
+            "No Jacobian or variational system is used.",
+            "Finite-time local Lyapunov indicators only.",
+            "Fractional results are not a full-memory Caputo-aware claim.",
+            "Does not certify chaos; does not certify hiddenness of attractors.",
+            "chaos_certified_by_this_pipeline: false",
+            "hiddenness_certified_by_this_pipeline: false",
+        ),
+        validated_against_synthetic_tests=True,
+        validated_against_published_benchmarks=False,
+        benchmark_status="fischer2020_pending",
+        family="fractional",
+        method_type="cloned_dynamics",
+        supports_q_less_than_1=True,
+        supports_q_equal_1=True,
+        supports_commensurate=True,
+        supports_incommensurate=True,
+        memory_protocol="published_block_restart",
+    ),
+
+    "fractional_cloned_dynamics_abm_qr": LyapunovMethodInfo(
+        method_id="fractional_cloned_dynamics_abm_qr",
+        derivative_model="caputo",
+        q_support="0 < q <= 1; commensurate and component-wise incommensurate orders",
+        requires_jacobian=False,
+        orthonormalization="qr",
+        finite_time_local=True,
+        implemented=True,
+        validated=False,
+        references=(
+            "Internal QR variant based on Fischer, Zourmba, and Mohamadou 2020"
+            " (DOI: 10.1016/j.apnum.2020.03.027).",
+        ),
+        warnings=(
+            "F3 internal QR variant - experimental and NOT validated.",
+            "Compare signs and trends against the published GS lane, not decimal agreement.",
+            "No Jacobian or variational system is used.",
+            "Finite-time local Lyapunov indicators only.",
+            "Fractional results are not a full-memory Caputo-aware claim.",
+            "Does not certify chaos; does not certify hiddenness of attractors.",
+            "chaos_certified_by_this_pipeline: false",
+            "hiddenness_certified_by_this_pipeline: false",
+        ),
+        validated_against_synthetic_tests=True,
+        validated_against_published_benchmarks=False,
+        benchmark_status="internal_variant_pending",
+        family="fractional",
+        method_type="cloned_dynamics",
+        supports_q_less_than_1=True,
+        supports_q_equal_1=True,
+        supports_commensurate=True,
+        supports_incommensurate=True,
+        memory_protocol="experimental_qr_block_restart",
     ),
 }
 

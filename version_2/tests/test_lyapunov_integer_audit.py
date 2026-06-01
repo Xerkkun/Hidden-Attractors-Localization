@@ -344,8 +344,8 @@ class TestMethodRegistry:
         info = LYAPUNOV_METHODS["fractional_cloned_dynamics_abm"]
         assert info.validated is False
 
-    def test_registry_has_four_methods(self) -> None:
-        assert len(LYAPUNOV_METHODS) == 4
+    def test_registry_has_f3_methods(self) -> None:
+        assert len(LYAPUNOV_METHODS) == 6
 
     def test_integer_method_derivative_model(self) -> None:
         info = LYAPUNOV_METHODS["integer_qr_benettin"]
@@ -356,6 +356,8 @@ class TestMethodRegistry:
             "fractional_variational_abm_qr",
             "fractional_variational_dk2018_block_restart_abm_gs",
             "fractional_cloned_dynamics_abm",
+            "fractional_cloned_dynamics_abm_gs_published",
+            "fractional_cloned_dynamics_abm_qr",
         ):
             assert LYAPUNOV_METHODS[mid].derivative_model == "caputo"
 

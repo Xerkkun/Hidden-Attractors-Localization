@@ -1,0 +1,21 @@
+method_id: fractional_cloned_dynamics_abm_gs_published
+benchmark_type: published
+reference: {authors: [C. Fischer, K. L. A. Zourmba, A. Mohamadou], year: 2020, title: Lyapunov exponents spectrum estimation of fractional order nonlinear systems using Cloned Dynamics, journal: "Applied Numerical Mathematics 154, 187-204", doi: 10.1016/j.apnum.2020.03.027, table: Table 5, data_complete: true}
+system:
+  kind: financial
+  dimension: 3
+  equations: ["D^alpha1 x = z + (y-a)x", "D^alpha2 y = 1 - b y - |x|", "D^alpha3 z = -x - c z"]
+  parameters: {a: 1.0, b: 0.15, c: 1.0}
+  x0: [1.0, 1.0, 1.0]
+  nonsmooth_rhs: true
+integration: {integrator: abm_predictor_corrector, memory_protocol: published_block_restart, h: 0.05, T_ref: 5000, N: 100000, t_clone: 10, n_clone: 1000, h_clone: 0.01, K: 500, delta: 0.001}
+expected:
+  rows:
+    - {orders: [1.0, 1.0, 1.0], type: Comm, lyapunov: [0.0891, 0.0058, -0.4348], K01: 0.9984}
+    - {orders: [0.9, 0.9, 0.9], type: Comm, lyapunov: [0.1133, -0.0030, -0.3370], K01: 0.9974}
+    - {orders: [0.8, 0.8, 0.8], type: Comm, lyapunov: [-0.0407, -0.0406, -0.2648], K01: 0.1325}
+    - {orders: [0.7, 0.7, 0.7], type: Comm, lyapunov: [-0.2125, -0.4539, -0.4539], K01: 0.2491}
+  tolerance_abs_initial: 0.15
+  tolerance_abs_target: 0.05
+  sign_pattern_required: true
+  validation_level: quantitative_initial_or_sign_pattern

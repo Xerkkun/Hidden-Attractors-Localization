@@ -100,7 +100,9 @@ received q=0.99.  Use a fractional Lyapunov method for Caputo q<1
 | `integer_qr_benettin` | q=1 ODE | Implemented ✓ · Validated ✓ (F0) |
 | `fractional_variational_abm_qr` | Caputo q<1 | Implemented ✓ · NOT validated (F2) |
 | `fractional_variational_dk2018_block_restart_abm_gs` | Caputo q<1 | Implemented native reproduction lane · `published_benchmarks_pending_reproduced_discrepancy` (`RF lambda_3` only) |
-| `fractional_cloned_dynamics_abm` | Caputo q<1 | NOT implemented · NOT validated |
+| `fractional_cloned_dynamics_abm` | Caputo q<1 | Legacy placeholder; NOT implemented |
+| `fractional_cloned_dynamics_abm_gs_published` | Caputo `0 < q <= 1` | Implemented F3 Fischer 2020 GS lane; pending published validation |
+| `fractional_cloned_dynamics_abm_qr` | Caputo `0 < q <= 1` | Implemented F3 experimental QR lane; pending comparison |
 | `zero_one_test` | — | NOT implemented |
 | PSD/FFT analysis | — | NOT implemented |
 | Boundedness checks | — | NOT implemented |
@@ -324,3 +326,27 @@ The benchmark layer keeps two contracts separate:
 `FO_LE.m` (Danca, 2026) is recorded as a future QR/LIL_nc reference for
 non-commensurate orders. `LIL_nc.m` was not supplied and that third contract is
 not implemented here.
+
+---
+
+## F3 - Fischer 2020 cloned dynamics
+
+F3 adds a second fractional Lyapunov family that does not use a Jacobian or a
+variational system. A fiducial trajectory and one perturbed clone per state
+direction are integrated over a cloning interval. Their endpoint differences
+are orthonormalized and restarted around the evolved fiducial state.
+
+The published reproduction lane is
+`fractional_cloned_dynamics_abm_gs_published`. It uses ABM
+predictor-corrector integration, modified Gram-Schmidt, and
+`memory_protocol: published_block_restart`. This is a block-local memory
+contract, not a full-memory Caputo-aware claim.
+
+The separate `fractional_cloned_dynamics_abm_qr` method is an experimental
+internal QR variant. It is not the published algorithm and cannot be promoted
+from Fischer decimal agreement alone.
+
+Both methods produce finite-time local Lyapunov indicators. They do not certify
+chaos, do not certify hiddenness, and do not close integrated diagnostics.
+
+See [Cloned Dynamics Lyapunov Indicators](lyapunov_cloned_dynamics.md).

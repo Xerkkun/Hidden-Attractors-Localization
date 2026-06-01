@@ -32,6 +32,7 @@ from .lyapunov_fractional import (
     pack_extended_state,
     unpack_extended_state,
 )
+from .lyapunov_cloned import ClonedDynamicsResult, compute_cloned_dynamics_spectrum
 from .spectral import SpectrumResult, fft_spectrum, infer_step, psd_welch, trajectory_component_spectra
 from .trajectory import (
     RobustnessCase,
@@ -71,6 +72,9 @@ __all__ = [
     "fractional_variational_abm_qr",
     "pack_extended_state",
     "unpack_extended_state",
+    # Lyapunov - F3 cloned dynamics ABM GS/QR
+    "ClonedDynamicsResult",
+    "compute_cloned_dynamics_spectrum",
     # Spectral
     "SpectrumResult",
     "fft_spectrum",

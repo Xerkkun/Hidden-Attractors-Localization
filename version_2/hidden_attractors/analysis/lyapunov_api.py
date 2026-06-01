@@ -17,7 +17,13 @@ F2 (implemented, not yet validated against published benchmarks)
 * ``memory_mode`` must be ``'full'`` or ``'window'`` (not ``'not_applicable'``).
 * ``q`` must be in (0, 1).
 
-F1/F2 does NOT certify
+F3 (implemented, pending Fischer 2020 published validation)
+-----------------------------------------------------------
+* Routes the GS published cloned-dynamics lane and the experimental QR lane.
+* Does not require a Jacobian or a variational system.
+* Uses block-restarted ABM memory for fractional execution.
+
+F1/F2/F3 does NOT certify
 -----------------------
 * chaos_certified_by_this_pipeline: false
 * hiddenness_certified_by_this_pipeline: false
@@ -43,6 +49,7 @@ from .lyapunov import (
     integer_system_lyapunov_exponents,
 )
 from .lyapunov_fractional import fractional_variational_abm_qr as _frac_abm_qr
+from .lyapunov_cloned import compute_cloned_dynamics_spectrum as _cloned_dynamics
 from .lyapunov_methods import LYAPUNOV_METHODS, LyapunovMethodInfo
 
 # ---------------------------------------------------------------------------
@@ -289,6 +296,32 @@ def validate_lyapunov_method_request(
         elif request.jacobian is None and request.system is not None:
             if not callable(getattr(request.system, "jacobian_matrix", None)):
                 warnings.append("analytic_jacobian_missing_finite_difference_used")
+
+    elif request.method in {
+        "fractional_cloned_dynamics_abm_gs_published",
+        "fractional_cloned_dynamics_abm_qr",
+    }:
+        q_val = float(request.q)
+        if not (0.0 < q_val <= 1.0):
+            return (
+                False,
+                "method_not_valid_for_out_of_range_q",
+                (f"cloned dynamics requires 0 < q <= 1; received q={request.q}.",),
+            )
+        if request.memory_mode not in (
+            "not_applicable",
+            "published_block_restart",
+            "experimental_qr_block_restart",
+        ):
+            return (
+                False,
+                "memory_mode_must_be_block_restart_for_cloned_dynamics",
+                (
+                    "cloned dynamics supports published_block_restart memory only; "
+                    f"received memory_mode='{request.memory_mode}'.",
+                ),
+            )
+        warnings.append("cloned_dynamics_no_jacobian_required")
 
     # 3. Registered but not implemented
     elif not info.implemented:
@@ -569,6 +602,67 @@ def compute_lyapunov_spectrum(
             div_threshold=div_threshold,
             history_aware_qr=bool(history_aware),
             qr_epsilon=float(qr_epsilon),
+        )
+
+    elif method in {
+        "fractional_cloned_dynamics_abm_gs_published",
+        "fractional_cloned_dynamics_abm_qr",
+    }:
+        _rhs = rhs
+        if system is not None:
+            if not callable(getattr(system, "evaluate", None)):
+                raise ValueError(
+                    "compute_lyapunov_spectrum: system must expose a callable evaluate(state)."
+                )
+            _rhs = lambda state: system.evaluate(state)
+        if _rhs is None:
+            raise ValueError(
+                "compute_lyapunov_spectrum: either 'system' or 'rhs' must be provided."
+            )
+        cloned_method = "gs" if method.endswith("_gs_published") else "qr"
+        t_clone = float(
+            extra.get(
+                "t_clone",
+                reorthonormalization_time
+                if reorthonormalization_time is not None
+                else resolved_every * float(h),
+            )
+        )
+        k_blocks = int(extra.get("k_blocks", max(1, round(float(t_final) / t_clone))))
+        orders = extra.get("orders", [float(q)])
+        memory_protocol = str(
+            extra.get(
+                "memory_protocol",
+                "published_block_restart"
+                if cloned_method == "gs"
+                else "experimental_qr_block_restart",
+            )
+        )
+        result = _cloned_dynamics(
+            _rhs,
+            request.x0,
+            orders=orders,
+            h=float(h),
+            t_clone=t_clone,
+            n_clones=extra.get("n_clones"),
+            k_blocks=k_blocks,
+            delta=float(extra.get("delta", 1e-3)),
+            method=cloned_method,
+            memory_protocol=memory_protocol,
+            system_id=extra.get("system_id"),
+            parameters=extra.get("parameters"),
+            return_history=bool(extra.get("return_history", False)),
+            random_seed=extra.get("random_seed"),
+            divergence_norm=div_threshold,
+        )
+        request_summary.update(
+            {
+                "orders": [float(value) for value in np.asarray(orders, dtype=float).reshape(-1)],
+                "t_clone": t_clone,
+                "k_blocks": k_blocks,
+                "delta": float(extra.get("delta", 1e-3)),
+                "memory_protocol": memory_protocol,
+            }
         )
 
     else:
