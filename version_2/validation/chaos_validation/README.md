@@ -163,3 +163,8 @@ experimental.
 
 Auditable CSV/JSON outputs are stored under
 `validation/outputs/lyapunov_benchmarks/fractional_cloned_dynamics_abm_gs_published/`.
+
+Tracked row-level classifications and the sensitivity plan are available in
+the [Fischer 2020 discrepancy report](lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/discrepancy_diagnostics/fischer2020_discrepancy_report.md).
+F3 is implemented, the all-row benchmark has been executed, reproduction is
+partial, discrepancy diagnostics have been added, and `validated=False`.

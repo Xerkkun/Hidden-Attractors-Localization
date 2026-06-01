@@ -18,6 +18,7 @@ from ..integrations.abm_fractional import (
     integrate_fractional_abm,
     normalize_component_orders,
 )
+from ..integrations.rk4 import rk4_integrate
 
 FISCHER_2020_REFERENCE = (
     "Fischer, Zourmba, and Mohamadou 2020 - Lyapunov exponents spectrum "
@@ -68,15 +69,34 @@ def _modified_gram_schmidt(vectors: np.ndarray) -> tuple[np.ndarray, np.ndarray]
     return q, residual_norms
 
 
+def _classical_gram_schmidt(vectors: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Return classical Gram-Schmidt columns for diagnostic comparisons."""
+
+    q = np.zeros_like(vectors)
+    residual_norms = np.zeros(vectors.shape[1], dtype=float)
+    for col in range(vectors.shape[1]):
+        source = vectors[:, col]
+        residual = source.copy()
+        for previous in range(col):
+            residual -= np.dot(q[:, previous], source) * q[:, previous]
+        residual_norms[col] = np.linalg.norm(residual)
+        if not np.isfinite(residual_norms[col]) or residual_norms[col] <= 0.0:
+            return q, residual_norms
+        q[:, col] = residual / residual_norms[col]
+    return q, residual_norms
+
+
 def _orthonormalize(vectors: np.ndarray, method: str) -> tuple[np.ndarray, np.ndarray]:
-    if method == "gs":
+    if method in {"gs", "gs_modified"}:
         return _modified_gram_schmidt(vectors)
+    if method == "gs_classical":
+        return _classical_gram_schmidt(vectors)
     if method == "qr":
         q, r = np.linalg.qr(vectors)
         diagonal = np.diag(r)
         signs = np.where(diagonal < 0.0, -1.0, 1.0)
         return q * signs, np.abs(diagonal)
-    raise ValueError("method must be 'gs' or 'qr'.")
+    raise ValueError("method must be 'gs', 'gs_modified', 'gs_classical', or 'qr'.")
 
 
 def compute_cloned_dynamics_spectrum(
@@ -95,6 +115,7 @@ def compute_cloned_dynamics_spectrum(
     return_history: bool = False,
     random_seed: int | None = None,
     divergence_norm: float | None = None,
+    integration_mode: str = "fractional_abm",
 ) -> ClonedDynamicsResult:
     """Estimate a spectrum from perturbed clones without a Jacobian.
 
@@ -124,6 +145,10 @@ def compute_cloned_dynamics_spectrum(
         "experimental_qr_block_restart",
     }:
         raise ValueError("unsupported cloned-dynamics memory protocol.")
+    if integration_mode not in {"fractional_abm", "integer_rk4_reference"}:
+        raise ValueError("integration_mode must be 'fractional_abm' or 'integer_rk4_reference'.")
+    if integration_mode == "integer_rk4_reference" and not np.allclose(component_orders, 1.0):
+        raise ValueError("integer_rk4_reference is available only when all orders are q=1.")
 
     direction_basis = np.eye(dimension, dtype=float)
     sum_logs = np.zeros(dimension, dtype=float)
@@ -154,15 +179,24 @@ def compute_cloned_dynamics_spectrum(
                 derivatives.append(np.asarray(value, dtype=float))
             return np.asarray(derivatives, dtype=float).reshape(-1)
 
-        _, trajectories, integration_status = integrate_fractional_abm(
-            augmented_rhs,
-            initial_copies.reshape(-1),
-            augmented_orders,
-            h,
-            n_steps,
-            memory_protocol="published_block_restart",
-            divergence_norm=divergence_norm,
-        )
+        if integration_mode == "integer_rk4_reference":
+            _, trajectories, integration_status, _ = rk4_integrate(
+                augmented_rhs,
+                initial_copies.reshape(-1),
+                h,
+                n_steps,
+                divergence_norm=float("inf") if divergence_norm is None else divergence_norm,
+            )
+        else:
+            _, trajectories, integration_status = integrate_fractional_abm(
+                augmented_rhs,
+                initial_copies.reshape(-1),
+                augmented_orders,
+                h,
+                n_steps,
+                memory_protocol="published_block_restart",
+                divergence_norm=divergence_norm,
+            )
         if integration_status != "ok":
             status = "numerical_failure"
             bounded_trajectory = integration_status != "diverged"
@@ -206,7 +240,7 @@ def compute_cloned_dynamics_spectrum(
     order_class = classify_component_orders(component_orders)
     method_id = (
         "fractional_cloned_dynamics_abm_gs_published"
-        if method == "gs"
+        if method != "qr"
         else "fractional_cloned_dynamics_abm_qr"
     )
     return ClonedDynamicsResult(
@@ -223,6 +257,7 @@ def compute_cloned_dynamics_spectrum(
             "no_jacobian_required": True,
             "memory_protocol": memory_protocol,
             "orthonormalization": method,
+            "integration_mode": integration_mode,
             "delta": delta,
             "t_clone": t_clone,
             "k_blocks": k_blocks,

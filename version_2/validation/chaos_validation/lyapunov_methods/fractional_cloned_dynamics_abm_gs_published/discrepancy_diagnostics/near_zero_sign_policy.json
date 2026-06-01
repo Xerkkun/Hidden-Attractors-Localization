@@ -1,0 +1,23 @@
+{
+  "policy_id": "near_zero_sign_policy",
+  "zero_tol": 0.02,
+  "rules": [
+    {
+      "when": "abs(published_i) < zero_tol and abs(computed_i) < zero_tol",
+      "status": "near_zero_compatible"
+    },
+    {
+      "when": "sign(computed_i) == sign(published_i)",
+      "status": "strict_match"
+    },
+    {
+      "when": "abs(published_i) < zero_tol or abs(computed_i) < zero_tol",
+      "status": "near_zero_boundary_crossing"
+    },
+    {
+      "when": "otherwise",
+      "status": "strict_mismatch"
+    }
+  ],
+  "recommendation": "A quantitative absolute-error pass may still cross the strict sign boundary for near-zero exponents. Use near_zero_sign_boundary before interpreting sign failures."
+}

@@ -388,3 +388,10 @@ Audit outputs are stored under:
 ```text
 validation/outputs/lyapunov_benchmarks/fractional_cloned_dynamics_abm_gs_published/
 ```
+
+The tracked
+[Fischer 2020 discrepancy report](https://github.com/Xerkkun/Hidden-Attractors-Localization/blob/main/version_2/validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/discrepancy_diagnostics/fischer2020_discrepancy_report.md)
+adds row-level classifications, an explicit near-zero sign policy, and a
+reproducible opt-in sensitivity plan. F3 is implemented and the all-row
+benchmark has been executed, but reproduction remains partial and
+`validated=False`.

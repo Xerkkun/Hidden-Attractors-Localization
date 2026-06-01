@@ -44,6 +44,9 @@ def test_f3_summary_remains_conservative() -> None:
     assert summary["validated_against_published_benchmarks"] is False
     assert summary["certifications"]["chaos_certified_by_this_pipeline"] is False
     assert summary["certifications"]["hiddenness_certified_by_this_pipeline"] is False
+    diagnostics = summary["discrepancy_diagnostics"]
+    assert diagnostics["status"] == "diagnostics_added"
+    assert diagnostics["validated_after_diagnostics"] is False
 
 
 def test_diagnostics_stage_remains_partial() -> None:

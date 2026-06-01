@@ -1,0 +1,97 @@
+{
+  "fischer2020_financial_commensurate.yaml#0": {
+    "discrepancy_class": "sign_pattern_supported_not_quantitative",
+    "interpretation": "sign_pattern_only",
+    "notes": "financial RHS contains abs(x)"
+  },
+  "fischer2020_financial_commensurate.yaml#1": {
+    "discrepancy_class": "quantitative_abs_pass_near_zero_sign_boundary",
+    "interpretation": "near_zero_boundary",
+    "notes": "strict sign crossing occurs only at the explicit near-zero boundary; historical quantitative absolute-error pass crosses strict sign boundary; financial RHS contains abs(x)"
+  },
+  "fischer2020_financial_commensurate.yaml#2": {
+    "discrepancy_class": "quantitative_abs_pass_strict_sign_pass",
+    "interpretation": "strict_quantitative_agreement",
+    "notes": "financial RHS contains abs(x)"
+  },
+  "fischer2020_financial_commensurate.yaml#3": {
+    "discrepancy_class": "sign_pattern_supported_not_quantitative",
+    "interpretation": "sign_pattern_only",
+    "notes": "financial RHS contains abs(x)"
+  },
+  "fischer2020_financial_incommensurate.yaml#0": {
+    "discrepancy_class": "strict_discrepancy",
+    "interpretation": "near_zero_boundary_with_quantitative_discrepancy",
+    "notes": "strict sign crossing occurs only at the explicit near-zero boundary; financial RHS contains abs(x)"
+  },
+  "fischer2020_financial_incommensurate.yaml#1": {
+    "discrepancy_class": "quantitative_abs_pass_strict_sign_pass",
+    "interpretation": "strict_quantitative_agreement",
+    "notes": "financial RHS contains abs(x)"
+  },
+  "fischer2020_financial_incommensurate.yaml#2": {
+    "discrepancy_class": "quantitative_abs_pass_strict_sign_pass",
+    "interpretation": "strict_quantitative_agreement",
+    "notes": "financial RHS contains abs(x)"
+  },
+  "fischer2020_financial_incommensurate.yaml#3": {
+    "discrepancy_class": "quantitative_abs_pass_strict_sign_pass",
+    "interpretation": "strict_quantitative_agreement",
+    "notes": "financial RHS contains abs(x)"
+  },
+  "fischer2020_four_wing_commensurate.yaml#1": {
+    "discrepancy_class": "quantitative_abs_pass_near_zero_sign_boundary",
+    "interpretation": "near_zero_boundary",
+    "notes": "strict sign crossing occurs only at the explicit near-zero boundary; historical quantitative absolute-error pass crosses strict sign boundary"
+  },
+  "fischer2020_four_wing_incommensurate.yaml#1": {
+    "discrepancy_class": "strict_discrepancy",
+    "interpretation": "near_zero_boundary_with_quantitative_discrepancy",
+    "notes": "strict sign crossing occurs only at the explicit near-zero boundary"
+  },
+  "fischer2020_four_wing_incommensurate.yaml#3": {
+    "discrepancy_class": "strict_discrepancy",
+    "interpretation": "near_zero_boundary_with_quantitative_discrepancy",
+    "notes": "strict sign crossing occurs only at the explicit near-zero boundary"
+  },
+  "fischer2020_jerk_commensurate.yaml#0": {
+    "discrepancy_class": "sign_pattern_supported_not_quantitative",
+    "interpretation": "sign_pattern_only",
+    "notes": "review jerk exponential nonlinearity scale and clone protocol"
+  },
+  "fischer2020_jerk_commensurate.yaml#1": {
+    "discrepancy_class": "sign_pattern_supported_not_quantitative",
+    "interpretation": "sign_pattern_only",
+    "notes": "review jerk exponential nonlinearity scale and clone protocol"
+  },
+  "fischer2020_jerk_commensurate.yaml#2": {
+    "discrepancy_class": "strict_discrepancy",
+    "interpretation": "near_zero_boundary_with_quantitative_discrepancy",
+    "notes": "strict sign crossing occurs only at the explicit near-zero boundary; review jerk exponential nonlinearity scale and clone protocol"
+  },
+  "fischer2020_jerk_commensurate.yaml#3": {
+    "discrepancy_class": "sign_pattern_supported_not_quantitative",
+    "interpretation": "sign_pattern_only",
+    "notes": "review jerk exponential nonlinearity scale and clone protocol"
+  },
+  "fischer2020_jerk_incommensurate.yaml#0": {
+    "discrepancy_class": "sign_pattern_supported_not_quantitative",
+    "interpretation": "sign_pattern_only",
+    "notes": "review jerk exponential nonlinearity scale and clone protocol"
+  },
+  "fischer2020_jerk_incommensurate.yaml#1": {
+    "discrepancy_class": "strict_discrepancy",
+    "interpretation": "near_zero_boundary_with_quantitative_discrepancy",
+    "notes": "strict sign crossing occurs only at the explicit near-zero boundary; review jerk exponential nonlinearity scale and clone protocol"
+  },
+  "fischer2020_jerk_incommensurate.yaml#2": {
+    "discrepancy_class": "strict_discrepancy",
+    "interpretation": "strict_sign_discrepancy",
+    "notes": "review jerk exponential nonlinearity scale and clone protocol"
+  },
+  "fischer2020_jerk_incommensurate.yaml#3": {
+    "discrepancy_class": "strict_discrepancy",
+    "interpretation": "strict_sign_discrepancy",
+    "notes": "review jerk exponential nonlinearity scale and clone protocol"
+  }
+}

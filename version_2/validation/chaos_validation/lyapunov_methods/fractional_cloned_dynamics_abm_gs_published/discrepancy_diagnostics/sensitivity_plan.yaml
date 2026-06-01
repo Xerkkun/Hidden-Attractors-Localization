@@ -1,0 +1,66 @@
+status: planned_or_partial
+purpose: diagnose protocol and numerical sensitivity without promoting validation
+opt_in: RUN_F3_DISCREPANCY_SWEEPS=1
+bounded_default: run_cloned_dynamics_sensitivity.py limits active runs unless --max-runs
+  0 is supplied
+priority_rows:
+- case_file: fischer2020_jerk_commensurate.yaml
+  row_indices:
+  - 0
+  - 1
+  - 2
+  - 3
+- case_file: fischer2020_jerk_incommensurate.yaml
+  row_indices:
+  - 1
+  - 2
+  - 3
+- case_file: fischer2020_four_wing_incommensurate.yaml
+  row_indices:
+  - 1
+  - 2
+  - 3
+- case_file: fischer2020_financial_incommensurate.yaml
+  row_indices:
+  - 0
+axes:
+  delta:
+  - 0.01
+  - 0.001
+  - 0.0001
+  - 1.0e-05
+  t_clone:
+    multipliers:
+    - 0.5
+    - 1.0
+    - 2.0
+    jerk_explicit_values:
+    - 1.0
+    - 5.0
+    - 10.0
+  h_clone:
+    multipliers:
+    - 0.5
+    - 1.0
+    - 2.0
+    double_only_if_stable: true
+  K:
+    multipliers:
+    - 0.5
+    - 1.0
+    - 2.0
+    double_only_if_cost_allows: true
+  orthonormalization:
+  - gs_modified
+  - gs_classical
+  - qr
+  abm_q1_mode:
+  - fractional_abm_q1
+  - integer_rk4_reference
+hypotheses:
+- 'H1: cloning protocol is not identical to the published protocol'
+- 'H2: T_C, N_C, h_C, or K interpretation differs'
+- 'H3: classical GS, modified GS, QR, or accumulated norm convention differs'
+- 'H4: near-zero exponents are strongly sensitive'
+- 'H5: incommensurate ABM handling requires a specific audit'
+- 'H6: published rounded values may retain ambiguity'

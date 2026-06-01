@@ -1,0 +1,8 @@
+{
+  "status": "planned_not_executed",
+  "opt_in": "RUN_F3_DISCREPANCY_SWEEPS=1",
+  "validated_after_sensitivity": false,
+  "notes": [
+    "Sensitivity sweeps are diagnostic only and do not promote F3."
+  ]
+}

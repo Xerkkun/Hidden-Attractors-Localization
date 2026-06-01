@@ -155,6 +155,13 @@ Discrepancies remain in the financial incommensurate lane, the four-wing
 incommensurate lane, and jerk commensurate/incommensurate rows. The method
 therefore remains `validated=False`.
 
+Formal row-level diagnostics are tracked in the
+[Fischer 2020 discrepancy report](https://github.com/Xerkkun/Hidden-Attractors-Localization/blob/main/version_2/validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/discrepancy_diagnostics/fischer2020_discrepancy_report.md).
+The report records the explicit `near_zero_sign_policy`, separates strict
+sign discrepancies from near-zero boundary crossings, and provides an opt-in
+sensitivity plan. These diagnostics do not change the official validation
+status.
+
 Auditable runtime outputs:
 
 ```text

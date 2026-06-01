@@ -864,5 +864,13 @@
       "K01_published": 0.1329,
       "status": "published_benchmark_failed_quantitative"
     }
-  ]
+  ],
+  "discrepancy_diagnostics": {
+    "status": "diagnostics_added",
+    "report": "discrepancy_diagnostics/fischer2020_discrepancy_report.md",
+    "matrix": "discrepancy_diagnostics/fischer2020_discrepancy_matrix.csv",
+    "near_zero_sign_policy": "discrepancy_diagnostics/near_zero_sign_policy.json",
+    "sensitivity_status": "planned_or_partial",
+    "validated_after_diagnostics": false
+  }
 }

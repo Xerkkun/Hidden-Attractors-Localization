@@ -16,3 +16,10 @@ The method uses ABM predictor-corrector integration with
 orthonormalization. Results are finite-time local Lyapunov indicators. They do
 not certify chaos or hiddenness, and they are not a full-memory Caputo-aware
 claim.
+
+Formal diagnostics are stored in
+[discrepancy_diagnostics/](discrepancy_diagnostics/README.md). The
+[row-level report](discrepancy_diagnostics/fischer2020_discrepancy_report.md)
+classifies strict discrepancies and near-zero sign boundaries and records a
+bounded opt-in sensitivity plan. These additions do not promote F3:
+`validated=False`.
