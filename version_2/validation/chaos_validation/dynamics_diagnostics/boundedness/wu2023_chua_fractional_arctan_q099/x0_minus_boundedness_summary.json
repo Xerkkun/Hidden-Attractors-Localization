@@ -1,0 +1,64 @@
+{
+  "case_id": "wu2023_chua_fractional_arctan_q099",
+  "trajectory_id": "x0_minus",
+  "trajectory_metadata": {
+    "case_id": "wu2023_chua_fractional_arctan_q099",
+    "trajectory_id": "x0_minus",
+    "q": 0.99,
+    "derivative_model": "Caputo",
+    "h": 0.01,
+    "t_final": 100.0,
+    "t_burn": 50.0,
+    "integrator": "EFORK",
+    "backend": "efork_c_arctan",
+    "memory_policy": "finite_memory",
+    "memory_length": 40.0,
+    "seed": [
+      -13.8,
+      -0.7093,
+      19.8768
+    ],
+    "seed_scope": "configured_reference_seed",
+    "source_reference": "Wu et al. 2023",
+    "trajectory_rows": 10001,
+    "post_transient_rows": 5000,
+    "sampled_rows": 5000,
+    "nonfinite_count": 0,
+    "post_transient_sha256": "0c2505e639c5937faac59b8cbcc1a2cb7bb79a6842a527d74fca364a3bb4d8a8",
+    "post_transient_cache": "validation/chaos_validation/dynamics_diagnostics/trajectories/wu2023_chua_fractional_arctan_q099/x0_minus_post_transient.npz",
+    "post_transient_sampled_csv": "validation/chaos_validation/dynamics_diagnostics/trajectories/wu2023_chua_fractional_arctan_q099/x0_minus_post_transient_sampled.csv",
+    "integration_status": "ok"
+  },
+  "burn_time": 50.0,
+  "norm": "euclidean",
+  "post_transient_rows": 5000,
+  "finite_fraction": 1.0,
+  "nonfinite_count": 0,
+  "divergence_radius": 1000000.0,
+  "boundedness_proves_chaos": false,
+  "chaos_certified_by_boundedness": false,
+  "hiddenness_certified_by_boundedness": false,
+  "max_norm": 7.938238313756773,
+  "R_observed": 7.938238313756773,
+  "min_norm": 3.122651370420599,
+  "mean_norm": 5.7007319560211664,
+  "median_norm": 5.877211703364294,
+  "final_norm": 5.537984365056175,
+  "norm_growth_ratio": 0.9806630946351493,
+  "coordinate_min": [
+    -2.6776577623404116,
+    -2.031502700430752,
+    -7.752768321486473
+  ],
+  "coordinate_max": [
+    2.674056722125371,
+    2.02696598985536,
+    7.767599966982423
+  ],
+  "coordinate_span": [
+    5.3517144844657825,
+    4.058468690286112,
+    15.520368288468894
+  ],
+  "boundedness_status": "bounded_candidate"
+}

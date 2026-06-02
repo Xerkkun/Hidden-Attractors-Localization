@@ -1,0 +1,28 @@
+{
+  "case_id": "wu2023_chua_fractional_arctan_q099",
+  "trajectory_id": "x0_minus",
+  "q": 0.99,
+  "derivative_model": "Caputo",
+  "h": 0.01,
+  "t_final": 100.0,
+  "t_burn": 50.0,
+  "integrator": "EFORK",
+  "backend": "efork_c_arctan",
+  "memory_policy": "finite_memory",
+  "memory_length": 40.0,
+  "seed": [
+    -13.8,
+    -0.7093,
+    19.8768
+  ],
+  "seed_scope": "configured_reference_seed",
+  "source_reference": "Wu et al. 2023",
+  "trajectory_rows": 10001,
+  "post_transient_rows": 5000,
+  "sampled_rows": 5000,
+  "nonfinite_count": 0,
+  "post_transient_sha256": "0c2505e639c5937faac59b8cbcc1a2cb7bb79a6842a527d74fca364a3bb4d8a8",
+  "post_transient_cache": "validation/chaos_validation/dynamics_diagnostics/trajectories/wu2023_chua_fractional_arctan_q099/x0_minus_post_transient.npz",
+  "post_transient_sampled_csv": "validation/chaos_validation/dynamics_diagnostics/trajectories/wu2023_chua_fractional_arctan_q099/x0_minus_post_transient_sampled.csv",
+  "integration_status": "ok"
+}

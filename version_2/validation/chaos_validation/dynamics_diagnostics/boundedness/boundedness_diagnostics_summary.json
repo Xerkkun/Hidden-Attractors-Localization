@@ -1,0 +1,299 @@
+{
+  "stage": "F5.1_boundedness",
+  "status": "completed_structured_outputs",
+  "generated_at_utc": "2026-06-02T06:43:27.617154+00:00",
+  "fast": true,
+  "cases_total": 3,
+  "standardized_outputs": true,
+  "boundedness_proves_chaos": false,
+  "chaos_certified_by_boundedness": false,
+  "hiddenness_certified_by_boundedness": false,
+  "case_summaries": [
+    {
+      "case_id": "chua_integer_q1_reference",
+      "status": "bounded_candidate",
+      "trajectory_count": 1,
+      "trajectories": [
+        {
+          "case_id": "chua_integer_q1_reference",
+          "trajectory_id": "X0_python",
+          "trajectory_metadata": {
+            "case_id": "chua_integer_q1_reference",
+            "trajectory_id": "X0_python",
+            "q": 1.0,
+            "derivative_model": "integer",
+            "h": 0.05,
+            "t_final": 100.0,
+            "t_burn": 50.0,
+            "integrator": "efork_q1",
+            "backend": "efork_q1",
+            "memory_policy": "not_applicable",
+            "memory_length": null,
+            "seed": [
+              5.856145086257356,
+              0.369331578246782,
+              -8.36653616833188
+            ],
+            "seed_scope": "configured_reference_seed",
+            "source_reference": "Kuznetsov/Guan-Xie displayed values",
+            "trajectory_rows": 2001,
+            "post_transient_rows": 1001,
+            "sampled_rows": 1001,
+            "nonfinite_count": 0,
+            "post_transient_sha256": "55dc6b503f6e48155bb33ad64a818db9f3204b60dac70a62038c738ada6f2c2d",
+            "post_transient_cache": "validation/chaos_validation/dynamics_diagnostics/trajectories/chua_integer_q1_reference/X0_python_post_transient.npz",
+            "post_transient_sampled_csv": "validation/chaos_validation/dynamics_diagnostics/trajectories/chua_integer_q1_reference/X0_python_post_transient_sampled.csv",
+            "integration_status": "ok"
+          },
+          "burn_time": 50.0,
+          "norm": "euclidean",
+          "post_transient_rows": 1001,
+          "finite_fraction": 1.0,
+          "nonfinite_count": 0,
+          "divergence_radius": 1000000.0,
+          "boundedness_proves_chaos": false,
+          "chaos_certified_by_boundedness": false,
+          "hiddenness_certified_by_boundedness": false,
+          "max_norm": 10.955606747648615,
+          "R_observed": 10.955606747648615,
+          "min_norm": 1.8146007444292036,
+          "mean_norm": 6.171958704101557,
+          "median_norm": 6.203362449288644,
+          "final_norm": 2.082349105881116,
+          "norm_growth_ratio": 0.976652973520829,
+          "coordinate_min": [
+            -6.286715291462049,
+            -1.661538810566523,
+            -7.555396949943928
+          ],
+          "coordinate_max": [
+            4.368175533897789,
+            1.5757502238284318,
+            8.973704983085682
+          ],
+          "coordinate_span": [
+            10.65489082535984,
+            3.237289034394955,
+            16.529101933029608
+          ],
+          "boundedness_status": "bounded_candidate"
+        }
+      ],
+      "boundedness_proves_chaos": false,
+      "chaos_certified_by_boundedness": false,
+      "hiddenness_certified_by_boundedness": false
+    },
+    {
+      "case_id": "danca2017_chua_fractional_saturation_q09998",
+      "status": "bounded_candidate",
+      "trajectory_count": 1,
+      "trajectories": [
+        {
+          "case_id": "danca2017_chua_fractional_saturation_q09998",
+          "trajectory_id": "diagnostic_X0",
+          "trajectory_metadata": {
+            "case_id": "danca2017_chua_fractional_saturation_q09998",
+            "trajectory_id": "diagnostic_X0",
+            "q": 0.9998,
+            "derivative_model": "Caputo",
+            "h": 0.01,
+            "t_final": 500.0,
+            "t_burn": 250.0,
+            "integrator": "ABM",
+            "backend": "native_full_history_abm",
+            "memory_policy": "full_history",
+            "memory_length": null,
+            "seed": [
+              5.856145086257356,
+              0.369331578246782,
+              -8.36653616833188
+            ],
+            "seed_scope": "diagnostic_only_not_reported_by_article",
+            "source_reference": "Danca 2017",
+            "trajectory_rows": 50001,
+            "post_transient_rows": 25001,
+            "sampled_rows": 5000,
+            "nonfinite_count": 0,
+            "post_transient_sha256": "47b36ad68cd039f63c040e17c207fdc0115cf576ab4fc5bb3fa31ef6e9252c78",
+            "post_transient_cache": "validation/chaos_validation/dynamics_diagnostics/trajectories/danca2017_chua_fractional_saturation_q09998/diagnostic_X0_post_transient.npz",
+            "post_transient_sampled_csv": "validation/chaos_validation/dynamics_diagnostics/trajectories/danca2017_chua_fractional_saturation_q09998/diagnostic_X0_post_transient_sampled.csv",
+            "integration_status": "ok"
+          },
+          "burn_time": 250.0,
+          "norm": "euclidean",
+          "post_transient_rows": 25001,
+          "finite_fraction": 1.0,
+          "nonfinite_count": 0,
+          "divergence_radius": 1000000.0,
+          "boundedness_proves_chaos": false,
+          "chaos_certified_by_boundedness": false,
+          "hiddenness_certified_by_boundedness": false,
+          "max_norm": 10.87661949297824,
+          "R_observed": 10.87661949297824,
+          "min_norm": 1.8177154726082607,
+          "mean_norm": 6.13241396185722,
+          "median_norm": 6.180670847937504,
+          "final_norm": 6.219695244444673,
+          "norm_growth_ratio": 1.0034682263128396,
+          "coordinate_min": [
+            -4.206936988805214,
+            -1.566665679652997,
+            -8.919043287534441
+          ],
+          "coordinate_max": [
+            6.227316051887942,
+            1.656851959091759,
+            7.422260438497938
+          ],
+          "coordinate_span": [
+            10.434253040693157,
+            3.223517638744756,
+            16.34130372603238
+          ],
+          "boundedness_status": "bounded_candidate"
+        }
+      ],
+      "boundedness_proves_chaos": false,
+      "chaos_certified_by_boundedness": false,
+      "hiddenness_certified_by_boundedness": false
+    },
+    {
+      "case_id": "wu2023_chua_fractional_arctan_q099",
+      "status": "bounded_candidate",
+      "trajectory_count": 2,
+      "trajectories": [
+        {
+          "case_id": "wu2023_chua_fractional_arctan_q099",
+          "trajectory_id": "x0_plus",
+          "trajectory_metadata": {
+            "case_id": "wu2023_chua_fractional_arctan_q099",
+            "trajectory_id": "x0_plus",
+            "q": 0.99,
+            "derivative_model": "Caputo",
+            "h": 0.01,
+            "t_final": 100.0,
+            "t_burn": 50.0,
+            "integrator": "EFORK",
+            "backend": "efork_c_arctan",
+            "memory_policy": "finite_memory",
+            "memory_length": 40.0,
+            "seed": [
+              13.8,
+              0.7093,
+              -19.8768
+            ],
+            "seed_scope": "configured_reference_seed",
+            "source_reference": "Wu et al. 2023",
+            "trajectory_rows": 10001,
+            "post_transient_rows": 5000,
+            "sampled_rows": 5000,
+            "nonfinite_count": 0,
+            "post_transient_sha256": "b8774908e567b7da5846c1154a5b2e8969de9d6a702dfaa523530a9eb9a5855f",
+            "post_transient_cache": "validation/chaos_validation/dynamics_diagnostics/trajectories/wu2023_chua_fractional_arctan_q099/x0_plus_post_transient.npz",
+            "post_transient_sampled_csv": "validation/chaos_validation/dynamics_diagnostics/trajectories/wu2023_chua_fractional_arctan_q099/x0_plus_post_transient_sampled.csv",
+            "integration_status": "ok"
+          },
+          "burn_time": 50.0,
+          "norm": "euclidean",
+          "post_transient_rows": 5000,
+          "finite_fraction": 1.0,
+          "nonfinite_count": 0,
+          "divergence_radius": 1000000.0,
+          "boundedness_proves_chaos": false,
+          "chaos_certified_by_boundedness": false,
+          "hiddenness_certified_by_boundedness": false,
+          "max_norm": 7.938238313756773,
+          "R_observed": 7.938238313756773,
+          "min_norm": 3.122651370420599,
+          "mean_norm": 5.7007319560211664,
+          "median_norm": 5.877211703364294,
+          "final_norm": 5.537984365056175,
+          "norm_growth_ratio": 0.9806630946351493,
+          "coordinate_min": [
+            -2.674056722125371,
+            -2.02696598985536,
+            -7.767599966982423
+          ],
+          "coordinate_max": [
+            2.6776577623404116,
+            2.031502700430752,
+            7.752768321486473
+          ],
+          "coordinate_span": [
+            5.3517144844657825,
+            4.058468690286112,
+            15.520368288468894
+          ],
+          "boundedness_status": "bounded_candidate"
+        },
+        {
+          "case_id": "wu2023_chua_fractional_arctan_q099",
+          "trajectory_id": "x0_minus",
+          "trajectory_metadata": {
+            "case_id": "wu2023_chua_fractional_arctan_q099",
+            "trajectory_id": "x0_minus",
+            "q": 0.99,
+            "derivative_model": "Caputo",
+            "h": 0.01,
+            "t_final": 100.0,
+            "t_burn": 50.0,
+            "integrator": "EFORK",
+            "backend": "efork_c_arctan",
+            "memory_policy": "finite_memory",
+            "memory_length": 40.0,
+            "seed": [
+              -13.8,
+              -0.7093,
+              19.8768
+            ],
+            "seed_scope": "configured_reference_seed",
+            "source_reference": "Wu et al. 2023",
+            "trajectory_rows": 10001,
+            "post_transient_rows": 5000,
+            "sampled_rows": 5000,
+            "nonfinite_count": 0,
+            "post_transient_sha256": "0c2505e639c5937faac59b8cbcc1a2cb7bb79a6842a527d74fca364a3bb4d8a8",
+            "post_transient_cache": "validation/chaos_validation/dynamics_diagnostics/trajectories/wu2023_chua_fractional_arctan_q099/x0_minus_post_transient.npz",
+            "post_transient_sampled_csv": "validation/chaos_validation/dynamics_diagnostics/trajectories/wu2023_chua_fractional_arctan_q099/x0_minus_post_transient_sampled.csv",
+            "integration_status": "ok"
+          },
+          "burn_time": 50.0,
+          "norm": "euclidean",
+          "post_transient_rows": 5000,
+          "finite_fraction": 1.0,
+          "nonfinite_count": 0,
+          "divergence_radius": 1000000.0,
+          "boundedness_proves_chaos": false,
+          "chaos_certified_by_boundedness": false,
+          "hiddenness_certified_by_boundedness": false,
+          "max_norm": 7.938238313756773,
+          "R_observed": 7.938238313756773,
+          "min_norm": 3.122651370420599,
+          "mean_norm": 5.7007319560211664,
+          "median_norm": 5.877211703364294,
+          "final_norm": 5.537984365056175,
+          "norm_growth_ratio": 0.9806630946351493,
+          "coordinate_min": [
+            -2.6776577623404116,
+            -2.031502700430752,
+            -7.752768321486473
+          ],
+          "coordinate_max": [
+            2.674056722125371,
+            2.02696598985536,
+            7.767599966982423
+          ],
+          "coordinate_span": [
+            5.3517144844657825,
+            4.058468690286112,
+            15.520368288468894
+          ],
+          "boundedness_status": "bounded_candidate"
+        }
+      ],
+      "boundedness_proves_chaos": false,
+      "chaos_certified_by_boundedness": false,
+      "hiddenness_certified_by_boundedness": false
+    }
+  ]
+}

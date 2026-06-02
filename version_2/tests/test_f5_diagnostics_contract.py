@@ -16,6 +16,7 @@ SUMMARY = (
     / "dynamics_diagnostics"
     / "f5_diagnostics_summary.json"
 )
+CONTRACT = SUMMARY.parent / "diagnostics_contract.json"
 
 
 def test_f5_summary_tracks_all_required_subphases() -> None:
@@ -30,12 +31,25 @@ def test_f5_summary_tracks_all_required_subphases() -> None:
     )
 
 
-def test_pending_subphases_prevent_structured_ready_promotion() -> None:
+def test_zero_one_is_required_by_f5_contract() -> None:
+    contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
+    assert "zero_one_test" in contract["required_diagnostics"]
+    assert "zero_one_test" not in contract["optional_diagnostics"]
+
+
+def test_generated_subphases_are_standardized_and_structured_ready() -> None:
     summary = json.loads(SUMMARY.read_text(encoding="utf-8"))
     subphases = [summary[name] for name in ("boundedness", "zero_one", "psd_fft", "poincare")]
-    if not all(item["standardized_outputs"] for item in subphases):
-        assert summary["final_f5_status"] != "f5_diagnostics_structured_outputs_ready"
-    assert summary["final_f5_status"] == "diagnostics_partial_current_protocol"
+    assert all(item["standardized_outputs"] for item in subphases)
+    assert summary["final_f5_status"] == "f5_diagnostics_structured_outputs_ready"
+
+
+def test_pending_subphase_prevents_structured_ready_promotion() -> None:
+    subphases = {
+        name: {"status": "completed", "standardized_outputs": name != "zero_one"}
+        for name in ("boundedness", "zero_one", "psd_fft", "poincare")
+    }
+    assert _final_f5_status(subphases) == "diagnostics_partial_current_protocol"
 
 
 def test_all_standardized_outputs_can_mark_structured_ready_without_certification() -> None:
@@ -55,4 +69,7 @@ def test_no_single_diagnostic_certifies_chaos_or_hiddenness() -> None:
     serialized = json.dumps(summary)
     assert '"chaos_verified": true' not in serialized
     assert '"hidden_verified": true' not in serialized
-    assert "poincare_proves_chaos" not in serialized
+    assert '"poincare_proves_chaos": true' not in serialized
+    assert '"boundedness_proves_chaos": true' not in serialized
+    assert '"zero_one_proves_chaos": true' not in serialized
+    assert '"psd_proves_chaos": true' not in serialized

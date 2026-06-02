@@ -96,6 +96,7 @@
     }
   },
   "geometric_interpretation": "cloud_like",
+  "poincare_proves_chaos": false,
   "chaos_certified_by_poincare": false,
   "hiddenness_certified_by_poincare": false,
   "periodic_orbit_exact": false,

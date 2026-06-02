@@ -329,6 +329,7 @@ def write_poincare_outputs(
     summary.update(
         {
             "status": summary["interpretation_label"],
+            "poincare_proves_chaos": False,
             "chaos_certified_by_poincare": False,
             "hiddenness_certified_by_poincare": False,
             "periodic_orbit_exact": False,

@@ -54,8 +54,8 @@
 | F2 | `fractional_cloned_dynamics_abm` | Legacy placeholder; NOT implemented |
 | F3 | `fractional_cloned_dynamics_abm_gs_published` | **Implemented · `published_benchmarks_pending_discrepancy`** |
 | F3 | `fractional_cloned_dynamics_abm_qr` | **Implemented experimental QR variant · benchmark comparison pending** |
-| F2 | `zero_one_test` | NOT implemented |
-| F3 | PSD/FFT validation | Partial; diagnostics are not complete |
+| F5 | `zero_one_test` | **Implemented as supporting diagnostic; does not certify chaos** |
+| F5 | PSD/FFT diagnostics | **Implemented with standardized outputs; does not certify chaos** |
 | F4 | Internal Lyapunov validation | **`f4_complete_with_documented_discrepancies`**; no validation promotion |
 
 ---
@@ -197,3 +197,15 @@ cases. Integer ODE crossings use `x=0, xdot>0`; Caputo crossings are geometric
 sampled-trajectory diagnostics with `exact_poincare_map=false`. Poincare alone
 does not certify chaos, hiddenness, or exact periodic orbits in Caputo
 systems. Outputs live under `dynamics_diagnostics/poincare/`.
+
+## F5 - Complementary dynamics diagnostics
+
+F5.1 boundedness, F5.2 zero-one, F5.3 FFT/PSD, and F5.4 Poincare now produce
+standardized outputs for the same three configured cases. They share cached
+post-transient trajectories and close as
+`f5_diagnostics_structured_outputs_ready`.
+
+This state means the complementary output bundle is ready for inspection. It
+does not certify chaos, certify hiddenness, assert exact Caputo periodic
+orbits, or automatically promote the separate official protocol diagnostics
+stage. See [F5 Dynamics Diagnostics](../../docs/f5_dynamics_diagnostics.md).

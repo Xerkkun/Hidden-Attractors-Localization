@@ -52,6 +52,7 @@ def test_global_summary_records_method_validation_and_no_certification() -> None
     assert application["chaos_certified_by_poincare"] is False
     assert application["hiddenness_certified_by_poincare"] is False
     assert summary["caputo_periodic_orbit_claim"] is False
+    assert summary["poincare_proves_chaos"] is False
 
 
 def test_each_published_case_has_standardized_outputs() -> None:

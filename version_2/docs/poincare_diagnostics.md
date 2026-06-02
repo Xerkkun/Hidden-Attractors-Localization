@@ -7,6 +7,10 @@ The detector validates sampled crossing detection, linear interpolation,
 direction filtering, integer RHS direction checks, and Caputo geometric
 metadata. Poincare alone does not certify chaos or hiddenness.
 
+F5.4 is also consumed by the shared
+[F5 Dynamics Diagnostics](f5_dynamics_diagnostics.md) runner together with
+boundedness, zero-one, and FFT/PSD outputs.
+
 ## Integer ODE section
 
 For an integer ODE, the natural Chua section is:

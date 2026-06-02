@@ -22,6 +22,7 @@ nav:
   - Fractional Chua Arctan Wu2023: chua_arctan_wu2023_methodology.md
   - Dynamical Analysis: dynamical_analysis.md
   - Poincare Diagnostics: poincare_diagnostics.md
+  - F5 Dynamics Diagnostics: f5_dynamics_diagnostics.md
   - Cloned Dynamics Lyapunov Indicators: lyapunov_cloned_dynamics.md
   - F4 Internal Lyapunov Validation: f4_internal_lyapunov_validation.md
   - Validation Evidence: validation_evidence.md

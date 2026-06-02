@@ -15,6 +15,7 @@ contribution notes.
 - [Adapting New Systems](adapting_new_systems.md)
 - [Dynamical Analysis](dynamical_analysis.md)
 - [Poincare Diagnostics](poincare_diagnostics.md)
+- [F5 Dynamics Diagnostics](f5_dynamics_diagnostics.md)
 - [F4 Internal Lyapunov Validation](f4_internal_lyapunov_validation.md)
 - [External Tools](external_tools.md)
 - [Unified Report](unified_report.md)

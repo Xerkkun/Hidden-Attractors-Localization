@@ -1,0 +1,4 @@
+coordinate,K,K_median,K_mean,K_std,K_min,K_max,c_values_count,state,signal_length,detrend,normalize,random_seed,zero_one_alone_does_not_certify_chaos,chaos_certified_by_zero_one,hiddenness_certified_by_zero_one
+x,0.07368521600709813,0.07368521600709813,0.2130420833775521,0.28532086883384006,-0.027858744864936454,0.9758668518520958,40,zero_one_regular_candidate,1500,True,True,12345,True,False,False
+y,0.02144481246218011,0.02144481246218011,0.123995623158814,0.2477849969309265,-0.015349331664778115,0.9652453219997513,40,zero_one_regular_candidate,1500,True,True,12345,True,False,False
+z,-0.0012988923718465896,-0.0012988923718465896,0.048142165874448625,0.1528999594136382,-0.020246649970964894,0.8423783604893994,40,zero_one_regular_candidate,1500,True,True,12345,True,False,False

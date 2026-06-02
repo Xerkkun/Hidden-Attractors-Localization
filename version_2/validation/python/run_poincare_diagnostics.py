@@ -253,6 +253,7 @@ def _write_case_outputs(config: dict[str, Any]) -> dict[str, Any]:
             "trajectory_count": len(trajectory_summaries),
             "trajectories": trajectory_summaries,
             "geometric_interpretation": summary["interpretation_label"],
+            "poincare_proves_chaos": False,
             "chaos_certified_by_poincare": False,
             "hiddenness_certified_by_poincare": False,
             "periodic_orbit_exact": False,
@@ -294,10 +295,15 @@ def _write_f5_summary(
     method_validation: dict[str, Any],
     application_summary: dict[str, Any],
 ) -> dict[str, Any]:
+    existing = (
+        json.loads(F5_SUMMARY_PATH.read_text(encoding="utf-8"))
+        if F5_SUMMARY_PATH.exists()
+        else {}
+    )
     subphases = {
-        "boundedness": {"status": "partial", "standardized_outputs": False},
-        "zero_one": {"status": "not_implemented", "standardized_outputs": False},
-        "psd_fft": {"status": "partial", "standardized_outputs": False},
+        "boundedness": existing.get("boundedness", {"status": "partial", "standardized_outputs": False}),
+        "zero_one": existing.get("zero_one", {"status": "not_implemented", "standardized_outputs": False}),
+        "psd_fft": existing.get("psd_fft", {"status": "partial", "standardized_outputs": False}),
         "poincare": {
             "status": application_summary["status"],
             "standardized_outputs": True,
@@ -317,6 +323,8 @@ def _write_f5_summary(
             "poincare_cannot_certify_caputo_periodic_orbits": True,
         },
     }
+    if "combined_interpretation" in existing:
+        payload["combined_interpretation"] = existing["combined_interpretation"]
     _write_json(F5_SUMMARY_PATH, payload)
     return payload
 
@@ -342,6 +350,7 @@ def run(cases_dir: Path = CASES_DIR) -> dict[str, Any]:
         "cases_with_crossings": sum(summary["crossing_count"] > 0 for summary in summaries),
         "cases_insufficient_crossings": sum(summary["crossing_count"] < 3 for summary in summaries),
         "caputo_periodic_orbit_claim": False,
+        "poincare_proves_chaos": False,
         "chaos_certified_by_poincare": False,
         "hiddenness_certified_by_poincare": False,
         "standardized_outputs": True,

@@ -421,6 +421,14 @@ remains separate from the DK2018 block-restart reproduction lane.
 
 See [F4 Internal Lyapunov Validation](f4_internal_lyapunov_validation.md).
 
+## F5 - Complementary dynamics diagnostics
+
+F5 adds standalone boundedness, zero-one, FFT/PSD, and Poincare diagnostics.
+These are supporting numerical outputs rather than Lyapunov methods or
+isolated chaos proofs. The combined state may report
+`f5_diagnostics_structured_outputs_ready` only when all four standardized
+outputs exist. See [F5 Dynamics Diagnostics](f5_dynamics_diagnostics.md).
+
 ## F5.4 Poincare diagnostic
 
 Poincare outputs are complementary finite-time geometry, not Lyapunov

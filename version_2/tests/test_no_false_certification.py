@@ -42,3 +42,20 @@ def test_no_false_certification() -> None:
     assert "robustness" in manifest_data["failed_or_incomplete_stages"]
     assert "hiddenness_tests" in manifest_data["failed_or_incomplete_stages"]
     assert "diagnostics" in manifest_data["failed_or_incomplete_stages"]
+
+
+def test_f5_outputs_have_no_false_certification() -> None:
+    root = PROJECT_ROOT / "validation" / "chaos_validation" / "dynamics_diagnostics"
+    serialized = "\n".join(
+        path.read_text(encoding="utf-8").lower()
+        for path in root.rglob("*.json")
+    )
+    for forbidden in (
+        '"boundedness_proves_chaos": true',
+        '"zero_one_proves_chaos": true',
+        '"psd_proves_chaos": true',
+        '"poincare_proves_chaos": true',
+        '"chaos_verified": true',
+        '"hidden_verified": true',
+    ):
+        assert forbidden not in serialized

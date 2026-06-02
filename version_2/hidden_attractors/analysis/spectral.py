@@ -1,11 +1,24 @@
-"""Reusable spectral diagnostics for trajectory components."""
+"""Reusable spectral diagnostics for trajectory components.
+
+FFT and PSD classifications are supporting numerical indicators. They do not
+certify chaos or hiddenness.
+"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Sequence
+from typing import Any, Sequence
 
 import numpy as np
+
+
+ALLOWED_SPECTRAL_STATES = {
+    "broadband_spectrum",
+    "dominant_periodic_peak",
+    "quasiperiodic_candidate",
+    "spectral_inconclusive",
+}
+_COORDINATE_NAMES = ("x", "y", "z")
 
 
 @dataclass(frozen=True)
@@ -230,10 +243,163 @@ def trajectory_component_spectra(
     return out
 
 
+def _window_weights(length: int, window: str) -> np.ndarray:
+    if window == "hann":
+        return np.hanning(length)
+    if window in {"none", "boxcar"}:
+        return np.ones(length)
+    raise ValueError("window must be 'hann', 'none', or 'boxcar'.")
+
+
+def _prominent_peak_indices(power: np.ndarray) -> np.ndarray:
+    if power.size < 3 or float(np.max(power)) <= 0.0:
+        return np.empty(0, dtype=int)
+    local = np.flatnonzero((power[1:-1] > power[:-2]) & (power[1:-1] >= power[2:])) + 1
+    return local[power[local] >= 0.05 * float(np.max(power))]
+
+
+def compute_fft_psd(
+    times: Sequence[float],
+    signal: Sequence[float],
+    burn_time: float | None = None,
+    detrend: bool = True,
+    window: str = "hann",
+    normalize_power: bool = True,
+    remove_dc: bool = True,
+) -> dict[str, Any]:
+    """Compute one-sided FFT power metrics and a conservative spectral label."""
+
+    t = np.asarray(times, dtype=float)
+    values = np.asarray(signal, dtype=float).reshape(-1)
+    if t.ndim != 1 or values.ndim != 1 or t.size != values.size:
+        raise ValueError("times and signal must be one-dimensional and aligned.")
+    if burn_time is not None:
+        mask = t >= float(burn_time)
+        t = t[mask]
+        values = values[mask]
+    finite = np.isfinite(t) & np.isfinite(values)
+    t = t[finite]
+    values = values[finite]
+    if values.size < 16:
+        return {
+            "state": "spectral_inconclusive",
+            "signal_length": int(values.size),
+            "psd_proves_chaos": False,
+            "chaos_certified_by_psd": False,
+            "hiddenness_certified_by_psd": False,
+        }
+    step = infer_step(t)
+    data = values.copy()
+    if detrend:
+        index = np.arange(data.size, dtype=float)
+        slope, intercept = np.polyfit(index, data, 1)
+        data = data - (slope * index + intercept)
+    elif remove_dc:
+        data = data - float(np.mean(data))
+    weights = _window_weights(data.size, window)
+    power = np.abs(np.fft.rfft(data * weights)) ** 2
+    frequencies = np.fft.rfftfreq(data.size, d=step)
+    if remove_dc and power.size:
+        power[0] = 0.0
+    total_power_raw = float(np.sum(power))
+    if normalize_power and total_power_raw > 0.0:
+        power = power / total_power_raw
+    total_power = float(np.sum(power))
+    dominant_index = int(np.argmax(power)) if power.size else 0
+    dominant_power = float(power[dominant_index]) if power.size else 0.0
+    peak_dominance = dominant_power / max(total_power, np.finfo(float).eps)
+    positive_power = power[power > 0.0]
+    entropy = (
+        float(-np.sum(positive_power * np.log(positive_power)) / np.log(power.size))
+        if positive_power.size and power.size > 1 and normalize_power
+        else 0.0
+    )
+    sorted_power = np.sort(power)[::-1]
+    cumulative = np.cumsum(sorted_power)
+    bins_for_90 = int(np.searchsorted(cumulative, 0.9 * max(total_power, 0.0)) + 1)
+    bandwidth_fraction = float(bins_for_90 / max(power.size, 1))
+    prominent = _prominent_peak_indices(power)
+    peak_count = int(prominent.size)
+    if peak_dominance > 0.6:
+        state = "dominant_periodic_peak"
+    elif 2 <= peak_count <= 5 and peak_dominance >= 0.1:
+        state = "quasiperiodic_candidate"
+    elif entropy >= 0.65 and peak_dominance < 0.2:
+        state = "broadband_spectrum"
+    else:
+        state = "spectral_inconclusive"
+    return {
+        "state": state,
+        "peak_dominance": float(peak_dominance),
+        "spectral_entropy": entropy,
+        "bandwidth_fraction": bandwidth_fraction,
+        "number_of_prominent_peaks": peak_count,
+        "dominant_frequency": float(frequencies[dominant_index]) if frequencies.size else None,
+        "dominant_power": dominant_power,
+        "total_power": total_power,
+        "total_power_before_normalization": total_power_raw,
+        "dc_removed": bool(remove_dc),
+        "detrend": bool(detrend),
+        "window": window,
+        "normalize_power": bool(normalize_power),
+        "sampling_interval": step,
+        "sampling_rate": 1.0 / step,
+        "signal_length": int(values.size),
+        "frequencies": frequencies.tolist(),
+        "power": power.tolist(),
+        "psd_proves_chaos": False,
+        "chaos_certified_by_psd": False,
+        "hiddenness_certified_by_psd": False,
+    }
+
+
+def spectral_diagnostics_multicoordinate(
+    times: Sequence[float],
+    trajectory: Sequence[Sequence[float]],
+    burn_time: float,
+    coordinates: Sequence[str] = _COORDINATE_NAMES,
+    **kwargs: Any,
+) -> dict[str, Any]:
+    """Apply :func:`compute_fft_psd` to selected trajectory coordinates."""
+
+    t = np.asarray(times, dtype=float)
+    states = np.asarray(trajectory, dtype=float)
+    if t.ndim != 1 or states.ndim != 2 or states.shape[0] != t.size:
+        raise ValueError("times and trajectory must have shapes (N,) and (N, d).")
+    results: dict[str, dict[str, Any]] = {}
+    for name in coordinates:
+        if name not in _COORDINATE_NAMES:
+            raise ValueError("coordinates must be selected from x, y, and z.")
+        index = _COORDINATE_NAMES.index(name)
+        if index >= states.shape[1]:
+            raise ValueError(f"trajectory does not contain coordinate {name}.")
+        results[name] = compute_fft_psd(t, states[:, index], burn_time=burn_time, **kwargs)
+    states_observed = [result["state"] for result in results.values()]
+    if "broadband_spectrum" in states_observed:
+        state_global = "broadband_spectrum"
+    elif "dominant_periodic_peak" in states_observed:
+        state_global = "dominant_periodic_peak"
+    elif "quasiperiodic_candidate" in states_observed:
+        state_global = "quasiperiodic_candidate"
+    else:
+        state_global = "spectral_inconclusive"
+    return {
+        "coordinate_results": results,
+        "state_global": state_global,
+        "psd_alone_does_not_certify_chaos": True,
+        "psd_proves_chaos": False,
+        "chaos_certified_by_psd": False,
+        "hiddenness_certified_by_psd": False,
+    }
+
+
 __all__ = [
+    "ALLOWED_SPECTRAL_STATES",
     "SpectrumResult",
+    "compute_fft_psd",
     "fft_spectrum",
     "infer_step",
     "psd_welch",
+    "spectral_diagnostics_multicoordinate",
     "trajectory_component_spectra",
 ]

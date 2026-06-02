@@ -1,0 +1,64 @@
+{
+  "case_id": "danca2017_chua_fractional_saturation_q09998",
+  "trajectory_id": "diagnostic_X0",
+  "trajectory_metadata": {
+    "case_id": "danca2017_chua_fractional_saturation_q09998",
+    "trajectory_id": "diagnostic_X0",
+    "q": 0.9998,
+    "derivative_model": "Caputo",
+    "h": 0.01,
+    "t_final": 500.0,
+    "t_burn": 250.0,
+    "integrator": "ABM",
+    "backend": "native_full_history_abm",
+    "memory_policy": "full_history",
+    "memory_length": null,
+    "seed": [
+      5.856145086257356,
+      0.369331578246782,
+      -8.36653616833188
+    ],
+    "seed_scope": "diagnostic_only_not_reported_by_article",
+    "source_reference": "Danca 2017",
+    "trajectory_rows": 50001,
+    "post_transient_rows": 25001,
+    "sampled_rows": 5000,
+    "nonfinite_count": 0,
+    "post_transient_sha256": "47b36ad68cd039f63c040e17c207fdc0115cf576ab4fc5bb3fa31ef6e9252c78",
+    "post_transient_cache": "validation/chaos_validation/dynamics_diagnostics/trajectories/danca2017_chua_fractional_saturation_q09998/diagnostic_X0_post_transient.npz",
+    "post_transient_sampled_csv": "validation/chaos_validation/dynamics_diagnostics/trajectories/danca2017_chua_fractional_saturation_q09998/diagnostic_X0_post_transient_sampled.csv",
+    "integration_status": "ok"
+  },
+  "burn_time": 250.0,
+  "norm": "euclidean",
+  "post_transient_rows": 25001,
+  "finite_fraction": 1.0,
+  "nonfinite_count": 0,
+  "divergence_radius": 1000000.0,
+  "boundedness_proves_chaos": false,
+  "chaos_certified_by_boundedness": false,
+  "hiddenness_certified_by_boundedness": false,
+  "max_norm": 10.87661949297824,
+  "R_observed": 10.87661949297824,
+  "min_norm": 1.8177154726082607,
+  "mean_norm": 6.13241396185722,
+  "median_norm": 6.180670847937504,
+  "final_norm": 6.219695244444673,
+  "norm_growth_ratio": 1.0034682263128396,
+  "coordinate_min": [
+    -4.206936988805214,
+    -1.566665679652997,
+    -8.919043287534441
+  ],
+  "coordinate_max": [
+    6.227316051887942,
+    1.656851959091759,
+    7.422260438497938
+  ],
+  "coordinate_span": [
+    10.434253040693157,
+    3.223517638744756,
+    16.34130372603238
+  ],
+  "boundedness_status": "bounded_candidate"
+}

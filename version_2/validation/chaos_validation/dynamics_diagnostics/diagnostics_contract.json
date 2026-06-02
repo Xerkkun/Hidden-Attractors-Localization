@@ -12,12 +12,12 @@
     "boundedness",
     "fft_psd",
     "poincare",
+    "zero_one_test",
     "lyapunov_with_validated_method_when_applicable",
     "step_size_sensitivity",
     "abm_direct_vs_fft_block"
   ],
   "optional_diagnostics": [
-    "zero_one_test",
     "abm_vs_efork_when_applicable"
   ],
   "invariants": {

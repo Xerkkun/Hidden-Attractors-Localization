@@ -49,6 +49,7 @@
   "section_density_estimate": 153.99692017037506,
   "interpretation_label": "cloud_like",
   "status": "cloud_like",
+  "poincare_proves_chaos": false,
   "chaos_certified_by_poincare": false,
   "hiddenness_certified_by_poincare": false,
   "periodic_orbit_exact": false,

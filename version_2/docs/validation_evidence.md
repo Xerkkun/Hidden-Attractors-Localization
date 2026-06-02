@@ -133,3 +133,20 @@ cases may use `x=0, xdot>0`; Caputo cases use geometric sampled crossings with
 `exact_poincare_map=false`. These outputs do not certify chaos, hiddenness, or
 exact periodic orbits in Caputo systems. See
 [Poincare Diagnostics](poincare_diagnostics.md).
+
+## F5 Complementary Dynamics Diagnostics
+
+F5.1 boundedness, F5.2 zero-one, F5.3 FFT/PSD, and F5.4 Poincare write
+standardized outputs under
+`validation/chaos_validation/dynamics_diagnostics/`. They reuse compressed
+post-transient trajectory caches and can be regenerated with:
+
+```powershell
+python .\validation\python\run_f5_dynamics_diagnostics.py --all --use-existing-poincare --fast
+```
+
+The summary state `f5_diagnostics_structured_outputs_ready` records output
+readiness only. It does not certify chaos, hiddenness, or exact periodic
+orbits in Caputo systems, and it does not automatically promote the separate
+official protocol diagnostics stage. See
+[F5 Dynamics Diagnostics](f5_dynamics_diagnostics.md).

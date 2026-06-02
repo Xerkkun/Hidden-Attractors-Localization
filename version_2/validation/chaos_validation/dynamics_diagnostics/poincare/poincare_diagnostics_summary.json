@@ -1,11 +1,12 @@
 {
   "stage": "F5.4_poincare_diagnostic",
   "status": "completed_structured_outputs",
-  "generated_at_utc": "2026-06-02T05:58:21.545231+00:00",
+  "generated_at_utc": "2026-06-02T06:37:57.018234+00:00",
   "cases_total": 3,
   "cases_with_crossings": 3,
   "cases_insufficient_crossings": 0,
   "caputo_periodic_orbit_claim": false,
+  "poincare_proves_chaos": false,
   "chaos_certified_by_poincare": false,
   "hiddenness_certified_by_poincare": false,
   "standardized_outputs": true,
@@ -119,6 +120,7 @@
         }
       },
       "geometric_interpretation": "cloud_like",
+      "poincare_proves_chaos": false,
       "chaos_certified_by_poincare": false,
       "hiddenness_certified_by_poincare": false,
       "periodic_orbit_exact": false,
@@ -202,6 +204,7 @@
         }
       },
       "geometric_interpretation": "cloud_like",
+      "poincare_proves_chaos": false,
       "chaos_certified_by_poincare": false,
       "hiddenness_certified_by_poincare": false,
       "periodic_orbit_exact": false,
@@ -305,6 +308,7 @@
         }
       },
       "geometric_interpretation": "cloud_like",
+      "poincare_proves_chaos": false,
       "chaos_certified_by_poincare": false,
       "hiddenness_certified_by_poincare": false,
       "periodic_orbit_exact": false,
