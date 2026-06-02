@@ -81,6 +81,7 @@ def regenerate_validation_manifest(
     stage_statuses: dict[str, str] = {}
     stage_evidence_scopes: dict[str, str] = {}
     pending_stages: list[str] = []
+    hidden_verified_flag = False
     for stage in contract.get("stages", []):
         stage_id = stage["id"]
         slug = stage["slug"]
@@ -96,6 +97,8 @@ def regenerate_validation_manifest(
                 if isinstance(scope, dict)
                 else "current_or_unspecified"
             )
+            if slug == "hiddenness_tests":
+                hidden_verified_flag = bool(summary.get("hidden_verified", False) or summary.get("evidence", {}).get("hidden_verified", False))
         else:
             stages[slug] = "pending"
             status = "missing_summary"
@@ -135,10 +138,9 @@ def regenerate_validation_manifest(
     if stage_statuses.get("robustness") in ("completed", "passed"):
         overall_state = "hidden_compatible"
     if "hiddenness_tests" in stage_statuses:
-        h_status = stage_statuses["hiddenness_tests"]
-        if h_status == "completed":
+        if hidden_verified_flag:
             overall_state = "hidden_verified"
-        elif "exploratory" in h_status or "lightweight" in h_status or h_status == "hiddenness_exploratory_only":
+        else:
             overall_state = "hidden_compatible"
 
     manifest = {

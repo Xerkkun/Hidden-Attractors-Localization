@@ -226,11 +226,34 @@ def run_sphere_probe_sweep(
             print(f"    numerical_failure={stats['numerical_failure']}")
             
             for idx, run_res in enumerate(radius_runs):
+                pt = pts[idx]
+                v_j = (pt - eq_pt) / radius
+                direction_norm = float(np.linalg.norm(v_j))
+                if abs(direction_norm - 1.0) > 1e-10:
+                    raise ValueError(
+                        f"Protocol error: Sampling direction vector norm deviates from 1.0 "
+                        f"by {abs(direction_norm - 1.0):.2e} (expected norm <= 1e-10 difference)."
+                    )
+                
+                early_stop_reason = None
+                status_str = run_res["status"]
+                if "early" in status_str or "stop" in status_str or status_str in ("diverged", "nonfinite_solution"):
+                    early_stop_reason = status_str
+
                 all_runs.append({
                     "equilibrium": eq_name,
-                    "radius": radius,
+                    "radius": float(radius),
+                    "sample_index": idx,
+                    "direction": v_j.tolist(),
+                    "direction_norm": direction_norm,
                     "x0": run_res["x0"],
                     "destination": run_res["destination"],
+                    "status": run_res["status"],
+                    "final_state": run_res["final_state"],
+                    "distance_to_target": run_res["distance_to_target"],
+                    "distance_to_equilibrium": run_res["distance_to_equilibrium"],
+                    "trajectory_available": len(run_res["trajectory"]) > 0,
+                    "early_stop_reason": early_stop_reason,
                     "trajectory": run_res["trajectory"]
                 })
                 detailed_csv_rows.append([
@@ -286,17 +309,45 @@ def run_sphere_probe_sweep(
         
     _print_and_save_hiddenness_tables(summary_records, output_dir)
     
-    return {"probe_runs": all_runs, "summary_records": summary_records}
+    return {
+        "probe_runs": all_runs,
+        "summary_records": summary_records,
+        "metadata": {
+            "equilibria_selected": list(selected_eqs.keys()),
+            "radii": list(radii_list),
+            "samples_policy": "per_radius_calculated" if st_config.get("samples_per_radius") is None else "per_radius_fixed",
+            "directions_mode": st_config.get("directions_mode", "sphere_random"),
+            "random_seed": st_config.get("random_seed", 42),
+            "t_final": st_config.get("t_final", 80.0),
+            "t_burn": st_config.get("t_burn", 20.0),
+            "h": st_config.get("h", 0.01),
+            "integrator": config["integrator"],
+            "memory_mode": config["memory_mode"],
+            "q_dynamics_effective": q_dynamics_effective
+        }
+    }
 
 def _print_and_save_hiddenness_tables(summary_records: List[Dict[str, Any]], output_dir: str) -> None:
     """Renders the Markdown summary table to console, CSV, and summary files."""
-    headers = ["system_id", "equilibrium", "radius", "samples", "EQ", "TARGET", "OTHER", "DIV", "FAIL"]
+    headers = ["system_id", "equilibrium", "radius", "samples", "EQ", "TARGET", "OTHER", "DIV", "FAIL", "criterio_local"]
     
-    print("\n" + "="*95)
+    # Compute local criteria
+    for r in summary_records:
+        if r.get("TARGET", 0) > 0:
+            criterio = "FAIL"
+        elif r.get("FAIL", 0) > 0:
+            criterio = "FAIL"
+        elif r.get("samples", 0) == 0:
+            criterio = "INCOMPLETE"
+        else:
+            criterio = "PASS"
+        r["criterio_local"] = criterio
+
+    print("\n" + "="*110)
     print(" RESUMEN DE PRUEBAS DE OCULTEDAD (VECINDARIOS DE EQUILIBRIOS) ")
-    print("="*95)
-    print(f"| {' | '.join(f'{h:<11}' if h != 'system_id' else f'{h:<22}' for h in headers)} |")
-    print(f"|{'-'*93}|")
+    print("="*110)
+    print(f"| {' | '.join(f'{h:<11}' if h != 'system_id' and h != 'criterio_local' else (f'{h:<22}' if h == 'system_id' else f'{h:<14}') for h in headers)} |")
+    print(f"|{'-'*108}|")
     for r in summary_records:
         rad_str = f"{r['radius']:.0e}"
         row = [
@@ -308,10 +359,11 @@ def _print_and_save_hiddenness_tables(summary_records: List[Dict[str, Any]], out
             f"{r['TARGET']:<11}",
             f"{r['OTHER']:<11}",
             f"{r['DIV']:<11}",
-            f"{r['FAIL']:<11}"
+            f"{r['FAIL']:<11}",
+            f"{r['criterio_local']:<14}"
         ]
         print(f"| {' | '.join(row)} |")
-    print("="*95 + "\n")
+    print("="*110 + "\n")
 
     md_path = os.path.join(output_dir, "hiddenness_summary.md")
     with open(md_path, "w", encoding="utf-8") as f:
@@ -319,7 +371,7 @@ def _print_and_save_hiddenness_tables(summary_records: List[Dict[str, Any]], out
         f.write("| " + " | ".join(headers) + " |\n")
         f.write("|" + "|".join("---" for _ in headers) + "|\n")
         for r in summary_records:
-            f.write(f"| {r['system_id']} | {r['equilibrium']} | {r['radius']:.0e} | {r['samples']} | {r['EQ']} | {r['TARGET']} | {r['OTHER']} | {r['DIV']} | {r['FAIL']} |\n")
+            f.write(f"| {r['system_id']} | {r['equilibrium']} | {r['radius']:.0e} | {r['samples']} | {r['EQ']} | {r['TARGET']} | {r['OTHER']} | {r['DIV']} | {r['FAIL']} | {r['criterio_local']} |\n")
             
     csv_summary_path = os.path.join(output_dir, "hiddenness_summary.csv")
     with open(csv_summary_path, "w", newline="", encoding="utf-8") as f:

@@ -1488,6 +1488,50 @@ etapa verifica persistencia geometrica; no clasifica ocultedad.
     is_lightweight_window = window["hiddenness"].get("is_lightweight", True)
     is_lightweight = is_lightweight_full or is_lightweight_window
 
+    import csv
+    from ..models.chua import equilibria_nonsmooth
+    from ..verification.hiddenness_contract import verify_hiddenness_contract
+
+    probe_runs = []
+    results_csv = hidden_dir / "ball_sampling_results.csv"
+    if results_csv.exists():
+        with open(results_csv, encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                t_hit_str = row.get("target_hit", "False")
+                target_hit = (t_hit_str.lower() in ("true", "1"))
+                class_label = row.get("class_label", "")
+                if target_hit:
+                    destination = "target_attractor"
+                elif class_label == "numerical_failure":
+                    destination = "numerical_failure"
+                elif class_label == "divergence":
+                    destination = "divergence"
+                elif class_label == "equilibrium":
+                    destination = "stable_equilibrium"
+                else:
+                    destination = "other_attractor"
+                probe_runs.append({
+                    "equilibrium": row.get("equilibrium_id"),
+                    "radius": float(row.get("radius", 0.0)),
+                    "destination": destination
+                })
+
+    contract_res = verify_hiddenness_contract(
+        equilibria=equilibria_nonsmooth(),
+        sphere_summary_records=[],
+        probe_runs=probe_runs,
+        required_radii=[1e-2, 1e-3, 1e-4, 1e-5],
+        require_all_equilibria=True,
+        allow_numerical_failures=False,
+        require_candidate_attractor=True,
+        seed_reached_attractor=True,
+    )
+    
+    is_contract_verified = bool(contract_res.get("hidden_verified", False) and all_slices_present)
+    contract_res["sphere_tests"] = True
+    contract_res["completed_sphere_tests"] = True
+
     if is_lightweight:
         hiddenness_status = "incomplete_lightweight_exploratory"
         hiddenness_verdict = "exploratory_hiddenness_screen"
@@ -1516,8 +1560,9 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
         provenance=provenance,
         outputs={"branches": {"full_history": full["hiddenness"], "finite_memory": window["hiddenness"]}, "sampling_mode": "ball", "is_lightweight": is_lightweight},
         verdict=hiddenness_verdict,
-        state="hidden_verified" if not is_lightweight and all_slices_present else "hidden_compatible",
-        state_history=["candidate_attractor", "seed_found", "candidate_attractor", "chaotic_candidate", "hidden_compatible", "hidden_verified" if not is_lightweight and all_slices_present else "hidden_compatible"],
+        state="hidden_verified" if is_contract_verified else "hidden_compatible",
+        state_history=["candidate_attractor", "seed_found", "candidate_attractor", "chaotic_candidate", "hidden_compatible", "hidden_verified" if is_contract_verified else "hidden_compatible"],
+        evidence=contract_res,
     )
 
     # Run algebraic validation

@@ -1,0 +1,72 @@
+# Example configuration showcasing strict operational hiddenness verification.
+
+experiment:
+  name: "Chua Fractional Strict Hiddenness Validation"
+  description: >
+    Runs the complete localization and strict neighborhood sphere tests
+    verifying B(A) intersect U_epsilon(X_i*) = empty for all 4 radii.
+  output_dir: "outputs/chua_fractional_hiddenness_strict"
+  run_id: "auto"
+  random_seed: 42
+
+system:
+  system_id: "chua-nonsmooth"
+  q: 0.9998
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+modes:
+  transfer_mode: "fractional"
+  seed_mode: "fractional"
+  continuation_mode: "fractional"
+  dynamics_mode: "fractional"
+
+integrator:
+  name: "efork3"
+  h: 0.01
+  memory_policy: "full_caputo"
+  use_c_backend: true
+
+stages:
+  seed_search: true
+  continuation: true
+  final_simulation: true
+  hiddenness_tests: true
+  sphere_tests: true
+  basin_slices: false
+
+seed_search:
+  strategy: "imw_gain"
+  construction: "modal"
+  branch_index: 0
+  omega_min: 0.01
+  omega_max: 20.0
+  amplitude_min: 0.01
+  amplitude_max: 20.0
+  force_heuristic_describing_function: false
+
+sphere_tests:
+  enabled: true
+  equilibrium_selection: "all"
+  radii: [1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5]
+  samples_initial: 20
+  samples_growth_factor: 1.0
+  directions_mode: "sphere_random"
+  random_seed: 42
+  t_final: 80.0
+  t_burn: 20.0
+  h: 0.01
+
+hiddenness:
+  required_radii: [1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5]
+  strict_all_equilibria: true
+  allow_numerical_failures: false
+  min_ref_tail_points: 1000
+  min_probe_tail_points: 200
+  target_match_metric: "nn_percentile"
+  target_match_tol: 0.5
+  target_match_nn_percentile: 90.0

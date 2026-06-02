@@ -243,6 +243,18 @@ _DEFAULTS: Dict[str, Any] = {
     "robustness": {
         "enabled": False,
     },
+
+    # ── Hiddenness contract parameters ───────────────────────────────────────
+    "hiddenness": {
+        "required_radii": [1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5],
+        "strict_all_equilibria": True,
+        "allow_numerical_failures": False,
+        "min_ref_tail_points": 1000,
+        "min_probe_tail_points": 200,
+        "target_match_metric": "nn_percentile",
+        "target_match_tol": 0.5,
+        "target_match_nn_percentile": 90.0,
+    },
 }
 
 # ---------------------------------------------------------------------------
@@ -367,7 +379,7 @@ def _flatten_hierarchical(raw: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
                                                           _DEFAULTS["max_seed_candidates_to_plot"])
 
     # nested sections passed through directly
-    for section in ("continuation", "sphere_tests", "basin", "bifurcation", "early_stop", "attractor_plots", "robustness"):
+    for section in ("continuation", "sphere_tests", "basin", "bifurcation", "early_stop", "attractor_plots", "robustness", "hiddenness"):
         if section in raw:
             flat[section] = raw[section]
 
@@ -532,6 +544,12 @@ def _normalize(cfg: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
     for lk in ("x_interval", "y_interval", "z_interval"):
         if lk in basin and basin[lk] is not None:
             basin[lk] = [float(v) for v in basin[lk]]
+
+    hid = cfg.get("hiddenness", {})
+    _cast_nested_floats(hid, ["target_match_tol", "target_match_nn_percentile"])
+    _cast_nested_ints(hid, ["min_ref_tail_points", "min_probe_tail_points"])
+    if "required_radii" in hid and hid["required_radii"] is not None:
+        hid["required_radii"] = [float(r) for r in hid["required_radii"]]
 
     bif = cfg.get("bifurcation", {})
     _cast_nested_floats(bif, ["discard_time", "sample_time", "h"])

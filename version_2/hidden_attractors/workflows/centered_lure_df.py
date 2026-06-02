@@ -740,6 +740,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         final_status = "converged_to_equilibrium"
         
     seed_reached_attractor = bool(final_traj is not None and final_status == "ok" and len(ref_tail) > 10)
+    sphere_results = {"probe_runs": [], "summary_records": []}
     
     if (config["run_sphere_tests"] or config["run_hiddenness_tests"]):
         if seed_reached_attractor:
@@ -769,6 +770,35 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
             verdict = "df_seed_not_found"
     else:
         verdict = "df_seed_found" if seed_reached_attractor else "df_seed_not_found"
+
+    # Evaluate Hiddenness Contract
+    from ..verification.hiddenness_contract import verify_hiddenness_contract
+    hid_cfg = config.get("hiddenness", {})
+    required_radii = hid_cfg.get("required_radii", [1e-2, 1e-3, 1e-4, 1e-5])
+    strict_all_eq = hid_cfg.get("strict_all_equilibria", True)
+    allow_num_fail = hid_cfg.get("allow_numerical_failures", False)
+    min_ref_pts = hid_cfg.get("min_ref_tail_points", 1000)
+    min_probe_pts = hid_cfg.get("min_probe_tail_points", 200)
+    target_metric = hid_cfg.get("target_match_metric", "nn_percentile")
+    target_tol = hid_cfg.get("target_match_tol", 0.5)
+    target_nn_pct = hid_cfg.get("target_match_nn_percentile", 90.0)
+
+    contract_res = verify_hiddenness_contract(
+        equilibria=equilibria,
+        sphere_summary_records=sphere_results.get("summary_records", []),
+        probe_runs=sphere_results.get("probe_runs", []),
+        required_radii=required_radii,
+        require_all_equilibria=strict_all_eq,
+        allow_numerical_failures=allow_num_fail,
+        require_candidate_attractor=True,
+        seed_reached_attractor=seed_reached_attractor,
+        min_ref_tail_points=min_ref_pts,
+        min_probe_tail_points=min_probe_pts,
+        ref_tail_size=len(ref_tail) if ref_tail is not None else 0,
+        target_match_metric=target_metric,
+        target_match_tol=target_tol,
+        target_match_nn_percentile=target_nn_pct,
+    )
         
     basin_data_accum = []
     if config["run_basin_slices"] and seed_reached_attractor:
@@ -927,7 +957,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         target_lam=target_lam,
         modal_res=modal_res,
         norm_res=norm_res,
-        marginal_eqs=marginal_eqs
+        marginal_eqs=marginal_eqs,
+        contract_res=contract_res
     )
     _save_summary(summary, output_dir)
     
@@ -964,7 +995,8 @@ def _build_summary_dict(
     target_lam: Optional[complex],
     modal_res: Optional[float],
     norm_res: Optional[float],
-    marginal_eqs: Optional[List[np.ndarray]] = None
+    marginal_eqs: Optional[List[np.ndarray]] = None,
+    contract_res: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     n_candidates = len(candidates)
     target_hits = sum(1 for r in probe_results if r["destination"] == "target_attractor")
@@ -1012,7 +1044,12 @@ def _build_summary_dict(
         
     history_policy = "full_caputo" if config.get("memory_policy") == "full_caputo" else ("finite_window" if config.get("memory_policy") == "finite_window" else "none")
 
-    return {
+    # Determine status verdict
+    status_verdict = verdict
+    if config.get("run_hiddenness_tests", False) and contract_res is not None:
+        status_verdict = contract_res["hiddenness_status"]
+
+    summary = {
         "system_id": config["system_id"],
         "transfer_mode": config["transfer_mode"],
         "seed_strategy": config["seed_strategy"],
@@ -1052,9 +1089,37 @@ def _build_summary_dict(
         "target_hits_from_equilibria": target_hits,
         "target_hits_from_seed": 1 if final_traj is not None and final_class == "simulation_bounded" else 0,
         "basin_slices_enabled": config["run_basin_slices"],
-        "status": verdict,
+        "status": status_verdict,
         "notes": notes
     }
+
+    # Merge contract verification fields
+    if contract_res is not None:
+        for k_field, v_field in contract_res.items():
+            summary[k_field] = v_field
+    else:
+        summary.update({
+            "hiddenness_status": "NOT_RUN",
+            "hidden_verified": False,
+            "hidden_compatible": False,
+            "self_excited_contact_detected": False,
+            "protocol_complete": False,
+            "equilibria_required": [],
+            "equilibria_tested": [],
+            "missing_equilibria": [],
+            "radii_tested_by_equilibrium": {},
+            "missing_radii_by_equilibrium": {},
+            "target_hits_total": 0,
+            "numerical_failures_total": 0,
+            "other_attractor_total": 0,
+            "divergence_total": 0,
+            "stable_equilibrium_total": 0,
+            "samples_total": 0,
+            "failed_requirements": [],
+            "methodological_note": ""
+        })
+
+    return summary
 
 def _save_summary(summary: Dict[str, Any], output_dir: str) -> None:
     json_path = os.path.join(output_dir, "summary.json")
