@@ -19,6 +19,7 @@ nav:
   - Systems: systems.md
   - Integer Chua q=1 Reference: integer_chua_reference.md
   - Fractional Chua q=0.9998 Algebra: fractional_chua_algebra_validation.md
+  - Scientific Software Validation: software_scientific_validation.md
   - Fractional Chua Arctan Wu2023: chua_arctan_wu2023_methodology.md
   - Dynamical Analysis: dynamical_analysis.md
   - Poincare Diagnostics: poincare_diagnostics.md

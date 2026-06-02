@@ -75,8 +75,18 @@ WEYL_CAPUTO_NOTE = (
 )
 
 
+LURE_TRANSFER_CONVENTION = "c^T (P - s I)^(-1) b"
+LURE_TRANSFER_NORMALIZED_CONVENTION = "c^T (s I - P)^(-1) b = -W_code(s)"
+
+
 def lure_transfer_function(omega: float, q: float, system: LureSystem) -> complex:
-    """Return ``c^T (A - (i\u03c9)^q I)^{-1} b`` for a generic Lur'e system.
+    """Return ``c^T (P - (i\u03c9)^q I)^{-1} b`` for a generic Lur'e system.
+
+    This API preserves the Kuznetsov integer-reference convention used by the
+    promoted MATLAB/Wolfram artifacts. The normalized report convention
+    ``c^T (s I - P)^{-1} b`` is its negative. Therefore ``1 + k*W_code = 0``
+    and ``1 - k*W_report = 0`` are equivalent closures, not interchangeable
+    formulas with the same gain sign.
 
     Parameters
     ----------
@@ -97,7 +107,7 @@ def lure_transfer_function(omega: float, q: float, system: LureSystem) -> comple
     ValueError
         If evaluating with integer order when q != 1.0 or if system is fractional and q = 1.0.
     numpy.linalg.LinAlgError
-        If ``A - (i omega)^q I`` is singular.
+        If ``P - (i omega)^q I`` is singular.
     """
 
     q_val = float(q)
@@ -114,7 +124,7 @@ def lure_transfer_function(omega: float, q: float, system: LureSystem) -> comple
     lhs = matrix - s * np.eye(
         system.dimension, dtype=complex_dtype
     )
-    value = (cvec.reshape(1, -1) @ np.linalg.inv(lhs) @ bvec.reshape(-1, 1))[0, 0]
+    value = (cvec.reshape(1, -1) @ np.linalg.solve(lhs, bvec.reshape(-1, 1)))[0, 0]
     return complex_dtype(value)
 
 
@@ -660,6 +670,8 @@ __all__ = [
     "lure_describing_function",
     "lure_machado_describing_function",
     "lure_transfer_function",
+    "LURE_TRANSFER_CONVENTION",
+    "LURE_TRANSFER_NORMALIZED_CONVENTION",
     "reconstruct_biased_lure_seed_from_system",
     "solve_lure_amplitude_from_gain",
     "WEYL_CAPUTO_NOTE",

@@ -18,6 +18,8 @@ Mathematical conventions enforced here:
   * Fractional transfer function W_hat_q(z) = r^T (z I - P)^{-1} b
     is evaluated at z = (j omega)^q = omega^q exp(j q pi/2).
     Never use z = j*omega when q != 1.
+    This normalized report convention is the negative of the generic
+    seed-generation API convention W_code(z) = r^T (P - z I)^{-1} b.
   * Matrix S is built from the similarity relation P0 S = S Hq,
     NOT from eigenvectors of P0.
   * X_seed = a0 * S[:, 0]  (first real column of S).
@@ -96,7 +98,8 @@ def compute_transfer_fractional_py(
 ) -> complex:
     """W_q(j omega) = W_hat_q(z)  where  z = (j omega)^q.
 
-    This is the ONLY correct form for fractional systems.
+    This validator uses the normalized report convention. The generic
+    seed-generation API preserves the opposite-sign Kuznetsov convention.
     Never substitute z = j*omega when q != 1.
 
     Parameters
@@ -727,4 +730,3 @@ def compare_all(output_dir: str | Path, system_id: str) -> dict:
         json.dump(consistency_summary, f, indent=2, ensure_ascii=False)
 
     return results
-
