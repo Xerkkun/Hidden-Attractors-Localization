@@ -1,7 +1,7 @@
 {
   "stage": "F5.3_psd_fft",
   "status": "completed_structured_outputs",
-  "generated_at_utc": "2026-06-02T09:49:27.915099+00:00",
+  "generated_at_utc": "2026-06-02T09:56:27.448351+00:00",
   "fast": true,
   "cases_total": 3,
   "standardized_outputs": true,
