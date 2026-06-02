@@ -17,6 +17,15 @@ helpers, native C/EFORK backends, and reproducible workflows live under
 compatibility commands while their reusable pieces are migrated into package
 modules.
 
+## Scientific Scope
+
+The maintained scientific scope is commensurate-order Caputo fractional
+systems with an explicit scalar Lur'e representation and an auditable
+equilibrium, solver, continuation and basin-neighborhood contract. Arbitrary
+nonlinear systems and unsupported fractional contracts are out of scope.
+Visual plots and diagnostics do not certify hiddenness. See
+[Scientific Scope](docs/scientific_scope.md).
+
 ## Features
 
 - Chua non-smooth and arctan model definitions and equilibrium helpers.
@@ -235,7 +244,7 @@ python -m mkdocs serve
 
 The site navigation is defined in `mkdocs.yml`.
 
-## Scientific Scope
+## Numerical Contract
 
 The library records numerical contracts. It does not turn finite-time
 simulations into mathematical proofs of hiddenness. Any reported result must

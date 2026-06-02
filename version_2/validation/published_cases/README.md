@@ -8,7 +8,7 @@ Este directorio contiene las configuraciones y herramientas para validar y repro
 
 | Identificador del Caso | Autores | Título | Revista / Referencia | Año | Volumen / Art. No. | DOI |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `kuznetsov2017_chua_integer` | N. V. Kuznetsov, O. A. Kuznetsova, G. A. Leonov, T. N. Mokaev, N. V. Stankevich | Localization of hidden Chua attractors by the describing function method | *IFAC-PapersOnLine* (arXiv:1705.02311) | 2017 | 50 (1), 11956-11961 | [10.1016/j.ifacol.2017.08.1633](https://doi.org/10.1016/j.ifacol.2017.08.1633) |
+| `kuznetsov2017_chua_integer` | N. V. Kuznetsov, O. A. Kuznetsova, G. A. Leonov, T. N. Mokaev, N. V. Stankevich | Hidden attractors localization in Chua circuit via the describing function method | *IFAC-PapersOnLine* (arXiv:1705.02311) | 2017 | 50 (1), 2651-2656 | [10.1016/j.ifacol.2017.08.470](https://doi.org/10.1016/j.ifacol.2017.08.470) |
 | `danca2017_chua_fractional_saturation` | Marius-F. Danca | Hidden chaotic attractors in fractional-order systems | *Nonlinear Dynamics* | 2017 | 89, 577–586 | [10.1007/s11071-017-3472-7](https://doi.org/10.1007/s11071-017-3472-7) |
 | `wu2023_chua_fractional_arctan` | Xianming Wu, Longxiang Fu, Shaobo He, Zhao Yao, Huihai Wang, Jiayu Han | Hidden attractors in a new fractional-order Chua system with arctan nonlinearity and its DSP implementation | *Results in Physics* | 2023 | 52, 106866 | [10.1016/j.rinp.2023.106866](https://doi.org/10.1016/j.rinp.2023.106866) |
 

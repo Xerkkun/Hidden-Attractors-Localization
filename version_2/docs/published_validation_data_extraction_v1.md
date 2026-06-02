@@ -5,7 +5,7 @@ Este archivo concentra datos extraídos de los artículos adjuntos para configur
 
 ## kuznetsov2017_chua_integer_df
 
-**Referencia:** N. V. Kuznetsov, O. A. Kuznetsova, G. A. Leonov, T. N. Mokaev, N. V. Stankevich (2017), *Localization of hidden Chua attractors by the describing function method*.
+**Referencia:** N. V. Kuznetsov, O. A. Kuznetsova, G. A. Leonov, T. N. Mokaev, N. V. Stankevich (2017), *Hidden attractors localization in Chua circuit via the describing function method*.
 
 
 ### kuznetsov2017_case_18_hidden_chaotic

@@ -5,6 +5,9 @@ a published reference, a local numerical contract documented in the report, or
 a clearly marked utility role. This page is the first audit table for that
 policy.
 
+For the complementary article-to-function comparison and explicit scientific
+boundaries, see [Scientific Scope](scientific_scope.md).
+
 ## Core Model
 
 | Code | Purpose | Reference source |

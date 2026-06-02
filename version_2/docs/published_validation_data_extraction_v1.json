@@ -13,9 +13,9 @@
       "bibliography": {
         "authors": "N. V. Kuznetsov, O. A. Kuznetsova, G. A. Leonov, T. N. Mokaev, N. V. Stankevich",
         "year": 2017,
-        "title": "Localization of hidden Chua attractors by the describing function method",
+        "title": "Hidden attractors localization in Chua circuit via the describing function method",
         "venue": "IFAC-PapersOnLine",
-        "doi": "10.1016/j.ifacol.2017.08.1633"
+        "doi": "10.1016/j.ifacol.2017.08.470"
       },
       "system": {
         "id": "chua_integer_saturation",

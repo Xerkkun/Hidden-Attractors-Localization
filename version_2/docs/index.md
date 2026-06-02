@@ -6,6 +6,7 @@ contribution notes.
 
 ## User Guides
 
+- [Scientific Scope](scientific_scope.md)
 - [Installation](installation.md)
 - [Getting Started](getting_started.md)
 - [Examples](examples.md)

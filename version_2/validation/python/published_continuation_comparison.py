@@ -41,7 +41,7 @@ Allowed overall_status values
 
 References
 ----------
-- Kuznetsov et al. (2017): doi:10.1016/j.ifacol.2017.08.1633
+- Kuznetsov et al. (2017): doi:10.1016/j.ifacol.2017.08.470
 - Danca (2017): doi:10.1007/s11071-017-3472-7
 - Wu et al. (2023): doi:10.1016/j.rinp.2023.106866
 """

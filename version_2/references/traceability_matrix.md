@@ -33,12 +33,12 @@
 - **Verification Status**: `verified`
 
 ### `kuznetsov_2017_chua_df` - Kuznetsov Describing Function for Chua Circuit
-- **Authors**: Kuznetsov, Nikolay V. and Blagov, M. V. and Yuldashev, R. V. and Yuldashev, M. V. and Leonov, G. A.
+- **Authors**: Kuznetsov, Nikolay V. and Kuznetsova, Olga A. and Leonov, Gennady A. and Mokaev, Tatyana N. and Stankevich, Nikolay V.
 - **Year**: 2017
-- **Title**: *Localization of hidden Chua attractors by the describing function method*
+- **Title**: *Hidden attractors localization in Chua circuit via the describing function method*
 - **Journal/Venue**: IFAC-PapersOnLine
-- **DOI**: `10.1016/j.ifacol.2017.12.015`
-- **URL**: https://doi.org/10.1016/j.ifacol.2017.12.015
+- **DOI**: `10.1016/j.ifacol.2017.08.470`
+- **URL**: https://doi.org/10.1016/j.ifacol.2017.08.470
 - **Topics**: describing_function_chua, hidden_attractor_localization
 - **Verification Status**: `verified`
 
@@ -57,8 +57,8 @@
 - **Year**: 2017
 - **Title**: *Hidden Chaotic Attractors in Fractional-Order Systems*
 - **Journal/Venue**: Nonlinear Dynamics
-- **DOI**: `10.1007/s11071-017-3462-1`
-- **URL**: https://doi.org/10.1007/s11071-017-3462-1
+- **DOI**: `10.1007/s11071-017-3472-7`
+- **URL**: https://doi.org/10.1007/s11071-017-3472-7
 - **Topics**: fractional_hidden_attractors, fractional_stability, fractional_chua
 - **Verification Status**: `verified`
 
@@ -76,9 +76,9 @@
 - **Authors**: Machado, J. Tenreiro
 - **Year**: 2015
 - **Title**: *Fractional order describing functions*
-- **Journal/Venue**: Nonlinear Dynamics
-- **DOI**: `10.1007/s11071-014-1422-9`
-- **URL**: https://doi.org/10.1007/s11071-014-1422-9
+- **Journal/Venue**: Signal Processing
+- **DOI**: `10.1016/j.sigpro.2014.05.012`
+- **URL**: https://doi.org/10.1016/j.sigpro.2014.05.012
 - **Topics**: machado_fdf, describing_functions
 - **Verification Status**: `external_reference_pending`
 
@@ -93,11 +93,11 @@
 - **Verification Status**: `verified`
 
 ### `wu_2023_fractional_chua_arctan` - Wu et al. Fractional Chua with Arctan Nonlinearity
-- **Authors**: Wu, G. and Sene, N. and others
+- **Authors**: Wu, Xianming and Fu, Longxiang and He, Shaobo and Yao, Zhao and Wang, Huihai and Han, Jiayu
 - **Year**: 2023
 - **Title**: *Hidden attractors in a new fractional-order Chua system with arctan nonlinearity and its DSP implementation*
-- **Journal/Venue**: Chaos, Solitons & Fractals
-- **DOI**: `10.1016/j.chaos.2023.113941`
-- **URL**: https://doi.org/10.1016/j.chaos.2023.113941
+- **Journal/Venue**: Results in Physics
+- **DOI**: `10.1016/j.rinp.2023.106866`
+- **URL**: https://doi.org/10.1016/j.rinp.2023.106866
 - **Topics**: wu_fractional_chua_arctan, fractional_chua
 - **Verification Status**: `verified`
