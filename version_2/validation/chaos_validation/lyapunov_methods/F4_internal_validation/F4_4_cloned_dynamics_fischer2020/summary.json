@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "stage": "F4_4_cloned_dynamics_fischer2020",
+  "status": "controlled_benchmark_with_documented_discrepancies",
+  "fast_smoke_only": true,
+  "uses_existing_published_long_evidence": true,
+  "method_id": "fractional_cloned_dynamics_abm_gs_published",
+  "source_summary": "validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/validation_summary.json",
+  "source_status": "published_benchmarks_pending_discrepancy",
+  "validated": false,
+  "rows_total": 24,
+  "rows_passed_quantitative": 10,
+  "rows_passed_sign_pattern": 6,
+  "rows_failed": 8,
+  "sensitivity_runs_reused": 164,
+  "sensitivity_axes_reused": [
+    "delta",
+    "gs_policy",
+    "h",
+    "k",
+    "q1_mode",
+    "t_clone"
+  ],
+  "files": {
+    "results_csv": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_4_cloned_dynamics_fischer2020/fischer2020_f4_results.csv",
+    "sensitivity_csv": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_4_cloned_dynamics_fischer2020/fischer2020_f4_sensitivity.csv",
+    "source_classification_csv": "validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/discrepancy_diagnostics/fischer2020_row_classification.csv"
+  },
+  "certifications": {
+    "chaos_certified_by_this_pipeline": false,
+    "hiddenness_certified_by_this_pipeline": false,
+    "fractional_lyapunov_validated_by_f4": false,
+    "caputo_lyapunov_validated_by_f4": false,
+    "published_decimal_reproduction_implies_method_validation": false
+  }
+}

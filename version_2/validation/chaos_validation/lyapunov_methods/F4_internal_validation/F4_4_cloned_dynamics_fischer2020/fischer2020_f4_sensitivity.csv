@@ -1,0 +1,7 @@
+axis,runs,best_row,best_max_abs_error,improved_rows,degraded_rows,source_runs_total,reused_existing_artifact
+delta,44,"financial Incomm [0.9, 1.0, 1.0] (delta=0.01)",0.054553773594228624,3,10,164,True
+gs_policy,33,"financial Incomm [0.9, 1.0, 1.0] (orthonormalization=qr)",0.05476696278812253,0,5,164,True
+h,24,"financial Incomm [0.9, 1.0, 1.0] (h_clone=0.01)",0.05476696278812304,2,6,164,True
+k,33,"financial Incomm [0.9, 1.0, 1.0] (K=250)",0.054013542444831655,1,8,164,True
+q1_mode,2,"jerk Comm [1.0, 1.0, 1.0] (integration_mode=integer_rk4_reference)",0.2633030122369916,0,0,164,True
+t_clone,28,"jerk Comm [1.0, 1.0, 1.0] (t_clone=10)",0.025781114214319133,2,8,164,True

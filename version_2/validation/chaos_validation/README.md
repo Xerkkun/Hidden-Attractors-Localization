@@ -56,7 +56,7 @@
 | F3 | `fractional_cloned_dynamics_abm_qr` | **Implemented experimental QR variant · benchmark comparison pending** |
 | F2 | `zero_one_test` | NOT implemented |
 | F3 | PSD/FFT validation | Partial; diagnostics are not complete |
-| F4 | Boundedness checks | Pending; diagnostics are not complete |
+| F4 | Internal Lyapunov validation | **`f4_complete_with_documented_discrepancies`**; no validation promotion |
 
 ---
 
@@ -178,6 +178,16 @@ bounded sweep is required in the current scope; exact reproduction requires
 unreported protocol details or access to the authors' implementation. This
 does not certify chaos, certify hiddenness, validate F2, or promote the
 internal QR variant.
+
+## F4 - Internal Lyapunov validation
+
+F4 records controlled linear and q=1 Chua checks, reuses the existing DK2018
+and Fischer 2020 artifacts, and preserves their discrepancies. Its closure
+status is `f4_complete_with_documented_discrepancies`. This is internal
+consistency evidence only: it does not promote fractional method validation,
+certify chaos, or certify hiddenness.
+
+Outputs live under `lyapunov_methods/F4_internal_validation/`.
 
 ## F5.4 Poincare diagnostic
 

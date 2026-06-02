@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "phase": "F4_internal_validation",
+  "generated_at_utc": "2026-06-02T06:14:41.114772+00:00",
+  "status": "f4_complete_with_documented_discrepancies",
+  "fast_smoke_only": true,
+  "uses_existing_published_long_evidence": true,
+  "missing_stages": [],
+  "stage_summaries": {
+    "F4_1": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_1_integer_linear/summary.json",
+    "F4_2": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_2_integer_chua_q1/summary.json",
+    "F4_3": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_3_fractional_published_dk2018/summary.json",
+    "F4_4": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_4_cloned_dynamics_fischer2020/summary.json"
+  },
+  "method_controls": [
+    {
+      "method_id": "integer_qr_benettin",
+      "controlled_benchmark": "F4_1_integer_linear and F4_2_integer_chua_q1",
+      "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_1_integer_linear/integer_linear_sensitivity.csv",
+      "bibliographic_or_internal_reference": "Benettin et al. 1980; Wolf et al. 1985",
+      "status": "controlled_q1_checks_recorded",
+      "validated_by_f4": false
+    },
+    {
+      "method_id": "fractional_variational_abm_qr",
+      "controlled_benchmark": "F4_3 local stable synthetic full-history QR rows",
+      "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_3_fractional_published_dk2018/fractional_method_sensitivity.csv",
+      "bibliographic_or_internal_reference": "Local fixed-lower-limit history-aware QR implementation contract",
+      "status": "separate_internal_control_only_published_validation_pending",
+      "validated_by_f4": false
+    },
+    {
+      "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
+      "controlled_benchmark": "F4_3 reused DK2018 Lorenz and RF artifact",
+      "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_3_fractional_published_dk2018/dk2018_published_contract.csv",
+      "bibliographic_or_internal_reference": "Danca and Kuznetsov 2018 DOI 10.1142/S0218127418500670",
+      "status": "published_benchmarks_pending_reproduced_discrepancy",
+      "validated_by_f4": false
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "controlled_benchmark": "F4_4 reused Fischer 2020 artifact",
+      "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_4_cloned_dynamics_fischer2020/fischer2020_f4_sensitivity.csv",
+      "bibliographic_or_internal_reference": "Fischer et al. 2020 DOI 10.1016/j.apnum.2020.03.027",
+      "status": "controlled_benchmark_with_documented_discrepancies",
+      "validated_by_f4": false
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_qr",
+      "controlled_benchmark": "F4_1 q=1 diagonal QR cloned control",
+      "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_1_integer_linear/integer_linear_sensitivity.csv",
+      "bibliographic_or_internal_reference": "Internal QR comparison variant based on Fischer et al. 2020",
+      "status": "internal_experimental_variant_controlled_only",
+      "validated_by_f4": false
+    }
+  ],
+  "closure_checks": {
+    "each_method_has_controlled_benchmark": true,
+    "each_method_has_sensitivity_reference": true,
+    "each_method_has_bibliographic_or_internal_reference": true,
+    "discrepancies_preserved": true,
+    "validation_state_promoted": false
+  },
+  "certifications": {
+    "chaos_certified_by_this_pipeline": false,
+    "hiddenness_certified_by_this_pipeline": false,
+    "fractional_lyapunov_validated_by_f4": false,
+    "caputo_lyapunov_validated_by_f4": false,
+    "published_decimal_reproduction_implies_method_validation": false
+  },
+  "notes": [
+    "F4 is an internal consistency layer, not a published validation promotion.",
+    "Fast smoke controls do not replace long published quantitative runs.",
+    "DK2018 RF lambda_3 and Fischer 2020 discrepancies remain explicit.",
+    "The local full-history QR and DK2018 block-restart lanes remain separate."
+  ]
+}

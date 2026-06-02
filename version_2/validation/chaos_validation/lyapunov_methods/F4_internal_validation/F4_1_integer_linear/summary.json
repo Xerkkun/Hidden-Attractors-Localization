@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "stage": "F4_1_integer_linear",
+  "status": "controlled_linear_checks_passed",
+  "fast_smoke_only": true,
+  "methods": [
+    "integer_qr_benettin",
+    "fractional_cloned_dynamics_abm_gs_published",
+    "fractional_cloned_dynamics_abm_qr"
+  ],
+  "checks": {
+    "exact_diagonal_controls": true,
+    "integer_h_sensitivity": true,
+    "cloned_delta_sensitivity": true,
+    "all_controlled_rows_passed": true
+  },
+  "files": {
+    "results_csv": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_1_integer_linear/integer_linear_results.csv",
+    "sensitivity_csv": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_1_integer_linear/integer_linear_sensitivity.csv"
+  },
+  "certifications": {
+    "chaos_certified_by_this_pipeline": false,
+    "hiddenness_certified_by_this_pipeline": false,
+    "fractional_lyapunov_validated_by_f4": false,
+    "caputo_lyapunov_validated_by_f4": false,
+    "published_decimal_reproduction_implies_method_validation": false
+  }
+}

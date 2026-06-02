@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "stage": "F4_2_integer_chua_q1",
+  "status": "finite_bounded_with_method_differences_documented",
+  "fast_smoke_only": true,
+  "published_spectrum_claimed": false,
+  "reference_seed": {
+    "omega0": 2.039186939959001,
+    "k": 0.209867354515084,
+    "a0": 5.856145086257356,
+    "x0": [
+      5.856145086257356,
+      0.369331578246782,
+      -8.36653616833188
+    ]
+  },
+  "checks": {
+    "all_spectra_finite": true,
+    "all_trajectories_bounded": true,
+    "strict_sign_pattern_agreement": true,
+    "sign_patterns_observed": [
+      [
+        "positive",
+        "positive",
+        "negative"
+      ]
+    ],
+    "interpretation": "Loose finite-time consistency diagnostic; no published integer Chua spectrum is asserted."
+  },
+  "files": {
+    "results_csv": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_2_integer_chua_q1/integer_chua_q1_results.csv",
+    "sensitivity_csv": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_2_integer_chua_q1/integer_chua_q1_sensitivity.csv"
+  },
+  "certifications": {
+    "chaos_certified_by_this_pipeline": false,
+    "hiddenness_certified_by_this_pipeline": false,
+    "fractional_lyapunov_validated_by_f4": false,
+    "caputo_lyapunov_validated_by_f4": false,
+    "published_decimal_reproduction_implies_method_validation": false
+  }
+}

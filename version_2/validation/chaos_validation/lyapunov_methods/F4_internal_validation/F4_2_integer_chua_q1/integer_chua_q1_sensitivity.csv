@@ -1,0 +1,5 @@
+case_id,method_id,h,t_final,t_burn,computed_exponents,sign_pattern,status,trajectory_status,trajectory_bounded,max_state_norm,orthonormalization,delta,t_clone,k_blocks
+integer_chua_q1_h_0.02,integer_qr_benettin,0.02,15.0,3.0,"[0.2569373710226747,0.09360794683656876,-1.3806817294016984]","[""positive"",""positive"",""negative""]",ok,ok,True,10.848197860051064,,,,
+integer_chua_q1_h_0.01,integer_qr_benettin,0.01,15.0,3.0,"[0.14287731376839943,0.08488248638877861,-1.2689782390589595]","[""positive"",""positive"",""negative""]",ok,ok,True,10.885626627899185,,,,
+integer_chua_q1_cloned_gs_modified_delta_0.01,fractional_cloned_dynamics_abm_gs_published,0.01,,,"[0.6780898450741754,0.09368431208107975,-1.8026351187783791]","[""positive"",""positive"",""negative""]",ok,,True,,gs_modified,0.01,0.5,8
+integer_chua_q1_cloned_gs_modified_delta_0.001,fractional_cloned_dynamics_abm_gs_published,0.01,,,"[0.672400442742228,0.09641053510981468,-1.7973349578774325]","[""positive"",""positive"",""negative""]",ok,,True,,gs_modified,0.001,0.5,8

@@ -1,0 +1,44 @@
+{
+  "method_controls": [
+    {
+      "method_id": "integer_qr_benettin",
+      "controlled_benchmark": "F4_1_integer_linear and F4_2_integer_chua_q1",
+      "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_1_integer_linear/integer_linear_sensitivity.csv",
+      "bibliographic_or_internal_reference": "Benettin et al. 1980; Wolf et al. 1985",
+      "status": "controlled_q1_checks_recorded",
+      "validated_by_f4": false
+    },
+    {
+      "method_id": "fractional_variational_abm_qr",
+      "controlled_benchmark": "F4_3 local stable synthetic full-history QR rows",
+      "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_3_fractional_published_dk2018/fractional_method_sensitivity.csv",
+      "bibliographic_or_internal_reference": "Local fixed-lower-limit history-aware QR implementation contract",
+      "status": "separate_internal_control_only_published_validation_pending",
+      "validated_by_f4": false
+    },
+    {
+      "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
+      "controlled_benchmark": "F4_3 reused DK2018 Lorenz and RF artifact",
+      "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_3_fractional_published_dk2018/dk2018_published_contract.csv",
+      "bibliographic_or_internal_reference": "Danca and Kuznetsov 2018 DOI 10.1142/S0218127418500670",
+      "status": "published_benchmarks_pending_reproduced_discrepancy",
+      "validated_by_f4": false
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "controlled_benchmark": "F4_4 reused Fischer 2020 artifact",
+      "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_4_cloned_dynamics_fischer2020/fischer2020_f4_sensitivity.csv",
+      "bibliographic_or_internal_reference": "Fischer et al. 2020 DOI 10.1016/j.apnum.2020.03.027",
+      "status": "controlled_benchmark_with_documented_discrepancies",
+      "validated_by_f4": false
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_qr",
+      "controlled_benchmark": "F4_1 q=1 diagonal QR cloned control",
+      "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_1_integer_linear/integer_linear_sensitivity.csv",
+      "bibliographic_or_internal_reference": "Internal QR comparison variant based on Fischer et al. 2020",
+      "status": "internal_experimental_variant_controlled_only",
+      "validated_by_f4": false
+    }
+  ]
+}

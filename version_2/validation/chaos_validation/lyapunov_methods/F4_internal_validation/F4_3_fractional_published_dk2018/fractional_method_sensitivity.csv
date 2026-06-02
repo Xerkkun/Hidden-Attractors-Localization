@@ -1,0 +1,3 @@
+case_id,method_id,q,h,t_final,history_aware_qr,computed_exponents,status,all_finite,all_nonpositive
+full_history_qr_synthetic_stable_h_0.02,fractional_variational_abm_qr,0.9,0.02,0.3,True,[-1.1506214948384785],ok,True,True
+full_history_qr_synthetic_stable_h_0.01,fractional_variational_abm_qr,0.9,0.01,0.3,True,[-1.1506705916583635],ok,True,True

@@ -108,6 +108,23 @@ recorded on 2026-05-31 passed Lorenz and left RF pending because only
 `lambda_3` exceeds absolute tolerance `0.05`. This does not promote the local
 full-history QR method.
 
+## F4 Internal Lyapunov Validation
+
+F4 assembles controlled method-level checks under
+`validation/chaos_validation/lyapunov_methods/F4_internal_validation/`.
+The fast runner uses short internal controls and reuses existing published
+artifacts:
+
+```powershell
+python .\validation\python\run_f4_internal_lyapunov_validation.py --all --fast --use-existing
+```
+
+The closure state `f4_complete_with_documented_discrepancies` records that
+every implemented method has a control, sensitivity reference, and
+bibliographic or internal reference. It does not promote fractional method
+validation. DK2018 RF `lambda_3` and Fischer 2020 discrepancies remain
+explicit. See [F4 Internal Lyapunov Validation](f4_internal_lyapunov_validation.md).
+
 ## F5.4 Poincare Diagnostics
 
 F5.4 records standardized Poincare crossing outputs under

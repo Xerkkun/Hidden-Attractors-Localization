@@ -23,6 +23,7 @@ nav:
   - Dynamical Analysis: dynamical_analysis.md
   - Poincare Diagnostics: poincare_diagnostics.md
   - Cloned Dynamics Lyapunov Indicators: lyapunov_cloned_dynamics.md
+  - F4 Internal Lyapunov Validation: f4_internal_lyapunov_validation.md
   - Validation Evidence: validation_evidence.md
   - EFORK-3 Published Validation: efork3_validation.md
   - External Tools: external_tools.md

@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "stage": "F4_3_fractional_published_dk2018",
+  "status": "controlled_benchmark_with_documented_rf_lambda_3_discrepancy",
+  "fast_smoke_only": true,
+  "uses_existing_published_long_evidence": true,
+  "published_lane": {
+    "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
+    "source_summary": "validation/chaos_validation/lyapunov_methods/fractional_variational_dk2018_block_restart_abm_gs_published/validation_summary.json",
+    "source_status": "published_benchmarks_pending_reproduced_discrepancy",
+    "lorenz_status": "published_benchmark_passed_quantitative",
+    "rabinovich_fabrikant_status": "published_benchmark_failed",
+    "documented_discrepancy": "RF lambda_3 exceeds the absolute tolerance."
+  },
+  "local_full_history_qr_lane": {
+    "method_id": "fractional_variational_abm_qr",
+    "status": "separate_internal_synthetic_control_only",
+    "validated_against_dk2018_published_lane": false,
+    "sensitivity_axis": "h"
+  },
+  "files": {
+    "results_csv": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_3_fractional_published_dk2018/dk2018_published_results.csv",
+    "published_contract_csv": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_3_fractional_published_dk2018/dk2018_published_contract.csv",
+    "sensitivity_csv": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_3_fractional_published_dk2018/fractional_method_sensitivity.csv"
+  },
+  "certifications": {
+    "chaos_certified_by_this_pipeline": false,
+    "hiddenness_certified_by_this_pipeline": false,
+    "fractional_lyapunov_validated_by_f4": false,
+    "caputo_lyapunov_validated_by_f4": false,
+    "published_decimal_reproduction_implies_method_validation": false
+  }
+}

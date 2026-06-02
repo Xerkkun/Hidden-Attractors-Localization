@@ -405,6 +405,22 @@ article or access to the authors' implementation. No further bounded sweep
 is required in the current scope. This closure does not certify chaos,
 certify hiddenness, validate F2, or promote the internal QR variant.
 
+## F4 - Internal Lyapunov validation
+
+F4 adds a conservative internal consistency layer across the implemented
+Lyapunov families. It runs exact diagonal controls and q=1 Chua comparisons,
+then reuses the existing DK2018 and Fischer 2020 artifacts. It does not rerun
+long published sweeps by default.
+
+The generated closure state is
+`f4_complete_with_documented_discrepancies`: each method has a controlled
+benchmark, a sensitivity reference, and a bibliographic or internal reference.
+This does not promote fractional method validation. DK2018 RF `lambda_3` and
+the Fischer 2020 discrepancies remain explicit. The local full-history QR lane
+remains separate from the DK2018 block-restart reproduction lane.
+
+See [F4 Internal Lyapunov Validation](f4_internal_lyapunov_validation.md).
+
 ## F5.4 Poincare diagnostic
 
 Poincare outputs are complementary finite-time geometry, not Lyapunov
