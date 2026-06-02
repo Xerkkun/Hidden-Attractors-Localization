@@ -150,3 +150,25 @@ readiness only. It does not certify chaos, hiddenness, or exact periodic
 orbits in Caputo systems, and it does not automatically promote the separate
 official protocol diagnostics stage. See
 [F5 Dynamics Diagnostics](f5_dynamics_diagnostics.md).
+
+## F6 And F7 Integration Layers
+
+F6 combines F5, the Lyapunov registry, available case-specific spectra, and
+optional F4 metadata into conservative per-case candidate labels:
+
+```powershell
+python .\validation\python\run_integrated_chaos_validator.py
+```
+
+F7 compares method applicability, validation state, missing results, and
+diagnostic conflicts:
+
+```powershell
+python .\validation\python\run_method_comparison.py
+```
+
+These integration layers preserve the separation between full-history Caputo
+QR, DK2018 block-restart, Fischer published GS, and the experimental QR lane.
+They do not certify chaos, hiddenness, or fractional Lyapunov methods. See
+[F6 Integrated Chaos Validator](f6_integrated_chaos_validator.md) and
+[F7 Method Comparison](f7_method_comparison.md).

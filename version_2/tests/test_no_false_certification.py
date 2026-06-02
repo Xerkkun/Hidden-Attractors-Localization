@@ -59,3 +59,23 @@ def test_f5_outputs_have_no_false_certification() -> None:
         '"hidden_verified": true',
     ):
         assert forbidden not in serialized
+
+
+def test_f6_f7_outputs_have_no_false_certification() -> None:
+    root = PROJECT_ROOT / "validation" / "chaos_validation"
+    serialized = "\n".join(
+        path.read_text(encoding="utf-8").lower()
+        for folder in ("integrated_chaos_validator", "method_comparison")
+        for path in (root / folder).rglob("*.json")
+    )
+    for forbidden in (
+        '"integrated_validator_proves_chaos": true',
+        '"method_comparison_proves_chaos": true',
+        '"chaos_verified": true',
+        '"hidden_verified": true',
+        '"f6_chaos_proof": true',
+        '"f7_chaos_proof": true',
+        '"fractional_lyapunov_validated": true',
+        '"caputo_lyapunov_validated": true',
+    ):
+        assert forbidden not in serialized

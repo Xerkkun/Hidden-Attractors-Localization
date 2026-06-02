@@ -1,0 +1,712 @@
+{
+  "stage": "F6_integrated_chaos_validator",
+  "status": "completed_non_certifying_integration",
+  "generated_at_utc": "2026-06-02T07:06:10.525020+00:00",
+  "inputs": {
+    "f5_summary": "validation/chaos_validation/dynamics_diagnostics/f5_diagnostics_summary.json",
+    "boundedness_summary": "validation/chaos_validation/dynamics_diagnostics/boundedness/boundedness_diagnostics_summary.json",
+    "zero_one_summary": "validation/chaos_validation/dynamics_diagnostics/zero_one/zero_one_diagnostics_summary.json",
+    "psd_fft_summary": "validation/chaos_validation/dynamics_diagnostics/psd_fft/psd_fft_diagnostics_summary.json",
+    "poincare_summary": "validation/chaos_validation/dynamics_diagnostics/poincare/poincare_diagnostics_summary.json",
+    "lyapunov_registry": "hidden_attractors/analysis/lyapunov_methods.py",
+    "lyapunov_validation_summaries": {
+      "fractional_variational_abm_qr": {
+        "path": "validation/chaos_validation/lyapunov_methods/fractional_variational_abm_qr_published/validation_summary.json",
+        "available": true,
+        "status": "published_benchmarks_pending"
+      },
+      "fractional_variational_dk2018_block_restart_abm_gs": {
+        "path": "validation/chaos_validation/lyapunov_methods/fractional_variational_dk2018_block_restart_abm_gs_published/validation_summary.json",
+        "available": true,
+        "status": "published_benchmarks_pending_reproduced_discrepancy"
+      },
+      "fractional_cloned_dynamics_abm_gs_published": {
+        "path": "validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/validation_summary.json",
+        "available": true,
+        "status": "published_benchmarks_pending_discrepancy"
+      }
+    },
+    "f4_summary": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/f4_internal_validation_summary.json"
+  },
+  "f4_status": "f4_complete_with_documented_discrepancies",
+  "cases_total": 3,
+  "cases": [
+    {
+      "case_id": "chua_integer_q1_reference",
+      "integrated_status": "mixed_diagnostics_inconclusive",
+      "decision_reason": "F5 indicators conflict or PSD/FFT remains inconclusive",
+      "chaos_verified": false,
+      "hidden_verified": false,
+      "hiddenness_evaluated": false,
+      "hiddenness_certified": false,
+      "evidence": {
+        "f5_combined_status": "mixed_diagnostics_inconclusive",
+        "boundedness_status": "bounded_candidate",
+        "zero_one_status": "zero_one_regular_candidate",
+        "zero_one_K_global": -0.017314593890187427,
+        "psd_fft_status": "spectral_inconclusive",
+        "peak_dominance_max": 0.5015338877259724,
+        "poincare_status": "cloud_like",
+        "poincare_crossing_count": 19,
+        "lyapunov_methods": [
+          {
+            "method_id": "integer_qr_benettin",
+            "applicable": true,
+            "implemented": true,
+            "validated": true,
+            "validated_against_published_benchmarks": true,
+            "benchmark_status": "validated_against_published_benchmarks",
+            "q_support": "q=1 only",
+            "lambda_max": 0.187455926182096,
+            "full_spectrum": [
+              0.187455926182096,
+              0.003768512148811471,
+              -1.201999617068561
+            ],
+            "sign_pattern": [
+              "positive",
+              "positive",
+              "negative"
+            ],
+            "finite_time_local": true,
+            "memory_protocol": "not_applicable",
+            "warnings": [
+              "This routine is not a validated Caputo fractional Lyapunov method. It is restricted to q=1. Fractional Caputo spectra require a dedicated extended-memory variational method.",
+              "Finite-time local exponents: convergence depends on integration length and step size.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false"
+            ],
+            "result_status": "available_finite_time_local",
+            "lambda_class": "positive_lambda_max"
+          },
+          {
+            "method_id": "fractional_variational_abm_qr",
+            "applicable": false,
+            "implemented": true,
+            "validated": false,
+            "validated_against_published_benchmarks": false,
+            "benchmark_status": "published_benchmarks_pending",
+            "q_support": "0 < q < 1",
+            "lambda_max": null,
+            "full_spectrum": null,
+            "sign_pattern": null,
+            "finite_time_local": true,
+            "memory_protocol": "fixed_lower_limit_full_history_qr",
+            "warnings": [
+              "F2 \u2014 implemented, NOT yet validated against published benchmarks.",
+              "validated_against_published_benchmarks: false.",
+              "synthetic benchmark infrastructure available",
+              "published benchmark validation pending unless completed",
+              "does not certify chaos",
+              "does not certify hiddenness",
+              "Results are finite-time local Lyapunov exponent estimates, NOT asymptotic proofs.",
+              "Caputo memory: history-aware QR transforms the entire stored variational history at each reorthonormalisation step (history_aware_qr=True).",
+              "If history_aware_qr=False (block-restart), method is NOT full-memory Caputo-aware; label results accordingly.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false",
+              "Not validated for non-smooth systems (e.g., Chua saturation); derivative undefined at switching surfaces."
+            ],
+            "result_status": "not_applicable",
+            "lambda_class": "unavailable"
+          },
+          {
+            "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
+            "applicable": false,
+            "implemented": true,
+            "validated": false,
+            "validated_against_published_benchmarks": false,
+            "benchmark_status": "published_benchmarks_pending_reproduced_discrepancy",
+            "q_support": "0 < q < 1",
+            "lambda_max": null,
+            "full_spectrum": null,
+            "sign_pattern": null,
+            "finite_time_local": true,
+            "memory_protocol": "dk2018_block_restart_abm_gs",
+            "warnings": [
+              "Published-value reproduction lane; distinct from fixed-lower-limit full-history Caputo QR.",
+              "Passing this lane does not validate fractional_variational_abm_qr.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false"
+            ],
+            "result_status": "not_applicable",
+            "lambda_class": "unavailable"
+          },
+          {
+            "method_id": "fractional_cloned_dynamics_abm_gs_published",
+            "applicable": true,
+            "implemented": true,
+            "validated": false,
+            "validated_against_published_benchmarks": false,
+            "benchmark_status": "published_benchmarks_pending_discrepancy",
+            "q_support": "0 < q <= 1; commensurate and component-wise incommensurate orders",
+            "lambda_max": 0.41564554031715994,
+            "full_spectrum": [
+              0.41564554031715994,
+              0.045449134361651274,
+              -1.3597302209452222
+            ],
+            "sign_pattern": [
+              "positive",
+              "positive",
+              "negative"
+            ],
+            "finite_time_local": true,
+            "memory_protocol": "published_block_restart",
+            "warnings": [
+              "F3 - implemented, NOT yet validated against published benchmarks.",
+              "Published reproduction lane with ABM predictor-corrector, modified Gram-Schmidt, and published_block_restart memory.",
+              "No Jacobian or variational system is used.",
+              "Finite-time local Lyapunov indicators only.",
+              "Fractional results are not a full-memory Caputo-aware claim.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false"
+            ],
+            "result_status": "available_finite_time_local",
+            "lambda_class": "positive_lambda_max"
+          },
+          {
+            "method_id": "fractional_cloned_dynamics_abm_qr",
+            "applicable": true,
+            "implemented": true,
+            "validated": false,
+            "validated_against_published_benchmarks": false,
+            "benchmark_status": "internal_variant_pending",
+            "q_support": "0 < q <= 1; commensurate and component-wise incommensurate orders",
+            "lambda_max": 0.4156455403171601,
+            "full_spectrum": [
+              0.4156455403171601,
+              0.04544913436165136,
+              -1.3597302209452231
+            ],
+            "sign_pattern": [
+              "positive",
+              "positive",
+              "negative"
+            ],
+            "finite_time_local": true,
+            "memory_protocol": "experimental_qr_block_restart",
+            "warnings": [
+              "F3 internal QR variant - experimental and NOT validated.",
+              "Compare signs and trends against the published GS lane, not decimal agreement.",
+              "No Jacobian or variational system is used.",
+              "Finite-time local Lyapunov indicators only.",
+              "Fractional results are not a full-memory Caputo-aware claim.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false"
+            ],
+            "result_status": "available_finite_time_local",
+            "lambda_class": "positive_lambda_max"
+          }
+        ],
+        "f4_status": "f4_complete_with_documented_discrepancies"
+      }
+    },
+    {
+      "case_id": "danca2017_chua_fractional_saturation_q09998",
+      "integrated_status": "mixed_diagnostics_inconclusive",
+      "decision_reason": "F5 indicators conflict or PSD/FFT remains inconclusive",
+      "chaos_verified": false,
+      "hidden_verified": false,
+      "hiddenness_evaluated": false,
+      "hiddenness_certified": false,
+      "evidence": {
+        "f5_combined_status": "mixed_diagnostics_inconclusive",
+        "boundedness_status": "bounded_candidate",
+        "zero_one_status": "zero_one_regular_candidate",
+        "zero_one_K_global": 0.02144481246218011,
+        "psd_fft_status": "spectral_inconclusive",
+        "peak_dominance_max": 0.5821832574043466,
+        "poincare_status": "cloud_like",
+        "poincare_crossing_count": 92,
+        "lyapunov_methods": [
+          {
+            "method_id": "integer_qr_benettin",
+            "applicable": false,
+            "implemented": true,
+            "validated": true,
+            "validated_against_published_benchmarks": true,
+            "benchmark_status": "validated_against_published_benchmarks",
+            "q_support": "q=1 only",
+            "lambda_max": null,
+            "full_spectrum": null,
+            "sign_pattern": null,
+            "finite_time_local": true,
+            "memory_protocol": "not_applicable",
+            "warnings": [
+              "This routine is not a validated Caputo fractional Lyapunov method. It is restricted to q=1. Fractional Caputo spectra require a dedicated extended-memory variational method.",
+              "Finite-time local exponents: convergence depends on integration length and step size.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false"
+            ],
+            "result_status": "not_applicable",
+            "lambda_class": "unavailable"
+          },
+          {
+            "method_id": "fractional_variational_abm_qr",
+            "applicable": true,
+            "implemented": true,
+            "validated": false,
+            "validated_against_published_benchmarks": false,
+            "benchmark_status": "published_benchmarks_pending",
+            "q_support": "0 < q < 1",
+            "lambda_max": null,
+            "full_spectrum": null,
+            "sign_pattern": null,
+            "finite_time_local": true,
+            "memory_protocol": "fixed_lower_limit_full_history_qr",
+            "warnings": [
+              "F2 \u2014 implemented, NOT yet validated against published benchmarks.",
+              "validated_against_published_benchmarks: false.",
+              "synthetic benchmark infrastructure available",
+              "published benchmark validation pending unless completed",
+              "does not certify chaos",
+              "does not certify hiddenness",
+              "Results are finite-time local Lyapunov exponent estimates, NOT asymptotic proofs.",
+              "Caputo memory: history-aware QR transforms the entire stored variational history at each reorthonormalisation step (history_aware_qr=True).",
+              "If history_aware_qr=False (block-restart), method is NOT full-memory Caputo-aware; label results accordingly.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false",
+              "Not validated for non-smooth systems (e.g., Chua saturation); derivative undefined at switching surfaces."
+            ],
+            "result_status": "unavailable_for_case",
+            "lambda_class": "unavailable"
+          },
+          {
+            "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
+            "applicable": true,
+            "implemented": true,
+            "validated": false,
+            "validated_against_published_benchmarks": false,
+            "benchmark_status": "published_benchmarks_pending_reproduced_discrepancy",
+            "q_support": "0 < q < 1",
+            "lambda_max": null,
+            "full_spectrum": null,
+            "sign_pattern": null,
+            "finite_time_local": true,
+            "memory_protocol": "dk2018_block_restart_abm_gs",
+            "warnings": [
+              "Published-value reproduction lane; distinct from fixed-lower-limit full-history Caputo QR.",
+              "Passing this lane does not validate fractional_variational_abm_qr.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false"
+            ],
+            "result_status": "unavailable_for_case",
+            "lambda_class": "unavailable"
+          },
+          {
+            "method_id": "fractional_cloned_dynamics_abm_gs_published",
+            "applicable": true,
+            "implemented": true,
+            "validated": false,
+            "validated_against_published_benchmarks": false,
+            "benchmark_status": "published_benchmarks_pending_discrepancy",
+            "q_support": "0 < q <= 1; commensurate and component-wise incommensurate orders",
+            "lambda_max": null,
+            "full_spectrum": null,
+            "sign_pattern": null,
+            "finite_time_local": true,
+            "memory_protocol": "published_block_restart",
+            "warnings": [
+              "F3 - implemented, NOT yet validated against published benchmarks.",
+              "Published reproduction lane with ABM predictor-corrector, modified Gram-Schmidt, and published_block_restart memory.",
+              "No Jacobian or variational system is used.",
+              "Finite-time local Lyapunov indicators only.",
+              "Fractional results are not a full-memory Caputo-aware claim.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false"
+            ],
+            "result_status": "unavailable_for_case",
+            "lambda_class": "unavailable"
+          },
+          {
+            "method_id": "fractional_cloned_dynamics_abm_qr",
+            "applicable": true,
+            "implemented": true,
+            "validated": false,
+            "validated_against_published_benchmarks": false,
+            "benchmark_status": "internal_variant_pending",
+            "q_support": "0 < q <= 1; commensurate and component-wise incommensurate orders",
+            "lambda_max": null,
+            "full_spectrum": null,
+            "sign_pattern": null,
+            "finite_time_local": true,
+            "memory_protocol": "experimental_qr_block_restart",
+            "warnings": [
+              "F3 internal QR variant - experimental and NOT validated.",
+              "Compare signs and trends against the published GS lane, not decimal agreement.",
+              "No Jacobian or variational system is used.",
+              "Finite-time local Lyapunov indicators only.",
+              "Fractional results are not a full-memory Caputo-aware claim.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false"
+            ],
+            "result_status": "unavailable_for_case",
+            "lambda_class": "unavailable"
+          }
+        ],
+        "f4_status": "f4_complete_with_documented_discrepancies"
+      }
+    },
+    {
+      "case_id": "wu2023_chua_fractional_arctan_q099",
+      "integrated_status": "mixed_diagnostics_inconclusive",
+      "decision_reason": "F5 indicators conflict or PSD/FFT remains inconclusive",
+      "chaos_verified": false,
+      "hidden_verified": false,
+      "hiddenness_evaluated": false,
+      "hiddenness_certified": false,
+      "evidence": {
+        "f5_combined_status": "mixed_diagnostics_inconclusive",
+        "boundedness_status": "bounded_candidate",
+        "zero_one_status": "zero_one_regular_candidate",
+        "zero_one_K_global": -0.005124399779400064,
+        "psd_fft_status": "spectral_inconclusive",
+        "peak_dominance_max": 0.5800170043264734,
+        "poincare_status": "cloud_like",
+        "poincare_crossing_count": 31,
+        "lyapunov_methods": [
+          {
+            "method_id": "integer_qr_benettin",
+            "applicable": false,
+            "implemented": true,
+            "validated": true,
+            "validated_against_published_benchmarks": true,
+            "benchmark_status": "validated_against_published_benchmarks",
+            "q_support": "q=1 only",
+            "lambda_max": null,
+            "full_spectrum": null,
+            "sign_pattern": null,
+            "finite_time_local": true,
+            "memory_protocol": "not_applicable",
+            "warnings": [
+              "This routine is not a validated Caputo fractional Lyapunov method. It is restricted to q=1. Fractional Caputo spectra require a dedicated extended-memory variational method.",
+              "Finite-time local exponents: convergence depends on integration length and step size.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false"
+            ],
+            "result_status": "not_applicable",
+            "lambda_class": "unavailable"
+          },
+          {
+            "method_id": "fractional_variational_abm_qr",
+            "applicable": true,
+            "implemented": true,
+            "validated": false,
+            "validated_against_published_benchmarks": false,
+            "benchmark_status": "published_benchmarks_pending",
+            "q_support": "0 < q < 1",
+            "lambda_max": null,
+            "full_spectrum": null,
+            "sign_pattern": null,
+            "finite_time_local": true,
+            "memory_protocol": "fixed_lower_limit_full_history_qr",
+            "warnings": [
+              "F2 \u2014 implemented, NOT yet validated against published benchmarks.",
+              "validated_against_published_benchmarks: false.",
+              "synthetic benchmark infrastructure available",
+              "published benchmark validation pending unless completed",
+              "does not certify chaos",
+              "does not certify hiddenness",
+              "Results are finite-time local Lyapunov exponent estimates, NOT asymptotic proofs.",
+              "Caputo memory: history-aware QR transforms the entire stored variational history at each reorthonormalisation step (history_aware_qr=True).",
+              "If history_aware_qr=False (block-restart), method is NOT full-memory Caputo-aware; label results accordingly.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false",
+              "Not validated for non-smooth systems (e.g., Chua saturation); derivative undefined at switching surfaces."
+            ],
+            "result_status": "unavailable_for_case",
+            "lambda_class": "unavailable"
+          },
+          {
+            "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
+            "applicable": true,
+            "implemented": true,
+            "validated": false,
+            "validated_against_published_benchmarks": false,
+            "benchmark_status": "published_benchmarks_pending_reproduced_discrepancy",
+            "q_support": "0 < q < 1",
+            "lambda_max": null,
+            "full_spectrum": null,
+            "sign_pattern": null,
+            "finite_time_local": true,
+            "memory_protocol": "dk2018_block_restart_abm_gs",
+            "warnings": [
+              "Published-value reproduction lane; distinct from fixed-lower-limit full-history Caputo QR.",
+              "Passing this lane does not validate fractional_variational_abm_qr.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false"
+            ],
+            "result_status": "unavailable_for_case",
+            "lambda_class": "unavailable"
+          },
+          {
+            "method_id": "fractional_cloned_dynamics_abm_gs_published",
+            "applicable": true,
+            "implemented": true,
+            "validated": false,
+            "validated_against_published_benchmarks": false,
+            "benchmark_status": "published_benchmarks_pending_discrepancy",
+            "q_support": "0 < q <= 1; commensurate and component-wise incommensurate orders",
+            "lambda_max": null,
+            "full_spectrum": null,
+            "sign_pattern": null,
+            "finite_time_local": true,
+            "memory_protocol": "published_block_restart",
+            "warnings": [
+              "F3 - implemented, NOT yet validated against published benchmarks.",
+              "Published reproduction lane with ABM predictor-corrector, modified Gram-Schmidt, and published_block_restart memory.",
+              "No Jacobian or variational system is used.",
+              "Finite-time local Lyapunov indicators only.",
+              "Fractional results are not a full-memory Caputo-aware claim.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false"
+            ],
+            "result_status": "unavailable_for_case",
+            "lambda_class": "unavailable"
+          },
+          {
+            "method_id": "fractional_cloned_dynamics_abm_qr",
+            "applicable": true,
+            "implemented": true,
+            "validated": false,
+            "validated_against_published_benchmarks": false,
+            "benchmark_status": "internal_variant_pending",
+            "q_support": "0 < q <= 1; commensurate and component-wise incommensurate orders",
+            "lambda_max": null,
+            "full_spectrum": null,
+            "sign_pattern": null,
+            "finite_time_local": true,
+            "memory_protocol": "experimental_qr_block_restart",
+            "warnings": [
+              "F3 internal QR variant - experimental and NOT validated.",
+              "Compare signs and trends against the published GS lane, not decimal agreement.",
+              "No Jacobian or variational system is used.",
+              "Finite-time local Lyapunov indicators only.",
+              "Fractional results are not a full-memory Caputo-aware claim.",
+              "Does not certify chaos; does not certify hiddenness of attractors.",
+              "chaos_certified_by_this_pipeline: false",
+              "hiddenness_certified_by_this_pipeline: false"
+            ],
+            "result_status": "unavailable_for_case",
+            "lambda_class": "unavailable"
+          }
+        ],
+        "f4_status": "f4_complete_with_documented_discrepancies"
+      }
+    }
+  ],
+  "global_counts": {
+    "chaotic_candidate_numerically_supported": 0,
+    "regular_candidate_numerically_supported": 0,
+    "mixed_diagnostics_inconclusive": 3,
+    "insufficient_lyapunov_support": 0,
+    "insufficient_f5_support": 0,
+    "method_validation_pending": 0,
+    "numerical_failure": 0,
+    "not_evaluated": 0
+  },
+  "method_registry": [
+    {
+      "method_id": "integer_qr_benettin",
+      "derivative_model": "integer",
+      "q_support": "q=1 only",
+      "requires_jacobian": true,
+      "orthonormalization": "qr",
+      "finite_time_local": true,
+      "implemented": true,
+      "validated": true,
+      "references": [
+        "Benettin et al. 1980 \u2014 Lyapunov Characteristic Exponents for Smooth Dynamical Systems (Meccanica 15)",
+        "Wolf et al. 1985 \u2014 Determining Lyapunov Exponents from a Time Series (Physica D 16)",
+        "Danca & Kuznetsov 2018 \u2014 Matlab Code for Lyapunov Exponents of Fractional-Order Systems (Int. J. Bifurcation Chaos 28(5)): establishes that fractional Caputo spectra require extended-memory variational integration; integer QR is NOT valid for q<1."
+      ],
+      "warnings": [
+        "This routine is not a validated Caputo fractional Lyapunov method. It is restricted to q=1. Fractional Caputo spectra require a dedicated extended-memory variational method.",
+        "Finite-time local exponents: convergence depends on integration length and step size.",
+        "Does not certify chaos; does not certify hiddenness of attractors.",
+        "chaos_certified_by_this_pipeline: false",
+        "hiddenness_certified_by_this_pipeline: false"
+      ],
+      "validated_against_synthetic_tests": true,
+      "validated_against_published_benchmarks": true,
+      "benchmark_status": "validated_against_published_benchmarks",
+      "family": "integer",
+      "method_type": "variational",
+      "supports_q_less_than_1": false,
+      "supports_q_equal_1": true,
+      "supports_commensurate": true,
+      "supports_incommensurate": false,
+      "memory_protocol": "not_applicable",
+      "no_chaos_certification": true,
+      "no_hiddenness_certification": true
+    },
+    {
+      "method_id": "fractional_variational_abm_qr",
+      "derivative_model": "caputo",
+      "q_support": "0 < q < 1",
+      "requires_jacobian": true,
+      "orthonormalization": "qr",
+      "finite_time_local": true,
+      "implemented": true,
+      "validated": false,
+      "references": [
+        "Danca & Kuznetsov 2018 \u2014 Matlab Code for Lyapunov Exponents of Fractional-Order Systems (Int. J. Bifurcation Chaos 28(5)): primary reference for the extended original\u2013variational Caputo system with ABM predictor-corrector and QR reorthonormalisation.",
+        "Benettin et al. 1980 \u2014 Lyapunov Characteristic Exponents (Meccanica 15).",
+        "Wolf et al. 1985 \u2014 Determining Lyapunov Exponents from a Time Series (Physica D 16)."
+      ],
+      "warnings": [
+        "F2 \u2014 implemented, NOT yet validated against published benchmarks.",
+        "validated_against_published_benchmarks: false.",
+        "synthetic benchmark infrastructure available",
+        "published benchmark validation pending unless completed",
+        "does not certify chaos",
+        "does not certify hiddenness",
+        "Results are finite-time local Lyapunov exponent estimates, NOT asymptotic proofs.",
+        "Caputo memory: history-aware QR transforms the entire stored variational history at each reorthonormalisation step (history_aware_qr=True).",
+        "If history_aware_qr=False (block-restart), method is NOT full-memory Caputo-aware; label results accordingly.",
+        "Does not certify chaos; does not certify hiddenness of attractors.",
+        "chaos_certified_by_this_pipeline: false",
+        "hiddenness_certified_by_this_pipeline: false",
+        "Not validated for non-smooth systems (e.g., Chua saturation); derivative undefined at switching surfaces."
+      ],
+      "validated_against_synthetic_tests": true,
+      "validated_against_published_benchmarks": false,
+      "benchmark_status": "published_benchmarks_pending",
+      "family": "fractional",
+      "method_type": "variational",
+      "supports_q_less_than_1": true,
+      "supports_q_equal_1": false,
+      "supports_commensurate": true,
+      "supports_incommensurate": false,
+      "memory_protocol": "fixed_lower_limit_full_history_qr",
+      "no_chaos_certification": true,
+      "no_hiddenness_certification": true
+    },
+    {
+      "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
+      "derivative_model": "caputo",
+      "q_support": "0 < q < 1",
+      "requires_jacobian": true,
+      "orthonormalization": "gs",
+      "finite_time_local": true,
+      "implemented": true,
+      "validated": false,
+      "references": [
+        "Danca & Kuznetsov 2018 \u2014 Matlab Code for Lyapunov Exponents of Fractional-Order Systems (Int. J. Bifurcation Chaos 28(5)): reproduction contract for block-restarted FDE12 integration and Gram-Schmidt renormalisation."
+      ],
+      "warnings": [
+        "Published-value reproduction lane; distinct from fixed-lower-limit full-history Caputo QR.",
+        "Passing this lane does not validate fractional_variational_abm_qr.",
+        "Does not certify chaos; does not certify hiddenness of attractors.",
+        "chaos_certified_by_this_pipeline: false",
+        "hiddenness_certified_by_this_pipeline: false"
+      ],
+      "validated_against_synthetic_tests": true,
+      "validated_against_published_benchmarks": false,
+      "benchmark_status": "published_benchmarks_pending_reproduced_discrepancy",
+      "family": "fractional",
+      "method_type": "variational",
+      "supports_q_less_than_1": true,
+      "supports_q_equal_1": false,
+      "supports_commensurate": true,
+      "supports_incommensurate": false,
+      "memory_protocol": "dk2018_block_restart_abm_gs",
+      "no_chaos_certification": true,
+      "no_hiddenness_certification": true
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_gs_published",
+      "derivative_model": "caputo",
+      "q_support": "0 < q <= 1; commensurate and component-wise incommensurate orders",
+      "requires_jacobian": false,
+      "orthonormalization": "gram_schmidt",
+      "finite_time_local": true,
+      "implemented": true,
+      "validated": false,
+      "references": [
+        "Fischer, Zourmba, and Mohamadou 2020 - Lyapunov exponents spectrum estimation of fractional order nonlinear systems using Cloned Dynamics (Applied Numerical Mathematics 154, 187-204; DOI: 10.1016/j.apnum.2020.03.027)."
+      ],
+      "warnings": [
+        "F3 - implemented, NOT yet validated against published benchmarks.",
+        "Published reproduction lane with ABM predictor-corrector, modified Gram-Schmidt, and published_block_restart memory.",
+        "No Jacobian or variational system is used.",
+        "Finite-time local Lyapunov indicators only.",
+        "Fractional results are not a full-memory Caputo-aware claim.",
+        "Does not certify chaos; does not certify hiddenness of attractors.",
+        "chaos_certified_by_this_pipeline: false",
+        "hiddenness_certified_by_this_pipeline: false"
+      ],
+      "validated_against_synthetic_tests": true,
+      "validated_against_published_benchmarks": false,
+      "benchmark_status": "published_benchmarks_pending_discrepancy",
+      "family": "fractional",
+      "method_type": "cloned_dynamics",
+      "supports_q_less_than_1": true,
+      "supports_q_equal_1": true,
+      "supports_commensurate": true,
+      "supports_incommensurate": true,
+      "memory_protocol": "published_block_restart",
+      "no_chaos_certification": true,
+      "no_hiddenness_certification": true
+    },
+    {
+      "method_id": "fractional_cloned_dynamics_abm_qr",
+      "derivative_model": "caputo",
+      "q_support": "0 < q <= 1; commensurate and component-wise incommensurate orders",
+      "requires_jacobian": false,
+      "orthonormalization": "qr",
+      "finite_time_local": true,
+      "implemented": true,
+      "validated": false,
+      "references": [
+        "Internal QR variant based on Fischer, Zourmba, and Mohamadou 2020 (DOI: 10.1016/j.apnum.2020.03.027)."
+      ],
+      "warnings": [
+        "F3 internal QR variant - experimental and NOT validated.",
+        "Compare signs and trends against the published GS lane, not decimal agreement.",
+        "No Jacobian or variational system is used.",
+        "Finite-time local Lyapunov indicators only.",
+        "Fractional results are not a full-memory Caputo-aware claim.",
+        "Does not certify chaos; does not certify hiddenness of attractors.",
+        "chaos_certified_by_this_pipeline: false",
+        "hiddenness_certified_by_this_pipeline: false"
+      ],
+      "validated_against_synthetic_tests": true,
+      "validated_against_published_benchmarks": false,
+      "benchmark_status": "internal_variant_pending",
+      "family": "fractional",
+      "method_type": "cloned_dynamics",
+      "supports_q_less_than_1": true,
+      "supports_q_equal_1": true,
+      "supports_commensurate": true,
+      "supports_incommensurate": true,
+      "memory_protocol": "experimental_qr_block_restart",
+      "no_chaos_certification": true,
+      "no_hiddenness_certification": true
+    }
+  ],
+  "certifications": {
+    "chaos_verified": false,
+    "hidden_verified": false
+  },
+  "invariants": {
+    "integrated_validator_is_not_a_mathematical_proof": true,
+    "integrated_validator_proves_chaos": false,
+    "no_single_indicator_certifies_chaos": true,
+    "hiddenness_not_evaluated_here": true
+  }
+}

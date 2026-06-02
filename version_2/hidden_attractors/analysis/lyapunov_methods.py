@@ -195,6 +195,10 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
         validated_against_synthetic_tests=True,
         validated_against_published_benchmarks=False,
         benchmark_status="published_benchmarks_pending",
+        family="fractional",
+        supports_q_less_than_1=True,
+        supports_q_equal_1=False,
+        memory_protocol="fixed_lower_limit_full_history_qr",
 
     ),
 
@@ -228,6 +232,10 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
             if _DK2018_PUBLISHED_VALIDATED
             else _DK2018_PUBLISHED_STATUS
         ),
+        family="fractional",
+        supports_q_less_than_1=True,
+        supports_q_equal_1=False,
+        memory_protocol="dk2018_block_restart_abm_gs",
     ),
 
     "fractional_cloned_dynamics_abm": LyapunovMethodInfo(

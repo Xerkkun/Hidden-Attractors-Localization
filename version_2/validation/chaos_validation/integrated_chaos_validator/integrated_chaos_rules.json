@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "stage": "F6_integrated_chaos_validator",
+  "allowed_case_statuses": [
+    "chaotic_candidate_numerically_supported",
+    "regular_candidate_numerically_supported",
+    "mixed_diagnostics_inconclusive",
+    "insufficient_lyapunov_support",
+    "insufficient_f5_support",
+    "method_validation_pending",
+    "numerical_failure",
+    "not_evaluated"
+  ],
+  "chaotic_candidate_rule": {
+    "requires_boundedness": "bounded_candidate",
+    "minimum_supporting_indicators": 2,
+    "indicators": [
+      "validated_applicable_positive_lambda_max",
+      "zero_one_chaotic_candidate",
+      "broadband_spectrum",
+      "cloud_like_or_dispersed_cloud_like_poincare"
+    ],
+    "blockers": [
+      "numerical_failure",
+      "nonfinite_trajectory",
+      "contradictory_f5_evidence"
+    ]
+  },
+  "regular_candidate_rule": {
+    "requires_boundedness": "bounded_candidate",
+    "minimum_supporting_indicators": 2,
+    "indicators": [
+      "validated_applicable_nonpositive_lambda_max",
+      "zero_one_regular_candidate",
+      "dominant_periodic_peak_or_quasiperiodic_candidate",
+      "point_finite_set_or_curve_like_poincare"
+    ]
+  },
+  "conservative_boundaries": {
+    "integrated_validator_proves_chaos": false,
+    "hiddenness_evaluated": false,
+    "hiddenness_certified": false,
+    "dk2018_block_restart_does_not_validate_full_history_qr": true,
+    "fischer_cloned_dynamics_does_not_validate_full_history_qr": true,
+    "f5_conflict_or_spectral_inconclusive_remains_inconclusive": true
+  }
+}

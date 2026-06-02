@@ -435,3 +435,15 @@ Poincare outputs are complementary finite-time geometry, not Lyapunov
 validation. The integer Chua case uses `x=0, xdot>0`; Caputo cases use
 geometric sampled crossings with `exact_poincare_map=false`. See
 [Poincare Diagnostics](poincare_diagnostics.md).
+
+## F6 And F7 - Integration And Comparison
+
+F6 integrates F5 indicators with the registry and available finite-time local
+spectra. F7 compares method applicability, validation status, and diagnostic
+conflicts. Both layers preserve the distinct contracts for full-history
+Caputo QR, DK2018 block-restart ABM-GS, Fischer published cloned-dynamics GS,
+and the experimental QR variant.
+
+Neither phase validates pending fractional methods or certifies chaos or
+hiddenness. See [F6 Integrated Chaos Validator](f6_integrated_chaos_validator.md)
+and [F7 Method Comparison](f7_method_comparison.md).

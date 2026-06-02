@@ -45,6 +45,21 @@ from .spectral import (
     trajectory_component_spectra,
 )
 from .zero_one import ALLOWED_ZERO_ONE_STATES, zero_one_multicoordinate, zero_one_test
+from .integrated_chaos_validator import (
+    ALLOWED_INTEGRATED_STATUSES,
+    CASE_Q,
+    classify_lambda_max,
+    integrate_case_evidence,
+    method_is_applicable,
+    method_registry_rows,
+    normalize_lyapunov_case_evidence,
+)
+from .method_comparison import (
+    ALLOWED_COMPARISON_STATUSES,
+    classify_method_row,
+    compare_f5_diagnostics,
+    compare_lyapunov_methods,
+)
 from .poincare import (
     ALLOWED_INTERPRETATION_LABELS,
     PoincareCrossingResult,
@@ -108,6 +123,18 @@ __all__ = [
     "ALLOWED_ZERO_ONE_STATES",
     "zero_one_multicoordinate",
     "zero_one_test",
+    # Integrated diagnostics (F6/F7)
+    "ALLOWED_INTEGRATED_STATUSES",
+    "CASE_Q",
+    "classify_lambda_max",
+    "integrate_case_evidence",
+    "method_is_applicable",
+    "method_registry_rows",
+    "normalize_lyapunov_case_evidence",
+    "ALLOWED_COMPARISON_STATUSES",
+    "classify_method_row",
+    "compare_f5_diagnostics",
+    "compare_lyapunov_methods",
     # Poincare diagnostic
     "ALLOWED_INTERPRETATION_LABELS",
     "PoincareCrossingResult",

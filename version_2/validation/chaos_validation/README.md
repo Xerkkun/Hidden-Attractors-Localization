@@ -209,3 +209,17 @@ This state means the complementary output bundle is ready for inspection. It
 does not certify chaos, certify hiddenness, assert exact Caputo periodic
 orbits, or automatically promote the separate official protocol diagnostics
 stage. See [F5 Dynamics Diagnostics](../../docs/f5_dynamics_diagnostics.md).
+
+## F6 - Integrated chaos validator
+
+F6 combines F5, the Lyapunov registry, available case-specific spectra, and F4
+metadata. It writes conservative per-case candidate labels under
+`integrated_chaos_validator/`. The current F5 conflicts remain
+`mixed_diagnostics_inconclusive`. F6 does not certify chaos or hiddenness.
+
+## F7 - Method comparison
+
+F7 writes applicability, validation-state, consensus, and discrepancy tables
+under `method_comparison/`. Full-history QR, DK2018 block-restart, Fischer
+published GS, and the experimental QR lane remain separate contracts. F7 does
+not validate pending fractional methods or certify chaos or hiddenness.

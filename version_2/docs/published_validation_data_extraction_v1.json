@@ -1,0 +1,1171 @@
+{
+  "metadata": {
+    "purpose": "Datos extraídos de artículos adjuntos para configurar validaciones: algebraicas, reproducción publicada, memoria, continuación, Lyapunov/caos, 0-1, PSD, ocultedad.",
+    "version": "extracted_from_uploaded_papers_v1",
+    "notes": [
+      "Los campos marked_missing_or_not_reported no deben inventarse en la librería.",
+      "Los benchmarks de Lyapunov publicados deben distinguir validación cualitativa, cuantitativa y datos incompletos.",
+      "Para Caputo, la memoria y el método numérico reportado deben preservarse como metadatos."
+    ]
+  },
+  "articles": {
+    "kuznetsov2017_chua_integer_df": {
+      "bibliography": {
+        "authors": "N. V. Kuznetsov, O. A. Kuznetsova, G. A. Leonov, T. N. Mokaev, N. V. Stankevich",
+        "year": 2017,
+        "title": "Localization of hidden Chua attractors by the describing function method",
+        "venue": "IFAC-PapersOnLine",
+        "doi": "10.1016/j.ifacol.2017.08.1633"
+      },
+      "system": {
+        "id": "chua_integer_saturation",
+        "order": 1.0,
+        "equations": [
+          "dx/dt = alpha*(y - x*(m1+1)) - alpha*psi(x)",
+          "dy/dt = x - y + z",
+          "dz/dt = -(beta*y + gamma*z)",
+          "psi(x) = (m0-m1)*sat(x) = 0.5*(m0-m1)*(abs(x+1)-abs(x-1))"
+        ],
+        "lure": {
+          "P": "[[-alpha*(m1+1), alpha, 0], [1,-1,1], [0,-beta,-gamma]]",
+          "q_vector": "[-alpha,0,0]^T",
+          "r_vector": "[1,0,0]^T",
+          "transfer": "W(p)=r^T(P-pI)^(-1)q",
+          "condition": "Im W(i*omega0)=0; k=-(Re W(i*omega0))^(-1)"
+        }
+      },
+      "published_cases": [
+        {
+          "case_id": "kuznetsov2017_case_18_hidden_chaotic",
+          "parameters": {
+            "alpha": 8.4562,
+            "beta": 12.0732,
+            "gamma": 0.0052,
+            "m0": -0.1768,
+            "m1": -1.1468
+          },
+          "equilibria": {
+            "F0": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "S_plus_approx": [
+              6.5883,
+              0.0029,
+              -6.5855
+            ],
+            "S_minus_approx": [
+              -6.5883,
+              -0.0029,
+              6.5855
+            ],
+            "classification": "F0 stable focus-node; S± saddle-foci with one-dimensional unstable manifolds"
+          },
+          "df_data": {
+            "omega0": 2.0392,
+            "k": 0.2098,
+            "a0": 5.8576
+          },
+          "seed_plus": [
+            5.8576,
+            0.3694,
+            -8.3686
+          ],
+          "seed_minus": [
+            -5.8576,
+            -0.3694,
+            8.3686
+          ],
+          "reported_status": "two symmetric hidden chaotic attractors localized by direct use of DF initial data; authors state they skip multistep small-parameter continuation for this case.",
+          "usable_for_phases": [
+            "published_case_reproduction",
+            "lure_transfer_validation",
+            "describing_function_seed_validation",
+            "integer_lyapunov_reference",
+            "paper_style_continuation_comparison",
+            "hiddenness_neighborhoods"
+          ]
+        },
+        {
+          "case_id": "kuznetsov2017_case_21_hidden_chaotic_branch",
+          "parameters": {
+            "alpha": 8.4,
+            "beta": 12.0,
+            "gamma": -0.005,
+            "m0": -1.2,
+            "m1": -0.05
+          },
+          "df_data": {
+            "omega0": 2.026,
+            "k": -0.889,
+            "a0": 1.5187
+          },
+          "seed_plus": [
+            1.5187,
+            0.0926,
+            -2.1682
+          ],
+          "reported_status": "two symmetric hidden chaotic attractors"
+        },
+        {
+          "case_id": "kuznetsov2017_case_21_hidden_periodic_branch",
+          "parameters": {
+            "alpha": 8.4,
+            "beta": 12.0,
+            "gamma": -0.005,
+            "m0": -1.2,
+            "m1": -0.05
+          },
+          "df_data": {
+            "omega0": 3.2396,
+            "k": -0.1244,
+            "a0": 11.7546
+          },
+          "seed_plus": [
+            11.7546,
+            9.7044,
+            -16.7367
+          ],
+          "reported_status": "hidden periodic attractor / stable limit cycle coexisting with hidden chaotic attractors"
+        }
+      ],
+      "missing_or_not_reported": [
+        "explicit integration time",
+        "integration step for plotted attractors",
+        "numeric Lyapunov exponents for this Chua case"
+      ]
+    },
+    "danca2017_fractional_hidden_attractors": {
+      "bibliography": {
+        "authors": "Marius-F. Danca",
+        "year": 2017,
+        "title": "Hidden chaotic attractors in fractional-order systems",
+        "venue": "Nonlinear Dynamics",
+        "doi": "10.1007/s11071-017-3472-7"
+      },
+      "general_method": {
+        "derivative": "Caputo, 0<q<1, starting point t0=0",
+        "integrator": "Adams-Bashforth-Moulton predictor-corrector",
+        "matignon_practical_measure": "iota = q - 2*alpha_min/pi; asymptotically stable if iota < 0",
+        "hidden_definition": "basin of attraction does not intersect any open neighborhood of an equilibrium"
+      },
+      "systems": {
+        "generalized_lorenz_fractional": {
+          "equations": [
+            "D^q x1 = -sigma*(x1-x2) - a*x2*x3",
+            "D^q x2 = r*x1 - x2 - x1*x3",
+            "D^q x3 = -x3 + x1*x2",
+            "sigma = -a*r"
+          ],
+          "parameters": {
+            "r": 6.8,
+            "a": -0.5,
+            "sigma": 3.4,
+            "q": 0.995
+          },
+          "equilibria": {
+            "X0": [
+              0,
+              0,
+              0
+            ],
+            "X12": "±(3.476,1.807,6.280)"
+          },
+          "eigenspectra": {
+            "X0": [
+              2.5576,
+              -1.0,
+              -7.5576
+            ],
+            "X1": [
+              "-5.9570",
+              "-0.0215 ± 3.6026i"
+            ]
+          },
+          "neighborhood_test": {
+            "unstable_equilibrium": "X0",
+            "radius_delta": 0.3,
+            "reported_trajectories": 50
+          },
+          "usable_for_phases": [
+            "Matignon_validation",
+            "hiddenness_neighborhood_protocol",
+            "fractional_ABM_reproduction"
+          ]
+        },
+        "rabinovich_fabrikant_fractional": {
+          "equations": [
+            "D^q x1 = x2*(x3 - 1 + x1^2) + a*x1",
+            "D^q x2 = x1*(3*x3 + 1 - x1^2) + a*x2",
+            "D^q x3 = -2*x3*(b + x1*x2)"
+          ],
+          "parameters": {
+            "a": 0.1,
+            "b": 0.2876,
+            "q": 0.998
+          },
+          "equilibria": {
+            "X0": [
+              0,
+              0,
+              0
+            ],
+            "X12": "(∓1.1600, ±0.2479, 0.1223)",
+            "X34": "(∓0.0850, ±3.3827, 0.9953)"
+          },
+          "eigenspectra": {
+            "X0": [
+              "-0.5752",
+              "0.1 ± i"
+            ],
+            "X1": [
+              "-0.2562",
+              "-0.0595 ± 1.4731i"
+            ],
+            "X3": [
+              "0.1981",
+              "-0.2866 ± 4.7743i"
+            ]
+          },
+          "neighborhood_test": {
+            "unstable_equilibria": [
+              "X0",
+              "X3",
+              "X4"
+            ],
+            "radius_delta": 0.1
+          },
+          "usable_for_phases": [
+            "Matignon_validation",
+            "hiddenness_neighborhood_protocol",
+            "optional_Lyapunov_F2_benchmark_model"
+          ]
+        },
+        "chua_fractional_saturation": {
+          "equations": [
+            "D^q x1 = alpha*(x2 - x1 - m1*x1 - psi(x1))",
+            "D^q x2 = x1 - x2 + x3",
+            "D^q x3 = -(beta*x2 + gamma*x3)",
+            "psi(x1)=(m0-m1)*sat(x1)"
+          ],
+          "parameters": {
+            "m0": -0.1768,
+            "m1": -1.1468,
+            "alpha": 8.4562,
+            "beta": 12.0732,
+            "gamma": 0.0052,
+            "q": 0.9998
+          },
+          "equilibria": {
+            "X0": [
+              0,
+              0,
+              0
+            ],
+            "X12": "(±6.5883, ±0.0029, ∓6.5855)"
+          },
+          "jacobian_piecewise": {
+            "|x|>1": "[[-alpha-alpha*m1, alpha, 0],[1,-1,1],[0,-beta,-gamma]]",
+            "|x|<1": "[[-alpha-alpha*m1-m0+m1, alpha, 0],[1,-1,1],[0,-beta,-gamma]]"
+          },
+          "eigenspectra": {
+            "X0": [
+              "-7.9587",
+              "-0.0038 ± 3.2494i"
+            ],
+            "X12": [
+              "2.2193",
+              "-0.9916 ± 2.4068i"
+            ]
+          },
+          "neighborhood_test": {
+            "unstable_equilibria": [
+              "X1",
+              "X2"
+            ],
+            "radius_delta": 0.01,
+            "reported_trajectories": 200
+          },
+          "missing_or_not_reported": [
+            "exact hidden-attractor initial condition",
+            "omega0",
+            "k",
+            "a0",
+            "Lyapunov exponents"
+          ],
+          "usable_for_phases": [
+            "published_case_reproduction_partial",
+            "fractional_memory_validation",
+            "continuation_memory_validation",
+            "hiddenness_neighborhoods"
+          ]
+        }
+      }
+    },
+    "wu2023_chua_fractional_arctan": {
+      "bibliography": {
+        "authors": "Xianming Wu, Longxiang Fu, Shaobo He, Zhao Yao, Huihai Wang, Jiayu Han",
+        "year": 2023,
+        "title": "Hidden attractors in a new fractional-order Chua system with arctan nonlinearity and its DSP implementation",
+        "venue": "Results in Physics 52, 106866",
+        "doi": "10.1016/j.rinp.2023.106866"
+      },
+      "system": {
+        "id": "chua_fractional_arctan",
+        "derivative": "Caputo",
+        "equations": [
+          "D^q x = alpha*(y-x) - alpha*f(x)",
+          "D^q y = x-y+z",
+          "D^q z = -beta*y - gamma*z",
+          "f(x)=m*x+(n-m)*arctan(x)"
+        ],
+        "parameters": {
+          "alpha": 8.4562,
+          "beta": 12.0732,
+          "gamma_or_r": 0.0052,
+          "m": 0.4,
+          "n": -1.1585
+        },
+        "jacobian": "a11=alpha*(1+m)-alpha*(n-m)/(1+x^2), a12=alpha, a13=0; a21=1,a22=-1,a23=1; a31=0,a32=-beta,a33=-gamma",
+        "equilibria_paper_approx": {
+          "P1": [
+            -0.573,
+            -0.0002468,
+            0.573
+          ],
+          "P2": [
+            0.573,
+            0.0002468,
+            -0.573
+          ]
+        }
+      },
+      "simulation": {
+        "q": 0.99,
+        "N": 10000,
+        "h": 0.01,
+        "method_reported": "ADM for numerical solution; DSP uses ADM and Romberg integration for arctan",
+        "initial_conditions_hidden": {
+          "x0_plus": [
+            13.8,
+            0.7093,
+            -19.8768
+          ],
+          "x0_minus": [
+            -13.8,
+            -0.7093,
+            19.8768
+          ]
+        },
+        "phase_figure": "Fig. 9",
+        "basin_figure": "Fig. 10"
+      },
+      "dynamics_scan": {
+        "q_sweep": {
+          "range": [
+            0.8,
+            1.0
+          ],
+          "step": 0.0008,
+          "minimum_order_for_chaos": 0.9028,
+          "ICs": [
+            [
+              13,
+              0.7,
+              -19
+            ],
+            [
+              -13,
+              -0.7,
+              19
+            ]
+          ]
+        },
+        "alpha_sweep": {
+          "beta": 12.0732,
+          "gamma": 0.0052,
+          "m": 0.4,
+          "n": -1.1585,
+          "q": 0.99,
+          "range": [
+            9.2,
+            8.7
+          ],
+          "step": 0.002
+        },
+        "beta_sweep": {
+          "alpha": 8.4562,
+          "gamma": 0.0052,
+          "m": 0.4,
+          "n": -1.1585,
+          "q": 0.99,
+          "range": [
+            11.5,
+            12.5
+          ],
+          "step": 0.004
+        },
+        "complexity_map": {
+          "alpha_range": [
+            8.2,
+            8.7
+          ],
+          "alpha_step": 0.005,
+          "beta_range": [
+            11.5,
+            12.5
+          ],
+          "beta_step": 0.01,
+          "q": 0.99
+        }
+      },
+      "hidden_localization": {
+        "method": "Leonov/Kuznetsov-style harmonic linearization adapted by authors",
+        "transfer_formula_notes": "The paper uses p/omega0 harmonic formula not fractional spectral lambda=(j omega)^q; keep as paper-style only.",
+        "DF_missing_or_not_explicit_numeric": [
+          "omega0",
+          "k",
+          "a0",
+          "S matrix numeric"
+        ]
+      },
+      "usable_for_phases": [
+        "published_case_reproduction",
+        "paper_style_continuation_comparison",
+        "chaos_validation_0_1_SampEn_PSD",
+        "hiddenness_basin_comparison",
+        "DSP_consistency_optional"
+      ]
+    },
+    "danca_kuznetsov2018_lyapunov_fo": {
+      "bibliography": {
+        "authors": "Marius-F. Danca, Nikolay Kuznetsov",
+        "year": 2018,
+        "title": "Matlab Code for Lyapunov Exponents of Fractional-Order Systems",
+        "venue": "International Journal of Bifurcation and Chaos 28(5), 1850067",
+        "doi": "10.1142/S0218127418500670"
+      },
+      "method": {
+        "id": "fractional_variational_abm_gs_reference",
+        "equations": [
+          "D_*^q X = f(X)",
+          "D_*^q Phi = D_x f(X)*Phi, Phi(0)=I"
+        ],
+        "algorithm": "Benettin-Wolf with extended original+variational FO system, FDE12 ABM integration, Gram-Schmidt reorthonormalization",
+        "finite_time_local": true,
+        "commensurate_assumption": "q1=q2=...=q"
+      },
+      "benchmarks": [
+        {
+          "case_id": "DK2018_RF_q0999",
+          "system": "Rabinovich-Fabrikant",
+          "parameters": {
+            "a": 0.1,
+            "p_or_bifurcation_parameter": 0.98,
+            "q": 0.999
+          },
+          "equations": [
+            "D^q x1=x2*(x3-1+x1^2)+0.1*x1",
+            "D^q x2=x1*(3*x3+1-x1^2)+0.1*x2",
+            "D^q x3=-2*x3*(p+x1*x2)"
+          ],
+          "integration_for_attractor": {
+            "FDE12": [
+              0.999,
+              "@RF",
+              0,
+              1500,
+              [
+                0.1,
+                0.1,
+                0.1
+              ],
+              0.01
+            ]
+          },
+          "lyapunov_command": {
+            "ne": 3,
+            "t_start": 0,
+            "h_norm": 0.02,
+            "t_end": 300,
+            "x_start": [
+              0.1,
+              0.1,
+              0.1
+            ],
+            "h": 0.005,
+            "q": 0.999,
+            "out": 1000
+          },
+          "expected_LE_final": [
+            0.0749,
+            0.0018,
+            -2.085
+          ],
+          "validation_level": "quantitative"
+        },
+        {
+          "case_id": "DK2018_Lorenz_q0985",
+          "system": "Lorenz",
+          "parameters": {
+            "sigma": 10,
+            "beta": 2.6666666666666665,
+            "p": 200,
+            "q": 0.985
+          },
+          "equations": [
+            "D^q x1=sigma*(x2-x1)",
+            "D^q x2=-x1*x3+p*x1-x2",
+            "D^q x3=x1*x2-beta*x3"
+          ],
+          "lyapunov_command": {
+            "ne": 3,
+            "t_start": 0,
+            "h_norm": 5,
+            "t_end": 500,
+            "x_start": [
+              0.1,
+              0.1,
+              0.1
+            ],
+            "h": 0.001,
+            "q": 0.985,
+            "out": 10
+          },
+          "expected_LE_final": [
+            -0.0026,
+            -0.087,
+            -1.6225
+          ],
+          "validation_level": "quantitative"
+        },
+        {
+          "case_id": "DK2018_4D_nonsmooth_q098",
+          "system": "nonsmooth_4D",
+          "parameters": {
+            "a": 1,
+            "b": 0.5,
+            "q": 0.98
+          },
+          "equations": [
+            "D^q x1=-x1+x2",
+            "D^q x2=-x3*sgn(x1)+x4",
+            "D^q x3=|x1|-a",
+            "D^q x4=-b*x2"
+          ],
+          "lyapunov_command": {
+            "ne": 4,
+            "t_start": 0,
+            "h_norm": 0.02,
+            "t_end": 300,
+            "x_start": [
+              0.1,
+              0.1,
+              0.1,
+              0.1
+            ],
+            "h": 0.005,
+            "q": 0.98,
+            "out": 1000
+          },
+          "expected_LE_final": [
+            0.1262,
+            0.0846,
+            0.0778,
+            -1.5244
+          ],
+          "validation_level": "qualitative_or_experimental_only",
+          "warning": "Authors state nonsmooth/discontinuous system cannot be integrated correctly without smooth approximation; Jacobian cannot be determined without smoothing."
+        }
+      ],
+      "usable_for_phases": [
+        "F2_fractional_variational_ABM_QR_benchmarks",
+        "F0_integer_method_documentation",
+        "F5_chaos_validation_LE"
+      ]
+    },
+    "fischer2020_cloned_dynamics": {
+      "bibliography": {
+        "authors": "C. Fischer, K. L. A. Zourmba, A. Mohamadou",
+        "year": 2020,
+        "title": "Lyapunov exponents spectrum estimation of fractional order nonlinear systems using Cloned Dynamics",
+        "venue": "Applied Numerical Mathematics 154, 187-204",
+        "doi": "10.1016/j.apnum.2020.03.027"
+      },
+      "method": {
+        "id": "cloned_dynamics",
+        "no_jacobian_required": true,
+        "integrator_fractional": "predictor-corrector Adams-Bashforth-Moulton",
+        "reorthonormalization": "Gram-Schmidt after clone interval",
+        "uses_0_1_test": true,
+        "formulation": "fiducial trajectory plus clones perturbed in coordinate directions; after T_Clone compute clone differences, orthonormalize, accumulate log(norm/delta)"
+      },
+      "common_orders": {
+        "commensurate": [
+          [
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            0.9,
+            0.9,
+            0.9
+          ],
+          [
+            0.8,
+            0.8,
+            0.8
+          ],
+          [
+            0.7,
+            0.7,
+            0.7
+          ]
+        ],
+        "incommensurate": [
+          [
+            0.9,
+            1.0,
+            1.0
+          ],
+          [
+            0.8,
+            1.0,
+            1.0
+          ],
+          [
+            0.7,
+            1.0,
+            1.0
+          ],
+          [
+            0.6,
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      "jerk_system": {
+        "equations": [
+          "D^alpha1 x = y",
+          "D^alpha2 y = z",
+          "D^alpha3 z = -a*z - f(y) - x",
+          "f(y)=Ic*(exp(y/(n*VT))-1)"
+        ],
+        "parameters": {
+          "a": 0.5,
+          "Ic": "10*10^-9 A",
+          "VT": 0.026,
+          "n": 2
+        },
+        "initial_conditions": [
+          0.1,
+          0.1,
+          0.1
+        ],
+        "reference_simulation": {
+          "T_ref": 1000,
+          "N": 100000,
+          "h": 0.01
+        },
+        "clone_conditions": [
+          {
+            "T_clone": 1,
+            "N_clone": 100,
+            "hC": 0.01,
+            "K": 1000
+          },
+          {
+            "T_clone": 5,
+            "N_clone": 500,
+            "hC": 0.01,
+            "K": 200
+          },
+          {
+            "T_clone": 10,
+            "N_clone": 1000,
+            "hC": 0.01,
+            "K": 100
+          }
+        ],
+        "delta_x0": 0.001,
+        "table3_cloned_vs_classic_commensurate": [
+          {
+            "orders": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "cloned": [
+              0.1899,
+              0.0413,
+              -0.4246
+            ],
+            "classic": [
+              0.1845,
+              -0.0003,
+              -0.693
+            ]
+          },
+          {
+            "orders": [
+              0.9,
+              0.9,
+              0.9
+            ],
+            "cloned": [
+              -0.0042,
+              -0.0267,
+              -0.4656
+            ],
+            "classic": [
+              -0.0243,
+              -0.1376,
+              -1.3396
+            ]
+          },
+          {
+            "orders": [
+              0.8,
+              0.8,
+              0.8
+            ],
+            "cloned": [
+              -0.0047,
+              -0.2864,
+              -0.3634
+            ],
+            "classic": [
+              0.0005,
+              -0.8676,
+              -2.1037
+            ]
+          },
+          {
+            "orders": [
+              0.7,
+              0.7,
+              0.7
+            ],
+            "cloned": [
+              -0.0527,
+              -0.0528,
+              -0.2763
+            ],
+            "classic": [
+              0.0006,
+              -0.6493,
+              -2.1408
+            ]
+          }
+        ],
+        "table4_lce_0_1": [
+          {
+            "type": "Comm",
+            "orders": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              0.1899,
+              0.0413,
+              -0.4246
+            ],
+            "K01": 0.9866
+          },
+          {
+            "type": "Comm",
+            "orders": [
+              0.9,
+              0.9,
+              0.9
+            ],
+            "LE": [
+              -0.0042,
+              -0.0267,
+              -0.4656
+            ],
+            "K01": 0.0758
+          },
+          {
+            "type": "Comm",
+            "orders": [
+              0.8,
+              0.8,
+              0.8
+            ],
+            "LE": [
+              -0.0047,
+              -0.2864,
+              -0.3634
+            ],
+            "K01": 0.0151
+          },
+          {
+            "type": "Comm",
+            "orders": [
+              0.7,
+              0.7,
+              0.7
+            ],
+            "LE": [
+              -0.0527,
+              -0.0528,
+              -0.2763
+            ],
+            "K01": -0.1425
+          },
+          {
+            "type": "Incomm",
+            "orders": [
+              0.9,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              0.1744,
+              0.0246,
+              -0.46
+            ],
+            "K01": 0.9928
+          },
+          {
+            "type": "Incomm",
+            "orders": [
+              0.8,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              0.081,
+              -0.0162,
+              -0.4017
+            ],
+            "K01": 0.3786
+          },
+          {
+            "type": "Incomm",
+            "orders": [
+              0.7,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              -0.0395,
+              -0.0888,
+              -0.2442
+            ],
+            "K01": 0.1543
+          },
+          {
+            "type": "Incomm",
+            "orders": [
+              0.6,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              0.0179,
+              -0.0971,
+              -0.2816
+            ],
+            "K01": 0.1329
+          }
+        ]
+      },
+      "financial_system": {
+        "equations": [
+          "D^alpha1 x = z+(y-a)*x",
+          "D^alpha2 y = 1-b*y-|x|",
+          "D^alpha3 z = -x-c*z"
+        ],
+        "parameters": {
+          "a": 1.0,
+          "b": 0.15,
+          "c": 1.0
+        },
+        "initial_conditions": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "reference_simulation": {
+          "T_ref": 5000,
+          "N": 100000,
+          "h": 0.05
+        },
+        "clone_conditions": {
+          "T_clone": 10,
+          "N_clone": 1000,
+          "hC": 0.01,
+          "K": 500,
+          "delta_x0": 0.001
+        },
+        "table5_lce_0_1": [
+          {
+            "type": "Comm",
+            "orders": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              0.0891,
+              0.0058,
+              -0.4348
+            ],
+            "K01": 0.9984
+          },
+          {
+            "type": "Comm",
+            "orders": [
+              0.9,
+              0.9,
+              0.9
+            ],
+            "LE": [
+              0.1133,
+              -0.003,
+              -0.337
+            ],
+            "K01": 0.9974
+          },
+          {
+            "type": "Comm",
+            "orders": [
+              0.8,
+              0.8,
+              0.8
+            ],
+            "LE": [
+              -0.0407,
+              -0.0406,
+              -0.2648
+            ],
+            "K01": 0.1325
+          },
+          {
+            "type": "Comm",
+            "orders": [
+              0.7,
+              0.7,
+              0.7
+            ],
+            "LE": [
+              -0.2125,
+              -0.4539,
+              -0.4539
+            ],
+            "K01": 0.2491
+          },
+          {
+            "type": "Incomm",
+            "orders": [
+              0.9,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              0.1445,
+              0.0012,
+              -0.4419
+            ],
+            "K01": 0.998
+          },
+          {
+            "type": "Incomm",
+            "orders": [
+              0.8,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              0.1235,
+              -0.0026,
+              -0.3412
+            ],
+            "K01": 0.9975
+          },
+          {
+            "type": "Incomm",
+            "orders": [
+              0.7,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              0.0935,
+              -0.0476,
+              -0.29
+            ],
+            "K01": 0.9986
+          },
+          {
+            "type": "Incomm",
+            "orders": [
+              0.6,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              -0.0678,
+              -0.068,
+              -0.3308
+            ],
+            "K01": 0.1037
+          }
+        ]
+      },
+      "four_wing_system": {
+        "equations": [
+          "D^alpha1 x=-x+y*z",
+          "D^alpha2 y=y-x*z",
+          "D^alpha3 z=b-c*z+x*y"
+        ],
+        "parameters": {
+          "b": 0.53,
+          "c": 3.0
+        },
+        "initial_conditions": [
+          0.1,
+          0.1,
+          0.1
+        ],
+        "reference_simulation": {
+          "T_ref": 1000,
+          "N": 100000,
+          "h": 0.01
+        },
+        "clone_conditions": {
+          "T_clone": 5,
+          "N_clone": 500,
+          "hC": 0.01,
+          "K": 200,
+          "delta_x0": 0.001
+        },
+        "table6_lce_0_1": [
+          {
+            "type": "Comm",
+            "orders": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              0.3358,
+              0.0133,
+              -1.2608
+            ],
+            "K01": 0.998
+          },
+          {
+            "type": "Comm",
+            "orders": [
+              0.9,
+              0.9,
+              0.9
+            ],
+            "LE": [
+              0.2684,
+              -0.0259,
+              -0.9699
+            ],
+            "K01": 0.9982
+          },
+          {
+            "type": "Comm",
+            "orders": [
+              0.8,
+              0.8,
+              0.8
+            ],
+            "LE": [
+              -0.1543,
+              -0.1531,
+              -0.801
+            ],
+            "K01": 0.1352
+          },
+          {
+            "type": "Comm",
+            "orders": [
+              0.7,
+              0.7,
+              0.7
+            ],
+            "LE": [
+              -0.4825,
+              -0.4818,
+              -0.6942
+            ],
+            "K01": 0.1752
+          },
+          {
+            "type": "Incomm",
+            "orders": [
+              0.9,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              0.3623,
+              -0.0501,
+              -1.0984
+            ],
+            "K01": 0.9983
+          },
+          {
+            "type": "Incomm",
+            "orders": [
+              0.8,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              0.346,
+              -0.1048,
+              -0.9196
+            ],
+            "K01": 0.9978
+          },
+          {
+            "type": "Incomm",
+            "orders": [
+              0.7,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              0.3598,
+              -0.0345,
+              -0.916
+            ],
+            "K01": 0.9976
+          },
+          {
+            "type": "Incomm",
+            "orders": [
+              0.6,
+              1.0,
+              1.0
+            ],
+            "LE": [
+              0.3371,
+              -0.0628,
+              -0.9076
+            ],
+            "K01": 0.9969
+          }
+        ]
+      },
+      "usable_for_phases": [
+        "F3_cloned_dynamics_benchmarks",
+        "F5_zero_one_test_validation",
+        "chaos_validation_consensus"
+      ]
+    }
+  }
+}

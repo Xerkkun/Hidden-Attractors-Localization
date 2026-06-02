@@ -109,6 +109,10 @@ f5_diagnostics_structured_outputs_ready
 This means that the complementary output bundle is ready for inspection. It
 does not promote the separate official protocol stage automatically.
 
+F6 consumes this structured bundle conservatively. Conflicting F5 indicators
+remain inconclusive; structured output readiness is not a chaos verdict. See
+[F6 Integrated Chaos Validator](f6_integrated_chaos_validator.md).
+
 ```text
 chaos_verified: false
 hidden_verified: false
