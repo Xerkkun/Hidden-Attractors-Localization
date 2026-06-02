@@ -20,6 +20,7 @@ from .transfer import (
     W_precompute_spectral,
     W_eval_from_cache,
 )
+from .compatibility import LureCompatibilityValidator
 
 __all__ = [
     "validate_lure_decomposition",
@@ -40,4 +41,5 @@ __all__ = [
     "W_eval",
     "W_precompute_spectral",
     "W_eval_from_cache",
+    "LureCompatibilityValidator",
 ]

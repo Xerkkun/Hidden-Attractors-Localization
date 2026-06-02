@@ -10,9 +10,12 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable, Sequence
+
+from hidden_attractors.workflows.protocol import validate_global_report_coherence
 
 
 DEFAULT_CONTRACT = Path("configs") / "validation_contract.json"
@@ -161,18 +164,55 @@ def check_validation_contract(
     if manifest_path.exists():
         data, _ = _read_json(manifest_path)
         if data is not None:
-            # 1. Extract pending stages mapped to "pending"
+            # Legacy field migrations for backward compatibility
+            migrated = False
+            if "final_label" in data and "state" not in data:
+                data["state"] = data["final_label"]
+                issues.append(ValidationIssue("WARNING", manifest_path, "Migrated legacy 'final_label' to 'state'"))
+                warnings.warn(f"{manifest_path}: Migrated legacy 'final_label' to 'state'", DeprecationWarning)
+                migrated = True
+            if "final_report_status" in data and "state" not in data:
+                data["state"] = data["final_report_status"]
+                issues.append(ValidationIssue("WARNING", manifest_path, "Migrated legacy 'final_report_status' to 'state'"))
+                warnings.warn(f"{manifest_path}: Migrated legacy 'final_report_status' to 'state'", DeprecationWarning)
+                migrated = True
+
+            # Extract pending stages
             stages = data.get("stages", {})
             if isinstance(stages, dict):
                 for k, v in stages.items():
                     if v == "pending":
                         pending_slugs.add(k)
-            # 2. Extract pending stages in the pending_stages array
             pending_stages = data.get("pending_stages", [])
             if isinstance(pending_stages, list):
                 for item in pending_stages:
                     if isinstance(item, str):
                         pending_slugs.add(item)
+
+            # Global report coherence check
+            try:
+                # Also read stage summaries to populate evidence if not already present
+                combined_data = dict(data)
+                stage_statuses = data.get("stage_statuses", {})
+                
+                # Check for hiddenness_tests or diagnostics to extract evidence/outputs
+                for stage_slug, rel_path in stages.items():
+                    if rel_path != "pending":
+                        stage_path = validation_root / rel_path
+                        if stage_path.exists():
+                            stage_summary, _ = _read_json(stage_path)
+                            if stage_summary:
+                                # merge outputs, metrics or files into combined_data to provide complete context
+                                for key in ("outputs", "metrics", "evidence", "files"):
+                                    if key in stage_summary:
+                                        if key not in combined_data:
+                                            combined_data[key] = {}
+                                        if isinstance(combined_data[key], dict) and isinstance(stage_summary[key], dict):
+                                            combined_data[key].update(stage_summary[key])
+                
+                validate_global_report_coherence(combined_data)
+            except ValueError as exc:
+                issues.append(ValidationIssue("ERROR", manifest_path, f"Global report coherence check failed: {exc}"))
 
     for file_name in manifest_info.get("required_files", []):
         path = manifest_dir / file_name

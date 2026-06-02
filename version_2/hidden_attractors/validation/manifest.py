@@ -124,6 +124,23 @@ def regenerate_validation_manifest(
     else:
         final_report_status = "pending_final_report_generation"
 
+    # Determine overall state from the stages' statuses
+    overall_state = "candidate_attractor"
+    if stage_statuses.get("seed_generation") in ("completed", "passed"):
+        overall_state = "seed_found"
+    if stage_statuses.get("continuation") in ("completed", "passed"):
+        overall_state = "candidate_attractor"
+    if stage_statuses.get("dynamic_reference") in ("completed", "passed"):
+        overall_state = "chaotic_candidate"
+    if stage_statuses.get("robustness") in ("completed", "passed"):
+        overall_state = "hidden_compatible"
+    if "hiddenness_tests" in stage_statuses:
+        h_status = stage_statuses["hiddenness_tests"]
+        if h_status == "completed":
+            overall_state = "hidden_verified"
+        elif "exploratory" in h_status or "lightweight" in h_status or h_status == "hiddenness_exploratory_only":
+            overall_state = "hidden_compatible"
+
     manifest = {
         "validation_id": validation_id,
         "repository_commit": actual_provenance["repository_commit"],
@@ -134,6 +151,7 @@ def regenerate_validation_manifest(
         "main_parameters": parameters,
         "schema_version": str(contract.get("schema_version", "1.0")),
         "protocol_version": str(contract.get("protocol_version", "caputo_hidden_attractors_v1")),
+        "state": overall_state,
         "stages": stages,
         "stage_statuses": stage_statuses,
         "stage_evidence_scopes": stage_evidence_scopes,

@@ -19,6 +19,8 @@ from typing import Any, Literal, Mapping, Sequence
 
 import numpy as np
 
+from hidden_attractors.validation.states import AttractorValidationState
+
 
 SCHEMA_VERSION = "1.0"
 PROTOCOL_VERSION = "caputo_hidden_attractors_v1"
@@ -380,6 +382,13 @@ class StageEnvelope:
     provenance: Mapping[str, Any] = field(default_factory=dict)
     schema_version: str = SCHEMA_VERSION
     protocol_version: str = PROTOCOL_VERSION
+    state: str | None = None
+    state_history: Sequence[str] = field(default_factory=list)
+    evidence: Mapping[str, Any] = field(default_factory=dict)
+    failed_requirements: Sequence[str] = field(default_factory=list)
+    method_scope: str = ""
+    warnings: Sequence[str] = field(default_factory=list)
+    literature_note: str = ""
 
     def validate(self) -> list[str]:
         errors: list[str] = []
@@ -410,8 +419,159 @@ class StageEnvelope:
                 "verdict": self.verdict,
                 "files": dict(self.files),
                 "provenance": dict(self.provenance),
+                "state": self.state,
+                "state_history": list(self.state_history),
+                "evidence": dict(self.evidence),
+                "failed_requirements": list(self.failed_requirements),
+                "method_scope": self.method_scope,
+                "warnings": list(self.warnings),
+                "literature_note": self.literature_note,
             }
         )
+
+
+def validate_global_report_coherence(report_data: dict) -> None:
+    """Validate coherence of global report validation metadata states and evidence."""
+
+    state = report_data.get("state")
+    verdict = report_data.get("verdict")
+    final_report_status = ""
+    if isinstance(report_data.get("final_report"), dict):
+        final_report_status = report_data["final_report"].get("status", "")
+
+    outputs = report_data.get("outputs", {})
+    metrics = report_data.get("metrics", {})
+    stage_statuses = report_data.get("stage_statuses", {})
+
+    # 1. Structural check: State 'seed_found' cannot be labeled as hidden
+    is_seed_found = (
+        state == "seed_found"
+        or verdict == "seed_found"
+        or (isinstance(outputs, dict) and outputs.get("state") == "seed_found")
+    )
+    if is_seed_found:
+        if verdict in (
+            "hidden_compatible",
+            "hidden_verified",
+            "compatible_with_hiddenness_under_tested_radii",
+            "hidden_verified_only_if_full_protocol_passed",
+        ):
+            raise ValueError("State 'seed_found' cannot be labeled as hidden.")
+        if state in ("hidden_compatible", "hidden_verified"):
+            raise ValueError("State 'seed_found' cannot be labeled as hidden.")
+
+    # Normalize state/verdict keys from envelopes if checking a list of stages or manifest
+    is_hidden_verified = (
+        state == "hidden_verified"
+        or verdict == "hidden_verified"
+        or verdict == "hidden_verified_only_if_full_protocol_passed"
+        or final_report_status == "hidden_verified"
+        or report_data.get("final_report_status") == "hidden_verified"
+    )
+
+    if isinstance(outputs, dict):
+        if outputs.get("state") == "hidden_verified" or outputs.get("verdict") == "hidden_verified":
+            is_hidden_verified = True
+    if isinstance(metrics, dict):
+        if metrics.get("state") == "hidden_verified" or metrics.get("verdict") == "hidden_verified":
+            is_hidden_verified = True
+
+    if is_hidden_verified:
+        evidence = report_data.get("evidence", {})
+        
+        has_sphere = False
+        has_basin = False
+
+        if isinstance(evidence, dict):
+            if evidence.get("sphere_tests") or evidence.get("basin_neighborhood_tests"):
+                has_sphere = True
+                has_basin = True
+            if "sphere_tests" in evidence or "basin_neighborhood_tests" in evidence:
+                has_sphere = True
+                has_basin = True
+            if evidence.get("completed_sphere_tests") or evidence.get("completed_basin_tests"):
+                has_sphere = True
+                has_basin = True
+
+        if isinstance(outputs, dict):
+            if outputs.get("sphere_tests") or outputs.get("basin_neighborhood_tests"):
+                has_sphere = True
+                has_basin = True
+            if "basin_slices" in outputs or "sphere_controls" in outputs:
+                has_sphere = True
+                has_basin = True
+            hiddenness_run = outputs.get("branches", {}).get("full_history", {}).get("run_type")
+            if hiddenness_run == "full_protocol_hiddenness_tests":
+                has_sphere = True
+                has_basin = True
+
+        if isinstance(stage_statuses, dict):
+            if stage_statuses.get("hiddenness_tests") in ("completed", "passed_python_wolfram"):
+                has_sphere = True
+                has_basin = True
+
+        files = report_data.get("files", {})
+        if isinstance(files, dict):
+            for f in files.values():
+                if isinstance(f, str) and ("sphere" in f or "basin" in f):
+                    has_sphere = True
+                    has_basin = True
+                elif isinstance(f, list):
+                    for item in f:
+                        if isinstance(item, str) and ("sphere" in item or "basin" in item):
+                            has_sphere = True
+                            has_basin = True
+
+        if not (has_sphere or has_basin):
+            raise ValueError(
+                "State 'hidden_verified' requires evidence of completed sphere_tests or basin_neighborhood_tests."
+            )
+
+    is_chaotic_candidate = (
+        state == "chaotic_candidate"
+        or verdict == "chaotic_candidate"
+        or final_report_status == "chaotic_candidate"
+        or (isinstance(outputs, dict) and (outputs.get("state") == "chaotic_candidate" or outputs.get("verdict") == "chaotic_candidate"))
+    )
+    if is_chaotic_candidate:
+        has_chaos_evidence = False
+        for d in (metrics, outputs, report_data.get("evidence", {})):
+            if not isinstance(d, dict):
+                continue
+            if d.get("zero_one_test") is not None or d.get("zero_one_kappa") is not None:
+                has_chaos_evidence = True
+            if d.get("lyapunov_estimate") is not None or d.get("max_lyapunov") is not None or d.get("positive_lyapunov") is not None:
+                max_ly = d.get("max_lyapunov")
+                if max_ly is not None:
+                    try:
+                        if float(max_ly) > 0.0:
+                            has_chaos_evidence = True
+                    except ValueError:
+                        pass
+                else:
+                    has_chaos_evidence = True
+            kappa = d.get("zero_one_kappa") or d.get("kappa")
+            if kappa is not None:
+                try:
+                    if float(kappa) > 0.5:
+                        has_chaos_evidence = True
+                except ValueError:
+                    pass
+
+        if isinstance(stage_statuses, dict):
+            if stage_statuses.get("diagnostics") == "completed":
+                has_chaos_evidence = True
+
+        files = report_data.get("files", {})
+        if isinstance(files, dict):
+            for f in files.values():
+                if isinstance(f, str) and ("lyapunov" in f or "zero_one" in f or "chaos" in f):
+                    has_chaos_evidence = True
+
+        if not has_chaos_evidence:
+            raise ValueError(
+                "State 'chaotic_candidate' requires chaos test evidence (positive max Lyapunov or 0-1 test)."
+            )
 
 
 def sample_uniform_ball(
@@ -453,4 +613,5 @@ __all__ = [
     "StageEnvelope",
     "UnifiedSeedRecord",
     "sample_uniform_ball",
+    "validate_global_report_coherence",
 ]

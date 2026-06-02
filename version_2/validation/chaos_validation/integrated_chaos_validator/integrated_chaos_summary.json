@@ -1,7 +1,7 @@
 {
   "stage": "F6_integrated_chaos_validator",
   "status": "completed_non_certifying_integration",
-  "generated_at_utc": "2026-06-02T08:25:58.394131+00:00",
+  "generated_at_utc": "2026-06-02T09:38:54.963452+00:00",
   "inputs": {
     "f5_summary": "validation/chaos_validation/dynamics_diagnostics/f5_diagnostics_summary.json",
     "boundedness_summary": "validation/chaos_validation/dynamics_diagnostics/boundedness/boundedness_diagnostics_summary.json",
@@ -43,7 +43,7 @@
         "f5_combined_status": "mixed_diagnostics_inconclusive",
         "boundedness_status": "bounded_candidate",
         "zero_one_status": "zero_one_regular_candidate",
-        "zero_one_K_global": -0.017314593890187427,
+        "zero_one_K_global": -0.017314593890187434,
         "psd_fft_status": "spectral_inconclusive",
         "peak_dominance_max": 0.5015338877259724,
         "poincare_status": "cloud_like",
@@ -218,7 +218,7 @@
         "f5_combined_status": "mixed_diagnostics_inconclusive",
         "boundedness_status": "bounded_candidate",
         "zero_one_status": "zero_one_regular_candidate",
-        "zero_one_K_global": 0.02144481246218011,
+        "zero_one_K_global": 0.021444812462180114,
         "psd_fft_status": "spectral_inconclusive",
         "peak_dominance_max": 0.5821832574043466,
         "poincare_status": "cloud_like",

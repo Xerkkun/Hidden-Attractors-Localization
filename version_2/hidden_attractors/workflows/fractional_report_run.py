@@ -1144,6 +1144,13 @@ def _write_stage_summary(
     outputs: dict[str, Any] | None = None,
     metrics: dict[str, Any] | None = None,
     verdict: str | None = None,
+    state: str | None = None,
+    state_history: list[str] | None = None,
+    evidence: dict[str, Any] | None = None,
+    failed_requirements: list[str] | None = None,
+    method_scope: str = "",
+    warnings: list[str] | None = None,
+    literature_note: str = "",
 ) -> None:
     summary = StageEnvelope(
         stage=stage,
@@ -1156,6 +1163,13 @@ def _write_stage_summary(
         verdict=verdict,
         files=files,
         provenance=provenance,
+        state=state,
+        state_history=state_history or [],
+        evidence=evidence or {},
+        failed_requirements=failed_requirements or [],
+        method_scope=method_scope,
+        warnings=warnings or [],
+        literature_note=literature_note,
     )
     errors = summary.validate()
     if errors:
@@ -1236,6 +1250,8 @@ def promote_validation(
         },
         provenance=provenance,
         outputs={"efork_stage": EFORK_STAGE, "protocol_version": PROTOCOL_VERSION},
+        state="candidate_attractor",
+        state_history=["candidate_attractor"],
     )
 
     seed_rows = read_csv_rows(run_root / "df_candidate_pool.csv")
@@ -1261,10 +1277,11 @@ def promote_validation(
         )
     write_json(seed_dir / "unified_seeds.json", {"schema_version": SCHEMA_VERSION, "protocol_version": PROTOCOL_VERSION, "seeds": seeds})
     write_csv(seed_dir / "harmonic_residuals.csv", [{"candidate_id": item["candidate_id"], "family": item["family"], "harmonic_residual": item["harmonic_residual"], "rho_H": item["rho_H"]} for item in seeds])
-    (seed_dir / "seed_generation_validation.md").write_text(
-        "# Seed generation\n\nLas familias Lur'e y Machado/FDF generan semillas; no prueban ocultedad.\n",
-        encoding="utf-8",
-    )
+    from hidden_attractors.seed_generation.lure import WEYL_CAPUTO_NOTE
+    seed_report_text = "# Seed generation\n\nLas familias Lur'e y Machado/FDF generan semillas; no prueban ocultedad.\n"
+    if Q < 1.0:
+        seed_report_text += f"\n> [!NOTE]\n> {WEYL_CAPUTO_NOTE}\n"
+    (seed_dir / "seed_generation_validation.md").write_text(seed_report_text, encoding="utf-8")
     _write_stage_summary(
         seed_dir,
         "seed_generation",
@@ -1274,6 +1291,9 @@ def promote_validation(
         provenance=provenance,
         outputs={"candidate_count": len(seeds), "families": sorted({item["family"] for item in seeds})},
         verdict="seed_only",
+        state="seed_found",
+        state_history=["candidate_attractor", "seed_found"],
+        literature_note=WEYL_CAPUTO_NOTE if Q < 1.0 else "",
     )
 
     precheck_rows = []
@@ -1308,6 +1328,8 @@ def promote_validation(
         files={"report": "soft_precheck_validation.md", "decisions": "precheck_decisions.csv"},
         provenance=provenance,
         outputs={"admitted_to_continuation": sum(1 for row in precheck_rows if row["admissible_for_continuation"]), "periodicity_gate": False},
+        state="seed_found",
+        state_history=["candidate_attractor", "seed_found"],
     )
 
     shutil.copy2(full_root / "continuation_paths.csv", continuation_dir / "continuation_trace.csv")
@@ -1332,6 +1354,8 @@ def promote_validation(
         files={"report": "continuation_validation.md", "plan": "continuation_plan.json", "trace": "continuation_trace.csv", "finite_memory_trace": "finite_memory_continuation_trace.csv"},
         provenance=provenance,
         outputs={"branches": ["full_history", "finite_memory"], "public_parameter": "lambda"},
+        state="candidate_attractor",
+        state_history=["candidate_attractor", "seed_found", "candidate_attractor"],
     )
 
     full_filter = read_csv_rows(full_root / "candidate_dynamic_screen.csv")
@@ -1353,6 +1377,8 @@ def promote_validation(
         provenance=provenance,
         outputs={"full_history_survivors": len(full["selected"]), "finite_memory_survivors": len(window["selected"])},
         verdict="continuation_survivor",
+        state="candidate_attractor",
+        state_history=["candidate_attractor", "seed_found", "candidate_attractor"],
     )
 
     _copy_files(full_root / "dynamic", dynamic_dir, ["trajectory_metrics.csv", "fft_summary.csv", "psd_summary.csv", "lyapunov_summary.csv", "phase_3d.png", "projections.png", "time_series.png", "spectrum_x.png"])
@@ -1372,6 +1398,8 @@ def promote_validation(
         files={"report": "dynamic_reference_validation.md", "reference": "dynamic_reference.json", "metrics": "trajectory_metrics.csv", "signature": "similarity_signature.json"},
         provenance=provenance,
         outputs={"branches": ["full_history", "finite_memory"]},
+        state="chaotic_candidate",
+        state_history=["candidate_attractor", "seed_found", "candidate_attractor", "chaotic_candidate"],
     )
 
     _copy_files(full_root / "robustness", robust_dir, ["robustness_overlay_metrics.csv", "robustness_summary.json", "overlay_3d.png"])
@@ -1401,6 +1429,8 @@ etapa verifica persistencia geometrica; no clasifica ocultedad.
         provenance=provenance,
         outputs={"branches": ["full_history", "finite_memory"], "abm_reference": True},
         verdict="weak_target_hit",
+        state="hidden_compatible",
+        state_history=["candidate_attractor", "seed_found", "candidate_attractor", "chaotic_candidate", "hidden_compatible"],
     )
 
     _copy_files(full_root / "hiddenness", hidden_dir, ["ball_sampling_plan.csv", "ball_sampling_results.csv", "hiddenness_decisions.csv", "strict_refinement_summary.csv", "hiddenness_run_summary.json"])
@@ -1486,6 +1516,8 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
         provenance=provenance,
         outputs={"branches": {"full_history": full["hiddenness"], "finite_memory": window["hiddenness"]}, "sampling_mode": "ball", "is_lightweight": is_lightweight},
         verdict=hiddenness_verdict,
+        state="hidden_verified" if not is_lightweight and all_slices_present else "hidden_compatible",
+        state_history=["candidate_attractor", "seed_found", "candidate_attractor", "chaotic_candidate", "hidden_compatible", "hidden_verified" if not is_lightweight and all_slices_present else "hidden_compatible"],
     )
 
     # Run algebraic validation
@@ -1658,6 +1690,8 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
             files=algebra_summary["files"],
             provenance=provenance,
             outputs=algebra_summary["outputs"],
+            state="candidate_attractor",
+            state_history=["candidate_attractor"],
         )
     except Exception as exc:
         print(f"Warning: Algebraic validation integration failed: {exc}", flush=True)
@@ -1675,6 +1709,8 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
         files={"report": "diagnostics_validation.md", "fft": "fft_summary.csv", "psd": "psd_summary.csv", "lyapunov": "lyapunov_summary.csv"},
         provenance=provenance,
         outputs={"lyapunov": "pending_causal_history_backend"},
+        state="chaotic_candidate",
+        state_history=["candidate_attractor", "seed_found", "candidate_attractor", "chaotic_candidate"],
     )
 
     regenerate_validation_manifest(

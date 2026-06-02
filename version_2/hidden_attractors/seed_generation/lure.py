@@ -68,6 +68,13 @@ def build_lure_linearized_matrix(system: LureSystem, gain: float) -> np.ndarray:
     )
 
 
+WEYL_CAPUTO_NOTE = (
+    "Weyl-Caputo Note: Para sistemas con orden fraccionario q < 1.0, la frecuencia s = (j*omega)^q "
+    "se evalúa formalmente en la rama principal como s = omega^q * exp(j * q * pi / 2) de acuerdo al "
+    "operador de Weyl-Caputo."
+)
+
+
 def lure_transfer_function(omega: float, q: float, system: LureSystem) -> complex:
     """Return ``c^T (A - (i\u03c9)^q I)^{-1} b`` for a generic Lur'e system.
 
@@ -87,14 +94,24 @@ def lure_transfer_function(omega: float, q: float, system: LureSystem) -> comple
 
     Raises
     ------
+    ValueError
+        If evaluating with integer order when q != 1.0 or if system is fractional and q = 1.0.
     numpy.linalg.LinAlgError
         If ``A - (i omega)^q I`` is singular.
     """
 
+    q_val = float(q)
+    if q_val == 1.0:
+        if "fractional" in getattr(system, "name", "").lower() or "nonsmooth" in getattr(system, "name", "").lower():
+            raise ValueError("Prohibited evaluating fractional Lur'e system with integer order (q = 1.0).")
+        s = complex_dtype(1j * omega)
+    else:
+        s = fractional_iomega_power(omega, q_val)
+
     matrix = np.asarray(system.matrix, dtype=complex_dtype)
     bvec = np.asarray(system.input_vector, dtype=complex_dtype)
     cvec = np.asarray(system.output_vector, dtype=complex_dtype)
-    lhs = matrix - fractional_iomega_power(omega, q) * np.eye(
+    lhs = matrix - s * np.eye(
         system.dimension, dtype=complex_dtype
     )
     value = (cvec.reshape(1, -1) @ np.linalg.inv(lhs) @ bvec.reshape(-1, 1))[0, 0]
@@ -645,4 +662,5 @@ __all__ = [
     "lure_transfer_function",
     "reconstruct_biased_lure_seed_from_system",
     "solve_lure_amplitude_from_gain",
+    "WEYL_CAPUTO_NOTE",
 ]

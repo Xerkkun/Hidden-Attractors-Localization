@@ -150,6 +150,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         verdict=verdict,
         files=data.get("files", {}) if isinstance(data.get("files", {}), dict) else {},
         provenance=data.get("provenance", {}) if isinstance(data.get("provenance", {}), dict) else {},
+        state=data.get("state"),
+        state_history=data.get("state_history", []),
+        evidence=data.get("evidence", {}) if isinstance(data.get("evidence", {}), dict) else {},
+        failed_requirements=data.get("failed_requirements", []),
+        method_scope=data.get("method_scope", ""),
+        warnings=data.get("warnings", []),
+        literature_note=data.get("literature_note", ""),
     )
     errors = envelope.validate()
     if errors:

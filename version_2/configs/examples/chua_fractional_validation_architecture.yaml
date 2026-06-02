@@ -1,0 +1,56 @@
+# Example configuration showcasing the correct verification architecture,
+# including symmetry-enabled seed discovery and non-smooth crossing alerts.
+
+experiment:
+  name: "Chua Fractional Validation Architecture"
+  description: >
+    Runs the complete localization and verification pipeline using Lur'e compatibility,
+    non-smooth crossing detectors, and symmetry mapping.
+  output_dir: "outputs/chua_validation_architecture"
+  run_id: "auto"
+  random_seed: 20260602
+
+system:
+  system_id: "chua-nonsmooth"
+  q: 0.9998
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+modes:
+  transfer_mode: "fractional"
+  seed_mode: "fractional"
+  continuation_mode: "fractional"
+  dynamics_mode: "fractional"
+
+integrator:
+  name: "efork3"
+  h: 0.01
+  memory_policy: "full_history"
+  use_c_backend: true
+
+stages:
+  seed_search: true
+  continuation: true
+  final_simulation: true
+  hiddenness_tests: true
+  sphere_tests: true
+  basin_slices: true
+
+seed_search:
+  strategy: "imw_gain"
+  construction: "modal"
+  branch_index: 0
+  omega_min: 0.01
+  omega_max: 20.0
+  amplitude_min: 0.01
+  amplitude_max: 20.0
+  force_heuristic_describing_function: false
+
+validation:
+  symmetry_tolerance: 1e-5
+  symmetry_deduplication: true
+  force_nonsmooth_integration: false
