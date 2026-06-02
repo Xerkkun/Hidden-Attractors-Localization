@@ -60,6 +60,13 @@ from .method_comparison import (
     compare_f5_diagnostics,
     compare_lyapunov_methods,
 )
+from .phase_f_closure import (
+    FRACTIONAL_CANDIDATE_IDS,
+    PHASE_F_CLOSURE_RULES,
+    PHASE_F_STRUCTURED_STATUS,
+    assess_phase_f_closure,
+    build_phase_f_closure_matrix,
+)
 from .poincare import (
     ALLOWED_INTERPRETATION_LABELS,
     PoincareCrossingResult,
@@ -135,6 +142,12 @@ __all__ = [
     "classify_method_row",
     "compare_f5_diagnostics",
     "compare_lyapunov_methods",
+    # Phase F closure
+    "FRACTIONAL_CANDIDATE_IDS",
+    "PHASE_F_CLOSURE_RULES",
+    "PHASE_F_STRUCTURED_STATUS",
+    "assess_phase_f_closure",
+    "build_phase_f_closure_matrix",
     # Poincare diagnostic
     "ALLOWED_INTERPRETATION_LABELS",
     "PoincareCrossingResult",

@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "stage": "phase_F_closure",
+  "strict_closure_requires_one_completed_route": [
+    "route_A",
+    "route_B"
+  ],
+  "route_A": {
+    "route_id": "strict_fractional_variational_validation",
+    "method_id": "fractional_variational_abm_qr",
+    "non_strict_assessment_status": "assessed_with_documented_validation_gap",
+    "requires": [
+      "validated=true",
+      "validated_against_published_benchmarks=true or accepted_fractional_lyapunov_validation_policy.md exists",
+      "case-specific spectrum for each current fractional candidate",
+      "lambda_max",
+      "full_spectrum",
+      "sign_pattern",
+      "convergence_status",
+      "sensitivity_status",
+      "method_validation_status"
+    ]
+  },
+  "route_B": {
+    "route_id": "strict_fractional_cloned_validation",
+    "method_id": "fractional_cloned_dynamics_abm_gs_published",
+    "non_strict_assessment_status": "assessed_with_documented_discrepancies",
+    "requires": [
+      "validated=true",
+      "validated_against_published_benchmarks=true or fischer2020_discrepancy_resolution.md exists",
+      "published_benchmarks_pending_discrepancy must be resolved"
+    ]
+  },
+  "route_C": {
+    "route_id": "diagnostic_scope_closure",
+    "requires": [
+      "F4.status=f4_complete_with_documented_discrepancies",
+      "F5.final_f5_status=f5_diagnostics_structured_outputs_ready",
+      "phase_F_diagnostic_scope_statement.md exists"
+    ],
+    "result_status": "F_closed_as_structured_diagnostics_not_chaos_certification"
+  },
+  "invariants": {
+    "strict_chaos_validation_closed": false,
+    "chaos_verified": false,
+    "hiddenness_verified": false,
+    "fractional_method_promotion_without_policy": false
+  }
+}

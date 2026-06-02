@@ -79,3 +79,21 @@ def test_f6_f7_outputs_have_no_false_certification() -> None:
         '"caputo_lyapunov_validated": true',
     ):
         assert forbidden not in serialized
+
+
+def test_phase_f_closure_has_no_false_certification() -> None:
+    root = PROJECT_ROOT / "validation" / "chaos_validation"
+    serialized = "\n".join(
+        path.read_text(encoding="utf-8").lower()
+        for folder in ("phase_F_closure", "lyapunov_methods/F4_internal_validation")
+        for path in (root / folder).rglob("*.json")
+    )
+    for forbidden in (
+        '"strict_chaos_validation_closed": true',
+        '"chaos_verified": true',
+        '"hiddenness_verified": true',
+        "f_strict_chaos_validation_closed",
+        '"fractional_lyapunov_validated_by_f4": true',
+        '"caputo_lyapunov_validated_by_f4": true',
+    ):
+        assert forbidden not in serialized

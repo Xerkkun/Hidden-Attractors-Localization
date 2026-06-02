@@ -65,3 +65,12 @@ hiddenness_certified_by_this_pipeline: false
 fractional_lyapunov_validated_by_f4: false
 caputo_lyapunov_validated_by_f4: false
 ```
+
+## Phase F Closure Status
+
+F4 evidence contributes to the Phase F diagnostic closure without promoting
+fractional methods. Route A is labeled
+`assessed_with_documented_validation_gap`; Route B is labeled
+`assessed_with_documented_discrepancies`. This preserves rigorous controls,
+published reproduction attempts, and sensitivity sweeps while keeping the
+strict validation boundary explicit. See [Phase F Closure Status](phase_f_closure.md).

@@ -18,6 +18,7 @@ contribution notes.
 - [F5 Dynamics Diagnostics](f5_dynamics_diagnostics.md)
 - [F6 Integrated Chaos Validator](f6_integrated_chaos_validator.md)
 - [F7 Method Comparison](f7_method_comparison.md)
+- [Phase F Closure Status](phase_f_closure.md)
 - [F4 Internal Lyapunov Validation](f4_internal_lyapunov_validation.md)
 - [External Tools](external_tools.md)
 - [Unified Report](unified_report.md)

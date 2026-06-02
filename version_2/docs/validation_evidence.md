@@ -172,3 +172,19 @@ QR, DK2018 block-restart, Fischer published GS, and the experimental QR lane.
 They do not certify chaos, hiddenness, or fractional Lyapunov methods. See
 [F6 Integrated Chaos Validator](f6_integrated_chaos_validator.md) and
 [F7 Method Comparison](f7_method_comparison.md).
+
+## Phase F Closure Status
+
+Phase F is closed only as standardized diagnostic evidence, not as chaos
+certification:
+
+```text
+F_closed_as_structured_diagnostics_not_chaos_certification
+```
+
+Route A full-history QR is `assessed_with_documented_validation_gap`: its
+internal controls and sensitivity evidence remain recorded without promotion.
+Route B Fischer published GS is
+`assessed_with_documented_discrepancies`: the long reproduction and bounded
+sensitivity sweeps are retained with their unresolved discrepancies. Route C
+closes the structured diagnostic scope. See [Phase F Closure Status](phase_f_closure.md).

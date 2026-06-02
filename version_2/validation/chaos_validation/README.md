@@ -223,3 +223,17 @@ F7 writes applicability, validation-state, consensus, and discrepancy tables
 under `method_comparison/`. Full-history QR, DK2018 block-restart, Fischer
 published GS, and the experimental QR lane remain separate contracts. F7 does
 not validate pending fractional methods or certify chaos or hiddenness.
+
+## Phase F closure status
+
+Phase F is closed only as standardized diagnostic evidence, not as chaos
+certification:
+
+```text
+F_closed_as_structured_diagnostics_not_chaos_certification
+```
+
+Route A full-history QR is `assessed_with_documented_validation_gap`. Route B
+Fischer published GS is `assessed_with_documented_discrepancies`. Their
+rigorous controls, reproduction attempts, sensitivity sweeps, and remaining
+limitations stay explicit. Route C closes the structured diagnostic scope.

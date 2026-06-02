@@ -1,0 +1,209 @@
+{
+  "stage": "phase_F_closure",
+  "status": "F_closed_as_structured_diagnostics_not_chaos_certification",
+  "strict_chaos_validation_closed": false,
+  "structured_diagnostics_closed": true,
+  "closure_routes": {
+    "route_A_fractional_variational_abm_qr": {
+      "status": "assessed_with_documented_validation_gap",
+      "strict_requirement_satisfied": false,
+      "reason": "rigorous_internal_controls_completed_but_published_validation_or_accepted_policy_not_achieved",
+      "evidence_interpretation": "The full-history QR lane has internal controls and sensitivity evidence. It remains distinct from the DK2018 block-restart lane and is not promoted.",
+      "f4_method_control": {
+        "method_id": "fractional_variational_abm_qr",
+        "controlled_benchmark": "F4_3 local stable synthetic full-history QR rows",
+        "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_3_fractional_published_dk2018/fractional_method_sensitivity.csv",
+        "bibliographic_or_internal_reference": "Local fixed-lower-limit history-aware QR implementation contract",
+        "status": "separate_internal_control_only_published_validation_pending",
+        "validated_by_f4": false
+      },
+      "related_dk2018_reproduction_lane": {
+        "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
+        "status": "published_benchmarks_pending_reproduced_discrepancy",
+        "validation_run_class": "published_quantitative_long",
+        "local_full_history_qr_status": "published_benchmarks_pending_separate_contract_required",
+        "does_not_promote_full_history_qr": true
+      },
+      "method_registry": {
+        "method_id": "fractional_variational_abm_qr",
+        "derivative_model": "caputo",
+        "q_support": "0 < q < 1",
+        "requires_jacobian": true,
+        "orthonormalization": "qr",
+        "finite_time_local": true,
+        "implemented": true,
+        "validated": false,
+        "references": [
+          "Danca & Kuznetsov 2018 \u2014 Matlab Code for Lyapunov Exponents of Fractional-Order Systems (Int. J. Bifurcation Chaos 28(5)): primary reference for the extended original\u2013variational Caputo system with ABM predictor-corrector and QR reorthonormalisation.",
+          "Benettin et al. 1980 \u2014 Lyapunov Characteristic Exponents (Meccanica 15).",
+          "Wolf et al. 1985 \u2014 Determining Lyapunov Exponents from a Time Series (Physica D 16)."
+        ],
+        "warnings": [
+          "F2 \u2014 implemented, NOT yet validated against published benchmarks.",
+          "validated_against_published_benchmarks: false.",
+          "synthetic benchmark infrastructure available",
+          "published benchmark validation pending unless completed",
+          "does not certify chaos",
+          "does not certify hiddenness",
+          "Results are finite-time local Lyapunov exponent estimates, NOT asymptotic proofs.",
+          "Caputo memory: history-aware QR transforms the entire stored variational history at each reorthonormalisation step (history_aware_qr=True).",
+          "If history_aware_qr=False (block-restart), method is NOT full-memory Caputo-aware; label results accordingly.",
+          "Does not certify chaos; does not certify hiddenness of attractors.",
+          "chaos_certified_by_this_pipeline: false",
+          "hiddenness_certified_by_this_pipeline: false",
+          "Not validated for non-smooth systems (e.g., Chua saturation); derivative undefined at switching surfaces."
+        ],
+        "validated_against_synthetic_tests": true,
+        "validated_against_published_benchmarks": false,
+        "benchmark_status": "published_benchmarks_pending",
+        "family": "fractional",
+        "method_type": "variational",
+        "supports_q_less_than_1": true,
+        "supports_q_equal_1": false,
+        "supports_commensurate": true,
+        "supports_incommensurate": false,
+        "memory_protocol": "fixed_lower_limit_full_history_qr",
+        "no_chaos_certification": true,
+        "no_hiddenness_certification": true
+      },
+      "accepted_policy_exists": false,
+      "applied_to_each_fractional_candidate": false,
+      "candidate_applications": {
+        "danca2017_chua_fractional_saturation_q09998": {
+          "lambda_max": null,
+          "full_spectrum": null,
+          "sign_pattern": null,
+          "convergence_status": null,
+          "sensitivity_status": null,
+          "method_validation_status": "published_benchmarks_pending",
+          "required_fields_available": false
+        },
+        "wu2023_chua_fractional_arctan_q099": {
+          "lambda_max": null,
+          "full_spectrum": null,
+          "sign_pattern": null,
+          "convergence_status": null,
+          "sensitivity_status": null,
+          "method_validation_status": "published_benchmarks_pending",
+          "required_fields_available": false
+        }
+      }
+    },
+    "route_B_fractional_cloned_dynamics": {
+      "status": "assessed_with_documented_discrepancies",
+      "strict_requirement_satisfied": false,
+      "reason": "rigorous_fischer2020_reproduction_and_sensitivity_completed_with_documented_discrepancies",
+      "evidence_interpretation": "The published GS lane was exercised with long reproduction and bounded sensitivity sweeps. Remaining discrepancies are retained explicitly.",
+      "f4_method_control": {
+        "method_id": "fractional_cloned_dynamics_abm_gs_published",
+        "controlled_benchmark": "F4_4 reused Fischer 2020 artifact",
+        "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_4_cloned_dynamics_fischer2020/fischer2020_f4_sensitivity.csv",
+        "bibliographic_or_internal_reference": "Fischer et al. 2020 DOI 10.1016/j.apnum.2020.03.027",
+        "status": "controlled_benchmark_with_documented_discrepancies",
+        "validated_by_f4": false
+      },
+      "method_registry": {
+        "method_id": "fractional_cloned_dynamics_abm_gs_published",
+        "derivative_model": "caputo",
+        "q_support": "0 < q <= 1; commensurate and component-wise incommensurate orders",
+        "requires_jacobian": false,
+        "orthonormalization": "gram_schmidt",
+        "finite_time_local": true,
+        "implemented": true,
+        "validated": false,
+        "references": [
+          "Fischer, Zourmba, and Mohamadou 2020 - Lyapunov exponents spectrum estimation of fractional order nonlinear systems using Cloned Dynamics (Applied Numerical Mathematics 154, 187-204; DOI: 10.1016/j.apnum.2020.03.027)."
+        ],
+        "warnings": [
+          "F3 - implemented, NOT yet validated against published benchmarks.",
+          "Published reproduction lane with ABM predictor-corrector, modified Gram-Schmidt, and published_block_restart memory.",
+          "No Jacobian or variational system is used.",
+          "Finite-time local Lyapunov indicators only.",
+          "Fractional results are not a full-memory Caputo-aware claim.",
+          "Does not certify chaos; does not certify hiddenness of attractors.",
+          "chaos_certified_by_this_pipeline: false",
+          "hiddenness_certified_by_this_pipeline: false"
+        ],
+        "validated_against_synthetic_tests": true,
+        "validated_against_published_benchmarks": false,
+        "benchmark_status": "published_benchmarks_pending_discrepancy",
+        "family": "fractional",
+        "method_type": "cloned_dynamics",
+        "supports_q_less_than_1": true,
+        "supports_q_equal_1": true,
+        "supports_commensurate": true,
+        "supports_incommensurate": true,
+        "memory_protocol": "published_block_restart",
+        "no_chaos_certification": true,
+        "no_hiddenness_certification": true
+      },
+      "fischer2020_status": "published_benchmarks_pending_discrepancy",
+      "rows_total": 24,
+      "rows_passed_quantitative": 10,
+      "rows_passed_sign_pattern": 6,
+      "rows_failed": 8,
+      "sensitivity_status": "partial_sweeps_executed_not_validation",
+      "diagnostic_closure": {
+        "status": "closed_with_documented_discrepancies",
+        "additional_sweeps_required_for_current_scope": false,
+        "reason": "bounded sensitivity sweeps already covered delta, T_clone, h, K, q1_mode and orthonormalization; remaining discrepancies require information not reported in the paper or an independent implementation from the authors",
+        "exact_reproduction_requires_unreported_article_details": true,
+        "validated_after_closure": false,
+        "validated_after_diagnostics": false
+      },
+      "discrepancy_resolution_exists": false
+    },
+    "route_C_diagnostic_scope_closure": {
+      "status": "completed",
+      "reason": "F4 and F5 are structurally complete with documented limitations"
+    }
+  },
+  "criteria": {
+    "reproducible_bounded_trajectory": true,
+    "valid_fractional_lyapunov_method_per_candidate": "not_strictly_validated_with_documented_attempts",
+    "two_methods_sign_agreement_preferred": "not_available_with_documented_method_limitations",
+    "zero_one_compatible": true,
+    "psd_fft_without_dominant_periodicity": "partial",
+    "warnings_for_nonsmooth_memory_sensitivity": true,
+    "no_false_chaos_certification": true,
+    "no_false_hiddenness_certification": true
+  },
+  "input_statuses": {
+    "f4_status": "f4_complete_with_documented_discrepancies",
+    "f5_status": "f5_diagnostics_structured_outputs_ready",
+    "dk2018_status": "published_benchmarks_pending_reproduced_discrepancy",
+    "fischer2020_status": "published_benchmarks_pending_discrepancy",
+    "f6_status": "completed_non_certifying_integration",
+    "f7_status": "completed_non_certifying_comparison"
+  },
+  "certifications": {
+    "chaos_verified": false,
+    "hiddenness_verified": false
+  },
+  "invariants": {
+    "structured_diagnostics_are_not_strict_chaos_validation": true,
+    "no_fractional_method_promoted": true,
+    "dk2018_block_restart_does_not_validate_full_history_qr": true,
+    "no_single_diagnostic_certifies_chaos": true
+  },
+  "future_requirements_for_strict_closure": [
+    "Validate fractional_variational_abm_qr against a published benchmark or accepted policy.",
+    "Or resolve Fischer 2020 cloned dynamics discrepancies.",
+    "Apply a valid fractional Lyapunov method to each fractional candidate.",
+    "Preferably obtain sign agreement between two valid methods.",
+    "Keep F5 diagnostics compatible."
+  ],
+  "generated_at_utc": "2026-06-02T08:26:21.986237+00:00",
+  "inputs": {
+    "f4_summary": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/f4_internal_validation_summary.json",
+    "f5_summary": "validation/chaos_validation/dynamics_diagnostics/f5_diagnostics_summary.json",
+    "dk2018_summary": "validation/chaos_validation/lyapunov_methods/fractional_variational_dk2018_block_restart_abm_gs_published/validation_summary.json",
+    "fischer2020_summary": "validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/validation_summary.json",
+    "lyapunov_registry": "hidden_attractors/analysis/lyapunov_methods.py",
+    "f6_summary": "validation/chaos_validation/integrated_chaos_validator/integrated_chaos_summary.json",
+    "f7_summary": "validation/chaos_validation/method_comparison/method_comparison_summary.json",
+    "accepted_fractional_lyapunov_validation_policy": null,
+    "fischer2020_discrepancy_resolution": null,
+    "diagnostic_scope_statement": "validation/chaos_validation/phase_F_closure/phase_F_diagnostic_scope_statement.md"
+  }
+}

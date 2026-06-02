@@ -120,3 +120,11 @@ single_indicator_cannot_certify_chaos: true
 diagnostics_cannot_certify_hiddenness: true
 poincare_cannot_certify_caputo_periodic_orbits: true
 ```
+
+## Phase F Closure Status
+
+F5 supplies standardized diagnostics to the Phase F closure assessment. The
+current valid state is
+`F_closed_as_structured_diagnostics_not_chaos_certification`: structured
+evidence is closed, while current cases remain `mixed_diagnostics_inconclusive`.
+See [Phase F Closure Status](phase_f_closure.md).
