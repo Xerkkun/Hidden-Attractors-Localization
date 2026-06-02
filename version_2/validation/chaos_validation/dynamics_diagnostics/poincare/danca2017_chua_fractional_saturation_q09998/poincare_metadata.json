@@ -1,0 +1,27 @@
+{
+  "case_id": "danca2017_chua_fractional_saturation_q09998",
+  "source": "Danca 2017",
+  "derivative_model": "Caputo",
+  "q": 0.9998,
+  "section": {
+    "variable": "x",
+    "value": 0.0,
+    "direction": "positive_geometric_crossing",
+    "derivative_mode": "geometric_fractional",
+    "condition": "x[n] < 0 <= x[n+1] and x[n+1] - x[n] > 0"
+  },
+  "integration": {
+    "backend": "native_full_history_abm",
+    "integrator": "ABM",
+    "memory_policy": "full_history",
+    "h": 0.01,
+    "t_final": 500.0,
+    "t_burn": 250.0
+  },
+  "burn_time": 250.0,
+  "warnings": [
+    "Poincare alone does not certify chaos.",
+    "Poincare alone does not certify hiddenness.",
+    "Caputo crossings are geometric diagnostics, not exact periodic-orbit returns."
+  ]
+}

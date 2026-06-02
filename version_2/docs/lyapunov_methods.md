@@ -395,3 +395,19 @@ adds row-level classifications, an explicit near-zero sign policy, and a
 reproducible opt-in sensitivity plan. F3 is implemented and the all-row
 benchmark has been executed, but reproduction remains partial and
 `validated=False`.
+
+The bounded diagnostics recorded `164` sensitivity runs across six axes.
+Persistent discrepancies remain documented in the
+[Fischer 2020 reproduction limitations](https://github.com/Xerkkun/Hidden-Attractors-Localization/blob/main/version_2/validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/discrepancy_diagnostics/fischer2020_reproduction_limitations.md).
+The lane is `implemented_with_documented_published_discrepancies`: exact
+reproduction requires protocol and numerical details not reported in the
+article or access to the authors' implementation. No further bounded sweep
+is required in the current scope. This closure does not certify chaos,
+certify hiddenness, validate F2, or promote the internal QR variant.
+
+## F5.4 Poincare diagnostic
+
+Poincare outputs are complementary finite-time geometry, not Lyapunov
+validation. The integer Chua case uses `x=0, xdot>0`; Caputo cases use
+geometric sampled crossings with `exact_poincare_map=false`. See
+[Poincare Diagnostics](poincare_diagnostics.md).

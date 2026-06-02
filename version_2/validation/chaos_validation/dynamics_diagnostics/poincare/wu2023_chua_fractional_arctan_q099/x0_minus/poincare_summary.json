@@ -1,0 +1,56 @@
+{
+  "crossing_count": 15,
+  "retained_after_burn": 15,
+  "bounding_box": {
+    "coordinate_0": {
+      "minimum": 0.0,
+      "maximum": 0.0
+    },
+    "coordinate_1": {
+      "minimum": 1.2125999449440956,
+      "maximum": 1.2253185433609448
+    },
+    "coordinate_2": {
+      "minimum": 5.859538266772316,
+      "maximum": 5.9561088767740875
+    }
+  },
+  "centroid": [
+    0.0,
+    1.2157387696372752,
+    5.8830700413718215
+  ],
+  "covariance": [
+    [
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.4767727341413575e-05,
+      0.00011242904617457332
+    ],
+    [
+      0.0,
+      0.00011242904617457332,
+      0.000856069690090101
+    ]
+  ],
+  "rank_estimate": 2,
+  "nearest_neighbor_stats": {
+    "minimum": 0.0004902076610696965,
+    "median": 0.0031959374282938447,
+    "mean": 0.006527641707861803,
+    "maximum": 0.025542046061401365
+  },
+  "recurrence_like_score": 0.9968142440483893,
+  "duplicate_fraction": 0.0,
+  "section_density_estimate": 153.99692017037506,
+  "interpretation_label": "cloud_like",
+  "status": "cloud_like",
+  "chaos_certified_by_poincare": false,
+  "hiddenness_certified_by_poincare": false,
+  "periodic_orbit_exact": false,
+  "caputo_periodic_orbit_exact": false
+}

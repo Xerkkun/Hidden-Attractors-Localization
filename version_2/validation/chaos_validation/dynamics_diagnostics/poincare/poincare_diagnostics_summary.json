@@ -1,0 +1,314 @@
+{
+  "stage": "F5.4_poincare_diagnostic",
+  "status": "completed_structured_outputs",
+  "generated_at_utc": "2026-06-02T05:58:21.545231+00:00",
+  "cases_total": 3,
+  "cases_with_crossings": 3,
+  "cases_insufficient_crossings": 0,
+  "caputo_periodic_orbit_claim": false,
+  "chaos_certified_by_poincare": false,
+  "hiddenness_certified_by_poincare": false,
+  "standardized_outputs": true,
+  "poincare_method_validation": {
+    "status": "passed_synthetic_crossing_tests",
+    "checks": {
+      "positive_crossing_detection": true,
+      "negative_direction_filtering": true,
+      "no_crossings_status": true,
+      "linear_interpolation": true,
+      "caputo_geometric_metadata": true
+    },
+    "validates": [
+      "crossing_detection",
+      "linear_interpolation",
+      "direction_filtering",
+      "integer_rhs_direction",
+      "caputo_geometric_crossing_metadata"
+    ],
+    "does_not_validate": [
+      "chaos",
+      "hiddenness",
+      "periodic_orbits_in_caputo"
+    ]
+  },
+  "poincare_application_to_published_cases": {
+    "status": "completed_structured_outputs",
+    "cases": [
+      "chua_integer_q1_reference",
+      "danca2017_chua_fractional_saturation_q09998",
+      "wu2023_chua_fractional_arctan_q099"
+    ],
+    "chaos_certified_by_poincare": false,
+    "hiddenness_certified_by_poincare": false
+  },
+  "case_summaries": [
+    {
+      "crossing_count": 19,
+      "retained_after_burn": 19,
+      "bounding_box": {
+        "coordinate_0": {
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "coordinate_1": {
+          "minimum": 1.3269637828843581,
+          "maximum": 1.3746242478231283
+        },
+        "coordinate_2": {
+          "minimum": 2.5846668928455294,
+          "maximum": 3.4829106227088005
+        }
+      },
+      "centroid": [
+        0.0,
+        1.3534241896568946,
+        2.9848411191875
+      ],
+      "covariance": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0003089237319595963,
+          0.003824368367211526
+        ],
+        [
+          0.0,
+          0.003824368367211526,
+          0.08501526365349119
+        ]
+      ],
+      "rank_estimate": 2,
+      "nearest_neighbor_stats": {
+        "minimum": 0.0035970473496983527,
+        "median": 0.025677200386556073,
+        "mean": 0.03310035956230613,
+        "maximum": 0.08385040865006499
+      },
+      "recurrence_like_score": 0.9749656125953869,
+      "duplicate_fraction": 0.0,
+      "section_density_estimate": 21.12267544514944,
+      "interpretation_label": "cloud_like",
+      "case_id": "chua_integer_q1_reference",
+      "status": "completed_structured_outputs",
+      "trajectory_count": 1,
+      "trajectories": {
+        "X0_python": {
+          "integration_status": "ok",
+          "trajectory_rows": 2001,
+          "crossing_count": 19,
+          "status": "crossings_detected",
+          "section_metadata": {
+            "section_variable": "x",
+            "section_index": 0,
+            "section_value": 0.0,
+            "direction": "positive",
+            "direction_rule": "rhs(section_crossing)[section_variable] has requested sign",
+            "derivative_mode": "integer_rhs",
+            "interpolation": "linear",
+            "min_crossing_separation": 0.0,
+            "filtered_by_min_crossing_separation": 0,
+            "burn_time": 50.0,
+            "caputo_geometric_crossing": false,
+            "exact_poincare_map": true,
+            "uses_classical_rhs_direction": true
+          }
+        }
+      },
+      "geometric_interpretation": "cloud_like",
+      "chaos_certified_by_poincare": false,
+      "hiddenness_certified_by_poincare": false,
+      "periodic_orbit_exact": false,
+      "caputo_periodic_orbit_exact": false
+    },
+    {
+      "crossing_count": 92,
+      "retained_after_burn": 92,
+      "bounding_box": {
+        "coordinate_0": {
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "coordinate_1": {
+          "minimum": 0.9774794309965968,
+          "maximum": 1.3055137214910972
+        },
+        "coordinate_2": {
+          "minimum": 4.161496824431615,
+          "maximum": 4.53229176844987
+        }
+      },
+      "centroid": [
+        0.0,
+        1.1196071367835305,
+        4.446330158156795
+      ],
+      "covariance": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.009394918201157822,
+          -0.010243692105573752
+        ],
+        [
+          0.0,
+          -0.010243692105573752,
+          0.013065374363982613
+        ]
+      ],
+      "rank_estimate": 2,
+      "nearest_neighbor_stats": {
+        "minimum": 0.0001513433628155646,
+        "median": 0.00208555517544519,
+        "mean": 0.003834310354301528,
+        "maximum": 0.036211236336434534
+      },
+      "recurrence_like_score": 0.9979187853126172,
+      "duplicate_fraction": 0.0,
+      "section_density_estimate": 185.8318966002018,
+      "interpretation_label": "cloud_like",
+      "case_id": "danca2017_chua_fractional_saturation_q09998",
+      "status": "completed_structured_outputs",
+      "trajectory_count": 1,
+      "trajectories": {
+        "diagnostic_X0": {
+          "integration_status": "ok",
+          "seed_scope": "diagnostic_only_not_reported_by_article",
+          "trajectory_rows": 50001,
+          "crossing_count": 92,
+          "status": "crossings_detected",
+          "section_metadata": {
+            "section_variable": "x",
+            "section_index": 0,
+            "section_value": 0.0,
+            "direction": "positive_geometric_crossing",
+            "direction_rule": "sampled series changes sign with requested geometric orientation",
+            "derivative_mode": "geometric_fractional",
+            "interpolation": "linear",
+            "min_crossing_separation": 0.0,
+            "filtered_by_min_crossing_separation": 0,
+            "burn_time": 250.0,
+            "caputo_geometric_crossing": true,
+            "exact_poincare_map": false,
+            "uses_classical_rhs_direction": false
+          }
+        }
+      },
+      "geometric_interpretation": "cloud_like",
+      "chaos_certified_by_poincare": false,
+      "hiddenness_certified_by_poincare": false,
+      "periodic_orbit_exact": false,
+      "caputo_periodic_orbit_exact": false
+    },
+    {
+      "crossing_count": 31,
+      "retained_after_burn": 31,
+      "bounding_box": {
+        "coordinate_0": {
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "coordinate_1": {
+          "minimum": 1.2125572901234785,
+          "maximum": 1.2274032004140691
+        },
+        "coordinate_2": {
+          "minimum": 5.859338860397466,
+          "maximum": 5.971928107764686
+        }
+      },
+      "centroid": [
+        0.0,
+        1.2158936872950308,
+        5.884256059510994
+      ],
+      "covariance": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.662651143339188e-05,
+          0.00012656891471846666
+        ],
+        [
+          0.0,
+          0.00012656891471846666,
+          0.0009636305448794506
+        ]
+      ],
+      "rank_estimate": 2,
+      "nearest_neighbor_stats": {
+        "minimum": 0.00020391747363221447,
+        "median": 0.001710564689220868,
+        "mean": 0.003670797800456054,
+        "maximum": 0.01595599774890491
+      },
+      "recurrence_like_score": 0.998292356345716,
+      "duplicate_fraction": 0.0,
+      "section_density_estimate": 272.9742786774379,
+      "interpretation_label": "cloud_like",
+      "case_id": "wu2023_chua_fractional_arctan_q099",
+      "status": "completed_structured_outputs",
+      "trajectory_count": 2,
+      "trajectories": {
+        "x0_plus": {
+          "integration_status": "ok",
+          "trajectory_rows": 10001,
+          "crossing_count": 16,
+          "status": "crossings_detected",
+          "section_metadata": {
+            "section_variable": "x",
+            "section_index": 0,
+            "section_value": 0.0,
+            "direction": "positive_geometric_crossing",
+            "direction_rule": "sampled series changes sign with requested geometric orientation",
+            "derivative_mode": "geometric_fractional",
+            "interpolation": "linear",
+            "min_crossing_separation": 0.0,
+            "filtered_by_min_crossing_separation": 0,
+            "burn_time": 50.0,
+            "caputo_geometric_crossing": true,
+            "exact_poincare_map": false,
+            "uses_classical_rhs_direction": false
+          }
+        },
+        "x0_minus": {
+          "integration_status": "ok",
+          "trajectory_rows": 10001,
+          "crossing_count": 15,
+          "status": "crossings_detected",
+          "section_metadata": {
+            "section_variable": "x",
+            "section_index": 0,
+            "section_value": 0.0,
+            "direction": "positive_geometric_crossing",
+            "direction_rule": "sampled series changes sign with requested geometric orientation",
+            "derivative_mode": "geometric_fractional",
+            "interpolation": "linear",
+            "min_crossing_separation": 0.0,
+            "filtered_by_min_crossing_separation": 0,
+            "burn_time": 50.0,
+            "caputo_geometric_crossing": true,
+            "exact_poincare_map": false,
+            "uses_classical_rhs_direction": false
+          }
+        }
+      },
+      "geometric_interpretation": "cloud_like",
+      "chaos_certified_by_poincare": false,
+      "hiddenness_certified_by_poincare": false,
+      "periodic_orbit_exact": false,
+      "caputo_periodic_orbit_exact": false
+    }
+  ]
+}

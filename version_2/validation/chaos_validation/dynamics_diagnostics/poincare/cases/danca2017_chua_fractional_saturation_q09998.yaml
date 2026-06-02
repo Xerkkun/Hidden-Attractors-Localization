@@ -1,0 +1,43 @@
+case_id: danca2017_chua_fractional_saturation_q09998
+source: Danca 2017
+doi: 10.1007/s11071-017-3472-7
+derivative_model: Caputo
+q: 0.9998
+parameters:
+  alpha: 8.4562
+  beta: 12.0732
+  gamma: 0.0052
+  m0: -0.1768
+  m1: -1.1468
+equilibria:
+  E0: [0.0, 0.0, 0.0]
+  E+: [6.588307886538868, 0.0028364022560936064, -6.585471484282774]
+  E-: [-6.588307886538868, -0.0028364022560936064, 6.585471484282774]
+matignon:
+  E0: stable
+  E+: unstable
+  E-: unstable
+seed:
+  diagnostic_X0: [5.856145086257356, 0.369331578246782, -8.366536168331880]
+  source: transferred_reproduced_integer_lure_seed
+  article_initial_condition_reported: false
+integration:
+  backend: native_full_history_abm
+  integrator: ABM
+  memory_policy: full_history
+  h: 0.01
+  t_final: 500.0
+  t_burn: 250.0
+section:
+  variable: x
+  value: 0.0
+  direction: positive_geometric_crossing
+  derivative_mode: geometric_fractional
+  condition: x[n] < 0 <= x[n+1] and x[n+1] - x[n] > 0
+missing_article_data:
+  - omega0
+  - k
+  - a0
+  - seed_plus
+  - seed_minus
+  - hidden-attractor initial condition coordinates

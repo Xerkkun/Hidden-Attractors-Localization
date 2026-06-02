@@ -103,6 +103,14 @@ Passing or failing F3 does not validate or invalidate F2.
 F3 does not certify chaos. F3 does not certify hiddenness.
 The current state is `published_benchmarks_pending_discrepancy`.
 
+## Reproduction limitations and missing article data
+
+See `fischer2020_reproduction_limitations.md`.
+
+No further bounded diagnostic sweep is required in the current scope; exact
+reproduction requires protocol details not reported in the article or access
+to the authors' implementation.
+
 ## Sensitivity sweep results
 
 Controlled diagnostic sweeps recorded `164` unique runs across `delta, gs_policy, h, k, q1_mode, t_clone`. See the [sensitivity analysis report](sensitivity_analysis_report.md) for the run inventory, best improvements, persistent discrepancies, and hypothesis assessment. These sweeps do not promote validation.

@@ -1,0 +1,30 @@
+{
+  "section_metadata": {
+    "section_variable": "x",
+    "section_index": 0,
+    "section_value": 0.0,
+    "direction": "positive_geometric_crossing",
+    "direction_rule": "sampled series changes sign with requested geometric orientation",
+    "derivative_mode": "geometric_fractional",
+    "interpolation": "linear",
+    "min_crossing_separation": 0.0,
+    "filtered_by_min_crossing_separation": 0,
+    "burn_time": 50.0,
+    "caputo_geometric_crossing": true,
+    "exact_poincare_map": false,
+    "uses_classical_rhs_direction": false
+  },
+  "warnings": [
+    "Caputo crossings are numerical geometric diagnostics, not exact classical Poincare-map returns."
+  ],
+  "crossing_count": 16,
+  "status": "crossings_detected",
+  "certifications": {
+    "chaos_verified": false,
+    "hidden_verified": false,
+    "periodic_orbit_exact": false,
+    "caputo_periodic_orbit_exact": false
+  },
+  "trajectory_id": "x0_plus",
+  "integration_status": "ok"
+}

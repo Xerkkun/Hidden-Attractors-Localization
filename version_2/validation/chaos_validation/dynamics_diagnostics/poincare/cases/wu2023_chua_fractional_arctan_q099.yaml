@@ -1,0 +1,32 @@
+case_id: wu2023_chua_fractional_arctan_q099
+source: Wu et al. 2023
+derivative_model: Caputo
+q: 0.99
+model: arctan
+parameters:
+  alpha: 8.4562
+  beta: 12.0732
+  gamma: 0.0052
+  m: 0.4
+  n: -1.1585
+  a1: 0.4
+  a2: -1.5585
+  rho: 1.0
+seed:
+  x0_plus: [13.8, 0.7093, -19.8768]
+  x0_minus: [-13.8, -0.7093, 19.8768]
+integration:
+  backend: efork_c_arctan
+  integrator: EFORK
+  memory_policy: finite_memory
+  memory_length: 40.0
+  h: 0.01
+  N: 10000
+  t_final: 100.0
+  diagnostic_burn_fraction: 0.5
+section:
+  variable: x
+  value: 0.0
+  direction: positive_geometric_crossing
+  derivative_mode: geometric_fractional
+  condition: x[n] < 0 <= x[n+1] and x[n+1] - x[n] > 0

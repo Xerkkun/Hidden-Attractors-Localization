@@ -95,3 +95,16 @@ for the swept rows. `H4` and `H6` explain only near-zero subsets.
 The sweep evidence is diagnostic and partial. It does not justify promotion
 to validation. The official F3 state remains
 `published_benchmarks_pending_discrepancy` with `validated=False`.
+
+## Diagnostic closure
+
+The bounded partial sweeps covered six axes: `delta`, `T_clone`, `h`, `K`,
+`q1_mode`, and `gs_policy`. The `gs_policy` hypothesis is weakened as the
+primary cause because modified GS, classical GS, and QR are numerically
+equivalent for the swept rows. `T_clone`, protocol parameters, and
+incommensurate handling remain the main audit paths.
+
+An unlimited sweep is not required in the current scope. Its cost is high,
+and the article does not report enough protocol detail to distinguish
+conclusively among plausible conventions. F3 remains
+`published_benchmarks_pending_discrepancy` and is not promoted.

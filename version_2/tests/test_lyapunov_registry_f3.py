@@ -11,7 +11,7 @@ def test_published_gs_registry_contract() -> None:
     assert info.requires_jacobian is False
     assert info.method_type == "cloned_dynamics"
     assert info.memory_protocol == "published_block_restart"
-    assert info.benchmark_status == "fischer2020_pending"
+    assert info.benchmark_status == "published_benchmarks_pending_discrepancy"
     assert info.supports_q_equal_1 is True
     assert info.supports_incommensurate is True
 

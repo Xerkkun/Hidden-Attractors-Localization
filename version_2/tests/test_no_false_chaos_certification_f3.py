@@ -47,6 +47,11 @@ def test_f3_summary_remains_conservative() -> None:
     diagnostics = summary["discrepancy_diagnostics"]
     assert diagnostics["status"] == "diagnostics_added"
     assert diagnostics["validated_after_diagnostics"] is False
+    closure = diagnostics["diagnostic_closure"]
+    assert closure["status"] == "closed_with_documented_discrepancies"
+    assert closure["additional_sweeps_required_for_current_scope"] is False
+    assert closure["validated_after_closure"] is False
+    assert closure["validated_after_diagnostics"] is False
 
 
 def test_diagnostics_stage_remains_partial() -> None:

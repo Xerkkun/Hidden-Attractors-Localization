@@ -107,3 +107,12 @@ is an explicit opt-in run with `RUN_PUBLISHED_LYAPUNOV=1`. The long native run
 recorded on 2026-05-31 passed Lorenz and left RF pending because only
 `lambda_3` exceeds absolute tolerance `0.05`. This does not promote the local
 full-history QR method.
+
+## F5.4 Poincare Diagnostics
+
+F5.4 records standardized Poincare crossing outputs under
+`validation/chaos_validation/dynamics_diagnostics/poincare/`. Integer ODE
+cases may use `x=0, xdot>0`; Caputo cases use geometric sampled crossings with
+`exact_poincare_map=false`. These outputs do not certify chaos, hiddenness, or
+exact periodic orbits in Caputo systems. See
+[Poincare Diagnostics](poincare_diagnostics.md).

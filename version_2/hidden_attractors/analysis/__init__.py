@@ -34,6 +34,13 @@ from .lyapunov_fractional import (
 )
 from .lyapunov_cloned import ClonedDynamicsResult, compute_cloned_dynamics_spectrum
 from .spectral import SpectrumResult, fft_spectrum, infer_step, psd_welch, trajectory_component_spectra
+from .poincare import (
+    ALLOWED_INTERPRETATION_LABELS,
+    PoincareCrossingResult,
+    detect_poincare_crossings,
+    summarize_poincare_points,
+    write_poincare_outputs,
+)
 from .trajectory import (
     RobustnessCase,
     classify_trajectory_against_equilibria,
@@ -81,6 +88,12 @@ __all__ = [
     "infer_step",
     "psd_welch",
     "trajectory_component_spectra",
+    # Poincare diagnostic
+    "ALLOWED_INTERPRETATION_LABELS",
+    "PoincareCrossingResult",
+    "detect_poincare_crossings",
+    "summarize_poincare_points",
+    "write_poincare_outputs",
     # Trajectory
     "RobustnessCase",
     "classify_trajectory_against_equilibria",

@@ -1,0 +1,82 @@
+{
+  "crossing_count": 19,
+  "retained_after_burn": 19,
+  "bounding_box": {
+    "coordinate_0": {
+      "minimum": 0.0,
+      "maximum": 0.0
+    },
+    "coordinate_1": {
+      "minimum": 1.3269637828843581,
+      "maximum": 1.3746242478231283
+    },
+    "coordinate_2": {
+      "minimum": 2.5846668928455294,
+      "maximum": 3.4829106227088005
+    }
+  },
+  "centroid": [
+    0.0,
+    1.3534241896568946,
+    2.9848411191875
+  ],
+  "covariance": [
+    [
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0003089237319595963,
+      0.003824368367211526
+    ],
+    [
+      0.0,
+      0.003824368367211526,
+      0.08501526365349119
+    ]
+  ],
+  "rank_estimate": 2,
+  "nearest_neighbor_stats": {
+    "minimum": 0.0035970473496983527,
+    "median": 0.025677200386556073,
+    "mean": 0.03310035956230613,
+    "maximum": 0.08385040865006499
+  },
+  "recurrence_like_score": 0.9749656125953869,
+  "duplicate_fraction": 0.0,
+  "section_density_estimate": 21.12267544514944,
+  "interpretation_label": "cloud_like",
+  "case_id": "chua_integer_q1_reference",
+  "status": "completed_structured_outputs",
+  "trajectory_count": 1,
+  "trajectories": {
+    "X0_python": {
+      "integration_status": "ok",
+      "trajectory_rows": 2001,
+      "crossing_count": 19,
+      "status": "crossings_detected",
+      "section_metadata": {
+        "section_variable": "x",
+        "section_index": 0,
+        "section_value": 0.0,
+        "direction": "positive",
+        "direction_rule": "rhs(section_crossing)[section_variable] has requested sign",
+        "derivative_mode": "integer_rhs",
+        "interpolation": "linear",
+        "min_crossing_separation": 0.0,
+        "filtered_by_min_crossing_separation": 0,
+        "burn_time": 50.0,
+        "caputo_geometric_crossing": false,
+        "exact_poincare_map": true,
+        "uses_classical_rhs_direction": true
+      }
+    }
+  },
+  "geometric_interpretation": "cloud_like",
+  "chaos_certified_by_poincare": false,
+  "hiddenness_certified_by_poincare": false,
+  "periodic_orbit_exact": false,
+  "caputo_periodic_orbit_exact": false
+}

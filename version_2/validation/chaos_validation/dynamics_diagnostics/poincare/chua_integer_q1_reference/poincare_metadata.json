@@ -1,0 +1,25 @@
+{
+  "case_id": "chua_integer_q1_reference",
+  "source": "Kuznetsov/Guan-Xie displayed values",
+  "derivative_model": "integer",
+  "q": 1.0,
+  "section": {
+    "variable": "x",
+    "value": 0.0,
+    "direction": "positive",
+    "derivative_mode": "integer_rhs",
+    "condition": "x=0, xdot>0"
+  },
+  "integration": {
+    "backend": "efork_q1",
+    "h": 0.05,
+    "t_final": 100.0,
+    "t_burn": 50.0
+  },
+  "burn_time": 50.0,
+  "warnings": [
+    "Poincare alone does not certify chaos.",
+    "Poincare alone does not certify hiddenness.",
+    "Caputo crossings are geometric diagnostics, not exact periodic-orbit returns."
+  ]
+}

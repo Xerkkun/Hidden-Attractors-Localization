@@ -1,0 +1,29 @@
+{
+  "case_id": "wu2023_chua_fractional_arctan_q099",
+  "source": "Wu et al. 2023",
+  "derivative_model": "Caputo",
+  "q": 0.99,
+  "section": {
+    "variable": "x",
+    "value": 0.0,
+    "direction": "positive_geometric_crossing",
+    "derivative_mode": "geometric_fractional",
+    "condition": "x[n] < 0 <= x[n+1] and x[n+1] - x[n] > 0"
+  },
+  "integration": {
+    "backend": "efork_c_arctan",
+    "integrator": "EFORK",
+    "memory_policy": "finite_memory",
+    "memory_length": 40.0,
+    "h": 0.01,
+    "N": 10000,
+    "t_final": 100.0,
+    "diagnostic_burn_fraction": 0.5
+  },
+  "burn_time": 50.0,
+  "warnings": [
+    "Poincare alone does not certify chaos.",
+    "Poincare alone does not certify hiddenness.",
+    "Caputo crossings are geometric diagnostics, not exact periodic-orbit returns."
+  ]
+}

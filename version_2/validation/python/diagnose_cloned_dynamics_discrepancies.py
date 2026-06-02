@@ -423,6 +423,14 @@ def _render_report(matrix: list[dict[str, Any]], consistency: dict[str, Any]) ->
             "F3 does not certify chaos. F3 does not certify hiddenness.",
             "The current state is `published_benchmarks_pending_discrepancy`.",
             "",
+            "## Reproduction limitations and missing article data",
+            "",
+            "See `fischer2020_reproduction_limitations.md`.",
+            "",
+            "No further bounded diagnostic sweep is required in the current scope; exact",
+            "reproduction requires protocol details not reported in the article or access",
+            "to the authors' implementation.",
+            "",
         ]
     )
     return "\n".join(lines)
@@ -551,7 +559,8 @@ def generate_diagnostics(
         "# F3 Fischer 2020 discrepancy diagnostics\n\n"
         "This directory classifies the recorded F3 discrepancies without promoting\n"
         "validation. See [the report](fischer2020_discrepancy_report.md) and the\n"
-        f"reproducible [sensitivity plan](sensitivity_plan.yaml).{sensitivity_note}\n",
+        "formal [reproduction limitations](fischer2020_reproduction_limitations.md),\n"
+        f"plus the reproducible [sensitivity plan](sensitivity_plan.yaml).{sensitivity_note}\n",
         encoding="utf-8",
     )
     existing_diagnostics = summary.get("discrepancy_diagnostics", {})
@@ -571,6 +580,22 @@ def generate_diagnostics(
             existing_diagnostics.get("sensitivity_status", "planned_or_partial"),
         ),
         "validated_after_diagnostics": False,
+        "reproduction_limitations": (
+            "discrepancy_diagnostics/fischer2020_reproduction_limitations.md"
+        ),
+        "diagnostic_closure": {
+            "status": "closed_with_documented_discrepancies",
+            "additional_sweeps_required_for_current_scope": False,
+            "reason": (
+                "bounded sensitivity sweeps already covered delta, T_clone, h, K, "
+                "q1_mode and orthonormalization; remaining discrepancies require "
+                "information not reported in the paper or an independent "
+                "implementation from the authors"
+            ),
+            "exact_reproduction_requires_unreported_article_details": True,
+            "validated_after_closure": False,
+            "validated_after_diagnostics": False,
+        },
     }
     if sensitivity_report_path.exists():
         summary["discrepancy_diagnostics"].update(

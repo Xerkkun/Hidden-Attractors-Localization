@@ -285,7 +285,7 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
         ),
         validated_against_synthetic_tests=True,
         validated_against_published_benchmarks=False,
-        benchmark_status="fischer2020_pending",
+        benchmark_status="published_benchmarks_pending_discrepancy",
         family="fractional",
         method_type="cloned_dynamics",
         supports_q_less_than_1=True,

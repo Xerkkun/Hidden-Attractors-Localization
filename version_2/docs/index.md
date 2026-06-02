@@ -14,6 +14,7 @@ contribution notes.
 - [EFORK-3 Published Validation](efork3_validation.md)
 - [Adapting New Systems](adapting_new_systems.md)
 - [Dynamical Analysis](dynamical_analysis.md)
+- [Poincare Diagnostics](poincare_diagnostics.md)
 - [External Tools](external_tools.md)
 - [Unified Report](unified_report.md)
 - [Figure Gallery](figure_gallery.md)

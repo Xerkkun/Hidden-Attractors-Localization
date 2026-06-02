@@ -162,6 +162,18 @@ sign discrepancies from near-zero boundary crossings, and provides an opt-in
 sensitivity plan. These diagnostics do not change the official validation
 status.
 
+Bounded sensitivity diagnostics recorded `164` runs across `delta`, `T_clone`,
+`h`, `K`, `q1_mode`, and `gs_policy`. Persistent strict discrepancies remain
+in one financial incommensurate row and four jerk rows. The lane is
+`implemented_with_documented_published_discrepancies`: exact reproduction
+requires protocol and numerical details not reported in the article or
+access to the authors' implementation. No further bounded sweep is required
+in the current scope. See the
+[formal reproduction limitations](https://github.com/Xerkkun/Hidden-Attractors-Localization/blob/main/version_2/validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/discrepancy_diagnostics/fischer2020_reproduction_limitations.md).
+
+This closure does not certify chaos, certify hiddenness, validate F2, or
+promote the internal QR variant.
+
 Auditable runtime outputs:
 
 ```text

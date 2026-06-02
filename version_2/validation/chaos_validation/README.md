@@ -168,3 +168,22 @@ Tracked row-level classifications and the sensitivity plan are available in
 the [Fischer 2020 discrepancy report](lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/discrepancy_diagnostics/fischer2020_discrepancy_report.md).
 F3 is implemented, the all-row benchmark has been executed, reproduction is
 partial, discrepancy diagnostics have been added, and `validated=False`.
+
+The bounded diagnostics recorded `164` sensitivity runs across `delta`,
+`T_clone`, `h`, `K`, `q1_mode`, and `gs_policy`. Persistent discrepancies and
+missing article details are listed in the
+[Fischer 2020 reproduction limitations](lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/discrepancy_diagnostics/fischer2020_reproduction_limitations.md).
+The lane is `implemented_with_documented_published_discrepancies`. No further
+bounded sweep is required in the current scope; exact reproduction requires
+unreported protocol details or access to the authors' implementation. This
+does not certify chaos, certify hiddenness, validate F2, or promote the
+internal QR variant.
+
+## F5.4 Poincare diagnostic
+
+F5.4 provides standardized numerical crossing sections for the integer Chua
+reference, Danca 2017 fractional saturation, and Wu 2023 fractional arctan
+cases. Integer ODE crossings use `x=0, xdot>0`; Caputo crossings are geometric
+sampled-trajectory diagnostics with `exact_poincare_map=false`. Poincare alone
+does not certify chaos, hiddenness, or exact periodic orbits in Caputo
+systems. Outputs live under `dynamics_diagnostics/poincare/`.

@@ -1,0 +1,62 @@
+{
+  "stage": "F5_dynamics_diagnostics",
+  "boundedness": {
+    "status": "partial",
+    "standardized_outputs": false
+  },
+  "zero_one": {
+    "status": "not_implemented",
+    "standardized_outputs": false
+  },
+  "psd_fft": {
+    "status": "partial",
+    "standardized_outputs": false
+  },
+  "poincare": {
+    "status": "completed_structured_outputs",
+    "standardized_outputs": true,
+    "path": "poincare/poincare_diagnostics_summary.json"
+  },
+  "poincare_method_validation": {
+    "status": "passed_synthetic_crossing_tests",
+    "checks": {
+      "positive_crossing_detection": true,
+      "negative_direction_filtering": true,
+      "no_crossings_status": true,
+      "linear_interpolation": true,
+      "caputo_geometric_metadata": true
+    },
+    "validates": [
+      "crossing_detection",
+      "linear_interpolation",
+      "direction_filtering",
+      "integer_rhs_direction",
+      "caputo_geometric_crossing_metadata"
+    ],
+    "does_not_validate": [
+      "chaos",
+      "hiddenness",
+      "periodic_orbits_in_caputo"
+    ]
+  },
+  "poincare_application_to_published_cases": {
+    "status": "completed_structured_outputs",
+    "cases": [
+      "chua_integer_q1_reference",
+      "danca2017_chua_fractional_saturation_q09998",
+      "wu2023_chua_fractional_arctan_q099"
+    ],
+    "chaos_certified_by_poincare": false,
+    "hiddenness_certified_by_poincare": false
+  },
+  "final_f5_status": "diagnostics_partial_current_protocol",
+  "certifications": {
+    "chaos_verified": false,
+    "hidden_verified": false
+  },
+  "invariants": {
+    "single_indicator_cannot_certify_chaos": true,
+    "diagnostics_cannot_certify_hiddenness": true,
+    "poincare_cannot_certify_caputo_periodic_orbits": true
+  }
+}

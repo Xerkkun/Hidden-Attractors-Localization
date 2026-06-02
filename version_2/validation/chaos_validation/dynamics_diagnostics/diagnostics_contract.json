@@ -3,12 +3,15 @@
   "allowed_statuses": [
     "diagnostics_pending",
     "diagnostics_partial",
+    "diagnostics_partial_current_protocol",
+    "f5_diagnostics_structured_outputs_ready",
     "chaotic_candidate_numerically_supported",
     "chaos_not_certified"
   ],
   "required_diagnostics": [
     "boundedness",
     "fft_psd",
+    "poincare",
     "lyapunov_with_validated_method_when_applicable",
     "step_size_sensitivity",
     "abm_direct_vs_fft_block"
@@ -19,6 +22,7 @@
   ],
   "invariants": {
     "single_indicator_cannot_certify_chaos": true,
-    "diagnostics_cannot_certify_hiddenness": true
+    "diagnostics_cannot_certify_hiddenness": true,
+    "poincare_cannot_certify_caputo_periodic_orbits": true
   }
 }

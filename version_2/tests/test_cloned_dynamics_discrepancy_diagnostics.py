@@ -82,6 +82,22 @@ def test_official_diagnostic_summary_remains_conservative() -> None:
     assert summary["validated_against_published_benchmarks"] is False
     assert diagnostics["status"] == "diagnostics_added"
     assert diagnostics["validated_after_diagnostics"] is False
+    assert diagnostics["reproduction_limitations"] == (
+        "discrepancy_diagnostics/fischer2020_reproduction_limitations.md"
+    )
+    assert diagnostics["diagnostic_closure"] == {
+        "status": "closed_with_documented_discrepancies",
+        "additional_sweeps_required_for_current_scope": False,
+        "reason": (
+            "bounded sensitivity sweeps already covered delta, T_clone, h, K, "
+            "q1_mode and orthonormalization; remaining discrepancies require "
+            "information not reported in the paper or an independent "
+            "implementation from the authors"
+        ),
+        "exact_reproduction_requires_unreported_article_details": True,
+        "validated_after_closure": False,
+        "validated_after_diagnostics": False,
+    }
     assert diagnostics["sensitivity_status"] in {
         "planned_not_executed",
         "partial_sweeps_executed_not_validation",
@@ -99,6 +115,7 @@ def test_tracked_diagnostic_artifacts_exist() -> None:
         "fischer2020_discrepancy_report.md",
         "fischer2020_discrepancy_matrix.csv",
         "fischer2020_row_classification.csv",
+        "fischer2020_reproduction_limitations.md",
         "sensitivity_plan.yaml",
         "sensitivity_summary.json",
         "sensitivity_delta.csv",
@@ -112,6 +129,14 @@ def test_tracked_diagnostic_artifacts_exist() -> None:
         "sensitivity_run_log.json",
     }
     assert required <= {path.name for path in DIAGNOSTICS_DIR.iterdir()}
+
+
+def test_main_report_links_reproduction_limitations() -> None:
+    report = (DIAGNOSTICS_DIR / "fischer2020_discrepancy_report.md").read_text(
+        encoding="utf-8"
+    )
+    assert "## Reproduction limitations and missing article data" in report
+    assert "fischer2020_reproduction_limitations.md" in report
 
 
 def test_executed_sensitivity_summary_remains_diagnostic_only() -> None:
