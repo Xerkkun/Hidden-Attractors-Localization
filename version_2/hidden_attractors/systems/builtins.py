@@ -80,6 +80,7 @@ def _chua_jacobian(state: np.ndarray, parameters: Mapping[str, Any]) -> np.ndarr
 def _chua_lure_system(parameters: Mapping[str, Any]) -> LureSystem:
     params = chua_parameters(**_filter_chua_params(parameters))
     model = params.model
+    system_name = parameters.get("system_name", f"chua-{model}-lure")
     base_slope = params.a1 if model == "arctan" else params.m1
     matrix = np.array(
         [
@@ -152,7 +153,7 @@ def _chua_lure_system(parameters: Mapping[str, Any]) -> LureSystem:
         raise RuntimeError("No amplitude solved the requested describing-function gain.")
 
     return LureSystem(
-        name=f"chua-{model}-lure",
+        name=system_name,
         matrix=matrix,
         input_vector=input_vector,
         output_vector=output_vector,
@@ -222,6 +223,7 @@ def chua_arctan_wu2023_system() -> ChaoticSystem:
         "a1": params.a1,
         "a2": params.a2,
         "rho": params.rho,
+        "system_name": "fractional_chua_arctan_wu2023_lure",
     }
     return ChaoticSystem(
         name="fractional_chua_arctan_wu2023",

@@ -18,7 +18,7 @@ def test_weyl_caputo_note():
 
 def test_prohibit_integer_evaluation_for_fractional_system():
     """Verify that evaluating a fractional system with q=1.0 is prohibited."""
-    system = get_system("chua-nonsmooth").lure
+    system = get_system("fractional_chua_arctan_wu2023").lure
     
     # Evaluating with q=1.0 should raise ValueError as it is a fractional system
     with pytest.raises(ValueError, match="Prohibited evaluating fractional Lur'e system"):

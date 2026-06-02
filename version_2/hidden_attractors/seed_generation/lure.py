@@ -102,7 +102,7 @@ def lure_transfer_function(omega: float, q: float, system: LureSystem) -> comple
 
     q_val = float(q)
     if q_val == 1.0:
-        if "fractional" in getattr(system, "name", "").lower() or "nonsmooth" in getattr(system, "name", "").lower():
+        if "fractional" in getattr(system, "name", "").lower():
             raise ValueError("Prohibited evaluating fractional Lur'e system with integer order (q = 1.0).")
         s = complex_dtype(1j * omega)
     else:

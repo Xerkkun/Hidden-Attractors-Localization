@@ -91,6 +91,13 @@ def test_official_stage_order_and_uniform_envelope() -> None:
         "verdict",
         "files",
         "provenance",
+        "state",
+        "state_history",
+        "evidence",
+        "failed_requirements",
+        "method_scope",
+        "warnings",
+        "literature_note",
     )
 
 
