@@ -56,13 +56,24 @@ Every stage summary must contain:
   "metrics": {},
   "verdict": "pre_continuation_periodic",
   "files": {},
-  "provenance": {}
+  "provenance": {},
+  "run_metadata": {},
+  "metadata_validation_errors": []
 }
 ```
 
 Use `hidden-attractors-protocol <stage-command>` to write or validate an
 official envelope. A `pre_continuation_periodic` verdict is diagnostic and
 must remain eligible for continuation.
+
+Each maintained run also writes `run_metadata.json`. It records the effective
+`q`, `h`, `t_final`, `t_burn`, memory policy and window, integrator backend,
+software provenance, Lur'e split, selected seed, parameters, and random-seed
+policy. A strong hiddenness promotion requires a valid metadata envelope,
+full-history Caputo integration, robust reference reproduction, all
+equilibrium-ball controls, zero target contacts, zero numerical failures, and
+all six close/large basin slices. Missing any one condition yields
+`compatible_with_hiddenness_under_tested_radii`.
 
 ## Evidence Per Stage
 

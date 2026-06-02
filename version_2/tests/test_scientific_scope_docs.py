@@ -44,7 +44,8 @@ def test_scope_has_required_literature_rows() -> None:
 def test_hidden_verified_appears_only_in_explicit_warning() -> None:
     text = _read(SCOPE)
     assert text.count("hidden_verified") == 1
-    assert "Warning: do not declare `hidden_verified` unless basin or neighborhood tests" in text
+    assert "Warning: do not declare `hidden_verified` unless neighborhood and basin tests" in text
+    assert "`compatible_with_hiddenness_under_tested_radii`" in text
 
 
 def test_confirmed_reference_metadata_is_consistent() -> None:

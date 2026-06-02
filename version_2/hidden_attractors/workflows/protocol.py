@@ -20,6 +20,12 @@ from typing import Any, Literal, Mapping, Sequence
 import numpy as np
 
 from hidden_attractors.validation.states import AttractorValidationState
+from hidden_attractors.reproducibility import (
+    CONSERVATIVE_HIDDENNESS_LABEL,
+    metadata_to_jsonable,
+    validate_hiddenness_promotion_metadata,
+    validate_run_metadata,
+)
 
 
 SCHEMA_VERSION = "1.0"
@@ -52,6 +58,7 @@ FINAL_LABELS: tuple[str, ...] = (
     "robust_survivor",
     "compatible_with_hiddenness_under_tested_radii",
     "rejected_self_excited_contact",
+    "hidden_verified",
     "hidden_verified_only_if_full_protocol_passed",
 )
 
@@ -88,6 +95,7 @@ FinalLabel = Literal[
     "robust_survivor",
     "compatible_with_hiddenness_under_tested_radii",
     "rejected_self_excited_contact",
+    "hidden_verified",
     "hidden_verified_only_if_full_protocol_passed",
 ]
 RobustnessLabel = Literal[
@@ -348,21 +356,44 @@ class HiddennessTestResult:
     basin_planes: tuple[str, ...]
     reference_was_robust: bool
     final_label: FinalLabel
+    run_metadata: Mapping[str, Any] | None = None
+    required_equilibria: tuple[str, ...] = ()
+    required_radii: tuple[float, ...] = ()
 
     def validate(self) -> list[str]:
         errors: list[str] = []
         required_planes = {"xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"}
+        tested_radii = tuple(float(radius) for radius in self.tested_radii)
+        includes_required_radii = bool(self.required_radii) and all(
+            any(np.isclose(float(required), tested, rtol=1.0e-12, atol=1.0e-15) for tested in tested_radii)
+            for required in self.required_radii
+        )
         full_protocol = (
             self.reference_was_robust
             and self.neighborhood_sampling_mode == "ball"
-            and bool(self.tested_equilibria)
+            and bool(self.required_equilibria)
+            and set(self.required_equilibria).issubset(set(self.tested_equilibria))
+            and includes_required_radii
             and self.target_contacts == 0
             and self.numerical_failures == 0
             and required_planes.issubset(set(self.basin_planes))
         )
-        if self.final_label == "hidden_verified_only_if_full_protocol_passed" and not full_protocol:
+        strong_label = self.final_label in {"hidden_verified", "hidden_verified_only_if_full_protocol_passed"}
+        if strong_label and not full_protocol:
             errors.append("hidden_verified_only_if_full_protocol_passed requires the complete tested protocol.")
+        if strong_label:
+            errors.extend(validate_hiddenness_promotion_metadata(dict(self.run_metadata) if self.run_metadata else None))
         return errors
+
+    @property
+    def promotion_verdict(self) -> str:
+        """Return the only candidate label allowed by the available evidence."""
+
+        if self.target_contacts > 0:
+            return "rejected_self_excited_contact"
+        if self.validate():
+            return CONSERVATIVE_HIDDENNESS_LABEL
+        return "hidden_verified"
 
 
 @dataclass(frozen=True)
@@ -380,6 +411,8 @@ class StageEnvelope:
     verdict: str | None = None
     files: Mapping[str, Any] = field(default_factory=dict)
     provenance: Mapping[str, Any] = field(default_factory=dict)
+    run_metadata: Mapping[str, Any] = field(default_factory=dict)
+    metadata_validation_errors: Sequence[str] = field(default_factory=list)
     schema_version: str = SCHEMA_VERSION
     protocol_version: str = PROTOCOL_VERSION
     state: str | None = None
@@ -401,6 +434,11 @@ class StageEnvelope:
             "hiddenness_tests",
         }:
             errors.append("final candidate labels may only be issued by decision stages.")
+        metadata_errors = validate_run_metadata(metadata_to_jsonable(dict(self.run_metadata)))
+        if list(self.metadata_validation_errors) != metadata_errors:
+            errors.append("metadata_validation_errors must match validate_run_metadata(run_metadata).")
+        if self.verdict in {"hidden_verified", "hidden_verified_only_if_full_protocol_passed"}:
+            errors.extend(validate_hiddenness_promotion_metadata(dict(self.run_metadata)))
         return errors
 
     def to_dict(self) -> dict[str, Any]:
@@ -419,6 +457,8 @@ class StageEnvelope:
                 "verdict": self.verdict,
                 "files": dict(self.files),
                 "provenance": dict(self.provenance),
+                "run_metadata": dict(self.run_metadata),
+                "metadata_validation_errors": list(self.metadata_validation_errors),
                 "state": self.state,
                 "state_history": list(self.state_history),
                 "evidence": dict(self.evidence),
@@ -477,54 +517,45 @@ def validate_global_report_coherence(report_data: dict) -> None:
             is_hidden_verified = True
 
     if is_hidden_verified:
+        metadata_errors = validate_hiddenness_promotion_metadata(report_data.get("run_metadata"))
+        if metadata_errors:
+            raise ValueError(
+                "State 'hidden_verified' requires complete reproducibility metadata: "
+                + "; ".join(metadata_errors)
+            )
         evidence = report_data.get("evidence", {})
         
         has_sphere = False
         has_basin = False
 
         if isinstance(evidence, dict):
-            if evidence.get("sphere_tests") or evidence.get("basin_neighborhood_tests"):
-                has_sphere = True
-                has_basin = True
-            if "sphere_tests" in evidence or "basin_neighborhood_tests" in evidence:
-                has_sphere = True
-                has_basin = True
-            if evidence.get("completed_sphere_tests") or evidence.get("completed_basin_tests"):
-                has_sphere = True
-                has_basin = True
+            has_sphere = bool(evidence.get("sphere_tests") or evidence.get("completed_sphere_tests"))
+            has_basin = bool(evidence.get("basin_neighborhood_tests") or evidence.get("completed_basin_tests"))
 
         if isinstance(outputs, dict):
-            if outputs.get("sphere_tests") or outputs.get("basin_neighborhood_tests"):
-                has_sphere = True
-                has_basin = True
-            if "basin_slices" in outputs or "sphere_controls" in outputs:
-                has_sphere = True
-                has_basin = True
+            has_sphere = has_sphere or bool(outputs.get("sphere_tests") or outputs.get("sphere_controls"))
+            has_basin = has_basin or bool(outputs.get("basin_neighborhood_tests") or outputs.get("basin_slices"))
             hiddenness_run = outputs.get("branches", {}).get("full_history", {}).get("run_type")
             if hiddenness_run == "full_protocol_hiddenness_tests":
                 has_sphere = True
-                has_basin = True
-
-        if isinstance(stage_statuses, dict):
-            if stage_statuses.get("hiddenness_tests") in ("completed", "passed_python_wolfram"):
-                has_sphere = True
-                has_basin = True
 
         files = report_data.get("files", {})
         if isinstance(files, dict):
             for f in files.values():
-                if isinstance(f, str) and ("sphere" in f or "basin" in f):
+                if isinstance(f, str) and "sphere" in f:
                     has_sphere = True
+                if isinstance(f, str) and "basin" in f:
                     has_basin = True
                 elif isinstance(f, list):
                     for item in f:
-                        if isinstance(item, str) and ("sphere" in item or "basin" in item):
+                        if isinstance(item, str) and "sphere" in item:
                             has_sphere = True
+                        if isinstance(item, str) and "basin" in item:
                             has_basin = True
 
-        if not (has_sphere or has_basin):
+        if not (has_sphere and has_basin):
             raise ValueError(
-                "State 'hidden_verified' requires evidence of completed sphere_tests or basin_neighborhood_tests."
+                "State 'hidden_verified' requires evidence of completed sphere_tests and basin_neighborhood_tests."
             )
 
     is_chaotic_candidate = (

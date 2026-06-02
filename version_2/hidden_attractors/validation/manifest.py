@@ -14,6 +14,7 @@ import matplotlib
 import numpy as np
 
 from ..paths import CONFIGS, PROJECT_ROOT
+from ..reproducibility import validate_hiddenness_promotion_metadata
 
 
 CLOSED_STAGE_STATUSES = frozenset({"completed", "passed_python_wolfram"})
@@ -98,7 +99,13 @@ def regenerate_validation_manifest(
                 else "current_or_unspecified"
             )
             if slug == "hiddenness_tests":
-                hidden_verified_flag = bool(summary.get("hidden_verified", False) or summary.get("evidence", {}).get("hidden_verified", False))
+                evidence = summary.get("evidence", {})
+                requested_hidden_verified = bool(
+                    summary.get("hidden_verified", False)
+                    or (evidence.get("hidden_verified", False) if isinstance(evidence, dict) else False)
+                )
+                metadata_errors = validate_hiddenness_promotion_metadata(summary.get("run_metadata"))
+                hidden_verified_flag = bool(requested_hidden_verified and not metadata_errors)
         else:
             stages[slug] = "pending"
             status = "missing_summary"

@@ -102,7 +102,29 @@
     "basin_planes": ["xy", "xz", "yz"],
     "windows": ["close", "large"],
     "requires_all_equilibria": true,
-    "requires_robust_reference": true
+    "requires_robust_reference": true,
+    "requires_valid_run_metadata": true,
+    "strong_label": "hidden_verified",
+    "fallback_label": "compatible_with_hiddenness_under_tested_radii"
+  },
+  "reproducibility": {
+    "schema_version": "1.0",
+    "required_file": "run_metadata.json",
+    "required_blocks": [
+      "numerical_contract",
+      "software",
+      "parameters",
+      "lure",
+      "seed"
+    ],
+    "numerical_contract_fields": [
+      "q",
+      "h",
+      "t_final",
+      "t_burn",
+      "memory",
+      "integrator"
+    ]
   },
   "classical_lure_defaults": {
     "note": "Flags que controlan qué está activo en la ruta clásica por defecto",

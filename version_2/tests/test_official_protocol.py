@@ -53,7 +53,7 @@ def _contract() -> NumericalContract:
     )
 
 
-def test_official_stage_order_and_uniform_envelope() -> None:
+def test_official_stage_order_and_uniform_envelope(valid_run_metadata) -> None:
     expected = (
         "numerical_contract",
         "algebraic_validation",
@@ -74,6 +74,8 @@ def test_official_stage_order_and_uniform_envelope() -> None:
         numerical_contract=_contract().to_dict(),
         candidate_id="seed-1",
         verdict="seed_only",
+        run_metadata=valid_run_metadata,
+        metadata_validation_errors=[],
     )
     record = envelope.to_dict()
     assert envelope.validate() == []
@@ -91,6 +93,8 @@ def test_official_stage_order_and_uniform_envelope() -> None:
         "verdict",
         "files",
         "provenance",
+        "run_metadata",
+        "metadata_validation_errors",
         "state",
         "state_history",
         "evidence",
@@ -205,7 +209,7 @@ def test_danca_control_matrix_declares_abm_and_efork_with_both_memory_policies()
     assert all(case["memory_length"] == 40.0 for case in cases if case["history_policy"] == FINITE_MEMORY_POLICY)
 
 
-def test_strong_hiddenness_label_requires_the_full_protocol() -> None:
+def test_strong_hiddenness_label_requires_the_full_protocol(valid_run_metadata) -> None:
     incomplete = HiddennessTestResult(
         candidate_id="c1",
         tested_equilibria=("E0", "E+", "E-"),
@@ -216,6 +220,9 @@ def test_strong_hiddenness_label_requires_the_full_protocol() -> None:
         basin_planes=("xy_close",),
         reference_was_robust=True,
         final_label="hidden_verified_only_if_full_protocol_passed",
+        run_metadata=valid_run_metadata,
+        required_equilibria=("E0", "E+", "E-"),
+        required_radii=(1.0e-4,),
     )
     complete = HiddennessTestResult(
         candidate_id="c1",
@@ -227,9 +234,30 @@ def test_strong_hiddenness_label_requires_the_full_protocol() -> None:
         basin_planes=("xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"),
         reference_was_robust=True,
         final_label="hidden_verified_only_if_full_protocol_passed",
+        run_metadata=valid_run_metadata,
+        required_equilibria=("E0", "E+", "E-"),
+        required_radii=(1.0e-4,),
     )
     assert incomplete.validate()
     assert complete.validate() == []
+
+
+def test_strong_hiddenness_label_requires_every_declared_radius(valid_run_metadata) -> None:
+    result = HiddennessTestResult(
+        candidate_id="c1",
+        tested_equilibria=("E0",),
+        tested_radii=(1.0e-4,),
+        neighborhood_sampling_mode="ball",
+        target_contacts=0,
+        numerical_failures=0,
+        basin_planes=("xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"),
+        reference_was_robust=True,
+        final_label="hidden_verified",
+        run_metadata=valid_run_metadata,
+        required_equilibria=("E0",),
+        required_radii=(1.0e-4, 1.0e-3),
+    )
+    assert result.promotion_verdict == "compatible_with_hiddenness_under_tested_radii"
 
 
 def test_validation_contract_uses_only_the_official_stage_order() -> None:
@@ -250,4 +278,6 @@ def test_validation_contract_uses_only_the_official_stage_order() -> None:
         "verdict",
         "files",
         "provenance",
+        "run_metadata",
+        "metadata_validation_errors",
     }

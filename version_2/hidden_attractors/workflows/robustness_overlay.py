@@ -25,6 +25,13 @@ from ..io import read_csv_rows, read_json, safe_name, timestamp, write_csv, writ
 from ..native.backends import FractionalChuaBackend
 from ..parallel import force_single_openmp_thread_current_process, force_single_openmp_thread_env
 from ..paths import OUTPUTS, PROJECT_ROOT, RUNTIME_CACHE
+from ..reproducibility import (
+    collect_lure_metadata,
+    collect_run_metadata,
+    collect_seed_metadata,
+    write_run_metadata,
+)
+from ..systems import get_system
 
 
 DEFAULT_SOURCE_DIR = PROJECT_ROOT / "validation" / "06_post_continuation_filter"
@@ -145,6 +152,38 @@ def make_config(
         "cases": cases,
         "chunks": 3,
     }
+    baseline = cases[0]
+    lure = get_system("chua-nonsmooth").lure
+    run_metadata = collect_run_metadata(
+        run_id=root.name,
+        workflow="robustness_overlay",
+        system="fractional_nonsmooth_chua",
+        q=float(baseline["q"]),
+        h=float(baseline["h"]),
+        t_final=float(baseline["t_final"]),
+        t_burn=float(baseline["t_burn"]),
+        memory_mode="finite_window",
+        M=int(round(float(baseline["Lm"]) / float(baseline["h"]))),
+        memory_window_steps=int(round(float(baseline["Lm"]) / float(baseline["h"]))),
+        memory_window_time=float(baseline["Lm"]),
+        is_full_caputo=False,
+        integrator_name="efork3",
+        integrator_backend="native",
+        caputo=True,
+        parameters=cfg["params"],
+        lure=collect_lure_metadata(
+            lure,
+            transfer_convention="c^T(A - sI)^(-1)b",
+            harmonic_condition="robustness overlay only; no hiddenness promotion",
+        ),
+        seed=collect_seed_metadata(
+            cfg["candidates"][0] if cfg["candidates"] else None,
+            source=str(source_dir),
+        ),
+        random_seed_policy="not_applicable",
+        extra={"cases": cases},
+    )
+    cfg["run_metadata"] = write_run_metadata(root / "run_metadata.json", run_metadata)
     write_json(root / "robustness_overlay_config.json", cfg)
     return cfg
 

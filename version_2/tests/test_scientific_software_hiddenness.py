@@ -23,7 +23,7 @@ def test_nn_percentile_target_match_accepts_close_clouds_and_rejects_separated_c
     ("target_hits", "seed_reached", "numerical_failures", "expected"),
     [
         (1, True, 0, "self_excited_contact_detected"),
-        (0, True, 0, "compatible_with_hiddenness_under_sampled_radii"),
+        (0, True, 0, "compatible_with_hiddenness_under_tested_radii"),
         (0, False, 0, "not_supported"),
         (0, True, 1, "numerical_failure"),
     ],
@@ -41,4 +41,3 @@ def test_hiddenness_verdict_uses_operational_sampled_radii_states(
         )
         == expected
     )
-

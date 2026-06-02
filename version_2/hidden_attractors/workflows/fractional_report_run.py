@@ -28,6 +28,14 @@ from ..models.chua import equilibria_nonsmooth
 from ..native.backends import FractionalChuaBackend, FullHistoryABMBackend
 from ..paths import OUTPUTS, PROJECT_ROOT, RUNTIME_CACHE
 from ..plotting.dynamics import plot_lure_nyquist_describing_function, plot_phase_projections, plot_phase_space, plot_time_series, plot_trajectory_spectra
+from ..reproducibility import (
+    collect_lure_metadata,
+    collect_run_metadata,
+    collect_seed_metadata,
+    metadata_to_jsonable,
+    validate_run_metadata,
+    write_run_metadata,
+)
 from ..seed_generation import biased_lure_describing_function, lure_transfer_function
 from ..seed_generation.core import HarmonicSeed
 from ..systems import get_system
@@ -1140,6 +1148,7 @@ def _write_stage_summary(
     *,
     files: dict[str, str],
     provenance: dict[str, Any],
+    run_metadata: dict[str, Any],
     inputs: dict[str, Any] | None = None,
     outputs: dict[str, Any] | None = None,
     metrics: dict[str, Any] | None = None,
@@ -1163,6 +1172,8 @@ def _write_stage_summary(
         verdict=verdict,
         files=files,
         provenance=provenance,
+        run_metadata=run_metadata,
+        metadata_validation_errors=validate_run_metadata(run_metadata),
         state=state,
         state_history=state_history or [],
         evidence=evidence or {},
@@ -1184,6 +1195,7 @@ def promote_validation(
     df_metadata: dict[str, Any],
     branch_results: dict[str, dict[str, Any]],
     danca_summary: dict[str, Any],
+    run_metadata: dict[str, Any],
 ) -> None:
     validation = PROJECT_ROOT / "validation"
     numerical_dir = validation / "01_numerical_contract"
@@ -1249,6 +1261,7 @@ def promote_validation(
             "integrator_benchmark": "integrator_benchmark_summary.csv",
         },
         provenance=provenance,
+        run_metadata=run_metadata,
         outputs={"efork_stage": EFORK_STAGE, "protocol_version": PROTOCOL_VERSION},
         state="candidate_attractor",
         state_history=["candidate_attractor"],
@@ -1289,6 +1302,7 @@ def promote_validation(
         contract,
         files={"report": "seed_generation_validation.md", "seeds": "unified_seeds.json", "residuals": "harmonic_residuals.csv"},
         provenance=provenance,
+        run_metadata=run_metadata,
         outputs={"candidate_count": len(seeds), "families": sorted({item["family"] for item in seeds})},
         verdict="seed_only",
         state="seed_found",
@@ -1327,6 +1341,7 @@ def promote_validation(
         contract,
         files={"report": "soft_precheck_validation.md", "decisions": "precheck_decisions.csv"},
         provenance=provenance,
+        run_metadata=run_metadata,
         outputs={"admitted_to_continuation": sum(1 for row in precheck_rows if row["admissible_for_continuation"]), "periodicity_gate": False},
         state="seed_found",
         state_history=["candidate_attractor", "seed_found"],
@@ -1353,6 +1368,7 @@ def promote_validation(
         contract,
         files={"report": "continuation_validation.md", "plan": "continuation_plan.json", "trace": "continuation_trace.csv", "finite_memory_trace": "finite_memory_continuation_trace.csv"},
         provenance=provenance,
+        run_metadata=run_metadata,
         outputs={"branches": ["full_history", "finite_memory"], "public_parameter": "lambda"},
         state="candidate_attractor",
         state_history=["candidate_attractor", "seed_found", "candidate_attractor"],
@@ -1375,6 +1391,7 @@ def promote_validation(
         contract,
         files={"report": "post_continuation_filter_validation.md", "decisions": "survivor_decisions.csv", "selected": "selected_candidates.json"},
         provenance=provenance,
+        run_metadata=run_metadata,
         outputs={"full_history_survivors": len(full["selected"]), "finite_memory_survivors": len(window["selected"])},
         verdict="continuation_survivor",
         state="candidate_attractor",
@@ -1397,6 +1414,7 @@ def promote_validation(
         contract,
         files={"report": "dynamic_reference_validation.md", "reference": "dynamic_reference.json", "metrics": "trajectory_metrics.csv", "signature": "similarity_signature.json"},
         provenance=provenance,
+        run_metadata=run_metadata,
         outputs={"branches": ["full_history", "finite_memory"]},
         state="chaotic_candidate",
         state_history=["candidate_attractor", "seed_found", "candidate_attractor", "chaotic_candidate"],
@@ -1427,6 +1445,7 @@ etapa verifica persistencia geometrica; no clasifica ocultedad.
         contract,
         files={"report": "robustness_validation.md", "metrics": "robustness_metrics.csv", "verdicts": "robustness_verdicts.json", "abm_comparison": "abm_efork_comparison.csv"},
         provenance=provenance,
+        run_metadata=run_metadata,
         outputs={"branches": ["full_history", "finite_memory"], "abm_reference": True},
         verdict="weak_target_hit",
         state="hidden_compatible",
@@ -1526,6 +1545,10 @@ etapa verifica persistencia geometrica; no clasifica ocultedad.
         allow_numerical_failures=False,
         require_candidate_attractor=True,
         seed_reached_attractor=True,
+        run_metadata=run_metadata,
+        reference_was_robust=False,
+        neighborhood_sampling_mode="ball",
+        basin_planes=produced_planes,
     )
     
     is_contract_verified = bool(contract_res.get("hidden_verified", False) and all_slices_present)
@@ -1537,7 +1560,7 @@ etapa verifica persistencia geometrica; no clasifica ocultedad.
         hiddenness_verdict = "exploratory_hiddenness_screen"
     else:
         hiddenness_status = "completed" if all_slices_present else "incomplete_pending_basin_slices"
-        hiddenness_verdict = "hidden_verified_only_if_full_protocol_passed" if all_slices_present else "compatible_with_hiddenness_under_tested_radii"
+        hiddenness_verdict = str(contract_res["promotion_verdict"])
     
     hidden_md = rf"""# Hiddenness tests
     
@@ -1558,6 +1581,7 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
         contract,
         files={"report": "hiddenness_tests_validation.md", "plan": "ball_sampling_plan.csv", "results": "ball_sampling_results.csv", "basin_slices": "basin_slices_summary.json"},
         provenance=provenance,
+        run_metadata=run_metadata,
         outputs={"branches": {"full_history": full["hiddenness"], "finite_memory": window["hiddenness"]}, "sampling_mode": "ball", "is_lightweight": is_lightweight},
         verdict=hiddenness_verdict,
         state="hidden_verified" if is_contract_verified else "hidden_compatible",
@@ -1734,6 +1758,7 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
             contract,
             files=algebra_summary["files"],
             provenance=provenance,
+            run_metadata=run_metadata,
             outputs=algebra_summary["outputs"],
             state="candidate_attractor",
             state_history=["candidate_attractor"],
@@ -1753,6 +1778,7 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
         contract,
         files={"report": "diagnostics_validation.md", "fft": "fft_summary.csv", "psd": "psd_summary.csv", "lyapunov": "lyapunov_summary.csv"},
         provenance=provenance,
+        run_metadata=run_metadata,
         outputs={"lyapunov": "pending_causal_history_backend"},
         state="chaotic_candidate",
         state_history=["candidate_attractor", "seed_found", "candidate_attractor", "chaotic_candidate"],
@@ -1901,10 +1927,37 @@ def run(args: argparse.Namespace) -> Path:
         danca_dir.mkdir()
         danca_summary = run_danca_abm_control(danca_dir, h=args.h)
 
-    write_json(
-        root / "run_metadata.json",
+    selected_seed = next(
+        iter(branch_results["full_history"].get("selected", [])),
+        admissible_pool[0],
+    )
+    lure = get_system("chua-nonsmooth").lure
+    common_metadata = collect_run_metadata(
+        run_id=run_id,
+        workflow="fractional_report_run",
+        system="fractional_nonsmooth_chua",
+        q=Q,
+        h=args.h,
+        t_final=args.t_final,
+        t_burn=0.5 * args.t_final,
+        memory_mode="full",
+        integrator_name="efork3",
+        integrator_backend="native",
+        caputo=True,
+        parameters=PARAMETERS,
+        lure=collect_lure_metadata(
+            lure,
+            transfer_convention="W_code = -W_report",
+            harmonic_condition="1 + k*W_code = 0 equivalent to 1 - k*W_report = 0",
+        ),
+        seed=collect_seed_metadata(selected_seed, source="fractional_report_run:selected_full_history_seed"),
+        random_seed=20260517,
+        random_seed_policy="fixed_reproducible",
+        provenance=provenance,
+    )
+    run_metadata = metadata_to_jsonable(common_metadata)
+    run_metadata.update(
         {
-            "run_id": run_id,
             **provenance,
             "q": Q,
             "params": PARAMETERS,
@@ -1920,10 +1973,11 @@ def run(args: argparse.Namespace) -> Path:
             "danca_abm_control": danca_summary,
             "basins": "pending_requires_valid_nonperiodic_candidates",
             "bifurcations": "pending",
-        },
+        }
     )
+    run_metadata = write_run_metadata(root / "run_metadata.json", run_metadata)
     if enough_selected and not args.skip_validation_promotion:
-        promote_validation(root, run_id, provenance, df_metadata, branch_results, danca_summary)
+        promote_validation(root, run_id, provenance, df_metadata, branch_results, danca_summary, run_metadata)
     return root
 
 

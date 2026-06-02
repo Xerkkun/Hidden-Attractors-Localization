@@ -19,6 +19,13 @@ from ..verification.stability import classify_equilibrium_stability
 from ..verification.hiddenness import run_neighborhood_probe, generate_neighborhood_points
 from ..verification.basins import generate_basin_slice
 from ..verification.classifiers import classify_hiddenness_verdict
+from ..reproducibility import (
+    collect_lure_metadata,
+    collect_run_metadata,
+    collect_seed_metadata,
+    validate_run_metadata,
+    write_run_metadata,
+)
 
 # Import plotting routines dynamically if enabled
 from ..plotting.plot_transfer import plot_nyquist_transfer
@@ -49,6 +56,8 @@ DEFAULT_CONFIG = {
     "run_sphere_tests": False,
     "run_robustness": False,
     "workers": 1,
+    "random_seed": 42,
+    "random_seed_policy": "fixed_reproducible",
     "seed_mode": "fractional",
     "machado_enabled": False,
     "biased_enabled": False,
@@ -296,6 +305,48 @@ def _effective_q(config: dict, system: Any) -> float:
         q = 1.0
     return float(q)
 
+
+def _write_workflow_run_metadata(
+    *,
+    config: dict[str, Any],
+    system: Any,
+    run_id: str,
+    system_id: str,
+    q_dynamics: float,
+    t_final: float,
+    t_burn: float,
+    seed: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Persist the common reproducibility envelope for the centered workflow."""
+
+    metadata = collect_run_metadata(
+        run_id=run_id,
+        workflow="centered_lure_df",
+        system=system_id,
+        q=q_dynamics,
+        h=float(config["h"]),
+        t_final=float(t_final),
+        t_burn=float(t_burn),
+        memory_mode=str(config.get("memory_mode", "full")),
+        M=config.get("memory_window_steps") or config.get("memory_window_length"),
+        memory_window_steps=config.get("memory_window_steps") or config.get("memory_window_length"),
+        memory_window_time=config.get("memory_window_time"),
+        is_full_caputo=str(config.get("memory_mode", "full")).lower() in {"full", "full_history"},
+        integrator_name=str(config["integrator"]),
+        integrator_backend="native" if config.get("use_c_backend", True) else "python",
+        caputo=True,
+        parameters=system.parameters,
+        lure=collect_lure_metadata(
+            system.lure,
+            transfer_convention=str(config.get("transfer_convention", "")),
+            harmonic_condition=str(config.get("harmonic_condition", "")),
+        ),
+        seed=collect_seed_metadata(seed, source="centered_lure_df:selected_seed"),
+        random_seed=config.get("random_seed"),
+        random_seed_policy=str(config.get("random_seed_policy", "fixed_reproducible")),
+    )
+    return write_run_metadata(os.path.join(config["output_dir"], "run_metadata.json"), metadata)
+
 def run_workflow_integration(system, x0, q_val, h, t_final, config, equilibria):
     integrator = config["integrator"]
     memory_mode = config["memory_mode"]
@@ -505,10 +556,22 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     
     if n_candidates == 0:
         print(f"[{run_id}][{system_id}] No DF seed candidates found.")
+        run_metadata = _write_workflow_run_metadata(
+            config=config,
+            system=system,
+            run_id=run_id,
+            system_id=system_id,
+            q_dynamics=q_dynamics,
+            t_final=t_final,
+            t_burn=t_burn,
+            seed=None,
+        )
         summary = _build_summary_dict(
             config, system, equilibria, unstable_eqs, candidates, None, None, None, None, [], "df_seed_not_found",
             final_traj=None, matched_ev=None, target_lam=None, modal_res=None, norm_res=None
         )
+        summary["run_metadata"] = run_metadata
+        summary["metadata_validation_errors"] = validate_run_metadata(run_metadata)
         _save_summary(summary, output_dir)
         return summary
         
@@ -584,6 +647,23 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         transfer_mode=seed_transfer_mode,
         theta=config.get("seed_theta", 0.0),
         seed_construction=config.get("seed_construction", "modal"),
+    )
+    run_metadata = _write_workflow_run_metadata(
+        config=config,
+        system=system,
+        run_id=run_id,
+        system_id=system_id,
+        q_dynamics=q_dynamics,
+        t_final=t_final,
+        t_burn=t_burn,
+        seed={
+            "candidate_id": f"{run_id}:branch_{branch_idx}",
+            "family": "lure_classical_centered",
+            "x0": seed_pos,
+            "A": A0,
+            "omega": omega0,
+            "k": k,
+        },
     )
     
     if config["seed_construction"] == "modal":
@@ -800,6 +880,10 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
             target_match_metric=target_metric,
             target_match_tol=target_tol,
             target_match_nn_percentile=target_nn_pct,
+            run_metadata=run_metadata,
+            reference_was_robust=bool(config.get("run_robustness", False)),
+            neighborhood_sampling_mode="ball",
+            basin_planes=(),
         )
         
     basin_data_accum = []
@@ -978,6 +1062,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         contract_res=contract_res,
         bib_res=bib_res
     )
+    summary["run_metadata"] = run_metadata
+    summary["metadata_validation_errors"] = validate_run_metadata(run_metadata)
     _save_summary(summary, output_dir)
     
     if config.get("plot_enabled", True):

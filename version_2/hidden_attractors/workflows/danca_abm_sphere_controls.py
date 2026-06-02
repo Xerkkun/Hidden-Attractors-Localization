@@ -32,6 +32,12 @@ from ..native.backends import FractionalChuaBackend, FullHistoryABMBackend
 from ..parallel import force_single_openmp_thread_current_process, force_single_openmp_thread_env
 from ..paths import PROJECT_ROOT
 from ..plotting.dynamics import plot_phase_projections, plot_phase_space, plot_time_series, plot_trajectory_spectra
+from ..reproducibility import (
+    collect_lure_metadata,
+    collect_run_metadata,
+    collect_seed_metadata,
+    write_run_metadata,
+)
 from ..seed_generation import lure_transfer_function
 from ..systems import get_system
 from .protocol import sample_uniform_ball
@@ -593,6 +599,38 @@ def make_plan(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
         "chain_strict_unknown_refinement": bool(args.chain_strict_unknown_refinement),
         "strict_refine_chunks": int(args.strict_refine_chunks),
     }
+    lure = get_system("chua-nonsmooth").lure
+    run_metadata = collect_run_metadata(
+        run_id=root.name,
+        workflow="danca_abm_sphere_controls",
+        system="fractional_nonsmooth_chua",
+        q=dcfg.q,
+        h=dcfg.h,
+        t_final=dcfg.t_final,
+        t_burn=dcfg.transient,
+        memory_mode="full",
+        integrator_name="abm_efork_solver_matrix",
+        integrator_backend="native",
+        caputo=True,
+        parameters=dcfg.params().__dict__,
+        lure=collect_lure_metadata(
+            lure,
+            transfer_convention="c^T(A - sI)^(-1)b",
+            harmonic_condition="Danca reference seed; equilibrium-ball controls only",
+        ),
+        seed=collect_seed_metadata(
+            {
+                "candidate_id": "danca2017_reference",
+                "family": "published_reference_seed",
+                "x0": reference.get("x0"),
+            },
+            source=str(reference.get("source_summary", "danca_reference_summary.json")),
+        ),
+        random_seed=int(args.seed),
+        random_seed_policy="fixed_reproducible",
+        extra={"solver_cases": solver_cases},
+    )
+    cfg["run_metadata"] = write_run_metadata(root / "run_metadata.json", run_metadata)
     write_json(root / "danca_abm_sphere_config.json", cfg)
     return cfg
 

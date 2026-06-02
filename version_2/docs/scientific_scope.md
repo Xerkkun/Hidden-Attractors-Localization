@@ -57,9 +57,12 @@ hidden-attractor protocol.
 - Lyapunov, FFT, PSD, Poincare, 0-1 and bifurcation outputs are diagnostics.
 - Hiddenness can be promoted only through neighborhood or basin tests around all equilibria under the recorded numerical contract.
 
-Warning: do not declare `hidden_verified` unless basin or neighborhood tests
-around all equilibria satisfy the recorded promotion contract. Visual plots
-and diagnostics do not certify hiddenness.
+Warning: do not declare `hidden_verified` unless neighborhood and basin tests
+around all equilibria, the robust reference checks, and the reproducible
+`run_metadata.json` envelope all satisfy the recorded promotion contract. If
+one condition is missing, use
+`compatible_with_hiddenness_under_tested_radii`. Visual plots and diagnostics
+do not certify hiddenness.
 
 ## What the library can reproduce
 

@@ -13,6 +13,13 @@ from pathlib import Path
 from typing import Any, Sequence
 
 from .io import write_json
+from .reproducibility import (
+    CONSERVATIVE_HIDDENNESS_LABEL,
+    collect_run_metadata,
+    metadata_to_jsonable,
+    validate_run_metadata,
+    write_run_metadata,
+)
 from .workflows.protocol import (
     OFFICIAL_STAGE_ORDER,
     ContinuationPlan,
@@ -62,7 +69,53 @@ def _numerical_contract(payload: dict[str, Any]) -> NumericalContract:
     return contract
 
 
-def _stage_specific_payload(args: argparse.Namespace, data: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any], str | None]:
+def _backend_name(backend: str) -> str:
+    value = backend.lower()
+    if "python" in value:
+        return "python"
+    if "native" in value or value.endswith("_c") or value == "c":
+        return "native"
+    return "unknown"
+
+
+def _run_metadata(
+    args: argparse.Namespace,
+    contract: NumericalContract,
+    data: dict[str, Any],
+) -> dict[str, Any]:
+    supplied = data.get("run_metadata")
+    if isinstance(supplied, dict):
+        return write_run_metadata(args.output.parent / "run_metadata.json", supplied)
+    metadata = collect_run_metadata(
+        run_id=str(data.get("run_id", args.output.stem)),
+        workflow=f"protocol_cli:{args.command}",
+        system=args.system,
+        q=contract.q,
+        h=contract.h,
+        t_final=contract.t_final,
+        t_burn=contract.effective_transient,
+        memory_mode=contract.memory_policy,
+        memory_window_time=contract.memory_length,
+        is_full_caputo=contract.memory_policy == "full_history",
+        integrator_name=contract.backend,
+        integrator_backend=_backend_name(contract.backend),
+        caputo=True,
+        parameters=data.get("parameters", {}),
+        lure=data.get("lure"),
+        seed=data.get("seed"),
+        random_seed=contract.random_seed,
+        random_seed_policy=contract.random_seed_policy if contract.random_seed is not None else "not_applicable",
+        provenance=data.get("provenance", {}),
+    )
+    return write_run_metadata(args.output.parent / "run_metadata.json", metadata)
+
+
+def _stage_specific_payload(
+    args: argparse.Namespace,
+    data: dict[str, Any],
+    run_metadata: dict[str, Any],
+    contract: NumericalContract,
+) -> tuple[dict[str, Any], dict[str, Any], str | None]:
     inputs = dict(data.get("inputs", {})) if isinstance(data.get("inputs", {}), dict) else {}
     metrics = dict(data.get("metrics", {})) if isinstance(data.get("metrics", {}), dict) else {}
     verdict = data.get("verdict")
@@ -97,10 +150,10 @@ def _stage_specific_payload(args: argparse.Namespace, data: dict[str, Any]) -> t
             "lambda_values": list(plan.lambda_values),
             "mapping": dict(plan.mapping),
         }
-    elif args.command == "hiddenness" and verdict == "hidden_verified_only_if_full_protocol_passed":
+    elif args.command == "hiddenness" and verdict in {"hidden_verified", "hidden_verified_only_if_full_protocol_passed"}:
         evidence = data.get("hiddenness_test_result")
         if not isinstance(evidence, dict):
-            raise ValueError("strong hiddenness verdict requires hiddenness_test_result.")
+            evidence = {}
         result = HiddennessTestResult(
             candidate_id=args.candidate_id or "",
             tested_equilibria=tuple(evidence.get("tested_equilibria", ())),
@@ -111,10 +164,17 @@ def _stage_specific_payload(args: argparse.Namespace, data: dict[str, Any]) -> t
             basin_planes=tuple(evidence.get("basin_planes", ())),
             reference_was_robust=bool(evidence.get("reference_was_robust", False)),
             final_label="hidden_verified_only_if_full_protocol_passed",
+            run_metadata=run_metadata,
+            required_equilibria=tuple(evidence.get("required_equilibria", ())),
+            required_radii=tuple(float(value) for value in evidence.get("required_radii", contract.hiddenness_radii)),
         )
         errors = result.validate()
-        if errors:
-            raise ValueError("; ".join(errors))
+        metrics["hiddenness_promotion_errors"] = errors
+        inputs["hiddenness_test_result"] = {
+            **evidence,
+            "promotion_verdict": result.promotion_verdict,
+        }
+        verdict = result.promotion_verdict
     return inputs, metrics, str(verdict) if verdict is not None else None
 
 
@@ -137,7 +197,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = make_parser().parse_args(argv)
     contract = _numerical_contract(_read_object(args.contract))
     data = _read_object(args.payload)
-    inputs, metrics, verdict = _stage_specific_payload(args, data)
+    run_metadata = _run_metadata(args, contract, data)
+    inputs, metrics, verdict = _stage_specific_payload(args, data, run_metadata, contract)
+    state = data.get("state")
+    if state == "hidden_verified" and verdict != "hidden_verified":
+        state = "hidden_compatible"
     envelope = StageEnvelope(
         stage=COMMAND_TO_STAGE[args.command],
         status=args.status,
@@ -150,7 +214,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         verdict=verdict,
         files=data.get("files", {}) if isinstance(data.get("files", {}), dict) else {},
         provenance=data.get("provenance", {}) if isinstance(data.get("provenance", {}), dict) else {},
-        state=data.get("state"),
+        run_metadata=run_metadata,
+        metadata_validation_errors=validate_run_metadata(metadata_to_jsonable(run_metadata)),
+        state=state,
         state_history=data.get("state_history", []),
         evidence=data.get("evidence", {}) if isinstance(data.get("evidence", {}), dict) else {},
         failed_requirements=data.get("failed_requirements", []),

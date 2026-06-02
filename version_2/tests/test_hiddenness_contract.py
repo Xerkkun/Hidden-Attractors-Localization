@@ -200,7 +200,7 @@ def test_unstable_only_limitation():
 
 
 # 10. Test contract satisfied (HIDDEN_VERIFIED)
-def test_contract_satisfied():
+def test_contract_satisfied(valid_run_metadata):
     equilibria = {"E0": np.zeros(3), "E1": np.ones(3)}
     probe_runs = []
     for eq in equilibria:
@@ -216,11 +216,34 @@ def test_contract_satisfied():
         allow_numerical_failures=False,
         ref_tail_size=1200,
         min_ref_tail_points=1000,
+        run_metadata=valid_run_metadata,
+        reference_was_robust=True,
+        basin_planes=("xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"),
     )
     assert res["hiddenness_status"] == HiddennessVerificationStatus.HIDDEN_VERIFIED
     assert res["hidden_verified"] is True
     assert res["hidden_compatible"] is True
     assert len(res["failed_requirements"]) == 0
+
+
+def test_complete_neighborhood_evidence_without_metadata_is_only_compatible():
+    equilibria = {"E0": np.zeros(3)}
+    probe_runs = [
+        {"equilibrium": "E0", "radius": radius, "destination": "stable_equilibrium"}
+        for radius in [1e-2, 1e-3, 1e-4, 1e-5]
+    ]
+    res = verify_hiddenness_contract(
+        equilibria=equilibria,
+        sphere_summary_records=[],
+        probe_runs=probe_runs,
+        required_radii=[1e-2, 1e-3, 1e-4, 1e-5],
+        ref_tail_size=1200,
+        reference_was_robust=True,
+        basin_planes=("xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"),
+    )
+    assert res["hidden_verified"] is False
+    assert res["promotion_verdict"] == "compatible_with_hiddenness_under_tested_radii"
+    assert "run_metadata is required for hidden_verified" in res["metadata_validation_errors"]
 
 
 # 11. Test config loader default values

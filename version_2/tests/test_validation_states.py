@@ -43,15 +43,19 @@ def test_coherence_chaotic_candidate_requires_evidence():
     validate_global_report_coherence(report)
 
 
-def test_coherence_hidden_verified_requires_evidence():
-    """Validate that hidden_verified requires sphere or basin evidence."""
+def test_coherence_hidden_verified_requires_evidence(valid_run_metadata):
+    """Validate that hidden_verified requires metadata plus sphere and basin evidence."""
     report = {
         "state": "hidden_verified",
         "stage_statuses": {"hiddenness_tests": "incomplete"},
     }
+    with pytest.raises(ValueError, match="requires complete reproducibility metadata"):
+        validate_global_report_coherence(report)
+
+    report["run_metadata"] = valid_run_metadata
     with pytest.raises(ValueError, match="requires evidence of completed sphere_tests"):
         validate_global_report_coherence(report)
 
     # Adding evidence makes it pass
-    report["stage_statuses"]["hiddenness_tests"] = "completed"
+    report["evidence"] = {"completed_sphere_tests": True, "completed_basin_tests": True}
     validate_global_report_coherence(report)

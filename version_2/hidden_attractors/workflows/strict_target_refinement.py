@@ -32,6 +32,13 @@ from ..io import append_csv, read_csv_rows, read_json, write_csv, write_json
 from ..native.backends import BasinBackend, FractionalChuaBackend
 from ..parallel import force_single_openmp_thread_current_process, force_single_openmp_thread_env
 from ..paths import PROJECT_ROOT
+from ..reproducibility import (
+    collect_lure_metadata,
+    collect_run_metadata,
+    collect_seed_metadata,
+    write_run_metadata,
+)
+from ..systems import get_system
 from .protocol import sample_uniform_ball
 
 
@@ -534,6 +541,43 @@ def make_config(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
         "chunks": int(args.chunks),
         "planned_rows": len(selected),
     }
+    full_history = contract["memory_length"] == "full_caputo_history"
+    memory_time = None if full_history else float(contract["memory_length"])
+    lure_system = get_system("chua-nonsmooth")
+    run_metadata = collect_run_metadata(
+        run_id=root.name,
+        workflow="strict_target_refinement",
+        system="fractional_nonsmooth_chua",
+        q=float(contract["q"]),
+        h=float(contract["h"]),
+        t_final=float(contract["t_final"]),
+        t_burn=float(contract["t_burn"]),
+        memory_mode="full" if full_history else "finite_window",
+        M=None if full_history else int(round(float(memory_time) / float(contract["h"]))),
+        memory_window_steps=None if full_history else int(round(float(memory_time) / float(contract["h"]))),
+        memory_window_time=memory_time,
+        is_full_caputo=full_history,
+        integrator_name="abm" if contract["backend"] == "danca_abm" else "efork3",
+        integrator_backend="native",
+        caputo=True,
+        parameters=lure_system.parameters,
+        lure=collect_lure_metadata(
+            lure_system.lure,
+            transfer_convention="c^T(A - sI)^(-1)b",
+            harmonic_condition="strict target-reference refinement only",
+        ),
+        seed=collect_seed_metadata(
+            {
+                "candidate_id": candidate_id,
+                "family": "continued_candidate",
+                "x0": positive_seed,
+            },
+            source=str(source_dir),
+        ),
+        random_seed=20260524,
+        random_seed_policy="fixed_reproducible",
+    )
+    cfg["run_metadata"] = write_run_metadata(root / "run_metadata.json", run_metadata)
     write_json(root / "strict_refinement_config.json", cfg)
     return cfg
 

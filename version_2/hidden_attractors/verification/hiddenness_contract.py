@@ -3,8 +3,19 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, List, Sequence
+from typing import Any, Dict, List, Mapping, Sequence
 import numpy as np
+
+from hidden_attractors.reproducibility import (
+    CONSERVATIVE_HIDDENNESS_LABEL,
+    metadata_to_jsonable,
+    validate_hiddenness_promotion_metadata,
+)
+
+
+HIDDEN_VERIFIED_LABEL = "hidden_verified"
+REJECTED_SELF_EXCITED_LABEL = "rejected_self_excited_contact"
+REQUIRED_BASIN_PLANES = {"xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"}
 
 
 class HiddennessVerificationStatus(str, Enum):
@@ -40,6 +51,10 @@ def verify_hiddenness_contract(
     target_match_metric: str = "nn_percentile",
     target_match_tol: float = 0.5,
     target_match_nn_percentile: float = 90.0,
+    run_metadata: Mapping[str, Any] | None = None,
+    reference_was_robust: bool = False,
+    neighborhood_sampling_mode: str = "ball",
+    basin_planes: Sequence[str] = (),
 ) -> Dict[str, Any]:
     """Verify operational hiddenness condition: B(A) ∩ U_epsilon(X_i*) = empty.
 
@@ -69,6 +84,8 @@ def verify_hiddenness_contract(
         Actual size of the reference attractor tail.
     target_match_metric : str, default "nn_percentile"
         Metric used to evaluate matches against the target attractor.
+    run_metadata : Mapping[str, Any] | None
+        Auditable metadata envelope. It is mandatory for ``hidden_verified``.
     target_match_tol : float, default 0.5
     target_match_nn_percentile : float, default 90.0
 
@@ -84,6 +101,7 @@ def verify_hiddenness_contract(
         failed_reqs.append("Seed did not reach the target attractor candidate.")
         return {
             "hiddenness_status": HiddennessVerificationStatus.CANDIDATE_NOT_AVAILABLE.value,
+            "promotion_verdict": "seed_only",
             "hidden_verified": False,
             "hidden_compatible": False,
             "self_excited_contact_detected": False,
@@ -103,6 +121,10 @@ def verify_hiddenness_contract(
             "divergence_total": 0,
             "stable_equilibrium_total": 0,
             "samples_total": 0,
+            "run_metadata": metadata_to_jsonable(run_metadata) if run_metadata is not None else None,
+            "metadata_validation_errors": validate_hiddenness_promotion_metadata(
+                dict(run_metadata) if run_metadata is not None else None
+            ),
         }
 
     # Validate ref tail length
@@ -222,6 +244,25 @@ def verify_hiddenness_contract(
             protocol_complete = False
             failed_reqs.append(f"Equilibrium {eq} is missing required radii: {missing_radii_by_eq[eq]}")
 
+    # A strong promotion also requires robust reference evidence, basin controls,
+    # and a complete reproducibility envelope.
+    if not reference_was_robust:
+        protocol_complete = False
+        failed_reqs.append("Robust target reproduction is required for hidden_verified.")
+    if neighborhood_sampling_mode != "ball":
+        protocol_complete = False
+        failed_reqs.append("Neighborhood sampling mode must be ball for hidden_verified.")
+    missing_basin_planes = sorted(REQUIRED_BASIN_PLANES.difference(basin_planes))
+    if missing_basin_planes:
+        protocol_complete = False
+        failed_reqs.append(f"Missing required basin planes: {missing_basin_planes}")
+    metadata_validation_errors = validate_hiddenness_promotion_metadata(
+        dict(run_metadata) if run_metadata is not None else None
+    )
+    if metadata_validation_errors:
+        protocol_complete = False
+        failed_reqs.extend(f"Reproducibility metadata: {error}" for error in metadata_validation_errors)
+
     # 5. Apply verification decision rules
     hidden_verified = False
     hidden_compatible = False
@@ -231,16 +272,16 @@ def verify_hiddenness_contract(
         hiddenness_status = HiddennessVerificationStatus.SELF_EXCITED_CONTACT_DETECTED.value
         self_excited_contact_detected = True
         failed_reqs.append(f"Self-excited contact detected: {target_hits_total} probe trajectory hits on target attractor.")
-    elif not protocol_complete:
-        hiddenness_status = HiddennessVerificationStatus.INCOMPLETE_PROTOCOL.value
-        # If there are no target hits and seed reached attractor, it is hidden_compatible
-        if seed_reached_attractor:
-            hidden_compatible = True
     elif numerical_failures_total > 0 and not allow_numerical_failures:
         hiddenness_status = HiddennessVerificationStatus.NUMERICAL_FAILURE.value
         failed_reqs.append(f"Numerical failures detected: {numerical_failures_total} probe integrations failed.")
         # Still compatible if zero target hits
         hidden_compatible = True
+    elif not protocol_complete:
+        hiddenness_status = HiddennessVerificationStatus.INCOMPLETE_PROTOCOL.value
+        # If there are no target hits and seed reached attractor, it is hidden_compatible
+        if seed_reached_attractor:
+            hidden_compatible = True
     elif len(failed_reqs) > 0:
         # Catch-all for failed requirements (like tail length limits)
         hiddenness_status = HiddennessVerificationStatus.INCOMPLETE_PROTOCOL.value
@@ -250,8 +291,17 @@ def verify_hiddenness_contract(
         hidden_verified = True
         hidden_compatible = True
 
+    promotion_verdict = (
+        HIDDEN_VERIFIED_LABEL
+        if hidden_verified
+        else REJECTED_SELF_EXCITED_LABEL
+        if self_excited_contact_detected
+        else CONSERVATIVE_HIDDENNESS_LABEL
+    )
+
     return {
         "hiddenness_status": hiddenness_status,
+        "promotion_verdict": promotion_verdict,
         "hidden_verified": hidden_verified,
         "hidden_compatible": hidden_compatible,
         "self_excited_contact_detected": self_excited_contact_detected,
@@ -269,6 +319,8 @@ def verify_hiddenness_contract(
         "stable_equilibrium_total": stable_equilibrium_total,
         "samples_total": samples_total,
         "failed_requirements": failed_reqs,
+        "run_metadata": metadata_to_jsonable(run_metadata) if run_metadata is not None else None,
+        "metadata_validation_errors": metadata_validation_errors,
         "methodological_note": _get_methodological_note(),
     }
 

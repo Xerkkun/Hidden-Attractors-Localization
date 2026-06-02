@@ -41,6 +41,13 @@ from ..io import append_csv, read_csv_rows, read_json, timestamp, write_csv, wri
 from ..native.backends import FractionalChuaBackend
 from ..parallel import force_single_openmp_thread_current_process, force_single_openmp_thread_env
 from ..paths import OUTPUTS, PROJECT_ROOT, RUNTIME_CACHE
+from ..reproducibility import (
+    collect_lure_metadata,
+    collect_run_metadata,
+    collect_seed_metadata,
+    write_run_metadata,
+)
+from ..systems import get_system
 
 
 DEFAULT_SOURCE_DIR = OUTPUTS / "basin_compare_danca_project_h001_grid101_20260517"
@@ -356,6 +363,41 @@ def make_config(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
         "unknown_cells_planned": len(unknown_rows),
         "chunks": int(args.chunks),
     }
+    contract = cfg["project_contract"]
+    lure_system = get_system("chua-nonsmooth")
+    run_metadata = collect_run_metadata(
+        run_id=root.name,
+        workflow="refined_basin",
+        system="fractional_nonsmooth_chua",
+        q=float(contract["q"]),
+        h=float(contract["h"]),
+        t_final=float(contract["t_final"]),
+        t_burn=float(contract["t_burn"]),
+        memory_mode="finite_window",
+        M=int(round(float(contract["Lm"]) / float(contract["h"]))),
+        memory_window_steps=int(round(float(contract["Lm"]) / float(contract["h"]))),
+        memory_window_time=float(contract["Lm"]),
+        is_full_caputo=False,
+        integrator_name="efork3",
+        integrator_backend="native",
+        caputo=True,
+        parameters=lure_system.parameters,
+        lure=collect_lure_metadata(
+            lure_system.lure,
+            transfer_convention="c^T(A - sI)^(-1)b",
+            harmonic_condition="refined basin classification only",
+        ),
+        seed=collect_seed_metadata(
+            {
+                "candidate_id": contract["candidate_id"],
+                "family": "continued_candidate",
+                "x0": cfg["reference"]["positive_seed"],
+            },
+            source=str(source_dir),
+        ),
+        random_seed_policy="not_applicable",
+    )
+    cfg["run_metadata"] = write_run_metadata(root / "run_metadata.json", run_metadata)
     write_json(root / "refined_basin_config.json", cfg)
     return cfg
 

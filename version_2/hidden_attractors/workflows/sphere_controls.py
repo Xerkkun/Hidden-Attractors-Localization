@@ -27,6 +27,13 @@ from ..io import append_csv, read_csv_rows, read_json, timestamp, write_csv, wri
 from ..native.backends import BasinBackend
 from ..parallel import force_single_openmp_thread_current_process, force_single_openmp_thread_env
 from ..paths import OUTPUTS, PROJECT_ROOT
+from ..reproducibility import (
+    collect_lure_metadata,
+    collect_run_metadata,
+    collect_seed_metadata,
+    write_run_metadata,
+)
+from ..systems import get_system
 from .protocol import sample_uniform_ball
 
 
@@ -242,6 +249,38 @@ def make_plan(outdir: str | Path, args: argparse.Namespace) -> dict[str, Any]:
         "chunks": int(args.chunks),
         "random_seed": int(args.seed),
     }
+    lure = get_system("chua-nonsmooth").lure
+    seed = candidates[0] if candidates else None
+    if seed is not None:
+        seed = {**seed, "x0": seed.get("seed", seed.get("robust_start"))}
+    run_metadata = collect_run_metadata(
+        run_id=root.name,
+        workflow="sphere_controls",
+        system="fractional_nonsmooth_chua",
+        q=float(args.q),
+        h=float(args.h),
+        t_final=float(args.t_final),
+        t_burn=float(args.t_burn),
+        memory_mode="finite_window",
+        M=int(round(float(args.memory_length) / float(args.h))),
+        memory_window_steps=int(round(float(args.memory_length) / float(args.h))),
+        memory_window_time=float(args.memory_length),
+        is_full_caputo=False,
+        integrator_name="efork3",
+        integrator_backend="native",
+        caputo=True,
+        parameters=get_system("chua-nonsmooth").parameters,
+        lure=collect_lure_metadata(
+            lure,
+            transfer_convention="c^T(A - sI)^(-1)b",
+            harmonic_condition="equilibrium-ball controls only",
+        ),
+        seed=collect_seed_metadata(seed, source=str(Path(args.source_dir).resolve())),
+        random_seed=int(args.seed),
+        random_seed_policy="fixed_reproducible",
+        extra={"robustness_cases": cfg["robustness_cases"]},
+    )
+    cfg["run_metadata"] = write_run_metadata(root / "run_metadata.json", run_metadata)
     write_csv(root / "sphere_plan.csv", rows)
     write_json(root / "top3_sphere_robustness_config.json", cfg)
     return cfg

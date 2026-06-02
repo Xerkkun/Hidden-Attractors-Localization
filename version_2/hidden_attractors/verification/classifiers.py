@@ -10,7 +10,7 @@ def classify_hiddenness_verdict(
     """Classify the overall hiddenness verdict under the tested numerical contract.
     
     States:
-        - "compatible_with_hiddenness_under_sampled_radii"
+        - "compatible_with_hiddenness_under_tested_radii"
         - "self_excited_contact_detected"
         - "not_supported"
         - "numerical_failure"
@@ -24,4 +24,4 @@ def classify_hiddenness_verdict(
     if not seed_reached_attractor:
         return "not_supported"
         
-    return "compatible_with_hiddenness_under_sampled_radii"
+    return "compatible_with_hiddenness_under_tested_radii"

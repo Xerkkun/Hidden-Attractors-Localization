@@ -15,6 +15,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 
+from hidden_attractors.reproducibility import (
+    validate_hiddenness_promotion_metadata,
+    validate_run_metadata,
+)
 from hidden_attractors.workflows.protocol import validate_global_report_coherence
 
 
@@ -203,8 +207,11 @@ def check_validation_contract(
                             stage_summary, _ = _read_json(stage_path)
                             if stage_summary:
                                 # merge outputs, metrics or files into combined_data to provide complete context
-                                for key in ("outputs", "metrics", "evidence", "files"):
+                                for key in ("outputs", "metrics", "evidence", "files", "run_metadata"):
                                     if key in stage_summary:
+                                        if key == "run_metadata":
+                                            combined_data[key] = stage_summary[key]
+                                            continue
                                         if key not in combined_data:
                                             combined_data[key] = {}
                                         if isinstance(combined_data[key], dict) and isinstance(stage_summary[key], dict):
@@ -255,6 +262,22 @@ def check_validation_contract(
                 issues.append(ValidationIssue(severity, summary_path, "stage summary JSON is missing"))
             else:
                 issues.extend(_check_json_fields(summary_path, summary_required, severity=severity))
+                summary_data, _ = _read_json(summary_path)
+                if isinstance(summary_data, dict) and isinstance(summary_data.get("run_metadata"), dict):
+                    metadata_errors = validate_run_metadata(summary_data["run_metadata"])
+                    if summary_data.get("metadata_validation_errors") != metadata_errors:
+                        issues.append(
+                            ValidationIssue(
+                                severity,
+                                summary_path,
+                                "metadata_validation_errors does not match validate_run_metadata(run_metadata)",
+                            )
+                        )
+                    for error in metadata_errors:
+                        issues.append(ValidationIssue(severity, summary_path, f"invalid run_metadata: {error}"))
+                    if summary_data.get("verdict") in {"hidden_verified", "hidden_verified_only_if_full_protocol_passed"}:
+                        for error in validate_hiddenness_promotion_metadata(summary_data["run_metadata"]):
+                            issues.append(ValidationIssue(severity, summary_path, f"invalid hidden_verified metadata: {error}"))
         for file_name in stage.get("expected_evidence", []):
             if not isinstance(file_name, str):
                 issues.append(ValidationIssue(severity, stage_dir, "expected evidence entries must be strings"))

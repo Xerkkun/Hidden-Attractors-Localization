@@ -103,7 +103,9 @@
     "metrics",
     "verdict",
     "files",
-    "provenance"
+    "provenance",
+    "run_metadata",
+    "metadata_validation_errors"
   ],
   "final_report": {
     "source": "validation/final_validation_report.tex",

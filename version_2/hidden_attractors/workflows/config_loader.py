@@ -111,6 +111,7 @@ _DEFAULTS: Dict[str, Any] = {
     # ── Workers / reproducibility ─────────────────────────────────────────────
     "workers": 1,
     "random_seed": 42,
+    "random_seed_policy": "fixed_reproducible",
 
     # ── Divergence ───────────────────────────────────────────────────────────
     "divergence_norm": 120.0,
