@@ -1,0 +1,99 @@
+claims:
+  - claim_id: "hidden_definition"
+    claim_type: "HIDDEN_ATTRACTOR_DEFINITION"
+    severity: "strong"
+    text: "An attractor is hidden if its basin of attraction does not intersect any open neighborhood of an equilibrium."
+    references:
+      - "leonov_kuznetsov_hidden_definition"
+      - "kuznetsov_2017_chua_df"
+    location: "version_2/docs/hiddenness_verification.md"
+
+  - claim_id: "self_excited_vs_hidden"
+    claim_type: "SELF_EXCITED_DEFINITION"
+    severity: "strong"
+    text: "Self-excited attractors possess a basin of attraction that intersects the neighborhood of at least one equilibrium point."
+    references:
+      - "leonov_kuznetsov_hidden_definition"
+    location: "version_2/docs/validation_methodology.md"
+
+  - claim_id: "df_chua_localization"
+    claim_type: "DESCRIBING_FUNCTION_CHUA_LOCALIZATION"
+    severity: "strong"
+    text: "Describing functions predict harmonic seed candidates in the Chua circuit by searching for frequency balance points."
+    references:
+      - "kuznetsov_2017_chua_df"
+    location: "version_2/docs/lure_candidate_route.md"
+
+  - claim_id: "df_is_heuristic"
+    claim_type: "DESCRIBING_FUNCTION_IS_HEURISTIC"
+    severity: "strong"
+    text: "Describing function approximations are heuristic and do not guarantee the existence of a chaotic hidden attractor."
+    references:
+      - "kuznetsov_2017_chua_df"
+    location: "version_2/docs/hiddenness_verification.md"
+
+  - claim_id: "caputo_memory"
+    claim_type: "WEYL_CAPUTO_BRIDGE"
+    severity: "strong"
+    text: "The Caputo fractional derivative is a causal formulation that models historical memory effects."
+    references:
+      - "danca_2017_fractional_hidden"
+    location: "version_2/docs/validation_methodology.md"
+
+  - claim_id: "caputo_abm_integration"
+    claim_type: "CAPUTO_ABM_INTEGRATION"
+    severity: "strong"
+    text: "The predictor-corrector Adams-Bashforth-Moulton method is used for simulating Caputo fractional differential equations."
+    references:
+      - "diethelm_ford_freed_abm_caputo"
+      - "danca_2017_fractional_hidden"
+    location: "version_2/docs/validation_methodology.md"
+
+  - claim_id: "matignon_stability"
+    claim_type: "FRACTIONAL_MATIGNON_STABILITY"
+    severity: "strong"
+    text: "The Matignon stability theorem determines fractional-order local stability based on eigenvalues."
+    references:
+      - "matignon_fractional_stability"
+      - "danca_2017_fractional_hidden"
+    location: "version_2/docs/validation_methodology.md"
+
+  - claim_id: "danca_fractional_hiddenness"
+    claim_type: "NONSMOOTH_CHUA_LIPSCHITZ_ABM"
+    severity: "strong"
+    text: "Caputo fractional-order hidden attractors in non-smooth Lipschitz Chua circuits are integrated with verified ABM."
+    references:
+      - "danca_2017_fractional_hidden"
+    location: "version_2/docs/validation_methodology.md"
+
+  - claim_id: "machado_fdf_describing"
+    claim_type: "MACHADO_FDF"
+    severity: "strong"
+    text: "Tenreiro Machado introduced fractional order describing functions to evaluate frequency-domain behavior."
+    references:
+      - "machado_2015_fractional_describing_functions"
+    location: "version_2/docs/f7_method_comparison.md"
+
+  - claim_id: "alternative_localization_review"
+    claim_type: "ALTERNATIVE_LOCALIZATION_METHODS"
+    severity: "strong"
+    text: "Guan and Xie reviewed alternative methods for hidden attractor localization."
+    references:
+      - "guan_xie_2025_review"
+    location: "version_2/docs/f7_method_comparison.md"
+
+  - claim_id: "alternative_methods_list"
+    claim_type: "ALTERNATIVE_LOCALIZATION_METHODS"
+    severity: "strong"
+    text: "Alternative methods include numerical continuation, perpetual point, critical velocity surface, and connecting curve."
+    references:
+      - "guan_xie_2025_review"
+    location: "version_2/docs/f7_method_comparison.md"
+
+  - claim_id: "wu_chua_arctan"
+    claim_type: "FRACTIONAL_CHUA_ARCTAN_WU2023"
+    severity: "strong"
+    text: "Wu et al. proposed a new fractional-order Chua system with arctan nonlinearity."
+    references:
+      - "wu_2023_fractional_chua_arctan"
+    location: "version_2/docs/validation_methodology.md"

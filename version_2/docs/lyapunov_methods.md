@@ -111,9 +111,9 @@ received q=0.99.  Use a fractional Lyapunov method for Caputo q<1
 
 The F2 variational lane computes fractional Caputo Lyapunov spectra as follows:
 1. An Adams–Bashforth–Moulton (ABM) predictor-corrector integrates the
-   **extended (original + variational) system** with Caputo memory.
+   **extended (original + variational) system** with Caputo memory [ref:diethelm_ford_freed_abm_caputo, ref:danca_2017_fractional_hidden].
 2. History-aware QR reorthonormalisation is applied to the variational block.
-3. Validation is performed against published results (Danca & Kuznetsov 2018).
+3. Validation is performed against published results (Danca & Kuznetsov 2018) [ref:danca_2017_fractional_hidden].
 
 These are tracked in the method registry
 (`hidden_attractors/analysis/lyapunov_methods.py`).
@@ -272,7 +272,7 @@ Under Caputo fractional derivatives, the future state depends on the **entire hi
 
 ### Integration with Caputo ABM
 
-Both state $X$ and variational basis $\Phi$ are integrated stepwise using a history-dependent Caputo Adams–Bashforth–Moulton (ABM) predictor-corrector. The integration weights mirror exactly those in the standard fractional solver:
+Both state $X$ and variational basis $\Phi$ are integrated stepwise using a history-dependent Caputo Adams–Bashforth–Moulton (ABM) predictor-corrector [ref:diethelm_ford_freed_abm_caputo, ref:danca_2017_fractional_hidden]. The integration weights mirror exactly those in the standard fractional solver:
 * Predictor scale: $h^q / \Gamma(q+1)$
 * Corrector scale: $h^q / \Gamma(q+2)$
 * $b_{j,n+1} = (n+1-j)^q - (n-j)^q$

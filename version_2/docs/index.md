@@ -1,6 +1,6 @@
 # hidden-attractors-fo documentation
 
-This documentation follows a library-oriented structure: installation,
+This library implements tools for verifying and localizing hidden attractors [ref:leonov_kuznetsov_hidden_definition, ref:kuznetsov_2017_chua_df] in dynamical systems. This documentation follows a library-oriented structure: installation,
 getting-started material, public interfaces, examples, workflows, tests, and
 contribution notes.
 

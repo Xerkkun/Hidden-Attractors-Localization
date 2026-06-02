@@ -2,23 +2,23 @@
 
 Este módulo establece un protocolo estricto para validar la condición operacional de ocultedad en atractores caóticos de orden entero y fraccionario. 
 
-En la literatura científica, un atractor $\mathcal{A}$ se clasifica como **oculto** (hidden attractor) si su cuenca de atracción $\mathcal{B}(\mathcal{A})$ no interseca la vecindad de ningún punto de equilibrio del sistema:
+En la literatura científica, un atractor $\mathcal{A}$ se clasifica como **oculto** (hidden attractor) si su cuenca de atracción $\mathcal{B}(\mathcal{A})$ no interseca la vecindad de ningún punto de equilibrio del sistema [ref:leonov_kuznetsov_hidden_definition]:
 
 $$\mathcal{B}(\mathcal{A}) \cap \mathcal{U}_{\epsilon}(X_i^*) = \emptyset \quad \forall X_i^*$$
 
-Si la cuenca interseca alguna vecindad equilibrio, el atractor es **auto-excitado** (self-excited).
+Si la cuenca interseca alguna vecindad equilibrio, el atractor es **auto-excitado** (self-excited) [ref:leonov_kuznetsov_hidden_definition].
 
 ---
 
 ## Limitación de Métodos Analíticos y Heurísticos
 
-Métodos como el balance armónico (función descriptiva o DF), el criterio de Nyquist, la continuación de homoclínicas/bifurcaciones, o la simulación acotada de un solo seed **no son suficientes** para certificar un sistema como `hidden_verified`. 
+Métodos como el balance armónico (función descriptiva o DF), el criterio de Nyquist, la continuación de homoclínicas/bifurcaciones, o la simulación acotada de un solo seed **no son suficientes** para certificar un sistema como `hidden_verified` [ref:kuznetsov_2017_chua_df]. 
 
-* **Función Descriptiva / Nyquist:** Son aproximaciones lineales equivalentes locales (tipo Weyl) que sirven únicamente para **generar candidatos/semillas** (`seed_found`). No demuestran la no-intersección de trayectorias globales.
-* **Continuación:** Demuestra la persistencia de una estructura oscilatoria al variar un parámetro de control $\eta$, pero no descarta contactos transitorios en la vecindad del equilibrio para el sistema final.
+* **Función Descriptiva / Nyquist:** Son aproximaciones lineales equivalentes locales (tipo Weyl) que sirven únicamente para **generar candidatos/semillas** (`seed_found`). No demuestran la no-intersección de trayectorias globales [ref:kuznetsov_2017_chua_df].
+* **Continuación:** Demuestra la persistencia de una estructura oscilatoria al variar un parámetro de control $\eta$, pero no descarta contactos transitorios en la vecindad del equilibrio para el sistema final [ref:guan_xie_2025_review].
 * **Diagnósticos de Caos:** Validan la naturaleza caótica (Lyapunov positivo, prueba 0-1) pero no su topología de cuencas de atracción.
 
-Por lo tanto, la biblioteca restringe la etiqueta `hidden_verified` exclusivamente a los sistemas que aprueban el protocolo operacional completo de muestreo en vecindades de control.
+Por lo tanto, la biblioteca restringe la etiqueta `hidden_verified` exclusivamente a los sistemas que aprueban el protocolo operacional completo de muestreo en vecindades de control [ref:danca_2017_fractional_hidden].
 
 ---
 

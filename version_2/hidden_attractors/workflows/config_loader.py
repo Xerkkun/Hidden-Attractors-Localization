@@ -255,6 +255,14 @@ _DEFAULTS: Dict[str, Any] = {
         "target_match_tol": 0.5,
         "target_match_nn_percentile": 90.0,
     },
+
+    # ── Validation / Bibliography ──────────────────────────────────────────
+    "validation": {
+        "strict_bibliography": False,
+        "claims_manifest": "version_2/references/claims_manifest.yaml",
+        "fail_on_missing_references": True,
+        "fail_on_unregistered_references": True,
+    },
 }
 
 # ---------------------------------------------------------------------------
@@ -378,8 +386,7 @@ def _flatten_hierarchical(raw: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
         flat["max_seed_candidates_to_plot"] = plots.get("max_seed_candidates_to_plot",
                                                           _DEFAULTS["max_seed_candidates_to_plot"])
 
-    # nested sections passed through directly
-    for section in ("continuation", "sphere_tests", "basin", "bifurcation", "early_stop", "attractor_plots", "robustness", "hiddenness"):
+    for section in ("continuation", "sphere_tests", "basin", "bifurcation", "early_stop", "attractor_plots", "robustness", "hiddenness", "validation"):
         if section in raw:
             flat[section] = raw[section]
 

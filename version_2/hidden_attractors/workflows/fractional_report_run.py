@@ -1866,6 +1866,14 @@ def run_efork_branch(
 
 def run(args: argparse.Namespace) -> Path:
     _configure_runtime()
+    from ..references.validator import validate_bibliography_manifest
+    claims_manifest_path = PROJECT_ROOT / "references" / "claims_manifest.yaml"
+    bib_res = validate_bibliography_manifest(claims_manifest_path, strict=args.strict_bibliography)
+    if args.strict_bibliography and bib_res["bibliographic_validation_status"] == "failed":
+        raise ValueError(
+            "Bibliographic validation failed under strict_bibliography contract. "
+            f"Missing or unregistered references: {[c.get('claim_id') for c in bib_res.get('claims_missing_references', [])]}"
+        )
     run_id = args.run_id or f"chua_fractional_nonsmooth_q09998_efork3_{timestamp()}"
     root = OUTPUTS / run_id
     root.mkdir(parents=True, exist_ok=False)
@@ -1928,6 +1936,7 @@ def make_parser() -> argparse.ArgumentParser:
     parser.add_argument("--biased-lhs-count", type=int, default=24, help="Numero de puntos sesgados por familia en el barrido DF ligero.")
     parser.add_argument("--biased-keep-best", type=int, default=12, help="Numero de semillas sesgadas conservadas para continuacion.")
     parser.add_argument("--skip-validation-promotion", action="store_true", help="Conservar artefactos bajo outputs/ sin escribir evidencia compartida en validation/.")
+    parser.add_argument("--strict-bibliography", action="store_true", help="Raise ValueError if bibliographic validation fails.")
     return parser
 
 

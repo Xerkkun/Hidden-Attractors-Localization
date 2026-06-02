@@ -772,33 +772,35 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         verdict = "df_seed_found" if seed_reached_attractor else "df_seed_not_found"
 
     # Evaluate Hiddenness Contract
-    from ..verification.hiddenness_contract import verify_hiddenness_contract
-    hid_cfg = config.get("hiddenness", {})
-    required_radii = hid_cfg.get("required_radii", [1e-2, 1e-3, 1e-4, 1e-5])
-    strict_all_eq = hid_cfg.get("strict_all_equilibria", True)
-    allow_num_fail = hid_cfg.get("allow_numerical_failures", False)
-    min_ref_pts = hid_cfg.get("min_ref_tail_points", 1000)
-    min_probe_pts = hid_cfg.get("min_probe_tail_points", 200)
-    target_metric = hid_cfg.get("target_match_metric", "nn_percentile")
-    target_tol = hid_cfg.get("target_match_tol", 0.5)
-    target_nn_pct = hid_cfg.get("target_match_nn_percentile", 90.0)
+    contract_res = None
+    if (config["run_sphere_tests"] or config["run_hiddenness_tests"]):
+        from ..verification.hiddenness_contract import verify_hiddenness_contract
+        hid_cfg = config.get("hiddenness", {})
+        required_radii = hid_cfg.get("required_radii", [1e-2, 1e-3, 1e-4, 1e-5])
+        strict_all_eq = hid_cfg.get("strict_all_equilibria", True)
+        allow_num_fail = hid_cfg.get("allow_numerical_failures", False)
+        min_ref_pts = hid_cfg.get("min_ref_tail_points", 1000)
+        min_probe_pts = hid_cfg.get("min_probe_tail_points", 200)
+        target_metric = hid_cfg.get("target_match_metric", "nn_percentile")
+        target_tol = hid_cfg.get("target_match_tol", 0.5)
+        target_nn_pct = hid_cfg.get("target_match_nn_percentile", 90.0)
 
-    contract_res = verify_hiddenness_contract(
-        equilibria=equilibria,
-        sphere_summary_records=sphere_results.get("summary_records", []),
-        probe_runs=sphere_results.get("probe_runs", []),
-        required_radii=required_radii,
-        require_all_equilibria=strict_all_eq,
-        allow_numerical_failures=allow_num_fail,
-        require_candidate_attractor=True,
-        seed_reached_attractor=seed_reached_attractor,
-        min_ref_tail_points=min_ref_pts,
-        min_probe_tail_points=min_probe_pts,
-        ref_tail_size=len(ref_tail) if ref_tail is not None else 0,
-        target_match_metric=target_metric,
-        target_match_tol=target_tol,
-        target_match_nn_percentile=target_nn_pct,
-    )
+        contract_res = verify_hiddenness_contract(
+            equilibria=equilibria,
+            sphere_summary_records=sphere_results.get("summary_records", []),
+            probe_runs=sphere_results.get("probe_runs", []),
+            required_radii=required_radii,
+            require_all_equilibria=strict_all_eq,
+            allow_numerical_failures=allow_num_fail,
+            require_candidate_attractor=True,
+            seed_reached_attractor=seed_reached_attractor,
+            min_ref_tail_points=min_ref_pts,
+            min_probe_tail_points=min_probe_pts,
+            ref_tail_size=len(ref_tail) if ref_tail is not None else 0,
+            target_match_metric=target_metric,
+            target_match_tol=target_tol,
+            target_match_nn_percentile=target_nn_pct,
+        )
         
     basin_data_accum = []
     if config["run_basin_slices"] and seed_reached_attractor:
@@ -940,6 +942,21 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
             from ..plotting.plot_matignon import plot_matignon_equilibria
             plot_matignon_equilibria(system, equilibria, config, output_dir)
             
+    # Bibliographic Validation
+    from ..references.validator import validate_bibliography_manifest
+    val_cfg = config.get("validation", {})
+    manifest_path = val_cfg.get("claims_manifest", "version_2/references/claims_manifest.yaml")
+    strict_bib = val_cfg.get("strict_bibliography", False)
+    
+    bib_res = validate_bibliography_manifest(manifest_path, strict=strict_bib)
+    
+    # If strict bibliography is enabled and validation fails, raise an error
+    if strict_bib and bib_res["bibliographic_validation_status"] == "failed":
+        raise ValueError(
+            "Bibliographic validation failed under strict_bibliography contract. "
+            f"Missing or unregistered references: {[c.get('claim_id') for c in bib_res.get('claims_missing_references', [])]}"
+        )
+        
     summary = _build_summary_dict(
         config=config,
         system=system,
@@ -958,7 +975,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         modal_res=modal_res,
         norm_res=norm_res,
         marginal_eqs=marginal_eqs,
-        contract_res=contract_res
+        contract_res=contract_res,
+        bib_res=bib_res
     )
     _save_summary(summary, output_dir)
     
@@ -996,7 +1014,8 @@ def _build_summary_dict(
     modal_res: Optional[float],
     norm_res: Optional[float],
     marginal_eqs: Optional[List[np.ndarray]] = None,
-    contract_res: Optional[Dict[str, Any]] = None
+    contract_res: Optional[Dict[str, Any]] = None,
+    bib_res: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     n_candidates = len(candidates)
     target_hits = sum(1 for r in probe_results if r["destination"] == "target_attractor")
@@ -1045,9 +1064,10 @@ def _build_summary_dict(
     history_policy = "full_caputo" if config.get("memory_policy") == "full_caputo" else ("finite_window" if config.get("memory_policy") == "finite_window" else "none")
 
     # Determine status verdict
-    status_verdict = verdict
-    if config.get("run_hiddenness_tests", False) and contract_res is not None:
+    if contract_res is not None:
         status_verdict = contract_res["hiddenness_status"]
+    else:
+        status_verdict = verdict
 
     summary = {
         "system_id": config["system_id"],
@@ -1083,7 +1103,7 @@ def _build_summary_dict(
         "marginal_equilibria_count": len(marginal_eqs) if marginal_eqs is not None else 0,
         "marginal_eqs": [eq.tolist() for eq in marginal_eqs] if marginal_eqs is not None else [],
         "hiddenness_tests_enabled": config["run_hiddenness_tests"],
-        "radii_tested": [1e-5, 1e-4, 1e-3, 1e-2] if config["run_hiddenness_tests"] else [],
+        "radii_tested": contract_res["required_radii"] if contract_res is not None else [],
         "samples_per_radius": config["samples_per_radius"] if config["run_hiddenness_tests"] else 0,
         "equilibrium_contacts": target_hits,
         "target_hits_from_equilibria": target_hits,
@@ -1118,6 +1138,24 @@ def _build_summary_dict(
             "failed_requirements": [],
             "methodological_note": ""
         })
+
+    # Add bibliographic validation results
+    if bib_res is not None:
+        summary["bibliographic_validation"] = {
+            "status": bib_res["bibliographic_validation_status"],
+            "claims_total": bib_res["claims_total"],
+            "references_used": bib_res["references_used"],
+            "missing_claim_references": [c.get("claim_id") for c in bib_res.get("claims_missing_references", [])],
+            "traceability_manifest": config.get("validation", {}).get("claims_manifest", "version_2/references/claims_manifest.yaml")
+        }
+    else:
+        summary["bibliographic_validation"] = {
+            "status": "NOT_RUN",
+            "claims_total": 0,
+            "references_used": [],
+            "missing_claim_references": [],
+            "traceability_manifest": config.get("validation", {}).get("claims_manifest", "version_2/references/claims_manifest.yaml")
+        }
 
     return summary
 

@@ -8,11 +8,11 @@ This document outlines the rigorous mathematical and computational validation hi
 
 To prevent false claims of hiddenness, the library strictly divides execution into five promotion states:
 
-1. **`seed_found`**: Initial candidate generated through frequency balance (e.g., Describing Functions, Nyquist scanning).
+1. **`seed_found`**: Initial candidate generated through frequency balance (e.g., Describing Functions, Nyquist scanning) [ref:kuznetsov_2017_chua_df].
 2. **`candidate_attractor`**: Verified to be bounded and converge to non-trivial persistent dynamics under standard integration parameters.
 3. **`chaotic_candidate`**: Confirmed chaotic via Gottwald-Melbourne 0-1 test or positive maximum Lyapunov exponents.
-4. **`hidden_compatible`**: Free of intersections with equilibrium neighborhoods across all tested radii.
-5. **`hidden_verified`**: Meets all requirements of `hidden_compatible` plus passes the complete set of boundary basin-of-attraction slices (`xy_close`, `xy_large`, `xz_close`, `xz_large`, `yz_close`, `yz_large`).
+4. **`hidden_compatible`**: Free of intersections with equilibrium neighborhoods under the tested/sampled settings, but the verification protocol is incomplete (e.g., only a subset of equilibria or radii were tested). Self-excited attractors possess a basin of attraction that intersects the neighborhood of at least one equilibrium point [ref:leonov_kuznetsov_hidden_definition].
+5. **`hidden_verified`**: Meets the strict verification contract of spherical neighborhood sweeps around all equilibrium points for all required radii (e.g., `[1e-2, 1e-3, 1e-4, 1e-5]`), with zero attractor contacts and zero numerical failures (unless allowed) [ref:danca_2017_fractional_hidden]. Basin slices are complementary visual and exploratory evidence to aid in understanding the boundary, but are not a logical requirement for the formal validation of `hidden_verified`.
 
 ---
 
@@ -22,7 +22,7 @@ For systems with fractional order $q < 1.0$, frequency scans and transfer functi
 
 $$\lambda = (j\omega)^q = \omega^q e^{j q \pi / 2}$$
 
-Prohibiting integer-order shortcuts ensures the predicted harmonic seeds correctly correspond to the Caputo fractional derivative memory structure. When $q < 1.0$, a mandated "Weyl–Caputo Note" is automatically appended to summaries.
+Prohibiting integer-order shortcuts ensures the predicted harmonic seeds correctly correspond to the Caputo fractional derivative memory structure. The Caputo fractional derivative is a causal formulation that models historical memory effects [ref:danca_2017_fractional_hidden]. The predictor-corrector Adams-Bashforth-Moulton method is used for simulating Caputo fractional differential equations [ref:diethelm_ford_freed_abm_caputo, ref:danca_2017_fractional_hidden]. When $q < 1.0$, a mandated "Weyl–Caputo Note" is automatically appended to summaries. For instance, this applies to the fractional-order Chua system with arctan nonlinearity [ref:wu_2023_fractional_chua_arctan].
 
 ---
 
@@ -42,7 +42,8 @@ Describing function approximations are valid only if the system fits the Lur'e f
 - **Lipschitz Continuity**: $\text{sat}(x)$ and $|x|$ are continuous but non-differentiable at switching surfaces (e.g., $x = \pm 1$).
 - **Discontinuities**: $\text{sign}(x)$ is discontinuous, blocking standard ODE solvers by default and requiring regularized or Filippov-based solvers.
 - **Switching Crossings**: Trajectories crossing these surfaces trigger alerts as global symbolic Jacobians are invalid at these boundaries.
-- **Matignon stability**: Equilibria lying exactly on switching boundaries are classified as `nonsmooth_indeterminate`.
+- **Matignon stability**: Equilibria lying exactly on switching boundaries are classified as `nonsmooth_indeterminate`. The Matignon stability theorem determines fractional-order local stability based on eigenvalues [ref:matignon_fractional_stability, ref:danca_2017_fractional_hidden].
+- **ABM Integration**: Caputo fractional-order hidden attractors in non-smooth Lipschitz Chua circuits are integrated with verified ABM [ref:danca_2017_fractional_hidden].
 
 ---
 

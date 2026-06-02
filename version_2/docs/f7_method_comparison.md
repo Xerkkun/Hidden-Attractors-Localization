@@ -37,6 +37,11 @@ abs(lambda_max) < 0.02
 Published benchmark rows from other systems are not transplanted into a Chua
 case. A missing case-specific spectrum is reported as unavailable.
 
+## Alternative Heuristics & Methods
+
+- **Fractional Describing Functions**: Tenreiro Machado introduced fractional order describing functions to evaluate frequency-domain behavior [ref:machado_2015_fractional_describing_functions].
+- **Localization Review**: Guan and Xie reviewed alternative methods for hidden attractor localization [ref:guan_xie_2025_review]. Alternative methods include numerical continuation, perpetual point, critical velocity surface, and connecting curve [ref:guan_xie_2025_review].
+
 ## F5 Comparison
 
 Boundedness is a finite-time boundedness diagnostic, not a chaos indicator.

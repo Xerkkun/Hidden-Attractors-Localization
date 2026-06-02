@@ -30,9 +30,9 @@ Every reconstructed seed writes:
 ```
 
 `lure_classical_centered` is the former centered classical DF or centered
-Lur'e construction. It is one conceptual route, not two. `machado_centered`
+Lur'e construction. It is one conceptual route, not two. Describing functions predict harmonic seed candidates in the Chua circuit by searching for frequency balance points [ref:kuznetsov_2017_chua_df]. `machado_centered`
 and `machado_biased` extend the searchable seed family through `mu` and
-`theta`; they do not prove that the resulting target is hidden.
+`theta` [ref:machado_2015_fractional_describing_functions]; they do not prove that the resulting target is hidden.
 
 ## Soft Precheck
 
