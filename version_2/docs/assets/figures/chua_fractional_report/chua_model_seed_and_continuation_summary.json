@@ -1,0 +1,278 @@
+{
+  "nonsmooth": {
+    "system_name": "chua-nonsmooth",
+    "parameters": {
+      "model": "nonsmooth",
+      "alpha": 8.4562,
+      "beta": 12.0732,
+      "gamma": 0.0052,
+      "m0": -0.1768,
+      "m1": -1.1468,
+      "a1": 0.4,
+      "a2": -1.5585,
+      "rho": 1.0
+    },
+    "typical_initial_condition_yaml": [
+      0.1,
+      0.1,
+      0.1
+    ],
+    "displayed_attractor_initial_condition": "integer describing-function seed",
+    "integer_seed": {
+      "q": 1.0,
+      "omega": 2.039186939959448,
+      "gain": 0.20986735451513655,
+      "amplitude": 5.85614508625525,
+      "seed": [
+        5.85614508625525,
+        0.36933157824708485,
+        -8.366536168329228
+      ],
+      "matched_eigenvalue": [
+        2.1760371282653068e-13,
+        2.039186939959274
+      ],
+      "method": "classic"
+    },
+    "fractional_seed": {
+      "q": 0.998,
+      "omega": 2.0503485719665075,
+      "gain": 0.2114508398054974,
+      "amplitude": 5.8118521566442,
+      "seed": [
+        5.8118521566442,
+        0.38016183773042367,
+        -8.310244127673755
+      ],
+      "matched_eigenvalue": [
+        0.006432106149518724,
+        2.0473962406907265
+      ],
+      "method": "classic"
+    },
+    "figures": {
+      "attractor_3d": "chua_nonsmooth_typical_attractor_3d.png",
+      "time_series": "chua_nonsmooth_typical_time_series.png",
+      "continuation_3d": "chua_nonsmooth_df_continuation_3d.png"
+    },
+    "attractor_info": {
+      "status": "ok",
+      "final_state": [
+        -2.0193801409892647,
+        -1.3828375867594014,
+        2.151502115386344
+      ],
+      "post_burn_bounds": {
+        "min": [
+          -4.268734941204456,
+          -1.5702321462708837,
+          -8.936844826901192
+        ],
+        "max": [
+          6.243426183787591,
+          1.6579717282315178,
+          7.475249223918687
+        ]
+      }
+    },
+    "continuation_info": {
+      "etas": [
+        0.0,
+        0.2,
+        0.4,
+        0.6000000000000001,
+        0.8,
+        1.0
+      ],
+      "final_state": [
+        -3.766066536731314,
+        -0.7543799730011008,
+        6.156477752858267
+      ]
+    }
+  },
+  "arctan": {
+    "system_name": "chua-arctan",
+    "parameters": {
+      "model": "arctan",
+      "alpha": 8.4562,
+      "beta": 12.0732,
+      "gamma": 0.0052,
+      "m0": -0.1768,
+      "m1": -1.1468,
+      "a1": 0.4,
+      "a2": -1.5585,
+      "rho": 1.0
+    },
+    "typical_initial_condition_yaml": [
+      0.1,
+      0.1,
+      0.1
+    ],
+    "displayed_attractor_initial_condition": "integer describing-function seed",
+    "integer_seed": {
+      "q": 1.0,
+      "omega": 2.0391869399734124,
+      "gain": -1.3369326454832164,
+      "amplitude": 0.8790766753554944,
+      "seed": [
+        0.8790766753554944,
+        0.05544104033280986,
+        -1.2559160831525573
+      ],
+      "matched_eigenvalue": [
+        7.01882996168024e-12,
+        2.0391869399678395
+      ],
+      "method": "classic"
+    },
+    "fractional_seed": {
+      "q": 0.95,
+      "omega": 2.668947490027568,
+      "gain": -1.2083557952085018,
+      "amplitude": 1.2226778400706657,
+      "seed": [
+        1.2226778400706657,
+        0.2631463661959412,
+        -1.834967132957534
+      ],
+      "matched_eigenvalue": [
+        0.1993729919662418,
+        2.533274054786225
+      ],
+      "method": "classic"
+    },
+    "figures": {
+      "attractor_3d": "chua_arctan_typical_attractor_3d.png",
+      "time_series": "chua_arctan_typical_time_series.png",
+      "continuation_3d": "chua_arctan_df_continuation_3d.png"
+    },
+    "attractor_info": {
+      "status": "ok",
+      "final_state": [
+        -0.5590153691560369,
+        -0.00577097573977618,
+        0.5463049951187239
+      ],
+      "post_burn_bounds": {
+        "min": [
+          -0.8362902945553212,
+          -0.1487416814793619,
+          -1.152621518021248
+        ],
+        "max": [
+          0.8415816788323366,
+          0.14373096216126505,
+          1.1355381963823672
+        ]
+      }
+    },
+    "continuation_info": {
+      "etas": [
+        0.0,
+        0.2,
+        0.4,
+        0.6000000000000001,
+        0.8,
+        1.0
+      ],
+      "final_state": [
+        0.5422041768297379,
+        -1.474898012179652,
+        -11.678202842377948
+      ]
+    }
+  },
+  "arctan_wu2023_centered_q095": {
+    "system": "fractional_chua_arctan_wu2023",
+    "q": 0.95,
+    "method": "classical_centered_arctan",
+    "transfer_function": "r^T ((j*omega)^q I - P)^(-1) b",
+    "balance_equation": "1 - W_q(j*omega)*N(A) = 0",
+    "sign_audit": "With b=[-alpha,0,0]^T and a2<0, 1 + W_q*N(A) = 0 has no admissible centered branch.",
+    "branches": [
+      {
+        "branch": 0,
+        "family": "classical_centered_arctan",
+        "omega": 2.6689474900744026,
+        "k": -1.208355795193413,
+        "A": 1.2226778401122778,
+        "lambda": [
+          0.19937299196952205,
+          2.5332740548284605
+        ],
+        "W_q": [
+          -0.8275708230785926,
+          -4.765909888959641e-13
+        ],
+        "N_A": -1.208355795193413,
+        "eigenvalue": [
+          0.1993729919714594,
+          2.533274054828217
+        ],
+        "eigenvector": [
+          [
+            1.0,
+            -0.0
+          ],
+          [
+            0.21522134252464667,
+            0.2995759389357179
+          ],
+          [
+            -1.5007772880367567,
+            0.904517933266975
+          ]
+        ],
+        "seed": [
+          1.2226778401122778,
+          0.2631463662240997,
+          -1.8349671330263435
+        ],
+        "closure_residual_1_minus_WN": 5.758914833693977e-13,
+        "incompatible_requested_residual_1_plus_WN": 2.0
+      },
+      {
+        "branch": 1,
+        "family": "classical_centered_arctan",
+        "omega": 2.7750404256137644,
+        "k": -1.1712967024692702,
+        "A": 1.3264350888178917,
+        "lambda": [
+          0.2068945958089,
+          2.6288450931559946
+        ],
+        "W_q": [
+          -0.8537546446531004,
+          7.946976410266871e-13
+        ],
+        "N_A": -1.1712967024692704,
+        "eigenvalue": [
+          0.20689459580629582,
+          2.628845093156082
+        ],
+        "eigenvector": [
+          [
+            1.0,
+            -0.0
+          ],
+          [
+            0.2531699132453882,
+            0.310877828475684
+          ],
+          [
+            -1.5117002538427124,
+            1.0407412553131894
+          ]
+        ],
+        "seed": [
+          1.3264350888178917,
+          0.33581345636166443,
+          -2.0051722604718876
+        ],
+        "closure_residual_1_minus_WN": 9.308267528785462e-13,
+        "incompatible_requested_residual_1_plus_WN": 2.0
+      }
+    ]
+  }
+}

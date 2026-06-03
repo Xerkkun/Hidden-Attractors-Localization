@@ -1,0 +1,31 @@
+{
+  "system": "Lorenz 1963",
+  "parameters": {
+    "sigma": 10.0,
+    "rho": 28.0,
+    "beta": 2.6666666666666665
+  },
+  "initial_condition": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "integration": {
+    "t_final": 80.0,
+    "dt": 0.01,
+    "burn_in": 20.0,
+    "method": "scipy.solve_ivp DOP853"
+  },
+  "lyapunov_qr": {
+    "exponents": [
+      0.8741131802653727,
+      0.02054871351068325,
+      -14.5612272909032
+    ],
+    "sum": -13.666565397127146
+  },
+  "poincare": {
+    "section": "z=27 upward",
+    "points": 79
+  }
+}
