@@ -109,6 +109,19 @@ API estable\localcontract{api\_stability}.
   los contratos actuales\localcontract{prior\_exploratory\_run}.
 \end{itemize}
 
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.20\textwidth}L{0.36\textwidth}L{0.34\textwidth}@{}}
+\toprule
+Tier API & Alcance & Ejemplos en este reporte \\
+\midrule
+Publico & Interfaces documentadas para usuario; cambios deben ser deliberados. & CLI \codepath{hidden-attractors}, modelos y registros consultables. \\
+Provisional & Workflows y modulos utiles pero en fase alfa; pueden cambiar con el protocolo. & \codepath{workflows}, \codepath{integrations}, \codepath{analysis}. \\
+Interno & Sin garantia; helpers, simbolos con guion bajo, backends y detalles de implementacion. & \codepath{native}, funciones \codepath{_chua_lure_system}, scripts historicos. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
 \section{Instalación y estructura del repositorio}
 
 El paquete de \codepath{version_2/pyproject.toml} se llama
@@ -201,6 +214,40 @@ series temporales, tablas de candidatos, reportes de continuidad, resultados de
 cuenca y diagnosticos. Cada archivo debe leerse junto con su YAML y su contrato
 numerico; fuera de ese contrato no hay conclusion fuerte.
 
+\subsection*{Lectura de resultados JSON y etiquetas de clasificación}
+
+Los workflows pueden producir resumenes JSON con informacion de trayectoria,
+conteos por clase y geometria de nube. Una estructura tipica, adaptada a los
+campos documentados en la web, es:
+\begin{verbatim}
+{
+  "candidate_id": "rank_0001",
+  "basin_label": "SELF_EXCITED",
+  "label_counts": {
+    "SELF_EXCITED": 48,
+    "HIDDEN_CANDIDATE": 2,
+    "DIVERGENT": 0,
+    "INCONCLUSIVE": 0
+  },
+  "cloud_summary": {
+    "bounding_box": [[xmin, xmax], [ymin, ymax], [zmin, zmax]],
+    "centroid": [xc, yc, zc],
+    "spread": [sx, sy, sz]
+  }
+}
+\end{verbatim}
+\codepath{basin_label} resume la clasificacion operacional de una trayectoria o
+grupo. \codepath{SELF_EXCITED} indica contacto con vecindades de equilibrio o
+convergencia compatible con equilibrio bajo el contrato probado.
+\codepath{HIDDEN_CANDIDATE} significa trayectoria acotada que no cayo en
+equilibrio ni divergio dentro del horizonte; no significa atractor oculto
+verificado. \codepath{DIVERGENT} indica escape o norma fuera del umbral.
+\codepath{INCONCLUSIVE} cubre NaN, inestabilidad numerica o evidencia
+insuficiente. \codepath{cloud_summary} guarda geometria post-transitorio:
+\codepath{bounding_box} da rangos por coordenada, \codepath{centroid} da centro
+geometrico y \codepath{spread} mide dispersion por eje. Esos campos describen
+una nube numerica, no prueban cuenca global.
+
 \section{Configuraciones YAML}
 
 Los YAML de \codepath{version_2/configs/examples/} definen el sistema, el modo
@@ -224,6 +271,52 @@ YAML & Caso & Uso \\
 Los valores de un YAML de ejemplo no convierten automaticamente una corrida en
 validacion publicada. Para evidencia promovida, el contrato numerico debe
 quedar registrado junto con el resumen, los CSV y las figuras.
+
+El ejemplo jerarquico siguiente esta sincronizado con
+\codepath{version_2/hidden_attractors/configs/examples/chua_fractional_centered_lure_df.yaml}.
+El valor vigente del preset es \(q=0.998\); \(q=0.9998\) aparece en evidencia
+historica y paginas web como contrato documental anterior, no como el valor
+actual de este YAML.
+\begin{verbatim}
+experiment:
+  name: "Chua Fractional Centered Lure DF"
+  output_dir: "outputs/chua_fractional_df"
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.998
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+modes:
+  transfer_mode: "fractional"
+  seed_mode: "fractional"
+  continuation_mode: "fractional"
+integrator:
+  name: "efork3"
+  h: 0.001
+  memory_policy: "finite_window"
+  memory_window_steps: 400
+stages:
+  seed_search: true
+  continuation: true
+  final_simulation: true
+  hiddenness_tests: false
+seed_search:
+  strategy: "k_phi"
+  omega_min: 0.01
+  omega_max: 20.0
+  amplitude_min: 0.01
+  amplitude_max: 20.0
+simulation:
+  t_final: 300.0
+  t_burn: 120.0
+plots:
+  enabled: true
+  save_figures: true
+\end{verbatim}
 
 \begin{center}
 \footnotesize
@@ -304,6 +397,15 @@ contrato local. En continuacion fraccionaria no basta reiniciar cada paso con el
 ultimo punto de la trayectoria anterior; debe conservarse una ventana de memoria
 o historia compatible con el contrato numerico.
 
+Con \(N\) pasos, una convolucion de Caputo con historia completa suma
+contribuciones de todos los pasos previos y escala tipicamente como \(O(N^2)\)
+en tiempo y \(O(N)\) en memoria. Si se usa una ventana de \(N_m\) muestras, el
+costo operativo baja hacia \(O(N_mN)\), pero se introduce error de truncamiento
+de memoria. Ese error puede amortiguar oscilaciones, desplazar fase o provocar
+colapso numerico a equilibrios. Por eso una rama candidata critica debe
+revisarse bajo historia completa o bajo una politica de memoria explicitamente
+aceptada antes de promover evidencia.
+
 \section{Atractores, caos y atractores ocultos}
 
 Un atractor autoexcitado tiene una cuenca que intersecta una vecindad de algun
@@ -331,6 +433,12 @@ La cuenca de un atractor \(\mathcal A\) puede escribirse como
 \{X_0\in\mathbb{R}^n:\ \operatorname{dist}(X(t;X_0),\mathcal{A})\to 0
 \text{ cuando }t\to\infty\}.
 \]
+La condicion ideal de ocultedad se expresa como
+\[
+\mathcal{B}(\mathcal{A})\cap U_\varepsilon(E_i)=\varnothing,
+\qquad \forall E_i,
+\]
+donde \(U_\varepsilon(E_i)\) es una vecindad abierta del equilibrio \(E_i\).
 La version numerica finita reemplaza el limite por integracion hasta \(t_f\),
 elimina transitorio, compara la cola contra una referencia \TARGET{} y clasifica
 trayectorias como \TARGET{}, no-\TARGET{}, divergentes, caidas a equilibrio o
@@ -346,8 +454,14 @@ no concluyentes. El procedimiento local es:
   no declarar ocultedad bajo ese contrato.
 \end{enumerate}
 El muestreo en bola prueba puntos interiores de una vecindad; el muestreo en
-esfera prueba una frontera de radio fijo. Ambos son finitos y no prueban una
-no interseccion global de cuencas.
+esfera prueba una frontera de radio fijo:
+\[
+S_r(E_i)=\{X\in\mathbb R^n:\|X-E_i\|=r\}.
+\]
+Una bola \(B_r(E_i)\) incluye el interior \(\|X-E_i\|<r\); una esfera
+\(S_r(E_i)\) incluye solo la frontera; un cascaron combina radios
+\(r_{\min}\le \|X-E_i\|\le r_{\max}\). Todos son muestreos finitos y no prueban
+una no interseccion global de cuencas.
 
 \section{Estabilidad local y criterio de Matignon}
 
@@ -402,6 +516,15 @@ disponibles. En sistemas fraccionarios, la variacional y la memoria requieren
 contratos adicionales; no se promueve un estimador local como prueba matematica
 de caos.
 
+Debe distinguirse entre un exponente variacional, obtenido integrando la
+dinamica tangente o un sistema variacional con reortonormalizacion, y una
+estimacion por series temporales. Herramientas externas como \codepath{nolds}
+implementan estimadores tipo Rosenstein sobre una coordenada embebida; son
+diagnosticos utiles cuando se documentan \(dt\), dimension de embedding, retardo
+y longitud de serie. En sistemas fraccionarios se usan de forma heuristica y
+deben corroborarse con FFT/PSD, Poincare, entropia, recurrencia y pruebas de
+cuenca.
+
 \begin{center}
 \small
 \begin{tabular}{@{}L{0.25\textwidth}L{0.30\textwidth}L{0.35\textwidth}@{}}
@@ -430,6 +553,11 @@ maximos, minimos, cruces o muestras de cola. El diagrama resultante puede
 mostrar ramas, ventanas periodicas, caos aparente, multistabilidad o dependencia
 de condiciones iniciales. Sin un metodo de continuacion de ramas declarado, un
 diagrama de bifurcacion es un barrido numerico, no una continuacion formal.
+El procedimiento operativo es: elegir parametro, definir intervalo o lista de
+valores, integrar cada caso con el mismo contrato, descartar \(t_{\rm burn}\),
+extraer maximos/minimos o cruces, graficar contra \(\mu\), y registrar
+condiciones iniciales. Si se cambia la condicion inicial en el barrido, el
+diagrama tambien mezcla informacion de cuencas y multistabilidad.
 
 \section{Forma de Lur'e y separación lineal--no lineal}
 
@@ -504,10 +632,26 @@ N(A)=\frac{2}{\pi A}
 \int_{-\pi}^{\pi}
 \psi(A\sin\theta)\sin\theta\,d\theta.
 \]
-La aproximacion es util cuando el bloque lineal atenue armonicos superiores,
-pero sigue siendo generadora de semillas. La familia Machado/FDF amplia la
-familia de busqueda; no prueba ciclos limite exactos en Caputo ni ocultedad
-\cite{Machado2015FDF,TavazoeiHaeri2009}.
+El caso no sesgado usa \(\sigma(t)=A\sin(\omega t)\). El caso sesgado usa
+\[
+\sigma(t)=A_0+A\sin(\omega t),
+\]
+y requiere cerrar simultaneamente sesgo, amplitud y fase. La ecuacion de cierre
+puede escribirse con dos convenciones equivalentes si el signo del lazo se
+absorbe de forma distinta:
+\[
+1+N(A)W=0,\qquad W=-\frac{1}{N(A)},
+\]
+o
+\[
+1-N(A)W=0,\qquad W=\frac{1}{N(A)}.
+\]
+La convencion correcta depende de \(P,b,r,\psi\). Si el signo se toma
+incorrectamente, la condicion de fase se desplaza por \(\pi\) y las semillas
+quedan en una rama equivocada. La aproximacion es util cuando el bloque lineal
+atenue armonicos superiores, pero sigue siendo generadora de semillas. La
+familia Machado/FDF amplia la familia de busqueda; no prueba ciclos limite
+exactos en Caputo ni ocultedad \cite{Machado2015FDF,TavazoeiHaeri2009}.
 
 \section{Transferencia fraccionaria y puente Weyl--Caputo}
 
@@ -532,6 +676,39 @@ y la condicion armonica se escribe
 W_q(\ii\omega)N(A)=-1,
 \qquad
 W_q(\ii\omega)\equiv \widehat W_q((\ii\omega)^q).
+\]
+Para el Chua no suave con el split de este reporte,
+\[
+\lambda I-P=
+\begin{bmatrix}
+\lambda+\alpha(1+m_1) & -\alpha & 0\\
+-1 & \lambda+1 & -1\\
+0 & \beta & \lambda+\gamma
+\end{bmatrix}.
+\]
+El menor asociado a la entrada \((1,1)\) es
+\[
+N(\lambda)=
+\det\begin{bmatrix}
+\lambda+1 & -1\\
+\beta & \lambda+\gamma
+\end{bmatrix}
+=(\lambda+1)(\lambda+\gamma)+\beta.
+\]
+La expansion por cofactores da
+\[
+\Delta(\lambda)=\det(\lambda I-P)
+=(\lambda+\alpha(1+m_1))N(\lambda)-\alpha(\lambda+\gamma),
+\]
+y
+\[
+[(\lambda I-P)^{-1}]_{11}=\frac{N(\lambda)}{\Delta(\lambda)}.
+\]
+Como \(r=(1,0,0)^\top\) y \(b=(-\alpha,0,0)^\top\),
+\[
+\widehat W_q(\lambda)
+=r^\top(\lambda I-P)^{-1}b
+=-\alpha\frac{N(\lambda)}{\Delta(\lambda)}.
 \]
 Fourier y balance armonico se interpretan naturalmente en regimen estacionario
 ideal tipo Weyl/Liouville--Weyl. Caputo es causal y depende de memoria desde
@@ -562,6 +739,82 @@ periodica o producir una referencia dinamica candidata. En Caputo, no debe
 reiniciarse cada paso unicamente con el ultimo punto de la trayectoria anterior;
 debe conservarse una ventana de memoria o historia compatible con el contrato
 numerico.
+
+\section{Métodos numéricos de integración fraccionaria}
+
+\subsection*{ABM predictor--corrector para Caputo}
+
+El metodo Adams--Bashforth--Moulton resuelve la forma integral de Volterra
+asociada a Caputo. Para \(0<q<1\), paso \(h\), tiempos \(t_j=t_0+jh\) y
+vector de campo \(f(t,x)\), el predictor explicito es
+\[
+x_{n+1}^{P}
+=x_0+\frac{h^q}{\Gamma(q+1)}
+\sum_{j=0}^{n} b_{j,n+1} f(t_j,x_j),
+\]
+con pesos
+\[
+b_{j,n+1}=(n+1-j)^q-(n-j)^q.
+\]
+El corrector usa el valor predicho:
+\[
+x_{n+1}
+=x_0+\frac{h^q}{\Gamma(q+2)}
+\left[
+f(t_{n+1},x_{n+1}^{P})
++\sum_{j=0}^{n} a_{j,n+1}f(t_j,x_j)
+\right],
+\]
+donde
+\[
+\begin{aligned}
+a_{0,n+1}&=n^{q+1}-(n-q)(n+1)^q,\\
+a_{j,n+1}&=(n-j+2)^{q+1}+(n-j)^{q+1}
+-2(n-j+1)^{q+1},\qquad j\ge 1.
+\end{aligned}
+\]
+ABM es una referencia natural para historia completa, pero su costo crece con
+la memoria historica. En el reporte se cita como evidencia numerica, no como
+demostracion de atractores ocultos.
+
+\subsection*{EFORK-3 y corrección de memoria}
+
+EFORK-3 es el integrador fraccionario explicito de tres etapas usado por varios
+presets. La documentacion web lo clasifica como experimental y bajo revision;
+por tanto, este reporte lo mantiene como evidencia numerica local, separada de
+validacion publicada fuerte. Para \(n\ge 1\), la derivada local corregida puede
+representarse como
+\[
+{}^C_{t_n}D_t^q y(t)
+=f(t,y)-
+\frac{1}{\Gamma(2-q)}
+\sum_{i=0}^{n-1}
+\frac{y_{i+1}-y_i}{h}
+\left[(t-t_i)^{1-q}-(t-t_{i+1})^{1-q}\right].
+\]
+Con esa correccion historica \(F_n\), las etapas son
+\[
+\begin{aligned}
+K_1 &= h^q F_n(t_n,y_n),\\
+K_2 &= h^q F_n(t_n+c_2h,\;y_n+a_{21}K_1),\\
+K_3 &= h^q F_n(t_n+c_3h,\;y_n+a_{31}K_1+a_{32}K_2),
+\end{aligned}
+\]
+y la actualizacion
+\[
+y_{n+1}=y_n+w_1K_1+w_2K_2+w_3K_3.
+\]
+Los coeficientes \(c_i,a_{ij},w_i\) pertenecen al contrato del integrador y a
+la implementacion validada localmente contra sus referencias disponibles.
+
+\subsection*{Memoria completa, ventana y sensibilidad numérica}
+
+Historia completa conserva todos los terminos de la convolucion; ventana finita
+recorta la suma. La ventana mejora costo y permite backends rapidos, pero puede
+cambiar la geometria de la trayectoria. En particular, los resultados con
+\codepath{memory_policy: finite_window} se leen como evidencia bajo ese contrato
+concreto. Si un candidato se quiere promover, debe revisarse sensibilidad frente
+a \(h\), \(t_f\), \(t_{\rm burn}\), longitud de memoria y backend.
 
 \section{Metodología oficial de la librería}
 
@@ -766,6 +1019,18 @@ suave por saturacion. Las corridas historicas preservadas aqui se realizaron
 principalmente alrededor de \(q=0.9998\); el YAML de ejemplo actual
 \codepath{chua_fractional_centered_lure_df.yaml} declara \(q=0.998\)
 \cite{Danca2017}\localcontract{example\_yaml}.
+Las ecuaciones oficiales son
+\[
+\begin{aligned}
+{}^C D_t^q x &= \alpha(y-x-f(x)),\\
+{}^C D_t^q y &= x-y+z,\\
+{}^C D_t^q z &= -\beta y-\gamma z,
+\end{aligned}
+\]
+con caracteristica no suave
+\[
+f(x)=m_1x+\frac{m_0-m_1}{2}\bigl(|x+1|-|x-1|\bigr).
+\]
 
 \subsection{Parámetros}
 La evidencia principal documentada usa
@@ -780,27 +1045,87 @@ Se consideran \(E_0\), \(E_+\) y \(E_-\). Las pruebas de ocultedad deben
 lanzarse desde vecindades de todos ellos; una ausencia de contacto en un solo
 equilibrio no basta \cite{LeonovKuznetsov2013}
 \claimtag{all\_equilibria}.
+Para los parametros registrados:
+\[
+E_0=(0,0,0),
+\]
+\[
+E_+=(6.588307886539,\;0.002836402256,\;-6.585471484283),
+\]
+\[
+E_-=(-6.588307886539,\;-0.002836402256,\;6.585471484283).
+\]
 
 \subsection{Jacobiano}
 El Jacobiano por regiones usa la pendiente activa de la saturacion. La
 clasificacion local se evalua con Matignon cuando \(0<q<1\)
 \cite{Matignon1996,Danca2017}.
+En la region interna \(|x|<1\),
+\[
+J_{\rm inner}=
+\begin{bmatrix}
+-\alpha(1+m_0)&\alpha&0\\
+1&-1&1\\
+0&-\beta&-\gamma
+\end{bmatrix},
+\]
+y en las regiones externas \(|x|>1\),
+\[
+J_{\rm outer}=
+\begin{bmatrix}
+-\alpha(1+m_1)&\alpha&0\\
+1&-1&1\\
+0&-\beta&-\gamma
+\end{bmatrix}.
+\]
+El Jacobiano regional no esta definido sobre las superficies de conmutacion
+\(x=\pm1\).
 
 \subsection{Estabilidad local}
 Matignon establece estabilidad local asintotica si los autovalores del
 Jacobiano satisfacen la condicion angular para el \(q\) declarado. Este paso
 solo decide comportamiento local linealizado
 \cite{Matignon1996}\claimtag{local\_stability}.
+La pagina web documenta, para el contrato historico \(q=0.9998\), autovalores
+internos \(\lambda_1\approx-7.9587\),
+\(\lambda_{2,3}\approx -0.0038\pm3.2494\ii\), compatibles con estabilidad local
+del origen por Matignon. En las regiones externas documenta
+\(\lambda_1\approx2.2193\),
+\(\lambda_{2,3}\approx-0.9916\pm2.4068\ii\); el autovalor real positivo hace
+inestables localmente a \(E_+\) y \(E_-\). Esta lectura no decide ocultedad.
 
 \subsection{Forma de Lur'e}
 La forma Lur'e del no suave usa el split registrado por
 \codepath{hidden_attractors.systems.builtins}. La no linealidad residual se
 usa para construir \(N(A)\)\localcontract{lure\_split}.
+Con \(\sigma=x\),
+\[
+P=
+\begin{bmatrix}
+-\alpha(1+m_1)&\alpha&0\\
+1&-1&1\\
+0&-\beta&-\gamma
+\end{bmatrix},
+\qquad
+b=(-\alpha,0,0)^\top,\qquad r=(1,0,0)^\top.
+\]
+La no linealidad escalar residual es
+\[
+\psi(\sigma)=\frac{m_0-m_1}{2}\bigl(|\sigma+1|-|\sigma-1|\bigr).
+\]
 
 \subsection{Transferencia}
 La transferencia se evalua como \(W_q(j\omega)\) usando
 \(\lambda=(j\omega)^q\). No debe sustituirse por la transferencia entera salvo
 cuando \(q=1\)\cite{Caputo1967,KuznetsovEtAl2017}.
+Para este split,
+\[
+\widehat W_q(\lambda)=-\alpha\frac{N(\lambda)}{\Delta(\lambda)},\qquad
+N(\lambda)=(\lambda+1)(\lambda+\gamma)+\beta,
+\]
+\[
+\Delta(\lambda)=(\lambda+\alpha(1+m_1))N(\lambda)-\alpha(\lambda+\gamma).
+\]
 
 \subsection{Función descriptiva}
 La funcion descriptiva fraccionaria y Machado/FDF son familias de busqueda de
@@ -864,6 +1189,19 @@ no oculto bajo los contratos con contactos \TARGET{} desde equilibrios.}
 La variante arctan se registra como \codepath{chua-arctan} y como caso
 nominal \codepath{fractional_chua_arctan_wu2023}. La no linealidad es suave y
 usa parametros \(a_1\), \(a_2\), \(\rho\) \cite{Wu2023ArctanChua}.
+La lectura se separa en cuatro niveles:
+\begin{itemize}
+  \item \textbf{Reportado}: Wu et al. 2023 publica un sistema fraccionario de
+  Chua con arctan, condiciones iniciales y figuras de referencia.
+  \item \textbf{Implementado}: el repositorio contiene parametros, RHS,
+  equilibrios, Jacobiano y registro Lur'e compatibles con la rama arctan.
+  \item \textbf{Reproducido localmente}: este reporte no promueve una
+  reproduccion dinamica completa del articulo; conserva solo algebra y corridas
+  exploratorias documentadas.
+  \item \textbf{Pendiente}: falta una rama robusta, contrato numerico cerrado,
+  comparacion explicita contra Wu et al. 2023 y pruebas de cuenca alrededor de
+  todos los equilibrios.
+\end{itemize}
 
 \subsection{Parámetros}
 El YAML de ejemplo \codepath{chua_arctan_fractional_centered_lure_df.yaml}
@@ -1185,6 +1523,57 @@ Funcion o modulo & Proposito & Referencia o contrato local & Estado \\
 \end{center}
 
 \section{Contratos numéricos}
+
+\subsection*{Estructura de paquete de evidencia}
+
+La documentacion web define una estructura objetivo para paquetes completos de
+validacion. Si una carpeta falta en una campana activa, se interpreta como
+pendiente, no como evidencia negativa automatica.
+
+\begin{center}
+\footnotesize
+\resizebox{0.98\textwidth}{!}{%
+\begin{tabular}{@{}L{0.20\textwidth}L{0.40\textwidth}L{0.30\textwidth}@{}}
+\toprule
+Carpeta & Contenido esperado & Lectura \\
+\midrule
+\codepath{00_manifest/} & Hashes, metadatos de plataforma, tiempos de ejecucion y manifiesto. & Trazabilidad de archivos. \\
+\codepath{01_numerical_contract/} & \(q,h,t_f,t_{\rm burn}\), memoria, backend, tolerancias. & Alcance del experimento. \\
+\codepath{02_algebraic_validation/} & RHS, equilibrios, Jacobianos, Matignon, Lur'e. & Consistencia algebraica. \\
+\codepath{03_seed_generation/} & DF/Nyquist/Machado, residuos, amplitudes, frecuencias. & Semillas heuristicas. \\
+\codepath{04_continuation/} & Trazas de homotopia, aceptacion/rechazo, divergencias. & Transporte numerico. \\
+\codepath{05_post_filter/} & Periodicidad, duplicados, colapsos, no finitud. & Filtro operativo. \\
+\codepath{06_survivors/} & Candidatos supervivientes y etiquetas. & Candidatos numericos. \\
+\codepath{07_dynamic_reference/} & Trayectoria larga, bounding box, centroides, distancias. & Referencia geometrica, no cuenca. \\
+\codepath{08_robustness/} & Cambios de \(h\), memoria, horizonte o backend. & Persistencia finita. \\
+\codepath{09_hiddenness_tests/} & Bolas/esferas/cascarones alrededor de equilibrios. & Soporte o bloqueo de ocultedad. \\
+\codepath{10_diagnostics/} & FFT, PSD, Poincare, recurrencia, Lyapunov, comparaciones. & Diagnosticos complementarios. \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+Para casos de literatura, la estructura minima debe separar manifiesto,
+extraccion bibliografica, algebra, reproduccion numerica, referencia dinamica,
+comparacion con valores publicados y diagnosticos. Si el articulo no reporta un
+valor necesario, se marca como \codepath{Referencia pendiente de verificar} o
+\pendingfix{}.
+
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.30\textwidth}L{0.32\textwidth}L{0.30\textwidth}@{}}
+\toprule
+Prueba & Que prueba & Que no prueba \\
+\midrule
+Manifiesto y hashes & Que los artefactos son trazables. & Que la dinamica sea correcta. \\
+Algebra y equilibrios & Que el sistema implementado coincide con formulas declaradas. & Existencia de atractor. \\
+Trayectoria larga & Acotamiento y geometria bajo contrato. & Atraccion global. \\
+Robustez & Persistencia ante variaciones finitas. & Invariancia matematica. \\
+Cuencas finitas & Contactos o ausencia de contactos en muestras. & No interseccion global exacta. \\
+Lyapunov/FFT/Poincare & Caracterizacion diagnostica. & Ocultedad verificada. \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \begin{center}
 \footnotesize
