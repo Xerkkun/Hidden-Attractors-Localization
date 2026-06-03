@@ -28,6 +28,9 @@ def _complete_evidence(valid_run_metadata) -> dict:
 def test_complete_zero_contact_evidence_promotes_sampled_hiddenness(valid_run_metadata) -> None:
     gate = evaluate_candidate_gate(_complete_evidence(valid_run_metadata))
     assert gate["verdict"] == "hiddenness_supported_under_tested_neighborhoods"
+    assert gate["hiddenness_evidence_level"] == "hiddenness_supported_under_tested_neighborhoods"
+    assert gate["evidence_level"] == "hiddenness_supported_under_tested_neighborhoods"
+    assert gate["chaos_evidence_level"] == "strong_chaos_evidence"
     assert gate["promotion_allowed"] is True
 
 

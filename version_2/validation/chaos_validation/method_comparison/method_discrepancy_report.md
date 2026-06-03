@@ -8,11 +8,11 @@ or case-specific Lyapunov spectra are unavailable.
 
 ## Cases
 
-| Case | Lyapunov comparison | F5 comparison | F6 status |
+| Case | Lyapunov comparison | F5 comparison | F6 chaos level |
 |---|---|---|---|
-| `chua_integer_q1_reference` | `insufficient_comparable_methods` | `f5_diagnostics_conflict` | `mixed_diagnostics_inconclusive` |
-| `danca2017_chua_fractional_saturation_q09998` | `method_validation_pending` | `f5_diagnostics_conflict` | `mixed_diagnostics_inconclusive` |
-| `wu2023_chua_fractional_arctan_q099` | `method_validation_pending` | `f5_diagnostics_conflict` | `mixed_diagnostics_inconclusive` |
+| `chua_integer_q1_reference` | `insufficient_comparable_methods` | `f5_diagnostics_conflict` | `chaos_evidence_inconclusive` |
+| `danca2017_chua_fractional_saturation_q09998` | `method_validation_pending` | `f5_diagnostics_conflict` | `chaos_evidence_inconclusive` |
+| `wu2023_chua_fractional_arctan_q099` | `method_validation_pending` | `f5_diagnostics_conflict` | `chaos_evidence_inconclusive` |
 
 ## Lyapunov Methods
 
@@ -35,8 +35,8 @@ or case-specific Lyapunov spectra are unavailable.
 ## Conflicts Detected
 
 - `chua_integer_q1_reference`: one or more available spectra belong to methods with validation pending; zero-one is regular-like while Poincare geometry is cloud-like
-- `danca2017_chua_fractional_saturation_q09998`: zero-one is regular-like while Poincare geometry is cloud-like
-- `wu2023_chua_fractional_arctan_q099`: zero-one is regular-like while Poincare geometry is cloud-like
+- `danca2017_chua_fractional_saturation_q09998`: one or more available spectra belong to methods with validation pending; zero-one is regular-like while Poincare geometry is cloud-like
+- `wu2023_chua_fractional_arctan_q099`: one or more available spectra belong to methods with validation pending; zero-one is regular-like while Poincare geometry is cloud-like
 
 ## Limitations
 

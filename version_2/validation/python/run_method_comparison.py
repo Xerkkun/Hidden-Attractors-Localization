@@ -25,8 +25,8 @@ from hidden_attractors.analysis.method_comparison import (  # noqa: E402
     compare_f5_diagnostics,
     compare_lyapunov_methods,
 )
-from f5_diagnostics_common import CASE_IDS, write_csv, write_json  # noqa: E402
-from run_integrated_chaos_validator import (  # noqa: E402
+from validation.python.f5_diagnostics_common import CASE_IDS, write_csv, write_json  # noqa: E402
+from validation.python.run_integrated_chaos_validator import (  # noqa: E402
     BOUNDEDNESS_SUMMARY,
     CHAOS_VALIDATION_ROOT,
     F4_SUMMARY,
@@ -71,13 +71,13 @@ def _write_report(per_case: list[dict[str, Any]], lyapunov_rows: list[dict[str, 
         "",
         "## Cases",
         "",
-        "| Case | Lyapunov comparison | F5 comparison | F6 status |",
+        "| Case | Lyapunov comparison | F5 comparison | F6 chaos level |",
         "|---|---|---|---|",
     ]
     for item in per_case:
         lines.append(
             f"| `{item['case_id']}` | `{item['lyapunov_consensus']}` | "
-            f"`{item['f5_consensus']}` | `{item['integrated_f6_status']}` |"
+            f"`{item['f5_consensus']}` | `{item['integrated_f6_level']}` |"
         )
     lines.extend(
         [
@@ -192,7 +192,7 @@ def run() -> dict[str, Any]:
             "conflict_notes": conflict_note,
         }
         diagnostic_rows.append(diagnostic_row)
-        integrated_status = f6_cases.get(case_id, {}).get("integrated_status", "not_evaluated")
+        integrated_f6_level = f6_cases.get(case_id, {}).get("chaos_evidence_level", "chaos_evidence_inconclusive")
         conflicts = list(lyapunov_notes)
         if f5_consensus in {"f5_diagnostics_conflict", "methods_mixed_inconclusive"}:
             conflicts.append(conflict_note)
@@ -212,11 +212,11 @@ def run() -> dict[str, Any]:
                 "case_id": case_id,
                 "lyapunov_consensus": lyapunov_consensus,
                 "f5_consensus": f5_consensus,
-                "integrated_f6_status": integrated_status,
+                "integrated_f6_level": integrated_f6_level,
                 "method_conflicts": conflicts,
                 "method_limitations": sorted(limitations),
-                "chaos_verified": False,
-                "hidden_verified": False,
+                "chaos_evidence_level": "chaos_evidence_inconclusive",
+                "hiddenness_evidence_level": "not_evaluated_by_this_stage",
             }
         )
         consensus_rows.append(
@@ -224,15 +224,15 @@ def run() -> dict[str, Any]:
                 "case_id": case_id,
                 "lyapunov_consensus": lyapunov_consensus,
                 "f5_consensus": f5_consensus,
-                "integrated_f6_status": integrated_status,
+                "integrated_f6_level": integrated_f6_level,
                 "f4_status": f4_status,
-                "chaos_verified": False,
-                "hidden_verified": False,
+                "chaos_evidence_level": "chaos_evidence_inconclusive",
+                "hiddenness_evidence_level": "not_evaluated_by_this_stage",
             }
         )
     payload = {
         "stage": "F7_method_comparison",
-        "status": "completed_non_certifying_comparison",
+        "status": "completed_method_evidence_comparison",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "cases_total": len(per_case),
         "f4_status": f4_status,
@@ -249,11 +249,11 @@ def run() -> dict[str, Any]:
             "boundedness_is_not_a_chaos_indicator": True,
         },
         "per_case": per_case,
-        "certifications": {"chaos_verified": False, "hidden_verified": False},
+        "chaos_evidence_level": "chaos_evidence_inconclusive",
+        "hiddenness_evidence_level": "not_evaluated_by_this_stage",
         "invariants": {
-            "method_comparison_is_not_certification": True,
-            "method_comparison_proves_chaos": False,
-            "hiddenness_not_evaluated_here": True,
+            "evidence_scope": "finite_time_method_evidence",
+            "hiddenness_scope": "not_evaluated_by_this_stage",
         },
     }
     write_json(SUMMARY_PATH, payload)
@@ -267,8 +267,8 @@ def run() -> dict[str, Any]:
 def main() -> None:
     summary = run()
     print(f"F7 status: {summary['status']}")
-    print("Chaos verified: false")
-    print("Hiddenness verified: false")
+    print("Chaos evidence level: inconclusive")
+    print("Hiddenness evidence level: not evaluated by this stage")
 
 
 if __name__ == "__main__":

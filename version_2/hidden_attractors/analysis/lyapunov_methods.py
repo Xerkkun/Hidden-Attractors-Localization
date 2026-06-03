@@ -102,8 +102,8 @@ class LyapunovMethodInfo:
     supports_commensurate: bool = True
     supports_incommensurate: bool | str = False
     memory_protocol: str = "not_applicable"
-    no_chaos_certification: bool = True
-    no_hiddenness_certification: bool = True
+    evidence_scope: str = "finite_time_method_evidence"
+    hiddenness_scope: str = "not_evaluated_by_this_stage"
 
 
 

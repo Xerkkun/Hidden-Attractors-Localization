@@ -1,17 +1,17 @@
 {
   "stage": "F7_method_comparison",
-  "status": "completed_non_certifying_comparison",
-  "generated_at_utc": "2026-06-02T22:31:52.146394+00:00",
+  "status": "completed_method_evidence_comparison",
+  "generated_at_utc": "2026-06-03T00:44:12.851648+00:00",
   "cases_total": 3,
   "f4_status": "f4_complete_with_documented_discrepancies",
   "lyapunov_comparison": {
     "near_zero_threshold": 0.02,
     "rows_total": 15,
     "status_counts": {
-      "positive_lambda_max": 1,
-      "not_applicable": 4,
-      "validation_pending": 2,
-      "unavailable": 8
+      "method_supports_strong_chaos_evidence": 1,
+      "method_not_applicable": 4,
+      "method_has_documented_discrepancy": 5,
+      "method_evidence_inconclusive": 5
     },
     "dk2018_block_restart_does_not_validate_full_history_qr": true,
     "fischer_gs_does_not_validate_full_history_qr": true
@@ -28,7 +28,7 @@
       "case_id": "chua_integer_q1_reference",
       "lyapunov_consensus": "insufficient_comparable_methods",
       "f5_consensus": "f5_diagnostics_conflict",
-      "integrated_f6_status": "mixed_diagnostics_inconclusive",
+      "integrated_f6_level": "chaos_evidence_inconclusive",
       "method_conflicts": [
         "one or more available spectra belong to methods with validation pending",
         "zero-one is regular-like while Poincare geometry is cloud-like"
@@ -37,15 +37,16 @@
         "finite_time_local_indicators_only",
         "hiddenness_not_evaluated"
       ],
-      "chaos_verified": false,
-      "hidden_verified": false
+      "chaos_evidence_level": "chaos_evidence_inconclusive",
+      "hiddenness_evidence_level": "not_evaluated_by_this_stage"
     },
     {
       "case_id": "danca2017_chua_fractional_saturation_q09998",
       "lyapunov_consensus": "method_validation_pending",
       "f5_consensus": "f5_diagnostics_conflict",
-      "integrated_f6_status": "mixed_diagnostics_inconclusive",
+      "integrated_f6_level": "chaos_evidence_inconclusive",
       "method_conflicts": [
+        "one or more available spectra belong to methods with validation pending",
         "zero-one is regular-like while Poincare geometry is cloud-like"
       ],
       "method_limitations": [
@@ -54,15 +55,16 @@
         "fractional_method_validation_pending",
         "hiddenness_not_evaluated"
       ],
-      "chaos_verified": false,
-      "hidden_verified": false
+      "chaos_evidence_level": "chaos_evidence_inconclusive",
+      "hiddenness_evidence_level": "not_evaluated_by_this_stage"
     },
     {
       "case_id": "wu2023_chua_fractional_arctan_q099",
       "lyapunov_consensus": "method_validation_pending",
       "f5_consensus": "f5_diagnostics_conflict",
-      "integrated_f6_status": "mixed_diagnostics_inconclusive",
+      "integrated_f6_level": "chaos_evidence_inconclusive",
       "method_conflicts": [
+        "one or more available spectra belong to methods with validation pending",
         "zero-one is regular-like while Poincare geometry is cloud-like"
       ],
       "method_limitations": [
@@ -71,17 +73,14 @@
         "fractional_method_validation_pending",
         "hiddenness_not_evaluated"
       ],
-      "chaos_verified": false,
-      "hidden_verified": false
+      "chaos_evidence_level": "chaos_evidence_inconclusive",
+      "hiddenness_evidence_level": "not_evaluated_by_this_stage"
     }
   ],
-  "certifications": {
-    "chaos_verified": false,
-    "hidden_verified": false
-  },
+  "chaos_evidence_level": "chaos_evidence_inconclusive",
+  "hiddenness_evidence_level": "not_evaluated_by_this_stage",
   "invariants": {
-    "method_comparison_is_not_certification": true,
-    "method_comparison_proves_chaos": false,
-    "hiddenness_not_evaluated_here": true
+    "evidence_scope": "finite_time_method_evidence",
+    "hiddenness_scope": "not_evaluated_by_this_stage"
   }
 }

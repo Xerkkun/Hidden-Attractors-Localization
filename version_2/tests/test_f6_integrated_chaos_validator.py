@@ -45,8 +45,8 @@ def test_f6_loads_f5_and_all_three_cases_have_evidence() -> None:
 
 def test_current_f5_conflicts_remain_inconclusive_even_with_integer_positive_lambda() -> None:
     summary = json.loads(SUMMARY.read_text(encoding="utf-8"))
-    assert {case["integrated_status"] for case in summary["cases"]} == {
-        "mixed_diagnostics_inconclusive"
+    assert {case["chaos_evidence_level"] for case in summary["cases"]} == {
+        "chaos_evidence_inconclusive"
     }
     integer = next(case for case in summary["cases"] if case["case_id"] == "chua_integer_q1_reference")
     method = next(
@@ -66,15 +66,18 @@ def test_explicit_non_conflicting_rule_can_label_chaotic_candidate() -> None:
         lyapunov_evidence=[],
         f4_status="f4_internal_validation_missing_or_pending",
     )
-    assert decision["integrated_status"] == "chaotic_candidate_numerically_supported"
-    assert decision["chaos_verified"] is False
+    assert decision["chaos_evidence_level"] == "strong_chaos_evidence"
+    assert "chaos_verified" not in decision
 
 
 def test_f6_never_certifies_chaos_or_hiddenness() -> None:
     summary = json.loads(SUMMARY.read_text(encoding="utf-8"))
-    assert summary["certifications"] == {"chaos_verified": False, "hidden_verified": False}
-    assert all(case["chaos_verified"] is False for case in summary["cases"])
-    assert all(case["hidden_verified"] is False for case in summary["cases"])
+    assert "certifications" not in summary
+    assert "chaos_verified" not in summary
+    assert all("chaos_verified" not in case for case in summary["cases"])
+    assert all("hidden_verified" not in case for case in summary["cases"])
+    assert summary["chaos_evidence_level"] == "chaos_evidence_inconclusive"
+    assert summary["hiddenness_evidence_level"] == "not_evaluated_by_this_stage"
 
 
 def test_missing_f4_is_reported_without_blocking_f6_classification() -> None:

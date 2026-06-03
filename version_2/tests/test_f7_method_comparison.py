@@ -60,9 +60,10 @@ def test_fischer_published_gs_preserves_discrepancy_status() -> None:
 
 def test_f7_never_certifies_chaos_or_hiddenness() -> None:
     summary = json.loads(SUMMARY.read_text(encoding="utf-8"))
-    assert summary["status"] == "completed_non_certifying_comparison"
-    assert summary["certifications"] == {"chaos_verified": False, "hidden_verified": False}
-    assert all(case["chaos_verified"] is False for case in summary["per_case"])
-    assert all(case["hidden_verified"] is False for case in summary["per_case"])
+    assert summary["status"] == "completed_method_evidence_comparison"
+    assert summary["chaos_evidence_level"] == "chaos_evidence_inconclusive"
+    assert summary["hiddenness_evidence_level"] == "not_evaluated_by_this_stage"
+    assert all(case["chaos_evidence_level"] == "chaos_evidence_inconclusive" for case in summary["per_case"])
+    assert all(case["hiddenness_evidence_level"] == "not_evaluated_by_this_stage" for case in summary["per_case"])
     assert summary["lyapunov_comparison"]["dk2018_block_restart_does_not_validate_full_history_qr"] is True
     assert summary["lyapunov_comparison"]["fischer_gs_does_not_validate_full_history_qr"] is True

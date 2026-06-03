@@ -1,7 +1,7 @@
 {
   "stage": "F6_integrated_chaos_validator",
-  "status": "completed_non_certifying_integration",
-  "generated_at_utc": "2026-06-02T22:31:49.951792+00:00",
+  "status": "completed_finite_time_chaos_evidence_integration",
+  "generated_at_utc": "2026-06-03T00:44:10.862263+00:00",
   "inputs": {
     "f5_summary": "validation/chaos_validation/dynamics_diagnostics/f5_diagnostics_summary.json",
     "boundedness_summary": "validation/chaos_validation/dynamics_diagnostics/boundedness/boundedness_diagnostics_summary.json",
@@ -33,17 +33,15 @@
   "cases": [
     {
       "case_id": "chua_integer_q1_reference",
-      "integrated_status": "mixed_diagnostics_inconclusive",
+      "chaos_evidence_level": "chaos_evidence_inconclusive",
+      "legacy_internal_label": "mixed_diagnostics_inconclusive",
       "decision_reason": "F5 indicators conflict or PSD/FFT remains inconclusive",
-      "chaos_verified": false,
-      "hidden_verified": false,
-      "hiddenness_evaluated": false,
-      "hiddenness_certified": false,
+      "hiddenness_evidence_level": "not_evaluated_by_this_stage",
       "evidence": {
         "f5_combined_status": "mixed_diagnostics_inconclusive",
         "boundedness_status": "bounded_candidate",
         "zero_one_status": "zero_one_regular_candidate",
-        "zero_one_K_global": -0.017314593890187427,
+        "zero_one_K_global": -0.017314593890187434,
         "psd_fft_status": "spectral_inconclusive",
         "peak_dominance_max": 0.5015338877259724,
         "poincare_status": "cloud_like",
@@ -196,17 +194,15 @@
     },
     {
       "case_id": "danca2017_chua_fractional_saturation_q09998",
-      "integrated_status": "mixed_diagnostics_inconclusive",
+      "chaos_evidence_level": "chaos_evidence_inconclusive",
+      "legacy_internal_label": "mixed_diagnostics_inconclusive",
       "decision_reason": "F5 indicators conflict or PSD/FFT remains inconclusive",
-      "chaos_verified": false,
-      "hidden_verified": false,
-      "hiddenness_evaluated": false,
-      "hiddenness_certified": false,
+      "hiddenness_evidence_level": "not_evaluated_by_this_stage",
       "evidence": {
         "f5_combined_status": "mixed_diagnostics_inconclusive",
         "boundedness_status": "bounded_candidate",
         "zero_one_status": "zero_one_regular_candidate",
-        "zero_one_K_global": 0.02144481246218011,
+        "zero_one_K_global": 0.021444812462180114,
         "psd_fft_status": "spectral_inconclusive",
         "peak_dominance_max": 0.5821832574043466,
         "poincare_status": "cloud_like",
@@ -335,12 +331,10 @@
     },
     {
       "case_id": "wu2023_chua_fractional_arctan_q099",
-      "integrated_status": "mixed_diagnostics_inconclusive",
+      "chaos_evidence_level": "chaos_evidence_inconclusive",
+      "legacy_internal_label": "mixed_diagnostics_inconclusive",
       "decision_reason": "F5 indicators conflict or PSD/FFT remains inconclusive",
-      "chaos_verified": false,
-      "hidden_verified": false,
-      "hiddenness_evaluated": false,
-      "hiddenness_certified": false,
+      "hiddenness_evidence_level": "not_evaluated_by_this_stage",
       "evidence": {
         "f5_combined_status": "mixed_diagnostics_inconclusive",
         "boundedness_status": "bounded_candidate",
@@ -474,14 +468,11 @@
     }
   ],
   "global_counts": {
-    "chaotic_candidate_numerically_supported": 0,
-    "regular_candidate_numerically_supported": 0,
-    "mixed_diagnostics_inconclusive": 3,
-    "insufficient_lyapunov_support": 0,
-    "insufficient_f5_support": 0,
-    "method_validation_pending": 0,
-    "numerical_failure": 0,
-    "not_evaluated": 0
+    "strong_chaos_evidence": 0,
+    "chaotic_dynamics_supported": 0,
+    "chaos_evidence_inconclusive": 3,
+    "regular_or_periodic_candidate": 0,
+    "unbounded_or_diverged": 0
   },
   "method_registry": [
     {
@@ -513,8 +504,8 @@
       "supports_commensurate": true,
       "supports_incommensurate": false,
       "memory_protocol": "not_applicable",
-      "no_chaos_certification": true,
-      "no_hiddenness_certification": true
+      "evidence_scope": "finite_time_method_evidence",
+      "hiddenness_scope": "not_evaluated_by_this_stage"
     },
     {
       "method_id": "fractional_variational_abm_qr",
@@ -551,8 +542,8 @@
       "supports_commensurate": true,
       "supports_incommensurate": false,
       "memory_protocol": "fixed_lower_limit_full_history_qr",
-      "no_chaos_certification": true,
-      "no_hiddenness_certification": true
+      "evidence_scope": "finite_time_method_evidence",
+      "hiddenness_scope": "not_evaluated_by_this_stage"
     },
     {
       "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
@@ -581,8 +572,8 @@
       "supports_commensurate": true,
       "supports_incommensurate": false,
       "memory_protocol": "dk2018_block_restart_abm_gs",
-      "no_chaos_certification": true,
-      "no_hiddenness_certification": true
+      "evidence_scope": "finite_time_method_evidence",
+      "hiddenness_scope": "not_evaluated_by_this_stage"
     },
     {
       "method_id": "fractional_cloned_dynamics_abm_gs_published",
@@ -614,8 +605,8 @@
       "supports_commensurate": true,
       "supports_incommensurate": true,
       "memory_protocol": "published_block_restart",
-      "no_chaos_certification": true,
-      "no_hiddenness_certification": true
+      "evidence_scope": "finite_time_method_evidence",
+      "hiddenness_scope": "not_evaluated_by_this_stage"
     },
     {
       "method_id": "fractional_cloned_dynamics_abm_qr",
@@ -647,17 +638,14 @@
       "supports_commensurate": true,
       "supports_incommensurate": true,
       "memory_protocol": "experimental_qr_block_restart",
-      "no_chaos_certification": true,
-      "no_hiddenness_certification": true
+      "evidence_scope": "finite_time_method_evidence",
+      "hiddenness_scope": "not_evaluated_by_this_stage"
     }
   ],
-  "certifications": {
-    "chaos_verified": false,
-    "hidden_verified": false
-  },
+  "chaos_evidence_level": "chaos_evidence_inconclusive",
+  "hiddenness_evidence_level": "not_evaluated_by_this_stage",
   "invariants": {
-    "integrated_validator_is_not_a_mathematical_proof": true,
-    "integrated_validator_proves_chaos": false,
+    "evidence_scope": "finite_time_method_evidence",
     "no_single_indicator_certifies_chaos": true,
     "hiddenness_not_evaluated_here": true
   }

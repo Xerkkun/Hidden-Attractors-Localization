@@ -17,8 +17,8 @@ for item in (PROJECT_ROOT, Path(__file__).resolve().parent):
     if str(item) not in sys.path:
         sys.path.insert(0, str(item))
 
-from f5_diagnostics_common import CASE_IDS, DIAGNOSTICS_ROOT, aggregate_state, write_case_readme, write_csv, write_json  # noqa: E402
-from f5_trajectory_provider import load_or_generate_f5_trajectory  # noqa: E402
+from validation.python.f5_diagnostics_common import CASE_IDS, DIAGNOSTICS_ROOT, aggregate_state, write_case_readme, write_csv, write_json  # noqa: E402
+from validation.python.f5_trajectory_provider import load_or_generate_f5_trajectory  # noqa: E402
 from hidden_attractors.analysis.zero_one import zero_one_multicoordinate, zero_one_test  # noqa: E402
 
 

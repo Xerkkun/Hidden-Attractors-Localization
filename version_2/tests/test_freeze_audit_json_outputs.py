@@ -24,9 +24,7 @@ LEGACY_JSON_PREFIXES = (
     "validation/09_hiddenness_tests/",
     "validation/10_diagnostics/",
     "validation/chaos_validation/dynamics_diagnostics/",
-    "validation/chaos_validation/integrated_chaos_validator/",
     "validation/chaos_validation/lyapunov_methods/",
-    "validation/chaos_validation/method_comparison/",
     "validation/outputs/",
     "validation/reference_cases/",
 )
@@ -98,3 +96,28 @@ def test_phase_f_freeze_summary_uses_positive_evidence_vocabulary() -> None:
     assert payload["phase_F_frozen"] is True
     assert payload["evidence_layer"] == "finite_time_chaos_evidence"
     assert "chaos_verified" not in path.read_text(encoding="utf-8")
+
+
+def test_f6_f7_phase_f_do_not_contain_obsolete_vocabulary() -> None:
+    forbidden = [
+        "chaos_verified",
+        "hidden_verified",
+        "non_certifying",
+        "no_chaos_certification",
+        "no_hiddenness_certification",
+    ]
+    files = [
+        ROOT / "validation/chaos_validation/integrated_chaos_validator/integrated_chaos_summary.json",
+        ROOT / "validation/chaos_validation/method_comparison/method_comparison_summary.json",
+        ROOT / "validation/chaos_validation/phase_F_closure/phase_F_closure_summary.json",
+    ]
+    violations = []
+    for path in files:
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8").lower()
+        for term in forbidden:
+            if term.lower() in text:
+                violations.append(f"{path.name} contains forbidden term: {term}")
+    assert violations == []
+

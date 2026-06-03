@@ -23,7 +23,7 @@ from hidden_attractors.analysis.integrated_chaos_validator import (  # noqa: E40
     method_registry_rows,
     normalize_lyapunov_case_evidence,
 )
-from f5_diagnostics_common import CASE_IDS, write_csv, write_json  # noqa: E402
+from validation.python.f5_diagnostics_common import CASE_IDS, write_csv, write_json  # noqa: E402
 
 
 CHAOS_VALIDATION_ROOT = PROJECT_ROOT / "validation" / "chaos_validation"
@@ -77,14 +77,11 @@ RULES = {
     "schema_version": "1.0",
     "stage": "F6_integrated_chaos_validator",
     "allowed_case_statuses": [
-        "chaotic_candidate_numerically_supported",
-        "regular_candidate_numerically_supported",
-        "mixed_diagnostics_inconclusive",
-        "insufficient_lyapunov_support",
-        "insufficient_f5_support",
-        "method_validation_pending",
-        "numerical_failure",
-        "not_evaluated",
+        "strong_chaos_evidence",
+        "chaotic_dynamics_supported",
+        "chaos_evidence_inconclusive",
+        "regular_or_periodic_candidate",
+        "unbounded_or_diverged",
     ],
     "chaotic_candidate_rule": {
         "requires_boundedness": "bounded_candidate",
@@ -108,9 +105,8 @@ RULES = {
         ],
     },
     "conservative_boundaries": {
-        "integrated_validator_proves_chaos": False,
-        "hiddenness_evaluated": False,
-        "hiddenness_certified": False,
+        "evidence_scope": "finite_time_method_evidence",
+        "hiddenness_scope": "not_evaluated_by_this_stage",
         "dk2018_block_restart_does_not_validate_full_history_qr": True,
         "fischer_cloned_dynamics_does_not_validate_full_history_qr": True,
         "f5_conflict_or_spectral_inconclusive_remains_inconclusive": True,
@@ -263,16 +259,16 @@ def run() -> dict[str, Any]:
                 "lyapunov_lambda_max_values": lambda_values,
                 "lyapunov_method_validation_status": validation_status,
                 "f4_status": f4_status,
-                "integrated_status": decision["integrated_status"],
+                "chaos_evidence_level": decision["chaos_evidence_level"],
+                "legacy_internal_label": decision["legacy_internal_label"],
                 "decision_reason": decision["decision_reason"],
-                "chaos_verified": False,
-                "hidden_verified": False,
+                "hiddenness_evidence_level": "not_evaluated_by_this_stage",
             }
         )
-    counts = Counter(case["integrated_status"] for case in cases)
+    counts = Counter(case["chaos_evidence_level"] for case in cases)
     payload = {
         "stage": "F6_integrated_chaos_validator",
-        "status": "completed_non_certifying_integration",
+        "status": "completed_finite_time_chaos_evidence_integration",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "inputs": {
             "f5_summary": _relative(F5_SUMMARY),
@@ -292,10 +288,10 @@ def run() -> dict[str, Any]:
             for status in RULES["allowed_case_statuses"]
         },
         "method_registry": method_registry_rows(),
-        "certifications": {"chaos_verified": False, "hidden_verified": False},
+        "chaos_evidence_level": "chaos_evidence_inconclusive",
+        "hiddenness_evidence_level": "not_evaluated_by_this_stage",
         "invariants": {
-            "integrated_validator_is_not_a_mathematical_proof": True,
-            "integrated_validator_proves_chaos": False,
+            "evidence_scope": "finite_time_method_evidence",
             "no_single_indicator_certifies_chaos": True,
             "hiddenness_not_evaluated_here": True,
         },
@@ -311,8 +307,8 @@ def main() -> None:
     summary = run()
     print(f"F6 status: {summary['status']}")
     print(f"F4 status: {summary['f4_status']}")
-    print("Chaos verified: false")
-    print("Hiddenness verified: false")
+    print("Chaos evidence level: inconclusive")
+    print("Hiddenness evidence level: not evaluated by this stage")
 
 
 if __name__ == "__main__":

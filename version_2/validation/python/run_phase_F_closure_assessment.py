@@ -20,7 +20,7 @@ from hidden_attractors.analysis.phase_f_closure import (  # noqa: E402
     assess_phase_f_closure,
     build_phase_f_closure_matrix,
 )
-from f5_diagnostics_common import write_csv, write_json  # noqa: E402
+from validation.python.f5_diagnostics_common import write_csv, write_json  # noqa: E402
 
 
 CHAOS_VALIDATION_ROOT = PROJECT_ROOT / "validation" / "chaos_validation"

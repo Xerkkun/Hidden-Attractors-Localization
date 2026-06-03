@@ -63,7 +63,7 @@ SEED_FAMILIES: tuple[str, ...] = (
     "machado_biased",
 )
 
-FINAL_LABELS: tuple[str, ...] = (
+CURRENT_FINAL_LABELS: tuple[str, ...] = (
     "seed_only",
     "continuation_survivor",
     "rejected_post_continuation",
@@ -75,10 +75,16 @@ FINAL_LABELS: tuple[str, ...] = (
     "candidate_not_reproducible",
     "numerical_failure",
     "candidate_rejected",
-    "rejected_self_excited_contact",
+)
+
+LEGACY_FINAL_LABELS: tuple[str, ...] = (
     "hidden_verified",
     "hidden_verified_only_if_full_protocol_passed",
+    "rejected_self_excited_contact",
+    "compatible_in_all_tested_solver_memory_cases",
 )
+
+FINAL_LABELS = CURRENT_FINAL_LABELS + LEGACY_FINAL_LABELS
 
 ROBUSTNESS_VERDICTS: tuple[str, ...] = (
     "robust_target_hit",
@@ -121,6 +127,7 @@ FinalLabel = Literal[
     "rejected_self_excited_contact",
     "hidden_verified",
     "hidden_verified_only_if_full_protocol_passed",
+    "compatible_in_all_tested_solver_memory_cases",
 ]
 RobustnessLabel = Literal[
     "robust_target_hit",
@@ -383,6 +390,7 @@ class HiddennessTestResult:
     run_metadata: Mapping[str, Any] | None = None
     required_equilibria: tuple[str, ...] = ()
     required_radii: tuple[float, ...] = ()
+    candidate_evidence: Mapping[str, Any] = field(default_factory=dict)
 
     def validate(self) -> list[str]:
         errors: list[str] = []
@@ -410,58 +418,106 @@ class HiddennessTestResult:
         return errors
 
     @property
-    def promotion_verdict(self) -> str:
-        """Return the only candidate label allowed by the available evidence."""
+    def promotion_gate(self) -> dict[str, Any]:
+        """Evaluate and return the promotion gate result payload."""
+        if self.candidate_evidence:
+            gate = _evaluate_candidate_gate(dict(self.candidate_evidence))
+            return gate
 
+        # fallback path
         metadata = metadata_to_jsonable(self.run_metadata) if self.run_metadata else None
         numerical = metadata.get("numerical_contract", {}) if isinstance(metadata, Mapping) else {}
         seed = metadata.get("seed") if isinstance(metadata, Mapping) else {}
         seed = seed if isinstance(seed, Mapping) else {}
         continuation = metadata.get("continuation", {}) if isinstance(metadata, Mapping) else {}
-        gate = _evaluate_candidate_gate(
-            {
-                "run_metadata": metadata,
-                "equilibria": {"all_found": bool(self.required_equilibria), "max_residual": 0.0},
-                "matignon": {"all_classified": bool(self.required_equilibria), "q": numerical.get("q")},
-                "seed": {
-                    "localized": self.reference_was_robust,
-                    "method": "manual_traced",
-                    "source": seed.get("source", "hiddenness_test_result"),
-                },
-                "continuation": continuation,
-                "trajectory": {
-                    "bounded": self.reference_was_robust,
-                    "nontrivial": self.reference_was_robust,
-                    "finite_fraction": 1.0,
-                    "post_transient_length": 1,
-                },
-                "robustness": {
-                    "tested_h": self.reference_was_robust,
-                    "tested_memory": self.reference_was_robust,
-                    "tested_t_final": self.reference_was_robust,
-                    "tested_integrator": self.reference_was_robust,
-                    "consistent": self.reference_was_robust,
-                },
-                "hiddenness": {
-                    "tested_all_equilibria": bool(self.required_equilibria)
-                    and set(self.required_equilibria).issubset(set(self.tested_equilibria)),
-                    "tested_radii": self.tested_radii,
-                    "required_radii": self.required_radii,
-                    "target_hits_from_equilibria": self.target_contacts,
-                    "basin_intersection_detected": False,
-                    "basin_controls_complete": {
-                        "xy_close",
-                        "xy_large",
-                        "xz_close",
-                        "xz_large",
-                        "yz_close",
-                        "yz_large",
-                    }.issubset(set(self.basin_planes)),
-                    "numerical_failures": self.numerical_failures,
-                },
-            }
+        
+        required_planes = {"xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"}
+        tested_radii = tuple(float(radius) for radius in self.tested_radii)
+        includes_required_radii = bool(self.required_radii) and all(
+            any(np.isclose(float(required), tested, rtol=1.0e-12, atol=1.0e-15) for tested in tested_radii)
+            for required in self.required_radii
         )
-        return gate["verdict"]
+        full_protocol = (
+            self.reference_was_robust
+            and self.neighborhood_sampling_mode == "ball"
+            and bool(self.required_equilibria)
+            and set(self.required_equilibria).issubset(set(self.tested_equilibria))
+            and includes_required_radii
+            and self.target_contacts == 0
+            and self.numerical_failures == 0
+            and required_planes.issubset(set(self.basin_planes))
+        )
+        metadata_errors = validate_hiddenness_promotion_metadata(dict(self.run_metadata) if self.run_metadata else None)
+        
+        evidence_payload = {
+            "run_metadata": metadata,
+            "evidence_source": "legacy_minimal_hiddenness_result",
+            "equilibria": {"all_found": bool(self.required_equilibria), "max_residual": 0.0},
+            "matignon": {"all_classified": bool(self.required_equilibria), "q": numerical.get("q")},
+            "seed": {
+                "localized": self.reference_was_robust,
+                "method": "manual_traced",
+                "source": seed.get("source", "hiddenness_test_result"),
+            },
+            "continuation": continuation,
+            "trajectory": {
+                "bounded": self.reference_was_robust,
+                "nontrivial": self.reference_was_robust,
+                "finite_fraction": 1.0,
+                "post_transient_length": 1,
+            },
+            "robustness": {
+                "tested_h": self.reference_was_robust,
+                "tested_memory": self.reference_was_robust,
+                "tested_t_final": self.reference_was_robust,
+                "tested_integrator": self.reference_was_robust,
+                "consistent": self.reference_was_robust,
+            },
+            "hiddenness": {
+                "tested_all_equilibria": bool(self.required_equilibria)
+                and set(self.required_equilibria).issubset(set(self.tested_equilibria)),
+                "tested_radii": self.tested_radii,
+                "required_radii": self.required_radii,
+                "target_hits_from_equilibria": self.target_contacts,
+                "basin_intersection_detected": False,
+                "basin_controls_complete": required_planes.issubset(set(self.basin_planes)),
+                "numerical_failures": self.numerical_failures,
+            },
+        }
+        
+        gate = _evaluate_candidate_gate(evidence_payload)
+        
+        # Enforce Rule 3:
+        fallback_is_valid = (
+            full_protocol
+            and not metadata_errors
+            and bool(self.required_equilibria)
+            and bool(self.required_radii)
+            and self.run_metadata is not None
+        )
+        
+        verdict = gate.get("verdict")
+        if verdict == "hiddenness_supported_under_tested_neighborhoods" and not fallback_is_valid:
+            # Demote to compatible
+            gate = dict(gate)
+            gate["verdict"] = "compatible_with_hiddenness_under_tested_radii"
+            if "hiddenness_evidence_level" in gate:
+                gate["hiddenness_evidence_level"] = "compatible_with_hiddenness_under_tested_radii"
+            if "evidence_level" in gate:
+                gate["evidence_level"] = "compatible_with_hiddenness_under_tested_radii"
+            gate["promotion_allowed"] = False
+            
+        # Enforce Rule 4:
+        gate = dict(gate)
+        warnings = list(gate.get("warnings", []))
+        warnings.append("candidate_evidence_missing_full_algebraic_payload")
+        gate["warnings"] = warnings
+        return gate
+
+    @property
+    def promotion_verdict(self) -> str:
+        """Return the only candidate label allowed by the available evidence."""
+        return self.promotion_gate["verdict"]
 
 
 @dataclass(frozen=True)
@@ -490,6 +546,11 @@ class StageEnvelope:
     method_scope: str = ""
     warnings: Sequence[str] = field(default_factory=list)
     literature_note: str = ""
+
+    def __post_init__(self) -> None:
+        if self.verdict is not None:
+            normalized = _normalize_hiddenness_label(self.verdict)
+            object.__setattr__(self, "verdict", normalized)
 
     def validate(self) -> list[str]:
         errors: list[str] = []

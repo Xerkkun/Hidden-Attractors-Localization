@@ -266,6 +266,7 @@ def evaluate_candidate_gate(evidence: dict[str, Any]) -> dict[str, Any]:
     warnings.extend(chaos["diagnostic_conflicts"])
     return {
         "verdict": verdict,
+        "hiddenness_evidence_level": verdict,
         "evidence_level": verdict,
         **chaos,
         "checked_conditions": checked,

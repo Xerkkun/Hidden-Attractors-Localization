@@ -21,7 +21,7 @@ if str(PROJECT_ROOT) not in sys.path:
 if str(Path(__file__).resolve().parent) not in sys.path:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from run_poincare_diagnostics import CASES_DIR, _burn_time, _integrate_case  # noqa: E402
+from validation.python.run_poincare_diagnostics import CASES_DIR, _burn_time, _integrate_case  # noqa: E402
 
 
 TRAJECTORY_ROOT = (

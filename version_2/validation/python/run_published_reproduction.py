@@ -18,7 +18,7 @@ if str(repo_root) not in sys.path:
 if str(here) not in sys.path:
     sys.path.insert(0, str(here))
 
-from published_reproduction import run_case_reproduction, run_all_published_cases
+from validation.python.published_reproduction import run_case_reproduction, run_all_published_cases
 
 
 def main() -> int:

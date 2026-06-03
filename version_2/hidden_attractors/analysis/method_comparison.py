@@ -19,15 +19,23 @@ ALLOWED_COMPARISON_STATUSES = {
 
 
 def classify_method_row(method: dict[str, Any]) -> str:
-    """Classify one case-method row while preserving validation boundaries."""
+    """Classify one case-method row under the F7 frozen vocabulary."""
 
-    if not method["applicable"]:
-        return "not_applicable"
-    if method["lambda_max"] is None:
-        return "unavailable"
-    if not method["validated"]:
-        return "validation_pending"
-    return method["lambda_class"]
+    if not method.get("applicable"):
+        return "method_not_applicable"
+    benchmark_status = method.get("benchmark_status", "")
+    if "discrepancy" in str(benchmark_status):
+        return "method_has_documented_discrepancy"
+    if method.get("lambda_max") is None:
+        return "method_evidence_inconclusive"
+    if not method.get("validated"):
+        return "method_evidence_inconclusive"
+    lambda_class = method.get("lambda_class")
+    if lambda_class == "positive_lambda_max":
+        if method.get("method_id") == "integer_qr_benettin":
+            return "method_supports_strong_chaos_evidence"
+        return "method_supports_chaotic_dynamics"
+    return "method_evidence_inconclusive"
 
 
 def compare_lyapunov_methods(rows: list[dict[str, Any]]) -> tuple[str, list[str]]:
@@ -35,12 +43,12 @@ def compare_lyapunov_methods(rows: list[dict[str, Any]]) -> tuple[str, list[str]
 
     classified = [(row, classify_method_row(row)) for row in rows]
     comparable = [
-        state
-        for row, state in classified
-        if row["validated"] and state in {"positive_lambda_max", "nonpositive_lambda_max", "near_zero_lambda_max"}
+        row["lambda_class"]
+        for row, _ in classified
+        if row.get("validated") and row.get("lambda_class") in {"positive_lambda_max", "nonpositive_lambda_max", "near_zero_lambda_max"}
     ]
     warnings = []
-    if any(state == "validation_pending" for _, state in classified):
+    if any(not row.get("validated") and row.get("applicable") for row in rows):
         warnings.append("one or more available spectra belong to methods with validation pending")
     if "positive_lambda_max" in comparable and any(
         state in {"nonpositive_lambda_max", "near_zero_lambda_max"} for state in comparable
@@ -52,7 +60,7 @@ def compare_lyapunov_methods(rows: list[dict[str, Any]]) -> tuple[str, list[str]
         state in {"nonpositive_lambda_max", "near_zero_lambda_max"} for state in comparable
     ):
         return "lyapunov_consensus_nonpositive", warnings
-    if any(row["applicable"] and not row["validated"] for row, _ in classified) and not comparable:
+    if any(row.get("applicable") and not row.get("validated") for row in rows) and not comparable:
         return "method_validation_pending", warnings
     return "insufficient_comparable_methods", warnings
 

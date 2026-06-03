@@ -1,7 +1,7 @@
 # hidden-attractors-fo
 
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
-![Status](https://img.shields.io/badge/status-research%20alpha-orange)
+![Status](https://img.shields.io/badge/status-research%20freeze%20candidate-blue)
 ![Package](https://img.shields.io/badge/package-editable%20install-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 [![CI](https://github.com/Xerkkun/Hidden-Attractors-Localization/actions/workflows/ci.yml/badge.svg)](https://github.com/Xerkkun/Hidden-Attractors-Localization/actions/workflows/ci.yml)

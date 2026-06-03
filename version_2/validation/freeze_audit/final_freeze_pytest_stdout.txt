@@ -1,0 +1,99 @@
+=== STAGE: test_scientific_software_algebra ===
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_scientific_software_algebra.py -q
+Exit code: 0
+
+--- STDOUT ---
+.....................                                                    [100%]
+21 passed in 5.40s
+
+--- STDERR ---
+
+
+=== STAGE: test_scientific_software_integrators ===
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_scientific_software_integrators.py -q
+Exit code: 0
+
+--- STDOUT ---
+......s                                                                  [100%]
+6 passed, 1 skipped in 1.85s
+
+--- STDERR ---
+
+
+=== STAGE: test_scientific_software_hiddenness ===
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_scientific_software_hiddenness.py -q
+Exit code: 0
+
+--- STDOUT ---
+.....                                                                    [100%]
+5 passed in 1.78s
+
+--- STDERR ---
+
+
+=== STAGE: test_reproducibility_metadata ===
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_reproducibility_metadata.py -q
+Exit code: 0
+
+--- STDOUT ---
+........                                                                 [100%]
+8 passed in 2.05s
+
+--- STDERR ---
+
+
+=== STAGE: test_candidate_gate ===
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_candidate_gate.py -q
+Exit code: 0
+
+--- STDOUT ---
+..........                                                               [100%]
+10 passed in 1.74s
+
+--- STDERR ---
+
+
+=== STAGE: test_freeze_audit_json_outputs ===
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_freeze_audit_json_outputs.py -q
+Exit code: 0
+
+--- STDOUT ---
+....                                                                     [100%]
+4 passed in 3.40s
+
+--- STDERR ---
+
+
+=== STAGE: regression_tests ===
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest -m regression -q
+Exit code: 0
+
+--- STDOUT ---
+....                                                                     [100%]
+4 passed, 822 deselected in 2.45s
+
+--- STDERR ---
+
+
+=== STAGE: all_tests ===
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest -q
+Exit code: 0
+
+--- STDOUT ---
+........................................................................ [  8%]
+.ssssssssssssssssssssssssssssss......................................... [ 17%]
+........................................................................ [ 26%]
+............................................ss.......................... [ 34%]
+........................................................................ [ 43%]
+........................................................................ [ 52%]
+........................................................................ [ 61%]
+........................................................................ [ 69%]
+....s................................................................... [ 78%]
+........................................................................ [ 87%]
+...................................s.................................... [ 95%]
+..................................                                       [100%]
+792 passed, 34 skipped in 264.32s (0:04:24)
+
+--- STDERR ---
+
+

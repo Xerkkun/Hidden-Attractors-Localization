@@ -237,14 +237,25 @@ def _sign_pattern(spectrum: list[float] | None) -> list[str] | None:
 def _decision(case_id: str, status: str, reason: str) -> dict[str, Any]:
     if status not in ALLOWED_INTEGRATED_STATUSES:
         raise ValueError(f"unsupported integrated status: {status}")
+    
+    mapping = {
+        "chaotic_candidate_numerically_supported": "strong_chaos_evidence",
+        "regular_candidate_numerically_supported": "regular_or_periodic_candidate",
+        "numerical_failure": "unbounded_or_diverged",
+        "mixed_diagnostics_inconclusive": "chaos_evidence_inconclusive",
+        "insufficient_lyapunov_support": "chaos_evidence_inconclusive",
+        "insufficient_f5_support": "chaos_evidence_inconclusive",
+        "method_validation_pending": "chaos_evidence_inconclusive",
+        "not_evaluated": "chaos_evidence_inconclusive",
+    }
+    level = mapping.get(status, "chaos_evidence_inconclusive")
+    
     return {
         "case_id": case_id,
-        "integrated_status": status,
+        "chaos_evidence_level": level,
+        "legacy_internal_label": status,
         "decision_reason": reason,
-        "chaos_verified": False,
-        "hidden_verified": False,
-        "hiddenness_evaluated": False,
-        "hiddenness_certified": False,
+        "hiddenness_evidence_level": "not_evaluated_by_this_stage",
     }
 
 

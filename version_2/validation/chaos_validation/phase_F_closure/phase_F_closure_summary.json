@@ -140,8 +140,8 @@
         "supports_commensurate": true,
         "supports_incommensurate": false,
         "memory_protocol": "fixed_lower_limit_full_history_qr",
-        "no_chaos_certification": true,
-        "no_hiddenness_certification": true
+        "evidence_scope": "finite_time_method_evidence",
+        "hiddenness_scope": "not_evaluated_by_this_stage"
       },
       "accepted_policy_exists": false,
       "applied_to_each_fractional_candidate": false,
@@ -209,8 +209,8 @@
         "supports_commensurate": true,
         "supports_incommensurate": true,
         "memory_protocol": "published_block_restart",
-        "no_chaos_certification": true,
-        "no_hiddenness_certification": true
+        "evidence_scope": "finite_time_method_evidence",
+        "hiddenness_scope": "not_evaluated_by_this_stage"
       },
       "fischer2020_status": "published_benchmarks_pending_discrepancy",
       "rows_total": 24,
@@ -248,8 +248,8 @@
     "f5_status": "f5_diagnostics_structured_outputs_ready",
     "dk2018_status": "published_benchmarks_pending_reproduced_discrepancy",
     "fischer2020_status": "published_benchmarks_pending_discrepancy",
-    "f6_status": "completed_non_certifying_integration",
-    "f7_status": "completed_non_certifying_comparison"
+    "f6_status": "completed_finite_time_chaos_evidence_integration",
+    "f7_status": "completed_method_evidence_comparison"
   },
   "invariants": {
     "finite_time_scope_recorded": true,
@@ -264,7 +264,7 @@
     "Prefer sign agreement between two applicable methods.",
     "Keep F5 diagnostics compatible."
   ],
-  "generated_at_utc": "2026-06-02T22:32:05.693144+00:00",
+  "generated_at_utc": "2026-06-03T00:44:29.994784+00:00",
   "inputs": {
     "f4_summary": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/f4_internal_validation_summary.json",
     "f5_summary": "validation/chaos_validation/dynamics_diagnostics/f5_diagnostics_summary.json",

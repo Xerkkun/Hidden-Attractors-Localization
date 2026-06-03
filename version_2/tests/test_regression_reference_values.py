@@ -53,7 +53,8 @@ def test_phase_f_reference_states_remain_traceable() -> None:
     phase_f = _read("validation/chaos_validation/phase_F_closure/phase_F_closure_summary.json")
     assert f4["status"] == "f4_complete_with_documented_discrepancies"
     assert f5["final_f5_status"] == "f5_diagnostics_structured_outputs_ready"
-    assert f6["status"] == "completed_non_certifying_integration"
-    assert f7["status"] == "completed_non_certifying_comparison"
+    assert f6["status"] == "completed_finite_time_chaos_evidence_integration"
+    assert f7["status"] == "completed_method_evidence_comparison"
     assert phase_f["status"] == "phase_F_frozen"
     assert phase_f["phase_F_frozen"] is True
+

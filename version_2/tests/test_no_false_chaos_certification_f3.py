@@ -19,8 +19,8 @@ def test_f3_registry_contains_no_positive_certification_claims() -> None:
         text = " ".join(LYAPUNOV_METHODS[method].warnings).lower()
         assert "chaos_verified: true" not in text
         assert "hidden_verified: true" not in text
-        assert LYAPUNOV_METHODS[method].no_chaos_certification is True
-        assert LYAPUNOV_METHODS[method].no_hiddenness_certification is True
+        assert LYAPUNOV_METHODS[method].evidence_scope == "finite_time_method_evidence"
+        assert LYAPUNOV_METHODS[method].hiddenness_scope == "not_evaluated_by_this_stage"
 
 
 def test_f3_summary_remains_conservative() -> None:

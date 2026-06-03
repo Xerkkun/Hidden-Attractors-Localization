@@ -16,11 +16,11 @@ for item in (PROJECT_ROOT, Path(__file__).resolve().parent):
     if str(item) not in sys.path:
         sys.path.insert(0, str(item))
 
-from f5_diagnostics_common import CASE_IDS, CERTIFICATIONS, DIAGNOSTICS_ROOT, INVARIANTS, write_json  # noqa: E402
-from run_boundedness_diagnostics import GLOBAL_SUMMARY as BOUNDEDNESS_SUMMARY, run as run_boundedness  # noqa: E402
-from run_poincare_diagnostics import GLOBAL_SUMMARY_PATH as POINCARE_SUMMARY, _final_f5_status, run as run_poincare  # noqa: E402
-from run_spectral_diagnostics import GLOBAL_SUMMARY as SPECTRAL_SUMMARY, run as run_spectral  # noqa: E402
-from run_zero_one_diagnostics import GLOBAL_SUMMARY as ZERO_ONE_SUMMARY, run as run_zero_one  # noqa: E402
+from validation.python.f5_diagnostics_common import CASE_IDS, CERTIFICATIONS, DIAGNOSTICS_ROOT, INVARIANTS, write_json  # noqa: E402
+from validation.python.run_boundedness_diagnostics import GLOBAL_SUMMARY as BOUNDEDNESS_SUMMARY, run as run_boundedness  # noqa: E402
+from validation.python.run_poincare_diagnostics import GLOBAL_SUMMARY_PATH as POINCARE_SUMMARY, _final_f5_status, run as run_poincare  # noqa: E402
+from validation.python.run_spectral_diagnostics import GLOBAL_SUMMARY as SPECTRAL_SUMMARY, run as run_spectral  # noqa: E402
+from validation.python.run_zero_one_diagnostics import GLOBAL_SUMMARY as ZERO_ONE_SUMMARY, run as run_zero_one  # noqa: E402
 
 
 F5_SUMMARY = DIAGNOSTICS_ROOT / "f5_diagnostics_summary.json"

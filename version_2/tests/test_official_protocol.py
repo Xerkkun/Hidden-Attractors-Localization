@@ -281,3 +281,94 @@ def test_validation_contract_uses_only_the_official_stage_order() -> None:
         "run_metadata",
         "metadata_validation_errors",
     }
+
+
+def test_current_and_legacy_final_labels_are_separated() -> None:
+    from hidden_attractors.workflows.protocol import CURRENT_FINAL_LABELS, LEGACY_FINAL_LABELS, FINAL_LABELS
+    assert "hidden_verified" not in CURRENT_FINAL_LABELS
+    assert "hiddenness_supported_under_tested_neighborhoods" in CURRENT_FINAL_LABELS
+    assert "hidden_verified" in LEGACY_FINAL_LABELS
+    assert len(FINAL_LABELS) == len(CURRENT_FINAL_LABELS) + len(LEGACY_FINAL_LABELS)
+
+
+def test_hiddenness_test_result_evidence_cases(valid_run_metadata) -> None:
+    from copy import deepcopy
+    res_complete = HiddennessTestResult(
+        candidate_id="c_complete",
+        tested_equilibria=("E0", "E+", "E-"),
+        tested_radii=(1.0e-2, 1.0e-3),
+        neighborhood_sampling_mode="ball",
+        target_contacts=0,
+        numerical_failures=0,
+        basin_planes=("xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"),
+        reference_was_robust=True,
+        final_label="hiddenness_supported_under_tested_neighborhoods",
+        candidate_evidence={
+            "run_metadata": valid_run_metadata,
+            "equilibria": {"all_found": True, "max_residual": 1.0e-10},
+            "matignon": {"all_classified": True, "q": 0.9998},
+            "seed": {"localized": True, "method": "df_nyquist", "source": "published_reference"},
+            "continuation": {"used": True, "eta_path": [0.0, 0.5, 1.0], "continuation_mode": "fractional", "memory_window_propagated": True, "final_eta": 1.0},
+            "trajectory": {"bounded": True, "nontrivial": True, "finite_fraction": 1.0, "post_transient_length": 10_000},
+            "robustness": {"tested_h": True, "tested_memory": True, "tested_t_final": True, "tested_integrator": True, "consistent": True},
+            "hiddenness": {"tested_all_equilibria": True, "tested_radii": [1.0e-2, 1.0e-3], "required_radii": [1.0e-2, 1.0e-3], "target_hits_from_equilibria": 0, "basin_intersection_detected": False, "basin_controls_complete": True},
+            "lyapunov": {"lambda_max": 0.15, "method_status": "internal_controls_passed"},
+            "zero_one": {"K": 0.9},
+            "spectrum": {"label": "broadband_spectrum"},
+            "poincare": {"label": "complex_section"},
+        },
+    )
+    assert res_complete.promotion_verdict == "hiddenness_supported_under_tested_neighborhoods"
+    assert "candidate_evidence_missing_full_algebraic_payload" not in res_complete.promotion_gate.get("warnings", [])
+
+    bad_metadata = deepcopy(valid_run_metadata)
+    bad_metadata["software"]["git_commit"] = "unknown"
+    res_fallback = HiddennessTestResult(
+        candidate_id="c_fallback",
+        tested_equilibria=("E0", "E+", "E-"),
+        tested_radii=(1.0e-2, 1.0e-3),
+        neighborhood_sampling_mode="ball",
+        target_contacts=0,
+        numerical_failures=0,
+        basin_planes=("xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"),
+        reference_was_robust=True,
+        final_label="hiddenness_supported_under_tested_neighborhoods",
+        run_metadata=bad_metadata,
+        required_equilibria=("E0", "E+", "E-"),
+        required_radii=(1.0e-2, 1.0e-3),
+    )
+    assert res_fallback.promotion_verdict == "compatible_with_hiddenness_under_tested_radii"
+    assert "candidate_evidence_missing_full_algebraic_payload" in res_fallback.promotion_gate["warnings"]
+
+    res_fallback_none = HiddennessTestResult(
+        candidate_id="c_fallback_none",
+        tested_equilibria=("E0", "E+", "E-"),
+        tested_radii=(1.0e-2, 1.0e-3),
+        neighborhood_sampling_mode="ball",
+        target_contacts=0,
+        numerical_failures=0,
+        basin_planes=("xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"),
+        reference_was_robust=True,
+        final_label="hiddenness_supported_under_tested_neighborhoods",
+        run_metadata=None,
+        required_equilibria=("E0", "E+", "E-"),
+        required_radii=(1.0e-2, 1.0e-3),
+    )
+    assert res_fallback_none.promotion_verdict == "candidate_not_reproducible"
+    assert "candidate_evidence_missing_full_algebraic_payload" in res_fallback_none.promotion_gate["warnings"]
+
+    res_contacts = HiddennessTestResult(
+        candidate_id="c_contacts",
+        tested_equilibria=("E0", "E+", "E-"),
+        tested_radii=(1.0e-2, 1.0e-3),
+        neighborhood_sampling_mode="ball",
+        target_contacts=5,
+        numerical_failures=0,
+        basin_planes=("xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"),
+        reference_was_robust=True,
+        final_label="hiddenness_supported_under_tested_neighborhoods",
+        run_metadata=valid_run_metadata,
+        required_equilibria=("E0", "E+", "E-"),
+        required_radii=(1.0e-2, 1.0e-3),
+    )
+    assert res_contacts.promotion_verdict == "self_excited_contact_detected"

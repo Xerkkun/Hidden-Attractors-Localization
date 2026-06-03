@@ -46,3 +46,13 @@ python -m pytest tests -q
 - `hiddenness_inconclusive`
 - `candidate_not_reproducible`
 - `numerical_failure`
+
+## G2. Final Freeze Consistency Pass
+
+- [x] Normalize case integration and method comparison vocabularies across F6/F7.
+- [x] Remove obsolete `chaos_verified` and `hidden_verified` keys from new summaries and reports.
+- [x] Separate `CURRENT_FINAL_LABELS` and `LEGACY_FINAL_LABELS`, normalizing legacy verdicts immediately in `StageEnvelope`.
+- [x] Link `HiddennessTestResult` with candidate evidence payload, executing fallback checks and demoting verdicts when necessary.
+- [x] Update `candidate_gate.py` to output both `hiddenness_evidence_level` and `chaos_evidence_level`.
+- [x] Create and run `run_final_freeze_audit.py` to generate `validation/freeze_audit/final_freeze_pytest_summary.json` with `freeze_ready=true`.
+
