@@ -88,6 +88,86 @@ cortes de cuenca \(xy\), \(xz\) y \(yz\), cada uno en ventana cercana y
 amplia. EFORK/C es el backend preferente para barridos validados y ABM con
 historia completa permanece como referencia de comparacion final.
 
+\section{Interfaz de linea de comandos}
+
+La lista oficial de comandos instalables se toma de
+\codepath{version_2/pyproject.toml}. La CLI principal estable para usuario es
+\codepath{hidden-attractors}. Los workflows especializados son interfaces
+reproducibles de analisis, pero pueden cambiar mientras el proyecto este en
+fase alfa. Los comandos auxiliares o internos se documentan para trazabilidad,
+no como interfaz estable.
+
+\begin{center}
+\small
+\begin{longtable}{@{}L{0.25\textwidth}L{0.18\textwidth}L{0.31\textwidth}L{0.18\textwidth}@{}}
+\toprule
+Comando & Grupo & Uso & Estado documental \\
+\midrule
+\codepath{hidden-attractors} &
+Principal de usuario &
+\codepath{run -c/--config}, \codepath{run -p/--preset},
+\codepath{init -e/--example}, \codepath{inspect-config -c/--config},
+\codepath{inspect-config -p/--preset},
+\codepath{validate-bibliography -m/--manifest --strict --json -o/--markdown-output} &
+CLI principal estable para usuario; modulo Python interno. \\
+\begin{tabular}[t]{@{}l@{}}\codepath{hidden-attractors}\\\codepath{-protocol}\end{tabular} &
+Workflow especializado &
+Interfaz de etapas \codepath{generate-seeds}, \codepath{soft-precheck},
+\codepath{continue}, \codepath{filter-survivors}, \codepath{build-reference},
+\codepath{robustness}, \codepath{hiddenness}, \codepath{diagnostics}. &
+Reproducible; alfa. \\
+\begin{tabular}[t]{@{}l@{}}\codepath{hidden-attractors}\\\codepath{-robustness-overlay}\end{tabular} &
+Workflow especializado &
+Workflow de overlay de robustez; consultar \codepath{--help}. &
+Reproducible; alfa. \\
+\begin{tabular}[t]{@{}l@{}}\codepath{hidden-attractors}\\\codepath{-sphere-controls}\end{tabular} &
+Workflow especializado &
+Controles en bolas de equilibrio; consultar \codepath{--help}. &
+Reproducible; alfa. \\
+\begin{tabular}[t]{@{}l@{}}\codepath{hidden-attractors}\\\codepath{-refined-basin}\end{tabular} &
+Workflow especializado &
+Refinamiento de cuencas; consultar \codepath{--help}. &
+Reproducible; alfa. \\
+\begin{tabular}[t]{@{}l@{}}\codepath{hidden-attractors}\\\codepath{-strict-target}\\\codepath{-refinement}\end{tabular} &
+Workflow especializado &
+Refinamiento estricto contra referencia objetivo; consultar \codepath{--help}. &
+Reproducible; alfa. \\
+\begin{tabular}[t]{@{}l@{}}\codepath{hidden-attractors}\\\codepath{-danca-abm}\\\codepath{-sphere-controls}\end{tabular} &
+Workflow especializado &
+Controles ABM/Danca; consultar \codepath{--help}. &
+Reproducible; alfa. \\
+\begin{tabular}[t]{@{}l@{}}\codepath{hidden-attractors}\\\codepath{-fractional-report-run}\end{tabular} &
+Workflow especializado &
+Corrida de reporte fraccionario; consultar \codepath{--help}. &
+Reproducible; alfa. \\
+\begin{tabular}[t]{@{}l@{}}\codepath{hidden-attractors}\\\codepath{-list-candidates}\end{tabular} &
+Auxiliar o interno &
+Listado de candidatos; consultar \codepath{--help}. &
+Trazabilidad; no API estable. \\
+\begin{tabular}[t]{@{}l@{}}\codepath{hidden-attractors}\\\codepath{-systems}\end{tabular} &
+Auxiliar o interno &
+Inspeccion del registro de sistemas; consultar \codepath{--help}. &
+Trazabilidad; no API estable. \\
+\begin{tabular}[t]{@{}l@{}}\codepath{hidden-attractors}\\\codepath{-workflow-requirements}\end{tabular} &
+Auxiliar o interno &
+Diagnostico de requisitos de workflow; consultar \codepath{--help}. &
+Trazabilidad; no API estable. \\
+\begin{tabular}[t]{@{}l@{}}\codepath{hidden-attractors}\\\codepath{-check-validation}\end{tabular} &
+Auxiliar o interno &
+Chequeo del contrato de validacion; consultar \codepath{--help}. &
+Trazabilidad; no API estable. \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+Flujo minimo correcto:
+\begin{verbatim}
+hidden-attractors init -e chua_fractional
+hidden-attractors inspect-config -p chua_fractional
+hidden-attractors run -p chua_fractional
+hidden-attractors run -c path/to/config.yaml
+\end{verbatim}
+
 \section{Indice tematico consolidado}
 
 Este archivo es el reporte activo unico. Los documentos LaTeX anteriores se
@@ -965,7 +1045,7 @@ La API publica ya tiene post-procesamiento simple; falta exponer una corrida den
 Cuencas \(xz\) y \(yz\), \codepath{fig10b}, \codepath{fig10c} &
 Ejecutar \codepath{basin_only} o migrar \codepath{compute_basin_planes_c} a workflow publico documentado. \\
 FFT/PSD, \codepath{fig11b_fft_spectrum}, \codepath{fig11_psd_welch} &
-Regenerar con \codepath{hidden-attractors-unified-chua --psd}; citar que FFT/PSD caracterizan frecuencia, no ocultedad. \\
+Regenerar con un workflow documentado, por ejemplo \codepath{hidden-attractors-fractional-report-run} si corresponde al reporte vigente; citar que FFT/PSD caracterizan frecuencia, no ocultedad. \\
 Lyapunov, \codepath{fig12_lyapunov_convergence} &
 Ejecutar backend Benettin solo bajo contrato explicito; citar los dos articulos de Benettin et al. \\
 TISEAN/exportes externos &

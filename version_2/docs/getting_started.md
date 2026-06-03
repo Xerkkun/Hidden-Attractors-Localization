@@ -12,24 +12,34 @@ The CLI offers a simple entry point to run presets, initialize custom folders, a
 
 To run a built-in workflow preset:
 ```bash
-hidden-attractors run --preset chua_integer
-hidden-attractors run --preset chua_fractional
-hidden-attractors run --preset chua_arctan_only_fractional
+hidden-attractors run -p chua_integer
+hidden-attractors run -p chua_fractional
+hidden-attractors run -p chua_arctan_only_fractional
 ```
 
 ### Initializing Examples
 
 To copy a pre-packaged template config to your local working directory:
 ```bash
-hidden-attractors init --example chua_fractional
+hidden-attractors init -e chua_fractional
 ```
 
 ### Inspecting Configurations
 
 To preview the fully normalized effective configuration mapping (including defaults) before execution:
 ```bash
-hidden-attractors inspect-config --preset chua_fractional
+hidden-attractors inspect-config -p chua_fractional
 ```
+
+To run a custom YAML file directly:
+```bash
+hidden-attractors run -c path/to/config.yaml
+```
+
+The primary stable user-facing CLI is `hidden-attractors`. Specialized
+workflow entry points are reproducible analysis interfaces that may change
+while the project remains in alpha. Auxiliary or internal commands are
+documented for traceability, not as stable public interfaces.
 
 ---
 

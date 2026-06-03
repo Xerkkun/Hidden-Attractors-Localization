@@ -42,13 +42,15 @@ without reading files from the old project root.
 - `tools/cli/robustness_overlay_c_trajectories.py`
 - `tools/cli/lure_top3_sphere_robustness.py`
 - `tools/cli/refine_project_basin_classification.py`
-- `hidden-attractors-legacy`: installable facade for historical scripts.
-- `hidden-attractors-extended-search`, `hidden-attractors-danca2017`,
-  `hidden-attractors-nyquist-pipeline`: common command shape for legacy
-  workflows that are still being migrated.
+- Historical script facades are not declared as installable commands in the
+  current `[project.scripts]` table. Use the documented workflow entry points
+  (`hidden-attractors-protocol`, `hidden-attractors-fractional-report-run`, and
+  the specialized workflow commands) or call legacy scripts explicitly from
+  `tools/legacy/` when traceability requires it.
 
 ## Legacy Research Scripts
 
 Long scripts that are not yet clean public API live under `tools/legacy/`, but
-they are packaged and exposed through installable commands. Extend the package
-first before growing those scripts further.
+they are not advertised as stable installable commands unless present in
+`version_2/pyproject.toml`. Extend the package first before growing those
+scripts further.

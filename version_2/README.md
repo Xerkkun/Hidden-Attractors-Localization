@@ -105,34 +105,49 @@ After editable installation, the unified `hidden-attractors` CLI is available on
 
 #### Initialize configs in the current folder:
 ```bash
-hidden-attractors init --example chua_fractional
+hidden-attractors init -e chua_fractional
 ```
 
 #### Preview the normalized configuration (with default values and overrides):
 ```bash
-hidden-attractors inspect-config --preset chua_fractional
+hidden-attractors inspect-config -p chua_fractional
 ```
 
 #### Run a workflow preset:
 ```bash
-hidden-attractors run --preset chua_fractional
+hidden-attractors run -p chua_fractional
+```
+
+#### Run from a YAML file:
+```bash
+hidden-attractors run -c path/to/config.yaml
 ```
 
 #### Overriding configuration parameters via CLI:
 You can override any parameter in the YAML config from the CLI using nested keys. For example:
 ```bash
-hidden-attractors run --preset chua_fractional --final_simulation.t_final 100.0 --h 0.005 --plot_enabled false
+hidden-attractors run -p chua_fractional --final_simulation.t_final 100.0 --h 0.005 --plot_enabled false
 ```
 
-The historical utility scripts are also registered on path:
-```bash
-hidden-attractors-list-candidates
-hidden-attractors-systems
-hidden-attractors-check-validation --help
-hidden-attractors-protocol --help
-hidden-attractors-robustness-overlay --help
-hidden-attractors-fractional-report-run --help
-```
+The primary stable user-facing CLI is `hidden-attractors`. Specialized
+workflows are reproducible analysis interfaces, but may change while the
+project remains in alpha. Auxiliary or internal commands are documented for
+traceability, not as stable public interfaces.
+
+| Command | Group | Real options or usage | Documentary status |
+|---|---|---|---|
+| `hidden-attractors` | Main user command | `run -c/--config`, `run -p/--preset`, `init -e/--example`, `inspect-config -c/--config`, `inspect-config -p/--preset`, `validate-bibliography -m/--manifest --strict --json -o/--markdown-output` | Primary stable user-facing CLI; Python module is internal |
+| `hidden-attractors-protocol` | Specialized workflow | Stage commands such as `generate-seeds`, `soft-precheck`, `continue`, `filter-survivors`, `build-reference`, `robustness`, `hiddenness`, `diagnostics` | Reproducible protocol interface; alpha |
+| `hidden-attractors-robustness-overlay` | Specialized workflow | `--help` | Reproducible analysis workflow; alpha |
+| `hidden-attractors-sphere-controls` | Specialized workflow | `--help` | Reproducible analysis workflow; alpha |
+| `hidden-attractors-refined-basin` | Specialized workflow | `--help` | Reproducible analysis workflow; alpha |
+| `hidden-attractors-strict-target-refinement` | Specialized workflow | `--help` | Reproducible analysis workflow; alpha |
+| `hidden-attractors-danca-abm-sphere-controls` | Specialized workflow | `--help` | Reproducible analysis workflow; alpha |
+| `hidden-attractors-fractional-report-run` | Specialized workflow | `--help` | Reproducible report workflow; alpha |
+| `hidden-attractors-list-candidates` | Auxiliary/internal | `--help` | Traceability helper; not a stable API |
+| `hidden-attractors-systems` | Auxiliary/internal | `--help` | Registry inspection helper; not a stable API |
+| `hidden-attractors-workflow-requirements` | Auxiliary/internal | `--help` | Workflow diagnostic helper; not a stable API |
+| `hidden-attractors-check-validation` | Auxiliary/internal | Validation-contract checks; use `--help` for current options | Validation diagnostic helper; not a stable API |
 
 ### 2. Programmatic Python API
 

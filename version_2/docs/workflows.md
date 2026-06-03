@@ -28,11 +28,32 @@ numerical_contract, inputs, outputs, metrics, verdict, files, provenance
 ### Simple-level CLI Presets
 
 The high-level unified CLI `hidden-attractors` allows executing preset workflows directly:
-* `hidden-attractors init --example <name>`: Copies configuration templates into the working directory.
-* `hidden-attractors inspect-config --preset <name>`: Previews the fully resolved configuration mapping.
-* `hidden-attractors run --preset <name>`: Executes the workflow preset (e.g., `chua_integer`, `chua_fractional`, `chua_arctan`, `chua_bifurcation`, `chua_basin`).
+* `hidden-attractors init -e <name>` or `hidden-attractors init --example <name>`: Copies configuration templates into the working directory.
+* `hidden-attractors inspect-config -p <name>` or `hidden-attractors inspect-config --preset <name>`: Previews the fully resolved configuration mapping.
+* `hidden-attractors run -p <name>` or `hidden-attractors run --preset <name>`: Executes the workflow preset (e.g., `chua_integer`, `chua_fractional`, `chua_arctan`, `chua_bifurcation`, `chua_basin`).
+* `hidden-attractors run -c path/to/config.yaml` or `hidden-attractors run --config path/to/config.yaml`: Executes a workflow from a YAML file.
 
 You can override configuration parameters directly on the CLI command line using nested dot notation overrides (e.g., `--final_simulation.t_final 50.0 --h 0.01`).
+
+The primary stable user-facing CLI is `hidden-attractors`. Specialized
+workflows are reproducible analysis interfaces, but may change while the
+project remains in alpha. Auxiliary or internal commands are documented for
+traceability, not as stable public interfaces.
+
+| Command | Group | Usage | Documentary status |
+|---|---|---|---|
+| `hidden-attractors` | Main user command | `run -c/--config`, `run -p/--preset`, `init -e/--example`, `inspect-config -c/--config`, `inspect-config -p/--preset`, `validate-bibliography -m/--manifest --strict --json -o/--markdown-output` | Primary stable user-facing CLI; Python module is internal |
+| `hidden-attractors-protocol` | Specialized workflow | Protocol stage summaries and validation envelopes | Reproducible protocol interface; alpha |
+| `hidden-attractors-robustness-overlay` | Specialized workflow | Robustness overlay workflow | Reproducible analysis workflow; alpha |
+| `hidden-attractors-sphere-controls` | Specialized workflow | Equilibrium-ball controls | Reproducible analysis workflow; alpha |
+| `hidden-attractors-refined-basin` | Specialized workflow | Basin refinement workflow | Reproducible analysis workflow; alpha |
+| `hidden-attractors-strict-target-refinement` | Specialized workflow | Strict target refinement workflow | Reproducible analysis workflow; alpha |
+| `hidden-attractors-danca-abm-sphere-controls` | Specialized workflow | Danca ABM sphere controls | Reproducible analysis workflow; alpha |
+| `hidden-attractors-fractional-report-run` | Specialized workflow | Fractional report generation workflow | Reproducible report workflow; alpha |
+| `hidden-attractors-list-candidates` | Auxiliary/internal | Candidate listing helper | Traceability helper; not a stable API |
+| `hidden-attractors-systems` | Auxiliary/internal | System registry inspection helper | Registry helper; not a stable API |
+| `hidden-attractors-workflow-requirements` | Auxiliary/internal | Workflow capability checks | Diagnostic helper; not a stable API |
+| `hidden-attractors-check-validation` | Auxiliary/internal | Validation-contract checks | Validation diagnostic helper; not a stable API |
 
 ### Low-level Programmatic Usage
 

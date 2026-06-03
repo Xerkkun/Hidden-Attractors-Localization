@@ -8,6 +8,29 @@ policy.
 For the complementary article-to-function comparison and explicit scientific
 boundaries, see [Scientific Scope](scientific_scope.md).
 
+## Command-Line Entry Points
+
+The installed scripts below are the commands declared in
+`version_2/pyproject.toml`. The primary stable user-facing CLI is
+`hidden-attractors`; specialized workflow commands are reproducible analysis
+interfaces that may change while the project remains in alpha. Auxiliary or
+internal commands are listed for traceability, not as stable public APIs.
+
+| Command | Group | Entry point | Documentary status |
+|---|---|---|---|
+| `hidden-attractors` | Main user command | `hidden_attractors.cli.run:main` | Primary stable user-facing CLI; implementation module is internal |
+| `hidden-attractors-protocol` | Specialized workflow | `hidden_attractors.protocol_cli:main` | Reproducible protocol interface; alpha |
+| `hidden-attractors-robustness-overlay` | Specialized workflow | `hidden_attractors.workflows.robustness_overlay:main` | Reproducible analysis workflow; alpha |
+| `hidden-attractors-sphere-controls` | Specialized workflow | `hidden_attractors.workflows.sphere_controls:main` | Reproducible analysis workflow; alpha |
+| `hidden-attractors-refined-basin` | Specialized workflow | `hidden_attractors.workflows.refined_basin:main` | Reproducible analysis workflow; alpha |
+| `hidden-attractors-strict-target-refinement` | Specialized workflow | `hidden_attractors.workflows.strict_target_refinement:main` | Reproducible analysis workflow; alpha |
+| `hidden-attractors-danca-abm-sphere-controls` | Specialized workflow | `hidden_attractors.workflows.danca_abm_sphere_controls:main` | Reproducible analysis workflow; alpha |
+| `hidden-attractors-fractional-report-run` | Specialized workflow | `hidden_attractors.workflows.fractional_report_run:main` | Reproducible report workflow; alpha |
+| `hidden-attractors-list-candidates` | Auxiliary/internal | `hidden_attractors.cli:list_candidates` | Traceability helper; not a stable API |
+| `hidden-attractors-systems` | Auxiliary/internal | `hidden_attractors.cli:systems` | Registry helper; not a stable API |
+| `hidden-attractors-workflow-requirements` | Auxiliary/internal | `hidden_attractors.cli:workflow_requirements` | Diagnostic helper; not a stable API |
+| `hidden-attractors-check-validation` | Auxiliary/internal | `hidden_attractors.validation_contract:main` | Validation diagnostic helper; not a stable API |
+
 ## Core Model
 
 | Code | Purpose | Reference source |

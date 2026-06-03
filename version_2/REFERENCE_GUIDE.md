@@ -11,6 +11,27 @@ The library separates user-facing interfaces from experimental features and inte
 * **Experimental API** (`experimental`): High-level workflows, numerical integration wrappers, and diagnostic analyzers (e.g. `hidden_attractors.workflows`, `hidden_attractors.analysis`, `hidden_attractors.plotting`).
 * **Internal API** (`internal`): Compiled C-backend bindings, parallel worker pools, and path resolution caches (e.g. `hidden_attractors.native`, `hidden_attractors.cli`).
 
+The primary stable user-facing command-line interface is the installed
+`hidden-attractors` command. The Python implementation module
+`hidden_attractors.cli` remains internal. Specialized workflow commands are
+reproducible analysis interfaces while the project is in alpha, and auxiliary
+commands are documented for traceability rather than as stable APIs.
+
+| Command | Group | Real options or usage | Documentary status |
+|---|---|---|---|
+| `hidden-attractors` | Main user command | `run -c/--config`, `run -p/--preset`, `init -e/--example`, `inspect-config -c/--config`, `inspect-config -p/--preset`, `validate-bibliography -m/--manifest --strict --json -o/--markdown-output` | Primary stable user-facing CLI; Python module is internal |
+| `hidden-attractors-protocol` | Specialized workflow | Official protocol stage interface | Reproducible protocol interface; alpha |
+| `hidden-attractors-robustness-overlay` | Specialized workflow | Robustness overlay workflow | Reproducible analysis workflow; alpha |
+| `hidden-attractors-sphere-controls` | Specialized workflow | Equilibrium-ball controls | Reproducible analysis workflow; alpha |
+| `hidden-attractors-refined-basin` | Specialized workflow | Basin refinement workflow | Reproducible analysis workflow; alpha |
+| `hidden-attractors-strict-target-refinement` | Specialized workflow | Strict target refinement workflow | Reproducible analysis workflow; alpha |
+| `hidden-attractors-danca-abm-sphere-controls` | Specialized workflow | Danca ABM sphere controls | Reproducible analysis workflow; alpha |
+| `hidden-attractors-fractional-report-run` | Specialized workflow | Fractional report generation workflow | Reproducible report workflow; alpha |
+| `hidden-attractors-list-candidates` | Auxiliary/internal | Candidate listing helper | Traceability helper; not a stable API |
+| `hidden-attractors-systems` | Auxiliary/internal | System registry inspection helper | Registry helper; not a stable API |
+| `hidden-attractors-workflow-requirements` | Auxiliary/internal | Workflow capability checks | Diagnostic helper; not a stable API |
+| `hidden-attractors-check-validation` | Auxiliary/internal | Validation-contract checks | Validation diagnostic helper; not a stable API |
+
 ---
 
 ## 2. Configuration Reference (Hierarchical YAML Schema)
