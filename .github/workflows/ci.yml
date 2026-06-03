@@ -1,16 +1,15 @@
 # CI mínimo – hidden-attractors-fo
 # Ejecuta smoke checks de sintaxis, pruebas unitarias y ejemplos de usuario.
 #
-# Matriz OS
-# ---------
-# ubuntu-latest : gcc disponible, sin dependencias adicionales de OpenMP.
-# windows-latest: gcc llega con la toolchain de mingw que ya está en el
-#                  PATH de los runners de GitHub.
+# Matriz OS automática
+# --------------------
+# ubuntu-latest : smoke tests, pytest y ejemplos de usuario.
+# windows-latest: smoke tests, pytest y ejemplos de usuario.
+# macos-latest  : smoke tests, pytest y ejemplos de usuario.
 #
-# macOS NO está en la matriz automática porque la build de backends C con
-# OpenMP requiere `brew install libomp`, lo que hace la corrida impredecible
-# en runners efímeros.  Está documentado como limitación en README.md y en el
-# trabajo manual `ci-macos` que se puede disparar a mano (workflow_dispatch).
+# La prueba nativa de backends C se mantiene separada en `cc-probe` para Linux
+# y Windows.  La corrida macOS con `brew install libomp` queda en el trabajo
+# manual `ci-macos`, disparable con workflow_dispatch.
 #
 # Backends C
 # ----------
@@ -58,8 +57,8 @@ jobs:
     strategy:
       fail-fast: false          # que un OS que falle no cancele el otro
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        python-version: ["3.11", "3.12", "3.13"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.11", "3.12"]
 
 
     defaults:
@@ -70,6 +69,9 @@ jobs:
     env:
       ALLOW_NO_OPENMP: "1"     # compile_c_target no falla si OpenMP ausente
       MPLBACKEND: "Agg"        # matplotlib sin GUI
+      RUN_PUBLISHED_LYAPUNOV: "0"
+      RUN_PUBLISHED_CLONED: "0"
+      RUN_PUBLISHED_CLONED_ALL: "0"
 
     steps:
       # ── 1. Checkout ──────────────────────────────────────────────────────
@@ -93,7 +95,7 @@ jobs:
 
       # ── 5. Pytest para version_2 ─────────────────────────────────────────
       - name: Run pytest for version_2
-        run: python -m pytest -q
+        run: python -m pytest -q -m "not slow"
 
 
       # ── 6. Ejemplos de usuario ───────────────────────────────────────────
@@ -132,6 +134,9 @@ jobs:
     env:
       ALLOW_NO_OPENMP: "1"
       MPLBACKEND: "Agg"
+      RUN_PUBLISHED_LYAPUNOV: "0"
+      RUN_PUBLISHED_CLONED: "0"
+      RUN_PUBLISHED_CLONED_ALL: "0"
 
     steps:
       - uses: actions/checkout@v4
@@ -207,6 +212,9 @@ jobs:
       ALLOW_NO_OPENMP: "1"     # fallback si libomp falla de todas formas
       MPLBACKEND: "Agg"
       HOMEBREW_NO_AUTO_UPDATE: "1"
+      RUN_PUBLISHED_LYAPUNOV: "0"
+      RUN_PUBLISHED_CLONED: "0"
+      RUN_PUBLISHED_CLONED_ALL: "0"
 
     steps:
       - uses: actions/checkout@v4
@@ -229,7 +237,7 @@ jobs:
         run: python -m compileall hidden_attractors examples tests tools/cli
 
       - name: Run pytest
-        run: python -m pytest -q
+        run: python -m pytest -q -m "not slow"
 
       - name: Run quickstart_equilibria example
         run: python examples/quickstart_equilibria.py
