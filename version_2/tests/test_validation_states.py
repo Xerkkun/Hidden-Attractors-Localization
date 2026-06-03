@@ -53,7 +53,7 @@ def test_coherence_hidden_verified_requires_evidence(valid_run_metadata):
         validate_global_report_coherence(report)
 
     report["run_metadata"] = valid_run_metadata
-    with pytest.raises(ValueError, match="requires evidence of completed sphere_tests"):
+    with pytest.raises(ValueError, match="requires completed sphere and basin-neighborhood evidence"):
         validate_global_report_coherence(report)
 
     # Adding evidence makes it pass

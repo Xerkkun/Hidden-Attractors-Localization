@@ -9,6 +9,7 @@ contribution notes.
 - [Scientific Scope](scientific_scope.md)
 - [Freeze Status](freeze_status.md)
 - [Final Freeze Checklist](final_freeze_checklist.md)
+- [Published Validation Coverage](published_validation_coverage.md)
 - [Installation](installation.md)
 - [Getting Started](getting_started.md)
 - [Examples](examples.md)

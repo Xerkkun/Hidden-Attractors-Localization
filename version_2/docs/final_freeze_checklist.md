@@ -56,3 +56,10 @@ python -m pytest tests -q
 - [x] Update `candidate_gate.py` to output both `hiddenness_evidence_level` and `chaos_evidence_level`.
 - [x] Create and run `run_final_freeze_audit.py` to generate `validation/freeze_audit/final_freeze_pytest_summary.json` with `freeze_ready=true`.
 
+## G3. Final Freeze Cleanup and Published-Validation Coverage Audit
+
+- [x] Published validation coverage matrix is complete.
+- [x] Every extracted published case is classified.
+- [x] Missing published values are not invented.
+
+

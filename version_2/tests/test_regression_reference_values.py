@@ -58,3 +58,46 @@ def test_phase_f_reference_states_remain_traceable() -> None:
     assert phase_f["status"] == "phase_F_frozen"
     assert phase_f["phase_F_frozen"] is True
 
+
+@pytest.mark.regression
+def test_kuznetsov_three_cases_are_readable() -> None:
+    data = _read("docs/published_validation_data_extraction_v1.json")
+    article = data["articles"]["kuznetsov2017_chua_integer_df"]
+    cases = {c["case_id"]: c for c in article["published_cases"]}
+    assert "kuznetsov2017_case_18_hidden_chaotic" in cases
+    assert "kuznetsov2017_case_21_hidden_chaotic_branch" in cases
+    assert "kuznetsov2017_case_21_hidden_periodic_branch" in cases
+
+
+@pytest.mark.regression
+def test_wu_arctan_parameter_equivalence() -> None:
+    # m = 0.4, n = -1.1585 in Wu paper
+    # Code uses a1 = m = 0.4 and a2 = n - m = -1.1585 - 0.4 = -1.5585
+    system = get_system("fractional_chua_arctan_wu2023")
+    params = system.parameters
+    assert params["a1"] == 0.4
+    assert params["a2"] == pytest.approx(-1.5585, abs=1e-6)
+
+
+@pytest.mark.regression
+def test_dk2018_validation_levels() -> None:
+    data = _read("docs/published_validation_data_extraction_v1.json")
+    benchmarks = data["articles"]["danca_kuznetsov2018_lyapunov_fo"]["benchmarks"]
+    levels = {b["case_id"]: b["validation_level"] for b in benchmarks}
+    assert levels["DK2018_RF_q0999"] == "quantitative"
+    assert levels["DK2018_Lorenz_q0985"] == "quantitative"
+    assert levels["DK2018_4D_nonsmooth_q098"] == "qualitative_or_experimental_only"
+
+
+@pytest.mark.regression
+def test_fischer_cloned_dynamics_system_structures() -> None:
+    data = _read("docs/published_validation_data_extraction_v1.json")
+    fischer = data["articles"]["fischer2020_cloned_dynamics"]
+    assert "jerk_system" in fischer
+    assert "financial_system" in fischer
+    assert "four_wing_system" in fischer
+    assert len(fischer["jerk_system"]["table4_lce_0_1"]) > 0
+    assert len(fischer["financial_system"]["table5_lce_0_1"]) > 0
+    assert len(fischer["four_wing_system"]["table6_lce_0_1"]) > 0
+
+

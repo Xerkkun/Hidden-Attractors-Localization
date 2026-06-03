@@ -1,0 +1,212 @@
+[
+  {
+    "article_id": "kuznetsov2017_chua_integer_df",
+    "case_id": "kuznetsov2017_case_18_hidden_chaotic",
+    "published_data_available": true,
+    "coverage_status": "executable_regression",
+    "implemented_system_id": "chua-nonsmooth",
+    "test_files": [
+      "tests/test_regression_reference_values.py",
+      "tests/test_scientific_software_algebra.py"
+    ],
+    "validation_artifacts": [
+      "validation/references/kuznetsov2017_expected.json"
+    ],
+    "missing_data": [],
+    "reason": "Complete numeric parameters, equilibria and DF seed are verified via regression test.",
+    "release_blocking": false
+  },
+  {
+    "article_id": "kuznetsov2017_chua_integer_df",
+    "case_id": "kuznetsov2017_case_21_hidden_chaotic_branch",
+    "published_data_available": true,
+    "coverage_status": "future_extension",
+    "implemented_system_id": "chua-nonsmooth",
+    "test_files": [],
+    "validation_artifacts": [],
+    "missing_data": [
+      "explicit integration time",
+      "integration step for plotted attractors",
+      "numeric Lyapunov exponents for this Chua case"
+    ],
+    "reason": "Chaotic branch reference data extracted; no numeric Lyapunov exponents reported in paper.",
+    "release_blocking": false
+  },
+  {
+    "article_id": "kuznetsov2017_chua_integer_df",
+    "case_id": "kuznetsov2017_case_21_hidden_periodic_branch",
+    "published_data_available": true,
+    "coverage_status": "future_extension",
+    "implemented_system_id": "chua-nonsmooth",
+    "test_files": [],
+    "validation_artifacts": [],
+    "missing_data": [
+      "explicit integration time",
+      "integration step for plotted attractors",
+      "numeric Lyapunov exponents for this Chua case"
+    ],
+    "reason": "Periodic branch reference data extracted; useful for testing regular/periodic classification in the future.",
+    "release_blocking": false
+  },
+  {
+    "article_id": "danca2017_fractional_hidden_attractors",
+    "case_id": "chua_fractional_saturation",
+    "published_data_available": true,
+    "coverage_status": "implemented_partial_reproduction",
+    "implemented_system_id": "chua-nonsmooth",
+    "test_files": [
+      "tests/test_scientific_software_hiddenness.py"
+    ],
+    "validation_artifacts": [
+      "validation/outputs/hiddenness_tests/"
+    ],
+    "missing_data": [
+      "exact hidden-attractor initial condition",
+      "omega0",
+      "k",
+      "a0",
+      "Lyapunov exponents"
+    ],
+    "reason": "Danca does not report exact seed or Lyapunov exponents; verified via fractional Chua Matignon stability and neighborhood controls.",
+    "release_blocking": false
+  },
+  {
+    "article_id": "danca2017_fractional_hidden_attractors",
+    "case_id": "generalized_lorenz_fractional",
+    "published_data_available": true,
+    "coverage_status": "reference_data_only",
+    "implemented_system_id": null,
+    "test_files": [],
+    "validation_artifacts": [],
+    "missing_data": [],
+    "reason": "Not implemented as built-in system in this release; kept as future Matignon and neighborhood benchmark.",
+    "release_blocking": false
+  },
+  {
+    "article_id": "danca2017_fractional_hidden_attractors",
+    "case_id": "rabinovich_fabrikant_fractional",
+    "published_data_available": true,
+    "coverage_status": "reference_data_only",
+    "implemented_system_id": null,
+    "test_files": [],
+    "validation_artifacts": [],
+    "missing_data": [],
+    "reason": "Not implemented as built-in system in this release; kept as future Matignon and Lyapunov benchmark.",
+    "release_blocking": false
+  },
+  {
+    "article_id": "wu2023_chua_fractional_arctan",
+    "case_id": "wu2023_chua_fractional_arctan",
+    "published_data_available": true,
+    "coverage_status": "implemented_partial_reproduction",
+    "implemented_system_id": "chua-arctan",
+    "test_files": [
+      "tests/test_scientific_software_algebra.py",
+      "tests/test_validation_contract.py"
+    ],
+    "validation_artifacts": [
+      "hidden_attractors/models/chua.py",
+      "hidden_attractors/systems/builtins.py"
+    ],
+    "missing_data": [
+      "omega0",
+      "k",
+      "a0",
+      "S matrix numeric"
+    ],
+    "reason": "Arctan nonlinearity is built-in. Equilibria and reported ICs are verified; parameter sweeps and complexity map are reference-only.",
+    "release_blocking": false
+  },
+  {
+    "article_id": "danca_kuznetsov2018_lyapunov_fo",
+    "case_id": "DK2018_RF_q0999",
+    "published_data_available": true,
+    "coverage_status": "implemented_partial_reproduction",
+    "implemented_system_id": null,
+    "test_files": [
+      "tests/test_regression_reference_values.py"
+    ],
+    "validation_artifacts": [
+      "validation/chaos_validation/lyapunov_methods/fractional_variational_dk2018_block_restart_abm_gs_published/validation_summary.json"
+    ],
+    "missing_data": [],
+    "reason": "Lyapunov comparison benchmark run exists but with documented block-restarted method discrepancy.",
+    "release_blocking": false
+  },
+  {
+    "article_id": "danca_kuznetsov2018_lyapunov_fo",
+    "case_id": "DK2018_Lorenz_q0985",
+    "published_data_available": true,
+    "coverage_status": "implemented_partial_reproduction",
+    "implemented_system_id": null,
+    "test_files": [
+      "tests/test_regression_reference_values.py"
+    ],
+    "validation_artifacts": [
+      "validation/chaos_validation/lyapunov_methods/fractional_variational_dk2018_block_restart_abm_gs_published/validation_summary.json"
+    ],
+    "missing_data": [],
+    "reason": "Lyapunov comparison benchmark run exists but with documented block-restarted method discrepancy.",
+    "release_blocking": false
+  },
+  {
+    "article_id": "danca_kuznetsov2018_lyapunov_fo",
+    "case_id": "DK2018_4D_nonsmooth_q098",
+    "published_data_available": true,
+    "coverage_status": "reference_data_only",
+    "implemented_system_id": null,
+    "test_files": [],
+    "validation_artifacts": [],
+    "missing_data": [],
+    "reason": "4D nonsmooth system cannot be modeled accurately without smooth approximation (discontinuous derivative); out of scope.",
+    "release_blocking": false
+  },
+  {
+    "article_id": "fischer2020_cloned_dynamics",
+    "case_id": "jerk_system",
+    "published_data_available": true,
+    "coverage_status": "implemented_partial_reproduction",
+    "implemented_system_id": null,
+    "test_files": [
+      "tests/test_regression_reference_values.py"
+    ],
+    "validation_artifacts": [
+      "validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/validation_summary.json"
+    ],
+    "missing_data": [],
+    "reason": "Published cloned dynamics reproduction attempted and documented with known discrepancies.",
+    "release_blocking": false
+  },
+  {
+    "article_id": "fischer2020_cloned_dynamics",
+    "case_id": "financial_system",
+    "published_data_available": true,
+    "coverage_status": "implemented_partial_reproduction",
+    "implemented_system_id": null,
+    "test_files": [
+      "tests/test_regression_reference_values.py"
+    ],
+    "validation_artifacts": [
+      "validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/validation_summary.json"
+    ],
+    "missing_data": [],
+    "reason": "Published cloned dynamics reproduction attempted and documented with known discrepancies.",
+    "release_blocking": false
+  },
+  {
+    "article_id": "fischer2020_cloned_dynamics",
+    "case_id": "four_wing_system",
+    "published_data_available": true,
+    "coverage_status": "implemented_partial_reproduction",
+    "implemented_system_id": null,
+    "test_files": [
+      "tests/test_regression_reference_values.py"
+    ],
+    "validation_artifacts": [
+      "validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/validation_summary.json"
+    ],
+    "missing_data": [],
+    "reason": "Published cloned dynamics reproduction attempted and documented with known discrepancies.",
+    "release_blocking": false
+  }
+]

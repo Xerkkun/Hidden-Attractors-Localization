@@ -26,12 +26,16 @@ def write_placeholder_summary(commit: str, dirty: bool, diff_hash: str | None) -
     """Write a temporary summary file to satisfy bootstrapping tests."""
     AUDIT_DIR.mkdir(parents=True, exist_ok=True)
     placeholder = {
+        "stage": "final_freeze_audit",
+        "status": "running",
+        "freeze_ready": False,
+        "reason": "audit_in_progress",
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "audit_timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "git_commit": commit,
         "working_tree_dirty": dirty,
         "git_diff_sha256": diff_hash,
         "stages": {},
-        "freeze_ready": True,
     }
     SUMMARY_PATH.write_text(json.dumps(placeholder, indent=2) + "\n", encoding="utf-8")
     if not STDOUT_PATH.exists():
@@ -101,18 +105,28 @@ def main() -> None:
     # 5. Write final files
     STDOUT_PATH.write_text(combined_log, encoding="utf-8")
 
+    freeze_ready = overall_passed and (commit != "unknown")
+    status = "passed" if freeze_ready else "failed"
+    reason = None if freeze_ready else ("git_commit_unknown" if commit == "unknown" else "pytest_stage_failed")
+
     summary_payload = {
+        "stage": "final_freeze_audit",
+        "status": status,
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "audit_timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "git_commit": commit,
         "working_tree_dirty": dirty,
         "git_diff_sha256": diff_hash,
         "stages": results,
-        "freeze_ready": overall_passed,
+        "freeze_ready": freeze_ready,
     }
+    if reason:
+        summary_payload["reason"] = reason
+
     SUMMARY_PATH.write_text(json.dumps(summary_payload, indent=2) + "\n", encoding="utf-8")
 
-    print(f"Audit completed. Freeze ready: {overall_passed}")
-    sys.exit(0 if overall_passed else 1)
+    print(f"Audit completed. Freeze ready: {freeze_ready}")
+    sys.exit(0 if freeze_ready else 1)
 
 
 if __name__ == "__main__":

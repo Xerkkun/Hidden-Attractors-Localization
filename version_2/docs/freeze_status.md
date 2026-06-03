@@ -58,3 +58,12 @@ For maximum consistency, the library separates current and legacy labels:
 - **Legacy labels** (e.g., `hidden_verified`) are supported for backward compatibility during read/parse stages and are immediately normalized to their current equivalents.
 - The obsolete keys `chaos_verified` and `hidden_verified` are completely removed from all new validation outputs and summaries to prevent misleading interpretations.
 
+## Published validation coverage matrix
+
+To prevent misleading interpretations of missing values in published literature (e.g. initial conditions, parameters, or Lyapunov exponents not reported by original authors), the library maintains a formal coverage matrix:
+- **Coverage file**: `validation/published_reference_coverage.json`
+- **Documentation**: [Published Validation Coverage](published_validation_coverage.md)
+
+This matrix maps each extracted case to its exact reproduction scope (e.g., `executable_regression`, `implemented_partial_reproduction`, `reference_data_only`, `future_extension`) without inventing missing information.
+
+

@@ -649,7 +649,7 @@ def validate_global_report_coherence(report_data: dict) -> None:
         metadata_errors = validate_hiddenness_promotion_metadata(report_data.get("run_metadata"))
         if metadata_errors:
             raise ValueError(
-                "State 'hidden_verified' requires complete reproducibility metadata: "
+                "Strong hiddenness support requires complete reproducibility metadata: "
                 + "; ".join(metadata_errors)
             )
         evidence = report_data.get("evidence", {})
@@ -684,7 +684,7 @@ def validate_global_report_coherence(report_data: dict) -> None:
 
         if not (has_sphere and has_basin):
             raise ValueError(
-                "State 'hidden_verified' requires evidence of completed sphere_tests and basin_neighborhood_tests."
+                "Strong hiddenness support requires completed sphere and basin-neighborhood evidence."
             )
 
     is_chaotic_candidate = (
