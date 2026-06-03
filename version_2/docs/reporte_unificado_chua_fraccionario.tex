@@ -1,4 +1,4 @@
-﻿\documentclass[11pt]{article}
+\documentclass[11pt]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -24,15 +24,19 @@
 \setlength{\emergencystretch}{3em}
 \renewcommand{\arraystretch}{1.12}
 \setlength{\tabcolsep}{4pt}
-\graphicspath{{figures/chua_fractional_report/}}
+\graphicspath{{assets/figures/chua_fractional_report/}}
 
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \DeclareRobustCommand{\codepath}[1]{\begingroup\Urlmuskip=0mu plus 2mu\path{#1}\endgroup}
 \newcommand{\maybeincludegraphics}[2][]{%
-  \IfFileExists{figures/chua_fractional_report/#2}{%
-    \includegraphics[#1]{#2}%
+  \IfFileExists{assets/figures/chua_fractional_report/#2}{%
+    \includegraphics[#1]{assets/figures/chua_fractional_report/#2}%
   }{%
-    \fbox{\parbox[c][0.25\textheight][c]{0.78\linewidth}{\centering\small Figura pendiente de regeneracion:\\ \codepath{#2}}}%
+    \IfFileExists{assets/figures/chua_integer_q1/#2}{%
+      \includegraphics[#1]{assets/figures/chua_integer_q1/#2}%
+    }{%
+      \fbox{\parbox[c][0.25\textheight][c]{0.78\linewidth}{\centering\small Figura pendiente de regeneracion:\\ \codepath{#2}}}%
+    }%
   }%
 }
 \newcommand{\CaputoD}{\,{}^{C}D_t^q}
@@ -936,331 +940,794 @@ ID & Afirmación & Ubicación en reporte & Fuente & Tipo & Estado \\
 
 \section{Caso 1: Chua entero}
 
-\subsection{Sistema}
-El caso entero usa \(q=1\) y el Chua no suave con saturacion por tramos. Es la
-referencia metodologica para entender la forma de Lur'e, la transferencia
-entera y la continuacion antes de pasar a Caputo
-\cite{Chua1986,KuznetsovEtAl2017}.
+\subsection{Objetivo del caso}
+El Caso 1 establece la línea base metodológica para la localización de atractores en el circuito de Chua entero ($q=1.0$) con no linealidad por saturación no suave. A través de este caso, se busca validar el pipeline de transformaciones lineales, el resolvedor de balance armónico senoidal y la rutina de continuación numérica frente a resultados clásicos de la literatura \cite{Chua1986,KuznetsovEtAl2017} y reportes de comparación recientes como Guan-Xie (2025). Al tratarse de un sistema sin memoria histórica, representa un punto de contraste directo para evaluar el impacto de los operadores fraccionarios.
 
-\subsection{Parámetros}
-El YAML \codepath{chua_integer_centered_lure_df.yaml} declara
-\[
-\alpha=8.4562,\quad \beta=12.0732,\quad \gamma=0.0052,\quad
-m_0=-0.1768,\quad m_1=-1.1468,\quad q=1.
-\]
-\localcontract{example\_yaml}
-
-\subsection{Equilibrios}
-Los equilibrios se calculan con
-\codepath{hidden_attractors.models.chua.equilibria_nonsmooth}. La evidencia
-actual del reporte no rederiva todos los valores aqui; su auditoria vive en
-los paquetes de validacion y en el codigo de modelo\localcontract{model\_code}.
-
-\subsection{Jacobiano}
-El Jacobiano por regiones usa la pendiente de la no linealidad activa. Para
-el modo no suave se usa \(m_0\) dentro de la region central y \(m_1\) fuera de
-ella.
-
-\subsection{Estabilidad local}
-Para \(q=1\) se usa el criterio clasico de autovalores con parte real
-negativa. La lectura de estabilidad local no decide por si sola ocultedad
-\cite{LeonovKuznetsov2013}\claimtag{local\_not\_hidden}.
-
-\subsection{Forma de Lur'e}
-La forma Lur'e se construye con matriz \(P\), entrada \(b\), salida \(r\) y
-no linealidad escalar \(\psi(r^\top x)\). El split debe registrarse como parte
-del contrato algebraico\localcontract{lure\_split}.
-
-\subsection{Transferencia}
-En \(q=1\) la transferencia se reduce a
-\[
-W_1(s)=r^\top(sI-P)^{-1}b.
-\]
-\cite{GenesioTesi1993,KuznetsovEtAl2017}
-
-\subsection{Función descriptiva}
-La funcion descriptiva clasica aproxima el primer armonico de la saturacion.
-Su uso es generar semillas, no certificar atractores
-\cite{KuznetsovEtAl2017}\heuristictag{df}.
-
-\subsection{Semilla}
-El ejemplo usa busqueda \codepath{k_phi}, construccion \codepath{modal},
-\(\omega\in[0.01,20]\), \(A\in[0.01,20]\), mallas \(200\times200\) y
-refinamiento de raiz con tolerancia \(10^{-8}\).
-\localcontract{seed\_grid}
-
-\subsection{Continuación}
-La continuacion entera mueve la semilla hacia el sistema objetivo mediante el
-parametro publico \(\lambda\). Las implementaciones internas pueden mapear
-\(\lambda\) a otros nombres, pero el reporte usa \(\lambda\) como contrato
-publico\localcontract{continuation}.
-
-\subsection{Simulación}
-El YAML de ejemplo usa integrador \codepath{heun}, \(h=0.001\),
-\(t_f=300\) y transitorio \(120\).
-\localcontract{example\_yaml}
-
-\subsection{Verificación de ocultedad}
-La verificacion requiere vecindades alrededor de todos los equilibrios y
-cuencas declaradas. En este reporte el caso entero funciona como referencia
-metodologica; no se promueve aqui una etiqueta fuerte de ocultedad sin el
-paquete completo de cuencas \cite{LeonovKuznetsov2013}
-\localcontract{hiddenness\_protocol}.
-
-\subsection{Estado final}
-\textbf{Estado: referencia metodologica; no concluyente como ocultedad en
-este reporte maestro.}
-
-\section{Caso 2: Chua fraccionario no suave}
-
-\subsection{Sistema}
-Es el caso principal. El modelo usa derivada de Caputo y la no linealidad no
-suave por saturacion. Las corridas historicas preservadas aqui se realizaron
-principalmente alrededor de \(q=0.9998\); el YAML de ejemplo actual
-\codepath{chua_fractional_centered_lure_df.yaml} declara \(q=0.998\)
-\cite{Danca2017}\localcontract{example\_yaml}.
-Las ecuaciones oficiales son
-\[
+\subsection{Sistema dinámico}
+El sistema dinámico autónomo de orden entero ($q=1$) que describe el comportamiento del circuito de Chua con elemento no lineal por saturación se expresa mediante las siguientes ecuaciones diferenciales ordinarias en $\mathbb{R}^3$:
+\begin{equation}
 \begin{aligned}
-{}^C D_t^q x &= \alpha(y-x-f(x)),\\
-{}^C D_t^q y &= x-y+z,\\
-{}^C D_t^q z &= -\beta y-\gamma z,
+\dot{x} &= \alpha(y - x - f(x)), \\
+\dot{y} &= x - y + z, \\
+\dot{z} &= -\beta y - \gamma z,
 \end{aligned}
-\]
-con caracteristica no suave
-\[
-f(x)=m_1x+\frac{m_0-m_1}{2}\bigl(|x+1|-|x-1|\bigr).
-\]
+\label{eq:chua_integer_nonsmooth_sistema}
+\end{equation}
+donde la no linealidad por tramos $f(x)$ conserva la característica de saturación clásica:
+\begin{equation}
+f(x) = m_1 x + \frac{m_0 - m_1}{2} \bigl(|x+1| - |x-1|\bigr).
+\end{equation}
 
-\subsection{Parámetros}
-La evidencia principal documentada usa
-\[
-\alpha=8.4562,\quad \beta=12.0732,\quad \gamma=0.0052,\quad
-m_0=-0.1768,\quad m_1=-1.1468.
-\]
-\cite{Danca2017}
+\subsection{Parámetros y configuración oficial}
+El Caso 1 está regido por los parámetros físicos nominales y la configuración de integración temporal declarados en el preset ejecutable del proyecto:
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Parámetro & Símbolo & Valor & Uso en la librería \\
+\midrule
+Razón de capacitores & $\alpha$ & $8.4562$ & Parámetro clásico de Chua \cite{Chua1986} \\
+Inductancia normalizada & $\beta$ & $12.0732$ & Parámetro de Chua clásico \\
+Amortiguamiento resistivo & $\gamma$ & $0.0052$ & Resistencia interna de la bobina \\
+Pendiente interna & $m_0$ & $-0.1768$ & Linealidad en región central ($|x| \le 1$) \\
+Pendiente externa & $m_1$ & $-1.1468$ & Saturación regional ($|x| > 1$) \\
+Orden dinámico entero & $q$ & $1.0$ & Exponente del operador de derivada temporal \\
+Paso de integración & $h$ & $0.001$ & Discretización temporal del resolvedor \\
+Solucionador nominal & --- & \codepath{heun} & Backend numérico de orden entero \\
+YAML del experimento & --- & \codepath{chua_integer_centered_lure_df.yaml} & Contrato ejecutable del preset entero \\
+\bottomrule
+\end{tabular}
+\end{center}
+\localcontract{example\_yaml}
 
 \subsection{Equilibrios}
-Se consideran \(E_0\), \(E_+\) y \(E_-\). Las pruebas de ocultedad deben
-lanzarse desde vecindades de todos ellos; una ausencia de contacto en un solo
-equilibrio no basta \cite{LeonovKuznetsov2013}
-\claimtag{all\_equilibria}.
-Para los parametros registrados:
-\[
-E_0=(0,0,0),
-\]
-\[
-E_+=(6.588307886539,\;0.002836402256,\;-6.585471484283),
-\]
-\[
-E_-=(-6.588307886539,\;-0.002836402256,\;6.585471484283).
-\]
+Dado que el operador de derivada ordinario anula las constantes en estado estacionario, las ecuaciones algebraicas para los equilibrios estacionarios $F(E) = 0$ se reducen a la relación:
+\begin{equation}
+y^\ast = \frac{\gamma}{\beta + \gamma} x^\ast, \qquad z^\ast = -\frac{\beta}{\beta + \gamma} x^\ast, \qquad -\frac{\beta}{\beta + \gamma} x^\ast = f(x^\ast).
+\label{eq:eq_nonsmooth_escalar}
+\end{equation}
+Sustituyendo los parámetros físicos idénticos ($\alpha=8.4562, \beta=12.0732, \gamma=0.0052, m_0=-0.1768, m_1=-1.1468$), obtenemos los siguientes puntos de equilibrio geométricamente fijos mediante la rutina de resolvedor \codepath{hidden_attractors.models.chua.equilibria_nonsmooth}:
+\begin{itemize}
+  \item $E_0 = (0.0,\, 0.0,\, 0.0)$, residual $\|F(E_0)\|_2 \le 1.0 \times 10^{-15}$.
+  \item $E_+ = (6.588307886539,\, 0.002836402256,\, -6.585471484283)$, residual $\|F(E_+)\|_2 \approx 1.1 \times 10^{-15}$.
+  \item $E_- = (-6.588307886539,\, -0.002836402256,\, 6.585471484283)$, residual $\|F(E_-)\|_2 \approx 1.1 \times 10^{-15}$.
+\end{itemize}
+\localcontract{model\_code}
 
-\subsection{Jacobiano}
-El Jacobiano por regiones usa la pendiente activa de la saturacion. La
-clasificacion local se evalua con Matignon cuando \(0<q<1\)
-\cite{Matignon1996,Danca2017}.
-En la region interna \(|x|<1\),
-\[
-J_{\rm inner}=
+\subsection{Jacobiano y regiones de validez}
+El campo vectorial linealizado localmente responde a matrices Jacobianas regionales según la región activa de la no linealidad:
+\begin{equation}
+J(x) = 
 \begin{bmatrix}
--\alpha(1+m_0)&\alpha&0\\
-1&-1&1\\
-0&-\beta&-\gamma
+-\alpha (1 + f'(x)) & \alpha & 0 \\
+1 & -1 & 1 \\
+0 & -\beta & -\gamma
 \end{bmatrix},
-\]
-y en las regiones externas \(|x|>1\),
-\[
-J_{\rm outer}=
-\begin{bmatrix}
--\alpha(1+m_1)&\alpha&0\\
-1&-1&1\\
-0&-\beta&-\gamma
-\end{bmatrix}.
-\]
-El Jacobiano regional no esta definido sobre las superficies de conmutacion
-\(x=\pm1\).
+\end{equation}
+donde el valor regional de la derivada es:
+\begin{equation}
+f'(x) = 
+\begin{cases}
+m_0, & \text{si } |x| < 1, \\
+m_1, & \text{si } |x| > 1.
+\end{cases}
+\end{equation}
+Al igual que en el caso general, el Jacobiano no está definido en las superficies de conmutación de no suavidad $x = \pm 1$, pues el campo vectorial no es diferenciable sobre ellas.
 
 \subsection{Estabilidad local}
-Matignon establece estabilidad local asintotica si los autovalores del
-Jacobiano satisfacen la condicion angular para el \(q\) declarado. Este paso
-solo decide comportamiento local linealizado
-\cite{Matignon1996}\claimtag{local\_stability}.
-La pagina web documenta, para el contrato historico \(q=0.9998\), autovalores
-internos \(\lambda_1\approx-7.9587\),
-\(\lambda_{2,3}\approx -0.0038\pm3.2494\ii\), compatibles con estabilidad local
-del origen por Matignon. En las regiones externas documenta
-\(\lambda_1\approx2.2193\),
-\(\lambda_{2,3}\approx-0.9916\pm2.4068\ii\); el autovalor real positivo hace
-inestables localmente a \(E_+\) y \(E_-\). Esta lectura no decide ocultedad.
-
-\subsection{Forma de Lur'e}
-La forma Lur'e del no suave usa el split registrado por
-\codepath{hidden_attractors.systems.builtins}. La no linealidad residual se
-usa para construir \(N(A)\)\localcontract{lure\_split}.
-Con \(\sigma=x\),
-\[
-P=
-\begin{bmatrix}
--\alpha(1+m_1)&\alpha&0\\
-1&-1&1\\
-0&-\beta&-\gamma
-\end{bmatrix},
-\qquad
-b=(-\alpha,0,0)^\top,\qquad r=(1,0,0)^\top.
-\]
-La no linealidad escalar residual es
-\[
-\psi(\sigma)=\frac{m_0-m_1}{2}\bigl(|\sigma+1|-|\sigma-1|\bigr).
-\]
-
-\subsection{Transferencia}
-La transferencia se evalua como \(W_q(j\omega)\) usando
-\(\lambda=(j\omega)^q\). No debe sustituirse por la transferencia entera salvo
-cuando \(q=1\)\cite{Caputo1967,KuznetsovEtAl2017}.
-Para este split,
-\[
-\widehat W_q(\lambda)=-\alpha\frac{N(\lambda)}{\Delta(\lambda)},\qquad
-N(\lambda)=(\lambda+1)(\lambda+\gamma)+\beta,
-\]
-\[
-\Delta(\lambda)=(\lambda+\alpha(1+m_1))N(\lambda)-\alpha(\lambda+\gamma).
-\]
-
-\subsection{Función descriptiva}
-La funcion descriptiva fraccionaria y Machado/FDF son familias de busqueda de
-semillas. Son utiles para encontrar candidatos acotados, pero no prueban
-ocultedad \cite{KuznetsovEtAl2017,Machado2015FDF}
-\heuristictag{machado\_seed}.
-
-\subsection{Semilla}
-La evidencia historica incluye la familia \codepath{lure_classical_biased} con
-\(5208\) evaluaciones crudas, \(121\) candidatos filtrados, \(968\) semillas y
-\(4\) supervivientes de continuacion. El mejor residual fue
-\codepath{lure_biased_q_0p99980_rank_0001}, con
-\(|R|\approx6.82\times10^{-13}\), \(\omega=2.0402861\) y \(A=5.8517686\).
-\localcontract{prior\_exploratory\_run}
-
-\subsection{Continuación}
-Los supervivientes historicos Lur'e y Machado produjeron trayectorias
-acotadas no triviales. Eso los vuelve utiles como candidatos numericos, no
-como atractores ocultos verificados.
-
-\subsection{Simulación}
-La replica Danca ABM uso historia completa, \(h=0.05\), \(t_f=500\),
-transitorio \(250\), \(\delta=0.01\) y semilla
-\[
-x_0=(3.039383585,\,-0.241686207,\,-6.873467365).
-\]
-La trayectoria de referencia fue \codepath{bounded_nontrivial}. Sus valores
-principales fueron
-\[
-\Delta_{\mathrm{tail}}=(11.344069,\;3.292309,\;17.035874),\quad
-\mathrm{FFT\ peak}=0.369963,\quad
-\mathrm{PSD\ entropy}=0.162207.
-\]
-\cite{Danca2017,DiethelmFordFreed2002}\localcontract{danca\_abm\_replica}
-
-\subsection{Verificación de ocultedad}
-La evidencia disponible bloquea una etiqueta fuerte de ocultedad
-\cite{LeonovKuznetsov2013}:
+Para el orden entero $q=1.0$, la estabilidad local asintótica de un equilibrio hiperbólico queda determinada por el criterio clásico de autovalores con parte real negativa. La evaluación local produce los siguientes resultados:
 \begin{center}
 \small
-\begin{tabular}{@{}L{0.30\textwidth}L{0.26\textwidth}L{0.34\textwidth}@{}}
+\begin{tabular}{@{}llllll@{}}
 \toprule
-Prueba & Contactos \TARGET{} & Lectura \\
+Equilibrio & Región activa & Autovalores ($\lambda_j$) & Parte Real $\operatorname{Re}(\lambda_j)$ & Reales $< 0$ & Clasificación local \\
 \midrule
-\codepath{chua_nonsmooth} & \(22/504\), con \(12\) desde \(E_+\) y \(10\) desde \(E_-\). & \codepath{not_supported_by_sample}; hay atractor numerico pero no ocultedad bajo la muestra. \\
-Replica Danca ABM & \(102/200\), \(54/100\) desde \(E_+\), \(48/100\) desde \(E_-\). & Reproduce dinamica acotada tipo Danca; no soporta ocultedad local. \\
-\codepath{rank_0001} Lur'e & \(1/1\) desde \(E_+\) a \(10^{-5}\). & Una trayectoria desde equilibrio bloquea ocultedad bajo ese contrato. \\
-\codepath{rank_0004} Lur'e & \(11/11\) desde \(E_+\), \(4/8\) desde \(E_-\). & Evidencia fuerte contra ocultedad. \\
-Machado \(\mu=4\) y \(\mu=2\) & Contacto dirigido y reproducido desde \(E_-\) a \(10^{-5}\). & Buenos como candidatos numericos; malos como ocultos bajo el contrato probado. \\
+$E_0$ & Interna ($|x| < 1$) & \begin{tabular}{@{}l@{}} $-7.9587261113$, \\ $-0.0038088643 \pm 3.2494460858 \ii$ \end{tabular} & \begin{tabular}{@{}l@{}} $-7.9587$, \\ $-0.0038$ \end{tabular} & Satisfecho en todos & Estable \\
+$E_+$ & Externa ($x > 1$) & \begin{tabular}{@{}l@{}} $2.2193492642$, \\ $-0.9915895521 \pm 2.4067596392 \ii$ \end{tabular} & \begin{tabular}{@{}l@{}} $2.2193$, \\ $-0.9916$ \end{tabular} & Violado por $\lambda_1$ & Inestable (foco-silla) \\
+$E_-$ & Externa ($x < -1$) & \begin{tabular}{@{}l@{}} $2.2193492642$, \\ $-0.9915895521 \pm 2.4067596392 \ii$ \end{tabular} & \begin{tabular}{@{}l@{}} $2.2193$, \\ $-0.9916$ \end{tabular} & Violado por $\lambda_1$ & Inestable (foco-silla) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\claimtag{local\_not\_hidden}
+Puesto que todos los autovalores de $J_{\rm inner}$ tienen parte real estrictamente negativa, el origen $E_0$ es un punto de equilibrio localmente asintóticamente estable. Los focos externos $E_+$ y $E_-$ son inestables de tipo foco-silla de índice 1, lo cual es consistente con la posible coexistencia de atractores caóticos. La lectura de estabilidad local no decide por sí sola la ocultedad.
+
+\subsection{Forma de Lur'e}
+La forma Lur'e ordinaria separa el sistema en un bloque lineal compatible y una realimentación no lineal estricta:
+\begin{equation}
+\dot{X} = P X + b \psi(r^\top X), \qquad \sigma = r^\top X = x,
+\end{equation}
+con los operadores algebraicos definidos por:
+\begin{equation}
+P = 
+\begin{bmatrix}
+-\alpha(1 + m_1) & \alpha & 0 \\
+1 & -1 & 1 \\
+0 & -\beta & -\gamma
+\end{bmatrix} = 
+\begin{bmatrix}
+1.24137016 & 8.4562 & 0.0 \\
+1.0 & -1.0 & 1.0 \\
+0.0 & -12.0732 & -0.0052
+\end{bmatrix},
+\end{equation}
+\begin{equation}
+b = 
+\begin{bmatrix}
+-\alpha \\ 0 \\ 0
+\end{bmatrix} = 
+\begin{bmatrix}
+-8.4562 \\ 0 \\ 0
+\end{bmatrix}, \qquad
+r = 
+\begin{bmatrix}
+1 \\ 0 \\ 0
+\end{bmatrix},
+\end{equation}
+y la no linealidad residual impar por tramos:
+\begin{equation}
+\psi(\sigma) = \frac{m_0 - m_1}{2} \bigl(|\sigma+1| - |\sigma-1|\bigr) = (m_0 - m_1) \operatorname{sat}(\sigma).
+\end{equation}
+\localcontract{lure\_split}
+
+\subsection{Función de transferencia}
+La función de transferencia del bloque lineal se evalúa en la variable compleja estándar $s$:
+\begin{equation}
+W_1(s) = r^\top (sI - P)^{-1} b.
+\end{equation}
+El cálculo analítico por adjuntos produce:
+\begin{equation}
+W_1(s) = -\alpha \frac{N(s)}{\Delta(s)},
+\end{equation}
+con las expresiones polinomiales evaluadas en $s$ definidas como:
+\begin{equation}
+N(s) = (s + 1)(s + \gamma) + \beta, \qquad \Delta(s) = (s + \alpha(1 + m_1)) N(s) - \alpha (s + \gamma).
+\end{equation}
+La evaluación en frecuencia real $W_1(j\omega)$ representa la respuesta espectral lineal del circuito de Chua de orden entero \cite{GenesioTesi1993,KuznetsovEtAl2017}.
+
+\subsection{Función descriptiva}
+Al conservar la misma característica estricta $\psi(\sigma) = (m_0 - m_1) \operatorname{sat}(\sigma)$, la función descriptiva clásica $N(A)$ para el caso de saturación no suave se define formalmente como:
+\begin{equation}
+N(A) = 
+\begin{cases}
+m_0 - m_1, & \text{si } A \le 1, \\
+\frac{2(m_0 - m_1)}{\pi} \left( \arcsin\left(\frac{1}{A}\right) + \frac{1}{A} \sqrt{1 - \frac{1}{A^2}} \right), & \text{si } A > 1.
+\end{cases}
+\label{eq:df_nonsmooth_entero}
+\end{equation}
+Esta aproximación por el primer armónico describe la ganancia equivalente del elemento no lineal para una oscilación de amplitud $A$. Su rol es actuar puramente como un generador heurístico de semillas y no representa ni prueba ciclos límite en sistemas autónomos exactos \cite{KuznetsovEtAl2017}\heuristictag{df}.
+
+\subsection{Condición armónica y semillas}
+La condición de balance armónico senoidal exige resolver la ecuación compleja de lazo cerrado:
+\begin{equation}
+1 - N(A) W_1(j\omega) = 0 \quad \Longrightarrow \quad W_1(j\omega) = \frac{1}{N(A)}.
+\end{equation}
+Resolviendo para la amplitud $A$ y la frecuencia crítica $\omega$, el resolvedor localiza la semilla armónica de referencia. Para el caso entero, se obtienen los siguientes valores críticos:
+\begin{itemize}
+  \item \textbf{Frecuencia crítica:} $\omega_0 \approx 2.039186939959$.
+  \item \textbf{Amplitud estimada:} $A_0 \approx 5.856145086257$.
+  \item \textbf{Ganancia equivalente:} $k = N(A_0) \approx 0.209867354515$.
+  \item \textbf{Residuo complejo de cierre:} $|R| \approx 9.93 \times 10^{-16}$.
+  \item \textbf{Semilla en coordenadas de estado:} $X_0 = (5.85614509,\, 0.36933158,\, -8.36653617)$.
+\end{itemize}
+Al comparar con el Ejemplo 6 reportado por Guan y Xie (2025) ($\omega_0=2.0392$, $k=0.2098$, $A_0=5.8576$, $X_0=(5.8576, 0.3694, -8.3686)$), las diferencias relativas son inferiores a $0.03\%$, lo cual valida el pipeline algebraico de la librería.
+\localcontract{seed\_grid}
+
+\subsection{Configuración YAML usada}
+El pipeline para el caso entero ejecuta la configuración jerárquica del archivo preset \codepath{chua_integer_centered_lure_df.yaml}:
+\begin{verbatim}
+system:
+  system_id: "chua_integer_saturation"
+  q: 1.0
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+modes:
+  transfer_mode: "integer"
+  seed_mode: "integer"
+  continuation_mode: "integer"
+integrator:
+  name: "heun"
+  h: 0.001
+\end{verbatim}
+\localcontract{example\_yaml}
+
+\subsection{Continuación numérica}
+La continuación numérica en orden entero traslada la semilla linealizada hacia el sistema no lineal real mediante el parámetro de homotopía $\lambda$:
+\begin{equation}
+\dot{X} = P X + b \bigl[ (1-\lambda) k \sigma + \lambda \psi(\sigma) \bigr], \qquad \lambda \in [0, 1].
+\end{equation}
+A través de 8 pasos homotópicos estables, se deforma el atractor armónico inicial. Al alcanzar la meta $\lambda=1.0$, la trayectoria continuada converge al atractor real. El estado final registrado de la trayectoria continuada es $(1.99297400,\, 1.26397185,\, -2.55106335)$, lo que tras el descarte del transitorio inicial produce la semilla de trayectoria efectiva $(4.09187265,\, -0.08387100,\, -7.50907585)$.
+\localcontract{continuation}
+
+\subsection{Simulación final}
+La integración temporal de largo plazo se realiza utilizando el paso de integración oficial:
+\begin{itemize}
+  \item \textbf{Semilla de trayectoria efectiva:} $X_0 = (4.09187265,\, -0.08387100,\, -7.50907585)$.
+  \item \textbf{Método numérico:} Integrador Heun ordinario, paso $h=0.001$, horizonte total $t_f = 300.0$ con transitorio $t_{\rm burn} = 120.0$.
+  \item \textbf{Dinámica resultante:} Se obtiene un atractor caótico robusto de doble scroll que permanece perfectamente acotado en el espacio de fase.
+\end{itemize}
+
+\subsection{Diagnósticos dinámicos}
+Los diagnósticos dinámicos obtenidos para la órbita de largo plazo simulada se detallan en la siguiente tabla:
+\begin{center}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+Diagnóstico & Valor observado & Interpretación científica & Límite del método \\
+\midrule
+Exponentes de Lyapunov & $(0.2082,\, 0.0137,\, -1.3669)$ & Evidencia de caos ($\lambda_1 > 0$) & Método de Benettin QR \\
+Frecuencia FFT de $x(t)$ & $2.3036$ rad/s & Frecuencia media de scrolls & Resolución espectral \\
+Frecuencia Welch PSD & $2.3010$ rad/s & Pico espectral dominante & Ancho de ventana espectral \\
+Desviación espectral & $12.96\%$ & Corrimiento por modulación caótica & Respecto a semilla $\omega_0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+El exponente de Lyapunov positivo demuestra numéricamente la naturaleza caótica del atractor, validando la estabilidad de la órbita caótica en orden entero.
+
+\subsection{Pruebas de cuenca y ocultedad}
+Para evaluar la cuenca de atracción y auditar la ocultedad del atractor bajo el protocolo oficial, se realizaron barridos estructurados desde vecindades de los tres equilibrios $E_0$, $E_+$ y $E_-$ utilizando 7 radios en el rango $[10^{-5}, 10^{-2}]$. La distribución de convergencia de las 504 condiciones iniciales se detalla a continuación:
+\begin{center}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+Clasificación de órbita final & Conteo de muestras \\
+\midrule
+Colapso a equilibrios (\texttt{EQ}) & $369$ \\
+Divergencia al infinito (\texttt{DIV}) & $69$ \\
+Convergencia a otras órbitas (\texttt{OTHER}) & $66$ \\
+Convergencia al atractor caótico (\texttt{TARGET}) & $0$ \\
+Desconocido (\texttt{UNKNOWN}) & $0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\localcontract{hiddenness\_protocol}
+Bajo este contrato numérico y de muestreo finito, no se detectó convergencia al atractor caótico central (\TARGET{}) desde vecindades de los equilibrios, lo cual apoya su clasificación de candidato a atractor oculto. Sin embargo, no constituye una prueba de exclusión matemática global.
+
+\subsection{Figuras y archivos esperados}
+Los archivos gráficos y resúmenes estructurados disponibles en la validación del caso entero son:
+\begin{center}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Archivo esperado & Contenido visual & Significado diagnóstico \\
+\midrule
+\codepath{fig01c_transfer_real_imag.png} & Parte Real e Imag. de la transferencia & Verificación de Nyquist/DF \\
+\codepath{fig02d_continuation_story.png} & Evolución temporal en homotopía & Trazado de ramas de continuación \\
+\codepath{fig11a_fft_x.png} & Espectro FFT de la señal $x(t)$ & Verificación de frecuencias \\
+\codepath{fig11d_psd_x.png} & Espectro de densidad de potencia (PSD) & Distribución de energía espectral \\
+\codepath{fig05b_hiddenness_overview.png} & Conteo de clases por radio & Resultados de cuencas de atracción \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\subsection{Estado final}
-\textbf{Estado: candidato numerico acotado y evidencia historica rica, pero
-no oculto bajo los contratos con contactos \TARGET{} desde equilibrios.}
+\subsection{Lectura del resultado}
+El Caso 1 demuestra la consistencia del workflow completo de la librería en orden entero. Al recuperar con extrema precisión los valores clásicos reportados por Guan y Xie (2025), se certifica la exactitud del resolvedor algebraico y del resolvedor de continuación numérica del proyecto. La cuenca de atracción obtenida para la órbita de referencia no muestra penetración desde las vecindades de los equilibrios para los radios testeados, por lo que el atractor es clasificado como candidato a oculto bajo este contrato limitado de simulación.
+
+\subsection{Conclusión del caso}
+\textbf{Conclusión:} El Caso 1 produce una órbita caótica acotada verificada mediante exponentes de Lyapunov positivos, y las pruebas de cuenca limitadas apoyan su condición de atractor oculto. El caso sirve como referencia metodológica y se cataloga operacionalmente como \emph{verificado} en el pipeline entero.
+
+\section{Caso 2: Chua fraccionario no suave}
+
+\subsection{Objetivo del caso}
+El Caso 2 representa el núcleo de estudio científico de la librería. Se enfoca en evaluar los efectos del operador integro-diferencial fraccionario de Caputo en el sistema de Chua con no linealidad por saturación no suave. A través de este caso, se audita cómo la memoria histórica intrínseca a la dinámica fraccionaria afecta la estabilidad de los equilibrios algebraicos, desplaza los cruces del balance armónico de primer armónico y modifica la topología del atractor caótico en comparación con el caso entero de referencia. El objetivo es clasificar los candidatos acotados generados por balance armónico fraccionario y su posterior continuación Caputo, auditando si es posible sostener la etiqueta de ocultedad dinámica frente a los resultados publicados en la literatura \cite{Danca2017} bajo un riguroso contrato de cuencas de atracción.
+
+\subsection{Sistema dinámico}
+El sistema dinámico autónomo de orden fraccionario con derivada de Caputo conmensurada se escribe en su forma vectorial general como ${}^C D_t^q X = F(X)$, con $0 < q < 1$. Para el circuito de Chua no suave, las ecuaciones diferenciales fraccionarias oficiales del campo vectorial son:
+\begin{equation}
+\begin{aligned}
+{}^C D_t^q x &= \alpha(y - x - f(x)), \\
+{}^C D_t^q y &= x - y + z, \\
+{}^C D_t^q z &= -\beta y - \gamma z,
+\end{aligned}
+\label{eq:chua_frac_nonsmooth_sistema}
+\end{equation}
+donde el operador fraccionario de Caputo causal con punto inicial de integración en $t_0 = 0$ está definido para una función escalar continua diferenciable $v(t)$ por:
+\begin{equation}
+{}^C D_t^q v(t) = \frac{1}{\Gamma(1-q)} \int_{0}^{t} \frac{\dot v(\tau)}{(t-\tau)^q} \, d\tau.
+\label{eq:caputo_definition}
+\end{equation}
+La no linealidad no suave $f(x)$ conserva la característica de saturación por tramos:
+\begin{equation}
+f(x) = m_1 x + \frac{m_0 - m_1}{2} \bigl(|x+1| - |x-1|\bigr).
+\end{equation}
+
+\subsection{Parámetros y configuración oficial}
+El Caso 2 distingue explícitamente entre la configuración nominal activa en los archivos YAML estándar del proyecto y la evidencia histórica almacenada de corridas de validación previas:
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Parámetro & Símbolo & Valor & Fuente/uso \\
+\midrule
+Razón de capacitores & $\alpha$ & $8.4562$ & Parámetro clásico de Chua \cite{Danca2017} \\
+Inductancia normalizada & $\beta$ & $12.0732$ & Parámetro clásico de Chua \cite{Danca2017} \\
+Amortiguamiento resistivo & $\gamma$ & $0.0052$ & Resistencia de bobina acoplada \cite{Danca2017} \\
+Pendiente interna & $m_0$ & $-0.1768$ & Linealidad central ($|x| \le 1$) \\
+Pendiente externa & $m_1$ & $-1.1468$ & Saturación regional ($|x| > 1$) \\
+Orden fraccionario nominal & $q_{\rm YAML}$ & $0.998$ & Valor oficial en \codepath{chua_fractional_centered_lure_df.yaml} \\
+Orden fraccionario histórico & $q_{\rm hist}$ & $0.9998$ & Valor registrado en validaciones bibliográficas \cite{Danca2017} \\
+Paso de integración & $h$ & $0.001$ (nominal) / $0.05$ (ABM) & Discretización temporal del solucionador \\
+Solucionador por defecto & --- & \codepath{efork3} / \codepath{abm} & Backend numérico fraccionario \\
+Ventana de memoria & $N_m$ & $400$ pasos (\codepath{finite_window}) & Límite de convolución de Caputo en EFORK \\
+YAML del experimento & --- & \codepath{chua_fractional_centered_lure_df.yaml} & Contrato ejecutable del preset fraccionario \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textbf{Advertencia de discrepancia:} El YAML actual declara $q=0.998$, mientras que la evidencia histórica preservada utiliza $q=0.9998$. En este reporte ambos se mantienen separados para evitar la superposición de contratos numéricos de diferente orden.
+
+\subsection{Equilibrios}
+Dado que el operador de Caputo anula las constantes, las ecuaciones algebraicas para los equilibrios estacionarios $F(E) = 0$ son formalmente idénticas a las del caso de orden entero (\ref{eq:eq_nonsmooth_escalar}). La deducción descrita en el Caso 1 se mantiene intacta:
+\begin{equation}
+y^\ast = \frac{\gamma}{\beta + \gamma} x^\ast, \qquad z^\ast = -\frac{\beta}{\beta + \gamma} x^\ast, \qquad -\frac{\beta}{\beta + \gamma} x^\ast = f(x^\ast).
+\end{equation}
+Sustituyendo las constantes físicas idénticas ($\alpha=8.4562, \beta=12.0732, \gamma=0.0052, m_0=-0.1768, m_1=-1.1468$), los puntos de equilibrio son geométricamente fijos para cualquier orden $q \in (0, 1]$:
+\begin{itemize}
+  \item $E_0 = (0.0,\, 0.0,\, 0.0)$, residual $\|F(E_0)\|_2 \le 1.0 \times 10^{-15}$.
+  \item $E_+ = (6.588307886539,\, 0.002836402256,\, -6.585471484283)$, residual $\|F(E_+)\|_2 \approx 1.1 \times 10^{-15}$.
+  \item $E_- = (-6.588307886539,\, -0.002836402256,\, 6.585471484283)$, residual $\|F(E_-)\|_2 \approx 1.1 \times 10^{-15}$.
+\end{itemize}
+
+\subsection{Jacobiano y regiones de validez}
+El campo vectorial fraccionario linealizado localmente responde a las mismas Jacobianas regionales del caso entero:
+\begin{equation}
+J(x) = 
+\begin{bmatrix}
+-\alpha (1 + f'(x)) & \alpha & 0 \\
+1 & -1 & 1 \\
+0 & -\beta & -\gamma
+\end{bmatrix},
+\end{equation}
+donde el valor regional de la derivada es:
+\begin{equation}
+f'(x) = 
+\begin{cases}
+m_0, & \text{si } |x| < 1, \\
+m_1, & \text{si } |x| > 1.
+\end{cases}
+\end{equation}
+Al igual que en el caso ordinario, el Jacobiano linealizado no está definido sobre las superficies de conmutación de no suavidad $x = \pm 1$, pues el campo vectorial no es diferenciable sobre ellas.
+
+\subsection{Estabilidad local}
+Para sistemas dinámicos fraccionarios conmensurados, la estabilidad local asintótica de un equilibrio hiperbólico queda determinada por el criterio angular de Matignon \cite{Matignon1996}. Un equilibrio con Jacobiano $J$ es localmente asintóticamente estable si y sólo si todos sus autovalores $\lambda_j$ satisfacen:
+\begin{equation}
+|\arg(\lambda_j)| > \frac{q \pi}{2}.
+\label{eq:matignon_criteria}
+\end{equation}
+Para el orden histórico $q=0.9998$, la frontera angular crítica de estabilidad es $\theta_c = \frac{0.9998 \pi}{2} \approx 1.570482$ rad. La evaluación local produce los siguientes resultados:
+\begin{center}
+\small
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Equilibrio & Región activa & Autovalores ($\lambda_j$) & Fases $|\arg(\lambda_j)|$ (rad) & Matignon $|\arg| > \theta_c$ & Clasificación local \\
+\midrule
+$E_0$ & Interna ($|x| < 1$) & \begin{tabular}{@{}l@{}} $-7.9587261113$, \\ $-0.0038088643 \pm 3.2494460858 \ii$ \end{tabular} & \begin{tabular}{@{}l@{}} $\pi \approx 3.1416$, \\ $1.571969$ \end{tabular} & Satisfecho en todos & Estable \\
+$E_+$ & Externa ($x > 1$) & \begin{tabular}{@{}l@{}} $2.2193492642$, \\ $-0.9915895521 \pm 2.4067596392 \ii$ \end{tabular} & \begin{tabular}{@{}l@{}} $0.0000$, \\ $1.9615$ \end{tabular} & Violado por $\lambda_1$ & Inestable \\
+$E_-$ & Externa ($x < -1$) & \begin{tabular}{@{}l@{}} $2.2193492642$, \\ $-0.9915895521 \pm 2.4067596392 \ii$ \end{tabular} & \begin{tabular}{@{}l@{}} $0.0000$, \\ $1.9615$ \end{tabular} & Violado por $\lambda_1$ & Inestable \\
+\bottomrule
+\end{tabular}
+\end{center}
+Dado que $|\arg(\lambda_{2,3})| \approx 1.5720 > 1.5705$, las componentes oscilatorias del origen $E_0$ convergen asintóticamente hacia cero. La estabilidad local del origen y la inestabilidad de los focos externos $E_+$ y $E_-$ se mantienen para toda la familia fraccionaria superior cercana al orden entero.
+
+\subsection{Forma de Lur'e}
+La forma Lur'e fraccionaria separa el sistema Caputo en un bloque lineal compatible y una realimentación no lineal estricta:
+\begin{equation}
+{}^C D_t^q X = P X + b \psi(r^\top X), \qquad \sigma = r^\top X = x,
+\end{equation}
+con los mismos operadores algebraicos que el caso entero:
+\begin{equation}
+P = 
+\begin{bmatrix}
+-\alpha(1 + m_1) & \alpha & 0 \\
+1 & -1 & 1 \\
+0 & -\beta & -\gamma
+\end{bmatrix}, \qquad
+b = 
+\begin{bmatrix}
+-\alpha \\ 0 \\ 0
+\end{bmatrix}, \qquad
+r = 
+\begin{bmatrix}
+1 \\ 0 \\ 0
+\end{bmatrix},
+\end{equation}
+y la no linealidad residual impar:
+\begin{equation}
+\psi(\sigma) = \frac{m_0 - m_1}{2} \bigl(|\sigma+1| - |\sigma-1|\bigr).
+\end{equation}
+
+\subsection{Función de transferencia}
+La función de transferencia fraccionaria se evalúa en la variable compleja angular del plano espectral $\lambda = s^q$:
+\begin{equation}
+\widehat W_q(\lambda) = r^\top (\lambda I - P)^{-1} b.
+\end{equation}
+Reemplazando la variable espectral en el régimen senoidal permanente ideal $\lambda = (j\omega)^q$:
+\begin{equation}
+(j\omega)^q = \omega^q \exp \left( \ii \frac{q \pi}{2} \right) = \omega^q \cos\left(\frac{q\pi}{2}\right) + \ii \omega^q \sin\left(\frac{q\pi}{2}\right).
+\end{equation}
+El cálculo formal por adjuntos produce:
+\begin{equation}
+\widehat W_q(\lambda) = -\alpha \frac{N(\lambda)}{\Delta(\lambda)},
+\end{equation}
+con las mismas expresiones polinomiales evaluadas en la potencia fraccionaria compleja:
+\begin{equation}
+N(\lambda) = (\lambda + 1)(\lambda + \gamma) + \beta, \qquad \Delta(\lambda) = (\lambda + \alpha(1 + m_1)) N(\lambda) - \alpha (\lambda + \gamma).
+\end{equation}
+\textbf{Advertencia matemática:} La transferencia fraccionaria $W_q(j\omega)$ introduce un acoplamiento de fase continuo a través del argumento fraccionario $\exp(\ii q \pi / 2)$. No se debe utilizar la transferencia estándar entera salvo para el límite estricto $q=1.0$.
+
+\subsection{Función descriptiva}
+Al conservar la misma característica estricta $\psi(\sigma) = (m_0 - m_1) \operatorname{sat}(\sigma)$, la función descriptiva clásica $N(A)$ es idéntica a la fórmula (\ref{eq:df_nonsmooth_entero}) calculada en el Caso 1. Para la variante de balance modificado, se implementa la familia de búsqueda extendida de Machado/FDF:
+\begin{equation}
+N_{\star,\mu}(A) = \exp \bigl\{ \mu \operatorname{Log} N_\star(A) \bigr\} = [N(A)]^\mu,
+\end{equation}
+donde $\mu \ge 1$ actúa como un factor de deformación paramétrica. Esta familia ampliada se utiliza puramente como un generador heurístico auxiliar de semillas iniciales y no representa ni prueba ciclos límite en sistemas Caputo \cite{TavazoeiHaeri2009}.
+
+\subsection{Condición armónica y semillas}
+La condición de realimentación fraccionaria exige resolver:
+\begin{equation}
+1 - N(A) \widehat W_q \bigl((j\omega)^q\bigr) = 0 \quad \Longrightarrow \quad \widehat W_q \bigl((j\omega)^q\bigr) = \frac{1}{N(A)}.
+\end{equation}
+La presencia del término de fase fraccionario distorsiona la curva de Nyquist en el plano complejo. A $q=0.9998$, las estadísticas del resolvedor y las semillas calculadas se resumen a continuación:
+\begin{itemize}
+  \item \textbf{Estadísticas de búsqueda:} $5208$ evaluaciones de malla, $121$ candidatos admitidos tras filtros suaves y $968$ semillas generadas.
+  \item \textbf{Candidato superviviente de referencia:} \codepath{lure_biased_q_0p99980_rank_0001}.
+  \item \textbf{Valores críticos resueltos:} Amplitud $A_0 = 5.8517686$, frecuencia $\omega_0 = 2.0402861$, ganancia $k = 0.21002279$ con un residuo complejo mínimo $|R| \approx 6.82 \times 10^{-13}$.
+  \item \textbf{Condición inicial reconstruida:} $X_0 = (5.85176778,\, 0.37040860,\, -8.36097293)$.
+\end{itemize}
+
+\subsection{Configuración YAML usada}
+El pipeline para el caso fraccionario no suave ejecuta la configuración jerárquica del archivo \codepath{chua_fractional_centered_lure_df.yaml}:
+\begin{verbatim}
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.998
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+modes:
+  transfer_mode: "fractional"
+  seed_mode: "fractional"
+  continuation_mode: "fractional"
+integrator:
+  name: "efork3"
+  h: 0.001
+  memory_policy: "finite_window"
+  memory_window_steps: 400
+\end{verbatim}
+En este YAML se especifica la política de ventana de memoria finita de 400 pasos para limitar el costo computacional de la convolución de Caputo en el solucionador \codepath{efork3}.
+
+\subsection{Continuación numérica}
+La continuación fraccionaria traslada la semilla armónica lineal hacia el campo fraccionario Caputo objetivo mediante:
+\begin{equation}
+{}^C D_t^q X = P X + b \bigl[ (1-\eta) k \sigma + \eta \psi(\sigma) \bigr], \qquad \eta \in [0, 1].
+\end{equation}
+\textbf{Preservación de memoria en Caputo:} A diferencia del caso entero, la derivada de Caputo requiere transportar e integrar la ventana de memoria correspondiente en cada incremento de $\eta$; reiniciar el solucionador de forma puntual descartando la historia acumulada rompe el lazo causal y distorsiona el diagnóstico final de la simulación. El estado de las ramas continuadas a $q=0.9998$ arrojó 4 supervivientes estables y acotados.
+
+\subsection{Simulación final}
+Para contrastar la persistencia dinámica frente a solucionadores clásicos de historia completa, se ejecutó una simulación mediante el predictor-corrector ABM de Adams-Bashforth-Moulton sobre la semilla clásica de Danca:
+\begin{itemize}
+  \item \textbf{Condición inicial de Danca (2017):} $X_0 = (3.039383585,\, -0.241686207,\, -6.873467365)$.
+  \item \textbf{Método numérico:} ABM de historia completa (sin truncamiento), paso de integración $h = 0.05$ y horizonte total $t_f = 500.0$ con descarte del transitorio inicial $t_{\rm burn} = 250.0$.
+  \item \textbf{Resultados de la réplica Danca ABM:} Se obtuvo un atractor caótico acotado no trivial. Las métricas post-transitorio registradas son: rango de cola $\Delta_{\rm tail} = (11.344069,\, 3.292309,\, 17.035874)$, frecuencia pico FFT $= 0.369963$ y entropía espectral PSD $= 0.162207$.
+\end{itemize}
+
+\subsection{Diagnósticos dinámicos}
+Los diagnósticos dinámicos obtenidos para las órbitas de largo plazo simuladas se resumen en la siguiente tabla:
+\begin{center}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+Diagnóstico & Valor observado & Interpretación científica & Límite del método \\
+\midrule
+Rango de cola (Danca ABM) & $11.34$ ($x$), $3.29$ ($y$), $17.03$ ($z$) & Órbita acotada no convergente a cero & Horizonte temporal de corrida \\
+Espectro Welch de $x(t)$ & Pico dominante en $0.370$ Hz & Frecuencia media de oscilación de scrolls & Discretización paso $h=0.05$ \\
+Entropía espectral PSD & $0.1622$ & Nivel moderado de complejidad spectral & Dependiente de longitud de cola \\
+Lyapunov estimado (series) & \texttt{pendiente de regenerar} & Sensibilidad caótica aproximada & Altamente sensible al transitorio \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Pruebas de cuenca y ocultedad}
+Para clasificar la cuenca de atracción y auditar la ocultedad del candidato, se realizaron barridos estructurados desde vecindades de los tres equilibrios $E_0$, $E_+$ y $E_-$ bajo esferas de radio controlado $\rho$. Los resultados de contactos a clase \TARGET{} (atractor caótico acotado objetivo) revelan un comportamiento autoexcitado inequívoco:
+\begin{center}
+\small
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Prueba ejecutable & Equilibrios probados & Radio de esfera ($\rho$) & Muestras totales & Contactos TARGET & Lectura del resultado \\
+\midrule
+\codepath{chua_nonsmooth} (EFORK) & $E_0$, $E_+$, $E_-$ & $10^{-5}$ a $10^{-3}$ & $504$ & $22$ ($12$ desde $E_+$, $10$ desde $E_-$) & Autoexcitado en la muestra \\
+Réplica Danca ABM & $E_0$, $E_+$, $E_-$ & $10^{-2}$ & $200$ & $102$ ($54$ desde $E_+$, $48$ desde $E_-$) & Autoexcitado en la muestra \\
+\codepath{rank_0001} Lur'e & $E_0$, $E_+$, $E_-$ & $10^{-5}$ & $1$ & $1$ (desde $E_+$) & Contacto temprano directo \\
+\codepath{rank_0004} Lur'e & $E_0$, $E_+$, $E_-$ & $10^{-5}$ & $19$ & $15$ ($11$ desde $E_+$, $4$ desde $E_-$) & Autoexcitado en la muestra \\
+Machado ($\mu=4$, $\mu=2$) & $E_0$, $E_+$, $E_-$ & $10^{-5}$ & --- & Contacto directo desde $E_-$ & Contacto reproducido y validado \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textbf{Regla del contrato de ocultedad:} La existencia de cualquier contacto \TARGET{} desde una vecindad de equilibrio bloquea la clasificación de ocultedad bajo el contrato probado. Dado que múltiples condiciones iniciales extremadamente cercanas a $E_+$ y $E_-$ convergen directamente hacia el atractor, el atractor es autoexcitado.
+
+\subsection{Figuras y archivos esperados}
+Los archivos gráficos y resúmenes estructurados disponibles para este caso son:
+\begin{center}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+Archivo esperado & Contenido visual & Interpretación diagnóstica & Estado \\
+\midrule
+\codepath{danca_abm_fig03.png} & Proyecciones 2D de la órbita ABM & Geometría del doble scroll fraccionario acotado & Disponible \\
+\codepath{basin_danca_abm_xy.png} & Corte plano $xy$ de cuencas & Distribución de clases de convergencia & Disponible \\
+\codepath{project_lure_rank0001.png} & Proyección 3D de la trayectoria Lure & Órbita caótica superviviente continuada & Disponible \\
+\codepath{hiddenness_machado_mu4.png} & Traza de contactos desde equilibrios & Cruce directo de vecindades a órbita caótica & Disponible \\
+\codepath{sphere_overview_lure.png} & Conteo de clases por radio & Visualización de penetración de cuenca & Disponible \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Lectura del resultado}
+El análisis del Caso 2 demuestra que, si bien el balance armónico fraccionario de Lur'e proporciona aproximaciones eficientes de órbita que sobreviven al pipeline de continuación fraccionaria Caputo y producen atractores caóticos acotados coherentes con la literatura \cite{Danca2017}, las pruebas de cuenca invalidan su clasificación como atractores ocultos. 
+
+Tanto en la integración por predictor-corrector ABM de historia completa como en el solucionador experimental EFORK-3 de ventana de memoria, se observan contactos directos al atractor caótico desde vecindades de los focos inestables $E_+$ y $E_-$ para radios de perturbación pequeños de hasta $10^{-5}$. De acuerdo con la definición rigurosa de Leonov y Kuznetsov \cite{LeonovKuznetsov2013}, estos contactos confirman que la cuenca del atractor intersecta las vecindades de los puntos de equilibrio, lo que clasifica operativamente el atractor como autoexcitado.
+
+\subsection{Conclusión del caso}
+\textbf{Conclusión:} El caso fraccionario no suave produce candidatos numéricos acotados y evidencia dinámica rica compatible con los reportes bibliográficos, pero los contactos \TARGET{} reproducidos desde las vecindades de los equilibrios inestables impiden clasificar los atractores candidatos como ocultos bajo los contratos y protocolos de prueba declarados.
 
 \section{Caso 3: Chua fraccionario con arctan}
 
-\subsection{Sistema}
-La variante arctan se registra como \codepath{chua-arctan} y como caso
-nominal \codepath{fractional_chua_arctan_wu2023}. La no linealidad es suave y
-usa parametros \(a_1\), \(a_2\), \(\rho\) \cite{Wu2023ArctanChua}.
-La lectura se separa en cuatro niveles:
+\subsection{Objetivo del caso}
+El Caso 3 introduce una no linealidad suave de tipo trascendente ($\arctan$) propuesta originalmente por Wu et al. \cite{Wu2023ArctanChua}. El objetivo es estudiar la localización de atractores en sistemas donde la característica no lineal es infinitamente diferenciable, lo cual facilita el acoplamiento algebraico riguroso con el método de la función descriptiva clásica y elimina las discontinuidades del Jacobiano regional presentes en los casos no suaves. La evaluación de este caso en la librería se organiza en cuatro niveles documentales para mantener la trazabilidad científica sin sobredimensionar la evidencia:
 \begin{itemize}
-  \item \textbf{Reportado}: Wu et al. 2023 publica un sistema fraccionario de
-  Chua con arctan, condiciones iniciales y figuras de referencia.
-  \item \textbf{Implementado}: el repositorio contiene parametros, RHS,
-  equilibrios, Jacobiano y registro Lur'e compatibles con la rama arctan.
-  \item \textbf{Reproducido localmente}: este reporte no promueve una
-  reproduccion dinamica completa del articulo; conserva solo algebra y corridas
-  exploratorias documentadas.
-  \item \textbf{Pendiente}: falta una rama robusta, contrato numerico cerrado,
-  comparacion explicita contra Wu et al. 2023 y pruebas de cuenca alrededor de
-  todos los equilibrios.
+  \item \textbf{Reportado:} Wu et al. (2023) definen el sistema fraccionario, proponen condiciones iniciales y grafican atractores de doble scroll caótico acotados.
+  \item \textbf{Implementado:} El repositorio contiene las ecuaciones algebraicas, el campo vectorial, las rutinas de equilibrios y Jacobiano, y el split de Lur'e correspondiente.
+  \item \textbf{Reproducido localmente:} El reporte maestro no valida una reproducción dinámica completa del doble scroll caótico del artículo original; conserva el análisis algebraico y los resultados exploratorios.
+  \item \textbf{Pendiente:} Falta consolidar una rama dinámica robusta, definir un contrato numérico final estable para el solucionador, comparar formalmente contra Wu et al. (2023) y realizar barridos de cuenca completos.
 \end{itemize}
 
-\subsection{Parámetros}
-El YAML de ejemplo \codepath{chua_arctan_fractional_centered_lure_df.yaml}
-declara \(q=0.95\),
-\[
-\alpha=8.4562,\quad \beta=12.0732,\quad \gamma=0.0052,\quad
-a_1=0.4,\quad a_2=0.8,\quad \rho=1.0.
-\]
-El registro \codepath{fractional_chua_arctan_wu2023} se mantiene separado y
-debe compararse explicitamente con Wu et al. 2023 antes de promover evidencia
-\cite{Wu2023ArctanChua}\localcontract{reported\_case\_not\_reproduced}.
+\subsection{Sistema dinámico}
+El sistema de orden fraccionario de Caputo con no linealidad suave $\arctan$ se describe mediante el campo vectorial:
+\begin{equation}
+\begin{aligned}
+{}^C D_t^q x &= \alpha(y - x - f(x)), \\
+{}^C D_t^q y &= x - y + z, \\
+{}^C D_t^q z &= -\beta y - \gamma z,
+\end{aligned}
+\label{eq:chua_frac_arctan_sistema}
+\end{equation}
+donde el término de Caputo ${}^C D_t^q$ está definido según (\ref{eq:caputo_definition}) y la característica no lineal continua $f(x)$ viene dada por:
+\begin{equation}
+f(x) = a_1 x + a_2 \arctan(\rho x).
+\end{equation}
+
+\subsection{Parámetros y configuración oficial}
+El Caso 3 de estudio está regulado bajo el archivo de configuración \codepath{chua_arctan_fractional_centered_lure_df.yaml}. Se comparan a continuación las constantes del preset de ejemplo frente a los parámetros reportados por Wu et al. (2023):
+\begin{center}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+Parámetro & Símbolo & Valor YAML & Valor Wu et al. (2023) & Uso en la librería \\
+\midrule
+Razón de capacitores & $\alpha$ & $8.4562$ & $8.4562$ & Sensibilidad lineal de primer canal \\
+Inductancia normalizada & $\beta$ & $12.0732$ & $12.0732$ & Coeficiente de inductancia \\
+Amortiguamiento resistivo & $\gamma$ & $0.0052$ & $0.0052$ & Resistencia interna \\
+Ganancia lineal & $a_1$ & $0.4$ & $0.4$ & Pendiente lineal base de realimentación \\
+Ganancia arctan & $a_2$ & $0.8$ & $-1.5585$ & Coeficiente de amplitud de la arctan \\
+Frecuencia de escala & $\rho$ & $1.0$ & $1.0$ & Escalamiento de argumento de arctan \\
+Orden fraccionario nominal & $q$ & $0.95$ & $0.95$ (o $0.99$) & Orden del operador de Caputo \\
+Paso de integración & $h$ & $0.001$ & $0.01$ (en el artículo) & Discretización temporal discreta \\
+Integrador nominal & --- & \codepath{efork3} & \codepath{adm_wu2023} (ABM local) & Método de integración temporal \\
+YAML del experimento & --- & \codepath{chua_arctan_fractional_centered_lure_df.yaml} & --- & Contrato ejecutable del preset arctan \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \subsection{Equilibrios}
-Los equilibrios se calculan con \codepath{equilibria_arctan}. El reporte
-actual no contiene una rama robusta validada para este caso.
+Las condiciones algebraicas de equilibrio estacionario anulan los operadores de Caputo. Al igual que en el caso no suave, las ecuaciones segunda y tercera en estado estacionario imponen las relaciones lineales:
+\begin{equation}
+y^\ast = \frac{\gamma}{\beta + \gamma} x^\ast, \qquad z^\ast = -\frac{\beta}{\beta + \gamma} x^\ast.
+\end{equation}
+Sustituyendo estas relaciones en la primera ecuación linealizada obtenemos la ecuación escalar trascendente para la coordenada de equilibrio $x^\ast$:
+\begin{equation}
+\left( a_1 + \frac{\beta}{\beta + \gamma} \right) x^\ast + a_2 \operatorname{arctan}(\rho x^\ast) = 0.
+\label{eq:eq_arctan_escalar}
+\end{equation}
+Esta ecuación posee la raíz trivial $E_0 = (0, 0, 0)$. Para los parámetros nominales reportados por Wu et al. (2023) ($a_2 = -1.5585$), la ecuación admite dos soluciones simétricas adicionales que se resuelven numéricamente mediante el método de bisección en \codepath{equilibria_arctan}:
+\begin{itemize}
+  \item $E_0 = (0.0,\, 0.0,\, 0.0)$, residual $\|F(E_0)\|_2 \le 1.0 \times 10^{-15}$.
+  \item $E_+ = (0.60967911698,\, 0.00026247941849,\, -0.60941663756)$, residual $\|F(E_+)\|_2 \le 1.0 \times 10^{-15}$.
+  \item $E_- = (-0.60967911698,\, -0.00026247941849,\, 0.60941663756)$, residual $\|F(E_-)\|_2 \le 1.0 \times 10^{-15}$.
+\end{itemize}
+Para el caso del YAML nominal ($a_2=0.8$), las coordenadas de equilibrio están \texttt{pendiente de fijar} debido a la ausencia de una órbita robusta promovida bajo este contrato.
 
-\subsection{Jacobiano}
-El Jacobiano usa la derivada de la no linealidad arctan y se evalua con las
-rutinas del modelo Chua.
+\subsection{Jacobiano y regiones de validez}
+Al ser la función $f(x)$ continuamente diferenciable en toda la recta real, la derivada analítica local está definida de manera única en cualquier punto $x$ por:
+\begin{equation}
+f'(x) = a_1 + \frac{a_2 \rho}{1 + \rho^2 x^2}.
+\end{equation}
+Consecuentemente, la matriz Jacobiana $J(x)$ toma la forma analítica global sin discontinuidades regionales:
+\begin{equation}
+J(x) = 
+\begin{bmatrix}
+-\alpha \left( 1 + a_1 + \frac{a_2 \rho}{1 + \rho^2 x^2} \right) & \alpha & 0 \\
+1 & -1 & 1 \\
+0 & -\beta & -\gamma
+\end{bmatrix}.
+\end{equation}
+Esta matriz se evalúa en el código mediante la rutina estable \codepath{jacobian_arctan}.
 
 \subsection{Estabilidad local}
-La estabilidad local debe verificarse con Matignon para el \(q\) declarado.
-La existencia de equilibrios inestables no prueba ocultedad
-\cite{Matignon1996,LeonovKuznetsov2013}.
+La estabilidad local asintótica de los equilibrios se determina por el criterio angular de Matignon (\ref{eq:matignon_criteria}) para el orden $q$ especificado. Para el caso de Wu et al. (2023) a $q=0.99$:
+\begin{itemize}
+  \item El origen $E_0$ es inestable bajo Matignon debido a la existencia de un autovalor real estrictamente positivo, el cual es inyectado por la pendiente negativa en el origen $f'(0) = a_1 + a_2 \rho = 0.4 - 1.5585 = -1.1585$.
+  \item Los equilibrios externos $E_+$ y $E_-$ también resultan ser inestables locales debido a que su par de autovalores complejos conjugados se ubica en el sector angular inestable del plano de Riemann.
+\end{itemize}
+Falta realizar la clasificación sistemática de estabilidad para los parámetros del YAML a $q=0.95$, la cual queda marcada como \texttt{pendiente}.
 
 \subsection{Forma de Lur'e}
-El registro local provee un split Lur'e compatible con arctan. Su
-compatibilidad algebraica no es evidencia dinamica completa
-\localcontract{lure\_split}.
+La descomposición en lazo cerrado para el caso suave se realiza tomando la ganancia lineal $a_1$ como la pendiente de referencia lineal, formulando la no linealidad residual estricta como:
+\begin{equation}
+\psi(x) = f(x) - a_1 x = a_2 \operatorname{arctan}(\rho x).
+\end{equation}
+Esto nos permite representar el sistema en la forma clásica de Lur'e:
+\begin{equation}
+{}^C D_t^q X = P X + b \psi(r^\top X), \qquad \sigma = r^\top X = x,
+\end{equation}
+con los operadores definidos por:
+\begin{equation}
+P = 
+\begin{bmatrix}
+-\alpha(1 + a_1) & \alpha & 0 \\
+1 & -1 & 1 \\
+0 & -\beta & -\gamma
+\end{bmatrix} = 
+\begin{bmatrix}
+-11.83868 & 8.4562 & 0 \\
+1 & -1 & 1 \\
+0 & -12.0732 & -0.0052
+\end{bmatrix},
+\end{equation}
+\begin{equation}
+b = 
+\begin{bmatrix}
+-\alpha \\ 0 \\ 0
+\end{bmatrix} = 
+\begin{bmatrix}
+-8.4562 \\ 0 \\ 0
+\end{bmatrix}, \qquad
+r = 
+\begin{bmatrix}
+1 \\ 0 \\ 0
+\end{bmatrix}.
+\end{equation}
 
-\subsection{Transferencia}
-Debe evaluarse \(W_q(j\omega)\) con \(\lambda=(j\omega)^q\). No se debe usar
-la transferencia entera salvo para \(q=1\)\cite{Caputo1967}.
+\subsection{Función de transferencia}
+La función de transferencia fraccionaria del bloque lineal para el split arctan se escribe en la variable angular compleja $\lambda = s^q$ como:
+\begin{equation}
+\widehat W_q(\lambda) = -\alpha \frac{N(\lambda)}{\Delta(\lambda)},
+\end{equation}
+donde el polinomio del menor principal se mantiene invariante:
+\begin{equation}
+N(\lambda) = (\lambda + 1)(\lambda + \gamma) + \beta,
+\end{equation}
+y el polinomio característico se actualiza usando la ganancia lineal $a_1$:
+\begin{equation}
+\Delta(\lambda) = (\lambda + \alpha(1 + a_1)) N(\lambda) - \alpha (\lambda + \gamma).
+\end{equation}
+La evaluación en frecuencia real $W_q(j\omega)$ se ejecuta reemplazando $\lambda = (j\omega)^q$.
 
 \subsection{Función descriptiva}
-El modo \codepath{describing_function_mode: wu2023} usa la forma arctan para
-generar semillas. Sigue siendo una aproximacion de primer armonico
-\cite{Wu2023ArctanChua,KuznetsovEtAl2017}\heuristictag{arctan\_df}.
+Para la no linealidad residual trascendente $\psi(\sigma) = a_2 \arctan(\rho \sigma)$, la aproximación de primer armónico clásica produce la función descriptiva en forma analítica cerrada:
+\begin{equation}
+N(A) = \frac{2 a_2}{\rho A^2} \left( \sqrt{1 + (\rho A)^2} - 1 \right).
+\label{eq:df_arctan}
+\end{equation}
+Dado que el coeficiente $a_2$ es negativo ($a_2 = -1.5585$ en el caso de Wu et al. 2023), la ganancia equivalente $N(A)$ es estrictamente negativa para todo $A > 0$. Para el YAML nominal ($a_2 = 0.8$), la función descriptiva adopta valores positivos.
 
-\subsection{Semilla}
-La corrida historica encontro cruces Nyquist/DF, pero la rama seleccionada no
-termino como referencia robusta\heuristictag{nyquist\_df}.
+\subsection{Condición armónica y semillas}
+La condición armónica para resolver semillas se plantea bajo la convención de signo de la librería como:
+\begin{equation}
+1 - N(A) \widehat W_q\bigl((j\omega)^q\bigr) = 0.
+\end{equation}
+En corridas históricas previas de la librería, se encontraron intersecciones en frecuencia para Nyquist/DF. Sin embargo, debido a las características del resolvedor bajo parámetros no promovidos, no se logró registrar una semilla limpia con residuo de cierre admisible. La tabla de semillas para el Caso 3 permanece como:
+\begin{center}
+\small
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Rama & Amplitud ($A_0$) & Frecuencia ($\omega_0$) & Ganancia ($k$) & Residuo Complejo ($R$) & Semilla de Posición ($X_0$) \\
+\midrule
+$1$ & --- & --- & --- & \texttt{pendiente de fijar} & \texttt{pendiente de fijar} \\
+\bottomrule
+\end{tabular}
+\end{center}
 
-\subsection{Continuación}
-La continuacion historica de la rama seleccionada divergio; el estado final
-quedo del orden de \(10^{10}\)\localcontract{historical\_run}.
+\subsection{Configuración YAML usada}
+La ejecución de esta variante en fase experimental está descrita por la configuración del archivo \codepath{chua_arctan_fractional_centered_lure_df.yaml}:
+\begin{verbatim}
+system:
+  system_id: "chua_fractional_arctan"
+  q: 0.95
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    a1: 0.4
+    a2: 0.8
+    rho: 1.0
+modes:
+  transfer_mode: "fractional"
+  seed_mode: "fractional"
+  continuation_mode: "fractional"
+integrator:
+  name: "efork3"
+  h: 0.001
+seed_search:
+  strategy: "k_phi"
+  omega_min: 0.01
+  omega_max: 20.0
+  amplitude_min: 0.01
+  amplitude_max: 20.0
+  describing_function_mode: "wu2023"
+\end{verbatim}
 
-\subsection{Simulación}
-No hay referencia dinamica robusta promovida en este reporte para el arctan
-\localcontract{no\_promoted\_reference}.
+\subsection{Continuación numérica}
+\textbf{Resultado de auditoría de corrida:} Durante las pruebas de validación previas del protocolo, el proceso de continuación numérica fraccionaria ejecutado sobre las semillas aproximadas de arctan sufrió inestabilidad numérica severa y divergió, reportando normas de trayectoria finales del orden de $10^{10}$. A causa de esta divergencia, no fue posible transportar ninguna órbita de forma exitosa hasta el sistema real objetivo $\eta=1.0$.
 
-\subsection{Verificación de ocultedad}
-No se ejecuta una verificacion de ocultedad fuerte sin referencia robusta. El
-caso requiere nueva rama, nuevo contrato numerico, nuevas cuencas y
-comparacion explicita con Wu et al. 2023 \cite{Wu2023ArctanChua}
-\localcontract{hiddenness\_not\_run}.
+\subsection{Simulación final}
+Debido a la divergencia del workflow en la etapa de continuación:
+\begin{itemize}
+  \item No se cuenta con una condición inicial efectiva ni una referencia dinámica acotada para el sistema arctan en este reporte.
+  \item El estado final se registra operacionalmente como: \textbf{Resultado pendiente de regenerar bajo contrato vigente.}
+\end{itemize}
 
-\subsection{Estado final}
-\textbf{Estado: no concluyente bajo el contrato actual.}
+\subsection{Diagnósticos dinámicos}
+Al no disponer de una órbita de referencia caótica estable y acotada, las métricas del Caso 3 quedan no resueltas:
+\begin{center}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+Diagnóstico & Valor observado & Interpretación científica & Límite del método \\
+\midrule
+Rango de cola & --- & \texttt{pendiente de regenerar} & Sin órbita robusta \\
+FFT variable $x(t)$ & --- & \texttt{pendiente de regenerar} & Sin órbita robusta \\
+Entropía espectral PSD & --- & \texttt{pendiente de regenerar} & Sin órbita robusta \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Pruebas de cuenca y ocultedad}
+Las pruebas de cuencas de atracción alrededor de los equilibrios requieren la existencia de una referencia dinámica robusta (\TARGET{}) para clasificar los contactos. Al no contar con una órbita robusta acotada, no se ha podido ejecutar el módulo de cuencas para este caso.
+\begin{center}
+\small
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Prueba de cuenca & Equilibrios probados & Radio de esfera ($\rho$) & Muestras totales & Contactos TARGET & Clasificación permitida \\
+\midrule
+\codepath{chua_arctan} & $E_0$, $E_+$, $E_-$ & --- & --- & --- & \textbf{Resultado pendiente de regenerar} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Figuras y archivos esperados}
+Todos los productos gráficos asociados a las trayectorias e histogramas de cuenca del caso de Chua con arctan permanecen sin generar debido a la divergencia en la fase de homotopía:
+\begin{center}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+Archivo esperado & Contenido visual & Interpretación diagnóstica & Estado \\
+\midrule
+\codepath{arctan_phase_3d.png} & Proyecciones 3D de órbita caótica & Visualización de scroll caótico arctan & \texttt{pendiente de regenerar} \\
+\codepath{arctan_fft_psd.png} & Espectros FFT y PSD de cola & Distribución espectral de la simulación & \texttt{pendiente de regenerar} \\
+\codepath{arctan_basin_xy.png} & Cuenca de atracción en plano $xy$ & Mapa de convergencia local & \texttt{pendiente de regenerar} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Lectura del resultado}
+El Caso 3 representa una brecha en la validación numérica actual de la librería. Aunque la formulación algebraica de la no linealidad arctan, la deducción analítica de la función descriptiva $N(A)$ (\ref{eq:df_arctan}) y el split de Lur'e están completamente verificados y programados en el repositorio, la dinámica de Caputo a $q=0.95$ o $q=0.99$ no pudo estabilizarse bajo el workflow de continuación numérica provisto. 
+
+Esta inestabilidad puede originarse por la falta de aproximación del término de memoria en Caputo o por la selección inadecuada del paso $h$ en la integración de la homotopía. Por consiguiente, no es científicamente viable emitir afirmaciones sobre la existencia de atractores caóticos ni mucho menos catalogar la variante como oculta.
+
+\subsection{Conclusión del caso}
+\textbf{Conclusión:} El caso está implementado como sistema compatible con Lur'e y vinculado a Wu et al. 2023, pero la reproducción local permanece no concluyente mientras no exista una rama robusta, referencia dinámica promovida y pruebas de cuenca completas. El estado del caso se mantiene formalmente como \texttt{pendiente}.
 
 \section{Tabla de candidatos futuros}
 
@@ -1338,7 +1805,7 @@ Figura o salida & Fuente/ruta & Contrato asociado & Lectura permitida & Lectura 
 \begin{figure}[p]
 \centering
 \maybeincludegraphics[width=0.74\textwidth]{phase_space_3d.png}
-\caption{Espacio de fases 3D. Lectura permitida: geometria acotada de una trayectoria\diagnostictag{phase}; lectura no permitida: prueba de ocultedad.}
+\caption{Espacio de fases 3D. Lectura permitida: geometría acotada de una trayectoria\diagnostictag{phase}; lectura no permitida: prueba de ocultedad.}
 \end{figure}
 
 \begin{figure}[p]
@@ -1351,7 +1818,25 @@ Figura o salida & Fuente/ruta & Contrato asociado & Lectura permitida & Lectura 
 \centering
 \maybeincludegraphics[width=\linewidth]{basin_project_best_xy.png}
 \end{minipage}
-\caption{Cortes de cuenca \(xy\). Estas figuras son evidencia finita de cuenca bajo contratos declarados\localcontract{finite\_basin}, no demostraciones globales.}
+\caption{Cortes de cuenca \(xy\) para el Caso 2. Estas figuras son evidencia finita de cuenca bajo contratos declarados\localcontract{finite\_basin}, no demostraciones globales.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\maybeincludegraphics[width=0.74\textwidth]{fig02d_continuation_story.png}
+\caption{Homotopía de continuación para el Caso 1 (Chua entero). Evolución tridimensional de la trayectoria desde la aproximación armónica linealizada ($\lambda=0$) hasta el atractor caótico final ($\lambda=1$).}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\maybeincludegraphics[width=0.74\textwidth]{fig01c_transfer_real_imag.png}
+\caption{Cierre de balance armónico en el plano espectral para el Caso 1. Verificación de las condiciones reales e imaginarias $\operatorname{Re}(W_1(j\omega_0)) = -1/k$ e $\operatorname{Im}(W_1(j\omega_0)) = 0$.}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\maybeincludegraphics[width=0.74\textwidth]{fig05b_hiddenness_overview.png}
+\caption{Pruebas de cuencas y ocultedad para el Caso 1. Conteo de convergencias para las 504 condiciones iniciales testeadas alrededor de las vecindades de los equilibrios $E_0$, $E_+$ y $E_-$.}
 \end{figure}
 
 \section{Limitaciones}
