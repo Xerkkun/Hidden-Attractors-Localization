@@ -1,4 +1,4 @@
-"""Phase F closes as structured diagnostics without false certification."""
+"""Phase F freezes as a structured finite-time chaos-evidence layer."""
 
 from __future__ import annotations
 
@@ -34,15 +34,13 @@ def test_phase_f_runner_writes_closure_artifacts() -> None:
     assert (OUTPUT / "phase_F_closure_rules.json").is_file()
 
 
-def test_phase_f_closes_only_as_non_certifying_diagnostics() -> None:
+def test_phase_f_freezes_as_finite_time_evidence_layer() -> None:
     summary = json.loads(SUMMARY.read_text(encoding="utf-8"))
-    assert summary["status"] == "F_closed_as_structured_diagnostics_not_chaos_certification"
-    assert summary["strict_chaos_validation_closed"] is False
+    assert summary["status"] == "phase_F_frozen"
+    assert summary["phase_F_frozen"] is True
+    assert summary["evidence_layer"] == "finite_time_chaos_evidence"
+    assert summary["available_evidence_level"] == "chaos_evidence_inconclusive"
     assert summary["structured_diagnostics_closed"] is True
-    assert summary["certifications"] == {
-        "chaos_verified": False,
-        "hiddenness_verified": False,
-    }
 
 
 def test_routes_a_and_b_are_assessed_not_discarded_or_promoted() -> None:
@@ -87,8 +85,8 @@ def test_scope_statement_documents_methods_discrepancies_and_boundaries() -> Non
         "published_benchmarks_pending_discrepancy",
         "F4",
         "F5",
-        "does not certify mathematical chaos",
-        "does not certify hiddenness",
+        "finite-time chaos-evidence layer",
+        "sampled-neighborhood candidate gate",
         "assessed_with_documented_validation_gap",
         "assessed_with_documented_discrepancies",
     ):

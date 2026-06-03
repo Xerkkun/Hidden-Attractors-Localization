@@ -243,7 +243,7 @@ def test_complete_neighborhood_evidence_without_metadata_is_only_compatible():
     )
     assert res["hidden_verified"] is False
     assert res["promotion_verdict"] == "compatible_with_hiddenness_under_tested_radii"
-    assert "run_metadata is required for hidden_verified" in res["metadata_validation_errors"]
+    assert "run_metadata is required for a strong candidate promotion" in res["metadata_validation_errors"]
 
 
 # 11. Test config loader default values

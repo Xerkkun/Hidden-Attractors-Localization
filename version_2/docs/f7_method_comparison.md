@@ -2,7 +2,7 @@
 
 F7 compares Lyapunov lanes and F5 diagnostics by configured case. It records
 applicability, missing spectra, validation status, consensus, discrepancies,
-and methodological limitations. It does not certify chaos or hiddenness.
+and methodological limitations.
 
 Run:
 
@@ -56,7 +56,4 @@ limitations:
 validation/chaos_validation/method_comparison/method_discrepancy_report.md
 ```
 
-```text
-chaos_verified: false
-hidden_verified: false
-```
+F7 supplies comparison evidence to the frozen finite-time Phase F layer.

@@ -2,7 +2,7 @@
 
 F5 assembles four complementary finite-time numerical diagnostics:
 boundedness, the 0-1 test, FFT/PSD, and Poincare sections. The combined output
-supports candidate characterization. It does not certify chaos or hiddenness.
+supports candidate characterization under the recorded finite-time contract.
 
 Run the shared-cache pipeline with:
 
@@ -24,8 +24,7 @@ R_observed = sup_{t in [T_b,T]} ||X(t)||
 
 The output also records coordinate spans, final norm, finite fraction, and a
 late-versus-early norm growth ratio. `bounded_candidate` means that the sampled
-post-transient trajectory remained numerically bounded. It is not an
-asymptotic proof and does not prove chaos.
+post-transient trajectory remained numerically bounded.
 
 ## F5.2 Zero-One Test
 
@@ -46,9 +45,9 @@ The interpretation thresholds are:
 | otherwise | `zero_one_inconclusive` |
 
 Fischer et al. use the 0-1 statistic together with Lyapunov evidence. F5 keeps
-that boundary: a high 0-1 statistic alone does not certify deterministic
-chaos. White noise is included as an explicit limitation because it may also
-produce a high statistic.
+that boundary: a high 0-1 statistic is interpreted with complementary
+diagnostics. White noise is included as an explicit limitation because it may
+also produce a high statistic.
 
 ## F5.3 FFT And PSD
 
@@ -68,8 +67,7 @@ quasiperiodic_candidate
 spectral_inconclusive
 ```
 
-FFT/PSD describes spectral geometry. Broadband noise is not deterministic
-chaos, and a periodic-looking spectrum does not prove a periodic orbit.
+FFT/PSD describes spectral geometry and contributes complementary evidence.
 
 ## F5.4 Poincare
 
@@ -80,8 +78,8 @@ scope. Integer Chua uses:
 x = 0, xdot > 0
 ```
 
-Caputo cases use geometric sampled crossings. They are not exact classical
-return maps and do not establish exact non-constant periodic Caputo orbits.
+Caputo cases use geometric sampled crossings rather than exact classical
+return maps.
 See [Poincare Diagnostics](poincare_diagnostics.md).
 
 ## Published Cases
@@ -106,25 +104,14 @@ When all four diagnostics have standardized outputs, the F5 summary may report:
 f5_diagnostics_structured_outputs_ready
 ```
 
-This means that the complementary output bundle is ready for inspection. It
-does not promote the separate official protocol stage automatically.
+This means that the complementary output bundle is ready for inspection.
 
-F6 consumes this structured bundle conservatively. Conflicting F5 indicators
-remain inconclusive; structured output readiness is not a chaos verdict. See
+F6 consumes this structured bundle. Conflicting F5 indicators remain
+inconclusive. See
 [F6 Integrated Chaos Validator](f6_integrated_chaos_validator.md).
-
-```text
-chaos_verified: false
-hidden_verified: false
-single_indicator_cannot_certify_chaos: true
-diagnostics_cannot_certify_hiddenness: true
-poincare_cannot_certify_caputo_periodic_orbits: true
-```
 
 ## Phase F Closure Status
 
-F5 supplies standardized diagnostics to the Phase F closure assessment. The
-current valid state is
-`F_closed_as_structured_diagnostics_not_chaos_certification`: structured
-evidence is closed, while current cases remain `mixed_diagnostics_inconclusive`.
+F5 supplies standardized diagnostics to the frozen Phase F evidence layer.
+Current cases remain `chaos_evidence_inconclusive` where diagnostics conflict.
 See [Phase F Closure Status](phase_f_closure.md).

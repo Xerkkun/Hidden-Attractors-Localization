@@ -892,7 +892,7 @@ def run_hiddenness_evidence(
                 "candidate_id": cand["candidate_id"],
                 "tested_trajectories": len(rows),
                 "target_hits": hits,
-                "hiddenness_status": "rejected_self_excited_contact" if hits else "compatible_with_hiddenness_under_tested_radii",
+                "hiddenness_status": "self_excited_contact_detected" if hits else "compatible_with_hiddenness_under_tested_radii",
                 "contract_note": f"Una coincidencia refuta ocultedad bajo el contrato EFORK de {contract_label}; cero impactos no es demostracion.",
             }
         )
@@ -1105,7 +1105,7 @@ def run_danca_abm_control(outdir: Path, *, h: float) -> dict[str, Any]:
         "reference_metrics": reference_metric,
         "tested_trajectories": len(rows),
         "target_hits": hits,
-        "decision": "rejected_self_excited_contact" if hits else "compatible_with_hiddenness_under_tested_radii",
+        "decision": "self_excited_contact_detected" if hits else "compatible_with_hiddenness_under_tested_radii",
     }
     write_json(outdir / "abm_replication_summary.json", summary)
     return summary

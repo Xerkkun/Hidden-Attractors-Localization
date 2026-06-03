@@ -2,14 +2,15 @@
 
 ## Decision
 
-Phase F is structurally complete but not strictly closed as chaos validation.
+Phase F is frozen as a structured finite-time chaos-evidence layer. It reports
+strong, supported, inconclusive or regular dynamics according to Lyapunov,
+0-1, spectral, boundedness and Poincare diagnostics.
 
 ```text
-status: F_closed_as_structured_diagnostics_not_chaos_certification
-strict_chaos_validation_closed: false
-structured_diagnostics_closed: true
-chaos_verified: false
-hiddenness_verified: false
+status: phase_F_frozen
+phase_F_frozen: true
+evidence_layer: finite_time_chaos_evidence
+available_evidence_level: chaos_evidence_inconclusive
 ```
 
 ## Closure Routes
@@ -37,18 +38,17 @@ sign-pattern passes, and `8`
 discrepancy rows. Bounded sensitivity sweeps were completed for the current
 scope, while the discrepancies remain explicit.
 
-## Strict Closure Boundary
+## Evidence Scope
 
-Rigorous assessments were executed for the fractional Lyapunov lanes. They are
-recorded as documented evidence, not discarded as failed work. Strict chaos
-validation remains outside the current evidence scope because no accepted
-fractional Lyapunov method has been applied to each fractional candidate:
+Rigorous assessments were executed for the fractional Lyapunov lanes and are
+recorded with their method controls and discrepancies:
 
 ```text
 valid_fractional_lyapunov_method_per_candidate: not_strictly_validated_with_documented_attempts
 ```
 
 F4 internal controls, published reproduction attempts, sensitivity sweeps, F5
-standardized diagnostics, and optional F6/F7 integration outputs remain
-reproducible numerical evidence. They do not certify mathematical chaos or
-hiddenness.
+standardized diagnostics, and optional F6/F7 integration outputs form the
+finite-time evidence layer. Evidence levels are numerical and tied to the
+recorded solver, memory and time horizon. Hiddenness is assessed separately by
+the sampled-neighborhood candidate gate.

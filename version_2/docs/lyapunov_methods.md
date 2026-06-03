@@ -64,13 +64,6 @@
 
 - **NOT** valid for Caputo fractional systems (q < 1).
 - **NOT** handling fractional memory.
-- **DOES NOT** certify chaos.
-- **DOES NOT** certify hiddenness of attractors.
-
-```
-chaos_certified_by_this_pipeline: false
-hiddenness_certified_by_this_pipeline: false
-```
 
 > **Methodological warning:** This routine is **not a validated Caputo
 > fractional Lyapunov method**. It is restricted to **q = 1**.
@@ -300,7 +293,6 @@ If `history_aware_qr=False`, only the current $\Phi$ is updated, which behaves a
 > This routine is **not yet validated against published benchmarks**.
 > Results are finite-time local Lyapunov exponent estimates.
 > Caputo memory requires transforming the entire stored variational history at each QR step (`history_aware_qr=True`). If `history_aware_qr=False` (block-restart), the method is NOT full-memory Caputo-aware; label results accordingly.
-> Does not certify chaos; does not certify hiddenness of attractors.
 
 ---
 
@@ -357,12 +349,11 @@ The separate `fractional_cloned_dynamics_abm_qr` method is an experimental
 internal QR variant. It is not the published algorithm and cannot be promoted
 from Fischer decimal agreement alone.
 
-Both methods produce finite-time local Lyapunov indicators. They do not certify
-chaos, do not certify hiddenness, and do not close integrated diagnostics.
+Both methods produce finite-time local Lyapunov indicators consumed by the
+integrated evidence layer.
 
 Passing F3 Fischer tests does not validate `fractional_variational_abm_qr`.
-Passing F3 does not certify chaos or hiddenness. F3 and F2 remain separate
-validation lanes.
+F3 and F2 remain separate validation lanes.
 
 See [Cloned Dynamics Lyapunov Indicators](lyapunov_cloned_dynamics.md).
 
@@ -402,8 +393,8 @@ Persistent discrepancies remain documented in the
 The lane is `implemented_with_documented_published_discrepancies`: exact
 reproduction requires protocol and numerical details not reported in the
 article or access to the authors' implementation. No further bounded sweep
-is required in the current scope. This closure does not certify chaos,
-certify hiddenness, validate F2, or promote the internal QR variant.
+is required in the current scope. This closure does not validate F2 or promote
+the internal QR variant.
 
 ## F4 - Internal Lyapunov validation
 

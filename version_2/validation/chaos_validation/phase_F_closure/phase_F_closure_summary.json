@@ -1,7 +1,88 @@
 {
   "stage": "phase_F_closure",
-  "status": "F_closed_as_structured_diagnostics_not_chaos_certification",
-  "strict_chaos_validation_closed": false,
+  "status": "phase_F_frozen",
+  "phase_F_frozen": true,
+  "evidence_layer": "finite_time_chaos_evidence",
+  "available_evidence_level": "chaos_evidence_inconclusive",
+  "chaos_evidence_level": "chaos_evidence_inconclusive",
+  "lyapunov_support": {
+    "chua_integer_q1_reference": "positive_lambda_max",
+    "danca2017_chua_fractional_saturation_q09998": "not_available_or_nonpositive",
+    "wu2023_chua_fractional_arctan_q099": "not_available_or_nonpositive"
+  },
+  "zero_one_support": {
+    "chua_integer_q1_reference": "zero_one_regular_candidate",
+    "danca2017_chua_fractional_saturation_q09998": "zero_one_regular_candidate",
+    "wu2023_chua_fractional_arctan_q099": "zero_one_regular_candidate"
+  },
+  "spectral_support": {
+    "chua_integer_q1_reference": "spectral_inconclusive",
+    "danca2017_chua_fractional_saturation_q09998": "spectral_inconclusive",
+    "wu2023_chua_fractional_arctan_q099": "spectral_inconclusive"
+  },
+  "boundedness_support": {
+    "chua_integer_q1_reference": "bounded_candidate",
+    "danca2017_chua_fractional_saturation_q09998": "bounded_candidate",
+    "wu2023_chua_fractional_arctan_q099": "bounded_candidate"
+  },
+  "poincare_support": {
+    "chua_integer_q1_reference": "cloud_like",
+    "danca2017_chua_fractional_saturation_q09998": "cloud_like",
+    "wu2023_chua_fractional_arctan_q099": "cloud_like"
+  },
+  "diagnostic_conflicts": {
+    "chua_integer_q1_reference": [
+      "zero_one_regular_vs_cloud_like_poincare"
+    ],
+    "danca2017_chua_fractional_saturation_q09998": [
+      "zero_one_regular_vs_cloud_like_poincare"
+    ],
+    "wu2023_chua_fractional_arctan_q099": [
+      "zero_one_regular_vs_cloud_like_poincare"
+    ]
+  },
+  "recommended_interpretation": "inconclusive chaos evidence",
+  "per_case_evidence": [
+    {
+      "case_id": "chua_integer_q1_reference",
+      "chaos_evidence_level": "chaos_evidence_inconclusive",
+      "lyapunov_support": "positive_lambda_max",
+      "zero_one_support": "zero_one_regular_candidate",
+      "spectral_support": "spectral_inconclusive",
+      "boundedness_support": "bounded_candidate",
+      "poincare_support": "cloud_like",
+      "diagnostic_conflicts": [
+        "zero_one_regular_vs_cloud_like_poincare"
+      ],
+      "recommended_interpretation": "inconclusive chaos evidence"
+    },
+    {
+      "case_id": "danca2017_chua_fractional_saturation_q09998",
+      "chaos_evidence_level": "chaos_evidence_inconclusive",
+      "lyapunov_support": "not_available_or_nonpositive",
+      "zero_one_support": "zero_one_regular_candidate",
+      "spectral_support": "spectral_inconclusive",
+      "boundedness_support": "bounded_candidate",
+      "poincare_support": "cloud_like",
+      "diagnostic_conflicts": [
+        "zero_one_regular_vs_cloud_like_poincare"
+      ],
+      "recommended_interpretation": "inconclusive chaos evidence"
+    },
+    {
+      "case_id": "wu2023_chua_fractional_arctan_q099",
+      "chaos_evidence_level": "chaos_evidence_inconclusive",
+      "lyapunov_support": "not_available_or_nonpositive",
+      "zero_one_support": "zero_one_regular_candidate",
+      "spectral_support": "spectral_inconclusive",
+      "boundedness_support": "bounded_candidate",
+      "poincare_support": "cloud_like",
+      "diagnostic_conflicts": [
+        "zero_one_regular_vs_cloud_like_poincare"
+      ],
+      "recommended_interpretation": "inconclusive chaos evidence"
+    }
+  ],
   "structured_diagnostics_closed": true,
   "closure_routes": {
     "route_A_fractional_variational_abm_qr": {
@@ -43,14 +124,10 @@
           "validated_against_published_benchmarks: false.",
           "synthetic benchmark infrastructure available",
           "published benchmark validation pending unless completed",
-          "does not certify chaos",
-          "does not certify hiddenness",
           "Results are finite-time local Lyapunov exponent estimates, NOT asymptotic proofs.",
           "Caputo memory: history-aware QR transforms the entire stored variational history at each reorthonormalisation step (history_aware_qr=True).",
           "If history_aware_qr=False (block-restart), method is NOT full-memory Caputo-aware; label results accordingly.",
-          "Does not certify chaos; does not certify hiddenness of attractors.",
-          "chaos_certified_by_this_pipeline: false",
-          "hiddenness_certified_by_this_pipeline: false",
+          "Scope: finite-time numerical Lyapunov evidence under the recorded method contract.",
           "Not validated for non-smooth systems (e.g., Chua saturation); derivative undefined at switching surfaces."
         ],
         "validated_against_synthetic_tests": true,
@@ -120,9 +197,7 @@
           "No Jacobian or variational system is used.",
           "Finite-time local Lyapunov indicators only.",
           "Fractional results are not a full-memory Caputo-aware claim.",
-          "Does not certify chaos; does not certify hiddenness of attractors.",
-          "chaos_certified_by_this_pipeline: false",
-          "hiddenness_certified_by_this_pipeline: false"
+          "Scope: finite-time numerical Lyapunov evidence under the recorded method contract."
         ],
         "validated_against_synthetic_tests": true,
         "validated_against_published_benchmarks": false,
@@ -165,8 +240,8 @@
     "zero_one_compatible": true,
     "psd_fft_without_dominant_periodicity": "partial",
     "warnings_for_nonsmooth_memory_sensitivity": true,
-    "no_false_chaos_certification": true,
-    "no_false_hiddenness_certification": true
+    "scope_note_centralized": true,
+    "hiddenness_scope_separated": true
   },
   "input_statuses": {
     "f4_status": "f4_complete_with_documented_discrepancies",
@@ -176,24 +251,20 @@
     "f6_status": "completed_non_certifying_integration",
     "f7_status": "completed_non_certifying_comparison"
   },
-  "certifications": {
-    "chaos_verified": false,
-    "hiddenness_verified": false
-  },
   "invariants": {
-    "structured_diagnostics_are_not_strict_chaos_validation": true,
-    "no_fractional_method_promoted": true,
+    "finite_time_scope_recorded": true,
+    "fractional_method_contracts_kept_separate": true,
     "dk2018_block_restart_does_not_validate_full_history_qr": true,
-    "no_single_diagnostic_certifies_chaos": true
+    "strong_level_requires_coherent_multiple_diagnostics": true
   },
-  "future_requirements_for_strict_closure": [
+  "future_method_improvements": [
     "Validate fractional_variational_abm_qr against a published benchmark or accepted policy.",
     "Or resolve Fischer 2020 cloned dynamics discrepancies.",
     "Apply a valid fractional Lyapunov method to each fractional candidate.",
-    "Preferably obtain sign agreement between two valid methods.",
+    "Prefer sign agreement between two applicable methods.",
     "Keep F5 diagnostics compatible."
   ],
-  "generated_at_utc": "2026-06-02T10:43:34.854878+00:00",
+  "generated_at_utc": "2026-06-02T22:32:05.693144+00:00",
   "inputs": {
     "f4_summary": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/f4_internal_validation_summary.json",
     "f5_summary": "validation/chaos_validation/dynamics_diagnostics/f5_diagnostics_summary.json",

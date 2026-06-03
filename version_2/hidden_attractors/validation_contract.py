@@ -275,7 +275,7 @@ def check_validation_contract(
                         )
                     for error in metadata_errors:
                         issues.append(ValidationIssue(severity, summary_path, f"invalid run_metadata: {error}"))
-                    if summary_data.get("verdict") in {"hidden_verified", "hidden_verified_only_if_full_protocol_passed"}:
+                    if summary_data.get("verdict") in {"hidden_verified", "hidden_verified_only_if_full_protocol_passed", "hiddenness_supported_under_tested_neighborhoods"}:
                         for error in validate_hiddenness_promotion_metadata(summary_data["run_metadata"]):
                             issues.append(ValidationIssue(severity, summary_path, f"invalid hidden_verified metadata: {error}"))
         for file_name in stage.get("expected_evidence", []):

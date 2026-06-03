@@ -14,10 +14,7 @@ F0 status
 * ``integer_qr_benettin``: implemented and validated for q=1 only.
 * Fractional methods: tracked independently by execution contract.
 
-No claim is made about chaos or hiddenness certification.
-
-    chaos_certified_by_this_pipeline: false
-    hiddenness_certified_by_this_pipeline: false
+Evidence levels are interpreted under the recorded finite-time contract.
 """
 
 from __future__ import annotations
@@ -54,6 +51,7 @@ def _dk2018_published_validation_status() -> str:
 
 _DK2018_PUBLISHED_STATUS = _dk2018_published_validation_status()
 _DK2018_PUBLISHED_VALIDATED = _DK2018_PUBLISHED_STATUS == "published_quantitative_validated"
+FINITE_TIME_SCOPE_WARNING = "Scope: finite-time numerical Lyapunov evidence under the recorded method contract."
 
 
 @dataclass(frozen=True)
@@ -143,9 +141,7 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
             " variational method.",
             "Finite-time local exponents: convergence depends on integration"
             " length and step size.",
-            "Does not certify chaos; does not certify hiddenness of attractors.",
-            "chaos_certified_by_this_pipeline: false",
-            "hiddenness_certified_by_this_pipeline: false",
+            FINITE_TIME_SCOPE_WARNING,
         ),
         validated_against_synthetic_tests=True,
         validated_against_published_benchmarks=True,
@@ -179,16 +175,12 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
             "validated_against_published_benchmarks: false.",
             "synthetic benchmark infrastructure available",
             "published benchmark validation pending unless completed",
-            "does not certify chaos",
-            "does not certify hiddenness",
             "Results are finite-time local Lyapunov exponent estimates, NOT asymptotic proofs.",
             "Caputo memory: history-aware QR transforms the entire stored variational"
             " history at each reorthonormalisation step (history_aware_qr=True).",
             "If history_aware_qr=False (block-restart), method is NOT full-memory"
             " Caputo-aware; label results accordingly.",
-            "Does not certify chaos; does not certify hiddenness of attractors.",
-            "chaos_certified_by_this_pipeline: false",
-            "hiddenness_certified_by_this_pipeline: false",
+            FINITE_TIME_SCOPE_WARNING,
             "Not validated for non-smooth systems (e.g., Chua saturation);"
             " derivative undefined at switching surfaces.",
         ),
@@ -221,9 +213,7 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
             "Published-value reproduction lane; distinct from fixed-lower-limit"
             " full-history Caputo QR.",
             "Passing this lane does not validate fractional_variational_abm_qr.",
-            "Does not certify chaos; does not certify hiddenness of attractors.",
-            "chaos_certified_by_this_pipeline: false",
-            "hiddenness_certified_by_this_pipeline: false",
+            FINITE_TIME_SCOPE_WARNING,
         ),
         validated_against_synthetic_tests=True,
         validated_against_published_benchmarks=_DK2018_PUBLISHED_VALIDATED,
@@ -287,9 +277,7 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
             "No Jacobian or variational system is used.",
             "Finite-time local Lyapunov indicators only.",
             "Fractional results are not a full-memory Caputo-aware claim.",
-            "Does not certify chaos; does not certify hiddenness of attractors.",
-            "chaos_certified_by_this_pipeline: false",
-            "hiddenness_certified_by_this_pipeline: false",
+            FINITE_TIME_SCOPE_WARNING,
         ),
         validated_against_synthetic_tests=True,
         validated_against_published_benchmarks=False,
@@ -322,9 +310,7 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
             "No Jacobian or variational system is used.",
             "Finite-time local Lyapunov indicators only.",
             "Fractional results are not a full-memory Caputo-aware claim.",
-            "Does not certify chaos; does not certify hiddenness of attractors.",
-            "chaos_certified_by_this_pipeline: false",
-            "hiddenness_certified_by_this_pipeline: false",
+            FINITE_TIME_SCOPE_WARNING,
         ),
         validated_against_synthetic_tests=True,
         validated_against_published_benchmarks=False,

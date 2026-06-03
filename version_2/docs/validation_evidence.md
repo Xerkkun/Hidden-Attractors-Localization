@@ -68,8 +68,9 @@ must remain eligible for continuation.
 
 Each maintained run also writes `run_metadata.json`. It records the effective
 `q`, `h`, `t_final`, `t_burn`, memory policy and window, integrator backend,
-software provenance, Lur'e split, selected seed, parameters, and random-seed
-policy. A strong hiddenness promotion requires a valid metadata envelope,
+software provenance, Lur'e split, selected seed, parameters, continuation
+path, decision tolerances, SciPy version, and random-seed policy. A strong
+hiddenness promotion requires a valid metadata envelope,
 full-history Caputo integration, robust reference reproduction, all
 equilibrium-ball controls, zero target contacts, zero numerical failures, and
 all six close/large basin slices. Missing any one condition yields
@@ -157,9 +158,8 @@ python .\validation\python\run_f5_dynamics_diagnostics.py --all --use-existing-p
 ```
 
 The summary state `f5_diagnostics_structured_outputs_ready` records output
-readiness only. It does not certify chaos, hiddenness, or exact periodic
-orbits in Caputo systems, and it does not automatically promote the separate
-official protocol diagnostics stage. See
+readiness under the finite-time evidence scope; it does not automatically
+promote the separate official protocol diagnostics stage. See
 [F5 Dynamics Diagnostics](f5_dynamics_diagnostics.md).
 
 ## F6 And F7 Integration Layers
@@ -180,17 +180,16 @@ python .\validation\python\run_method_comparison.py
 
 These integration layers preserve the separation between full-history Caputo
 QR, DK2018 block-restart, Fischer published GS, and the experimental QR lane.
-They do not certify chaos, hiddenness, or fractional Lyapunov methods. See
+They report finite-time evidence levels with method status attached. See
 [F6 Integrated Chaos Validator](f6_integrated_chaos_validator.md) and
 [F7 Method Comparison](f7_method_comparison.md).
 
 ## Phase F Closure Status
 
-Phase F is closed only as standardized diagnostic evidence, not as chaos
-certification:
+Phase F is frozen as a structured finite-time chaos-evidence layer:
 
 ```text
-F_closed_as_structured_diagnostics_not_chaos_certification
+phase_F_frozen
 ```
 
 Route A full-history QR is `assessed_with_documented_validation_gap`: its
@@ -198,4 +197,6 @@ internal controls and sensitivity evidence remain recorded without promotion.
 Route B Fischer published GS is
 `assessed_with_documented_discrepancies`: the long reproduction and bounded
 sensitivity sweeps are retained with their unresolved discrepancies. Route C
-closes the structured diagnostic scope. See [Phase F Closure Status](phase_f_closure.md).
+closes the structured diagnostic scope. Evidence levels are numerical and tied
+to the recorded solver, memory and time horizon. See
+[Phase F Closure Status](phase_f_closure.md).

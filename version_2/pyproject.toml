@@ -104,6 +104,7 @@ markers = [
   "native: native C backend validation (skipped if the compiler is unavailable)",
   "published: quantitative validation against explicitly extracted published values",
   "slow: extensive numerical validation excluded from the quick suite",
+  "regression: deterministic numerical regression tests against stored references",
 ]
 
 [tool.pytest-benchmark]

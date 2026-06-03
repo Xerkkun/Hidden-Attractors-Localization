@@ -26,6 +26,10 @@ nonlinear systems and unsupported fractional contracts are out of scope.
 Visual plots and diagnostics do not certify hiddenness. See
 [Scientific Scope](docs/scientific_scope.md).
 
+The frozen evidence vocabulary and release checks are documented in
+[Freeze Status](docs/freeze_status.md) and
+[Final Freeze Checklist](docs/final_freeze_checklist.md).
+
 ## Features
 
 - Chua non-smooth and arctan model definitions and equilibrium helpers.

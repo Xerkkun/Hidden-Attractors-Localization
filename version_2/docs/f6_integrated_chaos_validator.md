@@ -2,8 +2,8 @@
 
 F6 combines F5 dynamics diagnostics, the Lyapunov method registry, available
 case-specific finite-time local spectra, and F4 internal-validation metadata.
-It emits conservative candidate labels. It does not prove chaos and it does
-not evaluate hiddenness.
+It emits finite-time chaos-evidence labels. Hiddenness is evaluated separately
+by `candidate_gate`.
 
 Run:
 
@@ -31,14 +31,14 @@ F6 still produces its report in that state.
 
 ## Decision Rules
 
-A chaotic-candidate label requires bounded finite-time behavior and at least
-two non-certifying support indicators: applicable validated positive
+A strong chaos-evidence label requires bounded finite-time behavior and at least
+two support indicators: applicable controlled positive
 `lambda_max`, zero-one chaotic-candidate behavior, broadband PSD/FFT, or
 cloud-like Poincare geometry. Contradictory F5 evidence remains inconclusive.
 
 A regular-candidate label similarly requires bounded finite-time behavior and
-at least two regular-like indicators. Unvalidated fractional methods remain
-pending and cannot be silently promoted.
+at least two regular-like indicators. Fractional method status remains
+explicit in the report.
 
 Allowed per-case labels:
 
@@ -60,9 +60,5 @@ rule set.
 
 The three configured Chua cases remain `mixed_diagnostics_inconclusive`.
 Their F5 summaries combine zero-one regular-like behavior, inconclusive
-PSD/FFT, and cloud-like Poincare geometry. F6 preserves that conflict.
-
-```text
-chaos_verified: false
-hidden_verified: false
-```
+PSD/FFT, and cloud-like Poincare geometry. F6 reports
+`chaos_evidence_inconclusive` for that conflict.

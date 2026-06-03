@@ -46,7 +46,8 @@ when `q<1`.
 | `efork_integrate` | `hidden_attractors/integrations/efork.py` | Full-memory scalar decay against ABM; native backend against Python fallback; documented `q=1` route | Ghoreishi et al. 2023; ABM cross-check | monotone difference decrease, `1e-12` native | default, `native` |
 | `evaluate_target_match` | `hidden_attractors/verification/hiddenness.py` | Close and separated synthetic point clouds with `nn_percentile` | Leonov-Kuznetsov operational basin distinction | `1e-2` cloud distance | default |
 | `classify_hiddenness_verdict` | `hidden_attractors/verification/classifiers.py` | Sampled-radii compatible, self-excited contact, unsupported, and numerical-failure states | Leonov-Kuznetsov operational basin distinction | exact label | default |
-| `validate_run_metadata`, `validate_hiddenness_promotion_metadata` | `hidden_attractors/reproducibility.py` | Complete auditable run envelope, full-history promotion requirement, and conservative fallback | repository reproducibility contract | exact required fields and labels | default |
+| `validate_run_metadata`, `validate_hiddenness_promotion_metadata` | `hidden_attractors/reproducibility.py` | Complete auditable run envelope, full-history promotion requirement, continuation path, decision tolerances, and conservative fallback | repository reproducibility contract | exact required fields and labels | default |
+| `evaluate_candidate_gate` | `hidden_attractors/verification/candidate_gate.py` | Formal chaos-evidence and sampled-neighborhood hiddenness promotion gate | repository freeze contract | exact evidence levels | default |
 
 ## Scope Boundary
 
@@ -57,7 +58,8 @@ an auxiliary extension and is not a hiddenness proof. Any operational
 hiddenness promotion must continue to use the full neighborhood and basin
 contract documented in `hiddenness_verification.md`. Every maintained run
 writes `run_metadata.json`; an incomplete envelope blocks the strong label and
-emits `compatible_with_hiddenness_under_tested_radii`.
+emits `compatible_with_hiddenness_under_tested_radii`. Complete evidence emits
+`hiddenness_supported_under_tested_neighborhoods`.
 
 ## References
 

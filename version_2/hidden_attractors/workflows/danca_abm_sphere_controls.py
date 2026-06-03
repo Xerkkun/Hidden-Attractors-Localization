@@ -802,7 +802,7 @@ def aggregate(outdir: str | Path, *, wait: bool = False, poll_sec: float = 60.0)
                 "tested_ball_trajectories": executed,
                 "total_target_hits": targets,
                 "total_unknown": unknown,
-                "hiddenness_status": "rejected_self_excited_contact" if targets > 0 else "compatible_with_hiddenness_under_tested_radii",
+                "hiddenness_status": "self_excited_contact_detected" if targets > 0 else "compatible_with_hiddenness_under_tested_radii",
             }
         )
     total_targets = sum(int(case["total_target_hits"]) for case in case_decisions)
@@ -814,7 +814,7 @@ def aggregate(outdir: str | Path, *, wait: bool = False, poll_sec: float = 60.0)
         "total_target_hits": total_targets,
         "total_unknown": total_unknown,
         "case_decisions": case_decisions,
-        "hiddenness_status": "rejected_in_at_least_one_solver_memory_case" if total_targets > 0 else "compatible_in_all_tested_solver_memory_cases",
+        "hiddenness_status": "self_excited_contact_detected" if total_targets > 0 else "compatible_with_hiddenness_under_tested_radii",
         "notes": "Each case is interpreted independently. A target hit from any equilibrium ball refutes hiddenness under that tested solver-memory contract.",
     }
     write_json(root / "danca_sphere_decision.json", decision)

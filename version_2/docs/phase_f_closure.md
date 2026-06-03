@@ -1,10 +1,11 @@
 # Phase F Closure Status
 
-Phase F is closed as standardized diagnostic evidence, not as chaos
-certification:
+Phase F is frozen as a structured finite-time chaos-evidence layer. It reports
+strong, supported, inconclusive or regular dynamics according to Lyapunov,
+0-1, spectral, boundedness and Poincare diagnostics:
 
 ```text
-F_closed_as_structured_diagnostics_not_chaos_certification
+phase_F_frozen
 ```
 
 The closure assessment is generated with:
@@ -35,8 +36,8 @@ sign-pattern passes, and `8` discrepancy rows.
 Route C closes the structured diagnostic scope because F4 and F5 have
 auditable outputs with explicit limitations.
 
-## Boundary
+## Scope
 
-The rigorous A and B assessments are not discarded as false. They also are not
-promoted to strict fractional-method validation. Current Phase F artifacts do
-not certify mathematical chaos and do not certify hiddenness.
+Evidence levels are numerical and tied to the recorded solver, memory and time
+horizon. Hiddenness is assessed separately through sampled-neighborhood
+candidate gates.

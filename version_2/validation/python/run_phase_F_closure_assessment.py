@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write the conservative Phase F closure assessment artifacts."""
+"""Write the frozen finite-time Phase F evidence artifacts."""
 
 from __future__ import annotations
 
@@ -75,14 +75,15 @@ def _decision_markdown(summary: dict[str, Any]) -> str:
 
 ## Decision
 
-Phase F is structurally complete but not strictly closed as chaos validation.
+Phase F is frozen as a structured finite-time chaos-evidence layer. It reports
+strong, supported, inconclusive or regular dynamics according to Lyapunov,
+0-1, spectral, boundedness and Poincare diagnostics.
 
 ```text
 status: {summary["status"]}
-strict_chaos_validation_closed: false
-structured_diagnostics_closed: true
-chaos_verified: false
-hiddenness_verified: false
+phase_F_frozen: {str(summary["phase_F_frozen"]).lower()}
+evidence_layer: {summary["evidence_layer"]}
+available_evidence_level: {summary["available_evidence_level"]}
 ```
 
 ## Closure Routes
@@ -110,26 +111,25 @@ sign-pattern passes, and `{routes["route_B_fractional_cloned_dynamics"]["rows_fa
 discrepancy rows. Bounded sensitivity sweeps were completed for the current
 scope, while the discrepancies remain explicit.
 
-## Strict Closure Boundary
+## Evidence Scope
 
-Rigorous assessments were executed for the fractional Lyapunov lanes. They are
-recorded as documented evidence, not discarded as failed work. Strict chaos
-validation remains outside the current evidence scope because no accepted
-fractional Lyapunov method has been applied to each fractional candidate:
+Rigorous assessments were executed for the fractional Lyapunov lanes and are
+recorded with their method controls and discrepancies:
 
 ```text
 valid_fractional_lyapunov_method_per_candidate: {str(criteria["valid_fractional_lyapunov_method_per_candidate"]).lower()}
 ```
 
 F4 internal controls, published reproduction attempts, sensitivity sweeps, F5
-standardized diagnostics, and optional F6/F7 integration outputs remain
-reproducible numerical evidence. They do not certify mathematical chaos or
-hiddenness.
+standardized diagnostics, and optional F6/F7 integration outputs form the
+finite-time evidence layer. Evidence levels are numerical and tied to the
+recorded solver, memory and time horizon. Hiddenness is assessed separately by
+the sampled-neighborhood candidate gate.
 """
 
 
 def run() -> dict[str, Any]:
-    """Read Phase F evidence and write a non-certifying closure assessment."""
+    """Read Phase F evidence and write the frozen evidence assessment."""
 
     f4 = _read_json(F4_SUMMARY)
     f5 = _read_json(F5_SUMMARY)
@@ -177,10 +177,9 @@ def run() -> dict[str, Any]:
 def main() -> None:
     summary = run()
     print(f"Phase F status: {summary['status']}")
-    print("Strict chaos validation closed: false")
-    print("Structured diagnostics closed: true")
-    print("Chaos verified: false")
-    print("Hiddenness verified: false")
+    print(f"Phase F frozen: {str(summary['phase_F_frozen']).lower()}")
+    print(f"Evidence layer: {summary['evidence_layer']}")
+    print(f"Available evidence level: {summary['available_evidence_level']}")
 
 
 if __name__ == "__main__":

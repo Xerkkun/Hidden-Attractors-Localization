@@ -13,8 +13,8 @@ from hidden_attractors.reproducibility import (
 )
 
 
-HIDDEN_VERIFIED_LABEL = "hidden_verified"
-REJECTED_SELF_EXCITED_LABEL = "rejected_self_excited_contact"
+HIDDENNESS_SUPPORTED_LABEL = "hiddenness_supported_under_tested_neighborhoods"
+SELF_EXCITED_CONTACT_LABEL = "self_excited_contact_detected"
 REQUIRED_BASIN_PLANES = {"xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"}
 
 
@@ -292,9 +292,9 @@ def verify_hiddenness_contract(
         hidden_compatible = True
 
     promotion_verdict = (
-        HIDDEN_VERIFIED_LABEL
+        HIDDENNESS_SUPPORTED_LABEL
         if hidden_verified
-        else REJECTED_SELF_EXCITED_LABEL
+        else SELF_EXCITED_CONTACT_LABEL
         if self_excited_contact_detected
         else CONSERVATIVE_HIDDENNESS_LABEL
     )

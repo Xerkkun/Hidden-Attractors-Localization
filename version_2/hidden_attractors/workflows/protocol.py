@@ -31,6 +31,18 @@ from hidden_attractors.reproducibility import (
 SCHEMA_VERSION = "1.0"
 PROTOCOL_VERSION = "caputo_hidden_attractors_v1"
 
+
+def _normalize_hiddenness_label(label: str) -> str:
+    from hidden_attractors.verification.candidate_gate import normalize_hiddenness_label
+
+    return normalize_hiddenness_label(label)
+
+
+def _evaluate_candidate_gate(evidence: dict[str, Any]) -> dict[str, Any]:
+    from hidden_attractors.verification.candidate_gate import evaluate_candidate_gate
+
+    return evaluate_candidate_gate(evidence)
+
 OFFICIAL_STAGE_ORDER: tuple[str, ...] = (
     "numerical_contract",
     "algebraic_validation",
@@ -57,6 +69,12 @@ FINAL_LABELS: tuple[str, ...] = (
     "rejected_post_continuation",
     "robust_survivor",
     "compatible_with_hiddenness_under_tested_radii",
+    "hiddenness_supported_under_tested_neighborhoods",
+    "self_excited_contact_detected",
+    "hiddenness_inconclusive",
+    "candidate_not_reproducible",
+    "numerical_failure",
+    "candidate_rejected",
     "rejected_self_excited_contact",
     "hidden_verified",
     "hidden_verified_only_if_full_protocol_passed",
@@ -94,6 +112,12 @@ FinalLabel = Literal[
     "rejected_post_continuation",
     "robust_survivor",
     "compatible_with_hiddenness_under_tested_radii",
+    "hiddenness_supported_under_tested_neighborhoods",
+    "self_excited_contact_detected",
+    "hiddenness_inconclusive",
+    "candidate_not_reproducible",
+    "numerical_failure",
+    "candidate_rejected",
     "rejected_self_excited_contact",
     "hidden_verified",
     "hidden_verified_only_if_full_protocol_passed",
@@ -378,7 +402,7 @@ class HiddennessTestResult:
             and self.numerical_failures == 0
             and required_planes.issubset(set(self.basin_planes))
         )
-        strong_label = self.final_label in {"hidden_verified", "hidden_verified_only_if_full_protocol_passed"}
+        strong_label = _normalize_hiddenness_label(self.final_label) == "hiddenness_supported_under_tested_neighborhoods"
         if strong_label and not full_protocol:
             errors.append("hidden_verified_only_if_full_protocol_passed requires the complete tested protocol.")
         if strong_label:
@@ -389,11 +413,55 @@ class HiddennessTestResult:
     def promotion_verdict(self) -> str:
         """Return the only candidate label allowed by the available evidence."""
 
-        if self.target_contacts > 0:
-            return "rejected_self_excited_contact"
-        if self.validate():
-            return CONSERVATIVE_HIDDENNESS_LABEL
-        return "hidden_verified"
+        metadata = metadata_to_jsonable(self.run_metadata) if self.run_metadata else None
+        numerical = metadata.get("numerical_contract", {}) if isinstance(metadata, Mapping) else {}
+        seed = metadata.get("seed") if isinstance(metadata, Mapping) else {}
+        seed = seed if isinstance(seed, Mapping) else {}
+        continuation = metadata.get("continuation", {}) if isinstance(metadata, Mapping) else {}
+        gate = _evaluate_candidate_gate(
+            {
+                "run_metadata": metadata,
+                "equilibria": {"all_found": bool(self.required_equilibria), "max_residual": 0.0},
+                "matignon": {"all_classified": bool(self.required_equilibria), "q": numerical.get("q")},
+                "seed": {
+                    "localized": self.reference_was_robust,
+                    "method": "manual_traced",
+                    "source": seed.get("source", "hiddenness_test_result"),
+                },
+                "continuation": continuation,
+                "trajectory": {
+                    "bounded": self.reference_was_robust,
+                    "nontrivial": self.reference_was_robust,
+                    "finite_fraction": 1.0,
+                    "post_transient_length": 1,
+                },
+                "robustness": {
+                    "tested_h": self.reference_was_robust,
+                    "tested_memory": self.reference_was_robust,
+                    "tested_t_final": self.reference_was_robust,
+                    "tested_integrator": self.reference_was_robust,
+                    "consistent": self.reference_was_robust,
+                },
+                "hiddenness": {
+                    "tested_all_equilibria": bool(self.required_equilibria)
+                    and set(self.required_equilibria).issubset(set(self.tested_equilibria)),
+                    "tested_radii": self.tested_radii,
+                    "required_radii": self.required_radii,
+                    "target_hits_from_equilibria": self.target_contacts,
+                    "basin_intersection_detected": False,
+                    "basin_controls_complete": {
+                        "xy_close",
+                        "xy_large",
+                        "xz_close",
+                        "xz_large",
+                        "yz_close",
+                        "yz_large",
+                    }.issubset(set(self.basin_planes)),
+                    "numerical_failures": self.numerical_failures,
+                },
+            }
+        )
+        return gate["verdict"]
 
 
 @dataclass(frozen=True)
@@ -437,7 +505,7 @@ class StageEnvelope:
         metadata_errors = validate_run_metadata(metadata_to_jsonable(dict(self.run_metadata)))
         if list(self.metadata_validation_errors) != metadata_errors:
             errors.append("metadata_validation_errors must match validate_run_metadata(run_metadata).")
-        if self.verdict in {"hidden_verified", "hidden_verified_only_if_full_protocol_passed"}:
+        if _normalize_hiddenness_label(str(self.verdict)) == "hiddenness_supported_under_tested_neighborhoods":
             errors.extend(validate_hiddenness_promotion_metadata(dict(self.run_metadata)))
         return errors
 
@@ -503,17 +571,17 @@ def validate_global_report_coherence(report_data: dict) -> None:
     # Normalize state/verdict keys from envelopes if checking a list of stages or manifest
     is_hidden_verified = (
         state == "hidden_verified"
-        or verdict == "hidden_verified"
-        or verdict == "hidden_verified_only_if_full_protocol_passed"
+        or state == "hiddenness_supported_under_tested_neighborhoods"
+        or _normalize_hiddenness_label(str(verdict)) == "hiddenness_supported_under_tested_neighborhoods"
         or final_report_status == "hidden_verified"
         or report_data.get("final_report_status") == "hidden_verified"
     )
 
     if isinstance(outputs, dict):
-        if outputs.get("state") == "hidden_verified" or outputs.get("verdict") == "hidden_verified":
+        if outputs.get("state") in {"hidden_verified", "hiddenness_supported_under_tested_neighborhoods"} or _normalize_hiddenness_label(str(outputs.get("verdict"))) == "hiddenness_supported_under_tested_neighborhoods":
             is_hidden_verified = True
     if isinstance(metrics, dict):
-        if metrics.get("state") == "hidden_verified" or metrics.get("verdict") == "hidden_verified":
+        if metrics.get("state") in {"hidden_verified", "hiddenness_supported_under_tested_neighborhoods"} or _normalize_hiddenness_label(str(metrics.get("verdict"))) == "hiddenness_supported_under_tested_neighborhoods":
             is_hidden_verified = True
 
     if is_hidden_verified:

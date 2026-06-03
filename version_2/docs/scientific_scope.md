@@ -51,18 +51,18 @@ hidden-attractor protocol.
 ## Required evidence before hiddenness claims
 
 - DF/Nyquist computations produce seeds.
-- Continuation transports seeds or candidates; it does not certify their destination.
+- Continuation transports seeds or candidates and records their destination scope.
 - ABM/EFORK simulate a Caputo system under an explicit numerical contract.
 - Matignon classifies equilibria locally.
 - Lyapunov, FFT, PSD, Poincare, 0-1 and bifurcation outputs are diagnostics.
 - Hiddenness can be promoted only through neighborhood or basin tests around all equilibria under the recorded numerical contract.
 
-Warning: do not declare `hidden_verified` unless neighborhood and basin tests
-around all equilibria, the robust reference checks, and the reproducible
-`run_metadata.json` envelope all satisfy the recorded promotion contract. If
-one condition is missing, use
-`compatible_with_hiddenness_under_tested_radii`. Visual plots and diagnostics
-do not certify hiddenness.
+Use `hiddenness_supported_under_tested_neighborhoods` only when neighborhood
+and basin tests around all equilibria, robust reference checks, and the
+reproducible `run_metadata.json` envelope satisfy the recorded promotion
+contract. If one condition is missing, use
+`compatible_with_hiddenness_under_tested_radii`. Legacy `hidden_verified`
+inputs are normalized to the sampled-neighborhood label.
 
 ## What the library can reproduce
 

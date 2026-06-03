@@ -7,6 +7,8 @@ contribution notes.
 ## User Guides
 
 - [Scientific Scope](scientific_scope.md)
+- [Freeze Status](freeze_status.md)
+- [Final Freeze Checklist](final_freeze_checklist.md)
 - [Installation](installation.md)
 - [Getting Started](getting_started.md)
 - [Examples](examples.md)
@@ -44,8 +46,7 @@ contribution notes.
 
 ## Notes
 
-The project provides numerical evidence workflows. A simulation result is not a
-formal theorem of hiddenness unless a separate mathematical proof is supplied.
-The promoted integer-order baseline is documented in
+The project reports numerical evidence under explicit solver, memory, time and
+sampling contracts. The promoted integer-order baseline is documented in
 [Integer Chua q=1 Reference](integer_chua_reference.md), including its
 literature and cross-tool evidence status.

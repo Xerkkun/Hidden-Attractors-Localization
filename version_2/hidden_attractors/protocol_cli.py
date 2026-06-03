@@ -16,10 +16,12 @@ from .io import write_json
 from .reproducibility import (
     CONSERVATIVE_HIDDENNESS_LABEL,
     collect_run_metadata,
+    extract_run_metadata,
     metadata_to_jsonable,
     validate_run_metadata,
     write_run_metadata,
 )
+from .verification.candidate_gate import normalize_hiddenness_label
 from .workflows.protocol import (
     OFFICIAL_STAGE_ORDER,
     ContinuationPlan,
@@ -83,9 +85,19 @@ def _run_metadata(
     contract: NumericalContract,
     data: dict[str, Any],
 ) -> dict[str, Any]:
-    supplied = data.get("run_metadata")
-    if isinstance(supplied, dict):
+    supplied = extract_run_metadata(data)
+    if supplied is not None:
         return write_run_metadata(args.output.parent / "run_metadata.json", supplied)
+    continuation = data.get("continuation", {})
+    if args.command == "continue" and not continuation:
+        eta_path = [float(value) for value in args.lambda_values.split(",") if value.strip()]
+        continuation = {
+            "used": True,
+            "eta_path": eta_path,
+            "continuation_mode": "fractional" if contract.q < 1.0 else "integer",
+            "memory_window_propagated": contract.memory_policy == "full_history",
+            "final_eta": eta_path[-1] if eta_path else None,
+        }
     metadata = collect_run_metadata(
         run_id=str(data.get("run_id", args.output.stem)),
         workflow=f"protocol_cli:{args.command}",
@@ -106,6 +118,8 @@ def _run_metadata(
         random_seed=contract.random_seed,
         random_seed_policy=contract.random_seed_policy if contract.random_seed is not None else "not_applicable",
         provenance=data.get("provenance", {}),
+        continuation=continuation or None,
+        tolerances=contract.tolerances or None,
     )
     return write_run_metadata(args.output.parent / "run_metadata.json", metadata)
 
@@ -150,7 +164,7 @@ def _stage_specific_payload(
             "lambda_values": list(plan.lambda_values),
             "mapping": dict(plan.mapping),
         }
-    elif args.command == "hiddenness" and verdict in {"hidden_verified", "hidden_verified_only_if_full_protocol_passed"}:
+    elif args.command == "hiddenness" and normalize_hiddenness_label(str(verdict)) == "hiddenness_supported_under_tested_neighborhoods":
         evidence = data.get("hiddenness_test_result")
         if not isinstance(evidence, dict):
             evidence = {}
@@ -163,7 +177,7 @@ def _stage_specific_payload(
             numerical_failures=int(evidence.get("numerical_failures", 0)),
             basin_planes=tuple(evidence.get("basin_planes", ())),
             reference_was_robust=bool(evidence.get("reference_was_robust", False)),
-            final_label="hidden_verified_only_if_full_protocol_passed",
+            final_label="hiddenness_supported_under_tested_neighborhoods",
             run_metadata=run_metadata,
             required_equilibria=tuple(evidence.get("required_equilibria", ())),
             required_radii=tuple(float(value) for value in evidence.get("required_radii", contract.hiddenness_radii)),
@@ -200,8 +214,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     run_metadata = _run_metadata(args, contract, data)
     inputs, metrics, verdict = _stage_specific_payload(args, data, run_metadata, contract)
     state = data.get("state")
-    if state == "hidden_verified" and verdict != "hidden_verified":
+    if state == "hidden_verified" and verdict != "hiddenness_supported_under_tested_neighborhoods":
         state = "hidden_compatible"
+    elif state == "hidden_verified":
+        state = "hiddenness_supported_under_tested_neighborhoods"
     envelope = StageEnvelope(
         stage=COMMAND_TO_STAGE[args.command],
         status=args.status,

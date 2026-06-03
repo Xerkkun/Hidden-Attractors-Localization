@@ -41,10 +41,11 @@ def test_scope_has_required_literature_rows() -> None:
     assert len(rows) >= 20
 
 
-def test_hidden_verified_appears_only_in_explicit_warning() -> None:
+def test_legacy_hidden_verified_appears_only_in_alias_note() -> None:
     text = _read(SCOPE)
     assert text.count("hidden_verified") == 1
-    assert "Warning: do not declare `hidden_verified` unless neighborhood and basin tests" in text
+    assert "Legacy `hidden_verified`" in text
+    assert "`hiddenness_supported_under_tested_neighborhoods`" in text
     assert "`compatible_with_hiddenness_under_tested_radii`" in text
 
 

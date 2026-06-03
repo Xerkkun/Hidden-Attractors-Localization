@@ -102,6 +102,7 @@ def regenerate_validation_manifest(
                 evidence = summary.get("evidence", {})
                 requested_hidden_verified = bool(
                     summary.get("hidden_verified", False)
+                    or summary.get("verdict") == "hiddenness_supported_under_tested_neighborhoods"
                     or (evidence.get("hidden_verified", False) if isinstance(evidence, dict) else False)
                 )
                 metadata_errors = validate_hiddenness_promotion_metadata(summary.get("run_metadata"))
@@ -146,7 +147,7 @@ def regenerate_validation_manifest(
         overall_state = "hidden_compatible"
     if "hiddenness_tests" in stage_statuses:
         if hidden_verified_flag:
-            overall_state = "hidden_verified"
+            overall_state = "hiddenness_supported_under_tested_neighborhoods"
         else:
             overall_state = "hidden_compatible"
 

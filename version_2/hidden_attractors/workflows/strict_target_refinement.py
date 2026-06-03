@@ -676,7 +676,7 @@ def aggregate(outdir: str | Path, *, wait: bool = False, poll_sec: float = 60.0)
         "refined_rows": len(rows),
         "target_hits_after_strict_refinement": int(target_hits),
         "status": "partial" if len(rows) != int(cfg["planned_rows"]) else "ok",
-        "hiddenness_interpretation": "rejected_self_excited_contact" if target_hits else "compatible_with_hiddenness_under_tested_radii",
+        "hiddenness_interpretation": "self_excited_contact_detected" if target_hits else "compatible_with_hiddenness_under_tested_radii",
         "notes": [
             "Only selected source rows were re-integrated and reclassified.",
             "A strict target hit is numerical evidence of target-like basin membership, not a proof of hiddenness.",

@@ -25,7 +25,7 @@ def test_hidden_verified_metadata_requires_full_caputo(valid_run_metadata) -> No
     metadata["numerical_contract"]["memory"]["mode"] = "finite_window"
     metadata["numerical_contract"]["memory"]["is_full_caputo"] = False
     errors = validate_hiddenness_promotion_metadata(metadata)
-    assert "hidden_verified requires numerical_contract.memory.is_full_caputo=true" in errors
+    assert "strong candidate promotion requires numerical_contract.memory.is_full_caputo=true" in errors
 
 
 def test_fixed_random_seed_policy_requires_integer_seed(valid_run_metadata) -> None:
@@ -90,6 +90,6 @@ def test_protocol_cli_degrades_strong_label_without_lure_and_seed_metadata(tmp_p
         ]
     ) == 0
     summary = json.loads(output_path.read_text(encoding="utf-8"))
-    assert summary["verdict"] == "compatible_with_hiddenness_under_tested_radii"
+    assert summary["verdict"] == "hiddenness_inconclusive"
     assert summary["state"] == "hidden_compatible"
     assert (tmp_path / "run_metadata.json").exists()

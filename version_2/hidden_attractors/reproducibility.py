@@ -14,6 +14,7 @@ import sys
 from typing import Any, Mapping, Sequence
 
 import numpy as np
+import scipy
 
 from .io import write_json
 from .paths import PROJECT_ROOT
@@ -21,6 +22,18 @@ from .paths import PROJECT_ROOT
 
 REPRODUCIBILITY_SCHEMA_VERSION = "1.0"
 CONSERVATIVE_HIDDENNESS_LABEL = "compatible_with_hiddenness_under_tested_radii"
+DEFAULT_TOLERANCES = {
+    "equilibrium_residual_tol": 1.0e-8,
+    "matignon_tol": 1.0e-12,
+    "target_match_tol": 0.5,
+    "boundedness_norm": 120.0,
+    "nontrivial_variance_tol": 1.0e-8,
+    "lyapunov_positive_tol": 0.02,
+    "zero_one_chaos_threshold": 0.7,
+    "zero_one_regular_threshold": 0.3,
+    "spectral_peak_dominance_threshold": 0.8,
+}
+TOLERANCE_FIELDS = tuple(DEFAULT_TOLERANCES)
 
 
 @dataclass(frozen=True)
@@ -59,6 +72,32 @@ class NumericalMetadata:
 
 
 @dataclass(frozen=True)
+class ContinuationMetadata:
+    """Continuation path and Caputo-memory propagation policy."""
+
+    used: bool = False
+    eta_path: Sequence[float] = ()
+    continuation_mode: str = "none"
+    memory_window_propagated: bool | None = None
+    final_eta: float | None = None
+
+
+@dataclass(frozen=True)
+class ToleranceMetadata:
+    """Numerical tolerances used by decision gates."""
+
+    equilibrium_residual_tol: float = DEFAULT_TOLERANCES["equilibrium_residual_tol"]
+    matignon_tol: float = DEFAULT_TOLERANCES["matignon_tol"]
+    target_match_tol: float = DEFAULT_TOLERANCES["target_match_tol"]
+    boundedness_norm: float = DEFAULT_TOLERANCES["boundedness_norm"]
+    nontrivial_variance_tol: float = DEFAULT_TOLERANCES["nontrivial_variance_tol"]
+    lyapunov_positive_tol: float = DEFAULT_TOLERANCES["lyapunov_positive_tol"]
+    zero_one_chaos_threshold: float = DEFAULT_TOLERANCES["zero_one_chaos_threshold"]
+    zero_one_regular_threshold: float = DEFAULT_TOLERANCES["zero_one_regular_threshold"]
+    spectral_peak_dominance_threshold: float = DEFAULT_TOLERANCES["spectral_peak_dominance_threshold"]
+
+
+@dataclass(frozen=True)
 class SoftwareMetadata:
     """Software provenance for one integration."""
 
@@ -66,6 +105,7 @@ class SoftwareMetadata:
     platform: str
     package_version: str
     numpy_version: str
+    scipy_version: str
     git_commit: str
     working_tree_dirty: bool
     git_diff_sha256: str | None
@@ -82,6 +122,8 @@ class RunMetadata:
     created_at_utc: str
     numerical_contract: NumericalMetadata | Mapping[str, Any]
     software: SoftwareMetadata | Mapping[str, Any]
+    continuation: ContinuationMetadata | Mapping[str, Any]
+    tolerances: ToleranceMetadata | Mapping[str, Any]
     parameters: Mapping[str, Any] = field(default_factory=dict)
     lure: LureMetadata | Mapping[str, Any] | None = None
     seed: SeedMetadata | Mapping[str, Any] | None = None
@@ -150,6 +192,7 @@ def collect_software_metadata() -> SoftwareMetadata:
         platform=platform.platform(),
         package_version=_package_version(),
         numpy_version=np.__version__,
+        scipy_version=scipy.__version__,
         git_commit=commit,
         working_tree_dirty=dirty,
         git_diff_sha256=diff_hash,
@@ -237,6 +280,8 @@ def collect_run_metadata(
     random_seed_policy: str = "not_applicable",
     provenance: Mapping[str, Any] | None = None,
     extra: Mapping[str, Any] | None = None,
+    continuation: ContinuationMetadata | Mapping[str, Any] | None = None,
+    tolerances: ToleranceMetadata | Mapping[str, Any] | None = None,
 ) -> RunMetadata:
     """Build the common metadata envelope used by maintained workflows."""
 
@@ -255,6 +300,12 @@ def collect_run_metadata(
         "backend": str(integrator_backend),
         "caputo": bool(caputo),
     }
+    continuation_payload = metadata_to_jsonable(ContinuationMetadata())
+    if continuation is not None:
+        continuation_payload.update(metadata_to_jsonable(continuation))
+    tolerance_payload = dict(DEFAULT_TOLERANCES)
+    if tolerances is not None:
+        tolerance_payload.update(metadata_to_jsonable(tolerances))
     return RunMetadata(
         schema_version=REPRODUCIBILITY_SCHEMA_VERSION,
         run_id=str(run_id),
@@ -270,6 +321,8 @@ def collect_run_metadata(
             integrator=integrator,
         ),
         software=collect_software_metadata(),
+        continuation=continuation_payload,
+        tolerances=tolerance_payload,
         parameters=dict(parameters or {}),
         lure=lure,
         seed=seed,
@@ -312,6 +365,19 @@ def _require_mapping(
         errors.append(f"{key} must be an object")
         return {}
     return value
+
+
+def extract_run_metadata(container: Mapping[str, Any] | None) -> dict[str, Any] | None:
+    """Read either metadata alias and return the canonical JSON-ready payload."""
+
+    if not isinstance(container, Mapping):
+        return None
+    candidate = container.get("run_metadata", container.get("reproducibility_metadata"))
+    if candidate is None and "numerical_contract" in container and "software" in container:
+        candidate = container
+    if not isinstance(candidate, Mapping):
+        return None
+    return metadata_to_jsonable(candidate)
 
 
 def validate_run_metadata(metadata: dict[str, Any]) -> list[str]:
@@ -358,8 +424,39 @@ def validate_run_metadata(metadata: dict[str, Any]) -> list[str]:
     if not isinstance(integrator.get("caputo"), bool):
         errors.append("numerical_contract.integrator.caputo must be boolean")
 
+    if not isinstance(metadata.get("parameters"), Mapping):
+        errors.append("parameters must be an object")
+
+    tolerances = _require_mapping(metadata, "tolerances", errors)
+    for key in TOLERANCE_FIELDS:
+        if not _is_finite_number(tolerances.get(key)):
+            errors.append(f"tolerances.{key} must be finite")
+
+    continuation = _require_mapping(metadata, "continuation", errors)
+    if not isinstance(continuation.get("used"), bool):
+        errors.append("continuation.used must be boolean")
+    if continuation.get("continuation_mode") not in {
+        "integer",
+        "fractional",
+        "none",
+        "paper_style",
+        "unknown",
+    }:
+        errors.append("continuation.continuation_mode is invalid")
+    eta_path = continuation.get("eta_path")
+    if not isinstance(eta_path, (list, tuple)):
+        errors.append("continuation.eta_path must be an array")
+    elif continuation.get("used") and not eta_path:
+        errors.append("continuation.eta_path is required when continuation.used=true")
+    elif any(not _is_finite_number(value) for value in eta_path):
+        errors.append("continuation.eta_path values must be finite")
+    if continuation.get("used") and not _is_finite_number(continuation.get("final_eta")):
+        errors.append("continuation.final_eta must be finite when continuation.used=true")
+    if continuation.get("memory_window_propagated") not in {True, False, None}:
+        errors.append("continuation.memory_window_propagated must be boolean or null")
+
     software = _require_mapping(metadata, "software", errors)
-    for key in ("python_version", "platform", "package_version", "numpy_version", "git_commit"):
+    for key in ("python_version", "platform", "package_version", "numpy_version", "scipy_version", "git_commit"):
         if not str(software.get(key, "")).strip():
             errors.append(f"software.{key} is required")
     if not isinstance(software.get("working_tree_dirty"), bool):
@@ -375,24 +472,24 @@ def validate_run_metadata(metadata: dict[str, Any]) -> list[str]:
 
 
 def validate_hiddenness_promotion_metadata(metadata: dict[str, Any] | None) -> list[str]:
-    """Validate the stricter metadata contract required for ``hidden_verified``."""
+    """Validate metadata required for a strong sampled-neighborhood promotion."""
 
     if metadata is None:
-        return ["run_metadata is required for hidden_verified"]
+        return ["run_metadata is required for a strong candidate promotion"]
     jsonable = metadata_to_jsonable(metadata)
     errors = validate_run_metadata(jsonable)
     numerical = jsonable.get("numerical_contract", {})
     memory = numerical.get("memory", {}) if isinstance(numerical, Mapping) else {}
     integrator = numerical.get("integrator", {}) if isinstance(numerical, Mapping) else {}
     if memory.get("is_full_caputo") is not True:
-        errors.append("hidden_verified requires numerical_contract.memory.is_full_caputo=true")
+        errors.append("strong candidate promotion requires numerical_contract.memory.is_full_caputo=true")
     if integrator.get("backend") == "unknown":
-        errors.append("hidden_verified requires a known integrator backend")
+        errors.append("strong candidate promotion requires a known integrator backend")
     software = jsonable.get("software", {})
     if isinstance(software, Mapping) and software.get("git_commit") == "unknown":
-        errors.append("hidden_verified requires a known software.git_commit")
+        errors.append("strong candidate promotion requires a known software.git_commit")
     if jsonable.get("random_seed_policy") != "fixed_reproducible" or not isinstance(jsonable.get("random_seed"), int):
-        errors.append("hidden_verified requires an integer random_seed with random_seed_policy=fixed_reproducible")
+        errors.append("strong candidate promotion requires an integer random_seed with random_seed_policy=fixed_reproducible")
 
     lure = _require_mapping(jsonable, "lure", errors)
     for key in (
@@ -404,12 +501,12 @@ def validate_hiddenness_promotion_metadata(metadata: dict[str, Any] | None) -> l
         "harmonic_condition",
     ):
         if lure.get(key) in (None, "", []):
-            errors.append(f"lure.{key} is required for hidden_verified")
+            errors.append(f"lure.{key} is required for a strong candidate promotion")
 
     seed = _require_mapping(jsonable, "seed", errors)
     for key in ("candidate_id", "family", "x0", "source"):
         if seed.get(key) in (None, "", []):
-            errors.append(f"seed.{key} is required for hidden_verified")
+            errors.append(f"seed.{key} is required for a strong candidate promotion")
     return list(dict.fromkeys(errors))
 
 

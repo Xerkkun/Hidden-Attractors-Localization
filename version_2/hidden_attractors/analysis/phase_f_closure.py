@@ -1,9 +1,4 @@
-"""Conservative Phase F closure assessment.
-
-Phase F may close as a structured diagnostic evidence bundle while strict
-chaos validation remains blocked. This module never promotes fractional
-Lyapunov methods and never certifies chaos or hiddenness.
-"""
+"""Phase F freeze assessment for finite-time chaos evidence."""
 
 from __future__ import annotations
 
@@ -13,7 +8,7 @@ from typing import Any, Mapping
 from .lyapunov_methods import LYAPUNOV_METHODS, LyapunovMethodInfo
 
 
-PHASE_F_STRUCTURED_STATUS = "F_closed_as_structured_diagnostics_not_chaos_certification"
+PHASE_F_STRUCTURED_STATUS = "phase_F_frozen"
 FRACTIONAL_CANDIDATE_IDS = (
     "danca2017_chua_fractional_saturation_q09998",
     "wu2023_chua_fractional_arctan_q099",
@@ -22,7 +17,7 @@ FRACTIONAL_CANDIDATE_IDS = (
 PHASE_F_CLOSURE_RULES = {
     "schema_version": "1.0",
     "stage": "phase_F_closure",
-    "strict_closure_requires_one_completed_route": ["route_A", "route_B"],
+    "evidence_layer": "finite_time_chaos_evidence",
     "route_A": {
         "route_id": "strict_fractional_variational_validation",
         "method_id": "fractional_variational_abm_qr",
@@ -58,12 +53,13 @@ PHASE_F_CLOSURE_RULES = {
         ],
         "result_status": PHASE_F_STRUCTURED_STATUS,
     },
-    "invariants": {
-        "strict_chaos_validation_closed": False,
-        "chaos_verified": False,
-        "hiddenness_verified": False,
-        "fractional_method_promotion_without_policy": False,
-    },
+    "allowed_evidence_levels": [
+        "strong_chaos_evidence",
+        "chaotic_dynamics_supported",
+        "chaos_evidence_inconclusive",
+        "regular_or_periodic_candidate",
+        "unbounded_or_diverged",
+    ],
 }
 
 
@@ -144,19 +140,20 @@ def assess_phase_f_closure(
             "partial" if psd_states and all(state == "spectral_inconclusive" for state in psd_states) else False
         ),
         "warnings_for_nonsmooth_memory_sensitivity": True,
-        "no_false_chaos_certification": True,
-        "no_false_hiddenness_certification": True,
+        "scope_note_centralized": True,
+        "hiddenness_scope_separated": True,
     }
+    evidence_summary = _phase_f_evidence_summary(f6_cases)
     return {
         "stage": "phase_F_closure",
         "status": (
-            "F_strict_closure_requirements_satisfied_pending_review"
-            if strict_closed
-            else PHASE_F_STRUCTURED_STATUS
+            PHASE_F_STRUCTURED_STATUS
             if route_c_complete
             else "F_structured_diagnostics_closure_pending"
         ),
-        "strict_chaos_validation_closed": strict_closed,
+        "phase_F_frozen": route_c_complete,
+        "evidence_layer": "finite_time_chaos_evidence",
+        **evidence_summary,
         "structured_diagnostics_closed": route_c_complete,
         "closure_routes": {
             "route_A_fractional_variational_abm_qr": {
@@ -239,21 +236,17 @@ def assess_phase_f_closure(
             "f6_status": (f6_summary or {}).get("status", "not_available"),
             "f7_status": (f7_summary or {}).get("status", "not_available"),
         },
-        "certifications": {
-            "chaos_verified": False,
-            "hiddenness_verified": False,
-        },
         "invariants": {
-            "structured_diagnostics_are_not_strict_chaos_validation": True,
-            "no_fractional_method_promoted": True,
+            "finite_time_scope_recorded": True,
+            "fractional_method_contracts_kept_separate": True,
             "dk2018_block_restart_does_not_validate_full_history_qr": True,
-            "no_single_diagnostic_certifies_chaos": True,
+            "strong_level_requires_coherent_multiple_diagnostics": True,
         },
-        "future_requirements_for_strict_closure": [
+        "future_method_improvements": [
             "Validate fractional_variational_abm_qr against a published benchmark or accepted policy.",
             "Or resolve Fischer 2020 cloned dynamics discrepancies.",
             "Apply a valid fractional Lyapunov method to each fractional candidate.",
-            "Preferably obtain sign agreement between two valid methods.",
+            "Prefer sign agreement between two applicable methods.",
             "Keep F5 diagnostics compatible.",
         ],
     }
@@ -319,22 +312,22 @@ def build_phase_f_closure_matrix(summary: Mapping[str, Any]) -> list[dict[str, A
             "Registry warnings remain explicit.",
         ),
         _criterion(
-            "no_false_chaos_certification",
-            "No Phase F artifact claims verified chaos.",
+            "scope_note_centralized",
+            "Phase F reports numerical evidence levels under the recorded contract.",
             True,
-            criteria["no_false_chaos_certification"],
+            criteria["scope_note_centralized"],
             "validation/chaos_validation/phase_F_closure/phase_F_closure_summary.json",
             "",
-            "chaos_verified remains false.",
+            "The finite-time interpretation is centralized in the freeze summary.",
         ),
         _criterion(
-            "no_false_hiddenness_certification",
-            "No Phase F artifact claims verified hiddenness.",
+            "hiddenness_scope_separated",
+            "Hiddenness assessment remains a separate sampled-neighborhood gate.",
             True,
-            criteria["no_false_hiddenness_certification"],
+            criteria["hiddenness_scope_separated"],
             "validation/chaos_validation/phase_F_closure/phase_F_closure_summary.json",
             "",
-            "hiddenness_verified remains false.",
+            "Phase F reports chaos evidence; candidate_gate reports hiddenness scope.",
         ),
     ]
 
@@ -356,6 +349,89 @@ def _method_application(case: Mapping[str, Any] | None, method_id: str) -> dict[
     }
 
 
+def _phase_f_evidence_summary(cases: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
+    """Summarize F6 case evidence with the frozen positive vocabulary."""
+
+    level_aliases = {
+        "chaotic_candidate_numerically_supported": "strong_chaos_evidence",
+        "regular_candidate_numerically_supported": "regular_or_periodic_candidate",
+        "numerical_failure": "unbounded_or_diverged",
+        "mixed_diagnostics_inconclusive": "chaos_evidence_inconclusive",
+        "insufficient_lyapunov_support": "chaos_evidence_inconclusive",
+        "insufficient_f5_support": "chaos_evidence_inconclusive",
+        "method_validation_pending": "chaos_evidence_inconclusive",
+        "not_evaluated": "chaos_evidence_inconclusive",
+    }
+    priority = {
+        "strong_chaos_evidence": 4,
+        "chaotic_dynamics_supported": 3,
+        "regular_or_periodic_candidate": 2,
+        "chaos_evidence_inconclusive": 1,
+        "unbounded_or_diverged": 0,
+    }
+    per_case = []
+    for case_id, case in cases.items():
+        evidence = case.get("evidence", {})
+        level = level_aliases.get(
+            str(case.get("integrated_status")),
+            str(case.get("chaos_evidence_level", "chaos_evidence_inconclusive")),
+        )
+        per_case.append(
+            {
+                "case_id": case_id,
+                "chaos_evidence_level": level,
+                "lyapunov_support": _lyapunov_support(evidence),
+                "zero_one_support": evidence.get("zero_one_status"),
+                "spectral_support": evidence.get("psd_fft_status"),
+                "boundedness_support": evidence.get("boundedness_status"),
+                "poincare_support": evidence.get("poincare_status"),
+                "diagnostic_conflicts": (
+                    ["zero_one_regular_vs_cloud_like_poincare"]
+                    if evidence.get("zero_one_status") == "zero_one_regular_candidate"
+                    and evidence.get("poincare_status") in {"cloud_like", "dispersed_cloud_like"}
+                    else []
+                ),
+                "recommended_interpretation": _evidence_interpretation(level),
+            }
+        )
+    available = max(
+        (item["chaos_evidence_level"] for item in per_case),
+        key=lambda level: priority.get(level, -1),
+        default="chaos_evidence_inconclusive",
+    )
+    return {
+        "available_evidence_level": available,
+        "chaos_evidence_level": available,
+        "lyapunov_support": {item["case_id"]: item["lyapunov_support"] for item in per_case},
+        "zero_one_support": {item["case_id"]: item["zero_one_support"] for item in per_case},
+        "spectral_support": {item["case_id"]: item["spectral_support"] for item in per_case},
+        "boundedness_support": {item["case_id"]: item["boundedness_support"] for item in per_case},
+        "poincare_support": {item["case_id"]: item["poincare_support"] for item in per_case},
+        "diagnostic_conflicts": {
+            item["case_id"]: item["diagnostic_conflicts"] for item in per_case if item["diagnostic_conflicts"]
+        },
+        "recommended_interpretation": _evidence_interpretation(available),
+        "per_case_evidence": per_case,
+    }
+
+
+def _lyapunov_support(evidence: Mapping[str, Any]) -> str:
+    values = [
+        item.get("lambda_max")
+        for item in evidence.get("lyapunov_methods", [])
+        if item.get("lambda_max") is not None
+    ]
+    return "positive_lambda_max" if any(float(value) > 0.02 for value in values) else "not_available_or_nonpositive"
+
+
+def _evidence_interpretation(level: str) -> str:
+    return {
+        "strong_chaos_evidence": "strong numerical evidence of chaos",
+        "chaotic_dynamics_supported": "chaotic dynamics supported by finite-time diagnostics",
+        "chaos_evidence_inconclusive": "inconclusive chaos evidence",
+        "regular_or_periodic_candidate": "regular/periodic dynamics supported",
+        "unbounded_or_diverged": "trajectory is unbounded or diverged",
+    }[level]
 def _all_f5_cases_match(summary: Mapping[str, Any], key: str, expected: str) -> bool:
     values = _f5_values(summary, key)
     return bool(values) and all(value == expected for value in values)

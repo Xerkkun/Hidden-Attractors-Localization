@@ -130,9 +130,8 @@ def test_benchmark_summary_no_chaos_hidden_verified() -> None:
     assert "chaos_verified: true" not in combined_warnings
     assert "hidden_verified: true" not in combined_warnings
     
-    # Check that negative warnings are still present
-    assert "chaos_certified_by_this_pipeline: false" in combined_warnings
-    assert "hiddenness_certified_by_this_pipeline: false" in combined_warnings
+    # Check that the finite-time scope note remains centralized.
+    assert "scope: finite-time numerical lyapunov evidence" in combined_warnings
 
 
 # ---------------------------------------------------------------------------

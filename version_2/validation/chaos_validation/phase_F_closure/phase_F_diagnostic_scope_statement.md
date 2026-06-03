@@ -4,7 +4,7 @@
 
 Phase F produces standardized numerical evidence about bounded dynamics,
 chaos indicators, and method comparison. Its outputs are reproducible,
-traceable, and conservative.
+traceable, and scoped by the recorded numerical contract.
 
 ## 2. What F4/F5 currently establish
 
@@ -19,10 +19,10 @@ F5 establishes standardized outputs for:
 - `psd_fft`
 - `poincare`
 
-F5 does not certify mathematical chaos. F5 does not evaluate or certify
-hiddenness.
+F5 contributes complementary finite-time evidence. Hiddenness is evaluated by
+the separate sampled-neighborhood candidate gate.
 
-## 3. Why strict chaos validation is not closed
+## 3. Documented method limitations
 
 There is not yet an accepted fractional Lyapunov method applied to every
 fractional candidate. This is a strict-closure limitation, not an assertion
@@ -38,21 +38,18 @@ that the completed numerical work is false or absent.
   Rabinovich-Fabrikant `lambda_3` discrepancy after a long native run. This
   reproduction lane remains distinct from full-history QR.
 
-Therefore Phase F cannot assert `chaos_verified`.
-
 ## 4. Current valid closure
 
-The current valid closure is diagnostic, not certifying.
+The current valid closure is a structured finite-time chaos-evidence layer.
 
 ```text
-F_closed_as_structured_diagnostics_not_chaos_certification
+phase_F_frozen
 ```
 
 F4 validates internal consistency without promoting strong fractional-method
-validation. F5 produces standardized diagnostics. Phase F does not certify
-mathematical chaos. Phase F does not certify hiddenness. Current candidates
-remain `mixed_diagnostics_inconclusive` unless additional evidence is
-recorded.
+validation. F5 produces standardized diagnostics. Current candidates remain
+`chaos_evidence_inconclusive` when diagnostics conflict. Evidence levels are
+numerical and tied to the recorded solver, memory and time horizon.
 
 The strict routes are labeled as assessed with documented limitations:
 
@@ -71,4 +68,4 @@ strictly validated status.
    candidate.
 4. Preferably obtain sign agreement between two valid methods.
 5. Preserve compatibility with boundedness, zero-one, PSD/FFT, and Poincare.
-6. Do not use any isolated diagnostic as proof of chaos.
+6. Interpret diagnostics jointly under the recorded numerical contract.

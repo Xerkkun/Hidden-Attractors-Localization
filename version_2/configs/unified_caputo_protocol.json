@@ -104,7 +104,7 @@
     "requires_all_equilibria": true,
     "requires_robust_reference": true,
     "requires_valid_run_metadata": true,
-    "strong_label": "hidden_verified",
+    "strong_label": "hiddenness_supported_under_tested_neighborhoods",
     "fallback_label": "compatible_with_hiddenness_under_tested_radii"
   },
   "reproducibility": {
@@ -115,7 +115,9 @@
       "software",
       "parameters",
       "lure",
-      "seed"
+      "seed",
+      "continuation",
+      "tolerances"
     ],
     "numerical_contract_fields": [
       "q",

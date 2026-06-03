@@ -457,7 +457,7 @@ def aggregate(outdir: str | Path, *, wait: bool = False, poll_sec: float = 30.0)
                 "total_neighborhood_trajectories": sum(int(r["n_executed"]) for r in rows),
                 "total_target_hits": target_total,
                 "smallest_radius_with_target_hit": "" if math.isnan(smallest) else smallest,
-                "hiddenness_status": "rejected_self_excited_contact" if target_total > 0 else "compatible_with_hiddenness_under_tested_radii",
+                "hiddenness_status": "self_excited_contact_detected" if target_total > 0 else "compatible_with_hiddenness_under_tested_radii",
                 "notes": "Ball-neighborhood test uses EFORK target class; it is sufficient only within the declared tested radii.",
             }
         )

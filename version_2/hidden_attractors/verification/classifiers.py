@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from .candidate_gate import normalize_hiddenness_label
 
 def classify_hiddenness_verdict(
     target_hits_from_equilibria: int,
@@ -12,7 +12,7 @@ def classify_hiddenness_verdict(
     States:
         - "compatible_with_hiddenness_under_tested_radii"
         - "self_excited_contact_detected"
-        - "not_supported"
+        - "hiddenness_inconclusive"
         - "numerical_failure"
     """
     if numerical_failures > 0 and target_hits_from_equilibria == 0:
@@ -22,6 +22,9 @@ def classify_hiddenness_verdict(
         return "self_excited_contact_detected"
         
     if not seed_reached_attractor:
-        return "not_supported"
+        return "hiddenness_inconclusive"
         
     return "compatible_with_hiddenness_under_tested_radii"
+
+
+__all__ = ["classify_hiddenness_verdict", "normalize_hiddenness_label"]

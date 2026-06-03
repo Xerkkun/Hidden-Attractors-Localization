@@ -17,6 +17,8 @@ nav:
       - API Stability Tiers: api_stability.md
   - Examples: examples.md
   - Scientific Scope: scientific_scope.md
+  - Freeze Status: freeze_status.md
+  - Final Freeze Checklist: final_freeze_checklist.md
   - Systems: systems.md
   - Integer Chua q=1 Reference: integer_chua_reference.md
   - Fractional Chua q=0.9998 Algebra: fractional_chua_algebra_validation.md
