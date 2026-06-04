@@ -42,6 +42,12 @@ site/
 
 # Generated project outputs
 outputs/
+# Un-ignore static reference files inside validation/outputs that are committed
+# as ground-truth documents (not generated artifacts).
+!validation/outputs/
+!validation/outputs/**/.gitignore
+!validation/outputs/integrator_method_validation/
+!validation/outputs/integrator_method_validation/integrator_method_validation_summary.json
 runs*/
 hidden_verify/
 chua_piecewise/

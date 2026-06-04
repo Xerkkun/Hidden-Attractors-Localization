@@ -1,0 +1,29 @@
+{
+  "stage": "integrator_method_validation",
+  "methods": {
+    "EFORK3": {
+      "status": "validated_elsewhere_against_published_errors",
+      "reference_script": "tools/validation/validate_efork_integrator.py",
+      "note": "EFORK3 is validated against published terminal errors from Ghoreishi, Ghaffari, and Saad (2023) within 6e-9. See the reference script for details."
+    },
+    "ABM": {
+      "status": "method_validated_against_exact_solution",
+      "tests": {
+        "mittag_leffler": "abm_mittag_leffler_decreasing_error",
+        "manufactured_solution": "abm_manufactured_solution_decreasing_error",
+        "vector_linear": "abm_vector_linear_ok"
+      }
+    },
+    "RK4": {
+      "status": "method_validated_against_exact_and_solve_ivp",
+      "tests": {
+        "exponential_decay": "rk4_order4_confirmed",
+        "harmonic_oscillator": "rk4_energy_drift_decreasing",
+        "vector_linear": "rk4_vector_linear_ok",
+        "solve_ivp_comparison": "rk4_solve_ivp_consistent"
+      }
+    }
+  },
+  "hiddenness_certified_by_this_pipeline": false,
+  "no_hidden_verified_claim": true
+}
