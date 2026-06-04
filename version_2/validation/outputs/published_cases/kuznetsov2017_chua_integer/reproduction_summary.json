@@ -1,0 +1,17 @@
+{
+  "case_id": "kuznetsov2017_chua_integer",
+  "reference": "Kuznetsov et al. 2017",
+  "seed_transfer_mode": "published_integer_laplace",
+  "q_dependent_seed": false,
+  "dynamics_q": 1.0,
+  "statuses": [
+    "paper_formula_reproduced",
+    "paper_seed_reproduced",
+    "paper_initial_condition_reproduced",
+    "paper_formula_seed_reproduced",
+    "paper_partially_reproduced"
+  ],
+  "missing_data": [],
+  "no_hidden_verified_claim": true,
+  "hiddenness_certified_by_this_pipeline": false
+}

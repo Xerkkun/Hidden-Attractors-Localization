@@ -1,0 +1,18 @@
+{
+  "stage": "fractional_memory_validation",
+  "case_id": "chua_fractional_arctan_memory",
+  "system_id": "chua_fractional_arctan",
+  "q": 0.99,
+  "integrator": "ABM",
+  "full_memory_reference_present": true,
+  "windows_tested": [
+    256,
+    512,
+    1024
+  ],
+  "overall_status": "memory_validation_passed",
+  "automatic_warnings": [],
+  "pointwise_comparison_used": false,
+  "hiddenness_certified_by_this_pipeline": false,
+  "no_hidden_verified_claim": true
+}

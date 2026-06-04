@@ -1,0 +1,16 @@
+{
+  "global_status": "fractional_variational_abm_qr_published_pending",
+  "method_id": "fractional_variational_abm_qr",
+  "published_reproduction_method_id": "fractional_variational_dk2018_block_restart_abm_gs",
+  "certifications": {
+    "chaos_certified_by_this_pipeline": false,
+    "hiddenness_certified_by_this_pipeline": false
+  },
+  "cases_run": 6,
+  "synthetic_cases_passed": 2,
+  "published_cases_passed_quantitative": 0,
+  "published_cases_passed_qualitative": 0,
+  "published_cases_pending_missing_data": 2,
+  "failures": 0,
+  "inconclusive": 0
+}

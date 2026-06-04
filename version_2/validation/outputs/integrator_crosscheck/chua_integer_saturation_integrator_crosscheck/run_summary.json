@@ -1,0 +1,365 @@
+{
+  "case_id": "chua_integer_saturation_integrator_crosscheck",
+  "runs": [
+    {
+      "method": "EFORK_Q1",
+      "h": 0.05,
+      "q": 1.0,
+      "memory_mode": "not_applicable",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "efork_q1_h005",
+      "ic_name": "seed_plus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 51,
+        "max_norm": 10.29798534714356,
+        "min_vector": [
+          -3.523861010366524,
+          -1.507985516080415,
+          -8.528428967877025
+        ],
+        "max_vector": [
+          5.775487803655682,
+          1.6290203432702903,
+          6.805704705049509
+        ],
+        "range_vector": [
+          9.299348814022206,
+          3.1370058593507055,
+          15.334133672926534
+        ],
+        "mean_vector": [
+          0.9896342728938117,
+          -0.07736054915514554,
+          -0.8992031596749556
+        ],
+        "std_vector": [
+          3.2682504307109945,
+          1.0426597613026705,
+          5.555081383243819
+        ],
+        "variance_vector": [
+          10.681460877842602,
+          1.0871393778397416,
+          30.858929174462062
+        ],
+        "final_state": [
+          3.4002390213963403,
+          1.4842254373212778,
+          -3.5490726739780007
+        ]
+      }
+    },
+    {
+      "method": "EFORK_Q1",
+      "h": 0.05,
+      "q": 1.0,
+      "memory_mode": "not_applicable",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "efork_q1_h005",
+      "ic_name": "seed_minus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 51,
+        "max_norm": 10.29798534714356,
+        "min_vector": [
+          -5.775487803655682,
+          -1.6290203432702903,
+          -6.805704705049509
+        ],
+        "max_vector": [
+          3.523861010366524,
+          1.507985516080415,
+          8.528428967877025
+        ],
+        "range_vector": [
+          9.299348814022206,
+          3.1370058593507055,
+          15.334133672926534
+        ],
+        "mean_vector": [
+          -0.9896342728938117,
+          0.07736054915514554,
+          0.8992031596749556
+        ],
+        "std_vector": [
+          3.2682504307109945,
+          1.0426597613026705,
+          5.555081383243819
+        ],
+        "variance_vector": [
+          10.681460877842602,
+          1.0871393778397416,
+          30.858929174462062
+        ],
+        "final_state": [
+          -3.4002390213963403,
+          -1.4842254373212778,
+          3.5490726739780007
+        ]
+      }
+    },
+    {
+      "method": "EFORK_Q1",
+      "h": 0.02,
+      "q": 1.0,
+      "memory_mode": "not_applicable",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "efork_q1_h002",
+      "ic_name": "seed_plus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 126,
+        "max_norm": 10.262562383288364,
+        "min_vector": [
+          -3.4902437250481886,
+          -1.5122612447665797,
+          -8.516904906258317
+        ],
+        "max_vector": [
+          5.743308827702453,
+          1.6311018322920106,
+          6.79414343610445
+        ],
+        "range_vector": [
+          9.233552552750641,
+          3.1433630770585905,
+          15.311048342362767
+        ],
+        "mean_vector": [
+          0.9610801147325447,
+          -0.08606953804025606,
+          -0.85787598420427
+        ],
+        "std_vector": [
+          3.239077891059758,
+          1.0435938236432467,
+          5.543804209176105
+        ],
+        "variance_vector": [
+          10.49162558435213,
+          1.0890880687463318,
+          30.733765109678696
+        ],
+        "final_state": [
+          3.498443748898783,
+          1.4671266400826615,
+          -3.7418852810330465
+        ]
+      }
+    },
+    {
+      "method": "EFORK_Q1",
+      "h": 0.02,
+      "q": 1.0,
+      "memory_mode": "not_applicable",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "efork_q1_h002",
+      "ic_name": "seed_minus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 126,
+        "max_norm": 10.262562383288364,
+        "min_vector": [
+          -5.743308827702453,
+          -1.6311018322920106,
+          -6.79414343610445
+        ],
+        "max_vector": [
+          3.4902437250481886,
+          1.5122612447665797,
+          8.516904906258317
+        ],
+        "range_vector": [
+          9.233552552750641,
+          3.1433630770585905,
+          15.311048342362767
+        ],
+        "mean_vector": [
+          -0.9610801147325447,
+          0.08606953804025606,
+          0.85787598420427
+        ],
+        "std_vector": [
+          3.239077891059758,
+          1.0435938236432467,
+          5.543804209176105
+        ],
+        "variance_vector": [
+          10.49162558435213,
+          1.0890880687463318,
+          30.733765109678696
+        ],
+        "final_state": [
+          -3.498443748898783,
+          -1.4671266400826615,
+          3.7418852810330465
+        ]
+      }
+    },
+    {
+      "method": "EFORK_Q1",
+      "h": 0.01,
+      "q": 1.0,
+      "memory_mode": "not_applicable",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "efork_q1_h001",
+      "ic_name": "seed_plus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 251,
+        "max_norm": 10.274960820557567,
+        "min_vector": [
+          -3.4652998438098335,
+          -1.510003757837354,
+          -8.52330796390564
+        ],
+        "max_vector": [
+          5.752829864893377,
+          1.628435496592039,
+          6.770549507309253
+        ],
+        "range_vector": [
+          9.21812970870321,
+          3.138439254429393,
+          15.293857471214894
+        ],
+        "mean_vector": [
+          0.9660128256233771,
+          -0.09098794403247477,
+          -0.8599242348868087
+        ],
+        "std_vector": [
+          3.2331688188388585,
+          1.0411299149853204,
+          5.540155200797556
+        ],
+        "variance_vector": [
+          10.45338061111186,
+          1.0839514998773405,
+          30.69331964892421
+        ],
+        "final_state": [
+          3.4978185102311246,
+          1.462683310915212,
+          -3.753331340779753
+        ]
+      }
+    },
+    {
+      "method": "EFORK_Q1",
+      "h": 0.01,
+      "q": 1.0,
+      "memory_mode": "not_applicable",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "efork_q1_h001",
+      "ic_name": "seed_minus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 251,
+        "max_norm": 10.274960820557567,
+        "min_vector": [
+          -5.752829864893377,
+          -1.628435496592039,
+          -6.770549507309253
+        ],
+        "max_vector": [
+          3.4652998438098335,
+          1.510003757837354,
+          8.52330796390564
+        ],
+        "range_vector": [
+          9.21812970870321,
+          3.138439254429393,
+          15.293857471214894
+        ],
+        "mean_vector": [
+          -0.9660128256233771,
+          0.09098794403247477,
+          0.8599242348868087
+        ],
+        "std_vector": [
+          3.2331688188388585,
+          1.0411299149853204,
+          5.540155200797556
+        ],
+        "variance_vector": [
+          10.45338061111186,
+          1.0839514998773405,
+          30.69331964892421
+        ],
+        "final_state": [
+          -3.4978185102311246,
+          -1.462683310915212,
+          3.753331340779753
+        ]
+      }
+    }
+  ],
+  "metric_comparisons": [
+    {
+      "run_id": "efork_q1_h005",
+      "ic_name": "seed_plus",
+      "geometric_consistency": true,
+      "range_relative_error": 0.005000798565023721,
+      "center_relative_error": 0.007358222346110749,
+      "scale_relative_error": 0.005871438945409379,
+      "cloud_distance_approx": 0.0031530826854159143,
+      "range_tolerance_used": 0.35,
+      "center_tolerance_used": 0.6,
+      "scale_tolerance_used": 0.5,
+      "pointwise_comparison_used": false
+    },
+    {
+      "run_id": "efork_q1_h005",
+      "ic_name": "seed_minus",
+      "geometric_consistency": true,
+      "range_relative_error": 0.005000798565023721,
+      "center_relative_error": 0.007358222346110749,
+      "scale_relative_error": 0.005871438945409379,
+      "cloud_distance_approx": 0.0031530826854159143,
+      "range_tolerance_used": 0.35,
+      "center_tolerance_used": 0.6,
+      "scale_tolerance_used": 0.5,
+      "pointwise_comparison_used": false
+    },
+    {
+      "run_id": "efork_q1_h002",
+      "ic_name": "seed_plus",
+      "geometric_consistency": true,
+      "range_relative_error": 0.001302440251716675,
+      "center_relative_error": 0.001117285785947476,
+      "scale_relative_error": 0.0011339632744748033,
+      "cloud_distance_approx": 0.0007448118381908042,
+      "range_tolerance_used": 0.35,
+      "center_tolerance_used": 0.6,
+      "scale_tolerance_used": 0.5,
+      "pointwise_comparison_used": false
+    },
+    {
+      "run_id": "efork_q1_h002",
+      "ic_name": "seed_minus",
+      "geometric_consistency": true,
+      "range_relative_error": 0.001302440251716675,
+      "center_relative_error": 0.001117285785947476,
+      "scale_relative_error": 0.0011339632744748033,
+      "cloud_distance_approx": 0.0007448118381908042,
+      "range_tolerance_used": 0.35,
+      "center_tolerance_used": 0.6,
+      "scale_tolerance_used": 0.5,
+      "pointwise_comparison_used": false
+    }
+  ]
+}

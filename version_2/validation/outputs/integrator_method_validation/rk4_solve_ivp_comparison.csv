@@ -1,0 +1,3 @@
+h,max_diff_vs_solve_ivp,consistent,scipy_method
+0.05,2.6635417205156386e-08,True,DOP853
+0.025,1.6502244015725864e-09,True,DOP853

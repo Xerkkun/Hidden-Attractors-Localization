@@ -1,0 +1,621 @@
+{
+  "case_id": "chua_fractional_saturation_integrator_crosscheck",
+  "runs": [
+    {
+      "method": "ABM",
+      "h": 0.05,
+      "q": 0.9998,
+      "memory_mode": "full",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "abm_full_h005",
+      "ic_name": "seed_plus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 51,
+        "max_norm": 10.12938815658536,
+        "min_vector": [
+          -3.5477729893500447,
+          -1.526151439839066,
+          -8.428170485658098
+        ],
+        "max_vector": [
+          5.640947250170699,
+          1.637436046206878,
+          6.856992103137133
+        ],
+        "range_vector": [
+          9.188720239520745,
+          3.163587486045944,
+          15.285162588795231
+        ],
+        "mean_vector": [
+          0.930318606298251,
+          -0.05774391790256628,
+          -0.8321581777700506
+        ],
+        "std_vector": [
+          3.2140559629521723,
+          1.058668751516155,
+          5.507671909939063
+        ],
+        "variance_vector": [
+          10.330155732988416,
+          1.1207795254367745,
+          30.334449867531806
+        ],
+        "final_state": [
+          3.763717737247098,
+          1.4113647676123136,
+          -4.300843676512788
+        ]
+      }
+    },
+    {
+      "method": "ABM",
+      "h": 0.05,
+      "q": 0.9998,
+      "memory_mode": "full",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "abm_full_h005",
+      "ic_name": "seed_minus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 51,
+        "max_norm": 10.12938815658536,
+        "min_vector": [
+          -5.640947250170699,
+          -1.637436046206878,
+          -6.856992103137133
+        ],
+        "max_vector": [
+          3.5477729893500447,
+          1.526151439839066,
+          8.428170485658098
+        ],
+        "range_vector": [
+          9.188720239520745,
+          3.163587486045944,
+          15.285162588795231
+        ],
+        "mean_vector": [
+          -0.930318606298251,
+          0.05774391790256628,
+          0.8321581777700506
+        ],
+        "std_vector": [
+          3.2140559629521723,
+          1.058668751516155,
+          5.507671909939063
+        ],
+        "variance_vector": [
+          10.330155732988416,
+          1.1207795254367745,
+          30.334449867531806
+        ],
+        "final_state": [
+          -3.763717737247098,
+          -1.4113647676123136,
+          4.300843676512788
+        ]
+      }
+    },
+    {
+      "method": "ABM",
+      "h": 0.025,
+      "q": 0.9998,
+      "memory_mode": "full",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "abm_full_h0025",
+      "ic_name": "seed_plus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 101,
+        "max_norm": 10.221008106090137,
+        "min_vector": [
+          -3.4876408802657126,
+          -1.5144362109268572,
+          -8.487171410327878
+        ],
+        "max_vector": [
+          5.711743055927459,
+          1.6291119674698211,
+          6.791071997820964
+        ],
+        "range_vector": [
+          9.199383936193172,
+          3.1435481783966783,
+          15.278243408148843
+        ],
+        "mean_vector": [
+          0.9557738814984517,
+          -0.07854314219463626,
+          -0.8537291052271474
+        ],
+        "std_vector": [
+          3.2220570108349698,
+          1.0470994047020978,
+          5.5234448750711085
+        ],
+        "variance_vector": [
+          10.38165138107078,
+          1.0964171633274875,
+          30.508443287949298
+        ],
+        "final_state": [
+          3.578098140649956,
+          1.4440938898626712,
+          -3.9327547356402857
+        ]
+      }
+    },
+    {
+      "method": "ABM",
+      "h": 0.025,
+      "q": 0.9998,
+      "memory_mode": "full",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "abm_full_h0025",
+      "ic_name": "seed_minus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 101,
+        "max_norm": 10.221008106090137,
+        "min_vector": [
+          -5.711743055927459,
+          -1.6291119674698211,
+          -6.791071997820964
+        ],
+        "max_vector": [
+          3.4876408802657126,
+          1.5144362109268572,
+          8.487171410327878
+        ],
+        "range_vector": [
+          9.199383936193172,
+          3.1435481783966783,
+          15.278243408148843
+        ],
+        "mean_vector": [
+          -0.9557738814984517,
+          0.07854314219463626,
+          0.8537291052271474
+        ],
+        "std_vector": [
+          3.2220570108349698,
+          1.0470994047020978,
+          5.5234448750711085
+        ],
+        "variance_vector": [
+          10.38165138107078,
+          1.0964171633274875,
+          30.508443287949298
+        ],
+        "final_state": [
+          -3.578098140649956,
+          -1.4440938898626712,
+          3.9327547356402857
+        ]
+      }
+    },
+    {
+      "method": "EFORK3",
+      "h": 0.02,
+      "q": 0.9998,
+      "memory_mode": "full",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "efork3_full_h002",
+      "ic_name": "seed_plus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 126,
+        "max_norm": 8.406600152549093,
+        "min_vector": [
+          -2.4231076286577946,
+          -0.8302820535435194,
+          -7.2639594259144475
+        ],
+        "max_vector": [
+          4.3369496925296325,
+          1.471283679296794,
+          5.993352987939124
+        ],
+        "range_vector": [
+          6.760057321187427,
+          2.3015657328403134,
+          13.257312413853573
+        ],
+        "mean_vector": [
+          2.0640747434392903,
+          0.6461898644101176,
+          -1.891052618348949
+        ],
+        "std_vector": [
+          2.0228983728278016,
+          0.6750680401718056,
+          4.890126567228126
+        ],
+        "variance_vector": [
+          4.092117826789368,
+          0.4557168588614025,
+          23.91333784351034
+        ],
+        "final_state": [
+          2.0013883648753925,
+          -0.8302820535435194,
+          -5.803577058468332
+        ]
+      }
+    },
+    {
+      "method": "EFORK3",
+      "h": 0.02,
+      "q": 0.9998,
+      "memory_mode": "full",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "efork3_full_h002",
+      "ic_name": "seed_minus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 126,
+        "max_norm": 8.406600152549093,
+        "min_vector": [
+          -4.3369496925296325,
+          -1.471283679296794,
+          -5.993352987939124
+        ],
+        "max_vector": [
+          2.4231076286577946,
+          0.8302820535435194,
+          7.2639594259144475
+        ],
+        "range_vector": [
+          6.760057321187427,
+          2.3015657328403134,
+          13.257312413853573
+        ],
+        "mean_vector": [
+          -2.0640747434392903,
+          -0.6461898644101176,
+          1.891052618348949
+        ],
+        "std_vector": [
+          2.0228983728278016,
+          0.6750680401718056,
+          4.890126567228126
+        ],
+        "variance_vector": [
+          4.092117826789368,
+          0.4557168588614025,
+          23.91333784351034
+        ],
+        "final_state": [
+          -2.0013883648753925,
+          0.8302820535435194,
+          5.803577058468332
+        ]
+      }
+    },
+    {
+      "method": "EFORK3",
+      "h": 0.01,
+      "q": 0.9998,
+      "memory_mode": "full",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "efork3_full_h001",
+      "ic_name": "seed_plus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 251,
+        "max_norm": 9.314193118347616,
+        "min_vector": [
+          -2.654103839681901,
+          -0.6328653918300926,
+          -7.886256640606726
+        ],
+        "max_vector": [
+          5.008704636233723,
+          1.527830562591252,
+          6.179190544605689
+        ],
+        "range_vector": [
+          7.662808475915624,
+          2.1606959544213447,
+          14.065447185212415
+        ],
+        "mean_vector": [
+          2.3459397065655487,
+          0.7229038382752082,
+          -1.9560105060133584
+        ],
+        "std_vector": [
+          2.4117259788220187,
+          0.6420938050276455,
+          5.251812515986617
+        ],
+        "variance_vector": [
+          5.816422196925024,
+          0.41228445445488004,
+          27.581534703073686
+        ],
+        "final_state": [
+          3.677550999453209,
+          -0.6328653918300926,
+          -6.977129857389683
+        ]
+      }
+    },
+    {
+      "method": "EFORK3",
+      "h": 0.01,
+      "q": 0.9998,
+      "memory_mode": "full",
+      "memory_window": null,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "efork3_full_h001",
+      "ic_name": "seed_minus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 251,
+        "max_norm": 9.314193118347616,
+        "min_vector": [
+          -5.008704636233723,
+          -1.527830562591252,
+          -6.179190544605689
+        ],
+        "max_vector": [
+          2.654103839681901,
+          0.6328653918300926,
+          7.886256640606726
+        ],
+        "range_vector": [
+          7.662808475915624,
+          2.1606959544213447,
+          14.065447185212415
+        ],
+        "mean_vector": [
+          -2.3459397065655487,
+          -0.7229038382752082,
+          1.9560105060133584
+        ],
+        "std_vector": [
+          2.4117259788220187,
+          0.6420938050276455,
+          5.251812515986617
+        ],
+        "variance_vector": [
+          5.816422196925024,
+          0.41228445445488004,
+          27.581534703073686
+        ],
+        "final_state": [
+          -3.677550999453209,
+          0.6328653918300926,
+          6.977129857389683
+        ]
+      }
+    },
+    {
+      "method": "EFORK3",
+      "h": 0.01,
+      "q": 0.9998,
+      "memory_mode": "window",
+      "memory_window": 16.0,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "efork3_window_h001_L16",
+      "ic_name": "seed_plus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 251,
+        "max_norm": 9.314193118347616,
+        "min_vector": [
+          -2.654103839681901,
+          -0.6328653918300926,
+          -7.886256640606726
+        ],
+        "max_vector": [
+          5.008704636233723,
+          1.527830562591252,
+          6.179190544605689
+        ],
+        "range_vector": [
+          7.662808475915624,
+          2.1606959544213447,
+          14.065447185212415
+        ],
+        "mean_vector": [
+          2.3459397065655487,
+          0.7229038382752082,
+          -1.9560105060133584
+        ],
+        "std_vector": [
+          2.4117259788220187,
+          0.6420938050276455,
+          5.251812515986617
+        ],
+        "variance_vector": [
+          5.816422196925024,
+          0.41228445445488004,
+          27.581534703073686
+        ],
+        "final_state": [
+          3.677550999453209,
+          -0.6328653918300926,
+          -6.977129857389683
+        ]
+      }
+    },
+    {
+      "method": "EFORK3",
+      "h": 0.01,
+      "q": 0.9998,
+      "memory_mode": "window",
+      "memory_window": 16.0,
+      "status": "integrated_ok",
+      "error_message": null,
+      "run_id": "efork3_window_h001_L16",
+      "ic_name": "seed_minus",
+      "trajectory_class": "bounded_nontrivial",
+      "metrics": {
+        "n_post": 251,
+        "max_norm": 9.314193118347616,
+        "min_vector": [
+          -5.008704636233723,
+          -1.527830562591252,
+          -6.179190544605689
+        ],
+        "max_vector": [
+          2.654103839681901,
+          0.6328653918300926,
+          7.886256640606726
+        ],
+        "range_vector": [
+          7.662808475915624,
+          2.1606959544213447,
+          14.065447185212415
+        ],
+        "mean_vector": [
+          -2.3459397065655487,
+          -0.7229038382752082,
+          1.9560105060133584
+        ],
+        "std_vector": [
+          2.4117259788220187,
+          0.6420938050276455,
+          5.251812515986617
+        ],
+        "variance_vector": [
+          5.816422196925024,
+          0.41228445445488004,
+          27.581534703073686
+        ],
+        "final_state": [
+          -3.677550999453209,
+          0.6328653918300926,
+          6.977129857389683
+        ]
+      }
+    }
+  ],
+  "metric_comparisons": [
+    {
+      "run_id": "abm_full_h005",
+      "ic_name": "seed_plus",
+      "geometric_consistency": true,
+      "range_relative_error": 0.0013104580277463285,
+      "center_relative_error": 0.006067831442056791,
+      "scale_relative_error": 0.0032615964147781214,
+      "cloud_distance_approx": 0.003591892780123037,
+      "range_tolerance_used": 0.35,
+      "center_tolerance_used": 0.6,
+      "scale_tolerance_used": 0.5,
+      "pointwise_comparison_used": false
+    },
+    {
+      "run_id": "abm_full_h005",
+      "ic_name": "seed_minus",
+      "geometric_consistency": true,
+      "range_relative_error": 0.0013104580277463285,
+      "center_relative_error": 0.006067831442056791,
+      "scale_relative_error": 0.0032615964147781214,
+      "cloud_distance_approx": 0.003591892780123037,
+      "range_tolerance_used": 0.35,
+      "center_tolerance_used": 0.6,
+      "scale_tolerance_used": 0.5,
+      "pointwise_comparison_used": false
+    },
+    {
+      "run_id": "efork3_full_h002",
+      "ic_name": "seed_plus",
+      "geometric_consistency": true,
+      "range_relative_error": 0.18099935218792793,
+      "center_relative_error": 0.2596021596410438,
+      "scale_relative_error": 0.21702074292502402,
+      "cloud_distance_approx": 0.15926311011312286,
+      "range_tolerance_used": 0.35,
+      "center_tolerance_used": 0.6,
+      "scale_tolerance_used": 0.5,
+      "pointwise_comparison_used": false
+    },
+    {
+      "run_id": "efork3_full_h002",
+      "ic_name": "seed_minus",
+      "geometric_consistency": true,
+      "range_relative_error": 0.18099935218792793,
+      "center_relative_error": 0.2596021596410438,
+      "scale_relative_error": 0.21702074292502402,
+      "cloud_distance_approx": 0.15926311011312286,
+      "range_tolerance_used": 0.35,
+      "center_tolerance_used": 0.6,
+      "scale_tolerance_used": 0.5,
+      "pointwise_comparison_used": false
+    },
+    {
+      "run_id": "efork3_full_h001",
+      "ic_name": "seed_plus",
+      "geometric_consistency": true,
+      "range_relative_error": 0.12095761447878817,
+      "center_relative_error": 0.30044094881614836,
+      "scale_relative_error": 0.14595640231379575,
+      "cloud_distance_approx": 0.18073513144415573,
+      "range_tolerance_used": 0.35,
+      "center_tolerance_used": 0.6,
+      "scale_tolerance_used": 0.5,
+      "pointwise_comparison_used": false
+    },
+    {
+      "run_id": "efork3_full_h001",
+      "ic_name": "seed_minus",
+      "geometric_consistency": true,
+      "range_relative_error": 0.12095761447878817,
+      "center_relative_error": 0.30044094881614836,
+      "scale_relative_error": 0.14595640231379575,
+      "cloud_distance_approx": 0.18073513144415573,
+      "range_tolerance_used": 0.35,
+      "center_tolerance_used": 0.6,
+      "scale_tolerance_used": 0.5,
+      "pointwise_comparison_used": false
+    },
+    {
+      "run_id": "efork3_window_h001_L16",
+      "ic_name": "seed_plus",
+      "geometric_consistency": true,
+      "range_relative_error": 0.12095761447878817,
+      "center_relative_error": 0.30044094881614836,
+      "scale_relative_error": 0.14595640231379575,
+      "cloud_distance_approx": 0.18073513144415573,
+      "range_tolerance_used": 0.35,
+      "center_tolerance_used": 0.6,
+      "scale_tolerance_used": 0.5,
+      "pointwise_comparison_used": false
+    },
+    {
+      "run_id": "efork3_window_h001_L16",
+      "ic_name": "seed_minus",
+      "geometric_consistency": true,
+      "range_relative_error": 0.12095761447878817,
+      "center_relative_error": 0.30044094881614836,
+      "scale_relative_error": 0.14595640231379575,
+      "cloud_distance_approx": 0.18073513144415573,
+      "range_tolerance_used": 0.35,
+      "center_tolerance_used": 0.6,
+      "scale_tolerance_used": 0.5,
+      "pointwise_comparison_used": false
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+run_id,ic_name,method,h,q,memory_mode,memory_window,trajectory_class,status,error_message
+efork_q1_h005,seed_plus,EFORK_Q1,0.05,1.0,not_applicable,,bounded_nontrivial,integrated_ok,
+efork_q1_h005,seed_minus,EFORK_Q1,0.05,1.0,not_applicable,,bounded_nontrivial,integrated_ok,
+efork_q1_h002,seed_plus,EFORK_Q1,0.02,1.0,not_applicable,,bounded_nontrivial,integrated_ok,
+efork_q1_h002,seed_minus,EFORK_Q1,0.02,1.0,not_applicable,,bounded_nontrivial,integrated_ok,
+efork_q1_h001,seed_plus,EFORK_Q1,0.01,1.0,not_applicable,,bounded_nontrivial,integrated_ok,
+efork_q1_h001,seed_minus,EFORK_Q1,0.01,1.0,not_applicable,,bounded_nontrivial,integrated_ok,

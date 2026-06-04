@@ -1,0 +1,10 @@
+{
+  "case_id": "wu2023_chua_fractional_arctan",
+  "missing_ics": [],
+  "published_missing_values": [
+    "paper does not report omega0 explicitly",
+    "paper does not report describing-function gain k explicitly",
+    "paper does not report describing-function amplitude a0 explicitly",
+    "paper does not report exact seed_plus or seed_minus coordinates"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "missing_values": [
+    "paper does not report omega0 explicitly",
+    "paper does not report describing-function gain k explicitly",
+    "paper does not report describing-function amplitude a0 explicitly",
+    "paper does not report exact seed_plus or seed_minus coordinates"
+  ],
+  "notes": "The paper reports initial conditions x0_plus/minus but not the intermediate DF seed parameters. The commensurate Caputo fractional order is q=0.99."
+}

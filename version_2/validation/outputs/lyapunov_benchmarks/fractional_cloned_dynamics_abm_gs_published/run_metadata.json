@@ -1,0 +1,107 @@
+{
+  "generated_at_utc": "2026-06-01T16:14:31.135275+00:00",
+  "run_class": "published_quantitative_long",
+  "command": "validation\\python\\run_cloned_dynamics_benchmarks.py --official-summary-dir validation\\chaos_validation\\lyapunov_methods\\fractional_cloned_dynamics_abm_gs_published",
+  "python_version": "3.12.12 (main, Oct 10 2025, 12:42:57)  [GCC UCRT 15.2.0 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "global_parameters": [
+    {
+      "case_file": "fischer2020_financial_commensurate.yaml",
+      "system": "financial",
+      "integration": {
+        "integrator": "abm_predictor_corrector",
+        "memory_protocol": "published_block_restart",
+        "h": 0.05,
+        "T_ref": 5000,
+        "N": 100000,
+        "t_clone": 10,
+        "n_clone": 1000,
+        "h_clone": 0.01,
+        "K": 500,
+        "delta": 0.001
+      }
+    },
+    {
+      "case_file": "fischer2020_financial_incommensurate.yaml",
+      "system": "financial",
+      "integration": {
+        "integrator": "abm_predictor_corrector",
+        "memory_protocol": "published_block_restart",
+        "h": 0.05,
+        "T_ref": 5000,
+        "N": 100000,
+        "t_clone": 10,
+        "n_clone": 1000,
+        "h_clone": 0.01,
+        "K": 500,
+        "delta": 0.001
+      }
+    },
+    {
+      "case_file": "fischer2020_four_wing_commensurate.yaml",
+      "system": "four_wing",
+      "integration": {
+        "integrator": "abm_predictor_corrector",
+        "memory_protocol": "published_block_restart",
+        "h": 0.01,
+        "T_ref": 1000,
+        "N": 100000,
+        "t_clone": 5,
+        "n_clone": 500,
+        "h_clone": 0.01,
+        "K": 200,
+        "delta": 0.001
+      }
+    },
+    {
+      "case_file": "fischer2020_four_wing_incommensurate.yaml",
+      "system": "four_wing",
+      "integration": {
+        "integrator": "abm_predictor_corrector",
+        "memory_protocol": "published_block_restart",
+        "h": 0.01,
+        "T_ref": 1000,
+        "N": 100000,
+        "t_clone": 5,
+        "n_clone": 500,
+        "h_clone": 0.01,
+        "K": 200,
+        "delta": 0.001
+      }
+    },
+    {
+      "case_file": "fischer2020_jerk_commensurate.yaml",
+      "system": "jerk",
+      "integration": {
+        "integrator": "abm_predictor_corrector",
+        "memory_protocol": "published_block_restart",
+        "h": 0.01,
+        "T_ref": 1000,
+        "N": 100000,
+        "t_clone": 1,
+        "n_clone": 100,
+        "h_clone": 0.01,
+        "K": 1000,
+        "delta": 0.001
+      }
+    },
+    {
+      "case_file": "fischer2020_jerk_incommensurate.yaml",
+      "system": "jerk",
+      "integration": {
+        "integrator": "abm_predictor_corrector",
+        "memory_protocol": "published_block_restart",
+        "h": 0.01,
+        "T_ref": 1000,
+        "N": 100000,
+        "t_clone": 1,
+        "n_clone": 100,
+        "h_clone": 0.01,
+        "K": 1000,
+        "delta": 0.001
+      }
+    }
+  ],
+  "commit": "047ec8dc96a71e28ec473d905db156cc37581203",
+  "working_tree_dirty": true
+}

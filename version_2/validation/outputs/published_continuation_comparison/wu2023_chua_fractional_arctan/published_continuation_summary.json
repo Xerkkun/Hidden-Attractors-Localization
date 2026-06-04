@@ -1,0 +1,21 @@
+{
+  "stage": "published_continuation_comparison",
+  "case_id": "wu2023_chua_fractional_arctan",
+  "reference_id": "wu2023",
+  "system_id": "chua_fractional_arctan",
+  "paper_reports_continuation": false,
+  "paper_reports_memory_transport": false,
+  "paper_does_not_report_continuation": true,
+  "paper_style_strategy": "paper_style_initial_condition_integration",
+  "caputo_aware_strategy": "history_window_transport",
+  "overall_status": "published_comparison_partial_original_only",
+  "published_data_status": "published_data_available",
+  "paper_style_reintegration_status": "paper_initial_condition_reintegrated",
+  "paper_style_vs_history_status": "paper_style_result_differs_from_caputo_history_transport",
+  "dynamic_class_detected": "bounded_nontrivial",
+  "chaotic_dynamics_candidate_detected": true,
+  "hiddenness_certified_by_this_pipeline": false,
+  "chaos_certified_by_this_pipeline": false,
+  "no_hidden_verified_claim": true,
+  "pointwise_comparison_used": false
+}

@@ -1,0 +1,23 @@
+{
+  "case_id": "chua_fractional_arctan_integrator_crosscheck",
+  "system_id": "chua_fractional_arctan",
+  "q": 0.99,
+  "reference_run": "efork3_full_h001",
+  "t_final": 5.0,
+  "t_burn": 2.5,
+  "fast_mode": true,
+  "overall_status": "crosscheck_passed",
+  "pointwise_comparison_used": false,
+  "bounded_consistency": true,
+  "noncollapse_consistency": true,
+  "geometric_consistency": true,
+  "h_sensitivity": "h_stable",
+  "memory_sensitivity": "no_memory_window_runs",
+  "method_validation_status": {
+    "EFORK3": "validated_against_published_errors_and_manufactured_solutions",
+    "ABM": "validated_against_exact_solutions",
+    "RK4": "validated_against_exact_solutions_for_q1"
+  },
+  "hiddenness_certified_by_this_pipeline": false,
+  "no_hidden_verified_claim": true
+}

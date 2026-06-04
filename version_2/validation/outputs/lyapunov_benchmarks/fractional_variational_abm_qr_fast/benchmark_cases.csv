@@ -1,0 +1,7 @@
+benchmark_type,case_id,computed_exponents,execution_contract,message,missing_fields,numerical_route,status
+published,published_danca_kuznetsov2018_template,,,Published benchmark is a template with missing data.,"['expected_exponents', 'exact_h', 'exact_t_final', 'exact_t_burn', 'exact_initial_condition', 'reorthonormalization_time']",,published_reference_data_missing
+published,published_dk2018_4d_nonsmooth_q098_qualitative,,,Published benchmark is a template with missing data.,"['complete_system_parameters', 'exact_initial_condition', 'expected_exponents', 'exact_h', 'exact_t_final']",,published_reference_data_missing_qualitative_only
+published,published_dk2018_lorenz_q0985,"[85.9072122605617, -97.69478429449502, -2.905158554472327]",dk2018_block_restart_abm_gs,Execution completed with outcome: published_benchmark_smoke_passed,,native_c,published_benchmark_smoke_passed
+published,published_dk2018_rabinovich_fabrikant_q0999,"[0.1319988383161393, 0.08905972733792132, -1.9888982382105813]",dk2018_block_restart_abm_gs,Execution completed with outcome: published_benchmark_smoke_passed,,native_c,published_benchmark_smoke_passed
+synthetic,synthetic_linear_stable,"[-1.3000202080224492, -2.5814564020646404]",fixed_lower_limit_full_history_qr,Execution completed with outcome: synthetic_benchmark_passed,,python_reference_short,synthetic_benchmark_passed
+synthetic,synthetic_zero_rhs,"[0.0, 0.0]",fixed_lower_limit_full_history_qr,Execution completed with outcome: synthetic_benchmark_passed,,python_reference_short,synthetic_benchmark_passed

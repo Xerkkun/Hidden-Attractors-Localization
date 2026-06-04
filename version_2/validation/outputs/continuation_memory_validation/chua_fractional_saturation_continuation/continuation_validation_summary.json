@@ -1,0 +1,42 @@
+{
+  "stage": "continuation_memory_validation",
+  "case_id": "chua_fractional_saturation_continuation",
+  "system_id": "chua_fractional_saturation",
+  "q": 0.9998,
+  "eta_grids": [
+    10,
+    25,
+    50,
+    100
+  ],
+  "strategies": [
+    "last_point_restart",
+    "history_window_transport"
+  ],
+  "history_windows": [
+    256,
+    512,
+    1024
+  ],
+  "deformed_lure_continuation_requested": true,
+  "deformed_lure_continuation_available": true,
+  "deformed_lure_continuation_status": "deformed_lure_continuation_sensitive_to_history",
+  "original_system_strategy_comparison_requested": true,
+  "original_system_strategy_comparison_performed": true,
+  "original_system_restart_vs_history_status": "original_restart_and_history_consistent",
+  "overall_status": "continuation_validation_sensitive_to_history",
+  "eta_refinement_status": "continuation_stable_under_eta_refinement",
+  "restart_vs_history_status": "restart_differs_from_history",
+  "deformed_lure_restart_vs_history_status": "restart_differs_from_history",
+  "transported_history": true,
+  "rhs_history_recomputed_after_eta_change": true,
+  "automatic_warnings": [
+    "Deformed-system restart/history comparison differs: final_state_relative_distance=0.5720 > 0.5",
+    "Deformed-system restart/history comparison differs: final_state_relative_distance=0.5850 > 0.5",
+    "Deformed-system restart/history comparison differs: final_state_relative_distance=0.6168 > 0.5"
+  ],
+  "pointwise_comparison_used": false,
+  "hiddenness_certified_by_this_pipeline": false,
+  "chaos_certified_by_this_pipeline": false,
+  "no_hidden_verified_claim": true
+}

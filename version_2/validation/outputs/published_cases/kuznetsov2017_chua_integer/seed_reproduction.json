@@ -1,0 +1,36 @@
+{
+  "computed_seed": {
+    "status": "ok",
+    "q_seed": 1.0,
+    "omega0": 2.0391869399588547,
+    "k": 0.2098673545150666,
+    "a0": 5.85614508625525,
+    "seed_plus": [
+      5.85614508625525,
+      0.3693315782465249,
+      -8.366536168328683
+    ],
+    "seed_minus": [
+      -5.85614508625525,
+      -0.3693315782465249,
+      8.366536168328683
+    ],
+    "seed_transfer_mode": "published_integer_laplace",
+    "z_rule": "z = j*omega",
+    "q_dependent_seed": false,
+    "dynamics_q": 1.0,
+    "W_mode_used": "W_pub(j omega) = r^T(j omega I - P)^(-1)b",
+    "W_at_omega0": {
+      "re": 4.764914497114932,
+      "im": 3.113065361048939e-13
+    }
+  },
+  "comparison": {
+    "status": "paper_seed_reproduced",
+    "omega0_diff": 1.461053500406706e-13,
+    "k_diff": 1.73749903353837e-14,
+    "a0_diff": 2.105871033108997e-12,
+    "seed_plus_diff": 3.1867841698840493e-12,
+    "seed_minus_diff": 3.1867841698840493e-12
+  }
+}

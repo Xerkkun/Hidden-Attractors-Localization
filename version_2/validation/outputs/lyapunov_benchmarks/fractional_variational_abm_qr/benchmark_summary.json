@@ -1,0 +1,11 @@
+{
+  "global_status": "fractional_variational_abm_qr_published_pending",
+  "method_id": "fractional_variational_abm_qr",
+  "cases_run": 3,
+  "synthetic_cases_passed": 2,
+  "published_cases_passed_quantitative": 0,
+  "published_cases_passed_qualitative": 0,
+  "published_cases_pending_missing_data": 1,
+  "failures": 0,
+  "inconclusive": 0
+}

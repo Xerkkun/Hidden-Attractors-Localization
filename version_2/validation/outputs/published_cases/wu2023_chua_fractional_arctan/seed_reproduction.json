@@ -1,0 +1,32 @@
+{
+  "computed_seed": {
+    "status": "ok",
+    "q_seed": 1.0,
+    "omega0": 2.0391869399765503,
+    "k": -1.3369326454828465,
+    "a0": 0.8790766753564714,
+    "seed_plus": [
+      0.8790766753564714,
+      0.05544104033246714,
+      -1.2559160831584406
+    ],
+    "seed_minus": [
+      -0.8790766753564714,
+      -0.05544104033246714,
+      1.2559160831584406
+    ],
+    "seed_transfer_mode": "published_integer_laplace",
+    "z_rule": "z = j*omega",
+    "q_dependent_seed": false,
+    "dynamics_q": 0.99,
+    "W_mode_used": "W_pub(j omega) = r^T(j omega I - P)^(-1)b",
+    "W_at_omega0": {
+      "re": -0.7479808376126833,
+      "im": -9.195699757214015e-13
+    }
+  },
+  "comparison": {
+    "status": "paper_data_missing",
+    "notes": "One or more expected seed metrics (omega0, k, a0, seed_plus/minus) are null in case config."
+  }
+}

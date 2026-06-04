@@ -1,0 +1,21 @@
+{
+  "stage": "published_continuation_comparison",
+  "case_id": "danca2017_chua_fractional_saturation",
+  "reference_id": "danca2017",
+  "system_id": "chua_fractional_saturation",
+  "paper_reports_continuation": false,
+  "paper_reports_memory_transport": false,
+  "paper_does_not_report_continuation": true,
+  "paper_style_strategy": "none",
+  "caputo_aware_strategy": "not_applicable",
+  "overall_status": "published_data_missing",
+  "published_data_status": "published_data_missing",
+  "paper_style_reintegration_status": "paper_data_missing",
+  "paper_style_vs_history_status": "comparison_not_applicable",
+  "dynamic_class_detected": "inconclusive",
+  "chaotic_dynamics_candidate_detected": false,
+  "hiddenness_certified_by_this_pipeline": false,
+  "chaos_certified_by_this_pipeline": false,
+  "no_hidden_verified_claim": true,
+  "pointwise_comparison_used": false
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "case_id": "published_danca_kuznetsov2018_template",
+    "missing_fields": [
+      "expected_exponents",
+      "exact_h",
+      "exact_t_final",
+      "exact_t_burn",
+      "exact_initial_condition",
+      "reorthonormalization_time"
+    ]
+  },
+  {
+    "case_id": "published_dk2018_4d_nonsmooth_q098_qualitative",
+    "missing_fields": [
+      "complete_system_parameters",
+      "exact_initial_condition",
+      "expected_exponents",
+      "exact_h",
+      "exact_t_final"
+    ]
+  }
+]

@@ -1,0 +1,4 @@
+case_id,benchmark_type,status,computed_exponents,message,missing_fields
+published_danca_kuznetsov2018_template,published,published_reference_data_missing,,Published benchmark is a template with missing data.,"['expected_exponents', 'exact_h', 'exact_t_final', 'exact_t_burn', 'exact_initial_condition', 'reorthonormalization_time']"
+synthetic_linear_stable,synthetic,synthetic_benchmark_passed,"[-1.3000202080224494, -2.5814564020646404]",Execution completed with outcome: synthetic_benchmark_passed,
+synthetic_zero_rhs,synthetic,synthetic_benchmark_passed,"[0.0, 0.0]",Execution completed with outcome: synthetic_benchmark_passed,

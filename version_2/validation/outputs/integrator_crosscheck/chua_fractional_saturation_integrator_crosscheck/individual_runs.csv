@@ -1,0 +1,11 @@
+run_id,ic_name,method,h,q,memory_mode,memory_window,trajectory_class,status,error_message
+abm_full_h005,seed_plus,ABM,0.05,0.9998,full,,bounded_nontrivial,integrated_ok,
+abm_full_h005,seed_minus,ABM,0.05,0.9998,full,,bounded_nontrivial,integrated_ok,
+abm_full_h0025,seed_plus,ABM,0.025,0.9998,full,,bounded_nontrivial,integrated_ok,
+abm_full_h0025,seed_minus,ABM,0.025,0.9998,full,,bounded_nontrivial,integrated_ok,
+efork3_full_h002,seed_plus,EFORK3,0.02,0.9998,full,,bounded_nontrivial,integrated_ok,
+efork3_full_h002,seed_minus,EFORK3,0.02,0.9998,full,,bounded_nontrivial,integrated_ok,
+efork3_full_h001,seed_plus,EFORK3,0.01,0.9998,full,,bounded_nontrivial,integrated_ok,
+efork3_full_h001,seed_minus,EFORK3,0.01,0.9998,full,,bounded_nontrivial,integrated_ok,
+efork3_window_h001_L16,seed_plus,EFORK3,0.01,0.9998,window,16.0,bounded_nontrivial,integrated_ok,
+efork3_window_h001_L16,seed_minus,EFORK3,0.01,0.9998,window,16.0,bounded_nontrivial,integrated_ok,

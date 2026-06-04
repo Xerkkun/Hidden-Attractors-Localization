@@ -1,0 +1,17 @@
+{
+  "case_id": "danca2017_chua_fractional_saturation",
+  "missing_ics": [
+    {
+      "ic_id": "ic_0",
+      "source": "missing",
+      "reason": "no_published_ic_or_seed"
+    }
+  ],
+  "published_missing_values": [
+    "paper does not report omega0 explicitly",
+    "paper does not report describing-function gain k explicitly",
+    "paper does not report describing-function amplitude a0 explicitly",
+    "paper does not report exact seed_plus or seed_minus coordinates",
+    "paper does not report hidden-attractor initial condition coordinates explicitly"
+  ]
+}

@@ -1,0 +1,9 @@
+case_id,initial_condition_id,M,memory_time,dynamic_class_full,dynamic_class_window,class_changed,rho_relative_error,rho_max_relative_error,range_relative_error,center_relative_error,tail_bound_estimate,warning,status
+chua_fractional_saturation_memory,seed_plus,,5.0,bounded_nontrivial,bounded_nontrivial,False,0.0,0.0,0.0,0.0,0.0,False,full_memory_reference
+chua_fractional_saturation_memory,seed_plus,256,2.56,bounded_nontrivial,bounded_nontrivial,False,0.0006981093544582502,0.0006414279869344791,0.0004969420073793362,0.0007300273866560987,0.003062871334752336,False,window_memory_sufficient
+chua_fractional_saturation_memory,seed_plus,512,5.12,bounded_nontrivial,bounded_nontrivial,False,0.0,0.0,0.0,0.0,0.0,False,window_memory_sufficient
+chua_fractional_saturation_memory,seed_plus,1024,10.24,bounded_nontrivial,bounded_nontrivial,False,0.0,0.0,0.0,0.0,0.0,False,window_memory_sufficient
+chua_fractional_saturation_memory,seed_minus,,5.0,bounded_nontrivial,bounded_nontrivial,False,0.0,0.0,0.0,0.0,0.0,False,full_memory_reference
+chua_fractional_saturation_memory,seed_minus,256,2.56,bounded_nontrivial,bounded_nontrivial,False,0.0006981093544582502,0.0006414279869344791,0.0004969420073793362,0.0007300273866560987,0.003062871334752336,False,window_memory_sufficient
+chua_fractional_saturation_memory,seed_minus,512,5.12,bounded_nontrivial,bounded_nontrivial,False,0.0,0.0,0.0,0.0,0.0,False,window_memory_sufficient
+chua_fractional_saturation_memory,seed_minus,1024,10.24,bounded_nontrivial,bounded_nontrivial,False,0.0,0.0,0.0,0.0,0.0,False,window_memory_sufficient

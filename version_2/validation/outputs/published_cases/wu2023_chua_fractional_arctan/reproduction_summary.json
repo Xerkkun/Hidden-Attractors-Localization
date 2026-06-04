@@ -1,0 +1,22 @@
+{
+  "case_id": "wu2023_chua_fractional_arctan",
+  "reference": "Wu et al. 2023",
+  "seed_transfer_mode": "published_integer_laplace",
+  "q_dependent_seed": false,
+  "dynamics_q": 0.99,
+  "statuses": [
+    "paper_formula_reproduced",
+    "paper_data_missing",
+    "paper_partially_reproduced_missing_seed_data",
+    "paper_initial_condition_reproduced",
+    "paper_partially_reproduced"
+  ],
+  "missing_data": [
+    "paper does not report omega0 explicitly",
+    "paper does not report describing-function gain k explicitly",
+    "paper does not report describing-function amplitude a0 explicitly",
+    "paper does not report exact seed_plus or seed_minus coordinates"
+  ],
+  "no_hidden_verified_claim": true,
+  "hiddenness_certified_by_this_pipeline": false
+}

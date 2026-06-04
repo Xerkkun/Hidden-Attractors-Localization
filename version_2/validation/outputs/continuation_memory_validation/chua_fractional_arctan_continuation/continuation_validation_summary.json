@@ -1,0 +1,47 @@
+{
+  "stage": "continuation_memory_validation",
+  "case_id": "chua_fractional_arctan_continuation",
+  "system_id": "chua_fractional_arctan",
+  "q": 0.99,
+  "eta_grids": [
+    10,
+    25,
+    50,
+    100
+  ],
+  "strategies": [
+    "last_point_restart",
+    "history_window_transport"
+  ],
+  "history_windows": [
+    256,
+    512,
+    1024
+  ],
+  "deformed_lure_continuation_requested": false,
+  "deformed_lure_continuation_available": false,
+  "deformed_lure_continuation_status": "deformed_lure_continuation_skipped",
+  "original_system_strategy_comparison_requested": true,
+  "original_system_strategy_comparison_performed": true,
+  "original_system_restart_vs_history_status": "original_restart_differs_from_history",
+  "overall_status": "continuation_validation_partial_original_only",
+  "eta_refinement_status": "continuation_inconclusive",
+  "restart_vs_history_status": "original_restart_differs_from_history",
+  "deformed_lure_restart_vs_history_status": "deformed_lure_continuation_skipped",
+  "transported_history": true,
+  "rhs_history_recomputed_after_eta_change": true,
+  "automatic_warnings": [
+    "Original-system restart/history comparison differs: final_state_relative_distance=0.5225 > 0.5",
+    "Original-system restart/history comparison differs: final_state_relative_distance=0.7360 > 0.5",
+    "Original-system restart/history comparison differs: final_state_relative_distance=1.3103 > 0.5",
+    "Original-system restart/history comparison differs: final_state_relative_distance=1.4184 > 0.5",
+    "Original-system restart/history comparison differs: final_state_relative_distance=1.4641 > 0.5",
+    "Original-system restart/history comparison differs: final_state_relative_distance=1.7953 > 0.5",
+    "Original-system restart/history comparison differs: final_state_relative_distance=2.5167 > 0.5",
+    "Original-system restart/history comparison differs: final_state_relative_distance=2.7642 > 0.5"
+  ],
+  "pointwise_comparison_used": false,
+  "hiddenness_certified_by_this_pipeline": false,
+  "chaos_certified_by_this_pipeline": false,
+  "no_hidden_verified_claim": true
+}
