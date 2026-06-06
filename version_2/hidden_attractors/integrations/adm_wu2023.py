@@ -262,14 +262,34 @@ def adm_wu2023_integrate(
         alpha = float(params["alpha"])
         beta  = float(params["beta"])
         gamma = float(params["gamma"])
-        m     = float(params["m"])
-        n     = float(params["n"])
+        m_raw = params["m"] if "m" in params else params.get("a1")
+        if m_raw is None:
+            raise ValueError("ADM Wu2023 parameters require either 'm' or 'a1'.")
+        m = float(m_raw)
+        if "n" in params and params["n"] is not None:
+            n_param = float(params["n"])
+        elif "a2" in params and params["a2"] is not None:
+            n_param = m + float(params["a2"])
+        else:
+            raise ValueError("ADM Wu2023 parameters require either 'n' or 'a2'.")
     else:
         alpha = float(params.alpha)
         beta  = float(params.beta)
         gamma = float(params.gamma)
-        m     = float(params.m)
-        n     = float(params.n)
+        m_raw = getattr(params, "m", None)
+        if m_raw is None:
+            m_raw = getattr(params, "a1", None)
+        if m_raw is None:
+            raise ValueError("ADM Wu2023 parameters require either 'm' or 'a1'.")
+        m = float(m_raw)
+        n_raw = getattr(params, "n", None)
+        if n_raw is not None:
+            n_param = float(n_raw)
+        else:
+            a2_raw = getattr(params, "a2", None)
+            if a2_raw is None:
+                raise ValueError("ADM Wu2023 parameters require either 'n' or 'a2'.")
+            n_param = m + float(a2_raw)
 
     q    = float(q)
     h    = float(h)
@@ -302,10 +322,10 @@ def adm_wu2023_integrate(
     cx, cy, cz = float(x0_arr[0]), float(x0_arr[1]), float(x0_arr[2])
 
     # ── Main integration loop ─────────────────────────────────────────────────
-    for n in range(N):
+    for step_index in range(N):
         nx, ny, nz = _adm_step(
             cx, cy, cz,
-            alpha, beta, gamma, m, n,
+            alpha, beta, gamma, m, n_param,
             q, h, gf,
         )
 
@@ -317,15 +337,15 @@ def adm_wu2023_integrate(
         # ── Divergence check ─────────────────────────────────────────────────
         norm = math.sqrt(nx * nx + ny * ny + nz * nz)
         if norm > divergence_norm:
-            times[n + 1]  = (n + 1) * h
-            states[n + 1] = [nx, ny, nz]
-            last_n = n + 1
+            times[step_index + 1]  = (step_index + 1) * h
+            states[step_index + 1] = [nx, ny, nz]
+            last_n = step_index + 1
             status = "diverged"
             break
 
-        times[n + 1]  = (n + 1) * h
-        states[n + 1] = [nx, ny, nz]
-        last_n = n + 1
+        times[step_index + 1]  = (step_index + 1) * h
+        states[step_index + 1] = [nx, ny, nz]
+        last_n = step_index + 1
         cx, cy, cz = nx, ny, nz
 
     info: Dict[str, Any] = {
@@ -398,14 +418,34 @@ def rhs_chua_arctan(x: np.ndarray, params: Any) -> np.ndarray:
         alpha = float(params["alpha"])
         beta  = float(params["beta"])
         gamma = float(params["gamma"])
-        m     = float(params["m"])
-        n     = float(params["n"])
+        m_raw = params["m"] if "m" in params else params.get("a1")
+        if m_raw is None:
+            raise ValueError("ADM Wu2023 parameters require either 'm' or 'a1'.")
+        m = float(m_raw)
+        if "n" in params and params["n"] is not None:
+            n = float(params["n"])
+        elif "a2" in params and params["a2"] is not None:
+            n = m + float(params["a2"])
+        else:
+            raise ValueError("ADM Wu2023 parameters require either 'n' or 'a2'.")
     else:
         alpha = float(params.alpha)
         beta  = float(params.beta)
         gamma = float(params.gamma)
-        m     = float(params.m)
-        n     = float(params.n)
+        m_raw = getattr(params, "m", None)
+        if m_raw is None:
+            m_raw = getattr(params, "a1", None)
+        if m_raw is None:
+            raise ValueError("ADM Wu2023 parameters require either 'm' or 'a1'.")
+        m = float(m_raw)
+        n_raw = getattr(params, "n", None)
+        if n_raw is not None:
+            n = float(n_raw)
+        else:
+            a2_raw = getattr(params, "a2", None)
+            if a2_raw is None:
+                raise ValueError("ADM Wu2023 parameters require either 'n' or 'a2'.")
+            n = m + float(a2_raw)
 
     xv, yv, zv = float(x[0]), float(x[1]), float(x[2])
     nm = n - m

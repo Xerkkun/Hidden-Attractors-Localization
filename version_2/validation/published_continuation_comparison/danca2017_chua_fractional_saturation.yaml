@@ -19,10 +19,27 @@ paper:
     If no initial condition or seed is available from the library, the
     comparison must be marked missing.
 
+seed_reproduction:
+  seed_transfer_mode: "published_integer_laplace"
+  default_transfer_mode: "published_integer_laplace"
+  z_rule: "z = j*omega"
+  transfer_function: "W_pub(j*omega) = r^T (j*omega I - P)^(-1) b"
+  describing_function: "classical_nonsmooth_saturation"
+  balance_equation: "1 - W_pub(j*omega)*N(A) = 0"
+  q_seed: 1.0
+  q_dependent_seed: false
+  transfer_exponent_applied: false
+  experiment_transfer_modes:
+    - "fractional_spectral"
+
 dynamics:
   derivative: "Caputo"
   q: 0.9998
   integrator: "ABM"
+  backend: "python_abm_full_history"
+  memory_mode: "full"
+  memory_policy: "full_history"
+  caputo_history_accumulated: true
   h: 0.01
   t_final: 500.0
   t_burn: 250.0

@@ -40,8 +40,21 @@ En este modo:
 
 Para Danca 2017 ($q=0.9998$) y Wu 2023 ($q=0.99$):
 - La fase de balance armónico usa la transferencia de Laplace clásica (modo `published_integer_laplace`).
-- El orden $q$ interviene exclusivamente en la integración causal Caputo:
+- El orden $q$ interviene en la integración temporal declarada por cada caso:
 $${}^C D_t^q X = P X + b \psi(r^T X)$$
+
+Contratos dinamicos por caso:
+
+| Caso | Integrador dinamico publicado | Politica de memoria |
+| :--- | :--- | :--- |
+| `danca2017_chua_fractional_saturation` | `ABM` / `python_abm_full_history` | `memory_mode=full`, `memory_policy=full_history`, `caputo_history_accumulated=true` |
+| `wu2023_chua_fractional_arctan` | `ADM_WU2023` / `adm_local_reproduction` | `memory_mode=none`, `memory_policy=none_local_adm`, `caputo_history_accumulated=false` |
+
+La diferencia es intencional. Danca se reproduce como Caputo ABM con memoria
+completa. Wu se reproduce con el metodo ADM local descrito para ese articulo;
+esa reproduccion no debe presentarse como ABM ni como EFORK con memoria
+Caputo completa. Los experimentos posteriores de continuacion numerica si
+deben usar ABM con memoria completa y `h<=0.01`.
 
 ---
 

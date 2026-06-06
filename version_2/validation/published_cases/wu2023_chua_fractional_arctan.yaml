@@ -19,15 +19,30 @@ paper:
   doi_or_url: "10.1016/j.rinp.2023.106866"
 seed_reproduction:
   seed_transfer_mode: "published_integer_laplace"
+  default_transfer_mode: "published_integer_laplace"
   z_rule: "z = j*omega"
+  transfer_function: "W_pub(j*omega) = r^T (j*omega I - P)^(-1) b"
+  describing_function: "classical_arctan"
+  balance_equation: "1 - W_pub(j*omega)*N(A) = 0"
+  q_seed: 1.0
   q_dependent_seed: false
+  transfer_exponent_applied: false
+  seed_construction: "published_integer_closed_form"
+  experiment_transfer_modes:
+    - "fractional_spectral"
 dynamics:
   derivative: "Caputo"
   q: 0.99
-  integrator: "EFORK"
+  integrator: "ADM_WU2023"
+  backend: "adm_local_reproduction"
+  adm_order: 4
+  memory_mode: "none"
+  memory_policy: "none_local_adm"
+  caputo_history_accumulated: false
   h: 0.01
   t_final: 100.0
   t_burn: 50.0
+  divergence_norm: 120.0
 expected:
   parameters:
     alpha: 8.4562

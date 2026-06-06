@@ -1,4 +1,11 @@
 {
   "status": "skipped",
-  "reason": "run_dynamics=false"
+  "reason": "run_dynamics=false",
+  "derivative": "integer",
+  "q": 1.0,
+  "integrator": "EFORK",
+  "backend": "not_recorded",
+  "memory_mode": "not_recorded",
+  "memory_policy": "not_recorded",
+  "caputo_history_accumulated": false
 }

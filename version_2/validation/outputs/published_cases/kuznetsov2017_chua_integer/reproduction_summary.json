@@ -4,6 +4,11 @@
   "seed_transfer_mode": "published_integer_laplace",
   "q_dependent_seed": false,
   "dynamics_q": 1.0,
+  "dynamics_integrator": "EFORK",
+  "dynamics_backend": "not_recorded",
+  "dynamics_memory_mode": "not_recorded",
+  "dynamics_memory_policy": "not_recorded",
+  "caputo_history_accumulated": false,
   "statuses": [
     "paper_formula_reproduced",
     "paper_seed_reproduced",

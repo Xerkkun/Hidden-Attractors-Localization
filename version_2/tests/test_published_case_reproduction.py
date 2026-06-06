@@ -69,7 +69,24 @@ def test_published_fractional_cases_use_integer_seed_transfer() -> None:
         
         seed_rep = cfg.get("seed_reproduction", {})
         assert seed_rep.get("seed_transfer_mode") == "published_integer_laplace"
+        assert seed_rep.get("q_seed") == 1.0
         assert seed_rep.get("q_dependent_seed") is False
+        assert seed_rep.get("transfer_exponent_applied") is False
+
+
+def test_fractional_published_dynamics_configs_record_integration_contract() -> None:
+    with open(CASES_DIR / "danca2017_chua_fractional_saturation.yaml", "r", encoding="utf-8") as f:
+        danca = yaml.safe_load(f)
+    assert danca["dynamics"]["integrator"] == "ABM"
+    assert danca["dynamics"]["memory_mode"] == "full"
+    assert danca["dynamics"]["memory_policy"] == "full_history"
+    assert danca["dynamics"]["caputo_history_accumulated"] is True
+
+    with open(CASES_DIR / "wu2023_chua_fractional_arctan.yaml", "r", encoding="utf-8") as f:
+        wu = yaml.safe_load(f)
+    assert wu["dynamics"]["integrator"] == "ADM_WU2023"
+    assert wu["dynamics"]["memory_policy"] == "none_local_adm"
+    assert wu["dynamics"]["caputo_history_accumulated"] is False
 
 
 def test_published_integer_seed_uses_closed_form_not_modal(monkeypatch) -> None:
@@ -224,6 +241,11 @@ def test_reproduction_outputs_schema() -> None:
         "seed_transfer_mode",
         "q_dependent_seed",
         "dynamics_q",
+        "dynamics_integrator",
+        "dynamics_backend",
+        "dynamics_memory_mode",
+        "dynamics_memory_policy",
+        "caputo_history_accumulated",
         "statuses",
         "missing_data",
         "no_hidden_verified_claim",

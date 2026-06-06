@@ -24,6 +24,9 @@ lure_seed:
 integrator:
   method: ABM
   h: 0.01
+  default_memory_mode: full
+  default_memory_policy: full_history
+  caputo_history_accumulated: true
 
 time_per_eta:
   t_final: 20.0

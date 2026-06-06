@@ -11,6 +11,7 @@ from hidden_attractors.seed_generation.chua_arctan_wu2023 import format_arctan_w
 
 
 ROOT = Path(__file__).resolve().parents[2]
+CONFIG = ROOT / "configs" / "chua_arctan_wu2023_caputo.json"
 DEFAULT_OUTPUT = (
     ROOT
     / "validation"
@@ -26,7 +27,14 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--nscan", type=int, default=20000)
     args = parser.parse_args()
-    report = format_arctan_wu2023_seed_report(nscan=args.nscan)
+    config = json.loads(CONFIG.read_text(encoding="utf-8"))
+    seed_cfg = config["seed_generation"]
+    report = format_arctan_wu2023_seed_report(
+        q=float(config["numerical_contract"]["q"]),
+        nscan=args.nscan,
+        transfer_mode=seed_cfg["default_transfer_mode"],
+    )
+    report["configuration"] = str(CONFIG.relative_to(ROOT)).replace("\\", "/")
     report["hidden_verified"] = False
     report["interpretation"] = "seed_generation_only_not_hiddenness_evidence"
     args.output.parent.mkdir(parents=True, exist_ok=True)

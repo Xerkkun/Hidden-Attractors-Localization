@@ -4,6 +4,11 @@
   "seed_transfer_mode": "published_integer_laplace",
   "q_dependent_seed": false,
   "dynamics_q": 0.99,
+  "dynamics_integrator": "ADM_WU2023",
+  "dynamics_backend": "adm_local_reproduction",
+  "dynamics_memory_mode": "none",
+  "dynamics_memory_policy": "none_local_adm",
+  "caputo_history_accumulated": false,
   "statuses": [
     "paper_formula_reproduced",
     "paper_data_missing",

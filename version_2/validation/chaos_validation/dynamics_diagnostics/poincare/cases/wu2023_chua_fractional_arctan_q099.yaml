@@ -15,11 +15,20 @@ parameters:
 seed:
   x0_plus: [13.8, 0.7093, -19.8768]
   x0_minus: [-13.8, -0.7093, 19.8768]
+  source: paper_reported_initial_conditions
+  seed_transfer_mode: published_integer_laplace
+  transfer_function: "W_pub(j*omega) = r^T (j*omega I - P)^(-1) b"
+  describing_function: classical_arctan
+  q_seed: 1.0
+  transfer_exponent_applied: false
 integration:
-  backend: efork_c_arctan
-  integrator: EFORK
-  memory_policy: finite_memory
-  memory_length: 40.0
+  backend: adm_local_reproduction
+  integrator: ADM_WU2023
+  adm_order: 4
+  memory_mode: none
+  memory_policy: none_local_adm
+  caputo_history_accumulated: false
+  divergence_norm: 120.0
   h: 0.01
   N: 10000
   t_final: 100.0

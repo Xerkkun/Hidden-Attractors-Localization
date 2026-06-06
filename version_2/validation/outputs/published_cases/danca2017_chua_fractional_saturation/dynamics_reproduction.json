@@ -1,4 +1,11 @@
 {
   "status": "skipped",
-  "reason": "run_dynamics=false"
+  "reason": "run_dynamics=false",
+  "derivative": "Caputo",
+  "q": 0.9998,
+  "integrator": "ABM",
+  "backend": "python_abm_full_history",
+  "memory_mode": "full",
+  "memory_policy": "full_history",
+  "caputo_history_accumulated": true
 }

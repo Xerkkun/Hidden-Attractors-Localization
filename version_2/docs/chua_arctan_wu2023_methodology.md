@@ -100,17 +100,19 @@ para cada autovalor. A `q=0.99`, la validación algebraica clasifica los tres
 equilibrios como inestables: `E0` posee un autovalor real positivo y
 `E+`, `E-` poseen un par complejo en el sector inestable.
 
-## Transferencia Fraccionaria Y Función Descriptiva
+## Transferencia Publicada Y Función Descriptiva
 
-La evaluación armónica usa la rama principal:
+Para reproducir los valores reportados por Wu et al. se usa la transferencia
+entera de Laplace en la etapa de semilla. En esa reproduccion el orden
+fraccionario `q=0.99` no se aplica al operador lineal usado por la funcion
+descriptiva:
 
 ```text
-lambda = (j*omega)^q = omega^q * exp(j*q*pi/2)
-W_q(j*omega) = r^T*(lambda*I - P)^(-1)*b
+z = j*omega
+W_pub(j*omega) = r^T*(z*I - P)^(-1)*b
 ```
 
-No se sustituye por `W(j*omega)` de orden entero. Para
-`psi(sigma)=a2*atan(rho*sigma)`, la función descriptiva clásica es:
+Para `psi(sigma)=a2*atan(rho*sigma)`, la función descriptiva clásica es:
 
 ```text
 N(A) = 2*a2*(sqrt(1+(rho*A)^2)-1)/(rho*A^2).
@@ -120,16 +122,19 @@ Como `a2<0`, `N(A)<0` para `A>0`. Con el vector `b` anterior, la ecuación
 modal de la linealización `P+b*N(A)*r^T` es:
 
 ```text
-1 - W_q(j*omega)*N(A) = 0.
+1 - W_pub(j*omega)*N(A) = 0.
 ```
 
 Esto es equivalente a la convención histórica del código
-`r^T*(P-lambda*I)^(-1)*b` con cierre `1+W_code*N=0`. En cambio, imponer
-`W_q*N=-1` manteniendo `b=(-alpha,0,0)^T` y la misma `psi` produce ganancias
+`r^T*(P-z*I)^(-1)*b` con cierre `1+W_code*N=0`. En cambio, imponer
+`W_pub*N=-1` manteniendo `b=(-alpha,0,0)^T` y la misma `psi` produce ganancias
 de signo opuesto a `N(A)` y no constituye una rama Wu2023 admisible.
 
 El JSON de semillas guarda `omega`, `k=N(A)`, `A`, el eigenvector normalizado,
-`lambda=(j*omega)^q`, el estado semilla y ambos residuos de signo.
+`z=j*omega`, el estado semilla y ambos residuos de signo. El modo
+`fractional_spectral`, definido por
+`r^T*((j*omega)^q*I - P)^(-1)*b`, queda como extension experimental
+configurable; no forma parte de la reproduccion publicada.
 
 ## Weyl-Caputo Y Continuación
 
@@ -138,15 +143,29 @@ sirve sólo para localizar semillas. La comprobación causal debe reintegrar el
 problema de valor inicial Caputo desde una condición inicial declarada. El
 puente metodológico es:
 
-1. generar la semilla mediante balance armónico fraccionario;
-2. continuar la no linealidad hasta el sistema objetivo `eta=1`;
+1. generar la semilla mediante balance armónico publicado (`W_pub`) o mediante
+   el modo experimental elegido;
+2. continuar la no linealidad hasta el sistema objetivo `eta=1` con ABM de
+   memoria completa para experimentos;
 3. integrar Caputo con política de memoria registrada;
 4. descartar transitorio y decidir periodicidad/robustez;
 5. sólo entonces ejecutar controles de cuenca.
 
-La configuración permite `full_history` y `finite_memory`. La variante
-`finite_memory` parte de una ventana de `40.0`; los cambios de ventana son
-pruebas de robustez, no una sustitución silenciosa del problema Caputo.
+La reproduccion dinamica publicada de Wu usa `ADM_WU2023` con
+`memory_policy=none_local_adm` porque sigue la recurrencia local del articulo.
+No equivale a ABM de memoria completa. En cambio, toda busqueda posterior por
+continuacion numerica de semillas DF debe declarar `integrator=ABM`,
+`memory_mode=full`, `memory_policy=full_history`,
+`caputo_history_accumulated=true` y `h<=0.01`.
+
+Como control exploratorio, cuando un articulo no especifica como transporto la
+memoria durante una continuacion numerica, `tools/search_arctan_full_memory_candidates.py`
+tambien permite `--continuation-method abm_restart` y
+`--continuation-method adm_restart`. En ambos casos cada segmento de eta
+reinicia la historia usando solo el punto final anterior. Estos resultados se
+etiquetan como `memory_policy=last_point_restart` o
+`last_point_restart_local_adm` y no sustituyen la referencia Caputo de memoria
+completa.
 
 ## Protocolo De Ocultedad Y Descarte Periódico
 

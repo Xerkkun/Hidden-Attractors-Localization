@@ -17,7 +17,7 @@
   "warnings": [
     "Caputo crossings are numerical geometric diagnostics, not exact classical Poincare-map returns."
   ],
-  "crossing_count": 15,
+  "crossing_count": 27,
   "status": "crossings_detected",
   "certifications": {
     "chaos_verified": false,
@@ -26,5 +26,24 @@
     "caputo_periodic_orbit_exact": false
   },
   "trajectory_id": "x0_minus",
-  "integration_status": "ok"
+  "integration_status": "ok",
+  "seed_scope": "paper_reported_initial_condition",
+  "integrator": "ADM_WU2023",
+  "backend": "adm_local_reproduction",
+  "memory_policy": "none_local_adm",
+  "memory_mode": "none",
+  "caputo_history_accumulated": false,
+  "adm_metadata": {
+    "integrator": "adm_wu2023",
+    "integrator_class": "adm_local_reproduction",
+    "scientific_label": "ADM reproduction of Wu et al. 2023. Local update only \u2014 no Caputo full-memory history. NOT equivalent to ABM or EFORK-3 Caputo integration.",
+    "hidden_verified": false,
+    "q": 0.99,
+    "h": 0.01,
+    "N": 10000,
+    "steps_completed": 10000,
+    "t_final_reached": 100.0,
+    "divergence_norm_threshold": 120.0,
+    "caputo_memory": "none \u2014 local ADM step only"
+  }
 }

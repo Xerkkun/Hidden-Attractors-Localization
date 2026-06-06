@@ -40,23 +40,25 @@ r = [1, 0, 0]^T
 psi(sigma) = a2*atan(rho*sigma)
 ```
 
-La transferencia fraccionaria se evalúa con `lambda=(j*omega)^q`, nunca
-con la transferencia entera:
+Para reproducir el articulo de Wu se usa la transferencia entera de Laplace,
+sin aplicar el exponente fraccionario `q` en la fase de semilla:
 
 ```text
-W_q(j*omega) = r^T * (lambda*I - P)^(-1) * b
+W_pub(j*omega) = r^T * (j*omega*I - P)^(-1) * b
 N(A) = 2*a2*(sqrt(1+(rho*A)^2)-1)/(rho*A^2)
 ```
 
 Con el signo de `b` y `psi` anterior, el cierre consistente es:
 
 ```text
-1 - W_q(j*omega)*N(A) = 0
+1 - W_pub(j*omega)*N(A) = 0
 ```
 
-La expresión `1 + W_q*N(A)=0` con exactamente el mismo `b` y `a2<0` invierte
-el lazo y no produce ramas centradas admisibles. La salida JSON conserva esta
-auditoría de signo para impedir una reproducción algebraicamente inconsistente.
+El modo `fractional_spectral`, con
+`r^T*((j*omega)^q*I - P)^(-1)*b`, queda disponible solo como extension
+experimental configurable. No se usa para validar los valores reportados por
+Wu. La salida JSON conserva esta auditoria de signo y de modo de transferencia
+para impedir una reproduccion algebraicamente inconsistente.
 
 ## Condiciones Iniciales Del Paper
 
@@ -78,14 +80,32 @@ Desde la raíz `version_2`:
 python examples/chua_arctan_wu2023/run_seed_generation.py
 python examples/chua_arctan_wu2023/run_validation.py
 python examples/chua_arctan_wu2023/run_validation.py --run-trajectories
-python examples/chua_arctan_wu2023/run_validation.py --run-trajectories --full-history
 python examples/chua_arctan_wu2023/plot_basins.py
 ```
 
 La configuración principal está en `configs/chua_arctan_wu2023_caputo.json`.
-`full_history` reproduce el historial Caputo completo para la corrida corta
-del paper; `finite_memory` inicia en `memory_length=40.0` como variante
-robusta y escalable.
+La reproduccion publicada de Wu usa `integrator=adm_wu2023`, backend
+`adm_local_reproduction`, `adm_order=4`, `memory_mode=none` y
+`caputo_history_accumulated=false`, porque el ADM implementado para esa
+reproduccion es una recurrencia local del articulo, no una integracion ABM de
+memoria completa. Por eso `--full-history` no es una opcion valida para este
+ejemplo publicado.
+
+Los experimentos posteriores de continuacion numerica, donde se busca una
+semilla DF y se transporta hasta el sistema objetivo, deben usar ABM con
+`memory_mode=full`, `memory_policy=full_history`, `caputo_history_accumulated=true`
+y `h<=0.01`.
+
+Para probar la hipotesis de continuacion con reinicio de memoria, use el
+buscador exploratorio desde la raiz `version_2`:
+
+```powershell
+python tools/search_arctan_full_memory_candidates.py --continuation-method abm_restart --h 0.005
+python tools/search_arctan_full_memory_candidates.py --continuation-method adm_restart --h 0.005 --rho-values 1.0
+```
+
+`adm_restart` usa la recurrencia local ADM de Wu y esta limitado a `rho=1`.
+Los resultados se guardan en `outputs/arctan_full_memory_search/run_*`.
 
 ## Protocolo De Ocultedad
 

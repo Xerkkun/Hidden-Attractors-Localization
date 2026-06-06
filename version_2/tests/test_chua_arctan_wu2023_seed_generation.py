@@ -15,17 +15,27 @@ from hidden_attractors.seed_generation.chua_arctan_wu2023 import (
 from hidden_attractors.seed_generation.core import fractional_iomega_power
 
 
-def test_fractional_transfer_uses_lambda_equal_jomega_to_q() -> None:
+def test_published_transfer_uses_integer_laplace_by_default() -> None:
+    p = chua_arctan_wu2023_parameters()
+    omega = 2.0991692817
+    q = 0.99
+    pmat, bvec, rvec = chua_matrices(p)
+    expected = rvec @ np.linalg.solve(1j * omega * np.eye(3) - pmat, bvec)
+    fractional_extension = rvec @ np.linalg.solve(fractional_iomega_power(omega, q) * np.eye(3) - pmat, bvec)
+
+    assert transfer_function_arctan_wu2023(omega, q, p) == expected
+    assert abs(expected - fractional_extension) > 1.0e-3
+
+
+def test_fractional_spectral_transfer_is_explicit_experiment_mode() -> None:
     p = chua_arctan_wu2023_parameters()
     omega = 2.0991692817
     q = 0.99
     pmat, bvec, rvec = chua_matrices(p)
     lam = fractional_iomega_power(omega, q)
     expected = rvec @ np.linalg.solve(lam * np.eye(3) - pmat, bvec)
-    integer_wrong = rvec @ np.linalg.solve(1j * omega * np.eye(3) - pmat, bvec)
 
-    assert transfer_function_arctan_wu2023(omega, q, p) == expected
-    assert abs(expected - integer_wrong) > 1.0e-3
+    assert transfer_function_arctan_wu2023(omega, q, p, transfer_mode="fractional_spectral") == expected
 
 
 def test_arctan_describing_function_sign_and_centered_branch_closure() -> None:

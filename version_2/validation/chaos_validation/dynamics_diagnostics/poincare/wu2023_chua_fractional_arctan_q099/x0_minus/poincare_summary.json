@@ -1,24 +1,24 @@
 {
-  "crossing_count": 15,
-  "retained_after_burn": 15,
+  "crossing_count": 27,
+  "retained_after_burn": 27,
   "bounding_box": {
     "coordinate_0": {
       "minimum": 0.0,
       "maximum": 0.0
     },
     "coordinate_1": {
-      "minimum": 1.2125999449440956,
-      "maximum": 1.2253185433609448
+      "minimum": 1.823725142095425,
+      "maximum": 1.8259280206944444
     },
     "coordinate_2": {
-      "minimum": 5.859538266772316,
-      "maximum": 5.9561088767740875
+      "minimum": 10.733389312212779,
+      "maximum": 10.750154693776008
     }
   },
   "centroid": [
     0.0,
-    1.2157387696372752,
-    5.8830700413718215
+    1.8244036176726317,
+    10.736631013201352
   ],
   "covariance": [
     [
@@ -28,25 +28,25 @@
     ],
     [
       0.0,
-      1.4767727341413575e-05,
-      0.00011242904617457332
+      3.565097240434095e-07,
+      2.2640027364191e-06
     ],
     [
       0.0,
-      0.00011242904617457332,
-      0.000856069690090101
+      2.2640027364191e-06,
+      2.0106823619726386e-05
     ]
   ],
   "rank_estimate": 2,
   "nearest_neighbor_stats": {
-    "minimum": 0.0004902076610696965,
-    "median": 0.0031959374282938447,
-    "mean": 0.006527641707861803,
-    "maximum": 0.025542046061401365
+    "minimum": 2.6534441835586286e-05,
+    "median": 0.0003036885419394042,
+    "mean": 0.0007385356450811835,
+    "maximum": 0.003182433677609341
   },
-  "recurrence_like_score": 0.9968142440483893,
+  "recurrence_like_score": 0.9996964036567914,
   "duplicate_fraction": 0.0,
-  "section_density_estimate": 153.99692017037506,
+  "section_density_estimate": 1596.7369510255955,
   "interpretation_label": "cloud_like",
   "status": "cloud_like",
   "poincare_proves_chaos": false,

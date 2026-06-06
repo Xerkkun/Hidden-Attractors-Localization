@@ -14,6 +14,9 @@ initial_conditions:
 integrator:
   method: ABM
   h: 0.01
+  default_memory_mode: full
+  default_memory_policy: full_history
+  caputo_history_accumulated: true
 
 time:
   t_final: 80.0

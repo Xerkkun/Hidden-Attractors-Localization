@@ -216,10 +216,19 @@ class TestWuKNullDoesNotInventContinuation:
         modes = config["comparison_modes"]
         assert modes.get("deformed_lure_continuation", False) is False
 
-    def test_wu_original_system_comparison_enabled(self) -> None:
+    def test_wu_original_system_comparison_disabled_for_adm_reproduction(self) -> None:
         config = load_published_continuation_config(_WU_YAML)
         modes = config["comparison_modes"]
-        assert modes.get("original_system_strategy_comparison", False) is True
+        assert modes.get("original_system_strategy_comparison", False) is False
+        assert modes.get("caputo_aware_history_window_transport", False) is False
+
+    def test_wu_reproduction_uses_adm_not_abm_history_transport(self) -> None:
+        config = load_published_continuation_config(_WU_YAML)
+        assert config["dynamics"]["integrator"] == "ADM_WU2023"
+        assert config["dynamics"]["memory_policy"] == "none_local_adm"
+        assert config["dynamics"]["caputo_history_accumulated"] is False
+        assert config["seed_reproduction"]["seed_transfer_mode"] == "published_integer_laplace"
+        assert config["seed_reproduction"]["transfer_exponent_applied"] is False
 
     def test_wu_no_omega0_no_a0(self) -> None:
         config = load_published_continuation_config(_WU_YAML)
@@ -422,7 +431,7 @@ class TestRunWuFastSmoke:
         case_out = tmp_path / case_id
         assert (case_out / "published_continuation_summary.json").exists()
         assert (case_out / "paper_style_runs.csv").exists()
-        assert (case_out / "paper_style_vs_history.csv").exists()
+        assert not (case_out / "paper_style_vs_history.csv").exists()
         assert (case_out / "published_data_missing.json").exists()
 
     def test_wu_fast_overall_status_allowed(self, tmp_path: Path) -> None:

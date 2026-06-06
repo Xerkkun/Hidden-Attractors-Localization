@@ -21,16 +21,36 @@ paper:
     The paper reports initial conditions x0_plus and x0_minus but does not
     report DF parameters (omega0, k, a0) or intermediate seed coordinates.
     No continuation procedure is reported. k is null so deformed Lure
-    continuation cannot be constructed. original_system_strategy_comparison
-    is performed instead using the paper-reported initial conditions.
+    continuation cannot be constructed. The paper reproduction lane uses
+    the article-style local ADM integrator; Caputo history transport is not
+    attributed to the published reproduction.
+
+seed_reproduction:
+  seed_transfer_mode: "published_integer_laplace"
+  default_transfer_mode: "published_integer_laplace"
+  z_rule: "z = j*omega"
+  transfer_function: "W_pub(j*omega) = r^T (j*omega I - P)^(-1) b"
+  describing_function: "classical_arctan"
+  balance_equation: "1 - W_pub(j*omega)*N(A) = 0"
+  q_seed: 1.0
+  q_dependent_seed: false
+  transfer_exponent_applied: false
+  experiment_transfer_modes:
+    - "fractional_spectral"
 
 dynamics:
   derivative: "Caputo"
   q: 0.99
-  integrator: "ABM"
+  integrator: "ADM_WU2023"
+  backend: "adm_local_reproduction"
+  adm_order: 4
+  memory_mode: "none"
+  memory_policy: "none_local_adm"
+  caputo_history_accumulated: false
   h: 0.01
   t_final: 100.0
   t_burn: 50.0
+  divergence_norm: 120.0
 
 fast_test:
   t_final: 5.0
@@ -62,10 +82,10 @@ published_data:
 
 comparison_modes:
   paper_style_initial_condition_integration: true
-  paper_style_last_point_restart: true
+  paper_style_last_point_restart: false
   deformed_lure_continuation: false
-  original_system_strategy_comparison: true
-  caputo_aware_history_window_transport: true
+  original_system_strategy_comparison: false
+  caputo_aware_history_window_transport: false
 
 continuation:
   eta_grids: [10, 25, 50, 100]

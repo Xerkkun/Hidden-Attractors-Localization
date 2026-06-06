@@ -1,24 +1,24 @@
 {
-  "crossing_count": 31,
-  "retained_after_burn": 31,
+  "crossing_count": 54,
+  "retained_after_burn": 54,
   "bounding_box": {
     "coordinate_0": {
       "minimum": 0.0,
       "maximum": 0.0
     },
     "coordinate_1": {
-      "minimum": 1.2125572901234785,
-      "maximum": 1.2274032004140691
+      "minimum": 1.8237248846194638,
+      "maximum": 1.8259280206944444
     },
     "coordinate_2": {
-      "minimum": 5.859338860397466,
-      "maximum": 5.971928107764686
+      "minimum": 10.733272634615433,
+      "maximum": 10.750154693776008
     }
   },
   "centroid": [
     0.0,
-    1.2158936872950308,
-    5.884256059510994
+    1.8243779006730763,
+    10.736471798937643
   ],
   "covariance": [
     [
@@ -28,25 +28,25 @@
     ],
     [
       0.0,
-      1.662651143339188e-05,
-      0.00012656891471846666
+      3.0996486025240857e-07,
+      1.9460554531803443e-06
     ],
     [
       0.0,
-      0.00012656891471846666,
-      0.0009636305448794506
+      1.9460554531803443e-06,
+      1.7895558648730734e-05
     ]
   ],
   "rank_estimate": 2,
   "nearest_neighbor_stats": {
-    "minimum": 0.00020391747363221447,
-    "median": 0.001710564689220868,
-    "mean": 0.003670797800456054,
-    "maximum": 0.01595599774890491
+    "minimum": 2.6534441835586286e-05,
+    "median": 0.00022392680169402486,
+    "mean": 0.00038356298908211796,
+    "maximum": 0.0016499183557615311
   },
-  "recurrence_like_score": 0.998292356345716,
+  "recurrence_like_score": 0.9997761233302928,
   "duplicate_fraction": 0.0,
-  "section_density_estimate": 272.9742786774379,
+  "section_density_estimate": 3171.7672931050893,
   "interpretation_label": "cloud_like",
   "case_id": "wu2023_chua_fractional_arctan_q099",
   "status": "completed_structured_outputs",
@@ -54,8 +54,27 @@
   "trajectories": {
     "x0_plus": {
       "integration_status": "ok",
+      "seed_scope": "paper_reported_initial_condition",
+      "integrator": "ADM_WU2023",
+      "backend": "adm_local_reproduction",
+      "memory_policy": "none_local_adm",
+      "memory_mode": "none",
+      "caputo_history_accumulated": false,
+      "adm_metadata": {
+        "integrator": "adm_wu2023",
+        "integrator_class": "adm_local_reproduction",
+        "scientific_label": "ADM reproduction of Wu et al. 2023. Local update only \u2014 no Caputo full-memory history. NOT equivalent to ABM or EFORK-3 Caputo integration.",
+        "hidden_verified": false,
+        "q": 0.99,
+        "h": 0.01,
+        "N": 10000,
+        "steps_completed": 10000,
+        "t_final_reached": 100.0,
+        "divergence_norm_threshold": 120.0,
+        "caputo_memory": "none \u2014 local ADM step only"
+      },
       "trajectory_rows": 10001,
-      "crossing_count": 16,
+      "crossing_count": 27,
       "status": "crossings_detected",
       "section_metadata": {
         "section_variable": "x",
@@ -75,8 +94,27 @@
     },
     "x0_minus": {
       "integration_status": "ok",
+      "seed_scope": "paper_reported_initial_condition",
+      "integrator": "ADM_WU2023",
+      "backend": "adm_local_reproduction",
+      "memory_policy": "none_local_adm",
+      "memory_mode": "none",
+      "caputo_history_accumulated": false,
+      "adm_metadata": {
+        "integrator": "adm_wu2023",
+        "integrator_class": "adm_local_reproduction",
+        "scientific_label": "ADM reproduction of Wu et al. 2023. Local update only \u2014 no Caputo full-memory history. NOT equivalent to ABM or EFORK-3 Caputo integration.",
+        "hidden_verified": false,
+        "q": 0.99,
+        "h": 0.01,
+        "N": 10000,
+        "steps_completed": 10000,
+        "t_final_reached": 100.0,
+        "divergence_norm_threshold": 120.0,
+        "caputo_memory": "none \u2014 local ADM step only"
+      },
       "trajectory_rows": 10001,
-      "crossing_count": 15,
+      "crossing_count": 27,
       "status": "crossings_detected",
       "section_metadata": {
         "section_variable": "x",

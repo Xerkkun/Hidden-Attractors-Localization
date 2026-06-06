@@ -15,17 +15,18 @@ system:
     rho: 1.0
 
 modes:
-  transfer_mode: "fractional"
+  transfer_mode: "published_integer_laplace"
+  transfer_modes_available: ["published_integer_laplace", "fractional_spectral"]
   seed_mode: "fractional"
   continuation_mode: "fractional"
   dynamics_mode: "system"
 
 integrator:
-  name: "efork3"
-  h: 0.001
-  memory_mode: "window"
-  memory_policy: "finite_window"
-  memory_window_steps: 400
+  name: "abm"
+  h: 0.01
+  memory_mode: "full"
+  memory_policy: "full_history"
+  caputo_history_accumulated: true
 
 stages:
   seed_search: true

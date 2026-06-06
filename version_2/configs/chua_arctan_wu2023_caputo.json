@@ -19,13 +19,16 @@
     "h": 0.01,
     "N": 10000,
     "t_final": 100.0,
-    "memory_policy": "finite_memory",
+    "integrator": "adm_wu2023",
+    "backend": "adm_local_reproduction",
+    "adm_order": 4,
+    "memory_policy": "none_local_adm",
     "memory_policy_options": [
-      "full_history",
-      "finite_memory"
+      "none_local_adm"
     ],
-    "memory_length": 40.0,
-    "backend": "efork_c_arctan",
+    "memory_length": null,
+    "caputo_history_accumulated": false,
+    "divergence_norm": 120.0,
     "hiddenness_radii": [
       1e-05,
       3e-05,
@@ -57,8 +60,17 @@
     "excluded_from_primary_reproduction": [
       "machado_experimental_complex_branch"
     ],
-    "transfer_function": "r^T ((j*omega)^q I - P)^(-1) b",
-    "harmonic_balance_equation": "1 - W_q(j*omega)*N(A) = 0",
+    "seed_transfer_mode": "published_integer_laplace",
+    "default_transfer_mode": "published_integer_laplace",
+    "q_seed": 1.0,
+    "q_dependent_seed": false,
+    "transfer_exponent_applied": false,
+    "transfer_function": "r^T (j*omega I - P)^(-1) b",
+    "harmonic_balance_equation": "1 - W_pub(j*omega)*N(A) = 0",
+    "diagnostic_transfer_modes": [
+      "fractional_spectral"
+    ],
+    "diagnostic_transfer_function": "r^T ((j*omega)^q I - P)^(-1) b",
     "sign_audit": "The plus-sign balance with the same b and psi has no admissible centered arctan branch."
   },
   "post_continuation_periodicity": {

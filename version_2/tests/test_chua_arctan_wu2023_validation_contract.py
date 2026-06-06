@@ -21,8 +21,14 @@ def test_wu2023_config_loads_reported_initial_conditions_and_memory_policies() -
     assert config["numerical_contract"]["q"] == 0.99
     assert config["numerical_contract"]["h"] == 0.01
     assert config["numerical_contract"]["N"] == 10000
-    assert config["numerical_contract"]["memory_policy_options"] == ["full_history", "finite_memory"]
-    assert config["numerical_contract"]["memory_length"] == 40.0
+    assert config["numerical_contract"]["integrator"] == "adm_wu2023"
+    assert config["numerical_contract"]["backend"] == "adm_local_reproduction"
+    assert config["numerical_contract"]["memory_policy_options"] == ["none_local_adm"]
+    assert config["numerical_contract"]["memory_length"] is None
+    assert config["numerical_contract"]["caputo_history_accumulated"] is False
+    assert config["seed_generation"]["seed_transfer_mode"] == "published_integer_laplace"
+    assert config["seed_generation"]["q_seed"] == 1.0
+    assert config["seed_generation"]["transfer_exponent_applied"] is False
     assert config["initial_conditions_reported"]["x0_plus"] == [13.8, 0.7093, -19.8768]
     assert config["initial_conditions_reported"]["x0_minus"] == [-13.8, -0.7093, 19.8768]
     assert config["hiddenness_protocol"]["requires_all_equilibria"] == ["E0", "E+", "E-"]

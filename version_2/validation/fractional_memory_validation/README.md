@@ -11,6 +11,12 @@ This phase validates **numerically** the sensitivity of fractional-order Chua dy
 to the amount of historical memory retained in the Adams-Bashforth-Moulton (ABM)
 Caputo integrator.
 
+The default reference contract in each YAML is explicit:
+`integrator.method=ABM`, `h=0.01`, `default_memory_mode=full`,
+`default_memory_policy=full_history`, and
+`caputo_history_accumulated=true`. Finite windows are compared against this
+full-memory reference and must remain labeled as approximations.
+
 It does **NOT** validate hiddenness or certify chaotic behavior.
 All outputs carry:
 

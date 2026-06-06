@@ -9,6 +9,14 @@
 
 This phase evaluates the numerical sensitivity of memory-preservation strategies during multi-segment integrations. It operates across two distinct validation layers:
 
+All configured fractional continuation experiments in this phase declare the
+same default numerical contract unless a case says otherwise:
+`integrator.method=ABM`, `h=0.01`, `default_memory_mode=full`,
+`default_memory_policy=full_history`, and
+`caputo_history_accumulated=true`. Windowed or restart comparisons are
+diagnostic controls against that default, not silent replacements for the
+full-memory ABM reference.
+
 ### A. Deformed Lur'e Continuation (`deformed_lure_continuation`)
 *Only available if a describing-function gain seed $k \neq \text{null}$ is provided (e.g., Chua saturation).*
 This layer validates the parameter continuation in $\eta \in [0, 1]$ between the auxiliary linear system ($\eta=0$) and the original Chua system ($\eta=1$). It compares:
@@ -233,7 +241,7 @@ necessary but not sufficient step toward a hidden attractor localization.
 
 ### Detailed Notes on $k$ and Continuation Layers
 1. **Gain Equivalent $k$**: For the Chua saturation system, the parameter $k = 0.20986735451508398$ represents the equivalent gain from describing-function analysis used for the seed. It is **not** the local nonlinear slopes ($m_0, m_1$) nor the exterior slope. Sign conventions are strictly preserved to ensure consistency with the deformed vector field $F_{\eta}(X) = P X + b [k \sigma + \eta(\psi(\sigma) - k \sigma)]$.
-2. **Handling $k = \text{null}$ (Chua Arctan)**: No artificial gain $k$ is invented or assumed. The `deformed_lure_continuation` is marked as `continuation_auxiliary_unavailable`. However, strategy comparison (`original_system_strategy_comparison`) is still fully executed on the original system directly to evaluate numerical restart vs history transport sensitivities under Caputo integrations.
+2. **Handling $k = \text{null}$ (published Chua Arctan)**: No artificial gain $k$ is invented or assumed for the Wu published case. The `deformed_lure_continuation` is marked as `continuation_auxiliary_unavailable`. The default integration contract remains ABM full-memory (`default_memory_mode=full`, `default_memory_policy=full_history`) for this memory-sensitivity phase, while the separate published Wu reproduction uses ADM local recurrence and is documented in `published_cases`.
 3. **Conservative Status Aggregation**: Los estados `restart_and_history_consistent` / `original_restart_and_history_consistent` solo pueden asignarse si ninguna comparación relevante excede tolerancias ni produce warnings. Si cualquier fila excede tolerancias, el estado agregado se degrada conservadoramente a `differs_from_history` o `artifact_possible` (o sus equivalentes con prefijo `original_`).
 4. **Partial Original System Comparison Meaning**: `continuation_validation_partial_original_only` no significa que la continuación Lur’e haya sido reproducida. Solo significa que, al no existir k, se ejecutó una comparación de estrategias sobre el sistema original.
 5. **No-Claim Invariants**:

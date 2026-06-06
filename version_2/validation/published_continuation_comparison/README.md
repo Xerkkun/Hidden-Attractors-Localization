@@ -111,7 +111,10 @@ The pipeline will **not** invent values to fill missing data.
 - **System**: Chua fractional saturation (non-smooth), q=0.9998, ABM.
 - **Available data**: parameters, q, h, integrator. All DF seed and IC data
   are missing from the article.
-- **Strategy**: No paper-style integration possible (missing IC/seed). All
+- **Strategy**: No paper-style integration possible (missing IC/seed). The
+  dynamic contract is still explicit: `integrator=ABM`, backend
+  `python_abm_full_history`, `memory_mode=full`,
+  `memory_policy=full_history`, `caputo_history_accumulated=true`. All
   comparison modes are disabled. Outputs `published_data_missing`.
 - **Status field**: `paper_does_not_report_continuation`, `published_data_missing`.
 
@@ -120,13 +123,16 @@ The pipeline will **not** invent values to fill missing data.
 - **System**: Chua fractional arctan, q=0.99.
 - **Available data**: parameters, q, published ICs `x0_plus`, `x0_minus`.
   DF parameters (k, a0, omega0) not reported.
-- **Strategy**: `paper_style_initial_condition_integration` from published ICs.
-  `original_system_strategy_comparison` with `paper_style_last_point_restart`
-  vs. `caputo_aware_history_window_transport`. No deformed Lure continuation
-  (k is null — not invented).
+- **Strategy**: `paper_style_initial_condition_integration` from published ICs
+  using `ADM_WU2023`, backend `adm_local_reproduction`, `adm_order=4`,
+  `memory_mode=none`, `memory_policy=none_local_adm` and
+  `caputo_history_accumulated=false`. No deformed Lure continuation is run
+  because `k` is null and is not invented. The restart-vs-history comparison
+  is disabled for this published Wu reproduction because it would compare ABM
+  memory policies that the ADM reproduction does not use.
 - **Status field**: `paper_does_not_report_continuation`,
   `continuation_auxiliary_unavailable`,
-  `paper_style_comparison_performed`.
+  `published_initial_condition_reintegrated`.
 
 ---
 

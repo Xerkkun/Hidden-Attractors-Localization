@@ -389,8 +389,10 @@ def run_paper_style_integration(
     """Run a single paper-style integration from a given IC.
 
     For q == 1: uses integer-order integrator (EFORK_Q1 / RK4).
-    For q < 1: uses ABM Caputo with memory_mode="full",
-               history_times=None (fresh start — paper_style_last_point_restart).
+    For q < 1 and integrator == ADM_WU2023: uses the Wu2023 local ADM
+    reproduction lane with no accumulated Caputo history.
+    For q < 1 and integrator == ABM: uses ABM Caputo with
+    memory_mode="full", history_times=None.
 
     Does NOT transport history (paper-style means last_point_restart or
     initial_condition_integration as reported by the article).
@@ -407,6 +409,7 @@ def run_paper_style_integration(
     q = float(dyn.get("q", 1.0))
     h = float(dyn.get("h", 0.05))
     divergence_norm = 120.0
+    integrator = str(dyn.get("integrator", "ABM")).upper()
 
     if fast and "fast_test" in config:
         t_final = float(config["fast_test"]["t_final"])
@@ -453,6 +456,26 @@ def run_paper_style_integration(
             divergence_norm=divergence_norm,
         )
         strategy = "paper_style_initial_condition_integration_integer_rk4"
+        memory_mode = "not_applicable"
+        memory_policy = "not_applicable"
+        caputo_history_accumulated = False
+    elif integrator in {"ADM", "ADM_WU2023"}:
+        from hidden_attractors.integrations.adm_wu2023 import adm_wu2023_integrate
+
+        params = dict(config.get("published_data", {}).get("parameters", {}))
+        N = int(math.ceil(t_final / h))
+        times, states, int_status, _ = adm_wu2023_integrate(
+            params=params,
+            x0=x0_arr,
+            q=q,
+            h=h,
+            N=N,
+            divergence_norm=float(dyn.get("divergence_norm", divergence_norm)),
+        )
+        strategy = "paper_style_initial_condition_integration_adm_wu2023"
+        memory_mode = "none"
+        memory_policy = "none_local_adm"
+        caputo_history_accumulated = False
     else:
         # Fractional: use ABM Caputo, no history transport
         from hidden_attractors.integrations.abm import caputo_abm_integrate
@@ -468,7 +491,10 @@ def run_paper_style_integration(
             history_states=None,
             use_c_backend=True,
         )
-        strategy = "paper_style_initial_condition_integration_abm"
+        strategy = "paper_style_initial_condition_integration_abm_full_history"
+        memory_mode = "full"
+        memory_policy = "full_history"
+        caputo_history_accumulated = True
 
     # Classify
     dyn_class = classify_fractional_trajectory(
@@ -512,6 +538,11 @@ def run_paper_style_integration(
         ),
         "chaotic_candidate_by_geometry": chaotic_candidate,
         "strategy": strategy,
+        "integrator": integrator,
+        "backend": dyn.get("backend", "not_recorded"),
+        "memory_mode": dyn.get("memory_mode", memory_mode),
+        "memory_policy": dyn.get("memory_policy", memory_policy),
+        "caputo_history_accumulated": bool(dyn.get("caputo_history_accumulated", caputo_history_accumulated)),
         "q": q,
     }
 
@@ -916,6 +947,7 @@ def run_published_continuation_case(
 
     modes = config.get("comparison_modes", {})
     q = float(config.get("dynamics", {}).get("q", 1.0))
+    dyn_cfg = config.get("dynamics", {})
 
     # -----------------------------------------------------------------------
     # Track per-IC results
@@ -961,6 +993,11 @@ def run_published_continuation_case(
                 "ic_id": ic_id,
                 "ic_source": ic_source,
                 "strategy": ps_result["strategy"],
+                "integrator": ps_result["integrator"],
+                "backend": ps_result["backend"],
+                "memory_mode": ps_result["memory_mode"],
+                "memory_policy": ps_result["memory_policy"],
+                "caputo_history_accumulated": ps_result["caputo_history_accumulated"],
                 "int_status": ps_result["int_status"],
                 "dynamic_class": ps_result["dynamic_class"],
                 "rho_attractor": ps_result["rho_attractor"],
@@ -1108,6 +1145,11 @@ def run_published_continuation_case(
         "paper_reports_memory_transport": scope["paper_reports_memory_transport"],
         "paper_does_not_report_continuation": scope["paper_does_not_report_continuation"],
         "paper_style_strategy": scope["paper_style_strategy"],
+        "published_integrator": dyn_cfg.get("integrator", "not_recorded"),
+        "published_backend": dyn_cfg.get("backend", "not_recorded"),
+        "published_memory_mode": dyn_cfg.get("memory_mode", "not_recorded"),
+        "published_memory_policy": dyn_cfg.get("memory_policy", "not_recorded"),
+        "caputo_history_accumulated": bool(dyn_cfg.get("caputo_history_accumulated", False)),
         "caputo_aware_strategy": (
             "history_window_transport"
             if modes.get("caputo_aware_history_window_transport", False)
@@ -1204,7 +1246,8 @@ def run_all_published_continuation_comparisons(
 
 def _write_csv(path: Path, rows: List[Dict[str, Any]]) -> None:
     if not rows:
-        path.write_text("")
+        if path.exists():
+            path.unlink()
         return
     fieldnames = list(rows[0].keys())
     with path.open("w", newline="", encoding="utf-8") as fh:

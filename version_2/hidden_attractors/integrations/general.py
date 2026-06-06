@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from typing import Callable, Tuple, Optional, Any, List
 from .fractional_c import fractional_integrate
@@ -11,6 +12,58 @@ except ImportError:  # pragma: no cover
     _NUMBA_AVAILABLE = False
     def integrate_efork3_q1_numba(*args, **kwargs):  # type: ignore[misc]
         return None
+
+
+def _native_chua_params(system: Any):
+    from ..models.chua import chua_parameters
+
+    params = dict(getattr(system, "parameters", {}) or {})
+    return chua_parameters(
+        model=params.get("model", "nonsmooth"),
+        alpha=params.get("alpha", 8.4562),
+        beta=params.get("beta", 12.0732),
+        gamma=params.get("gamma", 0.0052),
+        m0=params.get("m0", -0.1768),
+        m1=params.get("m1", -1.1468),
+        a1=params.get("a1", 0.4),
+        a2=params.get("a2", -1.5585),
+        rho=params.get("rho", 1.0),
+    )
+
+
+def _try_native_chua_fractional(
+    *,
+    system: Optional[Any],
+    x0: np.ndarray,
+    q: float,
+    h: float,
+    t_final: float,
+    integrator: str,
+    memory_mode: str,
+    memory_window_length: Optional[int],
+    divergence_norm: Optional[float],
+) -> Optional[Tuple[np.ndarray, np.ndarray, str]]:
+    if (
+        system is None
+        or str(integrator).lower() not in {"efork", "efork3"}
+        or getattr(system, "dimension", None) != 3
+        or getattr(system, "lure", None) is None
+    ):
+        return None
+
+    from ..native.backends import FractionalChuaBackend
+
+    backend = FractionalChuaBackend.build(output_name=f"general_chua_efork_{os.getpid()}")
+    backend.set_params(_native_chua_params(system))
+    if memory_mode == "window" and memory_window_length:
+        Lm = float(memory_window_length) * float(h)
+    else:
+        Lm = float(t_final) + float(h)
+    traj = backend.integrate_efork3(x0, q=float(q), h=float(h), Lm=Lm, t_final=float(t_final))
+    status = "ok"
+    if divergence_norm is not None and np.max(np.linalg.norm(traj[:, 1:4], axis=1)) > float(divergence_norm):
+        status = "diverged"
+    return traj[:, 0], traj[:, 1:4], status
 
 def integrate_general(
     rhs: Callable[[float, np.ndarray], np.ndarray],
@@ -201,6 +254,21 @@ def integrate_general(
         return t_arr[:last_idx + 1], x_arr[:last_idx + 1], status
             
     # 2. Fractional order q in (0, 1)
+    if use_c_backend:
+        native_chua = _try_native_chua_fractional(
+            system=system,
+            x0=x0_arr,
+            q=q,
+            h=h,
+            t_final=t_final,
+            integrator=integrator,
+            memory_mode=memory_mode,
+            memory_window_length=memory_window_length,
+            divergence_norm=divergence_norm,
+        )
+        if native_chua is not None:
+            return native_chua
+
     t_arr, x_arr, status, info = fractional_integrate(
         rhs=rhs_t,
         x0=x0_arr,

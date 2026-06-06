@@ -1,0 +1,92 @@
+experiment:
+  name: "Chua Fractional H001 Exploratory DF Continuation"
+  description: "Exploratory fractional Chua run: Lure describing function, modal seed, numerical continuation, final trajectory, and local hiddenness probes."
+  output_dir: "outputs/chua_fractional_h001_exploratory"
+
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.998
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+modes:
+  transfer_mode: "published_integer_laplace"
+  transfer_modes_available: ["published_integer_laplace", "fractional_spectral"]
+  seed_mode: "fractional"
+  continuation_mode: "fractional"
+  dynamics_mode: "system"
+
+integrator:
+  name: "abm"
+  h: 0.01
+  memory_mode: "full"
+  memory_policy: "full_history"
+  caputo_history_accumulated: true
+  use_c_backend: false
+  allow_python_fallback: true
+
+stages:
+  seed_search: true
+  continuation: true
+  final_simulation: true
+  hiddenness_tests: true
+  sphere_tests: true
+  basin_slices: false
+  bifurcation: false
+  attractor_only: false
+
+seed_search:
+  strategy: "k_phi"
+  construction: "modal"
+  branch_index: 0
+  omega_min: 0.01
+  omega_max: 20.0
+  amplitude_min: 0.01
+  amplitude_max: 20.0
+  grid_size_omega: 120
+  grid_size_amplitude: 120
+  root_refinement: true
+  df_residual_tol: 1.0e-2
+
+continuation:
+  eta_grid_mode: "adaptive"
+  eta_min: 1.0e-3
+  eta_max: 1.0
+  n_eta: 9
+  periods_transient: 5
+  periods_keep: 3
+  use_period_based_times: true
+  build_fractional_harmonic_history: true
+  harmonic_history_periods: 10
+  require_c_backend: false
+  allow_python_fallback: true
+
+simulation:
+  t_final: 120.0
+  t_burn: 40.0
+
+sphere_tests:
+  enabled: true
+  radii: [1.0e-5, 1.0e-4, 1.0e-3, 1.0e-2]
+  samples_initial: 6
+  samples_growth_factor: 1.0
+  directions_mode: "sphere_random"
+  random_seed: 42
+  t_final: 40.0
+  t_burn: 15.0
+  h: 0.01
+
+plots:
+  enabled: true
+  save_figures: true
+  attractor: true
+  timeseries: true
+  transfer: true
+  describing_function: true
+  continuation: true
+  sphere_tests: true
+  matignon: true

@@ -1,6 +1,97 @@
+import os
 import numpy as np
 from typing import Any, Dict, List, Sequence, Optional
 from ..integrations.fractional_c import fractional_integrate
+from ..models.chua import chua_parameters
+from ..native.backends import FractionalChuaBackend
+
+
+def _chua_params_from_system(system: Any):
+    params = dict(getattr(system, "parameters", {}) or {})
+    return chua_parameters(
+        model=params.get("model", "nonsmooth"),
+        alpha=params.get("alpha", 8.4562),
+        beta=params.get("beta", 12.0732),
+        gamma=params.get("gamma", 0.0052),
+        m0=params.get("m0", -0.1768),
+        m1=params.get("m1", -1.1468),
+        a1=params.get("a1", 0.4),
+        a2=params.get("a2", -1.5585),
+        rho=params.get("rho", 1.0),
+    )
+
+
+def _can_use_native_chua_efork(system: Any, integrator: str, use_c_backend: bool) -> bool:
+    return bool(
+        use_c_backend
+        and str(integrator).lower() in {"efork", "efork3"}
+        and getattr(system, "dimension", None) == 3
+        and getattr(system, "lure", None) is not None
+    )
+
+
+def _native_chua_continuation_steps(
+    *,
+    system: Any,
+    seed_x0: np.ndarray,
+    k_gain: float,
+    lambda_values: Sequence[float],
+    q: float,
+    h: float,
+    memory_mode: str,
+    memory_window_length: Optional[int],
+    t_transient: float,
+    t_keep: float,
+) -> List[Dict[str, Any]]:
+    backend = FractionalChuaBackend.build(output_name=f"centered_lure_continuation_{os.getpid()}")
+    backend.set_params(_chua_params_from_system(system))
+
+    if memory_mode == "window" and memory_window_length:
+        Lm = float(memory_window_length) * float(h)
+    else:
+        Lm = float(len(lambda_values)) * (float(t_transient) + float(t_keep)) + float(h)
+
+    result = backend.continue_efork3(
+        seed_x0,
+        lambda_values=lambda_values,
+        q=float(q),
+        k=float(k_gain),
+        h=float(h),
+        Lm=Lm,
+        t_transient=float(t_transient),
+        t_keep=float(t_keep),
+        t_observe=0.0,
+    )
+
+    steps: List[Dict[str, Any]] = []
+    trajectories = result["trajectories"]
+    for idx, eta in enumerate(result["lambda"]):
+        traj = np.asarray(trajectories[idx], dtype=float)
+        x_in = np.asarray(result["x_in"][idx], dtype=float)
+        x_out = np.asarray(result["x_out"][idx], dtype=float)
+        max_norm = float(np.max(np.linalg.norm(traj[:, 1:4], axis=1))) if len(traj) else float(np.linalg.norm(x_out))
+        steps.append(_make_step_dict(
+            eta=float(eta),
+            x_in=x_in,
+            x_out=x_out,
+            trajectory=traj,
+            status="ok",
+            used_c=True,
+            rhs_src="chua_frac_backend_lib.c",
+            n_steps=int(len(traj)),
+            t_end=float(traj[-1, 0]) if len(traj) else 0.0,
+            max_norm=max_norm,
+            x_in_norm=float(np.linalg.norm(x_in)),
+            x_out_norm=float(np.linalg.norm(x_out)),
+            early_stop_reason="",
+            history_policy="finite_window" if memory_mode == "window" else "full_caputo",
+            carry_state_history=True,
+            carry_derivative_history=False,
+            eta_boundary_policy="right_continuous",
+        ))
+        steps[-1]["history_in_count"] = int(result["history_in_counts"][idx])
+        steps[-1]["history_out_count"] = int(result["history_out_counts"][idx])
+    return steps
 
 
 def run_fractional_continuation(
@@ -45,6 +136,46 @@ def run_fractional_continuation(
         )
 
     q_effective = q if q is not None else float(system.parameters.get("q", 1.0))
+
+    if _can_use_native_chua_efork(system, integrator, use_c_backend):
+        try:
+            return _native_chua_continuation_steps(
+                system=system,
+                seed_x0=seed_x0,
+                k_gain=k_gain,
+                lambda_values=lambda_values,
+                q=q_effective,
+                h=h,
+                memory_mode=memory_mode,
+                memory_window_length=memory_window_length,
+                t_transient=t_transient,
+                t_keep=t_keep,
+            )
+        except Exception as exc:
+            if require_c_backend and not allow_python_fallback:
+                x_in = np.asarray(seed_x0, dtype=float).copy()
+                err_msg = f"backend_failure:{exc}"
+                return [_make_step_dict(
+                    eta=float(lambda_values[0]) if len(lambda_values) else float("nan"),
+                    x_in=x_in,
+                    x_out=x_in.copy(),
+                    trajectory=np.empty((0, 1 + len(x_in))),
+                    status=err_msg,
+                    used_c=False,
+                    rhs_src="none",
+                    n_steps=0,
+                    t_end=0.0,
+                    max_norm=float(np.linalg.norm(x_in)),
+                    x_in_norm=float(np.linalg.norm(x_in)),
+                    x_out_norm=float(np.linalg.norm(x_in)),
+                    early_stop_reason=err_msg,
+                    history_policy="finite_window" if memory_mode == "window" else "full_caputo",
+                    carry_state_history=True,
+                    carry_derivative_history=False,
+                    eta_boundary_policy="right_continuous",
+                )]
+            if not allow_python_fallback:
+                raise
 
     x_in = np.asarray(seed_x0, dtype=float).copy()
     steps: List[Dict[str, Any]] = []

@@ -198,6 +198,11 @@ sampled-trajectory diagnostics with `exact_poincare_map=false`. Poincare alone
 does not certify chaos, hiddenness, or exact periodic orbits in Caputo
 systems. Outputs live under `dynamics_diagnostics/poincare/`.
 
+The configured integrator contract is case-specific and reported in the
+metadata: Danca 2017 uses ABM with full Caputo memory, while Wu 2023 published
+reproduction uses `ADM_WU2023` with `memory_policy=none_local_adm`. Separate
+arctan continuation experiments must use ABM with `memory_mode=full`.
+
 ## F5 - Complementary dynamics diagnostics
 
 F5.1 boundedness, F5.2 zero-one, F5.3 FFT/PSD, and F5.4 Poincare now produce

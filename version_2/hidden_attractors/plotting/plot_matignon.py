@@ -16,7 +16,7 @@ def plot_matignon_equilibria(
     Renders the premium Matignon stability plane visualization for all equilibria.
     Saves the plot as 'figures/matignon_equilibria.png'.
     """
-    q = system.q
+    q = float(config.get("q", getattr(system, "q", system.parameters.get("q", 1.0))))
     fig_dir = os.path.join(output_dir, "figures")
     os.makedirs(fig_dir, exist_ok=True)
     

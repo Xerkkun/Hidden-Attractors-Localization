@@ -13,7 +13,9 @@
   "integration": {
     "backend": "native_full_history_abm",
     "integrator": "ABM",
+    "memory_mode": "full",
     "memory_policy": "full_history",
+    "caputo_history_accumulated": true,
     "h": 0.01,
     "t_final": 500.0,
     "t_burn": 250.0

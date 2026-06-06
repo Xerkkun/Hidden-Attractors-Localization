@@ -385,8 +385,13 @@ def run_case_reproduction(
     derivative = dynamics_cfg.get("derivative", "Caputo")
     dynamics_q = float(dynamics_cfg.get("q", 1.0))
     integrator = dynamics_cfg.get("integrator", "EFORK")
+    backend = dynamics_cfg.get("backend", "not_recorded")
+    memory_mode = dynamics_cfg.get("memory_mode", "not_recorded")
+    memory_policy = dynamics_cfg.get("memory_policy", "not_recorded")
+    caputo_history_accumulated = bool(dynamics_cfg.get("caputo_history_accumulated", False))
     h = float(dynamics_cfg.get("h", 0.01))
     t_final = float(dynamics_cfg.get("t_final", 100.0))
+    divergence_norm = float(dynamics_cfg.get("divergence_norm", 120.0))
 
     # Read run_dynamics from YAML if not specified explicitly as argument
     if run_dynamics is None:
@@ -490,7 +495,19 @@ def run_case_reproduction(
                 traj, status = efork_q1_integrate(rhs_func, np.asarray(x0), t_final=t_final, h=h)
             else:
                 # Caputo
-                if integrator == "ABM":
+                if str(integrator).upper() in {"ADM", "ADM_WU2023"}:
+                    from hidden_attractors.integrations.adm_wu2023 import adm_wu2023_integrate
+                    n_steps = int(np.ceil(t_final / h))
+                    times, states, status, adm_info = adm_wu2023_integrate(
+                        params=params_dict,
+                        x0=np.asarray(x0, dtype=float),
+                        q=dynamics_q,
+                        h=h,
+                        N=n_steps,
+                        divergence_norm=divergence_norm,
+                    )
+                    traj = np.column_stack((times, states))
+                elif integrator == "ABM":
                     traj, status = caputo_abm_integrate(rhs_func, x0, q=dynamics_q, h=h, t_final=t_final)
                 else:
                     # EFORK
@@ -502,6 +519,11 @@ def run_case_reproduction(
             trajectories_info[ic_name] = {
                 "initial_condition": x0,
                 "status": status,
+                "integrator": integrator,
+                "backend": backend,
+                "memory_mode": memory_mode,
+                "memory_policy": memory_policy,
+                "caputo_history_accumulated": caputo_history_accumulated,
                 "final_state": traj[-1, 1:].tolist() if len(traj) > 0 else None,
                 "max_norm": float(np.max(np.linalg.norm(traj[:, 1:], axis=1))) if len(traj) > 0 else 0.0
             }
@@ -512,13 +534,24 @@ def run_case_reproduction(
             "derivative": derivative,
             "q": dynamics_q,
             "integrator": integrator,
+            "backend": backend,
+            "memory_mode": memory_mode,
+            "memory_policy": memory_policy,
+            "caputo_history_accumulated": caputo_history_accumulated,
             "trajectories": trajectories_info
         }
     else:
         trajectory_reproduced = False
         dynamics_rep_out = {
             "status": "skipped",
-            "reason": "run_dynamics=false"
+            "reason": "run_dynamics=false",
+            "derivative": derivative,
+            "q": dynamics_q,
+            "integrator": integrator,
+            "backend": backend,
+            "memory_mode": memory_mode,
+            "memory_policy": memory_policy,
+            "caputo_history_accumulated": caputo_history_accumulated,
         }
 
     with open(case_output_dir / "dynamics_reproduction.json", "w", encoding="utf-8") as f:
@@ -579,6 +612,11 @@ def run_case_reproduction(
         "seed_transfer_mode": seed_transfer_mode,
         "q_dependent_seed": q_dependent_seed,
         "dynamics_q": dynamics_q,
+        "dynamics_integrator": integrator,
+        "dynamics_backend": backend,
+        "dynamics_memory_mode": memory_mode,
+        "dynamics_memory_policy": memory_policy,
+        "caputo_history_accumulated": caputo_history_accumulated,
         "statuses": statuses,
         "missing_data": missing_data_list,
         "no_hidden_verified_claim": True,

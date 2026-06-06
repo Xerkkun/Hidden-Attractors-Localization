@@ -26,8 +26,8 @@ from hidden_attractors.analysis.poincare import (  # noqa: E402
     write_poincare_outputs,
 )
 from hidden_attractors.models.chua import chua_parameters, rhs_nonsmooth  # noqa: E402
+from hidden_attractors.integrations.adm_wu2023 import adm_wu2023_integrate  # noqa: E402
 from hidden_attractors.native.backends import (  # noqa: E402
-    FractionalChuaBackend,
     FullHistoryABMBackend,
 )
 from hidden_attractors.solvers import efork_q1_integrate  # noqa: E402
@@ -148,25 +148,38 @@ def _integrate_case(config: dict[str, Any]) -> list[tuple[str, np.ndarray, dict[
             },
         )]
     if case_id == "wu2023_chua_fractional_arctan_q099":
-        backend = FractionalChuaBackend.build(output_name="poincare_wu2023_efork_arctan")
-        backend.set_arctan_params(params)
-        return [
-            (
-                name,
-                backend.integrate_efork3(
-                    seed,
-                    q=q,
-                    h=h,
-                    Lm=float(integration["memory_length"]),
-                    t_final=t_final,
-                ),
-                {"integration_status": "ok"},
+        n_steps = int(round(t_final / h))
+        params_dict = dict(config["parameters"])
+        trajectories = []
+        for name, seed in (
+            ("x0_plus", config["seed"]["x0_plus"]),
+            ("x0_minus", config["seed"]["x0_minus"]),
+        ):
+            times, states, status, info = adm_wu2023_integrate(
+                params=params_dict,
+                x0=np.asarray(seed, dtype=float),
+                q=q,
+                h=h,
+                N=n_steps,
+                divergence_norm=float(integration.get("divergence_norm", 120.0)),
             )
-            for name, seed in (
-                ("x0_plus", config["seed"]["x0_plus"]),
-                ("x0_minus", config["seed"]["x0_minus"]),
+            trajectories.append(
+                (
+                    name,
+                    np.column_stack((times, states)),
+                    {
+                        "integration_status": status,
+                        "seed_scope": "paper_reported_initial_condition",
+                        "integrator": "ADM_WU2023",
+                        "backend": "adm_local_reproduction",
+                        "memory_policy": "none_local_adm",
+                        "memory_mode": "none",
+                        "caputo_history_accumulated": False,
+                        "adm_metadata": info,
+                    },
+                )
             )
-        ]
+        return trajectories
     raise ValueError(f"unsupported Poincare diagnostic case: {case_id}")
 
 

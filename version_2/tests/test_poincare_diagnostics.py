@@ -33,10 +33,19 @@ def test_poincare_case_yamls_record_published_numeric_values() -> None:
         "m1": -1.1468,
     }
     assert danca["seed"]["article_initial_condition_reported"] is False
+    assert danca["seed"]["seed_transfer_mode"] == "published_integer_laplace"
+    assert danca["integration"]["integrator"] == "ABM"
+    assert danca["integration"]["memory_mode"] == "full"
+    assert danca["integration"]["memory_policy"] == "full_history"
+    assert danca["integration"]["caputo_history_accumulated"] is True
     assert wu["q"] == 0.99
     assert wu["seed"]["x0_plus"] == [13.8, 0.7093, -19.8768]
     assert wu["seed"]["x0_minus"] == [-13.8, -0.7093, 19.8768]
-    assert wu["integration"]["memory_length"] == 40.0
+    assert wu["seed"]["seed_transfer_mode"] == "published_integer_laplace"
+    assert wu["integration"]["integrator"] == "ADM_WU2023"
+    assert wu["integration"]["backend"] == "adm_local_reproduction"
+    assert wu["integration"]["memory_policy"] == "none_local_adm"
+    assert wu["integration"]["caputo_history_accumulated"] is False
 
 
 def test_global_summary_records_method_validation_and_no_certification() -> None:
