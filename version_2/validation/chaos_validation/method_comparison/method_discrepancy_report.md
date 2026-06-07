@@ -30,7 +30,7 @@ or case-specific Lyapunov spectra are unavailable.
 |---|---|---|---|---|---|
 | `chua_integer_q1_reference` | `bounded_candidate` | `zero_one_regular_candidate` | `spectral_inconclusive` | `cloud_like` | `f5_diagnostics_conflict` |
 | `danca2017_chua_fractional_saturation_q09998` | `bounded_candidate` | `zero_one_regular_candidate` | `spectral_inconclusive` | `cloud_like` | `f5_diagnostics_conflict` |
-| `wu2023_chua_fractional_arctan_q099` | `bounded_candidate` | `zero_one_regular_candidate` | `spectral_inconclusive` | `cloud_like` | `f5_diagnostics_conflict` |
+| `wu2023_chua_fractional_arctan_q099` | `bounded_candidate` | `zero_one_regular_candidate` | `dominant_periodic_peak` | `cloud_like` | `f5_diagnostics_conflict` |
 
 ## Conflicts Detected
 

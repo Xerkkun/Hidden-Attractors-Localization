@@ -7,10 +7,11 @@ import time
 import numpy as np
 
 sys.path.insert(0, ".")
+sys.path.insert(0, "./version_2")
 
-from src.lure.transfer import W_eval, W_precompute_spectral, W_eval_from_cache
-from src.lure.describing_function import evaluate_describing_function_batch
-from src.lure.nyquist import find_harmonic_candidates, HarmonicCandidate
+from hidden_attractors.lure.transfer import W_eval, W_precompute_spectral, W_eval_from_cache
+from hidden_attractors.lure.describing_function import evaluate_describing_function_batch, evaluate_describing_function
+from hidden_attractors.lure.nyquist import find_harmonic_candidates, HarmonicCandidate
 
 print("=" * 60)
 print("VERIFICACION DE OPTIMIZACIONES")
@@ -52,18 +53,24 @@ print("\n[2] evaluate_describing_function_batch")
 
 class MockSystem:
     """Minimal closed-form DF for saturation nonlinearity N(A) = m1 + 2(m0-m1)/pi * arcsin(Bp/A)"""
+    def __init__(self):
+        self.lure = self
+        self.parameters = {"model": "saturation"}
+        
     system_id = "mock_saturation"
     Bp = 1.0
     m0 = -0.5
     m1 = -0.8
-    describing_function_capabilities = {
-        "closed_form": True,
-        "piecewise_closed_form": False,
-        "quadrature": True,
-        "nonsmooth": False,
-        "breakpoints": None,
-    }
-    def describing_function_closed_form(self, A):
+    
+    def nonlinearity(self, sigma):
+        sigma_arr = np.asarray(sigma, dtype=float)
+        return np.where(
+            np.abs(sigma_arr) <= self.Bp,
+            self.m0 * sigma_arr,
+            self.m1 * sigma_arr + np.sign(sigma_arr) * (self.m0 - self.m1) * self.Bp
+        )
+        
+    def describing_function(self, A):
         Bp = self.Bp
         m0, m1 = self.m0, self.m1
         A_arr = np.asarray(A, dtype=float)
@@ -81,7 +88,7 @@ t0 = time.perf_counter()
 N_batch = evaluate_describing_function_batch(sys_mock, A_grid)
 t_batch = time.perf_counter() - t0
 
-from src.lure.describing_function import evaluate_describing_function
+from hidden_attractors.lure.describing_function import evaluate_describing_function
 t0 = time.perf_counter()
 N_serial = np.array([evaluate_describing_function(sys_mock, float(A)).value for A in A_grid])
 t_serial = time.perf_counter() - t0

@@ -18,7 +18,7 @@
   "spectral_support": {
     "chua_integer_q1_reference": "spectral_inconclusive",
     "danca2017_chua_fractional_saturation_q09998": "spectral_inconclusive",
-    "wu2023_chua_fractional_arctan_q099": "spectral_inconclusive"
+    "wu2023_chua_fractional_arctan_q099": "dominant_periodic_peak"
   },
   "boundedness_support": {
     "chua_integer_q1_reference": "bounded_candidate",
@@ -74,7 +74,7 @@
       "chaos_evidence_level": "chaos_evidence_inconclusive",
       "lyapunov_support": "not_available_or_nonpositive",
       "zero_one_support": "zero_one_regular_candidate",
-      "spectral_support": "spectral_inconclusive",
+      "spectral_support": "dominant_periodic_peak",
       "boundedness_support": "bounded_candidate",
       "poincare_support": "cloud_like",
       "diagnostic_conflicts": [
@@ -238,7 +238,7 @@
     "valid_fractional_lyapunov_method_per_candidate": "not_strictly_validated_with_documented_attempts",
     "two_methods_sign_agreement_preferred": "not_available_with_documented_method_limitations",
     "zero_one_compatible": true,
-    "psd_fft_without_dominant_periodicity": "partial",
+    "psd_fft_without_dominant_periodicity": false,
     "warnings_for_nonsmooth_memory_sensitivity": true,
     "scope_note_centralized": true,
     "hiddenness_scope_separated": true
@@ -264,7 +264,7 @@
     "Prefer sign agreement between two applicable methods.",
     "Keep F5 diagnostics compatible."
   ],
-  "generated_at_utc": "2026-06-03T01:20:35.461066+00:00",
+  "generated_at_utc": "2026-06-06T02:16:08.080314+00:00",
   "inputs": {
     "f4_summary": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/f4_internal_validation_summary.json",
     "f5_summary": "validation/chaos_validation/dynamics_diagnostics/f5_diagnostics_summary.json",

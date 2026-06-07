@@ -1,0 +1,38 @@
+=====================================================================================
+           EXTENDED RUNS COMPARISON REPORT: ADOMIAN ADM VS FULL-HISTORY ABM           
+=====================================================================================
+Source Run: run_20260605_194127
+Extended Time: t_final = 500.0, t_burn = 100.0, h = 0.005
+=====================================================================================
+
+Rank | Case ID                             | OrigSc | ADM Stat | ADM Label              | ABM Stat | ABM Label             
+---------------------------------------------------------------------------------------------------------------------------
+1    | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.5918 | ok       | nonperiodic_candidate  | ok       | nonperiodic_candidate 
+2    | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.5771 | ok       | regular_periodic_rejected | ok       | nonperiodic_candidate 
+3    | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.5752 | ok       | nonperiodic_candidate  | ok       | nonperiodic_candidate 
+4    | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.5738 | ok       | nonperiodic_candidate  | ok       | nonperiodic_candidate 
+5    | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.5291 | ok       | regular_periodic_rejected | ok       | nonperiodic_candidate 
+6    | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.5219 | ok       | regular_periodic_rejected | ok       | nonperiodic_candidate 
+7    | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.4834 | ok       | nonperiodic_candidate  | ok       | nonperiodic_candidate 
+8    | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.4557 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+9    | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.4478 | ok       | nonperiodic_candidate  | ok       | nonperiodic_candidate 
+10   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.4366 | ok       | regular_periodic_rejected | ok       | nonperiodic_candidate 
+11   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.4109 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+12   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.3862 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+13   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.3845 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+14   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.3801 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+15   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.3610 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+16   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.3500 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+17   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.3451 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+18   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.3436 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+19   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.3220 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+20   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.3032 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+21   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.2986 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+22   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.2845 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+23   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.2775 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+24   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.2590 | ok       | chaotic_candidate_pending_robustness | ok       | chaotic_candidate_pending_robustness
+25   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.1385 | ok       | nonperiodic_candidate  | ok       | nonperiodic_candidate 
+26   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.1312 | ok       | nonperiodic_candidate  | ok       | nonperiodic_candidate 
+27   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.1288 | ok       | regular_periodic_rejected | ok       | nonperiodic_candidate 
+28   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.0315 | ok       | thin_periodic_rejected | ok       | nonperiodic_candidate 
+29   | alpha_8p4562_beta_12p0732_gamma_0p0 | 0.0315 | ok       | thin_periodic_rejected | ok       | nonperiodic_candidate 

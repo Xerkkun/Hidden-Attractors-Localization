@@ -4,12 +4,15 @@ workspace_root = Path(__file__).resolve().parent
 if str(workspace_root) not in sys.path:
     sys.path.insert(0, str(workspace_root))
 
-from src.systems.registry import get_system_by_id
-from src.lure.transfer import W_eval
+# Add version_2 to sys.path
+sys.path.insert(0, str(workspace_root / "version_2"))
+
+from hidden_attractors.systems import get_system
+from hidden_attractors.lure.transfer import W_eval
 import numpy as np
 from scipy.optimize import root_scalar
 
-sys_int = get_system_by_id("chua_integer_saturation")
+sys_int = get_system("chua-nonsmooth")
 q = 1.0
 transfer_mode = "integer"
 omega_min = 0.5
@@ -20,7 +23,7 @@ scan_n = max(grid_size_omega, 20000)
 ws = np.linspace(omega_min, omega_max, scan_n)
 ims = []
 for w in ws:
-    val = W_eval(w, q, transfer_mode, sys_int.P, sys_int.b, sys_int.r)
+    val = W_eval(w, q, transfer_mode, sys_int.lure.matrix, sys_int.lure.input_vector, sys_int.lure.output_vector)
     ims.append(val.imag)
 
 ims = np.array(ims)
@@ -30,14 +33,14 @@ print("Number of sign changes in Im(W):", len(sign_changes))
 omega_roots = []
 for j in sign_changes:
     def root_f(w):
-        return W_eval(w, q, transfer_mode, sys_int.P, sys_int.b, sys_int.r).imag
-    sol = root_scalar(root_f, bracket=[ws[j], ws[j+1]], method="bisection")
+        return W_eval(w, q, transfer_mode, sys_int.lure.matrix, sys_int.lure.input_vector, sys_int.lure.output_vector).imag
+    sol = root_scalar(root_f, bracket=[ws[j], ws[j+1]], method="bisect")
     if sol.converged:
         omega_roots.append(sol.root)
 print("omega_roots:", omega_roots)
 
 for w0 in omega_roots:
-    W0 = W_eval(w0, q, transfer_mode, sys_int.P, sys_int.b, sys_int.r)
+    W0 = W_eval(w0, q, transfer_mode, sys_int.lure.matrix, sys_int.lure.input_vector, sys_int.lure.output_vector)
     k = -1.0 / W0.real
     print(f"w0={w0}, k={k}")
     
@@ -48,7 +51,7 @@ for w0 in omega_roots:
         if A <= 0:
             return 0.0
         def integrand(t):
-            return (sys_int.psi(A * np.cos(w0 * t)) - k * A * np.cos(w0 * t)) * np.cos(w0 * t)
+            return (sys_int.lure.nonlinearity(A * np.cos(w0 * t)) - k * A * np.cos(w0 * t)) * np.cos(w0 * t)
         val, _ = quad(integrand, 0.0, 2.0 * np.pi / w0, limit=100)
         return val
         
@@ -60,3 +63,4 @@ for w0 in omega_roots:
     phi_vals = [phi_func(a) for a in as_]
     phi_sign_changes = np.where(np.array(phi_vals[:-1]) * np.array(phi_vals[1:]) < 0.0)[0]
     print("phi sign changes indices:", phi_sign_changes)
+

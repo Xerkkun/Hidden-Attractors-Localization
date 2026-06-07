@@ -1,8 +1,8 @@
 {
   "stage": "F5.1_boundedness",
   "status": "completed_structured_outputs",
-  "generated_at_utc": "2026-06-06T00:56:30.342508+00:00",
-  "fast": false,
+  "generated_at_utc": "2026-06-06T02:15:26.177329+00:00",
+  "fast": true,
   "cases_total": 3,
   "standardized_outputs": true,
   "boundedness_proves_chaos": false,

@@ -4,13 +4,14 @@ import numpy as np
 import yaml
 import os
 
-# Ensure the root of the project is in python path
+# Ensure the root and version_2 of the project is in python path
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "version_2"))
 
-from src.workflows.centered_lure_df_workflow import run_centered_lure_df_workflow
-from src.workflows.configs import load_and_validate_config
-from src.integrators.general import integrate_general
+from hidden_attractors.workflows.centered_lure_df import run_centered_lure_df_workflow
+from hidden_attractors.workflows.config_loader import load_config as load_and_validate_config
+from hidden_attractors.integrations.general import integrate_general
 
 def main():
     print("=" * 90)
@@ -20,9 +21,9 @@ def main():
     print("para obtener resultados de localización inmediatos en menos de 5 segundos.\n")
 
     presets = [
-        "configs/examples/chua_integer_centered_lure_df.yaml",
-        "configs/examples/chua_fractional_centered_lure_df.yaml",
-        "configs/examples/chua_arctan_fractional_centered_lure_df.yaml"
+        "version_2/configs/examples/chua_integer_centered_lure_df.yaml",
+        "version_2/configs/examples/chua_fractional_centered_lure_df.yaml",
+        "version_2/configs/examples/chua_arctan_fractional_centered_lure_df.yaml"
     ]
 
     summaries = []
@@ -31,8 +32,9 @@ def main():
         print(f"\n---> Cargando configuración desde: {preset_path}")
         config = load_and_validate_config(preset_path)
         
-        config["t_final"] = 30.0
-        config["t_burn"] = 10.0
+        config.setdefault("final_simulation", {})
+        config["final_simulation"]["t_final"] = 30.0
+        config["final_simulation"]["t_burn"] = 10.0
         config["run_hiddenness_tests"] = False
         config["run_basin_slices"] = False
         config["plot_enabled"] = False

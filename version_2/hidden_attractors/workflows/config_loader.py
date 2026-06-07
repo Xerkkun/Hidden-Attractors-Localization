@@ -596,11 +596,17 @@ def _validate(cfg: Dict[str, Any]) -> None:
         validate_integrator_compatibility(integrator, float(q))
 
     # Transfer / continuation / dynamics modes
-    valid = {"integer", "fractional"}
-    for key in ("transfer_mode", "seed_mode", "continuation_mode"):
+    valid_transfer = {"integer", "fractional", "published_integer_laplace", "fractional_spectral"}
+    valid_modes = {"integer", "fractional"}
+    
+    val_tm = cfg.get("transfer_mode")
+    if val_tm is not None and val_tm not in valid_transfer:
+        raise ValueError(f"Invalid transfer_mode: '{val_tm}'. Must be one of {valid_transfer}.")
+        
+    for key in ("seed_mode", "continuation_mode"):
         val = cfg.get(key)
-        if val is not None and val not in valid:
-            raise ValueError(f"Invalid {key}: '{val}'. Must be one of {valid}.")
+        if val is not None and val not in valid_modes:
+            raise ValueError(f"Invalid {key}: '{val}'. Must be one of {valid_modes}.")
 
     dm = cfg.get("dynamics_mode")
     if dm is not None and dm not in {"integer", "fractional", "system"}:
@@ -680,6 +686,9 @@ def _resolve_output_dir(cfg: Dict[str, Any]) -> str:
 def _normalize_memory_config(flat: Dict[str, Any]) -> None:
     """Normalize and infer memory_mode / memory_policy before defaults are applied."""
     mp = flat.get("memory_policy")
+    if mp == "full_history":
+        flat["memory_policy"] = "full_caputo"
+        mp = "full_caputo"
     mm = flat.get("memory_mode")
     
     # Rules:

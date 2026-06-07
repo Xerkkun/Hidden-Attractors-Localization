@@ -1,16 +1,20 @@
 {
   "stage": "F5_dynamics_diagnostics",
+  "generated_at_utc": "2026-06-06T02:15:27.371084+00:00",
   "boundedness": {
-    "status": "partial",
-    "standardized_outputs": false
+    "status": "completed_structured_outputs",
+    "standardized_outputs": true,
+    "path": "boundedness/boundedness_diagnostics_summary.json"
   },
   "zero_one": {
-    "status": "not_implemented",
-    "standardized_outputs": false
+    "status": "completed_structured_outputs",
+    "standardized_outputs": true,
+    "path": "zero_one/zero_one_diagnostics_summary.json"
   },
   "psd_fft": {
-    "status": "partial",
-    "standardized_outputs": false
+    "status": "completed_structured_outputs",
+    "standardized_outputs": true,
+    "path": "psd_fft/psd_fft_diagnostics_summary.json"
   },
   "poincare": {
     "status": "completed_structured_outputs",
@@ -49,7 +53,7 @@
     "chaos_certified_by_poincare": false,
     "hiddenness_certified_by_poincare": false
   },
-  "final_f5_status": "diagnostics_partial_current_protocol",
+  "final_f5_status": "f5_diagnostics_structured_outputs_ready",
   "certifications": {
     "chaos_verified": false,
     "hidden_verified": false
@@ -58,5 +62,42 @@
     "single_indicator_cannot_certify_chaos": true,
     "diagnostics_cannot_certify_hiddenness": true,
     "poincare_cannot_certify_caputo_periodic_orbits": true
+  },
+  "combined_interpretation": {
+    "status": "diagnostics_only_not_certification",
+    "per_case": [
+      {
+        "case_id": "chua_integer_q1_reference",
+        "status": "mixed_diagnostics_inconclusive",
+        "boundedness": "bounded_candidate",
+        "zero_one": "zero_one_regular_candidate",
+        "psd_fft": "spectral_inconclusive",
+        "poincare": "cloud_like",
+        "chaos_verified": false,
+        "hidden_verified": false
+      },
+      {
+        "case_id": "danca2017_chua_fractional_saturation_q09998",
+        "status": "mixed_diagnostics_inconclusive",
+        "boundedness": "bounded_candidate",
+        "zero_one": "zero_one_regular_candidate",
+        "psd_fft": "spectral_inconclusive",
+        "poincare": "cloud_like",
+        "chaos_verified": false,
+        "hidden_verified": false
+      },
+      {
+        "case_id": "wu2023_chua_fractional_arctan_q099",
+        "status": "mixed_diagnostics_inconclusive",
+        "boundedness": "bounded_candidate",
+        "zero_one": "zero_one_regular_candidate",
+        "psd_fft": "dominant_periodic_peak",
+        "poincare": "cloud_like",
+        "chaos_verified": false,
+        "hidden_verified": false
+      }
+    ],
+    "chaos_verified": false,
+    "hidden_verified": false
   }
 }
