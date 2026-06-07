@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 def inspect():
-    summary_path = Path(r"c:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\outputs\arctan_full_memory_search\run_20260605_194127\summary.json")
+    summary_path = Path(__file__).resolve().parent / "version_2" / "outputs" / "arctan_full_memory_search" / "run_20260605_194127" / "summary.json"
     if not summary_path.exists():
         print("Summary file not found.")
         return

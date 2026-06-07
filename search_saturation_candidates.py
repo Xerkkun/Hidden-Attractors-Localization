@@ -8,7 +8,7 @@ import argparse
 from types import SimpleNamespace
 
 # Ensure version_2 is in python path
-sys.path.insert(0, str(Path(r"c:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2")))
+sys.path.insert(0, str(Path(__file__).resolve().parent / "version_2"))
 
 from hidden_attractors.models.chua import ChuaParameters
 from hidden_attractors.seed_generation.chua import find_omega_gain_candidates, solve_amplitude_from_gain, build_fractional_seed

@@ -16,10 +16,11 @@
         "**/__pyrefly_virutal__/**",
         "**/__pyrefly_virtual__/**"
     ],
+    "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
     "python.analysis.extraPaths": [
         "./version_2"
     ],
     "python.autoComplete.extraPaths": [
         "./version_2"
     ]
-}
+}

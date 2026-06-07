@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.gridspec import GridSpec
 
-ROOT = Path(r"c:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order")
+ROOT = Path(__file__).resolve().parent
 OUT_DIR = ROOT / "outputs" / "chaotic_candidates_plots"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 

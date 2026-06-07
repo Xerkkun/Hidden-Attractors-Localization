@@ -8,7 +8,7 @@ import argparse
 from types import SimpleNamespace
 
 # Ensure version_2 is in python path
-sys.path.insert(0, str(Path(r"c:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2")))
+sys.path.insert(0, str(Path(__file__).resolve().parent / "version_2"))
 
 from hidden_attractors.models.chua import ChuaParameters
 from hidden_attractors.seed_generation.chua_arctan_wu2023 import find_centered_arctan_wu2023_branches
@@ -21,20 +21,22 @@ def main():
     parser = argparse.ArgumentParser(description="Sweep arctan Chua candidates with fractional DF and continuation.")
     parser.add_argument("--memory-mode", default="full", choices=["full", "window"], help="Caputo memory mode")
     parser.add_argument("--output-dir", type=str, default="outputs/arctan_fractional_search", help="Output folder")
-    
+    parser.add_argument("--lm-seconds", type=float, default=10.0, help="Memory window length in seconds (only used when --memory-mode=window)")
+
     args = parser.parse_args()
-    
+
     memory_mode = args.memory_mode
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     q_dynamics = 0.99
     h = 0.01
     t_final = 300.0
     t_transient = 100.0
-    
+
     if memory_mode == "window":
-        memory_window_length = int(10.0 / h)  # Lm = 10.0 seconds
+        memory_window_length = int(args.lm_seconds / h)  # Lm in seconds → steps
+        print(f"Memory window: Lm={args.lm_seconds} s ({memory_window_length} steps)")
     else:
         memory_window_length = None
         
