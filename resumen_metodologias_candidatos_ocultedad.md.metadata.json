@@ -1,5 +1,0 @@
-{
-  "artifactType": "ARTIFACT_TYPE_OTHER",
-  "summary": "Se actualiza la sección 10 del reporte con: (1) carrusel de candidatos version_2 con figura de 4 solucionadores (four_solvers_phase3d), separados de los que solo tienen comparison_phase3d; (2) tabla resumen de Lm=30 result (177/177 diverged_early); (3) tabla Lm=40 pendiente.",
-  "updatedAt": "2026-06-07T18:55:27.389295300Z"
-}

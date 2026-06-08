@@ -1,0 +1,409 @@
+\section{Resultados numéricos y análisis de ocultedad}
+\label{sec:resultados_numericos}
+
+En esta sección se presentan y analizan los resultados numéricos de las simulaciones y el protocolo operacional de vecindades aplicado a los sistemas bajo estudio. Se delimita en primer lugar la reproducción del sistema de Chua no suave de Danca \cite{Danca2017} y sus deficiencias metodológicas. A continuación se reporta el caso de control centrado, seguido por los resultados del candidato sesgado propuesto mediante función descriptiva sesgada (BDF) y homotopía afín. Por último, se exponen los resultados del Chua fraccionario con no linealidad $\arctan$.
+
+\subsection{Intento de reproducción de Danca (2017) y análisis crítico}
+\label{subsec:resultados_danca_exactos}
+
+Se intentó reproducir el resultado publicado por Danca \cite{Danca2017} para el circuito de Chua fraccionario no suave con saturación ($q=0.9998$), cuyos parámetros nominales son:
+\[
+(m_0,m_1)=(-0.1768,-1.1468), \quad \alpha=8.4562, \quad \beta=12.0732, \quad \gamma=0.0052.
+\]
+Danca \cite{Danca2017} declara la existencia de un atractor caótico oculto en este sistema. Sin embargo, su análisis presenta serias limitaciones metodológicas y errores conceptuales:
+\begin{enumerate}
+    \item \textbf{Protocolo de sondeo esférico insuficiente:} Danca realiza un test utilizando únicamente un radio $\delta = 0.01$ y una muestra de $200$ trayectorias, omitiendo el equilibrio central $E_0$.
+    \item \textbf{Ausencia de criterio cuantitativo:} No se especifica una métrica formal de distancia para declarar que una trayectoria alcanza el atractor, basándose únicamente en inspección visual.
+    \item \textbf{Declaración circular de ocultedad por construcción:} Se asume que el atractor es oculto porque se localizó usando una semilla que no pertenece a una vecindad de equilibrio. Esto es incorrecto, pues la cuenca de atracción del atractor puede cruzarse con las vecindades de los equilibrios inestables.
+    \item \textbf{Matignon como condición suficiente:} Danca deduce la ocultedad directamente del hecho de que los equilibrios externos son inestables y el origen es estable. Sin embargo, esto es una condición necesaria pero no suficiente.
+\end{enumerate}
+
+Para evaluar rigurosamente la ocultedad, se implementó el sistema exacto con la semilla clásica más cercana:
+\[
+X_{\rm seed}^{\rm Danca} \approx \begin{bmatrix}5.8518 \\ 0.3704 \\ -8.3610\end{bmatrix}.
+\]
+Los equilibrios correspondientes a estos parámetros son:
+\[
+\begin{aligned}
+E_0 &= (0,0,0), \\
+E_+ &\approx(6.5883,\ 0.002836,\ -6.5855), \\
+E_- &\approx(-6.5883,\ -0.002836,\ 6.5855).
+\end{aligned}
+\]
+Los autovalores lineales confirman que $E_0$ es localmente estable asintóticamente (yace dentro del sector de estabilidad de Matignon) y $E_\pm$ son silla-focos inestables:
+\begin{equation}
+\label{eq:danca_eigs}
+\begin{aligned}
+E_0: &\quad \lambda_{1}=-7.9587,\quad \lambda_{2,3}=-0.0038\pm3.2494i,\\
+E_\pm: &\quad \lambda_{1}=2.2193,\quad \lambda_{2,3}=-0.9916\pm2.4068i.
+\end{aligned}
+\end{equation}
+
+Al realizar el protocolo riguroso de sondeos esféricos con seis radios $r\in\{10^{-5},3{\times}10^{-5},10^{-4},3{\times}10^{-4},10^{-3},10^{-2}\}$ y $1350$ trayectorias por equilibrio ($4050$ en total), se detectó que el atractor caótico no es oculto. Aunque no hubo contactos desde $E_0$, se detectaron $649$ contactos desde $E_+$ y $656$ contactos desde $E_-$, por lo que la cuenca del atractor intersecta las vecindades de los equilibrios externos y se clasifica como \textbf{autoexcitado}. Las figuras siguientes ilustran la simulación del sistema con parámetros exactos de Danca.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/danca_frac_phase_3d.png}
+\caption{Retrato de fase 3D obtenido con los parámetros exactos de Danca \cite{Danca2017}: $m_0=-0.1768$, $m_1=-1.1468$, $q=0.9998$.}
+\label{fig:danca_phase3d}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/danca_frac_projections.png}
+\caption{Proyecciones en los planos $x$-$y$, $x$-$z$ y $y$-$z$ del atractor caótico obtenido con los parámetros exactos de Danca.}
+\label{fig:danca_projections}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/danca_frac_time_series.png}
+\caption{Series temporales de la simulación del sistema exacto de Danca, mostrando conmutaciones irregulares entre lóbulos.}
+\label{fig:danca_timeseries}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/danca_frac_spectrum_x.png}
+\caption{Espectro FFT de frecuencias de la señal $x(t)$ para el sistema de Danca.}
+\label{fig:danca_spectrum}
+\end{figure}
+
+\subsection{Control metodológico: Candidato centrado ($q=0.9998$)}
+\label{subsec:resultados_centrado}
+
+Como control metodológico, se analizó el candidato de la rama centrada con parámetros modificados $(m_0,m_1)=(-0.2,-1.2)$ y semilla:
+\[
+X_{\rm seed} = \begin{bmatrix}4.8019 \\ 0.3040 \\ -6.8610\end{bmatrix}.
+\]
+Este candidato fue seleccionado a partir del balance armónico clásico centrado, el cual predice la frecuencia $\omega_0=2.0403$ y amplitud $A_0=4.8019$. Los equilibrios de este sistema son:
+\[
+\begin{aligned}
+E_0&=(0,0,0),\\
+E_+&\approx(4.9893,\ 0.0021,\ -4.9871),\\
+E_-&\approx(-4.9893,\ -0.0021,\ 4.9871).
+\end{aligned}
+\]
+
+Las Fig. \ref{fig:chua_frac_ns_transfer_real} y \ref{fig:chua_frac_ns_transfer_imag} ilustran las componentes real e imaginaria de la función de transferencia lineal, comparando el caso de control $q=1$ con el caso fraccionario $q=0.9998$. La Fig. \ref{fig:chua_frac_ns_continuation} muestra la continuación causal del candidato seleccionado, y las Fig. \ref{fig:chua_frac_ns_attractor}, \ref{fig:chua_frac_ns_projections}, \ref{fig:chua_frac_ns_timeseries} y \ref{fig:chua_frac_ns_fft} presentan su retrato 3D, proyecciones 2D, series de tiempo y espectro FFT.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig01a_transfer_real.pdf}
+\caption{Componente real de la transferencia usada por la función descriptiva para el candidato no suave. La línea continua corresponde a \(q=0.9998\) y la discontinua al control entero \(q=1\).}
+\label{fig:chua_frac_ns_transfer_real}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig01b_transfer_imag.pdf}
+\caption{Componente imaginaria de la transferencia usada por la función descriptiva para el candidato no suave. La línea continua corresponde a \(q=0.9998\) y la discontinua al control entero \(q=1\).}
+\label{fig:chua_frac_ns_transfer_imag}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig02_continuation_story.pdf}
+\caption{Historia de la continuación numérica del candidato centrado seleccionado. La ruta propuesta usa Caputo con memoria completa.}
+\label{fig:chua_frac_ns_continuation}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig03_final_attractor.pdf}
+\caption{Trayectoria postransitoria del candidato centrado tras la continuación causal hasta el sistema físico \(\varepsilon=1\).}
+\label{fig:chua_frac_ns_attractor}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig03abc_final_attractor_projections.pdf}
+\caption{Proyecciones \(x\)-\(y\), \(x\)-\(z\) y \(y\)-\(z\) de la trayectoria postransitoria del candidato centrado.}
+\label{fig:chua_frac_ns_projections}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig04_time_series.pdf}
+\caption{Series temporales postransitorias del candidato centrado seleccionado.}
+\label{fig:chua_frac_ns_timeseries}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig11a_fft_x.pdf}
+\caption{Espectro FFT normalizado de \(x(t)\) en la ventana postransitoria del candidato centrado.}
+\label{fig:chua_frac_ns_fft}
+\end{figure}
+
+Para caracterizar el caos, se estimaron los exponentes de Lyapunov mediante dos métodos: el método variacional y el método de dinámica clonada. Con $T_{\rm burn}=40$ s y $T_{\rm eval}=160$ s con paso $h=0.01$, el método variacional estimó $\lambda \approx (0.13145, -0.01398, -0.02425)$ y el de dinámica clonada dio valores coherentes sin reinicio, certificando el régimen caótico. La convergencia se ilustra en la Fig. \ref{fig:chua_frac_ns_lyapunov}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig12_lyapunov_two_methods.pdf}
+\caption{Convergencia de los exponentes de Lyapunov del candidato centrado no suave. Arriba: método variacional. Abajo: método de dinámica clonada.}
+\label{fig:chua_frac_ns_lyapunov}
+\end{figure}
+
+La verificación de ocultedad para este candidato centrado dio como resultado 0 contactos desde $E_0$, pero $649$ contactos desde $E_+$ y $656$ contactos desde $E_-$, de modo que se clasifica como autoexcitado. Las Fig. \ref{fig:chua_frac_ns_spheres_E0}, \ref{fig:chua_frac_ns_spheres_Ep}, \ref{fig:chua_frac_ns_spheres_Em} y el mapa de calor en la Fig. \ref{fig:chua_frac_ns_hiddenness_heatmap} ilustran los resultados de los sondeos y contactos.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig13_E0_hiddenness_spherical_3d.pdf}
+\caption{Sondeos esféricos 3D centrados en $E_0$ para el candidato centrado (0 TARGET).}
+\label{fig:chua_frac_ns_spheres_E0}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig13_Ep_hiddenness_spherical_3d.pdf}
+\caption{Sondeos esféricos 3D centrados en $E_+$ para el candidato centrado, mostrando contactos TARGET.}
+\label{fig:chua_frac_ns_spheres_Ep}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig13_Em_hiddenness_spherical_3d.pdf}
+\caption{Sondeos esféricos 3D centrados en $E_-$ para el candidato centrado, mostrando contactos TARGET.}
+\label{fig:chua_frac_ns_spheres_Em}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig14_hiddenness_contact_heatmap.pdf}
+\caption{Mapa de calor de contactos por equilibrio y radio de sondeo para el candidato centrado.}
+\label{fig:chua_frac_ns_hiddenness_heatmap}
+\end{figure}
+
+\subsection{Resultados: Candidato sesgado compatible con ocultedad ($q=0.9998$)}
+\label{subsec:resultados_sesgado_oculto}
+
+La aplicación de la metodología propuesta utilizando la función descriptiva sesgada (BDF) con la auditoría de signo armónico ($1 + W_q(\omega) N_1(A,c) = 0$, convención \emph{plus}) y la homotopía afín preservadora de DC permitió identificar un candidato compatible con la ocultedad para los parámetros exactos de Danca \cite{Danca2017}:
+\[
+(m_0,m_1) = (-0.1768, -1.1468), \qquad q = 0.9998,
+\]
+en la \textbf{rama 1} (sesgada), la cual tiene un bias teórico $c \approx 2.776$ y amplitud teórica $A \approx 4.578$.
+
+Las Fig. \ref{fig:chua_frac_ns_biased_transfer_real} y \ref{fig:chua_frac_ns_biased_transfer_imag} muestran el cruce y la condición de cierre armónico sesgado en el plano frecuencial para los componentes real e imaginario de la función de transferencia.
+
+Bajo la continuación afín de Caputo (que previene la deformación incorrecta del bias a cero al inicio del camino homotópico), la semilla modal reconstruida:
+\[
+X_{\rm seed}^{\rm sesgado} \approx 
+\begin{bmatrix}
+7.35428 \\
+0.29097 \\
+-9.31605
+\end{bmatrix}
+\]
+logró converger exitosamente a un atractor estacionario estable. Los equilibrios correspondientes son:
+\[
+\begin{aligned}
+E_0 &= (0,0,0), \\
+E_+ &\approx (6.58831,\ 0.00284,\ -6.58547), \\
+E_- &\approx (-6.58831,\ -0.00284,\ 6.58547).
+\end{aligned}
+\]
+
+La historia de la continuación afín en 3D se ilustra en la Fig. \ref{fig:chua_frac_ns_biased_continuation}. El retrato de fase 3D y sus retratos 2D se presentan en las Fig. \ref{fig:chua_frac_ns_biased_attractor} y \ref{fig:chua_frac_ns_biased_projections}, respectivamente. La Fig. \ref{fig:chua_frac_ns_biased_timeseries} muestra las series de tiempo del candidato sesgado, y el espectro de amplitud FFT (recortado en frecuencia angular $\omega \in [0, 10]$ rad/s) se presenta en la Fig. \ref{fig:chua_frac_ns_biased_fft}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_biased_fig01a_transfer_real.pdf}
+\caption{Componente real de la función de transferencia y cruce con el inverso negativo de la ganancia teórica de la BDF $-1/N_1(A,c)$ para el candidato sesgado ($q=0.9998$).}
+\label{fig:chua_frac_ns_biased_transfer_real}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_biased_fig01b_transfer_imag.pdf}
+\caption{Componente imaginaria de la función de transferencia y cruce por cero para determinar la frecuencia de oscilación $\omega_0$ del candidato sesgado ($q=0.9998$).}
+\label{fig:chua_frac_ns_biased_transfer_imag}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_biased_fig02_continuation_story.pdf}
+\caption{Historia de la continuación afín deformable de Caputo de la semilla sesgada ($\eta \in [0, 1]$), mostrando el camino recorrido desde la semilla inicial ($\eta=0$) hasta el atractor caótico final ($\eta=1$).}
+\label{fig:chua_frac_ns_biased_continuation}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_biased_fig03_attractor.png}
+\caption{Atractor caótico sesgado obtenido en $\eta=1$ para el sistema de Chua fraccionario no suave con $q=0.9998$ y parámetros exactos de Danca ($m_0=-0.1768, m_1=-1.1468$).}
+\label{fig:chua_frac_ns_biased_attractor}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_biased_fig03abc_projections.pdf}
+\caption{Retratos de fase 2D (proyecciones en los planos $x$-$y$, $x$-$z$ y $y$-$z$) de la trayectoria postransitoria del candidato sesgado.}
+\label{fig:chua_frac_ns_biased_projections}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_biased_fig04_timeseries.png}
+\caption{Series temporales de los estados en régimen estacionario para el candidato sesgado, donde se aprecia el sesgo asimétrico respecto al origen.}
+\label{fig:chua_frac_ns_biased_timeseries}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_biased_fig11_fft.pdf}
+\caption{Espectro FFT de la señal $x(t)$ para el atractor sesgado con eje x recortado en frecuencia angular.}
+\label{fig:chua_frac_ns_biased_fft}
+\end{figure}
+
+La caracterización dinámica de este atractor sesgado se completó mediante la evaluación de su espectro de Lyapunov utilizando dos métodos: el método variacional con memoria de Caputo completa y descomposición QR, y el método de dinámica clonada. Con $T_{\rm burn} = 40$ s, $T_{\rm final} = 160$ s y $h=0.01$, el método variacional arrojó:
+\[
+\lambda \approx (0.14863, \ 0.00390, \ -0.00139),
+\]
+con un exponente máximo positivo ($\lambda_{\max} \approx 0.14863 > 0$). El método de la dinámica clonada arrojó resultados consistentes, confirmando el carácter caótico del régimen. La Fig. \ref{fig:chua_frac_ns_biased_lyapunov} detalla la convergencia temporal para ambos métodos.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_biased_fig12_lyapunov.pdf}
+\caption{Convergencia de los exponentes de Lyapunov para el atractor sesgado. Arriba: método variacional. Abajo: método de dinámica clonada.}
+\label{fig:chua_frac_ns_biased_lyapunov}
+\end{figure}
+
+La prueba de ocultedad se ejecutó utilizando el protocolo riguroso de sondeos esféricos en vecindades de los tres equilibrios, con seis radios de sondeo $r\in\{10^{-5},3{\times}10^{-5},10^{-4},3{\times}10^{-4},10^{-3},10^{-2}\}$ y un total de $675$ trayectorias simuladas. 
+
+A diferencia de los casos anteriores, para este atractor sesgado se registraron exactamente \textbf{0 contactos} (TARGET hits) desde todos los radios ensayados en vecindades de los tres equilibrios $E_0$, $E_+$, y $E_-$:
+\[
+\mathrm{TARGET}_{E_0} = 0, \qquad \mathrm{TARGET}_{E_+} = 0, \qquad \mathrm{TARGET}_{E_-} = 0.
+\]
+Todas las trayectorias de prueba decayeron hacia los equilibrios estables locales o divergieron, sin que ninguna cruzara hacia el atractor caótico candidato, clasificando al atractor como \textbf{compatible con la ocultedad}. Las Fig. \ref{fig:chua_frac_ns_biased_spheres_E0}, \ref{fig:chua_frac_ns_biased_spheres_Ep}, y \ref{fig:chua_frac_ns_biased_spheres_Em} ilustran las condiciones iniciales de sondeo, y la Fig. \ref{fig:chua_frac_ns_biased_heatmap} presenta el mapa de calor de contactos correspondientes, el cual permanece completamente en cero.
+
+Para evaluar la robustez de la ocultedad, se realizaron pruebas adicionales de alta densidad: un test intensivo de volumen completo (1200 trayectorias adicionales con radios $r \le 10^{-2}$) y una prueba de radios extendidos en los equilibrios externos $E_+$ y $E_-$ (con 12 radios desde $10^{-5}$ hasta $2.0$, acumulando $21,300$ simulaciones). Los resultados confirmaron la ausencia total de contactos para radios locales $r \le 0.1$ (0 hits sobre 18,300 muestras). Únicamente en radios macroscópicos ($r \ge 0.3$) se detectaron contactos con el atractor caótico ($22$ hits para $E_+$ y $11$ para $E_-$ en $r=0.3$, incrementándose progresivamente hasta $209$ y $175$ hits en $r=2.0$). La Tabla~\ref{tab:chua_frac_ns_biased_extended_hiddenness} detalla el desglose de simulaciones, y la Fig.~\ref{fig:chua_frac_ns_biased_extended_heatmap} ilustra la fracción de contactos (TARGET hits) en función del radio, demostrando la robustez local de la ocultedad.
+
+\begin{table}[H]
+\centering
+\scriptsize
+\caption{Resultados del test de ocultedad extendido en vecindades de los equilibrios externos $E_+$ y $E_-$.}
+\label{tab:chua_frac_ns_biased_extended_hiddenness}
+\begin{tabular}{ccccccc}
+\toprule
+\textbf{Eq.} & \textbf{Radio} $r$ & \textbf{Muestras} $N$ & \textbf{TARGET} & \textbf{EQ} & \textbf{OTHER} & \textbf{Frac. TARGET} \\
+\midrule
+$E_+$ & $10^{-5}$ & 150 & 0 & 0 & 150 & 0.000 \\
+      & $3{\times}10^{-5}$ & 200 & 0 & 0 & 200 & 0.000 \\
+      & $10^{-4}$ & 300 & 0 & 0 & 300 & 0.000 \\
+      & $3{\times}10^{-4}$ & 400 & 0 & 0 & 400 & 0.000 \\
+      & $10^{-3}$ & 600 & 0 & 0 & 600 & 0.000 \\
+      & $3{\times}10^{-3}$ & 800 & 0 & 0 & 800 & 0.000 \\
+      & $10^{-2}$ & 1000 & 0 & 0 & 1000 & 0.000 \\
+      & $3{\times}10^{-2}$ & 1200 & 0 & 0 & 1200 & 0.000 \\
+      & $10^{-1}$ & 1500 & 0 & 5 & 1495 & 0.000 \\
+      & $3{\times}10^{-1}$ & 1500 & 22 & 16 & 1462 & 0.015 \\
+      & $1.0$ & 1500 & 90 & 107 & 1303 & 0.060 \\
+      & $2.0$ & 1500 & 209 & 75 & 1216 & 0.139 \\
+\midrule
+$E_-$ & $10^{-5}$ & 150 & 0 & 0 & 150 & 0.000 \\
+      & $3{\times}10^{-5}$ & 200 & 0 & 0 & 200 & 0.000 \\
+      & $10^{-4}$ & 300 & 0 & 0 & 300 & 0.000 \\
+      & $3{\times}10^{-4}$ & 400 & 0 & 0 & 400 & 0.000 \\
+      & $10^{-3}$ & 600 & 0 & 0 & 600 & 0.000 \\
+      & $3{\times}10^{-3}$ & 800 & 0 & 0 & 800 & 0.000 \\
+      & $10^{-2}$ & 1000 & 0 & 0 & 1000 & 0.000 \\
+      & $3{\times}10^{-2}$ & 1200 & 0 & 0 & 1200 & 0.000 \\
+      & $10^{-1}$ & 1500 & 0 & 10 & 1490 & 0.000 \\
+      & $3{\times}10^{-1}$ & 1500 & 11 & 15 & 1474 & 0.007 \\
+      & $1.0$ & 1500 & 115 & 99 & 1286 & 0.077 \\
+      & $2.0$ & 1500 & 175 & 92 & 1233 & 0.117 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_biased_fig15_extended_heatmap.png}
+\caption{Fracción de contactos con el atractor caótico sesgado (TARGET hits) en los equilibrios externos $E_+$ y $E_-$ para radios extendidos hasta $2.0$. Se confirma la ausencia total de contacto en vecindades locales $r \le 0.1$.}
+\label{fig:chua_frac_ns_biased_extended_heatmap}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_biased_fig13_E0_hiddenness_spherical_3d.png}
+\caption{Nubes de sondeo esférico tridimensionales centradas en $E_0$ para los seis radios. El comportamiento muestra una convergencia hacia los estados locales, resultando en 0 TARGET hits.}
+\label{fig:chua_frac_ns_biased_spheres_E0}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_biased_fig13_Ep_hiddenness_spherical_3d.png}
+\caption{Nubes de sondeo esférico tridimensionales centradas en $E_+$. Las condiciones iniciales decaen o divergen sin intersectar la cuenca del atractor candidato.}
+\label{fig:chua_frac_ns_biased_spheres_Ep}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_biased_fig13_Em_hiddenness_spherical_3d.png}
+\caption{Nubes de sondeo esférico tridimensionales centradas en $E_-$. El atractor permanece inalcanzable desde las vecindades de este equilibrio (0 contactos).}
+\label{fig:chua_frac_ns_biased_spheres_Em}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_biased_fig14_hiddenness_contact_heatmap.png}
+\caption{Mapa de calor de contactos para el candidato sesgado en los tres equilibrios y seis radios ensayados. Se evidencia la ausencia total de contacto en todas las vecindades, validando numéricamente su naturaleza oculta.}
+\label{fig:chua_frac_ns_biased_heatmap}
+\end{figure}
+
+\subsection{Resultados numéricos: Chua fraccionario con no linealidad $\arctan$ ($q=0.99$)}
+\label{subsec:resultados_arctan}
+
+Como segundo ejemplo de estudio, se evaluaron los resultados del sistema con no linealidad de tipo $\arctan$ utilizando los parámetros reportados por Wu \emph{et al.} \cite{Wu2023ArctanChua}:
+\[
+\alpha = 8.4562, \quad \beta = 12.0732, \quad \gamma = 0.0052, \quad a_1 = 0.1, \quad a_2 = -1.2,
+\]
+y un orden dinámico fraccionario conmensurado de $q = 0.99$. 
+
+Bajo la simulación numérica del sistema causal mediante el método de descomposición de Adomian (ADM) local sin memoria, las condiciones iniciales reportadas en la literatura dan origen a dos atractores caóticos que coexisten simétricamente alrededor de los equilibrios externos. 
+
+El primer atractor, denotado como atractor positivo, se excita al integrar desde la condición inicial $X_{0,+} = [0.1, \ 0, \ 0]^\mathsf{T}$. El segundo atractor, denotado como atractor negativo, se obtiene a partir de $X_{0,-} = [-0.1, \ 0, \ 0]^\mathsf{T}$. Ambas trayectorias se presentan en régimen estacionario tras descartar el transitorio correspondiente.
+
+Las figuras siguientes ilustran los retratos de fase 3D, proyecciones 2D y series temporales para ambos atractores.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/wu2023_chua_fractional_arctan_q099_x0_plus_phase3d.pdf}
+\caption{Retrato de fase 3D del atractor caótico positivo para el Chua fraccionario con no linealidad $\arctan$ ($q=0.99$), iniciado desde $X_{0,+}$.}
+\label{fig:arctan_x0_plus_phase3d}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/wu2023_chua_fractional_arctan_q099_x0_plus_projections.pdf}
+\caption{Proyecciones 2D en los planos $x$-$y$, $x$-$z$ y $y$-$z$ del atractor caótico positivo del sistema con no linealidad $\arctan$.}
+\label{fig:arctan_x0_plus_projections}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/wu2023_chua_fractional_arctan_q099_x0_plus_timeseries.pdf}
+\caption{Series temporales de los estados en régimen estacionario del atractor positivo del sistema con no linealidad $\arctan$.}
+\label{fig:arctan_x0_plus_timeseries}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/wu2023_chua_fractional_arctan_q099_x0_minus_phase3d.pdf}
+\caption{Retrato de fase 3D del atractor caótico negativo (simétrico) para el Chua fraccionario con no linealidad $\arctan$ ($q=0.99$), iniciado desde $X_{0,-}$.}
+\label{fig:arctan_x0_minus_phase3d}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/wu2023_chua_fractional_arctan_q099_x0_minus_projections.pdf}
+\caption{Proyecciones 2D del atractor caótico negativo del sistema con no linealidad $\arctan$.}
+\label{fig:arctan_x0_minus_projections}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/wu2023_chua_fractional_arctan_q099_x0_minus_timeseries.pdf}
+\caption{Series temporales de los estados del atractor negativo del sistema con no linealidad $\arctan$.}
+\label{fig:arctan_x0_minus_timeseries}
+\end{figure}

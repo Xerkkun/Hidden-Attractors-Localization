@@ -1,0 +1,173 @@
+# =============================================================================
+# Chua Fraccionario No Suave — Búsqueda de Atractor Oculto con DF Sesgada
+# =============================================================================
+# Configuración completa y reproducible para el primer ejemplo exitoso de la
+# librería hidden_attractors_fo.
+#
+# Este YAML es leído por todos los pasos del ejemplo:
+#   step1_centered_reference.py
+#   step2_biased_df_search.py
+#   step3_hiddenness_verification.py
+#   step4_extended_hiddenness.py
+#   step5_summarize_and_plot.py
+#
+# REFERENCIA HISTÓRICA: Los scripts temporales originales se encuentran en
+#   _reference_scripts/ (raíz del proyecto, fuera de version_2/).
+# =============================================================================
+
+# ── Metadatos del experimento ─────────────────────────────────────────────────
+experiment:
+  name: "Chua Fraccionario No Suave — Atractor Oculto con DF Sesgada"
+  description: >
+    Búsqueda del primer atractor oculto confirmado en el sistema de Chua
+    fraccionario no suave (saturación bilineal) con q = 0.9998 usando la
+    Función Descriptiva Sesgada (bias DC ≠ 0) y continuación afín Caputo ABM.
+    Los 3 candidatos confirmados son compatibles con ocultedad bajo el
+    protocolo de barrido de esferas (radios 1e-5 … 1e-2, 225 muestras/equilibrio).
+  output_dir: "outputs/example_chua_nonsmooth_biased_hidden_attractor"
+  run_id: "auto"
+  random_seed: 42
+
+# ── Sistema dinámico ──────────────────────────────────────────────────────────
+system:
+  # Identificador del sistema dentro de la librería
+  system_id: "chua-nonsmooth"
+  # Orden fraccionario de Caputo
+  q: 0.9998
+  # Parámetros del sistema de Chua no suave
+  parameters:
+    alpha: 8.4562    # Ganancia del capacitor C1
+    beta:  12.0732   # Inductancia normalizada
+    gamma: 0.0052    # Conductancia lineal
+    m0:   -0.1768    # Pendiente de la no linealidad en la región inner
+    m1:   -1.1468    # Pendiente de la no linealidad en la región outer
+
+# ── Grilla de parámetros para el barrido ─────────────────────────────────────
+# Se evalúan las 9 combinaciones (3×3). Los candidatos sobrevivientes son
+# todos de rama branch_1 (segunda raíz de la DF).
+parameter_grid:
+  m1_values: [-1.1468, -1.20, -1.25]
+  m0_values: [-0.1768, -0.20, -0.24]
+
+# ── Integrador fraccionario ───────────────────────────────────────────────────
+integrator:
+  method: "abm"          # Adams-Bashforth-Moulton Caputo
+  h: 0.01                # Paso de tiempo (s)
+  memory_mode: "full"    # "full" = memoria completa de Caputo; "window" = truncada
+  use_c_backend: true    # Usar backend C compilado (mucho más rápido)
+  # Nota: para memoria truncada, descomentar y ajustar:
+  # memory_window_seconds: 20.0
+
+# ── Paso 1: Búsqueda centrada de referencia ───────────────────────────────────
+# Encuentra ramas de la DF centrada (c = 0) como línea base para comparación.
+step1_centered_reference:
+  # Rango del scan de frecuencias para encontrar cruces de ganancia
+  omega_min: 0.5
+  omega_max: 6.0
+  nscan: 5000
+  # Continuación de referencia
+  eta_steps: 21         # λ ∈ [0, 1] con este número de pasos
+  t_transient: 30.0     # Tiempo de transiente por paso (s)
+  t_keep: 30.0          # Tiempo que se conserva por paso (s)
+  # Simulación de referencia
+  t_sim_final: 300.0
+  t_sim_transient: 100.0
+
+# ── Paso 2: Búsqueda DF Sesgada corregida ────────────────────────────────────
+# Encuentra raíces del sistema (A, c, ω) con bias DC ≠ 0.
+# Convención de signo confirmada: 1 + Wq(jω) · N₁(A,c) = 0
+step2_biased_df_search:
+  # Grilla de arranque para el solver least_squares
+  A_range:     [0.5, 10.0]   # Amplitud del armónico fundamental
+  c_range:     [-8.0, 8.0]   # Bias DC (componente constante de la salida)
+  omega_range: [0.5, 6.0]    # Frecuencia (rad/s)
+  n_A:     5                 # Puntos en la grilla de A
+  n_c:     9                 # Puntos en la grilla de c
+  n_omega: 6                 # Puntos en la grilla de omega
+  residual_tol: 1.0e-4       # Tolerancia para aceptar una raíz
+  # Homotopía afín (continuación del sistema sesgado → original)
+  eta_step: 0.05             # Tamaño de paso en λ ∈ [0, 1]
+  t_transient: 30.0          # Transiente por paso de continuación (s)
+  t_keep: 30.0               # Ventana conservada por paso (s)
+  # Umbral de divergencia
+  div_threshold: 120.0
+  # Simulación final (con el sistema original, η = 1)
+  t_sim_final: 300.0
+  t_sim_transient: 100.0
+  # Cuántos candidatos por parámetro (m1, m0) se procesan como máximo
+  max_branches_per_case: 2
+  # Cuadratura numérica para la DF sesgada
+  n_theta: 8192
+
+# ── Paso 3: Verificación de ocultedad (protocolo estándar) ───────────────────
+# Barrido de esferas alrededor de todos los equilibrios.
+step3_hiddenness:
+  # Radios de las esferas de prueba
+  radii:          [1.0e-5, 3.0e-5, 1.0e-4, 3.0e-4, 1.0e-3, 1.0e-2]
+  # Número de muestras por radio (1 muestra = 1 integración completa)
+  samples_per_radius: [20, 25, 30, 40, 50, 60]   # 225 por equilibrio
+  # Modo de muestreo
+  sampling_mode: "sphere_random"   # puntos sobre la superficie de la esfera
+  # Integración de cada sonda
+  t_final_probe: 200.0   # Tiempo total de integración (s)
+  t_burn_probe:  50.0    # Tiempo de transitorio descartado (s)
+  # Clasificación del destino de cada sonda
+  equilibrium_tol: 0.5           # Radio de captura al equilibrio
+  match_metric: "nn_percentile"  # Métrica de coincidencia con el atractor objetivo
+  match_tol: 0.5                 # Tolerancia de distancia (unidades del espacio)
+  match_percentile: 90.0         # Percentil a usar en nn_percentile
+  # Contrato de ocultedad
+  require_all_equilibria: true
+  allow_numerical_failures: false
+  min_ref_tail_points: 200
+
+# ── Paso 4: Verificación extendida (multiprocessing) ─────────────────────────
+# Test masivo para el candidato confirmado (c ≈ +2.776).
+# Extiende los radios hasta r = 2.0 con densidad masiva de muestras.
+step4_extended_hiddenness:
+  # Par (radio, n_muestras) — total ~9610 probes por equilibrio
+  radius_plan:
+    - [1.0e-5,  80]
+    - [3.0e-5,  120]
+    - [1.0e-4,  160]
+    - [3.0e-4,  240]
+    - [1.0e-3,  400]
+    - [3.0e-3,  600]
+    - [1.0e-2,  800]
+    - [3.0e-2,  1000]
+    - [1.0e-1,  1200]
+    - [3.0e-1,  1200]
+    - [1.0,     1500]
+    - [2.0,     1500]
+  sampling_mode: "ball_random"   # volumen completo del ball
+  t_final_probe: 200.0
+  t_burn_probe:  50.0
+  equilibrium_tol: 0.5
+  match_metric: "nn_percentile"
+  match_tol: 0.5
+  match_percentile: 90.0
+  # Paralelismo
+  n_workers: "auto"   # "auto" = cpu_count - 2, mínimo 1
+  # Candidato a verificar
+  target_candidate:
+    m1: -1.1468
+    m0: -0.1768
+    branch: 1
+    c: 2.776
+
+# ── Plots ─────────────────────────────────────────────────────────────────────
+# Configuración visual del ejemplo (estilo del reporte)
+plots:
+  style: "dark"          # "dark" = tema oscuro del reporte; "light" = claro
+  dpi: 150
+  save_figures: true
+  # Figuras a generar (paso 2 y 5)
+  attractor_3d: true
+  projections_2d: true
+  time_series: true
+  fft_spectrum: true
+  continuation_norm: true
+  sign_audit_bars: true
+  seed_consistency_bars: true
+  heatmap_hiddenness: true   # Paso 4
+  comparison_biased_centered: true
