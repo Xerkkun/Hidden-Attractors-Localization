@@ -102,10 +102,10 @@ If you see a success summary indicating that all 156 unit tests passed successfu
 
 ## Step 4: Run a Quick Test Experiment
 
-To verify that the CLI commands work, try running a quick direct simulation of the Chua Arctan attractor:
+To verify that the installation is fully functional, try running the official example of the fractional non-smooth Chua system with a biased describing function in quick mode:
 
 ```bash
-hidden-attractors run -c configs/examples/chua_arctan_attractor_only_fractional.yaml
+python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick
 ```
 
-The outputs (CSV trajectories and phase space plots) will be written to `outputs/chua_arctan_attractor_fractional/`.
+The outputs (CSV trajectories and reports) will be written to `outputs/example_chua_nonsmooth_biased_hidden_attractor/` and the generated graphics will be exported to `version_2/library_figures/`.
