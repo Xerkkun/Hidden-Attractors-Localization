@@ -273,7 +273,8 @@ def write_matignon_plot(rows: list[dict[str, object]], path: Path) -> None:
     ax.set_title("Fractional Chua q=0.9998 regional stability")
     ax.tick_params(axis="x", rotation=45)
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, path, 'attractor')
     plt.close(fig)
 
 
@@ -345,7 +346,8 @@ def write_matignon_complex_plane_plot(rows: list[dict[str, object]], path: Path)
         framealpha=0.9,
     )
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, path, 'attractor')
     plt.close(fig)
 
 

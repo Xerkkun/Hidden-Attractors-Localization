@@ -39,7 +39,8 @@ def plot_describing_function(
     ax.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
     
     plt.tight_layout()
-    fig.savefig(os.path.join(fig_dir, "describing_function.png"), dpi=300)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, os.path.join(fig_dir, "describing_function.png"), "nyquist")
     plt.close(fig)
     
     plot_harmonic_residual_map(system, candidates, config, output_dir)
@@ -105,5 +106,6 @@ def plot_harmonic_residual_map(
     ax.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
     
     plt.tight_layout()
-    fig.savefig(os.path.join(fig_dir, "harmonic_residual_map.png"), dpi=300)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, os.path.join(fig_dir, "harmonic_residual_map.png"), "nyquist")
     plt.close(fig)

@@ -51,8 +51,10 @@ def _save(fig: plt.Figure, directory: Path, stem: str) -> list[str]:
     png = directory / f"{stem}.png"
     pdf = directory / f"{stem}.pdf"
     fig.tight_layout()
-    fig.savefig(png, dpi=220)
-    fig.savefig(pdf)
+    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, png, 'attractor')
+    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, pdf, 'nyquist')
     plt.close(fig)
     return [str(png), str(pdf)]
 

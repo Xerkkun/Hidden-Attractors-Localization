@@ -157,6 +157,7 @@ def plot_matignon_equilibria(
 
     plt.tight_layout()
     fig_path = fig_dir / "matignon_equilibria.png"
-    fig.savefig(fig_path, dpi=300)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, fig_path, "matignon")
     plt.close(fig)
     return str(fig_path)

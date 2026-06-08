@@ -76,7 +76,8 @@ def plot_flexible_attractor_and_projections(
     
     plt.tight_layout()
     filename_3d = f"{file_prefix}_3d.png" if "candidate" not in file_prefix else f"{file_prefix}_attractor_3d.png"
-    fig_3d.savefig(os.path.join(fig_dir, filename_3d), dpi=300)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig_3d, os.path.join(fig_dir, filename_3d), "attractor")
     plt.close(fig_3d)
     
     projections = [
@@ -108,7 +109,8 @@ def plot_flexible_attractor_and_projections(
         ax.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
         
         plt.tight_layout()
-        fig_2d.savefig(os.path.join(fig_dir, f"{file_prefix}_{proj_name}.png"), dpi=300)
+        from .export import intercept_and_export_path
+        intercept_and_export_path(fig_2d, os.path.join(fig_dir, f"{file_prefix}_{proj_name}.png"), "attractor")
         plt.close(fig_2d)
 
 def plot_timeseries_data(
@@ -160,7 +162,8 @@ def plot_timeseries_data(
         ax.set_xlabel('t', fontsize=10)
         ax.set_ylabel(var_name, fontsize=10)
         plt.tight_layout()
-        fig.savefig(os.path.join(fig_dir, f"{file_prefix}_timeseries_{var_name}.png"), dpi=300)
+        from .export import intercept_and_export_path
+        intercept_and_export_path(fig, os.path.join(fig_dir, f"{file_prefix}_timeseries_{var_name}.png"), "time_series")
         plt.close(fig)
         
     fig = plt.figure(figsize=(10, 5), dpi=300)
@@ -174,7 +177,8 @@ def plot_timeseries_data(
     ax.set_ylabel('State Variables', fontsize=10)
     ax.legend(loc='best', fontsize=8, framealpha=0.9)
     plt.tight_layout()
-    fig.savefig(os.path.join(fig_dir, f"{file_prefix}_timeseries_xyz.png"), dpi=300)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, os.path.join(fig_dir, f"{file_prefix}_timeseries_xyz.png"), "time_series")
     plt.close(fig)
 
 def plot_neighborhood_control_spheres(
@@ -266,6 +270,7 @@ def plot_neighborhood_control_spheres(
     ax.set_zlim(z_min - pad * z_span, z_max + pad * z_span)
     
     plt.tight_layout()
-    fig.savefig(os.path.join(fig_dir, "fig05b_hiddenness_overview.png"), dpi=300)
-    fig.savefig(os.path.join(fig_dir, "fig05b_hiddenness_overview.pdf"))
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, os.path.join(fig_dir, "fig05b_hiddenness_overview.png"), "sphere_test")
+    pass
     plt.close(fig)

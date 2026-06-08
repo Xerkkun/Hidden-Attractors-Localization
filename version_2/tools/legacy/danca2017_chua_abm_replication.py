@@ -635,8 +635,10 @@ def plot_danca_figure3(cfg: DancaChuaConfig, outdir: Path) -> Dict[str, str]:
     fig.tight_layout()
     png = outdir / "fig03_danca2017_chua_abm_replica.png"
     pdf = outdir / "fig03_danca2017_chua_abm_replica.pdf"
-    fig.savefig(png, dpi=220)
-    fig.savefig(pdf)
+    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, png, 'attractor')
+    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, pdf, 'nyquist')
     plt.close(fig)
     return {"status": "ok", "png": str(png), "pdf": str(pdf)}
 
@@ -689,8 +691,10 @@ def plot_project_candidate_figures(cfg: DancaChuaConfig, outdir: Path) -> Dict[s
         fig.tight_layout()
         png = outdir / f"fig_project_{spec['candidate_id']}.png"
         pdf = outdir / f"fig_project_{spec['candidate_id']}.pdf"
-        fig.savefig(png, dpi=220)
-        fig.savefig(pdf)
+        from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+        intercept_and_export_path(fig, png, 'attractor')
+        from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+        intercept_and_export_path(fig, pdf, 'nyquist')
         plt.close(fig)
         cls = classify_trajectory(traj, cfg, eqs)
         rows.append(

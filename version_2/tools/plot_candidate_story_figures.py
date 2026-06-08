@@ -167,8 +167,10 @@ def plot_continuation_story(run_root: Path, branch: str, candidate_id: str, outd
 
     png = outdir / f"fig02d_{safe_name(candidate_id)}_continuation_story.png"
     pdf = outdir / f"fig02d_{safe_name(candidate_id)}_continuation_story.pdf"
-    fig.savefig(png, dpi=240)
-    fig.savefig(pdf)
+    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, png, 'attractor')
+    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, pdf, 'nyquist')
     plt.close(fig)
 
 
@@ -194,8 +196,10 @@ def plot_linear_vs_original(run_root: Path, branch: str, candidate_id: str, outd
 
     png = outdir / f"fig03g_{safe_name(candidate_id)}_linear_vs_original_3d.png"
     pdf = outdir / f"fig03g_{safe_name(candidate_id)}_linear_vs_original_3d.pdf"
-    fig.savefig(png, dpi=240)
-    fig.savefig(pdf)
+    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, png, 'attractor')
+    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, pdf, 'nyquist')
     plt.close(fig)
 
 

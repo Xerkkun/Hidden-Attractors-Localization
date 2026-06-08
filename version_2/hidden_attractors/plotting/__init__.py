@@ -41,6 +41,12 @@ from .plot_matignon import plot_matignon_equilibria as plot_matignon_equilibria_
 from .plot_sphere_tests import plot_sphere_test_results
 from .generate_publication_figures import generate_all_publication_figures
 
+# Unified plotting API
+from .style import apply_library_style, apply_axes_style, get_figsize
+from .export import export_figure
+from .renderers import render_attractor, render_basin, render_nyquist, render_matignon
+from .render_all import render_all_plots
+
 __all__ = [
     "plot_integer_hiddenness_controls",
     "plot_integer_lure_continuation",
@@ -74,4 +80,16 @@ __all__ = [
     "plot_neighborhood_control_spheres",
     "plot_sphere_test_results",
     "generate_all_publication_figures",
+
+    # Unified API
+    "apply_library_style",
+    "apply_axes_style",
+    "get_figsize",
+    "export_figure",
+    "render_attractor",
+    "render_basin",
+    "render_nyquist",
+    "render_matignon",
+    "render_all_plots",
 ]
+

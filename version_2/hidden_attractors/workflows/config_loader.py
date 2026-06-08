@@ -264,6 +264,17 @@ _DEFAULTS: Dict[str, Any] = {
         "fail_on_missing_references": True,
         "fail_on_unregistered_references": True,
     },
+
+    # ── Figures (unified plotting) ───────────────────────────────────────────
+    "figures": {
+        "enabled": True,
+        "output_root": "version_2/library_figures",
+        "export_formats": ["pdf", "png"],
+        "white_background": True,
+        "no_titles": True,
+        "update_report_assets": True,
+        "write_manifest": True,
+    },
 }
 
 # ---------------------------------------------------------------------------
@@ -387,7 +398,7 @@ def _flatten_hierarchical(raw: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
         flat["max_seed_candidates_to_plot"] = plots.get("max_seed_candidates_to_plot",
                                                           _DEFAULTS["max_seed_candidates_to_plot"])
 
-    for section in ("continuation", "sphere_tests", "basin", "bifurcation", "early_stop", "attractor_plots", "robustness", "hiddenness", "validation"):
+    for section in ("continuation", "sphere_tests", "basin", "bifurcation", "early_stop", "attractor_plots", "robustness", "hiddenness", "validation", "figures"):
         if section in raw:
             flat[section] = raw[section]
 

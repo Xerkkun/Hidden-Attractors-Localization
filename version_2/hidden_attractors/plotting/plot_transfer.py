@@ -40,9 +40,11 @@ def plot_nyquist_transfer(
     ax.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
     
     plt.tight_layout()
-    fig.savefig(os.path.join(fig_dir, "transfer_nyquist.png"), dpi=300)
-    fig.savefig(os.path.join(fig_dir, "fig01_nyquist_df.png"), dpi=300)
-    fig.savefig(os.path.join(fig_dir, "fig01_nyquist_df.pdf"))
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, os.path.join(fig_dir, "transfer_nyquist.png"), "nyquist")
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, os.path.join(fig_dir, "fig01_nyquist_df.png"), "nyquist")
+    pass
     plt.close(fig)
     
     # 1.b. RENDER NYQUIST ZOOM PLOT (fig01b_nyquist_zoom_x)
@@ -65,8 +67,9 @@ def plot_nyquist_transfer(
         ax_zoom.set_xlabel(r"$\mathrm{Re}(W)$")
         ax_zoom.set_ylabel(r"$\mathrm{Im}(W)$")
         plt.tight_layout()
-        fig_zoom.savefig(os.path.join(fig_dir, "fig01b_nyquist_zoom_x.png"), dpi=300)
-        fig_zoom.savefig(os.path.join(fig_dir, "fig01b_nyquist_zoom_x.pdf"))
+        from .export import intercept_and_export_path
+        intercept_and_export_path(fig_zoom, os.path.join(fig_dir, "fig01b_nyquist_zoom_x.png"), "nyquist")
+        pass
         plt.close(fig_zoom)
     
     # 2. RENDER REAL & IMAG COMPONENTS PLOT
@@ -95,7 +98,9 @@ def plot_nyquist_transfer(
     axes[1].legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
     
     plt.tight_layout()
-    fig_comp.savefig(os.path.join(fig_dir, "transfer_real_imag.png"), dpi=300)
-    fig_comp.savefig(os.path.join(fig_dir, "fig01c_transfer_real_imag.png"), dpi=300)
-    fig_comp.savefig(os.path.join(fig_dir, "fig01c_transfer_real_imag.pdf"))
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig_comp, os.path.join(fig_dir, "transfer_real_imag.png"), "transfer")
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig_comp, os.path.join(fig_dir, "fig01c_transfer_real_imag.png"), "transfer")
+    pass
     plt.close(fig_comp)

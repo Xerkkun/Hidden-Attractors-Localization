@@ -65,7 +65,8 @@ def plot_phase_space(
     if title:
         ax.set_title(title)
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "attractor")
     plt.close(fig)
     return str(path)
 
@@ -92,7 +93,8 @@ def plot_phase_projections(
     if title:
         fig.suptitle(title)
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "attractor")
     plt.close(fig)
     return str(path)
 
@@ -119,7 +121,8 @@ def plot_time_series(
         ax.set_title(title)
     ax.legend(frameon=True, fontsize=8)
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "time_series")
     plt.close(fig)
     return str(path)
 
@@ -144,7 +147,8 @@ def plot_bifurcation_diagram(
     ax.set_ylabel(observable_label)
     ax.set_title(title)
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "bifurcation")
     plt.close(fig)
     return str(path)
 
@@ -202,7 +206,8 @@ def plot_lure_nyquist_describing_function(
     ax.set_title(title)
     ax.legend(loc="best", fontsize=8)
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "nyquist")
     plt.close(fig)
     return str(path)
 
@@ -263,7 +268,8 @@ def plot_lure_transfer_components(
     axes[1].legend(loc="best", fontsize=8)
 
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "transfer")
     plt.close(fig)
     return str(path)
 
@@ -301,7 +307,8 @@ def plot_integer_lure_continuation(
         ax.set_title(title)
     ax.legend(loc="best", fontsize=8)
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "continuation")
     plt.close(fig)
     return str(path)
 
@@ -374,7 +381,8 @@ def plot_fractional_continuation_phase_story(
     ax.set_zlabel("z")
     ax.legend(fontsize=7, loc="best")
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "continuation")
     plt.close(fig)
     return str(path)
 
@@ -406,7 +414,8 @@ def plot_phase_space_with_reference_points(
     if seed_effective is not None or continuation_final is not None:
         ax.legend(fontsize=7, loc="best")
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "attractor")
     plt.close(fig)
     return str(path)
 
@@ -441,7 +450,8 @@ def plot_integer_hiddenness_controls(
         ax.set_title(title)
     ax.legend(loc="best", fontsize=8)
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "sphere_test")
     plt.close(fig)
     return str(path)
 
@@ -472,7 +482,8 @@ def plot_spectrum(
     if omega_marker is not None and x_units in {"rad/s", "omega"}:
         ax.legend(loc="best", fontsize=8)
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "fft")
     plt.close(fig)
     return str(path)
 
@@ -512,6 +523,7 @@ def plot_lyapunov_convergence(result: LyapunovResult, output_path: str | Path) -
     ax.set_title("Lyapunov convergence")
     ax.legend(loc="best", fontsize=8)
     fig.tight_layout()
-    fig.savefig(path, dpi=220)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "lyapunov")
     plt.close(fig)
     return str(path)

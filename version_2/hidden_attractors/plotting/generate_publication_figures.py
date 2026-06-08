@@ -45,8 +45,9 @@ def save_and_close(fig, path: Path):
     
     path_png.parent.mkdir(parents=True, exist_ok=True)
     
-    fig.savefig(str(path_png), dpi=300, bbox_inches='tight')
-    fig.savefig(str(path_pdf), bbox_inches='tight')
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, str(path_png), "publication")
+    pass
     plt.close(fig)
     print(f"[Publication Figures] Saved: {path.name}.png and {path.name}.pdf")
 

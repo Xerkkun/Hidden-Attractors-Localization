@@ -64,7 +64,8 @@ import yaml
 from hidden_attractors.analysis.spectral import fft_spectrum
 from hidden_attractors.diagnostics.periodicity import classify_post_transient_periodicity
 from hidden_attractors.integrations.fractional_c import fractional_integrate
-from hidden_attractors.models.chua import ChuaParameters, chua_matrices, chua_parameters, chua_gain
+from hidden_attractors.models.chua import ChuaParameters, chua_parameters
+from hidden_attractors.seed_generation.chua import chua_matrices, chua_gain
 from hidden_attractors.seed_generation.core import (
     complex_dtype,
     fractional_iomega_power,
@@ -374,54 +375,38 @@ def run_affine_continuation(params: ChuaParameters, q: float, h: float,
 # F. Plots del Reporte
 # ══════════════════════════════════════════════════════════════════════════════
 
-BG    = "#0D0D1A"
-PANEL = "#141428"
-TEXT  = "#E8E8FF"
-TICK  = "#9999BB"
-GRID  = "#1E1E3A"
-CMAP  = plt.cm.plasma
+LW = 0.7
+CMAP = plt.cm.plasma
 
 
-def _ax_dark(ax, grid=True):
-    ax.set_facecolor(PANEL)
-    ax.tick_params(colors=TICK, labelsize=7)
-    for s in ax.spines.values():
-        s.set_edgecolor("#2A2A50")
-    ax.xaxis.label.set_color(TEXT)
-    ax.yaxis.label.set_color(TEXT)
+def _ax_style(ax, grid=True):
     if grid:
-        ax.grid(True, color=GRID, lw=0.4, ls="--", alpha=0.7)
+        ax.grid(True, linestyle="--", linewidth=0.5, color="#cbd5e1")
 
 
-def _ax3d_dark(ax):
-    ax.set_facecolor(PANEL)
-    ax.tick_params(colors=TICK, labelsize=6)
-    for attr in ["xaxis", "yaxis", "zaxis"]:
-        getattr(ax, attr).label.set_color(TEXT)
-        getattr(ax, attr).pane.fill = False
-        getattr(ax, attr).pane.set_edgecolor("#1E1E3A")
-    ax.grid(True, color=GRID, lw=0.3, ls="--", alpha=0.5)
+def _ax3d_style(ax):
+    ax.grid(True, color="#cbd5e1", lw=0.3, ls="--", alpha=0.5)
 
 
 def plot_sign_audit(audit_rows: List[Dict], outpath: Path) -> None:
     """Barras de auditoría de convención de signo (|1+WN| vs |1-WN|)."""
-    fig, ax = plt.subplots(figsize=(10, 5), facecolor=BG)
-    ax.set_facecolor(PANEL)
+    fig, ax = plt.subplots(figsize=(10, 5))
     idx = np.arange(len(audit_rows))
     w   = 0.35
-    ab_plus  = [r["abs_1_plus_Wq_N1"] for r in audit_rows]
-    ab_minus = [r["abs_1_minus_Wq_N1"] for r in audit_rows]
+    ab_plus  = [r["R_plus_abs"] for r in audit_rows]
+    ab_minus = [r["R_minus_abs"] for r in audit_rows]
     lbls     = [f"m1={r['m1']:.3f}\nm0={r['m0']:.3f}\nc={r['c']:.2f}" for r in audit_rows]
     ax.bar(idx - w/2, ab_plus,  w, label="|1 + Wq·N₁| (convención oficial)", color="#4DBBD5")
     ax.bar(idx + w/2, ab_minus, w, label="|1 − Wq·N₁|",                      color="#E64B35", alpha=0.7)
     ax.set_xticks(idx); ax.set_xticklabels(lbls, fontsize=6)
-    ax.set_ylabel("Residuo armónico absoluto", color=TEXT)
-    ax.set_title("Auditoría de Convención de Signo Armónico", color=TEXT, fontsize=10)
+    ax.set_ylabel("Residuo armónico absoluto")
+    ax.set_title("Auditoría de Convención de Signo Armónico", fontsize=11, fontweight="bold")
     ax.legend(fontsize=7)
-    _ax_dark(ax)
+    _ax_style(ax)
     fig.tight_layout()
     outpath.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(outpath, dpi=150, facecolor=BG, bbox_inches="tight")
+    fig.savefig(outpath, dpi=300, bbox_inches="tight")
+    fig.savefig(outpath.with_suffix('.pdf'), bbox_inches='tight')
     plt.close(fig)
 
 
@@ -435,10 +420,10 @@ def plot_attractor_report(post_traj: np.ndarray, prefix: str,
     if n < 10:
         return
 
-    fig = plt.figure(figsize=(17, 9.5), facecolor=BG)
+    fig = plt.figure(figsize=(17, 9.5), dpi=300)
     fig.suptitle(
         f"[Chua Fraccionario No Suave  |  DF Sesgada  |  q=0.9998]\n{params_str}",
-        color=TEXT, fontsize=10.5, fontweight="bold", y=0.99, va="top",
+        fontsize=11, fontweight="bold", y=0.99, va="top",
     )
 
     from matplotlib.gridspec import GridSpec
@@ -450,18 +435,18 @@ def plot_attractor_report(post_traj: np.ndarray, prefix: str,
     for i in range(n - 1):
         ax3.plot(states[i:i+2, 0], states[i:i+2, 1], states[i:i+2, 2],
                  lw=0.35, color=CMAP(i / n), alpha=0.75)
-    _ax3d_dark(ax3)
+    _ax3d_style(ax3)
     ax3.set_xlabel("x", labelpad=2); ax3.set_ylabel("y", labelpad=2); ax3.set_zlabel("z", labelpad=2)
-    ax3.set_title("Espacio de fase 3D", color=TEXT, fontsize=9, pad=5)
+    ax3.set_title("Espacio de fase 3D", fontsize=11, fontweight='bold', pad=5)
 
     # Proyecciones 2D
     pairs = [("x", "y", 0, 1, gs[0, 2]), ("x", "z", 0, 2, gs[0, 3]), ("y", "z", 1, 2, gs[1, 2])]
     for xl, yl, ix, iy, gss in pairs:
         ax2 = fig.add_subplot(gss)
         ax2.plot(states[:, ix], states[:, iy], lw=0.3, color="#E64B35", alpha=0.8)
-        _ax_dark(ax2)
+        _ax_style(ax2)
         ax2.set_xlabel(xl, fontsize=8); ax2.set_ylabel(yl, fontsize=8)
-        ax2.set_title(f"Proy. {xl}-{yl}", color=TEXT, fontsize=8)
+        ax2.set_title(f"Proy. {xl}-{yl}", fontsize=8)
 
     # FFT de x(t)
     ax_fft = fig.add_subplot(gs[1, 3])
@@ -473,22 +458,22 @@ def plot_attractor_report(post_traj: np.ndarray, prefix: str,
             ax_fft.axvline(spec.frequency_rad_s[dom_idx], color="#E64B35", ls="--", alpha=0.7)
     except Exception:
         pass
-    _ax_dark(ax_fft)
+    _ax_style(ax_fft)
     ax_fft.set_xlabel("ω (rad/s)", fontsize=8); ax_fft.set_ylabel("Amplitud", fontsize=8)
-    ax_fft.set_title("Espectro FFT x(t)", color=TEXT, fontsize=8)
+    ax_fft.set_title("Espectro FFT x(t)", fontsize=8)
 
     # Series de tiempo
     ts_cfg = [("x(t)", states[:, 0], "#E64B35"), ("y(t)", states[:, 1], "#4DBBD5"), ("z(t)", states[:, 2], "#00A087")]
     for col_i, (lbl, sig, clr) in enumerate(ts_cfg):
         ax_t = fig.add_subplot(gs[2, col_i])
         ax_t.plot(times, sig, lw=0.35, color=clr)
-        _ax_dark(ax_t)
+        _ax_style(ax_t)
         ax_t.set_xlabel("t [s]", fontsize=8); ax_t.set_ylabel(lbl, fontsize=8)
-        ax_t.set_title(f"Serie {lbl}", color=TEXT, fontsize=8)
+        ax_t.set_title(f"Serie {lbl}", fontsize=8)
 
     # Panel de información
     ax_i = fig.add_subplot(gs[2, 3])
-    ax_i.set_facecolor(PANEL); ax_i.axis("off")
+    ax_i.axis("off")
     centroid = np.mean(states, axis=0)
     info = [
         "Modelo: Chua No Suave (Saturación)",
@@ -502,12 +487,13 @@ def plot_attractor_report(post_traj: np.ndarray, prefix: str,
         f"Centroide: ({centroid[0]:.3f}, {centroid[1]:.3f}, {centroid[2]:.3f})",
     ]
     ax_i.text(0.04, 0.97, "\n".join(info), transform=ax_i.transAxes,
-              va="top", ha="left", color=TEXT, fontsize=7, fontfamily="monospace", linespacing=1.5)
-    ax_i.set_title("Parámetros", color=TEXT, fontsize=8)
+              va="top", ha="left", fontsize=7, fontfamily="monospace", linespacing=1.5)
+    ax_i.set_title("Parámetros", fontsize=8)
 
     fig.tight_layout(rect=[0, 0, 1, 0.97])
     outpath.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(outpath, dpi=150, facecolor=BG, bbox_inches="tight")
+    fig.savefig(outpath, dpi=300, bbox_inches="tight")
+    fig.savefig(outpath.with_suffix('.pdf'), bbox_inches='tight')
     plt.close(fig)
 
 
@@ -517,26 +503,26 @@ def plot_continuation_metrics(cont_steps: List[Dict], prefix: str, outpath: Path
     norms = [s["x_out_norm"] for s in cont_steps]
     coords = np.array([s["x_out"] for s in cont_steps])
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4), facecolor=BG)
-    ax1.set_facecolor(PANEL); ax2.set_facecolor(PANEL)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
 
     ax1.plot(etas, norms, "o-", color="#4DBBD5", lw=2)
-    _ax_dark(ax1)
-    ax1.set_xlabel("η (lambda)", fontsize=9, color=TEXT)
-    ax1.set_ylabel("||x_final||", fontsize=9, color=TEXT)
-    ax1.set_title("Norma vs η — Continuación Afín", color=TEXT, fontsize=9)
+    _ax_style(ax1)
+    ax1.set_xlabel("η (lambda)", fontsize=9)
+    ax1.set_ylabel("||x_final||", fontsize=9)
+    ax1.set_title("Norma vs η — Continuación Afín", fontsize=9, fontweight='bold')
 
     for ci, (lbl, clr) in enumerate(zip(["x", "y", "z"], ["#E64B35", "#4DBBD5", "#00A087"])):
         ax2.plot(etas, coords[:, ci], "o-", label=lbl, color=clr, lw=1.5)
-    _ax_dark(ax2)
-    ax2.set_xlabel("η (lambda)", fontsize=9, color=TEXT)
-    ax2.set_ylabel("Coordenada", fontsize=9, color=TEXT)
-    ax2.set_title("Coordenadas vs η", color=TEXT, fontsize=9)
+    _ax_style(ax2)
+    ax2.set_xlabel("η (lambda)", fontsize=9)
+    ax2.set_ylabel("Coordenada", fontsize=9)
+    ax2.set_title("Coordenadas vs η", fontsize=9, fontweight='bold')
     ax2.legend(fontsize=8)
 
     fig.tight_layout()
     outpath.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(outpath, dpi=150, facecolor=BG, bbox_inches="tight")
+    fig.savefig(outpath, dpi=300, bbox_inches="tight")
+    fig.savefig(outpath.with_suffix('.pdf'), bbox_inches='tight')
     plt.close(fig)
 
 
@@ -587,10 +573,10 @@ def run_biased_df_search(cfg: Dict[str, Any]) -> List[Dict[str, Any]]:
     all_results   : List[Dict] = []
 
     print("=" * 65)
-    print("PASO 2 — Búsqueda DF Sesgada Corregida")
-    print(f"  q = {q},  h = {h},  η_step = {eta_step}")
-    print(f"  Convención de signo: 1 + Wq·N₁ = 0")
-    print(f"  Grilla: {len(m1_values)} × {len(m0_values)}")
+    print("PASO 2 - Busqueda DF Sesgada Corregida")
+    print(f"  q = {q},  h = {h},  eta_step = {eta_step}")
+    print(f"  Convencion de signo: 1 + Wq*N1 = 0")
+    print(f"  Grilla: {len(m1_values)} x {len(m0_values)}")
     print("=" * 65)
 
     for m1 in m1_values:
@@ -601,7 +587,7 @@ def run_biased_df_search(cfg: Dict[str, Any]) -> List[Dict[str, Any]]:
             g    = chua_gain(params)
             pmat, qvec, rvec = chua_matrices(params)
 
-            print(f"\n  m1={m1}, m0={m0} …")
+            print(f"\n  m1={m1}, m0={m0} ...")
 
             biased_roots = find_biased_branches(params, q, s2_cfg)
             print(f"    Raíces sesgadas: {len(biased_roots)}")
@@ -617,7 +603,7 @@ def run_biased_df_search(cfg: Dict[str, Any]) -> List[Dict[str, Any]]:
                 )
                 tag = tag.replace(".", "p").replace("-", "m")
 
-                print(f"    br{root_idx}: A={A:.3f}  c={c:.3f}  ω={omega:.3f}  res={res_norm:.2e}"
+                print(f"    br{root_idx}: A={A:.3f}  c={c:.3f}  w={omega:.3f}  res={res_norm:.2e}"
                       + ("  [centrada, skip]" if is_centered else ""))
 
                 # ── Auditoría de signo ─────────────────────────────────────
@@ -661,6 +647,7 @@ def run_biased_df_search(cfg: Dict[str, Any]) -> List[Dict[str, Any]]:
                     "A": A, "c": c, "omega": omega, "N1": N1, "psi0": psi0,
                     "residual_norm": res_norm,
                     "X_seed_x": X_seed[0], "X_seed_y": X_seed[1], "X_seed_z": X_seed[2],
+                    "prefix": tag,
                 })
 
                 # ── Verificación de identidad homotópica ──────────────────
@@ -682,14 +669,14 @@ def run_biased_df_search(cfg: Dict[str, Any]) -> List[Dict[str, Any]]:
                 })
 
                 # ── Continuación afín ─────────────────────────────────────
-                print(f"      Continuación afín …")
+                print(f"      Continuacion afin ...")
                 cont_steps = run_affine_continuation(
                     params, q, h, X_seed, A, c, psi0, N1, lambda_vals,
                     t_cont_trans, t_cont_keep, div_thr,
                 )
                 survived = (len(cont_steps) == len(lambda_vals)
                             and all(s["status"] == "ok" for s in cont_steps))
-                print(f"      Continuación: {'OK' if survived else 'FALLÓ'}")
+                print(f"      Continuacion: {'OK' if survived else 'FALLO'}")
 
                 cont_rows.append({
                     "m1": m1, "m0": m0, "branch": root_idx,
@@ -718,7 +705,7 @@ def run_biased_df_search(cfg: Dict[str, Any]) -> List[Dict[str, Any]]:
                 # ── Simulación final ───────────────────────────────────────
                 system = get_system("chua-nonsmooth")
                 system.parameters.update({"m1": m1, "m0": m0, "alpha": alpha, "beta": beta, "gamma": gamma})
-                print(f"      Simulación final …")
+                print(f"      Simulacion final ...")
                 sim_t, sim_x, sim_status, _ = fractional_integrate(
                     rhs=lambda t, x: system.rhs(x, system.parameters),
                     x0=x_final_cont, q=q, h=h, t_final=t_sim_final,
@@ -778,12 +765,12 @@ def run_biased_df_search(cfg: Dict[str, Any]) -> List[Dict[str, Any]]:
     # ── Resumen ───────────────────────────────────────────────────────────────
     print("\n[PASO 2 COMPLETADO]")
     survived = [r for r in classif_rows if "failed" not in r["classification"]]
-    print(f"  Raíces procesadas       : {len(roots_rows)}")
+    print(f"  Raices procesadas       : {len(roots_rows)}")
     print(f"  Continuaciones OK       : {len(cont_rows)}")
     print(f"  Candidatos supervivientes: {len(survived)}")
     for r in survived:
-        print(f"    m1={r['m1']} m0={r['m0']} br={r['branch']}  c≈{r.get('centroid_x', '?'):.3f}"
-              f"  → {r['classification']}")
+        print(f"    m1={r['m1']} m0={r['m0']} br={r['branch']}  c~{r.get('centroid_x', '?'):.3f}"
+              f"  -> {r['classification']}")
 
     return all_results
 

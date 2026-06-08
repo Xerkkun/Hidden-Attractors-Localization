@@ -1,0 +1,61 @@
+# Indice de Scripts de Figuras Archivados
+
+Este directorio contiene scripts de generación de figuras históricos y obsoletos que han sido desactivados en favor del sistema unificado de plotting de la librería.
+
+| Ruta Original | Ruta Archivada | Razón de Archivo | Equivalente en Plotting Library | Fecha |
+| --- | --- | --- | --- | --- |
+| `scratch_plot_saturation_attractor.py` | `_archived_figure_scripts/root/scratch_plot_saturation_attractor.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `scratch_extend_user.py` | `_archived_figure_scripts/root/scratch_extend_user.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `scratch_four_plots.py` | `_archived_figure_scripts/root/scratch_four_plots.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `search_saturation_candidates.py` | `_archived_figure_scripts/root/search_saturation_candidates.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `search_arctan_fractional.py` | `_archived_figure_scripts/root/search_arctan_fractional.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `compare_solvers_saturation.py` | `_archived_figure_scripts/root/compare_solvers_saturation.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `tools/generate_saturation_candidate_report_assets.py` | `_archived_figure_scripts/tools/generate_saturation_candidate_report_assets.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `tools/run_saturation_candidate_chaos_hiddenness_tests.py` | `_archived_figure_scripts/tools/run_saturation_candidate_chaos_hiddenness_tests.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `tools/run_danca_exact_chaos_hiddenness_tests.py` | `_archived_figure_scripts/tools/run_danca_exact_chaos_hiddenness_tests.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `version_2/tools/plot_sphere_closeup.py` | `_archived_figure_scripts/version_2_tools/plot_sphere_closeup.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `version_2/tools/plot_validation_outputs.py` | `_archived_figure_scripts/version_2_tools/plot_validation_outputs.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `version_2/tools/plot_fractional_reference_attractors.py` | `_archived_figure_scripts/version_2_tools/plot_fractional_reference_attractors.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `version_2/tools/search_arctan_full_memory_candidates.py` | `_archived_figure_scripts/version_2_tools/search_arctan_full_memory_candidates.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `version_2/tools/validation/generate_chua_nonsmooth_efork_figure.py` | `_archived_figure_scripts/validation/generate_chua_nonsmooth_efork_figure.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `version_2/tools/validation/validate_efork3_ghoreishi_ghaffari.py` | `_archived_figure_scripts/validation/validate_efork3_ghoreishi_ghaffari.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `version_2/docs/scripts/generate_chua_model_seed_continuation_figures.py` | `_archived_figure_scripts/docs_scripts/generate_chua_model_seed_continuation_figures.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `version_2/docs/scripts/generate_chua_nonlinearity_comparison.py` | `_archived_figure_scripts/docs_scripts/generate_chua_nonlinearity_comparison.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `version_2/docs/scripts/generate_lorenz_chaos_figures.py` | `_archived_figure_scripts/docs_scripts/generate_lorenz_chaos_figures.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `version_2/docs/scripts/generate_matignon_complex_plane.py` | `_archived_figure_scripts/docs_scripts/generate_matignon_complex_plane.py` | Obsolete figure script. Replaced by central plotting library. | `version_2/hidden_attractors/plotting/render_all.py` | 2026-06-08 |
+| `debug_output.txt` | `_archived_figure_scripts/root_scratch/debug_output.txt` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `exploration_template.py` | `_archived_figure_scripts/root_scratch/exploration_template.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `generate_all_plots_and_summary.py` | `_archived_figure_scripts/root_scratch/generate_all_plots_and_summary.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `inspect_full_candidate_record.py` | `_archived_figure_scripts/root_scratch/inspect_full_candidate_record.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `inspect_top_candidate.py` | `_archived_figure_scripts/root_scratch/inspect_top_candidate.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `plot_chaotic_candidates.py` | `_archived_figure_scripts/root_scratch/plot_chaotic_candidates.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch_debug.py` | `_archived_figure_scripts/root_scratch/scratch_debug.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch_saturation_test.py` | `_archived_figure_scripts/root_scratch/scratch_saturation_test.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch_scan.py` | `_archived_figure_scripts/root_scratch/scratch_scan.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch_scan_saturation.py` | `_archived_figure_scripts/root_scratch/scratch_scan_saturation.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch_test_c_efork.py` | `_archived_figure_scripts/root_scratch/scratch_test_c_efork.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch_test_danca_ref.py` | `_archived_figure_scripts/root_scratch/scratch_test_danca_ref.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `verify_optimizations.py` | `_archived_figure_scripts/root_scratch/verify_optimizations.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `version_2/00_make_chua_fractional_memory_experiment_matrix.py` | `_archived_figure_scripts/version_2_scratch/00_make_chua_fractional_memory_experiment_matrix.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `version_2/hiddenness_cand0_all_extended.py` | `_archived_figure_scripts/version_2_scratch/hiddenness_cand0_all_extended.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `version_2/hiddenness_cand0_e0_extended.py` | `_archived_figure_scripts/version_2_scratch/hiddenness_cand0_e0_extended.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `version_2/hiddenness_cand0_ep_em_extended.py` | `_archived_figure_scripts/version_2_scratch/hiddenness_cand0_ep_em_extended.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `version_2/hiddenness_cand0_intensive.py` | `_archived_figure_scripts/version_2_scratch/hiddenness_cand0_intensive.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `version_2/hiddenness_single_candidate.py` | `_archived_figure_scripts/version_2_scratch/hiddenness_single_candidate.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `version_2/recover_hiddenness_results.py` | `_archived_figure_scripts/version_2_scratch/recover_hiddenness_results.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `version_2/run_hiddenness_biased_candidates.py` | `_archived_figure_scripts/version_2_scratch/run_hiddenness_biased_candidates.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `version_2/run_hiddenness_parallel.py` | `_archived_figure_scripts/version_2_scratch/run_hiddenness_parallel.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `version_2/search_saturation_biased_candidates.py` | `_archived_figure_scripts/version_2_scratch/search_saturation_biased_candidates.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `version_2/search_saturation_biased_candidates_corrected.py` | `_archived_figure_scripts/version_2_scratch/search_saturation_biased_candidates_corrected.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch/audit_and_archive.py` | `_archived_figure_scripts/scratch/audit_and_archive.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch/compute_biased_lyapunov_two_methods.py` | `_archived_figure_scripts/scratch/compute_biased_lyapunov_two_methods.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch/find_and_analyze_plotting_files.py` | `_archived_figure_scripts/scratch/find_and_analyze_plotting_files.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch/generate_biased_candidate_report_assets.py` | `_archived_figure_scripts/scratch/generate_biased_candidate_report_assets.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch/new_results.tex` | `_archived_figure_scripts/scratch/new_results.tex` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch/plotting_references.txt` | `_archived_figure_scripts/scratch/plotting_references.txt` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch/replot_biased_lyapunov.py` | `_archived_figure_scripts/scratch/replot_biased_lyapunov.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch/search_matplotlib.py` | `_archived_figure_scripts/scratch/search_matplotlib.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch/update_dynamics.py` | `_archived_figure_scripts/scratch/update_dynamics.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch/update_fractional_report_run.py` | `_archived_figure_scripts/scratch/update_fractional_report_run.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch/update_latex.py` | `_archived_figure_scripts/scratch/update_latex.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |
+| `scratch/update_plotting_libs.py` | `_archived_figure_scripts/scratch/update_plotting_libs.py` | Temporary or scratch script. Cleaned up from workspace. | `N/A` | 2026-06-08 |

@@ -65,6 +65,7 @@ def plot_basin_slice_file(
     fig_name = f"basin_{plane}_{eq_name}.png"
     fig_path = os.path.join(fig_dir, fig_name)
     plt.tight_layout()
-    fig.savefig(fig_path, dpi=300)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, fig_path, "basin")
     plt.close(fig)
     return fig_path

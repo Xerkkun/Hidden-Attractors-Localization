@@ -25,19 +25,19 @@
 \setlength{\emergencystretch}{3em}
 \renewcommand{\arraystretch}{1.13}
 \setlength{\tabcolsep}{4pt}
-\graphicspath{{assets/figures/chua_fractional_report/}{assets/figures/chua_integer_q1/}{assets/figures/efork3_validation/}}
+\graphicspath{{../library_figures/by_report/unified_chua_fractional/pdf/}{../library_figures/by_report/unified_chua_fractional/pdf/}{../library_figures/by_report/unified_chua_fractional/pdf/}}
 
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \DeclareRobustCommand{\codepath}[1]{\begingroup\Urlmuskip=0mu plus 2mu\path{#1}\endgroup}
 \newcommand{\maybeincludegraphics}[2][]{%
-  \IfFileExists{assets/figures/chua_fractional_report/#2}{%
-    \includegraphics[#1]{assets/figures/chua_fractional_report/#2}%
+  \IfFileExists{../library_figures/by_report/unified_chua_fractional/pdf/#2}{%
+    \includegraphics[#1]{../library_figures/by_report/unified_chua_fractional/pdf/#2}%
   }{%
-    \IfFileExists{assets/figures/chua_integer_q1/#2}{%
-      \includegraphics[#1]{assets/figures/chua_integer_q1/#2}%
+    \IfFileExists{../library_figures/by_report/unified_chua_fractional/pdf/#2}{%
+      \includegraphics[#1]{../library_figures/by_report/unified_chua_fractional/pdf/#2}%
     }{%
-      \IfFileExists{assets/figures/efork3_validation/#2}{%
-        \includegraphics[#1]{assets/figures/efork3_validation/#2}%
+      \IfFileExists{../library_figures/by_report/unified_chua_fractional/pdf/#2}{%
+        \includegraphics[#1]{../library_figures/by_report/unified_chua_fractional/pdf/#2}%
       }{%
         \fbox{\parbox[c][0.22\textheight][c]{0.80\linewidth}{\centering\small Figura no encontrada en assets del reporte:\\ \codepath{#2}}}%
       }%
@@ -311,13 +311,13 @@ promedio fuerte.
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.80\textwidth]{chaos_lorenz_phase_3d.png}
+\maybeincludegraphics[width=0.80\textwidth]{chaos_lorenz_phase_3d.pdf}
 \caption{Sistema de Lorenz: geometría post-transitorio del atractor clásico. La forma de dos lóbulos muestra plegamiento y confinamiento, pero la figura sola no prueba caos.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.88\textwidth]{chaos_lorenz_time_series.png}
+\maybeincludegraphics[width=0.88\textwidth]{chaos_lorenz_time_series.pdf}
 \caption{Sistema de Lorenz: series temporales post-transitorio. La señal permanece acotada y aperiódica a escala visual.}
 \end{figure}
 
@@ -325,11 +325,11 @@ promedio fuerte.
 \centering
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{chaos_lorenz_poincare.png}
+\maybeincludegraphics[width=\linewidth]{chaos_lorenz_poincare.pdf}
 \end{minipage}\hfill
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{chaos_lorenz_spectrum.png}
+\maybeincludegraphics[width=\linewidth]{chaos_lorenz_spectrum.pdf}
 \end{minipage}
 \caption{Sistema de Lorenz: sección de Poincaré ascendente \(z=27\) y espectro de \(x(t)\). La sección no colapsa a un punto periódico y el espectro muestra energía distribuida en banda.}
 \end{figure}
@@ -473,7 +473,7 @@ sector.
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.78\textwidth]{matignon_complex_plane.png}
+\maybeincludegraphics[width=0.78\textwidth]{matignon_complex_plane.pdf}
 \caption{División del plano complejo según Matignon. Para un orden conmensurado \(q\), los valores propios deben quedar fuera del sector \(|\arg(\lambda)|\le q\pi/2\). La zona sombreada ilustra el caso \(q=0.8\).}
 \end{figure}
 
@@ -571,7 +571,7 @@ coincide con \(n\) cerca de \(x=0\) y tiende a \(m\) cuando \(|x|\) crece.
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.94\textwidth]{chua_nonlinearity_piecewise_vs_arctan.png}
+\maybeincludegraphics[width=0.94\textwidth]{chua_nonlinearity_piecewise_vs_arctan.pdf}
 \caption{Comparación entre la característica definida a trozos y la característica arctan usada por el caso Wu et al. 2023. La curva arctan suaviza los cambios de pendiente del modelo por tramos.}
 \end{figure}
 
@@ -650,31 +650,31 @@ YAML de esa corrida como fuente de verdad.
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.78\textwidth]{chua_nonsmooth_typical_attractor_3d.png}
+\maybeincludegraphics[width=0.78\textwidth]{chua_nonsmooth_typical_attractor_3d.pdf}
 \caption{Chua no suave: atractor 3D integrado desde la semilla DF entera calculada por la librería. Parámetros: \(\alpha=8.4562\), \(\beta=12.0732\), \(\gamma=0.0052\), \(m_0=-0.1768\), \(m_1=-1.1468\).}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.78\textwidth]{chua_nonsmooth_df_continuation_3d.png}
+\maybeincludegraphics[width=0.78\textwidth]{chua_nonsmooth_df_continuation_3d.pdf}
 \caption{Chua no suave: continuación ilustrativa desde el modelo linealizado \(P+bk r^\top\) hasta la no linealidad saturada completa. \(\eta=0\) representa el cierre lineal armónico y \(\eta=1\) el sistema no lineal.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.78\textwidth]{chua_arctan_typical_attractor_3d.png}
+\maybeincludegraphics[width=0.78\textwidth]{chua_arctan_typical_attractor_3d.pdf}
 \caption{Chua arctan: atractor 3D integrado desde la semilla DF entera calculada por la librería. Parámetros tipo Wu2023: \(a_1=0.4\), \(a_2=-1.5585\), \(\rho=1\).}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.86\textwidth]{chua_arctan_typical_time_series.png}
+\maybeincludegraphics[width=0.86\textwidth]{chua_arctan_typical_time_series.pdf}
 \caption{Chua arctan: series temporales post-transitorio de la corrida típica usada para el atractor 3D. La gráfica permite revisar acotamiento, escalas relativas y aperiodicidad visual; no reemplaza Lyapunov, Poincaré ni análisis de cuencas.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.78\textwidth]{chua_arctan_df_continuation_3d.png}
+\maybeincludegraphics[width=0.78\textwidth]{chua_arctan_df_continuation_3d.pdf}
 \caption{Chua arctan: continuación ilustrativa desde la linealización armónica hasta la realimentación suave \(a_2\arctan(\rho\sigma)\).}
 \end{figure}
 
@@ -973,7 +973,7 @@ Ghoreishi, Ghaffari y Saad (2023), \emph{Fractional Order Runge--Kutta Methods},
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.82\textwidth]{convergence_errors.png}
+\maybeincludegraphics[width=0.82\textwidth]{convergence_errors.pdf}
 \caption{Validación EFORK-3: error terminal absoluto frente al tamaño de paso para los ejemplos publicados reproducidos localmente. La tendencia de convergencia respalda el orden de etapas y los coeficientes del método, pero no valida por sí sola una corrida Chua específica.}
 \end{figure}
 
@@ -1118,7 +1118,7 @@ habla de caos; solo valida la algebra local del campo.
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.76\textwidth]{example_quickstart_equilibria.png}
+\maybeincludegraphics[width=0.76\textwidth]{example_quickstart_equilibria.pdf}
 \caption{Lectura visual del ejemplo \codepath{quickstart_equilibria.py}. Los tres puntos son los equilibrios del Chua no suave bajo parámetros por defecto. La figura ayuda a ubicar \(E_0\), \(E_+\) y \(E_-\); no decide estabilidad global.}
 \end{figure}
 
@@ -1137,7 +1137,7 @@ solo no certifica ocultedad.
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.78\textwidth]{example_candidate_reading.png}
+\maybeincludegraphics[width=0.78\textwidth]{example_candidate_reading.pdf}
 \caption{Cómo leer candidatos finales: la semilla y la trayectoria son solo el inicio. La decisión necesita métricas, robustez y cuencas.}
 \end{figure}
 
@@ -1156,7 +1156,7 @@ que una simulación no debe leerse sin contrato.
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.95\textwidth]{example_minimal_protocol_flow.png}
+\maybeincludegraphics[width=0.95\textwidth]{example_minimal_protocol_flow.pdf}
 \caption{Orden de lectura del protocolo: contrato, álgebra, semillas, precheck, continuación, referencia, robustez, cuencas y diagnósticos.}
 \end{figure}
 
@@ -1178,7 +1178,7 @@ de destino, cortes de cuenca y refinamiento.
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.78\textwidth]{example_api_layers.png}
+\maybeincludegraphics[width=0.78\textwidth]{example_api_layers.pdf}
 \caption{Capas de API para extender la librería. Los usuarios nuevos deben construir sobre la capa estable y tratar workflows/integradores como contratos experimentales explícitos.}
 \end{figure}
 
@@ -1202,25 +1202,25 @@ Este ejemplo es el puente natural entre teoría y práctica. Ejecuta:
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.82\textwidth]{fig01_nyquist_df.png}
+\maybeincludegraphics[width=0.82\textwidth]{fig01_nyquist_df.pdf}
 \caption{Ejemplo entero: lectura Nyquist/DF del cruce armónico. La curva \(W(\ii\omega)\) y el punto \(-1/N(A)\) muestran la coherencia algebraica de la semilla candidata; no constituyen una prueba de atractor oculto.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.80\textwidth]{fig01c_transfer_real_imag.png}
+\maybeincludegraphics[width=0.80\textwidth]{fig01c_transfer_real_imag.pdf}
 \caption{Ejemplo entero: componentes real e imaginaria de la transferencia en el cruce armónico. Esta figura valida el cierre de semilla, no la ocultedad.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.82\textwidth]{fig02d_continuation_story.png}
+\maybeincludegraphics[width=0.82\textwidth]{fig02d_continuation_story.pdf}
 \caption{Ejemplo entero: historia de continuación desde el modelo linealizado hasta la trayectoria final. La homotopía es numérica y debe leerse con su contrato.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.82\textwidth]{fig05b_hiddenness_overview.png}
+\maybeincludegraphics[width=0.82\textwidth]{fig05b_hiddenness_overview.pdf}
 \caption{Ejemplo entero: controles de cuenca alrededor de equilibrios. La presencia o ausencia de contactos se interpreta bajo radios y muestras declaradas.}
 \end{figure}
 
@@ -1228,11 +1228,11 @@ Este ejemplo es el puente natural entre teoría y práctica. Ejecuta:
 \centering
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{fig11a_fft_x.png}
+\maybeincludegraphics[width=\linewidth]{fig11a_fft_x.pdf}
 \end{minipage}\hfill
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{fig11d_psd_x.png}
+\maybeincludegraphics[width=\linewidth]{fig11d_psd_x.pdf}
 \end{minipage}
 \caption{Ejemplo entero: FFT y PSD de la señal \(x(t)\). El espectro ayuda a distinguir periodicidad dominante, armónicos y energía distribuida; se usa como diagnóstico complementario y no como criterio único de caos.}
 \end{figure}
@@ -1251,25 +1251,25 @@ el contrato de esa trayectoria debe citarse por separado.
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.78\textwidth]{phase_space_3d.png}
+\maybeincludegraphics[width=0.78\textwidth]{phase_space_3d.pdf}
 \caption{Galería de análisis: espacio de fases 3D. Lectura permitida: geometría acotada aparente; lectura no permitida: prueba de ocultedad.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.92\textwidth]{phase_projections.png}
+\maybeincludegraphics[width=0.92\textwidth]{phase_projections.pdf}
 \caption{Galería de análisis: proyecciones de fase. Las proyecciones ayudan a inspeccionar estructura, simetría y escala.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.92\textwidth]{time_series.png}
+\maybeincludegraphics[width=0.92\textwidth]{time_series.pdf}
 \caption{Galería de análisis: series temporales. Sirven para observar transitorios, acotamiento operativo y posibles problemas de integración.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.88\textwidth]{bifurcation_diagram.png}
+\maybeincludegraphics[width=0.88\textwidth]{bifurcation_diagram.pdf}
 \caption{Galería de análisis: diagrama de bifurcación por post-procesamiento. Muestra cambios cualitativos finitos; no sustituye continuación formal de ramas.}
 \end{figure}
 
@@ -1289,7 +1289,7 @@ cuencas, pero ayuda a detectar candidatos frágiles.
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.86\textwidth]{robustness_overlay_lure.png}
+\maybeincludegraphics[width=0.86\textwidth]{robustness_overlay_lure.pdf}
 \caption{Robustez del candidato Lur'e: superposición de trayectorias bajo contratos finitos.}
 \end{figure}
 
@@ -1297,11 +1297,11 @@ cuencas, pero ayuda a detectar candidatos frágiles.
 \centering
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{robustness_overlay_machado_mu2.png}
+\maybeincludegraphics[width=\linewidth]{robustness_overlay_machado_mu2.pdf}
 \end{minipage}\hfill
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{robustness_overlay_machado_mu4.png}
+\maybeincludegraphics[width=\linewidth]{robustness_overlay_machado_mu4.pdf}
 \end{minipage}
 \caption{Robustez de candidatos Machado/FDF. Estas figuras son evidencia de persistencia numérica, no prueba de ocultedad.}
 \end{figure}
@@ -1400,7 +1400,7 @@ la separación:
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.82\textwidth]{danca_abm_fig03.png}
+\maybeincludegraphics[width=0.82\textwidth]{danca_abm_fig03.pdf}
 \caption{Réplica visual ABM del caso no suave. Es comparación dinámica con historia completa, no prueba de ocultedad.}
 \end{figure}
 
@@ -1408,11 +1408,11 @@ la separación:
 \centering
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{basin_danca_abm_xy.png}
+\maybeincludegraphics[width=\linewidth]{basin_danca_abm_xy.pdf}
 \end{minipage}\hfill
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{basin_project_best_xy.png}
+\maybeincludegraphics[width=\linewidth]{basin_project_best_xy.pdf}
 \end{minipage}
 \caption{Cortes \(xy\) de cuenca bajo contratos finitos. Si un bloque cercano a equilibrio llega a \TARGET{}, la promoción de ocultedad queda bloqueada bajo ese contrato.}
 \end{figure}
@@ -1421,11 +1421,11 @@ la separación:
 \centering
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{project_lure_rank0001.png}
+\maybeincludegraphics[width=\linewidth]{project_lure_rank0001.pdf}
 \end{minipage}\hfill
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{project_machado_mu4.png}
+\maybeincludegraphics[width=\linewidth]{project_machado_mu4.pdf}
 \end{minipage}
 \caption{Candidatos generados por Lur'e y Machado/FDF. La semejanza geométrica es diagnóstica; la decisión depende de robustez y cuencas.}
 \end{figure}

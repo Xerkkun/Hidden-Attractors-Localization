@@ -58,6 +58,7 @@ def plot_trajectory_overlay(
     fig.legend(handles, legend_labels, loc="lower center", ncol=2, fontsize=8, frameon=True)
     fig.suptitle(title, fontsize=11)
     fig.tight_layout(rect=[0, 0.08, 1, 0.96])
-    fig.savefig(path, dpi=220)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "attractor")
     plt.close(fig)
     return str(path)

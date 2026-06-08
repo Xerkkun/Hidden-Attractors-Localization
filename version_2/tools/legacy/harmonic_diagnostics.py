@@ -149,7 +149,8 @@ def write_rho_outputs(rows: Sequence[Dict[str, Any]], outdir: Path) -> None:
             ax.grid(True, alpha=0.25)
             ax.legend(fontsize=8)
             fig.tight_layout()
-            fig.savefig(plots / name, dpi=180)
+            from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+            intercept_and_export_path(fig, plots / name, 'attractor')
             plt.close(fig)
 
 
@@ -165,6 +166,7 @@ def plot_harmonic_spectrum(row: Dict[str, Any], outdir: Path) -> str:
     fig.tight_layout()
     path = Path(outdir) / "plots" / f"harmonic_spectrum_candidate_{row['candidate_id']}.png"
     path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(path, dpi=180)
+    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, path, 'attractor')
     plt.close(fig)
     return str(path)

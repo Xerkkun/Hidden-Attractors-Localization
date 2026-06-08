@@ -677,7 +677,8 @@ def _plot_biased_nyquist_df(lure_system: Any, row: dict[str, Any], output: Path)
     ax.set_ylabel(r"Im$(W_q(i\omega))$")
     ax.legend(loc="best", fontsize=8)
     fig.tight_layout()
-    fig.savefig(output, dpi=220)
+    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, output, "robustness")
     plt.close(fig)
     return str(output)
 
@@ -972,7 +973,8 @@ def plot_hiddenness_ball_figures(outdir: Path, selected: Sequence[dict[str, Any]
         ax.legend(fontsize=7)
         fig.tight_layout()
         path = plot_dir / f"{safe_name(candidate_id)}_equilibrium_ball_samples.png"
-        fig.savefig(path, dpi=220)
+        from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+        intercept_and_export_path(fig, path, "sphere_test")
         plt.close(fig)
         files.append(str(path))
     return files

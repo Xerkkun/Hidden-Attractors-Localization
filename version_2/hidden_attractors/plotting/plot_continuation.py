@@ -111,7 +111,8 @@ def plot_continuation_first_last_comparison(
     ax_3d.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
     
     plt.tight_layout()
-    fig_3d.savefig(os.path.join(fig_dir, "continuation_first_last_comparison.png"), dpi=300)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig_3d, os.path.join(fig_dir, "continuation_first_last_comparison.png"), "continuation")
     plt.close(fig_3d)
     
     fig_2d, axes = plt.subplots(1, 3, figsize=(15, 5), dpi=300)
@@ -133,7 +134,8 @@ def plot_continuation_first_last_comparison(
         ax.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
         
     plt.tight_layout()
-    fig_2d.savefig(os.path.join(fig_dir, "continuation_first_last_projections.png"), dpi=300)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig_2d, os.path.join(fig_dir, "continuation_first_last_projections.png"), "continuation")
     plt.close(fig_2d)
 
 def plot_continuation_timeseries_comparison(
@@ -175,7 +177,8 @@ def plot_continuation_timeseries_comparison(
     ax.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
     
     plt.tight_layout()
-    fig.savefig(os.path.join(fig_dir, "continuation_timeseries_comparison_x.png"), dpi=300)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, os.path.join(fig_dir, "continuation_timeseries_comparison_x.png"), "continuation")
     plt.close(fig)
 
 def plot_continuation_progression(
@@ -260,7 +263,8 @@ def plot_continuation_progression(
     cbar.ax.tick_params(labelsize=8)
     
     plt.tight_layout()
-    fig.savefig(os.path.join(fig_dir, "continuation_progression.png"), dpi=300)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, os.path.join(fig_dir, "continuation_progression.png"), "continuation")
     plt.close(fig)
 
 _STATUS_ORDER = [
@@ -345,5 +349,6 @@ def plot_continuation_tracking(
     ax.set_xlabel(r"$\eta$", fontsize=11)
     ax.set_xlim(-0.02, eta_max)
     plt.tight_layout()
-    fig.savefig(os.path.join(fig_dir, "continuation_tracking_status.png"), dpi=300)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, os.path.join(fig_dir, "continuation_tracking_status.png"), "continuation")
     plt.close(fig)

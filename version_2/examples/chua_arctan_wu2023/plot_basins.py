@@ -48,7 +48,8 @@ def main() -> None:
     ax.set_ylabel("y(0)")
     ax.set_title("Wu2023 arctan Chua: exploratory xy basin slice (z0=0)")
     fig.tight_layout()
-    fig.savefig(args.output, dpi=180)
+    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, args.output, 'attractor')
     plt.close(fig)
     print(f"figure={args.output}")
     print("hidden_verified=false; neighborhood tests around E0, E+ and E- remain required")

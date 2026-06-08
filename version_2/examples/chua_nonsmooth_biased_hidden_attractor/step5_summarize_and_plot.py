@@ -47,33 +47,17 @@ def load_config() -> Dict[str, Any]:
 
 
 # ── Estilo visual del reporte ──────────────────────────────────────────────────
-BG    = "#0D0D1A"
-PANEL = "#141428"
-TEXT  = "#E8E8FF"
-TICK  = "#9999BB"
-GRID  = "#1E1E3A"
-CMAP  = plt.cm.plasma
+LW = 0.7
+CMAP = plt.cm.plasma
 
 
-def _ax_dark(ax, grid=True):
-    ax.set_facecolor(PANEL)
-    ax.tick_params(colors=TICK, labelsize=7)
-    for s in ax.spines.values():
-        s.set_edgecolor("#2A2A50")
-    ax.xaxis.label.set_color(TEXT)
-    ax.yaxis.label.set_color(TEXT)
+def _ax_style(ax, grid=True):
     if grid:
-        ax.grid(True, color=GRID, lw=0.4, ls="--", alpha=0.7)
+        ax.grid(True, linestyle="--", linewidth=0.5, color="#cbd5e1")
 
 
-def _ax3d_dark(ax):
-    ax.set_facecolor(PANEL)
-    ax.tick_params(colors=TICK, labelsize=6)
-    for attr in ["xaxis", "yaxis", "zaxis"]:
-        getattr(ax, attr).label.set_color(TEXT)
-        getattr(ax, attr).pane.fill = False
-        getattr(ax, attr).pane.set_edgecolor("#1E1E3A")
-    ax.grid(True, color=GRID, lw=0.3, ls="--", alpha=0.5)
+def _ax3d_style(ax):
+    ax.grid(True, color="#cbd5e1", lw=0.3, ls="--", alpha=0.5)
 
 
 # ── Carga de trayectoria ──────────────────────────────────────────────────────
@@ -107,8 +91,8 @@ def plot_candidate_report(traj: np.ndarray, title: str,
 
     h_est = float(np.median(np.diff(times))) if len(times) > 1 else h
 
-    fig = plt.figure(figsize=(17, 9.5), facecolor=BG)
-    fig.suptitle(title, color=TEXT, fontsize=10.5, fontweight="bold", y=0.99, va="top")
+    fig = plt.figure(figsize=(17, 9.5), dpi=300)
+    fig.suptitle(title, fontsize=11, fontweight="bold", y=0.99, va="top")
     gs = GridSpec(3, 4, figure=fig, left=0.055, right=0.97, top=0.90,
                   bottom=0.07, hspace=0.55, wspace=0.38)
 
@@ -117,18 +101,18 @@ def plot_candidate_report(traj: np.ndarray, title: str,
     for i in range(n - 1):
         ax3.plot(states[i:i+2, 0], states[i:i+2, 1], states[i:i+2, 2],
                  lw=0.35, color=CMAP(i / n), alpha=0.75)
-    _ax3d_dark(ax3)
+    _ax3d_style(ax3)
     ax3.set_xlabel("x", labelpad=2); ax3.set_ylabel("y", labelpad=2); ax3.set_zlabel("z", labelpad=2)
-    ax3.set_title("Espacio de fase 3D", color=TEXT, fontsize=9, pad=5)
+    ax3.set_title("Espacio de fase 3D", fontsize=11, fontweight='bold', pad=5)
 
     # Proyecciones
     for xl, yl, ix, iy, gss in [("x", "y", 0, 1, gs[0, 2]), ("x", "z", 0, 2, gs[0, 3]),
                                   ("y", "z", 1, 2, gs[1, 2])]:
         ax2 = fig.add_subplot(gss)
         ax2.plot(states[:, ix], states[:, iy], lw=0.3, color="#E64B35", alpha=0.8)
-        _ax_dark(ax2)
+        _ax_style(ax2)
         ax2.set_xlabel(xl, fontsize=8); ax2.set_ylabel(yl, fontsize=8)
-        ax2.set_title(f"Proy. {xl}-{yl}", color=TEXT, fontsize=8)
+        ax2.set_title(f"Proy. {xl}-{yl}", fontsize=8)
 
     # FFT
     ax_fft = fig.add_subplot(gs[1, 3])
@@ -142,9 +126,9 @@ def plot_candidate_report(traj: np.ndarray, title: str,
             ax_fft.legend(fontsize=7)
     except Exception:
         pass
-    _ax_dark(ax_fft)
+    _ax_style(ax_fft)
     ax_fft.set_xlabel("ω (rad/s)", fontsize=8); ax_fft.set_ylabel("Amplitud", fontsize=8)
-    ax_fft.set_title("Espectro FFT x(t)", color=TEXT, fontsize=8)
+    ax_fft.set_title("Espectro FFT x(t)", fontsize=8)
 
     # Series de tiempo
     for col_i, (lbl, sig, clr) in enumerate(
@@ -154,13 +138,13 @@ def plot_candidate_report(traj: np.ndarray, title: str,
     ):
         ax_t = fig.add_subplot(gs[2, col_i])
         ax_t.plot(times, sig, lw=0.35, color=clr)
-        _ax_dark(ax_t)
+        _ax_style(ax_t)
         ax_t.set_xlabel("t [s]", fontsize=8); ax_t.set_ylabel(lbl, fontsize=8)
-        ax_t.set_title(f"Serie {lbl}", color=TEXT, fontsize=8)
+        ax_t.set_title(f"Serie {lbl}", fontsize=8)
 
     # Panel de info
     ax_i = fig.add_subplot(gs[2, 3])
-    ax_i.set_facecolor(PANEL); ax_i.axis("off")
+    ax_i.axis("off")
     centroid = np.mean(states, axis=0)
     info = [
         "Modelo: Chua No Suave (Saturación)",
@@ -173,12 +157,13 @@ def plot_candidate_report(traj: np.ndarray, title: str,
         f"Centroide: ({centroid[0]:.3f}, {centroid[1]:.3f}, {centroid[2]:.3f})",
     ]
     ax_i.text(0.04, 0.97, "\n".join(info), transform=ax_i.transAxes,
-              va="top", ha="left", color=TEXT, fontsize=7, fontfamily="monospace", linespacing=1.5)
-    ax_i.set_title("Parámetros", color=TEXT, fontsize=8)
+              va="top", ha="left", fontsize=7, fontfamily="monospace", linespacing=1.5)
+    ax_i.set_title("Parámetros", fontsize=8)
 
     fig.tight_layout(rect=[0, 0, 1, 0.97])
     outpath.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(outpath, dpi=150, facecolor=BG, bbox_inches="tight")
+    fig.savefig(outpath, dpi=300, bbox_inches="tight")
+    fig.savefig(outpath.with_suffix('.pdf'), bbox_inches='tight')
     plt.close(fig)
 
 
@@ -188,14 +173,13 @@ def plot_biased_vs_centered(biased_traj: np.ndarray,
                              centered_traj: Optional[np.ndarray],
                              params_str: str, outpath: Path) -> None:
     """Overlay 3D y FFT del atractor sesgado vs referencia centrada."""
-    fig = plt.figure(figsize=(16, 7), facecolor=BG)
+    fig = plt.figure(figsize=(16, 7), dpi=300)
     fig.suptitle(
         f"Comparación: Atractor Sesgado vs Referencia Centrada\n{params_str}",
-        color=TEXT, fontsize=10, fontweight="bold", y=0.98,
+        fontsize=11, fontweight="bold", y=0.98,
     )
 
     ax3 = fig.add_subplot(1, 2, 1, projection="3d")
-    ax3.set_facecolor(PANEL)
     states_b = biased_traj[:, 1:4]
     n = len(states_b)
     for i in range(n - 1):
@@ -213,14 +197,13 @@ def plot_biased_vs_centered(biased_traj: np.ndarray,
         cent_c = np.mean(states_c, axis=0)
         ax3.scatter(*cent_c, color="#E64B35", s=80, marker="X", label="Centrado (c=0)")
 
-    _ax3d_dark(ax3)
+    _ax3d_style(ax3)
     ax3.set_xlabel("x", labelpad=2); ax3.set_ylabel("y", labelpad=2); ax3.set_zlabel("z", labelpad=2)
-    ax3.set_title("Espacio de fase 3D", color=TEXT, fontsize=9)
+    ax3.set_title("Espacio de fase 3D", fontsize=9)
     ax3.legend(fontsize=8)
 
     # FFT comparativa
     ax_fft = fig.add_subplot(1, 2, 2)
-    ax_fft.set_facecolor(PANEL)
     h_est = float(np.median(np.diff(biased_traj[:, 0]))) if len(biased_traj) > 1 else 0.01
     try:
         from hidden_attractors.analysis.spectral import fft_spectrum
@@ -235,15 +218,16 @@ def plot_biased_vs_centered(biased_traj: np.ndarray,
                             lw=1.0, linestyle="--", label="Centrado")
     except Exception:
         pass
-    _ax_dark(ax_fft)
-    ax_fft.set_xlabel("ω (rad/s)", fontsize=9, color=TEXT)
-    ax_fft.set_ylabel("Amplitud", fontsize=9, color=TEXT)
-    ax_fft.set_title("Comparación de Espectros FFT", color=TEXT, fontsize=9)
+    _ax_style(ax_fft)
+    ax_fft.set_xlabel("ω (rad/s)", fontsize=9)
+    ax_fft.set_ylabel("Amplitud", fontsize=9)
+    ax_fft.set_title("Comparación de Espectros FFT", fontsize=11, fontweight="bold")
     ax_fft.legend(fontsize=8)
 
     fig.tight_layout(rect=[0, 0, 1, 0.95])
     outpath.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(outpath, dpi=150, facecolor=BG, bbox_inches="tight")
+    fig.savefig(outpath, dpi=300, bbox_inches="tight")
+    fig.savefig(outpath.with_suffix('.pdf'), bbox_inches='tight')
     plt.close(fig)
 
 
@@ -259,10 +243,10 @@ def plot_mega_summary(candidates: List[Dict], outpath: Path) -> None:
     ncols  = min(3, n_all)
     nrows  = (n_all + ncols - 1) // ncols
 
-    fig = plt.figure(figsize=(ncols * 5, nrows * 4.5 + 1), facecolor=BG)
+    fig = plt.figure(figsize=(ncols * 5, nrows * 4.5 + 1), dpi=300)
     fig.suptitle(
         "Atractores Ocultos — Chua Fraccionario No Suave (q=0.9998)  |  DF Sesgada",
-        color=TEXT, fontsize=12, fontweight="bold", y=0.99,
+        fontsize=12, fontweight="bold", y=0.99,
     )
 
     for idx, (cand, traj) in enumerate(valid):
@@ -272,18 +256,19 @@ def plot_mega_summary(candidates: List[Dict], outpath: Path) -> None:
         for i in range(n - 1):
             ax.plot(states[i:i+2, 0], states[i:i+2, 1], states[i:i+2, 2],
                     lw=0.3, color=CMAP(i / n), alpha=0.8)
-        _ax3d_dark(ax)
+        _ax3d_style(ax)
         ax.set_xlabel("x", fontsize=5, labelpad=0)
         ax.set_ylabel("y", fontsize=5, labelpad=0)
         ax.set_zlabel("z", fontsize=5, labelpad=0)
         ax.set_title(
             f"★ m1={cand['m1']} | m0={cand['m0']}\nc={cand.get('c', 0):.3f}  {cand.get('verdict', '')}",
-            color=TEXT, fontsize=7, pad=2,
+            fontsize=7, pad=2,
         )
 
     fig.tight_layout(rect=[0, 0, 1, 0.96])
     outpath.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(outpath, dpi=140, facecolor=BG, bbox_inches="tight")
+    fig.savefig(outpath, dpi=300, bbox_inches="tight")
+    fig.savefig(outpath.with_suffix('.pdf'), bbox_inches='tight')
     plt.close(fig)
 
 
@@ -370,7 +355,7 @@ def run_summarize_and_plot(cfg: Dict[str, Any]) -> None:
     out_s5.mkdir(parents=True, exist_ok=True)
 
     print("=" * 65)
-    print("PASO 5 — Resumen y Galería de Figuras")
+    print("PASO 5 - Resumen y Galeria de Figuras")
     print("=" * 65)
 
     # ── Leer clasificación del Paso 2 ────────────────────────────────────────
@@ -406,10 +391,10 @@ def run_summarize_and_plot(cfg: Dict[str, Any]) -> None:
 
     # ── Galería: figura de reporte por candidato ──────────────────────────────
     if plot_cfg["save_figures"]:
-        print("\n  Generando galería de figuras …")
+        print("\n  Generando galeria de figuras ...")
         for cand in candidates:
             if cand["traj"] is None:
-                print(f"    [SKIP] {cand['prefix']} — trayectoria no encontrada")
+                print(f"    [SKIP] {cand['prefix']} - trayectoria no encontrada")
                 continue
             m1      = cand.get("m1", "?")
             m0      = cand.get("m0", "?")

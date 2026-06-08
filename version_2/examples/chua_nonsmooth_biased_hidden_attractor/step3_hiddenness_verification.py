@@ -229,7 +229,7 @@ def run_hiddenness_for_candidate(candidate: Dict[str, Any],
 
     for eq_name, eq_pt in equilibria.items():
         for r_idx, (radius, n_samples) in enumerate(zip(radii, samples_per_r)):
-            print(f"    [{eq_name}]  r={radius:.0e}  n={n_samples}", end=" … ", flush=True)
+            print(f"    [{eq_name}]  r={radius:.0e}  n={n_samples}", end=" ... ", flush=True)
             pts = generate_neighborhood_points(
                 eq_point=eq_pt, radius=radius, num_samples=n_samples,
                 mode=h3_cfg["sampling_mode"], seed=random_seed + r_idx,
@@ -326,7 +326,7 @@ def run_hiddenness_verification(candidates: List[Dict[str, Any]],
                                  cfg: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Ejecuta la verificación de ocultedad para todos los candidatos."""
     print("=" * 65)
-    print("PASO 3 — Verificación de Ocultedad (Protocolo Estándar)")
+    print("PASO 3 - Verificacion de Ocultedad (Protocolo Estandar)")
     print(f"  Radios: {cfg['step3_hiddenness']['radii']}")
     print(f"  Muestras/radio: {cfg['step3_hiddenness']['samples_per_radius']}")
     print(f"  Candidatos a verificar: {len(candidates)}")
@@ -351,9 +351,9 @@ def run_hiddenness_verification(candidates: List[Dict[str, Any]],
 
     print("\n[PASO 3 COMPLETADO]")
     for r in results:
-        icon = "✓" if r["hidden_compatible"] else "✗"
+        icon = "[OK]" if r["hidden_compatible"] else "[FAIL]"
         print(f"  {icon} m1={r['m1']}  m0={r['m0']}  c={r['c']:.3f}"
-              f"  → {r['hiddenness_status']}  (hits={r['target_hits']})")
+              f"  -> {r['hiddenness_status']}  (hits={r['target_hits']})")
 
     return results
 

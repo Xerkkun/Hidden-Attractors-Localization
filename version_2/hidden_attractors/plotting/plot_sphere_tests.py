@@ -97,7 +97,8 @@ def plot_sphere_test_results(
     fig_path_png = os.path.join(fig_dir, f"{fig_name}.png")
     fig_path_pdf = os.path.join(fig_dir, f"{fig_name}.pdf")
     plt.tight_layout()
-    fig.savefig(fig_path_png, dpi=300)
-    fig.savefig(fig_path_pdf)
+    from .export import intercept_and_export_path
+    intercept_and_export_path(fig, fig_path_png, "sphere_test")
+    pass
     plt.close(fig)
     return fig_path_png
