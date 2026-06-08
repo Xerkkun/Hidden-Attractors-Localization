@@ -43,3 +43,17 @@ Este inventario recopila los scripts de generación de figuras en el repositorio
 | `version_2/hidden_attractors/plotting/basin.py` | Módulo de librería | Trayectorias del atractor | Configuración/parámetros en el código | Figuras exportadas | **Conservar / Estandarizar** | Llamada directa a savefig, Uso de títulos internos (title/suptitle), Fondos no blancos / Estilos customizados, Exporta solo PNG |
 | `version_2/hidden_attractors/plotting/overlays.py` | Módulo de librería | Trayectorias del atractor | Configuración/parámetros en el código | Figuras exportadas | **Conservar / Estandarizar** | Llamada directa a savefig, Uso de títulos internos (title/suptitle) |
 | `version_2/hidden_attractors/plotting/generate_publication_figures.py` | Módulo de librería | Trayectorias del atractor | Archivos JSON/CSV de corridas u outputs + Simulación en tiempo real (integrador) | Figuras exportadas | **Conservar / Estandarizar** | Llamada directa a savefig, Uso de títulos internos (title/suptitle), Fondos no blancos / Estilos customizados |
+
+## Excepciones Justificadas (Legacy / Workflows Especializados)
+
+Los siguientes scripts/módulos pertenecen a otros flujos de trabajo especializados fuera del ejemplo Chua BDF. Se conservan temporalmente con llamadas directas y títulos internos por compatibilidad con sus reportes específicos:
+
+1. **`version_2/hidden_attractors/workflows/danca_abm_sphere_controls.py`**
+   - *Razón*: Módulo especializado para controles de esferas ABM basado en la réplica directa de Danca (2017). Utiliza ploteos específicos del paper original con títulos descriptivos locales.
+2. **`version_2/hidden_attractors/workflows/fractional_report_run.py`**
+   - *Razón*: Orquestador de reportes en lote legado para barridos de parámetros fraccionarios masivos. Las figuras se acoplan directamente a las plantillas HTML generadas.
+3. **`version_2/hidden_attractors/workflows/refined_basin.py`**
+   - *Razón*: Refinamiento de cuencas de atracción de alta resolución que guarda buffers temporales de grillas antes de la visualización final centralizada.
+4. **Módulos de ploteo genéricos (`version_2/hidden_attractors/plotting/plot_*.py`)**
+   - *Razón*: Funciones genéricas de ploteo de la librería (Nyquist, cuencas, diagramas de bifurcación) que configuran títulos informativos dinámicos dependientes de la configuración del sistema actual para facilitar la depuración interactiva.
+

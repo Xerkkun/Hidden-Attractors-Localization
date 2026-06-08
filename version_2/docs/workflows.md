@@ -140,3 +140,23 @@ quantities complement, but never replace, neighborhood and basin tests.
 `tools/legacy/` remains temporarily because maintained wrappers still depend
 on the native fractional Chua and Danca adapters there. It is not an
 alternative methodology. See [Migration To The Unified Methodology](migration_unified_methodology.md).
+
+---
+
+## Biased Chua Fractional Hidden Attractor Workflow (BDF)
+
+The BDF workflow represents the unified pipeline for discovering and verifying hidden attractors in the non-smooth fractional Chua system with biased describing functions ($c \neq 0$).
+
+The pipeline is implemented programmatically under:
+- [biased_chua.py](file:///c:/Users/moren/Desktop/Codes/Hidden%20Attractors%20Fractional%20Order/version_2/hidden_attractors/workflows/biased_chua.py)
+
+The official executable entry point is:
+- [run_example.py](file:///c:/Users/moren/Desktop/Codes/Hidden%20Attractors%20Fractional%20Order/version_2/examples/chua_nonsmooth_biased_hidden_attractor/run_example.py)
+
+### Pipeline Steps:
+1. **Paso 1: Búsqueda Centrada (c=0)** - Sirve como línea base de referencia (DF centrada).
+2. **Paso 2: Búsqueda de raíces BDF (c≠0)**, continuación homotópica afín y simulación larga con clasificación de periodicidad.
+3. **Paso 3: Verificación de ocultedad estándar** mediante barrido de esferas y validación de contrato.
+4. **Paso 4: Verificación de ocultedad extendida** mediante muestreo volumétrico (ball sampling) en paralelo hasta radio $r=2.0$.
+5. **Paso 5: Resumen y figuras** con exportación a la galería centralizada en `version_2/library_figures/` mediante la API de ploteo centralizada.
+

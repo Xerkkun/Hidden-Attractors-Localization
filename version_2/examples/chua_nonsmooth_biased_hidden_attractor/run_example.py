@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Orquestador Principal — Primer Atractor Oculto en Chua Fraccionario
+"""Orquestador Principal — Primer Atractor Oculto en Chua Fraccionario
 ====================================================================
 Ejecuta el pipeline completo en orden, o pasos individuales.
 
@@ -17,7 +16,7 @@ Pasos individuales:
 
 Pasos disponibles:
   1 – Búsqueda centrada de referencia (DF c=0)
-  2 – Búsqueda DF sesgada corregida (c≠0, continuación afín)
+  2 – Búsqueda DF sesgada corregida (c != 0, continuación afín)
   3 – Verificación de ocultedad estándar (225 muestras/equilibrio)
   4 – Verificación extendida con multiprocessing (hasta r=2.0)
   5 – Resumen final y galería de figuras
@@ -44,6 +43,14 @@ for p in [str(VERSION2), str(ROOT)]:
 
 import yaml
 
+from hidden_attractors.workflows.biased_chua import (
+    run_centered_reference,
+    run_biased_df_search,
+    run_hiddenness_verification,
+    run_extended_hiddenness,
+    run_summarize_and_plot,
+)
+
 CFG_PATH = VERSION2 / "configs" / "examples" / "chua_nonsmooth_biased_df_search.yaml"
 
 
@@ -52,7 +59,6 @@ def load_config(quick: bool = False) -> Dict[str, Any]:
         cfg = yaml.safe_load(f)
 
     if quick:
-        # Reducir tiempos para prueba de humo
         cfg["step1_centered_reference"]["t_sim_final"]    = 50.0
         cfg["step1_centered_reference"]["t_sim_transient"] = 10.0
         cfg["step1_centered_reference"]["t_transient"]    = 10.0
@@ -82,21 +88,17 @@ def banner(title: str) -> None:
 
 def run_step1(cfg: Dict[str, Any]) -> List[Dict]:
     banner("PASO 1 — Búsqueda Centrada de Referencia (DF c=0)")
-    from step1_centered_reference import run_centered_reference
     return run_centered_reference(cfg)
 
 
 def run_step2(cfg: Dict[str, Any]) -> List[Dict]:
     banner("PASO 2 — Búsqueda DF Sesgada Corregida")
-    from step2_biased_df_search import run_biased_df_search
     return run_biased_df_search(cfg)
 
 
 def run_step3(cfg: Dict[str, Any], step2_results: Optional[List[Dict]] = None) -> List[Dict]:
     banner("PASO 3 — Verificación de Ocultedad (Protocolo Estándar)")
-    from step3_hiddenness_verification import run_hiddenness_verification
 
-    # Construir lista de candidatos desde resultados del Paso 2
     if step2_results:
         traj_dir = ROOT / cfg["experiment"]["output_dir"] / "step2_biased_df" / "trajectories"
         candidates = []
@@ -114,7 +116,6 @@ def run_step3(cfg: Dict[str, Any], step2_results: Optional[List[Dict]] = None) -
                     "traj_path": str(traj_path),
                 })
     else:
-        # Usar candidatos históricos conocidos
         traj_dir = ROOT / cfg["experiment"]["output_dir"] / "step2_biased_df" / "trajectories"
         candidates = [
             {
@@ -146,7 +147,6 @@ def run_step4(cfg: Dict[str, Any]) -> Dict:
     banner("PASO 4 — Verificación Extendida Multiprocessing (r hasta 2.0)")
     import multiprocessing
     multiprocessing.freeze_support()
-    from step4_extended_hiddenness import run_extended_hiddenness
     traj_dir  = ROOT / cfg["experiment"]["output_dir"] / "step2_biased_df" / "trajectories"
     target    = cfg["step4_extended_hiddenness"]["target_candidate"]
     q         = float(cfg["system"]["q"])
@@ -166,7 +166,6 @@ def run_step4(cfg: Dict[str, Any]) -> Dict:
 
 def run_step5(cfg: Dict[str, Any]) -> None:
     banner("PASO 5 — Resumen Final y Galería de Figuras")
-    from step5_summarize_and_plot import run_summarize_and_plot
     run_summarize_and_plot(cfg)
 
 
@@ -199,7 +198,7 @@ def main() -> None:
     elif args.all:
         steps = [1, 2, 3, 4, 5]
     else:
-        steps = [1, 2, 3, 5]   # Por defecto: todos excepto el extendido
+        steps = [1, 2, 3, 5]
 
     print(f"\n{'='*65}")
     print("  PRIMER ATRACTOR OCULTO — CHUA FRACCIONARIO NO SUAVE")
