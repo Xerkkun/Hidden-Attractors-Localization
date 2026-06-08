@@ -18,10 +18,10 @@ chua_nonsmooth_biased_hidden_attractor/
 ```
 
 La lógica interna de los pasos está alojada en:
-- [biased_chua.py](file:///c:/Users/moren/Desktop/Codes/Hidden%20Attractors%20Fractional%20Order/version_2/hidden_attractors/workflows/biased_chua.py) (Módulo de Workflows)
-- [biased_chua.py](file:///c:/Users/moren/Desktop/Codes/Hidden%20Attractors%20Fractional%20Order/version_2/hidden_attractors/plotting/biased_chua.py) (Módulo de Ploteo centralizado)
+- [biased_chua.py](../../hidden_attractors/workflows/biased_chua.py) (Módulo de Workflows)
+- [biased_chua.py](../../hidden_attractors/plotting/biased_chua.py) (Módulo de Ploteo centralizado)
 
-Los scripts históricos e independientes (`step1_*.py` a `step5_*.py`) han sido archivados en [_archived_figure_scripts/examples/chua_nonsmooth_biased_hidden_attractor/](file:///c:/Users/moren/Desktop/Codes/Hidden%20Attractors%20Fractional%20Order/_archived_figure_scripts/examples/chua_nonsmooth_biased_hidden_attractor/) y están catalogados en el [Índice de Archivos](file:///c:/Users/moren/Desktop/Codes/Hidden%20Attractors%20Fractional%20Order/_archived_figure_scripts/ARCHIVE_INDEX.md).
+Los scripts históricos e independientes (`step1_*.py` a `step5_*.py`) han sido archivados en [_archived_figure_scripts/examples/chua_nonsmooth_biased_hidden_attractor/](../../../_archived_figure_scripts/examples/chua_nonsmooth_biased_hidden_attractor/) y están catalogados en el [Índice de Archivos](../../../_archived_figure_scripts/ARCHIVE_INDEX.md).
 
 ---
 

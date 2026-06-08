@@ -9,9 +9,12 @@ import numpy as np
 import pytest
 
 
-LEGACY_ROOT = Path(__file__).resolve().parents[1] / "tools" / "legacy"
-if str(LEGACY_ROOT) not in sys.path:
-    sys.path.insert(0, str(LEGACY_ROOT))
+# Add legacy tools paths to sys.path from archived directory and active legacy directory
+LEGACY_ROOT = Path(__file__).resolve().parents[2] / "_archived_figure_scripts" / "version_2_tools_legacy"
+ACTIVE_LEGACY = Path(__file__).resolve().parents[1] / "tools" / "legacy"
+for path in [LEGACY_ROOT, ACTIVE_LEGACY]:
+    if str(path) not in sys.path:
+        sys.path.insert(0, str(path))
 
 from early_periodicity_filter import classify_early_periodicity, run_early_periodicity_filter  # noqa: E402
 from lure_biased_multiparam_continuation import selected_seed_items  # noqa: E402

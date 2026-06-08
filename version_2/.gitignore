@@ -42,12 +42,6 @@ site/
 
 # Generated project outputs
 outputs/
-# Un-ignore static reference files inside validation/outputs that are committed
-# as ground-truth documents (not generated artifacts).
-!validation/outputs/
-!validation/outputs/**/.gitignore
-!validation/outputs/integrator_method_validation/
-!validation/outputs/integrator_method_validation/integrator_method_validation_summary.json
 runs*/
 hidden_verify/
 chua_piecewise/
@@ -58,10 +52,46 @@ __codex_dir_test/
 .runtime_cache/
 .runtime_native/
 
+# Ignore all dynamically generated output files under validation/outputs
+validation/outputs/**/*
+
+# But keep the committed/required reference case data
+!validation/outputs/**/.gitkeep
+!validation/outputs/**/.gitignore
+!validation/outputs/integrator_method_validation/*.csv
+!validation/outputs/integrator_method_validation/*.json
+!validation/outputs/lyapunov_benchmarks/**/*.csv
+!validation/outputs/lyapunov_benchmarks/**/*.json
+!validation/outputs/published_cases/**/*.json
+!validation/outputs/published_continuation_comparison/**/*.csv
+!validation/outputs/published_continuation_comparison/**/*.json
+
 # pytest-benchmark baselines (platform-specific; store explicitly when needed)
 .benchmarks/
 
 # Decide if outputs_unified/ should be versioned or not.
-# If you want to version it (recommended to preserve unifications and manifests), keep it unignored.
-# If you want to ignore it (e.g., to avoid committing 2+ GB of trajectory files), uncomment the line below:
-# outputs_unified/
+outputs_unified/
+
+# Generated project figures
+library_figures/
+
+# Clean repository strategy: Ignore all dynamic/generated graphic outputs
+*.png
+*.pdf
+*.svg
+*.jpg
+*.jpeg
+
+# Unignore documentation assets and reference papers
+!docs/assets/**/*.png
+!docs/assets/**/*.pdf
+!docs/assets/**/*.svg
+!docs/assets/**/*.jpg
+!docs/assets/**/*.jpeg
+!docs/**/*.pdf
+
+# Unignore committed validation reference cases (ground-truth plots)
+!validation/reference_cases/**/*.png
+!validation/reference_cases/**/*.pdf
+!validation/reference_cases/**/*.jpg
+!validation/reference_cases/**/*.jpeg

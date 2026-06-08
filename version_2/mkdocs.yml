@@ -11,6 +11,8 @@ theme:
 nav:
   - Home: index.md
   - Installation: installation.md
+  - Quick Start: quick_start.md
+  - Examples Index: examples_index.md
   - Getting Started: getting_started.md
   - Reference:
       - API Reference: api_reference.md

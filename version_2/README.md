@@ -99,6 +99,9 @@ compiler such as `gcc` on `PATH`; on macOS, OpenMP builds may require Homebrew
 
 ## Quick Start
 
+> 🚀 **Recommended Entry Point**: Read the **[Quick Start Guide](docs/quick_start.md)** for installation, executing the official Example 1, presets, and safety rules.
+> For a full list of workflows and presets, see the **[Examples Index](docs/examples_index.md)**.
+
 ### 1. High-Level CLI Presets
 
 After editable installation, the unified `hidden-attractors` CLI is available on your system path.

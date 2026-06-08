@@ -1,6 +1,6 @@
 {
   "run_mode": "balanced",
-  "output_root": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced",
+  "output_root": "version_1\\legacy_root\\chua_integer_runs\\balanced",
   "runtime_contract": {
     "order": "integer",
     "q_passed_to_c_backends": 1.0,
@@ -83,7 +83,7 @@
     },
     "lyapunov": {
       "enabled": true,
-      "backend_c": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\tools\\legacy\\chua_frac_lyapunov_efork_benettin.c",
+      "backend_c": "version_2\\tools\\legacy\\chua_frac_lyapunov_efork_benettin.c",
       "q": 1.0,
       "h": 0.01,
       "Lm": 1.0,
@@ -116,7 +116,7 @@
       "m0": -0.1768,
       "m1": -1.1468
     },
-    "matlab_reference": "C:/Users/moren/Documents/MATLAB/verifica_chua_entero.m",
+    "matlab_reference": "verifica_chua_entero.m",
     "P": [
       [
         1.241370160000001,
@@ -250,7 +250,7 @@
       1.26397184977323,
       -2.551063353867033
     ],
-    "summary_json": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\chua_integer_continuation_summary.json"
+    "summary_json": "version_1\\legacy_root\\chua_integer_runs\\balanced\\chua_integer_continuation_summary.json"
   },
   "final_attractor": {
     "target_seed_after_burn": [
@@ -272,10 +272,10 @@
     "integration_points": 3501,
     "plotted_points": 700,
     "figures": {
-      "linear_vs_original_x_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig03d_linear_vs_original_x.pdf",
-      "linear_vs_original_y_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig03e_linear_vs_original_y.pdf",
-      "linear_vs_original_z_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig03f_linear_vs_original_z.pdf",
-      "linear_vs_original_3d_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig03g_linear_vs_original_3d.pdf"
+      "linear_vs_original_x_pdf": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig03d_linear_vs_original_x.pdf",
+      "linear_vs_original_y_pdf": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig03e_linear_vs_original_y.pdf",
+      "linear_vs_original_z_pdf": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig03f_linear_vs_original_z.pdf",
+      "linear_vs_original_3d_pdf": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig03g_linear_vs_original_3d.pdf"
     }
   },
   "spectral": {
@@ -424,12 +424,12 @@
       }
     },
     "extra_figures": {
-      "fft_x_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11a_fft_x.pdf",
-      "fft_y_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11b_fft_y.pdf",
-      "fft_z_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11c_fft_z.pdf",
-      "psd_x_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11d_psd_x.pdf",
-      "psd_y_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11e_psd_y.pdf",
-      "psd_z_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11f_psd_z.pdf"
+      "fft_x_pdf": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11a_fft_x.pdf",
+      "fft_y_pdf": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11b_fft_y.pdf",
+      "fft_z_pdf": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11c_fft_z.pdf",
+      "psd_x_pdf": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11d_psd_x.pdf",
+      "psd_y_pdf": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11e_psd_y.pdf",
+      "psd_z_pdf": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11f_psd_z.pdf"
     },
     "notes": [
       "The direct FFT is the primary spectral artifact and is zoomed around the dominant frequencies.",
@@ -463,12 +463,12 @@
       "t_burn": 60.0,
       "n_blocks": 300,
       "t_block": 0.5,
-      "source_c": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\tools\\legacy\\chua_frac_lyapunov_efork_benettin.c",
-      "exe": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\native\\chua_integer_lyapunov_benettin.exe"
+      "source_c": "version_2\\tools\\legacy\\chua_frac_lyapunov_efork_benettin.c",
+      "exe": "version_1\\legacy_root\\chua_integer_runs\\balanced\\native\\chua_integer_lyapunov_benettin.exe"
     },
     "outputs": {
-      "csv": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\chua_integer_le_convergence.csv",
-      "pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig13_lyapunov_convergence.pdf"
+      "csv": "version_1\\legacy_root\\chua_integer_runs\\balanced\\chua_integer_le_convergence.csv",
+      "pdf": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig13_lyapunov_convergence.pdf"
     },
     "raw_stdout": "# LE_frac_standard 0.20824617851871649 0.013732698332286726 -1.3669300926593664\n# final_state -6.0419038609054816 -0.32575998613774754 8.6645895099103374\n",
     "notes": [
@@ -535,8 +535,8 @@
           "-O3",
           "-fopenmp",
           "-o",
-          "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\chua_piecewise\\native\\chua_hidden_backend_integer.exe",
-          "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\tools\\legacy\\chua_hidden_backend.c",
+          "version_1\\legacy_root\\chua_integer_runs\\balanced\\chua_piecewise\\native\\chua_hidden_backend_integer.exe",
+          "version_2\\tools\\legacy\\chua_hidden_backend.c",
           "-lm"
         ]
       },
@@ -740,13 +740,13 @@
       }
     ],
     "files": {
-      "summary_from_pipeline": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\chua_integer_pipeline_summary.json",
-      "csv_out": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\hidden_target_check_integer.csv",
-      "ref_csv_out": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\reference_section_integer.csv",
-      "summary_csv_out": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\summary_by_radius_integer.csv",
-      "json_out": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\hidden_target_summary_integer.json",
-      "fig_section": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\reference_section_integer.png",
-      "fig_probe": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\probe_summary_integer.png"
+      "summary_from_pipeline": "version_1\\legacy_root\\chua_integer_runs\\balanced\\chua_integer_pipeline_summary.json",
+      "csv_out": "version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\hidden_target_check_integer.csv",
+      "ref_csv_out": "version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\reference_section_integer.csv",
+      "summary_csv_out": "version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\summary_by_radius_integer.csv",
+      "json_out": "version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\hidden_target_summary_integer.json",
+      "fig_section": "version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\reference_section_integer.png",
+      "fig_probe": "version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\probe_summary_integer.png"
     },
     "notes": [
       "Integer-order verification uses the same C backend interface as the fractional pipeline.",
@@ -758,7 +758,7 @@
   "hiddenness_illustration": {
     "status": "ok",
     "method": "visualization of hidden verification probes from backend CSV",
-    "detail_csv": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\hidden_target_check_integer.csv",
+    "detail_csv": "version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\hidden_target_check_integer.csv",
     "total_counts": {
       "EQ": 369,
       "DIV": 69,
@@ -774,10 +774,10 @@
       "UNKNOWN": 0
     },
     "outputs": {
-      "overview_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig05b_hiddenness_overview.pdf",
-      "overview_png": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig05b_hiddenness_overview.png",
-      "zoom_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig05c_hiddenness_zoom.pdf",
-      "zoom_png": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig05c_hiddenness_zoom.png"
+      "overview_pdf": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig05b_hiddenness_overview.pdf",
+      "overview_png": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig05b_hiddenness_overview.png",
+      "zoom_pdf": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig05c_hiddenness_zoom.pdf",
+      "zoom_png": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig05c_hiddenness_zoom.png"
     },
     "interpretation": "No TARGET hits were reported in the sampled equilibrium neighborhoods."
   },
@@ -791,7 +791,7 @@
         "3": 27708,
         "4": 2268
       },
-      "figure": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig06a_basin_overlay_z0.pdf"
+      "figure": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig06a_basin_overlay_z0.pdf"
     },
     "z_attractor": {
       "z": -7.509075854668217,
@@ -802,7 +802,7 @@
         "3": 30235,
         "4": 689
       },
-      "figure": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig06b_basin_overlay_zfinal.pdf"
+      "figure": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig06b_basin_overlay_zfinal.pdf"
     }
   },
   "basin_plane_counts": {
@@ -818,7 +818,7 @@
         "3": 23902,
         "4": 536
       },
-      "figure": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig10a_basin_xy_final_state.pdf"
+      "figure": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig10a_basin_xy_final_state.pdf"
     },
     "xz": {
       "shape": [
@@ -832,7 +832,7 @@
         "3": 17741,
         "4": 3511
       },
-      "figure": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig10b_basin_xz_final_state.pdf"
+      "figure": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig10b_basin_xz_final_state.pdf"
     },
     "yz": {
       "shape": [
@@ -846,7 +846,7 @@
         "3": 23239,
         "4": 781
       },
-      "figure": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig10c_basin_yz_final_state.pdf"
+      "figure": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig10c_basin_yz_final_state.pdf"
     }
   },
   "basin_3d_counts": {
@@ -861,7 +861,7 @@
       "3": 35892,
       "4": 1240
     },
-    "figure": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig12_basin_3d_volume.pdf",
+    "figure": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig12_basin_3d_volume.pdf",
     "config": {
       "nx": 34,
       "ny": 34,
@@ -1531,9 +1531,9 @@
       }
     ],
     "figures": {
-      "alpha": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig08_bifurcation_alpha.pdf",
-      "beta": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig09_bifurcation_beta.pdf"
+      "alpha": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig08_bifurcation_alpha.pdf",
+      "beta": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig09_bifurcation_beta.pdf"
     }
   },
-  "figures_dir": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs"
+  "figures_dir": "version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs"
 }

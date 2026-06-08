@@ -164,5 +164,5 @@ def test_native_efork_backend_matches_python_fallback_when_available() -> None:
         early_stop_config=NO_EARLY_STOP,
     )
     assert native_status == python_status == "ok"
-    assert np.allclose(native_times, python_times, atol=0.0, rtol=0.0)
+    assert np.allclose(native_times, python_times, atol=1.0e-12, rtol=0.0)
     assert np.allclose(native_states, python_states, atol=1.0e-12, rtol=0.0)

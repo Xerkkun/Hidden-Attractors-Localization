@@ -59,7 +59,7 @@ def _find_key(value: Any, key: str) -> bool:
 def test_new_json_outputs_do_not_emit_obsolete_strong_flags() -> None:
     violations = []
     for path in _json_files():
-        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload = json.loads(path.read_text(encoding="utf-8-sig"))
         if _legacy(path):
             continue
         if _find_key(payload, "chaos_verified"):
@@ -83,7 +83,7 @@ def test_new_reports_centralize_repeated_caution_text() -> None:
     for path in _json_files():
         if _legacy(path):
             continue
-        text = path.read_text(encoding="utf-8").lower()
+        text = path.read_text(encoding="utf-8-sig").lower()
         for phrase in phrases:
             if text.count(phrase) > 1:
                 violations.append(f"{_relative(path)} repeats {phrase!r}")
@@ -92,10 +92,10 @@ def test_new_reports_centralize_repeated_caution_text() -> None:
 
 def test_phase_f_freeze_summary_uses_positive_evidence_vocabulary() -> None:
     path = ROOT / "validation" / "chaos_validation" / "phase_F_closure" / "phase_F_closure_summary.json"
-    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload = json.loads(path.read_text(encoding="utf-8-sig"))
     assert payload["phase_F_frozen"] is True
     assert payload["evidence_layer"] == "finite_time_chaos_evidence"
-    assert "chaos_verified" not in path.read_text(encoding="utf-8")
+    assert "chaos_verified" not in path.read_text(encoding="utf-8-sig")
 
 
 def test_f6_f7_phase_f_do_not_contain_obsolete_vocabulary() -> None:
@@ -115,7 +115,7 @@ def test_f6_f7_phase_f_do_not_contain_obsolete_vocabulary() -> None:
     for path in files:
         if not path.exists():
             continue
-        text = path.read_text(encoding="utf-8").lower()
+        text = path.read_text(encoding="utf-8-sig").lower()
         for term in forbidden:
             if term.lower() in text:
                 violations.append(f"{path.name} contains forbidden term: {term}")

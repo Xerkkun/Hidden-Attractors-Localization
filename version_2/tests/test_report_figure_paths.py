@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 
 def test_latex_figure_paths():
-    root_dir = Path("c:/Users/moren/Desktop/Codes/Hidden Attractors Fractional Order")
+    root_dir = Path(__file__).resolve().parents[2]
     
     tex_files = [
         root_dir / "DF y NC Chua entero y fraccionario copy/main.tex",

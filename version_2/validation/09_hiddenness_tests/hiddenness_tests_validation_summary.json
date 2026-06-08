@@ -22,6 +22,7 @@
     "t_final": 300.0,
     "t_transient": 100.0,
     "radii": [1e-05, 3e-05, 0.0001, 0.0003, 0.001, 0.01],
+    "hiddenness_radii": [1e-05, 3e-05, 0.0001, 0.0003, 0.001, 0.01],
     "samples_per_radius": [100, 150, 200, 250, 300, 350],
     "sampling_mode": "spherical_balls",
     "workers": 4
@@ -88,7 +89,7 @@
   "evidence_scope": {
     "classification": "official_summary_for_current_protocol",
     "current_contract_applied": true,
-    "numerical_evidence_executed_under_current_contract": true,
-    "legacy_exploratory_evidence_retained": false
+    "numerical_evidence_executed_under_current_contract": false,
+    "legacy_exploratory_evidence_retained": true
   }
 }

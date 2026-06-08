@@ -10,10 +10,12 @@ from pathlib import Path
 import pytest
 import numpy as np
 
-# Add legacy tools path to sys.path
-LEGACY_ROOT = Path(__file__).resolve().parents[1] / "tools" / "legacy"
-if str(LEGACY_ROOT) not in sys.path:
-    sys.path.insert(0, str(LEGACY_ROOT))
+# Add legacy tools paths to sys.path from archived directory and active legacy directory
+LEGACY_ROOT = Path(__file__).resolve().parents[2] / "_archived_figure_scripts" / "version_2_tools_legacy"
+ACTIVE_LEGACY = Path(__file__).resolve().parents[1] / "tools" / "legacy"
+for path in [LEGACY_ROOT, ACTIVE_LEGACY]:
+    if str(path) not in sys.path:
+        sys.path.insert(0, str(path))
 
 import lure_biased_multiparam_continuation as continuation
 import lure_biased_multiparam_search as search

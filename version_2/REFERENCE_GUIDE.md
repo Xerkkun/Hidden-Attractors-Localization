@@ -141,7 +141,7 @@ plots:
 
 ## 3. Registered Chaotic Systems
 
-Defined in [`hidden_attractors/systems/builtins.py`](file:///c:/Users/moren/Desktop/Codes/Hidden%20Attractors%20Fractional%20Order/version_2/hidden_attractors/systems/builtins.py), systems are retrieved via `get_system(name)`. Dotted / legacy names are supported via aliases:
+Defined in [`hidden_attractors/systems/builtins.py`](hidden_attractors/systems/builtins.py), systems are retrieved via `get_system(name)`. Dotted / legacy names are supported via aliases:
 
 | Registry Key | System Variant | Default Parameters | Default $q$ | Lur'e Split Support |
 | :--- | :--- | :--- | :--- | :--- |
@@ -155,7 +155,7 @@ Defined in [`hidden_attractors/systems/builtins.py`](file:///c:/Users/moren/Desk
 
 ## 4. Integrators Compatibility Matrix
 
-Numerical integration goes through the selector [`hidden_attractors/integrations/selector.py`](file:///c:/Users/moren/Desktop/Codes/Hidden%20Attractors%20Fractional%20Order/version_2/hidden_attractors/integrations/selector.py#L119-L195) to validate compatibility with fractional order $q$:
+Numerical integration goes through the selector [`hidden_attractors/integrations/selector.py`](hidden_attractors/integrations/selector.py#L119-L195) to validate compatibility with fractional order $q$:
 
 * **Fractional-Order ($0 < q < 1$)**:
   * `efork3` (or `efork`): Predictor-corrector Caputo method with fractional order (uses Numba/C-backend).
@@ -174,7 +174,7 @@ Numerical integration goes through the selector [`hidden_attractors/integrations
 Located under `hidden_attractors/analysis/`, these functions operate on simulated trajectories:
 
 * **Lyapunov ExponentQR Reorthonormalisation**:
-  * Wrapper [`integer_system_lyapunov_exponents(system, x0, h, t_final)`](file:///c:/Users/moren/Desktop/Codes/Hidden%20Attractors%20Fractional%20Order/version_2/hidden_attractors/analysis/lyapunov.py#L209-L274) uses Benettin QR factorization to compute Lyapunov spectrum.
+  * Wrapper [`integer_system_lyapunov_exponents(system, x0, h, t_final)`](hidden_attractors/analysis/lyapunov.py#L209-L274) uses Benettin QR factorization to compute Lyapunov spectrum.
 * **0-1 Test for Chaos**:
   * Gottwald & Melbourne method. Approximates asymptotic growth rates. Returns $\approx 1.0$ for chaos and $\approx 0.0$ for periodic behavior.
 * **Spectral Entropy**:

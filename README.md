@@ -6,6 +6,7 @@ A scientific research library for reproducing, auditing, and extending numerical
 
 ## 🗺️ Navigation / Navegación
 
+* 🚀 **[Quick Start Guide / Guía de Inicio Rápido](version_2/docs/quick_start.md)** — **Recommended entry point for new users / Ruta recomendada para usuarias nuevas.**
 * 🇬🇧 [English version of the Guide](#-english-installation-and-usage-guide)
 * 🇪🇸 [Versión en Español de la Guía](#-guía-de-instalación-y-uso-en-español)
 

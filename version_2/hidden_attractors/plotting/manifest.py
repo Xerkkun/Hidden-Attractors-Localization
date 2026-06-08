@@ -4,7 +4,8 @@ import csv
 from pathlib import Path
 
 # Base directory for library figures
-LIBRARY_FIGURES_ROOT = Path("c:/Users/moren/Desktop/Codes/Hidden Attractors Fractional Order/version_2/library_figures")
+from hidden_attractors.paths import PROJECT_ROOT
+LIBRARY_FIGURES_ROOT = PROJECT_ROOT / "library_figures"
 
 def load_manifest():
     """

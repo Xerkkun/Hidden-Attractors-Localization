@@ -43,3 +43,30 @@ chua_piecewise/
 /native/
 .tmp.driveupload/
 __codex_dir_test/
+.pytest_tmp/
+.runtime_cache/
+.runtime_native/
+
+# Generated project figures
+figures/
+
+# Clean repository strategy: Ignore all dynamic/generated graphic outputs
+*.png
+*.pdf
+*.svg
+*.jpg
+*.jpeg
+
+# Unignore documentation assets and reference papers in version_2
+!version_2/docs/assets/**/*.png
+!version_2/docs/assets/**/*.pdf
+!version_2/docs/assets/**/*.svg
+!version_2/docs/assets/**/*.jpg
+!version_2/docs/assets/**/*.jpeg
+!version_2/docs/**/*.pdf
+
+# Unignore committed validation reference cases (ground-truth plots) in version_2
+!version_2/validation/reference_cases/**/*.png
+!version_2/validation/reference_cases/**/*.pdf
+!version_2/validation/reference_cases/**/*.jpg
+!version_2/validation/reference_cases/**/*.jpeg

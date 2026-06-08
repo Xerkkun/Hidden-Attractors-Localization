@@ -85,7 +85,7 @@
 The `fractional_variational_abm_qr` method estimates the Lyapunov spectrum for Caputo fractional systems $0 < q < 1$. It uses an extended original–variational system solver and history-consistent QR reorthonormalisation.
 
 Validation configurations and metadata are defined in:
-[fractional_variational_abm_qr_validation.yaml](file:///c:/Users/moren/Desktop/Codes/Hidden%20Attractors%20Fractional%20Order/version_2/validation/chaos_validation/lyapunov_methods/fractional_variational_abm_qr_validation.yaml)
+[fractional_variational_abm_qr_validation.yaml](lyapunov_methods/fractional_variational_abm_qr_validation.yaml)
 
 ### Certifications & Status
 
