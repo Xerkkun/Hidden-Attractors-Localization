@@ -60,3 +60,8 @@ __codex_dir_test/
 
 # pytest-benchmark baselines (platform-specific; store explicitly when needed)
 .benchmarks/
+
+# Decide if outputs_unified/ should be versioned or not.
+# If you want to version it (recommended to preserve unifications and manifests), keep it unignored.
+# If you want to ignore it (e.g., to avoid committing 2+ GB of trajectory files), uncomment the line below:
+# outputs_unified/

@@ -715,7 +715,7 @@ def main() -> None:
     if args.only != "all":
         existing_path = out / "candidate_chaos_hiddenness_summary.json"
         if existing_path.exists():
-            with existing_path.open(encoding="utf-8") as handle:
+            with existing_path.open(encoding="utf-8-sig") as handle:
                 existing_summary = json.load(handle)
             existing_summary.update(summary)
             summary = existing_summary
