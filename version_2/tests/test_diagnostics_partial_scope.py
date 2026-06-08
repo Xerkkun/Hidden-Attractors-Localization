@@ -5,7 +5,7 @@ from pathlib import Path
 from hidden_attractors.paths import PROJECT_ROOT
 
 def test_diagnostics_partial_scope() -> None:
-    # 1. Verify stage 09 (hiddenness_tests) is hiddenness_exploratory_only
+    # 1. Verify stage 09 (hiddenness_tests) records the completed negative hiddenness verdict
     summary09_path = PROJECT_ROOT / "validation" / "09_hiddenness_tests" / "hiddenness_tests_validation_summary.json"
     assert summary09_path.exists()
     
@@ -13,7 +13,8 @@ def test_diagnostics_partial_scope() -> None:
         summary09_data = json.load(f)
         
     assert summary09_data["stage"] == "hiddenness_tests"
-    assert summary09_data["status"] == "hiddenness_exploratory_only"
+    assert summary09_data["status"] == "completed_self_excited_contact_detected"
+    assert summary09_data["verdict"] == "chaotic_self_excited_candidate_not_hidden_under_tested_equilibrium_neighborhoods"
     assert summary09_data["evidence_scope"]["current_contract_applied"] is True
     assert summary09_data["evidence_scope"]["classification"] == "official_summary_for_current_protocol"
     

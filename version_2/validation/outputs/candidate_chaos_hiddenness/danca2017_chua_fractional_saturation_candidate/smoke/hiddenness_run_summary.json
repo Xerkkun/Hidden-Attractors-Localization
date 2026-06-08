@@ -1,0 +1,68 @@
+{
+  "profile": "smoke",
+  "q": 0.9998,
+  "h": 0.01,
+  "t_final": 20.0,
+  "t_transient": 5.0,
+  "equilibria": {
+    "E0": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "E+": [
+      4.989260103763922,
+      0.002147979247215659,
+      -4.987112124516706
+    ],
+    "E-": [
+      -4.989260103763922,
+      -0.002147979247215659,
+      4.987112124516706
+    ]
+  },
+  "decisions": [
+    {
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "samples": 4,
+      "target_hits": 0,
+      "decision": "no_contact_detected"
+    },
+    {
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "samples": 4,
+      "target_hits": 0,
+      "decision": "no_contact_detected"
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "samples": 4,
+      "target_hits": 1,
+      "decision": "self_excited_contact_detected"
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "samples": 4,
+      "target_hits": 0,
+      "decision": "no_contact_detected"
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "samples": 4,
+      "target_hits": 0,
+      "decision": "no_contact_detected"
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "samples": 4,
+      "target_hits": 0,
+      "decision": "no_contact_detected"
+    }
+  ]
+}

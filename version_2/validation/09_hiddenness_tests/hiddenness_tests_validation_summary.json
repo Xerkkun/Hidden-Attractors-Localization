@@ -2,160 +2,93 @@
   "schema_version": "1.0",
   "protocol_version": "caputo_hidden_attractors_v1",
   "stage": "hiddenness_tests",
-  "status": "hiddenness_exploratory_only",
-  "candidate_id": null,
+  "status": "completed_self_excited_contact_detected",
+  "candidate_id": "m1_m1p2000_m0_m0p2000_branch_0",
+  "selection_id": "danca2017_nearby_saturation_candidate_q09998",
   "system": "fractional_nonsmooth_chua",
-  "numerical_contract": {
+  "parameters": {
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m0": -0.2,
+    "m1": -1.2,
     "q": 0.9998,
+    "h": 0.01
+  },
+  "numerical_contract": {
+    "integrator": "abm_fractional",
+    "memory_policy": "full_caputo_history_for_candidate_reference",
     "h": 0.01,
-    "t_final": 3000.0,
-    "t_transient": 120.0,
-    "backend": "efork_c",
-    "memory_policy": "finite_memory",
-    "memory_length": 40.0,
-    "tolerances": {
-      "equilibrium_residual": 1e-10,
-      "jacobian_error": 1e-06
-    },
-    "boundedness_thresholds": {
-      "divergence_norm": 120.0,
-      "nontrivial_range": 0.01
-    },
-    "equilibrium_distance_thresholds": {
-      "collapsed_distance": 0.001
-    },
-    "harmonic_residual_thresholds": {
-      "residual_keep": 0.05,
-      "rho_H_keep": 0.3
-    },
-    "similarity_thresholds": {
-      "target_cloud_norm": 0.08
-    },
-    "hiddenness_radii": [1e-05, 3e-05, 0.0001, 0.0003, 0.001, 0.01],
-    "samples_per_radius": 100,
-    "sample_growth_per_radius": 50,
-    "random_seed_policy": "fixed_reproducible",
-    "random_seed": 20260517,
-    "output_schema_version": "1.0",
-    "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)"
+    "t_final": 300.0,
+    "t_transient": 100.0,
+    "radii": [1e-05, 3e-05, 0.0001, 0.0003, 0.001, 0.01],
+    "samples_per_radius": [100, 150, 200, 250, 300, 350],
+    "sampling_mode": "spherical_balls",
+    "workers": 4
   },
-  "inputs": {},
+  "equilibria_tested": ["E+", "E-", "E0"],
+  "inputs": {
+    "candidate_reference": "../outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/candidate_chaos_hiddenness_summary.json",
+    "sampling_plan": "../outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/ball_sampling_plan.csv"
+  },
   "outputs": {
-    "branches": {
-      "full_history": {
-        "status": "completed",
-        "backend": "chua_frac_backend_lib.c",
-        "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
-        "is_lightweight": true,
-        "run_type": "exploratory_hiddenness_screen",
-        "contract": {
-          "q": 0.9998,
-          "h": 0.02,
-          "history_horizon": 30.02,
-          "memory_policy": "full_caputo_history_no_finite_memory_truncation",
-          "t_final": 30.0,
-          "t_burn": 15.0,
-          "radii": [
-            0.0001,
-            0.001
-          ],
-          "sampling_mode": "ball",
-          "samples_per_radius": 12,
-          "sample_growth_per_radius": 12
-        },
-        "decisions": [
-          {
-            "candidate_id": "current_centered_machado_b0_mu_2",
-            "tested_trajectories": 108,
-            "target_hits": 0,
-            "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
-            "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de historial completo; cero impactos no es demostracion."
-          },
-          {
-            "candidate_id": "current_centered_classical_b0",
-            "tested_trajectories": 108,
-            "target_hits": 0,
-            "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
-            "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de historial completo; cero impactos no es demostracion."
-          },
-          {
-            "candidate_id": "current_centered_machado_b0_mu_4",
-            "tested_trajectories": 108,
-            "target_hits": 0,
-            "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
-            "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de historial completo; cero impactos no es demostracion."
-          }
-        ],
-        "basins_and_bifurcations": "pending"
-      },
-      "finite_memory": {
-        "status": "completed",
-        "backend": "chua_frac_backend_lib.c",
-        "efork_stage": "K3 = h^q*f(x_n + a31*K1 + a32*K2)",
-        "is_lightweight": true,
-        "run_type": "exploratory_hiddenness_screen",
-        "contract": {
-          "q": 0.9998,
-          "h": 0.02,
-          "history_horizon": 20.0,
-          "memory_policy": "finite_caputo_history_window",
-          "t_final": 30.0,
-          "t_burn": 15.0,
-          "radii": [
-            0.0001,
-            0.001
-          ],
-          "sampling_mode": "ball",
-          "samples_per_radius": 12,
-          "sample_growth_per_radius": 12
-        },
-        "decisions": [
-          {
-            "candidate_id": "current_centered_machado_b0_mu_2",
-            "tested_trajectories": 108,
-            "target_hits": 0,
-            "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
-            "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de ventana finita; cero impactos no es demostracion."
-          },
-          {
-            "candidate_id": "current_centered_classical_b0",
-            "tested_trajectories": 108,
-            "target_hits": 0,
-            "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
-            "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de ventana finita; cero impactos no es demostracion."
-          },
-          {
-            "candidate_id": "current_centered_machado_b0_mu_4",
-            "tested_trajectories": 108,
-            "target_hits": 0,
-            "hiddenness_status": "compatible_with_hiddenness_under_tested_radii",
-            "contract_note": "Una coincidencia refuta ocultedad bajo el contrato EFORK de ventana finita; cero impactos no es demostracion."
-          }
-        ],
-        "basins_and_bifurcations": "pending"
-      }
-    },
-    "sampling_mode": "ball",
-    "is_lightweight": true
+    "decisions": "../outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/hiddenness_decisions.csv",
+    "results": "../outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/ball_sampling_results.csv",
+    "run_summary": "../outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/hiddenness_run_summary.json"
   },
-  "metrics": {},
-  "verdict": "exploratory_hiddenness_screen",
+  "decisions": [
+    {"equilibrium": "E+", "radius": 1e-05, "samples": 100, "target_hits": 49, "decision": "self_excited_contact_detected"},
+    {"equilibrium": "E+", "radius": 3e-05, "samples": 150, "target_hits": 67, "decision": "self_excited_contact_detected"},
+    {"equilibrium": "E+", "radius": 0.0001, "samples": 200, "target_hits": 95, "decision": "self_excited_contact_detected"},
+    {"equilibrium": "E+", "radius": 0.0003, "samples": 250, "target_hits": 119, "decision": "self_excited_contact_detected"},
+    {"equilibrium": "E+", "radius": 0.001, "samples": 300, "target_hits": 135, "decision": "self_excited_contact_detected"},
+    {"equilibrium": "E+", "radius": 0.01, "samples": 350, "target_hits": 184, "decision": "self_excited_contact_detected"},
+    {"equilibrium": "E-", "radius": 1e-05, "samples": 100, "target_hits": 49, "decision": "self_excited_contact_detected"},
+    {"equilibrium": "E-", "radius": 3e-05, "samples": 150, "target_hits": 67, "decision": "self_excited_contact_detected"},
+    {"equilibrium": "E-", "radius": 0.0001, "samples": 200, "target_hits": 97, "decision": "self_excited_contact_detected"},
+    {"equilibrium": "E-", "radius": 0.0003, "samples": 250, "target_hits": 135, "decision": "self_excited_contact_detected"},
+    {"equilibrium": "E-", "radius": 0.001, "samples": 300, "target_hits": 143, "decision": "self_excited_contact_detected"},
+    {"equilibrium": "E-", "radius": 0.01, "samples": 350, "target_hits": 165, "decision": "self_excited_contact_detected"},
+    {"equilibrium": "E0", "radius": 1e-05, "samples": 100, "target_hits": 0, "decision": "no_contact_detected"},
+    {"equilibrium": "E0", "radius": 3e-05, "samples": 150, "target_hits": 0, "decision": "no_contact_detected"},
+    {"equilibrium": "E0", "radius": 0.0001, "samples": 200, "target_hits": 0, "decision": "no_contact_detected"},
+    {"equilibrium": "E0", "radius": 0.0003, "samples": 250, "target_hits": 0, "decision": "no_contact_detected"},
+    {"equilibrium": "E0", "radius": 0.001, "samples": 300, "target_hits": 0, "decision": "no_contact_detected"},
+    {"equilibrium": "E0", "radius": 0.01, "samples": 350, "target_hits": 0, "decision": "no_contact_detected"}
+  ],
+  "metrics": {
+    "total_trajectories": 4050,
+    "target_candidate": 1305,
+    "equilibrium": 1232,
+    "diverged": 1395,
+    "no_target_match": 118,
+    "target_hits_E_plus": 649,
+    "target_hits_E_minus": 656,
+    "target_hits_E0": 0
+  },
+  "verdict": "chaotic_self_excited_candidate_not_hidden_under_tested_equilibrium_neighborhoods",
+  "interpretation": "The candidate is not promoted as hidden because contacts with the target candidate were detected from neighborhoods of E+ and E-.",
   "files": {
     "report": "hiddenness_tests_validation.md",
-    "plan": "ball_sampling_plan.csv",
-    "results": "ball_sampling_results.csv",
-    "basin_slices": "basin_slices_summary.json"
+    "summary": "../outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/candidate_chaos_hiddenness_summary.json",
+    "decisions": "../outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/hiddenness_decisions.csv",
+    "results": "../outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/ball_sampling_results.csv",
+    "figures": [
+      "../../../DF y NC Chua entero y fraccionario copy/Figs/chua_frac_ns_fig13_hiddenness_spherical_probes.png",
+      "../../../DF y NC Chua entero y fraccionario copy/Figs/chua_frac_ns_fig14_hiddenness_contact_heatmap.png"
+    ]
   },
   "provenance": {
-    "repository_commit": "d6694319908fbb2650d8ca554f1c9ec13b075f45",
-    "working_tree_dirty": false,
-    "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "implementation_sources_sha256": "42f8194cfb022c9bfc0df391c94fcd9f23d73107d9529d31237d69c25de76334"
+    "run_command": "python tools/run_saturation_candidate_chaos_hiddenness_tests.py --profile report --only all --workers 4",
+    "stdout": "../outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/run_stdout.log",
+    "stderr": "../outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/run_stderr.log"
   },
+  "run_metadata": null,
+  "metadata_validation_errors": [],
   "evidence_scope": {
     "classification": "official_summary_for_current_protocol",
     "current_contract_applied": true,
-    "numerical_evidence_executed_under_current_contract": false,
-    "legacy_exploratory_evidence_retained": true
+    "numerical_evidence_executed_under_current_contract": true,
+    "legacy_exploratory_evidence_retained": false
   }
 }

@@ -1,0 +1,492 @@
+{
+  "case_id": "m1_m1p2000_m0_m0p2000_branch_0",
+  "date": "2026-06-07",
+  "scope": "candidate_isolation_before_hiddenness_tests",
+  "parameters": {
+    "model": "nonsmooth",
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m0": -0.2,
+    "m1": -1.2,
+    "q_dynamics": 0.9998
+  },
+  "reference_danca_parameters": {
+    "model": "nonsmooth",
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m0": -0.1768,
+    "m1": -1.1468,
+    "q_for_matignon_comparison": 0.9998,
+    "equilibria": {
+      "E0": {
+        "point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "jacobian_eigenvalues": [
+          [
+            -7.958726111305269,
+            0.0
+          ],
+          [
+            -0.003808864347369434,
+            3.2494460857581156
+          ],
+          [
+            -0.003808864347369434,
+            -3.2494460857581156
+          ]
+        ],
+        "min_abs_arg": 1.571968484295728,
+        "matignon_threshold_qpi2": 1.5704821675295375,
+        "locally_asymptotically_stable_matignon": true
+      },
+      "E+": {
+        "point": [
+          6.5883078865388685,
+          0.0028364022560936064,
+          -6.585471484282775
+        ],
+        "jacobian_eigenvalues": [
+          [
+            2.2193492642258335,
+            0.0
+          ],
+          [
+            -0.9915895521129157,
+            2.4067596392452995
+          ],
+          [
+            -0.9915895521129157,
+            -2.4067596392452995
+          ]
+        ],
+        "min_abs_arg": 0.0,
+        "matignon_threshold_qpi2": 1.5704821675295375,
+        "locally_asymptotically_stable_matignon": false
+      },
+      "E-": {
+        "point": [
+          -6.5883078865388685,
+          -0.0028364022560936064,
+          6.585471484282775
+        ],
+        "jacobian_eigenvalues": [
+          [
+            2.2193492642258335,
+            0.0
+          ],
+          [
+            -0.9915895521129157,
+            2.4067596392452995
+          ],
+          [
+            -0.9915895521129157,
+            -2.4067596392452995
+          ]
+        ],
+        "min_abs_arg": 0.0,
+        "matignon_threshold_qpi2": 1.5704821675295375,
+        "locally_asymptotically_stable_matignon": false
+      }
+    }
+  },
+  "selected_experiment_parameters": {
+    "model": "nonsmooth",
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m0": -0.2,
+    "m1": -1.2,
+    "q_for_matignon_comparison": 0.9998,
+    "equilibria": {
+      "E0": {
+        "point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "jacobian_eigenvalues": [
+          [
+            -7.779782464790126,
+            0.0
+          ],
+          [
+            0.0048112323950654234,
+            3.239934463362673
+          ],
+          [
+            0.0048112323950654234,
+            -3.239934463362673
+          ]
+        ],
+        "min_abs_arg": 1.569311349579165,
+        "matignon_threshold_qpi2": 1.5704821675295375,
+        "locally_asymptotically_stable_matignon": false
+      },
+      "E+": {
+        "point": [
+          4.989260103763922,
+          0.002147979247215659,
+          -4.987112124516706
+        ],
+        "jacobian_eigenvalues": [
+          [
+            2.729537494534471,
+            0.0
+          ],
+          [
+            -1.0217487472672357,
+            2.5408656164340786
+          ],
+          [
+            -1.0217487472672357,
+            -2.5408656164340786
+          ]
+        ],
+        "min_abs_arg": 0.0,
+        "matignon_threshold_qpi2": 1.5704821675295375,
+        "locally_asymptotically_stable_matignon": false
+      },
+      "E-": {
+        "point": [
+          -4.989260103763922,
+          -0.002147979247215659,
+          4.987112124516706
+        ],
+        "jacobian_eigenvalues": [
+          [
+            2.729537494534471,
+            0.0
+          ],
+          [
+            -1.0217487472672357,
+            2.5408656164340786
+          ],
+          [
+            -1.0217487472672357,
+            -2.5408656164340786
+          ]
+        ],
+        "min_abs_arg": 0.0,
+        "matignon_threshold_qpi2": 1.5704821675295375,
+        "locally_asymptotically_stable_matignon": false
+      }
+    }
+  },
+  "planned_lyapunov_characterization": {
+    "primary_method": "fractional_variational_abm_qr",
+    "primary_memory_mode": "full",
+    "secondary_method": "fractional_cloned_dynamics_abm_gs_published",
+    "secondary_memory_protocol": "published_block_restart",
+    "purpose": "finite_time_chaos_characterization",
+    "positive_criterion": "at_least_one_positive_exponent_with_bounded_noncollapsed_trajectory",
+    "scope_note": "Lyapunov exponents characterize chaos evidence; hiddenness is decided by equilibrium-neighborhood basin probes."
+  },
+  "proposed_fractional_method": {
+    "seed": {
+      "q_seed": 0.9998,
+      "omega0": 2.0402860510799403,
+      "k": 0.2632227929621655,
+      "A0": 4.801923641567804,
+      "seed": [
+        4.801923641567804,
+        0.303954955161402,
+        -6.860961520018262
+      ],
+      "modal_vector": [
+        [
+          1.0,
+          -0.0
+        ],
+        [
+          0.06329858153724456,
+          0.24124251905522717
+        ],
+        [
+          -1.4287943816154045,
+          0.3705259165556302
+        ]
+      ],
+      "matched_eigenvalue": [
+        0.0006408833485833654,
+        2.039994989634816
+      ],
+      "P0": [
+        [
+          -0.5346245818466644,
+          8.4562,
+          0.0
+        ],
+        [
+          1.0,
+          -1.0,
+          1.0
+        ],
+        [
+          0.0,
+          -12.0732,
+          -0.0052
+        ]
+      ],
+      "P0_eigenvalues": [
+        [
+          -1.54110634854383,
+          0.0
+        ],
+        [
+          0.0006408833485826992,
+          2.039994989634817
+        ],
+        [
+          0.0006408833485826992,
+          -2.039994989634817
+        ]
+      ],
+      "W": [
+        -3.799063100678123,
+        6.083597625661242e-13
+      ],
+      "N_A": 0.26322279296241446,
+      "closure_residual_1_plus_WN": 9.593689113616526e-13
+    },
+    "continuation": {
+      "integrator": "ABM",
+      "derivative": "Caputo",
+      "q": 0.9998,
+      "h": 0.01,
+      "lambda_values": "0.0:0.1:1.0",
+      "t_transient_per_step": 30.0,
+      "t_keep_per_step": 30.0,
+      "full_memory_summary_row": {
+        "case_id": "m1_m1p2000_m0_m0p2000_branch_0",
+        "m1": "-1.2",
+        "m0": "-0.2",
+        "omega0": "2.0402860510799403",
+        "k": "0.2632227929621655",
+        "A0": "4.801923641567804",
+        "continuation_status": "ok",
+        "simulation_status": "ok",
+        "verdict": "chaotic_candidate_pending_robustness",
+        "final_state": "[-1.5774788811484806, -0.28498901376346114, 4.364931371054484]"
+      },
+      "window_memory_summary_row": {
+        "case_id": "m1_m1p2000_m0_m0p2000_branch_0",
+        "m1": "-1.2",
+        "m0": "-0.2",
+        "omega0": "2.0402860510799403",
+        "k": "0.2632227929621655",
+        "A0": "4.801923641567804",
+        "continuation_status": "ok",
+        "simulation_status": "ok",
+        "verdict": "chaotic_candidate_pending_robustness",
+        "final_state": "[2.3389458076689804, 1.297968983009973, -2.202618810907998]"
+      },
+      "full_eta1_state": [
+        -1.5774788811484806,
+        -0.28498901376346114,
+        4.364931371054484
+      ],
+      "full_initial_conditions": [
+        [
+          4.801923641567804,
+          0.303954955161402,
+          -6.860961520018262
+        ],
+        [
+          -4.7812065276762965,
+          -0.4142334847832832,
+          6.659969398158066
+        ],
+        [
+          4.723893737914311,
+          0.29906776949471264,
+          -6.7457572695517785
+        ],
+        [
+          -3.492057685201372,
+          0.5332953438329273,
+          6.077517192098379
+        ],
+        [
+          -3.763996651503529,
+          -0.8571131745114817,
+          4.693066609138653
+        ],
+        [
+          -4.04489470756787,
+          -0.703682519157713,
+          5.420511611599875
+        ],
+        [
+          0.5239573009402054,
+          1.1902623700276362,
+          1.577361664728664
+        ],
+        [
+          -4.735780515599274,
+          -0.4695026404294605,
+          6.5953896128837455
+        ],
+        [
+          -0.2807190728145814,
+          1.0649356418836626,
+          2.5080430736987074
+        ],
+        [
+          -1.1254585678332685,
+          0.943365039997295,
+          4.184003806953439
+        ],
+        [
+          -0.6547237260485188,
+          -0.9493292632203643,
+          -2.1544785704810048
+        ]
+      ],
+      "window_eta1_state": [
+        2.3389458076689804,
+        1.297968983009973,
+        -2.202618810907998
+      ]
+    },
+    "final_simulation": {
+      "integrator": "ABM",
+      "memory_mode": "full",
+      "h": 0.01,
+      "t_final": 300.0,
+      "t_transient": 100.0,
+      "target_reference_state": [
+        -0.6354433769533847,
+        -1.2449922866189083,
+        -1.534586007323108
+      ],
+      "frequency": {
+        "fft_hz": 0.3899805009749513,
+        "fft_rad_s": 2.4503197538123485,
+        "psd_hz": 0.390625,
+        "psd_rad_s": 2.454369260617026
+      },
+      "hiddenness_tests": "not_run",
+      "lyapunov_tests": "not_run"
+    }
+  },
+  "article_style_integer_comparison": {
+    "reason": "Danca 2017 does not report a continuation algorithm; this artifact records the integer DF plus integer continuation control route.",
+    "seed": {
+      "q_seed": 1.0,
+      "omega0": 2.0391869399588547,
+      "k": 0.2630673545150665,
+      "A0": 4.804803431820183,
+      "seed": [
+        4.804803431820182,
+        0.3030262414097723,
+        -6.864509178296387
+      ],
+      "modal_vector": [
+        [
+          0.9999999999999999,
+          -0.0
+        ],
+        [
+          0.06306735451505832,
+          0.24114696198752505
+        ],
+        [
+          -1.4286763809806753,
+          0.3697530876523733
+        ]
+      ],
+      "matched_eigenvalue": [
+        -6.94999613415348e-14,
+        2.0391869399589106
+      ],
+      "P0": [
+        [
+          -0.5333101632503057,
+          8.4562,
+          0.0
+        ],
+        [
+          1.0,
+          -1.0,
+          1.0
+        ],
+        [
+          0.0,
+          -12.0732,
+          -0.0052
+        ]
+      ],
+      "P0_eigenvalues": [
+        [
+          -1.5385101632501617,
+          0.0
+        ],
+        [
+          -6.933342788784103e-14,
+          2.0391869399589124
+        ],
+        [
+          -6.933342788784103e-14,
+          -2.0391869399589124
+        ]
+      ],
+      "W": [
+        -3.8013078507722153,
+        -1.97623040154582e-13
+      ],
+      "N_A": 0.2630673545149763,
+      "closure_residual_1_plus_WN": 3.4686600683186237e-13
+    },
+    "continuation": {
+      "integrator": "RK4",
+      "derivative": "integer_ode",
+      "h": 0.01,
+      "lambda_values": "0.0:0.1:1.0",
+      "t_per_step": 60.0,
+      "eta1_state": [
+        3.2272033125584643,
+        1.0659395723182292,
+        -4.1739262543929305
+      ]
+    },
+    "integer_final_simulation": {
+      "h": 0.01,
+      "t_final": 300.0,
+      "t_transient": 100.0,
+      "diagnostic_label": "chaotic_candidate_pending_robustness",
+      "frequency": {
+        "fft_hz": 0.39498025098745065,
+        "fft_rad_s": 2.4817341096304553,
+        "psd_hz": 0.390625,
+        "psd_rad_s": 2.454369260617026
+      }
+    },
+    "caputo_seed1_existing_row": {
+      "case_id": "m1_m1p2000_m0_m0p2000_branch_0",
+      "m1": "-1.2",
+      "m0": "-0.2",
+      "omega0": "2.0391869399588547",
+      "k": "0.2630673545150665",
+      "A0": "4.804803431820183",
+      "continuation_status": "ok",
+      "simulation_status": "ok",
+      "verdict": "chaotic_candidate_pending_robustness",
+      "final_state": "[5.658588628546241, -0.35752352140248367, -7.182793468822785]"
+    }
+  },
+  "figure_files": {
+    "transfer_real": "Figs/chua_frac_ns_fig01a_transfer_real.pdf",
+    "transfer_imag": "Figs/chua_frac_ns_fig01b_transfer_imag.pdf",
+    "transfer_combined_legacy": "Figs/chua_frac_ns_fig01_transfer_real_imag.pdf",
+    "continuation": "Figs/chua_frac_ns_fig02_continuation_story.pdf",
+    "attractor": "Figs/chua_frac_ns_fig03_final_attractor.pdf",
+    "projections": "Figs/chua_frac_ns_fig03abc_final_attractor_projections.pdf",
+    "time_series": "Figs/chua_frac_ns_fig04_time_series.pdf",
+    "fft_x": "Figs/chua_frac_ns_fig11a_fft_x.pdf"
+  }
+}

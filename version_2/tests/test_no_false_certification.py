@@ -5,14 +5,14 @@ from pathlib import Path
 from hidden_attractors.paths import PROJECT_ROOT
 
 def test_no_false_certification() -> None:
-    # Verify that stages 08, 09, and 10 are NOT falsely certified as complete
+    # Verify that incomplete stages remain open and hiddenness is closed only with a negative verdict
     validation_root = PROJECT_ROOT / "validation"
     manifest_path = validation_root / "00_manifest" / "validation_manifest.json"
     
     with open(manifest_path, "r", encoding="utf-8") as f:
         manifest_data = json.load(f)
         
-    incomplete_stages = ["robustness", "hiddenness_tests", "diagnostics"]
+    incomplete_stages = ["robustness", "diagnostics"]
     
     for stage_name in incomplete_stages:
         stage_path = manifest_data["stages"][stage_name]
@@ -29,18 +29,28 @@ def test_no_false_certification() -> None:
         # Verify specific honest statuses
         if stage_name == "robustness":
             assert summary_data["status"] == "pending_not_in_scope_current_phase"
-        elif stage_name == "hiddenness_tests":
-            assert summary_data["status"] == "hiddenness_exploratory_only"
         elif stage_name == "diagnostics":
             assert summary_data["status"] == "diagnostics_partial_current_protocol"
+
+    hiddenness_path = validation_root / manifest_data["stages"]["hiddenness_tests"]
+    with open(hiddenness_path, "r", encoding="utf-8") as f:
+        hiddenness_data = json.load(f)
+
+    assert hiddenness_data["status"] == "completed_self_excited_contact_detected"
+    assert hiddenness_data["verdict"] == "chaotic_self_excited_candidate_not_hidden_under_tested_equilibrium_neighborhoods"
+    assert hiddenness_data["metrics"]["target_hits_E_plus"] > 0
+    assert hiddenness_data["metrics"]["target_hits_E_minus"] > 0
+    serialized_hiddenness = json.dumps(hiddenness_data).lower()
+    assert '"hidden_verified": true' not in serialized_hiddenness
+    assert '"hiddenness_verified": true' not in serialized_hiddenness
             
     # Verify they are correctly placed under pending/failed_or_incomplete stages in the manifest
     assert "robustness" in manifest_data["pending_stages"]
-    assert "hiddenness_tests" in manifest_data["pending_stages"]
+    assert "hiddenness_tests" not in manifest_data["pending_stages"]
     assert "diagnostics" in manifest_data["pending_stages"]
     
     assert "robustness" in manifest_data["failed_or_incomplete_stages"]
-    assert "hiddenness_tests" in manifest_data["failed_or_incomplete_stages"]
+    assert "hiddenness_tests" not in manifest_data["failed_or_incomplete_stages"]
     assert "diagnostics" in manifest_data["failed_or_incomplete_stages"]
 
 

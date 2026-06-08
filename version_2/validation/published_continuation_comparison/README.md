@@ -118,6 +118,26 @@ The pipeline will **not** invent values to fill missing data.
   comparison modes are disabled. Outputs `published_data_missing`.
 - **Status field**: `paper_does_not_report_continuation`, `published_data_missing`.
 
+#### Candidate-selection traceability derived from Danca 2017
+
+The nearby candidate used by the current report is not stored as a top-level
+`published_continuation_comparison/*.yaml` case, because the runner executes all
+top-level YAML files as published article comparisons. Its traceability record is
+kept separately at:
+
+```
+validation/candidate_selection/danca2017_nearby_saturation_candidate.yaml
+```
+
+That record preserves the exact Danca parameters as the published reference and
+documents the derived sweep candidate
+`m1_m1p2000_m0_m0p2000_branch_0`, with `(m0,m1)=(-0.2,-1.2)`. It also records
+the proposed fractional DF plus ABM-Caputo continuation route and the integer
+DF plus integer-continuation control route used only because the article does
+not specify a continuation algorithm. It must not be read as a closed
+reproduction of the Danca paper, and it makes no hiddenness or Lyapunov-based
+chaos claim.
+
 ### 3. Wu et al. 2023
 
 - **System**: Chua fractional arctan, q=0.99.

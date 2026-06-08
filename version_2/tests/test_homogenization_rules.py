@@ -213,7 +213,11 @@ def test_official_manifest_pending_stages_match_real_stage_summaries() -> None:
     root = Path(__file__).resolve().parents[1]
     contract = json.loads((root / "configs" / "validation_contract.json").read_text(encoding="utf-8"))
     manifest = json.loads((root / "validation" / "00_manifest" / "validation_manifest.json").read_text(encoding="utf-8"))
-    closed_statuses = {"completed", "passed_python_wolfram"}
+    closed_statuses = {
+        "completed",
+        "passed_python_wolfram",
+        "completed_self_excited_contact_detected",
+    }
     expected_pending = []
     for stage in contract["stages"]:
         summary_path = root / "validation" / stage["id"] / stage["summary"]

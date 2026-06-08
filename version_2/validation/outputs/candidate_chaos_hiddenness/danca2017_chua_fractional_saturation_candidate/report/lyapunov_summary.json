@@ -1,0 +1,71 @@
+{
+  "profile": "report",
+  "methods": [
+    {
+      "method": "fractional_variational_abm_qr",
+      "status": "ok",
+      "exponents": [
+        0.13145143184775676,
+        -0.013982768116623223,
+        -0.024253343049259947
+      ],
+      "max_exponent": 0.13145143184775676,
+      "warnings": [
+        "Results are finite-time local Lyapunov exponents, NOT asymptotic proofs.",
+        "Caputo memory: history-aware QR transforms the entire stored variational history at each reorthonormalisation step.",
+        "Does not certify chaos; does not certify hiddenness of attractors.",
+        "chaos_certified_by_this_pipeline: false",
+        "hiddenness_certified_by_this_pipeline: false",
+        "validated_against_published_benchmarks: false (F2 \u2014 pending).",
+        "Not validated for non-smooth systems (e.g., Chua saturation); derivative undefined at switching surfaces."
+      ],
+      "request": {
+        "method": "fractional_variational_abm_qr",
+        "q": 0.9998,
+        "h": 0.01,
+        "t_final": 160.0,
+        "t_burn": 40.0,
+        "reorthonormalize_every": 10,
+        "reorthonormalization_time": 0.1,
+        "memory_mode": "full",
+        "memory_window": null
+      }
+    },
+    {
+      "method": "fractional_cloned_dynamics_abm_gs_published",
+      "status": "ok",
+      "exponents": [
+        0.18505827645014455,
+        0.008263025523137877,
+        -4.329485944009468
+      ],
+      "max_exponent": 0.18505827645014455,
+      "warnings": [
+        "cloned_dynamics_no_jacobian_required",
+        "Finite-time local Lyapunov indicators; convergence depends on delta, t_clone, K, h, and orders.",
+        "Fractional memory protocol is published_block_restart; this is not a full-memory Caputo-aware claim.",
+        "Does not certify chaos; does not certify hiddenness of attractors."
+      ],
+      "request": {
+        "method": "fractional_cloned_dynamics_abm_gs_published",
+        "q": 0.9998,
+        "h": 0.01,
+        "t_final": 160.0,
+        "t_burn": 40.0,
+        "reorthonormalize_every": 10,
+        "reorthonormalization_time": 0.1,
+        "memory_mode": "published_block_restart",
+        "memory_window": null,
+        "orders": [
+          0.9998,
+          0.9998,
+          0.9998
+        ],
+        "t_clone": 2.0,
+        "k_blocks": 100,
+        "delta": 0.0001,
+        "memory_protocol": "published_block_restart"
+      }
+    }
+  ]
+}

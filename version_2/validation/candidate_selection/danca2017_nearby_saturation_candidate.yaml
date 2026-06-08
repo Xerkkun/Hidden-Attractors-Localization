@@ -1,0 +1,105 @@
+selection_id: "danca2017_nearby_saturation_candidate_q09998"
+candidate_id: "m1_m1p2000_m0_m0p2000_branch_0"
+reference_case_id: "danca2017_chua_fractional_saturation"
+reference_id: "danca2017"
+system_id: "chua_fractional_saturation"
+
+published_reference:
+  role: "reference_case_not_overwritten"
+  paper_title: "Hidden chaotic attractors in fractional-order systems"
+  doi: "10.1007/s11071-017-3472-7"
+  exact_parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+    q: 0.9998
+  missing_values:
+    - "initial_condition"
+    - "describing_function_omega0"
+    - "describing_function_gain_k"
+    - "describing_function_amplitude_A0"
+    - "seed_coordinates"
+    - "continuation_algorithm"
+  interpretation: >
+    The exact Danca parameter set is retained as the published reference.
+    The selected candidate below is a nearby parameter-sweep result, not a
+    replacement for the published case and not a closed reproduction of the
+    article.
+
+parameter_change_procedure:
+  fixed_parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    q: 0.9998
+  varied_parameters:
+    m1_grid: [-0.8, -1.0, -1.2, -1.4, -1.6]
+    m0_grid: [-0.1, -0.2, -0.3, -0.4]
+  selected_pair:
+    m0: -0.2
+    m1: -1.2
+  rationale: >
+    Only the nonsmooth slopes were varied around the published Danca slopes.
+    The linear part and fractional order were kept fixed to preserve the case
+    lineage.
+
+proposed_method:
+  describing_function: "fractional_lure_first_harmonic"
+  q_seed: 0.9998
+  continuation: "caputo_abm_full_memory"
+  continuation_grid: "epsilon=0.0:0.1:1.0"
+  h: 0.01
+  t_transient_per_step: 30.0
+  t_keep_per_step: 30.0
+  final_integration:
+    integrator: "ABM"
+    derivative: "Caputo"
+    memory_mode: "full"
+    t_final: 300.0
+    t_transient: 100.0
+  seed:
+    omega0: 2.0402860510799403
+    k: 0.2632227929621655
+    A0: 4.801923641567804
+    x0: [4.801923641567804, 0.303954955161402, -6.860961520018262]
+  result:
+    continuation_status: "ok"
+    simulation_status: "ok"
+    verdict: "chaotic_candidate_pending_robustness"
+
+memory_sensitivity:
+  full_memory_verdict: "chaotic_candidate_pending_robustness"
+  window_memory:
+    window_length_seconds: 10.0
+    verdict: "chaotic_candidate_pending_robustness"
+
+article_style_control:
+  purpose: "traceability_when_article_continuation_is_not_specified"
+  describing_function: "integer_laplace_lure_first_harmonic"
+  q_seed: 1.0
+  continuation: "integer_rk4"
+  h: 0.01
+  seed:
+    omega0: 2.0391869399588547
+    k: 0.2630673545150665
+    A0: 4.804803431820183
+    x0: [4.804803431820182, 0.3030262414097723, -6.864509178296387]
+  diagnostic_label: "chaotic_candidate_pending_robustness"
+  interpretation: >
+    This is a control route because the article does not specify numerical
+    continuation. It must not be reported as published-continuation
+    reproduction.
+
+artifacts:
+  method_comparison_json: "validation/outputs/published_continuation_comparison/danca2017_chua_fractional_saturation_candidate/candidate_method_comparison.json"
+  fractional_full_continuation_steps: "validation/outputs/published_continuation_comparison/danca2017_chua_fractional_saturation_candidate/fractional_full_continuation_steps.csv"
+  fractional_window_continuation_steps: "validation/outputs/published_continuation_comparison/danca2017_chua_fractional_saturation_candidate/fractional_window_continuation_steps.csv"
+  integer_continuation_steps: "validation/outputs/published_continuation_comparison/danca2017_chua_fractional_saturation_candidate/integer_continuation_steps.csv"
+
+no_claims:
+  hiddenness_certified_by_this_pipeline: false
+  chaos_certified_by_this_pipeline: false
+  no_hidden_verified_claim: true
+  exact_published_danca_reproduced: false

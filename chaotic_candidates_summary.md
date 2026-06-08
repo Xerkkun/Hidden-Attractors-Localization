@@ -100,31 +100,31 @@ Para determinar si estos atractores son diferentes o el mismo, analizamos la dis
 Se integraron los 13 candidatos hasta $t_{final} = 500\text{ s}$ con un paso $h = 0.005\text{ s}$, eliminando los primeros $100\text{ s}$ de transitorio. A continuación se presentan las visualizaciones de espacio de fases en una cuadrícula de 2x2 comparando **ADM, ABM, EFORK Truncado (ventana de memoria de 40.0s) y EFORK Completo (historial completo)** para cada candidato:
 
 ````carousel
-![Caso 1](file:///C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m1_rho_1p25_branch_0_four_solvers_phase3d.png)
+![Caso 1](figures/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m1_rho_1p25_branch_0_four_solvers_phase3d.png)
 <!-- slide -->
-![Caso 2](file:///C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m1_rho_1p5_branch_0_four_solvers_phase3d.png)
+![Caso 2](figures/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m1_rho_1p5_branch_0_four_solvers_phase3d.png)
 <!-- slide -->
-![Caso 3](file:///C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m1p2_rho_1p25_branch_0_four_solvers_phase3d.png)
+![Caso 3](figures/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m1p2_rho_1p25_branch_0_four_solvers_phase3d.png)
 <!-- slide -->
-![Caso 4](file:///C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m1p2_rho_1p5_branch_0_four_solvers_phase3d.png)
+![Caso 4](figures/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m1p2_rho_1p5_branch_0_four_solvers_phase3d.png)
 <!-- slide -->
-![Caso 5](file:///C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m1p5585_rho_1_branch_0_four_solvers_phase3d.png)
+![Caso 5](figures/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m1p5585_rho_1_branch_0_four_solvers_phase3d.png)
 <!-- slide -->
-![Caso 6](file:///C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m2_rho_0p75_branch_0_four_solvers_phase3d.png)
+![Caso 6](figures/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m2_rho_0p75_branch_0_four_solvers_phase3d.png)
 <!-- slide -->
-![Caso 7](file:///C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m2p5_rho_0p5_branch_0_four_solvers_phase3d.png)
+![Caso 7](figures/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m2p5_rho_0p5_branch_0_four_solvers_phase3d.png)
 <!-- slide -->
-![Caso 8](file:///C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m3_rho_0p5_branch_0_four_solvers_phase3d.png)
+![Caso 8](figures/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p1_a2_m3_rho_0p5_branch_0_four_solvers_phase3d.png)
 <!-- slide -->
-![Caso 9](file:///C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p2_a2_m0p8_rho_2_branch_0_four_solvers_phase3d.png)
+![Caso 9](figures/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p2_a2_m0p8_rho_2_branch_0_four_solvers_phase3d.png)
 <!-- slide -->
-![Caso 10](file:///C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p2_a2_m1_rho_1p5_branch_0_four_solvers_phase3d.png)
+![Caso 10](figures/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p2_a2_m1_rho_1p5_branch_0_four_solvers_phase3d.png)
 <!-- slide -->
-![Caso 11](file:///C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p2_a2_m1p2_rho_1p25_branch_0_four_solvers_phase3d.png)
+![Caso 11](figures/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p2_a2_m1p2_rho_1p25_branch_0_four_solvers_phase3d.png)
 <!-- slide -->
-![Caso 12](file:///C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p2_a2_m1p5585_rho_1_branch_0_four_solvers_phase3d.png)
+![Caso 12](figures/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p2_a2_m1p5585_rho_1_branch_0_four_solvers_phase3d.png)
 <!-- slide -->
-![Caso 13](file:///C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p2_a2_m2_rho_0p75_branch_0_four_solvers_phase3d.png)
+![Caso 13](figures/alpha_8p4562_beta_12p0732_gamma_0p0052_a1_0p2_a2_m2_rho_0p75_branch_0_four_solvers_phase3d.png)
 ````
 
 > [!TIP]

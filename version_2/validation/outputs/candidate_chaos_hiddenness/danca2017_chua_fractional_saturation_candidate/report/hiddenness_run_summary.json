@@ -1,0 +1,152 @@
+{
+  "profile": "report",
+  "q": 0.9998,
+  "h": 0.01,
+  "t_final": 300.0,
+  "t_transient": 100.0,
+  "equilibria": {
+    "E0": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "E+": [
+      4.989260103763922,
+      0.002147979247215659,
+      -4.987112124516706
+    ],
+    "E-": [
+      -4.989260103763922,
+      -0.002147979247215659,
+      4.987112124516706
+    ]
+  },
+  "decisions": [
+    {
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "samples": 100,
+      "target_hits": 49,
+      "decision": "self_excited_contact_detected"
+    },
+    {
+      "equilibrium": "E+",
+      "radius": 3e-05,
+      "samples": 150,
+      "target_hits": 67,
+      "decision": "self_excited_contact_detected"
+    },
+    {
+      "equilibrium": "E+",
+      "radius": 0.0001,
+      "samples": 200,
+      "target_hits": 95,
+      "decision": "self_excited_contact_detected"
+    },
+    {
+      "equilibrium": "E+",
+      "radius": 0.0003,
+      "samples": 250,
+      "target_hits": 119,
+      "decision": "self_excited_contact_detected"
+    },
+    {
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "samples": 300,
+      "target_hits": 135,
+      "decision": "self_excited_contact_detected"
+    },
+    {
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "samples": 350,
+      "target_hits": 184,
+      "decision": "self_excited_contact_detected"
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "samples": 100,
+      "target_hits": 49,
+      "decision": "self_excited_contact_detected"
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 3e-05,
+      "samples": 150,
+      "target_hits": 67,
+      "decision": "self_excited_contact_detected"
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 0.0001,
+      "samples": 200,
+      "target_hits": 97,
+      "decision": "self_excited_contact_detected"
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 0.0003,
+      "samples": 250,
+      "target_hits": 135,
+      "decision": "self_excited_contact_detected"
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "samples": 300,
+      "target_hits": 143,
+      "decision": "self_excited_contact_detected"
+    },
+    {
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "samples": 350,
+      "target_hits": 165,
+      "decision": "self_excited_contact_detected"
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "samples": 100,
+      "target_hits": 0,
+      "decision": "no_contact_detected"
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 3e-05,
+      "samples": 150,
+      "target_hits": 0,
+      "decision": "no_contact_detected"
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 0.0001,
+      "samples": 200,
+      "target_hits": 0,
+      "decision": "no_contact_detected"
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 0.0003,
+      "samples": 250,
+      "target_hits": 0,
+      "decision": "no_contact_detected"
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "samples": 300,
+      "target_hits": 0,
+      "decision": "no_contact_detected"
+    },
+    {
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "samples": 350,
+      "target_hits": 0,
+      "decision": "no_contact_detected"
+    }
+  ]
+}

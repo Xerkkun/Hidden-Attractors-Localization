@@ -17,6 +17,38 @@
     "rho": 1.0,
     "q": 0.9998
   },
+  "candidate_selection": {
+    "status": "candidate_isolated_before_hiddenness_tests",
+    "selection_id": "danca2017_nearby_saturation_candidate_q09998",
+    "candidate_id": "m1_m1p2000_m0_m0p2000_branch_0",
+    "reference_case_id": "danca2017_chua_fractional_saturation",
+    "reference_parameters_policy": "preserve_published_danca_parameters_as_reference",
+    "candidate_parameters": {
+      "model": "nonsmooth",
+      "alpha": 8.4562,
+      "beta": 12.0732,
+      "gamma": 0.0052,
+      "m0": -0.2,
+      "m1": -1.2,
+      "q": 0.9998
+    },
+    "changed_parameters": [
+      "m0",
+      "m1"
+    ],
+    "selection_manifest": "00_manifest/candidate_selection_manifest.json",
+    "published_traceability": "candidate_selection/danca2017_nearby_saturation_candidate.yaml",
+    "method_comparison_artifact": "outputs/published_continuation_comparison/danca2017_chua_fractional_saturation_candidate/candidate_method_comparison.json",
+    "chaos_hiddenness_artifact": "outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/candidate_chaos_hiddenness_summary.json",
+    "lyapunov_tests": "completed_positive_finite_time_two_methods",
+    "hiddenness_tests": "completed_self_excited_contact_detected",
+    "classification_after_tests": "chaotic_self_excited_candidate_not_hidden_under_tested_equilibrium_neighborhoods",
+    "lyapunov_methods": [
+      "fractional_variational_abm_qr",
+      "fractional_cloned_dynamics_abm_gs_published"
+    ],
+    "hiddenness_target_hits": 1305
+  },
   "schema_version": "1.0",
   "protocol_version": "caputo_hidden_attractors_v1",
   "stages": {
@@ -40,7 +72,7 @@
     "post_continuation_filter": "completed",
     "dynamic_reference": "completed",
     "robustness": "pending_not_in_scope_current_phase",
-    "hiddenness_tests": "hiddenness_exploratory_only",
+    "hiddenness_tests": "completed_self_excited_contact_detected",
     "diagnostics": "diagnostics_partial_current_protocol"
   },
   "stage_evidence_scopes": {
@@ -57,12 +89,10 @@
   },
   "pending_stages": [
     "robustness",
-    "hiddenness_tests",
     "diagnostics"
   ],
   "failed_or_incomplete_stages": [
     "robustness",
-    "hiddenness_tests",
     "diagnostics"
   ],
   "final_report": {

@@ -1,0 +1,7 @@
+equilibrium,radius,samples,target_hits,decision
+E+,1e-05,4,0,no_contact_detected
+E+,0.001,4,0,no_contact_detected
+E-,1e-05,4,1,self_excited_contact_detected
+E-,0.001,4,0,no_contact_detected
+E0,1e-05,4,0,no_contact_detected
+E0,0.001,4,0,no_contact_detected

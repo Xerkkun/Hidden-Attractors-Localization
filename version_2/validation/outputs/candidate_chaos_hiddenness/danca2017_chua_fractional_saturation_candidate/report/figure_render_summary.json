@@ -1,0 +1,21 @@
+{
+  "case_id": "m1_m1p2000_m0_m0p2000_branch_0",
+  "profile": "report",
+  "parameters": {
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m0": -0.2,
+    "m1": -1.2,
+    "q": 0.9998,
+    "h": 0.01
+  },
+  "figures": {
+    "lyapunov": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\validation\\outputs\\candidate_chaos_hiddenness\\danca2017_chua_fractional_saturation_candidate\\report\\lyapunov_results.csv",
+    "hiddenness": {
+      "profile": "report",
+      "source": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\validation\\outputs\\candidate_chaos_hiddenness\\danca2017_chua_fractional_saturation_candidate\\report\\ball_sampling_results.csv",
+      "figures": "rendered_from_existing_outputs"
+    }
+  }
+}

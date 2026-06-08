@@ -27,7 +27,14 @@ from ..io import read_csv_rows, read_json, safe_name, timestamp, write_csv, writ
 from ..models.chua import equilibria_nonsmooth
 from ..native.backends import FractionalChuaBackend, FullHistoryABMBackend
 from ..paths import OUTPUTS, PROJECT_ROOT, RUNTIME_CACHE
-from ..plotting.dynamics import plot_lure_nyquist_describing_function, plot_phase_projections, plot_phase_space, plot_time_series, plot_trajectory_spectra
+from ..plotting.dynamics import (
+    plot_lure_nyquist_describing_function,
+    plot_lure_transfer_components,
+    plot_phase_projections,
+    plot_phase_space,
+    plot_time_series,
+    plot_trajectory_spectra,
+)
 from ..reproducibility import (
     collect_lure_metadata,
     collect_run_metadata,
@@ -618,7 +625,15 @@ def generate_candidate_diagnostic_figures(
             q=Q,
             method=mode,
             mu=seed.mu,
-            title=f"Nyquist/DF: {candidate_id}",
+            title=None,
+        )
+        files.append(str(Path(path).relative_to(branch_root.parent)))
+        path = plot_lure_transfer_components(
+            lure_system,
+            seed,
+            output_dir / f"{slug}_transfer_real_imag.png",
+            q=Q,
+            title=None,
         )
         files.append(str(Path(path).relative_to(branch_root.parent)))
     return {
@@ -660,7 +675,6 @@ def _plot_biased_nyquist_df(lure_system: Any, row: dict[str, Any], output: Path)
     ax.axvline(0.0, color="#9ca3af", ls=":", lw=0.7)
     ax.set_xlabel(r"Re$(W_q(i\omega))$")
     ax.set_ylabel(r"Im$(W_q(i\omega))$")
-    ax.set_title(f"Nyquist/DF sesgada: {row['candidate_id']}")
     ax.legend(loc="best", fontsize=8)
     fig.tight_layout()
     fig.savefig(output, dpi=220)
@@ -688,10 +702,10 @@ def run_dynamic_evidence(
         path = outdir / "trajectories" / f"selected_{int(row['rank'])}.csv"
         _write_trajectory(path, traj)
         if int(row["rank"]) == 1:
-            plot_phase_space(traj, outdir / "phase_3d.png", title="Candidato mejor clasificado, EFORK-3 C")
-            plot_phase_projections(traj, outdir / "projections.png", title="Proyecciones del candidato mejor clasificado")
-            plot_time_series(traj, outdir / "time_series.png", title="Serie temporal del candidato mejor clasificado")
-            _plot_spectrum(traj, h, outdir / "spectrum_x.png")
+            plot_phase_space(traj, outdir / "phase_3d.png", title=None)
+            plot_phase_projections(traj, outdir / "projections.png", title=None)
+            plot_time_series(traj, outdir / "time_series.png", title=None)
+            _plot_spectrum(traj, h, outdir / "spectrum_x.png", omega0=_finite(row.get("omega")))
         lyapunov_rows.append(
             {
                 "candidate_id": row["candidate_id"],
@@ -707,7 +721,7 @@ def run_dynamic_evidence(
     return {"trajectory_metrics": metric_rows, "lyapunov": lyapunov_rows}
 
 
-def _plot_spectrum(traj: np.ndarray, h: float, output: Path) -> None:
+def _plot_spectrum(traj: np.ndarray, h: float, output: Path, *, omega0: float | None = None) -> None:
     import matplotlib.pyplot as plt
 
     tail = traj[traj[:, 0] >= 0.5 * float(traj[-1, 0]), 1]
@@ -715,10 +729,13 @@ def _plot_spectrum(traj: np.ndarray, h: float, output: Path) -> None:
     spectrum = np.abs(np.fft.rfft(data * np.hanning(data.size))) ** 2
     freq = np.fft.rfftfreq(data.size, h)
     fig, ax = plt.subplots(figsize=(7.2, 4.3))
-    ax.semilogy(freq[1:], np.maximum(spectrum[1:], 1e-30), color="#2563eb")
-    ax.set_xlabel("Frecuencia")
+    omega = 2.0 * np.pi * freq
+    ax.semilogy(omega[1:], np.maximum(spectrum[1:], 1e-30), color="#2563eb", label="FFT")
+    if omega0 is not None and math.isfinite(float(omega0)):
+        ax.axvline(float(omega0), color="red", lw=1.0, label=rf"$\omega_0={float(omega0):.4f}$")
+        ax.legend(loc="best", fontsize=8)
+    ax.set_xlabel(r"$\omega$ [rad/s]")
     ax.set_ylabel("Potencia FFT")
-    ax.set_title("Espectro de x(t), trayectoria EFORK-3 C")
     ax.grid(True, alpha=0.25)
     fig.tight_layout()
     fig.savefig(output, dpi=220)

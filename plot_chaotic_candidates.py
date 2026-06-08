@@ -317,7 +317,7 @@ skipped = []
 for cand in CANDIDATES:
     traj = cand["traj_path"]
     if not traj.exists():
-        print(f"[SKIP] {cand['case_id']} – trayectoria no encontrada: {traj.name}")
+        print(f"[SKIP] {cand['case_id']} - trayectoria no encontrada: {traj.name}")
         skipped.append(cand["case_id"])
         continue
 
@@ -339,7 +339,7 @@ for cand in CANDIDATES:
     out_file = OUT_DIR / f"{cand['case_id']}_detailed.png"
     fig.savefig(out_file, dpi=160, facecolor=BG_COLOR, bbox_inches="tight")
     plt.close(fig)
-    print(f"  → Guardado: {out_file.name}")
+    print(f"  -> Guardado: {out_file.name}")
     generated.append((cand["case_id"], cand["model_label"], cand["memory_label"], out_file))
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -380,7 +380,7 @@ if n_cands > 0:
         for i in range(len(pts) - 1):
             frac = i / len(pts)
             ax.plot(pts[i:i+2, 0], pts[i:i+2, 1], pts[i:i+2, 2],
-                    lw=0.35, color=cmap(frac), alpha=0.8)
+                     lw=0.35, color=cmap(frac), alpha=0.8)
 
         style_ax3d(ax)
         ax.set_xlabel("x", fontsize=6, labelpad=1)
@@ -398,21 +398,21 @@ if n_cands > 0:
     summary_file = OUT_DIR / "all_candidates_summary_phase3d.png"
     fig_sum.savefig(summary_file, dpi=160, facecolor=BG_COLOR, bbox_inches="tight")
     plt.close(fig_sum)
-    print(f"  → Figura resumen guardada: {summary_file.name}")
+    print(f"  -> Figura resumen guardada: {summary_file.name}")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Reporte en terminal
 # ══════════════════════════════════════════════════════════════════════════════
 
-print("\n" + "═" * 70)
-print("REPORTE FINAL – plot_chaotic_candidates.py")
-print("═" * 70)
+print("\n" + "=" * 70)
+print("REPORTE FINAL - plot_chaotic_candidates.py")
+print("=" * 70)
 print(f"\n  Candidatos procesados: {len(generated)}")
 print(f"  Candidatos omitidos  : {len(skipped)}")
 print(f"\n  Figuras generadas en: {OUT_DIR}")
 print()
 for case_id, model, mem, path in generated:
-    print(f"  ✓  {case_id}")
+    print(f"  [OK]  {case_id}")
     print(f"        [{model} | {mem}]")
-    print(f"        → {path.name}")
+    print(f"        -> {path.name}")
     print()

@@ -1,0 +1,7 @@
+profile,equilibrium,radius,sample_count
+smoke,E0,1e-05,4
+smoke,E0,0.001,4
+smoke,E+,1e-05,4
+smoke,E+,0.001,4
+smoke,E-,1e-05,4
+smoke,E-,0.001,4

@@ -2316,7 +2316,8 @@ Para \(q=0.9998\),
 1.57048.
 \]
 
-En el origen se usa \(J_{\rm in}\). Para los parámetros anteriores,
+En el origen se usa \(J_{\rm in}\). Para los parámetros de Danca usados en
+esta evaluación algebraica de referencia,
 \begin{equation}
 \label{eq:eigs_origin_ns}
 \lambda_1\approx -7.95873,
@@ -2335,9 +2336,12 @@ y
 >
 1.57048.
 \]
-Por tanto, todos los autovalores del origen satisfacen el criterio de Matignon y el origen es localmente asintóticamente estable para \(q=0.9998\).
+Por tanto, todos los autovalores del origen satisfacen el criterio de Matignon
+y el origen es localmente asintóticamente estable para \(q=0.9998\) en el caso
+exacto de Danca.
 
-En los equilibrios externos se usa \(J_{\rm out}\). Para los mismos parámetros,
+En los equilibrios externos se usa \(J_{\rm out}\). Para los mismos parámetros
+de Danca,
 \begin{equation}
 \label{eq:eigs_external_ns}
 \lambda_1\approx 2.21935,
@@ -2350,15 +2354,14 @@ Como
 <
 1.57048,
 \]
-el criterio de Matignon falla. Por tanto, los equilibrios externos son inestables.
+el criterio de Matignon falla. Por tanto, los equilibrios externos son inestables. Esta clasificación no prueba por sí misma la existencia ni el ocultamiento del atractor; únicamente identifica las vecindades de los equilibrios que deberán analizarse y descartarse en la etapa de verificación mediante cuencas de atracción.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.88\columnwidth]{matignon_complex_plane.png}
-\caption{Autovalores del sistema linealizado del Chua fraccionario no suave en el plano complejo para \(q=0.9998\). Se ilustra el sector de estabilidad de Matignon. Los autovalores del origen \(E_0^*\) (círculos azules) yacen dentro de la región de estabilidad local asintótica, mientras que los autovalores de los equilibrios externos \(E_\pm^*\) (triángulos rojos) tienen componentes en la región inestable.}
+\caption{Autovalores del sistema linealizado del Chua fraccionario no suave, con parámetros exactos de Danca, en el plano complejo para \(q=0.9998\). Se ilustra el sector de estabilidad de Matignon. Los autovalores del origen \(E_0^*\) (círculos azules) yacen dentro de la región de estabilidad local asintótica para ese conjunto de parámetros, mientras que los autovalores de los equilibrios externos \(E_\pm^*\) (triángulos rojos) tienen componentes en la región inestable.}
 \label{fig:matignon_complex_plane}
 \end{figure}
-% Esta clasificación no prueba por sí misma la existencia ni el ocultamiento del atractor. Únicamente identifica las vecindades de los equilibrios que deberán analizarse y descartarse en la etapa de verificación mediante cuencas de atracción.
 
 
 \subsection{Forma de Lur'e}
@@ -2696,13 +2699,9 @@ k_2&=\frac{1}{W_q(i\omega_{0,2})}\approx 0.95695.
 \end{aligned}
 \]
 
-% Estas raíces no prueban la existencia de ciclos periódicos exactos en el sistema
-% autónomo de Caputo. En este contexto, la evaluación armónica se interpreta mediante
-% el puente Weyl--Caputo: la formulación de Weyl permite representar regímenes
-% periódicos estacionarios ideales, mientras que el sistema de Caputo conserva memoria
-% desde el tiempo inicial. Por ello, las soluciones armónicas obtenidas aquí deben
-% tratarse como semillas o aproximaciones asintóticas para simulación y continuación
-% numérica, no como prueba de periodicidad exacta.
+\begin{remark}
+Las raíces $\omega_{0,j}$ de $F(\omega)=0$ no prueban la existencia de ciclos periódicos exactos en el sistema autónomo de Caputo. La evaluación armónica se interpreta mediante el puente Weyl--Caputo: la formulación de Weyl permite representar regímenes periódicos estacionarios ideales, mientras que el sistema de Caputo conserva memoria desde el tiempo inicial. Por ello, las soluciones armónicas obtenidas aquí deben tratarse como \emph{semillas o aproximaciones asintóticas} para simulación y continuación numérica, no como prueba de periodicidad exacta. Esto es coherente con los resultados de Haacker \emph{et al}.\ \cite{Haacker2026}, quienes muestran que la extensión fraccionaria del balance armónico captura soluciones con crecimiento exponencial pero no describe adecuadamente el régimen estable con decaimiento algebraico.
+\end{remark}
 
 \subsection{Función descriptiva de la saturación}
 
@@ -3535,8 +3534,8 @@ Ambas semillas deben probarse por separado. La selección definitiva no debe hac
 
 \subsection{Continuación causal de las semillas propuestas}
 
-Una vez obtenida una semilla por la línea Lur'e o por la línea Machado/FDF, se
-usa la ganancia armónica correspondiente \(k\) para escribir
+Una vez obtenida una semilla por la línea Lur'e fraccionaria, se usa la
+ganancia armónica correspondiente \(k\) para escribir
 \begin{equation}
 \label{eq:delta_ns}
 \psi(\sigma)=k\sigma+\delta(\sigma),
@@ -3563,29 +3562,112 @@ X_{j+1}(t_{\rm start}+\theta)=X_j(t_{\rm end}+\theta),
 
 El procedimiento común queda establecido en los siguientes pasos:
 \begin{enumerate}[leftmargin=1.8em,label=\arabic*)]
-\item fijar los parámetros de \eqref{eq:danca_params_ns}, el orden $q$, el paso $h$, el integrador y la política de memoria;
+\item fijar el caso de referencia, el par \((m_0,m_1)\) evaluado, el orden $q$, el paso $h$, el integrador y la política de memoria;
 \item elegir la línea de función descriptiva y resolver sus condiciones de cierre y amplitud;
 \item reconstruir las semillas armónicas producidas por dicha línea;
-\item integrar cada semilla durante un transitorio y una ventana de observación causal con la matriz EFORK/ABM de la Subsección~\ref{subsec:busqueda_sistematica_ns}, descartando las señales periódicas persistentes sólo después del transitorio;
-\item conservar únicamente semillas \path{nonperiodic_post_transient} en la celda primaria EFORK sin truncamiento e integrar \eqref{eq:homotopy_ns} sobre una malla $0=\varepsilon_0<\varepsilon_1<\cdots<\varepsilon_N=1$;
+\item integrar cada semilla durante un transitorio y una ventana de observación causal con ABM de Caputo, descartando las señales periódicas persistentes sólo después del transitorio;
+\item conservar únicamente semillas \path{nonperiodic_post_transient} e integrar \eqref{eq:homotopy_ns} sobre una malla $0=\varepsilon_0<\varepsilon_1<\cdots<\varepsilon_N=1$;
 \item transportar en cada paso la historia completa o la ventana \eqref{eq:history_window_ns}, de acuerdo con el contrato evaluado;
-\item al llegar a $\varepsilon=1$, integrar el sistema físico y aplicar las pruebas de vecindades de los equilibrios y de cuencas requeridas para discutir ocultedad.
+\item al llegar a $\varepsilon=1$, integrar el sistema físico; las pruebas de vecindades de los equilibrios y de cuencas quedan reservadas para la fase posterior de ocultedad.
 \end{enumerate}
 
-La selección numérica del caso fraccionario no suave se regenerará
-exclusivamente mediante las corridas vigentes con \(q=0.9998\), EFORK-3
-corregido y la matriz postransitoria descrita en la
+La selección numérica del caso fraccionario no suave se regenera
+exclusivamente mediante las corridas vigentes con \(q=0.9998\), ABM de
+Caputo y la criba postransitoria descrita en la
 Subsección~\ref{subsec:busqueda_sistematica_ns}. No se incorporan como
 resultados valores ni figuras provenientes de ejecuciones anteriores.
 
 \subsection{Búsqueda sistemática y evaluación de candidatos}
 \label{subsec:busqueda_sistematica_ns}
 
-Esta versión del manuscrito retira los resultados numéricos de ejecuciones anteriores. La función descriptiva clásica de Lur'e (centrada y sesgada) se utiliza exclusivamente como generadora de semillas; la selección de candidatos y sus pruebas se poblarán a partir de las corridas del flujo básico bajo el contrato descrito enseguida. La tabla de síntesis del caso se conserva para mantener la estructura comparativa del reporte y marca como pendientes los campos correspondientes.
+La función descriptiva clásica de Lur'e se utiliza exclusivamente como
+generadora de semillas; la selección de candidatos se decide después por
+continuación causal e integración postransitoria. El caso publicado de Danca,
+con los parámetros de \eqref{eq:danca_params_ns_appendix}, se conserva como
+referencia bibliográfica y algebraica: para esos valores exactos se obtienen
+las dos ramas de la Tabla~\ref{tab:ramas_danca_ns}, pero el artículo no
+reporta condición inicial, semilla, ganancia armónica ni algoritmo de
+continuación. Por esa razón, el punto exacto de Danca no se etiqueta aquí como
+reproducción cerrada ni como candidato seleccionado.
+
+El candidato que se reporta proviene de un barrido paramétrico cercano al caso
+de Danca. Se mantuvieron fijos
+\(\alpha=8.4562\), \(\beta=12.0732\), \(\gamma=0.0052\) y \(q=0.9998\), y se
+variaron sólo las pendientes de la no linealidad no suave en la malla
+\[
+\begin{aligned}
+m_1&\in\{-0.8,-1.0,-1.2,-1.4,-1.6\},\\
+m_0&\in\{-0.1,-0.2,-0.3,-0.4\}.
+\end{aligned}
+\]
+Para cada par se calculó la semilla con función descriptiva fraccionaria
+\((q_{\rm seed}=0.9998)\), se aplicó continuación ABM de Caputo en
+\(\varepsilon=0:0.1:1\) y se integró el sistema físico con \(h=0.01\). El
+control de trazabilidad contra la ruta publicada/no especificada repitió el
+mismo par seleccionado con transferencia entera \((q_{\rm seed}=1)\) y
+continuación entera RK4, sin convertir ese control en validación del artículo.
+
+\subsubsection{Parámetros y equilibrios para las pruebas posteriores}
+
+Antes de ejecutar Lyapunov y ocultedad se fijan dos conjuntos de parámetros
+separados. El primero corresponde al caso exacto citado por Danca y se conserva
+como referencia publicada; el segundo corresponde al candidato seleccionado por
+el barrido cercano. Esta separación evita usar los equilibrios del caso
+publicado para clasificar un régimen obtenido con pendientes distintas.
+
+\begin{table*}[htbp]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Parámetros y equilibrios del caso de Danca y del candidato usado en los experimentos fraccionarios. Los autovalores son los de la matriz regional del campo vectorial; el umbral de Matignon para \(q=0.9998\) es \(q\pi/2=1.57048217\).}
+\label{tab:chua_frac_ns_equilibria_parameter_sets}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}L{2.5cm}L{3.2cm}L{3.6cm}L{4.3cm}L{2.4cm}@{}}
+\toprule
+\textbf{Conjunto} &
+\textbf{Parámetros} &
+\textbf{Equilibrios} &
+\textbf{Autovalores locales} &
+\textbf{Matignon, \(q=0.9998\)} \\
+\midrule
+
+Danca 2017 &
+\(\alpha=8.4562,\ \beta=12.0732,\ \gamma=0.0052,\ m_0=-0.1768,\ m_1=-1.1468\) &
+\begin{tabular}[t]{@{}p{3.35cm}@{}}
+\(E_0=(0,0,0)\)\\
+\(E_+:\ x=6.5883,\ y=2.84{\times}10^{-3},\ z=-6.5855\)\\
+\(E_-:\ x=-6.5883,\ y=-2.84{\times}10^{-3},\ z=6.5855\)
+\end{tabular} &
+En \(E_0\): \(-7.95873,\ -0.00381\pm3.24945i\).
+En \(E_\pm\): \(2.21935,\ -0.99159\pm2.40676i\). &
+\(E_0\) estable localmente; \(E_\pm\) inestables por autovalor real positivo. \\
+
+Candidato experimental &
+\(\alpha=8.4562,\ \beta=12.0732,\ \gamma=0.0052,\ m_0=-0.2,\ m_1=-1.2\) &
+\begin{tabular}[t]{@{}p{3.35cm}@{}}
+\(E_0=(0,0,0)\)\\
+\(E_+:\ x=4.9893,\ y=2.15{\times}10^{-3},\ z=-4.9871\)\\
+\(E_-:\ x=-4.9893,\ y=-2.15{\times}10^{-3},\ z=4.9871\)
+\end{tabular} &
+En \(E_0\): \(-7.77978,\ 0.00481\pm3.23993i\).
+En \(E_\pm\): \(2.72954,\ -1.02175\pm2.54087i\). &
+Los tres equilibrios son inestables para el contrato fraccionario evaluado. \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table*}
+
+Las pruebas de ocultedad se harán únicamente con los equilibrios del candidato
+experimental, porque son los que corresponden al campo vectorial que produjo el
+atractor seleccionado. Los equilibrios de Danca se reportan para comparación y
+trazabilidad, no como centros de sondeo del candidato modificado.
 
 \subsubsection{Protocolo de búsqueda y criba básica}
 
-Para la corrida promovible se implementó una ruta basada en la función descriptiva clásica de Lur'e en sus variantes centrada y sesgada. Esta etapa sólo propone semillas iniciales aproximadas.
+Para la corrida promovible se implementó una ruta basada en la función
+descriptiva fraccionaria de Lur'e. Esta etapa sólo propone semillas iniciales
+aproximadas.
 
 El filtro armónico conserva una semilla si cumple:
 \begin{equation}
@@ -3597,27 +3679,35 @@ El filtro armónico conserva una semilla si cumple:
  \end{aligned}
 \end{equation}
 
-Antes de ejecutar una continuación, cada semilla reconstruida se integra utilizando el solver EFORK-3 con historia completa de Caputo y paso fijo $h=0.01$ (sin truncamiento de memoria). El intervalo \(0\leq t\leq T_{\rm tr}\) se descarta como transitorio, y la observación del régimen dinámico se realiza sobre \(T_{\rm tr}\leq t\leq T_{\rm tr}+T_{\rm obs}\), fijando:
+Antes de ejecutar una continuación, cada semilla reconstruida se integra con
+ABM de Caputo, paso fijo \(h=0.01\) y política de memoria explícita. El
+intervalo \(0\leq t\leq T_{\rm tr}\) se descarta como transitorio, y la
+observación del régimen dinámico se realiza sobre
+\(T_{\rm tr}\leq t\leq T_{\rm tr}+T_{\rm obs}\), fijando:
 \[
-T_{\rm tr}=120,\qquad T_{\rm obs}=120,\qquad h=0.01.
+T_{\rm tr}=100,\qquad T_{\rm obs}=200,\qquad h=0.01.
 \]
 
-Las semillas que colapsan a equilibrios o divergen en esta etapa son descartadas. Las semillas supervivientes que exhiben un comportamiento acotado no trivial avanzan a la continuación homotópica ($\lambda \in [0, 1]$). Al alcanzar el sistema objetivo ($\lambda = 1$), se realiza la verificación final de ocultedad mediante las pruebas de vecindades de los equilibrios: se integra el sistema partiendo de múltiples condiciones iniciales muestreadas en bolas de radio pequeño alrededor de cada equilibrio para determinar si alguna de ellas converge al atractor caótico candidato.
+Las semillas que colapsan a equilibrios o divergen en esta etapa son
+descartadas. Las semillas supervivientes que exhiben un comportamiento
+acotado no trivial avanzan a la continuación homotópica
+\((\lambda \in [0,1])\). En esta fase no se ejecutan todavía las pruebas de
+ocultedad por vecindades de equilibrios; esos sondeos quedan fuera del llenado
+actual de campos.
 
 \subsection{Tabla de resultados del Chua fraccionario no suave}
 
 De manera análoga a la Tabla~\ref{tab:chua_integer_results_full}, la
-Tabla~\ref{tab:chua_frac_ns_results_full} conserva la estructura de resultados
-del caso fraccionario no suave. Los parámetros y contratos metodológicos son
-los vigentes; los valores dinámicos se completarán únicamente desde las
-corridas postransitorias actuales.
+Tabla~\ref{tab:chua_frac_ns_results_full} resume el candidato fraccionario no
+suave seleccionado y conserva explícitamente los campos que aún no forman parte
+del contrato actual.
 
 \begin{table*}[htbp]
 \centering
 \scriptsize
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.12}
-\caption{Resumen de resultados y campos de validación pendientes para el Chua fraccionario no suave con \(q=0.9998\).}
+\caption{Resumen trazable del candidato seleccionado para el Chua fraccionario no suave con \(q=0.9998\).}
 \label{tab:chua_frac_ns_results_full}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{@{}L{2.7cm}L{3.4cm}L{4.4cm}L{5.8cm}@{}}
@@ -3628,10 +3718,15 @@ corridas postransitorias actuales.
 \textbf{Interpretación} \\
 \midrule
 
-Parámetros del sistema &
-Definición del caso no suave &
+Caso publicado de referencia &
+Parámetros exactos de Danca &
 \(\alpha=8.4562,\ \beta=12.0732,\ \gamma=0.0052,\ m_0=-0.1768,\ m_1=-1.1468\) &
-Sistema fraccionario no suave evaluado en la búsqueda actual. \\
+Se usa como referencia del sistema y para reconstruir las ramas DF; no queda promovido porque faltan semilla, condición inicial y continuación en el artículo. \\
+
+Candidato seleccionado &
+Barrido cercano al caso de Danca &
+\(\alpha=8.4562,\ \beta=12.0732,\ \gamma=0.0052,\ m_0=-0.2,\ m_1=-1.2\) &
+Se variaron sólo las pendientes \(m_0,m_1\); el resto de parámetros y \(q\) permanecen fijos. \\
 
 Orden dinámico &
 Sistema conmensurado de Caputo &
@@ -3643,55 +3738,55 @@ Separación algebraica &
 \({}^{C}D_t^qX=PX+q_v\psi(r^\top X)\) &
 La función descriptiva actúa como generadora de semillas, no como prueba de ocultedad. \\
 
-Rutas de semilla &
-DF de primer armónico &
-Lur'e clásica (centrada y sesgada) &
-La línea clásica se explora antes de aplicar filtros dinámicos. \\
+Ruta de semilla &
+DF fraccionaria de primer armónico &
+\(\omega_0=2.0402860511,\ k=0.2632227930,\ A_0=4.8019236416\) &
+Semilla promovida: \(X_{\rm seed}=(4.801923642,\ 0.303954955,\ -6.860961520)\). \\
 
-Integrador principal &
-EFORK-3 corregido en C &
-\(K_3=h^q f(X_n+a_{31}K_1+a_{32}K_2)\) &
-La decisión primaria se toma con EFORK sin truncamiento de historia. \\
+Continuación propuesta &
+ABM de Caputo con memoria completa &
+\(\varepsilon=0:0.1:1,\ h=0.01,\ T_{\rm tr}=30,\ T_{\rm keep}=30\) &
+La continuación llega a \(\varepsilon=1\) con estado final \((-1.577478881,\ -0.284989014,\ 4.364931371)\). \\
 
-Integración y sensibilidad &
-EFORK con historia completa &
-EFORK sin truncamiento &
-La integración y promoción se realizan con EFORK sin truncamiento. \\
+Sensibilidad de memoria &
+ABM de Caputo con ventana \(L_m=10\) s &
+Mismo veredicto operativo: \path{chaotic_candidate_pending_robustness} &
+El candidato persiste bajo memoria completa y memoria truncada; no sustituye las pruebas finales de robustez. \\
 
-Tramo de evaluación &
-Criba de periodicidad posterior al transitorio &
-\(T_{\rm tr}=120,\ T_{\rm obs}=120,\ h=0.01\) &
-La periodicidad no se decide con la parte transitoria de la trayectoria. \\
+Tramo de evaluación final &
+Integración ABM de Caputo del sistema físico &
+\(T_{\rm final}=300,\ T_{\rm tr}=100,\ h=0.01\) &
+La trayectoria postransitoria se usa para las figuras y diagnósticos básicos. \\
 
-Semillas armónicas &
-Búsqueda y reconstrucción DF/FDF &
-\textbf{Pendiente de promoción} &
-Se reportarán identificador, método, parámetros DF/FDF y condición inicial desde la corrida vigente. \\
+Comparación tipo artículo &
+DF entera y continuación entera RK4 &
+\(\omega_0=2.039186940,\ k=0.2630673545,\ A_0=4.8048034318\) &
+Control metodológico porque Danca no especifica continuación; no se reporta como reproducción publicada. \\
 
-Tres mejores candidatos &
-Filtro dinámico y ranking &
-\textbf{Pendiente de promoción} &
-La tabla final distinguirá la ruta generadora y el contrato EFORK aplicado. \\
-
-Continuación causal &
-Homotopía con historia transportada &
-\textbf{Pendiente} &
-Sólo semillas no periódicas después del transitorio podrán continuar. \\
+Criterio de selección &
+Persistencia entre rutas &
+\path{m1_m1p2000_m0_m0p2000_branch_0} &
+Fue el único candidato con continuación y simulación \path{ok} que persistió en DF fraccionaria, memoria completa, memoria truncada y control entero. \\
 
 Diagnóstico dinámico &
-Trayectoria, FFT/PSD y Lyapunov &
-\textbf{Pendiente} &
-Las métricas se incorporarán sólo para sobrevivientes de continuación. \\
+FFT postransitoria de \(x(t)\) &
+\(\omega_{\rm FFT}=2.450319754,\ \omega_{\rm PSD}=2.454369261\) &
+Diagnóstico auxiliar del candidato; no se usa como certificación matemática de caos. \\
+
+Lyapunov &
+Estimador variacional Caputo con memoria histórica &
+ABM--QR full-history: \((0.13145,-0.01398,-0.02425)\) &
+El estimador conserva la memoria Caputo completa y produce \(\lambda_{\max}>0\); el régimen se caracteriza como caótico bajo evidencia numérica de tiempo finito. \\
 
 Robustez &
 Variaciones de paso, horizonte y memoria &
 \textbf{Pendiente} &
-Se compararán EFORK sin truncamiento y la sensibilidad bajo ventana finita. \\
+La persistencia memoria completa/ventana es una criba inicial; falta el contrato completo de robustez. \\
 
 Sondeos de ocultedad &
 Vecindades de todos los equilibrios &
-\textbf{Pendiente} &
-No se usará \path{hidden_verified} sin completar el contrato de vecindades. \\
+4050 trayectorias; \(\mathrm{TARGET}=1305\), \(\mathrm{EQ}=1232\), \(\mathrm{DIV}=1395\), \(\mathrm{OTHER}=118\) &
+Se detectaron contactos con el candidato desde \(E_+\) y \(E_-\); por tanto no se clasifica como atractor oculto bajo este contrato. \\
 
 Cuencas y bifurcaciones &
 Validación final &
@@ -4585,7 +4680,7 @@ produce la familia
 {}^{C}D_t^qX=P_0X+\varepsilon q_v\delta(r^\top X),
 \qquad \varepsilon\in[0,1].
 \end{equation}
-La continuación que se implementa con EFORK es causal en Caputo. Por ello,
+La continuación fraccionaria implementada es causal en Caputo. Por ello,
 el transporte entre pasos no debe hacerse únicamente con el último punto de
 la trayectoria anterior.
 
@@ -4620,39 +4715,299 @@ En esta sección se reportan y organizan los resultados numéricos correspondien
 
 \subsection{Resultados: Chua fraccionario no suave ($q=0.9998$)}
 
-La búsqueda y validación del atractor se realiza integrando el sistema con el solver EFORK-3 en C utilizando historia completa. A continuación se presentan las secciones listas para recibir las figuras y datos de la corrida:
+La búsqueda del atractor candidato se realiza integrando el sistema con ABM de
+Caputo y memoria completa. A continuación se presentan los datos de la corrida
+seleccionada; las pruebas de ocultedad no se ejecutan en esta fase:
 
-\begin{enumerate}
-    \item \textbf{Candidato de la ruta clásica}: Parámetros armónicos seleccionados: $\omega_0$, ganancia $k$ y amplitud $A_0$. Semilla inicial reconstruida $\bm{x}(0) = (x_0, y_0, z_0)$.
-    \item \textbf{Trayectoria del atractor caótico}: Retrato de fases en el espacio 3D y proyecciones geométricas 2D del atractor superviviente de la continuación causal a $\varepsilon=1$.
-    \item \textbf{Sondeos de ocultedad (vecindades de equilibrios)}: Resultados de la simulación partiendo de esferas/bolas de vecindad alrededor de los equilibrios inestables. Se registrará la proporción de trayectorias que convergen al atractor y el veredicto final.
-\end{enumerate}
+El candidato seleccionado es
+\path{m1_m1p2000_m0_m0p2000_branch_0}, con
+\[
+\begin{aligned}
+(m_0,m_1)&=(-0.2,-1.2),\\
+X_{\rm seed}&=
+\begin{bmatrix}
+4.801923642\\
+0.303954955\\
+-6.860961520
+\end{bmatrix}.
+\end{aligned}
+\]
+La función descriptiva fraccionaria produce
+\[
+\begin{aligned}
+\omega_0&=2.0402860511,\\
+k&=0.2632227930,\\
+A_0&=4.8019236416.
+\end{aligned}
+\]
 
-\subsection{Resultados: Chua fraccionario con no linealidad $\arctan$ ($q=0.99$)}
+Los sondeos de ocultedad de este candidato se centrarán en los equilibrios del
+campo con \(m_0=-0.2\) y \(m_1=-1.2\), no en los equilibrios del caso exacto de
+Danca:
+\[
+\begin{aligned}
+E_0&=(0,0,0),\\
+E_+&\approx(4.989260104,\ 0.002147979,\ -4.987112125),\\
+E_-&\approx(-4.989260104,\ -0.002147979,\ 4.987112125).
+\end{aligned}
+\]
+Para comparación, los parámetros exactos de Danca
+\((m_0,m_1)=(-0.1768,-1.1468)\) producen
+\[
+\begin{aligned}
+E_+^{\rm Danca}&\approx(6.588307887,\ 0.002836402,\ -6.585471484),\\
+E_-^{\rm Danca}&\approx(-6.588307887,\ -0.002836402,\ 6.585471484).
+\end{aligned}
+\]
+La diferencia es relevante porque la clasificación de autoexcitación u
+ocultedad debe hacerse respecto de las vecindades de equilibrio del sistema que
+realmente generó el candidato.
 
-De forma análoga al caso anterior, los resultados de la simulación y criba para el sistema con no linealidad de tipo $\arctan$ se estructuran bajo el flujo básico de criba:
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig01a_transfer_real.pdf}
+\caption{Componente real de la transferencia usada por la función descriptiva para el candidato no suave. La línea continua corresponde a \(q=0.9998\) y la discontinua al control entero \(q=1\).}
+\label{fig:chua_frac_ns_transfer_real}
+\end{figure}
 
-\begin{enumerate}
-    \item \textbf{Candidato y Semilla}: Parámetros obtenidos mediante Nyquist y función descriptiva exacta del bloque Lur'e $\psi(\sigma) = a_2\arctan(\rho\sigma)$.
-    \item \textbf{Trayectoria final del atractor}: Espacio de fases 3D para el sistema objetivo tras la continuación paramétrica completa.
-    \item \textbf{Pruebas de ocultedad}: Análisis operacional de cuencas de atracción alrededor de todos los equilibrios calculados, determinando si el atractor es clasificado operacionalmente como oculto o autoexcitado.
-\end{enumerate}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig01b_transfer_imag.pdf}
+\caption{Componente imaginaria de la transferencia usada por la función descriptiva para el candidato no suave. La línea continua corresponde a \(q=0.9998\) y la discontinua al control entero \(q=1\).}
+\label{fig:chua_frac_ns_transfer_imag}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig02_continuation_story.pdf}
+\caption{Continuación numérica del candidato seleccionado. La ruta propuesta usa ABM de Caputo con memoria completa; se incluye la ventana de memoria y el control entero como trazabilidad metodológica.}
+\label{fig:chua_frac_ns_continuation}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig03_final_attractor.pdf}
+\caption{Trayectoria postransitoria del candidato tras la continuación causal hasta el sistema físico \(\varepsilon=1\).}
+\label{fig:chua_frac_ns_attractor}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig03abc_final_attractor_projections.pdf}
+\caption{Proyecciones \(x\)-\(y\), \(x\)-\(z\) y \(y\)-\(z\) de la trayectoria postransitoria del candidato.}
+\label{fig:chua_frac_ns_projections}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig04_time_series.pdf}
+\caption{Series temporales postransitorias del candidato seleccionado.}
+\label{fig:chua_frac_ns_timeseries}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig11a_fft_x.pdf}
+\caption{Espectro FFT normalizado de \(x(t)\) en la ventana postransitoria. La frecuencia dominante se usa sólo como diagnóstico auxiliar.}
+\label{fig:chua_frac_ns_fft}
+\end{figure}
+
+La caracterización dinámica se completó con un estimador variacional de
+Lyapunov de tiempo finito que integra el sistema original--variacional con ABM
+de Caputo y QR con memoria histórica completa. En cada reortonormalización se
+transforma toda la historia variacional almacenada; por tanto, no se usa el
+reinicio por bloques de la dinámica clonada publicada. Con \(h=0.01\),
+\(q=0.9998\), \(T_{\rm burn}=40\) y \(T_{\rm eval}=160\), se obtuvo
+\[
+\lambda^{\rm ABM\text{-}QR}\approx
+(0.13145,-0.01398,-0.02425),
+\]
+con \(\lambda_{\max}>0\). Junto con la trayectoria acotada y no colapsada, esto
+caracteriza el régimen como caótico bajo evidencia numérica finita. La
+Fig.~\ref{fig:chua_frac_ns_lyapunov} muestra la convergencia registrada por el
+estimador con memoria histórica completa.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig12_lyapunov_full_history.pdf}
+\caption{Convergencia de los exponentes de Lyapunov del candidato no suave usando ABM--QR fraccionario con memoria histórica completa.}
+\label{fig:chua_frac_ns_lyapunov}
+\end{figure}
+
+La prueba de ocultedad se ejecutó con sondeos esféricos alrededor de los
+equilibrios del candidato experimental:
+\[
+r\in\{10^{-5},3{\times}10^{-5},10^{-4},3{\times}10^{-4},10^{-3},10^{-2}\}.
+\]
+Se usaron \(100,150,200,250,300,350\) muestras por radio y por equilibrio, para
+un total de \(4050\) trayectorias. Los conteos globales fueron
+\[
+\begin{aligned}
+\mathrm{TARGET}&=1305,&
+\mathrm{EQ}&=1232,\\
+\mathrm{DIV}&=1395,&
+\mathrm{OTHER}&=118.
+\end{aligned}
+\]
+No se detectaron contactos desde \(E_0\). Sin embargo, sí se detectaron
+contactos desde las vecindades de los equilibrios externos \(E_+\) y \(E_-\):
+\[
+\mathrm{TARGET}_{E_+}=649,
+\qquad
+\mathrm{TARGET}_{E_-}=656.
+\]
+Por tanto, aunque el régimen cumple los criterios numéricos de caos, no se
+clasifica como atractor oculto bajo este contrato; se reporta como atractor
+caótico autoexcitado desde vecindades de los equilibrios externos.
+
+Las figuras siguientes muestran los sondeos esféricos en 3D por separado para
+cada equilibrio. En cada subpanel las coordenadas están centradas en el
+equilibrio correspondiente y escaladas por el radio de sondeo.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig13_E0_hiddenness_spherical_3d.pdf}
+\caption{Sondeos esféricos 3D centrados en $E_0=(0,0,0)$ para los seis radios
+del protocolo. Ninguna trayectoria desde $E_0$ alcanza el atractor candidato
+(0/\emph{N} TARGET en todos los radios).}
+\label{fig:chua_frac_ns_spheres_E0}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig13_Ep_hiddenness_spherical_3d.pdf}
+\caption{Sondeos esféricos 3D centrados en $E_+\approx(4.989,0.00215,-4.987)$.
+Los contactos TARGET aparecen en todos los radios probados, incluyendo
+$r=10^{-5}$, por lo que la cuenca del atractor intersecta las vecindades de
+$E_+$.}
+\label{fig:chua_frac_ns_spheres_Ep}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig13_Em_hiddenness_spherical_3d.pdf}
+\caption{Sondeos esféricos 3D centrados en $E_-\approx(-4.989,-0.00215,4.987)$.
+Los contactos TARGET aparecen en todos los radios probados, confirmando la
+autoexcitación desde el equilibrio externo simétrico.}
+\label{fig:chua_frac_ns_spheres_Em}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/chua_frac_ns_fig14_hiddenness_contact_heatmap.pdf}
+\caption{Mapa de calor de contactos (izquierda: hits absolutos; derecha:
+porcentaje) por equilibrio y radio de sondeo. La fila de $E_0$ permanece
+en 0 en todos los radios, mientras que las filas de $E_+$ y $E_-$ muestran
+45--54\% de trayectorias que alcanzan el atractor. Esto descarta la
+clasificación como oculto bajo el contrato evaluado.}
+\label{fig:chua_frac_ns_hiddenness_heatmap}
+\end{figure}
+
+\subsection{Resultados: comparación con parámetros exactos de Danca}
+\label{subsec:resultados_danca_exactos}
+
+Como comparación publicada, se integró el sistema con los parámetros originales
+de Danca \cite{Danca2017}, \((m_0,m_1)=(-0.1768,-1.1468)\), usando como
+condición inicial la semilla clásica más cercana al caso publicado:
+\[
+X_{\rm seed}^{\rm Danca}
+\approx\begin{bmatrix}5.8518\\0.3704\\-8.3610\end{bmatrix}.
+\]
+Los equilibrios del sistema con parámetros exactos de Danca son:
+\[
+\begin{aligned}
+E_0 &= (0,0,0),\\
+E_+ &\approx(6.5883,\ 0.002836,\ -6.5855),\\
+E_- &\approx(-6.5883,\ -0.002836,\ 6.5855).
+\end{aligned}
+\]
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/danca_frac_phase_3d.png}
+\caption{Retrato de fase 3D del sistema de Chua fraccionario no suave con los
+parámetros exactos de Danca \cite{Danca2017}: $m_0=-0.1768$, $m_1=-1.1468$,
+$\alpha=8.4562$, $\beta=12.0732$, $\gamma=0.0052$, $q=0.9998$.}
+\label{fig:danca_phase3d}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/danca_frac_projections.png}
+\caption{Proyecciones en los planos $x$-$y$, $x$-$z$ y $y$-$z$ del régimen
+caótico obtenido con los parámetros exactos de Danca.}
+\label{fig:danca_projections}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/danca_frac_time_series.png}
+\caption{Series temporales del sistema de Danca. La señal $x(t)$ muestra
+conmutaciones irregulares entre los dos lóbulos del atractor.}
+\label{fig:danca_timeseries}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{Figs/danca_frac_spectrum_x.png}
+\caption{Espectro de frecuencias de $x(t)$ para el sistema exacto de Danca.}
+\label{fig:danca_spectrum}
+\end{figure}
+
+Los autovalores de los equilibrios del sistema exacto de Danca, reportados por
+el propio artículo y confirmados por cálculo directo, son:
+\begin{equation}
+\label{eq:danca_eigs}
+\begin{aligned}
+E_0: &\quad \lambda_{1}=-7.9587,\quad \lambda_{2,3}=-0.0038\pm3.2494i,\\
+E_\pm: &\quad \lambda_{1}=2.2193,\quad \lambda_{2,3}=-0.9916\pm2.4068i.
+\end{aligned}
+\end{equation}
+
+La tabla siguiente resume los conteos de las pruebas de ocultedad aplicadas con
+el contrato de seis radios y tres equilibrios. Los datos corresponden al
+candidato experimental \((m_0,m_1)=(-0.2,-1.2)\), usado como proxy operativo
+porque la continuación fraccionaria con los parámetros originales diverge antes
+de completar la homotopía.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\caption{Conteo de clasificaciones por equilibrio para los sondeos esféricos
+del Chua fraccionario no suave. TARGET: trayectorias que alcanzan el atractor
+candidato; EQ: convergen a un equilibrio; DIV: divergen; OTHER: comportamiento
+no clasificado.}
+\label{tab:danca_hiddenness}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Equilibrio & TARGET & EQ & DIV & OTHER & Total \\
+\midrule
+$E_0$ & $0$ & $>0$ & $>0$ & $>0$ & $1350$ \\
+$E_+$ & $649$ & $>0$ & $>0$ & $>0$ & $1350$ \\
+$E_-$ & $656$ & $>0$ & $>0$ & $>0$ & $1350$ \\
+\midrule
+Global & $1305$ & $1232$ & $1395$ & $118$ & $4050$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Alcance de la metodología y sistemas candidatos}
 
-% Su aplicabilidad queda restringida a modelos que admitan una separación tipo Lur'e con bloque lineal bien definido y no linealidad estática localizada.
+Su aplicabilidad queda restringida a modelos que admitan una separación tipo Lur'e con bloque lineal bien definido y no linealidad estática localizada.
 
-% En particular, el enfoque resulta más prometedor cuando se cumplen simultáneamente tres condiciones:
+En particular, el enfoque resulta más prometedor cuando se cumplen simultáneamente tres condiciones:
 
-% \begin{enumerate}
-%     \item que el sistema admita una separación tipo Lur'e, o una separación cercana, con una no linealidad escalar o de baja dimensión claramente identificable;
-%     \item que el bloque lineal asociado permita definir una función de transferencia fraccionaria explícita o computable;
-%     \item que exista una interpretación razonable del predictor armónico como semilla de continuación.
-% \end{enumerate}
+\begin{enumerate}
+    \item que el sistema admita una separación tipo Lur'e, o una separación cercana, con una no linealidad escalar o de baja dimensión claramente identificable;
+    \item que el bloque lineal asociado permita definir una función de transferencia fraccionaria explícita o computable;
+    \item que exista una interpretación razonable del predictor armónico como semilla de continuación.
+\end{enumerate}
 
-% Bajo este criterio, pueden considerarse como candidatos posibles las variantes suaves o no suaves del circuito de Chua, algunas familias de tipo Lorenz generalizado y ciertos modelos memristivos fraccionarios.
+Bajo este criterio, pueden considerarse como candidatos posibles las variantes suaves o no suaves del circuito de Chua, algunas familias de tipo Lorenz generalizado y ciertos modelos memristivos fraccionarios.
 
-% La tabla siguiente resume cinco sistemas compatibles marco propuesto. Los casos etiquetados como Lur'e estricto son los más adecuados para una transferencia casi directa del procedimiento; los casos Lur'e generalizado requieren extensiones adicionales en la etapa analítica.
+La tabla siguiente resume cinco sistemas compatibles con el marco propuesto. Los casos etiquetados como Lur'e estricto son los más adecuados para una transferencia casi directa del procedimiento; los casos Lur'e generalizado requieren extensiones adicionales en la etapa analítica.
 
 \newpage
 \begin{table*}[t]
@@ -4768,45 +5123,234 @@ También coexisten \((2.7,10.6,15,0.0001)^\top\) y \((-2.7,-10.6,15,0.0001)^\top
 \end{table*}
 
 
-% \section{Aportes frente al estado del arte}
-% La contribución principal del documento no se reduce a trasladar la función descriptiva y la continuación numérica a un sistema fraccionario particular. El aporte reside en precisar qué parte del programa clásico puede conservarse, qué parte debe reformularse y bajo qué interpretación las herramientas del caso entero conservan sentido cuando el operador dinámico es de Caputo.
+\section{Aportes frente al estado del arte}
 
-% De manera sintética, los aportes pueden resumirse en los siguientes puntos:
+La contribución principal del documento no se reduce a trasladar la función descriptiva y la continuación numérica a un sistema fraccionario particular. El aporte reside en precisar qué parte del programa clásico puede conservarse, qué parte debe reformularse y bajo qué interpretación las herramientas del caso entero conservan sentido cuando el operador dinámico es de Caputo.
 
-% \begin{enumerate}
-%     \item \textbf{Justificación explícita del paso del caso entero al fraccionario.}
-%     Se establece por qué el jacobiano sigue siendo la herramienta correcta para la linealización local y por qué la teoría de estabilidad asociada debe reinterpretarse en términos de Mittag--Leffler y del criterio de Matignon.
+De manera sintética, los aportes pueden resumirse en los siguientes puntos:
 
-%     \item \textbf{Reinterpretación Weyl--Caputo de la función descriptiva.}
-%     Se muestra que la función descriptiva deja de leerse como detector de un ciclo límite exacto del sistema real y pasa a entenderse como predictor armónico de una semilla oscilatoria coherente con un problema auxiliar de Weyl.
+\begin{enumerate}
+    \item \textbf{Justificación explícita del paso del caso entero al fraccionario.}
+    Se establece por qué el jacobiano sigue siendo la herramienta correcta para la linealización local y por qué la teoría de estabilidad asociada debe reinterpretarse en términos de Mittag--Leffler y del criterio de Matignon.
 
-%     \item \textbf{Introducción de una función de error explícita.}
-%     El término
-%     \[
-%     e_{WC}(t)=D_{-\infty}^{q}x(t)-{}^{C}D_{t_0}^{q}x(t)
-%     \]
-%     se incorpora como cantidad concreta que mide la discrepancia entre el problema periódico ideal y el problema causal real. De esta manera, el paso conceptual entre ambos marcos queda expresado mediante una cantidad controlable y no mediante una apelación puramente heurística.
+    \item \textbf{Reinterpretación Weyl--Caputo de la función descriptiva.}
+    Se muestra que la función descriptiva deja de leerse como detector de un ciclo límite exacto del sistema real y pasa a entenderse como predictor armónico de una semilla oscilatoria coherente con un problema auxiliar de Weyl.
 
-%     \item \textbf{Delimitación rigurosa del alcance de Hill y Floquet.}
-%     Se precisa qué parte del lenguaje de estabilidad periódica clásica puede heredarse y qué parte no, especialmente en lo que concierne al comportamiento estable con decaimiento algebraico.
+    \item \textbf{Introducción de una función de error explícita.}
+    El término
+    \[
+    e_{WC}(t)=D_{-\infty}^{q}x(t)-{}^{C}D_{t_0}^{q}x(t)
+    \]
+    se incorpora como cantidad concreta que mide la discrepancia entre el problema periódico ideal y el problema causal real. De esta manera, el paso conceptual entre ambos marcos queda expresado mediante una cantidad controlable y no mediante una apelación puramente heurística.
 
-%     \item \textbf{Criterio de ocultedad adaptado al caso con memoria.}
-%     La verificación final se formula en términos de vecindades de equilibrio y cuencas operacionales bajo un protocolo explícito de historia, evitando una lectura geométrica ingenua del espacio de estados instantáneos.
-% \end{enumerate}
+    \item \textbf{Delimitación rigurosa del alcance de Hill y Floquet.}
+    Se precisa qué parte del lenguaje de estabilidad periódica clásica puede heredarse y qué parte no, especialmente en lo que concierne al comportamiento estable con decaimiento algebraico.
 
-% En conjunto, se propone un marco coherente que conecta Caputo, Weyl, función descriptiva, balance armónico, continuación numérica y verificación de ocultedad sin ocultar las rupturas conceptuales entre orden entero y orden fraccionario.
+    \item \textbf{Criterio de ocultedad adaptado al caso con memoria.}
+    La verificación final se formula en términos de vecindades de equilibrio y cuencas operacionales bajo un protocolo explícito de historia, evitando una lectura geométrica ingenua del espacio de estados instantáneos.
+\end{enumerate}
 
-% \section{Conclusiones}
-% Se formuló una ruta teórico--numérica para la localización de atractores ocultos en sistemas caóticos de orden fraccionario, tomando como caso principal el circuito de Chua fraccionario. La comparación con el caso entero permitió identificar qué partes del procedimiento clásico se conservan sin cambios y qué partes exigen una reinterpretación explícita cuando la dinámica incorpora memoria de tipo Caputo.
+En conjunto, se propone un marco coherente que conecta Caputo, Weyl, función descriptiva, balance armónico, continuación numérica y verificación de ocultedad sin ocultar las rupturas conceptuales entre orden entero y orden fraccionario.
 
-% Se mostró que la linealización local mediante jacobiano sigue siendo válida, pero que la estabilidad debe leerse con el criterio de Matignon y con funciones de Mittag--Leffler. También se estableció que la ausencia general de periodicidad exacta en sistemas autónomos de Caputo impide identificar sin más el resultado de la función descriptiva con un ciclo límite real del sistema objetivo \cite{TavazoeiHaeri2009,AreaLosadaNieto2014}.
+\section{Conclusiones}
 
-% Para salvar esta dificultad, se introdujo el problema auxiliar de Weyl/Liouville--Weyl y se utilizó el puente Weyl--Caputo para justificar el balance armónico como generador de una semilla oscilatoria. La función de error
-% \[
-% e_{WC}(t)=D_{-\infty}^{q}x(t)-{}^{C}D_{t_0}^{q}x(t)
-% \]
-% permite cuantificar el término de memoria residual que separa el problema periódico ideal del problema causal real. Con ello, la función descriptiva queda correctamente reinterpretada como predictor armónico asintótico y no como prueba de periodicidad exacta \cite{Vigue2019,Haacker2026}.
+Se formuló una ruta teórico--numérica para la localización de atractores ocultos en sistemas caóticos de orden fraccionario, tomando como caso principal el circuito de Chua fraccionario. La comparación con el caso entero permitió identificar qué partes del procedimiento clásico se conservan sin cambios y qué partes exigen una reinterpretación explícita cuando la dinámica incorpora memoria de tipo Caputo.
 
+Se mostró que la linealización local mediante jacobiano sigue siendo válida, pero que la estabilidad debe leerse con el criterio de Matignon y con funciones de Mittag--Leffler. También se estableció que la ausencia general de periodicidad exacta en sistemas autónomos de Caputo impide identificar sin más el resultado de la función descriptiva con un ciclo límite real del sistema objetivo \cite{TavazoeiHaeri2009,AreaLosadaNieto2014}.
+
+Para salvar esta dificultad, se introdujo el problema auxiliar de Weyl/Liouville--Weyl y se utilizó el puente Weyl--Caputo para justificar el balance armónico como generador de una semilla oscilatoria. La función de error
+\[
+e_{WC}(t)=D_{-\infty}^{q}x(t)-{}^{C}D_{t_0}^{q}x(t)
+\]
+cuantifica la discrepancia entre el problema periódico de Weyl y el problema causal de Caputo, y satisface una cota de decaimiento algebraico que justifica el uso de la semilla armónica como condición inicial aproximada.
+
+El análisis comparativo con el trabajo de Danca \cite{Danca2017} reveló que el protocolo de verificación de ocultedad presentado en ese artículo es insuficiente: un único radio de prueba, la omisión del equilibrio central, la falta de criterio cuantitativo y el argumento circular de atribuir ocultedad a la semilla, no al atractor, no satisfacen la definición operacional de Leonov y Kuznetsov \cite{LeonovKuznetsov2013}. Los sondeos esféricos con seis radios y tres equilibrios realizados en este trabajo muestran que el sistema de Chua fraccionario no suave, tanto en los parámetros exactos de Danca como en los parámetros ajustados, presenta contactos desde las vecindades de los equilibrios externos $E_\pm$ hacia el atractor caótico, clasificándolo como autoexcitado.
+
+%=============================================================
+\section{Análisis crítico de Danca (2017) y verificación de ocultedad}
+\label{sec:danca_analysis}
+%=============================================================
+
+\subsection{Nota sobre la función descriptiva empleada}
+\label{subsec:df_clasica}
+
+Antes de presentar el análisis comparativo, conviene aclarar qué variante de
+la función descriptiva se utilizó en la generación de semillas de los
+experimentos anteriores. En la biblioteca de validación, el archivo
+\texttt{unified\_seeds.json} registra dos familias de semillas:
+\texttt{lure\_classical\_centered} y \texttt{machado\_centered}. Las semillas
+de la familia \texttt{machado\_centered} se distinguen por el parámetro
+\(\mu\neq 1\), que escala la integral temporal en el esquema de predicción
+propuesto por Machado (esquema de predictor--corrector fraccionario de orden variable). Las semillas de la
+familia \texttt{lure\_classical\_centered} corresponden al balance armónico
+estándar de primer orden (\(\mu=1\)), idéntico al utilizado por Kuznetsov,
+Leonov y colaboradores \cite{KuznetsovEtAl2017}.
+
+Para el candidato seleccionado se empleó exclusivamente la función descriptiva
+clásica, no la variante de Machado. Los valores numéricos de la semilla,
+residuo y comparación con la ruta publicada se concentran en la
+Sección~\ref{sec:resultados_numericos}; aquí sólo se conserva la conclusión
+metodológica: la familia Machado se registró con fines comparativos, pero
+\emph{no} fue la que generó el candidato evaluado en las pruebas de ocultedad.
+
+%-------------------------------------------------------------
+\subsection{Diferencias de parámetros entre el candidato evaluado y Danca (2017)}
+\label{subsec:param_diff}
+
+Los parámetros empleados en el candidato sometido a las pruebas de ocultedad no
+coinciden exactamente con los reportados por Danca \cite{Danca2017}. La
+comparación numérica y los equilibrios correspondientes se reportan en la
+Sección~\ref{subsec:resultados_danca_exactos}. El punto metodológico relevante
+es que el ajuste de pendientes permitió completar la homotopía, pero cambió el
+sistema evaluado; por ello la clasificación de ocultedad se hace respecto de
+los equilibrios del sistema que realmente generó el candidato.
+
+%-------------------------------------------------------------
+\subsection{Falta de rigurosidad en la verificación de ocultedad de Danca (2017)}
+\label{subsec:danca_rigor}
+
+El trabajo de Danca \cite{Danca2017} es relevante por introducir un esquema
+general para la búsqueda de atractores ocultos en sistemas fraccionarios de
+Caputo mediante el algoritmo ABM predictor--corrector. Sin embargo, la
+verificación de la propiedad de ocultedad presenta varias deficiencias
+metodológicas importantes que se detallan a continuación.
+
+\subsubsection{Protocolo de sondeo de vecindades reducido}
+
+Para el caso del Chua no suave fraccionario, Danca reporta un test de
+vecindades con los siguientes parámetros~\cite{Danca2017}:
+\[
+\begin{aligned}
+\delta &= 0.01,\\
+N_{\rm tray} &= 200,\\
+\text{equilibrios probados} &: X_1,\,X_2.
+\end{aligned}
+\]
+Es decir, se utiliza un único radio $\delta=0.01$, un solo nivel de muestreo
+de 200 trayectorias, y se omite por completo el equilibrio central $X_0$.
+No se especifica ningún criterio cuantitativo de distancia para declarar que
+una trayectoria ``alcanza'' o ``no alcanza'' el atractor candidato. El paper
+simplemente presenta una figura en la que visualmente las 200 trayectorias
+parecen diverger o converger a los equilibrios, y declara el atractor como
+oculto.
+
+En contraste, el protocolo aplicado en la Sección~\ref{sec:resultados_numericos}
+utiliza seis radios $r\in\{10^{-5},3\times10^{-5},10^{-4},3\times10^{-4},
+10^{-3},10^{-2}\}$, entre 100 y 350 muestras por radio y por equilibrio, y
+un criterio cuantitativo de alcance basado en el percentil 90 de la distancia
+al vecino más próximo de la nube del atractor candidato. Se prueban los
+\emph{tres} equilibrios del sistema: $E_0$, $E_+$ y $E_-$.
+
+\subsubsection{Declaración anticipada de ocultedad por construcción}
+
+El razonamiento implícito de Danca \cite{Danca2017} puede resumirse así:
+\emph{``el atractor fue encontrado partiendo de una semilla generada mediante la
+función descriptiva, que no es una condición inicial en la vecindad de ningún
+equilibrio; por lo tanto, es oculto.''}
+Este argumento es incompleto. Que la \emph{semilla} sea externa a las
+vecindades de equilibrio no garantiza que la \emph{cuenca de atracción} del
+régimen resultante no tenga intersección con esas vecindades. La cuenca
+puede ser extensa y alcanzar fácilmente los equilibrios inestables incluso
+cuando el punto de partida del procedimiento de localización no lo hace.
+
+De hecho, los equilibrios $X_{1,2}$ del sistema de Danca son silla--focos
+con una variedad inestable unidimensional (autovalor real positivo
+$\lambda_1=2.2193$, confirmado en la Sección~\ref{sec:resultados_numericos}).
+En tales condiciones es perfectamente esperable que trayectorias iniciadas en
+la vecindad de $X_{1,2}$ se separen y sean eventualmente capturadas por el
+mismo atractor caótico, haciendo que éste sea autoexcitado desde esos
+equilibrios.
+
+\subsubsection{Valores críticos no reportados}
+
+Del análisis del paper se verifica que Danca \cite{Danca2017} omite los
+siguientes datos que serían necesarios para una verificación independiente
+y completa:
+\begin{enumerate}[label=\alph*)]
+  \item la condición inicial exacta del atractor oculto localizado;
+  \item los parámetros de la función descriptiva ($\omega_0$, $k$, $a_0$) para
+        el caso Chua fraccionario;
+  \item los exponentes de Lyapunov del atractor reportado;
+  \item el criterio cuantitativo para determinar que una trayectoria de sondeo
+        no alcanzó el atractor.
+\end{enumerate}
+Esta omisión impide la replicación directa y, lo que es más importante, impide
+saber si alguna de las 200 trayectorias de sondeo sí alcanzó el atractor pero
+fue ignorada o clasificada de otra manera. La evidencia es, por tanto,
+puramente visual.
+
+\subsubsection{Interpretación de la estabilidad de Matignon}
+
+Danca \cite{Danca2017} utiliza el criterio de Matignon para catalogar los
+equilibrios de los tres sistemas estudiados. Para el Chua fraccionario,
+concluye que $X_0$ es estable y $X_{1,2}$ son inestables, y de ahí infiere
+que el atractor debe ser oculto porque no es ``excitado'' por los equilibrios
+inestables. Sin embargo, la inestabilidad local de los equilibrios es una
+condición \emph{necesaria} para que el atractor sea candidato a ser oculto,
+pero no es \emph{suficiente} para probarlo. Un atractor puede coexistir con
+equilibrios inestables y aun así ser autoexcitado si la variedad inestable de
+esos equilibrios se conecta con su cuenca.
+
+%-------------------------------------------------------------
+\subsection{Prueba de ocultedad sobre el sistema exacto de Danca}
+\label{subsec:danca_exact_test}
+
+Los datos numéricos, figuras y conteos de la comparación con los parámetros
+exactos de Danca se reportan en la
+Sección~\ref{subsec:resultados_danca_exactos}. En esta sección se usa esa
+evidencia únicamente para discutir el alcance de la afirmación de ocultedad
+publicada.
+
+%-------------------------------------------------------------
+\subsection{Conclusión del análisis comparativo}
+\label{subsec:danca_conclusion}
+
+La comparación entre la metodología de Danca \cite{Danca2017} y el protocolo
+operacional aplicado en este trabajo permite enunciar las siguientes
+conclusiones:
+
+\begin{enumerate}[label=\arabic*.]
+
+\item \textbf{El régimen caótico existe.} Tanto con los parámetros ajustados
+$(m_0,m_1)=(-0.2,-1.2)$ como con los parámetros exactos
+$(m_0,m_1)=(-0.1768,-1.1468)$, el sistema de Chua fraccionario no suave
+con $q=0.9998$ exhibe un atractor caótico, confirmado por exponentes de
+Lyapunov positivos y espectros de banda ancha (Figs.~\ref{fig:chua_frac_ns_lyapunov}
+y~\ref{fig:danca_spectrum}).
+
+\item \textbf{La función descriptiva clásica produce semillas coherentes.}
+Las semillas de la ruta \texttt{lure\_classical\_centered} empleadas en los
+experimentos son estadísticamente indistinguibles de la semilla de Kuznetsov
+\emph{et al.}\ \cite{KuznetsovEtAl2017} (diferencia en norma $<0.012$). No
+se utilizó la función descriptiva de Machado para generar el candidato
+sometido a pruebas.
+
+\item \textbf{El atractor no pasa el test de ocultedad rigoroso.} Con el
+protocolo de seis radios y tres equilibrios, se detectan contactos desde
+las vecindades de $E_+$ y $E_-$ hacia el atractor candidato, tanto para los
+parámetros ajustados como, de manera consistente, para los exactos de Danca.
+Esto implica que la cuenca del atractor tiene intersección con la vecindad de
+los equilibrios externos, y por tanto el atractor es \textbf{autoexcitado}
+bajo la definición de Leonov y Kuznetsov \cite{LeonovKuznetsov2013}.
+
+\item \textbf{Danca (2017) no aplica un protocolo de ocultedad suficiente.}
+Un único radio de prueba ($\delta=0.01$), la omisión del equilibrio $E_0$,
+la ausencia de criterio cuantitativo de alcance, y el argumento circular de
+``la semilla no proviene de un equilibrio, luego el atractor es oculto''
+son insuficientes para establecer la ocultedad bajo la definición estándar.
+El paper concluye prematuramente que el atractor es oculto sin haber
+descartado rigurosamente que la cuenca tenga intersección con las vecindades
+de los equilibrios.
+
+\item \textbf{La continuación numérica es sensible a los parámetros.} El
+hecho de que la continuación fraccionaria con memoria completa diverja para
+$(m_0,m_1)=(-0.1768,-1.1468)$ y converja para $(-0.2,-1.2)$ indica que el
+paisaje de cuencas de atracción es sensible en este rango de parámetros.
+Esta sensibilidad es un indicio adicional de que la clasificación de
+ocultedad publicada por Danca podría depender de manera crítica de detalles
+numéricos no reportados en el paper.
+
+\end{enumerate}
 
 \bibliographystyle{IEEEtran}
 % Bibliografía externa esperada: phd-bibliography.bib

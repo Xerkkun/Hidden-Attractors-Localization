@@ -232,19 +232,19 @@ Los siguientes candidatos tienen la mayor prioridad para verificar si son **atra
 ## 8. Galería de Figuras
 
 ### Figura global — todos los candidatos (37 paneles)
-![Todos los candidatos caóticos](C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/MEGA_all_candidates.png)
+![Todos los candidatos caóticos](figures/MEGA_all_candidates.png)
 
 ### Mosaico — Saturación, Memoria Completa (6 candidatos)
-![Saturación - Memoria Completa](C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/summary_sat_full.png)
+![Saturación - Memoria Completa](figures/summary_sat_full.png)
 
 ### Mosaico — Saturación, Memoria Truncada (1 candidato confirmado)
-![Saturación - Memoria Truncada](C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/summary_sat_win.png)
+![Saturación - Memoria Truncada](figures/summary_sat_win.png)
 
 ### Mosaico — Arctan Fraccionario, Memoria Completa (26 candidatos)
-![Arctan - Memoria Completa](C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/summary_arc_full.png)
+![Arctan - Memoria Completa](figures/summary_arc_full.png)
 
 ### Detalle — Candidato caótico Saturación (m1=-1.2, m0=-0.2)
-![Saturación candidato caótico detallado](C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/sat_chaotic_candidate_detailed.png)
+![Saturación candidato caótico detallado](figures/sat_chaotic_candidate_detailed.png)
 
 ### Detalle — Candidato caótico Arctan (a1=0.1, a2=-1.2, ρ=1.0)
-![Arctan candidato caótico detallado](C:/Users/moren/.gemini/antigravity-ide/brain/e90964d8-48e3-4643-b087-c2fc0cf40e67/arc_chaotic_candidate_detailed.png)
+![Arctan candidato caótico detallado](figures/arc_chaotic_candidate_detailed.png)

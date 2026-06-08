@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "selection_id": "danca2017_nearby_saturation_candidate_q09998",
+  "selection_date": "2026-06-07",
+  "scope": "candidate_selection_before_hiddenness_tests",
+  "reference_case": {
+    "case_id": "danca2017_chua_fractional_saturation",
+    "role": "published_reference_not_overwritten",
+    "parameters": {
+      "model": "nonsmooth",
+      "alpha": 8.4562,
+      "beta": 12.0732,
+      "gamma": 0.0052,
+      "m0": -0.1768,
+      "m1": -1.1468,
+      "q": 0.9998
+    },
+    "published_missing_values": [
+      "initial_condition",
+      "describing_function_omega0",
+      "describing_function_gain_k",
+      "describing_function_amplitude_A0",
+      "seed_coordinates",
+      "continuation_algorithm"
+    ]
+  },
+  "parameter_change_procedure": {
+    "fixed_parameters": {
+      "alpha": 8.4562,
+      "beta": 12.0732,
+      "gamma": 0.0052,
+      "q": 0.9998
+    },
+    "varied_parameters": {
+      "m1_grid": [-0.8, -1.0, -1.2, -1.4, -1.6],
+      "m0_grid": [-0.1, -0.2, -0.3, -0.4]
+    },
+    "reason": "nearby sweep around the published nonsmooth slopes while preserving the linear part and fractional order"
+  },
+  "selected_candidate": {
+    "candidate_id": "m1_m1p2000_m0_m0p2000_branch_0",
+    "parameters": {
+      "model": "nonsmooth",
+      "alpha": 8.4562,
+      "beta": 12.0732,
+      "gamma": 0.0052,
+      "m0": -0.2,
+      "m1": -1.2,
+      "q": 0.9998
+    },
+    "fractional_df": {
+      "q_seed": 0.9998,
+      "omega0": 2.0402860510799403,
+      "k": 0.2632227929621655,
+      "A0": 4.801923641567804,
+      "seed": [4.801923641567804, 0.303954955161402, -6.860961520018262]
+    },
+    "selection_criteria": [
+      "continuation_status_ok",
+      "simulation_status_ok",
+      "chaotic_candidate_pending_robustness",
+      "persists_with_full_memory",
+      "persists_with_window_memory",
+      "persists_under_integer_df_integer_continuation_control"
+    ],
+    "not_claimed": [
+      "hiddenness_verified",
+      "chaos_certified_by_lyapunov",
+      "published_danca_exact_reproduction"
+    ]
+  },
+  "artifacts": {
+    "method_comparison_json": "validation/outputs/published_continuation_comparison/danca2017_chua_fractional_saturation_candidate/candidate_method_comparison.json",
+    "fractional_full_continuation_steps": "validation/outputs/published_continuation_comparison/danca2017_chua_fractional_saturation_candidate/fractional_full_continuation_steps.csv",
+    "fractional_window_continuation_steps": "validation/outputs/published_continuation_comparison/danca2017_chua_fractional_saturation_candidate/fractional_window_continuation_steps.csv",
+    "integer_continuation_steps": "validation/outputs/published_continuation_comparison/danca2017_chua_fractional_saturation_candidate/integer_continuation_steps.csv"
+  }
+}

@@ -1,4 +1,2 @@
 candidate_id,tested_trajectories,target_hits,hiddenness_status,contract_note
-current_centered_machado_b0_mu_2,108,0,compatible_with_hiddenness_under_tested_radii,Una coincidencia refuta ocultedad bajo el contrato EFORK de historial completo; cero impactos no es demostracion.
-current_centered_classical_b0,108,0,compatible_with_hiddenness_under_tested_radii,Una coincidencia refuta ocultedad bajo el contrato EFORK de historial completo; cero impactos no es demostracion.
-current_centered_machado_b0_mu_4,108,0,compatible_with_hiddenness_under_tested_radii,Una coincidencia refuta ocultedad bajo el contrato EFORK de historial completo; cero impactos no es demostracion.
+m1_m1p2000_m0_m0p2000_branch_0,4050,1305,self_excited_contact_detected,Official ABM spherical probes found contacts from E+ and E-; the candidate is not hidden under the tested equilibrium-neighborhood contract.
