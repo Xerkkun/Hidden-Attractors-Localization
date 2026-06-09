@@ -10,13 +10,14 @@ names must not appear in new promoted outputs.
 | classical centered describing function | `seed_generation.family=lure_classical_centered` |
 | centered Lur'e route | `seed_generation.family=lure_classical_centered` |
 | biased Lur'e route | `seed_generation.family=lure_classical_biased` |
-| Machado/FDF route | `machado_centered` or `machado_biased` seed family |
+| Machado/FDF route | `machado_centered` or `machado_biased` (Marked as planned / unsupported in this release) |
 | epsilon or eta continuation | `ContinuationPlan(lambda_values=...)` with internal mapping in provenance |
 | early periodicity filter | `soft_precheck`; periodic seeds use `pre_continuation_periodic` and continue |
 | sphere-only controls | interior ball sampling in `hiddenness_tests` |
 
-Describing functions and reconstructed Lur'e/Machado points are seed sources
-only. They are not hiddenness evidence.
+*Nota Científica e Invariante de Caputo*:
+1. Describing functions and reconstructed Lur'e points are seed sources only. They are not hiddenness evidence.
+2. En sistemas de Caputo, la continuación numérica debe propagar la memoria e historia. Las continuaciones que utilicen únicamente el último estado (warm-start numérico) no se consideran continuación Caputo estricta y emitirán una advertencia.
 
 ## Removed And Retained Material
 

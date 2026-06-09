@@ -11,8 +11,7 @@
 #   step4_extended_hiddenness.py
 #   step5_summarize_and_plot.py
 #
-# REFERENCIA HISTÓRICA: Los scripts temporales originales se encuentran en
-#   _reference_scripts/ (raíz del proyecto, fuera de version_2/).
+# REFERENCIA HISTÓRICA: Los scripts temporales originales se encuentran en el archivo histórico y están excluidos del flujo activo.
 # =============================================================================
 
 # ── Metadatos del experimento ─────────────────────────────────────────────────

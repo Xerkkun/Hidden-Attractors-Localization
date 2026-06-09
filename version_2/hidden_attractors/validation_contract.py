@@ -321,7 +321,13 @@ def _build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> int:
     """Console entry point for hidden-attractors-check-validation."""
-
+    import warnings
+    warnings.warn(
+        "Deprecated: use 'hidden-attractors validate contract ...'",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    print("Deprecated: use 'hidden-attractors validate contract ...'")
     parser = _build_parser()
     args = parser.parse_args(argv)
     issues = check_validation_contract(args.contract, args.validation_root, args.allow_pending)

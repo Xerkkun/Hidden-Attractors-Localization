@@ -38,19 +38,36 @@ Otras opciones de ejecución para el Ejemplo 1:
 
 ---
 
-## 3. Ejecutar un Preset de la CLI
+## 3. Interfaz CLI Unificada (`hidden-attractors`)
 
-La biblioteca incluye configuraciones rápidas (presets) listas para ejecutar mediante el comando unificado `hidden-attractors`. 
+La biblioteca incluye una interfaz CLI unificada agrupada por propósito matemático y computacional.
 
-Para ejecutar el preset de Chua Fraccionario:
+### Comandos Directos:
+* `hidden-attractors run -p/--preset <name>` (o con `-c/--config`)
+* `hidden-attractors init`: Copia las plantillas de configuración al directorio actual.
+* `hidden-attractors inspect-config`: Previsualiza la configuración efectiva normalizada.
 
-```bash
-hidden-attractors run -p chua_fractional
-```
-
-Otras opciones de presets disponibles:
-* `chua_integer`: Simulación y Lure DF en el sistema Chua de orden entero.
-* `chua_arctan`: Análisis en el sistema Chua de orden fraccionario con no-linealidad arcotangente.
+### Comandos Agrupados de Análisis Avanzado:
+* **Generación de Semillas (`seed`)**:
+  * `hidden-attractors seed lure-centered -c <config>` (o `-p <preset>`): Búsqueda de semillas mediante la función descriptiva clásica centrada ($c = 0$, $W_q(j\omega)N(A) = -1$).
+  * `hidden-attractors seed lure-biased -c <config>` (o `-p <preset>`): Búsqueda de semillas desplazadas mediante balance de primer armónico y balance DC ($c \neq 0$, $W_q(j\omega)N_1(A, \sigma_0) = -1$).
+  * *Nota*: Las familias Machado/FDF (`machado-centered`, `machado-biased`) se encuentran documentadas como planificadas pero no están disponibles para ejecución activa en esta entrega.
+  * *Advertencia Científica*: La función descriptiva es únicamente una aproximación armónica para buscar semillas localizadas, **no constituye una prueba matemática de existencia ni de ocultedad**.
+* **Continuación Numérica (`continuation`)**:
+  * `hidden-attractors continuation run -c <config> -s <seeds.csv>`: Propagación escalar de una semilla deformando la no linealidad mediante $\eta \in [0,1]$.
+  * `hidden-attractors continuation multiparameter -c <config>`: Continuación vectorial a lo largo de un camino parametrizado $\Gamma(\tau) = (\eta(\tau), p_1(\tau), \ldots, p_m(\tau))$.
+  * *Nota de Caputo*: En sistemas fraccionarios de Caputo, se propaga y registra la historia de memoria/historial. En caso de usar una continuación sin historia (warm-start de último estado), se emitirá una advertencia explícita.
+* **Bifurcaciones (`bifurcation`)**:
+  * `hidden-attractors bifurcation run -c <config>`: Ejecuta barridos de parámetros para diagramas de bifurcación.
+  * `hidden-attractors bifurcation plot -i <csv>`: Genera diagramas de bifurcación estilizados.
+  * `hidden-attractors bifurcation inspect -i <json>`: Muestra estadísticas de extremos locales detectados.
+* **Exponentes de Lyapunov (`lyapunov`)**:
+  * `hidden-attractors lyapunov compute -c <config>`: Estima el espectro de Lyapunov (variación homotópica).
+  * `hidden-attractors lyapunov spectrum -t <csv>`: Estima exponentes a partir de trayectorias (mediante `nolds`).
+  * `hidden-attractors lyapunov validate -i <json>`: Valida reportes y emite advertencias sobre aproximaciones de tiempo finito.
+* **Prueba de Caos (`chaos-test`)**:
+  * `hidden-attractors chaos-test zero-one -c <config>` (o `-t <csv>`): Ejecuta la prueba 0-1 de caos.
+  * `hidden-attractors chaos-test inspect -i <json>`: Muestra la clasificación (regular, caótico o inconcluyente).
 
 ---
 
@@ -65,7 +82,6 @@ Otras opciones de presets disponibles:
 
 Para garantizar la estabilidad y reproducibilidad científica del repositorio, sigue estrictamente estas reglas:
 
-* 🚫 **No ejecutar scripts archivados**: Todo código histórico se ha movido a `_archived_figure_scripts/` y no forma parte del flujo de ejecución actual.
-* 🚫 **No utilizar `_reference_scripts/`**: Dicha carpeta ha sido archivada en `_archived_figure_scripts/reference_scripts/` y borrada de la raíz.
+* 🚫 **No ejecutar scripts históricos ni scratch**: Los archivos históricos usados durante la migración no forman parte del repositorio activo ni de la distribución pública. Todo flujo reproducible debe ejecutarse desde `hidden-attractors` o desde los ejemplos oficiales en `version_2/examples/`.
 * 🚫 **No crear scripts nuevos en la raíz del repositorio**: Todo script de prueba temporal o análisis específico debe colocarse dentro de la carpeta de trabajo `version_2/examples/` o en un módulo bajo `version_2/hidden_attractors/`.
 * 🚫 **No guardar figuras directamente fuera de `library_figures`**: Queda prohibido llamar directamente a `savefig` en módulos activos. Todo gráfico debe exportarse utilizando la API unificada de ploteo en `export_figure` o `intercept_and_export_path`.

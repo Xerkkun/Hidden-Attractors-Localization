@@ -64,12 +64,32 @@ Los presets de CLI son configuraciones rápidas predefinidas para ejecutar flujo
 * **Sistema**: `chua_fractional_saturation` (q = 0.998).
 * **Tipo de análisis**: Análisis dinámico de bifurcaciones mediante barrido de parámetros.
 * **Estado**: Estable.
-* **Comando**: `hidden-attractors run -p chua_bifurcation`
+* **Comando**: `hidden-attractors bifurcation run -p chua_bifurcation` (o con `-c configs/examples/chua_fractional_bifurcation.yaml`)
 * **Salida esperada**: Archivo CSV de extremos locales detectados y diagrama de bifurcación.
 * **Genera figuras**: Sí.
 * **Recomendado para nuevas usuarias**: No (requiere más tiempo de cómputo y conocimientos especializados).
 
-### 5. `chua_basin`
+### 5. `chua_lyapunov`
+* **Propósito**: Computar el espectro de exponentes de Lyapunov y estimaciones locales de tiempo finito para Chua fraccionario.
+* **Sistema**: `chua_fractional_saturation` (q = 0.98).
+* **Tipo de análisis**: Análisis variacional/Jacobiano y convergencia temporal.
+* **Estado**: Estable.
+* **Comando**: `hidden-attractors lyapunov compute -c configs/examples/chua_fractional_lyapunov.yaml`
+* **Salida esperada**: CSV de espectro y convergencia, curvas de convergencia PNG/PDF, reportes de metadatos.
+* **Genera figuras**: Sí.
+* **Recomendado para nuevas usuarias**: Sí.
+
+### 6. `chua_zero_one`
+* **Propósito**: Ejecutar la prueba 0-1 de caos como diagnóstico complementario sobre series temporales del sistema Chua.
+* **Sistema**: `chua_fractional_saturation` (q = 0.98).
+* **Tipo de análisis**: Cálculo de parámetro K y plano de fase de desplazamiento.
+* **Estado**: Estable.
+* **Comando**: `hidden-attractors chaos-test zero-one -c configs/examples/chua_fractional_zero_one.yaml`
+* **Salida esperada**: CSV de valores c, trayectoria de desplazamiento p-q y reporte de clasificación caótica/regular.
+* **Genera figuras**: Sí.
+* **Recomendado para nuevas usuarias**: Sí.
+
+### 7. `chua_basin`
 * **Propósito**: Computar y clasificar las cuencas de atracción locales de los atractores detectados.
 * **Sistema**: `chua_fractional_saturation` (q = 0.998).
 * **Tipo de análisis**: Mapeo 2D de secciones de cuencas de atracción.
@@ -113,6 +133,8 @@ Estas herramientas y comandos de utilidad no deben aparecer como comandos recome
 
 Estos directorios contienen código congelado o histórico que ha sido retirado de la ruta activa de desarrollo para garantizar la reproducibilidad y evitar confusión metodológica. No son alternativas activas ni ejecutables válidos para simulación.
 
-* **`_archived_figure_scripts/`**: Repositorio central de scripts de figuras legacy y código obsoleto modularizado.
-* **`_archived_figure_scripts/reference_scripts/`**: Scripts históricos anteriormente ubicados en la raíz `_reference_scripts/` (eliminada).
+Historical migration scripts are intentionally excluded from the active repository.
+The active implementation lives in `version_2/hidden_attractors/`.
+
 * **`version_2/tools/legacy/`**: Fuentes y herramientas históricas congeladas, expuestas solo como comandos de compatibilidad legacy si es necesario.
+

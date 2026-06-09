@@ -2014,6 +2014,13 @@ def make_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: Sequence[str] | None = None) -> None:
+    import warnings
+    warnings.warn(
+        "Deprecated: use 'hidden-attractors report fractional-run ...'",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    print("Deprecated: use 'hidden-attractors report fractional-run ...'")
     args = make_parser().parse_args(argv)
     output = run(args)
     metadata = read_json(output / "run_metadata.json")

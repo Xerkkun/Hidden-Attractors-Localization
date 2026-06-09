@@ -961,6 +961,13 @@ def make_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> None:
+    import warnings
+    warnings.warn(
+        "Deprecated: use 'hidden-attractors published danca-abm-sphere-controls ...'",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    print("Deprecated: use 'hidden-attractors published danca-abm-sphere-controls ...'")
     args = make_parser().parse_args(argv)
     outdir = Path(args.output_dir).resolve()
     if args.job == "launch":

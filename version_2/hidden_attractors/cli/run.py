@@ -325,55 +325,8 @@ def validate_bibliography_cmd(args: argparse.Namespace) -> None:
 
 def main(argv: Sequence[str] | None = None) -> None:
     """Main CLI entry point."""
-    if argv is None:
-        argv = sys.argv[1:]
-
-    parser = argparse.ArgumentParser(
-        prog="hidden-attractors",
-        description="Unified interface for fractional-order hidden attractor analysis.",
-        allow_abbrev=False
-    )
-    
-    subparsers = parser.add_subparsers(dest="command", required=True, help="Subcommand to execute")
-    
-    # Run subparser
-    run_parser = subparsers.add_parser("run", help="Run an experiment configuration", allow_abbrev=False)
-    run_parser.add_argument("-c", "--config", type=str, help="Path to YAML configuration file")
-    run_parser.add_argument(
-        "-p", "--preset", type=str,
-        help="Select a built-in config preset or 'basic_chua_three'"
-    )
-    
-    # Init subparser
-    init_parser = subparsers.add_parser("init", help="Copy template configs to the current directory", allow_abbrev=False)
-    init_parser.add_argument(
-        "-e", "--example", type=str,
-        help="Name of a specific example preset to extract"
-    )
-    
-    # Inspect-config subparser
-    inspect_parser = subparsers.add_parser("inspect-config", help="Preview the normalized configuration", allow_abbrev=False)
-    inspect_parser.add_argument("-c", "--config", type=str, help="Path to YAML configuration file")
-    inspect_parser.add_argument("-p", "--preset", type=str, help="Select a built-in config preset")
-
-    # validate-bibliography subparser
-    val_bib_parser = subparsers.add_parser("validate-bibliography", help="Validate project claims manifest against bibliographic registry", allow_abbrev=False)
-    val_bib_parser.add_argument("-m", "--manifest", type=str, default="version_2/references/claims_manifest.yaml", help="Path to the claims_manifest.yaml file")
-    val_bib_parser.add_argument("--strict", action="store_true", help="Fail with exit code 1 if bibliographic verification fails")
-    val_bib_parser.add_argument("--json", action="store_true", help="Output validation results in JSON format")
-    val_bib_parser.add_argument("-o", "--markdown-output", type=str, help="Path to write the generated markdown traceability matrix")
-
-    # To handle arbitrary CLI overrides, parse known arguments and pass remainder
-    args, extra_args = parser.parse_known_args(argv)
-    
-    if args.command == "run":
-        run_cmd(args, extra_args)
-    elif args.command == "init":
-        init_cmd(args)
-    elif args.command == "inspect-config":
-        inspect_config_cmd(args, extra_args)
-    elif args.command == "validate-bibliography":
-        validate_bibliography_cmd(args)
+    from .main import main as main_dispatcher
+    main_dispatcher(argv)
 
 
 if __name__ == "__main__":

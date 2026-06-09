@@ -726,6 +726,13 @@ def make_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: Sequence[str] | None = None) -> None:
+    import warnings
+    warnings.warn(
+        "Deprecated: use 'hidden-attractors basin refined ...'",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    print("Deprecated: use 'hidden-attractors basin refined ...'")
     args = make_parser().parse_args(argv)
     outdir = Path(args.output_dir).resolve() if args.output_dir else OUTPUTS / f"project_basin_refined_{timestamp()}"
     if args.job == "launch":

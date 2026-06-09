@@ -208,6 +208,13 @@ def make_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    import warnings
+    warnings.warn(
+        "Deprecated: use 'hidden-attractors protocol <command> ...'",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    print("Deprecated: use 'hidden-attractors protocol <command> ...'")
     args = make_parser().parse_args(argv)
     contract = _numerical_contract(_read_object(args.contract))
     data = _read_object(args.payload)

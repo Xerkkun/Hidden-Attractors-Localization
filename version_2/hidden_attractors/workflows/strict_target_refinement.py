@@ -738,6 +738,29 @@ def make_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-range-rel", type=float, default=0.60)
     parser.add_argument("--max-fft-rel", type=float, default=0.35)
     parser.add_argument("--max-section-norm", type=float, default=0.50)
+    parser.add_argument("--job", choices=["launch", "chunk", "aggregate"], default="launch")
+    parser.add_argument("--mode", choices=["basin-project", "basin-danca", "sphere-project", "sphere-danca"], required=False, default="basin-project")
+    parser.add_argument("--source-dir", default=str(ROOT_OUTPUTS / "equilibrium_zoom_Eplus_160_20260517"))
+    parser.add_argument("--source-csv", default="")
+    parser.add_argument("--output-dir", default="")
+    parser.add_argument("--candidate-id", default=DEFAULT_PROJECT_CANDIDATE)
+    parser.add_argument("--source-labels", default="unknown,target_positive,target_negative")
+    parser.add_argument("--equilibrium-filter", default="")
+    parser.add_argument("--max-rows", type=int, default=0)
+    parser.add_argument("--chunks", type=int, default=4)
+    parser.add_argument("--chunk-id", type=int, default=0)
+    parser.add_argument("--t-final", type=float, default=0.0)
+    parser.add_argument("--t-burn", type=float, default=-1.0)
+    parser.add_argument("--tail-fraction-start", type=float, default=0.5)
+    parser.add_argument("--divergence-norm", type=float, default=120.0)
+    parser.add_argument("--equilibrium-tol", type=float, default=1.0e-3)
+    parser.add_argument("--max-cloud-points", type=int, default=700)
+    parser.add_argument("--max-section-points", type=int, default=250)
+    parser.add_argument("--max-score", type=float, default=0.45)
+    parser.add_argument("--max-cloud-norm", type=float, default=0.35)
+    parser.add_argument("--max-range-rel", type=float, default=0.60)
+    parser.add_argument("--max-fft-rel", type=float, default=0.35)
+    parser.add_argument("--max-section-norm", type=float, default=0.50)
     parser.add_argument("--min-reference-margin", type=float, default=0.10)
     parser.add_argument("--min-control-margin", type=float, default=0.10)
     parser.add_argument("--negative-control-radius", type=float, default=1.0e-4)
@@ -753,6 +776,13 @@ def make_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> None:
+    import warnings
+    warnings.warn(
+        "Deprecated: use 'hidden-attractors hiddenness strict-target-refinement ...' or 'hidden-attractors basin strict-target-refinement ...'",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    print("Deprecated: use 'hidden-attractors hiddenness strict-target-refinement ...' or 'hidden-attractors basin strict-target-refinement ...'")
     args = make_parser().parse_args(argv)
     if args.mode == "sphere-danca" and args.source_labels == "unknown,target_positive,target_negative":
         args.source_labels = "bounded_nontrivial"

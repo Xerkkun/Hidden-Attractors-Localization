@@ -37,17 +37,38 @@ Este ejemplo ejecuta de forma secuencial las siguientes fases:
 
 ---
 
-## 3. Presets de CLI
+## 3. Presets de CLI y Comandos Unificados
 
 Los presets de CLI son configuraciones empaquetadas listas para ejecutar con el comando `hidden-attractors`. Puedes consultar la lista completa y detalles de cada uno (sistema, estabilidad, propósito, etc.) en el [Índice de Ejemplos y Workflows](examples_index.md).
 
-Ejemplo de uso:
+Ejemplos de uso:
 ```bash
-# Ejecutar preset de Chua Fraccionario
+# Buscar semillas usando la función descriptiva Lur'e centrada
+hidden-attractors seed lure-centered -p chua_fractional
+
+# Buscar semillas usando la función descriptiva Lur'e sesgada
+hidden-attractors seed lure-biased -p chua_fractional
+
+# Ejecutar continuación escalar
+hidden-attractors continuation run -c path/to/config.yaml -s outputs/seeds.csv
+
+# Ejecutar continuación multiparámetro
+hidden-attractors continuation multiparameter -c path/to/config.yaml
+
+# Ejecutar preset de Chua Fraccionario estándar
 hidden-attractors run -p chua_fractional
 
 # Ejecutar preset de Chua con no-linealidad arcotangente
 hidden-attractors run -p chua_arctan
+
+# Ejecutar un barrido de bifurcación
+hidden-attractors bifurcation run -p chua_bifurcation
+
+# Ejecutar estimación de exponentes de Lyapunov
+hidden-attractors lyapunov compute -c configs/examples/chua_fractional_lyapunov.yaml
+
+# Ejecutar la prueba de caos 0-1
+hidden-attractors chaos-test zero-one -c configs/examples/chua_fractional_zero_one.yaml
 ```
 
 ---
@@ -101,9 +122,8 @@ times, states, status = integrate(
 
 ## 6. Legacy y Archivo Histórico
 
-Los scripts históricos, pruebas de ploteo manuales y código legacy redundante han sido retirados de la ruta activa y archivados:
-* **Scripts de la Raíz**: Archivados en `_archived_figure_scripts/reference_scripts/`.
-* **Pasos sueltos del Ejemplo 1**: Archivados en `_archived_figure_scripts/examples/chua_nonsmooth_biased_hidden_attractor/`.
+Historical migration scripts are intentionally excluded from the active repository.
+The active implementation lives in `version_2/hidden_attractors/`.
+
 * **Herramientas Legacy**: Conservadas bajo `version_2/tools/legacy/` solo para compatibilidad hacia atrás en resolvedores específicos de C.
 
-Para ver el índice completo del archivo histórico y su justificación, consulta el [Índice de Scripts Archivados](../../_archived_figure_scripts/ARCHIVE_INDEX.md).

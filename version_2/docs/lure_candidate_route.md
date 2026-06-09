@@ -13,7 +13,7 @@ Every reconstructed seed writes:
 
 ```json
 {
-  "family": "lure_classical_centered | lure_classical_biased | machado_centered | machado_biased",
+  "family": "lure_classical_centered | lure_classical_biased",
   "centered_or_biased": "centered | biased",
   "A": 0.0,
   "sigma0": 0.0,
@@ -29,10 +29,10 @@ Every reconstructed seed writes:
 }
 ```
 
-`lure_classical_centered` is the former centered classical DF or centered
-Lur'e construction. It is one conceptual route, not two. Describing functions predict harmonic seed candidates in the Chua circuit by searching for frequency balance points [ref:kuznetsov_2017_chua_df]. `machado_centered`
-and `machado_biased` extend the searchable seed family through `mu` and
-`theta` [ref:machado_2015_fractional_describing_functions]; they do not prove that the resulting target is hidden.
+*Nota sobre Machado/FDF*: Las familias `machado_centered` y `machado_biased` se encuentran especificadas en el esquema como `planned` / `unsupported` en la versión actual. Si se invoca la generación de estas familias por CLI, fallará explícitamente.
+
+`lure_classical_centered` es la antigua ruta clásica centrada. Las funciones descriptivas predicen candidatos armónicos en el Chua buscando puntos de balance de frecuencia ($W_q(j\omega)N(A) = -1$).
+*Advertencia Científica*: La función descriptiva es una herramienta de aproximación armónica de primer armónico para ubicar posibles semillas localizadas. **No constituye de ninguna manera una prueba de existencia de atractor ni de su ocultedad**. La ocultedad se determina posteriormente y de forma rigurosa en el protocolo evaluando vecindades locales de todos los equilibrios (Stage 52 `hiddenness_tests`).
 
 ## Soft Precheck
 

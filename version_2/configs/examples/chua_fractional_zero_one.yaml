@@ -1,0 +1,39 @@
+# Configuración de ejemplo para diagnóstico de caos 0-1 en Chua fraccional
+experiment:
+  name: "Chua Fractional Zero-One"
+  description: "0-1 chaos test diagnostic on fractional Chua system"
+  output_dir: "outputs/chua_fractional_zero_one"
+
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.98
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+stages:
+  seed_search: false
+  continuation: false
+  final_simulation: false
+  hiddenness_tests: false
+  sphere_tests: false
+  basin_slices: false
+  bifurcation: false
+  attractor_only: false
+  zero_one: true
+
+zero_one:
+  observable: "x"
+  t_final: 200.0
+  t_burn: 50.0
+  divergence_norm: 120.0
+  n_c_values: 100
+  c_min: 0.1
+  c_max: 3.04159
+  seed: 20260517
+  threshold_chaotic: 0.85
+  threshold_regular: 0.15
+  initial_condition: [0.1, 0.0, 0.0]

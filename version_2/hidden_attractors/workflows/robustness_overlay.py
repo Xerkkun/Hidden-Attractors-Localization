@@ -392,7 +392,13 @@ def make_parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> None:
     """CLI entrypoint."""
-
+    import warnings
+    warnings.warn(
+        "Deprecated: use 'hidden-attractors robustness overlay ...'",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    print("Deprecated: use 'hidden-attractors robustness overlay ...'")
     args = make_parser().parse_args(argv)
     outdir = Path(args.output_dir).resolve() if args.output_dir else OUTPUTS / f"robustness_overlay_c_trajectories_{timestamp()}"
     if args.job == "launch":

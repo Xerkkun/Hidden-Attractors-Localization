@@ -21,7 +21,7 @@ La lógica interna de los pasos está alojada en:
 - [biased_chua.py](../../hidden_attractors/workflows/biased_chua.py) (Módulo de Workflows)
 - [biased_chua.py](../../hidden_attractors/plotting/biased_chua.py) (Módulo de Ploteo centralizado)
 
-Los scripts históricos e independientes (`step1_*.py` a `step5_*.py`) han sido archivados en [_archived_figure_scripts/examples/chua_nonsmooth_biased_hidden_attractor/](../../../_archived_figure_scripts/examples/chua_nonsmooth_biased_hidden_attractor/) y están catalogados en el [Índice de Archivos](../../../_archived_figure_scripts/ARCHIVE_INDEX.md).
+Historical scripts were used during migration and are intentionally excluded from the active repository. The active workflow is implemented in `version_2/hidden_attractors/`.
 
 ---
 

@@ -55,10 +55,13 @@
   "seed_generation": {
     "families": [
       "lure_classical_centered",
-      "lure_classical_biased",
+      "lure_classical_biased"
+    ],
+    "planned_families": [
       "machado_centered",
       "machado_biased"
     ],
+    "machado_enabled": false,
     "interpretation": "seed_generation_only_not_hiddenness_evidence"
   },
   "soft_precheck": {

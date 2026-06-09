@@ -59,6 +59,9 @@ OFFICIAL_STAGE_ORDER: tuple[str, ...] = (
 SEED_FAMILIES: tuple[str, ...] = (
     "lure_classical_centered",
     "lure_classical_biased",
+)
+
+PLANNED_SEED_FAMILIES: tuple[str, ...] = (
     "machado_centered",
     "machado_biased",
 )

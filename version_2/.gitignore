@@ -95,3 +95,7 @@ library_figures/
 !validation/reference_cases/**/*.pdf
 !validation/reference_cases/**/*.jpg
 !validation/reference_cases/**/*.jpeg
+
+# Historical local archive; not part of active library, tests, docs or package distribution
+_archived_figure_scripts/
+

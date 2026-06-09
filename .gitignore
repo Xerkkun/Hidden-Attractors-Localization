@@ -70,3 +70,7 @@ figures/
 !version_2/validation/reference_cases/**/*.pdf
 !version_2/validation/reference_cases/**/*.jpg
 !version_2/validation/reference_cases/**/*.jpeg
+
+# Historical local archive; not part of active library, tests, docs or package distribution
+_archived_figure_scripts/
+

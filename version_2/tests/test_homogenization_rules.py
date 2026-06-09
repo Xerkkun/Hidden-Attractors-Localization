@@ -10,118 +10,15 @@ from pathlib import Path
 import pytest
 import numpy as np
 
-# Add legacy tools paths to sys.path from archived directory and active legacy directory
-LEGACY_ROOT = Path(__file__).resolve().parents[2] / "_archived_figure_scripts" / "version_2_tools_legacy"
+# Add active legacy directory to sys.path
 ACTIVE_LEGACY = Path(__file__).resolve().parents[1] / "tools" / "legacy"
-for path in [LEGACY_ROOT, ACTIVE_LEGACY]:
-    if str(path) not in sys.path:
-        sys.path.insert(0, str(path))
+if str(ACTIVE_LEGACY) not in sys.path:
+    sys.path.insert(0, str(ACTIVE_LEGACY))
 
-import lure_biased_multiparam_continuation as continuation
-import lure_biased_multiparam_search as search
 from hidden_attractors.workflows.protocol import (
     HiddennessTestResult,
 )
 
-def test_legacy_scripts_raise_error_without_historical_reproduction_mode() -> None:
-    # 1. Verify that both search.py and continuation.py raise errors without historical_reproduction_only: true
-    bad_cfg = {
-        "q": 0.9998,
-        "historical_reproduction_only": False,
-    }
-    tmp_file = Path("configs_tmp_bad_test.yaml")
-    try:
-        import yaml
-        tmp_file.write_text(yaml.dump(bad_cfg), encoding="utf-8")
-        
-        with pytest.raises(RuntimeError, match="Legacy Route Execution Blocked"):
-            continuation.run_continuation_pipeline(tmp_file)
-            
-        with pytest.raises(RuntimeError, match="Legacy Route Execution Blocked"):
-            import argparse
-            mock_args = argparse.Namespace(
-                output_root=None,
-                resume=False,
-                search_worker_index=None,
-                aggregate_search_workers=False,
-                periodicity_only=False,
-                aggregate_periodicity_workers=False,
-                n_samples=None,
-                periodicity_worker_count=1,
-                periodicity_worker_index=None,
-                run_id=None,
-                search_worker_count=1,
-                prepare_only=False,
-            )
-            search.run_search(tmp_file, mock_args)
-    finally:
-        if tmp_file.exists():
-            tmp_file.unlink()
-
-def test_survivor_preserves_early_periodicity_status(monkeypatch) -> None:
-    # 2. Verify that a survivor correctly retains its early_periodicity_status
-    # and records post_continuation_dynamics_status separately
-    item = {
-        "candidate_id": "c1",
-        "seed_id": "s1",
-        "seed_early_periodicity_status": "pre_continuation_periodic",
-        "seed_vec": np.array([1.0, 2.0, 3.0]),
-        "sigma0": 0.5,
-    }
-    cfg = {
-        "q": 0.9998,
-        "continuation": {
-            "h": 0.02,
-            "memory_length": 20.0,
-            "t_block": 10.0,
-            "n_blocks": 2,
-            "smooth_width": 0.2,
-            "routes": ["C1"],
-            "divergence_norm": 120.0,
-            "equilibrium_tol": 0.001,
-        }
-    }
-    p = {"alpha_chua": 1.0}
-    eqs = {"E0": np.array([0.0, 0.0, 0.0])}
-    
-    # Mock integration to run fast and return bounded classification
-    class FakeHistory:
-        def __init__(self):
-            self.memory_points = 5
-            
-        @classmethod
-        def from_trajectory(cls, *args, **kwargs):
-            return cls()
-
-        def as_efork_history(self):
-            return None
-            
-    monkeypatch.setattr("lure_biased_multiparam_continuation.chua.efork3_integrate", lambda *args, **kwargs: np.zeros((10, 4)))
-    monkeypatch.setattr("lure_biased_multiparam_continuation.classify_traj", lambda *args, **kwargs: {
-        "bounded": True,
-        "diverged": False,
-        "equilibrium_hit": False,
-        "final_class": "bounded_nontrivial",
-        "final_x": 1.0,
-        "final_y": 2.0,
-        "final_z": 3.0,
-    })
-    monkeypatch.setattr("lure_biased_multiparam_continuation.FractionalHistory", FakeHistory)
-    
-    output_dir = Path(__file__).resolve().parents[1] / "outputs" / "test_artifacts" / f"continuation_{uuid.uuid4().hex}"
-    output_dir.mkdir(parents=True)
-    try:
-        rows, path_rows, survivor, elapsed = continuation.run_one_continuation_item(
-            item, cfg, p, eqs, output_dir, []
-        )
-    finally:
-        shutil.rmtree(output_dir, ignore_errors=True)
-    
-    assert survivor is not None
-    # Verify early_periodicity_status is preserved and not overwritten to nonperiodic_post_transient
-    assert survivor["early_periodicity_status"] == "pre_continuation_periodic"
-    # Verify separate post_continuation_dynamics_status field exists
-    assert survivor["post_continuation_dynamics_status"] == "nonperiodic_post_transient"
 
 def test_strong_hiddenness_label_requires_all_six_basin_planes() -> None:
     # 3. Verify that hiddenness_tests validator fails if final_label is strong

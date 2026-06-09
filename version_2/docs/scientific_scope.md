@@ -88,7 +88,7 @@ Lyapunov estimates, cloned-dynamics spectra, FFT/PSD panels, Poincare sections,
 checks, robustness overlays and Machado/FDF variants are diagnostics or seed
 extensions. Each is useful for auditing a candidate. None is a hiddenness
 proof by itself. In particular, Machado/FDF is auxiliary and not a hiddenness
-proof.
+proof. Las familias `machado_centered` y `machado_biased` están registradas en el esquema de la biblioteca como planificadas (`planned`/`unsupported`), por lo que no se pueden ejecutar en esta entrega.
 
 ## Reference metadata audit
 
