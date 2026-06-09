@@ -15,7 +15,7 @@ from typing import Sequence, Any, Dict
 
 import numpy as np
 
-from ..workflows.config_loader import load_config
+from ..workflows.config_loader import load_config, apply_cli_overrides, resolve_seed_transfer_contract
 from ..reproducibility import collect_run_metadata, collect_lure_metadata, collect_seed_metadata
 from ..systems import get_system
 from ..seed_generation.lure import (
@@ -192,6 +192,19 @@ def run_seed_generation(
     parser.add_argument("-p", "--preset", type=str, help="Select a built-in config preset")
     parser.add_argument("-o", "--output-dir", type=str, help="Directory to save output files")
     
+    # Explicit CLI options for seed
+    parser.add_argument("--df-order", type=str, choices=["integer", "fractional"], help="describing function order type")
+    parser.add_argument("--transfer-mode", type=str, choices=["published_integer_laplace", "fractional_spectral"], help="transfer mode concrete type")
+    parser.add_argument("--q-seed", type=float, help="order used for seeds")
+    parser.add_argument("--integrator", type=str, help="integrator name")
+    parser.add_argument("--h", type=float, help="integration step size")
+    parser.add_argument("--memory-policy", type=str, choices=["full_history", "finite_window", "none"], help="Caputo memory policy")
+    parser.add_argument("--memory-window-time", type=float, help="memory window length in seconds")
+    parser.add_argument("--use-c-backend", action="store_true", default=None, help="use compiled C/Numba backend")
+    parser.add_argument("--no-c-backend", action="store_false", dest="use_c_backend", help="do not use compiled C/Numba backend")
+    parser.add_argument("--allow-python-fallback", action="store_true", default=None, help="allow fallback to Python")
+    parser.add_argument("--no-python-fallback", action="store_false", dest="allow_python_fallback", help="do not allow fallback to Python")
+
     args, extra_args = parser.parse_known_args(argv)
     
     if args.preset:
@@ -208,6 +221,17 @@ def run_seed_generation(
         sys.exit(1)
         
     config = load_config(config_path)
+
+    # Build overrides dictionary
+    overrides = {}
+    for key in ("df_order", "transfer_mode", "q_seed", "integrator", "h",
+                 "memory_policy", "memory_window_time", "use_c_backend",
+                 "allow_python_fallback"):
+        val = getattr(args, key, None)
+        if val is not None:
+            overrides[key] = val
+
+    config = apply_cli_overrides(config, overrides)
     
     system_id = config.get("system_id", "chua_fractional_saturation")
     name_map = {
@@ -224,8 +248,16 @@ def run_seed_generation(
     if lure_sys is None:
         print(f"Error: System '{system_id}' does not have a registered Lur'e decomposition.")
         sys.exit(1)
-        
-    q = float(config.get("q_seed") or config.get("q") or system.parameters.get("q", 1.0))
+
+    # Resolve seed transfer contract
+    contract = resolve_seed_transfer_contract(config, system)
+    df_order = contract["df_order"]
+    q = contract["q_seed"]
+    transfer_mode = contract["transfer_mode"]
+
+    if df_order == "fractional":
+        print("Warning: Fourier/Nyquist/describing-function calculations are interpreted through the Weyl-Caputo bridge. The harmonic solution is a seed-generation approximation, not proof of an exact Caputo periodic orbit.")
+
     wmin = float(config.get("omega_min", 1e-4))
     wmax = float(config.get("omega_max", 10.0))
     nscan = int(config.get("grid_size_omega", 20000))
@@ -357,7 +389,7 @@ def run_seed_generation(
                 c["source_config"]
             ])
             
-    # 4. run_metadata.json
+    # 4. run_metadata.json, effective_config.yaml, effective_config.json
     h_val = float(config.get("h", 0.01))
     t_final = float(config.get("final_simulation", {}).get("t_final", 500.0))
     t_burn = float(config.get("final_simulation", {}).get("t_burn", 120.0))
@@ -382,11 +414,57 @@ def run_seed_generation(
         random_seed_policy=config.get("random_seed_policy", "fixed_reproducible"),
     )
     
+    from ..reproducibility import metadata_to_jsonable
+    meta_jsonable = metadata_to_jsonable(run_meta)
+
+    # Resolve contracts
+    seed_transfer_contract = {
+        "df_order": contract["df_order"],
+        "transfer_mode": contract["transfer_mode"],
+        "q_seed": float(contract["q_seed"]),
+        "frequency_rule": contract["lambda_frequency_rule"]
+    }
+
+    continuation_contract = {
+        "continuation_order": config["continuation"].get("continuation_order"),
+        "q_continuation": float(config["continuation"].get("q_continuation")) if config["continuation"].get("q_continuation") is not None else None,
+        "integrator": config.get("integrator"),
+        "memory_policy": config.get("memory_policy"),
+        "history_carried": config.get("memory_policy") != "none"
+    }
+
+    dynamics_contract = {
+        "dynamics_order": config["dynamics"].get("dynamics_order"),
+        "q_dynamics": float(config["dynamics"].get("q_dynamics")) if config["dynamics"].get("q_dynamics") is not None else None,
+        "integrator": config.get("integrator")
+    }
+
+    meta_jsonable["seed_transfer_contract"] = seed_transfer_contract
+    meta_jsonable["continuation_contract"] = continuation_contract
+    meta_jsonable["dynamics_contract"] = dynamics_contract
+
     meta_path = Path(output_dir) / "run_metadata.json"
     with open(meta_path, "w", encoding="utf-8") as f:
-        # Custom dict serialisation for metadata to handle dataclasses nested
-        from ..reproducibility import metadata_to_jsonable
-        json.dump(metadata_to_jsonable(run_meta), f, indent=2)
+        json.dump(meta_jsonable, f, indent=2)
+
+    config["seed_transfer_contract"] = seed_transfer_contract
+    config["continuation_contract"] = continuation_contract
+    config["dynamics_contract"] = dynamics_contract
+
+    from ..workflows.config_loader import save_effective_config
+    save_effective_config(config, output_dir)
+
+    eff_json_path = Path(output_dir) / "effective_config.json"
+    with open(eff_json_path, "w", encoding="utf-8") as f:
+        def _clean(obj: Any) -> Any:
+            if hasattr(obj, "tolist"):
+                return obj.tolist()
+            if isinstance(obj, dict):
+                return {k: _clean(v) for k, v in obj.items()}
+            if isinstance(obj, (list, tuple)):
+                return [_clean(v) for v in obj]
+            return obj
+        json.dump(_clean(dict(config)), f, indent=2)
         
     print(f"Generated {len(candidates)} seeds. Summary: {summary_path}")
 

@@ -1,0 +1,40 @@
+experiment:
+  name: "Chua Continuation Multiparameter Fractional"
+  description: "Run fractional-order multi-parameter continuation path"
+  output_dir: "outputs/chua_continuation_multiparameter_fractional"
+
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.98
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+continuation:
+  continuation_order: "fractional"
+  q_continuation: 0.98
+  mode: "multiparameter"
+  path_parameter: "eta"
+  steps: 25
+  parameters:
+    eta:
+      start: 0.0
+      end: 1.0
+    q:
+      start: 0.98
+      end: 0.95
+
+integrator:
+  name: "efork3"
+  h: 0.002
+  memory_policy: "finite_window"
+  memory_mode: "window"
+  memory_window_steps: 1000
+
+stages:
+  seed_search: false
+  continuation: true
+  final_simulation: false

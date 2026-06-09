@@ -7,7 +7,14 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from hidden_attractors.plotting.export import export_figure, LIBRARY_FIGURES_ROOT
 
-def test_manifest_entries():
+@pytest.mark.plotting
+def test_manifest_entries(tmp_path, monkeypatch):
+    import hidden_attractors.plotting.export as export_mod
+    import hidden_attractors.plotting.manifest as manifest_mod
+    monkeypatch.setattr(export_mod, "LIBRARY_FIGURES_ROOT", tmp_path / "library_figures")
+    monkeypatch.setattr(manifest_mod, "LIBRARY_FIGURES_ROOT", tmp_path / "library_figures")
+    LIBRARY_FIGURES_ROOT = tmp_path / "library_figures"
+
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1])
     

@@ -16,13 +16,10 @@ SYSTEM_ID = "chua_fractional_saturation"
 
 
 @pytest.fixture
-def artifact_root() -> Path:
-    root = Path(__file__).resolve().parents[1] / "outputs" / "test_artifacts" / f"wolfram_{uuid.uuid4().hex}"
+def artifact_root(tmp_path) -> Path:
+    root = tmp_path / f"wolfram_{uuid.uuid4().hex}"
     root.mkdir(parents=True)
-    try:
-        yield root
-    finally:
-        shutil.rmtree(root, ignore_errors=True)
+    yield root
 
 
 def _write_generated_artifacts(root: Path, *, passed: bool) -> Path:
@@ -38,12 +35,14 @@ def _write_generated_artifacts(root: Path, *, passed: bool) -> Path:
     return out
 
 
+@pytest.mark.unit
 def test_official_algebra_fails_or_pending_without_wolfram_artifacts(artifact_root: Path) -> None:
     artifacts = resolve_wolfram_artifacts(artifact_root)
     assert artifacts.complete is False
     assert artifacts.source_kind == "missing"
 
 
+@pytest.mark.unit
 def test_promoted_wolfram_artifacts_are_consumed_by_algebra_validation(artifact_root: Path) -> None:
     out = _write_generated_artifacts(artifact_root, passed=True)
     artifacts = resolve_wolfram_artifacts(artifact_root)
@@ -53,6 +52,7 @@ def test_promoted_wolfram_artifacts_are_consumed_by_algebra_validation(artifact_
     assert artifacts.files["wolfram_jacobians.csv"] == out / f"{SYSTEM_ID}_jacobians.csv"
 
 
+@pytest.mark.unit
 def test_algebra_summary_promotes_only_when_wolfram_summaries_pass(artifact_root: Path) -> None:
     _write_generated_artifacts(artifact_root, passed=False)
     artifacts = resolve_wolfram_artifacts(artifact_root)
@@ -60,6 +60,7 @@ def test_algebra_summary_promotes_only_when_wolfram_summaries_pass(artifact_root
     assert artifacts.summaries_pass is False
 
 
+@pytest.mark.unit
 def test_algebra_summary_does_not_claim_hiddenness_or_chaos() -> None:
     root = Path(__file__).resolve().parents[1]
     summary = (

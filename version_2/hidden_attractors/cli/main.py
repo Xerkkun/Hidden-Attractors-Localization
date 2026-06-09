@@ -50,7 +50,7 @@ def dispatch(group: str, cmd: str | None, argv: Sequence[str]) -> None:
         from .run import run_cmd
         # run_cmd expects parsed args and extra_args.
         # Let's parse args for run subcommand
-        parser = argparse.ArgumentParser(prog="hidden-attractors run")
+        parser = argparse.ArgumentParser(prog="hidden-attractors run", allow_abbrev=False)
         parser.add_argument("-c", "--config", type=str, help="Path to YAML configuration file")
         parser.add_argument("-p", "--preset", type=str, help="Select a built-in config preset or 'basic_chua_three'")
         args, extra_args = parser.parse_known_args(argv)
@@ -58,14 +58,14 @@ def dispatch(group: str, cmd: str | None, argv: Sequence[str]) -> None:
         
     elif group == "init":
         from .run import init_cmd
-        parser = argparse.ArgumentParser(prog="hidden-attractors init")
+        parser = argparse.ArgumentParser(prog="hidden-attractors init", allow_abbrev=False)
         parser.add_argument("-e", "--example", type=str, help="Name of a specific example preset to extract")
         args = parser.parse_args(argv)
         init_cmd(args)
         
     elif group == "inspect-config":
         from .run import inspect_config_cmd
-        parser = argparse.ArgumentParser(prog="hidden-attractors inspect-config")
+        parser = argparse.ArgumentParser(prog="hidden-attractors inspect-config", allow_abbrev=False)
         parser.add_argument("-c", "--config", type=str, help="Path to YAML configuration file")
         parser.add_argument("-p", "--preset", type=str, help="Select a built-in config preset")
         args, extra_args = parser.parse_known_args(argv)
@@ -251,7 +251,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     cont_sub.add_parser("multiparameter", help="Run multiparameter continuation")
 
     args, extra_args = parser.parse_known_args(argv)
-    dispatch(args.group, args.cmd, extra_args)
+    dispatch(args.group, getattr(args, "cmd", None), extra_args)
 
 
 if __name__ == "__main__":

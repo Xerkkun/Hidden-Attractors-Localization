@@ -85,3 +85,26 @@ Para garantizar la estabilidad y reproducibilidad científica del repositorio, s
 * 🚫 **No ejecutar scripts históricos ni scratch**: Los archivos históricos usados durante la migración no forman parte del repositorio activo ni de la distribución pública. Todo flujo reproducible debe ejecutarse desde `hidden-attractors` o desde los ejemplos oficiales en `version_2/examples/`.
 * 🚫 **No crear scripts nuevos en la raíz del repositorio**: Todo script de prueba temporal o análisis específico debe colocarse dentro de la carpeta de trabajo `version_2/examples/` o en un módulo bajo `version_2/hidden_attractors/`.
 * 🚫 **No guardar figuras directamente fuera de `library_figures`**: Queda prohibido llamar directamente a `savefig` en módulos activos. Todo gráfico debe exportarse utilizando la API unificada de ploteo en `export_figure` o `intercept_and_export_path`.
+
+---
+
+## 6. Pruebas Unitarias y de Contrato
+
+Para garantizar que los contratos científicos y la lógica de la biblioteca permanezcan invariables, puedes ejecutar la suite de pruebas desde la carpeta `version_2/`:
+
+```bash
+# Ejecutar la suite de pruebas rápidas (CI rápida, excluye pruebas lentas)
+pytest tests -m "not slow"
+
+# Ejecutar únicamente los contratos científicos rápidos
+pytest tests -m "scientific_contract"
+
+# Ejecutar pruebas del CLI público
+pytest tests -m "cli"
+
+# Ejecutar la suite completa localmente
+pytest tests
+
+# Ejecutar pruebas lentas y reproducciones numéricas pesadas (antes de congelar versión)
+pytest tests -m "slow"
+```

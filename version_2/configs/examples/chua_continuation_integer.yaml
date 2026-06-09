@@ -1,0 +1,29 @@
+experiment:
+  name: "Chua Continuation Integer"
+  description: "Run integer-order numerical continuation"
+  output_dir: "outputs/chua_continuation_integer"
+
+system:
+  system_id: "chua_integer_saturation"
+  q: 1.0
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+continuation:
+  continuation_order: "integer"
+  q_continuation: 1.0
+  mode: "scalar"
+  path_parameter: "eta"
+
+integrator:
+  name: "rk4"
+  h: 0.001
+
+stages:
+  seed_search: false
+  continuation: true
+  final_simulation: false

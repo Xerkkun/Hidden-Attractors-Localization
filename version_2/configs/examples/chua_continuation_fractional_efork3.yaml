@@ -1,0 +1,32 @@
+experiment:
+  name: "Chua Continuation Fractional Efork3"
+  description: "Run fractional-order numerical continuation using Efork3 method"
+  output_dir: "outputs/chua_continuation_fractional_efork3"
+
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.98
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+continuation:
+  continuation_order: "fractional"
+  q_continuation: 0.98
+  mode: "scalar"
+  path_parameter: "eta"
+
+integrator:
+  name: "efork3"
+  h: 0.002
+  memory_policy: "finite_window"
+  memory_mode: "window"
+  memory_window_steps: 1000
+
+stages:
+  seed_search: false
+  continuation: true
+  final_simulation: false

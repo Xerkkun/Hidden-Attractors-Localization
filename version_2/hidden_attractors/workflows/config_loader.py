@@ -51,6 +51,18 @@ _DEFAULTS: Dict[str, Any] = {
     "continuation_mode": "fractional",
     "dynamics_mode": "system",
 
+    # ── Explicit multi-order sections ────────────────────────────────────────
+    "seed": {
+        "df_order": None,
+        "transfer_mode": None,
+        "q_seed": None,
+        "family": None,
+    },
+    "dynamics": {
+        "dynamics_order": None,
+        "q_dynamics": None,
+    },
+
     # ── Integrator ───────────────────────────────────────────────────────────
     "integrator": "efork3",
     "h": 0.001,
@@ -160,6 +172,10 @@ _DEFAULTS: Dict[str, Any] = {
     },
 
     "continuation": {
+        "continuation_order": None,
+        "q_continuation": None,
+        "mode": "scalar",
+        "path_parameter": "eta",
         # lambda_values: explicit list overrides the adaptive eta grid.
         # When provided, these values are used exactly (no adaptive fallback).
         # Official contract values: [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0]
@@ -398,7 +414,7 @@ def _flatten_hierarchical(raw: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
         flat["max_seed_candidates_to_plot"] = plots.get("max_seed_candidates_to_plot",
                                                           _DEFAULTS["max_seed_candidates_to_plot"])
 
-    for section in ("continuation", "sphere_tests", "basin", "bifurcation", "early_stop", "attractor_plots", "robustness", "hiddenness", "validation", "figures"):
+    for section in ("seed", "dynamics", "continuation", "sphere_tests", "basin", "bifurcation", "early_stop", "attractor_plots", "robustness", "hiddenness", "validation", "figures"):
         if section in raw:
             flat[section] = raw[section]
 
@@ -467,6 +483,115 @@ def _apply_defaults(flat: Dict[str, Any]) -> Dict[str, Any]:
 
 def _normalize(cfg: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
     """Apply normalization: aliases, type casting, derived keys."""
+
+    # ── Multi-Order Contract Normalization and Legacy Compatibility ──
+    # Ensure nested sub-dicts exist
+    if "seed" not in cfg or cfg["seed"] is None:
+        cfg["seed"] = {}
+    elif not isinstance(cfg["seed"], dict):
+        cfg["seed"] = {"df_order": cfg["seed"]}
+
+    if "continuation" not in cfg or cfg["continuation"] is None:
+        cfg["continuation"] = {}
+
+    if "dynamics" not in cfg or cfg["dynamics"] is None:
+        cfg["dynamics"] = {}
+
+    # Extract/resolve system order q
+    q = cfg.get("q")
+
+    # Map seed_mode to seed.df_order
+    if cfg["seed"].get("df_order") is None:
+        sm = cfg.get("seed_mode")
+        if sm == "integer":
+            cfg["seed"]["df_order"] = "integer"
+        elif sm == "fractional":
+            cfg["seed"]["df_order"] = "fractional"
+        else:
+            tm = cfg.get("transfer_mode")
+            if tm in ("published_integer_laplace", "integer"):
+                cfg["seed"]["df_order"] = "integer"
+            elif tm in ("fractional_spectral", "fractional"):
+                cfg["seed"]["df_order"] = "fractional"
+            else:
+                cfg["seed"]["df_order"] = "fractional" if (q is not None and q < 1.0) else "integer"
+
+    # Map transfer_mode
+    if cfg["seed"].get("transfer_mode") is None:
+        tm = cfg.get("transfer_mode")
+        if tm is not None:
+            if tm == "integer":
+                cfg["seed"]["transfer_mode"] = "published_integer_laplace"
+            elif tm == "fractional":
+                cfg["seed"]["transfer_mode"] = "fractional_spectral"
+            else:
+                cfg["seed"]["transfer_mode"] = tm
+        else:
+            cfg["seed"]["transfer_mode"] = "published_integer_laplace" if cfg["seed"]["df_order"] == "integer" else "fractional_spectral"
+
+    # Map q_seed
+    if cfg["seed"].get("q_seed") is None:
+        qs = cfg.get("q_seed")
+        if qs is not None:
+            cfg["seed"]["q_seed"] = float(qs)
+        else:
+            cfg["seed"]["q_seed"] = 1.0 if cfg["seed"]["df_order"] == "integer" else q
+
+    # Map continuation_mode to continuation.continuation_order
+    if cfg["continuation"].get("continuation_order") is None:
+        cm = cfg.get("continuation_mode")
+        if cm == "integer":
+            cfg["continuation"]["continuation_order"] = "integer"
+        elif cm == "fractional":
+            cfg["continuation"]["continuation_order"] = "fractional"
+        else:
+            cfg["continuation"]["continuation_order"] = "fractional" if (q is not None and q < 1.0) else "integer"
+
+    # Map dynamics_mode to dynamics.dynamics_order
+    if cfg["dynamics"].get("dynamics_order") is None:
+        dm = cfg.get("dynamics_mode")
+        if dm == "integer":
+            cfg["dynamics"]["dynamics_order"] = "integer"
+        elif dm in ("fractional", "system"):
+            cfg["dynamics"]["dynamics_order"] = "fractional"
+        else:
+            cfg["dynamics"]["dynamics_order"] = "fractional" if (q is not None and q < 1.0) else "integer"
+
+    # Map q_dynamics
+    if cfg["dynamics"].get("q_dynamics") is None:
+        qd = cfg.get("q_dynamics")
+        if qd is not None:
+            cfg["dynamics"]["q_dynamics"] = float(qd)
+        else:
+            cfg["dynamics"]["q_dynamics"] = 1.0 if cfg["dynamics"]["dynamics_order"] == "integer" else q
+
+    # Map q_continuation
+    if cfg["continuation"].get("q_continuation") is None:
+        qc = cfg.get("q_continuation")
+        if qc is not None:
+            cfg["continuation"]["q_continuation"] = float(qc)
+        else:
+            if cfg["continuation"]["continuation_order"] == "integer":
+                cfg["continuation"]["q_continuation"] = 1.0
+            else:
+                qd_val = cfg["dynamics"].get("q_dynamics")
+                cfg["continuation"]["q_continuation"] = qd_val if (qd_val is not None and qd_val < 1.0) else q
+
+    # Sync back to top level for legacy support
+    cfg["q_seed"] = cfg["seed"]["q_seed"]
+    cfg["q_dynamics"] = cfg["dynamics"]["q_dynamics"]
+    cfg["q_continuation"] = cfg["continuation"]["q_continuation"]
+    cfg["seed_mode"] = cfg["seed"]["df_order"]
+    cfg["continuation_mode"] = cfg["continuation"]["continuation_order"]
+    cfg["dynamics_mode"] = "system" if cfg["dynamics"]["dynamics_order"] == "fractional" else "integer"
+
+    # Apply type casting to nested sections
+    if cfg["seed"].get("q_seed") is not None:
+        cfg["seed"]["q_seed"] = float(cfg["seed"]["q_seed"])
+    if cfg["continuation"].get("q_continuation") is not None:
+        cfg["continuation"]["q_continuation"] = float(cfg["continuation"]["q_continuation"])
+    if cfg["dynamics"].get("q_dynamics") is not None:
+        cfg["dynamics"]["q_dynamics"] = float(cfg["dynamics"]["q_dynamics"])
 
     # Integrator aliases
     if cfg.get("integrator") == "efork":
@@ -874,6 +999,17 @@ _INTEGRATOR_SUBKEY_MAPPING = {
 }
 
 
+_CLI_NESTED_MAPPINGS = {
+    "df_order": "seed.df_order",
+    "transfer_mode": "seed.transfer_mode",
+    "q_seed": "seed.q_seed",
+    "continuation_order": "continuation.continuation_order",
+    "q_continuation": "continuation.q_continuation",
+    "dynamics_order": "dynamics.dynamics_order",
+    "q_dynamics": "dynamics.q_dynamics",
+}
+
+
 def apply_cli_overrides(cfg: Dict[str, Any], overrides: Dict[str, Any]) -> Dict[str, Any]:
     """Apply CLI override values to a loaded config, then re-validate.
 
@@ -892,6 +1028,9 @@ def apply_cli_overrides(cfg: Dict[str, Any], overrides: Dict[str, Any]) -> Dict[
     mapped_overrides = {}
     for k, v in overrides.items():
         if v is None:
+            continue
+        if k in _CLI_NESTED_MAPPINGS:
+            mapped_overrides[_CLI_NESTED_MAPPINGS[k]] = v
             continue
         if k.startswith("integrator."):
             subkey = k.split(".", 1)[1]
@@ -920,3 +1059,59 @@ def apply_cli_overrides(cfg: Dict[str, Any], overrides: Dict[str, Any]) -> Dict[
     cfg = _normalize(cfg)
     _validate(cfg)
     return cfg
+
+
+def resolve_seed_transfer_contract(config: Dict[str, Any], system: Any) -> Dict[str, Any]:
+    """Resolve the explicit contract for describing function and transfer function evaluation.
+
+    Parameters
+    ----------
+    config : dict
+        Normalized config dictionary.
+    system : object
+        System object from the systems registry.
+
+    Returns
+    -------
+    dict
+        SeedTransferContract dictionary.
+    """
+    # Resolve order and modes
+    q = config.get("q")
+    if q is None and system is not None:
+        q = system.parameters.get("q")
+    if q is None:
+        q = 1.0
+
+    seed_sec = config.get("seed") or {}
+    df_order = seed_sec.get("df_order")
+    if df_order is None:
+        df_order = "fractional" if q < 1.0 else "integer"
+
+    q_seed = seed_sec.get("q_seed")
+    if q_seed is None:
+        q_seed = 1.0 if df_order == "integer" else q
+
+    transfer_mode = seed_sec.get("transfer_mode")
+    if transfer_mode is None:
+        transfer_mode = "published_integer_laplace" if df_order == "integer" else "fractional_spectral"
+    elif transfer_mode == "integer":
+        transfer_mode = "published_integer_laplace"
+    elif transfer_mode == "fractional":
+        transfer_mode = "fractional_spectral"
+
+    frequency_rule = "lambda=jomega" if df_order == "integer" else "lambda=(jomega)^q"
+
+    legacy_source_fields = []
+    if "seed_mode" in config:
+        legacy_source_fields.append("seed_mode")
+    if "transfer_mode" in config:
+        legacy_source_fields.append("transfer_mode")
+
+    return {
+        "df_order": df_order,
+        "transfer_mode": transfer_mode,
+        "q_seed": float(q_seed),
+        "lambda_frequency_rule": frequency_rule,
+        "legacy_source_fields": legacy_source_fields
+    }

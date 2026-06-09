@@ -24,6 +24,7 @@ CASES_DIR = REPO_ROOT / "validation" / "published_cases"
 OUTPUTS_DIR = REPO_ROOT / "validation" / "outputs" / "published_cases"
 
 
+@pytest.mark.literature_traceability
 def test_published_cases_exist() -> None:
     """Verificar que existen los tres YAML."""
     expected_files = [
@@ -36,6 +37,7 @@ def test_published_cases_exist() -> None:
         assert path.exists(), f"Missing expected case config file: {filename}"
 
 
+@pytest.mark.literature_traceability
 def test_bibliographic_metadata_correct() -> None:
     """Verificar que la metadata bibliográfica en los YAML es correcta y precisa."""
     # 1. Danca 2017
@@ -57,6 +59,8 @@ def test_bibliographic_metadata_correct() -> None:
         assert author in wu["paper"]["authors"]
 
 
+@pytest.mark.literature_traceability
+@pytest.mark.scientific_contract
 def test_published_fractional_cases_use_integer_seed_transfer() -> None:
     """Para Danca 2017 y Wu 2023:
     assert seed_transfer_mode == "published_integer_laplace"
@@ -74,6 +78,8 @@ def test_published_fractional_cases_use_integer_seed_transfer() -> None:
         assert seed_rep.get("transfer_exponent_applied") is False
 
 
+@pytest.mark.literature_traceability
+@pytest.mark.scientific_contract
 def test_fractional_published_dynamics_configs_record_integration_contract() -> None:
     with open(CASES_DIR / "danca2017_chua_fractional_saturation.yaml", "r", encoding="utf-8") as f:
         danca = yaml.safe_load(f)
@@ -89,6 +95,8 @@ def test_fractional_published_dynamics_configs_record_integration_contract() -> 
     assert wu["dynamics"]["caputo_history_accumulated"] is False
 
 
+@pytest.mark.literature_traceability
+@pytest.mark.scientific_contract
 def test_published_integer_seed_uses_closed_form_not_modal(monkeypatch) -> None:
     """Parchear np.linalg.eig y np.linalg.eigh para que fallen, y verificar que
     compute_seed_for_reproduction con published_integer_laplace funciona (usa fórmula cerrada).
@@ -111,6 +119,8 @@ def test_published_integer_seed_uses_closed_form_not_modal(monkeypatch) -> None:
     assert len(seed_res["seed_plus"]) == 3
 
 
+@pytest.mark.literature_traceability
+@pytest.mark.scientific_contract
 def test_published_seed_independent_of_q() -> None:
     """Para un sistema fraccionario publicado:
     - calcular semilla con q_dynamics = 1;
@@ -139,6 +149,8 @@ def test_published_seed_independent_of_q() -> None:
     assert np.allclose(seed_q1["seed_plus"], seed_q_frac["seed_plus"], atol=1e-12)
 
 
+@pytest.mark.literature_traceability
+@pytest.mark.scientific_contract
 def test_fractional_extension_seed_is_q_dependent_or_transfer_differs() -> None:
     """Usando seed_transfer_mode = "fractional_spectral":
     - calcular con q = 1;
@@ -179,6 +191,7 @@ def test_fractional_extension_seed_is_q_dependent_or_transfer_differs() -> None:
     assert abs(W_int - W_frac) > 1e-5
 
 
+@pytest.mark.scientific_contract
 def test_W_published_integer_formula() -> None:
     """Verificar directamente W_published_integer(omega, P, b, r) = r @ solve(1j*omega*I - P, b)"""
     sys_obj = chua_system("nonsmooth")
@@ -192,6 +205,7 @@ def test_W_published_integer_formula() -> None:
     assert np.isclose(W_calc, W_expected, atol=1e-12)
 
 
+@pytest.mark.scientific_contract
 def test_W_fractional_spectral_formula() -> None:
     """Verificar directamente W_fractional_spectral(omega, q, P, b, r) = r @ solve((1j*omega)**q*I - P, b)"""
     sys_obj = chua_system("nonsmooth")
@@ -207,15 +221,16 @@ def test_W_fractional_spectral_formula() -> None:
     assert np.isclose(W_calc, W_expected, atol=1e-12)
 
 
-def test_outputs_do_not_claim_hidden_verified() -> None:
+@pytest.mark.validation_contract
+def test_outputs_do_not_claim_hidden_verified(tmp_path) -> None:
     """Los outputs de esta fase no deben contener la clave hidden_verified.
     Se permite la clave/texto 'hiddenness_claim'.
     """
     # Ensure they are generated without dynamics by default
-    run_all_published_cases(OUTPUTS_DIR, run_dynamics=False)
+    run_all_published_cases(tmp_path, run_dynamics=False)
 
     # Scan the directory and verify no generated JSON contains "hidden_verified" as a key
-    for p in OUTPUTS_DIR.glob("**/*.json"):
+    for p in tmp_path.glob("**/*.json"):
         with open(p, "r", encoding="utf-8") as f:
             data = json.load(f)
         
@@ -231,9 +246,10 @@ def test_outputs_do_not_claim_hidden_verified() -> None:
         check_keys(data)
 
 
-def test_reproduction_outputs_schema() -> None:
+@pytest.mark.validation_contract
+def test_reproduction_outputs_schema(tmp_path) -> None:
     """Verificar que reproduction_summary.json contiene las claves requeridas y correctas."""
-    run_all_published_cases(OUTPUTS_DIR, run_dynamics=False)
+    run_all_published_cases(tmp_path, run_dynamics=False)
 
     expected_keys = {
         "case_id",
@@ -252,7 +268,7 @@ def test_reproduction_outputs_schema() -> None:
         "hiddenness_certified_by_this_pipeline"
     }
 
-    for p in OUTPUTS_DIR.glob("**/reproduction_summary.json"):
+    for p in tmp_path.glob("**/reproduction_summary.json"):
         with open(p, "r", encoding="utf-8") as f:
             summary = json.load(f)
         
@@ -262,25 +278,26 @@ def test_reproduction_outputs_schema() -> None:
         assert summary["q_dependent_seed"] is False  # For all initial cases in Laplace transfer mode
 
 
-def test_dynamics_skipped_by_default() -> None:
+@pytest.mark.validation_contract
+def test_dynamics_skipped_by_default(tmp_path) -> None:
     """Verificar que sin run_dynamics, dynamics_reproduction.json contiene status: 'skipped'
     y no aparece la etiqueta 'paper_trajectory_reproduced' ni 'paper_fully_reproduced' en los statuses del summary.
     """
     # Clear outputs first
     for case_id in ["kuznetsov2017_chua_integer", "danca2017_chua_fractional_saturation", "wu2023_chua_fractional_arctan"]:
-        dyn_file = OUTPUTS_DIR / case_id / "dynamics_reproduction.json"
+        dyn_file = tmp_path / case_id / "dynamics_reproduction.json"
         if dyn_file.exists():
             dyn_file.unlink()
 
     # Run with run_dynamics=False
-    results = run_all_published_cases(OUTPUTS_DIR, run_dynamics=False)
+    results = run_all_published_cases(tmp_path, run_dynamics=False)
 
     for case_id, res in results.items():
         assert "paper_trajectory_reproduced" not in res["statuses"]
         assert "paper_fully_reproduced" not in res["statuses"]
         
         # Read dynamics file
-        dyn_file = OUTPUTS_DIR / case_id / "dynamics_reproduction.json"
+        dyn_file = tmp_path / case_id / "dynamics_reproduction.json"
         assert dyn_file.exists()
         with open(dyn_file, "r", encoding="utf-8") as f:
             dyn_data = json.load(f)
@@ -288,6 +305,8 @@ def test_dynamics_skipped_by_default() -> None:
         assert dyn_data["reason"] == "run_dynamics=false"
 
 
+@pytest.mark.literature_traceability
+@pytest.mark.scientific_contract
 def test_arctan_closed_form_seed_uses_a1_not_m1(monkeypatch) -> None:
     """Verificar que la semilla cerrada del caso arctan usa a1 y no m1, y no usa eigenvectors."""
     def broken_eig(*args, **kwargs):
@@ -319,6 +338,7 @@ def test_arctan_closed_form_seed_uses_a1_not_m1(monkeypatch) -> None:
     assert abs(abs(seed_plus[1]) - abs(y_wrong)) > 1e-6
 
 
+@pytest.mark.validation_contract
 def test_run_dynamics_does_not_claim_full_reproduction(tmp_path) -> None:
     """Verificar que la ejecución con run_dynamics=True no añade 'paper_trajectory_reproduced'
     ni 'paper_fully_reproduced' y usa en su lugar 'paper_trajectory_integrated'.

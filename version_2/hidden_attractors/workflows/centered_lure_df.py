@@ -345,7 +345,14 @@ def _write_workflow_run_metadata(
         random_seed=config.get("random_seed"),
         random_seed_policy=str(config.get("random_seed_policy", "fixed_reproducible")),
     )
-    return write_run_metadata(os.path.join(config["output_dir"], "run_metadata.json"), metadata)
+    
+    from ..reproducibility import metadata_to_jsonable
+    meta_jsonable = metadata_to_jsonable(metadata)
+    meta_jsonable["seed_transfer_contract"] = config.get("seed_transfer_contract")
+    meta_jsonable["continuation_contract"] = config.get("continuation_contract")
+    meta_jsonable["dynamics_contract"] = config.get("dynamics_contract")
+
+    return write_run_metadata(os.path.join(config["output_dir"], "run_metadata.json"), meta_jsonable)
 
 def run_workflow_integration(system, x0, q_val, h, t_final, config, equilibria):
     integrator = config["integrator"]
@@ -427,31 +434,54 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         from ..systems.builtins import _chua_lure_system
         system = dataclasses.replace(system, lure=_chua_lure_system(system.parameters))
     
-    if config.get("q_seed") is not None:
-        q_seed = config["q_seed"]
-    elif config.get("seed_mode") == "integer":
-        q_seed = 1.0
-    else:
-        q_seed = _effective_q(config, system)
+    from ..workflows.config_loader import resolve_seed_transfer_contract
+    contract = resolve_seed_transfer_contract(config, system)
+    df_order = contract["df_order"]
+    q_seed = contract["q_seed"]
+    transfer_mode = contract["transfer_mode"]
+    seed_transfer_mode = "integer" if df_order == "integer" else "fractional"
 
-    if config.get("q_dynamics") is not None:
-        q_dynamics = config["q_dynamics"]
-    elif config.get("dynamics_mode") == "integer":
-        q_dynamics = 1.0
-    elif config.get("dynamics_mode") == "fractional":
-        q_dynamics = _effective_q(config, system)
-    else:
-        q_dynamics = _effective_q(config, system)
+    if df_order == "fractional":
+        print("Warning: Fourier/Nyquist/describing-function calculations are interpreted through the Weyl-Caputo bridge. The harmonic solution is a seed-generation approximation, not proof of an exact Caputo periodic orbit.")
 
-    if config.get("continuation_mode") == "integer":
-        q_continuation = 1.0
-    else:
-        q_continuation = q_dynamics if q_dynamics < 1.0 else _effective_q(config, system)
+    q_dynamics = config["dynamics"].get("q_dynamics")
+    if q_dynamics is None:
+        if config["dynamics"].get("dynamics_order") == "integer":
+            q_dynamics = 1.0
+        else:
+            q_dynamics = _effective_q(config, system)
 
-    if config.get("seed_mode") == "integer":
-        seed_transfer_mode = "integer"
-    else:
-        seed_transfer_mode = "fractional"
+    q_continuation = config["continuation"].get("q_continuation")
+    if q_continuation is None:
+        if config["continuation"].get("continuation_order") == "integer":
+            q_continuation = 1.0
+        else:
+            q_continuation = q_dynamics if q_dynamics < 1.0 else _effective_q(config, system)
+
+    seed_transfer_contract = {
+        "df_order": df_order,
+        "transfer_mode": transfer_mode,
+        "q_seed": float(q_seed),
+        "frequency_rule": contract["lambda_frequency_rule"]
+    }
+
+    continuation_contract = {
+        "continuation_order": config["continuation"].get("continuation_order"),
+        "q_continuation": float(q_continuation) if q_continuation is not None else None,
+        "integrator": config.get("integrator"),
+        "memory_policy": config.get("memory_policy"),
+        "history_carried": config.get("memory_policy") != "none"
+    }
+
+    dynamics_contract = {
+        "dynamics_order": config["dynamics"].get("dynamics_order"),
+        "q_dynamics": float(q_dynamics) if q_dynamics is not None else None,
+        "integrator": config.get("integrator")
+    }
+
+    config["seed_transfer_contract"] = seed_transfer_contract
+    config["continuation_contract"] = continuation_contract
+    config["dynamics_contract"] = dynamics_contract
 
     validation_config = config.copy()
     validation_config["q_seed"] = q_seed
@@ -464,7 +494,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     effective_config_path = os.path.join(output_dir, "effective_config.yaml")
     effective_config = config.copy()
     effective_config["q"] = q
-    effective_config["seed_mode"] = config["seed_mode"]
+    effective_config["seed_mode"] = config.get("seed_mode") or df_order
     effective_config["q_seed_effective"] = q_seed
     effective_config["q_dynamics_effective"] = q_dynamics
     effective_config["q_continuation_effective"] = q_continuation
@@ -473,6 +503,9 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     effective_config["harmonic_condition"] = config["harmonic_condition"]
     effective_config["memory_policy"] = config["memory_policy"]
     effective_config["history_policy"] = "full_caputo" if config["memory_policy"] == "full_caputo" else ("finite_window" if config["memory_policy"] == "finite_window" else "none")
+    effective_config["seed_transfer_contract"] = seed_transfer_contract
+    effective_config["continuation_contract"] = continuation_contract
+    effective_config["dynamics_contract"] = dynamics_contract
     
     with open(effective_config_path, "w", encoding="utf-8") as f:
         yaml.dump(effective_config, f, default_flow_style=False)

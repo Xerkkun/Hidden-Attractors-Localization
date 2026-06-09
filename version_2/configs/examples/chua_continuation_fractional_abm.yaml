@@ -1,0 +1,31 @@
+experiment:
+  name: "Chua Continuation Fractional ABM"
+  description: "Run fractional-order numerical continuation using ABM method"
+  output_dir: "outputs/chua_continuation_fractional_abm"
+
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.98
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+continuation:
+  continuation_order: "fractional"
+  q_continuation: 0.98
+  mode: "scalar"
+  path_parameter: "eta"
+
+integrator:
+  name: "abm"
+  h: 0.005
+  memory_policy: "full_caputo"
+  memory_mode: "full"
+
+stages:
+  seed_search: false
+  continuation: true
+  final_simulation: false

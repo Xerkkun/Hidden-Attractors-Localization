@@ -29,6 +29,9 @@ from hidden_attractors.workflows.integer_lure import (
 )
 
 
+import pytest
+
+@pytest.mark.unit
 def test_builtin_chua_has_required_lure_form() -> None:
     system = get_system("chua-nonsmooth")
 
@@ -38,8 +41,9 @@ def test_builtin_chua_has_required_lure_form() -> None:
     assert pairs
 
 
-def test_integer_lure_seed_and_short_continuation_are_reusable() -> None:
-    outdir = Path("outputs/test_artifacts/integer_lure_seed")
+@pytest.mark.integration
+def test_integer_lure_seed_and_short_continuation_are_reusable(tmp_path) -> None:
+    outdir = tmp_path / "integer_lure_seed"
     outdir.mkdir(parents=True, exist_ok=True)
     system = get_system("chua-nonsmooth")
     seed = integer_lure_seed(system, nscan=1500, wmax=50.0)
@@ -68,8 +72,9 @@ def test_integer_lure_seed_and_short_continuation_are_reusable() -> None:
     assert (outdir / "continuation.png").exists()
 
 
-def test_integer_hiddenness_controls_and_lyapunov_smoke() -> None:
-    outdir = Path("outputs/test_artifacts/integer_lure_hiddenness")
+@pytest.mark.integration
+def test_integer_hiddenness_controls_and_lyapunov_smoke(tmp_path) -> None:
+    outdir = tmp_path / "integer_lure_hiddenness"
     outdir.mkdir(parents=True, exist_ok=True)
     system = get_system("chua-nonsmooth")
     seed = integer_lure_seed(system, nscan=1500, wmax=50.0)
@@ -113,6 +118,7 @@ def test_integer_hiddenness_controls_and_lyapunov_smoke() -> None:
     assert (outdir / "hiddenness.png").exists()
 
 
+@pytest.mark.unit
 def test_full_workflow_rejects_system_without_lure() -> None:
     system = ChaoticSystem(
         name="rhs-only",

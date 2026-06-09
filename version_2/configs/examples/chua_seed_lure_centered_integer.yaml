@@ -1,0 +1,25 @@
+experiment:
+  name: "Chua Seed Lure Centered Integer"
+  description: "Generate integer-order centered Lure describing function seeds"
+  output_dir: "outputs/chua_seed_lure_centered_integer"
+
+system:
+  system_id: "chua_integer_saturation"
+  q: 1.0
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+seed:
+  df_order: "integer"
+  transfer_mode: "published_integer_laplace"
+  q_seed: 1.0
+  family: "lure_classical_centered"
+
+stages:
+  seed_search: true
+  continuation: false
+  final_simulation: false

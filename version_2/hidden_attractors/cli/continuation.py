@@ -16,13 +16,13 @@ from typing import Sequence, Any, Dict, List
 
 import numpy as np
 
-from ..workflows.config_loader import load_config
+from ..workflows.config_loader import load_config, apply_cli_overrides, resolve_seed_transfer_contract
 from ..reproducibility import collect_run_metadata, collect_lure_metadata, collect_seed_metadata
 from ..systems import get_system
 from ..seed_generation.chua import chua_matrices, psi_sigma
 from ..continuation.continuation_fractional import run_fractional_continuation
 from ..continuation.continuation_integer import run_integer_continuation
-from ..integrations.selector import integrate
+from ..integrations.selector import integrate, validate_integrator_compatibility
 
 def load_seeds_from_csv(csv_path: Path) -> list[dict[str, Any]]:
     seeds = []
@@ -56,6 +56,20 @@ def run_scalar_continuation(
     parser.add_argument("-o", "--output-dir", type=str, help="Directory to save output files")
     parser.add_argument("--lambda-values", type=str, help="Comma-separated list of lambda/eta values")
     
+    # Explicit CLI options for continuation
+    parser.add_argument("--continuation-order", type=str, choices=["integer", "fractional"], help="continuation order type")
+    parser.add_argument("--q-continuation", type=float, help="continuation order")
+    parser.add_argument("--integrator", type=str, help="integrator name")
+    parser.add_argument("--h", type=float, help="step size")
+    parser.add_argument("--memory-policy", type=str, choices=["full_history", "finite_window", "none"], help="Caputo memory policy")
+    parser.add_argument("--memory-mode", type=str, choices=["full", "window", "none"], help="Caputo memory mode")
+    parser.add_argument("--memory-window-time", type=float, help="window size in seconds")
+    parser.add_argument("--memory-window-steps", type=int, help="window size in steps")
+    parser.add_argument("--use-c-backend", action="store_true", default=None, help="use compiled C/Numba backend")
+    parser.add_argument("--no-c-backend", action="store_false", dest="use_c_backend", help="do not use compiled C/Numba backend")
+    parser.add_argument("--allow-python-fallback", action="store_true", default=None, help="allow fallback to Python")
+    parser.add_argument("--no-python-fallback", action="store_false", dest="allow_python_fallback", help="do not allow fallback to Python")
+
     args, extra_args = parser.parse_known_args(argv)
     
     if args.config:
@@ -64,6 +78,17 @@ def run_scalar_continuation(
     else:
         config_path = None
         config = {}
+
+    # Build overrides dictionary
+    overrides = {}
+    for key in ("continuation_order", "q_continuation", "integrator", "h",
+                 "memory_policy", "memory_mode", "memory_window_time",
+                 "memory_window_steps", "use_c_backend", "allow_python_fallback"):
+        val = getattr(args, key, None)
+        if val is not None:
+            overrides[key] = val
+
+    config = apply_cli_overrides(config, overrides)
         
     output_dir = args.output_dir or config.get("output_dir") or "outputs"
     os.makedirs(output_dir, exist_ok=True)
@@ -94,25 +119,57 @@ def run_scalar_continuation(
     normalized_sys_id = name_map.get(system_id, system_id)
     system = get_system(normalized_sys_id)
     
-    q = float(config.get("q_seed") or config.get("q") or system.parameters.get("q", 1.0))
+    # Resolve continuation properties
+    continuation_order = config["continuation"]["continuation_order"]
+    q_continuation = config["continuation"]["q_continuation"]
+    
+    # Ensure q_continuation is 1.0 for integer continuation, or less than 1.0 for fractional continuation
+    if continuation_order == "integer":
+        q_continuation = 1.0
+        config["continuation"]["q_continuation"] = 1.0
+    elif continuation_order == "fractional":
+        if q_continuation is not None and q_continuation >= 1.0:
+            raise ValueError(f"For fractional continuation, q_continuation must be strictly less than 1.0. Got {q_continuation}.")
+            
+    integrator = config.get("integrator", "efork3")
     h = float(config.get("h", 0.01))
     
+    # Validate compatibility between integrator and order
+    if continuation_order == "fractional":
+        if integrator in ("rk4", "heun", "efork_q1"):
+            raise ValueError(f"{integrator} only supports integer-order dynamics. Use abm or efork3 for fractional Caputo continuation.")
+        validate_integrator_compatibility(integrator, q_continuation)
+    else:
+        # integer order
+        if integrator in ("abm", "adm_wu2023"):
+            raise ValueError(f"{integrator} requires 0<q<1. Use rk4, heun or efork_q1 for integer-order continuation.")
+        validate_integrator_compatibility(integrator, 1.0)
+        if integrator == "efork3":
+            import warnings
+            warnings.warn(
+                "Integrator 'efork3' at q=1.0 redirects to the integer-order 'efork_q1' limit. "
+                "For pure integer-order work, prefer 'rk4' or 'heun' which are simpler and faster.",
+                UserWarning,
+                stacklevel=2
+            )
+
     # Check memory policy warnings for Caputo continuation
     memory_policy = config.get("memory_policy", "full_caputo")
     history_carried = True
     if memory_policy == "none":
         history_carried = False
-        print("Warning: last-state continuation in a Caputo system is a numerical warm-start, not a strict history-preserving continuation.")
+        print("Warning: last-state continuation in a Caputo system is a warm-start, not strict history-preserving continuation.")
         
     # Grid values
     if args.lambda_values:
         lambda_values = [float(v) for v in args.lambda_values.split(",") if v.strip()]
+        config.setdefault("continuation", {})["lambda_values"] = lambda_values
     elif config.get("continuation", {}).get("lambda_values"):
         lambda_values = [float(v) for v in config["continuation"]["lambda_values"]]
     else:
         lambda_values = [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0]
         
-    continuation_mode = "fractional" if q < 1.0 else "integer"
+    continuation_mode = continuation_order
     
     trace_rows = []
     final_candidates = []
@@ -138,7 +195,7 @@ def run_scalar_continuation(
                 t_transient=t_transient,
                 t_keep=t_keep,
                 div_threshold=120.0,
-                integrator="efork3",
+                integrator=integrator,
                 early_stop_config=config.get("early_stop"),
                 equilibria=[],
             )
@@ -152,13 +209,13 @@ def run_scalar_continuation(
                 memory_mode=config.get("memory_mode", "full"),
                 memory_window_length=config.get("memory_window_length"),
                 div_threshold=120.0,
-                integrator=config.get("integrator", "efork3"),
+                integrator=integrator,
                 use_c_backend=config.get("use_c_backend", True),
                 t_transient=t_transient,
                 t_keep=t_keep,
                 early_stop_config=config.get("early_stop"),
                 equilibria=[],
-                q=q,
+                q=q_continuation,
             )
             
         # Record trace
@@ -172,7 +229,7 @@ def run_scalar_continuation(
                 "candidate_id": candidate_id,
                 "step_index": idx,
                 "eta": step["lambda_value"],
-                "q": q,
+                "q": q_continuation,
                 "h": h,
                 "memory_policy": memory_policy,
                 "continuation_mode": continuation_mode,
@@ -193,7 +250,7 @@ def run_scalar_continuation(
                 "A": s["A"],
                 "sigma0": s["sigma0"],
                 "omega": s["omega"],
-                "q": q,
+                "q": q_continuation,
                 "eta": last_step["lambda_value"],
                 "x": float(last_step["x_out"][0]),
                 "y": float(last_step["x_out"][1]),
@@ -226,7 +283,7 @@ def run_scalar_continuation(
     summary_path = Path(output_dir) / "continuation_summary.json"
     summary_data = {
         "system_id": system_id,
-        "q": q,
+        "q": q_continuation,
         "memory_policy": memory_policy,
         "history_carried": history_carried,
         "memory_window_time": config.get("memory_window_time"),
@@ -248,18 +305,18 @@ def run_scalar_continuation(
                 fc["x"], fc["y"], fc["z"], fc["status"]
             ])
             
-    # 4. run_metadata.json
+    # 4. run_metadata.json, effective_config.json, effective_config.yaml
     first_seed = seeds[0] if seeds else None
     run_meta = collect_run_metadata(
         run_id=config.get("run_id", "auto_continuation"),
         workflow="continuation_run",
         system=system_id,
-        q=q,
+        q=q_continuation,
         h=h,
         t_final=t_transient + t_keep,
         t_burn=t_transient,
         memory_mode=config.get("memory_mode", "full"),
-        integrator_name=config.get("integrator", "efork3"),
+        integrator_name=integrator,
         integrator_backend="native" if config.get("use_c_backend", True) else "python",
         caputo=True,
         parameters=system.parameters,
@@ -268,10 +325,59 @@ def run_scalar_continuation(
         random_seed=config.get("random_seed"),
         random_seed_policy=config.get("random_seed_policy", "fixed_reproducible"),
     )
+    
+    from ..reproducibility import metadata_to_jsonable
+    meta_jsonable = metadata_to_jsonable(run_meta)
+
+    # Resolve contracts
+    seed_contract = resolve_seed_transfer_contract(config, system)
+    seed_transfer_contract = {
+        "df_order": seed_contract["df_order"],
+        "transfer_mode": seed_contract["transfer_mode"],
+        "q_seed": float(seed_contract["q_seed"]),
+        "frequency_rule": seed_contract["lambda_frequency_rule"]
+    }
+
+    continuation_contract = {
+        "continuation_order": continuation_order,
+        "q_continuation": float(q_continuation),
+        "integrator": integrator,
+        "memory_policy": config.get("memory_policy"),
+        "history_carried": history_carried
+    }
+
+    dynamics_contract = {
+        "dynamics_order": config["dynamics"].get("dynamics_order"),
+        "q_dynamics": float(config["dynamics"].get("q_dynamics")) if config["dynamics"].get("q_dynamics") is not None else None,
+        "integrator": integrator
+    }
+
+    meta_jsonable["seed_transfer_contract"] = seed_transfer_contract
+    meta_jsonable["continuation_contract"] = continuation_contract
+    meta_jsonable["dynamics_contract"] = dynamics_contract
+
     meta_path = Path(output_dir) / "run_metadata.json"
     with open(meta_path, "w", encoding="utf-8") as f:
-        from ..reproducibility import metadata_to_jsonable
-        json.dump(metadata_to_jsonable(run_meta), f, indent=2)
+        json.dump(meta_jsonable, f, indent=2)
+
+    config["seed_transfer_contract"] = seed_transfer_contract
+    config["continuation_contract"] = continuation_contract
+    config["dynamics_contract"] = dynamics_contract
+
+    from ..workflows.config_loader import save_effective_config
+    save_effective_config(config, output_dir)
+
+    eff_json_path = Path(output_dir) / "effective_config.json"
+    with open(eff_json_path, "w", encoding="utf-8") as f:
+        def _clean(obj: Any) -> Any:
+            if hasattr(obj, "tolist"):
+                return obj.tolist()
+            if isinstance(obj, dict):
+                return {k: _clean(v) for k, v in obj.items()}
+            if isinstance(obj, (list, tuple)):
+                return [_clean(v) for v in obj]
+            return obj
+        json.dump(_clean(dict(config)), f, indent=2)
         
     print(f"Continuation completed. Summary written to {summary_path}")
 
@@ -283,7 +389,22 @@ def run_multiparameter_continuation(
     parser.add_argument("-p", "--path", type=str, help="Path to JSON path definition file")
     parser.add_argument("-s", "--seed-file", type=str, help="Path to CSV seeds file")
     parser.add_argument("-o", "--output-dir", type=str, help="Directory to save output files")
+    parser.add_argument("--lambda-values", type=str, help="Comma-separated list of lambda/eta values")
     
+    # Explicit options
+    parser.add_argument("--continuation-order", type=str, choices=["integer", "fractional"], help="continuation order type")
+    parser.add_argument("--q-continuation", type=float, help="continuation order")
+    parser.add_argument("--integrator", type=str, help="integrator name")
+    parser.add_argument("--h", type=float, help="step size")
+    parser.add_argument("--memory-policy", type=str, choices=["full_history", "finite_window", "none"], help="Caputo memory policy")
+    parser.add_argument("--memory-mode", type=str, choices=["full", "window", "none"], help="Caputo memory mode")
+    parser.add_argument("--memory-window-time", type=float, help="window size in seconds")
+    parser.add_argument("--memory-window-steps", type=int, help="window size in steps")
+    parser.add_argument("--use-c-backend", action="store_true", default=None, help="use compiled C/Numba backend")
+    parser.add_argument("--no-c-backend", action="store_false", dest="use_c_backend", help="do not use compiled C/Numba backend")
+    parser.add_argument("--allow-python-fallback", action="store_true", default=None, help="allow fallback to Python")
+    parser.add_argument("--no-python-fallback", action="store_false", dest="allow_python_fallback", help="do not allow fallback to Python")
+
     args, extra_args = parser.parse_known_args(argv)
     
     if args.config:
@@ -292,6 +413,21 @@ def run_multiparameter_continuation(
     else:
         config_path = None
         config = {}
+
+    # Build overrides dictionary
+    overrides = {}
+    for key in ("continuation_order", "q_continuation", "integrator", "h",
+                 "memory_policy", "memory_mode", "memory_window_time",
+                 "memory_window_steps", "use_c_backend", "allow_python_fallback"):
+        val = getattr(args, key, None)
+        if val is not None:
+            overrides[key] = val
+
+    config = apply_cli_overrides(config, overrides)
+    
+    if args.lambda_values:
+        parsed_lambda_values = [float(v) for v in args.lambda_values.split(",") if v.strip()]
+        config.setdefault("continuation", {})["lambda_values"] = parsed_lambda_values
         
     output_dir = args.output_dir or config.get("output_dir") or "outputs"
     os.makedirs(output_dir, exist_ok=True)
@@ -306,7 +442,11 @@ def run_multiparameter_continuation(
         
     steps_count = int(path_config.get("steps", 25))
     parameters_def = path_config.get("parameters", {})
-    memory_policy = path_config.get("memory_policy", "carry_window")
+    
+    # Check overrides or path_config for memory policy
+    memory_policy = config.get("memory_policy")
+    if memory_policy is None:
+        memory_policy = path_config.get("memory_policy", "carry_window")
     
     # Resolve seeds
     seeds = []
@@ -333,14 +473,45 @@ def run_multiparameter_continuation(
     normalized_sys_id = name_map.get(system_id, system_id)
     system = get_system(normalized_sys_id)
     
+    continuation_order = config["continuation"]["continuation_order"]
+    q_continuation = config["continuation"]["q_continuation"]
+    
+    # Ensure q_continuation is 1.0 for integer continuation, or less than 1.0 for fractional continuation
+    if continuation_order == "integer":
+        q_continuation = 1.0
+        config["continuation"]["q_continuation"] = 1.0
+    elif continuation_order == "fractional":
+        if q_continuation is not None and q_continuation >= 1.0:
+            raise ValueError(f"For fractional continuation, q_continuation must be strictly less than 1.0. Got {q_continuation}.")
+            
+    integrator = config.get("integrator", "efork3")
     h = float(config.get("h", 0.01))
     
+    # Validate compatibility between integrator and order
+    if continuation_order == "fractional":
+        if integrator in ("rk4", "heun", "efork_q1"):
+            raise ValueError(f"{integrator} only supports integer-order dynamics. Use abm or efork3 for fractional Caputo continuation.")
+        validate_integrator_compatibility(integrator, q_continuation)
+    else:
+        # integer order
+        if integrator in ("abm", "adm_wu2023"):
+            raise ValueError(f"{integrator} requires 0<q<1. Use rk4, heun or efork_q1 for integer-order continuation.")
+        validate_integrator_compatibility(integrator, 1.0)
+        if integrator == "efork3":
+            import warnings
+            warnings.warn(
+                "Integrator 'efork3' at q=1.0 redirects to the integer-order 'efork_q1' limit. "
+                "For pure integer-order work, prefer 'rk4' or 'heun' which are simpler and faster.",
+                UserWarning,
+                stacklevel=2
+            )
+    
     # Distinguish causal continuation from sweep
-    is_causal = memory_policy in ("carry_window", "full_history")
+    is_causal = memory_policy in ("carry_window", "full_history", "full_caputo", "finite_window")
     continuation_type = "continuation_causal_caputo" if is_causal else "independent_parameter_sweep"
     
     if not is_causal:
-        print("Warning: last-state continuation in a Caputo system is a numerical warm-start, not a strict history-preserving continuation.")
+        print("Warning: last-state continuation in a Caputo system is a warm-start, not strict history-preserving continuation.")
         
     tau_grid = np.linspace(0.0, 1.0, steps_count)
     
@@ -526,7 +697,7 @@ def run_multiparameter_continuation(
                 fc["x"], fc["y"], fc["z"], fc["status"]
             ])
             
-    # 4. run_metadata.json
+    # 4. run_metadata.json, effective_config.json, effective_config.yaml
     first_seed = seeds[0] if seeds else None
     run_meta = collect_run_metadata(
         run_id=config.get("run_id", "auto_multiparameter"),
@@ -537,7 +708,7 @@ def run_multiparameter_continuation(
         t_final=60.0 * steps_count,
         t_burn=60.0,
         memory_mode="window",
-        integrator_name=config.get("integrator", "efork3"),
+        integrator_name=integrator,
         integrator_backend="native" if config.get("use_c_backend", True) else "python",
         caputo=True,
         parameters=system.parameters,
@@ -546,9 +717,58 @@ def run_multiparameter_continuation(
         random_seed=config.get("random_seed"),
         random_seed_policy=config.get("random_seed_policy", "fixed_reproducible"),
     )
+    
+    from ..reproducibility import metadata_to_jsonable
+    meta_jsonable = metadata_to_jsonable(run_meta)
+
+    # Resolve contracts
+    seed_contract = resolve_seed_transfer_contract(config, system)
+    seed_transfer_contract = {
+        "df_order": seed_contract["df_order"],
+        "transfer_mode": seed_contract["transfer_mode"],
+        "q_seed": float(seed_contract["q_seed"]),
+        "frequency_rule": seed_contract["lambda_frequency_rule"]
+    }
+
+    continuation_contract = {
+        "continuation_order": continuation_order,
+        "q_continuation": float(q_continuation),
+        "integrator": integrator,
+        "memory_policy": config.get("memory_policy"),
+        "history_carried": is_causal
+    }
+
+    dynamics_contract = {
+        "dynamics_order": config["dynamics"].get("dynamics_order"),
+        "q_dynamics": float(config["dynamics"].get("q_dynamics")) if config["dynamics"].get("q_dynamics") is not None else None,
+        "integrator": integrator
+    }
+
+    meta_jsonable["seed_transfer_contract"] = seed_transfer_contract
+    meta_jsonable["continuation_contract"] = continuation_contract
+    meta_jsonable["dynamics_contract"] = dynamics_contract
+
     meta_path = Path(output_dir) / "run_metadata.json"
     with open(meta_path, "w", encoding="utf-8") as f:
-        from ..reproducibility import metadata_to_jsonable
-        json.dump(metadata_to_jsonable(run_meta), f, indent=2)
+        json.dump(meta_jsonable, f, indent=2)
+
+    config["seed_transfer_contract"] = seed_transfer_contract
+    config["continuation_contract"] = continuation_contract
+    config["dynamics_contract"] = dynamics_contract
+
+    from ..workflows.config_loader import save_effective_config
+    save_effective_config(config, output_dir)
+
+    eff_json_path = Path(output_dir) / "effective_config.json"
+    with open(eff_json_path, "w", encoding="utf-8") as f:
+        def _clean(obj: Any) -> Any:
+            if hasattr(obj, "tolist"):
+                return obj.tolist()
+            if isinstance(obj, dict):
+                return {k: _clean(v) for k, v in obj.items()}
+            if isinstance(obj, (list, tuple)):
+                return [_clean(v) for v in obj]
+            return obj
+        json.dump(_clean(dict(config)), f, indent=2)
         
     print(f"Multiparameter continuation completed. Summary written to {summary_path}")

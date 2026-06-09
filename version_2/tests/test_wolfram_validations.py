@@ -67,7 +67,7 @@ _SKIP_NO_WOLFRAM = pytest.mark.skipif(
     DEFAULT_CASES,
     ids=[Path(c).stem for c in DEFAULT_CASES],
 )
-def test_wolfram_case_validation(case_relpath: str) -> None:
+def test_wolfram_case_validation(case_relpath: str, tmp_path) -> None:
     """Run a Wolfram validation script and assert that passed=true in the summary JSON.
 
     The output is written to a temporary directory so tests do not pollute the
@@ -75,7 +75,7 @@ def test_wolfram_case_validation(case_relpath: str) -> None:
     """
     root = repo_root()
     case_path = root / case_relpath
-    out_dir = root / "outputs" / "test_artifacts" / f"wolfram_{uuid.uuid4().hex}" / Path(case_relpath).stem
+    out_dir = tmp_path / f"wolfram_{uuid.uuid4().hex}" / Path(case_relpath).stem
     try:
         result = run_case(case_path, out_dir)
         assert result["summary"]["passed"] is True, (
@@ -90,6 +90,7 @@ def test_wolfram_case_validation(case_relpath: str) -> None:
 # Existence / smoke tests (no wolframscript required)
 # ---------------------------------------------------------------------------
 
+@pytest.mark.hygiene
 def test_wolfram_case_files_exist() -> None:
     """All DEFAULT_CASES point to files that are actually present in the repo."""
     root = repo_root()
@@ -98,6 +99,7 @@ def test_wolfram_case_files_exist() -> None:
         assert p.exists(), f"Expected Wolfram case not found: {p}"
 
 
+@pytest.mark.hygiene
 def test_common_wolfram_files_exist() -> None:
     """The common Wolfram helper scripts are present."""
     root = repo_root()
@@ -112,6 +114,7 @@ def test_common_wolfram_files_exist() -> None:
         assert p.exists(), f"Common Wolfram file missing: {p}"
 
 
+@pytest.mark.hygiene
 def test_template_wolfram_file_exists() -> None:
     """The new_lure_system_template.wl is present in validation/wolfram/template/."""
     root = repo_root()
@@ -119,6 +122,7 @@ def test_template_wolfram_file_exists() -> None:
     assert p.exists(), f"Template file missing: {p}"
 
 
+@pytest.mark.hygiene
 def test_runner_script_exists() -> None:
     """validation/python/run_wolfram_validations.py is present."""
     root = repo_root()
@@ -126,6 +130,7 @@ def test_runner_script_exists() -> None:
     assert p.exists(), f"Runner script missing: {p}"
 
 
+@pytest.mark.hygiene
 def test_compare_module_exists() -> None:
     """validation/python/compare_with_library.py is present."""
     root = repo_root()
@@ -133,6 +138,7 @@ def test_compare_module_exists() -> None:
     assert p.exists(), f"Compare module missing: {p}"
 
 
+@pytest.mark.hygiene
 def test_wolfram_validation_readme_exists() -> None:
     """validation/wolfram/README.md is present."""
     root = repo_root()

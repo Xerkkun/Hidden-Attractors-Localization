@@ -1,0 +1,25 @@
+experiment:
+  name: "Chua Seed Lure Centered Fractional"
+  description: "Generate fractional-order centered Lure describing function seeds"
+  output_dir: "outputs/chua_seed_lure_centered_fractional"
+
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.98
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+seed:
+  df_order: "fractional"
+  transfer_mode: "fractional_spectral"
+  q_seed: 0.98
+  family: "lure_classical_centered"
+
+stages:
+  seed_search: true
+  continuation: false
+  final_simulation: false

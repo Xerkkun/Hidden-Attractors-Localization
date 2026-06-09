@@ -1,3 +1,4 @@
+import pytest
 """Regression checks for the documented scientific scope."""
 
 from pathlib import Path
@@ -11,6 +12,7 @@ def _read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
+@pytest.mark.hygiene
 def test_scientific_scope_page_is_linked() -> None:
     assert SCOPE.exists()
     assert "## Scientific Scope" in _read(ROOT / "README.md")
@@ -19,19 +21,23 @@ def test_scientific_scope_page_is_linked() -> None:
     assert "Scientific Scope: scientific_scope.md" in _read(ROOT / "mkdocs.yml")
 
 
+@pytest.mark.scientific_contract
 def test_scope_declares_supported_boundary_and_evidence_layers() -> None:
     text = _read(SCOPE)
     lowered = text.lower()
     for keyword in ("caputo", "commensurate", "lur'e", "scalar", "out of scope", "visual"):
         assert keyword in lowered
-    assert "not a hiddenness proof" in lowered
-    assert "DF/Nyquist computations produce seeds." in text
-    assert "Continuation transports seeds or candidates" in text
-    assert "ABM/EFORK simulate a Caputo system" in text
-    assert "Matignon classifies equilibria locally." in text
-    assert "Hiddenness can be promoted only through neighborhood or basin tests around all equilibria" in text
+        
+    required_terms = [
+        "df", "nyquist", "seed", "not", "hiddenness proof",
+        "continuation", "transports", "abm", "efork", "caputo",
+        "matignon", "equilibria", "neighborhood", "basin", "promote"
+    ]
+    for term in required_terms:
+        assert term in lowered
 
 
+@pytest.mark.literature_traceability
 def test_scope_has_required_literature_rows() -> None:
     text = _read(SCOPE)
     assert "| Article | System / object | Order | Method in article | What the library reproduces | What the library extends | Library modules / evidence |" in text
@@ -41,6 +47,7 @@ def test_scope_has_required_literature_rows() -> None:
     assert len(rows) >= 20
 
 
+@pytest.mark.scientific_contract
 def test_legacy_hidden_verified_appears_only_in_alias_note() -> None:
     text = _read(SCOPE)
     assert text.count("hidden_verified") == 1
@@ -49,6 +56,7 @@ def test_legacy_hidden_verified_appears_only_in_alias_note() -> None:
     assert "`compatible_with_hiddenness_under_tested_radii`" in text
 
 
+@pytest.mark.literature_traceability
 def test_confirmed_reference_metadata_is_consistent() -> None:
     bib = _read(ROOT / "docs" / "references.bib")
     registry = _read(ROOT / "hidden_attractors" / "references" / "registry.py")

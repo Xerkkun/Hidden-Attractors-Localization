@@ -20,13 +20,10 @@ from record_dk2018_published_validation_run import record  # noqa: E402
 
 
 @pytest.fixture
-def artifact_root() -> Path:
-    root = Path(__file__).resolve().parents[1] / "outputs" / "test_artifacts" / f"promotion_{uuid.uuid4().hex}"
+def artifact_root(tmp_path) -> Path:
+    root = tmp_path / f"promotion_{uuid.uuid4().hex}"
     root.mkdir(parents=True)
-    try:
-        yield root
-    finally:
-        shutil.rmtree(root, ignore_errors=True)
+    yield root
 
 
 def _write_runtime(root: Path, *, statuses: dict[str, str]) -> Path:
@@ -52,6 +49,7 @@ def _write_runtime(root: Path, *, statuses: dict[str, str]) -> Path:
     return runtime
 
 
+@pytest.mark.unit
 def test_promotion_rejects_missing_case(artifact_root: Path) -> None:
     only_case = next(iter(REQUIRED_CASES))
     runtime = _write_runtime(artifact_root, statuses={only_case: "published_benchmark_passed_quantitative"})
@@ -59,6 +57,7 @@ def test_promotion_rejects_missing_case(artifact_root: Path) -> None:
         promote(runtime, artifact_root / "official")
 
 
+@pytest.mark.unit
 def test_promotion_rejects_smoke_result(artifact_root: Path) -> None:
     runtime = _write_runtime(
         artifact_root,
@@ -68,6 +67,7 @@ def test_promotion_rejects_smoke_result(artifact_root: Path) -> None:
         promote(runtime, artifact_root / "official")
 
 
+@pytest.mark.unit
 def test_promotion_accepts_two_native_quantitative_results(artifact_root: Path) -> None:
     runtime = _write_runtime(
         artifact_root,
@@ -83,6 +83,7 @@ def test_promotion_accepts_two_native_quantitative_results(artifact_root: Path) 
     assert len(list((official / "convergence").glob("*.csv"))) == 2
 
 
+@pytest.mark.unit
 def test_record_long_run_keeps_discrepancy_pending_without_promoting_csv(artifact_root: Path) -> None:
     runtime = artifact_root / "runtime"
     runtime.mkdir()

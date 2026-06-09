@@ -105,6 +105,16 @@ markers = [
   "published: quantitative validation against explicitly extracted published values",
   "slow: extensive numerical validation excluded from the quick suite",
   "regression: deterministic numerical regression tests against stored references",
+  "unit: fast unit tests",
+  "scientific_contract: mathematical and scientific invariants",
+  "cli: command-line interface tests",
+  "plotting: figure export and plotting contract tests",
+  "validation_contract: validation evidence contract tests",
+  "literature_traceability: bibliographic and published-case traceability tests",
+  "integration: short integration tests",
+  "migration: temporary migration tests",
+  "deprecated_alias: tests for compatibility aliases scheduled for removal",
+  "hygiene: repository cleanliness and packaging hygiene",
 ]
 
 [tool.pytest-benchmark]
