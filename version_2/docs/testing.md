@@ -2,27 +2,36 @@
 
 ## Smoke Checks
 
-These commands do not require `pytest`:
+Comandos rápidos desde `version_2/`:
 
 ```bash
 python -m compileall hidden_attractors examples tests tools/cli
 python examples/quickstart_equilibria.py
 python examples/list_final_candidates.py
-python tools/cli/robustness_overlay_c_trajectories.py --help
-python tools/cli/lure_top3_sphere_robustness.py --help
-python tools/cli/refine_project_basin_classification.py --help
-python tools/cli/check_validation_contract.py --help
-python -m hidden_attractors.protocol_cli --help
+python -m hidden_attractors.cli.main --help
+python -m hidden_attractors.cli.main inspect --help
+python -m hidden_attractors.cli.main validate --help
+python -m hidden_attractors.cli.main seed --help
+python -m hidden_attractors.cli.main continuation --help
+```
+
+Si el paquete está instalado en modo editable:
+
+```bash
+hidden-attractors --help
+hidden-attractors inspect systems
+hidden-attractors inspect candidates
+hidden-attractors validate contract --help
 ```
 
 ## Pytest
 
-After installing development dependencies:
-
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,analysis,legacy]"
 python -m pytest -q
 ```
+
+En el freeze audit actual, la suite completa reporta 797 passed y 34 skipped. El conteo oficial debe tomarse de `validation/freeze_audit/`.
 
 Current tests verify:
 
@@ -60,8 +69,19 @@ of embedding all raw data.
 Run the contract checker from `version_2/` after evidence has been promoted:
 
 ```bash
-hidden-attractors-check-validation
+hidden-attractors validate contract
 ```
 
-The checker intentionally fails on the initial template-only tree because the
-real CSV, JSON, figures, and final report have not been generated yet.
+Y, cuando se permitan etapas pendientes:
+
+```bash
+hidden-attractors validate contract --allow-pending
+```
+
+Si se necesita raíz alternativa:
+
+```bash
+hidden-attractors validate contract --validation-root path/to/validation
+```
+
+*Nota de depreciación:* El comando antiguo `hidden-attractors-check-validation` es legacy/deprecated y no debe recomendarse como comando público. La ruta pública estable es `hidden-attractors validate contract`. Los scripts en `tools/legacy/` o wrappers antiguos no deben aparecer en smoke checks principales.

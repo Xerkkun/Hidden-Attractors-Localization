@@ -93,7 +93,7 @@ Install development tools using your system's package manager:
 
 ### 🧪 Verification and Testing
 
-1. **Run Unit Tests**: Ensure everything works correctly by running the suite of 156 unit tests from the `version_2` directory:
+1. **Run Unit Tests**: Ensure everything works correctly. Run the suite from `version_2/`. At the current thesis-freeze audit, the artifacts under `version_2/validation/freeze_audit/` report 797 passed tests and 34 skipped tests. Future runs may change the count; the freeze-audit artifact is the official source:
    ```bash
    cd version_2
    pytest
@@ -115,7 +115,7 @@ hidden-attractors run -c version_2/configs/examples/chua_arctan_attractor_only_f
 
 The outputs (csv trajectories, figures, and logs) will be saved in the `outputs/` folder.
 
-For details on configuration keys and workflow options, refer to the [Reference Guide (REFERENCE_GUIDE.md)](file:///version_2/REFERENCE_GUIDE.md).
+For details on configuration keys and workflow options, refer to the [Reference Guide (REFERENCE_GUIDE.md)](version_2/REFERENCE_GUIDE.md).
 
 ---
 ---
@@ -201,7 +201,7 @@ Instala las herramientas de desarrollo utilizando el gestor de paquetes de tu di
 
 ### 🧪 Verificación y Pruebas
 
-1. **Ejecutar Pruebas Unitarias**: Asegúrate de que todo funcione correctamente ejecutando la suite de 156 pruebas desde el directorio `version_2`:
+1. **Ejecutar Pruebas Unitarias**: Asegúrate de que todo funcione correctamente. Ejecuta la suite desde `version_2/`. En el estado actual de auditoría tesis-freeze, los artefactos bajo `version_2/validation/freeze_audit/` reportan 797 pruebas aprobadas y 34 omitidas. El conteo puede cambiar en ejecuciones futuras; la fuente oficial es el artefacto de freeze audit:
    ```bash
    cd version_2
    pytest
@@ -223,4 +223,4 @@ hidden-attractors run -c version_2/configs/examples/chua_arctan_attractor_only_f
 
 Los resultados (trayectorias en csv, imágenes y bitácoras) se guardarán en la carpeta `outputs/`.
 
-Para más detalles sobre las opciones de los archivos de configuración y fases de análisis, consulta la [Guía de Referencia (REFERENCE_GUIDE.md)](file:///version_2/REFERENCE_GUIDE.md).
+Para más detalles sobre las opciones de los archivos de configuración y fases de análisis, consulta la [Guía de Referencia (REFERENCE_GUIDE.md)](version_2/REFERENCE_GUIDE.md).

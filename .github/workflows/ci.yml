@@ -113,7 +113,7 @@ jobs:
           PYTHONPATH: .
 
       - name: Check validation contract with pending allowed
-        run: hidden-attractors-check-validation --validation-root ${{ runner.temp }}/ha_validation --allow-pending
+        run: hidden-attractors validate contract --validation-root ${{ runner.temp }}/ha_validation --allow-pending
 
   # ─────────────────────────────────────────────────────────────────────────
   # Trabajo opcional: prueba nativa de backends C (solo si gcc está en PATH)

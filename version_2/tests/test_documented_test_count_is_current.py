@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 ROOT_DIR = Path(__file__).resolve().parents[1]  # version_2 directory
+WORKSPACE_DIR = ROOT_DIR.parent
 
 BANNED_PHRASES = [
     r"156\s+tests",
@@ -14,7 +15,8 @@ BANNED_PHRASES = [
 @pytest.mark.hygiene
 def test_no_outdated_test_count_mentions():
     """Fail if any documentation file mentions the outdated 156 test count."""
-    markdown_files = list(ROOT_DIR.glob("**/*.md")) + [ROOT_DIR / "README.md", ROOT_DIR / "REFERENCE_GUIDE.md"]
+    # We glob version_2 files, and explicitly include the root README.md
+    markdown_files = list(ROOT_DIR.glob("**/*.md")) + [WORKSPACE_DIR / "README.md"]
     markdown_files = list(set(f for f in markdown_files if f.exists()))
     
     violations = []
@@ -35,7 +37,11 @@ def test_no_outdated_test_count_mentions():
         for line_num, line in enumerate(content.splitlines(), 1):
             for rx in compiled_banned:
                 if rx.search(line):
-                    rel_path = f.relative_to(ROOT_DIR).as_posix()
+                    # Use relative path to workspace root (parent of version_2)
+                    try:
+                        rel_path = f.relative_to(WORKSPACE_DIR).as_posix()
+                    except ValueError:
+                        rel_path = f.as_posix()
                     violations.append(f"{rel_path}:L{line_num} -> '{line.strip()}'")
                     
     assert not violations, (
@@ -46,11 +52,12 @@ def test_no_outdated_test_count_mentions():
 @pytest.mark.hygiene
 def test_documentation_references_freeze_audit():
     """Verify that key documents reference the freeze audit directory or the current counts."""
-    # We check README.md, REFERENCE_GUIDE.md and INSTALL.md
+    # We check README raíz, version_2/README.md, version_2/REFERENCE_GUIDE.md, and version_2/docs/testing.md
     files_to_check = [
+        WORKSPACE_DIR / "README.md",
         ROOT_DIR / "README.md",
         ROOT_DIR / "REFERENCE_GUIDE.md",
-        ROOT_DIR / "INSTALL.md",
+        ROOT_DIR / "docs/testing.md",
     ]
     
     missing_references = []
@@ -68,7 +75,10 @@ def test_documentation_references_freeze_audit():
         
         has_reference = any(p.search(content) for p in expected_patterns)
         if not has_reference:
-            rel_path = f.relative_to(ROOT_DIR).as_posix()
+            try:
+                rel_path = f.relative_to(WORKSPACE_DIR).as_posix()
+            except ValueError:
+                rel_path = f.as_posix()
             missing_references.append(rel_path)
             
     assert not missing_references, (

@@ -136,3 +136,5 @@ This file lists all test files in the test suite, their classification, and plan
 | tests/test_promoted_figures_export_policy.py | Verificar direct savefig en rutas promovidas | plotting | fast | unit | ninguna | no | no | conservar | Evita savefig en flujos de producción. |
 | tests/test_no_external_figure_paths_in_promoted_validation.py | Verificar no rutas relativas externas en validación | hygiene | fast | unit | ninguna | no | no | conservar | Evita fugas de rutas legacy no canónicas. |
 | tests/test_figure_tests_do_not_write_real_library_figures.py | Verificar no escritura de tests en library_figures | hygiene | fast | unit | ninguna | no | no | conservar | Enforza el uso de tmp_path y monkeypatch en tests. |
+| tests/test_ci_uses_unified_cli.py | Verificar que CI usa CLI unificado | hygiene | fast | unit | ninguna | no | no | conservar | Verifica comandos en ci.yml. |
+| tests/test_no_legacy_entrypoints_in_ci_or_docs.py | Verificar ausencia de entry points legacy en CI y docs | hygiene | fast | unit | ninguna | no | no | conservar | Evita regresión de entry points obsoletos. |
