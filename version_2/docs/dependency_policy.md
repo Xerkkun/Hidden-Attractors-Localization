@@ -1,36 +1,30 @@
 # Dependency Policy
 
-This project follows the [SPEC-0][spec0] rolling-window support policy adopted
-by the Scientific Python ecosystem (NumPy, SciPy, Matplotlib, etc.).
+This project follows the spirit of the [SPEC-0][spec0] rolling-window support policy adopted by the Scientific Python ecosystem (NumPy, SciPy, Matplotlib, etc.). However, to prioritize stability and user convenience across older computing environments (such as legacy HPC clusters), the project adopts a **pragmatic extended support policy** rather than strict, literal compliance with the SPEC-0 rolling drop dates.
 
 ---
 
 ## Python version support
 
-| Rule | Value |
-|------|-------|
-| Minimum supported | 3 years after release |
-| Drop date | 42 months after release |
+Under strict SPEC-0 compliance (as of mid-2026), Python 3.11 would be dropped. However, to maximize compatibility, we maintain a pragmatic extended support window:
 
-**Currently supported**: Python ≥ 3.11 and 3.12 (both tested in CI).  
-Python 3.13 will be added to CI once it reaches its first stable patch release.
+- **Currently supported**: Python &ge; 3.11, 3.12, and 3.13 (tested in CI).
+- **Python 3.11 Support**: Maintained as extended support to accommodate legacy platforms.
 
 ---
 
 ## Core dependencies
 
-Core dependencies (`numpy`, `matplotlib`) are pinned with a **lower bound only**.
-Upper bounds are intentionally omitted to avoid unnecessary conflicts in
-user environments.
+Core dependencies (`numpy`, `matplotlib`, `scipy`) are pinned with a **lower bound only**. Upper bounds are intentionally omitted to avoid unnecessary conflicts in user environments.
 
-| Package | Current lower bound | Released | SPEC-0 drop date |
-|---------|--------------------|---------:|----------------:|
-| `numpy` | `>=1.26` | 2023-06 | 2025-06 |
-| `matplotlib` | `>=3.8` | 2023-09 | 2025-09 |
+| Package | Current lower bound | Released | SPEC-0 drop date | Note |
+|---------|--------------------|---------:|----------------:|------|
+| `numpy` | `>=1.26` | 2023-06 | 2025-06 | Extended support |
+| `matplotlib` | `>=3.8` | 2023-09 | 2025-09 | Extended support |
+| `scipy` | `>=1.12` | 2024-01 | 2026-01 | Extended support |
 
 > [!NOTE]
-> These bounds will be bumped on the **next minor release** of this package
-> after the SPEC-0 support window closes — not before.
+> Lower bounds are maintained beyond their strict SPEC-0 drop dates under our extended support model. They will be bumped pragmatically on minor releases of this package if required by new API features or when dropping older Python minor versions.
 
 ---
 

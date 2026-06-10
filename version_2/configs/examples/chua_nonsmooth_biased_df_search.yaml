@@ -16,13 +16,14 @@
 
 # ── Metadatos del experimento ─────────────────────────────────────────────────
 experiment:
-  name: "Chua Fraccionario No Suave — Atractor Oculto con DF Sesgada"
+  name: "Chua Fraccionario No Suave — Búsqueda de Candidatos Ocultos con DF Sesgada"
   description: >
-    Búsqueda del primer atractor oculto confirmado en el sistema de Chua
+    Búsqueda de candidatos compatibles con ocultedad en el sistema de Chua
     fraccionario no suave (saturación bilineal) con q = 0.9998 usando la
     Función Descriptiva Sesgada (bias DC ≠ 0) y continuación afín Caputo ABM.
-    Los 3 candidatos confirmados son compatibles con ocultedad bajo el
-    protocolo de barrido de esferas (radios 1e-5 … 1e-2, 225 muestras/equilibrio).
+    Los candidatos principales son compatibles con ocultedad bajo el
+    protocolo local de barrido de esferas (radios 1e-5 … 1e-2, 225 muestras/equilibrio).
+    Nota: no representa una reproducción de Danca (2017) debido a la falta de reproducibilidad de dicho artículo.
   output_dir: "outputs/example_chua_nonsmooth_biased_hidden_attractor"
   run_id: "auto"
   random_seed: 42

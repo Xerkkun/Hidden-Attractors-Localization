@@ -24,9 +24,13 @@ Si es la primera vez que interactúas con este repositorio, la ruta recomendada 
 
 ## 2. Ejemplo Oficial
 
-El **Ejemplo 1 — Chua fraccionario no suave con función descriptiva sesgada** es el atractor oculto de referencia confirmado. Su entrada de ejecución oficial es:
+El **Ejemplo 1 — Chua fraccionario no suave con función descriptiva sesgada** es el caso de referencia para la búsqueda de candidatos compatibles con ocultedad. Su entrada de ejecución oficial es:
 * **Archivo**: [run_example.py](../examples/chua_nonsmooth_biased_hidden_attractor/run_example.py)
 * **Lógica interna**: Implementada de forma limpia en el núcleo de la librería (`hidden_attractors/workflows/biased_chua.py`).
+
+> [!NOTE]
+> **Advertencia Científica y de Reproducibilidad:** Este ejemplo **no es una reproducción del sistema de Danca (2017)**.
+> El sistema original de Danca **no fue reproducible debido a la falta de información publicada** (como las coordenadas exactas de las condiciones iniciales del atractor oculto, parámetros del resolvedor DF, y el método de continuación numérica). Por consiguiente, este ejemplo realiza una búsqueda sistemática de candidatos en un sweep de parámetros para identificar vecindades compatibles con ocultedad.
 
 Este ejemplo ejecuta de forma secuencial las siguientes fases:
 1. **Paso 1**: Búsqueda centrada de referencia (DF centrada, $c=0$).

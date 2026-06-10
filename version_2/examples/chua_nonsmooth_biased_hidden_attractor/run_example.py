@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Orquestador Principal — Primer Atractor Oculto en Chua Fraccionario
-====================================================================
+"""Orquestador Principal — Búsqueda de Candidatos Ocultos en Chua Fraccionario
+==========================================================================
 Ejecuta el pipeline completo en orden, o pasos individuales.
 
 Uso rápido (prueba de humo, simulaciones cortas):
@@ -201,7 +201,7 @@ def main() -> None:
         steps = [1, 2, 3, 5]
 
     print(f"\n{'='*65}")
-    print("  PRIMER ATRACTOR OCULTO — CHUA FRACCIONARIO NO SUAVE")
+    print("  BÚSQUEDA DE CANDIDATOS OCULTOS — CHUA FRACCIONARIO NO SUAVE")
     print(f"  Librería: hidden_attractors_fo")
     print(f"  Pasos a ejecutar: {steps}")
     print(f"  Salida: {ROOT / cfg['experiment']['output_dir']}")

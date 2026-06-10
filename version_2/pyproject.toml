@@ -25,10 +25,9 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Mathematics",
 ]
 # ── Core runtime ────────────────────────────────────────────────────────────
-# Lower bounds follow SPEC-0 (https://scientific-python.org/specs/spec-0000/):
-#   numpy   released 2023-06 → supported until 2025-06  (>=1.26)
-#   matplotlib released 2023-09 → supported until 2025-09  (>=3.8)
-# Bump these whenever CI drops an old Python minor, not before.
+# Support policy: Pragmatic extended support to maintain compatibility with older
+# environments (Python 3.11, NumPy 1.26, Matplotlib 3.8, SciPy 1.12) beyond the
+# strict SPEC-0 rolling drop dates (which would drop 3.11/1.26/3.8/1.12 by mid-2026).
 dependencies = [
   "numpy>=1.26",
   "matplotlib>=3.8",

@@ -12,6 +12,7 @@ import yaml
 
 from hidden_attractors.models.chua import chua_nonsmooth_parameters, chua_parameters
 from hidden_attractors.systems.builtins import chua_system
+from hidden_attractors.workflows.biased_chua import get_Wq
 from validation.python.published_reproduction import (
     W_published_integer,
     W_fractional_spectral,
@@ -219,6 +220,25 @@ def test_W_fractional_spectral_formula() -> None:
     # Check branch formulation
     W_expected = r @ np.linalg.solve(((omega ** q) * np.exp(1j * q * np.pi / 2.0)) * np.eye(len(P)) - P, b)
     assert np.isclose(W_calc, W_expected, atol=1e-12)
+
+
+@pytest.mark.scientific_contract
+def test_biased_chua_get_Wq_matches_fractional_spectral_convention() -> None:
+    """Verificar que get_Wq tiene el signo opuesto a la convención espectral estándar."""
+    sys_obj = chua_system("nonsmooth")
+    P = sys_obj.lure.matrix
+    b = sys_obj.lure.input_vector
+    r = sys_obj.lure.output_vector
+    omega = 2.039
+    q = 0.9998
+
+    # get_Wq computes r @ inv(P - s^q I) b
+    W_get_Wq = get_Wq(omega, q, P, b, r)
+    # W_fractional_spectral computes r @ inv(s^q I - P) b
+    W_frac_spec = W_fractional_spectral(omega, q, P, b, r)
+
+    # They should be of opposite sign
+    assert np.isclose(W_get_Wq, -W_frac_spec, atol=1e-12)
 
 
 @pytest.mark.validation_contract

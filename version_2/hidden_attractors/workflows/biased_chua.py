@@ -230,6 +230,24 @@ def run_centered_reference(cfg: Dict[str, Any]) -> List[Dict[str, Any]]:
 
 def get_Wq(omega: float, q: float, pmat: np.ndarray,
            qvec: np.ndarray, rvec: np.ndarray) -> complex:
+    """Compute the fractional transfer function value using the P - lambda I sign convention.
+
+    Warning
+    -------
+    This function constructs the state-space matrix as ``P - (j*omega)^q * I``,
+    which corresponds to:
+        W_q(lambda) = r^T (P - lambda I)^(-1) b.
+    This is the negative of the standard Laplace / spectral transfer function
+    convention:
+        W_std(lambda) = r^T (lambda I - P)^(-1) b.
+    This sign inversion is deliberate and historically absorbed in the BDF harmonic
+    residual condition:
+        1.0 + W_q * N_1 = 0
+    which is mathematically equivalent to the standard feedback loop balance condition:
+        1.0 - W_std * N_1 = 0.
+    In contrast, `build_biased_seed` uses the standard `lambda * I - P` formulation to
+    correctly reconstruct the phase coordinates of the seed.
+    """
     matrix = pmat.astype(complex_dtype) - fractional_iomega_power(omega, q) * np.eye(3, dtype=complex_dtype)
     return complex_dtype(
         (rvec.astype(complex_dtype).reshape(1, -1)

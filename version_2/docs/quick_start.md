@@ -25,6 +25,9 @@ pip install -e "version_2[dev]"
 
 El **Ejemplo 1 — Chua fraccionario no suave con función descriptiva sesgada** es el principal punto de partida para comprobar el flujo de negocio del framework.
 
+> [!NOTE]
+> **Nota metodológica:** Este ejemplo **no es una reproducción del sistema de Danca (2017)**. El sistema original de Danca **no fue reproducible debido a la falta de información publicada** (condiciones iniciales, detalles espectrales del resolvedor DF y el método de continuación numérica). Este ejemplo realiza una búsqueda sistemática para identificar vecindades compatibles.
+
 Para ejecutar la prueba de humo rápida (~1-2 minutos):
 
 ```bash
