@@ -2,6 +2,10 @@
 
 Esta guía proporciona la ruta de entrada recomendada y directa para usuarias nuevas en la versión 2 de la biblioteca.
 
+Los metadatos sincronizados de los manuales se definen en [docs/manual_manifest.yaml](manual_manifest.yaml); las afirmaciones científicas defendibles siguen gobernadas por [THESIS_CLAIMS.md](../THESIS_CLAIMS.md).
+
+Para una descripción completa de instalación, CLI, ejemplos, salidas, etiquetas de evidencia y limitaciones, véase [USER_MANUAL.md](../USER_MANUAL.md).
+
 ---
 
 ## 1. Alcance Mínimo

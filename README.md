@@ -9,6 +9,7 @@ A scientific research library for reproducing, auditing, and extending numerical
 * 🚀 **[Quick Start Guide / Guía de Inicio Rápido](version_2/docs/quick_start.md)** — **Recommended entry point for new users / Ruta recomendada para usuarias nuevas.**
 * 🇬🇧 [English version of the Guide](#-english-installation-and-usage-guide)
 * 🇪🇸 [Versión en Español de la Guía](#-guía-de-instalación-y-uso-en-español)
+* 📖 For a complete user-facing description of installation, CLI usage, examples, outputs, evidence labels and limitations, see [USER_MANUAL.md](version_2/USER_MANUAL.md). / Para una descripción completa de instalación, CLI, ejemplos, salidas, etiquetas de evidencia y limitaciones, véase [USER_MANUAL.md](version_2/USER_MANUAL.md).
 
 ---
 
@@ -112,6 +113,7 @@ You can launch simulations and analysis pipelines directly using YAML configurat
 ```bash
 hidden-attractors run -c version_2/configs/examples/chua_arctan_attractor_only_fractional.yaml
 ```
+*(Note: Chua arctan is implemented algebraically, pending full hiddenness validation.)*
 
 The outputs (csv trajectories, figures, and logs) will be saved in the `outputs/` folder.
 
@@ -220,6 +222,7 @@ Puedes lanzar simulaciones y flujos de análisis directamente utilizando archivo
 ```bash
 hidden-attractors run -c version_2/configs/examples/chua_arctan_attractor_only_fractional.yaml
 ```
+*(Nota: Chua arctan está implementado algebraicamente, pendiente de validación completa de ocultedad.)*
 
 Los resultados (trayectorias en csv, imágenes y bitácoras) se guardarán en la carpeta `outputs/`.
 

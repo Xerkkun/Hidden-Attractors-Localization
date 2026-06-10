@@ -118,7 +118,7 @@ superficie de usuario se divide por estabilidad:
 Hay cuatro advertencias que deben permanecer visibles en todo el documento:
 
 \begin{enumerate}
-  \item La función descriptiva, Nyquist y Machado/FDF generan semillas. No
+  \item La función descriptiva, Nyquist y Machado/FDF (métodos teóricos y familias de semillas planificadas, no promovidos como flujos públicos estables) generan semillas. No
   prueban existencia global de un ciclo ni ocultedad
   \cite{GenesioTesi1993,KuznetsovEtAl2017,Machado2015FDF}.
   \item En sistemas autónomos de Caputo no se deben afirmar órbitas periódicas
@@ -189,6 +189,18 @@ Preset & YAML empaquetado & Lectura \\
 \end{tabular}
 \end{center}
 
+\section{Manual de usuario}
+
+El manual de usuario canónico de la librería se encuentra en \codepath{USER_MANUAL.md}. Este archivo contiene las especificaciones detalladas para el uso práctico de la librería. Los metadatos de configuración y sincronización documental se definen en el manifiesto central \codepath{docs/manual_manifest.yaml}, mientras que las afirmaciones científicas oficialmente defendibles están gobernadas por la matriz en \codepath{THESIS_CLAIMS.md}. 
+
+El presente reporte en LaTeX/PDF representa la versión formal extendida para la tesis y artículos del proyecto, mientras que \codepath{USER_MANUAL.md} es la ruta de uso práctico recomendada.
+
+Este reporte no introduce resultados científicos nuevos respecto a los manifiestos de validación. Su función es explicar la metodología, los comandos, las salidas esperadas y la interpretación de la evidencia bajo el contrato numérico declarado.
+
+\begin{quote}
+\textbf{Advertencia:} La función descriptiva, el análisis de Nyquist, la continuación numérica y la visualización de una trayectoria acotada no prueban la ocultedad de un atractor. La ocultedad se evalúa rigurosamente analizando las vecindades de todos los puntos de equilibrio bajo los radios, tiempos de integración, integrador numérico y política de memoria declarados.
+\end{quote}
+
 \section{Estructura del repositorio}
 
 \begin{center}
@@ -199,7 +211,7 @@ Ruta & Papel \\
 \midrule
 \codepath{hidden_attractors/models/} & Parámetros, campos vectoriales, no linealidades, equilibrios y Jacobianos. \\
 \codepath{hidden_attractors/systems/} & Registro público de sistemas y forma de Lur'e. \\
-\codepath{hidden_attractors/seed_generation/} & Semillas por función descriptiva, Nyquist, Lur'e y Machado/FDF. \\
+\codepath{hidden_attractors/seed_generation/} & Semillas por función descriptiva, Nyquist, Lur'e y Machado/FDF (teoría/no promovido). \\
 \codepath{hidden_attractors/integrations/} & Integradores enteros y fraccionarios, selector de backend y compatibilidad de \(q\). \\
 \codepath{hidden_attractors/analysis/} & Métricas de trayectoria, bifurcación, FFT/PSD, Lyapunov y validadores integrados. \\
 \codepath{hidden_attractors/plotting/} & Figuras de fase, series, espectros, transferencia, continuación y cuencas. \\
@@ -601,17 +613,15 @@ primer armónico se anula y \(N(A)\) es real.
 La semilla se calcula en tres pasos:
 \begin{enumerate}
   \item Se escanea \(\omega>0\) hasta encontrar cruces donde
-  \(\operatorname{Im}W_q(\ii\omega)=0\), con
+  \(\operatorname{Im}\widehat W_q(\lambda)=0\) con \(\lambda=(\ii\omega)^q\), definiendo la función de transferencia compleja como \(W_q(\ii\omega)\equiv \widehat W_q((\ii\omega)^q)\):
   \[
-  W_q(\ii\omega)=r^\top\left((\ii\omega)^qI-P\right)^{-1}b.
+  \widehat W_q(\lambda)=r^\top\left(\lambda I-P\right)^{-1}b,\qquad \lambda=(\ii\omega)^q.
   \]
-  \item En el cruce se toma \(k=N(A)=1/\operatorname{Re}W_q(\ii\omega)\),
-  usando la convención normalizada del reporte. La implementación histórica
-  equivalente usa \(r^\top(P-(\ii\omega)^qI)^{-1}b\) y por eso guarda el mismo
-  cierre con signo opuesto en la transferencia.
+  \item En el cruce se toma \(k=N(A)=1/\operatorname{Re}\widehat W_q(\lambda)\),
+  usando la convención normalizada del reporte. Si la implementación usa \(W_{\rm code}=r^\top(P-\lambda I)^{-1}b\), entonces \(W_{\rm code}=-\widehat W_q(\lambda)\), y la condición residual debe escribirse con el signo correspondiente.
   \item Se resuelve \(N(A)=k\), se construye
   \(P+bkr^\top\), se toma el autovector asociado a
-  \((\ii\omega)^q\), se normaliza con \(r^\top v=1\), y la condición inicial
+  \(\lambda\), se normaliza con \(r^\top v=1\), y la condición inicial
   modal se toma como
   \[
   X_0=A\,\operatorname{Re}\left(v e^{\ii\theta}\right),
@@ -663,19 +673,19 @@ YAML de esa corrida como fuente de verdad.
 \begin{figure}[H]
 \centering
 \maybeincludegraphics[width=0.78\textwidth]{chua_arctan_typical_attractor_3d.pdf}
-\caption{Chua arctan: atractor 3D integrado desde la semilla DF entera calculada por la librería. Parámetros tipo Wu2023: \(a_1=0.4\), \(a_2=-1.5585\), \(\rho=1\).}
+\caption{Chua arctan (pendiente de validación completa de ocultedad): atractor 3D integrado desde la semilla DF entera calculada por la librería. Parámetros tipo Wu2023: \(a_1=0.4\), \(a_2=-1.5585\), \(\rho=1\).}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \maybeincludegraphics[width=0.86\textwidth]{chua_arctan_typical_time_series.pdf}
-\caption{Chua arctan: series temporales post-transitorio de la corrida típica usada para el atractor 3D. La gráfica permite revisar acotamiento, escalas relativas y aperiodicidad visual; no reemplaza Lyapunov, Poincaré ni análisis de cuencas.}
+\caption{Chua arctan (pendiente de validación completa de ocultedad): series temporales post-transitorio de la corrida típica usada para el atractor 3D. La gráfica permite revisar acotamiento, escalas relativas y aperiodicidad visual; no reemplaza Lyapunov, Poincaré ni análisis de cuencas.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \maybeincludegraphics[width=0.78\textwidth]{chua_arctan_df_continuation_3d.pdf}
-\caption{Chua arctan: continuación ilustrativa desde la linealización armónica hasta la realimentación suave \(a_2\arctan(\rho\sigma)\).}
+\caption{Chua arctan (pendiente de validación completa de ocultedad): continuación ilustrativa desde la linealización armónica hasta la realimentación suave \(a_2\arctan(\rho\sigma)\).}
 \end{figure}
 
 \section{Lur'e, función de transferencia y función descriptiva}
@@ -698,16 +708,14 @@ P=
 b=(-\alpha,0,0)^\top .
 \]
 La transferencia usada por el balance armónico es
+La transferencia usada por el balance armónico se define usando la convención explícita:
 \[
-W_q(\ii\omega)=r^\top\left((\ii\omega)^qI-P\right)^{-1}b.
+\widehat W_q(\lambda)=r^\top\left(\lambda I-P\right)^{-1}b, \qquad W_q(\ii\omega)\equiv \widehat W_q((\ii\omega)^q), \qquad \lambda=(\ii\omega)^q.
 \]
-Para \(q=1\), esto coincide con la transferencia ordinaria \(W_1(\ii\omega)\).
-Para \(0<q<1\), la librería usa la convención local
-\(\lambda=(\ii\omega)^q\). Esta operación es una herramienta de semillas, no
-una equivalencia exacta con una órbita periódica de Caputo.
+Si la implementación usa \(W_{\rm code}=r^\top(P-\lambda I)^{-1}b\), entonces \(W_{\rm code}=-\widehat W_q(\lambda)\), y la condición residual debe escribirse con el signo correspondiente. Para \(q=1\), esto coincide con la transferencia ordinaria. Para \(0<q<1\), la librería usa la convención local \(\lambda=(\ii\omega)^q\). Esta operación es una herramienta de semillas, no una equivalencia exacta con una órbita periódica de Caputo.
 
 La función descriptiva de la saturación residual
-\(\psi(\sigma)=(m_0-m_1)\operatorname{sat}(\sigma)\) es
+\text{con }\(\psi(\sigma)=(m_0-m_1)\operatorname{sat}(\sigma)\) es
 \begin{equation}
 N(A)=
 \begin{cases}
@@ -723,7 +731,7 @@ m_0-m_1, & A\le 1,\\[4pt]
 \end{equation}
 El cruce armónico busca \(A\) y \(\omega\) tales que
 \[
-1-N(A)W_q(\ii\omega)=0.
+1-N(A)\widehat W_q(\lambda)=0, \qquad \lambda=(\ii\omega)^q.
 \]
 La solución produce una semilla inicial para integración y continuación. No
 prueba que exista un atractor oculto.
@@ -733,9 +741,7 @@ Para arctan, la función descriptiva implementada en la forma de Lur'e es
 N_{\arctan}(A)=
 a_2\,\frac{2\left(\sqrt{1+(\rho A)^2}-1\right)}{\rho A^2}.
 \]
-La rama de Machado/FDF aplica una deformación de ganancia para búsqueda de
-semillas. La librería la trata como heurística auxiliar y no como validación
-matemática de ciclos fraccionarios.
+La rama de Machado/FDF aplica una deformación de ganancia para búsqueda de semillas. Machado/FDF se documenta como teoría y familia de semillas planificada; no es un flujo público promovido en esta versión. La librería la trata como una heurística auxiliar teórica para explorar semillas, y no como una validación matemática de ciclos fraccionarios o de ocultedad.
 
 \section{Integradores y contratos numéricos}
 
@@ -1060,8 +1066,8 @@ Función o módulo & Archivo fuente & Fundamento & Validación o evidencia & Lec
 \codepath{jacobian_nonsmooth}, \codepath{jacobian_arctan} & \codepath{models/chua.py} & Linealización \(J=\partial F/\partial x\). & Diferencias finitas, Wolfram/Matlab cuando aplica. & Estabilidad local. \\
 \codepath{ChaoticSystem}, \codepath{register_system} & \codepath{systems/} & Contrato abstracto de sistema autónomo. & Ejemplo \codepath{custom_system_definition.py} y capability checks. & Punto de extensión. \\
 \codepath{LureSystem} & \codepath{systems/lure.py} & Split \(PX+b\psi(r^\top X)\). & Casos Chua y comparación Lur'e. & Necesario para DF/Nyquist. \\
-\codepath{find_lure_harmonic_seed} & \codepath{seed_generation/} & \(1-N(A)W_q(\ii\omega)=0\). & Baseline entero y residuos complejos. & Semilla heurística. \\
-\codepath{machado_describing_function} & \codepath{seed_generation/} & Deformación FDF de ganancia. & Contrato local; referencia Machado. & Exploración auxiliar. \\
+\codepath{find_lure_harmonic_seed} & \codepath{seed_generation/} & \(1-N(A)\widehat W_q(\lambda)=0\). & Baseline entero y residuos complejos. & Semilla heurística. \\
+\codepath{machado_describing_function} & \codepath{seed_generation/} & Deformación FDF de ganancia (teoría). & Contrato local; referencia Machado (teoría). & Exploración auxiliar. \\
 \codepath{caputo_abm_integrate} & \codepath{integrations/abm.py} & ABM predictor-corrector de Caputo. & Reproducción Danca/contratos de historia completa. & Integración numérica. \\
 \codepath{efork3_caputo_integrate} & \codepath{solvers/} & Runge--Kutta fraccionario EFORK. & Tablas manufacturadas Ghoreishi--Ghaffari. & Referencia y solver. \\
 \codepath{integrate} & \codepath{integrations/selector.py} & Selector según \(q\) y backend. & Pruebas de compatibilidad. & Despacha método. \\
@@ -1165,7 +1171,7 @@ que una simulación no debe leerse sin contrato.
 Comandos:
 \begin{verbatim}
 python examples/custom_system_definition.py
-hidden-attractors-systems
+hidden-attractors inspect systems
 python examples/new_system_workflow_spec.py
 \end{verbatim}
 
@@ -1303,7 +1309,7 @@ cuencas, pero ayuda a detectar candidatos frágiles.
 \centering
 \maybeincludegraphics[width=\linewidth]{robustness_overlay_machado_mu4.pdf}
 \end{minipage}
-\caption{Robustez de candidatos Machado/FDF. Estas figuras son evidencia de persistencia numérica, no prueba de ocultedad.}
+\caption{Robustez de candidatos Machado/FDF (teoría, familia de semillas planificada). Estas figuras son evidencia de persistencia numérica, no prueba de ocultedad.}
 \end{figure}
 
 \section{Caso científico 1: Chua entero}
@@ -1381,9 +1387,9 @@ artefactos es \(q=0.9998\), cercano al caso entero pero con memoria explícita.
 
 \subsection{Semillas y continuación}
 
-La transferencia fraccionaria usa
+La transferencia fraccionaria se define mediante la expresión explícita:
 \[
-W_q(\ii\omega)=r^\top\left((\ii\omega)^qI-P\right)^{-1}b.
+\widehat W_q(\lambda)=r^\top\left(\lambda I-P\right)^{-1}b, \qquad W_q(\ii\omega)\equiv \widehat W_q((\ii\omega)^q), \qquad \lambda=(\ii\omega)^q.
 \]
 La semilla se construye con la misma lógica DF/Nyquist, pero la integración
 final debe hacerse con un integrador causal de Caputo. La librería conserva
@@ -1427,7 +1433,7 @@ la separación:
 \centering
 \maybeincludegraphics[width=\linewidth]{project_machado_mu4.pdf}
 \end{minipage}
-\caption{Candidatos generados por Lur'e y Machado/FDF. La semejanza geométrica es diagnóstica; la decisión depende de robustez y cuencas.}
+\caption{Candidatos generados por Lur'e y Machado/FDF (teoría/no promovido). La semejanza geométrica es diagnóstica; la decisión depende de robustez y cuencas.}
 \end{figure}
 
 \subsection{Lectura del resultado}
@@ -1485,14 +1491,48 @@ completa contra Wu et al. queda separada.
 
 \subsection{Estado}
 
-La formulación algebraica, los equilibrios, el Jacobiano y el split de Lur'e
-están implementados. La guía no afirma reproducción completa ni ocultedad
-verificada del caso arctan mientras no exista una rama robusta, referencia
-dinámica promovida, comparación publicada y paquete de cuencas completo. Esto
-evita convertir un caso implementado en una conclusión científica más fuerte
-que la evidencia disponible.
+El caso Chua arctan fraccionario está implementado algebraicamente, pendiente de validación completa de ocultedad. No se promueve como atractor oculto verificado en esta versión.
+
+La formulación algebraica, los equilibrios, el Jacobiano y el split de Lur'e están implementados. La guía no afirma reproducción completa ni ocultedad verificada del caso arctan mientras no exista una rama robusta, referencia dinámica promovida, comparación publicada y paquete de cuencas completo. Esto evita convertir un caso implementado en una conclusión científica más fuerte que la evidencia disponible. 
+
+El flujo de trabajo completo que queda pendiente para este caso de estudio comprende:
+\begin{enumerate}
+  \item la definición y split en la forma Lur'e;
+  \item la formulación de la función de transferencia fraccionaria;
+  \item la evaluación analítica de la función descriptiva arctan;
+  \item el cálculo de la condición armónica de Nyquist;
+  \item la continuación paramétrica completa;
+  \item la simulación temporal mediante los integradores Caputo ABM o EFORK;
+  \item el muestreo de esferas y vecindades de todos los puntos de equilibrio;
+  \item la clasificación de ocultedad bajo criterios estrictos y conservadores.
+\end{enumerate}
 
 \section{Validación oficial y evidencia promovida}
+
+El freeze audit actual reporta \(797\) pruebas aprobadas y \(34\) omitidas. La fuente oficial es \codepath{validation/freeze_audit/}; los conteos futuros deben leerse desde esos artefactos y no duplicarse como afirmación manual sin actualización.
+
+\subsection{Matriz resumida de afirmaciones defendibles}
+
+La tabla a continuación resume las afirmaciones científicamente defendibles para cada uno de los sistemas o contribuciones de este proyecto.
+
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.46\textwidth}L{0.36\textwidth}@{}}
+\toprule
+Sistema o contribución & Estado defendible \\
+\midrule
+Chua entero & \codepath{reproducido}. \\
+Chua no suave Ejemplo 1 & \codepath{candidato}. \\
+Candidato oficial fraccionario no suave & \codepath{rechazado}; se detectó contacto autoexcitado bajo el contrato probado. \\
+Chua arctan fraccionario & \codepath{pendiente}; implementado algebraicamente, pendiente de validación completa de ocultedad. \\
+Metodología Lur'e/fraccionaria & \codepath{probado como framework}; generación, continuación, simulación y auditoría bajo alcance Lur'e/Caputo declarado. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+La fuente normativa de esta tabla es \codepath{THESIS_CLAIMS.md}. El reporte no debe promover resultados por encima del estado registrado en esa matriz.
+
+\subsection{Protocolo de validación}
 
 El protocolo Caputo oficial está definido por
 \codepath{configs/validation_contract.json} y
@@ -1570,7 +1610,7 @@ Nyquist/DF & Cruce armónico. & Semilla \(A,\omega\). & Existencia de atractor. 
   memoria, backend, tolerancias y condición inicial.
   \item Las figuras son evidencia auxiliar; no reemplazan contratos ni
   archivos de origen.
-  \item DF/Nyquist/Machado/FDF son generadores de semillas.
+  \item DF/Nyquist/Machado/FDF son generadores de semillas (métodos teóricos y familias de semillas planificadas).
   \item Matignon decide estabilidad local de equilibrios linealizados, no
   ocultedad.
   \item Lyapunov, FFT, PSD y Poincaré son diagnósticos si el método no está
@@ -1588,26 +1628,67 @@ Nyquist/DF & Cruce armónico. & Semilla \(A,\omega\). & Existencia de atractor. 
 
 \begin{center}
 \footnotesize
-\begin{longtable}{@{}L{0.32\textwidth}L{0.46\textwidth}L{0.14\textwidth}@{}}
+\begin{longtable}{@{}L{0.34\textwidth}L{0.43\textwidth}L{0.15\textwidth}@{}}
 \toprule
 Comando & Uso & Estado \\
 \midrule
-\cmdbreak{hidden-attractors}{run -p chua\_integer} & Ejecuta preset entero. & Usuario \\
-\cmdbreak{hidden-attractors}{run -p chua\_fractional} & Ejecuta preset fraccionario no suave. & Usuario \\
-\cmdbreak{hidden-attractors}{run -p chua\_arctan} & Ejecuta preset arctan. & Usuario \\
-\cmdbreak{hidden-attractors}{init -e chua\_fractional} & Copia YAML editable. & Usuario \\
-\begin{tabular}[t]{@{}l@{}}\texttt{hidden-attractors}\\\texttt{inspect-config}\\\texttt{-p chua\_fractional}\end{tabular} & Muestra configuración efectiva. & Usuario \\
-\cmdbreak{hidden-attractors}{systems} & Lista sistemas registrados. & Auxiliar \\
-\cmdbreak{hidden-attractors}{workflow-requirements} & Explica requerimientos por workflow. & Auxiliar \\
-\cmdbreak{hidden-attractors}{protocol} & Ejecuta etapas oficiales del protocolo. & Alfa \\
-\cmdbreak{hidden-attractors}{robustness-overlay} & Workflow de robustez. & Alfa \\
-\cmdbreak{hidden-attractors}{sphere-controls} & Muestreo de esferas/bolas. & Alfa \\
-\cmdbreak{hidden-attractors}{refined-basin} & Refinamiento de cuencas. & Alfa \\
-\cmdbreak{hidden-attractors}{strict-target-refinement} & Refinamiento estricto de TARGET. & Alfa \\
-\cmdbreak{hidden-attractors}{check-validation} & Revisa contrato de validación. & Auxiliar \\
+\cmdbreak{hidden-attractors}{--help} & Muestra la ayuda general del CLI unificado. & Usuario \\
+\cmdbreak{hidden-attractors}{inspect systems} & Lista o inspecciona sistemas registrados. & Usuario \\
+\cmdbreak{hidden-attractors}{inspect candidates} & Lista candidatos disponibles y su estado documental. & Usuario \\
+\cmdbreak{hidden-attractors}{inspect workflow-requirements} & Explica requisitos de workflows. & Usuario \\
+\cmdbreak{hidden-attractors}{run -p chua\_integer} & Ejecuta el preset entero de referencia. & Usuario \\
+\cmdbreak{hidden-attractors}{run -p chua\_fractional} & Ejecuta el preset fraccionario no suave. & Usuario \\
+\cmdbreak{hidden-attractors}{run -p chua\_arctan} & Ejecuta o inspecciona el preset arctan, sin promover ocultedad. & Experimental \\
+\cmdbreak{hidden-attractors}{run -c path/to/config.yaml} & Ejecuta un YAML definido por el usuario. & Usuario \\
+\cmdbreak{hidden-attractors}{init -e chua\_fractional} & Copia un YAML editable. & Usuario \\
+\cmdbreak{hidden-attractors}{seed lure-centered --help} & Ayuda para semillas Lur'e centradas por función descriptiva. & Experimental \\
+\cmdbreak{hidden-attractors}{seed lure-biased --help} & Ayuda para semillas Lur'e sesgadas/BDF. & Experimental \\
+\cmdbreak{hidden-attractors}{continuation run --help} & Continuación de un candidato bajo contrato declarado. & Experimental \\
+\cmdbreak{hidden-attractors}{continuation multiparameter --help} & Continuación multiparámetro. & Experimental \\
+\cmdbreak{hidden-attractors}{protocol <stage>} & Ejecuta una etapa del protocolo oficial. & Alfa \\
+\cmdbreak{hidden-attractors}{hiddenness sphere-controls --help} & Pruebas de vecindades/esferas alrededor de equilibrios. & Alfa \\
+\cmdbreak{hidden-attractors}{basin refined --help} & Refinamiento de cuencas. & Alfa \\
+\cmdbreak{hidden-attractors}{robustness overlay --help} & Barridos de robustez bajo perturbaciones. & Alfa \\
+\cmdbreak{hidden-attractors}{bifurcation run --help} & Barrido de bifurcación. & Alfa \\
+\cmdbreak{hidden-attractors}{lyapunov compute --help} & Cálculo de exponentes de Lyapunov. & Alfa \\
+\cmdbreak{hidden-attractors}{chaos-test --help} & Pruebas diagnósticas de caos. & Alfa \\
+\cmdbreak{hidden-attractors}{validate contract --allow-pending} & Revisa el contrato de validación permitiendo etapas pendientes. & Usuario \\
 \bottomrule
 \end{longtable}
 \end{center}
+
+Los comandos independientes antiguos, como \codepath{hidden-attractors-check-validation}
+o \codepath{hidden-attractors-protocol}, no forman parte de la superficie pública
+instalada en esta versión. Se reemplazan por subcomandos agrupados bajo
+\codepath{hidden-attractors}.
+
+\subsection{Salidas esperadas de comandos mínimos}
+
+En la siguiente tabla se resumen las salidas o efectos esperados al ejecutar los comandos de prueba mínimos de la librería.
+
+\begin{center}
+\footnotesize
+\begin{longtable}{@{}L{0.34\textwidth}L{0.28\textwidth}L{0.30\textwidth}@{}}
+\toprule
+Comando & Archivos o salida esperada & Interpretación \\
+\midrule
+\codepath{hidden-attractors inspect systems} &
+Salida terminal. &
+Lista los sistemas registrados y permite verificar que la instalación cargó el registro. \\
+\codepath{hidden-attractors run -p chua\_integer} &
+Resumen JSON, tablas CSV y figuras si el preset activa exportación. &
+Control entero \(q=1\); valida la ruta de uso sin memoria fraccionaria. \\
+\codepath{python examples/quickstart\_equilibria.py} &
+Resumen corto de ejemplo. &
+Prueba de humo del ejemplo correspondiente; no constituye validación completa. \\
+\codepath{hidden-attractors validate contract --allow-pending} &
+Diagnóstico de contrato. &
+Revisa estructura de evidencia y permite etapas pendientes declaradas. \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+La opción \codepath{--quick} debe usarse sólo si el ejemplo la implementa.
 
 \section{Bibliografía}
 

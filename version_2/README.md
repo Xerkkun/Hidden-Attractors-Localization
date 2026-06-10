@@ -32,10 +32,14 @@ The frozen evidence vocabulary and release checks are documented in
 
 See [Thesis Claims Matrix](THESIS_CLAIMS.md) for the current claim matrix and the distinction between reproduced, rejected, candidate, non-certified and pending results.
 
+The synchronized manual metadata are defined in [docs/manual_manifest.yaml](docs/manual_manifest.yaml); scientific claims remain governed by [THESIS_CLAIMS.md](THESIS_CLAIMS.md).
+
+For a complete user-facing description of installation, CLI usage, examples, outputs, evidence labels and limitations, see [USER_MANUAL.md](USER_MANUAL.md).
+
 
 ## Features
 
-- Chua non-smooth and arctan model definitions and equilibrium helpers.
+- Chua non-smooth and arctan model definitions and equilibrium helpers (Chua arctan is implemented algebraically, pending full hiddenness validation).
 - Final candidate loaders for the current reference outputs.
 - Geometry, spectral, phase-space, and bifurcation post-processing diagnostics.
 - Basin classification labels and plotting helpers.
@@ -49,7 +53,7 @@ See [Thesis Claims Matrix](THESIS_CLAIMS.md) for the current claim matrix and th
 - A system registry for built-in and user-defined chaotic systems. Full
   Nyquist/DF workflows require a manual Lur'e form.
 - Public seed-generation helpers normalized into classical centered, classical
-  biased, Machado centered, and Machado biased seed families.
+  biased, Machado centered, and Machado biased seed families (documented as theory/planned seed families).
 - Official Caputo workflow contracts, JSON envelopes, lambda continuation,
   interior-ball hiddenness tests, and complementary diagnostics.
 - Installable compatibility commands for historical workflows.
@@ -184,7 +188,7 @@ configuration, seed construction, post-processing, plotting, and IO.
 
 For systems beyond the built-in Chua cases, the user must provide the equations
 and, for the full DF route, the Lur'e split `A, b, c, psi(c^T x)`, the
-classical describing function, the Machado branch, equilibria, and preferably a
+classical describing function, the Machado branch (documented as theory/planned), equilibria, and preferably a
 Jacobian. Current C backends are Chua-specific; reusable native contracts are
 available for adding system-specific integer or fractional engines.
 
@@ -293,7 +297,7 @@ Finite-memory integration is a robustness/scalability variant.
 `seed_generation` unifies classical centered Lur'e, classical biased Lur'e,
 Machado centered and Machado biased constructions. Describing functions,
 Lur'e reconstruction and Machado/FDF only produce seeds; none is evidence of
-hiddenness. A periodic-looking direct seed is labelled
+hiddenness. Machado/FDF is documented as theory and planned seed family; not a promoted public workflow in this release. A periodic-looking direct seed is labelled
 `pre_continuation_periodic` in `soft_precheck` and is not rejected before
 `ContinuationPlan(lambda_values=...)` reaches the target system.
 

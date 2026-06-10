@@ -2,43 +2,59 @@
 
 ## Editable Install
 
-From the repository root:
+Depending on your current working directory, run one of the following commands:
 
+### A. From the Repository Root Directory
+```bash
+python -m pip install -e version_2
+```
+
+### B. From the `version_2/` Subdirectory
 ```bash
 python -m pip install -e .
 ```
 
-For development:
+---
 
+## Recommended Install for Validation and Development
+
+To run unit tests, validation contracts, and chaos analysis:
+
+### A. From the Repository Root Directory
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install -e "version_2[dev,analysis,legacy]"
 ```
 
-For the historical scripts in `tools/legacy/`:
-
+### B. From the `version_2/` Subdirectory
 ```bash
-python -m pip install -e ".[legacy]"
+python -m pip install -e ".[dev,analysis,legacy]"
 ```
 
-Those scripts remain outside the public API, but some reproducibility workflows
-still need SciPy and PyYAML.
+---
 
-## Native Backends
+## Supported Environments
 
-The package contains C sources in `hidden_attractors/native/csrc/` and compiles
-shared libraries into `.runtime_native/` when a native workflow is executed.
+- **Python Version**: Requires `Python >= 3.11`.
+- **CI Matrix**: Versions `3.11`, `3.12`, and `3.13` are fully tested in the automatic CI pipeline.
+- For detailed package support boundaries and rolling support guidelines, refer to the [Dependency Policy](dependency_policy.md).
 
-**Currently supported**: Python ≥ 3.11, 3.12, and 3.13 (all tested in CI).
+---
 
+## Verification and Smoke Checks
 
-- `numpy` and `matplotlib`.
-- A C compiler for native workflows.
-- On macOS, Homebrew `libomp` may be required for OpenMP-enabled builds.
-
-## GitHub Install Shape
-
-Once published, the expected install command is:
+After installation, verify that the unifed CLI command is registered and running correctly:
 
 ```bash
-python -m pip install "git+https://github.com/Xerkkun/Hidden-Attractors-Localization.git#subdirectory=version_2"
+hidden-attractors --help
+hidden-attractors inspect systems
+hidden-attractors validate contract --allow-pending
 ```
+
+---
+
+## Native C-solvers Compilation
+
+The library contains native high-performance C solvers under `hidden_attractors/native/csrc/`. These compile dynamically into `.runtime_native/` on demand.
+- **Windows**: Requires a GCC compiler (e.g. MinGW) on your system `PATH`.
+- **Linux**: Requires `build-essential`.
+- **macOS**: Requires Xcode Command Line Tools. OpenMP parallelism can be supported by running `brew install libomp`. If OpenMP is missing or disabled, compile by passing the environment variable `ALLOW_NO_OPENMP=1`.

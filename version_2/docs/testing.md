@@ -6,8 +6,6 @@ Comandos rápidos desde `version_2/`:
 
 ```bash
 python -m compileall hidden_attractors examples tests tools/cli
-python examples/quickstart_equilibria.py
-python examples/list_final_candidates.py
 python -m hidden_attractors.cli.main --help
 python -m hidden_attractors.cli.main inspect --help
 python -m hidden_attractors.cli.main validate --help
@@ -21,7 +19,7 @@ Si el paquete está instalado en modo editable:
 hidden-attractors --help
 hidden-attractors inspect systems
 hidden-attractors inspect candidates
-hidden-attractors validate contract --help
+hidden-attractors validate contract --allow-pending
 ```
 
 ## Pytest
@@ -31,7 +29,7 @@ python -m pip install -e ".[dev,analysis,legacy]"
 python -m pytest -q
 ```
 
-En el freeze audit actual, la suite completa reporta 797 passed y 34 skipped. El conteo oficial debe tomarse de `validation/freeze_audit/`.
+At the current thesis-freeze audit, `validation/freeze_audit/` reports 797 passed and 34 skipped.
 
 Current tests verify:
 
@@ -84,4 +82,8 @@ Si se necesita raíz alternativa:
 hidden-attractors validate contract --validation-root path/to/validation
 ```
 
-*Nota de depreciación:* El comando antiguo `hidden-attractors-check-validation` es legacy/deprecated y no debe recomendarse como comando público. La ruta pública estable es `hidden-attractors validate contract`. Los scripts en `tools/legacy/` o wrappers antiguos no deben aparecer en smoke checks principales.
+### Legacy commands no longer installed
+
+These names may appear in old notes only; use the grouped `hidden-attractors` CLI:
+- `hidden-attractors-check-validation` (deprecated; use `hidden-attractors validate contract` instead)
+- `hidden-attractors-protocol` (deprecated; use `hidden-attractors protocol <stage>` instead)

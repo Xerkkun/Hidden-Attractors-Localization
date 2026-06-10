@@ -1,6 +1,15 @@
 # Validation Evidence
 
+The synchronized manual metadata are defined in [docs/manual_manifest.yaml](manual_manifest.yaml); scientific claims remain governed by [THESIS_CLAIMS.md](../THESIS_CLAIMS.md).
+
+For a complete user-facing description of installation, CLI usage, examples, outputs, evidence labels and limitations, see [USER_MANUAL.md](../USER_MANUAL.md).
+
 See the [Thesis Claims Matrix](../THESIS_CLAIMS.md) for the current claims classification (reproduced, rejected, candidate, pending).
+
+> [!WARNING]
+> **Chua Arctan Validation Status**: The Chua arctan system is implemented algebraically, but is pending full numerical hiddenness validation.
+>
+> **Machado/FDF Validation Status**: The Machado/FDF system is documented as theory and a planned seed family. It is not a promoted public workflow in this release.
 
 Promoted validation evidence follows the official Caputo protocol defined by
 `configs/validation_contract.json` and
@@ -75,7 +84,7 @@ Every stage summary must contain:
 }
 ```
 
-Use `hidden-attractors-protocol <stage-command>` to write or validate an
+Use `hidden-attractors protocol <stage>` to write or validate an
 official envelope. A `pre_continuation_periodic` verdict is diagnostic and
 must remain eligible for continuation.
 
@@ -114,7 +123,7 @@ tables; those records are not a competing protocol run.
 ## Contract Check
 
 ```bash
-hidden-attractors-check-validation --allow-pending
+hidden-attractors validate contract --allow-pending
 ```
 
 `--allow-pending` permits official stages not yet generated in a current run.

@@ -35,6 +35,10 @@ For older standalone commands (e.g. `hidden-attractors-protocol`, `hidden-attrac
 
 See [Thesis Claims Matrix](THESIS_CLAIMS.md) for the current claim matrix and the distinction between reproduced, rejected, candidate, non-certified and pending results.
 
+The synchronized manual metadata are defined in [docs/manual_manifest.yaml](docs/manual_manifest.yaml); scientific claims remain governed by [THESIS_CLAIMS.md](THESIS_CLAIMS.md).
+
+For a complete user-facing description of installation, CLI usage, examples, outputs, evidence labels and limitations, see [USER_MANUAL.md](USER_MANUAL.md).
+
 
 
 ---
@@ -155,6 +159,8 @@ Defined in [`hidden_attractors/systems/builtins.py`](hidden_attractors/systems/b
 | **`fractional_chua_arctan_wu2023`** | Exact Wu et al. parameters | $\alpha=8.4562, \beta=12.0732, \gamma=0.0052, m=0.4, n=1.2$ | `0.95` | Yes |
 
 *Aliases mapped: `chua_integer_saturation` $\rightarrow$ `chua-nonsmooth`, `chua_fractional_saturation` $\rightarrow$ `chua-nonsmooth`, `chua_fractional_arctan` $\rightarrow$ `chua-arctan`.*
+
+*(Note: Chua arctan is implemented algebraically, pending full hiddenness validation.)*
 
 ---
 

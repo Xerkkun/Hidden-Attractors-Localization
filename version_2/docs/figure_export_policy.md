@@ -1,5 +1,7 @@
 # Política de Exportación de Figuras y Reproducibilidad
 
+La versión sincronizada y los objetivos de portabilidad de figuras del manual se definen en el manifiesto [docs/manual_manifest.yaml](manual_manifest.yaml) y se detallan para el usuario final en [USER_MANUAL.md](../USER_MANUAL.md).
+
 Este documento define la política oficial para la generación, exportación y almacenamiento de figuras en el repositorio. El objetivo principal es garantizar la higiene del código, la reproducibilidad de los resultados científicos y la protección contra la contaminación de datos promovidos por ejecuciones de pruebas.
 
 ## 1. Principio General
@@ -38,6 +40,9 @@ Para garantizar la portabilidad y limpieza de la evidencia de validación:
 | --- | --- | --- | --- | --- |
 | **Figura Promovida** | Aparece en reportes, manifiestos o validación oficial; es parte del cuerpo de evidencia numérica del proyecto. | Sí (JSON/CSV) | `library_figures/` | **Sí** |
 | **Figura Legacy / Exploratoria** | Proviene de scripts históricos o de análisis transitorios. | No | Fuera de `library_figures/` | **No** |
+
+> [!IMPORTANT]
+> **Límites de Evidencia Promovida**: Las figuras generadas bajo esquemas no soportados o en desarrollo, como diagramas de bifurcación de Chua arctan (el cual está implementado algebraicamente pero pendiente de validación de ocultedad) o semillas Machado/FDF (el cual está planeado en teoría y no es un flujo de trabajo promovido), no pueden ser promovidas al conjunto de figuras oficial (`library_figures/`). Cualquier figura en `library_figures/` debe cumplir rigurosamente con los criterios de validación numérica de la Etapa 9 descritos en [USER_MANUAL.md](../USER_MANUAL.md).
 
 ---
 

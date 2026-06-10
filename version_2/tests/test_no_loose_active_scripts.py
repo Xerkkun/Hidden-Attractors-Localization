@@ -31,6 +31,13 @@ EXCLUDED_PATHS = [
 
 EXEMPTED_FILES = [
     "hidden_attractors/plotting/generate_publication_figures.py",
+    "tests/test_manual_manifest.py",
+    "tests/test_manual_manifest_consistency.py",
+    "tests/test_user_manual.py",
+    "tests/test_user_manual_claims_consistency.py",
+    "tests/test_manual_claims_consistency.py",
+    "tests/test_manual_cli_consistency.py",
+    "tests/test_manual_freeze_audit_reference.py",
 ]
 
 @pytest.mark.hygiene
