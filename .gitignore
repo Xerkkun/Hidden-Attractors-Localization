@@ -33,7 +33,15 @@ venv/
 *.out
 *.run.xml
 *.synctex.gz
+*.synctex
+*.pdfsync
 *.toc
+*.lof
+*.lot
+*.glo
+*.idx
+*.ilg
+*.ind
 
 # Generated project outputs
 outputs/
@@ -57,13 +65,12 @@ figures/
 *.jpg
 *.jpeg
 
-# Unignore documentation assets and reference papers in version_2
+# Unignore documentation assets in version_2
 !version_2/docs/assets/**/*.png
 !version_2/docs/assets/**/*.pdf
 !version_2/docs/assets/**/*.svg
 !version_2/docs/assets/**/*.jpg
 !version_2/docs/assets/**/*.jpeg
-!version_2/docs/**/*.pdf
 
 # Unignore committed validation reference cases (ground-truth plots) in version_2
 !version_2/validation/reference_cases/**/*.png

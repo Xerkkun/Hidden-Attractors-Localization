@@ -38,7 +38,15 @@ site/
 *.out
 *.run.xml
 *.synctex.gz
+*.synctex
+*.pdfsync
 *.toc
+*.lof
+*.lot
+*.glo
+*.idx
+*.ilg
+*.ind
 
 # Generated project outputs
 outputs/
@@ -82,13 +90,12 @@ library_figures/
 *.jpg
 *.jpeg
 
-# Unignore documentation assets and reference papers
+# Unignore documentation assets
 !docs/assets/**/*.png
 !docs/assets/**/*.pdf
 !docs/assets/**/*.svg
 !docs/assets/**/*.jpg
 !docs/assets/**/*.jpeg
-!docs/**/*.pdf
 
 # Unignore committed validation reference cases (ground-truth plots)
 !validation/reference_cases/**/*.png
