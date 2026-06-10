@@ -11,6 +11,7 @@ Esta biblioteca está diseñada para definir, analizar y ejecutar **workflows re
 > **Advertencia Metodológica y Científica:**
 > - El análisis de la función descriptiva (DF), Nyquist y los métodos de continuación numérica son herramientas heurísticas que únicamente sirven para **generar semillas o candidatos**. **No constituyen una prueba matemática de existencia ni de ocultedad**.
 > - La verificación científica y rigurosa de la ocultedad requiere la comprobación exhaustiva del comportamiento transitorio en vecindades de **todos los puntos de equilibrio** del sistema.
+> - Consulta la [Matriz de Afirmaciones de Tesis (Thesis Claims Matrix)](../THESIS_CLAIMS.md) para ver la clasificación actual de resultados y claims defendibles.
 
 ---
 

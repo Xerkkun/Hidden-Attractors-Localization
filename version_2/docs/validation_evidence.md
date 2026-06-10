@@ -1,5 +1,7 @@
 # Validation Evidence
 
+See the [Thesis Claims Matrix](../THESIS_CLAIMS.md) for the current claims classification (reproduced, rejected, candidate, pending).
+
 Promoted validation evidence follows the official Caputo protocol defined by
 `configs/validation_contract.json` and
 `configs/unified_caputo_protocol.json`. JSON stores traceability and decisions;

@@ -33,6 +33,9 @@ commands are documented for traceability rather than as stable APIs.
 
 For older standalone commands (e.g. `hidden-attractors-protocol`, `hidden-attractors-sphere-controls`), see the [CLI Migration Guide](docs/cli_migration_legacy_entrypoints.md) as they are no longer installed as public entry points.
 
+See [Thesis Claims Matrix](THESIS_CLAIMS.md) for the current claim matrix and the distinction between reproduced, rejected, candidate, non-certified and pending results.
+
+
 
 ---
 

@@ -30,6 +30,9 @@ The frozen evidence vocabulary and release checks are documented in
 [Freeze Status](docs/freeze_status.md) and
 [Final Freeze Checklist](docs/final_freeze_checklist.md).
 
+See [Thesis Claims Matrix](THESIS_CLAIMS.md) for the current claim matrix and the distinction between reproduced, rejected, candidate, non-certified and pending results.
+
+
 ## Features
 
 - Chua non-smooth and arctan model definitions and equilibrium helpers.

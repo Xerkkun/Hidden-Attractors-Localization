@@ -1,5 +1,7 @@
 # Flujos de Trabajo (Workflows) — Guía Oficial
 
+Consulta la [Matriz de Afirmaciones de Tesis (Thesis Claims Matrix)](../THESIS_CLAIMS.md) para ver la clasificación actual de resultados y claims defendibles.
+
 Este documento detalla los flujos de trabajo de la biblioteca `hidden-attractors-fo`. 
 
 ---

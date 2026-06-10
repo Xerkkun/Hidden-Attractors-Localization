@@ -122,6 +122,7 @@ This file lists all test files in the test suite, their classification, and plan
 | tests/test_symmetry_validator.py | Verificar symmetry validator | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_systems_and_legacy_facade.py | Verificar systems and legacy facade | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_test_suite_classification.py | Verificar suite classification | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
+| tests/test_thesis_claims.py | Verificar matriz de claims de la tesis | hygiene | fast | unit | ninguna | no | no | conservar | Verifica consistencia de claims y límites en THESIS_CLAIMS.md. |
 | tests/test_validation_contract.py | Verificar validation contract | validation_contract | fast | contract | ninguna | sí | no | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
 | tests/test_validation_manifest.py | Verificar validation manifest | unit | fast | unit | ninguna | sí | no | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
 | tests/test_validation_states.py | Verificar validation states | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
