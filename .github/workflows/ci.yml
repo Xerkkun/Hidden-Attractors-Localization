@@ -58,7 +58,8 @@ jobs:
       fail-fast: false          # que un OS que falle no cancele el otro
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
+
 
 
     defaults:

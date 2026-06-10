@@ -184,7 +184,7 @@ validation/reference_cases/chua_integer_q1/
 Validate its presence and internal references with:
 
 ```bash
-hidden-attractors-check-validation \
+hidden-attractors validate contract \
   --contract configs/validation_chua_integer_q1.json \
   --validation-root validation/reference_cases/chua_integer_q1
 ```

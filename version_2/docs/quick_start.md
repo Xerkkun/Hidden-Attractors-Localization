@@ -1,113 +1,172 @@
-# Guía de Inicio Rápido — Hidden Attractors
+# Guía de Inicio Rápido — hidden-attractors-fo
 
 Esta guía proporciona la ruta de entrada recomendada y directa para usuarias nuevas en la versión 2 de la biblioteca.
 
 ---
 
-## 1. Instalación Mínima
+## 1. Alcance Mínimo
+Esta biblioteca está diseñada para definir, analizar y ejecutar **workflows reproducibles de candidatos a atractores ocultos** en sistemas dinámicos compatibles con la forma Lur’e (principalmente el circuito de Chua en sus variantes de orden entero y fraccionario).
 
-Para instalar la biblioteca en modo editable junto con las dependencias necesarias:
+> [!WARNING]
+> **Advertencia Metodológica y Científica:**
+> - El análisis de la función descriptiva (DF), Nyquist y los métodos de continuación numérica son herramientas heurísticas que únicamente sirven para **generar semillas o candidatos**. **No constituyen una prueba matemática de existencia ni de ocultedad**.
+> - La verificación científica y rigurosa de la ocultedad requiere la comprobación exhaustiva del comportamiento transitorio en vecindades de **todos los puntos de equilibrio** del sistema.
+
+---
+
+## 2. Instalación Mínima
+Para instalar la biblioteca en modo de desarrollo editable, ejecuta los siguientes comandos desde la **raíz del repositorio**:
 
 ```bash
-# Desde la raíz del repositorio
+# Instalación estándar editable
 pip install -e version_2
-```
 
-Si deseas ejecutar pruebas unitarias o realizar labores de desarrollo, instala las dependencias de desarrollo:
-
-```bash
-pip install -e "version_2[dev]"
+# Instalación completa para desarrollo y análisis avanzado
+pip install -e "version_2[dev,analysis]"
 ```
 
 ---
 
-## 2. Ejecutar el Ejemplo Oficial (Ejemplo 1)
+## 3. Comando Público Único
+La biblioteca se distribuye con un **único comando público y estable**:
 
-El **Ejemplo 1 — Chua fraccionario no suave con función descriptiva sesgada** es el principal punto de partida para comprobar el flujo de negocio del framework.
+```bash
+hidden-attractors
+```
 
-> [!NOTE]
-> **Nota metodológica:** Este ejemplo **no es una reproducción del sistema de Danca (2017)**. El sistema original de Danca **no fue reproducible debido a la falta de información publicada** (condiciones iniciales, detalles espectrales del resolvedor DF y el método de continuación numérica). Este ejemplo realiza una búsqueda sistemática para identificar vecindades compatibles.
+Este comando expone de manera unificada toda la funcionalidad de la biblioteca. Los comandos independientes antiguos (como `hidden-attractors-protocol`, `hidden-attractors-sphere-controls`, `hidden-attractors-refined-basin`, etc.) ya no se instalan como ejecutables globales, sino que están disponibles a través de subcomandos de `hidden-attractors` o se consideran interfaces de uso interno/desarrollador.
+
+---
+
+## 4. Primer Chequeo de Instalación
+Para verificar que el entorno local se ha configurado de manera correcta, puedes realizar las siguientes consultas rápidas al CLI:
+
+```bash
+# Mostrar ayuda general y lista de grupos de comandos
+hidden-attractors --help
+
+# Inspeccionar los sistemas caóticos registrados en el framework
+hidden-attractors inspect systems
+
+# Listar los registros de candidatos a atractores registrados
+hidden-attractors inspect candidates
+```
+
+---
+
+## 5. Ejecución Mínima Recomendada
+La ruta de ejecución más sencilla para comenzar utiliza los presets predefinidos en la biblioteca. Puedes extraer, previsualizar y ejecutar el preset fraccionario por defecto con los siguientes pasos:
+
+```bash
+# 1. Inicializar y copiar el preset 'chua_fractional' al directorio de trabajo actual
+hidden-attractors init -e chua_fractional
+
+# 2. Previsualizar la configuración efectiva y sus parámetros por defecto
+hidden-attractors inspect-config -p chua_fractional
+
+# 3. Ejecutar el pipeline de localización y simulación para el preset
+hidden-attractors run -p chua_fractional
+```
+
+---
+
+## 6. Ejemplo Oficial 1
+El **Ejemplo 1 — Chua fraccionario no suave con función descriptiva sesgada** es el principal flujo completo reproducible para explorar el pipeline BDF (Biased Describing Function) y el integrador fraccionario.
 
 Para ejecutar la prueba de humo rápida (~1-2 minutos):
-
 ```bash
 cd version_2/examples/chua_nonsmooth_biased_hidden_attractor
 python run_example.py --quick
 ```
 
-Otras opciones de ejecución para el Ejemplo 1:
-- `python run_example.py` (Ejecución estándar con 4 pasos clave, ~10-15 minutos)
-- `python run_example.py --all` (Ejecución masiva con búsqueda extendida en paralelo, puede tomar horas)
+> [!NOTE]
+> **Aclaraciones sobre el Ejemplo 1:**
+> - Es una **prueba de humo** para validar la integración mediante el pipeline BDF y el resolvedor fraccionario.
+> - **No constituye una reproducción exacta del sistema de Danca (2017)** debido a la falta de información publicada originalmente (condiciones iniciales del atractor oculto, resolvedor DF y detalles de la continuación).
+> - La simulación de este ejemplo **no prueba la ocultedad por sí misma**; las clasificaciones fuertes de ocultedad en la biblioteca dependen estrictamente del contrato de vecindades esféricas alrededor de los equilibrios.
 
 ---
 
-## 3. Interfaz CLI Unificada (`hidden-attractors`)
-
-La biblioteca incluye una interfaz CLI unificada agrupada por propósito matemático y computacional.
-
-### Comandos Directos:
-* `hidden-attractors run -p/--preset <name>` (o con `-c/--config`)
-* `hidden-attractors init`: Copia las plantillas de configuración al directorio actual.
-* `hidden-attractors inspect-config`: Previsualiza la configuración efectiva normalizada.
-
-### Comandos Agrupados de Análisis Avanzado:
-* **Generación de Semillas (`seed`)**:
-  * `hidden-attractors seed lure-centered -c <config>` (o `-p <preset>`): Búsqueda de semillas mediante la función descriptiva clásica centrada ($c = 0$, $W_q(j\omega)N(A) = -1$).
-  * `hidden-attractors seed lure-biased -c <config>` (o `-p <preset>`): Búsqueda de semillas desplazadas mediante balance de primer armónico y balance DC ($c \neq 0$, $W_q(j\omega)N_1(A, \sigma_0) = -1$).
-  * *Nota*: Las familias Machado/FDF (`machado-centered`, `machado-biased`) se encuentran documentadas como planificadas pero no están disponibles para ejecución activa en esta entrega.
-  * *Advertencia Científica*: La función descriptiva es únicamente una aproximación armónica para buscar semillas localizadas, **no constituye una prueba matemática de existencia ni de ocultedad**.
-* **Continuación Numérica (`continuation`)**:
-  * `hidden-attractors continuation run -c <config> -s <seeds.csv>`: Propagación escalar de una semilla deformando la no linealidad mediante $\eta \in [0,1]$.
-  * `hidden-attractors continuation multiparameter -c <config>`: Continuación vectorial a lo largo de un camino parametrizado $\Gamma(\tau) = (\eta(\tau), p_1(\tau), \ldots, p_m(\tau))$.
-  * *Nota de Caputo*: En sistemas fraccionarios de Caputo, se propaga y registra la historia de memoria/historial. En caso de usar una continuación sin historia (warm-start de último estado), se emitirá una advertencia explícita.
-* **Bifurcaciones (`bifurcation`)**:
-  * `hidden-attractors bifurcation run -c <config>`: Ejecuta barridos de parámetros para diagramas de bifurcación.
-  * `hidden-attractors bifurcation plot -i <csv>`: Genera diagramas de bifurcación estilizados.
-  * `hidden-attractors bifurcation inspect -i <json>`: Muestra estadísticas de extremos locales detectados.
-* **Exponentes de Lyapunov (`lyapunov`)**:
-  * `hidden-attractors lyapunov compute -c <config>`: Estima el espectro de Lyapunov (variación homotópica).
-  * `hidden-attractors lyapunov spectrum -t <csv>`: Estima exponentes a partir de trayectorias (mediante `nolds`).
-  * `hidden-attractors lyapunov validate -i <json>`: Valida reportes y emite advertencias sobre aproximaciones de tiempo finito.
-* **Prueba de Caos (`chaos-test`)**:
-  * `hidden-attractors chaos-test zero-one -c <config>` (o `-t <csv>`): Ejecuta la prueba 0-1 de caos.
-  * `hidden-attractors chaos-test inspect -i <json>`: Muestra la clasificación (regular, caótico o inconcluyente).
-
----
-
-## 4. ¿Dónde quedan los Resultados?
-
-- **CSV de Trayectorias y Logs de Salida**: Se almacenan en la carpeta `outputs/` en la raíz del repositorio.
-- **Gráficos y Metadatos**: Todas las figuras generadas se guardan de forma unificada bajo `version_2/library_figures/` (organizadas por identificador de ejecución o `by_run`).
-
----
-
-## 5. ⚠️ Qué NO Ejecutar
-
-Para garantizar la estabilidad y reproducibilidad científica del repositorio, sigue estrictamente estas reglas:
-
-* 🚫 **No ejecutar scripts históricos ni scratch**: Los archivos históricos usados durante la migración no forman parte del repositorio activo ni de la distribución pública. Todo flujo reproducible debe ejecutarse desde `hidden-attractors` o desde los ejemplos oficiales en `version_2/examples/`.
-* 🚫 **No crear scripts nuevos en la raíz del repositorio**: Todo script de prueba temporal o análisis específico debe colocarse dentro de la carpeta de trabajo `version_2/examples/` o en un módulo bajo `version_2/hidden_attractors/`.
-* 🚫 **No guardar figuras directamente fuera de `library_figures`**: Queda prohibido llamar directamente a `savefig` en módulos activos. Todo gráfico debe exportarse utilizando la API unificada de ploteo en `export_figure` o `intercept_and_export_path`.
-
----
-
-## 6. Pruebas Unitarias y de Contrato
-
-Para garantizar que los contratos científicos y la lógica de la biblioteca permanezcan invariables, puedes ejecutar la suite de pruebas desde la carpeta `version_2/`:
+## 7. Mapa de Subcomandos Agrupados
+Para usuarias avanzadas e investigación, la interfaz CLI unificada agrupa los comandos según su propósito:
 
 ```bash
-# Ejecutar la suite de pruebas rápidas (CI rápida, excluye pruebas lentas)
-pytest tests -m "not slow"
+# Generación de semillas iniciales
+hidden-attractors seed lure-centered
+hidden-attractors seed lure-biased
 
-# Ejecutar únicamente los contratos científicos rápidos
-pytest tests -m "scientific_contract"
+# Continuación numérica
+hidden-attractors continuation run
+hidden-attractors continuation multiparameter
 
-# Ejecutar pruebas del CLI público
-pytest tests -m "cli"
+# Análisis de bifurcación
+hidden-attractors bifurcation run
+hidden-attractors bifurcation plot
+hidden-attractors bifurcation inspect
 
-# Ejecutar la suite completa localmente
-pytest tests
+# Espectro y exponentes de Lyapunov
+hidden-attractors lyapunov compute
+hidden-attractors lyapunov spectrum
+hidden-attractors lyapunov validate
 
-# Ejecutar pruebas lentas y reproducciones numéricas pesadas (antes de congelar versión)
-pytest tests -m "slow"
+# Pruebas complementarias de caos
+hidden-attractors chaos-test zero-one
+hidden-attractors chaos-test inspect
+
+# Pruebas de vecindades y clasificación de ocultedad
+hidden-attractors hiddenness sphere-controls
+hidden-attractors hiddenness strict-target-refinement
+hidden-attractors basin refined
+hidden-attractors basin strict-target-refinement
+
+# Validación y contratos de datos
+hidden-attractors validate contract
+hidden-attractors validate bibliography
+
+# Protocolo oficial Caputo paso a paso
+hidden-attractors protocol <substage>
 ```
+
+> [!NOTE]
+> **Nota de Estabilidad:** Los subcomandos avanzados se consideran interfaces de investigación (tier experimental/alfa). La ruta de ejecución estable y recomendada para usuarias nuevas es el comando `hidden-attractors run` configurado mediante presets o archivos YAML.
+
+---
+
+## 8. Qué NO Ejecutar
+Para garantizar la estabilidad y reproducibilidad científica del repositorio, sigue estrictamente estas directrices:
+
+* 🚫 **No ejecutar scripts históricos ni scratch**: Todos los scripts de migración o carpetas temporales están excluidos del flujo de trabajo estándar.
+* 🚫 **No ejecutar comandos legacy independientes**: No intentes invocar comandos globales antiguos como `hidden-attractors-protocol`. Usa en su lugar la sintaxis de subcomando unificada (`hidden-attractors protocol`).
+* 🚫 **No guardar figuras manualmente fuera de `library_figures`**: Todos los gráficos y figuras exportados deben ir a través de la API unificada para centralizar los resultados en `library_figures/`. Para más detalles, consulta la [Política de Exportación de Figuras](figure_export_policy.md).
+* 🚫 **No clasificar un candidato como oculto prematuramente**: Nunca declares un candidato como atractor oculto basándote únicamente en simulaciones de un solo punto inicial, Nyquist/DF o continuación. Se requiere la ejecución completa de la validación de vecindades de los equilibrios.
+
+---
+
+## 9. Estados de Evidencia
+Las clasificaciones resultantes de los flujos de verificación en la biblioteca se organizan en los siguientes estados oficiales:
+
+| Estado de Evidencia | Descripción |
+| :--- | :--- |
+| `seed_only` | Solo se ha generado una semilla inicial por análisis armónico (DF). |
+| `continuation_survivor` | La semilla sobrevivió a la deformación del parámetro de continuación $\eta \in [0, 1]$. |
+| `compatible_with_hiddenness_under_tested_radii` | El atractor no intersecta con vecindades probadas de equilibrios estables. |
+| `hiddenness_supported_under_tested_neighborhoods` | El atractor está numéricamente verificado como oculto tras muestrear exhaustivamente esferas de condiciones iniciales alrededor de todos los equilibrios (inestables). |
+| `self_excited_contact_detected` | Se ha detectado contacto directo con el flujo originado en un punto de equilibrio; el atractor es autoexcitado. |
+| `hiddenness_inconclusive` | Las integraciones numéricas fallaron o los resultados no son concluyentes bajo los parámetros dados. |
+| `candidate_rejected` | El candidato divergió o colapsó permanentemente a un punto de equilibrio. |
+
+> [!IMPORTANT]
+> El estado `hiddenness_supported_under_tested_neighborhoods` **no representa una demostración matemática global**. Es una clasificación numérica bajo el contrato de integración, paso de tiempo ($h$), orden fraccionario ($q$) y radios de vecindades definidos y probados.
+
+---
+
+## 10. Aspectos Matemáticos y Convenciones
+Cuando se trabaja con la función descriptiva fraccionaria (DF), se utiliza la convención estándar para la función de transferencia del sistema lineal $W_q(s)$:
+
+$$W_q(s) = r^T (s^q I - P)^{-1} b$$
+
+Donde la variable compleja de Laplace en el dominio de frecuencia se define por:
+
+$$\lambda = (j \omega)^q$$
+
+*Nota metodológica sobre el signo de BDF:* Si necesitas verificar las ecuaciones detalladas de la función descriptiva sesgada (BDF) con su signo histórico de acoplamiento, consulta la documentación técnica y las fórmulas descritas en los comentarios del código del módulo `hidden_attractors/seed_generation/chua.py`.

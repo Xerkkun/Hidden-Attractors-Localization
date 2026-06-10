@@ -5,53 +5,108 @@ import pytest
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 VERSION2_DIR = ROOT_DIR / "version_2"
+POLICY_FILE = VERSION2_DIR / "docs" / "figure_export_policy.md"
 
-# Documented exceptions from figure_scripts_inventory.md
-SAVEFIG_EXCEPTIONS = {
-    "version_2/hidden_attractors/plotting/export.py",
-    "version_2/hidden_attractors/workflows/danca_abm_sphere_controls.py",
-    "version_2/hidden_attractors/workflows/fractional_report_run.py",
-    "version_2/hidden_attractors/workflows/refined_basin.py",
-    "version_2/hidden_attractors/plotting/generate_publication_figures.py",
-    "version_2/hidden_attractors/plotting/matignon.py",
-    "version_2/hidden_attractors/plotting/dynamics.py",
-    "version_2/hidden_attractors/plotting/basin.py",
-    "version_2/hidden_attractors/plotting/overlays.py",
+PROMOTED_PREFIXES = [
+    "hidden_attractors/plotting",
+    "hidden_attractors/workflows",
+    "examples",
+    "tools/cli",
+]
+
+ALLOWED_SAVEFIG_FILE = "hidden_attractors/plotting/export.py"
+
+ALLOWED_STATES = {
+    "legacy",
+    "exploratorio",
+    "no promovido",
+    "pendiente de migración",
+    "pendiente",
 }
 
-def is_exception(file_path: Path) -> bool:
-    # Resolve path relative to ROOT_DIR
-    try:
-        rel_parts = file_path.relative_to(ROOT_DIR).as_posix()
-    except ValueError:
-        return False
+def parse_policy_table() -> list[dict[str, str]]:
+    """Parse the exceptions table from docs/figure_export_policy.md."""
+    rows = []
+    if not POLICY_FILE.exists():
+        return rows
         
-    if rel_parts in SAVEFIG_EXCEPTIONS:
-        return True
+    content = POLICY_FILE.read_text(encoding="utf-8")
+    in_table = False
     
-    # Generic plotting modules plot_*.py are allowed exceptions
-    if "version_2/hidden_attractors/plotting/plot_" in rel_parts:
-        return True
-        
-    # Test directory is exempt
-    if "version_2/tests" in rel_parts:
-        return True
-        
-    return False
+    for line in content.splitlines():
+        line = line.strip()
+        if line.startswith("|") and "Archivo" in line and "Motivo" in line:
+            in_table = True
+            continue
+        if in_table:
+            if not line.startswith("|"):
+                in_table = False
+                continue
+            parts = [p.strip() for p in line.split("|")[1:-1]]
+            if not parts or all(x == "" or x.startswith("---") for x in parts):
+                continue
+                
+            # Columns: Archivo | Motivo | Estado | Permitido en evidencia promovida
+            if len(parts) >= 4:
+                file_path = parts[0].replace("`", "").strip()
+                motivo = parts[1]
+                estado = parts[2].lower()
+                permitido = parts[3].lower()
+                
+                rows.append({
+                    "path": file_path,
+                    "motivo": motivo,
+                    "estado": estado,
+                    "permitido": permitido
+                })
+    return rows
 
+@pytest.mark.plotting
+@pytest.mark.hygiene
 def test_no_direct_savefig():
-    """Scan all active Python production scripts and ensure savefig is not called directly."""
-    py_files = list(VERSION2_DIR.glob("**/*.py"))
+    """Verify that savefig is not called directly outside export.py and exceptions are strictly validated."""
+    # 1. Parse and validate policy exceptions table
+    policy_rows = parse_policy_table()
+    exceptions = set()
     
-    violations = []
+    policy_violations = []
+    for r in policy_rows:
+        path = r["path"]
+        estado = r["estado"]
+        permitido = r["permitido"]
+        
+        # Rule 4: Fail if a documented exception is allowed in promoted evidence
+        if "sí" in permitido or "si" in permitido or permitido == "yes":
+            policy_violations.append(f"{path}: permitido en evidencia promovida = sí")
+            
+        # Rule 5: Fail if the state is not legacy/exploratorio/no promovido/pendiente de migración
+        has_valid_state = any(s in estado for s in ALLOWED_STATES)
+        if not has_valid_state:
+            policy_violations.append(f"{path}: estado '{estado}' no es válido (debe ser legacy/exploratorio/no promovido/pendiente de migración)")
+            
+        exceptions.add(path)
+        
+    assert not policy_violations, f"Errores de formato/seguridad en docs/figure_export_policy.md:\n" + "\n".join(policy_violations)
+    
+    # 2. Scan python scripts for savefig calls
+    py_files = list(VERSION2_DIR.glob("**/*.py"))
     savefig_pattern = re.compile(r"\bsavefig\s*\(")
     
+    violations = []
+    unregistered_exceptions = []
+    
     for f in py_files:
-        if is_exception(f):
+        try:
+            rel_path = f.relative_to(VERSION2_DIR).as_posix()
+        except ValueError:
             continue
             
-        # Ignore pycache/build artifacts
-        if "__pycache__" in f.parts or "build" in f.parts or "egg-info" in f.parts:
+        # Skip tests, pycache, build, egg-info
+        if "tests" in f.parts or "__pycache__" in f.parts or "build" in f.parts or "egg-info" in f.parts:
+            continue
+            
+        # Skip export.py
+        if rel_path == ALLOWED_SAVEFIG_FILE:
             continue
             
         try:
@@ -60,8 +115,17 @@ def test_no_direct_savefig():
             continue
             
         if savefig_pattern.search(content):
-            # Resolve to relative path for clear error report
-            rel_path = f.relative_to(ROOT_DIR).as_posix()
-            violations.append(rel_path)
+            # Check if it is a promoted route
+            is_promoted = any(rel_path.startswith(prefix) for prefix in PROMOTED_PREFIXES)
             
-    assert not violations, f"Llamadas directas a savefig encontradas en scripts no autorizados: {violations}"
+            if is_promoted:
+                violations.append(f"{rel_path} (promoted route)")
+            elif rel_path not in exceptions:
+                # Rule 3: Fail if direct savefig is called in a file not documented in policy
+                unregistered_exceptions.append(rel_path)
+                
+    assert not violations, f"Llamadas directas a savefig encontradas en rutas promovidas/canónicas: {violations}"
+    assert not unregistered_exceptions, (
+        f"Llamadas directas a savefig encontradas en scripts legados/exploratorios no registrados "
+        f"en docs/figure_export_policy.md: {unregistered_exceptions}"
+    )

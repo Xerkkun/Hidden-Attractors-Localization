@@ -37,7 +37,7 @@ Este ejemplo ejecuta de forma secuencial las siguientes fases:
 2. **Paso 2**: Búsqueda homotópica afín con función descriptiva sesgada (BDF, $c \neq 0$).
 3. **Paso 3**: Verificación de ocultedad estándar mediante barrido local de esferas.
 4. **Paso 4** (Opcional): Búsqueda extendida en paralelo de ocultedad volumétrica.
-5. **Paso 5**: Resumen y exportación de figuras a la galería centralizada `library_figures/`.
+5. **Paso 5**: Resumen y exportación de figuras a la galería centralizada `library_figures/` según la [Política de Exportación de Figuras](figure_export_policy.md).
 
 ---
 
@@ -85,13 +85,14 @@ Los workflows especializados no son ejemplos independientes ni metodologías alt
 > Los workflows especializados no son ejemplos independientes ni metodologías alternativas. Son interfaces de bajo nivel usadas por el pipeline oficial, pruebas de validación o análisis avanzados.
 
 ### Comandos de Workflows Especializados:
-* **`hidden-attractors-protocol`**: Ejecución secuencial y detallada del protocolo oficial (generación de semillas, continuación, validación, etc.).
-* **`hidden-attractors-robustness-overlay`**: Análisis de robustez numérica variando tamaños de paso y condiciones del resolvedor.
-* **`hidden-attractors-refined-basin`**: Refinamiento fino de las fronteras de cuencas de atracción locales.
-* **`hidden-attractors-sphere-controls`** / **`hidden-attractors-danca-abm-sphere-controls`**: Pruebas de ocultedad en vecindades esféricas alrededor de los puntos de equilibrio.
-* **`hidden-attractors-strict-target-refinement`**: Refinamiento numérico del atractor localizado.
-* **`hidden-attractors-fractional-report-run`**: Generador automático de reportes científicos unificados.
-* **`hidden-attractors-check-validation`**: Controladores de validación de la consistencia interna.
+* **`hidden-attractors protocol`**: Ejecución secuencial y detallada del protocolo oficial (generación de semillas, continuación, validación, etc.).
+* **`hidden-attractors robustness overlay`**: Análisis de robustez numérica variando tamaños de paso y condiciones del resolvedor.
+* **`hidden-attractors basin refined`**: Refinamiento fino de las fronteras de cuencas de atracción locales.
+* **`hidden-attractors hiddenness sphere-controls`** / **`hidden-attractors published danca-abm-sphere-controls`**: Pruebas de ocultedad en vecindades esféricas alrededor de los puntos de equilibrio.
+* **`hidden-attractors basin strict-target-refinement`** / **`hidden-attractors hiddenness strict-target-refinement`**: Refinamiento numérico del atractor localizado.
+* **`hidden-attractors report fractional-run`**: Generador automático de reportes científicos unificados.
+* **`hidden-attractors validate contract`**: Controladores de validación de la consistencia interna.
+
 
 ---
 

@@ -21,7 +21,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "Programming Language :: Python :: 3.14",
+
   "Topic :: Scientific/Engineering :: Mathematics",
 ]
 # ── Core runtime ────────────────────────────────────────────────────────────
@@ -72,18 +72,8 @@ Repository = "https://github.com/Xerkkun/Hidden-Attractors-Localization"
 Issues = "https://github.com/Xerkkun/Hidden-Attractors-Localization/issues"
 
 [project.scripts]
-hidden-attractors = "hidden_attractors.cli.run:main"
-hidden-attractors-list-candidates = "hidden_attractors.cli:list_candidates"
-hidden-attractors-systems = "hidden_attractors.cli:systems"
-hidden-attractors-workflow-requirements = "hidden_attractors.cli:workflow_requirements"
-hidden-attractors-check-validation = "hidden_attractors.validation_contract:main"
-hidden-attractors-protocol = "hidden_attractors.protocol_cli:main"
-hidden-attractors-robustness-overlay = "hidden_attractors.workflows.robustness_overlay:main"
-hidden-attractors-sphere-controls = "hidden_attractors.workflows.sphere_controls:main"
-hidden-attractors-refined-basin = "hidden_attractors.workflows.refined_basin:main"
-hidden-attractors-strict-target-refinement = "hidden_attractors.workflows.strict_target_refinement:main"
-hidden-attractors-danca-abm-sphere-controls = "hidden_attractors.workflows.danca_abm_sphere_controls:main"
-hidden-attractors-fractional-report-run = "hidden_attractors.workflows.fractional_report_run:main"
+hidden-attractors = "hidden_attractors.cli.main:main"
+
 
 [tool.setuptools.packages.find]
 include = ["hidden_attractors*", "tools*", "benchmarks*"]

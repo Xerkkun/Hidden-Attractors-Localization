@@ -38,6 +38,17 @@ sensitivity, are evidence for `numerical_contract`. Danca-style ABM
 replication is a comparison under `robustness`, not a separate hiddenness
 methodology.
 
+All figures supporting validation evidence are promoted to the canonical `library_figures/` directory under strict reproducibility guidelines. Direct modifications are prohibited. See the [Figure Export Policy](figure_export_policy.md) for details.
+
+### Path & Figures Portability Rules
+* **Canonical Pathing**: All promoted validation evidence must use relative paths under the repository.
+* **Prohibition of Local Paths**: Personal absolute paths (e.g., `/[UserDir]/`, `C:\[UserDir]\`, `[Desktop]\`) are strictly prohibited in code, tests, and promoted validation.
+
+* **Legacy Paths**: Relative external figure paths (e.g., pointing to unpromoted external directories like `.._.._.._/[DirectoryName]/Figs/`) must only reside in explicitly marked legacy fields (such as `legacy_external_figures_not_promoted` in stage JSON summaries) or under legacy Markdown headers. They are excluded from the official body of promoted evidence.
+
+
+
+
 ## Uniform Summary JSON
 
 Every stage summary must contain:

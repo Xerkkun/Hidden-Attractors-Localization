@@ -218,7 +218,8 @@ not the high-throughput backend for attractor searches.
 - `hidden_attractors.workflows.specs.load_workflow_spec`
 
 Use the workflow modules for reusable Python calls and
-`hidden-attractors-protocol` for official stage output.
+`hidden-attractors protocol` for official stage output.
+
 
 `WorkflowInputSpec` is the shared contract for maintained CLIs and migrated
 legacy scripts. It records solver, memory, classifier, target-reference,

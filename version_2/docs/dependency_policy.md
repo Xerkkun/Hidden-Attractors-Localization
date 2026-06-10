@@ -6,10 +6,17 @@ This project follows the spirit of the [SPEC-0][spec0] rolling-window support po
 
 ## Python version support
 
-Under strict SPEC-0 compliance (as of mid-2026), Python 3.11 would be dropped. However, to maximize compatibility, we maintain a pragmatic extended support window:
+This project follows the spirit of SPEC-0 but intentionally keeps an extended-support window for thesis reproducibility and older scientific environments. The automatic CI matrix currently tests Python 3.11, 3.12, and 3.13.
 
-- **Currently supported**: Python &ge; 3.11, 3.12, and 3.13 (tested in CI).
-- **Python 3.11 Support**: Maintained as extended support to accommodate legacy platforms.
+| Component | Supported/Tested | Policy |
+| :--- | :--- | :--- |
+| Python 3.11 | tested in CI | extended support |
+| Python 3.12 | tested in CI | standard support |
+| Python 3.13 | tested in CI | standard/current support |
+| NumPy >=1.26 | supported | extended lower bound |
+| SciPy >=1.12 | supported | extended lower bound |
+| Matplotlib >=3.8 | supported | extended lower bound |
+
 
 ---
 

@@ -96,7 +96,8 @@ Once the package and toolchains are configured, verify the entire installation b
 pytest
 ```
 
-If you see a success summary indicating that all 156 unit tests passed successfully, your environment is correctly configured!
+If you see a success summary indicating that all tests passed successfully, your environment is correctly configured! (At the current thesis-freeze audit, the suite reports 797 passed tests and 34 skipped tests; future runs should be checked against the official freeze audit artifacts under `validation/freeze_audit/`).
+
 
 ---
 

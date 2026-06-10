@@ -16,20 +16,28 @@ The installed scripts below are the commands declared in
 interfaces that may change while the project remains in alpha. Auxiliary or
 internal commands are listed for traceability, not as stable public APIs.
 
-| Command | Group | Entry point | Documentary status |
+| Command / Subcommand | Group | Entry point / Target function | Documentary status |
 |---|---|---|---|
-| `hidden-attractors` | Main user command | `hidden_attractors.cli.run:main` | Primary stable user-facing CLI; implementation module is internal |
-| `hidden-attractors-protocol` | Specialized workflow | `hidden_attractors.protocol_cli:main` | Reproducible protocol interface; alpha |
-| `hidden-attractors-robustness-overlay` | Specialized workflow | `hidden_attractors.workflows.robustness_overlay:main` | Reproducible analysis workflow; alpha |
-| `hidden-attractors-sphere-controls` | Specialized workflow | `hidden_attractors.workflows.sphere_controls:main` | Reproducible analysis workflow; alpha |
-| `hidden-attractors-refined-basin` | Specialized workflow | `hidden_attractors.workflows.refined_basin:main` | Reproducible analysis workflow; alpha |
-| `hidden-attractors-strict-target-refinement` | Specialized workflow | `hidden_attractors.workflows.strict_target_refinement:main` | Reproducible analysis workflow; alpha |
-| `hidden-attractors-danca-abm-sphere-controls` | Specialized workflow | `hidden_attractors.workflows.danca_abm_sphere_controls:main` | Reproducible analysis workflow; alpha |
-| `hidden-attractors-fractional-report-run` | Specialized workflow | `hidden_attractors.workflows.fractional_report_run:main` | Reproducible report workflow; alpha |
-| `hidden-attractors-list-candidates` | Auxiliary/internal | `hidden_attractors.cli:list_candidates` | Traceability helper; not a stable API |
-| `hidden-attractors-systems` | Auxiliary/internal | `hidden_attractors.cli:systems` | Registry helper; not a stable API |
-| `hidden-attractors-workflow-requirements` | Auxiliary/internal | `hidden_attractors.cli:workflow_requirements` | Diagnostic helper; not a stable API |
-| `hidden-attractors-check-validation` | Auxiliary/internal | `hidden_attractors.validation_contract:main` | Validation diagnostic helper; not a stable API |
+| `hidden-attractors` | Main user command | `hidden_attractors.cli.main:main` | Primary stable entry point |
+| `hidden-attractors run` | Running Workflows | `hidden_attractors.cli.run:run_cmd` | Runs simple/preset workflow |
+| `hidden-attractors init` | Setup | `hidden_attractors.cli.run:init_cmd` | Copies config templates |
+| `hidden-attractors inspect-config` | Configuration | `hidden_attractors.cli.run:inspect_config_cmd` | Previews config |
+| `hidden-attractors inspect candidates` | Registry & Candidates | `hidden_attractors.cli.inspect:list_candidates` | Lists final candidate records |
+| `hidden-attractors inspect systems` | Registry & Candidates | `hidden_attractors.cli.inspect:systems` | Lists registered chaotic systems |
+| `hidden-attractors inspect workflow-requirements` | Registry & Candidates | `hidden_attractors.cli.inspect:workflow_requirements` | Inspects system capability requirements |
+| `hidden-attractors validate contract` | Validation Contracts | `hidden_attractors.validation_contract:main` | Validates validation contract schema |
+| `hidden-attractors validate bibliography` | Validation Contracts | `hidden_attractors.cli.validate:validate_bibliography` | Validates bibliography manifest |
+| `hidden-attractors protocol <substage>` | Caputo Protocol | `hidden_attractors.protocol_cli:main` | Orchestrates Caputo protocol stages |
+| `hidden-attractors robustness overlay` | Robustness | `hidden_attractors.workflows.robustness_overlay:main` | Robustness overlay sweep |
+| `hidden-attractors hiddenness sphere-controls` | Neighborhood Probing | `hidden_attractors.workflows.sphere_controls:main` | Neighborhood sphere controls |
+| `hidden-attractors hiddenness strict-target-refinement` | Neighborhood Probing | `hidden_attractors.workflows.strict_target_refinement:main` | Target refinement for hiddenness |
+| `hidden-attractors basin refined` | Basins | `hidden_attractors.workflows.refined_basin:main` | Refines attraction basins |
+| `hidden-attractors basin strict-target-refinement` | Basins | `hidden_attractors.workflows.strict_target_refinement:main` | Target refinement for basins |
+| `hidden-attractors published danca-abm-sphere-controls` | Replication | `hidden_attractors.workflows.danca_abm_sphere_controls:main` | Replicates published Danca paper |
+| `hidden-attractors report fractional-run` | Reporting | `hidden_attractors.workflows.fractional_report_run:main` | Automated scientific report generator |
+
+For legacy command details, see the [CLI Migration Guide](cli_migration_legacy_entrypoints.md).
+
 
 ## Core Model
 

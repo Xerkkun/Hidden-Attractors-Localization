@@ -36,7 +36,7 @@ entry point. The default command only writes the JSON contract and shell command
 
 ```bash
 python examples/custom_system_definition.py
-hidden-attractors-systems
+hidden-attractors inspect systems
 ```
 
 Purpose: show how a user registers a new chaotic system through the public

@@ -36,10 +36,8 @@ To run a custom YAML file directly:
 hidden-attractors run -c path/to/config.yaml
 ```
 
-The primary stable user-facing CLI is `hidden-attractors`. Specialized
-workflow entry points are reproducible analysis interfaces that may change
-while the project remains in alpha. Auxiliary or internal commands are
-documented for traceability, not as stable public interfaces.
+The primary stable user-facing CLI is `hidden-attractors`. Specialized workflows (such as protocol stages, robustness overlays, basin mappings, and report generation) are accessible as subcommands under this unified interface. For a detailed list and migration guide from legacy standalone commands, see [CLI Migration Guide](cli_migration_legacy_entrypoints.md).
+
 
 ---
 

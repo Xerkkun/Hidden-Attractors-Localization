@@ -25,6 +25,7 @@ This file lists all test files in the test suite, their classification, and plan
 | tests/test_chua_arctan_wu2023_algebra.py | Verificar chua arctan wu2023 algebra | scientific_contract | fast | contract | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_chua_arctan_wu2023_seed_generation.py | Verificar chua arctan wu2023 seed generation | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_chua_arctan_wu2023_validation_contract.py | Verificar chua arctan wu2023 validation contract | validation_contract | fast | contract | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
+| tests/test_ci_dependency_policy_consistency.py | Verificar consistencia de política de dependencias y CI | hygiene | fast | unit | ninguna | no | no | conservar | Verifica consistencia entre la política de dependencias y .github/workflows/ci.yml. |
 | tests/test_classical_route_scope.py | Verificar classical route scope | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_cli_no_redundant_public_scripts.py | Verificar cli no redundant public scripts | cli | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_cli_overrides.py | Verificar cli overrides | cli | medium | unit | ninguna | no | sí | conservar | Verifica contrato o comportamiento único. |
@@ -44,6 +45,7 @@ This file lists all test files in the test suite, their classification, and plan
 | tests/test_danca_candidate_traceability.py | Verificar danca candidate traceability | unit | fast | unit | ninguna | sí | no | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
 | tests/test_deferred_robustness_scope.py | Verificar deferred robustness scope | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_diagnostics_partial_scope.py | Verificar diagnostics partial scope | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
+| tests/test_documented_test_count_is_current.py | Verificar conteo de pruebas documentado | hygiene | fast | unit | ninguna | no | no | conservar | Verifica que el conteo de pruebas documentado esté al día y remita al freeze audit. |
 | tests/test_documentation_references.py | Verificar documentation references | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_dynamical_analysis.py | Verificar dynamical analysis | unit | fast | unit | ninguna | sí | no | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
 | tests/test_efork_published_validation.py | Verificar efork published validation | unit | medium | unit | ninguna | no | sí | conservar | Verifica contrato o comportamiento único. |
@@ -83,9 +85,11 @@ This file lists all test files in the test suite, their classification, and plan
 | tests/test_native_fractional_variational_backend.py | Verificar native fractional variational backend | unit | medium | unit | ninguna | no | sí | conservar | Verifica contrato o comportamiento único. |
 | tests/test_no_absolute_local_paths.py | Verificar no absolute local paths | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_no_direct_savefig_outside_export.py | Verificar no direct savefig outside export | plotting | fast | unit | ninguna | sí | no | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
+| tests/test_no_external_paths_in_promoted_artifacts.py | Verificar no external paths in promoted artifacts | hygiene | fast | unit | ninguna | no | no | conservar | Verifica que no existan rutas externas o personales en la evidencia promovida. |
 | tests/test_no_false_certification.py | Verificar no false certification | unit | medium | unit | wolframscript | no | sí | conservar | Verifica contrato o comportamiento único. |
 | tests/test_no_false_chaos_certification_f3.py | Verificar no false chaos certification f3 | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_no_loose_figure_scripts.py | Verificar no loose figure scripts | plotting | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
+| tests/test_no_loose_active_scripts.py | Verificar no loose active scripts | hygiene | fast | unit | ninguna | no | no | conservar | Verifica que no existan scripts sueltos en las carpetas activas de la API. |
 | tests/test_no_plot_titles.py | Verificar no plot titles | plotting | fast | unit | matplotlib | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_nonsmooth_nonlinearities.py | Verificar nonsmooth nonlinearities | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_official_protocol.py | Verificar official protocol | unit | medium | unit | ninguna | sí | sí | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
@@ -96,9 +100,13 @@ This file lists all test files in the test suite, their classification, and plan
 | tests/test_plotting_style_contract.py | Verificar plotting style contract | plotting | fast | unit | matplotlib | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_poincare_diagnostics.py | Verificar poincare diagnostics | unit | fast | unit | ninguna | sí | no | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
 | tests/test_poincare_method_validation.py | Verificar poincare method validation | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
+| tests/test_public_entry_points_are_unified.py | Verificar entry points públicos unificados en pyproject | cli | fast | unit | ninguna | no | no | conservar | Verifica empaquetamiento y entry points. |
+| tests/test_python_version_metadata.py | Verificar metadatos de versión de Python | hygiene | fast | unit | ninguna | no | no | conservar | Verifica que los classifiers de pyproject.toml y requires-python sean correctos. |
 | tests/test_published_case_reproduction.py | Verificar published case reproduction | unit | medium | unit | ninguna | sí | sí | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
 | tests/test_published_continuation_comparison.py | Verificar published continuation comparison | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_published_validation_coverage.py | Verificar published validation coverage | unit | fast | unit | ninguna | sí | no | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
+| tests/test_quick_start_cli_consistency.py | Verificar consistencia de CLI y guía rápida | hygiene | fast | unit | ninguna | no | no | conservar | Verifica higiene documental de CLI. |
+| tests/test_quick_start_commands.py | Verificar comandos rápidos de CLI y ayuda | cli | fast | unit | ninguna | no | no | conservar | Smoke test del CLI unificado. |
 | tests/test_reference_data.py | Verificar reference data | unit | medium | unit | ninguna | no | sí | conservar | Verifica contrato o comportamiento único. |
 | tests/test_regression_reference_values.py | Verificar regression reference values | unit | medium | regression | ninguna | sí | sí | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
 | tests/test_report_figure_paths.py | Verificar report figure paths | plotting | fast | unit | ninguna | sí | no | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
@@ -124,3 +132,6 @@ This file lists all test files in the test suite, their classification, and plan
 | tests/test_yaml_loading.py | Verificar yaml loading | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_zero_one_diagnostics.py | Verificar zero one diagnostics | unit | fast | unit | ninguna | sí | no | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
 | tests/test_zero_one_test.py | Verificar zero one test | unit | medium | unit | ninguna | no | sí | conservar | Verifica contrato o comportamiento único. |
+| tests/test_promoted_figures_export_policy.py | Verificar direct savefig en rutas promovidas | plotting | fast | unit | ninguna | no | no | conservar | Evita savefig en flujos de producción. |
+| tests/test_no_external_figure_paths_in_promoted_validation.py | Verificar no rutas relativas externas en validación | hygiene | fast | unit | ninguna | no | no | conservar | Evita fugas de rutas legacy no canónicas. |
+| tests/test_figure_tests_do_not_write_real_library_figures.py | Verificar no escritura de tests en library_figures | hygiene | fast | unit | ninguna | no | no | conservar | Enforza el uso de tmp_path y monkeypatch en tests. |

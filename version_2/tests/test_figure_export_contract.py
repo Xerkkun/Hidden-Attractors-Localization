@@ -1,11 +1,17 @@
-import os
-import shutil
 import pytest
 import matplotlib.pyplot as plt
 from pathlib import Path
-from hidden_attractors.plotting.export import export_figure, LIBRARY_FIGURES_ROOT
+from hidden_attractors.plotting.export import export_figure
 
-def test_export_figure_saves_both_formats():
+@pytest.mark.plotting
+def test_export_figure_saves_both_formats(tmp_path, monkeypatch):
+    import hidden_attractors.plotting.export as export_mod
+    import hidden_attractors.plotting.manifest as manifest_mod
+    
+    mock_root = tmp_path / "library_figures"
+    monkeypatch.setattr(export_mod, "LIBRARY_FIGURES_ROOT", mock_root)
+    monkeypatch.setattr(manifest_mod, "LIBRARY_FIGURES_ROOT", mock_root)
+    
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1])
     
@@ -38,10 +44,9 @@ def test_export_figure_saves_both_formats():
     assert png_path.suffix == ".png"
     
     # Check metadata existence
-    meta_path = LIBRARY_FIGURES_ROOT / "by_run" / test_run_id / "metadata" / f"{test_fig_id}.json"
+    meta_path = mock_root / "by_run" / test_run_id / "metadata" / f"{test_fig_id}.json"
     assert meta_path.exists()
     
-    # Clean up test output
-    test_run_dir = LIBRARY_FIGURES_ROOT / "by_run" / test_run_id
-    if test_run_dir.exists():
-        shutil.rmtree(test_run_dir)
+    # Assert paths reside within tmp_path (subpath verification)
+    assert tmp_path in pdf_path.parents
+    assert tmp_path in png_path.parents

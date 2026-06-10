@@ -739,7 +739,8 @@ def _plot_spectrum(traj: np.ndarray, h: float, output: Path, *, omega0: float | 
     ax.set_ylabel("Potencia FFT")
     ax.grid(True, alpha=0.25)
     fig.tight_layout()
-    fig.savefig(output, dpi=220)
+    from hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, output, "spectrum")
     plt.close(fig)
 
 
@@ -809,7 +810,8 @@ def _plot_robustness_overlay(trajectories: Sequence[np.ndarray], labels: Sequenc
     ax.set_title("Robustez geométrica, trayectorias C")
     ax.legend(fontsize=8)
     fig.tight_layout()
-    fig.savefig(output, dpi=220)
+    from hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, output, "robustness")
     plt.close(fig)
 
 

@@ -108,13 +108,13 @@ Los workflows especializados no son ejemplos independientes ni metodologías alt
 > [!WARNING]
 > Uso avanzado. No es el punto de entrada recomendado para una primera ejecución.
 
-* **`hidden-attractors-protocol` (Protocolo)**: Interfaz CLI para la ejecución paso a paso de las etapas formales del protocolo (generación de semillas, precheck, continuación, filtrado, referencia y diagnóstico).
-* **`hidden-attractors-robustness-overlay` (Robustez)**: Workflow para ejecutar análisis de robustez numérica variando parámetros de discretización.
-* **`hidden-attractors-refined-basin` (Cuencas)**: Pipeline avanzado para el refinamiento de bordes de cuencas de atracción.
-* **`hidden-attractors-sphere-controls` y `hidden-attractors-danca-abm-sphere-controls` (Esferas alrededor de equilibrios)**: Pruebas locales de ocultedad muestreando vecindades esféricas alrededor de los equilibrios (mecanismo estándar y modo de comparación Danca).
-* **`hidden-attractors-strict-target-refinement` (Refinamiento)**: Rutina de búsqueda y aproximación fina del atractor objetivo.
-* **`hidden-attractors-fractional-report-run` (Reporte)**: Orquestador avanzado para la compilación automática de reportes de ejecución y galería de figuras.
-* **`hidden-attractors-check-validation` (Validación)**: CLI para ejecutar aserciones de consistencia matemática y consistencia física de la librería.
+* **`hidden-attractors protocol` (Protocolo)**: Interfaz CLI para la ejecución paso a paso de las etapas formales del protocolo (generación de semillas, precheck, continuación, filtrado, referencia y diagnóstico).
+* **`hidden-attractors robustness overlay` (Robustez)**: Workflow para ejecutar análisis de robustez numérica variando parámetros de discretización.
+* **`hidden-attractors basin refined` (Cuencas)**: Pipeline avanzado para el refinamiento de bordes de cuencas de atracción.
+* **`hidden-attractors hiddenness sphere-controls` y `hidden-attractors published danca-abm-sphere-controls` (Esferas alrededor de equilibrios)**: Pruebas locales de ocultedad muestreando vecindades esféricas alrededor de los equilibrios (mecanismo estándar y modo de comparación Danca).
+* **`hidden-attractors basin strict-target-refinement` / `hidden-attractors hiddenness strict-target-refinement` (Refinamiento)**: Rutina de búsqueda y aproximación fina del atractor objetivo.
+* **`hidden-attractors report fractional-run` (Reporte)**: Orquestador avanzado para la compilación automática de reportes de ejecución y galería de figuras.
+* **`hidden-attractors validate contract` (Validación)**: CLI para ejecutar aserciones de consistencia matemática y consistencia física de la librería.
 
 ---
 
@@ -122,10 +122,11 @@ Los workflows especializados no son ejemplos independientes ni metodologías alt
 
 Estas herramientas y comandos de utilidad no deben aparecer como comandos recomendados para usuarias nuevas. Son utilizados internamente para labores de desarrollo, depuración y consistencia.
 
-* **`hidden-attractors-list-candidates`**: Utilidad para inspeccionar los metadatos de los candidatos a atractores ocultos registrados.
-* **`hidden-attractors-systems`**: Herramienta de inspección para listar los sistemas dinámicos disponibles en el registro central.
-* **`hidden-attractors-workflow-requirements`**: Script de diagnóstico para validar dependencias y capacidades numéricas del entorno local.
-* **`hidden-attractors-check-validation`**: Ejecución de contratos de validación contra el modelo de datos.
+* **`hidden-attractors inspect candidates`**: Utilidad para inspeccionar los metadatos de los candidatos a atractores ocultos registrados.
+* **`hidden-attractors inspect systems`**: Herramienta de inspección para listar los sistemas dinámicos disponibles en el registro central.
+* **`hidden-attractors inspect workflow-requirements`**: Script de diagnóstico para validar dependencias y capacidades numéricas del entorno local.
+* **`hidden-attractors validate contract`**: Ejecución de contratos de validación contra el modelo de datos.
+
 
 ---
 

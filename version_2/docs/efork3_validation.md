@@ -51,7 +51,7 @@ validation/reference_cases/efork3_ghoreishi_ghaffari/
 Run the contract check with:
 
 ```bash
-hidden-attractors-check-validation \
+hidden-attractors validate contract \
   --contract configs/validation_efork3_ghoreishi_ghaffari.json \
   --validation-root validation/reference_cases/efork3_ghoreishi_ghaffari
 ```

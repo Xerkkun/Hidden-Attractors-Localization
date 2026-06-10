@@ -68,6 +68,9 @@ The spec records the experiment-level inputs:
 - `BasinSliceSpec`: plane/grid definition and fixed coordinates;
 - `StrictRefinementSpec`: trajectory-similarity thresholds and negative
   control policy;
+- `BasinSliceSpec`: plane/grid definition and fixed coordinates;
+- `StrictRefinementSpec`: trajectory-similarity thresholds and negative
+  control policy;
 - `TrajectoryDiagnosticsSpec`: retained tail window, observables, spectra,
   sections, and metric policy;
 - `ParameterSweepSpec`: bifurcation/sweep parameter, values or range, seed
@@ -82,10 +85,10 @@ means that the numerical run is auditable; it does not prove hiddenness.
 Inspect requirements from the command line:
 
 ```bash
-hidden-attractors-workflow-requirements
-hidden-attractors-workflow-requirements --workflow sphere-controls
-hidden-attractors-workflow-requirements --workflow strict-refinement --system chua-nonsmooth
-hidden-attractors-workflow-requirements --example-spec
+hidden-attractors inspect workflow-requirements
+hidden-attractors inspect workflow-requirements --workflow sphere-controls
+hidden-attractors inspect workflow-requirements --workflow strict-refinement --system chua-nonsmooth
+hidden-attractors inspect workflow-requirements --example-spec
 ```
 
 The same information is available in Python:
@@ -174,10 +177,10 @@ because they encode published or recorded numerical comparisons. Official
 hiddenness evidence nevertheless uses interior ball samples:
 
 ```bash
-hidden-attractors-strict-target-refinement --help
-hidden-attractors-danca-abm-sphere-controls --help
+hidden-attractors hiddenness strict-target-refinement --help
+hidden-attractors published danca-abm-sphere-controls --help
 ```
 
 They are compatibility adapters, not competing methodologies. New runs should
-enter through `hidden-attractors-protocol` and dispatch to the registered
+enter through `hidden-attractors protocol` and dispatch to the registered
 system, solver backend, classifier, and dynamic reference.

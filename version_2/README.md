@@ -91,7 +91,8 @@ compiler such as `gcc` on `PATH`; on macOS, OpenMP builds may require Homebrew
 - **macOS**: The default `clang` does not bundle OpenMP.  Either install
   `libomp` via Homebrew (`brew install libomp`) or set `ALLOW_NO_OPENMP=1` to
   compile without parallelism.  Set `LIBOMP_PREFIX` to override the Homebrew
-  prefix.  macOS is included in the automatic CI matrix (Python 3.11 and 3.12)
+  prefix.  macOS is included in the automatic CI matrix (Python 3.11, 3.12, and 3.13)
+
   and can also be triggered manually via `workflow_dispatch` on the `ci.yml` workflow.
 - **ALLOW_NO_OPENMP**: Setting `ALLOW_NO_OPENMP=1` lets `compile_c_target`
   retry the build without `-fopenmp` instead of raising `RuntimeError`.  This
@@ -132,25 +133,21 @@ You can override any parameter in the YAML config from the CLI using nested keys
 hidden-attractors run -p chua_fractional --final_simulation.t_final 100.0 --h 0.005 --plot_enabled false
 ```
 
-The primary stable user-facing CLI is `hidden-attractors`. Specialized
-workflows are reproducible analysis interfaces, but may change while the
-project remains in alpha. Auxiliary or internal commands are documented for
-traceability, not as stable public interfaces.
+The primary stable user-facing CLI is `hidden-attractors`. All analysis workflows are grouped as subcommands under this unified entry point. Legacy standalone commands are no longer installed as public entry points (see [CLI Migration Guide](docs/cli_migration_legacy_entrypoints.md) for details).
 
-| Command | Group | Real options or usage | Documentary status |
+| Command / Subcommand | Group | Real options or usage | Documentary status |
 |---|---|---|---|
-| `hidden-attractors` | Main user command | `run -c/--config`, `run -p/--preset`, `init -e/--example`, `inspect-config -c/--config`, `inspect-config -p/--preset`, `validate-bibliography -m/--manifest --strict --json -o/--markdown-output` | Primary stable user-facing CLI; Python module is internal |
-| `hidden-attractors-protocol` | Specialized workflow | Stage commands such as `generate-seeds`, `soft-precheck`, `continue`, `filter-survivors`, `build-reference`, `robustness`, `hiddenness`, `diagnostics` | Reproducible protocol interface; alpha |
-| `hidden-attractors-robustness-overlay` | Specialized workflow | `--help` | Reproducible analysis workflow; alpha |
-| `hidden-attractors-sphere-controls` | Specialized workflow | `--help` | Reproducible analysis workflow; alpha |
-| `hidden-attractors-refined-basin` | Specialized workflow | `--help` | Reproducible analysis workflow; alpha |
-| `hidden-attractors-strict-target-refinement` | Specialized workflow | `--help` | Reproducible analysis workflow; alpha |
-| `hidden-attractors-danca-abm-sphere-controls` | Specialized workflow | `--help` | Reproducible analysis workflow; alpha |
-| `hidden-attractors-fractional-report-run` | Specialized workflow | `--help` | Reproducible report workflow; alpha |
-| `hidden-attractors-list-candidates` | Auxiliary/internal | `--help` | Traceability helper; not a stable API |
-| `hidden-attractors-systems` | Auxiliary/internal | `--help` | Registry inspection helper; not a stable API |
-| `hidden-attractors-workflow-requirements` | Auxiliary/internal | `--help` | Workflow diagnostic helper; not a stable API |
-| `hidden-attractors-check-validation` | Auxiliary/internal | Validation-contract checks; use `--help` for current options | Validation diagnostic helper; not a stable API |
+| `hidden-attractors run` | Running Workflows | `-c/--config`, `-p/--preset` | Primary stable entry point |
+| `hidden-attractors init` | Setup | `-e/--example` | Copy configuration templates |
+| `hidden-attractors inspect-config` | Configuration | `-c/--config`, `-p/--preset` | Previews normalized config |
+| `hidden-attractors inspect` | Registry & Candidates | `candidates`, `systems`, `workflow-requirements` | Inspection utility |
+| `hidden-attractors validate` | Validation Contracts | `contract`, `bibliography` | Numerical/bibliographical validation |
+| `hidden-attractors protocol` | Caputo Protocol | `generate-seeds`, `soft-precheck`, `continue`, `filter-survivors`, `build-reference`, `robustness`, `hiddenness`, `diagnostics` | Stage-by-stage protocol engine |
+| `hidden-attractors robustness` | Robustness | `overlay` | Robustness overlay sweep |
+| `hidden-attractors hiddenness` | Neighborhood Probing | `sphere-controls`, `strict-target-refinement` | Neighborhood analysis |
+| `hidden-attractors basin` | Basins | `refined`, `strict-target-refinement` | Basin-of-attraction analysis |
+| `hidden-attractors published` | Replication | `danca-abm-sphere-controls` | Reproduces published Danca papers |
+| `hidden-attractors report` | Reporting | `fractional-run` | Automated scientific report generation |
 
 ### 2. Programmatic Python API
 
@@ -248,12 +245,13 @@ python examples/minimal_chua_protocol.py
 python examples/custom_system_definition.py
 python examples/integer_lure_chua_protocol.py
 python examples/dynamical_analysis_gallery.py
-python tools/cli/check_validation_contract.py --help
+python -m hidden_attractors.cli.main validate contract --help
 python -m pytest -q
 ```
 
 If `pytest` is not installed, the first three commands still provide a useful
-smoke check.
+smoke check. At the current thesis-freeze audit, the test suite reports 797 passed tests and 34 skipped tests; the official results are stored under `validation/freeze_audit/`.
+
 
 ## Documentation Site
 
@@ -300,7 +298,8 @@ Only post-continuation survivors may become dynamic references. Only robustly
 reproduced references advance to hiddenness tests, which sample inside
 increasing balls around every equilibrium and generate close and large `xy`,
 `xz` and `yz` basin slices. FFT, PSD, Lyapunov estimates and bifurcation
-figures are diagnostics; they do not substitute for those tests.
+figures are diagnostics; they do not substitute for those tests. All generated figures are stored in the canonical library figures repository (`library_figures/`) following the [Figure Export Policy](docs/figure_export_policy.md).
+
 
 ## Citation
 

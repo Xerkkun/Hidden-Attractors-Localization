@@ -7,6 +7,8 @@ folder:
 docs/assets/figures/chua_fractional_report/
 ```
 
+All figures that are promoted to the official validation repository are managed under the [Figure Export Policy](figure_export_policy.md) and stored in `library_figures/`.
+
 They come from either `outputs/` artifacts or from the public example
 `examples/dynamical_analysis_gallery.py`.
 

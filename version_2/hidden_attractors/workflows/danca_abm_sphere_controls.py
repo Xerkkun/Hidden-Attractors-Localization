@@ -372,10 +372,11 @@ def _plot_reference_story(trajectory: np.ndarray, case_id: str, output_dir: Path
     ax.set(xlabel="x", ylabel="y", zlabel="z", title=f"Danca reference: {case_id}")
     ax.legend()
     fig.tight_layout()
-    for suffix in ("png", "pdf"):
-        path = output_dir / f"fig02d_{slug}_reference_story.{suffix}"
-        fig.savefig(path, dpi=240 if suffix == "png" else None)
-        paths.append(str(path))
+    path_png = output_dir / f"fig02d_{slug}_reference_story.png"
+    from hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, path_png, "attractor")
+    paths.append(str(path_png))
+    paths.append(str(path_png.with_suffix(".pdf")))
     plt.close(fig)
 
     fig = plt.figure(figsize=(8.0, 7.0))
@@ -385,10 +386,11 @@ def _plot_reference_story(trajectory: np.ndarray, case_id: str, output_dir: Path
     ax.set(xlabel="x", ylabel="y", zlabel="z", title=f"Danca reference: {case_id}")
     ax.legend()
     fig.tight_layout()
-    for suffix in ("png", "pdf"):
-        path = output_dir / f"fig03g_{slug}_harmonic_vs_original_3d.{suffix}"
-        fig.savefig(path, dpi=240 if suffix == "png" else None)
-        paths.append(str(path))
+    path_png = output_dir / f"fig03g_{slug}_harmonic_vs_original_3d.png"
+    from hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, path_png, "attractor")
+    paths.append(str(path_png))
+    paths.append(str(path_png.with_suffix(".pdf")))
     plt.close(fig)
     return paths
 
@@ -411,7 +413,8 @@ def _plot_system_nyquist(q: float, case_id: str, output: Path) -> str:
     ax.text(0.02, 0.02, "Sin cierre DF: semilla Danca no armonica", transform=ax.transAxes, fontsize=8)
     ax.legend(loc="best", fontsize=8)
     fig.tight_layout()
-    fig.savefig(output, dpi=220)
+    from hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, output, "nyquist")
     plt.close(fig)
     return str(output)
 
@@ -740,7 +743,8 @@ def _plot_ball_control_figures(root: Path, cfg: dict[str, Any], rows: list[dict[
         ax.legend(loc="best", fontsize=7)
         fig.tight_layout()
         path = output_dir / f"{safe_name(case_id)}_ball_controls.png"
-        fig.savefig(path, dpi=220)
+        from hidden_attractors.plotting.export import intercept_and_export_path
+        intercept_and_export_path(fig, path, "ball_controls")
         plt.close(fig)
         files.append(str(path.relative_to(root)))
     return files

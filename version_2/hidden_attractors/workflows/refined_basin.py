@@ -615,7 +615,8 @@ def plot_grid(outdir: Path, cfg: dict[str, Any], rows: Sequence[dict[str, Any]])
     ax.legend(handles=handles, loc="upper right", fontsize=7, framealpha=0.88)
     fig.tight_layout()
     path = outdir / "project_best_basin_refined_xy.png"
-    fig.savefig(path, dpi=220)
+    from hidden_attractors.plotting.export import intercept_and_export_path
+    intercept_and_export_path(fig, path, "basin")
     plt.close(fig)
     return str(path)
 

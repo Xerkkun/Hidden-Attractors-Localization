@@ -28,8 +28,8 @@ still need SciPy and PyYAML.
 The package contains C sources in `hidden_attractors/native/csrc/` and compiles
 shared libraries into `.runtime_native/` when a native workflow is executed.
 
-**Currently supported**: Python ≥ 3.11 (3.12 also tested in CI).  
-Python 3.13 will be added to CI once it reaches its first stable patch release.
+**Currently supported**: Python ≥ 3.11, 3.12, and 3.13 (all tested in CI).
+
 
 - `numpy` and `matplotlib`.
 - A C compiler for native workflows.

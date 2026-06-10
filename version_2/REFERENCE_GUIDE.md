@@ -17,20 +17,22 @@ The primary stable user-facing command-line interface is the installed
 reproducible analysis interfaces while the project is in alpha, and auxiliary
 commands are documented for traceability rather than as stable APIs.
 
-| Command | Group | Real options or usage | Documentary status |
+| Command / Subcommand | Group | Real options or usage | Documentary status |
 |---|---|---|---|
-| `hidden-attractors` | Main user command | `run -c/--config`, `run -p/--preset`, `init -e/--example`, `inspect-config -c/--config`, `inspect-config -p/--preset`, `validate-bibliography -m/--manifest --strict --json -o/--markdown-output` | Primary stable user-facing CLI; Python module is internal |
-| `hidden-attractors-protocol` | Specialized workflow | Official protocol stage interface | Reproducible protocol interface; alpha |
-| `hidden-attractors-robustness-overlay` | Specialized workflow | Robustness overlay workflow | Reproducible analysis workflow; alpha |
-| `hidden-attractors-sphere-controls` | Specialized workflow | Equilibrium-ball controls | Reproducible analysis workflow; alpha |
-| `hidden-attractors-refined-basin` | Specialized workflow | Basin refinement workflow | Reproducible analysis workflow; alpha |
-| `hidden-attractors-strict-target-refinement` | Specialized workflow | Strict target refinement workflow | Reproducible analysis workflow; alpha |
-| `hidden-attractors-danca-abm-sphere-controls` | Specialized workflow | Danca ABM sphere controls | Reproducible analysis workflow; alpha |
-| `hidden-attractors-fractional-report-run` | Specialized workflow | Fractional report generation workflow | Reproducible report workflow; alpha |
-| `hidden-attractors-list-candidates` | Auxiliary/internal | Candidate listing helper | Traceability helper; not a stable API |
-| `hidden-attractors-systems` | Auxiliary/internal | System registry inspection helper | Registry helper; not a stable API |
-| `hidden-attractors-workflow-requirements` | Auxiliary/internal | Workflow capability checks | Diagnostic helper; not a stable API |
-| `hidden-attractors-check-validation` | Auxiliary/internal | Validation-contract checks | Validation diagnostic helper; not a stable API |
+| `hidden-attractors run` | Running Workflows | `-c/--config`, `-p/--preset` | Primary stable entry point |
+| `hidden-attractors init` | Setup | `-e/--example` | Copy configuration templates |
+| `hidden-attractors inspect-config` | Configuration | `-c/--config`, `-p/--preset` | Previews normalized config |
+| `hidden-attractors inspect` | Registry & Candidates | `candidates`, `systems`, `workflow-requirements` | Inspection utility |
+| `hidden-attractors validate` | Validation Contracts | `contract`, `bibliography` | Numerical/bibliographical validation |
+| `hidden-attractors protocol` | Caputo Protocol | `generate-seeds`, `soft-precheck`, `continue`, `filter-survivors`, `build-reference`, `robustness`, `hiddenness`, `diagnostics` | Stage-by-stage protocol engine |
+| `hidden-attractors robustness` | Robustness | `overlay` | Robustness overlay sweep |
+| `hidden-attractors hiddenness` | Neighborhood Probing | `sphere-controls`, `strict-target-refinement` | Neighborhood analysis |
+| `hidden-attractors basin` | Basins | `refined`, `strict-target-refinement` | Basin-of-attraction analysis |
+| `hidden-attractors published` | Replication | `danca-abm-sphere-controls` | Reproduces published Danca papers |
+| `hidden-attractors report` | Reporting | `fractional-run` | Automated scientific report generation |
+
+For older standalone commands (e.g. `hidden-attractors-protocol`, `hidden-attractors-sphere-controls`), see the [CLI Migration Guide](docs/cli_migration_legacy_entrypoints.md) as they are no longer installed as public entry points.
+
 
 ---
 
@@ -197,12 +199,16 @@ All visualization functions are exported in `hidden_attractors.plotting`:
 * **`plot_basin_slice_file(plane, u, v, mat, ...)`**: Color-coded attraction basin maps (stable equilibria vs. chaotic attractors vs. divergence).
 * **`plot_bifurcation_diagram(points, path, ...)`**: Extrema sweeps showing parameter bifurcations.
 * **`plot_matignon_plane(...)`**: Stability regions plane layout.
+* **`export_figure(fig, figure_id, kind, metadata_dict, ...)`**: Central export function saving PNG/PDF to `library_figures/` and updating manifests.
+
+All figure exports are subject to the [Figure Export Policy](docs/figure_export_policy.md) to guarantee reproducibility.
 
 ---
 
 ## 7. Testing Suite
 
-The library is backed by 156 tests in `version_2/tests/`:
+The library is backed by a robust test suite (at the current thesis-freeze audit, the suite reports 797 passed tests and 34 skipped tests; future runs should be checked against `validation/freeze_audit/`):
+
 
 * **Verification Execution**:
   ```bash
