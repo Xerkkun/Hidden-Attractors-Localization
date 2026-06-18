@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "Hidden Attractors Fractional Order"
+		},
+		{
+			"path": "DevBlog-main/DevBlog-main"
+		}
+	],
+	"settings": {
+		"powershell.cwd": "DevBlog-main"
+	}
+}
