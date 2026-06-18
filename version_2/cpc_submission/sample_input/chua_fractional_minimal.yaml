@@ -1,0 +1,63 @@
+experiment:
+  name: "CPC sample fractional Chua configuration"
+  description: "Small fractional-order Chua configuration for CPC interface checks; not promoted evidence."
+  output_dir: "outputs/cpc_samples/chua_fractional_minimal"
+
+system:
+  system_id: "chua_fractional_saturation"
+  q: 0.998
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+modes:
+  transfer_mode: "published_integer_laplace"
+  seed_mode: "fractional"
+  continuation_mode: "fractional"
+  dynamics_mode: "system"
+
+integrator:
+  name: "abm"
+  h: 0.05
+  memory_mode: "full"
+  memory_policy: "full_history"
+  caputo_history_accumulated: true
+
+stages:
+  seed_search: true
+  continuation: false
+  final_simulation: false
+  hiddenness_tests: false
+  sphere_tests: false
+  basin_slices: false
+  bifurcation: false
+  attractor_only: false
+
+seed_search:
+  strategy: "k_phi"
+  construction: "modal"
+  branch_index: 0
+  omega_min: 0.01
+  omega_max: 8.0
+  amplitude_min: 0.01
+  amplitude_max: 8.0
+  grid_size_omega: 24
+  grid_size_amplitude: 24
+  root_refinement: false
+  df_residual_tol: 1.0e-2
+
+simulation:
+  t_final: 2.0
+  t_burn: 0.5
+
+plots:
+  enabled: false
+  save_figures: false
+  attractor: false
+  timeseries: false
+  transfer: false
+  describing_function: false
+  continuation: false

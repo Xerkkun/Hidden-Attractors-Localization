@@ -1,0 +1,7 @@
+{
+  "command": "hidden-attractors validate cpc-readiness",
+  "expected_status": "partial",
+  "expected_exit_code_non_strict": 0,
+  "expected_exit_code_strict": 1,
+  "reason": "Freeze audit and final commit audit are explicitly pending after CPC cleanup."
+}

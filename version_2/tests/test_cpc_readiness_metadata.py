@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from pathlib import Path
 
@@ -39,3 +39,15 @@ def test_citation_records_archive_doi_without_requiring_article_doi() -> None:
     citation = (REPO_ROOT / "CITATION.cff").read_text(encoding="utf-8")
     assert "10.17605/OSF.IO/ZGK74" in citation
     assert "associated CPC article when available" in citation
+
+
+@pytest.mark.hygiene
+@pytest.mark.cpc_readiness
+def test_archive_manifest_records_pending_audit_state_explicitly() -> None:
+    import json
+
+    manifest = json.loads((VERSION_ROOT / "cpc_submission" / "archive_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["commit_status"] in {"current", "pending_update_after_final_audit"}
+    assert manifest["freeze_audit_status"] in {"current", "pending_after_cpc_cleanup"}
+    assert manifest["sample_status"] in {"template_only_pending_execution", "executed"}
+    assert manifest["claims_status"] == "finite-time numerical evidence only; no global mathematical hiddenness proof"

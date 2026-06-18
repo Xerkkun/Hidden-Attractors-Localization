@@ -428,3 +428,7 @@ claim status: [reproducido/candidato/pendiente]
 - **Release citation**: The OSF DOI currently recorded for this CPC-preparation package is `10.17605/OSF.IO/ZGK74`; a future CPC article DOI should be added only after acceptance/publication.
 - **Reproducibility matrix**: Publications and reports must document the exact software environment, commit hash, and validation outcomes from [validation/freeze_audit/](validation/freeze_audit/).
 - **CPC readiness**: Run `hidden-attractors validate cpc-readiness` to check metadata, editorial skeletons, promoted evidence boundaries, and local-output hygiene.
+
+### CPC freeze-audit caveat
+
+The current CPC preparation keeps `freeze_audit_status: pending_after_cpc_cleanup`. The last recorded freeze audit corresponds to commit `2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a`; it should not be presented as covering later CPC metadata, sample, or manuscript cleanup until regenerated.

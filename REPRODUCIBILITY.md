@@ -1,4 +1,4 @@
-﻿# Reproducibility
+# Reproducibility
 
 ## Installation
 
@@ -29,3 +29,7 @@ The arctan system is implemented algebraically but is pending full validation an
 ## Code provenance
 
 The EFORK implementation and integer-order Lyapunov algorithm include code provenance from material provided by Dr. Luis Gerardo de la Fraga. This provenance should remain traceable in publication and archival metadata.
+
+## Freeze audit status after CPC cleanup
+
+`freeze_audit_status: pending_after_cpc_cleanup` is intentional. The last recorded freeze audit corresponds to commit `2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a` and must be regenerated before CPC submission. Do not treat the current CPC-preparation metadata changes as covered by that older freeze audit until the full audit is rerun and recorded.

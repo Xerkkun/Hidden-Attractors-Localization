@@ -1,34 +1,67 @@
-﻿\documentclass[preprint,12pt]{elsarticle}
+\documentclass[preprint,12pt]{elsarticle}
 
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{hyperref}
 
 \begin{document}
 
 \begin{frontmatter}
+
 \title{A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors}
 
 \author[inaoe]{Maria Fernanda Moreno Lopez}
 \affiliation[inaoe]{organization={Instituto Nacional de Astrofisica, Optica y Electronica (INAOE)}}
 
 \begin{abstract}
-This placeholder manuscript records the structure for a future CPC submission. The scientific claims remain bounded by the promoted validation artifacts in \texttt{version_2/validation/}; no new numerical result is introduced here.
+This manuscript skeleton documents the software scope and reproducibility structure for a future Computer Physics Communications submission. The package, named \texttt{hidden-attractors-fo}, organizes workflows for theoretical-numerical search, localization, reproduction, audit, and conservative classification of candidate hidden attractors in integer- and commensurate fractional-order Chua/Lur'e systems. The current preparation does not introduce new numerical results. Scientific claims remain bounded by the promoted validation artifacts in \texttt{version\_2/validation/}, the finite-time numerical contract, and the tested-neighborhood hiddenness language used by the project.
 \end{abstract}
 
 \begin{keyword}
-hidden attractors \sep fractional-order systems \sep Chua circuit \sep Caputo derivative \sep numerical validation
+hidden attractors \sep fractional-order systems \sep integer-order systems \sep Chua circuit \sep Caputo derivative \sep numerical validation \sep scientific software
 \end{keyword}
+
 \end{frontmatter}
 
 \input{cpc_program_summary}
 
-\section{Scope}
+\section{Introduction}
 
-The active software distribution is \texttt{version_2/}. The arctan route is implemented algebraically but remains pending full validation as a promoted hidden-attractor result.
+Hidden attractors and the distinction between self-excited and hidden oscillations are central to the motivation for this package \cite{leonov_kuznetsov_hidden_2013,kuznetsov_hidden_attractors_2017}. The Chua circuit remains a reference setting for nonlinear circuit dynamics and chaos studies \cite{matsumoto_chua_1984}. This repository prepares a reproducible software layer for candidate localization and audit, not a mathematical proof engine.
+
+\section{Scientific and numerical scope}
+
+The active distribution is \texttt{version\_2/}. It supports integer-order and commensurate fractional-order workflows for scalar Lur'e-compatible Chua-type systems. Fractional workflows are written under Caputo-style memory assumptions and use explicit solver, horizon, step-size, and memory-policy contracts \cite{podlubny_fractional_1999}. The terminology used in reports is intentionally conservative: candidate hidden attractor, finite-time numerical evidence, tested neighborhoods, reproduced reference case, and not a global proof.
+
+The Chua arctan route is implemented algebraically and is useful for traceability against the documented source case \cite{wu_chua_arctan_2023}. It remains pending full validation and is not promoted as a validated hidden attractor.
+
+\section{Software architecture}
+
+The package exposes a single public entry point, \texttt{hidden-attractors}. Core code lives in \texttt{version\_2/hidden\_attractors/}; configurations live under \texttt{version\_2/configs/}; promoted validation evidence lives under \texttt{version\_2/validation/}; promoted scientific figures belong in \texttt{version\_2/library\_figures/}; and local/regenerable outputs remain ignored under \texttt{version\_2/outputs/}, \texttt{version\_2/validation\_outputs/}, \texttt{version\_2/runs*/}, or \texttt{version\_2/figures/}. Editorial preparation material is separated under \texttt{paper/} and \texttt{version\_2/cpc\_submission/}.
+
+\section{Numerical workflow}
+
+The workflow combines describing-function or harmonic-balance style seed generation, BDF-style algebraic continuation, integer-order integration paths, Caputo ABM/EFORK integration for fractional order, and finite-time diagnostics \cite{diethelm_abm_fractional_2002,ghoreishi_ghaffari_saad_efork_2023,khalil_nonlinear_2002}. Chaos diagnostics such as the 0-1 test and Lyapunov-style estimates are treated as supporting evidence only \cite{gottwald_melbourne_2004,wolf_lyapunov_1985}. They do not replace equilibrium-neighborhood tests.
+
+\section{Validation and reproducibility}
+
+Promoted evidence is checked through the repository validation contract. The integer Chua case is treated as a reproduced reference/software validation case. Fractional non-smooth Chua evidence is reported using the project claims matrix and finite-time neighborhood tests; conclusions remain bounded to the recorded contract. Regenerable outputs are intentionally excluded from Git to keep the promoted evidence boundary auditable.
+
+The current CPC preparation marks the freeze audit as \texttt{pending\_after\_cpc\_cleanup}. The last recorded freeze audit predates this CPC cleanup and must be regenerated before a final submission claim is made.
+
+\section{Limitations}
+
+The software does not certify global mathematical hiddenness. It records finite-time numerical evidence under tested neighborhoods, chosen integration horizons, solver tolerances, sampling radii, and memory policies. Describing-function, Nyquist, continuation, boundedness, and diagnostic plots do not prove hiddenness by themselves. Arctan Chua remains implemented algebraically but pending full validation.
+
+\section{Availability and archival metadata}
+
+The repository is available at \url{https://github.com/Xerkkun/Hidden-Attractors-Localization}. The current archived software/material DOI is \url{https://doi.org/10.17605/OSF.IO/ZGK74}. CPC Library metadata should be assigned only after acceptance.
+
+\section{Conclusions}
+
+This preparation organizes the package, evidence boundaries, metadata, and reproducibility checks for a future CPC submission. The manuscript remains a preparation template; it should be completed with regenerated freeze-audit results and final bibliographic metadata before submission.
 
 \bibliographystyle{elsarticle-num}
 \bibliography{references}
 
 \end{document}
-
-
-

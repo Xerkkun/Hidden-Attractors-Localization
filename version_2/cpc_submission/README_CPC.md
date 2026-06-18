@@ -1,6 +1,8 @@
-﻿# CPC submission package
+# CPC submission package
 
-`hidden-attractors-fo` provides reproducible workflows for localization, reproduction, audit, and conservative classification of hidden-attractor candidates in integer- and commensurate fractional-order Chua/Lur'e systems.
+`hidden-attractors-fo` provides reproducible workflows for theoretical-numerical search, localization, reproduction, audit, and conservative classification of hidden-attractor candidates in integer- and commensurate fractional-order Chua/Lur'e systems.
+
+This directory is CPC preparation material. It is not evidence of CPC acceptance and does not introduce new scientific claims.
 
 ## Install
 
@@ -9,19 +11,22 @@ cd version_2
 python -m pip install -e ".[dev,analysis,legacy]"
 ```
 
-## Minimal run
+## Minimal checks
 
 ```bash
 hidden-attractors --help
-hidden-attractors init -e chua_fractional
-hidden-attractors inspect-config -p chua_fractional
-hidden-attractors validate contract --allow-pending
 hidden-attractors validate cpc-readiness
+hidden-attractors validate contract --allow-pending
+python -m pytest -q -m "cpc_readiness"
 ```
+
+`hidden-attractors validate cpc-readiness --strict` is expected to fail while `freeze_audit_status` or `sample_status` remains pending. Passing strict mode should be reserved for the final audited CPC-preparation commit.
 
 ## Evidence included
 
 Promoted evidence is under `validation/`. Promoted scientific figures belong in `library_figures/` and are generated through `hidden_attractors.plotting.export.export_figure`.
+
+Local/regenerable outputs belong under `outputs/`, `validation_outputs/`, `runs*/`, or `figures/` and remain outside Git.
 
 ## What is not claimed
 

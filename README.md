@@ -241,3 +241,7 @@ The active distribution is `version_2/`. Root-level metadata files (`CITATION.cf
 ```
 
 Editorial drafts live in `paper/`. Reproducible submission packaging lives in `version_2/cpc_submission/`. These folders do not promote new scientific claims; they organize code, metadata, and evidence boundaries for a future CPC submission.
+
+### Freeze audit status for CPC preparation
+
+The current CPC-preparation files are not yet covered by a regenerated freeze audit. The last recorded freeze audit corresponds to commit `2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a`; regenerate it before treating the CPC package as final submission material.

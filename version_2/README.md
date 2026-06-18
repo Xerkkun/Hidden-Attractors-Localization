@@ -323,3 +323,7 @@ The folder `cpc_submission/` contains a minimal reproducible CPC packaging skele
 ```bash
 hidden-attractors validate cpc-readiness
 ```
+
+### Freeze audit status for CPC preparation
+
+The CPC readiness folder is preparation material, not an accepted CPC article. The last recorded freeze audit corresponds to commit `2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a` and predates the final CPC cleanup. Regenerate `validation/freeze_audit/` on the final CPC-preparation commit before submission.

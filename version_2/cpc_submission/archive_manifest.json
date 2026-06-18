@@ -1,11 +1,15 @@
-﻿{
+{
   "package": "hidden-attractors-fo",
   "archive_title": "A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors",
   "version": "0.1.0",
-  "commit": "740f8b6",
+  "commit": "9bbe09607619cc0c0075ff1f6dec8ab199ee6ec0",
+  "commit_status": "pending_update_after_final_audit",
   "doi": "10.17605/OSF.IO/ZGK74",
-  "python_supported": ">=3.11",
   "license": "MIT",
+  "python_supported": ">=3.11",
+  "freeze_audit_status": "pending_after_cpc_cleanup",
+  "last_recorded_freeze_audit_commit": "2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a",
+  "sample_status": "template_only_pending_execution",
   "principal_author": {
     "name": "Maria Fernanda Moreno Lopez",
     "affiliation": "Instituto Nacional de Astrofisica, Optica y Electronica (INAOE)"
@@ -23,6 +27,15 @@
       "name": "Dr. Luis Gerardo de la Fraga",
       "role": "Provided code provenance for EFORK and the integer-order Lyapunov algorithm"
     }
+  ],
+  "sample_input": [
+    "version_2/cpc_submission/sample_input/chua_fractional_minimal.yaml",
+    "version_2/cpc_submission/sample_input/chua_integer_reference_minimal.yaml"
+  ],
+  "sample_output": [
+    "version_2/cpc_submission/sample_output/sample_output_manifest.json",
+    "version_2/cpc_submission/sample_output/expected_cpc_readiness_summary.json",
+    "version_2/cpc_submission/sample_output/expected_validation_contract_status.json"
   ],
   "included_paths": [
     "version_2/hidden_attractors/",

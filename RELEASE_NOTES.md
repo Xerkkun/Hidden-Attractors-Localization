@@ -1,4 +1,4 @@
-﻿# Release Notes
+# Release Notes
 
 ## 0.1.0-cpc-preparation
 
