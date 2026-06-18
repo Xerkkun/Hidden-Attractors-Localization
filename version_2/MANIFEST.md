@@ -1,4 +1,4 @@
-# Version 2 manifest
+﻿# Version 2 manifest
 
 V2 is the active library-style distribution. It should run from this directory
 without reading files from the old project root.
@@ -24,7 +24,7 @@ without reading files from the old project root.
 - `configs/validation_contract.json`: contract for promoted validation
   evidence, manifests, stage summaries, and final reports.
 - `hidden_attractors/validation_contract.py`: checker used by
-  `hidden-attractors-check-validation`.
+  `hidden-attractors validate contract`.
 - `validation/`: generated validation evidence promoted from ordinary outputs
   into a defensible review package.
 
@@ -37,20 +37,28 @@ without reading files from the old project root.
 - `examples/create_robustness_overlay_config.py`
 - `examples/aggregate_existing_robustness_overlay.py`
 
-## Command Wrappers
+## CLI Boundary
 
-- `tools/cli/robustness_overlay_c_trajectories.py`
-- `tools/cli/lure_top3_sphere_robustness.py`
-- `tools/cli/refine_project_basin_classification.py`
-- Historical script facades are not declared as installable commands in the
-  current `[project.scripts]` table. Use the documented workflow entry points
-  (`hidden-attractors-protocol`, `hidden-attractors-fractional-report-run`, and
-  the specialized workflow commands) or call legacy scripts explicitly from
-  `tools/legacy/` when traceability requires it.
+The package exposes a single public console script:
+
+```text
+hidden-attractors
+```
+
+All maintained workflows are reached as subcommands, for example
+`hidden-attractors validate contract`, `hidden-attractors validate bibliography`,
+`hidden-attractors validate cpc-readiness`, and `hidden-attractors report
+fractional-run`. The historical standalone command names are not public API in
+this distribution.
+
+`tools/cli/` contains maintained helper wrappers that are invoked by tests or
+development workflows. They do not define additional public entry points.
 
 ## Legacy Research Scripts
 
 Long scripts that are not yet clean public API live under `tools/legacy/`, but
-they are not advertised as stable installable commands unless present in
-`version_2/pyproject.toml`. Extend the package first before growing those
-scripts further.
+they are historical material, not public API. The current setuptools package
+find configuration still includes `tools*` and `benchmarks*` so traceability
+helpers and benchmark modules remain importable for reproducibility audits.
+They must not grow into new installed commands without first being routed
+through the unified `hidden-attractors` CLI.

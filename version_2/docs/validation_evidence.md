@@ -222,3 +222,14 @@ sensitivity sweeps are retained with their unresolved discrepancies. Route C
 closes the structured diagnostic scope. Evidence levels are numerical and tied
 to the recorded solver, memory and time horizon. See
 [Phase F Closure Status](phase_f_closure.md).
+
+## CPC evidence boundary
+
+The CPC preparation material separates four layers:
+
+- Promoted evidence lives under `validation/` and is controlled by the validation contract.
+- Promoted scientific figures live under `library_figures/` and must be generated through `hidden_attractors.plotting.export.export_figure`.
+- Local and exploratory outputs live under `outputs/`, `validation_outputs/`, `runs*/`, or `figures/` and remain outside Git.
+- Editorial material lives under `paper/` and `cpc_submission/`; it does not create new scientific claims.
+
+The arctan Chua route is implemented algebraically and retained for reproducible inspection, but it is not promoted as a validated hidden attractor. Finite neighborhood evidence must keep labels such as `hiddenness_supported_under_tested_neighborhoods`; it is not a global mathematical proof of hiddenness.

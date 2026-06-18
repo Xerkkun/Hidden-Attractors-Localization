@@ -313,3 +313,13 @@ figures are diagnostics; they do not substitute for those tests. All generated f
 
 Citation metadata is pending. Until a public release exists, cite the repository
 URL, commit hash, and the project reports in `docs/`.
+
+## CPC readiness
+
+Citation metadata is tracked at the repository root in `CITATION.cff`, `.zenodo.json`, and `codemeta.json`. The archived OSF DOI recorded for this preparation package is `10.17605/OSF.IO/ZGK74`. Until a CPC article is accepted, cite the repository URL, commit hash, archived DOI, and the relevant reports in `docs/`.
+
+The folder `cpc_submission/` contains a minimal reproducible CPC packaging skeleton. It documents installation, sample commands, validation boundaries, included paths, excluded local outputs, and the current arctan/claims status. Run the readiness check with:
+
+```bash
+hidden-attractors validate cpc-readiness
+```

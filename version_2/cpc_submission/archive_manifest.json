@@ -1,0 +1,68 @@
+﻿{
+  "package": "hidden-attractors-fo",
+  "archive_title": "A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors",
+  "version": "0.1.0",
+  "commit": "740f8b6",
+  "doi": "10.17605/OSF.IO/ZGK74",
+  "python_supported": ">=3.11",
+  "license": "MIT",
+  "principal_author": {
+    "name": "Maria Fernanda Moreno Lopez",
+    "affiliation": "Instituto Nacional de Astrofisica, Optica y Electronica (INAOE)"
+  },
+  "contributors": [
+    {
+      "name": "Dr. Esteban Tlelo Cuautle",
+      "role": "Doctoral thesis director; assigned and guided the research topic"
+    },
+    {
+      "name": "Dr. Oscar Martinez-Fuentes",
+      "role": "Doctoral thesis co-advisor; reviewed the theoretical fractional-calculus component"
+    },
+    {
+      "name": "Dr. Luis Gerardo de la Fraga",
+      "role": "Provided code provenance for EFORK and the integer-order Lyapunov algorithm"
+    }
+  ],
+  "included_paths": [
+    "version_2/hidden_attractors/",
+    "version_2/configs/",
+    "version_2/examples/",
+    "version_2/tests/",
+    "version_2/validation/",
+    "version_2/library_figures/",
+    "version_2/figure_scripts/",
+    "version_2/cpc_submission/",
+    "paper/",
+    "CITATION.cff",
+    ".zenodo.json",
+    "codemeta.json",
+    "AUTHORS.md",
+    "CHANGELOG.md",
+    "RELEASE_NOTES.md",
+    "REPRODUCIBILITY.md"
+  ],
+  "excluded_paths": [
+    "version_2/validation_outputs/",
+    "version_2/outputs/",
+    "version_2/runs*/",
+    "version_2/figures/",
+    ".pytest_tmp/",
+    ".runtime_cache/",
+    "figures/",
+    "DF y NC Chua entero y fraccionario/",
+    "DF y NC Chua entero y fraccionario copy/"
+  ],
+  "promoted_evidence": [
+    "version_2/validation/chua_integer_saturation/",
+    "version_2/validation/",
+    "version_2/validation/freeze_audit/"
+  ],
+  "unpromoted_outputs": [
+    "version_2/outputs/",
+    "version_2/validation_outputs/",
+    "version_2/outputs/chua_fractional_arctan/"
+  ],
+  "arctan_status": "implemented algebraically, pending full validation; not promoted as a validated hidden attractor",
+  "claims_status": "finite-time numerical evidence only; no global mathematical hiddenness proof"
+}

@@ -76,3 +76,96 @@ def validate_bibliography(argv: Sequence[str] | None = None) -> None:
         import traceback
         traceback.print_exc()
         sys.exit(1)
+
+
+def _repo_root() -> Path:
+    return Path(__file__).resolve().parents[3]
+
+
+def _git_ls_files(root: Path, *patterns: str) -> list[str]:
+    import subprocess
+
+    cmd = ["git", "ls-files", *patterns]
+    result = subprocess.run(cmd, cwd=root, text=True, capture_output=True, check=False)
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.strip() or "git ls-files failed")
+    return [line.strip().replace("\\", "/") for line in result.stdout.splitlines() if line.strip()]
+
+
+def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
+    """Validate CPC metadata and repository hygiene without changing science artifacts."""
+    parser = argparse.ArgumentParser(description="Validate CPC readiness metadata and hygiene")
+    parser.add_argument("--json", action="store_true", help="Output machine-readable results")
+    args = parser.parse_args(argv)
+
+    root = _repo_root()
+    version_root = root / "version_2"
+
+    required = [
+        "CITATION.cff",
+        ".zenodo.json",
+        "codemeta.json",
+        "AUTHORS.md",
+        "CHANGELOG.md",
+        "RELEASE_NOTES.md",
+        "REPRODUCIBILITY.md",
+        "paper/cpc_program_summary.tex",
+        "paper/cpc_manuscript.tex",
+        "paper/references.bib",
+        "version_2/cpc_submission/README_CPC.md",
+        "version_2/cpc_submission/PROGRAM_SUMMARY.md",
+        "version_2/cpc_submission/SAMPLE_RUN.md",
+        "version_2/cpc_submission/reproducibility_checklist.md",
+        "version_2/cpc_submission/archive_manifest.json",
+        "version_2/validation/freeze_audit/final_freeze_pytest_summary.json",
+        "version_2/README.md",
+        "version_2/USER_MANUAL.md",
+    ]
+
+    checks: list[dict[str, object]] = []
+    missing = [rel for rel in required if not (root / rel).exists()]
+    checks.append({"name": "required_files", "ok": not missing, "details": missing})
+
+    validation_outputs_tracked = _git_ls_files(root, "version_2/validation_outputs")
+    checks.append({
+        "name": "validation_outputs_untracked",
+        "ok": not validation_outputs_tracked,
+        "details": validation_outputs_tracked,
+    })
+
+    promoted = ["version_2/validation/chua_integer_saturation"]
+    missing_promoted = [rel for rel in promoted if not (root / rel).exists()]
+    checks.append({"name": "promoted_validation_evidence", "ok": not missing_promoted, "details": missing_promoted})
+
+    arctan_promoted = _git_ls_files(root, "version_2/validation/chua_fractional_arctan")
+    checks.append({"name": "arctan_not_promoted_validation_root", "ok": not arctan_promoted, "details": arctan_promoted})
+
+    pyproject_text = (version_root / "pyproject.toml").read_text(encoding="utf-8")
+    entry_ok = 'hidden-attractors = "hidden_attractors.cli.main:main"' in pyproject_text
+    legacy_entries = [
+        "hidden-attractors-check-validation",
+        "hidden-attractors-protocol",
+        "hidden-attractors-fractional-report-run",
+    ]
+    legacy_public = [name for name in legacy_entries if f"{name} =" in pyproject_text]
+    checks.append({"name": "single_public_entry_point", "ok": entry_ok and not legacy_public, "details": legacy_public})
+
+    citation_path = root / "CITATION.cff"
+    citation_text = citation_path.read_text(encoding="utf-8") if citation_path.exists() else ""
+    doi_ok = "10.17605/OSF.IO/ZGK74" in citation_text
+    checks.append({"name": "doi_recorded", "ok": doi_ok, "details": [] if doi_ok else ["10.17605/OSF.IO/ZGK74 missing"]})
+
+    ok = all(bool(check["ok"]) for check in checks)
+    payload = {"status": "passed" if ok else "failed", "checks": checks}
+    if args.json:
+        print(json.dumps(payload, indent=2))
+    else:
+        print(f"CPC readiness: {payload['status']}")
+        for check in checks:
+            status = "ok" if check["ok"] else "FAIL"
+            print(f"- {status}: {check['name']}")
+            if check["details"]:
+                for item in check["details"]:
+                    print(f"  - {item}")
+
+    sys.exit(0 if ok else 1)

@@ -1,0 +1,21 @@
+﻿cff-version: 1.2.0
+title: "A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors"
+version: "0.1.0"
+date-released: "2026-06-18"
+doi: "10.17605/OSF.IO/ZGK74"
+authors:
+  - family-names: "Moreno Lopez"
+    given-names: "Maria Fernanda"
+    affiliation: "Instituto Nacional de Astrofisica, Optica y Electronica (INAOE)"
+repository-code: "https://github.com/Xerkkun/Hidden-Attractors-Localization"
+license: "MIT"
+message: "If you use this software, cite the associated CPC article when available and the archived software release."
+keywords:
+  - hidden attractors
+  - fractional order systems
+  - Chua circuit
+  - Caputo derivative
+  - numerical validation
+
+
+abstract: "Software package hidden-attractors-fo for integer- and fractional-order hidden-attractor search/localization workflows."

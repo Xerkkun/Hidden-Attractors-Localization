@@ -1,0 +1,59 @@
+﻿{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "name": "hidden-attractors-fo",
+  "version": "0.1.0",
+  "identifier": "https://doi.org/10.17605/OSF.IO/ZGK74",
+  "codeRepository": "https://github.com/Xerkkun/Hidden-Attractors-Localization",
+  "license": "https://spdx.org/licenses/MIT",
+  "programmingLanguage": [
+    "Python",
+    "C"
+  ],
+  "runtimePlatform": [
+    "Python >=3.11"
+  ],
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Maria Fernanda",
+      "familyName": "Moreno Lopez",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "Instituto Nacional de Astrofisica, Optica y Electronica (INAOE)"
+      }
+    }
+  ],
+  "contributor": [
+    {
+      "@type": "Person",
+      "givenName": "Esteban",
+      "familyName": "Tlelo Cuautle",
+      "description": "Doctoral thesis director; assigned and guided the research topic."
+    },
+    {
+      "@type": "Person",
+      "givenName": "Oscar",
+      "familyName": "Martinez-Fuentes",
+      "description": "Doctoral thesis co-advisor; reviewed the theoretical fractional-calculus component."
+    },
+    {
+      "@type": "Person",
+      "givenName": "Luis Gerardo",
+      "familyName": "de la Fraga",
+      "description": "Provided source code used as provenance for the EFORK implementation and integer-order Lyapunov algorithm."
+    }
+  ],
+  "description": "Numerical workflows for locating, reproducing, auditing, and conservatively classifying hidden-attractor candidates in Chua/Lur'e systems with integer and commensurate Caputo fractional order.",
+  "keywords": [
+    "hidden attractors",
+    "fractional-order systems",
+    "integer-order systems",
+    "Chua",
+    "Caputo",
+    "Lur'e systems",
+    "describing function",
+    "EFORK",
+    "ABM"
+  ]
+}

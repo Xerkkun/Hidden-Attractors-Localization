@@ -24,7 +24,7 @@ classifiers = [
 
   "Topic :: Scientific/Engineering :: Mathematics",
 ]
-# ── Core runtime ────────────────────────────────────────────────────────────
+# â”€â”€ Core runtime â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Support policy: Pragmatic extended support to maintain compatibility with older
 # environments (Python 3.11, NumPy 1.26, Matplotlib 3.8, SciPy 1.12) beyond the
 # strict SPEC-0 rolling drop dates (which would drop 3.11/1.26/3.8/1.12 by mid-2026).
@@ -37,30 +37,30 @@ dependencies = [
 
 
 [project.optional-dependencies]
-# ── Development ─────────────────────────────────────────────────────────────
+# â”€â”€ Development â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 dev = [
   "pytest>=8.0",
   "pytest-cov>=5.0",
   "pytest-benchmark>=4.0",
 ]
-# ── Optional scientific analysis ─────────────────────────────────────────────
+# â”€â”€ Optional scientific analysis â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 analysis = [
   "antropy>=0.1.6",
   "nolds>=0.6.1",
   "scipy>=1.12",
 ]
-# ── Documentation build ──────────────────────────────────────────────────────
+# â”€â”€ Documentation build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 docs = [
   "mkdocs>=1.6",
   "mkdocs-material>=9.5",
   "mkdocstrings[python]>=0.25",
 ]
-# ── Legacy scripts (frozen, no new feature work) ─────────────────────────────
+# â”€â”€ Legacy scripts (frozen, no new feature work) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 legacy = [
   "PyYAML>=6.0",
   "scipy>=1.12",
 ]
-# ── Optional numerical continuation (external, not always available) ─────────
+# â”€â”€ Optional numerical continuation (external, not always available) â”€â”€â”€â”€â”€â”€â”€â”€â”€
 pydstool = [
   "PyDSTool",   # no stable PyPI release; pin not enforced
 ]
@@ -104,6 +104,7 @@ markers = [
   "migration: temporary migration tests",
   "deprecated_alias: tests for compatibility aliases scheduled for removal",
   "hygiene: repository cleanliness and packaging hygiene",
+  "cpc_readiness: CPC submission metadata and packaging readiness checks",
 ]
 
 [tool.pytest-benchmark]
@@ -116,3 +117,5 @@ histogram = false
 # Store baselines in .benchmarks/ (git-ignored by default)
 storage = "file"
 storage_path = ".benchmarks"
+
+

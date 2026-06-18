@@ -1,4 +1,4 @@
-# Operating system and editor files
+﻿# Operating system and editor files
 .DS_Store
 Thumbs.db
 *.swp
@@ -91,3 +91,9 @@ _archived_figure_scripts/
 /version_2/runs*/
 /version_2/figures/
 
+
+
+
+# Local editor/workspace settings
+.vscode/
+*.code-workspace

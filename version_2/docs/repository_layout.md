@@ -36,3 +36,9 @@ but new reusable behavior should be added to `hidden_attractors/` first.
 
 All figures used as promoted evidence are stored in the canonical `library_figures/` repository. For detailed guidelines on figure generation, refer to the [Figure Export Policy](figure_export_policy.md) and [Figure Scripts Policy](figure_scripts_policy.md).
 
+
+## CPC submission layout
+
+`cpc_submission/` contains editorial and archival packaging material for a future CPC submission. It is documentation and packaging metadata, not new scientific evidence.
+
+`library_figures/` is the canonical store for promoted scientific figures generated through `hidden_attractors.plotting.export.export_figure`. `docs/assets/` is reserved for documentation or web-only assets; it is not the promoted scientific figure store.

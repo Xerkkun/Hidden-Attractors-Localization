@@ -229,3 +229,15 @@ hidden-attractors run -c version_2/configs/examples/chua_arctan_attractor_only_f
 Los resultados (trayectorias en csv, imágenes y bitácoras) se guardarán en la carpeta `outputs/`.
 
 Para más detalles sobre las opciones de los archivos de configuración y fases de análisis, consulta la [Guía de Referencia (REFERENCE_GUIDE.md)](version_2/REFERENCE_GUIDE.md).
+
+---
+
+### CPC readiness and citation
+
+The active distribution is `version_2/`. Root-level metadata files (`CITATION.cff`, `.zenodo.json`, `codemeta.json`, `AUTHORS.md`, `CHANGELOG.md`, `RELEASE_NOTES.md`, and `REPRODUCIBILITY.md`) describe the software package and the current CPC-preparation state. The archived DOI recorded for this package is:
+
+```text
+10.17605/OSF.IO/ZGK74
+```
+
+Editorial drafts live in `paper/`. Reproducible submission packaging lives in `version_2/cpc_submission/`. These folders do not promote new scientific claims; they organize code, metadata, and evidence boundaries for a future CPC submission.

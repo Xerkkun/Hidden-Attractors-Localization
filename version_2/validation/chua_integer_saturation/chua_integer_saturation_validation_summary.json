@@ -1,6 +1,6 @@
 {
 	"system_id":"chua_integer_saturation",
-	"output_dir":"C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\validation\\chua_integer_saturation",
+	"output_dir":"C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\validation_outputs\\chua_integer_saturation",
 	"tests":[
 		{
 			"name":"lure_form",

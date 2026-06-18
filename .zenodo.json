@@ -1,0 +1,42 @@
+﻿{
+  "title": "A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors",
+  "upload_type": "software",
+  "description": "Python software and reproducible workflows for localization, reproduction, audit, and conservative classification of hidden-attractor candidates in integer- and fractional-order Chua/Lur'e systems.",
+  "creators": [
+    {
+      "name": "Moreno Lopez, Maria Fernanda",
+      "affiliation": "Instituto Nacional de Astrofisica, Optica y Electronica (INAOE)"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Tlelo Cuautle, Esteban",
+      "type": "Supervisor"
+    },
+    {
+      "name": "Martinez-Fuentes, Oscar",
+      "type": "Researcher"
+    },
+    {
+      "name": "de la Fraga, Luis Gerardo",
+      "type": "Other"
+    }
+  ],
+  "license": "MIT",
+  "keywords": [
+    "hidden attractors",
+    "fractional-order systems",
+    "integer-order systems",
+    "Chua",
+    "Caputo",
+    "Lur'e systems",
+    "numerical validation"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.17605/OSF.IO/ZGK74",
+      "relation": "isSupplementTo",
+      "scheme": "doi"
+    }
+  ]
+}

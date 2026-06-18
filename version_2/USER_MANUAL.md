@@ -421,3 +421,10 @@ memory policy: finite_window (400 steps)
 validation contract: configs/validation_contract.json
 claim status: [reproducido/candidato/pendiente]
 ```
+
+## 18. CPC readiness
+
+- **Citation metadata**: Consult the repository-root `CITATION.cff`, `.zenodo.json`, and `codemeta.json` files for citation keys and formats.
+- **Release citation**: The OSF DOI currently recorded for this CPC-preparation package is `10.17605/OSF.IO/ZGK74`; a future CPC article DOI should be added only after acceptance/publication.
+- **Reproducibility matrix**: Publications and reports must document the exact software environment, commit hash, and validation outcomes from [validation/freeze_audit/](validation/freeze_audit/).
+- **CPC readiness**: Run `hidden-attractors validate cpc-readiness` to check metadata, editorial skeletons, promoted evidence boundaries, and local-output hygiene.
