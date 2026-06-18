@@ -47,6 +47,7 @@ dev = [
 analysis = [
   "antropy>=0.1.6",
   "nolds>=0.6.1",
+  "pandas>=2.1",
   "scipy>=1.12",
 ]
 # Documentation build
@@ -117,5 +118,6 @@ histogram = false
 # Store baselines in .benchmarks/ (git-ignored by default)
 storage = "file"
 storage_path = ".benchmarks"
+
 
 

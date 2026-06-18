@@ -15,7 +15,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple, Optional
 
 import numpy as np
-import pandas as pd
 from scipy.optimize import least_squares
 from scipy.special import gamma as gamma_func
 
@@ -55,6 +54,23 @@ from hidden_attractors.plotting.biased_chua import (
 VERSION2 = PROJECT_ROOT
 ROOT     = VERSION2.parent
 
+
+class _LazyPandas:
+    """Import pandas only when CSV/DataFrame workflow steps actually need it."""
+
+    def __getattr__(self, name: str) -> Any:
+        try:
+            import pandas as pandas_module
+        except ModuleNotFoundError as exc:
+            raise RuntimeError(
+                "pandas is required for biased Chua CSV/DataFrame workflow steps. "
+                "Install the analysis extra or install pandas explicitly."
+            ) from exc
+        globals()["pd"] = pandas_module
+        return getattr(pandas_module, name)
+
+
+pd: Any = _LazyPandas()
 # ══════════════════════════════════════════════════════════════════════════════
 # STEP 1: Centered Reference Search
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1239,3 +1255,4 @@ def run_summarize_and_plot(cfg: Dict[str, Any]) -> None:
     (out_s5 / "experiment_summary.json").write_text(
         json.dumps(summary, indent=2), encoding="utf-8"
     )
+
