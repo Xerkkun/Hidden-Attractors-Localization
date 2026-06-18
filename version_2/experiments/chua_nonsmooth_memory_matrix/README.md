@@ -40,7 +40,7 @@ Desde `version_2/`:
 python experiments/chua_nonsmooth_memory_matrix/run_shared_cache_tasks.py --workers 4
 python experiments/chua_nonsmooth_memory_matrix/run_continuation_tasks.py --workers 4
 python experiments/chua_nonsmooth_memory_matrix/run_hiddenness_tasks.py --workers 4
-python experiments/chua_nonsmooth_memory_matrix/run_figure_tasks.py --workers 2
+python figure_scripts/chua_nonsmooth_memory_matrix_run_figure_tasks.py --workers 2
 python experiments/chua_nonsmooth_memory_matrix/aggregate_results.py
 ```
 

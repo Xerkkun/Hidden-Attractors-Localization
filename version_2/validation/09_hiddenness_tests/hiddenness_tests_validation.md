@@ -26,6 +26,4 @@ Primary artifacts:
 - `outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/hiddenness_decisions.csv`
 - `outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/ball_sampling_results.csv`
 
-### Legacy exploratory figures (not part of promoted validation evidence)
-- `DF y NC Chua entero y fraccionario copy/Figs/chua_frac_ns_fig13_hiddenness_spherical_probes.png`
-- `DF y NC Chua entero y fraccionario copy/Figs/chua_frac_ns_fig14_hiddenness_contact_heatmap.png`
+

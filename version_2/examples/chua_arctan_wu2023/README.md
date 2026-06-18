@@ -80,7 +80,7 @@ Desde la raíz `version_2`:
 python examples/chua_arctan_wu2023/run_seed_generation.py
 python examples/chua_arctan_wu2023/run_validation.py
 python examples/chua_arctan_wu2023/run_validation.py --run-trajectories
-python examples/chua_arctan_wu2023/plot_basins.py
+python figure_scripts/chua_arctan_wu2023_plot_basins.py
 ```
 
 La configuración principal está en `configs/chua_arctan_wu2023_caputo.json`.

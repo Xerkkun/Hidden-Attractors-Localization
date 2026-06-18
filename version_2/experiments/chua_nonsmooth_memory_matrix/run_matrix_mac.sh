@@ -14,5 +14,5 @@ export OPENBLAS_NUM_THREADS=1
 python3 experiments/chua_nonsmooth_memory_matrix/run_shared_cache_tasks.py --tasks "$MATRIX_ROOT/tasks/shared_cache_tasks.csv" --workers "$WORKERS"
 python3 experiments/chua_nonsmooth_memory_matrix/run_continuation_tasks.py --tasks "$MATRIX_ROOT/tasks/continuation_tasks.csv" --workers "$WORKERS"
 python3 experiments/chua_nonsmooth_memory_matrix/run_hiddenness_tasks.py --tasks "$MATRIX_ROOT/tasks/hiddenness_tasks.csv" --workers "$WORKERS"
-python3 experiments/chua_nonsmooth_memory_matrix/run_figure_tasks.py --tasks "$MATRIX_ROOT/tasks/figure_tasks.csv" --workers "$WORKERS"
+python3 figure_scripts/chua_nonsmooth_memory_matrix_run_figure_tasks.py --tasks "$MATRIX_ROOT/tasks/figure_tasks.csv" --workers "$WORKERS"
 python3 experiments/chua_nonsmooth_memory_matrix/aggregate_results.py --root "$MATRIX_ROOT"

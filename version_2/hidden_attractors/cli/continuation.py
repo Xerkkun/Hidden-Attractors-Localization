@@ -128,7 +128,16 @@ def run_scalar_continuation(
         q_continuation = 1.0
         config["continuation"]["q_continuation"] = 1.0
     elif continuation_order == "fractional":
-        if q_continuation is not None and q_continuation >= 1.0:
+        if q_continuation is None:
+            q_val = config.get("q")
+            if q_val is None and system is not None and hasattr(system, "parameters"):
+                q_val = system.parameters.get("q")
+            if q_val is None:
+                q_val = 0.9998
+            q_continuation = float(q_val)
+            config["continuation"]["q_continuation"] = q_continuation
+            
+        if q_continuation >= 1.0:
             raise ValueError(f"For fractional continuation, q_continuation must be strictly less than 1.0. Got {q_continuation}.")
             
     integrator = config.get("integrator", "efork3")
@@ -444,9 +453,12 @@ def run_multiparameter_continuation(
     parameters_def = path_config.get("parameters", {})
     
     # Check overrides or path_config for memory policy
-    memory_policy = config.get("memory_policy")
-    if memory_policy is None:
-        memory_policy = path_config.get("memory_policy", "carry_window")
+    if args.memory_policy:
+        memory_policy = args.memory_policy
+    else:
+        memory_policy = path_config.get("memory_policy")
+        if memory_policy is None:
+            memory_policy = config.get("memory_policy", "carry_window")
     
     # Resolve seeds
     seeds = []
@@ -481,7 +493,16 @@ def run_multiparameter_continuation(
         q_continuation = 1.0
         config["continuation"]["q_continuation"] = 1.0
     elif continuation_order == "fractional":
-        if q_continuation is not None and q_continuation >= 1.0:
+        if q_continuation is None:
+            q_val = config.get("q")
+            if q_val is None and system is not None and hasattr(system, "parameters"):
+                q_val = system.parameters.get("q")
+            if q_val is None:
+                q_val = 0.9998
+            q_continuation = float(q_val)
+            config["continuation"]["q_continuation"] = q_continuation
+            
+        if q_continuation >= 1.0:
             raise ValueError(f"For fractional continuation, q_continuation must be strictly less than 1.0. Got {q_continuation}.")
             
     integrator = config.get("integrator", "efork3")

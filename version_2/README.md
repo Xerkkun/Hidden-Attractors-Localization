@@ -224,10 +224,11 @@ examples/               short, user-facing examples
 tests/                  package smoke tests
 configs/                workflow configurations
 docs/                   user and developer documentation
+figure_scripts/         centralized folder for active figure generation scripts
 validation/             promoted validation evidence and final reports
 tools/cli/              compatibility command wrappers
 tools/legacy/           packaged historical scripts behind installable commands
-outputs/                reference outputs used by examples/loaders
+outputs/                exploratory outputs and unpromoted evidence
 artifacts/              migrated runtime/prebuilt artifacts
 ```
 

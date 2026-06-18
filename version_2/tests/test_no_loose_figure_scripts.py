@@ -38,6 +38,7 @@ EXCLUDED_DIRS = [
     "_archived_figure_scripts",
     "version_2/tests",
     "version_2/tests/hygiene",
+    "version_2/figure_scripts",
 ]
 
 @pytest.mark.hygiene
@@ -79,3 +80,85 @@ def test_no_loose_or_duplicate_scripts():
                     violations.append(f"File '{rel_to_root}' matches prohibited pattern '{pat}'")
                     
     assert not violations, "Found prohibited active scripts in repository:\n" + "\n".join(violations)
+
+@pytest.mark.hygiene
+def test_no_loose_figure_scripts_outside_designated_directories():
+    """Verify that no active figure-generation or plotting scripts exist outside
+    version_2/figure_scripts/, version_2/hidden_attractors/plotting/, and version_2/tools/legacy/.
+    Also ensures that the root LaTeX reports are excluded from checking.
+    """
+    allowed_prefixes = [
+        "version_2/figure_scripts/",
+        "version_2/hidden_attractors/",
+        "version_2/tools/cli/",
+        "version_2/tools/legacy/",
+        "version_2/tests/",
+        "version_2/docs/",
+        "version_2/benchmarks/",
+    ]
+    violations = []
+    
+    # Scan recursively for python files under version_2/
+    version_2_dir = ROOT_DIR / "version_2"
+    if not version_2_dir.exists():
+        return
+        
+    for r, d, files in os.walk(version_2_dir):
+        # Exclude directories like __pycache__, .pytest_cache
+        d[:] = [dirname for dirname in d if not dirname.startswith(".") and dirname != "__pycache__"]
+        
+        rel_dir = os.path.relpath(r, ROOT_DIR).replace("\\", "/")
+        
+        # Skip if directory is inside allowed prefixes
+        is_allowed = False
+        for prefix in allowed_prefixes:
+            if rel_dir.startswith(prefix.rstrip("/")) or (rel_dir + "/").startswith(prefix):
+                is_allowed = True
+                break
+        if is_allowed:
+            continue
+            
+        for f in files:
+            if not f.endswith(".py"):
+                continue
+                
+            file_path = Path(r) / f
+            file_rel = file_path.relative_to(ROOT_DIR).as_posix()
+            
+            # Check name or direct savefig calls
+            name_lower = f.lower()
+            is_fig_script = (
+                "plot" in name_lower or
+                "figure" in name_lower or
+                "basin" in name_lower
+            )
+            
+            has_savefig = False
+            try:
+                content = file_path.read_text(encoding="utf-8", errors="ignore")
+                if ".savefig(" in content:
+                    has_savefig = True
+            except Exception:
+                pass
+                
+            if is_fig_script or has_savefig:
+                # Exempt normal workflows or common utilities that are not primarily loose figure scripts
+                exemptions = [
+                    "version_2/hidden_attractors/workflows/fractional_report_run.py",
+                    "version_2/hidden_attractors/workflows/refined_basin.py",
+                    "version_2/hidden_attractors/workflows/danca_abm_sphere_controls.py",
+                    "version_2/hidden_attractors/workflows/robustness_overlay.py",
+                    "version_2/hidden_attractors/workflows/robustness.py",
+                    "version_2/hidden_attractors/workflows/basin.py",
+                    "version_2/hidden_attractors/workflows/bifurcation.py",
+                    "version_2/hidden_attractors/workflows/continuation.py",
+                    "version_2/hidden_attractors/workflows/chaos_test.py",
+                    "version_2/hidden_attractors/workflows/seed_search.py",
+                    "version_2/hidden_attractors/workflows/simulation.py",
+                    "version_2/hidden_attractors/workflows/sphere_tests.py",
+                ]
+                if file_rel in exemptions:
+                    continue
+                violations.append(f"Figure script '{file_rel}' found outside designated directories.")
+                
+    assert not violations, "Found loose figure scripts outside version_2/figure_scripts/:\n" + "\n".join(violations)

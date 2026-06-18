@@ -55,7 +55,7 @@ All figures supporting validation evidence are promoted to the canonical `librar
 * **Canonical Pathing**: All promoted validation evidence must use relative paths under the repository.
 * **Prohibition of Local Paths**: Personal absolute paths (e.g., `/[UserDir]/`, `C:\[UserDir]\`, `[Desktop]\`) are strictly prohibited in code, tests, and promoted validation.
 
-* **Legacy Paths**: Relative external figure paths (e.g., pointing to unpromoted external directories like `.._.._.._/[DirectoryName]/Figs/`) must only reside in explicitly marked legacy fields (such as `legacy_external_figures_not_promoted` in stage JSON summaries) or under legacy Markdown headers. They are excluded from the official body of promoted evidence.
+* **Prohibición de Referencias a Directorios Locales LaTeX**: Los directorios de reportes LaTeX en la raíz del proyecto (como los informes de trabajo locales) son estrictamente locales y no están rastreados por Git. No se permite referenciar ningún archivo dentro de estos directorios en código, pruebas, manifiestos, reportes oficiales o archivos de resumen de validación (JSON/MD). Cualquier referencia heredada a estos directorios ha sido eliminada por higiene del repositorio.
 
 
 

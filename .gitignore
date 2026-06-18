@@ -81,3 +81,13 @@ figures/
 # Historical local archive; not part of active library, tests, docs or package distribution
 _archived_figure_scripts/
 
+# Root LaTeX reports (local only)
+/DF y NC Chua entero y fraccionario/
+/DF y NC Chua entero y fraccionario copy/
+
+# version_2 local/regenerable directories
+/version_2/validation_outputs/
+/version_2/outputs/
+/version_2/runs*/
+/version_2/figures/
+

@@ -28,7 +28,7 @@ Para garantizar la portabilidad y limpieza de la evidencia de validación:
 * **Ubicación Canónica**: Todas las figuras promovidas deben referenciarse utilizando rutas relativas al repositorio dentro de la carpeta `version_2/library_figures/`.
 * **Prohibición de Rutas Personales**: Está estrictamente prohibido incluir rutas absolutas locales personales (por ejemplo, `C:/[Usuarios]/...`, `/[Usuarios]/...`, `Desktop/[Codigos]/...`) en el código, pruebas, manifiestos o archivos de validación promovidos.
 
-* **Manejo de Rutas Externas Legacy**: Rutas relativas que apunten fuera de la carpeta canónica (como `.._.._.._/[Nombre_Directorio]/Figs/`) se consideran rutas no canónicas. Solo se permiten dentro de campos o secciones marcados explícitamente como legacy (por ejemplo, el campo `legacy_external_figures_not_promoted` en archivos JSON, o bajo un encabezado Markdown que contenga la palabra "Legacy"). No forman parte de la evidencia científica promovida y se conservan únicamente por procedencia histórica.
+* **Prohibición de Referencias a Directorios Locales LaTeX**: Los directorios de reportes LaTeX en la raíz del proyecto (como los informes de trabajo locales) son estrictamente locales y no están rastreados por Git. No se permite referenciar ningún archivo dentro de estos directorios en código, pruebas, manifiestos, reportes oficiales o archivos de resumen de validación (JSON/MD). Cualquier referencia heredada a estos directorios ha sido eliminada por higiene del repositorio.
 
 
 ---

@@ -27,6 +27,7 @@ EXCLUDED_PATHS = [
     "tools/legacy",
     "_archive",
     "_archived_figure_scripts",
+    "figure_scripts",
 ]
 
 EXEMPTED_FILES = [

@@ -541,7 +541,7 @@ def generate_candidate_story_figures(
 ) -> dict[str, Any]:
     """Generate interpretive figures for each promoted branch candidate."""
 
-    script = PROJECT_ROOT / "tools" / "plot_candidate_story_figures.py"
+    script = PROJECT_ROOT / "figure_scripts" / "plot_candidate_story_figures.py"
     output_dir = branch_root / "candidate_story_figures"
     output_dir.mkdir(parents=True, exist_ok=True)
     figure_paths: list[str] = []

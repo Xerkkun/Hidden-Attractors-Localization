@@ -20,6 +20,7 @@ A scientific research library for reproducing, auditing, and extending numerical
 The project has been refactored to use `/version_2` as the formal, unified, and maintained library package.
 * **`version_2/`**: Contains the core library (`hidden_attractors`), configurations, test suite, and examples.
 * **`src/`**: Legacy folder. The entry-point script `src/cli/run_workflow.py` acts as an adapter, redirecting to the new package and displaying a deprecation warning.
+* **`DF y NC Chua entero y fraccionario/` / `DF y NC Chua entero y fraccionario copy/`**: Local-only LaTeX report folders. They are untracked and excluded from Git, remaining purely local to the workspace and outside the active Python package or testing flows.
 
 ---
 
@@ -129,6 +130,7 @@ For details on configuration keys and workflow options, refer to the [Reference 
 El proyecto ha sido reestructurado para utilizar `/version_2` como la librería formal única, unificada y mantenida.
 * **`version_2/`**: Contiene la librería principal (`hidden_attractors`), configuraciones, conjunto de pruebas unitarias y ejemplos.
 * **`src/`**: Carpeta heredada (legacy). El script `src/cli/run_workflow.py` actúa como adaptador redirigiendo al nuevo paquete y emitiendo una advertencia de depreciación.
+* **`DF y NC Chua entero y fraccionario/` / `DF y NC Chua entero y fraccionario copy/`**: Carpetas de reportes LaTeX de uso estrictamente local. Están excluidas de Git (untracked) y no forman parte del flujo activo de la librería ni del conjunto de pruebas automatizadas.
 
 ---
 

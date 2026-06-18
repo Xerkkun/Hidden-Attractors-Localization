@@ -303,9 +303,10 @@ Execution runs produce structured outputs separated by tier:
 | **Figures** | Visual | Automatically formatted plots (phase-spaces, basins, Nyquist). |
 | **Validation Manifest** | Status | JSON files verifying contract compliance (e.g. `validation_manifest.json`). |
 
-- **Execution output**: Stored locally in `outputs/` or configured folders for inspection.
-- **Promoted evidence**: Promoted to `validation/` and figures saved in `library_figures/` following the guidelines in [docs/figure_export_policy.md](docs/figure_export_policy.md).
+- **Execution output**: Stored locally in `outputs/` or configured folders for inspection. Unpromoted systems, like the arctan system (`outputs/chua_fractional_arctan/`), write their outputs to the `outputs/` directory.
+- **Promoted evidence**: Promoted validation evidence, such as the saturation systems (`validation/chua_integer_saturation/` and `validation/chua_fractional_saturation/`), are stored under `validation/`. Figures are saved in `library_figures/` following the guidelines in [docs/figure_export_policy.md](docs/figure_export_policy.md).
 - **Legacy artifacts**: Frozen files kept under legacy namespaces.
+
 
 ---
 

@@ -444,16 +444,18 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     if df_order == "fractional":
         print("Warning: Fourier/Nyquist/describing-function calculations are interpreted through the Weyl-Caputo bridge. The harmonic solution is a seed-generation approximation, not proof of an exact Caputo periodic orbit.")
 
-    q_dynamics = config["dynamics"].get("q_dynamics")
+    dynamics_cfg = config.get("dynamics") or {}
+    q_dynamics = dynamics_cfg.get("q_dynamics")
     if q_dynamics is None:
-        if config["dynamics"].get("dynamics_order") == "integer":
+        if dynamics_cfg.get("dynamics_order") == "integer":
             q_dynamics = 1.0
         else:
             q_dynamics = _effective_q(config, system)
 
-    q_continuation = config["continuation"].get("q_continuation")
+    continuation_cfg = config.get("continuation") or {}
+    q_continuation = continuation_cfg.get("q_continuation")
     if q_continuation is None:
-        if config["continuation"].get("continuation_order") == "integer":
+        if continuation_cfg.get("continuation_order") == "integer":
             q_continuation = 1.0
         else:
             q_continuation = q_dynamics if q_dynamics < 1.0 else _effective_q(config, system)
@@ -466,7 +468,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     }
 
     continuation_contract = {
-        "continuation_order": config["continuation"].get("continuation_order"),
+        "continuation_order": continuation_cfg.get("continuation_order"),
         "q_continuation": float(q_continuation) if q_continuation is not None else None,
         "integrator": config.get("integrator"),
         "memory_policy": config.get("memory_policy"),
@@ -474,7 +476,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     }
 
     dynamics_contract = {
-        "dynamics_order": config["dynamics"].get("dynamics_order"),
+        "dynamics_order": dynamics_cfg.get("dynamics_order"),
         "q_dynamics": float(q_dynamics) if q_dynamics is not None else None,
         "integrator": config.get("integrator")
     }

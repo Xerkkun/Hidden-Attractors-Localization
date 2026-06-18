@@ -106,3 +106,9 @@ library_figures/
 # Historical local archive; not part of active library, tests, docs or package distribution
 _archived_figure_scripts/
 
+# Local/regenerable directories
+validation_outputs/
+outputs/
+runs*/
+figures/
+

@@ -88,17 +88,31 @@ def resolve_wolfram_artifacts(
 
     validation_root = validation_root.resolve()
     algebra = validation_root / "02_algebraic_validation"
-    output_dir = (
-        generated_output_root.resolve()
-        if generated_output_root is not None
-        else validation_root / "outputs" / "wolfram" / system_id
-    )
+    
+    if generated_output_root is not None:
+        output_dirs = [generated_output_root.resolve()]
+    else:
+        output_dirs = [
+            validation_root / system_id,
+            validation_root.parent / "outputs" / system_id,
+            validation_root / "outputs" / "wolfram" / system_id,
+        ]
 
-    prefixed = {
-        official: output_dir / f"{system_id}_{suffix}"
-        for official, suffix in REQUIRED_WOLFRAM_ARTIFACTS.items()
-    }
-    if all(path.exists() for path in prefixed.values()):
+    chosen_dir = None
+    chosen_prefixed = None
+    for d in output_dirs:
+        prefixed = {
+            official: d / f"{system_id}_{suffix}"
+            for official, suffix in REQUIRED_WOLFRAM_ARTIFACTS.items()
+        }
+        if all(path.exists() for path in prefixed.values()):
+            chosen_dir = d
+            chosen_prefixed = prefixed
+            break
+
+    if chosen_dir is not None and chosen_prefixed is not None:
+        output_dir = chosen_dir
+        prefixed = chosen_prefixed
         validation_summary = output_dir / f"{system_id}_validation_summary.json"
         consistency_summary = output_dir / f"{system_id}_python_consistency_summary.json"
         summary_states = (
@@ -115,6 +129,8 @@ def resolve_wolfram_artifacts(
             summaries_pass=summary_states == (True, True),
         )
 
+    # Fallback/default if not found
+    output_dir = output_dirs[0]
     promoted = {
         official: algebra / official
         for official in REQUIRED_WOLFRAM_ARTIFACTS

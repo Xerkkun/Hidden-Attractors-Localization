@@ -75,18 +75,7 @@
     "decisions": "../outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/hiddenness_decisions.csv",
     "results": "../outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/ball_sampling_results.csv",
     "figures": [],
-    "legacy_external_figures_not_promoted": [
-      {
-        "path": "../../../DF y NC Chua entero y fraccionario copy/Figs/chua_frac_ns_fig13_hiddenness_spherical_probes.png",
-        "status": "legacy_provenance_only",
-        "note": "External exploratory figure path retained for provenance only; not part of promoted validation evidence."
-      },
-      {
-        "path": "../../../DF y NC Chua entero y fraccionario copy/Figs/chua_frac_ns_fig14_hiddenness_contact_heatmap.png",
-        "status": "legacy_provenance_only",
-        "note": "External exploratory figure path retained for provenance only; not part of promoted validation evidence."
-      }
-    ]
+    "legacy_external_figures_not_promoted": []
   },
   "provenance": {
     "run_command": "python tools/run_saturation_candidate_chaos_hiddenness_tests.py --profile report --only all --workers 4",

@@ -56,6 +56,9 @@ ToJSONReady[expr_] := Which[
   (* Complex numeric: export real/imag parts separately *)
   TrueQ[NumericQ[expr]] && ! TrueQ[Im[N[expr]] == 0],
     <|"re" -> N[Re[expr]], "im" -> N[Im[expr]]|>,
+  (* Zero numeric check to avoid 0.e-XX invalid JSON representation *)
+  TrueQ[NumericQ[expr]] && TrueQ[N[expr] == 0],
+    0.0,
   (* Real numeric: export as floating point *)
   TrueQ[NumericQ[expr]], N[expr],
   Head[expr] === Missing, ToString[expr],
