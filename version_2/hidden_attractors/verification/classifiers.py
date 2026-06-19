@@ -10,21 +10,20 @@ def classify_hiddenness_verdict(
     """Classify the overall hiddenness verdict under the tested numerical contract.
     
     States:
-        - "compatible_with_hiddenness_under_tested_radii"
-        - "self_excited_contact_detected"
-        - "hiddenness_inconclusive"
-        - "numerical_failure"
+        - "compatible_with_hiddenness"
+        - "self_excited"
+        - "inconclusive"
     """
     if numerical_failures > 0 and target_hits_from_equilibria == 0:
-        return "numerical_failure"
+        return "inconclusive"
         
     if target_hits_from_equilibria > 0:
-        return "self_excited_contact_detected"
+        return "self_excited"
         
     if not seed_reached_attractor:
-        return "hiddenness_inconclusive"
+        return "inconclusive"
         
-    return "compatible_with_hiddenness_under_tested_radii"
+    return "compatible_with_hiddenness"
 
 
 __all__ = ["classify_hiddenness_verdict", "normalize_hiddenness_label"]

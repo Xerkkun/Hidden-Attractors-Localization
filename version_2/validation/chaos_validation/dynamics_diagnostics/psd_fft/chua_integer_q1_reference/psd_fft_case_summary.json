@@ -37,14 +37,14 @@
       "coordinate_results": {
         "x": {
           "state": "spectral_inconclusive",
-          "peak_dominance": 0.49165237285053726,
-          "spectral_entropy": 0.17205150676214176,
+          "peak_dominance": 0.4916523728505371,
+          "spectral_entropy": 0.17205150676214181,
           "bandwidth_fraction": 0.003992015968063872,
           "number_of_prominent_peaks": 1,
           "dominant_frequency": 0.35964035964038005,
-          "dominant_power": 0.49165237285053726,
+          "dominant_power": 0.4916523728505371,
           "total_power": 1.0,
-          "total_power_before_normalization": 1974298.901295073,
+          "total_power_before_normalization": 1974298.9012950726,
           "dc_removed": true,
           "detrend": true,
           "window": "hann",
@@ -80,7 +80,7 @@
         "z": {
           "state": "spectral_inconclusive",
           "peak_dominance": 0.5015338877259724,
-          "spectral_entropy": 0.15369966756199543,
+          "spectral_entropy": 0.1536996675619954,
           "bandwidth_fraction": 0.003992015968063872,
           "number_of_prominent_peaks": 1,
           "dominant_frequency": 0.35964035964038005,

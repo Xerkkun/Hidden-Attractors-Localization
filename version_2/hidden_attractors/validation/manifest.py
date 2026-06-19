@@ -99,10 +99,16 @@ def regenerate_validation_manifest(
                 else "current_or_unspecified"
             )
             if slug == "hiddenness_tests":
+                from ..verification.status_labels import normalize_attractor_status
                 evidence = summary.get("evidence", {})
+                status_val = summary.get("attractor_status") or summary.get("verdict") or (evidence.get("attractor_status") if isinstance(evidence, dict) else None)
+                if status_val is not None:
+                    norm_status = normalize_attractor_status(status_val)
+                else:
+                    norm_status = ""
                 requested_hidden_verified = bool(
-                    summary.get("hidden_verified", False)
-                    or summary.get("verdict") == "hiddenness_supported_under_tested_neighborhoods"
+                    norm_status == "hidden_under_tested_neighborhoods"
+                    or summary.get("hidden_verified", False)
                     or (evidence.get("hidden_verified", False) if isinstance(evidence, dict) else False)
                 )
                 metadata_errors = validate_hiddenness_promotion_metadata(summary.get("run_metadata"))
@@ -136,20 +142,20 @@ def regenerate_validation_manifest(
         final_report_status = "pending_final_report_generation"
 
     # Determine overall state from the stages' statuses
-    overall_state = "candidate_attractor"
+    overall_state = "candidate"
     if stage_statuses.get("seed_generation") in ("completed", "passed"):
-        overall_state = "seed_found"
+        overall_state = "candidate"
     if stage_statuses.get("continuation") in ("completed", "passed"):
-        overall_state = "candidate_attractor"
+        overall_state = "candidate"
     if stage_statuses.get("dynamic_reference") in ("completed", "passed"):
-        overall_state = "chaotic_candidate"
+        overall_state = "candidate"
     if stage_statuses.get("robustness") in ("completed", "passed"):
-        overall_state = "hidden_compatible"
+        overall_state = "compatible_with_hiddenness"
     if "hiddenness_tests" in stage_statuses:
         if hidden_verified_flag:
-            overall_state = "hiddenness_supported_under_tested_neighborhoods"
+            overall_state = "hidden_under_tested_neighborhoods"
         else:
-            overall_state = "hidden_compatible"
+            overall_state = "compatible_with_hiddenness"
 
     from ..references.validator import validate_bibliography_manifest
     claims_manifest_path = PROJECT_ROOT / "references" / "claims_manifest.yaml"
@@ -166,6 +172,7 @@ def regenerate_validation_manifest(
         "schema_version": str(contract.get("schema_version", "1.0")),
         "protocol_version": str(contract.get("protocol_version", "caputo_hidden_attractors_v1")),
         "state": overall_state,
+        "attractor_status": overall_state,
         "stages": stages,
         "stage_statuses": stage_statuses,
         "stage_evidence_scopes": stage_evidence_scopes,

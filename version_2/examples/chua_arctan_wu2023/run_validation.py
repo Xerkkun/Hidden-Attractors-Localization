@@ -65,7 +65,7 @@ def _run_reported_trajectories(config: dict, output_dir: Path) -> dict:
             "caputo_history_accumulated": numerical["caputo_history_accumulated"],
             "adm_metadata": info,
             "periodicity": periodicity,
-            "hidden_verified": False,
+            "attractor_status": "not_tested",
         }
     return results
 
@@ -91,7 +91,7 @@ def main() -> None:
         "configuration": str(CONFIG.relative_to(ROOT)).replace("\\", "/"),
         "algebra": str(algebra_path.relative_to(ROOT)).replace("\\", "/"),
         "algebra_status": algebra["status"],
-        "hidden_verified": False,
+        "attractor_status": "not_tested",
         "hiddenness_requirement": "Must test neighborhoods of E0, E+ and E- under a robust target reference.",
     }
     if args.run_trajectories:

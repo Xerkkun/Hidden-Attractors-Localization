@@ -27,9 +27,9 @@ def _complete_evidence(valid_run_metadata) -> dict:
 
 def test_complete_zero_contact_evidence_promotes_sampled_hiddenness(valid_run_metadata) -> None:
     gate = evaluate_candidate_gate(_complete_evidence(valid_run_metadata))
-    assert gate["verdict"] == "hiddenness_supported_under_tested_neighborhoods"
-    assert gate["hiddenness_evidence_level"] == "hiddenness_supported_under_tested_neighborhoods"
-    assert gate["evidence_level"] == "hiddenness_supported_under_tested_neighborhoods"
+    assert gate["verdict"] == "hidden_under_tested_neighborhoods"
+    assert gate["hiddenness_evidence_level"] == "hidden_under_tested_neighborhoods"
+    assert gate["evidence_level"] == "hidden_under_tested_neighborhoods"
     assert gate["chaos_evidence_level"] == "strong_chaos_evidence"
     assert gate["promotion_allowed"] is True
 
@@ -37,19 +37,19 @@ def test_complete_zero_contact_evidence_promotes_sampled_hiddenness(valid_run_me
 def test_missing_robustness_is_compatible_only(valid_run_metadata) -> None:
     evidence = _complete_evidence(valid_run_metadata)
     evidence["robustness"]["tested_h"] = False
-    assert evaluate_candidate_gate(evidence)["verdict"] == "compatible_with_hiddenness_under_tested_radii"
+    assert evaluate_candidate_gate(evidence)["verdict"] == "compatible_with_hiddenness"
 
 
 def test_target_hit_is_self_excited(valid_run_metadata) -> None:
     evidence = _complete_evidence(valid_run_metadata)
     evidence["hiddenness"]["target_hits_from_equilibria"] = 1
-    assert evaluate_candidate_gate(evidence)["verdict"] == "self_excited_contact_detected"
+    assert evaluate_candidate_gate(evidence)["verdict"] == "self_excited"
 
 
 def test_divergent_candidate_is_rejected(valid_run_metadata) -> None:
     evidence = _complete_evidence(valid_run_metadata)
     evidence["trajectory"]["bounded"] = False
-    assert evaluate_candidate_gate(evidence)["verdict"] == "candidate_rejected"
+    assert evaluate_candidate_gate(evidence)["verdict"] == "rejected"
 
 
 def test_positive_lyapunov_high_zero_one_and_broadband_is_strong(valid_run_metadata) -> None:
@@ -84,11 +84,11 @@ def test_incomplete_metadata_blocks_strong_hiddenness(valid_run_metadata) -> Non
     evidence = _complete_evidence(deepcopy(valid_run_metadata))
     evidence["run_metadata"]["software"]["git_commit"] = "unknown"
     gate = evaluate_candidate_gate(evidence)
-    assert gate["verdict"] == "compatible_with_hiddenness_under_tested_radii"
+    assert gate["verdict"] == "compatible_with_hiddenness"
     assert gate["promotion_allowed"] is False
 
 
 def test_legacy_hiddenness_aliases() -> None:
-    assert normalize_hiddenness_label("hidden_verified") == "hiddenness_supported_under_tested_neighborhoods"
-    assert normalize_hiddenness_label("rejected_self_excited_contact") == "self_excited_contact_detected"
-    assert normalize_hiddenness_label("compatible_in_all_tested_solver_memory_cases") == "compatible_with_hiddenness_under_tested_radii"
+    assert normalize_hiddenness_label("hidden_verified") == "hidden_under_tested_neighborhoods"
+    assert normalize_hiddenness_label("rejected_self_excited_contact") == "self_excited"
+    assert normalize_hiddenness_label("compatible_in_all_tested_solver_memory_cases") == "compatible_with_hiddenness"

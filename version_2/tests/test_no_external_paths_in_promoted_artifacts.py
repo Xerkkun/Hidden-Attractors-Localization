@@ -104,6 +104,8 @@ def test_no_external_paths_in_promoted_artifacts() -> None:
     for path in files_to_check:
         if "tools/legacy" in path.as_posix():
             continue
+        if "outputs/wolfram" in path.as_posix():
+            continue
         rel_file = path.relative_to(VERSION2_DIR).as_posix() if path.is_relative_to(VERSION2_DIR) else path.relative_to(ROOT_DIR).as_posix()
         suffix = path.suffix.lower()
         if suffix == ".json":

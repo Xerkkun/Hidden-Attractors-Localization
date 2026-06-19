@@ -84,6 +84,7 @@ Run the following commands to verify that the environment compiles and runs succ
 
 ```bash
 hidden-attractors --help
+cd version_2
 python -m compileall hidden_attractors examples tests tools/cli
 python -m pytest -q
 ```
@@ -272,7 +273,7 @@ experiment:
   random_seed: 42
 
 system:
-  system_id: "chua-nonsmooth"
+  system_id: "chua_fractional_saturation"
   q: 0.9998
 
 integrator:

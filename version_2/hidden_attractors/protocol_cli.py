@@ -164,7 +164,7 @@ def _stage_specific_payload(
             "lambda_values": list(plan.lambda_values),
             "mapping": dict(plan.mapping),
         }
-    elif args.command == "hiddenness" and normalize_hiddenness_label(str(verdict)) == "hiddenness_supported_under_tested_neighborhoods":
+    elif args.command == "hiddenness" and normalize_hiddenness_label(str(verdict)) == "hidden_under_tested_neighborhoods":
         evidence = data.get("hiddenness_test_result")
         if not isinstance(evidence, dict):
             evidence = {}
@@ -177,7 +177,7 @@ def _stage_specific_payload(
             numerical_failures=int(evidence.get("numerical_failures", 0)),
             basin_planes=tuple(evidence.get("basin_planes", ())),
             reference_was_robust=bool(evidence.get("reference_was_robust", False)),
-            final_label="hiddenness_supported_under_tested_neighborhoods",
+            final_label="hidden_under_tested_neighborhoods",
             run_metadata=run_metadata,
             required_equilibria=tuple(evidence.get("required_equilibria", ())),
             required_radii=tuple(float(value) for value in evidence.get("required_radii", contract.hiddenness_radii)),

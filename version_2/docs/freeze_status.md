@@ -40,7 +40,7 @@ Allowed evidence levels:
 
 - Danca reproduction: partial where the paper does not publish an exact hidden initial condition.
 - Wu reproduction: paper-style reported-IC reproduction where `omega`, `k`, and `a0` are not explicitly reported.
-- `fractional_variational_abm_qr`: implemented and internally controlled, but not promoted as a published-validated reference method.
+- `fractional_variational_abm_qr`: internally controlled local ABM-QR Lyapunov method. ABM integration is validated separately, but this full Lyapunov contract is not yet promoted as a published-validated reference method.
 - Fischer cloned dynamics: implemented with documented reproduction discrepancies.
 
 ## Not frozen as universal claim
@@ -51,12 +51,6 @@ Allowed evidence levels:
 - Non-Caputo derivatives.
 - Arbitrary non-Lur'e systems.
 
-## Current vs legacy labels
-
-For maximum consistency, the library separates current and legacy labels:
-- **Current labels** (e.g., `hiddenness_supported_under_tested_neighborhoods`, `compatible_with_hiddenness_under_tested_radii`) are used exclusively in all new workflows.
-- **Legacy labels** (e.g., `hidden_verified`) are supported for backward compatibility during read/parse stages and are immediately normalized to their current equivalents.
-- The obsolete keys `chaos_verified` and `hidden_verified` are completely removed from all new validation outputs and summaries to prevent misleading interpretations.
 
 ## Published validation coverage matrix
 

@@ -10,13 +10,15 @@ from hidden_attractors.workflows.protocol import validate_global_report_coherenc
 
 def test_validation_state_enum():
     """Verify that AttractorValidationState enum contains all required states."""
-    assert AttractorValidationState.SEED_FOUND == "seed_found"
-    assert AttractorValidationState.CANDIDATE_ATTRACTOR == "candidate_attractor"
-    assert AttractorValidationState.CHAOTIC_CANDIDATE == "chaotic_candidate"
-    assert AttractorValidationState.HIDDEN_COMPATIBLE == "hidden_compatible"
-    assert AttractorValidationState.HIDDEN_VERIFIED == "hidden_verified"
+    assert AttractorValidationState.CANDIDATE == "candidate"
+    assert AttractorValidationState.HIDDEN_UNDER_TESTED_NEIGHBORHOODS == "hidden_under_tested_neighborhoods"
+    assert AttractorValidationState.COMPATIBLE_WITH_HIDDENNESS == "compatible_with_hiddenness"
+    assert AttractorValidationState.SELF_EXCITED == "self_excited"
+    assert AttractorValidationState.NONCHAOTIC == "nonchaotic"
+    assert AttractorValidationState.DIVERGED == "diverged"
+    assert AttractorValidationState.INCONCLUSIVE == "inconclusive"
     assert AttractorValidationState.REJECTED == "rejected"
-    assert AttractorValidationState.FAILED_NUMERICALLY == "failed_numerically"
+    assert AttractorValidationState.NOT_TESTED == "not_tested"
 
 
 def test_coherence_seed_found_not_hidden():
