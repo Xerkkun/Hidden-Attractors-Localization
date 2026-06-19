@@ -35,14 +35,14 @@ def _parse_claims_table() -> list[dict[str, str]]:
     headers = [c.strip() for c in table_lines[0].split("|")][1:-1]
     expected_headers = [
         "claim_id",
-        "afirmación",
-        "sistema",
-        "orden",
-        "estado",
-        "evidencia_json",
-        "evidencia_csv",
-        "figuras",
-        "comentario_metodologico"
+        "claim",
+        "system",
+        "order",
+        "status",
+        "json_evidence",
+        "csv_evidence",
+        "figures",
+        "methodological_comment"
     ]
     # Check that headers are present (order-insensitive or direct match)
     for eh in expected_headers:
@@ -69,11 +69,11 @@ def test_claims_file_and_columns_exist() -> None:
 @pytest.mark.hygiene
 def test_allowed_evidence_status_values() -> None:
     """Verifies that all states in the claims table belong to the allowed vocabulary."""
-    allowed_states = {"probado", "reproducido", "rechazado", "candidato", "no_certificado", "pendiente"}
+    allowed_states = {"validated", "reproduced", "rejected", "candidate", "partial", "pending"}
     rows = _parse_claims_table()
 
     for row in rows:
-        state = _clean_text(row["estado"])
+        state = _clean_text(row["status"])
         assert state in allowed_states, f"Claim {row['claim_id']} has invalid state '{state}'. Allowed: {allowed_states}"
 
 
@@ -94,9 +94,7 @@ def test_forbidden_claims_phrases() -> None:
 
     for phrase in forbidden_phrases:
         # Check case-insensitively, but allow mentions under "Claims Explicitly Not Made" or "Purpose"
-        # of why we do NOT make them. Wait! We need to verify that we do not make the claim as an assertion.
-        # However, to be safe, the test checks if the table or positive claims make them.
-        # Let's inspect the positive claims specifically (the claim table row fields) for these phrases.
+        # of why we do NOT make them.
         rows = _parse_claims_table()
         for row in rows:
             for field, val in row.items():
@@ -115,6 +113,7 @@ def test_mandatory_claims_exist() -> None:
     mandatory_ids = {
         "CLAIM-CHUA-INTEGER-001",
         "CLAIM-CHUA-NONSMOOTH-EX1-001",
+        "CLAIM-CHUA-FRAC-REJECTED-001",
         "CLAIM-CHUA-ARCTAN-FRAC-001",
         "CLAIM-METHOD-LURE-FRAC-001"
     }
@@ -125,32 +124,32 @@ def test_mandatory_claims_exist() -> None:
 
 @pytest.mark.hygiene
 def test_fractional_arctan_claim_status() -> None:
-    """Verifies that the fractional arctan claim is listed as pending or non-certified."""
+    """Verifies that the fractional arctan claim is listed as pending or partial."""
     rows = _parse_claims_table()
     for row in rows:
         claim_id = _clean_text(row["claim_id"])
         if claim_id == "CLAIM-CHUA-ARCTAN-FRAC-001":
-            state = _clean_text(row["estado"])
-            assert state in {"pendiente", "no_certificado"}, (
-                f"Chua arctan claim status must be 'pendiente' or 'no_certified', but got '{state}'"
+            state = _clean_text(row["status"])
+            assert state in {"pending", "partial"}, (
+                f"Chua arctan claim status must be 'pending' or 'partial', but got '{state}'"
             )
-            # Must not be listed as proven or reproduced
-            assert state not in {"probado", "reproducido", "hiddenness_supported_under_tested_neighborhoods"}
+            # Must not be listed as validated or reproduced
+            assert state not in {"validated", "reproduced"}
 
 
 @pytest.mark.hygiene
 def test_proven_reproduced_claims_traceability() -> None:
-    """Verifies that any claim marked as probado or reproducido has non-empty references."""
+    """Verifies that any claim marked as validated or reproduced has non-empty references."""
     rows = _parse_claims_table()
     empty_indicators = {"", "ninguna", "pendiente", "none", "n/a", "empty"}
 
     for row in rows:
-        state = _clean_text(row["estado"])
-        if state in {"probado", "reproducido"}:
+        state = _clean_text(row["status"])
+        if state in {"validated", "reproduced"}:
             claim_id = row["claim_id"]
             # Check if there's at least one non-empty reference in the evidence/comment columns
             has_ref = False
-            for col in ["evidencia_json", "evidencia_csv", "figuras", "comentario_metodologico"]:
+            for col in ["json_evidence", "csv_evidence", "figures", "methodological_comment"]:
                 val = _clean_text(row[col]).lower()
                 if val and val not in empty_indicators:
                     has_ref = True
@@ -161,24 +160,41 @@ def test_proven_reproduced_claims_traceability() -> None:
 
 
 @pytest.mark.hygiene
-def test_oculto_verificado_disclaimer() -> None:
-    """Verifies that if 'oculto verificado' appears in the text, it is accompanied by the numerical contract disclaimer."""
+def test_no_legacy_labels_and_only_english() -> None:
     content = CLAIMS_PATH.read_text(encoding="utf-8")
-    # Search for "oculto verificado" (case-insensitive)
-    matches = re.finditer("oculto verificado", content, re.IGNORECASE)
-    for match in matches:
-        # Find context around the match
-        start_idx = max(0, match.start() - 100)
-        end_idx = min(len(content), match.end() + 100)
-        context = content[start_idx:end_idx].lower()
-        
-        # Ensure it contains the contract disclaimer
-        has_disclaimer = (
-            "bajo contrato" in context or 
-            "contrato numérico" in context or 
-            "tested neighborhoods" in context or
-            "neighborhood contract" in context
-        )
-        assert has_disclaimer, (
-            f"Phrase 'oculto verificado' detected without appropriate numerical contract disclaimer in context:\n... {content[match.start()-50:match.end()+50]} ..."
-        )
+    
+    # 1. No legacy labels
+    legacy_labels = [
+        "hidden_verified",
+        "chaos_verified",
+        "hiddenness_supported_under_tested_neighborhoods",
+        "self_excited_contact_detected",
+        "hiddenness_inconclusive",
+        "candidate_rejected"
+    ]
+    for label in legacy_labels:
+        assert label not in content, f"THESIS_CLAIMS.md contains legacy label: '{label}'"
+
+    # 2. No Spanish keywords in table/headers
+    spanish_keywords = ["afirmación", "sistema", "orden", "estado", "evidencia_json", "evidencia_csv", "figuras", "comentario_metodologico"]
+    for word in spanish_keywords:
+        assert word not in content.lower(), f"THESIS_CLAIMS.md contains Spanish keyword: '{word}'"
+
+    # 3. Does not claim full reproduction of Danca 2017 or Wu 2023 in the claims table
+    rows = _parse_claims_table()
+    for row in rows:
+        claim_text = row["claim"].lower()
+        if "danca" in claim_text:
+            assert not any(phrase in claim_text for phrase in ["full reproduction", "fully reproduced", "fully validated", "complete reproduction"]), \
+                f"Claim {row['claim_id']} overclaims Danca reproduction: '{row['claim']}'"
+        if "wu" in claim_text or "arctan" in claim_text:
+            assert not any(phrase in claim_text for phrase in ["full reproduction", "fully reproduced", "fully validated", "complete reproduction", "verified arctan hidden"]), \
+                f"Claim {row['claim_id']} overclaims Wu/arctan reproduction: '{row['claim']}'"
+
+    # 4. Keeps Chua integer as the only strong reproduced reference case
+    for row in rows:
+        state = _clean_text(row["status"])
+        if state == "reproduced":
+            assert _clean_text(row["claim_id"]) == "CLAIM-CHUA-INTEGER-001", \
+                f"Only CLAIM-CHUA-INTEGER-001 should be marked as reproduced, but found {row['claim_id']}"
+
