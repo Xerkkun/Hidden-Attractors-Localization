@@ -1,4 +1,4 @@
-﻿# Authors and contributors
+# Authors, contributors, and provenance
 
 ## Principal author
 
@@ -14,4 +14,4 @@
 
 - Dr. Luis Gerardo de la Fraga - provided source code used as provenance for the EFORK implementation and the integer-order Lyapunov algorithm.
 
-These acknowledgements record intellectual, supervisory, and code-provenance contributions. Authorship order and formal publication author list should be confirmed before CPC submission.
+These acknowledgements record intellectual, supervisory, theoretical-review, and code-provenance contributions. Method-specific provenance and bibliographic attribution are documented in the relevant source files, validation records, and references.

@@ -8,10 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 ALLOWED_STATUSES = {
     "executable_regression",
-    "implemented_partial_reproduction",
+    "partial_reference_implementation",
     "reference_data_only",
-    "documented_missing_data",
-    "not_in_scope_for_current_release",
+    "diagnostic_comparison_with_discrepancies",
     "future_extension"
 }
 
@@ -82,9 +81,9 @@ def test_published_validation_coverage_is_complete_and_valid() -> None:
     assert kuz_21c["coverage_status"] != "executable_regression"
     assert kuz_21p["coverage_status"] != "executable_regression"
 
-    # Danca chua is implemented_partial_reproduction (since missing seed, LE, etc)
+    # Danca chua is partial_reference_implementation (since missing seed, LE, etc)
     danca_chua = coverage_map[("danca2017_fractional_hidden_attractors", "chua_fractional_saturation")]
-    assert danca_chua["coverage_status"] == "implemented_partial_reproduction"
+    assert danca_chua["coverage_status"] == "partial_reference_implementation"
     assert "exact hidden-attractor initial condition" in danca_chua["missing_data"]
 
     # Danca Lorenz and RF are reference_data_only and not release_blocking
@@ -95,12 +94,12 @@ def test_published_validation_coverage_is_complete_and_valid() -> None:
     assert not danca_lorenz["release_blocking"]
     assert not danca_rf["release_blocking"]
 
-    # Wu 2023 is implemented_partial_reproduction
+    # Wu 2023 is partial_reference_implementation
     wu_arctan = coverage_map[("wu2023_chua_fractional_arctan", "wu2023_chua_fractional_arctan")]
-    assert wu_arctan["coverage_status"] == "implemented_partial_reproduction"
+    assert wu_arctan["coverage_status"] == "partial_reference_implementation"
 
-    # Fischer Jerk, Financial, and Four Wing systems are implemented_partial_reproduction and have discrepancies reason
+    # Fischer Jerk, Financial, and Four Wing systems are diagnostic_comparison_with_discrepancies and have discrepancies reason
     for case_id in ["jerk_system", "financial_system", "four_wing_system"]:
         fischer_case = coverage_map[("fischer2020_cloned_dynamics", case_id)]
-        assert fischer_case["coverage_status"] == "implemented_partial_reproduction"
+        assert fischer_case["coverage_status"] == "diagnostic_comparison_with_discrepancies"
         assert "discrepancies" in fischer_case["reason"]

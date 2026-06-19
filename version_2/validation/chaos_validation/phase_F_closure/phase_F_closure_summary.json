@@ -264,7 +264,7 @@
     "Prefer sign agreement between two applicable methods.",
     "Keep F5 diagnostics compatible."
   ],
-  "generated_at_utc": "2026-06-18T23:02:59.813801+00:00",
+  "generated_at_utc": "2026-06-19T02:00:49.031674+00:00",
   "inputs": {
     "f4_summary": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/f4_internal_validation_summary.json",
     "f5_summary": "validation/chaos_validation/dynamics_diagnostics/f5_diagnostics_summary.json",

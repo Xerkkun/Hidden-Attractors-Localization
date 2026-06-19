@@ -64,22 +64,21 @@ contract. If one condition is missing, use
 `compatible_with_hiddenness_under_tested_radii`. Legacy `hidden_verified`
 inputs are normalized to the sampled-neighborhood label.
 
-## What the library can reproduce
+## Published reference coverage
 
-- The Kuznetsov et al. 2017 integer Chua reference branch: the scalar Lur'e
-  split, `omega`, `k`, amplitude, seed and the maintained reference trajectory.
-- The Danca 2017 fractional non-smooth Chua inputs: equilibria, local Matignon
-  classification, ABM-style controls where configured, and solver-comparison
-  envelopes. The documented Lorenz and Rabinovich-Fabrikant material is not
-  promoted here as a new quantitative reproduction claim.
-- The Wu et al. 2023 arctan Chua case: model algebra, equilibria, Jacobian,
-  reported initial conditions, scalar Lur'e representation, and isolated ADM
-  comparison path.
-- The Diethelm-Ford-Freed ABM and Ghoreishi-Ghaffari-Saad EFORK numerical
-  contracts exercised by their corresponding validation lanes.
-- Published Lyapunov comparison lanes when explicitly run. Smoke tests remain
-  separate from published quantitative validation, and recorded
-  discrepancies remain visible.
+The library separates complete reproductions from partial implementations, reference-data extraction, and diagnostic comparison lanes.
+
+- **Kuznetsov et al. 2017, integer Chua reference**: reproduced as an executable regression case. The available published data are sufficient to verify the scalar Lur'e split, frequency, gain, amplitude, seed construction, and maintained integer-order reference trajectory.
+
+- **Danca 2017, fractional non-smooth Chua case**: partially implemented and used as a reference case. The paper does not report enough numerical information to claim full trajectory reproduction of the published hidden attractor. Missing data include the exact describing-function frequency, gain, amplitude, seed coordinates, exact hidden-attractor initial condition, and quantitative Lyapunov data. The library therefore validates the model equations, equilibria, local Matignon classification, configured Caputo/ABM-style controls, and neighborhood-test infrastructure, but it does not claim full reproduction of the published attractor.
+
+- **Danca 2017, generalized Lorenz and Rabinovich-Fabrikant cases**: reference-data only. They are not promoted as built-in quantitative reproduction claims in the current release.
+
+- **Wu et al. 2023, fractional arctan Chua case**: partially implemented as a reference case. The library includes the model algebra, equilibria, Jacobian, reported initial conditions, scalar Lur'e representation, and isolated ADM comparison path where documented. The paper does not report all numerical values required for a complete independent reproduction of the describing-function seed and published attractor workflow, including `omega0`, `k`, `a0`, and exact seed coordinates. The current library workflow also uses a Caputo-compatible validation route that is not identical to the published ADM/DSP-oriented workflow. Therefore this case must not be described as fully reproduced.
+
+- **Diethelm-Ford-Freed ABM and Ghoreishi-Ghaffari-Saad EFORK methods**: used as numerical-method validation references. These lanes validate solver contracts and implementation behavior; they should not be described as reproduction of a hidden-attractor result.
+
+- **Published Lyapunov comparison lanes**: opt-in diagnostic comparisons. When discrepancies are recorded, they must remain visible and the result must be described as a comparison lane with documented discrepancies, not as full quantitative reproduction.
 
 ## What the library only treats as diagnostics
 
@@ -110,7 +109,7 @@ metadata. During the scope review, four conflicting records were reconciled:
 
 ## Literature comparison table
 
-| Article | System / object | Order | Method in article | What the library reproduces | What the library extends | Library modules / evidence |
+| Article | System / object | Order | Method in article | Implemented / documented coverage | What the library extends | Library modules / evidence |
 |---|---|---|---|---|---|---|
 | Madan & Chua 1986 | Base Chua circuit | Integer | Circuit model and chaotic dynamics | Theoretical support only: base model family | Fractional and auditable workflow variants | `models/chua.py` |
 | Caputo 1967 | Caputo derivative | Fractional | Dissipation model with fractional derivative | Theoretical support only | Explicit solver and memory contracts | `integrations/abm.py`, `solvers/history.py` |
@@ -118,12 +117,12 @@ metadata. During the scope review, four conflicting records were reconciled:
 | Leonov & Kuznetsov 2013 | Hidden/self-excited distinction | Integer dynamical systems | Basin-neighborhood definition | Theoretical support only | Finite sampled promotion contract | `verification/hiddenness.py`, `workflows/sphere_controls.py` |
 | Kuznetsov 2016 | Hidden-attractor review | General | Review and classification | Theoretical support only | Auditable labels and workflow boundaries | `verification/classifiers.py` |
 | Genesio, Tesi & Villoresi 1993 | Frequency-domain nonlinear-circuit analysis | Integer | Harmonic balance / describing function | Theoretical support only | Seed-generation API | `seed_generation/chua.py` |
-| Kuznetsov et al. 2017 | Saturation non-smooth Chua | `q=1` | Describing function and direct integration from a localized seed | Reproduces Lur'e split, `omega`, `k`, amplitude, seed branch and integer reference trajectory | Fractional frequency evaluation, Caputo candidate transport, algebraic validation and hiddenness protocol | `seed_generation/lure.py`, `workflows/integer_lure.py`, `validation/published_cases/kuznetsov2017_chua_integer.yaml` |
-| Diethelm, Ford & Freed 2002 | Caputo FDE integration | Fractional | ABM predictor-corrector | Reproduces maintained ABM numerical contract | Neighborhood controls and solver comparisons | `integrations/abm.py`, `workflows/danca_abm_sphere_controls.py` |
-| Danca 2017 | Fractional non-smooth Chua; documented generalized Lorenz and Rabinovich-Fabrikant context | Chua case `q=0.9998` | ABM Caputo and equilibrium-neighborhood analysis | Reproduces equilibrium data, Matignon classification and configured ABM-style controls | Automated neighborhood tests, robustness checks, ABM/EFORK comparison and validation envelopes | `integrations/abm.py`, `verification/stability.py`, `verification/hiddenness.py`, `workflows/danca_abm_sphere_controls.py`, `validation/published_cases/danca2017_chua_fractional_saturation.yaml` |
-| Wu et al. 2023 | Fractional Chua with arctan nonlinearity | Official case `q=0.99` | Initial-value localization algorithm, numerical simulation and DSP implementation | Reproduces arctan model, equilibria, Jacobian, reported initial conditions, Lur'e representation and isolated ADM comparison | Lur'e/Nyquist checks, fractional-frequency convention and software tests | `models/chua.py`, `systems/builtins.py`, `seed_generation/chua_arctan_wu2023.py`, `integrations/adm_wu2023.py`, `validation/published_cases/wu2023_chua_fractional_arctan.yaml` |
+| Kuznetsov et al. 2017 | Saturation non-smooth Chua | `q=1` | Describing function and direct integration from a localized seed | Executable regression: Lur'e split, omega, gain, amplitude, seed branch and integer reference trajectory. | Fractional frequency evaluation, Caputo candidate transport, algebraic validation and hiddenness protocol | `seed_generation/lure.py`, `workflows/integer_lure.py`, `validation/published_cases/kuznetsov2017_chua_integer.yaml` |
+| Diethelm, Ford & Freed 2002 | Caputo FDE integration | Fractional | ABM predictor-corrector | Validation reference: validates maintained ABM numerical contract. | Neighborhood controls and solver comparisons | `integrations/abm.py`, `workflows/danca_abm_sphere_controls.py` |
+| Danca 2017 | Fractional non-smooth Chua; documented generalized Lorenz and Rabinovich-Fabrikant context | Chua case `q=0.9998` | ABM Caputo and equilibrium-neighborhood analysis | Partial reference implementation: equations, parameters, equilibria, Matignon classification, configured ABM-style controls and neighborhood-test infrastructure. Full published hidden-attractor trajectory reproduction is not claimed because key numerical data are not reported. | Automated neighborhood tests, robustness checks, ABM/EFORK comparison and validation envelopes | `integrations/abm.py`, `verification/stability.py`, `verification/hiddenness.py`, `workflows/danca_abm_sphere_controls.py`, `validation/published_cases/danca2017_chua_fractional_saturation.yaml` |
+| Wu et al. 2023 | Fractional Chua with arctan nonlinearity | Official case `q=0.99` | Initial-value localization algorithm, numerical simulation and DSP implementation | Partial reference implementation: arctan model algebra, equilibria, Jacobian, reported initial conditions, Lur'e representation and isolated ADM comparison path. Full published attractor workflow reproduction is not claimed because required seed and sweep data are incomplete. | Lur'e/Nyquist checks, fractional-frequency convention and software tests | `models/chua.py`, `systems/builtins.py`, `seed_generation/chua_arctan_wu2023.py`, `integrations/adm_wu2023.py`, `validation/published_cases/wu2023_chua_fractional_arctan.yaml` |
 | Machado 2015 | Backlash / fractional describing function | Fractional describing-function parameter, not Caputo state order | Fractional describing function | Theoretical support only: no direct hidden-attractor claim | Auxiliary seed families only; not a hiddenness proof | `seed_generation/lure.py`, `seed_generation/chua.py`, `tests/test_classical_route_scope.py` |
-| Ghoreishi, Ghaffari & Saad 2023 | Fractional Runge-Kutta schemes | Fractional | EFORK schemes | Reproduces manufactured-solution EFORK checks | Chua solver comparison lane | `solvers/efork_published.py`, `docs/efork3_validation.md` |
+| Ghoreishi, Ghaffari & Saad 2023 | Fractional Runge-Kutta schemes | Fractional | EFORK schemes | Validation reference: validates manufactured-solution EFORK checks. | Chua solver comparison lane | `solvers/efork_published.py`, `docs/efork3_validation.md` |
 | Guan & Xie 2025 | Hidden-attractor localization review | General | Review of localization methods | Theoretical support only | Method inventory and reference comparisons | `workflows/integer_lure.py`, `docs/integer_chua_reference.md` |
 | Petras 2008 | Fractional Chua family | Fractional | Fractional Chua model note | Theoretical support only | Family context for non-smooth Chua algebra | `models/chua.py` |
 | Sene 2021 | Caputo-Liouville Chua family | Fractional | Fractional Chua analysis | Theoretical support only | Documented model-family boundary | `models/chua.py` |
@@ -137,5 +136,5 @@ metadata. During the scope review, four conflicting records were reconciled:
 | Benettin et al. 1980 | Lyapunov characteristic exponents | Integer | Variational propagation and orthonormalization | Diagnostic only: integer-reference implementation | Frozen `q=1` QR lane | `analysis/lyapunov.py`, `docs/lyapunov_methods.md` |
 | Skokos 2010 | Lyapunov exponent computation | Integer | Computational review | Theoretical support only | Diagnostic documentation | `analysis/lyapunov.py` |
 | Christiansen & Rugh 1997 | Lyapunov spectra | Integer | Continuous Gram-Schmidt orthonormalization | Theoretical support only | Diagnostic comparison context | `analysis/lyapunov.py` |
-| Danca & Kuznetsov 2018 | Fractional Lyapunov exponents | Caputo fractional | Extended original-variational system with memory and reorthonormalization | Reproduces an opt-in published comparison lane with a recorded RF discrepancy | Keeps the local full-history QR contract separate | `analysis/lyapunov_fractional.py`, `validation/chaos_validation/lyapunov_methods/fractional_variational_dk2018_block_restart_abm_gs_published/` |
-| Fischer, Zourmba & Mohamadou 2020 | Cloned-dynamics Lyapunov spectra | Fractional | Cloned dynamics and Gram-Schmidt | Diagnostic only: published comparison rows retain documented discrepancies | Separate GS and experimental QR comparison lanes | `analysis/lyapunov_cloned.py`, `validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/` |
+| Danca & Kuznetsov 2018 | Fractional Lyapunov exponents | Caputo fractional | Extended original-variational system with memory and reorthonormalization | Diagnostic comparison lane with documented discrepancies. | Keeps the local full-history QR contract separate | `analysis/lyapunov_fractional.py`, `validation/chaos_validation/lyapunov_methods/fractional_variational_dk2018_block_restart_abm_gs_published/` |
+| Fischer, Zourmba & Mohamadou 2020 | Cloned-dynamics Lyapunov spectra | Fractional | Cloned dynamics and Gram-Schmidt | Diagnostic comparison lane with documented discrepancies. | Separate GS and experimental QR comparison lanes | `analysis/lyapunov_cloned.py`, `validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/` |

@@ -1,7 +1,7 @@
 {
   "stage": "F6_integrated_chaos_validator",
   "status": "completed_finite_time_chaos_evidence_integration",
-  "generated_at_utc": "2026-06-18T21:30:35.486526+00:00",
+  "generated_at_utc": "2026-06-19T01:59:33.704710+00:00",
   "inputs": {
     "f5_summary": "validation/chaos_validation/dynamics_diagnostics/f5_diagnostics_summary.json",
     "boundedness_summary": "validation/chaos_validation/dynamics_diagnostics/boundedness/boundedness_diagnostics_summary.json",
@@ -41,7 +41,7 @@
         "f5_combined_status": "mixed_diagnostics_inconclusive",
         "boundedness_status": "bounded_candidate",
         "zero_one_status": "zero_one_regular_candidate",
-        "zero_one_K_global": -0.017314593890187434,
+        "zero_one_K_global": -0.017314593890187427,
         "psd_fft_status": "spectral_inconclusive",
         "peak_dominance_max": 0.5015338877259724,
         "poincare_status": "cloud_like",
@@ -202,7 +202,7 @@
         "f5_combined_status": "mixed_diagnostics_inconclusive",
         "boundedness_status": "bounded_candidate",
         "zero_one_status": "zero_one_regular_candidate",
-        "zero_one_K_global": 0.021444812462180114,
+        "zero_one_K_global": 0.02144481246218011,
         "psd_fft_status": "spectral_inconclusive",
         "peak_dominance_max": 0.5821832574043466,
         "poincare_status": "cloud_like",
@@ -341,7 +341,7 @@
         "zero_one_status": "zero_one_regular_candidate",
         "zero_one_K_global": -0.0060179902411451195,
         "psd_fft_status": "dominant_periodic_peak",
-        "peak_dominance_max": 0.6637231169000184,
+        "peak_dominance_max": 0.6637231169000183,
         "poincare_status": "cloud_like",
         "poincare_crossing_count": 54,
         "lyapunov_methods": [

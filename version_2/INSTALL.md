@@ -90,13 +90,20 @@ macOS uses the Clang compiler included in Xcode Command Line Tools.
 
 ## Step 3: Verification
 
-Once the package and toolchains are configured, verify the entire installation by running the automated unit test suite from the `version_2/` root directory:
+Once the package is installed, verify the command-line interface:
 
 ```bash
-pytest
+hidden-attractors --help
 ```
 
-If you see a success summary indicating that all tests passed successfully, your environment is correctly configured! (At the current thesis-freeze audit, the suite reports 797 passed tests and 34 skipped tests; future runs should be checked against the official freeze audit artifacts under `validation/freeze_audit/`).
+For development or validation work, run the test suite from `version_2/`:
+
+```bash
+cd version_2
+python -m pytest -q
+```
+
+Archived validation records are stored under `validation/freeze_audit/`.
 
 
 ---

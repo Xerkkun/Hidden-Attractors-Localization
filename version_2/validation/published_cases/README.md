@@ -1,6 +1,8 @@
-# Reproducción de Casos Publicados (`published_case_reproduction`)
+# Casos de Referencia Publicados (`published_case_coverage`)
 
-Este directorio contiene las configuraciones y herramientas para validar y reproducir tres sistemas caóticos clásicos de la literatura científica:
+Este directorio contiene las configuraciones y herramientas para validar y documentar la cobertura de tres sistemas caóticos clásicos de la literatura científica:
+
+Only the integer Chua reference case is treated as a complete executable reproduction in the current repository. Danca 2017 and Wu 2023 are partial reference implementations because the articles do not provide all numerical values required for a full independent reproduction of the published attractor workflows.
 
 ---
 
@@ -14,11 +16,11 @@ Este directorio contiene las configuraciones y herramientas para validar y repro
 
 ---
 
-## 2. Diferencia entre Reproducción Publicada y Extensión Fraccionaria
+## 2. Diferencia entre Cobertura de Referencia Publicada y Extensión Fraccionaria
 
 Existen dos maneras en que la función de transferencia lineal interviene en el balance armónico (describing function):
 
-### A. Modo Reproducción Publicada (`published_integer_laplace`)
+### A. Modo de Referencia Publicada (`published_integer_laplace`)
 Es el método usado por los artículos originales. Consiste en emplear la transferencia clásica de Laplace ($q=1$) para localizar $\omega_0, k, a_0$ y el estado de la semilla inicial, incluso cuando la dinámica temporal final sea fraccionaria:
 $$W_{pub}(j\omega) = r^T (j\omega I - P)^{-1} b$$
 En este modo:
@@ -43,24 +45,20 @@ Para Danca 2017 ($q=0.9998$) y Wu 2023 ($q=0.99$):
 - El orden $q$ interviene en la integración temporal declarada por cada caso:
 $${}^C D_t^q X = P X + b \psi(r^T X)$$
 
-Contratos dinamicos por caso:
+Contratos dinámicos por caso:
 
-| Caso | Integrador dinamico publicado | Politica de memoria |
+| Caso | Integrador dinámico publicado | Política de memoria |
 | :--- | :--- | :--- |
 | `danca2017_chua_fractional_saturation` | `ABM` / `python_abm_full_history` | `memory_mode=full`, `memory_policy=full_history`, `caputo_history_accumulated=true` |
 | `wu2023_chua_fractional_arctan` | `ADM_WU2023` / `adm_local_reproduction` | `memory_mode=none`, `memory_policy=none_local_adm`, `caputo_history_accumulated=false` |
 
-La diferencia es intencional. Danca se reproduce como Caputo ABM con memoria
-completa. Wu se reproduce con el metodo ADM local descrito para ese articulo;
-esa reproduccion no debe presentarse como ABM ni como EFORK con memoria
-Caputo completa. Los experimentos posteriores de continuacion numerica si
-deben usar ABM con memoria completa y `h<=0.01`.
+La diferencia es intencional. Danca se implementa como Caputo ABM con memoria completa. Wu se implementa con el método ADM local descrito para ese artículo; esta comparación no debe presentarse como ABM ni como EFORK con memoria Caputo completa. Los experimentos posteriores de continuación numérica si deben usar ABM con memoria completa y `h<=0.01`.
 
 ---
 
 ## 4. Lista de Valores Faltantes en Artículos (`missing_values`)
 
-Si un artículo no reporta un dato, este se registra como `null` en la configuración y se declara como faltante, resultando en una reproducción parcial honesta:
+Si un artículo no reporta un dato, este se registra como `null` en la configuración y se declara como faltante, resultando en una cobertura de referencia parcial:
 
 * **Danca 2017**:
   - `omega0` (no reportado en el texto)
@@ -92,14 +90,14 @@ Por defecto, la validación se enfoca en la consistencia algebraica de transfere
   ```
 
 > [!NOTE]
-> - `run_dynamics=True` solo verifica ejecución numérica básica sin divergencia.
-> - El estado `paper_trajectory_integrated` no significa que el atractor publicado haya sido reproducido geométricamente.
+> - `run_dynamics=True` solo verifica ejecución numérica básica (a paper-style run) sin divergencia.
+> - A successful paper-style integration only confirms that the configured model can be integrated under the selected numerical contract. It is not a full geometric or quantitative reproduction of the published attractor.
 > - Esta fase no asigna `paper_fully_reproduced` bajo ninguna circunstancia.
-> - Para declarar reproducción dinámica completa se requerirán métricas posteriores tales como: rangos del atractor, proyecciones, exponentes de Lyapunov, PSD/FFT, comparación formal de cuencas o el protocolo de ocultedad.
+> - Para declarar una reproducción dinámica completa se requerirían datos exactos y métricas adicionales tales como: rangos del atractor, proyecciones, exponentes de Lyapunov, PSD/FFT, comparación formal de cuencas o el protocolo de ocultedad.
 
 ---
 
 ## 6. Advertencia Metodológica de Ocultedad
 
 > [!WARNING]
-> Esta fase de reproducción **no certifica** la propiedad de atractor oculto (`hidden_verified` no aparece en los outputs). Para clasificar un atractor como verificado oculto se requiere evaluar vecindades de tamaño $\delta$ alrededor de todos los equilibrios e investigar las cuencas de atracción bajo el protocolo dinámico robusto.
+> Esta fase de validación de referencia **no certifica** la propiedad de atractor oculto (`hidden_verified` no aparece en los outputs). Para clasificar un atractor como verificado oculto se requiere evaluar vecindades de tamaño $\delta$ alrededor de todos los equilibrios e investigar las cuencas de atracción bajo el protocolo dinámico robusto.
