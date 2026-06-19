@@ -1,8 +1,21 @@
-﻿# CPC editorial folder
+# CPC editorial folder
 
 This folder contains editorial preparation material for a future Computer Physics Communications submission. It is not new scientific evidence and does not promote additional claims beyond the validation artifacts in `version_2/validation/`.
 
 The active software distribution remains `version_2/`.
+
+## Files
+
+- `cpc_manuscript.tex` is the working CPC manuscript draft.
+- `cpc_program_summary.tex` contains the CPC Program Summary.
+- `references.bib` contains preliminary bibliographic metadata for drafting.
+- `els-cas-templates/` contains the official Elsevier CAS template bundle for final formatting.
+- The current draft may use `elsarticle` for convenience until final migration to the official template.
+- Final manuscript writing remains pending.
+
+## Template and bibliography status
+
+Bibliographic metadata must be finalized before submission. TODO entries in `references.bib` are acceptable during repository preparation but not in the final manuscript.
 
 ## Contribution notes
 

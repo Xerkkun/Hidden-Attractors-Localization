@@ -144,12 +144,12 @@
     }
   },
   "extra_figures": {
-    "fft_x_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11a_fft_x.pdf",
-    "fft_y_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11b_fft_y.pdf",
-    "fft_z_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11c_fft_z.pdf",
-    "psd_x_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11d_psd_x.pdf",
-    "psd_y_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11e_psd_y.pdf",
-    "psd_z_pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig11f_psd_z.pdf"
+    "fft_x_pdf": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/final_pdf_figs/fig11a_fft_x.pdf",
+    "fft_y_pdf": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/final_pdf_figs/fig11b_fft_y.pdf",
+    "fft_z_pdf": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/final_pdf_figs/fig11c_fft_z.pdf",
+    "psd_x_pdf": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/final_pdf_figs/fig11d_psd_x.pdf",
+    "psd_y_pdf": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/final_pdf_figs/fig11e_psd_y.pdf",
+    "psd_z_pdf": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/final_pdf_figs/fig11f_psd_z.pdf"
   },
   "notes": [
     "The direct FFT is the primary spectral artifact and is zoomed around the dominant frequencies.",

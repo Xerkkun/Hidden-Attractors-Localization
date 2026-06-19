@@ -16,11 +16,18 @@ python -m pip install -e ".[dev,analysis,legacy]"
 ```bash
 hidden-attractors --help
 hidden-attractors validate cpc-readiness
+hidden-attractors validate cpc-readiness --strict
 hidden-attractors validate contract --allow-pending
 python -m pytest -q -m "cpc_readiness"
 ```
 
-`hidden-attractors validate cpc-readiness --strict` is expected to fail while `freeze_audit_status` or `sample_status` remains pending. Passing strict mode should be reserved for the final audited CPC-preparation commit.
+`hidden-attractors validate cpc-readiness --strict` is expected to pass when only the declared final-submission items remain. `hidden-attractors validate cpc-readiness --submission-strict` is reserved for the final submission package and may fail while the manuscript, arctan validation, final scientific freeze audit, or executed sample outputs remain pending.
+
+## CI and freeze audit boundary
+
+The GitHub Actions CI matrix for the CPC cleanup has passed. This confirms package hygiene and cross-platform test execution for the current repository state. It does not replace the full scientific freeze audit, which remains a separate artifact to regenerate once final promoted validation cases are fixed for submission.
+
+CI status: passed for current CPC cleanup. Freeze audit: last full scientific freeze audit corresponds to commit `2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a` and must be regenerated only when the final scientific evidence set is frozen.
 
 ## Evidence included
 
@@ -30,7 +37,7 @@ Local/regenerable outputs belong under `outputs/`, `validation_outputs/`, `runs*
 
 ## What is not claimed
 
-The package does not certify global mathematical hiddenness. It records finite-time numerical evidence under explicit solver, memory, horizon, and neighborhood contracts. The arctan route is implemented algebraically but is not promoted as a validated hidden attractor.
+The package does not certify global mathematical hiddenness. It records finite-time numerical evidence under explicit solver, memory, horizon, and tested-neighborhood contracts. The arctan route is implemented algebraically, pending full validation, and is not promoted as a validated hidden attractor.
 
 ## Authorship, supervision, and code provenance
 

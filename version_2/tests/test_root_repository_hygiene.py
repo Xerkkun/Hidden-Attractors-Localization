@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import fnmatch
 import subprocess
@@ -73,6 +73,26 @@ def test_no_tracked_files_in_local_ignored_directories() -> None:
                 violations.append(path)
                 break
     assert not violations, "Tracked local/regenerable files:\n" + "\n".join(violations)
+
+
+@pytest.mark.hygiene
+@pytest.mark.cpc_readiness
+def test_validation_outputs_has_no_tracked_files() -> None:
+    assert git_ls_files("version_2/validation_outputs") == []
+
+
+@pytest.mark.hygiene
+@pytest.mark.cpc_readiness
+def test_gitignore_keeps_local_outputs_ignored_but_validation_promoted() -> None:
+    text = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8")
+    for line in [
+        "/version_2/validation_outputs/",
+        "/version_2/outputs/",
+        "/version_2/runs*/",
+        "/version_2/figures/",
+    ]:
+        assert line in text
+    assert "/version_2/validation/" not in text
 
 
 @pytest.mark.hygiene

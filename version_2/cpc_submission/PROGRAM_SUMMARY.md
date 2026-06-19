@@ -20,6 +20,6 @@ Nature of problem: theoretical-numerical search, localization, reproduction, aud
 
 Solution method: describing-function seeding, BDF-style algebraic continuation, Caputo ABM/EFORK integration for fractional order, integer-order integration paths, finite-time chaos diagnostics, and equilibrium-neighborhood tests.
 
-Restrictions: scalar Lur'e systems and commensurate fractional order in the fractional workflow. Numerical evidence does not prove global mathematical hiddenness. The arctan route is implemented algebraically but not promoted as a validated hidden attractor.
+Restrictions: scalar Lur'e systems and commensurate fractional order in the fractional workflow. Numerical evidence does not prove global mathematical hiddenness. The arctan route is implemented algebraically, pending full validation, and not promoted as a validated hidden attractor.
 
 Running time: seconds for metadata and smoke checks; minutes or hours for long validation or fractional-memory sweeps, depending on horizon, step size, memory policy, backend, and sampling plan.

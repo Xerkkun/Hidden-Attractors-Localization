@@ -11,10 +11,10 @@
     "h": 0.01
   },
   "figures": {
-    "lyapunov": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\validation\\outputs\\candidate_chaos_hiddenness\\danca2017_chua_fractional_saturation_candidate\\report\\lyapunov_results.csv",
+    "lyapunov": "version_2/validation/outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/lyapunov_results.csv",
     "hiddenness": {
       "profile": "report",
-      "source": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\validation\\outputs\\candidate_chaos_hiddenness\\danca2017_chua_fractional_saturation_candidate\\report\\ball_sampling_results.csv",
+      "source": "version_2/validation/outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/ball_sampling_results.csv",
       "figures": "rendered_from_existing_outputs"
     }
   }

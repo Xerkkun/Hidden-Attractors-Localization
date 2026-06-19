@@ -1,4 +1,4 @@
-[chua-integer] Output root: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced
+[chua-integer] Output root: legacy_provenance/version_1_legacy_root/chua_integer_runs/balanced
 [chua-integer] Nyquist/DF check: omega0=2.03918694, a0=5.856145086, |W(iw0)+1/N(a0)|=9.930e-16.
 [chua-integer] Saved fig01_nyquist_df.pdf and fig01_nyquist_df.png
 [chua-integer] Saved fig01b_nyquist_zoom_x.pdf and fig01b_nyquist_zoom_x.png
@@ -32,11 +32,11 @@
 [chua-integer] Saved fig11d_psd_x.pdf and fig11d_psd_x.png
 [chua-integer] Saved fig11e_psd_y.pdf and fig11e_psd_y.png
 [chua-integer] Saved fig11f_psd_z.pdf and fig11f_psd_z.png
-[chua-integer] Lyapunov C: compiling gcc -O3 C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tools\legacy\chua_frac_lyapunov_efork_benettin.c -lm -o C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\native\chua_integer_lyapunov_benettin.exe
+[chua-integer] Lyapunov C: compiling gcc -O3 version_2/tools/legacy/chua_frac_lyapunov_efork_benettin.c -lm -o legacy_provenance/version_1_legacy_root/chua_integer_runs/balanced/native/chua_integer_lyapunov_benettin.exe
 [chua-integer] Lyapunov C: running q=1.0, h=0.01, burn=60.0, blocks=300x0.5.
 [chua-integer] Saved fig13_lyapunov_convergence.pdf and fig13_lyapunov_convergence.png
 [chua-integer] Hidden verification C: TREF=320.0, TTEST=320.0, samples=168.
-Compilando C: gcc -O3 -fopenmp -o C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\chua_piecewise\native\chua_hidden_backend_integer.exe C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tools\legacy\chua_hidden_backend.c -lm
+Compilando C: gcc -O3 -fopenmp -o legacy_provenance/version_1_legacy_root/chua_integer_runs/balanced/chua_piecewise/native/chua_hidden_backend_integer.exe version_2/tools/legacy/chua_hidden_backend.c -lm
 Ejecutando backend numerico en C...
 Contrato de paralelismo: python_workers=1; omp_threads=2; backend_openmp_active=True; seed_strategy=independent_equilibrium_samples; stage_kind=embarrassingly_parallel.
 OMP_NUM_THREADS=2
@@ -80,16 +80,16 @@ Resumen final:
 No se detectaron trayectorias que cayeran en el atractor objetivo desde las vecindades muestreadas de los equilibrios.
 
 Archivos numéricos generados:
-- C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\hidden_verify\hidden_target_check_integer.csv
-- C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\hidden_verify\reference_section_integer.csv
-- C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\hidden_verify\summary_by_radius_integer.csv
+- legacy_provenance/version_1_legacy_root/chua_integer_runs/balanced/hidden_verify/hidden_target_check_integer.csv
+- legacy_provenance/version_1_legacy_root/chua_integer_runs/balanced/hidden_verify/reference_section_integer.csv
+- legacy_provenance/version_1_legacy_root/chua_integer_runs/balanced/hidden_verify/summary_by_radius_integer.csv
 [chua-integer] Saved fig04_reference_section.pdf and fig04_reference_section.png
 [chua-integer] Saved fig05_probe_summary_E0.pdf and fig05_probe_summary_E0.png
 [chua-integer] Saved fig05_probe_summary_E.pdf and fig05_probe_summary_E.png
 [chua-integer] Saved fig05_probe_summary_E.pdf and fig05_probe_summary_E.png
 [chua-integer] Saved fig05b_hiddenness_overview.pdf and fig05b_hiddenness_overview.png
 [chua-integer] Saved fig05c_hiddenness_zoom.pdf and fig05c_hiddenness_zoom.png
-[chua-integer] Compilando C: gcc -O3 -shared -fopenmp -o C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\native\chua_basin_integer.dll C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tools\legacy\chua_basin_lib.c -lm
+[chua-integer] Compilando C: gcc -O3 -shared -fopenmp -o legacy_provenance/version_1_legacy_root/chua_integer_runs/balanced/native/chua_basin_integer.dll version_2/tools/legacy/chua_basin_lib.c -lm
 [chua-integer] Basin C: grid=180x180, z0=0.0, q=1.0, TMAX=120.0; python_workers=1; omp_threads=8; backend_openmp_active=True; seed_strategy=independent_grid_points; stage_kind=embarrassingly_parallel.
 [chua-integer] Saved fig06a_basin_overlay_z0.pdf and fig06a_basin_overlay_z0.png
 [chua-integer] Basin C: grid=180x180, z0=-7.509075854668217, q=1.0, TMAX=120.0; python_workers=1; omp_threads=8; backend_openmp_active=True; seed_strategy=independent_grid_points; stage_kind=embarrassingly_parallel.
@@ -217,4 +217,4 @@ Archivos numéricos generados:
 [chua-integer] Saved fig09_bifurcation_beta.pdf and fig09_bifurcation_beta.png
 [chua-integer] Bifurcation: skipped divergent/failed integrations (alpha=0, beta=30).
 [chua-integer] Pipeline complete.
-Resumen: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_1\legacy_root\chua_integer_runs\balanced\chua_integer_pipeline_summary.json
+Resumen: legacy_provenance/version_1_legacy_root/chua_integer_runs/balanced/chua_integer_pipeline_summary.json

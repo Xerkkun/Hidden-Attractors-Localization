@@ -1,4 +1,4 @@
-﻿# Operating system and editor files
+# Operating system and editor files
 .DS_Store
 Thumbs.db
 *.swp
@@ -84,6 +84,10 @@ _archived_figure_scripts/
 # Root LaTeX reports (local only)
 /DF y NC Chua entero y fraccionario/
 /DF y NC Chua entero y fraccionario copy/
+/paper/
+
+# Local environment notes
+/LOCAL_ENV_NOTES.md
 
 # version_2 local/regenerable directories
 /version_2/validation_outputs/

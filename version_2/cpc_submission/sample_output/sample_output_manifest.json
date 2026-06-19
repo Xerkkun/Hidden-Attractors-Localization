@@ -1,6 +1,7 @@
 {
   "sample_status": "template_only_pending_execution",
   "files": [
+    "expected_cli_help_summary.json",
     "expected_cpc_readiness_summary.json",
     "expected_validation_contract_status.json"
   ],

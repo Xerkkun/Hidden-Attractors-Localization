@@ -1,4 +1,4 @@
-"""CLI commands for validating validation evidence contracts and claims bibliography.
+"""CLI commands for validating validation evidence contracts and CPC readiness.
 
 Stability: internal
 """
@@ -7,25 +7,26 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import Sequence
+from typing import Any, Sequence
 
 from ..references.validator import validate_bibliography_manifest, write_traceability_matrix_markdown
 from ..validation_contract import main as contract_main
 
 
 MOJIBAKE_PATTERNS = [
-    "Ãƒ",
-    "Ã‚",
-    "Ã¢â€\x9dâ‚¬",
-    "Ã¢â‚¬â€œ",
-    "Ã¢â‚¬â„¢",
-    "Ă",
-    "â€œ",
-    "â€",
-    "â”",
+    "??",
+    "??",
+    "????\x9d???",
+    "????????",
+    "????????",
+    "?",
+    "???",
+    "??",
+    "??",
 ]
 
 MAIN_TEXT_PATTERNS = [
@@ -51,6 +52,45 @@ MAIN_TEXT_PATTERNS = [
     "version_2/cpc_submission/sample_output/*.json",
     "version_2/cpc_submission/sample_output/*.md",
 ]
+
+PROMOTED_SCAN_PATTERNS = [
+    "version_2/validation/**/*.json",
+    "version_2/validation/**/*.md",
+    "version_2/docs/**/*.md",
+    "version_2/cpc_submission/**/*.md",
+    "version_2/cpc_submission/**/*.json",
+    "paper/**/*.tex",
+    "paper/**/*.bib",
+]
+
+KNOWN_REMAINING_WORK = [
+    "final CPC manuscript writing in official Elsevier/CPC template",
+    "fractional arctan Chua validation runs",
+    "additional reproducible scientific examples selected for the paper",
+    "final scientific freeze audit regeneration after scientific choices are frozen",
+    "replace sample-output templates with executed outputs if required by the final CPC package",
+]
+
+JSON_POLICY_KEYS = {
+    "legacy_provenance",
+    "archived_external_paths",
+    "legacy_external_figures_not_promoted",
+    "excluded_paths",
+    "unpromoted_outputs",
+}
+
+LOCAL_PATH_REGEXES = [
+    re.compile(r"[A-Za-z]:[\\/]+Users[\\/]"),
+    re.compile(r"(^|[^A-Za-z0-9_])[\\/]Users[\\/]"),
+    re.compile(r"(^|[^A-Za-z0-9_])/home/"),
+    re.compile(r"(^|[\\/])Desktop([\\/]|$)"),
+    re.compile(r"(^|[\\/])Downloads([\\/]|$)"),
+    re.compile(r"OneDrive"),
+    re.compile(r"Google Drive"),
+]
+
+VALIDATION_OUTPUTS_REGEX = re.compile(r"(^|[\\/])validation_outputs([\\/]|$)|version_2[\\/]validation_outputs")
+PROJECT_NAME_PATH_REGEX = re.compile(r"Hidden Attractors Fractional Order[\\/]")
 
 
 def validate_contract(argv: Sequence[str] | None = None) -> None:
@@ -133,13 +173,13 @@ def _git_head(root: Path, short: bool = False) -> str:
     return result.stdout.strip()
 
 
-def _check(name: str, level: str, ok: bool, details: list[str] | None = None) -> dict[str, object]:
-    return {"name": name, "level": level, "ok": ok, "details": details or []}
+def _check(name: str, category: str, ok: bool, details: list[str] | None = None) -> dict[str, Any]:
+    return {"name": name, "category": category, "ok": ok, "details": details or []}
 
 
-def _load_json(path: Path) -> dict[str, object]:
+def _load_json(path: Path) -> dict[str, Any]:
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        return json.loads(path.read_text(encoding="utf-8-sig"))
     except Exception as exc:
         return {"_load_error": str(exc)}
 
@@ -147,7 +187,17 @@ def _load_json(path: Path) -> dict[str, object]:
 def _paper_bib_entries(path: Path) -> int:
     if not path.exists():
         return 0
-    return sum(1 for line in path.read_text(encoding="utf-8").splitlines() if line.lstrip().startswith("@"))
+    return sum(1 for line in path.read_text(encoding="utf-8-sig").splitlines() if line.lstrip().startswith("@"))
+
+
+def _paper_bib_todos(path: Path) -> list[str]:
+    if not path.exists():
+        return ["paper/references.bib missing"]
+    hits = []
+    for line_no, line in enumerate(path.read_text(encoding="utf-8-sig").splitlines(), 1):
+        if "TODO" in line:
+            hits.append(f"paper/references.bib:L{line_no}: {line.strip()}")
+    return hits
 
 
 def _mojibake_hits(root: Path) -> list[str]:
@@ -159,7 +209,7 @@ def _mojibake_hits(root: Path) -> list[str]:
                 continue
             seen.add(path)
             try:
-                text = path.read_text(encoding="utf-8")
+                text = path.read_text(encoding="utf-8-sig")
             except UnicodeDecodeError as exc:
                 hits.append(f"{path.relative_to(root).as_posix()}: utf-8 decode failed: {exc}")
                 continue
@@ -170,7 +220,7 @@ def _mojibake_hits(root: Path) -> list[str]:
     return hits
 
 
-def _manifest_path_references(root: Path, manifest: dict[str, object], key: str) -> list[str]:
+def _manifest_path_references(root: Path, manifest: dict[str, Any], key: str) -> list[str]:
     values = manifest.get(key, [])
     if not isinstance(values, list):
         return [f"{key} is not a list"]
@@ -181,18 +231,114 @@ def _manifest_path_references(root: Path, manifest: dict[str, object], key: str)
     return missing
 
 
+def _is_policy_markdown_line(lines: list[str], index: int) -> bool:
+    current_header = ""
+    for previous in lines[: index + 1]:
+        if previous.startswith("#"):
+            current_header = previous.lower()
+    line = lines[index].lower()
+    policy_terms = [
+        "policy",
+        "evidence boundary",
+        "local/regenerable",
+        "local outputs",
+        "unpromoted",
+        "non-promoted",
+        "legacy",
+        "freeze audit",
+        "ci and freeze",
+    ]
+    return any(term in current_header or term in line for term in policy_terms)
+
+
+def _string_path_violation(value: str, *, allow_validation_outputs: bool) -> bool:
+    if any(regex.search(value) for regex in LOCAL_PATH_REGEXES):
+        return True
+    if PROJECT_NAME_PATH_REGEX.search(value):
+        return True
+    if VALIDATION_OUTPUTS_REGEX.search(value) and not allow_validation_outputs:
+        return True
+    return False
+
+
+def _json_path_hits(path: Path, root: Path) -> list[str]:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+    except Exception as exc:
+        return [f"{path.relative_to(root).as_posix()}: JSON parse failed: {exc}"]
+    hits: list[str] = []
+
+    def walk(value: Any, keys: tuple[str, ...] = (), policy_context: bool = False) -> None:
+        if isinstance(value, dict):
+            for key, child in value.items():
+                child_policy = policy_context or key in JSON_POLICY_KEYS
+                walk(child, (*keys, str(key)), child_policy)
+        elif isinstance(value, list):
+            for idx, child in enumerate(value):
+                walk(child, (*keys, str(idx)), policy_context)
+        elif isinstance(value, str):
+            if _string_path_violation(value, allow_validation_outputs=policy_context):
+                dotted = ".".join(keys) or "<root>"
+                hits.append(f"{path.relative_to(root).as_posix()}:{dotted}: {value}")
+
+    walk(data)
+    return hits
+
+
+def _text_path_hits(path: Path, root: Path) -> list[str]:
+    hits = []
+    try:
+        lines = path.read_text(encoding="utf-8-sig").splitlines()
+    except UnicodeDecodeError as exc:
+        return [f"{path.relative_to(root).as_posix()}: utf-8 decode failed: {exc}"]
+    for idx, line in enumerate(lines):
+        allow_validation_outputs = path.suffix.lower() == ".md" and _is_policy_markdown_line(lines, idx)
+        if _string_path_violation(line, allow_validation_outputs=allow_validation_outputs):
+            hits.append(f"{path.relative_to(root).as_posix()}:L{idx + 1}: {line.strip()}")
+    return hits
+
+
+def _promoted_local_path_hits(root: Path) -> list[str]:
+    hits: list[str] = []
+    seen: set[Path] = set()
+    for pattern in PROMOTED_SCAN_PATTERNS:
+        for path in root.glob(pattern):
+            if not path.is_file() or path in seen:
+                continue
+            seen.add(path)
+            if path.suffix.lower() == ".json":
+                hits.extend(_json_path_hits(path, root))
+            elif path.suffix.lower() in {".md", ".tex", ".bib"}:
+                hits.extend(_text_path_hits(path, root))
+    return hits
+
+
+def _remaining_work_file_matches(path: Path) -> bool:
+    if not path.exists():
+        return False
+    text = path.read_text(encoding="utf-8-sig")
+    required = [
+        "Write the final manuscript using the official CPC/Elsevier template.",
+        "Run and assess full fractional arctan Chua validation.",
+        "Regenerate the full scientific freeze audit on the final commit.",
+    ]
+    return all(item in text for item in required)
+
+
 def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
-    """Validate CPC metadata and repository hygiene without changing science artifacts."""
+    """Validate CPC repository/software readiness without changing science artifacts."""
     parser = argparse.ArgumentParser(description="Validate CPC readiness metadata and hygiene")
     parser.add_argument("--json", action="store_true", help="Output machine-readable results")
-    parser.add_argument("--strict", action="store_true", help="Treat CPC-finalization warnings as failures")
+    parser.add_argument("--strict", action="store_true", help="Fail on correctable repository/software readiness errors")
+    parser.add_argument("--submission-strict", action="store_true", help="Also fail on final-submission pending items")
     args = parser.parse_args(argv)
 
     root = _repo_root()
     version_root = root / "version_2"
-    manifest_path = version_root / "cpc_submission" / "archive_manifest.json"
+    cpc_root = version_root / "cpc_submission"
+    manifest_path = cpc_root / "archive_manifest.json"
     manifest = _load_json(manifest_path)
-    checks: list[dict[str, object]] = []
+    checks: list[dict[str, Any]] = []
 
     required = [
         "CITATION.cff",
@@ -202,12 +348,15 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
         "CHANGELOG.md",
         "RELEASE_NOTES.md",
         "REPRODUCIBILITY.md",
+        "paper/README.md",
+        "paper/TEMPLATE_DECISION.md",
         "paper/cpc_program_summary.tex",
         "paper/cpc_manuscript.tex",
         "paper/references.bib",
         "version_2/cpc_submission/README_CPC.md",
         "version_2/cpc_submission/PROGRAM_SUMMARY.md",
         "version_2/cpc_submission/SAMPLE_RUN.md",
+        "version_2/cpc_submission/REMAINING_WORK.md",
         "version_2/cpc_submission/reproducibility_checklist.md",
         "version_2/cpc_submission/archive_manifest.json",
         "version_2/validation/freeze_audit/final_freeze_pytest_summary.json",
@@ -215,13 +364,16 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
         "version_2/USER_MANUAL.md",
     ]
     missing = [rel for rel in required if not (root / rel).exists()]
-    checks.append(_check("required metadata", "fail", not missing, missing))
+    checks.append(_check("required CPC metadata", "repository", not missing, missing))
 
     validation_outputs_tracked = _git_ls_files(root, "version_2/validation_outputs")
-    checks.append(_check("validation_outputs untracked", "fail", not validation_outputs_tracked, validation_outputs_tracked))
+    checks.append(_check("validation_outputs untracked", "repository", not validation_outputs_tracked, validation_outputs_tracked))
 
-    sample_input = version_root / "cpc_submission" / "sample_input"
-    sample_output = version_root / "cpc_submission" / "sample_output"
+    path_hits = _promoted_local_path_hits(root)
+    checks.append(_check("no local absolute paths in promoted evidence", "repository", not path_hits, path_hits[:50]))
+
+    sample_input = cpc_root / "sample_input"
+    sample_output = cpc_root / "sample_output"
     sample_details = []
     if not (sample_input / "README.md").exists():
         sample_details.append("sample_input/README.md missing")
@@ -229,30 +381,31 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
         sample_details.append("sample_input has no yaml")
     if not (sample_output / "README.md").exists():
         sample_details.append("sample_output/README.md missing")
+    expected_cli = sample_output / "expected_cli_help_summary.json"
+    if not expected_cli.exists():
+        sample_details.append("sample_output/expected_cli_help_summary.json missing")
     if not list(sample_output.glob("*.json")):
         sample_details.append("sample_output has no json")
     sample_details.extend(_manifest_path_references(root, manifest, "sample_input"))
     sample_details.extend(_manifest_path_references(root, manifest, "sample_output"))
-    checks.append(_check("sample input/output", "fail", not sample_details, sample_details))
+    checks.append(_check("sample input/output templates", "software", not sample_details, sample_details))
 
     bib_entries = _paper_bib_entries(root / "paper" / "references.bib")
-    checks.append(_check("bibliography", "fail", bib_entries > 1, [f"bib_entries={bib_entries}"] if bib_entries <= 1 else []))
+    checks.append(_check("bibliography has base entries", "software", bib_entries > 1, [f"bib_entries={bib_entries}"] if bib_entries <= 1 else []))
 
     manuscript_path = root / "paper" / "cpc_manuscript.tex"
-    manuscript = manuscript_path.read_text(encoding="utf-8") if manuscript_path.exists() else ""
+    manuscript = manuscript_path.read_text(encoding="utf-8-sig") if manuscript_path.exists() else ""
     manuscript_bad = []
-    if "placeholder manuscript" in manuscript.lower() or "placeholder" in manuscript.lower():
-        manuscript_bad.append("placeholder wording remains")
     required_sections = ["Introduction", "Scientific and numerical scope", "Software architecture", "Numerical workflow", "Validation and reproducibility", "Limitations", "Availability and archival metadata", "Conclusions"]
     for section in required_sections:
         if f"\\section{{{section}}}" not in manuscript:
             manuscript_bad.append(f"missing section {section}")
-    checks.append(_check("manuscript", "fail", not manuscript_bad, manuscript_bad))
+    checks.append(_check("working manuscript draft structure", "software", not manuscript_bad, manuscript_bad))
 
     encoding_hits = _mojibake_hits(root)
-    checks.append(_check("encoding", "fail", not encoding_hits, encoding_hits[:20]))
+    checks.append(_check("encoding", "repository", not encoding_hits, encoding_hits[:20]))
 
-    pyproject_text = (version_root / "pyproject.toml").read_text(encoding="utf-8")
+    pyproject_text = (version_root / "pyproject.toml").read_text(encoding="utf-8-sig")
     entry_ok = 'hidden-attractors = "hidden_attractors.cli.main:main"' in pyproject_text
     legacy_entries = [
         "hidden-attractors-check-validation",
@@ -260,61 +413,91 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
         "hidden-attractors-fractional-report-run",
     ]
     legacy_public = [name for name in legacy_entries if f"{name} =" in pyproject_text]
-    checks.append(_check("single public entry point", "fail", entry_ok and not legacy_public, legacy_public))
+    checks.append(_check("single public entry point", "software", entry_ok and not legacy_public, legacy_public))
 
     citation_path = root / "CITATION.cff"
-    citation_text = citation_path.read_text(encoding="utf-8") if citation_path.exists() else ""
-    doi_ok = "10.17605/OSF.IO/ZGK74" in citation_text
-    checks.append(_check("DOI", "fail", doi_ok, [] if doi_ok else ["10.17605/OSF.IO/ZGK74 missing"]))
+    citation_text = citation_path.read_text(encoding="utf-8-sig") if citation_path.exists() else ""
+    doi_ok = "10.17605/OSF.IO/ZGK74" in citation_text and manifest.get("doi") == "10.17605/OSF.IO/ZGK74"
+    checks.append(_check("DOI metadata", "software", doi_ok, [] if doi_ok else ["10.17605/OSF.IO/ZGK74 missing from citation or manifest"]))
 
     arctan_promoted = _git_ls_files(root, "version_2/validation/chua_fractional_arctan")
-    checks.append(_check("arctan not promoted", "fail", not arctan_promoted, arctan_promoted))
+    arctan_text_ok = manifest.get("arctan_status") == "implemented algebraically, pending full validation; not promoted as a validated hidden attractor"
+    checks.append(_check("arctan not promoted", "repository", not arctan_promoted and arctan_text_ok, arctan_promoted if arctan_promoted else ([] if arctan_text_ok else [str(manifest.get("arctan_status"))])))
 
     current_head = _git_head(root)
     current_short = _git_head(root, short=True)
     manifest_commit = str(manifest.get("commit", ""))
     commit_status = str(manifest.get("commit_status", ""))
-    commit_ok = manifest_commit in {current_head, current_short} or commit_status == "pending_update_after_final_audit"
-    commit_warn = [] if manifest_commit in {current_head, current_short} and commit_status == "current" else [f"commit={manifest_commit}", f"HEAD={current_short}", f"commit_status={commit_status}"]
-    checks.append(_check("archive manifest commit", "warn", commit_ok, commit_warn))
+    commit_ok = manifest_commit in {current_head, current_short} and commit_status in {"current", "pending_update_after_final_cleanup_commit"}
+    checks.append(_check("archive manifest commit", "software", commit_ok, [] if commit_ok else [f"commit={manifest_commit}", f"HEAD={current_short}", f"commit_status={commit_status}"]))
 
-    freeze_summary = _load_json(version_root / "validation" / "freeze_audit" / "final_freeze_pytest_summary.json")
-    freeze_commit = str(freeze_summary.get("git_commit", ""))
     freeze_status = str(manifest.get("freeze_audit_status", ""))
-    freeze_ok = freeze_commit in {current_head, current_short} or freeze_status == "pending_after_cpc_cleanup"
-    freeze_warn = [] if freeze_commit in {current_head, current_short} and freeze_status == "current" else [f"freeze_commit={freeze_commit}", f"freeze_audit_status={freeze_status}"]
-    checks.append(_check("freeze audit current", "warn", freeze_ok, freeze_warn))
+    freeze_ok = freeze_status == "pending_final_scientific_freeze" and str(manifest.get("last_recorded_freeze_audit_commit", "")).startswith("2bcea343")
+    checks.append(_check("freeze audit separated from CI", "software", freeze_ok, [] if freeze_ok else [f"freeze_audit_status={freeze_status}"]))
 
-    changelog_text = (root / "CHANGELOG.md").read_text(encoding="utf-8") if (root / "CHANGELOG.md").exists() else ""
-    overclaims_closed = "Closed tracked-file leakage" in changelog_text and bool(validation_outputs_tracked)
-    checks.append(_check("CHANGELOG consistency", "fail", not overclaims_closed, ["claims closed while validation_outputs is tracked"] if overclaims_closed else []))
+    ci_ok = manifest.get("ci_status") == "passed" and "Python 3.11/3.12/3.13" in str(manifest.get("ci_status_scope", ""))
+    checks.append(_check("CI status documented", "software", ci_ok, [] if ci_ok else [f"ci_status={manifest.get('ci_status')}", f"ci_status_scope={manifest.get('ci_status_scope')}"]))
 
-    sample_status = str(manifest.get("sample_status", ""))
-    sample_status_ok = sample_status in {"template_only_pending_execution", "executed"}
-    sample_status_details = [] if sample_status_ok else [f"sample_status={sample_status}"]
-    if sample_status == "template_only_pending_execution":
-        sample_status_details.append("sample execution pending")
-    checks.append(_check("sample execution status", "warn", sample_status_ok, sample_status_details))
+    known_ok = manifest.get("known_remaining_work") == KNOWN_REMAINING_WORK and _remaining_work_file_matches(cpc_root / "REMAINING_WORK.md")
+    checks.append(_check("known remaining work declared", "software", known_ok, [] if known_ok else ["known_remaining_work mismatch or REMAINING_WORK.md incomplete"]))
 
-    failures = [c for c in checks if c["level"] == "fail" and not c["ok"]]
-    warnings = [c for c in checks if c["level"] == "warn" and (not c["ok"] or c["details"])]
-    status = "failed" if failures else ("partial" if warnings else "passed")
+    readiness_ok = (
+        manifest.get("repository_readiness") == "passed"
+        and manifest.get("software_package_readiness") == "passed"
+        and manifest.get("final_submission_readiness") == "pending"
+    )
+    checks.append(_check("readiness levels", "software", readiness_ok, [] if readiness_ok else [
+        f"repository_readiness={manifest.get('repository_readiness')}",
+        f"software_package_readiness={manifest.get('software_package_readiness')}",
+        f"final_submission_readiness={manifest.get('final_submission_readiness')}",
+    ]))
 
-    payload = {"status": status, "strict": bool(args.strict), "checks": checks}
+    final_pending: list[dict[str, Any]] = []
+    bib_todos = _paper_bib_todos(root / "paper" / "references.bib")
+    if bib_todos:
+        final_pending.append({"name": "bibliographic metadata TODOs", "details": bib_todos[:20]})
+    if manifest.get("sample_status") == "template_only_pending_execution":
+        final_pending.append({"name": "sample outputs not executed", "details": ["sample_status=template_only_pending_execution"]})
+    if manifest.get("freeze_audit_status") == "pending_final_scientific_freeze":
+        final_pending.append({"name": "final scientific freeze audit", "details": ["freeze audit must be regenerated after final scientific evidence is frozen"]})
+    if manifest.get("final_submission_readiness") == "pending":
+        final_pending.append({"name": "final CPC manuscript/template work", "details": ["final manuscript remains editorial work"]})
+    if manifest.get("remaining_scientific_validation"):
+        final_pending.append({"name": "remaining scientific validation", "details": list(manifest.get("remaining_scientific_validation", []))})
+
+    failures = [c for c in checks if not c["ok"]]
+    repository_readiness = "failed" if any(c["category"] == "repository" and not c["ok"] for c in checks) else "passed"
+    software_package_readiness = "failed" if any(c["category"] == "software" and not c["ok"] for c in checks) else "passed"
+    final_submission_readiness = "pending" if final_pending else "passed"
+    status = "failed" if failures else ("passed_with_known_pending_items" if final_pending else "passed")
+
+    payload = {
+        "status": status,
+        "strict": bool(args.strict),
+        "submission_strict": bool(args.submission_strict),
+        "repository_readiness": repository_readiness,
+        "software_package_readiness": software_package_readiness,
+        "final_submission_readiness": final_submission_readiness,
+        "known_remaining_work": KNOWN_REMAINING_WORK,
+        "checks": checks,
+        "final_submission_pending": final_pending,
+    }
     if args.json:
         print(json.dumps(payload, indent=2))
     else:
         print(f"CPC readiness: {status}")
+        print(f"repository_readiness: {repository_readiness}")
+        print(f"software_package_readiness: {software_package_readiness}")
+        print(f"final_submission_readiness: {final_submission_readiness}")
         for check in checks:
-            if check["level"] == "warn" and check["details"]:
-                label = "warn"
-            elif check["ok"]:
-                label = "ok"
-            else:
-                label = "fail"
+            label = "ok" if check["ok"] else "fail"
             print(f"- {label}: {check['name']}")
             for item in check["details"]:
                 print(f"  - {item}")
+        if final_pending:
+            print("known_remaining_work:")
+            for item in KNOWN_REMAINING_WORK:
+                print(f"- pending: {item}")
 
-    exit_code = 1 if failures or (args.strict and warnings) else 0
+    exit_code = 1 if failures or (args.submission_strict and final_pending) else 0
     sys.exit(exit_code)

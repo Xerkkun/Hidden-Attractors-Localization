@@ -25,12 +25,12 @@
     "t_burn": 60.0,
     "n_blocks": 300,
     "t_block": 0.5,
-    "source_c": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\tools\\legacy\\chua_frac_lyapunov_efork_benettin.c",
-    "exe": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\native\\chua_integer_lyapunov_benettin.exe"
+    "source_c": "version_2/tools/legacy/chua_frac_lyapunov_efork_benettin.c",
+    "exe": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/native/chua_integer_lyapunov_benettin.exe"
   },
   "outputs": {
-    "csv": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\chua_integer_le_convergence.csv",
-    "pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\final_pdf_figs\\fig13_lyapunov_convergence.pdf"
+    "csv": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/chua_integer_le_convergence.csv",
+    "pdf": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/final_pdf_figs/fig13_lyapunov_convergence.pdf"
   },
   "raw_stdout": "# LE_frac_standard 0.20824617851871649 0.013732698332286726 -1.3669300926593664\n# final_state -6.0419038609054816 -0.32575998613774754 8.6645895099103374\n",
   "notes": [

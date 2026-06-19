@@ -2,14 +2,32 @@
   "package": "hidden-attractors-fo",
   "archive_title": "A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors",
   "version": "0.1.0",
-  "commit": "9bbe09607619cc0c0075ff1f6dec8ab199ee6ec0",
-  "commit_status": "pending_update_after_final_audit",
+  "commit": "f841a47f4fbbb459d90fd8db1ed583e46f139ef9",
+  "commit_status": "pending_update_after_final_cleanup_commit",
   "doi": "10.17605/OSF.IO/ZGK74",
   "license": "MIT",
   "python_supported": ">=3.11",
-  "freeze_audit_status": "pending_after_cpc_cleanup",
+  "ci_status": "passed",
+  "ci_status_scope": "Python 3.11/3.12/3.13 on macOS, Ubuntu, and Windows",
+  "ci_status_note": "Recorded after the CPC cleanup CI matrix passed. Final scientific freeze audit remains separate from CI smoke/regression status.",
+  "freeze_audit_status": "pending_final_scientific_freeze",
   "last_recorded_freeze_audit_commit": "2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a",
+  "freeze_audit_note": "The GitHub Actions CI matrix passed for CPC cleanup, but it does not replace the full scientific freeze audit.",
   "sample_status": "template_only_pending_execution",
+  "repository_readiness": "passed",
+  "software_package_readiness": "passed",
+  "final_submission_readiness": "pending",
+  "known_remaining_work": [
+    "final CPC manuscript writing in official Elsevier/CPC template",
+    "fractional arctan Chua validation runs",
+    "additional reproducible scientific examples selected for the paper",
+    "final scientific freeze audit regeneration after scientific choices are frozen",
+    "replace sample-output templates with executed outputs if required by the final CPC package"
+  ],
+  "remaining_scientific_validation": [
+    "fractional arctan Chua full validation runs",
+    "additional reproducible examples selected for the CPC paper"
+  ],
   "principal_author": {
     "name": "Maria Fernanda Moreno Lopez",
     "affiliation": "Instituto Nacional de Astrofisica, Optica y Electronica (INAOE)"
@@ -34,6 +52,7 @@
   ],
   "sample_output": [
     "version_2/cpc_submission/sample_output/sample_output_manifest.json",
+    "version_2/cpc_submission/sample_output/expected_cli_help_summary.json",
     "version_2/cpc_submission/sample_output/expected_cpc_readiness_summary.json",
     "version_2/cpc_submission/sample_output/expected_validation_contract_status.json"
   ],
@@ -68,7 +87,8 @@
   ],
   "promoted_evidence": [
     "version_2/validation/chua_integer_saturation/",
-    "version_2/validation/",
+    "version_2/validation/chua_fractional_saturation/",
+    "version_2/validation/reference_cases/chua_integer_q1/",
     "version_2/validation/freeze_audit/"
   ],
   "unpromoted_outputs": [

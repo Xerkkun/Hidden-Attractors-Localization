@@ -1,0 +1,10 @@
+{
+  "sample_status": "template_only_pending_execution",
+  "commands": [
+    "hidden-attractors --help",
+    "hidden-attractors validate cpc-readiness"
+  ],
+  "expected_behavior": "CLI help and CPC readiness command are expected to run after editable installation.",
+  "not_promoted_evidence": true,
+  "replace_after_execution": true
+}

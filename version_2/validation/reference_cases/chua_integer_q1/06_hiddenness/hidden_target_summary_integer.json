@@ -55,8 +55,8 @@
         "-O3",
         "-fopenmp",
         "-o",
-        "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\chua_piecewise\\native\\chua_hidden_backend_integer.exe",
-        "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\tools\\legacy\\chua_hidden_backend.c",
+        "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/chua_piecewise/native/chua_hidden_backend_integer.exe",
+        "version_2/tools/legacy/chua_hidden_backend.c",
         "-lm"
       ]
     },
@@ -260,13 +260,13 @@
     }
   ],
   "files": {
-    "summary_from_pipeline": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\chua_integer_pipeline_summary.json",
-    "csv_out": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\hidden_target_check_integer.csv",
-    "ref_csv_out": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\reference_section_integer.csv",
-    "summary_csv_out": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\summary_by_radius_integer.csv",
-    "json_out": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\hidden_target_summary_integer.json",
-    "fig_section": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\reference_section_integer.png",
-    "fig_probe": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_1\\legacy_root\\chua_integer_runs\\balanced\\hidden_verify\\probe_summary_integer.png"
+    "summary_from_pipeline": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/chua_integer_pipeline_summary.json",
+    "csv_out": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/hidden_verify/hidden_target_check_integer.csv",
+    "ref_csv_out": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/hidden_verify/reference_section_integer.csv",
+    "summary_csv_out": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/hidden_verify/summary_by_radius_integer.csv",
+    "json_out": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/hidden_verify/hidden_target_summary_integer.json",
+    "fig_section": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/hidden_verify/reference_section_integer.png",
+    "fig_probe": "legacy_provenance/version_1/legacy_root/chua_integer_runs/balanced/hidden_verify/probe_summary_integer.png"
   },
   "notes": [
     "Integer-order verification uses the same C backend interface as the fractional pipeline.",

@@ -245,3 +245,9 @@ Editorial drafts live in `paper/`. Reproducible submission packaging lives in `v
 ### Freeze audit status for CPC preparation
 
 The current CPC-preparation files are not yet covered by a regenerated freeze audit. The last recorded freeze audit corresponds to commit `2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a`; regenerate it before treating the CPC package as final submission material.
+
+### CPC CI and freeze audit status
+
+The GitHub Actions CI matrix for the CPC cleanup has passed. This confirms package hygiene and cross-platform test execution for the current repository state. It does not replace the full scientific freeze audit, which remains a separate artifact to regenerate once final promoted validation cases are fixed for submission.
+
+CI status: passed for current CPC cleanup. Freeze audit: last full scientific freeze audit corresponds to commit `2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a` and must be regenerated only when the final scientific evidence set is frozen.

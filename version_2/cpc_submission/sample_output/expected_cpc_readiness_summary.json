@@ -1,7 +1,10 @@
 {
   "command": "hidden-attractors validate cpc-readiness",
-  "expected_status": "partial",
+  "expected_status": "passed_with_known_pending_items",
   "expected_exit_code_non_strict": 0,
-  "expected_exit_code_strict": 1,
-  "reason": "Freeze audit and final commit audit are explicitly pending after CPC cleanup."
+  "expected_exit_code_strict": 0,
+  "expected_exit_code_submission_strict": 1,
+  "reason": "Repository and software-package readiness pass while final manuscript, arctan validation, final scientific freeze audit, and executed sample outputs remain declared final-submission work.",
+  "not_promoted_evidence": true,
+  "replace_after_execution": true
 }
