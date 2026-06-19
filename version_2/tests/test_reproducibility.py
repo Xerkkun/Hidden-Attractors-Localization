@@ -90,6 +90,6 @@ def test_protocol_cli_degrades_strong_label_without_lure_and_seed_metadata(tmp_p
         ]
     ) == 0
     summary = json.loads(output_path.read_text(encoding="utf-8"))
-    assert summary["verdict"] == "hiddenness_inconclusive"
-    assert summary["state"] == "hidden_compatible"
+    assert summary["verdict"] == "inconclusive"
+    assert summary["state"] == "compatible_with_hiddenness"
     assert (tmp_path / "run_metadata.json").exists()

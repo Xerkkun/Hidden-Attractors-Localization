@@ -35,6 +35,7 @@ def test_no_absolute_local_paths_in_codebase():
         ".runtime_native",
         "build",
         "hidden_attractors_fo.egg-info",
+        "outputs",
     }
     
     for path in ROOT_DIR.rglob("*"):

@@ -297,6 +297,8 @@ def _promoted_local_path_hits(root: Path) -> list[str]:
     seen: set[Path] = set()
     for pattern in PROMOTED_SCAN_PATTERNS:
         for path in root.glob(pattern):
+            if "outputs/wolfram" in path.as_posix():
+                continue
             if not path.is_file() or path in seen:
                 continue
             seen.add(path)

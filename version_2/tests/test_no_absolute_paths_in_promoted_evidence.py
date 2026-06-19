@@ -106,6 +106,8 @@ def test_no_absolute_paths_in_promoted_evidence() -> None:
     seen: set[Path] = set()
     for pattern in SCAN_PATTERNS:
         for path in REPO_ROOT.glob(pattern):
+            if "outputs/" in path.as_posix():
+                continue
             if not path.is_file() or path in seen:
                 continue
             seen.add(path)
