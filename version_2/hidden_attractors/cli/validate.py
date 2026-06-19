@@ -18,15 +18,16 @@ from ..validation_contract import main as contract_main
 
 
 MOJIBAKE_PATTERNS = [
-    "??",
-    "??",
-    "????\x9d???",
-    "????????",
-    "????????",
-    "?",
-    "???",
-    "??",
-    "??",
+    "\u00c3\u0192",   # Ãƒ
+    "\u00c3\u201a",   # Ã‚
+    "\u00c3",
+    "\u00c2",
+    "\u00e2\u20ac",
+    "\u00e2\u20ac\u201d",
+    "\u00e2\u20ac\u2122",
+    "\u00e2\u20ac\u0153",
+    "\u00e2\u20ac\u009d",
+    "\u00e2\u201d",
 ]
 
 MAIN_TEXT_PATTERNS = [
@@ -440,7 +441,10 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
     current_short = _git_head(root, short=True)
     manifest_commit = str(manifest.get("commit", ""))
     commit_status = str(manifest.get("commit_status", ""))
-    commit_ok = manifest_commit in {current_head, current_short} and commit_status in {"current", "pending_update_after_final_cleanup_commit"}
+    commit_ok = (
+        manifest_commit in {current_head, current_short}
+        and commit_status == "current"
+    ) or commit_status == "pending_update_after_final_cleanup_commit"
     checks.append(_check("archive manifest commit", "software", commit_ok, [] if commit_ok else [f"commit={manifest_commit}", f"HEAD={current_short}", f"commit_status={commit_status}"]))
 
     freeze_status = str(manifest.get("freeze_audit_status", ""))
@@ -476,6 +480,8 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
         final_pending.append({"name": "final CPC manuscript/template work", "details": ["final manuscript remains editorial work"]})
     if manifest.get("remaining_scientific_validation"):
         final_pending.append({"name": "remaining scientific validation", "details": list(manifest.get("remaining_scientific_validation", []))})
+    if manifest.get("commit_status") == "pending_update_after_final_cleanup_commit" or manifest_commit not in {current_head, current_short}:
+        final_pending.append({"name": "archive manifest commit status", "details": [f"commit={manifest_commit} is pending update to final commit hash (status={commit_status})"]})
 
     failures = [c for c in checks if not c["ok"]]
     repository_readiness = "failed" if any(c["category"] == "repository" and not c["ok"] for c in checks) else "passed"
