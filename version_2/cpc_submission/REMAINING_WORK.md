@@ -1,5 +1,7 @@
 # Remaining work before CPC submission
 
+Editorial drafts, the official Elsevier/CPC template, and the final manuscript are prepared locally under ignored `paper/`. They are intentionally not tracked as part of the software repository readiness contract. The repository tracks the software package, promoted validation evidence, citation metadata, reproducibility notes, and CPC submission scaffolding under `version_2/cpc_submission/`.
+
 ## Editorial
 - Write the final manuscript using the official CPC/Elsevier template.
 - Replace manuscript-skeleton language with final article narrative.

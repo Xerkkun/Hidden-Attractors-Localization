@@ -37,9 +37,6 @@ MAIN_TEXT_PATTERNS = [
     "CITATION.cff",
     ".zenodo.json",
     "codemeta.json",
-    "paper/*.tex",
-    "paper/*.md",
-    "paper/*.bib",
     "version_2/README.md",
     "version_2/USER_MANUAL.md",
     "version_2/MANIFEST.md",
@@ -59,8 +56,6 @@ PROMOTED_SCAN_PATTERNS = [
     "version_2/docs/**/*.md",
     "version_2/cpc_submission/**/*.md",
     "version_2/cpc_submission/**/*.json",
-    "paper/**/*.tex",
-    "paper/**/*.bib",
 ]
 
 KNOWN_REMAINING_WORK = [
@@ -348,11 +343,6 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
         "CHANGELOG.md",
         "RELEASE_NOTES.md",
         "REPRODUCIBILITY.md",
-        "paper/README.md",
-        "paper/TEMPLATE_DECISION.md",
-        "paper/cpc_program_summary.tex",
-        "paper/cpc_manuscript.tex",
-        "paper/references.bib",
         "version_2/cpc_submission/README_CPC.md",
         "version_2/cpc_submission/PROGRAM_SUMMARY.md",
         "version_2/cpc_submission/SAMPLE_RUN.md",
@@ -390,17 +380,39 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
     sample_details.extend(_manifest_path_references(root, manifest, "sample_output"))
     checks.append(_check("sample input/output templates", "software", not sample_details, sample_details))
 
-    bib_entries = _paper_bib_entries(root / "paper" / "references.bib")
-    checks.append(_check("bibliography has base entries", "software", bib_entries > 1, [f"bib_entries={bib_entries}"] if bib_entries <= 1 else []))
+    has_paper_dir = (root / "paper").exists()
 
-    manuscript_path = root / "paper" / "cpc_manuscript.tex"
-    manuscript = manuscript_path.read_text(encoding="utf-8-sig") if manuscript_path.exists() else ""
-    manuscript_bad = []
-    required_sections = ["Introduction", "Scientific and numerical scope", "Software architecture", "Numerical workflow", "Validation and reproducibility", "Limitations", "Availability and archival metadata", "Conclusions"]
-    for section in required_sections:
-        if f"\\section{{{section}}}" not in manuscript:
-            manuscript_bad.append(f"missing section {section}")
-    checks.append(_check("working manuscript draft structure", "software", not manuscript_bad, manuscript_bad))
+    bib_entries = _paper_bib_entries(root / "paper" / "references.bib") if has_paper_dir else 2
+    bib_ok = (bib_entries > 1) if has_paper_dir else True
+    checks.append(_check("bibliography has base entries", "software", bib_ok, [f"bib_entries={bib_entries}"] if not bib_ok else []))
+
+    if has_paper_dir:
+        manuscript_path = root / "paper" / "cpc_manuscript.tex"
+        manuscript = manuscript_path.read_text(encoding="utf-8-sig") if manuscript_path.exists() else ""
+        manuscript_bad = []
+        required_sections = ["Introduction", "Scientific and numerical scope", "Software architecture", "Numerical workflow", "Validation and reproducibility", "Limitations", "Availability and archival metadata", "Conclusions"]
+        for section in required_sections:
+            if f"\\section{{{section}}}" not in manuscript:
+                manuscript_bad.append(f"missing section {section}")
+        manuscript_ok = not manuscript_bad
+    else:
+        manuscript_ok = True
+        manuscript_bad = []
+    checks.append(_check("working manuscript draft structure", "software", manuscript_ok, manuscript_bad))
+
+    gitignore_text = (root / ".gitignore").read_text(encoding="utf-8") if (root / ".gitignore").exists() else ""
+    gitignore_ok = "/paper/" in gitignore_text
+    try:
+        paper_tracked = _git_ls_files(root, "paper")
+    except Exception:
+        paper_tracked = []
+    paper_policy_ok = gitignore_ok and not paper_tracked
+    policy_details = []
+    if not gitignore_ok:
+        policy_details.append("'/paper/' is not in .gitignore")
+    if paper_tracked:
+        policy_details.append(f"tracked files found under paper/: {paper_tracked}")
+    checks.append(_check("paper local-only policy", "repository", paper_policy_ok, policy_details))
 
     encoding_hits = _mojibake_hits(root)
     checks.append(_check("encoding", "repository", not encoding_hits, encoding_hits[:20]))
@@ -478,6 +490,7 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
         "repository_readiness": repository_readiness,
         "software_package_readiness": software_package_readiness,
         "final_submission_readiness": final_submission_readiness,
+        "local_editorial_policy": "paper/ is local-only and ignored by Git",
         "known_remaining_work": KNOWN_REMAINING_WORK,
         "checks": checks,
         "final_submission_pending": final_pending,

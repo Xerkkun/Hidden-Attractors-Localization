@@ -8,6 +8,8 @@ The package license remains MIT. MIT permits use, copying, modification, distrib
 
 The archived DOI recorded for this preparation package is `10.17605/OSF.IO/ZGK74`.
 
+Editorial drafts, the official Elsevier/CPC template, and the final manuscript are prepared locally under ignored `paper/`. They are intentionally not tracked as part of the software repository readiness contract. The repository tracks the software package, promoted validation evidence, citation metadata, reproducibility notes, and CPC submission scaffolding under `version_2/cpc_submission/`.
+
 ## Contribution and provenance notes
 
 Maria Fernanda Moreno Lopez is recorded as principal author and maintainer. Dr. Esteban Tlelo Cuautle is acknowledged as doctoral thesis director and research guide. Dr. Oscar Martinez-Fuentes is acknowledged for reviewing the theoretical fractional-calculus component. Dr. Luis Gerardo de la Fraga is acknowledged for code provenance related to EFORK and the integer-order Lyapunov algorithm.

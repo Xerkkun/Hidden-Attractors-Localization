@@ -22,6 +22,7 @@ IGNORED_LOCAL_PREFIXES = [
     "figures/",
     "outputs/",
     "runs",
+    "paper/",
 ]
 
 PROHIBITED_ROOT_PATTERNS = [
@@ -41,7 +42,6 @@ ALLOWED_TOP_LEVEL = {
     ".gitignore",
     "README.md",
     "version_2",
-    "paper",
     "CITATION.cff",
     ".zenodo.json",
     "codemeta.json",
@@ -79,6 +79,14 @@ def test_no_tracked_files_in_local_ignored_directories() -> None:
 @pytest.mark.cpc_readiness
 def test_validation_outputs_has_no_tracked_files() -> None:
     assert git_ls_files("version_2/validation_outputs") == []
+
+
+@pytest.mark.hygiene
+@pytest.mark.cpc_readiness
+def test_paper_directory_is_local_only() -> None:
+    assert git_ls_files("paper") == []
+    text = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8")
+    assert "/paper/" in text
 
 
 @pytest.mark.hygiene

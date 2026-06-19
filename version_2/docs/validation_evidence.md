@@ -230,6 +230,6 @@ The CPC preparation material separates four layers:
 - Promoted evidence lives under `validation/` and is controlled by the validation contract.
 - Promoted scientific figures live under `library_figures/` and must be generated through `hidden_attractors.plotting.export.export_figure`.
 - Local and exploratory outputs live under `outputs/`, `validation_outputs/`, `runs*/`, or `figures/` and remain outside Git.
-- Editorial material lives under `paper/` and `cpc_submission/`; it does not create new scientific claims.
+- Editorial drafts and Elsevier templates are prepared locally under ignored `paper/`, while CPC submission scaffolding resides under `cpc_submission/`. Neither creates new scientific claims, and `paper/` is intentionally excluded from the tracked repository.
 
 The arctan Chua route is implemented algebraically and retained for reproducible inspection, but it is not promoted as a validated hidden attractor. Finite neighborhood evidence must keep labels such as `hiddenness_supported_under_tested_neighborhoods`; it is not a global mathematical proof of hiddenness.

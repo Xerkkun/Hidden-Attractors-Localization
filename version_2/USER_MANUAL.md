@@ -427,7 +427,7 @@ claim status: [reproducido/candidato/pendiente]
 - **Citation metadata**: Consult the repository-root `CITATION.cff`, `.zenodo.json`, and `codemeta.json` files for citation keys and formats.
 - **Release citation**: The OSF DOI currently recorded for this CPC-preparation package is `10.17605/OSF.IO/ZGK74`; a future CPC article DOI should be added only after acceptance/publication.
 - **Reproducibility matrix**: Publications and reports must document the exact software environment, commit hash, and validation outcomes from [validation/freeze_audit/](validation/freeze_audit/).
-- **CPC readiness**: Run `hidden-attractors validate cpc-readiness` to check metadata, editorial skeletons, promoted evidence boundaries, and local-output hygiene.
+- **CPC readiness**: Run `hidden-attractors validate cpc-readiness` to check metadata, local-only paper policy, promoted evidence boundaries, and local-output hygiene. Editorial drafts, the official Elsevier/CPC template, and the final manuscript are prepared locally under ignored `paper/`. They are intentionally not tracked as part of the software repository readiness contract. The repository tracks the software package, promoted validation evidence, citation metadata, reproducibility notes, and CPC submission scaffolding under `version_2/cpc_submission/`.
 
 ### CPC freeze-audit caveat
 
