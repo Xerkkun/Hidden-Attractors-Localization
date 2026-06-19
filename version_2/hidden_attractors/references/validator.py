@@ -98,7 +98,7 @@ def validate_claim_references(
                 # Check DOI verification warnings
                 ref_info = REFERENCE_REGISTRY[ref]
                 if ref_info.get("needs_doi_verification"):
-                    warnings.append(f"Reference '{ref}' is pending DOI verification.")
+                    warnings.append(f"Reference `{ref}` is pending DOI verification.")
 
         if unregistered:
             claim_status = "failed"
@@ -141,11 +141,11 @@ def validate_claim_references(
 
     # Determine overall status
     if has_failed:
-        status = "failed" if strict else "warning"
+        status = "FAILED" if strict else "PASS_WITH_WARNINGS"
     elif warnings:
-        status = "warning"
+        status = "PASS_WITH_WARNINGS"
     else:
-        status = "passed"
+        status = "PASS"
 
     return {
         "bibliographic_validation_status": status,
@@ -172,11 +172,23 @@ def write_traceability_matrix_markdown(result: Dict[str, Any], path: Union[str, 
         f"**Overall Status**: `{result['bibliographic_validation_status'].upper()}`",
         f"**Claims Validated**: {result['claims_valid']} / {result['claims_total']}",
         "",
+    ]
+
+    if result.get("warnings"):
+        lines.extend([
+            "## Warnings",
+            "",
+        ])
+        for w in result["warnings"]:
+            lines.append(f"- {w}")
+        lines.append("")
+
+    lines.extend([
         "## Claims Traceability Table",
         "",
         "| Claim ID | Claim Type | Strong Claim | Required References | Provided References | Status |",
         "|---|---|---|---|---|---|",
-    ]
+    ])
 
     for row in result["traceability_matrix"]:
         strong_str = "Yes" if row["severity"] == "strong" else "No"
@@ -236,7 +248,7 @@ def validate_bibliography_manifest(
 
     if not manifest_path.exists():
         return {
-            "bibliographic_validation_status": "failed" if strict else "warning",
+            "bibliographic_validation_status": "FAILED" if strict else "PASS_WITH_WARNINGS",
             "claims_total": 0,
             "claims_valid": 0,
             "claims_missing_references": [],

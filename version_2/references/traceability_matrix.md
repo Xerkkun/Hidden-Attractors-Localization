@@ -1,7 +1,11 @@
 # Bibliographic Traceability Matrix
 
-**Overall Status**: `WARNING`
+**Overall Status**: `PASS_WITH_WARNINGS`
 **Claims Validated**: 12 / 12
+
+## Warnings
+
+- Reference `matignon_fractional_stability` is pending DOI verification.
 
 ## Claims Traceability Table
 
@@ -11,10 +15,10 @@
 | self_excited_vs_hidden | SELF_EXCITED_DEFINITION | Yes | `leonov_kuznetsov_hidden_definition` | `leonov_kuznetsov_hidden_definition` | ✅ PASS |
 | df_chua_localization | DESCRIBING_FUNCTION_CHUA_LOCALIZATION | Yes | `kuznetsov_2017_chua_df` | `kuznetsov_2017_chua_df` | ✅ PASS |
 | df_is_heuristic | DESCRIBING_FUNCTION_IS_HEURISTIC | Yes | `kuznetsov_2017_chua_df` | `kuznetsov_2017_chua_df` | ✅ PASS |
-| caputo_memory | WEYL_CAPUTO_BRIDGE | Yes | `danca_2017_fractional_hidden` | `danca_2017_fractional_hidden` | ✅ PASS |
+| caputo_memory | CAPUTO_MEMORY_MODEL | Yes | `danca_2017_fractional_hidden` | `danca_2017_fractional_hidden` | ✅ PASS |
 | caputo_abm_integration | CAPUTO_ABM_INTEGRATION | Yes | `diethelm_ford_freed_abm_caputo`, `danca_2017_fractional_hidden` | `diethelm_ford_freed_abm_caputo`, `danca_2017_fractional_hidden` | ✅ PASS |
 | matignon_stability | FRACTIONAL_MATIGNON_STABILITY | Yes | `matignon_fractional_stability`, `danca_2017_fractional_hidden` | `matignon_fractional_stability`, `danca_2017_fractional_hidden` | ✅ PASS |
-| danca_fractional_hiddenness | NONSMOOTH_CHUA_LIPSCHITZ_ABM | Yes | `danca_2017_fractional_hidden` | `danca_2017_fractional_hidden` | ✅ PASS |
+| danca_fractional_chua_reference | NONSMOOTH_CHUA_LIPSCHITZ_ABM | Yes | `danca_2017_fractional_hidden` | `danca_2017_fractional_hidden` | ✅ PASS |
 | machado_fdf_describing | MACHADO_FDF | Yes | `machado_2015_fractional_describing_functions` | `machado_2015_fractional_describing_functions` | ✅ PASS |
 | alternative_localization_review | ALTERNATIVE_LOCALIZATION_METHODS | Yes | `guan_xie_2025_review` | `guan_xie_2025_review` | ✅ PASS |
 | alternative_methods_list | ALTERNATIVE_LOCALIZATION_METHODS | Yes | `guan_xie_2025_review` | `guan_xie_2025_review` | ✅ PASS |

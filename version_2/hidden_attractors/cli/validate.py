@@ -135,7 +135,7 @@ def validate_bibliography(argv: Sequence[str] | None = None) -> None:
             write_traceability_matrix_markdown(res, args.markdown_output)
             print(f"\nTraceability matrix written to: {args.markdown_output}")
 
-        if res["bibliographic_validation_status"] == "failed" and strict:
+        if res["bibliographic_validation_status"] == "FAILED" and strict:
             sys.exit(1)
     except Exception as e:
         print(f"Bibliography validation failed: {e}")

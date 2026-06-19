@@ -313,7 +313,7 @@ def validate_bibliography_cmd(args: argparse.Namespace) -> None:
             write_traceability_matrix_markdown(res, args.markdown_output)
             print(f"\nTraceability matrix written to: {args.markdown_output}")
             
-        if res["bibliographic_validation_status"] == "failed" and strict:
+        if res["bibliographic_validation_status"] == "FAILED" and strict:
             sys.exit(1)
             
     except Exception as e:

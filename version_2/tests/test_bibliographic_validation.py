@@ -70,6 +70,7 @@ def test_claim_type_enum():
         "ALTERNATIVE_LOCALIZATION_METHODS",
         "FRACTIONAL_CHUA_ARCTAN_WU2023",
         "WEYL_CAPUTO_BRIDGE",
+        "CAPUTO_MEMORY_MODEL",
         "NONSMOOTH_CHUA_LIPSCHITZ_ABM",
         "NUMERICAL_CONTINUATION_LOCALIZATION",
         "HIDDENNESS_OPERATIONAL_VERIFICATION",
@@ -100,7 +101,7 @@ def test_validate_claim_references_success():
         }
     ]
     res = validate_claim_references(claims, strict=True)
-    assert res["bibliographic_validation_status"] == "passed"
+    assert res["bibliographic_validation_status"] == "PASS"
     assert res["claims_valid"] == 1
 
 
@@ -116,7 +117,7 @@ def test_validate_claim_references_missing_references():
         }
     ]
     res = validate_claim_references(claims, strict=True)
-    assert res["bibliographic_validation_status"] == "failed"
+    assert res["bibliographic_validation_status"] == "FAILED"
     assert len(res["claims_missing_references"]) == 1
     assert res["claims_missing_references"][0]["claim_id"] == "test_missing"
 
@@ -133,7 +134,7 @@ def test_validate_claim_references_unregistered():
         }
     ]
     res = validate_claim_references(claims, strict=True)
-    assert res["bibliographic_validation_status"] == "failed"
+    assert res["bibliographic_validation_status"] == "FAILED"
     assert len(res["claims_with_unregistered_references"]) == 1
     assert res["claims_with_unregistered_references"][0]["claim_id"] == "test_unregistered"
 
@@ -151,7 +152,7 @@ def test_validate_claim_references_insufficient():
         }
     ]
     res = validate_claim_references(claims, strict=True)
-    assert res["bibliographic_validation_status"] == "failed"
+    assert res["bibliographic_validation_status"] == "FAILED"
     assert len(res["claims_with_insufficient_references"]) == 1
     assert res["claims_with_insufficient_references"][0]["claim_id"] == "test_insufficient"
 
@@ -169,7 +170,7 @@ def test_auto_suggestion_logic():
     ]
     res = validate_claim_references(claims, strict=True)
     # The check should suggest MACHADO_FDF and thus validation should succeed (but with warning because claim_type was suggested)
-    assert res["bibliographic_validation_status"] == "warning"
+    assert res["bibliographic_validation_status"] == "PASS_WITH_WARNINGS"
     assert res["traceability_matrix"][0]["claim_type"] == ClaimType.MACHADO_FDF
 
 
@@ -177,9 +178,9 @@ def test_auto_suggestion_logic():
 def test_validate_bibliography_manifest():
     manifest_path = workspace_root / "version_2" / "references" / "claims_manifest.yaml"
     res = validate_bibliography_manifest(manifest_path, strict=True)
-    # Overall validation status should be warning because of Matignon pending DOI verification,
+    # Overall validation status should be PASS_WITH_WARNINGS because of Matignon pending DOI verification,
     # but all claims should be valid
-    assert res["bibliographic_validation_status"] in ("warning", "passed")
+    assert res["bibliographic_validation_status"] in ("PASS_WITH_WARNINGS", "PASS")
     assert res["claims_total"] == 12
     assert res["claims_valid"] == 12
 

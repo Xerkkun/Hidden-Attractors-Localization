@@ -33,9 +33,9 @@ claims:
     location: "version_2/docs/hiddenness_verification.md"
 
   - claim_id: "caputo_memory"
-    claim_type: "WEYL_CAPUTO_BRIDGE"
+    claim_type: "CAPUTO_MEMORY_MODEL"
     severity: "strong"
-    text: "The Caputo fractional derivative is a causal formulation that models historical memory effects."
+    text: "The Caputo fractional derivative is a causal formulation commonly used to model history-dependent dynamics."
     references:
       - "danca_2017_fractional_hidden"
     location: "version_2/docs/validation_methodology.md"
@@ -58,10 +58,10 @@ claims:
       - "danca_2017_fractional_hidden"
     location: "version_2/docs/validation_methodology.md"
 
-  - claim_id: "danca_fractional_hiddenness"
+  - claim_id: "danca_fractional_chua_reference"
     claim_type: "NONSMOOTH_CHUA_LIPSCHITZ_ABM"
     severity: "strong"
-    text: "Caputo fractional-order hidden attractors in non-smooth Lipschitz Chua circuits are integrated with verified ABM."
+    text: "The Danca 2017 non-smooth fractional Chua case provides reference equations, parameters, equilibria, and ABM/Caputo context used for partial reference implementation and validation checks."
     references:
       - "danca_2017_fractional_hidden"
     location: "version_2/docs/validation_methodology.md"
