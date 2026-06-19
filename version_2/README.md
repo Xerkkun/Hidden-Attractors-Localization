@@ -302,8 +302,13 @@ figures are diagnostics; they do not substitute for those tests. All generated f
 
 ## Citation
 
-Citation metadata is pending. Until a public release exists, cite the repository
-URL, commit hash, and the project reports in `docs/`.
+Citation metadata is provided at the repository root in `CITATION.cff`, `.zenodo.json`, and `codemeta.json`.
+
+Archived DOI:
+
+```text
+10.17605/OSF.IO/ZGK74
+```
 
 ## Release and reproducibility metadata
 

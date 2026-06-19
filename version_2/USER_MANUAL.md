@@ -190,7 +190,7 @@ The integer-order Chua system acts as a baseline case to validate the Lur'e spli
 
 - **System**: Chua system with non-smooth piecewise-linear saturation nonlinearity.
 - **Order**: $q = 1.0$ (ordinary differential equation).
-- **Status in [THESIS_CLAIMS.md](THESIS_CLAIMS.md)**: `reproducido` (reproduced).
+- **Status**: reproduced integer reference.
 - **Command**:
   ```bash
   hidden-attractors run -p chua_integer
@@ -204,30 +204,29 @@ The integer-order Chua system acts as a baseline case to validate the Lur'e spli
 
 ## 7. Reproducible example 2: Chua nonsmooth BDF
 
-The non-smooth fractional Chua system under the Biased Describing Function (BDF) route represents the core numerical pipeline.
+The Danca 2017 fractional Chua case is used as a partial reference implementation. The published article does not report all numerical values required for full independent trajectory reproduction, including the exact seed and hidden-attractor initial condition. The library therefore records equations, equilibria, local stability, configured Caputo controls, and validation outcomes under its own numerical contract.
 
 - **System**: Chua system with piecewise-linear saturation nonlinearity.
 - **Order**: $q = 0.9998$ (Caputo fractional order).
-- **Status in [THESIS_CLAIMS.md](THESIS_CLAIMS.md)**: `candidato` (candidate).
-- **Command**:
+- **Status**: partial reference implementation (not fully reproduced).
+- **Example Run (Nearby Candidate)**:
   ```bash
   hidden-attractors run -c configs/examples/chua_fractional_biased_lure_df.yaml
   ```
 - **Interpretation**: 
-  - The BDF is a heuristic for generating periodic seeds. A successful continuation to the target system does not mathematically prove hiddenness.
-  - The final classification depends on the neighborhood tests around all equilibria points.
-  - One nearby candidate `danca2017_nearby_saturation_candidate_q09998` (branch_0) registered **1305 autoexcited contacts** and was officially classified as `self_excited_contact_detected` (rejected).
+  - The BDF route is a heuristic for generating periodic seeds. A successful continuation to the target system does not mathematically prove hiddenness.
+  - One nearby candidate evaluated under the library's own contract, `danca2017_nearby_saturation_candidate_q09998` (branch_0), registered **1305 autoexcited contacts** and was officially classified as `self_excited_contact_detected` (rejected).
 - **Validation artifacts**: Refer to [validation/00_manifest/validation_manifest.json](validation/00_manifest/validation_manifest.json) and [validation/09_hiddenness_tests/hiddenness_tests_validation_summary.json](validation/09_hiddenness_tests/hiddenness_tests_validation_summary.json) if available.
 
 ---
 
 ## 8. Pending/non-certified example: Chua arctan
 
-The fractional Chua system with an arctan nonlinearity is defined algebraically, but the full auditing protocol has not been finalized.
+The Wu 2023 arctan Chua case is implemented at the model/algebra level and includes documented reference inputs. Full independent reproduction of the published attractor workflow is not claimed because some seed-generation and sweep data are not reported and the library uses a separate Caputo-compatible validation route.
 
 - **System**: Chua system with $\psi(x) = \rho (\frac{2}{\pi} \arctan(m x) - \frac{2}{\pi} \arctan(n x))$.
-- **Order**: $q < 1.0$ (typically $q=0.95$).
-- **Status in [THESIS_CLAIMS.md](THESIS_CLAIMS.md)**: `pendiente` (pending).
+- **Order**: $q < 1.0$ (typically $q=0.99$).
+- **Status**: partial algebraic implementation; validation complete pending.
 - **Pending verification steps**:
   1. Define Lur'e split vectors.
   2. Evaluate fractional transfer function $W_q(s)$.
