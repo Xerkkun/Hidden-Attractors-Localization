@@ -5,7 +5,7 @@
 ### Added
 
 - CPC metadata files: `CITATION.cff`, `.zenodo.json`, `codemeta.json`, `AUTHORS.md`, `CHANGELOG.md`, `RELEASE_NOTES.md`, and `REPRODUCIBILITY.md`.
-- CPC editorial skeleton under `paper/`.
+- CPC editorial drafts and Elsevier template prepared locally under ignored `paper/`.
 - CPC submission skeleton under `version_2/cpc_submission/`.
 - `hidden-attractors validate cpc-readiness`.
 - CPC readiness and root hygiene tests.
@@ -14,6 +14,7 @@
 ### Fixed
 
 - Closed tracked-file leakage from `version_2/validation_outputs/`; promoted evidence now lives under `version_2/validation/`, while regenerable outputs remain ignored.
+- Decoupled `paper/` from Git tracking and validation checks, establishing `paper/` as local-only.
 - Root hygiene policy for local reports and generated outputs.
 - Figure-script policy centralization.
 - CPC metadata records the OSF DOI and contributor/provenance notes.

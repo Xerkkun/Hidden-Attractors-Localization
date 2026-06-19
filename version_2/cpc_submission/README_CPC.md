@@ -35,6 +35,8 @@ Promoted evidence is under `validation/`. Promoted scientific figures belong in 
 
 Local/regenerable outputs belong under `outputs/`, `validation_outputs/`, `runs*/`, or `figures/` and remain outside Git.
 
+Editorial drafts, the official Elsevier/CPC template, and the final manuscript are prepared locally under ignored `paper/`. They are intentionally not tracked as part of the software repository readiness contract. The repository tracks the software package, promoted validation evidence, citation metadata, reproducibility notes, and CPC submission scaffolding under `version_2/cpc_submission/`.
+
 ## What is not claimed
 
 The package does not certify global mathematical hiddenness. It records finite-time numerical evidence under explicit solver, memory, horizon, and tested-neighborhood contracts. The arctan route is implemented algebraically, pending full validation, and is not promoted as a validated hidden attractor.

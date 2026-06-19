@@ -23,7 +23,9 @@ Exact test counts can change as the suite evolves. The frozen source for reporte
 
 Promoted evidence is stored under `version_2/validation/`. Promoted scientific figures are stored under `version_2/library_figures/` and must be generated through `hidden_attractors.plotting.export.export_figure`.
 
-Local outputs, exploratory runs, regenerated artifacts, and arctan exploratory outputs belong under `version_2/outputs/`, `version_2/validation_outputs/`, `version_2/runs*/`, or `version_2/figures/`, all outside Git.
+Local outputs, exploratory runs, regenerated artifacts, and arctan exploratory outputs belong under `version_2/outputs/`, `version_2/validation_outputs/`, `version_2/runs*/`, or `figures/`, all outside Git.
+
+Editorial drafts, the official Elsevier/CPC template, and the final manuscript are prepared locally under ignored `paper/`. They are intentionally not tracked as part of the software repository readiness contract. The repository tracks the software package, promoted validation evidence, citation metadata, reproducibility notes, and CPC submission scaffolding under `version_2/cpc_submission/`.
 
 The arctan system is implemented algebraically, pending full validation, and must not be cited as a promoted validated hidden attractor.
 

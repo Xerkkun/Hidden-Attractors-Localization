@@ -318,7 +318,7 @@ URL, commit hash, and the project reports in `docs/`.
 
 Citation metadata is tracked at the repository root in `CITATION.cff`, `.zenodo.json`, and `codemeta.json`. The archived OSF DOI recorded for this preparation package is `10.17605/OSF.IO/ZGK74`. Until a CPC article is accepted, cite the repository URL, commit hash, archived DOI, and the relevant reports in `docs/`.
 
-The folder `cpc_submission/` contains a minimal reproducible CPC packaging skeleton. It documents installation, sample commands, validation boundaries, included paths, excluded local outputs, and the current arctan/claims status. Run the readiness check with:
+The folder `cpc_submission/` contains a minimal reproducible CPC packaging skeleton. It documents installation, sample commands, validation boundaries, included paths, excluded local outputs, and the current arctan/claims status. Editorial drafts, the official Elsevier/CPC template, and the final manuscript are prepared locally under ignored `paper/`. They are intentionally not tracked as part of the software repository readiness contract. The repository tracks the software package, promoted validation evidence, citation metadata, reproducibility notes, and CPC submission scaffolding under `version_2/cpc_submission/`. Run the readiness check with:
 
 ```bash
 hidden-attractors validate cpc-readiness

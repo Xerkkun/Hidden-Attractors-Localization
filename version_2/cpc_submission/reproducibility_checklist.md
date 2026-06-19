@@ -10,6 +10,7 @@
 - Run the intended pytest lane and record exact command, platform, Python, and dependency versions.
 - Treat `validation/freeze_audit/` as the frozen source for published scientific test counts.
 - Keep local outputs under ignored `outputs/`, `validation_outputs/`, `runs*/`, or `figures/`.
+- Prepare editorial drafts, official templates, and final manuscript locally under ignored `paper/`, ensuring they remain untracked by Git.
 - Do not promote arctan as a validated hidden attractor until the validation contract supports it.
 
 ## CI and freeze audit boundary

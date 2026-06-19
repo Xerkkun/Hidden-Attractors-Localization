@@ -21,17 +21,14 @@ def test_cpc_readiness_metadata_files_exist() -> None:
         REPO_ROOT / "CHANGELOG.md",
         REPO_ROOT / "RELEASE_NOTES.md",
         REPO_ROOT / "REPRODUCIBILITY.md",
-        REPO_ROOT / "paper" / "README.md",
-        REPO_ROOT / "paper" / "TEMPLATE_DECISION.md",
-        REPO_ROOT / "paper" / "cpc_program_summary.tex",
-        REPO_ROOT / "paper" / "cpc_manuscript.tex",
-        REPO_ROOT / "paper" / "references.bib",
         VERSION_ROOT / "cpc_submission" / "README_CPC.md",
         VERSION_ROOT / "cpc_submission" / "PROGRAM_SUMMARY.md",
         VERSION_ROOT / "cpc_submission" / "SAMPLE_RUN.md",
         VERSION_ROOT / "cpc_submission" / "REMAINING_WORK.md",
         VERSION_ROOT / "cpc_submission" / "reproducibility_checklist.md",
         VERSION_ROOT / "cpc_submission" / "archive_manifest.json",
+        VERSION_ROOT / "README.md",
+        VERSION_ROOT / "USER_MANUAL.md",
     ]
     missing = [str(path.relative_to(REPO_ROOT)) for path in required if not path.exists()]
     assert not missing, "Missing CPC readiness files:\n" + "\n".join(missing)

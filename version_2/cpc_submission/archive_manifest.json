@@ -2,7 +2,7 @@
   "package": "hidden-attractors-fo",
   "archive_title": "A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors",
   "version": "0.1.0",
-  "commit": "f841a47f4fbbb459d90fd8db1ed583e46f139ef9",
+  "commit": "c32267ff984fe09c1093bf980cb650553d51638c",
   "commit_status": "pending_update_after_final_cleanup_commit",
   "doi": "10.17605/OSF.IO/ZGK74",
   "license": "MIT",
@@ -65,7 +65,6 @@
     "version_2/library_figures/",
     "version_2/figure_scripts/",
     "version_2/cpc_submission/",
-    "paper/",
     "CITATION.cff",
     ".zenodo.json",
     "codemeta.json",
@@ -74,6 +73,10 @@
     "RELEASE_NOTES.md",
     "REPRODUCIBILITY.md"
   ],
+  "local_editorial_paths": [
+    "paper/"
+  ],
+  "paper_policy": "The CPC manuscript and official Elsevier/CPC template are prepared locally under ignored paper/. They are not part of the software repository readiness contract.",
   "excluded_paths": [
     "version_2/validation_outputs/",
     "version_2/outputs/",
@@ -83,7 +86,8 @@
     ".runtime_cache/",
     "figures/",
     "DF y NC Chua entero y fraccionario/",
-    "DF y NC Chua entero y fraccionario copy/"
+    "DF y NC Chua entero y fraccionario copy/",
+    "paper/"
   ],
   "promoted_evidence": [
     "version_2/validation/chua_integer_saturation/",

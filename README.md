@@ -240,7 +240,7 @@ The active distribution is `version_2/`. Root-level metadata files (`CITATION.cf
 10.17605/OSF.IO/ZGK74
 ```
 
-Editorial drafts live in `paper/`. Reproducible submission packaging lives in `version_2/cpc_submission/`. These folders do not promote new scientific claims; they organize code, metadata, and evidence boundaries for a future CPC submission.
+Editorial drafts, the official Elsevier/CPC template, and the final manuscript are prepared locally under ignored `paper/`. They are intentionally not tracked as part of the software repository readiness contract. The repository tracks the software package, promoted validation evidence, citation metadata, reproducibility notes, and CPC submission scaffolding under `version_2/cpc_submission/`. These folders do not promote new scientific claims; they organize code, metadata, and evidence boundaries for a future CPC submission.
 
 ### Freeze audit status for CPC preparation
 
