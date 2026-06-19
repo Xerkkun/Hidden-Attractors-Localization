@@ -1,7 +1,7 @@
 {
   "stage": "F7_method_comparison",
   "status": "completed_method_evidence_comparison",
-  "generated_at_utc": "2026-06-19T02:55:40.983345+00:00",
+  "generated_at_utc": "2026-06-19T03:18:22.989140+00:00",
   "cases_total": 3,
   "f4_status": "f4_complete_with_documented_discrepancies",
   "lyapunov_comparison": {

@@ -43,7 +43,8 @@ def test_quick_start_mventions_unified_command_only():
     for line in content.splitlines():
         for cmd in LEGACY_COMMANDS:
             if cmd in line:
-                assert any(depr in line for depr in ["ya no", "legacy", "antiguos", "No ejecutar", "deprecación", "históricos"]), \
+                lower_line = line.lower()
+                assert any(depr in lower_line for depr in ["ya no", "legacy", "antiguos", "no ejecutar", "deprecación", "históricos", "no longer", "deprecated", "obsolete"]), \
                     f"Line contains legacy command '{cmd}' without explicit deprecation context: '{line}'"
 
     # D. Sync check: If pyproject.toml scripts only has hidden-attractors, verify consistency

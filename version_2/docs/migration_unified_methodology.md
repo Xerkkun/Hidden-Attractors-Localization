@@ -1,5 +1,15 @@
 # Migration To The Unified Methodology
 
+## Table of Contents / Índice de Contenidos
+- [English Version](#english-version)
+- [Versión en Español](#versión-en-español)
+
+---
+
+## English Version
+
+# Migration To The Unified Methodology
+
 `version_2` now has one official Caputo hidden-attractor protocol. Old route
 names must not appear in new promoted outputs.
 
@@ -10,14 +20,12 @@ names must not appear in new promoted outputs.
 | classical centered describing function | `seed_generation.family=lure_classical_centered` |
 | centered Lur'e route | `seed_generation.family=lure_classical_centered` |
 | biased Lur'e route | `seed_generation.family=lure_classical_biased` |
-| Machado/FDF route | `machado_centered` or `machado_biased` (Marked as planned / unsupported in this release) |
+| Machado/FDF route | `machado_centered` or `machado_biased` (Marked as planned
 | epsilon or eta continuation | `ContinuationPlan(lambda_values=...)` with internal mapping in provenance |
 | early periodicity filter | `soft_precheck`; periodic seeds use `pre_continuation_periodic` and continue |
 | sphere-only controls | interior ball sampling in `hiddenness_tests` |
 
-*Nota Científica e Invariante de Caputo*:
 1. Describing functions and reconstructed Lur'e points are seed sources only. They are not hiddenness evidence.
-2. En sistemas de Caputo, la continuación numérica debe propagar la memoria e historia. Las continuaciones que utilicen únicamente el último estado (warm-start numérico) no se consideran continuación Caputo estricta y emitirán una advertencia.
 
 ## Removed And Retained Material
 
@@ -52,3 +60,30 @@ K3 = F(... + a31*K1 + a32*K2)
 the package-native C backends, and the C/Python engines temporarily retained
 under `tools/legacy/`. No superseded executable EFORK tree is kept as a second
 workflow surface.
+
+---
+
+## Versión en Español
+
+
+## Renamed Concepts
+
+| Previous wording | Official representation |
+|---|---|
+| classical centered describing function | `seed_generation.family=lure_classical_centered` |
+| centered Lur'e route | `seed_generation.family=lure_classical_centered` |
+| biased Lur'e route | `seed_generation.family=lure_classical_biased` |
+unsupported in this release) |
+
+*Nota Científica e Invariante de Caputo*:
+2. En sistemas de Caputo, la continuación numérica debe propagar la memoria e historia. Las continuaciones que utilicen únicamente el último estado (warm-start numérico) no se consideran continuación Caputo estricta y emitirán una advertencia.
+
+`validation/reference_cases/chua_integer_q1/`.
+
+envelope.
+
+## EFORK Correction Invariant
+
+```text
+K3 = F(... + a31*K1 + a32*K2)
+```
