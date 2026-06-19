@@ -1,27 +1,21 @@
 # Changelog
 
-## 0.1.0-cpc-preparation
+## 0.1.0-alpha.1
 
 ### Added
+- Initial alpha package structure.
+- Unified `hidden-attractors` CLI.
+- Validation and reproducibility metadata.
+- Release/archive metadata.
+- Sample configurations and expected-output templates.
+- Repository hygiene checks for generated outputs and local artifacts.
 
-- CPC metadata files: `CITATION.cff`, `.zenodo.json`, `codemeta.json`, `AUTHORS.md`, `CHANGELOG.md`, `RELEASE_NOTES.md`, and `REPRODUCIBILITY.md`.
-- CPC editorial drafts and Elsevier template prepared locally under ignored `paper/`.
-- CPC submission skeleton under `version_2/cpc_submission/`.
-- `hidden-attractors validate cpc-readiness`.
-- CPC readiness and root hygiene tests.
-- Lightweight CPC sample input and expected-output templates.
+### Changed
+- Consolidated active package code under `version_2/`.
+- Separated generated outputs from promoted validation evidence.
+- Normalized citation and archive metadata.
 
-### Fixed
-
-- Closed tracked-file leakage from `version_2/validation_outputs/`; promoted evidence now lives under `version_2/validation/`, while regenerable outputs remain ignored.
-- Decoupled `paper/` from Git tracking and validation checks, establishing `paper/` as local-only.
-- Root hygiene policy for local reports and generated outputs.
-- Figure-script policy centralization.
-- CPC metadata records the OSF DOI and contributor/provenance notes.
-
-### Pending before CPC submission
-
-- Regenerate freeze audit on the final CPC-preparation commit.
-- Replace template sample outputs with executed outputs.
-- Complete manuscript narrative and bibliographic metadata.
-- Update `archive_manifest.json` to `commit_status: current` after the final audit commit is frozen.
+### Pending
+- Complete selected validation runs.
+- Regenerate final scientific freeze audit.
+- Replace template sample outputs with executed outputs if required.

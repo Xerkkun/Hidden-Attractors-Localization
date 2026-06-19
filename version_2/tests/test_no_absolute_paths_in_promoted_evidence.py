@@ -15,8 +15,8 @@ SCAN_PATTERNS = [
     "version_2/validation/**/*.json",
     "version_2/validation/**/*.md",
     "version_2/docs/**/*.md",
-    "version_2/cpc_submission/**/*.md",
-    "version_2/cpc_submission/**/*.json",
+    "version_2/release_package/**/*.md",
+    "version_2/release_package/**/*.json",
 ]
 
 JSON_POLICY_KEYS = {
@@ -100,8 +100,7 @@ def _scan_text(path: Path) -> list[str]:
     return hits
 
 
-@pytest.mark.hygiene
-@pytest.mark.cpc_readiness
+@pytest.mark.release_readiness
 def test_no_absolute_paths_in_promoted_evidence() -> None:
     violations: list[str] = []
     seen: set[Path] = set()

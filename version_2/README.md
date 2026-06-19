@@ -6,16 +6,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 [![CI](https://github.com/Xerkkun/Hidden-Attractors-Localization/actions/workflows/ci.yml/badge.svg)](https://github.com/Xerkkun/Hidden-Attractors-Localization/actions/workflows/ci.yml)
 
-`hidden-attractors-fo` is a Python research library for reproducing, auditing,
-and extending numerical workflows for hidden-attractor candidates in
-integer- and fractional-order Chua/Lur'e systems.
-
-The package turns the previous script collection into a reusable library:
-models, candidate loaders, trajectory diagnostics, basin labels, plotting
-helpers, native C/EFORK backends, and reproducible workflows live under
-`hidden_attractors/`. Historical scripts are exposed through installable
-compatibility commands while their reusable pieces are migrated into package
-modules.
+`hidden-attractors-fo` provides tools for configuring, running, validating, and documenting numerical workflows for hidden-attractor candidates in integer- and fractional-order Chua/Lur'e systems.
 
 ## Scientific Scope
 
@@ -56,7 +47,7 @@ For a complete user-facing description of installation, CLI usage, examples, out
   biased, Machado centered, and Machado biased seed families (documented as theory/planned seed families).
 - Official Caputo workflow contracts, JSON envelopes, lambda continuation,
   interior-ball hiddenness tests, and complementary diagnostics.
-- Installable compatibility commands for historical workflows.
+- Compatibility tools for historical integrations.
 - Small examples and smoke tests for users who install from GitHub.
 
 ## Installation
@@ -258,7 +249,7 @@ python -m pytest -q
 ```
 
 If `pytest` is not installed, the first three commands still provide a useful
-smoke check. At the current thesis-freeze audit, the test suite reports 797 passed tests and 34 skipped tests; the official results are stored under `validation/freeze_audit/`.
+smoke check. At the current release cleanup, the test suite reports 85 passed tests and 884 deselected tests; the official results are stored under `validation/freeze_audit/`.
 
 
 ## Documentation Site
@@ -314,31 +305,21 @@ figures are diagnostics; they do not substitute for those tests. All generated f
 Citation metadata is pending. Until a public release exists, cite the repository
 URL, commit hash, and the project reports in `docs/`.
 
-## CPC readiness
+## Release and reproducibility metadata
 
-Citation metadata is tracked at the repository root in `CITATION.cff`, `.zenodo.json`, and `codemeta.json`. The archived OSF DOI recorded for this preparation package is `10.17605/OSF.IO/ZGK74`. Until a CPC article is accepted, cite the repository URL, commit hash, archived DOI, and the relevant reports in `docs/`.
+Citation and archive metadata are tracked at the repository root in `CITATION.cff`, `.zenodo.json`, and `codemeta.json`.
 
-The folder `cpc_submission/` contains a minimal reproducible CPC packaging skeleton. It documents installation, sample commands, validation boundaries, included paths, excluded local outputs, and the current arctan/claims status. Editorial drafts, the official Elsevier/CPC template, and the final manuscript are prepared locally under ignored `paper/`. They are intentionally not tracked as part of the software repository readiness contract. The repository tracks the software package, promoted validation evidence, citation metadata, reproducibility notes, and CPC submission scaffolding under `version_2/cpc_submission/`. Run the readiness check with:
+The reproducibility package under `release_package/` records sample commands, archive metadata, validation boundaries, and local-output policies for release preparation.
+
+Run:
 
 ```bash
-hidden-attractors validate cpc-readiness
+hidden-attractors validate release-readiness
 ```
 
-### Freeze audit status for CPC preparation
-
-The CPC readiness folder is preparation material, not an accepted CPC article. The last recorded freeze audit corresponds to commit `2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a` and predates the final CPC cleanup. Regenerate `validation/freeze_audit/` on the final CPC-preparation commit before submission.
-
-### CPC CI and freeze audit status
-
-The GitHub Actions CI matrix for the CPC cleanup has passed. This confirms package hygiene and cross-platform test execution for the current repository state. It does not replace the full scientific freeze audit, which remains a separate artifact to regenerate once final promoted validation cases are fixed for submission.
-
-The project keeps a small hygiene/readiness test suite because numerical tests do not protect repository publication boundaries. These tests guard against retracking local outputs, local manuscripts, absolute paths, legacy CLI entry points, unpromoted validation outputs, and overclaimed CPC metadata.
-
-To run these tests specifically:
+To run the hygiene/readiness tests:
 ```bash
 python -m pytest -q -m "hygiene"
-python -m pytest -q -m "cpc_readiness"
-python -m pytest -q -m "not hygiene and not cpc_readiness"
+python -m pytest -q -m "release_readiness"
+python -m pytest -q -m "not hygiene and not release_readiness"
 ```
-
-CI status: passed for current CPC cleanup. Freeze audit: last full scientific freeze audit corresponds to commit `2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a` and must be regenerated only when the final scientific evidence set is frozen.

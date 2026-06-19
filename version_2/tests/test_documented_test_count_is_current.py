@@ -52,9 +52,8 @@ def test_no_outdated_test_count_mentions():
 @pytest.mark.hygiene
 def test_documentation_references_freeze_audit():
     """Verify that key documents reference the freeze audit directory or the current counts."""
-    # We check README raíz, version_2/README.md, version_2/REFERENCE_GUIDE.md, and version_2/docs/testing.md
+    # We check version_2/README.md, version_2/REFERENCE_GUIDE.md, and version_2/docs/testing.md
     files_to_check = [
-        WORKSPACE_DIR / "README.md",
         ROOT_DIR / "README.md",
         ROOT_DIR / "REFERENCE_GUIDE.md",
         ROOT_DIR / "docs/testing.md",

@@ -34,12 +34,12 @@ SCAN_PATTERNS = [
     "version_2/MANIFEST.md",
     "version_2/pyproject.toml",
     "version_2/docs/*.md",
-    "version_2/cpc_submission/*.md",
-    "version_2/cpc_submission/*.json",
-    "version_2/cpc_submission/sample_input/*.yaml",
-    "version_2/cpc_submission/sample_input/*.md",
-    "version_2/cpc_submission/sample_output/*.json",
-    "version_2/cpc_submission/sample_output/*.md",
+    "version_2/release_package/*.md",
+    "version_2/release_package/*.json",
+    "version_2/release_package/sample_input/*.yaml",
+    "version_2/release_package/sample_input/*.md",
+    "version_2/release_package/sample_output/*.json",
+    "version_2/release_package/sample_output/*.md",
 ]
 
 
@@ -55,8 +55,8 @@ def iter_files() -> list[Path]:
 
 
 @pytest.mark.hygiene
-@pytest.mark.cpc_readiness
-def test_main_cpc_text_files_have_no_mojibake() -> None:
+@pytest.mark.release_readiness
+def test_main_release_text_files_have_no_mojibake() -> None:
     violations: list[str] = []
     for path in iter_files():
         text = path.read_text(encoding="utf-8")
@@ -64,4 +64,4 @@ def test_main_cpc_text_files_have_no_mojibake() -> None:
             if pattern in text:
                 violations.append(f"{path.relative_to(REPO_ROOT).as_posix()}: {pattern!r}")
                 break
-    assert not violations, "Mojibake found in CPC/main documentation files:\n" + "\n".join(violations)
+    assert not violations, "Mojibake found in release/main documentation files:\n" + "\n".join(violations)

@@ -76,13 +76,13 @@ def test_no_tracked_files_in_local_ignored_directories() -> None:
 
 
 @pytest.mark.hygiene
-@pytest.mark.cpc_readiness
+@pytest.mark.release_readiness
 def test_validation_outputs_has_no_tracked_files() -> None:
     assert git_ls_files("version_2/validation_outputs") == []
 
 
 @pytest.mark.hygiene
-@pytest.mark.cpc_readiness
+@pytest.mark.release_readiness
 def test_paper_directory_is_local_only() -> None:
     assert git_ls_files("paper") == []
     text = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8")
@@ -90,7 +90,7 @@ def test_paper_directory_is_local_only() -> None:
 
 
 @pytest.mark.hygiene
-@pytest.mark.cpc_readiness
+@pytest.mark.release_readiness
 def test_gitignore_keeps_local_outputs_ignored_but_validation_promoted() -> None:
     text = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8")
     for line in [

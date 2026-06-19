@@ -10,9 +10,8 @@ VERSION_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = VERSION_ROOT.parent
 
 
-@pytest.mark.hygiene
-@pytest.mark.cpc_readiness
-def test_cpc_readiness_metadata_files_exist() -> None:
+@pytest.mark.release_readiness
+def test_release_readiness_metadata_files_exist() -> None:
     required = [
         REPO_ROOT / "CITATION.cff",
         REPO_ROOT / ".zenodo.json",
@@ -21,21 +20,21 @@ def test_cpc_readiness_metadata_files_exist() -> None:
         REPO_ROOT / "CHANGELOG.md",
         REPO_ROOT / "RELEASE_NOTES.md",
         REPO_ROOT / "REPRODUCIBILITY.md",
-        VERSION_ROOT / "cpc_submission" / "README_CPC.md",
-        VERSION_ROOT / "cpc_submission" / "PROGRAM_SUMMARY.md",
-        VERSION_ROOT / "cpc_submission" / "SAMPLE_RUN.md",
-        VERSION_ROOT / "cpc_submission" / "REMAINING_WORK.md",
-        VERSION_ROOT / "cpc_submission" / "reproducibility_checklist.md",
-        VERSION_ROOT / "cpc_submission" / "archive_manifest.json",
+        VERSION_ROOT / "release_package" / "README_RELEASE.md",
+        VERSION_ROOT / "release_package" / "PROGRAM_SUMMARY.md",
+        VERSION_ROOT / "release_package" / "SAMPLE_RUN.md",
+        VERSION_ROOT / "release_package" / "REMAINING_WORK.md",
+        VERSION_ROOT / "release_package" / "reproducibility_checklist.md",
+        VERSION_ROOT / "release_package" / "archive_manifest.json",
         VERSION_ROOT / "README.md",
         VERSION_ROOT / "USER_MANUAL.md",
     ]
     missing = [str(path.relative_to(REPO_ROOT)) for path in required if not path.exists()]
-    assert not missing, "Missing CPC readiness files:\n" + "\n".join(missing)
+    assert not missing, "Missing release readiness files:\n" + "\n".join(missing)
 
 
 @pytest.mark.hygiene
-@pytest.mark.cpc_readiness
+@pytest.mark.release_readiness
 def test_citation_records_archive_doi_without_requiring_article_doi() -> None:
     citation = (REPO_ROOT / "CITATION.cff").read_text(encoding="utf-8")
     assert "10.17605/OSF.IO/ZGK74" in citation
@@ -43,9 +42,9 @@ def test_citation_records_archive_doi_without_requiring_article_doi() -> None:
 
 
 @pytest.mark.hygiene
-@pytest.mark.cpc_readiness
+@pytest.mark.release_readiness
 def test_archive_manifest_records_repository_readiness_and_final_pending_state() -> None:
-    manifest = json.loads((VERSION_ROOT / "cpc_submission" / "archive_manifest.json").read_text(encoding="utf-8"))
+    manifest = json.loads((VERSION_ROOT / "release_package" / "archive_manifest.json").read_text(encoding="utf-8"))
     assert manifest["commit_status"] in {"current", "pending_update_after_final_cleanup_commit"}
     assert manifest["freeze_audit_status"] == "pending_final_scientific_freeze"
     assert manifest["sample_status"] == "template_only_pending_execution"
@@ -54,5 +53,5 @@ def test_archive_manifest_records_repository_readiness_and_final_pending_state()
     assert manifest["repository_readiness"] == "passed"
     assert manifest["software_package_readiness"] == "passed"
     assert manifest["final_submission_readiness"] == "pending"
-    assert manifest["claims_status"] == "finite-time numerical evidence only; no global mathematical hiddenness proof"
+    assert manifest["claims_status"] == "finite-time numerical evidence under recorded validation contracts"
     assert "CI matrix passed" in manifest["freeze_audit_note"]

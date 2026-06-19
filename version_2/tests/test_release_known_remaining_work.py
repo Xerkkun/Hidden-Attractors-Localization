@@ -10,34 +10,30 @@ import pytest
 
 VERSION_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = VERSION_ROOT.parent
-CPC_ROOT = VERSION_ROOT / "cpc_submission"
+RELEASE_ROOT = VERSION_ROOT / "release_package"
 
 EXPECTED_REMAINING_WORK = [
-    "final CPC manuscript writing in official Elsevier/CPC template",
-    "fractional arctan Chua validation runs",
-    "additional reproducible scientific examples selected for the paper",
-    "final scientific freeze audit regeneration after scientific choices are frozen",
-    "replace sample-output templates with executed outputs if required by the final CPC package",
+    "complete selected validation runs",
+    "regenerate final scientific freeze audit",
+    "replace sample-output templates with executed outputs if required",
 ]
 
 
-@pytest.mark.hygiene
-@pytest.mark.cpc_readiness
+@pytest.mark.release_readiness
 def test_remaining_work_file_exists_and_is_limited_to_final_items() -> None:
-    path = CPC_ROOT / "REMAINING_WORK.md"
+    path = RELEASE_ROOT / "REMAINING_WORK.md"
     assert path.exists()
     text = path.read_text(encoding="utf-8")
-    assert "Write the final manuscript using the official CPC/Elsevier template." in text
-    assert "Run and assess full fractional arctan Chua validation." in text
-    assert "Regenerate the full scientific freeze audit on the final commit." in text
+    assert "Complete selected validation runs." in text
+    assert "Regenerate the final scientific freeze audit after the evidence set is fixed." in text
     assert "absolute path" not in text.lower()
     assert "missing metadata" not in text.lower()
 
 
 @pytest.mark.hygiene
-@pytest.mark.cpc_readiness
+@pytest.mark.release_readiness
 def test_archive_manifest_known_remaining_work_is_exact() -> None:
-    manifest = json.loads((CPC_ROOT / "archive_manifest.json").read_text(encoding="utf-8"))
+    manifest = json.loads((RELEASE_ROOT / "archive_manifest.json").read_text(encoding="utf-8"))
     assert manifest["known_remaining_work"] == EXPECTED_REMAINING_WORK
     assert manifest["repository_readiness"] == "passed"
     assert manifest["software_package_readiness"] == "passed"
@@ -48,10 +44,10 @@ def test_archive_manifest_known_remaining_work_is_exact() -> None:
 
 
 @pytest.mark.hygiene
-@pytest.mark.cpc_readiness
+@pytest.mark.release_readiness
 def test_cpc_readiness_strict_allows_declared_final_pending_items() -> None:
     result = subprocess.run(
-        [sys.executable, "-m", "hidden_attractors.cli.main", "validate", "cpc-readiness", "--strict", "--json"],
+        [sys.executable, "-m", "hidden_attractors.cli.main", "validate", "release-readiness", "--strict", "--json"],
         cwd=VERSION_ROOT,
         text=True,
         capture_output=True,
@@ -66,10 +62,10 @@ def test_cpc_readiness_strict_allows_declared_final_pending_items() -> None:
 
 
 @pytest.mark.hygiene
-@pytest.mark.cpc_readiness
+@pytest.mark.release_readiness
 def test_cpc_readiness_submission_strict_reports_final_pending_items() -> None:
     result = subprocess.run(
-        [sys.executable, "-m", "hidden_attractors.cli.main", "validate", "cpc-readiness", "--submission-strict", "--json"],
+        [sys.executable, "-m", "hidden_attractors.cli.main", "validate", "release-readiness", "--submission-strict", "--json"],
         cwd=VERSION_ROOT,
         text=True,
         capture_output=True,
@@ -79,5 +75,5 @@ def test_cpc_readiness_submission_strict_reports_final_pending_items() -> None:
     payload = json.loads(result.stdout)
     assert payload["final_submission_readiness"] == "pending"
     pending_names = {item["name"] for item in payload["final_submission_pending"]}
-    assert "final CPC manuscript/template work" in pending_names
+    assert "final release manuscript/template work" in pending_names
     assert "remaining scientific validation" in pending_names

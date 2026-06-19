@@ -43,10 +43,9 @@ $$\hat{W}_q(\lambda) = r^T (\lambda I - P)^{-1} b, \quad \lambda = (j \omega)^q 
 > [!IMPORTANT]
 > When $q < 1.0$, it is strictly prohibited to evaluate the frequency response using the integer-order convention $W(j\omega)$ as a substitute for $(j\omega)^q$.
 
-### Boundaries of the Scientific Claim
+### Scope of numerical evidence
 
-The library is not intended to solve or analyze arbitrary fractional-order chaotic systems. It is strictly limited to scalar Lur'e-compatible systems. 
-Furthermore, describing function (DF) analysis, Nyquist plots, and numerical parameter continuation are **heuristic tools for generating candidate seeds only**. They do not constitute mathematical proofs of limit cycle existence or hiddenness. Hiddenness is determined solely by evaluating the transient behavior of initial conditions in the neighborhoods of **all equilibrium points** of the system.
+The library records finite-time numerical evidence under explicit solver, tolerance, memory, and neighborhood contracts. Describing functions, continuation, plots, Lyapunov estimates, and basin slices are diagnostic tools; final labels are assigned only through the documented validation workflow.
 
 ---
 
@@ -422,19 +421,12 @@ validation contract: configs/validation_contract.json
 claim status: [reproducido/candidato/pendiente]
 ```
 
-## 18. CPC readiness
+## Citation and reproducibility
 
-- **Citation metadata**: Consult the repository-root `CITATION.cff`, `.zenodo.json`, and `codemeta.json` files for citation keys and formats.
-- **Release citation**: The OSF DOI currently recorded for this CPC-preparation package is `10.17605/OSF.IO/ZGK74`; a future CPC article DOI should be added only after acceptance/publication.
-- **Reproducibility matrix**: Publications and reports must document the exact software environment, commit hash, and validation outcomes from [validation/freeze_audit/](validation/freeze_audit/).
-- **CPC readiness**: Run `hidden-attractors validate cpc-readiness` to check metadata, local-only paper policy, promoted evidence boundaries, and local-output hygiene. Editorial drafts, the official Elsevier/CPC template, and the final manuscript are prepared locally under ignored `paper/`. They are intentionally not tracked as part of the software repository readiness contract. The repository tracks the software package, promoted validation evidence, citation metadata, reproducibility notes, and CPC submission scaffolding under `version_2/cpc_submission/`.
+Citation metadata is available in the repository root.
 
-### CPC freeze-audit caveat
+For archived validation records and environment information, see:
 
-The current CPC preparation keeps `freeze_audit_status: pending_after_cpc_cleanup`. The last recorded freeze audit corresponds to commit `2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a`; it should not be presented as covering later CPC metadata, sample, or manuscript cleanup until regenerated.
-
-## CPC CI and freeze audit status
-
-The GitHub Actions CI matrix for the CPC cleanup has passed. This confirms package hygiene and cross-platform test execution for the current repository state. It does not replace the full scientific freeze audit, which remains a separate artifact to regenerate once final promoted validation cases are fixed for submission.
-
-CI status: passed for current CPC cleanup. Freeze audit: last full scientific freeze audit corresponds to commit `2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a` and must be regenerated only when the final scientific evidence set is frozen.
+- `validation/freeze_audit/`
+- `REPRODUCIBILITY.md`
+- `CITATION.cff`

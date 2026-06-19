@@ -105,7 +105,7 @@ markers = [
   "migration: temporary migration tests",
   "deprecated_alias: tests for compatibility aliases scheduled for removal",
   "hygiene: repository cleanliness and packaging hygiene",
-  "cpc_readiness: CPC submission metadata and packaging readiness checks",
+  "release_readiness: Release archive metadata and packaging readiness checks",
 ]
 
 [tool.pytest-benchmark]
