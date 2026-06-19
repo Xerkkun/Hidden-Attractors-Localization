@@ -13,6 +13,8 @@ from hidden_attractors.reproducibility import (
 )
 
 
+from .status_labels import CANONICAL_ATTRACTOR_STATUS, normalize_attractor_status
+
 CHAOS_EVIDENCE_LEVELS = (
     "strong_chaos_evidence",
     "chaotic_dynamics_supported",
@@ -20,21 +22,8 @@ CHAOS_EVIDENCE_LEVELS = (
     "regular_or_periodic_candidate",
     "unbounded_or_diverged",
 )
-HIDDENNESS_EVIDENCE_LEVELS = (
-    "hiddenness_supported_under_tested_neighborhoods",
-    "compatible_with_hiddenness_under_tested_radii",
-    "self_excited_contact_detected",
-    "hiddenness_inconclusive",
-    "candidate_not_reproducible",
-    "numerical_failure",
-    "candidate_rejected",
-)
-LEGACY_HIDDENNESS_ALIASES = {
-    "hidden_verified": "hiddenness_supported_under_tested_neighborhoods",
-    "hidden_verified_only_if_full_protocol_passed": "hiddenness_supported_under_tested_neighborhoods",
-    "rejected_self_excited_contact": "self_excited_contact_detected",
-    "compatible_in_all_tested_solver_memory_cases": "compatible_with_hiddenness_under_tested_radii",
-}
+HIDDENNESS_EVIDENCE_LEVELS = tuple(CANONICAL_ATTRACTOR_STATUS)
+
 SEED_METHODS = {
     "df_nyquist",
     "describing_function",
@@ -46,9 +35,9 @@ SEED_METHODS = {
 
 
 def normalize_hiddenness_label(label: str) -> str:
-    """Map legacy labels to the frozen sampled-neighborhood vocabulary."""
+    """Map legacy labels to the canonical status vocabulary."""
 
-    return LEGACY_HIDDENNESS_ALIASES.get(str(label), str(label))
+    return normalize_attractor_status(label)
 
 
 def normalize_candidate_evidence(evidence: dict[str, Any]) -> dict[str, Any]:
@@ -247,24 +236,25 @@ def evaluate_candidate_gate(evidence: dict[str, Any]) -> dict[str, Any]:
     metadata_missing = not checked["reproducibility_metadata_complete"]
 
     if chaos["chaos_evidence_level"] == "unbounded_or_diverged":
-        verdict = "candidate_rejected"
+        verdict = "rejected"
     elif target_hits > 0 or hiddenness.get("basin_intersection_detected") is True:
-        verdict = "self_excited_contact_detected"
+        verdict = "self_excited"
     elif numerical_failures > 0:
-        verdict = "numerical_failure"
+        verdict = "inconclusive"
     elif not checked["hiddenness_tested_all_equilibria"] or not checked["hiddenness_tested_radii_recorded"]:
-        verdict = "hiddenness_inconclusive"
+        verdict = "inconclusive"
     elif all(checked.values()):
-        verdict = "hiddenness_supported_under_tested_neighborhoods"
+        verdict = "hidden_under_tested_neighborhoods"
     elif metadata_missing and normalized.get("run_metadata") is None:
-        verdict = "candidate_not_reproducible"
+        verdict = "inconclusive"
     else:
-        verdict = "compatible_with_hiddenness_under_tested_radii"
+        verdict = "compatible_with_hiddenness"
     warnings = []
     if metadata_missing:
         warnings.extend(validate_hiddenness_promotion_metadata(normalized.get("run_metadata")))
     warnings.extend(chaos["diagnostic_conflicts"])
     return {
+        "attractor_status": verdict,
         "verdict": verdict,
         "hiddenness_evidence_level": verdict,
         "evidence_level": verdict,
@@ -272,14 +262,13 @@ def evaluate_candidate_gate(evidence: dict[str, Any]) -> dict[str, Any]:
         "checked_conditions": checked,
         "missing_conditions": missing,
         "warnings": list(dict.fromkeys(warnings)),
-        "promotion_allowed": verdict == "hiddenness_supported_under_tested_neighborhoods",
+        "promotion_allowed": verdict == "hidden_under_tested_neighborhoods",
     }
 
 
 __all__ = [
     "CHAOS_EVIDENCE_LEVELS",
     "HIDDENNESS_EVIDENCE_LEVELS",
-    "LEGACY_HIDDENNESS_ALIASES",
     "classify_chaos_evidence",
     "evaluate_candidate_gate",
     "missing_candidate_conditions",

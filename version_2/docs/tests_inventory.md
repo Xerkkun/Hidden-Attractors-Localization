@@ -12,6 +12,7 @@ This file lists all test files in the test suite, their classification, and plan
 | tests/test_abm_fractional_diagnostics.py | Verificar abm fractional diagnostics | unit | medium | unit | ninguna | no | sí | conservar | Verifica contrato o comportamiento único. |
 | tests/test_adm_wu2023.py | Verificar adm wu2023 | unit | medium | unit | ninguna | no | sí | conservar | Verifica contrato o comportamiento único. |
 | tests/test_archive_independence.py | Verificar archive independence | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
+| tests/test_attractor_status_labels.py | Verificar canonical status labels y normalizacion | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato de etiquetas canonical attractor status y consistencia. |
 | tests/test_attractor_only.py | Verificar attractor only | unit | medium | unit | ninguna | no | sí | conservar | Verifica contrato o comportamiento único. |
 | tests/test_basin_smoke.py | Verificar basin smoke | integration | medium | integration | ninguna | no | sí | conservar | Verifica contrato o comportamiento único. |
 | tests/test_biased_chua_example_single_entrypoint.py | Verificar biased chua example single entrypoint | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |

@@ -40,7 +40,7 @@ def test_scope_declares_supported_boundary_and_evidence_layers() -> None:
 @pytest.mark.literature_traceability
 def test_scope_has_required_literature_rows() -> None:
     text = _read(SCOPE)
-    assert "| Article | System / object | Order | Method in article | Implemented / documented coverage | What the library extends | Library modules / evidence |" in text
+    assert "| Article | System / object | Order | Method in article | Library coverage | Library extension | Library modules / evidence |" in text
     for author in ("Kuznetsov", "Danca", "Wu", "Machado", "Matignon", "Diethelm", "Caputo", "Guan", "Ghoreishi"):
         assert author in text
     rows = [line for line in text.splitlines() if line.startswith("| ")][1:]

@@ -13,22 +13,22 @@ from hidden_attractors.reproducibility import (
 )
 
 
-HIDDENNESS_SUPPORTED_LABEL = "hiddenness_supported_under_tested_neighborhoods"
-SELF_EXCITED_CONTACT_LABEL = "self_excited_contact_detected"
+HIDDENNESS_SUPPORTED_LABEL = "hidden_under_tested_neighborhoods"
+SELF_EXCITED_CONTACT_LABEL = "self_excited"
 REQUIRED_BASIN_PLANES = {"xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"}
 
 
 class HiddennessVerificationStatus(str, Enum):
     """Enumeration of strict hiddenness verification states."""
 
-    NOT_RUN = "NOT_RUN"
-    INCOMPLETE_PROTOCOL = "INCOMPLETE_PROTOCOL"
-    SEED_NOT_AVAILABLE = "SEED_NOT_AVAILABLE"
-    CANDIDATE_NOT_AVAILABLE = "CANDIDATE_NOT_AVAILABLE"
-    SELF_EXCITED_CONTACT_DETECTED = "SELF_EXCITED_CONTACT_DETECTED"
-    NUMERICAL_FAILURE = "NUMERICAL_FAILURE"
-    HIDDEN_COMPATIBLE = "HIDDEN_COMPATIBLE"
-    HIDDEN_VERIFIED = "HIDDEN_VERIFIED"
+    NOT_RUN = "not_tested"
+    INCOMPLETE_PROTOCOL = "compatible_with_hiddenness"
+    SEED_NOT_AVAILABLE = "inconclusive"
+    CANDIDATE_NOT_AVAILABLE = "inconclusive"
+    SELF_EXCITED_CONTACT_DETECTED = "self_excited"
+    NUMERICAL_FAILURE = "inconclusive"
+    HIDDEN_COMPATIBLE = "compatible_with_hiddenness"
+    HIDDEN_VERIFIED = "hidden_under_tested_neighborhoods"
 
 
 def is_radius_close(r1: float, r2: float, rtol: float = 1e-12, atol: float = 1e-15) -> bool:
@@ -100,6 +100,7 @@ def verify_hiddenness_contract(
     if require_candidate_attractor and not seed_reached_attractor:
         failed_reqs.append("Seed did not reach the target attractor candidate.")
         return {
+            "attractor_status": "inconclusive",
             "hiddenness_status": HiddennessVerificationStatus.CANDIDATE_NOT_AVAILABLE.value,
             "promotion_verdict": "seed_only",
             "hidden_verified": False,
@@ -300,6 +301,7 @@ def verify_hiddenness_contract(
     )
 
     return {
+        "attractor_status": promotion_verdict,
         "hiddenness_status": hiddenness_status,
         "promotion_verdict": promotion_verdict,
         "hidden_verified": hidden_verified,

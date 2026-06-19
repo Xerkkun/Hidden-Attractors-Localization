@@ -1185,10 +1185,11 @@ def _build_summary_dict(
     history_policy = "full_caputo" if config.get("memory_policy") == "full_caputo" else ("finite_window" if config.get("memory_policy") == "finite_window" else "none")
 
     # Determine status verdict
+    from ..verification.status_labels import normalize_attractor_status
     if contract_res is not None:
-        status_verdict = contract_res["hiddenness_status"]
+        status_verdict = normalize_attractor_status(contract_res.get("attractor_status") or contract_res.get("hiddenness_status") or verdict)
     else:
-        status_verdict = verdict
+        status_verdict = normalize_attractor_status(verdict)
 
     summary = {
         "system_id": config["system_id"],
@@ -1231,6 +1232,7 @@ def _build_summary_dict(
         "target_hits_from_seed": 1 if final_traj is not None and final_class == "simulation_bounded" else 0,
         "basin_slices_enabled": config["run_basin_slices"],
         "status": status_verdict,
+        "attractor_status": status_verdict,
         "notes": notes
     }
 
@@ -1277,6 +1279,10 @@ def _build_summary_dict(
             "missing_claim_references": [],
             "traceability_manifest": config.get("validation", {}).get("claims_manifest", "version_2/references/claims_manifest.yaml")
         }
+
+    # Clean obsolete fields
+    for obsolete_key in ("hidden_verified", "hidden_compatible", "chaos_verified", "hiddenness_status"):
+        summary.pop(obsolete_key, None)
 
     return summary
 

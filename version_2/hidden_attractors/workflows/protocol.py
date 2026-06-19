@@ -67,25 +67,18 @@ PLANNED_SEED_FAMILIES: tuple[str, ...] = (
 )
 
 CURRENT_FINAL_LABELS: tuple[str, ...] = (
-    "seed_only",
-    "continuation_survivor",
-    "rejected_post_continuation",
-    "robust_survivor",
-    "compatible_with_hiddenness_under_tested_radii",
-    "hiddenness_supported_under_tested_neighborhoods",
-    "self_excited_contact_detected",
-    "hiddenness_inconclusive",
-    "candidate_not_reproducible",
-    "numerical_failure",
-    "candidate_rejected",
+    "candidate",
+    "hidden_under_tested_neighborhoods",
+    "compatible_with_hiddenness",
+    "self_excited",
+    "nonchaotic",
+    "diverged",
+    "inconclusive",
+    "rejected",
+    "not_tested",
 )
 
-LEGACY_FINAL_LABELS: tuple[str, ...] = (
-    "hidden_verified",
-    "hidden_verified_only_if_full_protocol_passed",
-    "rejected_self_excited_contact",
-    "compatible_in_all_tested_solver_memory_cases",
-)
+LEGACY_FINAL_LABELS: tuple[str, ...] = ()
 
 FINAL_LABELS = CURRENT_FINAL_LABELS + LEGACY_FINAL_LABELS
 
@@ -413,7 +406,7 @@ class HiddennessTestResult:
             and self.numerical_failures == 0
             and required_planes.issubset(set(self.basin_planes))
         )
-        strong_label = _normalize_hiddenness_label(self.final_label) == "hiddenness_supported_under_tested_neighborhoods"
+        strong_label = _normalize_hiddenness_label(self.final_label) == "hidden_under_tested_neighborhoods"
         if strong_label and not full_protocol:
             errors.append("hidden_verified_only_if_full_protocol_passed requires the complete tested protocol.")
         if strong_label:
@@ -500,14 +493,14 @@ class HiddennessTestResult:
         )
         
         verdict = gate.get("verdict")
-        if verdict == "hiddenness_supported_under_tested_neighborhoods" and not fallback_is_valid:
+        if verdict == "hidden_under_tested_neighborhoods" and not fallback_is_valid:
             # Demote to compatible
             gate = dict(gate)
-            gate["verdict"] = "compatible_with_hiddenness_under_tested_radii"
+            gate["verdict"] = "compatible_with_hiddenness"
             if "hiddenness_evidence_level" in gate:
-                gate["hiddenness_evidence_level"] = "compatible_with_hiddenness_under_tested_radii"
+                gate["hiddenness_evidence_level"] = "compatible_with_hiddenness"
             if "evidence_level" in gate:
-                gate["evidence_level"] = "compatible_with_hiddenness_under_tested_radii"
+                gate["evidence_level"] = "compatible_with_hiddenness"
             gate["promotion_allowed"] = False
             
         # Enforce Rule 4:
@@ -549,11 +542,24 @@ class StageEnvelope:
     method_scope: str = ""
     warnings: Sequence[str] = field(default_factory=list)
     literature_note: str = ""
+    attractor_status: str | None = None
 
     def __post_init__(self) -> None:
         if self.verdict is not None:
-            normalized = _normalize_hiddenness_label(self.verdict)
-            object.__setattr__(self, "verdict", normalized)
+            normalized_verdict = _normalize_hiddenness_label(self.verdict)
+            object.__setattr__(self, "verdict", normalized_verdict)
+        if self.state is not None:
+            normalized_state = _normalize_hiddenness_label(self.state)
+            object.__setattr__(self, "state", normalized_state)
+
+        status = None
+        if self.attractor_status is not None:
+            status = _normalize_hiddenness_label(self.attractor_status)
+        elif self.verdict is not None:
+            status = _normalize_hiddenness_label(self.verdict)
+        elif self.state is not None:
+            status = _normalize_hiddenness_label(self.state)
+        object.__setattr__(self, "attractor_status", status)
 
     def validate(self) -> list[str]:
         errors: list[str] = []
@@ -569,7 +575,7 @@ class StageEnvelope:
         metadata_errors = validate_run_metadata(metadata_to_jsonable(dict(self.run_metadata)))
         if list(self.metadata_validation_errors) != metadata_errors:
             errors.append("metadata_validation_errors must match validate_run_metadata(run_metadata).")
-        if _normalize_hiddenness_label(str(self.verdict)) == "hiddenness_supported_under_tested_neighborhoods":
+        if _normalize_hiddenness_label(str(self.verdict)) == "hidden_under_tested_neighborhoods":
             errors.extend(validate_hiddenness_promotion_metadata(dict(self.run_metadata)))
         return errors
 
@@ -598,6 +604,7 @@ class StageEnvelope:
                 "method_scope": self.method_scope,
                 "warnings": list(self.warnings),
                 "literature_note": self.literature_note,
+                "attractor_status": self.attractor_status,
             }
         )
 
@@ -605,11 +612,17 @@ class StageEnvelope:
 def validate_global_report_coherence(report_data: dict) -> None:
     """Validate coherence of global report validation metadata states and evidence."""
 
-    state = report_data.get("state")
-    verdict = report_data.get("verdict")
+    raw_state = report_data.get("state")
+    raw_verdict = report_data.get("verdict")
+    
+    state = _normalize_hiddenness_label(str(raw_state)) if raw_state is not None else None
+    verdict = _normalize_hiddenness_label(str(raw_verdict)) if raw_verdict is not None else None
+    
     final_report_status = ""
     if isinstance(report_data.get("final_report"), dict):
-        final_report_status = report_data["final_report"].get("status", "")
+        final_report_status = _normalize_hiddenness_label(report_data["final_report"].get("status", ""))
+    elif report_data.get("final_report_status") is not None:
+        final_report_status = _normalize_hiddenness_label(str(report_data.get("final_report_status")))
 
     outputs = report_data.get("outputs", {})
     metrics = report_data.get("metrics", {})
@@ -617,35 +630,37 @@ def validate_global_report_coherence(report_data: dict) -> None:
 
     # 1. Structural check: State 'seed_found' cannot be labeled as hidden
     is_seed_found = (
-        state == "seed_found"
-        or verdict == "seed_found"
-        or (isinstance(outputs, dict) and outputs.get("state") == "seed_found")
+        state == "candidate"
+        or verdict == "candidate"
+        or (isinstance(outputs, dict) and _normalize_hiddenness_label(str(outputs.get("state"))) == "candidate")
     )
     if is_seed_found:
         if verdict in (
-            "hidden_compatible",
-            "hidden_verified",
-            "compatible_with_hiddenness_under_tested_radii",
-            "hidden_verified_only_if_full_protocol_passed",
+            "compatible_with_hiddenness",
+            "hidden_under_tested_neighborhoods",
         ):
             raise ValueError("State 'seed_found' cannot be labeled as hidden.")
-        if state in ("hidden_compatible", "hidden_verified"):
+        if state in ("compatible_with_hiddenness", "hidden_under_tested_neighborhoods"):
             raise ValueError("State 'seed_found' cannot be labeled as hidden.")
 
     # Normalize state/verdict keys from envelopes if checking a list of stages or manifest
     is_hidden_verified = (
-        state == "hidden_verified"
-        or state == "hiddenness_supported_under_tested_neighborhoods"
-        or _normalize_hiddenness_label(str(verdict)) == "hiddenness_supported_under_tested_neighborhoods"
-        or final_report_status == "hidden_verified"
-        or report_data.get("final_report_status") == "hidden_verified"
+        state == "hidden_under_tested_neighborhoods"
+        or verdict == "hidden_under_tested_neighborhoods"
+        or final_report_status == "hidden_under_tested_neighborhoods"
     )
 
     if isinstance(outputs, dict):
-        if outputs.get("state") in {"hidden_verified", "hiddenness_supported_under_tested_neighborhoods"} or _normalize_hiddenness_label(str(outputs.get("verdict"))) == "hiddenness_supported_under_tested_neighborhoods":
+        if (
+            _normalize_hiddenness_label(str(outputs.get("state"))) == "hidden_under_tested_neighborhoods"
+            or _normalize_hiddenness_label(str(outputs.get("verdict"))) == "hidden_under_tested_neighborhoods"
+        ):
             is_hidden_verified = True
     if isinstance(metrics, dict):
-        if metrics.get("state") in {"hidden_verified", "hiddenness_supported_under_tested_neighborhoods"} or _normalize_hiddenness_label(str(metrics.get("verdict"))) == "hiddenness_supported_under_tested_neighborhoods":
+        if (
+            _normalize_hiddenness_label(str(metrics.get("state"))) == "hidden_under_tested_neighborhoods"
+            or _normalize_hiddenness_label(str(metrics.get("verdict"))) == "hidden_under_tested_neighborhoods"
+        ):
             is_hidden_verified = True
 
     if is_hidden_verified:
@@ -691,10 +706,13 @@ def validate_global_report_coherence(report_data: dict) -> None:
             )
 
     is_chaotic_candidate = (
-        state == "chaotic_candidate"
-        or verdict == "chaotic_candidate"
-        or final_report_status == "chaotic_candidate"
-        or (isinstance(outputs, dict) and (outputs.get("state") == "chaotic_candidate" or outputs.get("verdict") == "chaotic_candidate"))
+        state == "candidate"
+        or verdict == "candidate"
+        or final_report_status == "candidate"
+        or (isinstance(outputs, dict) and (
+            _normalize_hiddenness_label(str(outputs.get("state"))) == "candidate"
+            or _normalize_hiddenness_label(str(outputs.get("verdict"))) == "candidate"
+        ))
     )
     if is_chaotic_candidate:
         has_chaos_evidence = False

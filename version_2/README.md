@@ -43,8 +43,7 @@ For a complete user-facing description of installation, CLI usage, examples, out
   variables.
 - A system registry for built-in and user-defined chaotic systems. Full
   Nyquist/DF workflows require a manual Lur'e form.
-- Public seed-generation helpers normalized into classical centered, classical
-  biased, Machado centered, and Machado biased seed families (documented as theory/planned seed families).
+- Public seed-generation helpers currently cover classical centered and biased Lur’e/DF routes. Machado/FDF is documented as theory and planned seed family; it is not a promoted public workflow in this release.
 - Official Caputo workflow contracts, JSON envelopes, lambda continuation,
   interior-ball hiddenness tests, and complementary diagnostics.
 - Compatibility tools for historical integrations.

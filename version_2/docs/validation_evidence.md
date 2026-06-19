@@ -104,7 +104,7 @@ all six close/large basin slices. Missing any one condition yields
 |---|---|
 | `numerical_contract` | Effective solver/backend/memory contract and integrator benchmarks. |
 | `algebraic_validation` | Equilibria, Jacobians, Matignon margins, transfer function and scalar nonlinearity. |
-| `seed_generation` | Uniform seed records from the four declared families; no hiddenness claim. |
+| `seed_generation` | Seed records from implemented families; Machado/FDF remains documented as planned/theoretical unless explicitly promoted by a future release. |
 | `soft_precheck` | Admissibility and diagnostic labels only; no periodicity rejection. |
 | `continuation` | `ContinuationPlan(lambda_values=...)`, intermediate states and failures. |
 | `post_continuation_filter` | Target-system hard decisions, including periodicity and duplicate removal. |

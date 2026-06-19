@@ -102,6 +102,7 @@ def test_official_stage_order_and_uniform_envelope(valid_run_metadata) -> None:
         "method_scope",
         "warnings",
         "literature_note",
+        "attractor_status",
     )
 
 
@@ -257,7 +258,7 @@ def test_strong_hiddenness_label_requires_every_declared_radius(valid_run_metada
         required_equilibria=("E0",),
         required_radii=(1.0e-4, 1.0e-3),
     )
-    assert result.promotion_verdict == "compatible_with_hiddenness_under_tested_radii"
+    assert result.promotion_verdict == "compatible_with_hiddenness"
 
 
 def test_validation_contract_uses_only_the_official_stage_order() -> None:
@@ -286,9 +287,9 @@ def test_validation_contract_uses_only_the_official_stage_order() -> None:
 def test_current_and_legacy_final_labels_are_separated() -> None:
     from hidden_attractors.workflows.protocol import CURRENT_FINAL_LABELS, LEGACY_FINAL_LABELS, FINAL_LABELS
     assert "hidden_verified" not in CURRENT_FINAL_LABELS
-    assert "hiddenness_supported_under_tested_neighborhoods" in CURRENT_FINAL_LABELS
-    assert "hidden_verified" in LEGACY_FINAL_LABELS
-    assert len(FINAL_LABELS) == len(CURRENT_FINAL_LABELS) + len(LEGACY_FINAL_LABELS)
+    assert "hidden_under_tested_neighborhoods" in CURRENT_FINAL_LABELS
+    assert len(LEGACY_FINAL_LABELS) == 0
+    assert len(FINAL_LABELS) == len(CURRENT_FINAL_LABELS)
 
 
 def test_hiddenness_test_result_evidence_cases(valid_run_metadata) -> None:
@@ -302,7 +303,7 @@ def test_hiddenness_test_result_evidence_cases(valid_run_metadata) -> None:
         numerical_failures=0,
         basin_planes=("xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"),
         reference_was_robust=True,
-        final_label="hiddenness_supported_under_tested_neighborhoods",
+        final_label="hidden_under_tested_neighborhoods",
         candidate_evidence={
             "run_metadata": valid_run_metadata,
             "equilibria": {"all_found": True, "max_residual": 1.0e-10},
@@ -318,7 +319,7 @@ def test_hiddenness_test_result_evidence_cases(valid_run_metadata) -> None:
             "poincare": {"label": "complex_section"},
         },
     )
-    assert res_complete.promotion_verdict == "hiddenness_supported_under_tested_neighborhoods"
+    assert res_complete.promotion_verdict == "hidden_under_tested_neighborhoods"
     assert "candidate_evidence_missing_full_algebraic_payload" not in res_complete.promotion_gate.get("warnings", [])
 
     bad_metadata = deepcopy(valid_run_metadata)
@@ -332,12 +333,12 @@ def test_hiddenness_test_result_evidence_cases(valid_run_metadata) -> None:
         numerical_failures=0,
         basin_planes=("xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"),
         reference_was_robust=True,
-        final_label="hiddenness_supported_under_tested_neighborhoods",
+        final_label="hidden_under_tested_neighborhoods",
         run_metadata=bad_metadata,
         required_equilibria=("E0", "E+", "E-"),
         required_radii=(1.0e-2, 1.0e-3),
     )
-    assert res_fallback.promotion_verdict == "compatible_with_hiddenness_under_tested_radii"
+    assert res_fallback.promotion_verdict == "compatible_with_hiddenness"
     assert "candidate_evidence_missing_full_algebraic_payload" in res_fallback.promotion_gate["warnings"]
 
     res_fallback_none = HiddennessTestResult(
@@ -349,12 +350,12 @@ def test_hiddenness_test_result_evidence_cases(valid_run_metadata) -> None:
         numerical_failures=0,
         basin_planes=("xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"),
         reference_was_robust=True,
-        final_label="hiddenness_supported_under_tested_neighborhoods",
+        final_label="hidden_under_tested_neighborhoods",
         run_metadata=None,
         required_equilibria=("E0", "E+", "E-"),
         required_radii=(1.0e-2, 1.0e-3),
     )
-    assert res_fallback_none.promotion_verdict == "candidate_not_reproducible"
+    assert res_fallback_none.promotion_verdict == "inconclusive"
     assert "candidate_evidence_missing_full_algebraic_payload" in res_fallback_none.promotion_gate["warnings"]
 
     res_contacts = HiddennessTestResult(
@@ -366,9 +367,9 @@ def test_hiddenness_test_result_evidence_cases(valid_run_metadata) -> None:
         numerical_failures=0,
         basin_planes=("xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"),
         reference_was_robust=True,
-        final_label="hiddenness_supported_under_tested_neighborhoods",
+        final_label="hidden_under_tested_neighborhoods",
         run_metadata=valid_run_metadata,
         required_equilibria=("E0", "E+", "E-"),
         required_radii=(1.0e-2, 1.0e-3),
     )
-    assert res_contacts.promotion_verdict == "self_excited_contact_detected"
+    assert res_contacts.promotion_verdict == "self_excited"

@@ -20,14 +20,14 @@ from hidden_attractors.verification.sphere_tests import run_sphere_probe_sweep
 
 # 1. Test HiddennessVerificationStatus enum values
 def test_verification_status_values():
-    assert HiddennessVerificationStatus.NOT_RUN == "NOT_RUN"
-    assert HiddennessVerificationStatus.INCOMPLETE_PROTOCOL == "INCOMPLETE_PROTOCOL"
-    assert HiddennessVerificationStatus.SEED_NOT_AVAILABLE == "SEED_NOT_AVAILABLE"
-    assert HiddennessVerificationStatus.CANDIDATE_NOT_AVAILABLE == "CANDIDATE_NOT_AVAILABLE"
-    assert HiddennessVerificationStatus.SELF_EXCITED_CONTACT_DETECTED == "SELF_EXCITED_CONTACT_DETECTED"
-    assert HiddennessVerificationStatus.NUMERICAL_FAILURE == "NUMERICAL_FAILURE"
-    assert HiddennessVerificationStatus.HIDDEN_COMPATIBLE == "HIDDEN_COMPATIBLE"
-    assert HiddennessVerificationStatus.HIDDEN_VERIFIED == "HIDDEN_VERIFIED"
+    assert HiddennessVerificationStatus.NOT_RUN == "not_tested"
+    assert HiddennessVerificationStatus.INCOMPLETE_PROTOCOL == "compatible_with_hiddenness"
+    assert HiddennessVerificationStatus.SEED_NOT_AVAILABLE == "inconclusive"
+    assert HiddennessVerificationStatus.CANDIDATE_NOT_AVAILABLE == "inconclusive"
+    assert HiddennessVerificationStatus.SELF_EXCITED_CONTACT_DETECTED == "self_excited"
+    assert HiddennessVerificationStatus.NUMERICAL_FAILURE == "inconclusive"
+    assert HiddennessVerificationStatus.HIDDEN_COMPATIBLE == "compatible_with_hiddenness"
+    assert HiddennessVerificationStatus.HIDDEN_VERIFIED == "hidden_under_tested_neighborhoods"
 
 
 # 2. Test candidate not available check
@@ -242,7 +242,7 @@ def test_complete_neighborhood_evidence_without_metadata_is_only_compatible():
         basin_planes=("xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"),
     )
     assert res["hidden_verified"] is False
-    assert res["promotion_verdict"] == "compatible_with_hiddenness_under_tested_radii"
+    assert res["promotion_verdict"] == "compatible_with_hiddenness"
     assert "run_metadata is required for a strong candidate promotion" in res["metadata_validation_errors"]
 
 

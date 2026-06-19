@@ -21,7 +21,7 @@ from .paths import PROJECT_ROOT
 
 
 REPRODUCIBILITY_SCHEMA_VERSION = "1.0"
-CONSERVATIVE_HIDDENNESS_LABEL = "compatible_with_hiddenness_under_tested_radii"
+CONSERVATIVE_HIDDENNESS_LABEL = "compatible_with_hiddenness"
 DEFAULT_TOLERANCES = {
     "equilibrium_residual_tol": 1.0e-8,
     "matignon_tol": 1.0e-12,
