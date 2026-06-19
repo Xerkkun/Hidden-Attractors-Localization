@@ -17,8 +17,6 @@ SCAN_PATTERNS = [
     "version_2/docs/**/*.md",
     "version_2/cpc_submission/**/*.md",
     "version_2/cpc_submission/**/*.json",
-    "paper/**/*.tex",
-    "paper/**/*.bib",
 ]
 
 JSON_POLICY_KEYS = {

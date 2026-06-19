@@ -29,6 +29,17 @@ python -m pip install -e ".[dev,analysis,legacy]"
 python -m pytest -q
 ```
 
+### Hygiene and CPC Readiness Tests
+
+The project keeps a small hygiene/readiness test suite because numerical tests do not protect repository publication boundaries. These tests guard against retracking local outputs, local manuscripts, absolute paths, legacy CLI entry points, unpromoted validation outputs, and overclaimed CPC metadata.
+
+To run these tests specifically:
+```bash
+python -m pytest -q -m "hygiene"
+python -m pytest -q -m "cpc_readiness"
+python -m pytest -q -m "not hygiene and not cpc_readiness"
+```
+
 At the current thesis-freeze audit, `validation/freeze_audit/` reports 797 passed and 34 skipped.
 
 Current tests verify:

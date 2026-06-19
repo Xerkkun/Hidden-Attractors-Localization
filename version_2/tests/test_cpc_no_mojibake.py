@@ -9,15 +9,16 @@ VERSION_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = VERSION_ROOT.parent
 
 MOJIBAKE_PATTERNS = [
-    "Ãƒ",
-    "Ã‚",
-    "Ã¢â€\x9dâ‚¬",
-    "Ã¢â‚¬â€œ",
-    "Ã¢â‚¬â„¢",
-    "Ă",
-    "â€œ",
-    "â€",
-    "â”",
+    "\u00c3\u0192",   # Ãƒ
+    "\u00c3\u201a",   # Ã‚
+    "\u00c3",
+    "\u00c2",
+    "\u00e2\u20ac",
+    "\u00e2\u20ac\u201d",
+    "\u00e2\u20ac\u2122",
+    "\u00e2\u20ac\u0153",
+    "\u00e2\u20ac\u009d",
+    "\u00e2\u201d",
 ]
 
 SCAN_PATTERNS = [
