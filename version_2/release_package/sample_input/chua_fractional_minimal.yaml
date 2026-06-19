@@ -1,11 +1,11 @@
 experiment:
-  name: "CPC sample integer Chua reference"
-  description: "Small integer-order Chua reference configuration for CPC interface checks; not promoted evidence."
-  output_dir: "outputs/cpc_samples/chua_integer_reference_minimal"
+  name: "Sample fractional Chua configuration"
+  description: "Small fractional-order Chua configuration for interface checks; not promoted evidence."
+  output_dir: "outputs/release_samples/chua_fractional_minimal"
 
 system:
-  system_id: "chua_integer_saturation"
-  q: 1.0
+  system_id: "chua_fractional_saturation"
+  q: 0.998
   parameters:
     alpha: 8.4562
     beta: 12.0732
@@ -14,14 +14,17 @@ system:
     m1: -1.1468
 
 modes:
-  transfer_mode: "integer"
-  seed_mode: "integer"
-  continuation_mode: "integer"
+  transfer_mode: "published_integer_laplace"
+  seed_mode: "fractional"
+  continuation_mode: "fractional"
   dynamics_mode: "system"
 
 integrator:
-  name: "heun"
-  h: 0.01
+  name: "abm"
+  h: 0.05
+  memory_mode: "full"
+  memory_policy: "full_history"
+  caputo_history_accumulated: true
 
 stages:
   seed_search: true

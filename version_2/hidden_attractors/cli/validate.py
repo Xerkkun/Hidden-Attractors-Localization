@@ -1,4 +1,4 @@
-"""CLI commands for validating validation evidence contracts and CPC readiness.
+"""CLI commands for validating validation evidence contracts and release readiness.
 
 Stability: internal
 """
@@ -43,28 +43,26 @@ MAIN_TEXT_PATTERNS = [
     "version_2/MANIFEST.md",
     "version_2/pyproject.toml",
     "version_2/docs/*.md",
-    "version_2/cpc_submission/*.md",
-    "version_2/cpc_submission/*.json",
-    "version_2/cpc_submission/sample_input/*.yaml",
-    "version_2/cpc_submission/sample_input/*.md",
-    "version_2/cpc_submission/sample_output/*.json",
-    "version_2/cpc_submission/sample_output/*.md",
+    "version_2/release_package/*.md",
+    "version_2/release_package/*.json",
+    "version_2/release_package/sample_input/*.yaml",
+    "version_2/release_package/sample_input/*.md",
+    "version_2/release_package/sample_output/*.json",
+    "version_2/release_package/sample_output/*.md",
 ]
 
 PROMOTED_SCAN_PATTERNS = [
     "version_2/validation/**/*.json",
     "version_2/validation/**/*.md",
     "version_2/docs/**/*.md",
-    "version_2/cpc_submission/**/*.md",
-    "version_2/cpc_submission/**/*.json",
+    "version_2/release_package/**/*.md",
+    "version_2/release_package/**/*.json",
 ]
 
 KNOWN_REMAINING_WORK = [
-    "final CPC manuscript writing in official Elsevier/CPC template",
-    "fractional arctan Chua validation runs",
-    "additional reproducible scientific examples selected for the paper",
-    "final scientific freeze audit regeneration after scientific choices are frozen",
-    "replace sample-output templates with executed outputs if required by the final CPC package",
+    "complete selected validation runs",
+    "regenerate final scientific freeze audit",
+    "replace sample-output templates with executed outputs if required",
 ]
 
 JSON_POLICY_KEYS = {
@@ -314,16 +312,15 @@ def _remaining_work_file_matches(path: Path) -> bool:
         return False
     text = path.read_text(encoding="utf-8-sig")
     required = [
-        "Write the final manuscript using the official CPC/Elsevier template.",
-        "Run and assess full fractional arctan Chua validation.",
-        "Regenerate the full scientific freeze audit on the final commit.",
+        "Complete selected validation runs.",
+        "Regenerate the final scientific freeze audit after the evidence set is fixed.",
     ]
     return all(item in text for item in required)
 
 
-def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
-    """Validate CPC repository/software readiness without changing science artifacts."""
-    parser = argparse.ArgumentParser(description="Validate CPC readiness metadata and hygiene")
+def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
+    """Validate release repository/software readiness without changing science artifacts."""
+    parser = argparse.ArgumentParser(description="Validate release readiness metadata and hygiene")
     parser.add_argument("--json", action="store_true", help="Output machine-readable results")
     parser.add_argument("--strict", action="store_true", help="Fail on correctable repository/software readiness errors")
     parser.add_argument("--submission-strict", action="store_true", help="Also fail on final-submission pending items")
@@ -331,8 +328,8 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
 
     root = _repo_root()
     version_root = root / "version_2"
-    cpc_root = version_root / "cpc_submission"
-    manifest_path = cpc_root / "archive_manifest.json"
+    release_root = version_root / "release_package"
+    manifest_path = release_root / "archive_manifest.json"
     manifest = _load_json(manifest_path)
     checks: list[dict[str, Any]] = []
 
@@ -344,18 +341,18 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
         "CHANGELOG.md",
         "RELEASE_NOTES.md",
         "REPRODUCIBILITY.md",
-        "version_2/cpc_submission/README_CPC.md",
-        "version_2/cpc_submission/PROGRAM_SUMMARY.md",
-        "version_2/cpc_submission/SAMPLE_RUN.md",
-        "version_2/cpc_submission/REMAINING_WORK.md",
-        "version_2/cpc_submission/reproducibility_checklist.md",
-        "version_2/cpc_submission/archive_manifest.json",
+        "version_2/release_package/README_RELEASE.md",
+        "version_2/release_package/PROGRAM_SUMMARY.md",
+        "version_2/release_package/SAMPLE_RUN.md",
+        "version_2/release_package/REMAINING_WORK.md",
+        "version_2/release_package/reproducibility_checklist.md",
+        "version_2/release_package/archive_manifest.json",
         "version_2/validation/freeze_audit/final_freeze_pytest_summary.json",
         "version_2/README.md",
         "version_2/USER_MANUAL.md",
     ]
     missing = [rel for rel in required if not (root / rel).exists()]
-    checks.append(_check("required CPC metadata", "repository", not missing, missing))
+    checks.append(_check("required release metadata", "repository", not missing, missing))
 
     validation_outputs_tracked = _git_ls_files(root, "version_2/validation_outputs")
     checks.append(_check("validation_outputs untracked", "repository", not validation_outputs_tracked, validation_outputs_tracked))
@@ -363,8 +360,8 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
     path_hits = _promoted_local_path_hits(root)
     checks.append(_check("no local absolute paths in promoted evidence", "repository", not path_hits, path_hits[:50]))
 
-    sample_input = cpc_root / "sample_input"
-    sample_output = cpc_root / "sample_output"
+    sample_input = release_root / "sample_input"
+    sample_output = release_root / "sample_output"
     sample_details = []
     if not (sample_input / "README.md").exists():
         sample_details.append("sample_input/README.md missing")
@@ -389,6 +386,8 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
 
     if has_paper_dir:
         manuscript_path = root / "paper" / "cpc_manuscript.tex"
+        if not manuscript_path.exists():
+            manuscript_path = root / "paper" / "manuscript.tex"
         manuscript = manuscript_path.read_text(encoding="utf-8-sig") if manuscript_path.exists() else ""
         manuscript_bad = []
         required_sections = ["Introduction", "Scientific and numerical scope", "Software architecture", "Numerical workflow", "Validation and reproducibility", "Limitations", "Availability and archival metadata", "Conclusions"]
@@ -454,7 +453,7 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
     ci_ok = manifest.get("ci_status") == "passed" and "Python 3.11/3.12/3.13" in str(manifest.get("ci_status_scope", ""))
     checks.append(_check("CI status documented", "software", ci_ok, [] if ci_ok else [f"ci_status={manifest.get('ci_status')}", f"ci_status_scope={manifest.get('ci_status_scope')}"]))
 
-    known_ok = manifest.get("known_remaining_work") == KNOWN_REMAINING_WORK and _remaining_work_file_matches(cpc_root / "REMAINING_WORK.md")
+    known_ok = manifest.get("known_remaining_work") == KNOWN_REMAINING_WORK and _remaining_work_file_matches(release_root / "REMAINING_WORK.md")
     checks.append(_check("known remaining work declared", "software", known_ok, [] if known_ok else ["known_remaining_work mismatch or REMAINING_WORK.md incomplete"]))
 
     readiness_ok = (
@@ -477,7 +476,7 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
     if manifest.get("freeze_audit_status") == "pending_final_scientific_freeze":
         final_pending.append({"name": "final scientific freeze audit", "details": ["freeze audit must be regenerated after final scientific evidence is frozen"]})
     if manifest.get("final_submission_readiness") == "pending":
-        final_pending.append({"name": "final CPC manuscript/template work", "details": ["final manuscript remains editorial work"]})
+        final_pending.append({"name": "final release manuscript/template work", "details": ["final manuscript remains editorial work"]})
     if manifest.get("remaining_scientific_validation"):
         final_pending.append({"name": "remaining scientific validation", "details": list(manifest.get("remaining_scientific_validation", []))})
     if manifest.get("commit_status") == "pending_update_after_final_cleanup_commit" or manifest_commit not in {current_head, current_short}:
@@ -504,7 +503,7 @@ def validate_cpc_readiness(argv: Sequence[str] | None = None) -> None:
     if args.json:
         print(json.dumps(payload, indent=2))
     else:
-        print(f"CPC readiness: {status}")
+        print(f"Release readiness: {status}")
         print(f"repository_readiness: {repository_readiness}")
         print(f"software_package_readiness: {software_package_readiness}")
         print(f"final_submission_readiness: {final_submission_readiness}")

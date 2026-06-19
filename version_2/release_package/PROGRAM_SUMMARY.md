@@ -6,8 +6,6 @@ Archived title: A Python Library for the Theoretical-Numerical Search and Locali
 
 Repository: <https://github.com/Xerkkun/Hidden-Attractors-Localization>
 
-CPC Library link: To be assigned after acceptance.
-
 Licensing provisions: MIT for the software package.
 
 Programming language: Python, with optional C backends.

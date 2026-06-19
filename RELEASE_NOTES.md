@@ -1,14 +1,12 @@
 # Release Notes
 
-## 0.1.0-cpc-preparation
+## 0.1.0-alpha.1
 
-This preparation state organizes the active `version_2/` distribution for a future Computer Physics Communications submission. It does not change numerical parameters, seeds, tolerances, classifiers, or scientific conclusions.
+This release organizes the active `version_2/` distribution. It does not change numerical parameters, seeds, tolerances, classifiers, or scientific conclusions.
 
-The package license remains MIT. MIT permits use, copying, modification, distribution, sublicensing, and commercial use. If non-commercial restrictions are desired for articles, reports, or figures, those materials should be licensed separately from the OSI-compatible software code. Do not mix non-commercial restrictions into the code license if CPC/JOSS/OSF open-source compatibility is required.
+The package license remains MIT. MIT permits use, copying, modification, distribution, sublicensing, and commercial use. If non-commercial restrictions are desired for articles or figures, those materials should be licensed separately from the software code.
 
-The archived DOI recorded for this preparation package is `10.17605/OSF.IO/ZGK74`.
-
-Editorial drafts, the official Elsevier/CPC template, and the final manuscript are prepared locally under ignored `paper/`. They are intentionally not tracked as part of the software repository readiness contract. The repository tracks the software package, promoted validation evidence, citation metadata, reproducibility notes, and CPC submission scaffolding under `version_2/cpc_submission/`.
+The archived DOI recorded for this release is `10.17605/OSF.IO/ZGK74`.
 
 ## Contribution and provenance notes
 

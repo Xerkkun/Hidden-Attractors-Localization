@@ -11,7 +11,7 @@ from typing import Sequence
 
 # Import subcommand dispatchers
 from .inspect import list_candidates, systems, workflow_requirements
-from .validate import validate_contract, validate_bibliography, validate_cpc_readiness
+from .validate import validate_contract, validate_bibliography, validate_release_readiness
 from .protocol import run_protocol_stage
 from .hiddenness import sphere_controls, strict_target_refinement as hid_str_ref
 from .basin import refined, strict_target_refinement as bas_str_ref
@@ -28,7 +28,7 @@ GROUPS = {
     "init": None,
     "inspect-config": None,
     "inspect": ["candidates", "systems", "workflow-requirements"],
-    "validate": ["contract", "bibliography", "cpc-readiness"],
+    "validate": ["contract", "bibliography", "release-readiness"],
     "protocol": ["generate-seeds", "soft-precheck", "continue", "filter-survivors", "build-reference", "robustness", "hiddenness", "diagnostics"],
     "hiddenness": ["sphere-controls", "strict-target-refinement"],
     "basin": ["refined", "strict-target-refinement"],
@@ -84,8 +84,8 @@ def dispatch(group: str, cmd: str | None, argv: Sequence[str]) -> None:
             validate_contract(argv)
         elif cmd == "bibliography":
             validate_bibliography(argv)
-        elif cmd == "cpc-readiness":
-            validate_cpc_readiness(argv)
+        elif cmd == "release-readiness":
+            validate_release_readiness(argv)
             
     elif group == "protocol":
         run_protocol_stage(cmd, argv)
@@ -164,6 +164,11 @@ def main(argv: Sequence[str] | None = None) -> None:
     """Main CLI entry point."""
     if argv is None:
         argv = sys.argv[1:]
+    else:
+        argv = list(argv)
+
+    # Translate cpc-readiness to release-readiness for backward compatibility
+    argv = ["release-readiness" if arg == "cpc-readiness" else arg for arg in argv]
 
     # Intercept leaf-level --help / -h to show correct subcommand help
     if len(argv) >= 2 and argv[0] in GROUPS and argv[1] not in ("-h", "--help"):
@@ -195,7 +200,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     validate_sub = validate_parser.add_subparsers(dest="cmd", required=True)
     validate_sub.add_parser("contract", help="Validate numerical validation evidence contract")
     validate_sub.add_parser("bibliography", help="Validate claims bibliography manifest")
-    validate_sub.add_parser("cpc-readiness", help="Validate CPC packaging/readiness metadata")
+    validate_sub.add_parser("release-readiness", help="Validate release packaging/readiness metadata")
     
     protocol_parser = subparsers.add_parser("protocol", help="Official Caputo protocol stages")
     protocol_sub = protocol_parser.add_subparsers(dest="cmd", required=True)
