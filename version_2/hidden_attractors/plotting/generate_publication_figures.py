@@ -1,3 +1,4 @@
+import argparse
 import os
 import csv
 import json
@@ -12,6 +13,18 @@ from typing import Any, Dict, List, Tuple
 from ..systems import get_system
 from ..lure.transfer import W_eval
 from ..verification.stability import classify_equilibrium_stability
+from .biased_chua import build_hiddenness_heatmap
+from .export import export_figure
+from .style import apply_axes_style, apply_library_style
+
+
+VERSION2_ROOT = Path(__file__).resolve().parents[2]
+OBSOLETE_C590_FIGURE_IDS = (
+    "chua_frac_arctan_c590_fig03abc_projections",
+    "chua_frac_arctan_c590_fig12_lyapunov_exploratory",
+    "chua_frac_arctan_c590_fig16_integrator_audit",
+    "chua_frac_ns_biased_fig03abc_projections",
+)
 
 def first_harmonic_reconstruction(traj: np.ndarray, tail_fraction: float = 0.85) -> np.ndarray:
     """Helper to perform first harmonic (linearized) reconstruction of the attractor trajectory."""
@@ -51,12 +64,843 @@ def save_and_close(fig, path: Path):
     plt.close(fig)
     print(f"[Publication Figures] Saved: {path.name}.png and {path.name}.pdf")
 
+
+def _read_json(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8-sig"))
+
+
+def _resolve_publication_input(base: Path, value: str | Path) -> Path:
+    path = Path(value)
+    if path.is_absolute():
+        return path
+    candidates = (base / path, VERSION2_ROOT / path, VERSION2_ROOT.parent / path)
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate.resolve()
+    return (base / path).resolve()
+
+
+def _source_label(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(VERSION2_ROOT).as_posix()
+    except ValueError:
+        return path.resolve().as_posix()
+
+
+def _load_csv_trajectory(path: Path) -> np.ndarray:
+    data = np.genfromtxt(path, delimiter=",", names=True)
+    names = tuple(data.dtype.names or ())
+    if not names:
+        raise ValueError(f"trajectory CSV has no named columns: {path}")
+    t_name = "t" if "t" in names else names[0]
+    coordinate_names = [name for name in ("x", "y", "z") if name in names]
+    if len(coordinate_names) < 3:
+        coordinate_names = [name for name in ("x0", "x1", "x2") if name in names]
+    if len(coordinate_names) < 3:
+        raise ValueError(f"trajectory CSV lacks three state columns: {path}")
+    return np.column_stack(
+        [np.atleast_1d(data[t_name])]
+        + [np.atleast_1d(data[name]) for name in coordinate_names[:3]]
+    ).astype(float)
+
+
+def _candidate_metadata(
+    summary: dict[str, Any],
+    manifest: dict[str, Any],
+    figure_id: str,
+    sources: list[Path],
+    *,
+    kind: str,
+) -> dict[str, Any]:
+    contract = summary["numerical_contract"]
+    return {
+        "caption_key": f"fig_{figure_id}",
+        "source_script": "hidden_attractors/plotting/generate_publication_figures.py",
+        "source_function": figure_id,
+        "data_sources": [_source_label(path) for path in sources],
+        "system_id": "chua_fractional_arctan",
+        "q": float(summary["q"]),
+        "parameters": summary["parameters"],
+        "integrator": contract["integrator"],
+        "memory_mode": contract["memory_mode"],
+        "t_final": contract["target_t_final"],
+        "t_burn": contract["target_t_burn"],
+        "scientific_status": summary["status"],
+        "candidate_id": summary["candidate_id"],
+        "kind": kind,
+    }
+
+
+def _export_candidate_figure(
+    fig: plt.Figure,
+    figure_id: str,
+    summary: dict[str, Any],
+    manifest: dict[str, Any],
+    sources: list[Path],
+    *,
+    kind: str,
+) -> None:
+    export_figure(
+        fig,
+        figure_id,
+        kind,
+        _candidate_metadata(summary, manifest, figure_id, sources, kind=kind),
+        run_id=str(manifest["run_id"]),
+        report_targets=list(manifest.get("report_targets", ["df_nc_chua"])),
+    )
+    plt.close(fig)
+
+
+def _candidate_tail(
+    summary: dict[str, Any],
+    times: np.ndarray,
+    states: np.ndarray,
+) -> np.ndarray:
+    burn = float(summary["numerical_contract"]["target_t_burn"])
+    return states[times >= burn]
+
+
+def _prune_obsolete_candidate_figures() -> None:
+    """Remove report assets superseded by the consolidated c590 suite."""
+    from .manifest import load_manifest, save_manifest
+
+    library_root = VERSION2_ROOT / "library_figures"
+    for figure_id in OBSOLETE_C590_FIGURE_IDS:
+        for directory in (
+            library_root / "current" / "pdf",
+            library_root / "current" / "png",
+            library_root / "by_report" / "df_nc_chua" / "pdf",
+            library_root / "by_report" / "df_nc_chua" / "png",
+        ):
+            for suffix in (".pdf", ".png"):
+                path = directory / f"{figure_id}{suffix}"
+                if path.exists():
+                    path.unlink()
+    obsolete = set(OBSOLETE_C590_FIGURE_IDS)
+    save_manifest(
+        [entry for entry in load_manifest() if entry.get("figure_id") not in obsolete]
+    )
+
+
+def _plot_candidate_seed(
+    summary: dict[str, Any],
+    manifest: dict[str, Any],
+    times: np.ndarray,
+    states: np.ndarray,
+    target_path: Path,
+) -> None:
+    prefix = str(manifest["figure_prefix"])
+    tail = downsample(_candidate_tail(summary, times, states), 14000)
+    seed = np.asarray(summary["seed"], dtype=float)
+    equilibria = summary["hiddenness_evidence"]["equilibria"]
+    fig = plt.figure(figsize=(6.2, 5.0), dpi=300)
+    ax = fig.add_subplot(111, projection="3d")
+    ax.plot(tail[:, 0], tail[:, 1], tail[:, 2], color="#0f766e", lw=0.35, alpha=0.8)
+    ax.scatter(*seed, color="#dc2626", marker="*", s=105, label="Semilla de búsqueda", zorder=8)
+    for name, point in equilibria.items():
+        point_array = np.asarray(point, dtype=float)
+        ax.scatter(*point_array, marker="x", s=46, label=name)
+    ax.set_xlabel("$x$")
+    ax.set_ylabel("$y$")
+    ax.set_zlabel("$z$")
+    ax.legend(loc="best", fontsize=7)
+    apply_axes_style(ax, is_3d=True)
+    fig.tight_layout()
+    _export_candidate_figure(
+        fig,
+        f"{prefix}_fig00_initial_seed",
+        summary,
+        manifest,
+        [target_path],
+        kind="initial_seed",
+    )
+
+
+def _plot_candidate_transfer(
+    summary: dict[str, Any],
+    manifest: dict[str, Any],
+    seed_path: Path,
+) -> None:
+    from ..models.chua import chua_parameters
+    from ..seed_generation.chua_arctan_wu2023 import transfer_function_arctan_wu2023
+
+    prefix = str(manifest["figure_prefix"])
+    seed_report = _read_json(seed_path)
+    branch = seed_report["branches"][0]
+    omega0 = float(branch["omega"])
+    gain = float(branch["k"])
+    params = chua_parameters(model="arctan", **summary["parameters"])
+    omega = np.linspace(0.05, 10.0, 1800)
+    values = np.asarray(
+        [
+            transfer_function_arctan_wu2023(
+                value,
+                q=float(summary["q"]),
+                params=params,
+                transfer_mode=str(manifest.get("transfer_mode", "fractional_spectral")),
+            )
+            for value in omega
+        ],
+        dtype=complex,
+    )
+    fig, axes = plt.subplots(2, 1, figsize=(7.2, 6.0), sharex=True, dpi=300)
+    axes[0].plot(omega, values.real, color="#2563eb", lw=1.0)
+    axes[0].axhline(1.0 / gain, color="#64748b", ls="--", lw=0.8, label="$1/k$")
+    axes[0].axvline(omega0, color="#dc2626", lw=1.0, label=r"$\omega_0$")
+    axes[0].scatter([omega0], [1.0 / gain], color="#dc2626", s=28, zorder=5)
+    axes[0].set_ylabel(r"$\operatorname{Re} W_q(i\omega)$")
+    axes[0].legend(loc="best", fontsize=8)
+    apply_axes_style(axes[0], grid=True)
+    axes[1].plot(omega, values.imag, color="#0891b2", lw=1.0)
+    axes[1].axhline(0.0, color="#64748b", ls="--", lw=0.8)
+    axes[1].axvline(omega0, color="#dc2626", lw=1.0, label=fr"$\omega_0={omega0:.4f}$")
+    axes[1].scatter([omega0], [0.0], color="#dc2626", s=28, zorder=5)
+    axes[1].set_xlabel(r"$\omega$ [rad/s]")
+    axes[1].set_ylabel(r"$\operatorname{Im} W_q(i\omega)$")
+    axes[1].legend(loc="best", fontsize=8)
+    apply_axes_style(axes[1], grid=True)
+    fig.tight_layout()
+    _export_candidate_figure(
+        fig,
+        f"{prefix}_fig01_transfer_components",
+        summary,
+        manifest,
+        [seed_path],
+        kind="transfer_components",
+    )
+
+
+def _continuation_trajectories(continuation_dir: Path) -> list[tuple[float, Path, np.ndarray]]:
+    trace = _read_json(continuation_dir / "continuation_trace.json")
+    output: list[tuple[float, Path, np.ndarray]] = []
+    for row in trace:
+        path = continuation_dir / "continuation_steps" / f"continuation_eta_{int(row['step_idx']):03d}.csv"
+        if path.exists():
+            output.append((float(row["lambda_value"]), path, _load_csv_trajectory(path)))
+    return output
+
+
+def _plot_candidate_linear_and_continuation(
+    summary: dict[str, Any],
+    manifest: dict[str, Any],
+    times: np.ndarray,
+    states: np.ndarray,
+    target_path: Path,
+    continuation_dir: Path,
+) -> None:
+    prefix = str(manifest["figure_prefix"])
+    trajectories = _continuation_trajectories(continuation_dir)
+    if not trajectories:
+        return
+    eta0, eta0_path, eta0_traj = trajectories[0]
+    eta1, eta1_path, eta1_traj = trajectories[-1]
+    candidate = downsample(_candidate_tail(summary, times, states), 7000)
+
+    fig = plt.figure(figsize=(11.2, 4.0), dpi=300)
+    panels = (
+        (eta0_traj[:, 1:4], "#2563eb", fr"Linealizado, $\eta={eta0:g}$"),
+        (eta1_traj[:, 1:4], "#dc2626", fr"No lineal, $\eta={eta1:g}$"),
+        (candidate, "#0f766e", "Candidato c590"),
+    )
+    for index, (cloud, color, title) in enumerate(panels, start=1):
+        ax = fig.add_subplot(1, 3, index, projection="3d")
+        reduced = downsample(cloud, 3500)
+        ax.plot(reduced[:, 0], reduced[:, 1], reduced[:, 2], color=color, lw=0.45)
+        ax.set_title(title, fontsize=9)
+        ax.set_xlabel("$x$")
+        ax.set_ylabel("$y$")
+        ax.set_zlabel("$z$")
+        apply_axes_style(ax, is_3d=True)
+    fig.tight_layout()
+    _export_candidate_figure(
+        fig,
+        f"{prefix}_fig02a_linearized_vs_original",
+        summary,
+        manifest,
+        [eta0_path, eta1_path, target_path],
+        kind="linearized_vs_original",
+    )
+
+    fig = plt.figure(figsize=(7.0, 5.7), dpi=300)
+    ax = fig.add_subplot(111, projection="3d")
+    color_map = plt.get_cmap("viridis")
+    path_points = []
+    for eta, path, trajectory in trajectories:
+        reduced = downsample(trajectory[:, 1:4], 1000)
+        ax.plot(
+            reduced[:, 0],
+            reduced[:, 1],
+            reduced[:, 2],
+            color=color_map(eta),
+            lw=0.35,
+            alpha=0.6,
+        )
+        path_points.append(trajectory[-1, 1:4])
+    path_array = np.asarray(path_points)
+    ax.plot(
+        path_array[:, 0],
+        path_array[:, 1],
+        path_array[:, 2],
+        color="#111827",
+        ls="--",
+        marker="o",
+        markersize=3.5,
+        lw=1.0,
+        label="Recorrido de condiciones iniciales",
+    )
+    ax.set_xlabel("$x$")
+    ax.set_ylabel("$y$")
+    ax.set_zlabel("$z$")
+    ax.legend(loc="best", fontsize=7)
+    apply_axes_style(ax, is_3d=True)
+    scalar = plt.cm.ScalarMappable(cmap=color_map, norm=plt.Normalize(0.0, 1.0))
+    colorbar = fig.colorbar(scalar, ax=ax, shrink=0.65, pad=0.08)
+    colorbar.set_label(r"$\eta$")
+    fig.tight_layout()
+    _export_candidate_figure(
+        fig,
+        f"{prefix}_fig02b_continuation_path",
+        summary,
+        manifest,
+        [path for _, path, _ in trajectories],
+        kind="continuation",
+    )
+
+
+def _plot_candidate_dynamics(
+    summary: dict[str, Any],
+    manifest: dict[str, Any],
+    times: np.ndarray,
+    states: np.ndarray,
+    target_path: Path,
+) -> None:
+    prefix = str(manifest["figure_prefix"])
+    tail = downsample(_candidate_tail(summary, times, states), 16000)
+    fig = plt.figure(figsize=(5.6, 4.6), dpi=300)
+    ax = fig.add_subplot(111, projection="3d")
+    ax.plot(tail[:, 0], tail[:, 1], tail[:, 2], color="#0f766e", lw=0.35)
+    ax.set_xlabel("$x$")
+    ax.set_ylabel("$y$")
+    ax.set_zlabel("$z$")
+    apply_axes_style(ax, is_3d=True)
+    fig.tight_layout()
+    _export_candidate_figure(
+        fig,
+        f"{prefix}_fig03_attractor",
+        summary,
+        manifest,
+        [target_path],
+        kind="attractor_3d",
+    )
+
+    mask = times >= max(float(times[-1]) - 50.0, 0.0)
+    fig, axes = plt.subplots(3, 1, figsize=(7.4, 5.4), sharex=True, dpi=300)
+    for index, (ax, label, color) in enumerate(
+        zip(axes, ("$x(t)$", "$y(t)$", "$z(t)$"), ("#0f766e", "#2563eb", "#9333ea"))
+    ):
+        ax.plot(times[mask], states[mask, index], color=color, lw=0.5)
+        ax.set_ylabel(label)
+        apply_axes_style(ax, grid=True)
+    axes[-1].set_xlabel("$t$")
+    fig.tight_layout()
+    _export_candidate_figure(
+        fig,
+        f"{prefix}_fig04_timeseries",
+        summary,
+        manifest,
+        [target_path],
+        kind="time_series",
+    )
+
+
+def _plot_candidate_fft(
+    summary: dict[str, Any],
+    manifest: dict[str, Any],
+    times: np.ndarray,
+    states: np.ndarray,
+    target_path: Path,
+    spectral_path: Path,
+) -> None:
+    prefix = str(manifest["figure_prefix"])
+    burn = float(summary["numerical_contract"]["target_t_burn"])
+    tail = states[times >= burn]
+    h = float(np.median(np.diff(times)))
+    omega0 = float(manifest["omega0"])
+    fig, axes = plt.subplots(3, 1, figsize=(7.2, 6.4), sharex=True, dpi=300)
+    for index, (ax, label, color) in enumerate(
+        zip(axes, ("$x$", "$y$", "$z$"), ("#0f766e", "#2563eb", "#9333ea"))
+    ):
+        signal = tail[:, index] - float(np.mean(tail[:, index]))
+        amplitude = np.abs(np.fft.rfft(signal))
+        amplitude /= max(float(np.max(amplitude)), 1.0e-15)
+        omega = 2.0 * np.pi * np.fft.rfftfreq(len(signal), d=h)
+        keep = omega <= 10.0
+        ax.plot(omega[keep], amplitude[keep], color=color, lw=0.65)
+        ax.axvline(omega0, color="#dc2626", lw=1.0, label=r"$\omega_0$")
+        ax.set_ylabel(f"{label}\nnormalizada")
+        ax.set_ylim(0.0, 1.05)
+        apply_axes_style(ax, grid=True)
+    axes[0].legend(loc="upper right", fontsize=8)
+    axes[-1].set_xlabel(r"$\omega$ [rad/s]")
+    axes[-1].set_xlim(0.0, 10.0)
+    fig.tight_layout()
+    _export_candidate_figure(
+        fig,
+        f"{prefix}_fig11_fft",
+        summary,
+        manifest,
+        [target_path, spectral_path],
+        kind="fft",
+    )
+
+
+def _plot_candidate_lyapunov(
+    summary: dict[str, Any],
+    manifest: dict[str, Any],
+    evidence_path: Path,
+    convergence_path: Path,
+) -> None:
+    prefix = str(manifest["figure_prefix"])
+    evidence = _read_json(evidence_path)
+    convergence = np.load(convergence_path)
+    rows = (
+        ("variational", "Variacional ABM--QR"),
+        ("cloned", "Dinámica clonada ABM--GS"),
+    )
+    colors = ("#dc2626", "#2563eb", "#9333ea")
+    fig, axes = plt.subplots(2, 3, figsize=(10.2, 5.6), dpi=300)
+    for row_index, (key, method_label) in enumerate(rows):
+        method_times = np.asarray(convergence[f"{key}_times"], dtype=float)
+        method_values = np.asarray(convergence[f"{key}_convergence"], dtype=float)
+        for exponent_index in range(3):
+            ax = axes[row_index, exponent_index]
+            ax.plot(method_times, method_values[:, exponent_index], color=colors[exponent_index], lw=0.9)
+            ax.axhline(0.0, color="#64748b", ls="--", lw=0.6)
+            ax.set_title(fr"{method_label}: $\lambda_{exponent_index + 1}$", fontsize=8.5)
+            ax.set_xlabel(r"$t_{\mathrm{eval}}$")
+            ax.set_ylabel(fr"$\lambda_{exponent_index + 1}(t)$")
+            apply_axes_style(ax, grid=True)
+    fig.tight_layout()
+    _export_candidate_figure(
+        fig,
+        f"{prefix}_fig12_lyapunov_two_methods",
+        summary,
+        manifest,
+        [evidence_path, convergence_path],
+        kind="lyapunov_convergence",
+    )
+
+
+def _plot_candidate_spheres_and_heatmap(
+    summary: dict[str, Any],
+    manifest: dict[str, Any],
+    matrix_path: Path,
+) -> None:
+    prefix = str(manifest["figure_prefix"])
+    matrix = _read_json(matrix_path)
+    radii = sorted(float(value) for value in matrix["radii"])
+    slugs = {"E0": "E0", "E+": "Ep", "E-": "Em"}
+    for equilibrium in ("E0", "E+", "E-"):
+        center = np.asarray(matrix["equilibria"][equilibrium], dtype=float)
+        fig = plt.figure(figsize=(8.0, 6.8), dpi=300)
+        for panel, radius in enumerate(radii, start=1):
+            ax = fig.add_subplot(2, 2, panel, projection="3d")
+            rows = [
+                row
+                for row in matrix["rows"]
+                if row["equilibrium"] == equilibrium
+                and np.isclose(float(row["radius"]), radius)
+            ]
+            directions = np.asarray([row["direction_vector"] for row in rows], dtype=float)
+            points = center + radius * directions
+            contacts = np.asarray([bool(row["contact"]) for row in rows], dtype=bool)
+            u = np.linspace(0.0, 2.0 * np.pi, 28)
+            v = np.linspace(0.0, np.pi, 15)
+            x_surface = center[0] + radius * np.outer(np.cos(u), np.sin(v))
+            y_surface = center[1] + radius * np.outer(np.sin(u), np.sin(v))
+            z_surface = center[2] + radius * np.outer(np.ones_like(u), np.cos(v))
+            ax.plot_wireframe(
+                x_surface,
+                y_surface,
+                z_surface,
+                rstride=3,
+                cstride=2,
+                color="#94a3b8",
+                linewidth=0.25,
+                alpha=0.24,
+            )
+            ax.scatter(
+                points[~contacts, 0],
+                points[~contacts, 1],
+                points[~contacts, 2],
+                s=15,
+                color="#2563eb",
+                alpha=0.78,
+                label="sin contacto",
+            )
+            if np.any(contacts):
+                ax.scatter(
+                    points[contacts, 0],
+                    points[contacts, 1],
+                    points[contacts, 2],
+                    s=20,
+                    color="#dc2626",
+                    label="TARGET",
+                )
+            ax.scatter(*center, marker="x", s=40, color="#111827")
+            ax.text2D(
+                0.03,
+                0.93,
+                fr"$r={radius:.0e}$, $N={len(rows)}$",
+                transform=ax.transAxes,
+                fontsize=8,
+            )
+            limit = 1.15 * radius
+            ax.set_xlim(center[0] - limit, center[0] + limit)
+            ax.set_ylim(center[1] - limit, center[1] + limit)
+            ax.set_zlim(center[2] - limit, center[2] + limit)
+            ax.set_xlabel("$x$")
+            ax.set_ylabel("$y$")
+            ax.set_zlabel("$z$")
+            apply_axes_style(ax, is_3d=True)
+        fig.tight_layout()
+        _export_candidate_figure(
+            fig,
+            f"{prefix}_fig13_{slugs[equilibrium]}_hiddenness_spherical_3d",
+            summary,
+            manifest,
+            [matrix_path],
+            kind="hiddenness_spheres",
+        )
+
+    heatmap_records = []
+    for equilibrium in ("E0", "E+", "E-"):
+        for radius in radii:
+            rows = [
+                row
+                for row in matrix["rows"]
+                if row["equilibrium"] == equilibrium
+                and np.isclose(float(row["radius"]), radius)
+            ]
+            heatmap_records.append(
+                {
+                    "equilibrium": equilibrium,
+                    "radius": radius,
+                    "samples": len(rows),
+                    "TARGET": sum(bool(row["contact"]) for row in rows),
+                }
+            )
+    fig, _ = build_hiddenness_heatmap(heatmap_records, radii)
+    _export_candidate_figure(
+        fig,
+        f"{prefix}_fig14_hiddenness_contact_heatmap",
+        summary,
+        manifest,
+        [matrix_path],
+        kind="hiddenness_heatmap",
+    )
+
+
+def _export_report_heatmap(
+    figure_id: str,
+    records: list[dict[str, Any]],
+    sources: list[Path],
+    *,
+    q: float,
+    system_id: str,
+    status: str,
+    wide: bool = False,
+) -> None:
+    radii = sorted({float(row["radius"]) for row in records})
+    fig, _ = build_hiddenness_heatmap(records, radii)
+    if wide:
+        fig.set_size_inches(9.2, 3.6)
+        fig.tight_layout()
+    metadata = {
+        "caption_key": f"fig_{figure_id}",
+        "source_script": "hidden_attractors/plotting/generate_publication_figures.py",
+        "source_function": "generate_comparison_report_heatmaps",
+        "data_sources": [_source_label(path) for path in sources],
+        "system_id": system_id,
+        "q": q,
+        "scientific_status": status,
+        "kind": "hiddenness_heatmap",
+    }
+    export_figure(
+        fig,
+        figure_id,
+        "hiddenness_heatmap",
+        metadata,
+        run_id="df_nc_chua_heatmap_unification_20260624",
+        report_targets=["df_nc_chua"],
+    )
+    plt.close(fig)
+
+
+def generate_comparison_report_heatmaps() -> None:
+    """Regenerate report heatmaps 24, 33 and 37 with one visual contract."""
+    centered_path = (
+        VERSION2_ROOT
+        / "validation"
+        / "outputs"
+        / "candidate_chaos_hiddenness"
+        / "danca2017_chua_fractional_saturation_candidate"
+        / "report"
+        / "candidate_chaos_hiddenness_summary.json"
+    )
+    inputs_path = VERSION2_ROOT / "configs" / "report_heatmap_inputs.json"
+    centered = _read_json(centered_path)
+    centered_records = [
+        {
+            "equilibrium": row["equilibrium"],
+            "radius": float(row["radius"]),
+            "samples": int(row["samples"]),
+            "TARGET": int(row["target_hits"]),
+        }
+        for row in centered["hiddenness"]["decisions"]
+    ]
+    _export_report_heatmap(
+        "chua_frac_ns_fig14_hiddenness_contact_heatmap",
+        centered_records,
+        [centered_path],
+        q=float(centered["parameters"]["q"]),
+        system_id="chua_fractional_saturation",
+        status="self_excited_contact_detected",
+    )
+
+    inputs = _read_json(inputs_path)
+    local = inputs["biased_local"]
+    local_records = [
+        {
+            "equilibrium": equilibrium,
+            "radius": float(radius),
+            "samples": int(samples),
+            "TARGET": int(local["target_hits"]),
+        }
+        for equilibrium in local["equilibria"]
+        for radius, samples in zip(local["radii"], local["samples_per_radius"])
+    ]
+    _export_report_heatmap(
+        "chua_frac_ns_biased_fig14_hiddenness_contact_heatmap",
+        local_records,
+        [inputs_path],
+        q=0.9998,
+        system_id="chua_fractional_saturation_biased",
+        status="compatible_with_hiddenness_under_finite_surface_test",
+    )
+    _export_report_heatmap(
+        "chua_frac_ns_biased_fig15_extended_heatmap",
+        list(inputs["biased_extended"]["records"]),
+        [inputs_path],
+        q=0.9998,
+        system_id="chua_fractional_saturation_biased",
+        status="report_table_transcription_raw_artifact_missing",
+        wide=True,
+    )
+
+
+def generate_biased_report_dynamics() -> None:
+    """Regenerate the biased attractor as 3D-only and its normalized FFT."""
+    output_root = (
+        VERSION2_ROOT.parent
+        / "outputs"
+        / "example_chua_nonsmooth_biased_hidden_attractor"
+        / "step2_biased_df"
+    )
+    trajectory_path = (
+        output_root
+        / "trajectories"
+        / "biased_q9998_m1_m1p1468_m0_m0p1768_branch_1_c_2p776_trajectory.csv"
+    )
+    branch_path = output_root / "affine_continuation_summary.csv"
+    trajectory = _load_csv_trajectory(trajectory_path)
+    cloud = downsample(trajectory[:, 1:4], 16000)
+    common_metadata = {
+        "source_script": "hidden_attractors/plotting/generate_publication_figures.py",
+        "source_function": "generate_biased_report_dynamics",
+        "data_sources": [_source_label(trajectory_path), _source_label(branch_path)],
+        "system_id": "chua_fractional_saturation_biased",
+        "q": 0.9998,
+        "parameters": {"m0": -0.1768, "m1": -1.1468},
+        "scientific_status": "finite_time_candidate",
+    }
+
+    fig = plt.figure(figsize=(5.6, 4.6), dpi=300)
+    ax = fig.add_subplot(111, projection="3d")
+    ax.plot(cloud[:, 0], cloud[:, 1], cloud[:, 2], color="#0f766e", lw=0.35)
+    ax.set_xlabel("$x$")
+    ax.set_ylabel("$y$")
+    ax.set_zlabel("$z$")
+    apply_axes_style(ax, is_3d=True)
+    fig.tight_layout()
+    export_figure(
+        fig,
+        "chua_frac_ns_biased_fig03_attractor",
+        "attractor_3d",
+        {
+            **common_metadata,
+            "caption_key": "fig_chua_frac_ns_biased_fig03_attractor",
+            "kind": "attractor_3d",
+        },
+        run_id="df_nc_chua_biased_dynamics_20260624",
+        report_targets=["df_nc_chua"],
+    )
+    plt.close(fig)
+    _prune_obsolete_candidate_figures()
+
+
+def generate_centered_report_fft() -> None:
+    """Regenerate the centered control FFT with normalized amplitude and omega0."""
+    output_root = (
+        VERSION2_ROOT.parent
+        / "outputs"
+        / "example_chua_nonsmooth_biased_hidden_attractor"
+        / "step2_biased_df"
+    )
+    trajectory_path = (
+        output_root
+        / "trajectories"
+        / "biased_q9998_m1_m1p2000_m0_m0p2000_branch_0_c_centered_like_trajectory.csv"
+    )
+    classification_path = output_root / "final_classification.csv"
+    trajectory = _load_csv_trajectory(trajectory_path)
+    h = float(np.median(np.diff(trajectory[:, 0])))
+    signal = trajectory[:, 1] - float(np.mean(trajectory[:, 1]))
+    amplitude = np.abs(np.fft.rfft(signal))
+    amplitude /= max(float(np.max(amplitude)), 1.0e-15)
+    omega = 2.0 * np.pi * np.fft.rfftfreq(len(signal), d=h)
+    omega0 = 2.04028605107949
+    keep = omega <= 10.0
+
+    fig, ax = plt.subplots(figsize=(6.8, 3.7), dpi=300)
+    ax.plot(omega[keep], amplitude[keep], color="#111827", lw=0.7)
+    ax.axvline(omega0, color="#dc2626", lw=1.0, label=fr"$\omega_0={omega0:.4f}$")
+    ax.set_xlim(0.0, 10.0)
+    ax.set_ylim(0.0, 1.05)
+    ax.set_xlabel(r"$\omega$ [rad/s]")
+    ax.set_ylabel("Amplitud normalizada")
+    ax.legend(loc="upper right", fontsize=8)
+    apply_axes_style(ax, grid=True)
+    fig.tight_layout()
+    export_figure(
+        fig,
+        "chua_frac_ns_fig11a_fft_x",
+        "fft",
+        {
+            "caption_key": "fig_chua_frac_ns_fig11a_fft_x",
+            "source_script": "hidden_attractors/plotting/generate_publication_figures.py",
+            "source_function": "generate_centered_report_fft",
+            "data_sources": [
+                _source_label(trajectory_path),
+                _source_label(classification_path),
+            ],
+            "system_id": "chua_fractional_saturation",
+            "q": 0.9998,
+            "parameters": {"m0": -0.2, "m1": -1.2},
+            "scientific_status": "self_excited_contact_detected",
+            "omega0": omega0,
+            "kind": "fft",
+        },
+        run_id="df_nc_chua_centered_fft_20260624",
+        report_targets=["df_nc_chua"],
+    )
+    plt.close(fig)
+
+    h = float(np.median(np.diff(trajectory[:, 0])))
+    signal = trajectory[:, 1] - float(np.mean(trajectory[:, 1]))
+    amplitude = np.abs(np.fft.rfft(signal))
+    amplitude /= max(float(np.max(amplitude)), 1.0e-15)
+    omega = 2.0 * np.pi * np.fft.rfftfreq(len(signal), d=h)
+    omega0 = 2.04028605107949
+    keep = omega <= 10.0
+    fig, ax = plt.subplots(figsize=(6.8, 3.7), dpi=300)
+    ax.plot(omega[keep], amplitude[keep], color="#0f766e", lw=0.7)
+    ax.axvline(omega0, color="#dc2626", lw=1.0, label=fr"$\omega_0={omega0:.4f}$")
+    ax.set_xlim(0.0, 10.0)
+    ax.set_ylim(0.0, 1.05)
+    ax.set_xlabel(r"$\omega$ [rad/s]")
+    ax.set_ylabel("Amplitud normalizada")
+    ax.legend(loc="upper right", fontsize=8)
+    apply_axes_style(ax, grid=True)
+    fig.tight_layout()
+    export_figure(
+        fig,
+        "chua_frac_ns_biased_fig11_fft",
+        "fft",
+        {
+            **common_metadata,
+            "caption_key": "fig_chua_frac_ns_biased_fig11_fft",
+            "omega0": omega0,
+            "kind": "fft",
+        },
+        run_id="df_nc_chua_biased_dynamics_20260624",
+        report_targets=["df_nc_chua"],
+    )
+    plt.close(fig)
+
+
+def generate_candidate_publication_figures(candidate_dir: str | Path) -> None:
+    """Generate the complete c590-style paper suite from one candidate bundle."""
+    directory = Path(candidate_dir).resolve()
+    manifest_path = directory / "publication_figure_inputs.json"
+    manifest = _read_json(manifest_path)
+    summary_path = _resolve_publication_input(directory, manifest["candidate_summary"])
+    matrix_path = _resolve_publication_input(directory, manifest["hiddenness_matrix"])
+    continuation_dir = _resolve_publication_input(directory, manifest["continuation_dir"])
+    target_path = directory / "target.npz"
+    seed_path = directory / "df_fractional_spectral_seed.json"
+    spectral_path = directory / "spectral_periodicity_audit.json"
+    lyapunov_path = directory / "lyapunov_two_method.json"
+    convergence_path = directory / "lyapunov_two_method_convergence.npz"
+    required = (
+        summary_path,
+        matrix_path,
+        continuation_dir / "continuation_trace.json",
+        target_path,
+        seed_path,
+        spectral_path,
+        lyapunov_path,
+        convergence_path,
+    )
+    missing = [str(path) for path in required if not path.exists()]
+    if missing:
+        raise FileNotFoundError(f"candidate publication inputs are missing: {missing}")
+
+    summary = _read_json(summary_path)
+    target = np.load(target_path)
+    times = np.asarray(target["times"], dtype=float)
+    states = np.asarray(target["states"], dtype=float)
+    apply_library_style()
+    _plot_candidate_seed(summary, manifest, times, states, target_path)
+    _plot_candidate_transfer(summary, manifest, seed_path)
+    _plot_candidate_linear_and_continuation(
+        summary,
+        manifest,
+        times,
+        states,
+        target_path,
+        continuation_dir,
+    )
+    _plot_candidate_dynamics(summary, manifest, times, states, target_path)
+    _plot_candidate_fft(summary, manifest, times, states, target_path, spectral_path)
+    _plot_candidate_lyapunov(summary, manifest, lyapunov_path, convergence_path)
+    _plot_candidate_spheres_and_heatmap(summary, manifest, matrix_path)
+    generate_comparison_report_heatmaps()
+    generate_centered_report_fft()
+    generate_biased_report_dynamics()
+    _prune_obsolete_candidate_figures()
+    print(f"[Publication Figures] Candidate suite completed from {directory}")
+
+
 def generate_all_publication_figures(output_dir: str, config: Dict[str, Any]) -> None:
     """
     Core post-processor that parses raw data and configuration from a workflow run
     and produces vector PDF + high-resolution PNG figures.
     """
     out_dir_path = Path(output_dir)
+    if (out_dir_path / "publication_figure_inputs.json").exists():
+        generate_candidate_publication_figures(out_dir_path)
+        return
     fig_dir = out_dir_path / "figures"
     fig_dir.mkdir(parents=True, exist_ok=True)
     
@@ -483,3 +1327,16 @@ def generate_all_publication_figures(output_dir: str, config: Dict[str, Any]) ->
             print(f"[Publication Figures] Failed to render basin slices: {e}")
             
     print("[Publication Figures] Success: Completed all publication-grade vectors! [OK]")
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(
+        description="Generate every publication figure for a completed workflow or candidate bundle."
+    )
+    parser.add_argument("output_dir", type=Path)
+    args = parser.parse_args(argv)
+    generate_all_publication_figures(str(args.output_dir), {})
+
+
+if __name__ == "__main__":
+    main()

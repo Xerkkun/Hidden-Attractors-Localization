@@ -229,38 +229,60 @@ def plot_sphere_summary(eq_name: str, eq_pt: np.ndarray, radius: float,
     intercept_and_export_path(fig, outpath, 'sphere_test')
     plt.close(fig)
 
-def plot_heatmap_hiddenness(records: List[Dict], radii: List[float], outpath: Path) -> None:
-    """Heatmap of target hits per equilibrium and radius."""
-    eq_names = sorted(list(set(r["equilibrium"] for r in records)))
-    
-    grid = np.zeros((len(eq_names), len(radii)))
-    for r in records:
-        eq_idx = eq_names.index(r["equilibrium"])
-        r_idx  = radii.index(r["radius"])
-        # Support both 'TARGET' (lowercase or uppercase) and target_hits key formats
-        if "TARGET" in r:
-            grid[eq_idx, r_idx] = r["TARGET"] / max(r["samples"], 1)
-        else:
-            grid[eq_idx, r_idx] = r.get("target_hits", 0) / max(r.get("samples", 1), 1)
-        
-    fig, ax = plt.subplots(figsize=get_figsize("2d"), dpi=300)
-    im = ax.imshow(grid, cmap="YlOrRd", aspect="auto", vmin=0, vmax=1)
+def build_hiddenness_heatmap(
+    records: List[Dict],
+    radii: List[float],
+) -> tuple[plt.Figure, plt.Axes]:
+    """Build the canonical TARGET-contact heatmap used by every report."""
+    radius_values = sorted({float(value) for value in radii})
+    present = {str(row["equilibrium"]) for row in records}
+    preferred_order = ["E0", "E+", "E-"]
+    eq_names = [name for name in preferred_order if name in present]
+    eq_names.extend(sorted(present - set(eq_names)))
+
+    fractions = np.full((len(eq_names), len(radius_values)), np.nan, dtype=float)
+    hits = np.zeros_like(fractions, dtype=int)
+    totals = np.zeros_like(fractions, dtype=int)
+    for row in records:
+        eq_idx = eq_names.index(str(row["equilibrium"]))
+        radius = float(row["radius"])
+        r_idx = int(np.argmin(np.abs(np.asarray(radius_values) - radius)))
+        total = int(row.get("samples", row.get("total", 0)))
+        hit = int(row.get("TARGET", row.get("target_hits", 0)))
+        totals[eq_idx, r_idx] += total
+        hits[eq_idx, r_idx] += hit
+
+    mask = totals > 0
+    fractions[mask] = hits[mask] / totals[mask]
+    plot_values = np.nan_to_num(fractions, nan=0.0)
+
+    fig, ax = plt.subplots(figsize=(6.5, 3.6), dpi=300)
+    image = ax.imshow(plot_values, cmap="YlOrRd", aspect="auto", vmin=0.0, vmax=1.0)
     apply_axes_style(ax)
-    
-    ax.set_xticks(np.arange(len(radii)))
-    ax.set_xticklabels([f"{r:.0e}" for r in radii])
+    ax.set_xticks(np.arange(len(radius_values)))
+    ax.set_xticklabels([f"{radius:.0e}" for radius in radius_values])
     ax.set_yticks(np.arange(len(eq_names)))
-    ax.set_yticklabels(eq_names)
-    ax.set_xlabel("Radio de Sondeo (r)")
+    eq_labels = {"E0": r"$E_0$", "E+": r"$E_+$", "E-": r"$E_-$"}
+    ax.set_yticklabels([eq_labels.get(name, name) for name in eq_names])
+    ax.set_xlabel(r"Radio $r$")
     ax.set_ylabel("Equilibrio")
-    
+
     for i in range(len(eq_names)):
-        for j in range(len(radii)):
-            ax.text(j, i, f"{grid[i, j]:.2f}", ha="center", va="center", color="black", fontsize=8)
-            
-    fig.colorbar(im, ax=ax, shrink=0.8)
+        for j in range(len(radius_values)):
+            label = f"{hits[i, j]}/{totals[i, j]}" if totals[i, j] else "--"
+            color = "white" if plot_values[i, j] >= 0.55 else "#111827"
+            ax.text(j, i, label, ha="center", va="center", color=color, fontsize=8)
+
+    colorbar = fig.colorbar(image, ax=ax, shrink=0.82)
+    colorbar.set_label("Fracción TARGET")
     fig.tight_layout()
-    intercept_and_export_path(fig, outpath, 'heatmap')
+    return fig, ax
+
+
+def plot_heatmap_hiddenness(records: List[Dict], radii: List[float], outpath: Path) -> None:
+    """Export the canonical TARGET-contact heatmap."""
+    fig, _ = build_hiddenness_heatmap(records, radii)
+    intercept_and_export_path(fig, outpath, "heatmap")
     plt.close(fig)
 
 # Aliases

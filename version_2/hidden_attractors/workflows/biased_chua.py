@@ -1256,3 +1256,12 @@ def run_summarize_and_plot(cfg: Dict[str, Any]) -> None:
         json.dumps(summary, indent=2), encoding="utf-8"
     )
 
+    if plot_cfg.get("save_figures", True):
+        from ..plotting.generate_publication_figures import (
+            generate_biased_report_dynamics,
+            generate_comparison_report_heatmaps,
+        )
+
+        generate_comparison_report_heatmaps()
+        generate_biased_report_dynamics()
+

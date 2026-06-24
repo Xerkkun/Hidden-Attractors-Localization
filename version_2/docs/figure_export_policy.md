@@ -57,6 +57,7 @@ Para garantizar la portabilidad y limpieza de la evidencia de validación:
 
 | Archivo | Motivo | Estado | Permitido en evidencia promovida |
 | --- | --- | --- | --- |
+| `tools/legacy/arctan_sphere_hiddenness_wu2023_invalid.py` | sondeo Wu histórico; no corresponde al candidato c590 | legacy no promovido | no |
 | `hidden_attractors/workflows/danca_abm_sphere_controls.py` | script histórico/exploratorio | legacy | no |
 | `hidden_attractors/workflows/fractional_report_run.py` | reporte transitorio | legacy | no |
 | `hidden_attractors/workflows/refined_basin.py` | exploración de cuencas | legacy | no |

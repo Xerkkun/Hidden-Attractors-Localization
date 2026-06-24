@@ -89,3 +89,32 @@ def test_cli_override_case_f_real_cli(capsys):
     captured = capsys.readouterr()
     assert "values" in captured.out
     assert "'n': 3" in captured.out
+
+
+def test_global_q_and_transfer_overrides_propagate_to_all_fractional_contracts():
+    cfg = {
+        "system_id": "chua_fractional_arctan",
+        "q": 0.95,
+        "integrator": "abm",
+        "h": 0.01,
+        "memory_mode": "full",
+        "memory_policy": "full_caputo",
+        "transfer_mode": "published_integer_laplace",
+        "seed": {
+            "df_order": "fractional",
+            "transfer_mode": "published_integer_laplace",
+            "q_seed": 0.95,
+        },
+        "continuation": {"continuation_order": "fractional", "q_continuation": 0.95},
+        "dynamics": {"dynamics_order": "fractional", "q_dynamics": 0.95},
+    }
+    result = apply_cli_overrides(
+        cfg,
+        {"q": 0.9999, "transfer_mode": "fractional_spectral"},
+    )
+    assert result["q"] == pytest.approx(0.9999)
+    assert result["seed"]["q_seed"] == pytest.approx(0.9999)
+    assert result["continuation"]["q_continuation"] == pytest.approx(0.9999)
+    assert result["dynamics"]["q_dynamics"] == pytest.approx(0.9999)
+    assert result["transfer_mode"] == "fractional_spectral"
+    assert result["seed"]["transfer_mode"] == "fractional_spectral"

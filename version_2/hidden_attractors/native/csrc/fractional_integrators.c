@@ -21,9 +21,9 @@ void chua_saturation_rhs_c(double t, const double *x, double *dx, int n, void *p
 void chua_arctan_rhs_c(double t, const double *x, double *dx, int n, void *params) {
     ChuaArctanParams *p = (ChuaArctanParams *)params;
     double sigma = x[0];
-    double psi = (p->n - p->m) * atan(sigma);
+    double phi = p->a1 * sigma + p->a2 * atan(p->rho * sigma);
     
-    dx[0] = -p->alpha * (1.0 + p->m) * x[0] + p->alpha * x[1] - p->alpha * psi;
+    dx[0] = p->alpha * (x[1] - sigma - phi);
     dx[1] = x[0] - x[1] + x[2];
     dx[2] = -p->beta * x[1] - p->gamma * x[2];
 }
