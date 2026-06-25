@@ -101,3 +101,7 @@ _archived_figure_scripts/
 # Local editor/workspace settings
 .vscode/
 *.code-workspace
+
+# Local Codex memory and project context
+/.codex/
+/contexto_arquitectura_hidden_attractors_fo.md

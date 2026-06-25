@@ -33,8 +33,6 @@ The maximum absolute difference from the values displayed in the article is
 `5.5489224e-9`. The acceptance threshold is `6e-9`, accounting only for the
 paper's printed rounding.
 
-![EFORK-3 manufactured-solution convergence](assets/figures/efork3_validation/convergence_errors.png)
-
 ## Provenance
 
 The validation evidence package archives `constantes_efork.py` and

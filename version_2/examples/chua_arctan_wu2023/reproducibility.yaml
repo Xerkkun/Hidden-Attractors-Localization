@@ -1,0 +1,130 @@
+﻿case_id: chua_arctan_wu2023_and_c590
+role_in_report: "Ejemplo II -- Chua fraccionario con no linealidad arctan"
+
+published_wu2023:
+  source_reference: "Wu et al. 2023"
+  source_config: ../../configs/chua_arctan_wu2023_caputo.json
+  output_dir: ../../validation/reference_cases/fractional_chua_arctan_wu2023
+  interpretation: "reproduccion bibliografica no promovida; ADM local y DF/NC entera segun el contrato publicado"
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m: 0.4
+    n: -1.1585
+    a1: 0.4
+    a2: -1.5585
+    rho: 1.0
+  numerical_contract:
+    q: 0.99
+    h: 0.01
+    integrator: adm_wu2023
+    memory_policy: none_local_adm
+    caputo_history_accumulated: false
+  seed_generation:
+    transfer_mode: published_integer_laplace
+    q_seed: 1.0
+    transfer_function: "r^T (j*omega I - P)^(-1) b"
+    balance_equation: "1 - W_pub(j*omega)*N(A) = 0"
+
+proposed_centered_df:
+  interpretation: "rama DF fraccionaria auditada; semilla heuristica, no origen del candidato c590"
+  workflow_config:
+    run_id: chua_arctan_c590_centered_df_reproducibility
+    system_id: chua_fractional_arctan
+    output_dir: ../../outputs/examples/chua_arctan_wu2023/proposed_centered_df
+    q: 0.9999
+    q_seed: 0.9999
+    q_dynamics: 0.9999
+    q_continuation: 0.9999
+    alpha: 21.849356906616716
+    beta: 19.081840840860202
+    gamma: 0.007378011979156531
+    a1: 0.04228979343578827
+    a2: -3.3367815123026694
+    rho: 1.7984259332820332
+    transfer_mode: fractional
+    seed_mode: fractional
+    continuation_mode: fractional
+    dynamics_mode: system
+    integrator: abm
+    memory_mode: full
+    memory_policy: full_caputo
+    memory_window_steps: 400
+    seed_strategy: k_phi
+    seed_construction: modal
+    transfer_convention: standard
+    harmonic_condition: 1_minus_WN
+    branch_index: 0
+    omega_min: 0.01
+    omega_max: 10.0
+    grid_size_omega: 600
+    grid_size_amplitude: 400
+    df_residual_tol: 1.0e-8
+    h: 0.005
+    divergence_norm: 120.0
+    plot_enabled: true
+    save_figures: true
+    run_hiddenness_tests: false
+    run_sphere_tests: false
+    run_basin_slices: false
+    continuation:
+      continuation_order: fractional
+      q_continuation: 0.9999
+      eta_values: [0.001, 0.003, 0.01, 0.03, 0.07, 0.12, 0.2, 0.35, 0.5, 0.7, 0.85, 1.0]
+      use_period_based_times: false
+      t_transient: 30.0
+      t_keep: 30.0
+      require_c_backend: true
+      allow_python_fallback: false
+      build_fractional_harmonic_history: true
+    final_simulation:
+      t_final: 60.0
+      t_burn: 30.0
+
+proposed_c590:
+  candidate_id: chua_arctan_c590_q09999_seed9
+  candidate_dir: ../../outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623
+  continuation_dir: ../../outputs/arctan_hidden_candidate_search/c590_df_continuation_q09999_relaxed_20260624
+  interpretation: "busqueda dinamica Caputo full-history y sondeos esfericos; compatible localmente hasta r <= 0.3, revision macroscopia pendiente"
+  parameters:
+    alpha: 21.849356906616716
+    beta: 19.081840840860202
+    gamma: 0.007378011979156531
+    a1: 0.04228979343578827
+    a2: -3.3367815123026694
+    rho: 1.7984259332820332
+  q: 0.9999
+  seed: [5.864244979081692, 1.5847111486491057, 3.2155806477633915]
+  screen:
+    output_dir: ../../outputs/examples/chua_arctan_wu2023/c590_screen
+    q_values: "0.9999"
+    alpha_values: "21.849356906616716"
+    beta_values: "19.081840840860202"
+    gamma: 0.007378011979156531
+    a1: 0.04228979343578827
+    a2: -3.3367815123026694
+    rho: 1.7984259332820332
+    h: 0.005
+    t_final: 180.0
+    t_burn: 90.0
+    integrator: abm
+    memory_mode: full
+    seed_strategy: fixed
+    zero_one_samples: "500,800,1200"
+    max_cases: 1
+  verification:
+    radii: "1e-5,1e-4,1e-3,1e-2,0.03,0.1,0.3,1.0,2.0"
+    directions_per_radius_list: "100,200,300,400,500,600,700,800,900"
+    h: 0.005
+    t_final: 180.0
+    t_burn: 90.0
+    workers: 12
+    checkpoint_name: hiddenness_matrix_latest_checkpoint.jsonl
+    matrix_name: hiddenness_matrix_latest.json
+    summary_name: candidate_summary_latest.json
+    rows_name: hiddenness_latest_rows.csv
+    config_name: latest_hiddenness_run_config.json
+  figures:
+    canonical_script: hidden_attractors.plotting.generate_publication_figures
+    report_assets_dir: ../../library_figures/by_report/df_nc_chua

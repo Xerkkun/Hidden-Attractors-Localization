@@ -752,6 +752,28 @@ def generate_biased_report_dynamics() -> None:
     )
     plt.close(fig)
 
+
+    fig, axes = plt.subplots(1, 3, figsize=(9.2, 3.0), dpi=300)
+    projections = ((0, 1, r"$x$", r"$y$"), (0, 2, r"$x$", r"$z$"), (1, 2, r"$y$", r"$z$"))
+    for ax, (i, j, xlabel, ylabel) in zip(axes, projections):
+        ax.plot(cloud[:, i], cloud[:, j], color="#0f766e", lw=0.35)
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+        apply_axes_style(ax, grid=True)
+    fig.tight_layout()
+    export_figure(
+        fig,
+        "chua_frac_ns_biased_fig04_projections",
+        "phase_projections",
+        {
+            **common_metadata,
+            "caption_key": "fig_chua_frac_ns_biased_fig04_projections",
+            "kind": "phase_projections",
+        },
+        run_id="df_nc_chua_biased_dynamics_20260624",
+        report_targets=["df_nc_chua"],
+    )
+    plt.close(fig)
     h = float(np.median(np.diff(trajectory[:, 0])))
     signal = trajectory[:, 1] - float(np.mean(trajectory[:, 1]))
     amplitude = np.abs(np.fft.rfft(signal))

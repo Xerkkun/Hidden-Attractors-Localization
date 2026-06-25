@@ -1,0 +1,26 @@
+﻿case_id: chua_nonsmooth_biased_hidden_attractor
+role_in_report: "Ejemplo I -- Chua fraccionario no suave"
+active_config: ../../configs/examples/chua_nonsmooth_biased_df_search.yaml
+published_reference_lane:
+  source: Danca2017
+  config: ../../configs/examples/chua_nonsmooth_exact_danca_non_reproducible.yaml
+  interpretation: "reproduccion bibliografica y descarte metodologico; no se promueve como oculto"
+proposed_method_lane:
+  config: ../../configs/examples/chua_nonsmooth_biased_df_search.yaml
+  pipeline:
+    - centered_reference_search
+    - biased_describing_function_search
+    - affine_caputo_continuation
+    - standard_hiddenness_verification
+    - extended_hiddenness_verification
+    - editorial_figures
+  status: "compatible_with_hiddenness_under_tested_local_radii"
+commands:
+  search: "python 01_search.py"
+  continuation: "python 02_continue.py"
+  verification: "python 03_verify.py"
+  figures: "python 04_plot.py"
+  all: "python run_example.py --all"
+figure_policy:
+  canonical_script: hidden_attractors.plotting.generate_publication_figures
+  report_assets_dir: ../../library_figures/by_report/df_nc_chua
