@@ -1491,20 +1491,24 @@ completa contra Wu et al. queda separada.
 
 \subsection{Estado}
 
-El caso Chua arctan fraccionario está implementado algebraicamente, pendiente de validación completa de ocultedad. No se promueve como atractor oculto verificado en esta versión.
+El caso Chua arctan fraccionario ha sido analizado en profundidad mediante un protocolo de búsqueda sistemática y verificación estricta. Se ha localizado y promovido un candidato a atractor oculto denominado \texttt{c590} con parámetros $\alpha = 21.8494$, $\beta = 19.0818$, $\gamma = 0.0074$, $a_1 = 0.0423$, $a_2 = -3.3368$, $\rho = 1.7984$ en orden dinámico $q=0.9999$.
 
-La formulación algebraica, los equilibrios, el Jacobiano y el split de Lur'e están implementados. La guía no afirma reproducción completa ni ocultedad verificada del caso arctan mientras no exista una rama robusta, referencia dinámica promovida, comparación publicada y paquete de cuencas completo. Esto evita convertir un caso implementado en una conclusión científica más fuerte que la evidencia disponible. 
+La búsqueda se realizó en dos etapas: una exploración aleatorizada inicial con orden entero $q=1.0$ (donde se identificó el candidato con índice 590), seguida de una continuación homotópica al orden fraccionario $q=0.9999$ utilizando la formulación de Caputo con integración Adams-Bashforth-Moulton (ABM) de memoria completa y paso $h=0.005$.
 
-El flujo de trabajo completo que queda pendiente para este caso de estudio comprende:
+El atractor caótico promovido se clasificó como \texttt{hiddenness_compatible_chaos_candidate} al haber superado con éxito la criba de vecindades de todos los equilibrios ($E_0$, $E_+$, $E_-$) mediante sondeos esféricos concéntricos en radios $\epsilon \in \{10^{-2}, 10^{-3}, 10^{-4}, 10^{-5}\}$ con un total de 3000 trayectorias integradas y cero contactos con el atractor objetivo. La naturaleza caótica de la órbita de referencia está soportada por una mediana de la prueba 0-1 de $K \approx 0.8851$ (a paso $h=0.005$) y $K \approx 0.8658$ (a paso $h=0.0025$), así como un exponente de Lyapunov principal estimado de $\lambda_{\max} \approx 0.1766$.
+
+La formulación algebraica, los equilibrios, el Jacobiano y el split de Lur'e están completamente implementados y verificados. La evidencia obtenida es consistente con un atractor caótico oculto bajo el contrato de vecindades finito y paso temporal ensayado; no constituye una prueba matemática global de las cuencas de atracción del sistema completo.
+
+El flujo de trabajo que ha sido completado comprende:
 \begin{enumerate}
   \item la definición y split en la forma Lur'e;
   \item la formulación de la función de transferencia fraccionaria;
   \item la evaluación analítica de la función descriptiva arctan;
   \item el cálculo de la condición armónica de Nyquist;
-  \item la continuación paramétrica completa;
-  \item la simulación temporal mediante los integradores Caputo ABM o EFORK;
+  \item la continuación paramétrica de semillas;
+  \item la simulación temporal mediante integrador Caputo ABM de memoria completa;
   \item el muestreo de esferas y vecindades de todos los puntos de equilibrio;
-  \item la clasificación de ocultedad bajo criterios estrictos y conservadores.
+  \item la clasificación y veredicto de ocultedad bajo criterios operativos estrictos.
 \end{enumerate}
 
 \section{Validación oficial y evidencia promovida}

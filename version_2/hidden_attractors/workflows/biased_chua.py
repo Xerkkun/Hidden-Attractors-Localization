@@ -1258,10 +1258,8 @@ def run_summarize_and_plot(cfg: Dict[str, Any]) -> None:
 
     if plot_cfg.get("save_figures", True):
         from ..plotting.generate_publication_figures import (
-            generate_biased_report_dynamics,
-            generate_comparison_report_heatmaps,
+            generate_report_comparison_assets,
         )
 
-        generate_comparison_report_heatmaps()
-        generate_biased_report_dynamics()
+        generate_report_comparison_assets()
 

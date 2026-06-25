@@ -19,7 +19,7 @@ from .style import apply_axes_style, apply_library_style
 
 
 VERSION2_ROOT = Path(__file__).resolve().parents[2]
-OBSOLETE_C590_FIGURE_IDS = (
+OBSOLETE_REPORT_FIGURE_IDS = (
     "chua_frac_arctan_c590_fig03abc_projections",
     "chua_frac_arctan_c590_fig12_lyapunov_exploratory",
     "chua_frac_arctan_c590_fig16_integrator_audit",
@@ -81,10 +81,13 @@ def _resolve_publication_input(base: Path, value: str | Path) -> Path:
 
 
 def _source_label(path: Path) -> str:
-    try:
-        return path.resolve().relative_to(VERSION2_ROOT).as_posix()
-    except ValueError:
-        return path.resolve().as_posix()
+    resolved = path.resolve()
+    for root in (VERSION2_ROOT, VERSION2_ROOT.parent):
+        try:
+            return resolved.relative_to(root).as_posix()
+        except ValueError:
+            continue
+    return f"external/{resolved.name}"
 
 
 def _load_csv_trajectory(path: Path) -> np.ndarray:
@@ -160,12 +163,12 @@ def _candidate_tail(
     return states[times >= burn]
 
 
-def _prune_obsolete_candidate_figures() -> None:
-    """Remove report assets superseded by the consolidated c590 suite."""
+def _prune_obsolete_report_figures() -> None:
+    """Remove report assets superseded by the consolidated publication suite."""
     from .manifest import load_manifest, save_manifest
 
     library_root = VERSION2_ROOT / "library_figures"
-    for figure_id in OBSOLETE_C590_FIGURE_IDS:
+    for figure_id in OBSOLETE_REPORT_FIGURE_IDS:
         for directory in (
             library_root / "current" / "pdf",
             library_root / "current" / "png",
@@ -176,7 +179,7 @@ def _prune_obsolete_candidate_figures() -> None:
                 path = directory / f"{figure_id}{suffix}"
                 if path.exists():
                     path.unlink()
-    obsolete = set(OBSOLETE_C590_FIGURE_IDS)
+    obsolete = set(OBSOLETE_REPORT_FIGURE_IDS)
     save_manifest(
         [entry for entry in load_manifest() if entry.get("figure_id") not in obsolete]
     )
@@ -500,11 +503,13 @@ def _plot_candidate_spheres_and_heatmap(
     matrix = _read_json(matrix_path)
     radii = sorted(float(value) for value in matrix["radii"])
     slugs = {"E0": "E0", "E+": "Ep", "E-": "Em"}
+    columns = min(3, len(radii))
+    plot_rows = int(np.ceil(len(radii) / columns))
     for equilibrium in ("E0", "E+", "E-"):
         center = np.asarray(matrix["equilibria"][equilibrium], dtype=float)
-        fig = plt.figure(figsize=(8.0, 6.8), dpi=300)
+        fig = plt.figure(figsize=(3.8 * columns, 3.4 * plot_rows), dpi=300)
         for panel, radius in enumerate(radii, start=1):
-            ax = fig.add_subplot(2, 2, panel, projection="3d")
+            ax = fig.add_subplot(plot_rows, columns, panel, projection="3d")
             rows = [
                 row
                 for row in matrix["rows"]
@@ -746,7 +751,38 @@ def generate_biased_report_dynamics() -> None:
         report_targets=["df_nc_chua"],
     )
     plt.close(fig)
-    _prune_obsolete_candidate_figures()
+
+    h = float(np.median(np.diff(trajectory[:, 0])))
+    signal = trajectory[:, 1] - float(np.mean(trajectory[:, 1]))
+    amplitude = np.abs(np.fft.rfft(signal))
+    amplitude /= max(float(np.max(amplitude)), 1.0e-15)
+    omega = 2.0 * np.pi * np.fft.rfftfreq(len(signal), d=h)
+    omega0 = 2.04028605107949
+    keep = omega <= 10.0
+    fig, ax = plt.subplots(figsize=(6.8, 3.7), dpi=300)
+    ax.plot(omega[keep], amplitude[keep], color="#0f766e", lw=0.7)
+    ax.axvline(omega0, color="#dc2626", lw=1.0, label=fr"$\omega_0={omega0:.4f}$")
+    ax.set_xlim(0.0, 10.0)
+    ax.set_ylim(0.0, 1.05)
+    ax.set_xlabel(r"$\omega$ [rad/s]")
+    ax.set_ylabel("Amplitud normalizada")
+    ax.legend(loc="upper right", fontsize=8)
+    apply_axes_style(ax, grid=True)
+    fig.tight_layout()
+    export_figure(
+        fig,
+        "chua_frac_ns_biased_fig11_fft",
+        "fft",
+        {
+            **common_metadata,
+            "caption_key": "fig_chua_frac_ns_biased_fig11_fft",
+            "omega0": omega0,
+            "kind": "fft",
+        },
+        run_id="df_nc_chua_biased_dynamics_20260624",
+        report_targets=["df_nc_chua"],
+    )
+    plt.close(fig)
 
 
 def generate_centered_report_fft() -> None:
@@ -806,37 +842,14 @@ def generate_centered_report_fft() -> None:
     )
     plt.close(fig)
 
-    h = float(np.median(np.diff(trajectory[:, 0])))
-    signal = trajectory[:, 1] - float(np.mean(trajectory[:, 1]))
-    amplitude = np.abs(np.fft.rfft(signal))
-    amplitude /= max(float(np.max(amplitude)), 1.0e-15)
-    omega = 2.0 * np.pi * np.fft.rfftfreq(len(signal), d=h)
-    omega0 = 2.04028605107949
-    keep = omega <= 10.0
-    fig, ax = plt.subplots(figsize=(6.8, 3.7), dpi=300)
-    ax.plot(omega[keep], amplitude[keep], color="#0f766e", lw=0.7)
-    ax.axvline(omega0, color="#dc2626", lw=1.0, label=fr"$\omega_0={omega0:.4f}$")
-    ax.set_xlim(0.0, 10.0)
-    ax.set_ylim(0.0, 1.05)
-    ax.set_xlabel(r"$\omega$ [rad/s]")
-    ax.set_ylabel("Amplitud normalizada")
-    ax.legend(loc="upper right", fontsize=8)
-    apply_axes_style(ax, grid=True)
-    fig.tight_layout()
-    export_figure(
-        fig,
-        "chua_frac_ns_biased_fig11_fft",
-        "fft",
-        {
-            **common_metadata,
-            "caption_key": "fig_chua_frac_ns_biased_fig11_fft",
-            "omega0": omega0,
-            "kind": "fft",
-        },
-        run_id="df_nc_chua_biased_dynamics_20260624",
-        report_targets=["df_nc_chua"],
-    )
-    plt.close(fig)
+
+def generate_report_comparison_assets() -> None:
+    """Regenerate every shared DF/NC comparison asset used by the paper."""
+    apply_library_style()
+    generate_comparison_report_heatmaps()
+    generate_centered_report_fft()
+    generate_biased_report_dynamics()
+    _prune_obsolete_report_figures()
 
 
 def generate_candidate_publication_figures(candidate_dir: str | Path) -> None:
@@ -885,10 +898,7 @@ def generate_candidate_publication_figures(candidate_dir: str | Path) -> None:
     _plot_candidate_fft(summary, manifest, times, states, target_path, spectral_path)
     _plot_candidate_lyapunov(summary, manifest, lyapunov_path, convergence_path)
     _plot_candidate_spheres_and_heatmap(summary, manifest, matrix_path)
-    generate_comparison_report_heatmaps()
-    generate_centered_report_fft()
-    generate_biased_report_dynamics()
-    _prune_obsolete_candidate_figures()
+    generate_report_comparison_assets()
     print(f"[Publication Figures] Candidate suite completed from {directory}")
 
 
