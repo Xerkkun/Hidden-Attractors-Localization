@@ -86,7 +86,7 @@ PROJECT_NAME_PATH_REGEX = re.compile(r"Hidden Attractors Fractional Order[\\/]")
 
 def validate_contract(argv: Sequence[str] | None = None) -> None:
     """Validate numerical validation evidence contract."""
-    sys.exit(contract_main(argv))
+    sys.exit(contract_main(argv, deprecation_warning=False))  # type: ignore[call-arg]
 
 
 def validate_bibliography(argv: Sequence[str] | None = None) -> None:

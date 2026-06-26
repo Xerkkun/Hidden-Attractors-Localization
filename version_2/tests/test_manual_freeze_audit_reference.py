@@ -51,14 +51,14 @@ def test_manual_freeze_audit_reference_verification():
                 readme_found = True
     assert readme_found, "Neither version_2/README.md nor workspace README.md references 'validation/freeze_audit/'"
     
-    # 3. Context around 944 / 28 skipped
-    # If a document mentions 944 or 28 skipped, it must mention validation/freeze_audit or freeze audit within ±160 chars
+    # 3. Context around 947 / 28 skipped
+    # If a document mentions 947 or 28 skipped, it must mention validation/freeze_audit or freeze audit within ±160 chars
     for p in docs:
         content = read(p)
         content_lower = content.lower()
         
-        # Check '944'
-        for match in re.finditer(r"\b944\b", content_lower):
+        # Check '947'
+        for match in re.finditer(r"\b947\b", content_lower):
             pos = match.start()
             win_start = max(0, pos - 160)
             win_end = min(len(content), pos + len(match.group(0)) + 160)
@@ -94,13 +94,13 @@ def test_manual_freeze_audit_reference_verification():
     stdout_path = ROOT / "validation/freeze_audit/final_freeze_pytest_stdout.txt"
     if stdout_path.exists() and not in_progress:
         stdout_content = read(stdout_path)
-        assert "944 passed" in stdout_content, "final_freeze_pytest_stdout.txt does not contain '944 passed'"
+        assert "947 passed" in stdout_content, "final_freeze_pytest_stdout.txt does not contain '947 passed'"
         assert "28 skipped" in stdout_content, "final_freeze_pytest_stdout.txt does not contain '28 skipped'"
         
     # 5. Check manifest yaml contents
     manifest_data = load_manifest()
     freeze_audit = manifest_data.get("freeze_audit", {})
-    assert freeze_audit.get("passed") == 944, f"Manifest passed count is not 944 (got {freeze_audit.get('passed')})"
+    assert freeze_audit.get("passed") == 947, f"Manifest passed count is not 947 (got {freeze_audit.get('passed')})"
     assert freeze_audit.get("skipped") == 28, f"Manifest skipped count is not 28 (got {freeze_audit.get('skipped')})"
     assert freeze_audit.get("path") == "validation/freeze_audit/", f"Manifest path is incorrect (got {freeze_audit.get('path')})"
     

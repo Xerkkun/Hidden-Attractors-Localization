@@ -6,7 +6,6 @@
     "cwd": "version_2",
     "exit_code": 0,
     "stdout_excerpt": [
-      "Deprecated: use 'hidden-attractors validate contract ...'",
       "validation contract: passed"
     ],
     "stderr_excerpt": []
