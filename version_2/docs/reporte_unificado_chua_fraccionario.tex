@@ -1,7 +1,8 @@
-\documentclass[11pt]{article}
+﻿\documentclass[11pt]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \usepackage[spanish,es-noshorthands,es-tabla]{babel}
 \usepackage[a4paper,margin=2.15cm]{geometry}
 \usepackage{amsmath,amssymb,amsfonts}
@@ -25,25 +26,11 @@
 \setlength{\emergencystretch}{3em}
 \renewcommand{\arraystretch}{1.13}
 \setlength{\tabcolsep}{4pt}
-\graphicspath{{../library_figures/by_report/unified_chua_fractional/pdf/}{../library_figures/by_report/unified_chua_fractional/pdf/}{../library_figures/by_report/unified_chua_fractional/pdf/}}
+\graphicspath{{../library_figures/by_report/unified_chua_fractional/pdf/}}
 
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \DeclareRobustCommand{\codepath}[1]{\begingroup\Urlmuskip=0mu plus 2mu\path{#1}\endgroup}
-\newcommand{\maybeincludegraphics}[2][]{%
-  \IfFileExists{../library_figures/by_report/unified_chua_fractional/pdf/#2}{%
-    \includegraphics[#1]{../library_figures/by_report/unified_chua_fractional/pdf/#2}%
-  }{%
-    \IfFileExists{../library_figures/by_report/unified_chua_fractional/pdf/#2}{%
-      \includegraphics[#1]{../library_figures/by_report/unified_chua_fractional/pdf/#2}%
-    }{%
-      \IfFileExists{../library_figures/by_report/unified_chua_fractional/pdf/#2}{%
-        \includegraphics[#1]{../library_figures/by_report/unified_chua_fractional/pdf/#2}%
-      }{%
-        \fbox{\parbox[c][0.22\textheight][c]{0.80\linewidth}{\centering\small Figura no encontrada en assets del reporte:\\ \codepath{#2}}}%
-      }%
-    }%
-  }%
-}
+\newcommand{\reportinclude}[2][]{\includegraphics[#1]{#2}}
 \newcommand{\CaputoD}{\,{}^{C}D_t^q}
 \newcommand{\ii}{\mathrm{i}}
 \newcommand{\R}{\mathbb{R}}
@@ -220,10 +207,35 @@ Ruta & Papel \\
 \codepath{configs/examples/} & YAML listos para usar desde la CLI. \\
 \codepath{examples/} & Ejemplos pequeños para aprender la API. \\
 \codepath{validation/} & Evidencia promovida, manifiestos, contratos y diagnósticos. \\
-\codepath{docs/assets/figures/} & Figuras usadas por este documento. \\
+\codepath{library_figures/} & Figuras promovidas y manifiestos de figuras; \codepath{docs/assets/} queda solo para material documental. \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\section{Inventario de API de la libreria}
+
+La referencia exhaustiva de funciones, clases y metodos definidos en la libreria activa se mantiene en \codepath{docs/api_reference.md}. Ese archivo se genera por analisis AST de \codepath{version_2/hidden_attractors/}, sin importar modulos ni compilar backends nativos. En la revision de release documenta \(137\) modulos con simbolos, \(723\) funciones de nivel modulo, \(95\) clases y \(104\) metodos.
+
+El reporte usa esa referencia como indice normativo para no duplicar cientos de entradas privadas dentro del cuerpo principal. La lectura publica recomendada se resume asi:
+
+\begin{center}
+\small
+\begin{tabular}{@{}L{0.28\textwidth}L{0.32\textwidth}L{0.30\textwidth}@{}}
+\toprule
+Familia & Modulos principales & Uso documentado \\
+\midrule
+Registro de sistemas & \codepath{systems}, \codepath{models} & Definir campos vectoriales, parametros, equilibrios, Jacobianos y forma de Lur'e. \\
+Semillas Lur'e/DF & \codepath{seed_generation}, \codepath{lure} & Generar semillas heuristicas por DF/Nyquist; no prueban ocultedad. \\
+Integracion & \codepath{integrations}, \codepath{solvers}, \codepath{native} & Ejecutar trayectorias enteras o Caputo bajo contrato de solver y memoria. \\
+Workflows & \codepath{workflows}, \codepath{continuation} & Unir semillas, continuacion, referencia dinamica, robustez, cuencas y reportes. \\
+Verificacion & \codepath{verification}, \codepath{basins} & Clasificar equilibrios, muestrear vecindades y decidir contactos. \\
+Diagnosticos & \codepath{analysis}, \codepath{diagnostics} & FFT/PSD, Poincare, Lyapunov, 0--1, acotamiento y comparacion de metodos. \\
+Figuras e IO & \codepath{plotting}, \codepath{io} & Exportar PNG/PDF/JSON/CSV reproducibles y manifiestos. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Para nuevos sistemas tipo Lur'e, los puntos de entrada minimos son \codepath{ChaoticSystem}, \codepath{register_system}, \codepath{LureSystem}, \codepath{WorkflowInputSpec}, \codepath{load_config} e \codepath{integrate}. Cualquier simbolo nuevo anadido al paquete debe registrarse en \codepath{docs/api_reference.md} y, si cambia la ruta de usuario, en \codepath{docs/quick_start.md}, \codepath{docs/getting_started.md}, \codepath{USER_MANUAL.md} y este reporte.
 
 \section{Fundamentos: sistemas dinámicos y caos}
 
@@ -296,56 +308,9 @@ Geometría & Atractor acotado con plegamiento, lóbulos, capas o estructura no t
 \end{longtable}
 \end{center}
 
-\subsection{Ejemplo clásico: sistema de Lorenz}
+\subsection{Ejemplo pedagógico: qué sí y qué no decide una trayectoria}
 
-Como ejemplo pedagógico, considérese el sistema de Lorenz \cite{Lorenz1963}:
-\[
-\dot{x}=\sigma(y-x),\qquad
-\dot{y}=x(\rho-z)-y,\qquad
-\dot{z}=xy-\beta z,
-\]
-con
-\[
-\sigma=10,\qquad \rho=28,\qquad \beta=\frac{8}{3},\qquad
-x(0)=(1,1,1).
-\]
-Este ejemplo no es un atractor oculto de Chua; se incluye porque es un sistema
-caótico clásico y visualmente claro para principiantes. Una estimación QR de
-Lyapunov sobre la trayectoria integrada da, de forma orientativa,
-\[
-(\lambda_1,\lambda_2,\lambda_3)\approx(0.874,\ 0.021,\ -14.561),
-\qquad
-\lambda_1+\lambda_2+\lambda_3\approx -13.667.
-\]
-La lectura es la esperada para un flujo disipativo caótico: un exponente
-positivo, uno cercano a cero por la dirección del flujo y una contracción
-promedio fuerte.
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.80\textwidth]{chaos_lorenz_phase_3d.pdf}
-\caption{Sistema de Lorenz: geometría post-transitorio del atractor clásico. La forma de dos lóbulos muestra plegamiento y confinamiento, pero la figura sola no prueba caos.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.88\textwidth]{chaos_lorenz_time_series.pdf}
-\caption{Sistema de Lorenz: series temporales post-transitorio. La señal permanece acotada y aperiódica a escala visual.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\begin{minipage}{0.49\textwidth}
-\centering
-\maybeincludegraphics[width=\linewidth]{chaos_lorenz_poincare.pdf}
-\end{minipage}\hfill
-\begin{minipage}{0.49\textwidth}
-\centering
-\maybeincludegraphics[width=\linewidth]{chaos_lorenz_spectrum.pdf}
-\end{minipage}
-\caption{Sistema de Lorenz: sección de Poincaré ascendente \(z=27\) y espectro de \(x(t)\). La sección no colapsa a un punto periódico y el espectro muestra energía distribuida en banda.}
-\end{figure}
-
+Un ejemplo clásico como Lorenz ayuda a explicar sensibilidad, mezcla y señales no periódicas, pero no pertenece a la metodología activa de este reporte. Por eso no se usan figuras de Lorenz ni galerías externas como evidencia de los casos Chua. La regla de lectura es la misma para todos los sistemas: una trayectoria o un espectro son diagnósticos; la ocultedad requiere vecindades de todos los equilibrios y un contrato numérico reproducible.
 \section{Fundamentos: derivada fraccionaria de Caputo}
 
 Para \(0<q<1\), la derivada de Caputo usada por la librería se define como
@@ -485,7 +450,7 @@ sector.
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.78\textwidth]{matignon_complex_plane.pdf}
+\reportinclude[width=0.78\textwidth]{matignon_complex_plane.pdf}
 \caption{División del plano complejo según Matignon. Para un orden conmensurado \(q\), los valores propios deben quedar fuera del sector \(|\arg(\lambda)|\le q\pi/2\). La zona sombreada ilustra el caso \(q=0.8\).}
 \end{figure}
 
@@ -583,7 +548,7 @@ coincide con \(n\) cerca de \(x=0\) y tiende a \(m\) cuando \(|x|\) crece.
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.94\textwidth]{chua_nonlinearity_piecewise_vs_arctan.pdf}
+\reportinclude[width=0.94\textwidth]{chua_nonlinearity_piecewise_vs_arctan.pdf}
 \caption{Comparación entre la característica definida a trozos y la característica arctan usada por el caso Wu et al. 2023. La curva arctan suaviza los cambios de pendiente del modelo por tramos.}
 \end{figure}
 
@@ -592,102 +557,9 @@ sustituir los quiebres de una característica lineal por tramos por una
 función suave con pendientes límite comparables. La figura no valida la
 dinámica; sólo explica la no linealidad que entra al campo vectorial.
 
-\subsection{Atractores típicos, semillas y continuación}
+\subsection{Lectura uniforme de modelos y figuras}
 
-La librería calcula semillas mediante balance armónico en forma de Lur'e. Se
-escribe
-\[
-\CaputoD X=P X+b\,\psi(\sigma),\qquad \sigma=r^\top X,\qquad r=(1,0,0)^\top,
-\]
-y se aproxima \(\sigma(t)\approx A\sin(\omega t)\). La función descriptiva
-clásica es el cociente entre el primer armónico de \(\psi(A\sin\theta)\) y la
-amplitud \(A\):
-\begin{equation}
-N(A)=\frac{1}{\pi A}\int_{-\pi}^{\pi}
-\psi(A\sin\theta)\sin\theta\,d\theta .
-\label{eq:df_general_first_harmonic}
-\end{equation}
-Como las no linealidades usadas aquí son impares, el término coseno del
-primer armónico se anula y \(N(A)\) es real.
-
-La semilla se calcula en tres pasos:
-\begin{enumerate}
-  \item Se escanea \(\omega>0\) hasta encontrar cruces donde
-  \(\operatorname{Im}\widehat W_q(\lambda)=0\) con \(\lambda=(\ii\omega)^q\), definiendo la función de transferencia compleja como \(W_q(\ii\omega)\equiv \widehat W_q((\ii\omega)^q)\):
-  \[
-  \widehat W_q(\lambda)=r^\top\left(\lambda I-P\right)^{-1}b,\qquad \lambda=(\ii\omega)^q.
-  \]
-  \item En el cruce se toma \(k=N(A)=1/\operatorname{Re}\widehat W_q(\lambda)\),
-  usando la convención normalizada del reporte. Si la implementación usa \(W_{\rm code}=r^\top(P-\lambda I)^{-1}b\), entonces \(W_{\rm code}=-\widehat W_q(\lambda)\), y la condición residual debe escribirse con el signo correspondiente.
-  \item Se resuelve \(N(A)=k\), se construye
-  \(P+bkr^\top\), se toma el autovector asociado a
-  \(\lambda\), se normaliza con \(r^\top v=1\), y la condición inicial
-  modal se toma como
-  \[
-  X_0=A\,\operatorname{Re}\left(v e^{\ii\theta}\right),
-  \qquad \theta=0\ \text{en las figuras de este reporte}.
-  \]
-\end{enumerate}
-
-Para \(q=1\), \((\ii\omega)^q=\ii\omega\) y la construcción coincide con el
-balance armónico ordinario. Para \(0<q<1\), se usa la rama principal
-\[
-(\ii\omega)^q=\omega^q\exp\!\left(\ii\frac{q\pi}{2}\right).
-\]
-Esta semilla fraccionaria es una construcción armónica tipo Weyl; después
-debe reintegrarse como problema causal de Caputo y pasar por continuidad,
-robustez y cuencas antes de afirmar algo sobre ocultedad.
-
-\begin{center}
-\footnotesize
-\begin{longtable}{@{}L{0.15\textwidth}L{0.12\textwidth}L{0.15\textwidth}L{0.16\textwidth}L{0.30\textwidth}@{}}
-\toprule
-Modelo & \(q\) & \(\omega\) & \(A\), \(N(A)\) & Semilla \(X_0\) calculada \\
-\midrule
-No suave & \(1.000\) & \(2.03918694\) & \(A=5.85614509\), \(N=0.20986735\) & \((5.856145,\ 0.369332,\ -8.366536)\) \\
-No suave & \(0.998\) & \(2.05034857\) & \(A=5.81185216\), \(N=0.21145084\) & \((5.811852,\ 0.380162,\ -8.310244)\) \\
-Arctan & \(1.000\) & \(2.03918694\) & \(A=0.87907668\), \(N=-1.33693265\) & \((0.879077,\ 0.055441,\ -1.255916)\) \\
-Arctan & \(0.950\) & \(2.66894749\) & \(A=1.22267784\), \(N=-1.20835580\) & \((1.222678,\ 0.263146,\ -1.834967)\) \\
-\bottomrule
-\end{longtable}
-\end{center}
-
-Los valores anteriores fueron calculados con
-\codepath{find_lure_harmonic_seed}. La fila arctan usa la parametrización
-local tipo Wu2023 \(a_1=0.4\), \(a_2=-1.5585\), \(\rho=1\). Si un YAML
-sobrescribe esos parámetros, los números de semilla cambian y debe citarse el
-YAML de esa corrida como fuente de verdad.
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.78\textwidth]{chua_nonsmooth_typical_attractor_3d.pdf}
-\caption{Chua no suave: atractor 3D integrado desde la semilla DF entera calculada por la librería. Parámetros: \(\alpha=8.4562\), \(\beta=12.0732\), \(\gamma=0.0052\), \(m_0=-0.1768\), \(m_1=-1.1468\).}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.78\textwidth]{chua_nonsmooth_df_continuation_3d.pdf}
-\caption{Chua no suave: continuación ilustrativa desde el modelo linealizado \(P+bk r^\top\) hasta la no linealidad saturada completa. \(\eta=0\) representa el cierre lineal armónico y \(\eta=1\) el sistema no lineal.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.78\textwidth]{chua_arctan_typical_attractor_3d.pdf}
-\caption{Chua arctan (pendiente de validación completa de ocultedad): atractor 3D integrado desde la semilla DF entera calculada por la librería. Parámetros tipo Wu2023: \(a_1=0.4\), \(a_2=-1.5585\), \(\rho=1\).}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.86\textwidth]{chua_arctan_typical_time_series.pdf}
-\caption{Chua arctan (pendiente de validación completa de ocultedad): series temporales post-transitorio de la corrida típica usada para el atractor 3D. La gráfica permite revisar acotamiento, escalas relativas y aperiodicidad visual; no reemplaza Lyapunov, Poincaré ni análisis de cuencas.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.78\textwidth]{chua_arctan_df_continuation_3d.pdf}
-\caption{Chua arctan (pendiente de validación completa de ocultedad): continuación ilustrativa desde la linealización armónica hasta la realimentación suave \(a_2\arctan(\rho\sigma)\).}
-\end{figure}
-
+Las figuras de atractores, series, transferencia y continuación se colocan en las secciones de los tres casos científicos. En la parte conceptual sólo se conserva la comparación de no linealidades, porque es una figura pedagógica generada por el script editorial del reporte. Esta separación evita mezclar corridas antiguas con evidencia de los ejemplos activos.
 \section{Lur'e, función de transferencia y función descriptiva}
 
 La forma de Lur'e separa el sistema en un bloque lineal y una realimentación
@@ -977,11 +849,8 @@ Ghoreishi, Ghaffari y Saad (2023), \emph{Fractional Order Runge--Kutta Methods},
 \end{longtable}
 \end{center}
 
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.82\textwidth]{convergence_errors.pdf}
-\caption{Validación EFORK-3: error terminal absoluto frente al tamaño de paso para los ejemplos publicados reproducidos localmente. La tendencia de convergencia respalda el orden de etapas y los coeficientes del método, pero no valida por sí sola una corrida Chua específica.}
-\end{figure}
+La evidencia de convergencia de integradores se conserva en los tests y contratos de validación. En este reporte unificado no se incluye una figura independiente de errores de convergencia si no forma parte del paquete editorial generado para los tres casos Chua.
+
 
 Los artefactos principales son:
 \begin{itemize}
@@ -1084,239 +953,27 @@ Función o módulo & Archivo fuente & Fundamento & Validación o evidencia & Lec
 }
 \end{center}
 
-\section{Ejemplos de la librería}
+\section{Ejemplos oficiales de la librería}
 
-Los ejemplos oficiales se mantienen pequeños. Algunos producen figuras; otros
-producen contratos, listados o especificaciones. En esta guía cada ejemplo se
-presenta con su lectura y con una figura didáctica o científica asociada.
+Los ejemplos oficiales asociados al reporte viven en \codepath{version_2/examples/}. Cada uno contiene scripts separados para búsqueda, continuación, verificación y graficación, además de un \codepath{reproducibility.yaml}. Las figuras de estos ejemplos se colocan en sus secciones científicas respectivas.
 
 \begin{center}
 \footnotesize
-\begin{longtable}{@{}L{0.31\textwidth}L{0.34\textwidth}L{0.27\textwidth}@{}}
+\begin{longtable}{@{}L{0.26\textwidth}L{0.25\textwidth}L{0.39\textwidth}@{}}
 \toprule
-Ejemplo & Propósito & Figura asociada en esta guía \\
+Ejemplo & Archivos activos & Papel en el reporte \\
 \midrule
-\codepath{examples/quickstart_equilibria.py} & Verifica equilibrios del Chua no suave y residuales \(F(E)\). & \codepath{example_quickstart_equilibria.png}. \\
-\codepath{examples/list_final_candidates.py} & Carga candidatos finales desde artefactos existentes. & \codepath{example_candidate_reading.png}. \\
-\codepath{examples/minimal_chua_protocol.py} & Escribe contrato JSON y comando del protocolo; \codepath{--run} ejecuta. & \codepath{example_minimal_protocol_flow.png}. \\
-\codepath{examples/custom_system_definition.py} & Registra un sistema nuevo con \codepath{ChaoticSystem}. & \codepath{example_api_layers.png}. \\
-\codepath{examples/new_system_workflow_spec.py} & Escribe \codepath{WorkflowInputSpec} para auditar un sistema nuevo. & \codepath{example_minimal_protocol_flow.png}. \\
-\codepath{examples/integer_lure_chua_protocol.py} & Semilla DF, continuación, trayectoria final, controles de equilibrio y figuras para \(q=1\). & \codepath{fig01c_transfer_real_imag.png}, \codepath{fig02d_continuation_story.png}. \\
-\codepath{examples/dynamical_analysis_gallery.py} & Genera espacio de fases, proyecciones, series y bifurcación. & \codepath{phase_space_3d.png}, \codepath{phase_projections.png}, \codepath{time_series.png}. \\
-\codepath{examples/create_robustness_overlay_config.py} & Crea configuración de robustez sin lanzar simulaciones largas. & \codepath{robustness_overlay_lure.png}. \\
-\codepath{examples/aggregate_existing_robustness_overlay.py} & Reagrega una salida existente y regenera resumen/figuras. & \codepath{robustness_overlay_machado_mu2.png}. \\
-\codepath{examples/chua_arctan_wu2023/} & Semillas y validación local del caso arctan reportado por Wu et al. & Figuras de caso arctan se tratan como pendientes de promoción si no están en assets. \\
+\codepath{examples/chua_integer_lure_reference/} & \codepath{01_search.py}, \codepath{02_continue.py}, \codepath{03_verify.py}, \codepath{04_plot.py}, \codepath{run_example.py}, \codepath{reproducibility.yaml} & Referencia entera \(q=1\). Valida semilla, continuación, simulación y controles de vecindad sin memoria Caputo. \\
+\codepath{examples/chua_nonsmooth_biased_hidden_attractor/} & \codepath{01_search.py}, \codepath{02_continue.py}, \codepath{03_verify.py}, \codepath{04_plot.py}, \codepath{run_example.py}, \codepath{reproducibility.yaml} & Ejemplo I. Búsqueda centrada, BDF sesgada, continuación Caputo ABM, verificación estándar y extendida. \\
+\codepath{examples/chua_arctan_wu2023/} & \codepath{01_search.py}, \codepath{02_continue.py}, \codepath{03_verify.py}, \codepath{04_plot.py}, \codepath{run_example.py}, \codepath{reproducibility.yaml} & Ejemplo II. Separa reproducción bibliográfica Wu2023, rama DF fraccionaria y candidato dinámico c590. \\
 \bottomrule
 \end{longtable}
 \end{center}
 
-\subsection{Ejemplo 1: equilibrios rápidos}
+Los ejemplos pequeños de API siguen siendo útiles para aprendizaje, pero no son los casos científicos promovidos por este reporte.
+\section{Caso científico 1: Chua entero de referencia}
 
-Comando:
-\begin{verbatim}
-python examples/quickstart_equilibria.py
-\end{verbatim}
-
-El ejemplo enseña la pregunta más básica: si el modelo está bien escrito, sus
-equilibrios deben satisfacer \(F(E)=0\). El usuario principiante debe revisar
-la norma residual y las coordenadas. Esta prueba no integra trayectorias y no
-habla de caos; solo valida la algebra local del campo.
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.76\textwidth]{example_quickstart_equilibria.pdf}
-\caption{Lectura visual del ejemplo \codepath{quickstart_equilibria.py}. Los tres puntos son los equilibrios del Chua no suave bajo parámetros por defecto. La figura ayuda a ubicar \(E_0\), \(E_+\) y \(E_-\); no decide estabilidad global.}
-\end{figure}
-
-\subsection{Ejemplo 2: candidatos finales}
-
-Comando:
-\begin{verbatim}
-python examples/list_final_candidates.py
-\end{verbatim}
-
-Este ejemplo carga registros con la API pública de candidatos. Un
-\codepath{CandidateRecord} es un resumen de una corrida existente: semilla,
-familia, parámetros, clase y rutas de origen. La lectura correcta es seguir el
-registro hacia su YAML, trayectoria, robustez y cuencas. El registro por sí
-solo no certifica ocultedad.
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.78\textwidth]{example_candidate_reading.pdf}
-\caption{Cómo leer candidatos finales: la semilla y la trayectoria son solo el inicio. La decisión necesita métricas, robustez y cuencas.}
-\end{figure}
-
-\subsection{Ejemplo 3: protocolo mínimo}
-
-Comandos:
-\begin{verbatim}
-python examples/minimal_chua_protocol.py
-python examples/minimal_chua_protocol.py --run
-\end{verbatim}
-
-Sin \codepath{--run}, el ejemplo escribe un contrato explícito y el comando
-que se debe ejecutar. Esto es útil para aprender sin iniciar una corrida
-larga. Con \codepath{--run}, delega al workflow oficial. El punto educativo es
-que una simulación no debe leerse sin contrato.
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.95\textwidth]{example_minimal_protocol_flow.pdf}
-\caption{Orden de lectura del protocolo: contrato, álgebra, semillas, precheck, continuación, referencia, robustez, cuencas y diagnósticos.}
-\end{figure}
-
-\subsection{Ejemplo 4: registrar un sistema nuevo}
-
-Comandos:
-\begin{verbatim}
-python examples/custom_system_definition.py
-hidden-attractors inspect systems
-python examples/new_system_workflow_spec.py
-\end{verbatim}
-
-El primer script muestra cómo registrar un sistema caótico nuevo mediante
-\codepath{ChaoticSystem}. Como mínimo se debe proporcionar dimensión, campo
-vectorial, parámetros, equilibrios y, si se quiere usar la ruta DF/Nyquist,
-una forma \codepath{LureSystem}. El segundo script muestra el paso siguiente:
-escribir una \codepath{WorkflowInputSpec} con solver, clasificador, referencia
-de destino, cortes de cuenca y refinamiento.
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.78\textwidth]{example_api_layers.pdf}
-\caption{Capas de API para extender la librería. Los usuarios nuevos deben construir sobre la capa estable y tratar workflows/integradores como contratos experimentales explícitos.}
-\end{figure}
-
-\subsection{Ejemplo 5: Chua entero con Lur'e}
-
-Comando:
-\begin{verbatim}
-python examples/integer_lure_chua_protocol.py
-\end{verbatim}
-
-Este ejemplo es el puente natural entre teoría y práctica. Ejecuta:
-\begin{enumerate}
-  \item construcción de sistema Chua \(q=1\);
-  \item split de Lur'e;
-  \item búsqueda de cruce \(1-N(A)W_1(\ii\omega)=0\);
-  \item reconstrucción de semilla;
-  \item continuación hacia el sistema no lineal completo;
-  \item trayectoria final;
-  \item controles de equilibrio y estimación Lyapunov de humo.
-\end{enumerate}
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.82\textwidth]{fig01_nyquist_df.pdf}
-\caption{Ejemplo entero: lectura Nyquist/DF del cruce armónico. La curva \(W(\ii\omega)\) y el punto \(-1/N(A)\) muestran la coherencia algebraica de la semilla candidata; no constituyen una prueba de atractor oculto.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.80\textwidth]{fig01c_transfer_real_imag.pdf}
-\caption{Ejemplo entero: componentes real e imaginaria de la transferencia en el cruce armónico. Esta figura valida el cierre de semilla, no la ocultedad.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.82\textwidth]{fig02d_continuation_story.pdf}
-\caption{Ejemplo entero: historia de continuación desde el modelo linealizado hasta la trayectoria final. La homotopía es numérica y debe leerse con su contrato.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.82\textwidth]{fig05b_hiddenness_overview.pdf}
-\caption{Ejemplo entero: controles de cuenca alrededor de equilibrios. La presencia o ausencia de contactos se interpreta bajo radios y muestras declaradas.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\begin{minipage}{0.49\textwidth}
-\centering
-\maybeincludegraphics[width=\linewidth]{fig11a_fft_x.pdf}
-\end{minipage}\hfill
-\begin{minipage}{0.49\textwidth}
-\centering
-\maybeincludegraphics[width=\linewidth]{fig11d_psd_x.pdf}
-\end{minipage}
-\caption{Ejemplo entero: FFT y PSD de la señal \(x(t)\). El espectro ayuda a distinguir periodicidad dominante, armónicos y energía distribuida; se usa como diagnóstico complementario y no como criterio único de caos.}
-\end{figure}
-
-\subsection{Ejemplo 6: galería de análisis dinámico}
-
-Comandos:
-\begin{verbatim}
-python examples/dynamical_analysis_gallery.py
-python examples/dynamical_analysis_gallery.py --trajectory-csv <trajectory_csv>
-\end{verbatim}
-
-La galería enseña a producir figuras desde la API pública: espacio de fases,
-proyecciones, series temporales y bifurcación. Si se usa una trayectoria real,
-el contrato de esa trayectoria debe citarse por separado.
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.78\textwidth]{phase_space_3d.pdf}
-\caption{Galería de análisis: espacio de fases 3D. Lectura permitida: geometría acotada aparente; lectura no permitida: prueba de ocultedad.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.92\textwidth]{phase_projections.pdf}
-\caption{Galería de análisis: proyecciones de fase. Las proyecciones ayudan a inspeccionar estructura, simetría y escala.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.92\textwidth]{time_series.pdf}
-\caption{Galería de análisis: series temporales. Sirven para observar transitorios, acotamiento operativo y posibles problemas de integración.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.88\textwidth]{bifurcation_diagram.pdf}
-\caption{Galería de análisis: diagrama de bifurcación por post-procesamiento. Muestra cambios cualitativos finitos; no sustituye continuación formal de ramas.}
-\end{figure}
-
-\subsection{Ejemplo 7: robustez y reagregación}
-
-Comandos:
-\begin{verbatim}
-python examples/create_robustness_overlay_config.py
-python examples/aggregate_existing_robustness_overlay.py <run_root>
-\end{verbatim}
-
-El primer comando escribe una configuración de robustez sin lanzar un trabajo
-pesado. El segundo reagrega una carpeta existente. El objetivo es comparar si
-la geometría candidata persiste al cambiar condiciones de contrato: paso,
-memoria, backend, horizonte o semillas cercanas. La robustez no reemplaza las
-cuencas, pero ayuda a detectar candidatos frágiles.
-
-\begin{figure}[H]
-\centering
-\maybeincludegraphics[width=0.86\textwidth]{robustness_overlay_lure.pdf}
-\caption{Robustez del candidato Lur'e: superposición de trayectorias bajo contratos finitos.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\begin{minipage}{0.49\textwidth}
-\centering
-\maybeincludegraphics[width=\linewidth]{robustness_overlay_machado_mu2.pdf}
-\end{minipage}\hfill
-\begin{minipage}{0.49\textwidth}
-\centering
-\maybeincludegraphics[width=\linewidth]{robustness_overlay_machado_mu4.pdf}
-\end{minipage}
-\caption{Robustez de candidatos Machado/FDF (teoría, familia de semillas planificada). Estas figuras son evidencia de persistencia numérica, no prueba de ocultedad.}
-\end{figure}
-
-\section{Caso científico 1: Chua entero}
-
-El caso entero \(q=1\) es la línea base. Permite comprobar que el split de
-Lur'e, la transferencia, la función descriptiva, la continuación y los
-controles de cuenca funcionan sin la complejidad de memoria fraccionaria.
+El caso entero \(q=1\) es la línea base. Permite comprobar que el split de Lur'e, la transferencia, la función descriptiva, la continuación y los controles de cuenca funcionan sin la complejidad de memoria fraccionaria.
 
 \subsection{Sistema y parámetros}
 
@@ -1334,43 +991,70 @@ Amortiguamiento resistivo & \(\gamma\) & \(0.0052\) & Disipación en \(z\). \\
 Pendiente interna & \(m_0\) & \(-0.1768\) & Región \(|x|\le 1\). \\
 Pendiente externa & \(m_1\) & \(-1.1468\) & Región \(|x|>1\). \\
 Orden & \(q\) & \(1.0\) & Derivada ordinaria. \\
-YAML & -- & \codepath{chua_integer_centered_lure_df.yaml} & Preset de ejemplo. \\
+YAML & -- & \codepath{examples/chua_integer_lure_reference/reproducibility.yaml} & Fuente del contrato del ejemplo. \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\subsection{Lectura matemática}
+\subsection{Búsqueda y descarte de candidatos}
 
-La condición armónica en \(q=1\) se escribe
+La búsqueda se hace con la forma Lur'e centrada. Se escanea \(\omega\in[10^{-5},50]\) con \(40000\) puntos para resolver
 \[
 1-N(A)W_1(\ii\omega)=0.
 \]
-El resultado se compara con valores de referencia reportados en literatura de
-localización por función descriptiva \cite{KuznetsovEtAl2017,GuanXie2025}. Si
-el residuo complejo es pequeño, se valida la coherencia algebraica de la
-semilla. Después la trayectoria se transporta por continuación y se prueban
-vecindades de equilibrios. El paso de ``semilla correcta'' a ``atractor
-oculto'' no es automático.
+La semilla resultante se transporta mediante continuación con \(\lambda=0,0.1,\ldots,1\). La simulación final usa \(h=0.01\), transitorio \(120\) y ventana conservada \(180\). El descarte se hace por controles de vecindades: si alguna bola alrededor de un equilibrio llega a \TARGET{}, el candidato no se promueve como oculto.
 
-\subsection{Qué queda validado}
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.78\textwidth]{fig01_nyquist_df.pdf}
+\caption{Chua entero: lectura Nyquist/DF del cruce armónico. La curva y el punto de balance validan la semilla, no la ocultedad.}
+\end{figure}
 
-En este caso, la evidencia fuerte es algebraica y de pipeline:
-\begin{itemize}
-  \item los equilibrios y Jacobianos coinciden con el sistema declarado;
-  \item el split de Lur'e reproduce el campo no lineal;
-  \item el cruce DF/Nyquist tiene residuo bajo;
-  \item las figuras de transferencia y continuación son coherentes con el
-  contrato del ejemplo.
-\end{itemize}
-La ocultedad requiere leer los controles de cuenca. Si hay contactos
-\TARGET{} desde vecindades de equilibrio, la etiqueta fuerte no se promueve.
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.78\textwidth]{fig01c_transfer_real_imag.pdf}
+\caption{Chua entero: componentes real e imaginaria de la transferencia en el cruce armónico.}
+\end{figure}
 
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.82\textwidth]{fig02d_continuation_story.pdf}
+\caption{Chua entero: historia de continuación desde la semilla armónica hasta el sistema no lineal completo.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.70\textwidth]{fig03_final_attractor.pdf}
+\caption{Chua entero: trayectoria final post-continuación bajo el contrato del ejemplo.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.78\textwidth]{fig05b_hiddenness_overview.pdf}
+\caption{Chua entero: controles de vecindad alrededor de equilibrios. La lectura se limita a radios y muestras declaradas.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{fig11a_fft_x.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{fig11d_psd_x.pdf}
+\end{minipage}
+\caption{Chua entero: FFT y PSD de \(x(t)\). Son diagnósticos espectrales, no criterios únicos de caos.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.78\textwidth]{fig13_lyapunov_convergence.pdf}
+\caption{Chua entero: convergencia de estimación Lyapunov bajo el contrato del ejemplo.}
+\end{figure}
 \section{Caso científico 2: Chua fraccionario no suave}
 
-El caso fraccionario no suave usa el mismo campo de Chua, pero con derivada de
-Caputo y \(q\) cercano a uno. Es el núcleo científico del repositorio porque
-combina memoria, semilla Lur'e fraccionaria, backends nativos, comparación ABM
-y pruebas de cuenca.
+El caso fraccionario no suave conserva la saturación bilineal y usa derivada de Caputo con \(q\) cercano a uno. El ejemplo activo del reporte es \codepath{examples/chua_nonsmooth_biased_hidden_attractor/}. El YAML activo es \codepath{configs/examples/chua_nonsmooth_biased_df_search.yaml}; la línea bibliográfica Danca2017 se conserva como reproducción y descarte metodológico, no como resultado promovido de ocultedad.
 
 \subsection{Sistema}
 
@@ -1382,80 +1066,207 @@ y pruebas de cuenca.
 \end{aligned}
 \qquad 0<q<1,
 \]
-con \(f\) dado por \eqref{eq:nonsmooth_f}. El valor histórico usado en varios
-artefactos es \(q=0.9998\), cercano al caso entero pero con memoria explícita.
+con \(f\) dado por \eqref{eq:nonsmooth_f}. El valor histórico usado en varios artefactos es \(q=0.9998\), cercano al caso entero pero con memoria explícita.
 
-\subsection{Semillas y continuación}
+\subsection{Búsqueda y descarte de candidatos}
 
-La transferencia fraccionaria se define mediante la expresión explícita:
-\[
-\widehat W_q(\lambda)=r^\top\left(\lambda I-P\right)^{-1}b, \qquad W_q(\ii\omega)\equiv \widehat W_q((\ii\omega)^q), \qquad \lambda=(\ii\omega)^q.
-\]
-La semilla se construye con la misma lógica DF/Nyquist, pero la integración
-final debe hacerse con un integrador causal de Caputo. La librería conserva
-la separación:
-\begin{itemize}
-  \item DF/Nyquist genera una condición inicial candidata.
-  \item Continuación fraccionaria intenta transportar la semilla hacia el
-  campo completo.
-  \item ABM o EFORK integran la dinámica causal bajo contrato.
-  \item Robustez y cuencas deciden si el candidato soporta una lectura fuerte.
-\end{itemize}
+La búsqueda del ejemplo se divide en etapas:
+\begin{enumerate}
+  \item búsqueda centrada de referencia para obtener ramas comparables;
+  \item búsqueda por función descriptiva sesgada con \(A\), bias \(c\) y frecuencia \(\omega\);
+  \item barrido \(m_1\in\{-1.1468,-1.20,-1.25\}\), \(m_0\in\{-0.1768,-0.20,-0.24\}\);
+  \item continuación afín hacia el sistema original;
+  \item simulación Caputo ABM con memoria completa;
+  \item verificación por esferas y luego por un plan extendido de bolas.
+\end{enumerate}
 
-\subsection{Figuras principales}
+El criterio de descarte es explícito: un contacto \TARGET{} desde vecindades de algún equilibrio bloquea una etiqueta fuerte de ocultedad. La validación oficial del candidato fraccionario no suave histórico registra contacto autoexcitado bajo el contrato probado; por eso ese candidato queda rechazado en la matriz de afirmaciones. El ejemplo sesgado se reporta como candidato compatible bajo los radios locales declarados, no como prueba global.
+
+\subsection{Reproducción bibliográfica y controles}
 
 \begin{figure}[H]
 \centering
-\maybeincludegraphics[width=0.82\textwidth]{danca_abm_fig03.pdf}
-\caption{Réplica visual ABM del caso no suave. Es comparación dinámica con historia completa, no prueba de ocultedad.}
+\reportinclude[width=0.76\textwidth]{danca_frac_phase_3d.pdf}
+\caption{Chua fraccionario no suave: trayectoria 3D de la reproducción bibliográfica Danca/ABM. Sirve como comparación dinámica, no como validación de ocultedad.}
 \end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.86\textwidth]{danca_frac_projections.pdf}
+\caption{Chua fraccionario no suave: proyecciones de la reproducción bibliográfica.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.86\textwidth]{danca_frac_time_series.pdf}
+\caption{Chua fraccionario no suave: series temporales de la reproducción bibliográfica.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.76\textwidth]{danca_frac_spectrum_x.pdf}
+\caption{Chua fraccionario no suave: espectro de \(x(t)\) en la reproducción bibliográfica.}
+\end{figure}
+
+\subsection{Ruta centrada fraccionaria}
 
 \begin{figure}[H]
 \centering
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{basin_danca_abm_xy.pdf}
+\reportinclude[width=\linewidth]{chua_frac_ns_fig01a_transfer_real.pdf}
 \end{minipage}\hfill
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{basin_project_best_xy.pdf}
+\reportinclude[width=\linewidth]{chua_frac_ns_fig01b_transfer_imag.pdf}
 \end{minipage}
-\caption{Cortes \(xy\) de cuenca bajo contratos finitos. Si un bloque cercano a equilibrio llega a \TARGET{}, la promoción de ocultedad queda bloqueada bajo ese contrato.}
+\caption{Chua fraccionario no suave: transferencia fraccionaria en la rama centrada.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.82\textwidth]{chua_frac_ns_fig02_continuation_story.pdf}
+\caption{Chua fraccionario no suave: continuación de la rama centrada.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.68\textwidth]{chua_frac_ns_fig03_final_attractor.pdf}
+\caption{Chua fraccionario no suave: trayectoria final de la rama centrada bajo contrato Caputo.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.86\textwidth]{chua_frac_ns_fig03abc_final_attractor_projections.pdf}
+\caption{Chua fraccionario no suave: proyecciones de la trayectoria final centrada.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.86\textwidth]{chua_frac_ns_fig04_time_series.pdf}
+\caption{Chua fraccionario no suave: series temporales de la rama centrada.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{project_lure_rank0001.pdf}
+\reportinclude[width=\linewidth]{chua_frac_ns_fig11a_fft_x.pdf}
 \end{minipage}\hfill
 \begin{minipage}{0.49\textwidth}
 \centering
-\maybeincludegraphics[width=\linewidth]{project_machado_mu4.pdf}
+\reportinclude[width=\linewidth]{chua_frac_ns_fig12_lyapunov_two_methods.pdf}
 \end{minipage}
-\caption{Candidatos generados por Lur'e y Machado/FDF (teoría/no promovido). La semejanza geométrica es diagnóstica; la decisión depende de robustez y cuencas.}
+\caption{Chua fraccionario no suave: FFT y Lyapunov por dos métodos. Ambos son diagnósticos dependientes del contrato.}
 \end{figure}
 
-\subsection{Lectura del resultado}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.32\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_ns_fig13_E0_hiddenness_spherical_3d.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_ns_fig13_Ep_hiddenness_spherical_3d.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_ns_fig13_Em_hiddenness_spherical_3d.pdf}
+\end{minipage}
+\caption{Chua fraccionario no suave: sondeos esféricos alrededor de \(E_0\), \(E_+\) y \(E_-\) para la rama centrada.}
+\end{figure}
 
-El resultado documentado para este caso es conservador: se pueden obtener
-trayectorias acotadas y geometría coherente con literatura, pero las pruebas
-de cuenca registran contactos desde vecindades de equilibrios en contratos
-históricos y ABM. Bajo la definición de Leonov--Kuznetsov, esos contactos
-impiden promover el candidato como atractor oculto fuerte
-\cite{LeonovKuznetsov2013}. La lectura correcta es:
-\[
-\text{candidato caótico/acotado bajo contrato}
-\quad\not\Rightarrow\quad
-\text{atractor oculto verificado}.
-\]
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.78\textwidth]{chua_frac_ns_fig14_hiddenness_contact_heatmap.pdf}
+\caption{Chua fraccionario no suave: mapa de contactos de vecindad para la rama centrada.}
+\end{figure}
 
+\subsection{Ruta sesgada propuesta}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_ns_biased_fig01a_transfer_real.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_ns_biased_fig01b_transfer_imag.pdf}
+\end{minipage}
+\caption{Chua fraccionario no suave sesgado: transferencia fraccionaria usada para generar semillas BDF.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.82\textwidth]{chua_frac_ns_biased_fig02_continuation_story.pdf}
+\caption{Chua fraccionario no suave sesgado: historia de continuación afín.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.68\textwidth]{chua_frac_ns_biased_fig03_attractor.pdf}
+\caption{Chua fraccionario no suave sesgado: trayectoria candidata post-continuación.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.86\textwidth]{chua_frac_ns_biased_fig04_projections.pdf}
+\caption{Chua fraccionario no suave sesgado: proyecciones de fase del candidato.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.86\textwidth]{chua_frac_ns_biased_fig04_timeseries.pdf}
+\caption{Chua fraccionario no suave sesgado: series temporales del candidato.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_ns_biased_fig11_fft.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_ns_biased_fig12_lyapunov.pdf}
+\end{minipage}
+\caption{Chua fraccionario no suave sesgado: FFT y Lyapunov como diagnóstico de dinámica.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.32\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_ns_biased_fig13_E0_hiddenness_spherical_3d.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_ns_biased_fig13_Ep_hiddenness_spherical_3d.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_ns_biased_fig13_Em_hiddenness_spherical_3d.pdf}
+\end{minipage}
+\caption{Chua fraccionario no suave sesgado: sondeos esféricos alrededor de todos los equilibrios.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_ns_biased_fig14_hiddenness_contact_heatmap.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_ns_biased_fig15_extended_heatmap.pdf}
+\end{minipage}
+\caption{Chua fraccionario no suave sesgado: mapas de contacto estándar y extendido.}
+\end{figure}
 \section{Caso científico 3: Chua fraccionario arctan}
 
-El caso arctan reemplaza la saturación por una función suave. Su interés es
-doble: evita superficies no diferenciables y permite una función descriptiva
-analítica cerrada. El modelo está vinculado a Wu et al. 2023
-\cite{Wu2023ArctanChua}.
+El caso arctan reemplaza la saturación por una función suave. Su interés es doble: evita superficies no diferenciables y permite una función descriptiva analítica cerrada. El modelo está vinculado a Wu et al. 2023 \cite{Wu2023ArctanChua}, pero el reporte separa estrictamente la reproducción bibliográfica de la metodología fraccionaria propuesta.
 
 \subsection{Modelo}
 
@@ -1482,60 +1293,168 @@ J(x)=
 
 Para \(\psi(\sigma)=a_2\arctan(\rho\sigma)\), el primer armónico produce
 \[
-N_{\arctan}(A)=
-a_2\frac{2(\sqrt{1+\rho^2A^2}-1)}{\rho A^2}.
+N_{\arctan}(A)=a_2\frac{2(\sqrt{1+\rho^2A^2}-1)}{\rho A^2}.
 \]
-Esta fórmula se implementa en la forma \codepath{LureSystem} del Chua arctan.
-Su validación actual es algebraica y contractual; la reproducción dinámica
-completa contra Wu et al. queda separada.
+Esta fórmula se implementa en la forma \codepath{LureSystem}. Su lectura es semilla heurística; no prueba ocultedad.
 
-\subsection{Estado}
+\subsection{Wu2023: reproducción bibliográfica y límite metodológico}
 
-El caso Chua arctan fraccionario ha sido analizado en profundidad mediante un protocolo de búsqueda sistemática y verificación estricta. Se ha localizado y promovido un candidato a atractor oculto denominado \texttt{c590} con parámetros $\alpha = 21.8494$, $\beta = 19.0818$, $\gamma = 0.0074$, $a_1 = 0.0423$, $a_2 = -3.3368$, $\rho = 1.7984$ en orden dinámico $q=0.9999$.
+El caso Wu2023 usa \(\alpha=8.4562\), \(\beta=12.0732\), \(\gamma=0.0052\), \(a_1=0.4\), \(a_2=-1.5585\), \(\rho=1\), \(q=0.99\), \(h=0.01\). En el repositorio se conserva como \codepath{configs/chua_arctan_wu2023_caputo.json} y como ejemplo \codepath{examples/chua_arctan_wu2023/}.
 
-La búsqueda se realizó en dos etapas: una exploración aleatorizada inicial con orden entero $q=1.0$ (donde se identificó el candidato con índice 590), seguida de una continuación homotópica al orden fraccionario $q=0.9999$ utilizando la formulación de Caputo con integración Adams-Bashforth-Moulton (ABM) de memoria completa y paso $h=0.005$.
+La reproducción publicada no pudo promoverse como evidencia fraccionaria completa de ocultedad por una razón de contrato: el ADM usado en la ruta bibliográfica local no acumula memoria Caputo completa (\codepath{memory_policy: none_local_adm}) y la DF/NC publicada se evalúa con transferencia entera \(r^T(\ii\omega I-P)^{-1}b\), con \(q_{seed}=1\). Por eso las figuras de Wu2023 se reportan como reproducción bibliográfica y comparación dinámica; no sustituyen una búsqueda fraccionaria Lur'e--Caputo con historia completa ni pruebas de vecindad de todos los equilibrios.
 
-El atractor caótico promovido se clasificó como \texttt{hiddenness_compatible_chaos_candidate} al haber superado con éxito la criba de vecindades de todos los equilibrios ($E_0$, $E_+$, $E_-$) mediante sondeos esféricos concéntricos en radios $\epsilon \in \{10^{-2}, 10^{-3}, 10^{-4}, 10^{-5}\}$ con un total de 3000 trayectorias integradas y cero contactos con el atractor objetivo. La naturaleza caótica de la órbita de referencia está soportada por una mediana de la prueba 0-1 de $K \approx 0.8851$ (a paso $h=0.005$) y $K \approx 0.8658$ (a paso $h=0.0025$), así como un exponente de Lyapunov principal estimado de $\lambda_{\max} \approx 0.1766$.
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{wu2023_chua_fractional_arctan_q099_x0_plus_phase3d.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{wu2023_chua_fractional_arctan_q099_x0_minus_phase3d.pdf}
+\end{minipage}
+\caption{Wu2023 arctan: trayectorias 3D para las condiciones iniciales reportadas con signo opuesto.}
+\end{figure}
 
-La formulación algebraica, los equilibrios, el Jacobiano y el split de Lur'e están completamente implementados y verificados. La evidencia obtenida es consistente con un atractor caótico oculto bajo el contrato de vecindades finito y paso temporal ensayado; no constituye una prueba matemática global de las cuencas de atracción del sistema completo.
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{wu2023_chua_fractional_arctan_q099_x0_plus_projections.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{wu2023_chua_fractional_arctan_q099_x0_minus_projections.pdf}
+\end{minipage}
+\caption{Wu2023 arctan: proyecciones de fase de la reproducción bibliográfica.}
+\end{figure}
 
-El flujo de trabajo que ha sido completado comprende:
-\begin{enumerate}
-  \item la definición y split en la forma Lur'e;
-  \item la formulación de la función de transferencia fraccionaria;
-  \item la evaluación analítica de la función descriptiva arctan;
-  \item el cálculo de la condición armónica de Nyquist;
-  \item la continuación paramétrica de semillas;
-  \item la simulación temporal mediante integrador Caputo ABM de memoria completa;
-  \item el muestreo de esferas y vecindades de todos los puntos de equilibrio;
-  \item la clasificación y veredicto de ocultedad bajo criterios operativos estrictos.
-\end{enumerate}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{wu2023_chua_fractional_arctan_q099_x0_plus_timeseries.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{wu2023_chua_fractional_arctan_q099_x0_minus_timeseries.pdf}
+\end{minipage}
+\caption{Wu2023 Chua arctan: series temporales de la reproducción bibliográfica; el caso permanece pendiente de validacion completa de ocultedad.}
+\end{figure}
 
+\subsection{Candidato dinámico c590}
+
+El candidato \codepath{chua_arctan_c590_q09999_seed9} usa
+\[
+\alpha=21.8493569066,\quad \beta=19.0818408409,\quad \gamma=0.00737801198,
+\]
+\[
+a_1=0.04228979344,\quad a_2=-3.3367815123,\quad \rho=1.7984259333,\quad q=0.9999.
+\]
+La semilla de referencia es
+\[
+(5.8642449791,\;1.5847111486,\;3.2155806478).
+\]
+
+La búsqueda se documenta como una ruta dinámica: exploración inicial en orden entero, selección del índice 590, traslado al contrato fraccionario \(q=0.9999\) y simulación ABM Caputo con memoria completa. La rama DF fraccionaria centrada del ejemplo arctan está auditada como semilla heurística, pero no es el origen directo del candidato c590.
+
+El resumen local inicial registró ausencia de contactos en radios pequeños. El resumen vigente \codepath{candidate_summary_latest.json}, que usa radios \(10^{-5},10^{-4},10^{-3},10^{-2},0.03,0.1,0.3,1,2\), registra \(13500\) pruebas y \(610\) contactos, con veredicto \codepath{requires_review_due_to_macro_radius_contacts}. La lectura correcta es conservadora: candidato dinámico fraccionario con evidencia local y revisión macroscópica pendiente, no atractor oculto probado.
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.74\textwidth]{chua_frac_arctan_c590_fig00_initial_seed.pdf}
+\caption{Arctan c590: semilla de búsqueda, trayectoria objetivo y equilibrios.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.78\textwidth]{chua_frac_arctan_c590_fig01_transfer_components.pdf}
+\caption{Arctan c590: componentes de la transferencia fraccionaria usada como diagnóstico de semilla.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.88\textwidth]{chua_frac_arctan_c590_fig02a_linearized_vs_original.pdf}
+\caption{Arctan c590: comparación entre reconstrucción linealizada, etapa no lineal y candidato final.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.74\textwidth]{chua_frac_arctan_c590_fig02b_continuation_path.pdf}
+\caption{Arctan c590: camino de continuación disponible para auditoría.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.68\textwidth]{chua_frac_arctan_c590_fig03_attractor.pdf}
+\caption{Arctan c590: trayectoria objetivo bajo ABM Caputo de memoria completa.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.86\textwidth]{chua_frac_arctan_c590_fig04_timeseries.pdf}
+\caption{Arctan c590: series temporales de la trayectoria objetivo.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_arctan_c590_fig11_fft.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.49\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_arctan_c590_fig12_lyapunov_two_methods.pdf}
+\end{minipage}
+\caption{Arctan c590: FFT y estimación Lyapunov por dos métodos. Su lectura es diagnóstica y depende de validación del método.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.32\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_arctan_c590_fig13_E0_hiddenness_spherical_3d.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_arctan_c590_fig13_Ep_hiddenness_spherical_3d.pdf}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\reportinclude[width=\linewidth]{chua_frac_arctan_c590_fig13_Em_hiddenness_spherical_3d.pdf}
+\end{minipage}
+\caption{Arctan c590: sondeos esféricos alrededor de \(E_0\), \(E_+\) y \(E_-\).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\reportinclude[width=0.78\textwidth]{chua_frac_arctan_c590_fig14_hiddenness_contact_heatmap.pdf}
+\caption{Arctan c590: mapa de contactos de vecindad. Los contactos en radios macroscópicos obligan a conservar el estado \codepath{requires_review}.}
+\end{figure}
 \section{Validación oficial y evidencia promovida}
 
 El freeze audit actual reporta \(797\) pruebas aprobadas y \(34\) omitidas. La fuente oficial es \codepath{validation/freeze_audit/}; los conteos futuros deben leerse desde esos artefactos y no duplicarse como afirmación manual sin actualización.
 
 \subsection{Matriz resumida de afirmaciones defendibles}
 
-La tabla a continuación resume las afirmaciones científicamente defendibles para cada uno de los sistemas o contribuciones de este proyecto.
+La tabla a continuación resume las afirmaciones científicamente defendibles para los tres casos del reporte y para la metodología general. La fuente normativa sigue siendo \codepath{THESIS_CLAIMS.md}; el reporte no debe promover resultados por encima de esa matriz ni de los resúmenes vigentes.
 
 \begin{center}
-\small
-\begin{tabular}{@{}L{0.46\textwidth}L{0.36\textwidth}@{}}
+\footnotesize
+\begin{longtable}{@{}L{0.21\textwidth}L{0.18\textwidth}L{0.24\textwidth}L{0.27\textwidth}@{}}
 \toprule
-Sistema o contribución & Estado defendible \\
+Caso & Estado defendible & Evidencia principal & Límite de lectura \\
 \midrule
-Chua entero & \codepath{reproducido}. \\
-Chua no suave Ejemplo 1 & \codepath{candidato}. \\
-Candidato oficial fraccionario no suave & \codepath{rechazado}; se detectó contacto autoexcitado bajo el contrato probado. \\
-Chua arctan fraccionario & \codepath{pendiente}; implementado algebraicamente, pendiente de validación completa de ocultedad. \\
-Metodología Lur'e/fraccionaria & \codepath{probado como framework}; generación, continuación, simulación y auditoría bajo alcance Lur'e/Caputo declarado. \\
+Chua entero de referencia & \codepath{reproducido} & YAML del ejemplo, figuras de Lur'e/continuacion, controles de vecindad. & Chua entero valida la ruta entera; no valida resultados fraccionarios. \\
+Chua fraccionario no suave, reproduccion Danca & \codepath{reproduccion parcial no promovida} & Contrato bibliografico y datos extraidos. & Faltan datos publicados para reproduccion completa de trayectoria. \\
+Candidato oficial fraccionario no suave & \codepath{rechazado} & \codepath{validation/09_hiddenness_tests/}; 1305 contactos registrados. & Contacto desde vecindades de equilibrio bloquea ocultedad. \\
+Chua no suave Ejemplo 1 & \codepath{candidato} & BDF sesgada, continuacion y sondeos locales. & Candidato compatible solo bajo radios y muestras declaradas. \\
+Chua arctan fraccionario Wu2023 & \codepath{pendiente de validación} & \codepath{configs/chua_arctan_wu2023_caputo.json}; ADM local. & No es validacion Caputo completa de ocultedad. \\
+Chua arctan c590 & \codepath{requiere revision} & \codepath{candidate_summary_latest.json}; \(13500\) pruebas, \(610\) contactos. & Candidato dinamico; revision macroscopica pendiente, no oculto probado. \\
+Metodología Lur'e/Caputo & \codepath{probado como framework} & Modelos, API, semillas, integradores, verificacion, manifiestos y reporte. & Alcance restringido a sistemas compatibles con Lur'e escalar. \\
 \bottomrule
-\end{tabular}
+\end{longtable}
 \end{center}
-
-La fuente normativa de esta tabla es \codepath{THESIS_CLAIMS.md}. El reporte no debe promover resultados por encima del estado registrado en esa matriz.
-
 \subsection{Protocolo de validación}
 
 El protocolo Caputo oficial está definido por
@@ -1606,6 +1525,46 @@ Nyquist/DF & Cruce armónico. & Semilla \(A,\omega\). & Existencia de atractor. 
 }
 \end{center}
 
+\section{Reproducibilidad del reporte}
+
+El reporte no debe depender de scripts sueltos de raíz ni de carpetas históricas. La generación editorial de figuras del PDF unificado se hace con:
+
+\begin{verbatim}
+cd version_2
+python -m hidden_attractors.plotting.generate_unified_report_figures
+\end{verbatim}
+
+Compilación del PDF:
+
+\begin{verbatim}
+cd version_2/docs
+latexmk -pdf -interaction=nonstopmode `
+  -halt-on-error reporte_unificado_chua_fraccionario.tex
+\end{verbatim}
+
+Ejecución rápida de ejemplos oficiales:
+
+\begin{verbatim}
+cd version_2
+python examples/chua_integer_lure_reference/run_example.py --quick
+python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick
+python examples/chua_arctan_wu2023/run_example.py --quick
+\end{verbatim}
+
+Ejecución por etapas, cuando se quiera reproducir cada parte:
+
+\begin{center}
+\footnotesize
+\begin{longtable}{@{}L{0.25\textwidth}L{0.25\textwidth}L{0.40\textwidth}@{}}
+\toprule
+Ejemplo & Comandos por etapa & Configuración \\
+\midrule
+Chua entero & \codepath{run_example.py --steps search continuation verification figures} & \codepath{examples/chua_integer_lure_reference/reproducibility.yaml}. \\
+Chua fraccionario no suave & \codepath{run_example.py --steps 1 2 3 5}; wrappers \codepath{01_search.py}--\codepath{04_plot.py} son conveniencia. & \codepath{configs/examples/chua_nonsmooth_biased_df_search.yaml}; Danca no reproducible en \codepath{configs/examples/chua_nonsmooth_exact_danca_non_reproducible.yaml}. \\
+Chua arctan pendiente & \codepath{run_example.py --steps published search continuation figures}; \codepath{--all} incluye verificacion larga. & Wu2023 en \codepath{configs/chua_arctan_wu2023_caputo.json}; c590 en \codepath{outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623}. \\
+\bottomrule
+\end{longtable}
+\end{center}
 \section{Limitaciones}
 
 \begin{itemize}
@@ -1685,7 +1644,7 @@ Control entero \(q=1\); valida la ruta de uso sin memoria fraccionaria. \\
 \codepath{python examples/quickstart\_equilibria.py} &
 Resumen corto de ejemplo. &
 Prueba de humo del ejemplo correspondiente; no constituye validación completa. \\
-\codepath{hidden-attractors validate contract --allow-pending} &
+\cmdbreak{hidden-attractors}{validate contract --allow-pending} &
 Diagnóstico de contrato. &
 Revisa estructura de evidencia y permite etapas pendientes declaradas. \\
 \bottomrule
@@ -1809,3 +1768,6 @@ DOI: \codepath{10.1016/j.rinp.2023.106866}.
 \end{thebibliography}
 
 \end{document}
+
+
+

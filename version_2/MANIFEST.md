@@ -1,64 +1,72 @@
-﻿# Version 2 manifest
+# Version 2 manifest
 
-V2 is the active library-style distribution. It should run from this directory
-without reading files from the old project root.
+`version_2/` is the active library-style distribution of `hidden-attractors-fo`.
+It should run from this directory without depending on historical project-root
+scripts.
 
-## Public Package
+## Public package
 
-- `hidden_attractors/models/chua.py`: Chua parameters, vector field, and
-  equilibria.
-- `hidden_attractors/systems/`: registry for built-in and user-defined chaotic
-  systems.
-- `hidden_attractors/native/backends.py`: C/EFORK and basin-classifier wrappers.
-- `hidden_attractors/native/csrc/`: C sources bundled with the package.
-- `hidden_attractors/parallel.py`: native compilation and OpenMP policy.
-- `hidden_attractors/analysis/trajectory.py`: trajectory metrics, FFT, clouds,
-  sections, and robustness cases.
-- `hidden_attractors/basins/classification.py`: basin labels and helpers.
-- `hidden_attractors/plotting/overlays.py`: reusable plotting helpers.
-- `hidden_attractors/workflows/robustness_overlay.py`: robustness trajectories.
-- `hidden_attractors/workflows/sphere_controls.py`: equilibrium-neighborhood
-  controls.
-- `hidden_attractors/workflows/refined_basin.py`: geometry-based basin
-  refinement.
-- `configs/validation_contract.json`: contract for promoted validation
-  evidence, manifests, stage summaries, and final reports.
-- `hidden_attractors/validation_contract.py`: checker used by
-  `hidden-attractors validate contract`.
-- `validation/`: generated validation evidence promoted from ordinary outputs
-  into a defensible review package.
+- `hidden_attractors/models/`: Chua parameters, vector fields, nonlinearities,
+  equilibria, and Jacobians.
+- `hidden_attractors/systems/`: `ChaoticSystem`, `LureSystem`, registry,
+  aliases, and workflow-capability requirements.
+- `hidden_attractors/seed_generation/` and `hidden_attractors/lure/`: DF,
+  Nyquist, Lur'e, and seed reconstruction helpers.
+- `hidden_attractors/integrations/`, `solvers/`, `native/`: integer and Caputo
+  solver contracts, Python references, and C backends.
+- `hidden_attractors/analysis/`, `diagnostics/`: finite-time trajectory,
+  spectral, Poincare, boundedness, zero-one, Lyapunov, and method-comparison
+  diagnostics.
+- `hidden_attractors/verification/`, `basins/`: stability, neighborhoods,
+  hiddenness contracts, candidate gates, and basin labels.
+- `hidden_attractors/workflows/`: official protocol, continuation, robustness,
+  basins, hiddenness, report generation, and reusable workflow specs.
+- `hidden_attractors/plotting/`, `io.py`: canonical figure and CSV/JSON helpers.
 
-## User-Facing Examples
+The exhaustive symbol inventory is `docs/api_reference.md`; it lists every
+function, class, and method defined under `hidden_attractors`.
 
-- `examples/quickstart_equilibria.py`
-- `examples/list_final_candidates.py`
-- `examples/minimal_chua_protocol.py`
-- `examples/custom_system_definition.py`
-- `examples/create_robustness_overlay_config.py`
-- `examples/aggregate_existing_robustness_overlay.py`
+## Public CLI
 
-## CLI Boundary
-
-The package exposes a single public console script:
+The package exposes one public console script:
 
 ```text
 hidden-attractors
 ```
 
-All maintained workflows are reached as subcommands, for example
-`hidden-attractors validate contract`, `hidden-attractors validate bibliography`,
-`hidden-attractors validate cpc-readiness`, and `hidden-attractors report
-fractional-run`. The historical standalone command names are not public API in
-this distribution.
+Maintained workflows are subcommands, including `run`, `init`,
+`inspect-config`, `inspect`, `validate`, `protocol`, `seed`, `continuation`,
+`robustness`, `hiddenness`, `basin`, `bifurcation`, `lyapunov`, `chaos-test`,
+`published`, and `report`.
 
-`tools/cli/` contains maintained helper wrappers that are invoked by tests or
-development workflows. They do not define additional public entry points.
+Historical standalone command names are legacy/deprecated and are not the public
+release API.
 
-## Legacy Research Scripts
+## Official examples
 
-Long scripts that are not yet clean public API live under `tools/legacy/`, but
-they are historical material, not public API. The current setuptools package
-find configuration still includes `tools*` and `benchmarks*` so traceability
-helpers and benchmark modules remain importable for reproducibility audits.
-They must not grow into new installed commands without first being routed
-through the unified `hidden-attractors` CLI.
+- `examples/chua_integer_lure_reference/`: reproduced integer `q=1` Lur'e
+  software reference.
+- `examples/chua_nonsmooth_biased_hidden_attractor/`: proposed BDF methodology
+  for the non-smooth fractional Chua case.
+- `examples/chua_arctan_wu2023/`: Wu2023 bibliographic lane and proposed c590
+  Caputo lane, both non-promoted for hiddenness in this release.
+
+Small API examples remain in `examples/*.py` and should import from
+`hidden_attractors`.
+
+## Evidence and outputs
+
+- Promoted validation evidence: `validation/`
+- Promoted scientific figures: `library_figures/`
+- Ordinary/local outputs: `outputs/`, `validation_outputs/`, `runs*/`, `figures/`
+- Release packaging metadata: `release_package/`
+
+DF/Nyquist, continuation, plots, Lyapunov, FFT/PSD, Poincare, and zero-one tests
+are diagnostics or seed tools. Hiddenness labels require sampled equilibrium
+neighborhood or basin evidence under a recorded numerical contract.
+
+## Legacy material
+
+`tools/legacy/` preserves historical scripts for traceability only. Reusable
+logic should live under `hidden_attractors/`, with CLI access routed through the
+unified `hidden-attractors` command.

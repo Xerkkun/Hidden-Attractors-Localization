@@ -1,8 +1,8 @@
-# Migration To The Unified Methodology
+﻿# Migration To The Unified Methodology
 
 ## Table of Contents / Índice de Contenidos
 - [English Version](#english-version)
-- [Versión en Español](#versión-en-español)
+- [Versión en Español](#version-en-espanol)
 
 ---
 
@@ -87,3 +87,4 @@ envelope.
 ```text
 K3 = F(... + a31*K1 + a32*K2)
 ```
+

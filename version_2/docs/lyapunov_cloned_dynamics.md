@@ -1,4 +1,4 @@
-# Cloned Dynamics Lyapunov Indicators
+﻿# Cloned Dynamics Lyapunov Indicators
 
 ## F3 scope
 
@@ -183,3 +183,4 @@ validation/outputs/lyapunov_benchmarks/fractional_cloned_dynamics_abm_gs_publish
 The directory contains `published_benchmark_results.csv`,
 `published_benchmark_all_rows_results.csv`, `validation_summary.json`,
 `run_metadata.json`, and representative `convergence_by_block.csv`.
+

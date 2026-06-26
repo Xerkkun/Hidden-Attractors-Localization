@@ -2,9 +2,18 @@
   "sample_status": "template_only_pending_execution",
   "commands": [
     "hidden-attractors --help",
-    "hidden-attractors validate cpc-readiness"
+    "hidden-attractors validate release-readiness"
   ],
-  "expected_behavior": "CLI help and CPC readiness command are expected to run after editable installation.",
+  "expected_behavior": "CLI help and release readiness command are expected to run after editable installation.",
   "not_promoted_evidence": true,
-  "replace_after_execution": true
+  "replace_after_execution": true,
+  "public_seed_commands": [
+    "lure-centered",
+    "lure-biased"
+  ],
+  "not_public_seed_commands": [
+    "machado-centered",
+    "machado-biased"
+  ],
+  "release_blocked_for_v1_0_0": true
 }

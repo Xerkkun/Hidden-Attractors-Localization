@@ -1,4 +1,4 @@
-# Política de Scripts de Figuras (Figure Scripts Policy)
+﻿# Política de Scripts de Figuras (Figure Scripts Policy)
 
 Esta política establece las directrices para organizar, desarrollar y mantener los scripts que generan figuras y gráficos en el ecosistema de `hidden_attractors`.
 
@@ -40,3 +40,4 @@ Para garantizar la higiene y la predictibilidad del repositorio, los scripts de 
 
 - Las pruebas automáticas de higiene (como `test_no_loose_figure_scripts.py`) escanean periódicamente el repositorio para asegurar que no existan scripts de figuras sueltos fuera de las rutas autorizadas.
 - Cualquier adición de un nuevo script de figuras debe acompañarse de su correspondiente registro en `version_2/docs/figure_scripts_inventory.md`.
+

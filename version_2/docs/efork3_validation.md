@@ -1,4 +1,4 @@
-# EFORK-3 Published Validation
+﻿# EFORK-3 Published Validation
 
 The three-stage EFORK numerical method is validated independently of the
 Chua attractor workflow using the manufactured-solution examples reported by
@@ -63,3 +63,4 @@ fractional evidence package.
 
 F. Ghoreishi, R. Ghaffari, and N. Saad, "Fractional Order Runge-Kutta
 Methods," *Fractal and Fractional*, vol. 7, article 245, 2023.
+

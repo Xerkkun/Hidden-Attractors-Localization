@@ -1,4 +1,4 @@
-# F7 Method Comparison
+﻿# F7 Method Comparison
 
 F7 compares Lyapunov lanes and F5 diagnostics by configured case. It records
 applicability, missing spectra, validation status, consensus, discrepancies,
@@ -57,3 +57,4 @@ validation/chaos_validation/method_comparison/method_discrepancy_report.md
 ```
 
 F7 supplies comparison evidence to the frozen finite-time Phase F layer.
+

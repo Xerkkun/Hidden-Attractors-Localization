@@ -10,14 +10,30 @@ Licensing provisions: MIT for the software package.
 
 Programming language: Python, with optional C backends.
 
-External routines/libraries: NumPy, SciPy, Matplotlib, Numba, pytest for validation, optional antropy/nolds, and an optional C compiler for native backends.
+External routines/libraries: NumPy, SciPy, Matplotlib, Numba, pytest for
+validation, optional antropy/nolds, MkDocs for documentation, and an optional C
+compiler for native backends.
 
 Supplementary material: <https://doi.org/10.17605/OSF.IO/ZGK74>
 
-Nature of problem: theoretical-numerical search, localization, reproduction, audit, and conservative classification of candidate hidden attractors in integer- and commensurate fractional-order Chua/Lur'e systems with Caputo derivatives for the fractional case.
+Nature of problem: reproducible search, localization, audit, and conservative
+classification of candidate hidden attractors in integer- and commensurate
+Caputo fractional-order Chua/Lur'e systems.
 
-Solution method: describing-function seeding, BDF-style algebraic continuation, Caputo ABM/EFORK integration for fractional order, integer-order integration paths, finite-time chaos diagnostics, and equilibrium-neighborhood tests.
+Solution method: scalar Lur'e formulation, describing-function/Nyquist seed
+generation, integer or Caputo continuation, ABM/EFORK integration, finite-time
+diagnostics, all-equilibrium neighborhood tests, figures, manifests, and release
+metadata.
 
-Restrictions: scalar Lur'e systems and commensurate fractional order in the fractional workflow. Numerical evidence does not prove global mathematical hiddenness. The arctan route is implemented algebraically, pending full validation, and not promoted as a validated hidden attractor.
+Official examples: integer Chua Lur'e reference, non-smooth fractional Chua BDF
+methodology, and arctan Wu2023/c590 audit lane. The arctan lane is an audit and
+candidate-review lane, not a promoted hidden-attractor result.
 
-Running time: seconds for metadata and smoke checks; minutes or hours for long validation or fractional-memory sweeps, depending on horizon, step size, memory policy, backend, and sampling plan.
+Restrictions: scalar Lur'e systems, commensurate order, Caputo fractional
+contracts for `0 < q <= 1`, and finite numerical evidence. The package does not
+prove global hiddenness. The manifest currently blocks declaring `v1.0.0` until
+the arctan evidence gap, final freeze audit, and sample-output status are closed.
+
+Running time: seconds for metadata/smoke checks; minutes or hours for long
+fractional-memory sweeps, hiddenness sampling, or published quantitative
+comparison lanes.

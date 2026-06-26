@@ -1,4 +1,4 @@
-# Tests Inventory
+﻿# Tests Inventory
 
 This file lists all test files in the test suite, their classification, and planned actions.
 
@@ -137,6 +137,7 @@ This file lists all test files in the test suite, their classification, and plan
 | tests/test_promoted_figures_export_policy.py | Verificar direct savefig en rutas promovidas | plotting | fast | unit | ninguna | no | no | conservar | Evita savefig en flujos de producción. |
 | tests/test_no_external_figure_paths_in_promoted_validation.py | Verificar no rutas relativas externas en validación | hygiene | fast | unit | ninguna | no | no | conservar | Evita fugas de rutas legacy no canónicas. |
 | tests/test_figure_tests_do_not_write_real_library_figures.py | Verificar no escritura de tests en library_figures | hygiene | fast | unit | ninguna | no | no | conservar | Enforza el uso de tmp_path y monkeypatch en tests. |
+| tests/test_chua_candidate_extended_hiddenness.py | Verificar hiddenness extendida del candidato Chua | hygiene | fast | unit | ninguna | no | no | conservar | Valida que la evidencia extendida del candidato se mantenga conservadora. |
 | tests/test_ci_uses_unified_cli.py | Verificar que CI usa CLI unificado | hygiene | fast | unit | ninguna | no | no | conservar | Verifica comandos en ci.yml. |
 | tests/test_no_legacy_entrypoints_in_ci_or_docs.py | Verificar ausencia de entry points legacy en CI y docs | hygiene | fast | unit | ninguna | no | no | conservar | Evita regresión de entry points obsoletos. |
 | tests/test_manual_manifest.py | Verificar existencia y estructura del manual manifest | hygiene | fast | unit | ninguna | no | no | conservar | Valida estructura y valores de manual_manifest.yaml. |
@@ -159,3 +160,5 @@ This file lists all test files in the test suite, their classification, and plan
 | tests/test_release_known_remaining_work.py | Verificar pendientes legítimos de release y modos strict/submission-strict | hygiene,release_readiness | fast | unit | ninguna | no | no | conservar | Valida que los pendientes finales declarados no bloquean readiness de repositorio/software. |
 | tests/test_published_reference_claims_are_conservative.py | Verificar que los claims y estados de reproducción publicados sean conservadores | hygiene | fast | unit | ninguna | no | no | conservar | Evita sobreafirmaciones de reproducción en Danca y Wu y valida published_reference_coverage.json. |
 | tests/test_no_absolute_paths_in_promoted_evidence.py | Verificar ausencia de rutas absolutas en evidencia promovida | hygiene,release_readiness | fast | unit | ninguna | no | no | conservar | Escanea JSON/MD/TEX/BIB promovidos y permite solo secciones policy/legacy justificadas. |
+
+

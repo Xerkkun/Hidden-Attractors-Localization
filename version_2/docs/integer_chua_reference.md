@@ -1,4 +1,4 @@
-# Integer Chua `q=1` Reference
+﻿# Integer Chua `q=1` Reference
 
 The integer-order non-smooth Chua case, whose characteristic is linear by pieces, is the reference system from
 which the reusable workflow was developed. It exercises the same scientific
@@ -200,3 +200,4 @@ hidden-attractors validate contract \
   integer-order Chua reference procedure.
 - F. Ghoreishi, R. Ghaffari, and N. Saad, "Fractional Order Runge-Kutta
   Methods," *Fractal and Fractional*, 7, article 245 (2023).
+

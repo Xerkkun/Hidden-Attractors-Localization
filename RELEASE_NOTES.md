@@ -1,13 +1,35 @@
 # Release Notes
 
-## 0.1.0-alpha.1
+## 0.1.0
 
-This release organizes the active `version_2/` distribution. It does not change numerical parameters, seeds, tolerances, classifiers, or scientific conclusions.
+This release prepares `hidden-attractors-fo` as the active Python library
+distribution under `version_2/`. It does not change numerical parameters,
+seeds, tolerances, classifiers, or promoted scientific conclusions.
 
-The package license remains MIT. MIT permits use, copying, modification, distribution, sublicensing, and commercial use. If non-commercial restrictions are desired for articles or figures, those materials should be licensed separately from the software code.
+### Release contents
 
-The archived DOI recorded for this release is `10.17605/OSF.IO/ZGK74`.
+- Unified public CLI: `hidden-attractors`.
+- Three official report examples: integer Chua reference, non-smooth fractional
+  BDF methodology, and arctan Wu2023/c590 audit lane.
+- Exhaustive API inventory in `version_2/docs/api_reference.md` generated from
+  the active `hidden_attractors` package.
+- Updated README, quick start, getting started guide, examples index, user
+  manual, release manifest, and reproducibility metadata.
+- Release readiness metadata under `version_2/release_package/`.
 
-## Contribution and provenance notes
+### Evidence boundary
 
-Maria Fernanda Moreno Lopez is recorded as principal author and maintainer. Dr. Esteban Tlelo Cuautle is acknowledged as doctoral thesis director and research guide. Dr. Oscar Martinez-Fuentes is acknowledged for reviewing the theoretical fractional-calculus component. Dr. Luis Gerardo de la Fraga is acknowledged for code provenance related to EFORK and the integer-order Lyapunov algorithm.
+The integer `q=1` Chua route is the reproduced software reference. The Danca
+2017 non-smooth fractional case is a partial reference implementation because
+key published numerical details are not reported. The official nearby fractional
+candidate is rejected/self-excited under the current neighborhood contract. The
+Wu2023 arctan lane is partial/non-promoted, and the c590 lane remains under
+review.
+
+DF/Nyquist, continuation, plots, Lyapunov estimates, FFT/PSD, Poincare sections,
+and 0-1 tests are diagnostics or seed tools; they do not certify hiddenness by
+themselves.
+
+### Citation and license
+
+The package license remains MIT. Archived DOI: `10.17605/OSF.IO/ZGK74`.

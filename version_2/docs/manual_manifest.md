@@ -1,4 +1,4 @@
-# Manual Manifest
+﻿# Manual Manifest
 
 El archivo `docs/manual_manifest.yaml` actúa como la fuente canónica para sincronizar los metadatos y configuraciones documentales del proyecto a través de los siguientes manuales y objetivos:
 
@@ -32,3 +32,4 @@ El archivo `docs/manual_manifest.yaml` actúa como la fuente canónica para sinc
 | `forbidden_public_claims` | Afirmaciones prohibidas y sobreafirmaciones científicas no permitidas en los manuales públicos. |
 | `public_evidence_labels` | Etiquetas estandarizadas para clasificar la evidencia y resultados científicos. |
 | `documentation_policy` | Reglas y políticas a seguir para la inclusión de comandos CLI legacy, figuras, claims y conteo de pruebas. |
+

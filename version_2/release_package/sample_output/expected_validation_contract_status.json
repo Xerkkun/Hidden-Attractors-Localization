@@ -1,5 +1,5 @@
 {
   "command": "hidden-attractors validate contract --allow-pending",
   "expected_status": "passes_with_pending_allowed",
-  "notes": "The validation contract may print warnings for pending metadata fields; these are not CPC sample outputs."
+  "notes": "The validation contract may print warnings for pending metadata fields; these are not promoted sample outputs."
 }

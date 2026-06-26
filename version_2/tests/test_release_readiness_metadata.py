@@ -24,6 +24,8 @@ def test_release_readiness_metadata_files_exist() -> None:
         VERSION_ROOT / "release_package" / "PROGRAM_SUMMARY.md",
         VERSION_ROOT / "release_package" / "SAMPLE_RUN.md",
         VERSION_ROOT / "release_package" / "REMAINING_WORK.md",
+        VERSION_ROOT / "release_package" / "BLOCKING_EVIDENCE_GAPS.md",
+        VERSION_ROOT / "release_package" / "BLOCKING_RELEASE_ITEMS.md",
         VERSION_ROOT / "release_package" / "reproducibility_checklist.md",
         VERSION_ROOT / "release_package" / "archive_manifest.json",
         VERSION_ROOT / "README.md",
@@ -38,7 +40,8 @@ def test_release_readiness_metadata_files_exist() -> None:
 def test_citation_records_archive_doi_without_requiring_article_doi() -> None:
     citation = (REPO_ROOT / "CITATION.cff").read_text(encoding="utf-8")
     assert "10.17605/OSF.IO/ZGK74" in citation
-    assert "associated CPC article when available" in citation
+    assert "archived software release" in citation
+    assert "CPC" not in citation
 
 
 @pytest.mark.hygiene
@@ -54,4 +57,8 @@ def test_archive_manifest_records_repository_readiness_and_final_pending_state()
     assert manifest["software_package_readiness"] == "passed"
     assert manifest["final_submission_readiness"] == "pending"
     assert manifest["claims_status"] == "finite-time numerical evidence under recorded validation contracts"
+    assert manifest["release_blocked_for_v1_0_0"] is True
+    assert "version_2/release_package/BLOCKING_EVIDENCE_GAPS.md" in manifest["blocking_evidence_gaps"]
+    assert any("arctan" in item for item in manifest["blocking_release_items"])
+    assert "not exposed as public release CLI commands" in manifest["public_cli_scope_note"]
     assert "CI matrix passed" in manifest["freeze_audit_note"]

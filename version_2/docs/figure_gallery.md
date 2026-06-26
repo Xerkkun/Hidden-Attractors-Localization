@@ -1,4 +1,4 @@
-# Figure Gallery
+﻿# Figure Gallery
 
 Figures for the active reports are managed under the canonical library figure
 tree, not as copied run images inside `docs/assets/figures/`.
@@ -34,3 +34,4 @@ Older copied figures formerly stored under
 `docs/assets/figures/chua_fractional_report/` were local documentation assets.
 They are not the active source for the report figures after the migration to
 `library_figures/by_report/`.
+

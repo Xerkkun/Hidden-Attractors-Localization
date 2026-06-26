@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from pathlib import Path
 
@@ -9,8 +9,8 @@ VERSION_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = VERSION_ROOT.parent
 
 MOJIBAKE_PATTERNS = [
-    "\u00c3\u0192",   # Ãƒ
-    "\u00c3\u201a",   # Ã‚
+    "\u00c3\u0192",   # bad sequence marker
+    "\u00c3\u201a",   # bad sequence marker
     "\u00c3",
     "\u00c2",
     "\u00e2\u20ac",
@@ -65,3 +65,4 @@ def test_main_release_text_files_have_no_mojibake() -> None:
                 violations.append(f"{path.relative_to(REPO_ROOT).as_posix()}: {pattern!r}")
                 break
     assert not violations, "Mojibake found in release/main documentation files:\n" + "\n".join(violations)
+

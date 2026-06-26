@@ -1,4 +1,4 @@
-# Dependency Policy
+﻿# Dependency Policy
 
 This project follows the spirit of the [SPEC-0][spec0] rolling-window support policy adopted by the Scientific Python ecosystem (NumPy, SciPy, Matplotlib, etc.). However, to prioritize stability and user convenience across older computing environments (such as legacy HPC clusters), the project adopts a **pragmatic extended support policy** rather than strict, literal compliance with the SPEC-0 rolling drop dates.
 
@@ -101,3 +101,4 @@ no C toolchain.
 - [Matplotlib release schedule](https://matplotlib.org/stable/devel/release_guide.html)
 
 [spec0]: https://scientific-python.org/specs/spec-0000/
+

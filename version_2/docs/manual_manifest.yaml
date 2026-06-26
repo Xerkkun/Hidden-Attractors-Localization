@@ -1,4 +1,4 @@
-manual_version: "0.1.0-alpha-thesis-freeze"
+manual_version: "0.1.0-release-candidate"
 package_version: "0.1.0"
 
 public_cli: "hidden-attractors"

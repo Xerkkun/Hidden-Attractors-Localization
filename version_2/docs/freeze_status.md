@@ -1,4 +1,4 @@
-# Freeze Status
+﻿# Freeze Status
 
 ## Interpretation of evidence levels
 
@@ -59,5 +59,6 @@ To prevent misleading interpretations of missing values in published literature 
 - **Documentation**: [Published Validation Coverage](published_validation_coverage.md)
 
 This matrix maps each extracted case to its exact reproduction scope (e.g., `executable_regression`, `implemented_partial_reproduction`, `reference_data_only`, `future_extension`) without inventing missing information.
+
 
 

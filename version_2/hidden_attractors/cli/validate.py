@@ -18,8 +18,8 @@ from ..validation_contract import main as contract_main
 
 
 MOJIBAKE_PATTERNS = [
-    "\u00c3\u0192",   # Ãƒ
-    "\u00c3\u201a",   # Ã‚
+    "\u00c3\u0192",   # bad sequence marker
+    "\u00c3\u201a",   # bad sequence marker
     "\u00c3",
     "\u00c2",
     "\u00e2\u20ac",
@@ -347,6 +347,8 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
         "version_2/release_package/PROGRAM_SUMMARY.md",
         "version_2/release_package/SAMPLE_RUN.md",
         "version_2/release_package/REMAINING_WORK.md",
+        "version_2/release_package/BLOCKING_EVIDENCE_GAPS.md",
+        "version_2/release_package/BLOCKING_RELEASE_ITEMS.md",
         "version_2/release_package/reproducibility_checklist.md",
         "version_2/release_package/archive_manifest.json",
         "version_2/validation/freeze_audit/final_freeze_pytest_summary.json",
@@ -387,9 +389,9 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     checks.append(_check("bibliography has base entries", "software", bib_ok, [f"bib_entries={bib_entries}"] if not bib_ok else []))
 
     if has_paper_dir:
-        manuscript_path = root / "paper" / "cpc_manuscript.tex"
+        manuscript_path = root / "paper" / "manuscript.tex"
         if not manuscript_path.exists():
-            manuscript_path = root / "paper" / "manuscript.tex"
+            manuscript_path = root / "paper" / "release_manuscript.tex"
         manuscript = manuscript_path.read_text(encoding="utf-8-sig") if manuscript_path.exists() else ""
         manuscript_bad = []
         required_sections = ["Introduction", "Scientific and numerical scope", "Software architecture", "Numerical workflow", "Validation and reproducibility", "Limitations", "Availability and archival metadata", "Conclusions"]
@@ -481,6 +483,13 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
         final_pending.append({"name": "final release manuscript/template work", "details": ["final manuscript remains editorial work"]})
     if manifest.get("remaining_scientific_validation"):
         final_pending.append({"name": "remaining scientific validation", "details": list(manifest.get("remaining_scientific_validation", []))})
+    blocking_details = []
+    if manifest.get("release_blocked_for_v1_0_0"):
+        blocking_details.append("release_blocked_for_v1_0_0=true")
+    blocking_details.extend(str(item) for item in manifest.get("blocking_release_items", []))
+    blocking_details.extend(str(item) for item in manifest.get("blocking_evidence_gaps", []))
+    if blocking_details:
+        final_pending.append({"name": "blocking release items", "details": blocking_details})
     if manifest.get("commit_status") == "pending_update_after_final_cleanup_commit" or manifest_commit not in {current_head, current_short}:
         final_pending.append({"name": "archive manifest commit status", "details": [f"commit={manifest_commit} is pending update to final commit hash (status={commit_status})"]})
 
@@ -499,6 +508,8 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
         "final_submission_readiness": final_submission_readiness,
         "local_editorial_policy": "paper/ is local-only and ignored by Git",
         "known_remaining_work": KNOWN_REMAINING_WORK,
+        "blocking_release_items": manifest.get("blocking_release_items", []),
+        "blocking_evidence_gaps": manifest.get("blocking_evidence_gaps", []),
         "checks": checks,
         "final_submission_pending": final_pending,
     }

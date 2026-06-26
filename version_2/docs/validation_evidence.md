@@ -1,10 +1,10 @@
-# Validation Evidence
+﻿# Validation Evidence
 
-The synchronized manual metadata are defined in [docs/manual_manifest.yaml](manual_manifest.yaml); scientific claims remain governed by [THESIS_CLAIMS.md](../THESIS_CLAIMS.md).
+The synchronized manual metadata are defined in [docs/manual_manifest.yaml](manual_manifest.yaml); scientific claims remain governed by `THESIS_CLAIMS.md`.
 
-For a complete user-facing description of installation, CLI usage, examples, outputs, evidence labels and limitations, see [USER_MANUAL.md](../USER_MANUAL.md).
+For a complete user-facing description of installation, CLI usage, examples, outputs, evidence labels and limitations, see `USER_MANUAL.md`.
 
-See the [Thesis Claims Matrix](../THESIS_CLAIMS.md) for the current claims classification (reproduced, rejected, candidate, pending).
+See the `THESIS_CLAIMS.md` for the current claims classification (reproduced, rejected, candidate, pending).
 
 > [!WARNING]
 > **Chua Arctan Validation Status**: The Chua arctan system is implemented algebraically, but is pending full numerical hiddenness validation.
@@ -223,13 +223,15 @@ closes the structured diagnostic scope. Evidence levels are numerical and tied
 to the recorded solver, memory and time horizon. See
 [Phase F Closure Status](phase_f_closure.md).
 
-## CPC evidence boundary
+## Release evidence boundary
 
-The CPC preparation material separates four layers:
+Release preparation separates four layers:
 
 - Promoted evidence lives under `validation/` and is controlled by the validation contract.
 - Promoted scientific figures live under `library_figures/` and must be generated through `hidden_attractors.plotting.export.export_figure`.
 - Local and exploratory outputs live under `outputs/`, `validation_outputs/`, `runs*/`, or `figures/` and remain outside Git.
-- Editorial drafts and Elsevier templates are prepared locally under ignored `paper/`, while CPC submission scaffolding resides under `cpc_submission/`. Neither creates new scientific claims, and `paper/` is intentionally excluded from the tracked repository.
+- Local writing drafts and templates remain outside the tracked software repository and do not create new scientific claims.
 
 The arctan Chua route is implemented algebraically and retained for reproducible inspection, but it is not promoted as a validated hidden attractor. Finite neighborhood evidence must keep labels such as `hiddenness_supported_under_tested_neighborhoods`; it is not a global mathematical proof of hiddenness.
+
+

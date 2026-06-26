@@ -1,4 +1,4 @@
-# Code Reference Map
+﻿# Code Reference Map
 
 Every calculation-facing function should be traceable to one of three sources:
 a published reference, a local numerical contract documented in the report, or
@@ -124,3 +124,4 @@ When adding a new calculation module:
    Lyapunov exponents, or runs bifurcation sweeps, use or add a C backend rather
    than a heavy Python implementation.
 5. Add a small example that writes reproducible figures or CSV/JSON artifacts.
+

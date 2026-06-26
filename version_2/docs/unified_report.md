@@ -1,13 +1,13 @@
-# Unified Report
+﻿# Unified Report
 
-The synchronized manual metadata are defined in [docs/manual_manifest.yaml](manual_manifest.yaml); scientific claims remain governed by [THESIS_CLAIMS.md](../THESIS_CLAIMS.md).
+The synchronized manual metadata are defined in [docs/manual_manifest.yaml](manual_manifest.yaml); scientific claims remain governed by `THESIS_CLAIMS.md`.
 
-For a complete user-facing description of installation, CLI usage, examples, outputs, evidence labels and limitations, see [USER_MANUAL.md](../USER_MANUAL.md).
+For a complete user-facing description of installation, CLI usage, examples, outputs, evidence labels and limitations, see `USER_MANUAL.md`.
 
 ## Synchronization Targets
 
 As defined in [docs/manual_manifest.yaml](manual_manifest.yaml), the project's documentation is synchronized across three manual targets:
-1. **Markdown User Manual**: [USER_MANUAL.md](../USER_MANUAL.md)
+1. **Markdown User Manual**: `USER_MANUAL.md`
 2. **Unified LaTeX/PDF Report**: `docs/reporte_unificado_chua_fraccionario.tex`
 3. **Web Docs & Home Page**: Located in the external repository `Xerkkun/hidden-attractors` under `src/content/docs/` and `src/pages/hidden-attractors/index.astro`.
 
@@ -72,3 +72,4 @@ not copied manually from ad-hoc `outputs/` directories.
 Use [Code Reference Map](code_reference_map.md) before adding new calculation
 code. New methods must state whether they come from a paper, a local numerical
 contract, or an external library adapter.
+

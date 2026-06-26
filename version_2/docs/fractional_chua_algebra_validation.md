@@ -1,4 +1,4 @@
-# Fractional Non-Smooth Chua Algebra Validation
+﻿# Fractional Non-Smooth Chua Algebra Validation
 
 This page records the algebraic audit of the non-smooth fractional Chua case
 at `q=0.9998`. It validates equations, equilibria, regional Jacobians, the
@@ -153,3 +153,4 @@ independent validation stages:
 - N. Sene, "Mathematical Views of the Fractional Chua's Electrical Circuit
   Described by the Caputo-Liouville Derivative," *Revista Mexicana de
   Fisica*, 67(1), 91--99, 2021.
+

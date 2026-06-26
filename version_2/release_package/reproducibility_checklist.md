@@ -6,12 +6,14 @@
 - Run `hidden-attractors validate contract --allow-pending`.
 - Run `hidden-attractors validate release-readiness`.
 - Run `hidden-attractors validate release-readiness --strict` for repository/software readiness.
-- Run `hidden-attractors validate release-readiness --submission-strict` only for the final submission package.
+- Run `hidden-attractors validate release-readiness --submission-strict` only for the final archive package.
 - Run the intended pytest lane and record exact command, platform, Python, and dependency versions.
 - Treat `validation/freeze_audit/` as the frozen source for published scientific test counts.
 - Keep local outputs under ignored `outputs/`, `validation_outputs/`, `runs*/`, or `figures/`.
 - Prepare local writing and manuscript drafts locally under ignored `paper/`, ensuring they remain untracked by Git.
 - Do not promote arctan as a validated hidden attractor until the validation contract supports it.
+- Review `release_package/BLOCKING_EVIDENCE_GAPS.md` and `release_package/BLOCKING_RELEASE_ITEMS.md` before declaring a final release.
+- Confirm `hidden-attractors seed --help` exposes only `lure-centered` and `lure-biased`; Machado/FDF remains theory/internal planned support.
 
 ## CI and freeze audit boundary
 

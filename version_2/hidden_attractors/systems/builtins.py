@@ -188,10 +188,10 @@ def chua_system(model: str = "nonsmooth") -> ChaoticSystem:
         description="Fractional-order Chua vector field used by the hidden-attractor workflows.",
         tags=("chua", "fractional", "hidden-attractors"),
         workflows={
-            "full": "hidden-attractors-protocol",
-            "robustness": "hidden-attractors-robustness-overlay",
-            "sphere-controls": "hidden-attractors-sphere-controls",
-            "refined-basin": "hidden-attractors-refined-basin",
+            "full": "hidden-attractors protocol",
+            "robustness": "hidden-attractors robustness overlay",
+            "sphere-controls": "hidden-attractors hiddenness sphere-controls",
+            "refined-basin": "hidden-attractors basin refined",
         },
         lure=_chua_lure_system(
             {

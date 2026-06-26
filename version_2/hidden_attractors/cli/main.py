@@ -38,7 +38,7 @@ GROUPS = {
     "chaos-test": ["zero-one", "inspect"],
     "published": ["danca-abm-sphere-controls"],
     "report": ["fractional-run"],
-    "seed": ["lure-centered", "lure-biased", "machado-centered", "machado-biased"],
+    "seed": ["lure-centered", "lure-biased"],
     "continuation": ["run", "multiparameter"],
 }
 
@@ -143,9 +143,6 @@ def dispatch(group: str, cmd: str | None, argv: Sequence[str]) -> None:
         elif cmd == "lure-biased":
             from .seed import lure_biased
             lure_biased(argv)
-        elif cmd in ("machado-centered", "machado-biased"):
-            print("Machado/FDF seed generation is planned but not implemented in this release.")
-            sys.exit(1)
             
     elif group == "continuation":
         if cmd == "run":
@@ -166,9 +163,6 @@ def main(argv: Sequence[str] | None = None) -> None:
         argv = sys.argv[1:]
     else:
         argv = list(argv)
-
-    # Translate cpc-readiness to release-readiness for backward compatibility
-    argv = ["release-readiness" if arg == "cpc-readiness" else arg for arg in argv]
 
     # Intercept leaf-level --help / -h to show correct subcommand help
     if len(argv) >= 2 and argv[0] in GROUPS and argv[1] not in ("-h", "--help"):
@@ -250,8 +244,6 @@ def main(argv: Sequence[str] | None = None) -> None:
     seed_sub = seed_parser.add_subparsers(dest="cmd", required=True)
     seed_sub.add_parser("lure-centered", help="Centered Lur'e seed generation")
     seed_sub.add_parser("lure-biased", help="Biased Lur'e seed generation")
-    seed_sub.add_parser("machado-centered", help="Machado centered seed generation (planned)")
-    seed_sub.add_parser("machado-biased", help="Machado biased seed generation (planned)")
     
     cont_parser = subparsers.add_parser("continuation", help="Numerical continuation routes")
     cont_sub = cont_parser.add_subparsers(dest="cmd", required=True)

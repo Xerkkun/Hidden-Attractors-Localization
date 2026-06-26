@@ -1,4 +1,4 @@
-# hidden-attractors-fo documentation
+﻿# hidden-attractors-fo documentation
 
 This library implements tools for verifying and localizing hidden attractors [ref:leonov_kuznetsov_hidden_definition, ref:kuznetsov_2017_chua_df] in dynamical systems. This documentation follows a library-oriented structure: installation,
 getting-started material, public interfaces, examples, workflows, tests, and
@@ -53,3 +53,4 @@ The project reports numerical evidence under explicit solver, memory, time and
 sampling contracts. The promoted integer-order baseline is documented in
 [Integer Chua q=1 Reference](integer_chua_reference.md), including its
 literature and cross-tool evidence status.
+

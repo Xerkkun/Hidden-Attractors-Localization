@@ -14,6 +14,8 @@ def test_seed_cli_help(capsys):
     captured = capsys.readouterr()
     assert "lure-centered" in captured.out
     assert "lure-biased" in captured.out
+    assert "machado-centered" not in captured.out
+    assert "machado-biased" not in captured.out
 
 def test_seed_lure_centered_help(capsys):
     # Test hidden-attractors seed lure-centered --help
@@ -36,13 +38,13 @@ def test_seed_lure_biased_help(capsys):
     captured = capsys.readouterr()
     assert "--config" in captured.out
 
-def test_seed_machado_unsupported(capsys):
-    # Test hidden-attractors seed machado-centered throws planned/unsupported error
+def test_seed_machado_not_public(capsys):
     with pytest.raises(SystemExit) as excinfo:
         main(["seed", "machado-centered"])
-    assert excinfo.value.code == 1
+    assert excinfo.value.code == 2
     captured = capsys.readouterr()
-    assert "planned but not implemented" in captured.out
+    assert "invalid choice" in captured.err
+    assert "planned but not implemented" not in captured.out
 
 def test_seed_lure_centered_execution(tmp_path):
     # Test executing lure-centered seed generation

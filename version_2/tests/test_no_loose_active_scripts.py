@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 import fnmatch
 import os
 import re
@@ -32,6 +32,7 @@ EXCLUDED_PATHS = [
 
 EXEMPTED_FILES = [
     "hidden_attractors/plotting/generate_publication_figures.py",
+    "hidden_attractors/plotting/generate_unified_report_figures.py",
     "tests/test_manual_manifest.py",
     "tests/test_manual_manifest_consistency.py",
     "tests/test_user_manual.py",
@@ -128,3 +129,4 @@ def test_no_legacy_script_as_recommended_command():
         "Legacy scripts must not be promoted as recommended execution commands in documentation:\n"
         + "\n".join(markdown_violations)
     )
+

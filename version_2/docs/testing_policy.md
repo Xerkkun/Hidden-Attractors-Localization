@@ -1,4 +1,4 @@
-# Testing Policy
+﻿# Testing Policy
 
 ## Permanent tests
 Protect installation, public CLI, scientific contracts, validation contracts,
@@ -20,3 +20,4 @@ deprecation window.
 A passing test is not deleted because it passed. It is deleted only if it is
 redundant, obsolete, fragile without protecting a contract, or replaced by a
 stronger invariant.
+

@@ -1,4 +1,4 @@
-# Lyapunov Methods Audit
+﻿# Lyapunov Methods Audit
 
 > **F0 — integer_qr_benettin (frozen)**
 > Phase F0 freezes the existing integer-order QR-Benettin method and
@@ -438,3 +438,4 @@ and the experimental QR variant.
 Neither phase validates pending fractional methods or certifies chaos or
 hiddenness. See [F6 Integrated Chaos Validator](f6_integrated_chaos_validator.md)
 and [F7 Method Comparison](f7_method_comparison.md).
+

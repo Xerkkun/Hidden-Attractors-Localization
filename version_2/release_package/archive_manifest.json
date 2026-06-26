@@ -99,5 +99,16 @@
     "version_2/outputs/chua_fractional_arctan/"
   ],
   "arctan_status": "implemented algebraically, pending full validation; not promoted as a validated hidden attractor",
-  "claims_status": "finite-time numerical evidence under recorded validation contracts"
+  "claims_status": "finite-time numerical evidence under recorded validation contracts",
+  "release_blocked_for_v1_0_0": true,
+  "blocking_evidence_gaps": [
+    "version_2/release_package/BLOCKING_EVIDENCE_GAPS.md"
+  ],
+  "blocking_release_items": [
+    "fractional Chua arctan hiddenness evidence is not promotable yet",
+    "final scientific freeze audit is pending for the final promoted evidence set",
+    "sample outputs remain templates unless executed samples are required",
+    "archive manifest commit hash is pending final cleanup commit selection"
+  ],
+  "public_cli_scope_note": "Machado/FDF seed routes are theory/internal planned support only and are not exposed as public release CLI commands."
 }

@@ -29,7 +29,7 @@ Every reconstructed seed writes:
 }
 ```
 
-*Nota sobre Machado/FDF*: Las familias `machado_centered` y `machado_biased` se encuentran especificadas en el esquema como `planned` / `unsupported` en la versión actual. Si se invoca la generación de estas familias por CLI, fallará explícitamente.
+*Nota sobre Machado/FDF*: Las familias `machado_centered` y `machado_biased` se conservan como soporte teorico/interno planificado. No forman parte de la superficie publica del CLI de esta entrega; `hidden-attractors seed --help` solo lista `lure-centered` y `lure-biased`.
 
 `lure_classical_centered` es la antigua ruta clásica centrada. Las funciones descriptivas predicen candidatos armónicos en el Chua buscando puntos de balance de frecuencia ($W_q(j\omega)N(A) = -1$).
 *Advertencia Científica*: La función descriptiva es una herramienta de aproximación armónica de primer armónico para ubicar posibles semillas localizadas. **No constituye de ninguna manera una prueba de existencia de atractor ni de su ocultedad**. La ocultedad se determina posteriormente y de forma rigurosa en el protocolo evaluando vecindades locales de todos los equilibrios (Stage 52 `hiddenness_tests`).
