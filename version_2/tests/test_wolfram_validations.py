@@ -76,13 +76,16 @@ def test_wolfram_case_validation(case_relpath: str) -> None:
     import tempfile
     root = repo_root()
     case_path = root / case_relpath
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        out_dir = Path(tmp_dir) / Path(case_relpath).stem
+    tmp_root = Path(tempfile.gettempdir()) / f"wolfram_{Path(case_relpath).stem}_{uuid.uuid4().hex}"
+    try:
+        out_dir = tmp_root / Path(case_relpath).stem
         result = run_case(case_path, out_dir)
         assert result["summary"]["passed"] is True, (
             f"Wolfram validation failed for {case_relpath}:\n"
             f"{result['summary']}"
         )
+    finally:
+        shutil.rmtree(tmp_root, ignore_errors=True)
 
 
 # ---------------------------------------------------------------------------

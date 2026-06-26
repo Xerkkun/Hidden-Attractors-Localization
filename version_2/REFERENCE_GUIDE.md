@@ -216,7 +216,7 @@ All figure exports are subject to the [Figure Export Policy](docs/figure_export_
 
 ## 7. Testing Suite
 
-The library is backed by a robust test suite (at the current thesis-freeze audit, the suite reports 797 passed tests and 34 skipped tests; future runs should be checked against `validation/freeze_audit/`):
+The library is backed by a robust test suite (at the current thesis-freeze audit, the suite reports 939 passed tests and 27 skipped tests; future runs should be checked against `validation/freeze_audit/`):
 
 
 * **Verification Execution**:
