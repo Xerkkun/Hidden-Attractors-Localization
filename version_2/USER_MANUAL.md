@@ -45,16 +45,28 @@ contracts before they can enter the official workflow.
 
 ## 2. Installation
 
-From the repository root:
+For normal use from PyPI:
 
 ```bash
-python -m pip install -e version_2
+python -m pip install hidden-attractors-fo
 ```
 
-For development and documentation:
+The PyPI project name is `hidden-attractors-fo`; the Python import name is:
+
+```python
+import hidden_attractors
+```
+
+For development from a repository checkout:
 
 ```bash
 python -m pip install -e "version_2[dev,analysis,docs,legacy]"
+```
+
+From inside `version_2`:
+
+```bash
+python -m pip install -e ".[dev,analysis,docs,legacy]"
 ```
 
 On this Windows workspace, the safer local interpreter is usually:
@@ -67,15 +79,25 @@ Verify the install:
 
 ```bash
 hidden-attractors --help
+hidden-attractors inspect systems
+hidden-attractors seed --help
 cd version_2
 python -m compileall hidden_attractors examples tests tools/cli
 python -m pytest -q
 ```
 
+For PyPI packaging readiness:
+
+```bash
+python -m pip install --upgrade pip build twine
+python -m build
+python -m twine check dist/*
+python tools/release/validate_wheel_install.py
+```
+
 The official release/freeze counts are stored under
 [validation/freeze_audit/](validation/freeze_audit/). Local counts can differ
 when optional tools or local test selections change.
-
 ## 3. Repository structure
 
 | Path | Purpose |
@@ -394,3 +416,4 @@ Claim status: <reproduced/validated/candidate/rejected/partial/pending>
 
 For release packaging, also consult `REPRODUCIBILITY.md`, `RELEASE_NOTES.md`,
 `CHANGELOG.md`, `version_2/MANIFEST.md`, and `version_2/release_package/`.
+

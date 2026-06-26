@@ -9,6 +9,26 @@
 For the shortest command list, see [Quick Start](quick_start.md). For the full
 symbol inventory, see [API Reference](api_reference.md).
 
+## Installation
+
+Install from PyPI for normal use:
+
+```bash
+python -m pip install hidden-attractors-fo
+```
+
+Use the package from Python as:
+
+```python
+import hidden_attractors
+```
+
+Install from a checkout for development:
+
+```bash
+python -m pip install -e ".[dev,analysis,legacy]"
+```
+
 ## High-level CLI
 
 Run or inspect built-in presets:
@@ -33,6 +53,7 @@ Useful inspection and validation checks:
 hidden-attractors inspect systems
 hidden-attractors inspect candidates
 hidden-attractors inspect workflow-requirements
+hidden-attractors seed --help
 hidden-attractors validate contract --allow-pending
 hidden-attractors validate bibliography
 ```
@@ -172,7 +193,7 @@ Lyapunov estimates are useful but do not certify hiddenness.
 | --- | --- | --- |
 | Integer reference | `python examples/chua_integer_lure_reference/run_example.py --quick` | First example for the complete seed-continuation-hiddenness workflow at `q=1` |
 | Non-smooth fractional BDF | `python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick` | Proposed biased-DF route for fractional Chua; evidence remains contract-limited |
-| Arctan Wu2023/c590 | `python examples/chua_arctan_wu2023/run_example.py --quick` | Separates Wu2023 bibliographic reproduction from the c590 Caputo lane promoted for local radii `r <= 0.3` |
+| Arctan Wu2023/c590 | `python examples/chua_arctan_wu2023/run_example.py --quick` | Separates Wu2023 bibliographic reproduction from the c590 Caputo lane promoted only as local/radius-limited finite-time evidence |
 | Custom registration | `python examples/custom_system_definition.py` | Minimal system registry example |
 | Workflow spec | `python examples/new_system_workflow_spec.py` | Shows the next layer needed before reusable workflows are auditable |
 

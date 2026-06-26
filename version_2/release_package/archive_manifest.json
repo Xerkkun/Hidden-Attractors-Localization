@@ -2,7 +2,7 @@
   "package": "hidden-attractors-fo",
   "archive_title": "A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors",
   "version": "1.0.0",
-  "commit": "ec61e45ba61e114ac8c338a7371bf3557f9a8a85",
+  "commit": "3a0c361c79db890d34a83797dfe826735c3e3403",
   "commit_status": "current",
   "doi": "10.17605/OSF.IO/ZGK74",
   "license": "MIT",
@@ -12,7 +12,7 @@
   "ci_status_note": "Recorded after the release cleanup CI matrix passed. Final scientific freeze audit remains separate from CI status.",
   "freeze_audit_status": "passed",
   "last_recorded_freeze_audit_commit": "ec61e45ba61e114ac8c338a7371bf3557f9a8a85",
-  "freeze_audit_note": "Final scientific freeze audit passed under validation/freeze_audit/final_freeze_pytest_summary.json; CI status remains a separate cross-platform package check.",
+  "freeze_audit_note": "Final scientific freeze audit passed under validation/freeze_audit/final_freeze_pytest_summary.json; its recorded scientific audit commit remains last_recorded_freeze_audit_commit, while package metadata tracks the current repository HEAD.",
   "sample_status": "executed",
   "repository_readiness": "passed",
   "software_package_readiness": "passed",
@@ -62,7 +62,12 @@
     "AUTHORS.md",
     "CHANGELOG.md",
     "RELEASE_NOTES.md",
-    "REPRODUCIBILITY.md"
+    "REPRODUCIBILITY.md",
+    "version_2/MANIFEST.in",
+    "version_2/release_package/PYPI_RELEASE_CHECKLIST.md",
+    "version_2/release_package/PUBLISHING_POLICY.md",
+    ".github/workflows/package.yml",
+    ".github/workflows/publish-pypi.yml"
   ],
   "local_editorial_paths": [
     "paper/"
@@ -78,7 +83,10 @@
     "figures/",
     "DF y NC Chua entero y fraccionario/",
     "DF y NC Chua entero y fraccionario copy/",
-    "paper/"
+    "paper/",
+    "version_2/build/",
+    "version_2/dist/",
+    "version_2/*.egg-info/"
   ],
   "promoted_evidence": [
     "version_2/validation/chua_integer_saturation/",
@@ -97,5 +105,18 @@
   "blocking_release_items": [],
   "public_cli_scope_note": "Machado/FDF seed routes are theory/internal planned support only and are not exposed as public release CLI commands.",
   "release_date": "2026-06-26",
-  "arctan_promotion_boundary": "version_2/release_package/ARCTAN_C590_PROMOTION_BOUNDARY.md"
+  "arctan_promotion_boundary": "version_2/release_package/ARCTAN_C590_PROMOTION_BOUNDARY.md",
+  "pypi_readiness": {
+    "package_name": "hidden-attractors-fo",
+    "import_name": "hidden_attractors",
+    "version": "1.0.0",
+    "build_backend": "setuptools.build_meta",
+    "wheel_build": "passed",
+    "sdist_build": "passed",
+    "twine_check": "passed",
+    "wheel_install_smoke": "passed",
+    "testpypi_status": "manual_pending",
+    "pypi_status": "not_uploaded_by_repository",
+    "wheel_smoke_notes": "Validated 2026-06-26 with Python 3.14 venv; fixed lazy import for danca_abm_sphere_controls in cli/published.py and try/except fallback in danca_abm_sphere_controls.py; removed duplicate argparse args in strict_target_refinement.py make_parser()"
+  }
 }

@@ -2,7 +2,7 @@
 
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![Status](https://img.shields.io/badge/status-stable%201.0.0-green)
-![Package](https://img.shields.io/badge/package-editable%20install-green)
+![Package](https://img.shields.io/badge/package-PyPI%20ready-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 [![CI](https://github.com/Xerkkun/Hidden-Attractors-Localization/actions/workflows/ci.yml/badge.svg)](https://github.com/Xerkkun/Hidden-Attractors-Localization/actions/workflows/ci.yml)
 
@@ -10,19 +10,47 @@
 auditing, and conservatively classifying hidden-attractor candidates in integer-
 and commensurate Caputo fractional-order Chua/Lur'e systems.
 
-## Install
+The PyPI project name is `hidden-attractors-fo`; the Python import name remains
+`hidden_attractors`.
 
-From this directory:
+## PyPI installation
 
 ```bash
-python -m pip install -e .
+python -m pip install hidden-attractors-fo
+```
+
+Verify the public CLI:
+
+```bash
+hidden-attractors --help
+hidden-attractors inspect systems
+hidden-attractors seed --help
+```
+
+Use the package from Python as:
+
+```python
+import hidden_attractors
+```
+
+## Development installation
+
+From a repository checkout:
+
+```bash
+python -m pip install -e ".[dev,analysis,legacy]"
+```
+
+For documentation work, include the docs extra:
+
+```bash
 python -m pip install -e ".[dev,analysis,docs,legacy]"
 ```
 
 The package exposes one public console command:
 
 ```bash
-hidden-attractors --help
+hidden-attractors
 ```
 
 ## Quick start
@@ -54,7 +82,7 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 | --- | --- | --- |
 | `examples/chua_integer_lure_reference/` | Integer `q=1` Lur'e reference | Reproduced software reference/control |
 | `examples/chua_nonsmooth_biased_hidden_attractor/` | Biased-DF methodology for non-smooth fractional Chua | Candidate/compatible under tested local radii; not full Danca reproduction |
-| `examples/chua_arctan_wu2023/` | Wu2023 arctan lane plus promoted c590 lane | Wu2023 bibliographic; c590 promoted for local radii `r <= 0.3` |
+| `examples/chua_arctan_wu2023/` | Wu2023 arctan lane plus c590 local lane | Wu2023 bibliographic; c590 is finite-time local/radius-limited evidence under the recorded contract |
 
 ## Article reproduction status
 
@@ -63,7 +91,7 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 | Integer Chua reference | Reproduced as the maintained `q=1` software route |
 | Danca 2017 non-smooth fractional Chua | Partial implementation; missing published numerical details prevent full trajectory reproduction |
 | Official nearby non-smooth candidate | Rejected/self-excited under current neighborhood contract |
-| Wu2023 arctan Chua | Algebra/ADM local lane implemented as bibliographic reproduction; c590 Caputo lane promoted separately for local radii `r <= 0.3` |
+| Wu2023 arctan Chua | Algebra/ADM local lane implemented as bibliographic reproduction; c590 Caputo lane remains finite-time local/radius-limited evidence |
 | DK2018/Fischer Lyapunov lanes | Diagnostic comparison lanes with documented discrepancies |
 
 ## API reference
@@ -91,12 +119,18 @@ psi)`, describing-function convention, solver/memory contract, target reference,
 classifier thresholds, and all-equilibrium neighborhood sampling settings. See
 [docs/adapting_new_systems.md](docs/adapting_new_systems.md).
 
-## Scientific Scope
+## Scientific scope
 
-DF/Nyquist and continuation generate or transport candidates. FFT/PSD, 0-1,
-Poincare, phase portraits, and Lyapunov estimates are diagnostics. Hiddenness is
-only a finite numerical label under a recorded contract; it is not a global
-mathematical proof.
+DF, BDF, Nyquist, and continuation generate or transport candidate seeds.
+FFT/PSD, 0-1, Poincare, phase portraits, and Lyapunov estimates are diagnostics.
+Hiddenness is only a finite numerical label under a recorded contract; there is no global mathematical proof.
+
+The Chua arctan c590 lane is finite-time evidence under a local/radius-limited
+contract, not a global basin proof. The Wu2023 ADM lane remains bibliographic
+and does not replace full-history Caputo validation.
+
+Machado/FDF remains theory/internal planned support and is not exposed as a
+public seed workflow in this release.
 
 ## Tests and release checks
 
@@ -105,7 +139,16 @@ python -m compileall hidden_attractors examples tests tools/cli
 python -m pytest -q
 python -m pytest -q -m "hygiene"
 python -m pytest -q -m "release_readiness"
-hidden-attractors validate release-readiness
+hidden-attractors validate release-readiness --submission-strict --json
+```
+
+Packaging checks:
+
+```bash
+python -m pip install --upgrade pip build twine
+python -m build
+python -m twine check dist/*
+python tools/release/validate_wheel_install.py
 ```
 
 Release packaging metadata lives in `release_package/`. Promoted evidence lives
@@ -116,7 +159,6 @@ under `validation/`; ordinary run products stay under `outputs/`.
 - [User Manual](USER_MANUAL.md)
 - [Claims Matrix](THESIS_CLAIMS.md)
 - [Freeze Audit](validation/freeze_audit/)
-
 - [Quick Start](docs/quick_start.md)
 - [Getting Started](docs/getting_started.md)
 - [API Reference](docs/api_reference.md)
@@ -132,3 +174,12 @@ Citation metadata is provided at the repository root in `CITATION.cff`,
 `.zenodo.json`, and `codemeta.json`.
 
 Archived DOI: `10.17605/OSF.IO/ZGK74`.
+
+## License
+
+MIT.
+
+## Source
+
+GitHub: <https://github.com/Xerkkun/Hidden-Attractors-Localization>
+

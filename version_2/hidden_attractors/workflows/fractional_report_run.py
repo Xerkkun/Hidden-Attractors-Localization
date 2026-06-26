@@ -677,7 +677,7 @@ def _plot_biased_nyquist_df(lure_system: Any, row: dict[str, Any], output: Path)
     ax.set_ylabel(r"Im$(W_q(i\omega))$")
     ax.legend(loc="best", fontsize=8)
     fig.tight_layout()
-    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+    from hidden_attractors.plotting.export import intercept_and_export_path
     intercept_and_export_path(fig, output, "robustness")
     plt.close(fig)
     return str(output)
@@ -975,7 +975,7 @@ def plot_hiddenness_ball_figures(outdir: Path, selected: Sequence[dict[str, Any]
         ax.legend(fontsize=7)
         fig.tight_layout()
         path = plot_dir / f"{safe_name(candidate_id)}_equilibrium_ball_samples.png"
-        from version_2.hidden_attractors.plotting.export import intercept_and_export_path
+        from hidden_attractors.plotting.export import intercept_and_export_path
         intercept_and_export_path(fig, path, "sphere_test")
         plt.close(fig)
         files.append(str(path))
@@ -1616,7 +1616,7 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
     if str(algebra_tool_dir) not in sys.path:
         sys.path.insert(0, str(algebra_tool_dir))
     try:
-        import validate_chua_fractional_nonsmooth_algebra as alg_val
+        import validate_chua_fractional_nonsmooth_algebra as alg_val  # type: ignore
         algebra_dir = validation / "02_algebraic_validation"
         algebra_dir.mkdir(parents=True, exist_ok=True)
         params = alg_val.chua_nonsmooth_parameters()
@@ -1692,7 +1692,7 @@ equilibrio mediante EFORK C corregido. {f"Esta es una corrida ligera (explorator
                 "cross_tool_validation": {
                     "status": cross_tool_status,
                     "wolfram_comparison": "pending" if cross_tool_status == "missing_external_artifacts" else ("passed" if cross_tool_status == "passed" else "failed"),
-                    "wolfram_artifact_provenance": wolfram_artifacts.provenance(relative_to=validation_root),
+                    "wolfram_artifact_provenance": wolfram_artifacts.provenance(relative_to=validation),
                 }
             },
             "metrics": {

@@ -47,11 +47,31 @@ LEGACY_ROOT = PROJECT_ROOT / "tools" / "legacy"
 if str(LEGACY_ROOT) not in sys.path:
     sys.path.insert(0, str(LEGACY_ROOT))
 
-from danca2017_chua_abm_replication import (  # noqa: E402
-    DancaChuaConfig,
-    classify_trajectory,
-)
-from equilibria_analysis import solve_equilibria  # noqa: E402
+try:
+    from danca2017_chua_abm_replication import (  # type: ignore # noqa: E402
+        DancaChuaConfig,
+        classify_trajectory,
+    )
+    from equilibria_analysis import solve_equilibria  # type: ignore # noqa: E402
+except ModuleNotFoundError:
+    # This module is only imported lazily from cli/published.py when the
+    # 'published danca-abm-sphere-controls' command is invoked, which only
+    # works in a source checkout with tools/legacy available.
+    # Define placeholders so that the module-level code does not fail during
+    # collection; any actual call will raise a clear error.
+    class DancaChuaConfig:  # type: ignore[no-redef]
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            pass
+
+    def classify_trajectory(*_: object, **__: object) -> None:  # type: ignore[misc]
+        raise RuntimeError(
+            "Danca ABM helpers not available; requires source checkout with tools/legacy."
+        )
+
+    def solve_equilibria(*_: object, **__: object) -> None:  # type: ignore[misc]
+        raise RuntimeError(
+            "Danca ABM helpers not available; requires source checkout with tools/legacy."
+        )
 
 
 ROOT_OUTPUTS = PROJECT_ROOT.parent / "outputs"

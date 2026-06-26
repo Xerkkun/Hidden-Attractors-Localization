@@ -1,0 +1,35 @@
+include README.md
+include LICENSE
+include pyproject.toml
+include MANIFEST.in
+include MANIFEST.md
+include USER_MANUAL.md
+include THESIS_CLAIMS.md
+
+recursive-include hidden_attractors *.py *.yaml *.c *.h
+recursive-include configs *.json *.yaml
+recursive-include examples *.py *.md *.yaml
+recursive-include tests *.py
+recursive-include docs *.md *.yaml *.json *.bib
+recursive-include release_package *.md *.json *.yaml
+recursive-include tools/release *.py
+
+global-exclude __pycache__ *.py[cod] .DS_Store
+prune outputs
+prune validation_outputs
+prune runs
+prune figures
+prune library_figures
+prune .pytest_cache
+prune .pytest_tmp
+prune .runtime_cache
+prune .runtime_native
+prune .benchmarks
+prune paper
+prune build
+prune dist
+prune site
+prune scratch
+prune hidden_attractors_fo.egg-info
+prune tools/legacy/outputs
+prune tools/legacy/.runtime_cache

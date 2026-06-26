@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-26T03:07:18.630887+00:00",
+  "generated_at_utc": "2026-06-26T06:27:25.013633+00:00",
   "command": "python -m hidden_attractors.cli.main validate release-readiness --submission-strict --json",
   "expected_status": "passed",
   "expected_exit_code_submission_strict": 0,
@@ -12,5 +12,5 @@
   "last_verified_software_package_readiness": "passed",
   "last_verified_final_submission_readiness": "passed",
   "last_verified_final_submission_pending": [],
-  "last_verified_checks_ok": 16
+  "last_verified_checks_ok": 22
 }

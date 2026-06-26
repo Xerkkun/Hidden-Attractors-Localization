@@ -10,6 +10,7 @@ import json
 import re
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -181,6 +182,12 @@ def _load_json(path: Path) -> dict[str, Any]:
     except Exception as exc:
         return {"_load_error": str(exc)}
 
+def _load_pyproject(path: Path) -> dict[str, Any]:
+    try:
+        return tomllib.loads(path.read_text(encoding="utf-8-sig"))
+    except Exception as exc:
+        return {"_load_error": str(exc)}
+
 
 def _paper_bib_entries(path: Path) -> int:
     if not path.exists():
@@ -324,6 +331,155 @@ def _remaining_work_file_matches(path: Path) -> bool:
     return all(item in text for item in required)
 
 
+def _pypi_readiness_checks(root: Path, version_root: Path, manifest: dict[str, Any]) -> list[dict[str, Any]]:
+    checks: list[dict[str, Any]] = []
+
+    pyproject_path = version_root / "pyproject.toml"
+    pyproject = _load_pyproject(pyproject_path)
+    project = pyproject.get("project", {}) if isinstance(pyproject, dict) else {}
+    tool = pyproject.get("tool", {}) if isinstance(pyproject, dict) else {}
+    setuptools = tool.get("setuptools", {}) if isinstance(tool, dict) else {}
+    find_config = setuptools.get("packages", {}).get("find", {}) if isinstance(setuptools, dict) else {}
+    package_data = setuptools.get("package-data", {}) if isinstance(setuptools, dict) else {}
+
+    metadata_details: list[str] = []
+    if pyproject.get("_load_error"):
+        metadata_details.append(f"pyproject load error: {pyproject['_load_error']}")
+    if project.get("name") != "hidden-attractors-fo":
+        metadata_details.append(f"project.name={project.get('name')}")
+    if project.get("version") != "1.0.0":
+        metadata_details.append(f"project.version={project.get('version')}")
+    if project.get("readme") != "README.md":
+        metadata_details.append(f"project.readme={project.get('readme')}")
+    if project.get("requires-python") != ">=3.11":
+        metadata_details.append(f"requires-python={project.get('requires-python')}")
+    if project.get("license") != "MIT":
+        metadata_details.append(f"license={project.get('license')}")
+    if "LICENSE" not in project.get("license-files", []):
+        metadata_details.append("LICENSE missing from license-files")
+    if not project.get("authors"):
+        metadata_details.append("authors missing")
+    if not project.get("keywords"):
+        metadata_details.append("keywords missing")
+    classifiers = project.get("classifiers", [])
+    if not classifiers:
+        metadata_details.append("classifiers missing")
+    dependencies = project.get("dependencies", [])
+    for dependency in ("numpy", "matplotlib", "scipy", "numba", "PyYAML"):
+        if not any(str(item).lower().startswith(dependency.lower()) for item in dependencies):
+            metadata_details.append(f"runtime dependency missing: {dependency}")
+    scripts = project.get("scripts", {})
+    if scripts != {"hidden-attractors": "hidden_attractors.cli.main:main"}:
+        metadata_details.append(f"project.scripts={scripts}")
+    urls = project.get("urls", {})
+    for key in ("Homepage", "Documentation", "Repository", "Issues", "Archive"):
+        if key not in urls:
+            metadata_details.append(f"project.urls missing {key}")
+    if find_config.get("include") != ["hidden_attractors*"]:
+        metadata_details.append(f"package include={find_config.get('include')}")
+    excluded = set(find_config.get("exclude", []))
+    for pattern in ("tools*", "benchmarks*", "tests*", "examples*"):
+        if pattern not in excluded:
+            metadata_details.append(f"package exclude missing {pattern}")
+    hidden_data = package_data.get("hidden_attractors", [])
+    for pattern in ("native/csrc/*.c", "native/csrc/*.h", "configs/examples/*.yaml"):
+        if pattern not in hidden_data:
+            metadata_details.append(f"package-data missing {pattern}")
+    if any(key.startswith("tools") for key in package_data):
+        metadata_details.append("tools package-data must not be in the wheel")
+    checks.append(_check("PyPI project metadata", "software", not metadata_details, metadata_details))
+
+    readme_path = version_root / "README.md"
+    readme = readme_path.read_text(encoding="utf-8-sig") if readme_path.exists() else ""
+    readme_lower = readme.lower()
+    readme_details = []
+    for required_text in (
+        "python -m pip install hidden-attractors-fo",
+        "import hidden_attractors",
+        "hidden-attractors --help",
+        "hidden-attractors inspect systems",
+        "hidden-attractors seed --help",
+        "10.17605/OSF.IO/ZGK74",
+    ):
+        if required_text not in readme:
+            readme_details.append(f"README missing {required_text}")
+    for required_lower in ("radius-limited", "no global mathematical proof", "finite-time evidence"):
+        if required_lower not in readme_lower:
+            readme_details.append(f"README missing {required_lower}")
+    checks.append(_check("PyPI README", "software", not readme_details, readme_details))
+
+    manifest_in = version_root / "MANIFEST.in"
+    manifest_details = []
+    if not manifest_in.exists():
+        manifest_details.append("version_2/MANIFEST.in missing")
+    else:
+        manifest_text = manifest_in.read_text(encoding="utf-8-sig")
+        for directive in (
+            "recursive-include hidden_attractors",
+            "recursive-include tools/release *.py",
+            "global-exclude __pycache__ *.py[cod] .DS_Store",
+            "prune outputs",
+            "prune validation_outputs",
+            "prune runs",
+            "prune figures",
+            "prune paper",
+            "prune build",
+            "prune dist",
+        ):
+            if directive not in manifest_text:
+                manifest_details.append(f"MANIFEST.in missing directive: {directive}")
+    checks.append(_check("PyPI MANIFEST.in", "software", not manifest_details, manifest_details))
+
+    workflow_path = root / ".github" / "workflows" / "package.yml"
+    workflow_details = []
+    if not workflow_path.exists():
+        workflow_details.append(".github/workflows/package.yml missing")
+    else:
+        workflow_text = workflow_path.read_text(encoding="utf-8-sig")
+        for required_text in (
+            "python -m build",
+            "python -m twine check dist/*",
+            "python -m pip install dist/*.whl",
+            "hidden-attractors --help",
+            "hidden-attractors seed --help",
+            "actions/upload-artifact@v4",
+        ):
+            if required_text not in workflow_text:
+                workflow_details.append(f"package.yml missing {required_text}")
+    checks.append(_check("PyPI package workflow", "software", not workflow_details, workflow_details))
+
+    public_details = []
+    main_text = (version_root / "hidden_attractors" / "cli" / "main.py").read_text(encoding="utf-8-sig")
+    if '"seed": ["lure-centered", "lure-biased"]' not in main_text:
+        public_details.append("seed public commands are not limited to lure-centered/lure-biased")
+    if "machado" in str(project.get("scripts", {})).lower() or "fdf" in str(project.get("scripts", {})).lower():
+        public_details.append("Machado/FDF appears in project.scripts")
+    checks.append(_check("PyPI public CLI scope", "software", not public_details, public_details))
+
+    pypi = manifest.get("pypi_readiness", {})
+    expected = {
+        "package_name": "hidden-attractors-fo",
+        "import_name": "hidden_attractors",
+        "version": "1.0.0",
+        "build_backend": "setuptools.build_meta",
+        "wheel_build": "passed",
+        "sdist_build": "passed",
+        "twine_check": "passed",
+        "wheel_install_smoke": "passed",
+        "testpypi_status": "manual_pending",
+        "pypi_status": "not_uploaded_by_repository",
+    }
+    pypi_details = []
+    if not isinstance(pypi, dict):
+        pypi_details.append("archive manifest pypi_readiness missing or not an object")
+    else:
+        for key, value in expected.items():
+            if pypi.get(key) != value:
+                pypi_details.append(f"pypi_readiness.{key}={pypi.get(key)}")
+    checks.append(_check("archive manifest PyPI readiness", "software", not pypi_details, pypi_details))
+
+    return checks
+
 def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     """Validate release repository/software readiness without changing science artifacts."""
     parser = argparse.ArgumentParser(description="Validate release readiness metadata and hygiene")
@@ -353,6 +509,10 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
         "version_2/release_package/REMAINING_WORK.md",
         "version_2/release_package/ARCTAN_C590_PROMOTION_BOUNDARY.md",
         "version_2/release_package/reproducibility_checklist.md",
+        "version_2/release_package/PYPI_RELEASE_CHECKLIST.md",
+        "version_2/release_package/PUBLISHING_POLICY.md",
+        "version_2/MANIFEST.in",
+        ".github/workflows/package.yml",
         "version_2/release_package/archive_manifest.json",
         "version_2/validation/freeze_audit/final_freeze_pytest_summary.json",
         "version_2/validation/chua_fractional_arctan/README.md",
@@ -460,6 +620,8 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     legacy_public = [name for name in legacy_entries if f"{name} =" in pyproject_text]
     checks.append(_check("single public entry point", "software", entry_ok and not legacy_public, legacy_public))
 
+    checks.extend(_pypi_readiness_checks(root, version_root, manifest))
+
     citation_path = root / "CITATION.cff"
     citation_text = citation_path.read_text(encoding="utf-8-sig") if citation_path.exists() else ""
     doi_ok = "10.17605/OSF.IO/ZGK74" in citation_text and manifest.get("doi") == "10.17605/OSF.IO/ZGK74"
@@ -491,6 +653,7 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     freeze_status = str(manifest.get("freeze_audit_status", ""))
     freeze_summary = _load_json(root / "version_2" / "validation" / "freeze_audit" / "final_freeze_pytest_summary.json")
     freeze_commit = str(freeze_summary.get("git_commit", ""))
+    recorded_freeze_commit = str(manifest.get("last_recorded_freeze_audit_commit", ""))
     freeze_dirty_documented = (
         freeze_summary.get("working_tree_dirty") is False
         or bool(freeze_summary.get("git_diff_sha256"))
@@ -500,8 +663,8 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
         freeze_status == "passed"
         and freeze_summary.get("status") == "passed"
         and freeze_summary.get("freeze_ready") is True
-        and freeze_commit in {manifest_commit, current_head, current_short}
-        and str(manifest.get("last_recorded_freeze_audit_commit", "")) in {manifest_commit, current_head, current_short}
+        and freeze_commit in {recorded_freeze_commit, manifest_commit, current_head, current_short}
+        and recorded_freeze_commit in {freeze_commit, manifest_commit, current_head, current_short}
         and freeze_dirty_documented
     )
     checks.append(_check("freeze audit passed", "software", freeze_ok, [] if freeze_ok else [f"freeze_audit_status={freeze_status}", f"freeze_summary_status={freeze_summary.get('status')}", f"freeze_commit={freeze_commit}", f"working_tree_dirty={freeze_summary.get('working_tree_dirty')}"]))
@@ -582,3 +745,6 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
 
     exit_code = 1 if failures or (args.submission_strict and final_pending) else 0
     sys.exit(exit_code)
+
+
+

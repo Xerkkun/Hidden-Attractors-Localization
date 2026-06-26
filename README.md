@@ -4,10 +4,31 @@
 workflows around hidden-attractor candidates in integer- and commensurate
 Caputo fractional-order Chua/Lur'e systems.
 
-## Install
+## PyPI installation
 
 ```bash
-python -m pip install -e version_2
+python -m pip install hidden-attractors-fo
+```
+
+The Python import name is different from the PyPI project name:
+
+```python
+import hidden_attractors
+```
+
+The installed public CLI is:
+
+```bash
+hidden-attractors --help
+hidden-attractors inspect systems
+hidden-attractors seed --help
+```
+
+## Development installation
+
+From a repository checkout:
+
+```bash
 python -m pip install -e "version_2[dev,analysis,docs,legacy]"
 ```
 
@@ -32,7 +53,7 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 
 - Integer Chua `q=1`: reproduced software reference for the Lur'e route.
 - Non-smooth fractional Chua BDF: proposed methodology; not full Danca 2017 trajectory reproduction.
-- Arctan Chua Wu2023/c590: Wu2023 remains bibliographic; c590 is promoted as radius-limited hiddenness evidence for local radii `r <= 0.3` with 8400 probes and zero contacts.
+- Arctan Chua Wu2023/c590: Wu2023 remains bibliographic; c590 is finite-time evidence under a local/radius-limited contract, not a global mathematical proof.
 
 ## Documentation
 
@@ -49,7 +70,7 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 DF/Nyquist, continuation, plots, FFT/PSD, 0-1 tests, Poincare sections, and
 Lyapunov estimates are diagnostics or seed-generation tools. Hiddenness labels
 require sampled neighborhoods or basin evidence around all equilibria under a
-recorded numerical contract.
+recorded numerical contract. They are not a global mathematical proof.
 
 ## Citation
 
@@ -63,4 +84,3 @@ Citation metadata is provided in `CITATION.cff`, `.zenodo.json`, and
 ## License
 
 MIT.
-

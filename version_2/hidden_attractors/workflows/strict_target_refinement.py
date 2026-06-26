@@ -43,10 +43,30 @@ from .protocol import sample_uniform_ball
 
 
 LEGACY_ROOT = PROJECT_ROOT / "tools" / "legacy"
-if str(LEGACY_ROOT) not in sys.path:
-    sys.path.insert(0, str(LEGACY_ROOT))
 
-from danca2017_chua_abm_replication import DancaChuaConfig, caputo_abm_integrate, chua_rhs_factory  # noqa: E402
+
+def _load_danca_legacy_helpers() -> tuple[Any, Any, Any]:
+    """Load Danca ABM helpers only for source-checkout workflows that need them."""
+    if not LEGACY_ROOT.exists():
+        raise RuntimeError(
+            "Danca ABM legacy helpers require a source checkout with tools/legacy; "
+            "they are not part of the hidden-attractors-fo PyPI public runtime."
+        )
+    legacy_root = str(LEGACY_ROOT)
+    if legacy_root not in sys.path:
+        sys.path.insert(0, legacy_root)
+    try:
+        from danca2017_chua_abm_replication import (  # type: ignore # noqa: PLC0415
+            DancaChuaConfig,
+            caputo_abm_integrate,
+            chua_rhs_factory,
+        )
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            "Danca ABM legacy helpers could not be imported from tools/legacy; "
+            "this workflow is not part of the PyPI wheel public runtime."
+        ) from exc
+    return DancaChuaConfig, caputo_abm_integrate, chua_rhs_factory
 
 
 ROOT_OUTPUTS = PROJECT_ROOT.parent / "outputs"
@@ -284,6 +304,7 @@ def _project_integrator(cfg: dict[str, Any]) -> tuple[Any, Any]:
 
 
 def _danca_integrator(cfg: dict[str, Any]) -> tuple[Any, Any]:
+    DancaChuaConfig, caputo_abm_integrate, chua_rhs_factory = _load_danca_legacy_helpers()
     contract = cfg["contract"]
     dcfg = DancaChuaConfig(
         q=float(contract["q"]),
@@ -715,29 +736,6 @@ def launch(outdir: str | Path, args: argparse.Namespace) -> Path:
 
 def make_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Strict target-reference refinement for basin and equilibrium-ball outputs.")
-    parser.add_argument("--job", choices=["launch", "chunk", "aggregate"], default="launch")
-    parser.add_argument("--mode", choices=["basin-project", "basin-danca", "sphere-project", "sphere-danca"], required=False, default="basin-project")
-    parser.add_argument("--source-dir", default=str(ROOT_OUTPUTS / "equilibrium_zoom_Eplus_160_20260517"))
-    parser.add_argument("--source-csv", default="")
-    parser.add_argument("--output-dir", default="")
-    parser.add_argument("--candidate-id", default=DEFAULT_PROJECT_CANDIDATE)
-    parser.add_argument("--source-labels", default="unknown,target_positive,target_negative")
-    parser.add_argument("--equilibrium-filter", default="")
-    parser.add_argument("--max-rows", type=int, default=0)
-    parser.add_argument("--chunks", type=int, default=4)
-    parser.add_argument("--chunk-id", type=int, default=0)
-    parser.add_argument("--t-final", type=float, default=0.0)
-    parser.add_argument("--t-burn", type=float, default=-1.0)
-    parser.add_argument("--tail-fraction-start", type=float, default=0.5)
-    parser.add_argument("--divergence-norm", type=float, default=120.0)
-    parser.add_argument("--equilibrium-tol", type=float, default=1.0e-3)
-    parser.add_argument("--max-cloud-points", type=int, default=700)
-    parser.add_argument("--max-section-points", type=int, default=250)
-    parser.add_argument("--max-score", type=float, default=0.45)
-    parser.add_argument("--max-cloud-norm", type=float, default=0.35)
-    parser.add_argument("--max-range-rel", type=float, default=0.60)
-    parser.add_argument("--max-fft-rel", type=float, default=0.35)
-    parser.add_argument("--max-section-norm", type=float, default=0.50)
     parser.add_argument("--job", choices=["launch", "chunk", "aggregate"], default="launch")
     parser.add_argument("--mode", choices=["basin-project", "basin-danca", "sphere-project", "sphere-danca"], required=False, default="basin-project")
     parser.add_argument("--source-dir", default=str(ROOT_OUTPUTS / "equilibrium_zoom_Eplus_160_20260517"))
