@@ -106,6 +106,7 @@ This file lists all test files in the test suite, their classification, and plan
 | tests/test_published_case_reproduction.py | Verificar published case reproduction | unit | medium | unit | ninguna | sí | sí | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
 | tests/test_published_continuation_comparison.py | Verificar published continuation comparison | unit | fast | unit | ninguna | no | no | conservar | Verifica contrato o comportamiento único. |
 | tests/test_published_validation_coverage.py | Verificar published validation coverage | unit | fast | unit | ninguna | sí | no | refactorizar | Escribe en outputs reales; cambiar a tmp_path. |
+| tests/test_pypi_packaging.py | Verificar empaquetado y wheel de PyPI | packaging | fast | unit | ninguna | no | no | conservar | Valida estructura del wheel y el proceso de compilación local. |
 | tests/test_quick_start_cli_consistency.py | Verificar consistencia de CLI y guía rápida | hygiene | fast | unit | ninguna | no | no | conservar | Verifica higiene documental de CLI. |
 | tests/test_quick_start_commands.py | Verificar comandos rápidos de CLI y ayuda | cli | fast | unit | ninguna | no | no | conservar | Smoke test del CLI unificado. |
 | tests/test_reference_data.py | Verificar reference data | unit | medium | unit | ninguna | no | sí | conservar | Verifica contrato o comportamiento único. |

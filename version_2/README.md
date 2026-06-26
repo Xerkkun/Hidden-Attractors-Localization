@@ -119,7 +119,7 @@ psi)`, describing-function convention, solver/memory contract, target reference,
 classifier thresholds, and all-equilibrium neighborhood sampling settings. See
 [docs/adapting_new_systems.md](docs/adapting_new_systems.md).
 
-## Scientific scope
+## Scientific Scope
 
 DF, BDF, Nyquist, and continuation generate or transport candidate seeds.
 FFT/PSD, 0-1, Poincare, phase portraits, and Lyapunov estimates are diagnostics.
