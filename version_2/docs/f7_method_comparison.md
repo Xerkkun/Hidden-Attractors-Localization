@@ -1,4 +1,4 @@
-﻿# F7 Method Comparison
+# F7 Method Comparison
 
 F7 compares Lyapunov lanes and F5 diagnostics by configured case. It records
 applicability, missing spectra, validation status, consensus, discrepancies,
@@ -21,7 +21,7 @@ validation/chaos_validation/method_comparison/
 F7 keeps these contracts separate:
 
 | Method | Scope | Boundary |
-|---|---|---|
+| --- | --- | --- |
 | `integer_qr_benettin` | `q=1` only | Not applicable to fractional systems. |
 | `fractional_variational_abm_qr` | Caputo `0<q<1` | Full-history QR; published validation pending. |
 | `fractional_variational_dk2018_block_restart_abm_gs` | Caputo `0<q<1` | DK2018 reproduction lane; does not validate full-history QR. |
@@ -57,4 +57,3 @@ validation/chaos_validation/method_comparison/method_discrepancy_report.md
 ```
 
 F7 supplies comparison evidence to the frozen finite-time Phase F layer.
-

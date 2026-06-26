@@ -1,14 +1,15 @@
-﻿# Notebooks / Notebooks (Cuadernos)
+# Notebooks / Notebooks (Cuadernos)
 
 ## Table of Contents / Índice de Contenidos
+
 - [English Version](#english-version)
-- [Versión en Español](#version-en-espanol)
+- [Versión en Español](#versión-en-español)
 
 ---
 
 ## English Version
 
-# Notebooks
+### Notebooks
 
 Notebook-style examples are useful for teaching, inspection, and report preparation. Keep them light enough to run without launching long numerical jobs.
 
@@ -36,7 +37,7 @@ For phase-space plots, bifurcation post-processing, and optional complexity metr
 
 ## Versión en Español
 
-# Notebooks (Cuadernos)
+### Notebooks (Cuadernos)
 
 Los ejemplos estilo notebook (cuaderno) son útiles para la enseñanza, la inspección y la preparación de reportes. Manténgalos lo suficientemente ligeros como para ejecutarse sin iniciar trabajos numéricos largos.
 

@@ -1,4 +1,4 @@
-﻿# Lyapunov Methods Audit
+# Lyapunov Methods Audit
 
 > **F0 — integer_qr_benettin (frozen)**
 > Phase F0 freezes the existing integer-order QR-Benettin method and
@@ -10,7 +10,7 @@
 ## Frozen method: `integer_qr_benettin`
 
 | Property | Value |
-|---|---|
+| --- | --- |
 | Canonical identifier | `integer_qr_benettin` |
 | Implemented in | `hidden_attractors/analysis/lyapunov.py` |
 | Entry points | `integer_lyapunov_exponents`, `integer_qr_benettin_lyapunov_exponents`, `integer_system_lyapunov_exponents` |
@@ -78,7 +78,7 @@ Both `integer_lyapunov_exponents` and `integer_qr_benettin_lyapunov_exponents`
 accept an optional `q` parameter.  If `abs(q - 1.0) > 1e-9`, a `ValueError`
 is raised:
 
-```
+```text
 ValueError: integer_qr_benettin is valid only for q=1 (integer-order ODE);
 received q=0.99.  Use a fractional Lyapunov method for Caputo q<1
 (e.g., fractional_variational_abm_qr).
@@ -89,7 +89,7 @@ received q=0.99.  Use a fractional Lyapunov method for Caputo q<1
 ## Implementation status of methods
 
 | Method ID | Model | Status |
-|---|---|---|
+| --- | --- | --- |
 | `integer_qr_benettin` | q=1 ODE | Implemented ✓ · Validated ✓ (F0) |
 | `fractional_variational_abm_qr` | Caputo q<1 | Implemented ✓ · NOT validated (F2) |
 | `fractional_variational_dk2018_block_restart_abm_gs` | Caputo q<1 | Implemented native reproduction lane · `published_benchmarks_pending_reproduced_discrepancy` (`RF lambda_3` only) |
@@ -103,6 +103,7 @@ received q=0.99.  Use a fractional Lyapunov method for Caputo q<1
 ### Fractional methods — design and integration
 
 The F2 variational lane computes fractional Caputo Lyapunov spectra as follows:
+
 1. An Adams–Bashforth–Moulton (ABM) predictor-corrector integrates the
    **extended (original + variational) system** with Caputo memory [ref:diethelm_ford_freed_abm_caputo, ref:danca_2017_fractional_hidden].
 2. History-aware QR reorthonormalisation is applied to the variational block.
@@ -117,7 +118,7 @@ These are tracked in the method registry
 
 Static metadata for all known methods is in:
 
-```
+```text
 hidden_attractors/analysis/lyapunov_methods.py
 ```
 
@@ -183,7 +184,7 @@ print(summary.method_info.method_id)  # 'integer_qr_benettin'
 ### Method compatibility table (F1/F2/F3)
 
 | Method | q | memory_mode | Jacobian | Implemented | Status |
-|---|---:|---|---|---|---|
+| --- | ---: | --- | --- | --- | --- |
 | `integer_qr_benettin` | `1` | `not_applicable` | Required | Yes | Validated for integer ODE |
 | `integer_qr_benettin` | `< 1` | any | Required | Yes | Invalid; raises `ValueError` |
 | `fractional_variational_abm_qr` | `0 < q < 1` | `full` / `window` | Required | Yes | Pending published validation |
@@ -236,7 +237,7 @@ to `summary.warnings`.
 
 ### F1/F2/F3 does NOT certify
 
-```
+```yaml
 chaos_certified_by_this_pipeline: false
 hiddenness_certified_by_this_pipeline: false
 ```
@@ -266,20 +267,22 @@ Under Caputo fractional derivatives, the future state depends on the **entire hi
 ### Integration with Caputo ABM
 
 Both state $X$ and variational basis $\Phi$ are integrated stepwise using a history-dependent Caputo Adams–Bashforth–Moulton (ABM) predictor-corrector [ref:diethelm_ford_freed_abm_caputo, ref:danca_2017_fractional_hidden]. The integration weights mirror exactly those in the standard fractional solver:
-* Predictor scale: $h^q / \Gamma(q+1)$
-* Corrector scale: $h^q / \Gamma(q+2)$
-* $b_{j,n+1} = (n+1-j)^q - (n-j)^q$
-* $a_0 = n^{q+1} - (n-q)(n+1)^q$
-* $a_j = (n-j+2)^{q+1} + (n-j)^{q+1} - 2(n-j+1)^{q+1}$ for $j > 0$.
+
+- Predictor scale: $h^q / \Gamma(q+1)$
+- Corrector scale: $h^q / \Gamma(q+2)$
+- $b_{j,n+1} = (n+1-j)^q - (n-j)^q$
+- $a_0 = n^{q+1} - (n-q)(n+1)^q$
+- $a_j = (n-j+2)^{q+1} + (n-j)^{q+1} - 2(n-j+1)^{q+1}$ for $j > 0$.
 
 ### History-consistent (History-aware) QR
 
 At each orthonormalisation step (every `reorthonormalize_every` steps):
+
 1. Compute the QR decomposition of the current variational block:
    $$ \Phi(t_k) = Q R $$
 2. Extract the diagonal elements of $R$ to accumulate the Lyapunov exponents:
    $$ \lambda_i = \frac{1}{T} \sum_{k} \log |R_{ii}^{(k)}| $$
-3. Since Caputo fractional ODEs are non-local, resetting $\Phi(t_k) \leftarrow Q$ without updating the historical steps would create a **history-inconsistent** trajectory. 
+3. Since Caputo fractional ODEs are non-local, resetting $\Phi(t_k) \leftarrow Q$ without updating the historical steps would create a **history-inconsistent** trajectory.
    To maintain coherence with the Caputo memory, we apply the inverse rotation to the **entire history** of variational states stored in the memory window:
    $$ \Phi_j \leftarrow \Phi_j \cdot R^{-1}, \quad \text{for } j \in [0, k] $$
 4. Recalculate all historical derivative values:
@@ -438,4 +441,3 @@ and the experimental QR variant.
 Neither phase validates pending fractional methods or certifies chaos or
 hiddenness. See [F6 Integrated Chaos Validator](f6_integrated_chaos_validator.md)
 and [F7 Method Comparison](f7_method_comparison.md).
-

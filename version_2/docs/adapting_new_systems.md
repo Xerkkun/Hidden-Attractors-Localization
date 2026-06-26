@@ -1,4 +1,4 @@
-﻿# Adapting New Systems
+# Adapting New Systems
 
 This page is the release checklist for applying the library methodology to a
 new scalar Lur'e-compatible system. Chua is the reference family, not a hard
@@ -103,4 +103,3 @@ behavior, update:
 Legacy adapters may preserve old computations for traceability, but new reusable
 logic should live under `hidden_attractors/` and use the unified CLI contract.
 Historical scripts must not be presented as competing release workflows.
-

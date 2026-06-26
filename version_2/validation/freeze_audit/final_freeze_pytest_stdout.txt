@@ -1,83 +1,83 @@
 === STAGE: test_scientific_software_algebra ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_scientific_software_algebra.py -q
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_scientific_software_algebra.py -q
 Exit code: 0
 
 --- STDOUT ---
 .....................                                                    [100%]
-21 passed in 3.44s
+21 passed in 5.27s
 
 --- STDERR ---
 
 
 === STAGE: test_scientific_software_integrators ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_scientific_software_integrators.py -q
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_scientific_software_integrators.py -q
 Exit code: 0
 
 --- STDOUT ---
 .......                                                                  [100%]
-7 passed in 1.55s
+7 passed in 1.45s
 
 --- STDERR ---
 
 
 === STAGE: test_scientific_software_hiddenness ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_scientific_software_hiddenness.py -q
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_scientific_software_hiddenness.py -q
 Exit code: 0
 
 --- STDOUT ---
 .....                                                                    [100%]
-5 passed in 1.50s
+5 passed in 1.47s
 
 --- STDERR ---
 
 
 === STAGE: test_reproducibility_metadata ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_reproducibility_metadata.py -q
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_reproducibility_metadata.py -q
 Exit code: 0
 
 --- STDOUT ---
 ........                                                                 [100%]
-8 passed in 1.98s
+8 passed in 1.93s
 
 --- STDERR ---
 
 
 === STAGE: test_candidate_gate ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_candidate_gate.py -q
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_candidate_gate.py -q
 Exit code: 0
 
 --- STDOUT ---
 ..........                                                               [100%]
-10 passed in 1.48s
+10 passed in 1.54s
 
 --- STDERR ---
 
 
 === STAGE: test_freeze_audit_json_outputs ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_freeze_audit_json_outputs.py -q
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_freeze_audit_json_outputs.py -q
 Exit code: 0
 
 --- STDOUT ---
 ....                                                                     [100%]
-4 passed in 3.90s
+4 passed in 5.40s
 
 --- STDERR ---
 
 
 === STAGE: regression_tests ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest -m regression -q
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest -m regression -q
 Exit code: 0
 
 --- STDOUT ---
 ........                                                                 [100%]
-8 passed, 960 deselected in 2.15s
+8 passed, 960 deselected in 2.99s
 
 --- STDERR ---
 
 
 === STAGE: all_tests ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest -q
-Exit code: 1
+Command: C:\msys64\ucrt64\bin\python.exe -m pytest -q
+Exit code: 0
 
 --- STDOUT ---
 ........................................................................ [  7%]
@@ -88,129 +88,12 @@ sss..................................................................... [ 22%]
 ........................................................................ [ 44%]
 ........................................................................ [ 52%]
 ........................................................................ [ 59%]
-................F.F..................................................... [ 66%]
+........................................................................ [ 66%]
 ...................s.................................................... [ 74%]
 ........................................................................ [ 81%]
 ........................................................................ [ 89%]
 ........................................................................ [ 96%]
 ................................                                         [100%]
-================================== FAILURES ===================================
-_______________ test_manual_freeze_audit_reference_verification _______________
-
-    @pytest.mark.hygiene
-    def test_manual_freeze_audit_reference_verification():
-        # 1. Obsolete counts check
-        docs = active_doc_paths()
-        violations = []
-    
-        for p in docs:
-            content = read(p)
-            content_lower = content.lower()
-            for kw in OBSOLETE_COUNT_KEYWORDS:
-                if kw in content_lower:
-                    violations.append(f"{p.name} -> Mentions obsolete test count keyword '{kw}'")
-    
-        # 2. Require validation/freeze_audit/ in USER_MANUAL.md, README.md, REFERENCE_GUIDE.md
-        primary_files = [
-            ROOT / "USER_MANUAL.md",
-            ROOT / "README.md",
-            ROOT.parent / "README.md",
-            ROOT / "REFERENCE_GUIDE.md",
-        ]
-        # Filter only those that exist
-        existing_primary = [p for p in primary_files if p.exists()]
-    
-        # We must have at least USER_MANUAL.md, REFERENCE_GUIDE.md, and at least one README.md
-        # Let's check existence and content of each of the primary files
-        for p in [ROOT / "USER_MANUAL.md", ROOT / "REFERENCE_GUIDE.md"]:
-            assert p.exists(), f"Primary document '{p.name}' is missing"
-            content = read(p)
-            assert "validation/freeze_audit/" in content, f"Primary document '{p.name}' does not reference 'validation/freeze_audit/'"
-    
-        readme_found = False
-        for p in [ROOT / "README.md", ROOT.parent / "README.md"]:
-            if p.exists():
-                content = read(p)
-                if "validation/freeze_audit/" in content:
-                    readme_found = True
-        assert readme_found, "Neither version_2/README.md nor workspace README.md references 'validation/freeze_audit/'"
-    
-        # 3. Context around 797 / 34 skipped
-        # If a document mentions 797 or 34 skipped, it must mention validation/freeze_audit or freeze audit within �160 chars
-        for p in docs:
-            content = read(p)
-            content_lower = content.lower()
-    
-            # Check '797'
-            for match in re.finditer(r"\b797\b", content_lower):
-                pos = match.start()
-                win_start = max(0, pos - 160)
-                win_end = min(len(content), pos + len(match.group(0)) + 160)
-                sub_window = content_lower[win_start:win_end]
-                if "freeze" not in sub_window:
-                    line_num = content[:pos].count('\n') + 1
-                    violations.append(
-                        f"{p.name}:L{line_num} -> Mention of '{match.group(0)}' is missing 'freeze' or 'freeze_audit' context in nearby window."
-                    )
-    
-            # Check '34 skipped' etc.
-            for pattern in [r"\b34\s+skipped\b", r"\b34\s+omitidas\b", r"\b34\s+skipped\s+tests\b"]:
-                for match in re.finditer(pattern, content_lower):
-                    pos = match.start()
-                    win_start = max(0, pos - 160)
-                    win_end = min(len(content), pos + len(match.group(0)) + 160)
-                    sub_window = content_lower[win_start:win_end]
-                    if "freeze" not in sub_window:
-                        line_num = content[:pos].count('\n') + 1
-                        violations.append(
-                            f"{p.name}:L{line_num} -> Mention of '{match.group(0)}' is missing 'freeze' or 'freeze_audit' context in nearby window."
-                        )
-    
-        # 4. Check audit stdout contents
-        stdout_path = ROOT / "validation/freeze_audit/final_freeze_pytest_stdout.txt"
-        if stdout_path.exists():
-            stdout_content = read(stdout_path)
->           assert "797 passed" in stdout_content, "final_freeze_pytest_stdout.txt does not contain '797 passed'"
-E           AssertionError: final_freeze_pytest_stdout.txt does not contain '797 passed'
-E           assert '797 passed' in '=== STAGE: test_scientific_software_algebra ===\nCommand: C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractio...on[chua_fractional_arctan]\n3 failed, 938 passed, 27 skipped, 11 warnings in 503.43s (0:08:23)\n\n--- STDERR ---\n\n\n'
-
-tests\test_manual_freeze_audit_reference.py:89: AssertionError
-_________________________ test_manual_manifest_values _________________________
-
-    @pytest.mark.hygiene
-    def test_manual_manifest_values():
-        """Verify specific fields and values inside manual_manifest.yaml."""
-        data = load_manifest()
-    
-        assert data["manual_version"] == "1.0.0"
-        assert data["package_version"] == "1.0.0"
-    
-        # Assert entry points
-        assert data["public_cli"] == "hidden-attractors", "public_cli must be exactly 'hidden-attractors'"
-        assert data["entry_point"] == "hidden_attractors.cli.main:main", "entry_point must be 'hidden_attractors.cli.main:main'"
-    
-        # Assert claims source
-        claims_file = ROOT_DIR / data["claims_source"]
-        assert claims_file.exists(), f"Claims source file not found at {claims_file}"
-    
-        # Assert freeze audit
-        audit = data["freeze_audit"]
-        audit_dir = ROOT_DIR / audit["path"]
-        assert audit_dir.exists(), f"Freeze audit directory not found at {audit_dir}"
-    
-        # Check that freeze counts match stdout
-        stdout_file = ROOT_DIR / audit["stdout_txt"]
-        assert stdout_file.exists(), f"Freeze audit stdout file not found at {stdout_file}"
-        stdout_content = stdout_file.read_text(encoding="utf-8")
-    
-        expected_passed = f"{audit['passed']} passed"
-        expected_skipped = f"{audit['skipped']} skipped"
-    
->       assert expected_passed in stdout_content, f"Expected '{expected_passed}' in freeze audit stdout but not found"
-E       AssertionError: Expected '797 passed' in freeze audit stdout but not found
-E       assert '797 passed' in '=== STAGE: test_scientific_software_algebra ===\nCommand: C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractio...on[chua_fractional_arctan]\n3 failed, 938 passed, 27 skipped, 11 warnings in 503.43s (0:08:23)\n\n--- STDERR ---\n\n\n'
-
-tests\test_manual_manifest.py:126: AssertionError
 ============================== warnings summary ===============================
 tests/test_cli_smoke.py::test_deprecated_aliases_do_not_crash[hidden_attractors.protocol_cli-main]
   C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tests\test_cli_smoke.py:55: DeprecationWarning: Deprecated: use 'hidden-attractors protocol <command> ...'
@@ -233,14 +116,6 @@ tests/test_continuation_memory_policy.py::test_continuation_memory_policy_carry
   C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\hidden_attractors\cli\main.py:150: UserWarning: Integrator 'efork3' at q=1.0 redirects to the integer-order 'efork_q1' limit. For pure integer-order work, prefer 'rk4' or 'heun' which are simpler and faster.
     run_scalar_continuation(argv)
 
-tests/test_lyapunov_cli.py::test_lyapunov_cli_lifecycle
-  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Lib\site-packages\nolds\measures.py:263: RuntimeWarning: signal has very low mean frequency, setting min_tsep = 30
-    warnings.warn(msg.format(min_tsep), RuntimeWarning)
-
-tests/test_lyapunov_cli.py::test_lyapunov_cli_lifecycle
-  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Lib\site-packages\nolds\measures.py:292: RuntimeWarning: autocorrelation declined too slowly to find suitable lag, setting lag to 3
-    warnings.warn(msg.format(lag), RuntimeWarning)
-
 tests/test_reproducibility.py::test_protocol_cli_degrades_strong_label_without_lure_and_seed_metadata
   C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tests\test_reproducibility.py:81: DeprecationWarning: Deprecated: use 'hidden-attractors protocol <command> ...'
     assert protocol_main(
@@ -254,10 +129,7 @@ tests/test_validation_contract.py::test_validate_efork_integrator_runs_on_temp_d
     assert main([
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-=========================== short test summary info ===========================
-FAILED tests/test_manual_freeze_audit_reference.py::test_manual_freeze_audit_reference_verification
-FAILED tests/test_manual_manifest.py::test_manual_manifest_values - Assertion...
-2 failed, 939 passed, 27 skipped, 11 warnings in 797.95s (0:13:17)
+941 passed, 27 skipped, 9 warnings in 635.07s (0:10:35)
 
 --- STDERR ---
 

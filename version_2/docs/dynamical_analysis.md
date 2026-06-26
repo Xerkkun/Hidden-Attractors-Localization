@@ -1,4 +1,4 @@
-﻿# Dynamical Analysis
+# Dynamical Analysis
 
 This page documents reusable analysis functions adapted to the current study
 systems. The common trajectory convention is a numeric array or CSV with
@@ -130,4 +130,3 @@ Use these local functions when you already have trajectories from the current
 fractional-order workflows and need report-ready plots or scalar diagnostics.
 Use PyDSTool when the task is true continuation, branch tracking, or a more
 complete dynamical-systems modeling workflow in a compatible Python environment.
-

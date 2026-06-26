@@ -53,8 +53,8 @@ def test_registry_doi_warnings():
         }
     ]
     res = validate_claim_references(claims, strict=True)
-    # Warning should exist since matignon_fractional_stability is pending DOI verification
-    assert any("matignon_fractional_stability" in w and "pending DOI" in w for w in res["warnings"])
+    assert res["bibliographic_validation_status"] == "PASS"
+    assert not any("matignon_fractional_stability" in w and "pending DOI" in w for w in res["warnings"])
 
 
 # 3. Verify ClaimType enum contains required types

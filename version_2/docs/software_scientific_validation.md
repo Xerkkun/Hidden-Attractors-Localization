@@ -1,4 +1,4 @@
-﻿# Scientific Software Validation
+# Scientific Software Validation
 
 This page records the fast scientific-software validation layer. These tests
 check algebra, numerical consistency, and operational classifiers. They do not
@@ -72,4 +72,3 @@ emits `compatible_with_hiddenness_under_tested_radii`. Complete evidence emits
 - D. Matignon, fractional-order stability criterion.
 - Wu et al. (2023), fractional Chua system with arctan nonlinearity.
 - Machado-family FDF: auxiliary extension only, not hiddenness certification.
-

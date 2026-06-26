@@ -1,9 +1,16 @@
 {
-  "generated_at_utc": "2026-06-26T01:37:23.586789+00:00",
-  "command": "hidden-attractors validate release-readiness --submission-strict --json",
+  "generated_at_utc": "2026-06-26T03:07:18.630887+00:00",
+  "command": "python -m hidden_attractors.cli.main validate release-readiness --submission-strict --json",
   "expected_status": "passed",
   "expected_exit_code_submission_strict": 0,
   "reason": "Captured after the final freeze audit is regenerated; this file is a lightweight command sample, not scientific evidence.",
   "not_promoted_evidence": true,
-  "replace_after_execution": false
+  "replace_after_execution": false,
+  "last_verified_status": "passed",
+  "last_verified_submission_strict": true,
+  "last_verified_repository_readiness": "passed",
+  "last_verified_software_package_readiness": "passed",
+  "last_verified_final_submission_readiness": "passed",
+  "last_verified_final_submission_pending": [],
+  "last_verified_checks_ok": 16
 }

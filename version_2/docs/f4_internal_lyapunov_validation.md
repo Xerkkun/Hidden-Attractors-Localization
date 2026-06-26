@@ -1,4 +1,4 @@
-﻿# F4 Internal Lyapunov Validation
+# F4 Internal Lyapunov Validation
 
 F4 is an internal consistency layer for the implemented Lyapunov families. It
 does not promote fractional method validation and does not certify chaos or
@@ -23,7 +23,7 @@ RUN_PUBLISHED_CLONED=1
 ## Stages
 
 | Stage | Evidence | Current interpretation |
-|---|---|---|
+| --- | --- | --- |
 | `F4_1_integer_linear` | Exact 3D and 4D diagonal controls, q=1 cloned GS/QR checks, sensitivity to `h` and `delta` | Controlled linear checks passed |
 | `F4_2_integer_chua_q1` | Promoted q=1 Chua seed, integer QR and q=1 cloned comparisons | Finite and bounded finite-time indicators; no invented published spectrum |
 | `F4_3_fractional_published_dk2018` | Existing DK2018 Lorenz/RF artifact plus separate local full-history QR synthetic controls | Lorenz passes; RF `lambda_3` discrepancy remains explicit |
@@ -74,4 +74,3 @@ fractional methods. Route A is labeled
 `assessed_with_documented_discrepancies`. This preserves rigorous controls,
 published reproduction attempts, and sensitivity sweeps while keeping the
 strict validation boundary explicit. See [Phase F Closure Status](phase_f_closure.md).
-

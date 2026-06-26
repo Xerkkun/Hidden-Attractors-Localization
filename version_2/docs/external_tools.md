@@ -1,18 +1,19 @@
-﻿# External Tools / Herramientas Externas
+# External Tools / Herramientas Externas
 
 ## Table of Contents / Índice de Contenidos
+
 - [English Version](#english-version)
-- [Versión en Español](#version-en-espanol)
+- [Versión en Español](#versión-en-español)
 
 ---
 
 ## English Version
 
-# External Tools
+### External Tools (EN)
 
 The project should reuse and cite established tools instead of copying mature algorithms into this repository. Local code focuses on adapting outputs from the hidden-attractor workflows to those tools and documenting how they fit.
 
-## PyDSTool
+## PyDSTool (EN)
 
 - Project: [PyDSTool](https://pydstool.github.io/PyDSTool/FrontPage.html)
 - Role: dynamical-systems modeling, simulation, phase-plane analysis, continuation, and bifurcation analysis.
@@ -30,7 +31,7 @@ PyDSTool is broader than the local post-processing helpers. The functions in `hi
 
 Do not copy notebook code into this repository unless the license and citation requirements have been reviewed. The local adapter delegates scalar measures to installable libraries such as `nolds` and `antropy`.
 
-## nolds
+## nolds (EN)
 
 - Project: [nolds](https://pypi.org/project/nolds/)
 - Role: nonlinear time-series measures such as sample entropy, correlation dimension, Lyapunov estimates, Hurst exponent, and DFA.
@@ -50,7 +51,7 @@ from hidden_attractors.integrations import compute_complexity_measures
 metrics = compute_complexity_measures(trajectory[:, 1], backend="nolds")
 ```
 
-## antropy
+## antropy (EN)
 
 - Project: [antropy](https://pypi.org/project/antropy/)
 - Role: entropy and fractal diagnostics such as permutation entropy, spectral entropy, sample entropy, Higuchi fractal dimension, and DFA.
@@ -87,11 +88,11 @@ This registry is intentionally small. Add new external tools only when they solv
 
 ## Versión en Español
 
-# Herramientas Externas
+### Herramientas Externas (ES)
 
 El proyecto debe reutilizar y citar herramientas establecidas en lugar de copiar algoritmos maduros en este repositorio. El código local se centra en adaptar las salidas de los flujos de trabajo de atractores ocultos a esas herramientas y documentar cómo encajan.
 
-## PyDSTool
+## PyDSTool (ES)
 
 - Project: [PyDSTool](https://pydstool.github.io/PyDSTool/FrontPage.html)
 - Proyecto: [PyDSTool](https://pydstool.github.io/PyDSTool/FrontPage.html)
@@ -109,7 +110,7 @@ PyDSTool es más amplio que los ayudantes de posprocesamiento locales. Las funci
 
 No copie el código del notebook en este repositorio a menos que se hayan revisado los requisitos de licencia y cita. El adaptador local delega las medidas escalares a bibliotecas instalables como `nolds` y `antropy`.
 
-## nolds
+## nolds (ES)
 
 - Project: [nolds](https://pypi.org/project/nolds/)
 - Install:
@@ -130,7 +131,7 @@ from hidden_attractors.integrations import compute_complexity_measures
 metrics = compute_complexity_measures(trajectory[:, 1], backend="nolds")
 ```
 
-## antropy
+## antropy (ES)
 
 - Project: [antropy](https://pypi.org/project/antropy/)
 - Install:

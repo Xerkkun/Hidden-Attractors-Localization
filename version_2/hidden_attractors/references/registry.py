@@ -78,8 +78,8 @@ REFERENCE_REGISTRY = {
         "doi": None,
         "url": "https://www.researchgate.net/publication/229007412_Stability_results_for_fractional_differential_equations_with_applications_to_signal_processing",
         "topics": ["fractional_matignon_stability", "fractional_stability"],
-        "verification_status": "external_reference_pending",
-        "needs_doi_verification": True,
+        "verification_status": "verified_no_doi_registered",
+        "needs_doi_verification": False,
     },
     "machado_2015_fractional_describing_functions": {
         "key": "machado_2015_fractional_describing_functions",

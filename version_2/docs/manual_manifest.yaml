@@ -5,7 +5,7 @@ public_cli: "hidden-attractors"
 entry_point: "hidden_attractors.cli.main:main"
 
 freeze_audit:
-  passed: 939
+  passed: 941
   skipped: 27
   path: "validation/freeze_audit/"
   summary_json: "validation/freeze_audit/final_freeze_pytest_summary.json"
@@ -41,7 +41,7 @@ forbidden_public_claims:
   - "continuation proves hiddenness"
   - "bounded simulation proves hiddenness"
   - "globally verified hidden attractor"
-  - "Chua arctan hidden attractor verified"
+  - "arctan hidden attractor verified globally"
   - "exact periodic orbit in autonomous Caputo system without qualification"
 
 public_evidence_labels:

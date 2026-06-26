@@ -18,16 +18,21 @@ diagnostic controls against that default, not silent replacements for the
 full-memory ABM reference.
 
 ### A. Deformed Lur'e Continuation (`deformed_lure_continuation`)
+
 *Only available if a describing-function gain seed $k \neq \text{null}$ is provided (e.g., Chua saturation).*
+
 This layer validates the parameter continuation in $\eta \in [0, 1]$ between the auxiliary linear system ($\eta=0$) and the original Chua system ($\eta=1$). It compares:
+
 1. **`last_point_restart`**: Restarts the simulation at each $\eta_i \to \eta_{i+1}$ step using only the last computed point (Caputo history reset).
 2. **`history_window_transport`**: Carries the discrete history window $H_k = \{X(t_{k-M}), \dots, X(t_k)\}$ to the next continuation segment and recomputes the RHS samples under the new field $F_{\eta_{i+1}}(X_j)$.
 
 ### B. Original System Strategy Comparison (`original_system_strategy_comparison`)
+
 *Available even if $k = \text{null}$ (e.g., Chua arctan).*
 This layer compares the `last_point_restart` vs. `history_window_transport` integration strategies on the **original (undeformed) system** directly. It does **not** claim to be a Lur'e parameter continuation (since there is no $k$ to deform the field), but rather evaluates the sensitivity of the original fractional system integration to Caputo history resets across segment transitions. This comparison is particularly useful when analyzing papers that report initial conditions but do not specify or use a continuation auxiliary system.
 
 The phase compares these strategies in terms of:
+
 - dynamic classification of each trajectory segment;
 - attractor statistics (`rho_attractor`, `rho_max`, range, centroid);
 - jump norms between consecutive steps;
@@ -59,6 +64,7 @@ to the true Caputo continuation.
 ## 3. Why `last_point_restart` Is Not a Complete Caputo Continuation
 
 In the `last_point_restart` strategy:
+
 - Only the final state `X(t_final)` of the previous segment is used as `x0`.
 - All historical derivative samples are discarded.
 - The new integration starts with empty history, as if `t_0 = t_final` of the previous segment.
@@ -77,6 +83,7 @@ yields the correct Caputo answer.
 ## 4. What `history_window_transport` Does
 
 In the `history_window_transport` strategy:
+
 - The last `M` discrete states `{X(t_{k-M}), ..., X(t_k)}` are extracted from the
   previous segment's trajectory.
 - When eta changes from `eta_i` to `eta_{i+1}`, the RHS history samples are
@@ -88,6 +95,7 @@ $$f_j^{\text{new}} = F_{eta_{i+1}}(X_j), \quad j = k-M, \ldots, k$$
   so the ABM scheme starts the new segment with a non-empty history.
 
 Outputs report:
+
 - `history_transported: true`
 - `rhs_history_recomputed_after_eta_change: true`
 - `history_length: M`

@@ -85,13 +85,19 @@
     "jacobian_finite_differences": "jacobian_finite_difference_check.csv",
     "eigenvalues": "eigenvalues_matignon_summary.csv",
     "eigenvalue_cross_tool_comparison": "eigenvalues_cross_tool_comparison.csv",
-    "figure": "matignon_margins.png",
-    "complex_plane_figure": "matignon_complex_plane.png",
     "transfer_function": "transfer_function_check.csv",
     "lure_equivalence": "lure_equivalence_check.csv",
     "describing_function": "describing_function_check.csv",
     "machado_mu1": "machado_mu1_check.csv",
-    "seed_family_appendix": "describing_function_families.md"
+    "seed_family_appendix": "describing_function_families.md",
+    "legacy_declared_figures_removed_missing_from_archive": [
+      {
+        "figure": "matignon_margins.png"
+      },
+      {
+        "complex_plane_figure": "matignon_complex_plane.png"
+      }
+    ]
   },
   "verdict": null,
   "provenance": {
@@ -101,5 +107,7 @@
     "classification": "official_validation_run",
     "current_contract": "configs/unified_caputo_protocol.json",
     "current_contract_applied": true
-  }
+  },
+  "run_metadata": null,
+  "metadata_validation_errors": []
 }

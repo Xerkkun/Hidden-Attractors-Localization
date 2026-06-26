@@ -14,7 +14,7 @@
 **Status:** Implemented ✓ · Validated for q=1 ✓
 
 | Property | Value |
-|---|---|
+| --- | --- |
 | Scope | q = 1 (integer-order ODE) only |
 | Variational | Φ' = J(X) Φ (first-order, no Caputo memory) |
 | Orthonormalization | QR |
@@ -46,7 +46,7 @@
 ## Current implementation status of Phase F methods
 
 | Phase | Method ID | Status |
-|---|---|---|
+| --- | --- | --- |
 | F1 | Common API / dispatcher | **Completed** ✓ |
 | F1 | `integer_qr_benettin` dispatch | **Implemented & Validated** ✓ (F0/F1) |
 | F2 | `fractional_variational_abm_qr` | **Implemented ✓ · NOT validated against published benchmarks (F2)** |
@@ -65,7 +65,7 @@
 **Status: Completed ✓**
 
 | Item | Status |
-|---|---|
+| --- | --- |
 | `LyapunovComputationRequest` dataclass | ✓ Implemented |
 | `LyapunovComputationSummary` dataclass | ✓ Implemented |
 | `validate_lyapunov_method_request` | ✓ Implemented |
@@ -89,13 +89,13 @@ Validation configurations and metadata are defined in:
 
 ### Certifications & Status
 
-* `chaos_certified_by_this_pipeline: false`
-* `hiddenness_certified_by_this_pipeline: false`
-* `validated_against_published_benchmarks: false` (F2 pending)
+- `chaos_certified_by_this_pipeline: false`
+- `hiddenness_certified_by_this_pipeline: false`
+- `validated_against_published_benchmarks: false` (F2 pending)
 
 ### F1/F2 does NOT certify
 
-```
+```yaml
 chaos_certified_by_this_pipeline: false
 hiddenness_certified_by_this_pipeline: false
 ```
@@ -111,6 +111,7 @@ QR method and explicit RF/Lorenz published-value cases for the separate DK2018
 block-restart ABM-GS reproduction lane.
 
 ### Status
+
 - Synthetic benchmarks: **Implemented & Validated** (Zero RHS, Linear Stable)
 - Published RF/Lorenz values: **Long native run executed on 2026-05-31**. Lorenz passes quantitatively; RF remains `published_benchmarks_pending_reproduced_discrepancy` because only `lambda_3` exceeds tolerance.
 - Published 4D non-smooth case: **Qualitative only** because the quantitative article data are incomplete.
@@ -118,6 +119,7 @@ block-restart ABM-GS reproduction lane.
 - Fast CI executes native smoke tests only. Published quantitative checks require `RUN_PUBLISHED_LYAPUNOV=1`.
 
 ### Methodological boundary
+
 - `chaos_certified_by_this_pipeline: false`
 - `hiddenness_certified_by_this_pipeline: false`
 
@@ -147,7 +149,7 @@ validation lanes.
 The long GS runner was executed on `2026-06-01` and recorded `24` rows:
 
 | Result class | Count |
-|---|---:|
+| --- | ---: |
 | Quantitative passes (`all abs_error < 0.05`) | `10` |
 | Sign-pattern support passes | `6` |
 | Quantitative discrepancy rows | `8` |

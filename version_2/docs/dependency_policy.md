@@ -1,4 +1,4 @@
-﻿# Dependency Policy
+# Dependency Policy
 
 This project follows the spirit of the [SPEC-0][spec0] rolling-window support policy adopted by the Scientific Python ecosystem (NumPy, SciPy, Matplotlib, etc.). However, to prioritize stability and user convenience across older computing environments (such as legacy HPC clusters), the project adopts a **pragmatic extended support policy** rather than strict, literal compliance with the SPEC-0 rolling drop dates.
 
@@ -17,7 +17,6 @@ This project follows the spirit of SPEC-0 but intentionally keeps an extended-su
 | SciPy >=1.12 | supported | extended lower bound |
 | Matplotlib >=3.8 | supported | extended lower bound |
 
-
 ---
 
 ## Core dependencies
@@ -25,7 +24,7 @@ This project follows the spirit of SPEC-0 but intentionally keeps an extended-su
 Core dependencies (`numpy`, `matplotlib`, `scipy`) are pinned with a **lower bound only**. Upper bounds are intentionally omitted to avoid unnecessary conflicts in user environments.
 
 | Package | Current lower bound | Released | SPEC-0 drop date | Note |
-|---------|--------------------|---------:|----------------:|------|
+| --- | --- | --- | --- | --- |
 | `numpy` | `>=1.26` | 2023-06 | 2025-06 | Extended support |
 | `matplotlib` | `>=3.8` | 2023-09 | 2025-09 | Extended support |
 | `scipy` | `>=1.12` | 2024-01 | 2026-01 | Extended support |
@@ -38,7 +37,7 @@ Core dependencies (`numpy`, `matplotlib`, `scipy`) are pinned with a **lower bou
 ## Optional extras
 
 | Extra | Purpose | Key packages |
-|-------|---------|-------------|
+| --- | --- | --- |
 | `dev` | Test suite | `pytest>=8.0`, `pytest-cov>=5.0` |
 | `analysis` | Nonlinear time-series metrics | `antropy>=0.1.6`, `nolds>=0.6.1`, `scipy>=1.12` |
 | `docs` | Documentation build | `mkdocs>=1.6`, `mkdocs-material>=9.5`, `mkdocstrings[python]>=0.25` |
@@ -84,7 +83,7 @@ The native EFORK backend (`hidden_attractors/native/`) compiles against the
 active Python ABI. Platform-specific notes:
 
 | Platform | Requirement |
-|----------|-------------|
+| --- | --- |
 | Linux / macOS | `gcc` or `clang` with OpenMP (`libomp`) |
 | Windows | `gcc` in `PATH` (e.g. via MSYS2/UCRT64); OpenMP via `libgomp` |
 
@@ -101,4 +100,3 @@ no C toolchain.
 - [Matplotlib release schedule](https://matplotlib.org/stable/devel/release_guide.html)
 
 [spec0]: https://scientific-python.org/specs/spec-0000/
-

@@ -1,4 +1,4 @@
-﻿# Version 2 analysis
+# Version 2 analysis
 
 Este indice marca que analisis pertenecen a la version activa y donde debe
 crecer cada modificacion nueva.
@@ -41,4 +41,3 @@ Cada analisis nuevo debe registrar:
 - salidas escritas;
 - advertencia de validez cuando el resultado sea evidencia numerica y no
   prueba formal.
-

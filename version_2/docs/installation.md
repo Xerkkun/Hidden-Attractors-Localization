@@ -1,26 +1,25 @@
-﻿# Installation / Instalación
+# Installation / Instalación
 
 ## Table of Contents / Índice de Contenidos
+
 - [English Version](#english-version)
-- [Versión en Español](#version-en-espanol)
+- [Versión en Español](#versión-en-español)
 
 ---
 
 ## English Version
 
-# Installation
+### Installation
 
 ## Editable Install
 
-Depending on your current working directory, run one of the following commands:
-
-### A. From the Repository Root Directory
+### A. Editable Install from the Repository Root
 
 ```bash
 python -m pip install -e version_2
 ```
 
-### B. From the `version_2/` Subdirectory
+### B. Editable Install from version_2/ Subdirectory
 
 ```bash
 python -m pip install -e .
@@ -32,13 +31,13 @@ python -m pip install -e .
 
 To run unit tests, validation contracts, and chaos analysis:
 
-### A. From the Repository Root Directory
+### A. Recommended Install from the Repository Root
 
 ```bash
 python -m pip install -e "version_2[dev,analysis,legacy]"
 ```
 
-### B. From the `version_2/` Subdirectory
+### B. Recommended Install from version_2/ Subdirectory
 
 ```bash
 python -m pip install -e ".[dev,analysis,legacy]"
@@ -78,19 +77,17 @@ The library contains native high-performance C solvers under `hidden_attractors/
 
 ## Versión en Español
 
-# Instalación
+### Instalación
 
 ## Instalación Editable
 
-Dependiendo de su directorio de trabajo actual, ejecute uno de los siguientes comandos:
-
-### Desde el Directorio Raíz del Repositorio
+### Desde el Directorio Raíz del Repositorio (Editable)
 
 ```bash
 python -m pip install -e version_2
 ```
 
-### Desde el Subdirectorio `version_2/`
+### Desde el Subdirectorio version_2/ (Editable)
 
 ```bash
 python -m pip install -e .
@@ -102,13 +99,13 @@ python -m pip install -e .
 
 Para ejecutar pruebas unitarias, contratos de validación y análisis de caos:
 
-### Desde el Directorio Raíz del Repositorio
+### Desde el Directorio Raíz del Repositorio (Recomendada)
 
 ```bash
 python -m pip install -e "version_2[dev,analysis,legacy]"
 ```
 
-### Desde el Subdirectorio `version_2/`
+### Desde el Subdirectorio version_2/ (Recomendada)
 
 ```bash
 python -m pip install -e ".[dev,analysis,legacy]"

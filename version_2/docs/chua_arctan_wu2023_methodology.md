@@ -1,4 +1,4 @@
-﻿# Metodología Chua Fraccionario Arctan Wu2023
+# Metodología Chua Fraccionario Arctan Wu2023
 
 Esta página especifica el caso `fractional_chua_arctan_wu2023`. Sus
 artefactos se almacenan de forma independiente al caso Chua no suave; este
@@ -208,4 +208,3 @@ de la reproducción del artículo.
 - Ejemplo: `examples/chua_arctan_wu2023/`.
 - Algebra JSON: `validation/reference_cases/fractional_chua_arctan_wu2023/01_algebra/`.
 - Semillas JSON: `validation/reference_cases/fractional_chua_arctan_wu2023/02_lure_df/`.
-

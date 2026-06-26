@@ -1,4 +1,4 @@
-﻿# Repository Cleanup Status
+# Repository Cleanup Status
 
 The repository has one maintained library surface: `version_2/`.
 
@@ -20,4 +20,3 @@ and C, are guarded by tests enforcing the published third stage:
 ```text
 K3 = F(... + a31*K1 + a32*K2)
 ```
-

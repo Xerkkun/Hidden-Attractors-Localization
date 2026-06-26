@@ -1,4 +1,4 @@
-﻿# F6 Integrated Chaos Validator
+# F6 Integrated Chaos Validator
 
 F6 combines F5 dynamics diagnostics, the Lyapunov method registry, available
 case-specific finite-time local spectra, and F4 internal-validation metadata.
@@ -62,4 +62,3 @@ The three configured Chua cases remain `mixed_diagnostics_inconclusive`.
 Their F5 summaries combine zero-one regular-like behavior, inconclusive
 PSD/FFT, and cloud-like Poincare geometry. F6 reports
 `chaos_evidence_inconclusive` for that conflict.
-

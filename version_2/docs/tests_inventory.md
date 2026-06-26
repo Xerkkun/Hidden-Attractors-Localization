@@ -1,4 +1,4 @@
-﻿# Tests Inventory
+# Tests Inventory
 
 This file lists all test files in the test suite, their classification, and planned actions.
 
@@ -160,5 +160,3 @@ This file lists all test files in the test suite, their classification, and plan
 | tests/test_release_known_remaining_work.py | Verificar pendientes legítimos de release y modos strict/submission-strict | hygiene,release_readiness | fast | unit | ninguna | no | no | conservar | Valida que los pendientes finales declarados no bloquean readiness de repositorio/software. |
 | tests/test_published_reference_claims_are_conservative.py | Verificar que los claims y estados de reproducción publicados sean conservadores | hygiene | fast | unit | ninguna | no | no | conservar | Evita sobreafirmaciones de reproducción en Danca y Wu y valida published_reference_coverage.json. |
 | tests/test_no_absolute_paths_in_promoted_evidence.py | Verificar ausencia de rutas absolutas en evidencia promovida | hygiene,release_readiness | fast | unit | ninguna | no | no | conservar | Escanea JSON/MD/TEX/BIB promovidos y permite solo secciones policy/legacy justificadas. |
-
-

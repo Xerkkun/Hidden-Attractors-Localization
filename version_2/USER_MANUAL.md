@@ -394,4 +394,3 @@ Claim status: <reproduced/validated/candidate/rejected/partial/pending>
 
 For release packaging, also consult `REPRODUCIBILITY.md`, `RELEASE_NOTES.md`,
 `CHANGELOG.md`, `version_2/MANIFEST.md`, and `version_2/release_package/`.
-

@@ -68,7 +68,7 @@ tests/
 ## How to Install WolframScript
 
 1. Download **Wolfram Engine** (free for developers):
-   https://www.wolfram.com/engine/
+   [https://www.wolfram.com/engine/](https://www.wolfram.com/engine/)
 
 2. Activate with a free Wolfram account.
 
@@ -129,15 +129,15 @@ pytest
 
 Each `.wl` case script writes:
 
-| File | Content |
-|------|---------|
-| `<id>_validation_summary.json` | Overall pass/fail + test list |
-| `<id>_symbolic_summary.json` | P, b, r, W(z) as Mathematica expressions |
-| `<id>_equilibria_residuals.csv` | ‖F(Xeq)‖ per equilibrium |
-| `<id>_jacobians.csv` | Jacobian matrix entries at each equilibrium |
-| `<id>_eigenvalues_matignon.csv` | Eigenvalues + Matignon margin per q |
-| `<id>_seed_data.json` | ω₀, k, a₀, d, S, X_seed per candidate |
-| `<id>_seed_summary.csv` | Tabular summary of seed data |
+| File                            | Content                                     |
+| ------------------------------- | ------------------------------------------- |
+| `<id>_validation_summary.json`  | Overall pass/fail + test list               |
+| `<id>_symbolic_summary.json`    | P, b, r, W(z) as Mathematica expressions    |
+| `<id>_equilibria_residuals.csv` | ‖F(Xeq)‖ per equilibrium                    |
+| `<id>_jacobians.csv`            | Jacobian matrix entries at each equilibrium |
+| `<id>_eigenvalues_matignon.csv` | Eigenvalues + Matignon margin per q         |
+| `<id>_seed_data.json`           | ω₀, k, a₀, d, S, X_seed per candidate       |
+| `<id>_seed_summary.csv`         | Tabular summary of seed data                |
 
 The `passed` field in `*_validation_summary.json` must be `true` before
 any seed is used in simulations.
@@ -149,13 +149,13 @@ any seed is used in simulations.
 The transformation matrix **S is never built from eigenvectors**.
 It is obtained by solving the similarity relation:
 
-```
+```text
 P₀ S = S Hq
 ```
 
 where
 
-```
+```text
 P₀ = P + k b rᵀ
 
 Hq = [[zr, -zi, 0],
@@ -168,7 +168,7 @@ zi = ω₀^q sin(q π/2)
 
 The initial seed is then:
 
-```
+```text
 X_seed = a₀ · S[:, 0]
 ```
 
@@ -190,6 +190,7 @@ Copy `validation/wolfram/template/new_lure_system_template.wl` and fill in:
 - Expected equilibria or seed initial guesses
 
 The template automatically:
+
 - Verifies the Lur'e form residual
 - Computes `Ŵ(z) = rᵀ (zI − P)⁻¹ b`
 - Sets up the similarity equation `P₀ S = S Hq` to solve
@@ -201,18 +202,18 @@ The template automatically:
 
 ### Tolerances
 
-| Quantity | Symbolic | Numeric |
-|---------|---------|---------|
-| Lur'e residual | Exactly 0 via FullSimplify | — |
-| Chua saturation equilibrium residual | — | < 1e-20 (high-precision Mathematica) |
-| Chua arctan equilibrium residual | — | < 1e-12 (high-precision Mathematica) |
-| ω₀ Python vs Wolfram | — | < 1e-8 |
-| k and W_q differences | — | < 1e-8 |
-| Describing-function residual \|N_py(a₀_WL)−k_WL\| | — | < 1e-8 |
-| X_seed components | — | < 1e-7 |
-| Eigenvalues | — | < 1e-7 |
-| W(z) transfer function evaluation | — | < 1e-8 |
-| Similarity residual ‖P₀ S − S Hq‖ | — | Matching case `SimilarityTolerance` (< 1e-16) |
+| Quantity                                          | Symbolic                   | Numeric                                       |
+| ------------------------------------------------- | -------------------------- | --------------------------------------------- |
+| Lur'e residual                                    | Exactly 0 via FullSimplify | —                                             |
+| Chua saturation equilibrium residual              | —                          | < 1e-20 (high-precision Mathematica)          |
+| Chua arctan equilibrium residual                  | —                          | < 1e-12 (high-precision Mathematica)          |
+| ω₀ Python vs Wolfram                              | —                          | < 1e-8                                        |
+| k and W_q differences                             | —                          | < 1e-8                                        |
+| Describing-function residual \|N_py(a₀_WL)−k_WL\| | —                          | < 1e-8                                        |
+| X_seed components                                 | —                          | < 1e-7                                        |
+| Eigenvalues                                       | —                          | < 1e-7                                        |
+| W(z) transfer function evaluation                 | —                          | < 1e-8                                        |
+| Similarity residual ‖P₀ S − S Hq‖                 | —                          | Matching case `SimilarityTolerance` (< 1e-16) |
 
 ### Validation Scope vs. Consistency Verification
 

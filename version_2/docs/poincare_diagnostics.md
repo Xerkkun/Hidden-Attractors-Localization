@@ -1,4 +1,4 @@
-﻿# Poincare Diagnostics
+# Poincare Diagnostics
 
 ## Scope
 
@@ -39,7 +39,7 @@ exact periodic orbits in Caputo systems.
 ## Published Cases
 
 | Case | Contract | Initial condition |
-|---|---|---|
+| --- | --- | --- |
 | Chua integer reference | `q=1`, `x=0, xdot>0` | `[5.856145086257356, 0.369331578246782, -8.366536168331880]` |
 | Danca 2017 saturation | `q=0.9998`, `h=0.01`, `t_final=500`, geometric crossing | Reproducible diagnostic seed transferred from the integer case because article coordinates are not reported |
 | Wu 2023 arctan | `q=0.99`, `h=0.01`, `t_final=100`, finite memory `40.0`, geometric crossing | `[13.8, 0.7093, -19.8768]` and its reported symmetric counterpart |
@@ -64,4 +64,3 @@ README.md
 The summary reports geometric labels such as `point_like_or_fixed_return`,
 `curve_like`, and `cloud_like`. These labels are finite-time numerical
 descriptions, not isolated proofs of chaos.
-

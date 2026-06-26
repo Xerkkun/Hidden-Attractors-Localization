@@ -1,4 +1,4 @@
-﻿# F5 Dynamics Diagnostics
+# F5 Dynamics Diagnostics
 
 F5 assembles four complementary finite-time numerical diagnostics:
 boundedness, the 0-1 test, FFT/PSD, and Poincare sections. The combined output
@@ -39,7 +39,7 @@ K = median(K_c)
 The interpretation thresholds are:
 
 | Statistic | Label |
-|---|---|
+| --- | --- |
 | `K > 0.8` | `zero_one_chaotic_candidate` |
 | `K < 0.2` | `zero_one_regular_candidate` |
 | otherwise | `zero_one_inconclusive` |
@@ -115,4 +115,3 @@ inconclusive. See
 F5 supplies standardized diagnostics to the frozen Phase F evidence layer.
 Current cases remain `chaos_evidence_inconclusive` where diagnostics conflict.
 See [Phase F Closure Status](phase_f_closure.md).
-

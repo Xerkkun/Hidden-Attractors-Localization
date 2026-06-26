@@ -1,4 +1,4 @@
-﻿# Published Validation Coverage
+# Published Validation Coverage
 
 This document outlines the coverage status of the published reference cases against the extracted truth data recorded in `docs/published_validation_data_extraction_v1.json`.
 
@@ -25,4 +25,3 @@ This document outlines the coverage status of the published reference cases agai
 - **`reference_data_only`**: The data has been extracted from the publication for documentation/benchmark purposes but the system or model is not built-in to the current release.
 - **`diagnostic_comparison_with_discrepancies`**: Run comparisons are implemented to audit the method behavior, but the results exhibit documented mathematical, procedural, or numerical discrepancies compared to the published values.
 - **`future_extension`**: Reserved for post-release validation branches or future coverage extensions.
-

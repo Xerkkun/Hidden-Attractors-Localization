@@ -51,4 +51,3 @@ python examples/dynamical_analysis_gallery.py --trajectory-csv path/to/trajector
    validation helper.
 6. Link to [API Reference](api_reference.md) when adding new public functions or
    methods used by the example.
-

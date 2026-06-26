@@ -15,19 +15,19 @@ Este informe resume los hallazgos clave de la búsqueda sistemática corregida d
 2. **Homotopía Afín de Weyl-Caputo:**
    Para resolver la inconsistencia DC en la continuación de Caputo, se reemplazó la homotopía lineal estándar por una homotopía afín que mantiene el estado DC $x_{bar}$ y la ganancia efectiva del primer armónico $k_{eff} = N_1$ invariantes para $\eta = 0$:
    $$f_\eta(X) = P_{aff} X + const_{aff} + \eta b \left[ \psi(r^T X) - \psi_0(A, c) - k_{eff}(r^T X - c) \right]$$
-   donde:
-   * $P_{aff} = P + k_{eff} b r^T$
-   * $const_{aff} = b \left[ \psi_0 - k_{eff} c \right]$
-   
-   Esta formulación simplifica exactamente al campo vectorial de Chua original para $\eta = 1$ (error de identidad algebraico $< 10^{-14}$).
+    donde:
+    * $P_{aff} = P + k_{eff} b r^T$
+    * $const_{aff} = b \left[ \psi_0 - k_{eff} c \right]$
+
+    Esta formulación simplifica exactamente al campo vectorial de Chua original para $\eta = 1$ (error de identidad algebraico $< 10^{-14}$).
 
 ---
 
 ## 2. Hallazgos Clave
 
 1. **Impacto en la Continuación Caputo:**
-   - **Caso $m_1 = -1.20, m_0 = -0.1768$ (Rama 0):** Con la homotopía afín corregida, la semilla centrada **logró converger exitosamente** (`ok`), recuperando una órbita periódica que antes fallaba por inconsistencia en la deformación.
-   - **Caso $m_1 = -1.20, m_0 = -0.1768$ (Rama 1):** La órbita asimétrica sesgada ($c = 2.338$) **divergió correctamente** (`failed`), mostrando que la convergencia del run anterior era un artefacto debido a que la homotopía incompleta anuló incorrectamente el bias al inicio del camino.
+   * **Caso $m_1 = -1.20, m_0 = -0.1768$ (Rama 0):** Con la homotopía afín corregida, la semilla centrada **logró converger exitosamente** (`ok`), recuperando una órbita periódica que antes fallaba por inconsistencia en la deformación.
+   * **Caso $m_1 = -1.20, m_0 = -0.1768$ (Rama 1):** La órbita asimétrica sesgada ($c = 2.338$) **divergió correctamente** (`failed`), mostrando que la convergencia del run anterior era un artefacto debido a que la homotopía incompleta anuló incorrectamente el bias al inicio del camino.
 2. **Inestabilidad del Sesgo en Alta Pendiente ($m_1 \le -1.20$):**
    Todas las semillas genuinamente sesgadas ($c \approx \pm 2.0$) divergen bajo la continuación afín de Caputo para regímenes de alta disipación exterior ($m_1 \le -1.20$).
 3. **Persistencia de Órbitas Caóticas:**

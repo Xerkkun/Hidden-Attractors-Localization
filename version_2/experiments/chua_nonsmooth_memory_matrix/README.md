@@ -1,6 +1,7 @@
 # Experimental Non-Smooth Chua Matrix / Matriz Experimental Chua No Suave
 
 ## Table of Contents / Índice de Contenidos
+
 - [English Version](#english-version)
 - [Versión en Español](#versión-en-español)
 

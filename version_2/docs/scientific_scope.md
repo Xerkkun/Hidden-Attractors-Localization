@@ -1,4 +1,4 @@
-﻿# Scientific Scope
+# Scientific Scope
 
 ## Scope
 
@@ -122,7 +122,7 @@ metadata. During the scope review, four conflicting records were reconciled:
 ## Literature comparison table
 
 | Article | System / object | Order | Method in article | Library coverage | Library extension | Library modules / evidence |
-|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- |
 | Chua / Madan reference on Chua circuit family | Base Chua circuit | Integer | Circuit model and chaotic dynamics | Theoretical support only: base model family | Fractional and auditable workflow variants | `hidden_attractors/models/chua.py` |
 | Caputo 1967 | Caputo derivative | Fractional | Dissipation model with fractional derivative | Theoretical support only | Explicit solver and memory contracts | `hidden_attractors/integrations/abm.py`, `hidden_attractors/solvers/history.py` |
 | Matignon 1996 | Fractional local stability | Commensurate fractional | Eigenvalue-angle stability criterion | Theoretical support only | Automated equilibrium classification | `hidden_attractors/verification/stability.py` |
@@ -150,4 +150,3 @@ metadata. During the scope review, four conflicting records were reconciled:
 | Christiansen & Rugh 1997 | Lyapunov spectra | Integer | Continuous Gram-Schmidt orthonormalization | Theoretical support only | Diagnostic comparison context | `hidden_attractors/analysis/lyapunov.py` |
 | Danca & Kuznetsov 2018 | Fractional Lyapunov exponents | Caputo fractional | Extended original-variational system with memory and reorthonormalization | Diagnostic comparison lane with recorded RF discrepancy | Keeps the local full-history QR contract separate | `hidden_attractors/analysis/lyapunov_fractional.py`, `validation/chaos_validation/lyapunov_methods/fractional_variational_dk2018_block_restart_abm_gs_published/` |
 | Fischer, Zourmba & Mohamadou 2020 | Cloned-dynamics Lyapunov spectra | Fractional | Cloned dynamics and Gram-Schmidt | Diagnostic comparison lane; published comparison rows retain documented discrepancies | Separate GS and experimental QR comparison lanes | `hidden_attractors/analysis/lyapunov_cloned.py`, `validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/` |
-

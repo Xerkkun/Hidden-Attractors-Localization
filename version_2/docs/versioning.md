@@ -1,4 +1,4 @@
-﻿# Versioning Policy
+# Versioning Policy
 
 `version_2/` is the only maintained and executable library surface. New code,
 documentation, configurations and validation summaries must use the official
@@ -23,4 +23,3 @@ When a compatibility adapter duplicates official logic:
 3. Write outputs with the official JSON envelope and verdict vocabulary.
 4. Delete the compatibility source when no maintained import or evidence build
    uses it.
-

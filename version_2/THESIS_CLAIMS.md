@@ -5,6 +5,7 @@
 This document serves as the official Claims Matrix for the thesis. It enumerates the scientific claims that can be rigorously supported by the evidence currently available in the repository.
 
 By maintaining this matrix, the project establishes a strict defensive barrier against scientific overclaims in academic text, presentations, publications, and repository documentation. Specifically:
+
 - **Describing function (DF) analysis, Nyquist conditions, and numerical continuation** are heuristic tools for **generating seeds and candidates** only. They do not constitute mathematical proofs of existence or hiddenness.
 - **Hiddenness verification** requires checking the transient behavior starting from tested neighborhoods of **all equilibrium points** of the system.
 - Claims are categorized by their evidence status to maintain a conservative, auditable record of what is proven, candidate-only, or rejected.
@@ -38,6 +39,7 @@ By maintaining this matrix, the project establishes a strict defensive barrier a
 ## Claims Explicitly Not Made
 
 The following claims are strictly **prohibited** as they are not supported by evidence:
+
 - no mathematical proof from DF/Nyquist/continuation alone;
 - no full hiddenness claim from finite-time simulation alone;
 - no global mathematical proof for the arctan basin beyond the tested local-radius contract;
@@ -50,7 +52,8 @@ The following claims are strictly **prohibited** as they are not supported by ev
 
 An attractor candidate may receive the label `hidden_under_tested_neighborhoods` only when the configured neighborhood protocol is completed and no equilibrium-neighborhood trajectory reaches the target attractor under the recorded numerical contract.
 
-### Verification Steps:
+### Verification Steps
+
 1. **Calculate all equilibrium points** of the system.
 2. **Classify equilibria stability** using Matignon's fractional criterion when $q < 1$.
 3. **Simulate trajectories** starting from small spherical shells around each stable/unstable equilibrium.

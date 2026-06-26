@@ -150,7 +150,7 @@ def test_manual_manifest_values():
     required_forbidden = [
         "DF proves hiddenness",
         "globally verified hidden attractor",
-        "Chua arctan hidden attractor verified"
+        "arctan hidden attractor verified globally"
     ]
     for claim in required_forbidden:
         assert claim in forbidden, f"Forbidden claim '{claim}' is missing from forbidden_public_claims"

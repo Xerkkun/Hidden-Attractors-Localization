@@ -145,4 +145,3 @@ The arctan lane separates Wu2023 bibliographic ADM reproduction from the promote
 All functions, classes, and methods defined in `hidden_attractors` are listed in
 [API Reference](api_reference.md). Update that inventory whenever a new symbol is
 added for release.
-

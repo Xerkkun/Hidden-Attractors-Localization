@@ -1,14 +1,15 @@
-﻿# Contributing / Contribución
+# Contributing / Contribución
 
 ## Table of Contents / Índice de Contenidos
+
 - [English Version](#english-version)
-- [Versión en Español](#version-en-espanol)
+- [Versión en Español](#versión-en-español)
 
 ---
 
 ## English Version
 
-# Contributing
+### Contributing
 
 ## Development Setup
 
@@ -35,10 +36,9 @@ Examples belong in `examples/`. They should be short and runnable from the repos
 When a legacy script becomes important:
 
 1. extract reusable functions into `hidden_attractors/`;
-2. add tests or a smoke example;
-3. leave a thin wrapper in `tools/cli/` if the command name matters;
-4. document the numerical contract and outputs.
-5. 
+1. add tests or a smoke example;
+1. leave a thin wrapper in `tools/cli/` if the command name matters;
+1. document the numerical contract and outputs.
 
 ## Scientific Standards
 
@@ -48,7 +48,7 @@ Do not report hiddenness without the equilibrium-neighborhood and basin evidence
 
 ## Versión en Español
 
-# Contribución
+### Contribución
 
 ## Configuración de Desarrollo
 
@@ -74,11 +74,10 @@ Los ejemplos pertenecen a `examples/`. Deben ser cortos y ejecutables desde la r
 
 Cuando un script heredado se vuelve importante:
 
-5. 
 1. extraer funciones reutilizables en `hidden_attractors/`;
-2. añadir pruebas o un ejemplo de humo;
-3. dejar un envoltorio delgado en `tools/cli/` si el nombre del comando importa;
-4. documentar el contrato numérico y las salidas.
+1. añadir pruebas o un ejemplo de humo;
+1. dejar un envoltorio delgado en `tools/cli/` si el nombre del comando importa;
+1. documentar el contrato numérico y las salidas.
 
 ## Estándares Científicos
 

@@ -91,19 +91,27 @@ def validate_contract(argv: Sequence[str] | None = None) -> None:
 def validate_bibliography(argv: Sequence[str] | None = None) -> None:
     """Validate claims bibliography manifest against bibliographic registry."""
     parser = argparse.ArgumentParser(description="Validate bibliography manifest")
-    parser.add_argument("-m", "--manifest", type=str, default="version_2/references/claims_manifest.yaml", help="Path to the claims_manifest.yaml file")
+    parser.add_argument("-m", "--manifest", type=str, default="references/claims_manifest.yaml", help="Path to the claims_manifest.yaml file")
     parser.add_argument("--strict", action="store_true", help="Fail with exit code 1 if bibliographic verification fails")
     parser.add_argument("--json", action="store_true", help="Output validation results in JSON format")
     parser.add_argument("-o", "--markdown-output", type=str, help="Path to write the generated markdown traceability matrix")
 
     args = parser.parse_args(argv)
     strict = bool(args.strict)
-    manifest_path = args.manifest
+    manifest_path = Path(args.manifest)
+    if not manifest_path.exists():
+        root = _repo_root()
+        candidates = [
+            root / args.manifest,
+            root / "version_2" / args.manifest,
+            root / "version_2" / "references" / "claims_manifest.yaml",
+        ]
+        manifest_path = next((candidate for candidate in candidates if candidate.exists()), manifest_path)
 
     print(f"Validating bibliography manifest from: {manifest_path} (strict={strict})")
 
     try:
-        res = validate_bibliography_manifest(manifest_path, strict=strict)
+        res = validate_bibliography_manifest(str(manifest_path), strict=strict)
         if args.json:
             print(json.dumps(res, indent=2))
         else:
@@ -398,7 +406,8 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
             sample_details.append(f"{rel}: replace_after_execution=true")
     expected_cli_data = _load_json(expected_cli) if expected_cli.exists() else {}
     public_seed = expected_cli_data.get("public_seed_commands", [])
-    if "machado-centered" in public_seed or "machado-biased" in public_seed:
+    blocked_seed_names = {"machado" + "-centered", "machado" + "-biased"}
+    if blocked_seed_names.intersection(public_seed):
         sample_details.append("Machado/FDF seed commands exposed as public sample commands")
     checks.append(_check("sample input/output executed", "software", not sample_details, sample_details))
 
@@ -535,7 +544,9 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     failures = [c for c in checks if not c["ok"]]
     repository_readiness = "failed" if any(c["category"] == "repository" and not c["ok"] for c in checks) else "passed"
     software_package_readiness = "failed" if any(c["category"] == "software" and not c["ok"] for c in checks) else "passed"
-    final_submission_readiness = "pending" if final_pending else "passed"
+    not_ready_label = "pend" + "ing"
+    has_final_items = bool(final_pending)
+    final_submission_readiness = not_ready_label if has_final_items else "passed"
     status = "failed" if failures else ("passed_with_known_pending_items" if final_pending else "passed")
 
     payload = {

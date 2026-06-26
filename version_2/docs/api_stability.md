@@ -1,4 +1,4 @@
-﻿# API Stability Tiers
+# API Stability Tiers
 
 `hidden-attractors-fo` uses four formal stability tiers to communicate
 how much users can rely on each part of the API.  Every sub-module starts
@@ -16,7 +16,7 @@ that has been explicitly annotated carries `__api_tier__` as an attribute.
 > deprecation cycle and a version bump.
 
 | Module | Contents |
-|--------|----------|
+| --- | --- |
 | `hidden_attractors.models` | `ChuaParameters`, vector field helpers, equilibria |
 | `hidden_attractors.systems` | `ChaoticSystem`, `LureSystem`, registry API |
 | `hidden_attractors.basins` | `CLASS_LABELS`, `class_label`, `is_target_class` |
@@ -33,7 +33,7 @@ that has been explicitly annotated carries `__api_tier__` as an attribute.
 > will be announced at least one release in advance.
 
 | Module | Contents |
-|--------|----------|
+| --- | --- |
 | `hidden_attractors.analysis` | Lyapunov, spectral, bifurcation, trajectory metrics |
 | `hidden_attractors.seed_generation` | Harmonic-balance seeds — Chua-specific and generic Lur'e |
 | `hidden_attractors.seed_generation.core` | Shared dataclasses, `validate_fractional_order` |
@@ -53,7 +53,7 @@ that has been explicitly annotated carries `__api_tier__` as an attribute.
 > announced.  Pin to a specific commit if you rely on internals.
 
 | Module | Contents |
-|--------|----------|
+| --- | --- |
 | `hidden_attractors.native` | `FractionalChuaBackend`, `BasinBackend` (ctypes wrappers) |
 | `hidden_attractors.parallel` | C compilation helpers, OpenMP flags, process-pool policy |
 | `hidden_attractors.paths` | Repository path constants |
@@ -69,7 +69,7 @@ that has been explicitly annotated carries `__api_tier__` as an attribute.
 > is being gradually migrated into `stable` or `experimental` modules.
 
 | Module | Contents |
-|--------|----------|
+| --- | --- |
 | `hidden_attractors.legacy` | Facade over `tools/legacy/` historical scripts |
 
 ---
@@ -142,4 +142,3 @@ Stability: experimental
     Short explanation of what is and is not guaranteed.
 """
 ```
-

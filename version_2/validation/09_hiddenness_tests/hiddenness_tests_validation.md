@@ -16,7 +16,7 @@ Result summary:
 
 Global labels: `TARGET=1305`, `EQ=1232`, `DIV=1395`, `OTHER=118`.
 
-Verdict: `chaotic_self_excited_candidate_not_hidden_under_tested_equilibrium_neighborhoods`.
+Veredict: `chaotic_self_excited_candidate_not_hidden_under_tested_equilibrium_neighborhoods`.
 
 The candidate is therefore not promoted as hidden under the tested equilibrium-neighborhood contract. It is reported as a chaotic self-excited candidate because contacts with the target candidate were detected from neighborhoods of the external equilibria.
 
@@ -25,5 +25,3 @@ Primary artifacts:
 - `outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/candidate_chaos_hiddenness_summary.json`
 - `outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/hiddenness_decisions.csv`
 - `outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report/ball_sampling_results.csv`
-
-

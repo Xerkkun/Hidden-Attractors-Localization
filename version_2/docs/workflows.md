@@ -1,14 +1,13 @@
-﻿# Workflows — Official Guide / Flujos de Trabajo (Workflows) — Guía Oficial
+# Workflows — Official Guide / Flujos de Trabajo (Workflows) — Guía Oficial
 
 ## Table of Contents / Índice de Contenidos
+
 - [English Version](#english-version)
-- [Versión en Español](#version-en-espanol)
+- [Versión en Español](#versión-en-español)
 
 ---
 
 ## English Version
-
-# Workflows — Official Guide
 
 Consult the `THESIS_CLAIMS.md` to see the current classification of results and defensible claims.
 
@@ -20,29 +19,30 @@ This document details the library's workflows for `hidden-attractors-fo`.
 
 If this is your first time interacting with this repository, the recommended learning and execution path is as follows:
 
-1. **Installation**:Install the library in editable mode with `pip install -e version_2`.
-2. **Official Example**:Run the quick smoke check of Example 1 to verify the pipeline::
+1. **Installation**: Install the library in editable mode with `pip install -e version_2`.
+2. **Official Example**: Run the quick smoke check of Example 1 to verify the pipeline:
 
-```bash
+   ```bash
    cd version_2/examples/chua_nonsmooth_biased_hidden_attractor
    python run_example.py --quick
    ```
 
-3. **Explore Presets**:Run the unified CLI command to see a stable preset::
+3. **Explore Presets**: Run the unified CLI command to see a stable preset:
 
-```bash
+   ```bash
    hidden-attractors run -p chua_fractional
    ```
 
-4. **Read Guides**:Consult the [Quick Start Guide](quick_start.md) to understand where outputs are saved and what rules to follow.
+4. **Read Guides**: Consult the [Quick Start Guide](quick_start.md) to understand where outputs are saved and what rules to follow.
 
 ---
 
 ## 2. Official Example
 
 **Example 1 — Non-Smooth Fractional Chua with Biased Describing Function** is the reference case for searching for candidates compatible with hiddenness. Its official execution entry point is:
-* **File**: [run_example.py](../examples/chua_nonsmooth_biased_hidden_attractor/run_example.py)
-* **Internal logic**:Implemented cleanly in the core library (`hidden_attractors/workflows/biased_chua.py`).
+
+- **File**: [run_example.py](../examples/chua_nonsmooth_biased_hidden_attractor/run_example.py)
+- **Internal logic**: Implemented cleanly in the core library (`hidden_attractors/workflows/biased_chua.py`).
 
 > [!NOTE]
 > **Scientific and Reproducibility Warning:** This example **is not a reproduction of Danca's (2017) system**.
@@ -50,6 +50,7 @@ If this is your first time interacting with this repository, the recommended lea
 >
 
 This example sequentially executes the following phases:
+
 1. **Step 1**:Centered reference search (centered DF, $c=0$).
 2. **Step 2**:Affine homotopy search with biased describing function (BDF, $c \neq 0$).
 3. **Step 3**:Standard hiddenness verification via local sphere sweeping.
@@ -102,14 +103,15 @@ Specialized workflows are not standalone examples or alternative methodologies. 
 > [!WARNING]
 > Specialized workflows are not standalone examples or alternative methodologies. They are low-level interfaces used by the official pipeline, validation tests, or advanced analysis.
 
-### Specialized Workflows Commands:
-* **`hidden-attractors protocol`**:Step-by-step sequential execution of the official protocol (seed generation, continuation, validation, etc.).
-* **`hidden-attractors robustness overlay`**:Numerical robustness analysis varying step sizes and solver conditions.
-* **`hidden-attractors basin refined`**:Fine refinement of local basin of attraction boundaries.
-* **`hidden-attractors hiddenness sphere-controls`**:Hiddenness checking via spherical neighborhood sampling around equilibrium points.
-* **`hidden-attractors basin strict-target-refinement`**:Numerical refinement of the localized attractor.
-* **`hidden-attractors report fractional-run`**:Advanced orchestrator for automatic compilation of execution reports and figure galleries.
-* **`hidden-attractors validate contract`**:Validation checkers for internal consistency.
+### Specialized Workflows Commands
+
+- **`hidden-attractors protocol`**: Step-by-step sequential execution of the official protocol (seed generation, continuation, validation, etc.).
+- **`hidden-attractors robustness overlay`**: Numerical robustness analysis varying step sizes and solver conditions.
+- **`hidden-attractors basin refined`**: Fine refinement of local basin of attraction boundaries.
+- **`hidden-attractors hiddenness sphere-controls`**: Hiddenness checking via spherical neighborhood sampling around equilibrium points.
+- **`hidden-attractors basin strict-target-refinement`**: Numerical refinement of the localized attractor.
+- **`hidden-attractors report fractional-run`**: Advanced orchestrator for automatic compilation of execution reports and figure galleries.
+- **`hidden-attractors validate contract`**: Validation checkers for internal consistency.
 
 ---
 
@@ -147,13 +149,11 @@ times, states, status = integrate(
 Historical migration scripts are intentionally excluded from the active repository.
 The active implementation lives in `version_2/hidden_attractors/`.
 
-* **Legacy Tools**:Retained under `version_2/tools/legacy/` only for backward compatibility in specific C solvers.
+- **Legacy Tools**:Retained under `version_2/tools/legacy/` only for backward compatibility in specific C solvers.
 
 ---
 
 ## Versión en Español
-
-# Flujos de Trabajo (Workflows) — Guía Oficial
 
 Consulta la `THESIS_CLAIMS.md` para ver la clasificación actual de resultados y claims defendibles.
 
@@ -165,29 +165,30 @@ Este documento detalla los flujos de trabajo de la biblioteca `hidden-attractors
 
 Si es la primera vez que interactúas con este repositorio, la ruta recomendada de aprendizaje y ejecución es la siguiente:
 
-1. **Instalación**:Instala la librería en modo editable con `pip install -e version_2`.
-2. **Ejemplo Oficial**:Run the quick smoke check of Example 1 to verify the pipeline:Ejecuta la prueba rápida del Ejemplo 1 para verificar el pipeline:
+1. **Instalación**: Instala la librería en modo editable con `pip install -e version_2`.
+2. **Ejemplo Oficial**: Ejecuta la prueba rápida del Ejemplo 1 para verificar el pipeline:
 
-```bash
+   ```bash
    cd version_2/examples/chua_nonsmooth_biased_hidden_attractor
    python run_example.py --quick
    ```
 
-3. **Exploración de Presets**:Run the unified CLI command to see a stable preset:Ejecuta el comando de CLI unificado para ver un preset estable:
+3. **Exploración de Presets**: Ejecuta el comando de CLI unificado para ver un preset estable:
 
-```bash
+   ```bash
    hidden-attractors run -p chua_fractional
    ```
 
-4. **Lectura de Guías**:Consulta la [Guía de Inicio Rápido](quick_start.md) para comprender dónde se guardan las salidas y qué reglas seguir.
+4. **Lectura de Guías**: Consulta la [Guía de Inicio Rápido](quick_start.md) para comprender dónde se guardan las salidas y qué reglas seguir.
 
 ---
 
 ## Ejemplo Oficial
 
 El **Ejemplo 1 — Chua fraccionario no suave con función descriptiva sesgada** es el caso de referencia para la búsqueda de candidatos compatibles con ocultedad. Su entrada de ejecución oficial es:
-* **Archivo**: [run_example.py](../examples/chua_nonsmooth_biased_hidden_attractor/run_example.py)
-* **Lógica interna**:Implementada de forma limpia en el núcleo de la librería (`hidden_attractors/workflows/biased_chua.py`).
+
+- **Archivo**: [run_example.py](../examples/chua_nonsmooth_biased_hidden_attractor/run_example.py)
+- **Lógica interna**: Implementada de forma limpia en el núcleo de la librería (`hidden_attractors/workflows/biased_chua.py`).
 
 > [!NOTE]
 >
@@ -195,6 +196,7 @@ El **Ejemplo 1 — Chua fraccionario no suave con función descriptiva sesgada**
 > El sistema original de Danca **no fue reproducible debido a la falta de información publicada** (como las coordenadas exactas de las condiciones iniciales del atractor oculto, parámetros del resolvedor DF, y el método de continuación numérica). Por consiguiente, este ejemplo realiza una búsqueda sistemática de candidatos en un sweep de parámetros para identificar vecindades compatibles con ocultedad.
 
 Este ejemplo ejecuta de forma secuencial las siguientes fases:
+
 1. **Paso 1**:Búsqueda centrada de referencia (DF centrada, $c=0$).
 2. **Paso 2**:Búsqueda homotópica afín con función descriptiva sesgada (BDF, $c \neq 0$).
 3. **Paso 3**:Verificación de ocultedad estándar mediante barrido de esferas local.
@@ -247,14 +249,15 @@ Los workflows especializados no son ejemplos independientes ni metodologías alt
 > [!WARNING]
 > Los workflows especializados no son ejemplos independientes ni metodologías alternativas. Son interfaces de bajo nivel usadas por el pipeline oficial, pruebas de validación o análisis avanzados.
 
-### Comandos de Workflows Especializados:
-* **`hidden-attractors protocol`**:Ejecución secuencial y detallada del protocolo oficial (generación de semillas, continuación, validación, etc.).
-* **`hidden-attractors robustness overlay`**:Análisis de robustez numérica variando tamaños de paso y condiciones del resolvedor.
-* **`hidden-attractors basin refined`**:Refinamiento fino de las fronteras de cuencas de atracción locales.
-* **`hidden-attractors published danca-abm-sphere-controls`**:Pruebas de ocultedad en vecindades esféricas alrededor de los puntos de equilibrio.
-* **`hidden-attractors hiddenness strict-target-refinement`**:Refinamiento numérico del atractor localizado.
-* **`hidden-attractors report fractional-run`**:Generador automático de reportes científicos unificados.
-* **`hidden-attractors validate contract`**:Controladores de validación de la consistencia interna.
+### Comandos de Workflows Especializados
+
+- **`hidden-attractors protocol`**: Ejecución secuencial y detallada del protocolo oficial (generación de semillas, continuación, validación, etc.).
+- **`hidden-attractors robustness overlay`**: Análisis de robustez numérica variando tamaños de paso y condiciones del resolvedor.
+- **`hidden-attractors basin refined`**: Refinamiento fino de las fronteras de cuencas de atracción locales.
+- **`hidden-attractors published danca-abm-sphere-controls`**: Pruebas de ocultedad en vecindades esféricas alrededor de los puntos de equilibrio.
+- **`hidden-attractors hiddenness strict-target-refinement`**: Refinamiento numérico del atractor localizado.
+- **`hidden-attractors report fractional-run`**: Generador automático de reportes científicos unificados.
+- **`hidden-attractors validate contract`**: Controladores de validación de la consistencia interna.
 
 ---
 
@@ -289,5 +292,4 @@ times, states, status = integrate(
 
 ## Legacy y Archivo Histórico
 
-* **Herramientas Legacy**:Conservadas bajo `version_2/tools/legacy/` solo para compatibilidad hacia atrás en resolvedores específicos de C.
-
+- **Herramientas Legacy**: Conservadas bajo `version_2/tools/legacy/` solo para compatibilidad hacia atrás en resolvedores específicos de C.

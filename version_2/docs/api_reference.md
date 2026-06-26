@@ -1,4 +1,4 @@
-﻿# API Reference
+# API Reference
 
 This file is the release inventory for the active Python library under `version_2/hidden_attractors`. It is generated from Python AST parsing, so it lists symbols defined in source files without importing modules or compiling native backends.
 
@@ -662,7 +662,7 @@ Source: `version_2/hidden_attractors/lure/describing_function.py`
 | Kind | Name | Line | Visibility | Signature / Declaration | Documentation |
 | --- | --- | ---: | --- | --- | --- |
 | `class` | `DescribingFunctionResult` | 10 | `public/module` | `class DescribingFunctionResult(object)` | Internal helper or undocumented symbol; not a stable public contract unless exported elsewhere. |
-| `function` | `N_quadrature` | 16 | `public/module` | `N_quadrature(A: float, psi_func) -> float` | Evaluate describing function by standard numerical quadrature: N(A) = (2 / (pi * A)) * integral_0^pi psi(A * cos(theta)) * cos(theta) dtheta |
+| `function` | `N_quadrature` | 16 | `public/module` | `N_quadrature(A: float, psi_func) -> float` | Evaluate describing function by standard numerical quadrature: N(A) = (2 / (pi \* A)) \* integral_0^pi psi(A \* cos(theta)) \* cos(theta) dtheta |
 | `function` | `N_segmented_quadrature` | 29 | `public/module` | `N_segmented_quadrature(A: float, psi_func, theta_breaks: List[float]) -> float` | Evaluate describing function by segmented numerical quadrature: Integrate piecewise sections delimited by theta_breaks in [0, pi] to avoid roundoff errors. |
 | `function` | `get_describing_function_capabilities` | 48 | `public/module` | `get_describing_function_capabilities(system: Any) -> Dict[str, Any]` | Retrieve capabilities dictionary or define dynamic default maps. |
 | `function` | `evaluate_describing_function` | 68 | `public/module` | `evaluate_describing_function(system: Any, A: float, mode: str='auto') -> DescribingFunctionResult` | General evaluation interface resolving closed-form, piecewise or quadrature modes. |
@@ -1938,4 +1938,3 @@ Source: `version_2/hidden_attractors/workflows/strict_target_refinement.py`
 ## Maintenance Rule
 
 When a new function, method, or class is added under `hidden_attractors`, update this reference before release. If the symbol participates in public workflows, also update `docs/quick_start.md`, `docs/getting_started.md`, `USER_MANUAL.md`, and the unified report summary.
-

@@ -34,4 +34,3 @@ Older copied figures formerly stored under
 `docs/assets/figures/chua_fractional_report/` were local documentation assets.
 They are not the active source for the report figures after the migration to
 `library_figures/by_report/`.
-

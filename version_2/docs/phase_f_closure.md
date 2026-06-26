@@ -1,4 +1,4 @@
-﻿# Phase F Closure Status
+# Phase F Closure Status
 
 Phase F is frozen as a structured finite-time chaos-evidence layer. It reports
 strong, supported, inconclusive or regular dynamics according to Lyapunov,
@@ -41,4 +41,3 @@ auditable outputs with explicit limitations.
 Evidence levels are numerical and tied to the recorded solver, memory and time
 horizon. Hiddenness is assessed separately through sampled-neighborhood
 candidate gates.
-

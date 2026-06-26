@@ -22,6 +22,7 @@ The GitHub Actions CI matrix for the release cleanup has passed. This confirms p
 The project keeps a small hygiene/readiness test suite because numerical tests do not protect repository publication boundaries. These tests guard against retracking local outputs, local manuscripts, absolute paths, legacy CLI entry points, unpromoted validation outputs, and overclaimed release metadata.
 
 To run these tests specifically:
+
 ```bash
 python -m pytest -q -m "hygiene"
 python -m pytest -q -m "release_readiness"

@@ -132,5 +132,3 @@ Citation metadata is provided at the repository root in `CITATION.cff`,
 `.zenodo.json`, and `codemeta.json`.
 
 Archived DOI: `10.17605/OSF.IO/ZGK74`.
-
-

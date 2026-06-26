@@ -201,7 +201,7 @@ python -m pytest
 
 ## Output Structure
 
-```
+```text
 validation/outputs/fractional_memory_validation/<case_id>/
 ├── memory_window_summary.csv      # one row per (IC, memory_mode)
 ├── memory_comparison.csv          # window vs. full comparison per IC

@@ -1,4 +1,4 @@
-﻿# Fractional Non-Smooth Chua Algebra Validation
+# Fractional Non-Smooth Chua Algebra Validation
 
 This page records the algebraic audit of the non-smooth fractional Chua case
 at `q=0.9998`. It validates equations, equilibria, regional Jacobians, the
@@ -19,7 +19,7 @@ f(x) = m1*x + (m0-m1)*sat(x)
 with
 
 | Parameter | Value |
-|-----------|------:|
+| --- | --- |
 | `alpha` | `8.4562` |
 | `beta` | `12.0732` |
 | `gamma` | `0.0052` |
@@ -41,7 +41,7 @@ numeric reference for this case.
 Python, MATLAB, and Wolfram reproduce the same equilibria:
 
 | Equilibrium | State |
-|-------------|-------|
+| --- | --- |
 | `E0` | `(0, 0, 0)` |
 | `E+` | `(6.588307886539, 0.002836402256, -6.585471484283)` |
 | `E-` | `(-6.588307886539, -0.002836402256, 6.585471484283)` |
@@ -50,15 +50,15 @@ At `q=0.9998`, the Matignon threshold is `1.570482167530` radians. The
 central equilibrium is stable and the external equilibria are unstable:
 
 | Region | Eigenvalues | Result |
-|--------|-------------|--------|
+| --- | --- | --- |
 | Inner, `E0` | `-7.9587261113`, `-0.0038088643 +/- 3.2494460858 i` | stable |
 | Outer, `E+`, `E-` | `2.2193492642`, `-0.9915895521 +/- 2.4067596392 i` | unstable |
 
 ## Completion Matrix
 
 | Element | Acceptance tolerance | Recorded maximum error | Status |
-|---------|---------------------:|-----------------------:|:------:|
-| Equilibrium substitution in Python, MATLAB, Wolfram | `||F(E_i)||_2 < 1e-10` | `1.10e-15` | passed |
+| --- | --- | --- | --- |
+| Equilibrium substitution in Python, MATLAB, Wolfram | `\|\|F(E_i)\|\|_2 < 1e-10` | `1.10e-15` | passed |
 | Analytic Jacobian cross-tool agreement | relative error `< 1e-10` | `0.00e+00` | passed |
 | Python analytic vs. central finite-difference Jacobian | relative error `< 1e-6` | `2.47e-09` | passed |
 | Eigenvalues in Python, MATLAB, Wolfram | relative error `< 1e-8` | below `1e-15` | passed |
@@ -101,7 +101,7 @@ The two centered describing-function branches reproduced by MATLAB and
 Python are:
 
 | Branch | `omega0` | `k` | `a0` | Initial seed |
-|--------|---------:|----:|-----:|--------------|
+| --- | --- | --- | --- | --- |
 | 1 | `2.040286051079` | `0.210022792962` | `5.851767785486` | `(5.8517677855, 0.3704086003, -8.3609729344)` |
 | 2 | `3.244926730975` | `0.956945404928` | `1.053016610257` | `(1.0530166103, 0.8532234830, -1.5095086807)` |
 
@@ -153,4 +153,3 @@ independent validation stages:
 - N. Sene, "Mathematical Views of the Fractional Chua's Electrical Circuit
   Described by the Caputo-Liouville Derivative," *Revista Mexicana de
   Fisica*, 67(1), 91--99, 2021.
-

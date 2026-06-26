@@ -14,7 +14,7 @@ hidden_attractors.plotting.export.export_figure
 
 Esto garantiza que las figuras se guarden en la ubicación canónica estructurada bajo:
 
-```
+```text
 version_2/library_figures/
 ```
 
@@ -25,14 +25,12 @@ y que se generen automáticamente los archivos de metadatos JSON y los manifiest
 ## 1.1. Reglas de Rutas y Canonicidad
 
 Para garantizar la portabilidad y limpieza de la evidencia de validación:
+
 * **Ubicación Canónica**: Todas las figuras promovidas deben referenciarse utilizando rutas relativas al repositorio dentro de la carpeta `version_2/library_figures/`.
 * **Prohibición de Rutas Personales**: Está estrictamente prohibido incluir rutas absolutas locales personales (por ejemplo, `C:/[Usuarios]/...`, `/[Usuarios]/...`, `Desktop/[Codigos]/...`) en el código, pruebas, manifiestos o archivos de validación promovidos.
-
 * **Prohibición de Referencias a Directorios Locales LaTeX**: Los directorios de reportes LaTeX en la raíz del proyecto (como los informes de trabajo locales) son estrictamente locales y no están rastreados por Git. No se permite referenciar ningún archivo dentro de estos directorios en código, pruebas, manifiestos, reportes oficiales o archivos de resumen de validación (JSON/MD). Cualquier referencia heredada a estos directorios ha sido eliminada por higiene del repositorio.
 
-
 ---
-
 
 ## 2. Diferencia entre Figura Promovida y Figura Legacy
 
@@ -72,6 +70,7 @@ Para garantizar la portabilidad y limpieza de la evidencia de validación:
 ## 4. Relación con Reproducibilidad y Ejecución de Pruebas
 
 Para evitar que las pruebas de integración o unitarias contaminen la carpeta de figuras oficial (`version_2/library_figures`):
+
 1. Ninguna prueba debe escribir en el directorio real de figuras.
 2. Todas las pruebas que invoquen funciones de ploteo o exportación deben redirigir temporalmente las rutas utilizando `tmp_path` y `monkeypatch` en pytest.
 3. Se verificará en las pruebas de higiene que no ocurran escrituras no autorizadas.
@@ -83,4 +82,3 @@ Para evitar que las pruebas de integración o unitarias contaminen la carpeta de
 > [!WARNING]
 > **Una figura no constituye una prueba de ocultedad.**
 > Las figuras son meras representaciones visuales complementarias. La clasificación de ocultedad o auto-excitación de un atractor depende estrictamente de la evaluación numérica rigurosa de las vecindades de todos los equilibrios del sistema bajo el contrato numérico establecido, y no de análisis cualitativos de gráficos tridimensionales.
-

@@ -1,4 +1,4 @@
-﻿# Cloned Dynamics Lyapunov Indicators
+# Cloned Dynamics Lyapunov Indicators
 
 ## F3 scope
 
@@ -44,7 +44,7 @@ variational system are used.
 ## Implemented methods
 
 | Method | Orthonormalization | Status |
-|---|---|---|
+| --- | --- | --- |
 | `fractional_cloned_dynamics_abm_gs_published` | Modified Gram-Schmidt | Implemented; `published_benchmarks_pending_discrepancy` |
 | `fractional_cloned_dynamics_abm_qr` | QR | Experimental internal comparison |
 
@@ -76,7 +76,7 @@ metadata.
 ## Fischer 2020 extracted values
 
 | System | Orders | Published LE | Published K01 |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Jerk | `[1,1,1]` | `[0.1899, 0.0413, -0.4246]` | `0.9866` |
 | Jerk | `[0.9,0.9,0.9]` | `[-0.0042, -0.0267, -0.4656]` | `0.0758` |
 | Jerk | `[0.8,0.8,0.8]` | `[-0.0047, -0.2864, -0.3634]` | `0.0151` |
@@ -137,7 +137,7 @@ python validation/python/run_cloned_dynamics_benchmarks.py \
 ```
 
 | Item | Result |
-|---|---|
+| --- | --- |
 | Rows executed | `24` |
 | Quantitative passes (`all abs_error < 0.05`) | `10` |
 | Sign-pattern support passes | `6` |
@@ -183,4 +183,3 @@ validation/outputs/lyapunov_benchmarks/fractional_cloned_dynamics_abm_gs_publish
 The directory contains `published_benchmark_results.csv`,
 `published_benchmark_all_rows_results.csv`, `validation_summary.json`,
 `run_metadata.json`, and representative `convergence_by_block.csv`.
-

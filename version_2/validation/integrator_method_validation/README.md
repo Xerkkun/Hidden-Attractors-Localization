@@ -7,10 +7,10 @@ This phase validates each numerical integration method against **exact solutions
 
 It is **distinct** from `validation/integrator_crosscheck`:
 
-| Phase | What it answers |
-|---|---|
-| **integrator_method_validation** | Is the integrator mathematically correct? Does it converge at the right rate against known solutions? |
-| **integrator_crosscheck** | Are different integrators consistent with each other on chaotic systems? |
+| Phase                           | What it answers                                                                                             |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **integrator_method_validation** | Is the integrator mathematically correct? Does it converge at the right rate against known solutions?      |
+| **integrator_crosscheck**        | Are different integrators consistent with each other on chaotic systems?                                    |
 
 Method validation answers: *"Is the solver right?"*
 Crosscheck answers: *"Do independent solvers agree on chaotic dynamics?"*
@@ -21,7 +21,7 @@ Crosscheck answers: *"Do independent solvers agree on chaotic dynamics?"*
 
 EFORK3 (Caputo fractional, 3-stage) is already validated at a high level in:
 
-```
+```text
 tools/validation/validate_efork_integrator.py
 ```
 
@@ -33,7 +33,7 @@ That script:
 
 **This phase does not re-validate EFORK3** (to avoid duplication). It records its status as:
 
-```
+```text
 validated_elsewhere_against_published_errors
 reference_script: tools/validation/validate_efork_integrator.py
 ```
@@ -122,12 +122,12 @@ Skipped automatically if `scipy` is unavailable (though `scipy` is a core depend
 
 ## Dependencies
 
-| Dependency | Required? | Purpose |
-|---|---|---|
-| `numpy` | **Required** | All numerical computations |
-| `scipy` | Optional (but installed) | `solve_ivp` comparison for RK4/B4 |
-| `pytest` | Required for tests | Test runner |
-| `pyyaml` | Required | YAML config loading |
+| Dependency | Required?               | Purpose                            |
+| ---------- | ----------------------- | ---------------------------------- |
+| `numpy`    | **Required**            | All numerical computations         |
+| `scipy`    | Optional (but installed) | `solve_ivp` comparison for RK4/B4   |
+| `pytest`   | Required for tests      | Test runner                        |
+| `pyyaml`   | Required                | YAML config loading                |
 
 Nothing is downloaded at runtime.
 

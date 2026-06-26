@@ -84,4 +84,3 @@ contracted workflow.
 `tools/legacy/` preserves historical scripts for traceability. It is not a
 release API and must not be used as a competing solver path for new promoted
 results.
-

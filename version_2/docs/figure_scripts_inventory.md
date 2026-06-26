@@ -1,4 +1,4 @@
-﻿# Inventario de Scripts de Figuras
+# Inventario de Scripts de Figuras
 
 Este inventario recopila los scripts de generación de figuras en el repositorio, su clasificación, entradas/salidas y el plan de migración/archivo correspondiente.
 
@@ -55,5 +55,4 @@ Los siguientes scripts/módulos pertenecen a otros flujos de trabajo específico
 3. **`version_2/hidden_attractors/workflows/refined_basin.py`**
    - *Razón*: Refinamiento de cuencas de atracción de alta resolución que guarda buffers temporales de grillas antes de la visualización final centralizada.
 4. **Módulos de ploteo genéricos (`version_2/hidden_attractors/plotting/plot_*.py`)**
-   - *Razón*: Funciones genéricas de ploteo de la librería (Nyquist, cuencas, diagramas de bifurcación) que configuran títulos informativos dinámicos dependientes de la configuración del sistema actual para facilitar la depuración interactiva.
-
+    - *Razón*: Funciones genéricas de ploteo de la librería (Nyquist, cuencas, diagramas de bifurcación) que configuran títulos informativos dinámicos dependientes de la configuración del sistema actual para facilitar la depuración interactiva.

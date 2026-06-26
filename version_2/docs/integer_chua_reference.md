@@ -1,4 +1,4 @@
-﻿# Integer Chua `q=1` Reference
+# Integer Chua `q=1` Reference
 
 The integer-order non-smooth Chua case, whose characteristic is linear by pieces, is the reference system from
 which the reusable workflow was developed. It exercises the same scientific
@@ -26,7 +26,7 @@ f(x) = m1 x + (m0 - m1) sat(x)
 ```
 
 | Parameter | Value |
-|-----------|------:|
+| --- | --- |
 | `alpha` | 8.4562 |
 | `beta` | 12.0732 |
 | `gamma` | 0.0052 |
@@ -60,7 +60,7 @@ r  = [1.0, 0.0, 0.0]^T
 ```
 
 | Check | Recorded value |
-|-------|---------------:|
+| --- | --- |
 | Lur'e field residual | `0.0` |
 | Selected frequency `omega0` | `2.039186939959001` |
 | Selected gain `k` | `0.209867354515084` |
@@ -83,7 +83,7 @@ I and display `omega0=2.0392`, `k=0.2098`, `a0=5.8576`, and
 rounded paper values as the reference:
 
 | Quantity | Python result | Paper value | Absolute difference | Relative difference |
-|----------|--------------:|------------:|--------------------:|--------------------:|
+| --- | --- | --- | --- | --- |
 | `omega0` | 2.039186939959001 | 2.0392 | 1.3060e-05 | 0.000640% |
 | `k` | 0.209867354515084 | 0.2098 | 6.7355e-05 | 0.032104% |
 | `a0` | 5.856145086257356 | 5.8576 | 1.4549e-03 | 0.024838% |
@@ -120,7 +120,7 @@ The stored Python output also compares the seed frequency to the dominant
 frequency measured from the final `x(t)` trajectory:
 
 | Estimate | Frequency (rad/s) | Difference from `omega0` |
-|----------|------------------:|-------------------------:|
+| --- | --- | --- |
 | Nyquist/DF seed | 2.039186939959001 | - |
 | Direct FFT of `x(t)` | 2.303578659448180 | 12.9655% |
 | Welch PSD of `x(t)` | 2.300971181828511 | 12.8377% |
@@ -142,7 +142,7 @@ hiddenness runs sample the interior of balls and generate `xy`, `xz`, and
 `yz` basin slices at close and large windows. The stored global classification is:
 
 | Class | Count |
-|-------|------:|
+| --- | --- |
 | `EQ` | 369 |
 | `DIV` | 69 |
 | `OTHER` | 66 |
@@ -159,7 +159,7 @@ times.
 ## Verification Sources
 
 | Source | Evidence status | Use in this package |
-|--------|-----------------|---------------------|
+| --- | --- | --- |
 | `validation/reference_cases/chua_integer_q1/` | promoted baseline | Machine-readable JSON/CSV and figures for the corrected `q=1` run. |
 | Report `170526.pdf`, dated 17 May 2026 | registered copy | Theoretical derivation and harmonic-seed record; earlier integration-dependent numbers are superseded by the corrected run. |
 | MATLAB `verifica_chua_entero.m` | locally executed | Independent Lur'e, Nyquist/DF, canonical-transform, and ODE comparison script; its logged `omega0`, `k`, and `a0` reproduce the stored branch. |
@@ -200,4 +200,3 @@ hidden-attractors validate contract \
   integer-order Chua reference procedure.
 - F. Ghoreishi, R. Ghaffari, and N. Saad, "Fractional Order Runge-Kutta
   Methods," *Fractal and Fractional*, 7, article 245 (2023).
-

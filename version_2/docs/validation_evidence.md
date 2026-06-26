@@ -52,13 +52,10 @@ methodology.
 All figures supporting validation evidence are promoted to the canonical `library_figures/` directory under strict reproducibility guidelines. Direct modifications are prohibited. See the [Figure Export Policy](figure_export_policy.md) for details.
 
 ### Path & Figures Portability Rules
+
 * **Canonical Pathing**: All promoted validation evidence must use relative paths under the repository.
 * **Prohibition of Local Paths**: Personal absolute paths (e.g., `/[UserDir]/`, `C:\[UserDir]\`, `[Desktop]\`) are strictly prohibited in code, tests, and promoted validation.
-
 * **Prohibición de Referencias a Directorios Locales LaTeX**: Los directorios de reportes LaTeX en la raíz del proyecto (como los informes de trabajo locales) son estrictamente locales y no están rastreados por Git. No se permite referenciar ningún archivo dentro de estos directorios en código, pruebas, manifiestos, reportes oficiales o archivos de resumen de validación (JSON/MD). Cualquier referencia heredada a estos directorios ha sido eliminada por higiene del repositorio.
-
-
-
 
 ## Uniform Summary JSON
 
@@ -101,7 +98,7 @@ all six close/large basin slices. Missing any one condition yields
 ## Evidence Per Stage
 
 | Stage | Required interpretation |
-|---|---|
+| --- | --- |
 | `numerical_contract` | Effective solver/backend/memory contract and integrator benchmarks. |
 | `algebraic_validation` | Equilibria, Jacobians, Matignon margins, transfer function and scalar nonlinearity. |
 | `seed_generation` | Seed records from implemented families; Machado/FDF remains documented as planned/theoretical unless explicitly promoted by a future release. |
@@ -227,11 +224,9 @@ to the recorded solver, memory and time horizon. See
 
 Release preparation separates four layers:
 
-- Promoted evidence lives under `validation/` and is controlled by the validation contract.
-- Promoted scientific figures live under `library_figures/` and must be generated through `hidden_attractors.plotting.export.export_figure`.
-- Local and exploratory outputs live under `outputs/`, `validation_outputs/`, `runs*/`, or `figures/` and remain outside Git.
-- Local writing drafts and templates remain outside the tracked software repository and do not create new scientific claims.
+* **Promoted evidence**: lives under `validation/` and is controlled by the validation contract.
+* **Promoted scientific figures**: live under `library_figures/` and must be generated through `hidden_attractors.plotting.export.export_figure`.
+* **Local and exploratory outputs**: live under `outputs/`, `validation_outputs/`, `runs*/`, or `figures/` and remain outside Git.
+* **Local writing drafts and templates**: remain outside the tracked software repository and do not create new scientific claims.
 
 The canonical arctan Chua package `validation/chua_fractional_arctan/` promotes the c590 route as `hiddenness_supported_under_tested_neighborhoods` for local radii `r <= 0.3`, with 8400 finite probes and zero target contacts around all equilibria. Macro radii `1.0` and `2.0` remain extended audit evidence; the claim is finite and radius-limited, not a global mathematical proof of hiddenness.
-
-

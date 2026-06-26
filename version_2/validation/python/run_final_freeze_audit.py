@@ -51,7 +51,7 @@ def run_stage(name: str, args: list[str]) -> tuple[int, str]:
     env = os.environ.copy()
     env.update({"TMP": str(temp_root), "TEMP": str(temp_root), "TMPDIR": str(temp_root)})
     print(f"Running stage {name} via: {' '.join(cmd)}")
-    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env)
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env, cwd=PROJECT_ROOT)
     stdout_and_stderr = f"=== STAGE: {name} ===\n"
     stdout_and_stderr += f"Command: {' '.join(cmd)}\n"
     stdout_and_stderr += f"Exit code: {result.returncode}\n\n"

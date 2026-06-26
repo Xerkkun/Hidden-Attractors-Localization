@@ -7,6 +7,7 @@ This document is the master reference for the unified `hidden_attractors` librar
 ## 1. Library Architecture & Stability Tiers
 
 The library separates user-facing interfaces from experimental features and internal engines:
+
 * **Stable API** (`stable`): Core system definitions, registry utilities, and I/O managers. (e.g. `hidden_attractors.systems`, `hidden_attractors.models`).
 * **Experimental API** (`experimental`): High-level workflows, numerical integration wrappers, and diagnostic analyzers (e.g. `hidden_attractors.workflows`, `hidden_attractors.analysis`, `hidden_attractors.plotting`).
 * **Internal API** (`internal`): Compiled C-backend bindings, parallel worker pools, and path resolution caches (e.g. `hidden_attractors.native`, `hidden_attractors.cli`).
@@ -18,7 +19,7 @@ reproducible analysis interfaces with narrower support guarantees than the prima
 commands are documented for traceability rather than as stable APIs.
 
 | Command / Subcommand | Group | Real options or usage | Documentary status |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `hidden-attractors run` | Running Workflows | `-c/--config`, `-p/--preset` | Primary stable entry point |
 | `hidden-attractors init` | Setup | `-e/--example` | Copy configuration templates |
 | `hidden-attractors inspect-config` | Configuration | `-c/--config`, `-p/--preset` | Previews normalized config |
@@ -38,8 +39,6 @@ See [Thesis Claims Matrix](THESIS_CLAIMS.md) for the current claim matrix and th
 The synchronized manual metadata are defined in [docs/manual_manifest.yaml](docs/manual_manifest.yaml); scientific claims remain governed by [THESIS_CLAIMS.md](THESIS_CLAIMS.md).
 
 For a complete user-facing description of installation, CLI usage, examples, outputs, evidence labels and limitations, see [USER_MANUAL.md](USER_MANUAL.md).
-
-
 
 ---
 
@@ -218,9 +217,10 @@ All figure exports are subject to the [Figure Export Policy](docs/figure_export_
 
 The library is backed by a robust test suite (at the current thesis-freeze audit, the suite reports 939 passed tests and 27 skipped tests; future runs should be checked against `validation/freeze_audit/`):
 
-
 * **Verification Execution**:
+
   ```bash
   pytest
   ```
+
 * **Coverage**: Runs unit verification on coordinate models, Lure decompositions, C integrators accuracy, YAML schema parsing, CLI argument overrides, and diagnostics computations.
