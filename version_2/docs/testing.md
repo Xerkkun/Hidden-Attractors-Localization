@@ -1,43 +1,47 @@
-# Repository Layout
+# Testing
 
-```text
-hidden_attractors/              importable package
-hidden_attractors/systems/      chaotic-system registry and extension point
-hidden_attractors/native/csrc/  C sources bundled with the package
-examples/                       small runnable examples
-tests/                          smoke tests
-configs/                        workflow configuration files
-docs/                           documentation
-figure_scripts/                 centralized folder for active figure generation scripts
-validation/                     promoted validation evidence and final reports
-tools/cli/                      maintained CLI wrappers
-tools/legacy/                   packaged historical scripts behind facade commands
-outputs/                        exploratory outputs and unpromoted evidence
-artifacts/                      migrated prebuilt or runtime artifacts
-library_figures/                canonical promoted figure repository
+This document details the validation and testing suite for `hidden-attractors-fo`.
+
+## Running the Test Suite
+
+The test suite requires the package installed with developer extra dependencies. Run the tests from the `version_2/` directory:
+
+```bash
+python -m pytest -q
 ```
 
-## Public API Boundary
+### 1. Repository Cleanliness and Hygiene Checks
 
-Only `hidden_attractors/`, `examples/`, `tests/`, `configs/`, `validation/`,
-`library_figures/`, and documented `tools/cli/` commands are part of the active library workflow.
+To run fast repository cleanliness checks (which verify formatting, docstring policies, file naming constraints, and entry point rules):
 
-Chua arctan c590 is promoted only under the local-radius validation contract (`r <= 0.3`, 8400 probes, zero contacts); tests must keep that boundary and must not convert it into a global basin proof.
+```bash
+python -m pytest -q -m "hygiene"
+```
 
-To keep the active layer clean and free of temporary files, strict script naming and location rules are enforced. See the [Development Hygiene Policy](development_hygiene.md) for more details.
+### 2. Packaging and Release Readiness Checks
 
-Scripts in `tools/legacy/` are preserved for research traceability and are
-packaged so installed commands can still run them. They can be mined for logic,
-but new reusable behavior should be added to `hidden_attractors/` first.
+To check if the package meets release metadata requirements and passes smoke checks on sample configurations:
 
-`outputs/` remains the default place for ordinary generated products and exploratory runs. Promoted arctan evidence lives under `validation/chua_fractional_arctan/`; older output folders remain non-canonical provenance unless explicitly copied into validation with a manifest.
+```bash
+python -m pytest -q -m "release_readiness"
+```
 
-`validation/` is reserved for promoted evidence: stage summaries, selected CSV tables, short stage notes, manifests, the final validation report, and promoted system verification outputs (such as `validation/chua_integer_saturation/`, `validation/chua_fractional_saturation/`, and `validation/chua_fractional_arctan/`).
+### 3. Syntax Verification / Compilation Check
 
-`figure_scripts/` is the centralized repository for all active figure generation scripts. It holds scripts like `chua_arctan_wu2023_plot_basins.py` and `chua_nonsmooth_memory_matrix_run_figure_tasks.py`.
+To check that the entire code compiles cleanly without syntax errors:
 
-## Release packaging layout
+```bash
+python -m compileall hidden_attractors examples tests tools/cli
+```
 
-Release packaging material belongs under `release_package/` and records software/archive metadata, sample commands, and remaining readiness items. It is documentation and packaging metadata, not new scientific evidence.
+---
 
-`library_figures/` is the canonical store for promoted scientific figures generated through `hidden_attractors.plotting.export.export_figure`. `docs/assets/` is reserved for documentation or web-only assets; it is not the promoted scientific figure store.
+## Folder Roles in Testing
+
+- **`tests/`**: Contains the automated tests files.
+- **`tools/cli/`**: Houses internal helper script templates, not public entry points. Their behavior is verified as internal utilities by the tests but they are not public command boundaries.
+- **`tools/legacy/`**: Preserves historical C solver compatibility material. It is strictly internal and excluded from regular active public testing execution.
+
+## Boundary of validation tests
+
+The test suite asserts that the Chua arctan c590 candidate is promoted under the local-radius validation contract (`r <= 0.3`, 8400 probes, zero contacts). The testing boundaries check this local neighborhood and do not assume a global basin proof. Any change to the testing parameters must ensure the local claims contract remains auditable in `THESIS_CLAIMS.md`.

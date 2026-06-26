@@ -9,8 +9,11 @@
 
 ## English Version
 
-- [User Manual](user_manual.md)
+- [User Manual](../USER_MANUAL.md)
 - [Installation](installation.md)
+- [Quick Start](quick_start.md)
+- [Getting Started](getting_started.md)
+- [Examples Index](examples_index.md)
 - [Workflows and Examples](workflows.md)
 - [Scientific Scope](scientific_scope.md)
 - [Validation methodology](validation_methodology.md)
@@ -21,8 +24,11 @@
 
 ## Versión en Español
 
-- [Manual de Usuario](user_manual.md)
+- [Manual de Usuario](../USER_MANUAL.md)
 - [Instalación](installation.md)
+- [Guía de Inicio Rápido](quick_start.md)
+- [Introducción (Getting Started)](getting_started.md)
+- [Índice de Ejemplos](examples_index.md)
 - [Flujos de Trabajo y Ejemplos](workflows.md)
 - [Alcance Científico](scientific_scope.md)
 - [Metodología de Validación](validation_methodology.md)
@@ -37,6 +43,8 @@
 - [Code Reference Map](code_reference_map.md)
 - [Repository Layout](repository_layout.md)
 - [Testing](testing.md)
+- [PyPI Release Checklist](../release_package/PYPI_RELEASE_CHECKLIST.md)
+- [CLI Migration Legacy Entry Points](cli_migration_legacy_entrypoints.md)
 - [Citation](citation.md)
 
 ## Development

@@ -13,20 +13,51 @@ This guide provides step-by-step instructions to install and configure the `hidd
 
 ## Step 1: Install the Python Package
 
-Clone or copy the `version_2` directory to your local machine, navigate to its root directory in your terminal, and run:
+Choose one of the following installation methods depending on your needs:
 
-### For standard usage (Recommended)
+### 1. PyPI Installation (For End Users)
+
+To install the latest stable version of the package directly from PyPI, run:
 
 ```bash
-pip install -e .
+python -m pip install hidden-attractors-fo
 ```
 
-*The `-e` flag installs the package in **editable mode**. This maps the codebase to your environment so that any updates you make are immediately active without needing a reinstall.*
-
-### For running tests and developer tasks
+Verify that the unified public CLI is installed and runs:
 
 ```bash
-pip install -e ".[dev]"
+hidden-attractors --help
+hidden-attractors inspect systems
+```
+
+### 2. TestPyPI Installation (For Release Testing)
+
+To test the package distribution, install from TestPyPI. Note that TestPyPI does not always resolve dependencies automatically, so they should be installed first or separately if needed:
+
+```bash
+python -m pip install --index-url https://test.pypi.org/simple/ --no-deps hidden-attractors-fo
+```
+
+### 3. Development Installation from Repository
+
+To install the library in editable mode for development, running tests, or building documentation:
+
+From the workspace root directory:
+
+```bash
+python -m pip install -e "version_2[dev,analysis,docs,legacy]"
+```
+
+From the `version_2/` directory:
+
+```bash
+python -m pip install -e ".[dev,analysis,docs,legacy]"
+```
+
+On Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -e ".\version_2[dev,analysis,docs,legacy]"
 ```
 
 ---

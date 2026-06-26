@@ -18,19 +18,24 @@ The primary stable user-facing command-line interface is the installed
 reproducible analysis interfaces with narrower support guarantees than the primary CLI, and auxiliary
 commands are documented for traceability rather than as stable APIs.
 
-| Command / Subcommand | Group | Real options or usage | Documentary status |
-| --- | --- | --- | --- |
-| `hidden-attractors run` | Running Workflows | `-c/--config`, `-p/--preset` | Primary stable entry point |
-| `hidden-attractors init` | Setup | `-e/--example` | Copy configuration templates |
-| `hidden-attractors inspect-config` | Configuration | `-c/--config`, `-p/--preset` | Previews normalized config |
-| `hidden-attractors inspect` | Registry & Candidates | `candidates`, `systems`, `workflow-requirements` | Inspection utility |
-| `hidden-attractors validate` | Validation Contracts | `contract`, `bibliography` | Numerical/bibliographical validation |
-| `hidden-attractors protocol` | Caputo Protocol | `generate-seeds`, `soft-precheck`, `continue`, `filter-survivors`, `build-reference`, `robustness`, `hiddenness`, `diagnostics` | Stage-by-stage protocol engine |
-| `hidden-attractors robustness` | Robustness | `overlay` | Robustness overlay sweep |
-| `hidden-attractors hiddenness` | Neighborhood Probing | `sphere-controls`, `strict-target-refinement` | Neighborhood analysis |
-| `hidden-attractors basin` | Basins | `refined`, `strict-target-refinement` | Basin-of-attraction analysis |
-| `hidden-attractors published` | Replication | `danca-abm-sphere-controls` | Reproduces published Danca papers |
-| `hidden-attractors report` | Reporting | `fractional-run` | Automated scientific report generation |
+| Command Group | Subcommands / Subgroups | Real options or usage | Documentary status |
+| :--- | :--- | :--- | :--- |
+| `hidden-attractors run` | (direct) | `-c/--config`, `-p/--preset` | Primary stable entry point |
+| `hidden-attractors init` | (direct) | `-e/--example` | Copy configuration templates |
+| `hidden-attractors inspect-config` | (direct) | `-c/--config`, `-p/--preset` | Previews normalized config |
+| `hidden-attractors inspect` | `systems`, `candidates`, `workflow-requirements` | None | Registry and requirements inspection |
+| `hidden-attractors validate` | `contract`, `bibliography`, `release-readiness` | `--allow-pending`, `--submission-strict` | Numerical/bibliographical/release validation |
+| `hidden-attractors protocol` | `generate-seeds`, `soft-precheck`, `continue`, `filter-survivors`, `build-reference`, `robustness`, `hiddenness`, `diagnostics` | None | Stage-by-stage protocol engine |
+| `hidden-attractors seed` | `lure-centered`, `lure-biased` | None | Centered / biased Lur'e seed generation |
+| `hidden-attractors continuation` | `run`, `multiparameter` | None | Scalar / multiparameter continuation sweep |
+| `hidden-attractors hiddenness` | `sphere-controls`, `strict-target-refinement` | None | Neighborhood validation workflows |
+| `hidden-attractors basin` | `refined`, `strict-target-refinement` | None | Basin-of-attraction analysis |
+| `hidden-attractors robustness` | `overlay` | None | Robustness overlay sweep |
+| `hidden-attractors bifurcation` | `run`, `plot`, `inspect` | None | Parameter bifurcation sweep & plotting |
+| `hidden-attractors lyapunov` | `compute`, `spectrum`, `validate` | None | Exponent estimation and verification |
+| `hidden-attractors chaos-test` | `zero-one`, `inspect` | None | 0-1 chaos-test diagnostics |
+| `hidden-attractors published` | `danca-abm-sphere-controls` | None | Reproduces published Danca papers |
+| `hidden-attractors report` | `fractional-run` | None | Automated scientific report generation |
 
 For older standalone commands (e.g. `hidden-attractors-protocol`, `hidden-attractors-sphere-controls`), see the [CLI Migration Guide](docs/cli_migration_legacy_entrypoints.md) as they are no longer installed as public entry points.
 
@@ -215,7 +220,7 @@ All figure exports are subject to the [Figure Export Policy](docs/figure_export_
 
 ## 7. Testing Suite
 
-The library is backed by a robust test suite (at the current thesis-freeze audit, the suite reports 939 passed tests and 27 skipped tests; future runs should be checked against `validation/freeze_audit/`):
+The library is backed by a robust test suite (at the current thesis-freeze audit, the suite reports 944 passed tests and 28 skipped tests; future runs should be checked against `validation/freeze_audit/`):
 
 * **Verification Execution**:
 

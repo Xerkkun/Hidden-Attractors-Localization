@@ -23,10 +23,16 @@ Use the package from Python as:
 import hidden_attractors
 ```
 
-Install from a checkout for development:
+For release testing, install from TestPyPI:
 
 ```bash
-python -m pip install -e ".[dev,analysis,legacy]"
+python -m pip install --index-url https://test.pypi.org/simple/ --no-deps hidden-attractors-fo
+```
+
+Install from a checkout for development (with all extras):
+
+```bash
+python -m pip install -e ".[dev,analysis,docs,legacy]"
 ```
 
 ## High-level CLI
@@ -56,6 +62,7 @@ hidden-attractors inspect workflow-requirements
 hidden-attractors seed --help
 hidden-attractors validate contract --allow-pending
 hidden-attractors validate bibliography
+hidden-attractors validate release-readiness --submission-strict
 ```
 
 The public release surface is the single `hidden-attractors` command.

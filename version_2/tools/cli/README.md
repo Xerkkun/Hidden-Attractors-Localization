@@ -1,40 +1,24 @@
-# CLI Wrappers
+# Internal Legacy CLI Scripts
 
-The official command surface is:
+> [!WARNING]
+> This folder `tools/cli` contains internal legacy command-line script wrappers.
+> These are **not** public entry points and are deprecated.
+> All active development and public executions must use the unified CLI launcher: `hidden-attractors`.
 
-```bash
-hidden-attractors-protocol generate-seeds --help
-hidden-attractors-protocol soft-precheck --help
-hidden-attractors-protocol continue --help
-hidden-attractors-protocol filter-survivors --help
-hidden-attractors-protocol build-reference --help
-hidden-attractors-protocol robustness --help
-hidden-attractors-protocol hiddenness --help
-hidden-attractors-protocol diagnostics --help
-hidden-attractors-check-validation --help
-```
+## Unified CLI Alternatives (Migration Map)
 
-The scripts below are computation adapters while their numerical engines are
-migrated behind the canonical stages:
+The legacy standalone scripts have been migrated to the unified `hidden-attractors` tool as subcommands:
 
-```bash
-hidden-attractors-robustness-overlay --help
-hidden-attractors-sphere-controls --help
-hidden-attractors-refined-basin --help
-hidden-attractors-strict-target-refinement --help
-hidden-attractors-danca-abm-sphere-controls --help
-```
+- Legacy `hidden-attractors-protocol` -> Use the unified subcommands:
+  - `hidden-attractors seed`
+  - `hidden-attractors validate contract`
+  - `hidden-attractors run`
+  - `hidden-attractors inspect`
+  - `hidden-attractors validate release-readiness`
+- Legacy `hidden-attractors-check-validation` -> Use `hidden-attractors validate contract` or `hidden-attractors validate release-readiness`.
+- Legacy `hidden-attractors-robustness-overlay` -> Use `hidden-attractors run` with robustness configs.
+- Legacy `hidden-attractors-sphere-controls` -> Use equilibrium-centered seeds inside the unified workflow registry.
+- Legacy `hidden-attractors-refined-basin` -> Use unified basin/continuation subcommands.
+- Legacy `hidden-attractors-danca-abm-sphere-controls` -> Deprecated historical script; not part of the active public surface.
 
-Commands containing `sphere` retain old executable names only for previous
-job manifests. Their current plans sample inside equilibrium-centred balls;
-they are not an alternative methodology.
-
-## Contract For New CLIs
-
-New maintained CLIs emit the official JSON envelope and use only the stage
-vocabulary in `hidden_attractors.workflows.protocol`. This applies to
-equilibrium-ball controls, basin slices, strict refinement, continuation,
-robustness and diagnostics.
-
-System-specific adapters may calculate payloads, but promotion into official
-evidence must pass through `hidden-attractors-protocol`.
+Do not run these standalone legacy wrappers directly. They are kept for historical compatibility/migration only.

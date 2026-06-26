@@ -49,24 +49,33 @@ standalone examples.
 
 ## D. Specialized subcommands
 
-These commands are maintained analysis interfaces used by the official pipeline,
-validation tests, or advanced audits:
+These commands are maintained analysis interfaces used by the official pipeline, validation tests, or advanced audits:
 
-- `hidden-attractors protocol <substage>`
+- `hidden-attractors protocol <substage>` (e.g. `generate-seeds`, `soft-precheck`, `continue`, `filter-survivors`, `build-reference`, `robustness`, `hiddenness`, `diagnostics`)
 - `hidden-attractors seed lure-centered`
 - `hidden-attractors seed lure-biased`
 - `hidden-attractors continuation run`
 - `hidden-attractors continuation multiparameter`
-- `hidden-attractors robustness overlay`
 - `hidden-attractors hiddenness sphere-controls`
 - `hidden-attractors hiddenness strict-target-refinement`
 - `hidden-attractors basin refined`
+- `hidden-attractors basin strict-target-refinement`
+- `hidden-attractors robustness overlay`
+- `hidden-attractors bifurcation run`
+- `hidden-attractors bifurcation plot`
+- `hidden-attractors bifurcation inspect`
+- `hidden-attractors lyapunov compute`
+- `hidden-attractors lyapunov spectrum`
+- `hidden-attractors lyapunov validate`
+- `hidden-attractors chaos-test zero-one`
+- `hidden-attractors chaos-test inspect`
+- `hidden-attractors published danca-abm-sphere-controls`
 - `hidden-attractors validate contract`
 - `hidden-attractors validate bibliography`
+- `hidden-attractors validate release-readiness`
 - `hidden-attractors report fractional-run`
 
-They are not alternative methodologies. They implement stages of the same
-contracted workflow.
+They are not alternative methodologies. They implement stages of the same contracted workflow.
 
 ## E. Small API examples
 

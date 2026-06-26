@@ -4,7 +4,7 @@ These commands exercise release metadata, repository hygiene, the public CLI, an
 
 ```bash
 cd version_2
-python -m pip install -e ".[dev,analysis,legacy]"
+python -m pip install -e ".[dev,analysis,docs,legacy]"
 hidden-attractors --help
 hidden-attractors seed --help
 hidden-attractors validate release-readiness --submission-strict --json

@@ -37,7 +37,7 @@ that has been explicitly annotated carries `__api_tier__` as an attribute.
 | `hidden_attractors.analysis` | Lyapunov, spectral, bifurcation, trajectory metrics |
 | `hidden_attractors.seed_generation` | Harmonic-balance seeds — Chua-specific and generic Lur'e |
 | `hidden_attractors.seed_generation.core` | Shared dataclasses, `validate_fractional_order` |
-| `hidden_attractors.seed_generation.chua` | DF, Machado, biased helpers, `find_harmonic_seed` |
+| `hidden_attractors.seed_generation.chua` | DF, biased helpers, `find_harmonic_seed` (Machado/FDF is internal/planned support only) |
 | `hidden_attractors.seed_generation.lure` | Lur'e DF, `find_lure_harmonic_seed` |
 | `hidden_attractors.solvers` | Fractional solver interfaces, EFORK wrapper |
 | `hidden_attractors.plotting` | Phase-space and time-series plot helpers |
@@ -57,7 +57,7 @@ that has been explicitly annotated carries `__api_tier__` as an attribute.
 | `hidden_attractors.native` | `FractionalChuaBackend`, `BasinBackend` (ctypes wrappers) |
 | `hidden_attractors.parallel` | C compilation helpers, OpenMP flags, process-pool policy |
 | `hidden_attractors.paths` | Repository path constants |
-| `hidden_attractors.cli` | Console-script entry points |
+| `hidden_attractors.cli` | Console-script entry points (Internal implementation; the unified console command `hidden-attractors` is the official public command surface) |
 | `hidden_attractors._stability` | Tier constants and `api_tier` decorator (this module) |
 
 ---

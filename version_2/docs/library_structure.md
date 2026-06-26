@@ -27,23 +27,19 @@ crecer como librería Python y no como una colección de scripts independientes.
 
 ## Scripts y herramientas
 
-La raiz de V2 se mantiene limpia como una libreria Python:
+La raíz de version_2 se mantiene limpia como una librería Python:
 
-- `tools/cli/`: wrappers mantenidos para workflows publicos.
-- `tools/legacy/`: scripts historicos preservados para trazabilidad.
+- `tools/cli/`: scripts y utilidades internas obsoletas (no son entry points públicos).
+- `tools/legacy/`: scripts históricos preservados para trazabilidad (uso interno/histórico).
 - `artifacts/`: binarios o resultados migrados desde la estructura anterior.
 
-Cuando un script de `tools/legacy/` empiece a duplicar lógica, el patrón
-recomendado es:
+El patrón recomendado para añadir o modificar la interfaz de comandos (CLI) de la biblioteca es:
 
-1. mover la función reusable a `hidden_attractors/`;
-2. dejar un wrapper CLI en `tools/cli/` si el comando importa;
-3. agregar un ejemplo pequeño en `examples/`;
-4. documentar el contrato numérico y las salidas.
-
-`robustness_overlay_c_trajectories.py`, `lure_top3_sphere_robustness.py` y
-`refine_project_basin_classification.py` ya siguen ese patrón: la lógica vive
-en `hidden_attractors.workflows` y los wrappers viven en `tools/cli/`.
+1. Implementar la lógica reutilizable en `hidden_attractors/` (por ejemplo, en `hidden_attractors/workflows/`).
+2. Añadir un dispatcher o subcomando en `hidden_attractors/cli/` (por ejemplo, importando el workflow e implementando el parser de argumentos).
+3. Registrar el nuevo subcomando en el despachador unificado `hidden_attractors/cli/main.py` dentro del diccionario `GROUPS` y la función `main()`.
+4. Añadir pruebas de integración para la CLI en la carpeta `tests/`.
+5. Actualizar la referencia de la API (`docs/api_reference.md`) y los manuales de usuario.
 
 ## Resultados y ejemplos
 

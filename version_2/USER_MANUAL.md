@@ -98,6 +98,7 @@ python tools/release/validate_wheel_install.py
 The official release/freeze counts are stored under
 [validation/freeze_audit/](validation/freeze_audit/). Local counts can differ
 when optional tools or local test selections change.
+
 ## 3. Repository structure
 
 | Path | Purpose |
@@ -117,34 +118,48 @@ when optional tools or local test selections change.
 
 ## 4. Public CLI
 
-The only public console command is:
+The primary public console command is `hidden-attractors`. Below is the complete table of public command groups and subcommands:
 
-```bash
-hidden-attractors
-```
+| Command Group | Subcommand | Description | Command Example |
+| :--- | :--- | :--- | :--- |
+| **run** | (direct) | Run an experiment configuration (preset or YAML) | `hidden-attractors run -p chua_integer`, `hidden-attractors run -p chua_fractional`, `hidden-attractors run -p chua_arctan`, `hidden-attractors run -c path/to/config.yaml` |
+| **init** | (direct) | Copy template configs to the current directory | `hidden-attractors init -e chua_fractional` |
+| **inspect-config** | (direct) | Preview the normalized configuration | `hidden-attractors inspect-config -p chua_fractional` |
+| **inspect** | `systems` | Inspect registered chaotic systems | `hidden-attractors inspect systems` |
+| | `candidates` | List final candidate records | `hidden-attractors inspect candidates` |
+| | `workflow-requirements` | Inspect reusable workflow requirements | `hidden-attractors inspect workflow-requirements` |
+| **validate** | `contract` | Validate numerical validation evidence contract | `hidden-attractors validate contract --allow-pending` |
+| | `bibliography` | Validate claims bibliography manifest | `hidden-attractors validate bibliography` |
+| | `release-readiness` | Validate release packaging/readiness metadata | `hidden-attractors validate release-readiness --submission-strict` |
+| **protocol** | `generate-seeds` | Run seed generation protocol stage | `hidden-attractors protocol generate-seeds` |
+| | `soft-precheck` | Run soft precheck protocol stage | `hidden-attractors protocol soft-precheck` |
+| | `continue` | Run continuation protocol stage | `hidden-attractors protocol continue` |
+| | `filter-survivors` | Run survivor filtering protocol stage | `hidden-attractors protocol filter-survivors` |
+| | `build-reference` | Run reference building protocol stage | `hidden-attractors protocol build-reference` |
+| | `robustness` | Run robustness protocol stage | `hidden-attractors protocol robustness` |
+| | `hiddenness` | Run hiddenness protocol stage | `hidden-attractors protocol hiddenness` |
+| | `diagnostics` | Run diagnostics protocol stage | `hidden-attractors protocol diagnostics` |
+| **seed** | `lure-centered` | Centered Lur'e seed generation | `hidden-attractors seed lure-centered --help` |
+| | `lure-biased` | Biased Lur'e seed generation | `hidden-attractors seed lure-biased --help` |
+| **continuation** | `run` | Run scalar continuation | `hidden-attractors continuation run --help` |
+| | `multiparameter` | Run multiparameter continuation | `hidden-attractors continuation multiparameter --help` |
+| **hiddenness** | `sphere-controls` | Run sphere controls validation workflow | `hidden-attractors hiddenness sphere-controls --help` |
+| | `strict-target-refinement` | Run strict target refinement workflow | `hidden-attractors hiddenness strict-target-refinement --help` |
+| **basin** | `refined` | Run refined basin workflow | `hidden-attractors basin refined --help` |
+| | `strict-target-refinement` | Run strict target refinement workflow for basins | `hidden-attractors basin strict-target-refinement --help` |
+| **robustness** | `overlay` | Run robustness overlay workflow | `hidden-attractors robustness overlay --help` |
+| **bifurcation** | `run` | Run parameter sweep bifurcation workflow | `hidden-attractors bifurcation run --help` |
+| | `plot` | Plot bifurcation diagram from CSV data | `hidden-attractors bifurcation plot --help` |
+| | `inspect` | Inspect bifurcation summary JSON | `hidden-attractors bifurcation inspect --help` |
+| **lyapunov** | `compute` | Compute Lyapunov exponents workflow | `hidden-attractors lyapunov compute --help` |
+| | `spectrum` | Estimate trajectory-based Lyapunov exponent | `hidden-attractors lyapunov spectrum --help` |
+| | `validate` | Validate Lyapunov summary JSON | `hidden-attractors lyapunov validate --help` |
+| **chaos-test** | `zero-one` | Run 0-1 chaos-test diagnostic | `hidden-attractors chaos-test zero-one --help` |
+| | `inspect` | Inspect 0-1 chaos-test summary JSON | `hidden-attractors chaos-test inspect --help` |
+| **published** | `danca-abm-sphere-controls` | Run published Danca ABM sphere controls | `hidden-attractors published danca-abm-sphere-controls --help` |
+| **report** | `fractional-run` | Run fractional report run workflow | `hidden-attractors report fractional-run --help` |
 
-| Task | Command |
-| :--- | :--- |
-| Show help | `hidden-attractors --help` |
-| Run preset | `hidden-attractors run -p chua_integer` |
-| Run YAML | `hidden-attractors run -c path/to/config.yaml` |
-| Initialize config | `hidden-attractors init -e chua_fractional` |
-| Inspect config | `hidden-attractors inspect-config -p chua_fractional` |
-| Inspect systems | `hidden-attractors inspect systems` |
-| Inspect candidates | `hidden-attractors inspect candidates` |
-| Inspect workflow requirements | `hidden-attractors inspect workflow-requirements` |
-| Validate contract | `hidden-attractors validate contract --allow-pending` |
-| Validate bibliography | `hidden-attractors validate bibliography` |
-| Run protocol stage | `hidden-attractors protocol <substage>` |
-| Seed generation | `hidden-attractors seed lure-centered --help`; `hidden-attractors seed lure-biased --help` |
-| Continuation | `hidden-attractors continuation run --help` |
-| Robustness | `hidden-attractors robustness overlay --help` |
-| Hiddenness | `hidden-attractors hiddenness sphere-controls --help` |
-| Basins | `hidden-attractors basin refined --help` |
-| Reports | `hidden-attractors report fractional-run --help` |
-
-Legacy standalone commands were removed from the public installed surface. They
-may appear in migration documentation only as legacy/deprecated names.
+Legacy standalone commands were removed from the public installed surface. They may appear in migration documentation only as legacy/deprecated names.
 
 ## 5. Minimal examples
 
@@ -416,4 +431,3 @@ Claim status: <reproduced/validated/candidate/rejected/partial/pending>
 
 For release packaging, also consult `REPRODUCIBILITY.md`, `RELEASE_NOTES.md`,
 `CHANGELOG.md`, `version_2/MANIFEST.md`, and `version_2/release_package/`.
-

@@ -9,38 +9,49 @@
 
 ## English Version
 
-### Installation
+### 1. PyPI Installation (For End Users)
 
-## Editable Install
-
-### A. Editable Install from the Repository Root
+To install the latest stable version of the package directly from PyPI, run:
 
 ```bash
-python -m pip install -e version_2
+python -m pip install hidden-attractors-fo
 ```
 
-### B. Editable Install from version_2/ Subdirectory
+Verify that the unified public CLI is installed and runs:
 
 ```bash
-python -m pip install -e .
+hidden-attractors --help
+hidden-attractors inspect systems
 ```
 
----
+### 2. TestPyPI Installation (For Release Testing)
 
-## Recommended Install for Validation and Development
-
-To run unit tests, validation contracts, and chaos analysis:
-
-### A. Recommended Install from the Repository Root
+To test the package distribution, install from TestPyPI. Note that TestPyPI does not always resolve dependencies automatically, so they should be installed first or separately if needed:
 
 ```bash
-python -m pip install -e "version_2[dev,analysis,legacy]"
+python -m pip install --index-url https://test.pypi.org/simple/ --no-deps hidden-attractors-fo
 ```
 
-### B. Recommended Install from version_2/ Subdirectory
+### 3. Development Installation from Repository
+
+To install the library in editable mode for development, running tests, or building documentation:
+
+From the workspace root directory:
 
 ```bash
-python -m pip install -e ".[dev,analysis,legacy]"
+python -m pip install -e "version_2[dev,analysis,docs,legacy]"
+```
+
+From the `version_2/` directory:
+
+```bash
+python -m pip install -e ".[dev,analysis,docs,legacy]"
+```
+
+On Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -e ".\version_2[dev,analysis,docs,legacy]"
 ```
 
 ---
@@ -77,38 +88,49 @@ The library contains native high-performance C solvers under `hidden_attractors/
 
 ## Versión en Español
 
-### Instalación
+### 1. Instalación desde PyPI (Para Usuarios Finales)
 
-## Instalación Editable
-
-### Desde el Directorio Raíz del Repositorio (Editable)
+Para instalar la última versión estable directamente desde PyPI, ejecute:
 
 ```bash
-python -m pip install -e version_2
+python -m pip install hidden-attractors-fo
 ```
 
-### Desde el Subdirectorio version_2/ (Editable)
+Verifique la interfaz de línea de comandos pública unificada:
 
 ```bash
-python -m pip install -e .
+hidden-attractors --help
+hidden-attractors inspect systems
 ```
 
----
+### 2. Instalación desde TestPyPI (Prueba de Release)
 
-## Instalación Recomendada para Validación y Desarrollo
-
-Para ejecutar pruebas unitarias, contratos de validación y análisis de caos:
-
-### Desde el Directorio Raíz del Repositorio (Recomendada)
+Para probar la distribución del paquete, instálelo desde TestPyPI. Tenga en cuenta que TestPyPI no siempre resuelve las dependencias automáticamente, por lo que es posible que deban instalarse de forma previa o independiente si es necesario:
 
 ```bash
-python -m pip install -e "version_2[dev,analysis,legacy]"
+python -m pip install --index-url https://test.pypi.org/simple/ --no-deps hidden-attractors-fo
 ```
 
-### Desde el Subdirectorio version_2/ (Recomendada)
+### 3. Instalación de Desarrollo desde Repositorio
+
+Para instalar la biblioteca en modo editable para desarrollo, ejecución de pruebas o compilación de documentación:
+
+Desde el directorio raíz del espacio de trabajo:
 
 ```bash
-python -m pip install -e ".[dev,analysis,legacy]"
+python -m pip install -e "version_2[dev,analysis,docs,legacy]"
+```
+
+Desde el subdirectorio `version_2/`:
+
+```bash
+python -m pip install -e ".[dev,analysis,docs,legacy]"
+```
+
+En Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -e ".\version_2[dev,analysis,docs,legacy]"
 ```
 
 ---

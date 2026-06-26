@@ -16,25 +16,38 @@ The installed scripts below are the commands declared in
 interfaces that remain auditable but may have narrower support guarantees than the primary CLI. Auxiliary or
 internal commands are listed for traceability, not as stable public APIs.
 
-| Command / Subcommand                                    | Group                 | Entry point / Target function                                | Documentary status                      |
-| ------------------------------------------------------- | --------------------- | ------------------------------------------------------------ | --------------------------------------- |
-| `hidden-attractors`                                     | Main user command     | `hidden_attractors.cli.main:main`                            | Primary stable entry point              |
-| `hidden-attractors run`                                 | Running Workflows     | `hidden_attractors.cli.run:run_cmd`                          | Runs simple/preset workflow             |
-| `hidden-attractors init`                                | Setup                 | `hidden_attractors.cli.run:init_cmd`                         | Copies config templates                 |
-| `hidden-attractors inspect-config`                      | Configuration         | `hidden_attractors.cli.run:inspect_config_cmd`               | Previews config                         |
-| `hidden-attractors inspect candidates`                  | Registry & Candidates | `hidden_attractors.cli.inspect:list_candidates`              | Lists final candidate records           |
-| `hidden-attractors inspect systems`                     | Registry & Candidates | `hidden_attractors.cli.inspect:systems`                      | Lists registered chaotic systems        |
-| `hidden-attractors inspect workflow-requirements`       | Registry & Candidates | `hidden_attractors.cli.inspect:workflow_requirements`        | Inspects system capability requirements |
-| `hidden-attractors validate contract`                   | Validation Contracts  | `hidden_attractors.validation_contract:main`                 | Validates validation contract schema    |
-| `hidden-attractors validate bibliography`               | Validation Contracts  | `hidden_attractors.cli.validate:validate_bibliography`       | Validates bibliography manifest         |
-| `hidden-attractors protocol <substage>`                 | Caputo Protocol       | `hidden_attractors.protocol_cli:main`                        | Orchestrates Caputo protocol stages     |
-| `hidden-attractors robustness overlay`                  | Robustness            | `hidden_attractors.workflows.robustness_overlay:main`        | Robustness overlay sweep                |
-| `hidden-attractors hiddenness sphere-controls`          | Neighborhood Probing  | `hidden_attractors.workflows.sphere_controls:main`           | Neighborhood sphere controls            |
-| `hidden-attractors hiddenness strict-target-refinement` | Neighborhood Probing  | `hidden_attractors.workflows.strict_target_refinement:main`  | Target refinement for hiddenness        |
-| `hidden-attractors basin refined`                       | Basins                | `hidden_attractors.workflows.refined_basin:main`             | Refines attraction basins               |
-| `hidden-attractors basin strict-target-refinement`      | Basins                | `hidden_attractors.workflows.strict_target_refinement:main`  | Target refinement for basins            |
-| `hidden-attractors published danca-abm-sphere-controls` | Replication           | `hidden_attractors.workflows.danca_abm_sphere_controls:main` | Replicates published Danca paper        |
-| `hidden-attractors report fractional-run`               | Reporting             | `hidden_attractors.workflows.fractional_report_run:main`     | Automated scientific report generator   |
+| Command / Subcommand                                    | Group                 | Entry point / Dispatcher routing                                                   | Documentary status                      |
+| ------------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------- | --------------------------------------- |
+| `hidden-attractors`                                     | Main user command     | `hidden_attractors.cli.main:main`                                                  | Unified dispatcher entry point          |
+| `hidden-attractors run`                                 | Running Workflows     | Dispatches to `hidden_attractors.cli.run:run_cmd`                                  | Runs simple/preset workflow             |
+| `hidden-attractors init`                                | Setup                 | Dispatches to `hidden_attractors.cli.run:init_cmd`                                 | Copies config templates                 |
+| `hidden-attractors inspect-config`                      | Configuration         | Dispatches to `hidden_attractors.cli.run:inspect_config_cmd`                       | Previews config                         |
+| `hidden-attractors inspect candidates`                  | Registry & Candidates | Dispatches to `hidden_attractors.cli.inspect:list_candidates`                      | Lists final candidate records           |
+| `hidden-attractors inspect systems`                     | Registry & Candidates | Dispatches to `hidden_attractors.cli.inspect:systems`                              | Lists registered chaotic systems        |
+| `hidden-attractors inspect workflow-requirements`       | Registry & Candidates | Dispatches to `hidden_attractors.cli.inspect:workflow_requirements`                | Inspects system capability requirements |
+| `hidden-attractors validate contract`                   | Validation Contracts  | Dispatches to `hidden_attractors.cli.validate:validate_contract`                   | Validates validation contract schema    |
+| `hidden-attractors validate bibliography`               | Validation Contracts  | Dispatches to `hidden_attractors.cli.validate:validate_bibliography`               | Validates bibliography manifest         |
+| `hidden-attractors validate release-readiness`          | Validation Contracts  | Dispatches to `hidden_attractors.cli.validate:validate_release_readiness`          | Validates packaging/release readiness   |
+| `hidden-attractors protocol <substage>`                 | Caputo Protocol       | Dispatches to `hidden_attractors.cli.protocol:run_protocol_stage`                  | Orchestrates Caputo protocol stages     |
+| `hidden-attractors seed lure-centered`                  | Seed Generation       | Dispatches to `hidden_attractors.cli.seed:lure_centered`                           | Centered Lur'e seed generation          |
+| `hidden-attractors seed lure-biased`                    | Seed Generation       | Dispatches to `hidden_attractors.cli.seed:lure_biased`                             | Biased Lur'e seed generation            |
+| `hidden-attractors continuation run`                    | Continuation          | Dispatches to `hidden_attractors.cli.continuation:run_scalar_continuation`         | Runs scalar continuation                |
+| `hidden-attractors continuation multiparameter`         | Continuation          | Dispatches to `hidden_attractors.cli.continuation:run_multiparameter_continuation` | Runs multiparameter continuation        |
+| `hidden-attractors hiddenness sphere-controls`          | Neighborhood Probing  | Dispatches to `hidden_attractors.cli.hiddenness:sphere_controls`                   | Neighborhood sphere controls            |
+| `hidden-attractors hiddenness strict-target-refinement` | Neighborhood Probing  | Dispatches to `hidden_attractors.cli.hiddenness:hid_str_ref`                       | Target refinement for hiddenness        |
+| `hidden-attractors basin refined`                       | Basins                | Dispatches to `hidden_attractors.cli.basin:refined`                                | Refines attraction basins               |
+| `hidden-attractors basin strict-target-refinement`      | Basins                | Dispatches to `hidden_attractors.cli.basin:bas_str_ref`                            | Target refinement for basins            |
+| `hidden-attractors robustness overlay`                  | Robustness            | Dispatches to `hidden_attractors.cli.robustness:overlay`                           | Robustness overlay sweep                |
+| `hidden-attractors bifurcation run`                     | Bifurcation           | Dispatches to `hidden_attractors.cli.bifurcation:run_bifurcation`                  | Parameter bifurcation sweeps            |
+| `hidden-attractors bifurcation plot`                    | Bifurcation           | Dispatches to `hidden_attractors.cli.bifurcation:plot_bifurcation`                 | Plots bifurcation diagrams              |
+| `hidden-attractors bifurcation inspect`                 | Bifurcation           | Dispatches to `hidden_attractors.cli.bifurcation:inspect_bifurcation`              | Previews bifurcation summaries          |
+| `hidden-attractors lyapunov compute`                    | Lyapunov Exponents    | Dispatches to `hidden_attractors.cli.lyapunov:compute_lyapunov`                    | Estimates Lyapunov exponents            |
+| `hidden-attractors lyapunov spectrum`                   | Lyapunov Exponents    | Dispatches to `hidden_attractors.cli.lyapunov:trajectory_lyapunov_spectrum`        | Estimates LE spectrum                   |
+| `hidden-attractors lyapunov validate`                   | Lyapunov Exponents    | Dispatches to `hidden_attractors.cli.lyapunov:validate_lyapunov`                   | Validates Lyapunov results              |
+| `hidden-attractors chaos-test zero-one`                 | Chaos Diagnostics     | Dispatches to `hidden_attractors.cli.chaos_test:run_zero_one`                      | Runs 0-1 chaos tests                    |
+| `hidden-attractors chaos-test inspect`                  | Chaos Diagnostics     | Dispatches to `hidden_attractors.cli.chaos_test:inspect_zero_one`                  | Inspects 0-1 test results               |
+| `hidden-attractors published danca-abm-sphere-controls` | Replication           | Dispatches to `hidden_attractors.cli.published:danca_abm_sphere_controls`          | Replicates published Danca paper        |
+| `hidden-attractors report fractional-run`               | Reporting             | Dispatches to `hidden_attractors.cli.report:fractional_run`                        | Automated scientific report generator   |
 
 For legacy command details, see the [CLI Migration Guide](cli_migration_legacy_entrypoints.md).
 

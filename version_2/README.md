@@ -38,12 +38,6 @@ import hidden_attractors
 From a repository checkout:
 
 ```bash
-python -m pip install -e ".[dev,analysis,legacy]"
-```
-
-For documentation work, include the docs extra:
-
-```bash
 python -m pip install -e ".[dev,analysis,docs,legacy]"
 ```
 

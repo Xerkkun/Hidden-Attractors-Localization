@@ -2,6 +2,8 @@
   "status": "passed",
   "strict": false,
   "submission_strict": true,
+  "not_promoted_evidence": true,
+  "replace_after_execution": false,
   "repository_readiness": "passed",
   "software_package_readiness": "passed",
   "final_submission_readiness": "passed",

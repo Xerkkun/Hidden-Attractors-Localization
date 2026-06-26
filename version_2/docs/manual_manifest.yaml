@@ -5,8 +5,8 @@ public_cli: "hidden-attractors"
 entry_point: "hidden_attractors.cli.main:main"
 
 freeze_audit:
-  passed: 941
-  skipped: 27
+  passed: 944
+  skipped: 28
   path: "validation/freeze_audit/"
   summary_json: "validation/freeze_audit/final_freeze_pytest_summary.json"
   stdout_txt: "validation/freeze_audit/final_freeze_pytest_stdout.txt"

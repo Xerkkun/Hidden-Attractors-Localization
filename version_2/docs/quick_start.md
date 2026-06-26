@@ -58,6 +58,30 @@ they are not exposed as public release CLI commands.
 
 ## 4. Run a preset
 
+Depending on your installation path:
+
+### A. For PyPI / TestPyPI Users
+
+You can run commands from any directory. Create a project directory, initialize config templates, and run a preset:
+
+```bash
+mkdir my_project
+cd my_project
+hidden-attractors init -e chua_fractional
+hidden-attractors inspect-config -p chua_fractional
+hidden-attractors run -p chua_fractional
+```
+
+To run with your own custom YAML file:
+
+```bash
+hidden-attractors run -c path/to/config.yaml
+```
+
+### B. For Repository Developers / Editable Install
+
+From the repository checkout, navigate to the `version_2/` directory:
+
 ```bash
 cd version_2
 hidden-attractors init -e chua_fractional
@@ -65,10 +89,13 @@ hidden-attractors inspect-config -p chua_fractional
 hidden-attractors run -p chua_fractional
 ```
 
-To use your own configuration:
+On Windows PowerShell (when using the workspace virtual environment):
 
-```bash
-hidden-attractors run -c path/to/config.yaml
+```powershell
+cd version_2
+..\.venv\Scripts\hidden-attractors init -e chua_fractional
+..\.venv\Scripts\hidden-attractors inspect-config -p chua_fractional
+..\.venv\Scripts\hidden-attractors run -p chua_fractional
 ```
 
 ## 5. Official examples

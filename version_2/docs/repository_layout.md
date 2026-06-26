@@ -10,8 +10,8 @@ configs/                        workflow configuration files
 docs/                           documentation
 figure_scripts/                 centralized folder for active figure generation scripts
 validation/                     promoted validation evidence and final reports
-tools/cli/                      maintained CLI wrappers
-tools/legacy/                   packaged historical scripts behind facade commands
+tools/cli/                      legacy internal CLI wrappers (not public entry points)
+tools/legacy/                   historical compatibility material (internal only)
 outputs/                        exploratory outputs and unpromoted evidence
 artifacts/                      migrated prebuilt or runtime artifacts
 library_figures/                canonical promoted figure repository
@@ -19,14 +19,11 @@ library_figures/                canonical promoted figure repository
 
 ## Public API Boundary
 
-Only `hidden_attractors/`, `examples/`, `tests/`, `configs/`, `validation/`,
-`library_figures/`, and documented `tools/cli/` commands are part of the active library workflow.
+Only `hidden_attractors/`, `examples/`, `tests/`, `configs/`, `validation/`, and `library_figures/` are part of the active library workflow. The unified CLI `hidden-attractors` is the sole public command surface.
 
 To keep the active layer clean and free of temporary files, strict script naming and location rules are enforced. See the [Development Hygiene Policy](development_hygiene.md) for more details.
 
-Scripts in `tools/legacy/` are preserved for research traceability and are
-packaged so installed commands can still run them. They can be mined for logic,
-but new reusable behavior should be added to `hidden_attractors/` first.
+Scripts in `tools/legacy/` are preserved for historical compatibility and are for internal use only. New reusable behavior should be added directly to `hidden_attractors/` and dispatched via the unified CLI in `hidden_attractors.cli.main`.
 
 `outputs/` remains the default place for ordinary generated products and exploratory runs. Promoted arctan evidence lives under `validation/chua_fractional_arctan/`; older output folders remain non-canonical provenance unless explicitly copied into validation with a manifest.
 

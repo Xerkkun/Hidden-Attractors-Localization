@@ -17,6 +17,7 @@ def active_doc_paths() -> list[Path]:
         ROOT.parent / "README.md",
         ROOT / "REFERENCE_GUIDE.md",
         ROOT / "THESIS_CLAIMS.md",
+        ROOT / "INSTALL.md",
         ROOT / "docs/quick_start.md",
         ROOT / "docs/installation.md",
         ROOT / "docs/testing.md",
@@ -26,6 +27,20 @@ def active_doc_paths() -> list[Path]:
         ROOT / "docs/manual_manifest.md",
         ROOT / "docs/manual_manifest.yaml",
         ROOT / "docs/reporte_unificado_chua_fraccionario.tex",
+        ROOT / "docs/getting_started.md",
+        ROOT / "docs/workflows.md",
+        ROOT / "docs/examples_index.md",
+        ROOT / "docs/index.md",
+        ROOT / "docs/code_reference_map.md",
+        ROOT / "docs/repository_layout.md",
+        ROOT / "docs/library_structure.md",
+        ROOT / "docs/contributing.md",
+        ROOT / "docs/lure_candidate_route.md",
+        ROOT / "tools/cli/README.md",
+        ROOT / "tools/legacy/README.md",
+        ROOT / "release_package/README_RELEASE.md",
+        ROOT / "release_package/SAMPLE_RUN.md",
+        ROOT / "release_package/reproducibility_checklist.md",
     ]
     return [p for p in candidates if p.exists()]
 

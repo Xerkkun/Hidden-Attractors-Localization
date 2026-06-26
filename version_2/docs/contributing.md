@@ -13,8 +13,10 @@
 
 ## Development Setup
 
+To configure your development environment:
+
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,analysis,docs,legacy]"
 python -m compileall hidden_attractors examples tests tools/cli
 python -m pytest -q
 ```
@@ -25,7 +27,9 @@ python -m pytest -q
 - Put reusable diagnostics in `hidden_attractors/analysis/`.
 - Put reusable workflow orchestration in `hidden_attractors/workflows/`.
 - Put C backend sources in `hidden_attractors/native/csrc/`.
-- Keep command wrappers thin and place them in `tools/cli/`.
+- To expose new command-line interfaces:
+  1. Implement arguments parsing and dispatch logic in `hidden_attractors/cli/`.
+  2. Register the group and subcommand dispatcher in `hidden_attractors/cli/main.py`.
 
 ## Adding Examples
 
@@ -33,12 +37,12 @@ Examples belong in `examples/`. They should be short and runnable from the repos
 
 ## Migrating Legacy Scripts
 
-When a legacy script becomes important:
+When a legacy script from `tools/legacy/` becomes important:
 
-1. extract reusable functions into `hidden_attractors/`;
-1. add tests or a smoke example;
-1. leave a thin wrapper in `tools/cli/` if the command name matters;
-1. document the numerical contract and outputs.
+1. Extract reusable functions into `hidden_attractors/`;
+2. Add tests or a smoke example;
+3. Integrate the subcommand inside `hidden_attractors/cli/main.py`;
+4. Document the numerical contract and outputs.
 
 ## Scientific Standards
 
@@ -52,8 +56,10 @@ Do not report hiddenness without the equilibrium-neighborhood and basin evidence
 
 ## Configuración de Desarrollo
 
+Para configurar su entorno de desarrollo:
+
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,analysis,docs,legacy]"
 python -m compileall hidden_attractors examples tests tools/cli
 python -m pytest -q
 ```
@@ -64,7 +70,9 @@ python -m pytest -q
 - Colocar los diagnósticos reutilizables en `hidden_attractors/analysis/`.
 - Colocar la orquestación del flujo de trabajo reutilizable en `hidden_attractors/workflows/`.
 - Colocar las fuentes del backend de C en `hidden_attractors/native/csrc/`.
-- Mantener los comandos envoltorios delgados y colocarlos en `tools/cli/`.
+- Para exponer nuevas interfaces de línea de comandos:
+  1. Implementar el parser de argumentos y lógica en `hidden_attractors/cli/`.
+  2. Registrar el despachador de grupo y subcomando en `hidden_attractors/cli/main.py`.
 
 ## Adición de Ejemplos
 
@@ -72,12 +80,12 @@ Los ejemplos pertenecen a `examples/`. Deben ser cortos y ejecutables desde la r
 
 ## Migración de Scripts Heredados (Legacy)
 
-Cuando un script heredado se vuelve importante:
+Cuando un script heredado de `tools/legacy/` se vuelve importante:
 
-1. extraer funciones reutilizables en `hidden_attractors/`;
-1. añadir pruebas o un ejemplo de humo;
-1. dejar un envoltorio delgado en `tools/cli/` si el nombre del comando importa;
-1. documentar el contrato numérico y las salidas.
+1. Extraer funciones reutilizables en `hidden_attractors/`;
+2. Añadir pruebas o un ejemplo de humo;
+3. Integrar el subcomando dentro del despachador unificado `hidden_attractors/cli/main.py`;
+4. Documentar el contrato numérico y las salidas.
 
 ## Estándares Científicos
 

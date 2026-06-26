@@ -19,11 +19,16 @@ This document details the library's workflows for `hidden-attractors-fo`.
 
 If this is your first time interacting with this repository, the recommended learning and execution path is as follows:
 
-1. **Installation**: Install the library in editable mode with `pip install -e version_2`.
+1. **Installation**: Install the library in editable mode with all extras:
+
+   ```bash
+   python -m pip install -e ".[dev,analysis,docs,legacy]"
+   ```
+
 2. **Official Example**: Run the quick smoke check of Example 1 to verify the pipeline:
 
    ```bash
-   cd version_2/examples/chua_nonsmooth_biased_hidden_attractor
+   cd examples/chua_nonsmooth_biased_hidden_attractor
    python run_example.py --quick
    ```
 
@@ -161,15 +166,20 @@ Este documento detalla los flujos de trabajo de la biblioteca `hidden-attractors
 
 ---
 
-## Ruta Recomendada para Usuarias Nuevas
+## Ruta Recomendada para Usuarios Nuevos
 
 Si es la primera vez que interactúas con este repositorio, la ruta recomendada de aprendizaje y ejecución es la siguiente:
 
-1. **Instalación**: Instala la librería en modo editable con `pip install -e version_2`.
+1. **Instalación**: Instala la librería en modo editable con todos los extras:
+
+   ```bash
+   python -m pip install -e ".[dev,analysis,docs,legacy]"
+   ```
+
 2. **Ejemplo Oficial**: Ejecuta la prueba rápida del Ejemplo 1 para verificar el pipeline:
 
    ```bash
-   cd version_2/examples/chua_nonsmooth_biased_hidden_attractor
+   cd examples/chua_nonsmooth_biased_hidden_attractor
    python run_example.py --quick
    ```
 
@@ -197,11 +207,11 @@ El **Ejemplo 1 — Chua fraccionario no suave con función descriptiva sesgada**
 
 Este ejemplo ejecuta de forma secuencial las siguientes fases:
 
-1. **Paso 1**:Búsqueda centrada de referencia (DF centrada, $c=0$).
-2. **Paso 2**:Búsqueda homotópica afín con función descriptiva sesgada (BDF, $c \neq 0$).
-3. **Paso 3**:Verificación de ocultedad estándar mediante barrido de esferas local.
-4. Paso 4** (Optional:Búsqueda extendida en paralelo de ocultedad volumétrica.
-5. **Paso 5**:Resumen y exportación de figuras a la galería centralizada `library_figures/` según la [Política de Exportación de Figuras](figure_export_policy.md).
+1. **Paso 1**: Búsqueda centrada de referencia (DF centrada, $c=0$).
+2. **Paso 2**: Búsqueda homotópica afín con función descriptiva sesgada (BDF, $c \neq 0$).
+3. **Paso 3**: Verificación de ocultedad estándar mediante barrido de esferas local.
+4. **Paso 4** (Opcional): Búsqueda extendida en paralelo de ocultedad volumétrica.
+5. **Paso 5**: Resumen y exportación de figuras a la galería centralizada `library_figures/` según la [Política de Exportación de Figuras](figure_export_policy.md).
 
 ---
 
@@ -254,10 +264,10 @@ Los workflows especializados no son ejemplos independientes ni metodologías alt
 - **`hidden-attractors protocol`**: Ejecución secuencial y detallada del protocolo oficial (generación de semillas, continuación, validación, etc.).
 - **`hidden-attractors robustness overlay`**: Análisis de robustez numérica variando tamaños de paso y condiciones del resolvedor.
 - **`hidden-attractors basin refined`**: Refinamiento fino de las fronteras de cuencas de atracción locales.
-- **`hidden-attractors published danca-abm-sphere-controls`**: Pruebas de ocultedad en vecindades esféricas alrededor de los puntos de equilibrio.
-- **`hidden-attractors hiddenness strict-target-refinement`**: Refinamiento numérico del atractor localizado.
-- **`hidden-attractors report fractional-run`**: Generador automático de reportes científicos unificados.
-- **`hidden-attractors validate contract`**: Controladores de validación de la consistencia interna.
+- **`hidden-attractors hiddenness sphere-controls`**: Pruebas de ocultedad en vecindades esféricas alrededor de los puntos de equilibrio.
+- **`hidden-attractors basin strict-target-refinement`**: Refinamiento numérico del atractor localizado para cuencas de atracción.
+- **`hidden-attractors report fractional-run`**: Generador automático de reportes científicos y recopilación de figuras.
+- **`hidden-attractors validate contract`**: Verificación de contratos numéricos de consistencia interna.
 
 ---
 

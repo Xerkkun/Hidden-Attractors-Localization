@@ -29,10 +29,15 @@ Every reconstructed seed writes:
 }
 ```
 
-*Nota sobre Machado/FDF*: Las familias `machado_centered` y `machado_biased` se conservan como soporte teorico/interno planificado. No forman parte de la superficie publica del CLI de esta entrega; `hidden-attractors seed --help` solo lista `lure-centered` y `lure-biased`.
+*Nota sobre Machado/FDF*: Las familias `machado_centered` y `machado_biased` se conservan como soporte teórico/interno planificado. No forman parte de la superficie pública del CLI de esta entrega; el comando `hidden-attractors seed` expone las siguientes rutas:
+
+| Subcomando | Descripción | Comando de ayuda |
+| :--- | :--- | :--- |
+| `lure-centered` | Generación de semillas clásicas centradas de Lur'e | `hidden-attractors seed lure-centered --help` |
+| `lure-biased` | Generación de semillas clásicas sesgadas de Lur'e | `hidden-attractors seed lure-biased --help` |
 
 `lure_classical_centered` es la antigua ruta clásica centrada. Las funciones descriptivas predicen candidatos armónicos en el Chua buscando puntos de balance de frecuencia ($W_q(j\omega)N(A) = -1$).
-*Advertencia Científica*: La función descriptiva es una herramienta de aproximación armónica de primer armónico para ubicar posibles semillas localizadas. **No constituye de ninguna manera una prueba de existencia de atractor ni de su ocultedad**. La ocultedad se determina posteriormente y de forma rigurosa en el protocolo evaluando vecindades locales de todos los equilibrios (Stage 52 `hiddenness_tests`).
+*Advertencia Científica*: La función descriptiva es una herramienta de aproximación armónica de primer armónico para ubicar posibles semillas localizadas. **No constituye de ninguna manera una prueba de existencia de atractor ni de su ocultedad**. La ocultedad se determina posteriormente y de forma rigurosa en el protocolo evaluando vecindades locales de todos los equilibrios (en la etapa `hiddenness` de `hidden-attractors protocol` o mediante `hidden-attractors hiddenness sphere-controls`).
 
 ## Soft Precheck
 
