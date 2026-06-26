@@ -1,4 +1,4 @@
-﻿# Política de Exportación de Figuras y Reproducibilidad
+# Política de Exportación de Figuras y Reproducibilidad
 
 La versión sincronizada y los objetivos de portabilidad de figuras del manual se definen en el manifiesto [docs/manual_manifest.yaml](manual_manifest.yaml) y se detallan para el usuario final en `USER_MANUAL.md`.
 
@@ -42,7 +42,7 @@ Para garantizar la portabilidad y limpieza de la evidencia de validación:
 | **Figura Legacy / Exploratoria** | Proviene de scripts históricos o de análisis transitorios. | No | Fuera de `library_figures/` | **No** |
 
 > [!IMPORTANT]
-> **Límites de Evidencia Promovida**: Las figuras generadas bajo esquemas no soportados o en desarrollo, como diagramas de bifurcación de Chua arctan (el cual está implementado algebraicamente pero pendiente de validación de ocultedad) o semillas Machado/FDF (el cual está planeado en teoría y no es un flujo de trabajo promovido), no pueden ser promovidas al conjunto de figuras oficial (`library_figures/`). Cualquier figura en `library_figures/` debe cumplir rigurosamente con los criterios de validación numérica de la Etapa 9 descritos en `USER_MANUAL.md`.
+> **L?mites de Evidencia Promovida**: Las figuras generadas bajo esquemas no soportados o en desarrollo no pueden ser promovidas al conjunto oficial (`library_figures/`). Chua arctan c590 s? cuenta con figuras promovidas ?nicamente bajo la validaci?n local `r <= 0.3`; cualquier radio macro queda como auditor?a extendida. Las semillas Machado/FDF siguen como teor?a/soporte interno planificado y no son un flujo p?blico promovido. Cualquier figura en `library_figures/` debe cumplir rigurosamente con los criterios de validaci?n num?rica descritos en `USER_MANUAL.md`.
 
 ---
 

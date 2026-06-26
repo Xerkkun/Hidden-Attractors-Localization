@@ -14,7 +14,7 @@ The library separates user-facing interfaces from experimental features and inte
 The primary stable user-facing command-line interface is the installed
 `hidden-attractors` command. The Python implementation module
 `hidden_attractors.cli` remains internal. Specialized workflow commands are
-reproducible analysis interfaces while the project is in alpha, and auxiliary
+reproducible analysis interfaces with narrower support guarantees than the primary CLI, and auxiliary
 commands are documented for traceability rather than as stable APIs.
 
 | Command / Subcommand | Group | Real options or usage | Documentary status |

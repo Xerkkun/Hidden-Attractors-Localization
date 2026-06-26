@@ -4,7 +4,7 @@ The synchronized manual metadata are defined in [docs/manual_manifest.yaml](manu
 
 For a complete user-facing description of installation, CLI usage, examples, outputs, evidence labels and limitations, see `USER_MANUAL.md`.
 
-See the `THESIS_CLAIMS.md` for the current claims classification (reproduced, rejected, candidate, pending).
+See `THESIS_CLAIMS.md` for the current claims classification (reproduced, validated, rejected, candidate, partial, pending).
 
 > [!WARNING]
 > **Chua Arctan Validation Status**: The c590 Caputo arctan candidate is promoted as finite radius-limited hiddenness evidence for local radii `r <= 0.3`; Wu2023 remains a separate bibliographic ADM lane.
@@ -232,6 +232,6 @@ Release preparation separates four layers:
 - Local and exploratory outputs live under `outputs/`, `validation_outputs/`, `runs*/`, or `figures/` and remain outside Git.
 - Local writing drafts and templates remain outside the tracked software repository and do not create new scientific claims.
 
-The arctan Chua c590 route is promoted as `hiddenness_supported_under_tested_local_radii` for local radii `r <= 0.3`, with 8400 finite probes and zero target contacts around all equilibria. Macro radii `1.0` and `2.0` remain extended audit evidence; the claim is finite and radius-limited, not a global mathematical proof of hiddenness.
+The canonical arctan Chua package `validation/chua_fractional_arctan/` promotes the c590 route as `hiddenness_supported_under_tested_neighborhoods` for local radii `r <= 0.3`, with 8400 finite probes and zero target contacts around all equilibria. Macro radii `1.0` and `2.0` remain extended audit evidence; the claim is finite and radius-limited, not a global mathematical proof of hiddenness.
 
 

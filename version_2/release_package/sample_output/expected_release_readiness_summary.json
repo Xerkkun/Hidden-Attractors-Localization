@@ -1,11 +1,9 @@
 {
-  "command": "hidden-attractors validate release-readiness",
-  "expected_status": "passed_with_known_pending_items",
-  "expected_exit_code_non_strict": 0,
-  "expected_exit_code_strict": 0,
-  "expected_exit_code_submission_strict": 1,
-  "reason": "Repository and software-package readiness pass for v1.0.0 with arctan c590 promoted under the local-radius boundary.",
+  "generated_at_utc": "2026-06-26T01:37:23.586789+00:00",
+  "command": "hidden-attractors validate release-readiness --submission-strict --json",
+  "expected_status": "passed",
+  "expected_exit_code_submission_strict": 0,
+  "reason": "Captured after the final freeze audit is regenerated; this file is a lightweight command sample, not scientific evidence.",
   "not_promoted_evidence": true,
-  "replace_after_execution": true,
-  "blocking_release_items_declared": false
+  "replace_after_execution": false
 }

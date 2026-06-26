@@ -99,6 +99,9 @@ def test_manual_manifest_values():
     """Verify specific fields and values inside manual_manifest.yaml."""
     data = load_manifest()
     
+    assert data["manual_version"] == "1.0.0"
+    assert data["package_version"] == "1.0.0"
+
     # Assert entry points
     assert data["public_cli"] == "hidden-attractors", "public_cli must be exactly 'hidden-attractors'"
     assert data["entry_point"] == "hidden_attractors.cli.main:main", "entry_point must be 'hidden_attractors.cli.main:main'"
@@ -133,7 +136,7 @@ def test_manual_manifest_values():
     
     # Assert claim status summary
     status = data["claim_status_summary"]
-    assert status["chua_arctan_fractional"] == "pendiente", "chua_arctan_fractional status must be 'pendiente'"
+    assert status["chua_arctan_fractional"] == "promovido_con_limite_de_radio"
     
     # Assert forbidden public claims
     forbidden = data["forbidden_public_claims"]

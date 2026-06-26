@@ -22,8 +22,7 @@ seeds, tolerances, classifiers, or promoted scientific conclusions.
 The integer `q=1` Chua route is the reproduced software reference. The Danca
 2017 non-smooth fractional case is a partial reference implementation because
 key published numerical details are not reported. The official nearby fractional
-candidate is rejected/self-excited under the current neighborhood contract. The
-Wu2023 arctan remains a bibliographic ADM lane, while the c590 Caputo lane is promoted as radius-limited hiddenness evidence for local radii `r <= 0.3`.
+candidate is rejected/self-excited under the current neighborhood contract. The Wu2023 arctan remains a bibliographic ADM lane, while the canonical `validation/chua_fractional_arctan/` package promotes the c590 Caputo lane as radius-limited hiddenness evidence for local radii `r <= 0.3`.
 
 DF/Nyquist, continuation, plots, Lyapunov estimates, FFT/PSD, Poincare sections,
 and 0-1 tests are diagnostics or seed tools; they do not certify hiddenness by

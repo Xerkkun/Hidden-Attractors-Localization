@@ -1,12 +1,63 @@
 {
-  "sample_status": "template_outputs_recorded",
+  "sample_status": "executed",
+  "generated_at_utc": "2026-06-26T01:37:23.586789+00:00",
   "commands": [
-    "hidden-attractors --help",
-    "hidden-attractors validate release-readiness"
+    {
+      "command": "hidden-attractors --help",
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout_excerpt": [
+        "usage: hidden-attractors [-h]",
+        "                         {run,init,inspect-config,inspect,validate,protocol,hiddenness,basin,robustness,bifurcation,lyapunov,chaos-test,published,report,seed,continuation} ...",
+        "",
+        "Unified interface for fractional-order hidden attractor analysis.",
+        "",
+        "positional arguments:",
+        "  {run,init,inspect-config,inspect,validate,protocol,hiddenness,basin,robustness,bifurcation,lyapunov,chaos-test,published,report,seed,continuation}",
+        "                        Command group to execute",
+        "    run                 Run an experiment configuration",
+        "    init                Copy template configs to the current directory",
+        "    inspect-config      Preview the normalized configuration",
+        "    inspect             Inspect candidates, systems, or workflows",
+        "    validate            Validate contracts or bibliography",
+        "    protocol            Official Caputo protocol stages",
+        "    hiddenness          Hiddenness verification workflows",
+        "    basin               Basin of attraction workflows",
+        "    robustness          Robustness workflows",
+        "    bifurcation         Bifurcation sweep workflows and plots",
+        "    lyapunov            Lyapunov exponent calculation and convergence",
+        "    chaos-test          Supporting chaos time-series diagnostics",
+        "    published           Replicate/validate published workflows",
+        "    report              Report generation and publication figures",
+        "    seed                Seed generation routes",
+        "    continuation        Numerical continuation routes",
+        "",
+        "options:",
+        "  -h, --help            show this help message and exit"
+      ],
+      "stderr_excerpt": []
+    },
+    {
+      "command": "hidden-attractors seed --help",
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout_excerpt": [
+        "usage: hidden-attractors seed [-h] {lure-centered,lure-biased} ...",
+        "",
+        "positional arguments:",
+        "  {lure-centered,lure-biased}",
+        "    lure-centered       Centered Lur'e seed generation",
+        "    lure-biased         Biased Lur'e seed generation",
+        "",
+        "options:",
+        "  -h, --help            show this help message and exit"
+      ],
+      "stderr_excerpt": []
+    }
   ],
-  "expected_behavior": "CLI help and release readiness command are expected to run after editable installation.",
+  "expected_behavior": "CLI help and seed help execute after editable installation.",
   "not_promoted_evidence": true,
-  "replace_after_execution": true,
+  "replace_after_execution": false,
   "public_seed_commands": [
     "lure-centered",
     "lure-biased"

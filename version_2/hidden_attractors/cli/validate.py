@@ -347,6 +347,15 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
         "version_2/release_package/reproducibility_checklist.md",
         "version_2/release_package/archive_manifest.json",
         "version_2/validation/freeze_audit/final_freeze_pytest_summary.json",
+        "version_2/validation/chua_fractional_arctan/README.md",
+        "version_2/validation/chua_fractional_arctan/run_metadata.json",
+        "version_2/validation/chua_fractional_arctan/hiddenness_validation_summary.json",
+        "version_2/validation/chua_fractional_arctan/hiddenness_decisions.csv",
+        "version_2/validation/chua_fractional_arctan/summary_by_radius.csv",
+        "version_2/validation/chua_fractional_arctan/equilibria.json",
+        "version_2/validation/chua_fractional_arctan/matignon_classification.json",
+        "version_2/validation/chua_fractional_arctan/config.json",
+        "version_2/validation/chua_fractional_arctan/figures_manifest.json",
         "version_2/README.md",
         "version_2/USER_MANUAL.md",
     ]
@@ -371,11 +380,27 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     expected_cli = sample_output / "expected_cli_help_summary.json"
     if not expected_cli.exists():
         sample_details.append("sample_output/expected_cli_help_summary.json missing")
+    sample_manifest_path = sample_output / "sample_output_manifest.json"
+    if not sample_manifest_path.exists():
+        sample_details.append("sample_output/sample_output_manifest.json missing")
     if not list(sample_output.glob("*.json")):
         sample_details.append("sample_output has no json")
     sample_details.extend(_manifest_path_references(root, manifest, "sample_input"))
     sample_details.extend(_manifest_path_references(root, manifest, "sample_output"))
-    checks.append(_check("sample input/output templates", "software", not sample_details, sample_details))
+    if manifest.get("sample_status") != "executed":
+        sample_details.append(f"archive manifest sample_status={manifest.get('sample_status')}")
+    for sample_json in sample_output.glob("*.json"):
+        sample_data = _load_json(sample_json)
+        rel = sample_json.relative_to(root).as_posix()
+        if sample_data.get("sample_status") not in {None, "executed"}:
+            sample_details.append(f"{rel}: sample_status={sample_data.get('sample_status')}")
+        if sample_data.get("replace_after_execution") is True:
+            sample_details.append(f"{rel}: replace_after_execution=true")
+    expected_cli_data = _load_json(expected_cli) if expected_cli.exists() else {}
+    public_seed = expected_cli_data.get("public_seed_commands", [])
+    if "machado-centered" in public_seed or "machado-biased" in public_seed:
+        sample_details.append("Machado/FDF seed commands exposed as public sample commands")
+    checks.append(_check("sample input/output executed", "software", not sample_details, sample_details))
 
     has_paper_dir = (root / "paper").exists()
 
@@ -431,29 +456,46 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     doi_ok = "10.17605/OSF.IO/ZGK74" in citation_text and manifest.get("doi") == "10.17605/OSF.IO/ZGK74"
     checks.append(_check("DOI metadata", "software", doi_ok, [] if doi_ok else ["10.17605/OSF.IO/ZGK74 missing from citation or manifest"]))
 
-    arctan_summary = _load_json(root / "version_2" / "validation" / "chua_fractional_arctan_c590" / "validation_summary.json")
+    arctan_summary = _load_json(root / "version_2" / "validation" / "chua_fractional_arctan" / "hiddenness_validation_summary.json")
+    promoted_evidence = manifest.get("promoted_evidence", [])
     arctan_ok = (
-        arctan_summary.get("promoted_status") == "hiddenness_supported_under_tested_local_radii_with_macro_radius_review"
+        arctan_summary.get("case_id") == "chua_fractional_arctan"
+        and arctan_summary.get("promoted_status") == "hiddenness_supported_under_tested_local_radii_with_macro_radius_review"
+        and arctan_summary.get("canonical_label") == "hiddenness_supported_under_tested_neighborhoods"
         and arctan_summary.get("zero_contact_max_radius") == 0.3
         and arctan_summary.get("zero_contact_tests") == 8400
         and arctan_summary.get("zero_contact_contacts") == 0
+        and arctan_summary.get("all_equilibria_tested") is True
+        and "version_2/validation/chua_fractional_arctan/" in promoted_evidence
+        and "version_2/validation/chua_fractional_arctan_c590/" not in promoted_evidence
         and "radii <= 0.3" in str(manifest.get("arctan_status", ""))
     )
-    checks.append(_check("arctan c590 radius-limited promotion", "repository", arctan_ok, [] if arctan_ok else [str(arctan_summary), str(manifest.get("arctan_status"))]))
+    checks.append(_check("arctan canonical radius-limited promotion", "repository", arctan_ok, [] if arctan_ok else [str(arctan_summary), str(manifest.get("arctan_status")), str(promoted_evidence)]))
 
     current_head = _git_head(root)
     current_short = _git_head(root, short=True)
     manifest_commit = str(manifest.get("commit", ""))
     commit_status = str(manifest.get("commit_status", ""))
-    commit_ok = (
-        manifest_commit in {current_head, current_short}
-        and commit_status == "current"
-    ) or commit_status == "pending_update_after_final_cleanup_commit"
+    commit_ok = manifest_commit in {current_head, current_short} and commit_status == "current"
     checks.append(_check("archive manifest commit", "software", commit_ok, [] if commit_ok else [f"commit={manifest_commit}", f"HEAD={current_short}", f"commit_status={commit_status}"]))
 
     freeze_status = str(manifest.get("freeze_audit_status", ""))
-    freeze_ok = freeze_status == "pending_final_scientific_freeze" and str(manifest.get("last_recorded_freeze_audit_commit", "")).startswith("2bcea343")
-    checks.append(_check("freeze audit separated from CI", "software", freeze_ok, [] if freeze_ok else [f"freeze_audit_status={freeze_status}"]))
+    freeze_summary = _load_json(root / "version_2" / "validation" / "freeze_audit" / "final_freeze_pytest_summary.json")
+    freeze_commit = str(freeze_summary.get("git_commit", ""))
+    freeze_dirty_documented = (
+        freeze_summary.get("working_tree_dirty") is False
+        or bool(freeze_summary.get("git_diff_sha256"))
+        or bool(freeze_summary.get("dirty_state_note"))
+    )
+    freeze_ok = (
+        freeze_status == "passed"
+        and freeze_summary.get("status") == "passed"
+        and freeze_summary.get("freeze_ready") is True
+        and freeze_commit in {manifest_commit, current_head, current_short}
+        and str(manifest.get("last_recorded_freeze_audit_commit", "")) in {manifest_commit, current_head, current_short}
+        and freeze_dirty_documented
+    )
+    checks.append(_check("freeze audit passed", "software", freeze_ok, [] if freeze_ok else [f"freeze_audit_status={freeze_status}", f"freeze_summary_status={freeze_summary.get('status')}", f"freeze_commit={freeze_commit}", f"working_tree_dirty={freeze_summary.get('working_tree_dirty')}"]))
 
     ci_ok = manifest.get("ci_status") == "passed" and "Python 3.11/3.12/3.13" in str(manifest.get("ci_status_scope", ""))
     checks.append(_check("CI status documented", "software", ci_ok, [] if ci_ok else [f"ci_status={manifest.get('ci_status')}", f"ci_status_scope={manifest.get('ci_status_scope')}"]))
@@ -464,7 +506,7 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     readiness_ok = (
         manifest.get("repository_readiness") == "passed"
         and manifest.get("software_package_readiness") == "passed"
-        and manifest.get("final_submission_readiness") in {"pending", "passed"}
+        and manifest.get("final_submission_readiness") == "passed"
     )
     checks.append(_check("readiness levels", "software", readiness_ok, [] if readiness_ok else [
         f"repository_readiness={manifest.get('repository_readiness')}",
@@ -473,15 +515,12 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     ]))
 
     final_pending: list[dict[str, Any]] = []
-    bib_todos = _paper_bib_todos(root / "paper" / "references.bib")
-    if bib_todos:
-        final_pending.append({"name": "bibliographic metadata TODOs", "details": bib_todos[:20]})
-    if manifest.get("sample_status") == "template_only_pending_execution":
-        final_pending.append({"name": "sample outputs not executed", "details": ["sample_status=template_only_pending_execution"]})
-    if manifest.get("freeze_audit_status") == "pending_final_scientific_freeze":
-        final_pending.append({"name": "final scientific freeze audit", "details": ["freeze audit must be regenerated after final scientific evidence is frozen"]})
-    if manifest.get("final_submission_readiness") == "pending":
-        final_pending.append({"name": "final release manuscript/template work", "details": ["final manuscript remains editorial work"]})
+    if manifest.get("sample_status") != "executed":
+        final_pending.append({"name": "sample outputs not executed", "details": [f"sample_status={manifest.get('sample_status')}"]})
+    if manifest.get("freeze_audit_status") != "passed":
+        final_pending.append({"name": "final scientific freeze audit", "details": [f"freeze_audit_status={manifest.get('freeze_audit_status')}"]})
+    if manifest.get("final_submission_readiness") != "passed":
+        final_pending.append({"name": "final release readiness", "details": [f"final_submission_readiness={manifest.get('final_submission_readiness')}"]})
     if manifest.get("remaining_scientific_validation"):
         final_pending.append({"name": "remaining scientific validation", "details": list(manifest.get("remaining_scientific_validation", []))})
     blocking_details = []
@@ -490,8 +529,8 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     blocking_details.extend(str(item) for item in manifest.get("blocking_release_items", []))
     if blocking_details:
         final_pending.append({"name": "blocking release items", "details": blocking_details})
-    if manifest.get("commit_status") == "pending_update_after_final_cleanup_commit" or manifest_commit not in {current_head, current_short}:
-        final_pending.append({"name": "archive manifest commit status", "details": [f"commit={manifest_commit} is pending update to final commit hash (status={commit_status})"]})
+    if commit_status != "current" or manifest_commit not in {current_head, current_short}:
+        final_pending.append({"name": "archive manifest commit status", "details": [f"commit={manifest_commit} must match HEAD {current_short} with status=current (status={commit_status})"]})
 
     failures = [c for c in checks if not c["ok"]]
     repository_readiness = "failed" if any(c["category"] == "repository" and not c["ok"] for c in checks) else "passed"

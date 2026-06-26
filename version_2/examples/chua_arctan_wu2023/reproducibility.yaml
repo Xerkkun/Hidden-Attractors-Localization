@@ -1,4 +1,4 @@
-﻿case_id: chua_arctan_wu2023_and_c590
+case_id: chua_arctan_wu2023_and_c590
 role_in_report: "Ejemplo II -- Chua fraccionario con no linealidad arctan"
 
 published_wu2023:
@@ -86,7 +86,7 @@ proposed_c590:
   candidate_id: chua_arctan_c590_q09999_seed9
   candidate_dir: ../../outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623
   continuation_dir: ../../outputs/arctan_hidden_candidate_search/c590_df_continuation_q09999_relaxed_20260624
-  interpretation: "busqueda dinamica Caputo full-history y sondeos esfericos; compatible localmente hasta r <= 0.3, revision macroscopia pendiente"
+  interpretation: "busqueda dinamica Caputo full-history y sondeos esfericos; compatible localmente hasta r <= 0.3, auditoria macroscopica documentada"
   parameters:
     alpha: 21.849356906616716
     beta: 19.081840840860202

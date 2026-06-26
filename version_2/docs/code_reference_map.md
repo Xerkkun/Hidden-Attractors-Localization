@@ -1,4 +1,4 @@
-﻿# Code Reference Map
+# Code Reference Map
 
 Every calculation-facing function should be traceable to one of three sources:
 a published reference, a local numerical contract documented in the report, or
@@ -13,7 +13,7 @@ boundaries, see [Scientific Scope](scientific_scope.md).
 The installed scripts below are the commands declared in
 `version_2/pyproject.toml`. The primary stable user-facing CLI is
 `hidden-attractors`; specialized workflow commands are reproducible analysis
-interfaces that may change while the project remains in alpha. Auxiliary or
+interfaces that remain auditable but may have narrower support guarantees than the primary CLI. Auxiliary or
 internal commands are listed for traceability, not as stable public APIs.
 
 | Command / Subcommand | Group | Entry point / Target function | Documentary status |

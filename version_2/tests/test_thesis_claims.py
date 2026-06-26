@@ -131,7 +131,7 @@ def test_fractional_arctan_claim_status() -> None:
         if claim_id == "CLAIM-CHUA-ARCTAN-FRAC-001":
             state = _clean_text(row["status"])
             assert state == "validated"
-            assert "validation/chua_fractional_arctan_c590/validation_summary.json" in row["json_evidence"]
+            assert "validation/chua_fractional_arctan/hiddenness_validation_summary.json" in row["json_evidence"]
             assert "r <= 0.3" in row["methodological_comment"]
 
 

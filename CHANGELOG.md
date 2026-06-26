@@ -15,9 +15,8 @@
 - Updated root and package READMEs for the `1.0.0` release.
 - Rewrote quick start, getting started, examples, systems, user manual, and
   release manifest pages to use the unified `hidden-attractors` CLI.
-- Clarified reproduced, partial, rejected, and non-promoted article cases.
-- Neutralized release/readiness wording so public files do not mention any target
-  publication venue.
+- Clarified reproduced, partial, rejected, and radius-limited and non-promoted article cases.
+- Neutralized release/readiness wording so public files avoid venue-specific external targets.
 
 ### Scientific-results policy
 
@@ -27,8 +26,8 @@
   fractional Danca case partial; nearby non-smooth candidate rejected/self-excited;
   arctan c590 lane promoted as radius-limited hiddenness evidence for local radii `r <= 0.3`; Lyapunov comparison lanes remain diagnostic.
 
-### Pending
+### Release readiness
 
-- Regenerate the final scientific freeze audit after the evidence set is fixed.
-- Replace template sample outputs with executed release sample outputs if needed.
-- Complete any remaining long validation runs selected for the final evidence package.
+- Final release metadata expects executed sample outputs and a regenerated freeze audit.
+- No blocking arctan evidence item remains for the radius-limited v1.0.0 claim.
+- Optional future work is limited to stronger basin/global analyses and benchmark expansion.

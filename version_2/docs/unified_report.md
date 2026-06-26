@@ -1,4 +1,4 @@
-﻿# Unified Report
+# Unified Report
 
 The synchronized manual metadata are defined in [docs/manual_manifest.yaml](manual_manifest.yaml); scientific claims remain governed by `THESIS_CLAIMS.md`.
 
@@ -12,7 +12,7 @@ As defined in [docs/manual_manifest.yaml](manual_manifest.yaml), the project's d
 3. **Web Docs & Home Page**: Located in the external repository `Xerkkun/hidden-attractors` under `src/content/docs/` and `src/pages/hidden-attractors/index.astro`.
 
 > [!NOTE]
-> **LaTeX Report Updates**: While the core CLI commands and test count summaries have been unified, the LaTeX source `docs/reporte_unificado_chua_fraccionario.tex` retains pending updates for specific sections and figures (such as Nyquist, continuation, dense bifurcation, spectral diagnostics, and Lyapunov diagnostics). Ensure LaTeX commands and references are updated to match the unified CLI parameters during the final typesetting build.
+> **LaTeX report status**: The LaTeX source `docs/reporte_unificado_chua_fraccionario.tex` is the canonical unified report. Keep CLI commands, figures, arctan radius limits, and test-count summaries synchronized with `docs/manual_manifest.yaml` and `validation/freeze_audit/`.
 
 The canonical LaTeX source is:
 
@@ -26,9 +26,8 @@ It consolidates the previous `.tex` files into a thematic structure:
 - reference titles for each method;
 - public library calls;
 - real-trajectory examples;
-- generated report figures copied from `outputs/`;
-- pending figure sections for Nyquist, continuation, dense bifurcation,
-  spectral diagnostics, and Lyapunov diagnostics;
+- generated report figures promoted through `library_figures/`;
+- Nyquist, continuation, bifurcation, spectral, hiddenness, and Lyapunov diagnostic sections with conservative evidence labels;
 - the official fixed stage order and conservative interpretation of hiddenness.
 
 The older standalone LaTeX reports were retired to avoid repeated, stale
@@ -72,4 +71,6 @@ not copied manually from ad-hoc `outputs/` directories.
 Use [Code Reference Map](code_reference_map.md) before adding new calculation
 code. New methods must state whether they come from a paper, a local numerical
 contract, or an external library adapter.
+
+The Chua arctan c590 result referenced by the unified report is radius-limited: the canonical validation package `validation/chua_fractional_arctan/` supports local radii `r <= 0.3` with 8400 finite probes and zero contacts, while macro-radius contacts remain extended audit evidence rather than a global basin proof.
 

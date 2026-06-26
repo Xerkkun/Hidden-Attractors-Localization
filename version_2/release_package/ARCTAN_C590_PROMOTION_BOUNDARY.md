@@ -8,7 +8,8 @@ full-memory contract.
 
 - Label: `hiddenness_supported_under_tested_local_radii`.
 - Candidate: `chua_arctan_c590_q09999_seed9`.
-- Promoted validation package: `version_2/validation/chua_fractional_arctan_c590/`.
+- Promoted validation package: `version_2/validation/chua_fractional_arctan/`.
+- Source evidence package: `version_2/validation/chua_fractional_arctan_c590/`.
 - Tested local radii with zero contacts: `1e-5`, `1e-4`, `1e-3`, `1e-2`,
   `0.03`, `0.1`, and `0.3`.
 - Local finite probes: `8400`.

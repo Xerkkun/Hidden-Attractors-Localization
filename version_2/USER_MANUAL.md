@@ -216,8 +216,8 @@ The library therefore separates two claims:
 
 ## 8. Radius-limited promoted example: Chua arctan c590
 
-The arctan Chua example separates the Wu 2023 bibliographic lane from a proposed
-Caputo full-history dynamic lane.
+The arctan Chua example separates the Wu 2023 bibliographic lane from the promoted
+Caputo full-history c590 validation lane.
 
 - **System**: Chua with smooth arctan nonlinearity.
 - **Reported order**: `q = 0.99` for the Wu 2023 lane.
@@ -382,14 +382,14 @@ repository metadata is:
 Reproducible reports should state:
 
 ```text
-Software version: 0.1.0
+Software version: 1.0.0
 Git commit: <commit>
 Python version: <version>
 System and parameters: <system_id, q, parameters>
 Integrator and memory policy: <name, h, memory>
 Time contract: <t_final, t_burn>
 Validation contract: configs/validation_contract.json
-Claim status: <reproduced/candidate/rejected/partial/pending>
+Claim status: <reproduced/validated/candidate/rejected/partial/pending>
 ```
 
 For release packaging, also consult `REPRODUCIBILITY.md`, `RELEASE_NOTES.md`,
