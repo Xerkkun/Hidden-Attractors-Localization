@@ -24,8 +24,17 @@ This report summarizes the packaging, validation, and release readiness checks f
 | **Contract Status** | `validate contract --allow-pending` | **PASSED** | No structural or numeric contract discrepancy warnings |
 | **Twine Check** | `twine check dist/*` | **PASSED** | Verified metadata and structures of source distribution and wheel |
 | **Clean Venv Smoke Test** | `validate_wheel_install.py` | **PASSED** | Installs correctly; imports run clean; CLI loads without errors |
+| **TestPyPI Verification** | Manual upload & test | **PASSED** | Status, install, CLI smoke, and import tests all passed |
 
 ---
+
+## TestPyPI Verification Results
+
+The package was uploaded to TestPyPI and verified in a clean virtual environment:
+- **TestPyPI status**: passed
+- **TestPyPI install**: passed
+- **TestPyPI CLI smoke**: passed
+- **TestPyPI import**: passed
 
 ## Build Output Files
 
