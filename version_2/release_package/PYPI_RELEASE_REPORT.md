@@ -19,7 +19,7 @@ This report summarizes the packaging, validation, and release readiness checks f
 
 | Check | Tool / Command | Status | Notes |
 | :--- | :--- | :--- | :--- |
-| **Freeze Audit** | `run_final_freeze_audit.py` | **PASSED** | `944 passed, 28 skipped`; `working_tree_dirty: false` |
+| **Freeze Audit** | `run_final_freeze_audit.py` | **PASSED** | `947 passed, 28 skipped`; `working_tree_dirty: false` |
 | **Release Readiness** | `validate release-readiness --submission-strict` | **PASSED** | Unified CLI, archive manifest commit matched, metadata verified |
 | **Contract Status** | `validate contract --allow-pending` | **PASSED** | No structural or numeric contract discrepancy warnings |
 | **Twine Check** | `twine check dist/*` | **PASSED** | Verified metadata and structures of source distribution and wheel |
