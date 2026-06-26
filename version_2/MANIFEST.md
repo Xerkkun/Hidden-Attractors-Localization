@@ -48,8 +48,9 @@ release API.
   software reference.
 - `examples/chua_nonsmooth_biased_hidden_attractor/`: proposed BDF methodology
   for the non-smooth fractional Chua case.
-- `examples/chua_arctan_wu2023/`: Wu2023 bibliographic lane and proposed c590
-  Caputo lane, both non-promoted for hiddenness in this release.
+- `examples/chua_arctan_wu2023/`: Wu2023 bibliographic lane plus promoted c590
+  Caputo lane; c590 is radius-limited to local radii `r <= 0.3` and is not
+  a global basin proof.
 
 Small API examples remain in `examples/*.py` and should import from
 `hidden_attractors`.

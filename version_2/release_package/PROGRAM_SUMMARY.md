@@ -26,13 +26,12 @@ diagnostics, all-equilibrium neighborhood tests, figures, manifests, and release
 metadata.
 
 Official examples: integer Chua Lur'e reference, non-smooth fractional Chua BDF
-methodology, and arctan Wu2023/c590 audit lane. The arctan lane is an audit and
-candidate-review lane, not a promoted hidden-attractor result.
+methodology, and arctan Wu2023/c590 lane. The c590 arctan lane is promoted as
+radius-limited hiddenness evidence for local radii `r <= 0.3`.
 
 Restrictions: scalar Lur'e systems, commensurate order, Caputo fractional
 contracts for `0 < q <= 1`, and finite numerical evidence. The package does not
-prove global hiddenness. The manifest currently blocks declaring `v1.0.0` until
-the arctan evidence gap, final freeze audit, and sample-output status are closed.
+prove global hiddenness. The manifest declares `v1.0.0`; the arctan c590 claim is bounded by the tested local-radius contract and macro-radius audit evidence.
 
 Running time: seconds for metadata/smoke checks; minutes or hours for long
 fractional-memory sweeps, hiddenness sampling, or published quantitative

@@ -1,4 +1,4 @@
-﻿# Examples
+# Examples
 
 Examples are small, runnable entry points that import from `hidden_attractors`
 when possible. They write ordinary outputs under `outputs/`; promoted evidence
@@ -17,7 +17,7 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 | --- | --- | --- |
 | `examples/chua_integer_lure_reference/` | Integer `q=1` Lur'e seed, continuation, final trajectory, hiddenness controls, figures, Lyapunov diagnostic | Reproduced reference for the integer route only |
 | `examples/chua_nonsmooth_biased_hidden_attractor/` | Biased describing-function methodology for a non-smooth fractional Chua candidate | Candidate evidence under tested local radii; not full Danca reproduction |
-| `examples/chua_arctan_wu2023/` | Wu2023 arctan bibliographic lane plus proposed Caputo full-history c590 lane | Non-promoted/requires review; not verified hiddenness |
+| `examples/chua_arctan_wu2023/` | Wu2023 arctan bibliographic lane plus promoted Caputo full-history c590 lane | c590 promoted for local radii `r <= 0.3` with 8400 probes and zero contacts; not a global basin proof |
 
 ## Small API examples
 

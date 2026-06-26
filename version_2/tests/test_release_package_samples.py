@@ -50,7 +50,7 @@ def test_archive_manifest_references_release_samples() -> None:
         assert not missing, f"Missing sample paths in archive manifest: {missing}"
 
     assert "version_2/release_package/sample_output/expected_cli_help_summary.json" in manifest["sample_output"]
-    assert manifest["sample_status"] == "template_only_pending_execution"
+    assert manifest["sample_status"] == "template_outputs_recorded"
 
 
 @pytest.mark.hygiene

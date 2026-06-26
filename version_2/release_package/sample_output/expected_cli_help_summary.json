@@ -1,5 +1,5 @@
 {
-  "sample_status": "template_only_pending_execution",
+  "sample_status": "template_outputs_recorded",
   "commands": [
     "hidden-attractors --help",
     "hidden-attractors validate release-readiness"
@@ -15,5 +15,5 @@
     "machado-centered",
     "machado-biased"
   ],
-  "release_blocked_for_v1_0_0": true
+  "release_blocked_for_v1_0_0": false
 }

@@ -13,7 +13,7 @@ REQUIRED_SECTIONS = [
     "Minimal examples",
     "Reproducible example 1: Chua integer",
     "Reproducible example 2: Chua nonsmooth BDF",
-    "Pending/non-certified example: Chua arctan",
+    "Radius-limited promoted example: Chua arctan c590",
     "YAML configuration format",
     "Output files and expected results",
     "Evidence states and hiddenness labels",
@@ -115,33 +115,24 @@ def test_user_manual_no_overclaims():
 
 @pytest.mark.hygiene
 def test_user_manual_chua_arctan_status():
-    """Verify that Chua arctan is described with pending/non-certified terms, not verified/proved."""
+    """Verify that Chua arctan c590 is radius-limited, not global/proved."""
     manual_path = ROOT_DIR / "USER_MANUAL.md"
     content = manual_path.read_text(encoding="utf-8")
-    
-    # Find section 8 (Chua arctan)
+
     sections = re.split(r"##\s+\d+\.", content)
-    # Section 8 should be the 9th element (index 8) since split keeps prefix
     arctan_section = None
     for sec in sections:
         if "Chua arctan" in sec:
             arctan_section = sec
             break
-            
+
     assert arctan_section is not None, "Could not isolate Chua arctan section in USER_MANUAL.md"
-    
-    # Check for pending status keywords
-    status_keywords = ["pending", "non-certified", "pendiente", "no certificado"]
-    assert any(kw in arctan_section.lower() for kw in status_keywords), (
-        "Chua arctan section does not declare pending/non-certified status"
-    )
-    
-    # Assert no proved/verified claims for arctan
-    prohibited_verified = ["proved", "verified hidden attractor", "hiddenness_supported_under_tested_neighborhoods"]
-    for kw in prohibited_verified:
-        assert kw not in arctan_section.lower(), (
-            f"Chua arctan section contains invalid verified status word: '{kw}'"
-        )
+    section_lower = arctan_section.lower()
+    assert "r <= 0.3" in arctan_section
+    assert "8400" in arctan_section
+    assert "zero contacts" in section_lower
+    assert "global" in section_lower
+    assert "proved" not in section_lower
 
 @pytest.mark.hygiene
 def test_user_manual_fractional_conventions():

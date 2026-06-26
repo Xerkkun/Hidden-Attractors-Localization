@@ -17,7 +17,7 @@ def test_user_manual_claims_consistency():
     claims_content = claims_path.read_text(encoding="utf-8")
     manual_content = manual_path.read_text(encoding="utf-8")
     
-    # 1. Verify Chua arctan status
+    # 1. Verify Chua arctan radius-limited status
     arctan_claim_line = None
     for line in claims_content.splitlines():
         if "CLAIM-CHUA-ARCTAN-FRAC-001" in line or "Chua fraccionario arctan" in line:
@@ -26,7 +26,7 @@ def test_user_manual_claims_consistency():
             
     assert arctan_claim_line is not None, "Could not find Chua arctan claim in THESIS_CLAIMS.md"
     
-    if "pendiente" in arctan_claim_line.lower():
+    if "r <= 0.3" in arctan_claim_line.lower() or "radius-limited" in arctan_claim_line.lower():
         sections = re.split(r"##\s+\d+\.", manual_content)
         arctan_section = None
         for sec in sections:
@@ -34,8 +34,8 @@ def test_user_manual_claims_consistency():
                 arctan_section = sec
                 break
         assert arctan_section is not None, "Could not isolate Chua arctan section in USER_MANUAL.md"
-        assert "verified" not in arctan_section.lower(), "USER_MANUAL.md claims Chua arctan is verified but THESIS_CLAIMS.md marks it as pending."
-        assert "proved" not in arctan_section.lower(), "USER_MANUAL.md claims Chua arctan is proved but THESIS_CLAIMS.md marks it as pending."
+        assert "r <= 0.3" in arctan_section, "USER_MANUAL.md lacks the arctan local-radius boundary."
+        assert "proved" not in arctan_section.lower(), "USER_MANUAL.md claims Chua arctan is proved globally."
         
     # 2. Verify Chua integer status
     integer_claim_line = None

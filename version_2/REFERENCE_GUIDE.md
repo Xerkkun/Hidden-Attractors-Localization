@@ -160,7 +160,7 @@ Defined in [`hidden_attractors/systems/builtins.py`](hidden_attractors/systems/b
 
 *Aliases mapped: `chua_integer_saturation` $\rightarrow$ `chua-nonsmooth`, `chua_fractional_saturation` $\rightarrow$ `chua-nonsmooth`, `chua_fractional_arctan` $\rightarrow$ `chua-arctan`.*
 
-*(Note: Chua arctan is implemented algebraically, pending full hiddenness validation.)*
+*(Note: Chua arctan c590 is promoted as finite local-radius hiddenness evidence for `r <= 0.3`; this is not a global basin proof.)*
 
 ---
 

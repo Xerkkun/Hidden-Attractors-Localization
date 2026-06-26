@@ -1,4 +1,4 @@
-﻿# Repository Layout
+# Repository Layout
 
 ```text
 hidden_attractors/              importable package
@@ -22,7 +22,7 @@ library_figures/                canonical promoted figure repository
 Only `hidden_attractors/`, `examples/`, `tests/`, `configs/`, `validation/`,
 `library_figures/`, and documented `tools/cli/` commands are part of the active library workflow.
 
-Chua arctan outputs remain algebraically implemented and pending full hiddenness validation; they must stay non-promoted unless the validation contract changes.
+Chua arctan c590 is promoted only under the local-radius validation contract (`r <= 0.3`, 8400 probes, zero contacts); tests must keep that boundary and must not convert it into a global basin proof.
 
 To keep the active layer clean and free of temporary files, strict script naming and location rules are enforced. See the [Development Hygiene Policy](development_hygiene.md) for more details.
 

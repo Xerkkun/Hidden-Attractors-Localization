@@ -1,4 +1,4 @@
-﻿# Systems
+# Systems
 
 The package exposes a registry for chaotic systems. Built-in systems and user
 systems use the same `ChaoticSystem` contract, but a registered vector field is
@@ -138,8 +138,7 @@ The arctan example is:
 python examples/chua_arctan_wu2023/run_example.py --quick
 ```
 
-The arctan lane remains non-promoted for hiddenness: the Wu2023 bibliographic
-lane is a local ADM reproduction, and the c590 Caputo lane remains under review.
+The arctan lane separates Wu2023 bibliographic ADM reproduction from the promoted c590 Caputo lane. The c590 claim is radius-limited: local radii `r <= 0.3` have 8400 finite probes and zero contacts; macro radii `1.0` and `2.0` remain extended audit evidence.
 
 ## API inventory
 

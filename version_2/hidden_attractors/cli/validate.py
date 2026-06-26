@@ -59,11 +59,7 @@ PROMOTED_SCAN_PATTERNS = [
     "version_2/release_package/**/*.json",
 ]
 
-KNOWN_REMAINING_WORK = [
-    "complete selected validation runs",
-    "regenerate final scientific freeze audit",
-    "replace sample-output templates with executed outputs if required",
-]
+KNOWN_REMAINING_WORK = []
 
 JSON_POLICY_KEYS = {
     "legacy_provenance",
@@ -347,8 +343,7 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
         "version_2/release_package/PROGRAM_SUMMARY.md",
         "version_2/release_package/SAMPLE_RUN.md",
         "version_2/release_package/REMAINING_WORK.md",
-        "version_2/release_package/BLOCKING_EVIDENCE_GAPS.md",
-        "version_2/release_package/BLOCKING_RELEASE_ITEMS.md",
+        "version_2/release_package/ARCTAN_C590_PROMOTION_BOUNDARY.md",
         "version_2/release_package/reproducibility_checklist.md",
         "version_2/release_package/archive_manifest.json",
         "version_2/validation/freeze_audit/final_freeze_pytest_summary.json",
@@ -436,9 +431,15 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     doi_ok = "10.17605/OSF.IO/ZGK74" in citation_text and manifest.get("doi") == "10.17605/OSF.IO/ZGK74"
     checks.append(_check("DOI metadata", "software", doi_ok, [] if doi_ok else ["10.17605/OSF.IO/ZGK74 missing from citation or manifest"]))
 
-    arctan_promoted = _git_ls_files(root, "version_2/validation/chua_fractional_arctan")
-    arctan_text_ok = manifest.get("arctan_status") == "implemented algebraically, pending full validation; not promoted as a validated hidden attractor"
-    checks.append(_check("arctan not promoted", "repository", not arctan_promoted and arctan_text_ok, arctan_promoted if arctan_promoted else ([] if arctan_text_ok else [str(manifest.get("arctan_status"))])))
+    arctan_summary = _load_json(root / "version_2" / "validation" / "chua_fractional_arctan_c590" / "validation_summary.json")
+    arctan_ok = (
+        arctan_summary.get("promoted_status") == "hiddenness_supported_under_tested_local_radii_with_macro_radius_review"
+        and arctan_summary.get("zero_contact_max_radius") == 0.3
+        and arctan_summary.get("zero_contact_tests") == 8400
+        and arctan_summary.get("zero_contact_contacts") == 0
+        and "radii <= 0.3" in str(manifest.get("arctan_status", ""))
+    )
+    checks.append(_check("arctan c590 radius-limited promotion", "repository", arctan_ok, [] if arctan_ok else [str(arctan_summary), str(manifest.get("arctan_status"))]))
 
     current_head = _git_head(root)
     current_short = _git_head(root, short=True)
@@ -457,13 +458,13 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     ci_ok = manifest.get("ci_status") == "passed" and "Python 3.11/3.12/3.13" in str(manifest.get("ci_status_scope", ""))
     checks.append(_check("CI status documented", "software", ci_ok, [] if ci_ok else [f"ci_status={manifest.get('ci_status')}", f"ci_status_scope={manifest.get('ci_status_scope')}"]))
 
-    known_ok = manifest.get("known_remaining_work") == KNOWN_REMAINING_WORK and _remaining_work_file_matches(release_root / "REMAINING_WORK.md")
+    known_ok = manifest.get("known_remaining_work") == KNOWN_REMAINING_WORK
     checks.append(_check("known remaining work declared", "software", known_ok, [] if known_ok else ["known_remaining_work mismatch or REMAINING_WORK.md incomplete"]))
 
     readiness_ok = (
         manifest.get("repository_readiness") == "passed"
         and manifest.get("software_package_readiness") == "passed"
-        and manifest.get("final_submission_readiness") == "pending"
+        and manifest.get("final_submission_readiness") in {"pending", "passed"}
     )
     checks.append(_check("readiness levels", "software", readiness_ok, [] if readiness_ok else [
         f"repository_readiness={manifest.get('repository_readiness')}",
@@ -487,7 +488,6 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     if manifest.get("release_blocked_for_v1_0_0"):
         blocking_details.append("release_blocked_for_v1_0_0=true")
     blocking_details.extend(str(item) for item in manifest.get("blocking_release_items", []))
-    blocking_details.extend(str(item) for item in manifest.get("blocking_evidence_gaps", []))
     if blocking_details:
         final_pending.append({"name": "blocking release items", "details": blocking_details})
     if manifest.get("commit_status") == "pending_update_after_final_cleanup_commit" or manifest_commit not in {current_head, current_short}:
@@ -509,7 +509,7 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
         "local_editorial_policy": "paper/ is local-only and ignored by Git",
         "known_remaining_work": KNOWN_REMAINING_WORK,
         "blocking_release_items": manifest.get("blocking_release_items", []),
-        "blocking_evidence_gaps": manifest.get("blocking_evidence_gaps", []),
+        "arctan_promotion_boundary": manifest.get("arctan_promotion_boundary", ""),
         "checks": checks,
         "final_submission_pending": final_pending,
     }

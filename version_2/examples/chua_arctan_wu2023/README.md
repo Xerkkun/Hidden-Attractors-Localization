@@ -3,20 +3,21 @@
 This example keeps two lanes separate:
 
 1. a Wu2023 bibliographic reproduction lane; and
-2. a proposed Caputo full-history dynamic lane for the c590 candidate.
+2. a promoted Caputo full-history dynamic lane for the c590 candidate, limited to local radii `r <= 0.3`.
 
-Neither lane is promoted as a validated hidden-attractor result in this release.
+The Wu2023 bibliographic lane remains partial. The c590 lane is promoted as finite radius-limited hiddenness evidence for local radii `r <= 0.3` with 8400 probes and zero contacts; macro radii `1.0` and `2.0` remain extended audit evidence.
 
 ## Status
 
 | Lane | Contract | Current status |
 | --- | --- | --- |
-| Wu2023 bibliographic lane | arctan algebra, equilibria, Lur'e split, reported initial conditions, local ADM recurrence | Partial/non-promoted; reported initial conditions classify as periodic/nonchaotic under the local ADM contract |
-| Proposed c590 lane | Caputo ABM full-history search and neighborhood sampling | Candidate under review; macro-radius contacts require conservative status |
+| Wu2023 bibliographic lane | arctan algebra, equilibria, Lur'e split, reported initial conditions, local ADM recurrence | Bibliographic ADM reproduction; reported initial conditions classify as periodic/nonchaotic under the local ADM contract |
+| Promoted c590 lane | Caputo ABM full-history search and neighborhood sampling | Promoted for local radii `r <= 0.3` with 8400 probes and zero contacts; macro radii `1.0` and `2.0` retained as extended audit |
 
 The local ADM recurrence used to mirror the article is not the same as a
-full-memory Caputo ABM or EFORK validation. The c590 lane is a methodology lane
-for testing a new arctan candidate, not a final hiddenness claim.
+full-memory Caputo ABM or EFORK validation. The c590 lane is the promoted
+methodology example for arctan systems, but only under the recorded local-radius
+contract and not as a global basin proof.
 
 ## Run
 
@@ -64,7 +65,7 @@ contract.
 
 ## Hiddenness boundary
 
-No output from this example should be labeled as a confirmed hidden attractor
-without sampled neighborhoods of `E0`, `E+`, and `E-`, a robust dynamic
-reference, and a complete Caputo-compatible contract. Periodic or regular
-post-transient behavior is retained as diagnostic evidence, not chaos evidence.
+The c590 outputs may be labeled only as `hiddenness_supported_under_tested_local_radii`
+for `r <= 0.3`. They should not be described as a globally proved hidden
+attractor. Periodic or regular post-transient behavior in the Wu2023 bibliographic
+lane is retained as diagnostic evidence, not chaos evidence.

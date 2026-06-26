@@ -1,4 +1,4 @@
-﻿# hidden-attractors-fo
+# hidden-attractors-fo
 
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![Status](https://img.shields.io/badge/status-release%20candidate-blue)
@@ -54,7 +54,7 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 | --- | --- | --- |
 | `examples/chua_integer_lure_reference/` | Integer `q=1` Lur'e reference | Reproduced software reference/control |
 | `examples/chua_nonsmooth_biased_hidden_attractor/` | Biased-DF methodology for non-smooth fractional Chua | Candidate/compatible under tested local radii; not full Danca reproduction |
-| `examples/chua_arctan_wu2023/` | Wu2023 arctan lane plus proposed c590 lane | Partial/non-promoted; c590 under review |
+| `examples/chua_arctan_wu2023/` | Wu2023 arctan lane plus promoted c590 lane | Wu2023 bibliographic; c590 promoted for local radii `r <= 0.3` |
 
 ## Article reproduction status
 
@@ -63,7 +63,7 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 | Integer Chua reference | Reproduced as the maintained `q=1` software route |
 | Danca 2017 non-smooth fractional Chua | Partial implementation; missing published numerical details prevent full trajectory reproduction |
 | Official nearby non-smooth candidate | Rejected/self-excited under current neighborhood contract |
-| Wu2023 arctan Chua | Algebra/ADM local lane implemented; not a full Caputo hiddenness validation |
+| Wu2023 arctan Chua | Algebra/ADM local lane implemented as bibliographic reproduction; c590 Caputo lane promoted separately for local radii `r <= 0.3` |
 | DK2018/Fischer Lyapunov lanes | Diagnostic comparison lanes with documented discrepancies |
 
 ## API reference

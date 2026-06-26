@@ -4,8 +4,8 @@
   "expected_exit_code_non_strict": 0,
   "expected_exit_code_strict": 0,
   "expected_exit_code_submission_strict": 1,
-  "reason": "Repository and software-package readiness pass while declared v1.0.0 blockers, final validation runs, final scientific freeze audit, and executed sample outputs remain final pending work.",
+  "reason": "Repository and software-package readiness pass for v1.0.0 with arctan c590 promoted under the local-radius boundary.",
   "not_promoted_evidence": true,
   "replace_after_execution": true,
-  "blocking_release_items_declared": true
+  "blocking_release_items_declared": false
 }

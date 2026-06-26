@@ -1,4 +1,4 @@
-﻿# Figure Gallery
+# Figure Gallery
 
 Figures for the active reports are managed under the canonical library figure
 tree, not as copied run images inside `docs/assets/figures/`.
@@ -25,8 +25,8 @@ report assets unless they are promoted into `library_figures/by_report/`.
 - Nonsmooth fractional Chua figures: Danca reference reproduction, centered
   control route, biased DF candidate, hiddenness spheres, and extended-radius
   heatmaps.
-- Fractional arctan figures: Wu2023 non-promoted reproduction and the c590
-  candidate audit, including spherical hiddenness probes and contact heatmaps.
+- Fractional arctan figures: Wu2023 bibliographic reproduction and the promoted
+  c590 local-radius hiddenness evidence, including spherical probes and contact heatmaps.
 
 ## Retired Local Copies
 

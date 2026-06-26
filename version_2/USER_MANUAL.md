@@ -1,4 +1,4 @@
-﻿# User Manual
+# User Manual
 
 This is the primary user manual for the `hidden-attractors-fo` research
 library. It covers installation, the unified CLI, reproducible examples,
@@ -214,7 +214,7 @@ The library therefore separates two claims:
 | Example 1 biased-DF methodology | Candidate/compatible under declared local radii | It proposes a reproducible seed-continuation-verification workflow, but the local tests are not a global proof. |
 | Official nearby fractional candidate `danca2017_nearby_saturation_candidate_q09998` | Rejected/self-excited | `validation/09_hiddenness_tests/hiddenness_tests_validation_summary.json` records 1305 target contacts from neighborhoods of `E+` and `E-`. |
 
-## 8. Pending/non-certified example: Chua arctan
+## 8. Radius-limited promoted example: Chua arctan c590
 
 The arctan Chua example separates the Wu 2023 bibliographic lane from a proposed
 Caputo full-history dynamic lane.
@@ -228,16 +228,17 @@ cd version_2
 python examples/chua_arctan_wu2023/run_example.py --quick
 ```
 
-Current status is pending/non-certified. The library includes algebra,
-equilibria, Jacobian, Lur'e split, reported initial conditions, and a local ADM
-reproduction path. That ADM path uses a local recurrence and does not accumulate
-full Caputo history. Under the recorded local ADM contract, the reported initial
-conditions classify as periodic/nonchaotic after transient filtering.
+The Wu2023 bibliographic ADM path remains separate: it uses a local recurrence
+and does not accumulate full Caputo history. Under that local ADM contract, the
+reported initial conditions classify as periodic/nonchaotic after transient
+filtering.
 
-The proposed c590 lane uses a Caputo full-history dynamic search and neighborhood
-sampling, but it remains under review because macro-radius contacts are recorded.
-It is a candidate lane for methodology testing, not a promoted hidden-attractor
-result.
+The c590 lane uses a Caputo full-history dynamic search and neighborhood
+sampling. It is promoted as `hiddenness_supported_under_tested_local_radii` for
+local radii `r <= 0.3` with 8400 finite probes and zero contacts around all
+equilibria. Macro-radius contacts at `r=1.0` and `r=2.0` are retained as
+extended audit evidence. This is a finite local-radius hiddenness claim, not a
+global basin proof.
 
 ## 9. YAML configuration format
 

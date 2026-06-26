@@ -1,4 +1,4 @@
-﻿# Hidden Attractors in Fractional-Order Systems
+# Hidden Attractors in Fractional-Order Systems
 
 `hidden-attractors-fo` is a Python research library for reproducible numerical
 workflows around hidden-attractor candidates in integer- and commensurate
@@ -32,7 +32,7 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 
 - Integer Chua `q=1`: reproduced software reference for the Lur'e route.
 - Non-smooth fractional Chua BDF: proposed methodology; not full Danca 2017 trajectory reproduction.
-- Arctan Chua Wu2023/c590: partial/non-promoted bibliographic and candidate lanes.
+- Arctan Chua Wu2023/c590: Wu2023 remains bibliographic; c590 is promoted as radius-limited hiddenness evidence for local radii `r <= 0.3` with 8400 probes and zero contacts.
 
 ## Documentation
 

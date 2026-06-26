@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0
+## 1.0.0
 
 ### Added
 
@@ -12,7 +12,7 @@
 
 ### Changed
 
-- Updated root and package READMEs for the `0.1.0` release candidate.
+- Updated root and package READMEs for the `1.0.0` release.
 - Rewrote quick start, getting started, examples, systems, user manual, and
   release manifest pages to use the unified `hidden-attractors` CLI.
 - Clarified reproduced, partial, rejected, and non-promoted article cases.
@@ -25,7 +25,7 @@
   scientific conclusion was changed.
 - Existing evidence boundaries remain: integer Chua reproduced; non-smooth
   fractional Danca case partial; nearby non-smooth candidate rejected/self-excited;
-  arctan lane partial/non-promoted; Lyapunov comparison lanes diagnostic.
+  arctan c590 lane promoted as radius-limited hiddenness evidence for local radii `r <= 0.3`; Lyapunov comparison lanes remain diagnostic.
 
 ### Pending
 

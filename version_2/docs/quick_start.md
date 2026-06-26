@@ -67,7 +67,7 @@ sampling and fractional memory settings.
 | --- | --- | --- | --- |
 | Integer Chua Lur'e reference | `python examples/chua_integer_lure_reference/run_example.py --quick` | Control case for seed, continuation, trajectory, and neighborhood checks at `q=1` | Reproduced integer reference; does not validate fractional hiddenness |
 | Non-smooth fractional Chua BDF | `python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick` | Proposed biased-DF methodology for the non-smooth Caputo Chua case | Candidate/compatible only under declared local radii; a separate official candidate was rejected as self-excited |
-| Arctan fractional Chua Wu2023/c590 | `python examples/chua_arctan_wu2023/run_example.py --quick` | Separates Wu2023 bibliographic reproduction from a proposed Caputo full-history dynamic lane | Bibliographic lane is non-promoted; c590 remains under review, not a verified hidden attractor |
+| Arctan fractional Chua Wu2023/c590 | `python examples/chua_arctan_wu2023/run_example.py --quick` | Separates Wu2023 bibliographic reproduction from the promoted c590 Caputo full-history lane | c590 promoted for local radii `r <= 0.3` with 8400 probes and zero contacts; macro radii remain extended audit |
 
 ## 5. Reproduced vs non-reproduced article cases
 
@@ -76,7 +76,7 @@ sampling and fractional memory settings.
 | Kuznetsov-style integer Chua reference | Reproduced as the integer `q=1` software reference | Published/reference data are sufficient for the maintained Lur'e seed and trajectory route |
 | Danca 2017 non-smooth fractional Chua | Partial reference implementation, not full trajectory reproduction | The article does not report the exact DF frequency/gain/amplitude, seed coordinates, hidden-attractor initial condition, or complete continuation settings |
 | Official nearby non-smooth fractional candidate | Rejected under current contract | Neighborhood tests recorded 1305 target contacts from `E+` and `E-`, so the candidate is self-excited under the recorded protocol |
-| Wu2023 arctan fractional Chua | Partial algebraic/ADM reproduction, not full hiddenness reproduction | The ADM local recurrence is not a full-memory Caputo ABM/EFORK contract, and the reported initial conditions were classified as periodic/nonchaotic in the local reproduction |
+| Wu2023 arctan fractional Chua and c590 | Wu2023 is partial algebraic/ADM reproduction; c590 is a separate promoted local-radius lane | The ADM local recurrence is not full-memory Caputo ABM/EFORK; c590 is promoted only for local radii `r <= 0.3` with macro-radius contacts retained as extended audit |
 | DK2018 and Fischer 2020 Lyapunov lanes | Diagnostic comparison with documented discrepancies | These validate or audit method behavior; they do not certify chaos or hiddenness |
 
 ## 6. API map

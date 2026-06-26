@@ -1,4 +1,4 @@
-﻿# Official Examples and Workflow Index
+# Official Examples and Workflow Index
 
 This page classifies the maintained execution paths for the release. Examples
 are not scientific claims by themselves; claim status is governed by
@@ -10,7 +10,7 @@ are not scientific claims by themselves; claim status is governed by
 | --- | --- | --- | --- | --- |
 | Example 0: integer Chua Lur'e reference | `examples/chua_integer_lure_reference/` | `python examples/chua_integer_lure_reference/run_example.py --quick` | Reproduces the integer `q=1` route: Lur'e seed, continuation, final trajectory, neighborhood controls, figures, and Lyapunov diagnostic | Reproduced integer reference; not fractional validation |
 | Example 1: non-smooth fractional Chua BDF | `examples/chua_nonsmooth_biased_hidden_attractor/` | `python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick` | Proposed biased describing-function route for non-smooth Caputo Chua | Candidate/compatible under tested local radii; separate official nearby candidate rejected as self-excited |
-| Example 2: arctan Chua Wu2023/c590 | `examples/chua_arctan_wu2023/` | `python examples/chua_arctan_wu2023/run_example.py --quick` | Separates Wu2023 bibliographic reproduction from proposed Caputo full-history c590 lane | Bibliographic lane non-promoted; c590 under review due to macro-radius contacts |
+| Example 2: arctan Chua Wu2023/c590 | `examples/chua_arctan_wu2023/` | `python examples/chua_arctan_wu2023/run_example.py --quick` | Separates Wu2023 bibliographic reproduction from promoted Caputo full-history c590 lane | c590 promoted for local radii `r <= 0.3`; macro-radius contacts documented as extended audit |
 
 ### Full example commands
 
@@ -30,7 +30,7 @@ Check each example README before launching long hiddenness sampling.
 | --- | --- | --- |
 | Kuznetsov-style integer Chua reference | Executable integer reference case | N/A for the maintained integer route; it is a software reference, not a fractional claim |
 | Danca 2017 non-smooth fractional Chua | Partial reference implementation and proposed BDF methodology lane | Published data omit exact seed/IC, DF frequency/gain/amplitude, and continuation details; official nearby candidate is self-excited under current tests |
-| Wu2023 arctan Chua | Algebra, equilibria, Lur'e split, reported initial conditions, and ADM local reproduction | ADM local recurrence is not full-memory Caputo validation; reported ICs classify as periodic/nonchaotic in local reproduction; hiddenness neighborhoods remain incomplete for a promoted claim |
+| Wu2023 arctan Chua | Algebra, equilibria, Lur'e split, reported initial conditions, ADM local reproduction, and separate c590 Caputo lane | The published ADM/initial-condition lane is not full-memory Caputo validation; c590 is promoted separately for local radii `r <= 0.3` with macro-radius contacts retained as extended audit |
 | DK2018 Lyapunov benchmarks | Opt-in diagnostic comparison lane | RF `lambda_3` discrepancy remains recorded; the lane does not certify chaos/hiddenness |
 | Fischer 2020 cloned dynamics | Diagnostic comparison lane with documented discrepancies | Quantitative/sign-pattern discrepancies remain; not a full validation of the local QR method |
 
@@ -43,7 +43,7 @@ standalone examples.
 | --- | --- | --- | --- |
 | `chua_integer` | `hidden-attractors run -p chua_integer` | Stable user route | Yes |
 | `chua_fractional` | `hidden-attractors run -p chua_fractional` | Stable user route with fractional evidence boundary | Yes |
-| `chua_arctan` | `hidden-attractors run -p chua_arctan` | Experimental/non-promoted hiddenness | Inspect only |
+| `chua_arctan` | `hidden-attractors run -p chua_arctan` | Radius-limited c590 promotion plus bibliographic Wu2023 lane | Inspect with validation boundary |
 | `chua_bifurcation` | `hidden-attractors bifurcation run -p chua_bifurcation` | Advanced diagnostic | No |
 | `chua_basin` | `hidden-attractors run -p chua_basin` | Heavy basin workflow | No |
 

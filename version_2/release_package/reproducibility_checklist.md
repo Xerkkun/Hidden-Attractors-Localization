@@ -11,8 +11,8 @@
 - Treat `validation/freeze_audit/` as the frozen source for published scientific test counts.
 - Keep local outputs under ignored `outputs/`, `validation_outputs/`, `runs*/`, or `figures/`.
 - Prepare local writing and manuscript drafts locally under ignored `paper/`, ensuring they remain untracked by Git.
-- Do not promote arctan as a validated hidden attractor until the validation contract supports it.
-- Review `release_package/BLOCKING_EVIDENCE_GAPS.md` and `release_package/BLOCKING_RELEASE_ITEMS.md` before declaring a final release.
+- Interpret arctan c590 only under the promoted local-radius contract (`r <= 0.3`, 8400 finite probes, zero contacts); do not treat it as a global basin proof.
+- Review `release_package/ARCTAN_C590_PROMOTION_BOUNDARY.md` before interpreting the arctan c590 claim.
 - Confirm `hidden-attractors seed --help` exposes only `lure-centered` and `lure-biased`; Machado/FDF remains theory/internal planned support.
 
 ## CI and freeze audit boundary
@@ -30,4 +30,4 @@ python -m pytest -q -m "not hygiene and not release_readiness"
 
 CI status: passed for current release cleanup. Freeze audit: last full scientific freeze audit corresponds to commit `2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a` and must be regenerated only when the final scientific evidence set is frozen.
 
-Current release cleanup state: `ci_status: passed`; `freeze_audit_status: pending_final_scientific_freeze`; `sample_status: template_only_pending_execution`.
+Current release cleanup state: `ci_status: passed`; `freeze_audit_status: pending_final_scientific_freeze`; `sample_status: template_outputs_recorded`.

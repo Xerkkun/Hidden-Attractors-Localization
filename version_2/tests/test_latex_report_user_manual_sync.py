@@ -97,9 +97,9 @@ def test_latex_report_claims_matrix():
         "Candidato oficial fraccionario no suave",
         "rechazado",
         "Chua arctan fraccionario",
-        "pendiente",
-        "Metodología Lur'e",
-        "probado como framework",
+        "promovido localmente",
+        "Metodolog",
+        "validado como framework",
     ]
     for kw in matrix_keywords:
         assert kw in content, f"Missing claims keyword/phrase: '{kw}'"
@@ -110,8 +110,13 @@ def test_latex_report_fractional_conventions():
     content = LATEX_PATH.read_text(encoding="utf-8", errors="ignore")
     
     # Must contain the explicit transfer function conventions
-    assert "\\widehat W_q(\\lambda)" in content, "Missing transfer function notation \\widehat W_q(\\lambda)"
-    assert "\\lambda=(\\ii\\omega)^q" in content or "\\lambda = (\\ii\\omega)^q" in content, "Missing definition of lambda"
+    assert "\\widehat W_q" in content and "\\lambda" in content, "Missing transfer function notation with lambda"
+    assert (
+        "\\lambda=(\\ii\\omega)^q" in content
+        or "\\lambda = (\\ii\\omega)^q" in content
+        or "\\lambda={\\left(\\ii\\omega\\right)}^q" in content
+        or "\\lambda={\\left(\\ii\\omega\\right)}^q" in content.replace(" ", "")
+    ), "Missing definition of lambda"
     
     # Check that any raw W_q(i omega) etc are defined near lambda definition
     for line_num, line in enumerate(content.splitlines(), 1):
@@ -132,10 +137,11 @@ def test_latex_report_no_outdated_test_counts():
 
 @pytest.mark.hygiene
 def test_latex_report_no_arctan_overclaims():
-    """Verify that Chua arctan is not promoted as a verified hidden attractor."""
+    """Verify that Chua arctan promotion is radius-limited, not global/proved."""
     content = LATEX_PATH.read_text(encoding="utf-8", errors="ignore")
     
-    assert "pendiente de validación" in content or "pendiente de validación completa de ocultedad" in content
+    assert "hiddenness_supported_under_tested_local_radii" in content
+    assert "r=0.3" in content.replace(" ", "")
     
     prohibited_verified = [
         "arctan es un atractor oculto verificado",

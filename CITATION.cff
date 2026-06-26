@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 title: "A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors"
-version: "0.1.0"
-date-released: "2026-06-18"
+version: "1.0.0"
+date-released: "2026-06-26"
 doi: "10.17605/OSF.IO/ZGK74"
 authors:
   - family-names: "Moreno Lopez"

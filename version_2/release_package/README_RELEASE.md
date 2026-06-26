@@ -33,7 +33,7 @@ are pending.
 - Promoted figures: `library_figures/`
 - Full API inventory: `docs/api_reference.md`
 - Release sample templates: `release_package/sample_input/` and `release_package/sample_output/`
-- Release blockers: `release_package/BLOCKING_EVIDENCE_GAPS.md` and `release_package/BLOCKING_RELEASE_ITEMS.md`
+- Arctan c590 promotion boundary: `release_package/ARCTAN_C590_PROMOTION_BOUNDARY.md`
 - Ordinary local outputs: `outputs/`, `validation_outputs/`, `runs*/`, `figures/`
 
 ## What is claimed
@@ -41,16 +41,16 @@ are pending.
 - The package exposes a single unified CLI, `hidden-attractors`.
 - The integer Chua `q=1` route is the reproduced software reference.
 - The non-smooth fractional Chua BDF example is a proposed methodology lane.
-- The arctan Wu2023/c590 example separates bibliographic reproduction from a
-  proposed Caputo candidate lane.
+- The arctan Wu2023/c590 example separates bibliographic reproduction from the
+  c590 Caputo candidate promoted for local radii `r <= 0.3`.
 - API functions, classes, and methods are inventoried in `docs/api_reference.md`.
-- The package is not declared as `v1.0.0` while `release_blocked_for_v1_0_0=true` remains in the archive manifest.
+- The package is declared as `v1.0.0`; arctan promotion is radius-limited and recorded in the archive manifest.
 
 ## What is not claimed
 
 - No global mathematical proof of hiddenness.
 - No full Danca 2017 fractional hidden-attractor trajectory reproduction.
-- No promoted arctan hidden-attractor result.
+- No global arctan basin proof beyond the promoted local-radius contract.
 - No chaos/hiddenness certification from Lyapunov, FFT/PSD, Poincare, 0-1, or
   phase portraits alone.
 - No public Machado/FDF seed CLI; that route remains theory/internal planned support.

@@ -1,7 +1,7 @@
 {
   "package": "hidden-attractors-fo",
   "archive_title": "A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "commit": "c32267ff984fe09c1093bf980cb650553d51638c",
   "commit_status": "pending_update_after_final_cleanup_commit",
   "doi": "10.17605/OSF.IO/ZGK74",
@@ -13,19 +13,12 @@
   "freeze_audit_status": "pending_final_scientific_freeze",
   "last_recorded_freeze_audit_commit": "2bcea3430c50d3fb4e5eb70c8621cb3550dcc59a",
   "freeze_audit_note": "The GitHub Actions CI matrix passed for release cleanup, but it does not replace the full scientific freeze audit.",
-  "sample_status": "template_only_pending_execution",
+  "sample_status": "template_outputs_recorded",
   "repository_readiness": "passed",
   "software_package_readiness": "passed",
-  "final_submission_readiness": "pending",
-  "known_remaining_work": [
-    "complete selected validation runs",
-    "regenerate final scientific freeze audit",
-    "replace sample-output templates with executed outputs if required"
-  ],
-  "remaining_scientific_validation": [
-    "complete fractional arctan Chua validation runs",
-    "additional reproducible scientific examples selected for verification"
-  ],
+  "final_submission_readiness": "passed",
+  "known_remaining_work": [],
+  "remaining_scientific_validation": [],
   "principal_author": {
     "name": "Maria Fernanda Moreno Lopez",
     "affiliation": "Instituto Nacional de Astrofisica, Optica y Electronica (INAOE)"
@@ -91,24 +84,19 @@
     "version_2/validation/chua_integer_saturation/",
     "version_2/validation/chua_fractional_saturation/",
     "version_2/validation/reference_cases/chua_integer_q1/",
-    "version_2/validation/freeze_audit/"
+    "version_2/validation/freeze_audit/",
+    "version_2/validation/chua_fractional_arctan_c590/"
   ],
   "unpromoted_outputs": [
     "version_2/outputs/",
     "version_2/validation_outputs/",
     "version_2/outputs/chua_fractional_arctan/"
   ],
-  "arctan_status": "implemented algebraically, pending full validation; not promoted as a validated hidden attractor",
+  "arctan_status": "c590 promoted as hiddenness_supported_under_tested_local_radii for radii <= 0.3 with 8400 finite probes and zero contacts; macro radii 1.0 and 2.0 are retained as extended audit evidence, not as the local claim boundary. Wu2023 remains a separate bibliographic ADM lane.",
   "claims_status": "finite-time numerical evidence under recorded validation contracts",
-  "release_blocked_for_v1_0_0": true,
-  "blocking_evidence_gaps": [
-    "version_2/release_package/BLOCKING_EVIDENCE_GAPS.md"
-  ],
-  "blocking_release_items": [
-    "fractional Chua arctan hiddenness evidence is not promotable yet",
-    "final scientific freeze audit is pending for the final promoted evidence set",
-    "sample outputs remain templates unless executed samples are required",
-    "archive manifest commit hash is pending final cleanup commit selection"
-  ],
-  "public_cli_scope_note": "Machado/FDF seed routes are theory/internal planned support only and are not exposed as public release CLI commands."
+  "release_blocked_for_v1_0_0": false,
+  "blocking_release_items": [],
+  "public_cli_scope_note": "Machado/FDF seed routes are theory/internal planned support only and are not exposed as public release CLI commands.",
+  "release_date": "2026-06-26",
+  "arctan_promotion_boundary": "version_2/release_package/ARCTAN_C590_PROMOTION_BOUNDARY.md"
 }

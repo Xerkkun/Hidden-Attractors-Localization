@@ -1,8 +1,8 @@
-﻿{
+{
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "name": "hidden-attractors-fo",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "identifier": "https://doi.org/10.17605/OSF.IO/ZGK74",
   "codeRepository": "https://github.com/Xerkkun/Hidden-Attractors-Localization",
   "license": "https://spdx.org/licenses/MIT",
@@ -44,7 +44,7 @@
       "description": "Provided source code used as provenance for the EFORK implementation and integer-order Lyapunov algorithm."
     }
   ],
-  "description": "Numerical workflows for locating, reproducing, auditing, and conservatively classifying hidden-attractor candidates in Chua/Lur'e systems with integer and commensurate Caputo fractional order.",
+  "description": "Numerical workflows for locating, reproducing, auditing, and conservatively classifying hidden-attractor candidates in Chua/Lur'e systems with integer and commensurate Caputo fractional order, including radius-limited promoted evidence for the Chua arctan c590 candidate.",
   "keywords": [
     "hidden attractors",
     "fractional-order systems",
@@ -55,5 +55,6 @@
     "describing function",
     "EFORK",
     "ABM"
-  ]
+  ],
+  "datePublished": "2026-06-26"
 }
