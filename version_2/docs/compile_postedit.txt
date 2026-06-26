@@ -1,0 +1,258 @@
+﻿Initial Win CP for (console input, console output, system): (CP437, CP65001, CP1252)
+I changed them all to CP1252
+Rc files read (in order):
+  NONE
+Latexmk: This is Latexmk, John Collins, 9 March 2026. Version 4.88.
+Force everything to be remade.
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Category 'other':
+  Rerun of 'pdflatex' forced or previously required:
+    Reason or flag: 'go_mode'
+
+------------
+Run number 1 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  -interaction=nonstopmode -halt-on-error -recorder  "reporte_unificado_chua_fraccionario.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(reporte_unificado_chua_fraccionario.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-03-20>
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/base\size11.clo))
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/babel\txtbabel.def)
+*************************************
+* Local config file bblopts.cfg used
+*
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/arabi\bblopts.cfg)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/babel/locale/es\babel
+-spanish.tex)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/babel-spanish\spanish.l
+df))
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty))
+ (C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+ (C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty))
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty)))
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+)))
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.s
+ty) (C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+) (C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+) (C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty)))
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty)))
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/ragged2e\ragged2e.sty
+) (C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def) (reporte_unificado_chua_fraccionario.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg)) (reporte_unificado_chua_fraccionario.out)
+(reporte_unificado_chua_fraccionario.out)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(reporte_unificado_chua_fraccionario.toc [1{C:/Users/moren/AppData/Local/MiKTeX
+/fonts/map/pdftex/pdftex.map}{C:/Users/moren/AppData/Local/Programs/MiKTeX/font
+s/enc/dvips/lm/lm-ec.enc}]) [2{C:/Users/moren/AppData/Local/Programs/MiKTeX/fon
+ts/enc/dvips/lm/lm-mathsy.enc}{C:/Users/moren/AppData/Local/Programs/MiKTeX/fon
+ts/enc/dvips/lm/lm-mathit.enc}]
+(C:\Users\moren\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd) [3]
+[4{C:/Users/moren/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}]
+[5] [6] [7{C:/Users/moren/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-m
+athex.enc}] [8] [9 <../library_figures/by_report/unified_chua_fractional/pdf/ma
+tignon_complex_plane.pdf>] [10] [11 <../library_figures/by_report/unified_chua_
+fractional/pdf/chua_nonlinearity_piecewise_vs_arctan.pdf>] [12] [13] [14]
+Overfull \hbox (0.6149pt too wide) in paragraph at lines 861--862
+[]$\T1/lmtt/m/n/10.95 version _ 2 / validation / reference _ cases / efork3 _ g
+horeishi _ ghaffari/$$03 _ integrators /
+[15] [16] [17] [18] [19] [20 <../library_figures/by_report/unified_chua_fractio
+nal/pdf/fig01_nyquist_df.pdf> <../library_figures/by_report/unified_chua_fracti
+onal/pdf/fig01c_transfer_real_imag.pdf>] [21 <../library_figures/by_report/unif
+ied_chua_fractional/pdf/fig02d_continuation_story.pdf>] [22 <../library_figures
+/by_report/unified_chua_fractional/pdf/fig03_final_attractor.pdf>] [23 <../libr
+ary_figures/by_report/unified_chua_fractional/pdf/fig05b_hiddenness_overview.pd
+f> <../library_figures/by_report/unified_chua_fractional/pdf/fig11a_fft_x.pdf> 
+<../library_figures/by_report/unified_chua_fractional/pdf/fig11d_psd_x.pdf>]
+[24 <../library_figures/by_report/unified_chua_fractional/pdf/fig13_lyapunov_co
+nvergence.pdf>] [25 <../library_figures/by_report/unified_chua_fractional/pdf/d
+anca_frac_phase_3d.pdf> <../library_figures/by_report/unified_chua_fractional/p
+df/danca_frac_projections.pdf>] [26 <../library_figures/by_report/unified_chua_
+fractional/pdf/danca_frac_time_series.pdf> <../library_figures/by_report/unifie
+d_chua_fractional/pdf/danca_frac_spectrum_x.pdf> <../library_figures/by_report/
+unified_chua_fractional/pdf/chua_frac_ns_fig01a_transfer_real.pdf> <../library_
+figures/by_report/unified_chua_fractional/pdf/chua_frac_ns_fig01b_transfer_imag
+.pdf>] [27 <../library_figures/by_report/unified_chua_fractional/pdf/chua_frac_
+ns_fig02_continuation_story.pdf>] [28 <../library_figures/by_report/unified_chu
+a_fractional/pdf/chua_frac_ns_fig03_final_attractor.pdf> <../library_figures/by
+_report/unified_chua_fractional/pdf/chua_frac_ns_fig03abc_final_attractor_proje
+ctions.pdf>] [29 <../library_figures/by_report/unified_chua_fractional/pdf/chua
+_frac_ns_fig04_time_series.pdf> <../library_figures/by_report/unified_chua_frac
+tional/pdf/chua_frac_ns_fig11a_fft_x.pdf> <../library_figures/by_report/unified
+_chua_fractional/pdf/chua_frac_ns_fig12_lyapunov_two_methods.pdf>] [30 <../libr
+ary_figures/by_report/unified_chua_fractional/pdf/chua_frac_ns_fig13_E0_hiddenn
+ess_spherical_3d.pdf> <../library_figures/by_report/unified_chua_fractional/pdf
+/chua_frac_ns_fig13_Ep_hiddenness_spherical_3d.pdf> <../library_figures/by_repo
+rt/unified_chua_fractional/pdf/chua_frac_ns_fig13_Em_hiddenness_spherical_3d.pd
+f> <../library_figures/by_report/unified_chua_fractional/pdf/chua_frac_ns_fig14
+_hiddenness_contact_heatmap.pdf> <../library_figures/by_report/unified_chua_fra
+ctional/pdf/chua_frac_ns_biased_fig01a_transfer_real.pdf> <../library_figures/b
+y_report/unified_chua_fractional/pdf/chua_frac_ns_biased_fig01b_transfer_imag.p
+df>] [31 <../library_figures/by_report/unified_chua_fractional/pdf/chua_frac_ns
+_biased_fig02_continuation_story.pdf>] [32 <../library_figures/by_report/unifie
+d_chua_fractional/pdf/chua_frac_ns_biased_fig03_attractor.pdf> <../library_figu
+res/by_report/unified_chua_fractional/pdf/chua_frac_ns_biased_fig04_projections
+.pdf>] [33 <../library_figures/by_report/unified_chua_fractional/pdf/chua_frac_
+ns_biased_fig04_timeseries.pdf> <../library_figures/by_report/unified_chua_frac
+tional/pdf/chua_frac_ns_biased_fig11_fft.pdf> <../library_figures/by_report/uni
+fied_chua_fractional/pdf/chua_frac_ns_biased_fig12_lyapunov.pdf> <../library_fi
+gures/by_report/unified_chua_fractional/pdf/chua_frac_ns_biased_fig13_E0_hidden
+ness_spherical_3d.pdf> <../library_figures/by_report/unified_chua_fractional/pd
+f/chua_frac_ns_biased_fig13_Ep_hiddenness_spherical_3d.pdf> <../library_figures
+/by_report/unified_chua_fractional/pdf/chua_frac_ns_biased_fig13_Em_hiddenness_
+spherical_3d.pdf>] [34 <../library_figures/by_report/unified_chua_fractional/pd
+f/chua_frac_ns_biased_fig14_hiddenness_contact_heatmap.pdf> <../library_figures
+/by_report/unified_chua_fractional/pdf/chua_frac_ns_biased_fig15_extended_heatm
+ap.pdf>] [35 <../library_figures/by_report/unified_chua_fractional/pdf/wu2023_c
+hua_fractional_arctan_q099_x0_plus_phase3d.pdf> <../library_figures/by_report/u
+nified_chua_fractional/pdf/wu2023_chua_fractional_arctan_q099_x0_minus_phase3d.
+pdf> <../library_figures/by_report/unified_chua_fractional/pdf/wu2023_chua_frac
+tional_arctan_q099_x0_plus_projections.pdf> <../library_figures/by_report/unifi
+ed_chua_fractional/pdf/wu2023_chua_fractional_arctan_q099_x0_minus_projections.
+pdf> <../library_figures/by_report/unified_chua_fractional/pdf/wu2023_chua_frac
+tional_arctan_q099_x0_plus_timeseries.pdf> <../library_figures/by_report/unifie
+d_chua_fractional/pdf/wu2023_chua_fractional_arctan_q099_x0_minus_timeseries.pd
+f>] [36 <../library_figures/by_report/unified_chua_fractional/pdf/chua_frac_arc
+tan_c590_fig00_initial_seed.pdf>] [37 <../library_figures/by_report/unified_chu
+a_fractional/pdf/chua_frac_arctan_c590_fig01_transfer_components.pdf> <../libra
+ry_figures/by_report/unified_chua_fractional/pdf/chua_frac_arctan_c590_fig02a_l
+inearized_vs_original.pdf>] [38 <../library_figures/by_report/unified_chua_frac
+tional/pdf/chua_frac_arctan_c590_fig02b_continuation_path.pdf> <../library_figu
+res/by_report/unified_chua_fractional/pdf/chua_frac_arctan_c590_fig03_attractor
+.pdf>] [39 <../library_figures/by_report/unified_chua_fractional/pdf/chua_frac_
+arctan_c590_fig04_timeseries.pdf> <../library_figures/by_report/unified_chua_fr
+actional/pdf/chua_frac_arctan_c590_fig11_fft.pdf> <../library_figures/by_report
+/unified_chua_fractional/pdf/chua_frac_arctan_c590_fig12_lyapunov_two_methods.p
+df>] [40 <../library_figures/by_report/unified_chua_fractional/pdf/chua_frac_ar
+ctan_c590_fig13_E0_hiddenness_spherical_3d.pdf> <../library_figures/by_report/u
+nified_chua_fractional/pdf/chua_frac_arctan_c590_fig13_Ep_hiddenness_spherical_
+3d.pdf> <../library_figures/by_report/unified_chua_fractional/pdf/chua_frac_arc
+tan_c590_fig13_Em_hiddenness_spherical_3d.pdf> <../library_figures/by_report/un
+ified_chua_fractional/pdf/chua_frac_arctan_c590_fig14_hiddenness_contact_heatma
+p.pdf>] [41]
+Overfull \hbox (8.75409pt too wide) in paragraph at lines 1562--1562
+[]|[]|  
+
+Overfull \hbox (11.2306pt too wide) in paragraph at lines 1564--1564
+[]|[]|  
+ [42] [43]
+Overfull \hbox (13.39357pt too wide) in paragraph at lines 1623--1627
+[]\T1/lmr/m/n/10.95 Los co-man-dos in-de-pen-dien-tes an-ti-guos, co-mo [] o []
+,
+[44]
+Underfull \hbox (badness 1708) in paragraph at lines 1722--1723
+[]\T1/lmr/m/n/10.95 F. Gho-reishi, R. Ghaf-fa-ri, and N. Saad. \T1/lmr/m/it/10.
+95 Frac-tio-nal Or-der Runge--Kutta Methods\T1/lmr/m/n/10.95 . ar-
+[45] (reporte_unificado_chua_fraccionario.aux) )
+(see the transcript file for additional information)<C:/Users/moren/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/moren/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/moren/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/moren/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/moren/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/moren/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/moren/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/lm/lmmi9.pfb><C:/Users/moren/AppData/Local/
+Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/moren/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/moren/AppData/Local/Pr
+ograms/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/moren/AppData/Local/Pro
+grams/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/moren/AppData/Local/Progr
+ams/MiKTeX/fonts/type1/public/lm/lmr7.pfb><C:/Users/moren/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/moren/AppData/Local/Programs/
+MiKTeX/fonts/type1/public/lm/lmr9.pfb><C:/Users/moren/AppData/Local/Programs/Mi
+KTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/moren/AppData/Local/Programs/Mi
+KTeX/fonts/type1/public/lm/lmri9.pfb><C:/Users/moren/AppData/Local/Programs/MiK
+TeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/moren/AppData/Local/Programs/MiK
+TeX/fonts/type1/public/lm/lmsy6.pfb><C:/Users/moren/AppData/Local/Programs/MiKT
+eX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/moren/AppData/Local/Programs/MiKTe
+X/fonts/type1/public/lm/lmsy9.pfb><C:/Users/moren/AppData/Local/Programs/MiKTeX
+/fonts/type1/public/lm/lmtt10.pfb><C:/Users/moren/AppData/Local/Programs/MiKTeX
+/fonts/type1/public/lm/lmtt9.pfb><C:/Users/moren/AppData/Local/Programs/MiKTeX/
+fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on reporte_unificado_chua_fraccionario.pdf (45 pages, 8938320 by
+tes).
+Transcript written on reporte_unificado_chua_fraccionario.log.
+Latexmk: Getting log file 'reporte_unificado_chua_fraccionario.log'
+Latexmk: Examining 'reporte_unificado_chua_fraccionario.fls'
+Latexmk: Examining 'reporte_unificado_chua_fraccionario.log'
+Latexmk: Log file says output to 'reporte_unificado_chua_fraccionario.pdf'
+Latexmk: Log file says output to 'reporte_unificado_chua_fraccionario.pdf'
+Latexmk: All targets (reporte_unificado_chua_fraccionario.pdf) are up-to-date
+

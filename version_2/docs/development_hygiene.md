@@ -1,4 +1,4 @@
-# Development Hygiene Policies
+﻿# Development Hygiene Policies
 
 This document outlines the coding standards and file system rules established for the `thesis-freeze` release to ensure maximum reproducibility, organization, and a clean public API surface.
 
@@ -50,3 +50,4 @@ These rules are programmatically enforced by the following test suites:
 * `tests/test_no_loose_active_scripts.py`
 * `tests/test_no_loose_figure_scripts.py`
 * `tests/test_cli_no_redundant_public_scripts.py`
+

@@ -28,17 +28,18 @@ Scripts in `tools/legacy/` are preserved for research traceability and are
 packaged so installed commands can still run them. They can be mined for logic,
 but new reusable behavior should be added to `hidden_attractors/` first.
 
-`outputs/` remains the default place for ordinary generated products, exploratory runs, and unpromoted evidence (such as `outputs/chua_fractional_arctan/`). 
+`outputs/` remains the default place for ordinary generated products and exploratory runs. Promoted arctan evidence lives under `validation/chua_fractional_arctan/`; older output folders remain non-canonical provenance unless explicitly copied into validation with a manifest. 
 
-`validation/` is reserved for promoted evidence: stage summaries, selected CSV tables, short stage notes, manifests, the final validation report, and promoted system verification outputs (such as `validation/chua_integer_saturation/` and `validation/chua_fractional_saturation/`).
+`validation/` is reserved for promoted evidence: stage summaries, selected CSV tables, short stage notes, manifests, the final validation report, and promoted system verification outputs (such as `validation/chua_integer_saturation/`, `validation/chua_fractional_saturation/`, and `validation/chua_fractional_arctan/`).
 
 `figure_scripts/` is the centralized repository for all active figure generation scripts. It holds scripts like `chua_arctan_wu2023_plot_basins.py` and `chua_nonsmooth_memory_matrix_run_figure_tasks.py`.
 
 All figures used as promoted evidence are stored in the canonical `library_figures/` repository. For detailed guidelines on figure generation, refer to the [Figure Export Policy](figure_export_policy.md) and [Figure Scripts Policy](figure_scripts_policy.md).
 
 
-## CPC submission layout
+## Release packaging layout
 
-`cpc_submission/` contains editorial and archival packaging material for a future CPC submission. It is documentation and packaging metadata, not new scientific evidence.
+Release packaging material belongs under `release_package/` and records software/archive metadata, sample commands, and remaining readiness items. It is documentation and packaging metadata, not new scientific evidence.
 
 `library_figures/` is the canonical store for promoted scientific figures generated through `hidden_attractors.plotting.export.export_figure`. `docs/assets/` is reserved for documentation or web-only assets; it is not the promoted scientific figure store.
+

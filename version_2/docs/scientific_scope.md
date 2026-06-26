@@ -1,4 +1,4 @@
-# Scientific Scope
+﻿# Scientific Scope
 
 ## Scope
 
@@ -150,3 +150,4 @@ metadata. During the scope review, four conflicting records were reconciled:
 | Christiansen & Rugh 1997 | Lyapunov spectra | Integer | Continuous Gram-Schmidt orthonormalization | Theoretical support only | Diagnostic comparison context | `hidden_attractors/analysis/lyapunov.py` |
 | Danca & Kuznetsov 2018 | Fractional Lyapunov exponents | Caputo fractional | Extended original-variational system with memory and reorthonormalization | Diagnostic comparison lane with recorded RF discrepancy | Keeps the local full-history QR contract separate | `hidden_attractors/analysis/lyapunov_fractional.py`, `validation/chaos_validation/lyapunov_methods/fractional_variational_dk2018_block_restart_abm_gs_published/` |
 | Fischer, Zourmba & Mohamadou 2020 | Cloned-dynamics Lyapunov spectra | Fractional | Cloned dynamics and Gram-Schmidt | Diagnostic comparison lane; published comparison rows retain documented discrepancies | Separate GS and experimental QR comparison lanes | `hidden_attractors/analysis/lyapunov_cloned.py`, `validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/` |
+

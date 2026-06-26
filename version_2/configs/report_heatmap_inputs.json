@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "scientific_scope": "report_table_transcription",
+  "notes": [
+    "The extended rows reproduce the values tabulated in the DF/NC Chua report.",
+    "They are retained as plotting inputs because the original raw extended-run files are not present in the repository."
+  ],
+  "biased_local": {
+    "radii": [1e-5, 3e-5, 1e-4, 3e-4, 1e-3, 1e-2],
+    "samples_per_radius": [20, 25, 30, 40, 50, 60],
+    "equilibria": ["E0", "E+", "E-"],
+    "target_hits": 0
+  },
+  "biased_extended": {
+    "records": [
+      {"equilibrium": "E+", "radius": 1e-5, "samples": 150, "TARGET": 0},
+      {"equilibrium": "E+", "radius": 3e-5, "samples": 200, "TARGET": 0},
+      {"equilibrium": "E+", "radius": 1e-4, "samples": 300, "TARGET": 0},
+      {"equilibrium": "E+", "radius": 3e-4, "samples": 400, "TARGET": 0},
+      {"equilibrium": "E+", "radius": 1e-3, "samples": 600, "TARGET": 0},
+      {"equilibrium": "E+", "radius": 3e-3, "samples": 800, "TARGET": 0},
+      {"equilibrium": "E+", "radius": 1e-2, "samples": 1000, "TARGET": 0},
+      {"equilibrium": "E+", "radius": 3e-2, "samples": 1200, "TARGET": 0},
+      {"equilibrium": "E+", "radius": 1e-1, "samples": 1500, "TARGET": 0},
+      {"equilibrium": "E+", "radius": 3e-1, "samples": 1500, "TARGET": 22},
+      {"equilibrium": "E+", "radius": 1.0, "samples": 1500, "TARGET": 90},
+      {"equilibrium": "E+", "radius": 2.0, "samples": 1500, "TARGET": 209},
+      {"equilibrium": "E-", "radius": 1e-5, "samples": 150, "TARGET": 0},
+      {"equilibrium": "E-", "radius": 3e-5, "samples": 200, "TARGET": 0},
+      {"equilibrium": "E-", "radius": 1e-4, "samples": 300, "TARGET": 0},
+      {"equilibrium": "E-", "radius": 3e-4, "samples": 400, "TARGET": 0},
+      {"equilibrium": "E-", "radius": 1e-3, "samples": 600, "TARGET": 0},
+      {"equilibrium": "E-", "radius": 3e-3, "samples": 800, "TARGET": 0},
+      {"equilibrium": "E-", "radius": 1e-2, "samples": 1000, "TARGET": 0},
+      {"equilibrium": "E-", "radius": 3e-2, "samples": 1200, "TARGET": 0},
+      {"equilibrium": "E-", "radius": 1e-1, "samples": 1500, "TARGET": 0},
+      {"equilibrium": "E-", "radius": 3e-1, "samples": 1500, "TARGET": 11},
+      {"equilibrium": "E-", "radius": 1.0, "samples": 1500, "TARGET": 115},
+      {"equilibrium": "E-", "radius": 2.0, "samples": 1500, "TARGET": 175}
+    ]
+  }
+}

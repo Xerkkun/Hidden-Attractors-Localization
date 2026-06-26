@@ -1,8 +1,8 @@
-# Migración de Comandos CLI Legacy a Subcomandos Unificados
+﻿# Migración de Comandos CLI Legacy a Subcomandos Unificados
 
 ## Table of Contents / Índice de Contenidos
 - [English Version](#english-version)
-- [Versión en Español](#versión-en-español)
+- [Versión en Español](#version-en-espanol)
 
 ---
 

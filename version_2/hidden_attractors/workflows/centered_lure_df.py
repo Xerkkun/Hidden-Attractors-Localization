@@ -234,18 +234,30 @@ def _save_continuation_trace(cont_steps: list, output_dir: str) -> None:
     fieldnames = [
         "step_idx", "lambda_value", "status",
         "x_in_norm", "x_out_norm", "max_norm",
+        "x_in_0", "x_in_1", "x_in_2",
+        "x_out_0", "x_out_1", "x_out_2",
         "n_steps", "t_end",
         "used_c_backend", "rhs_source", "early_stop_reason",
     ]
     rows = []
     for idx, s in enumerate(cont_steps):
+        x_in = np.asarray(s.get("x_in", np.full(3, np.nan)), dtype=float).reshape(-1)
+        x_out = np.asarray(s.get("x_out", np.full(3, np.nan)), dtype=float).reshape(-1)
+        x_in = np.pad(x_in, (0, max(0, 3 - x_in.size)), constant_values=np.nan)
+        x_out = np.pad(x_out, (0, max(0, 3 - x_out.size)), constant_values=np.nan)
         rows.append({
             "step_idx":          idx,
             "lambda_value":      s.get("lambda_value", float("nan")),
             "status":            s.get("status", ""),
-            "x_in_norm":         s.get("x_in_norm",  float(np.linalg.norm(s.get("x_in",  [0])))),
-            "x_out_norm":        s.get("x_out_norm", float(np.linalg.norm(s.get("x_out", [0])))),
+            "x_in_norm":         s.get("x_in_norm",  float(np.linalg.norm(x_in))),
+            "x_out_norm":        s.get("x_out_norm", float(np.linalg.norm(x_out))),
             "max_norm":          s.get("max_norm",   float("nan")),
+            "x_in_0":            float(x_in[0]),
+            "x_in_1":            float(x_in[1]),
+            "x_in_2":            float(x_in[2]),
+            "x_out_0":           float(x_out[0]),
+            "x_out_1":           float(x_out[1]),
+            "x_out_2":           float(x_out[2]),
             "n_steps":           s.get("n_steps",    0),
             "t_end":             s.get("t_end",      float("nan")),
             "used_c_backend":    s.get("used_c_backend", False),

@@ -1,4 +1,4 @@
-site_name: hidden-attractors-fo
+﻿site_name: hidden-attractors-fo
 site_description: Numerical workflows for hidden-attractor candidates in fractional-order systems.
 repo_url: https://github.com/Xerkkun/Hidden-Attractors-Localization
 repo_name: Xerkkun/Hidden-Attractors-Localization
@@ -10,51 +10,72 @@ theme:
     - content.code.copy
 nav:
   - Home: index.md
-  - Installation: installation.md
-  - Quick Start: quick_start.md
-  - Examples Index: examples_index.md
-  - Getting Started: getting_started.md
+  - User Guides:
+      - Installation: installation.md
+      - Quick Start: quick_start.md
+      - Getting Started: getting_started.md
+      - Examples Index: examples_index.md
+      - Examples: examples.md
+      - Adapting New Systems: adapting_new_systems.md
+      - Systems: systems.md
+      - Workflows: workflows.md
+      - Notebooks: notebooks.md
+  - Scientific Scope:
+      - Scientific Scope: scientific_scope.md
+      - Freeze Status: freeze_status.md
+      - Final Freeze Checklist: final_freeze_checklist.md
+      - Published Validation Coverage: published_validation_coverage.md
+      - Validation Evidence: validation_evidence.md
+      - Validation Methodology: validation_methodology.md
+      - Hiddenness Verification: hiddenness_verification.md
+      - Scientific Software Validation: software_scientific_validation.md
+      - Integer Chua q=1 Reference: integer_chua_reference.md
+      - Fractional Chua q=0.9998 Algebra: fractional_chua_algebra_validation.md
+      - Fractional Chua Arctan Wu2023: chua_arctan_wu2023_methodology.md
+      - Phase F Closure Status: phase_f_closure.md
+  - Dynamics and Diagnostics:
+      - Dynamical Analysis: dynamical_analysis.md
+      - Poincare Diagnostics: poincare_diagnostics.md
+      - Lyapunov Methods: lyapunov_methods.md
+      - Cloned Dynamics Lyapunov Indicators: lyapunov_cloned_dynamics.md
+      - EFORK-3 Published Validation: efork3_validation.md
+      - F4 Internal Lyapunov Validation: f4_internal_lyapunov_validation.md
+      - F5 Dynamics Diagnostics: f5_dynamics_diagnostics.md
+      - F6 Integrated Chaos Validator: f6_integrated_chaos_validator.md
+      - F7 Method Comparison: f7_method_comparison.md
+  - Figures and Reports:
+      - Unified Report: unified_report.md
+      - Figure Gallery: figure_gallery.md
+      - Figure Export Policy: figure_export_policy.md
+      - Figure Scripts Policy: figure_scripts_policy.md
+      - Figure Scripts Inventory: figure_scripts_inventory.md
   - Reference:
       - API Reference: api_reference.md
       - API Stability Tiers: api_stability.md
-  - Examples: examples.md
-  - Scientific Scope: scientific_scope.md
-  - Freeze Status: freeze_status.md
-  - Final Freeze Checklist: final_freeze_checklist.md
-  - Published Validation Coverage: published_validation_coverage.md
-  - Systems: systems.md
-  - Integer Chua q=1 Reference: integer_chua_reference.md
-  - Fractional Chua q=0.9998 Algebra: fractional_chua_algebra_validation.md
-  - Scientific Software Validation: software_scientific_validation.md
-  - Fractional Chua Arctan Wu2023: chua_arctan_wu2023_methodology.md
-  - Dynamical Analysis: dynamical_analysis.md
-  - Poincare Diagnostics: poincare_diagnostics.md
-  - F5 Dynamics Diagnostics: f5_dynamics_diagnostics.md
-  - F6 Integrated Chaos Validator: f6_integrated_chaos_validator.md
-  - F7 Method Comparison: f7_method_comparison.md
-  - Phase F Closure Status: phase_f_closure.md
-  - Cloned Dynamics Lyapunov Indicators: lyapunov_cloned_dynamics.md
-  - F4 Internal Lyapunov Validation: f4_internal_lyapunov_validation.md
-  - Validation Evidence: validation_evidence.md
-  - EFORK-3 Published Validation: efork3_validation.md
-  - External Tools: external_tools.md
-  - Unified Report: unified_report.md
-  - Figure Gallery: figure_gallery.md
-  - Code Reference Map: code_reference_map.md
-  - Notebooks: notebooks.md
-  - Workflows: workflows.md
-  - Methodology Migration: migration_unified_methodology.md
-  - Testing: testing.md
-  - Repository Layout: repository_layout.md
-  - Contributing: contributing.md
-  - Citation: citation.md
+      - Code Reference Map: code_reference_map.md
+      - Manual Manifest: manual_manifest.md
+      - Repository Layout: repository_layout.md
+      - Testing: testing.md
+      - Testing Policy: testing_policy.md
+      - Tests Inventory: tests_inventory.md
+      - Tests Refactor Report: tests_refactor_report.md
+      - Citation: citation.md
+      - Archive Policy: archive_policy.md
+      - External Tools: external_tools.md
+  - Development:
+      - Contributing: contributing.md
+      - Development Hygiene: development_hygiene.md
+      - Methodology Migration: migration_unified_methodology.md
+      - CLI Legacy Migration: cli_migration_legacy_entrypoints.md
+      - Versioning Policy: versioning.md
+      - Dependency Policy: dependency_policy.md
+      - Physical Separation: physical_separation.md
   - Research Notes:
       - Library Structure: library_structure.md
       - Seed Generation Families: lure_candidate_route.md
-      - Versioning Policy: versioning.md
-      - Dependency Policy: dependency_policy.md
-      - Analysis Index: research/analysis.md
-      - Physical Separation: physical_separation.md
+      - Research Analysis Index: research/analysis.md
+      - Pipeline Guide: research/GUIA_CODIGOS_PIPELINE.md
+      - Published Validation Data Extraction: published_validation_data_extraction_v1.md
 markdown_extensions:
   - admonition
   - toc:

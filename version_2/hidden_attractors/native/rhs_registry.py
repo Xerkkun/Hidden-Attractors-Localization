@@ -16,8 +16,9 @@ class ChuaArctanParamsStruct(ctypes.Structure):
         ("alpha", ctypes.c_double),
         ("beta", ctypes.c_double),
         ("gamma", ctypes.c_double),
-        ("m", ctypes.c_double),
-        ("n", ctypes.c_double)
+        ("a1", ctypes.c_double),
+        ("a2", ctypes.c_double),
+        ("rho", ctypes.c_double),
     ]
 
 # Global registry of C RHS functions
@@ -55,13 +56,17 @@ def build_chua_saturation_params(system: Any) -> ctypes.Structure:
     )
 
 def build_chua_arctan_params(system: Any) -> ctypes.Structure:
-    # m maps to a1/m, n maps to a2/n
     return ChuaArctanParamsStruct(
         alpha=_get_param(system, "alpha", 8.4562),
         beta=_get_param(system, "beta", 12.0732),
         gamma=_get_param(system, "gamma", 0.0052),
-        m=_get_param(system, "m", _get_param(system, "a1", 0.4)),
-        n=_get_param(system, "n", _get_param(system, "a2", -1.5585))
+        a1=_get_param(system, "a1", _get_param(system, "m", 0.4)),
+        a2=_get_param(
+            system,
+            "a2",
+            _get_param(system, "n", -1.1585) - _get_param(system, "m", 0.4),
+        ),
+        rho=_get_param(system, "rho", 1.0),
     )
 
 # Register default systems

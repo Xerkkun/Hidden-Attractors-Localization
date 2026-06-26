@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0",
+  "case_id": "chua_fractional_arctan",
+  "figure_run": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624",
+  "figures": [
+    {
+      "id": "chua_frac_arctan_c590_fig00_initial_seed",
+      "metadata": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/metadata/chua_frac_arctan_c590_fig00_initial_seed.json",
+      "pdf": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/pdf/chua_frac_arctan_c590_fig00_initial_seed.pdf",
+      "png": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/png/chua_frac_arctan_c590_fig00_initial_seed.png"
+    },
+    {
+      "id": "chua_frac_arctan_c590_fig01_transfer_components",
+      "metadata": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/metadata/chua_frac_arctan_c590_fig01_transfer_components.json",
+      "pdf": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/pdf/chua_frac_arctan_c590_fig01_transfer_components.pdf",
+      "png": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/png/chua_frac_arctan_c590_fig01_transfer_components.png"
+    },
+    {
+      "id": "chua_frac_arctan_c590_fig02a_linearized_vs_original",
+      "metadata": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/metadata/chua_frac_arctan_c590_fig02a_linearized_vs_original.json",
+      "pdf": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/pdf/chua_frac_arctan_c590_fig02a_linearized_vs_original.pdf",
+      "png": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/png/chua_frac_arctan_c590_fig02a_linearized_vs_original.png"
+    },
+    {
+      "id": "chua_frac_arctan_c590_fig02b_continuation_path",
+      "metadata": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/metadata/chua_frac_arctan_c590_fig02b_continuation_path.json",
+      "pdf": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/pdf/chua_frac_arctan_c590_fig02b_continuation_path.pdf",
+      "png": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/png/chua_frac_arctan_c590_fig02b_continuation_path.png"
+    },
+    {
+      "id": "chua_frac_arctan_c590_fig03_attractor",
+      "metadata": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/metadata/chua_frac_arctan_c590_fig03_attractor.json",
+      "pdf": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/pdf/chua_frac_arctan_c590_fig03_attractor.pdf",
+      "png": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/png/chua_frac_arctan_c590_fig03_attractor.png"
+    },
+    {
+      "id": "chua_frac_arctan_c590_fig04_timeseries",
+      "metadata": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/metadata/chua_frac_arctan_c590_fig04_timeseries.json",
+      "pdf": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/pdf/chua_frac_arctan_c590_fig04_timeseries.pdf",
+      "png": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/png/chua_frac_arctan_c590_fig04_timeseries.png"
+    },
+    {
+      "id": "chua_frac_arctan_c590_fig11_fft",
+      "metadata": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/metadata/chua_frac_arctan_c590_fig11_fft.json",
+      "pdf": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/pdf/chua_frac_arctan_c590_fig11_fft.pdf",
+      "png": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/png/chua_frac_arctan_c590_fig11_fft.png"
+    },
+    {
+      "id": "chua_frac_arctan_c590_fig12_lyapunov_two_methods",
+      "metadata": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/metadata/chua_frac_arctan_c590_fig12_lyapunov_two_methods.json",
+      "pdf": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/pdf/chua_frac_arctan_c590_fig12_lyapunov_two_methods.pdf",
+      "png": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/png/chua_frac_arctan_c590_fig12_lyapunov_two_methods.png"
+    },
+    {
+      "id": "chua_frac_arctan_c590_fig13_E0_hiddenness_spherical_3d",
+      "metadata": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/metadata/chua_frac_arctan_c590_fig13_E0_hiddenness_spherical_3d.json",
+      "pdf": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/pdf/chua_frac_arctan_c590_fig13_E0_hiddenness_spherical_3d.pdf",
+      "png": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/png/chua_frac_arctan_c590_fig13_E0_hiddenness_spherical_3d.png"
+    },
+    {
+      "id": "chua_frac_arctan_c590_fig13_Em_hiddenness_spherical_3d",
+      "metadata": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/metadata/chua_frac_arctan_c590_fig13_Em_hiddenness_spherical_3d.json",
+      "pdf": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/pdf/chua_frac_arctan_c590_fig13_Em_hiddenness_spherical_3d.pdf",
+      "png": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/png/chua_frac_arctan_c590_fig13_Em_hiddenness_spherical_3d.png"
+    },
+    {
+      "id": "chua_frac_arctan_c590_fig13_Ep_hiddenness_spherical_3d",
+      "metadata": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/metadata/chua_frac_arctan_c590_fig13_Ep_hiddenness_spherical_3d.json",
+      "pdf": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/pdf/chua_frac_arctan_c590_fig13_Ep_hiddenness_spherical_3d.pdf",
+      "png": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/png/chua_frac_arctan_c590_fig13_Ep_hiddenness_spherical_3d.png"
+    },
+    {
+      "id": "chua_frac_arctan_c590_fig14_hiddenness_contact_heatmap",
+      "metadata": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/metadata/chua_frac_arctan_c590_fig14_hiddenness_contact_heatmap.json",
+      "pdf": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/pdf/chua_frac_arctan_c590_fig14_hiddenness_contact_heatmap.pdf",
+      "png": "version_2/library_figures/by_run/arctan_c590_publication_latest_r200_20260624/png/chua_frac_arctan_c590_fig14_hiddenness_contact_heatmap.png"
+    }
+  ],
+  "note": "Figures are presentation artifacts; hiddenness status is governed by hiddenness_validation_summary.json."
+}

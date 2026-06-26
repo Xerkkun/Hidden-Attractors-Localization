@@ -1,10 +1,12 @@
 {
-  "sample_status": "template_only_pending_execution",
+  "sample_status": "executed",
+  "generated_at_utc": "2026-06-26T01:37:23.586789+00:00",
   "files": [
     "expected_cli_help_summary.json",
     "expected_release_readiness_summary.json",
     "expected_validation_contract_status.json"
   ],
   "not_promoted_evidence": true,
-  "replace_after_execution": true
+  "replace_after_execution": false,
+  "scope": "lightweight CLI/interface checks only; no promoted scientific evidence"
 }

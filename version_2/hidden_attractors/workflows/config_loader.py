@@ -1055,6 +1055,23 @@ def apply_cli_overrides(cfg: Dict[str, Any], overrides: Dict[str, Any]) -> Dict[
         else:
             cfg[k] = v
 
+    # A global q override must not leave the normalized seed, continuation and
+    # dynamics contracts pinned to the q value loaded from the YAML file.
+    if "q" in mapped_overrides:
+        q_value = mapped_overrides["q"]
+        if "seed.q_seed" not in mapped_overrides:
+            _set_nested(cfg, "seed.q_seed", q_value)
+            cfg["q_seed"] = q_value
+        if "continuation.q_continuation" not in mapped_overrides:
+            _set_nested(cfg, "continuation.q_continuation", q_value)
+        if "dynamics.q_dynamics" not in mapped_overrides:
+            _set_nested(cfg, "dynamics.q_dynamics", q_value)
+            cfg["q_dynamics"] = q_value
+
+    # Keep the legacy summary key synchronized with the explicit seed contract.
+    if "seed.transfer_mode" in mapped_overrides:
+        cfg["transfer_mode"] = mapped_overrides["seed.transfer_mode"]
+
     _normalize_memory_config(cfg)
     cfg = _normalize(cfg)
     _validate(cfg)

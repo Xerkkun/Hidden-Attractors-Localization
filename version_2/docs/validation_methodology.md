@@ -1,4 +1,4 @@
-# Validation & Verification Methodology
+﻿# Validation & Verification Methodology
 
 This document outlines the rigorous mathematical and computational validation hierarchy implemented in the `hidden_attractors` library to distinguish between seed-generation heuristic stages and formal dynamical proofs of hiddenness.
 
@@ -52,3 +52,4 @@ Describing function approximations are valid only if the system fits the Lur'e f
 System symmetries (such as inversion $T(X) = -X$ or rotation $T(x,y,z) = (-x,-y,z)$) are verified numerically. If a symmetry is confirmed:
 - Symmetric seeds $T(X_0)$ are automatically generated and deduplicated.
 - Continuation sweeps and attraction basin tests are queued for both symmetric branches to map all coexisting attractors.
+

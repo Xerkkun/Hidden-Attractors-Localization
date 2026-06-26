@@ -20,6 +20,7 @@ working directory.
 """
 
 import ctypes
+import hashlib
 import os
 import sys
 from pathlib import Path
@@ -97,7 +98,13 @@ class GeneralFractionalCBackend:
             Path(__file__).resolve().parent.parent
             / "native" / "csrc" / "fractional_integrators.c"
         )
-        out_path = NATIVE_CACHE / f"fractional_integrators{_shared_suffix()}"
+        header_path = src_path.with_suffix(".h")
+        source_fingerprint = hashlib.sha256(
+            src_path.read_bytes() + header_path.read_bytes()
+        ).hexdigest()[:12]
+        out_path = NATIVE_CACHE / (
+            f"fractional_integrators_{source_fingerprint}{_shared_suffix()}"
+        )
 
         result = compile_c_target(
             src_path,

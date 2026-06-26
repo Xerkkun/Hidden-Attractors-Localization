@@ -7,10 +7,13 @@ workspace_root = Path(__file__).resolve().parents[2]
 if str(workspace_root) not in sys.path:
     sys.path.insert(0, str(workspace_root))
 
+import ctypes
 import importlib
 
 from typing import Any
 from hidden_attractors.integrations.general import integrate_general
+from hidden_attractors.integrations.fractional_c import GeneralFractionalCBackend
+from hidden_attractors.native.rhs_registry import get_c_rhs_and_params
 from hidden_attractors.systems import get_system
 import dataclasses
 
@@ -126,3 +129,70 @@ def test_general_solver_c_vs_python():
     assert np.allclose(t_c, t_py)
     assert np.allclose(x_c, x_py, atol=1e-6)
 
+
+def test_registered_arctan_rhs_matches_python_model_with_rho():
+    system = get_system_by_id(
+        "chua_fractional_arctan",
+        q=0.99,
+        alpha=8.4562,
+        beta=12.0732,
+        gamma=0.0052,
+        a1=0.4,
+        a2=-1.5585,
+        rho=0.75,
+    )
+    backend = GeneralFractionalCBackend.get_instance()
+    rhs_ptr, params = get_c_rhs_and_params(system, backend.lib)
+    assert rhs_ptr is not None
+
+    c_rhs = backend.RHS_CALLBACK(rhs_ptr)
+    state = np.ascontiguousarray([0.73, -0.12, 0.31], dtype=np.float64)
+    derivative = np.empty(3, dtype=np.float64)
+    c_rhs(
+        0.0,
+        state.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+        derivative.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+        3,
+        ctypes.cast(ctypes.byref(params), ctypes.c_void_p),
+    )
+
+    assert np.allclose(derivative, system.evaluate(state), rtol=1e-13, atol=1e-13)
+
+
+def test_arctan_candidate_abm_native_matches_python_full_memory():
+    system = get_system_by_id(
+        "chua_fractional_arctan",
+        q=0.9999,
+        alpha=21.849356906616716,
+        beta=19.081840840860202,
+        gamma=0.007378011979156531,
+        a1=0.04228979343578827,
+        a2=-3.3367815123026694,
+        rho=1.7984259332820332,
+    )
+    initial = np.array([0.73, -0.12, 0.31], dtype=float)
+    kwargs = dict(
+        q=0.9999,
+        h=0.01,
+        t_final=0.2,
+        integrator="abm",
+        memory_mode="full",
+        system=system,
+    )
+
+    t_native, x_native, status_native = integrate_general(
+        lambda _t, state: system.evaluate(state),
+        initial,
+        use_c_backend=True,
+        **kwargs,
+    )
+    t_python, x_python, status_python = integrate_general(
+        lambda _t, state: system.evaluate(state),
+        initial,
+        use_c_backend=False,
+        **kwargs,
+    )
+
+    assert status_native == status_python == "ok"
+    np.testing.assert_allclose(t_native, t_python, rtol=0.0, atol=0.0)
+    np.testing.assert_allclose(x_native, x_python, rtol=1.0e-12, atol=1.0e-12)

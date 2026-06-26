@@ -1,12 +1,12 @@
-manual_version: "0.1.0-alpha-thesis-freeze"
-package_version: "0.1.0"
+manual_version: "1.0.0"
+package_version: "1.0.0"
 
 public_cli: "hidden-attractors"
 entry_point: "hidden_attractors.cli.main:main"
 
 freeze_audit:
-  passed: 797
-  skipped: 34
+  passed: 939
+  skipped: 27
   path: "validation/freeze_audit/"
   summary_json: "validation/freeze_audit/final_freeze_pytest_summary.json"
   stdout_txt: "validation/freeze_audit/final_freeze_pytest_stdout.txt"
@@ -32,7 +32,7 @@ claim_status_summary:
   chua_integer: "reproducido"
   chua_nonsmooth_example_1: "candidato"
   official_fractional_nonsmooth_candidate: "rechazado"
-  chua_arctan_fractional: "pendiente"
+  chua_arctan_fractional: "promovido_con_limite_de_radio"
   lure_fractional_methodology: "probado"
 
 forbidden_public_claims:

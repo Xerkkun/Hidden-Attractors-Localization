@@ -124,17 +124,15 @@ def test_mandatory_claims_exist() -> None:
 
 @pytest.mark.hygiene
 def test_fractional_arctan_claim_status() -> None:
-    """Verifies that the fractional arctan claim is listed as pending or partial."""
+    """Verifies that the fractional arctan claim is promoted with a radius-limited boundary."""
     rows = _parse_claims_table()
     for row in rows:
         claim_id = _clean_text(row["claim_id"])
         if claim_id == "CLAIM-CHUA-ARCTAN-FRAC-001":
             state = _clean_text(row["status"])
-            assert state in {"pending", "partial"}, (
-                f"Chua arctan claim status must be 'pending' or 'partial', but got '{state}'"
-            )
-            # Must not be listed as validated or reproduced
-            assert state not in {"validated", "reproduced"}
+            assert state == "validated"
+            assert "validation/chua_fractional_arctan/hiddenness_validation_summary.json" in row["json_evidence"]
+            assert "r <= 0.3" in row["methodological_comment"]
 
 
 @pytest.mark.hygiene
@@ -167,8 +165,7 @@ def test_no_legacy_labels_and_only_english() -> None:
     legacy_labels = [
         "hidden_verified",
         "chaos_verified",
-        "hiddenness_supported_under_tested_neighborhoods",
-        "self_excited_contact_detected",
+            "self_excited_contact_detected",
         "hiddenness_inconclusive",
         "candidate_rejected"
     ]

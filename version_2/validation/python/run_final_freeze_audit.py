@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -45,15 +46,19 @@ def write_placeholder_summary(commit: str, dirty: bool, diff_hash: str | None) -
 def run_stage(name: str, args: list[str]) -> tuple[int, str]:
     """Run one pytest command and capture output."""
     cmd = [sys.executable, "-m", "pytest"] + args
+    temp_root = PROJECT_ROOT.parent / ".pytest_tmp" / "freeze_tmp"
+    temp_root.mkdir(parents=True, exist_ok=True)
+    env = os.environ.copy()
+    env.update({"TMP": str(temp_root), "TEMP": str(temp_root), "TMPDIR": str(temp_root)})
     print(f"Running stage {name} via: {' '.join(cmd)}")
-    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env)
     stdout_and_stderr = f"=== STAGE: {name} ===\n"
     stdout_and_stderr += f"Command: {' '.join(cmd)}\n"
     stdout_and_stderr += f"Exit code: {result.returncode}\n\n"
     stdout_and_stderr += "--- STDOUT ---\n"
-    stdout_and_stderr += result.stdout
+    stdout_and_stderr += result.stdout or ""
     stdout_and_stderr += "\n--- STDERR ---\n"
-    stdout_and_stderr += result.stderr
+    stdout_and_stderr += result.stderr or ""
     stdout_and_stderr += "\n\n"
     return result.returncode, stdout_and_stderr
 

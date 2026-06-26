@@ -1,8 +1,8 @@
-# External Tools / Herramientas Externas
+﻿# External Tools / Herramientas Externas
 
 ## Table of Contents / Índice de Contenidos
 - [English Version](#english-version)
-- [Versión en Español](#versión-en-español)
+- [Versión en Español](#version-en-espanol)
 
 ---
 

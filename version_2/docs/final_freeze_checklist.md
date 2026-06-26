@@ -1,4 +1,4 @@
-# Final Freeze Checklist
+﻿# Final Freeze Checklist
 
 The library is frozen as an auditable framework for hidden-attractor candidate
 localization, Caputo numerical simulation, finite-time chaos evidence, and
@@ -52,5 +52,6 @@ python -m pytest tests -q
 - [x] Published validation coverage matrix is complete.
 - [x] Every extracted published case is classified.
 - [x] Missing published values are not invented.
+
 
 

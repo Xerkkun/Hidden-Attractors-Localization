@@ -1,4 +1,4 @@
-# Verificación Estricta de Ocultedad Operacional (Strict Operational Hiddenness Verification)
+﻿# Verificación Estricta de Ocultedad Operacional (Strict Operational Hiddenness Verification)
 
 Este módulo establece un protocolo estricto para validar la condición operacional de ocultedad en atractores caóticos de orden entero y fraccionario. 
 
@@ -74,3 +74,4 @@ El contrato formal evalúa la matriz de resultados y asigna uno de los siguiente
 
 > [!WARNING]
 > La declaración de `hidden_verified` es estrictamente operacional. La ausencia de contactos numéricos bajo las tolerancias y radios especificados **no constituye una prueba matemática global de ocultedad**. Representa una verificación computacional exhaustiva bajo un contrato de discretización finito. Las dinámicas de orden fraccionario (especialmente con memoria larga) pueden presentar dinámicas transitorias extremadamente lentas que requieran tiempos de integración superiores a los límites computacionales del protocolo.
+

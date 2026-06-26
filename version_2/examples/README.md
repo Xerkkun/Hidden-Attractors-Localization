@@ -1,10 +1,26 @@
 # Examples
 
-These examples are the user-facing entry points for the library. They should be
-small, runnable from the repository root, and should not launch long numerical
-jobs unless the filename and help text make that clear.
+These are the runnable examples shipped with `hidden-attractors-fo`. They are
+user-facing entry points and should import from `hidden_attractors` rather than
+copying workflow internals.
 
-## Comandos
+## Official report examples
+
+Run from `version_2`:
+
+```bash
+python examples/chua_integer_lure_reference/run_example.py --quick
+python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick
+python examples/chua_arctan_wu2023/run_example.py --quick
+```
+
+| Example | Role | Evidence boundary |
+| --- | --- | --- |
+| `chua_integer_lure_reference/` | Integer `q=1` Lur'e reference: seed, continuation, trajectory, neighborhood controls, figures | Reproduced integer control only |
+| `chua_nonsmooth_biased_hidden_attractor/` | Proposed biased-DF route for non-smooth fractional Chua | Candidate/compatible only under declared local radii; not full Danca reproduction |
+| `chua_arctan_wu2023/` | Wu2023 bibliographic lane plus promoted Caputo c590 lane | c590 promoted for local radii `r <= 0.3`; Wu2023 ADM lane remains bibliographic |
+
+## Small API examples
 
 ```bash
 python examples/quickstart_equilibria.py
@@ -15,38 +31,21 @@ python examples/new_system_workflow_spec.py
 python examples/integer_lure_chua_protocol.py
 python examples/dynamical_analysis_gallery.py
 python examples/create_robustness_overlay_config.py
-python examples/aggregate_existing_robustness_overlay.py outputs/robustness_overlay_c_trajectories_20260517
 ```
 
-`dynamical_analysis_gallery.py` can also plot a real trajectory from `outputs/`
-when passed `--trajectory-csv path/to/trajectory.csv`.
+`minimal_chua_protocol.py` writes the explicit command and JSON contract by
+default. Add `--run` only when launching the numerical protocol intentionally.
 
-`minimal_chua_protocol.py` writes the explicit C-backed unified-workflow command
-and JSON contract by default. Add `--run` only when you want to launch the
-numerical protocol.
-
-`custom_system_definition.py` shows how a user can register another chaotic
-system through the public `hidden_attractors.systems` API.
-
-`new_system_workflow_spec.py` shows the next step after registration: writing a
-`WorkflowInputSpec` that records the solver, classifier, target-reference,
-basin, and strict-refinement inputs required before reusable workflows can be
-audited.
-
-`integer_lure_chua_protocol.py` is the small order-one example. It exercises
-the unified seed and validation stages: a `lure_classical_centered` DF seed,
-`ContinuationPlan(lambda_values=...)`, final trajectory, equilibrium-ball
-controls, Lyapunov estimate, and reusable plots. The
-same functions are intended for other integer-order systems that provide a
-manual Lur'e form and the required describing functions.
+`dynamical_analysis_gallery.py` accepts `--trajectory-csv path/to/trajectory.csv`
+for plotting an existing trajectory.
 
 ## Rules
 
-When adding a new example:
+When adding an example:
 
 1. import from `hidden_attractors` whenever possible;
 2. register new systems through `hidden_attractors.systems`;
-3. avoid duplicating long workflow logic;
-4. write outputs to a new folder under `outputs/` or require
-   `--output-dir`;
-5. update this README if the example becomes part of the normal workflow.
+3. record a `WorkflowInputSpec` before presenting reusable workflows;
+4. write outputs under `outputs/` or require `--output-dir`;
+5. document whether the run is a smoke check, a long job, a diagnostic, or a validation helper;
+6. update `docs/api_reference.md` when new functions, classes, or methods become part of the release surface.

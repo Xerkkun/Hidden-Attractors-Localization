@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 import fnmatch
 import os
 from pathlib import Path
@@ -91,6 +91,7 @@ def test_no_loose_figure_scripts_outside_designated_directories():
         "version_2/figure_scripts/",
         "version_2/hidden_attractors/",
         "version_2/tools/cli/",
+        "version_2/examples/",
         "version_2/tools/legacy/",
         "version_2/tests/",
         "version_2/docs/",
@@ -162,3 +163,4 @@ def test_no_loose_figure_scripts_outside_designated_directories():
                 violations.append(f"Figure script '{file_rel}' found outside designated directories.")
                 
     assert not violations, "Found loose figure scripts outside version_2/figure_scripts/:\n" + "\n".join(violations)
+

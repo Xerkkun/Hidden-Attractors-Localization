@@ -1,8 +1,8 @@
-# Workflows — Official Guide / Flujos de Trabajo (Workflows) — Guía Oficial
+﻿# Workflows — Official Guide / Flujos de Trabajo (Workflows) — Guía Oficial
 
 ## Table of Contents / Índice de Contenidos
 - [English Version](#english-version)
-- [Versión en Español](#versión-en-español)
+- [Versión en Español](#version-en-espanol)
 
 ---
 
@@ -10,7 +10,7 @@
 
 # Workflows — Official Guide
 
-Consult the [Thesis Claims Matrix](../THESIS_CLAIMS.md) to see the current classification of results and defensible claims.
+Consult the `THESIS_CLAIMS.md` to see the current classification of results and defensible claims.
 
 This document details the library's workflows for `hidden-attractors-fo`.
 
@@ -155,7 +155,7 @@ The active implementation lives in `version_2/hidden_attractors/`.
 
 # Flujos de Trabajo (Workflows) — Guía Oficial
 
-Consulta la [Matriz de Afirmaciones de Tesis (Thesis Claims Matrix)](../THESIS_CLAIMS.md) para ver la clasificación actual de resultados y claims defendibles.
+Consulta la `THESIS_CLAIMS.md` para ver la clasificación actual de resultados y claims defendibles.
 
 Este documento detalla los flujos de trabajo de la biblioteca `hidden-attractors-fo`.
 
@@ -290,3 +290,4 @@ times, states, status = integrate(
 ## Legacy y Archivo Histórico
 
 * **Herramientas Legacy**:Conservadas bajo `version_2/tools/legacy/` solo para compatibilidad hacia atrás en resolvedores específicos de C.
+

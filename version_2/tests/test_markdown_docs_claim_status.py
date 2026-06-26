@@ -64,7 +64,7 @@ def test_markdown_docs_machado_fdf_warning():
 
 @pytest.mark.hygiene
 def test_markdown_docs_chua_arctan_warning():
-    """Verify that any file mentioning Chua arctan contains warnings explaining it's algebraically implemented but pending validation."""
+    """Verify that arctan mentions include the radius-limited promotion boundary."""
     violations = []
     for f in FILES_TO_CHECK:
         if not f.exists():
@@ -72,13 +72,13 @@ def test_markdown_docs_chua_arctan_warning():
         content = f.read_text(encoding="utf-8", errors="ignore")
         if "arctan" in content.lower():
             has_warning = (
-                "pending" in content.lower() or
-                "pendiente" in content.lower() or
-                "non-certified" in content.lower() or
-                "no certificado" in content.lower() or
+                "r <= 0.3" in content.lower() or
+                "radius-limited" in content.lower() or
+                "local radii" in content.lower() or
+                "radios locales" in content.lower() or
                 "algebraic" in content.lower() or
                 "algebraicamente" in content.lower()
             )
             if not has_warning:
-                violations.append(f"{f.name} mentions arctan but lacks pending/algebraic validation warnings")
+                violations.append(f"{f.name} mentions arctan but lacks radius-limited/algebraic boundary context")
     assert not violations, "\n".join(violations)

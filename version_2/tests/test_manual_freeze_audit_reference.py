@@ -51,14 +51,14 @@ def test_manual_freeze_audit_reference_verification():
                 readme_found = True
     assert readme_found, "Neither version_2/README.md nor workspace README.md references 'validation/freeze_audit/'"
     
-    # 3. Context around 797 / 34 skipped
-    # If a document mentions 797 or 34 skipped, it must mention validation/freeze_audit or freeze audit within ±160 chars
+    # 3. Context around 939 / 27 skipped
+    # If a document mentions 939 or 27 skipped, it must mention validation/freeze_audit or freeze audit within ±160 chars
     for p in docs:
         content = read(p)
         content_lower = content.lower()
         
-        # Check '797'
-        for match in re.finditer(r"\b797\b", content_lower):
+        # Check '939'
+        for match in re.finditer(r"\b939\b", content_lower):
             pos = match.start()
             win_start = max(0, pos - 160)
             win_end = min(len(content), pos + len(match.group(0)) + 160)
@@ -69,8 +69,8 @@ def test_manual_freeze_audit_reference_verification():
                     f"{p.name}:L{line_num} -> Mention of '{match.group(0)}' is missing 'freeze' or 'freeze_audit' context in nearby window."
                 )
                 
-        # Check '34 skipped' etc.
-        for pattern in [r"\b34\s+skipped\b", r"\b34\s+omitidas\b", r"\b34\s+skipped\s+tests\b"]:
+        # Check '27 skipped' etc.
+        for pattern in [r"\b27\s+skipped\b", r"\b27\s+omitidas\b", r"\b27\s+skipped\s+tests\b"]:
             for match in re.finditer(pattern, content_lower):
                 pos = match.start()
                 win_start = max(0, pos - 160)
@@ -82,18 +82,26 @@ def test_manual_freeze_audit_reference_verification():
                         f"{p.name}:L{line_num} -> Mention of '{match.group(0)}' is missing 'freeze' or 'freeze_audit' context in nearby window."
                     )
                     
-    # 4. Check audit stdout contents
+    # 4. Check audit stdout contents. During run_final_freeze_audit.py the
+    # summary is temporarily marked audit_in_progress, so the full stdout may
+    # still correspond to the previous run until pytest finishes.
+    summary_path = ROOT / "validation/freeze_audit/final_freeze_pytest_summary.json"
+    in_progress = False
+    if summary_path.exists():
+        import json
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        in_progress = summary.get("reason") == "audit_in_progress"
     stdout_path = ROOT / "validation/freeze_audit/final_freeze_pytest_stdout.txt"
-    if stdout_path.exists():
+    if stdout_path.exists() and not in_progress:
         stdout_content = read(stdout_path)
-        assert "797 passed" in stdout_content, "final_freeze_pytest_stdout.txt does not contain '797 passed'"
-        assert "34 skipped" in stdout_content, "final_freeze_pytest_stdout.txt does not contain '34 skipped'"
+        assert "939 passed" in stdout_content, "final_freeze_pytest_stdout.txt does not contain '939 passed'"
+        assert "27 skipped" in stdout_content, "final_freeze_pytest_stdout.txt does not contain '27 skipped'"
         
     # 5. Check manifest yaml contents
     manifest_data = load_manifest()
     freeze_audit = manifest_data.get("freeze_audit", {})
-    assert freeze_audit.get("passed") == 797, f"Manifest passed count is not 797 (got {freeze_audit.get('passed')})"
-    assert freeze_audit.get("skipped") == 34, f"Manifest skipped count is not 34 (got {freeze_audit.get('skipped')})"
+    assert freeze_audit.get("passed") == 939, f"Manifest passed count is not 939 (got {freeze_audit.get('passed')})"
+    assert freeze_audit.get("skipped") == 27, f"Manifest skipped count is not 27 (got {freeze_audit.get('skipped')})"
     assert freeze_audit.get("path") == "validation/freeze_audit/", f"Manifest path is incorrect (got {freeze_audit.get('path')})"
     
     assert not violations, (

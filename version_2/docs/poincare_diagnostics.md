@@ -1,4 +1,4 @@
-# Poincare Diagnostics
+﻿# Poincare Diagnostics
 
 ## Scope
 
@@ -64,3 +64,4 @@ README.md
 The summary reports geometric labels such as `point_like_or_fixed_return`,
 `curve_like`, and `cloud_like`. These labels are finite-time numerical
 descriptions, not isolated proofs of chaos.
+

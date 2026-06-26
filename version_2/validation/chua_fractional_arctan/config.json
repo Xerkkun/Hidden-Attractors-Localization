@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "case_id": "chua_fractional_arctan",
+  "candidate_id": "chua_arctan_c590_q09999_seed9",
+  "system_id": "chua_fractional_arctan",
+  "parameters": {
+    "alpha": 21.849356906616716,
+    "beta": 19.081840840860202,
+    "gamma": 0.007378011979156531,
+    "a1": 0.04228979343578827,
+    "a2": -3.3367815123026694,
+    "rho": 1.7984259332820332
+  },
+  "q": 0.9999,
+  "seed": [
+    5.864244979081692,
+    1.5847111486491057,
+    3.2155806477633915
+  ],
+  "hiddenness_probe_contract": {
+    "radii": [
+      1e-05,
+      0.0001,
+      0.001,
+      0.01,
+      0.03,
+      0.1,
+      0.3,
+      1.0,
+      2.0
+    ],
+    "local_claim_max_radius": 0.3,
+    "contact_threshold": 0.5901016489457517,
+    "target_calibration_nn90": 0.29505082447287584,
+    "equilibria": [
+      "E0",
+      "E+",
+      "E-"
+    ]
+  },
+  "numerical_contract": {
+    "derivative": "Caputo",
+    "integrator": "ABM predictor-corrector",
+    "memory_mode": "full",
+    "caputo_history_accumulated": true,
+    "primary_h": 0.005,
+    "target_t_final": 180.0,
+    "target_t_burn": 90.0
+  }
+}

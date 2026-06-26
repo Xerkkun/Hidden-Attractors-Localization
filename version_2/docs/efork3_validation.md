@@ -1,4 +1,4 @@
-# EFORK-3 Published Validation
+﻿# EFORK-3 Published Validation
 
 The three-stage EFORK numerical method is validated independently of the
 Chua attractor workflow using the manufactured-solution examples reported by
@@ -33,8 +33,6 @@ The maximum absolute difference from the values displayed in the article is
 `5.5489224e-9`. The acceptance threshold is `6e-9`, accounting only for the
 paper's printed rounding.
 
-![EFORK-3 manufactured-solution convergence](assets/figures/efork3_validation/convergence_errors.png)
-
 ## Provenance
 
 The validation evidence package archives `constantes_efork.py` and
@@ -65,3 +63,4 @@ fractional evidence package.
 
 F. Ghoreishi, R. Ghaffari, and N. Saad, "Fractional Order Runge-Kutta
 Methods," *Fractal and Fractional*, vol. 7, article 245, 2023.
+

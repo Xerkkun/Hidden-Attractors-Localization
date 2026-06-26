@@ -1,4 +1,4 @@
-# API Stability Tiers
+﻿# API Stability Tiers
 
 `hidden-attractors-fo` uses four formal stability tiers to communicate
 how much users can rely on each part of the API.  Every sub-module starts
@@ -142,3 +142,4 @@ Stability: experimental
     Short explanation of what is and is not guaranteed.
 """
 ```
+

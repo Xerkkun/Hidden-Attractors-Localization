@@ -1,5 +1,5 @@
 # Release sample output
 
-These JSON files describe expected lightweight command outcomes. They are not generated validation evidence and do not claim a scientific result.
+These JSON files record lightweight command outcomes for the v1.0.0 package interface. They are not generated validation evidence and do not claim a scientific result.
 
-`sample_status` is currently `template_only_pending_execution`; replace these files with actual command outputs only after executing and recording the sample commands on the final release commit.
+`sample_status` is `executed` for the release interface checks. The outputs confirm CLI help, public seed command scope, validation-contract invocation, and release-readiness behavior.

@@ -50,14 +50,14 @@ def test_archive_manifest_references_release_samples() -> None:
         assert not missing, f"Missing sample paths in archive manifest: {missing}"
 
     assert "version_2/release_package/sample_output/expected_cli_help_summary.json" in manifest["sample_output"]
-    assert manifest["sample_status"] == "template_only_pending_execution"
+    assert manifest["sample_status"] == "executed"
 
 
 @pytest.mark.hygiene
 @pytest.mark.release_readiness
-def test_expected_sample_outputs_are_marked_templates_not_evidence() -> None:
+def test_expected_sample_outputs_are_executed_but_not_promoted_evidence() -> None:
     for path in (RELEASE_ROOT / "sample_output").glob("*.json"):
         data = json.loads(path.read_text(encoding="utf-8"))
-        assert data.get("not_promoted_evidence") is True or path.name == "expected_validation_contract_status.json"
-        if path.name != "expected_validation_contract_status.json":
-            assert data.get("replace_after_execution") is True
+        assert data.get("not_promoted_evidence") is True
+        assert data.get("replace_after_execution") is False
+        assert data.get("sample_status") in {None, "executed"}

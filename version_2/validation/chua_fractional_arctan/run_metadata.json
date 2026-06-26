@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "case_id": "chua_fractional_arctan",
+  "candidate_id": "chua_arctan_c590_q09999_seed9",
+  "source_case_id": "chua_fractional_arctan_c590",
+  "source_output": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/",
+  "source_summary": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/candidate_summary_latest.json",
+  "parameters": {
+    "alpha": 21.849356906616716,
+    "beta": 19.081840840860202,
+    "gamma": 0.007378011979156531,
+    "a1": 0.04228979343578827,
+    "a2": -3.3367815123026694,
+    "rho": 1.7984259332820332
+  },
+  "q": 0.9999,
+  "seed": [
+    5.864244979081692,
+    1.5847111486491057,
+    3.2155806477633915
+  ],
+  "numerical_contract": {
+    "derivative": "Caputo",
+    "integrator": "ABM predictor-corrector",
+    "memory_mode": "full",
+    "caputo_history_accumulated": true,
+    "primary_h": 0.005,
+    "target_t_final": 180.0,
+    "target_t_burn": 90.0
+  },
+  "generated_from": "version_2/validation/chua_fractional_arctan_c590/validation_summary.json",
+  "generated_at_utc": "2026-06-26T01:28:17.816198+00:00",
+  "claim_scope": "local radii <= 0.3 only; macro radii retained as extended audit evidence"
+}

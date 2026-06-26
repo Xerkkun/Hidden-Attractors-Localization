@@ -6,7 +6,7 @@ Reproduces the numerical method used in Wu et al. (2023):
 
 System equations (Caputo order q)
 ----------------------------------
-    D^q x = -alpha*(1+m)*x + alpha*y - alpha*(n-m)*arctan(x)
+    D^q x = -alpha*(1+a1)*x + alpha*y - alpha*a2*arctan(rho*x)
     D^q y =  x - y + z
     D^q z = -beta*y - gamma*z
 
@@ -46,7 +46,8 @@ Interface
     adm_wu2023_integrate(params, x0, q, h, N, divergence_norm) ->
         (times, states, status, info)
 
-    params: dict or object with keys: alpha, beta, gamma, m, n
+    params: dict or object with keys: alpha, beta, gamma and either
+            (m, n) for the Wu rho=1 notation or (a1, a2, rho)
     x0:     array-like (3,)
     q:      Caputo order (0 < q <= 1)
     h:      step size
@@ -73,11 +74,35 @@ def _gamma_factors(q: float) -> Dict[str, float]:
         "g2q1": math.gamma(2.0 * q + 1.0),       # Gamma(2q+1)
         "g3q1": math.gamma(3.0 * q + 1.0),       # Gamma(3q+1)
         "g4q1": math.gamma(4.0 * q + 1.0),       # Gamma(4q+1)
-        "g2q2": math.gamma(2.0 * (q + 1.0)),     # Gamma(2(q+1)) = Gamma(2q+2)
-        "g3q3": math.gamma(3.0 * (q + 1.0)),     # Gamma(3(q+1)) = Gamma(3q+3)
     }
     # Powers of h: h^q, h^2q, h^3q, h^4q  — computed per step, not here.
     return g
+
+
+def _extract_arctan_parameters(params: Any) -> Tuple[float, float, float, float, float, float]:
+    """Return alpha, beta, gamma, a1, a2, rho from either project notation."""
+    if isinstance(params, dict):
+        getter = params.get
+    else:
+        getter = lambda name, default=None: getattr(params, name, default)
+
+    alpha = float(getter("alpha"))
+    beta = float(getter("beta"))
+    gamma = float(getter("gamma"))
+    a1_raw = getter("a1", getter("m"))
+    if a1_raw is None:
+        raise ValueError("ADM arctan parameters require either 'a1' or 'm'.")
+    a1 = float(a1_raw)
+    a2_raw = getter("a2")
+    if a2_raw is None:
+        n_raw = getter("n")
+        if n_raw is None:
+            raise ValueError("ADM arctan parameters require either 'a2' or 'n'.")
+        a2_raw = float(n_raw) - a1
+    rho = float(getter("rho", 1.0))
+    if rho <= 0.0:
+        raise ValueError(f"ADM arctan requires rho > 0, got rho={rho}.")
+    return alpha, beta, gamma, a1, float(a2_raw), rho
 
 
 # ---------------------------------------------------------------------------
@@ -87,7 +112,7 @@ def _gamma_factors(q: float) -> Dict[str, float]:
 def _adm_step(
     x0: float, y0: float, z0: float,
     alpha: float, beta: float, gamma: float,
-    m: float, n: float,
+    a1: float, a2: float, rho: float,
     q: float, h: float,
     gf: Dict[str, float],
 ) -> Tuple[float, float, float]:
@@ -96,7 +121,7 @@ def _adm_step(
     Parameters
     ----------
     x0, y0, z0 : Current state (C^0 components).
-    alpha, beta, gamma, m, n : System parameters.
+    alpha, beta, gamma, a1, a2, rho : System parameters.
     q : Caputo order.
     h : Step size.
     gf : Pre-computed Gamma factor dictionary from :func:`_gamma_factors`.
@@ -108,31 +133,30 @@ def _adm_step(
     Notes
     -----
     Nonlinear term derivative at x0 (arctan decomposition):
-        Let s = x0^2 + 1
-        d/dx  arctan(x)|x=x0 = 1/s                               → g0
-        d2/dx2 arctan(x)|x=x0 = -2*x0/s^2                        → g1_raw  (unnorm.)
-        d3/dx3 arctan(x)|x=x0 = 8*x0^2/s^3 - 2/s^2              → g2_raw  (unnorm.)
+        Let s = (rho*x0)^2 + 1
+        d/dx  arctan(rho*x)|x=x0 = rho/s                         → g0
+        d2/dx2 arctan(rho*x)|x=x0 = -2*rho^3*x0/s^2              → g1_raw
+        d3/dx3 arctan(rho*x)|x=x0 = 8*rho^5*x0^2/s^3-2*rho^3/s^2 → g2_raw
     """
-    nm = float(n) - float(m)          # (n - m)
-    s  = x0 * x0 + 1.0               # x0^2 + 1
+    s  = (rho * x0) * (rho * x0) + 1.0
     s2 = s * s
     s3 = s2 * s
 
     # First derivative of arctan at x0
-    g0 = 1.0 / s
+    g0 = rho / s
 
     # Second-order term (raw second derivative of arctan, not divided by 2!)
     # Used in the Adomian polynomial A1 = d/du[arctan(u)]|_{u=x0} * C1^1
     # The factor (1/2!) appears in A2 for (C1^1)^2 * g1 term.
-    g1_raw = -2.0 * x0 / s2          # d^2/dx^2 arctan(x0) [raw]
+    g1_raw = -2.0 * rho**3 * x0 / s2
 
     # Third-order term (raw third derivative of arctan)
-    g2_raw = 8.0 * x0 * x0 / s3 - 2.0 / s2   # d^3/dx^3 arctan(x0) [raw]
+    g2_raw = 8.0 * rho**5 * x0 * x0 / s3 - 2.0 * rho**3 / s2
 
     # --------------------------------------------------------------------------
     # C^1 coefficients  (first Adomian component)
     # --------------------------------------------------------------------------
-    C1_1 = -alpha * (1.0 + m) * x0 + alpha * y0 - alpha * nm * math.atan(x0)
+    C1_1 = -alpha * (1.0 + a1) * x0 + alpha * y0 - alpha * a2 * math.atan(rho * x0)
     C2_1 = x0 - y0 + z0
     C3_1 = -beta * y0 - gamma * z0
 
@@ -141,9 +165,9 @@ def _adm_step(
     # For the arctan nonlinearity, the second Adomian polynomial is:
     #   A1(x0, C1_1) = d/dx[arctan(x)]|x=x0 * C1_1 = g0 * C1_1
     # --------------------------------------------------------------------------
-    C1_2 = (-alpha * (1.0 + m) * C1_1
+    C1_2 = (-alpha * (1.0 + a1) * C1_1
              + alpha * C2_1
-             - alpha * nm * g0 * C1_1)
+             - alpha * a2 * g0 * C1_1)
     C2_2 = C1_1 - C2_1 + C3_1
     C3_2 = -beta * C2_1 - gamma * C3_1
 
@@ -152,17 +176,16 @@ def _adm_step(
     # Adomian polynomial A2:
     #   A2 = g0 * C1_2 + (1/2!) * g1_raw * (C1_1)^2 * Gamma(2q+1)/Gamma(2(q+1))
     #
-    # Paper (Wu 2023, Eq. 22): ratio = Gamma(2q+1) / Gamma_2(q+1)
-    # where Gamma_2(q+1) := Gamma(2*(q+1)) = Gamma(2q+2)  [NOT Gamma(q+1)^2]
+    # Paper (Wu 2023, Eq. 22): ratio = Gamma(2q+1) / Gamma(q+1)^2.
     # --------------------------------------------------------------------------
-    ratio_A2 = gf["g2q1"] / gf["g2q2"]     # Gamma(2q+1) / Gamma(2q+2) = 1/(2q+1)
+    ratio_A2 = gf["g2q1"] / (gf["gq1"] * gf["gq1"])
 
     arctan_A2 = (g0 * C1_2
                  + 0.5 * g1_raw * C1_1 * C1_1 * ratio_A2)
 
-    C1_3 = (-alpha * (1.0 + m) * C1_2
+    C1_3 = (-alpha * (1.0 + a1) * C1_2
              + alpha * C2_2
-             - alpha * nm * arctan_A2)
+             - alpha * a2 * arctan_A2)
     C2_3 = C1_2 - C2_2 + C3_2
     C3_3 = -beta * C2_2 - gamma * C3_2
 
@@ -177,15 +200,16 @@ def _adm_step(
     # series terms in the Adomian decomposition.
     # --------------------------------------------------------------------------
     ratio_A3a = gf["g3q1"] / (gf["gq1"] * gf["g2q1"])  # Gamma(3q+1)/(Gamma(q+1)*Gamma(2q+1))
-    ratio_A3b = gf["g3q1"] / gf["g3q3"]                 # Gamma(3q+1)/Gamma(3(q+1))=Gamma(3q+3)  [Wu2023 Eq.23]
+    # Wu 2023 Eq. (23) uses Gamma(q+1)^3, not Gamma(3q+3).
+    ratio_A3b = gf["g3q1"] / (gf["gq1"] * gf["gq1"] * gf["gq1"])
 
     arctan_A3 = (g0 * C1_3
                  + g1_raw * C1_1 * C1_2 * ratio_A3a
                  + (1.0 / 6.0) * g2_raw * C1_1 * C1_1 * C1_1 * ratio_A3b)
 
-    C1_4 = (-alpha * (1.0 + m) * C1_3
+    C1_4 = (-alpha * (1.0 + a1) * C1_3
              + alpha * C2_3
-             - alpha * nm * arctan_A3)
+             - alpha * a2 * arctan_A3)
     C2_4 = C1_3 - C2_3 + C3_3
     C3_4 = -beta * C2_3 - gamma * C3_3
 
@@ -234,7 +258,8 @@ def adm_wu2023_integrate(
 
     Parameters
     ----------
-    params : object or dict with attributes/keys: alpha, beta, gamma, m, n.
+    params : object or dict with alpha, beta, gamma and either
+        a1, a2, rho or the Wu aliases m, n (rho=1).
     x0 : array-like (3,) — initial condition [x, y, z].
     q : Caputo order, 0 < q <= 1.
     h : Step size.
@@ -257,39 +282,7 @@ def adm_wu2023_integrate(
     Do NOT use this as a substitute for full-memory Caputo integration
     (ABM or EFORK-3) when rigorous fractional-order analysis is required.
     """
-    # ── Parameter extraction ─────────────────────────────────────────────────
-    if isinstance(params, dict):
-        alpha = float(params["alpha"])
-        beta  = float(params["beta"])
-        gamma = float(params["gamma"])
-        m_raw = params["m"] if "m" in params else params.get("a1")
-        if m_raw is None:
-            raise ValueError("ADM Wu2023 parameters require either 'm' or 'a1'.")
-        m = float(m_raw)
-        if "n" in params and params["n"] is not None:
-            n_param = float(params["n"])
-        elif "a2" in params and params["a2"] is not None:
-            n_param = m + float(params["a2"])
-        else:
-            raise ValueError("ADM Wu2023 parameters require either 'n' or 'a2'.")
-    else:
-        alpha = float(params.alpha)
-        beta  = float(params.beta)
-        gamma = float(params.gamma)
-        m_raw = getattr(params, "m", None)
-        if m_raw is None:
-            m_raw = getattr(params, "a1", None)
-        if m_raw is None:
-            raise ValueError("ADM Wu2023 parameters require either 'm' or 'a1'.")
-        m = float(m_raw)
-        n_raw = getattr(params, "n", None)
-        if n_raw is not None:
-            n_param = float(n_raw)
-        else:
-            a2_raw = getattr(params, "a2", None)
-            if a2_raw is None:
-                raise ValueError("ADM Wu2023 parameters require either 'n' or 'a2'.")
-            n_param = m + float(a2_raw)
+    alpha, beta, gamma, a1, a2, rho = _extract_arctan_parameters(params)
 
     q    = float(q)
     h    = float(h)
@@ -325,7 +318,7 @@ def adm_wu2023_integrate(
     for step_index in range(N):
         nx, ny, nz = _adm_step(
             cx, cy, cz,
-            alpha, beta, gamma, m, n_param,
+            alpha, beta, gamma, a1, a2, rho,
             q, h, gf,
         )
 
@@ -364,6 +357,14 @@ def adm_wu2023_integrate(
         "t_final_reached": float(times[last_n]),
         "divergence_norm_threshold": divergence_norm,
         "caputo_memory": "none — local ADM step only",
+        "parameters": {
+            "alpha": alpha,
+            "beta": beta,
+            "gamma": gamma,
+            "a1": a1,
+            "a2": a2,
+            "rho": rho,
+        },
     }
 
     return times[: last_n + 1], states[: last_n + 1], status, info
@@ -380,7 +381,8 @@ def adm_wu2023_integrate_from_config(
 ) -> Tuple[np.ndarray, np.ndarray, str, Dict[str, Any]]:
     """Wrap :func:`adm_wu2023_integrate` reading params/options from a config dict.
 
-    Keys read: alpha, beta, gamma, m, n, q, h, N (or t_final), divergence_norm.
+    Keys read: alpha, beta, gamma, a1/a2/rho (or m/n), q, h,
+    N (or t_final), divergence_norm.
     """
     h = float(config.get("h", 0.01))
     if "N" in config:
@@ -408,48 +410,15 @@ def adm_wu2023_integrate_from_config(
 def rhs_chua_arctan(x: np.ndarray, params: Any) -> np.ndarray:
     """Evaluate the RHS vector field F(X) of the Wu2023 system.
 
-    F1 = -alpha*(1+m)*x + alpha*y - alpha*(n-m)*arctan(x)
+    F1 = -alpha*(1+a1)*x + alpha*y - alpha*a2*arctan(rho*x)
     F2 =  x - y + z
     F3 = -beta*y - gamma*z
 
     Used in unit tests to verify consistency with ChuaArctanSystem.evaluate_rhs.
     """
-    if isinstance(params, dict):
-        alpha = float(params["alpha"])
-        beta  = float(params["beta"])
-        gamma = float(params["gamma"])
-        m_raw = params["m"] if "m" in params else params.get("a1")
-        if m_raw is None:
-            raise ValueError("ADM Wu2023 parameters require either 'm' or 'a1'.")
-        m = float(m_raw)
-        if "n" in params and params["n"] is not None:
-            n = float(params["n"])
-        elif "a2" in params and params["a2"] is not None:
-            n = m + float(params["a2"])
-        else:
-            raise ValueError("ADM Wu2023 parameters require either 'n' or 'a2'.")
-    else:
-        alpha = float(params.alpha)
-        beta  = float(params.beta)
-        gamma = float(params.gamma)
-        m_raw = getattr(params, "m", None)
-        if m_raw is None:
-            m_raw = getattr(params, "a1", None)
-        if m_raw is None:
-            raise ValueError("ADM Wu2023 parameters require either 'm' or 'a1'.")
-        m = float(m_raw)
-        n_raw = getattr(params, "n", None)
-        if n_raw is not None:
-            n = float(n_raw)
-        else:
-            a2_raw = getattr(params, "a2", None)
-            if a2_raw is None:
-                raise ValueError("ADM Wu2023 parameters require either 'n' or 'a2'.")
-            n = m + float(a2_raw)
-
+    alpha, beta, gamma, a1, a2, rho = _extract_arctan_parameters(params)
     xv, yv, zv = float(x[0]), float(x[1]), float(x[2])
-    nm = n - m
-    f1 = -alpha * (1.0 + m) * xv + alpha * yv - alpha * nm * math.atan(xv)
+    f1 = -alpha * (1.0 + a1) * xv + alpha * yv - alpha * a2 * math.atan(rho * xv)
     f2 = xv - yv + zv
     f3 = -beta * yv - gamma * zv
     return np.array([f1, f2, f3], dtype=float)

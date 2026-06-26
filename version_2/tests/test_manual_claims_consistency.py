@@ -5,11 +5,11 @@ from pathlib import Path
 from tests.helpers.test_documentation_text import read, ROOT, get_violations_without_context
 
 ARCTAN_CLARIFICATIONS = [
-    "implemented algebraically", "pending full hiddenness validation", "pending",
-    "non-certified", "pendiente", "no certificado", "implementado algebraicamente",
-    "pendiente de validación completa de ocultedad", "pendiente de validación completa"
+    "implemented algebraically", "radius-limited", "r <= 0.3", "local radii",
+    "8400", "zero contacts", "implementado algebraicamente", "radios locales",
+    "ocultedad local", "auditoria extendida", "reproduccion bibliografica",
+    "validacion completa de ocultedad", "adm local"
 ]
-
 MACHADO_CLARIFICATIONS = [
     "documented as theory", "planned seed family", "not a promoted public workflow",
     "not stable public workflow", "teoría", "familia de semillas planificada",
@@ -66,7 +66,7 @@ def test_manual_claims_consistency_check():
     assert claims_path.exists(), f"THESIS_CLAIMS.md not found at {claims_path}"
     claims_content = read(claims_path)
     
-    # 1. Determine if Chua arctan is pending/non-certified in THESIS_CLAIMS.md
+    # 1. Determine whether Chua arctan is promoted with a radius-limited boundary
     arctan_claim_line = None
     for line in claims_content.splitlines():
         if "CLAIM-CHUA-ARCTAN-FRAC-001" in line or "Chua fraccionario arctan" in line:
@@ -75,7 +75,7 @@ def test_manual_claims_consistency_check():
             
     assert arctan_claim_line is not None, "Could not locate Chua arctan claim in THESIS_CLAIMS.md"
     
-    is_arctan_pending = any(w in arctan_claim_line.lower() for w in ["pendiente", "no_certificado", "pending", "non-certified"])
+    is_arctan_radius_limited = "r <= 0.3" in arctan_claim_line.lower() or "radius-limited" in arctan_claim_line.lower()
     
     manuals = [
         ROOT / "USER_MANUAL.md",
@@ -96,8 +96,8 @@ def test_manual_claims_consistency_check():
         content = clean_text_for_claims(raw_content)
         content_lower = content.lower()
         
-        # Rule 1: No false verified claims for arctan if pending
-        if is_arctan_pending:
+        # Rule 1: Radius-limited arctan promotion must still avoid global/proof overclaims
+        if is_arctan_radius_limited:
             for claim in FORBIDDEN_ARCTAN_CLAIMS:
                 if claim in content_lower:
                     violations.append(f"{p.name} -> Contains forbidden verified claim: '{claim}'")
@@ -111,7 +111,7 @@ def test_manual_claims_consistency_check():
             if not any(term.lower() in sub_window for term in ARCTAN_CLARIFICATIONS):
                 line_num = raw_content[:pos].count('\n') + 1
                 violations.append(
-                    f"{p.name}:L{line_num} -> Mention of '{match.group(0)}' lacks pending/non-certified clarification context."
+                    f"{p.name}:L{line_num} -> Mention of '{match.group(0)}' lacks radius-limited clarification context."
                 )
                 
         # Rule 3: Machado / FDF mentions must be near clarification terms (within ±300 chars)

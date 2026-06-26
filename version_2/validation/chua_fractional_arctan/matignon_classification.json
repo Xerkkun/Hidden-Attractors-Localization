@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "case_id": "chua_fractional_arctan",
+  "equilibria_count": 3,
+  "stability": {
+    "E0": "unstable",
+    "E+": "stable",
+    "E-": "stable"
+  },
+  "margins": {
+    "E0": -1.570639247162217,
+    "E+": 0.000742265117933183,
+    "E-": 0.000742265117933183
+  },
+  "minimum_margin": -1.570639247162217
+}

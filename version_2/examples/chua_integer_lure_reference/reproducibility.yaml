@@ -1,0 +1,62 @@
+case_id: chua_integer_lure_reference
+title: "Chua entero de referencia con forma Lur'e"
+role_in_report: "caso de referencia en orden entero"
+scientific_status: "candidato numerico bajo vecindades muestreadas"
+
+system:
+  system_id: chua-nonsmooth
+  q: 1.0
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+seed_search:
+  method: classic
+  branch_index: 0
+  omega_min: 1.0e-5
+  omega_max: 50.0
+  nscan: 40000
+
+continuation:
+  lambda_values: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+  t_transient: 80.0
+  t_keep: 80.0
+  h: 0.01
+  div_threshold: 120.0
+
+final_simulation:
+  t_burn: 120.0
+  t_keep: 180.0
+  h: 0.01
+  div_threshold: 120.0
+
+hiddenness:
+  radii: [1.0e-5, 3.0e-5, 1.0e-4, 3.0e-4, 1.0e-3, 3.0e-3, 1.0e-2]
+  samples_per_radius: 24
+  sampling_mode: ball
+  t_final: 500.0
+  t_burn: 120.0
+  h: 0.01
+  div_threshold: 120.0
+  equilibrium_tol: 1.0e-3
+  target_cloud_tol: 0.08
+  random_seed: 123456789
+
+lyapunov:
+  enabled: true
+  h: 0.01
+  t_final: 60.0
+  t_burn: 10.0
+  reorthonormalize_every: 5
+  div_threshold: 120.0
+
+outputs:
+  output_dir: outputs/examples/chua_integer_lure_reference
+  figures_dir: outputs/examples/chua_integer_lure_reference/figures
+
+publication_figures:
+  canonical_script: hidden_attractors.plotting.generate_publication_figures
+  report_assets_dir: library_figures/by_report/df_nc_chua

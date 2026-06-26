@@ -1,4 +1,4 @@
-# Published validation data extraction v1
+﻿# Published validation data extraction v1
 
 Este archivo concentra datos extraídos de los artículos adjuntos para configurar benchmarks y validaciones de la librería. Los valores marcados como faltantes no deben inventarse.
 
@@ -150,3 +150,4 @@ Este archivo concentra datos extraídos de los artículos adjuntos para configur
 - Parámetros: `{'b': 0.53, 'c': 3.0}`; CI: `[0.1, 0.1, 0.1]`
 
 - Tabla LCE/0-1 Four Wing: `[{'type': 'Comm', 'orders': [1.0, 1.0, 1.0], 'LE': [0.3358, 0.0133, -1.2608], 'K01': 0.998}, {'type': 'Comm', 'orders': [0.9, 0.9, 0.9], 'LE': [0.2684, -0.0259, -0.9699], 'K01': 0.9982}, {'type': 'Comm', 'orders': [0.8, 0.8, 0.8], 'LE': [-0.1543, -0.1531, -0.801], 'K01': 0.1352}, {'type': 'Comm', 'orders': [0.7, 0.7, 0.7], 'LE': [-0.4825, -0.4818, -0.6942], 'K01': 0.1752}, {'type': 'Incomm', 'orders': [0.9, 1.0, 1.0], 'LE': [0.3623, -0.0501, -1.0984], 'K01': 0.9983}, {'type': 'Incomm', 'orders': [0.8, 1.0, 1.0], 'LE': [0.346, -0.1048, -0.9196], 'K01': 0.9978}, {'type': 'Incomm', 'orders': [0.7, 1.0, 1.0], 'LE': [0.3598, -0.0345, -0.916], 'K01': 0.9976}, {'type': 'Incomm', 'orders': [0.6, 1.0, 1.0], 'LE': [0.3371, -0.0628, -0.9076], 'K01': 0.9969}]`
+

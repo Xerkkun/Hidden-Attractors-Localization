@@ -39,7 +39,13 @@ from .plot_trajectories import (
 from .plot_basins import plot_basin_slice_file as plot_basin_slice_file_migrated
 from .plot_matignon import plot_matignon_equilibria as plot_matignon_equilibria_migrated
 from .plot_sphere_tests import plot_sphere_test_results
-from .generate_publication_figures import generate_all_publication_figures
+
+
+def generate_all_publication_figures(*args, **kwargs):
+    """Lazily load the canonical generator so it can also run as a module."""
+    from .generate_publication_figures import generate_all_publication_figures as _generate
+
+    return _generate(*args, **kwargs)
 
 # Unified plotting API
 from .style import apply_library_style, apply_axes_style, get_figsize
@@ -114,5 +120,4 @@ __all__ = [
     "plot_biased_vs_centered",
     "plot_mega_summary",
 ]
-
 

@@ -1,6 +1,3 @@
 # Remaining work
 
-- Complete selected validation runs.
-- Decide which additional examples should be included in archived validation evidence.
-- Regenerate the final scientific freeze audit after the evidence set is fixed.
-- Replace sample-output templates with executed outputs if required.
+The version `1.0.0` package records no arctan evidence blocker. Future work is limited to optional stronger basin/global analyses and continued benchmark expansion; these are not required for the radius-limited v1 claim.

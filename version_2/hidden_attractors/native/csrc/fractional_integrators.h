@@ -24,8 +24,9 @@ typedef struct {
     double alpha;
     double beta;
     double gamma;
-    double m;
-    double n;
+    double a1;
+    double a2;
+    double rho;
 } ChuaArctanParams;
 
 // Predefined RHS function pointers getter

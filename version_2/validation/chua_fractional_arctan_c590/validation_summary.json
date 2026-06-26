@@ -1,0 +1,380 @@
+{
+  "schema_version": "1.0",
+  "case_id": "chua_fractional_arctan_c590",
+  "candidate_id": "chua_arctan_c590_q09999_seed9",
+  "promoted_status": "hiddenness_supported_under_tested_local_radii_with_macro_radius_review",
+  "canonical_label": "hiddenness_supported_under_tested_neighborhoods",
+  "claim_boundary": "Radius-limited finite numerical evidence; not a global basin proof.",
+  "source_output": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/",
+  "source_summary": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/candidate_summary_latest.json",
+  "source_rows": [
+    "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_scaled_rows.csv",
+    "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r003_rows.csv",
+    "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r010_rows.csv",
+    "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r030_rows.csv",
+    "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r100_rows.csv",
+    "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r200_rows.csv"
+  ],
+  "parameters": {
+    "alpha": 21.849356906616716,
+    "beta": 19.081840840860202,
+    "gamma": 0.007378011979156531,
+    "a1": 0.04228979343578827,
+    "a2": -3.3367815123026694,
+    "rho": 1.7984259332820332
+  },
+  "q": 0.9999,
+  "seed": [
+    5.864244979081692,
+    1.5847111486491057,
+    3.2155806477633915
+  ],
+  "numerical_contract": {
+    "derivative": "Caputo",
+    "integrator": "ABM predictor-corrector",
+    "memory_mode": "full",
+    "caputo_history_accumulated": true,
+    "primary_h": 0.005,
+    "target_t_final": 180.0,
+    "target_t_burn": 90.0
+  },
+  "all_equilibria_tested": true,
+  "equilibria": {
+    "E0": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "E+": [
+      4.649405513460388,
+      0.0017970022680715836,
+      -4.647608511192317
+    ],
+    "E-": [
+      -4.649405513460388,
+      -0.0017970022680715836,
+      4.647608511192317
+    ]
+  },
+  "matignon": {
+    "equilibria_count": 3,
+    "stability": {
+      "E0": "unstable",
+      "E+": "stable",
+      "E-": "stable"
+    },
+    "margins": {
+      "E0": -1.570639247162217,
+      "E+": 0.000742265117933183,
+      "E-": 0.000742265117933183
+    },
+    "minimum_margin": -1.570639247162217
+  },
+  "contact_threshold": 0.5901016489457517,
+  "target_calibration_nn90": 0.29505082447287584,
+  "total_tests": 13500,
+  "total_contacts": 610,
+  "zero_contact_local_radii": [
+    1e-05,
+    0.0001,
+    0.001,
+    0.01,
+    0.03,
+    0.1,
+    0.3
+  ],
+  "zero_contact_max_radius": 0.3,
+  "zero_contact_tests": 8400,
+  "zero_contact_contacts": 0,
+  "macro_review_radii": [
+    1.0,
+    2.0
+  ],
+  "macro_review_tests": 5100,
+  "macro_review_contacts": 610,
+  "summary_by_radius": [
+    {
+      "radius": 1e-05,
+      "tests": 300,
+      "contacts": 0,
+      "finite": 300,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.0001,
+      "tests": 600,
+      "contacts": 0,
+      "finite": 600,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.001,
+      "tests": 900,
+      "contacts": 0,
+      "finite": 900,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.01,
+      "tests": 1200,
+      "contacts": 0,
+      "finite": 1200,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.03,
+      "tests": 1500,
+      "contacts": 0,
+      "finite": 1500,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.1,
+      "tests": 1800,
+      "contacts": 0,
+      "finite": 1800,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.3,
+      "tests": 2100,
+      "contacts": 0,
+      "finite": 2100,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 1.0,
+      "tests": 2400,
+      "contacts": 22,
+      "finite": 2400,
+      "decision": "macro_radius_contact_detected"
+    },
+    {
+      "radius": 2.0,
+      "tests": 2700,
+      "contacts": 588,
+      "finite": 2700,
+      "decision": "macro_radius_contact_detected"
+    }
+  ],
+  "summary_by_radius_equilibrium": [
+    {
+      "radius": 1e-05,
+      "equilibrium": "E+",
+      "tests": 100,
+      "contacts": 0,
+      "finite": 100,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 1e-05,
+      "equilibrium": "E-",
+      "tests": 100,
+      "contacts": 0,
+      "finite": 100,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 1e-05,
+      "equilibrium": "E0",
+      "tests": 100,
+      "contacts": 0,
+      "finite": 100,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.0001,
+      "equilibrium": "E+",
+      "tests": 200,
+      "contacts": 0,
+      "finite": 200,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.0001,
+      "equilibrium": "E-",
+      "tests": 200,
+      "contacts": 0,
+      "finite": 200,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.0001,
+      "equilibrium": "E0",
+      "tests": 200,
+      "contacts": 0,
+      "finite": 200,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.001,
+      "equilibrium": "E+",
+      "tests": 300,
+      "contacts": 0,
+      "finite": 300,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.001,
+      "equilibrium": "E-",
+      "tests": 300,
+      "contacts": 0,
+      "finite": 300,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.001,
+      "equilibrium": "E0",
+      "tests": 300,
+      "contacts": 0,
+      "finite": 300,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.01,
+      "equilibrium": "E+",
+      "tests": 400,
+      "contacts": 0,
+      "finite": 400,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.01,
+      "equilibrium": "E-",
+      "tests": 400,
+      "contacts": 0,
+      "finite": 400,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.01,
+      "equilibrium": "E0",
+      "tests": 400,
+      "contacts": 0,
+      "finite": 400,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.03,
+      "equilibrium": "E+",
+      "tests": 500,
+      "contacts": 0,
+      "finite": 500,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.03,
+      "equilibrium": "E-",
+      "tests": 500,
+      "contacts": 0,
+      "finite": 500,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.03,
+      "equilibrium": "E0",
+      "tests": 500,
+      "contacts": 0,
+      "finite": 500,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.1,
+      "equilibrium": "E+",
+      "tests": 600,
+      "contacts": 0,
+      "finite": 600,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.1,
+      "equilibrium": "E-",
+      "tests": 600,
+      "contacts": 0,
+      "finite": 600,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.1,
+      "equilibrium": "E0",
+      "tests": 600,
+      "contacts": 0,
+      "finite": 600,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.3,
+      "equilibrium": "E+",
+      "tests": 700,
+      "contacts": 0,
+      "finite": 700,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.3,
+      "equilibrium": "E-",
+      "tests": 700,
+      "contacts": 0,
+      "finite": 700,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 0.3,
+      "equilibrium": "E0",
+      "tests": 700,
+      "contacts": 0,
+      "finite": 700,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 1.0,
+      "equilibrium": "E+",
+      "tests": 800,
+      "contacts": 0,
+      "finite": 800,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 1.0,
+      "equilibrium": "E-",
+      "tests": 800,
+      "contacts": 0,
+      "finite": 800,
+      "decision": "no_contact_detected"
+    },
+    {
+      "radius": 1.0,
+      "equilibrium": "E0",
+      "tests": 800,
+      "contacts": 22,
+      "finite": 800,
+      "decision": "macro_radius_contact_detected"
+    },
+    {
+      "radius": 2.0,
+      "equilibrium": "E+",
+      "tests": 900,
+      "contacts": 150,
+      "finite": 900,
+      "decision": "macro_radius_contact_detected"
+    },
+    {
+      "radius": 2.0,
+      "equilibrium": "E-",
+      "tests": 900,
+      "contacts": 149,
+      "finite": 900,
+      "decision": "macro_radius_contact_detected"
+    },
+    {
+      "radius": 2.0,
+      "equilibrium": "E0",
+      "tests": 900,
+      "contacts": 289,
+      "finite": 900,
+      "decision": "macro_radius_contact_detected"
+    }
+  ],
+  "verdict": "promoted_radius_limited_hiddenness_supported_under_tested_neighborhoods",
+  "macro_radius_note": "Contacts occur only in extended macroscopic radii 1.0 and 2.0; local radii through 0.3 have zero contacts."
+}

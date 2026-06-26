@@ -1,86 +1,69 @@
 # User Manual
 
-This is the primary user manual for the `hidden-attractors-fo` research library. It provides installation instructions, CLI workflows, reproducible examples, and verification rules for identifying and auditing hidden attractor candidates in integer- and fractional-order systems.
+This is the primary user manual for the `hidden-attractors-fo` research
+library. It covers installation, the unified CLI, reproducible examples,
+article-reproduction status, evidence labels, API inventory, and the boundary
+between numerical diagnostics and hiddenness claims.
 
-For related repository documents and evidence logs, see:
+Canonical references:
+
 - **Official Claims Matrix**: [THESIS_CLAIMS.md](THESIS_CLAIMS.md)
 - **Quick Start Guide**: [docs/quick_start.md](docs/quick_start.md)
+- **API Reference**: [docs/api_reference.md](docs/api_reference.md)
 - **Figure Export Policy**: [docs/figure_export_policy.md](docs/figure_export_policy.md)
 - **Dependency Policy**: [docs/dependency_policy.md](docs/dependency_policy.md)
 - **Official Test Freeze Audit**: [validation/freeze_audit/](validation/freeze_audit/)
 
----
-
 ## 1. Purpose and scientific scope
 
-The library is designed to generate, transport, simulate, audit, and classify candidates for hidden attractors in commensurate fractional-order systems compatible with the scalar Lur'e representation.
+`hidden-attractors-fo` supports reproducible numerical workflows for
+integer-order and commensurate Caputo fractional-order systems that admit a
+scalar Lur'e representation
 
-### Mathematical Formulation
+```text
+^C D_t^q X = P X + b psi(r^T X),   0 < q <= 1.
+```
 
-The base model of a commensurate fractional-order Lur'e system is defined as:
+For frequency-domain seed generation, the fractional transfer convention is
 
-$$\sideset{^C}{_t^q}{\operatorname{D}} X = P X + b \psi(r^T X), \quad \sigma = r^T X$$
+```text
+W_q(s) = r^T (s^q I - P)^(-1) b
+lambda = (j omega)^q
+W_hat_q(lambda) = r^T (lambda I - P)^(-1) b
+```
 
-Where:
-- $X \in \mathbb{R}^n$ is the state vector.
-- $P \in \mathbb{R}^{n \times n}$ is the linear system matrix.
-- $b, r \in \mathbb{R}^n$ are the input and output vectors.
-- $\psi: \mathbb{R} \to \mathbb{R}$ is the scalar nonlinearity.
-- $\sideset{^C}{_t^q}{\operatorname{D}}$ represents the Caputo fractional derivative operator of order $q$.
-- For $q = 1.0$, the system is an ordinary differential equation (ODE).
-- For $0 < q < 1.0$, the system behaves as a fractional-order dynamical system with power-law memory.
+DF/Nyquist, continuation, FFT/PSD, Poincare sections, 0-1 tests, Lyapunov
+estimates, and phase portraits are diagnostics or seed-generation tools. They
+do not establish hiddenness by themselves. Hiddenness labels require sampled
+neighborhood or basin evidence around all equilibria under a recorded numerical
+contract.
 
-### Linear Transfer Function Conventions
-
-The linear transfer function $W_q(s)$ in the Laplace domain is defined as:
-
-$$W_q(s) = r^T (s^q I - P)^{-1} b$$
-
-For steady-state harmonic balance and describing function (DF) sweeps, the complex frequency evaluation uses the spectral parameter $\lambda$:
-
-$$\hat{W}_q(\lambda) = r^T (\lambda I - P)^{-1} b, \quad \lambda = (j \omega)^q = \omega^q e^{j q \pi / 2}$$
-
-> [!IMPORTANT]
-> When $q < 1.0$, it is strictly prohibited to evaluate the frequency response using the integer-order convention $W(j\omega)$ as a substitute for $(j\omega)^q$.
-
-### Scope of numerical evidence
-
-The library records finite-time numerical evidence under explicit solver, tolerance, memory, and neighborhood contracts. Describing functions, continuation, plots, Lyapunov estimates, and basin slices are diagnostic tools; final labels are assigned only through the documented validation workflow.
-
----
+The current release scope is scalar Lur'e-compatible Chua-type systems and
+extension templates for new Lur'e systems. Arbitrary nonlinear systems,
+incommensurate fractional orders, and non-Caputo derivatives require separate
+contracts before they can enter the official workflow.
 
 ## 2. Installation
 
-To install the library in editable mode, run the following command from the repository root:
+From the repository root:
 
 ```bash
 python -m pip install -e version_2
 ```
 
-For full development, document compiling, and validation testing, it is recommended to install all development, analysis, and legacy dependencies:
+For development and documentation:
 
 ```bash
-python -m pip install -e "version_2[dev,analysis,legacy]"
+python -m pip install -e "version_2[dev,analysis,docs,legacy]"
 ```
 
-### Extras Packages
+On this Windows workspace, the safer local interpreter is usually:
 
-You can install specific groups of dependencies separately:
-
-```bash
-python -m pip install -e "version_2[dev]"      # Pytest, coverage, benchmarks
-python -m pip install -e "version_2[analysis]" # Chaos diagnostics (antropy, nolds)
-python -m pip install -e "version_2[docs]"     # MkDocs and documentation compilers
-python -m pip install -e "version_2[legacy]"   # Legacy dependency support (PyYAML)
+```powershell
+.\.venv\Scripts\python.exe -m pip install -e ".\version_2[dev,analysis,docs,legacy]"
 ```
 
-### Requirements
-
-- **Python**: Version `>= 3.11`. The package is automatically tested on Python versions `3.11`, `3.12`, and `3.13` in the CI pipeline (see [Dependency Policy](docs/dependency_policy.md)).
-
-### Installation Verification
-
-Run the following commands to verify that the environment compiles and runs successfully:
+Verify the install:
 
 ```bash
 hidden-attractors --help
@@ -89,44 +72,34 @@ python -m compileall hidden_attractors examples tests tools/cli
 python -m pytest -q
 ```
 
-> [!NOTE]
-> The official results of the latest release audit (freeze audit) are stored under [validation/freeze_audit/](validation/freeze_audit/), reporting **797 passed** and **34 skipped** tests. Local test counts may vary if custom test files are added.
-
----
+The official release/freeze counts are stored under
+[validation/freeze_audit/](validation/freeze_audit/). Local counts can differ
+when optional tools or local test selections change.
 
 ## 3. Repository structure
 
 | Path | Purpose |
 | :--- | :--- |
-| `hidden_attractors/` | Core library package containing models, solvers, and utilities. |
-| `hidden_attractors/cli/` | Unified command-line interface dispatcher. |
-| `hidden_attractors/models/` | Core vector fields, Jacobians, and nonlinearities. |
-| `hidden_attractors/systems/` | Extensible chaotic-system registry and Lur'e splits. |
-| `hidden_attractors/seed_generation/` | Describing function (DF) and Nyquist seed generators. |
-| `hidden_attractors/integrations/` | Numerical solvers (RK4, Heun, ABM, EFORK-3). |
-| `hidden_attractors/workflows/` | Core pipelines (continuation, robustness, basins). |
-| `hidden_attractors/plotting/` | Canonical plotting and figure export tools. |
-| `configs/examples/` | Configuration YAML templates for presets and systems. |
-| `examples/` | Runnable python examples for testing API usage. |
-| `validation/` | Promoted validation evidence, logs, and LaTeX reports. |
-| `library_figures/` | Promoted figures and plots metadata (manifest). |
-| `docs/` | User manuals, technical documents, and reports. |
-| `THESIS_CLAIMS.md` | Official claims matrix documenting what is scientifically proven. |
-
-> [!WARNING]
-> Historical scripts under `tools/legacy/` or temporary folders are kept only for compatibility or archive purposes. They do not constitute public API routes.
-
----
+| `hidden_attractors/` | Importable package: models, systems, solvers, analysis, verification, plotting, workflows, CLI dispatch. |
+| `hidden_attractors/systems/` | `ChaoticSystem`, `LureSystem`, registry, workflow-capability requirements. |
+| `hidden_attractors/seed_generation/` and `hidden_attractors/lure/` | DF/Nyquist/Lur'e seed helpers; seed output is heuristic. |
+| `hidden_attractors/integrations/`, `solvers/`, `native/` | Integer and Caputo integration contracts, Python solvers, C backends. |
+| `hidden_attractors/workflows/` | Protocol, continuation, robustness, hiddenness, basins, report, and reusable specs. |
+| `hidden_attractors/verification/` | Equilibria, stability, neighborhood probes, candidate gates, status labels. |
+| `configs/examples/` | YAML templates and presets. |
+| `examples/` | Runnable examples and official report cases. |
+| `validation/` | Promoted evidence and manifests. |
+| `library_figures/` | Promoted figures and figure manifests. |
+| `docs/` | User docs, API reference, report source, validation notes. |
+| `tools/legacy/` | Historical compatibility material, not public release API. |
 
 ## 4. Public CLI
 
-The only public CLI command installed in the user environment is:
+The only public console command is:
 
 ```bash
 hidden-attractors
 ```
-
-Grouped subcommands are structured as follows:
 
 | Task | Command |
 | :--- | :--- |
@@ -134,143 +107,147 @@ Grouped subcommands are structured as follows:
 | Run preset | `hidden-attractors run -p chua_integer` |
 | Run YAML | `hidden-attractors run -c path/to/config.yaml` |
 | Initialize config | `hidden-attractors init -e chua_fractional` |
+| Inspect config | `hidden-attractors inspect-config -p chua_fractional` |
 | Inspect systems | `hidden-attractors inspect systems` |
 | Inspect candidates | `hidden-attractors inspect candidates` |
 | Inspect workflow requirements | `hidden-attractors inspect workflow-requirements` |
 | Validate contract | `hidden-attractors validate contract --allow-pending` |
-| Seed centered Lur’e DF | `hidden-attractors seed lure-centered --help` |
-| Seed biased Lur’e DF | `hidden-attractors seed lure-biased --help` |
+| Validate bibliography | `hidden-attractors validate bibliography` |
+| Run protocol stage | `hidden-attractors protocol <substage>` |
+| Seed generation | `hidden-attractors seed lure-centered --help`; `hidden-attractors seed lure-biased --help` |
 | Continuation | `hidden-attractors continuation run --help` |
-| Multiparameter continuation | `hidden-attractors continuation multiparameter --help` |
-| Hiddenness sphere controls | `hidden-attractors hiddenness sphere-controls --help` |
-| Basin refinement | `hidden-attractors basin refined --help` |
-| Robustness overlay | `hidden-attractors robustness overlay --help` |
-| Bifurcation | `hidden-attractors bifurcation run --help` |
-| Lyapunov | `hidden-attractors lyapunov compute --help` |
-| Chaos tests | `hidden-attractors chaos-test --help` |
+| Robustness | `hidden-attractors robustness overlay --help` |
+| Hiddenness | `hidden-attractors hiddenness sphere-controls --help` |
+| Basins | `hidden-attractors basin refined --help` |
+| Reports | `hidden-attractors report fractional-run --help` |
 
-> [!NOTE]
-> Legacy entry points were removed from the public installed command surface. Use the grouped CLI instead.
-
----
+Legacy standalone commands were removed from the public installed surface. They
+may appear in migration documentation only as legacy/deprecated names.
 
 ## 5. Minimal examples
 
-Below are quick commands to execute and inspect calculations:
+Quick inspection:
 
-### A. Registry Inspection
 ```bash
-hidden-attractors --help
 hidden-attractors inspect systems
 hidden-attractors inspect candidates
 hidden-attractors validate contract --allow-pending
 ```
 
-### B. Execution using a Preset
+Run presets:
+
 ```bash
 hidden-attractors run -p chua_integer
+hidden-attractors run -p chua_fractional
 ```
 
-### C. Execution using a Custom YAML
+Run the three official example folders from `version_2`:
+
 ```bash
-hidden-attractors init -e chua_fractional
-hidden-attractors run -c configs/examples/chua_fractional_centered_lure_df.yaml
+python examples/chua_integer_lure_reference/run_example.py --quick
+python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick
+python examples/chua_arctan_wu2023/run_example.py --quick
 ```
 
-### Expected Output
-- **Terminal Summary**: Displays real-time details of the seed, parameters, continuation steps, solver diagnostics, and validation decisions.
-- **JSON Summary**: A structured file containing run parameters, execution timestamps, and final verdict.
-- **CSV Data**: State trajectories (time, $x$, $y$, $z$) stored in the configured output directory.
-- **Figures**: Automatically exported PNG/PDF plots under the `library_figures/` directory if they are promoted.
+Python API starting points:
 
----
+```python
+from hidden_attractors import get_system, register_system
+from hidden_attractors.systems import ChaoticSystem
+from hidden_attractors.workflows.specs import WorkflowInputSpec
+from hidden_attractors.workflows.config_loader import load_config
+from hidden_attractors.integrations.selector import integrate
+```
+
+Every defined function, class, and method in the active package is documented in
+[docs/api_reference.md](docs/api_reference.md). That inventory includes private
+helpers for auditability; private names are not stable API unless explicitly
+exported or documented as public workflow inputs.
 
 ## 6. Reproducible example 1: Chua integer
 
-The integer-order Chua system acts as a baseline case to validate the Lur'e split, frequency analysis, parameter continuation, and diagnostic modules under a memoryless ODE framework.
+The integer-order Chua case is the release reference for the Lur'e software
+route. It exercises seed generation, continuation, final trajectory, sampled
+neighborhood controls, figures, and a finite-time Lyapunov diagnostic without
+Caputo memory.
 
-- **System**: Chua system with non-smooth piecewise-linear saturation nonlinearity.
-- **Order**: $q = 1.0$ (ordinary differential equation).
-- **Status**: reproduced integer reference.
+- **System**: non-smooth Chua saturation.
+- **Order**: `q = 1.0`.
+- **Status**: reproduced integer reference/control.
 - **Command**:
-  ```bash
-  hidden-attractors run -p chua_integer
-  ```
-- **Expected Output**: A stable chaotic attractor trajectory generated from a continuation seed starting from describing function analysis, with 0 contacts detected in the neighborhoods of the stable equilibria (hence classified as a hidden attractor).
 
-> [!WARNING]
-> The integer Chua case validates the integer-order route and Lur’e/DF pipeline, but it does not validate fractional hiddenness.
+```bash
+cd version_2
+python examples/chua_integer_lure_reference/run_example.py --quick
+```
 
----
+Promoted validation artifacts live under
+`validation/reference_cases/chua_integer_q1/`. The hiddenness summary reports no
+target-basin hits from sampled equilibrium neighborhoods in the corrected
+integer rerun. This validates the integer route only; it does not validate any
+fractional hidden-attractor claim.
 
 ## 7. Reproducible example 2: Chua nonsmooth BDF
 
-The Danca 2017 fractional Chua case is used as a partial reference implementation. The published article does not report all numerical values required for full independent trajectory reproduction, including the exact seed and hidden-attractor initial condition. The library therefore records equations, equilibria, local stability, configured Caputo controls, and validation outcomes under its own numerical contract.
+The non-smooth fractional Chua example demonstrates the proposed biased
+describing-function route for a Caputo candidate.
 
-- **System**: Chua system with piecewise-linear saturation nonlinearity.
-- **Order**: $q = 0.9998$ (Caputo fractional order).
-- **Status**: partial reference implementation (not fully reproduced).
-- **Example Run (Nearby Candidate)**:
-  ```bash
-  hidden-attractors run -c configs/examples/chua_fractional_biased_lure_df.yaml
-  ```
-- **Interpretation**: 
-  - The BDF route is a heuristic for generating periodic seeds. A successful continuation to the target system does not mathematically prove hiddenness.
-  - One nearby candidate evaluated under the library's own contract, `danca2017_nearby_saturation_candidate_q09998` (branch_0), registered **1305 autoexcited contacts** and was officially classified as `self_excited_contact_detected` (rejected).
-- **Validation artifacts**: Refer to [validation/00_manifest/validation_manifest.json](validation/00_manifest/validation_manifest.json) and [validation/09_hiddenness_tests/hiddenness_tests_validation_summary.json](validation/09_hiddenness_tests/hiddenness_tests_validation_summary.json) if available.
+- **System**: non-smooth Chua saturation.
+- **Order**: typically `q = 0.9998`.
+- **Command**:
 
----
+```bash
+cd version_2
+python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick
+```
 
-## 8. Pending/non-certified example: Chua arctan
+This is not a full reproduction of the Danca 2017 hidden-attractor trajectory.
+The paper does not report enough numerical data for an independent full
+trajectory reproduction: exact DF frequency/gain/amplitude, seed coordinates,
+exact hidden-attractor initial condition, and complete continuation settings are
+missing.
 
-The Wu 2023 arctan Chua case is implemented at the model/algebra level and includes documented reference inputs. Full independent reproduction of the published attractor workflow is not claimed because some seed-generation and sweep data are not reported and the library uses a separate Caputo-compatible validation route.
+The library therefore separates two claims:
 
-- **System**: Chua system with $\psi(x) = \rho (\frac{2}{\pi} \arctan(m x) - \frac{2}{\pi} \arctan(n x))$.
-- **Order**: $q < 1.0$ (typically $q=0.99$).
-- **Status**: partial algebraic implementation; validation complete pending.
-- **Pending verification steps**:
-  1. Define Lur'e split vectors.
-  2. Evaluate fractional transfer function $W_q(s)$.
-  3. Formulate the arctan describing function.
-  4. Perform Nyquist condition loops.
-  5. Run homotopic parameter continuation.
-  6. Simulate the system with Caputo ABM/EFORK solvers.
-  7. Run sphere probing around all equilibria.
-  8. Perform conservative classification.
+| Lane | Status | Reason |
+| --- | --- | --- |
+| Example 1 biased-DF methodology | Candidate/compatible under declared local radii | It proposes a reproducible seed-continuation-verification workflow, but the local tests are not a global proof. |
+| Official nearby fractional candidate `danca2017_nearby_saturation_candidate_q09998` | Rejected/self-excited | `validation/09_hiddenness_tests/hiddenness_tests_validation_summary.json` records 1305 target contacts from neighborhoods of `E+` and `E-`. |
 
----
+## 8. Radius-limited promoted example: Chua arctan c590
+
+The arctan Chua example separates the Wu 2023 bibliographic lane from the promoted
+Caputo full-history c590 validation lane.
+
+- **System**: Chua with smooth arctan nonlinearity.
+- **Reported order**: `q = 0.99` for the Wu 2023 lane.
+- **Command**:
+
+```bash
+cd version_2
+python examples/chua_arctan_wu2023/run_example.py --quick
+```
+
+The Wu2023 bibliographic ADM path remains separate: it uses a local recurrence
+and does not accumulate full Caputo history. Under that local ADM contract, the
+reported initial conditions classify as periodic/nonchaotic after transient
+filtering.
+
+The c590 lane uses a Caputo full-history dynamic search and neighborhood
+sampling. It is promoted as `hiddenness_supported_under_tested_local_radii` for
+local radii `r <= 0.3` with 8400 finite probes and zero contacts around all
+equilibria. Macro-radius contacts at `r=1.0` and `r=2.0` are retained as
+extended audit evidence. This is a finite local-radius hiddenness claim, not a
+global basin proof.
 
 ## 9. YAML configuration format
 
-Workflows are parameterized using a hierarchical, structured YAML schema. 
-
-> [!WARNING]
-> Do not use the old flat schema.
-
-### Core YAML Sections
-
-| Key | Meaning |
-| :--- | :--- |
-| `experiment` | Run identifier, description, output directory, and random seed. |
-| `system` | Registered system ID, order $q$, and parameter overrides. |
-| `modes` | Execution modes for seed search, transfer functions, and dynamics. |
-| `integrator` | Solver name (`efork3`, `abm`), step size $h$, and memory window policy. |
-| `stages` | Toggles for running seed search, continuation, and diagnostics. |
-| `seed_search` | Describing function amplitude, frequency, and grid bounds. |
-| `simulation` | Integration time $t_{final}$ and transients burn time $t_{burn}$. |
-| `sphere_tests` | Sampling size and radii around equilibria. |
-| `basin` | 2D basin slice grid resolutions and planes. |
-| `bifurcation` | Parameter sweep bifurcation boundaries. |
-| `plots` | Master toggles for phase space, Nyquist, and basin plots. |
-| `attractor_plots` | Attractor visual projection settings. |
-
-### Minimal Schematic Configuration
+Workflows use hierarchical YAML. A minimal structure is:
 
 ```yaml
 experiment:
-  name: "Chua Saturation Run"
-  output_dir: "outputs/chua"
-  random_seed: 42
+  name: "demo"
+  output_dir: "outputs/demo"
 
 system:
   system_id: "chua_fractional_saturation"
@@ -278,155 +255,143 @@ system:
 
 integrator:
   name: "efork3"
-  h: 0.001
+  h: 0.01
   memory_mode: "window"
-  memory_window_steps: 400
+  memory_policy: "finite_window"
+  memory_window_steps: 4000
 
 stages:
   seed_search: true
   continuation: true
   final_simulation: true
-  hiddenness_tests: true
+  hiddenness_tests: false
+  basin_slices: false
 ```
 
----
+For new Lur'e systems, registration is not enough. The workflow must also
+record equilibria, Jacobian, Lur'e split `(P, b, r, psi)`, describing-function
+branch convention, solver/memory policy, target reference, classifier thresholds,
+radii, sample counts, and random seed policy.
 
 ## 10. Output files and expected results
 
-Execution runs produce structured outputs separated by tier:
-
-| Output | Type | Description |
+| Output | Typical location | Meaning |
 | :--- | :--- | :--- |
-| **JSON Summary** | Metadata | Machine-readable description containing step, solver, parameters, and verdict. |
-| **CSV Trajectories** | Numerical | Trajectory coordinates ($t, x, y, z$) of simulation runs. |
-| **Figures** | Visual | Automatically formatted plots (phase-spaces, basins, Nyquist). |
-| **Validation Manifest** | Status | JSON files verifying contract compliance (e.g. `validation_manifest.json`). |
+| JSON summaries | `outputs/.../*.json` or `validation/.../*.json` | Machine-readable parameters, statuses, verdicts, and provenance. |
+| CSV trajectories/tables | `outputs/.../*.csv` or `validation/.../*.csv` | Numerical trajectory rows, decisions, basin labels, or diagnostics. |
+| Figures | `library_figures/` for promoted figures; `outputs/` for ordinary runs | PNG/PDF visual diagnostics generated through the plotting/export policy. |
+| Manifests | `validation/00_manifest/`, `library_figures/manifests/`, release metadata | Traceability from results to files, parameters, and software provenance. |
 
-- **Execution output**: Stored locally in `outputs/` or configured folders for inspection. Unpromoted systems, like the arctan system (`outputs/chua_fractional_arctan/`), write their outputs to the `outputs/` directory.
-- **Promoted evidence**: Promoted validation evidence, such as the saturation systems (`validation/chua_integer_saturation/` and `validation/chua_fractional_saturation/`), are stored under `validation/`. Figures are saved in `library_figures/` following the guidelines in [docs/figure_export_policy.md](docs/figure_export_policy.md).
-- **Legacy artifacts**: Frozen files kept under legacy namespaces.
-
-
----
+Ordinary exploratory outputs stay under `outputs/` or other ignored local output
+folders. Promoted validation evidence belongs under `validation/` and must use
+relative paths.
 
 ## 11. Evidence states and hiddenness labels
 
-The library enforces a separation between numerical evidence labels and official thesis claim statuses.
+Canonical attractor statuses:
 
-### Evidence Labels
-- `hiddenness_supported_under_tested_neighborhoods`: Attraction basin does not overlap with any tested neighborhood of any equilibrium.
-- `compatible_with_hiddenness_under_tested_radii`: No contacts detected, but tested parameters/radii are incomplete.
-- `self_excited_contact_detected`: An equilibrium trajectory reached the attractor; the attractor is self-excited.
-- `hiddenness_inconclusive`: Divergence or integration failure.
-- `candidate_rejected`: Attractor collapsed to equilibrium or diverged.
+| Status | Meaning |
+| :--- | :--- |
+| `candidate` | A localized branch or seed under investigation. |
+| `hidden_under_tested_neighborhoods` | No equilibrium-neighborhood target contact under the completed recorded contract. |
+| `compatible_with_hiddenness` | No contact detected under limited or incomplete tested radii/metadata. |
+| `self_excited` | Contact detected from at least one equilibrium neighborhood. |
+| `nonchaotic` | Periodic, quasiperiodic, equilibrium-like, or otherwise not chaotic under diagnostics. |
+| `diverged` | Numerical divergence/unbounded behavior. |
+| `inconclusive` | Conflicting diagnostics or numerical failure. |
+| `rejected` | Invalid, collapsed, self-excited, or otherwise not promotable. |
+| `not_tested` | Hiddenness checks have not been run. |
 
-### Claim Status (THESIS_CLAIMS.md)
-- `probado`: Verified by extensive tests and formal contract.
-- `reproducido`: Exists in literature and is reproduced under a verified config.
-- `rechazado`: Candidate rejected by neighborhood test.
-- `candidato`: Promised seed/attractor, but contract is incomplete.
-- `no_certificado`: Partial evidence only.
-- `pendiente`: Methodology not yet applied.
-
----
+The claims matrix uses broader evidence statuses such as `validated`,
+`reproduced`, `rejected`, `candidate`, `partial`, and `pending`.
 
 ## 12. Hiddenness verification protocol
 
-### Operational Definition
-An attractor is hidden if its basin of attraction does not intersect any open neighborhood of any equilibrium point.
+Operational definition: an attractor is hidden if its basin of attraction does
+not intersect any open neighborhood of any equilibrium point.
 
-> [!WARNING]
-> This is evaluated numerically under finite time, finite step $h$, and finite probing radii. It is not an absolute mathematical proof of global hiddenness.
+The finite numerical protocol approximates this by:
 
-### Official Audit Steps
-1. **Calculate all equilibrium points** of the vector field.
-2. **Classify stability** locally (using Matignon's criteria $|\arg(\lambda_i)| > q\pi/2$ if $q < 1.0$).
-3. **Simulate trajectories** starting from small spheres around all equilibrium points.
-4. **Simulate the candidate attractor** starting from the continuation seed.
-5. **Compare final states** of equilibrium runs vs the candidate run.
-6. **Detect contacts** between equilibrium trajectories and the candidate attractor cloud.
-7. **Report contract parameters**: Probing radii, samples per radius, solver, step size $h$, time, and memory length.
-8. **Classify conservatively** into the corresponding evidence label.
+1. computing all equilibria;
+2. classifying local stability, with Matignon's criterion for `0 < q < 1`;
+3. integrating sampled points in neighborhoods or basin slices around every equilibrium;
+4. integrating the candidate reference trajectory;
+5. comparing endpoint/trajectory clouds with target criteria;
+6. reporting contacts, divergences, equilibrium collapses, and unknown outcomes;
+7. preserving the complete numerical contract.
 
----
+A finite sample is evidence under the declared contract, not a global
+mathematical proof.
 
 ## 13. Fractional-order solvers and memory policy
 
-Fractional derivatives are non-local operators, meaning Caputo integration requires evaluating history since $t_0$.
+Caputo dynamics depend on history. The memory policy is part of the numerical
+model, not an implementation detail.
 
-- **Full Memory**: Evaluates full history. Computationally expensive ($O(N^2)$ complexity).
-- **Window Memory**: Truncates history to a fixed step window (e.g., $N_w = 400$). Greatly accelerates simulation, but changes the mathematical contract.
-- **Continuation warning**:
-  > For Caputo systems, a continuation step should carry a history window or explicit memory policy, not only the last state.
-- **Solvers**:
-  - `efork3`: Predictor-corrector Caputo solver.
-  - `abm`: Full-history Adams-Bashforth-Moulton Caputo solver.
-  - `rk4` / `heun`: Used only for integer order ($q=1.0$).
+| Policy | Meaning |
+| :--- | :--- |
+| `full` / `full_caputo` | Full accumulated Caputo history. Expensive but closest to the declared fractional IVP. |
+| `window` / `finite_window` | Finite memory window for scalability or robustness comparisons. Changes the contract. |
+| `none_local_adm` | Local recurrence used for the Wu2023 ADM reproduction lane; not a full-history Caputo ABM/EFORK route. |
 
----
+Use `rk4`, `heun`, or `efork_q1` only for integer order. Use `abm` or `efork3`
+for fractional Caputo workflows when their contract applies.
 
 ## 14. Figure export policy
 
-All figures promoted to the publication tree must comply with the rules in [docs/figure_export_policy.md](docs/figure_export_policy.md).
+Promoted figures must follow [docs/figure_export_policy.md](docs/figure_export_policy.md):
 
-- **Canonical exports**: Must be generated using the central `export_figure` API function and stored in `library_figures/` with a corresponding JSON manifest entry.
-- **Legacy figures**: Saved in legacy subdirectories and not promoted as official evidence.
-- **Direct Savefig**: The use of raw `plt.savefig()` is prohibited in workflow codes except within `plotting/export.py`.
-- **Proof boundary**: A phase-space plot is a diagnostic helper; it does not constitute proof of chaos or hiddenness.
+- export through the central plotting/export API;
+- store PNG/PDF plus metadata;
+- update the figure manifest;
+- avoid local absolute paths;
+- avoid treating visual plots as hiddenness proof.
 
----
+Ordinary example figures can remain under `outputs/` until promoted.
 
 ## 15. Troubleshooting
 
 | Problem | Likely cause | Fix |
 | :--- | :--- | :--- |
-| `hidden-attractors` not found | Package not installed in editable mode | Install using `python -m pip install -e version_2`. |
-| Validation command not found | Calling deprecated legacy wrappers | Use `hidden-attractors validate contract` instead. |
-| Missing optional analysis modules | Optional dependencies not installed | Install the extras: `pip install -e "version_2[analysis]"`. |
-| Native backend compiler failure | GCC compiler or OpenMP support missing | Set `ALLOW_NO_OPENMP=1` or rely on the Python solver fallback. |
-| Fractional simulation too slow | Full-history memory cost is high | Enable finite memory window (e.g. `memory_window_steps: 400`). |
-| Candidate not hidden | Trajectory intersects equilibrium basin | Classify as `self_excited_contact_detected` or `candidate_rejected`. |
-| Arctan validation missing | Arctan workflow pending | Do not claim verified hiddenness; verify claims in `THESIS_CLAIMS.md`. |
-
----
+| `hidden-attractors` not found | Editable install missing or wrong environment | Run `python -m pip install -e version_2` in the intended environment. |
+| Slow fractional run | Full history or large sampling plan | Use `--quick` for smoke checks, or reduce horizons/samples for exploratory runs. |
+| Native backend compile failure | Missing C compiler/OpenMP | Install a compiler or set documented fallback/OpenMP options where supported. |
+| Candidate becomes self-excited | Neighborhood trajectory reached target | Keep `self_excited`/`rejected`; do not promote hiddenness. |
+| Arctan result looks periodic | The local ADM lane produced regular post-transient behavior | Treat as nonchaotic/non-promoted under that contract. |
+| Docs mention a missing function | API reference is stale | Regenerate/update [docs/api_reference.md](docs/api_reference.md) and link affected guides. |
 
 ## 16. Limitations
 
-- **No global proof**: Numerical integration and neighborhood sweeps do not guarantee global mathematical hiddenness.
-- **System boundary**: Restricted to scalar Lur'e systems; does not generaliza to arbitrary fractional-order dynamics.
-- **Commensurate order only**: Commensurate fractional orders are supported; incommensurate systems are out of scope.
-- **Caputo only**: Formulations assume Caputo fractional derivatives; other definitions (e.g., Riemann-Liouville) are unsupported.
-- **Heuristic seeding**: Describing functions and continuation are seeds generators, not proof of existence.
-- **Finite-time simulation**: Results depend on the selected step size $h$, integration horizon $t_{final}$, and memory window.
-
----
+- Numerical evidence is finite-time and contract-dependent.
+- Hiddenness is not inferred from a single trajectory, plot, DF seed, or Lyapunov estimate.
+- The maintained full methodology is restricted to scalar Lur'e-compatible systems.
+- Fractional workflows assume commensurate Caputo order unless a separate contract is added.
+- Current native C backends are Chua-oriented; new systems may need new backends or adapters for heavy workflows.
+- Machado/FDF is documented as a theory/planned seed family, not a promoted public workflow in this release.
 
 ## 17. Citation and reproducibility
 
-- **Citation metadata**: Consult [docs/citation.md](docs/citation.md) for citation keys and formats.
-- **Release citation**: A release citation requires the official `CITATION.cff` and Zenodo DOI if available.
-- **Reproducibility matrix**: Publications and reports must document the exact software environment, commit hash, and validation outcomes from [validation/freeze_audit/](validation/freeze_audit/).
+Citation metadata is stored at the repository root in `CITATION.cff`,
+`.zenodo.json`, and `codemeta.json`. The archived DOI currently recorded in the
+repository metadata is:
 
-### Result Submission Template
 ```text
-Software version: 0.1.0
-Git commit: [commit_hash]
-Python version: [python_version]
-Integrator: efork3
-q: 0.9998
-h: 0.001
-t_final: 300.0
-memory policy: finite_window (400 steps)
-validation contract: configs/validation_contract.json
-claim status: [reproducido/candidato/pendiente]
+10.17605/OSF.IO/ZGK74
 ```
 
-## Citation and reproducibility
+Reproducible reports should state:
 
-Citation metadata is available in the repository root.
+```text
+Software version: 1.0.0
+Git commit: <commit>
+Python version: <version>
+System and parameters: <system_id, q, parameters>
+Integrator and memory policy: <name, h, memory>
+Time contract: <t_final, t_burn>
+Validation contract: configs/validation_contract.json
+Claim status: <reproduced/validated/candidate/rejected/partial/pending>
+```
 
-For archived validation records and environment information, see:
+For release packaging, also consult `REPRODUCIBILITY.md`, `RELEASE_NOTES.md`,
+`CHANGELOG.md`, `version_2/MANIFEST.md`, and `version_2/release_package/`.
 
-- `validation/freeze_audit/`
-- `REPRODUCIBILITY.md`
-- `CITATION.cff`

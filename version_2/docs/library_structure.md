@@ -1,4 +1,4 @@
-# Estructura de librería
+﻿# Estructura de librería
 
 Este documento fija la organización recomendada para que el proyecto pueda
 crecer como librería Python y no como una colección de scripts independientes.
@@ -51,3 +51,4 @@ Los resultados finales deben quedar bajo `outputs/final_candidate_analysis/` o
 en carpetas timestamped dentro de `outputs/`. Los ejemplos no deben sobrescribir
 resultados existentes; cuando escriban archivos, deben usar un directorio nuevo
 o pedir explícitamente `--output-dir`.
+

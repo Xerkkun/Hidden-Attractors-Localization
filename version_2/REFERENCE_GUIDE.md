@@ -14,7 +14,7 @@ The library separates user-facing interfaces from experimental features and inte
 The primary stable user-facing command-line interface is the installed
 `hidden-attractors` command. The Python implementation module
 `hidden_attractors.cli` remains internal. Specialized workflow commands are
-reproducible analysis interfaces while the project is in alpha, and auxiliary
+reproducible analysis interfaces with narrower support guarantees than the primary CLI, and auxiliary
 commands are documented for traceability rather than as stable APIs.
 
 | Command / Subcommand | Group | Real options or usage | Documentary status |
@@ -160,7 +160,7 @@ Defined in [`hidden_attractors/systems/builtins.py`](hidden_attractors/systems/b
 
 *Aliases mapped: `chua_integer_saturation` $\rightarrow$ `chua-nonsmooth`, `chua_fractional_saturation` $\rightarrow$ `chua-nonsmooth`, `chua_fractional_arctan` $\rightarrow$ `chua-arctan`.*
 
-*(Note: Chua arctan is implemented algebraically, pending full hiddenness validation.)*
+*(Note: Chua arctan c590 is promoted as finite local-radius hiddenness evidence for `r <= 0.3`; this is not a global basin proof.)*
 
 ---
 
@@ -216,7 +216,7 @@ All figure exports are subject to the [Figure Export Policy](docs/figure_export_
 
 ## 7. Testing Suite
 
-The library is backed by a robust test suite (at the current thesis-freeze audit, the suite reports 797 passed tests and 34 skipped tests; future runs should be checked against `validation/freeze_audit/`):
+The library is backed by a robust test suite (at the current thesis-freeze audit, the suite reports 939 passed tests and 27 skipped tests; future runs should be checked against `validation/freeze_audit/`):
 
 
 * **Verification Execution**:
