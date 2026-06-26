@@ -66,6 +66,18 @@ Smoke verification status: **PASSED**
 
 ---
 
+## 4b. TestPyPI Installation and Verification
+
+The package was uploaded to TestPyPI and verified in a clean virtual environment:
+- **TestPyPI status**: passed
+- **TestPyPI install**: passed
+- **TestPyPI CLI smoke**: passed
+- **TestPyPI import**: passed
+
+Verification status: **PASSED**
+
+---
+
 ## 5. Manual Release Publishing Instructions
 
 According to the repository policies, actual tagging and uploading are manual steps performed by the maintainer. To finalize the release:
