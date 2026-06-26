@@ -2,7 +2,7 @@
   "package": "hidden-attractors-fo",
   "archive_title": "A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors",
   "version": "1.0.0",
-  "commit": "700529c09d2744c2c021891900a48b03b846ee4b",
+  "commit": "f534d81f4c8c52dc2e681c8593f98d19b9fe1918",
   "commit_status": "current",
   "doi": "10.17605/OSF.IO/ZGK74",
   "license": "MIT",
