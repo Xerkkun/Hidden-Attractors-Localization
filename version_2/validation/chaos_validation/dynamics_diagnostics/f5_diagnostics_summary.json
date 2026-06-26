@@ -1,6 +1,6 @@
 {
   "stage": "F5_dynamics_diagnostics",
-  "generated_at_utc": "2026-06-26T17:16:35.408447+00:00",
+  "generated_at_utc": "2026-06-26T17:40:54.456830+00:00",
   "boundedness": {
     "status": "completed_structured_outputs",
     "standardized_outputs": true,

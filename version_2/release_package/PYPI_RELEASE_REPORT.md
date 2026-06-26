@@ -7,7 +7,7 @@ This report summarizes the packaging, validation, and release readiness checks f
 - **Package Name**: `hidden-attractors-fo`
 - **Import Module**: `hidden_attractors`
 - **Version**: `1.0.0`
-- **Target HEAD Commit**: `18b979fd0b0f2245142702c2033eefb7fc8078dd`
+- **Target HEAD Commit**: `700529c09d2744c2c021891900a48b03b846ee4b`
 - **Target Branch**: `main`
 - **Zenodo/OSF DOI**: `10.17605/OSF.IO/ZGK74`
 - **License**: `MIT`
