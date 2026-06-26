@@ -4,7 +4,7 @@ Exit code: 0
 
 --- STDOUT ---
 .....................                                                    [100%]
-21 passed in 3.14s
+21 passed in 3.06s
 
 --- STDERR ---
 
@@ -15,7 +15,7 @@ Exit code: 0
 
 --- STDOUT ---
 .......                                                                  [100%]
-7 passed in 1.58s
+7 passed in 1.50s
 
 --- STDERR ---
 
@@ -26,7 +26,7 @@ Exit code: 0
 
 --- STDOUT ---
 .....                                                                    [100%]
-5 passed in 1.61s
+5 passed in 1.44s
 
 --- STDERR ---
 
@@ -37,7 +37,7 @@ Exit code: 0
 
 --- STDOUT ---
 ........                                                                 [100%]
-8 passed in 1.71s
+8 passed in 1.77s
 
 --- STDERR ---
 
@@ -48,7 +48,7 @@ Exit code: 0
 
 --- STDOUT ---
 ..........                                                               [100%]
-10 passed in 1.41s
+10 passed in 1.49s
 
 --- STDERR ---
 
@@ -59,7 +59,7 @@ Exit code: 0
 
 --- STDOUT ---
 ....                                                                     [100%]
-4 passed in 3.72s
+4 passed in 3.82s
 
 --- STDERR ---
 
@@ -70,7 +70,7 @@ Exit code: 0
 
 --- STDOUT ---
 ........                                                                 [100%]
-8 passed, 964 deselected in 2.32s
+8 passed, 964 deselected in 2.06s
 
 --- STDERR ---
 
@@ -137,7 +137,7 @@ tests/test_validation_contract.py::test_validate_efork_integrator_runs_on_temp_d
     assert main([
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-944 passed, 28 skipped, 11 warnings in 469.68s (0:07:49)
+944 passed, 28 skipped, 11 warnings in 445.07s (0:07:25)
 
 --- STDERR ---
 

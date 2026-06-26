@@ -1,16 +1,147 @@
 {
-  "generated_at_utc": "2026-06-26T06:27:25.013633+00:00",
-  "command": "python -m hidden_attractors.cli.main validate release-readiness --submission-strict --json",
-  "expected_status": "passed",
-  "expected_exit_code_submission_strict": 0,
-  "reason": "Captured after the final freeze audit is regenerated; this file is a lightweight command sample, not scientific evidence.",
-  "not_promoted_evidence": true,
-  "replace_after_execution": false,
-  "last_verified_status": "passed",
-  "last_verified_submission_strict": true,
-  "last_verified_repository_readiness": "passed",
-  "last_verified_software_package_readiness": "passed",
-  "last_verified_final_submission_readiness": "passed",
-  "last_verified_final_submission_pending": [],
-  "last_verified_checks_ok": 22
+  "status": "passed",
+  "strict": false,
+  "submission_strict": true,
+  "repository_readiness": "passed",
+  "software_package_readiness": "passed",
+  "final_submission_readiness": "passed",
+  "local_editorial_policy": "paper/ is local-only and ignored by Git",
+  "known_remaining_work": [],
+  "blocking_release_items": [],
+  "arctan_promotion_boundary": "version_2/release_package/ARCTAN_C590_PROMOTION_BOUNDARY.md",
+  "checks": [
+    {
+      "name": "required release metadata",
+      "category": "repository",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "validation_outputs untracked",
+      "category": "repository",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "no local absolute paths in promoted evidence",
+      "category": "repository",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "sample input/output executed",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "bibliography has base entries",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "working manuscript draft structure",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "paper local-only policy",
+      "category": "repository",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "encoding",
+      "category": "repository",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "single public entry point",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "PyPI project metadata",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "PyPI README",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "PyPI MANIFEST.in",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "PyPI package workflow",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "PyPI public CLI scope",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "archive manifest PyPI readiness",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "DOI metadata",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "arctan canonical radius-limited promotion",
+      "category": "repository",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "archive manifest commit",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "freeze audit passed",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "CI status documented",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "known remaining work declared",
+      "category": "software",
+      "ok": true,
+      "details": []
+    },
+    {
+      "name": "readiness levels",
+      "category": "software",
+      "ok": true,
+      "details": []
+    }
+  ],
+  "final_submission_pending": []
 }

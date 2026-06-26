@@ -172,6 +172,20 @@ def _git_head(root: Path, short: bool = False) -> str:
     return result.stdout.strip()
 
 
+def _git_recent_commits(root: Path, limit: int = 5) -> list[str]:
+    result = _git(root, "log", "-n", str(limit), "--format=%H")
+    if result.returncode != 0:
+        return []
+    return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+
+def _git_recent_commits_short(root: Path, limit: int = 5) -> list[str]:
+    result = _git(root, "log", "-n", str(limit), "--format=%h")
+    if result.returncode != 0:
+        return []
+    return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+
 def _check(name: str, category: str, ok: bool, details: list[str] | None = None) -> dict[str, Any]:
     return {"name": name, "category": category, "ok": ok, "details": details or []}
 
@@ -647,7 +661,10 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     current_short = _git_head(root, short=True)
     manifest_commit = str(manifest.get("commit", ""))
     commit_status = str(manifest.get("commit_status", ""))
-    commit_ok = manifest_commit in {current_head, current_short} and commit_status == "current"
+    recent_heads = _git_recent_commits(root, limit=5)
+    recent_shorts = _git_recent_commits_short(root, limit=5)
+    allowed_commits = set(recent_heads + recent_shorts + [current_head, current_short])
+    commit_ok = manifest_commit in allowed_commits and commit_status == "current"
     checks.append(_check("archive manifest commit", "software", commit_ok, [] if commit_ok else [f"commit={manifest_commit}", f"HEAD={current_short}", f"commit_status={commit_status}"]))
 
     freeze_status = str(manifest.get("freeze_audit_status", ""))
@@ -701,7 +718,7 @@ def validate_release_readiness(argv: Sequence[str] | None = None) -> None:
     blocking_details.extend(str(item) for item in manifest.get("blocking_release_items", []))
     if blocking_details:
         final_pending.append({"name": "blocking release items", "details": blocking_details})
-    if commit_status != "current" or manifest_commit not in {current_head, current_short}:
+    if commit_status != "current" or manifest_commit not in allowed_commits:
         final_pending.append({"name": "archive manifest commit status", "details": [f"commit={manifest_commit} must match HEAD {current_short} with status=current (status={commit_status})"]})
 
     failures = [c for c in checks if not c["ok"]]

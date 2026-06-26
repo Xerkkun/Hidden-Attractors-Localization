@@ -1,32 +1,13 @@
 {
   "sample_status": "executed",
-  "generated_at_utc": "2026-06-26T01:37:23.586789+00:00",
+  "generated_at_utc": "2026-06-26T07:36:58.125439+00:00",
   "command": {
     "command": "hidden-attractors validate contract --allow-pending",
     "cwd": "version_2",
     "exit_code": 0,
     "stdout_excerpt": [
       "Deprecated: use 'hidden-attractors validate contract ...'",
-      "WARNING: validation\\01_numerical_contract\\numerical_contract_validation_summary.json: missing required field 'run_metadata'",
-      "WARNING: validation\\01_numerical_contract\\numerical_contract_validation_summary.json: missing required field 'metadata_validation_errors'",
-      "WARNING: validation\\02_algebraic_validation\\algebraic_validation_validation_summary.json: missing required field 'run_metadata'",
-      "WARNING: validation\\02_algebraic_validation\\algebraic_validation_validation_summary.json: missing required field 'metadata_validation_errors'",
-      "WARNING: validation\\02_algebraic_validation\\matignon_margins.png: declared evidence path does not exist",
-      "WARNING: validation\\02_algebraic_validation\\matignon_complex_plane.png: declared evidence path does not exist",
-      "WARNING: validation\\03_seed_generation\\seed_generation_validation_summary.json: missing required field 'run_metadata'",
-      "WARNING: validation\\03_seed_generation\\seed_generation_validation_summary.json: missing required field 'metadata_validation_errors'",
-      "WARNING: validation\\04_soft_precheck\\soft_precheck_validation_summary.json: missing required field 'run_metadata'",
-      "WARNING: validation\\04_soft_precheck\\soft_precheck_validation_summary.json: missing required field 'metadata_validation_errors'",
-      "WARNING: validation\\05_continuation\\continuation_validation_summary.json: missing required field 'run_metadata'",
-      "WARNING: validation\\05_continuation\\continuation_validation_summary.json: missing required field 'metadata_validation_errors'",
-      "WARNING: validation\\06_post_continuation_filter\\post_continuation_filter_validation_summary.json: missing required field 'run_metadata'",
-      "WARNING: validation\\06_post_continuation_filter\\post_continuation_filter_validation_summary.json: missing required field 'metadata_validation_errors'",
-      "WARNING: validation\\07_dynamic_reference\\dynamic_reference_validation_summary.json: missing required field 'run_metadata'",
-      "WARNING: validation\\07_dynamic_reference\\dynamic_reference_validation_summary.json: missing required field 'metadata_validation_errors'",
-      "WARNING: validation\\08_robustness\\robustness_validation_summary.json: missing required field 'run_metadata'",
-      "WARNING: validation\\08_robustness\\robustness_validation_summary.json: missing required field 'metadata_validation_errors'",
-      "WARNING: validation\\10_diagnostics\\diagnostics_validation_summary.json: missing required field 'run_metadata'",
-      "WARNING: validation\\10_diagnostics\\diagnostics_validation_summary.json: missing required field 'metadata_validation_errors'"
+      "validation contract: passed"
     ],
     "stderr_excerpt": []
   },
