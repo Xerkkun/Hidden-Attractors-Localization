@@ -22,12 +22,14 @@ The source distribution and pure Python wheel packages were built from the clean
 2. **Binary Wheel**: `hidden_attractors_fo-1.0.0-py3-none-any.whl` (twine verified: **PASSED**)
 
 Command run:
+
 ```bash
 python -m build
 python -m twine check dist/*
 ```
 
 Twine output:
+
 ```text
 Checking dist\hidden_attractors_fo-1.0.0-py3-none-any.whl: PASSED
 Checking dist\hidden_attractors_fo-1.0.0.tar.gz: PASSED
@@ -45,6 +47,7 @@ The scientific test inventory and package release checks were run on the target 
 - **Working Tree Cleanliness Check**: Verified clean release baseline matching target commit.
 
 Audit summary path:
+
 - [final_freeze_pytest_summary.json](../validation/freeze_audit/final_freeze_pytest_summary.json)
 - [final_freeze_pytest_stdout.txt](../validation/freeze_audit/final_freeze_pytest_stdout.txt)
 
@@ -53,6 +56,7 @@ Audit summary path:
 ## 4. Clean-Room Wheel Smoke Installation
 
 A clean-room installation smoke test was executed inside a temporary virtual environment (simulating an end-user install of the pure Python wheel) on Python 3.14. The validation suite confirms:
+
 - Dependency installation completes with zero warning flags.
 - Command-line entry point `hidden-attractors` loads properly.
 - All CLI subcommands and help texts are accessible.
@@ -67,11 +71,13 @@ Smoke verification status: **PASSED**
 According to the repository policies, actual tagging and uploading are manual steps performed by the maintainer. To finalize the release:
 
 1. **Verify via TestPyPI**:
+
    ```bash
    python -m twine upload --repository testpypi dist/*
    ```
 
 2. **Create Git Tag for the Release**:
+
    ```bash
    git tag -a v1.0.0 -m "Release hidden-attractors-fo v1.0.0"
    git push origin v1.0.0
