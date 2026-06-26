@@ -1,82 +1,82 @@
 === STAGE: test_scientific_software_algebra ===
-Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_scientific_software_algebra.py -q
+Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_scientific_software_algebra.py -q
 Exit code: 0
 
 --- STDOUT ---
 .....................                                                    [100%]
-21 passed in 5.27s
+21 passed in 3.12s
 
 --- STDERR ---
 
 
 === STAGE: test_scientific_software_integrators ===
-Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_scientific_software_integrators.py -q
+Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_scientific_software_integrators.py -q
 Exit code: 0
 
 --- STDOUT ---
 .......                                                                  [100%]
-7 passed in 1.45s
+7 passed in 1.46s
 
 --- STDERR ---
 
 
 === STAGE: test_scientific_software_hiddenness ===
-Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_scientific_software_hiddenness.py -q
+Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_scientific_software_hiddenness.py -q
 Exit code: 0
 
 --- STDOUT ---
 .....                                                                    [100%]
-5 passed in 1.47s
+5 passed in 1.42s
 
 --- STDERR ---
 
 
 === STAGE: test_reproducibility_metadata ===
-Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_reproducibility_metadata.py -q
+Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_reproducibility_metadata.py -q
 Exit code: 0
 
 --- STDOUT ---
 ........                                                                 [100%]
-8 passed in 1.93s
+8 passed in 1.66s
 
 --- STDERR ---
 
 
 === STAGE: test_candidate_gate ===
-Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_candidate_gate.py -q
+Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_candidate_gate.py -q
 Exit code: 0
 
 --- STDOUT ---
 ..........                                                               [100%]
-10 passed in 1.54s
+10 passed in 1.37s
 
 --- STDERR ---
 
 
 === STAGE: test_freeze_audit_json_outputs ===
-Command: C:\msys64\ucrt64\bin\python.exe -m pytest tests/test_freeze_audit_json_outputs.py -q
+Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_freeze_audit_json_outputs.py -q
 Exit code: 0
 
 --- STDOUT ---
 ....                                                                     [100%]
-4 passed in 5.40s
+4 passed in 3.71s
 
 --- STDERR ---
 
 
 === STAGE: regression_tests ===
-Command: C:\msys64\ucrt64\bin\python.exe -m pytest -m regression -q
+Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest -m regression -q
 Exit code: 0
 
 --- STDOUT ---
 ........                                                                 [100%]
-8 passed, 960 deselected in 2.99s
+8 passed, 960 deselected in 2.06s
 
 --- STDERR ---
 
 
 === STAGE: all_tests ===
-Command: C:\msys64\ucrt64\bin\python.exe -m pytest -q
+Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest -q
 Exit code: 0
 
 --- STDOUT ---
@@ -116,6 +116,14 @@ tests/test_continuation_memory_policy.py::test_continuation_memory_policy_carry
   C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\hidden_attractors\cli\main.py:150: UserWarning: Integrator 'efork3' at q=1.0 redirects to the integer-order 'efork_q1' limit. For pure integer-order work, prefer 'rk4' or 'heun' which are simpler and faster.
     run_scalar_continuation(argv)
 
+tests/test_lyapunov_cli.py::test_lyapunov_cli_lifecycle
+  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Lib\site-packages\nolds\measures.py:263: RuntimeWarning: signal has very low mean frequency, setting min_tsep = 30
+    warnings.warn(msg.format(min_tsep), RuntimeWarning)
+
+tests/test_lyapunov_cli.py::test_lyapunov_cli_lifecycle
+  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Lib\site-packages\nolds\measures.py:292: RuntimeWarning: autocorrelation declined too slowly to find suitable lag, setting lag to 3
+    warnings.warn(msg.format(lag), RuntimeWarning)
+
 tests/test_reproducibility.py::test_protocol_cli_degrades_strong_label_without_lure_and_seed_metadata
   C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tests\test_reproducibility.py:81: DeprecationWarning: Deprecated: use 'hidden-attractors protocol <command> ...'
     assert protocol_main(
@@ -129,7 +137,7 @@ tests/test_validation_contract.py::test_validate_efork_integrator_runs_on_temp_d
     assert main([
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-941 passed, 27 skipped, 9 warnings in 635.07s (0:10:35)
+941 passed, 27 skipped, 11 warnings in 482.77s (0:08:02)
 
 --- STDERR ---
 
