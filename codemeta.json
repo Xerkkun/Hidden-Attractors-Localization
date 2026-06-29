@@ -44,7 +44,7 @@
       "description": "Provided source code used as provenance for the EFORK implementation and integer-order Lyapunov algorithm."
     }
   ],
-  "description": "Numerical workflows for locating, reproducing, auditing, and conservatively classifying hidden-attractor candidates in Chua/Lur'e systems with integer and commensurate Caputo fractional order, including radius-limited promoted evidence for the Chua arctan c590 candidate.",
+  "description": "Numerical workflows for Lur'e-compatible integer and Caputo fractional-order chaotic systems, including seed generation, continuation, integration, hiddenness audits, and reproducible validation contracts. Maintained examples include integer Chua, non-smooth fractional Chua, and smooth arctan fractional Chua validation lanes.",
   "keywords": [
     "hidden attractors",
     "fractional-order systems",

@@ -7,7 +7,7 @@ For a complete user-facing description of installation, CLI usage, examples, out
 See `THESIS_CLAIMS.md` for the current claims classification (reproduced, validated, rejected, candidate, partial, pending).
 
 > [!WARNING]
-> **Chua Arctan Validation Status**: The c590 Caputo arctan candidate is promoted as finite radius-limited hiddenness evidence for local radii `r <= 0.3`; Wu2023 remains a separate bibliographic ADM lane.
+> **Chua Arctan Validation Status**: The c590 Caputo arctan candidate is one smooth-nonlinearity validation lane with finite radius-limited hiddenness evidence for local radii `r <= 0.3`; Wu2023 remains a separate bibliographic ADM lane.
 >
 > **Machado/FDF Validation Status**: The Machado/FDF system is documented as theory and a planned seed family. It is not a promoted public workflow in this release.
 
@@ -49,14 +49,17 @@ sensitivity, are evidence for `numerical_contract`. Danca-style ABM
 replication is a comparison under `robustness`, not a separate hiddenness
 methodology.
 
+## Interpretation of radius-dependent contacts
+
+A contact detected on a sphere of large radius around an equilibrium is not, by itself, evidence that the attractor is self-excited. The operative hiddenness test concerns sufficiently small neighborhoods of all equilibria. Large-radius spherical probes are reported as extended basin-geometry audits. Thus `local_neighborhood_contact_detected` or `self_excited_contact_detected` blocks hiddenness under the tested local contract, while `extended_radius_contact_detected` or `macro_radius_contact_detected` records basin geometry outside that local claim boundary. `hiddenness_supported_under_tested_local_neighborhoods`, `compatible_with_hiddenness_under_tested_radii`, and `candidate_rejected_under_local_contract` must be read with the stored radial contract.
+
 All figures supporting validation evidence are promoted to the canonical `library_figures/` directory under strict reproducibility guidelines. Direct modifications are prohibited. See the [Figure Export Policy](figure_export_policy.md) for details.
 
 ### Path & Figures Portability Rules
 
 * **Canonical Pathing**: All promoted validation evidence must use relative paths under the repository.
 * **Prohibition of Local Paths**: Personal absolute paths (e.g., `/[UserDir]/`, `C:\[UserDir]\`, `[Desktop]\`) are strictly prohibited in code, tests, and promoted validation.
-* **Prohibición de Referencias a Directorios Locales LaTeX**: Los directorios de reportes LaTeX en la raíz del proyecto (como los informes de trabajo locales) son estrictamente locales y no están rastreados por Git. No se permite referenciar ningún archivo dentro de estos directorios en código, pruebas, manifiestos, reportes oficiales o archivos de resumen de validación (JSON/MD). Cualquier referencia heredada a estos directorios ha sido eliminada por higiene del repositorio.
-
+* **No references to local LaTeX directories**: Local report directories at the project root are ignored local drafting areas. Do not reference files inside those directories from code, tests, manifests, official reports, or validation summaries.\n
 ## Uniform Summary JSON
 
 Every stage summary must contain:
@@ -229,4 +232,4 @@ Release preparation separates four layers:
 * **Local and exploratory outputs**: live under `outputs/`, `validation_outputs/`, `runs*/`, or `figures/` and remain outside Git.
 * **Local writing drafts and templates**: remain outside the tracked software repository and do not create new scientific claims.
 
-The canonical arctan Chua package `validation/chua_fractional_arctan/` promotes the c590 route as `hiddenness_supported_under_tested_neighborhoods` for local radii `r <= 0.3`, with 8400 finite probes and zero target contacts around all equilibria. Macro radii `1.0` and `2.0` remain extended audit evidence; the claim is finite and radius-limited, not a global mathematical proof of hiddenness.
+The canonical arctan Chua package `validation/chua_fractional_arctan/` reports the c590 route as `hiddenness_supported_under_tested_neighborhoods` for local radii `r <= 0.3`, with 8400 finite probes and zero target contacts around all equilibria. Macro radii `1.0` and `2.0` remain extended audit evidence; the claim is finite and radius-limited, not a global mathematical proof of hiddenness.

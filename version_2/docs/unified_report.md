@@ -73,4 +73,4 @@ Use [Code Reference Map](code_reference_map.md) before adding new calculation
 code. New methods must state whether they come from a paper, a local numerical
 contract, or an external library adapter.
 
-The Chua arctan c590 result referenced by the unified report is radius-limited: the canonical validation package `validation/chua_fractional_arctan/` supports local radii `r <= 0.3` with 8400 finite probes and zero contacts, while macro-radius contacts remain extended audit evidence rather than a global basin proof.
+The Chua arctan c590 result referenced by the unified report is one smooth-nonlinearity validation lane and is radius-limited: the canonical validation package `validation/chua_fractional_arctan/` supports local radii `r <= 0.3` with 8400 finite probes and zero contacts, while macro-radius contacts remain extended audit evidence rather than a global basin proof or automatic self-excited verdict.

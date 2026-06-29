@@ -11,22 +11,30 @@ To prevent false claims of hiddenness, the library strictly divides execution in
 1. **`seed_found`**: Initial candidate generated through frequency balance (e.g., Describing Functions, Nyquist scanning) [ref:kuznetsov_2017_chua_df].
 2. **`candidate_attractor`**: Verified to be bounded and converge to non-trivial persistent dynamics under standard integration parameters.
 3. **`chaotic_candidate`**: Confirmed chaotic via Gottwald-Melbourne 0-1 test or positive maximum Lyapunov exponents.
-4. **`hidden_compatible`**: Free of intersections with equilibrium neighborhoods under the tested/sampled settings, but the verification protocol is incomplete (e.g., only a subset of equilibria or radii were tested). Self-excited attractors possess a basin of attraction that intersects the neighborhood of at least one equilibrium point [ref:leonov_kuznetsov_hidden_definition].
+4. **`hidden_compatible`**: Free of intersections with tested local equilibrium neighborhoods under the sampled settings, but the verification protocol is incomplete (e.g., only a subset of equilibria or local radii were tested). Self-excited attractors possess a basin of attraction that intersects a sufficiently small neighborhood of at least one equilibrium point [ref:leonov_kuznetsov_hidden_definition].
 5. **`hidden_verified`**: Meets the strict verification contract of spherical neighborhood sweeps around all equilibrium points for all required radii (e.g., `[1e-2, 1e-3, 1e-4, 1e-5]`), with zero attractor contacts and zero numerical failures (unless allowed) [ref:danca_2017_fractional_hidden]. Basin slices are complementary visual and exploratory evidence to aid in understanding the boundary, but are not a logical requirement for the formal validation of `hidden_verified`.
 
 ---
 
-## 2. Weyl–Caputo Operator Evaluation
+## 2. Local neighborhoods versus extended spherical audits
+
+A contact detected on a sphere of large radius around an equilibrium is not, by itself, evidence that the attractor is self-excited. The operative hiddenness test concerns sufficiently small neighborhoods of all equilibria. Large-radius spherical probes are reported as extended basin-geometry audits.
+
+Use `local_neighborhood_contact_detected` and `self_excited_contact_detected` for contacts that violate the tested local contract. Use `extended_radius_contact_detected` and `macro_radius_contact_detected` for large-radius basin-geometry contacts outside the local claim boundary. Use `hiddenness_supported_under_tested_local_neighborhoods`, `compatible_with_hiddenness_under_tested_radii`, and `candidate_rejected_under_local_contract` with the stored radial contract.
+
+---
+
+## 3. Weyl-Caputo Operator Evaluation
 
 For systems with fractional order $q < 1.0$, frequency scans and transfer functions are evaluated formally on the principal branch:
 
 $$\lambda = (j\omega)^q = \omega^q e^{j q \pi / 2}$$
 
-Prohibiting integer-order shortcuts ensures the predicted harmonic seeds correctly correspond to the Caputo fractional derivative memory structure. The Caputo fractional derivative is a causal formulation that models historical memory effects [ref:danca_2017_fractional_hidden]. The predictor-corrector Adams-Bashforth-Moulton method is used for simulating Caputo fractional differential equations [ref:diethelm_ford_freed_abm_caputo, ref:danca_2017_fractional_hidden]. When $q < 1.0$, a mandated "Weyl–Caputo Note" is automatically appended to summaries. For instance, this applies to the fractional-order Chua system with arctan nonlinearity [ref:wu_2023_fractional_chua_arctan].
+Prohibiting integer-order shortcuts ensures the predicted harmonic seeds correctly correspond to the Caputo fractional derivative memory structure. The Caputo fractional derivative is a causal formulation that models historical memory effects [ref:danca_2017_fractional_hidden]. The predictor-corrector Adams-Bashforth-Moulton method is used for simulating Caputo fractional differential equations [ref:diethelm_ford_freed_abm_caputo, ref:danca_2017_fractional_hidden]. When $q < 1.0$, a mandated "Weyl-Caputo Note" is automatically appended to summaries. For instance, this applies to the fractional-order Chua system with arctan nonlinearity [ref:wu_2023_fractional_chua_arctan].
 
 ---
 
-## 3. Lur'e Compatibility
+## 4. Lur'e Compatibility
 
 Describing function approximations are valid only if the system fits the Lur'e feedback representation. The `LureCompatibilityValidator` evaluates compatibility on a random point cloud and classifies systems into:
 
@@ -37,7 +45,7 @@ Describing function approximations are valid only if the system fits the Lur'e f
 
 ---
 
-## 4. Non-Smooth Vector Fields
+## 5. Non-Smooth Vector Fields
 
  piece-wise continuous systems (e.g., containing $\text{sat}(x)$, $|x|$, or $\text{sign}(x)$) violate global differentiability:
 
@@ -49,7 +57,7 @@ Describing function approximations are valid only if the system fits the Lur'e f
 
 ---
 
-## 5. Symmetry Exploitation
+## 6. Symmetry Exploitation
 
 System symmetries (such as inversion $T(X) = -X$ or rotation $T(x,y,z) = (-x,-y,z)$) are verified numerically. If a symmetry is confirmed:
 

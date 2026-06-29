@@ -138,7 +138,7 @@ The arctan example is:
 python examples/chua_arctan_wu2023/run_example.py --quick
 ```
 
-The arctan lane separates Wu2023 bibliographic ADM reproduction from the promoted c590 Caputo lane. The c590 claim is radius-limited: local radii `r <= 0.3` have 8400 finite probes and zero contacts; macro radii `1.0` and `2.0` remain extended audit evidence.
+The arctan lane separates Wu2023 bibliographic ADM reproduction from one smooth c590 Caputo lane. The c590 claim is radius-limited: local radii `r <= 0.3` have 8400 finite probes and zero contacts; macro radii `1.0` and `2.0` remain extended basin-geometry audit evidence, not automatic self-excited evidence.
 
 ## API inventory
 

@@ -62,7 +62,7 @@ The wheel smoke test must confirm:
 - Promoted figures: `library_figures/`
 - Full API inventory: `docs/api_reference.md`
 - Release sample templates: `release_package/sample_input/` and `release_package/sample_output/`
-- Arctan c590 promotion boundary: `release_package/ARCTAN_C590_PROMOTION_BOUNDARY.md`
+- Arctan c590 local-radius boundary: `release_package/ARCTAN_C590_PROMOTION_BOUNDARY.md`
 - PyPI release checklist: `release_package/PYPI_RELEASE_CHECKLIST.md`
 - Publishing policy: `release_package/PUBLISHING_POLICY.md`
 - Ordinary local outputs: `outputs/`, `validation_outputs/`, `runs*/`, `figures/`
@@ -86,7 +86,7 @@ record remain the evidence locations for promoted scientific artifacts.
 
 - No global mathematical proof of hiddenness.
 - No full Danca 2017 fractional hidden-attractor trajectory reproduction.
-- No global arctan basin proof beyond the promoted local-radius contract.
+- No global basin proof beyond any recorded local-radius contract.
 - No chaos/hiddenness certification from Lyapunov, FFT/PSD, Poincare, 0-1, or
   phase portraits alone.
 - No public Machado/FDF seed CLI; that route remains theory/internal planned support.

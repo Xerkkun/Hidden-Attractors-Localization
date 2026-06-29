@@ -1,6 +1,6 @@
 # Chua fractional arctan canonical validation package
 
-This package promotes the `chua_arctan_c590_q09999_seed9` candidate for version `1.0.0` under a radius-limited finite numerical contract.
+This package reports the `chua_arctan_c590_q09999_seed9` candidate as one smooth-nonlinearity validation lane for version `1.0.0` under a radius-limited finite numerical contract.
 
 ## Status
 
@@ -14,7 +14,7 @@ This package promotes the `chua_arctan_c590_q09999_seed9` candidate for version 
 
 ## Boundary
 
-The promoted claim is finite numerical evidence under the recorded Caputo ABM full-memory contract, the listed probe radii, the recorded target-contact classifier, and the documented equilibria. It is not a global mathematical proof of basin exclusion. The contacts at radii `1.0` and `2.0` are intentionally retained as an extended-radius audit and do not change the local-radius claim boundary.
+The local claim is finite numerical evidence under the recorded Caputo ABM full-memory contract, the listed probe radii, the recorded target-contact classifier, and the documented equilibria. It is not a global mathematical proof of basin exclusion. The contacts at radii `1.0` and `2.0` are intentionally retained as an extended-radius audit and do not change the local-radius claim boundary.
 
 ## Files
 

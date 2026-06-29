@@ -1,21 +1,21 @@
 # Chua fractional arctan c590 validation
 
-This directory promotes the c590 arctan candidate as radius-limited finite
-hiddenness evidence, matching the same conservative convention used for other
-methodology examples.
+This directory reports the c590 arctan candidate as one radius-limited finite
+hiddenness-evidence lane, matching the same conservative convention used for
+other methodology examples.
 
 ## Status
 
 `hiddenness_supported_under_tested_local_radii_with_macro_radius_review`
 
-The promoted local claim is limited to tested radii through `0.3`.
+The local claim is limited to tested radii through `0.3`.
 Those local radii contain `8400` finite probes around all equilibria
 and `0` target contacts.
 
 ## Extended-radius audit
 
 The extended macroscopic radii are retained as review evidence, not as a reason
-to erase the local-radius promotion:
+to erase the local-radius claim:
 
 | Radius | Tests | Contacts | Decision |
 | --- | ---: | ---: | --- |

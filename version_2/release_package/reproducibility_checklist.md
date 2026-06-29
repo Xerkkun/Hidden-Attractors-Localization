@@ -17,7 +17,7 @@
 - Treat `validation/freeze_audit/` as the frozen source for published scientific test counts.
 - Keep local outputs under ignored `outputs/`, `validation_outputs/`, `runs*/`, or `figures/`.
 - Prepare local writing and manuscript drafts locally under ignored `paper/`, ensuring they remain untracked by Git.
-- Interpret arctan c590 only under the promoted local-radius contract (`r <= 0.3`, finite-time evidence, zero local contacts); do not treat it as a global basin proof.
+- Interpret arctan c590 only under the recorded local-radius contract (`r <= 0.3`, finite-time evidence, zero local contacts); do not treat it as a global basin proof or as the central project result.
 - Review `release_package/ARCTAN_C590_PROMOTION_BOUNDARY.md` before interpreting the arctan c590 claim.
 - Review `release_package/PYPI_RELEASE_CHECKLIST.md` and `release_package/PUBLISHING_POLICY.md` before TestPyPI or PyPI upload.
 

@@ -35,8 +35,9 @@ W_hat_q(lambda) = r^T (lambda I - P)^(-1) b
 DF/Nyquist, continuation, FFT/PSD, Poincare sections, 0-1 tests, Lyapunov
 estimates, and phase portraits are diagnostics or seed-generation tools. They
 do not establish hiddenness by themselves. Hiddenness labels require sampled
-neighborhood or basin evidence around all equilibria under a recorded numerical
-contract.
+local-neighborhood or basin evidence around all equilibria under a recorded
+numerical contract. Large-radius spherical probes are extended basin-geometry
+audits, not automatic evidence of a self-excited attractor.
 
 The current release scope is scalar Lur'e-compatible Chua-type systems and
 extension templates for new Lur'e systems. Arbitrary nonlinear systems,
@@ -249,12 +250,13 @@ The library therefore separates two claims:
 | Lane | Status | Reason |
 | --- | --- | --- |
 | Example 1 biased-DF methodology | Candidate/compatible under declared local radii | It proposes a reproducible seed-continuation-verification workflow, but the local tests are not a global proof. |
-| Official nearby fractional candidate `danca2017_nearby_saturation_candidate_q09998` | Rejected/self-excited | `validation/09_hiddenness_tests/hiddenness_tests_validation_summary.json` records 1305 target contacts from neighborhoods of `E+` and `E-`. |
+| Official nearby fractional candidate `danca2017_nearby_saturation_candidate_q09998` | Classified under the recorded local contract | `validation/09_hiddenness_tests/hiddenness_tests_validation_summary.json` records 1305 target contacts from local neighborhoods of `E+` and `E-`. |
 
 ## 8. Radius-limited promoted example: Chua arctan c590
 
-The arctan Chua example separates the Wu 2023 bibliographic lane from the promoted
-Caputo full-history c590 validation lane.
+The arctan Chua example is a smooth-nonlinearity validation example that
+separates the Wu 2023 bibliographic lane from the Caputo full-history c590
+validation lane.
 
 - **System**: Chua with smooth arctan nonlinearity.
 - **Reported order**: `q = 0.99` for the Wu 2023 lane.
@@ -271,7 +273,7 @@ reported initial conditions classify as periodic/nonchaotic after transient
 filtering.
 
 The c590 lane uses a Caputo full-history dynamic search and neighborhood
-sampling. It is promoted as `hiddenness_supported_under_tested_local_radii` for
+sampling. It is reported as `hiddenness_supported_under_tested_local_radii` for
 local radii `r <= 0.3` with 8400 finite probes and zero contacts around all
 equilibria. Macro-radius contacts at `r=1.0` and `r=2.0` are retained as
 extended audit evidence. This is a finite local-radius hiddenness claim, not a
@@ -332,11 +334,11 @@ Canonical attractor statuses:
 | `candidate` | A localized branch or seed under investigation. |
 | `hidden_under_tested_neighborhoods` | No equilibrium-neighborhood target contact under the completed recorded contract. |
 | `compatible_with_hiddenness` | No contact detected under limited or incomplete tested radii/metadata. |
-| `self_excited` | Contact detected from at least one equilibrium neighborhood. |
+| `self_excited` | Contact detected from at least one equilibrium local neighborhood under the recorded contract. |
 | `nonchaotic` | Periodic, quasiperiodic, equilibrium-like, or otherwise not chaotic under diagnostics. |
 | `diverged` | Numerical divergence/unbounded behavior. |
 | `inconclusive` | Conflicting diagnostics or numerical failure. |
-| `rejected` | Invalid, collapsed, self-excited, or otherwise not promotable. |
+| `rejected` | Invalid, collapsed, self-excited under the local contract, or otherwise not promotable. |
 | `not_tested` | Hiddenness checks have not been run. |
 
 The claims matrix uses broader evidence statuses such as `validated`,
@@ -359,6 +361,20 @@ The finite numerical protocol approximates this by:
 
 A finite sample is evidence under the declared contract, not a global
 mathematical proof.
+
+### Hiddenness contract by radial scale
+
+A contact detected on a sphere of large radius around an equilibrium is not, by itself, evidence that the attractor is self-excited. The operative hiddenness test concerns sufficiently small neighborhoods of all equilibria. Large-radius spherical probes are reported as extended basin-geometry audits.
+
+Use the following interpretation uniformly for integer Chua, non-smooth fractional Chua, smooth arctan fractional Chua, and future Lur'e systems:
+
+| Label family | Interpretation |
+| :--- | :--- |
+| `local_neighborhood_contact_detected` / `self_excited_contact_detected` | Evidence against hiddenness under the tested local contract. |
+| `extended_radius_contact_detected` / `macro_radius_contact_detected` | Extended basin-geometry audit contact; not an automatic rejection of local hiddenness. |
+| `hiddenness_supported_under_tested_local_neighborhoods` | No local-neighborhood contact was detected under the tested radii and sampling contract. |
+| `compatible_with_hiddenness_under_tested_radii` | Compatible with hiddenness under limited or incomplete tested radii. |
+| `candidate_rejected_under_local_contract` | Candidate rejected because the local contract, not merely an extended-radius audit, recorded disqualifying contact or another blocking condition. |
 
 ## 13. Fractional-order solvers and memory policy
 
@@ -393,7 +409,7 @@ Ordinary example figures can remain under `outputs/` until promoted.
 | `hidden-attractors` not found | Editable install missing or wrong environment | Run `python -m pip install -e version_2` in the intended environment. |
 | Slow fractional run | Full history or large sampling plan | Use `--quick` for smoke checks, or reduce horizons/samples for exploratory runs. |
 | Native backend compile failure | Missing C compiler/OpenMP | Install a compiler or set documented fallback/OpenMP options where supported. |
-| Candidate becomes self-excited | Neighborhood trajectory reached target | Keep `self_excited`/`rejected`; do not promote hiddenness. |
+| Candidate becomes self-excited | Local-neighborhood trajectory reached target under the recorded contract | Keep `self_excited`/`rejected`; do not promote hiddenness. |
 | Arctan result looks periodic | The local ADM lane produced regular post-transient behavior | Treat as nonchaotic/non-promoted under that contract. |
 | Docs mention a missing function | API reference is stale | Regenerate/update [docs/api_reference.md](docs/api_reference.md) and link affected guides. |
 

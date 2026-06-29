@@ -2,7 +2,9 @@
 
 `hidden-attractors-fo` is a Python research library for reproducible numerical
 workflows around hidden-attractor candidates in integer- and commensurate
-Caputo fractional-order Chua/Lur'e systems.
+Caputo fractional-order Lur'e-compatible systems. The maintained Chua examples
+cover an integer reference route, a non-smooth fractional BDF/saturation route,
+and a smooth arctan fractional route.
 
 ## PyPI installation
 
@@ -53,7 +55,7 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 
 - Integer Chua `q=1`: reproduced software reference for the Lur'e route.
 - Non-smooth fractional Chua BDF: proposed methodology; not full Danca 2017 trajectory reproduction.
-- Arctan Chua Wu2023/c590: Wu2023 remains bibliographic; c590 is finite-time evidence under a local/radius-limited contract, not a global mathematical proof.
+- Arctan Chua Wu2023/c590: a smooth-nonlinearity validation example; Wu2023 remains bibliographic, and c590 is finite-time evidence under a local/radius-limited contract, not a global mathematical proof.
 
 ## Documentation
 
@@ -68,9 +70,12 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 ## Evidence boundary
 
 DF/Nyquist, continuation, plots, FFT/PSD, 0-1 tests, Poincare sections, and
-Lyapunov estimates are diagnostics or seed-generation tools. Hiddenness labels
-require sampled neighborhoods or basin evidence around all equilibria under a
-recorded numerical contract. They are not a global mathematical proof.
+Lyapunov estimates are diagnostics or seed-generation tools. Hiddenness labels require sampled local neighborhoods or basin evidence around
+all equilibria under a recorded numerical contract. Large-radius spherical
+contacts are reported as extended basin-geometry audits; by themselves they do
+not imply a self-excited classification unless the local-radius contract records
+equilibrium-neighborhood contact. These labels are not a global mathematical
+proof.
 
 ## Citation
 

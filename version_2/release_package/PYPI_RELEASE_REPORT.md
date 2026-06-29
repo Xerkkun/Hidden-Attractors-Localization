@@ -1,6 +1,6 @@
 # PyPI Release Validation Report
 
-This report summarizes the packaging, validation, and release readiness checks for version `1.0.0` of `hidden-attractors-fo`. All checks were executed in the release environment and verified clean.
+This report summarizes the packaging, validation, PyPI publication, and release readiness checks for version `1.0.0` of `hidden-attractors-fo`.
 
 ## Release Metadata
 
@@ -19,22 +19,29 @@ This report summarizes the packaging, validation, and release readiness checks f
 
 | Check | Tool / Command | Status | Notes |
 | :--- | :--- | :--- | :--- |
-| **Freeze Audit** | `run_final_freeze_audit.py` | **PASSED** | `947 passed, 28 skipped`; `working_tree_dirty: false` |
+| **Freeze Audit** | `run_final_freeze_audit.py` | **PASSED** | Historical promoted snapshot records `947 passed, 28 skipped`; dirty-tree metadata is retained and documented for traceability. |
 | **Release Readiness** | `validate release-readiness --submission-strict` | **PASSED** | Unified CLI, archive manifest commit matched, metadata verified |
 | **Contract Status** | `validate contract --allow-pending` | **PASSED** | No structural or numeric contract discrepancy warnings |
 | **Twine Check** | `twine check dist/*` | **PASSED** | Verified metadata and structures of source distribution and wheel |
 | **Clean Venv Smoke Test** | `validate_wheel_install.py` | **PASSED** | Installs correctly; imports run clean; CLI loads without errors |
-| **TestPyPI Verification** | Manual upload & test | **PASSED** | Status, install, CLI smoke, and import tests all passed |
+| **TestPyPI Verification** | Manual upload & test | **PASSED** | Status, install, CLI smoke, and import tests passed before PyPI publication |
 
 ---
 
-## TestPyPI Verification Results
+## PyPI Publication Results
 
-The package was uploaded to TestPyPI and verified in a clean virtual environment:
-- **TestPyPI status**: passed
-- **TestPyPI install**: passed
-- **TestPyPI CLI smoke**: passed
-- **TestPyPI import**: passed
+The package is published on PyPI as `hidden-attractors-fo` version `1.0.0`:
+
+- **PyPI project**: <https://pypi.org/project/hidden-attractors-fo/>
+- **PyPI status**: published
+- **TestPyPI preflight**: passed
+- **Clean wheel install smoke**: passed
+
+Install the published package with:
+
+```bash
+python -m pip install hidden-attractors-fo
+```
 
 ## Build Output Files
 
@@ -69,7 +76,7 @@ validate_wheel_install passed
 
 ## Publishing Instructions (Manual Release)
 
-To proceed with publishing, complete the following manual steps:
+For future patch releases, complete the following manual steps:
 
 1. **Verify via TestPyPI**:
 

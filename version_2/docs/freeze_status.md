@@ -59,3 +59,7 @@ To prevent misleading interpretations of missing values in published literature 
 - **Documentation**: [Published Validation Coverage](published_validation_coverage.md)
 
 This matrix maps each extracted case to its exact reproduction scope (e.g., `executable_regression`, `implemented_partial_reproduction`, `reference_data_only`, `future_extension`) without inventing missing information.
+
+## Documentation-balance note
+
+Hiddenness labels are interpreted by radial scale. The local neighborhoods versus extended spherical audits distinction applies to integer Chua, non-smooth fractional Chua, arctan fractional Chua, and future Lur'e-compatible systems: large-radius contacts are extended basin-geometry audits unless the recorded local contract itself detects target contact.

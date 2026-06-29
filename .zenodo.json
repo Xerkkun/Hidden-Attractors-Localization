@@ -1,7 +1,7 @@
 {
   "title": "A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors",
   "upload_type": "software",
-  "description": "Python software and reproducible workflows for localization, reproduction, audit, and conservative classification of hidden-attractor candidates in integer- and fractional-order Chua/Lur'e systems, including radius-limited promoted evidence for the Chua arctan c590 candidate.",
+  "description": "Python software and reproducible workflows for Lur'e-compatible integer and Caputo fractional-order chaotic systems, including seed generation, continuation, integration, hiddenness audits, and validation contracts. Maintained examples include integer Chua, non-smooth fractional Chua, and smooth arctan fractional Chua validation lanes.",
   "creators": [
     {
       "name": "Moreno Lopez, Maria Fernanda",

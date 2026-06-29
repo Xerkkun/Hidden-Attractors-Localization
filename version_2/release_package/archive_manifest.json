@@ -99,7 +99,7 @@
     "version_2/outputs/",
     "version_2/validation_outputs/"
   ],
-  "arctan_status": "chua_fractional_arctan promoted as hiddenness_supported_under_tested_neighborhoods for local radii <= 0.3 with 8400 finite probes and zero contacts across E0, E+, and E-; macro radii 1.0 and 2.0 remain extended audit evidence with contacts and are outside the local claim boundary. Wu2023 remains a separate bibliographic ADM lane.",
+  "arctan_status": "chua_fractional_arctan is one smooth-nonlinearity validation lane reported as hiddenness_supported_under_tested_neighborhoods for local radii <= 0.3 with 8400 finite probes and zero contacts across E0, E+, and E-; macro radii 1.0 and 2.0 remain extended basin-geometry audit evidence with contacts and are outside the local claim boundary. Wu2023 remains a separate bibliographic ADM lane.",
   "claims_status": "finite-time numerical evidence under recorded validation contracts",
   "release_blocked_for_v1_0_0": false,
   "blocking_release_items": [],
@@ -115,8 +115,10 @@
     "sdist_build": "passed",
     "twine_check": "passed",
     "wheel_install_smoke": "passed",
-    "testpypi_status": "manual_pending",
-    "pypi_status": "not_uploaded_by_repository",
-    "wheel_smoke_notes": "Validated 2026-06-26 with Python 3.14 venv; fixed lazy import for danca_abm_sphere_controls in cli/published.py and try/except fallback in danca_abm_sphere_controls.py; removed duplicate argparse args in strict_target_refinement.py make_parser()"
+    "testpypi_status": "passed",
+    "pypi_status": "published",
+    "wheel_smoke_notes": "Validated with package build, twine check, clean wheel install smoke, and public PyPI project hidden-attractors-fo version 1.0.0.",
+    "pypi_url": "https://pypi.org/project/hidden-attractors-fo/",
+    "published_version": "1.0.0"
   }
 }

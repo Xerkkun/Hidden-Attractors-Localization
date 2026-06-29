@@ -1,52 +1,56 @@
 {
-  "stage": "final_freeze_audit",
-  "status": "passed",
-  "generated_at_utc": "2026-06-26T17:44:38.756879+00:00",
-  "audit_timestamp_utc": "2026-06-26T17:44:38.756902+00:00",
-  "git_commit": "700529c09d2744c2c021891900a48b03b846ee4b",
-  "working_tree_dirty": true,
-  "git_diff_sha256": "b5d8c0716aa248bc0eb1c3cd24125e01a3434bf7c461a09a3ff92904f12bfe7f",
-  "stages": {
-    "test_scientific_software_algebra": {
-      "command": "python -m pytest tests/test_scientific_software_algebra.py -q",
-      "exit_code": 0,
-      "passed": true
-    },
-    "test_scientific_software_integrators": {
-      "command": "python -m pytest tests/test_scientific_software_integrators.py -q",
-      "exit_code": 0,
-      "passed": true
-    },
-    "test_scientific_software_hiddenness": {
-      "command": "python -m pytest tests/test_scientific_software_hiddenness.py -q",
-      "exit_code": 0,
-      "passed": true
-    },
-    "test_reproducibility_metadata": {
-      "command": "python -m pytest tests/test_reproducibility_metadata.py -q",
-      "exit_code": 0,
-      "passed": true
-    },
-    "test_candidate_gate": {
-      "command": "python -m pytest tests/test_candidate_gate.py -q",
-      "exit_code": 0,
-      "passed": true
-    },
-    "test_freeze_audit_json_outputs": {
-      "command": "python -m pytest tests/test_freeze_audit_json_outputs.py -q",
-      "exit_code": 0,
-      "passed": true
-    },
-    "regression_tests": {
-      "command": "python -m pytest -m regression -q",
-      "exit_code": 0,
-      "passed": true
-    },
-    "all_tests": {
-      "command": "python -m pytest -q",
-      "exit_code": 0,
-      "passed": true
-    }
-  },
-  "freeze_ready": true
+    "stage":  "final_freeze_audit",
+    "status":  "passed",
+    "generated_at_utc":  "2026-06-26T17:44:38.756879+00:00",
+    "audit_timestamp_utc":  "2026-06-26T17:44:38.756902+00:00",
+    "git_commit":  "700529c09d2744c2c021891900a48b03b846ee4b",
+    "working_tree_dirty":  true,
+    "git_diff_sha256":  "b5d8c0716aa248bc0eb1c3cd24125e01a3434bf7c461a09a3ff92904f12bfe7f",
+    "stages":  {
+                   "test_scientific_software_algebra":  {
+                                                            "command":  "python -m pytest tests/test_scientific_software_algebra.py -q",
+                                                            "exit_code":  0,
+                                                            "passed":  true
+                                                        },
+                   "test_scientific_software_integrators":  {
+                                                                "command":  "python -m pytest tests/test_scientific_software_integrators.py -q",
+                                                                "exit_code":  0,
+                                                                "passed":  true
+                                                            },
+                   "test_scientific_software_hiddenness":  {
+                                                               "command":  "python -m pytest tests/test_scientific_software_hiddenness.py -q",
+                                                               "exit_code":  0,
+                                                               "passed":  true
+                                                           },
+                   "test_reproducibility_metadata":  {
+                                                         "command":  "python -m pytest tests/test_reproducibility_metadata.py -q",
+                                                         "exit_code":  0,
+                                                         "passed":  true
+                                                     },
+                   "test_candidate_gate":  {
+                                               "command":  "python -m pytest tests/test_candidate_gate.py -q",
+                                               "exit_code":  0,
+                                               "passed":  true
+                                           },
+                   "test_freeze_audit_json_outputs":  {
+                                                          "command":  "python -m pytest tests/test_freeze_audit_json_outputs.py -q",
+                                                          "exit_code":  0,
+                                                          "passed":  true
+                                                      },
+                   "regression_tests":  {
+                                            "command":  "python -m pytest -m regression -q",
+                                            "exit_code":  0,
+                                            "passed":  true
+                                        },
+                   "all_tests":  {
+                                     "command":  "python -m pytest -q",
+                                     "exit_code":  0,
+                                     "passed":  true
+                                 }
+               },
+    "freeze_ready":  true,
+    "historical_artifact":  true,
+    "output_policy":  "historical_promoted_artifact",
+    "historical_note":  "Captured before the clean-tree regeneration policy was added; working_tree_dirty is retained for traceability and does not describe a newly generated current audit.",
+    "current_regeneration_command":  "python validation/python/run_final_freeze_audit.py --require-clean --output-dir validation_outputs/freeze_audit_current"
 }

@@ -7,6 +7,23 @@ that has been explicitly annotated carries `__api_tier__` as an attribute.
 
 ---
 
+## Top-Level Export Boundary
+
+The top-level package intentionally exports both stable and experimental symbols for convenience, but it does not treat every exported name as equally stable. The machine-readable boundary is available as:
+
+```python
+import hidden_attractors as ha
+
+ha.PUBLIC_API_STABLE
+ha.PUBLIC_API_EXPERIMENTAL
+ha.PUBLIC_API_TIERS
+```
+
+`PUBLIC_API_STABLE` contains the model, system-registry, basin-label, IO, and candidate-loading entry points with stable guarantees. `PUBLIC_API_EXPERIMENTAL` contains diagnostics, seed generation, workflow specs, and workflow runners that are tested and documented but may evolve with changelog notes.
+
+Compatibility aliases such as old piecewise Chua names are importable only to read historical runs. They are intentionally excluded from `__all__` and from the stable tier lists. Internal implementation modules such as `hidden_attractors.cli`, `native`, `parallel`, and `paths` are also not promoted by top-level export.
+
+---
 ## The Four Tiers
 
 ### stable
@@ -35,7 +52,7 @@ that has been explicitly annotated carries `__api_tier__` as an attribute.
 | Module | Contents |
 | --- | --- |
 | `hidden_attractors.analysis` | Lyapunov, spectral, bifurcation, trajectory metrics |
-| `hidden_attractors.seed_generation` | Harmonic-balance seeds — Chua-specific and generic Lur'e |
+| `hidden_attractors.seed_generation` | Harmonic-balance seeds - Chua-specific and generic Lur'e |
 | `hidden_attractors.seed_generation.core` | Shared dataclasses, `validate_fractional_order` |
 | `hidden_attractors.seed_generation.chua` | DF, biased helpers, `find_harmonic_seed` (Machado/FDF is internal/planned support only) |
 | `hidden_attractors.seed_generation.lure` | Lur'e DF, `find_lure_harmonic_seed` |
@@ -102,7 +119,7 @@ ha.assert_tier(ha.find_harmonic_seed, ha.STABLE)  # raises AssertionError
 
 When an `experimental` symbol changes in a way that affects your code:
 
-1. **Read the changelog** for the relevant release — experimental changes
+1. **Read the changelog** for the relevant release - experimental changes
    are always documented.
 2. **Check the new signature** with `help()` or the API reference.
 3. If you pin to a specific version in `pyproject.toml` or `requirements.txt`,
@@ -112,7 +129,7 @@ When an `internal` symbol you relied on changes:
 
 1. Check whether an equivalent `stable` or `experimental` API now covers
    your use case.
-2. If not, open an issue — it may warrant promotion to `experimental`.
+2. If not, open an issue - it may warrant promotion to `experimental`.
 
 ---
 

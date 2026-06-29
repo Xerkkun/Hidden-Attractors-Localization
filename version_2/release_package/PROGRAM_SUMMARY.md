@@ -18,7 +18,7 @@ Supplementary material: <https://doi.org/10.17605/OSF.IO/ZGK74>
 
 Nature of problem: reproducible search, localization, audit, and conservative
 classification of candidate hidden attractors in integer- and commensurate
-Caputo fractional-order Chua/Lur'e systems.
+Caputo fractional-order Lur'e-compatible systems.
 
 Solution method: scalar Lur'e formulation, describing-function/Nyquist seed
 generation, integer or Caputo continuation, ABM/EFORK integration, finite-time
@@ -26,12 +26,12 @@ diagnostics, all-equilibrium neighborhood tests, figures, manifests, and release
 metadata.
 
 Official examples: integer Chua Lur'e reference, non-smooth fractional Chua BDF
-methodology, and arctan Wu2023/c590 lane. The c590 arctan lane is promoted as
-radius-limited hiddenness evidence for local radii `r <= 0.3`.
+methodology, and smooth arctan Wu2023/c590 lane. The c590 arctan lane is one
+radius-limited validation example for local radii `r <= 0.3`.
 
 Restrictions: scalar Lur'e systems, commensurate order, Caputo fractional
 contracts for `0 < q <= 1`, and finite numerical evidence. The package does not
-prove global hiddenness. The manifest declares `v1.0.0`; the arctan c590 claim is bounded by the tested local-radius contract and macro-radius audit evidence.
+prove global hiddenness. The manifest declares `v1.0.0`; all hiddenness claims are bounded by the tested local-radius contract, while macro-radius contacts are extended basin-geometry audit evidence.
 
 Running time: seconds for metadata/smoke checks; minutes or hours for long
 fractional-memory sweeps, hiddenness sampling, or published quantitative

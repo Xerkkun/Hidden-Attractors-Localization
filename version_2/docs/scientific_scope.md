@@ -66,11 +66,11 @@ All attractor verification workflows, output reports, and manifests use a unifie
 | `candidate` | A localized trajectory branch under investigation, showing chaotic dynamics but pending complete hiddenness checks. |
 | `hidden_under_tested_neighborhoods` | Strict verification contract passed: no equilibrium basin intersections detected within all required neighborhood radii under robust controls and metadata. |
 | `compatible_with_hiddenness` | Neighborhood tests showed no basin intersections, but the full auditable verification protocol or metadata is incomplete. |
-| `self_excited` | Candidate is confirmed self-excited (at least one equilibrium basin contact detected during neighborhood sampling). |
+| `self_excited` | Candidate is confirmed self-excited under the recorded local-neighborhood contract. |
 | `nonchaotic` | Dynamics are regular, periodic, or quasiperiodic rather than chaotic. |
 | `diverged` | Trajectory is unbounded or diverged to infinity. |
 | `inconclusive` | Diagnostics are conflicting or numerical integration failures occurred during neighborhood tests. |
-| `rejected` | Candidate is rejected due to divergence, invalid configuration, or failure to localize. |
+| `rejected` | Candidate is rejected due to divergence, invalid configuration, local-contract contact, or failure to localize. |
 | `not_tested` | Candidate has not been subjected to verification tests. |
 
 > [!NOTE]
@@ -99,8 +99,7 @@ Lyapunov estimates, cloned-dynamics spectra, FFT/PSD panels, Poincare sections,
 checks, robustness overlays and Machado/FDF variants are diagnostics or seed
 extensions. Each is useful for auditing a candidate. None is a hiddenness
 proof by itself. In particular, Machado/FDF is auxiliary and not a hiddenness
-proof. Las familias `machado_centered` y `machado_biased` están registradas en el esquema de la biblioteca como planificadas (`planned`/`unsupported`), por lo que no se pueden ejecutar en esta entrega.
-
+proof. The `machado_centered` and `machado_biased` families are registered in the library schema as planned/unsupported, so they cannot be executed in this release.\n
 ## Reference metadata audit
 
 This table is backed by `docs/references.bib` and repository validation

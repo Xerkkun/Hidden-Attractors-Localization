@@ -15,9 +15,9 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 
 | Directory | What it demonstrates | Evidence boundary |
 | --- | --- | --- |
-| `examples/chua_integer_lure_reference/` | Integer `q=1` Lur'e seed, continuation, final trajectory, hiddenness controls, figures, Lyapunov diagnostic | Reproduced reference for the integer route only |
+| `examples/chua_integer_lure_reference/` | Integer Chua `q=1` Lur'e seed, continuation, final trajectory, hiddenness controls, figures, Lyapunov diagnostic | Reproduced reference for the integer Chua route only |
 | `examples/chua_nonsmooth_biased_hidden_attractor/` | Biased describing-function methodology for a non-smooth fractional Chua candidate | Candidate evidence under tested local radii; not full Danca reproduction |
-| `examples/chua_arctan_wu2023/` | Wu2023 arctan bibliographic lane plus promoted Caputo full-history c590 lane | c590 promoted for local radii `r <= 0.3` with 8400 probes and zero contacts; not a global basin proof |
+| `examples/chua_arctan_wu2023/` | Wu2023 arctan bibliographic lane plus smooth Caputo full-history c590 lane | c590 reported for local radii `r <= 0.3` with 8400 probes and zero contacts; not a global basin proof |
 
 ## Small API examples
 

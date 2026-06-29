@@ -198,9 +198,9 @@ Lyapunov estimates are useful but do not certify hiddenness.
 
 | Lane | Command | Use |
 | --- | --- | --- |
-| Integer reference | `python examples/chua_integer_lure_reference/run_example.py --quick` | First example for the complete seed-continuation-hiddenness workflow at `q=1` |
+| Integer Chua reference | `python examples/chua_integer_lure_reference/run_example.py --quick` | First example for the complete seed-continuation-hiddenness workflow at `q=1` |
 | Non-smooth fractional BDF | `python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick` | Proposed biased-DF route for fractional Chua; evidence remains contract-limited |
-| Arctan Wu2023/c590 | `python examples/chua_arctan_wu2023/run_example.py --quick` | Separates Wu2023 bibliographic reproduction from the c590 Caputo lane promoted only as local/radius-limited finite-time evidence |
+| Arctan Wu2023/c590 | `python examples/chua_arctan_wu2023/run_example.py --quick` | Separates Wu2023 bibliographic reproduction from one smooth c590 Caputo lane reported only as local/radius-limited finite-time evidence |
 | Custom registration | `python examples/custom_system_definition.py` | Minimal system registry example |
 | Workflow spec | `python examples/new_system_workflow_spec.py` | Shows the next layer needed before reusable workflows are auditable |
 

@@ -3,21 +3,21 @@
 This example keeps two lanes separate:
 
 1. a Wu2023 bibliographic reproduction lane; and
-2. a promoted Caputo full-history dynamic lane for the c590 candidate, limited to local radii `r <= 0.3`.
+2. a Caputo full-history dynamic lane for the c590 candidate, limited to local radii `r <= 0.3`.
 
-The Wu2023 bibliographic lane remains partial. The c590 lane is promoted as finite radius-limited hiddenness evidence for local radii `r <= 0.3` with 8400 probes and zero contacts; macro radii `1.0` and `2.0` remain extended audit evidence.
+The Wu2023 bibliographic lane remains partial. The c590 lane is one smooth-nonlinearity validation example with finite radius-limited hiddenness evidence for local radii `r <= 0.3` with 8400 probes and zero contacts; macro radii `1.0` and `2.0` remain extended audit evidence.
 
 ## Status
 
 | Lane | Contract | Current status |
 | --- | --- | --- |
 | Wu2023 bibliographic lane | arctan algebra, equilibria, Lur'e split, reported initial conditions, local ADM recurrence | Bibliographic ADM reproduction; reported initial conditions classify as periodic/nonchaotic under the local ADM contract |
-| Promoted c590 lane | Caputo ABM full-history search and neighborhood sampling | Promoted for local radii `r <= 0.3` with 8400 probes and zero contacts; macro radii `1.0` and `2.0` retained as extended audit |
+| c590 lane | Caputo ABM full-history search and neighborhood sampling | Reported for local radii `r <= 0.3` with 8400 probes and zero contacts; macro radii `1.0` and `2.0` retained as extended audit |
 
 The local ADM recurrence used to mirror the article is not the same as a
-full-memory Caputo ABM or EFORK validation. The c590 lane is the promoted
-methodology example for arctan systems, but only under the recorded local-radius
-contract and not as a global basin proof.
+full-memory Caputo ABM or EFORK validation. The c590 lane is a smooth-nonlinearity
+methodology example, but only under the recorded local-radius contract and not
+as a global basin proof.
 
 ## Run
 
@@ -66,6 +66,9 @@ contract.
 ## Hiddenness boundary
 
 The c590 outputs may be labeled only as `hiddenness_supported_under_tested_local_radii`
-for `r <= 0.3`. They should not be described as a globally proved hidden
-attractor. Periodic or regular post-transient behavior in the Wu2023 bibliographic
-lane is retained as diagnostic evidence, not chaos evidence.
+for `r <= 0.3`. A contact detected on a sphere of large radius around an
+equilibrium is not, by itself, evidence that the attractor is self-excited;
+large-radius contacts are extended basin-geometry audits. The c590 lane should
+not be described as a globally proved hidden attractor. Periodic or regular
+post-transient behavior in the Wu2023 bibliographic lane is retained as
+diagnostic evidence, not chaos evidence.

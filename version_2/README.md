@@ -8,7 +8,9 @@
 
 `hidden-attractors-fo` provides reproducible workflows for locating, simulating,
 auditing, and conservatively classifying hidden-attractor candidates in integer-
-and commensurate Caputo fractional-order Chua/Lur'e systems.
+and commensurate Caputo fractional-order Lur'e-compatible systems. Maintained
+Chua lanes cover an integer reference, non-smooth fractional BDF/saturation,
+and smooth arctan fractional validation example.
 
 The PyPI project name is `hidden-attractors-fo`; the Python import name remains
 `hidden_attractors`.
@@ -47,12 +49,22 @@ The package exposes one public console command:
 hidden-attractors
 ```
 
-## Quick start
+## Quick path for new users
+
+From `version_2/` after installation:
 
 ```bash
+hidden-attractors --help
 hidden-attractors inspect systems
-hidden-attractors inspect candidates
+python examples/chua_integer_lure_reference/run_example.py --quick
 hidden-attractors validate contract --allow-pending
+hidden-attractors validate release-readiness --submission-strict --json
+```
+
+## Research workflows
+
+```bash
+hidden-attractors inspect candidates
 hidden-attractors run -p chua_integer
 hidden-attractors run -p chua_fractional
 ```
@@ -76,7 +88,7 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 | --- | --- | --- |
 | `examples/chua_integer_lure_reference/` | Integer `q=1` Lur'e reference | Reproduced software reference/control |
 | `examples/chua_nonsmooth_biased_hidden_attractor/` | Biased-DF methodology for non-smooth fractional Chua | Candidate/compatible under tested local radii; not full Danca reproduction |
-| `examples/chua_arctan_wu2023/` | Wu2023 arctan lane plus c590 local lane | Wu2023 bibliographic; c590 is finite-time local/radius-limited evidence under the recorded contract |
+| `examples/chua_arctan_wu2023/` | Smooth arctan Wu2023 lane plus c590 local lane | Wu2023 bibliographic; c590 is finite-time local/radius-limited evidence under the recorded contract |
 
 ## Article reproduction status
 
@@ -84,8 +96,8 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 | --- | --- |
 | Integer Chua reference | Reproduced as the maintained `q=1` software route |
 | Danca 2017 non-smooth fractional Chua | Partial implementation; missing published numerical details prevent full trajectory reproduction |
-| Official nearby non-smooth candidate | Rejected/self-excited under current neighborhood contract |
-| Wu2023 arctan Chua | Algebra/ADM local lane implemented as bibliographic reproduction; c590 Caputo lane remains finite-time local/radius-limited evidence |
+| Official nearby non-smooth candidate | Classified under the recorded local-neighborhood contract with target contacts from equilibrium neighborhoods |
+| Wu2023 arctan Chua | Algebra/ADM local lane implemented as bibliographic reproduction; c590 is one smooth-nonlinearity Caputo validation lane with finite-time local/radius-limited evidence |
 | DK2018/Fischer Lyapunov lanes | Diagnostic comparison lanes with documented discrepancies |
 
 ## API reference
@@ -125,6 +137,10 @@ and does not replace full-history Caputo validation.
 
 Machado/FDF remains theory/internal planned support and is not exposed as a
 public seed workflow in this release.
+
+## Advanced validation workflows
+
+These checks are for maintainers and release verification, not the first user route.
 
 ## Tests and release checks
 
@@ -176,4 +192,3 @@ MIT.
 ## Source
 
 GitHub: <https://github.com/Xerkkun/Hidden-Attractors-Localization>
-

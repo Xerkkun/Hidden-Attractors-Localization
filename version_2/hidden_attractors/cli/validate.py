@@ -480,8 +480,10 @@ def _pypi_readiness_checks(root: Path, version_root: Path, manifest: dict[str, A
         "sdist_build": "passed",
         "twine_check": "passed",
         "wheel_install_smoke": "passed",
-        "testpypi_status": "manual_pending",
-        "pypi_status": "not_uploaded_by_repository",
+        "testpypi_status": "passed",
+        "pypi_status": "published",
+        "pypi_url": "https://pypi.org/project/hidden-attractors-fo/",
+        "published_version": "1.0.0",
     }
     pypi_details = []
     if not isinstance(pypi, dict):

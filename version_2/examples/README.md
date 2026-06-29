@@ -16,9 +16,9 @@ python examples/chua_arctan_wu2023/run_example.py --quick
 
 | Example | Role | Evidence boundary |
 | --- | --- | --- |
-| `chua_integer_lure_reference/` | Integer `q=1` Lur'e reference: seed, continuation, trajectory, neighborhood controls, figures | Reproduced integer control only |
+| `chua_integer_lure_reference/` | Integer Chua `q=1` Lur'e reference: seed, continuation, trajectory, neighborhood controls, figures | Reproduced integer Chua control only |
 | `chua_nonsmooth_biased_hidden_attractor/` | Proposed biased-DF route for non-smooth fractional Chua | Candidate/compatible only under declared local radii; not full Danca reproduction |
-| `chua_arctan_wu2023/` | Wu2023 bibliographic lane plus promoted Caputo c590 lane | c590 promoted for local radii `r <= 0.3`; Wu2023 ADM lane remains bibliographic |
+| `chua_arctan_wu2023/` | Wu2023 bibliographic lane plus smooth Caputo c590 lane | c590 reported for local radii `r <= 0.3`; Wu2023 ADM lane remains bibliographic |
 
 ## Small API examples
 

@@ -20,9 +20,9 @@ coordinates, hidden-attractor initial condition, and continuation details are
 missing.
 
 The official nearby candidate stored in the current validation package,
-`danca2017_nearby_saturation_candidate_q09998`, is rejected under the current
-contract because `validation/09_hiddenness_tests/hiddenness_tests_validation_summary.json`
-records 1305 target contacts from neighborhoods of `E+` and `E-`.
+`danca2017_nearby_saturation_candidate_q09998`, is classified under the recorded
+local contract because `validation/09_hiddenness_tests/hiddenness_tests_validation_summary.json`
+records 1305 target contacts from local neighborhoods of `E+` and `E-`.
 
 ## Run
 
@@ -60,6 +60,8 @@ points. `run_example.py` is the official orchestrator.
 ## Methodological boundary
 
 BDF, Nyquist, and continuation are seed/candidate tools. They do not prove
-hiddenness. A promoted hiddenness label requires all-equilibrium neighborhood or
-basin evidence under the declared Caputo memory, step size, horizon, radii,
-samples, and classifier thresholds.
+hiddenness. A promoted hiddenness label requires all-equilibrium local
+neighborhood or basin evidence under the declared Caputo memory, step size,
+horizon, radii, samples, and classifier thresholds. Extended-radius contacts
+must be reported as basin-geometry audits unless the stored local-radius
+contract itself records disqualifying contact.
