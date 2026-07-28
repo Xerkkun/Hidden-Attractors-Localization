@@ -1,0 +1,38 @@
+{
+  "schema_version": "2.0",
+  "stage": "seed9_target",
+  "contract": {
+    "seed_index": 9,
+    "seed": [
+      5.864244979081692,
+      1.5847111486491057,
+      3.2155806477633915
+    ],
+    "q": 0.9999,
+    "h": 0.005,
+    "t_final": 300.0,
+    "t_burn": 150.0
+  },
+  "seed": [
+    5.864244979081692,
+    1.5847111486491057,
+    3.2155806477633915
+  ],
+  "recorded_seed": [
+    5.864244979081692,
+    1.5847111486491057,
+    3.2155806477633915
+  ],
+  "seed_max_abs_error": 0.0,
+  "status": "ok",
+  "end_time": 299.9999999997997,
+  "max_norm": 18.78600083613392,
+  "range": [
+    15.182378540552442,
+    6.065042752541456,
+    35.994615818373276
+  ],
+  "trajectory": "target.npz",
+  "reused_from": "survivor_long_audit\\seed09_h0p005.npz",
+  "recorded_regression_matched": true
+}

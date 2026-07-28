@@ -1,0 +1,85 @@
+{
+  "system": {
+    "system_id": "chua-nonsmooth",
+    "q": 0.9998,
+    "parameters": {
+      "alpha": 8.4562,
+      "beta": 12.0732,
+      "gamma": 0.0052,
+      "m0": -0.1768,
+      "m1": -1.1468
+    }
+  },
+  "integrator": {
+    "method": "abm",
+    "h": 0.01,
+    "memory_mode": "full"
+  },
+  "parameter_grid": {
+    "m1_values": [
+      -1.1468,
+      -1.2,
+      -1.25
+    ],
+    "m0_values": [
+      -0.1768,
+      -0.2,
+      -0.24
+    ]
+  },
+  "biased_search": {
+    "A_range": [
+      0.5,
+      10.0
+    ],
+    "c_range": [
+      -8.0,
+      8.0
+    ],
+    "omega_range": [
+      0.5,
+      6.0
+    ],
+    "n_A": 5,
+    "n_c": 9,
+    "n_omega": 6,
+    "residual_tol": 0.0001,
+    "eta_step": 0.05,
+    "t_transient": 30.0,
+    "t_keep": 30.0,
+    "div_threshold": 120.0,
+    "t_sim_final": 300.0,
+    "t_sim_transient": 100.0,
+    "max_branches_per_case": 2,
+    "n_theta": 8192
+  },
+  "hiddenness_probe": {
+    "radii": [
+      1e-05,
+      3e-05,
+      0.0001,
+      0.0003,
+      0.001,
+      0.01
+    ],
+    "samples_per_radius": [
+      20,
+      25,
+      30,
+      40,
+      50,
+      60
+    ],
+    "sampling_mode": "sphere_random",
+    "t_final_probe": 200.0,
+    "t_burn_probe": 50.0,
+    "equilibrium_tol": 0.5,
+    "match_metric": "nn_percentile",
+    "match_tol": 0.5,
+    "match_percentile": 90.0,
+    "require_all_equilibria": true,
+    "allow_numerical_failures": false,
+    "min_ref_tail_points": 200
+  },
+  "random_seed": 42
+}

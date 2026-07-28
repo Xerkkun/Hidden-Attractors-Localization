@@ -1,0 +1,901 @@
+{
+  "schema_version": "2.0",
+  "stage": "caputo-seed9",
+  "status": "completed_recorded_regression_matched",
+  "contract": {
+    "operator": "Caputo",
+    "integrator": "ABM predictor-corrector",
+    "memory_mode": "full",
+    "use_c_backend": true,
+    "early_stop": false,
+    "divergence_norm": 300.0,
+    "parameters": {
+      "alpha": 21.849356906616716,
+      "beta": 19.081840840860202,
+      "gamma": 0.007378011979156531,
+      "a1": 0.04228979343578827,
+      "a2": -3.3367815123026694,
+      "rho": 1.7984259332820332
+    },
+    "integer_seed": [
+      7.6733768928786095,
+      0.5079327670652387,
+      -14.49039352666749
+    ],
+    "q_scan": {
+      "q_values": [
+        0.9995,
+        0.9998,
+        0.9999,
+        0.99995
+      ],
+      "h": 0.005,
+      "t_final": 300.0,
+      "t_burn": 150.0,
+      "zero_one_samples": [
+        2000,
+        4000,
+        8000
+      ]
+    },
+    "resampled_zero_one": {
+      "q_values": [
+        0.9997,
+        0.9998,
+        0.9999
+      ],
+      "q_09997_t_final": 260.0,
+      "q_09997_t_burn": 130.0,
+      "h": 0.005,
+      "sample_intervals": [
+        0.5,
+        0.75,
+        1.0,
+        1.5
+      ],
+      "n_c": 100
+    },
+    "integer_seed_h_audit": {
+      "q": 0.9999,
+      "h_values": [
+        0.0025,
+        0.005,
+        0.01
+      ],
+      "t_final": 300.0,
+      "t_burn": 150.0,
+      "bounded_norm": 50.0,
+      "sample_intervals": [
+        0.5,
+        0.75,
+        1.0,
+        1.5
+      ],
+      "n_c": 100,
+      "recorded_robust_bounded": false,
+      "recorded_robust_chaos_screen": false
+    },
+    "seed_extraction": {
+      "source_q": 0.9999,
+      "source_h": 0.005,
+      "source_t_start": 150.0,
+      "count": 16,
+      "rule": "linspace(searchsorted(times,150),len(times)-1,16,dtype=int)",
+      "recorded_source_indices": [
+        30001,
+        32000,
+        34000,
+        36000,
+        38000,
+        40000,
+        42000,
+        44000,
+        46000,
+        48000,
+        50000,
+        52000,
+        54000,
+        56000,
+        58000,
+        60000
+      ],
+      "recorded_source_times": [
+        150.00499999993608,
+        159.99999999992698,
+        169.9999999999179,
+        179.9999999999088,
+        189.9999999998997,
+        199.9999999998906,
+        209.9999999998815,
+        219.99999999987241,
+        229.99999999986332,
+        239.99999999985423,
+        249.99999999984513,
+        259.99999999983606,
+        269.99999999982697,
+        279.9999999998179,
+        289.9999999998088,
+        299.9999999997997
+      ],
+      "recorded_source_states": [
+        [
+          -2.729473337164626,
+          2.1102962827455594,
+          10.432403330832878
+        ],
+        [
+          1.086782248440764,
+          -2.57728725411782,
+          0.5540523821057417
+        ],
+        [
+          -2.1175469987001168,
+          2.372607407573507,
+          5.375571214892048
+        ],
+        [
+          -4.963397803649754,
+          0.24695513953718384,
+          17.24106885861425
+        ],
+        [
+          2.573553666760516,
+          -2.2074465263950245,
+          -9.598640684855509
+        ],
+        [
+          -1.3443209405873457,
+          2.394579416841281,
+          -1.5861791996125314
+        ],
+        [
+          2.5970851435812365,
+          -1.9066187889449309,
+          -4.043299382162537
+        ],
+        [
+          4.445217479749246,
+          -0.589499420498435,
+          -13.200382065644083
+        ],
+        [
+          6.6792007983871535,
+          1.8624013079380815,
+          -9.432621685715773
+        ],
+        [
+          5.864244979081692,
+          1.5847111486491057,
+          3.2155806477633915
+        ],
+        [
+          2.1070652812673774,
+          -1.6959277503489347,
+          5.205928761559128
+        ],
+        [
+          4.188027775831749,
+          2.8128803633627006,
+          -1.7614566460862728
+        ],
+        [
+          -6.976264361536463,
+          -2.009821008822811,
+          13.134260959465786
+        ],
+        [
+          -3.27274740849852,
+          0.9735766277700553,
+          -2.50103439150134
+        ],
+        [
+          -2.861358092116564,
+          1.8356042430512796,
+          7.247421429834667
+        ],
+        [
+          -5.211832850603234,
+          -0.16296250009100868,
+          13.703379396402225
+        ]
+      ]
+    },
+    "seed_refinement": {
+      "q": 0.9999,
+      "h": 0.0025,
+      "t_final": 180.0,
+      "t_burn": 90.0,
+      "bounded_norm": 50.0,
+      "recorded_bounded_indices": [
+        0,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        13,
+        15
+      ]
+    },
+    "cross_step": {
+      "additional_h_values": [
+        0.005,
+        0.01
+      ],
+      "t_final": 180.0,
+      "t_burn": 90.0,
+      "recorded_passing_indices": [
+        5,
+        8,
+        9,
+        10,
+        13,
+        15
+      ]
+    },
+    "seed5_long_audit": {
+      "seed_index": 5,
+      "h_values": [
+        0.0025,
+        0.005,
+        0.01
+      ],
+      "t_final": 300.0,
+      "t_burn": 150.0,
+      "sample_intervals": [
+        0.5,
+        0.75,
+        1.0,
+        1.5
+      ],
+      "n_c": 100,
+      "K_threshold": 0.8,
+      "recorded_result": "rejected"
+    },
+    "survivor_long_audit": {
+      "seed_indices": [
+        8,
+        9,
+        10,
+        13,
+        15
+      ],
+      "h_values": [
+        0.0025,
+        0.005,
+        0.01
+      ],
+      "t_final": 300.0,
+      "t_burn": 150.0,
+      "sample_intervals": [
+        0.5,
+        0.75,
+        1.0,
+        1.5
+      ],
+      "n_c": 80,
+      "K_threshold": 0.8,
+      "selection_rule": "bounded at h=0.0025,0.005,0.01, then K_median>0.8 at the two refined steps h=0.0025 and h=0.005",
+      "recorded_passing_indices": [
+        9
+      ]
+    },
+    "final_target": {
+      "seed_index": 9,
+      "seed": [
+        5.864244979081692,
+        1.5847111486491057,
+        3.2155806477633915
+      ],
+      "q": 0.9999,
+      "h": 0.005,
+      "t_final": 300.0,
+      "t_burn": 150.0
+    }
+  },
+  "parameters": {
+    "alpha": 21.849356906616716,
+    "beta": 19.081840840860202,
+    "gamma": 0.007378011979156531,
+    "a1": 0.04228979343578827,
+    "a2": -3.3367815123026694,
+    "rho": 1.7984259332820332
+  },
+  "integer_seed": [
+    7.6733768928786095,
+    0.5079327670652387,
+    -14.49039352666749
+  ],
+  "q_scan": {
+    "schema_version": "2.0",
+    "stage": "caputo_q_scan",
+    "contract": {
+      "q_values": [
+        0.9995,
+        0.9998,
+        0.9999,
+        0.99995
+      ],
+      "h": 0.005,
+      "t_final": 300.0,
+      "t_burn": 150.0,
+      "zero_one_samples": [
+        2000,
+        4000,
+        8000
+      ]
+    },
+    "rows": [
+      {
+        "q": 0.9995,
+        "h": 0.005,
+        "status": "ok",
+        "end_time": 299.9999999997997,
+        "max_norm": 18.691342814145525,
+        "range": [
+          15.030087911298196,
+          5.831490974497935,
+          34.92018560173401
+        ],
+        "t_final": 300.0,
+        "t_burn": 150.0,
+        "seed": [
+          7.6733768928786095,
+          0.5079327670652387,
+          -14.49039352666749
+        ],
+        "screen_label": "regular_periodic_rejected",
+        "score": -0.06204002867425351,
+        "zero_one_K_robust_median": -0.030045803207599094,
+        "zero_one_K_by_sample_count": [
+          -0.030045803207599094,
+          -0.02867744429458347,
+          -0.038545843346455014
+        ],
+        "zero_one_states": [
+          "zero_one_inconclusive",
+          "zero_one_regular_candidate",
+          "zero_one_regular_candidate"
+        ],
+        "zero_one_chaotic_votes": 0,
+        "spectral_state": "dominant_periodic_peak",
+        "spectral_entropy_mean": 0.1411055979477958,
+        "peak_dominance_max": 0.6177426184954955,
+        "periodicity_label": "regular_periodic_rejected",
+        "poincare_crossings": 95,
+        "poincare_normalized_spread": 0.03723763050323413,
+        "state_range": [
+          15.030087911298196,
+          5.831490974497935,
+          34.92018560173401
+        ],
+        "matignon": {
+          "equilibria_count": 3,
+          "stability": {
+            "E0": "unstable",
+            "E+": "stable",
+            "E-": "stable"
+          },
+          "minimum_margin": -1.5700109286314992
+        },
+        "trajectory": "q0p9995.npz"
+      },
+      {
+        "q": 0.9998,
+        "h": 0.005,
+        "status": "ok",
+        "end_time": 299.9999999997997,
+        "max_norm": 18.69841872843603,
+        "range": [
+          15.114403255428089,
+          5.970310693746605,
+          35.418353933156865
+        ],
+        "t_final": 300.0,
+        "t_burn": 150.0,
+        "seed": [
+          7.6733768928786095,
+          0.5079327670652387,
+          -14.49039352666749
+        ],
+        "screen_label": "inconclusive_nonperiodic",
+        "score": 0.29107595376994133,
+        "zero_one_K_robust_median": 0.01659440443344016,
+        "zero_one_K_by_sample_count": [
+          0.01659440443344016,
+          0.019650053340366548,
+          0.0034901833104350336
+        ],
+        "zero_one_states": [
+          "zero_one_inconclusive",
+          "zero_one_regular_candidate",
+          "zero_one_regular_candidate"
+        ],
+        "zero_one_chaotic_votes": 0,
+        "spectral_state": "quasiperiodic_candidate",
+        "spectral_entropy_mean": 0.2659213420606965,
+        "peak_dominance_max": 0.33064784355317045,
+        "periodicity_label": "chaotic_candidate_pending_robustness",
+        "poincare_crossings": 27,
+        "poincare_normalized_spread": 0.09281815923051485,
+        "state_range": [
+          15.114403255428089,
+          5.970310693746605,
+          35.418353933156865
+        ],
+        "matignon": {
+          "equilibria_count": 3,
+          "stability": {
+            "E0": "unstable",
+            "E+": "stable",
+            "E-": "stable"
+          },
+          "minimum_margin": -1.5704821675295375
+        },
+        "trajectory": "q0p9998.npz"
+      },
+      {
+        "q": 0.9999,
+        "h": 0.005,
+        "status": "ok",
+        "end_time": 299.9999999997997,
+        "max_norm": 18.793381687561286,
+        "range": [
+          15.211819466965942,
+          5.997473609306352,
+          35.768404999507254
+        ],
+        "t_final": 300.0,
+        "t_burn": 150.0,
+        "seed": [
+          7.6733768928786095,
+          0.5079327670652387,
+          -14.49039352666749
+        ],
+        "screen_label": "inconclusive_nonperiodic",
+        "score": 0.25786979879124017,
+        "zero_one_K_robust_median": 0.00018209927303285662,
+        "zero_one_K_by_sample_count": [
+          0.004604115691036132,
+          0.00018209927303285662,
+          -0.0009653275862703942
+        ],
+        "zero_one_states": [
+          "zero_one_inconclusive",
+          "zero_one_inconclusive",
+          "zero_one_regular_candidate"
+        ],
+        "zero_one_chaotic_votes": 0,
+        "spectral_state": "quasiperiodic_candidate",
+        "spectral_entropy_mean": 0.28916808071981764,
+        "peak_dominance_max": 0.32148853754363216,
+        "periodicity_label": "chaotic_candidate_pending_robustness",
+        "poincare_crossings": 21,
+        "poincare_normalized_spread": 0.10295774253254228,
+        "state_range": [
+          15.211819466965942,
+          5.997473609306352,
+          35.768404999507254
+        ],
+        "matignon": {
+          "equilibria_count": 3,
+          "stability": {
+            "E0": "unstable",
+            "E+": "stable",
+            "E-": "stable"
+          },
+          "minimum_margin": -1.570639247162217
+        },
+        "trajectory": "q0p9999.npz"
+      },
+      {
+        "q": 0.99995,
+        "h": 0.005,
+        "status": "diverged",
+        "end_time": 208.1349999998832,
+        "max_norm": 300.07182789256484,
+        "range": [
+          136.4669514041891,
+          134.13266533595242,
+          598.8545573878534
+        ],
+        "t_final": 300.0,
+        "t_burn": 150.0,
+        "seed": [
+          7.6733768928786095,
+          0.5079327670652387,
+          -14.49039352666749
+        ],
+        "screen_label": "inconclusive_nonperiodic",
+        "score": 0.20566492104544135,
+        "zero_one_K_robust_median": 0.001786578306364059,
+        "zero_one_K_by_sample_count": [
+          -0.0009030793131588818,
+          0.001786578306364059,
+          0.002110744112892584
+        ],
+        "zero_one_states": [
+          "zero_one_regular_candidate",
+          "zero_one_regular_candidate",
+          "zero_one_regular_candidate"
+        ],
+        "zero_one_chaotic_votes": 0,
+        "spectral_state": "spectral_inconclusive",
+        "spectral_entropy_mean": 0.10119001595850098,
+        "peak_dominance_max": 0.5200546631559555,
+        "periodicity_label": "nonperiodic_candidate",
+        "poincare_crossings": 39,
+        "poincare_normalized_spread": 0.03692367430720392,
+        "state_range": [
+          136.4669514041891,
+          134.13266533595242,
+          598.8545573878534
+        ],
+        "matignon": {
+          "equilibria_count": 3,
+          "stability": {
+            "E0": "unstable",
+            "E+": "stable",
+            "E-": "stable"
+          },
+          "minimum_margin": -1.570717786978557
+        },
+        "trajectory": "q0p99995.npz"
+      }
+    ],
+    "recorded_selected_q": 0.9999
+  },
+  "resampled_zero_one": {
+    "schema_version": "2.0",
+    "stage": "resampled_zero_one",
+    "contract": {
+      "q_values": [
+        0.9997,
+        0.9998,
+        0.9999
+      ],
+      "q_09997_t_final": 260.0,
+      "q_09997_t_burn": 130.0,
+      "h": 0.005,
+      "sample_intervals": [
+        0.5,
+        0.75,
+        1.0,
+        1.5
+      ],
+      "n_c": 100
+    },
+    "rows": [
+      {
+        "q": 0.9997,
+        "h": 0.005,
+        "t_burn": 130.0,
+        "source_trajectory": "q_neighbour\\q0p9997.npz",
+        "rows": [
+          {
+            "sample_interval": 0.5,
+            "stride_steps": 100,
+            "samples": 260,
+            "K_global_median": 0.2502813833867441,
+            "state_global": "zero_one_inconclusive"
+          },
+          {
+            "sample_interval": 0.75,
+            "stride_steps": 150,
+            "samples": 174,
+            "K_global_median": 0.30395009956500885,
+            "state_global": "zero_one_inconclusive"
+          },
+          {
+            "sample_interval": 1.0,
+            "stride_steps": 200,
+            "samples": 130,
+            "K_global_median": 0.28928735154312435,
+            "state_global": "zero_one_inconclusive"
+          }
+        ]
+      },
+      {
+        "q": 0.9998,
+        "h": 0.005,
+        "t_burn": 150.0,
+        "source_trajectory": "q_scan\\q0p9998.npz",
+        "rows": [
+          {
+            "sample_interval": 0.5,
+            "stride_steps": 100,
+            "samples": 300,
+            "K_global_median": 0.6830676095501822,
+            "state_global": "zero_one_inconclusive"
+          },
+          {
+            "sample_interval": 0.75,
+            "stride_steps": 150,
+            "samples": 200,
+            "K_global_median": 0.6781876426322595,
+            "state_global": "zero_one_inconclusive"
+          },
+          {
+            "sample_interval": 1.0,
+            "stride_steps": 200,
+            "samples": 150,
+            "K_global_median": 0.5941576596897462,
+            "state_global": "zero_one_inconclusive"
+          },
+          {
+            "sample_interval": 1.5,
+            "stride_steps": 300,
+            "samples": 100,
+            "K_global_median": 0.7887349047318706,
+            "state_global": "zero_one_inconclusive"
+          }
+        ]
+      },
+      {
+        "q": 0.9999,
+        "h": 0.005,
+        "t_burn": 150.0,
+        "source_trajectory": "q_scan\\q0p9999.npz",
+        "rows": [
+          {
+            "sample_interval": 0.5,
+            "stride_steps": 100,
+            "samples": 300,
+            "K_global_median": 0.8076716439996197,
+            "state_global": "zero_one_chaotic_candidate"
+          },
+          {
+            "sample_interval": 0.75,
+            "stride_steps": 150,
+            "samples": 200,
+            "K_global_median": 0.6625091136288102,
+            "state_global": "zero_one_inconclusive"
+          },
+          {
+            "sample_interval": 1.0,
+            "stride_steps": 200,
+            "samples": 150,
+            "K_global_median": 0.8330617175261834,
+            "state_global": "zero_one_chaotic_candidate"
+          },
+          {
+            "sample_interval": 1.5,
+            "stride_steps": 300,
+            "samples": 100,
+            "K_global_median": 0.9721844950806443,
+            "state_global": "zero_one_chaotic_candidate"
+          }
+        ]
+      }
+    ]
+  },
+  "integer_seed_h_audit": {
+    "schema_version": "2.0",
+    "stage": "integer_seed_h_audit",
+    "contract": {
+      "q": 0.9999,
+      "h_values": [
+        0.0025,
+        0.005,
+        0.01
+      ],
+      "t_final": 300.0,
+      "t_burn": 150.0,
+      "bounded_norm": 50.0,
+      "sample_intervals": [
+        0.5,
+        0.75,
+        1.0,
+        1.5
+      ],
+      "n_c": 100,
+      "recorded_robust_bounded": false,
+      "recorded_robust_chaos_screen": false
+    },
+    "rows": [
+      {
+        "q": 0.9999,
+        "h": 0.0025,
+        "status": "ok",
+        "end_time": 299.9999999997634,
+        "max_norm": 270.3951512563775,
+        "range": [
+          123.97079592123288,
+          120.88955602533682,
+          538.7916389610486
+        ],
+        "t_final": 300.0,
+        "t_burn": 150.0,
+        "seed": [
+          7.6733768928786095,
+          0.5079327670652387,
+          -14.49039352666749
+        ],
+        "K_by_dt": {
+          "0.5": -0.08013531268340462,
+          "0.75": -0.09310011453739311,
+          "1.0": -0.1098256742286853,
+          "1.5": -0.10996004266283466
+        },
+        "K_median": -0.10146289438303921,
+        "matignon": {
+          "equilibria_count": 3,
+          "stability": {
+            "E0": "unstable",
+            "E+": "stable",
+            "E-": "stable"
+          },
+          "minimum_margin": -1.570639247162217
+        },
+        "trajectory": "integer_seed_h_audit\\h0p0025.npz",
+        "reused_from_q_scan": false,
+        "bounded": false
+      },
+      {
+        "q": 0.9999,
+        "h": 0.005,
+        "status": "ok",
+        "end_time": 299.9999999997997,
+        "max_norm": 18.793381687561286,
+        "range": [
+          15.211819466965942,
+          5.997473609306352,
+          35.768404999507254
+        ],
+        "t_final": 300.0,
+        "t_burn": 150.0,
+        "seed": [
+          7.6733768928786095,
+          0.5079327670652387,
+          -14.49039352666749
+        ],
+        "K_by_dt": {
+          "0.5": 0.8076716439996197,
+          "0.75": 0.6625091136288102,
+          "1.0": 0.8330617175261834,
+          "1.5": 0.9721844950806443
+        },
+        "K_median": 0.8203666807629015,
+        "matignon": {
+          "equilibria_count": 3,
+          "stability": {
+            "E0": "unstable",
+            "E+": "stable",
+            "E-": "stable"
+          },
+          "minimum_margin": -1.570639247162217
+        },
+        "trajectory": "q_scan\\q0p9999.npz",
+        "reused_from_q_scan": true,
+        "bounded": true
+      },
+      {
+        "q": 0.9999,
+        "h": 0.01,
+        "status": "ok",
+        "end_time": 299.99999999987216,
+        "max_norm": 18.835510565438437,
+        "range": [
+          15.203229467708887,
+          6.043780806743446,
+          35.88643273960206
+        ],
+        "t_final": 300.0,
+        "t_burn": 150.0,
+        "seed": [
+          7.6733768928786095,
+          0.5079327670652387,
+          -14.49039352666749
+        ],
+        "K_by_dt": {
+          "0.5": 0.806862937229987,
+          "0.75": 0.7520184790894398,
+          "1.0": 0.7347160119407465,
+          "1.5": 0.9732148661661304
+        },
+        "K_median": 0.7794407081597134,
+        "matignon": {
+          "equilibria_count": 3,
+          "stability": {
+            "E0": "unstable",
+            "E+": "stable",
+            "E-": "stable"
+          },
+          "minimum_margin": -1.570639247162217
+        },
+        "trajectory": "integer_seed_h_audit\\h0p01.npz",
+        "reused_from_q_scan": false,
+        "bounded": true
+      }
+    ],
+    "robust_bounded": false,
+    "robust_chaos_screen": false,
+    "recorded_regression_matched": true
+  },
+  "seed_refinement": {
+    "bounded_indices": [
+      0,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      13,
+      15
+    ],
+    "recorded_regression_matched": true
+  },
+  "cross_step": {
+    "passing_all_h": [
+      5,
+      8,
+      9,
+      10,
+      13,
+      15
+    ],
+    "recorded_regression_matched": true
+  },
+  "seed5_long_audit": {
+    "robust_bounded_and_zero_one": false,
+    "recorded_regression_matched": true
+  },
+  "survivor_long_audit": {
+    "bounded_at_all_three_h": [
+      9,
+      13
+    ],
+    "passing": [
+      9
+    ],
+    "recorded_regression_matched": true
+  },
+  "target": {
+    "schema_version": "2.0",
+    "stage": "seed9_target",
+    "contract": {
+      "seed_index": 9,
+      "seed": [
+        5.864244979081692,
+        1.5847111486491057,
+        3.2155806477633915
+      ],
+      "q": 0.9999,
+      "h": 0.005,
+      "t_final": 300.0,
+      "t_burn": 150.0
+    },
+    "seed": [
+      5.864244979081692,
+      1.5847111486491057,
+      3.2155806477633915
+    ],
+    "recorded_seed": [
+      5.864244979081692,
+      1.5847111486491057,
+      3.2155806477633915
+    ],
+    "seed_max_abs_error": 0.0,
+    "status": "ok",
+    "end_time": 299.9999999997997,
+    "max_norm": 18.78600083613392,
+    "range": [
+      15.182378540552442,
+      6.065042752541456,
+      35.994615818373276
+    ],
+    "trajectory": "target.npz",
+    "reused_from": "survivor_long_audit\\seed09_h0p005.npz",
+    "recorded_regression_matched": true
+  },
+  "recorded_regression_matched": true,
+  "scientific_boundary": "This route reproduces the finite-time full-memory Caputo selection of seed9 and its tested step robustness. The separate equilibrium-neighborhood probe supplies the hiddenness evidence."
+}

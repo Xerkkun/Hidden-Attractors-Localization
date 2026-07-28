@@ -4,7 +4,7 @@ active_config: ../../configs/examples/chua_nonsmooth_biased_df_search.yaml
 published_reference_lane:
   source: Danca2017
   config: ../../configs/examples/chua_nonsmooth_exact_danca_non_reproducible.yaml
-  interpretation: "reproduccion bibliografica y descarte metodologico; no se promueve como oculto"
+  interpretation: "control bibliografico independiente del modelo, parametros, equilibrios, estabilidad y contrato ABM"
 proposed_method_lane:
   config: ../../configs/examples/chua_nonsmooth_biased_df_search.yaml
   pipeline:
@@ -14,13 +14,26 @@ proposed_method_lane:
     - standard_hiddenness_verification
     - extended_hiddenness_verification
     - editorial_figures
-  status: "compatible_with_hiddenness_under_tested_local_radii"
+  dynamical_status: "regular_attracting_set"
+  basin_status: "locally_consistent_with_hiddenness_through_radius_0p01"
 commands:
   search: "python 01_search.py"
   continuation: "python 02_continue.py"
   verification: "python 03_verify.py"
   figures: "python 04_plot.py"
   all: "python run_example.py --all"
+  paper07_reconstruction: "python ../../tools/rerun_paper07_nonsmooth_hiddenness.py"
+recorded_paper07_probe:
+  output: ../../../outputs/paper07_nonsmooth_corrected/extended_first_contact_clean
+  executed_probes: 17400
+  numerical_failures: 0
+  local_radius_max: 0.01
+  local_probes: 7200
+  local_target_contacts: 0
+  first_sampled_contact_radius: 0.3
+  first_contact_radius_probes: 3600
+  first_contact_radius_contacts: 37
+  stop_policy: "complete_first_contact_radius_across_all_equilibria_then_omit_larger_radii"
 figure_policy:
   canonical_script: hidden_attractors.plotting.generate_publication_figures
   report_assets_dir: ../../library_figures/by_report/df_nc_chua

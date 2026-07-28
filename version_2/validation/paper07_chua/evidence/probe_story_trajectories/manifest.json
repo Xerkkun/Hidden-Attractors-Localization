@@ -1,0 +1,517 @@
+{
+  "schema_version": "1.0",
+  "generated_by": "version_2/tools/build_paper07_probe_story_data.py",
+  "purpose": "Full representative state histories for the Paper 07 spatial probe overview. Every trajectory is reintegrated and checked against its stored classification and metrics.",
+  "nonsmooth": {
+    "selection_rule": "Sort by probe_id and retain the first row of every observed (destination, equilibrium) stratum.",
+    "selected_probe_ids": [
+      0,
+      8800,
+      8801,
+      12350,
+      13407,
+      17600,
+      17602,
+      21163,
+      22330
+    ],
+    "selected_probe_id_sha256": "bd9811f7c732fe52f6a5bb8978969bab149526f3cc994f7528d590739fec976e",
+    "source_contract": {
+      "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_numerical_contract.json",
+      "sha256": "46fc70db31abcdb75bc87856d840158efe06a5c4527170c9c3685caf20a5f388"
+    },
+    "source_rows": {
+      "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
+      "sha256": "596302ec36b1f07314d86213776985d9127af8e4edf22037d12f34e32a22114d"
+    },
+    "target_cloud": {
+      "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/target_cloud_nn_sample.csv",
+      "sha256": "be399e79cd6bcbc3f24edd6d6bc2f6955c413fec801d39a8acd2446ca1138fa3"
+    },
+    "numerical_contract": {
+      "operator": "Caputo",
+      "integrator": "ABM-PECE",
+      "memory_mode": "full",
+      "q": 0.9998,
+      "h": 0.01,
+      "t_final": 200.0,
+      "t_burn": 50.0,
+      "native_backend_required": true,
+      "early_stopping": {
+        "enabled": true,
+        "equilibrium_enabled": true,
+        "divergence_enabled": true,
+        "equilibrium_min_time": 25.0,
+        "equilibrium_tol": 0.001,
+        "equilibrium_derivative_tol": 0.0001,
+        "equilibrium_consecutive_steps": 50,
+        "divergence_norm": 80.0,
+        "divergence_consecutive_steps": 5,
+        "divergence_growth_factor": 1.25
+      }
+    },
+    "entries": [
+      {
+        "source_table": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
+        "probe_id": 0,
+        "equilibrium": "E0",
+        "radius": 1e-05,
+        "initial_state": [
+          1.4760714820115383e-06,
+          -5.037757916963397e-06,
+          3.6352396448012345e-06
+        ],
+        "status": "converged_equilibrium_early",
+        "category": "EQUILIBRIUM",
+        "destination": "stable_equilibrium",
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_00000_E0.csv",
+          "rows": 2550,
+          "size_bytes": 224813,
+          "sha256": "3bf8ca4b32893dc0ebb87b5ddb6df98a9ee15241012eda6eeea8c07d2be9a8ee"
+        }
+      },
+      {
+        "source_table": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
+        "probe_id": 8800,
+        "equilibrium": "E+",
+        "radius": 1e-05,
+        "initial_state": [
+          6.588306634370728,
+          0.002827375423805,
+          -6.585472347857001
+        ],
+        "status": "ok",
+        "category": "OTHER",
+        "destination": "other_attractor",
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_08800_Ep.csv",
+          "rows": 20001,
+          "size_bytes": 1570739,
+          "sha256": "2d036c9bb3cd7d5d44d802ad803bc5fd5cc592e0f8dc3058b99171f57e53bbd3"
+        }
+      },
+      {
+        "source_table": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
+        "probe_id": 8801,
+        "equilibrium": "E+",
+        "radius": 1e-05,
+        "initial_state": [
+          6.58831661021084,
+          0.0028381171434328,
+          -6.585473413822262
+        ],
+        "status": "diverged_early",
+        "category": "DIVERGENCE",
+        "destination": "divergence",
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_08801_Ep.csv",
+          "rows": 703,
+          "size_bytes": 54062,
+          "sha256": "1a5a876c7385ba01ad759e56ed7970e69fc9959253699f87dfa9059e646b16c4"
+        }
+      },
+      {
+        "source_table": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
+        "probe_id": 12350,
+        "equilibrium": "E+",
+        "radius": 0.1,
+        "initial_state": [
+          6.530162805560488,
+          -0.0520313997358771,
+          -6.640285695199509
+        ],
+        "status": "ok",
+        "category": "EQUILIBRIUM",
+        "destination": "stable_equilibrium",
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_12350_Ep.csv",
+          "rows": 20001,
+          "size_bytes": 1571170,
+          "sha256": "0b374a2be638b9990a60630509b74a053c2e6bad7536e439380e7289d119ac52"
+        }
+      },
+      {
+        "source_table": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
+        "probe_id": 13407,
+        "equilibrium": "E+",
+        "radius": 0.2999999999999999,
+        "initial_state": [
+          6.7041462394592966,
+          -0.1541072452111123,
+          -6.623475690035414
+        ],
+        "status": "ok",
+        "category": "TARGET",
+        "destination": "target_attractor",
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_13407_Ep.csv",
+          "rows": 20001,
+          "size_bytes": 1537202,
+          "sha256": "08a314930a5bbc42be6f92d6e6c9ce97d917f5652aea7b709160836bc122d395"
+        }
+      },
+      {
+        "source_table": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
+        "probe_id": 17600,
+        "equilibrium": "E-",
+        "radius": 1e-05,
+        "initial_state": [
+          -6.588310209934856,
+          -0.0028398490492501,
+          6.585472016105282
+        ],
+        "status": "diverged_early",
+        "category": "DIVERGENCE",
+        "destination": "divergence",
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_17600_Em.csv",
+          "rows": 728,
+          "size_bytes": 56653,
+          "sha256": "75fd0113cfa01a51e2ca6b2fc2ea11392b68137cfe27e1c4135afe0f9c5ce874"
+        }
+      },
+      {
+        "source_table": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
+        "probe_id": 17602,
+        "equilibrium": "E-",
+        "radius": 1e-05,
+        "initial_state": [
+          -6.588300995476732,
+          -0.002830213532052,
+          6.585472465458431
+        ],
+        "status": "ok",
+        "category": "OTHER",
+        "destination": "other_attractor",
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_17602_Em.csv",
+          "rows": 20001,
+          "size_bytes": 1570882,
+          "sha256": "6c077249e9886f47cb46852fddf43e86b764df04229affc4435549d2a1803a60"
+        }
+      },
+      {
+        "source_table": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
+        "probe_id": 21163,
+        "equilibrium": "E-",
+        "radius": 0.1,
+        "initial_state": [
+          -6.521205771172219,
+          0.063372860715919,
+          6.599004589121056
+        ],
+        "status": "ok",
+        "category": "EQUILIBRIUM",
+        "destination": "stable_equilibrium",
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_21163_Em.csv",
+          "rows": 20001,
+          "size_bytes": 1570856,
+          "sha256": "55f200161b5aaaf37d38174f3a7d7ceb2f6f5b955e6b341940b99d295e9645e4"
+        }
+      },
+      {
+        "source_table": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
+        "probe_id": 22330,
+        "equilibrium": "E-",
+        "radius": 0.2999999999999999,
+        "initial_state": [
+          -6.598111383543025,
+          0.236854799073229,
+          6.405784592972603
+        ],
+        "status": "ok",
+        "category": "TARGET",
+        "destination": "target_attractor",
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_22330_Em.csv",
+          "rows": 20001,
+          "size_bytes": 1537460,
+          "sha256": "9eb6c4ebbc87e8dc48e29a4cd989b247e42f5b73f48522f8c573d37582e389ae"
+        }
+      }
+    ]
+  },
+  "arctan": {
+    "selection_rule": "At r<=1 retain the first two TARGET rows by direction_index, all four EQUILIBRIUM rows, and the first r=1 OTHER row from each equilibrium. Source filename is part of the identity because probe_id restarts in each independent radius run.",
+    "first_contact_cutoff": {
+      "rule": "Process radii in ascending order; after the first radius with TARGET contacts, finish that radius and exclude larger radii.",
+      "first_contact_radius": 1.0,
+      "included_radii": [
+        1e-05,
+        0.0001,
+        0.001,
+        0.01,
+        0.03,
+        0.1,
+        0.3,
+        1.0
+      ],
+      "included_tests": 10800,
+      "included_outcome_counts": {
+        "EQUILIBRIUM": 4,
+        "OTHER": 10774,
+        "TARGET": 22
+      },
+      "included_source_tables": [
+        {
+          "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_scaled_rows.csv",
+          "sha256": "f4118720ed34edc50b070511f65a88f0416b03744b95f114358f7adb00238983"
+        },
+        {
+          "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r003_rows.csv",
+          "sha256": "e6ec3773afe3c3b4dfe3c9090c8019539927b14717d739cfee1be50e6b214f8e"
+        },
+        {
+          "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r010_rows.csv",
+          "sha256": "7a36bc3d916a7234f3e065446830039b1b6c6434c3bfcdcbef48806fdbe1e732"
+        },
+        {
+          "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r030_rows.csv",
+          "sha256": "c74042d4ab044ad6f23b45652732d0096b0ae28af6021108e3ac2412b77b74f4"
+        },
+        {
+          "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_rows.csv",
+          "sha256": "4e95ffdf7e20b9555d8fe2b9cdd034ab62cb4eccb1c736fac0c4eae091eb1a38"
+        }
+      ],
+      "post_cutoff_source_excluded": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r200_rows.csv"
+    },
+    "source_summary": {
+      "path": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/candidate_summary_r100.json",
+      "sha256": "b6d7c020cded1733a7bf6ab13b8a6e74db74b8e0c3cdbf4c80f5c84ca1fddc2e"
+    },
+    "target_trajectory": {
+      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/target.npz",
+      "sha256": "bea3cf9e334d50b3d9d317a142d8238a6680961981395e831b15ddd47d873c98",
+      "classification_burn": 150.0,
+      "classification_points": 6000
+    },
+    "probe_run_config": {
+      "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_run_config.json",
+      "sha256": "263d52dfd2b7881ec608e1d28c13659cddb2b185e3cd228476162155c0a14aca"
+    },
+    "numerical_contract": {
+      "operator": "Caputo",
+      "integrator": "ABM predictor-corrector",
+      "memory_mode": "full",
+      "q": 0.9999,
+      "h": 0.005,
+      "t_final": 180.0,
+      "t_burn": 90.0,
+      "divergence_norm": 120.0,
+      "early_stopping": {
+        "enabled": true,
+        "divergence_enabled": false,
+        "equilibrium_enabled": true,
+        "equilibrium_min_time": 45.0,
+        "equilibrium_tol": 1e-06,
+        "equilibrium_derivative_tol": 0.0001,
+        "equilibrium_consecutive_steps": 50
+      }
+    },
+    "entries": [
+      {
+        "source_table": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_rows.csv",
+        "probe_id": "E0|r00|d194",
+        "equilibrium": "E0",
+        "radius": 1.0,
+        "initial_state": [
+          0.31132949617649613,
+          -0.7919915065204296,
+          0.5251889168765743
+        ],
+        "status": "ok",
+        "category": "TARGET",
+        "contact": true,
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d194.csv",
+          "rows": 36001,
+          "size_bytes": 2746529,
+          "sha256": "0d3c8f04227c7f6919ba3e01ee33dba1ad31f45edf6a2a1d9a8d7b5b5d8cb9b9"
+        }
+      },
+      {
+        "source_table": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_rows.csv",
+        "probe_id": "E0|r00|d228",
+        "equilibrium": "E0",
+        "radius": 1.0,
+        "initial_state": [
+          0.2584675401533988,
+          -0.8602286426051851,
+          0.43954659949622166
+        ],
+        "status": "ok",
+        "category": "TARGET",
+        "contact": true,
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d228.csv",
+          "rows": 36001,
+          "size_bytes": 2745602,
+          "sha256": "10047741db4cde747fb3109b6f4b83fff84349ef9a891ac98d058dcc6bff3382"
+        }
+      },
+      {
+        "source_table": "version_2/validation/chua_fractional_arctan_c590/hiddenness_scaled_rows.csv",
+        "probe_id": "E+|r00|d000",
+        "equilibrium": "E+",
+        "radius": 1e-05,
+        "initial_state": [
+          4.649395513460388,
+          0.0017970022680715836,
+          -4.647608511192317
+        ],
+        "status": "converged_equilibrium_early",
+        "category": "EQUILIBRIUM",
+        "contact": false,
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Ep_r00_d000.csv",
+          "rows": 9161,
+          "size_bytes": 716414,
+          "sha256": "23e0c068474346036553318520250aa1a10273510367f80833c17cb55d084727"
+        }
+      },
+      {
+        "source_table": "version_2/validation/chua_fractional_arctan_c590/hiddenness_scaled_rows.csv",
+        "probe_id": "E+|r00|d001",
+        "equilibrium": "E+",
+        "radius": 1e-05,
+        "initial_state": [
+          4.649415513460387,
+          0.0017970022680715836,
+          -4.647608511192317
+        ],
+        "status": "converged_equilibrium_early",
+        "category": "EQUILIBRIUM",
+        "contact": false,
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Ep_r00_d001.csv",
+          "rows": 9161,
+          "size_bytes": 716331,
+          "sha256": "2600a4eb633ed762197e4e8f2d9b6c58e00135952011b52a0e343ca73814c6b7"
+        }
+      },
+      {
+        "source_table": "version_2/validation/chua_fractional_arctan_c590/hiddenness_scaled_rows.csv",
+        "probe_id": "E-|r00|d000",
+        "equilibrium": "E-",
+        "radius": 1e-05,
+        "initial_state": [
+          -4.649415513460387,
+          -0.0017970022680715836,
+          4.647608511192317
+        ],
+        "status": "converged_equilibrium_early",
+        "category": "EQUILIBRIUM",
+        "contact": false,
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Em_r00_d000.csv",
+          "rows": 9161,
+          "size_bytes": 725492,
+          "sha256": "176fba9597a4cc17058e3d7910112037624c3d8de749629b57a858a35716d94e"
+        }
+      },
+      {
+        "source_table": "version_2/validation/chua_fractional_arctan_c590/hiddenness_scaled_rows.csv",
+        "probe_id": "E-|r00|d001",
+        "equilibrium": "E-",
+        "radius": 1e-05,
+        "initial_state": [
+          -4.649395513460388,
+          -0.0017970022680715836,
+          4.647608511192317
+        ],
+        "status": "converged_equilibrium_early",
+        "category": "EQUILIBRIUM",
+        "contact": false,
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Em_r00_d001.csv",
+          "rows": 9161,
+          "size_bytes": 725575,
+          "sha256": "c3c6f22a0544504e3322a54c6d231cab96b9c2cadee25ef283e2fba07862c7a4"
+        }
+      },
+      {
+        "source_table": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_rows.csv",
+        "probe_id": "E0|r00|d000",
+        "equilibrium": "E0",
+        "radius": 1.0,
+        "initial_state": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "status": "ok",
+        "category": "OTHER",
+        "contact": false,
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d000.csv",
+          "rows": 36001,
+          "size_bytes": 2755477,
+          "sha256": "f4f3d1b2c82332b45c615986eeba14b835d5ce382b265a8162e3c9e538324b7c"
+        }
+      },
+      {
+        "source_table": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_rows.csv",
+        "probe_id": "E+|r00|d000",
+        "equilibrium": "E+",
+        "radius": 1.0,
+        "initial_state": [
+          3.6494055134603878,
+          0.0017970022680715836,
+          -4.647608511192317
+        ],
+        "status": "ok",
+        "category": "OTHER",
+        "contact": false,
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_Ep_r00_d000.csv",
+          "rows": 36001,
+          "size_bytes": 2794100,
+          "sha256": "e0f7d2945368f3260a23411a23131123d1c0fb755588ff37d53d28fb9213cc83"
+        }
+      },
+      {
+        "source_table": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_rows.csv",
+        "probe_id": "E-|r00|d000",
+        "equilibrium": "E-",
+        "radius": 1.0,
+        "initial_state": [
+          -5.649405513460388,
+          -0.0017970022680715836,
+          4.647608511192317
+        ],
+        "status": "ok",
+        "category": "OTHER",
+        "contact": false,
+        "trajectory": {
+          "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_Em_r00_d000.csv",
+          "rows": 36001,
+          "size_bytes": 2795511,
+          "sha256": "d602bd5903a6e7af30cff8eb6b635f2e32e9ffb3ac9ff2ecba12fa5f9104ef74"
+        }
+      }
+    ]
+  },
+  "outputs_sha256": {
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_00000_E0.csv": "3bf8ca4b32893dc0ebb87b5ddb6df98a9ee15241012eda6eeea8c07d2be9a8ee",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_08800_Ep.csv": "2d036c9bb3cd7d5d44d802ad803bc5fd5cc592e0f8dc3058b99171f57e53bbd3",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_08801_Ep.csv": "1a5a876c7385ba01ad759e56ed7970e69fc9959253699f87dfa9059e646b16c4",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_12350_Ep.csv": "0b374a2be638b9990a60630509b74a053c2e6bad7536e439380e7289d119ac52",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_13407_Ep.csv": "08a314930a5bbc42be6f92d6e6c9ce97d917f5652aea7b709160836bc122d395",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_17600_Em.csv": "75fd0113cfa01a51e2ca6b2fc2ea11392b68137cfe27e1c4135afe0f9c5ce874",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_17602_Em.csv": "6c077249e9886f47cb46852fddf43e86b764df04229affc4435549d2a1803a60",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_21163_Em.csv": "55f200161b5aaaf37d38174f3a7d7ceb2f6f5b955e6b341940b99d295e9645e4",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_22330_Em.csv": "9eb6c4ebbc87e8dc48e29a4cd989b247e42f5b73f48522f8c573d37582e389ae",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d194.csv": "0d3c8f04227c7f6919ba3e01ee33dba1ad31f45edf6a2a1d9a8d7b5b5d8cb9b9",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d228.csv": "10047741db4cde747fb3109b6f4b83fff84349ef9a891ac98d058dcc6bff3382",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Ep_r00_d000.csv": "23e0c068474346036553318520250aa1a10273510367f80833c17cb55d084727",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Ep_r00_d001.csv": "2600a4eb633ed762197e4e8f2d9b6c58e00135952011b52a0e343ca73814c6b7",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Em_r00_d000.csv": "176fba9597a4cc17058e3d7910112037624c3d8de749629b57a858a35716d94e",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Em_r00_d001.csv": "c3c6f22a0544504e3322a54c6d231cab96b9c2cadee25ef283e2fba07862c7a4",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d000.csv": "f4f3d1b2c82332b45c615986eeba14b835d5ce382b265a8162e3c9e538324b7c",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_Ep_r00_d000.csv": "e0f7d2945368f3260a23411a23131123d1c0fb755588ff37d53d28fb9213cc83",
+    "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_Em_r00_d000.csv": "d602bd5903a6e7af30cff8eb6b635f2e32e9ffb3ac9ff2ecba12fa5f9104ef74"
+  }
+}

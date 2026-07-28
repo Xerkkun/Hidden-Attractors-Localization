@@ -1363,32 +1363,14 @@ La semilla de referencia es
 (5.8642449791,\;1.5847111486,\;3.2155806478).
 \]
 
-La búsqueda se documenta como una ruta dinámica: exploración inicial en orden entero, selección del índice 590, traslado al contrato fraccionario \(q=0.9999\) y simulación ABM Caputo con memoria completa. La rama DF fraccionaria centrada del ejemplo arctan está auditada como semilla heurística, pero no es el origen directo del candidato c590.
+La búsqueda se documenta como una ruta dinámica: exploración global de \(2400\) casos en orden entero, refinamiento local de \(1000\) casos, selección del índice 590, barrido de problemas de valor inicial Caputo en \(q\), extracción de estados interiores y reinicios sesgados. Cada corrida fraccionaria acumula memoria completa desde su propio tiempo inicial; la historia no se transfiere entre órdenes ni entre reinicios. Entre los estados acotados en los tres pasos, la semilla 9 se selecciona por su apoyo robusto en la prueba 0--1 para \(h=0.0025\) y \(h=0.005\).
 
-El resumen vigente usa radios \(10^{-5},10^{-4},10^{-3},10^{-2},0.03,0.1,0.3,1,2\). Para los radios locales hasta \(r=0.3\) registra \(8400\) pruebas finitas y cero contactos alrededor de todos los equilibrios, por lo que el candidato c590 se promueve como \codepath{hiddenness_supported_under_tested_local_radii}. Los contactos aparecen unicamente en los radios macroscopicos extendidos \(r=1\) y \(r=2\), con \(610\) contactos en \(5100\) pruebas; esos radios se conservan como auditoria extendida de cuenca y no como la frontera de la afirmacion local promovida.
+El resumen vigente usa radios \(10^{-5},10^{-4},10^{-3},10^{-2},0.03,0.1,0.3,1,2\). Para los radios locales hasta \(r=0.3\) registra \(8400\) pruebas y cero contactos alrededor de todos los equilibrios: \(8396\) trayectorias completan el horizonte y cuatro llegan anticipadamente a un equilibrio. El candidato c590 se promueve como \codepath{hiddenness_supported_under_tested_local_radii}. Los radios macroscópicos \(r=1\) y \(r=2\) suman \(610\) contactos en \(5100\) pruebas. En \(r=2\), \(2569\) trayectorias completan el horizonte y \(131\) alcanzan el umbral de divergencia declarado.
 
 \begin{figure}[H]
 \centering
 \reportinclude[width=0.74\textwidth]{chua_frac_arctan_c590_fig00_initial_seed.pdf}
 \caption{Arctan c590: semilla de búsqueda, trayectoria objetivo y equilibrios.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\reportinclude[width=0.78\textwidth]{chua_frac_arctan_c590_fig01_transfer_components.pdf}
-\caption{Arctan c590: componentes de la transferencia fraccionaria usada como diagnóstico de semilla.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\reportinclude[width=0.88\textwidth]{chua_frac_arctan_c590_fig02a_linearized_vs_original.pdf}
-\caption{Arctan c590: comparación entre reconstrucción linealizada, etapa no lineal y candidato final.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\reportinclude[width=0.74\textwidth]{chua_frac_arctan_c590_fig02b_continuation_path.pdf}
-\caption{Arctan c590: camino de continuación disponible para auditoría.}
 \end{figure}
 
 \begin{figure}[H]

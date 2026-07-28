@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "candidate_dir": "outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623",
+  "matrix": "hiddenness_matrix_r003.json",
+  "summary": "candidate_summary_r003.json",
+  "rows": "hiddenness_r003_rows.csv",
+  "checkpoint": "hiddenness_r003_checkpoint.jsonl",
+  "workers": 12,
+  "radii": [
+    0.03
+  ],
+  "samples_per_radius": [
+    500
+  ],
+  "tests": 1500,
+  "integrator": "abm",
+  "memory_mode": "full",
+  "h": 0.005,
+  "t_final": 180.0,
+  "t_burn": 90.0
+}

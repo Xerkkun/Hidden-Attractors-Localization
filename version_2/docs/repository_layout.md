@@ -29,7 +29,7 @@ Scripts in `tools/legacy/` are preserved for historical compatibility and are fo
 
 `validation/` is reserved for promoted evidence: stage summaries, selected CSV tables, short stage notes, manifests, the final validation report, and promoted system verification outputs (such as `validation/chua_integer_saturation/`, `validation/chua_fractional_saturation/`, and `validation/chua_fractional_arctan/`).
 
-`figure_scripts/` is the centralized repository for all active figure generation scripts. It holds scripts like `chua_arctan_wu2023_plot_basins.py` and `chua_nonsmooth_memory_matrix_run_figure_tasks.py`.
+`figure_scripts/` is the centralized repository for all active figure generation scripts. It holds scripts like `chua_arctan_wu2023_plot_basins.py`.
 
 ## Release packaging layout
 

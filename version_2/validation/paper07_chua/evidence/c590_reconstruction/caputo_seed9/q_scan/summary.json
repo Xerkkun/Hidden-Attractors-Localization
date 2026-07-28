@@ -1,0 +1,239 @@
+{
+  "schema_version": "2.0",
+  "stage": "caputo_q_scan",
+  "contract": {
+    "q_values": [
+      0.9995,
+      0.9998,
+      0.9999,
+      0.99995
+    ],
+    "h": 0.005,
+    "t_final": 300.0,
+    "t_burn": 150.0,
+    "zero_one_samples": [
+      2000,
+      4000,
+      8000
+    ]
+  },
+  "rows": [
+    {
+      "q": 0.9995,
+      "h": 0.005,
+      "status": "ok",
+      "end_time": 299.9999999997997,
+      "max_norm": 18.691342814145525,
+      "range": [
+        15.030087911298196,
+        5.831490974497935,
+        34.92018560173401
+      ],
+      "t_final": 300.0,
+      "t_burn": 150.0,
+      "seed": [
+        7.6733768928786095,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "screen_label": "regular_periodic_rejected",
+      "score": -0.06204002867425351,
+      "zero_one_K_robust_median": -0.030045803207599094,
+      "zero_one_K_by_sample_count": [
+        -0.030045803207599094,
+        -0.02867744429458347,
+        -0.038545843346455014
+      ],
+      "zero_one_states": [
+        "zero_one_inconclusive",
+        "zero_one_regular_candidate",
+        "zero_one_regular_candidate"
+      ],
+      "zero_one_chaotic_votes": 0,
+      "spectral_state": "dominant_periodic_peak",
+      "spectral_entropy_mean": 0.1411055979477958,
+      "peak_dominance_max": 0.6177426184954955,
+      "periodicity_label": "regular_periodic_rejected",
+      "poincare_crossings": 95,
+      "poincare_normalized_spread": 0.03723763050323413,
+      "state_range": [
+        15.030087911298196,
+        5.831490974497935,
+        34.92018560173401
+      ],
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5700109286314992
+      },
+      "trajectory": "q0p9995.npz"
+    },
+    {
+      "q": 0.9998,
+      "h": 0.005,
+      "status": "ok",
+      "end_time": 299.9999999997997,
+      "max_norm": 18.69841872843603,
+      "range": [
+        15.114403255428089,
+        5.970310693746605,
+        35.418353933156865
+      ],
+      "t_final": 300.0,
+      "t_burn": 150.0,
+      "seed": [
+        7.6733768928786095,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "screen_label": "inconclusive_nonperiodic",
+      "score": 0.29107595376994133,
+      "zero_one_K_robust_median": 0.01659440443344016,
+      "zero_one_K_by_sample_count": [
+        0.01659440443344016,
+        0.019650053340366548,
+        0.0034901833104350336
+      ],
+      "zero_one_states": [
+        "zero_one_inconclusive",
+        "zero_one_regular_candidate",
+        "zero_one_regular_candidate"
+      ],
+      "zero_one_chaotic_votes": 0,
+      "spectral_state": "quasiperiodic_candidate",
+      "spectral_entropy_mean": 0.2659213420606965,
+      "peak_dominance_max": 0.33064784355317045,
+      "periodicity_label": "chaotic_candidate_pending_robustness",
+      "poincare_crossings": 27,
+      "poincare_normalized_spread": 0.09281815923051485,
+      "state_range": [
+        15.114403255428089,
+        5.970310693746605,
+        35.418353933156865
+      ],
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5704821675295375
+      },
+      "trajectory": "q0p9998.npz"
+    },
+    {
+      "q": 0.9999,
+      "h": 0.005,
+      "status": "ok",
+      "end_time": 299.9999999997997,
+      "max_norm": 18.793381687561286,
+      "range": [
+        15.211819466965942,
+        5.997473609306352,
+        35.768404999507254
+      ],
+      "t_final": 300.0,
+      "t_burn": 150.0,
+      "seed": [
+        7.6733768928786095,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "screen_label": "inconclusive_nonperiodic",
+      "score": 0.25786979879124017,
+      "zero_one_K_robust_median": 0.00018209927303285662,
+      "zero_one_K_by_sample_count": [
+        0.004604115691036132,
+        0.00018209927303285662,
+        -0.0009653275862703942
+      ],
+      "zero_one_states": [
+        "zero_one_inconclusive",
+        "zero_one_inconclusive",
+        "zero_one_regular_candidate"
+      ],
+      "zero_one_chaotic_votes": 0,
+      "spectral_state": "quasiperiodic_candidate",
+      "spectral_entropy_mean": 0.28916808071981764,
+      "peak_dominance_max": 0.32148853754363216,
+      "periodicity_label": "chaotic_candidate_pending_robustness",
+      "poincare_crossings": 21,
+      "poincare_normalized_spread": 0.10295774253254228,
+      "state_range": [
+        15.211819466965942,
+        5.997473609306352,
+        35.768404999507254
+      ],
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.570639247162217
+      },
+      "trajectory": "q0p9999.npz"
+    },
+    {
+      "q": 0.99995,
+      "h": 0.005,
+      "status": "diverged",
+      "end_time": 208.1349999998832,
+      "max_norm": 300.07182789256484,
+      "range": [
+        136.4669514041891,
+        134.13266533595242,
+        598.8545573878534
+      ],
+      "t_final": 300.0,
+      "t_burn": 150.0,
+      "seed": [
+        7.6733768928786095,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "screen_label": "inconclusive_nonperiodic",
+      "score": 0.20566492104544135,
+      "zero_one_K_robust_median": 0.001786578306364059,
+      "zero_one_K_by_sample_count": [
+        -0.0009030793131588818,
+        0.001786578306364059,
+        0.002110744112892584
+      ],
+      "zero_one_states": [
+        "zero_one_regular_candidate",
+        "zero_one_regular_candidate",
+        "zero_one_regular_candidate"
+      ],
+      "zero_one_chaotic_votes": 0,
+      "spectral_state": "spectral_inconclusive",
+      "spectral_entropy_mean": 0.10119001595850098,
+      "peak_dominance_max": 0.5200546631559555,
+      "periodicity_label": "nonperiodic_candidate",
+      "poincare_crossings": 39,
+      "poincare_normalized_spread": 0.03692367430720392,
+      "state_range": [
+        136.4669514041891,
+        134.13266533595242,
+        598.8545573878534
+      ],
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.570717786978557
+      },
+      "trajectory": "q0p99995.npz"
+    }
+  ],
+  "recorded_selected_q": 0.9999
+}

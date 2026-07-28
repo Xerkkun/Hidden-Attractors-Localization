@@ -1,0 +1,150 @@
+{
+  "contract_version": 3,
+  "created_utc": "2026-07-28T07:28:12.409891+00:00",
+  "system": {
+    "system_id": "chua-nonsmooth",
+    "parameters": {
+      "alpha": 8.4562,
+      "beta": 12.0732,
+      "gamma": 0.0052,
+      "m0": -0.1768,
+      "m1": -1.1468
+    },
+    "equilibria": {
+      "E0": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "E+": [
+        6.5883078865388685,
+        0.002836402256093697,
+        -6.585471484282774
+      ],
+      "E-": [
+        -6.5883078865388685,
+        -0.002836402256093697,
+        6.585471484282774
+      ]
+    }
+  },
+  "candidate": {
+    "q": 0.9998,
+    "A": 4.5778827210231485,
+    "c": 2.776397003273905,
+    "omega": 2.04028605107949,
+    "residual_norm": 4.549007847495242e-16,
+    "seed": [
+      7.354279724297053,
+      0.29096877878449423,
+      -9.316054818665608
+    ],
+    "continuation_endpoint": [
+      0.8223107098499502,
+      1.4652727039952436,
+      1.2923082502480394
+    ]
+  },
+  "integrator": {
+    "operator": "Caputo",
+    "method": "ABM-PECE",
+    "q": 0.9998,
+    "h": 0.01,
+    "memory_mode": "full",
+    "t_final": 200.0,
+    "t_burn": 50.0,
+    "native_backend_required": true,
+    "hard_divergence_norm": 120.0,
+    "early_stopping": {
+      "enabled": true,
+      "equilibrium_enabled": true,
+      "divergence_enabled": true,
+      "equilibrium_min_time": 25.0,
+      "equilibrium_tol": 0.001,
+      "equilibrium_derivative_tol": 0.0001,
+      "equilibrium_consecutive_steps": 50,
+      "divergence_norm": 80.0,
+      "divergence_consecutive_steps": 5,
+      "divergence_growth_factor": 1.25
+    }
+  },
+  "sampling": {
+    "mode": "ball_random",
+    "generator": "sample_ball; NumPy default_rng (PCG64)",
+    "base_seed": 42,
+    "seed_schedule": "base_seed + equilibrium_index*100 + radius_index*10",
+    "radius_plan_nominal": [
+      [
+        1e-05,
+        80
+      ],
+      [
+        3e-05,
+        120
+      ],
+      [
+        0.0001,
+        160
+      ],
+      [
+        0.0003,
+        240
+      ],
+      [
+        0.001,
+        400
+      ],
+      [
+        0.003,
+        600
+      ],
+      [
+        0.01,
+        800
+      ],
+      [
+        0.03,
+        1000
+      ],
+      [
+        0.1,
+        1200
+      ],
+      [
+        0.3,
+        1200
+      ],
+      [
+        1.0,
+        1500
+      ],
+      [
+        2.0,
+        1500
+      ]
+    ],
+    "max_per_radius_override": 0,
+    "samples_total": 26400,
+    "plan_file": "extended_probe_plan.csv",
+    "plan_sha256": "6c07793e653fe116b3878fb0674ac778e313763781638d4eeed47d92e147be93"
+  },
+  "classification": {
+    "equilibrium_tol": 0.5,
+    "target_match_metric": "nn_percentile",
+    "target_match_tol": 0.5,
+    "target_match_percentile": 90.0,
+    "target_cloud_source": "../reference_trajectory_posttransient.csv",
+    "target_cloud_points_before_subsampling": 20001,
+    "target_cloud_subsampling": "default_rng(0).choice(max_points=2000, replace=False)",
+    "probe_tail_subsampling": "default_rng(0).choice(max_points=2000, replace=False)",
+    "nearest_neighbor_implementation": "SciPy cKDTree exact query",
+    "target_cloud_sample_file": "target_cloud_nn_sample.csv",
+    "target_cloud_sample_sha256": "be399e79cd6bcbc3f24edd6d6bc2f6955c413fec801d39a8acd2446ca1138fa3"
+  },
+  "termination": {
+    "rule": "Process radii in ascending order across all equilibria; after the first radius with one or more target contacts, finish every planned probe at that radius and omit all larger radii from the declared experiment.",
+    "stop_after_first_contact_radius": true,
+    "radius_group_scope": "all equilibria"
+  },
+  "contract_sha256": "ed11d92fe56e0bbfeedfda84dcb3a27738871b6e171cfaa0c7974ce87e24e44c"
+}

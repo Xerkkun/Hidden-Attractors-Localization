@@ -4,14 +4,14 @@
 # Configuración completa y reproducible para el primer ejemplo exitoso de la
 # librería hidden_attractors_fo.
 #
-# Este YAML es leído por todos los pasos del ejemplo:
-#   step1_centered_reference.py
-#   step2_biased_df_search.py
-#   step3_hiddenness_verification.py
-#   step4_extended_hiddenness.py
-#   step5_summarize_and_plot.py
+# Punto de entrada del ejemplo completo:
+#   python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --all
 #
-# REFERENCIA HISTÓRICA: Los scripts temporales originales se encuentran en el archivo histórico y están excluidos del flujo activo.
+# Sondeo extendido usado en el Paper 07:
+#   python tools/rerun_paper07_nonsmooth_hiddenness.py
+#
+# El control bibliográfico de Danca (2017) se conserva por separado en
+# configs/examples/chua_nonsmooth_exact_danca_non_reproducible.yaml.
 # =============================================================================
 
 # ── Metadatos del experimento ─────────────────────────────────────────────────
@@ -22,8 +22,9 @@ experiment:
     fraccionario no suave (saturación bilineal) con q = 0.9998 usando la
     Función Descriptiva Sesgada (bias DC ≠ 0) y continuación afín Caputo ABM.
     Los candidatos principales son compatibles con ocultedad bajo el
-    protocolo local de barrido de esferas (radios 1e-5 … 1e-2, 225 muestras/equilibrio).
-    Nota: no representa una reproducción de Danca (2017) debido a la falta de reproducibilidad de dicho artículo.
+    protocolo local de barrido de esferas (radios 1e-5 … 1e-2,
+    225 muestras/equilibrio). La reconstrucción bibliográfica de Danca (2017)
+    constituye un control independiente con su propio contrato numérico.
   output_dir: "outputs/example_chua_nonsmooth_biased_hidden_attractor"
   run_id: "auto"
   random_seed: 42
@@ -123,9 +124,13 @@ step3_hiddenness:
 
 # ── Paso 4: Verificación extendida (multiprocessing) ─────────────────────────
 # Test masivo para el candidato confirmado (c ≈ +2.776).
-# Extiende los radios hasta r = 2.0 con densidad masiva de muestras.
+# Define un plan máximo hasta r = 2.0 con densidad creciente de muestras.
 step4_extended_hiddenness:
-  # Par (radio, n_muestras) — total ~9610 probes por equilibrio
+  # Par (radio, n_muestras) — 8,800 sondas por equilibrio,
+  # hasta 26,400 problemas de valor inicial para los tres equilibrios.
+  # Los radios se procesan en orden ascendente. Al aparecer el primer
+  # contacto se completa ese radio en los tres equilibrios y se detiene el
+  # protocolo, de modo que la frontera observada queda delimitada.
   radius_plan:
     - [1.0e-5,  80]
     - [3.0e-5,  120]
@@ -139,13 +144,28 @@ step4_extended_hiddenness:
     - [3.0e-1,  1200]
     - [1.0,     1500]
     - [2.0,     1500]
-  sampling_mode: "ball_random"   # volumen completo del ball
+  sampling_mode: "ball_random"   # volumen completo de la bola
   t_final_probe: 200.0
   t_burn_probe:  50.0
   equilibrium_tol: 0.5
   match_metric: "nn_percentile"
   match_tol: 0.5
   match_percentile: 90.0
+  stop_after_first_contact_radius: true
+  # Paros causales reproducibles. La convergencia se acepta sólo después de
+  # una ventana mínima; la divergencia temprana exige crecimiento sostenido.
+  early_stopping:
+    enabled: true
+    equilibrium_enabled: true
+    divergence_enabled: true
+    equilibrium_min_time: 25.0
+    equilibrium_tol: 1.0e-3
+    equilibrium_derivative_tol: 1.0e-4
+    equilibrium_consecutive_steps: 50
+    divergence_norm: 80.0
+    divergence_consecutive_steps: 5
+    divergence_growth_factor: 1.25
+    hard_divergence_norm: 120.0
   # Paralelismo
   n_workers: "auto"   # "auto" = cpu_count - 2, mínimo 1
   # Candidato a verificar

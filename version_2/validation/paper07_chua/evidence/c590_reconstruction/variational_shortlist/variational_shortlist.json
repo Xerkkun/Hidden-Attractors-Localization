@@ -1,0 +1,1162 @@
+{
+  "schema_version": "2.0",
+  "stage": "variational_shortlist",
+  "status": "completed_recorded_regression_matched",
+  "source_screen": "integer_local/screen.json",
+  "contract": {
+    "order": 1.0,
+    "integrator": "fixed_step_vectorized_RK4_Benettin_QR",
+    "source_rows": "top 30 rows with screen_label=inconclusive_nonperiodic, sorted by the archived diagnostic score in descending order",
+    "candidates": 30,
+    "h": 0.005,
+    "state_burn_steps": 40000,
+    "state_burn_time": 200.0,
+    "measurement_steps": 60000,
+    "measurement_time": 300.0,
+    "reorthonormalize_every_steps": 10,
+    "recorded_c590_largest_exponent": 0.4699043683192531
+  },
+  "shortlist_rule": "screen_label == inconclusive_nonperiodic; descending score; first 30 rows",
+  "selection_rule": "maximum largest integer variational exponent among bounded, distinct rows with unstable E0 and stable E+ and E-",
+  "rows": [
+    {
+      "source_i": 314,
+      "source_score": 0.46543603975183967,
+      "source_zero_one_K_robust_median": 0.09018696235602122,
+      "parameters": {
+        "alpha": 20.781499011744078,
+        "beta": 26.459115382664763,
+        "gamma": 0.003438105751576884,
+        "a1": -0.0862280659512001,
+        "a2": -2.8253695305219795,
+        "rho": 1.6518936176808736
+      },
+      "seed": [
+        8.354048863857283,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        0.0055533628060727225,
+        0.005896630399482417,
+        -19.98508624593144
+      ],
+      "largest_integer_variational_exponent": 0.0055533628060727225
+    },
+    {
+      "source_i": 111,
+      "source_score": 0.4405090314954876,
+      "source_zero_one_K_robust_median": 0.11481239794998002,
+      "parameters": {
+        "alpha": 16.040538865954442,
+        "beta": 18.80261730168874,
+        "gamma": 0.005056176164069532,
+        "a1": -0.058712927123087094,
+        "a2": -2.783215591785164,
+        "rho": 1.6010727535753926
+      },
+      "seed": [
+        8.619221062367654,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        -0.010305104272411318,
+        -0.002709996384956714,
+        -15.866889221030569
+      ],
+      "largest_integer_variational_exponent": -0.010305104272411318
+    },
+    {
+      "source_i": 912,
+      "source_score": 0.4268141037369064,
+      "source_zero_one_K_robust_median": 0.0803253839349162,
+      "parameters": {
+        "alpha": 14.301550166968562,
+        "beta": 17.213075420334256,
+        "gamma": 0.005954608099981995,
+        "a1": -0.11863432396394988,
+        "a2": -3.21998944119704,
+        "rho": 1.9153970139301155
+      },
+      "seed": [
+        7.204772639633813,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        0.4057369892703189,
+        0.005047288635147529,
+        -11.400356017035367
+      ],
+      "largest_integer_variational_exponent": 0.4057369892703189
+    },
+    {
+      "source_i": 445,
+      "source_score": 0.416450267662722,
+      "source_zero_one_K_robust_median": 0.06602008473396362,
+      "parameters": {
+        "alpha": 15.202468605129315,
+        "beta": 16.61493481921154,
+        "gamma": 0.006179389204498284,
+        "a1": -0.0583326001205693,
+        "a2": -3.1129148470422474,
+        "rho": 1.8366759851206098
+      },
+      "seed": [
+        7.513573494616031,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        -0.0036722008367909183,
+        -0.010566552732574844,
+        -15.112647523401101
+      ],
+      "largest_integer_variational_exponent": -0.0036722008367909183
+    },
+    {
+      "source_i": 11,
+      "source_score": 0.40406201227048044,
+      "source_zero_one_K_robust_median": 0.06674922759411966,
+      "parameters": {
+        "alpha": 16.189449837422952,
+        "beta": 21.115952092222585,
+        "gamma": 0.006846497974213717,
+        "a1": -0.15047084881169778,
+        "a2": -3.1030480124397357,
+        "rho": 1.9871072162245598
+      },
+      "seed": [
+        6.9447687006137295,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        0.28927727959456534,
+        0.013038986303274205,
+        -13.378621086961854
+      ],
+      "largest_integer_variational_exponent": 0.28927727959456534
+    },
+    {
+      "source_i": 887,
+      "source_score": 0.3945156047560177,
+      "source_zero_one_K_robust_median": 0.04124839334745304,
+      "parameters": {
+        "alpha": 23.46686992316742,
+        "beta": 26.56409802466917,
+        "gamma": 0.004396596348059251,
+        "a1": -0.0485836380711159,
+        "a2": -3.211601692563657,
+        "rho": 2.2786054089528855
+      },
+      "seed": [
+        6.056336014027843,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        0.490602658871678,
+        -0.002971166387880405,
+        -19.48981452083002
+      ],
+      "largest_integer_variational_exponent": 0.490602658871678
+    },
+    {
+      "source_i": 637,
+      "source_score": 0.3782506489986682,
+      "source_zero_one_K_robust_median": 0.04312536247236793,
+      "parameters": {
+        "alpha": 21.138883909459402,
+        "beta": 22.831231376818355,
+        "gamma": 0.005138333804908944,
+        "a1": -0.05127658083455948,
+        "a2": -3.7349820002242144,
+        "rho": 1.9000080499455752
+      },
+      "seed": [
+        7.263127122222085,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        -0.004937703978098824,
+        -0.0026286107994680855,
+        -20.922172908768374
+      ],
+      "largest_integer_variational_exponent": -0.004937703978098824
+    },
+    {
+      "source_i": 709,
+      "source_score": 0.3631742818385313,
+      "source_zero_one_K_robust_median": 0.028637682355487377,
+      "parameters": {
+        "alpha": 17.198928335354573,
+        "beta": 16.525509374582054,
+        "gamma": 0.006500500413438773,
+        "a1": 0.0109796070082406,
+        "a2": -3.0751761740616526,
+        "rho": 1.8356546697694907
+      },
+      "seed": [
+        7.517753871283924,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        0.06838070049597561,
+        -0.02714504714919818,
+        -17.29283230379535
+      ],
+      "largest_integer_variational_exponent": 0.06838070049597561
+    },
+    {
+      "source_i": 703,
+      "source_score": 0.3583189771755516,
+      "source_zero_one_K_robust_median": 0.04235192612689055,
+      "parameters": {
+        "alpha": 18.33034031299219,
+        "beta": 17.57243634744288,
+        "gamma": 0.009801237438639745,
+        "a1": 0.010862096297508264,
+        "a2": -2.9272487430426373,
+        "rho": 2.0142372523102616
+      },
+      "seed": [
+        6.851228664434575,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        0.22053198730296078,
+        0.000991831458356926,
+        -16.587574416138366
+      ],
+      "largest_integer_variational_exponent": 0.22053198730296078
+    },
+    {
+      "source_i": 590,
+      "source_score": 0.3512890240108101,
+      "source_zero_one_K_robust_median": 0.01819422213409801,
+      "parameters": {
+        "alpha": 21.849356906616716,
+        "beta": 19.081840840860202,
+        "gamma": 0.007378011979156531,
+        "a1": 0.04228979343578827,
+        "a2": -3.3367815123026694,
+        "rho": 1.7984259332820332
+      },
+      "seed": [
+        7.6733768928786095,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": true,
+      "integer_variational_exponents": [
+        0.4699043683192531,
+        0.0010414593910687089,
+        -19.049169371639188
+      ],
+      "largest_integer_variational_exponent": 0.4699043683192531
+    },
+    {
+      "source_i": 6,
+      "source_score": 0.3138723066622534,
+      "source_zero_one_K_robust_median": 0.014157782468794917,
+      "parameters": {
+        "alpha": 20.58195697773446,
+        "beta": 19.968054528408814,
+        "gamma": 0.003722612101190488,
+        "a1": -0.008638092595213052,
+        "a2": -3.7934314621333556,
+        "rho": 2.3771899843211326
+      },
+      "seed": [
+        5.8051733731921065,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        0.2730385290786014,
+        0.0024242978432315572,
+        -18.614606140612043
+      ],
+      "largest_integer_variational_exponent": 0.2730385290786014
+    },
+    {
+      "source_i": 305,
+      "source_score": 0.29685787382327256,
+      "source_zero_one_K_robust_median": 0.005583285754313662,
+      "parameters": {
+        "alpha": 16.066221151542702,
+        "beta": 19.18001194399477,
+        "gamma": 0.006354239753912484,
+        "a1": -0.024088538564191304,
+        "a2": -3.4022576518790415,
+        "rho": 2.1457229870874133
+      },
+      "seed": [
+        6.431398686151938,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        0.15047674475171172,
+        -0.0027481395722503852,
+        -14.607275152005547
+      ],
+      "largest_integer_variational_exponent": 0.15047674475171172
+    },
+    {
+      "source_i": 504,
+      "source_score": 0.29641380436155784,
+      "source_zero_one_K_robust_median": 0.006397967820865385,
+      "parameters": {
+        "alpha": 18.574235292364314,
+        "beta": 21.11837455870942,
+        "gamma": 0.002903920668492593,
+        "a1": 0.019989580589039605,
+        "a2": -3.753684565406892,
+        "rho": 1.6714728165096537
+      },
+      "seed": [
+        8.256191703324838,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": true,
+      "integer_variational_exponents": [
+        0.18229914335986655,
+        -0.001230653576974388,
+        -16.934689674408126
+      ],
+      "largest_integer_variational_exponent": 0.18229914335986655
+    },
+    {
+      "source_i": 918,
+      "source_score": 0.2942874461327467,
+      "source_zero_one_K_robust_median": 0.014592434092862915,
+      "parameters": {
+        "alpha": 22.410311970995355,
+        "beta": 20.695512648433347,
+        "gamma": 0.006707389134739463,
+        "a1": 0.004106590302829765,
+        "a2": -3.7178660845695735,
+        "rho": 2.305233402423804
+      },
+      "seed": [
+        5.986378639789876,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        0.24581268695287065,
+        -0.0033027620897544264,
+        -20.43070862735987
+      ],
+      "largest_integer_variational_exponent": 0.24581268695287065
+    },
+    {
+      "source_i": 217,
+      "source_score": 0.2935877959553049,
+      "source_zero_one_K_robust_median": -0.01403260792661961,
+      "parameters": {
+        "alpha": 14.726861170319527,
+        "beta": 20.881485093958833,
+        "gamma": 0.004620465231711921,
+        "a1": -0.012872718940482489,
+        "a2": -3.3339398719687616,
+        "rho": 1.6375232207067403
+      },
+      "seed": [
+        8.42736141112188,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": true,
+      "integer_variational_exponents": [
+        0.08752171930246579,
+        0.0018172167192922314,
+        -13.380474520361872
+      ],
+      "largest_integer_variational_exponent": 0.08752171930246579
+    },
+    {
+      "source_i": 464,
+      "source_score": 0.28521475584833955,
+      "source_zero_one_K_robust_median": -0.0024755993386123176,
+      "parameters": {
+        "alpha": 19.71934966486973,
+        "beta": 22.62328794286891,
+        "gamma": 0.002692283659562938,
+        "a1": 0.013676477632527568,
+        "a2": -3.159221866803394,
+        "rho": 2.108651425522176
+      },
+      "seed": [
+        6.544467157051638,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": true,
+      "integer_variational_exponents": [
+        0.12169762480671817,
+        0.0009842430731896656,
+        -18.391575007414477
+      ],
+      "largest_integer_variational_exponent": 0.12169762480671817
+    },
+    {
+      "source_i": 911,
+      "source_score": 0.2770854317600645,
+      "source_zero_one_K_robust_median": -0.009735276482168787,
+      "parameters": {
+        "alpha": 19.18373363414619,
+        "beta": 19.951718555335425,
+        "gamma": 0.007605372390157225,
+        "a1": 0.03365529112631497,
+        "a2": -3.3984397515300695,
+        "rho": 1.6408388421583782
+      },
+      "seed": [
+        8.41033235283931,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": true,
+      "integer_variational_exponents": [
+        0.16571550400232068,
+        -0.001988851378052113,
+        -17.74566567760143
+      ],
+      "largest_integer_variational_exponent": 0.16571550400232068
+    },
+    {
+      "source_i": 416,
+      "source_score": 0.27608124200525025,
+      "source_zero_one_K_robust_median": -0.002110860440428231,
+      "parameters": {
+        "alpha": 17.370648697859387,
+        "beta": 17.639356081397104,
+        "gamma": 0.004178536337950837,
+        "a1": 0.0015902266201298886,
+        "a2": -3.750321134639422,
+        "rho": 1.9238724948002206
+      },
+      "seed": [
+        7.173032535834983,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": true,
+      "integer_variational_exponents": [
+        0.21474084804538707,
+        -0.001157280775838222,
+        -15.77164362932604
+      ],
+      "largest_integer_variational_exponent": 0.21474084804538707
+    },
+    {
+      "source_i": 470,
+      "source_score": 0.2752725975669509,
+      "source_zero_one_K_robust_median": -0.013976709917479851,
+      "parameters": {
+        "alpha": 20.53655618705789,
+        "beta": 27.792582310401936,
+        "gamma": 0.007538117688789151,
+        "a1": 0.011242872022203025,
+        "a2": -3.203526421026958,
+        "rho": 1.929915843072528
+      },
+      "seed": [
+        7.150570865323159,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": true,
+      "integer_variational_exponents": [
+        0.1307307678422565,
+        9.61519293520291e-05,
+        -18.703471310299186
+      ],
+      "largest_integer_variational_exponent": 0.1307307678422565
+    },
+    {
+      "source_i": 67,
+      "source_score": 0.2703426064527287,
+      "source_zero_one_K_robust_median": -0.009190673099703497,
+      "parameters": {
+        "alpha": 15.006729115454046,
+        "beta": 24.391486972548595,
+        "gamma": 0.005674783367682875,
+        "a1": -0.02680079863290305,
+        "a2": -2.765114221476034,
+        "rho": 1.8307716076724547
+      },
+      "seed": [
+        7.5378053396538,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": true,
+      "integer_variational_exponents": [
+        0.06874362917562413,
+        0.001842384873238992,
+        -13.494061188060446
+      ],
+      "largest_integer_variational_exponent": 0.06874362917562413
+    },
+    {
+      "source_i": 603,
+      "source_score": 0.26737438297338123,
+      "source_zero_one_K_robust_median": 0.002765406730200549,
+      "parameters": {
+        "alpha": 15.6298320204279,
+        "beta": 15.797146739636856,
+        "gamma": 0.0041207017969057775,
+        "a1": 0.027933896170041845,
+        "a2": -3.6265364771814217,
+        "rho": 1.6041570517287622
+      },
+      "seed": [
+        8.602648964531289,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": true,
+      "integer_variational_exponents": [
+        0.036131037290634695,
+        -0.003658837128057826,
+        -15.217461566970599
+      ],
+      "largest_integer_variational_exponent": 0.036131037290634695
+    },
+    {
+      "source_i": 170,
+      "source_score": 0.26736005863480194,
+      "source_zero_one_K_robust_median": -0.008387159035220932,
+      "parameters": {
+        "alpha": 17.311994049647378,
+        "beta": 19.843633448604812,
+        "gamma": 0.007651887018166181,
+        "a1": 0.0023895106269007163,
+        "a2": -2.8032014347796674,
+        "rho": 2.1716269406708286
+      },
+      "seed": [
+        6.3546826305889805,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": true,
+      "integer_variational_exponents": [
+        0.21137230502720536,
+        0.0018024124572179198,
+        -15.38912620759732
+      ],
+      "largest_integer_variational_exponent": 0.21137230502720536
+    },
+    {
+      "source_i": 608,
+      "source_score": 0.26383057780009717,
+      "source_zero_one_K_robust_median": -0.01684485039689081,
+      "parameters": {
+        "alpha": 16.061546971981414,
+        "beta": 17.7664761999894,
+        "gamma": 0.0035016106324887225,
+        "a1": 0.017379004949004663,
+        "a2": -2.86616423943424,
+        "rho": 2.17878868691773
+      },
+      "seed": [
+        6.3337945909396405,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": true,
+      "integer_variational_exponents": [
+        0.0399936950419254,
+        -0.006815264011400325,
+        -15.640920607694312
+      ],
+      "largest_integer_variational_exponent": 0.0399936950419254
+    },
+    {
+      "source_i": 125,
+      "source_score": 0.2630341931247473,
+      "source_zero_one_K_robust_median": 0.0028963960704219876,
+      "parameters": {
+        "alpha": 20.82107467334489,
+        "beta": 28.567193422996475,
+        "gamma": 0.005860604892833363,
+        "a1": -0.016561027475885948,
+        "a2": -3.6247220651597907,
+        "rho": 2.0091959299291355
+      },
+      "seed": [
+        6.868419248931451,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        0.18990392950021118,
+        -0.0016022242526025172,
+        -18.628527835378208
+      ],
+      "largest_integer_variational_exponent": 0.18990392950021118
+    },
+    {
+      "source_i": 104,
+      "source_score": 0.2357774369507928,
+      "source_zero_one_K_robust_median": 0.03273798727196733,
+      "parameters": {
+        "alpha": 19.624273674631183,
+        "beta": 19.339586804606252,
+        "gamma": 0.005911240512250221,
+        "a1": -0.012549291582208966,
+        "a2": -3.185189438334027,
+        "rho": 2.197218431757568
+      },
+      "seed": [
+        6.2806682305870245,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        0.39286485214421224,
+        0.0014154818635570172,
+        -17.064877215629778
+      ],
+      "largest_integer_variational_exponent": 0.39286485214421224
+    },
+    {
+      "source_i": 400,
+      "source_score": 0.2332479108864532,
+      "source_zero_one_K_robust_median": -0.018785239769585307,
+      "parameters": {
+        "alpha": 18.63317334636709,
+        "beta": 18.93514651500633,
+        "gamma": 0.007473400725210537,
+        "a1": 0.049797437683787915,
+        "a2": -3.757124007824618,
+        "rho": 1.4518469961231684
+      },
+      "seed": [
+        9.505133830802974,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "stable",
+          "E-": "stable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": true,
+      "integer_variational_exponents": [
+        -0.006880323984386515,
+        -0.006432586273490042,
+        -18.59093821170855
+      ],
+      "largest_integer_variational_exponent": -0.006880323984386515
+    },
+    {
+      "source_i": 380,
+      "source_score": 0.20773574375822393,
+      "source_zero_one_K_robust_median": -0.0070957470426810726,
+      "parameters": {
+        "alpha": 16.52495581119098,
+        "beta": 19.41379597006448,
+        "gamma": 0.004950417143440432,
+        "a1": -0.05445929374888328,
+        "a2": -2.6946547968911023,
+        "rho": 1.455851889324464
+      },
+      "seed": [
+        9.478986221876868,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        -0.01528139334198175,
+        -0.001974068269749184,
+        -16.41900270309687
+      ],
+      "largest_integer_variational_exponent": -0.01528139334198175
+    },
+    {
+      "source_i": 266,
+      "source_score": 0.20766974382717945,
+      "source_zero_one_K_robust_median": -0.005837572764476207,
+      "parameters": {
+        "alpha": 24.994152729451898,
+        "beta": 23.907123231294136,
+        "gamma": 0.009745420942937908,
+        "a1": -0.00840859760452313,
+        "a2": -3.387873625859567,
+        "rho": 1.6622401218298752
+      },
+      "seed": [
+        8.302049636973198,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        -0.00812101453991708,
+        -0.019720857046137748,
+        -25.303803101150162
+      ],
+      "largest_integer_variational_exponent": -0.00812101453991708
+    },
+    {
+      "source_i": 885,
+      "source_score": 0.19744584405491425,
+      "source_zero_one_K_robust_median": -0.0013600996547102212,
+      "parameters": {
+        "alpha": 23.20398098858734,
+        "beta": 20.497492471215523,
+        "gamma": 0.0019651016342281534,
+        "a1": 0.07925815413859999,
+        "a2": -2.6489538237420494,
+        "rho": 1.5642480532994816
+      },
+      "seed": [
+        8.822130205558858,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        -0.008078296084593057,
+        -0.05038979107021752,
+        -24.82228675676107
+      ],
+      "largest_integer_variational_exponent": -0.008078296084593057
+    },
+    {
+      "source_i": 162,
+      "source_score": 0.19714454451368812,
+      "source_zero_one_K_robust_median": -0.002293349382913031,
+      "parameters": {
+        "alpha": 19.42546703123344,
+        "beta": 15.985974495331963,
+        "gamma": 0.007037563134898193,
+        "a1": 0.025224166742954107,
+        "a2": -2.9307185651194327,
+        "rho": 2.2054347157869287
+      },
+      "seed": [
+        6.25726978051852,
+        0.5079327670652387,
+        -14.49039352666749
+      ],
+      "source_distinct": true,
+      "source_target_nontrivial": true,
+      "matignon": {
+        "equilibria_count": 3,
+        "stability": {
+          "E0": "unstable",
+          "E+": "unstable",
+          "E-": "unstable"
+        },
+        "minimum_margin": -1.5707963267948966
+      },
+      "equilibrium_stability_pattern_eligible": false,
+      "integer_variational_exponents": [
+        -0.00764264337377395,
+        -0.03403901273111604,
+        -20.244675066354006
+      ],
+      "largest_integer_variational_exponent": -0.00764264337377395
+    }
+  ],
+  "ranking_by_largest_exponent": [
+    887,
+    590,
+    912,
+    104,
+    11,
+    6,
+    918,
+    703,
+    416,
+    170,
+    125,
+    504,
+    911,
+    305,
+    470,
+    464,
+    217,
+    67,
+    709,
+    608,
+    603,
+    314,
+    445,
+    637,
+    400,
+    162,
+    885,
+    266,
+    111,
+    380
+  ],
+  "eligible_ranking": [
+    590,
+    416,
+    170,
+    504,
+    911,
+    470,
+    464,
+    217,
+    67,
+    608,
+    603,
+    400
+  ],
+  "selected_source_i": 590,
+  "c590": {
+    "present_in_shortlist": true,
+    "computed_largest_exponent": 0.4699043683192531,
+    "recorded_largest_exponent": 0.4699043683192531,
+    "absolute_error": 0.0
+  },
+  "recorded_regression_matched": true,
+  "outputs": {
+    "json": "variational_shortlist.json",
+    "npz": "variational_shortlist.npz"
+  },
+  "scientific_boundary": "The Benettin result is an integer-order finite-time variational audit used for discovery. Fractional-order classification and equilibrium-neighborhood hiddenness tests are separate stages."
+}

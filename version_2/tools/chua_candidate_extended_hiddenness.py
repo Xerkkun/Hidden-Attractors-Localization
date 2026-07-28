@@ -366,12 +366,8 @@ def _matignon(
 def _candidate_sources(candidate_dir: Path) -> tuple[Path, Path, dict[str, Any]]:
     manifest_path = candidate_dir / "publication_figure_inputs.json"
     manifest = _read_json(manifest_path)
-    summary_path = candidate_dir / "candidate_summary_dense.json"
-    if not summary_path.exists():
-        summary_path = candidate_dir / str(manifest["candidate_summary"])
-    calibration_path = candidate_dir / "hiddenness_matrix_dense.json"
-    if not calibration_path.exists():
-        calibration_path = candidate_dir / str(manifest["hiddenness_matrix"])
+    summary_path = candidate_dir / str(manifest["candidate_summary"])
+    calibration_path = candidate_dir / str(manifest["hiddenness_matrix"])
     return summary_path, calibration_path, manifest
 
 

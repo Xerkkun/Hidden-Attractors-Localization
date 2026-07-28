@@ -20,6 +20,9 @@ from .style import apply_axes_style, apply_library_style
 
 VERSION2_ROOT = Path(__file__).resolve().parents[2]
 OBSOLETE_REPORT_FIGURE_IDS = (
+    "chua_frac_arctan_c590_fig01_transfer_components",
+    "chua_frac_arctan_c590_fig02a_linearized_vs_original",
+    "chua_frac_arctan_c590_fig02b_continuation_path",
     "chua_frac_arctan_c590_fig03abc_projections",
     "chua_frac_arctan_c590_fig12_lyapunov_exploratory",
     "chua_frac_arctan_c590_fig16_integrator_audit",
@@ -174,6 +177,8 @@ def _prune_obsolete_report_figures() -> None:
             library_root / "current" / "png",
             library_root / "by_report" / "df_nc_chua" / "pdf",
             library_root / "by_report" / "df_nc_chua" / "png",
+            library_root / "by_report" / "unified_chua_fractional" / "pdf",
+            library_root / "by_report" / "unified_chua_fractional" / "png",
         ):
             for suffix in (".pdf", ".png"):
                 path = directory / f"{figure_id}{suffix}"
@@ -428,7 +433,6 @@ def _plot_candidate_fft(
     burn = float(summary["numerical_contract"]["target_t_burn"])
     tail = states[times >= burn]
     h = float(np.median(np.diff(times)))
-    omega0 = float(manifest["omega0"])
     fig, axes = plt.subplots(3, 1, figsize=(7.2, 6.4), sharex=True, dpi=300)
     for index, (ax, label, color) in enumerate(
         zip(axes, ("$x$", "$y$", "$z$"), ("#0f766e", "#2563eb", "#9333ea"))
@@ -439,11 +443,9 @@ def _plot_candidate_fft(
         omega = 2.0 * np.pi * np.fft.rfftfreq(len(signal), d=h)
         keep = omega <= 10.0
         ax.plot(omega[keep], amplitude[keep], color=color, lw=0.65)
-        ax.axvline(omega0, color="#dc2626", lw=1.0, label=r"$\omega_0$")
         ax.set_ylabel(f"{label}\nnormalizada")
         ax.set_ylim(0.0, 1.05)
         apply_axes_style(ax, grid=True)
-    axes[0].legend(loc="upper right", fontsize=8)
     axes[-1].set_xlabel(r"$\omega$ [rad/s]")
     axes[-1].set_xlim(0.0, 10.0)
     fig.tight_layout()
@@ -881,18 +883,14 @@ def generate_candidate_publication_figures(candidate_dir: str | Path) -> None:
     manifest = _read_json(manifest_path)
     summary_path = _resolve_publication_input(directory, manifest["candidate_summary"])
     matrix_path = _resolve_publication_input(directory, manifest["hiddenness_matrix"])
-    continuation_dir = _resolve_publication_input(directory, manifest["continuation_dir"])
     target_path = directory / "target.npz"
-    seed_path = directory / "df_fractional_spectral_seed.json"
     spectral_path = directory / "spectral_periodicity_audit.json"
     lyapunov_path = directory / "lyapunov_two_method.json"
     convergence_path = directory / "lyapunov_two_method_convergence.npz"
     required = (
         summary_path,
         matrix_path,
-        continuation_dir / "continuation_trace.json",
         target_path,
-        seed_path,
         spectral_path,
         lyapunov_path,
         convergence_path,
@@ -907,15 +905,6 @@ def generate_candidate_publication_figures(candidate_dir: str | Path) -> None:
     states = np.asarray(target["states"], dtype=float)
     apply_library_style()
     _plot_candidate_seed(summary, manifest, times, states, target_path)
-    _plot_candidate_transfer(summary, manifest, seed_path)
-    _plot_candidate_linear_and_continuation(
-        summary,
-        manifest,
-        times,
-        states,
-        target_path,
-        continuation_dir,
-    )
     _plot_candidate_dynamics(summary, manifest, times, states, target_path)
     _plot_candidate_fft(summary, manifest, times, states, target_path, spectral_path)
     _plot_candidate_lyapunov(summary, manifest, lyapunov_path, convergence_path)

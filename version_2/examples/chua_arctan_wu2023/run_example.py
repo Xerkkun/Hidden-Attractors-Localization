@@ -24,7 +24,6 @@ from hidden_attractors.models.chua import chua_parameters
 from hidden_attractors.plotting.generate_publication_figures import generate_all_publication_figures
 from hidden_attractors.seed_generation.chua_arctan_wu2023 import format_arctan_wu2023_seed_report
 from hidden_attractors.validation.chua_arctan_wu2023 import write_algebra_validation
-from hidden_attractors.workflows.centered_lure_df import run_centered_lure_df_workflow
 from tools.arctan_hidden_screen import make_parser as make_screen_parser, run as run_screen
 from tools.chua_candidate_extended_hiddenness import make_parser as make_hiddenness_parser, run as run_hiddenness
 
@@ -107,22 +106,6 @@ def run_search(cfg: dict[str, Any], *, quick: bool = False) -> None:
     print(json.dumps(summary, indent=2, default=str))
 
 
-def run_continuation(cfg: dict[str, Any], *, quick: bool = False) -> None:
-    wf = dict(cfg["proposed_centered_df"]["workflow_config"])
-    wf["output_dir"] = str(resolve(wf["output_dir"]))
-    if quick:
-        wf["grid_size_omega"] = 160
-        wf["grid_size_amplitude"] = 120
-        wf["continuation"]["eta_values"] = [0.001, 0.03, 0.2, 1.0]
-        wf["continuation"]["t_transient"] = 2.0
-        wf["continuation"]["t_keep"] = 2.0
-        wf["final_simulation"]["t_final"] = 10.0
-        wf["final_simulation"]["t_burn"] = 5.0
-    result = run_centered_lure_df_workflow(wf)
-    write_json(Path(wf["output_dir"]) / "reproducibility_result.json", result)
-    print(f"continuation_output={wf['output_dir']}")
-
-
 def run_verification(cfg: dict[str, Any], *, quick: bool = False) -> None:
     lane = cfg["proposed_c590"]
     verify = dict(lane["verification"])
@@ -169,7 +152,7 @@ def main() -> None:
     parser.add_argument(
         "--steps",
         nargs="+",
-        choices=["published", "search", "continuation", "verification", "figures"],
+        choices=["published", "search", "verification", "figures"],
         default=None,
     )
     parser.add_argument("--quick", action="store_true")
@@ -177,13 +160,15 @@ def main() -> None:
     parser.add_argument("--run-published-trajectories", action="store_true")
     args = parser.parse_args()
     cfg = load_config()
-    steps = args.steps or (["published", "search", "continuation", "verification", "figures"] if args.all else ["published", "search", "continuation", "figures"])
+    steps = args.steps or (
+        ["published", "search", "verification", "figures"]
+        if args.all
+        else ["published", "search", "figures"]
+    )
     if "published" in steps:
         run_published(cfg, run_trajectories=args.run_published_trajectories)
     if "search" in steps:
         run_search(cfg, quick=args.quick)
-    if "continuation" in steps:
-        run_continuation(cfg, quick=args.quick)
     if "verification" in steps:
         run_verification(cfg, quick=args.quick)
     if "figures" in steps:

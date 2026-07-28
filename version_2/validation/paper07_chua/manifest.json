@@ -1,0 +1,654 @@
+{
+  "schema_version": "1.0",
+  "validation_id": "paper07_chua_reproducibility",
+  "purpose": "Canonical traceability map for the two reported Chua cases, their bibliographic controls, and their parameter-and-seed exploration.",
+  "path_base": "repository_root",
+  "tracked_evidence_package": {
+    "root": "version_2/validation/paper07_chua/evidence",
+    "hash_manifest": "version_2/validation/paper07_chua/evidence_manifest.json",
+    "c590_hiddenness_rows": "version_2/validation/chua_fractional_arctan_c590",
+    "source_outputs_policy": "Long workflows write ignored outputs; only the compact declared projection is retained under validation.",
+    "sync_command": "python tools/sync_paper07_evidence.py --sync",
+    "verify_command": "python tools/sync_paper07_evidence.py --verify",
+    "source_parity_command": "python tools/sync_paper07_evidence.py --verify --verify-sources"
+  },
+  "claim_policy": {
+    "reported_results": "Numerical results produced by the proposed methodology and used by paper 07.",
+    "bibliographic_controls": "Reference-specific checks that preserve the published numerical contract and do not supply seeds or results to the proposed lanes unless explicitly stated.",
+    "exploration": "Parameter and seed provenance; selection alone is not chaos or hiddenness evidence.",
+    "hiddenness_boundary": "All hiddenness statements are conditioned on the recorded finite neighborhoods and classifier contract; macro-radius contacts describe extended basin geometry."
+  },
+  "reported_results": {
+    "nonsmooth_corrected": {
+      "case_id": "paper07_chua_nonsmooth_corrected",
+      "system_id": "chua-nonsmooth",
+      "role": "proposed_biased_df_caputo_lane",
+      "not_a_bibliographic_reproduction_of": "danca2017_chua_fractional_saturation",
+      "parameters": {
+        "q": 0.9998,
+        "alpha": 8.4562,
+        "beta": 12.0732,
+        "gamma": 0.0052,
+        "m0": -0.1768,
+        "m1": -1.1468
+      },
+      "search": {
+        "parameter_pairs": 9,
+        "starts_per_pair": 270,
+        "starts_total": 2430,
+        "grid_shape_per_pair": [
+          5,
+          9,
+          6
+        ],
+        "domains": {
+          "A": [
+            0.5,
+            10.0
+          ],
+          "c": [
+            -8.0,
+            8.0
+          ],
+          "omega": [
+            0.5,
+            6.0
+          ]
+        },
+        "filters": {
+          "solver_convergence_required": true,
+          "residual_norm_max": 0.0001,
+          "deduplication_tolerance": 0.001,
+          "max_branches_per_pair": 2,
+          "reported_branch_rule": "positive biased root c > 0.05 with minimum residual norm"
+        },
+        "selected_root": {
+          "A": 4.5778827210231485,
+          "c": 2.776397003273905,
+          "omega": 2.04028605107949,
+          "residual_norm": 4.549007847495242e-16,
+          "seed": [
+            7.354279724297053,
+            0.29096877878449423,
+            -9.316054818665608
+          ]
+        }
+      },
+      "continuation": {
+        "operator": "Caputo",
+        "integrator": "ABM-PECE",
+        "memory_mode": "full",
+        "history_carried": true,
+        "eta_start": 0.0,
+        "eta_stop": 1.0,
+        "eta_step": 0.05,
+        "stages": 21,
+        "t_transient_per_stage": 30.0,
+        "t_keep_per_stage": 30.0,
+        "endpoint": [
+          0.8223107098499502,
+          1.4652727039952436,
+          1.2923082502480394
+        ]
+      },
+      "reference": {
+        "h": 0.01,
+        "t_final": 300.0,
+        "t_burn": 100.0,
+        "status": "ok",
+        "dynamical_label": "regular_periodic_rejected",
+        "claim": "regular attracting set with finite sampled basin evidence"
+      },
+      "baseline_controls": {
+        "spherical_probes": 675,
+        "target_hits": 0,
+        "numerical_failures": 0,
+        "target_robustness_runs": 36,
+        "target_robustness_matches": 36
+      },
+      "extended_clean_probe": {
+        "output_dir": "outputs/paper07_nonsmooth_corrected/extended_first_contact_clean",
+        "sampling_mode": "ball_random",
+        "random_generator": "NumPy default_rng PCG64",
+        "base_seed": 42,
+        "seed_schedule": "42 + equilibrium_index*100 + radius_index*10",
+        "nominal_radii": [
+          0.00001,
+          0.00003,
+          0.0001,
+          0.0003,
+          0.001,
+          0.003,
+          0.01,
+          0.03,
+          0.1,
+          0.3,
+          1.0,
+          2.0
+        ],
+        "termination_rule": "Process radii in ascending order across all equilibria; finish the first radius with contacts and omit every larger radius.",
+        "status": "stopped_after_first_contact_radius",
+        "samples_total": 17400,
+        "samples_per_equilibrium": 5800,
+        "checkpoint_rows_total": 17400,
+        "post_cutoff_completed_rows_excluded": 0,
+        "first_contact_radius": 0.3,
+        "first_contact_radius_samples": 3600,
+        "first_contact_hits": 37,
+        "zero_contact_samples_through_radius_0_1": 13800,
+        "destination_counts": {
+          "target_attractor": 37,
+          "stable_equilibrium": 5827,
+          "other_attractor": 5826,
+          "divergence": 5710,
+          "numerical_failure": 0
+        },
+        "local_protocol": {
+          "radius_max": 0.01,
+          "samples_total": 7200,
+          "target_hits": 0,
+          "numerical_failures": 0
+        },
+        "macro_basin_exploration": {
+          "radii": [
+            0.03,
+            0.1,
+            0.3
+          ],
+          "samples_total": 10200,
+          "target_hits": 37,
+          "numerical_failures": 0
+        },
+        "all_runs_used_native_backend": true,
+        "hashes": {
+          "plan_sha256": "6c07793e653fe116b3878fb0674ac778e313763781638d4eeed47d92e147be93",
+          "target_cloud_sample_sha256": "be399e79cd6bcbc3f24edd6d6bc2f6955c413fec801d39a8acd2446ca1138fa3",
+          "contract_sha256": "ed11d92fe56e0bbfeedfda84dcb3a27738871b6e171cfaa0c7974ce87e24e44c"
+        }
+      },
+      "retained_paths": [
+        "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/candidate_and_reference.json",
+        "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/continuation_stages.csv",
+        "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/numerical_contract.json",
+        "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/probe_runs.csv",
+        "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/probe_summary.csv",
+        "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/target_reproduction_runs.csv",
+        "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/result.json",
+        "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_numerical_contract.json",
+        "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_plan.csv",
+        "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
+        "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_summary.csv",
+        "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_result.json",
+        "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/target_cloud_nn_sample.csv"
+      ]
+    },
+    "arctan_c590": {
+      "case_id": "chua_arctan_c590_q09999_seed9",
+      "system_id": "chua-arctan",
+      "role": "proposed_caputo_full_history_lane",
+      "not_a_bibliographic_reproduction_of": "wu2023_chua_fractional_arctan",
+      "q": 0.9999,
+      "seed": [
+        5.864244979081692,
+        1.5847111486491057,
+        3.2155806477633915
+      ],
+      "parameters": {
+        "alpha": 21.849356906616716,
+        "beta": 19.081840840860202,
+        "gamma": 0.007378011979156531,
+        "a1": 0.04228979343578827,
+        "a2": -3.3367815123026694,
+        "rho": 1.7984259332820332
+      },
+      "numerical_contract": {
+        "operator": "Caputo",
+        "integrator": "ABM predictor-corrector",
+        "memory_mode": "full",
+        "h": 0.005,
+        "target_t_final": 180.0,
+        "target_t_burn": 90.0
+      },
+      "local_neighborhood_result": {
+        "radii_max": 0.3,
+        "tests": 8400,
+        "contacts": 0,
+        "status_counts": {
+          "ok": 8396,
+          "converged_equilibrium_early": 4
+        },
+        "canonical_label": "hiddenness_supported_under_tested_neighborhoods"
+      },
+      "macro_radius_audit": {
+        "radii": [
+          1.0,
+          2.0
+        ],
+        "tests": 5100,
+        "contacts": 610,
+        "status_counts": {
+          "ok": 4969,
+          "diverged": 131
+        },
+        "by_radius": {
+          "1.0": {
+            "tests": 2400,
+            "contacts": 22,
+            "ok": 2400,
+            "diverged": 0
+          },
+          "2.0": {
+            "tests": 2700,
+            "contacts": 588,
+            "ok": 2569,
+            "diverged": 131
+          }
+        },
+        "interpretation": "extended basin geometry"
+      },
+      "retained_paths": [
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/target.npz",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/search_provenance.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/publication_figure_inputs.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/integrator_equilibria_audit.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/spectral_periodicity_audit.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/lyapunov_two_method.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/lyapunov_two_method_convergence.npz",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_matrix_scaled.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_matrix_r003.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_matrix_r010.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_matrix_r030.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_matrix_r100.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_matrix_r200.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_matrix_latest.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/candidate_summary_scaled.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/candidate_summary_r003.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/candidate_summary_r010.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/candidate_summary_r030.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/candidate_summary_r100.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/candidate_summary_r200.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/candidate_summary_latest.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_scaled_checkpoint.jsonl",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_scaled_rows.csv",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/scaled_hiddenness_run_config.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r003_checkpoint.jsonl",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r003_rows.csv",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r003_run_config.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r010_checkpoint.jsonl",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r010_rows.csv",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r010_run_config.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r030_checkpoint.jsonl",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r030_rows.csv",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r030_run_config.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r100_checkpoint.jsonl",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r100_rows.csv",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r100_run_config.json",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r200_checkpoint.jsonl",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r200_rows.csv",
+        "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r200_run_config.json",
+        "version_2/validation/chua_fractional_arctan_c590"
+      ]
+    }
+  },
+  "bibliographic_controls": {
+    "kuznetsov2017": {
+      "case_id": "kuznetsov2017_case_18_hidden_chaotic",
+      "system_id": "chua-nonsmooth",
+      "q": 1.0,
+      "status": "executable_regression",
+      "full_published_attractor_reproduced": true,
+      "role": "integer_order_method_control",
+      "paths": [
+        "version_2/validation/published_cases/kuznetsov2017_chua_integer.yaml",
+        "version_2/validation/reference_cases/chua_integer_q1",
+        "version_2/validation/references/kuznetsov2017_expected.json",
+        "version_2/validation/outputs/published_cases/kuznetsov2017_chua_integer",
+        "version_2/validation/outputs/published_continuation_comparison/kuznetsov2017_chua_integer",
+        "version_2/examples/chua_integer_lure_reference"
+      ]
+    },
+    "danca2017": {
+      "case_id": "danca2017_chua_fractional_saturation",
+      "system_id": "chua-nonsmooth",
+      "q": 0.9998,
+      "status": "partial_reference_implementation",
+      "full_published_attractor_reproduced": false,
+      "verified": [
+        "equations",
+        "parameters",
+        "equilibria",
+        "Matignon classification",
+        "ABM Caputo contract",
+        "neighborhood-control infrastructure"
+      ],
+      "missing_published_values": [
+        "exact hidden-attractor initial condition",
+        "omega0",
+        "k",
+        "a0",
+        "seed_plus",
+        "seed_minus",
+        "Lyapunov exponents"
+      ],
+      "paths": [
+        "version_2/validation/published_cases/danca2017_chua_fractional_saturation.yaml",
+        "version_2/configs/examples/chua_nonsmooth_exact_danca_non_reproducible.yaml",
+        "version_2/validation/published_reference_coverage.json",
+        "version_2/validation/outputs/published_cases/danca2017_chua_fractional_saturation",
+        "version_2/validation/outputs/published_continuation_comparison/danca2017_chua_fractional_saturation",
+        "version_2/validation/outputs/published_continuation_comparison/danca2017_chua_fractional_saturation_candidate",
+        "version_2/validation/outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report",
+        "version_2/examples/chua_nonsmooth_biased_hidden_attractor/reproducibility.yaml"
+      ]
+    },
+    "wu2023": {
+      "case_id": "wu2023_chua_fractional_arctan",
+      "system_id": "chua-arctan",
+      "q": 0.99,
+      "status": "partial_reference_implementation",
+      "full_published_attractor_reproduced": false,
+      "published_lane_contract": {
+        "integrator": "ADM local recurrence",
+        "memory_policy": "none_local_adm",
+        "seed_transfer_mode": "published_integer_laplace",
+        "q_seed": 1.0
+      },
+      "reported_initial_condition_result": "periodic_post_transient",
+      "missing_published_values": [
+        "omega0",
+        "k",
+        "a0",
+        "seed_plus",
+        "seed_minus",
+        "full seed-generation numerical data"
+      ],
+      "paths": [
+        "version_2/validation/published_cases/wu2023_chua_fractional_arctan.yaml",
+        "version_2/validation/reference_cases/fractional_chua_arctan_wu2023",
+        "version_2/validation/outputs/published_cases/wu2023_chua_fractional_arctan",
+        "version_2/validation/outputs/published_continuation_comparison/wu2023_chua_fractional_arctan",
+        "version_2/examples/chua_arctan_wu2023/reproducibility.yaml",
+        "version_2/configs/chua_arctan_wu2023_caputo.json"
+      ]
+    },
+    "shared_traceability": [
+      "version_2/validation/published_reference_coverage.json",
+      "version_2/references/claims_manifest.yaml",
+      "version_2/references/traceability_matrix.md"
+    ]
+  },
+  "exploration": {
+    "c590_exact_reconstruction": {
+      "status": "complete_discovery_contract_executable_and_provenance_verified",
+      "random_generator": "NumPy Generator PCG64",
+      "global": {
+        "rng_seed": 2026062304,
+        "cases": 2400,
+        "selected_zero_based_index": 1731,
+        "selected_parameters": {
+          "alpha": 18.485729510399246,
+          "beta": 21.96695211004372,
+          "gamma": 0.005274610555721088,
+          "a1": 0.02629749304876286,
+          "a2": -3.208777924503481,
+          "rho": 1.949261203458447
+        },
+        "selected_seed": [
+          7.079605327144233,
+          0.5079327670652387,
+          -14.49039352666749
+        ]
+      },
+      "local": {
+        "rng_seed": 2026062305,
+        "cases": 1000,
+        "centre_global_zero_based_index": 1731,
+        "selected_zero_based_index": 590,
+        "label": "c590",
+        "selected_parameters": {
+          "alpha": 21.849356906616716,
+          "beta": 19.081840840860202,
+          "gamma": 0.007378011979156531,
+          "a1": 0.04228979343578827,
+          "a2": -3.3367815123026694,
+          "rho": 1.7984259332820332
+        },
+        "integer_order_seed": [
+          7.6733768928786095,
+          0.5079327670652387,
+          -14.49039352666749
+        ]
+      },
+      "fractional_refinement": {
+        "execution_model": "independent Caputo initial-value problems with full memory from each declared restart time",
+        "history_transferred_between_orders_or_restarts": false,
+        "orders_scanned": [
+          0.9995,
+          0.9998,
+          0.9999,
+          0.99995
+        ],
+        "selected_q": 0.9999,
+        "source_states": 16,
+        "source_indices": [
+          30001,
+          32000,
+          34000,
+          36000,
+          38000,
+          40000,
+          42000,
+          44000,
+          46000,
+          48000,
+          50000,
+          52000,
+          54000,
+          56000,
+          58000,
+          60000
+        ],
+        "source_time_start": 150.00499999993608,
+        "source_time_stop": 299.9999999997997,
+        "selected_zero_based_index": 9,
+        "selected_source_time": 239.99999999985423,
+        "selected_source_time_nominal": 240.0,
+        "label": "seed9",
+        "bounded_cross_step_indices": [
+          5,
+          8,
+          9,
+          10,
+          13,
+          15
+        ],
+        "long_horizon_bounded_indices": [
+          9,
+          13
+        ],
+        "selection_rule": "bounded at h=0.0025,0.005,0.01, followed by K_median > 0.8 at h=0.0025 and h=0.005",
+        "selected_seed": [
+          5.864244979081692,
+          1.5847111486491057,
+          3.2155806477633915
+        ]
+      },
+      "verification": {
+        "global_max_abs_error": 0.0,
+        "local_max_abs_error": 0.0,
+        "absolute_tolerance": 5e-15
+      },
+      "scope": "The reconstruction script verifies the exact stochastic banks and selected rows; the discovery runner can re-execute all 3,400 integer screens, the variational shortlist, and the complete Caputo seed9 refinement.",
+      "paths": [
+        "version_2/tools/reconstruct_c590_search_provenance.py",
+        "version_2/tools/rerun_c590_discovery.py",
+        "version_2/tools/sync_paper07_evidence.py",
+        "version_2/validation/paper07_chua/evidence/c590_reconstruction",
+        "version_2/validation/paper07_chua/evidence_manifest.json",
+        "version_2/tests/test_c590_search_provenance.py",
+        "version_2/tests/test_rerun_c590_discovery.py",
+        "version_2/tests/test_sync_paper07_evidence.py"
+      ]
+    }
+  },
+  "reproduction_commands": [
+    {
+      "id": "c590_provenance_check",
+      "working_directory": "version_2",
+      "command": "python tools/reconstruct_c590_search_provenance.py --check-only"
+    },
+    {
+      "id": "c590_provenance_regression",
+      "working_directory": "version_2",
+      "command": "python -m pytest -q tests/test_c590_search_provenance.py tests/test_rerun_c590_discovery.py"
+    },
+    {
+      "id": "c590_discovery_contract_check",
+      "working_directory": "version_2",
+      "command": "python tools/rerun_c590_discovery.py --stage all --dry-run"
+    },
+    {
+      "id": "c590_complete_discovery_rerun",
+      "working_directory": "version_2",
+      "command": "python tools/rerun_c590_discovery.py --stage all --execute --output-dir outputs/reproductions/c590_discovery"
+    },
+    {
+      "id": "c590_hiddenness_probe",
+      "working_directory": "version_2",
+      "command": "python examples/chua_arctan_wu2023/run_example.py --steps verification"
+    },
+    {
+      "id": "c590_hiddenness_summary",
+      "working_directory": "version_2",
+      "command": "python tools/summarize_c590_hiddenness.py"
+    },
+    {
+      "id": "paper07_evidence_sync",
+      "working_directory": "version_2",
+      "command": "python tools/sync_paper07_evidence.py --sync"
+    },
+    {
+      "id": "paper07_evidence_verify",
+      "working_directory": "version_2",
+      "command": "python tools/sync_paper07_evidence.py --verify"
+    },
+    {
+      "id": "nonsmooth_fresh_reproduction",
+      "working_directory": "repository_root",
+      "command": "python version_2/tools/rerun_paper07_nonsmooth_hiddenness.py --output version_2/outputs/paper07_nonsmooth_reproduction --run-extended --extended-dirname extended_first_contact_clean --workers 12"
+    },
+    {
+      "id": "nonsmooth_resume_reproduction",
+      "working_directory": "repository_root",
+      "command": "python version_2/tools/rerun_paper07_nonsmooth_hiddenness.py --output version_2/outputs/paper07_nonsmooth_reproduction --reuse-reference --reuse-probes --run-extended --resume-extended --extended-dirname extended_first_contact_clean --workers 12"
+    },
+    {
+      "id": "extended_stop_policy_test",
+      "working_directory": "version_2",
+      "command": "python -m pytest -q tests/test_biased_chua_extended_stop_policy.py"
+    },
+    {
+      "id": "kuznetsov_integer_control",
+      "working_directory": "version_2",
+      "command": "python examples/chua_integer_lure_reference/run_example.py"
+    },
+    {
+      "id": "danca_published_control",
+      "working_directory": "version_2",
+      "command": "python -m hidden_attractors.cli.main published danca-abm-sphere-controls --output validation/outputs/published_cases/danca2017_chua_fractional_saturation"
+    },
+    {
+      "id": "wu_published_control",
+      "working_directory": "version_2",
+      "command": "python examples/chua_arctan_wu2023/run_example.py --steps published --run-published-trajectories"
+    },
+    {
+      "id": "bibliographic_contract_tests",
+      "working_directory": "version_2",
+      "command": "python -m pytest -q tests/test_published_case_reproduction.py tests/test_published_continuation_comparison.py tests/test_published_validation_coverage.py tests/test_published_reference_claims_are_conservative.py"
+    }
+  ],
+  "canonical_retention": {
+    "preserve": [
+      "version_2/validation/paper07_chua/evidence",
+      "version_2/validation/paper07_chua/evidence_manifest.json",
+      "version_2/outputs/paper07_c590_discovery_reconstruction",
+      "outputs/paper07_nonsmooth_corrected",
+      "outputs/paper07_nonsmooth_corrected/extended_first_contact_clean",
+      "outputs/example_chua_nonsmooth_biased_hidden_attractor/step1_centered",
+      "outputs/example_chua_nonsmooth_biased_hidden_attractor/step2_biased_df",
+      "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623",
+      "version_2/validation/chua_fractional_arctan_c590",
+      "version_2/validation/reference_cases/chua_integer_q1",
+      "version_2/validation/reference_cases/fractional_chua_arctan_wu2023",
+      "version_2/validation/published_cases",
+      "version_2/validation/outputs/published_cases",
+      "version_2/validation/outputs/published_continuation_comparison",
+      "version_2/validation/outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/report",
+      "version_2/validation/paper07_chua"
+    ],
+    "removed_noncanonical_outputs": [
+      "outputs/paper07_nonsmooth_corrected/extended",
+      "outputs/paper07_nonsmooth_corrected/extended_contract_smoke",
+      "outputs/example_chua_nonsmooth_biased_hidden_attractor/step3_hiddenness",
+      "outputs/example_chua_nonsmooth_biased_hidden_attractor/step5_summary",
+      "outputs/chua_fractional_zero_one",
+      "version_2/outputs/arctan_hidden_candidate_search/wu_q0999_long_20260623",
+      "version_2/outputs/test_artifacts",
+      "version_2/outputs/arctan_hidden_candidate_search/stable_origin_q1_params.npy",
+      "version_2/tools/legacy/outputs/machado_lure_route_20260524_101139",
+      "version_2/tools/legacy/outputs/machado_lure_route_20260524_161407",
+      "version_2/artifacts/reference_runs/runs_machado_sweep_fast",
+      "version_2/artifacts/reference_runs/chua_piecewise",
+      "version_2/artifacts/reference_runs/hidden_verify",
+      "version_2/artifacts/reference_runs/native",
+      "version_2/artifacts/reference_runs/analysis_empty_after_migration",
+      "version_2/tools/legacy/outputs/lure_biased_multiparam_q09998_20260524_101139",
+      "version_2/outputs/arctan_hidden_candidate_search/c590_df_continuation_q09999_relaxed_20260624",
+      "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/preliminary_and_superseded_matrices",
+      "version_2/experiments/chua_nonsmooth_memory_matrix",
+      "version_2/figure_scripts/chua_nonsmooth_memory_matrix_run_figure_tasks.py",
+      "version_2/scratch",
+      "version_2/validation/outputs/candidate_chaos_hiddenness/danca2017_chua_fractional_saturation_candidate/smoke",
+      "version_2/.pytest_tmp",
+      "version_2/.runtime_cache",
+      "_tmp_freeze_test",
+      "version_2/__codex_dir_test"
+    ],
+    "retained_nonreport_test_fixture": "version_2/outputs/tests/trajectory_fixture.csv",
+    "deletion_performed": true,
+    "recovery": "Large exploratory bundles and superseded c590 artifacts were moved outside the library to ../.quarantine_hidden_attractors_noncanonical_20260728; small regenerable caches and tracked one-off scripts were removed directly."
+  },
+  "tests": [
+    {
+      "path": "version_2/tests/test_c590_search_provenance.py",
+      "role": "exact PCG64 bank, index, parameter, and seed regression",
+      "writes_real_outputs": false,
+      "uses_long_simulations": false
+    },
+    {
+      "path": "version_2/tests/test_biased_chua_extended_stop_policy.py",
+      "role": "radius-major schedule and deterministic seed contract required by first-contact stopping",
+      "writes_real_outputs": false,
+      "uses_long_simulations": false
+    },
+    {
+      "path": "version_2/tests/test_rerun_c590_discovery.py",
+      "role": "complete c590 discovery-plan, exact source-state extraction, and executable-stage regression",
+      "writes_real_outputs": false,
+      "uses_long_simulations": false
+    },
+    {
+      "path": "version_2/tests/test_summarize_c590_hiddenness.py",
+      "role": "row-level c590 probe aggregation, status semantics, hashes, and public-summary regression",
+      "writes_real_outputs": false,
+      "uses_long_simulations": false
+    },
+    {
+      "path": "version_2/tests/test_sync_paper07_evidence.py",
+      "role": "tracked Paper07 inventory, SHA-256 manifest, and c590 row-source regression",
+      "writes_real_outputs": false,
+      "uses_long_simulations": false
+    }
+  ]
+}

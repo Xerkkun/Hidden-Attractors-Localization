@@ -1,0 +1,57 @@
+{
+  "status": "stopped_after_first_contact_radius",
+  "samples_total": 17400,
+  "planned_samples_total": 26400,
+  "checkpoint_rows_total": 17400,
+  "post_cutoff_completed_rows_excluded": 0,
+  "termination": {
+    "rule": "Process radii in ascending order across all equilibria; after the first radius with one or more target contacts, finish every planned probe at that radius and omit all larger radii from the declared experiment.",
+    "first_contact_radius": 0.3,
+    "first_contact_hits": 37,
+    "first_contact_radius_samples": 3600,
+    "last_declared_radius": 0.3
+  },
+  "samples_per_equilibrium": {
+    "E0": 5800,
+    "E+": 5800,
+    "E-": 5800
+  },
+  "destination_counts": {
+    "target_attractor": 37,
+    "stable_equilibrium": 5827,
+    "other_attractor": 5826,
+    "divergence": 5710,
+    "numerical_failure": 0
+  },
+  "local_protocol": {
+    "radius_max": 0.01,
+    "radii": [
+      1e-05,
+      3e-05,
+      0.0001,
+      0.0003,
+      0.001,
+      0.003,
+      0.01
+    ],
+    "samples_total": 7200,
+    "target_hits": 0,
+    "numerical_failures": 0,
+    "compatible_with_hiddenness_under_sampled_local_balls": true
+  },
+  "macro_basin_exploration": {
+    "radius_min_exclusive": 0.01,
+    "radii": [
+      0.03,
+      0.1,
+      0.3
+    ],
+    "samples_total": 10200,
+    "target_hits": 37,
+    "numerical_failures": 0
+  },
+  "all_runs_used_native_backend": true,
+  "plan_sha256": "6c07793e653fe116b3878fb0674ac778e313763781638d4eeed47d92e147be93",
+  "target_cloud_sample_sha256": "be399e79cd6bcbc3f24edd6d6bc2f6955c413fec801d39a8acd2446ca1138fa3",
+  "elapsed_new_probe_seconds": 5.742067599996517
+}

@@ -6,7 +6,7 @@ Ejecuta el pipeline completo en orden, o pasos individuales.
 Uso rápido (prueba de humo, simulaciones cortas):
     python run_example.py --quick
 
-Ejecución completa (puede tomar horas en el Paso 4):
+Ejecución canónica de localización (pasos 1 y 2):
     python run_example.py
 
 Pasos individuales:
@@ -179,7 +179,7 @@ def main() -> None:
     parser.add_argument(
         "--steps", nargs="+", type=int, metavar="N",
         choices=[1, 2, 3, 4, 5],
-        help="Pasos a ejecutar (por defecto: todos excepto el 4 extendido)",
+        help="Pasos a ejecutar (por defecto: 1 y 2, localización canónica)",
     )
     parser.add_argument(
         "--quick", action="store_true",
@@ -198,7 +198,7 @@ def main() -> None:
     elif args.all:
         steps = [1, 2, 3, 4, 5]
     else:
-        steps = [1, 2, 3, 5]
+        steps = [1, 2]
 
     print(f"\n{'='*65}")
     print("  BÚSQUEDA DE CANDIDATOS OCULTOS — CHUA FRACCIONARIO NO SUAVE")

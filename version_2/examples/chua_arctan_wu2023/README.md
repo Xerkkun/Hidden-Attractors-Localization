@@ -33,8 +33,10 @@ Selected stages:
 
 ```bash
 python examples/chua_arctan_wu2023/run_example.py --steps published
-python examples/chua_arctan_wu2023/run_example.py --steps search continuation figures --quick
-python examples/chua_arctan_wu2023/run_example.py --steps verification --all
+python examples/chua_arctan_wu2023/run_example.py --steps search figures --quick
+python examples/chua_arctan_wu2023/run_example.py --steps verification
+python tools/rerun_c590_discovery.py --stage all --execute \
+  --output-dir outputs/reproductions/c590_discovery
 ```
 
 `--run-published-trajectories` additionally calls the trajectory reproduction
@@ -59,9 +61,11 @@ psi(sigma) = a2 * atan(rho * sigma)
 ```
 
 The Wu2023 bibliographic seed lane uses the published integer Laplace transfer
-mode. Fractional spectral seed generation is a separate configurable extension
-and must be labeled as experimental unless promoted by a future validation
-contract.
+mode. The c590 lane follows its own recorded route: global and local integer
+screens, a sweep of independent Caputo initial-value problems in \(q\), biased
+restarts from interior states, and cross-step auditing. Every fractional run
+accumulates its complete Caputo history from its declared initial time; history
+is not transferred between independent values of \(q\) or between restarts.
 
 ## Hiddenness boundary
 

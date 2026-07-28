@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "case_id": "chua_fractional_arctan",
   "candidate_id": "chua_arctan_c590_q09999_seed9",
   "promoted_status": "hiddenness_supported_under_tested_local_radii_with_macro_radius_review",
@@ -8,12 +8,12 @@
   "source_output": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/",
   "source_summary": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/candidate_summary_latest.json",
   "source_rows": [
-    "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_scaled_rows.csv",
-    "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r003_rows.csv",
-    "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r010_rows.csv",
-    "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r030_rows.csv",
-    "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r100_rows.csv",
-    "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r200_rows.csv"
+    "version_2/validation/chua_fractional_arctan_c590/hiddenness_scaled_rows.csv",
+    "version_2/validation/chua_fractional_arctan_c590/hiddenness_r003_rows.csv",
+    "version_2/validation/chua_fractional_arctan_c590/hiddenness_r010_rows.csv",
+    "version_2/validation/chua_fractional_arctan_c590/hiddenness_r030_rows.csv",
+    "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_rows.csv",
+    "version_2/validation/chua_fractional_arctan_c590/hiddenness_r200_rows.csv"
   ],
   "parameters": {
     "alpha": 21.849356906616716,
@@ -97,63 +97,204 @@
       "radius": 1e-05,
       "tests": 300,
       "contacts": 0,
+      "contact_counts": {
+        "false": 300,
+        "true": 0
+      },
       "finite": 300,
+      "finite_counts": {
+        "false": 0,
+        "true": 300
+      },
+      "full_horizon": 296,
+      "status_counts": {
+        "converged_equilibrium_early": 4,
+        "ok": 296
+      },
+      "outcome_counts": {
+        "EQUILIBRIUM": 4,
+        "OTHER": 296
+      },
       "decision": "no_contact_detected"
     },
     {
       "radius": 0.0001,
       "tests": 600,
       "contacts": 0,
+      "contact_counts": {
+        "false": 600,
+        "true": 0
+      },
       "finite": 600,
+      "finite_counts": {
+        "false": 0,
+        "true": 600
+      },
+      "full_horizon": 600,
+      "status_counts": {
+        "ok": 600
+      },
+      "outcome_counts": {
+        "OTHER": 600
+      },
       "decision": "no_contact_detected"
     },
     {
       "radius": 0.001,
       "tests": 900,
       "contacts": 0,
+      "contact_counts": {
+        "false": 900,
+        "true": 0
+      },
       "finite": 900,
+      "finite_counts": {
+        "false": 0,
+        "true": 900
+      },
+      "full_horizon": 900,
+      "status_counts": {
+        "ok": 900
+      },
+      "outcome_counts": {
+        "OTHER": 900
+      },
       "decision": "no_contact_detected"
     },
     {
       "radius": 0.01,
       "tests": 1200,
       "contacts": 0,
+      "contact_counts": {
+        "false": 1200,
+        "true": 0
+      },
       "finite": 1200,
+      "finite_counts": {
+        "false": 0,
+        "true": 1200
+      },
+      "full_horizon": 1200,
+      "status_counts": {
+        "ok": 1200
+      },
+      "outcome_counts": {
+        "OTHER": 1200
+      },
       "decision": "no_contact_detected"
     },
     {
       "radius": 0.03,
       "tests": 1500,
       "contacts": 0,
+      "contact_counts": {
+        "false": 1500,
+        "true": 0
+      },
       "finite": 1500,
+      "finite_counts": {
+        "false": 0,
+        "true": 1500
+      },
+      "full_horizon": 1500,
+      "status_counts": {
+        "ok": 1500
+      },
+      "outcome_counts": {
+        "OTHER": 1500
+      },
       "decision": "no_contact_detected"
     },
     {
       "radius": 0.1,
       "tests": 1800,
       "contacts": 0,
+      "contact_counts": {
+        "false": 1800,
+        "true": 0
+      },
       "finite": 1800,
+      "finite_counts": {
+        "false": 0,
+        "true": 1800
+      },
+      "full_horizon": 1800,
+      "status_counts": {
+        "ok": 1800
+      },
+      "outcome_counts": {
+        "OTHER": 1800
+      },
       "decision": "no_contact_detected"
     },
     {
       "radius": 0.3,
       "tests": 2100,
       "contacts": 0,
+      "contact_counts": {
+        "false": 2100,
+        "true": 0
+      },
       "finite": 2100,
+      "finite_counts": {
+        "false": 0,
+        "true": 2100
+      },
+      "full_horizon": 2100,
+      "status_counts": {
+        "ok": 2100
+      },
+      "outcome_counts": {
+        "OTHER": 2100
+      },
       "decision": "no_contact_detected"
     },
     {
       "radius": 1.0,
       "tests": 2400,
       "contacts": 22,
+      "contact_counts": {
+        "false": 2378,
+        "true": 22
+      },
       "finite": 2400,
+      "finite_counts": {
+        "false": 0,
+        "true": 2400
+      },
+      "full_horizon": 2400,
+      "status_counts": {
+        "ok": 2400
+      },
+      "outcome_counts": {
+        "OTHER": 2378,
+        "TARGET": 22
+      },
       "decision": "macro_radius_contact_detected"
     },
     {
       "radius": 2.0,
       "tests": 2700,
       "contacts": 588,
+      "contact_counts": {
+        "false": 2112,
+        "true": 588
+      },
       "finite": 2700,
+      "finite_counts": {
+        "false": 0,
+        "true": 2700
+      },
+      "full_horizon": 2569,
+      "status_counts": {
+        "diverged": 131,
+        "ok": 2569
+      },
+      "outcome_counts": {
+        "DIVERGED": 131,
+        "OTHER": 1981,
+        "TARGET": 588
+      },
       "decision": "macro_radius_contact_detected"
     }
   ],
@@ -163,7 +304,24 @@
       "equilibrium": "E+",
       "tests": 100,
       "contacts": 0,
+      "contact_counts": {
+        "false": 100,
+        "true": 0
+      },
       "finite": 100,
+      "finite_counts": {
+        "false": 0,
+        "true": 100
+      },
+      "full_horizon": 98,
+      "status_counts": {
+        "converged_equilibrium_early": 2,
+        "ok": 98
+      },
+      "outcome_counts": {
+        "EQUILIBRIUM": 2,
+        "OTHER": 98
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -171,7 +329,24 @@
       "equilibrium": "E-",
       "tests": 100,
       "contacts": 0,
+      "contact_counts": {
+        "false": 100,
+        "true": 0
+      },
       "finite": 100,
+      "finite_counts": {
+        "false": 0,
+        "true": 100
+      },
+      "full_horizon": 98,
+      "status_counts": {
+        "converged_equilibrium_early": 2,
+        "ok": 98
+      },
+      "outcome_counts": {
+        "EQUILIBRIUM": 2,
+        "OTHER": 98
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -179,7 +354,22 @@
       "equilibrium": "E0",
       "tests": 100,
       "contacts": 0,
+      "contact_counts": {
+        "false": 100,
+        "true": 0
+      },
       "finite": 100,
+      "finite_counts": {
+        "false": 0,
+        "true": 100
+      },
+      "full_horizon": 100,
+      "status_counts": {
+        "ok": 100
+      },
+      "outcome_counts": {
+        "OTHER": 100
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -187,7 +377,22 @@
       "equilibrium": "E+",
       "tests": 200,
       "contacts": 0,
+      "contact_counts": {
+        "false": 200,
+        "true": 0
+      },
       "finite": 200,
+      "finite_counts": {
+        "false": 0,
+        "true": 200
+      },
+      "full_horizon": 200,
+      "status_counts": {
+        "ok": 200
+      },
+      "outcome_counts": {
+        "OTHER": 200
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -195,7 +400,22 @@
       "equilibrium": "E-",
       "tests": 200,
       "contacts": 0,
+      "contact_counts": {
+        "false": 200,
+        "true": 0
+      },
       "finite": 200,
+      "finite_counts": {
+        "false": 0,
+        "true": 200
+      },
+      "full_horizon": 200,
+      "status_counts": {
+        "ok": 200
+      },
+      "outcome_counts": {
+        "OTHER": 200
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -203,7 +423,22 @@
       "equilibrium": "E0",
       "tests": 200,
       "contacts": 0,
+      "contact_counts": {
+        "false": 200,
+        "true": 0
+      },
       "finite": 200,
+      "finite_counts": {
+        "false": 0,
+        "true": 200
+      },
+      "full_horizon": 200,
+      "status_counts": {
+        "ok": 200
+      },
+      "outcome_counts": {
+        "OTHER": 200
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -211,7 +446,22 @@
       "equilibrium": "E+",
       "tests": 300,
       "contacts": 0,
+      "contact_counts": {
+        "false": 300,
+        "true": 0
+      },
       "finite": 300,
+      "finite_counts": {
+        "false": 0,
+        "true": 300
+      },
+      "full_horizon": 300,
+      "status_counts": {
+        "ok": 300
+      },
+      "outcome_counts": {
+        "OTHER": 300
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -219,7 +469,22 @@
       "equilibrium": "E-",
       "tests": 300,
       "contacts": 0,
+      "contact_counts": {
+        "false": 300,
+        "true": 0
+      },
       "finite": 300,
+      "finite_counts": {
+        "false": 0,
+        "true": 300
+      },
+      "full_horizon": 300,
+      "status_counts": {
+        "ok": 300
+      },
+      "outcome_counts": {
+        "OTHER": 300
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -227,7 +492,22 @@
       "equilibrium": "E0",
       "tests": 300,
       "contacts": 0,
+      "contact_counts": {
+        "false": 300,
+        "true": 0
+      },
       "finite": 300,
+      "finite_counts": {
+        "false": 0,
+        "true": 300
+      },
+      "full_horizon": 300,
+      "status_counts": {
+        "ok": 300
+      },
+      "outcome_counts": {
+        "OTHER": 300
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -235,7 +515,22 @@
       "equilibrium": "E+",
       "tests": 400,
       "contacts": 0,
+      "contact_counts": {
+        "false": 400,
+        "true": 0
+      },
       "finite": 400,
+      "finite_counts": {
+        "false": 0,
+        "true": 400
+      },
+      "full_horizon": 400,
+      "status_counts": {
+        "ok": 400
+      },
+      "outcome_counts": {
+        "OTHER": 400
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -243,7 +538,22 @@
       "equilibrium": "E-",
       "tests": 400,
       "contacts": 0,
+      "contact_counts": {
+        "false": 400,
+        "true": 0
+      },
       "finite": 400,
+      "finite_counts": {
+        "false": 0,
+        "true": 400
+      },
+      "full_horizon": 400,
+      "status_counts": {
+        "ok": 400
+      },
+      "outcome_counts": {
+        "OTHER": 400
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -251,7 +561,22 @@
       "equilibrium": "E0",
       "tests": 400,
       "contacts": 0,
+      "contact_counts": {
+        "false": 400,
+        "true": 0
+      },
       "finite": 400,
+      "finite_counts": {
+        "false": 0,
+        "true": 400
+      },
+      "full_horizon": 400,
+      "status_counts": {
+        "ok": 400
+      },
+      "outcome_counts": {
+        "OTHER": 400
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -259,7 +584,22 @@
       "equilibrium": "E+",
       "tests": 500,
       "contacts": 0,
+      "contact_counts": {
+        "false": 500,
+        "true": 0
+      },
       "finite": 500,
+      "finite_counts": {
+        "false": 0,
+        "true": 500
+      },
+      "full_horizon": 500,
+      "status_counts": {
+        "ok": 500
+      },
+      "outcome_counts": {
+        "OTHER": 500
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -267,7 +607,22 @@
       "equilibrium": "E-",
       "tests": 500,
       "contacts": 0,
+      "contact_counts": {
+        "false": 500,
+        "true": 0
+      },
       "finite": 500,
+      "finite_counts": {
+        "false": 0,
+        "true": 500
+      },
+      "full_horizon": 500,
+      "status_counts": {
+        "ok": 500
+      },
+      "outcome_counts": {
+        "OTHER": 500
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -275,7 +630,22 @@
       "equilibrium": "E0",
       "tests": 500,
       "contacts": 0,
+      "contact_counts": {
+        "false": 500,
+        "true": 0
+      },
       "finite": 500,
+      "finite_counts": {
+        "false": 0,
+        "true": 500
+      },
+      "full_horizon": 500,
+      "status_counts": {
+        "ok": 500
+      },
+      "outcome_counts": {
+        "OTHER": 500
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -283,7 +653,22 @@
       "equilibrium": "E+",
       "tests": 600,
       "contacts": 0,
+      "contact_counts": {
+        "false": 600,
+        "true": 0
+      },
       "finite": 600,
+      "finite_counts": {
+        "false": 0,
+        "true": 600
+      },
+      "full_horizon": 600,
+      "status_counts": {
+        "ok": 600
+      },
+      "outcome_counts": {
+        "OTHER": 600
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -291,7 +676,22 @@
       "equilibrium": "E-",
       "tests": 600,
       "contacts": 0,
+      "contact_counts": {
+        "false": 600,
+        "true": 0
+      },
       "finite": 600,
+      "finite_counts": {
+        "false": 0,
+        "true": 600
+      },
+      "full_horizon": 600,
+      "status_counts": {
+        "ok": 600
+      },
+      "outcome_counts": {
+        "OTHER": 600
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -299,7 +699,22 @@
       "equilibrium": "E0",
       "tests": 600,
       "contacts": 0,
+      "contact_counts": {
+        "false": 600,
+        "true": 0
+      },
       "finite": 600,
+      "finite_counts": {
+        "false": 0,
+        "true": 600
+      },
+      "full_horizon": 600,
+      "status_counts": {
+        "ok": 600
+      },
+      "outcome_counts": {
+        "OTHER": 600
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -307,7 +722,22 @@
       "equilibrium": "E+",
       "tests": 700,
       "contacts": 0,
+      "contact_counts": {
+        "false": 700,
+        "true": 0
+      },
       "finite": 700,
+      "finite_counts": {
+        "false": 0,
+        "true": 700
+      },
+      "full_horizon": 700,
+      "status_counts": {
+        "ok": 700
+      },
+      "outcome_counts": {
+        "OTHER": 700
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -315,7 +745,22 @@
       "equilibrium": "E-",
       "tests": 700,
       "contacts": 0,
+      "contact_counts": {
+        "false": 700,
+        "true": 0
+      },
       "finite": 700,
+      "finite_counts": {
+        "false": 0,
+        "true": 700
+      },
+      "full_horizon": 700,
+      "status_counts": {
+        "ok": 700
+      },
+      "outcome_counts": {
+        "OTHER": 700
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -323,7 +768,22 @@
       "equilibrium": "E0",
       "tests": 700,
       "contacts": 0,
+      "contact_counts": {
+        "false": 700,
+        "true": 0
+      },
       "finite": 700,
+      "finite_counts": {
+        "false": 0,
+        "true": 700
+      },
+      "full_horizon": 700,
+      "status_counts": {
+        "ok": 700
+      },
+      "outcome_counts": {
+        "OTHER": 700
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -331,7 +791,22 @@
       "equilibrium": "E+",
       "tests": 800,
       "contacts": 0,
+      "contact_counts": {
+        "false": 800,
+        "true": 0
+      },
       "finite": 800,
+      "finite_counts": {
+        "false": 0,
+        "true": 800
+      },
+      "full_horizon": 800,
+      "status_counts": {
+        "ok": 800
+      },
+      "outcome_counts": {
+        "OTHER": 800
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -339,7 +814,22 @@
       "equilibrium": "E-",
       "tests": 800,
       "contacts": 0,
+      "contact_counts": {
+        "false": 800,
+        "true": 0
+      },
       "finite": 800,
+      "finite_counts": {
+        "false": 0,
+        "true": 800
+      },
+      "full_horizon": 800,
+      "status_counts": {
+        "ok": 800
+      },
+      "outcome_counts": {
+        "OTHER": 800
+      },
       "decision": "no_contact_detected"
     },
     {
@@ -347,7 +837,23 @@
       "equilibrium": "E0",
       "tests": 800,
       "contacts": 22,
+      "contact_counts": {
+        "false": 778,
+        "true": 22
+      },
       "finite": 800,
+      "finite_counts": {
+        "false": 0,
+        "true": 800
+      },
+      "full_horizon": 800,
+      "status_counts": {
+        "ok": 800
+      },
+      "outcome_counts": {
+        "OTHER": 778,
+        "TARGET": 22
+      },
       "decision": "macro_radius_contact_detected"
     },
     {
@@ -355,7 +861,25 @@
       "equilibrium": "E+",
       "tests": 900,
       "contacts": 150,
+      "contact_counts": {
+        "false": 750,
+        "true": 150
+      },
       "finite": 900,
+      "finite_counts": {
+        "false": 0,
+        "true": 900
+      },
+      "full_horizon": 863,
+      "status_counts": {
+        "diverged": 37,
+        "ok": 863
+      },
+      "outcome_counts": {
+        "DIVERGED": 37,
+        "OTHER": 713,
+        "TARGET": 150
+      },
       "decision": "macro_radius_contact_detected"
     },
     {
@@ -363,7 +887,25 @@
       "equilibrium": "E-",
       "tests": 900,
       "contacts": 149,
+      "contact_counts": {
+        "false": 751,
+        "true": 149
+      },
       "finite": 900,
+      "finite_counts": {
+        "false": 0,
+        "true": 900
+      },
+      "full_horizon": 873,
+      "status_counts": {
+        "diverged": 27,
+        "ok": 873
+      },
+      "outcome_counts": {
+        "DIVERGED": 27,
+        "OTHER": 724,
+        "TARGET": 149
+      },
       "decision": "macro_radius_contact_detected"
     },
     {
@@ -371,12 +913,487 @@
       "equilibrium": "E0",
       "tests": 900,
       "contacts": 289,
+      "contact_counts": {
+        "false": 611,
+        "true": 289
+      },
       "finite": 900,
+      "finite_counts": {
+        "false": 0,
+        "true": 900
+      },
+      "full_horizon": 833,
+      "status_counts": {
+        "diverged": 67,
+        "ok": 833
+      },
+      "outcome_counts": {
+        "DIVERGED": 67,
+        "OTHER": 544,
+        "TARGET": 289
+      },
       "decision": "macro_radius_contact_detected"
     }
   ],
   "verdict": "promoted_radius_limited_hiddenness_supported_under_tested_neighborhoods",
   "macro_radius_note": "Contacts occur only in extended macroscopic radii 1.0 and 2.0; local radii through 0.3 have zero contacts.",
+  "aggregation_contract": {
+    "script": "version_2/tools/summarize_c590_hiddenness.py",
+    "simulation_performed": false,
+    "source_of_truth": "canonical_probe_csv_rows",
+    "grouping_dimensions": [
+      "radius",
+      "equilibrium",
+      "status",
+      "contact",
+      "finite"
+    ],
+    "status_semantics": {
+      "ok": "integration_reached_the_recorded_full_horizon",
+      "converged_equilibrium_early": "integration_terminated_after_the_recorded_equilibrium_criterion",
+      "diverged": "integration_reached_the_recorded_divergence_threshold"
+    }
+  },
+  "total_finite": 13500,
+  "status_counts": {
+    "converged_equilibrium_early": 4,
+    "diverged": 131,
+    "ok": 13365
+  },
+  "outcome_counts": {
+    "DIVERGED": 131,
+    "EQUILIBRIUM": 4,
+    "OTHER": 12755,
+    "TARGET": 610
+  },
+  "local_probe_summary": {
+    "maximum_radius": 0.3,
+    "radii": [
+      1e-05,
+      0.0001,
+      0.001,
+      0.01,
+      0.03,
+      0.1,
+      0.3
+    ],
+    "tests": 8400,
+    "contacts": 0,
+    "contact_counts": {
+      "false": 8400,
+      "true": 0
+    },
+    "finite": 8400,
+    "finite_counts": {
+      "false": 0,
+      "true": 8400
+    },
+    "full_horizon": 8396,
+    "status_counts": {
+      "converged_equilibrium_early": 4,
+      "ok": 8396
+    },
+    "outcome_counts": {
+      "EQUILIBRIUM": 4,
+      "OTHER": 8396
+    }
+  },
+  "macro_probe_summary": {
+    "radii": [
+      1.0,
+      2.0
+    ],
+    "tests": 5100,
+    "contacts": 610,
+    "contact_counts": {
+      "false": 4490,
+      "true": 610
+    },
+    "finite": 5100,
+    "finite_counts": {
+      "false": 0,
+      "true": 5100
+    },
+    "full_horizon": 4969,
+    "status_counts": {
+      "diverged": 131,
+      "ok": 4969
+    },
+    "outcome_counts": {
+      "DIVERGED": 131,
+      "OTHER": 4359,
+      "TARGET": 610
+    }
+  },
+  "summary_by_radius_equilibrium_status_contact": [
+    {
+      "radius": 1e-05,
+      "equilibrium": "E+",
+      "status": "converged_equilibrium_early",
+      "contact": false,
+      "finite": true,
+      "tests": 2
+    },
+    {
+      "radius": 1e-05,
+      "equilibrium": "E+",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 98
+    },
+    {
+      "radius": 1e-05,
+      "equilibrium": "E-",
+      "status": "converged_equilibrium_early",
+      "contact": false,
+      "finite": true,
+      "tests": 2
+    },
+    {
+      "radius": 1e-05,
+      "equilibrium": "E-",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 98
+    },
+    {
+      "radius": 1e-05,
+      "equilibrium": "E0",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 100
+    },
+    {
+      "radius": 0.0001,
+      "equilibrium": "E+",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 200
+    },
+    {
+      "radius": 0.0001,
+      "equilibrium": "E-",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 200
+    },
+    {
+      "radius": 0.0001,
+      "equilibrium": "E0",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 200
+    },
+    {
+      "radius": 0.001,
+      "equilibrium": "E+",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 300
+    },
+    {
+      "radius": 0.001,
+      "equilibrium": "E-",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 300
+    },
+    {
+      "radius": 0.001,
+      "equilibrium": "E0",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 300
+    },
+    {
+      "radius": 0.01,
+      "equilibrium": "E+",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 400
+    },
+    {
+      "radius": 0.01,
+      "equilibrium": "E-",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 400
+    },
+    {
+      "radius": 0.01,
+      "equilibrium": "E0",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 400
+    },
+    {
+      "radius": 0.03,
+      "equilibrium": "E+",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 500
+    },
+    {
+      "radius": 0.03,
+      "equilibrium": "E-",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 500
+    },
+    {
+      "radius": 0.03,
+      "equilibrium": "E0",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 500
+    },
+    {
+      "radius": 0.1,
+      "equilibrium": "E+",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 600
+    },
+    {
+      "radius": 0.1,
+      "equilibrium": "E-",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 600
+    },
+    {
+      "radius": 0.1,
+      "equilibrium": "E0",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 600
+    },
+    {
+      "radius": 0.3,
+      "equilibrium": "E+",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 700
+    },
+    {
+      "radius": 0.3,
+      "equilibrium": "E-",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 700
+    },
+    {
+      "radius": 0.3,
+      "equilibrium": "E0",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 700
+    },
+    {
+      "radius": 1.0,
+      "equilibrium": "E+",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 800
+    },
+    {
+      "radius": 1.0,
+      "equilibrium": "E-",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 800
+    },
+    {
+      "radius": 1.0,
+      "equilibrium": "E0",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 778
+    },
+    {
+      "radius": 1.0,
+      "equilibrium": "E0",
+      "status": "ok",
+      "contact": true,
+      "finite": true,
+      "tests": 22
+    },
+    {
+      "radius": 2.0,
+      "equilibrium": "E+",
+      "status": "diverged",
+      "contact": false,
+      "finite": true,
+      "tests": 37
+    },
+    {
+      "radius": 2.0,
+      "equilibrium": "E+",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 713
+    },
+    {
+      "radius": 2.0,
+      "equilibrium": "E+",
+      "status": "ok",
+      "contact": true,
+      "finite": true,
+      "tests": 150
+    },
+    {
+      "radius": 2.0,
+      "equilibrium": "E-",
+      "status": "diverged",
+      "contact": false,
+      "finite": true,
+      "tests": 27
+    },
+    {
+      "radius": 2.0,
+      "equilibrium": "E-",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 724
+    },
+    {
+      "radius": 2.0,
+      "equilibrium": "E-",
+      "status": "ok",
+      "contact": true,
+      "finite": true,
+      "tests": 149
+    },
+    {
+      "radius": 2.0,
+      "equilibrium": "E0",
+      "status": "diverged",
+      "contact": false,
+      "finite": true,
+      "tests": 67
+    },
+    {
+      "radius": 2.0,
+      "equilibrium": "E0",
+      "status": "ok",
+      "contact": false,
+      "finite": true,
+      "tests": 544
+    },
+    {
+      "radius": 2.0,
+      "equilibrium": "E0",
+      "status": "ok",
+      "contact": true,
+      "finite": true,
+      "tests": 289
+    }
+  ],
+  "source_file_manifest": [
+    {
+      "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_scaled_rows.csv",
+      "sha256": "f4118720ed34edc50b070511f65a88f0416b03744b95f114358f7adb00238983",
+      "rows": 3000,
+      "radii": [
+        1e-05,
+        0.0001,
+        0.001,
+        0.01
+      ],
+      "contacts": 0,
+      "status_counts": {
+        "converged_equilibrium_early": 4,
+        "ok": 2996
+      }
+    },
+    {
+      "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r003_rows.csv",
+      "sha256": "e6ec3773afe3c3b4dfe3c9090c8019539927b14717d739cfee1be50e6b214f8e",
+      "rows": 1500,
+      "radii": [
+        0.03
+      ],
+      "contacts": 0,
+      "status_counts": {
+        "ok": 1500
+      }
+    },
+    {
+      "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r010_rows.csv",
+      "sha256": "7a36bc3d916a7234f3e065446830039b1b6c6434c3bfcdcbef48806fdbe1e732",
+      "rows": 1800,
+      "radii": [
+        0.1
+      ],
+      "contacts": 0,
+      "status_counts": {
+        "ok": 1800
+      }
+    },
+    {
+      "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r030_rows.csv",
+      "sha256": "c74042d4ab044ad6f23b45652732d0096b0ae28af6021108e3ac2412b77b74f4",
+      "rows": 2100,
+      "radii": [
+        0.3
+      ],
+      "contacts": 0,
+      "status_counts": {
+        "ok": 2100
+      }
+    },
+    {
+      "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_rows.csv",
+      "sha256": "4e95ffdf7e20b9555d8fe2b9cdd034ab62cb4eccb1c736fac0c4eae091eb1a38",
+      "rows": 2400,
+      "radii": [
+        1.0
+      ],
+      "contacts": 22,
+      "status_counts": {
+        "ok": 2400
+      }
+    },
+    {
+      "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r200_rows.csv",
+      "sha256": "6a43f090c45515bc383421f5d835e2e5a6cd0e09d6ea78a4f07a4eadfaa58ccd",
+      "rows": 2700,
+      "radii": [
+        2.0
+      ],
+      "contacts": 588,
+      "status_counts": {
+        "diverged": 131,
+        "ok": 2569
+      }
+    }
+  ],
   "source_case_id": "chua_fractional_arctan_c590",
   "claim_label": "hiddenness_supported_under_tested_neighborhoods",
   "claim_scope": "local radii <= 0.3 only; macro radii retained as extended audit evidence",

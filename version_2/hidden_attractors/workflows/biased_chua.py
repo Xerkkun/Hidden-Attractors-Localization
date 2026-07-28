@@ -339,7 +339,11 @@ def find_biased_branches(params: ChuaParameters, q: float,
                     res = least_squares(
                         residual, x0=[A0, c0, w0],
                         bounds=([1e-6, -12.0, 0.1], [25.0, 12.0, 8.0]),
-                        ftol=1e-10, xtol=1e-10, max_nfev=300,
+                        method="trf",
+                        ftol=1e-10,
+                        xtol=1e-10,
+                        gtol=1e-8,
+                        max_nfev=300,
                     )
                     if res.success and np.linalg.norm(residual(res.x)) < tol:
                         raw.append((*res.x, np.linalg.norm(residual(res.x))))
@@ -952,8 +956,50 @@ def sample_ball(eq_point: np.ndarray, radius: float, n: int, seed: int) -> np.nd
                 break
     return np.array(pts[:n])
 
+
+def _extended_radius_blocks(
+    equilibria: Dict[str, np.ndarray],
+    radius_plan: List[tuple[float, int]],
+    random_seed: int,
+) -> List[List[tuple[int, str, np.ndarray, int, float, int, int]]]:
+    """Build a radius-major schedule that completes every equilibrium per radius."""
+
+    if not radius_plan:
+        raise ValueError("The extended hiddenness radius plan cannot be empty.")
+    if any(radius <= 0.0 or samples <= 0 for radius, samples in radius_plan):
+        raise ValueError("Every radius and sample count must be positive.")
+    if any(
+        radius_plan[index][0] >= radius_plan[index + 1][0]
+        for index in range(len(radius_plan) - 1)
+    ):
+        raise ValueError(
+            "The extended hiddenness radii must be strictly increasing so the "
+            "first-contact stopping rule is causal."
+        )
+
+    blocks: List[List[tuple[int, str, np.ndarray, int, float, int, int]]] = []
+    equilibrium_items = list(equilibria.items())
+    for radius_index, (radius, samples) in enumerate(radius_plan):
+        block: List[tuple[int, str, np.ndarray, int, float, int, int]] = []
+        for equilibrium_index, (name, point) in enumerate(equilibrium_items):
+            seed = random_seed + equilibrium_index * 100 + radius_index * 10
+            block.append(
+                (
+                    equilibrium_index,
+                    name,
+                    point,
+                    radius_index,
+                    float(radius),
+                    int(samples),
+                    seed,
+                )
+            )
+        blocks.append(block)
+    return blocks
+
+
 def run_extended_hiddenness(cfg: Dict[str, Any]) -> Dict[str, Any]:
-    """Runs high density multiprocessing probe up to radius 2.0."""
+    """Run a radius-major, high-density multiprocessing basin probe."""
     sys_cfg = cfg["system"]
     int_cfg = cfg["integrator"]
     h4_cfg  = cfg["step4_extended_hiddenness"].copy()
@@ -990,6 +1036,14 @@ def run_extended_hiddenness(cfg: Dict[str, Any]) -> Dict[str, Any]:
     radius_plan = [(float(r), int(n)) for r, n in h4_cfg["radius_plan"]]
     radii       = [r for r, _ in radius_plan]
     random_seed = int(cfg["experiment"]["random_seed"])
+    stop_after_first_contact_radius = bool(
+        h4_cfg.get("stop_after_first_contact_radius", False)
+    )
+    radius_blocks = _extended_radius_blocks(
+        equilibria,
+        radius_plan,
+        random_seed,
+    )
 
     n_workers_cfg = h4_cfg.get("n_workers", "auto")
     if n_workers_cfg == "auto":
@@ -1007,8 +1061,9 @@ def run_extended_hiddenness(cfg: Dict[str, Any]) -> Dict[str, Any]:
     all_records : List[Dict] = []
     all_runs    : List[Dict] = []
     t0_global   = time.time()
-    total_probes = sum(n for _, n in radius_plan) * len(equilibria)
+    planned_total_probes = sum(n for _, n in radius_plan) * len(equilibria)
     probe_count  = 0
+    first_contact_radius: Optional[float] = None
 
     pool = multiprocessing.Pool(
         processes=n_workers,
@@ -1016,52 +1071,108 @@ def run_extended_hiddenness(cfg: Dict[str, Any]) -> Dict[str, Any]:
         initargs=(m1, m0, alpha, beta, gamma, ref_tail, stable_eqs, h4_cfg),
     )
 
-    for eq_idx, (eq_name, eq_pt) in enumerate(equilibria.items()):
-        for r_idx, (radius, n_samples) in enumerate(radius_plan):
-            t0_r = time.time()
-            seed  = random_seed + eq_idx * 100 + r_idx * 10
-            pts   = sample_ball(eq_pt, radius, n_samples, seed)
+    try:
+        for radius_block in radius_blocks:
+            radius_target_hits = 0
+            for (
+                _eq_idx,
+                eq_name,
+                eq_pt,
+                _r_idx,
+                radius,
+                n_samples,
+                seed,
+            ) in radius_block:
+                t0_r = time.time()
+                pts = sample_ball(eq_pt, radius, n_samples, seed)
 
-            async_res = [pool.apply_async(worker_run_probe, (pt,)) for pt in pts]
-            stats = {k: 0 for k in
-                     ["target_attractor", "stable_equilibrium", "divergence",
-                      "other_attractor", "numerical_failure"]}
-            radius_runs: List[Dict] = []
-            report_step = max(1, n_samples // 4)
+                async_res = [
+                    pool.apply_async(worker_run_probe, (pt,))
+                    for pt in pts
+                ]
+                stats = {
+                    key: 0
+                    for key in [
+                        "target_attractor",
+                        "stable_equilibrium",
+                        "divergence",
+                        "other_attractor",
+                        "numerical_failure",
+                    ]
+                }
+                radius_runs: List[Dict] = []
+                report_step = max(1, n_samples // 4)
 
-            for k, ares in enumerate(async_res):
-                res = ares.get()
-                radius_runs.append(res)
-                stats[res["destination"]] = stats.get(res["destination"], 0) + 1
-                probe_count += 1
+                for k, ares in enumerate(async_res):
+                    res = ares.get()
+                    radius_runs.append(res)
+                    stats[res["destination"]] = (
+                        stats.get(res["destination"], 0) + 1
+                    )
+                    probe_count += 1
 
-                if (k + 1) % report_step == 0 or (k + 1) == n_samples:
-                    elapsed = time.time() - t0_global
-                    rate    = probe_count / elapsed if elapsed > 0 else 0
-                    eta     = (total_probes - probe_count) / rate if rate > 0 else 0
-                    print(f"  [{eq_name}] r={radius:.0e}  {k+1:4d}/{n_samples:4d}  "
-                          f"TARGET={stats['target_attractor']}  EQ={stats['stable_equilibrium']}  "
-                          f"OTHER={stats['other_attractor']}  "
-                          f"[{elapsed:.0f}s  ETA~{eta:.0f}s]")
+                    if (k + 1) % report_step == 0 or (k + 1) == n_samples:
+                        elapsed = time.time() - t0_global
+                        rate = probe_count / elapsed if elapsed > 0 else 0
+                        eta = (
+                            (planned_total_probes - probe_count) / rate
+                            if rate > 0
+                            else 0
+                        )
+                        print(
+                            f"  [{eq_name}] r={radius:.0e}  "
+                            f"{k+1:4d}/{n_samples:4d}  "
+                            f"TARGET={stats['target_attractor']}  "
+                            f"EQ={stats['stable_equilibrium']}  "
+                            f"OTHER={stats['other_attractor']}  "
+                            f"[{elapsed:.0f}s  ETA~{eta:.0f}s]"
+                        )
 
-            dt_r = time.time() - t0_r
-            print(f"  FINAL r={radius:.0e}  n={n_samples}  {dt_r:.1f}s: {stats}")
+                dt_r = time.time() - t0_r
+                print(
+                    f"  FINAL r={radius:.0e}  n={n_samples}  "
+                    f"{dt_r:.1f}s: {stats}"
+                )
 
-            if plot_cfg["save_figures"]:
-                plot_sphere_summary(eq_name, eq_pt, radius, radius_runs, pts, outdir / f"sphere_{eq_name}_{radius:.0e}.png")
+                if plot_cfg["save_figures"]:
+                    plot_sphere_summary(
+                        eq_name,
+                        eq_pt,
+                        radius,
+                        radius_runs,
+                        pts,
+                        outdir / f"sphere_{eq_name}_{radius:.0e}.png",
+                    )
 
-            for res in radius_runs:
-                all_runs.append({"equilibrium": eq_name, "radius": float(radius), **res})
+                for res in radius_runs:
+                    all_runs.append(
+                        {
+                            "equilibrium": eq_name,
+                            "radius": float(radius),
+                            **res,
+                        }
+                    )
 
-            all_records.append({
-                "equilibrium": eq_name, "radius": float(radius), "samples": n_samples,
-                "TARGET": stats["target_attractor"], "EQ": stats["stable_equilibrium"],
-                "OTHER": stats["other_attractor"], "DIV": stats["divergence"],
-                "FAIL": stats["numerical_failure"],
-            })
+                all_records.append(
+                    {
+                        "equilibrium": eq_name,
+                        "radius": float(radius),
+                        "samples": n_samples,
+                        "TARGET": stats["target_attractor"],
+                        "EQ": stats["stable_equilibrium"],
+                        "OTHER": stats["other_attractor"],
+                        "DIV": stats["divergence"],
+                        "FAIL": stats["numerical_failure"],
+                    }
+                )
+                radius_target_hits += int(stats["target_attractor"])
 
-    pool.close()
-    pool.join()
+            if stop_after_first_contact_radius and radius_target_hits > 0:
+                first_contact_radius = float(radius_block[0][4])
+                break
+    finally:
+        pool.close()
+        pool.join()
 
     target_hits  = sum(r["TARGET"] for r in all_records)
     samples_tot  = sum(r["samples"] for r in all_records)
@@ -1076,10 +1187,24 @@ def run_extended_hiddenness(cfg: Dict[str, Any]) -> Dict[str, Any]:
     result = {
         "prefix": prefix, "m1": m1, "m0": m0, "c": c_bias,
         "sampling_mode": h4_cfg["sampling_mode"],
-        "protocol": {"radii": radii, "radius_plan": radius_plan,
-                     "total_probes": total_probes,
-                     "t_final": float(h4_cfg["t_final_probe"]),
-                     "t_burn":  float(h4_cfg["t_burn_probe"])},
+        "protocol": {
+            "radii": radii,
+            "radius_plan": radius_plan,
+            "planned_total_probes": planned_total_probes,
+            "executed_radii": sorted({float(r["radius"]) for r in all_records}),
+            "executed_total_probes": samples_tot,
+            "stop_after_first_contact_radius": stop_after_first_contact_radius,
+            "first_contact_radius": first_contact_radius,
+            "stop_rule": (
+                "Process radii in ascending order across all equilibria; "
+                "complete every planned probe at the first radius with target "
+                "contacts and omit larger radii."
+                if stop_after_first_contact_radius
+                else "Execute the complete declared radius plan."
+            ),
+            "t_final": float(h4_cfg["t_final_probe"]),
+            "t_burn": float(h4_cfg["t_burn_probe"]),
+        },
         "hiddenness_status": status,
         "target_hits_total": int(target_hits),
         "samples_total":     int(samples_tot),

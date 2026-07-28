@@ -7,10 +7,13 @@ This package reports the `chua_arctan_c590_q09999_seed9` candidate as one smooth
 - Public validation package: `version_2/validation/chua_fractional_arctan/`.
 - Source evidence package: `version_2/validation/chua_fractional_arctan_c590/`.
 - Label: `hiddenness_supported_under_tested_neighborhoods` for local radii `r <= 0.3`.
-- Local finite probes: `8400`.
+- Local probes: `8400`; `8396` reached the full horizon and `4` met the
+  equilibrium-convergence criterion early.
 - Local target contacts: `0`.
 - Tested equilibria: `E0, E+, E-`.
 - Macro-radius audit: `610` contacts in `5100` probes at radii `1.0` and `2.0`.
+  At `r=2`, `2569` trajectories reached the full horizon and `131` reached the
+  declared divergence threshold.
 
 ## Boundary
 
@@ -21,8 +24,13 @@ The local claim is finite numerical evidence under the recorded Caputo ABM full-
 - `hiddenness_validation_summary.json`: canonical machine-readable summary.
 - `run_metadata.json`: parameters, seed, numerical contract, and source pointers.
 - `hiddenness_decisions.csv`: per-radius and per-equilibrium decisions.
+- `hiddenness_decisions_status_contact.csv`: row-derived groups by radius,
+  equilibrium, status, contact, and finite-state flag.
 - `summary_by_radius.csv`: aggregate decisions by radius.
 - `equilibria.json`: tested equilibria.
 - `matignon_classification.json`: local Matignon classification snapshot.
 - `config.json`: minimal reproducibility configuration for the promoted evidence.
 - `figures_manifest.json`: presentation figure metadata linked to this case.
+
+Regenerate this package and its source package without executing simulations
+with `python tools/summarize_c590_hiddenness.py`.
