@@ -22,6 +22,7 @@ modes:
   continuation_mode: "fractional"
 integrator:
   name: "rk4"
+  h: 0.01
 """
     config_path = tmp_path / "test_config.yaml"
     config_path.write_text(config_data, encoding="utf-8")

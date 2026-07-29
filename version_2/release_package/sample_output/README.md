@@ -1,5 +1,8 @@
-# Release sample output
+# Comprehensive sample output
 
-These JSON files record lightweight command outcomes for the v1.0.0 package interface. They are not generated validation evidence and do not claim a scientific result.
+`comprehensive_sample_summary.json` records the executed software-validation sample,
+its environment, numerical decision, repeatability check, and SHA-256 hashes.
 
-`sample_status` is `executed` for the release interface checks. The outputs confirm CLI help, public seed command scope, validation-contract invocation, and release-readiness behavior.
+The tracked summary is compact and verifies that two independent executions
+produced identical scientific outputs. The output path stored in
+`run_manifest.json` is intentionally excluded from deterministic comparison.

@@ -92,7 +92,7 @@
       "incompatible_requested_residual_1_plus_WN": 2.0
     }
   ],
-  "configuration": "configs/chua_arctan_wu2023_caputo.json",
+  "configuration": "validation/reference_cases/fractional_chua_arctan_wu2023/config.json",
   "hidden_verified": false,
   "interpretation": "seed_generation_only_not_hiddenness_evidence"
 }

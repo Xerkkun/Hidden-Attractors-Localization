@@ -4,7 +4,7 @@
 
 1. the unified CLI, `hidden-attractors`, for reproducible runs; and
 2. the Python package, `hidden_attractors`, for registering systems, composing
-   workflow specs, and building audited research scripts.
+   workflow specs, and building audited analysis scripts.
 
 For the shortest command list, see [Quick Start](quick_start.md). For the full
 symbol inventory, see [API Reference](api_reference.md).
@@ -23,52 +23,37 @@ Use the package from Python as:
 import hidden_attractors
 ```
 
-For release testing, install from TestPyPI:
-
-```bash
-python -m pip install --index-url https://test.pypi.org/simple/ --no-deps hidden-attractors-fo
-```
-
 Install from a checkout for development (with all extras):
 
 ```bash
-python -m pip install -e ".[dev,analysis,docs,legacy]"
+python -m pip install -e ".[dev,analysis,docs]"
 ```
 
 ## High-level CLI
 
-Run or inspect built-in presets:
+Copy the abstract contract, fill every required value, then run or inspect that
+explicit file:
 
 ```bash
-hidden-attractors run -p chua_integer
-hidden-attractors run -p chua_fractional
-hidden-attractors run -p chua_arctan
-hidden-attractors inspect-config -p chua_fractional
-```
-
-Initialize an editable example configuration:
-
-```bash
-hidden-attractors init -e chua_fractional
-hidden-attractors run -c configs/examples/chua_fractional_centered_lure_df.yaml
+hidden-attractors init -e workflow_contract
+hidden-attractors inspect-config -c my_workflow.yaml
+hidden-attractors run -c my_workflow.yaml
 ```
 
 Useful inspection and validation checks:
 
 ```bash
 hidden-attractors inspect systems
-hidden-attractors inspect candidates
+hidden-attractors inspect candidates --source path/to/candidates.json
 hidden-attractors inspect workflow-requirements
 hidden-attractors seed --help
-hidden-attractors validate contract --allow-pending
-hidden-attractors validate bibliography
-hidden-attractors validate release-readiness --submission-strict
+hidden-attractors validate contract
 ```
 
 The public release surface is the single `hidden-attractors` command.
-Historical standalone commands are legacy/deprecated and should appear only in
-migration notes. Machado/FDF seed routes remain theory/internal planned support
-and are not exposed as public CLI commands in this release.
+Historical standalone commands are legacy/deprecated and appear only in
+migration notes. The documented seed commands are limited to the implemented
+release surface.
 
 ## Python API basics
 
@@ -77,7 +62,7 @@ Load a configuration:
 ```python
 from hidden_attractors.workflows.config_loader import load_config
 
-config = load_config("configs/examples/chua_fractional_centered_lure_df.yaml")
+config = load_config("my_workflow.yaml")
 ```
 
 Retrieve a built-in system:
@@ -149,14 +134,14 @@ experiment:
 
 system:
   system_id: "chua_fractional_saturation"
-  q: 0.9998
+  q: 0.9
 
 integrator:
   name: "efork3"
   h: 0.01
   memory_mode: "window"
   memory_policy: "finite_window"
-  memory_window_steps: 4000
+  memory_window_steps: 100
 
 stages:
   seed_search: true
@@ -166,9 +151,8 @@ stages:
   basin_slices: false
 ```
 
-For full Caputo validation, use a full-history policy where required and record
-all horizons, burn-in windows, radii, sample counts, thresholds, and random
-seeds.
+For a reproducible calculation, record the solver, memory policy, horizon,
+transient, thresholds, and random seed with the output.
 
 ## Official methodology for new Lur'e systems
 
@@ -194,15 +178,16 @@ requires finite neighborhood or basin evidence around all equilibria under the
 recorded numerical contract. Diagnostics such as FFT/PSD, 0-1, Poincare, and
 Lyapunov estimates are useful but do not certify hiddenness.
 
-## Example lanes
+## Public API Examples And Completed Validation
 
-| Lane | Command | Use |
+| Kind | Command | Use |
 | --- | --- | --- |
-| Integer Chua reference | `python examples/chua_integer_lure_reference/run_example.py --quick` | First example for the complete seed-continuation-hiddenness workflow at `q=1` |
-| Non-smooth fractional BDF | `python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick` | Proposed biased-DF route for fractional Chua; evidence remains contract-limited |
-| Arctan Wu2023/c590 | `python examples/chua_arctan_wu2023/run_example.py --quick` | Separates Wu2023 bibliographic reproduction from one smooth c590 Caputo lane reported only as local/radius-limited finite-time evidence |
-| Custom registration | `python examples/custom_system_definition.py` | Minimal system registry example |
-| Workflow spec | `python examples/new_system_workflow_spec.py` | Shows the next layer needed before reusable workflows are auditable |
+| Public API example | `python examples/custom_system_definition.py` | Minimal system registry example |
+| Public API example | `python examples/new_system_workflow_spec.py` | Records the prerequisites for an auditable reusable workflow |
+| Repository validation | `python examples/chua_integer_lure_reference/run_example.py --quick` | Reproduces the complete `q=1` validation route |
+
+Case-specific research records remain outside the installed library and its
+public user documentation.
 
 Ordinary runs write to `outputs/`. Promoted evidence belongs under
 `validation/`, and promoted figures belong under `library_figures/` through the

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "case_id": "chua_fractional_arctan",
-  "candidate_id": "chua_arctan_c590_q09999_seed9",
+  "candidate_id": "chua_arctan_c590_q09999",
   "system_id": "chua_fractional_arctan",
   "parameters": {
     "alpha": 21.849356906616716,

@@ -5,7 +5,7 @@ from pathlib import Path
 from hidden_attractors.paths import PROJECT_ROOT
 
 def test_no_false_certification() -> None:
-    # Verify that incomplete stages remain open and hiddenness is closed only with a negative verdict
+    # Verify that non-evaluated/inconclusive stages remain non-certifying.
     validation_root = PROJECT_ROOT / "validation"
     manifest_path = validation_root / "00_manifest" / "validation_manifest.json"
     
@@ -28,7 +28,7 @@ def test_no_false_certification() -> None:
         
         # Verify specific honest statuses
         if stage_name == "robustness":
-            assert summary_data["status"] == "pending_not_in_scope_current_phase"
+            assert summary_data["status"] == "not_evaluated_under_frozen_contract"
         elif stage_name == "diagnostics":
             assert summary_data["status"] == "diagnostics_partial_current_protocol"
 
@@ -44,14 +44,16 @@ def test_no_false_certification() -> None:
     assert '"hidden_verified": true' not in serialized_hiddenness
     assert '"hiddenness_verified": true' not in serialized_hiddenness
             
-    # Verify they are correctly placed under pending/failed_or_incomplete stages in the manifest
-    assert "robustness" in manifest_data["pending_stages"]
-    assert "hiddenness_tests" not in manifest_data["pending_stages"]
-    assert "diagnostics" in manifest_data["pending_stages"]
-    
-    assert "robustness" in manifest_data["failed_or_incomplete_stages"]
-    assert "hiddenness_tests" not in manifest_data["failed_or_incomplete_stages"]
-    assert "diagnostics" in manifest_data["failed_or_incomplete_stages"]
+    assert manifest_data["pending_stages"] == []
+    assert manifest_data["failed_or_incomplete_stages"] == []
+    assert manifest_data["not_evaluated_stages"] == ["robustness"]
+    assert manifest_data["inconclusive_stages"] == ["diagnostics"]
+    assert (
+        manifest_data["final_report"]["status"]
+        == "not_produced_under_frozen_contract"
+    )
+    assert manifest_data["final_report"]["source"] is None
+    assert manifest_data["final_report"]["compiled"] is None
 
 
 def test_f5_outputs_have_no_false_certification() -> None:

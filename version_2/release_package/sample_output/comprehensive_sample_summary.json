@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "sample_status": "executed",
+  "not_promoted_evidence": true,
+  "replace_after_execution": false,
+  "release_version": "1.1.0",
+  "executed_on": "2026-07-29",
+  "command": "python examples/chua_integer_lure_reference/run_example.py --config release_package/sample_input/chua_integer_comprehensive.yaml --quick --steps search continuation verification --output-dir <empty-output-directory>",
+  "stages": [
+    "search",
+    "continuation",
+    "verification"
+  ],
+  "quick_mode": true,
+  "runtime": {
+    "elapsed_seconds": 2.455,
+    "python": "3.14.3",
+    "operating_system": "Microsoft Windows NT 10.0.26200.0",
+    "processor": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD"
+  },
+  "result": {
+    "seed_status": "computed",
+    "continuation_steps": 5,
+    "final_status": "ok",
+    "sampled_neighborhood_probes": 6,
+    "target_hits": 2,
+    "hidden_candidate_allowed": false,
+    "interpretation": "integer software validation control; finite sampled result, not a global proof"
+  },
+  "deterministic_output_hashes": {
+    "01_seed_report.json": "a9bd811f8753d3cf056f511ebe2b781fb30b4bc6f4c6d9c577a07b94438735dd",
+    "02_continuation_trace.json": "898e5fe2aa88b69332a382b25858a9dce7ee161eb80123c5179a86dbd94f3d51",
+    "03_final_attractor.csv": "02b14463680d6695c74c936cfea2ffb1cb2497005bf90dc7e4bb880db4d7c390",
+    "03_hiddenness_summary.json": "51be8f9e1449cb50828693c05bc21d9d69bc25a5a02ee251b07fda44647dfc9f",
+    "continuation_steps/continuation_lambda_000.csv": "79f1fcff7ae73193581d38eae5af99e62a6024cc81bb79d6517a37eec17fa919",
+    "continuation_steps/continuation_lambda_001.csv": "2914926be65adb63f922a83384af694ce3625d83a9b0339d53ce553ae3f0be28",
+    "continuation_steps/continuation_lambda_002.csv": "c9277c560d373868cad637f83d6d3a614c7a42e37ed361bdc01962ea73efc223",
+    "continuation_steps/continuation_lambda_003.csv": "1294dac38d2156730fb85db69b3eec2c668ec1f03a678678af209e830d785b55",
+    "continuation_steps/continuation_lambda_004.csv": "74dfe909a35feb67cd44d91caf764ebf8baa86214c7d821c73196f9035e23794"
+  },
+  "repeatability_check": {
+    "independent_runs": 2,
+    "deterministic_outputs_identical": true,
+    "path_dependent_run_manifest_excluded": true
+  }
+}

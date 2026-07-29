@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import shutil
 import sys
 from pathlib import Path
 
@@ -43,7 +42,9 @@ def test_near_zero_sign_policy_distinguishes_boundary_from_strict_mismatch() -> 
 
 def test_diagnostic_generation_does_not_require_ignored_outputs_csv(tmp_path: Path) -> None:
     summary_path = tmp_path / "validation_summary.json"
-    shutil.copyfile(SUMMARY_PATH, summary_path)
+    generator_input = _summary()
+    generator_input["status"] = "published_benchmarks_pending_discrepancy"
+    summary_path.write_text(json.dumps(generator_input), encoding="utf-8")
     generated = generate_diagnostics(
         summary_path=summary_path,
         outputs_csv_path=tmp_path / "absent.csv",
@@ -57,7 +58,9 @@ def test_diagnostic_generation_does_not_require_ignored_outputs_csv(tmp_path: Pa
 def test_diagnostic_regeneration_preserves_partial_sweep_outputs(tmp_path: Path) -> None:
     summary_path = tmp_path / "validation_summary.json"
     diagnostics_dir = tmp_path / "diagnostics"
-    shutil.copyfile(SUMMARY_PATH, summary_path)
+    generator_input = _summary()
+    generator_input["status"] = "published_benchmarks_pending_discrepancy"
+    summary_path.write_text(json.dumps(generator_input), encoding="utf-8")
     generate_diagnostics(
         summary_path=summary_path,
         outputs_csv_path=tmp_path / "absent.csv",
@@ -77,7 +80,7 @@ def test_diagnostic_regeneration_preserves_partial_sweep_outputs(tmp_path: Path)
 def test_official_diagnostic_summary_remains_conservative() -> None:
     summary = _summary()
     diagnostics = summary["discrepancy_diagnostics"]
-    assert summary["status"] == "published_benchmarks_pending_discrepancy"
+    assert summary["status"] == "recorded_published_benchmark_discrepancy"
     assert summary["validated"] is False
     assert summary["validated_against_published_benchmarks"] is False
     assert diagnostics["status"] == "diagnostics_added"
@@ -99,7 +102,7 @@ def test_official_diagnostic_summary_remains_conservative() -> None:
         "validated_after_diagnostics": False,
     }
     assert diagnostics["sensitivity_status"] in {
-        "planned_not_executed",
+        "not_executed",
         "partial_sweeps_executed_not_validation",
     }
     assert (
@@ -116,7 +119,7 @@ def test_tracked_diagnostic_artifacts_exist() -> None:
         "fischer2020_discrepancy_matrix.csv",
         "fischer2020_row_classification.csv",
         "fischer2020_reproduction_limitations.md",
-        "sensitivity_plan.yaml",
+        "sensitivity_protocol.yaml",
         "sensitivity_summary.json",
         "sensitivity_delta.csv",
         "sensitivity_t_clone.csv",
@@ -144,7 +147,7 @@ def test_executed_sensitivity_summary_remains_diagnostic_only() -> None:
         (DIAGNOSTICS_DIR / "sensitivity_summary.json").read_text(encoding="utf-8")
     )
     assert summary["status"] in {
-        "planned_not_executed",
+        "not_executed",
         "partial_sweeps_executed_not_validation",
     }
     assert summary["validated_after_sensitivity"] is False

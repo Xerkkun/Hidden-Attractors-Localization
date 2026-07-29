@@ -17,7 +17,6 @@ def test_reference_documents_exist() -> None:
     required = [
         ROOT / "docs" / "references.bib",
         ROOT / "docs" / "code_reference_map.md",
-        ROOT / "docs" / "reporte_unificado_chua_fraccionario.tex",
     ]
 
     assert all(path.exists() for path in required)

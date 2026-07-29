@@ -7,6 +7,7 @@ import argparse
 import csv
 import json
 import math
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -33,9 +34,10 @@ from hidden_attractors.native.backends import (  # noqa: E402
 from hidden_attractors.solvers import efork_q1_integrate  # noqa: E402
 
 
-POINCARE_ROOT = (
-    PROJECT_ROOT / "validation" / "chaos_validation" / "dynamics_diagnostics" / "poincare"
-)
+VALIDATION_ROOT = Path(
+    os.environ.get("HIDDEN_ATTRACTORS_VALIDATION_ROOT", PROJECT_ROOT / "validation")
+).resolve()
+POINCARE_ROOT = VALIDATION_ROOT / "chaos_validation" / "dynamics_diagnostics" / "poincare"
 CASES_DIR = POINCARE_ROOT / "cases"
 GLOBAL_SUMMARY_PATH = POINCARE_ROOT / "poincare_diagnostics_summary.json"
 F5_SUMMARY_PATH = POINCARE_ROOT.parent / "f5_diagnostics_summary.json"

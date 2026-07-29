@@ -173,7 +173,10 @@ def classify_row(row: dict[str, Any]) -> dict[str, Any]:
     if row["system"] == "financial":
         notes.append("financial RHS contains abs(x)")
     if row["system"] == "jerk" and max(errors) >= TARGET_ABS_TOL:
-        notes.append("review jerk exponential nonlinearity scale and clone protocol")
+        notes.append(
+            "jerk exponential-nonlinearity scale and clone-protocol "
+            "interpretation remain unresolved"
+        )
     return {
         "case_file": row["case_file"],
         "system": row["system"],
@@ -259,9 +262,9 @@ def _display_path(path: Path) -> str:
         return str(path)
 
 
-def _sensitivity_plan() -> dict[str, Any]:
+def _sensitivity_protocol() -> dict[str, Any]:
     return {
-        "status": "planned_or_partial",
+        "status": "bounded_diagnostic_protocol_with_recorded_runs",
         "purpose": "diagnose protocol and numerical sensitivity without promoting validation",
         "opt_in": "RUN_F3_DISCREPANCY_SWEEPS=1",
         "bounded_default": "run_cloned_dynamics_sensitivity.py limits active runs unless --max-runs 0 is supplied",
@@ -388,7 +391,7 @@ def _render_report(matrix: list[dict[str, Any]], consistency: dict[str, Any]) ->
             "### Jerk",
             "",
             "- Several rows retain large `lambda_3` discrepancies.",
-            "- Review the exponential nonlinearity scale, `T_clone`, and ABM protocol interpretation.",
+            "- The exponential nonlinearity scale, `T_clone`, and ABM protocol interpretation remain unresolved contributors.",
             "",
             "## Ordered hypotheses",
             "",
@@ -408,14 +411,17 @@ def _render_report(matrix: list[dict[str, Any]], consistency: dict[str, Any]) ->
             "for near-zero exponents. Use the additional diagnostic field",
             "`near_zero_sign_boundary` before interpreting sign failures.",
             "",
-            "## Recommendations",
+            "## Current validation boundary",
             "",
-            "- Do not promote F3.",
-            "- Review the completed bounded `T_clone` and `delta` sweeps before extending costly variants.",
-            "- Validate ABM `q=1` against an exact solution.",
-            "- Compare integer jerk against the independent reusable RK4 integrator.",
-            "- Review whether the article uses a transient before clone accumulation.",
-            "- Review whether clones restart on a long fiducial trajectory or restart block-locally.",
+            "- F3 is not promoted.",
+            "- The completed bounded `T_clone` and `delta` sweeps are the retained extent of this diagnostic record.",
+            "- An exact-solution ABM `q=1` validation is not present in this record.",
+            "- An independent reusable-RK4 comparison for the integer jerk case is not present in this record.",
+            "",
+            "## Unresolved protocol information",
+            "",
+            "- The available article description does not resolve whether a transient precedes clone accumulation.",
+            "- The available article description does not resolve whether clones restart on a long fiducial trajectory or block-locally.",
             "",
             "## Methodological declaration",
             "",
@@ -453,9 +459,9 @@ def generate_diagnostics(
     consistency = check_outputs_csv_consistency(summary["results"], outputs_csv_path)
     _write_csv(diagnostics_dir / "fischer2020_discrepancy_matrix.csv", matrix, MATRIX_FIELDS)
     _write_csv(diagnostics_dir / "fischer2020_row_classification.csv", matrix, MATRIX_FIELDS)
-    plan = _sensitivity_plan()
-    (diagnostics_dir / "sensitivity_plan.yaml").write_text(
-        yaml.safe_dump(plan, sort_keys=False),
+    protocol = _sensitivity_protocol()
+    (diagnostics_dir / "sensitivity_protocol.yaml").write_text(
+        yaml.safe_dump(protocol, sort_keys=False),
         encoding="utf-8",
     )
     policy = {
@@ -477,7 +483,7 @@ def generate_diagnostics(
         encoding="utf-8",
     )
     sensitivity_summary = {
-        "status": "planned_not_executed",
+        "status": "not_executed",
         "opt_in": "RUN_F3_DISCREPANCY_SWEEPS=1",
         "validated_after_sensitivity": False,
         "notes": ["Sensitivity sweeps are diagnostic only and do not promote F3."],
@@ -560,7 +566,7 @@ def generate_diagnostics(
         "This directory classifies the recorded F3 discrepancies without promoting\n"
         "validation. See [the report](fischer2020_discrepancy_report.md) and the\n"
         "formal [reproduction limitations](fischer2020_reproduction_limitations.md),\n"
-        f"plus the reproducible [sensitivity plan](sensitivity_plan.yaml).{sensitivity_note}\n",
+        f"plus the recorded [sensitivity protocol](sensitivity_protocol.yaml).{sensitivity_note}\n",
         encoding="utf-8",
     )
     existing_diagnostics = summary.get("discrepancy_diagnostics", {})
@@ -577,7 +583,10 @@ def generate_diagnostics(
         "near_zero_sign_policy": "discrepancy_diagnostics/near_zero_sign_policy.json",
         "sensitivity_status": sensitivity_summary.get(
             "status",
-            existing_diagnostics.get("sensitivity_status", "planned_or_partial"),
+            existing_diagnostics.get(
+                "sensitivity_status",
+                "bounded_diagnostic_protocol_with_recorded_runs",
+            ),
         ),
         "validated_after_diagnostics": False,
         "reproduction_limitations": (

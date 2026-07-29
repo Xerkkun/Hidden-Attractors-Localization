@@ -69,7 +69,12 @@ def test_no_writing_to_real_paths():
 
 @pytest.mark.hygiene
 def test_tests_inventory_has_no_pending_real_output_refactors():
-    inventory_path = Path(__file__).resolve().parents[2] / "docs" / "tests_inventory.md"
+    inventory_path = (
+        Path(__file__).resolve().parents[2]
+        / "validation"
+        / "software_audit"
+        / "tests_inventory.md"
+    )
     rows = [line for line in inventory_path.read_text(encoding="utf-8").splitlines() if line.startswith("| tests/")]
     violations = []
     for line in rows:

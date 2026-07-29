@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -12,7 +13,10 @@ import numpy as np
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DIAGNOSTICS_ROOT = PROJECT_ROOT / "validation" / "chaos_validation" / "dynamics_diagnostics"
+VALIDATION_ROOT = Path(
+    os.environ.get("HIDDEN_ATTRACTORS_VALIDATION_ROOT", PROJECT_ROOT / "validation")
+).resolve()
+DIAGNOSTICS_ROOT = VALIDATION_ROOT / "chaos_validation" / "dynamics_diagnostics"
 CASE_IDS = [
     "chua_integer_q1_reference",
     "danca2017_chua_fractional_saturation_q09998",

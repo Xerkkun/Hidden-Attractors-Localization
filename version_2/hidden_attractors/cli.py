@@ -10,15 +10,15 @@ from typing import Sequence
 from .cli import inspect
 
 
-def list_candidates() -> None:
-    """Print final candidate records using the public package API."""
+def list_candidates(argv: Sequence[str] | None = None) -> None:
+    """Print candidate records from an explicit portable JSON source."""
     warnings.warn(
         "Deprecated: use 'hidden-attractors inspect candidates'",
         DeprecationWarning,
         stacklevel=2
     )
     print("Deprecated: use 'hidden-attractors inspect candidates'")
-    inspect.list_candidates()
+    inspect.list_candidates(argv)
 
 
 def systems(argv: Sequence[str] | None = None) -> None:

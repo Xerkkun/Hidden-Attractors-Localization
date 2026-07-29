@@ -1,8 +1,8 @@
-"""Candidate records and loaders for final-project analyses.
+"""Portable records for user-supplied attractor-candidate outputs.
 
-Stability: stable
-    :class:`CandidateRecord` and :func:`load_final_candidate_records` are the
-    primary user-facing API for loading reference outputs.  Signatures are fixed.
+Stability: experimental
+    Candidate schemas may gain optional metadata fields.  Loaders require an
+    explicit JSON source and never inspect a repository validation tree.
 """
 
 from __future__ import annotations
@@ -13,11 +13,7 @@ from typing import Any, Dict, List, Sequence
 
 import numpy as np
 
-from .io import read_csv_rows, read_json
-from .paths import PROJECT_ROOT
-
-
-PROMOTED_SELECTION = PROJECT_ROOT / "validation" / "06_post_continuation_filter" / "selected_candidates.json"
+from .io import read_json
 
 
 def _float(value: Any, default: float = float("nan")) -> float:
@@ -34,21 +30,19 @@ class CandidateRecord:
     Attributes
     ----------
     candidate_id : str
-        Unique identifier of the form ``'branch_0_mu_4p00000_theta_0p00000'``
-        or ``'lure_biased_q_0p99980_rank_0001'``.
+        User-defined unique identifier.
     route : str
-        Official seed family, such as ``'machado_centered'`` or
-        ``'lure_classical_biased'``.
+        Seed or workflow family recorded by the source file.
     q : float
         Caputo fractional order used during seed search.
-    robust_start : np.ndarray, shape (3,)
+    robust_start : np.ndarray, shape (d,)
         State vector from the continuation run used as the robustness seed.
-    seed : np.ndarray, shape (3,)
+    seed : np.ndarray, shape (d,)
         Harmonic-balance seed state that initiated the continuation.
     mu : float or None
-        Machado exponent; ``None`` for classical-DF candidates.
+        Optional exponent parameter recorded by the source workflow.
     theta : float or None
-        Phase angle from the Machado DF solution; ``None`` if not applicable.
+        Optional phase angle recorded by the source workflow.
     A : float or None
         Oscillation amplitude from the describing-function solution.
     sigma0 : float or None
@@ -103,113 +97,11 @@ class CandidateRecord:
 
 def _vec(value: Sequence[Any] | None) -> np.ndarray:
     if value is None:
-        return np.array([float("nan"), float("nan"), float("nan")], dtype=float)
+        return np.empty(0, dtype=float)
     return np.asarray([_float(v) for v in value], dtype=float)
 
 
-def load_lure_survivor(
-    source_dir: str | Path,
-    candidate_id: str,
-) -> CandidateRecord:
-    """Load a Lur'e continuation survivor from the final q=0.9998 run.
-
-    Parameters
-    ----------
-    source_dir : str or Path
-        Directory produced by the biased-Lur'e multi-parameter sweep.
-        Defaults to the project-canonical output folder.
-    candidate_id : str, default 'lure_biased_q_0p99980_rank_0001'
-        Key matching ``candidate_id`` in ``biased_lure_candidates.csv``
-        and ``continuation_survivors.csv``.
-
-    Returns
-    -------
-    record : CandidateRecord
-        Frozen record with seed, robust-start, and DF parameters.
-
-    Raises
-    ------
-    FileNotFoundError
-        If *candidate_id* is absent from the CSV files in *source_dir*.
-    """
-
-    root = Path(source_dir)
-    candidates = read_csv_rows(root / "biased_lure_candidates.csv")
-    survivors = {row["candidate_id"]: row for row in read_csv_rows(root / "continuation_survivors.csv")}
-    for row in candidates:
-        if row.get("candidate_id") != candidate_id or candidate_id not in survivors:
-            continue
-        surv = survivors[candidate_id]
-        return CandidateRecord(
-            candidate_id=candidate_id,
-            route="lure_classical_biased",
-            q=_float(row.get("q"), 0.9998),
-            mu=None,
-            theta=None,
-            A=_float(row.get("A")),
-            sigma0=_float(row.get("sigma0")),
-            omega=_float(row.get("omega")),
-            rho_H=_float(row.get("rho_H")),
-            residual_abs=_float(row.get("residual_abs")),
-            seed=np.array([_float(row.get("seed_x")), _float(row.get("seed_y")), _float(row.get("seed_z"))], dtype=float),
-            robust_start=np.array([_float(surv.get("final_x")), _float(surv.get("final_y")), _float(surv.get("final_z"))], dtype=float),
-            source=str(root / "continuation_survivors.csv"),
-        )
-    raise FileNotFoundError(f"No se encontro {candidate_id} en {root}")
-
-
-def load_machado_candidate(candidate_id: str, targeted_path: str | Path, corrida1_path: str | Path) -> CandidateRecord:
-    """Load one Machado/FDF candidate from the final targeted verification outputs.
-
-    Parameters
-    ----------
-    candidate_id : str
-        Key of the form ``'branch_0_mu_4p00000_theta_0p00000'`` matching
-        entries in ``machado_targeted_summary.json`` and
-        ``corrida1_summary.json``.
-
-    Returns
-    -------
-    record : CandidateRecord
-        Frozen record with Machado exponent, phase, amplitude, and
-        robust-start coordinates.
-
-    Raises
-    ------
-    FileNotFoundError
-        If *candidate_id* is absent from the targeted verification JSON.
-    """
-
-    targeted_path = Path(targeted_path)
-    corrida1_path = Path(corrida1_path)
-    targeted = read_json(targeted_path)
-    corrida1 = read_json(corrida1_path)
-    ref_by_id = {row["candidate_id"]: row for row in targeted.get("reference_attractor", [])}
-    cand_by_id = {row["candidate_id"]: row for row in corrida1.get("candidates", [])}
-    ref = ref_by_id.get(candidate_id)
-    cand = cand_by_id.get(candidate_id, {})
-    if ref is None:
-        raise FileNotFoundError(f"No se encontro {candidate_id} en {targeted_path}")
-    return CandidateRecord(
-        candidate_id=candidate_id,
-        route="machado_centered",
-        q=_float(ref.get("q"), 0.9998),
-        mu=_float(ref.get("mu")),
-        theta=_float(ref.get("theta")),
-        A=_float(cand.get("A")),
-        sigma0=None,
-        omega=_float(cand.get("omega")),
-        rho_H=None,
-        residual_abs=None,
-        seed=_vec(cand.get("seed") if isinstance(cand.get("seed"), list) else None),
-        robust_start=np.array([_float(ref.get("final_x")), _float(ref.get("final_y")), _float(ref.get("final_z"))], dtype=float),
-        source=str(targeted_path),
-    )
-
-
-def _selection_path(source_dir: str | Path | None) -> Path:
-    if source_dir is None:
-        return PROMOTED_SELECTION
+def _selection_path(source_dir: str | Path) -> Path:
     source = Path(source_dir)
     return source if source.suffix.lower() == ".json" else source / "selected_candidates.json"
 
@@ -218,7 +110,7 @@ def _record_from_selected(row: Dict[str, Any], source: Path) -> CandidateRecord:
     return CandidateRecord(
         candidate_id=str(row["candidate_id"]),
         route=str(row.get("method", row.get("route", ""))),
-        q=_float(row.get("q"), 0.9998),
+        q=_float(row.get("q")),
         robust_start=_vec(row.get("robust_start")),
         seed=_vec(row.get("seed")),
         mu=None if row.get("mu", "") in {"", None} else _float(row.get("mu")),
@@ -233,23 +125,17 @@ def _record_from_selected(row: Dict[str, Any], source: Path) -> CandidateRecord:
 
 
 def load_final_candidate_records(
-    source_dir: str | Path | None = None,
+    source_dir: str | Path,
 ) -> List[CandidateRecord]:
-    """Return the three candidates promoted from the current validated run.
+    """Load candidate records from an explicitly supplied JSON file or folder.
 
-    Historical outputs are not an implicit fallback.  A promoted
-    ``selected_candidates.json`` must exist under the validation tree or in
-    an explicitly provided current run directory.
+    No checkout-relative fallback is used, so this function behaves identically
+    in a source tree and an installed wheel.
     """
 
     selection = _selection_path(source_dir)
     payload = read_json(selection)
-    status = payload.get("selection_status")
-    if status is not None and status != "continuation_survivors_selected_for_reference":
-        raise FileNotFoundError(
-            f"La selección actual no está promovida para ocultedad ({status}) en {selection}"
-        )
     rows = payload.get("selected_candidates", payload.get("candidates", []))
-    if len(rows) < 3:
-        raise FileNotFoundError(f"No hay una terna promovida de candidatos actuales en {selection}")
-    return [_record_from_selected(row, selection) for row in rows[:3]]
+    if not rows:
+        raise FileNotFoundError(f"No candidate records were found in {selection}")
+    return [_record_from_selected(row, selection) for row in rows]

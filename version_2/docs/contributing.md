@@ -3,7 +3,7 @@
 ## Table of Contents / Índice de Contenidos
 
 - [English Version](#english-version)
-- [Versión en Español](#versión-en-español)
+- [Versión en Español](#version-en-espanol)
 
 ---
 
@@ -16,7 +16,7 @@
 To configure your development environment:
 
 ```bash
-python -m pip install -e ".[dev,analysis,docs,legacy]"
+python -m pip install -e ".[dev,analysis,docs]"
 python -m compileall hidden_attractors examples tests tools/cli
 python -m pytest -q
 ```
@@ -35,15 +35,6 @@ python -m pytest -q
 
 Examples belong in `examples/`. They should be short and runnable from the repository root.
 
-## Migrating Legacy Scripts
-
-When a legacy script from `tools/legacy/` becomes important:
-
-1. Extract reusable functions into `hidden_attractors/`;
-2. Add tests or a smoke example;
-3. Integrate the subcommand inside `hidden_attractors/cli/main.py`;
-4. Document the numerical contract and outputs.
-
 ## Scientific Standards
 
 Do not report hiddenness without the equilibrium-neighborhood and basin evidence required by the workflow. Always report the numerical contract.
@@ -59,7 +50,7 @@ Do not report hiddenness without the equilibrium-neighborhood and basin evidence
 Para configurar su entorno de desarrollo:
 
 ```bash
-python -m pip install -e ".[dev,analysis,docs,legacy]"
+python -m pip install -e ".[dev,analysis,docs]"
 python -m compileall hidden_attractors examples tests tools/cli
 python -m pytest -q
 ```
@@ -77,15 +68,6 @@ python -m pytest -q
 ## Adición de Ejemplos
 
 Los ejemplos pertenecen a `examples/`. Deben ser cortos y ejecutables desde la raíz del repositorio.
-
-## Migración de Scripts Heredados (Legacy)
-
-Cuando un script heredado de `tools/legacy/` se vuelve importante:
-
-1. Extraer funciones reutilizables en `hidden_attractors/`;
-2. Añadir pruebas o un ejemplo de humo;
-3. Integrar el subcomando dentro del despachador unificado `hidden_attractors/cli/main.py`;
-4. Documentar el contrato numérico y las salidas.
 
 ## Estándares Científicos
 

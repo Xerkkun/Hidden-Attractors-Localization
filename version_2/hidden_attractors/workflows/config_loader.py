@@ -19,8 +19,8 @@ Usage
 
     from hidden_attractors.workflows.config_loader import load_config, save_effective_config
 
-    cfg = load_config("configs/examples/chua_fractional_centered_lure_df.yaml")
-    # cfg is a fully-normalized flat dict ready for workflow functions.
+    cfg = load_config("my_workflow.yaml")
+    # Scientific and numerical values in this file must be explicit.
 
     save_effective_config(cfg, output_dir="outputs/run_001")
 """
@@ -42,14 +42,14 @@ import yaml
 
 _DEFAULTS: Dict[str, Any] = {
     # ── System ───────────────────────────────────────────────────────────────
-    "system_id": "chua_fractional_saturation",
-    "q": None,  # fallback to system default
+    "system_id": None,
+    "q": None,
 
     # ── Modes ────────────────────────────────────────────────────────────────
-    "transfer_mode": "fractional",
-    "seed_mode": "fractional",
-    "continuation_mode": "fractional",
-    "dynamics_mode": "system",
+    "transfer_mode": None,
+    "seed_mode": None,
+    "continuation_mode": None,
+    "dynamics_mode": None,
 
     # ── Explicit multi-order sections ────────────────────────────────────────
     "seed": {
@@ -64,20 +64,20 @@ _DEFAULTS: Dict[str, Any] = {
     },
 
     # ── Integrator ───────────────────────────────────────────────────────────
-    "integrator": "efork3",
-    "h": 0.001,
-    "memory_mode": "full",
-    "memory_policy": "full_caputo",
-    "memory_window_steps": 400,
-    "memory_window_length": 400,
+    "integrator": None,
+    "h": None,
+    "memory_mode": None,
+    "memory_policy": None,
+    "memory_window_steps": None,
+    "memory_window_length": None,
     "memory_window_time": None,
-    "use_c_backend": True,
-    "allow_python_fallback": True,
+    "use_c_backend": False,
+    "allow_python_fallback": False,
 
     # ── Stages ───────────────────────────────────────────────────────────────
-    "run_seed_search": True,
-    "run_continuation": True,
-    "run_final_simulation": True,
+    "run_seed_search": False,
+    "run_continuation": False,
+    "run_final_simulation": False,
     "run_hiddenness_tests": False,
     "run_sphere_tests": False,
     "run_basin_slices": False,
@@ -85,211 +85,133 @@ _DEFAULTS: Dict[str, Any] = {
     "run_attractor_only": False,
 
     # ── Seed search ──────────────────────────────────────────────────────────
-    "seed_strategy": "k_phi",
-    "seed_sign_convention": "kuznetsov",
-    "seed_construction": "modal",
-    "seed_theta": 0.0,
-    "describing_function_mode": "auto",
-    "branch_index": 0,
-    "omega_min": 0.01,
-    "omega_max": 20.0,
-    "amplitude_min": 0.01,
-    "amplitude_max": 20.0,
-    "grid_size_omega": 200,
-    "grid_size_amplitude": 200,
-    "root_refinement": True,
-    "df_residual_tol": 1e-2,
-    "hiddenness_equilibria_filter": "all",
-    "transfer_convention": "standard",
-    "harmonic_condition": "1_minus_WN",
+    "seed_strategy": None,
+    "seed_sign_convention": None,
+    "seed_construction": None,
+    "seed_theta": None,
+    "describing_function_mode": None,
+    "branch_index": None,
+    "omega_min": None,
+    "omega_max": None,
+    "amplitude_min": None,
+    "amplitude_max": None,
+    "grid_size_omega": None,
+    "grid_size_amplitude": None,
+    "root_refinement": None,
+    "df_residual_tol": None,
+    "hiddenness_equilibria_filter": None,
+    "transfer_convention": None,
+    "harmonic_condition": None,
     "q_seed": None,
     "q_dynamics": None,
 
     # ── Classical route feature flags ────────────────────────────────────────────
-    # machado_enabled: Machado generalised DF with mu parameter.
-    # Default False: not in the published classical route.
     "machado_enabled": False,
-    # biased_enabled: biased seeds with sigma0 != 0.
-    # Default False: only centred seeds in the classical published route.
     "biased_enabled": False,
-    # seed_filter: post-search quality filter on harmonic residual / rho_H.
-    # Default disabled: all candidates from the base search are accepted.
     "seed_filter": {
         "enabled": False,
-        "harmonic_residual_keep": 0.05,
-        "rho_H_keep": 0.3,
     },
 
     # ── Workers / reproducibility ─────────────────────────────────────────────
     "workers": 1,
-    "random_seed": 42,
-    "random_seed_policy": "fixed_reproducible",
+    "random_seed": None,
+    "random_seed_policy": None,
 
     # ── Divergence ───────────────────────────────────────────────────────────
-    "divergence_norm": 120.0,
-    "equilibrium_tol": 0.5,
-    "target_match_metric": "nn_percentile",
-    "target_match_tol": 0.5,
+    "divergence_norm": None,
+    "equilibrium_tol": None,
+    "target_match_metric": None,
+    "target_match_tol": None,
 
     # ── Output ───────────────────────────────────────────────────────────────
     "output_dir": None,
     "run_id": "auto",
 
     # ── Plotting ─────────────────────────────────────────────────────────────
-    "plot_enabled": True,
-    "save_figures": True,
-    "plot_attractors": True,
-    "plot_timeseries": True,
-    "plot_transfer": True,
-    "plot_describing_function": True,
-    "plot_residual_map": True,
-    "plot_continuation": True,
-    "plot_sphere_tests": True,
-    "plot_matignon": True,
-    "plot_basin": True,
-    "plot_bifurcation": True,
-    "max_seed_candidates_to_plot": 3,
+    "plot_enabled": False,
+    "save_figures": False,
+    "plot_attractors": False,
+    "plot_timeseries": False,
+    "plot_transfer": False,
+    "plot_describing_function": False,
+    "plot_residual_map": False,
+    "plot_continuation": False,
+    "plot_sphere_tests": False,
+    "plot_matignon": False,
+    "plot_basin": False,
+    "plot_bifurcation": False,
+    "max_seed_candidates_to_plot": None,
 
     # ── Nested sections (preserved as dicts) ─────────────────────────────────
     "early_stop": {
-        "enabled": True,
-        "divergence_enabled": True,
-        "divergence_norm": 80.0,
-        "divergence_consecutive_steps": 5,
-        "divergence_growth_factor": 1.25,
-        "equilibrium_enabled": True,
-        "equilibrium_tol": 1e-3,
-        "equilibrium_derivative_tol": 1e-4,
-        "equilibrium_consecutive_steps": 200,
-        "equilibrium_min_time": 5.0,
+        "enabled": False,
     },
 
-    "final_simulation": {
-        "t_final": 500.0,
-        "t_burn": 120.0,
-        "initial_condition": None,
-        "divergence_norm": 120.0,
-    },
+    "final_simulation": {},
 
     "continuation": {
         "continuation_order": None,
         "q_continuation": None,
-        "mode": "scalar",
-        "path_parameter": "eta",
-        # lambda_values: explicit list overrides the adaptive eta grid.
-        # When provided, these values are used exactly (no adaptive fallback).
-        # Official contract values: [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0]
         "lambda_values": None,
-        "eta_grid_mode": "adaptive",
+        "eta_grid_mode": None,
         "eta_values": None,
-        "eta_min": 1.0e-3,
-        "eta_max": 1.0,
-        "n_eta": 21,
-        "start_at_zero": False,
-        "use_period_based_times": True,
-        "periods_transient": 20,
-        "periods_keep": 10,
-        "build_fractional_harmonic_history": True,
-        "harmonic_history_periods": 10,
-        "early_stop_enabled": True,
-        "require_c_backend": True,
+        "eta_min": None,
+        "eta_max": None,
+        "n_eta": None,
+        "start_at_zero": None,
+        "use_period_based_times": None,
+        "periods_transient": None,
+        "periods_keep": None,
+        "t_transient": None,
+        "t_keep": None,
+        "build_fractional_harmonic_history": None,
+        "harmonic_history_periods": None,
+        "early_stop_enabled": False,
+        "require_c_backend": False,
         "allow_python_fallback": False,
     },
 
     "sphere_tests": {
         "enabled": False,
-        "equilibrium_selection": "all",
-        "radii": [1e-5, 1e-4, 1e-3, 1e-2],
-        "samples_initial": 20,
-        "samples_growth_factor": 2.0,
-        "directions_mode": "sphere_random",
-        "random_seed": 42,
-        "t_final": 80.0,
-        "t_burn": 20.0,
-        "h": 0.01,
-        "early_stop_enabled": True,
     },
 
     "basin": {
         "enabled": False,
-        "planes": ["xy", "xz", "yz"],
-        "grid_n": 150,
-        "x_interval": [-10.0, 10.0],
-        "y_interval": [-10.0, 10.0],
-        "z_interval": [-10.0, 10.0],
-        "fixed_x": 0.0,
-        "fixed_y": 0.0,
-        "fixed_z": 0.0,
-        "around_equilibria": True,
-        "equilibrium_selection": "all",
-        "local_radius": 2.0,
-        "t_final": 80.0,
-        "t_burn": 20.0,
-        "h": 0.01,
-        "early_stop_enabled": True,
     },
 
     "bifurcation": {
         "enabled": False,
-        "parameter": "beta",
-        "values": {"min": 8.0, "max": 16.0, "n": 300},
-        "continuation_between_values": True,
-        "initial_condition": [0.1, 0.0, 0.0],
-        "discard_time": 200.0,
-        "sample_time": 200.0,
-        "h": 0.01,
-        "coordinate": "x",
-        "sampling": {
-            "method": "local_maxima",
-            "max_points_per_parameter": 200,
-        },
-        "save_csv": True,
-        "save_plot": True,
-        "workers": 1,
     },
 
     "attractor_plots": {
+        "enabled": False,
         "include_equilibria": False,
         "use_tail_after_burn": True,
-        "max_seed_candidates_to_plot": 3,
-        "line_width": 0.7,
-        "point_size": 0.0,
     },
 
-    # ── Robustness (second priority, disabled by default) ───────────────────
+    # Optional robustness diagnostics
     "robustness": {
         "enabled": False,
     },
 
     # ── Hiddenness contract parameters ───────────────────────────────────────
-    "hiddenness": {
-        "required_radii": [1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5],
-        "strict_all_equilibria": True,
-        "allow_numerical_failures": False,
-        "min_ref_tail_points": 1000,
-        "min_probe_tail_points": 200,
-        "target_match_metric": "nn_percentile",
-        "target_match_tol": 0.5,
-        "target_match_nn_percentile": 90.0,
-    },
+    "hiddenness": {},
 
     # ── Validation / Bibliography ──────────────────────────────────────────
     "validation": {
         "strict_bibliography": False,
-        "claims_manifest": "version_2/references/claims_manifest.yaml",
-        "fail_on_missing_references": True,
-        "fail_on_unregistered_references": True,
+        "claims_manifest": None,
+        "fail_on_missing_references": False,
+        "fail_on_unregistered_references": False,
     },
 
     # ── Figures (unified plotting) ───────────────────────────────────────────
     "figures": {
-        "enabled": True,
-        "output_root": "version_2/library_figures",
-        "export_formats": ["pdf", "png"],
-        "white_background": True,
-        "no_titles": True,
-        "update_report_assets": True,
-        "write_manifest": True,
+        "enabled": False,
+        "output_root": "outputs/figures",
+        "export_formats": [],
+        "export_targets": [],
+        "write_manifest": False,
     },
 }
 
@@ -304,33 +226,45 @@ def _flatten_hierarchical(raw: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
     # experiment section
     exp = raw.get("experiment", {})
     if exp:
-        flat["output_dir"] = exp.get("output_dir", None)
-        flat["run_id"] = exp.get("run_id", "auto")
-        flat["random_seed"] = exp.get("random_seed", 42)
-        flat["_experiment_name"] = exp.get("name", "")
-        flat["_description"] = exp.get("description", "")
+        for source_key, target_key in (
+            ("output_dir", "output_dir"),
+            ("run_id", "run_id"),
+            ("random_seed", "random_seed"),
+            ("name", "_experiment_name"),
+            ("description", "_description"),
+        ):
+            if source_key in exp:
+                flat[target_key] = exp[source_key]
 
     # system section
     sys_sec = raw.get("system", {})
     if sys_sec:
-        flat["system_id"] = sys_sec.get("system_id", _DEFAULTS["system_id"])
-        flat["q"] = sys_sec.get("q", None)
+        if "system_id" in sys_sec:
+            flat["system_id"] = sys_sec["system_id"]
+        if "q" in sys_sec:
+            flat["q"] = sys_sec["q"]
         params = sys_sec.get("parameters", {})
         flat.update(params)  # alpha, beta, gamma, m0/m, m1/n, etc.
 
     # modes section
     modes = raw.get("modes", {})
     if modes:
-        flat["transfer_mode"] = modes.get("transfer_mode", _DEFAULTS["transfer_mode"])
-        flat["seed_mode"] = modes.get("seed_mode", _DEFAULTS["seed_mode"])
-        flat["continuation_mode"] = modes.get("continuation_mode", _DEFAULTS["continuation_mode"])
-        flat["dynamics_mode"] = modes.get("dynamics_mode", _DEFAULTS["dynamics_mode"])
+        for key in (
+            "transfer_mode",
+            "seed_mode",
+            "continuation_mode",
+            "dynamics_mode",
+        ):
+            if key in modes:
+                flat[key] = modes[key]
 
     # integrator section
     integ = raw.get("integrator", {})
     if isinstance(integ, dict):
-        flat["integrator"] = integ.get("name", _DEFAULTS["integrator"])
-        flat["h"] = integ.get("h", _DEFAULTS["h"])
+        if "name" in integ:
+            flat["integrator"] = integ["name"]
+        if "h" in integ:
+            flat["h"] = integ["h"]
         if "memory_mode" in integ:
             flat["memory_mode"] = integ["memory_mode"]
         if "memory_policy" in integ:
@@ -341,22 +275,29 @@ def _flatten_hierarchical(raw: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
             flat["memory_window_steps"] = integ["memory_window_length"]
         if "memory_window_time" in integ:
             flat["memory_window_time"] = integ["memory_window_time"]
-        flat["use_c_backend"] = integ.get("use_c_backend", _DEFAULTS["use_c_backend"])
-        flat["allow_python_fallback"] = integ.get("allow_python_fallback", _DEFAULTS["allow_python_fallback"])
+        if "use_c_backend" in integ:
+            flat["use_c_backend"] = integ["use_c_backend"]
+        if "allow_python_fallback" in integ:
+            flat["allow_python_fallback"] = integ["allow_python_fallback"]
     elif isinstance(integ, str):
         flat["integrator"] = integ  # flat legacy key inside hierarchical doc
 
     # stages section
     stages = raw.get("stages", {})
     if stages:
-        flat["run_seed_search"] = stages.get("seed_search", _DEFAULTS["run_seed_search"])
-        flat["run_continuation"] = stages.get("continuation", _DEFAULTS["run_continuation"])
-        flat["run_final_simulation"] = stages.get("final_simulation", _DEFAULTS["run_final_simulation"])
-        flat["run_hiddenness_tests"] = stages.get("hiddenness_tests", _DEFAULTS["run_hiddenness_tests"])
-        flat["run_sphere_tests"] = stages.get("sphere_tests", _DEFAULTS["run_sphere_tests"])
-        flat["run_basin_slices"] = stages.get("basin_slices", _DEFAULTS["run_basin_slices"])
-        flat["run_bifurcation"] = stages.get("bifurcation", _DEFAULTS["run_bifurcation"])
-        flat["run_attractor_only"] = stages.get("attractor_only", _DEFAULTS["run_attractor_only"])
+        stage_mapping = {
+            "seed_search": "run_seed_search",
+            "continuation": "run_continuation",
+            "final_simulation": "run_final_simulation",
+            "hiddenness_tests": "run_hiddenness_tests",
+            "sphere_tests": "run_sphere_tests",
+            "basin_slices": "run_basin_slices",
+            "bifurcation": "run_bifurcation",
+            "attractor_only": "run_attractor_only",
+        }
+        for source_key, target_key in stage_mapping.items():
+            if source_key in stages:
+                flat[target_key] = stages[source_key]
 
     # seed_search section
     ss = raw.get("seed_search", {})
@@ -390,29 +331,33 @@ def _flatten_hierarchical(raw: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
     sim = raw.get("simulation", {})
     if sim:
         flat.setdefault("final_simulation", {})
-        flat["final_simulation"]["t_final"] = sim.get("t_final", _DEFAULTS["final_simulation"]["t_final"])
-        flat["final_simulation"]["t_burn"] = sim.get("t_burn", _DEFAULTS["final_simulation"]["t_burn"])
-        flat["final_simulation"]["initial_condition"] = sim.get("initial_condition", None)
-        flat["final_simulation"]["divergence_norm"] = sim.get("divergence_norm",
-                                                               _DEFAULTS["final_simulation"]["divergence_norm"])
+        for key in ("t_final", "t_burn", "initial_condition", "divergence_norm"):
+            if key in sim:
+                flat["final_simulation"][key] = sim[key]
+        if "divergence_norm" in sim:
+            flat["divergence_norm"] = sim["divergence_norm"]
 
     # plots section
     plots = raw.get("plots", {})
     if plots:
-        flat["plot_enabled"] = plots.get("enabled", _DEFAULTS["plot_enabled"])
-        flat["save_figures"] = plots.get("save_figures", _DEFAULTS["save_figures"])
-        flat["plot_attractors"] = plots.get("attractor", _DEFAULTS["plot_attractors"])
-        flat["plot_timeseries"] = plots.get("timeseries", _DEFAULTS["plot_timeseries"])
-        flat["plot_transfer"] = plots.get("transfer", _DEFAULTS["plot_transfer"])
-        flat["plot_describing_function"] = plots.get("describing_function", _DEFAULTS["plot_describing_function"])
-        flat["plot_residual_map"] = plots.get("residual_map", _DEFAULTS["plot_residual_map"])
-        flat["plot_continuation"] = plots.get("continuation", _DEFAULTS["plot_continuation"])
-        flat["plot_sphere_tests"] = plots.get("sphere_tests", _DEFAULTS["plot_sphere_tests"])
-        flat["plot_basin"] = plots.get("basin", _DEFAULTS["plot_basin"])
-        flat["plot_bifurcation"] = plots.get("bifurcation", _DEFAULTS["plot_bifurcation"])
-        flat["plot_matignon"] = plots.get("matignon", _DEFAULTS["plot_matignon"])
-        flat["max_seed_candidates_to_plot"] = plots.get("max_seed_candidates_to_plot",
-                                                          _DEFAULTS["max_seed_candidates_to_plot"])
+        plot_mapping = {
+            "enabled": "plot_enabled",
+            "save_figures": "save_figures",
+            "attractor": "plot_attractors",
+            "timeseries": "plot_timeseries",
+            "transfer": "plot_transfer",
+            "describing_function": "plot_describing_function",
+            "residual_map": "plot_residual_map",
+            "continuation": "plot_continuation",
+            "sphere_tests": "plot_sphere_tests",
+            "basin": "plot_basin",
+            "bifurcation": "plot_bifurcation",
+            "matignon": "plot_matignon",
+            "max_seed_candidates_to_plot": "max_seed_candidates_to_plot",
+        }
+        for source_key, target_key in plot_mapping.items():
+            if source_key in plots:
+                flat[target_key] = plots[source_key]
 
     for section in ("seed", "dynamics", "continuation", "sphere_tests", "basin", "bifurcation", "early_stop", "attractor_plots", "robustness", "hiddenness", "validation", "figures"):
         if section in raw:
@@ -444,8 +389,8 @@ def _detect_and_warn_legacy(raw: Dict[str, Any]) -> None:
         warnings.warn(
             f"Detected legacy flat YAML keys: {sorted(found)}. "
             "Please migrate to the hierarchical schema. "
-            "See version_2/configs/examples/ for reference YAMLs. "
-            "Legacy support will be removed in a future version.",
+            "Use the packaged workflow_contract.yaml as the schema reference. "
+            "This compatibility input is deprecated; use the normalized schema.",
             DeprecationWarning,
             stacklevel=4,
         )
@@ -513,8 +458,6 @@ def _normalize(cfg: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
                 cfg["seed"]["df_order"] = "integer"
             elif tm in ("fractional_spectral", "fractional"):
                 cfg["seed"]["df_order"] = "fractional"
-            else:
-                cfg["seed"]["df_order"] = "fractional" if (q is not None and q < 1.0) else "integer"
 
     # Map transfer_mode
     if cfg["seed"].get("transfer_mode") is None:
@@ -526,16 +469,16 @@ def _normalize(cfg: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
                 cfg["seed"]["transfer_mode"] = "fractional_spectral"
             else:
                 cfg["seed"]["transfer_mode"] = tm
-        else:
-            cfg["seed"]["transfer_mode"] = "published_integer_laplace" if cfg["seed"]["df_order"] == "integer" else "fractional_spectral"
 
     # Map q_seed
     if cfg["seed"].get("q_seed") is None:
         qs = cfg.get("q_seed")
         if qs is not None:
             cfg["seed"]["q_seed"] = float(qs)
-        else:
-            cfg["seed"]["q_seed"] = 1.0 if cfg["seed"]["df_order"] == "integer" else q
+        elif cfg["seed"].get("df_order") == "integer":
+            cfg["seed"]["q_seed"] = 1.0
+        elif cfg["seed"].get("df_order") == "fractional":
+            cfg["seed"]["q_seed"] = q
 
     # Map continuation_mode to continuation.continuation_order
     if cfg["continuation"].get("continuation_order") is None:
@@ -544,26 +487,28 @@ def _normalize(cfg: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
             cfg["continuation"]["continuation_order"] = "integer"
         elif cm == "fractional":
             cfg["continuation"]["continuation_order"] = "fractional"
-        else:
-            cfg["continuation"]["continuation_order"] = "fractional" if (q is not None and q < 1.0) else "integer"
 
     # Map dynamics_mode to dynamics.dynamics_order
     if cfg["dynamics"].get("dynamics_order") is None:
         dm = cfg.get("dynamics_mode")
         if dm == "integer":
             cfg["dynamics"]["dynamics_order"] = "integer"
-        elif dm in ("fractional", "system"):
+        elif dm == "fractional":
             cfg["dynamics"]["dynamics_order"] = "fractional"
-        else:
-            cfg["dynamics"]["dynamics_order"] = "fractional" if (q is not None and q < 1.0) else "integer"
+        elif dm == "system" and q is not None:
+            cfg["dynamics"]["dynamics_order"] = (
+                "fractional" if float(q) < 1.0 else "integer"
+            )
 
     # Map q_dynamics
     if cfg["dynamics"].get("q_dynamics") is None:
         qd = cfg.get("q_dynamics")
         if qd is not None:
             cfg["dynamics"]["q_dynamics"] = float(qd)
-        else:
-            cfg["dynamics"]["q_dynamics"] = 1.0 if cfg["dynamics"]["dynamics_order"] == "integer" else q
+        elif cfg["dynamics"].get("dynamics_order") == "integer":
+            cfg["dynamics"]["q_dynamics"] = 1.0
+        elif cfg["dynamics"].get("dynamics_order") == "fractional":
+            cfg["dynamics"]["q_dynamics"] = q
 
     # Map q_continuation
     if cfg["continuation"].get("q_continuation") is None:
@@ -571,19 +516,22 @@ def _normalize(cfg: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
         if qc is not None:
             cfg["continuation"]["q_continuation"] = float(qc)
         else:
-            if cfg["continuation"]["continuation_order"] == "integer":
+            if cfg["continuation"].get("continuation_order") == "integer":
                 cfg["continuation"]["q_continuation"] = 1.0
-            else:
+            elif cfg["continuation"].get("continuation_order") == "fractional":
                 qd_val = cfg["dynamics"].get("q_dynamics")
                 cfg["continuation"]["q_continuation"] = qd_val if (qd_val is not None and qd_val < 1.0) else q
 
     # Sync back to top level for legacy support
-    cfg["q_seed"] = cfg["seed"]["q_seed"]
-    cfg["q_dynamics"] = cfg["dynamics"]["q_dynamics"]
-    cfg["q_continuation"] = cfg["continuation"]["q_continuation"]
-    cfg["seed_mode"] = cfg["seed"]["df_order"]
-    cfg["continuation_mode"] = cfg["continuation"]["continuation_order"]
-    cfg["dynamics_mode"] = "system" if cfg["dynamics"]["dynamics_order"] == "fractional" else "integer"
+    cfg["q_seed"] = cfg["seed"].get("q_seed")
+    cfg["q_dynamics"] = cfg["dynamics"].get("q_dynamics")
+    cfg["q_continuation"] = cfg["continuation"].get("q_continuation")
+    if cfg["seed"].get("df_order") is not None:
+        cfg["seed_mode"] = cfg["seed"]["df_order"]
+    if cfg["continuation"].get("continuation_order") is not None:
+        cfg["continuation_mode"] = cfg["continuation"]["continuation_order"]
+    if cfg.get("dynamics_mode") is None:
+        cfg["dynamics_mode"] = cfg["dynamics"].get("dynamics_order")
 
     # Apply type casting to nested sections
     if cfg["seed"].get("q_seed") is not None:
@@ -720,15 +668,209 @@ def _cast_nested_ints(d: Dict, keys: list) -> None:
 # Validation
 # ---------------------------------------------------------------------------
 
+def _get_nested_value(cfg: Dict[str, Any], dotted_path: str) -> Any:
+    value: Any = cfg
+    for part in dotted_path.split("."):
+        if not isinstance(value, dict) or part not in value:
+            return None
+        value = value[part]
+    return value
+
+
+def _require_config_values(
+    cfg: Dict[str, Any],
+    paths: tuple[str, ...],
+    *,
+    context: str,
+) -> None:
+    missing = []
+    for path in paths:
+        value = _get_nested_value(cfg, path)
+        if value is None or value == "" or (
+            isinstance(value, (list, tuple, dict)) and not value
+        ):
+            missing.append(path)
+    if missing:
+        raise ValueError(
+            f"{context} requires explicit configuration values for: "
+            + ", ".join(missing)
+        )
+
+
+def _validate_explicit_stage_contracts(cfg: Dict[str, Any]) -> None:
+    """Reject enabled calculations that rely on package-wide scientific values."""
+    stage_keys = (
+        "run_seed_search",
+        "run_continuation",
+        "run_final_simulation",
+        "run_hiddenness_tests",
+        "run_sphere_tests",
+        "run_basin_slices",
+        "run_bifurcation",
+        "run_attractor_only",
+    )
+    nested_stage_keys = ("sphere_tests", "basin", "bifurcation")
+    active = any(bool(cfg.get(key)) for key in stage_keys) or any(
+        bool((cfg.get(key) or {}).get("enabled")) for key in nested_stage_keys
+    )
+    if not active:
+        return
+
+    _require_config_values(
+        cfg,
+        ("system_id", "q"),
+        context="An enabled scientific calculation",
+    )
+
+    integration_requested = any(
+        bool(cfg.get(key))
+        for key in (
+            "run_continuation",
+            "run_final_simulation",
+            "run_hiddenness_tests",
+            "run_sphere_tests",
+            "run_basin_slices",
+            "run_bifurcation",
+            "run_attractor_only",
+        )
+    )
+    if integration_requested:
+        _require_config_values(
+            cfg,
+            ("integrator", "h", "dynamics_mode"),
+            context="An enabled integration stage",
+        )
+        if float(cfg["q"]) < 1.0:
+            _require_config_values(
+                cfg,
+                ("memory_mode", "memory_policy"),
+                context="A fractional integration stage",
+            )
+
+    if cfg.get("run_seed_search"):
+        _require_config_values(
+            cfg,
+            (
+                "transfer_mode",
+                "seed_mode",
+                "seed_strategy",
+                "seed_construction",
+                "describing_function_mode",
+                "omega_min",
+                "omega_max",
+                "amplitude_min",
+                "amplitude_max",
+                "grid_size_omega",
+                "grid_size_amplitude",
+                "root_refinement",
+                "df_residual_tol",
+            ),
+            context="Seed search",
+        )
+
+    if cfg.get("run_continuation"):
+        _require_config_values(
+            cfg,
+            ("continuation_mode",),
+            context="Continuation",
+        )
+        continuation = cfg.get("continuation") or {}
+        explicit_values = continuation.get("lambda_values") or continuation.get(
+            "eta_values"
+        )
+        if not explicit_values:
+            _require_config_values(
+                cfg,
+                (
+                    "continuation.eta_grid_mode",
+                    "continuation.eta_min",
+                    "continuation.eta_max",
+                    "continuation.n_eta",
+                ),
+                context="Continuation grid",
+            )
+        period_based = continuation.get("use_period_based_times")
+        if period_based is True:
+            _require_config_values(
+                cfg,
+                (
+                    "continuation.periods_transient",
+                    "continuation.periods_keep",
+                ),
+                context="Period-based continuation",
+            )
+        elif period_based is False:
+            _require_config_values(
+                cfg,
+                ("continuation.t_transient", "continuation.t_keep"),
+                context="Time-based continuation",
+            )
+        else:
+            raise ValueError(
+                "Continuation requires explicit "
+                "continuation.use_period_based_times."
+            )
+
+    if cfg.get("run_final_simulation") or cfg.get("run_attractor_only"):
+        _require_config_values(
+            cfg,
+            ("final_simulation.t_final", "final_simulation.t_burn"),
+            context="Final simulation",
+        )
+
+    if cfg.get("run_sphere_tests") or cfg.get("run_hiddenness_tests"):
+        _require_config_values(
+            cfg,
+            (
+                "sphere_tests.radii",
+                "sphere_tests.samples_initial",
+                "sphere_tests.t_final",
+                "sphere_tests.t_burn",
+                "sphere_tests.h",
+                "hiddenness.required_radii",
+            ),
+            context="Neighborhood verification",
+        )
+
+    if cfg.get("run_basin_slices"):
+        _require_config_values(
+            cfg,
+            (
+                "basin.planes",
+                "basin.grid_n",
+                "basin.t_final",
+                "basin.t_burn",
+                "basin.h",
+            ),
+            context="Basin calculation",
+        )
+
+    if cfg.get("run_bifurcation"):
+        _require_config_values(
+            cfg,
+            (
+                "bifurcation.parameter",
+                "bifurcation.values.min",
+                "bifurcation.values.max",
+                "bifurcation.values.n",
+                "bifurcation.initial_condition",
+                "bifurcation.discard_time",
+                "bifurcation.sample_time",
+                "bifurcation.h",
+            ),
+            context="Bifurcation calculation",
+        )
+
+
 def _validate(cfg: Dict[str, Any]) -> None:
     """Raise ValueError / UserWarning for invalid combinations."""
     from hidden_attractors.integrations.selector import validate_integrator_compatibility
 
-    integrator = cfg.get("integrator", "efork3")
+    integrator = cfg.get("integrator")
     q = cfg.get("q")
 
     # Validate integrator × q compatibility (only if q is specified)
-    if q is not None:
+    if q is not None and integrator is not None:
         validate_integrator_compatibility(integrator, float(q))
 
     # Transfer / continuation / dynamics modes
@@ -754,14 +896,13 @@ def _validate(cfg: Dict[str, Any]) -> None:
 
     if cfg.get("transfer_mode") == "integer":
         if cfg.get("seed_mode") == "fractional" or cfg.get("continuation_mode") == "fractional":
-            raise ValueError("Invalid mode mixture: transfer_mode is 'integer' but seed_mode or continuation_mode is 'fractional'. For published integer reproduction, all must be 'integer'.")
-        # Warning when trying to claim fractional outputs with transfer_mode: integer
+            raise ValueError("Invalid mode mixture: transfer_mode is 'integer' but seed_mode or continuation_mode is 'fractional'. All order modes must be consistent.")
         if q is not None and q < 1.0:
             import warnings
             warnings.warn(
                 "You are using transfer_mode='integer' on a fractional system (q < 1). "
-                "Ensure that this is only used for published integer reproduction, "
-                "and NEVER mix these results with fractional claims.",
+                "The transfer calculation and the fractional dynamics therefore "
+                "use different order contracts; report them separately.",
                 UserWarning,
                 stacklevel=2
             )
@@ -782,8 +923,10 @@ def _validate(cfg: Dict[str, Any]) -> None:
         raise ValueError(f"Invalid seed_strategy: '{seed_strat}'.")
 
     # System parameters validation
-    system_id = cfg.get("system_id", "chua_fractional_saturation")
-    is_arctan = "arctan" in system_id or "wu2023" in system_id
+    system_id = cfg.get("system_id")
+    is_arctan = bool(
+        system_id and ("arctan" in system_id or "wu2023" in system_id)
+    )
     
     invalid_for_nonsmooth = {"m", "n", "a1", "a2", "rho"}
     invalid_for_arctan = {"m", "n", "m0", "m1"}
@@ -795,10 +938,12 @@ def _validate(cfg: Dict[str, Any]) -> None:
         for k in invalid_for_arctan:
             if k in cfg:
                 raise ValueError(f"Parameter '{k}' is invalid for arctan system '{system_id}'. Allowed parameters: alpha, beta, gamma, a1, a2, rho.")
-    else:
+    elif system_id:
         for k in invalid_for_nonsmooth:
             if k in cfg:
                 raise ValueError(f"Parameter '{k}' is invalid for nonsmooth system '{system_id}'. Allowed parameters: alpha, beta, gamma, m0, m1.")
+
+    _validate_explicit_stage_contracts(cfg)
 
 
 # ---------------------------------------------------------------------------
@@ -813,7 +958,7 @@ def _resolve_output_dir(cfg: Dict[str, Any]) -> str:
     run_id = cfg.get("run_id", "auto")
     if run_id == "auto":
         run_id = time.strftime("%Y%m%d_%H%M%S")
-    system_id = cfg.get("system_id", "experiment")
+    system_id = cfg.get("system_id") or "configuration"
     resolved = os.path.join("outputs", system_id, run_id)
     cfg["output_dir"] = resolved
     return resolved
@@ -868,8 +1013,12 @@ def _normalize_memory_config(flat: Dict[str, Any]) -> None:
         if mw_steps is None and mw_len is None and mw_time is None:
             raise ValueError("memory_window_length, memory_window_steps or memory_window_time must be specified when memory_mode='window'.")
             
-        h = flat.get("h") or _DEFAULTS["h"]
         if mw_time is not None:
+            h = flat.get("h")
+            if h is None:
+                raise ValueError(
+                    "memory_window_time requires an explicit integration step h."
+                )
             steps = int(round(float(mw_time) / float(h)))
             flat["memory_window_steps"] = steps
             flat["memory_window_length"] = steps
@@ -1095,15 +1244,18 @@ def resolve_seed_transfer_contract(config: Dict[str, Any], system: Any) -> Dict[
     """
     # Resolve order and modes
     q = config.get("q")
-    if q is None and system is not None:
-        q = system.parameters.get("q")
     if q is None:
-        q = 1.0
+        raise ValueError(
+            "Seed-transfer evaluation requires an explicit system order q."
+        )
 
     seed_sec = config.get("seed") or {}
     df_order = seed_sec.get("df_order")
     if df_order is None:
-        df_order = "fractional" if q < 1.0 else "integer"
+        raise ValueError(
+            "Seed-transfer evaluation requires explicit seed.df_order "
+            "(or seed_mode before normalization)."
+        )
 
     q_seed = seed_sec.get("q_seed")
     if q_seed is None:
@@ -1111,8 +1263,11 @@ def resolve_seed_transfer_contract(config: Dict[str, Any], system: Any) -> Dict[
 
     transfer_mode = seed_sec.get("transfer_mode")
     if transfer_mode is None:
-        transfer_mode = "published_integer_laplace" if df_order == "integer" else "fractional_spectral"
-    elif transfer_mode == "integer":
+        raise ValueError(
+            "Seed-transfer evaluation requires explicit seed.transfer_mode "
+            "(or transfer_mode before normalization)."
+        )
+    if transfer_mode == "integer":
         transfer_mode = "published_integer_laplace"
     elif transfer_mode == "fractional":
         transfer_mode = "fractional_spectral"

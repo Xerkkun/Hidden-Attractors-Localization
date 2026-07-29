@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 import sys
 from collections import Counter
 from datetime import datetime, timezone
@@ -17,7 +18,7 @@ for item in (PROJECT_ROOT, Path(__file__).resolve().parent):
     if str(item) not in sys.path:
         sys.path.insert(0, str(item))
 
-from hidden_attractors.analysis.integrated_chaos_validator import (  # noqa: E402
+from validation.python.integrated_chaos_validator import (  # noqa: E402
     CASE_Q,
     integrate_case_evidence,
     method_registry_rows,
@@ -26,7 +27,10 @@ from hidden_attractors.analysis.integrated_chaos_validator import (  # noqa: E40
 from validation.python.f5_diagnostics_common import CASE_IDS, write_csv, write_json  # noqa: E402
 
 
-CHAOS_VALIDATION_ROOT = PROJECT_ROOT / "validation" / "chaos_validation"
+VALIDATION_ROOT = Path(
+    os.environ.get("HIDDEN_ATTRACTORS_VALIDATION_ROOT", PROJECT_ROOT / "validation")
+).resolve()
+CHAOS_VALIDATION_ROOT = VALIDATION_ROOT / "chaos_validation"
 DYNAMICS_ROOT = CHAOS_VALIDATION_ROOT / "dynamics_diagnostics"
 OUTPUT_ROOT = CHAOS_VALIDATION_ROOT / "integrated_chaos_validator"
 F5_SUMMARY = DYNAMICS_ROOT / "f5_diagnostics_summary.json"

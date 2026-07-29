@@ -7,15 +7,80 @@ Stability: internal
 
 from __future__ import annotations
 
+import os
+import tempfile
 from pathlib import Path
 
 
 PACKAGE_ROOT = Path(__file__).resolve().parent
 PROJECT_ROOT = PACKAGE_ROOT.parent
-OUTPUTS = PROJECT_ROOT / "outputs"
 CONFIGS = PROJECT_ROOT / "configs"
-NATIVE_CACHE = PROJECT_ROOT / ".runtime_native"
-RUNTIME_CACHE = PROJECT_ROOT / ".runtime_cache"
+
+
+def _runtime_output_root() -> Path:
+    configured = os.environ.get("HIDDEN_ATTRACTORS_OUTPUT_DIR")
+    return Path(configured).expanduser().resolve() if configured else Path.cwd().resolve() / "outputs"
+
+
+def _runtime_cache_root() -> Path:
+    configured = os.environ.get("HIDDEN_ATTRACTORS_CACHE_DIR")
+    if configured:
+        return Path(configured).expanduser().resolve()
+    if os.environ.get("XDG_CACHE_HOME"):
+        return Path(os.environ["XDG_CACHE_HOME"]).expanduser().resolve() / "hidden-attractors-fo"
+    if os.environ.get("LOCALAPPDATA"):
+        return Path(os.environ["LOCALAPPDATA"]).expanduser().resolve() / "hidden-attractors-fo"
+    return Path.home().resolve() / ".cache" / "hidden-attractors-fo"
+
+
+OUTPUTS = _runtime_output_root()
+_CACHE_ROOT = _runtime_cache_root()
+NATIVE_CACHE = _CACHE_ROOT / "native"
+RUNTIME_CACHE = _CACHE_ROOT / "runtime"
+
+
+def _ensure_writable_cache(directory: Path) -> Path:
+    """Create *directory* or use a process-temporary cache when defaults are blocked.
+
+    An explicitly configured ``HIDDEN_ATTRACTORS_CACHE_DIR`` is never silently
+    replaced: an unusable configured path raises a clear error.  Platform
+    defaults may be unavailable in restricted containers, so those fall back
+    to the operating-system temporary directory.
+    """
+
+    probe = directory / f".write-probe-{os.getpid()}"
+    try:
+        directory.mkdir(parents=True, exist_ok=True)
+        probe.write_bytes(b"")
+        probe.unlink()
+        return directory
+    except OSError as exc:
+        try:
+            probe.unlink(missing_ok=True)
+        except OSError:
+            pass
+        if os.environ.get("HIDDEN_ATTRACTORS_CACHE_DIR"):
+            raise OSError(f"Configured cache directory is not writable: {directory}") from exc
+
+    fallback = (
+        Path(tempfile.gettempdir()).expanduser().resolve()
+        / "hidden-attractors-fo"
+        / directory.name
+    )
+    fallback.mkdir(parents=True, exist_ok=True)
+    return fallback
+
+
+def get_native_cache() -> Path:
+    """Return a writable directory for compiled native backends."""
+
+    return _ensure_writable_cache(NATIVE_CACHE)
+
+
+def get_runtime_cache() -> Path:
+    """Return a writable directory for transient runtime resources."""
+
+    return _ensure_writable_cache(RUNTIME_CACHE)
 
 
 def get_packaged_examples_ref():
@@ -56,5 +121,3 @@ def get_packaged_examples_path() -> Path:
     if p2.exists():
         return p2
     return p
-
-

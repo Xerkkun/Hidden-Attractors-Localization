@@ -1,60 +1,26 @@
-manual_version: "1.0.0"
-package_version: "1.0.0"
+manual_version: "1.1.0"
+package_version: "1.1.0"
 
 public_cli: "hidden-attractors"
 entry_point: "hidden_attractors.cli.main:main"
 
-freeze_audit:
-  passed: 947
-  skipped: 28
-  path: "validation/freeze_audit/"
-  summary_json: "validation/freeze_audit/final_freeze_pytest_summary.json"
-  stdout_txt: "validation/freeze_audit/final_freeze_pytest_stdout.txt"
-
-claims_source: "THESIS_CLAIMS.md"
-canonical_figures: "library_figures/"
-
 manual_targets:
-  markdown: "USER_MANUAL.md"
-  latex: "docs/reporte_unificado_chua_fraccionario.tex"
-  web_repository: "Xerkkun/hidden-attractors"
-  web_docs_root: "src/content/docs/"
-  web_home: "src/pages/hidden-attractors/index.astro"
+  user_manual: "USER_MANUAL.md"
+  documentation_root: "docs/"
 
 scientific_scope:
-  system_family: "integer and commensurate fractional-order Lur'e-compatible systems"
-  derivative: "Caputo, 0 < q <= 1"
-  transfer_convention: "W_q(s)=r^T(s^q I-P)^(-1)b"
-  spectral_parameter: "lambda=(j omega)^q"
-  hiddenness_contract: "finite-time numerical evidence under tested neighborhoods, not global mathematical proof"
+  public_uses:
+    - "hidden-attractor localization for compatible systems"
+    - "independent dynamical-system, trajectory, and time-series characterization"
+  evidence_boundary: "finite-data and finite-time numerical results under recorded method settings"
+  hiddenness_boundary: "sampled-neighborhood evidence is not a global mathematical proof"
 
-claim_status_summary:
-  chua_integer: "reproducido"
-  chua_nonsmooth_example_1: "candidato"
-  official_fractional_nonsmooth_candidate: "rechazado"
-  chua_arctan_fractional: "promovido_con_limite_de_radio"
-  lure_fractional_methodology: "probado"
-
-forbidden_public_claims:
-  - "DF proves hiddenness"
-  - "Nyquist proves hiddenness"
-  - "continuation proves hiddenness"
-  - "bounded simulation proves hiddenness"
-  - "globally verified hidden attractor"
-  - "arctan hidden attractor verified globally"
-  - "exact periodic orbit in autonomous Caputo system without qualification"
-
-public_evidence_labels:
-  - "hiddenness_supported_under_tested_neighborhoods"
-  - "compatible_with_hiddenness_under_tested_radii"
-  - "self_excited_contact_detected"
-  - "hiddenness_inconclusive"
-  - "candidate_not_reproducible"
-  - "numerical_failure"
-  - "candidate_rejected"
+publication_boundary:
+  pypi_distribution: "supported software, public examples, and public user documentation"
+  validation_records: "release-tagged validation tree, excluded from PyPI distributions"
+  detailed_reports: "local editorial artifacts, excluded from the public documentation site"
 
 documentation_policy:
-  legacy_cli_commands: "not public; may appear only in migration/deprecation context"
-  figure_policy: "promoted figures must use export_figure and live under library_figures/"
-  claims_policy: "manuals must defer to THESIS_CLAIMS.md"
-  test_count_policy: "manuals must defer to validation/freeze_audit/"
+  public_content: "supported interfaces, completed validations, and explicit numerical limitations"
+  excluded_content: "local campaigns, editorial working files, private research notes, and forward-looking plans"
+  version_source: "pyproject.toml"

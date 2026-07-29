@@ -21,7 +21,7 @@
     "article_id": "kuznetsov2017_chua_integer_df",
     "case_id": "kuznetsov2017_case_21_hidden_chaotic_branch",
     "published_data_available": true,
-    "coverage_status": "future_extension",
+    "coverage_status": "reference_data_only",
     "implemented_system_id": "chua-nonsmooth",
     "test_files": [],
     "validation_artifacts": [],
@@ -38,7 +38,7 @@
     "article_id": "kuznetsov2017_chua_integer_df",
     "case_id": "kuznetsov2017_case_21_hidden_periodic_branch",
     "published_data_available": true,
-    "coverage_status": "future_extension",
+    "coverage_status": "reference_data_only",
     "implemented_system_id": "chua-nonsmooth",
     "test_files": [],
     "validation_artifacts": [],
@@ -47,7 +47,7 @@
       "integration step for plotted attractors",
       "numeric Lyapunov exponents for this Chua case"
     ],
-    "reason": "Periodic branch reference data extracted; useful for testing regular/periodic classification in the future.",
+    "reason": "Periodic branch reference data are recorded, but the published integration contract is incomplete and no executable regression is claimed.",
     "release_blocking": false,
     "full_published_attractor_reproduced": false
   },
@@ -85,7 +85,7 @@
     "test_files": [],
     "validation_artifacts": [],
     "missing_data": [],
-    "reason": "Not implemented as built-in system in this release; kept as future Matignon and neighborhood benchmark.",
+    "reason": "Not implemented as a built-in system; excluded from the current executable validation surface.",
     "release_blocking": false,
     "full_published_attractor_reproduced": false
   },
@@ -98,7 +98,7 @@
     "test_files": [],
     "validation_artifacts": [],
     "missing_data": [],
-    "reason": "Not implemented as built-in system in this release; kept as future Matignon and Lyapunov benchmark.",
+    "reason": "Not implemented as a built-in system; excluded from the current executable validation surface.",
     "release_blocking": false,
     "full_published_attractor_reproduced": false
   },

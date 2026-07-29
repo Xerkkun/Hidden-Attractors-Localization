@@ -2,7 +2,7 @@
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "name": "hidden-attractors-fo",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "identifier": "https://doi.org/10.17605/OSF.IO/ZGK74",
   "codeRepository": "https://github.com/Xerkkun/Hidden-Attractors-Localization",
   "license": "https://spdx.org/licenses/MIT",
@@ -29,22 +29,22 @@
       "@type": "Person",
       "givenName": "Esteban",
       "familyName": "Tlelo Cuautle",
-      "description": "Doctoral thesis director; assigned and guided the research topic."
+      "description": "Supervision and methodology."
     },
     {
       "@type": "Person",
       "givenName": "Oscar",
       "familyName": "Martinez-Fuentes",
-      "description": "Doctoral thesis co-advisor; reviewed the theoretical fractional-calculus component."
+      "description": "Fractional-calculus methodology review."
     },
     {
       "@type": "Person",
       "givenName": "Luis Gerardo",
       "familyName": "de la Fraga",
-      "description": "Provided source code used as provenance for the EFORK implementation and integer-order Lyapunov algorithm."
+      "description": "Software provenance for EFORK and the integer-order Lyapunov algorithm."
     }
   ],
-  "description": "Numerical workflows for Lur'e-compatible integer and Caputo fractional-order chaotic systems, including seed generation, continuation, integration, hiddenness audits, and reproducible validation contracts. Maintained examples include integer Chua, non-smooth fractional Chua, and smooth arctan fractional Chua validation lanes.",
+  "description": "Numerical software for Lur'e-compatible integer and Caputo fractional-order systems, hidden-attractor localization workflows, and independent dynamical characterization from systems, trajectories, and scalar time series.",
   "keywords": [
     "hidden attractors",
     "fractional-order systems",
@@ -55,6 +55,8 @@
     "describing function",
     "EFORK",
     "ABM"
+    ,"time-series Lyapunov exponents"
+    ,"dynamical-system characterization"
   ],
-  "datePublished": "2026-06-26"
+  "datePublished": "2026-07-29"
 }

@@ -1,26 +1,32 @@
-# Adapting New Systems
+# Supported System Adapter Contract
 
-This page is the release checklist for applying the library methodology to a
-new scalar Lur'e-compatible system. Chua is the reference family, not a hard
-limit of the architecture.
+The installed library accepts user-defined dynamical systems through the
+public contracts described here. Chua is the validated reference family, not
+a hard-coded limit of the software.
+
+Trajectory and scalar-time-series analysis does not require model
+registration. Functions such as `compute_trajectory_metrics` and
+`estimate_time_series_lyapunov` operate directly on supplied numerical data.
 
 ## Entry layers
 
-A new system enters through two layers:
+A model-based workflow uses two public layers:
 
 1. `ChaoticSystem`: mathematical model registration.
 2. `WorkflowInputSpec`: numerical and evidence contract for a particular run.
 
 A vector field alone is not enough to run or claim hiddenness checks. The
 workflow must record the solver, memory policy, target reference, classifier,
-robustness cases, basin slices, and equilibrium-neighborhood sampling plan.
+robustness cases, basin slices, and equilibrium-neighborhood sampling
+contract.
 
 ## Minimum model inputs
 
-For a built-in system, add the definition in `hidden_attractors/systems/builtins.py`.
-For a project/user system, register it from an external script or package.
+Built-in systems are defined in `hidden_attractors/systems/builtins.py`.
+User systems are registered from the calling script or package without
+modifying the installed library.
 
-Every maintained system should define:
+A registered system defines:
 
 - `name`: stable lowercase identifier;
 - `dimension`: state dimension;
@@ -32,7 +38,7 @@ Every maintained system should define:
 
 ## Lur'e methodology inputs
 
-For a full seed-continuation-hiddenness route, also provide:
+The supported seed-continuation-hiddenness route additionally requires:
 
 - matrices/vectors `P`, `b`, `r`;
 - scalar nonlinearity `psi(sigma)`;
@@ -41,9 +47,6 @@ For a full seed-continuation-hiddenness route, also provide:
 - seed interpretation as a heuristic Weyl/harmonic approximation;
 - Caputo or integer validation after seed generation;
 - all equilibria and the radii/samples used for neighborhood probes.
-
-Machado/FDF variants are currently documented as theory/planned seed families,
-not promoted public workflows.
 
 ## WorkflowInputSpec checklist
 
@@ -66,40 +69,13 @@ Inspect requirements with:
 ```bash
 hidden-attractors inspect workflow-requirements
 hidden-attractors inspect workflow-requirements --workflow sphere-controls
-hidden-attractors inspect workflow-requirements --workflow strict-refinement --system chua-nonsmooth
 hidden-attractors inspect workflow-requirements --example-spec
 ```
 
-## Recommended extension order
+## Evidence boundary
 
-```text
-register ChaoticSystem
--> add equilibria and Jacobian
--> add Lur'e split if DF/Nyquist is needed
--> create WorkflowInputSpec
--> run small integration smoke checks
--> run seed generation
--> run continuation
--> build dynamic reference
--> run robustness checks
--> sample neighborhoods around all equilibria
--> generate diagnostics and figures
--> write validation manifest/report
-```
-
-## Public documentation rule
-
-When a new system adds public functions, classes, methods, examples, or CLI
-behavior, update:
-
-- [API Reference](api_reference.md), which lists every symbol defined in the library;
-- [Quick Start](quick_start.md), if the new route is a first-run path;
-- [Examples](examples.md), if a script becomes part of the maintained example set;
-- [Validation Evidence](validation_evidence.md), if evidence is promoted;
-- `docs/reporte_unificado_chua_fraccionario.tex`, if the report discusses the route.
-
-## Legacy boundary
-
-Legacy adapters may preserve old computations for traceability, but new reusable
-logic should live under `hidden_attractors/` and use the unified CLI contract.
-Historical scripts must not be presented as competing release workflows.
+These interfaces define executable numerical contracts. They do not convert a
+seed, continuation endpoint, finite trajectory, or single diagnostic into a
+claim of chaos or hiddenness. Public validation records remain separate and
+identify the solver, memory policy, classifier, equilibria, sampling contract,
+and completed probe counts used for each reported result.

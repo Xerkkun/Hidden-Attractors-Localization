@@ -1,36 +1,35 @@
-# Chua fractional arctan canonical validation package
+# Chua fractional arctan validation record
 
-This package reports the `chua_arctan_c590_q09999_seed9` candidate as one smooth-nonlinearity validation lane for version `1.0.0` under a radius-limited finite numerical contract.
+This directory is a fixed public projection of the c590 radius-limited
+validation result.
 
-## Status
+## Result
 
-- Public validation package: `version_2/validation/chua_fractional_arctan/`.
-- Source evidence package: `version_2/validation/chua_fractional_arctan_c590/`.
-- Label: `hiddenness_supported_under_tested_neighborhoods` for local radii `r <= 0.3`.
-- Local probes: `8400`; `8396` reached the full horizon and `4` met the
-  equilibrium-convergence criterion early.
-- Local target contacts: `0`.
-- Tested equilibria: `E0, E+, E-`.
-- Macro-radius audit: `610` contacts in `5100` probes at radii `1.0` and `2.0`.
-  At `r=2`, `2569` trajectories reached the full horizon and `131` reached the
-  declared divergence threshold.
+- Local radii `r <= 0.3`: `8,400` finite probes and `0` target contacts.
+- All three equilibria were tested.
+- Macro radii `1.0` and `2.0`: `610` contacts in `5,100` probes.
+- At `r = 2`, `2,569` trajectories reached the full horizon and `131`
+  reached the declared divergence threshold.
 
 ## Boundary
 
-The local claim is finite numerical evidence under the recorded Caputo ABM full-memory contract, the listed probe radii, the recorded target-contact classifier, and the documented equilibria. It is not a global mathematical proof of basin exclusion. The contacts at radii `1.0` and `2.0` are intentionally retained as an extended-radius audit and do not change the local-radius claim boundary.
+The local conclusion is finite numerical evidence under the recorded Caputo
+ABM full-memory contract and target-contact classifier. It is not a global
+mathematical proof of basin exclusion. Macro-radius contacts are retained as
+an extended basin audit and do not enlarge or invalidate the local contract.
+This record does not certify chaos.
 
-## Files
+## Canonical files
 
-- `hiddenness_validation_summary.json`: canonical machine-readable summary.
-- `run_metadata.json`: parameters, seed, numerical contract, and source pointers.
-- `hiddenness_decisions.csv`: per-radius and per-equilibrium decisions.
-- `hiddenness_decisions_status_contact.csv`: row-derived groups by radius,
-  equilibrium, status, contact, and finite-state flag.
-- `summary_by_radius.csv`: aggregate decisions by radius.
-- `equilibria.json`: tested equilibria.
-- `matignon_classification.json`: local Matignon classification snapshot.
-- `config.json`: minimal reproducibility configuration for the promoted evidence.
-- `figures_manifest.json`: presentation figure metadata linked to this case.
+- `hiddenness_validation_summary.json`
+- `run_metadata.json`
+- `hiddenness_decisions.csv`
+- `hiddenness_decisions_status_contact.csv`
+- `summary_by_radius.csv`
+- `equilibria.json`
+- `matignon_classification.json`
+- `config.json`
+- `figures_manifest.json`
 
-Regenerate this package and its source package without executing simulations
-with `python tools/summarize_c590_hiddenness.py`.
+The row-level source record is
+`validation/chua_fractional_arctan_c590/validation_summary.json`.

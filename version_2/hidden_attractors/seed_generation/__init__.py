@@ -1,13 +1,9 @@
 """Harmonic-balance seed generation for fractional Chua and generic Lur'e workflows.
 
 Stability: experimental
-    This sub-package is the library-facing version of the reusable mathematics
-    that previously lived only in legacy scripts.  All numerical choices are
-    explicit arguments; no ``HIDDEN_ATTRACTORS_*`` environment variables are
-    read here.
-
-    The API is useful and tested.  New parameters or helper functions may be
-    added as additional system families are supported.
+    This sub-package provides the reusable seed-generation mathematics. All
+    numerical choices are explicit arguments; no ``HIDDEN_ATTRACTORS_*``
+    environment variables are read here.
 
 Sub-modules
 -----------

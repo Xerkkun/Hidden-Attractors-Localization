@@ -11,7 +11,7 @@ from hidden_attractors.validation.chua_arctan_wu2023 import write_algebra_valida
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG = ROOT / "configs" / "chua_arctan_wu2023_caputo.json"
+CONFIG = ROOT / "validation" / "reference_cases" / "fractional_chua_arctan_wu2023" / "config.json"
 
 
 def test_wu2023_config_loads_reported_initial_conditions_and_memory_policies() -> None:

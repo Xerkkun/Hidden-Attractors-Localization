@@ -20,10 +20,9 @@ def test_release_sample_input_output_are_populated() -> None:
 
     assert (sample_input / "README.md").exists()
     yaml_files = list(sample_input.glob("*.yaml"))
-    assert yaml_files, "sample_input must contain at least one YAML file"
+    assert yaml_files == [sample_input / "chua_integer_comprehensive.yaml"]
     assert (sample_output / "README.md").exists()
-    assert (sample_output / "expected_cli_help_summary.json").exists()
-    assert list(sample_output.glob("*.json")), "sample_output must contain at least one JSON file"
+    assert list(sample_output.glob("*.json")) == [sample_output / "comprehensive_sample_summary.json"]
 
 
 @pytest.mark.hygiene
@@ -31,11 +30,12 @@ def test_release_sample_input_output_are_populated() -> None:
 def test_release_sample_inputs_write_only_to_ignored_sample_outputs() -> None:
     for path in (RELEASE_ROOT / "sample_input").glob("*.yaml"):
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
-        output_dir = data["experiment"]["output_dir"].replace("\\", "/")
+        output_dir = data["outputs"]["output_dir"].replace("\\", "/")
+        figures_dir = data["outputs"]["figures_dir"].replace("\\", "/")
         assert output_dir.startswith("outputs/release_samples/"), output_dir
+        assert figures_dir.startswith(output_dir + "/"), figures_dir
         assert "validation/" not in output_dir
         assert "library_figures" not in output_dir
-        assert data.get("plots", {}).get("save_figures") is False
 
 
 @pytest.mark.hygiene
@@ -49,7 +49,8 @@ def test_archive_manifest_references_release_samples() -> None:
         missing = [rel for rel in manifest[key] if not (REPO_ROOT / rel).exists()]
         assert not missing, f"Missing sample paths in archive manifest: {missing}"
 
-    assert "version_2/release_package/sample_output/expected_cli_help_summary.json" in manifest["sample_output"]
+    assert "version_2/release_package/sample_input/chua_integer_comprehensive.yaml" in manifest["sample_input"]
+    assert "version_2/release_package/sample_output/comprehensive_sample_summary.json" in manifest["sample_output"]
     assert manifest["sample_status"] == "executed"
 
 
@@ -60,4 +61,8 @@ def test_expected_sample_outputs_are_executed_but_not_promoted_evidence() -> Non
         data = json.loads(path.read_text(encoding="utf-8"))
         assert data.get("not_promoted_evidence") is True
         assert data.get("replace_after_execution") is False
-        assert data.get("sample_status") in {None, "executed"}
+        assert data.get("sample_status") == "executed"
+        assert data.get("release_version") == "1.1.0"
+        assert data["repeatability_check"]["independent_runs"] >= 2
+        assert data["repeatability_check"]["deterministic_outputs_identical"] is True
+        assert data["deterministic_output_hashes"]

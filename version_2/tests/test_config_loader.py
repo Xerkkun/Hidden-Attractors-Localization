@@ -26,11 +26,16 @@ system:
     beta: 15.0
 modes:
   transfer_mode: "fractional"
+  dynamics_mode: "system"
 integrator:
   name: "efork3"
   h: 0.005
+  memory_policy: "full_caputo"
 stages:
   attractor_only: true
+simulation:
+  t_final: 1.0
+  t_burn: 0.2
 """
     yaml_file = tmp_path / "test_hier.yaml"
     yaml_file.write_text(yaml_content, encoding="utf-8")
@@ -106,4 +111,49 @@ integrator:
     yaml_file.write_text(yaml_content, encoding="utf-8")
 
     with pytest.raises(ValueError, match="only supports integer-order systems"):
+        load_config(yaml_file)
+
+
+def test_simulation_section_copies_only_explicit_values(tmp_path):
+    yaml_file = tmp_path / "partial_simulation.yaml"
+    yaml_file.write_text(
+        """
+experiment:
+  name: partial
+simulation:
+  t_final: 2.0
+""",
+        encoding="utf-8",
+    )
+
+    cfg = load_config(yaml_file)
+
+    assert cfg["final_simulation"] == {"t_final": 2.0}
+
+
+def test_enabled_simulation_rejects_missing_horizon(tmp_path):
+    yaml_file = tmp_path / "missing_horizon.yaml"
+    yaml_file.write_text(
+        """
+system:
+  system_id: chua_integer_saturation
+  q: 1.0
+modes:
+  dynamics_mode: integer
+integrator:
+  name: heun
+  h: 0.01
+stages:
+  attractor_only: true
+simulation:
+  t_final: 2.0
+""",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(
+        ValueError,
+        match=r"Final simulation requires explicit configuration values for: "
+        r"final_simulation\.t_burn",
+    ):
         load_config(yaml_file)

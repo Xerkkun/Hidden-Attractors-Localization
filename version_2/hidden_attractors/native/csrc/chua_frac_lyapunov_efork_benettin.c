@@ -305,10 +305,7 @@ static void run_fractional_le(const double x_init[3], const Params *p, const cha
 int main(int argc, char *argv[]) {
     if (argc != 15) {
         fprintf(stderr,
-                "Uso: %s x0 y0 z0 alpha_chua beta gamma_chua m0 m1 q h Lm t_burn n_blocks t_block [NO: csv va fijo por env CHUA_LE_CSV]\n",
-                argv[0]);
-        fprintf(stderr,
-                "Ejemplo: %s 5.85176778548633 0.370408600306164 -8.36097293442065 8.4562 12.0732 0.0052 -0.1768 -1.1468 0.9998 0.01 20 100 500 0.5\n",
+                "Usage: %s x0 y0 z0 alpha beta gamma m0 m1 q h memory_length burn_time block_count block_time\n",
                 argv[0]);
         return 1;
     }

@@ -6,9 +6,10 @@ import datetime
 import subprocess
 from pathlib import Path
 
-# Base directory for library figures
-from hidden_attractors.paths import PROJECT_ROOT
-LIBRARY_FIGURES_ROOT = PROJECT_ROOT / "library_figures"
+# Base directory for generated library figures.  It must remain outside the
+# installed package directory when running from a wheel.
+from hidden_attractors.paths import OUTPUTS
+LIBRARY_FIGURES_ROOT = OUTPUTS / "library_figures"
 
 def get_git_commit():
     """
@@ -27,18 +28,18 @@ def get_git_commit():
 
 from .manifest import update_manifest
 
-def export_figure(fig, figure_id, kind, metadata_dict, run_id="default_run", report_targets=None):
+def export_figure(fig, figure_id, kind, metadata_dict, run_id="default_run", export_targets=None):
     """
     Exports a figure to the canonical folder structure.
     Saves:
       - PDF and PNG in run-specific directory
       - JSON metadata in run-specific directory
       - Copies PDF/PNG to active/current directory
-      - Copies PDF/PNG to report-specific directories if requested
+      - Copies PDF/PNG to caller-selected export directories if requested
       - Appends entry to figure_manifest.json and figure_manifest.csv
     """
-    if report_targets is None:
-        report_targets = []
+    if export_targets is None:
+        export_targets = []
         
     # Standardize paths
     run_dir = LIBRARY_FIGURES_ROOT / "by_run" / run_id
@@ -70,16 +71,16 @@ def export_figure(fig, figure_id, kind, metadata_dict, run_id="default_run", rep
     shutil.copy2(pdf_path, current_pdf / f"{figure_id}.pdf")
     shutil.copy2(png_path, current_png / f"{figure_id}.png")
     
-    # Copy to report_targets
-    for target in report_targets:
-        report_dir = LIBRARY_FIGURES_ROOT / "by_report" / target
-        r_pdf = report_dir / "pdf"
-        r_png = report_dir / "png"
-        r_pdf.mkdir(parents=True, exist_ok=True)
-        r_png.mkdir(parents=True, exist_ok=True)
+    # Copy to explicitly requested export targets.
+    for target in export_targets:
+        export_dir = LIBRARY_FIGURES_ROOT / "by_export" / target
+        target_pdf = export_dir / "pdf"
+        target_png = export_dir / "png"
+        target_pdf.mkdir(parents=True, exist_ok=True)
+        target_png.mkdir(parents=True, exist_ok=True)
         
-        shutil.copy2(pdf_path, r_pdf / f"{figure_id}.pdf")
-        shutil.copy2(png_path, r_png / f"{figure_id}.png")
+        shutil.copy2(pdf_path, target_pdf / f"{figure_id}.pdf")
+        shutil.copy2(png_path, target_png / f"{figure_id}.png")
         
     # Build manifest entry
     created_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -105,18 +106,23 @@ def export_figure(fig, figure_id, kind, metadata_dict, run_id="default_run", rep
         "metadata_path": str(metadata_path.relative_to(LIBRARY_FIGURES_ROOT.parent)).replace('\\', '/'),
         "created_at": created_at,
         "git_commit": git_commit,
-        "report_targets": report_targets
+        "export_targets": export_targets
     }
     
     update_manifest(entry)
     
     return pdf_path, png_path
 
-def intercept_and_export_path(fig, output_path, kind, metadata_dict=None):
+def intercept_and_export_path(
+    fig,
+    output_path,
+    kind,
+    metadata_dict=None,
+    export_targets=None,
+):
     """
-    Helper to intercept savefig calls in older plotting scripts, formatting them,
-    exporting them to the central library figures repository, updating manifests,
-    and writing them back to the originally requested locations.
+    Intercept a save operation, export it to the central figure store, update
+    the manifest, and write it to the caller's requested location.
     """
     output_path = Path(output_path)
     figure_id = output_path.stem
@@ -137,24 +143,28 @@ def intercept_and_export_path(fig, output_path, kind, metadata_dict=None):
     if metadata_dict is None:
         metadata_dict = {}
         
-    metadata_dict.setdefault("source_script", "legacy_or_workflow_interception")
+    metadata_dict.setdefault("source_script", "plotting_interception")
     metadata_dict.setdefault("caption_key", f"fig_{figure_id}")
     
     # Enforce pure white background
     fig.patch.set_facecolor('white')
     for ax in fig.axes:
         ax.set_facecolor('white')
-        # Enforce no titles to satisfy "Sin títulos internos" rule
+        # Keep exported figures free of internal titles.
         ax.set_title("")
     fig.suptitle("")
     
-    # If this is a report asset, register report target
-    report_targets = []
-    if "report" in str(output_path).lower() or "figs" in str(output_path).lower() or "validation" in str(output_path).lower():
-        report_targets.append("df_nc_chua")
-        report_targets.append("unified_chua_fractional")
+    if export_targets is None:
+        export_targets = []
         
-    pdf_p, png_p = export_figure(fig, figure_id, kind, metadata_dict, run_id=run_id, report_targets=report_targets)
+    pdf_p, png_p = export_figure(
+        fig,
+        figure_id,
+        kind,
+        metadata_dict,
+        run_id=run_id,
+        export_targets=export_targets,
+    )
     
     # Copy to original destination
     output_path.parent.mkdir(parents=True, exist_ok=True)

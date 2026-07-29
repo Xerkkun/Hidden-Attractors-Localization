@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import hidden_attractors as ha
+import hidden_attractors.analysis as analysis
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,6 +34,13 @@ def test_top_level_exports_are_partitioned_by_public_tier() -> None:
     assert ha.PUBLIC_API_TIERS[ha.EXPERIMENTAL] == ha.PUBLIC_API_EXPERIMENTAL
 
 
+def test_every_declared_public_symbol_reports_its_runtime_tier() -> None:
+    for name in ha.PUBLIC_API_STABLE:
+        assert ha.get_tier(getattr(ha, name)) == ha.STABLE, name
+    for name in ha.PUBLIC_API_EXPERIMENTAL:
+        assert ha.get_tier(getattr(ha, name)) == ha.EXPERIMENTAL, name
+
+
 def test_compatibility_aliases_and_internals_are_not_public_tier_exports() -> None:
     blocked = {
         "chua_piecewise_parameters",
@@ -58,3 +66,13 @@ def test_api_stability_docs_explain_top_level_export_boundary() -> None:
     assert "PUBLIC_API_EXPERIMENTAL" in text
     assert "does not treat every exported name as equally stable" in text
     assert "Compatibility aliases" in text
+
+
+def test_analysis_wildcard_surface_matches_tested_top_level_contract() -> None:
+    expected = {
+        name
+        for name in ha.PUBLIC_API_EXPERIMENTAL
+        if hasattr(analysis, name)
+    }
+    expected.add("integer_qr_benettin_lyapunov_exponents")
+    assert set(analysis.__all__) == expected

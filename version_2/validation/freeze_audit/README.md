@@ -4,6 +4,8 @@ This directory contains the promoted final freeze audit snapshot for the release
 
 The committed `final_freeze_pytest_summary.json` is a historical promoted artifact. It records the exact audit metadata from the original freeze run, including `working_tree_dirty: true` and its diff hash. That dirty-tree state is retained for traceability; it is not a current clean-tree regeneration result and must not be edited away.
 
+Filesystem locations in the promoted stdout are represented by stable placeholders such as `<PYTHON_ENV>` and `<REPOSITORY_ROOT>`. This path redaction does not change commands, test outcomes, warnings, counts, or timings.
+
 For a current local regeneration, write to an ignored scratch path first:
 
 ```bash

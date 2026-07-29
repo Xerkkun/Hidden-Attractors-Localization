@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
-  "status": "published_benchmarks_pending_reproduced_discrepancy",
+  "status": "recorded_published_benchmark_discrepancy",
   "validation_run_class": "published_quantitative_long",
   "generated_at_utc": "2026-05-31T06:34:28.523792+00:00",
   "required_cases": [
@@ -62,7 +62,7 @@
   ],
   "quick_ci_guarantee": "native_smoke_only_not_published_quantitative_validation",
   "published_quantitative_opt_in": "RUN_PUBLISHED_LYAPUNOV=1",
-  "local_full_history_qr_status": "published_benchmarks_pending_separate_contract_required",
+  "local_full_history_qr_status": "not_evaluated_under_separate_contract",
   "certifications": {
     "chaos_certified_by_this_pipeline": false,
     "hiddenness_certified_by_this_pipeline": false

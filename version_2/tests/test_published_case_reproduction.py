@@ -12,13 +12,16 @@ import yaml
 
 from hidden_attractors.models.chua import chua_nonsmooth_parameters, chua_parameters
 from hidden_attractors.systems.builtins import chua_system
-from hidden_attractors.workflows.biased_chua import get_Wq
 from validation.python.published_reproduction import (
     W_published_integer,
     W_fractional_spectral,
     compute_seed_for_reproduction,
     run_all_published_cases,
     run_case_reproduction,
+)
+from validation.paper07_chua.nonsmooth_helpers import (
+    biased_saturation_df,
+    build_biased_seed,
 )
 
 CASES_DIR = REPO_ROOT / "validation" / "published_cases"
@@ -223,22 +226,49 @@ def test_W_fractional_spectral_formula() -> None:
 
 
 @pytest.mark.scientific_contract
-def test_biased_chua_get_Wq_matches_fractional_spectral_convention() -> None:
-    """Verificar que get_Wq tiene el signo opuesto a la convención espectral estándar."""
-    sys_obj = chua_system("nonsmooth")
-    P = sys_obj.lure.matrix
-    b = sys_obj.lure.input_vector
-    r = sys_obj.lure.output_vector
-    omega = 2.039
-    q = 0.9998
+def test_paper07_nonsmooth_helpers_reproduce_recorded_seed() -> None:
+    """The validation-only helper extraction must preserve the frozen seed."""
 
-    # get_Wq computes r @ inv(P - s^q I) b
-    W_get_Wq = get_Wq(omega, q, P, b, r)
-    # W_fractional_spectral computes r @ inv(s^q I - P) b
-    W_frac_spec = W_fractional_spectral(omega, q, P, b, r)
+    evidence_path = (
+        REPO_ROOT
+        / "validation"
+        / "paper07_chua"
+        / "evidence"
+        / "nonsmooth_corrected"
+        / "candidate_and_reference.json"
+    )
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+    params = chua_parameters(
+        model="nonsmooth",
+        alpha=evidence["alpha"],
+        beta=evidence["beta"],
+        gamma=evidence["gamma"],
+        m0=evidence["m0"],
+        m1=evidence["m1"],
+    )
 
-    # They should be of opposite sign
-    assert np.isclose(W_get_Wq, -W_frac_spec, atol=1e-12)
+    psi0, n1 = biased_saturation_df(
+        evidence["A"],
+        evidence["c"],
+        params.m0 - params.m1,
+        8192,
+    )
+    seed = build_biased_seed(
+        params,
+        evidence["q"],
+        evidence["A"],
+        evidence["c"],
+        evidence["omega"],
+        psi0,
+        n1,
+    )["seed"]
+
+    assert psi0 == pytest.approx(evidence["psi0"], abs=1e-14)
+    assert n1 == pytest.approx(evidence["N1"], abs=1e-14)
+    assert np.asarray(seed) == pytest.approx(
+        np.asarray(evidence["seed"]),
+        abs=1e-13,
+    )
 
 
 @pytest.mark.validation_contract

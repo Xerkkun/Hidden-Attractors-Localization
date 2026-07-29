@@ -51,7 +51,9 @@ def test_external_tool_report_documents_companion_tools() -> None:
     names = {row["name"] for row in report}
 
     assert "PyDSTool" in names
-    assert "pyComplexity notebook" in names
+    assert "nolds" in names
+    assert "antropy" in names
+    assert "pyComplexity notebook" not in names
 
 
 def test_rosenstein_adapter_uses_sample_interval(
@@ -92,4 +94,79 @@ def test_complexity_adapter_rejects_invalid_sample_rate(
             backend="nolds",
             sample_rate=sample_rate,
             measures=["lyapunov_rosenstein"],
+        )
+
+
+def test_complexity_adapter_rejects_unknown_measure() -> None:
+    with pytest.raises(ValueError, match="Unknown complexity measure"):
+        compute_complexity_measures(
+            np.linspace(0.0, 1.0, 16),
+            backend="auto",
+            measures=["not_a_measure"],
+        )
+
+
+def test_complexity_adapter_rejects_measure_unsupported_by_explicit_backend() -> None:
+    with pytest.raises(ValueError, match="does not support"):
+        compute_complexity_measures(
+            np.linspace(0.0, 1.0, 16),
+            backend="nolds",
+            measures=["permutation_entropy"],
+        )
+
+
+def test_complexity_auto_routes_each_measure_to_supporting_backend(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    imported: list[str] = []
+    fake_nolds = SimpleNamespace(
+        lyap_r=lambda signal, *, tau: 1.25,
+    )
+    fake_antropy = SimpleNamespace(
+        perm_entropy=lambda signal, *, normalize: 0.75,
+    )
+
+    monkeypatch.setattr(
+        external_tools,
+        "available_complexity_backends",
+        lambda: ["nolds", "antropy"],
+    )
+
+    def fake_require(import_name: str):
+        imported.append(import_name)
+        return {
+            "nolds": fake_nolds,
+            "antropy": fake_antropy,
+        }[import_name]
+
+    monkeypatch.setattr(external_tools, "require_external", fake_require)
+
+    result = compute_complexity_measures(
+        np.linspace(0.0, 1.0, 16),
+        backend="auto",
+        sample_rate=20.0,
+        measures=["permutation_entropy", "lyapunov_rosenstein"],
+    )
+
+    assert result == {
+        "lyapunov_rosenstein": 1.25,
+        "permutation_entropy": 0.75,
+    }
+    assert imported == ["nolds", "antropy"]
+
+
+def test_complexity_auto_reports_missing_measure_backend(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        external_tools,
+        "available_complexity_backends",
+        lambda: ["nolds"],
+    )
+
+    with pytest.raises(ImportError, match="permutation_entropy.*antropy"):
+        compute_complexity_measures(
+            np.linspace(0.0, 1.0, 16),
+            backend="auto",
+            measures=["permutation_entropy"],
         )

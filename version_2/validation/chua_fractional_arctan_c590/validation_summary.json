@@ -1,12 +1,11 @@
 {
   "schema_version": "1.1",
   "case_id": "chua_fractional_arctan_c590",
-  "candidate_id": "chua_arctan_c590_q09999_seed9",
+  "candidate_id": "chua_arctan_c590_q09999",
   "promoted_status": "hiddenness_supported_under_tested_local_radii_with_macro_radius_review",
   "canonical_label": "hiddenness_supported_under_tested_neighborhoods",
   "claim_boundary": "Radius-limited finite numerical evidence; not a global basin proof.",
-  "source_output": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/",
-  "source_summary": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/candidate_summary_latest.json",
+  "validation_record": "version_2/validation/chua_fractional_arctan_c590",
   "source_rows": [
     "version_2/validation/chua_fractional_arctan_c590/hiddenness_scaled_rows.csv",
     "version_2/validation/chua_fractional_arctan_c590/hiddenness_r003_rows.csv",
@@ -938,7 +937,7 @@
   "verdict": "promoted_radius_limited_hiddenness_supported_under_tested_neighborhoods",
   "macro_radius_note": "Contacts occur only in extended macroscopic radii 1.0 and 2.0; local radii through 0.3 have zero contacts.",
   "aggregation_contract": {
-    "script": "version_2/tools/summarize_c590_hiddenness.py",
+    "script": "version_2/validation/paper07_chua/scripts/summarize_c590_hiddenness.py",
     "simulation_performed": false,
     "source_of_truth": "canonical_probe_csv_rows",
     "grouping_dimensions": [

@@ -42,7 +42,7 @@ class LureSystem:
         Scalar nonlinearity ``ψ(σ) -> float``.
     describing_function : callable
         Classical describing function ``N(A) -> complex | float``.
-    machado_describing_function : callable
+    machado_describing_function : callable or None, default None
         Machado-family describing function ``N_μ(A, μ) -> complex | float``.
     gain_compatible : callable or None, default None
         Returns ``True`` if a given gain can be produced by the DF model.
@@ -61,7 +61,7 @@ class LureSystem:
     Examples
     --------
     >>> from hidden_attractors.systems import get_system
-    >>> sys = get_system('chua-fractional')
+    >>> sys = get_system('chua-nonsmooth')
     >>> lure = sys.lure
     >>> lure.dimension
     3
@@ -73,7 +73,7 @@ class LureSystem:
     output_vector: np.ndarray
     nonlinearity: ScalarNonlinearity
     describing_function: DescribingFunction
-    machado_describing_function: MachadoDescribingFunction
+    machado_describing_function: MachadoDescribingFunction | None = None
     gain_compatible: GainCompatibility | None = None
     amplitude_from_gain: AmplitudeSolver | None = None
     description: str = ""

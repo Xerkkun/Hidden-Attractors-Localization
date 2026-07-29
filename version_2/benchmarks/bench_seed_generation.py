@@ -1,34 +1,8 @@
-"""
-benchmarks/bench_seed_generation.py
-=====================================
-Performance benchmarks for the describing-function seed-generation pipeline.
+"""Synthetic timing checks for public describing-function utilities.
 
-What is measured
-----------------
-- **Frequency scan** (``find_omega_gain_candidates``): the Nyquist/DF
-  frequency sweep.  Cost scales with ``nscan`` and dominates the seed pipeline.
-- **Amplitude solver** (``solve_amplitude_from_gain``): bisection over
-  ``N(A) = k``.  Cheap in the piecewise case; more expensive for arctan.
-- **Full seed construction** (``find_harmonic_seed``): end-to-end from ``q``
-  to a ``HarmonicSeed`` object (scan + solve + eigenvector).
-- **Fourier coefficients** (``fourier_coefficients_psi``): the quadrature
-  inner loop used by the biased DF.  Costs scales with ``n_quad``.
-- **Biased seed** (``reconstruct_biased_lure_seed``): full biased pipeline
-  including two least-squares solves.
-- **Lur'e generic path** (``find_lure_harmonic_seed``): exercises the
-  system-independent wrappers.
-
-Why this matters
-----------------
-Seed generation is called once per candidate ``q`` value.  A parameter sweep
-over many fractional orders can easily require 10 000+ seed evaluations.  The
-Nyquist scan (``nscan=20_000``) is the dominant cost; ``n_quad=4096`` for the
-Fourier coefficients is secondary but non-trivial on slow machines.
-
-Running
--------
-    python -m pytest benchmarks/bench_seed_generation.py -v
-    python benchmarks/bench_seed_generation.py           # standalone
+Round-number coefficients and compact numerical resolutions keep these
+workloads independent of validation cases.  The checks measure implementation
+cost only; generated states are not evidence for a scientific claim.
 """
 
 from __future__ import annotations
@@ -38,205 +12,160 @@ from typing import Callable
 
 import numpy as np
 
-# ── Canonical parameters ──────────────────────────────────────────────────────
-Q = 0.9998
-NSCAN_DEFAULT = 20_000
-NSCAN_FAST = 2_000     # used for "fast" fixture to separate scan cost from rest
-N_QUAD = 4096
+
+PERFORMANCE_ORDER = 1.0
+BASE_SCAN_SIZE = 48
+EXTENDED_SCAN_SIZE = 96
+BASE_QUADRATURE_SIZE = 64
+EXTENDED_QUADRATURE_SIZE = 96
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Helpers
-# ─────────────────────────────────────────────────────────────────────────────
-
-def _time_callable(fn: Callable, repeats: int = 5) -> tuple[float, float]:
+def _time_callable(
+    fn: Callable[[], object],
+    *,
+    repeats: int = 3,
+) -> tuple[float, float]:
+    """Return the minimum and mean elapsed time."""
     times = []
     for _ in range(repeats):
-        t0 = time.perf_counter()
+        start = time.perf_counter()
         fn()
-        times.append(time.perf_counter() - t0)
+        times.append(time.perf_counter() - start)
     return min(times), sum(times) / len(times)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# pytest-benchmark tests
-# ─────────────────────────────────────────────────────────────────────────────
+def _spectral_input(parameters):
+    """Build one deterministic input shared by several timing checks."""
+    from hidden_attractors.seed_generation.chua import (
+        find_omega_gain_candidates,
+        solve_amplitude_from_gain,
+    )
 
-def test_frequency_scan_default(benchmark, chua_params):
-    """Nyquist/DF frequency scan — nscan=20 000 (production default)."""
-    from hidden_attractors.seed_generation.chua import find_omega_gain_candidates
+    pairs = find_omega_gain_candidates(
+        PERFORMANCE_ORDER,
+        parameters,
+        nscan=BASE_SCAN_SIZE,
+    )
+    omega, gain = pairs[0]
+    amplitude = solve_amplitude_from_gain(gain, parameters)
+    return omega, gain, amplitude
 
-    def _run():
-        return find_omega_gain_candidates(Q, chua_params, nscan=NSCAN_DEFAULT)
 
-    pairs = benchmark(_run)
-    assert len(pairs) >= 1
+def test_frequency_scan_base(benchmark, performance_parameters):
+    """Measure a compact frequency scan."""
+    from hidden_attractors.seed_generation.chua import (
+        find_omega_gain_candidates,
+    )
+
+    pairs = benchmark(
+        find_omega_gain_candidates,
+        PERFORMANCE_ORDER,
+        performance_parameters,
+        nscan=BASE_SCAN_SIZE,
+    )
+    assert pairs
     assert all(omega > 0 and gain > 0 for omega, gain in pairs)
 
 
-def test_frequency_scan_fast(benchmark, chua_params):
-    """Nyquist/DF frequency scan — nscan=2 000 (fast path for CI)."""
-    from hidden_attractors.seed_generation.chua import find_omega_gain_candidates
-
-    def _run():
-        return find_omega_gain_candidates(Q, chua_params, nscan=NSCAN_FAST)
-
-    pairs = benchmark(_run)
-    assert len(pairs) >= 1
-
-
-def test_amplitude_solver_piecewise(benchmark, chua_params):
-    """Amplitude bisection for the piecewise Chua DF."""
+def test_frequency_scan_extended(benchmark, performance_parameters):
+    """Measure a second compact frequency scan."""
     from hidden_attractors.seed_generation.chua import (
         find_omega_gain_candidates,
-        solve_amplitude_from_gain,
     )
 
-    pairs = find_omega_gain_candidates(Q, chua_params, nscan=NSCAN_FAST)
-    _, gain = pairs[0]
+    pairs = benchmark(
+        find_omega_gain_candidates,
+        PERFORMANCE_ORDER,
+        performance_parameters,
+        nscan=EXTENDED_SCAN_SIZE,
+    )
+    assert pairs
 
-    def _run():
-        return solve_amplitude_from_gain(gain, chua_params)
 
-    amp = benchmark(_run)
-    assert amp > 0.0
+def test_amplitude_solver(benchmark, performance_parameters):
+    """Measure the amplitude solver with a synthetic gain."""
+    from hidden_attractors.seed_generation.chua import solve_amplitude_from_gain
+
+    _, gain, _ = _spectral_input(performance_parameters)
+    amplitude = benchmark(
+        solve_amplitude_from_gain,
+        gain,
+        performance_parameters,
+    )
+    assert amplitude > 0.0
 
 
-def test_full_harmonic_seed_classic(benchmark, chua_params):
-    """End-to-end ``find_harmonic_seed`` — classic DF, nscan=20 000."""
+def test_harmonic_state_construction(benchmark, performance_parameters):
+    """Measure the public harmonic-state construction path."""
     from hidden_attractors.seed_generation.chua import find_harmonic_seed
 
-    def _run():
-        return find_harmonic_seed(q=Q, params=chua_params, method="classic")
-
-    seed = benchmark(_run)
-    assert seed.amplitude > 0
-    assert np.all(np.isfinite(seed.seed))
-
-
-def test_full_harmonic_seed_machado(benchmark, chua_params):
-    """End-to-end ``find_harmonic_seed`` — Machado DF (mu=1.5)."""
-    from hidden_attractors.seed_generation.chua import find_harmonic_seed
-
-    def _run():
-        return find_harmonic_seed(
-            q=Q, params=chua_params, method="machado", mu=1.5
-        )
-
-    seed = benchmark(_run)
-    assert seed.amplitude > 0
-    assert np.all(np.isfinite(seed.seed))
-
-
-def test_fourier_coefficients(benchmark, chua_params):
-    """Fourier coefficient quadrature — n_quad=4096, harmonics=10."""
-    from hidden_attractors.seed_generation.chua import (
-        find_omega_gain_candidates,
-        fourier_coefficients_psi,
-        solve_amplitude_from_gain,
+    state = benchmark(
+        find_harmonic_seed,
+        q=PERFORMANCE_ORDER,
+        params=performance_parameters,
+        method="classic",
+        nscan=BASE_SCAN_SIZE,
     )
-
-    pairs = find_omega_gain_candidates(Q, chua_params, nscan=NSCAN_FAST)
-    _, gain = pairs[0]
-    amp = solve_amplitude_from_gain(gain, chua_params)
-
-    def _run():
-        return fourier_coefficients_psi(
-            amp, sigma0=0.0, params=chua_params, harmonics=10, n_quad=N_QUAD
-        )
-
-    coeffs = benchmark(_run)
-    assert "y_mean" in coeffs
-    assert 1 in coeffs["coefficients"]
+    assert state.amplitude > 0.0
+    assert np.all(np.isfinite(state.seed))
 
 
-def test_fourier_coefficients_fine(benchmark, chua_params):
-    """Fourier coefficient quadrature — n_quad=16 384, harmonics=20 (fine)."""
-    from hidden_attractors.seed_generation.chua import (
-        find_omega_gain_candidates,
+def test_fourier_coefficients_base(benchmark, performance_parameters):
+    """Measure compact Fourier coefficient quadrature."""
+    from hidden_attractors.seed_generation.chua import fourier_coefficients_psi
+
+    _, _, amplitude = _spectral_input(performance_parameters)
+    coefficients = benchmark(
         fourier_coefficients_psi,
-        solve_amplitude_from_gain,
+        amplitude,
+        sigma0=0.0,
+        params=performance_parameters,
+        harmonics=4,
+        n_quad=BASE_QUADRATURE_SIZE,
     )
-
-    pairs = find_omega_gain_candidates(Q, chua_params, nscan=NSCAN_FAST)
-    _, gain = pairs[0]
-    amp = solve_amplitude_from_gain(gain, chua_params)
-
-    def _run():
-        return fourier_coefficients_psi(
-            amp, sigma0=0.0, params=chua_params, harmonics=20, n_quad=16_384
-        )
-
-    coeffs = benchmark(_run)
-    assert "y_mean" in coeffs
+    assert "y_mean" in coefficients
+    assert 1 in coefficients["coefficients"]
 
 
-def test_biased_lure_seed(benchmark, chua_params):
-    """Full biased seed pipeline — two least-squares solves + quadrature."""
+def test_fourier_coefficients_extended(benchmark, performance_parameters):
+    """Measure the same quadrature path at a second compact resolution."""
+    from hidden_attractors.seed_generation.chua import fourier_coefficients_psi
+
+    _, _, amplitude = _spectral_input(performance_parameters)
+    coefficients = benchmark(
+        fourier_coefficients_psi,
+        amplitude,
+        sigma0=0.0,
+        params=performance_parameters,
+        harmonics=4,
+        n_quad=EXTENDED_QUADRATURE_SIZE,
+    )
+    assert "y_mean" in coefficients
+
+
+def test_biased_state_construction(benchmark, performance_parameters):
+    """Measure the public biased-state reconstruction path."""
     from hidden_attractors.seed_generation.chua import (
-        find_omega_gain_candidates,
         reconstruct_biased_lure_seed,
-        solve_amplitude_from_gain,
     )
 
-    pairs = find_omega_gain_candidates(Q, chua_params, nscan=NSCAN_FAST)
-    omega, gain = pairs[0]
-    amp = solve_amplitude_from_gain(gain, chua_params)
-
-    def _run():
-        return reconstruct_biased_lure_seed(
-            q=Q,
-            params=chua_params,
-            amplitude=amp,
-            sigma0=0.0,
-            omega=omega,
-        )
-
-    seed = benchmark(_run)
-    assert np.all(np.isfinite(seed.seed))
+    omega, _, amplitude = _spectral_input(performance_parameters)
+    state = benchmark(
+        reconstruct_biased_lure_seed,
+        q=PERFORMANCE_ORDER,
+        params=performance_parameters,
+        amplitude=amplitude,
+        sigma0=0.0,
+        omega=omega,
+        harmonics=4,
+        n_quad=BASE_QUADRATURE_SIZE,
+    )
+    assert np.all(np.isfinite(state.seed))
 
 
-def test_lure_generic_seed(benchmark, chua_system):
-    """Generic Lur'e ``find_lure_harmonic_seed`` via LureSystem wrapper."""
-    from hidden_attractors.seed_generation.lure import find_lure_harmonic_seed
-
-    def _run():
-        return find_lure_harmonic_seed(q=Q, system=chua_system, method="classic")
-
-    seed = benchmark(_run)
-    assert seed.amplitude > 0
-    assert np.all(np.isfinite(seed.seed))
-
-
-def test_q_sweep_seed_generation(benchmark, chua_params):
-    """Seed generation over 10 fractional orders — simulates a parameter scan."""
-    from hidden_attractors.seed_generation.chua import find_harmonic_seed
-
-    q_values = np.linspace(0.990, 0.9998, 10)
-
-    def _run():
-        seeds = []
-        for q in q_values:
-            try:
-                s = find_harmonic_seed(
-                    q=float(q), params=chua_params,
-                    method="classic", nscan=NSCAN_FAST,
-                )
-                seeds.append(s)
-            except (RuntimeError, IndexError):
-                pass  # no candidate at this q — expected for some values
-        return seeds
-
-    seeds = benchmark(_run)
-    assert len(seeds) >= 1
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Standalone
-# ─────────────────────────────────────────────────────────────────────────────
-
-def _standalone():
-    from hidden_attractors.models.chua import chua_piecewise_parameters
+def _standalone() -> None:
+    """Run the synthetic timing checks without pytest-benchmark."""
+    from hidden_attractors.models.chua import ChuaParameters
     from hidden_attractors.seed_generation.chua import (
         find_harmonic_seed,
         find_omega_gain_candidates,
@@ -245,63 +174,65 @@ def _standalone():
         solve_amplitude_from_gain,
     )
 
-    params = chua_piecewise_parameters()
-    print("\n=== Seed-generation benchmarks ===\n")
-
-    # 1. Frequency scan
-    lo, mean = _time_callable(
-        lambda: find_omega_gain_candidates(Q, params, nscan=NSCAN_DEFAULT), repeats=5
+    parameters = ChuaParameters(
+        alpha=8.0,
+        beta=12.0,
+        gamma=0.1,
+        m0=-0.2,
+        m1=-1.0,
     )
-    print(f"  frequency_scan  nscan={NSCAN_DEFAULT:<6d}  min={lo*1e3:.1f} ms  mean={mean*1e3:.1f} ms")
+    omega, gain, amplitude = _spectral_input(parameters)
 
-    lo_fast, mean_fast = _time_callable(
-        lambda: find_omega_gain_candidates(Q, params, nscan=NSCAN_FAST), repeats=5
-    )
-    print(f"  frequency_scan  nscan={NSCAN_FAST:<6d}  min={lo_fast*1e3:.1f} ms  mean={mean_fast*1e3:.1f} ms")
-    print(f"  scan speedup {NSCAN_DEFAULT}→{NSCAN_FAST}: {mean/mean_fast:.1f}×")
-
-    # 2. Amplitude solver
-    pairs = find_omega_gain_candidates(Q, params, nscan=NSCAN_FAST)
-    _, gain = pairs[0]
-    lo, mean = _time_callable(
-        lambda: solve_amplitude_from_gain(gain, params), repeats=10
-    )
-    print(f"\n  amplitude_solver (piecewise)               min={lo*1e3:.2f} ms  mean={mean*1e3:.2f} ms")
-
-    # 3. Full harmonic seed
-    lo, mean = _time_callable(
-        lambda: find_harmonic_seed(q=Q, params=params, method="classic"), repeats=5
-    )
-    print(f"  find_harmonic_seed (classic)               min={lo*1e3:.1f} ms  mean={mean*1e3:.1f} ms")
-
-    # 4. Fourier coefficients
-    amp = solve_amplitude_from_gain(gain, params)
-    lo, mean = _time_callable(
-        lambda: fourier_coefficients_psi(
-            amp, sigma0=0.0, params=params, harmonics=10, n_quad=N_QUAD
+    measurements: tuple[tuple[str, Callable[[], object]], ...] = (
+        (
+            "Frequency scan",
+            lambda: find_omega_gain_candidates(
+                PERFORMANCE_ORDER,
+                parameters,
+                nscan=BASE_SCAN_SIZE,
+            ),
         ),
-        repeats=10,
-    )
-    print(f"  fourier_coefficients  n_quad={N_QUAD}       min={lo*1e3:.1f} ms  mean={mean*1e3:.1f} ms")
-
-    # 5. Biased seed
-    omega, _ = pairs[0]
-    lo, mean = _time_callable(
-        lambda: reconstruct_biased_lure_seed(
-            q=Q, params=params, amplitude=amp, sigma0=0.0, omega=omega
+        (
+            "Amplitude solver",
+            lambda: solve_amplitude_from_gain(gain, parameters),
         ),
-        repeats=5,
+        (
+            "Harmonic state",
+            lambda: find_harmonic_seed(
+                q=PERFORMANCE_ORDER,
+                params=parameters,
+                method="classic",
+                nscan=BASE_SCAN_SIZE,
+            ),
+        ),
+        (
+            "Fourier coefficients",
+            lambda: fourier_coefficients_psi(
+                amplitude,
+                sigma0=0.0,
+                params=parameters,
+                harmonics=4,
+                n_quad=BASE_QUADRATURE_SIZE,
+            ),
+        ),
+        (
+            "Biased state",
+            lambda: reconstruct_biased_lure_seed(
+                q=PERFORMANCE_ORDER,
+                params=parameters,
+                amplitude=amplitude,
+                sigma0=0.0,
+                omega=omega,
+                harmonics=4,
+                n_quad=BASE_QUADRATURE_SIZE,
+            ),
+        ),
     )
-    print(f"  biased_lure_seed                           min={lo*1e3:.1f} ms  mean={mean*1e3:.1f} ms")
 
-    # 6. q-sweep estimate
-    print("\n--- q-sweep extrapolation ---")
-    lo_seed, mean_seed = _time_callable(
-        lambda: find_harmonic_seed(q=Q, params=params, nscan=NSCAN_FAST), repeats=5
-    )
-    for n_q in [100, 1_000, 10_000]:
-        est_s = n_q * mean_seed
-        print(f"  {n_q:>6d} q values (fast scan): ~{est_s:.1f} s  ({est_s/60:.1f} min)")
+    print("Synthetic describing-function performance checks")
+    for label, operation in measurements:
+        minimum, mean = _time_callable(operation)
+        print(f"{label:<24} min={minimum * 1e3:8.2f} ms mean={mean * 1e3:8.2f} ms")
 
 
 if __name__ == "__main__":

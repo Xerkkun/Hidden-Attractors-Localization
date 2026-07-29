@@ -10,20 +10,11 @@ PROHIBITED_ACTIVE_PATTERNS = [
     "scratch_*.py",
     "step[0-9]_*.py",
     "generate_*_plots*.py",
+    "generate_*_report_assets*.py",
+    "plot_*_candidates*.py",
     "search_*_candidates*.py",
+    "search_*_fractional*.py",
     "compare_solvers_*.py",
-]
-
-# We also keep a few specific historic ones for absolute safety
-PROHIBITED_SPECIFIC_PATHS = [
-    "scratch/replot_biased_lyapunov.py",
-    "scratch/compute_biased_lyapunov_two_methods.py",
-    "scratch/generate_biased_candidate_report_assets.py",
-    "generate_all_plots_and_summary.py",
-    "plot_chaotic_candidates.py",
-    "search_saturation_candidates.py",
-    "search_arctan_fractional.py",
-    "compare_solvers_saturation.py",
 ]
 
 ACTIVE_DIRS = [
@@ -35,7 +26,6 @@ ACTIVE_DIRS = [
 
 EXCLUDED_DIRS = [
     "version_2/tools/legacy",
-    "_archived_figure_scripts",
     "version_2/tests",
     "version_2/tests/hygiene",
     "version_2/figure_scripts",
@@ -46,13 +36,7 @@ def test_no_loose_or_duplicate_scripts():
     """Verify that none of the prohibited script patterns exist in active directories."""
     violations = []
 
-    # 1. Check specific hardcoded prohibited paths
-    for rel_path in PROHIBITED_SPECIFIC_PATHS:
-        full_path = ROOT_DIR / rel_path
-        if full_path.exists():
-            violations.append(f"Specific prohibited file exists: {rel_path}")
-
-    # 2. Check general glob patterns in active directories
+    # Check only generic filename patterns in active directories.
     for active_dir_rel in ACTIVE_DIRS:
         active_path = ROOT_DIR / active_dir_rel
         if not active_path.exists():
@@ -93,6 +77,7 @@ def test_no_loose_figure_scripts_outside_designated_directories():
         "version_2/tools/cli/",
         "version_2/examples/",
         "version_2/tools/legacy/",
+        "version_2/validation/",
         "version_2/tests/",
         "version_2/docs/",
         "version_2/benchmarks/",
@@ -106,7 +91,12 @@ def test_no_loose_figure_scripts_outside_designated_directories():
         
     for r, d, files in os.walk(version_2_dir):
         # Exclude directories like __pycache__, .pytest_cache
-        d[:] = [dirname for dirname in d if not dirname.startswith(".") and dirname != "__pycache__"]
+        d[:] = [
+            dirname
+            for dirname in d
+            if not dirname.startswith(".")
+            and dirname not in {"__pycache__", "build", "local_reports"}
+        ]
         
         rel_dir = os.path.relpath(r, ROOT_DIR).replace("\\", "/")
         
@@ -143,23 +133,6 @@ def test_no_loose_figure_scripts_outside_designated_directories():
                 pass
                 
             if is_fig_script or has_savefig:
-                # Exempt normal workflows or common utilities that are not primarily loose figure scripts
-                exemptions = [
-                    "version_2/hidden_attractors/workflows/fractional_report_run.py",
-                    "version_2/hidden_attractors/workflows/refined_basin.py",
-                    "version_2/hidden_attractors/workflows/danca_abm_sphere_controls.py",
-                    "version_2/hidden_attractors/workflows/robustness_overlay.py",
-                    "version_2/hidden_attractors/workflows/robustness.py",
-                    "version_2/hidden_attractors/workflows/basin.py",
-                    "version_2/hidden_attractors/workflows/bifurcation.py",
-                    "version_2/hidden_attractors/workflows/continuation.py",
-                    "version_2/hidden_attractors/workflows/chaos_test.py",
-                    "version_2/hidden_attractors/workflows/seed_search.py",
-                    "version_2/hidden_attractors/workflows/simulation.py",
-                    "version_2/hidden_attractors/workflows/sphere_tests.py",
-                ]
-                if file_rel in exemptions:
-                    continue
                 violations.append(f"Figure script '{file_rel}' found outside designated directories.")
                 
     assert not violations, "Found loose figure scripts outside version_2/figure_scripts/:\n" + "\n".join(violations)

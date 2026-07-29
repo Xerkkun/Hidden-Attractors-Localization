@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Register a new system and write an auditable workflow specification.
-
-This example does not launch a long simulation.  It shows the minimum shape a
-new system should expose before sphere controls, basin cuts, strict
-refinement, or hiddenness evidence are run through the reusable package API.
-"""
+"""Register a system and write an explicit characterization specification."""
 
 from __future__ import annotations
 
@@ -21,11 +16,7 @@ if str(ROOT) not in sys.path:
 
 from hidden_attractors.systems import ChaoticSystem, check_system_capability, get_system, register_system
 from hidden_attractors.workflows import (
-    BasinSliceSpec,
-    DestinationClassifierSpec,
     IntegratorSpec,
-    StrictRefinementSpec,
-    TargetReferenceSpec,
     TrajectoryDiagnosticsSpec,
     WorkflowInputSpec,
     write_workflow_spec,
@@ -93,40 +84,19 @@ def register_lorenz63() -> None:
 
 
 def build_spec() -> WorkflowInputSpec:
-    """Build a placeholder workflow spec that documents required adapters."""
+    """Build a self-contained specification for trajectory characterization."""
 
     return WorkflowInputSpec(
         system_name="lorenz63",
         dimension=3,
         parameters={"sigma": 10.0, "rho": 28.0, "beta": 8.0 / 3.0},
         integrator=IntegratorSpec(
-            implementation="my_package.solvers.integrate_lorenz63",
+            implementation="example.integrate_lorenz63",
             order_kind="integer",
             h=0.01,
             t_final=100.0,
             t_burn=20.0,
             memory_policy="not_applicable",
-        ),
-        classifier=DestinationClassifierSpec(
-            implementation="my_package.classifiers.classify_lorenz_destination",
-            thresholds={"divergence_norm": 100.0, "equilibrium_tol": 1.0e-5},
-            notes="Replace this placeholder with the project classifier before a real run.",
-        ),
-        target_reference=TargetReferenceSpec(
-            candidate_id="lorenz63_example_target",
-            positive_seed=(1.0, 1.0, 1.0),
-            target_definition="placeholder finite-time reference; not a hiddenness claim",
-        ),
-        basin=BasinSliceSpec(
-            varying_state_indices=(0, 1),
-            limits=((-25.0, 25.0), (-35.0, 35.0)),
-            grid_shape=(80, 80),
-            fixed_state=(0.0, 0.0, 20.0),
-            plane_label="xy_z20",
-        ),
-        strict_refinement=StrictRefinementSpec(
-            negative_control_equilibria=("E0", "E+", "E-"),
-            negative_control_radius=1.0e-5,
         ),
         trajectory_diagnostics=TrajectoryDiagnosticsSpec(
             retained_time_start=20.0,
@@ -135,10 +105,7 @@ def build_spec() -> WorkflowInputSpec:
             extrema_observable="z",
             spectrum_observable="x",
         ),
-        notes=(
-            "Template only.  Add a real integrator, classifier, target reference, "
-            "and output directory before launching a workflow."
-        ),
+        notes="Example contract for finite-time trajectory characterization.",
     )
 
 
@@ -155,12 +122,12 @@ def main(argv: list[str] | None = None) -> None:
     register_lorenz63()
     system = get_system("lorenz63")
     print(f"registered={system.name}")
-    for workflow in ("equilibria", "matignon", "basin", "strict-refinement"):
+    for workflow in ("equilibria", "characterization"):
         report = check_system_capability(system, workflow)
         print(f"[{workflow}] {report.as_lines()[-1] if report.warnings else report.as_lines()[2]}")
 
     spec = build_spec()
-    errors = spec.validate_for(("basin", "strict-refinement", "trajectory-diagnostics"))
+    errors = spec.validate_for(("trajectory-diagnostics",))
     if errors:
         raise SystemExit("\n".join(errors))
     args.output.parent.mkdir(parents=True, exist_ok=True)

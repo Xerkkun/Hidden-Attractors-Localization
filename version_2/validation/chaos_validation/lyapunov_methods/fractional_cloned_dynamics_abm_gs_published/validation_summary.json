@@ -10,7 +10,7 @@
     "year": 2020,
     "doi": "10.1016/j.apnum.2020.03.027"
   },
-  "status": "published_benchmarks_pending_discrepancy",
+  "status": "recorded_published_benchmark_discrepancy",
   "validated": false,
   "validated_against_published_benchmarks": false,
   "memory_protocol": "published_block_restart",

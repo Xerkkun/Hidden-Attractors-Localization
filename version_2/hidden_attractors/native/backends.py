@@ -20,7 +20,7 @@ import numpy as np
 
 from ..models.chua import ChuaParameters, chua_nonsmooth_parameters
 from ..parallel import compile_c_target
-from ..paths import NATIVE_CACHE, PACKAGE_ROOT
+from ..paths import PACKAGE_ROOT, get_native_cache
 from .contracts import FractionalLyapunovRequest, FractionalLyapunovResult
 
 
@@ -83,10 +83,10 @@ class NativeFractionalVariationalBackend:
     def build(cls, output_name: str = "fractional_variational_lyapunov") -> "NativeFractionalVariationalBackend":
         if output_name in cls._cache:
             return cls._cache[output_name]
-        NATIVE_CACHE.mkdir(parents=True, exist_ok=True)
+        native_cache = get_native_cache()
         result = compile_c_target(
             C_SOURCE_ROOT / "fractional_variational_lyapunov_lib.c",
-            NATIVE_CACHE / f"{output_name}{_shared_suffix()}",
+            native_cache / f"{output_name}{_shared_suffix()}",
             target_kind="shared",
             openmp=False,
         )
@@ -239,10 +239,10 @@ class FractionalChuaBackend:
     def build(cls, output_name: str = "chua_frac_backend") -> "FractionalChuaBackend":
         if output_name in cls._cache:
             return cls._cache[output_name]
-        NATIVE_CACHE.mkdir(parents=True, exist_ok=True)
+        native_cache = get_native_cache()
         result = compile_c_target(
             C_SOURCE_ROOT / "chua_frac_backend_lib.c",
-            NATIVE_CACHE / f"{output_name}{_shared_suffix()}",
+            native_cache / f"{output_name}{_shared_suffix()}",
             target_kind="shared",
             openmp=False,
         )
@@ -450,10 +450,10 @@ class FullHistoryABMBackend:
 
     @classmethod
     def build(cls, output_name: str = "chua_abm_full_history") -> "FullHistoryABMBackend":
-        NATIVE_CACHE.mkdir(parents=True, exist_ok=True)
+        native_cache = get_native_cache()
         result = compile_c_target(
             C_SOURCE_ROOT / "chua_abm_full_history_lib.c",
-            NATIVE_CACHE / f"{output_name}{_shared_suffix()}",
+            native_cache / f"{output_name}{_shared_suffix()}",
             target_kind="shared",
             openmp=False,
         )
@@ -729,10 +729,10 @@ class BasinBackend:
 
     @classmethod
     def build(cls, output_name: str = "chua_basin_backend") -> "BasinBackend":
-        NATIVE_CACHE.mkdir(parents=True, exist_ok=True)
+        native_cache = get_native_cache()
         result = compile_c_target(
             C_SOURCE_ROOT / "chua_basin_lib.c",
-            NATIVE_CACHE / f"{output_name}{_shared_suffix()}",
+            native_cache / f"{output_name}{_shared_suffix()}",
             target_kind="shared",
             openmp=False,
         )
@@ -837,11 +837,11 @@ class FractionalLyapunovBackend:
 
     @classmethod
     def build(cls, output_name: str = "chua_frac_lyapunov_efork_benettin") -> "FractionalLyapunovBackend":
-        NATIVE_CACHE.mkdir(parents=True, exist_ok=True)
+        native_cache = get_native_cache()
         suffix = ".exe" if sys.platform == "win32" else ""
         result = compile_c_target(
             C_SOURCE_ROOT / "chua_frac_lyapunov_efork_benettin.c",
-            NATIVE_CACHE / f"{output_name}{suffix}",
+            native_cache / f"{output_name}{suffix}",
             target_kind="executable",
             openmp=False,
         )
@@ -912,10 +912,10 @@ class GeneralFDEBackend:
     def build(cls, output_name: str = "general_fde_solver") -> "GeneralFDEBackend":
         if output_name in cls._cache:
             return cls._cache[output_name]
-        NATIVE_CACHE.mkdir(parents=True, exist_ok=True)
+        native_cache = get_native_cache()
         result = compile_c_target(
             C_SOURCE_ROOT / "general_fde_solver.c",
-            NATIVE_CACHE / f"{output_name}{_shared_suffix()}",
+            native_cache / f"{output_name}{_shared_suffix()}",
             target_kind="shared",
             openmp=False,
         )

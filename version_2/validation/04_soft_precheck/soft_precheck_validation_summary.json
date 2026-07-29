@@ -65,7 +65,7 @@
   },
   "evidence_scope": {
     "classification": "official_validation_run",
-    "current_contract": "configs/unified_caputo_protocol.json",
+    "current_contract": "validation/00_manifest/source_configs/unified_caputo_protocol.json",
     "current_contract_applied": true
   },
   "run_metadata": null,

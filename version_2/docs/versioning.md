@@ -1,25 +1,15 @@
 # Versioning Policy
 
-`version_2/` is the only maintained and executable library surface. New code,
-documentation, configurations and validation summaries must use the official
-Caputo protocol defined in `hidden_attractors.workflows.protocol`.
+`hidden-attractors-fo` follows semantic versioning for the installed Python
+package and unified `hidden-attractors` command.
 
-Historical numerical evidence that remains useful as a benchmark is promoted
-under `validation/reference_cases/` and identified as archived evidence. It is
-not a competing methodology and it is not relabelled as a run under the new
-protocol.
+- Patch releases preserve documented behavior and correct defects.
+- Minor releases may add documented APIs while preserving the stable tier.
+- Major releases may change stable interfaces and must identify those changes
+  in the release notes.
 
-`tools/legacy/` remains temporarily packaged only because a small set of
-maintained adapters still imports its numerical engines. Those engines are
-covered by the corrected EFORK regression tests and must not publish new
-methodology names. New entry points use the unified `hidden-attractors` command, for example `hidden-attractors protocol`.
-
-## Migration Rule
-
-When a compatibility adapter duplicates official logic:
-
-1. Move the reusable implementation into `hidden_attractors/`.
-2. Preserve only a narrow adapter if an installed command still depends on it.
-3. Write outputs with the official JSON envelope and verdict vocabulary.
-4. Delete the compatibility source when no maintained import or evidence build
-   uses it.
+The [API Stability Tiers](api_stability.md) page is the authoritative boundary
+between stable and experimental symbols. Recorded validation artifacts keep
+their original numerical contract and provenance; a software version change
+does not relabel earlier evidence or turn a diagnostic into a claim of chaos
+or hiddenness.

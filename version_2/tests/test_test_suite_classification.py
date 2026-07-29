@@ -5,10 +5,10 @@ import pytest
 
 @pytest.mark.hygiene
 def test_all_tests_are_inventoried():
-    """Verify that every test file in tests/ is listed in docs/tests_inventory.md."""
+    """Verify that every test file is listed in the validation software audit."""
     tests_dir = Path(__file__).resolve().parent
-    inventory_path = tests_dir / ".." / "docs" / "tests_inventory.md"
-    assert inventory_path.exists(), "docs/tests_inventory.md does not exist"
+    inventory_path = tests_dir / ".." / "validation" / "software_audit" / "tests_inventory.md"
+    assert inventory_path.exists(), "validation/software_audit/tests_inventory.md does not exist"
     
     # Read inventory content and extract files
     inventory_content = inventory_path.read_text(encoding="utf-8")
@@ -35,7 +35,8 @@ def test_all_tests_are_inventoried():
                 
     missing_from_inventory = disk_files - inventoried_files
     assert not missing_from_inventory, (
-        f"The following test files are on disk but not listed in docs/tests_inventory.md:\n"
+        "The following test files are on disk but not listed in "
+        "validation/software_audit/tests_inventory.md:\n"
         f"{missing_from_inventory}"
     )
 

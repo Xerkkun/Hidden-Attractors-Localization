@@ -4,6 +4,7 @@ import sys
 import pytest
 import numpy as np
 from pathlib import Path
+from types import SimpleNamespace
 
 # Add workspace root and version_2 to sys.path
 workspace_root = Path(__file__).resolve().parents[2]
@@ -30,6 +31,8 @@ def test_validate_integrator_compatibility():
         validate_integrator_compatibility("efork3", 0.0)
     with pytest.raises(ValueError, match="must be in"):
         validate_integrator_compatibility("efork3", 1.2)
+    with pytest.raises(ValueError, match="finite"):
+        validate_integrator_compatibility("efork3", np.nan)
 
     # Incompatible combos
     with pytest.raises(ValueError, match="requires q < 1"):
@@ -57,3 +60,145 @@ def test_integrate_dispatch():
     )
     assert status_frac == "ok"
     assert len(t_frac) == 51
+
+
+def test_near_integer_order_validation_and_dispatch_agree() -> None:
+    """An order accepted as q=1 must reach the integer solver branch."""
+
+    q_near_one = 1.0 - 5.0e-11
+    assert validate_integrator_compatibility("rk4", q_near_one) == "rk4"
+
+    t, x, status = integrate(
+        lambda state: -state,
+        np.array([1.0]),
+        q=q_near_one,
+        h=0.01,
+        t_final=0.1,
+        integrator="rk4",
+        use_c_backend=False,
+    )
+
+    assert status == "ok"
+    assert len(t) == 11
+    assert x[-1, 0] == pytest.approx(np.exp(-0.1), rel=1.0e-6)
+
+
+def test_selector_propagates_python_fallback_policy(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    observed: dict[str, object] = {}
+
+    def fake_integrate_general(**kwargs):
+        observed.update(kwargs)
+        return np.array([0.0]), np.array([[1.0]]), "ok"
+
+    monkeypatch.setattr(
+        "hidden_attractors.integrations.selector.get_integrator_fn",
+        lambda: fake_integrate_general,
+    )
+
+    integrate(
+        lambda state: -state,
+        np.array([1.0]),
+        q=0.9,
+        h=0.01,
+        t_final=0.1,
+        integrator="efork3",
+        allow_python_fallback=False,
+    )
+
+    assert observed["allow_python_fallback"] is False
+
+
+def test_use_c_backend_false_disables_integer_numba_path(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from hidden_attractors.integrations import general
+
+    calls = {"numba": 0}
+
+    def fake_numba(**kwargs):
+        calls["numba"] += 1
+        raise AssertionError("Numba backend must not run when use_c_backend=False")
+
+    monkeypatch.setattr(general, "_NUMBA_AVAILABLE", True)
+    monkeypatch.setattr(general, "integrate_efork3_q1_numba", fake_numba)
+
+    t, x, status = general.integrate_general(
+        lambda state: -state,
+        np.array([1.0]),
+        q=1.0,
+        h=0.01,
+        t_final=0.1,
+        integrator="efork3",
+        system=SimpleNamespace(),
+        use_c_backend=False,
+    )
+
+    assert calls["numba"] == 0
+    assert status == "ok"
+    assert len(t) == len(x) == 11
+
+
+def test_general_dispatcher_forwards_python_fallback_policy(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from hidden_attractors.integrations import general
+
+    observed: dict[str, object] = {}
+
+    def fake_fractional_integrate(**kwargs):
+        observed.update(kwargs)
+        return (
+            np.array([0.0, 0.1]),
+            np.array([[1.0], [0.9]]),
+            "ok",
+            {},
+        )
+
+    monkeypatch.setattr(general, "fractional_integrate", fake_fractional_integrate)
+
+    general.integrate_general(
+        lambda state: -state,
+        np.array([1.0]),
+        q=0.9,
+        h=0.1,
+        t_final=0.1,
+        integrator="efork3",
+        use_c_backend=True,
+        allow_python_fallback=False,
+    )
+
+    assert observed["allow_python_fallback"] is False
+
+
+def test_integer_backend_failure_respects_disabled_fallback(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from hidden_attractors.integrations import general
+
+    def fail_numba(**kwargs):
+        raise RuntimeError("backend failed")
+
+    monkeypatch.setattr(general, "_NUMBA_AVAILABLE", True)
+    monkeypatch.setattr(
+        general,
+        "integrate_efork3_q1_numba",
+        fail_numba,
+    )
+
+    with pytest.raises(
+        RuntimeError,
+        match="allow_python_fallback=False",
+    ):
+        general.integrate_general(
+            lambda state: -state,
+            np.array([1.0]),
+            q=1.0,
+            h=0.01,
+            t_final=0.1,
+            integrator="efork3",
+            system=SimpleNamespace(),
+            use_c_backend=True,
+            allow_python_fallback=False,
+        )

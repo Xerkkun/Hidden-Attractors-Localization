@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-CLAIMS_PATH = ROOT / "THESIS_CLAIMS.md"
+CLAIMS_PATH = ROOT / "validation/references/thesis_claims_matrix.md"
 
 
 def _clean_text(text: str) -> str:
@@ -14,7 +14,7 @@ def _clean_text(text: str) -> str:
 
 
 def _parse_claims_table() -> list[dict[str, str]]:
-    assert CLAIMS_PATH.exists(), f"THESIS_CLAIMS.md does not exist at {CLAIMS_PATH}"
+    assert CLAIMS_PATH.exists(), f"Validation claims matrix does not exist at {CLAIMS_PATH}"
     content = CLAIMS_PATH.read_text(encoding="utf-8")
 
     lines = content.splitlines()
@@ -61,7 +61,7 @@ def _parse_claims_table() -> list[dict[str, str]]:
 
 @pytest.mark.hygiene
 def test_claims_file_and_columns_exist() -> None:
-    """Verifies that THESIS_CLAIMS.md exists and contains the correct column headers."""
+    """Verify that the validation claims matrix contains the expected columns."""
     rows = _parse_claims_table()
     assert len(rows) > 0, "No rows parsed from the claims table"
 
@@ -79,7 +79,7 @@ def test_allowed_evidence_status_values() -> None:
 
 @pytest.mark.hygiene
 def test_forbidden_claims_phrases() -> None:
-    """Verifies that THESIS_CLAIMS.md does not contain any of the strictly prohibited overclaims."""
+    """Verify that the validation claims matrix contains no prohibited overclaims."""
     content = CLAIMS_PATH.read_text(encoding="utf-8")
     forbidden_phrases = [
         "hidden attractor confirmed",
@@ -112,8 +112,8 @@ def test_mandatory_claims_exist() -> None:
 
     mandatory_ids = {
         "CLAIM-CHUA-INTEGER-001",
-        "CLAIM-CHUA-NONSMOOTH-EX1-001",
         "CLAIM-CHUA-FRAC-REJECTED-001",
+        "CLAIM-CHUA-NONSMOOTH-PAPER07-001",
         "CLAIM-CHUA-ARCTAN-FRAC-001",
         "CLAIM-METHOD-LURE-FRAC-001"
     }
@@ -133,6 +133,24 @@ def test_fractional_arctan_claim_status() -> None:
             assert state == "validated"
             assert "validation/chua_fractional_arctan/hiddenness_validation_summary.json" in row["json_evidence"]
             assert "r <= 0.3" in row["methodological_comment"]
+
+
+@pytest.mark.hygiene
+def test_corrected_nonsmooth_claim_uses_the_local_contract_only() -> None:
+    """Keep the paper07 local claim separate from its macro-radius audit."""
+    rows = _parse_claims_table()
+    row = next(
+        item
+        for item in rows
+        if _clean_text(item["claim_id"]) == "CLAIM-CHUA-NONSMOOTH-PAPER07-001"
+    )
+
+    assert _clean_text(row["status"]) == "validated"
+    assert "extended_first_contact_clean/extended_result.json" in row["json_evidence"]
+    assert "r <= 0.01" in row["methodological_comment"]
+    assert "7200 probes" in row["methodological_comment"]
+    assert "37 contacts at `r = 0.3`" in row["methodological_comment"]
+    assert "no chaos claim" in row["methodological_comment"].lower()
 
 
 @pytest.mark.hygiene
@@ -170,12 +188,12 @@ def test_no_legacy_labels_and_only_english() -> None:
         "candidate_rejected"
     ]
     for label in legacy_labels:
-        assert label not in content, f"THESIS_CLAIMS.md contains legacy label: '{label}'"
+        assert label not in content, f"Validation claims matrix contains legacy label: '{label}'"
 
     # 2. No Spanish keywords in table/headers
     spanish_keywords = ["afirmación", "sistema", "orden", "estado", "evidencia_json", "evidencia_csv", "figuras", "comentario_metodologico"]
     for word in spanish_keywords:
-        assert word not in content.lower(), f"THESIS_CLAIMS.md contains Spanish keyword: '{word}'"
+        assert word not in content.lower(), f"Validation claims matrix contains Spanish keyword: '{word}'"
 
     # 3. Does not claim full reproduction of Danca 2017 or Wu 2023 in the claims table
     rows = _parse_claims_table()

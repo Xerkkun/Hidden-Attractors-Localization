@@ -51,10 +51,11 @@ INTERNAL: str = "internal"
 user-facing surface.  May change without notice."""
 
 LEGACY: str = "legacy"
-"""Legacy tier: frozen compatibility facade over historical scripts.
-No new features will be added.  Will not be ported to new APIs."""
+"""Legacy tier: compatibility label for historical symbol aliases.
+It does not imply an importable legacy module."""
 
 _VALID_TIERS = frozenset({STABLE, EXPERIMENTAL, INTERNAL, LEGACY})
+_IMMUTABLE_TIER_REGISTRY: dict[int, str] = {}
 
 _F = TypeVar("_F", bound=Any)
 
@@ -95,7 +96,13 @@ def api_tier(tier: str) -> Callable[[_F], _F]:
         )
 
     def decorator(obj: _F) -> _F:
-        obj.__api_tier__ = tier  # type: ignore[attr-defined]
+        try:
+            obj.__api_tier__ = tier  # type: ignore[attr-defined]
+        except (AttributeError, TypeError):
+            # Public constants such as dictionaries and tuples cannot carry
+            # attributes.  Keep their tier by object identity so get_tier()
+            # still matches the declared top-level API contract.
+            _IMMUTABLE_TIER_REGISTRY[id(obj)] = tier
         return obj
 
     return decorator
@@ -128,7 +135,7 @@ def get_tier(obj: Any) -> str | None:
     >>> get_tier(len) is None
     True
     """
-    return getattr(obj, "__api_tier__", None)
+    return getattr(obj, "__api_tier__", _IMMUTABLE_TIER_REGISTRY.get(id(obj)))
 
 
 def assert_tier(obj: Any, expected: str) -> None:

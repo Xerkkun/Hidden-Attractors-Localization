@@ -246,8 +246,8 @@ def test_complete_neighborhood_evidence_without_metadata_is_only_compatible():
     assert "run_metadata is required for a strong candidate promotion" in res["metadata_validation_errors"]
 
 
-# 11. Test config loader default values
-def test_config_loader_hiddenness_defaults(tmp_path):
+# 11. The generic loader must not inject a neighborhood protocol.
+def test_config_loader_has_no_hiddenness_scientific_defaults(tmp_path):
     yaml_content = """
 system:
   system_id: "chua_fractional_saturation"
@@ -257,25 +257,20 @@ system:
     beta: 15.0
 modes:
   transfer_mode: "fractional"
+  dynamics_mode: "system"
 integrator:
   name: "efork3"
   h: 0.005
+  memory_policy: "full_caputo"
 stages:
   attractor_only: true
+simulation:
+  t_final: 1.0
+  t_burn: 0.2
 """
     yaml_file = tmp_path / "test_hiddenness_cfg.yaml"
     yaml_file.write_text(yaml_content, encoding="utf-8")
 
     cfg = load_config(yaml_file)
     
-    # Verify that the hiddenness sub-dictionary exists with all defaults
-    assert "hiddenness" in cfg
-    hid = cfg["hiddenness"]
-    assert hid["required_radii"] == [1e-2, 1e-3, 1e-4, 1e-5]
-    assert hid["strict_all_equilibria"] is True
-    assert hid["allow_numerical_failures"] is False
-    assert hid["min_ref_tail_points"] == 1000
-    assert hid["min_probe_tail_points"] == 200
-    assert hid["target_match_metric"] == "nn_percentile"
-    assert hid["target_match_tol"] == 0.5
-    assert hid["target_match_nn_percentile"] == 90.0
+    assert cfg["hiddenness"] == {}

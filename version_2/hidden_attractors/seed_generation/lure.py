@@ -272,12 +272,18 @@ def lure_machado_describing_function(
     Notes
     -----
     Complex or sign-changing DF variants need a custom branch convention
-    and should be implemented by a dedicated amplitude solver.
+    and are outside this real-branch helper; they require an explicitly
+    supplied branch convention.
     """
 
     exponent = float(mu)
     if not np.isfinite(exponent) or exponent <= 0.0:
         raise ValueError("mu must be positive and finite.")
+    if system.machado_describing_function is None:
+        raise RuntimeError(
+            f"{system.name} does not define an auxiliary Machado "
+            "describing-function callback."
+        )
     value = complex(system.machado_describing_function(float(amplitude), exponent))
     if abs(float(np.imag(value))) > 1.0e-12:
         raise ValueError("Machado workflow currently requires a real-valued branch.")

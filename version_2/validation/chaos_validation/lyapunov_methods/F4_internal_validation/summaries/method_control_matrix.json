@@ -13,7 +13,7 @@
       "controlled_benchmark": "F4_3 local stable synthetic full-history QR rows",
       "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_3_fractional_published_dk2018/fractional_method_sensitivity.csv",
       "bibliographic_or_internal_reference": "Local fixed-lower-limit history-aware QR implementation contract",
-      "status": "separate_internal_control_only_published_validation_pending",
+      "status": "separate_internal_control_only_not_published_validated",
       "validated_by_f4": false
     },
     {
@@ -21,7 +21,7 @@
       "controlled_benchmark": "F4_3 reused DK2018 Lorenz and RF artifact",
       "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_3_fractional_published_dk2018/dk2018_published_contract.csv",
       "bibliographic_or_internal_reference": "Danca and Kuznetsov 2018 DOI 10.1142/S0218127418500670",
-      "status": "published_benchmarks_pending_reproduced_discrepancy",
+      "status": "recorded_published_benchmark_discrepancy",
       "validated_by_f4": false
     },
     {

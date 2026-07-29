@@ -1,73 +1,32 @@
-# Version 2 manifest
+# Source-distribution manifest
 
-`version_2/` is the active library-style distribution of `hidden-attractors-fo`.
-It should run from this directory without depending on historical project-root
-scripts.
+The `hidden-attractors-fo` source distribution contains only the importable
+library, supported resources, user-facing documentation, and a validated
+end-to-end integer reference example. The wheel contains the importable
+package and supported package data; project documents and examples remain in
+the source distribution.
 
-## Public package
+## Included
 
-- `hidden_attractors/models/`: Chua parameters, vector fields, nonlinearities,
-  equilibria, and Jacobians.
-- `hidden_attractors/systems/`: `ChaoticSystem`, `LureSystem`, registry,
-  aliases, and workflow-capability requirements.
-- `hidden_attractors/seed_generation/` and `hidden_attractors/lure/`: DF,
-  Nyquist, Lur'e, and seed reconstruction helpers.
-- `hidden_attractors/integrations/`, `solvers/`, `native/`: integer and Caputo
-  solver contracts, Python references, and C backends.
-- `hidden_attractors/analysis/`, `diagnostics/`: finite-time trajectory,
-  spectral, Poincare, boundedness, zero-one, Lyapunov, and method-comparison
-  diagnostics.
-- `hidden_attractors/verification/`, `basins/`: stability, neighborhoods,
-  hiddenness contracts, candidate gates, and basin labels.
-- `hidden_attractors/workflows/`: official protocol, continuation, robustness,
-  basins, hiddenness, report generation, and reusable workflow specs.
-- `hidden_attractors/plotting/`, `io.py`: canonical figure and CSV/JSON helpers.
+- `hidden_attractors/`: Python package and native C sources.
+- `hidden_attractors/configs/examples/`: packaged configuration resources.
+- `examples/chua_integer_lure_reference/`: validated comprehensive example.
+- `examples/quickstart_equilibria.py` and `examples/minimal_chua_protocol.py`.
+- `README.md`, `USER_MANUAL.md`, `LICENSE`, and packaging metadata.
+- A small whitelist of installation, quick-start, API-stability, scientific
+  scope, and citation pages.
 
-The exhaustive symbol inventory is `docs/api_reference.md`; it lists every
-function, class, and method defined under `hidden_attractors`.
+## Excluded
 
-## Public CLI
+- exploratory configurations and ordinary run outputs;
+- internal study notes and project plans;
+- repository test infrastructure and maintainer release checklists;
+- full validation datasets, large figures, and literature PDFs;
+- local caches, compiled artifacts, and editorial files.
 
-The package exposes one public console script:
+The complete validation tree remains available in the matching release tag and
+archived DOI snapshot. Excluding it from PyPI avoids presenting an installed
+wheel as a scientific evidence archive.
 
-```text
-hidden-attractors
-```
-
-Maintained workflows are subcommands, including `run`, `init`,
-`inspect-config`, `inspect`, `validate`, `protocol`, `seed`, `continuation`,
-`robustness`, `hiddenness`, `basin`, `bifurcation`, `lyapunov`, `chaos-test`,
-`published`, and `report`.
-
-Historical standalone command names are legacy/deprecated and are not the public
-release API.
-
-## Official examples
-
-- `examples/chua_integer_lure_reference/`: reproduced integer `q=1` Lur'e
-  software reference.
-- `examples/chua_nonsmooth_biased_hidden_attractor/`: proposed BDF methodology
-  for the non-smooth fractional Chua case.
-- `examples/chua_arctan_wu2023/`: Wu2023 bibliographic lane plus promoted c590
-  Caputo lane; c590 is radius-limited to local radii `r <= 0.3` and is not
-  a global basin proof.
-
-Small API examples remain in `examples/*.py` and should import from
-`hidden_attractors`.
-
-## Evidence and outputs
-
-- Promoted validation evidence: `validation/`
-- Promoted scientific figures: `library_figures/`
-- Ordinary/local outputs: `outputs/`, `validation_outputs/`, `runs*/`, `figures/`
-- Release packaging metadata: `release_package/`
-
-DF/Nyquist, continuation, plots, Lyapunov, FFT/PSD, Poincare, and zero-one tests
-are diagnostics or seed tools. Hiddenness labels require sampled equilibrium
-neighborhood or basin evidence under a recorded numerical contract.
-
-## Legacy material
-
-`tools/legacy/` preserves historical scripts for traceability only. Reusable
-logic should live under `hidden_attractors/`, with CLI access routed through the
-unified `hidden-attractors` command.
+Generated outputs default to `./outputs`; runtime caches use the operating
+system user-cache directory. Neither location is inside the installed package.

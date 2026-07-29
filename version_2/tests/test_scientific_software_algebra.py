@@ -23,6 +23,7 @@ from hidden_attractors.seed_generation.lure import (
     find_lure_harmonic_seed,
     find_lure_omega_gain_candidates,
     lure_describing_function,
+    lure_machado_describing_function,
     lure_transfer_function,
 )
 from hidden_attractors.systems import get_system
@@ -152,6 +153,22 @@ def test_lure_transfer_function_preserves_p_minus_s_i_convention(q: float) -> No
         assert abs(spectral_value - 1j * omega) > 1.0e-3
 
 
+def test_classical_lure_system_does_not_require_auxiliary_seed_callback() -> None:
+    matrix = np.array([[-1.0, 0.0], [0.0, -2.0]])
+    system = LureSystem(
+        "classical-only",
+        matrix,
+        np.array([1.0, 0.0]),
+        np.array([1.0, 0.0]),
+        lambda sigma: sigma,
+        lambda _amplitude: 1.0,
+    )
+
+    assert system.machado_describing_function is None
+    with pytest.raises(RuntimeError, match="does not define"):
+        lure_machado_describing_function(1.0, system, 0.9)
+
+
 def test_cross_tool_fractional_transfer_artifact_uses_the_same_sign_convention() -> None:
     artifact = ROOT / "validation" / "02_algebraic_validation" / "transfer_function_check.csv"
     if not artifact.exists():
@@ -211,4 +228,3 @@ def test_kuznetsov2017_integer_nyquist_seed_reproduction() -> None:
     assert np.allclose(seed.seed, expected["seed_plus"], atol=1.0e-7, rtol=0.0)
     assert abs(response.imag) < 1.0e-8
     assert abs(1.0 + seed.gain * response) < 1.0e-8
-

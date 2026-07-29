@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
   "execution_contract": "dk2018_block_restart_abm_gs",
-  "status": "published_benchmarks_pending_reproduced_discrepancy",
+  "status": "recorded_published_benchmark_discrepancy",
   "required_cases": [
     "published_dk2018_lorenz_q0985",
     "published_dk2018_rabinovich_fabrikant_q0999"

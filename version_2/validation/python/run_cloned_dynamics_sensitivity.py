@@ -208,7 +208,7 @@ def _append_unique(path: Path, row: dict[str, Any]) -> bool:
     return True
 
 
-def _planned_signature(
+def _protocol_signature(
     axis: str,
     case_file: str,
     row_index: int,
@@ -419,7 +419,7 @@ def _write_analysis(diagnostics_dir: Path) -> dict[str, Any]:
     ]
     run_log = _load_log(diagnostics_dir / RUN_LOG)
     summary = {
-        "status": "partial_sweeps_executed_not_validation" if rows else "planned_not_executed",
+        "status": "partial_sweeps_executed_not_validation" if rows else "not_executed",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "validated_after_sensitivity": False,
         "runs_total": len(rows),
@@ -439,7 +439,7 @@ def _write_analysis(diagnostics_dir: Path) -> dict[str, Any]:
             "F3 remains validated=False.",
             "No chaos or hiddenness is certified.",
             "Hypotheses remain hypotheses, not definitive conclusions.",
-            "The unlimited sweep remains pending because bounded runs already showed substantial cost.",
+            "An unlimited sweep is outside the recorded validation scope.",
         ],
     }
     (diagnostics_dir / "sensitivity_summary.json").write_text(
@@ -456,8 +456,8 @@ def _write_analysis(diagnostics_dir: Path) -> dict[str, Any]:
         f"Recorded integration time: `{summary['elapsed_seconds_total']:.3f}` seconds.",
         "These runs assess sensitivity only. They do not promote F3 validation,",
         "certify chaos, or certify hiddenness.",
-        "The unlimited sweep was not executed because bounded runs already showed",
-        "substantial cost; partial outputs were preserved after each row.",
+        "An unlimited sweep is outside the recorded validation scope;",
+        "partial outputs were preserved after each row.",
         "",
         "## Executed commands",
         "",
@@ -612,7 +612,7 @@ def main() -> None:
                     if args.max_runs and len(all_rows) >= args.max_runs:
                         limit_reached = True
                         break
-                    signature = _planned_signature(axis, case_file, row_index, case, variant)
+                    signature = _protocol_signature(axis, case_file, row_index, case, variant)
                     if signature in existing_signatures:
                         continue
                     started = time.perf_counter()

@@ -1,8 +1,7 @@
-"""Capability checks for adapting workflows to new chaotic systems.
+"""Capability checks for applying workflows to registered chaotic systems.
 
-The package is intended to grow beyond the historical Chua/Danca scripts.  This
-module records, in code, which mathematical ingredients must be supplied by a
-new system before a workflow can be treated as reusable rather than
+This module records, in code, which mathematical ingredients a system must
+supply before a workflow can be treated as reusable rather than
 system-specific.
 
 Validity warning:
@@ -346,7 +345,7 @@ def check_system_capability(system: ChaoticSystem, workflow: WorkflowName) -> Ca
     --------
     >>> from hidden_attractors.systems import get_system
     >>> from hidden_attractors.systems.requirements import check_system_capability
-    >>> report = check_system_capability(get_system('chua-fractional'), 'equilibria')
+    >>> report = check_system_capability(get_system('chua-nonsmooth'), 'equilibria')
     >>> report.ok
     True
     """

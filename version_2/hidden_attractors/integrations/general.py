@@ -5,6 +5,7 @@ from .fractional_c import fractional_integrate
 from .abm import caputo_abm_integrate
 from .efork import efork_integrate
 from .rk4 import rk4_integrate
+from .selector import normalize_fractional_order
 # Numba JIT fast path for q=1.0 (graceful fallback if unavailable)
 try:
     from .numba_kernels import integrate_efork3_q1_numba, NUMBA_AVAILABLE as _NUMBA_AVAILABLE
@@ -77,6 +78,7 @@ def integrate_general(
     divergence_norm: Optional[float] = 120.0,
     system: Optional[Any] = None,
     use_c_backend: bool = True,
+    allow_python_fallback: bool = True,
     early_stop_config: Optional[dict] = None,
     equilibria: Optional[List[np.ndarray]] = None
 ) -> Tuple[np.ndarray, np.ndarray, str]:
@@ -84,6 +86,7 @@ def integrate_general(
     Unified general solver facade for integrating any system (fractional or integer).
     Supports ABM and EFORK schemes under full or windowed memory with early stopping.
     """
+    q = normalize_fractional_order(q)
     x0_arr = np.asarray(x0, dtype=float)
     dim = x0_arr.size
     
@@ -100,7 +103,12 @@ def integrate_general(
         # Only attempted when system is provided and integrator is EFORK-based.
         # Returns None for unknown system types or if Numba is not installed,
         # in which case execution falls through to the pure-Python loop below.
-        if _NUMBA_AVAILABLE and system is not None and integrator.lower() in {"efork", "efork3", "efork_q1"}:
+        numba_requested = (
+            use_c_backend
+            and system is not None
+            and integrator.lower() in {"efork", "efork3", "efork_q1"}
+        )
+        if numba_requested and _NUMBA_AVAILABLE:
             try:
                 _result = integrate_efork3_q1_numba(
                     system=system,
@@ -113,8 +121,19 @@ def integrate_general(
                 )
                 if _result is not None:
                     return _result
-            except Exception:
-                pass  # fallback to pure-Python path
+                if not allow_python_fallback:
+                    raise RuntimeError(
+                        "Numba backend does not support the requested system."
+                    )
+            except Exception as exc:
+                if not allow_python_fallback:
+                    raise RuntimeError(
+                        "Numba backend failed and allow_python_fallback=False."
+                    ) from exc
+        elif numba_requested and not allow_python_fallback:
+            raise RuntimeError(
+                "Numba backend is unavailable and allow_python_fallback=False."
+            )
         # --- Pure-Python fallback (always available) ---
         if integrator.lower() in {"efork", "efork3", "efork_q1"}:
             from ._q1_coefficients import (
@@ -255,17 +274,25 @@ def integrate_general(
             
     # 2. Fractional order q in (0, 1)
     if use_c_backend:
-        native_chua = _try_native_chua_fractional(
-            system=system,
-            x0=x0_arr,
-            q=q,
-            h=h,
-            t_final=t_final,
-            integrator=integrator,
-            memory_mode=memory_mode,
-            memory_window_length=memory_window_length,
-            divergence_norm=divergence_norm,
-        )
+        try:
+            native_chua = _try_native_chua_fractional(
+                system=system,
+                x0=x0_arr,
+                q=q,
+                h=h,
+                t_final=t_final,
+                integrator=integrator,
+                memory_mode=memory_mode,
+                memory_window_length=memory_window_length,
+                divergence_norm=divergence_norm,
+            )
+        except Exception as exc:
+            if not allow_python_fallback:
+                raise RuntimeError(
+                    "Native Chua backend failed and "
+                    "allow_python_fallback=False."
+                ) from exc
+            native_chua = None
         if native_chua is not None:
             return native_chua
 
@@ -282,7 +309,7 @@ def integrate_general(
         use_c_backend=use_c_backend,
         divergence_norm=divergence_norm if divergence_norm is not None else 120.0,
         return_history=True,
-        allow_python_fallback=True,
+        allow_python_fallback=allow_python_fallback,
         early_stop_config=early_stop_config,
         equilibria=equilibria
     )

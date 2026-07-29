@@ -1,4 +1,4 @@
-"""F3 cloned-dynamics finite-time Lyapunov spectrum estimators.
+"""Cloned-dynamics finite-time Lyapunov spectrum estimators.
 
 The implementation follows the block-restarted cloned-dynamics contract from
 Fischer, Zourmba, and Mohamadou (2020).  It does not use a Jacobian or a

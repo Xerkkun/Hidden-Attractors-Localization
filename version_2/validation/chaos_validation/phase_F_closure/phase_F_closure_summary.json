@@ -95,14 +95,14 @@
         "controlled_benchmark": "F4_3 local stable synthetic full-history QR rows",
         "sensitivity_reference": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_3_fractional_published_dk2018/fractional_method_sensitivity.csv",
         "bibliographic_or_internal_reference": "Local fixed-lower-limit history-aware QR implementation contract",
-        "status": "separate_internal_control_only_published_validation_pending",
+        "status": "separate_internal_control_only_not_published_validated",
         "validated_by_f4": false
       },
       "related_dk2018_reproduction_lane": {
         "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
-        "status": "published_benchmarks_pending_reproduced_discrepancy",
+        "status": "recorded_published_benchmark_discrepancy",
         "validation_run_class": "published_quantitative_long",
-        "local_full_history_qr_status": "published_benchmarks_pending_separate_contract_required",
+        "local_full_history_qr_status": "not_evaluated_under_separate_contract",
         "does_not_promote_full_history_qr": true
       },
       "method_registry": {
@@ -120,10 +120,8 @@
           "Wolf et al. 1985 \u2014 Determining Lyapunov Exponents from a Time Series (Physica D 16)."
         ],
         "warnings": [
-          "F2 \u2014 implemented, NOT yet validated against published benchmarks.",
-          "validated_against_published_benchmarks: false.",
-          "synthetic benchmark infrastructure available",
-          "published benchmark validation pending unless completed",
+          "Implemented and covered by synthetic numerical tests.",
+          "No published quantitative-validation claim is made for this method.",
           "Results are finite-time local Lyapunov exponent estimates, NOT asymptotic proofs.",
           "Caputo memory: history-aware QR transforms the entire stored variational history at each reorthonormalisation step (history_aware_qr=True).",
           "If history_aware_qr=False (block-restart), method is NOT full-memory Caputo-aware; label results accordingly.",
@@ -132,7 +130,7 @@
         ],
         "validated_against_synthetic_tests": true,
         "validated_against_published_benchmarks": false,
-        "benchmark_status": "published_benchmarks_pending",
+        "benchmark_status": "synthetic_validation_only",
         "family": "fractional",
         "method_type": "variational",
         "supports_q_less_than_1": true,
@@ -152,7 +150,7 @@
           "sign_pattern": null,
           "convergence_status": null,
           "sensitivity_status": null,
-          "method_validation_status": "published_benchmarks_pending",
+          "method_validation_status": "not_validated_against_published_benchmarks",
           "required_fields_available": false
         },
         "wu2023_chua_fractional_arctan_q099": {
@@ -161,7 +159,7 @@
           "sign_pattern": null,
           "convergence_status": null,
           "sensitivity_status": null,
-          "method_validation_status": "published_benchmarks_pending",
+          "method_validation_status": "not_validated_against_published_benchmarks",
           "required_fields_available": false
         }
       }
@@ -192,7 +190,7 @@
           "Fischer, Zourmba, and Mohamadou 2020 - Lyapunov exponents spectrum estimation of fractional order nonlinear systems using Cloned Dynamics (Applied Numerical Mathematics 154, 187-204; DOI: 10.1016/j.apnum.2020.03.027)."
         ],
         "warnings": [
-          "F3 - implemented, NOT yet validated against published benchmarks.",
+          "Implemented numerical diagnostic with a recorded benchmark discrepancy.",
           "Published reproduction lane with ABM predictor-corrector, modified Gram-Schmidt, and published_block_restart memory.",
           "No Jacobian or variational system is used.",
           "Finite-time local Lyapunov indicators only.",
@@ -201,7 +199,7 @@
         ],
         "validated_against_synthetic_tests": true,
         "validated_against_published_benchmarks": false,
-        "benchmark_status": "published_benchmarks_pending_discrepancy",
+        "benchmark_status": "recorded_benchmark_discrepancy",
         "family": "fractional",
         "method_type": "cloned_dynamics",
         "supports_q_less_than_1": true,
@@ -212,7 +210,7 @@
         "evidence_scope": "finite_time_method_evidence",
         "hiddenness_scope": "not_evaluated_by_this_stage"
       },
-      "fischer2020_status": "published_benchmarks_pending_discrepancy",
+      "fischer2020_status": "recorded_published_benchmark_discrepancy",
       "rows_total": 24,
       "rows_passed_quantitative": 10,
       "rows_passed_sign_pattern": 6,
@@ -246,8 +244,8 @@
   "input_statuses": {
     "f4_status": "f4_complete_with_documented_discrepancies",
     "f5_status": "f5_diagnostics_structured_outputs_ready",
-    "dk2018_status": "published_benchmarks_pending_reproduced_discrepancy",
-    "fischer2020_status": "published_benchmarks_pending_discrepancy",
+    "dk2018_status": "recorded_published_benchmark_discrepancy",
+    "fischer2020_status": "recorded_published_benchmark_discrepancy",
     "f6_status": "completed_finite_time_chaos_evidence_integration",
     "f7_status": "completed_method_evidence_comparison"
   },
@@ -257,14 +255,14 @@
     "dk2018_block_restart_does_not_validate_full_history_qr": true,
     "strong_level_requires_coherent_multiple_diagnostics": true
   },
-  "future_method_improvements": [
-    "Validate fractional_variational_abm_qr against a published benchmark or accepted policy.",
-    "Or resolve Fischer 2020 cloned dynamics discrepancies.",
-    "Apply a valid fractional Lyapunov method to each fractional candidate.",
-    "Prefer sign agreement between two applicable methods.",
-    "Keep F5 diagnostics compatible."
+  "current_evidence_limitations": [
+    "fractional_variational_abm_qr has no passing published-benchmark or accepted-policy validation in this record.",
+    "The Fischer 2020 cloned-dynamics discrepancy remains unresolved in this record.",
+    "No validated fractional Lyapunov method is applied to every fractional candidate in this record.",
+    "Two-method sign agreement is unavailable for the applicable fractional methods in this record.",
+    "The F5 diagnostic set is not fully compatible across all cases in this record."
   ],
-  "generated_at_utc": "2026-07-29T03:05:57.748349+00:00",
+  "generated_at_utc": "2026-07-29T08:59:21.171836+00:00",
   "inputs": {
     "f4_summary": "validation/chaos_validation/lyapunov_methods/F4_internal_validation/f4_internal_validation_summary.json",
     "f5_summary": "validation/chaos_validation/dynamics_diagnostics/f5_diagnostics_summary.json",

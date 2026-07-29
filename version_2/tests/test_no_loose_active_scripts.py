@@ -25,14 +25,12 @@ PROHIBITED_ACTIVE_PATTERNS = [
 
 EXCLUDED_PATHS = [
     "tools/legacy",
+    "local_reports",
     "_archive",
-    "_archived_figure_scripts",
     "figure_scripts",
 ]
 
 EXEMPTED_FILES = [
-    "hidden_attractors/plotting/generate_publication_figures.py",
-    "hidden_attractors/plotting/generate_unified_report_figures.py",
     "tests/test_manual_manifest.py",
     "tests/test_manual_manifest_consistency.py",
     "tests/test_user_manual.py",

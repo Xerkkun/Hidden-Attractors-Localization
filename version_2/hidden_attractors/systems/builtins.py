@@ -189,9 +189,6 @@ def chua_system(model: str = "nonsmooth") -> ChaoticSystem:
         tags=("chua", "fractional", "hidden-attractors"),
         workflows={
             "full": "hidden-attractors protocol",
-            "robustness": "hidden-attractors robustness overlay",
-            "sphere-controls": "hidden-attractors hiddenness sphere-controls",
-            "refined-basin": "hidden-attractors basin refined",
         },
         lure=_chua_lure_system(
             {
@@ -234,7 +231,7 @@ def chua_arctan_wu2023_system() -> ChaoticSystem:
         parameters=parameters,
         description="Wu et al. (2023) fractional Chua system with arctan nonlinearity.",
         tags=("chua", "fractional", "arctan", "wu2023", "hidden-attractors"),
-        workflows={"validation": "python examples/chua_arctan_wu2023/run_validation.py"},
+        workflows={},
         lure=_chua_lure_system(parameters),
     )
 

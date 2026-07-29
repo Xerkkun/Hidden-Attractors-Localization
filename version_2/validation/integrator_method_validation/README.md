@@ -77,15 +77,6 @@ Exact solution: `X_i(t) = X_i(0) · E_q(λᵢ · t^q)`
 
 Cases: `q ∈ {0.5, 0.8, 0.9998}`.
 
-### A4. External References (Optional — Not Required for CI)
-
-Potential future comparisons (not implemented here, no download required):
-
-- **FractionalDiffEq.jl**: Julia package for FDEs (external, not needed for CI).
-- **FDE12 (Garrappa)**: MATLAB/Octave ABM implementation (external, not needed for CI).
-
----
-
 ## RK4 — Validated Here (q=1 only)
 
 Classical 4th-order Runge-Kutta for integer-order ODEs. **Not used for q<1.**

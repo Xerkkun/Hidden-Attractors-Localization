@@ -55,8 +55,6 @@ hidden_verify/
 chua_piecewise/
 /native/
 artifacts/reference_runs/native/
-.tmp.driveupload/
-__codex_dir_test/
 .runtime_cache/
 .runtime_native/
 
@@ -76,9 +74,6 @@ validation/outputs/**/*
 
 # pytest-benchmark baselines (platform-specific; store explicitly when needed)
 .benchmarks/
-
-# Decide if outputs_unified/ should be versioned or not.
-outputs_unified/
 
 # Generated project figures
 library_figures/
@@ -103,12 +98,8 @@ library_figures/
 !validation/reference_cases/**/*.jpg
 !validation/reference_cases/**/*.jpeg
 
-# Historical local archive; not part of active library, tests, docs or package distribution
-_archived_figure_scripts/
-
 # Local/regenerable directories
 validation_outputs/
 outputs/
 runs*/
 figures/
-

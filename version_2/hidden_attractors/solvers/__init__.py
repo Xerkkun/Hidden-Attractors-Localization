@@ -1,13 +1,8 @@
-"""Fractional-system solver interfaces.
+"""Experimental fractional-system solver interfaces.
 
-Stability: experimental
-    Currently wraps the C/EFORK backend.  New solver interfaces (full-history
-    ABM, etc.) will be added here as they are migrated from legacy scripts.
-    Existing interfaces will not be removed without a deprecation notice.
-
-Currently this package exposes the repository C/EFORK wrapper.  Full-history
-ABM and other Caputo solvers should live here as reusable modules when they are
-migrated out of legacy experiment scripts.
+The package exposes the published EFORK3 coefficient/integration interface,
+the repository C/EFORK backend wrapper, explicit fractional-history storage,
+and the recorded integer-order EFORK limit.
 """
 
 from ..native.backends import FractionalChuaBackend

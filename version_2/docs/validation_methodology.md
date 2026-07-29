@@ -1,65 +1,118 @@
-# Validation & Verification Methodology
+# Validation and Verification Methodology
 
-This document outlines the rigorous mathematical and computational validation hierarchy implemented in the `hidden_attractors` library to distinguish between seed-generation heuristic stages and formal dynamical proofs of hiddenness.
+The library separates numerical operations so that an initialization result,
+a trajectory diagnostic, and a hiddenness assessment are not confused.
 
----
+## Numerical evidence layers
 
-## 1. Validation State Separation
+1. **Seed generation** locates an initial condition through an explicit
+   approximation such as a describing function or frequency scan.
+2. **Target integration** checks whether the supplied initial condition
+   produces a finite, bounded, persistent trajectory under the recorded
+   numerical settings.
+3. **Dynamical characterization** applies diagnostics such as spectra, the
+   0--1 test, Poincare crossings, or finite-time Lyapunov estimates.
+4. **Equilibrium-neighborhood controls** sample initial conditions around all
+   recorded equilibria when a hiddenness assessment is requested.
 
-To prevent false claims of hiddenness, the library strictly divides execution into five promotion states:
+Each layer reports only its own result. A seed is not an attractor proof, a
+positive finite-time exponent is not an asymptotic chaos proof, and sampled
+neighborhood controls are not an exhaustive basin proof.
 
-1. **`seed_found`**: Initial candidate generated through frequency balance (e.g., Describing Functions, Nyquist scanning) [ref:kuznetsov_2017_chua_df].
-2. **`candidate_attractor`**: Verified to be bounded and converge to non-trivial persistent dynamics under standard integration parameters.
-3. **`chaotic_candidate`**: Confirmed chaotic via Gottwald-Melbourne 0-1 test or positive maximum Lyapunov exponents.
-4. **`hidden_compatible`**: Free of intersections with tested local equilibrium neighborhoods under the sampled settings, but the verification protocol is incomplete (e.g., only a subset of equilibria or local radii were tested). Self-excited attractors possess a basin of attraction that intersects a sufficiently small neighborhood of at least one equilibrium point [ref:leonov_kuznetsov_hidden_definition].
-5. **`hidden_verified`**: Meets the strict verification contract of spherical neighborhood sweeps around all equilibrium points for all required radii (e.g., `[1e-2, 1e-3, 1e-4, 1e-5]`), with zero attractor contacts and zero numerical failures (unless allowed) [ref:danca_2017_fractional_hidden]. Basin slices are complementary visual and exploratory evidence to aid in understanding the boundary, but are not a logical requirement for the formal validation of `hidden_verified`.
+## Operational status labels
 
----
+Some machine-readable records retain status names such as `seed_found`,
+`candidate_attractor`, `chaotic_candidate`, `hidden_compatible`, and
+`hidden_verified`. These are operational labels interpreted through the
+stored contract. In public summaries, the preferred hiddenness wording is
+`hiddenness_supported_under_tested_neighborhoods` or
+`compatible_with_hiddenness_under_tested_radii`.
 
-## 2. Local neighborhoods versus extended spherical audits
+Any such result must preserve the solver, dynamic order, step size, horizon,
+memory policy, transient removal, equilibria, radii, samples, sampling mode,
+classifier, and failure policy that bound the calculation.
 
-A contact detected on a sphere of large radius around an equilibrium is not, by itself, evidence that the attractor is self-excited. The operative hiddenness test concerns sufficiently small neighborhoods of all equilibria. Large-radius spherical probes are reported as extended basin-geometry audits.
+## Local and extended neighborhoods
 
-Use `local_neighborhood_contact_detected` and `self_excited_contact_detected` for contacts that violate the tested local contract. Use `extended_radius_contact_detected` and `macro_radius_contact_detected` for large-radius basin-geometry contacts outside the local claim boundary. Use `hiddenness_supported_under_tested_local_neighborhoods`, `compatible_with_hiddenness_under_tested_radii`, and `candidate_rejected_under_local_contract` with the stored radial contract.
+The operative sampled hiddenness check concerns sufficiently small
+neighborhoods of every equilibrium. A contact detected only at a larger
+radius describes sampled basin geometry outside the local contract; it does
+not by itself establish that the attractor is self-excited. Local and
+macro-radius results must therefore be stored and interpreted separately.
 
----
+The sampling geometry is part of the evidence:
 
-## 3. Weyl-Caputo Operator Evaluation
+- an **interior ball** samples points throughout a declared neighborhood;
+- a **spherical surface** samples only a fixed-distance boundary;
+- a **spherical shell** samples a declared radial band.
 
-For systems with fractional order $q < 1.0$, frequency scans and transfer functions are evaluated formally on the principal branch:
+A surface or shell result must not be reported as filled-ball coverage.
+Concrete radii and sample allocations belong in the associated validation
+record rather than in the public method description.
 
-$$\lambda = (j\omega)^q = \omega^q e^{j q \pi / 2}$$
+### Per-probe time and history
 
-Prohibiting integer-order shortcuts ensures the predicted harmonic seeds correctly correspond to the Caputo fractional derivative memory structure. The Caputo fractional derivative is a causal formulation that models historical memory effects [ref:danca_2017_fractional_hidden]. The predictor-corrector Adams-Bashforth-Moulton method is used for simulating Caputo fractional differential equations [ref:diethelm_ford_freed_abm_caputo, ref:danca_2017_fractional_hidden]. When $q < 1.0$, a mandated "Weyl-Caputo Note" is automatically appended to summaries. For instance, this applies to the fractional-order Chua system with arctan nonlinearity [ref:wu_2023_fractional_chua_arctan].
+Every probe records its initial time and initial state. For a Caputo problem it
+also records the history function and the interval on which that history is
+defined. A fresh probe normally starts with its own declared history (for
+example, a constant history equal to that probe state); it must not silently
+reuse the history of a reference trajectory or another probe. Explicit history
+transport is a different contract and must be identified as such.
 
----
+### Predeclared classification and stopping
 
-## 4. Lur'e Compatibility
+The target representation, comparison metric, classification threshold,
+divergence threshold, and failure policy are fixed before neighborhood
+sampling begins. They are not retuned after inspecting probe outcomes.
 
-Describing function approximations are valid only if the system fits the Lur'e feedback representation. The `LureCompatibilityValidator` evaluates compatibility on a random point cloud and classifies systems into:
+An ordered radial protocol may optionally use
+`complete_first_contact_radius`: once a contact is observed, it completes every
+planned probe at that radius across all equilibria and then omits larger radii.
+This gives a complete denominator at the first contact radius while preserving
+a causal stopping rule. The omitted radii remain untested.
 
-- **`LURE_DIRECT`**: Directly equivalent.
-- **`LURE_LINEAR_CHANGE`**: Equivalent after a linear change of coordinates $X = S Z$.
-- **`LURE_APPROXIMATE`**: Matches with a small reconstruction residual.
-- **`NOT_COMPATIBLE`**: Fails to match, blocking Describing Function scans unless forced by configurations (restricting promotion to `seed_found` only).
+## Fractional frequency and integration contracts
 
----
+For `0 < q < 1`, a frequency scan evaluates the configured branch of
 
-## 5. Non-Smooth Vector Fields
+```text
+(j omega)^q = omega^q exp(j q pi / 2)
+```
 
- piece-wise continuous systems (e.g., containing $\text{sat}(x)$, $|x|$, or $\text{sign}(x)$) violate global differentiability:
+The harmonic calculation supplies a seed approximation. Validation of the
+trajectory requires an explicit fractional integrator and memory policy.
+Full-history, finite-window, and local recurrence methods are different
+numerical contracts and must not be merged.
 
-- **Lipschitz Continuity**: $\text{sat}(x)$ and $|x|$ are continuous but non-differentiable at switching surfaces (e.g., $x = \pm 1$).
-- **Discontinuities**: $\text{sign}(x)$ is discontinuous, blocking standard ODE solvers by default and requiring regularized or Filippov-based solvers.
-- **Switching Crossings**: Trajectories crossing these surfaces trigger alerts as global symbolic Jacobians are invalid at these boundaries.
-- **Matignon stability**: Equilibria lying exactly on switching boundaries are classified as `nonsmooth_indeterminate`. The Matignon stability theorem determines fractional-order local stability based on eigenvalues [ref:matignon_fractional_stability, ref:danca_2017_fractional_hidden].
-- **ABM Integration**: Caputo fractional-order hidden attractors in non-smooth Lipschitz Chua circuits are integrated with verified ABM [ref:danca_2017_fractional_hidden].
+## Lur'e compatibility
 
----
+Describing-function routes require an explicit scalar Lur'e representation.
+`LureCompatibilityValidator` reports one of:
 
-## 6. Symmetry Exploitation
+- `LURE_DIRECT`
+- `LURE_LINEAR_CHANGE`
+- `LURE_APPROXIMATE`
+- `NOT_COMPATIBLE`
 
-System symmetries (such as inversion $T(X) = -X$ or rotation $T(x,y,z) = (-x,-y,z)$) are verified numerically. If a symmetry is confirmed:
+Compatibility means that the configured representation meets its tested
+reconstruction tolerance. It does not establish the existence or hiddenness
+of an attractor.
 
-- Symmetric seeds $T(X_0)$ are automatically generated and deduplicated.
-- Continuation sweeps and attraction basin tests are queued for both symmetric branches to map all coexisting attractors.
+## Non-smooth vector fields
+
+For piecewise-continuous systems, switching surfaces must be handled
+explicitly:
+
+- Jacobians are interpreted only where the vector field is differentiable.
+- A discontinuous right-hand side requires an appropriate regularized or
+  nonsmooth integration contract.
+- Equilibria on switching surfaces can be reported as
+  `nonsmooth_indeterminate` for derivative-based stability checks.
+- Crossing and numerical-failure information remains part of the result.
+
+## Symmetry
+
+When a system transformation is used to generate symmetric initial
+conditions, its equivariance must be checked numerically under the same model
+parameters. Symmetry-derived samples are deduplicated and remain subject to
+the same integration and evidence boundaries as the original sample.

@@ -1,10 +1,8 @@
-"""Reusable workflow input specifications for new systems.
+"""Reusable workflow input specifications.
 
-System-specific scripts such as the Chua/Danca compatibility workflows may
-still exist, but new installable workflows should accept or build one of these
-specifications.  The intent is that CLI wrappers, notebooks, and legacy
-migration code all record the same explicit inputs before running sphere
-controls, basin cuts, strict refinement, continuation, or robustness checks.
+These contracts record explicit numerical inputs before running neighborhood
+controls, basin cuts, strict refinement, continuation, diagnostics, or
+robustness checks.
 
 Validity warning:
     A valid specification means the numerical experiment is reproducible and
@@ -31,9 +29,9 @@ SeedPolicy = Literal["independent", "continuation", "final_state", "manual"]
 
 @dataclass(frozen=True)
 class IntegratorSpec:
-    """Numerical solver contract shared by CLI and legacy wrappers.
+    """Numerical solver contract.
 
-    Required for new systems:
+    Fields:
         - ``implementation``: import path, executable, or native backend name.
         - ``order_kind``: integer, Caputo, Weyl seed, or external.
         - ``q``: fractional order when ``order_kind`` is not integer.
@@ -121,8 +119,7 @@ class TargetReferenceSpec:
 class SphereControlSpec:
     """Equilibrium-neighborhood sampling contract.
 
-    The historical class name is retained for compatibility. The official
-    hiddenness protocol samples within balls, not only sphere surfaces.
+    The hiddenness protocol samples within balls, not only sphere surfaces.
     """
 
     equilibria: tuple[str, ...]
@@ -399,70 +396,25 @@ def write_workflow_spec(path: str | Path, spec: WorkflowInputSpec) -> None:
 
 
 def load_workflow_spec(path: str | Path) -> Mapping[str, Any]:
-    """Load a JSON workflow spec for legacy adapters or CLIs."""
+    """Load a JSON workflow specification."""
 
     return read_json(path)
 
 
-def example_chua_fractional_spec() -> WorkflowInputSpec:
-    """Return a minimal example spec for documentation and tests."""
+def example_workflow_spec() -> WorkflowInputSpec:
+    """Return a minimal abstract specification for documentation and tests."""
 
     return WorkflowInputSpec(
-        system_name="chua-nonsmooth",
-        dimension=3,
-        parameters={"model": "nonsmooth"},
+        system_name="example-system",
+        dimension=1,
+        parameters={},
         integrator=IntegratorSpec(
-            implementation="hidden_attractors.native.FractionalChuaBackend.integrate_efork3",
-            order_kind="caputo",
-            q=0.9998,
-            h=0.01,
-            memory_policy="finite_memory",
-            memory_length=10.0,
-            t_final=1500.0,
-            t_burn=100.0,
+            implementation="example.integrate",
+            order_kind="integer",
+            h=0.1,
+            t_final=1.0,
+            state_columns=("x",),
         ),
-        classifier=DestinationClassifierSpec(
-            implementation="hidden_attractors.native.BasinBackend.classify_point",
-            thresholds={"divergence_norm": 120.0, "equilibrium_tol": 1.0e-3},
-        ),
-        target_reference=TargetReferenceSpec(
-            candidate_id="example_candidate",
-            positive_seed=(5.0, 0.0, -8.0),
-        ),
-        sphere_controls=SphereControlSpec(
-            equilibria=("E0", "E+", "E-"),
-            radii=(1.0e-5, 3.0e-5, 1.0e-4, 3.0e-4, 1.0e-3, 1.0e-2),
-            samples_per_radius=100,
-            sample_growth_per_radius=50,
-        ),
-        basin=BasinSliceSpec(
-            varying_state_indices=(0, 1),
-            limits=((0.0, 9.0), (-1.5, 1.5)),
-            grid_shape=(160, 160),
-            fixed_state=(5.0, 0.0, -8.0),
-            plane_label="xy",
-        ),
-        strict_refinement=StrictRefinementSpec(),
-        trajectory_diagnostics=TrajectoryDiagnosticsSpec(
-            retained_time_start=100.0,
-            retained_time_end=1500.0,
-            observables=("x", "y", "z"),
-        ),
-        parameter_sweep=ParameterSweepSpec(
-            parameter_name="alpha",
-            start=8.0,
-            stop=16.0,
-            count=81,
-            seed_policy="independent",
-        ),
-        robustness_cases=(
-            RobustnessCaseSpec(
-                case_id="h_half",
-                integrator_overrides={"h": 0.005},
-                allowed_change="step-size sensitivity check",
-            ),
-        ),
-        notes="Template only; replace seed, parameters, and backend for a real run.",
     )
 
 
@@ -481,7 +433,7 @@ __all__ = [
     "TargetReferenceSpec",
     "TrajectoryDiagnosticsSpec",
     "WorkflowInputSpec",
-    "example_chua_fractional_spec",
+    "example_workflow_spec",
     "load_workflow_spec",
     "write_workflow_spec",
 ]

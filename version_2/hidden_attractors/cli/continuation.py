@@ -24,6 +24,7 @@ from ..continuation.continuation_fractional import run_fractional_continuation
 from ..continuation.continuation_integer import run_integer_continuation
 from ..integrations.selector import integrate, validate_integrator_compatibility
 
+
 def load_seeds_from_csv(csv_path: Path) -> list[dict[str, Any]]:
     seeds = []
     if not csv_path.exists():
@@ -47,11 +48,113 @@ def load_seeds_from_csv(csv_path: Path) -> list[dict[str, Any]]:
             })
     return seeds
 
+
+def _resolve_explicit_fractional_q(
+    config: dict[str, Any],
+    *,
+    system: Any,
+    seeds: list[dict[str, Any]],
+    path_parameters: dict[str, Any] | None = None,
+) -> float:
+    """Resolve ``q`` only from inputs already supplied by the caller."""
+
+    q_value: Any = config.get("q")
+    system_config = config.get("system")
+    if q_value is None and isinstance(system_config, dict):
+        q_value = system_config.get("q")
+    if q_value is None and path_parameters and "q" in path_parameters:
+        q_range = path_parameters["q"]
+        if isinstance(q_range, dict):
+            q_value = q_range.get("start")
+    if q_value is None and system is not None and hasattr(system, "parameters"):
+        q_value = system.parameters.get("q")
+    if q_value is None and seeds:
+        seed_orders = {float(seed["q"]) for seed in seeds if seed.get("q") is not None}
+        if len(seed_orders) == 1:
+            q_value = seed_orders.pop()
+    if q_value is None:
+        raise ValueError(
+            "Fractional continuation requires an explicit q value in "
+            "continuation.q_continuation, a q path, the system configuration, "
+            "or a consistent seed file."
+        )
+    return float(q_value)
+
+
+def _require_value(mapping: dict[str, Any], key: str, label: str) -> Any:
+    """Return a caller-supplied value or raise a contract-focused error."""
+
+    value = mapping.get(key)
+    if value is None:
+        raise ValueError(f"Continuation requires an explicit {label}.")
+    return value
+
+
+def _resolve_continuation_times(
+    continuation: dict[str, Any],
+) -> tuple[float, float]:
+    """Resolve transient/kept durations only from an explicit time contract."""
+
+    use_periods = continuation.get("use_period_based_times")
+    has_periods = (
+        continuation.get("periods_transient") is not None
+        and continuation.get("periods_keep") is not None
+    )
+    has_times = (
+        continuation.get("t_transient") is not None
+        and continuation.get("t_keep") is not None
+    )
+
+    if use_periods is True or (use_periods is None and has_periods and not has_times):
+        if not has_periods:
+            raise ValueError(
+                "Period-based continuation requires explicit "
+                "continuation.periods_transient and continuation.periods_keep."
+            )
+        transient = float(continuation["periods_transient"]) * 2.0 * np.pi
+        kept = float(continuation["periods_keep"]) * 2.0 * np.pi
+    elif use_periods is False or (use_periods is None and has_times and not has_periods):
+        if not has_times:
+            raise ValueError(
+                "Time-based continuation requires explicit "
+                "continuation.t_transient and continuation.t_keep."
+            )
+        transient = float(continuation["t_transient"])
+        kept = float(continuation["t_keep"])
+    else:
+        raise ValueError(
+            "Continuation requires one unambiguous explicit duration contract: "
+            "periods_transient/periods_keep or t_transient/t_keep."
+        )
+
+    if not np.isfinite(transient) or not np.isfinite(kept):
+        raise ValueError("Continuation durations must be finite.")
+    if transient <= 0.0 or kept <= 0.0:
+        raise ValueError("Continuation durations must be strictly positive.")
+    return transient, kept
+
+
+def _require_seed_gain(seed: dict[str, Any]) -> float:
+    metadata = seed.get("reconstruction_metadata")
+    if not isinstance(metadata, dict) or metadata.get("gain") is None:
+        raise ValueError(
+            "Each continuation seed requires an explicit "
+            "reconstruction_metadata.gain value."
+        )
+    return float(metadata["gain"])
+
+
 def run_scalar_continuation(
     argv: Sequence[str] | None = None
 ) -> None:
     parser = argparse.ArgumentParser(prog="hidden-attractors continuation run")
-    parser.add_argument("-c", "--config", type=str, help="Path to YAML configuration file")
+    parser.add_argument(
+        "-c",
+        "--config",
+        type=str,
+        required=True,
+        help="Path to an explicit YAML continuation contract",
+    )
     parser.add_argument("-s", "--seed-file", type=str, help="Path to CSV seeds file")
     parser.add_argument("-o", "--output-dir", type=str, help="Directory to save output files")
     parser.add_argument("--lambda-values", type=str, help="Comma-separated list of lambda/eta values")
@@ -61,7 +164,7 @@ def run_scalar_continuation(
     parser.add_argument("--q-continuation", type=float, help="continuation order")
     parser.add_argument("--integrator", type=str, help="integrator name")
     parser.add_argument("--h", type=float, help="step size")
-    parser.add_argument("--memory-policy", type=str, choices=["full_history", "finite_window", "none"], help="Caputo memory policy")
+    parser.add_argument("--memory-policy", type=str, choices=["full_history", "full_caputo", "finite_window", "none"], help="Caputo memory policy")
     parser.add_argument("--memory-mode", type=str, choices=["full", "window", "none"], help="Caputo memory mode")
     parser.add_argument("--memory-window-time", type=float, help="window size in seconds")
     parser.add_argument("--memory-window-steps", type=int, help="window size in steps")
@@ -107,7 +210,7 @@ def run_scalar_continuation(
         print("Error: No seeds found. Please provide --seed-file or run seed generation first.")
         sys.exit(1)
         
-    system_id = config.get("system_id", "chua_fractional_saturation")
+    system_id = str(_require_value(config, "system_id", "system_id"))
     name_map = {
         "chua_piecewise": "chua-nonsmooth",
         "chua_integer_saturation": "chua-nonsmooth",
@@ -120,8 +223,15 @@ def run_scalar_continuation(
     system = get_system(normalized_sys_id)
     
     # Resolve continuation properties
-    continuation_order = config["continuation"]["continuation_order"]
-    q_continuation = config["continuation"]["q_continuation"]
+    continuation_cfg = config.get("continuation") or {}
+    continuation_order = str(
+        _require_value(
+            continuation_cfg,
+            "continuation_order",
+            "continuation.continuation_order",
+        )
+    )
+    q_continuation = continuation_cfg.get("q_continuation")
     
     # Ensure q_continuation is 1.0 for integer continuation, or less than 1.0 for fractional continuation
     if continuation_order == "integer":
@@ -129,19 +239,20 @@ def run_scalar_continuation(
         config["continuation"]["q_continuation"] = 1.0
     elif continuation_order == "fractional":
         if q_continuation is None:
-            q_val = config.get("q")
-            if q_val is None and system is not None and hasattr(system, "parameters"):
-                q_val = system.parameters.get("q")
-            if q_val is None:
-                q_val = 0.9998
-            q_continuation = float(q_val)
+            q_continuation = _resolve_explicit_fractional_q(
+                config,
+                system=system,
+                seeds=seeds,
+            )
             config["continuation"]["q_continuation"] = q_continuation
             
         if q_continuation >= 1.0:
             raise ValueError(f"For fractional continuation, q_continuation must be strictly less than 1.0. Got {q_continuation}.")
             
-    integrator = config.get("integrator", "efork3")
-    h = float(config.get("h", 0.01))
+    integrator = str(_require_value(config, "integrator", "integrator"))
+    h = float(_require_value(config, "h", "integration step h"))
+    if not np.isfinite(h) or h <= 0.0:
+        raise ValueError("Continuation integration step h must be finite and positive.")
     
     # Validate compatibility between integrator and order
     if continuation_order == "fractional":
@@ -163,8 +274,11 @@ def run_scalar_continuation(
             )
 
     # Check memory policy warnings for Caputo continuation
-    memory_policy = config.get("memory_policy", "full_caputo")
-    history_carried = True
+    memory_policy = str(
+        _require_value(config, "memory_policy", "memory_policy")
+    )
+    memory_mode = str(_require_value(config, "memory_mode", "memory_mode"))
+    history_carried = memory_policy != "none"
     if memory_policy == "none":
         history_carried = False
         print("Warning: last-state continuation in a Caputo system is a warm-start, not strict history-preserving continuation.")
@@ -173,10 +287,17 @@ def run_scalar_continuation(
     if args.lambda_values:
         lambda_values = [float(v) for v in args.lambda_values.split(",") if v.strip()]
         config.setdefault("continuation", {})["lambda_values"] = lambda_values
-    elif config.get("continuation", {}).get("lambda_values"):
-        lambda_values = [float(v) for v in config["continuation"]["lambda_values"]]
+    elif continuation_cfg.get("lambda_values"):
+        lambda_values = [float(v) for v in continuation_cfg["lambda_values"]]
     else:
-        lambda_values = [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0]
+        raise ValueError(
+            "Continuation requires explicit --lambda-values or "
+            "continuation.lambda_values."
+        )
+    if not lambda_values or not np.all(np.isfinite(lambda_values)):
+        raise ValueError("Continuation lambda values must be a non-empty finite list.")
+    if np.any(np.diff(np.asarray(lambda_values, dtype=float)) <= 0.0):
+        raise ValueError("Continuation lambda values must be strictly increasing.")
         
     continuation_mode = continuation_order
     
@@ -184,13 +305,17 @@ def run_scalar_continuation(
     final_candidates = []
     summaries = []
     
-    t_transient = float(config.get("continuation", {}).get("periods_transient", 20)) * 2.0 * np.pi
-    t_keep = float(config.get("continuation", {}).get("periods_keep", 10)) * 2.0 * np.pi
+    t_transient, t_keep = _resolve_continuation_times(continuation_cfg)
+    div_threshold = float(
+        _require_value(config, "divergence_norm", "divergence_norm")
+    )
+    if not np.isfinite(div_threshold) or div_threshold <= 0.0:
+        raise ValueError("Continuation divergence_norm must be finite and positive.")
     
     for s_idx, s in enumerate(seeds):
         candidate_id = s["candidate_id"]
         x0 = np.array(s["x0"], dtype=float)
-        k_gain = s["reconstruction_metadata"].get("gain", 0.0)
+        k_gain = _require_seed_gain(s)
         
         print(f"Running scalar continuation for candidate {candidate_id}...")
         
@@ -203,7 +328,7 @@ def run_scalar_continuation(
                 h=h,
                 t_transient=t_transient,
                 t_keep=t_keep,
-                div_threshold=120.0,
+                div_threshold=div_threshold,
                 integrator=integrator,
                 early_stop_config=config.get("early_stop"),
                 equilibria=[],
@@ -215,15 +340,21 @@ def run_scalar_continuation(
                 k_gain=k_gain,
                 lambda_values=lambda_values,
                 h=h,
-                memory_mode=config.get("memory_mode", "full"),
+                memory_mode=memory_mode,
                 memory_window_length=config.get("memory_window_length"),
-                div_threshold=120.0,
+                div_threshold=div_threshold,
                 integrator=integrator,
-                use_c_backend=config.get("use_c_backend", True),
+                use_c_backend=bool(config.get("use_c_backend", False)),
                 t_transient=t_transient,
                 t_keep=t_keep,
                 early_stop_config=config.get("early_stop"),
                 equilibria=[],
+                require_c_backend=bool(
+                    continuation_cfg.get("require_c_backend", False)
+                ),
+                allow_python_fallback=bool(
+                    config.get("allow_python_fallback", False)
+                ),
                 q=q_continuation,
             )
             
@@ -324,15 +455,23 @@ def run_scalar_continuation(
         h=h,
         t_final=t_transient + t_keep,
         t_burn=t_transient,
-        memory_mode=config.get("memory_mode", "full"),
+        memory_mode=memory_mode,
         integrator_name=integrator,
-        integrator_backend="native" if config.get("use_c_backend", True) else "python",
-        caputo=True,
+        integrator_backend="native" if config.get("use_c_backend", False) else "python",
+        caputo=continuation_order == "fractional",
         parameters=system.parameters,
-        lure=collect_lure_metadata(system.lure, transfer_convention="standard", harmonic_condition="1_minus_WN"),
+        lure=collect_lure_metadata(
+            system.lure,
+            transfer_convention=str(
+                config.get("transfer_convention") or "not_specified"
+            ),
+            harmonic_condition=str(
+                config.get("harmonic_condition") or "not_specified"
+            ),
+        ),
         seed=collect_seed_metadata(first_seed, source="continuation_run") if first_seed else None,
         random_seed=config.get("random_seed"),
-        random_seed_policy=config.get("random_seed_policy", "fixed_reproducible"),
+        random_seed_policy=config.get("random_seed_policy") or "not_specified",
     )
     
     from ..reproducibility import metadata_to_jsonable
@@ -394,7 +533,13 @@ def run_multiparameter_continuation(
     argv: Sequence[str] | None = None
 ) -> None:
     parser = argparse.ArgumentParser(prog="hidden-attractors continuation multiparameter")
-    parser.add_argument("-c", "--config", type=str, help="Path to YAML configuration file")
+    parser.add_argument(
+        "-c",
+        "--config",
+        type=str,
+        required=True,
+        help="Path to an explicit YAML continuation contract",
+    )
     parser.add_argument("-p", "--path", type=str, help="Path to JSON path definition file")
     parser.add_argument("-s", "--seed-file", type=str, help="Path to CSV seeds file")
     parser.add_argument("-o", "--output-dir", type=str, help="Directory to save output files")
@@ -405,7 +550,7 @@ def run_multiparameter_continuation(
     parser.add_argument("--q-continuation", type=float, help="continuation order")
     parser.add_argument("--integrator", type=str, help="integrator name")
     parser.add_argument("--h", type=float, help="step size")
-    parser.add_argument("--memory-policy", type=str, choices=["full_history", "finite_window", "none"], help="Caputo memory policy")
+    parser.add_argument("--memory-policy", type=str, choices=["full_history", "full_caputo", "finite_window", "none", "carry_window"], help="Caputo memory policy")
     parser.add_argument("--memory-mode", type=str, choices=["full", "window", "none"], help="Caputo memory mode")
     parser.add_argument("--memory-window-time", type=float, help="window size in seconds")
     parser.add_argument("--memory-window-steps", type=int, help="window size in steps")
@@ -449,8 +594,53 @@ def run_multiparameter_continuation(
     elif "continuation" in config:
         path_config = config["continuation"]
         
-    steps_count = int(path_config.get("steps", 25))
-    parameters_def = path_config.get("parameters", {})
+    steps_count = int(
+        _require_value(path_config, "steps", "continuation.steps")
+    )
+    if steps_count < 2:
+        raise ValueError("continuation.steps must be at least 2.")
+    parameters_def = _require_value(
+        path_config,
+        "parameters",
+        "continuation.parameters",
+    )
+    if not isinstance(parameters_def, dict) or not parameters_def:
+        raise ValueError(
+            "continuation.parameters must be a non-empty mapping of explicit paths."
+        )
+    for parameter_name, parameter_range in parameters_def.items():
+        if not isinstance(parameter_range, dict):
+            raise ValueError(
+                f"continuation.parameters.{parameter_name} must be a mapping."
+            )
+        _require_value(
+            parameter_range,
+            "start",
+            f"continuation.parameters.{parameter_name}.start",
+        )
+        _require_value(
+            parameter_range,
+            "end",
+            f"continuation.parameters.{parameter_name}.end",
+        )
+    t_final_step = float(
+        _require_value(
+            path_config,
+            "t_step",
+            "continuation.t_step",
+        )
+    )
+    if not np.isfinite(t_final_step) or t_final_step <= 0.0:
+        raise ValueError("continuation.t_step must be finite and strictly positive.")
+    div_threshold = float(
+        _require_value(config, "divergence_norm", "divergence_norm")
+    )
+    if not np.isfinite(div_threshold) or div_threshold <= 0.0:
+        raise ValueError("Continuation divergence_norm must be finite and positive.")
+    integrator = str(_require_value(config, "integrator", "integrator"))
+    h = float(_require_value(config, "h", "integration step h"))
+    if not np.isfinite(h) or h <= 0.0:
+        raise ValueError("Continuation integration step h must be finite and positive.")
     
     # Check overrides or path_config for memory policy
     if args.memory_policy:
@@ -458,7 +648,35 @@ def run_multiparameter_continuation(
     else:
         memory_policy = path_config.get("memory_policy")
         if memory_policy is None:
-            memory_policy = config.get("memory_policy", "carry_window")
+            memory_policy = config.get("memory_policy")
+    if memory_policy is None:
+        raise ValueError(
+            "Multiparameter continuation requires an explicit memory_policy."
+        )
+    memory_window_time = path_config.get("memory_window_time")
+    if memory_policy in {"carry_window", "finite_window"}:
+        if memory_window_time is None:
+            raise ValueError(
+                "Windowed multiparameter continuation requires explicit "
+                "continuation.memory_window_time."
+            )
+        memory_window_length = int(round(float(memory_window_time) / h))
+        if memory_window_length < 1:
+            raise ValueError(
+                "continuation.memory_window_time must span at least one step."
+            )
+        integration_memory_mode = "window"
+    elif memory_policy in {"full_history", "full_caputo"}:
+        memory_window_length = None
+        integration_memory_mode = "full"
+    elif memory_policy == "none":
+        memory_window_length = None
+        integration_memory_mode = "none"
+    else:
+        raise ValueError(
+            "Unsupported multiparameter memory_policy: "
+            f"{memory_policy!r}."
+        )
     
     # Resolve seeds
     seeds = []
@@ -473,7 +691,7 @@ def run_multiparameter_continuation(
         print("Error: No seeds found for multiparameter continuation.")
         sys.exit(1)
         
-    system_id = config.get("system_id", "chua_fractional_saturation")
+    system_id = str(_require_value(config, "system_id", "system_id"))
     name_map = {
         "chua_piecewise": "chua-nonsmooth",
         "chua_integer_saturation": "chua-nonsmooth",
@@ -485,8 +703,15 @@ def run_multiparameter_continuation(
     normalized_sys_id = name_map.get(system_id, system_id)
     system = get_system(normalized_sys_id)
     
-    continuation_order = config["continuation"]["continuation_order"]
-    q_continuation = config["continuation"]["q_continuation"]
+    continuation_cfg = config.get("continuation") or {}
+    continuation_order = str(
+        _require_value(
+            continuation_cfg,
+            "continuation_order",
+            "continuation.continuation_order",
+        )
+    )
+    q_continuation = continuation_cfg.get("q_continuation")
     
     # Ensure q_continuation is 1.0 for integer continuation, or less than 1.0 for fractional continuation
     if continuation_order == "integer":
@@ -494,20 +719,17 @@ def run_multiparameter_continuation(
         config["continuation"]["q_continuation"] = 1.0
     elif continuation_order == "fractional":
         if q_continuation is None:
-            q_val = config.get("q")
-            if q_val is None and system is not None and hasattr(system, "parameters"):
-                q_val = system.parameters.get("q")
-            if q_val is None:
-                q_val = 0.9998
-            q_continuation = float(q_val)
+            q_continuation = _resolve_explicit_fractional_q(
+                config,
+                system=system,
+                seeds=seeds,
+                path_parameters=parameters_def,
+            )
             config["continuation"]["q_continuation"] = q_continuation
             
         if q_continuation >= 1.0:
             raise ValueError(f"For fractional continuation, q_continuation must be strictly less than 1.0. Got {q_continuation}.")
             
-    integrator = config.get("integrator", "efork3")
-    h = float(config.get("h", 0.01))
-    
     # Validate compatibility between integrator and order
     if continuation_order == "fractional":
         if integrator in ("rk4", "heun", "efork_q1"):
@@ -544,7 +766,7 @@ def run_multiparameter_continuation(
     for s in seeds:
         candidate_id = s["candidate_id"]
         x_in = np.array(s["x0"], dtype=float).copy()
-        k_gain = s["reconstruction_metadata"].get("gain", 0.0)
+        k_gain = _require_seed_gain(s)
         
         print(f"Running multi-parameter continuation for candidate {candidate_id} (type: {continuation_type})...")
         
@@ -573,16 +795,36 @@ def run_multiparameter_continuation(
             # Set up deformed vector field
             # Chua specific lure split
             from ..models.chua import chua_parameters
+            required_parameters = (
+                "model",
+                "alpha",
+                "beta",
+                "gamma",
+                "m0",
+                "m1",
+                "a1",
+                "a2",
+                "rho",
+            )
+            missing_parameters = [
+                name for name in required_parameters if name not in current_params
+            ]
+            if missing_parameters:
+                raise ValueError(
+                    "The current registered system does not provide the explicit "
+                    "parameters required by this Chua continuation route: "
+                    + ", ".join(missing_parameters)
+                )
             cp = chua_parameters(
-                model=current_params.get("model", "nonsmooth"),
-                alpha=current_params.get("alpha", 8.4562),
-                beta=current_params.get("beta", 12.0732),
-                gamma=current_params.get("gamma", 0.0052),
-                m0=current_params.get("m0", -0.1768),
-                m1=current_params.get("m1", -1.1468),
-                a1=current_params.get("a1", 0.4),
-                a2=current_params.get("a2", -1.5585),
-                rho=current_params.get("rho", 1.0),
+                model=str(current_params["model"]),
+                alpha=float(current_params["alpha"]),
+                beta=float(current_params["beta"]),
+                gamma=float(current_params["gamma"]),
+                m0=float(current_params["m0"]),
+                m1=float(current_params["m1"]),
+                a1=float(current_params["a1"]),
+                a2=float(current_params["a2"]),
+                rho=float(current_params["rho"]),
             )
             P_mat, b_vec, c_vec = chua_matrices(cp)
             sat_gain = float(cp.m0 - cp.m1)
@@ -600,23 +842,24 @@ def run_multiparameter_continuation(
                 delta = psi_deformed(sigma) - k_gain * sigma
                 return P0 @ x_val + current_eta * b_vec * delta
                 
-            t_final_step = 60.0
-            
             # Integrate this step
             try:
-                t_tr, x_tr, status, info = integrate(
+                t_tr, x_tr, status = integrate(
                     rhs=rhs_deformed,
                     x0=x_in,
                     q=current_q,
                     h=h,
                     t_final=t_final_step,
-                    integrator=config.get("integrator", "efork3"),
-                    memory_mode="full" if memory_policy == "full_history" else "window",
-                    memory_window_length=int(round(float(path_config.get("memory_window_time", 40.0)) / h)),
+                    integrator=integrator,
+                    memory_mode=integration_memory_mode,
+                    memory_window_length=memory_window_length,
+                    divergence_norm=div_threshold,
                     history_times=hist_t,
                     history_states=hist_x,
-                    use_c_backend=config.get("use_c_backend", True),
-                    allow_python_fallback=True,
+                    use_c_backend=bool(config.get("use_c_backend", False)),
+                    allow_python_fallback=bool(
+                        config.get("allow_python_fallback", False)
+                    ),
                 )
             except Exception as e:
                 status = f"error: {e}"
@@ -700,7 +943,11 @@ def run_multiparameter_continuation(
         "memory_policy": memory_policy,
         "history_carried": is_causal,
         "memory_window_time": path_config.get("memory_window_time"),
-        "memory_window_steps": int(round(float(path_config.get("memory_window_time", 40.0)) / h)),
+        "memory_window_steps": (
+            int(round(float(path_config["memory_window_time"]) / h))
+            if path_config.get("memory_window_time") is not None
+            else None
+        ),
         "candidates": summaries,
     }
     with open(summary_path, "w", encoding="utf-8") as f:
@@ -724,19 +971,27 @@ def run_multiparameter_continuation(
         run_id=config.get("run_id", "auto_multiparameter"),
         workflow="continuation_multiparameter",
         system=system_id,
-        q=float(first_seed["q"]) if first_seed else 1.0,
+        q=float(first_seed["q"]),
         h=h,
-        t_final=60.0 * steps_count,
-        t_burn=60.0,
-        memory_mode="window",
+        t_final=t_final_step * steps_count,
+        t_burn=t_final_step,
+        memory_mode=integration_memory_mode,
         integrator_name=integrator,
-        integrator_backend="native" if config.get("use_c_backend", True) else "python",
-        caputo=True,
+        integrator_backend="native" if config.get("use_c_backend", False) else "python",
+        caputo=continuation_order == "fractional",
         parameters=system.parameters,
-        lure=collect_lure_metadata(system.lure, transfer_convention="standard", harmonic_condition="1_minus_WN"),
+        lure=collect_lure_metadata(
+            system.lure,
+            transfer_convention=str(
+                config.get("transfer_convention") or "not_specified"
+            ),
+            harmonic_condition=str(
+                config.get("harmonic_condition") or "not_specified"
+            ),
+        ),
         seed=collect_seed_metadata(first_seed, source="continuation_multiparameter") if first_seed else None,
         random_seed=config.get("random_seed"),
-        random_seed_policy=config.get("random_seed_policy", "fixed_reproducible"),
+        random_seed_policy=config.get("random_seed_policy") or "not_specified",
     )
     
     from ..reproducibility import metadata_to_jsonable

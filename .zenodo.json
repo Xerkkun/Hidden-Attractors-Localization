@@ -1,7 +1,7 @@
 {
-  "title": "A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors",
+  "title": "hidden-attractors-fo: Hidden-Attractor Localization and Dynamical-System Characterization",
   "upload_type": "software",
-  "description": "Python software and reproducible workflows for Lur'e-compatible integer and Caputo fractional-order chaotic systems, including seed generation, continuation, integration, hiddenness audits, and validation contracts. Maintained examples include integer Chua, non-smooth fractional Chua, and smooth arctan fractional Chua validation lanes.",
+  "description": "Python software for Lur'e-compatible integer and Caputo fractional-order systems. It provides seed generation, continuation, integration, sampled-neighborhood verification, and independent dynamical characterization from systems, trajectories, and scalar time series, including Lyapunov, spectral, Poincare, boundedness, bifurcation, and 0-1 diagnostics.",
   "creators": [
     {
       "name": "Moreno Lopez, Maria Fernanda",
@@ -31,6 +31,8 @@
     "Caputo",
     "Lur'e systems",
     "numerical validation"
+    ,"time-series Lyapunov exponents"
+    ,"dynamical-system characterization"
   ],
   "related_identifiers": [
     {
@@ -39,6 +41,6 @@
       "scheme": "doi"
     }
   ],
-  "version": "1.0.0",
-  "publication_date": "2026-06-26"
+  "version": "1.1.0",
+  "publication_date": "2026-07-29"
 }

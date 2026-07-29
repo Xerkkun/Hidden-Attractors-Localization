@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hidden-attractors-fo"
-version = "1.0.0"
-description = "Numerical workflows for locating and verifying hidden attractor candidates in fractional-order systems."
+version = "1.1.0"
+description = "Hidden-attractor localization and independent dynamical-system and time-series characterization."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
@@ -13,7 +13,7 @@ license-files = ["LICENSE"]
 authors = [
   { name = "Hidden Attractors Fractional Order project", email = "xerkkun@fyskode.com" }
 ]
-keywords = ["fractional-order systems", "hidden attractors", "Chua", "Caputo", "EFORK"]
+keywords = ["fractional-order systems", "hidden attractors", "Lyapunov exponents", "time series", "dynamical systems", "Chua", "Caputo", "EFORK"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Science/Research",
@@ -61,10 +61,6 @@ docs = [
   "mkdocs-material>=9.5",
   "mkdocstrings[python]>=0.25",
 ]
-# Legacy scripts
-legacy = [
-  "scipy>=1.12",
-]
 # Optional numerical continuation
 pydstool = [
   "PyDSTool",   # no stable PyPI release; pin not enforced
@@ -86,7 +82,7 @@ include = ["hidden_attractors*"]
 exclude = ["tools*", "benchmarks*", "tests*", "examples*"]
 
 [tool.setuptools.package-data]
-hidden_attractors = ["native/csrc/*.c", "native/csrc/*.h", "configs/examples/*.yaml"]
+hidden_attractors = ["native/csrc/*.c", "native/csrc/*.h", "configs/examples/workflow_contract.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -107,8 +103,7 @@ markers = [
   "validation_contract: validation evidence contract tests",
   "literature_traceability: bibliographic and published-case traceability tests",
   "integration: short integration tests",
-  "migration: temporary migration tests",
-  "deprecated_alias: tests for compatibility aliases scheduled for removal",
+  "deprecated_alias: tests for deprecated compatibility aliases",
   "hygiene: repository cleanliness and packaging hygiene",
   "release_readiness: Release archive metadata and packaging readiness checks",
   "packaging: PyPI packaging and wheel/sdist checks",

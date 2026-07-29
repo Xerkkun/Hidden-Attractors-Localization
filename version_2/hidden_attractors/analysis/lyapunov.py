@@ -1,7 +1,7 @@
 """Reusable Lyapunov exponent estimators.
 
-F0 AUDIT — integer_qr_benettin (frozen)
-========================================
+Integer QR-Benettin method
+==========================
 This module implements **finite-time local Lyapunov exponents for
 integer-order (q=1) ODE systems** using the classical Benettin/QR
 reorthonormalisation algorithm.
@@ -15,18 +15,16 @@ Scope
 * Orthonormalisation: QR decomposition (numpy.linalg.qr).
 * Result: finite-time, local Lyapunov exponent estimates.
 
-Out of scope (F0)
------------------
+Out of scope
+------------
 * NOT a validated Caputo fractional Lyapunov method.
 * Does NOT handle fractional memory (q < 1).
 * Does NOT certify chaos by itself.
 * Does NOT certify hiddenness of attractors.
 * chaos_verified / hidden_verified are NOT asserted here.
 
-Fractional Caputo spectra (q < 1) require a dedicated extended-memory
-variational method integrating the full original–variational system with
-Caputo memory.  That will be implemented in future phases:
-``fractional_variational_abm_qr`` and ``fractional_cloned_dynamics_abm``.
+Fractional Caputo spectra (q < 1) require a dedicated memory-aware method.
+They must not be computed with this integer-order routine.
 
 References
 ----------
@@ -53,7 +51,7 @@ from ..solvers.integer import efork_q1_step
 from ..systems.base import ChaoticSystem
 
 # ---------------------------------------------------------------------------
-# F0 canonical references (frozen with this method)
+# Canonical references for this method
 # ---------------------------------------------------------------------------
 _INTEGER_QR_BENETTIN_REFS: tuple[str, ...] = (
     "Benettin et al. 1980 — Lyapunov Characteristic Exponents (Meccanica 15)",
@@ -94,10 +92,10 @@ class LyapunovResult:
         ``'diverged'``.
     method_id : str
         Canonical identifier for the numerical method used.
-        ``'integer_qr_benettin'`` for this module (F0).
+        ``'integer_qr_benettin'`` for this module.
     derivative_model : str
         Derivative model: ``'integer'`` for q=1 ODE, ``'caputo'`` for
-        fractional (not implemented in F0).
+        fractional.
     q : float
         Fractional order used.  Must be 1.0 for ``integer_qr_benettin``.
     finite_time_local : bool
@@ -109,7 +107,7 @@ class LyapunovResult:
     orthonormalization : str
         Orthonormalisation scheme: ``'qr'`` for this method.
     reference_ids : tuple[str, ...]
-        Bibliographic references for the method (F0 frozen set).
+        Bibliographic references for the method.
     methodological_warnings : tuple[str, ...]
         Human-readable warnings about scope and limitations.
     """
@@ -120,7 +118,7 @@ class LyapunovResult:
     convergence: np.ndarray
     status: str
 
-    # F0 metadata fields (all have defaults → fully backward-compatible)
+    # Method metadata fields (defaults preserve compatibility)
     method_id: str = "integer_qr_benettin"
     derivative_model: str = "integer"
     q: float = 1.0
@@ -198,7 +196,7 @@ def integer_lyapunov_exponents(
 ) -> LyapunovResult:
     """Estimate integer-order Lyapunov exponents by QR reorthonormalisation.
 
-    **Method identifier: ``integer_qr_benettin`` (F0 — frozen)**
+    **Method identifier: ``integer_qr_benettin``**
 
     Uses the Benettin/Wolf algorithm:
 
@@ -221,9 +219,8 @@ def integer_lyapunov_exponents(
 
     This routine is **not a validated Caputo fractional Lyapunov method**.
     It is restricted to **q = 1**.
-    Fractional Caputo spectra require a dedicated extended-memory variational
-    method integrating the full original–variational system with Caputo memory
-    (to be implemented in future phases: ``fractional_variational_abm_qr``).
+    Fractional Caputo spectra require a dedicated memory-aware method; they
+    must not be computed with this integer-order routine.
 
     Parameters
     ----------
@@ -255,7 +252,7 @@ def integer_lyapunov_exponents(
     Returns
     -------
     result : LyapunovResult
-        Exponent estimates, convergence history, status string, and F0
+        Exponent estimates, convergence history, status string, and method
         method metadata (``method_id='integer_qr_benettin'``).
 
     Raises
@@ -289,26 +286,43 @@ def integer_lyapunov_exponents(
     >>> res.status
     'ok'
     """
-    # --- q-validation (F0 gate) ---
-    if abs(float(q) - 1.0) > 1e-9:
+    # --- numeric and q validation ---
+    q_value = float(q)
+    if not np.isfinite(q_value) or abs(q_value - 1.0) > 1e-9:
         raise ValueError(
             f"integer_qr_benettin is valid only for q=1 (integer-order ODE); "
             f"received q={q}.  "
-            "Use a fractional Lyapunov method for Caputo q<1 "
-            "(e.g., fractional_variational_abm_qr — not yet implemented in F0)."
+            "Use a memory-aware fractional Lyapunov method for Caputo q<1."
         )
 
     h_value = float(h)
-    if h_value <= 0.0:
-        raise ValueError("h must be positive.")
+    t_final_value = float(t_final)
+    t_burn_value = float(t_burn)
+    eps_value = float(jacobian_eps)
+    if not np.isfinite(h_value) or h_value <= 0.0:
+        raise ValueError("h must be finite and positive.")
+    if not np.isfinite(t_final_value) or t_final_value <= 0.0:
+        raise ValueError("t_final must be finite and positive.")
+    if not np.isfinite(t_burn_value) or t_burn_value < 0.0:
+        raise ValueError("t_burn must be finite and non-negative.")
+    if not np.isfinite(eps_value) or eps_value <= 0.0:
+        raise ValueError("jacobian_eps must be finite and positive.")
+    interval = int(reorthonormalize_every)
+    if interval < 1 or float(reorthonormalize_every) != float(interval):
+        raise ValueError("reorthonormalize_every must be a positive integer.")
+    if div_threshold is not None:
+        threshold_value = float(div_threshold)
+        if not np.isfinite(threshold_value) or threshold_value <= 0.0:
+            raise ValueError("div_threshold must be finite and positive.")
     x = np.asarray(x0, dtype=float).copy()
-    if x.ndim != 1:
-        raise ValueError("x0 must be one-dimensional.")
+    if x.ndim != 1 or x.size == 0 or not np.all(np.isfinite(x)):
+        raise ValueError("x0 must be a non-empty finite one-dimensional array.")
     n = x.size
-    burn_steps = int(max(0, round(float(t_burn) / h_value)))
-    total_steps = int(max(0, round(float(t_final) / h_value)))
-    interval = max(1, int(reorthonormalize_every))
-    jac = jacobian or (lambda state: finite_difference_jacobian(rhs, state, eps=jacobian_eps))
+    burn_steps = int(round(t_burn_value / h_value))
+    total_steps = int(round(t_final_value / h_value))
+    if total_steps < 1:
+        raise ValueError("t_final must span at least one integration step.")
+    jac = jacobian or (lambda state: finite_difference_jacobian(rhs, state, eps=eps_value))
 
     for _ in range(burn_steps):
         x = efork_q1_step(rhs, x, h_value)
@@ -322,16 +336,24 @@ def integer_lyapunov_exponents(
     times: list[float] = []
     convergence: list[np.ndarray] = []
     elapsed = 0.0
+    qr_elapsed = 0.0
+    steps_since_qr = 0
     status = "ok"
     for step in range(1, total_steps + 1):
         J = np.asarray(jac(x), dtype=float)
-        basis = basis + h_value * J @ basis
+        if J.shape != (n, n) or not np.all(np.isfinite(J)):
+            status = "invalid_jacobian"
+            break
+        next_basis = basis + h_value * J @ basis
         try:
-            x = efork_q1_step(rhs, x, h_value)
+            next_x = efork_q1_step(rhs, x, h_value)
         except (RuntimeError, ValueError, FloatingPointError, OverflowError):
             status = "solver_exception"
             break
+        x = np.asarray(next_x, dtype=float)
+        basis = next_basis
         elapsed += h_value
+        steps_since_qr += 1
         if not np.all(np.isfinite(x)) or not np.all(np.isfinite(basis)):
             status = "nonfinite_solution"
             break
@@ -344,16 +366,34 @@ def integer_lyapunov_exponents(
             diag[diag <= 1.0e-300] = 1.0e-300
             sums += np.log(diag)
             basis = qmat
+            qr_elapsed = elapsed
+            steps_since_qr = 0
             times.append(elapsed)
             convergence.append(sums / max(elapsed, 1.0e-300))
 
-    exponents = sums / max(elapsed, 1.0e-300) if elapsed > 0.0 else np.full(n, np.nan)
+    if steps_since_qr > 0 and np.all(np.isfinite(basis)):
+        try:
+            qmat, rmat = np.linalg.qr(basis)
+        except np.linalg.LinAlgError:
+            status = "qr_failure"
+        else:
+            diag = np.abs(np.diag(rmat))
+            diag[diag <= 1.0e-300] = 1.0e-300
+            sums += np.log(diag)
+            basis = qmat
+            qr_elapsed = elapsed
+            times.append(elapsed)
+            convergence.append(sums / max(elapsed, 1.0e-300))
+
+    exponents = (
+        sums / qr_elapsed if qr_elapsed > 0.0 else np.full(n, np.nan)
+    )
     return LyapunovResult(
         exponents=np.asarray(exponents, dtype=float),
         times=np.asarray(times, dtype=float),
         convergence=np.asarray(convergence, dtype=float) if convergence else np.empty((0, n), dtype=float),
         status=status,
-        # F0 metadata
+        # Method metadata
         method_id="integer_qr_benettin",
         derivative_model="integer",
         q=1.0,
@@ -366,7 +406,7 @@ def integer_lyapunov_exponents(
 
 
 # ---------------------------------------------------------------------------
-# Alias / wrapper with explicit q-gate (F0 canonical entry point)
+# Alias / wrapper with an explicit q-gate
 # ---------------------------------------------------------------------------
 
 def integer_qr_benettin_lyapunov_exponents(
@@ -382,12 +422,12 @@ def integer_qr_benettin_lyapunov_exponents(
     div_threshold: float | None = None,
     q: float = 1.0,
 ) -> LyapunovResult:
-    """Canonical F0 entry point for integer-order QR-Benettin Lyapunov exponents.
+    """Canonical entry point for integer-order QR-Benettin Lyapunov exponents.
 
-    **Method identifier: ``integer_qr_benettin`` (F0 — frozen)**
+    **Method identifier: ``integer_qr_benettin``**
 
     This is the explicitly named wrapper for the integer-order QR-Benettin
-    algorithm.  It enforces ``q = 1.0`` strictly and populates all F0
+    algorithm.  It enforces ``q = 1.0`` strictly and populates all method
     metadata fields in the returned :class:`LyapunovResult`.
 
     Calling this function with ``q ≠ 1.0`` always raises ``ValueError``.
@@ -420,7 +460,7 @@ def integer_qr_benettin_lyapunov_exponents(
     Returns
     -------
     result : LyapunovResult
-        Full result with ``method_id='integer_qr_benettin'`` and all F0
+        Full result with ``method_id='integer_qr_benettin'`` and all method
         metadata populated.
 
     Raises
@@ -432,8 +472,7 @@ def integer_qr_benettin_lyapunov_exponents(
     -----
     This routine is **not a validated Caputo fractional Lyapunov method**.
     It is restricted to **q = 1**.
-    Fractional Caputo spectra require a dedicated extended-memory variational
-    method (to be implemented in future phases).
+    Fractional Caputo spectra require a dedicated memory-aware method.
 
     References
     ----------
@@ -447,8 +486,7 @@ def integer_qr_benettin_lyapunov_exponents(
         raise ValueError(
             f"integer_qr_benettin is valid only for q=1 (integer-order ODE); "
             f"received q={q}.  "
-            "Use a fractional Lyapunov method for Caputo q<1 "
-            "(e.g., fractional_variational_abm_qr — not yet implemented in F0)."
+            "Use a memory-aware fractional Lyapunov method for Caputo q<1."
         )
     return integer_lyapunov_exponents(
         rhs,
@@ -532,7 +570,7 @@ def integer_system_lyapunov_exponents(
 ) -> LyapunovResult:
     """Estimate Lyapunov exponents for a registered integer-order system.
 
-    **Method identifier: ``integer_qr_benettin`` (F0 — frozen)**
+    **Method identifier: ``integer_qr_benettin``**
 
     Convenience wrapper around :func:`integer_lyapunov_exponents` that reads
     the RHS and analytic Jacobian directly from a
@@ -542,9 +580,7 @@ def integer_system_lyapunov_exponents(
 
     This routine is **not a validated Caputo fractional Lyapunov method**.
     It is restricted to **q = 1** (integer-order ODE systems).
-    Fractional Caputo spectra require a dedicated extended-memory variational
-    method integrating the full original–variational system with Caputo memory
-    (to be implemented in future phases: ``fractional_variational_abm_qr``).
+    Fractional Caputo spectra require a dedicated memory-aware method.
 
     Parameters
     ----------
@@ -569,7 +605,7 @@ def integer_system_lyapunov_exponents(
     Returns
     -------
     result : LyapunovResult
-        Exponent estimates, convergence history, status string, and F0
+        Exponent estimates, convergence history, status string, and method
         method metadata (``method_id='integer_qr_benettin'``).
 
     Examples
@@ -577,14 +613,14 @@ def integer_system_lyapunov_exponents(
     >>> import numpy as np
     >>> from hidden_attractors.systems import get_system
     >>> from hidden_attractors.analysis.lyapunov import integer_system_lyapunov_exponents
-    >>> sys = get_system('chua-integer')
+    >>> sys = get_system('chua-nonsmooth')
     >>> res = integer_system_lyapunov_exponents(
     ...     sys, np.array([0.1, 0.2, 0.3]), h=0.01, t_final=50.0)
     >>> res.status
     'ok'
     """
 
-    # A2 — F0 closure: reject fractional systems defensively
+    # Reject fractional systems defensively.
     q_sys = _infer_system_order(system)
     if q_sys is not None and abs(q_sys - 1.0) > 1e-9:
         raise ValueError(
@@ -593,7 +629,7 @@ def integer_system_lyapunov_exponents(
             "Use a fractional Lyapunov method for Caputo q<1."
         )
 
-    # A1 — F1 closure: defensive attribute access for evaluate / jacobian
+    # Defensive attribute access for evaluate / jacobian.
     if not callable(getattr(system, "evaluate", None)):
         raise ValueError(
             "integer_system_lyapunov_exponents: system must expose a callable "

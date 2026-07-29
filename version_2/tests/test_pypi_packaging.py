@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import sys
 import tomllib
@@ -23,7 +24,7 @@ def test_pypi_project_metadata_and_public_cli() -> None:
     project = data["project"]
 
     assert project["name"] == "hidden-attractors-fo"
-    assert project["version"] == "1.0.0"
+    assert project["version"] == "1.1.0"
     assert project["readme"] == "README.md"
     assert project["requires-python"] == ">=3.11"
     assert project["license"] == "MIT"
@@ -43,18 +44,20 @@ def test_pypi_project_metadata_and_public_cli() -> None:
 
 def test_pypi_readme_and_release_files_exist() -> None:
     readme = (VERSION_ROOT / "README.md").read_text(encoding="utf-8")
-    readme_lower = readme.lower()
+    readme_lower = re.sub(r"\s+", " ", readme.lower())
 
     assert "python -m pip install hidden-attractors-fo" in readme
     assert "import hidden_attractors" in readme
-    assert "no global mathematical proof" in readme_lower
-    assert "radius-limited" in readme_lower
-    assert "finite-time evidence" in readme_lower
+    assert "not a global proof" in readme_lower
+    assert "finite numerical evidence" in readme_lower
+    assert "not in the installed package" in readme_lower
 
     assert (VERSION_ROOT / "MANIFEST.in").exists()
-    assert (VERSION_ROOT / "release_package" / "PYPI_RELEASE_CHECKLIST.md").exists()
+    assert (VERSION_ROOT / "MANIFEST.md").exists()
+    assert (VERSION_ROOT / "release_package" / "README_RELEASE.md").exists()
     assert (VERSION_ROOT / "release_package" / "PUBLISHING_POLICY.md").exists()
     assert (REPO_ROOT / ".github" / "workflows" / "package.yml").exists()
+    assert (REPO_ROOT / ".github" / "workflows" / "publish-pypi.yml").exists()
 
 
 def test_pypi_wheel_package_scope_is_narrow() -> None:
@@ -68,7 +71,18 @@ def test_pypi_wheel_package_scope_is_narrow() -> None:
     assert "hidden_attractors" in package_data
     assert "native/csrc/*.c" in package_data["hidden_attractors"]
     assert "native/csrc/*.h" in package_data["hidden_attractors"]
-    assert "configs/examples/*.yaml" in package_data["hidden_attractors"]
+    assert "configs/examples/workflow_contract.yaml" in package_data["hidden_attractors"]
+    assert "configs/examples/*.yaml" not in package_data["hidden_attractors"]
+
+    manifest = (VERSION_ROOT / "MANIFEST.in").read_text(encoding="utf-8")
+    assert "recursive-include examples/chua_integer_lure_reference" in manifest
+    assert "include hidden_attractors/configs/examples/workflow_contract.yaml" in manifest
+    assert "recursive-include hidden_attractors *.py *.yaml" not in manifest
+    assert "recursive-exclude tests *" in manifest
+    assert not any(
+        line.strip().startswith("prune ")
+        for line in manifest.splitlines()
+    )
 
 
 @pytest.mark.packaging

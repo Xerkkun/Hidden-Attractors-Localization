@@ -12,11 +12,11 @@ if str(workspace_root / "version_2") not in sys.path:
 
 from hidden_attractors.workflows.config_loader import load_config
 from hidden_attractors.workflows.bifurcation import run_bifurcation_workflow
-from hidden_attractors.paths import get_packaged_examples_path
+SOFTWARE_FIXTURE = Path(__file__).parent / "fixtures" / "software_validation_fractional.yaml"
 
 
 def test_bifurcation_smoke(tmp_path):
-    config_path = get_packaged_examples_path() / "chua_fractional_bifurcation.yaml"
+    config_path = SOFTWARE_FIXTURE
     cfg = load_config(config_path)
     
     # Configure fast smoke run
@@ -53,7 +53,7 @@ def test_bifurcation_smoke(tmp_path):
 
 
 def test_bifurcation_no_csv(tmp_path):
-    config_path = get_packaged_examples_path() / "chua_fractional_bifurcation.yaml"
+    config_path = SOFTWARE_FIXTURE
     cfg = load_config(config_path)
     
     cfg["output_dir"] = str(tmp_path)
@@ -73,7 +73,7 @@ def test_bifurcation_no_csv(tmp_path):
 
 
 def test_bifurcation_sweeps_q(tmp_path):
-    config_path = get_packaged_examples_path() / "chua_fractional_bifurcation.yaml"
+    config_path = SOFTWARE_FIXTURE
     cfg = load_config(config_path)
     
     cfg["output_dir"] = str(tmp_path)
@@ -111,4 +111,3 @@ def test_bifurcation_sweeps_q(tmp_path):
         assert row["parameter_name"] == "q"
         val = float(row["parameter_value"])
         assert any(abs(val - target) < 1e-4 for target in [0.97, 0.98, 0.99])
-

@@ -52,7 +52,7 @@ Contratos dinámicos por caso:
 | `danca2017_chua_fractional_saturation` | `ABM` / `python_abm_full_history` | `memory_mode=full`, `memory_policy=full_history`, `caputo_history_accumulated=true` |
 | `wu2023_chua_fractional_arctan` | `ADM_WU2023` / `adm_local_reproduction` | `memory_mode=none`, `memory_policy=none_local_adm`, `caputo_history_accumulated=false` |
 
-La diferencia es intencional. Danca se implementa como Caputo ABM con memoria completa. Wu se implementa con el método ADM local descrito para ese artículo; esta comparación no debe presentarse como ABM ni como EFORK con memoria Caputo completa. Los experimentos posteriores de continuación numérica si deben usar ABM con memoria completa y `h<=0.01`.
+La diferencia es intencional. Danca se implementa como Caputo ABM con memoria completa. Wu se implementa con el método ADM local descrito para ese artículo; esta comparación no debe presentarse como ABM ni como EFORK con memoria Caputo completa. Una integración ABM con memoria completa constituye un contrato distinto y no forma parte de esta reproducción.
 
 ---
 

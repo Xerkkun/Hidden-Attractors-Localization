@@ -12,7 +12,7 @@ if str(version_2_dir) not in sys.path:
 from hidden_attractors.cli.seed import lure_centered
 
 def test_seed_order_cli_centered(tmp_path):
-    config_path = version_2_dir / "configs/examples/chua_integer_centered_lure_df.yaml"
+    config_path = version_2_dir / "tests/fixtures/software_validation_integer.yaml"
     output_dir = tmp_path / "output"
     
     # Run lure_centered with CLI overrides

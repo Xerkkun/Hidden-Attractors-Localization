@@ -8,7 +8,7 @@ It integrates the extended system in renormalization blocks and applies
 Gram-Schmidt between blocks, matching the supplied `FO_Lyapunov.m` contract.
 
 The tracked state is
-`published_benchmarks_pending_reproduced_discrepancy`. Numeric CSV files are
+`recorded_published_benchmark_discrepancy`. Numeric CSV files are
 added only by
 `validation/python/update_lyapunov_method_validation_status.py` after the RF
 and Lorenz native C benchmarks both pass their published tolerances.

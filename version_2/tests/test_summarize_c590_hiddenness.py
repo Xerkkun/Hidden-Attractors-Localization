@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-from tools.summarize_c590_hiddenness import (
+from validation.paper07_chua.scripts.summarize_c590_hiddenness import (
     DEFAULT_SOURCE_DIR,
     aggregate_probe_rows,
     build_public_validation_summary,

@@ -11,11 +11,10 @@ ALLOWED_STATUSES = {
     "partial_reference_implementation",
     "reference_data_only",
     "diagnostic_comparison_with_discrepancies",
-    "future_extension"
 }
 
 def test_published_validation_coverage_is_complete_and_valid() -> None:
-    extraction_path = ROOT / "docs" / "published_validation_data_extraction_v1.json"
+    extraction_path = ROOT / "validation" / "references" / "published_validation_data_extraction_v1.json"
     coverage_path = ROOT / "validation" / "published_reference_coverage.json"
 
     assert extraction_path.is_file(), f"Missing extraction data at {extraction_path}"

@@ -16,8 +16,13 @@ if str(workspace_root / "version_2") not in sys.path:
 
 
 def test_lyapunov_cli_lifecycle(tmp_path):
-    # Determine config path
-    config_path = Path(workspace_root) / "version_2" / "configs" / "examples" / "chua_fractional_lyapunov.yaml"
+    config_path = (
+        Path(workspace_root)
+        / "version_2"
+        / "tests"
+        / "fixtures"
+        / "software_validation_fractional.yaml"
+    )
     
     # Run Lyapunov workflow via CLI with extremely short times for fast test
     main([
@@ -83,9 +88,9 @@ def test_trajectory_lyapunov_cli_writes_structured_json(
         largest_exponent=0.4,
         spectrum=(0.4, 0.0, -2.0),
         kaplan_yorke_dimension=2.2,
-        kaplan_yorke_status="computed_from_exploratory_eckmann_spectrum",
+        kaplan_yorke_status="computed_from_finite_time_eckmann_spectrum",
         spectrum_sum=-1.6,
-        spectrum_status="exploratory_nolds_eckmann_scalar_reconstruction",
+        spectrum_status="finite_time_nolds_eckmann_scalar_reconstruction",
         sample_interval=0.02,
         sample_rate=50.0,
         time_unit="s",
@@ -129,3 +134,14 @@ def test_trajectory_lyapunov_cli_writes_structured_json(
     assert payload["largest_exponent"] == 0.4
     assert payload["spectrum"] == [0.4, 0.0, -2.0]
     assert payload["kaplan_yorke_dimension"] == 2.2
+
+    with pytest.raises(SystemExit) as exc_info:
+        main(
+            [
+                "lyapunov",
+                "validate",
+                "--input",
+                str(output_json),
+            ]
+        )
+    assert exc_info.value.code == 0

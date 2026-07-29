@@ -1,10 +1,8 @@
 """Chua-specific seed generation: describing functions and harmonic seeds.
 
 Stability: experimental
-    Functions here are the library version of the Nyquist/DF mathematics
-    that previously lived only in legacy scripts.  The API is considered
-    useful and tested.  New parameters may be added as additional Chua
-    families are supported.
+    Functions here implement the tested Nyquist and describing-function
+    mathematics exposed by the library.
 
 Contents
 --------
@@ -535,7 +533,7 @@ def fourier_coefficients_psi(
         Keys: ``'amplitude'``, ``'sigma0'``, ``'harmonics'``, ``'n_quad'``,
         ``'y_mean'``, ``'coefficients'``.
         ``coefficients[k]`` is a dict with ``'a'``, ``'b'``, and
-        ``'Y' = a_k - i b_k`` (legacy convention).
+        ``'Y' = a_k - i b_k`` (documented sign convention).
 
     Raises
     ------
@@ -545,8 +543,8 @@ def fourier_coefficients_psi(
 
     Notes
     -----
-    The convention ``Y_k = a_k - i b_k`` matches the legacy Chua scripts
-    and the project reports.
+    The convention ``Y_k = a_k - i b_k`` is used consistently by the public
+    seed reconstruction functions.
     """
 
     amp = float(amplitude)

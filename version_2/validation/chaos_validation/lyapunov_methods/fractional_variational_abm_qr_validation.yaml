@@ -3,7 +3,7 @@
 # F2 — Lyapunov method validation
 # ================================
 # Method: fractional_variational_abm_qr
-# Phase:  F2 — implemented, NOT yet validated against published benchmarks.
+# Phase:  F2 — implemented; no published-benchmark validation claim is made.
 #
 # Methodological declarations
 # ----------------------------
@@ -80,7 +80,7 @@ cases:
     h: 0.001
     t_final: 20.0
     reorthonormalize_every: 10
-    status: pending_benchmark
+    status: benchmark_not_evaluated
     warnings:
       - no_published_benchmark_for_comparison
       - finite_time_local_not_asymptotic
@@ -96,7 +96,7 @@ cases:
     h: 0.001
     t_final: 20.0
     reorthonormalize_every: 10
-    status: pending_benchmark
+    status: benchmark_not_evaluated
     warnings:
       - piecewise_jacobian_used
       - derivative_undefined_at_switching_surfaces

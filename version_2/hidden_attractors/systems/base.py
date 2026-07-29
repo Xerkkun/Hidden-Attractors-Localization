@@ -55,7 +55,7 @@ class ChaoticSystem:
     Examples
     --------
     >>> from hidden_attractors.systems import get_system
-    >>> sys = get_system('chua-fractional')
+    >>> sys = get_system('chua-nonsmooth')
     >>> sys.dimension
     3
     """
@@ -97,9 +97,9 @@ class ChaoticSystem:
         --------
         >>> import numpy as np
         >>> from hidden_attractors.systems import get_system
-        >>> sys = get_system('chua-fractional')
-        >>> sys.evaluate(np.zeros(3))
-        array([0., 0., 0.])
+        >>> sys = get_system('chua-nonsmooth')
+        >>> np.allclose(sys.evaluate(np.zeros(3)), 0.0)
+        True
         """
 
         x = np.asarray(state, dtype=float)
@@ -130,7 +130,7 @@ class ChaoticSystem:
         Examples
         --------
         >>> from hidden_attractors.systems import get_system
-        >>> eq = get_system('chua-fractional').equilibrium_points()
+        >>> eq = get_system('chua-nonsmooth').equilibrium_points()
         >>> list(eq.keys())
         ['E0', 'E+', 'E-']
         """
@@ -312,7 +312,7 @@ def get_system(name: str) -> ChaoticSystem:
     Examples
     --------
     >>> from hidden_attractors.systems import get_system
-    >>> get_system('chua-fractional').dimension
+    >>> get_system('chua-nonsmooth').dimension
     3
     """
 

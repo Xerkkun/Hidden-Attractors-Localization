@@ -2,27 +2,8 @@
 import pytest
 import tomllib
 from pathlib import Path
-from tests.helpers.test_documentation_text import read, normalize, active_doc_paths, get_violations_without_context, ROOT
+from tests.helpers.test_documentation_text import read, normalize, active_doc_paths, ROOT
 from tests.test_manual_manifest import load_manifest
-
-DEPRECATION_KEYWORDS = [
-    "legacy", "deprecated", "removed", "no longer installed", "not public",
-    "migration", "obsolete", "obsoleto", "deprecado", "no público",
-    "no se instala", "reemplazado", "antiguo"
-]
-
-LEGACY_COMMANDS = [
-    "hidden-attractors-check-validation",
-    "hidden-attractors-protocol",
-    "hidden-attractors-sphere-controls",
-    "hidden-attractors-refined-basin",
-    "hidden-attractors-robustness-overlay",
-    "hidden-attractors-danca-abm-sphere-controls",
-    "hidden-attractors-fractional-report-run",
-    "hidden-attractors-systems",
-    "hidden-attractors-list-candidates",
-    "hidden-attractors-workflow-requirements",
-]
 
 @pytest.mark.hygiene
 def test_manual_cli_consistency_and_metadata():
@@ -62,18 +43,3 @@ def test_manual_cli_consistency_and_metadata():
     ]
     for cmd in required_commands:
         assert cmd in combined_content_normalized, f"Unified CLI command '{cmd}' is missing in active documentation"
-        
-    # Check that legacy commands are only used in deprecation context
-    violations = []
-    for p in docs:
-        content = read(p)
-        for cmd in LEGACY_COMMANDS:
-            if cmd in content:
-                errs = get_violations_without_context(content, cmd, DEPRECATION_KEYWORDS, window=160)
-                for err in errs:
-                    violations.append(f"{p.name}:{err} for command '{cmd}'")
-                    
-    assert not violations, (
-        "Legacy CLI commands found in active documentation without deprecation context:\n"
-        + "\n".join(violations)
-    )

@@ -1,2 +1,1 @@
-"""Historical research scripts kept for reproducibility."""
-
+"""Repository-only helpers for the closed partial Danca validation."""

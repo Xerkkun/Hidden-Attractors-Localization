@@ -153,5 +153,7 @@ pytest tests/test_integrator_crosscheck.py -v
 
 - It does **not** declare `hidden_verified`.
 - It does **not** certify that a trajectory is a hidden attractor.
-- It does **not** perform Lyapunov exponent computation (planned for a later phase).
+- It does **not** perform Lyapunov exponent computation; that capability is
+  validated separately by the integer, fractional and scalar time-series
+  Lyapunov test suites.
 - It does **not** certify basin of attraction geometry.

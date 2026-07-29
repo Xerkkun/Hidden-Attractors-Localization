@@ -176,7 +176,7 @@ def test_auto_suggestion_logic():
 
 # 10. Verify validate_bibliography_manifest with real YAML manifest
 def test_validate_bibliography_manifest():
-    manifest_path = workspace_root / "version_2" / "references" / "claims_manifest.yaml"
+    manifest_path = workspace_root / "version_2" / "validation" / "references" / "claims_manifest.yaml"
     res = validate_bibliography_manifest(manifest_path, strict=True)
     # Overall validation status should be PASS_WITH_WARNINGS because of Matignon pending DOI verification,
     # but all claims should be valid
@@ -187,7 +187,7 @@ def test_validate_bibliography_manifest():
 
 # 11. Verify traceability matrix export functionality
 def test_traceability_matrix_export(tmp_path):
-    manifest_path = workspace_root / "version_2" / "references" / "claims_manifest.yaml"
+    manifest_path = workspace_root / "version_2" / "validation" / "references" / "claims_manifest.yaml"
     res = validate_bibliography_manifest(manifest_path, strict=True)
     out_file = tmp_path / "matrix.md"
     write_traceability_matrix_markdown(res, out_file)

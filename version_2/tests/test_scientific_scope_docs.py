@@ -37,23 +37,69 @@ def test_scope_declares_supported_boundary_and_evidence_layers() -> None:
         assert term in lowered
 
 
+@pytest.mark.scientific_contract
+def test_scope_names_every_top_level_characterization_entry_point() -> None:
+    text = _read(SCOPE)
+    expected = {
+        "bifurcation_points_from_trajectories",
+        "bifurcation_summary",
+        "compute_boundedness_metrics",
+        "compute_fft_psd",
+        "compute_lyapunov_spectrum",
+        "compute_trajectory_metrics",
+        "detect_poincare_crossings",
+        "estimate_time_series_lyapunov",
+        "integer_system_lyapunov_exponents",
+        "kaplan_yorke_dimension",
+        "trajectory_metrics",
+        "trajectory_metrics_for_system",
+        "validate_lyapunov_method_request",
+        "zero_one_test",
+    }
+    assert all(f"`{name}`" in text for name in expected)
+    assert (
+        "`hidden_attractors.analysis.integer_qr_benettin_lyapunov_exponents`"
+        in text
+    )
+
+
+@pytest.mark.scientific_contract
+def test_scope_documents_direct_system_and_parameter_access() -> None:
+    text = _read(SCOPE)
+    expected = {
+        "get_system",
+        "list_systems",
+        "register_system",
+        "requirements_for",
+        "check_system_capability",
+        "chua_parameters",
+        "chua_nonsmooth_parameters",
+        "chua_arctan_wu2023_parameters",
+        "equilibria_nonsmooth",
+        "equilibria_arctan",
+        "jacobian_nonsmooth",
+        "jacobian_arctan",
+        "rhs_nonsmooth",
+        "rhs_arctan",
+    }
+    assert all(f"`{name}`" in text for name in expected)
+
+
 @pytest.mark.literature_traceability
 def test_scope_has_required_literature_rows() -> None:
     text = _read(SCOPE)
-    assert "| Article | System / object | Order | Method in article | Library coverage | Library extension | Library modules / evidence |" in text
-    for author in ("Kuznetsov", "Danca", "Wu", "Machado", "Matignon", "Diethelm", "Caputo", "Guan", "Ghoreishi"):
-        assert author in text
-    rows = [line for line in text.splitlines() if line.startswith("| ")][1:]
-    assert len(rows) >= 20
+    assert "Published reference coverage" in text
+    assert "validation/published_reference_coverage.json" in text
+    assert "partial reference implementation" in text
+    assert "| Article | System / object |" not in text
 
 
 @pytest.mark.scientific_contract
 def test_legacy_hidden_verified_appears_only_in_alias_note() -> None:
     text = _read(SCOPE)
-    assert text.count("hidden_verified") == 1
-    assert "Legacy `hidden_verified`" in text
-    assert "`hiddenness_supported_under_tested_neighborhoods`" in text
-    assert "`compatible_with_hiddenness_under_tested_radii`" in text
+    assert "hidden_verified" not in text
+    assert "`hidden_under_tested_neighborhoods`" in text
+    assert "`compatible_with_hiddenness`" in text
 
 
 @pytest.mark.literature_traceability

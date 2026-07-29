@@ -12,16 +12,20 @@ if str(workspace_root / "version_2") not in sys.path:
 
 from hidden_attractors.workflows.config_loader import load_config
 from hidden_attractors.workflows.basin_runner import run_basin_workflow
-from hidden_attractors.paths import get_packaged_examples_path
+SOFTWARE_FIXTURE = Path(__file__).parent / "fixtures" / "software_validation_fractional.yaml"
 
 
 def test_basin_smoke_all(tmp_path):
-    config_path = get_packaged_examples_path() / "chua_fractional_basin.yaml"
+    config_path = SOFTWARE_FIXTURE
     cfg = load_config(config_path)
     
     cfg["output_dir"] = str(tmp_path)
     cfg["plot_enabled"] = False
     cfg["use_c_backend"] = False
+    cfg["equilibrium_tol"] = 0.5
+    cfg["target_match_metric"] = "centroid_distance"
+    cfg["target_match_tol"] = 0.5
+    cfg["basin"]["enabled"] = True
     
     # Configure fast smoke run
     cfg["basin"]["grid_n"] = 3
@@ -61,12 +65,16 @@ def test_basin_smoke_all(tmp_path):
 
 
 def test_basin_smoke_single_eq(tmp_path):
-    config_path = get_packaged_examples_path() / "chua_fractional_basin.yaml"
+    config_path = SOFTWARE_FIXTURE
     cfg = load_config(config_path)
     
     cfg["output_dir"] = str(tmp_path)
     cfg["plot_enabled"] = False
     cfg["use_c_backend"] = False
+    cfg["equilibrium_tol"] = 0.5
+    cfg["target_match_metric"] = "centroid_distance"
+    cfg["target_match_tol"] = 0.5
+    cfg["basin"]["enabled"] = True
     
     cfg["basin"]["grid_n"] = 3
     cfg["basin"]["t_final"] = 0.1

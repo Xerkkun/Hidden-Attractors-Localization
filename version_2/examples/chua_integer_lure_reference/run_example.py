@@ -1,5 +1,5 @@
 ﻿#!/usr/bin/env python3
-"""Reproducible integer-order Chua Lur'e example for the report."""
+"""Reproducible integer-order Chua Lur'e validation example."""
 
 from __future__ import annotations
 
@@ -82,8 +82,12 @@ def _seed_payload(seed: HarmonicSeed) -> dict[str, Any]:
     }
 
 
-def load_config(*, quick: bool = False) -> dict[str, Any]:
-    cfg = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+def load_config(
+    *,
+    config_path: Path = CONFIG_PATH,
+    quick: bool = False,
+) -> dict[str, Any]:
+    cfg = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     if quick:
         cfg["seed_search"]["nscan"] = 3000
         cfg["continuation"]["lambda_values"] = [0.0, 0.25, 0.5, 0.75, 1.0]
@@ -107,6 +111,13 @@ def output_dir(cfg: dict[str, Any]) -> Path:
 
 def figure_dir(cfg: dict[str, Any]) -> Path:
     return VERSION2 / cfg["outputs"]["figures_dir"]
+
+
+def _display_path(path: Path) -> str:
+    try:
+        return path.relative_to(VERSION2).as_posix()
+    except ValueError:
+        return str(path)
 
 
 def build_system(cfg: dict[str, Any]):
@@ -229,7 +240,7 @@ def run_figures(cfg: dict[str, Any], context: dict[str, Any]) -> None:
     plot_lure_nyquist_describing_function(system.lure, seed, figures / "integer_lure_nyquist.png", q=1.0)
     plot_lure_transfer_components(system.lure, seed, figures / "integer_lure_transfer_components.png", q=1.0)
     plot_integer_lure_continuation(steps, figures / "integer_lure_continuation.png")
-    plot_phase_space(trajectory, figures / "integer_lure_attractor.png", title="Integer Chua Lure candidate")
+    plot_phase_space(trajectory, figures / "integer_lure_attractor.png", title="Integer Chua Lure reference")
     plot_phase_projections(trajectory, figures / "integer_lure_projections.png", title="Integer Chua Lure projections")
     plot_integer_hiddenness_controls(trajectory, probes, figures / "integer_lure_hiddenness_controls.png")
     plot_trajectory_spectra(trajectory, figures, method="fft", prefix="integer_lure")
@@ -254,8 +265,18 @@ def run_figures(cfg: dict[str, Any], context: dict[str, Any]) -> None:
         plot_lyapunov_convergence(lyap, figures / "integer_lure_lyapunov_convergence.png")
 
 
-def run_selected(steps: list[str], *, quick: bool = False) -> None:
-    cfg = load_config(quick=quick)
+def run_selected(
+    steps: list[str],
+    *,
+    quick: bool = False,
+    output_override: Path | None = None,
+    config_path: Path = CONFIG_PATH,
+) -> None:
+    cfg = load_config(config_path=config_path, quick=quick)
+    if output_override is not None:
+        destination = output_override.resolve()
+        cfg["outputs"]["output_dir"] = str(destination)
+        cfg["outputs"]["figures_dir"] = str(destination / "figures")
     context: dict[str, Any] = {}
     if "search" in steps:
         run_search(cfg, context)
@@ -269,8 +290,8 @@ def run_selected(steps: list[str], *, quick: bool = False) -> None:
         "case_id": cfg["case_id"],
         "steps": steps,
         "quick": quick,
-        "output_dir": str(output_dir(cfg).relative_to(VERSION2)),
-        "figures_dir": str(figure_dir(cfg).relative_to(VERSION2)),
+        "output_dir": _display_path(output_dir(cfg)),
+        "figures_dir": _display_path(figure_dir(cfg)),
     })
     print(f"output_dir={output_dir(cfg)}")
 
@@ -284,8 +305,24 @@ def main() -> None:
         default=["search", "continuation", "verification", "figures"],
     )
     parser.add_argument("--quick", action="store_true")
+    parser.add_argument(
+        "--config",
+        type=Path,
+        default=CONFIG_PATH,
+        help="YAML configuration for the integer reference workflow.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        help="Write all sample products to this directory.",
+    )
     args = parser.parse_args()
-    run_selected(args.steps, quick=args.quick)
+    run_selected(
+        args.steps,
+        quick=args.quick,
+        output_override=args.output_dir,
+        config_path=args.config,
+    )
 
 
 if __name__ == "__main__":

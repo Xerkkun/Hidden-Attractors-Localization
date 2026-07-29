@@ -13,6 +13,7 @@ import numpy as np
 
 from hidden_attractors.systems import get_system
 from hidden_attractors.analysis.lyapunov_api import compute_lyapunov_spectrum
+from hidden_attractors.integrations.selector import normalize_fractional_order
 from hidden_attractors.plotting.lyapunov import plot_lyapunov_convergence_styled
 from hidden_attractors.reproducibility import collect_run_metadata, write_run_metadata
 from hidden_attractors.workflows.config_loader import save_effective_config
@@ -32,12 +33,12 @@ def run_lyapunov_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         Results summary.
     """
     system_id = config.get("system_id", "chua_fractional_saturation")
-    integrator = config.get("integrator", "efork3")
     q = config.get("q")
     output_dir = Path(config.get("output_dir", "outputs"))
     
     lyap_cfg = config.get("lyapunov", {})
-    method = lyap_cfg.get("method", "fractional_variational_abm_qr")
+    if not isinstance(lyap_cfg, dict):
+        raise TypeError("lyapunov configuration must be a mapping")
     
     t_final = float(lyap_cfg.get("t_final", 500.0))
     t_burn = float(lyap_cfg.get("t_burn", 100.0))
@@ -45,13 +46,26 @@ def run_lyapunov_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     
     x0 = np.asarray(lyap_cfg.get("initial_condition", [0.1, 0.0, 0.0]), dtype=float)
     
-    reorth_every = lyap_cfg.get("orthonormalization_interval", 10)
-    
     system = get_system(system_id)
     if q is None:
-        q = float(system.parameters.get("q", 0.99))
+        q = normalize_fractional_order(system.parameters.get("q", 0.99))
     else:
-        q = float(q)
+        q = normalize_fractional_order(q)
+
+    method = lyap_cfg.get("method")
+    if method is None:
+        method = (
+            "integer_qr_benettin"
+            if q == 1.0
+            else "fractional_variational_abm_qr"
+        )
+    method = str(method)
+
+    if "reorthonormalize_every" in lyap_cfg:
+        reorth_every = lyap_cfg["reorthonormalize_every"]
+    else:
+        # Backward-compatible alias retained for the original example config.
+        reorth_every = lyap_cfg.get("orthonormalization_interval", 10)
 
     # Reconstruct system with config parameters
     import dataclasses
@@ -77,8 +91,17 @@ def run_lyapunov_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
 
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    memory_mode = config.get("memory_mode", "full")
-    memory_window = config.get("memory_window_steps") or config.get("memory_window_length", 400)
+    if method == "integer_qr_benettin":
+        # Integer QR-Benettin has no Caputo memory.  Global workflow defaults
+        # commonly contain memory_mode="full"; they must not leak into this
+        # method request.
+        memory_mode = "not_applicable"
+        memory_window = None
+    else:
+        memory_mode = config.get("memory_mode", "full")
+        memory_window = config.get("memory_window_steps")
+        if memory_window is None:
+            memory_window = config.get("memory_window_length", 400)
 
     # Compute Lyapunov spectrum
     summary_obj = compute_lyapunov_spectrum(
@@ -146,6 +169,9 @@ def run_lyapunov_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         "system_id": system_id,
         "q": q,
         "method": method,
+        "reorthonormalize_every": int(reorth_every),
+        "memory_mode": memory_mode,
+        "memory_window": memory_window,
         "status": "completed" if result.status == "ok" else "failed",
         "finite_time": q < 1.0 or bool(result.finite_time_local),
         "spectrum": [float(x) for x in result.exponents],
@@ -174,7 +200,7 @@ def run_lyapunov_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         memory_mode=memory_mode,
         memory_window_steps=memory_window,
         integrator_name=method,
-        integrator_backend="python" if "python" in method else "native",
+        integrator_backend="python",
         caputo=q < 1.0,
         parameters=system_params,
         extra={"largest_exponent": largest_exp, "chaos_indicator": chaos_indicator},
@@ -182,5 +208,13 @@ def run_lyapunov_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
     write_run_metadata(output_dir / "run_metadata.json", metadata)
     print(f"  Metadata saved -> {output_dir / 'run_metadata.json'}")
     
-    save_effective_config(config, str(output_dir))
+    effective_config = dict(config)
+    effective_config["q"] = q
+    effective_config["memory_mode"] = memory_mode
+    effective_config["memory_window_steps"] = memory_window
+    effective_lyapunov = dict(lyap_cfg)
+    effective_lyapunov["method"] = method
+    effective_lyapunov["reorthonormalize_every"] = int(reorth_every)
+    effective_config["lyapunov"] = effective_lyapunov
+    save_effective_config(effective_config, str(output_dir))
     return summary_dict

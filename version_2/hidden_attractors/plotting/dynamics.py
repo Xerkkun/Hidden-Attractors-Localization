@@ -325,10 +325,10 @@ def plot_fractional_continuation_phase_story(
 ) -> str:
     """Plot fractional continuation trajectories directly in phase space.
 
-    The standard report figure overlays each continuation trajectory, marks
-    every initial condition, and connects those initial conditions with a
-    dotted line.  If a final physical trajectory is supplied, it is drawn in
-    red after the continuation path.
+    The phase-space figure overlays each continuation trajectory, marks every
+    initial condition, and connects those initial conditions with a dotted
+    line. If a final trajectory is supplied, it is drawn in red after the
+    continuation path.
     """
 
     if not steps:

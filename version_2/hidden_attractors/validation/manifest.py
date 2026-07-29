@@ -158,7 +158,7 @@ def regenerate_validation_manifest(
             overall_state = "compatible_with_hiddenness"
 
     from ..references.validator import validate_bibliography_manifest
-    claims_manifest_path = PROJECT_ROOT / "references" / "claims_manifest.yaml"
+    claims_manifest_path = PROJECT_ROOT / "validation" / "references" / "claims_manifest.yaml"
     bib_res = validate_bibliography_manifest(claims_manifest_path, strict=False)
 
     manifest = {
@@ -188,7 +188,11 @@ def regenerate_validation_manifest(
             "claims_total": bib_res["claims_total"],
             "references_used": bib_res["references_used"],
             "missing_claim_references": [c.get("claim_id") for c in bib_res.get("claims_missing_references", [])],
-            "traceability_manifest": claims_manifest_path.relative_to(PROJECT_ROOT).as_posix() if claims_manifest_path.exists() else "references/claims_manifest.yaml"
+            "traceability_manifest": (
+                claims_manifest_path.relative_to(PROJECT_ROOT).as_posix()
+                if claims_manifest_path.exists()
+                else "validation/references/claims_manifest.yaml"
+            )
         },
         "dirty": bool(actual_provenance.get("working_tree_dirty", False)),
     }

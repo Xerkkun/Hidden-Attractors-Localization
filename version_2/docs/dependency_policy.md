@@ -50,15 +50,12 @@ Core dependencies (`numpy`, `matplotlib`, `scipy`) are pinned with a **lower bou
 
 ---
 
-## Upgrade schedule
+## Compatibility bounds
 
-Bounds are reviewed and updated according to this cadence:
-
-1. **Quarterly**: Run `pip index versions <pkg>` and check SPEC-0 tables.
-2. **On each minor release** (`0.x.0`): drop any package version whose
-   SPEC-0 window has closed; bump the lower bound.
-3. **Never use upper bounds** (`<2.0`) unless a known API break requires it.
-   If needed, open an issue and document the reason.
+The declared bounds describe the versions supported by this release.
+Upper bounds are used only for a documented incompatibility; exact
+environment snapshots belong in validation records rather than the public
+runtime requirements.
 
 ---
 

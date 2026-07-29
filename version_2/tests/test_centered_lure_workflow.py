@@ -17,7 +17,10 @@ from hidden_attractors.lure.transfer import W_eval
 from hidden_attractors.lure.describing_function import N_quadrature
 from hidden_attractors.verification.stability import classify_equilibrium_stability
 from hidden_attractors.integrations.abm import caputo_abm_integrate
-from hidden_attractors.workflows.centered_lure_df import run_centered_lure_df_workflow
+from hidden_attractors.workflows.centered_lure_df import (
+    build_eta_grid,
+    run_centered_lure_df_workflow,
+)
 
 def get_system_by_id(system_id: str, **kwargs) -> Any:
     name_map = {
@@ -143,23 +146,54 @@ def test_smoke_workflow_short_runs(tmp_path):
         "system_id": "chua_integer_saturation",
         "q": 1.0,
         "transfer_mode": "integer",
+        "seed_mode": "integer",
         "continuation_mode": "integer",
+        "dynamics_mode": "integer",
         "integrator": "heun",
-        "memory_mode": "full",
+        "memory_mode": "none",
+        "memory_policy": "none",
+        "use_c_backend": False,
+        "allow_python_fallback": True,
         "run_hiddenness_tests": False, # 8. run_hiddenness_tests = false skips
         "run_basin_slices": False,
+        "run_sphere_tests": False,
         "plot_enabled": False,
         "save_figures": False,
         "output_dir": str(tmp_path),
+        "seed_strategy": "k_phi",
+        "seed_sign_convention": "kuznetsov",
+        "seed_construction": "modal",
+        "seed_theta": 0.0,
+        "describing_function_mode": "auto",
+        "branch_index": 0,
         "amplitude_min": 1.0,
         "amplitude_max": 8.0,
         "omega_min": 0.5,
         "omega_max": 3.0,
         "grid_size_omega": 20,
         "grid_size_amplitude": 20,
-        "t_final": 5.0, # short run
-        "t_burn": 2.0,
-        "h": 0.02
+        "root_refinement": True,
+        "df_residual_tol": 1.0e-2,
+        "transfer_convention": "standard",
+        "harmonic_condition": "1_minus_WN",
+        "divergence_norm": 120.0,
+        "equilibrium_tol": 0.5,
+        "target_match_metric": "nn_percentile",
+        "target_match_tol": 0.5,
+        "final_simulation": {
+            "t_final": 5.0,
+            "t_burn": 2.0,
+        },
+        "continuation": {
+            "lambda_values": [0.0, 1.0],
+            "use_period_based_times": False,
+            "t_transient": 0.2,
+            "t_keep": 0.2,
+            "early_stop_enabled": False,
+            "require_c_backend": False,
+            "allow_python_fallback": True,
+        },
+        "h": 0.02,
     }
     
     res = run_centered_lure_df_workflow(config)
@@ -172,3 +206,26 @@ def test_smoke_workflow_short_runs(tmp_path):
     # Check fields in summary
     assert res["system_id"] == "chua_integer_saturation"
     assert res["status"] in {"df_seed_found", "df_seed_not_found"}
+
+
+def test_continuation_grid_has_no_implicit_scientific_values():
+    with pytest.raises(ValueError, match="Continuation requires explicit values"):
+        build_eta_grid({})
+
+
+def test_continuation_grid_rejects_adaptive_mode():
+    with pytest.raises(ValueError, match="implicit adaptive grids are not supported"):
+        build_eta_grid(
+            {
+                "eta_grid_mode": "adaptive",
+                "eta_min": 0.1,
+                "eta_max": 1.0,
+                "n_eta": 3,
+                "start_at_zero": False,
+            }
+        )
+
+
+def test_explicit_continuation_values_are_used_exactly():
+    grid = build_eta_grid({"lambda_values": [0.0, 0.25, 1.0]})
+    assert np.array_equal(grid, np.array([0.0, 0.25, 1.0]))

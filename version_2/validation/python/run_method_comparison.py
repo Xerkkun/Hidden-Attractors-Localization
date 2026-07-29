@@ -16,11 +16,11 @@ for item in (PROJECT_ROOT, Path(__file__).resolve().parent):
     if str(item) not in sys.path:
         sys.path.insert(0, str(item))
 
-from hidden_attractors.analysis.integrated_chaos_validator import (  # noqa: E402
+from validation.python.integrated_chaos_validator import (  # noqa: E402
     CASE_Q,
     normalize_lyapunov_case_evidence,
 )
-from hidden_attractors.analysis.method_comparison import (  # noqa: E402
+from validation.python.method_comparison import (  # noqa: E402
     classify_method_row,
     compare_f5_diagnostics,
     compare_lyapunov_methods,

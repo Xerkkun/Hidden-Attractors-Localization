@@ -19,7 +19,10 @@ ha.PUBLIC_API_EXPERIMENTAL
 ha.PUBLIC_API_TIERS
 ```
 
-`PUBLIC_API_STABLE` contains the model, system-registry, basin-label, IO, and candidate-loading entry points with stable guarantees. `PUBLIC_API_EXPERIMENTAL` contains diagnostics, seed generation, workflow specs, and workflow runners that are tested and documented but may evolve with changelog notes.
+`PUBLIC_API_STABLE` contains model, system-registry, basin-label, and IO entry
+points with stable guarantees. `PUBLIC_API_EXPERIMENTAL` contains independent
+diagnostics, seed generation, workflow specs, and workflow runners that are
+tested and documented but may evolve with changelog notes.
 
 Compatibility aliases such as old piecewise Chua names are importable only to read historical runs. They are intentionally excluded from `__all__` and from the stable tier lists. Internal implementation modules such as `hidden_attractors.cli`, `native`, `parallel`, and `paths` are also not promoted by top-level export.
 
@@ -38,7 +41,6 @@ Compatibility aliases such as old piecewise Chua names are importable only to re
 | `hidden_attractors.systems` | `ChaoticSystem`, `LureSystem`, registry API |
 | `hidden_attractors.basins` | `CLASS_LABELS`, `class_label`, `is_target_class` |
 | `hidden_attractors.io` | JSON/CSV read-write, `load_trajectory_csv` |
-| `hidden_attractors.candidates` | `CandidateRecord`, `load_final_candidate_records` |
 
 ---
 
@@ -51,10 +53,10 @@ Compatibility aliases such as old piecewise Chua names are importable only to re
 
 | Module | Contents |
 | --- | --- |
-| `hidden_attractors.analysis` | Lyapunov, spectral, bifurcation, trajectory metrics |
+| `hidden_attractors.analysis` | Lyapunov, scalar-time-series Lyapunov, Kaplan--Yorke dimension, spectral, bifurcation, boundedness, Poincare, 0-1, and trajectory metrics |
 | `hidden_attractors.seed_generation` | Harmonic-balance seeds - Chua-specific and generic Lur'e |
 | `hidden_attractors.seed_generation.core` | Shared dataclasses, `validate_fractional_order` |
-| `hidden_attractors.seed_generation.chua` | DF, biased helpers, `find_harmonic_seed` (Machado/FDF is internal/planned support only) |
+| `hidden_attractors.seed_generation.chua` | Implemented DF helpers and `find_harmonic_seed` |
 | `hidden_attractors.seed_generation.lure` | Lur'e DF, `find_lure_harmonic_seed` |
 | `hidden_attractors.solvers` | Fractional solver interfaces, EFORK wrapper |
 | `hidden_attractors.plotting` | Phase-space and time-series plot helpers |
@@ -81,13 +83,11 @@ Compatibility aliases such as old piecewise Chua names are importable only to re
 
 ### legacy
 
-> **Guarantee**: No symbol will be removed and no behaviour will change.
-> The module is frozen.  No new features will be added.  Reusable mathematics
-> is being gradually migrated into `stable` or `experimental` modules.
+> **Guarantee**: Compatibility annotation only.
 
-| Module | Contents |
-| --- | --- |
-| `hidden_attractors.legacy` | Facade over `tools/legacy/` historical scripts |
+The `LEGACY` constant remains available for tier introspection of historical
+symbol aliases. It does not correspond to an importable
+`hidden_attractors.legacy` module or to an installed legacy command surface.
 
 ---
 

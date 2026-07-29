@@ -1,27 +1,26 @@
 # Testing Policy
 
-## Permanent tests
+## Core tests
 
-Protect installation, public CLI, scientific contracts, validation contracts,
-figure export contracts, bibliographic traceability and repository hygiene.
+Core tests protect installation, the public API and CLI, numerical contracts,
+supported configuration schemas, and repository hygiene.
 
-## Slow tests
+## Extended tests
 
-Reproduce published cases, long integrations, full hiddenness probes,
-full report generation and solver-memory comparisons.
+Computationally expensive checks are marked explicitly. They are retained when
+they verify a documented numerical method or reproduce a published reference,
+and their evidence boundary remains attached to the corresponding test data.
 
-## Migration tests
+## Validation boundary
 
-Temporary tests used during refactors. They must either become general
-invariants or be removed after the migration is closed.
+Passing software tests demonstrates conformance to their recorded contracts.
+It does not by itself certify chaos, hiddenness, physical performance, or a
+scientific result.
 
-## Deprecated aliases
+## Maintenance
 
-Compatibility tests for old commands. These are removed after the documented
-deprecation window.
-
-## Deletion rule
-
-A passing test is not deleted because it passed. It is deleted only if it is
-redundant, obsolete, fragile without protecting a contract, or replaced by a
-stronger invariant.
+- Refactor-specific checks are retained only when they protect a current,
+  general invariant.
+- Compatibility tests cover only documented public aliases.
+- A test is removed only when it is redundant, obsolete, or replaced by a
+  stronger invariant.

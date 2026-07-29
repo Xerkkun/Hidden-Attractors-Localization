@@ -7,7 +7,7 @@
   "published_lane": {
     "method_id": "fractional_variational_dk2018_block_restart_abm_gs",
     "source_summary": "validation/chaos_validation/lyapunov_methods/fractional_variational_dk2018_block_restart_abm_gs_published/validation_summary.json",
-    "source_status": "published_benchmarks_pending_reproduced_discrepancy",
+    "source_status": "recorded_published_benchmark_discrepancy",
     "lorenz_status": "published_benchmark_passed_quantitative",
     "rabinovich_fabrikant_status": "published_benchmark_failed",
     "documented_discrepancy": "RF lambda_3 exceeds the absolute tolerance."

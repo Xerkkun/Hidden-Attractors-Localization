@@ -45,19 +45,19 @@ To install the library in editable mode for development, running tests, or build
 From the workspace root directory:
 
 ```bash
-python -m pip install -e "version_2[dev,analysis,docs,legacy]"
+python -m pip install -e "version_2[dev,analysis,docs]"
 ```
 
 From the `version_2/` directory:
 
 ```bash
-python -m pip install -e ".[dev,analysis,docs,legacy]"
+python -m pip install -e ".[dev,analysis,docs]"
 ```
 
 On Windows PowerShell:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -e ".\version_2[dev,analysis,docs,legacy]"
+.\.venv\Scripts\python.exe -m pip install -e ".\version_2[dev,analysis,docs]"
 ```
 
 ---
@@ -160,10 +160,11 @@ Archived validation records are stored under `validation/freeze_audit/`.
 
 ## Step 4: Run a Quick Test Experiment
 
-To verify that the installation is fully functional, try running the official example of the fractional non-smooth Chua system with a biased describing function in quick mode:
+To verify that the installation is functional, run the generic equilibrium
+quick start:
 
 ```bash
-python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick
+python examples/quickstart_equilibria.py
 ```
 
-The outputs (CSV trajectories and reports) will be written to `outputs/example_chua_nonsmooth_biased_hidden_attractor/` and the generated graphics will be exported to `version_2/library_figures/`.
+The command prints each registered equilibrium and its vector-field residual.

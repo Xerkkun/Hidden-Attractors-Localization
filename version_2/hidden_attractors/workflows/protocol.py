@@ -6,10 +6,10 @@ Stability: experimental
     output must use the stage order, seed families, and verdicts defined here.
 
 Scientific boundary:
-    Describing functions, Lur'e reconstruction, and Machado/FDF are
-    seed-generation mechanisms. They never establish hiddenness. A hiddenness
-    label can be emitted only after continuation, target reproduction under
-    robustness checks, and equilibrium-neighborhood plus basin tests.
+    Describing functions and Lur'e reconstruction are seed-generation
+    mechanisms. They never establish hiddenness. A hiddenness label can be
+    emitted only after continuation, target reproduction under robustness
+    checks, and equilibrium-neighborhood plus basin tests.
 """
 
 from __future__ import annotations
@@ -61,11 +61,6 @@ SEED_FAMILIES: tuple[str, ...] = (
     "lure_classical_biased",
 )
 
-PLANNED_SEED_FAMILIES: tuple[str, ...] = (
-    "machado_centered",
-    "machado_biased",
-)
-
 CURRENT_FINAL_LABELS: tuple[str, ...] = (
     "candidate",
     "hidden_under_tested_neighborhoods",
@@ -105,8 +100,6 @@ SOFT_PRECHECK_LABELS: tuple[str, ...] = (
 SeedFamily = Literal[
     "lure_classical_centered",
     "lure_classical_biased",
-    "machado_centered",
-    "machado_biased",
 ]
 FinalLabel = Literal[
     "seed_only",
@@ -206,7 +199,7 @@ class NumericalContract:
 
 @dataclass(frozen=True)
 class UnifiedSeedRecord:
-    """Uniform seed record shared by classical Lur'e and Machado/FDF families."""
+    """Uniform seed record for the maintained classical Lur'e families."""
 
     family: SeedFamily
     centered_or_biased: Literal["centered", "biased"]

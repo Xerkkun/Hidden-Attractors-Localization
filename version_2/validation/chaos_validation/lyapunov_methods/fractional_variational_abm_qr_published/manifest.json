@@ -2,6 +2,6 @@
   "schema_version": "1.0",
   "method_id": "fractional_variational_abm_qr",
   "execution_contract": "fixed_lower_limit_full_history_qr",
-  "status": "published_benchmarks_pending",
+  "status": "not_validated_against_published_benchmarks",
   "numeric_outputs_policy": "generated_only_after_contract_specific_quantitative_validation"
 }

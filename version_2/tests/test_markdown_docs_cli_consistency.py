@@ -7,62 +7,25 @@ from tests.helpers.test_documentation_text import active_doc_paths, read
 ROOT_DIR = Path(__file__).resolve().parents[1]  # version_2 directory
 WORKSPACE_DIR = ROOT_DIR.parent
 
-LEGACY_COMMANDS = {
-    "hidden-attractors-check-validation",
-    "hidden-attractors-protocol",
-    "hidden-attractors-sphere-controls",
-    "hidden-attractors-refined-basin",
-    "hidden-attractors-fractional-report-run",
-    "hidden-attractors-robustness-overlay",
-    "hidden-attractors-danca-abm-sphere-controls",
-}
-
-DEPRECATION_KEYWORDS = [
-    "legacy",
-    "deprecated",
-    "migration",
-    "no longer installed",
-    "not public",
-    "no público",
-    "no se instala",
-    "no ejecutar",
-    "ya no",
-    "antiguos",
-    "deprecación",
-    "históricos",
-    "antiguas",
-]
-
 @pytest.mark.hygiene
 def test_markdown_docs_cli_consistency():
-    """Verify that only the unified CLI is recommended and legacy command usage is deprecated in markdown docs."""
-    violations_legacy = []
+    """Verify that executable examples use the unified CLI token."""
+    violations = []
     docs = active_doc_paths()
     
     for f in docs:
         content = read(f)
         
-        # Check active code blocks (bash, sh, shell, powershell, cmd, text)
         code_blocks = re.findall(r"```(?:bash|sh|shell|powershell|cmd|text)?\n(.*?)```", content, re.DOTALL)
         for block in code_blocks:
-            for cmd in LEGACY_COMMANDS:
-                if cmd in block:
-                    # Exclude explicit legacy/migration files or sections
-                    if "cli_migration_legacy_entrypoints" not in f.name and "migration" not in block.lower():
-                        violations_legacy.append(f"{f.name} (code block) -> '{cmd}' is actively recommended/written as an executable command")
-
-        # Check line-by-line deprecation context for legacy commands
-        for line_num, line in enumerate(content.splitlines(), 1):
-            for cmd in LEGACY_COMMANDS:
-                if cmd in line:
-                    if "cli_migration_legacy_entrypoints" not in f.name:
-                        has_context = any(kw.lower() in line.lower() for kw in DEPRECATION_KEYWORDS)
-                        if not has_context:
-                            violations_legacy.append(f"{f.name}:L{line_num} -> '{line.strip()}' contains '{cmd}' without deprecation context")
+            for line in block.splitlines():
+                token = line.strip().split(maxsplit=1)[0] if line.strip() else ""
+                if token.startswith("hidden-attractors-"):
+                    violations.append(f"{f.name} -> unsupported executable token '{token}'")
                         
-    assert not violations_legacy, (
-        "Legacy commands found inside active script blocks or without proper deprecation context:\n"
-        + "\n".join(violations_legacy)
+    assert not violations, (
+        "Standalone command tokens found instead of the unified CLI:\n"
+        + "\n".join(violations)
     )
 
 @pytest.mark.hygiene
@@ -86,33 +49,28 @@ def test_markdown_docs_no_outdated_test_counts():
 
 @pytest.mark.hygiene
 def test_markdown_docs_reference_manuals():
-    """Verify that primary markdown documentation files reference USER_MANUAL.md or THESIS_CLAIMS.md."""
+    """Verify that public entry documents point readers to USER_MANUAL.md."""
     core_docs = [
         WORKSPACE_DIR / "README.md",
         ROOT_DIR / "README.md",
         ROOT_DIR / "REFERENCE_GUIDE.md",
-        ROOT_DIR / "docs/validation_evidence.md",
-        ROOT_DIR / "docs/unified_report.md",
-        ROOT_DIR / "docs/figure_export_policy.md",
     ]
     
     violations = []
     for f in core_docs:
         if f.exists():
             content = read(f)
-            has_manual = "USER_MANUAL.md" in content
-            has_claims = "THESIS_CLAIMS.md" in content
-            if not (has_manual or has_claims):
-                violations.append(f"{f.name} lacks reference to both USER_MANUAL.md and THESIS_CLAIMS.md")
+            if "USER_MANUAL.md" not in content:
+                violations.append(f"{f.name} lacks a reference to USER_MANUAL.md")
             
     assert not violations, (
-        "Primary documentation files missing links to USER_MANUAL.md or THESIS_CLAIMS.md:\n"
+        "Public entry documents missing links to USER_MANUAL.md:\n"
         + "\n".join(violations)
     )
 
 @pytest.mark.hygiene
 def test_development_installation_is_complete():
-    """Verify that development installation recommendations contain all extras [dev,analysis,docs,legacy]."""
+    """Verify that development installation recommendations include supported extras."""
     violations = []
     docs = active_doc_paths()
     
@@ -170,7 +128,7 @@ def test_release_docs_have_submission_strict_validation():
     ]
     
     violations = []
-    target_cmd = "validate release-readiness --submission-strict"
+    target_cmd = "tools/release/validate_release_readiness.py --submission-strict"
     
     for f in release_docs:
         if f.exists():
@@ -182,4 +140,3 @@ def test_release_docs_have_submission_strict_validation():
         "Release documentation files missing required submission-strict validation command:\n"
         + "\n".join(violations)
     )
-

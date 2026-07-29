@@ -14,11 +14,11 @@ def test_user_manual_exists_and_content_integrity():
     
     # Required references
     required_references = [
-        "thesis_claims.md",
         "validation/freeze_audit/",
-        "docs/figure_export_policy.md",
-        "docs/dependency_policy.md",
         "docs/quick_start.md",
+        "docs/scientific_scope.md",
+        "docs/api_stability.md",
+        "docs/citation.md",
     ]
     for ref in required_references:
         assert ref.lower() in content_lower, f"Required reference '{ref}' is missing in USER_MANUAL.md"
@@ -29,8 +29,7 @@ def test_user_manual_exists_and_content_integrity():
     
     # Key sections or equivalent text
     required_terms = [
-        "hiddenness verification protocol",
-        "evidence states",
+        "evidence states and hiddenness verification",
         "limitations",
         "troubleshooting",
     ]

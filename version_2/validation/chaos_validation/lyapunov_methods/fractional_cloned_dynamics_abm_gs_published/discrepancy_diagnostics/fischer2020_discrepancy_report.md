@@ -6,7 +6,7 @@ F3 was executed against 24 published Fischer 2020 rows. It produced 10
 quantitative passes, 6 sign-pattern passes, and 8 failures. Therefore the
 method remains `validated=False`.
 
-The official status remains `published_benchmarks_pending_discrepancy`.
+The official status remains `recorded_published_benchmark_discrepancy`.
 This diagnostic layer classifies the recorded results; it does not tune
 parameters to force agreement and it does not promote validation.
 
@@ -68,7 +68,7 @@ parameters to force agreement and it does not promote validation.
 ### Jerk
 
 - Several rows retain large `lambda_3` discrepancies.
-- Review the exponential nonlinearity scale, `T_clone`, and ABM protocol interpretation.
+- The exponential nonlinearity scale, `T_clone`, and ABM protocol interpretation remain unresolved contributors.
 
 ## Ordered hypotheses
 
@@ -88,20 +88,23 @@ A quantitative absolute-error pass may still cross the strict sign boundary
 for near-zero exponents. Use the additional diagnostic field
 `near_zero_sign_boundary` before interpreting sign failures.
 
-## Recommendations
+## Current validation boundary
 
-- Do not promote F3.
-- Review the completed bounded `T_clone` and `delta` sweeps before extending costly variants.
-- Validate ABM `q=1` against an exact solution.
-- Compare integer jerk against the independent reusable RK4 integrator.
-- Review whether the article uses a transient before clone accumulation.
-- Review whether clones restart on a long fiducial trajectory or restart block-locally.
+- F3 is not promoted.
+- The completed bounded `T_clone` and `delta` sweeps are the retained extent of this diagnostic record.
+- An exact-solution ABM `q=1` validation is not present in this record.
+- An independent reusable-RK4 comparison for the integer jerk case is not present in this record.
+
+## Unresolved protocol information
+
+- The available article description does not resolve whether a transient precedes clone accumulation.
+- The available article description does not resolve whether clones restart on a long fiducial trajectory or block-locally.
 
 ## Methodological declaration
 
 Passing or failing F3 does not validate or invalidate F2.
 F3 does not certify chaos. F3 does not certify hiddenness.
-The current state is `published_benchmarks_pending_discrepancy`.
+The current state is `recorded_published_benchmark_discrepancy`.
 
 ## Reproduction limitations and missing article data
 

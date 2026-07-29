@@ -35,10 +35,8 @@ def test_f3_summary_remains_conservative() -> None:
         ).read_text(encoding="utf-8")
     )
     assert summary["status"] in {
-        "published_benchmarks_not_run",
-        "published_benchmarks_pending_discrepancy",
-        "published_benchmarks_inconclusive_numerical_failure",
-        "published_sign_pattern_supported_not_quantitatively_validated",
+        "recorded_published_benchmark_discrepancy",
+        "not_validated_against_published_benchmarks",
     }
     assert summary["validated"] is False
     assert summary["validated_against_published_benchmarks"] is False

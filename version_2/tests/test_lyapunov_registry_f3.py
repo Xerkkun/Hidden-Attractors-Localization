@@ -11,7 +11,7 @@ def test_published_gs_registry_contract() -> None:
     assert info.requires_jacobian is False
     assert info.method_type == "cloned_dynamics"
     assert info.memory_protocol == "published_block_restart"
-    assert info.benchmark_status == "published_benchmarks_pending_discrepancy"
+    assert info.benchmark_status == "recorded_benchmark_discrepancy"
     assert info.supports_q_equal_1 is True
     assert info.supports_incommensurate is True
 
@@ -23,7 +23,7 @@ def test_qr_registry_contract() -> None:
     assert info.validated_against_published_benchmarks is False
     assert info.requires_jacobian is False
     assert info.orthonormalization == "qr"
-    assert info.benchmark_status == "internal_variant_pending"
+    assert info.benchmark_status == "numerical_comparison_only"
 
 
 def test_fractional_variational_validation_status_is_unchanged() -> None:

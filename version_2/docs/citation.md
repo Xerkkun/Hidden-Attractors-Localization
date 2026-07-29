@@ -1,11 +1,31 @@
 # Citation
 
-The software package is citable using the archived software release metadata. For formal academic and scientific attribution, cite the repository and archived software DOI:
+Use the archived software metadata for academic attribution:
 
-- **Archived software DOI**: [10.17605/OSF.IO/ZGK74](https://doi.org/10.17605/OSF.IO/ZGK74)
-- **Repository URL**: [https://github.com/Xerkkun/Hidden-Attractors-Localization](https://github.com/Xerkkun/Hidden-Attractors-Localization)
-- **CITATION.cff**: Metadata, author affiliations, and related bibliography are defined in the repository root `CITATION.cff`.
+- **Archived software DOI**:
+  [10.17605/OSF.IO/ZGK74](https://doi.org/10.17605/OSF.IO/ZGK74)
+- **Repository**:
+  [Xerkkun/Hidden-Attractors-Localization](https://github.com/Xerkkun/Hidden-Attractors-Localization)
+- **Release metadata**: `CITATION.cff` in the repository root
 
-For fractional results, cite `docs/reporte_unificado_chua_fraccionario.tex` or its generated PDF and include the exact commit hash when sharing numerical results. For the integer-order Chua `q=1` reference case, cite the promoted source registry in `validation/reference_cases/chua_integer_q1/08_literature_comparison/` and the supplied theoretical report recorded there.
+When reporting a numerical result, also record:
 
-For numerical-method claims involving the three-stage EFORK method, cite Ghoreishi, Ghaffari, and Saad (2023) and the reproduction package at `validation/reference_cases/efork3_ghoreishi_ghaffari/`, which archives the provided implementation provenance and the reproduced published tables.
+- the package version and exact commit;
+- the input configuration or API arguments;
+- solver, step, horizon, transient removal, and memory policy;
+- sampling and estimator settings;
+- the result artifact and its checksum; and
+- the primary references for the numerical method.
+
+The completed integer-order Chua reference evidence is stored under
+`validation/reference_cases/chua_integer_q1/`. Results that reproduce that
+record should cite the sources listed in
+[Integer Chua `q=1` Reference](integer_chua_reference.md).
+
+The completed EFORK-3 method reproduction is stored under
+`validation/reference_cases/efork3_ghoreishi_ghaffari/`. Numerical-method
+claims based on that record should cite Ghoreishi, Ghaffari, and Saad (2023)
+as documented in [EFORK-3 Published Validation](efork3_validation.md).
+
+Time-series Lyapunov results delegated to `nolds` should cite the estimator
+sources recorded by the package and report the installed backend version.

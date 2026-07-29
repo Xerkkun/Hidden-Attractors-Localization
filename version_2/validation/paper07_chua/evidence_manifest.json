@@ -2,354 +2,196 @@
   "schema_version": "1.0",
   "package_id": "paper07_chua_tracked_numerical_evidence",
   "path_base": "repository_root",
-  "generated_by": "version_2/tools/sync_paper07_evidence.py",
-  "scientific_scope": "Compact evidence for the reported c590 reconstruction, the corrected nonsmooth probes, and the promoted c590 hiddenness rows, together with the finite representative trajectories used by the spatial probe figures. Checkpoints, figure binaries, exploratory trajectories, and superseded attempts are intentionally excluded.",
-  "artifact_count": 66,
-  "total_size_bytes": 45840437,
+  "generated_by": "version_2/validation/paper07_chua/scripts/sync_paper07_evidence.py",
+  "scientific_scope": "Fixed result-level evidence for the corrected nonsmooth probes and the radius-limited c590 hiddenness rows, together with the finite representative trajectories used by the spatial probe figures.",
+  "artifact_count": 43,
+  "total_size_bytes": 40395711,
   "groups": {
     "c590_hiddenness_rows": {
       "files": 12,
-      "size_bytes": 5341982
-    },
-    "c590_reconstruction": {
-      "files": 22,
-      "size_bytes": 5420876
+      "size_bytes": 5340852
     },
     "nonsmooth_corrected": {
       "files": 13,
       "size_bytes": 8639991
     },
     "probe_story_trajectories": {
-      "files": 19,
-      "size_bytes": 26437588
+      "files": 18,
+      "size_bytes": 26414868
     }
   },
   "artifacts": [
     {
       "group": "c590_hiddenness_rows",
-      "source_path": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r003_rows.csv",
+      "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r003_rows.csv",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r003_rows.csv",
       "size_bytes": 597282,
       "sha256": "e6ec3773afe3c3b4dfe3c9090c8019539927b14717d739cfee1be50e6b214f8e"
     },
     {
       "group": "c590_hiddenness_rows",
-      "source_path": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r003_run_config.json",
+      "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r003_run_config.json",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r003_run_config.json",
-      "size_bytes": 526,
-      "sha256": "8e0fe1613769991b0cebc4489e6ac4880c3058ae66a39311459432661cb61b41"
+      "size_bytes": 339,
+      "sha256": "89f532a23e88b85056d1bda2369dc3677bfeac72c7af1f3cd17e82d0d97ab045"
     },
     {
       "group": "c590_hiddenness_rows",
-      "source_path": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r010_rows.csv",
+      "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r010_rows.csv",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r010_rows.csv",
       "size_bytes": 711754,
       "sha256": "7a36bc3d916a7234f3e065446830039b1b6c6434c3bfcdcbef48806fdbe1e732"
     },
     {
       "group": "c590_hiddenness_rows",
-      "source_path": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r010_run_config.json",
+      "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r010_run_config.json",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r010_run_config.json",
-      "size_bytes": 525,
-      "sha256": "61bfa6a45f8ff17a9f3139d951f64195a5b93b64e228b686243c497e8fe31d3a"
+      "size_bytes": 338,
+      "sha256": "61fa3c17dc63e812d4c1a9182060d022fa64345b487e0555054a8cf17e2da85a"
     },
     {
       "group": "c590_hiddenness_rows",
-      "source_path": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r030_rows.csv",
+      "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r030_rows.csv",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r030_rows.csv",
       "size_bytes": 827042,
       "sha256": "c74042d4ab044ad6f23b45652732d0096b0ae28af6021108e3ac2412b77b74f4"
     },
     {
       "group": "c590_hiddenness_rows",
-      "source_path": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r030_run_config.json",
+      "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r030_run_config.json",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r030_run_config.json",
-      "size_bytes": 525,
-      "sha256": "3a6cc12f6864ec8630f07d898862262507e2d3c54fe368608f8c02e326240161"
+      "size_bytes": 338,
+      "sha256": "d1eabd73f395bce9b127355d6ed51da24fa0a2d3ee2f32045b19dc71d4be27f8"
     },
     {
       "group": "c590_hiddenness_rows",
-      "source_path": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r100_rows.csv",
+      "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_rows.csv",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_rows.csv",
       "size_bytes": 940534,
       "sha256": "4e95ffdf7e20b9555d8fe2b9cdd034ab62cb4eccb1c736fac0c4eae091eb1a38"
     },
     {
       "group": "c590_hiddenness_rows",
-      "source_path": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r100_run_config.json",
+      "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_run_config.json",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_run_config.json",
-      "size_bytes": 525,
-      "sha256": "263d52dfd2b7881ec608e1d28c13659cddb2b185e3cd228476162155c0a14aca"
+      "size_bytes": 338,
+      "sha256": "53edb728d125f1e9bb7169346cd19ad10a2d9ec5cd32f8ffea75e4f2ebb28b2c"
     },
     {
       "group": "c590_hiddenness_rows",
-      "source_path": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r200_rows.csv",
+      "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r200_rows.csv",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r200_rows.csv",
       "size_bytes": 1057837,
       "sha256": "6a43f090c45515bc383421f5d835e2e5a6cd0e09d6ea78a4f07a4eadfaa58ccd"
     },
     {
       "group": "c590_hiddenness_rows",
-      "source_path": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_r200_run_config.json",
+      "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r200_run_config.json",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r200_run_config.json",
-      "size_bytes": 525,
-      "sha256": "b774116d0d0096aeb6381ade49b740f852eaf3de0cfc3c64efe5f4be235fb3f8"
+      "size_bytes": 338,
+      "sha256": "fef8759c6f7c939b928b83ab16897c0cefadfe7395ac24f88239434a901754bd"
     },
     {
       "group": "c590_hiddenness_rows",
-      "source_path": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/hiddenness_scaled_rows.csv",
+      "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_scaled_rows.csv",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_scaled_rows.csv",
       "size_bytes": 1204306,
       "sha256": "f4118720ed34edc50b070511f65a88f0416b03744b95f114358f7adb00238983"
     },
     {
       "group": "c590_hiddenness_rows",
-      "source_path": "version_2/outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623/scaled_hiddenness_run_config.json",
+      "source_path": "version_2/validation/chua_fractional_arctan_c590/scaled_hiddenness_run_config.json",
       "path": "version_2/validation/chua_fractional_arctan_c590/scaled_hiddenness_run_config.json",
-      "size_bytes": 601,
-      "sha256": "bf481e2c8f14ef8229d89f5da17ae0714ed1d566a7d33758e50a12396be3fd81"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/cross_step/summary.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/cross_step/summary.json",
-      "size_bytes": 12733,
-      "sha256": "0f0ca409d49586f786720bdbaba91590da6a8dd2f76acd0e2a51e4f60a4abf0a"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/integer_seed_h_audit/summary.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/integer_seed_h_audit/summary.json",
-      "size_bytes": 3500,
-      "sha256": "b145e5e40e59284da0c817f0988c4e5b90b356c091fa72280f3371f6b4309b18"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/q_neighbour/summary.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/q_neighbour/summary.json",
-      "size_bytes": 1430,
-      "sha256": "d48678bc51f5f5ace5c790b35fda811fde1aa8a69f9931d6500f82a1b68394b1"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/q_scan/summary.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/q_scan/summary.json",
-      "size_bytes": 6722,
-      "sha256": "a39e8cb22afcc6b4ab4850ffbab2aaa19325cd93ed189c3bab490ac81c68c30d"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/resampled_zero_one.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/resampled_zero_one.json",
-      "size_bytes": 3241,
-      "sha256": "b76f3d7b82a7637a35b2050f9fb6d1867b78d130ab3c25b669b49b8afcab2863"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/seed5_long_audit/summary.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/seed5_long_audit/summary.json",
-      "size_bytes": 2487,
-      "sha256": "03731247e54fc52e5249818918c584d8386ab8835140dffb3491a19cdb22d049"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/seed_refinement/seeds.npz",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/seed_refinement/seeds.npz",
-      "size_bytes": 1185,
-      "sha256": "d5c92275fadd4388b91a7f2fa6730b051ad405fee21762c3e1baa851130dd67b"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/seed_refinement/summary.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/seed_refinement/summary.json",
-      "size_bytes": 12546,
-      "sha256": "a63be28f7f1c24dbcd1921c3b5e97ee55c7f1718de25ddc45fe4b587c653b343"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/summary.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/summary.json",
-      "size_bytes": 23083,
-      "sha256": "a57f22a7d7afc3677237a20af24b2ad7a29d56f7fc32e9a7d40ff4b1040d16b3"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/survivor_long_audit/summary.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/survivor_long_audit/summary.json",
-      "size_bytes": 10525,
-      "sha256": "644a88feb3079e93647c7f533ddaf4a6f7f1aef59892a119ad21e7f7f3016b45"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/target.npz",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/target.npz",
-      "size_bytes": 1644150,
-      "sha256": "bea3cf9e334d50b3d9d317a142d8238a6680961981395e831b15ddd47d873c98"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/target_summary.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/target_summary.json",
-      "size_bytes": 821,
-      "sha256": "c1c2c761393ab1c558aa3d8474b9f4a164f1fd8b98c40e0d3dc588507f0bf27f"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/integer_global/recorded_selection_i1731.npz",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/integer_global/recorded_selection_i1731.npz",
-      "size_bytes": 49234,
-      "sha256": "6f4c3a71d4127a600420b365743162739c7a8723bc6691b4ea7d46ca818d26b4"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/integer_global/screen.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/integer_global/screen.json",
-      "size_bytes": 2476631,
-      "sha256": "3ccdcc1f5d007a7d0ea71b6b5f3ad3e510eb329438b8b5ad803d2de0a7b98deb"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/integer_global/summary.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/integer_global/summary.json",
-      "size_bytes": 2131,
-      "sha256": "106e3eb50de9b243a177d337dd7b7a311f5c7f481a5da1a975d2509792e94b7e"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/integer_local/recorded_selection_c590.npz",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/integer_local/recorded_selection_c590.npz",
-      "size_bytes": 58985,
-      "sha256": "c22572477f282fc41a7ceeb66db4917b0c1044f6e41fd3a73ced5af7baaecf88"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/integer_local/screen.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/integer_local/screen.json",
-      "size_bytes": 837993,
-      "sha256": "a0b9c7d2e11270cbd8d2423e47ef78ff6ff7d819a9f88dac250b6f2c91d31671"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/integer_local/summary.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/integer_local/summary.json",
-      "size_bytes": 2216,
-      "sha256": "6f0fd3bc5fa55e392caa69f727c5b7a560a74b8da1e238b9912a36227cb6d381"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/search_banks.npz",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/search_banks.npz",
-      "size_bytes": 222326,
-      "sha256": "c09910bfe8d0ae43ada68675a5ed63753cd8b706829a07135a44a8459fd8e23f"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/search_provenance.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/search_provenance.json",
-      "size_bytes": 7533,
-      "sha256": "1a3c3301e308775dca78511d483de6055e75adcfe7cbdc86aee0482bbf91dc3b"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/variational_shortlist/variational_shortlist.json",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/variational_shortlist/variational_shortlist.json",
-      "size_bytes": 34466,
-      "sha256": "5ebb54d9bb9e4b1efe4f860a32975472537867edf22ba8374dbd112caae2ab7a"
-    },
-    {
-      "group": "c590_reconstruction",
-      "source_path": "version_2/outputs/paper07_c590_discovery_reconstruction/variational_shortlist/variational_shortlist.npz",
-      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/variational_shortlist/variational_shortlist.npz",
-      "size_bytes": 6938,
-      "sha256": "267ef0c4a2dbaf2be96a259f74f9bba37fce4fe9d8950c29c538f80d4d8cf720"
+      "size_bytes": 406,
+      "sha256": "73224192ef157be63467de1d03f0d37353dd444b380c0f958c8197893c335ac3"
     },
     {
       "group": "nonsmooth_corrected",
-      "source_path": "outputs/paper07_nonsmooth_corrected/candidate_and_reference.json",
+      "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/candidate_and_reference.json",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/candidate_and_reference.json",
       "size_bytes": 3014,
       "sha256": "461ed043cd7a0144e500ef75df14329fc0e5e209ce287ef02b00d683ddd705fa"
     },
     {
       "group": "nonsmooth_corrected",
-      "source_path": "outputs/paper07_nonsmooth_corrected/continuation_stages.csv",
+      "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/continuation_stages.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/continuation_stages.csv",
       "size_bytes": 4524,
       "sha256": "00edce06154ee998eac6cba73ad6969d3e4f7bf306da4c553cbe80e75fc0323a"
     },
     {
       "group": "nonsmooth_corrected",
-      "source_path": "outputs/paper07_nonsmooth_corrected/extended_first_contact_clean/extended_numerical_contract.json",
+      "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_numerical_contract.json",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_numerical_contract.json",
       "size_bytes": 3823,
       "sha256": "46fc70db31abcdb75bc87856d840158efe06a5c4527170c9c3685caf20a5f388"
     },
     {
       "group": "nonsmooth_corrected",
-      "source_path": "outputs/paper07_nonsmooth_corrected/extended_first_contact_clean/extended_probe_plan.csv",
+      "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_plan.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_plan.csv",
       "size_bytes": 3019349,
       "sha256": "6c07793e653fe116b3878fb0674ac778e313763781638d4eeed47d92e147be93"
     },
     {
       "group": "nonsmooth_corrected",
-      "source_path": "outputs/paper07_nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
+      "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
       "size_bytes": 5307265,
       "sha256": "596302ec36b1f07314d86213776985d9127af8e4edf22037d12f34e32a22114d"
     },
     {
       "group": "nonsmooth_corrected",
-      "source_path": "outputs/paper07_nonsmooth_corrected/extended_first_contact_clean/extended_probe_summary.csv",
+      "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_summary.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_summary.csv",
       "size_bytes": 916,
       "sha256": "2ccf8b0e7828780807931b12e034bbc931d24af1584ff4ca9c0c2aa521439f9d"
     },
     {
       "group": "nonsmooth_corrected",
-      "source_path": "outputs/paper07_nonsmooth_corrected/extended_first_contact_clean/extended_result.json",
+      "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_result.json",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_result.json",
       "size_bytes": 1675,
       "sha256": "f1b534edc5c027958e586930c76d5d9a8d6b6bf85a415e612df3e4cb8a09db4d"
     },
     {
       "group": "nonsmooth_corrected",
-      "source_path": "outputs/paper07_nonsmooth_corrected/extended_first_contact_clean/target_cloud_nn_sample.csv",
+      "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/target_cloud_nn_sample.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/target_cloud_nn_sample.csv",
       "size_bytes": 117769,
       "sha256": "be399e79cd6bcbc3f24edd6d6bc2f6955c413fec801d39a8acd2446ca1138fa3"
     },
     {
       "group": "nonsmooth_corrected",
-      "source_path": "outputs/paper07_nonsmooth_corrected/numerical_contract.json",
+      "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/numerical_contract.json",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/numerical_contract.json",
       "size_bytes": 1537,
       "sha256": "6699c311a42b8574b6b45cea59d19603c1afc258e583111e5f431c4ae30ed619"
     },
     {
       "group": "nonsmooth_corrected",
-      "source_path": "outputs/paper07_nonsmooth_corrected/probe_runs.csv",
+      "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/probe_runs.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/probe_runs.csv",
       "size_bytes": 165687,
       "sha256": "e2a1ca6506889def6f86cce84d870da30e31dcb5d8257518cfadc08c440a3992"
     },
     {
       "group": "nonsmooth_corrected",
-      "source_path": "outputs/paper07_nonsmooth_corrected/probe_summary.csv",
+      "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/probe_summary.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/probe_summary.csv",
       "size_bytes": 552,
       "sha256": "959c4164129c3e9c691fc124819f600fdc1557b7109ea704e9ca9f14ec34d64f"
     },
     {
       "group": "nonsmooth_corrected",
-      "source_path": "outputs/paper07_nonsmooth_corrected/result.json",
+      "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/result.json",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/result.json",
       "size_bytes": 6920,
       "sha256": "8afc617c60c013f356240a6b016284e51bd80376054c833ddac31bd2f8ccf6b6"
     },
     {
       "group": "nonsmooth_corrected",
-      "source_path": "outputs/paper07_nonsmooth_corrected/target_reproduction_runs.csv",
+      "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/target_reproduction_runs.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/target_reproduction_runs.csv",
       "size_bytes": 6960,
       "sha256": "084bb0b8dd1ca458b520241859557f9f56876c259f6b95518ddf80847f2555b2"
@@ -416,13 +258,6 @@
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Ep_r00_d001.csv",
       "size_bytes": 716331,
       "sha256": "2600a4eb633ed762197e4e8f2d9b6c58e00135952011b52a0e343ca73814c6b7"
-    },
-    {
-      "group": "probe_story_trajectories",
-      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/manifest.json",
-      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/manifest.json",
-      "size_bytes": 22720,
-      "sha256": "c3bdbe6dd90d0586a6152789751e3d58e7d1505633eaed9cb0d092755f96b6b0"
     },
     {
       "group": "probe_story_trajectories",

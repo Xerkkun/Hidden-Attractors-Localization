@@ -11,8 +11,6 @@ VERSION_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = VERSION_ROOT.parent
 
 IGNORED_LOCAL_PREFIXES = [
-    "DF y NC Chua entero y fraccionario/",
-    "DF y NC Chua entero y fraccionario copy/",
     "version_2/validation_outputs/",
     "version_2/outputs/",
     "version_2/figures/",
@@ -22,7 +20,6 @@ IGNORED_LOCAL_PREFIXES = [
     "figures/",
     "outputs/",
     "runs",
-    "paper/",
 ]
 
 PROHIBITED_ROOT_PATTERNS = [
@@ -30,8 +27,6 @@ PROHIBITED_ROOT_PATTERNS = [
     "step*.py",
     "generate_*plots*.py",
     "generate_*figures*.py",
-    "search_*candidates*.py",
-    "compare_*solvers*.py",
     "*_old.py",
     "*_backup.py",
     "*_tmp.py",
@@ -79,14 +74,6 @@ def test_no_tracked_files_in_local_ignored_directories() -> None:
 @pytest.mark.release_readiness
 def test_validation_outputs_has_no_tracked_files() -> None:
     assert git_ls_files("version_2/validation_outputs") == []
-
-
-@pytest.mark.hygiene
-@pytest.mark.release_readiness
-def test_paper_directory_is_local_only() -> None:
-    assert git_ls_files("paper") == []
-    text = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8")
-    assert "/paper/" in text
 
 
 @pytest.mark.hygiene

@@ -1,80 +1,113 @@
-# Verificacion estricta de ocultedad operacional (Strict Operational Hiddenness Verification)
+# Verificacion operacional de ocultedad
 
-Este modulo establece un protocolo estricto para validar la condicion operacional de ocultedad en atractores caoticos de orden entero y fraccionario.
+Este modulo documenta el contrato numerico usado para evaluar ocultedad en
+sistemas dinamicos de orden entero y fraccionario. La conclusion siempre queda
+limitada a las vecindades, tiempos, clasificador y tolerancias declarados.
 
-En la literatura cientifica, un atractor A se clasifica como oculto si su cuenca de atraccion B(A) no interseca ninguna vecindad de ningun punto de equilibrio del sistema. Si la cuenca interseca alguna vecindad local de equilibrio, el atractor es auto-excitado (self-excited).
+En la literatura cientifica, un atractor \(A\) se clasifica como oculto si su
+cuenca de atraccion \(B(A)\) no interseca ninguna vecindad de ningun equilibrio.
+Una interseccion detectada dentro de una vecindad local es evidencia contra la
+ocultedad bajo el contrato probado.
 
----
+## Lo que no demuestra ocultedad
 
-## Limitacion de metodos analiticos y heuristicos
+El balance armonico, la funcion descriptiva, Nyquist, la continuacion y una
+trayectoria acotada pueden localizar o caracterizar una solucion, pero no
+demuestran por si solos la no interseccion de cuencas. Del mismo modo, un
+exponente de Lyapunov estimado, la prueba 0--1, FFT, PSD o una seccion de
+Poincare caracterizan dinamica; no sustituyen el muestreo de vecindades de
+todos los equilibrios.
 
-Metodos como el balance armonico, la funcion descriptiva o DF, el criterio de Nyquist, la continuacion, o la simulacion acotada de un solo seed no son suficientes para certificar un sistema como `hidden_verified`.
+## Geometrias de muestreo
 
-* **Funcion descriptiva / Nyquist:** aproximaciones lineales equivalentes locales que sirven para generar candidatos o semillas (`seed_found`). No demuestran la no interseccion global de cuencas.
-* **Continuacion:** transporta una estructura oscilatoria al variar un parametro de control, pero no descarta contactos transitorios en la vecindad del equilibrio para el sistema final.
-* **Diagnosticos de caos:** Lyapunov positivo, prueba 0-1, FFT, PSD o secciones de Poincare ayudan a caracterizar dinamica, pero no prueban la topologia de cuencas.
+Cada resultado debe identificar sin ambiguedad la geometria usada:
 
-Por lo tanto, la biblioteca restringe las etiquetas fuertes de ocultedad a sistemas que aprueban el protocolo operacional de muestreo en vecindades bajo un contrato finito.
+- **Bolas interiores:** muestrean puntos cuya distancia al equilibrio no
+  excede el radio declarado. Son la geometria adecuada para una afirmacion
+  operacional sobre una vecindad abierta muestreada.
+- **Superficies esfericas:** muestrean puntos a distancia fija del equilibrio.
+  Solo informan sobre esa frontera y no equivalen a llenar la bola interior.
+- **Cascarones esfericos:** muestrean una banda radial declarada entre dos
+  radios. Describen esa banda, pero no cubren automaticamente el interior que
+  queda fuera del cascaron.
 
----
+Las tres geometrias son admisibles como evidencia finita si se etiquetan con su
+alcance real. Una superficie o un cascaron no se promueven como prueba de una
+bola interior. Los radios y conteos concretos pertenecen al registro de
+validacion que produjo el resultado, no a esta descripcion publica del metodo.
 
-## Protocolo de muestreo de vecindades (Sphere Probes)
+## Contrato por sonda
 
-Para verificar numericamente la condicion de ocultedad, se realiza un barrido de trayectorias integradas desde esferas concentricas alrededor de todos los puntos de equilibrio.
+Para cada sonda se deben conservar:
 
-### 1. Requisitos de cobertura de radios
+- el equilibrio, la geometria y el dominio radial;
+- el integrador, paso, horizonte, transitorio y politica de fallos;
+- el tiempo inicial declarado;
+- la condicion inicial o, para Caputo, la funcion de historia declarada;
+- el clasificador del atractor objetivo, su metrica y su umbral;
+- el destino numerico y la procedencia del software.
 
-El contrato puede exigir radios locales decrecientes, por ejemplo:
+En un problema de Caputo, cada sonda es un problema de valor inicial con memoria.
+Una inicializacion nueva debe comenzar en su propio tiempo inicial con la
+historia definida por el contrato, por ejemplo una historia constante igual al
+estado de la sonda antes de ese tiempo. No se puede heredar silenciosamente la
+historia de otra trayectoria, de otro parametro o de otra sonda. Si el contrato
+transporta una historia registrada, esa historia y su intervalo deben quedar
+identificados de forma explicita.
 
-```text
-1e-2, 1e-3, 1e-4, 1e-5
-```
+## Clasificacion fijada antes del barrido
 
-Cualquier omision de radios restringe el veredicto a compatibilidad bajo los radios probados, nunca a una prueba global.
+La representacion del atractor de referencia, la metrica de coincidencia, el
+umbral, las tolerancias de divergencia y las reglas para estados indeterminados
+se fijan antes de iniciar el barrido. No se recalibran despues de observar
+contactos. Una calibracion separada puede justificar esos valores, pero no debe
+usar las sondas que despues se evaluan como evidencia.
 
-### 2. Condicion de direccion unitaria uniforme
+Para cada bloque equilibrio--dominio radial:
 
-Para cada muestra en el radio epsilon, el punto inicial se genera como:
+- **sin contacto:** ninguna sonda completada alcanza el objetivo bajo el
+  clasificador predeclarado;
+- **contacto:** al menos una sonda alcanza el objetivo bajo ese clasificador;
+- **incompleto:** faltan sondas o hay fallos que el contrato no permite.
 
-```text
-x0 = X_i^* + epsilon v_j
-```
+## Regla causal opcional de primer contacto
 
-donde `v_j` es una direccion unitaria. La biblioteca audita la norma de la direccion y falla si la muestra no respeta la tolerancia declarada.
+Un barrido radial ordenado puede declarar de antemano la regla
+`complete_first_contact_radius`: al aparecer uno o mas contactos, se completan
+todas las sondas planeadas para ese mismo radio y para todos los equilibrios.
+Solo despues se detiene el barrido y se excluyen los radios mayores.
 
-### 3. Criterio local de evaluacion
+Esta regla conserva el denominador completo del primer radio con contacto y
+evita seleccionar resultados a posteriori. No convierte los radios omitidos en
+radios probados, y el informe debe distinguir una terminacion causal de un
+protocolo radial completo.
 
-Para cada par equilibrio-radio, se clasifica localmente como:
+## Vecindades locales versus auditorias extendidas
 
-* **PASS:** cero trayectorias iniciadas en la esfera local alcanzan la vecindad del atractor objetivo.
-* **FAIL:** al menos una trayectoria iniciada en el radio local probado interseca el atractor. La interpretacion depende del contrato radial: un contacto local es evidencia contra ocultedad bajo ese contrato; un contacto solo en radio extendido se reporta como auditoria de geometria de cuenca.
-* **INCOMPLETE:** fallo numerico o muestreo incompleto.
+Local neighborhoods versus extended spherical audits are different numerical
+questions. A contact detected on a sphere of large radius around an equilibrium
+is not, by itself, evidence that the attractor is self-excited. The operative
+hiddenness test concerns sufficiently small neighborhoods of all equilibria.
+Large-radius spherical probes are reported as extended basin-geometry audits.
 
----
+Los dominios locales y macroscopicos se almacenan y se interpretan por separado:
 
-## Vecindades locales versus auditorias esfericas extendidas
+- un contacto local es evidencia contra ocultedad bajo el contrato local;
+- un contacto solo en un dominio macro describe geometria de cuenca extendida
+  y no invalida por si mismo la afirmacion local;
+- cero contactos solo admite una etiqueta condicionada a las vecindades
+  efectivamente muestreadas.
 
-A contact detected on a sphere of large radius around an equilibrium is not, by itself, evidence that the attractor is self-excited. The operative hiddenness test concerns sufficiently small neighborhoods of all equilibria. Large-radius spherical probes are reported as extended basin-geometry audits.
+## Estados conservadores
 
-La interpretacion uniforme por escala radial es:
+- `hidden_under_tested_neighborhoods`: se completo el contrato local declarado
+  para todos los equilibrios, sin contactos ni fallos prohibidos.
+- `compatible_with_hiddenness`: no se observaron contactos, pero el protocolo
+  o su cobertura no permiten la etiqueta anterior.
+- `self_excited`: se detecto contacto dentro del dominio local declarado.
+- `inconclusive`: faltan datos o existen fallos numericos que bloquean una
+  conclusion.
 
-* `local_neighborhood_contact_detected` o local self-excited contact: evidencia contra ocultedad bajo el contrato local probado.
-* `extended_radius_contact_detected` o `macro_radius_contact_detected`: contacto macroscopico de auditoria extendida; no rechazo automatico de la ocultedad local.
-* `hiddenness_supported_under_tested_local_neighborhoods` o `compatible_with_hiddenness_under_tested_radii`: cero contactos en las vecindades locales probadas, con alcance finito.
-* `candidate_rejected_under_local_contract`: rechazo por contacto local o por otro bloqueo del contrato probado, no por contacto extendido aislado.
-
----
-
-## Estados del contrato de ocultedad (HiddennessVerificationStatus)
-
-1. **HIDDEN_VERIFIED:** protocolo de vecindades completado para todos los equilibrios y radios exigidos, con cero contactos y cero fallos numericos bajo el contrato.
-2. **HIDDEN_COMPATIBLE:** no se detectaron contactos, pero el protocolo esta incompleto o limitado a un subconjunto de radios, muestras o equilibrios.
-3. **SELF_EXCITED_CONTACT_DETECTED:** se detecto al menos un contacto entre vecindades locales declaradas de los equilibrios y el atractor. El atractor no es oculto bajo ese contrato local.
-4. **NUMERICAL_FAILURE:** ocurrieron fallos de integracion durante el barrido y el contrato no los permite.
-5. **CANDIDATE_NOT_AVAILABLE / SEED_NOT_AVAILABLE:** la simulacion del seed o la continuacion fallaron en localizar el atractor de referencia.
-
----
-
-## Nota metodologica importante
-
-La declaracion de ocultedad es estrictamente operacional. La ausencia de contactos numericos bajo tolerancias y radios especificados no constituye una prueba matematica global. Representa evidencia computacional bajo un contrato de discretizacion finito. Las dinamicas fraccionarias de memoria larga pueden requerir tiempos de integracion superiores a los limites computacionales del protocolo.
+La ausencia de contactos en un muestreo finito no constituye una prueba
+matematica global. Es evidencia computacional reproducible bajo el contrato
+registrado.

@@ -71,9 +71,9 @@
     "continuation": "completed",
     "post_continuation_filter": "completed",
     "dynamic_reference": "completed",
-    "robustness": "pending_not_in_scope_current_phase",
+    "robustness": "not_evaluated_under_frozen_contract",
     "hiddenness_tests": "completed_self_excited_contact_detected",
-    "diagnostics": "diagnostics_partial_current_protocol"
+    "diagnostics": "inconclusive_under_frozen_contract"
   },
   "stage_evidence_scopes": {
     "numerical_contract": "official_validation_run",
@@ -83,22 +83,22 @@
     "continuation": "official_validation_run",
     "post_continuation_filter": "official_validation_run",
     "dynamic_reference": "official_validation_run",
-    "robustness": "official_validation_run",
+    "robustness": "not_evaluated_under_frozen_contract",
     "hiddenness_tests": "official_summary_for_current_protocol",
-    "diagnostics": "official_validation_run"
+    "diagnostics": "recorded_inconclusive_diagnostics"
   },
-  "pending_stages": [
-    "robustness",
+  "pending_stages": [],
+  "not_evaluated_stages": [
+    "robustness"
+  ],
+  "inconclusive_stages": [
     "diagnostics"
   ],
-  "failed_or_incomplete_stages": [
-    "robustness",
-    "diagnostics"
-  ],
+  "failed_or_incomplete_stages": [],
   "final_report": {
-    "status": "pending_full_protocol",
-    "source": "validation/final_validation_report.tex",
-    "compiled": "validation/final_validation_report.pdf"
+    "status": "not_produced_under_frozen_contract",
+    "source": null,
+    "compiled": null
   },
   "dirty": false,
   "working_tree_dirty": false

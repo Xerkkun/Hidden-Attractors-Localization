@@ -17,7 +17,7 @@ MAIN_DOCUMENTS = [
     WORKSPACE / ".zenodo.json",
     ROOT / "README.md",
     ROOT / "USER_MANUAL.md",
-    ROOT / "THESIS_CLAIMS.md",
+    ROOT / "validation" / "references" / "thesis_claims_matrix.md",
     ROOT / "docs" / "quick_start.md",
     ROOT / "docs" / "getting_started.md",
     ROOT / "docs" / "examples.md",
@@ -30,10 +30,7 @@ MAIN_DOCUMENTS = [
     ROOT / "docs" / "validation_methodology.md",
     ROOT / "release_package" / "README_RELEASE.md",
     ROOT / "release_package" / "PROGRAM_SUMMARY.md",
-    ROOT / "release_package" / "ARCTAN_C590_PROMOTION_BOUNDARY.md",
-    ROOT / "release_package" / "reproducibility_checklist.md",
     ROOT / "examples" / "README.md",
-    ROOT / "examples" / "chua_nonsmooth_biased_hidden_attractor" / "README.md",
     ROOT / "examples" / "chua_arctan_wu2023" / "README.md",
     ROOT / "validation" / "chua_fractional_arctan" / "README.md",
     ROOT / "validation" / "chua_fractional_arctan_c590" / "README.md",
@@ -47,7 +44,7 @@ BALANCE_REQUIRED_DOCUMENTS = [
     WORKSPACE / ".zenodo.json",
     ROOT / "README.md",
     ROOT / "USER_MANUAL.md",
-    ROOT / "THESIS_CLAIMS.md",
+    ROOT / "validation" / "references" / "thesis_claims_matrix.md",
     ROOT / "docs" / "quick_start.md",
     ROOT / "docs" / "getting_started.md",
     ROOT / "docs" / "examples.md",
@@ -135,3 +132,45 @@ def test_docs_define_local_neighborhoods_versus_extended_spherical_audits() -> N
     assert "local neighborhoods versus extended spherical audits" in corpus
     assert "a contact detected on a sphere of large radius" in corpus
     assert "large-radius spherical probes are reported as extended basin-geometry audits" in corpus
+
+
+@pytest.mark.hygiene
+def test_public_method_documents_the_complete_generic_probe_contract() -> None:
+    method_paths = [
+        ROOT / "docs" / "hiddenness_verification.md",
+        ROOT / "docs" / "validation_evidence.md",
+        ROOT / "docs" / "validation_methodology.md",
+    ]
+    corpus = re.sub(
+        r"\s+",
+        " ",
+        "\n".join(_read(path).lower() for path in method_paths),
+    )
+
+    for term in (
+        "interior ball",
+        "spherical surface",
+        "spherical shell",
+        "initial time",
+        "history function",
+        "classification threshold",
+        "complete_first_contact_radius",
+        "first contact radius",
+        "local and macro-radius",
+    ):
+        assert term in corpus
+
+    algebra = _read(ROOT / "docs" / "fractional_chua_algebra_validation.md").lower()
+    for term in (
+        "rho > 0",
+        "lur'e form",
+        "transfer-function identity",
+        "equilibrium",
+        "jacobian",
+        "closed-form describing function",
+        "validation/",
+    ):
+        assert term in algebra
+
+    for case_specific_term in ("omega0", "initial seed", "harmonic branches"):
+        assert case_specific_term not in algebra

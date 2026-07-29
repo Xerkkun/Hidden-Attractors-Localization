@@ -37,17 +37,17 @@ def test_published_reference_claims_are_conservative() -> None:
     assert scope_path.is_file(), f"Missing {scope_path}"
     scope_text = scope_path.read_text(encoding="utf-8")
     
-    assert "## What the library can reproduce" not in scope_text
     assert "Published reference coverage" in scope_text
     assert "partial reference implementation" in scope_text.lower()
+    assert "validation/published_reference_coverage.json" in scope_text
     
     # 3. Check USER_MANUAL.md
     manual_path = ROOT / "USER_MANUAL.md"
     assert manual_path.is_file(), f"Missing {manual_path}"
     manual_text = manual_path.read_text(encoding="utf-8")
     
-    # Check that Danca 2017 and Wu 2023 are not claimed as fully reproduced in the manual
+    # The public manual keeps case-specific literature details in validation records.
     assert "Wu 2023 is fully reproduced" not in manual_text
     assert "Danca 2017 is fully reproduced" not in manual_text
-    assert "Wu 2023" in manual_text
-    assert "Danca 2017" in manual_text
+    assert "Chua arctan" not in manual_text
+    assert "c590" not in manual_text

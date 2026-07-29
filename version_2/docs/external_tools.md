@@ -1,208 +1,77 @@
-# External Tools / Herramientas Externas
+# Optional External Tools
 
-## Table of Contents / Índice de Contenidos
+`hidden-attractors-fo` keeps optional integrations behind small adapters.
+External packages perform their own calculations and retain their own citation
+and licensing requirements.
 
-- [English Version](#english-version)
-- [Versión en Español](#versión-en-español)
+## Registered tools
 
----
+```python
+from hidden_attractors.integrations import external_tool_report
 
-## English Version
+for row in external_tool_report():
+    print(row["name"], row["available"], row["recommended_use"])
+```
 
-### External Tools (EN)
+The registry describes three optional tools:
 
-The project should reuse and cite established tools instead of copying mature algorithms into this repository. Local code focuses on adapting outputs from the hidden-attractor workflows to those tools and documenting how they fit.
+| Tool | Package role | Local boundary |
+| --- | --- | --- |
+| PyDSTool | Modeling, continuation, and branch tracking | Listed as a companion tool; local bifurcation helpers only post-process existing trajectories. |
+| `nolds` | Nonlinear scalar time-series measures | Used through the complexity adapter and the integrated scalar Lyapunov interface. |
+| `antropy` | Entropy and fractal measures | Used through the complexity adapter. |
 
-## PyDSTool (EN)
+## Complexity measures
 
-- Project: [PyDSTool](https://pydstool.github.io/PyDSTool/FrontPage.html)
-- Role: dynamical-systems modeling, simulation, phase-plane analysis, continuation, and bifurcation analysis.
-- Use here: reference or optional companion tool for continuation and branch tracking when the environment is compatible.
-- Proyecto: [PyDSTool](https://pydstool.github.io/PyDSTool/FrontPage.html)
-
-PyDSTool is broader than the local post-processing helpers. The functions in `hidden_attractors.analysis.bifurcation` only extract maxima, minima, or samples from already computed trajectories. They are not a continuation engine.
-
-## pyComplexity Notebook
-
-- Reference: [pyComplexity.ipynb](https://github.com/relopezbriega/relopezbriega.github.io/blob/master/downloads/pyComplexity.ipynb)
-- Role: notebook-style exposition of complexity analysis.
-- Use here: documentation and notebook style reference for presenting scalar complexity diagnostics clearly.
-- Referencia: [pyComplexity.ipynb](https://github.com/relopezbriega/relopezbriega.github.io/blob/master/downloads/pyComplexity.ipynb)
-
-Do not copy notebook code into this repository unless the license and citation requirements have been reviewed. The local adapter delegates scalar measures to installable libraries such as `nolds` and `antropy`.
-
-## nolds (EN)
-
-- Project: [nolds](https://pypi.org/project/nolds/)
-- Role: nonlinear time-series measures such as sample entropy, correlation dimension, Lyapunov estimates, Hurst exponent, and DFA.
-- Install:
-- Proyecto: [nolds](https://pypi.org/project/nolds/)
+Install one or both optional backends:
 
 ```bash
 python -m pip install nolds
+python -m pip install antropy
 ```
 
-Usage:
-Uso:
+Then request explicit measures:
 
 ```python
 from hidden_attractors.integrations import compute_complexity_measures
 
 metrics = compute_complexity_measures(
-    trajectory[:, 1],
-    backend="nolds",
-    sample_rate=1.0 / sampling_interval,
+    signal,
+    backend="auto",
+    measures=["permutation_entropy", "sample_entropy"],
+    sample_rate=100.0,
 )
 ```
 
-For a reusable Lyapunov result containing a Rosenstein LLE, an Eckmann
-spectrum, and a Kaplan--Yorke dimension, use:
+`backend="auto"` selects an installed backend that supports each requested
+measure. Unknown measures, incompatible explicit backends, and unavailable
+dependencies raise an error.
+
+When `lyapunov_rosenstein` is requested, `sample_rate` is converted to
+`tau=1/sample_rate`, so the returned estimate has inverse-time units.
+
+## Integrated time-series Lyapunov interface
+
+The supported high-level interface delegates delay reconstruction to `nolds`:
 
 ```python
-from hidden_attractors.analysis import estimate_time_series_lyapunov
+from hidden_attractors import estimate_time_series_lyapunov
 
 result = estimate_time_series_lyapunov(
-    trajectory[:, 1],
-    sample_interval=sampling_interval,
+    signal,
+    sample_interval=0.01,
     observable="x",
 )
+
+print(result.largest_exponent)
+print(result.spectrum)
+print(result.kaplan_yorke_dimension)
 ```
 
-Both estimators are normalized by the supplied sample interval. They remain
-finite-time scalar-reconstruction diagnostics and do not certify chaos or
-hiddenness.
+The result records the Rosenstein largest-exponent estimate, an Eckmann
+reconstructed spectrum, the corresponding Kaplan--Yorke dimension, estimator
+parameters, units, backend version, diagnostics, and warnings.
 
-## antropy (EN)
-
-- Project: [antropy](https://pypi.org/project/antropy/)
-- Role: entropy and fractal diagnostics such as permutation entropy, spectral entropy, sample entropy, Higuchi fractal dimension, and DFA.
-- Install:
-- Proyecto: [antropy](https://pypi.org/project/antropy/)
-
-```bash
-python -m pip install antropy
-```
-
-Usage:
-Uso:
-
-```python
-from hidden_attractors.integrations import compute_complexity_measures
-
-metrics = compute_complexity_measures(trajectory[:, 1], backend="antropy")
-```
-
-## Tool Registry
-
-The current registry is available from Python:
-
-```python
-from hidden_attractors.integrations import external_tool_report
-
-for row in external_tool_report():
-    print(row["name"], row["available"], row["recommended_use"])
-```
-
-This registry is intentionally small. Add new external tools only when they solve a real analysis need and the repository can document how they apply to the fractional Chua/Lur'e study systems.
-
----
-
-## Versión en Español
-
-### Herramientas Externas (ES)
-
-El proyecto debe reutilizar y citar herramientas establecidas en lugar de copiar algoritmos maduros en este repositorio. El código local se centra en adaptar las salidas de los flujos de trabajo de atractores ocultos a esas herramientas y documentar cómo encajan.
-
-## PyDSTool (ES)
-
-- Project: [PyDSTool](https://pydstool.github.io/PyDSTool/FrontPage.html)
-- Proyecto: [PyDSTool](https://pydstool.github.io/PyDSTool/FrontPage.html)
-- Rol: modelado de sistemas dinámicos, simulación, análisis del plano de fase, continuación y análisis de bifurcación.
-- Uso aquí: herramienta de referencia o acompañante opcional para la continuación y el seguimiento de ramas cuando el entorno sea compatible.
-
-PyDSTool es más amplio que los ayudantes de posprocesamiento locales. Las funciones en `hidden_attractors.analysis.bifurcation` solo extraen máximos, mínimos o muestras de trayectorias ya calculadas. No son un motor de continuación.
-
-## Notebook pyComplexity
-
-- Reference: [pyComplexity.ipynb](https://github.com/relopezbriega/relopezbriega.github.io/blob/master/downloads/pyComplexity.ipynb)
-- Referencia: [pyComplexity.ipynb](https://github.com/relopezbriega/relopezbriega.github.io/blob/master/downloads/pyComplexity.ipynb)
-- Rol: exposición en estilo notebook del análisis de complejidad.
-- Uso aquí: documentación y referencia estilo notebook para presentar claramente los diagnósticos de complejidad escalar.
-
-No copie el código del notebook en este repositorio a menos que se hayan revisado los requisitos de licencia y cita. El adaptador local delega las medidas escalares a bibliotecas instalables como `nolds` y `antropy`.
-
-## nolds (ES)
-
-- Project: [nolds](https://pypi.org/project/nolds/)
-- Install:
-- Proyecto: [nolds](https://pypi.org/project/nolds/)
-- Rol: medidas de series temporales no lineales como entropía muestral, dimensión de correlación, estimaciones de Lyapunov, exponente de Hurst y DFA.
-- Instalación:
-
-```bash
-python -m pip install nolds
-```
-
-Usage:
-Uso:
-
-```python
-from hidden_attractors.integrations import compute_complexity_measures
-
-metrics = compute_complexity_measures(
-    trajectory[:, 1],
-    backend="nolds",
-    sample_rate=1.0 / intervalo_muestreo,
-)
-```
-
-Para obtener un resultado reutilizable con el LLE de Rosenstein, el espectro
-de Eckmann y la dimensión de Kaplan--Yorke, use:
-
-```python
-from hidden_attractors.analysis import estimate_time_series_lyapunov
-
-resultado = estimate_time_series_lyapunov(
-    trayectoria[:, 1],
-    sample_interval=intervalo_muestreo,
-    observable="x",
-)
-```
-
-Ambos estimadores se normalizan con el intervalo de muestreo indicado. Siguen
-siendo diagnósticos de tiempo finito reconstruidos desde una señal escalar y
-no certifican caos ni ocultedad.
-
-## antropy (ES)
-
-- Project: [antropy](https://pypi.org/project/antropy/)
-- Install:
-- Proyecto: [antropy](https://pypi.org/project/antropy/)
-- Rol: diagnósticos de entropía y fractales como entropía de permutación, entropía espectral, entropía muestral, dimensión fractal de Higuchi y DFA.
-- Instalación:
-
-```bash
-python -m pip install antropy
-```
-
-Usage:
-Uso:
-
-```python
-from hidden_attractors.integrations import compute_complexity_measures
-
-metrics = compute_complexity_measures(trajectory[:, 1], backend="antropy")
-```
-
-## Registro de Herramientas
-
-El registro actual está disponible desde Python:
-
-```python
-from hidden_attractors.integrations import external_tool_report
-
-for row in external_tool_report():
-    print(row["name"], row["available"], row["recommended_use"])
-```
-
-Este registro es intencionadamente pequeño. Agregue nuevas herramientas externas solo cuando resuelvan una necesidad de análisis real y el repositorio pueda documentar cómo se aplican a los sistemas de estudio fraccionarios de Chua/Lur'e.
+These are finite-data estimates whose interpretation depends on sampling,
+embedding, retained length, and estimator settings. They do not by themselves
+certify chaos or hiddenness.

@@ -128,7 +128,6 @@ def test_full_workflow_rejects_system_without_lure() -> None:
     )
     workflow = FullWorkflowContract(
         seed_generator=lambda *_args, **_kwargs: None,  # type: ignore[arg-type]
-        machado_seed_generator=lambda *_args, **_kwargs: None,  # type: ignore[arg-type]
         continuation=lambda *_args, **_kwargs: None,  # type: ignore[arg-type]
         hiddenness_verifier=lambda *_args, **_kwargs: None,  # type: ignore[arg-type]
         basin_classifier=lambda *_args, **_kwargs: {},  # type: ignore[arg-type]

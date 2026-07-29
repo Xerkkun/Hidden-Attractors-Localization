@@ -15,7 +15,7 @@ from hidden_attractors.validation.chua_arctan_wu2023 import write_algebra_valida
 
 
 ROOT = Path(__file__).resolve().parents[2]
-CONFIG = ROOT / "configs" / "chua_arctan_wu2023_caputo.json"
+CONFIG = ROOT / "validation" / "reference_cases" / "fractional_chua_arctan_wu2023" / "config.json"
 
 
 def _load_config() -> dict:
@@ -92,7 +92,9 @@ def main() -> None:
         "algebra": str(algebra_path.relative_to(ROOT)).replace("\\", "/"),
         "algebra_status": algebra["status"],
         "attractor_status": "not_tested",
-        "hiddenness_requirement": "Must test neighborhoods of E0, E+ and E- under a robust target reference.",
+        "hiddenness_scope": (
+            "not_evaluated_by_this_bibliographic_validation_contract"
+        ),
     }
     if args.run_trajectories:
         dynamics_dir = output_dir / "03_reported_initial_conditions"
@@ -105,7 +107,7 @@ def main() -> None:
         result["dynamic_status"] = (
             "rejected_periodic_reported_initial_conditions"
             if labels <= {"regular_periodic_rejected", "thin_periodic_rejected"}
-            else "pending_robustness_and_hiddenness_controls"
+            else "inconclusive_under_bibliographic_contract"
         )
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "validation_summary.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")

@@ -1,7 +1,7 @@
-"""F2 — Fractional variational ABM-QR Lyapunov exponent estimator.
+"""Fractional variational ABM-QR Lyapunov exponent estimator.
 
-F2 — fractional_variational_abm_qr
-=====================================
+fractional_variational_abm_qr
+=============================
 Implements finite-time local Lyapunov exponents for Caputo fractional-order
 systems (0 < q < 1) by integrating the **extended original–variational system**
 
@@ -87,7 +87,7 @@ from .lyapunov import (
 )
 
 # ---------------------------------------------------------------------------
-# Canonical references for F2
+# Canonical references
 # ---------------------------------------------------------------------------
 
 _FRACTIONAL_VARIATIONAL_ABM_QR_REFS: tuple[str, ...] = (
@@ -107,7 +107,7 @@ _FRACTIONAL_VARIATIONAL_ABM_QR_WARNINGS: tuple[str, ...] = (
     "Does not certify chaos; does not certify hiddenness of attractors.",
     "chaos_certified_by_this_pipeline: false",
     "hiddenness_certified_by_this_pipeline: false",
-    "validated_against_published_benchmarks: false (F2 — pending).",
+    "validated_against_published_benchmarks: false; no published quantitative-validation claim.",
     "Not validated for non-smooth systems (e.g., Chua saturation);"
     " derivative undefined at switching surfaces.",
 )
@@ -377,7 +377,7 @@ def apply_history_aware_qr_transform(
 
 
 # ---------------------------------------------------------------------------
-# Extended ABM integrator (F2 local, mirrors official ABM weights)
+# Extended ABM integrator
 # ---------------------------------------------------------------------------
 
 def _caputo_abm_extended_stepwise(
@@ -516,7 +516,7 @@ def _caputo_abm_extended_stepwise(
 
 
 # ---------------------------------------------------------------------------
-# Main F2 estimator
+# Main estimator
 # ---------------------------------------------------------------------------
 
 _FRAC_REFS = (
@@ -545,11 +545,9 @@ def fractional_variational_abm_qr(
     history_aware_qr: bool = True,
     qr_epsilon: float = 1e-300,
 ) -> LyapunovResult:
-    """Estimate Caputo fractional-order Lyapunov exponents (F2).
+    """Estimate Caputo fractional-order Lyapunov exponents.
 
     **Method identifier: ``fractional_variational_abm_qr``**
-    **Phase: F2 — implemented, not yet validated against published benchmarks**
-
     Integrates the extended original–variational Caputo system
 
         ᶜDᵗq X   = F(X)
@@ -565,11 +563,12 @@ def fractional_variational_abm_qr(
     * NOT valid for q = 1 (use ``integer_qr_benettin``).
     * Results are finite-time local Lyapunov exponents.
     * Does NOT certify chaos or hiddenness.
-    * ``validated_against_published_benchmarks: false`` (F2 pending).
+    * ``validated_against_published_benchmarks: false``; no published
+      quantitative-validation claim is made.
 
     **Methodological warning**
 
-    This routine is **not yet validated against published benchmarks**.
+    No published quantitative-validation claim is made for this routine.
     Results are finite-time local Lyapunov exponent estimates.
     Caputo memory requires transforming the entire stored variational history
     at each QR step (``history_aware_qr=True``).  If ``history_aware_qr=False``
@@ -615,7 +614,7 @@ def fractional_variational_abm_qr(
     Returns
     -------
     result : LyapunovResult
-        Exponent estimates with full F2 metadata.
+        Exponent estimates with full method metadata.
 
     Raises
     ------

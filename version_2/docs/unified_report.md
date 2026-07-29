@@ -1,76 +1,73 @@
-# Unified Report
+# Version 1.1.0 Public Scope
 
-The synchronized manual metadata are defined in [docs/manual_manifest.yaml](manual_manifest.yaml); scientific claims remain governed by `THESIS_CLAIMS.md`.
+The public documentation describes the supported package and the boundaries
+of its completed validation records. Only those supported interfaces and
+completed evidence boundaries are distributed as package documentation.
 
-For a complete user-facing description of installation, CLI usage, examples, outputs, evidence labels and limitations, see `USER_MANUAL.md`.
+## Two independent entry routes
 
-## Synchronization Targets
+`hidden-attractors-fo` supports:
 
-As defined in [docs/manual_manifest.yaml](manual_manifest.yaml), the project's documentation is synchronized across three manual targets:
+1. localization workflows for compatible dynamical systems under explicit
+   numerical and neighborhood-control contracts; and
+2. direct characterization of systems, trajectories, and scalar time series,
+   whether or not localization is requested.
 
-1. **Markdown User Manual**: `USER_MANUAL.md`
-2. **Unified LaTeX/PDF Report**: `docs/reporte_unificado_chua_fraccionario.tex`
-3. **Web Docs & Home Page**: Located in the external repository `Xerkkun/hidden-attractors` under `src/content/docs/` and `src/pages/hidden-attractors/index.astro`.
+The characterization route includes:
 
-> [!NOTE]
-> **LaTeX report status**: The LaTeX source `docs/reporte_unificado_chua_fraccionario.tex` is the canonical unified report. Keep CLI commands, figures, arctan radius limits, and test-count summaries synchronized with `docs/manual_manifest.yaml` and `validation/freeze_audit/`.
+- equilibria and Jacobians supplied by registered systems;
+- boundedness and trajectory metrics;
+- FFT and power-spectral-density summaries;
+- the Gottwald--Melbourne 0--1 test;
+- Poincare-section crossings;
+- bifurcation post-processing for existing trajectories;
+- equation-based Lyapunov calculations under registered method contracts; and
+- scalar time-series Lyapunov estimates.
 
-The canonical LaTeX source is:
+## Time-series Lyapunov integration
 
-```text
-docs/reporte_unificado_chua_fraccionario.tex
-```
+`estimate_time_series_lyapunov` is a supported public function. Through the
+optional `nolds` backend it returns:
 
-It consolidates the previous `.tex` files into a thematic structure:
+- Rosenstein's largest-exponent estimate;
+- an Eckmann reconstructed finite spectrum; and
+- the associated Kaplan--Yorke dimension.
 
-- mathematical theory of the fractional Chua system;
-- reference titles for each method;
-- public library calls;
-- real-trajectory examples;
-- generated report figures promoted through `library_figures/`;
-- Nyquist, continuation, bifurcation, spectral, hiddenness, and Lyapunov diagnostic sections with conservative evidence labels;
-- the official fixed stage order and conservative interpretation of hiddenness.
-
-The older standalone LaTeX reports were retired to avoid repeated, stale
-results. Keep result updates in `reporte_unificado_chua_fraccionario.tex`.
-
-## Build
-
-From `version_2/docs`:
+The result also records sampling units, estimator parameters, backend
+provenance, diagnostics, and warnings. The same operation is available from:
 
 ```bash
-latexmk -pdf -interaction=nonstopmode -halt-on-error reporte_unificado_chua_fraccionario.tex
+hidden-attractors lyapunov spectrum --help
 ```
 
-If `latexmk` is not available:
+These values are finite-data estimates. They do not by themselves establish
+an asymptotic Lyapunov spectrum, chaos, or hiddenness.
 
-```bash
-pdflatex -interaction=nonstopmode -halt-on-error reporte_unificado_chua_fraccionario.tex
-```
+## Evidence boundary
 
-## Figures
+A seed, continuation path, bounded trajectory, positive finite-time exponent,
+or negative neighborhood sample is not a global proof. Scientific
+interpretation remains conditional on the exact solver, memory policy,
+horizon, transient removal, sampling, equilibria, radii, classifier,
+estimator, and numerical-failure policy recorded with the result.
 
-The active report figures live under:
+Completed validation records are kept separately from the installed API.
+Public calculations can be used on user-supplied systems and data without
+claiming correspondence to any validation case.
 
-```text
-library_figures/by_report/df_nc_chua/
-library_figures/by_report/unified_chua_fractional/
-```
+The corrected non-smooth Chua record applies this rule explicitly: its local
+claim stops at `r = 0.01` after 7,200 zero-contact, zero-failure ball samples.
+The zero-contact samples at `r = 0.03` and `r = 0.1`, followed by 37 contacts
+at `r = 0.3`, are retained as a separate macro-basin audit and do not enlarge
+the local claim. The recorded trajectory is regular/periodic, so no chaos
+claim is attached to this validation.
 
-The `df_nc_chua` target is the canonical destination for the current
-three-example report. The `unified_chua_fractional` target is kept only for
-figures still referenced by `docs/reporte_unificado_chua_fraccionario.tex`.
+## Public references
 
-Older copied figures under `docs/assets/figures/chua_fractional_report/` were
-retired as active report assets. New or regenerated report figures should be
-promoted through the library figure export path described in
-[Figure Gallery](figure_gallery.md) and [Figure Export Policy](figure_export_policy.md),
-not copied manually from ad-hoc `outputs/` directories.
-
-## Reference Policy
-
-Use [Code Reference Map](code_reference_map.md) before adding new calculation
-code. New methods must state whether they come from a paper, a local numerical
-contract, or an external library adapter.
-
-The Chua arctan c590 result referenced by the unified report is one smooth-nonlinearity validation lane and is radius-limited: the canonical validation package `validation/chua_fractional_arctan/` supports local radii `r <= 0.3` with 8400 finite probes and zero contacts, while macro-radius contacts remain extended audit evidence rather than a global basin proof or automatic self-excited verdict.
+- [Quick Start](quick_start.md)
+- [Workflows](workflows.md)
+- [Dynamical Analysis](dynamical_analysis.md)
+- [Lyapunov Methods](lyapunov_methods.md)
+- [Validation Boundary](validation_evidence.md)
+- [Code Reference Map](code_reference_map.md)
+- [API Reference](api_reference.md)

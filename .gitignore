@@ -49,8 +49,6 @@ runs*/
 hidden_verify/
 chua_piecewise/
 /native/
-.tmp.driveupload/
-__codex_dir_test/
 .pytest_tmp/
 .runtime_cache/
 .runtime_native/
@@ -78,30 +76,11 @@ figures/
 !version_2/validation/reference_cases/**/*.jpg
 !version_2/validation/reference_cases/**/*.jpeg
 
-# Historical local archive; not part of active library, tests, docs or package distribution
-_archived_figure_scripts/
-
-# Root LaTeX reports (local only)
-/DF y NC Chua entero y fraccionario/
-/DF y NC Chua entero y fraccionario copy/
-/paper/
-
-# Local environment notes
-/LOCAL_ENV_NOTES.md
-
 # version_2 local/regenerable directories
 /version_2/validation_outputs/
 /version_2/outputs/
 /version_2/runs*/
 /version_2/figures/
-
-
-
-
 # Local editor/workspace settings
 .vscode/
 *.code-workspace
-
-# Local Codex memory and project context
-/.codex/
-/contexto_arquitectura_hidden_attractors_fo.md

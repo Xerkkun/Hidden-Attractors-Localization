@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "method_id": "fractional_variational_abm_qr",
-  "status": "published_benchmarks_pending",
+  "status": "not_validated_against_published_benchmarks",
   "certifications": {
     "chaos_certified_by_this_pipeline": false,
     "hiddenness_certified_by_this_pipeline": false

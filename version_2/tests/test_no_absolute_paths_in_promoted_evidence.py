@@ -24,6 +24,7 @@ JSON_POLICY_KEYS = {
     "archived_external_paths",
     "legacy_external_figures_not_promoted",
     "excluded_paths",
+    "public_distribution_excluded",
     "unpromoted_outputs",
 }
 

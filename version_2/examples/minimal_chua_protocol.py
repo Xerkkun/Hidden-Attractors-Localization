@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write a minimal official protocol contract and optional stage envelope."""
+"""Write a claim-free protocol-schema example and optional stage envelope."""
 
 from __future__ import annotations
 
@@ -25,11 +25,11 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=OUTPUTS / "examples" / f"minimal_chua_protocol_{timestamp()}",
     )
-    parser.add_argument("--q", type=float, default=0.9998)
+    parser.add_argument("--q", type=float, default=0.9)
     parser.add_argument("--h", type=float, default=0.02)
-    parser.add_argument("--memory-length", type=float, default=40.0)
-    parser.add_argument("--t-transient", type=float, default=40.0)
-    parser.add_argument("--t-final", type=float, default=80.0)
+    parser.add_argument("--memory-length", type=float, default=10.0)
+    parser.add_argument("--t-transient", type=float, default=10.0)
+    parser.add_argument("--t-final", type=float, default=20.0)
     parser.add_argument("--run", action="store_true", help="Emit a seed_generation stage envelope; no long integration is run.")
     return parser.parse_args()
 
@@ -45,11 +45,11 @@ def main() -> None:
         backend="efork_c",
         memory_policy="finite_memory",
         memory_length=args.memory_length,
-        hiddenness_radii=(1.0e-4, 1.0e-3),
-        samples_per_radius=100,
-        sample_growth_per_radius=50,
+        hiddenness_radii=(1.0e-3, 1.0e-2),
+        samples_per_radius=16,
+        sample_growth_per_radius=8,
         random_seed_policy="fixed_reproducible",
-        random_seed=20260524,
+        random_seed=0,
     )
     errors = contract.validate()
     if errors:
@@ -62,7 +62,7 @@ def main() -> None:
             "system": "fractional_nonsmooth_chua",
             "official_stage_order": list(OFFICIAL_STAGE_ORDER),
             "numerical_contract": contract.to_dict(),
-            "scientific_boundary": "describing-function families generate seeds only; hiddenness requires the full protocol.",
+            "scientific_boundary": "schema demonstration only; generated seeds and finite runs are not validation evidence.",
         },
     )
     command = [

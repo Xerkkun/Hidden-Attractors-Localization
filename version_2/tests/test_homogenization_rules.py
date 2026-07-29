@@ -108,25 +108,27 @@ def test_pending_stages_not_empty_if_any_stage_incomplete() -> None:
             assert stage in pending, f"{stage} is incomplete and must be in pending_stages"
 
 
-def test_official_manifest_pending_stages_match_real_stage_summaries() -> None:
+def test_official_manifest_closes_nonexecuted_and_inconclusive_stages() -> None:
     root = Path(__file__).resolve().parents[1]
     contract = json.loads((root / "configs" / "validation_contract.json").read_text(encoding="utf-8"))
     manifest = json.loads((root / "validation" / "00_manifest" / "validation_manifest.json").read_text(encoding="utf-8"))
-    closed_statuses = {
-        "completed",
-        "passed_python_wolfram",
-        "completed_self_excited_contact_detected",
-    }
-    expected_pending = []
+    expected_not_evaluated = []
+    expected_inconclusive = []
     for stage in contract["stages"]:
         summary_path = root / "validation" / stage["id"] / stage["summary"]
         if not summary_path.exists():
-            expected_pending.append(stage["slug"])
+            expected_not_evaluated.append(stage["slug"])
             continue
         summary = json.loads(summary_path.read_text(encoding="utf-8"))
-        if summary.get("status") not in closed_statuses:
-            expected_pending.append(stage["slug"])
-    assert manifest["pending_stages"] == expected_pending
+        status = str(summary.get("status", ""))
+        if status.startswith("not_evaluated"):
+            expected_not_evaluated.append(stage["slug"])
+        elif status == "diagnostics_partial_current_protocol":
+            expected_inconclusive.append(stage["slug"])
+
+    assert manifest["pending_stages"] == []
+    assert manifest["not_evaluated_stages"] == expected_not_evaluated
+    assert manifest["inconclusive_stages"] == expected_inconclusive
 
 
 def test_algebraic_validation_failed_cross_tool_cannot_be_closed() -> None:

@@ -4,7 +4,7 @@ import csv
 import pytest
 from pathlib import Path
 from hidden_attractors.workflows.config_loader import load_config
-from hidden_attractors.paths import get_packaged_examples_path
+SOFTWARE_FIXTURE = Path(__file__).parent / "fixtures" / "software_validation_fractional.yaml"
 
 
 def test_anti_regression_no_src_imports():
@@ -36,7 +36,7 @@ def test_anti_regression_no_src_imports():
 
 
 def test_incompatible_memory_mode():
-    config_path = get_packaged_examples_path() / "chua_fractional_centered_lure_df.yaml"
+    config_path = SOFTWARE_FIXTURE
     cfg = load_config(config_path)
     
     cfg["memory_policy"] = "full_caputo"
@@ -47,7 +47,7 @@ def test_incompatible_memory_mode():
 
 
 def test_invalid_memory_window():
-    config_path = get_packaged_examples_path() / "chua_fractional_centered_lure_df.yaml"
+    config_path = SOFTWARE_FIXTURE
     cfg = load_config(config_path)
     
     cfg["memory_mode"] = "window"
@@ -59,7 +59,7 @@ def test_invalid_memory_window():
 
 
 def test_legacy_parameters_rejected():
-    config_path = get_packaged_examples_path() / "chua_fractional_centered_lure_df.yaml"
+    config_path = SOFTWARE_FIXTURE
     cfg = load_config(config_path)
     
     cfg["m"] = 0.4

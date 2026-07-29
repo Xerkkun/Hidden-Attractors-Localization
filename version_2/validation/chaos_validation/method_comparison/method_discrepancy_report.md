@@ -11,18 +11,18 @@ or case-specific Lyapunov spectra are unavailable.
 | Case | Lyapunov comparison | F5 comparison | F6 chaos level |
 |---|---|---|---|
 | `chua_integer_q1_reference` | `insufficient_comparable_methods` | `f5_diagnostics_conflict` | `chaos_evidence_inconclusive` |
-| `danca2017_chua_fractional_saturation_q09998` | `method_validation_pending` | `f5_diagnostics_conflict` | `chaos_evidence_inconclusive` |
-| `wu2023_chua_fractional_arctan_q099` | `method_validation_pending` | `f5_diagnostics_conflict` | `chaos_evidence_inconclusive` |
+| `danca2017_chua_fractional_saturation_q09998` | `method_not_validated` | `f5_diagnostics_conflict` | `chaos_evidence_inconclusive` |
+| `wu2023_chua_fractional_arctan_q099` | `method_not_validated` | `f5_diagnostics_conflict` | `chaos_evidence_inconclusive` |
 
 ## Lyapunov Methods
 
 | Method | Applicable rows | Validated | Benchmark status |
 |---|---:|---|---|
 | `integer_qr_benettin` | `1` | `True` | `validated_against_published_benchmarks` |
-| `fractional_variational_abm_qr` | `2` | `False` | `published_benchmarks_pending` |
-| `fractional_variational_dk2018_block_restart_abm_gs` | `2` | `False` | `published_benchmarks_pending_reproduced_discrepancy` |
-| `fractional_cloned_dynamics_abm_gs_published` | `3` | `False` | `published_benchmarks_pending_discrepancy` |
-| `fractional_cloned_dynamics_abm_qr` | `3` | `False` | `internal_variant_pending` |
+| `fractional_variational_abm_qr` | `2` | `False` | `not_validated_against_published_benchmarks` |
+| `fractional_variational_dk2018_block_restart_abm_gs` | `2` | `False` | `recorded_published_benchmark_discrepancy` |
+| `fractional_cloned_dynamics_abm_gs_published` | `3` | `False` | `recorded_published_benchmark_discrepancy` |
+| `fractional_cloned_dynamics_abm_qr` | `3` | `False` | `numerical_comparison_only` |
 
 ## F5 Diagnostics
 
@@ -34,9 +34,9 @@ or case-specific Lyapunov spectra are unavailable.
 
 ## Conflicts Detected
 
-- `chua_integer_q1_reference`: one or more available spectra belong to methods with validation pending; zero-one is regular-like while Poincare geometry is cloud-like
-- `danca2017_chua_fractional_saturation_q09998`: one or more available spectra belong to methods with validation pending; zero-one is regular-like while Poincare geometry is cloud-like
-- `wu2023_chua_fractional_arctan_q099`: one or more available spectra belong to methods with validation pending; zero-one is regular-like while Poincare geometry is cloud-like
+- `chua_integer_q1_reference`: one or more available spectra belong to methods without published-benchmark validation; zero-one is regular-like while Poincare geometry is cloud-like
+- `danca2017_chua_fractional_saturation_q09998`: one or more available spectra belong to methods without published-benchmark validation; zero-one is regular-like while Poincare geometry is cloud-like
+- `wu2023_chua_fractional_arctan_q099`: one or more available spectra belong to methods without published-benchmark validation; zero-one is regular-like while Poincare geometry is cloud-like
 
 ## Limitations
 

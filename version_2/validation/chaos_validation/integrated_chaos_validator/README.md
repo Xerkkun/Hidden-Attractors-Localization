@@ -5,5 +5,5 @@ finite-time local spectra, and optional F4 internal validation metadata.
 
 The output is a conservative diagnostic integration layer. It does not certify
 chaos or hiddenness. Missing F4 artifacts are reported as
-`f4_internal_validation_missing_or_pending` without preventing report
+`f4_internal_validation_unavailable_or_not_evaluated` without preventing report
 generation.

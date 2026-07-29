@@ -947,9 +947,6 @@ def run_integrator_crosscheck_case(
     _write_individual_runs_csv(all_run_results, case_output_dir / "individual_runs.csv")
     _write_metric_comparison_csv(metric_comparisons, case_output_dir / "metric_comparison.csv")
 
-    if make_figures:
-        _try_make_figures(all_run_results, case_output_dir, config)
-
     return summary
 
 
@@ -1117,19 +1114,6 @@ def _write_metric_comparison_csv(comparisons: list[dict], path: Path) -> None:
         writer.writeheader()
         for c in comparisons:
             writer.writerow(c)
-
-
-def _try_make_figures(results: list[dict], output_dir: Path, config: dict) -> None:
-    """Attempt to generate phase-space figures; silently skip if matplotlib unavailable."""
-    try:
-        import matplotlib
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-    except ImportError:
-        return
-
-    # Nothing to plot without trajectory data in results (stripped).
-    # This hook is for future use when trajectories are kept in memory.
 
 
 __all__ = [

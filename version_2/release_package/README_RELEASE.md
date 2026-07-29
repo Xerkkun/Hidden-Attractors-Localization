@@ -1,100 +1,101 @@
-# Release package
+# Release package 1.1.0
 
-`hidden-attractors-fo` provides reproducible workflows for theoretical-numerical
-search, localization, audit, and conservative classification of hidden-attractor
-candidates in integer- and commensurate Caputo fractional-order Chua/Lur'e
-systems.
+`hidden-attractors-fo` provides reproducible numerical components for
+integer-order and commensurate Caputo fractional-order Lur'e-compatible
+systems. Version 1.1.0 also exposes independent characterization of dynamical
+systems, trajectories, and scalar time series. It fully integrates
+Rosenstein/Eckmann Lyapunov reconstruction and Kaplan--Yorke dimension for a
+uniformly sampled scalar signal.
 
-## PyPI installation
+## Publication state
+
+The 1.1.0 source is a locally verified release candidate. This record does not
+claim a PyPI publication that has not been independently observed. The public
+package version recorded at verification time is 1.0.0.
+
+The release contract is machine-readable in `archive_manifest.json`.
+
+## Installation
+
+PyPI package name:
 
 ```bash
 python -m pip install hidden-attractors-fo
 ```
 
-The Python import name is:
+Python import and public console script:
 
 ```python
 import hidden_attractors
 ```
 
-The only public console script is:
-
-```bash
-hidden-attractors
-```
-
-## Development installation
-
-```bash
-cd version_2
-python -m pip install -e ".[dev,analysis,docs,legacy]"
-```
-
-## Minimal checks
-
 ```bash
 hidden-attractors --help
-hidden-attractors seed --help
-hidden-attractors validate release-readiness --submission-strict --json
-hidden-attractors validate contract --allow-pending
-python -m pytest -q -m "release_readiness"
+hidden-attractors inspect systems
 ```
 
-## Package build checks
+Development installation from `version_2/`:
 
 ```bash
-python -m pip install --upgrade pip build twine
+python -m pip install -e ".[dev,analysis,docs]"
+```
+
+## Release verification
+
+```bash
+python tools/release/validate_release_readiness.py --submission-strict --json
+python -m pytest -q -m "not slow"
 python -m build
 python -m twine check dist/*
 python tools/release/validate_wheel_install.py
 ```
 
-The wheel smoke test must confirm:
+The protected workflow additionally checks that the tag equals the package
+version and that verification does not modify tracked files.
 
-- `hidden-attractors --help` works from the installed wheel.
-- `hidden-attractors seed --help` works from the installed wheel.
-- `hidden-attractors seed --help` does not expose Machado/FDF.
-- `import hidden_attractors` works from the installed wheel.
+## Comprehensive software-validation sample
 
-## Evidence included
+The tracked release control executes seed construction, continuation, final
+integration, sampled-neighborhood verification, and structured output:
 
-- Promoted evidence: `validation/`
-- Promoted figures: `library_figures/`
-- Full API inventory: `docs/api_reference.md`
-- Release sample templates: `release_package/sample_input/` and `release_package/sample_output/`
-- Arctan c590 local-radius boundary: `release_package/ARCTAN_C590_PROMOTION_BOUNDARY.md`
-- PyPI release checklist: `release_package/PYPI_RELEASE_CHECKLIST.md`
-- Publishing policy: `release_package/PUBLISHING_POLICY.md`
-- Ordinary local outputs: `outputs/`, `validation_outputs/`, `runs*/`, `figures/`
+```bash
+python examples/chua_integer_lure_reference/run_example.py \
+  --config release_package/sample_input/chua_integer_comprehensive.yaml \
+  --quick \
+  --steps search continuation verification \
+  --output-dir <empty-output-directory>
+```
 
-PyPI distributes the software package. The GitHub repository and archived DOI
-record remain the evidence locations for promoted scientific artifacts.
+`sample_output/comprehensive_sample_summary.json` records two independent runs
+with identical deterministic outputs. It is a software-validation control, not
+promoted scientific evidence and not a global proof of hiddenness.
 
-## What is claimed
+## Distribution boundary
 
-- The package exposes a single unified CLI, `hidden-attractors`.
-- The PyPI package name is `hidden-attractors-fo`.
-- The Python import name is `hidden_attractors`.
-- The package version is `1.0.0`.
-- The integer Chua `q=1` route is the reproduced software reference.
-- The non-smooth fractional Chua BDF example is a proposed methodology lane.
-- The arctan Wu2023/c590 example separates bibliographic reproduction from the
-  c590 Caputo candidate, which remains finite-time local/radius-limited evidence.
-- API functions, classes, and methods are inventoried in `docs/api_reference.md`.
+The wheel contains the importable package and supported runtime resources. The
+source distribution additionally contains selected user documentation and the
+validated integer reference example. Both exclude repository tests, maintainer
+release files, exploratory configurations, generated outputs, large figures,
+and the validation archive.
 
-## What is not claimed
+Scientific validation records remain in the repository and DOI archive. PyPI
+distributes executable software; it is not the evidence archive.
 
-- No global mathematical proof of hiddenness.
-- No full Danca 2017 fractional hidden-attractor trajectory reproduction.
-- No global basin proof beyond any recorded local-radius contract.
-- No chaos/hiddenness certification from Lyapunov, FFT/PSD, Poincare, 0-1, or
-  phase portraits alone.
-- No public Machado/FDF seed CLI; that route remains theory/internal planned support.
+## Evidence boundary
 
-## Authorship, supervision, and code provenance
+Describing-function and Nyquist calculations construct seeds. Continuation
+transports them. Lyapunov, spectral, Poincare, boundedness, bifurcation, and
+0-1 diagnostics characterize finite trajectories or time series. None of these
+operations alone proves hiddenness.
 
-Maria Fernanda Moreno Lopez is the principal author and maintainer. Dr. Esteban
-Tlelo Cuautle is acknowledged as doctoral thesis director and research guide.
-Dr. Oscar Martinez-Fuentes is acknowledged for reviewing the theoretical
-fractional-calculus component. Dr. Luis Gerardo de la Fraga is acknowledged for
-code provenance related to EFORK and the integer-order Lyapunov algorithm.
+A hiddenness label requires the declared sampled-neighborhood or basin contract,
+including all relevant equilibria, solver settings, classifier thresholds, and
+reproducible outputs. The resulting statement remains finite numerical evidence,
+not a global mathematical proof.
+
+## Authorship and provenance
+
+Maria Fernanda Moreno Lopez is the principal author and maintainer. Esteban
+Tlelo Cuautle supervised the research; Oscar Martinez-Fuentes reviewed the
+fractional-calculus methodology; Luis Gerardo de la Fraga provided code
+provenance for EFORK and the integer-order Lyapunov algorithm.

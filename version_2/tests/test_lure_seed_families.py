@@ -7,7 +7,8 @@ from hidden_attractors.cli.run import main
 
 def test_lure_seed_families_centered(tmp_path):
     output_dir = tmp_path / "seed_centered_outputs"
-    main(["seed", "lure-centered", "--preset", "chua_fractional", "-o", str(output_dir), "--grid_size_omega", "50"])
+    config_path = Path(__file__).parent / "fixtures" / "software_validation_fractional.yaml"
+    main(["seed", "lure-centered", "--config", str(config_path), "-o", str(output_dir), "--grid_size_omega", "50"])
     
     summary_path = output_dir / "seed_generation_summary.json"
     assert summary_path.exists()
@@ -22,7 +23,8 @@ def test_lure_seed_families_centered(tmp_path):
 
 def test_lure_seed_families_biased(tmp_path):
     output_dir = tmp_path / "seed_biased_outputs"
-    main(["seed", "lure-biased", "--preset", "chua_fractional", "-o", str(output_dir), "--grid_size_omega", "50", "--amplitude_max", "10.0"])
+    config_path = Path(__file__).parent / "fixtures" / "software_validation_fractional.yaml"
+    main(["seed", "lure-biased", "--config", str(config_path), "-o", str(output_dir), "--grid_size_omega", "50", "--amplitude_max", "10.0"])
     
     summary_path = output_dir / "seed_generation_summary.json"
     assert summary_path.exists()

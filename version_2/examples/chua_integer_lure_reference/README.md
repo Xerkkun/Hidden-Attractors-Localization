@@ -1,7 +1,8 @@
-# Chua Integer Lur'e Reference Example
+# Chua Integer Lur'e Validation Record
 
-This is the first official report example. It demonstrates the complete
-integer-order route before fractional Caputo memory is introduced.
+This source-repository validation record demonstrates the complete
+integer-order route before fractional Caputo memory is introduced. It is not a
+PyPI user example.
 
 ## Status
 
@@ -45,9 +46,9 @@ The configuration is `reproducibility.yaml` in this directory.
 | `verification` | `final_integer_lure_attractor`, `run_integer_lure_hiddenness_controls` | Final trajectory and sampled equilibrium-neighborhood controls |
 | `figures` | `hidden_attractors.plotting.*` | Phase, transfer, continuation, hiddenness, spectra, and Lyapunov diagnostics |
 
-## Reuse for new systems
+## System contract
 
-A new integer Lur'e system can follow this example when it provides:
+The example requires:
 
 - a registered `ChaoticSystem`;
 - equilibria and Jacobian;

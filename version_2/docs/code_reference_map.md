@@ -1,138 +1,80 @@
-# Code Reference Map
+# Public Calculation Reference Map
 
-Every calculation-facing function should be traceable to one of three sources:
-a published reference, a local numerical contract documented in the report, or
-a clearly marked utility role. This page is the first audit table for that
-policy.
+This page maps the supported public calculation interfaces to their scientific
+basis and current validation status. It contains no case-development scripts
+or editorial infrastructure.
 
-For the complementary article-to-function comparison and explicit scientific
-boundaries, see [Scientific Scope](scientific_scope.md).
+## Independent Dynamical Characterization
 
-## Command-Line Entry Points
+These exported functions can be used without running a hidden-attractor
+search.
 
-The installed scripts below are the commands declared in
-`version_2/pyproject.toml`. The primary stable user-facing CLI is
-`hidden-attractors`; specialized workflow commands are reproducible analysis
-interfaces that remain auditable but may have narrower support guarantees than the primary CLI. Auxiliary or
-internal commands are listed for traceability, not as stable public APIs.
+| Public interface | Result | Evidence boundary |
+| --- | --- | --- |
+| `hidden_attractors.compute_trajectory_metrics` and `trajectory_metrics` | Boundedness, ranges, variance, spectral summaries, section counts, and finite trajectory diagnostics | Tested finite-trajectory characterization; not a proof of chaos or hiddenness. |
+| `hidden_attractors.compute_boundedness_metrics` | Finite-window boundedness status and supporting statistics | Numerical diagnostic under the supplied observation window. |
+| `hidden_attractors.compute_fft_psd` | FFT-derived PSD arrays and spectral summaries | Standard sampled-signal spectral analysis. |
+| `hidden_attractors.detect_poincare_crossings` | Direction-aware Poincare crossings and crossing metadata | Finite geometric sampling of a trajectory. |
+| `hidden_attractors.zero_one_test` | 0--1 chaos-test statistic | Finite-series diagnostic; it does not certify chaos or hiddenness by itself. |
+| `hidden_attractors.bifurcation_points_from_trajectories` | Maxima, minima, or samples from parameter sweeps | Post-processing for bifurcation diagrams, not a continuation proof. |
+| `hidden_attractors.estimate_time_series_lyapunov` | Rosenstein largest-exponent estimate, Eckmann reconstructed spectrum, and Kaplan--Yorke dimension | Fully integrated and tested scalar-series route through the optional `nolds` backend. Results are finite-data, sampling-dependent estimates with parameters, provenance, fit diagnostics, and warnings. |
+| `hidden_attractors.kaplan_yorke_dimension` | Kaplan--Yorke dimension from an ordered finite spectrum | Algebraic calculation whose interpretation inherits the evidence limits of the supplied spectrum. |
+| `hidden_attractors.compute_lyapunov_spectrum` | State-space Lyapunov calculation selected from the implemented method registry | The returned summary identifies the method and its validation status; the dispatcher does not imply equal evidence for every method. |
 
-| Command / Subcommand                                    | Group                 | Entry point / Dispatcher routing                                                   | Documentary status                      |
-| ------------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------- | --------------------------------------- |
-| `hidden-attractors`                                     | Main user command     | `hidden_attractors.cli.main:main`                                                  | Unified dispatcher entry point          |
-| `hidden-attractors run`                                 | Running Workflows     | Dispatches to `hidden_attractors.cli.run:run_cmd`                                  | Runs simple/preset workflow             |
-| `hidden-attractors init`                                | Setup                 | Dispatches to `hidden_attractors.cli.run:init_cmd`                                 | Copies config templates                 |
-| `hidden-attractors inspect-config`                      | Configuration         | Dispatches to `hidden_attractors.cli.run:inspect_config_cmd`                       | Previews config                         |
-| `hidden-attractors inspect candidates`                  | Registry & Candidates | Dispatches to `hidden_attractors.cli.inspect:list_candidates`                      | Lists final candidate records           |
-| `hidden-attractors inspect systems`                     | Registry & Candidates | Dispatches to `hidden_attractors.cli.inspect:systems`                              | Lists registered chaotic systems        |
-| `hidden-attractors inspect workflow-requirements`       | Registry & Candidates | Dispatches to `hidden_attractors.cli.inspect:workflow_requirements`                | Inspects system capability requirements |
-| `hidden-attractors validate contract`                   | Validation Contracts  | Dispatches to `hidden_attractors.cli.validate:validate_contract`                   | Validates validation contract schema    |
-| `hidden-attractors validate bibliography`               | Validation Contracts  | Dispatches to `hidden_attractors.cli.validate:validate_bibliography`               | Validates bibliography manifest         |
-| `hidden-attractors validate release-readiness`          | Validation Contracts  | Dispatches to `hidden_attractors.cli.validate:validate_release_readiness`          | Validates packaging/release readiness   |
-| `hidden-attractors protocol <substage>`                 | Caputo Protocol       | Dispatches to `hidden_attractors.cli.protocol:run_protocol_stage`                  | Orchestrates Caputo protocol stages     |
-| `hidden-attractors seed lure-centered`                  | Seed Generation       | Dispatches to `hidden_attractors.cli.seed:lure_centered`                           | Centered Lur'e seed generation          |
-| `hidden-attractors seed lure-biased`                    | Seed Generation       | Dispatches to `hidden_attractors.cli.seed:lure_biased`                             | Biased Lur'e seed generation            |
-| `hidden-attractors continuation run`                    | Continuation          | Dispatches to `hidden_attractors.cli.continuation:run_scalar_continuation`         | Runs scalar continuation                |
-| `hidden-attractors continuation multiparameter`         | Continuation          | Dispatches to `hidden_attractors.cli.continuation:run_multiparameter_continuation` | Runs multiparameter continuation        |
-| `hidden-attractors hiddenness sphere-controls`          | Neighborhood Probing  | Dispatches to `hidden_attractors.cli.hiddenness:sphere_controls`                   | Neighborhood sphere controls            |
-| `hidden-attractors hiddenness strict-target-refinement` | Neighborhood Probing  | Dispatches to `hidden_attractors.cli.hiddenness:hid_str_ref`                       | Target refinement for hiddenness        |
-| `hidden-attractors basin refined`                       | Basins                | Dispatches to `hidden_attractors.cli.basin:refined`                                | Refines attraction basins               |
-| `hidden-attractors basin strict-target-refinement`      | Basins                | Dispatches to `hidden_attractors.cli.basin:bas_str_ref`                            | Target refinement for basins            |
-| `hidden-attractors robustness overlay`                  | Robustness            | Dispatches to `hidden_attractors.cli.robustness:overlay`                           | Robustness overlay sweep                |
-| `hidden-attractors bifurcation run`                     | Bifurcation           | Dispatches to `hidden_attractors.cli.bifurcation:run_bifurcation`                  | Parameter bifurcation sweeps            |
-| `hidden-attractors bifurcation plot`                    | Bifurcation           | Dispatches to `hidden_attractors.cli.bifurcation:plot_bifurcation`                 | Plots bifurcation diagrams              |
-| `hidden-attractors bifurcation inspect`                 | Bifurcation           | Dispatches to `hidden_attractors.cli.bifurcation:inspect_bifurcation`              | Previews bifurcation summaries          |
-| `hidden-attractors lyapunov compute`                    | Lyapunov Exponents    | Dispatches to `hidden_attractors.cli.lyapunov:compute_lyapunov`                    | Estimates Lyapunov exponents            |
-| `hidden-attractors lyapunov spectrum`                   | Lyapunov Exponents    | Dispatches to `hidden_attractors.cli.lyapunov:trajectory_lyapunov_spectrum`        | Estimates LE spectrum                   |
-| `hidden-attractors lyapunov validate`                   | Lyapunov Exponents    | Dispatches to `hidden_attractors.cli.lyapunov:validate_lyapunov`                   | Validates Lyapunov results              |
-| `hidden-attractors chaos-test zero-one`                 | Chaos Diagnostics     | Dispatches to `hidden_attractors.cli.chaos_test:run_zero_one`                      | Runs 0-1 chaos tests                    |
-| `hidden-attractors chaos-test inspect`                  | Chaos Diagnostics     | Dispatches to `hidden_attractors.cli.chaos_test:inspect_zero_one`                  | Inspects 0-1 test results               |
-| `hidden-attractors published danca-abm-sphere-controls` | Replication           | Dispatches to `hidden_attractors.cli.published:danca_abm_sphere_controls`          | Replicates published Danca paper        |
-| `hidden-attractors report fractional-run`               | Reporting             | Dispatches to `hidden_attractors.cli.report:fractional_run`                        | Automated scientific report generator   |
+The Lyapunov registry contains four callable methods. Their recorded validation
+states are:
 
-For legacy command details, see the [CLI Migration Guide](cli_migration_legacy_entrypoints.md).
+| Method identifier | Current validation state |
+| --- | --- |
+| `integer_qr_benettin` | Synthetic tests and published benchmark validation; restricted to `q=1`. |
+| `fractional_variational_abm_qr` | Synthetic numerical validation only. |
+| `fractional_cloned_dynamics_abm_gs_published` | Implemented diagnostic with a recorded published-benchmark discrepancy. |
+| `fractional_cloned_dynamics_abm_qr` | Implemented numerical-comparison route; no published quantitative-validation claim. |
 
-## Core Model
+All four methods return finite-time indicators. Only
+`integer_qr_benettin` carries the registry flag for published benchmark
+validation.
 
-| Code                                                   | Purpose                                                                | Reference source                                                                                                                                                                  |
-| ------------------------------------------------------ | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `hidden_attractors.models.chua.ChuaParameters`         | Parameter container for the non-smooth fractional Chua case            | M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems"; R. N. Madan and L. O. Chua, "Chaos in Chua's Circuit"                                                       |
-| `hidden_attractors.models.chua.nonlinearity_nonsmooth` | Non-smooth Chua characteristic, linear by pieces                       | R. N. Madan and L. O. Chua, "Chaos in Chua's Circuit"; Danca's non-smooth fractional Chua example                                                                                 |
-| `hidden_attractors.models.chua.rhs_nonsmooth`          | Vector field used inside Caputo/EFORK integrations                     | M. Caputo, "Linear Models of Dissipation whose Q is almost Frequency Independent-II"; M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems"                        |
-| `hidden_attractors.models.chua.equilibria_nonsmooth`   | Equilibria of the non-smooth Chua model                                | Chua circuit model plus the fractional stability interpretation of D. Matignon, "Stability Results for Fractional Differential Equations with Applications to Control Processing" |
-| `hidden_attractors.models.chua.jacobian_nonsmooth`     | Regional Jacobian and switching-surface guard for the non-smooth model | Danca's non-smooth fractional Chua equilibria/stability table; Matignon local stability criterion                                                                                 |
+## Models, Systems, And Stability
 
-## Seed Generation
+| Public interface | Result | Evidence boundary |
+| --- | --- | --- |
+| `hidden_attractors.ChuaParameters`, `rhs_nonsmooth`, and `equilibria_nonsmooth` | Parameterized non-smooth Chua vector field and equilibria | Implemented model equations with algebraic and software validation. |
+| `hidden_attractors.jacobian_nonsmooth` | Regional Jacobian with a switching-surface guard | Local linearization; fractional stability interpretation follows Matignon's criterion. |
+| `hidden_attractors.register_system`, `get_system`, and `list_systems` | Registration and retrieval of dynamical-system definitions | Stable model-registry API. Registration alone does not establish any dynamical classification. |
+| `hidden_attractors.check_system_capability` and `requirements_for` | Capability checks for a selected calculation or workflow | Separates general characterization requirements from the additional evidence required for hidden-attractor localization. |
+| `hidden_attractors.load_trajectory_csv` | Portable loading of sampled trajectory data | Stable input route for independent trajectory and time-series analysis. |
 
-| Code                                                             | Purpose                                                                                      | Reference source                                                                                                                                                              |
-| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `hidden_attractors.seed_generation.find_harmonic_seed`           | Classical or Machado describing-function seed construction                                   | Genesio--Tesi frequency-domain harmonic-balance approach; Tenreiro Machado fractional describing-function family; local Weyl-to-Caputo warning in the report                  |
-| `hidden_attractors.seed_generation.reconstruct_biased_lure_seed` | Biased Lur'e seed reconstruction from DC and first harmonic equations                        | Local biased describing-function contract documented in the Chua report                                                                                                       |
-| `hidden_attractors.solvers.FractionalHistory`                    | EFORK-compatible finite memory window container                                              | Local finite-memory EFORK contract; heavy integration is delegated to C backends                                                                                              |
-| `hidden_attractors.solvers.efork3_caputo_integrate`              | Three-stage Caputo EFORK reference integrator used for manufactured-solution reproduction    | F. Ghoreishi, R. Ghaffari, and N. Saad, "Fractional Order Runge-Kutta Methods," Tables 3, 4, 9, and 10; provided `ejemplo1.py` implementation archived in validation evidence |
-| `tools/validation/validate_chua_fractional_nonsmooth_algebra.py` | Generate algebra and Lur'e/DF evidence for `q=0.9998`, with MATLAB/report sign normalization | Danca (2017) for the exact case; local MATLAB/Wolfram reproductions; Petras (2008) as model-family support only                                                               |
+## Hidden-Attractor Localization
 
-## Trajectory Diagnostics
+The public localization route is built from exported generic Lur'e seed
+functions and the completed executable integer reference workflow.
 
-| Code                                                          | Purpose                                                                | Reference source                                                                                                |
-| ------------------------------------------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `hidden_attractors.analysis.trajectory.component_fft`         | Dominant FFT frequency and spectral entropy proxy                      | Standard spectral analysis; used as a diagnostic only, not as hiddenness proof                                  |
-| `hidden_attractors.analysis.trajectory.section_points`        | Poincare-style section points for trajectory-cloud comparison          | Operational section geometry documented in `reporte_unificado_chua_fraccionario.tex`; not a proof of hiddenness |
-| `hidden_attractors.analysis.trajectory.cloud_median_distance` | Symmetric nearest-neighbor cloud distance                              | Local geometric comparison contract documented in the report                                                    |
-| `hidden_attractors.analysis.trajectory.trajectory_metrics`    | Boundedness, range, variance, spectral, section, and cloud diagnostics | Local robustness contract; hiddenness reading follows Leonov--Kuznetsov hidden/self-excited classification      |
+| Public interface | Result | Evidence boundary |
+| --- | --- | --- |
+| `hidden_attractors.find_lure_harmonic_seed` | Describing-function seed for a compatible registered Lur'e system | Initialization calculation; a seed is not hiddenness evidence. |
+| `hidden_attractors.integer_lure_seed` and `continue_integer_lure_seed` | Integer reference seed and continuation trace | Covered by the executable integer reference validation. |
+| `hidden_attractors.integrate_integer_lure` and `final_integer_lure_attractor` | Finite numerical trajectory for the selected continued seed | Solver output under explicit numerical settings. |
+| `hidden_attractors.run_integer_lure_hiddenness_controls` | Finite equilibrium-neighborhood controls with conservative labels | Numerical control record; it does not turn finite sampling into a global basin proof. |
+| `hidden_attractors.validate_full_workflow_system` | Preflight validation of model capabilities required by a workflow | Software-contract validation only. |
 
-## Bifurcation And Plots
+## Scientific References
 
-| Code                                                                          | Purpose                                                                       | Reference source                                                                                                            |
-| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `hidden_attractors.analysis.bifurcation.bifurcation_points_from_trajectories` | Extract maxima, minima, or samples from parameter scans                       | Post-processing convention for bifurcation diagrams; continuation should be delegated to tools such as PyDSTool when needed |
-| `hidden_attractors.plotting.dynamics.plot_phase_space`                        | Phase-space view of `t,x,y,z` trajectories                                    | Standard dynamical-systems visualization                                                                                    |
-| `hidden_attractors.plotting.dynamics.plot_phase_projections`                  | `xy`, `xz`, `yz` projections                                                  | Standard dynamical-systems visualization                                                                                    |
-| `hidden_attractors.plotting.dynamics.plot_time_series`                        | Time series for selected observables                                          | Standard numerical diagnostics                                                                                              |
-| `hidden_attractors.plotting.dynamics.plot_bifurcation_diagram`                | Scatter plot of extracted bifurcation points                                  | Post-processing visualization, not numerical continuation                                                                   |
-| `hidden_attractors.plotting.dynamics.plot_lure_transfer_components`           | Real and imaginary transfer-function closure panels for a selected Lur'e seed | Integer Chua `q=1` MATLAB verification view and Guan--Xie Example 6 branch                                                  |
+The implemented equations and validation boundaries cite the following source
+titles:
 
-## Native And Workflow Contracts
+- “Chaos in Chua's Circuit” for the Chua model family;
+- “Hidden Chaotic Attractors in Fractional-Order Systems” as a bibliographic
+  basis for the implemented fractional reference model, without claiming a
+  complete independent reproduction;
+- “Stability Results for Fractional Differential Equations with Applications to Control Processing” for the local fractional stability criterion;
+- “Lyapunov Characteristic Exponents for Smooth Dynamical Systems and for Hamiltonian Systems” for the QR/orthonormalization foundation;
+- Rosenstein et al. and Eckmann et al. for scalar time-series reconstruction.
 
-| Code                                                    | Purpose                                                                                                                                | Reference source                                                                                                                                                        |
-| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `hidden_attractors.native.FractionalChuaBackend`        | Wrapper for C/EFORK fractional Chua integration                                                                                        | Caputo fractional model; stage ordering aligned with Ghoreishi--Ghaffari--Saad; full fractional external validation remains separate from the verified `q=1` Chua rerun |
-| `hidden_attractors.native.BasinBackend`                 | Wrapper for basin classification backend                                                                                               | Leonov--Kuznetsov hidden/self-excited classification plus local finite-time basin contract                                                                              |
-| `hidden_attractors.workflows.robustness_overlay`        | Overlay trajectories under changes of `h`, `Lm`, and `t_final`                                                                         | Local robustness contract; robustness does not imply hiddenness                                                                                                         |
-| `hidden_attractors.workflows.sphere_controls`           | Compatibility adapter now sampling inside equilibrium-centred balls                                                                    | Leonov--Kuznetsov basin criterion; finite-sample numerical control                                                                                                      |
-| `hidden_attractors.workflows.refined_basin`             | Refine unresolved basin cells by trajectory geometry                                                                                   | Local target-reference geometry contract                                                                                                                                |
-| `hidden_attractors.workflows.strict_target_refinement`  | Stricter target-reference refinement for unresolved Chua/Danca basin or equilibrium-ball rows                                          | Local finite-time trajectory-similarity contract with negative controls; still numerical evidence, not proof                                                            |
-| `hidden_attractors.workflows.danca_abm_sphere_controls` | Danca-located reference accreditation with untruncated ABM, followed by ABM/EFORK3 full/truncated-memory ball controls and diagnostics | Danca fractional Chua example plus Diethelm--Ford--Freed ABM predictor-corrector; solver/memory comparison does not replace the official hiddenness protocol            |
-| `hidden_attractors.protocol_cli`                        | Canonical stage-envelope CLI for the single official methodology                                                                       | Local protocol contract; numerical payloads may use corrected C backends                                                                                                |
-| `hidden_attractors.workflows.integer_lure`              | Reusable order-one Lur'e seed, continuation, final-attractor, and hiddenness controls                                                  | Integer Chua `q=1` reference report; Guan--Xie Example 6 displayed-value comparison; locally regenerated evidence package                                               |
-| `hidden_attractors.workflows.specs.WorkflowInputSpec`   | Shared input contract for reusable CLIs and migrated adapters                                                                          | Local reproducibility contract: records solver, classifier, target, basin, ball-sampling, and refinement assumptions                                                    |
-| `hidden_attractors.systems.requirements`                | Capability and requirement checklist for applying workflows to new systems                                                             | Local library-extension policy; distinguishes vector-field registration from hiddenness evidence workflows                                                              |
+## Evidence Boundary
 
-## Optional External Methods
-
-| Code                                                                                 | Purpose                                                                  | Reference source                                                                                                                                                              |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `hidden_attractors.integrations.compute_complexity_measures(..., backend="nolds")`   | Delegate entropy, dimension, Lyapunov, Hurst, and DFA metrics to `nolds` | External `nolds` package; Lyapunov-spectrum methods should cite Benettin et al., "Lyapunov Characteristic Exponents for Smooth Dynamical Systems and for Hamiltonian Systems" |
-| `hidden_attractors.integrations.compute_complexity_measures(..., backend="antropy")` | Delegate entropy and fractal measures to `antropy`                       | External `antropy` package; do not copy implementations into this repo                                                                                                        |
-| `hidden_attractors.integrations.external_tool_report`                                | Registry of optional tools                                               | PyDSTool documentation; pyComplexity notebook reference; local adapter policy                                                                                                 |
-
-## Internal Transition Dependencies
-
-| Code                                               | Purpose                                                                             | Reference source                                                                                                                                                                                                 |
-| -------------------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tools/legacy/danca2017_chua_abm_replication.py`   | Temporary ABM numerical dependency used by the maintained robustness comparison     | M. F. Danca, "Hidden Chaotic Attractors in Fractional-Order Systems"; K. Diethelm, N. J. Ford, and A. D. Freed, "A Predictor-Corrector Approach for the Numerical Solution of Fractional Differential Equations" |
-| `tools/legacy/chua_initial_cond.py` and DF helpers | Temporary calculation dependencies used by `fractional_report_run`; no public route | Genesio--Tesi seed mechanism; it must not be read as proof of hiddenness                                                                                                                                         |
-| `tools/legacy/early_periodicity_filter.py`         | Migration adapter tested to prevent pre-continuation periodic rejection             | Official `soft_precheck` rule                                                                                                                                                                                    |
-
-## Policy For New Calculation Code
-
-When adding a new calculation module:
-
-1. Add the article title and source in the module docstring or in this table.
-2. State whether the method is exact theory, finite-time numerical evidence, or
-   an operational diagnostic.
-3. If a maintained external package already implements the algorithm, add an
-   adapter and citation instead of copying the algorithm.
-4. If the method integrates many trajectories, classifies basins, estimates
-   Lyapunov exponents, or runs bifurcation sweeps, use or add a C backend rather
-   than a heavy Python implementation.
-5. Add a small example that writes reproducible figures or CSV/JSON artifacts.
+The library supports hidden-attractor localization and independent dynamical
+characterization as separate uses. Every result must be interpreted according
+to its returned method, numerical settings, validation status, sampling, and
+finite observation window. This map is limited to current exported interfaces
+and recorded validation states.

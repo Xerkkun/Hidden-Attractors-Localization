@@ -14,8 +14,7 @@ if str(workspace_root / "version_2") not in sys.path:
 
 def test_bifurcation_cli_lifecycle(tmp_path):
     # Determine config path
-    from hidden_attractors.paths import get_packaged_examples_path
-    config_path = get_packaged_examples_path() / "chua_fractional_bifurcation.yaml"
+    config_path = Path(__file__).parent / "fixtures" / "software_validation_fractional.yaml"
     
     # Run bifurcation workflow via CLI
     main([

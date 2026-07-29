@@ -1,7 +1,7 @@
 case_id: chua_integer_lure_reference
-title: "Chua entero de referencia con forma Lur'e"
-role_in_report: "caso de referencia en orden entero"
-scientific_status: "candidato numerico bajo vecindades muestreadas"
+title: "Integer-order Chua Lur'e validation reference"
+validation_role: "integer_order_software_control"
+scientific_status: "validated_under_sampled_neighborhoods"
 
 system:
   system_id: chua-nonsmooth
@@ -56,7 +56,3 @@ lyapunov:
 outputs:
   output_dir: outputs/examples/chua_integer_lure_reference
   figures_dir: outputs/examples/chua_integer_lure_reference/figures
-
-publication_figures:
-  canonical_script: hidden_attractors.plotting.generate_publication_figures
-  report_assets_dir: library_figures/by_report/df_nc_chua

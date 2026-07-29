@@ -50,10 +50,10 @@
 | F1 | Common API / dispatcher | **Completed** ✓ |
 | F1 | `integer_qr_benettin` dispatch | **Implemented & Validated** ✓ (F0/F1) |
 | F2 | `fractional_variational_abm_qr` | **Implemented ✓ · NOT validated against published benchmarks (F2)** |
-| F2 | `fractional_variational_dk2018_block_restart_abm_gs` | **Implemented native reproduction lane · `published_benchmarks_pending_reproduced_discrepancy` (`RF lambda_3` only)** |
+| F2 | `fractional_variational_dk2018_block_restart_abm_gs` | **Implemented native reproduction lane · `recorded_published_benchmark_discrepancy` (`RF lambda_3` only)** |
 | F2 | `fractional_cloned_dynamics_abm` | Legacy placeholder; NOT implemented |
-| F3 | `fractional_cloned_dynamics_abm_gs_published` | **Implemented · `published_benchmarks_pending_discrepancy`** |
-| F3 | `fractional_cloned_dynamics_abm_qr` | **Implemented experimental QR variant · benchmark comparison pending** |
+| F3 | `fractional_cloned_dynamics_abm_gs_published` | **Implemented · `recorded_published_benchmark_discrepancy`** |
+| F3 | `fractional_cloned_dynamics_abm_qr` | **Implemented experimental QR variant · numerical comparison only; no published-benchmark validation claim** |
 | F5 | `zero_one_test` | **Implemented as supporting diagnostic; does not certify chaos** |
 | F5 | PSD/FFT diagnostics | **Implemented with standardized outputs; does not certify chaos** |
 | F4 | Internal Lyapunov validation | **`f4_complete_with_documented_discrepancies`**; no validation promotion |
@@ -80,7 +80,7 @@
 
 ## F2 — `fractional_variational_abm_qr` Validation
 
-**Status: Implemented, pending benchmark validation**
+**Status: Implemented, not validated against published benchmarks**
 
 The `fractional_variational_abm_qr` method estimates the Lyapunov spectrum for Caputo fractional systems $0 < q < 1$. It uses an extended original–variational system solver and history-consistent QR reorthonormalisation.
 
@@ -91,7 +91,7 @@ Validation configurations and metadata are defined in:
 
 - `chaos_certified_by_this_pipeline: false`
 - `hiddenness_certified_by_this_pipeline: false`
-- `validated_against_published_benchmarks: false` (F2 pending)
+- `validated_against_published_benchmarks: false` (F2 not validated against published benchmarks)
 
 ### F1/F2 does NOT certify
 
@@ -113,7 +113,7 @@ block-restart ABM-GS reproduction lane.
 ### Status
 
 - Synthetic benchmarks: **Implemented & Validated** (Zero RHS, Linear Stable)
-- Published RF/Lorenz values: **Long native run executed on 2026-05-31**. Lorenz passes quantitatively; RF remains `published_benchmarks_pending_reproduced_discrepancy` because only `lambda_3` exceeds tolerance.
+- Published RF/Lorenz values: **Long native run executed on 2026-05-31**. Lorenz passes quantitatively; RF remains `recorded_published_benchmark_discrepancy` because only `lambda_3` exceeds tolerance.
 - Published 4D non-smooth case: **Qualitative only** because the quantitative article data are incomplete.
 - Passing the DK2018 lane does not promote `fractional_variational_abm_qr`.
 - Fast CI executes native smoke tests only. Published quantitative checks require `RUN_PUBLISHED_LYAPUNOV=1`.
@@ -127,7 +127,7 @@ block-restart ABM-GS reproduction lane.
 
 ## F3 - Fischer 2020 cloned dynamics
 
-**Status: `published_benchmarks_pending_discrepancy`**
+**Status: `recorded_published_benchmark_discrepancy`**
 
 The published GS lane and the internal QR comparison lane are implemented.
 They use a fiducial trajectory plus perturbed clones and do not require a
@@ -156,7 +156,7 @@ The long GS runner was executed on `2026-06-01` and recorded `24` rows:
 | Numerical failures | `0` |
 | Strict sign-pattern gate failures | `10` |
 
-Final status: `published_benchmarks_pending_discrepancy`.
+Final status: `recorded_published_benchmark_discrepancy`.
 
 The strict all-row test reports `14 passed, 10 failed`. Two near-zero
 exponents cross sign while remaining below the quantitative absolute-error
@@ -166,7 +166,7 @@ experimental.
 Auditable CSV/JSON outputs are stored under
 `validation/outputs/lyapunov_benchmarks/fractional_cloned_dynamics_abm_gs_published/`.
 
-Tracked row-level classifications and the sensitivity plan are available in
+Tracked row-level classifications and the recorded sensitivity protocol are available in
 the [Fischer 2020 discrepancy report](lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/discrepancy_diagnostics/fischer2020_discrepancy_report.md).
 F3 is implemented, the all-row benchmark has been executed, reproduction is
 partial, discrepancy diagnostics have been added, and `validated=False`.
@@ -229,7 +229,7 @@ metadata. It writes conservative per-case candidate labels under
 F7 writes applicability, validation-state, consensus, and discrepancy tables
 under `method_comparison/`. Full-history QR, DK2018 block-restart, Fischer
 published GS, and the experimental QR lane remain separate contracts. F7 does
-not validate pending fractional methods or certify chaos or hiddenness.
+not validate fractional methods without published-benchmark validation or certify chaos or hiddenness.
 
 ## Phase F closure status
 

@@ -11,12 +11,21 @@ from typing import Sequence
 
 from ..candidates import load_final_candidate_records
 from ..systems import check_system_capability, get_system, known_workflows, list_systems, requirements_for
-from ..workflows.specs import example_chua_fractional_spec
+from ..workflows.specs import example_workflow_spec
 
 
-def list_candidates() -> None:
-    """Print final candidate records using the public package API."""
-    for record in load_final_candidate_records():
+def list_candidates(argv: Sequence[str] | None = None) -> None:
+    """Print candidate records from an explicit portable JSON source."""
+    parser = argparse.ArgumentParser(
+        description="Inspect candidate records from a JSON file or run directory."
+    )
+    parser.add_argument(
+        "--source",
+        required=True,
+        help="selected_candidates.json or a directory that contains it.",
+    )
+    args = parser.parse_args(argv)
+    for record in load_final_candidate_records(args.source):
         print(
             f"{record.candidate_id} | route={record.route} | "
             f"q={record.q:.4f} | start={record.robust_start.tolist()} | "
@@ -60,7 +69,7 @@ def workflow_requirements(argv: Sequence[str] | None = None) -> None:
     parser.add_argument("--example-spec", action="store_true", help="Print a JSON-like example WorkflowInputSpec.")
     args = parser.parse_args(argv)
     if args.example_spec:
-        print(json.dumps(example_chua_fractional_spec().to_jsonable(), indent=2, sort_keys=True))
+        print(json.dumps(example_workflow_spec().to_jsonable(), indent=2, sort_keys=True))
         return
     workflows = [args.workflow] if args.workflow else list(known_workflows())
     for workflow in workflows:

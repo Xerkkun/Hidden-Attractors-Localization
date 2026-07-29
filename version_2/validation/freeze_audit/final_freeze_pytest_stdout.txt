@@ -1,5 +1,5 @@
 === STAGE: test_scientific_software_algebra ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_scientific_software_algebra.py -q
+Command: <PYTHON> -m pytest tests/test_scientific_software_algebra.py -q
 Exit code: 0
 
 --- STDOUT ---
@@ -10,7 +10,7 @@ Exit code: 0
 
 
 === STAGE: test_scientific_software_integrators ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_scientific_software_integrators.py -q
+Command: <PYTHON> -m pytest tests/test_scientific_software_integrators.py -q
 Exit code: 0
 
 --- STDOUT ---
@@ -21,7 +21,7 @@ Exit code: 0
 
 
 === STAGE: test_scientific_software_hiddenness ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_scientific_software_hiddenness.py -q
+Command: <PYTHON> -m pytest tests/test_scientific_software_hiddenness.py -q
 Exit code: 0
 
 --- STDOUT ---
@@ -32,7 +32,7 @@ Exit code: 0
 
 
 === STAGE: test_reproducibility_metadata ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_reproducibility_metadata.py -q
+Command: <PYTHON> -m pytest tests/test_reproducibility_metadata.py -q
 Exit code: 0
 
 --- STDOUT ---
@@ -43,7 +43,7 @@ Exit code: 0
 
 
 === STAGE: test_candidate_gate ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_candidate_gate.py -q
+Command: <PYTHON> -m pytest tests/test_candidate_gate.py -q
 Exit code: 0
 
 --- STDOUT ---
@@ -54,7 +54,7 @@ Exit code: 0
 
 
 === STAGE: test_freeze_audit_json_outputs ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest tests/test_freeze_audit_json_outputs.py -q
+Command: <PYTHON> -m pytest tests/test_freeze_audit_json_outputs.py -q
 Exit code: 0
 
 --- STDOUT ---
@@ -65,7 +65,7 @@ Exit code: 0
 
 
 === STAGE: regression_tests ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest -m regression -q
+Command: <PYTHON> -m pytest -m regression -q
 Exit code: 0
 
 --- STDOUT ---
@@ -76,7 +76,7 @@ Exit code: 0
 
 
 === STAGE: all_tests ===
-Command: C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Scripts\python.exe -m pytest -q
+Command: <PYTHON> -m pytest -q
 Exit code: 0
 
 --- STDOUT ---
@@ -96,44 +96,44 @@ sss..................................................................... [ 22%]
 .......................................                                  [100%]
 ============================== warnings summary ===============================
 tests/test_cli_smoke.py::test_deprecated_aliases_do_not_crash[hidden_attractors.protocol_cli-main]
-  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tests\test_cli_smoke.py:55: DeprecationWarning: Deprecated: use 'hidden-attractors protocol <command> ...'
+  <REPOSITORY_ROOT>\tests\test_cli_smoke.py:55: DeprecationWarning: Deprecated: use 'hidden-attractors protocol <command> ...'
     func(["--help"])
 
 tests/test_cli_smoke.py::test_deprecated_aliases_do_not_crash[hidden_attractors.workflows.sphere_controls-main]
-  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tests\test_cli_smoke.py:55: DeprecationWarning: Deprecated: use 'hidden-attractors hiddenness sphere-controls ...'
+  <REPOSITORY_ROOT>\tests\test_cli_smoke.py:55: DeprecationWarning: Deprecated: use 'hidden-attractors hiddenness sphere-controls ...'
     func(["--help"])
 
 tests/test_cli_smoke.py::test_deprecated_aliases_do_not_crash[hidden_attractors.workflows.refined_basin-main]
-  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tests\test_cli_smoke.py:55: DeprecationWarning: Deprecated: use 'hidden-attractors basin refined ...'
+  <REPOSITORY_ROOT>\tests\test_cli_smoke.py:55: DeprecationWarning: Deprecated: use 'hidden-attractors basin refined ...'
     func(["--help"])
 
 tests/test_cli_smoke.py::test_deprecated_aliases_do_not_crash[hidden_attractors.workflows.fractional_report_run-main]
-  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tests\test_cli_smoke.py:55: DeprecationWarning: Deprecated: use 'hidden-attractors report fractional-run ...'
+  <REPOSITORY_ROOT>\tests\test_cli_smoke.py:55: DeprecationWarning: Deprecated: use 'hidden-attractors report fractional-run ...'
     func(["--help"])
 
 tests/test_continuation_cli.py::test_continuation_run_execution
 tests/test_continuation_memory_policy.py::test_continuation_memory_policy_carry
-  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\hidden_attractors\cli\main.py:150: UserWarning: Integrator 'efork3' at q=1.0 redirects to the integer-order 'efork_q1' limit. For pure integer-order work, prefer 'rk4' or 'heun' which are simpler and faster.
+  <REPOSITORY_ROOT>\hidden_attractors\cli\main.py:150: UserWarning: Integrator 'efork3' at q=1.0 redirects to the integer-order 'efork_q1' limit. For pure integer-order work, prefer 'rk4' or 'heun' which are simpler and faster.
     run_scalar_continuation(argv)
 
 tests/test_lyapunov_cli.py::test_lyapunov_cli_lifecycle
-  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Lib\site-packages\nolds\measures.py:263: RuntimeWarning: signal has very low mean frequency, setting min_tsep = 30
+  <PYTHON_ENV>\Lib\site-packages\nolds\measures.py:263: RuntimeWarning: signal has very low mean frequency, setting min_tsep = 30
     warnings.warn(msg.format(min_tsep), RuntimeWarning)
 
 tests/test_lyapunov_cli.py::test_lyapunov_cli_lifecycle
-  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\.venv\Lib\site-packages\nolds\measures.py:292: RuntimeWarning: autocorrelation declined too slowly to find suitable lag, setting lag to 3
+  <PYTHON_ENV>\Lib\site-packages\nolds\measures.py:292: RuntimeWarning: autocorrelation declined too slowly to find suitable lag, setting lag to 3
     warnings.warn(msg.format(lag), RuntimeWarning)
 
 tests/test_reproducibility.py::test_protocol_cli_degrades_strong_label_without_lure_and_seed_metadata
-  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tests\test_reproducibility.py:81: DeprecationWarning: Deprecated: use 'hidden-attractors protocol <command> ...'
+  <REPOSITORY_ROOT>\tests\test_reproducibility.py:81: DeprecationWarning: Deprecated: use 'hidden-attractors protocol <command> ...'
     assert protocol_main(
 
 tests/test_validation_contract.py::test_validation_contract_accepts_pending_stages
-  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tests\test_validation_contract.py:227: DeprecationWarning: Deprecated: use 'hidden-attractors validate contract ...'
+  <REPOSITORY_ROOT>\tests\test_validation_contract.py:227: DeprecationWarning: Deprecated: use 'hidden-attractors validate contract ...'
     assert main(["--contract", str(contract_path), "--validation-root", str(validation)]) == 0
 
 tests/test_validation_contract.py::test_validate_efork_integrator_runs_on_temp_dir
-  C:\Users\moren\Desktop\Codes\Hidden Attractors Fractional Order\version_2\tests\test_validation_contract.py:285: DeprecationWarning: Deprecated: use 'hidden-attractors validate contract ...'
+  <REPOSITORY_ROOT>\tests\test_validation_contract.py:285: DeprecationWarning: Deprecated: use 'hidden-attractors validate contract ...'
     assert main([
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html

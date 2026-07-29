@@ -4,6 +4,7 @@ import csv
 import yaml
 import numpy as np
 import dataclasses
+from copy import deepcopy
 from typing import Any, Dict, List, Tuple, Optional
 from ..systems import get_system
 from ..lure.decomposition import validate_lure_decomposition
@@ -42,188 +43,101 @@ from ..plotting.plot_trajectories import (
 )
 from ..verification.sphere_tests import run_sphere_probe_sweep
 
-DEFAULT_CONFIG = {
-    "system_id": "chua_fractional_saturation",
-    "q": None,
-    "transfer_mode": "fractional",
-    "continuation_mode": "fractional",
-    "dynamics_mode": "system",
-    "integrator": "efork3",
-    "memory_mode": "full",
-    "memory_window_length": 4000,
+INFRASTRUCTURE_DEFAULTS = {
     "run_hiddenness_tests": False,
     "run_basin_slices": False,
     "run_sphere_tests": False,
     "run_robustness": False,
     "workers": 1,
-    "random_seed": 42,
-    "random_seed_policy": "fixed_reproducible",
-    "seed_mode": "fractional",
     "machado_enabled": False,
     "biased_enabled": False,
-    "seed_filter": {
-        "enabled": False,
-        "harmonic_residual_keep": 0.05,
-        "rho_H_keep": 0.3,
-    },
-    "robustness": {
-        "enabled": False,
-    },
-    "memory_policy": "full_caputo",
-    "memory_window_steps": 4000,
-    "memory_window_time": None,
-    "transfer_convention": "standard",
-    "harmonic_condition": "1_minus_WN",
-    "q_seed": None,
-    "q_dynamics": None,
-    "plot_enabled": True,
-    "save_figures": True,
-    "plot_attractors": True,
-    "plot_seed_trajectories": True,
-    "plot_transfer": True,
-    "plot_describing_function": True,
-    "plot_residual_map": True,
-    "plot_continuation": True,
-    "plot_sphere_tests": True,
-    "plot_timeseries": True,
-    "plot_matignon": True,
-    "max_seed_candidates_to_plot": 3,
+    "seed_filter": {"enabled": False},
+    "robustness": {"enabled": False},
+    "plot_enabled": False,
+    "save_figures": False,
+    "plot_attractors": False,
+    "plot_seed_trajectories": False,
+    "plot_transfer": False,
+    "plot_describing_function": False,
+    "plot_residual_map": False,
+    "plot_continuation": False,
+    "plot_sphere_tests": False,
+    "plot_timeseries": False,
+    "plot_matignon": False,
     "plot_each_phase": False,
-    "output_dir": None,
-    "seed_strategy": "k_phi",
-    "seed_sign_convention": "kuznetsov",
-    "seed_construction": "modal",
-    "seed_theta": 0.0,
-    "hiddenness_equilibria_filter": "all",
-    "describing_function_mode": "auto",
-    "branch_index": 0,
-    "omega_min": 0.01,
-    "omega_max": 20.0,
-    "amplitude_min": 0.01,
-    "amplitude_max": 20.0,
-    "grid_size_omega": 200,
-    "grid_size_amplitude": 200,
-    "root_refinement": True,
-    "df_residual_tol": 1e-2,
-    "samples_per_radius": 15,
-    "radial_growth_factor": 1.0,
-    "directions_mode": "sphere_random",
-    "random_seed": 42,
-    "h": 0.01,
-    "divergence_norm": 120.0,
-    "equilibrium_tol": 0.5,
-    "target_match_metric": "nn_percentile",
-    "target_match_tol": 0.5,
-    "attractor_plots": {
-        "enabled": True,
-        "include_equilibria": False,
-        "use_tail_after_burn": True,
-        "max_seed_candidates_to_plot": 3,
-        "line_width": 0.7,
-        "point_size": 0.0
-    },
-    "early_stop": {
-        "enabled": True,
-        "divergence_enabled": True,
-        "divergence_norm": 80.0,
-        "divergence_derivative_norm": None,
-        "divergence_consecutive_steps": 5,
-        "divergence_growth_factor": 1.25,
-        "equilibrium_enabled": True,
-        "equilibrium_tol": 1e-3,
-        "equilibrium_derivative_tol": 1e-4,
-        "equilibrium_consecutive_steps": 200,
-        "equilibrium_min_time": 5.0
-    },
-    "final_simulation": {
-        "t_final": 500.0,
-        "t_burn": 120.0
-    },
-    "sphere_tests": {
-        "enabled": False,
-        "equilibrium_selection": "all",
-        "radii": [1e-5, 1e-4, 1e-3, 1e-2],
-        "samples_initial": 20,
-        "samples_growth_factor": 2.0,
-        "directions_mode": "sphere_random",
-        "random_seed": 42,
-        "t_final": 80.0,
-        "t_burn": 20.0,
-        "h": 0.01,
-        "trajectory_plot_fraction": 0.25,
-        "max_trajectories_to_plot": 60,
-        "samples_per_radius": None,
-        "early_stop_enabled": True
-    },
-    "continuation": {
-        "eta_grid_mode": "adaptive",
-        "eta_values": None,
-        "eta_min": 1.0e-3,
-        "eta_max": 1.0,
-        "n_eta": 21,
-        "start_at_zero": False,
-        "t_transient": None,
-        "t_keep": None,
-        "periods_transient": 20,
-        "periods_keep": 10,
-        "use_period_based_times": True,
-        "early_stop_enabled": True,
-        "require_c_backend": True,
-        "allow_python_fallback": False,
-        "build_fractional_harmonic_history": True,
-        "harmonic_history_periods": 10
-    },
-    "basin": {
-        "enabled": False,
-        "planes": ["xy", "xz", "yz"],
-        "grid_n": 150,
-        "x_interval": [-10.0, 10.0],
-        "y_interval": [-10.0, 10.0],
-        "z_interval": [-10.0, 10.0],
-        "fixed_x": 0.0,
-        "fixed_y": 0.0,
-        "fixed_z": 0.0,
-        "around_equilibria": True,
-        "equilibrium_selection": "all",
-        "local_radius": 2.0,
-        "t_final": 80.0,
-        "t_burn": 20.0,
-        "h": 0.01,
-        "early_stop_enabled": True
-    }
+    "memory_window_length": None,
+    "memory_window_steps": None,
+    "memory_window_time": None,
+    "attractor_plots": {"enabled": False},
+    "early_stop": {"enabled": False},
+    "sphere_tests": {"enabled": False},
+    "basin": {"enabled": False},
+    "hiddenness": {},
 }
+
+# Kept as an import-compatible alias; it contains infrastructure choices only.
+DEFAULT_CONFIG = INFRASTRUCTURE_DEFAULTS
 
 def build_eta_grid(cont_cfg: dict) -> np.ndarray:
     if cont_cfg.get("lambda_values") is not None:
-        return np.asarray(cont_cfg["lambda_values"], dtype=float)
+        grid = np.asarray(cont_cfg["lambda_values"], dtype=float)
+        return _validate_continuation_grid(grid, "continuation.lambda_values")
     if cont_cfg.get("eta_values") is not None:
-        return np.asarray(cont_cfg["eta_values"], dtype=float)
+        grid = np.asarray(cont_cfg["eta_values"], dtype=float)
+        return _validate_continuation_grid(grid, "continuation.eta_values")
 
-    mode       = cont_cfg.get("eta_grid_mode", "adaptive")
-    eta_min    = float(cont_cfg.get("eta_min", 1e-3))
-    eta_max    = float(cont_cfg.get("eta_max", 1.0))
-    n_eta      = int(cont_cfg.get("n_eta", 21))
-    start_zero = bool(cont_cfg.get("start_at_zero", False))
+    missing = [
+        key
+        for key in ("eta_grid_mode", "eta_min", "eta_max", "n_eta", "start_at_zero")
+        if cont_cfg.get(key) is None
+    ]
+    if missing:
+        raise ValueError(
+            "Continuation requires explicit values for: "
+            + ", ".join(f"continuation.{key}" for key in missing)
+        )
 
-    if mode == "adaptive":
-        base = np.array([1e-3, 3e-3, 1e-2, 3e-2, 0.07, 0.12,
-                         0.2,  0.35, 0.5,  0.7,  0.85, 1.0], dtype=float)
-        grid = base[(base >= eta_min) & (base <= eta_max)]
-        if len(grid) == 0:
-            grid = np.linspace(eta_min, eta_max, max(n_eta, 5))
-    elif mode == "logarithmic":
-        start = 0.0 if start_zero else eta_min
-        if start <= 0.0:
-            grid = np.geomspace(eta_min, eta_max, n_eta)
-        else:
-            grid = np.geomspace(start, eta_max, n_eta)
+    mode = str(cont_cfg["eta_grid_mode"])
+    if mode not in {"linear", "logarithmic"}:
+        raise ValueError(
+            "continuation.eta_grid_mode must be 'linear' or 'logarithmic'; "
+            "implicit adaptive grids are not supported."
+        )
+
+    eta_min = float(cont_cfg["eta_min"])
+    eta_max = float(cont_cfg["eta_max"])
+    n_eta = int(cont_cfg["n_eta"])
+    start_zero = bool(cont_cfg["start_at_zero"])
+    if n_eta < 2:
+        raise ValueError("continuation.n_eta must be at least 2.")
+    if not np.isfinite(eta_min) or not np.isfinite(eta_max) or eta_max <= eta_min:
+        raise ValueError(
+            "continuation.eta_min and continuation.eta_max must be finite "
+            "with eta_max > eta_min."
+        )
+
+    if mode == "logarithmic":
+        if eta_min <= 0.0:
+            raise ValueError(
+                "continuation.eta_min must be positive for a logarithmic grid."
+            )
+        grid = np.geomspace(eta_min, eta_max, n_eta)
     else:
-        start = 0.0 if start_zero else eta_min
-        grid = np.linspace(start, eta_max, n_eta)
+        grid = np.linspace(eta_min, eta_max, n_eta)
 
     if start_zero and grid[0] != 0.0:
         grid = np.concatenate(([0.0], grid))
 
+    return _validate_continuation_grid(grid, "generated continuation grid")
+
+
+def _validate_continuation_grid(grid: np.ndarray, source: str) -> np.ndarray:
+    if grid.ndim != 1 or grid.size == 0:
+        raise ValueError(f"{source} must be a non-empty one-dimensional list.")
+    if not np.all(np.isfinite(grid)):
+        raise ValueError(f"{source} must contain only finite values.")
+    if np.any(np.diff(grid) <= 0.0):
+        raise ValueError(f"{source} must be strictly increasing.")
     return grid
 
 def _save_continuation_trace(cont_steps: list, output_dir: str) -> None:
@@ -312,9 +226,9 @@ def _evaluate_rhs(system: Any, x: Any) -> Any:
     return system.evaluate(x)
 
 def _effective_q(config: dict, system: Any) -> float:
-    q = config.get("q", system.parameters.get("q", 1.0))
+    q = config.get("q")
     if q is None:
-        q = 1.0
+        raise ValueError("Dynamics evaluation requires an explicit system order q.")
     return float(q)
 
 
@@ -339,13 +253,13 @@ def _write_workflow_run_metadata(
         h=float(config["h"]),
         t_final=float(t_final),
         t_burn=float(t_burn),
-        memory_mode=str(config.get("memory_mode", "full")),
+        memory_mode=str(config["memory_mode"]),
         M=config.get("memory_window_steps") or config.get("memory_window_length"),
         memory_window_steps=config.get("memory_window_steps") or config.get("memory_window_length"),
         memory_window_time=config.get("memory_window_time"),
-        is_full_caputo=str(config.get("memory_mode", "full")).lower() in {"full", "full_history"},
+        is_full_caputo=str(config["memory_mode"]).lower() in {"full", "full_history"},
         integrator_name=str(config["integrator"]),
-        integrator_backend="native" if config.get("use_c_backend", True) else "python",
+        integrator_backend="native" if config["use_c_backend"] else "python",
         caputo=True,
         parameters=system.parameters,
         lure=collect_lure_metadata(
@@ -355,7 +269,7 @@ def _write_workflow_run_metadata(
         ),
         seed=collect_seed_metadata(seed, source="centered_lure_df:selected_seed"),
         random_seed=config.get("random_seed"),
-        random_seed_policy=str(config.get("random_seed_policy", "fixed_reproducible")),
+        random_seed_policy=str(config.get("random_seed_policy") or "not_specified"),
     )
     
     from ..reproducibility import metadata_to_jsonable
@@ -384,19 +298,229 @@ def run_workflow_integration(system, x0, q_val, h, t_final, config, equilibria):
         memory_window_length=memory_window_length,
         divergence_norm=divergence_norm,
         system=system,
-        use_c_backend=config.get("use_c_backend", True),
-        allow_python_fallback=config.get("allow_python_fallback", True),
+        use_c_backend=config["use_c_backend"],
+        allow_python_fallback=config["allow_python_fallback"],
         early_stop_config=early_stop,
         equilibria=equilibria
     )
 
 def use_c_backend_check(config: Dict[str, Any]) -> bool:
-    return config.get("use_c_backend", True)
+    return bool(config["use_c_backend"])
+
+
+def _merge_infrastructure_defaults(config: dict) -> dict:
+    result = deepcopy(INFRASTRUCTURE_DEFAULTS)
+    for key, value in deepcopy(config).items():
+        if isinstance(value, dict) and isinstance(result.get(key), dict):
+            merged = deepcopy(result[key])
+            merged.update(value)
+            result[key] = merged
+        else:
+            result[key] = value
+    return result
+
+
+def _value_at(config: dict, dotted_path: str) -> Any:
+    value: Any = config
+    for part in dotted_path.split("."):
+        if not isinstance(value, dict) or part not in value:
+            return None
+        value = value[part]
+    return value
+
+
+def _require_explicit(config: dict, *paths: str, context: str) -> None:
+    missing = []
+    for path in paths:
+        value = _value_at(config, path)
+        if value is None or value == "" or (
+            isinstance(value, (list, tuple, dict)) and not value
+        ):
+            missing.append(path)
+    if missing:
+        raise ValueError(
+            f"{context} requires explicit configuration values for: "
+            + ", ".join(missing)
+        )
+
+
+def _prepare_centered_lure_config(config: dict) -> dict:
+    if not isinstance(config, dict):
+        raise TypeError("The centered Lur'e workflow configuration must be a dict.")
+
+    prepared = _merge_infrastructure_defaults(config)
+    from .config_loader import _normalize, _validate
+
+    prepared = _normalize(prepared)
+    _validate(prepared)
+
+    _require_explicit(
+        prepared,
+        "system_id",
+        "q",
+        "transfer_mode",
+        "seed_mode",
+        "continuation_mode",
+        "dynamics_mode",
+        "integrator",
+        "h",
+        "memory_mode",
+        "memory_policy",
+        "use_c_backend",
+        "allow_python_fallback",
+        "output_dir",
+        "seed_strategy",
+        "seed_sign_convention",
+        "seed_construction",
+        "seed_theta",
+        "describing_function_mode",
+        "branch_index",
+        "omega_min",
+        "omega_max",
+        "amplitude_min",
+        "amplitude_max",
+        "grid_size_omega",
+        "grid_size_amplitude",
+        "root_refinement",
+        "df_residual_tol",
+        "transfer_convention",
+        "harmonic_condition",
+        "divergence_norm",
+        "equilibrium_tol",
+        "target_match_metric",
+        "target_match_tol",
+        "final_simulation.t_final",
+        "final_simulation.t_burn",
+        context="The centered Lur'e workflow",
+    )
+
+    if prepared["memory_mode"] == "window":
+        _require_explicit(
+            prepared,
+            "memory_window_length",
+            context="Finite-window integration",
+        )
+
+    continuation = prepared.get("continuation") or {}
+    build_eta_grid(continuation)
+    _require_explicit(
+        prepared,
+        "continuation.early_stop_enabled",
+        "continuation.require_c_backend",
+        "continuation.allow_python_fallback",
+        context="Continuation execution",
+    )
+    period_based = continuation.get("use_period_based_times")
+    if period_based is True:
+        _require_explicit(
+            prepared,
+            "continuation.periods_transient",
+            "continuation.periods_keep",
+            context="Period-based continuation",
+        )
+    elif period_based is False:
+        _require_explicit(
+            prepared,
+            "continuation.t_transient",
+            "continuation.t_keep",
+            context="Time-based continuation",
+        )
+    else:
+        raise ValueError(
+            "The centered Lur'e workflow requires explicit "
+            "continuation.use_period_based_times."
+        )
+
+    if prepared["continuation_mode"] == "fractional":
+        _require_explicit(
+            prepared,
+            "continuation.build_fractional_harmonic_history",
+            context="Fractional continuation",
+        )
+        if continuation["build_fractional_harmonic_history"]:
+            _require_explicit(
+                prepared,
+                "continuation.harmonic_history_periods",
+                context="Fractional harmonic history",
+            )
+
+    seed_filter = prepared.get("seed_filter") or {}
+    if seed_filter.get("enabled"):
+        _require_explicit(
+            prepared,
+            "seed_filter.harmonic_residual_keep",
+            "seed_filter.rho_H_keep",
+            context="Seed filtering",
+        )
+
+    if prepared["run_sphere_tests"] or prepared["run_hiddenness_tests"]:
+        _require_explicit(
+            prepared,
+            "sphere_tests.radii",
+            "sphere_tests.samples_initial",
+            "sphere_tests.samples_growth_factor",
+            "sphere_tests.directions_mode",
+            "sphere_tests.random_seed",
+            "sphere_tests.t_final",
+            "sphere_tests.t_burn",
+            "sphere_tests.h",
+            "hiddenness.required_radii",
+            "hiddenness.strict_all_equilibria",
+            "hiddenness.allow_numerical_failures",
+            "hiddenness.min_ref_tail_points",
+            "hiddenness.min_probe_tail_points",
+            "hiddenness.target_match_metric",
+            "hiddenness.target_match_tol",
+            "hiddenness.target_match_nn_percentile",
+            context="Neighborhood verification",
+        )
+        prepared["samples_per_radius"] = prepared["sphere_tests"].get(
+            "samples_per_radius",
+            prepared["sphere_tests"]["samples_initial"],
+        )
+
+    if prepared["run_basin_slices"]:
+        _require_explicit(
+            prepared,
+            "basin.planes",
+            "basin.grid_n",
+            "basin.around_equilibria",
+            "basin.equilibrium_selection",
+            "basin.t_final",
+            "basin.t_burn",
+            "basin.h",
+            context="Basin calculation",
+        )
+        if prepared["basin"]["around_equilibria"]:
+            _require_explicit(
+                prepared,
+                "basin.local_radius",
+                context="Equilibrium-centred basin calculation",
+            )
+        else:
+            _require_explicit(
+                prepared,
+                "basin.x_interval",
+                "basin.y_interval",
+                "basin.z_interval",
+                "basin.fixed_x",
+                "basin.fixed_y",
+                "basin.fixed_z",
+                context="Global basin calculation",
+            )
+
+    if prepared["plot_enabled"]:
+        _require_explicit(
+            prepared,
+            "max_seed_candidates_to_plot",
+            context="Candidate plotting",
+        )
+
+    return prepared
 
 def run_centered_lure_df_workflow(config: dict) -> dict:
     """Execute the full 7-phase centered Lur'e describing function workflow with early stopping."""
-    for k, v in DEFAULT_CONFIG.items():
-        config.setdefault(k, v)
+    config = _prepare_centered_lure_config(config)
         
     if not config.get("machado_enabled"):
         if config.get("describing_function_mode") == "machado":
@@ -532,8 +656,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         print(f"[{run_id}][{system_id}] WARNING: Lur'e decomposition vector field mismatch.")
         
     fs_cfg = config.get("final_simulation", {})
-    t_final = fs_cfg.get("t_final", config.get("t_final", 500.0))
-    t_burn = fs_cfg.get("t_burn", config.get("t_burn", 120.0))
+    t_final = fs_cfg["t_final"]
+    t_burn = fs_cfg["t_burn"]
     
     print(f"[{run_id}][{system_id}] Fase 2/7: calculando equilibrios... 15%")
     equilibria = solve_equilibria(system)
@@ -623,7 +747,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         return summary
         
     if config["plot_enabled"] and n_candidates > 0:
-        max_seeds_to_plot = config.get("max_seed_candidates_to_plot", 3)
+        max_seeds_to_plot = config["max_seed_candidates_to_plot"]
         for idx in range(min(n_candidates, max_seeds_to_plot)):
             c_A0, c_omega0, c_k = candidates[idx]
             try:
@@ -632,8 +756,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                     seed_sign_convention=config["seed_sign_convention"],
                     q=q_seed,
                     transfer_mode=seed_transfer_mode,
-                    theta=config.get("seed_theta", 0.0),
-                    seed_construction=config.get("seed_construction", "modal"),
+                    theta=config["seed_theta"],
+                    seed_construction=config["seed_construction"],
                 )
                 
                 c_active_q = q_dynamics
@@ -670,7 +794,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                         output_dir=target_dir,
                         file_prefix=file_prefix
                     )
-                    if config.get("plot_timeseries", True):
+                    if config["plot_timeseries"]:
                         plot_timeseries_data(
                             trajectory=c_traj,
                             config=config,
@@ -680,7 +804,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
             except Exception as e:
                 print(f"[{run_id}][{system_id}] WARNING: Candidate seed {idx} plotting simulation failed: {e}")
  
-    branch_idx = config.get("branch_index", 0)
+    branch_idx = config["branch_index"]
     if branch_idx >= len(candidates):
         print(f"[{run_id}][{system_id}] branch_index {branch_idx} out of range. Selecting index 0.")
         branch_idx = 0
@@ -692,8 +816,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         seed_sign_convention=config["seed_sign_convention"],
         q=q_seed,
         transfer_mode=seed_transfer_mode,
-        theta=config.get("seed_theta", 0.0),
-        seed_construction=config.get("seed_construction", "modal"),
+        theta=config["seed_theta"],
+        seed_construction=config["seed_construction"],
     )
     run_metadata = _write_workflow_run_metadata(
         config=config,
@@ -715,7 +839,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     
     if config["seed_construction"] == "modal":
         _, v_norm, matched_ev, target_lam = build_modal_lure_seed(
-            system, A0, omega0, k, q=q_seed, transfer_mode=seed_transfer_mode, theta=config.get("seed_theta", 0.0)
+            system, A0, omega0, k, q=q_seed, transfer_mode=seed_transfer_mode, theta=config["seed_theta"]
         )
         r_vec = _get_lure_output_vector(system)
         P_mat = _get_lure_matrix(system)
@@ -734,28 +858,28 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     cont_cfg = config.get("continuation", {})
     lambda_grid = build_eta_grid(cont_cfg)
     
-    if cont_cfg.get("use_period_based_times", True) and omega0 is not None and omega0 > 0:
+    if cont_cfg["use_period_based_times"] and omega0 is not None and omega0 > 0:
         T0 = 2.0 * np.pi / omega0
-        t_transient_cont = cont_cfg.get("t_transient") or float(cont_cfg.get("periods_transient", 20)) * T0
-        t_keep_cont      = cont_cfg.get("t_keep")      or float(cont_cfg.get("periods_keep",      10)) * T0
+        t_transient_cont = float(cont_cfg["periods_transient"]) * T0
+        t_keep_cont = float(cont_cfg["periods_keep"]) * T0
     else:
-        t_transient_cont = float(cont_cfg.get("t_transient") or 30.0)
-        t_keep_cont      = float(cont_cfg.get("t_keep")      or 30.0)
+        t_transient_cont = float(cont_cfg["t_transient"])
+        t_keep_cont = float(cont_cfg["t_keep"])
     
     pre_hist_t = None
     pre_hist_x = None
     is_fractional_cont = config["continuation_mode"] == "fractional"
     
-    if is_fractional_cont and cont_cfg.get("build_fractional_harmonic_history", True):
+    if is_fractional_cont and cont_cfg["build_fractional_harmonic_history"]:
         try:
             _, v_norm_pre, _, _ = build_modal_lure_seed(
                 system, A0, omega0, k,
                 q=q_seed,
                 transfer_mode=seed_transfer_mode,
-                theta=config.get("seed_theta", 0.0)
+                theta=config["seed_theta"]
             )
             T0_pre = 2.0 * np.pi / omega0
-            n_hist_periods = int(cont_cfg.get("harmonic_history_periods", 10))
+            n_hist_periods = int(cont_cfg["harmonic_history_periods"])
             h_val = config["h"]
             
             if config["memory_mode"] == "window" and config["memory_window_length"] is not None:
@@ -776,7 +900,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
             pre_hist_x = None
     
     cont_early_stop = config.get("early_stop", {}).copy()
-    if not cont_cfg.get("early_stop_enabled", True):
+    if not cont_cfg["early_stop_enabled"]:
         cont_early_stop["enabled"] = False
     
     if config["continuation_mode"] == "integer":
@@ -811,8 +935,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
             history_states=pre_hist_x,
             early_stop_config=cont_early_stop,
             equilibria=list(equilibria.values()),
-            require_c_backend=cont_cfg.get("require_c_backend", False),
-            allow_python_fallback=cont_cfg.get("allow_python_fallback", True),
+            require_c_backend=cont_cfg["require_c_backend"],
+            allow_python_fallback=cont_cfg["allow_python_fallback"],
             q=q_continuation,
         )
     
@@ -903,14 +1027,14 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     if (config["run_sphere_tests"] or config["run_hiddenness_tests"]):
         from ..verification.hiddenness_contract import verify_hiddenness_contract
         hid_cfg = config.get("hiddenness", {})
-        required_radii = hid_cfg.get("required_radii", [1e-2, 1e-3, 1e-4, 1e-5])
-        strict_all_eq = hid_cfg.get("strict_all_equilibria", True)
-        allow_num_fail = hid_cfg.get("allow_numerical_failures", False)
-        min_ref_pts = hid_cfg.get("min_ref_tail_points", 1000)
-        min_probe_pts = hid_cfg.get("min_probe_tail_points", 200)
-        target_metric = hid_cfg.get("target_match_metric", "nn_percentile")
-        target_tol = hid_cfg.get("target_match_tol", 0.5)
-        target_nn_pct = hid_cfg.get("target_match_nn_percentile", 90.0)
+        required_radii = hid_cfg["required_radii"]
+        strict_all_eq = hid_cfg["strict_all_equilibria"]
+        allow_num_fail = hid_cfg["allow_numerical_failures"]
+        min_ref_pts = hid_cfg["min_ref_tail_points"]
+        min_probe_pts = hid_cfg["min_probe_tail_points"]
+        target_metric = hid_cfg["target_match_metric"]
+        target_tol = hid_cfg["target_match_tol"]
+        target_nn_pct = hid_cfg["target_match_nn_percentile"]
 
         contract_res = verify_hiddenness_contract(
             equilibria=equilibria,
@@ -936,9 +1060,9 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     basin_data_accum = []
     if config["run_basin_slices"] and seed_reached_attractor:
         basin_cfg = config.get("basin", {})
-        planes = basin_cfg.get("planes", ["xy", "xz", "yz"])
-        around_eq = basin_cfg.get("around_equilibria", True)
-        eq_sel = basin_cfg.get("equilibrium_selection", "all")
+        planes = basin_cfg["planes"]
+        around_eq = basin_cfg["around_equilibria"]
+        eq_sel = basin_cfg["equilibrium_selection"]
         
         selected_eq_basin = {}
         if eq_sel == "all":
@@ -962,11 +1086,11 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                         ref_tail=ref_tail,
                         stable_eqs=stable_eqs,
                         fixed_values={"z": float(eq_pt[2]), "y": float(eq_pt[1]), "x": float(eq_pt[0])},
-                        grid_n=basin_cfg.get("grid_n", 150),
+                        grid_n=basin_cfg["grid_n"],
                         center=eq_pt.tolist(),
-                        t_final=basin_cfg.get("t_final", 80.0),
-                        t_burn=basin_cfg.get("t_burn", 20.0),
-                        h=basin_cfg.get("h", 0.01),
+                        t_final=basin_cfg["t_final"],
+                        t_burn=basin_cfg["t_burn"],
+                        h=basin_cfg["h"],
                         workers=config["workers"],
                         eq_tol=config["equilibrium_tol"],
                         div_norm=config["divergence_norm"],
@@ -976,7 +1100,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                         memory_mode=config["memory_mode"],
                         memory_window_length=config["memory_window_length"],
                         around_equilibria=True,
-                        local_radius=basin_cfg.get("local_radius", 2.0),
+                        local_radius=basin_cfg["local_radius"],
                         eq_name=eq_name,
                         system_id=system_id,
                         early_stop_config=config.get("early_stop"),
@@ -990,7 +1114,12 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                         for j, v_val in enumerate(v):
                             basin_data_accum.append([plane, eq_name, float(u_val), float(v_val), int(mat[i, j])])
         else:
-            center_pt = equilibria.get("E0", np.zeros(3)).tolist()
+            if not equilibria:
+                raise ValueError("Global basin calculation requires equilibria.")
+            center_pt = np.mean(
+                np.vstack(list(equilibria.values())),
+                axis=0,
+            ).tolist()
             for plane in planes:
                 u, v, mat = generate_basin_slice(
                     plane=plane,
@@ -999,12 +1128,12 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                     integrator=config["integrator"],
                     ref_tail=ref_tail,
                     stable_eqs=stable_eqs,
-                    fixed_values={"z": basin_cfg.get("fixed_z", 0.0), "y": basin_cfg.get("fixed_y", 0.0), "x": basin_cfg.get("fixed_x", 0.0)},
-                    grid_n=basin_cfg.get("grid_n", 150),
+                    fixed_values={"z": basin_cfg["fixed_z"], "y": basin_cfg["fixed_y"], "x": basin_cfg["fixed_x"]},
+                    grid_n=basin_cfg["grid_n"],
                     center=center_pt,
-                    t_final=basin_cfg.get("t_final", 80.0),
-                    t_burn=basin_cfg.get("t_burn", 20.0),
-                    h=basin_cfg.get("h", 0.01),
+                    t_final=basin_cfg["t_final"],
+                    t_burn=basin_cfg["t_burn"],
+                    h=basin_cfg["h"],
                     workers=config["workers"],
                     eq_tol=config["equilibrium_tol"],
                     div_norm=config["divergence_norm"],
@@ -1039,10 +1168,10 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                 
         basin_meta = {
             "system_id": system_id,
-            "grid_n": basin_cfg.get("grid_n", 150),
+            "grid_n": basin_cfg["grid_n"],
             "planes": planes,
             "around_equilibria": around_eq,
-            "local_radius": basin_cfg.get("local_radius", 2.0),
+            "local_radius": basin_cfg.get("local_radius"),
             "x_interval": basin_cfg.get("x_interval"),
             "y_interval": basin_cfg.get("y_interval"),
             "z_interval": basin_cfg.get("z_interval")
@@ -1063,29 +1192,33 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                 print(f"[{run_id}][{system_id}] WARNING: tracking plots failed: {exc_track}")
         if final_traj is not None:
             plot_flexible_attractor_and_projections(final_traj, equilibria, config, output_dir, "final_attractor")
-            if config.get("plot_timeseries", True):
+            if config["plot_timeseries"]:
                 plot_timeseries_data(final_traj, config, output_dir, "final")
                 
             if len(probe_results) > 0:
                 plot_neighborhood_control_spheres(final_traj, probe_results, equilibria, config, output_dir)
                 
-        if config.get("plot_matignon", True):
+        if config["plot_matignon"]:
             from ..plotting.plot_matignon import plot_matignon_equilibria
             plot_matignon_equilibria(system, equilibria, config, output_dir)
             
     # Bibliographic Validation
     from ..references.validator import validate_bibliography_manifest
-    val_cfg = config.get("validation", {})
-    manifest_path = val_cfg.get("claims_manifest", "version_2/references/claims_manifest.yaml")
+    val_cfg = config.get("validation") or {}
+    manifest_path = val_cfg.get("claims_manifest")
     strict_bib = val_cfg.get("strict_bibliography", False)
-    
-    bib_res = validate_bibliography_manifest(manifest_path, strict=strict_bib)
-    
-    # If strict bibliography is enabled and validation fails, raise an error
-    if strict_bib and bib_res["bibliographic_validation_status"] == "failed":
+
+    bib_res = None
+    if manifest_path:
+        bib_res = validate_bibliography_manifest(manifest_path, strict=strict_bib)
+        if strict_bib and bib_res["bibliographic_validation_status"] == "failed":
+            raise ValueError(
+                "Bibliographic validation failed under strict_bibliography contract. "
+                f"Missing or unregistered references: {[c.get('claim_id') for c in bib_res.get('claims_missing_references', [])]}"
+            )
+    elif strict_bib:
         raise ValueError(
-            "Bibliographic validation failed under strict_bibliography contract. "
-            f"Missing or unregistered references: {[c.get('claim_id') for c in bib_res.get('claims_missing_references', [])]}"
+            "strict_bibliography requires an explicit validation.claims_manifest"
         )
         
     summary = _build_summary_dict(
@@ -1113,12 +1246,18 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     summary["metadata_validation_errors"] = validate_run_metadata(run_metadata)
     _save_summary(summary, output_dir)
     
-    if config.get("plot_enabled", True):
+    if config["plot_enabled"]:
         try:
-            from ..plotting.generate_publication_figures import generate_all_publication_figures
-            generate_all_publication_figures(output_dir, config)
+            from ..plotting.render_all import render_all_plots
+
+            render_all_plots(
+                trajectory=final_traj,
+                equilibria=equilibria,
+                config=config,
+                run_id=run_id,
+            )
         except Exception as plot_exc:
-            print(f"[{run_id}][{system_id}] WARNING: Publication figures generation failed: {plot_exc}")
+            print(f"[{run_id}][{system_id}] WARNING: Figure generation failed: {plot_exc}")
             import traceback
             traceback.print_exc()
             
@@ -1221,7 +1360,7 @@ def _build_summary_dict(
         "harmonic_condition": config.get("harmonic_condition"),
         "memory_policy": config.get("memory_policy"),
         "history_policy": history_policy,
-        "branch_index": config.get("branch_index", 0),
+        "branch_index": config["branch_index"],
         "n_df_candidates": n_candidates,
         "selected_seed": "pos" if n_candidates > 0 else "none",
         "omega0": float(omega0) if omega0 is not None else float("nan"),
@@ -1281,7 +1420,7 @@ def _build_summary_dict(
             "claims_total": bib_res["claims_total"],
             "references_used": bib_res["references_used"],
             "missing_claim_references": [c.get("claim_id") for c in bib_res.get("claims_missing_references", [])],
-            "traceability_manifest": config.get("validation", {}).get("claims_manifest", "version_2/references/claims_manifest.yaml")
+            "traceability_manifest": (config.get("validation") or {}).get("claims_manifest")
         }
     else:
         summary["bibliographic_validation"] = {
@@ -1289,7 +1428,7 @@ def _build_summary_dict(
             "claims_total": 0,
             "references_used": [],
             "missing_claim_references": [],
-            "traceability_manifest": config.get("validation", {}).get("claims_manifest", "version_2/references/claims_manifest.yaml")
+            "traceability_manifest": (config.get("validation") or {}).get("claims_manifest")
         }
 
     # Clean obsolete fields

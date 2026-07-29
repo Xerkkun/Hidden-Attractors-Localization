@@ -81,7 +81,7 @@ def test_f4_2_integer_chua_uses_reference_seed_without_invented_spectrum() -> No
 
 def test_f4_3_keeps_dk2018_rf_discrepancy_and_contract_separation() -> None:
     summary = _load_json(STAGE_DIRS["F4_3"] / "summary.json")
-    assert summary["published_lane"]["source_status"] == "published_benchmarks_pending_reproduced_discrepancy"
+    assert summary["published_lane"]["source_status"] == "recorded_published_benchmark_discrepancy"
     assert summary["published_lane"]["rabinovich_fabrikant_status"] == "published_benchmark_failed"
     assert "RF lambda_3" in summary["published_lane"]["documented_discrepancy"]
     assert summary["local_full_history_qr_lane"]["validated_against_dk2018_published_lane"] is False

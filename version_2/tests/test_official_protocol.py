@@ -13,16 +13,12 @@ if str(workspace_root / "version_2") not in sys.path:
 if str(workspace_root) not in sys.path:
     sys.path.insert(1, str(workspace_root))
 
-from hidden_attractors.workflows.danca_abm_sphere_controls import (
-    FINITE_MEMORY_POLICY,
+from validation.python.danca_abm_sphere_controls import (
     FULL_HISTORY_POLICY,
     _solver_cases,
-    make_parser as make_danca_sphere_parser,
-)
-from hidden_attractors.workflows.fractional_report_run import (
-    HIDDENNESS_RADII,
-    HIDDENNESS_SAMPLE_GROWTH_PER_RADIUS,
-    HIDDENNESS_SAMPLES_PER_RADIUS,
+    build_validation_summary,
+    make_parser as make_danca_partial_parser,
+    run_validation as run_danca_partial_validation,
 )
 from hidden_attractors.workflows.protocol import (
     OFFICIAL_STAGE_ORDER,
@@ -34,7 +30,6 @@ from hidden_attractors.workflows.protocol import (
     UnifiedSeedRecord,
     sample_uniform_ball,
 )
-from hidden_attractors.workflows.sphere_controls import make_parser as make_sphere_parser
 
 
 def _contract() -> NumericalContract:
@@ -174,40 +169,59 @@ def test_hiddenness_sampling_is_interior_to_equilibrium_balls() -> None:
     assert np.any(distances < 0.09)
 
 
-def test_sphere_controls_reach_danca_delta_with_requested_growth() -> None:
+def test_sphere_controls_contract_declares_radii_and_requested_growth() -> None:
     expected_radii = [1.0e-5, 3.0e-5, 1.0e-4, 3.0e-4, 1.0e-3, 1.0e-2]
-    configs_dir = Path(__file__).resolve().parent.parent / "configs"
-    configured = json.loads((configs_dir / "unified_caputo_protocol.json").read_text(encoding="utf-8"))["numerical_contract"]
+    protocol_path = (
+        Path(__file__).resolve().parent.parent
+        / "validation"
+        / "00_manifest"
+        / "source_configs"
+        / "unified_caputo_protocol.json"
+    )
+    configured = json.loads(protocol_path.read_text(encoding="utf-8"))["numerical_contract"]
 
     assert configured["hiddenness_radii"] == expected_radii
     assert configured["samples_per_radius"] == 100
     assert configured["sample_growth_per_radius"] == 50
-    assert HIDDENNESS_RADII == expected_radii
-    assert HIDDENNESS_SAMPLES_PER_RADIUS == 100
-    assert HIDDENNESS_SAMPLE_GROWTH_PER_RADIUS == 50
-
-    for args in (make_sphere_parser().parse_args([]), make_danca_sphere_parser().parse_args([])):
-        radii = [float(radius) for radius in args.radii.split(",")]
-        assert radii == expected_radii
-        assert args.samples_per_radius == 100
-        assert args.sample_growth_per_radius == 50
-        assert args.samples_per_radius + (len(radii) - 1) * args.sample_growth_per_radius == 350
+    assert (
+        configured["samples_per_radius"]
+        + (len(expected_radii) - 1) * configured["sample_growth_per_radius"]
+        == 350
+    )
 
 
-def test_danca_control_matrix_declares_abm_and_efork_with_both_memory_policies() -> None:
-    args = make_danca_sphere_parser().parse_args([])
+def test_danca_partial_validation_keeps_only_the_disclosed_abm_contract(tmp_path) -> None:
+    args = make_danca_partial_parser().parse_args([])
     cases = _solver_cases(args)
-    assert args.h == 0.01
-    assert args.memory_length == 40.0
     assert [(case["solver"], case["history_policy"]) for case in cases] == [
         ("abm", FULL_HISTORY_POLICY),
-        ("abm", FINITE_MEMORY_POLICY),
-        ("efork3", FULL_HISTORY_POLICY),
-        ("efork3", FINITE_MEMORY_POLICY),
     ]
     assert cases[0]["solver_case_id"] == "abm_full_history"
-    assert cases[0]["reference_role"] == "single_seed_accreditation_and_comparison"
-    assert all(case["memory_length"] == 40.0 for case in cases if case["history_policy"] == FINITE_MEMORY_POLICY)
+    assert cases[0]["reference_role"] == "published_method_contract_only"
+    assert cases[0]["dynamics_executed"] is False
+
+    summary = build_validation_summary()
+    assert summary["status"] == "passed"
+    assert summary["artifact_role"] == "published_case_partial_validation"
+    assert summary["numerical_contract"]["q"] == 0.9998
+    assert summary["numerical_contract"]["h"] == 0.01
+    assert summary["dynamics"] == {
+        "executed": False,
+        "reason": "published_initial_condition_not_disclosed",
+    }
+    assert summary["claims"] == {
+        "chaos_certified": False,
+        "hiddenness_certified": False,
+        "full_reproduction": False,
+    }
+    serialized = json.dumps(summary).lower()
+    assert "candidate" not in serialized
+    assert '"seed' not in serialized
+    assert "search" not in serialized
+
+    written = run_danca_partial_validation(tmp_path)
+    assert written == tmp_path / "danca2017_partial_validation_summary.json"
+    assert json.loads(written.read_text(encoding="utf-8"))["status"] == "passed"
 
 
 def test_strong_hiddenness_label_requires_the_full_protocol(valid_run_metadata) -> None:

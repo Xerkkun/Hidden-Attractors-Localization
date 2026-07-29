@@ -570,6 +570,6 @@
     "F3 remains validated=False.",
     "No chaos or hiddenness is certified.",
     "Hypotheses remain hypotheses, not definitive conclusions.",
-    "The unlimited sweep remains pending because bounded runs already showed substantial cost."
+    "An unlimited sweep is outside the recorded validation scope."
   ]
 }

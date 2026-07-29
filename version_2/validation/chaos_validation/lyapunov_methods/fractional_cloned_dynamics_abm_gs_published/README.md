@@ -3,7 +3,7 @@
 This directory records the published-algorithm reproduction lane for
 `fractional_cloned_dynamics_abm_gs_published`.
 
-Current status: `published_benchmarks_pending_discrepancy`.
+Current status: `recorded_published_benchmark_discrepancy`.
 
 The long GS runner was executed on `2026-06-01`: `24` rows were recorded,
 with `10` quantitative passes, `6` sign-pattern support passes, `8`
@@ -21,5 +21,5 @@ Formal diagnostics are stored in
 [discrepancy_diagnostics/](discrepancy_diagnostics/README.md). The
 [row-level report](discrepancy_diagnostics/fischer2020_discrepancy_report.md)
 classifies strict discrepancies and near-zero sign boundaries and records a
-bounded opt-in sensitivity plan. These additions do not promote F3:
+bounded opt-in sensitivity protocol. These additions do not promote F3:
 `validated=False`.

@@ -4,8 +4,8 @@ import csv
 from pathlib import Path
 
 # Base directory for library figures
-from hidden_attractors.paths import PROJECT_ROOT
-LIBRARY_FIGURES_ROOT = PROJECT_ROOT / "library_figures"
+from hidden_attractors.paths import OUTPUTS
+LIBRARY_FIGURES_ROOT = OUTPUTS / "library_figures"
 
 def load_manifest():
     """
@@ -42,7 +42,7 @@ def save_manifest(entries):
         "figure_id", "caption_key", "kind", "source_script", "source_function",
         "data_sources", "run_id", "system_id", "q", "parameters", "integrator",
         "memory_mode", "t_final", "t_burn", "pdf_path", "png_path", "metadata_path",
-        "created_at", "git_commit", "report_targets"
+        "created_at", "git_commit", "export_targets"
     ]
     
     csv_rows = []

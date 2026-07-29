@@ -2,7 +2,7 @@
 
 Stability: experimental
     The public result type and entry points are tested and reusable, while
-    optional estimator parameters may be added in future minor releases.
+    optional estimator parameters are outside the stable compatibility tier.
 
 This module is deliberately separate from the variational Lyapunov routines.
 It does not require a right-hand side, Jacobian, or numerical integrator.
@@ -33,7 +33,7 @@ from hidden_attractors.integrations.external_tools import require_external
 ROSENSTEIN_METHOD = "nolds.lyap_r (Rosenstein et al. 1993)"
 ECKMANN_METHOD = "nolds.lyap_e (Eckmann et al. 1986)"
 EVIDENCE_STATUS = "finite_time_time_series_diagnostic"
-SPECTRUM_STATUS = "exploratory_nolds_eckmann_scalar_reconstruction"
+SPECTRUM_STATUS = "finite_time_nolds_eckmann_scalar_reconstruction"
 DEFAULT_MAX_PAIRWISE_MATRIX_BYTES = 256 * 1024 * 1024
 _RANSAC_RANDOM_LOCK = Lock()
 
@@ -156,7 +156,7 @@ def _deduplicated_warning_text(
     fixed = (
         "Finite-time estimates reconstructed from one scalar observable.",
         "Results depend on sampling, delay embedding, neighborhood, and fit parameters.",
-        "The nolds Eckmann spectrum and derived Kaplan-Yorke dimension are exploratory.",
+        "The nolds Eckmann spectrum and derived Kaplan-Yorke dimension are finite-data estimates.",
         "These diagnostics do not certify chaos, asymptotic exponents, or hiddenness.",
     )
     messages = [*fixed, *extra, *(str(item.message) for item in captured)]
@@ -463,7 +463,7 @@ def estimate_time_series_lyapunov(
     dimension = kaplan_yorke_dimension(ordered)
     spectrum_sum = float(np.sum(spectrum_values))
     if spectrum_sum < 0.0:
-        kaplan_yorke_status = "computed_from_exploratory_eckmann_spectrum"
+        kaplan_yorke_status = "computed_from_finite_time_eckmann_spectrum"
         extra_warnings: tuple[str, ...] = ()
     else:
         kaplan_yorke_status = "spectrum_not_dissipatively_closed"

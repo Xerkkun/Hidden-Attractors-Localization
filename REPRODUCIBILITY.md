@@ -4,7 +4,7 @@
 
 ```bash
 cd version_2
-python -m pip install -e ".[dev,analysis,docs,legacy]"
+python -m pip install -e ".[dev,analysis,docs]"
 ```
 
 ## Minimal checks
@@ -12,31 +12,26 @@ python -m pip install -e ".[dev,analysis,docs,legacy]"
 ```bash
 hidden-attractors --help
 hidden-attractors inspect systems
-hidden-attractors validate contract --allow-pending
-hidden-attractors validate release-readiness
-python -m pytest -q -m "release_readiness"
+python -m pytest -q tests/test_package_smoke.py
+python validation/paper07_chua/scripts/sync_paper07_evidence.py --verify
 ```
 
-## Official examples
+## Validated example
 
 ```bash
 python examples/chua_integer_lure_reference/run_example.py --quick
-python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick
-python examples/chua_arctan_wu2023/run_example.py --quick
 ```
 
 ## Evidence layout
 
-- Promoted validation evidence: `version_2/validation/`
-- Promoted figures: `version_2/library_figures/`
+- Closed validation records: `version_2/validation/`
 - API inventory: `version_2/docs/api_reference.md`
-- Local/generated outputs: `version_2/outputs/`, `version_2/validation_outputs/`, `version_2/runs*/`, `version_2/figures/`
-- Release package metadata: `version_2/release_package/`
 
 ## Claim boundary
 
-Use [version_2/THESIS_CLAIMS.md](version_2/THESIS_CLAIMS.md) for the current
-claim matrix. Diagnostics and seed-generation artifacts do not prove hiddenness.
+Use [version_2/docs/scientific_scope.md](version_2/docs/scientific_scope.md)
+for the evidence boundary. Diagnostics and seed-generation artifacts do not
+prove hiddenness.
 
 ## Archive metadata
 

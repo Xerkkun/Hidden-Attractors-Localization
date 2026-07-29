@@ -40,29 +40,11 @@ from .plot_basins import plot_basin_slice_file as plot_basin_slice_file_migrated
 from .plot_matignon import plot_matignon_equilibria as plot_matignon_equilibria_migrated
 from .plot_sphere_tests import plot_sphere_test_results
 
-
-def generate_all_publication_figures(*args, **kwargs):
-    """Lazily load the canonical generator so it can also run as a module."""
-    from .generate_publication_figures import generate_all_publication_figures as _generate
-
-    return _generate(*args, **kwargs)
-
 # Unified plotting API
 from .style import apply_library_style, apply_axes_style, get_figsize
 from .export import export_figure
 from .renderers import render_attractor, render_basin, render_nyquist, render_matignon
 from .render_all import render_all_plots
-from .biased_chua import (
-    plot_centered_trajectory,
-    plot_sign_audit,
-    plot_attractor_report,
-    plot_continuation_metrics,
-    plot_sphere_summary,
-    plot_heatmap_hiddenness,
-    plot_candidate_report,
-    plot_biased_vs_centered,
-    plot_mega_summary,
-)
 
 __all__ = [
     "plot_integer_hiddenness_controls",
@@ -96,8 +78,6 @@ __all__ = [
     "plot_timeseries_data",
     "plot_neighborhood_control_spheres",
     "plot_sphere_test_results",
-    "generate_all_publication_figures",
-
     # Unified API
     "apply_library_style",
     "apply_axes_style",
@@ -108,16 +88,5 @@ __all__ = [
     "render_nyquist",
     "render_matignon",
     "render_all_plots",
-
-    # Biased Chua
-    "plot_centered_trajectory",
-    "plot_sign_audit",
-    "plot_attractor_report",
-    "plot_continuation_metrics",
-    "plot_sphere_summary",
-    "plot_heatmap_hiddenness",
-    "plot_candidate_report",
-    "plot_biased_vs_centered",
-    "plot_mega_summary",
 ]
 

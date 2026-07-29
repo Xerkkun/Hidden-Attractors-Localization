@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
+import subprocess
 import pytest
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -15,41 +16,27 @@ PROHIBITED_PATTERNS = [
 ]
 
 def test_no_absolute_local_paths_in_codebase():
-    """Scan the active codebase and ensure no personal local absolute paths are defined."""
+    """Scan the tracked public tree for personal local absolute paths."""
     # Active code extensions to check
     extensions = [".py", ".md", ".tex", ".yaml", ".json"]
     
     violations = []
     
-    # We walk from the root directory but exclude archived folders and envs
-    exclude_dirs = {
-        "_archived_figure_scripts",
-        "_reference_scripts",
-        ".git",
-        ".venv",
-        "venv",
-        ".pytest_cache",
-        "__pycache__",
-        ".benchmarks",
-        ".runtime_cache",
-        ".runtime_native",
-        "build",
-        "hidden_attractors_fo.egg-info",
-        "outputs",
-    }
-    
-    for path in ROOT_DIR.rglob("*"):
-        # Skip directories
-        if path.is_dir():
+    tracked = subprocess.run(
+        ["git", "-C", str(ROOT_DIR), "ls-files", "-z"],
+        check=True,
+        capture_output=True,
+    ).stdout.decode("utf-8").split("\0")
+
+    for relative in tracked:
+        if not relative:
+            continue
+        path = ROOT_DIR / relative
+        if not path.is_file():
             continue
             
         # Skip this test script itself to avoid false matching on literal pattern constants
         if path.name == "test_no_absolute_local_paths.py":
-            continue
-            
-        # Check if file is in excluded directory
-        parts = path.relative_to(ROOT_DIR).parts
-        if any(d in parts for d in exclude_dirs):
             continue
             
         # Check extension

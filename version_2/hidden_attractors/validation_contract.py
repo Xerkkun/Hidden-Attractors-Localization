@@ -2,7 +2,7 @@
 
 Stability: internal
     The console command is the supported interface. The Python data structures
-    may change as the validation package matures.
+    are internal validation machinery.
 """
 
 from __future__ import annotations

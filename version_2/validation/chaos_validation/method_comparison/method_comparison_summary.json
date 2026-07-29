@@ -30,7 +30,7 @@
       "f5_consensus": "f5_diagnostics_conflict",
       "integrated_f6_level": "chaos_evidence_inconclusive",
       "method_conflicts": [
-        "one or more available spectra belong to methods with validation pending",
+        "one or more available spectra belong to methods without published-benchmark validation",
         "zero-one is regular-like while Poincare geometry is cloud-like"
       ],
       "method_limitations": [
@@ -42,17 +42,17 @@
     },
     {
       "case_id": "danca2017_chua_fractional_saturation_q09998",
-      "lyapunov_consensus": "method_validation_pending",
+      "lyapunov_consensus": "method_not_validated",
       "f5_consensus": "f5_diagnostics_conflict",
       "integrated_f6_level": "chaos_evidence_inconclusive",
       "method_conflicts": [
-        "one or more available spectra belong to methods with validation pending",
+        "one or more available spectra belong to methods without published-benchmark validation",
         "zero-one is regular-like while Poincare geometry is cloud-like"
       ],
       "method_limitations": [
         "case_specific_fractional_lyapunov_spectrum_unavailable",
         "finite_time_local_indicators_only",
-        "fractional_method_validation_pending",
+        "fractional_method_not_validated",
         "hiddenness_not_evaluated"
       ],
       "chaos_evidence_level": "chaos_evidence_inconclusive",
@@ -60,17 +60,17 @@
     },
     {
       "case_id": "wu2023_chua_fractional_arctan_q099",
-      "lyapunov_consensus": "method_validation_pending",
+      "lyapunov_consensus": "method_not_validated",
       "f5_consensus": "f5_diagnostics_conflict",
       "integrated_f6_level": "chaos_evidence_inconclusive",
       "method_conflicts": [
-        "one or more available spectra belong to methods with validation pending",
+        "one or more available spectra belong to methods without published-benchmark validation",
         "zero-one is regular-like while Poincare geometry is cloud-like"
       ],
       "method_limitations": [
         "case_specific_fractional_lyapunov_spectrum_unavailable",
         "finite_time_local_indicators_only",
-        "fractional_method_validation_pending",
+        "fractional_method_not_validated",
         "hiddenness_not_evaluated"
       ],
       "chaos_evidence_level": "chaos_evidence_inconclusive",

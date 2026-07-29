@@ -1,0 +1,25 @@
+template:
+  artifact_role: "public_abstract_workflow_contract"
+  runnable: false
+  scientific_claim: "none"
+  purpose: "Copy this structure, then supply an independently justified system and numerical contract."
+
+required_inputs:
+  system:
+    system_id: null
+    parameters: {}
+  integrator:
+    implementation: null
+    order_kind: null
+    order: null
+    step_size: null
+    final_time: null
+    burn_in: null
+  outputs:
+    directory: null
+
+evidence_boundary:
+  result_status: "unvalidated_until_a_recorded_validation_contract_is_completed"
+  notes:
+    - "This file is structural and contains no case-specific content."
+    - "The library can compute dynamical-system diagnostics independently of hidden-attractor searches."

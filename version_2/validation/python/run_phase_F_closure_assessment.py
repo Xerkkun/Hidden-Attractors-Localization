@@ -15,7 +15,7 @@ for item in (PROJECT_ROOT, Path(__file__).resolve().parent):
     if str(item) not in sys.path:
         sys.path.insert(0, str(item))
 
-from hidden_attractors.analysis.phase_f_closure import (  # noqa: E402
+from validation.python.phase_f_closure import (  # noqa: E402
     PHASE_F_CLOSURE_RULES,
     assess_phase_f_closure,
     build_phase_f_closure_matrix,
@@ -128,9 +128,14 @@ the sampled-neighborhood candidate gate.
 """
 
 
-def run() -> dict[str, Any]:
+def run(output_root: Path = OUTPUT_ROOT) -> dict[str, Any]:
     """Read Phase F evidence and write the frozen evidence assessment."""
 
+    output_root = Path(output_root)
+    summary_path = output_root / SUMMARY_PATH.name
+    matrix_path = output_root / MATRIX_PATH.name
+    decision_path = output_root / DECISION_PATH.name
+    rules_path = output_root / RULES_PATH.name
     f4 = _read_json(F4_SUMMARY)
     f5 = _read_json(F5_SUMMARY)
     dk2018 = _read_json(DK2018_SUMMARY)
@@ -167,10 +172,10 @@ def run() -> dict[str, Any]:
         ),
         "diagnostic_scope_statement": _relative(SCOPE_STATEMENT_PATH),
     }
-    write_json(SUMMARY_PATH, payload)
-    write_json(RULES_PATH, PHASE_F_CLOSURE_RULES)
-    write_csv(MATRIX_PATH, build_phase_f_closure_matrix(payload))
-    DECISION_PATH.write_text(_decision_markdown(payload), encoding="utf-8")
+    write_json(summary_path, payload)
+    write_json(rules_path, PHASE_F_CLOSURE_RULES)
+    write_csv(matrix_path, build_phase_f_closure_matrix(payload))
+    decision_path.write_text(_decision_markdown(payload), encoding="utf-8")
     return payload
 
 

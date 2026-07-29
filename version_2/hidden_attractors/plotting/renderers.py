@@ -11,7 +11,7 @@ def render_attractor(
     equilibria: Dict[str, np.ndarray],
     config: dict,
     run_id: str = "default_run",
-    report_targets: List[str] = None
+    export_targets: List[str] = None
 ) -> Dict[str, str]:
     """
     Renders 3D phase space and 2D projections of the attractor.
@@ -88,7 +88,7 @@ def render_attractor(
         kind="attractor",
         metadata_dict=meta_common,
         run_id=run_id,
-        report_targets=report_targets
+        export_targets=export_targets
     )
     plt.close(fig_3d)
     
@@ -134,7 +134,7 @@ def render_attractor(
             kind="attractor",
             metadata_dict=proj_meta,
             run_id=run_id,
-            report_targets=report_targets
+            export_targets=export_targets
         )
         plt.close(fig_2d)
         
@@ -149,7 +149,7 @@ def render_basin(
     basin_grid: np.ndarray,
     config: dict,
     run_id: str = "default_run",
-    report_targets: List[str] = None
+    export_targets: List[str] = None
 ) -> Tuple[str, str]:
     """
     Renders the basin of attraction map.
@@ -217,7 +217,7 @@ def render_basin(
         kind="basin",
         metadata_dict=metadata,
         run_id=run_id,
-        report_targets=report_targets
+        export_targets=export_targets
     )
     plt.close(fig)
     return str(pdf_p), str(png_p)
@@ -229,7 +229,7 @@ def render_nyquist(
     candidates: List[Tuple[float, float, float]] = None,
     config: dict = None,
     run_id: str = "default_run",
-    report_targets: List[str] = None
+    export_targets: List[str] = None
 ) -> Tuple[str, str]:
     """
     Renders describing function / Nyquist plots distinguishing:
@@ -316,7 +316,7 @@ def render_nyquist(
         kind="nyquist",
         metadata_dict=metadata,
         run_id=run_id,
-        report_targets=report_targets
+        export_targets=export_targets
     )
     plt.close(fig)
     return str(pdf_p), str(png_p)
@@ -326,7 +326,7 @@ def render_matignon(
     q: float,
     config: dict,
     run_id: str = "default_run",
-    report_targets: List[str] = None
+    export_targets: List[str] = None
 ) -> Tuple[str, str]:
     """
     Renders the Matignon stability complex plane.
@@ -402,7 +402,7 @@ def render_matignon(
         kind="matignon",
         metadata_dict=metadata,
         run_id=run_id,
-        report_targets=report_targets
+        export_targets=export_targets
     )
     plt.close(fig)
     return str(pdf_p), str(png_p)

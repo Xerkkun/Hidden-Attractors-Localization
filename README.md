@@ -1,91 +1,79 @@
-# Hidden Attractors in Fractional-Order Systems
+# hidden-attractors-fo
 
-`hidden-attractors-fo` is a Python research library for reproducible numerical
-workflows around hidden-attractor candidates in integer- and commensurate
-Caputo fractional-order Lur'e-compatible systems. The maintained Chua examples
-cover an integer reference route, a non-smooth fractional BDF/saturation route,
-and a smooth arctan fractional route.
+`hidden-attractors-fo` is a Python library for reproducible numerical
+integration, Lur'e seed construction, continuation, diagnostics, and
+finite-neighborhood verification in integer- and commensurate Caputo
+fractional-order systems.
 
-## PyPI installation
+The public documentation describes implemented software and completed
+validation only. Exploratory runs, internal study notes, project plans, and
+unvalidated parameter searches are not part of the public distribution.
+
+## Installation
 
 ```bash
 python -m pip install hidden-attractors-fo
 ```
 
-The Python import name is different from the PyPI project name:
+The import name and public command are:
 
 ```python
 import hidden_attractors
 ```
 
-The installed public CLI is:
-
 ```bash
 hidden-attractors --help
 hidden-attractors inspect systems
-hidden-attractors seed --help
 ```
 
-## Development installation
+## Independent characterization
 
-From a repository checkout:
+The library can calculate finite-time characteristics independently of a
+hidden-attractor search: trajectory and boundedness metrics, FFT/PSD,
+Poincare sections, the 0-1 statistic, bifurcation post-processing, and
+equation-based Lyapunov spectra. Version 1.1.0 fully integrates Lyapunov
+estimation from uniformly sampled scalar time series using Rosenstein and
+Eckmann reconstruction plus Kaplan--Yorke dimension.
 
-```bash
-python -m pip install -e "version_2[dev,analysis,docs,legacy]"
-```
+## Validated example
 
-## First run
-
-```bash
-cd version_2
-hidden-attractors --help
-hidden-attractors inspect systems
-hidden-attractors validate contract --allow-pending
-hidden-attractors run -p chua_integer
-```
-
-## Official examples
+The maintained end-to-end example is the integer-order Chua Lur'e
+reference/control:
 
 ```bash
 cd version_2
 python examples/chua_integer_lure_reference/run_example.py --quick
-python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick
-python examples/chua_arctan_wu2023/run_example.py --quick
 ```
 
-- Integer Chua `q=1`: reproduced software reference for the Lur'e route.
-- Non-smooth fractional Chua BDF: proposed methodology; not full Danca 2017 trajectory reproduction.
-- Arctan Chua Wu2023/c590: a smooth-nonlinearity validation example; Wu2023 remains bibliographic, and c590 is finite-time evidence under a local/radius-limited contract, not a global mathematical proof.
+It exercises seed construction, continuation, integration, sampled
+equilibrium-neighborhood controls, and structured output generation. Its
+finite numerical decision is not a global mathematical proof.
+
+## Distribution boundary
+
+The wheel contains the importable library and supported package resources.
+The source distribution additionally contains the user manual and validated
+example. Complete validation manifests and reproducibility records are
+preserved in the tagged repository and archived snapshot; they are not
+duplicated inside the installed package.
+
+Canonical validation records live under `version_2/validation/`. Ordinary
+runtime products are written to `./outputs` unless the user selects another
+directory. The installed package directory is never used as an output or cache
+location.
 
 ## Documentation
 
 - User manual: `version_2/USER_MANUAL.md`
+- Installation: `version_2/docs/installation.md`
 - Quick start: `version_2/docs/quick_start.md`
-- API inventory: `version_2/docs/api_reference.md`
-- Examples index: `version_2/docs/examples_index.md`
-- Validation evidence: `version_2/docs/validation_evidence.md`
-- Claims matrix: `version_2/THESIS_CLAIMS.md`
-- Freeze audit: `version_2/validation/freeze_audit/`
+- API stability: `version_2/docs/api_stability.md`
+- Scientific scope: `version_2/docs/scientific_scope.md`
+- Validation freeze: `version_2/validation/freeze_audit/`
 
-## Evidence boundary
-
-DF/Nyquist, continuation, plots, FFT/PSD, 0-1 tests, Poincare sections, and
-Lyapunov estimates are diagnostics or seed-generation tools. Hiddenness labels require sampled local neighborhoods or basin evidence around
-all equilibria under a recorded numerical contract. Large-radius spherical
-contacts are reported as extended basin-geometry audits; by themselves they do
-not imply a self-excited classification unless the local-radius contract records
-equilibrium-neighborhood contact. These labels are not a global mathematical
-proof.
-
-## Citation
+## Citation and license
 
 Citation metadata is provided in `CITATION.cff`, `.zenodo.json`, and
-`codemeta.json`. Archived DOI:
+`codemeta.json`. Archived DOI: `10.17605/OSF.IO/ZGK74`.
 
-```text
-10.17605/OSF.IO/ZGK74
-```
-
-## License
-
-MIT.
+The software is licensed under the MIT License.

@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 import sys
 from pathlib import Path
 from typing import Sequence
@@ -20,26 +21,13 @@ from ..analysis.spectral import infer_step
 
 
 def compute_lyapunov(argv: Sequence[str] | None = None) -> None:
-    """Compute Lyapunov exponents of a system from a configuration or preset."""
+    """Compute Lyapunov exponents of a system from an explicit configuration."""
     parser = argparse.ArgumentParser(description="Compute Lyapunov exponents workflow")
-    parser.add_argument("-c", "--config", type=str, help="Path to YAML configuration file")
-    parser.add_argument("-p", "--preset", type=str, help="Select a built-in config preset")
+    parser.add_argument("-c", "--config", type=str, required=True, help="Path to YAML configuration file")
     args, extra_args = parser.parse_known_args(argv)
 
-    from .run import find_example_config, parse_dynamic_overrides
-    
-    if args.preset:
-        from .run import PRESETS
-        filename = PRESETS.get(args.preset)
-        if not filename:
-            print(f"Error: Preset '{args.preset}' not recognized. Available: {list(PRESETS.keys())}")
-            sys.exit(1)
-        config_path = find_example_config(filename)
-    elif args.config:
-        config_path = Path(args.config)
-    else:
-        print("Error: Must provide --config (-c) or --preset (-p).")
-        sys.exit(1)
+    from .run import parse_dynamic_overrides
+    config_path = Path(args.config)
 
     try:
         config = load_config(config_path)
@@ -230,30 +218,41 @@ def validate_lyapunov(argv: Sequence[str] | None = None) -> None:
     with open(input_path, "r", encoding="utf-8") as f:
         summary = json.load(f)
 
-    # Validation criteria:
-    # 1. Must have analysis_type == "lyapunov"
-    # 2. Status must becompleted
-    # 3. Must warn if q < 1.0 that it's finite time estimate
-    # 4. Must check check compatibility of fractional order and method.
     print(f"Validating Lyapunov summary: {input_path}")
     
     errors = []
-    if summary.get("analysis_type") != "lyapunov":
-        errors.append("Invalid analysis_type. Expected 'lyapunov'.")
+    analysis_type = summary.get("analysis_type")
+    if analysis_type not in {"lyapunov", "time_series_lyapunov"}:
+        errors.append(
+            "Invalid analysis_type. Expected 'lyapunov' or "
+            "'time_series_lyapunov'."
+        )
     if summary.get("status") != "completed":
         errors.append(f"Calculation status is not completed: {summary.get('status')}")
-    
-    q = summary.get("q")
-    method = summary.get("method")
-    if q is not None and method is not None:
-        if q < 1.0 and method == "integer_qr_benettin":
-            errors.append(f"Method {method} is incompatible with fractional order q={q}")
-            
-    warnings = summary.get("warnings", [])
-    if q is not None and q < 1.0:
-        has_finite_time_warn = any("finite_time" in w.lower() or "estimate" in w.lower() for w in warnings)
-        if not has_finite_time_warn:
-            errors.append("Missing warning regarding finite-time estimate for fractional system.")
+
+    if analysis_type == "lyapunov":
+        q = summary.get("q")
+        method = summary.get("method")
+        if q is not None and method is not None:
+            if q < 1.0 and method == "integer_qr_benettin":
+                errors.append(
+                    f"Method {method} is incompatible with fractional order q={q}"
+                )
+
+        warnings = summary.get("warnings", [])
+        if q is not None and q < 1.0:
+            has_finite_time_warn = any(
+                "finite_time" in str(w).lower()
+                or "estimate" in str(w).lower()
+                for w in warnings
+            )
+            if not has_finite_time_warn:
+                errors.append(
+                    "Missing warning regarding finite-time estimate for fractional system."
+                )
+
+    if analysis_type == "time_series_lyapunov":
+        _validate_time_series_lyapunov_summary(summary, errors)
 
     if errors:
         print("Validation: FAILED")
@@ -263,3 +262,79 @@ def validate_lyapunov(argv: Sequence[str] | None = None) -> None:
     else:
         print("Validation: PASSED")
         sys.exit(0)
+
+
+def _finite_number(value: object) -> bool:
+    if isinstance(value, bool):
+        return False
+    try:
+        return math.isfinite(float(value))
+    except (TypeError, ValueError, OverflowError):
+        return False
+
+
+def _validate_time_series_lyapunov_summary(
+    summary: dict[str, object],
+    errors: list[str],
+) -> None:
+    """Validate the machine-readable contract emitted by ``spectrum``."""
+
+    for key in ("largest_exponent", "kaplan_yorke_dimension"):
+        if not _finite_number(summary.get(key)):
+            errors.append(f"{key} must be a finite number.")
+
+    spectrum = summary.get("spectrum")
+    if (
+        not isinstance(spectrum, list)
+        or not spectrum
+        or not all(_finite_number(value) for value in spectrum)
+    ):
+        errors.append("spectrum must be a non-empty list of finite numbers.")
+
+    interval = summary.get("sample_interval")
+    rate = summary.get("sample_rate")
+    if not _finite_number(interval) or float(interval) <= 0.0:
+        errors.append("sample_interval must be a positive finite number.")
+    if not _finite_number(rate) or float(rate) <= 0.0:
+        errors.append("sample_rate must be a positive finite number.")
+    if (
+        _finite_number(interval)
+        and float(interval) > 0.0
+        and _finite_number(rate)
+        and float(rate) > 0.0
+        and not math.isclose(
+            float(interval) * float(rate),
+            1.0,
+            rel_tol=1.0e-9,
+            abs_tol=1.0e-12,
+        )
+    ):
+        errors.append("sample_interval and sample_rate must be reciprocal.")
+
+    n_samples = summary.get("n_samples")
+    if (
+        isinstance(n_samples, bool)
+        or not isinstance(n_samples, int)
+        or n_samples < 100
+    ):
+        errors.append("n_samples must be an integer greater than or equal to 100.")
+
+    if not isinstance(summary.get("largest_sign_agrees_with_spectrum"), bool):
+        errors.append("largest_sign_agrees_with_spectrum must be boolean.")
+    for key in (
+        "backend",
+        "evidence_status",
+        "rosenstein_method",
+        "eckmann_method",
+    ):
+        value = summary.get(key)
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"{key} must be a non-empty string.")
+
+    warnings = summary.get("warnings")
+    if (
+        not isinstance(warnings, list)
+        or not warnings
+        or not all(isinstance(item, str) and item.strip() for item in warnings)
+    ):
+        errors.append("warnings must be a non-empty list of strings.")

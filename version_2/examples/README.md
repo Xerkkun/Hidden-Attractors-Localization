@@ -1,36 +1,33 @@
 # Examples
 
-These are the runnable examples shipped with `hidden-attractors-fo`. They are
-user-facing entry points and should import from `hidden_attractors` rather than
-copying workflow internals.
+This directory contains small public API examples and one explicitly labelled
+validation reference. The API examples demonstrate reusable library features;
+the validation reference retains its own numerical and evidence boundary.
 
-## Official report examples
+## Validation reference
+
+The integer-order reference reproduces a registered software-validation record.
+It does not broaden the claims stored with that record.
 
 Run from `version_2`:
 
 ```bash
 python examples/chua_integer_lure_reference/run_example.py --quick
-python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick
-python examples/chua_arctan_wu2023/run_example.py --quick
 ```
 
-| Example | Role | Evidence boundary |
+| Validation record | Role | Evidence boundary |
 | --- | --- | --- |
 | `chua_integer_lure_reference/` | Integer Chua `q=1` Lur'e reference: seed, continuation, trajectory, neighborhood controls, figures | Reproduced integer Chua control only |
-| `chua_nonsmooth_biased_hidden_attractor/` | Proposed biased-DF route for non-smooth fractional Chua | Candidate/compatible only under declared local radii; not full Danca reproduction |
-| `chua_arctan_wu2023/` | Wu2023 bibliographic lane plus smooth Caputo c590 lane | c590 reported for local radii `r <= 0.3`; Wu2023 ADM lane remains bibliographic |
 
 ## Small API examples
 
 ```bash
 python examples/quickstart_equilibria.py
-python examples/list_final_candidates.py
 python examples/minimal_chua_protocol.py
 python examples/custom_system_definition.py
 python examples/new_system_workflow_spec.py
 python examples/integer_lure_chua_protocol.py
 python examples/dynamical_analysis_gallery.py
-python examples/create_robustness_overlay_config.py
 ```
 
 `minimal_chua_protocol.py` writes the explicit command and JSON contract by

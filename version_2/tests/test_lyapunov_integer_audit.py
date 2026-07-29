@@ -186,24 +186,6 @@ class TestIntegerQrBenettinRejectsFractionalQ:
                 q=0.9,
             )
 
-    def test_fractional_method_not_implemented(self) -> None:
-        """fractional_cloned_dynamics_abm is still unimplemented in F2."""
-        from hidden_attractors.analysis import LyapunovComputationRequest, validate_lyapunov_method_request
-        request = LyapunovComputationRequest(
-            system=None,
-            rhs=_stable_linear_rhs,
-            jacobian=None,
-            x0=np.array([1.0, 1.0]),
-            q=0.99,
-            method="fractional_cloned_dynamics_abm",
-            h=0.01,
-            t_final=5.0,
-            memory_mode="full",
-        )
-        ok, status, _ = validate_lyapunov_method_request(request)
-        assert ok is False
-        assert status == "method_not_implemented"
-
     def test_q_exactly_one_does_not_raise(self) -> None:
         result = integer_qr_benettin_lyapunov_exponents(
             _stable_linear_rhs,
@@ -331,21 +313,22 @@ class TestMethodRegistry:
         info = LYAPUNOV_METHODS["integer_qr_benettin"]
         assert "q=1" in info.q_support
 
-    def test_fractional_variational_abm_qr_implemented_in_f2(self) -> None:
-        """F2: fractional_variational_abm_qr is now implemented (F2 update)."""
+    def test_fractional_variational_abm_qr_implemented(self) -> None:
         info = LYAPUNOV_METHODS["fractional_variational_abm_qr"]
         assert info.implemented is True
 
-    def test_fractional_cloned_dynamics_not_implemented(self) -> None:
-        info = LYAPUNOV_METHODS["fractional_cloned_dynamics_abm"]
-        assert info.implemented is False
-
-    def test_fractional_cloned_dynamics_not_validated(self) -> None:
-        info = LYAPUNOV_METHODS["fractional_cloned_dynamics_abm"]
-        assert info.validated is False
-
-    def test_registry_has_f3_methods(self) -> None:
-        assert len(LYAPUNOV_METHODS) == 6
+    @pytest.mark.parametrize(
+        "method_id",
+        (
+            "fractional_cloned_dynamics_abm_gs_published",
+            "fractional_cloned_dynamics_abm_qr",
+        ),
+    )
+    def test_cloned_dynamics_methods_are_implemented(
+        self,
+        method_id: str,
+    ) -> None:
+        assert LYAPUNOV_METHODS[method_id].implemented is True
 
     def test_integer_method_derivative_model(self) -> None:
         info = LYAPUNOV_METHODS["integer_qr_benettin"]
@@ -354,8 +337,6 @@ class TestMethodRegistry:
     def test_fractional_methods_derivative_model(self) -> None:
         for mid in (
             "fractional_variational_abm_qr",
-            "fractional_variational_dk2018_block_restart_abm_gs",
-            "fractional_cloned_dynamics_abm",
             "fractional_cloned_dynamics_abm_gs_published",
             "fractional_cloned_dynamics_abm_qr",
         ):
@@ -433,9 +414,12 @@ class TestNoForbiddenClaims:
         content = self._load_lyapunov_methods_doc()
         assert "chaos_verified: true" not in content.lower()
 
-    def test_lyapunov_doc_has_false_certification(self) -> None:
+    def test_lyapunov_doc_states_certification_boundary(self) -> None:
         content = self._load_lyapunov_methods_doc()
-        assert "false" in content.lower()
+        normalized = content.lower()
+        assert "does not" in normalized or "do not" in normalized
+        assert "certify chaos or" in normalized
+        assert "finite-time" in normalized
 
     def test_lyapunov_result_has_no_verified_flags(self) -> None:
         """LyapunovResult dataclass must not have hidden_verified or chaos_verified fields."""
@@ -448,37 +432,26 @@ class TestNoForbiddenClaims:
 
 
 # ---------------------------------------------------------------------------
-# H. F0 closure — public API exports from analysis package
+# H. Public analysis boundary
 # ---------------------------------------------------------------------------
 
-class TestF0ClosureExports:
-    """H: A1 — analysis package exports F0 symbols correctly."""
+class TestPublicAnalysisBoundary:
+    """H: Numerical functions are public; registry metadata remains internal."""
 
     def test_analysis_init_exports_integer_qr_benettin(self) -> None:
         from hidden_attractors.analysis import integer_qr_benettin_lyapunov_exponents
         assert callable(integer_qr_benettin_lyapunov_exponents)
 
-    def test_analysis_init_exports_lyapunov_method_info(self) -> None:
-        from hidden_attractors.analysis import LyapunovMethodInfo
-        import dataclasses
-        assert dataclasses.is_dataclass(LyapunovMethodInfo)
-
-    def test_analysis_init_exports_lyapunov_methods_registry(self) -> None:
-        from hidden_attractors.analysis import LYAPUNOV_METHODS
-        assert isinstance(LYAPUNOV_METHODS, dict)
-        assert LYAPUNOV_METHODS["integer_qr_benettin"].implemented is True
-
     def test_integer_qr_benettin_in_all(self) -> None:
         import hidden_attractors.analysis as ha
         assert "integer_qr_benettin_lyapunov_exponents" in ha.__all__
 
-    def test_lyapunov_method_info_in_all(self) -> None:
+    def test_registry_metadata_is_not_public(self) -> None:
         import hidden_attractors.analysis as ha
-        assert "LyapunovMethodInfo" in ha.__all__
-
-    def test_lyapunov_methods_in_all(self) -> None:
-        import hidden_attractors.analysis as ha
-        assert "LYAPUNOV_METHODS" in ha.__all__
+        assert not hasattr(ha, "LyapunovMethodInfo")
+        assert not hasattr(ha, "LYAPUNOV_METHODS")
+        assert "LyapunovMethodInfo" not in ha.__all__
+        assert "LYAPUNOV_METHODS" not in ha.__all__
 
 
 # ---------------------------------------------------------------------------

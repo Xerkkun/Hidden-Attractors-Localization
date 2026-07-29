@@ -1,8 +1,8 @@
 # Systems
 
-The package exposes a registry for chaotic systems. Built-in systems and user
-systems use the same `ChaoticSystem` contract, but a registered vector field is
-not automatically a complete hidden-attractor workflow.
+The package exposes a registry for built-in and user-defined dynamical
+systems. A registered vector field can be characterized directly; it is not
+automatically a complete hidden-attractor workflow.
 
 ## Inspect registered systems
 
@@ -12,11 +12,10 @@ hidden-attractors inspect workflow-requirements
 hidden-attractors inspect workflow-requirements --workflow sphere-controls
 ```
 
-Built-in Chua routes currently include the non-smooth saturation model and the
-arctan model. Aliases used by older configs are normalized by the registry, but
-new documentation should use the canonical names shown by `inspect systems`.
+Aliases accepted by older configuration files are normalized by the registry.
+New code should use the canonical names returned by `inspect systems`.
 
-## Register a new system
+## Register a system
 
 ```python
 from typing import Any, Mapping
@@ -46,102 +45,84 @@ register_system(
 )
 ```
 
-See `examples/custom_system_definition.py` for a runnable version.
+See `examples/custom_system_definition.py` for a runnable example.
 
-## Lur'e requirements
+## Characterization requirements
 
-For the full methodology, a user must provide more than `rhs`. The route uses
-an explicit scalar Lur'e form:
+Trajectory and scalar-series functions can be used without a Lur'e
+decomposition or hiddenness workflow. Depending on the requested calculation,
+a user supplies one of:
+
+- sampled times and states;
+- a uniformly sampled scalar observable and its sample interval;
+- a vector field and parameters;
+- equilibria or a Jacobian when the selected calculation requires them.
+
+The numerical output remains conditional on the integration, sampling,
+transient removal, embedding, and estimator settings supplied by the caller.
+
+## Lur'e workflow requirements
+
+The seed-continuation route uses the scalar form
 
 ```text
 ^C D_t^q X = P X + b psi(r^T X)
 ```
 
-Required inputs for DF/Nyquist and hiddenness workflows:
+It requires:
 
-- stable system identifier and default parameters;
-- state dimension and vector field;
-- all equilibria and a Jacobian when stability/Matignon/Lyapunov checks are used;
+- a stable system identifier, dimension, vector field, and parameters;
+- all equilibria and, when required, a Jacobian;
 - explicit `P`, `b`, `r`, and scalar `psi`;
-- describing-function convention, including the `(j omega)^q` branch for fractional seeds;
-- numerical contract: `q`, integrator, `h`, memory policy, time horizon, burn-in, thresholds;
-- target reference and classifier thresholds;
-- neighborhood radii and sample counts around every equilibrium;
-- output paths and provenance metadata.
+- a describing-function convention and fractional frequency branch;
+- an integrator, order, step, horizon, burn-in, and memory policy;
+- a target reference and classifier thresholds;
+- equilibrium-neighborhood radii, samples, and failure policy.
 
-The package does not infer equilibria, Lur'e form, memory policy, or basin
-targets silently.
+The package does not infer these scientific inputs silently.
 
-## WorkflowInputSpec
+## `WorkflowInputSpec`
 
-Reusable workflows should be backed by `hidden_attractors.workflows.specs.WorkflowInputSpec`.
-It records:
+Reusable numerical workflows can be represented with
+`hidden_attractors.workflows.specs.WorkflowInputSpec`. Its component specs
+record the integrator, classifier, target reference, neighborhood controls,
+basin slices, strict refinement, trajectory diagnostics, parameter sweeps, and
+robustness cases.
 
-- `IntegratorSpec`
-- `DestinationClassifierSpec`
-- `TargetReferenceSpec`
-- `SphereControlSpec`
-- `BasinSliceSpec`
-- `StrictRefinementSpec`
-- `TrajectoryDiagnosticsSpec`
-- `ParameterSweepSpec`
-- `RobustnessCaseSpec`
+Passing spec validation means that the inputs are structurally auditable. It
+does not prove chaos or hiddenness.
 
-The spec is a reproducibility contract. Passing spec validation means the run is
-auditable; it does not prove hiddenness.
+## Integer-order Lur'e route
 
-## Integer-order route
-
-For `q=1`, the reusable functions live under
-`hidden_attractors.workflows.integer_lure`:
+The reusable order-one functions are:
 
 ```python
 from hidden_attractors import get_system
 from hidden_attractors.workflows.integer_lure import (
-    integer_lure_seed,
     continue_integer_lure_seed,
     final_integer_lure_attractor,
+    integer_lure_seed,
     run_integer_lure_hiddenness_controls,
 )
 
 system = get_system("chua-nonsmooth")
 seed = integer_lure_seed(system)
 steps = continue_integer_lure_seed(system, seed)
-target_seed, trajectory, status = final_integer_lure_attractor(system, steps[-1].x_out)
+target_seed, trajectory, status = final_integer_lure_attractor(
+    system,
+    steps[-1].x_out,
+)
 probes = run_integer_lure_hiddenness_controls(system, trajectory)
 ```
 
-The official report example is:
+The completed reference validation for this route is documented in
+[Integer Chua `q=1` Reference](integer_chua_reference.md).
 
-```bash
-python examples/chua_integer_lure_reference/run_example.py --quick
-```
-
-Promoted integer-reference artifacts are stored under
-`validation/reference_cases/chua_integer_q1/`.
-
-## Fractional route
+## Fractional numerical contracts
 
 For `0 < q < 1`, the memory policy must be explicit. Full-history Caputo,
-finite-window Caputo, and local ADM-style recurrence are different contracts and
-must not be merged in reports or manifests.
+finite-window Caputo, and local recurrence methods are different numerical
+contracts and must not be treated as interchangeable.
 
-The official non-smooth BDF example is:
-
-```bash
-python examples/chua_nonsmooth_biased_hidden_attractor/run_example.py --quick
-```
-
-The arctan example is:
-
-```bash
-python examples/chua_arctan_wu2023/run_example.py --quick
-```
-
-The arctan lane separates Wu2023 bibliographic ADM reproduction from one smooth c590 Caputo lane. The c590 claim is radius-limited: local radii `r <= 0.3` have 8400 finite probes and zero contacts; macro radii `1.0` and `2.0` remain extended basin-geometry audit evidence, not automatic self-excited evidence.
-
-## API inventory
-
-All functions, classes, and methods defined in `hidden_attractors` are listed in
-[API Reference](api_reference.md). Update that inventory whenever a new symbol is
-added for release.
+See [API Reference](api_reference.md) for the exported system and analysis
+interfaces.

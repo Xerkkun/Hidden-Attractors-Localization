@@ -1,18 +1,17 @@
-"""Tests for F1 — Common Lyapunov API (lyapunov_api.py).
+"""Tests for the common Lyapunov API (lyapunov_api.py).
 
-F1 API tests
-============
+Common API tests
+================
 Verifies:
 1. compute_lyapunov_spectrum works end-to-end for integer_qr_benettin via rhs.
 2. Fractional q rejected for integer method.
 3. Unknown method raises ValueError with 'unknown_method'.
-4. Registered-but-unimplemented fractional method raises NotImplementedError.
-5. memory_mode='full' rejected for integer method.
-6. reorthonormalization_time converts to steps correctly.
-7. Both reorthonormalization_time and every → uses every + warning.
-8. Public package exports the F1 API.
-9. No hidden_verified / chaos_verified fields in F1 dataclasses.
-10. validate_lyapunov_method_request returns warning for missing analytic Jacobian.
+4. memory_mode='full' rejected for integer method.
+5. reorthonormalization_time converts to steps correctly.
+6. Both reorthonormalization_time and every → uses every + warning.
+7. Public package exports the common API.
+8. No hidden_verified / chaos_verified fields in API dataclasses.
+9. validate_lyapunov_method_request returns warning for missing analytic Jacobian.
 """
 
 from __future__ import annotations
@@ -28,9 +27,6 @@ from hidden_attractors.analysis.lyapunov_api import (
     compute_lyapunov_spectrum,
     validate_lyapunov_method_request,
 )
-from hidden_attractors.analysis.lyapunov_methods import LYAPUNOV_METHODS
-
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -214,43 +210,7 @@ class TestUnknownMethodRejected:
 
 
 # ---------------------------------------------------------------------------
-# 4. test_fractional_registered_but_not_implemented
-# ---------------------------------------------------------------------------
-
-class TestFractionalRegisteredNotImplemented:
-    """4: Registered fractional methods raise NotImplementedError."""
-
-    @pytest.mark.parametrize(
-        "frac_method",
-        ["fractional_cloned_dynamics_abm"],
-    )
-    def test_raises_not_implemented_error(self, frac_method: str) -> None:
-        with pytest.raises(NotImplementedError, match="not yet implemented"):
-            compute_lyapunov_spectrum(
-                rhs=_rhs,
-                x0=np.array([1.0, 1.0]),
-                q=0.99,
-                method=frac_method,
-                h=0.01,
-                t_final=5.0,
-            )
-
-    def test_error_mentions_registered(self) -> None:
-        with pytest.raises(NotImplementedError) as exc_info:
-            compute_lyapunov_spectrum(
-                rhs=_rhs,
-                x0=np.array([1.0, 1.0]),
-                q=0.99,
-                method="fractional_cloned_dynamics_abm",
-                h=0.01,
-                t_final=5.0,
-            )
-        msg = str(exc_info.value)
-        assert "registered" in msg or "not yet implemented" in msg
-
-
-# ---------------------------------------------------------------------------
-# 5. test_memory_mode_rejected_for_integer_method
+# 4. test_memory_mode_rejected_for_integer_method
 # ---------------------------------------------------------------------------
 
 class TestMemoryModeRejectedForIntegerMethod:
@@ -487,13 +447,3 @@ class TestValidateRequestEdgeCases:
         ok, status, _ = validate_lyapunov_method_request(request)
         assert ok is False
         assert status == "memory_mode_not_applicable_for_integer_method"
-
-    def test_fractional_method_not_implemented(self) -> None:
-        request = _make_request(
-            method="fractional_cloned_dynamics_abm",
-            q=0.99,
-            memory_mode="full",
-        )
-        ok, status, _ = validate_lyapunov_method_request(request)
-        assert ok is False
-        assert status == "method_not_implemented"

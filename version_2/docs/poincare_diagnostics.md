@@ -1,66 +1,38 @@
 # Poincare Diagnostics
 
-## Scope
+`detect_poincare_crossings` is the public, system-independent entry point for
+extracting direction-aware crossings from a sampled trajectory.
 
-Phase F5.4 implements Poincare sections as standardized geometric diagnostics.
-The detector validates sampled crossing detection, linear interpolation,
-direction filtering, integer RHS direction checks, and Caputo geometric
-metadata. Poincare alone does not certify chaos or hiddenness.
+```python
+from hidden_attractors import detect_poincare_crossings
 
-F5.4 is also consumed by the shared
-[F5 Dynamics Diagnostics](f5_dynamics_diagnostics.md) runner together with
-boundedness, zero-one, and FFT/PSD outputs.
+result = detect_poincare_crossings(
+    times,
+    states,
+    component=0,
+    level=0.0,
+    direction="positive",
+)
 
-## Integer ODE section
-
-For an integer ODE, the natural Chua section is:
-
-```text
-x = 0, xdot > 0
+print(result.points)
+print(result.crossing_times)
 ```
 
-The detector linearly interpolates the crossing and evaluates the ordinary
-RHS at that point. Positive crossings require a positive RHS component.
+The detector validates finite inputs, linearly interpolates each crossing, and
+records the selected component, level, direction, and numerical metadata.
 
-## Caputo section
+## Integer And Fractional Interpretation
 
-For a Caputo trajectory, F5.4 records a numerical geometric crossing:
+For an integer-order ODE, an oriented section can additionally be interpreted
+with the vector field, for example `x=0` with `dx/dt>0`.
 
-```text
-x[n] < 0 <= x[n+1] and x[n+1] - x[n] > 0
-```
+For sampled Caputo trajectories, the result is a finite geometric crossing of
+the stored sequence. A finite difference can describe crossing orientation,
+but it is not treated as a classical instantaneous derivative or an exact
+Poincare return map.
 
-This is not an exact classical Poincare map. A finite difference may describe
-the crossing orientation but is not treated as a classical instantaneous
-derivative. Danca 2021 notes that autonomous Caputo fractional systems do not
-have exact non-constant periodic solutions. Accordingly, F5.4 does not claim
-exact periodic orbits in Caputo systems.
+## Evidence Boundary
 
-## Published Cases
-
-| Case | Contract | Initial condition |
-| --- | --- | --- |
-| Chua integer reference | `q=1`, `x=0, xdot>0` | `[5.856145086257356, 0.369331578246782, -8.366536168331880]` |
-| Danca 2017 saturation | `q=0.9998`, `h=0.01`, `t_final=500`, geometric crossing | Reproducible diagnostic seed transferred from the integer case because article coordinates are not reported |
-| Wu 2023 arctan | `q=0.99`, `h=0.01`, `t_final=100`, finite memory `40.0`, geometric crossing | `[13.8, 0.7093, -19.8768]` and its reported symmetric counterpart |
-
-The Danca saturation parameters are `alpha=8.4562`, `beta=12.0732`,
-`gamma=0.0052`, `m0=-0.1768`, and `m1=-1.1468`. The Wu arctan parameters are
-`alpha=8.4562`, `beta=12.0732`, `gamma=0.0052`, `a1=0.4`, `a2=-1.5585`, and
-`rho=1.0`.
-
-## Outputs
-
-Each case writes:
-
-```text
-poincare_points.csv
-poincare_section.csv
-poincare_summary.json
-poincare_metadata.json
-README.md
-```
-
-The summary reports geometric labels such as `point_like_or_fixed_return`,
-`curve_like`, and `cloud_like`. These labels are finite-time numerical
-descriptions, not isolated proofs of chaos.
+Crossing counts, point clouds, and return-like plots are finite geometric
+characteristics. They may support trajectory comparison, but they do not
+independently establish periodicity, chaos, or hiddenness.

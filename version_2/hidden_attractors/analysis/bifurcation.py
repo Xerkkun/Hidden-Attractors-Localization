@@ -1,8 +1,8 @@
 """Post-processing helpers for parameter scans and bifurcation diagrams.
 
 These helpers do not replace continuation packages such as PyDSTool. They take
-trajectories produced by this project and extract observable values that can be
-plotted as a bifurcation diagram for the current study systems.
+user-supplied trajectories and extract observable values that can be plotted as
+a bifurcation diagram for any compatible system.
 
 Reference notes:
     This module implements trajectory post-processing only. Numerical

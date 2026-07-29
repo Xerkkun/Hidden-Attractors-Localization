@@ -11,7 +11,7 @@ numéricos del Chua no suave.
 | Álgebra y Matignon | `01_algebra/chua_arctan_wu2023_algebra.json` | ejecutada |
 | Semillas Lur'e clásicas centradas | `02_lure_df/centered_seeds.json` | ejecutada |
 | Condiciones iniciales reportadas | `03_reported_initial_conditions/` y `validation_summary.json` | ejecutada con ADM local publicado |
-| Robustez y vecindades de equilibrios | por generar | pendiente |
+| Robustez y vecindades de equilibrios | no incluidas en este registro | fuera del alcance validado |
 
 La corrida fresca `q=0.99`, `h=0.01`, `N=10000` usa `ADM_WU2023`,
 `adm_order=4`, backend `adm_local_reproduction` y
@@ -23,9 +23,9 @@ resultado no valida caos.
 
 Las semillas Lur'e centradas se generan con la transferencia entera publicada
 `W_pub(j*omega)=r^T(j*omega I-P)^(-1)b`, con `q_seed=1.0` y
-`transfer_exponent_applied=false`. El modo `fractional_spectral` queda
-separado como opcion experimental configurable.
+`transfer_exponent_applied=false`. Este paquete evalúa únicamente ese contrato
+bibliográfico.
 
-`hidden_verified` permanece en `false` hasta ejecutar controles de cuenca
-alrededor de `E0`, `E+` y `E-` con la referencia dinámica robusta definida
-por la configuración.
+`hidden_verified` permanece en `false` porque este registro no contiene
+controles de cuenca alrededor de `E0`, `E+` y `E-`. En consecuencia, no
+respalda una afirmación de ocultedad.

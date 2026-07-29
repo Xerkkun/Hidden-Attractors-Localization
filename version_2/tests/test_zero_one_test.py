@@ -15,15 +15,20 @@ if str(workspace_root / "version_2") not in sys.path:
 
 
 def test_zero_one_cli_lifecycle(tmp_path):
-    # Determine config path
-    config_path = Path(workspace_root) / "version_2" / "configs" / "examples" / "chua_fractional_zero_one.yaml"
+    config_path = (
+        Path(workspace_root)
+        / "version_2"
+        / "tests"
+        / "fixtures"
+        / "software_validation_fractional.yaml"
+    )
     
     # Run 0-1 test workflow via CLI
     main([
         "chaos-test", "zero-one",
         "-c", str(config_path),
         "-o", str(tmp_path),
-        "--zero_one.t_final", "1.0",
+        "--zero_one.t_final", "1.5",
         "--zero_one.t_burn", "0.2",
         "--use_c_backend", "false",
     ])

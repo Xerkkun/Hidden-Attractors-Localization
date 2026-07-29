@@ -1,42 +1,49 @@
-# Sample run
+# Comprehensive release sample
 
-These commands exercise release metadata, repository hygiene, the public CLI, and the PyPI package build without promoting new scientific evidence.
+From `version_2/`, execute the recorded software-validation control in a new
+output directory:
 
 ```bash
-cd version_2
-python -m pip install -e ".[dev,analysis,docs,legacy]"
-hidden-attractors --help
-hidden-attractors seed --help
-hidden-attractors validate release-readiness --submission-strict --json
-hidden-attractors validate contract --allow-pending
-python -m pytest -q tests/test_release_readiness_metadata.py
-python -m pytest -q tests/test_root_repository_hygiene.py
-python -m pytest -q tests/test_release_package_samples.py
-python -m pytest -q tests/test_release_docs_no_mojibake.py
-python -m pytest -q tests/test_pypi_packaging.py
+python examples/chua_integer_lure_reference/run_example.py \
+  --config release_package/sample_input/chua_integer_comprehensive.yaml \
+  --quick \
+  --steps search continuation verification \
+  --output-dir <empty-output-directory>
 ```
 
-Package build sample:
+Quick mode retains search, continuation, final integration, equilibrium-
+neighborhood sampling, and structured output while reducing numerical sizes.
+The tracked input writes only beneath `outputs/release_samples/` unless the
+command-line output directory overrides it.
+
+The recorded execution produced:
+
+- five continuation steps;
+- a finite final trajectory;
+- six sampled-neighborhood probes and two target contacts;
+- `hidden_candidate_allowed: false`;
+- 2.455 seconds elapsed on the recorded Windows environment;
+- identical deterministic files in two independent runs.
+
+The elapsed time is environment provenance, not a benchmark. The numerical
+decision is a finite sampled software control, not promoted evidence and not a
+global proof.
+
+The complete compact record, including SHA-256 hashes, is:
+
+`release_package/sample_output/comprehensive_sample_summary.json`
+
+Release checks:
 
 ```bash
-python -m pip install --upgrade pip build twine
+python tools/release/validate_release_readiness.py --submission-strict --json
+python -m pytest -q tests/test_release_package_samples.py
+python -m pytest -q tests/test_public_distribution_contract.py
+python -m pytest -q tests/test_pypi_packaging.py
 python -m build
 python -m twine check dist/*
 python tools/release/validate_wheel_install.py
 ```
 
-The wheel smoke test verifies:
-
-```bash
-hidden-attractors --help
-hidden-attractors seed --help
-python -c "import hidden_attractors; print('import ok')"
-```
-
-The sample YAML files are templates for interface checks and write to ignored local folders under `outputs/release_samples/`. They are not promoted evidence. The integer sample can be tried with:
-
-```bash
-hidden-attractors run -c release_package/sample_input/chua_integer_reference_minimal.yaml
-```
-
-Do not replace `sample_output/` templates with executed outputs unless the command was actually run on the final release commit. Exact test counts can change; the frozen source for published counts is `validation/freeze_audit/`.
+These commands validate software and packaging. They do not promote or rewrite
+scientific validation records.

@@ -42,24 +42,23 @@ def test_markdown_docs_no_prohibited_claims():
 
 @pytest.mark.hygiene
 def test_markdown_docs_machado_fdf_warning():
-    """Verify that any file mentioning Machado or FDF contains warnings explaining it's planned/theory only."""
+    """Verify that Machado/FDF mentions remain outside the public workflow."""
     violations = []
     for f in FILES_TO_CHECK:
         if not f.exists():
             continue
         content = f.read_text(encoding="utf-8", errors="ignore")
         if "machado" in content.lower() or "fdf" in content.lower():
-            # Check for warnings indicating it is planned or theory only
             has_warning = (
                 "theory" in content.lower() or
-                "planned" in content.lower() or
                 "not a promoted" in content.lower() or
                 "no promovido" in content.lower() or
-                "planeado" in content.lower() or
+                "validation-only" in content.lower() or
+                "solo para validación" in content.lower() or
                 "teoría" in content.lower()
             )
             if not has_warning:
-                violations.append(f"{f.name} mentions Machado/FDF but lacks planned/theory/not-promoted warnings")
+                violations.append(f"{f.name} mentions Machado/FDF without a theory/validation-only boundary")
     assert not violations, "\n".join(violations)
 
 @pytest.mark.hygiene

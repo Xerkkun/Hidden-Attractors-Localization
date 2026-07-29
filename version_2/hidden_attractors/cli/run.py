@@ -20,21 +20,13 @@ from hidden_attractors.workflows.config_loader import (
 from hidden_attractors.workflows.simple_runner import run_simple_workflow
 
 
-PRESETS = {
-    "chua_integer": "chua_integer_centered_lure_df.yaml",
-    "chua_fractional": "chua_fractional_centered_lure_df.yaml",
-    "chua_arctan": "chua_arctan_fractional_centered_lure_df.yaml",
-    "chua_arctan_only_integer": "chua_arctan_attractor_only_integer.yaml",
-    "chua_arctan_only_fractional": "chua_arctan_attractor_only_fractional.yaml",
-    "chua_bifurcation": "chua_fractional_bifurcation.yaml",
-    "chua_basin": "chua_fractional_basin.yaml",
-    "chua_full_protocol": "chua_full_protocol.yaml",
-}
+PRESETS: dict[str, str] = {}
+TEMPLATES = {"workflow_contract": "workflow_contract.yaml"}
 
 
 def find_example_config(filename: str) -> Path:
     """Resolve the template configuration path dynamically, copying to cache if not physically present."""
-    from hidden_attractors.paths import get_example_config_resource, RUNTIME_CACHE
+    from hidden_attractors.paths import get_example_config_resource, get_runtime_cache
     import importlib.resources
     import shutil
 
@@ -45,7 +37,7 @@ def find_example_config(filename: str) -> Path:
             with importlib.resources.as_file(ref) as p:
                 if p.exists():
                     if "temp" in str(p).lower() or "tmp" in str(p).lower() or "site-packages" in str(p).lower() or ".egg" in str(p).lower():
-                        cache_dir = RUNTIME_CACHE / "configs"
+                        cache_dir = get_runtime_cache() / "configs"
                         cache_dir.mkdir(parents=True, exist_ok=True)
                         dest = cache_dir / filename
                         shutil.copy2(p, dest)
@@ -114,52 +106,25 @@ def parse_dynamic_overrides(extra_args: List[str]) -> Dict[str, Any]:
 
 def run_cmd(args: argparse.Namespace, extra_args: List[str]) -> None:
     """Execute the run subcommand."""
-    presets_to_run = []
-    
-    if args.preset == "basic_chua_three":
-        presets_to_run = ["chua_integer", "chua_fractional", "chua_arctan"]
-    elif args.preset:
-        presets_to_run = [args.preset]
-    elif not args.config:
-        print("Error: Must provide --config (-c) or --preset (-p).")
+    if not args.config:
+        print("Error: Must provide --config (-c).")
         sys.exit(1)
 
     summaries = []
     overrides = parse_dynamic_overrides(extra_args)
-    
-    if presets_to_run:
-        for p_name in presets_to_run:
-            filename = PRESETS.get(p_name)
-            if not filename:
-                print(f"Error: Preset '{p_name}' not recognized. Available: {list(PRESETS.keys())}")
-                sys.exit(1)
-            try:
-                config_path = find_example_config(filename)
-                print(f"\n--- Running Preset: {p_name} ({config_path}) ---")
-                config = load_config(config_path)
-                if overrides:
-                    config = apply_cli_overrides(config, overrides)
-                
-                res = run_simple_workflow(config)
-                summaries.append(res)
-            except Exception as e:
-                print(f"Preset execution failed for {p_name}: {e}")
-                import traceback
-                traceback.print_exc()
-    else:
-        config_path = Path(args.config)
-        try:
-            config = load_config(config_path)
-            if overrides:
-                config = apply_cli_overrides(config, overrides)
-            
-            res = run_simple_workflow(config)
-            summaries.append(res)
-        except Exception as e:
-            print(f"Config execution failed for {config_path}: {e}")
-            import traceback
-            traceback.print_exc()
-            sys.exit(1)
+    config_path = Path(args.config)
+    try:
+        config = load_config(config_path)
+        if overrides:
+            config = apply_cli_overrides(config, overrides)
+
+        res = run_simple_workflow(config)
+        summaries.append(res)
+    except Exception as e:
+        print(f"Config execution failed for {config_path}: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
             
     # Print unified summary table if more than one preset was run
     if len(summaries) > 1:
@@ -204,7 +169,7 @@ def init_cmd(args: argparse.Namespace) -> None:
         sys.exit(1)
 
     if args.example:
-        filename = PRESETS.get(args.example, args.example)
+        filename = TEMPLATES.get(args.example, args.example)
         if not filename.endswith(".yaml"):
             filename += ".yaml"
             
@@ -231,20 +196,10 @@ def init_cmd(args: argparse.Namespace) -> None:
 
 def inspect_config_cmd(args: argparse.Namespace, extra_args: List[str]) -> None:
     """Execute the inspect-config subcommand."""
-    if args.preset:
-        filename = PRESETS.get(args.preset)
-        if not filename:
-            print(f"Error: Preset '{args.preset}' not recognized. Available: {list(PRESETS.keys())}")
-            sys.exit(1)
-        try:
-            config_path = find_example_config(filename)
-        except FileNotFoundError as e:
-            print(f"Error: {e}")
-            sys.exit(1)
-    elif args.config:
+    if args.config:
         config_path = Path(args.config)
     else:
-        print("Error: Must provide --config (-c) or --preset (-p).")
+        print("Error: Must provide --config (-c).")
         sys.exit(1)
 
     try:

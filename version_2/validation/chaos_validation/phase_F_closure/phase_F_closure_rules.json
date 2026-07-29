@@ -25,7 +25,7 @@
     "requires": [
       "validated=true",
       "validated_against_published_benchmarks=true or fischer2020_discrepancy_resolution.md exists",
-      "published_benchmarks_pending_discrepancy must be resolved"
+      "recorded_published_benchmark_discrepancy is a closed non-validation outcome"
     ]
   },
   "route_C": {

@@ -1,30 +1,24 @@
-"""Common Lyapunov API — F1/F2 dispatcher.
+"""Common Lyapunov-method dispatcher.
 
-F1/F2 — Common Lyapunov API
-============================
+Common Lyapunov API
+===================
 This module provides a **method-agnostic interface** for computing Lyapunov
 exponent spectra.  Callers select a method by name; the dispatcher validates
 compatibility between method, fractional order *q*, and memory mode, then
 routes to the appropriate implementation.
 
-F1 (frozen)
------------
-* Routes ``integer_qr_benettin`` → F0 implementation.
-
-F2 (implemented, not yet validated against published benchmarks)
----------------------------------------------------------------
+Supported routes
+----------------
+* Routes ``integer_qr_benettin`` to the integer QR implementation.
 * Routes ``fractional_variational_abm_qr`` → Caputo extended-variational ABM-QR.
 * ``memory_mode`` must be ``'full'`` or ``'window'`` (not ``'not_applicable'``).
 * ``q`` must be in (0, 1).
-
-F3 (implemented, pending Fischer 2020 published validation)
------------------------------------------------------------
-* Routes the GS published cloned-dynamics lane and the experimental QR lane.
+* Routes the GS and QR cloned-dynamics methods.
 * Does not require a Jacobian or a variational system.
 * Uses block-restarted ABM memory for fractional execution.
 
-F1/F2/F3 does NOT certify
------------------------
+The dispatcher does not certify
+-------------------------------
 * chaos_certified_by_this_pipeline: false
 * hiddenness_certified_by_this_pipeline: false
 
@@ -96,10 +90,10 @@ class LyapunovComputationRequest:
         Divergence threshold on the state norm.
     memory_mode : str, default ``'not_applicable'``
         Memory handling mode.  Must be ``'not_applicable'`` for
-        ``integer_qr_benettin``.  Future fractional methods will accept
-        ``'full'`` or ``'window'``.
+        ``integer_qr_benettin``; implemented fractional methods use their
+        declared full-history or block-restart contract.
     memory_window : int or None, default None
-        Memory window size (for future fractional methods).
+        Memory window size for methods that support windowed memory.
     extra : dict, default {}
         Additional method-specific parameters.
 
@@ -187,7 +181,7 @@ def validate_lyapunov_method_request(
         ``'compatible'`` on success.  On failure one of:
         ``'unknown_method'``, ``'method_not_valid_for_fractional_caputo'``,
         ``'memory_mode_not_applicable_for_integer_method'``,
-        ``'method_not_implemented'``, ``'invalid_parameter'``.
+        or ``'invalid_parameter'``.
     warnings : tuple[str, ...]
         Non-fatal advisory strings.
 
@@ -205,9 +199,44 @@ def validate_lyapunov_method_request(
             (f"Method '{request.method}' is not in the LYAPUNOV_METHODS registry.",),
         )
 
-    info = LYAPUNOV_METHODS[request.method]
+    # 2. Generic numeric validation
+    try:
+        q_value = float(request.q)
+        h_value = float(request.h)
+        t_final_value = float(request.t_final)
+        t_burn_value = float(request.t_burn)
+        jacobian_eps_value = float(request.jacobian_eps)
+        state = np.asarray(request.x0, dtype=float)
+    except (TypeError, ValueError, OverflowError):
+        return False, "invalid_parameter", ("numeric parameters must be real numbers.",)
 
-    # 2. Method-specific validation
+    if not all(
+        np.isfinite(value)
+        for value in (q_value, h_value, t_final_value, t_burn_value, jacobian_eps_value)
+    ):
+        return False, "invalid_parameter", ("q, h, times, and jacobian_eps must be finite.",)
+    if state.ndim != 1 or state.size == 0 or not np.all(np.isfinite(state)):
+        return False, "invalid_parameter", ("x0 must be a non-empty finite one-dimensional array.",)
+    if h_value <= 0.0:
+        return False, "invalid_parameter", ("h must be positive.",)
+    if t_final_value <= 0.0:
+        return False, "invalid_parameter", ("t_final must be positive.",)
+    if t_burn_value < 0.0:
+        return False, "invalid_parameter", ("t_burn must be non-negative.",)
+    if jacobian_eps_value <= 0.0:
+        return False, "invalid_parameter", ("jacobian_eps must be positive.",)
+    if request.reorthonormalize_every is not None and int(request.reorthonormalize_every) < 1:
+        return False, "invalid_parameter", ("reorthonormalize_every must be positive.",)
+    if request.reorthonormalization_time is not None:
+        interval = float(request.reorthonormalization_time)
+        if not np.isfinite(interval) or interval <= 0.0:
+            return False, "invalid_parameter", ("reorthonormalization_time must be finite and positive.",)
+    if request.div_threshold is not None:
+        threshold = float(request.div_threshold)
+        if not np.isfinite(threshold) or threshold <= 0.0:
+            return False, "invalid_parameter", ("div_threshold must be finite and positive.",)
+
+    # 3. Method-specific validation
     if request.method == "integer_qr_benettin":
         # q must be 1
         if abs(float(request.q) - 1.0) > 1e-9:
@@ -323,26 +352,6 @@ def validate_lyapunov_method_request(
             )
         warnings.append("cloned_dynamics_no_jacobian_required")
 
-    # 3. Registered but not implemented
-    elif not info.implemented:
-        return (
-            False,
-            "method_not_implemented",
-            (
-                f"Method '{request.method}' is registered in LYAPUNOV_METHODS "
-                f"(derivative_model='{info.derivative_model}') but is not yet implemented. "
-                "It will be available in a future phase.",
-            ),
-        )
-
-    # 4. Numeric parameter checks
-    if float(request.h) <= 0.0:
-        return False, "invalid_parameter", ("h must be positive.",)
-    if float(request.t_final) <= 0.0:
-        return False, "invalid_parameter", ("t_final must be positive.",)
-    if float(request.t_burn) < 0.0:
-        return False, "invalid_parameter", ("t_burn must be non-negative.",)
-
     return True, "compatible", tuple(warnings)
 
 
@@ -371,7 +380,7 @@ def compute_lyapunov_spectrum(
 ) -> LyapunovComputationSummary:
     """Compute the Lyapunov spectrum using a named method.
 
-    **F1 — Common Lyapunov API entry point**
+    **Common Lyapunov API entry point**
 
     This is the single, method-agnostic entry point for computing Lyapunov
     exponent spectra.  Pass a *method* name (e.g. ``'integer_qr_benettin'``)
@@ -416,10 +425,10 @@ def compute_lyapunov_spectrum(
     div_threshold : float or None, default None
         Divergence threshold on the state norm.
     memory_mode : str, default ``'not_applicable'``
-        ``'not_applicable'`` for ``integer_qr_benettin``.  Future fractional
-        methods will accept ``'full'`` or ``'window'``.
+        ``'not_applicable'`` for ``integer_qr_benettin``; fractional methods
+        use the memory contract documented by their registry entry.
     memory_window : int or None, default None
-        Memory window for future fractional methods.
+        Memory window for methods that support windowed memory.
     **extra : object
         Additional method-specific parameters stored in
         :attr:`LyapunovComputationRequest.extra`.
@@ -435,14 +444,11 @@ def compute_lyapunov_spectrum(
         If the request is invalid (unknown method, q/method mismatch,
         memory_mode mismatch, bad parameters) or neither *system* nor *rhs*
         is provided.
-    NotImplementedError
-        If the method is registered but not yet implemented (e.g.,
-        ``'fractional_variational_abm_qr'``).
-
     Notes
     -----
-    This function is **not a validated Caputo fractional Lyapunov method**.
-    It is restricted to ``q=1`` in F1.
+    The dispatcher exposes integer and fractional finite-time numerical
+    methods with method-specific validation metadata. A returned spectrum is
+    not a chaos or hiddenness certification.
 
     chaos_certified_by_this_pipeline: false
     hiddenness_certified_by_this_pipeline: false
@@ -461,6 +467,23 @@ def compute_lyapunov_spectrum(
     # ------------------------------------------------------------------
     # B4 — resolve reorthonormalize_every
     # ------------------------------------------------------------------
+    try:
+        h_for_interval = float(h)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise ValueError("h must be a finite positive number.") from exc
+    if not np.isfinite(h_for_interval) or h_for_interval <= 0.0:
+        raise ValueError("h must be a finite positive number.")
+    if reorthonormalization_time is not None:
+        interval_time = float(reorthonormalization_time)
+        if not np.isfinite(interval_time) or interval_time <= 0.0:
+            raise ValueError(
+                "reorthonormalization_time must be a finite positive number."
+            )
+    if reorthonormalize_every is not None:
+        every_value = int(reorthonormalize_every)
+        if every_value < 1 or float(reorthonormalize_every) != float(every_value):
+            raise ValueError("reorthonormalize_every must be a positive integer.")
+
     _extra_warnings: list[str] = []
     resolved_every: int
 
@@ -472,7 +495,7 @@ def compute_lyapunov_spectrum(
     elif reorthonormalize_every is not None:
         resolved_every = int(reorthonormalize_every)
     elif reorthonormalization_time is not None:
-        resolved_every = max(1, round(float(reorthonormalization_time) / float(h)))
+        resolved_every = max(1, round(float(reorthonormalization_time) / h_for_interval))
     else:
         resolved_every = 10  # method default
 
@@ -505,14 +528,6 @@ def compute_lyapunov_spectrum(
     all_warnings: tuple[str, ...] = tuple(_extra_warnings) + val_warnings
 
     if not ok:
-        # Registered-but-not-implemented gets NotImplementedError
-        if status == "method_not_implemented":
-            raise NotImplementedError(
-                f"Method '{method}' is registered in LYAPUNOV_METHODS but is not yet "
-                f"implemented in F1. "
-                f"Status: {status}. "
-                f"Details: {'; '.join(val_warnings)}"
-            )
         raise ValueError(
             f"Lyapunov request validation failed. "
             f"Status: {status}. "
@@ -666,10 +681,8 @@ def compute_lyapunov_spectrum(
         )
 
     else:
-        # Should not reach here (validate catches not-implemented),
-        # but defensive fallback:
-        raise NotImplementedError(
-            f"Method '{method}' routing is not implemented in this version."
+        raise RuntimeError(
+            f"Public Lyapunov registry/dispatcher mismatch for method '{method}'."
         )
 
     return LyapunovComputationSummary(

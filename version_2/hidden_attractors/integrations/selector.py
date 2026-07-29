@@ -20,6 +20,7 @@ Rules
 
 from __future__ import annotations
 
+import math
 import warnings
 from typing import Any, Callable, List, Optional, Tuple
 
@@ -41,6 +42,11 @@ _FRACTIONAL_ONLY = {"abm", "adm_wu2023"}
 # Integrators that are ONLY for integer order (fail at q<1)
 _INTEGER_ONLY = {"rk4", "heun", "efork_q1"}
 
+# Orders within this absolute distance of one are treated as the integer
+# endpoint throughout selector and low-level dispatcher code.  Keeping the
+# tolerance in one place prevents validation and dispatch from disagreeing.
+INTEGER_ORDER_ATOL = 1e-10
+
 
 def _canonical_name(integrator: str) -> str:
     """Normalize integrator names for internal dispatch."""
@@ -48,6 +54,28 @@ def _canonical_name(integrator: str) -> str:
     if name == "efork":
         return "efork3"
     return name
+
+
+def normalize_fractional_order(q: float) -> float:
+    """Return a validated order, normalising the numerical endpoint to 1."""
+
+    try:
+        value = float(q)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise ValueError(
+            f"Fractional order q must be a finite number. Got q={q!r}."
+        ) from exc
+    if not math.isfinite(value):
+        raise ValueError(
+            f"Fractional order q must be a finite number. Got q={q!r}."
+        )
+    if value <= 0.0 or value > 1.0:
+        raise ValueError(
+            f"Fractional order q must be in (0, 1]. Got q={q}."
+        )
+    if abs(value - 1.0) < INTEGER_ORDER_ATOL:
+        return 1.0
+    return value
 
 
 def validate_integrator_compatibility(integrator: str, q: float) -> str:
@@ -71,14 +99,9 @@ def validate_integrator_compatibility(integrator: str, q: float) -> str:
         If the integrator is incompatible with the given ``q``.
     """
     name = _canonical_name(integrator)
+    normalized_q = normalize_fractional_order(q)
 
-    if q <= 0.0 or q > 1.0:
-        raise ValueError(
-            f"Fractional order q must be in (0, 1]. Got q={q}."
-        )
-
-    is_fractional = q < 1.0
-    is_integer = abs(q - 1.0) < 1e-10
+    is_integer = normalized_q == 1.0
 
     if is_integer:
         # q == 1.0
@@ -174,6 +197,7 @@ def integrate(
     status : str  — 'ok', 'diverged', 'diverged_early', etc.
     """
     canonical = validate_integrator_compatibility(integrator, q)
+    normalized_q = normalize_fractional_order(q)
 
     integrate_general = get_integrator_fn()
 
@@ -199,7 +223,7 @@ def integrate(
     return integrate_general(
         rhs=wrapped_rhs,
         x0=np.asarray(x0, dtype=float),
-        q=q,
+        q=normalized_q,
         h=h,
         t_final=t_final,
         integrator=canonical,
@@ -208,6 +232,7 @@ def integrate(
         divergence_norm=divergence_norm,
         system=system,
         use_c_backend=use_c_backend,
+        allow_python_fallback=allow_python_fallback,
         early_stop_config=early_stop_config,
         equilibria=equilibria,
     )

@@ -3,8 +3,8 @@
 
 Stability: internal
     Compilation helpers, OpenMP flags, and process-pool policy.  These are
-    consumed by workflows and backends.  May change as new C kernels or
-    platforms are added.
+    consumed by workflows and backends and are not a public compatibility
+    surface.
 
 The numerical stages in this project mix causal fractional integrations,
 OpenMP-parallel C kernels, Python process pools, and external backend

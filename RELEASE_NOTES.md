@@ -1,39 +1,22 @@
 # Release Notes
 
-## 1.0.0
+## 1.1.0
 
-This release prepares `hidden-attractors-fo` as the active Python library
-distribution under `version_2/`. It does not change numerical parameters,
-seeds, tolerances, classifiers, or promoted scientific conclusions.
+`hidden-attractors-fo` 1.1.0 is a public-library and reproducibility release.
+It fully integrates scalar time-series Lyapunov diagnostics, hardens runtime
+paths for installed wheels, and narrows the source distribution to supported
+user-facing material.
 
-### Release contents
+The distributed comprehensive example is the integer-order Chua Lur'e
+reference/control. It exercises seed construction, continuation, integration,
+sampled equilibrium-neighborhood controls, and structured outputs. All
+decisions remain finite numerical evidence rather than global mathematical
+proofs.
 
-- Unified public CLI: `hidden-attractors`.
-- Three official report examples: integer Chua reference, non-smooth fractional
-  BDF methodology, and smooth arctan Wu2023/c590 audit lane.
-- Exhaustive API inventory in `version_2/docs/api_reference.md` generated from
-  the active `hidden_attractors` package.
-- Updated README, quick start, getting started guide, examples index, user
-  manual, release manifest, and reproducibility metadata.
-- Release readiness metadata under `version_2/release_package/`.
+The wheel and sdist intentionally omit internal investigations, project plans,
+ordinary run products, and the large validation data tree. Exact validation
+records are preserved in the matching release tag and archived snapshot.
 
-### Evidence boundary
+License: MIT.
 
-The integer `q=1` Chua route is the reproduced software reference. The Danca
-2017 non-smooth fractional case is a partial reference implementation and a
-methodological BDF/saturation lane because key published numerical details are
-not reported. The official nearby fractional candidate is classified under the
-recorded local-neighborhood contract, where target contacts were recorded from
-equilibrium neighborhoods. The Wu2023 arctan path remains a bibliographic ADM
-lane, while the canonical `validation/chua_fractional_arctan/` package reports
-one smooth-nonlinearity Caputo validation lane with local/radius-limited
-hiddenness evidence for radii `r <= 0.3` and extended-radius contacts retained
-as basin-geometry audit evidence.
-
-DF/Nyquist, continuation, plots, Lyapunov estimates, FFT/PSD, Poincare sections,
-and 0-1 tests are diagnostics or seed tools; they do not certify hiddenness by
-themselves.
-
-### Citation and license
-
-The package license remains MIT. Archived DOI: `10.17605/OSF.IO/ZGK74`.
+Archived DOI: `10.17605/OSF.IO/ZGK74`.

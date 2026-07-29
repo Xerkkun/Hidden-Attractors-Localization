@@ -43,10 +43,10 @@ REFERENCE_REGISTRY = {
         "volume": "29",
         "number": "1-4",
         "pages": "3-22",
-        "doi": "10.1023/A:1016592217141",
-        "url": "https://doi.org/10.1023/A:1016592217141",
+        "doi": "10.1023/A:1016592219341",
+        "url": "https://doi.org/10.1023/A:1016592219341",
         "topics": ["caputo_abm_integration", "fractional_differential_equations"],
-        "verification_status": "external_reference_pending",
+        "verification_status": "verified",
         "needs_doi_verification": False,
     },
     "danca_2017_fractional_hidden": {
@@ -93,7 +93,7 @@ REFERENCE_REGISTRY = {
         "doi": "10.1016/j.sigpro.2014.05.012",
         "url": "https://doi.org/10.1016/j.sigpro.2014.05.012",
         "topics": ["machado_fdf", "describing_functions"],
-        "verification_status": "external_reference_pending",
+        "verification_status": "verified",
         "needs_doi_verification": False,
     },
     "guan_xie_2025_review": {

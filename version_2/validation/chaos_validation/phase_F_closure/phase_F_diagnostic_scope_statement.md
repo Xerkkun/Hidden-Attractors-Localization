@@ -24,15 +24,15 @@ the separate sampled-neighborhood candidate gate.
 
 ## 3. Documented method limitations
 
-There is not yet an accepted fractional Lyapunov method applied to every
-fractional candidate. This is a strict-closure limitation, not an assertion
-that the completed numerical work is false or absent.
+The recorded validation does not establish an accepted fractional Lyapunov
+method for every fractional candidate. This is a strict-closure limitation,
+not an assertion that the completed numerical work is false or absent.
 
 - `fractional_variational_abm_qr` has internal full-history controls and
-  sensitivity evidence. It remains pending published validation or an
-  accepted formal policy.
+  sensitivity evidence, but no published quantitative validation is included
+  in this record.
 - `fractional_cloned_dynamics_abm_gs_published` retains Fischer 2020 status
-  `published_benchmarks_pending_discrepancy` after a long published
+  `recorded_published_benchmark_discrepancy` after a long published
   reproduction run and bounded sensitivity sweeps.
 - `fractional_variational_dk2018_block_restart_abm_gs` retains the
   Rabinovich-Fabrikant `lambda_3` discrepancy after a long native run. This
@@ -59,13 +59,11 @@ The strict routes are labeled as assessed with documented limitations:
 These labels preserve rigorous attempts without promoting the methods to
 strictly validated status.
 
-## 5. Requirements for future strict closure
+## 5. Why strict closure is not claimed
 
-1. Validate `fractional_variational_abm_qr` against a published benchmark or
-   accepted formal policy.
-2. Or formally resolve the Fischer 2020 F3 discrepancies.
-3. Apply at least one valid fractional Lyapunov method to every fractional
-   candidate.
-4. Preferably obtain sign agreement between two valid methods.
-5. Preserve compatibility with boundedness, zero-one, PSD/FFT, and Poincare.
-6. Interpret diagnostics jointly under the recorded numerical contract.
+Strict closure is absent because the local
+`fractional_variational_abm_qr` lane lacks an accepted published benchmark,
+the Fischer 2020 F3 comparison retains documented discrepancies, and not every
+fractional candidate has two mutually consistent validated Lyapunov estimates.
+The recorded boundedness, zero-one, PSD/FFT and Poincaré diagnostics therefore
+remain joint finite-time evidence rather than a strict chaos certificate.

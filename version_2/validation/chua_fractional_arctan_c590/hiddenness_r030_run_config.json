@@ -1,10 +1,7 @@
 {
   "schema_version": "1.0",
-  "candidate_dir": "outputs/arctan_hidden_candidate_search/c590_q09999_seed9_candidate_20260623",
-  "matrix": "hiddenness_matrix_r030.json",
-  "summary": "candidate_summary_r030.json",
-  "rows": "hiddenness_r030_rows.csv",
-  "checkpoint": "hiddenness_r030_checkpoint.jsonl",
+  "case_id": "chua_fractional_arctan_c590",
+  "artifact_role": "closed_validation_contract",
   "workers": 12,
   "radii": [
     0.3

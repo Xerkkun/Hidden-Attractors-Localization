@@ -6,7 +6,7 @@
   "uses_existing_published_long_evidence": true,
   "method_id": "fractional_cloned_dynamics_abm_gs_published",
   "source_summary": "validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/validation_summary.json",
-  "source_status": "published_benchmarks_pending_discrepancy",
+  "source_status": "recorded_published_benchmark_discrepancy",
   "validated": false,
   "rows_total": 24,
   "rows_passed_quantitative": 10,

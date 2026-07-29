@@ -1,24 +1,21 @@
 {
+  "schema_version": "2.0",
   "package": "hidden-attractors-fo",
-  "archive_title": "A Python Library for the Theoretical-Numerical Search and Localization of Hidden Attractors",
-  "version": "1.0.0",
-  "commit": "f534d81f4c8c52dc2e681c8593f98d19b9fe1918",
-  "commit_status": "current",
+  "archive_title": "hidden-attractors-fo: Hidden-Attractor Localization and Dynamical-System Characterization",
+  "version": "1.1.0",
+  "release_tag": "v1.1.0",
+  "release_date": "2026-07-29",
+  "release_state": "verified_release_candidate",
+  "publication_status": "not_published",
+  "source_commit_policy": "release_tag_resolves_to_source_commit",
   "doi": "10.17605/OSF.IO/ZGK74",
+  "doi_record_status": "existing_project_archive",
   "license": "MIT",
   "python_supported": ">=3.11",
-  "ci_status": "passed",
-  "ci_status_scope": "Python 3.11/3.12/3.13 on macOS, Ubuntu, and Windows",
-  "ci_status_note": "Recorded after the release cleanup CI matrix passed. Final scientific freeze audit remains separate from CI status.",
-  "freeze_audit_status": "passed",
-  "last_recorded_freeze_audit_commit": "700529c09d2744c2c021891900a48b03b846ee4b",
-  "freeze_audit_note": "Final scientific freeze audit passed under validation/freeze_audit/final_freeze_pytest_summary.json; its recorded scientific audit commit remains last_recorded_freeze_audit_commit, while package metadata tracks the current repository HEAD.",
-  "sample_status": "executed",
-  "repository_readiness": "passed",
-  "software_package_readiness": "passed",
-  "final_submission_readiness": "passed",
-  "known_remaining_work": [],
-  "remaining_scientific_validation": [],
+  "repository_readiness": "ready",
+  "software_package_readiness": "ready",
+  "release_preparation_readiness": "ready",
+  "claims_status": "finite-time numerical evidence under recorded validation contracts",
   "principal_author": {
     "name": "Maria Fernanda Moreno Lopez",
     "affiliation": "Instituto Nacional de Astrofisica, Optica y Electronica (INAOE)"
@@ -26,35 +23,47 @@
   "contributors": [
     {
       "name": "Dr. Esteban Tlelo Cuautle",
-      "role": "Doctoral thesis director; assigned and guided the research topic"
+      "role": "Doctoral thesis director and research supervisor"
     },
     {
       "name": "Dr. Oscar Martinez-Fuentes",
-      "role": "Doctoral thesis co-advisor; reviewed the theoretical fractional-calculus component"
+      "role": "Fractional-calculus methodology reviewer"
     },
     {
       "name": "Dr. Luis Gerardo de la Fraga",
-      "role": "Provided code provenance for EFORK and the integer-order Lyapunov algorithm"
+      "role": "Code provenance for EFORK and the integer-order Lyapunov algorithm"
     }
   ],
+  "release_verification": {
+    "workflow": ".github/workflows/publish-pypi.yml",
+    "trigger": "version-matched release tag",
+    "test_scope": "pytest marker not slow",
+    "build_checks": [
+      "python -m build",
+      "python -m twine check dist/*",
+      "clean wheel install smoke test",
+      "tracked worktree unchanged after verification"
+    ],
+    "publication_gate": "protected GitHub environment named pypi",
+    "authentication": "PyPI Trusted Publishing with job-scoped OIDC"
+  },
+  "sample_status": "executed",
   "sample_input": [
-    "version_2/release_package/sample_input/chua_fractional_minimal.yaml",
-    "version_2/release_package/sample_input/chua_integer_reference_minimal.yaml"
+    "version_2/release_package/sample_input/chua_integer_comprehensive.yaml"
   ],
   "sample_output": [
-    "version_2/release_package/sample_output/sample_output_manifest.json",
-    "version_2/release_package/sample_output/expected_cli_help_summary.json",
-    "version_2/release_package/sample_output/expected_release_readiness_summary.json",
-    "version_2/release_package/sample_output/expected_validation_contract_status.json"
+    "version_2/release_package/sample_output/comprehensive_sample_summary.json"
   ],
-  "included_paths": [
+  "sample_repeatability": {
+    "independent_runs": 2,
+    "deterministic_outputs_identical": true,
+    "not_promoted_evidence": true
+  },
+  "source_archive_included_paths": [
     "version_2/hidden_attractors/",
-    "version_2/configs/",
-    "version_2/examples/",
+    "version_2/examples/chua_integer_lure_reference/",
     "version_2/tests/",
     "version_2/validation/",
-    "version_2/library_figures/",
-    "version_2/figure_scripts/",
     "version_2/release_package/",
     "CITATION.cff",
     ".zenodo.json",
@@ -64,61 +73,45 @@
     "RELEASE_NOTES.md",
     "REPRODUCIBILITY.md",
     "version_2/MANIFEST.in",
-    "version_2/release_package/PYPI_RELEASE_CHECKLIST.md",
-    "version_2/release_package/PUBLISHING_POLICY.md",
+    "version_2/MANIFEST.md",
     ".github/workflows/package.yml",
     ".github/workflows/publish-pypi.yml"
   ],
-  "local_editorial_paths": [
-    "paper/"
+  "wheel_distribution_included": [
+    "version_2/hidden_attractors/"
   ],
-  "paper_policy": "Any local writing and manuscript templates are prepared locally and ignored by Git. They are not part of the software repository readiness contract.",
-  "excluded_paths": [
-    "version_2/validation_outputs/",
-    "version_2/outputs/",
-    "version_2/runs*/",
-    "version_2/figures/",
-    ".pytest_tmp/",
-    ".runtime_cache/",
-    "figures/",
-    "DF y NC Chua entero y fraccionario/",
-    "DF y NC Chua entero y fraccionario copy/",
-    "paper/",
-    "version_2/build/",
-    "version_2/dist/",
-    "version_2/*.egg-info/"
+  "sdist_distribution_included": [
+    "version_2/hidden_attractors/",
+    "version_2/examples/chua_integer_lure_reference/",
+    "version_2/examples/quickstart_equilibria.py",
+    "version_2/examples/minimal_chua_protocol.py",
+    "version_2/README.md",
+    "version_2/USER_MANUAL.md",
+    "version_2/docs/installation.md",
+    "version_2/docs/quick_start.md",
+    "version_2/docs/api_stability.md",
+    "version_2/docs/scientific_scope.md",
+    "version_2/docs/citation.md"
   ],
-  "promoted_evidence": [
-    "version_2/validation/chua_integer_saturation/",
-    "version_2/validation/chua_fractional_saturation/",
-    "version_2/validation/reference_cases/chua_integer_q1/",
-    "version_2/validation/freeze_audit/",
-    "version_2/validation/chua_fractional_arctan/"
-  ],
-  "unpromoted_outputs": [
-    "version_2/outputs/",
-    "version_2/validation_outputs/"
-  ],
-  "arctan_status": "chua_fractional_arctan is one smooth-nonlinearity validation lane reported as hiddenness_supported_under_tested_neighborhoods for local radii <= 0.3 with 8400 finite probes and zero contacts across E0, E+, and E-; macro radii 1.0 and 2.0 remain extended basin-geometry audit evidence with contacts and are outside the local claim boundary. Wu2023 remains a separate bibliographic ADM lane.",
-  "claims_status": "finite-time numerical evidence under recorded validation contracts",
-  "release_blocked_for_v1_0_0": false,
-  "blocking_release_items": [],
-  "public_cli_scope_note": "Machado/FDF seed routes are theory/internal planned support only and are not exposed as public release CLI commands.",
-  "release_date": "2026-06-26",
-  "arctan_promotion_boundary": "version_2/release_package/ARCTAN_C590_PROMOTION_BOUNDARY.md",
+  "scientific_validation": {
+    "repository_path": "version_2/validation/",
+    "freeze_record": "version_2/validation/freeze_audit/",
+    "distribution": "tagged repository and DOI archive",
+    "pypi_distribution": "excluded",
+    "boundary": "PyPI is a software distribution and is not the scientific evidence archive"
+  },
   "pypi_readiness": {
     "package_name": "hidden-attractors-fo",
     "import_name": "hidden_attractors",
-    "version": "1.0.0",
+    "version": "1.1.0",
+    "target_version": "1.1.0",
     "build_backend": "setuptools.build_meta",
-    "wheel_build": "passed",
-    "sdist_build": "passed",
-    "twine_check": "passed",
-    "wheel_install_smoke": "passed",
-    "testpypi_status": "passed",
-    "pypi_status": "published",
-    "wheel_smoke_notes": "Validated with package build, twine check, clean wheel install smoke, and public PyPI project hidden-attractors-fo version 1.0.0.",
+    "local_release_candidate_verification": "passed",
+    "publication_status": "not_published",
+    "current_public_version": "1.0.0",
     "pypi_url": "https://pypi.org/project/hidden-attractors-fo/",
-    "published_version": "1.0.0"
+    "workflow": ".github/workflows/publish-pypi.yml",
+    "authentication": "trusted_publishing_oidc",
+    "publication_gate": "pypi_environment"
   }
 }

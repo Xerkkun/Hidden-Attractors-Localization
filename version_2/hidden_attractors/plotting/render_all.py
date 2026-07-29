@@ -7,14 +7,14 @@ from .renderers import render_attractor, render_basin, render_nyquist, render_ma
 
 def render_all_plots(trajectory=None, equilibria=None, basin_grid=None, grid_x=None, grid_y=None, 
                      freqs=None, w_evals=None, n_evals=None, candidates=None, eigenvalues=None,
-                     config=None, run_id="default_run", report_targets=None):
+                     config=None, run_id="default_run", export_targets=None):
     """
     Programmatic entry point to render and export all available figures.
     """
     if config is None:
         config = {}
-    if report_targets is None:
-        report_targets = []
+    if export_targets is None:
+        export_targets = []
         
     outputs = {}
     
@@ -26,7 +26,7 @@ def render_all_plots(trajectory=None, equilibria=None, basin_grid=None, grid_x=N
             equilibria=equilibria or {},
             config=config,
             run_id=run_id,
-            report_targets=report_targets
+            export_targets=export_targets
         )
         
     # 2. Basin of attraction
@@ -38,7 +38,7 @@ def render_all_plots(trajectory=None, equilibria=None, basin_grid=None, grid_x=N
             basin_grid=basin_grid,
             config=config,
             run_id=run_id,
-            report_targets=report_targets
+            export_targets=export_targets
         )
         outputs["basin"] = {"pdf": pdf, "png": png}
         
@@ -52,7 +52,7 @@ def render_all_plots(trajectory=None, equilibria=None, basin_grid=None, grid_x=N
             candidates=candidates,
             config=config,
             run_id=run_id,
-            report_targets=report_targets
+            export_targets=export_targets
         )
         outputs["nyquist"] = {"pdf": pdf, "png": png}
         
@@ -65,7 +65,7 @@ def render_all_plots(trajectory=None, equilibria=None, basin_grid=None, grid_x=N
             q=q,
             config=config,
             run_id=run_id,
-            report_targets=report_targets
+            export_targets=export_targets
         )
         outputs["matignon"] = {"pdf": pdf, "png": png}
         

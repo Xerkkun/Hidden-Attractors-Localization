@@ -1,15 +1,11 @@
-"""Tests for current-run candidate promotion without historical defaults."""
+"""Tests for loading an explicitly selected candidate set."""
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
-import numpy as np
-import pytest
-
 from hidden_attractors.candidates import load_final_candidate_records
-from hidden_attractors.workflows.fractional_report_run import _dominant_period_return_ratio, _post_continuation_periodicity, make_parser
 
 
 def test_current_selection_loader_reads_promoted_json(tmp_path: Path) -> None:
@@ -40,7 +36,7 @@ def test_current_selection_loader_reads_promoted_json(tmp_path: Path) -> None:
     assert all("20260515" not in record.source for record in records)
 
 
-def test_current_selection_loader_rejects_periodic_postcheck_selection(tmp_path: Path) -> None:
+def test_explicit_loader_does_not_interpret_validation_status(tmp_path: Path) -> None:
     path = tmp_path / "selected_candidates.json"
     path.write_text(
         json.dumps(
@@ -52,46 +48,6 @@ def test_current_selection_loader_rejects_periodic_postcheck_selection(tmp_path:
         encoding="utf-8",
     )
 
-    with pytest.raises(FileNotFoundError, match="no está promovida"):
-        load_final_candidate_records(path)
+    records = load_final_candidate_records(path)
 
-
-def test_dominant_period_return_ratio_rejects_thin_closed_trace() -> None:
-    h = 0.01
-    times = np.arange(0.0, 20.0 + h, h)
-    omega = 2.0 * np.pi
-    trajectory = np.column_stack(
-        [times, np.cos(omega * times), np.sin(omega * times), 0.2 * np.cos(omega * times)]
-    )
-
-    ratio, lag = _dominant_period_return_ratio(
-        trajectory, h=h, t_start=10.0, dominant_frequency=1.0
-    )
-
-    assert lag == 100
-    assert ratio < 1.0e-12
-
-
-def test_post_continuation_filter_rejects_periodic_multicomponent_trace() -> None:
-    h = 0.01
-    times = np.arange(0.0, 80.0 + h, h)
-    omega = 2.0 * np.pi
-    trajectory = np.column_stack(
-        [times, np.cos(omega * times), np.sin(omega * times), 0.2 * np.cos(omega * times)]
-    )
-
-    result = _post_continuation_periodicity(trajectory, h=h, t_final=80.0)
-
-    assert result["periodicity_status"] == "periodic_post_transient"
-    assert result["periodic_post_transient"] is True
-    assert set(result["periodic_components"].split(";")) >= {"x", "y"}
-
-
-def test_fractional_report_new_runs_allow_only_requested_step_sizes() -> None:
-    parser = make_parser()
-
-    assert parser.parse_args([]).h == 0.01
-    assert parser.parse_args(["--h", "0.005"]).h == 0.005
-    assert parser.parse_args(["--h", "0.001"]).h == 0.001
-    with pytest.raises(SystemExit):
-        parser.parse_args(["--h", "0.02"])
+    assert [record.candidate_id for record in records] == ["c0", "c1", "c2"]

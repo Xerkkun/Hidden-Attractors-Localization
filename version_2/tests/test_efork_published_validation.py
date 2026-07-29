@@ -263,7 +263,6 @@ def test_every_executable_efork_source_keeps_the_published_k3_order() -> None:
     required_fragments = {
         root / "hidden_attractors" / "solvers" / "efork_published.py": "coeff.a31 * k1 + coeff.a32 * k2",
         root / "hidden_attractors" / "solvers" / "integer.py": "EFORK_Q1_A31 * k1 + EFORK_Q1_A32 * k2",
-        root / "tools" / "legacy" / "chua_initial_cond.py": "a31 * K1x + a32 * K2x",
         root / "hidden_attractors" / "native" / "csrc" / "chua_frac_backend_lib.c": "c.a31 * k1x + c.a32 * k2x",
         root / "hidden_attractors" / "native" / "csrc" / "chua_basin_lib.c": "c.a31*K1x + c.a32*K2x",
         root / "hidden_attractors" / "native" / "csrc" / "chua_frac_lyapunov_efork_benettin.c": "c.a31 * hq * rhs1[i] + c.a32 * hq * rhs2[i]",

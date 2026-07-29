@@ -12,6 +12,7 @@ import os
 import numpy as np
 import pytest
 from hidden_attractors.analysis.lyapunov_methods import LYAPUNOV_METHODS
+from lyapunov_method_registry import VALIDATION_LYAPUNOV_METHODS
 
 
 # Resolve default benchmarks directory
@@ -24,11 +25,10 @@ BENCHMARKS_DIR = os.path.abspath(
 # ---------------------------------------------------------------------------
 
 def test_benchmark_yaml_files_exist() -> None:
-    """Verify that all three benchmark configuration files exist in the expected path."""
+    """Verify that all completed benchmark configuration files exist."""
     expected_files = [
         "synthetic_zero_rhs.yaml",
         "synthetic_linear_stable.yaml",
-        "published_danca_kuznetsov2018_template.yaml",
         "published_dk2018_rabinovich_fabrikant_q0999.yaml",
         "published_dk2018_lorenz_q0985.yaml",
         "published_dk2018_4d_nonsmooth_q098_qualitative.yaml",
@@ -72,14 +72,16 @@ def test_synthetic_linear_stable_benchmark_passes_fast() -> None:
 # 4. test_published_template_missing_data_not_validated
 # ---------------------------------------------------------------------------
 
-def test_published_template_missing_data_not_validated() -> None:
-    """Verify that the published template case returns published_reference_data_missing status."""
-    yaml_path = os.path.join(BENCHMARKS_DIR, "published_danca_kuznetsov2018_template.yaml")
+def test_qualitative_reference_missing_data_not_validated() -> None:
+    """Verify that an incomplete qualitative reference is not promoted."""
+    yaml_path = os.path.join(
+        BENCHMARKS_DIR,
+        "published_dk2018_4d_nonsmooth_q098_qualitative.yaml",
+    )
     case_data = load_benchmark_case(yaml_path)
     res = run_benchmark_case(case_data, fast=True)
-    assert res["status"] == "published_reference_data_missing"
-    assert "missing_fields" in res
-    assert len(res["missing_fields"]) > 0
+    assert res["status"] == "published_reference_data_missing_qualitative_only"
+    assert res["computed_exponents"] is None
 
 
 # ---------------------------------------------------------------------------
@@ -88,7 +90,10 @@ def test_published_template_missing_data_not_validated() -> None:
 
 def test_no_published_validated_without_complete_data() -> None:
     """Verify that a case cannot be marked as published_benchmark_passed_quantitative if data_complete is false."""
-    yaml_path = os.path.join(BENCHMARKS_DIR, "published_danca_kuznetsov2018_template.yaml")
+    yaml_path = os.path.join(
+        BENCHMARKS_DIR,
+        "published_dk2018_4d_nonsmooth_q098_qualitative.yaml",
+    )
     case_data = load_benchmark_case(yaml_path)
     # Explicitly verify that data_complete is False in the specification
     assert case_data["reference"]["data_complete"] is False
@@ -107,14 +112,17 @@ def test_registry_keeps_validated_false_until_published_benchmark() -> None:
     assert info.implemented is True
     assert info.validated_against_synthetic_tests is True
     assert info.validated_against_published_benchmarks is False
-    assert info.benchmark_status == "published_benchmarks_pending"
+    assert info.benchmark_status == "synthetic_validation_only"
 
 
 def test_dk2018_registry_reports_reproduced_rf_lambda_3_discrepancy() -> None:
-    info = LYAPUNOV_METHODS["fractional_variational_dk2018_block_restart_abm_gs"]
+    assert "fractional_variational_dk2018_block_restart_abm_gs" not in LYAPUNOV_METHODS
+    info = VALIDATION_LYAPUNOV_METHODS[
+        "fractional_variational_dk2018_block_restart_abm_gs"
+    ]
     assert info.validated is False
     assert info.validated_against_published_benchmarks is False
-    assert info.benchmark_status == "published_benchmarks_pending_reproduced_discrepancy"
+    assert info.benchmark_status == "recorded_published_discrepancy"
 
 
 # ---------------------------------------------------------------------------

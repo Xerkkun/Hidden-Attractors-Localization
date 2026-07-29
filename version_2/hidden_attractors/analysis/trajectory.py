@@ -29,16 +29,16 @@ class RobustnessCase:
     Attributes
     ----------
     case_id : str
-        Human-readable label, e.g. ``'R0_base'`` or ``'R1_h_finer'``.
-    q : float, default 0.9998
+        User-supplied label for this numerical contract.
+    q : float
         Caputo fractional order.
-    h : float, default 0.01
+    h : float
         Integration step size.
-    Lm : float, default 10.0
+    Lm : float
         Memory length (truncation parameter for EFORK).
-    t_final : float, default 1500.0
+    t_final : float
         Total integration time.
-    t_burn : float, default 100.0
+    t_burn : float
         Burn-in time discarded before recording.
 
     Notes
@@ -49,11 +49,33 @@ class RobustnessCase:
     """
 
     case_id: str
-    q: float = 0.9998
-    h: float = 0.01
-    Lm: float = 10.0
-    t_final: float = 1500.0
-    t_burn: float = 100.0
+    q: float
+    h: float
+    Lm: float
+    t_final: float
+    t_burn: float
+
+    def __post_init__(self) -> None:
+        """Reject incomplete or numerically invalid case contracts."""
+
+        if not str(self.case_id).strip():
+            raise ValueError("case_id must be a non-empty label.")
+        values = {
+            "q": self.q,
+            "h": self.h,
+            "Lm": self.Lm,
+            "t_final": self.t_final,
+            "t_burn": self.t_burn,
+        }
+        if not all(np.isfinite(float(value)) for value in values.values()):
+            raise ValueError("robustness-case values must be finite.")
+        if not 0.0 < float(self.q) <= 1.0:
+            raise ValueError("q must satisfy 0 < q <= 1.")
+        for name in ("h", "Lm", "t_final"):
+            if float(values[name]) <= 0.0:
+                raise ValueError(f"{name} must be positive.")
+        if not 0.0 <= float(self.t_burn) < float(self.t_final):
+            raise ValueError("t_burn must satisfy 0 <= t_burn < t_final.")
 
     def as_dict(self, baseline: "RobustnessCase | None" = None) -> Dict[str, float | str]:
         base = baseline or self
@@ -68,42 +90,6 @@ class RobustnessCase:
             "Lm_change_pct": 100.0 * (self.Lm - base.Lm) / base.Lm,
             "t_final_change_pct": 100.0 * (self.t_final - base.t_final) / base.t_final,
         }
-
-
-def default_robustness_cases(q: float = 0.9998) -> list[RobustnessCase]:
-    """Return the standard six-case h/Lm/time perturbation set.
-
-    Parameters
-    ----------
-    q : float, default 0.9998
-        Caputo fractional order shared by all cases.
-
-    Returns
-    -------
-    cases : list[RobustnessCase]
-        Six cases: base, finer step, coarser step, lower memory,
-        higher memory, and longer integration.
-
-    Examples
-    --------
-    >>> from hidden_attractors.analysis.trajectory import default_robustness_cases
-    >>> cases = default_robustness_cases()
-    >>> cases[0].case_id
-    'R0_base'
-    >>> len(cases)
-    6
-    """
-
-    return [
-        RobustnessCase("R0_base", q=q, h=0.01, Lm=10.0, t_final=1500.0, t_burn=100.0),
-        RobustnessCase("R1_h_finer", q=q, h=0.005, Lm=10.0, t_final=1500.0, t_burn=100.0),
-        RobustnessCase("R2_h_coarser", q=q, h=0.02, Lm=10.0, t_final=1500.0, t_burn=100.0),
-        RobustnessCase("R3_Lm_lower", q=q, h=0.01, Lm=5.0, t_final=1500.0, t_burn=100.0),
-        RobustnessCase("R4_Lm_higher", q=q, h=0.01, Lm=20.0, t_final=1500.0, t_burn=100.0),
-        RobustnessCase("R5_t_longer", q=q, h=0.01, Lm=10.0, t_final=3000.0, t_burn=200.0),
-    ]
-
-
 def component_fft(values: np.ndarray, h: float) -> Tuple[float, float]:
     """Return the dominant FFT frequency and normalised spectral entropy.
 
@@ -141,28 +127,131 @@ def component_fft(values: np.ndarray, h: float) -> Tuple[float, float]:
     return float(freq[idx]), entropy
 
 
-def state_view(traj: np.ndarray) -> np.ndarray:
-    """Extract state columns from a trajectory array.
+def state_view(traj: np.ndarray, *, has_time: bool = False) -> np.ndarray:
+    """Extract state columns from an explicitly described trajectory array.
 
-    Parameters
-    ----------
-    traj : np.ndarray
-        Either a ``(N, d)`` pure-state array or a ``(N, d+1)`` array
-        whose first column is time (i.e. ``(N, ≥4)`` is treated as
-        ``t, states...``).
-
-    Returns
-    -------
-    states : np.ndarray, shape (N, d)
-        State-only columns.  Returns ``(0, 0)`` for non-2-D input.
+    ``has_time`` is explicit because a four-dimensional state array cannot be
+    distinguished reliably from ``(t, x, y, z)`` by shape alone.
     """
 
     X = np.asarray(traj, dtype=float)
     if X.ndim != 2:
         return np.empty((0, 0), dtype=float)
-    if X.shape[1] >= 4:
+    if has_time:
+        if X.shape[1] < 2:
+            return np.empty((X.shape[0], 0), dtype=float)
         return X[:, 1:]
     return X
+
+
+def _validated_time_and_states(
+    times: np.ndarray,
+    states: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return shape-checked time and state arrays."""
+
+    t = np.asarray(times, dtype=float)
+    X = np.asarray(states, dtype=float)
+    if t.ndim != 1 or t.size == 0 or not np.all(np.isfinite(t)):
+        raise ValueError("times must be a non-empty finite one-dimensional array.")
+    if X.ndim != 2 or X.shape[0] != t.size or X.shape[1] < 1:
+        raise ValueError(
+            "states must have shape (len(times), dimension) with dimension >= 1."
+        )
+    if t.size > 1 and np.any(np.diff(t) <= 0.0):
+        raise ValueError("times must be strictly increasing.")
+    return t, X
+
+
+def compute_trajectory_metrics(
+    times: np.ndarray,
+    states: np.ndarray,
+    *,
+    equilibria: Dict[str, np.ndarray] | None = None,
+    t_start: float | None = None,
+    divergence_norm: float = 120.0,
+    equilibrium_tol: float = 1.0e-3,
+) -> Dict[str, Any]:
+    """Compute dimension-agnostic metrics from explicit time and state arrays.
+
+    This entry point is independent of hidden-attractor workflows.  It accepts
+    any state dimension and does not require equilibria.  When equilibria are
+    supplied, final-state proximity is reported as a finite-time diagnostic.
+    """
+
+    t, X = _validated_time_and_states(times, states)
+    divergence_value = float(divergence_norm)
+    tolerance_value = float(equilibrium_tol)
+    if not np.isfinite(divergence_value) or divergence_value <= 0.0:
+        raise ValueError("divergence_norm must be finite and positive.")
+    if not np.isfinite(tolerance_value) or tolerance_value < 0.0:
+        raise ValueError("equilibrium_tol must be finite and non-negative.")
+    start_value = float(t[0]) if t_start is None else float(t_start)
+    if not np.isfinite(start_value):
+        raise ValueError("t_start must be finite.")
+    tail = X[t >= start_value]
+    if tail.shape[0] == 0:
+        raise ValueError("t_start leaves no trajectory samples.")
+
+    finite = bool(np.all(np.isfinite(X)))
+    norms = (
+        np.linalg.norm(X, axis=1)
+        if finite
+        else np.full(X.shape[0], float("inf"), dtype=float)
+    )
+    final = X[-1]
+    diverged = bool((not finite) or float(np.max(norms)) > divergence_value)
+
+    distances: dict[str, float] = {}
+    if equilibria is not None and finite:
+        for name, equilibrium in equilibria.items():
+            point = np.asarray(equilibrium, dtype=float)
+            if point.shape != (X.shape[1],) or not np.all(np.isfinite(point)):
+                raise ValueError(
+                    f"equilibrium {name!r} must be a finite vector with "
+                    f"shape ({X.shape[1]},)."
+                )
+            distances[str(name)] = float(np.linalg.norm(final - point))
+    closest = min(distances, key=distances.get) if distances else ""
+    closest_distance = distances[closest] if closest else float("nan")
+    equilibrium_hit = bool(
+        finite and bool(distances) and closest_distance <= tolerance_value
+    )
+
+    ranges = np.ptp(tail, axis=0)
+    variances = np.var(tail, axis=0)
+    if t.size > 1:
+        sample_interval = float(np.median(np.diff(t)))
+        peak, entropy = component_fft(tail[:, 0], sample_interval)
+    else:
+        sample_interval = float("nan")
+        peak, entropy = float("nan"), float("nan")
+    result: Dict[str, Any] = {
+        "bounded": bool(finite and not diverged),
+        "diverged": diverged,
+        "equilibrium_hit": equilibrium_hit,
+        "closest_equilibrium": closest,
+        "closest_equilibrium_distance": closest_distance,
+        "final_class": (
+            f"equilibrium_{closest}"
+            if equilibrium_hit
+            else ("diverged" if diverged else "bounded_nontrivial")
+        ),
+        "final_norm": float(np.linalg.norm(final)) if finite else float("nan"),
+        "max_norm": float(np.max(norms)),
+        "dimension": int(X.shape[1]),
+        "n_samples": int(X.shape[0]),
+        "n_tail_samples": int(tail.shape[0]),
+        "sample_interval": sample_interval,
+        "fft_peak_component_0": peak,
+        "psd_entropy_component_0": entropy,
+        "evidence_status": "finite_time_trajectory_diagnostic",
+    }
+    for index, value in enumerate(ranges):
+        result[f"range_{index}"] = float(value)
+    for index, value in enumerate(variances):
+        result[f"var_{index}_tail"] = float(value)
+    return result
 
 
 def min_distance_to_points(state: np.ndarray, points: Iterable[np.ndarray]) -> float:
@@ -222,6 +311,7 @@ def classify_trajectory_against_equilibria(
     divergence_norm: float = 120.0,
     equilibrium_tol: float = 1.0e-3,
     t_start: float | None = None,
+    has_time: bool = True,
 ) -> Dict[str, Any]:
     """Classify a trajectory's boundedness and final proximity to equilibria.
 
@@ -247,9 +337,9 @@ def classify_trajectory_against_equilibria(
     """
 
     X = np.asarray(traj, dtype=float)
-    if t_start is not None and X.ndim == 2 and X.shape[1] >= 2:
+    if t_start is not None and has_time and X.ndim == 2 and X.shape[1] >= 2:
         X = X[X[:, 0] >= float(t_start)]
-    states = state_view(X)
+    states = state_view(X, has_time=has_time)
     finite = bool(states.size > 0 and np.all(np.isfinite(states)))
     norms = np.linalg.norm(states, axis=1) if states.size else np.array([float("inf")])
     final = states[-1] if states.size else np.full(1, float("nan"))
@@ -283,6 +373,7 @@ def trajectory_metrics_for_system(
     t_start: float,
     divergence_norm: float = 120.0,
     equilibrium_tol: float = 1.0e-3,
+    has_time: bool = True,
 ) -> Dict[str, Any]:
     """Compute dimension-agnostic trajectory metrics for a registered system.
 
@@ -320,32 +411,27 @@ def trajectory_metrics_for_system(
             raise ValueError("provide either system or equilibria.")
         equilibria = system_equilibria(system)
     X = np.asarray(traj, dtype=float)
-    tail = tail_view(X, t_start=t_start)
-    states = state_view(tail if tail.shape[0] else X)
-    cls = classify_trajectory_against_equilibria(
-        X,
-        equilibria,
+    if X.ndim != 2:
+        raise ValueError("traj must be a two-dimensional array.")
+    if has_time:
+        if X.shape[1] < 2:
+            raise ValueError("a timed trajectory must contain time and state columns.")
+        times = X[:, 0]
+        states = X[:, 1:]
+    else:
+        states = X
+        times = np.arange(X.shape[0], dtype=float) * float(h)
+    return compute_trajectory_metrics(
+        times,
+        states,
+        equilibria=equilibria,
+        t_start=t_start,
         divergence_norm=divergence_norm,
         equilibrium_tol=equilibrium_tol,
-        t_start=t_start,
     )
-    ranges = np.ptp(states, axis=0) if states.size else np.empty(0, dtype=float)
-    variances = np.var(states, axis=0) if states.size else np.empty(0, dtype=float)
-    peak, entropy = component_fft(states[:, 0], h) if states.shape[0] and states.shape[1] else (float("nan"), float("nan"))
-    out: Dict[str, Any] = {
-        **cls,
-        "dimension": int(states.shape[1]) if states.ndim == 2 else 0,
-        "fft_peak_component_0": peak,
-        "psd_entropy_component_0": entropy,
-    }
-    for idx, value in enumerate(ranges):
-        out[f"range_{idx}"] = float(value)
-    for idx, value in enumerate(variances):
-        out[f"var_{idx}_tail"] = float(value)
-    return out
 
 
-def trajectory_ranges(traj: np.ndarray) -> Dict[str, float]:
+def trajectory_ranges(traj: np.ndarray, *, has_time: bool = True) -> Dict[str, float]:
     """Compute coordinate ranges for the ``x``, ``y``, ``z`` columns.
 
     Parameters
@@ -362,10 +448,10 @@ def trajectory_ranges(traj: np.ndarray) -> Dict[str, float]:
     """
 
     X = np.asarray(traj, dtype=float)
-    states = X[:, 1:4] if X.ndim == 2 and X.shape[1] >= 4 else X
-    if states.size == 0:
+    states = state_view(X, has_time=has_time)
+    if states.size == 0 or states.ndim != 2 or states.shape[1] < 3:
         return {"range_x": float("nan"), "range_y": float("nan"), "range_z": float("nan")}
-    values = np.ptp(states, axis=0)
+    values = np.ptp(states[:, :3], axis=0)
     return {"range_x": float(values[0]), "range_y": float(values[1]), "range_z": float(values[2])}
 
 

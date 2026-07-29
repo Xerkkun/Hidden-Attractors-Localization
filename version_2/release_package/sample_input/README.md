@@ -1,5 +1,17 @@
-# Sample input
+# Comprehensive sample input
 
-These files are lightweight templates for interface checks. They use the public `hidden-attractors` CLI and write only to ignored local output folders under `version_2/outputs/release_samples/`.
+`chua_integer_comprehensive.yaml` is the input for the comprehensive recorded
+software-validation sample. The verification command is:
 
-The sample configurations are intentionally small and are not promoted validation evidence. They are provided to inspect the package interface and configuration schema.
+```bash
+python examples/chua_integer_lure_reference/run_example.py \
+  --config release_package/sample_input/chua_integer_comprehensive.yaml \
+  --quick \
+  --steps search continuation verification \
+  --output-dir <empty-output-directory>
+```
+
+Quick mode preserves every workflow stage while reducing the continuation,
+trajectory, and sampled-neighborhood sizes so the package can be checked in a
+clean environment. It is a software-validation control, not promoted
+scientific evidence.

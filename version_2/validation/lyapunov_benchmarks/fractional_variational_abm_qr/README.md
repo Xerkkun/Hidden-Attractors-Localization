@@ -7,7 +7,6 @@ reference data for fractional variational Lyapunov contracts.
 
 - `synthetic_zero_rhs.yaml`: Trivial zero system verifying convergence to exactly zero exponents.
 - `synthetic_linear_stable.yaml`: Stable linear diagonal system verifying convergence to non-positive exponents.
-- `published_danca_kuznetsov2018_template.yaml`: Template for future validation against Danca & Kuznetsov (2018), marked as pending due to missing reference data.
 - `published_dk2018_rabinovich_fabrikant_q0999.yaml`: Quantitative RF reproduction case.
 - `published_dk2018_lorenz_q0985.yaml`: Quantitative Lorenz reproduction case.
 - `published_dk2018_4d_nonsmooth_q098_qualitative.yaml`: Qualitative-only 4D non-smooth reference.

@@ -38,7 +38,7 @@ if _version_2_dir not in sys.path:
     sys.path.insert(0, _version_2_dir)
 
 from hidden_attractors.parallel import compile_c_target  # noqa: E402
-from hidden_attractors.paths import NATIVE_CACHE          # noqa: E402
+from hidden_attractors.paths import get_native_cache      # noqa: E402
 from ..native.rhs_registry import get_c_rhs_and_params   # noqa: E402
 
 
@@ -92,7 +92,7 @@ class GeneralFractionalCBackend:
         if cls._instance is not None:
             return cls._instance
 
-        NATIVE_CACHE.mkdir(parents=True, exist_ok=True)
+        native_cache = get_native_cache()
 
         src_path = (
             Path(__file__).resolve().parent.parent
@@ -102,7 +102,7 @@ class GeneralFractionalCBackend:
         source_fingerprint = hashlib.sha256(
             src_path.read_bytes() + header_path.read_bytes()
         ).hexdigest()[:12]
-        out_path = NATIVE_CACHE / (
+        out_path = native_cache / (
             f"fractional_integrators_{source_fingerprint}{_shared_suffix()}"
         )
 

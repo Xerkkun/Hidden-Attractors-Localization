@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-from hidden_attractors.analysis.integrated_chaos_validator import integrate_case_evidence
+import pytest
+
+from validation.python.integrated_chaos_validator import integrate_case_evidence
 from validation.python.run_integrated_chaos_validator import _f4_status
 
 
@@ -16,7 +19,16 @@ OUTPUT = ROOT / "validation" / "chaos_validation" / "integrated_chaos_validator"
 SUMMARY = OUTPUT / "integrated_chaos_summary.json"
 
 
-def test_f6_runner_writes_integrated_outputs() -> None:
+def test_f6_runner_writes_integrated_outputs(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    validation_root = tmp_path / "validation"
+    shutil.copytree(
+        ROOT / "validation" / "chaos_validation",
+        validation_root / "chaos_validation",
+    )
+    monkeypatch.setenv("HIDDEN_ATTRACTORS_VALIDATION_ROOT", str(validation_root))
     subprocess.run(
         [sys.executable, str(ROOT / "validation" / "python" / "run_integrated_chaos_validator.py")],
         cwd=ROOT,
@@ -24,10 +36,11 @@ def test_f6_runner_writes_integrated_outputs() -> None:
         capture_output=True,
         text=True,
     )
-    assert SUMMARY.is_file()
-    assert (OUTPUT / "integrated_chaos_by_case.csv").is_file()
-    assert (OUTPUT / "integrated_chaos_evidence_matrix.csv").is_file()
-    assert (OUTPUT / "integrated_chaos_rules.json").is_file()
+    output = validation_root / "chaos_validation" / "integrated_chaos_validator"
+    assert (output / "integrated_chaos_summary.json").is_file()
+    assert (output / "integrated_chaos_by_case.csv").is_file()
+    assert (output / "integrated_chaos_evidence_matrix.csv").is_file()
+    assert (output / "integrated_chaos_rules.json").is_file()
 
 
 def test_f6_loads_f5_and_all_three_cases_have_evidence() -> None:

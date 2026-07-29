@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "allowed_statuses": [
-    "diagnostics_pending",
+    "diagnostics_not_evaluated",
     "diagnostics_partial",
     "diagnostics_partial_current_protocol",
     "f5_diagnostics_structured_outputs_ready",

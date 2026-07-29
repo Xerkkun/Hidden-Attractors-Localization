@@ -23,8 +23,6 @@ from hidden_attractors.cli.run import main
     ["inspect-config"],
     ["validate"],
     ["protocol"],
-    ["hiddenness"],
-    ["basin"],
     ["bifurcation"],
     ["lyapunov"],
     ["chaos-test"],
@@ -40,14 +38,9 @@ def test_grouped_cli_help(args, capsys):
 @pytest.mark.deprecated_alias
 @pytest.mark.parametrize("entrypoint_mod,entrypoint_func", [
     ("hidden_attractors.protocol_cli", "main"),
-    ("hidden_attractors.workflows.sphere_controls", "main"),
-    ("hidden_attractors.workflows.refined_basin", "main"),
-    ("hidden_attractors.workflows.fractional_report_run", "main"),
 ])
 def test_deprecated_aliases_do_not_crash(entrypoint_mod, entrypoint_func, capsys):
-    """Temporary compatibility checks for deprecated CLI entry points.
-    Scheduled for removal in v1.0.0.
-    """
+    """Compatibility checks for retained deprecated CLI entry points."""
     import importlib
     mod = importlib.import_module(entrypoint_mod)
     func = getattr(mod, entrypoint_func)
@@ -55,39 +48,39 @@ def test_deprecated_aliases_do_not_crash(entrypoint_mod, entrypoint_func, capsys
         func(["--help"])
     assert excinfo.value.code == 0
 
+
+@pytest.mark.cli
+def test_case_specific_workflow_modules_and_routes_are_not_public():
+    import importlib.util
+    from hidden_attractors.cli.main import GROUPS
+
+    assert importlib.util.find_spec("hidden_attractors.workflows.sphere_controls") is None
+    assert importlib.util.find_spec("hidden_attractors.workflows.robustness_overlay") is None
+    assert "hiddenness" not in GROUPS
+    assert "robustness" not in GROUPS
+
 # ---------------------------------------------------------------------------
 # Subcommand smoke tests
 # ---------------------------------------------------------------------------
 @pytest.mark.cli
-def test_cli_inspect_config_chua_fractional(capsys):
-    # Test inspecting a built-in preset with --preset
-    main(["inspect-config", "--preset", "chua_fractional"])
+def test_cli_inspect_config_explicit_fixture(capsys):
+    config_path = Path(__file__).parent / "fixtures" / "software_validation_fractional.yaml"
+    main(["inspect-config", "--config", str(config_path)])
     captured = capsys.readouterr()
     assert "EFFECTIVE CONFIGURATION" in captured.out
-    assert "chua_fractional_saturation" in captured.out
+    assert "chua-nonsmooth" in captured.out
 
 @pytest.mark.cli
-def test_cli_run_chua_arctan_only_integer(tmp_path, monkeypatch):
-    monkeypatch.chdir(tmp_path)
-    
-    # Run the exact CLI command from command list
-    main([
-        "run", "--preset", "chua_arctan_only_integer",
-        "--final_simulation.t_final", "0.2",
-        "--final_simulation.t_burn", "0.05",
-        "--h", "0.01",
-        "--plot_enabled", "false",
-        "--output_dir", str(tmp_path / "out_arctan_int"),
-    ])
-    
-    summary_path = tmp_path / "out_arctan_int" / "summary.json"
-    assert summary_path.exists()
+def test_cli_has_no_runnable_presets():
+    from hidden_attractors.cli.run import PRESETS
+
+    assert PRESETS == {}
 
 @pytest.mark.cli
 def test_cli_init_single(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    main(["init", "-e", "chua_integer"])
-    assert (tmp_path / "chua_integer_centered_lure_df.yaml").exists()
+    main(["init", "-e", "workflow_contract"])
+    assert (tmp_path / "workflow_contract.yaml").exists()
 
 @pytest.mark.cli
 def test_cli_init_all(tmp_path, monkeypatch):
@@ -95,13 +88,19 @@ def test_cli_init_all(tmp_path, monkeypatch):
     main(["init"])
     examples_dir = tmp_path / "configs" / "examples"
     assert examples_dir.exists()
-    assert (examples_dir / "chua_integer_centered_lure_df.yaml").exists()
+    assert {path.name for path in examples_dir.glob("*.yaml")} == {"workflow_contract.yaml"}
 
 @pytest.mark.cli
-def test_cli_inspect_candidates(capsys):
-    # Test hidden-attractors inspect candidates
-    main(["inspect", "candidates"])
+def test_cli_inspect_candidates(tmp_path, capsys):
+    source = tmp_path / "selected_candidates.json"
+    source.write_text(
+        '{"candidates":[{"candidate_id":"portable","q":1.0,'
+        '"seed":[0,0],"robust_start":[0,0]}]}',
+        encoding="utf-8",
+    )
+    main(["inspect", "candidates", "--source", str(source)])
     captured = capsys.readouterr()
+    assert "portable" in captured.out
     assert captured.err == ""
 
 @pytest.mark.cli
@@ -126,7 +125,11 @@ def test_cli_inspect_workflow_requirements(capsys):
     # Test hidden-attractors inspect workflow-requirements --example-spec
     main(["inspect", "workflow-requirements", "--example-spec"])
     captured = capsys.readouterr()
-    assert "basin" in captured.out
+    payload = json.loads(captured.out)
+    assert payload["system_name"] == "example-system"
+    assert payload["target_reference"] is None
+    assert payload["sphere_controls"] is None
+    assert payload["parameter_sweep"] is None
     assert captured.err == ""
 
 @pytest.mark.cli

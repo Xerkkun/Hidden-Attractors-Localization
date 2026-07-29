@@ -7,7 +7,7 @@ across six axes were executed. Reproduction is partial, and the method remains
 not validated.
 
 ```text
-Official status: published_benchmarks_pending_discrepancy
+Official status: recorded_published_benchmark_discrepancy
 validated: false
 validated_against_published_benchmarks: false
 ```

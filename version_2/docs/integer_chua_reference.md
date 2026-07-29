@@ -1,8 +1,8 @@
 # Integer Chua `q=1` Reference
 
-The integer-order non-smooth Chua case, whose characteristic is linear by pieces, is the reference system from
-which the reusable workflow was developed. It exercises the same scientific
-chain later used for fractional systems:
+The integer-order non-smooth Chua case, whose characteristic is linear by
+pieces, is the completed reference validation for the reusable workflow. It
+exercises the following numerical chain:
 
 ```text
 numerical_contract -> algebraic_validation -> seed_generation
@@ -16,7 +16,7 @@ hiddenness.
 
 ## Model And Numerical Contract
 
-The attached theoretical report gives the integer system as
+The completed validation record defines the integer system as
 
 ```text
 x' = alpha (y - x - f(x))
@@ -36,15 +36,13 @@ f(x) = m1 x + (m0 - m1) sat(x)
 | Operational integrator | EFORK-3 evaluated at `q=1.0` |
 | Main step size | `h=0.01` |
 
-The run deliberately uses the `q=1` specialization of the EFORK/native
-workflow so that the baseline and fractional cases share a traceable numerical
-route. It should not be silently replaced by a different ODE solver when
-claiming reproduction of this artifact set.
+The record uses the `q=1` specialization of the EFORK/native workflow. It
+should not be replaced by a different ODE solver when claiming reproduction
+of this artifact set.
 
-The EFORK-3 third-stage ordering was checked against Ghoreishi, Ghaffari, and
-Saad (2023) and the script supplied by Dr. Luis Gerardo de la Fraga. Earlier
-integration-dependent outputs were discarded; the results below were
-regenerated with `K3 = a31*K1 + a32*K2`. See
+The completed EFORK-3 validation uses the third-stage ordering checked against
+Ghoreishi, Ghaffari, and Saad (2023):
+`K3 = a31*K1 + a32*K2`. See
 [EFORK-3 Published Validation](efork3_validation.md).
 
 ## Lur'e And Describing-Function Check
@@ -96,10 +94,9 @@ against unrounded reference data.
 
 ## Continuation And Dynamic Evidence
 
-In the promoted historical artifact, eight internal homotopy steps were stored
-under the name `epsilon`. Under the official interface these are represented as
-`ContinuationPlan(lambda_values=...)`; `lambda=1` is the target system. At
-`lambda=1`, the stored final state is
+The completed record contains eight homotopy steps. The public interface
+represents them as `ContinuationPlan(lambda_values=...)`; `lambda=1` is the
+target system. At `lambda=1`, the stored final state is
 `(1.99297400, 1.26397185, -2.55106335)`. After burn-in, the effective
 reference seed is `(4.09187265, -0.08387100, -7.50907585)`.
 
@@ -135,11 +132,9 @@ criterion.
 
 ## Hiddenness Controls
 
-The archived validation artifacts contain 504 trajectories sampled around the three
-equilibria `E0`, `E+`, and `E-`, using seven radii from `1e-5` through
-`1e-2`. This older result is preserved as baseline evidence; new official
-hiddenness runs sample the interior of balls and generate `xy`, `xz`, and
-`yz` basin slices at close and large windows. The stored global classification is:
+The completed validation artifacts contain 504 trajectories sampled around
+the three equilibria `E0`, `E+`, and `E-`, using seven radii from `1e-5`
+through `1e-2`. The stored classification is:
 
 | Class | Count |
 | --- | --- |
@@ -161,11 +156,8 @@ times.
 | Source | Evidence status | Use in this package |
 | --- | --- | --- |
 | `validation/reference_cases/chua_integer_q1/` | promoted baseline | Machine-readable JSON/CSV and figures for the corrected `q=1` run. |
-| Report `170526.pdf`, dated 17 May 2026 | registered copy | Theoretical derivation and harmonic-seed record; earlier integration-dependent numbers are superseded by the corrected run. |
-| MATLAB `verifica_chua_entero.m` | locally executed | Independent Lur'e, Nyquist/DF, canonical-transform, and ODE comparison script; its logged `omega0`, `k`, and `a0` reproduce the stored branch. |
 | Guan and Xie (2025) | published comparison | Example 6 supplies the displayed `omega0`, `k`, `a0`, and starting-point values used in the relative-error table. |
-| Wolfram Language `chua_entero_algebraico_sin_numericos.wl` | locally executed, symbolic only | Symbolic Lur'e, transfer-function, canonical-transform, and describing-function derivation; the source intentionally performs no numerical parameter evaluation. |
-| Ghoreishi, Ghaffari, and Saad (2023) plus supplied EFORK scripts | reproduced benchmark | Tables 3, 4, 9, and 10 validate the EFORK-3 stage ordering before the corrected Chua rerun. |
+| Ghoreishi, Ghaffari, and Saad (2023) | reproduced benchmark | Tables 3, 4, 9, and 10 validate the EFORK-3 stage ordering used by this record. |
 
 The Guan--Xie review identifies Chua's circuit as an early and central example
 of coexisting hidden attractors and reviews numerical continuation among the
@@ -194,9 +186,5 @@ hidden-attractors validate contract \
 - X. Guan and Y. Xie, "A review on methods for localization of hidden
   attractors," *Nonlinear Dynamics*, 113, 22223-22255 (2025).
   DOI: `10.1007/s11071-025-11327-5`.
-- M. F. Moreno-Lopez, *Localizacion de atractores ocultos en sistemas
-  caoticos de orden fraccionario mediante funcion descriptiva y continuacion
-  numerica*, local report, 17 May 2026. The report includes the full
-  integer-order Chua reference procedure.
 - F. Ghoreishi, R. Ghaffari, and N. Saad, "Fractional Order Runge-Kutta
   Methods," *Fractal and Fractional*, 7, article 245 (2023).

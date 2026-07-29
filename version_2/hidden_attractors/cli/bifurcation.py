@@ -21,24 +21,11 @@ from ..analysis.bifurcation import BifurcationPoint
 def run_bifurcation(argv: Sequence[str] | None = None) -> None:
     """Run bifurcation parameter sweep workflow."""
     parser = argparse.ArgumentParser(description="Run bifurcation parameter sweep workflow")
-    parser.add_argument("-c", "--config", type=str, help="Path to YAML configuration file")
-    parser.add_argument("-p", "--preset", type=str, help="Select a built-in config preset")
+    parser.add_argument("-c", "--config", type=str, required=True, help="Path to YAML configuration file")
     args, extra_args = parser.parse_known_args(argv)
 
-    from .run import find_example_config, parse_dynamic_overrides
-    
-    if args.preset:
-        from .run import PRESETS
-        filename = PRESETS.get(args.preset)
-        if not filename:
-            print(f"Error: Preset '{args.preset}' not recognized. Available: {list(PRESETS.keys())}")
-            sys.exit(1)
-        config_path = find_example_config(filename)
-    elif args.config:
-        config_path = Path(args.config)
-    else:
-        print("Error: Must provide --config (-c) or --preset (-p).")
-        sys.exit(1)
+    from .run import parse_dynamic_overrides
+    config_path = Path(args.config)
 
     try:
         config = load_config(config_path)

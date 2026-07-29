@@ -181,9 +181,6 @@ def run_bifurcation_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
 
     # Extract bifurcation diagram points
     print("  Extracting local extrema...")
-    if sampling_method == "poincare":
-        raise NotImplementedError("Poincare section sampling is not implemented.")
-
     mode_map = {
         "local_maxima": "maxima",
         "local_minima": "minima",

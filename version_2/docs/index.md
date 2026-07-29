@@ -1,61 +1,56 @@
-# Hidden Attractors in Fractional-Order systems / Atractores Ocultos en Sistemas de Orden Fraccionario
+# `hidden-attractors-fo`
 
-## Table of Contents / Índice de Contenidos
+`hidden-attractors-fo` provides two independent capabilities:
 
-- [English Version](#english-version)
-- [Versión en Español](#versión-en-español)
+- numerical localization workflows for compatible dynamical systems under
+  explicit evidence contracts; and
+- direct characterization of systems, trajectories, and scalar time series.
 
----
+The characterization API can be used without searching for a hidden
+attractor. It includes trajectory and boundedness metrics, FFT/PSD summaries,
+the 0--1 test, Poincare crossings, bifurcation post-processing, and Lyapunov
+calculations.
 
-## English Version
+Version 1.1.0 includes the supported scalar time-series Lyapunov interface:
+Rosenstein's largest-exponent estimate, an Eckmann reconstructed spectrum, and
+the associated Kaplan--Yorke dimension through the optional `nolds` backend.
 
-- [User Manual](../USER_MANUAL.md)
+All numerical outputs remain conditional on their solver, sampling, memory,
+transient, embedding, estimator, and neighborhood-control settings.
+
+## Start here
+
 - [Installation](installation.md)
 - [Quick Start](quick_start.md)
 - [Getting Started](getting_started.md)
-- [Examples Index](examples_index.md)
-- [Workflows and Examples](workflows.md)
+- [Supported Examples](examples_index.md)
+- [Systems](systems.md)
+- [Public Workflows](workflows.md)
+- [Adapting New Systems](adapting_new_systems.md)
+
+## Analysis and evidence
+
+- [Dynamical Analysis](dynamical_analysis.md)
+- [Lyapunov Methods](lyapunov_methods.md)
+- [Poincare Diagnostics](poincare_diagnostics.md)
 - [Scientific Scope](scientific_scope.md)
-- [Validation methodology](validation_methodology.md)
-- [Phase F Closure Status](phase_f_closure.md)
-- [Published Validation Coverage](published_validation_coverage.md)
-
----
-
-## Versión en Español
-
-- [Manual de Usuario](../USER_MANUAL.md)
-- [Instalación](installation.md)
-- [Guía de Inicio Rápido](quick_start.md)
-- [Introducción (Getting Started)](getting_started.md)
-- [Índice de Ejemplos](examples_index.md)
-- [Flujos de Trabajo y Ejemplos](workflows.md)
-- [Alcance Científico](scientific_scope.md)
-- [Metodología de Validación](validation_methodology.md)
-- [Estado de Cierre de la Fase F](phase_f_closure.md)
-- [Cobertura de Validación Publicada](published_validation_coverage.md)
-
----
+- [Validation Boundary](validation_evidence.md)
+- [Validation Methodology](validation_methodology.md)
+- [Integer Chua `q=1` Reference](integer_chua_reference.md)
 
 ## Reference
 
 - [API Reference](api_reference.md)
-- [Code Reference Map](code_reference_map.md)
-- [Repository Layout](repository_layout.md)
+- [API Stability Tiers](api_stability.md)
+- [Public Calculation Reference Map](code_reference_map.md)
+- [Optional External Tools](external_tools.md)
 - [Testing](testing.md)
-- [PyPI Release Checklist](../release_package/PYPI_RELEASE_CHECKLIST.md)
-- [CLI Migration Legacy Entry Points](cli_migration_legacy_entrypoints.md)
 - [Citation](citation.md)
 
-## Development
+## En español
 
-- [Contributing](contributing.md)
-- [Physical Separation Status](physical_separation.md)
-- [Versioning Policy](versioning.md)
-
-## Notes
-
-The project reports numerical evidence under explicit solver, memory, time and
-sampling contracts. The promoted integer-order baseline is documented in
-[Integer Chua q=1 Reference](integer_chua_reference.md), including its
-literature and cross-tool evidence status.
+La biblioteca permite caracterizar sistemas, trayectorias y series temporales
+sin iniciar una búsqueda de atractores ocultos. Las estimaciones son
+numéricas y conservan los parámetros que delimitan su interpretación. Las
+páginas enlazadas arriba describen las interfaces soportadas, los límites de
+evidencia y las validaciones completadas.

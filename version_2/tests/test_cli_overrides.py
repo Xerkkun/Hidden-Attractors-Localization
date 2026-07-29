@@ -85,7 +85,8 @@ def test_cli_override_case_e():
 
 def test_cli_override_case_f_real_cli(capsys):
     from hidden_attractors.cli.run import main
-    main(["inspect-config", "--preset", "chua_bifurcation", "--bifurcation.values.n", "3"])
+    config_path = Path(__file__).parent / "fixtures" / "software_validation_fractional.yaml"
+    main(["inspect-config", "--config", str(config_path), "--bifurcation.values.n", "3"])
     captured = capsys.readouterr()
     assert "values" in captured.out
     assert "'n': 3" in captured.out

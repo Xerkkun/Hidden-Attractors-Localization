@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from tools.summarize_c590_hiddenness import (
+import json
+
+from validation.paper07_chua.scripts.summarize_c590_hiddenness import (
     CANONICAL_ROW_FILES,
     DEFAULT_SOURCE_DIR,
     DEFAULT_VALIDATION_DIR,
 )
-from tools.sync_paper07_evidence import (
+from validation.paper07_chua.scripts.sync_paper07_evidence import (
     EVIDENCE_ROOT,
+    PACKAGE_ROOT,
     artifact_specs,
     verify_package,
 )
@@ -16,11 +19,10 @@ def test_paper07_evidence_inventory_is_finite_and_compact() -> None:
     specs = artifact_specs()
     destinations = [spec.destination.resolve() for spec in specs]
 
-    assert len(specs) == 66
+    assert len(specs) == 43
     assert len(destinations) == len(set(destinations))
     assert {spec.group for spec in specs} == {
         "c590_hiddenness_rows",
-        "c590_reconstruction",
         "nonsmooth_corrected",
         "probe_story_trajectories",
     }
@@ -41,9 +43,20 @@ def test_manifest_hashes_verify_without_ignored_outputs() -> None:
     result = verify_package()
 
     assert result["status"] == "verified"
-    assert result["artifact_count"] == 66
+    assert result["artifact_count"] == 43
     assert result["total_size_bytes"] > 0
     assert result["source_parity_verified"] is False
+
+
+def test_compact_case_manifest_references_existing_evidence() -> None:
+    manifest = json.loads(
+        (PACKAGE_ROOT / "manifest.json").read_text(encoding="utf-8")
+    )
+    repository_root = PACKAGE_ROOT.parents[2]
+
+    for case in manifest["cases"].values():
+        for relative in case["canonical_evidence"]:
+            assert (repository_root / relative).is_file(), relative
 
 
 def test_dedicated_evidence_subtree_contains_only_declared_files() -> None:

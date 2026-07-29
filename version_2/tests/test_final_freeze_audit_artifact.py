@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib.util
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -78,3 +79,79 @@ def test_freeze_audit_script_supports_current_scratch_output_path() -> None:
     assert "--output-dir" in text
     assert "--require-clean" in text
     assert "validation_outputs/freeze_audit_current" in text
+
+
+def test_freeze_audit_sanitizer_redacts_local_paths() -> None:
+    module = _load_freeze_audit_module()
+    windows_user_path = "C:" + r"\Users\researcher\Desktop\private\result.py:8: warning"
+    sample = "\n".join(
+        [
+            f"Command: {module.sys.executable} -m pytest -q",
+            f"{ROOT / 'tests' / 'test_example.py'}:12: warning",
+            windows_user_path,
+            r"D:\laboratory\private campaign\result.json",
+            r"\\lab-server\private-share\results\trace.log:4: warning",
+            "/home/researcher/private/result.py:9: warning",
+            "/Users/researcher/private/result.py:10: warning",
+            "Docs: https://docs.pytest.org/en/stable/",
+        ]
+    )
+
+    sanitized = module.sanitize_audit_text(sample)
+
+    assert str(module.sys.executable) not in sanitized
+    assert str(ROOT) not in sanitized
+    assert "researcher" not in sanitized
+    assert "laboratory" not in sanitized
+    assert "lab-server" not in sanitized
+    assert "<PYTHON>" in sanitized
+    assert "<REPOSITORY_ROOT>" in sanitized
+    assert "<LOCAL_PATH>" in sanitized
+    assert "https://docs.pytest.org/en/stable/" in sanitized
+    assert module.sanitize_audit_text(sanitized) == sanitized
+
+
+def test_freeze_audit_payload_and_stage_output_are_sanitized(monkeypatch, tmp_path: Path) -> None:
+    module = _load_freeze_audit_module()
+    fake_root = tmp_path / "private repository"
+    fake_root.mkdir()
+    monkeypatch.setattr(module, "PROJECT_ROOT", fake_root)
+
+    raw_path = fake_root / "tests" / "test_private.py"
+    windows_stderr_path = "C:" + r"\Users\researcher\private\stderr.log" + "\n"
+
+    def fake_run(*_args, **_kwargs):
+        return SimpleNamespace(
+            returncode=0,
+            stdout=f"{raw_path}:21: warning\n",
+            stderr=windows_stderr_path,
+        )
+
+    monkeypatch.setattr(module.subprocess, "run", fake_run)
+    code, log = module.run_stage("privacy_regression", [str(raw_path), "-q"])
+    payload = {
+        "stage": {
+            "command": str(raw_path),
+            "log": log,
+        }
+    }
+    sanitized_payload = module.sanitize_audit_payload(payload)
+    serialized = json.dumps(sanitized_payload)
+
+    assert code == 0
+    assert str(fake_root) not in log
+    assert "researcher" not in log
+    assert "<REPOSITORY_ROOT>" in log
+    assert str(fake_root) not in serialized
+    assert "researcher" not in serialized
+
+
+def test_promoted_freeze_artifacts_contain_no_unsanitized_local_paths() -> None:
+    module = _load_freeze_audit_module()
+    audit_dir = ROOT / "validation" / "freeze_audit"
+
+    stdout_text = (audit_dir / "final_freeze_pytest_stdout.txt").read_text(encoding="utf-8")
+    summary_text = (audit_dir / "final_freeze_pytest_summary.json").read_text(encoding="utf-8")
+
+    assert module.sanitize_audit_text(stdout_text) == stdout_text
+    assert module.sanitize_audit_text(summary_text) == summary_text

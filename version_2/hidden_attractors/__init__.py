@@ -22,17 +22,17 @@ internal
     Modules: ``native``, ``parallel``, ``paths``, ``cli``.
 
 legacy
-    Frozen compatibility facade over historical scripts.  No new features.
-    Module: ``legacy``.
+    Compatibility label for historical symbol aliases. No importable
+    ``hidden_attractors.legacy`` module is distributed.
 
 See ``docs/api_stability.md`` for guarantees, upgrade-path guidance, and how
 to introspect a symbol's tier programmatically.
 
 Background
 ----------
-The package collects reusable pieces that were previously spread across
-experiment scripts: Chua models, Caputo/EFORK native backends, trajectory
-diagnostics, candidate loading, plotting, and process-safe IO helpers.
+The package provides reusable Chua models, Caputo/EFORK native backends,
+trajectory diagnostics, Lyapunov estimators for equations and scalar time
+series, plotting, and process-safe IO helpers.
 
 The package is intentionally conservative: harmonic-balance and describing
 function objects are treated as seed generators, while hiddenness and
@@ -77,21 +77,34 @@ from .systems.requirements import check_system_capability, known_workflows, requ
 # basins - classification labels
 from .basins import CLASS_LABELS, TARGET_CLASS_IDS, class_label, is_target_class
 
-# io / candidates - filesystem helpers and reference-output loaders
-from .candidates import CandidateRecord, load_final_candidate_records
+# io - portable trajectory loading
 from .io import load_trajectory_csv
 
 # Experimental API
 # analysis - trajectory diagnostics and Lyapunov estimates
 from .analysis import (
+    BifurcationPoint,
+    LyapunovComputationRequest,
+    LyapunovComputationSummary,
     LyapunovResult,
+    PoincareCrossingResult,
     RobustnessCase,
+    SpectrumResult,
     TimeSeriesLyapunovResult,
+    bifurcation_points_from_trajectories,
+    bifurcation_summary,
+    compute_boundedness_metrics,
+    compute_fft_psd,
+    compute_lyapunov_spectrum,
+    compute_trajectory_metrics,
+    detect_poincare_crossings,
     estimate_time_series_lyapunov,
     integer_system_lyapunov_exponents,
     kaplan_yorke_dimension,
     trajectory_metrics,
     trajectory_metrics_for_system,
+    validate_lyapunov_method_request,
+    zero_one_test,
 )
 
 # seed_generation - harmonic-balance seeds (Chua + generic Lur'e)
@@ -169,20 +182,32 @@ PUBLIC_API_STABLE = (
     "TARGET_CLASS_IDS",
     "class_label",
     "is_target_class",
-    "CandidateRecord",
-    "load_final_candidate_records",
     "load_trajectory_csv",
 )
 
 PUBLIC_API_EXPERIMENTAL = (
+    "BifurcationPoint",
+    "LyapunovComputationRequest",
+    "LyapunovComputationSummary",
     "LyapunovResult",
+    "PoincareCrossingResult",
     "RobustnessCase",
+    "SpectrumResult",
     "TimeSeriesLyapunovResult",
+    "bifurcation_points_from_trajectories",
+    "bifurcation_summary",
+    "compute_boundedness_metrics",
+    "compute_fft_psd",
+    "compute_lyapunov_spectrum",
+    "compute_trajectory_metrics",
+    "detect_poincare_crossings",
     "estimate_time_series_lyapunov",
     "integer_system_lyapunov_exponents",
     "kaplan_yorke_dimension",
     "trajectory_metrics",
     "trajectory_metrics_for_system",
+    "validate_lyapunov_method_request",
+    "zero_one_test",
     "HarmonicSeed",
     "find_harmonic_seed",
     "find_lure_harmonic_seed",
@@ -232,6 +257,16 @@ PUBLIC_API_TIERS = {
     STABLE: PUBLIC_API_STABLE,
     EXPERIMENTAL: PUBLIC_API_EXPERIMENTAL,
 }
+
+# Stamp the declared compatibility tier on every top-level public object.  This
+# keeps runtime introspection aligned with PUBLIC_API_STABLE and
+# PUBLIC_API_EXPERIMENTAL even when the implementation lives in another module.
+for _public_name in PUBLIC_API_STABLE:
+    api_tier(STABLE)(globals()[_public_name])
+for _public_name in PUBLIC_API_EXPERIMENTAL:
+    api_tier(EXPERIMENTAL)(globals()[_public_name])
+del _public_name
+
 __all__ = [
     # stability
     "EXPERIMENTAL",
@@ -269,19 +304,31 @@ __all__ = [
     "TARGET_CLASS_IDS",
     "class_label",
     "is_target_class",
-    # stable: io / candidates
-    "CandidateRecord",
-    "load_final_candidate_records",
+    # stable: portable IO
     "load_trajectory_csv",
     # experimental: analysis
+    "BifurcationPoint",
+    "LyapunovComputationRequest",
+    "LyapunovComputationSummary",
     "LyapunovResult",
+    "PoincareCrossingResult",
     "RobustnessCase",
+    "SpectrumResult",
     "TimeSeriesLyapunovResult",
+    "bifurcation_points_from_trajectories",
+    "bifurcation_summary",
+    "compute_boundedness_metrics",
+    "compute_fft_psd",
+    "compute_lyapunov_spectrum",
+    "compute_trajectory_metrics",
+    "detect_poincare_crossings",
     "estimate_time_series_lyapunov",
     "integer_system_lyapunov_exponents",
     "kaplan_yorke_dimension",
     "trajectory_metrics",
     "trajectory_metrics_for_system",
+    "validate_lyapunov_method_request",
+    "zero_one_test",
     # experimental: seed_generation
     "HarmonicSeed",
     "find_harmonic_seed",

@@ -3,8 +3,8 @@
 Stability: internal
     These classes are consumed by workflows and solvers.  The build API
     (``FractionalChuaBackend.build()``, ``FullHistoryABMBackend.build()``,
-    ``BasinBackend.build()``) is
-    available to advanced users but may change as new C kernels are added.
+    ``BasinBackend.build()``) is available to advanced users but remains an
+    internal compatibility surface.
     The ctypes signatures and compilation details are not part of the public
     surface.
 """

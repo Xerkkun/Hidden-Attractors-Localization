@@ -1,0 +1,89 @@
+experiment:
+  name: "Integer software validation fixture"
+  artifact_role: "software_test_fixture"
+  scientific_claim: "none"
+  output_dir: "test_outputs"
+  run_id: "integer_software_validation"
+  random_seed: 7
+
+system:
+  system_id: "chua-nonsmooth"
+  q: 1.0
+  parameters:
+    alpha: 8.4562
+    beta: 12.0732
+    gamma: 0.0052
+    m0: -0.1768
+    m1: -1.1468
+
+modes:
+  transfer_mode: "integer"
+  seed_mode: "integer"
+  continuation_mode: "integer"
+  dynamics_mode: "system"
+
+integrator:
+  name: "heun"
+  h: 0.01
+  memory_mode: "none"
+  memory_policy: "none"
+  use_c_backend: false
+  allow_python_fallback: true
+
+stages:
+  seed_search: false
+  continuation: false
+  final_simulation: false
+  hiddenness_tests: false
+  sphere_tests: false
+  basin_slices: false
+  bifurcation: false
+  attractor_only: false
+
+seed_search:
+  strategy: "k_phi"
+  construction: "modal"
+  describing_function_mode: "classical"
+  seed_theta: 0.0
+  branch_index: 0
+  omega_min: 0.01
+  omega_max: 2.0
+  amplitude_min: 0.01
+  amplitude_max: 2.0
+  grid_size_omega: 8
+  grid_size_amplitude: 8
+  root_refinement: false
+  df_residual_tol: 1.0e-6
+
+seed:
+  df_order: "integer"
+  transfer_mode: "published_integer_laplace"
+  q_seed: 1.0
+  calculation:
+    harmonics: 3
+    quadrature_points: 32
+    spectral_denominator_floor: 1.0e-12
+  biased_search:
+    sigma0_min: -2.0
+    sigma0_max: 2.0
+    sigma0_grid_size: 8
+    sigma0_exclusion_radius: 1.0e-3
+    dc_residual_max: 0.2
+    harmonic_residual_max: 0.2
+    sigma_division_floor: 1.0e-12
+    duplicate_omega_tolerance: 1.0e-2
+    duplicate_amplitude_tolerance: 0.1
+    duplicate_sigma0_tolerance: 0.1
+    max_candidates: 10
+  metadata:
+    transfer_convention: "software_validation_fixture"
+    harmonic_condition: "software_validation_fixture"
+    random_seed_policy: "software_test_fixed"
+
+simulation:
+  t_final: 1.0
+  t_burn: 0.2
+
+plots:
+  enabled: false
+  save_figures: false

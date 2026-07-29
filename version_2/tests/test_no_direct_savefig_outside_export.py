@@ -18,10 +18,18 @@ ALLOWED_SAVEFIG_FILE = "hidden_attractors/plotting/export.py"
 
 ALLOWED_STATES = {
     "legacy",
-    "exploratorio",
     "no promovido",
-    "pendiente de migración",
-    "pendiente",
+}
+
+IGNORED_GENERATED_DIRS = {
+    ".pytest_tmp",
+    ".runtime_cache",
+    ".venv",
+    "build",
+    "dist",
+    "egg-info",
+    "site",
+    "__pycache__",
 }
 
 def parse_policy_table() -> list[dict[str, str]]:
@@ -79,10 +87,15 @@ def test_no_direct_savefig():
         if "sí" in permitido or "si" in permitido or permitido == "yes":
             policy_violations.append(f"{path}: permitido en evidencia promovida = sí")
             
-        # Rule 5: Fail if the state is not legacy/exploratorio/no promovido/pendiente de migración
+        # Rule 5: only completed historical/non-promoted classifications are
+        # accepted. Exploratory or pending-work inventories are not public
+        # policy content.
         has_valid_state = any(s in estado for s in ALLOWED_STATES)
         if not has_valid_state:
-            policy_violations.append(f"{path}: estado '{estado}' no es válido (debe ser legacy/exploratorio/no promovido/pendiente de migración)")
+            policy_violations.append(
+                f"{path}: estado '{estado}' no es válido "
+                "(debe ser legacy o no promovido)"
+            )
             
         exceptions.add(path)
         
@@ -101,8 +114,8 @@ def test_no_direct_savefig():
         except ValueError:
             continue
             
-        # Skip tests, pycache, build, egg-info
-        if "tests" in f.parts or "__pycache__" in f.parts or "build" in f.parts or "egg-info" in f.parts:
+        # Skip tests and generated/install trees.
+        if "tests" in f.parts or any(part in IGNORED_GENERATED_DIRS for part in f.parts):
             continue
             
         # Skip export.py

@@ -11,11 +11,11 @@ ARCTAN_CLARIFICATIONS = [
     "validacion completa de ocultedad", "adm local"
 ]
 MACHADO_CLARIFICATIONS = [
-    "documented as theory", "planned seed family", "not a promoted public workflow",
-    "not stable public workflow", "teoría", "familia de semillas planificada",
-    "no promovido", "no estable", "no es un flujo público promovido", "planned", "theory",
-    "not stable", "teóricos", "teóricas", "planificadas", "planificados", "teórico", "teórica",
-    "planificada"
+    "documented as theory", "validation-only", "not a promoted public workflow",
+    "not stable public workflow", "teoría", "registro de validación",
+    "no promovido", "no estable", "no es un flujo público promovido", "theory",
+    "not stable", "teóricos", "teóricas", "teórico", "teórica",
+    "solo para validación"
 ]
 
 FORBIDDEN_ARCTAN_CLAIMS = [
@@ -62,8 +62,8 @@ def clean_text_for_claims(text: str) -> str:
 
 @pytest.mark.hygiene
 def test_manual_claims_consistency_check():
-    claims_path = ROOT / "THESIS_CLAIMS.md"
-    assert claims_path.exists(), f"THESIS_CLAIMS.md not found at {claims_path}"
+    claims_path = ROOT / "validation/references/thesis_claims_matrix.md"
+    assert claims_path.exists(), f"Validation claims matrix not found at {claims_path}"
     claims_content = read(claims_path)
     
     # 1. Determine whether Chua arctan is promoted with a radius-limited boundary
@@ -73,7 +73,7 @@ def test_manual_claims_consistency_check():
             arctan_claim_line = line
             break
             
-    assert arctan_claim_line is not None, "Could not locate Chua arctan claim in THESIS_CLAIMS.md"
+    assert arctan_claim_line is not None, "Could not locate Chua arctan claim in the validation claims matrix"
     
     is_arctan_radius_limited = "r <= 0.3" in arctan_claim_line.lower() or "radius-limited" in arctan_claim_line.lower()
     
@@ -85,7 +85,6 @@ def test_manual_claims_consistency_check():
         ROOT / "docs/quick_start.md",
         ROOT / "docs/validation_evidence.md",
         ROOT / "docs/unified_report.md",
-        ROOT / "docs/reporte_unificado_chua_fraccionario.tex",
     ]
     manuals = [p for p in manuals if p.exists()]
     
@@ -123,7 +122,7 @@ def test_manual_claims_consistency_check():
             if not any(term.lower() in sub_window for term in MACHADO_CLARIFICATIONS):
                 line_num = raw_content[:pos].count('\n') + 1
                 violations.append(
-                    f"{p.name}:L{line_num} -> Mention of '{match.group(0)}' lacks theoretical/planned clarification context."
+                    f"{p.name}:L{line_num} -> Mention of '{match.group(0)}' lacks a theory/validation-only boundary."
                 )
                 
         # Rule 4: Fails on Machado/FDF as promoted stable workflow

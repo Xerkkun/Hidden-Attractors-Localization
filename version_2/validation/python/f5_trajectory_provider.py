@@ -24,9 +24,7 @@ if str(Path(__file__).resolve().parent) not in sys.path:
 from validation.python.run_poincare_diagnostics import CASES_DIR, _burn_time, _integrate_case  # noqa: E402
 
 
-TRAJECTORY_ROOT = (
-    PROJECT_ROOT / "validation" / "chaos_validation" / "dynamics_diagnostics" / "trajectories"
-)
+TRAJECTORY_ROOT = CASES_DIR.parents[1] / "trajectories"
 CASES = {
     path.stem: yaml.safe_load(path.read_text(encoding="utf-8"))
     for path in sorted(CASES_DIR.glob("*.yaml"))

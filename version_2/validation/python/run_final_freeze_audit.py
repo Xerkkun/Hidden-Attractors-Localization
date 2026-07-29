@@ -11,10 +11,12 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -29,8 +31,80 @@ SUMMARY_FILENAME = "final_freeze_pytest_summary.json"
 STDOUT_FILENAME = "final_freeze_pytest_stdout.txt"
 
 
+_WINDOWS_ABSOLUTE_PATH_RE = re.compile(
+    r"(?i)(?<![A-Za-z0-9_])(?:[A-Z]:[\\/])[^:\r\n<>|?*\"]+"
+)
+_UNC_ABSOLUTE_PATH_RE = re.compile(
+    r"(?<![A-Za-z0-9_])\\\\[^\\/\s]+[\\/][^:\r\n<>|?*\"]+"
+)
+_POSIX_LOCAL_PATH_RE = re.compile(
+    r"(?<![:A-Za-z0-9_])/(?:home|Users|tmp|private/tmp|var/tmp|workspace|workspaces|mnt|media|opt|srv)/"
+    r"[^:\r\n<>|?*\"]+"
+)
+
+
+def _replace_path_prefix(text: str, path: Path | str | None, placeholder: str) -> str:
+    """Replace all separator variants of one known local path."""
+    if path is None:
+        return text
+    value = str(path).strip()
+    if not value:
+        return text
+    variants = {value, value.replace("\\", "/"), value.replace("/", "\\")}
+    for variant in sorted(variants, key=len, reverse=True):
+        text = re.sub(re.escape(variant), placeholder, text, flags=re.IGNORECASE)
+    return text
+
+
+def sanitize_audit_text(text: str) -> str:
+    """Redact local absolute paths while retaining useful relative diagnostics.
+
+    Known locations receive stable semantic placeholders. Generic absolute
+    Windows, UNC, macOS, and Linux paths are removed as a final safety net.
+    This function is intentionally idempotent so it can be applied both while
+    collecting a stage and immediately before persisting an artifact.
+    """
+    sanitized = str(text)
+
+    executable = Path(sys.executable)
+    sanitized = _replace_path_prefix(sanitized, executable, "<PYTHON>")
+
+    python_env = executable.parent.parent
+    if python_env.name.lower() in {".venv", "venv", "env"} or sys.prefix != sys.base_prefix:
+        sanitized = _replace_path_prefix(sanitized, python_env, "<PYTHON_ENV>")
+
+    sanitized = _replace_path_prefix(sanitized, PROJECT_ROOT, "<REPOSITORY_ROOT>")
+    sanitized = _replace_path_prefix(sanitized, PROJECT_ROOT.parent, "<WORKSPACE_ROOT>")
+    sanitized = _replace_path_prefix(sanitized, Path.home(), "<USER_HOME>")
+
+    for variable in ("TMP", "TEMP", "TMPDIR"):
+        sanitized = _replace_path_prefix(sanitized, os.environ.get(variable), "<TEMP_DIR>")
+
+    sanitized = _UNC_ABSOLUTE_PATH_RE.sub("<LOCAL_PATH>", sanitized)
+    sanitized = _WINDOWS_ABSOLUTE_PATH_RE.sub("<LOCAL_PATH>", sanitized)
+    sanitized = _POSIX_LOCAL_PATH_RE.sub("<LOCAL_PATH>", sanitized)
+    return sanitized
+
+
+def sanitize_audit_payload(value: Any) -> Any:
+    """Recursively sanitize every string in a JSON-compatible payload."""
+    if isinstance(value, str):
+        return sanitize_audit_text(value)
+    if isinstance(value, dict):
+        return {
+            sanitize_audit_text(key) if isinstance(key, str) else key: sanitize_audit_payload(item)
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [sanitize_audit_payload(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(sanitize_audit_payload(item) for item in value)
+    return value
+
+
 def _display_command(args: list[str]) -> str:
-    return "python -m pytest " + " ".join(args)
+    suffix = " ".join(sanitize_audit_text(str(arg)) for arg in args)
+    return ("python -m pytest " + suffix).rstrip()
 
 
 def validate_freeze_summary(payload: dict) -> list[str]:
@@ -69,7 +143,11 @@ def write_placeholder_summary(
     }
     if historical:
         placeholder["historical_artifact"] = True
-    (audit_dir / SUMMARY_FILENAME).write_text(json.dumps(placeholder, indent=2) + "\n", encoding="utf-8")
+    safe_placeholder = sanitize_audit_payload(placeholder)
+    (audit_dir / SUMMARY_FILENAME).write_text(
+        json.dumps(safe_placeholder, indent=2) + "\n",
+        encoding="utf-8",
+    )
     stdout_path = audit_dir / STDOUT_FILENAME
     if not stdout_path.exists():
         stdout_path.write_text("placeholder stdout\n", encoding="utf-8")
@@ -101,7 +179,7 @@ def run_stage(name: str, args: list[str]) -> tuple[int, str]:
     stdout_and_stderr += "\n--- STDERR ---\n"
     stdout_and_stderr += result.stderr or ""
     stdout_and_stderr += "\n\n"
-    return result.returncode, stdout_and_stderr
+    return result.returncode, sanitize_audit_text(stdout_and_stderr)
 
 
 def parse_args() -> argparse.Namespace:
@@ -170,7 +248,7 @@ def main() -> None:
         }
         combined_log += log
 
-    stdout_path.write_text(combined_log, encoding="utf-8")
+    stdout_path.write_text(sanitize_audit_text(combined_log), encoding="utf-8")
 
     clean_tree_ok = (not dirty) or args.historical_artifact
     if args.require_clean and dirty:
@@ -208,7 +286,11 @@ def main() -> None:
     if policy_errors:
         summary_payload["policy_errors"] = policy_errors
 
-    summary_path.write_text(json.dumps(summary_payload, indent=2) + "\n", encoding="utf-8")
+    safe_summary_payload = sanitize_audit_payload(summary_payload)
+    summary_path.write_text(
+        json.dumps(safe_summary_payload, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
     print(f"Audit completed. Freeze ready: {freeze_ready}")
     sys.exit(0 if freeze_ready else 1)

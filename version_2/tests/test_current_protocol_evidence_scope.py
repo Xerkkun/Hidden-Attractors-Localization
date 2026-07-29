@@ -5,8 +5,14 @@ from pathlib import Path
 from hidden_attractors.paths import PROJECT_ROOT
 
 def test_current_protocol_evidence_scope_and_contract() -> None:
-    # 1. Verify alignment of effective_contract.json with unified_caputo_protocol.json
-    protocol_path = PROJECT_ROOT / "configs" / "unified_caputo_protocol.json"
+    # 1. Verify alignment with the frozen validation protocol.
+    protocol_path = (
+        PROJECT_ROOT
+        / "validation"
+        / "00_manifest"
+        / "source_configs"
+        / "unified_caputo_protocol.json"
+    )
     effective_path = PROJECT_ROOT / "validation" / "01_numerical_contract" / "effective_contract.json"
     
     assert protocol_path.exists()

@@ -11,13 +11,8 @@ from typing import Sequence
 
 # Import subcommand dispatchers
 from .inspect import list_candidates, systems, workflow_requirements
-from .validate import validate_contract, validate_bibliography, validate_release_readiness
+from .validate import validate_contract, validate_bibliography
 from .protocol import run_protocol_stage
-from .hiddenness import sphere_controls, strict_target_refinement as hid_str_ref
-from .basin import refined, strict_target_refinement as bas_str_ref
-from .robustness import overlay
-from .published import danca_abm_sphere_controls
-from .report import fractional_run
 from .bifurcation import run_bifurcation, plot_bifurcation, inspect_bifurcation
 from .lyapunov import compute_lyapunov, trajectory_lyapunov_spectrum, validate_lyapunov
 from .chaos_test import run_zero_one, inspect_zero_one
@@ -28,16 +23,11 @@ GROUPS = {
     "init": None,
     "inspect-config": None,
     "inspect": ["candidates", "systems", "workflow-requirements"],
-    "validate": ["contract", "bibliography", "release-readiness"],
+    "validate": ["contract", "bibliography"],
     "protocol": ["generate-seeds", "soft-precheck", "continue", "filter-survivors", "build-reference", "robustness", "hiddenness", "diagnostics"],
-    "hiddenness": ["sphere-controls", "strict-target-refinement"],
-    "basin": ["refined", "strict-target-refinement"],
-    "robustness": ["overlay"],
     "bifurcation": ["run", "plot", "inspect"],
     "lyapunov": ["compute", "spectrum", "validate"],
     "chaos-test": ["zero-one", "inspect"],
-    "published": ["danca-abm-sphere-controls"],
-    "report": ["fractional-run"],
     "seed": ["lure-centered", "lure-biased"],
     "continuation": ["run", "multiparameter"],
 }
@@ -51,29 +41,27 @@ def dispatch(group: str, cmd: str | None, argv: Sequence[str]) -> None:
         # run_cmd expects parsed args and extra_args.
         # Let's parse args for run subcommand
         parser = argparse.ArgumentParser(prog="hidden-attractors run", allow_abbrev=False)
-        parser.add_argument("-c", "--config", type=str, help="Path to YAML configuration file")
-        parser.add_argument("-p", "--preset", type=str, help="Select a built-in config preset or 'basic_chua_three'")
+        parser.add_argument("-c", "--config", type=str, required=True, help="Path to YAML configuration file")
         args, extra_args = parser.parse_known_args(argv)
         run_cmd(args, extra_args)
         
     elif group == "init":
         from .run import init_cmd
         parser = argparse.ArgumentParser(prog="hidden-attractors init", allow_abbrev=False)
-        parser.add_argument("-e", "--example", type=str, help="Name of a specific example preset to extract")
+        parser.add_argument("-e", "--example", type=str, help="Name of an abstract template to extract")
         args = parser.parse_args(argv)
         init_cmd(args)
         
     elif group == "inspect-config":
         from .run import inspect_config_cmd
         parser = argparse.ArgumentParser(prog="hidden-attractors inspect-config", allow_abbrev=False)
-        parser.add_argument("-c", "--config", type=str, help="Path to YAML configuration file")
-        parser.add_argument("-p", "--preset", type=str, help="Select a built-in config preset")
+        parser.add_argument("-c", "--config", type=str, required=True, help="Path to YAML configuration file")
         args, extra_args = parser.parse_known_args(argv)
         inspect_config_cmd(args, extra_args)
         
     elif group == "inspect":
         if cmd == "candidates":
-            list_candidates()
+            list_candidates(argv)
         elif cmd == "systems":
             systems(argv)
         elif cmd == "workflow-requirements":
@@ -84,36 +72,10 @@ def dispatch(group: str, cmd: str | None, argv: Sequence[str]) -> None:
             validate_contract(argv)
         elif cmd == "bibliography":
             validate_bibliography(argv)
-        elif cmd == "release-readiness":
-            validate_release_readiness(argv)
             
     elif group == "protocol":
         run_protocol_stage(cmd, argv)
         
-    elif group == "hiddenness":
-        if cmd == "sphere-controls":
-            sphere_controls(argv)
-        elif cmd == "strict-target-refinement":
-            hid_str_ref(argv)
-            
-    elif group == "basin":
-        if cmd == "refined":
-            refined(argv)
-        elif cmd == "strict-target-refinement":
-            bas_str_ref(argv)
-            
-    elif group == "robustness":
-        if cmd == "overlay":
-            overlay(argv)
-            
-    elif group == "published":
-        if cmd == "danca-abm-sphere-controls":
-            danca_abm_sphere_controls(argv)
-            
-    elif group == "report":
-        if cmd == "fractional-run":
-            fractional_run(argv)
-            
     elif group == "bifurcation":
         if cmd == "run":
             run_bifurcation(argv)
@@ -186,7 +148,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     # 2. Grouped commands
     inspect_parser = subparsers.add_parser("inspect", help="Inspect candidates, systems, or workflows")
     inspect_sub = inspect_parser.add_subparsers(dest="cmd", required=True)
-    inspect_sub.add_parser("candidates", help="List final candidate records")
+    inspect_sub.add_parser("candidates", help="Inspect candidate records from an explicit JSON source")
     inspect_sub.add_parser("systems", help="Inspect registered chaotic systems")
     inspect_sub.add_parser("workflow-requirements", help="Inspect reusable workflow requirements")
     
@@ -194,27 +156,12 @@ def main(argv: Sequence[str] | None = None) -> None:
     validate_sub = validate_parser.add_subparsers(dest="cmd", required=True)
     validate_sub.add_parser("contract", help="Validate numerical validation evidence contract")
     validate_sub.add_parser("bibliography", help="Validate claims bibliography manifest")
-    validate_sub.add_parser("release-readiness", help="Validate release packaging/readiness metadata")
     
     protocol_parser = subparsers.add_parser("protocol", help="Official Caputo protocol stages")
     protocol_sub = protocol_parser.add_subparsers(dest="cmd", required=True)
     for p_cmd in GROUPS["protocol"]:
         protocol_sub.add_parser(p_cmd, help=f"Run protocol {p_cmd} stage")
         
-    hiddenness_parser = subparsers.add_parser("hiddenness", help="Hiddenness verification workflows")
-    hiddenness_sub = hiddenness_parser.add_subparsers(dest="cmd", required=True)
-    hiddenness_sub.add_parser("sphere-controls", help="Run sphere controls validation workflow")
-    hiddenness_sub.add_parser("strict-target-refinement", help="Run strict target refinement workflow")
-    
-    basin_parser = subparsers.add_parser("basin", help="Basin of attraction workflows")
-    basin_sub = basin_parser.add_subparsers(dest="cmd", required=True)
-    basin_sub.add_parser("refined", help="Run refined basin workflow")
-    basin_sub.add_parser("strict-target-refinement", help="Run strict target refinement workflow for basins")
-    
-    robustness_parser = subparsers.add_parser("robustness", help="Robustness workflows")
-    robustness_sub = robustness_parser.add_subparsers(dest="cmd", required=True)
-    robustness_sub.add_parser("overlay", help="Run robustness overlay workflow")
-    
     bif_parser = subparsers.add_parser("bifurcation", help="Bifurcation sweep workflows and plots")
     bif_sub = bif_parser.add_subparsers(dest="cmd", required=True)
     bif_sub.add_parser("run", help="Run parameter sweep bifurcation workflow")
@@ -224,21 +171,16 @@ def main(argv: Sequence[str] | None = None) -> None:
     lyap_parser = subparsers.add_parser("lyapunov", help="Lyapunov exponent calculation and convergence")
     lyap_sub = lyap_parser.add_subparsers(dest="cmd", required=True)
     lyap_sub.add_parser("compute", help="Compute Lyapunov exponents workflow")
-    lyap_sub.add_parser("spectrum", help="Estimate trajectory-based Lyapunov exponent")
+    lyap_sub.add_parser(
+        "spectrum",
+        help="Estimate a Lyapunov spectrum from a sampled scalar time series",
+    )
     lyap_sub.add_parser("validate", help="Validate Lyapunov summary JSON")
     
     chaos_parser = subparsers.add_parser("chaos-test", help="Supporting chaos time-series diagnostics")
     chaos_sub = chaos_parser.add_subparsers(dest="cmd", required=True)
     chaos_sub.add_parser("zero-one", help="Run 0-1 chaos-test diagnostic")
     chaos_sub.add_parser("inspect", help="Inspect 0-1 chaos-test summary JSON")
-    
-    pub_parser = subparsers.add_parser("published", help="Replicate/validate published workflows")
-    pub_sub = pub_parser.add_subparsers(dest="cmd", required=True)
-    pub_sub.add_parser("danca-abm-sphere-controls", help="Run published Danca ABM sphere controls")
-    
-    rep_parser = subparsers.add_parser("report", help="Report generation and publication figures")
-    rep_sub = rep_parser.add_subparsers(dest="cmd", required=True)
-    rep_sub.add_parser("fractional-run", help="Run fractional report run workflow")
     
     seed_parser = subparsers.add_parser("seed", help="Seed generation routes")
     seed_sub = seed_parser.add_subparsers(dest="cmd", required=True)

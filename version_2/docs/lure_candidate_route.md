@@ -1,15 +1,18 @@
-# Seed Generation Families
+# Lur'e Seed Generation
 
-This page replaces the former separate Lur'e and Machado route description.
-The official methodology has a single `seed_generation` stage configured in:
+The supported seed stage is available for systems that provide an explicit
+scalar Lur'e representation. It produces initialization records for numerical
+continuation; it does not establish the existence, chaoticity, or hiddenness
+of an attractor.
 
-```text
-configs/unified_caputo_protocol.json
+## Supported commands
+
+```bash
+hidden-attractors seed lure-centered --help
+hidden-attractors seed lure-biased --help
 ```
 
-## Uniform Seed Record
-
-Every reconstructed seed writes:
+The centered and biased routes return the same core fields:
 
 ```json
 {
@@ -20,52 +23,33 @@ Every reconstructed seed writes:
   "omega": 0.0,
   "mu": 1.0,
   "theta": 0.0,
-  "q": 0.9998,
+  "q": 1.0,
   "harmonic_residual": 0.0,
-  "rho_H": 0.0,
   "x0": [0.0, 0.0, 0.0],
-  "reconstruction_metadata": {},
-  "source_config": "configs/unified_caputo_protocol.json"
+  "reconstruction_metadata": {}
 }
 ```
 
-*Nota sobre Machado/FDF*: Las familias `machado_centered` y `machado_biased` se conservan como soporte teórico/interno planificado. No forman parte de la superficie pública del CLI de esta entrega; el comando `hidden-attractors seed` expone las siguientes rutas:
+For a fractional-order route, the frequency balance uses the configured
+branch of `(j omega)^q`. The describing function is a first-harmonic
+approximation used to locate an initial condition. It must be followed by
+integration of the target system under an explicit numerical contract.
 
-| Subcomando | Descripción | Comando de ayuda |
-| :--- | :--- | :--- |
-| `lure-centered` | Generación de semillas clásicas centradas de Lur'e | `hidden-attractors seed lure-centered --help` |
-| `lure-biased` | Generación de semillas clásicas sesgadas de Lur'e | `hidden-attractors seed lure-biased --help` |
+## Pre-continuation checks
 
-`lure_classical_centered` es la antigua ruta clásica centrada. Las funciones descriptivas predicen candidatos armónicos en el Chua buscando puntos de balance de frecuencia ($W_q(j\omega)N(A) = -1$).
-*Advertencia Científica*: La función descriptiva es una herramienta de aproximación armónica de primer armónico para ubicar posibles semillas localizadas. **No constituye de ninguna manera una prueba de existencia de atractor ni de su ocultedad**. La ocultedad se determina posteriormente y de forma rigurosa en el protocolo evaluando vecindades locales de todos los equilibrios (en la etapa `hiddenness` de `hidden-attractors protocol` o mediante `hidden-attractors hiddenness sphere-controls`).
+A direct integration before continuation is diagnostic. A periodic-looking or
+equilibrium-bound seed may still be passed to
+`ContinuationPlan(lambda_values=...)`. Invalid parameters, non-finite values,
+numerical failure, or an exact duplicate may stop the route before
+continuation.
 
-## Soft Precheck
+## Evidence boundary
 
-Direct integration before continuation is diagnostic. Its possible useful
-labels include:
+Continuation reaching `lambda=1` only establishes that the numerical path
+reached the target parameterization. Subsequent trajectory diagnostics and
+robustness checks are separate. If hiddenness is assessed, equilibrium-
+neighborhood controls must record all equilibria, radii, sample counts,
+sampling mode, solver, horizon, memory policy, classifier, and failure policy.
 
-```text
-pre_continuation_periodic
-pre_continuation_quasiperiodic
-pre_continuation_chaotic_looking
-pre_continuation_equilibrium_collapse
-```
-
-A seed with `pre_continuation_periodic` is still admitted to
-`ContinuationPlan(lambda_values=...)`. Only invalid parameters, NaN/Inf,
-catastrophic numerical failure or exact duplication may reject a seed here.
-
-## Decision Boundary
-
-Hard exclusion of periodic or collapsed target dynamics occurs only in
-`post_continuation_filter`, after the path reaches `lambda=1` and is
-integrated on the original target system. Hiddenness is assessed later still:
-only robust survivors receive ball-neighborhood and basin-slice tests around
-all equilibria.
-
-## Historical Reproduction
-
-The files `configs/lure_biased_multiparam_q09998.yaml` and
-`configs/machado_candidate_route.yaml` remain only to interpret or reproduce
-older artifacts while their adapters are being removed. New results must use
-the unified configuration and official JSON envelopes.
+No seed-generation or continuation output alone should be reported as a
+hidden-attractor result.

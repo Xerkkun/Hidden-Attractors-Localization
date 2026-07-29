@@ -44,11 +44,6 @@ class SeedGenerator(Protocol):
         """Generate a classical describing-function seed."""
 
 
-class MachadoSeedGenerator(Protocol):
-    def __call__(self, system: ChaoticSystem, contract: NumericalContract, *, mu: float) -> SeedResult:
-        """Generate a Machado-family describing-function seed."""
-
-
 class ContinuationFunction(Protocol):
     def __call__(self, system: ChaoticSystem, seed: SeedResult, contract: NumericalContract) -> ContinuationResult:
         """Continue a candidate seed under the selected numerical contract."""
@@ -74,7 +69,6 @@ class FullWorkflowContract:
     """Required hooks for a system to run the full analysis protocol."""
 
     seed_generator: SeedGenerator
-    machado_seed_generator: MachadoSeedGenerator
     continuation: ContinuationFunction
     hiddenness_verifier: HiddennessVerifier
     basin_classifier: BasinClassifier
@@ -93,14 +87,16 @@ def validate_full_workflow_system(system: ChaoticSystem, workflow: FullWorkflowC
         raise ValueError(f"{system.name} must provide equilibria for hiddenness controls.")
     required = (
         workflow.seed_generator,
-        workflow.machado_seed_generator,
         workflow.continuation,
         workflow.hiddenness_verifier,
         workflow.basin_classifier,
         workflow.report_writer,
     )
     if any(item is None for item in required):
-        raise ValueError("full workflow requires seed, Machado, continuation, hiddenness, basin, and report hooks.")
+        raise ValueError(
+            "full workflow requires seed, continuation, hiddenness, basin, "
+            "and report hooks."
+        )
 
 
 __all__ = [
@@ -110,7 +106,6 @@ __all__ = [
     "FullWorkflowContract",
     "HiddennessResult",
     "HiddennessVerifier",
-    "MachadoSeedGenerator",
     "NumericalContract",
     "ReportWriter",
     "SeedGenerator",
