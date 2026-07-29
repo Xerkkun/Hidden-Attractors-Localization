@@ -74,6 +74,12 @@ _WOLFRAM_CASES = [
     "chua_integer_saturation",
     "chua_fractional_saturation",
     "chua_fractional_arctan",
+    "chua_fractional_arctan_c590",
+]
+_SEED_CASES = [
+    "chua_integer_saturation",
+    "chua_fractional_saturation",
+    "chua_fractional_arctan",
 ]
 
 # ---------------------------------------------------------------------------
@@ -98,7 +104,7 @@ def _try_import_library():
 # ---------------------------------------------------------------------------
 
 @pytest.mark.wolfram
-@pytest.mark.parametrize("system_id", _WOLFRAM_CASES)
+@pytest.mark.parametrize("system_id", _SEED_CASES)
 def test_wolfram_python_seed_consistency(system_id: str) -> None:
     """Transfer function and seed values from Wolfram must match Python within tolerance.
 
@@ -273,7 +279,7 @@ def test_build_S_from_similarity_no_eigenvectors() -> None:
 
 
 @pytest.mark.wolfram
-@pytest.mark.parametrize("system_id", _WOLFRAM_CASES)
+@pytest.mark.parametrize("system_id", _SEED_CASES)
 def test_compare_seed_data_failures(system_id: str) -> None:
     """Verify that compare_seed_data fails when tolerances are exceeded."""
     if not _wolfram_outputs_exist(system_id):
@@ -432,3 +438,68 @@ def test_compare_all_summary(system_id: str) -> None:
     assert "missing_comparisons" in summary
 
 
+@pytest.mark.wolfram
+def test_compare_c590_recorded_candidate_consistency() -> None:
+    """The c590 parameters, recorded seed, and RHS must match Python."""
+    system_id = "chua_fractional_arctan_c590"
+    if not _wolfram_outputs_exist(system_id):
+        pytest.skip(
+            "No Wolfram c590 outputs — run: "
+            "python validation/python/run_wolfram_validations.py --all"
+        )
+
+    lib_ok, lib_err = _try_import_library()
+    if not lib_ok:
+        pytest.skip(f"Library not importable: {lib_err}")
+
+    from compare_with_library import compare_recorded_candidate
+
+    out_dir = repo_root() / "validation" / "outputs" / "wolfram" / system_id
+    candidate_json = out_dir / f"{system_id}_recorded_candidate.json"
+    result = compare_recorded_candidate(candidate_json, system_id)
+    assert result["passed"]
+    assert result["parameter_max_diff"] < 1e-10
+    assert result["seed_max_diff"] < 1e-10
+    assert result["rhs_max_diff"] < 1e-10
+
+
+def test_tracked_c590_algebraic_snapshot_is_portable_and_scoped() -> None:
+    """The reviewable c590 snapshot must remain passing, portable, and bounded."""
+    snapshot_dir = (
+        repo_root()
+        / "validation"
+        / "chua_fractional_arctan_c590"
+        / "algebraic_validation"
+    )
+    system_id = "chua_fractional_arctan_c590"
+    validation_path = snapshot_dir / f"{system_id}_validation_summary.json"
+    comparison_path = snapshot_dir / f"{system_id}_python_consistency_summary.json"
+
+    with validation_path.open("r", encoding="utf-8") as fh:
+        validation = json.load(fh)
+    with comparison_path.open("r", encoding="utf-8") as fh:
+        comparison = json.load(fh)
+
+    assert validation["system_id"] == system_id
+    assert validation["validation_scope"] == "algebra_and_recorded_candidate"
+    assert (
+        validation["seed_origin"]
+        == "bounded_integer_search_and_independent_caputo_refinement"
+    )
+    assert validation["passed"]
+    assert len(validation["tests"]) == 10
+    assert all(test["passed"] for test in validation["tests"])
+    assert not Path(validation["output_dir"]).is_absolute()
+
+    assert comparison["system_id"] == system_id
+    assert comparison["passed"]
+    assert all(comparison["checks"].values())
+    assert comparison["comparisons"]["recorded_candidate"]["passed"]
+    assert not Path(comparison["output_dir"]).is_absolute()
+
+    serialized = json.dumps(
+        {"validation": validation, "comparison": comparison},
+        sort_keys=True,
+    )
+    assert "hidden_verified" not in serialized
+    assert "chaos_verified" not in serialized

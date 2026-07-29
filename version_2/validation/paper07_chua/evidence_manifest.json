@@ -3,9 +3,9 @@
   "package_id": "paper07_chua_tracked_numerical_evidence",
   "path_base": "repository_root",
   "generated_by": "version_2/tools/sync_paper07_evidence.py",
-  "scientific_scope": "Compact evidence for the reported c590 reconstruction, the corrected nonsmooth probes, and the promoted c590 hiddenness rows. Checkpoints, figures, exploratory trajectories, and superseded attempts are intentionally excluded.",
-  "artifact_count": 47,
-  "total_size_bytes": 19401511,
+  "scientific_scope": "Compact evidence for the reported c590 reconstruction, the corrected nonsmooth probes, and the promoted c590 hiddenness rows, together with the finite representative trajectories used by the spatial probe figures. Checkpoints, figure binaries, exploratory trajectories, and superseded attempts are intentionally excluded.",
+  "artifact_count": 66,
+  "total_size_bytes": 45840437,
   "groups": {
     "c590_hiddenness_rows": {
       "files": 12,
@@ -17,7 +17,11 @@
     },
     "nonsmooth_corrected": {
       "files": 13,
-      "size_bytes": 8638653
+      "size_bytes": 8639991
+    },
+    "probe_story_trajectories": {
+      "files": 19,
+      "size_bytes": 26437588
     }
   },
   "artifacts": [
@@ -270,8 +274,8 @@
       "group": "nonsmooth_corrected",
       "source_path": "outputs/paper07_nonsmooth_corrected/continuation_stages.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/continuation_stages.csv",
-      "size_bytes": 3190,
-      "sha256": "e3816b468ce7dddcabd18191d053a39c88a055e3e667ad6fa87ad5eb05e69c3c"
+      "size_bytes": 4524,
+      "sha256": "00edce06154ee998eac6cba73ad6969d3e4f7bf306da4c553cbe80e75fc0323a"
     },
     {
       "group": "nonsmooth_corrected",
@@ -347,8 +351,141 @@
       "group": "nonsmooth_corrected",
       "source_path": "outputs/paper07_nonsmooth_corrected/target_reproduction_runs.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/target_reproduction_runs.csv",
-      "size_bytes": 6956,
-      "sha256": "dfc58eb980d4d966be426fdab1c0b6f3560f9ce6ae2edd05f285b527f23456a7"
+      "size_bytes": 6960,
+      "sha256": "084bb0b8dd1ca458b520241859557f9f56876c259f6b95518ddf80847f2555b2"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d000.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d000.csv",
+      "size_bytes": 2755477,
+      "sha256": "f4f3d1b2c82332b45c615986eeba14b835d5ce382b265a8162e3c9e538324b7c"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d194.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d194.csv",
+      "size_bytes": 2746529,
+      "sha256": "0d3c8f04227c7f6919ba3e01ee33dba1ad31f45edf6a2a1d9a8d7b5b5d8cb9b9"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d228.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d228.csv",
+      "size_bytes": 2745602,
+      "sha256": "10047741db4cde747fb3109b6f4b83fff84349ef9a891ac98d058dcc6bff3382"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_Em_r00_d000.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_Em_r00_d000.csv",
+      "size_bytes": 2795511,
+      "sha256": "d602bd5903a6e7af30cff8eb6b635f2e32e9ffb3ac9ff2ecba12fa5f9104ef74"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_Ep_r00_d000.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_Ep_r00_d000.csv",
+      "size_bytes": 2794100,
+      "sha256": "e0f7d2945368f3260a23411a23131123d1c0fb755588ff37d53d28fb9213cc83"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Em_r00_d000.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Em_r00_d000.csv",
+      "size_bytes": 725492,
+      "sha256": "176fba9597a4cc17058e3d7910112037624c3d8de749629b57a858a35716d94e"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Em_r00_d001.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Em_r00_d001.csv",
+      "size_bytes": 725575,
+      "sha256": "c3c6f22a0544504e3322a54c6d231cab96b9c2cadee25ef283e2fba07862c7a4"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Ep_r00_d000.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Ep_r00_d000.csv",
+      "size_bytes": 716414,
+      "sha256": "23e0c068474346036553318520250aa1a10273510367f80833c17cb55d084727"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Ep_r00_d001.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Ep_r00_d001.csv",
+      "size_bytes": 716331,
+      "sha256": "2600a4eb633ed762197e4e8f2d9b6c58e00135952011b52a0e343ca73814c6b7"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/manifest.json",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/manifest.json",
+      "size_bytes": 22720,
+      "sha256": "c3bdbe6dd90d0586a6152789751e3d58e7d1505633eaed9cb0d092755f96b6b0"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_00000_E0.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_00000_E0.csv",
+      "size_bytes": 224813,
+      "sha256": "3bf8ca4b32893dc0ebb87b5ddb6df98a9ee15241012eda6eeea8c07d2be9a8ee"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_08800_Ep.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_08800_Ep.csv",
+      "size_bytes": 1570739,
+      "sha256": "2d036c9bb3cd7d5d44d802ad803bc5fd5cc592e0f8dc3058b99171f57e53bbd3"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_08801_Ep.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_08801_Ep.csv",
+      "size_bytes": 54062,
+      "sha256": "1a5a876c7385ba01ad759e56ed7970e69fc9959253699f87dfa9059e646b16c4"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_12350_Ep.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_12350_Ep.csv",
+      "size_bytes": 1571170,
+      "sha256": "0b374a2be638b9990a60630509b74a053c2e6bad7536e439380e7289d119ac52"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_13407_Ep.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_13407_Ep.csv",
+      "size_bytes": 1537202,
+      "sha256": "08a314930a5bbc42be6f92d6e6c9ce97d917f5652aea7b709160836bc122d395"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_17600_Em.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_17600_Em.csv",
+      "size_bytes": 56653,
+      "sha256": "75fd0113cfa01a51e2ca6b2fc2ea11392b68137cfe27e1c4135afe0f9c5ce874"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_17602_Em.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_17602_Em.csv",
+      "size_bytes": 1570882,
+      "sha256": "6c077249e9886f47cb46852fddf43e86b764df04229affc4435549d2a1803a60"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_21163_Em.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_21163_Em.csv",
+      "size_bytes": 1570856,
+      "sha256": "55f200161b5aaaf37d38174f3a7d7ceb2f6f5b955e6b341940b99d295e9645e4"
+    },
+    {
+      "group": "probe_story_trajectories",
+      "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_22330_Em.csv",
+      "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_22330_Em.csv",
+      "size_bytes": 1537460,
+      "sha256": "9eb6c4ebbc87e8dc48e29a4cd989b247e42f5b73f48522f8c573d37582e389ae"
     }
   ],
   "pruned_stale_files": []

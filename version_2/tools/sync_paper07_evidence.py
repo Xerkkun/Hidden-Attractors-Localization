@@ -84,6 +84,7 @@ def artifact_specs() -> tuple[ArtifactSpec, ...]:
 
     c590_destination = EVIDENCE_ROOT / "c590_reconstruction"
     nonsmooth_destination = EVIDENCE_ROOT / "nonsmooth_corrected"
+    probe_story_destination = EVIDENCE_ROOT / "probe_story_trajectories"
 
     c590_files = (
         "search_provenance.json",
@@ -138,6 +139,27 @@ def artifact_specs() -> tuple[ArtifactSpec, ...]:
         "hiddenness_r200_rows.csv",
         "hiddenness_r200_run_config.json",
     )
+    probe_story_files = (
+        "manifest.json",
+        "arctan/hiddenness_r100_rows_E0_r00_d000.csv",
+        "arctan/hiddenness_r100_rows_E0_r00_d194.csv",
+        "arctan/hiddenness_r100_rows_E0_r00_d228.csv",
+        "arctan/hiddenness_r100_rows_Em_r00_d000.csv",
+        "arctan/hiddenness_r100_rows_Ep_r00_d000.csv",
+        "arctan/hiddenness_scaled_rows_Em_r00_d000.csv",
+        "arctan/hiddenness_scaled_rows_Em_r00_d001.csv",
+        "arctan/hiddenness_scaled_rows_Ep_r00_d000.csv",
+        "arctan/hiddenness_scaled_rows_Ep_r00_d001.csv",
+        "nonsmooth/probe_00000_E0.csv",
+        "nonsmooth/probe_08800_Ep.csv",
+        "nonsmooth/probe_08801_Ep.csv",
+        "nonsmooth/probe_12350_Ep.csv",
+        "nonsmooth/probe_13407_Ep.csv",
+        "nonsmooth/probe_17600_Em.csv",
+        "nonsmooth/probe_17602_Em.csv",
+        "nonsmooth/probe_21163_Em.csv",
+        "nonsmooth/probe_22330_Em.csv",
+    )
 
     specs = [
         _spec(
@@ -165,6 +187,15 @@ def artifact_specs() -> tuple[ArtifactSpec, ...]:
             C590_HIDDENNESS_VALIDATION,
         )
         for relative in hiddenness_files
+    )
+    specs.extend(
+        _spec(
+            "probe_story_trajectories",
+            probe_story_destination,
+            relative,
+            probe_story_destination,
+        )
+        for relative in probe_story_files
     )
     return tuple(specs)
 
@@ -349,8 +380,10 @@ def _manifest_payload(specs: Iterable[ArtifactSpec]) -> dict[str, Any]:
         "scientific_scope": (
             "Compact evidence for the reported c590 reconstruction, the "
             "corrected nonsmooth probes, and the promoted c590 hiddenness "
-            "rows. Checkpoints, figures, exploratory trajectories, and "
-            "superseded attempts are intentionally excluded."
+            "rows, together with the finite representative trajectories used "
+            "by the spatial probe figures. Checkpoints, figure binaries, "
+            "exploratory trajectories, and superseded attempts are "
+            "intentionally excluded."
         ),
         "artifact_count": len(artifacts),
         "total_size_bytes": sum(item["size_bytes"] for item in artifacts),
@@ -371,7 +404,8 @@ def sync_package() -> dict[str, Any]:
 
     for spec in specs:
         spec.destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(spec.source, spec.destination)
+        if spec.source.resolve() != spec.destination.resolve():
+            shutil.copy2(spec.source, spec.destination)
     removed = _prune_evidence_directory(
         spec.destination
         for spec in specs

@@ -39,6 +39,7 @@ DEFAULT_CASES: list[str] = [
     "validation/wolfram/cases/chua_integer_saturation.wl",
     "validation/wolfram/cases/chua_fractional_saturation.wl",
     "validation/wolfram/cases/chua_fractional_arctan.wl",
+    "validation/wolfram/cases/chua_fractional_arctan_c590.wl",
 ]
 
 DEFAULT_OUT_BASE = "validation/outputs/wolfram"
@@ -184,7 +185,10 @@ def main() -> None:
     parser.add_argument(
         "--all",
         action="store_true",
-        help="Run all three built-in cases (integer + fractional saturation + arctan).",
+        help=(
+            "Run all four built-in cases (integer saturation, fractional "
+            "saturation, bibliographic arctan, and c590 arctan)."
+        ),
     )
     parser.add_argument(
         "--case",

@@ -30,6 +30,7 @@ from __future__ import annotations
 import csv
 import json
 import math
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -49,8 +50,10 @@ try:
         equilibria_arctan,
         jacobian_nonsmooth,
         jacobian_arctan,
+        rhs_arctan,
     )
     from hidden_attractors.systems.builtins import (
+        _chua_lure_system,
         chua_system,
         chua_arctan_wu2023_system,
     )
@@ -83,6 +86,29 @@ def _load_json(path: str | Path) -> Any:
 def _load_csv(path: str | Path) -> list[list[str]]:
     with open(path, newline="", encoding="utf-8") as fh:
         return list(csv.reader(fh))
+
+
+_VERSION_ROOT = Path(__file__).resolve().parents[2]
+_C590_CONTRACT_PATH = (
+    _VERSION_ROOT
+    / "validation"
+    / "chua_fractional_arctan_c590"
+    / "validation_summary.json"
+)
+
+
+def _c590_contract() -> dict[str, Any]:
+    """Load the tracked c590 parameter/seed contract used by Paper 07."""
+    return _load_json(_C590_CONTRACT_PATH)
+
+
+def _arctan_parameters_for_system(system_id: str):
+    if system_id == "chua_fractional_arctan":
+        return chua_arctan_wu2023_parameters()
+    if system_id == "chua_fractional_arctan_c590":
+        values = _c590_contract()["parameters"]
+        return chua_parameters(model="arctan", **values)
+    raise ValueError(f"No arctan parameters registered for {system_id!r}")
 
 
 # ---------------------------------------------------------------------------
@@ -259,6 +285,27 @@ def _get_system(system_id: str):
         return chua_system("nonsmooth")
     if system_id == "chua_fractional_arctan":
         return chua_arctan_wu2023_system()
+    if system_id == "chua_fractional_arctan_c590":
+        params = _arctan_parameters_for_system(system_id)
+        parameter_map = {
+            "model": "arctan",
+            "alpha": params.alpha,
+            "beta": params.beta,
+            "gamma": params.gamma,
+            "m0": params.m0,
+            "m1": params.m1,
+            "a1": params.a1,
+            "a2": params.a2,
+            "rho": params.rho,
+            "system_name": "fractional_chua_arctan_c590_lure",
+        }
+        base = chua_system("arctan")
+        return replace(
+            base,
+            name="fractional_chua_arctan_c590",
+            parameters=parameter_map,
+            lure=_chua_lure_system(parameter_map),
+        )
     raise ValueError(f"Unknown system_id for comparison: {system_id!r}")
 
 
@@ -466,8 +513,11 @@ def compare_equilibria(
     # Load Python equilibria
     if system_id in ("chua_integer_saturation", "chua_fractional_saturation"):
         py_eqs = equilibria_nonsmooth()
-    elif system_id == "chua_fractional_arctan":
-        py_eqs = equilibria_arctan()
+    elif system_id in (
+        "chua_fractional_arctan",
+        "chua_fractional_arctan_c590",
+    ):
+        py_eqs = equilibria_arctan(_arctan_parameters_for_system(system_id))
     else:
         raise ValueError(f"Unknown system_id: {system_id}")
 
@@ -547,10 +597,13 @@ def compare_eigenvalues(
 
     # Sort Python equilibria to match region/equilibrium name mapping if needed
     eq_map = {}
-    if system_id == "chua_fractional_arctan":
+    if system_id in (
+        "chua_fractional_arctan",
+        "chua_fractional_arctan_c590",
+    ):
         # Wolfram roots are sorted by x in findEquilibria[], so E0, E1, E2 correspond to negative, near-zero, and positive x respectively.
         # Wolfram name "E0", "E1", "E2" mapped to Python E-, E0, E+ by sorting x coordinate
-        py_eqs = equilibria_arctan()
+        py_eqs = equilibria_arctan(_arctan_parameters_for_system(system_id))
         sorted_eqs = sorted(py_eqs.items(), key=lambda item: item[1][0])
         eq_map = {
             "E0": sorted_eqs[0][1],  # negative x-coordinate
@@ -572,11 +625,17 @@ def compare_eigenvalues(
             else:
                 raise ValueError(f"Unknown region for saturation system: {region}")
             jac = jacobian_nonsmooth(state)
-        elif system_id == "chua_fractional_arctan":
+        elif system_id in (
+            "chua_fractional_arctan",
+            "chua_fractional_arctan_c590",
+        ):
             if region not in eq_map:
                 raise ValueError(f"Unknown equilibrium name in CSV: {region}")
             state = eq_map[region]
-            jac = jacobian_arctan(state)
+            jac = jacobian_arctan(
+                state,
+                _arctan_parameters_for_system(system_id),
+            )
         else:
             raise ValueError(f"Unknown system_id: {system_id}")
 
@@ -631,6 +690,84 @@ def compare_eigenvalues(
     return results
 
 
+def compare_recorded_candidate(
+    wolfram_candidate_json: str | Path,
+    system_id: str,
+    tol: float = 1e-10,
+) -> dict:
+    """Cross-check a recorded, non-DF candidate against its tracked contract.
+
+    The c590 seed is a recorded output of bounded search plus independent
+    Caputo refinement.  This comparison verifies parameter, seed, and
+    vector-field consistency only; it does not reinterpret that seed as a
+    describing-function construction.
+    """
+    _require_library()
+    if system_id != "chua_fractional_arctan_c590":
+        raise ValueError(
+            "Recorded-candidate comparison is currently defined only for c590."
+        )
+
+    data = _load_json(wolfram_candidate_json)
+    contract = _c590_contract()
+    expected_parameters = {
+        key: float(value)
+        for key, value in contract["parameters"].items()
+    }
+    wolfram_parameters = {
+        key: float(value)
+        for key, value in data["parameters"].items()
+    }
+    parameter_diff = max(
+        abs(wolfram_parameters[key] - expected_parameters[key])
+        for key in expected_parameters
+    )
+
+    expected_q = float(contract["q"])
+    q_diff = abs(float(data["q"]) - expected_q)
+
+    expected_seed = np.asarray(contract["seed"], dtype=float)
+    wolfram_seed = np.asarray(data["recorded_seed"], dtype=float)
+    seed_max_diff = float(np.max(np.abs(wolfram_seed - expected_seed)))
+
+    params = _arctan_parameters_for_system(system_id)
+    rhs_python = rhs_arctan(expected_seed, params)
+    rhs_wolfram = np.asarray(data["rhs_at_recorded_seed"], dtype=float)
+    rhs_max_diff = float(np.max(np.abs(rhs_wolfram - rhs_python)))
+
+    expected_origin = (
+        "bounded_integer_search_and_independent_caputo_refinement"
+    )
+    seed_origin_matches = data.get("seed_origin") == expected_origin
+    scope_matches = data.get("validation_scope") == "algebra_and_recorded_candidate"
+
+    passed = bool(
+        parameter_diff < tol
+        and q_diff < tol
+        and seed_max_diff < tol
+        and rhs_max_diff < tol
+        and seed_origin_matches
+        and scope_matches
+    )
+    result = {
+        "system_id": system_id,
+        "parameter_max_diff": parameter_diff,
+        "q_diff": q_diff,
+        "seed_max_diff": seed_max_diff,
+        "rhs_max_diff": rhs_max_diff,
+        "seed_origin_matches": seed_origin_matches,
+        "scope_matches": scope_matches,
+        "tol": tol,
+        "passed": passed,
+    }
+    if not passed:
+        raise AssertionError(
+            "Recorded c590 candidate differs between Wolfram and the tracked "
+            f"Python contract:\n{json.dumps(result, indent=2)}"
+        )
+    return result
+
+
 def compare_all(output_dir: str | Path, system_id: str) -> dict:
     """Run all available comparisons for a given system output directory.
 
@@ -658,6 +795,7 @@ def compare_all(output_dir: str | Path, system_id: str) -> dict:
         "equilibria": False,
         "eigenvalues": False,
         "seed_data": False,
+        "recorded_candidate": None,
     }
 
     # 1. Matrix structure/numeric comparison
@@ -715,6 +853,25 @@ def compare_all(output_dir: str | Path, system_id: str) -> dict:
             results["passed"] = False
     else:
         results["missing_comparisons"].append(str(seed_json))
+
+    # 5. Recorded candidate metadata/field comparison (c590 only)
+    recorded_json = out / f"{system_id}_recorded_candidate.json"
+    if recorded_json.exists():
+        try:
+            r = compare_recorded_candidate(recorded_json, system_id)
+            results["comparisons"]["recorded_candidate"] = r
+            checks["recorded_candidate"] = r["passed"]
+        except Exception as e:
+            results["comparisons"]["recorded_candidate"] = {
+                "error": str(e),
+                "passed": False,
+            }
+            checks["recorded_candidate"] = False
+            results["passed"] = False
+    elif system_id == "chua_fractional_arctan_c590":
+        results["missing_comparisons"].append(str(recorded_json))
+        checks["recorded_candidate"] = False
+        results["passed"] = False
 
     # Save python consistency summary
     summary_path = out / f"{system_id}_python_consistency_summary.json"

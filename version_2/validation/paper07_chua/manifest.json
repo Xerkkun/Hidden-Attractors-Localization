@@ -617,7 +617,7 @@
     ],
     "retained_nonreport_test_fixture": "version_2/outputs/tests/trajectory_fixture.csv",
     "deletion_performed": true,
-    "recovery": "Large exploratory bundles and superseded c590 artifacts were moved outside the library to ../.quarantine_hidden_attractors_noncanonical_20260728; small regenerable caches and tracked one-off scripts were removed directly."
+    "recovery": "After independent verification of the canonical evidence, source parity, and provenance tests, the quarantined exploratory bundles and superseded c590 artifacts were permanently deleted on 2026-07-28; small regenerable caches and tracked one-off scripts had already been removed directly."
   },
   "tests": [
     {

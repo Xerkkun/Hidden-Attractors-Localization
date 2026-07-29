@@ -1,0 +1,24 @@
+{
+	"system_id":"chua_fractional_arctan_c590",
+	"validation_scope":"algebra_and_recorded_candidate",
+	"seed_origin":"bounded_integer_search_and_independent_caputo_refinement",
+	"recorded_seed":[
+		5.864244979081692,
+		1.5847111486491057,
+		3.2155806477633915
+	],
+	"rhs_at_recorded_seed":[
+		8.70533968652374,
+		7.495114478195978,
+		-3.026293050979813e1
+	],
+	"q":0.9999,
+	"parameters":{
+		"alpha":2.1849356906616716e1,
+		"beta":1.9081840840860202e1,
+		"gamma":7.378011979156531e-3,
+		"a1":4.228979343578827e-2,
+		"a2":-3.3367815123026694,
+		"rho":1.7984259332820332
+	}
+}

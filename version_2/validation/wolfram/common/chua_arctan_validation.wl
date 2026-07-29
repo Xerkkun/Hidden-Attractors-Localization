@@ -11,7 +11,7 @@ ClearAll[RunChuaArctanValidation];
 RunChuaArctanValidation[case_Association] := Module[
   {
    systemID, outDir, nPrec, wPrec, params0, params, qCases, omegaSeeds, amplitudeSeeds,
-   sTol, qord, w0, z, k, d, h, b1, b2, a, a0,
+   sTol, runCanonicalSeed, recordedSeed, seedOrigin, qord, w0, z, k, d, h, b1, b2, a, a0,
    x1, x2, x3, xs, lambda, X, psiCoef, psiSym, P, qv, r, originalField, lureField,
    lureCheck, M, Tz, Dz, WzFromInverse, WzExplicit, Wcheck, P0, D0z, D0Check,
    ar, bi, Tcomplex, Treal, Timag, Ap, Dcomplex, Dr, Di, Fomega,
@@ -21,9 +21,12 @@ RunChuaArctanValidation[case_Association] := Module[
    s13CanonQ, s23CanonQ, s33CanonQ, SCanonQ, HCanonQ, XseedCanonQ,
    hCanonQ, hCanonQFull, b1CanonQ, b2CanonQ, b1CanonQFull, b2CanonQFull,
    bCanonQConParametros, SCanonQConParametros, residuoTransformacionS,
-   rho, Aeq, scalarEq, J, tests, symbolicSummary, rhsNumeric, findEquilibria,
+   eqSlope, Aeq, scalarEq, J, jacobianCheck, tests, symbolicSummary, rhsNumeric, findEquilibria,
    equilibriumRows, jacobianRows, eigRows, thresholdForQ, findPositiveFrequencyRoots,
-   NpsiNumeric, amplitudeFromK, evaluateCase, seedRows, maxEqResidual, jsonPath
+   NpsiNumeric, NpsiClosedNumeric, dfSymbolicResidual, dfSampleAmplitudes, dfMaxResidual,
+   amplitudeFromK, evaluateCase, seedRows, okSeedRows, maxEqResidual,
+   expectedEqCount, expectedMatignonFlags, actualMatignonFlags,
+   recordedCandidate, jsonPath
   },
 
   systemID = Lookup[case, "SystemID", "chua_fractional_arctan"];
@@ -31,23 +34,32 @@ RunChuaArctanValidation[case_Association] := Module[
   nPrec = Lookup[case, "NumericPrecision", 30];
   wPrec = Lookup[case, "WorkingPrecision", 70];
   sTol = Lookup[case, "SimilarityTolerance", 10^-16];
+  runCanonicalSeed = TrueQ[Lookup[case, "RunCanonicalSeed", True]];
+  recordedSeed = Lookup[case, "RecordedSeed", {}];
+  seedOrigin = Lookup[case, "SeedOrigin", If[runCanonicalSeed, "describing_function", "not_declared"]];
   params0 = Lookup[case, "Parameters"];
   params = RulePrecision[params0, wPrec];
   qCases = SetPrecision[Lookup[case, "QCases", {0.9998}], wPrec];
   omegaSeeds = SetPrecision[Lookup[case, "OmegaSeeds", {1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0}], wPrec];
   amplitudeSeeds = SetPrecision[Lookup[case, "AmplitudeSeeds", {0.05, 0.1, 0.25, 0.5, 1, 2, 4, 8, 12, 20, 40}], wPrec];
 
-  ClearAll[qord, w0, z, k, d, h, b1, b2, a, a0, x1, x2, x3, xs, lambda];
-  $Assumptions = alpha > 0 && beta > 0 && gamma > 0 && 0 < qord <= 1 && w0 > 0 && a > 0 && a0 > 0 && Element[{m, n, k, d, h, b1, b2, z, w0, ar, bi}, Reals];
+  ClearAll[qord, w0, z, k, d, h, b1, b2, a, a0, x1, x2, x3, xs, lambda, theta];
+  $Assumptions = alpha > 0 && beta > 0 && gamma > 0 && rhoNL > 0 &&
+    0 < qord <= 1 && w0 > 0 && a > 0 && a0 > 0 &&
+    Element[{a1c, a2c, k, d, h, b1, b2, z, w0, ar, bi}, Reals];
 
-  psiCoef = n - m;
-  rho = gamma/(beta + gamma);
-  Aeq = 1 + m - rho;
+  psiCoef = a2c;
+  eqSlope = gamma/(beta + gamma);
+  Aeq = 1 + a1c - eqSlope;
 
   X = {x1, x2, x3};
-  psiSym[s_] := psiCoef ArcTan[s];
-  originalField = {alpha (x2 - x1) - alpha (m x1 + psiCoef ArcTan[x1]), x1 - x2 + x3, -beta x2 - gamma x3};
-  P = {{-alpha (1 + m), alpha, 0}, {1, -1, 1}, {0, -beta, -gamma}};
+  psiSym[s_] := psiCoef ArcTan[rhoNL s];
+  originalField = {
+    alpha (x2 - x1) - alpha (a1c x1 + psiCoef ArcTan[rhoNL x1]),
+    x1 - x2 + x3,
+    -beta x2 - gamma x3
+  };
+  P = {{-alpha (1 + a1c), alpha, 0}, {1, -1, 1}, {0, -beta, -gamma}};
   qv = {-alpha, 0, 0};
   r = {1, 0, 0};
   lureField = P.X + qv psiSym[r.X];
@@ -55,7 +67,7 @@ RunChuaArctanValidation[case_Association] := Module[
 
   M = z IdentityMatrix[3] - P;
   Tz = CleanPoly[(z + 1) (z + gamma) + beta, z];
-  Dz = CleanPoly[(z + alpha (1 + m)) Tz - alpha (z + gamma), z];
+  Dz = CleanPoly[(z + alpha (1 + a1c)) Tz - alpha (z + gamma), z];
   WzFromInverse = CleanRat[r . Inverse[M] . qv];
   WzExplicit = CleanRat[-alpha Tz/Dz];
   Wcheck = CleanRat[WzFromInverse - WzExplicit];
@@ -67,7 +79,7 @@ RunChuaArctanValidation[case_Association] := Module[
   Tcomplex = Expand[((ar + I bi) + 1) ((ar + I bi) + gamma) + beta];
   Treal = ComplexExpand[Re[Tcomplex]];
   Timag = ComplexExpand[Im[Tcomplex]];
-  Ap = alpha (1 + m);
+  Ap = alpha (1 + a1c);
   Dcomplex = Expand[((ar + I bi) + Ap) (Treal + I Timag) - alpha ((ar + I bi) + gamma)];
   Dr = ComplexExpand[Re[Dcomplex]];
   Di = ComplexExpand[Im[Dcomplex]];
@@ -80,12 +92,12 @@ RunChuaArctanValidation[case_Association] := Module[
 
   (* Canonical spectral construction in z=s^q. No eigenvector is used for S. *)
   LCanonQ = CleanRat[(zAbsSq - 2 zr (1 + gamma) - 4 zr^2 - gamma - beta + alpha)/(1 + gamma + 2 zr)];
-  kCanonQ = CleanRat[LCanonQ/alpha - 1 - m];
+  kCanonQ = CleanRat[LCanonQ/alpha - 1 - a1c];
   dCanonQ = CleanRat[LCanonQ + 1 + gamma + 2 zr];
   residuoFrecuenciaQ = CleanPoly[Expand[(D0z /. k -> kCanonQ) - (desiredD0z /. d -> dCanonQ)], z];
   residuoFrecuenciaQConstante = CleanRat[Coefficient[residuoFrecuenciaQ, z, 0]];
 
-  v2R = CleanRat[(alpha (1 + m + k) + zr)/alpha];
+  v2R = CleanRat[(alpha (1 + a1c + k) + zr)/alpha];
   v2I = CleanRat[zi/alpha];
   etaR = gamma + zr;
   etaI = zi;
@@ -95,7 +107,7 @@ RunChuaArctanValidation[case_Association] := Module[
   s31CanonQ = CleanRat[zr s21CanonQ + zi s22CanonQ - 1 + s21CanonQ];
   s32CanonQ = CleanRat[(-beta s21CanonQ - (gamma + zr) s31CanonQ)/zi];
   s13CanonQ = -h;
-  s23CanonQ = CleanRat[-h (alpha (1 + m + k) - d)/alpha];
+  s23CanonQ = CleanRat[-h (alpha (1 + a1c + k) - d)/alpha];
   s33CanonQ = CleanRat[h + (1 - d) s23CanonQ];
 
   SCanonQ = {{s11CanonQ, s12CanonQ, s13CanonQ}, {s21CanonQ, s22CanonQ, s23CanonQ}, {s31CanonQ, s32CanonQ, s33CanonQ}};
@@ -113,18 +125,46 @@ RunChuaArctanValidation[case_Association] := Module[
   SCanonQConParametros = CleanRat /@ (SCanonQ /. {k -> kCanonQ, d -> dCanonQ, h -> hCanonQFull});
 
   scalarEq = CleanRat[Aeq xs + psiSym[xs]];
-  J[x_] := {{-alpha (1 + m) - alpha psiCoef/(1 + x^2), alpha, 0}, {1, -1, 1}, {0, -beta, -gamma}};
+  J[x_] := {
+    {-alpha (1 + a1c) - alpha psiCoef rhoNL/(1 + (rhoNL x)^2), alpha, 0},
+    {1, -1, 1},
+    {0, -beta, -gamma}
+  };
+  jacobianCheck = CleanRat /@ Flatten[D[originalField, {X}] - J[x1]];
+  dfSymbolicResidual = FullSimplify[
+    (2/(Pi a)) Integrate[
+      psiCoef ArcTan[rhoNL a Cos[theta]] Cos[theta],
+      {theta, 0, Pi},
+      Assumptions -> a > 0 && rhoNL > 0 && Element[psiCoef, Reals],
+      GenerateConditions -> False
+    ] -
+      2 psiCoef (Sqrt[1 + (rhoNL a)^2] - 1)/(rhoNL a^2),
+    a > 0 && rhoNL > 0 && Element[psiCoef, Reals]
+  ];
 
   tests = {
     MakeTest["lure_form", FullSimplify[lureCheck == {0, 0, 0}]],
     MakeTest["transfer_identity", TrueQ[FullSimplify[Wcheck == 0]]],
-    MakeTest["p0_determinant_identity", TrueQ[FullSimplify[D0Check == 0]]]
+    MakeTest["p0_determinant_identity", TrueQ[FullSimplify[D0Check == 0]]],
+    MakeTest["jacobian_identity", TrueQ[FullSimplify[jacobianCheck == ConstantArray[0, 9]]]],
+    MakeTest["describing_function_closed_form_symbolic", TrueQ[dfSymbolicResidual == 0]]
   };
 
   symbolicSummary = <|
     "system_id" -> systemID,
     "nonlinearity" -> "arctan",
-    "lure_form" -> <|"P" -> ExprString[P], "b" -> ExprString[qv], "r" -> ExprString[r], "psi" -> "(n-m) ArcTan[sigma]", "residual" -> ExprString[lureCheck]|>,
+    "parameters" -> <|
+      "alpha" -> N[alpha /. params, nPrec],
+      "beta" -> N[beta /. params, nPrec],
+      "gamma" -> N[gamma /. params, nPrec],
+      "a1" -> N[a1c /. params, nPrec],
+      "a2" -> N[a2c /. params, nPrec],
+      "rho" -> N[rhoNL /. params, nPrec],
+      "q_cases" -> N[qCases, nPrec]
+    |>,
+    "validation_scope" -> Lookup[case, "ValidationScope", "algebra_and_describing_function_seed"],
+    "seed_origin" -> seedOrigin,
+    "lure_form" -> <|"P" -> ExprString[P], "b" -> ExprString[qv], "r" -> ExprString[r], "psi" -> "a2 ArcTan[rho sigma]", "residual" -> ExprString[lureCheck]|>,
     "lure_form_numeric" -> <|
       "P" -> N[P /. params, nPrec],
       "b" -> N[qv /. params, nPrec],
@@ -133,13 +173,21 @@ RunChuaArctanValidation[case_Association] := Module[
     "equilibrium_scalar_equation" -> ExprString[scalarEq],
     "transfer" -> <|"Tz" -> ExprString[Tz], "Dz" -> ExprString[Dz], "Wz" -> ExprString[WzExplicit], "fractional_frequency" -> "z=(j omega)^q = omega^q exp(j q pi/2)"|>,
     "canonical_construction" -> <|"method" -> "P0.S == S.Hq with r^T.S={1,0,-h}; seed=a0*S[[All,1]]", "k_q" -> ExprString[kCanonQ], "d_q" -> ExprString[dCanonQ], "h_q" -> ExprString[hCanonQFull], "b_q" -> ExprString[bCanonQConParametros], "S_q" -> ExprString[SCanonQConParametros], "frequency_residual" -> ExprString[residuoFrecuenciaQConstante]|>,
-    "describing_function" -> <|"definition" -> "N(a)=(2/(Pi a)) Integral_0^Pi psi(a Cos[theta]) Cos[theta] dtheta", "amplitude_condition" -> "N(a0)=k"|>,
+    "describing_function" -> <|
+      "definition" -> "N(a)=(2/(Pi a)) Integral_0^Pi psi(a Cos[theta]) Cos[theta] dtheta",
+      "closed_form" -> "2 a2 (Sqrt[1+(rho a)^2]-1)/(rho a^2)",
+      "amplitude_condition" -> If[runCanonicalSeed, "N(a0)=k", "not used to select the recorded candidate"]
+    |>,
     "tests" -> tests,
     "passed_symbolic" -> And @@ (TrueQ[Lookup[#, "passed"]] & /@ tests)
   |>;
   ExportJSON[FileNameJoin[{outDir, systemID <> "_symbolic_summary.json"}], symbolicSummary];
 
-  rhsNumeric[xx_List] := N[{alpha (xx[[2]] - xx[[1]]) - alpha (m xx[[1]] + psiCoef ArcTan[xx[[1]]]), xx[[1]] - xx[[2]] + xx[[3]], -beta xx[[2]] - gamma xx[[3]]} /. params, 24];
+  rhsNumeric[xx_List] := N[{
+    alpha (xx[[2]] - xx[[1]]) - alpha (a1c xx[[1]] + psiCoef ArcTan[rhoNL xx[[1]]]),
+    xx[[1]] - xx[[2]] + xx[[3]],
+    -beta xx[[2]] - gamma xx[[3]]
+  } /. params, 24];
 
   findEquilibria[] := Module[{f, rootSeeds, roots, xx},
     f[u_?NumericQ] := N[(Aeq xs + psiSym[xs]) /. params /. xs -> SetPrecision[u, wPrec], wPrec];
@@ -151,7 +199,7 @@ RunChuaArctanValidation[case_Association] := Module[
 
   With[{roots = findEquilibria[]},
     equilibriumRows = Table[
-      With[{xx = roots[[i]], yy = N[(rho xs) /. params /. xs -> roots[[i]], nPrec], zz = N[(-beta/(beta + gamma) xs) /. params /. xs -> roots[[i]], nPrec]},
+      With[{xx = roots[[i]], yy = N[(eqSlope xs) /. params /. xs -> roots[[i]], nPrec], zz = N[(-beta/(beta + gamma) xs) /. params /. xs -> roots[[i]], nPrec]},
         Join[{"E" <> ToString[i - 1]}, {xx, yy, zz}, {Norm[rhsNumeric[{xx, yy, zz}]]}]
       ], {i, Length[roots]}]
   ];
@@ -180,8 +228,40 @@ RunChuaArctanValidation[case_Association] := Module[
     Sort@DeleteDuplicates[N[Re /@ roots, nPrec], Abs[#1 - #2] < 10^-10 &]
   ];
 
-  NpsiNumeric[amp_?NumericQ] := Module[{coef = N[psiCoef /. params, wPrec], aa = SetPrecision[amp, wPrec], th},
-    N[(2/(Pi aa)) NIntegrate[coef ArcTan[aa Cos[th]] Cos[th], {th, 0, Pi}, WorkingPrecision -> wPrec, AccuracyGoal -> 25, PrecisionGoal -> 25, MaxRecursion -> 30], wPrec]
+  NpsiNumeric[amp_?NumericQ] := Module[
+    {
+      coef = N[psiCoef /. params, wPrec],
+      scale = N[rhoNL /. params, wPrec],
+      aa = SetPrecision[amp, wPrec],
+      th
+    },
+    N[
+      (2/(Pi aa)) NIntegrate[
+        coef ArcTan[scale aa Cos[th]] Cos[th],
+        {th, 0, Pi},
+        WorkingPrecision -> wPrec,
+        AccuracyGoal -> 25,
+        PrecisionGoal -> 25,
+        MaxRecursion -> 30
+      ],
+      wPrec
+    ]
+  ];
+  NpsiClosedNumeric[amp_?NumericQ] := Module[
+    {
+      coef = N[psiCoef /. params, wPrec],
+      scale = N[rhoNL /. params, wPrec],
+      aa = SetPrecision[amp, wPrec]
+    },
+    N[2 coef (Sqrt[1 + (scale aa)^2] - 1)/(scale aa^2), wPrec]
+  ];
+  dfSampleAmplitudes = SetPrecision[
+    Lookup[case, "DescribingFunctionTestAmplitudes", {0.05, 0.2, 1.0, 4.0, 12.0}],
+    wPrec
+  ];
+  dfMaxResidual = N[
+    Max[Abs[NpsiNumeric[#] - NpsiClosedNumeric[#]] & /@ dfSampleAmplitudes],
+    24
   ];
 
   amplitudeFromK[kval_] := Module[{aa, roots, kvalPrec, f},
@@ -219,19 +299,140 @@ RunChuaArctanValidation[case_Association] := Module[
       ], {j, Length[omegas]}]
   ];
 
-  seedRows = Flatten[evaluateCase /@ qCases, 1];
+  seedRows = If[
+    runCanonicalSeed,
+    Flatten[evaluateCase /@ qCases, 1],
+    {
+      <|
+        "q" -> N[First[qCases], 12],
+        "status" -> "recorded_candidate_not_df_seed",
+        "seed_origin" -> seedOrigin,
+        "recorded_seed" -> N[recordedSeed, nPrec]
+      |>
+    }
+  ];
   ExportJSON[FileNameJoin[{outDir, systemID <> "_seed_data.json"}], seedRows];
   WriteCSV[FileNameJoin[{outDir, systemID <> "_seed_summary.csv"}], Prepend[
     ({Lookup[#, "q", ""], Lookup[#, "branch", ""], Lookup[#, "omega0", ""], Lookup[#, "a0", ""], Lookup[#, "k", ""], Lookup[#, "d", ""], Lookup[#, "h", ""], Lookup[#, "frequency_residual", ""], Lookup[#, "amplitude_residual", ""], Lookup[#, "similarity_residual", ""], Lookup[#, "status", ""]} & /@ seedRows),
     {"q", "branch", "omega0", "a0", "k", "d", "h", "frequency_residual", "amplitude_residual", "similarity_residual", "status"}]];
 
-  tests = Join[tests, {
-    MakeTest["equilibrium_residuals_numeric", TrueQ[N[maxEqResidual] < 10^-12], <|"max_rhs_residual_norm" -> N[maxEqResidual, 16]|>],
-    MakeTest["seed_similarity_residuals_numeric", AllTrue[Select[seedRows, Lookup[#, "status", ""] == "ok" &], Abs[Lookup[#, "similarity_residual", 1]] < sTol &]]
-  }];
+  okSeedRows = Select[seedRows, Lookup[#, "status", ""] == "ok" &];
+  expectedEqCount = Lookup[case, "ExpectedEquilibriumCount", Missing["NotDeclared"]];
+  expectedMatignonFlags = Lookup[case, "ExpectedMatignonStableFlags", Missing["NotDeclared"]];
+  actualMatignonFlags = Table[
+    With[
+      {
+        margins = Cases[
+          eigRows,
+          row_ /; row[[2]] == equilibriumRows[[i, 1]] :> N[row[[6]]]
+        ]
+      },
+      margins =!= {} && Min[margins] > 0
+    ],
+    {i, Length[equilibriumRows]}
+  ];
+  recordedCandidate = If[
+    VectorQ[recordedSeed, NumericQ] && Length[recordedSeed] == 3,
+    <|
+      "system_id" -> systemID,
+      "validation_scope" -> Lookup[case, "ValidationScope", "algebra_and_recorded_candidate"],
+      "seed_origin" -> seedOrigin,
+      "recorded_seed" -> N[recordedSeed, nPrec],
+      "rhs_at_recorded_seed" -> rhsNumeric[recordedSeed],
+      "q" -> N[First[qCases], nPrec],
+      "parameters" -> <|
+        "alpha" -> N[alpha /. params, nPrec],
+        "beta" -> N[beta /. params, nPrec],
+        "gamma" -> N[gamma /. params, nPrec],
+        "a1" -> N[a1c /. params, nPrec],
+        "a2" -> N[a2c /. params, nPrec],
+        "rho" -> N[rhoNL /. params, nPrec]
+      |>
+    |>,
+    <||>
+  ];
+  If[
+    Length[recordedCandidate] > 0,
+    ExportJSON[
+      FileNameJoin[{outDir, systemID <> "_recorded_candidate.json"}],
+      recordedCandidate
+    ]
+  ];
+
+  tests = Join[
+    tests,
+    {
+      MakeTest[
+        "describing_function_closed_form_numeric",
+        TrueQ[dfMaxResidual < 10^-20],
+        <|"max_residual" -> N[dfMaxResidual, 16]|>
+      ],
+      MakeTest[
+        "equilibrium_residuals_numeric",
+        TrueQ[N[maxEqResidual] < 10^-12],
+        <|"max_rhs_residual_norm" -> N[maxEqResidual, 16]|>
+      ],
+      MakeTest[
+        "equilibrium_count",
+        If[
+          Head[expectedEqCount] === Missing,
+          Length[equilibriumRows] > 0,
+          Length[equilibriumRows] == expectedEqCount
+        ],
+        <|"count" -> Length[equilibriumRows], "expected" -> expectedEqCount|>
+      ],
+      MakeTest[
+        "matignon_classification",
+        If[
+          Head[expectedMatignonFlags] === Missing,
+          Length[actualMatignonFlags] == Length[equilibriumRows],
+          actualMatignonFlags === expectedMatignonFlags
+        ],
+        <|"stable_flags" -> actualMatignonFlags, "expected" -> expectedMatignonFlags|>
+      ],
+      MakeTest[
+        "seed_scope",
+        If[
+          runCanonicalSeed,
+          Length[okSeedRows] > 0 &&
+            AllTrue[
+              okSeedRows,
+              Abs[Lookup[#, "similarity_residual", 1]] < sTol &
+            ],
+          VectorQ[recordedSeed, NumericQ] &&
+            Length[recordedSeed] == 3 &&
+            seedOrigin =!= "describing_function"
+        ],
+        <|
+          "run_canonical_seed" -> runCanonicalSeed,
+          "seed_origin" -> seedOrigin,
+          "ok_seed_rows" -> Length[okSeedRows]
+        |>
+      ]
+    }
+  ];
 
   jsonPath = FileNameJoin[{outDir, systemID <> "_validation_summary.json"}];
-  ExportJSON[jsonPath, <|"system_id" -> systemID, "output_dir" -> outDir, "tests" -> tests, "passed" -> And @@ (TrueQ[Lookup[#, "passed"]] & /@ tests), "files" -> <|"symbolic" -> systemID <> "_symbolic_summary.json", "seeds" -> systemID <> "_seed_data.json"|>|>];
+  ExportJSON[
+    jsonPath,
+    <|
+      "system_id" -> systemID,
+      "output_dir" -> outDir,
+      "validation_scope" -> Lookup[case, "ValidationScope", "algebra_and_describing_function_seed"],
+      "seed_origin" -> seedOrigin,
+      "tests" -> tests,
+      "passed" -> And @@ (TrueQ[Lookup[#, "passed"]] & /@ tests),
+      "files" -> <|
+        "symbolic" -> systemID <> "_symbolic_summary.json",
+        "seeds" -> systemID <> "_seed_data.json",
+        "recorded_candidate" -> If[
+          Length[recordedCandidate] > 0,
+          systemID <> "_recorded_candidate.json",
+          ""
+        ]
+      |>
+    |>
+  ];
 
   If[TrueQ[Lookup[case, "ExitOnFailure", True]], ExitFromTests[tests]];
   tests

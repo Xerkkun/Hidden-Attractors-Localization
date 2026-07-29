@@ -1,0 +1,12 @@
+[
+	{
+		"q":0.9999,
+		"status":"recorded_candidate_not_df_seed",
+		"seed_origin":"bounded_integer_search_and_independent_caputo_refinement",
+		"recorded_seed":[
+			5.864244979081692,
+			1.5847111486491057,
+			3.2155806477633915
+		]
+	}
+]

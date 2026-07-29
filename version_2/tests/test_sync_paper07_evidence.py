@@ -16,12 +16,13 @@ def test_paper07_evidence_inventory_is_finite_and_compact() -> None:
     specs = artifact_specs()
     destinations = [spec.destination.resolve() for spec in specs]
 
-    assert len(specs) == 47
+    assert len(specs) == 66
     assert len(destinations) == len(set(destinations))
     assert {spec.group for spec in specs} == {
         "c590_hiddenness_rows",
         "c590_reconstruction",
         "nonsmooth_corrected",
+        "probe_story_trajectories",
     }
 
     forbidden_tokens = (
@@ -40,7 +41,7 @@ def test_manifest_hashes_verify_without_ignored_outputs() -> None:
     result = verify_package()
 
     assert result["status"] == "verified"
-    assert result["artifact_count"] == 47
+    assert result["artifact_count"] == 66
     assert result["total_size_bytes"] > 0
     assert result["source_parity_verified"] is False
 

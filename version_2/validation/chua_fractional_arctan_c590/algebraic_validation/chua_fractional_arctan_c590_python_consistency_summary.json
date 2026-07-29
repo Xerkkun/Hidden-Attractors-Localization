@@ -1,0 +1,151 @@
+{
+  "system_id": "chua_fractional_arctan_c590",
+  "output_dir": "validation/outputs/wolfram/chua_fractional_arctan_c590",
+  "passed": true,
+  "checks": {
+    "matrix_numeric": true,
+    "equilibria": true,
+    "eigenvalues": true,
+    "seed_data": true,
+    "recorded_candidate": true
+  },
+  "comparisons": {
+    "matrix_numeric": {
+      "system_id": "chua_fractional_arctan_c590",
+      "P_diff": 3.552713678800501e-15,
+      "b_diff": 0.0,
+      "r_diff": 0.0,
+      "passed": true
+    },
+    "equilibria": {
+      "system_id": "chua_fractional_arctan_c590",
+      "max_distance": 3.20237290006194e-15,
+      "passed": true
+    },
+    "eigenvalues": [
+      {
+        "q": 0.9999,
+        "region": "E0",
+        "max_eigenvalue_diff": 1.7763568394002505e-14,
+        "matched_details": [
+          {
+            "wolfram_eigenvalue": "(-21.92685403818623+0j)",
+            "python_eigenvalue": "(-21.92685403818625+0j)",
+            "eigenvalue_diff": 1.7763568394002505e-14,
+            "wolfram_abs_argument": 3.141592653589793,
+            "python_abs_argument": 3.141592653589793,
+            "abs_argument_diff": 0.0,
+            "passed": true
+          },
+          {
+            "wolfram_eigenvalue": "(-0.0024971177242836882+4.267223815645986j)",
+            "python_eigenvalue": "(-0.002497117724283515+4.267223815645984j)",
+            "eigenvalue_diff": 1.7847649708203287e-15,
+            "wolfram_abs_argument": 1.5713815122801502,
+            "python_abs_argument": 1.5713815122801502,
+            "abs_argument_diff": 0.0,
+            "passed": true
+          },
+          {
+            "wolfram_eigenvalue": "(-0.0024971177242836882-4.267223815645986j)",
+            "python_eigenvalue": "(-0.002497117724283515-4.267223815645984j)",
+            "eigenvalue_diff": 1.7847649708203287e-15,
+            "wolfram_abs_argument": 1.5713815122801502,
+            "python_abs_argument": 1.5713815122801502,
+            "abs_argument_diff": 0.0,
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      {
+        "q": 0.9999,
+        "region": "E1",
+        "max_eigenvalue_diff": 1.4210854715202004e-14,
+        "matched_details": [
+          {
+            "wolfram_eigenvalue": "(108.54277291151575+0j)",
+            "python_eigenvalue": "(108.54277291151574+0j)",
+            "eigenvalue_diff": 1.4210854715202004e-14,
+            "wolfram_abs_argument": 0.0,
+            "python_abs_argument": 0.0,
+            "abs_argument_diff": 0.0,
+            "passed": true
+          },
+          {
+            "wolfram_eigenvalue": "(-0.6032590180081888+4.3233968348510885j)",
+            "python_eigenvalue": "(-0.6032590180081887+4.323396834851089j)",
+            "eigenvalue_diff": 8.95090418262362e-16,
+            "wolfram_abs_argument": 1.709434780541843,
+            "python_abs_argument": 1.709434780541843,
+            "abs_argument_diff": 0.0,
+            "passed": true
+          },
+          {
+            "wolfram_eigenvalue": "(-0.6032590180081888-4.3233968348510885j)",
+            "python_eigenvalue": "(-0.6032590180081887-4.323396834851089j)",
+            "eigenvalue_diff": 8.95090418262362e-16,
+            "wolfram_abs_argument": 1.709434780541843,
+            "python_abs_argument": 1.709434780541843,
+            "abs_argument_diff": 0.0,
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      {
+        "q": 0.9999,
+        "region": "E2",
+        "max_eigenvalue_diff": 1.7763568394002505e-14,
+        "matched_details": [
+          {
+            "wolfram_eigenvalue": "(-21.92685403818623+0j)",
+            "python_eigenvalue": "(-21.92685403818625+0j)",
+            "eigenvalue_diff": 1.7763568394002505e-14,
+            "wolfram_abs_argument": 3.141592653589793,
+            "python_abs_argument": 3.141592653589793,
+            "abs_argument_diff": 0.0,
+            "passed": true
+          },
+          {
+            "wolfram_eigenvalue": "(-0.0024971177242836882+4.267223815645986j)",
+            "python_eigenvalue": "(-0.002497117724283515+4.267223815645984j)",
+            "eigenvalue_diff": 1.7847649708203287e-15,
+            "wolfram_abs_argument": 1.5713815122801502,
+            "python_abs_argument": 1.5713815122801502,
+            "abs_argument_diff": 0.0,
+            "passed": true
+          },
+          {
+            "wolfram_eigenvalue": "(-0.0024971177242836882-4.267223815645986j)",
+            "python_eigenvalue": "(-0.002497117724283515-4.267223815645984j)",
+            "eigenvalue_diff": 1.7847649708203287e-15,
+            "wolfram_abs_argument": 1.5713815122801502,
+            "python_abs_argument": 1.5713815122801502,
+            "abs_argument_diff": 0.0,
+            "passed": true
+          }
+        ],
+        "passed": true
+      }
+    ],
+    "seed_data": [
+      {
+        "status": "recorded_candidate_not_df_seed",
+        "passed": true
+      }
+    ],
+    "recorded_candidate": {
+      "system_id": "chua_fractional_arctan_c590",
+      "parameter_max_diff": 0.0,
+      "q_diff": 0.0,
+      "seed_max_diff": 0.0,
+      "rhs_max_diff": 5.329070518200751e-15,
+      "seed_origin_matches": true,
+      "scope_matches": true,
+      "tol": 1e-10,
+      "passed": true
+    }
+  },
+  "missing_comparisons": []
+}

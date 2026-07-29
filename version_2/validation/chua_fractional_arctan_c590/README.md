@@ -40,6 +40,43 @@ horizon and `131` reached the declared divergence threshold. The `finite`
 column remains `True` for those threshold events because the last stored
 states are finite; the `status` column records why integration stopped.
 
+## Algebraic validation of c590
+
+The Wolfram Language case
+[`chua_fractional_arctan_c590.wl`](../wolfram/cases/chua_fractional_arctan_c590.wl)
+evaluates the exact c590 nonlinearity
+
+\[
+h(x)=a_1x+a_2\arctan(\rho x),\qquad
+\rho=1.7984259332820332,
+\]
+
+instead of reusing the bibliographic arctangent case, for which \(\rho=1\).
+The canonical decimals enter Wolfram as exact rational numbers before any
+high-precision numerical evaluation.
+It verifies the Lur'e representation, transfer-function identity, Jacobian
+identity, three equilibria, equilibrium residuals, the closed-form describing
+function, and the local Matignon classification at \(q=0.9999\). The recorded
+fractional seed is checked against the canonical c590 contract and the Python
+right-hand side, while its provenance remains
+`bounded_integer_search_and_independent_caputo_refinement`; it is not labeled
+as a seed produced by the describing function.
+
+The portable snapshot in [`algebraic_validation/`](algebraic_validation/)
+contains all ten passing Wolfram tests and the passing Wolfram--Python
+comparison. Regenerate it from the repository root with:
+
+```powershell
+python validation/python/run_wolfram_validations.py `
+  --case validation/wolfram/cases/chua_fractional_arctan_c590.wl `
+  --out validation/outputs/wolfram
+```
+
+The algebraic result validates the c590 equations and the recorded
+parameter/seed contract. Dynamic integration, post-transient behavior, and
+radius-limited hiddenness evidence are validated by their separate numerical
+lanes.
+
 ## Rebuild
 
 Regenerate the JSON and all derived CSV summaries without rerunning any

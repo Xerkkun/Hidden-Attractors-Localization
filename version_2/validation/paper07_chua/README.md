@@ -424,7 +424,7 @@ exploratorias:
 
 Los pasos 1 y 2 del ejemplo no suave permanecen porque contienen la búsqueda y
 continuación que originan el sistema reportado. Los paquetes exploratorios
-materiales se movieron a
-`../.quarantine_hidden_attractors_noncanonical_20260728/`, fuera de la
-biblioteca y de forma recuperable; los cachés y scripts pequeños regenerables
-se retiraron directamente.
+materiales y sustituidos se eliminaron definitivamente el 28 de julio de 2026,
+después de verificar de forma independiente la evidencia canónica, su paridad
+con las fuentes y las pruebas de procedencia. Los cachés y scripts pequeños
+regenerables también se retiraron directamente.

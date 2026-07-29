@@ -49,7 +49,8 @@ validation/wolfram/
 ├── cases/
 │   ├── chua_integer_saturation.wl       # q=1, nonsmooth
 │   ├── chua_fractional_saturation.wl    # q=0.9998, nonsmooth
-│   └── chua_fractional_arctan.wl        # q=0.9998, arctan
+│   ├── chua_fractional_arctan.wl        # q=0.99, Wu arctan, rho=1
+│   └── chua_fractional_arctan_c590.wl   # q=0.9999, c590, rho!=1
 └── template/
     └── new_lure_system_template.wl      # Blank template for new systems
 
@@ -78,13 +79,22 @@ tests/
 
 ## Running Validations
 
-### All Three Cases
+### All Four Cases
 
 ```bash
 python validation/python/run_wolfram_validations.py --all
 ```
 
 Outputs are written to `validation/outputs/wolfram/<system_id>/`.
+
+The fourth case validates the exact c590 parameterization used in Paper 07.
+It checks the general nonlinearity
+`a1*x + a2*ArcTan[rho*x]` with
+`rho=1.7984259332820332`.  Its recorded fractional seed is tagged as the
+result of bounded integer-order search and independent Caputo refinement; it
+is not presented as a describing-function seed.
+Its reviewable passing summaries and numeric exports are tracked in
+`validation/chua_fractional_arctan_c590/algebraic_validation/`.
 
 For `chua_fractional_saturation`, the official algebraic validator consumes
 the generated prefixed CSV files directly from that ignored output directory.
@@ -138,9 +148,12 @@ Each `.wl` case script writes:
 | `<id>_eigenvalues_matignon.csv` | Eigenvalues + Matignon margin per q         |
 | `<id>_seed_data.json`           | ω₀, k, a₀, d, S, X_seed per candidate       |
 | `<id>_seed_summary.csv`         | Tabular summary of seed data                |
+| `<id>_recorded_candidate.json`  | c590 parameters, recorded seed, provenance, and RHS |
 
 The `passed` field in `*_validation_summary.json` must be `true` before
-any seed is used in simulations.
+the corresponding algebraic result is cited.  For c590, this status validates
+the system algebra and recorded parameter/seed consistency; it does not
+validate how the seed was dynamically selected.
 
 ---
 
