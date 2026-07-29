@@ -5,19 +5,19 @@
   "generated_by": "version_2/validation/paper07_chua/scripts/sync_paper07_evidence.py",
   "scientific_scope": "Fixed result-level evidence for the corrected nonsmooth probes and the radius-limited c590 hiddenness rows, together with the finite representative trajectories used by the spatial probe figures.",
   "artifact_count": 43,
-  "total_size_bytes": 40395711,
+  "total_size_bytes": 40022623,
   "groups": {
     "c590_hiddenness_rows": {
       "files": 12,
-      "size_bytes": 5340852
+      "size_bytes": 5327244
     },
     "nonsmooth_corrected": {
       "files": 13,
-      "size_bytes": 8639991
+      "size_bytes": 8621165
     },
     "probe_story_trajectories": {
       "files": 18,
-      "size_bytes": 26414868
+      "size_bytes": 26074214
     }
   },
   "artifacts": [
@@ -25,106 +25,106 @@
       "group": "c590_hiddenness_rows",
       "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r003_rows.csv",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r003_rows.csv",
-      "size_bytes": 597282,
-      "sha256": "e6ec3773afe3c3b4dfe3c9090c8019539927b14717d739cfee1be50e6b214f8e"
+      "size_bytes": 595781,
+      "sha256": "d326472e5e973474c5b939c040874e39fe98b06ef89fd72aae0960800a5b9316"
     },
     {
       "group": "c590_hiddenness_rows",
       "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r003_run_config.json",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r003_run_config.json",
-      "size_bytes": 339,
-      "sha256": "89f532a23e88b85056d1bda2369dc3677bfeac72c7af1f3cd17e82d0d97ab045"
+      "size_bytes": 323,
+      "sha256": "96dcfa884693b005077e7958a77c1cb02b890f8d88b6d9a669d8ea343c90f750"
     },
     {
       "group": "c590_hiddenness_rows",
       "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r010_rows.csv",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r010_rows.csv",
-      "size_bytes": 711754,
-      "sha256": "7a36bc3d916a7234f3e065446830039b1b6c6434c3bfcdcbef48806fdbe1e732"
+      "size_bytes": 709953,
+      "sha256": "518495ba21e92e605e5e515a50707e8befa8eb1d8fe312f63ee7f0670b879f30"
     },
     {
       "group": "c590_hiddenness_rows",
       "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r010_run_config.json",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r010_run_config.json",
-      "size_bytes": 338,
-      "sha256": "61fa3c17dc63e812d4c1a9182060d022fa64345b487e0555054a8cf17e2da85a"
+      "size_bytes": 322,
+      "sha256": "9058b63a23bbfb8f3cf55627818dde4c12923e9c975179d76ed6f3f01f775c8a"
     },
     {
       "group": "c590_hiddenness_rows",
       "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r030_rows.csv",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r030_rows.csv",
-      "size_bytes": 827042,
-      "sha256": "c74042d4ab044ad6f23b45652732d0096b0ae28af6021108e3ac2412b77b74f4"
+      "size_bytes": 824941,
+      "sha256": "7378f10d61a33901b81043dfc0ae8b7be5a8d0fb8d62541a2e9afad955b4b968"
     },
     {
       "group": "c590_hiddenness_rows",
       "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r030_run_config.json",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r030_run_config.json",
-      "size_bytes": 338,
-      "sha256": "d1eabd73f395bce9b127355d6ed51da24fa0a2d3ee2f32045b19dc71d4be27f8"
+      "size_bytes": 322,
+      "sha256": "d6de21d53fe32686625b53a37233cd6afa3ba0d978c04c86a55d03e5c68a6033"
     },
     {
       "group": "c590_hiddenness_rows",
       "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_rows.csv",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_rows.csv",
-      "size_bytes": 940534,
-      "sha256": "4e95ffdf7e20b9555d8fe2b9cdd034ab62cb4eccb1c736fac0c4eae091eb1a38"
+      "size_bytes": 938133,
+      "sha256": "64b32d95e30f46f54774f30d63b8bfede937eebe2ac21ccce11adc0b276734e4"
     },
     {
       "group": "c590_hiddenness_rows",
       "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_run_config.json",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r100_run_config.json",
-      "size_bytes": 338,
-      "sha256": "53edb728d125f1e9bb7169346cd19ad10a2d9ec5cd32f8ffea75e4f2ebb28b2c"
+      "size_bytes": 322,
+      "sha256": "521a68804932fabc8fb2161aa57116f0886fe9ea7eee8a74f84d793799b645e8"
     },
     {
       "group": "c590_hiddenness_rows",
       "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r200_rows.csv",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r200_rows.csv",
-      "size_bytes": 1057837,
-      "sha256": "6a43f090c45515bc383421f5d835e2e5a6cd0e09d6ea78a4f07a4eadfaa58ccd"
+      "size_bytes": 1055136,
+      "sha256": "9f309b285d27dbddf8b8356cb04949a0511622a96a854db07f9bd92259d0f97b"
     },
     {
       "group": "c590_hiddenness_rows",
       "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r200_run_config.json",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_r200_run_config.json",
-      "size_bytes": 338,
-      "sha256": "fef8759c6f7c939b928b83ab16897c0cefadfe7395ac24f88239434a901754bd"
+      "size_bytes": 322,
+      "sha256": "1e9549daaf3de840afb0387b1cb6dd6d3b2416110afad92054678c92a90cc064"
     },
     {
       "group": "c590_hiddenness_rows",
       "source_path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_scaled_rows.csv",
       "path": "version_2/validation/chua_fractional_arctan_c590/hiddenness_scaled_rows.csv",
-      "size_bytes": 1204306,
-      "sha256": "f4118720ed34edc50b070511f65a88f0416b03744b95f114358f7adb00238983"
+      "size_bytes": 1201305,
+      "sha256": "f640d71bc13a8f6b2b49c5648033585dc7446a9b25eec510dff7167dd202958f"
     },
     {
       "group": "c590_hiddenness_rows",
       "source_path": "version_2/validation/chua_fractional_arctan_c590/scaled_hiddenness_run_config.json",
       "path": "version_2/validation/chua_fractional_arctan_c590/scaled_hiddenness_run_config.json",
-      "size_bytes": 406,
-      "sha256": "73224192ef157be63467de1d03f0d37353dd444b380c0f958c8197893c335ac3"
+      "size_bytes": 384,
+      "sha256": "ac4f82de19b155cba54c36dd5f05901fed19a21233e13c1cffd14db964850b85"
     },
     {
       "group": "nonsmooth_corrected",
       "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/candidate_and_reference.json",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/candidate_and_reference.json",
-      "size_bytes": 3014,
-      "sha256": "461ed043cd7a0144e500ef75df14329fc0e5e209ce287ef02b00d683ddd705fa"
+      "size_bytes": 2910,
+      "sha256": "7d26816be550da4accc3dd38ed991324c6428e28c7d619eb4a2de89aeec756c7"
     },
     {
       "group": "nonsmooth_corrected",
       "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/continuation_stages.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/continuation_stages.csv",
-      "size_bytes": 4524,
-      "sha256": "00edce06154ee998eac6cba73ad6969d3e4f7bf306da4c553cbe80e75fc0323a"
+      "size_bytes": 4502,
+      "sha256": "32b6f821f84d9ef43fd1a15aec7f79668c0f5da42ca810dbac72c9cd28519b45"
     },
     {
       "group": "nonsmooth_corrected",
       "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_numerical_contract.json",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_numerical_contract.json",
-      "size_bytes": 3823,
-      "sha256": "46fc70db31abcdb75bc87856d840158efe06a5c4527170c9c3685caf20a5f388"
+      "size_bytes": 3673,
+      "sha256": "8785d296dd8890d419ce1e4babe775b40c4f26724f045f81085c09450c31d052"
     },
     {
       "group": "nonsmooth_corrected",
@@ -137,22 +137,22 @@
       "group": "nonsmooth_corrected",
       "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_runs.csv",
-      "size_bytes": 5307265,
-      "sha256": "596302ec36b1f07314d86213776985d9127af8e4edf22037d12f34e32a22114d"
+      "size_bytes": 5289864,
+      "sha256": "c86925d890b5b1730e55a110ae45feeaea73a122fbb923de3055720133ec6d0c"
     },
     {
       "group": "nonsmooth_corrected",
       "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_summary.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_probe_summary.csv",
-      "size_bytes": 916,
-      "sha256": "2ccf8b0e7828780807931b12e034bbc931d24af1584ff4ca9c0c2aa521439f9d"
+      "size_bytes": 885,
+      "sha256": "08f6bf07eb5e01af97123b03c74d7d56ffafd71f691693a899e0e8a64ea0fc25"
     },
     {
       "group": "nonsmooth_corrected",
       "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_result.json",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/extended_first_contact_clean/extended_result.json",
-      "size_bytes": 1675,
-      "sha256": "f1b534edc5c027958e586930c76d5d9a8d6b6bf85a415e612df3e4cb8a09db4d"
+      "size_bytes": 1618,
+      "sha256": "64bfc6dba6bc15a5e0e9f7ba223279217581120954f0c5048f8d1acc5de34b9c"
     },
     {
       "group": "nonsmooth_corrected",
@@ -165,162 +165,162 @@
       "group": "nonsmooth_corrected",
       "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/numerical_contract.json",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/numerical_contract.json",
-      "size_bytes": 1537,
-      "sha256": "6699c311a42b8574b6b45cea59d19603c1afc258e583111e5f431c4ae30ed619"
+      "size_bytes": 1453,
+      "sha256": "1da9a45d5a59df542793c62ef71cf794b3e8699ecba492635e8c402cc398de69"
     },
     {
       "group": "nonsmooth_corrected",
       "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/probe_runs.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/probe_runs.csv",
-      "size_bytes": 165687,
-      "sha256": "e2a1ca6506889def6f86cce84d870da30e31dcb5d8257518cfadc08c440a3992"
+      "size_bytes": 165011,
+      "sha256": "5bd22c79b37f11061274f688727bf1d8b6fe7110ae2c3ec3b5c7814c68c5a1d2"
     },
     {
       "group": "nonsmooth_corrected",
       "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/probe_summary.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/probe_summary.csv",
-      "size_bytes": 552,
-      "sha256": "959c4164129c3e9c691fc124819f600fdc1557b7109ea704e9ca9f14ec34d64f"
+      "size_bytes": 533,
+      "sha256": "7f2a5b02e24a99f65d57ca27b280ed9824d350352cd43b6472ddfa3ead766d16"
     },
     {
       "group": "nonsmooth_corrected",
       "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/result.json",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/result.json",
-      "size_bytes": 6920,
-      "sha256": "8afc617c60c013f356240a6b016284e51bd80376054c833ddac31bd2f8ccf6b6"
+      "size_bytes": 6675,
+      "sha256": "172ad3ef26be65f23ff171f9aa7827a7e5115d6903be6dd1b8e943e9dc9a274a"
     },
     {
       "group": "nonsmooth_corrected",
       "source_path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/target_reproduction_runs.csv",
       "path": "version_2/validation/paper07_chua/evidence/nonsmooth_corrected/target_reproduction_runs.csv",
-      "size_bytes": 6960,
-      "sha256": "084bb0b8dd1ca458b520241859557f9f56876c259f6b95518ddf80847f2555b2"
+      "size_bytes": 6923,
+      "sha256": "d7a140c9160b0f1298f5a506824be56efdba18c8d0f734406639959052b84155"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d000.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d000.csv",
-      "size_bytes": 2755477,
-      "sha256": "f4f3d1b2c82332b45c615986eeba14b835d5ce382b265a8162e3c9e538324b7c"
+      "size_bytes": 2719475,
+      "sha256": "7d211d157fa9024a49b67f5c5684ef7a6f7c54591ac67092c6b065717bcbe42d"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d194.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d194.csv",
-      "size_bytes": 2746529,
-      "sha256": "0d3c8f04227c7f6919ba3e01ee33dba1ad31f45edf6a2a1d9a8d7b5b5d8cb9b9"
+      "size_bytes": 2710527,
+      "sha256": "abd3ca536740a54b350e7f64d47acc51860c612b8a920a399e69d029b2c4bae6"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d228.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_E0_r00_d228.csv",
-      "size_bytes": 2745602,
-      "sha256": "10047741db4cde747fb3109b6f4b83fff84349ef9a891ac98d058dcc6bff3382"
+      "size_bytes": 2709600,
+      "sha256": "e1831bd74659b6b191e582b523aea022077cf6df4569b262a98ae9c2d4ba38c9"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_Em_r00_d000.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_Em_r00_d000.csv",
-      "size_bytes": 2795511,
-      "sha256": "d602bd5903a6e7af30cff8eb6b635f2e32e9ffb3ac9ff2ecba12fa5f9104ef74"
+      "size_bytes": 2759509,
+      "sha256": "5a76336e4b2d6b422e25257a781ec5406915030020307e1c45b37774769f9b2c"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_Ep_r00_d000.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_r100_rows_Ep_r00_d000.csv",
-      "size_bytes": 2794100,
-      "sha256": "e0f7d2945368f3260a23411a23131123d1c0fb755588ff37d53d28fb9213cc83"
+      "size_bytes": 2758098,
+      "sha256": "74466c2836ef0a91b116b81a950d4ad5dface88514589c7d263c216d1a41879f"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Em_r00_d000.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Em_r00_d000.csv",
-      "size_bytes": 725492,
-      "sha256": "176fba9597a4cc17058e3d7910112037624c3d8de749629b57a858a35716d94e"
+      "size_bytes": 716330,
+      "sha256": "6978e85fe9be4158bc921dd3b9db858980ee42d29bce485bdf0be45e79b4f09f"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Em_r00_d001.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Em_r00_d001.csv",
-      "size_bytes": 725575,
-      "sha256": "c3c6f22a0544504e3322a54c6d231cab96b9c2cadee25ef283e2fba07862c7a4"
+      "size_bytes": 716413,
+      "sha256": "a3a89c5d442a82782e9efc59e7adb53671afccad3180be3761d86028872299e7"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Ep_r00_d000.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Ep_r00_d000.csv",
-      "size_bytes": 716414,
-      "sha256": "23e0c068474346036553318520250aa1a10273510367f80833c17cb55d084727"
+      "size_bytes": 707252,
+      "sha256": "0b65679e2f58e0fbc38003bc830e6c6593185d4c7dd4aff06a7580d97ad27319"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Ep_r00_d001.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/arctan/hiddenness_scaled_rows_Ep_r00_d001.csv",
-      "size_bytes": 716331,
-      "sha256": "2600a4eb633ed762197e4e8f2d9b6c58e00135952011b52a0e343ca73814c6b7"
+      "size_bytes": 707169,
+      "sha256": "53a6da44409248425c005ea70a975bf3b952c1f413dab872f9f2fbf76088246f"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_00000_E0.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_00000_E0.csv",
-      "size_bytes": 224813,
-      "sha256": "3bf8ca4b32893dc0ebb87b5ddb6df98a9ee15241012eda6eeea8c07d2be9a8ee"
+      "size_bytes": 222262,
+      "sha256": "5bab41e6886a5cd48c9764af836789769a4a0ac7e0c5bb8197f6faa8243d7373"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_08800_Ep.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_08800_Ep.csv",
-      "size_bytes": 1570739,
-      "sha256": "2d036c9bb3cd7d5d44d802ad803bc5fd5cc592e0f8dc3058b99171f57e53bbd3"
+      "size_bytes": 1550737,
+      "sha256": "572bfabb7bd7da63bc47bb14df95485c888c1f3de3c14d01467103d47c43d08b"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_08801_Ep.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_08801_Ep.csv",
-      "size_bytes": 54062,
-      "sha256": "1a5a876c7385ba01ad759e56ed7970e69fc9959253699f87dfa9059e646b16c4"
+      "size_bytes": 53358,
+      "sha256": "8432cb7fc6ca53714bff86da536727ba2ab590d6619cb4c8b217d6680ab91cda"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_12350_Ep.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_12350_Ep.csv",
-      "size_bytes": 1571170,
-      "sha256": "0b374a2be638b9990a60630509b74a053c2e6bad7536e439380e7289d119ac52"
+      "size_bytes": 1551168,
+      "sha256": "8a9b6395cdd68024a2707fc47a4ef8346080fc90d25a1013ba6e02996e36fd51"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_13407_Ep.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_13407_Ep.csv",
-      "size_bytes": 1537202,
-      "sha256": "08a314930a5bbc42be6f92d6e6c9ce97d917f5652aea7b709160836bc122d395"
+      "size_bytes": 1517200,
+      "sha256": "fed6d32093be95b5d4b8bd7a90b3261fe70a20fca2a084a5b3ef5c3e12630bd1"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_17600_Em.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_17600_Em.csv",
-      "size_bytes": 56653,
-      "sha256": "75fd0113cfa01a51e2ca6b2fc2ea11392b68137cfe27e1c4135afe0f9c5ce874"
+      "size_bytes": 55924,
+      "sha256": "2d2190d1e6ce7327850967e6f9f0e45be04981843374e6408f72fae542e4217b"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_17602_Em.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_17602_Em.csv",
-      "size_bytes": 1570882,
-      "sha256": "6c077249e9886f47cb46852fddf43e86b764df04229affc4435549d2a1803a60"
+      "size_bytes": 1550880,
+      "sha256": "402b28c3606eaef164e4cf15b97934f2b5df4471d0148f631cfd44f10e7ffc5b"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_21163_Em.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_21163_Em.csv",
-      "size_bytes": 1570856,
-      "sha256": "55f200161b5aaaf37d38174f3a7d7ceb2f6f5b955e6b341940b99d295e9645e4"
+      "size_bytes": 1550854,
+      "sha256": "f38d0c6dd893cc7a99bb27558505c688cec68b6aa1f1d8289e6374d5972b0a04"
     },
     {
       "group": "probe_story_trajectories",
       "source_path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_22330_Em.csv",
       "path": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/nonsmooth/probe_22330_Em.csv",
-      "size_bytes": 1537460,
-      "sha256": "9eb6c4ebbc87e8dc48e29a4cd989b247e42f5b73f48522f8c573d37582e389ae"
+      "size_bytes": 1517458,
+      "sha256": "de15d23696c9689e8fafb2b7cb87cadca50c5bdc0eaae04d72100627b1dbc8d5"
     }
   ],
   "pruned_stale_files": []

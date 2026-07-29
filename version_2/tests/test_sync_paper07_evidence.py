@@ -11,6 +11,7 @@ from validation.paper07_chua.scripts.sync_paper07_evidence import (
     EVIDENCE_ROOT,
     PACKAGE_ROOT,
     artifact_specs,
+    canonical_artifact_metadata,
     verify_package,
 )
 
@@ -46,6 +47,15 @@ def test_manifest_hashes_verify_without_ignored_outputs() -> None:
     assert result["artifact_count"] == 43
     assert result["total_size_bytes"] > 0
     assert result["source_parity_verified"] is False
+
+
+def test_manifest_text_hashes_are_line_ending_portable(tmp_path) -> None:
+    lf = tmp_path / "artifact.json"
+    crlf = tmp_path / "artifact-crlf.json"
+    lf.write_bytes(b'{\n  "value": 1\n}\n')
+    crlf.write_bytes(b'{\r\n  "value": 1\r\n}\r\n')
+
+    assert canonical_artifact_metadata(lf) == canonical_artifact_metadata(crlf)
 
 
 def test_compact_case_manifest_references_existing_evidence() -> None:

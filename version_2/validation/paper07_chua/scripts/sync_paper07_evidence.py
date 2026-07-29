@@ -14,7 +14,7 @@ Verify the tracked package in a clean checkout::
 
     python validation/paper07_chua/scripts/sync_paper07_evidence.py --verify
 
-Also confirm byte-for-byte parity with locally retained workflow outputs::
+Also confirm repository-canonical parity with locally retained workflow outputs::
 
     python validation/paper07_chua/scripts/sync_paper07_evidence.py --verify --verify-sources
 """
@@ -36,6 +36,7 @@ REPOSITORY_ROOT = VERSION_ROOT.parent
 PACKAGE_ROOT = VERSION_ROOT / "validation" / "paper07_chua"
 EVIDENCE_ROOT = PACKAGE_ROOT / "evidence"
 MANIFEST_PATH = PACKAGE_ROOT / "evidence_manifest.json"
+CANONICAL_TEXT_SUFFIXES = frozenset({".csv", ".json", ".md", ".txt"})
 
 NONSMOOTH_SOURCE = EVIDENCE_ROOT / "nonsmooth_corrected"
 C590_HIDDENNESS_VALIDATION = (
@@ -163,6 +164,22 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def canonical_artifact_metadata(path: Path) -> tuple[int, str]:
+    """Return Git-portable size and SHA-256 metadata for an evidence artifact.
+
+    Git materializes tracked text with platform-dependent line endings when
+    ``core.autocrlf`` is enabled.  The evidence manifest records repository
+    bytes instead: known text formats use LF, while binary formats remain
+    byte-for-byte exact.  This keeps the same manifest valid on Windows and
+    Linux without changing any scientific values.
+    """
+
+    data = path.read_bytes()
+    if path.suffix.lower() in CANONICAL_TEXT_SUFFIXES:
+        data = data.replace(b"\r\n", b"\n")
+    return len(data), hashlib.sha256(data).hexdigest()
+
+
 def _read_json(path: Path) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
@@ -237,7 +254,7 @@ def _manifest_payload(specs: Iterable[ArtifactSpec]) -> dict[str, Any]:
     group_counts: Counter[str] = Counter()
     group_bytes: Counter[str] = Counter()
     for spec in specs:
-        size = spec.destination.stat().st_size
+        size, digest = canonical_artifact_metadata(spec.destination)
         group_counts[spec.group] += 1
         group_bytes[spec.group] += size
         artifacts.append(
@@ -246,7 +263,7 @@ def _manifest_payload(specs: Iterable[ArtifactSpec]) -> dict[str, Any]:
                 "source_path": _repository_relative(spec.source),
                 "path": _repository_relative(spec.destination),
                 "size_bytes": size,
-                "sha256": sha256_file(spec.destination),
+                "sha256": digest,
             }
         )
     artifacts.sort(key=lambda item: item["path"])
@@ -337,8 +354,7 @@ def verify_package(*, verify_sources: bool = False) -> dict[str, Any]:
             raise ValueError(f"source path mismatch for {path_text}")
         if not spec.destination.is_file():
             raise FileNotFoundError(f"missing tracked artifact: {path_text}")
-        size = spec.destination.stat().st_size
-        digest = sha256_file(spec.destination)
+        size, digest = canonical_artifact_metadata(spec.destination)
         if record.get("size_bytes") != size:
             raise ValueError(f"size mismatch for {path_text}")
         if record.get("sha256") != digest:
@@ -348,9 +364,12 @@ def verify_package(*, verify_sources: bool = False) -> dict[str, Any]:
                 raise FileNotFoundError(
                     f"missing local source artifact: {expected_source}"
                 )
-            if spec.source.stat().st_size != size:
+            source_size, source_digest = canonical_artifact_metadata(
+                spec.source
+            )
+            if source_size != size:
                 raise ValueError(f"source size mismatch for {path_text}")
-            if sha256_file(spec.source) != digest:
+            if source_digest != digest:
                 raise ValueError(f"source SHA-256 mismatch for {path_text}")
 
     expected_evidence = {
@@ -381,9 +400,11 @@ def verify_package(*, verify_sources: bool = False) -> dict[str, Any]:
             f"extra={extra}"
         )
 
-    total_size = sum(
-        spec.destination.stat().st_size for spec in specs
-    )
+    canonical_sizes = {
+        spec.destination: canonical_artifact_metadata(spec.destination)[0]
+        for spec in specs
+    }
+    total_size = sum(canonical_sizes.values())
     if manifest.get("artifact_count") != len(specs):
         raise ValueError("manifest artifact_count is stale")
     if manifest.get("total_size_bytes") != total_size:
@@ -392,7 +413,7 @@ def verify_package(*, verify_sources: bool = False) -> dict[str, Any]:
     group_bytes: Counter[str] = Counter()
     for spec in specs:
         group_counts[spec.group] += 1
-        group_bytes[spec.group] += spec.destination.stat().st_size
+        group_bytes[spec.group] += canonical_sizes[spec.destination]
     expected_groups = {
         group: {
             "files": group_counts[group],
