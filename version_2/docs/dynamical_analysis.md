@@ -90,6 +90,56 @@ points = bifurcation_points_from_trajectories(scans, parameter_key="q")
 Supported observable names are `t`, `x`, `y`, and `z`; integer column indices
 are also accepted.
 
+## Lyapunov Diagnostics From a Scalar Time Series
+
+Use the experimental time-series API when only a uniformly sampled observable
+is available and no right-hand side or Jacobian can be evaluated:
+
+```python
+from hidden_attractors.analysis import estimate_time_series_lyapunov
+
+result = estimate_time_series_lyapunov(
+    trajectory[:, 1],
+    sample_interval=0.01,
+    observable="x",
+    eckmann_emb_dim=9,
+    eckmann_matrix_dim=3,
+    random_seed=0,
+)
+
+print(result.largest_exponent)          # Rosenstein LLE
+print(result.spectrum)                  # Eckmann spectrum, descending
+print(result.kaplan_yorke_dimension)
+```
+
+The sample interval is passed to both `nolds.lyap_r` and `nolds.lyap_e` as
+`tau`, so exponents use inverse units of the trajectory time coordinate.
+The result records the backend version, estimator parameters, captured
+warnings, fit diagnostics, units, and evidence status. The polynomial fit is
+the dependency-light default. When RANSAC is requested, a lock and fixed
+local seed preserve reproducibility without leaking changes to NumPy's global
+random state.
+
+The corresponding CLI accepts a CSV with `t` and the selected observable:
+
+```bash
+hidden-attractors lyapunov spectrum \
+  --trajectory outputs/case/trajectory.csv \
+  --observable x \
+  --window-length 4096 \
+  --json-output outputs/case/time_series_lyapunov.json
+```
+
+Rosenstein estimates only the largest exponent. Eckmann reconstructs a
+finite-dimensional spectrum from the same scalar signal; the default
+`eckmann_matrix_dim=3` is appropriate only when a three-dimensional spectrum
+is intended. The Kaplan--Yorke dimension is computed from that ordered
+spectrum. These are finite-time, sampling- and embedding-dependent
+diagnostics, not proofs of chaos, asymptotic spectra, or hiddenness.
+Because the Rosenstein backend forms a quadratic pairwise-distance matrix,
+the API estimates its memory requirement and rejects requests above the
+configured limit instead of risking an out-of-memory failure.
+
 ## Complexity Measures Through External Libraries
 
 Complexity metrics are delegated to optional libraries. The repository keeps a
@@ -99,8 +149,15 @@ maintained implementations.
 ```python
 from hidden_attractors.integrations import compute_complexity_measures
 
-metrics = compute_complexity_measures(trajectory[:, 1], backend="auto")
+metrics = compute_complexity_measures(
+    trajectory[:, 1],
+    backend="auto",
+    sample_rate=100.0,
+)
 ```
+
+When `lyapunov_rosenstein` is selected, `sample_rate` is converted to
+`tau=1/sample_rate`; the returned value therefore has inverse-time units.
 
 Install one backend when those measures are needed:
 

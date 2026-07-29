@@ -86,7 +86,10 @@ from .io import load_trajectory_csv
 from .analysis import (
     LyapunovResult,
     RobustnessCase,
+    TimeSeriesLyapunovResult,
+    estimate_time_series_lyapunov,
     integer_system_lyapunov_exponents,
+    kaplan_yorke_dimension,
     trajectory_metrics,
     trajectory_metrics_for_system,
 )
@@ -174,7 +177,10 @@ PUBLIC_API_STABLE = (
 PUBLIC_API_EXPERIMENTAL = (
     "LyapunovResult",
     "RobustnessCase",
+    "TimeSeriesLyapunovResult",
+    "estimate_time_series_lyapunov",
     "integer_system_lyapunov_exponents",
+    "kaplan_yorke_dimension",
     "trajectory_metrics",
     "trajectory_metrics_for_system",
     "HarmonicSeed",
@@ -270,7 +276,10 @@ __all__ = [
     # experimental: analysis
     "LyapunovResult",
     "RobustnessCase",
+    "TimeSeriesLyapunovResult",
+    "estimate_time_series_lyapunov",
     "integer_system_lyapunov_exponents",
+    "kaplan_yorke_dimension",
     "trajectory_metrics",
     "trajectory_metrics_for_system",
     # experimental: seed_generation

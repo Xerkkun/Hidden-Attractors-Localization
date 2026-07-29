@@ -135,13 +135,19 @@ def compute_complexity_measures(
     """Compute scalar complexity measures through optional external libraries.
 
     This function is an adapter: it delegates calculations to external
-    libraries instead of reimplementing their algorithms.
+    libraries instead of reimplementing their algorithms.  ``sample_rate``
+    is expressed in samples per unit time.  The Rosenstein estimate returned
+    as ``lyapunov_rosenstein`` is normalized with
+    ``tau = 1 / sample_rate`` and therefore has inverse-time units.
     """
 
     x = np.asarray(signal, dtype=float)
     x = x[np.isfinite(x)]
     if x.size < 8:
         raise ValueError("signal must contain at least 8 finite values")
+    sample_rate = float(sample_rate)
+    if not np.isfinite(sample_rate) or sample_rate <= 0.0:
+        raise ValueError("sample_rate must be a positive finite value")
 
     selected = set(measures or ())
     use_all = not selected
@@ -155,7 +161,9 @@ def compute_complexity_measures(
         if use_all or "correlation_dimension" in selected:
             out["correlation_dimension"] = float(nolds.corr_dim(x, emb_dim=2))
         if use_all or "lyapunov_rosenstein" in selected:
-            out["lyapunov_rosenstein"] = float(nolds.lyap_r(x))
+            out["lyapunov_rosenstein"] = float(
+                nolds.lyap_r(x, tau=1.0 / sample_rate)
+            )
         if use_all or "hurst_rs" in selected:
             out["hurst_rs"] = float(nolds.hurst_rs(x))
         if use_all or "dfa" in selected:

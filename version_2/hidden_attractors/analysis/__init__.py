@@ -33,6 +33,14 @@ from .lyapunov_fractional import (
     unpack_extended_state,
 )
 from .lyapunov_cloned import ClonedDynamicsResult, compute_cloned_dynamics_spectrum
+from .time_series_lyapunov import (
+    ECKMANN_METHOD,
+    EVIDENCE_STATUS as TIME_SERIES_LYAPUNOV_EVIDENCE_STATUS,
+    ROSENSTEIN_METHOD,
+    TimeSeriesLyapunovResult,
+    estimate_time_series_lyapunov,
+    kaplan_yorke_dimension,
+)
 from .boundedness import ALLOWED_BOUNDEDNESS_STATUSES, compute_boundedness_metrics
 from .spectral import (
     ALLOWED_SPECTRAL_STATES,
@@ -115,6 +123,13 @@ __all__ = [
     # Lyapunov - F3 cloned dynamics ABM GS/QR
     "ClonedDynamicsResult",
     "compute_cloned_dynamics_spectrum",
+    # Lyapunov from scalar time series
+    "ECKMANN_METHOD",
+    "TIME_SERIES_LYAPUNOV_EVIDENCE_STATUS",
+    "ROSENSTEIN_METHOD",
+    "TimeSeriesLyapunovResult",
+    "estimate_time_series_lyapunov",
+    "kaplan_yorke_dimension",
     # Spectral
     "ALLOWED_BOUNDEDNESS_STATUSES",
     "compute_boundedness_metrics",

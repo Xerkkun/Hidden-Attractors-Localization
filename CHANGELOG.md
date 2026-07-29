@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Experimental scalar-time-series Lyapunov API with a Rosenstein largest
+  exponent, Eckmann spectrum, Kaplan--Yorke dimension, structured provenance,
+  deterministic RANSAC seeding, and JSON-capable CLI output.
+
+### Fixed
+
+- The optional `nolds` complexity adapter now propagates `sample_rate` to
+  `lyap_r` through `tau=1/sample_rate`, so Rosenstein estimates have the
+  documented inverse-time units.
+- The trajectory Lyapunov CLI now validates uniform sampling and reports the
+  scalar LLE, spectrum, Kaplan--Yorke dimension, backend, and diagnostic
+  evidence boundary.
+
 ## 1.0.0
 
 ### Added

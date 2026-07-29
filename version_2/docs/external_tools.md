@@ -48,8 +48,29 @@ Uso:
 ```python
 from hidden_attractors.integrations import compute_complexity_measures
 
-metrics = compute_complexity_measures(trajectory[:, 1], backend="nolds")
+metrics = compute_complexity_measures(
+    trajectory[:, 1],
+    backend="nolds",
+    sample_rate=1.0 / sampling_interval,
+)
 ```
+
+For a reusable Lyapunov result containing a Rosenstein LLE, an Eckmann
+spectrum, and a Kaplan--Yorke dimension, use:
+
+```python
+from hidden_attractors.analysis import estimate_time_series_lyapunov
+
+result = estimate_time_series_lyapunov(
+    trajectory[:, 1],
+    sample_interval=sampling_interval,
+    observable="x",
+)
+```
+
+Both estimators are normalized by the supplied sample interval. They remain
+finite-time scalar-reconstruction diagnostics and do not certify chaos or
+hiddenness.
 
 ## antropy (EN)
 
@@ -128,8 +149,29 @@ Uso:
 ```python
 from hidden_attractors.integrations import compute_complexity_measures
 
-metrics = compute_complexity_measures(trajectory[:, 1], backend="nolds")
+metrics = compute_complexity_measures(
+    trajectory[:, 1],
+    backend="nolds",
+    sample_rate=1.0 / intervalo_muestreo,
+)
 ```
+
+Para obtener un resultado reutilizable con el LLE de Rosenstein, el espectro
+de Eckmann y la dimensión de Kaplan--Yorke, use:
+
+```python
+from hidden_attractors.analysis import estimate_time_series_lyapunov
+
+resultado = estimate_time_series_lyapunov(
+    trayectoria[:, 1],
+    sample_interval=intervalo_muestreo,
+    observable="x",
+)
+```
+
+Ambos estimadores se normalizan con el intervalo de muestreo indicado. Siguen
+siendo diagnósticos de tiempo finito reconstruidos desde una señal escalar y
+no certifican caos ni ocultedad.
 
 ## antropy (ES)
 

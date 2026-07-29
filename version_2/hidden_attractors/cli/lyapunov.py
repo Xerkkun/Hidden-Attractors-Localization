@@ -15,6 +15,7 @@ import numpy as np
 
 from ..workflows.lyapunov import run_lyapunov_workflow
 from ..workflows.config_loader import load_config, apply_cli_overrides
+from ..analysis import estimate_time_series_lyapunov
 from ..analysis.spectral import infer_step
 
 
@@ -56,10 +57,48 @@ def compute_lyapunov(argv: Sequence[str] | None = None) -> None:
 
 
 def trajectory_lyapunov_spectrum(argv: Sequence[str] | None = None) -> None:
-    """Estimate trajectory-based Lyapunov exponent spectrum using time-series analysis."""
-    parser = argparse.ArgumentParser(description="Estimate trajectory-based Lyapunov exponent")
+    """Estimate Lyapunov diagnostics from a scalar trajectory observable."""
+    parser = argparse.ArgumentParser(
+        description=(
+            "Estimate Rosenstein LLE, Eckmann spectrum, and Kaplan-Yorke "
+            "dimension from one scalar time series"
+        )
+    )
     parser.add_argument("-t", "--trajectory", type=str, required=True, help="Path to trajectory CSV")
     parser.add_argument("--observable", default="x", help="State coordinate to use for estimation")
+    parser.add_argument("--window-start", type=int, default=0, help="First retained CSV sample")
+    parser.add_argument(
+        "--window-length",
+        type=int,
+        default=4096,
+        help=(
+            "Number of retained samples (default: 4096, limiting the "
+            "quadratic-memory Rosenstein calculation)"
+        ),
+    )
+    parser.add_argument("--time-unit", default="trajectory_time")
+    parser.add_argument("--rosenstein-emb-dim", type=int, default=10)
+    parser.add_argument("--rosenstein-lag", type=int)
+    parser.add_argument("--rosenstein-min-tsep", type=int)
+    parser.add_argument("--rosenstein-min-neighbors", type=int, default=20)
+    parser.add_argument("--rosenstein-trajectory-len", type=int, default=20)
+    parser.add_argument(
+        "--rosenstein-fit",
+        choices=("RANSAC", "poly"),
+        default="poly",
+    )
+    parser.add_argument("--rosenstein-fit-offset", type=int, default=0)
+    parser.add_argument("--eckmann-emb-dim", type=int, default=9)
+    parser.add_argument("--eckmann-matrix-dim", type=int, default=3)
+    parser.add_argument("--eckmann-min-neighbors", type=int)
+    parser.add_argument("--eckmann-min-tsep", type=int, default=0)
+    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--max-pairwise-mib", type=int, default=256)
+    parser.add_argument(
+        "--json-output",
+        type=Path,
+        help="Optional path for a machine-readable result",
+    )
     args = parser.parse_args(argv)
 
     trajectory_path = Path(args.trajectory)
@@ -81,31 +120,94 @@ def trajectory_lyapunov_spectrum(argv: Sequence[str] | None = None) -> None:
         print(f"Error reading trajectory file: {e}")
         sys.exit(1)
 
+    if args.window_start < 0:
+        print("Error: --window-start must be non-negative.")
+        sys.exit(1)
+    if args.window_length is not None and args.window_length <= 0:
+        print("Error: --window-length must be positive.")
+        sys.exit(1)
+
+    stop = (
+        None
+        if args.window_length is None
+        else args.window_start + args.window_length
+    )
+    times = times[args.window_start:stop]
+    signal = signal[args.window_start:stop]
     if len(signal) < 100:
-        print("Error: Signal is too short for estimation. Need at least 100 points.")
+        print("Error: Retained signal is too short. Need at least 100 points.")
         sys.exit(1)
 
     t_arr = np.array(times)
     sig_arr = np.array(signal)
-    
-    # Try using nolds
+
     try:
-        from ..integrations.external_tools import compute_complexity_measures
-        h = infer_step(t_arr, fallback=0.01)
-        measures = compute_complexity_measures(sig_arr, backend="nolds", sample_rate=1.0/h, measures=["lyapunov_rosenstein"])
-        val = measures.get("lyapunov_rosenstein")
-        
+        h = infer_step(t_arr)
+        diffs = np.diff(t_arr)
+        if not np.all(np.isfinite(diffs)) or not np.allclose(
+            diffs,
+            h,
+            rtol=1e-6,
+            atol=max(1e-12, abs(h) * 1e-9),
+        ):
+            raise ValueError(
+                "trajectory time column is not uniformly sampled in the retained window"
+            )
+
+        result = estimate_time_series_lyapunov(
+            sig_arr,
+            sample_interval=h,
+            time_unit=args.time_unit,
+            observable=args.observable,
+            rosenstein_emb_dim=args.rosenstein_emb_dim,
+            rosenstein_lag=args.rosenstein_lag,
+            rosenstein_min_tsep=args.rosenstein_min_tsep,
+            rosenstein_min_neighbors=args.rosenstein_min_neighbors,
+            rosenstein_trajectory_len=args.rosenstein_trajectory_len,
+            rosenstein_fit=args.rosenstein_fit,
+            rosenstein_fit_offset=args.rosenstein_fit_offset,
+            eckmann_emb_dim=args.eckmann_emb_dim,
+            eckmann_matrix_dim=args.eckmann_matrix_dim,
+            eckmann_min_neighbors=args.eckmann_min_neighbors,
+            eckmann_min_tsep=args.eckmann_min_tsep,
+            random_seed=args.seed,
+            max_pairwise_matrix_bytes=args.max_pairwise_mib * 1024 * 1024,
+        )
+
+        payload = {
+            "analysis_type": "time_series_lyapunov",
+            "status": "completed",
+            "trajectory": str(trajectory_path),
+            "window_start": args.window_start,
+            "window_length": len(signal),
+            **result.to_dict(),
+        }
+        if args.json_output is not None:
+            args.json_output.parent.mkdir(parents=True, exist_ok=True)
+            args.json_output.write_text(
+                json.dumps(payload, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+
+        spectrum = ", ".join(f"{value:.9g}" for value in result.spectrum)
         print("\n" + "="*80)
-        print(" TRAJECTORY LYAPUNOV SPECTRUM ESTIMATION (nolds/Rosenstein) ")
+        print(" SCALAR TIME-SERIES LYAPUNOV DIAGNOSTICS (nolds) ")
         print("="*80)
         print(f"| Trajectory File  | {trajectory_path.name:<48} |")
         print(f"| Observable       | {args.observable:<48} |")
         print(f"| Signal Length    | {len(signal):<48} |")
-        print(f"| Estimated LLE    | {val:<48.6f} |")
-        print(f"| Chaos Indicator  | {'positive_largest_exponent' if val > 0.0 else 'nonpositive':<48} |")
-        print(f"| Warning          | {'finite_time_lyapunov_estimate (supporting diagnostic only)'} |")
+        print(f"| Sampling interval| {h:<48.9g} |")
+        print(
+            f"| Rosenstein LLE   | {result.largest_exponent:<35.9g} "
+            f"{result.exponent_unit:<12} |"
+        )
+        print(f"| Eckmann spectrum | {spectrum:<48} |")
+        print(f"| Kaplan-Yorke D   | {result.kaplan_yorke_dimension:<48.9g} |")
+        print(f"| KY status        | {result.kaplan_yorke_status:<48} |")
+        print(f"| Evidence status  | {result.evidence_status:<48} |")
+        print(f"| Warning          | {'supporting diagnostic only; not a chaos proof':<48} |")
         print("="*80 + "\n")
-        
+
     except ImportError as e:
         print(f"Error: {e}")
         sys.exit(1)
