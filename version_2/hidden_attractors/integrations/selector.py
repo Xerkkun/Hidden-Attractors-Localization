@@ -12,7 +12,9 @@ Rules
 - q < 1.0  + rk4/heun      → ValueError  (RK4/Heun require integer order)
 - q < 1.0  + efork_q1      → ValueError  (efork_q1 is the q=1 limit)
 - q == 1.0 + efork3        → UserWarning + redirect to efork_q1
-- q < 1.0  + adm_wu2023    → allowed (local ADM for Caputo)
+- q < 1.0  + adm_wu2023    → compatibility-valid, but the generic
+                              ``integrate`` facade rejects it with directions
+                              to the specialized ``adm_wu2023_integrate`` API
 - q < 1.0  + efork3        → allowed
 - q < 1.0  + abm           → allowed
 - q == 1.0 + rk4/heun/efork_q1 → allowed
@@ -172,7 +174,10 @@ def integrate(
     t_final : float
         Integration end time.
     integrator : str
-        One of 'rk4', 'heun', 'efork_q1', 'efork3', 'abm', 'adm_wu2023'.
+        One of 'rk4', 'heun', 'efork_q1', 'efork3', or 'abm'.
+        ``adm_wu2023`` has a different parameter contract and must be called
+        through
+        :func:`hidden_attractors.integrations.adm_wu2023_integrate`.
     memory_mode : str
         'full' or 'window'. Ignored for integer-order.
     memory_window_length : int, optional
@@ -195,9 +200,24 @@ def integrate(
     t_arr : ndarray (M,)
     x_arr : ndarray (M, dim)
     status : str  — 'ok', 'diverged', 'diverged_early', etc.
+
+    Raises
+    ------
+    ValueError
+        If the integrator is incompatible with the given ``q``, or if
+        ``adm_wu2023`` is requested through this generic facade.
     """
     canonical = validate_integrator_compatibility(integrator, q)
     normalized_q = normalize_fractional_order(q)
+
+    if canonical == "adm_wu2023":
+        raise ValueError(
+            "The generic integrate(...) facade does not dispatch 'adm_wu2023' "
+            "because that local ADM method requires its specialized parameter "
+            "mapping and step-count contract. Call "
+            "hidden_attractors.integrations.adm_wu2023_integrate("
+            "params, x0, q, h, N, divergence_norm=...) instead."
+        )
 
     integrate_general = get_integrator_fn()
 

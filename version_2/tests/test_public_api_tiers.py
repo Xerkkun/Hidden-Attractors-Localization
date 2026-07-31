@@ -74,5 +74,8 @@ def test_analysis_wildcard_surface_matches_tested_top_level_contract() -> None:
         for name in ha.PUBLIC_API_EXPERIMENTAL
         if hasattr(analysis, name)
     }
-    expected.add("integer_qr_benettin_lyapunov_exponents")
     assert set(analysis.__all__) == expected
+    assert (
+        ha.get_tier(analysis.integer_qr_benettin_lyapunov_exponents)
+        == ha.EXPERIMENTAL
+    )

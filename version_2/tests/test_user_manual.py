@@ -26,6 +26,8 @@ REQUIRED_LINKS = [
     "docs/quick_start.md",
     "docs/scientific_scope.md",
     "docs/api_stability.md",
+    "docs/mathematical_diagnostics.md",
+    "docs/plot_function_catalog.md",
     "docs/citation.md",
     "validation/freeze_audit/",
 ]

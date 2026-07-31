@@ -91,7 +91,12 @@
     "version_2/docs/quick_start.md",
     "version_2/docs/api_stability.md",
     "version_2/docs/scientific_scope.md",
-    "version_2/docs/citation.md"
+    "version_2/docs/citation.md",
+    "version_2/docs/mathematical_diagnostics.md",
+    "version_2/docs/plot_function_catalog.md",
+    "version_2/docs/javascripts/mathjax.js",
+    "version_2/docs/assets/generated_plot_catalog/",
+    "version_2/figure_scripts/generate_plot_catalog_examples.py"
   ],
   "scientific_validation": {
     "repository_path": "version_2/validation/",
@@ -112,6 +117,10 @@
     "pypi_url": "https://pypi.org/project/hidden-attractors-fo/",
     "workflow": ".github/workflows/publish-pypi.yml",
     "authentication": "trusted_publishing_oidc",
-    "publication_gate": "pypi_environment"
+    "publication_gate": "pypi_environment",
+    "public_api_symbols": 99,
+    "plotting_callables": 33,
+    "catalog_png_outputs": 62,
+    "time_series_lyapunov_integration": "complete"
   }
 }

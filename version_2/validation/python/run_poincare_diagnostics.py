@@ -84,6 +84,16 @@ def _synthetic_method_validation() -> dict[str, Any]:
         direction="positive_geometric_crossing",
         derivative_mode="geometric_fractional",
     )
+    def oscillator_rhs(_time: float, state: np.ndarray) -> np.ndarray:
+        return np.array([state[1], -state[0]], dtype=float)
+
+    integer_rhs = detect_poincare_crossings(
+        times,
+        sine,
+        derivative_mode="integer_rhs",
+        rhs=oscillator_rhs,
+        burn_time=0.1,
+    )
     expected_positive = np.arange(1, 4) * 2.0 * math.pi
     checks = {
         "positive_crossing_detection": bool(
@@ -98,6 +108,13 @@ def _synthetic_method_validation() -> dict[str, Any]:
         "caputo_geometric_metadata": bool(
             geometric.section_metadata["caputo_geometric_crossing"]
             and not geometric.section_metadata["exact_poincare_map"]
+        ),
+        "integer_rhs_direction_and_metadata": bool(
+            integer_rhs.crossing_count >= 3
+            and integer_rhs.section_metadata["uses_classical_rhs_direction"]
+            and integer_rhs.section_metadata["classical_integer_section_interpretation"]
+            and integer_rhs.section_metadata["sampled_linear_interpolation"]
+            and not integer_rhs.section_metadata["exact_poincare_map"]
         ),
     }
     if not all(checks.values()):

@@ -200,10 +200,10 @@ def integer_lyapunov_exponents(
 
     Uses the Benettin/Wolf algorithm:
 
-    1. Integrate the state ``X' = F(X)`` with an integer-order Euler step
-       (:func:`~hidden_attractors.solvers.integer.efork_q1_step`).
-    2. Propagate the variational basis ``Φ' = J(X) Φ``
-       (first-order, memoryless).
+    1. Integrate the state ``X' = F(X)`` with the three-stage
+       :func:`~hidden_attractors.solvers.integer.efork_q1_step`.
+    2. Propagate the variational basis ``Φ' = J(X) Φ`` with an explicit
+       first-order Euler update (memoryless).
     3. Every ``reorthonormalize_every`` steps apply QR decomposition,
        accumulate ``log|diag(R)|``, and reset the basis to Q.
     4. Divide accumulated sums by elapsed time.
@@ -262,8 +262,9 @@ def integer_lyapunov_exponents(
 
     Notes
     -----
-    The algorithm integrates a first-order Euler scheme (``q=1``) via
-    :func:`~hidden_attractors.solvers.integer.efork_q1_step`.
+    The state uses the three-stage
+    :func:`~hidden_attractors.solvers.integer.efork_q1_step`; the variational
+    basis uses a first-order explicit Euler update before QR.
 
     References
     ----------

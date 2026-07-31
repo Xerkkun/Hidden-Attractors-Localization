@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from typing import Any, List, Tuple
 from ..lure.transfer import W_eval
+from .plot_transfer import (
+    _closure_plot_terms,
+    _resolve_transfer_plot_contract,
+)
 
 def plot_describing_function(
     system: Any,
@@ -51,9 +55,13 @@ def plot_harmonic_residual_map(
     config: dict,
     output_dir: str
 ) -> None:
-    """Generate and save a 2D contour map of the harmonic residual |1 + N(A)W(iw)|."""
+    """Plot the harmonic residual selected by the transfer/sign contract."""
     fig_dir = os.path.join(output_dir, "figures")
     os.makedirs(fig_dir, exist_ok=True)
+    transfer_convention, harmonic_condition = _resolve_transfer_plot_contract(
+        config
+    )
+    _, _, residual_latex = _closure_plot_terms(harmonic_condition)
     
     n_a = 150
     n_w = 150
@@ -68,7 +76,15 @@ def plot_harmonic_residual_map(
     for w in ws_grid:
         try:
             q_val = system.parameters.get("q", 1.0)
-            val = W_eval(w, q_val, config["transfer_mode"], system.lure.matrix, system.lure.input_vector, system.lure.output_vector)
+            val = W_eval(
+                w,
+                q_val,
+                config["transfer_mode"],
+                system.lure.matrix,
+                system.lure.input_vector,
+                system.lure.output_vector,
+                transfer_convention=transfer_convention,
+            )
             w_evals.append(val)
         except Exception:
             w_evals.append(complex(np.nan, np.nan))
@@ -86,6 +102,8 @@ def plot_harmonic_residual_map(
             n_val = n_evals[j]
             if np.isnan(w_val) or np.isnan(n_val):
                 residual_mesh[i, j] = np.nan
+            elif harmonic_condition == "1_minus_WN":
+                residual_mesh[i, j] = np.abs(1.0 - n_val * w_val)
             else:
                 residual_mesh[i, j] = np.abs(1.0 + n_val * w_val)
                 
@@ -94,7 +112,10 @@ def plot_harmonic_residual_map(
     log_residual = np.log10(np.clip(residual_mesh, 1e-8, 10.0))
     contour = ax.contourf(A_mesh, W_mesh, log_residual, levels=25, cmap='viridis_r', alpha=0.92)
     cbar = fig.colorbar(contour, ax=ax)
-    cbar.set_label(r'$\log_{10}(|1 + N(A)W(i\omega)|)$ residual valley', fontsize=9)
+    cbar.set_label(
+        rf'$\log_{{10}}(|{residual_latex}|)$ residual valley',
+        fontsize=9,
+    )
     
     for idx, (A0, w0, k) in enumerate(candidates):
         ax.scatter([A0], [w0], color='#ef4444', marker='*', s=120, edgecolors='black', linewidths=0.8, zorder=10,

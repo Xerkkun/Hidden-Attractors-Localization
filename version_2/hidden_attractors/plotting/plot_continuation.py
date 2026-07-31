@@ -11,11 +11,11 @@ def plot_continuation_eta(
     config: dict,
     output_dir: str
 ) -> None:
-    """Generate and save numerical continuation plots: eta vs state norm, and eta vs oscillation amplitude."""
+    """Plot state norm and oscillation amplitude against public parameter lambda."""
     fig_dir = os.path.join(output_dir, "figures")
     os.makedirs(fig_dir, exist_ok=True)
     
-    etas = [step["lambda_value"] for step in cont_steps]
+    lambda_values = [step["lambda_value"] for step in cont_steps]
     norms = [np.linalg.norm(step["x_out"]) for step in cont_steps]
     statuses = [step["status"] for step in cont_steps]
     
@@ -31,37 +31,92 @@ def plot_continuation_eta(
         else:
             amplitudes.append(0.0)
             
-    success_etas = []
+    success_lambdas = []
     success_norms = []
     success_amps = []
-    failed_etas = []
+    failed_lambdas = []
     failed_norms = []
     failed_amps = []
     
     for i in range(len(cont_steps)):
         if statuses[i] == "ok":
-            success_etas.append(etas[i])
+            success_lambdas.append(lambda_values[i])
             success_norms.append(norms[i])
             success_amps.append(amplitudes[i])
         else:
-            failed_etas.append(etas[i])
+            failed_lambdas.append(lambda_values[i])
             failed_norms.append(norms[i])
             failed_amps.append(amplitudes[i])
             
     fig_norm, ax_norm = plt.subplots(figsize=(8, 7), dpi=300)
     ax_norm.grid(True, linestyle='--', linewidth=0.5, color='#cbd5e1')
     
-    if len(success_etas) > 0:
-        ax_norm.plot(success_etas, success_norms, color='#7c3aed', marker='o', markersize=5, linewidth=1.8, label='Success')
-    if len(failed_etas) > 0:
-        ax_norm.scatter(failed_etas, failed_norms, color='#ef4444', marker='x', s=60, zorder=5, label='Failure')
+    if len(success_lambdas) > 0:
+        ax_norm.plot(success_lambdas, success_norms, color='#7c3aed', marker='o', markersize=5, linewidth=1.8, label='Success')
+    if len(failed_lambdas) > 0:
+        ax_norm.scatter(failed_lambdas, failed_norms, color='#ef4444', marker='x', s=60, zorder=5, label='Failure')
         
-    ax_norm.set_title(f"Numerical Continuation: Norm vs $\\eta$\n{config['system_id']}", fontsize=12, fontweight='bold', pad=15)
-    ax_norm.set_xlabel(r'Continuation Parameter ($\eta$)', fontsize=10)
+    ax_norm.set_title(f"Numerical Continuation: Norm vs $\\lambda$\n{config['system_id']}", fontsize=12, fontweight='bold', pad=15)
+    ax_norm.set_xlabel(r'Continuation Parameter ($\lambda$)', fontsize=10)
     ax_norm.set_ylabel(r'Final State Norm $\|\|X_{\mathrm{out}}\|\|$', fontsize=10)
     ax_norm.set_xlim(-0.05, 1.05)
     ax_norm.legend(loc='best', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
-    
+
+    plt.tight_layout()
+    from .export import intercept_and_export_path
+    intercept_and_export_path(
+        fig_norm,
+        os.path.join(fig_dir, "continuation_norm_vs_eta.png"),
+        "continuation",
+    )
+    plt.close(fig_norm)
+
+    fig_amp, ax_amp = plt.subplots(figsize=(8, 7), dpi=300)
+    ax_amp.grid(True, linestyle='--', linewidth=0.5, color='#cbd5e1')
+    if len(success_lambdas) > 0:
+        ax_amp.plot(
+            success_lambdas,
+            success_amps,
+            color='#0d9488',
+            marker='o',
+            markersize=5,
+            linewidth=1.8,
+            label='Success',
+        )
+    if len(failed_lambdas) > 0:
+        ax_amp.scatter(
+            failed_lambdas,
+            failed_amps,
+            color='#ef4444',
+            marker='x',
+            s=60,
+            zorder=5,
+            label='Failure',
+        )
+    ax_amp.set_title(
+        f"Numerical Continuation: Amplitude vs $\\lambda$\n{config['system_id']}",
+        fontsize=12,
+        fontweight='bold',
+        pad=15,
+    )
+    ax_amp.set_xlabel(r'Continuation Parameter ($\lambda$)', fontsize=10)
+    ax_amp.set_ylabel(r'Peak-to-peak amplitude of $x$', fontsize=10)
+    ax_amp.set_xlim(-0.05, 1.05)
+    ax_amp.legend(
+        loc='best',
+        fontsize=8,
+        framealpha=0.9,
+        facecolor='#f8fafc',
+        edgecolor='#e2e8f0',
+    )
+    plt.tight_layout()
+    intercept_and_export_path(
+        fig_amp,
+        os.path.join(fig_dir, "continuation_amplitude_vs_eta.png"),
+        "continuation",
+    )
+    plt.close(fig_amp)
+
     if len(cont_steps) >= 2:
         try:
             plot_continuation_first_last_comparison(cont_steps, config, output_dir)
@@ -75,9 +130,11 @@ def plot_continuation_first_last_comparison(
     config: dict,
     output_dir: str
 ) -> None:
-    """Compare the linearized attractor (first step, lambda=0.0) and the final nonlinear attractor (last step, lambda=1.0) in 3D and 2D overlays."""
+    """Compare the first and final continuation trajectories in 3D and 2D."""
     first_step = cont_steps[0]
     last_step = cont_steps[-1]
+    first_lambda = float(first_step["lambda_value"])
+    last_lambda = float(last_step["lambda_value"])
     
     first_traj = first_step.get("trajectory")
     last_traj = last_step.get("trajectory")
@@ -101,10 +158,10 @@ def plot_continuation_first_last_comparison(
     fig_3d = plt.figure(figsize=(8, 7), dpi=300)
     ax_3d = fig_3d.add_subplot(111, projection='3d')
     
-    ax_3d.plot(fx, fy, fz, color='#3b82f6', linestyle='--', linewidth=1.2, alpha=0.9, label=r'Linearized Attractor ($\eta=0.0$)')
-    ax_3d.plot(lx, ly, lz, color='#ef4444', linestyle='-', linewidth=1.2, alpha=0.9, label=r'Nonlinear Attractor ($\eta=1.0$)')
+    ax_3d.plot(fx, fy, fz, color='#3b82f6', linestyle='--', linewidth=1.2, alpha=0.9, label=fr'First trajectory ($\lambda={first_lambda:g}$)')
+    ax_3d.plot(lx, ly, lz, color='#ef4444', linestyle='-', linewidth=1.2, alpha=0.9, label=fr'Final trajectory ($\lambda={last_lambda:g}$)')
     
-    ax_3d.set_title(f"Linearized vs Nonlinear Attractor\n{config['system_id']}", fontsize=12, fontweight='bold', pad=15)
+    ax_3d.set_title(f"First vs Final Continuation Trajectories\n{config['system_id']}", fontsize=12, fontweight='bold', pad=15)
     ax_3d.set_xlabel('x', fontsize=10)
     ax_3d.set_ylabel('y', fontsize=10)
     ax_3d.set_zlabel('z', fontsize=10)
@@ -126,8 +183,8 @@ def plot_continuation_first_last_comparison(
     for idx, fu, fv, lu, lv, xlabel, ylabel, title in projections:
         ax = axes[idx]
         ax.grid(True, linestyle='--', linewidth=0.5, color='#cbd5e1')
-        ax.plot(fu, fv, color='#3b82f6', linestyle='--', linewidth=1.2, alpha=0.9, label=r'Linearized ($\eta=0.0$)')
-        ax.plot(lu, lv, color='#ef4444', linestyle='-', linewidth=1.2, alpha=0.9, label=r'Nonlinear ($\eta=1.0$)')
+        ax.plot(fu, fv, color='#3b82f6', linestyle='--', linewidth=1.2, alpha=0.9, label=fr'First ($\lambda={first_lambda:g}$)')
+        ax.plot(lu, lv, color='#ef4444', linestyle='-', linewidth=1.2, alpha=0.9, label=fr'Final ($\lambda={last_lambda:g}$)')
         ax.set_title(title, fontsize=11, fontweight='bold')
         ax.set_xlabel(xlabel, fontsize=10)
         ax.set_ylabel(ylabel, fontsize=10)
@@ -143,9 +200,11 @@ def plot_continuation_timeseries_comparison(
     config: dict,
     output_dir: str
 ) -> None:
-    """Compare the time series of the first state variable x(t) between the first cycle (linearized) and last cycle."""
+    """Compare x(t) between the first and final continuation steps."""
     first_step = cont_steps[0]
     last_step = cont_steps[-1]
+    first_lambda = float(first_step["lambda_value"])
+    last_lambda = float(last_step["lambda_value"])
     
     first_traj = first_step.get("trajectory")
     last_traj = last_step.get("trajectory")
@@ -168,8 +227,8 @@ def plot_continuation_timeseries_comparison(
     ax = fig.add_subplot(111)
     ax.grid(True, linestyle='--', linewidth=0.5, color='#cbd5e1')
     
-    ax.plot(t1_align, x1, color='#3b82f6', linestyle='--', linewidth=1.2, alpha=0.9, label=r'Linearized $x(t)$ ($\eta=0.0$)')
-    ax.plot(t2_align, x2, color='#ef4444', linestyle='-', linewidth=1.2, alpha=0.9, label=r'Nonlinear $x(t)$ ($\eta=1.0$)')
+    ax.plot(t1_align, x1, color='#3b82f6', linestyle='--', linewidth=1.2, alpha=0.9, label=fr'First $x(t)$ ($\lambda={first_lambda:g}$)')
+    ax.plot(t2_align, x2, color='#ef4444', linestyle='-', linewidth=1.2, alpha=0.9, label=fr'Final $x(t)$ ($\lambda={last_lambda:g}$)')
     
     ax.set_title(f"Time Series Comparison: $x(t)$\n{config['system_id']}", fontsize=12, fontweight='bold', pad=15)
     ax.set_xlabel('Aligned Time $t$', fontsize=10)
@@ -205,8 +264,8 @@ def plot_continuation_progression(
         if traj is None or len(traj) == 0:
             continue
             
-        eta = step["lambda_value"]
-        color = cmap((eta - lam_min) / lam_span)
+        lambda_value = step["lambda_value"]
+        color = cmap((lambda_value - lam_min) / lam_span)
         
         if traj.shape[1] == 4:
             x, y, z = traj[:, 1], traj[:, 2], traj[:, 3]
@@ -223,7 +282,7 @@ def plot_continuation_progression(
             x_plot, y_plot, z_plot = x, y, z
             
         ax.plot(x_plot, y_plot, z_plot, color=color, linewidth=0.8, alpha=0.85, 
-                label=fr"$\eta = {eta:.2f}$" if len(cont_steps) <= 8 else "")
+                label=fr"$\lambda = {lambda_value:.2f}$" if len(cont_steps) <= 8 else "")
                 
     x_in_pts = []
     for step in cont_steps:
@@ -259,7 +318,7 @@ def plot_continuation_progression(
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=lam_min, vmax=lam_max))
     sm.set_array([])
     cbar = plt.colorbar(sm, ax=ax, shrink=0.6, pad=0.1)
-    cbar.set_label(r'Continuation Parameter $\eta$', fontsize=9)
+    cbar.set_label(r'Continuation Parameter $\lambda$', fontsize=9)
     cbar.ax.tick_params(labelsize=8)
     
     plt.tight_layout()
@@ -297,7 +356,7 @@ def plot_continuation_tracking(
     fig_dir = os.path.join(output_dir, "figures")
     os.makedirs(fig_dir, exist_ok=True)
 
-    etas      = [s["lambda_value"] for s in cont_steps]
+    lambda_values = [s["lambda_value"] for s in cont_steps]
     out_norms = [s.get("x_out_norm", float(np.linalg.norm(s["x_out"]))) for s in cont_steps]
     statuses  = [s.get("status", "ok")                                   for s in cont_steps]
 
@@ -313,20 +372,28 @@ def plot_continuation_tracking(
         for st, c in seen_legend.items()
     ]
 
-    eta_max = max(etas) * 1.04 if etas else 1.05
+    lambda_max = max(lambda_values) * 1.04 if lambda_values else 1.05
 
     fig, ax = plt.subplots(figsize=(8, 5), dpi=300)
     ax.set_facecolor("#f8fafc")
     ax.grid(True, linestyle="--", linewidth=0.5, color="#cbd5e1")
-    ax.plot(etas, out_norms, color="#7c3aed", linewidth=1.6, zorder=2, alpha=0.7)
-    ax.scatter(etas, out_norms, c=color_pts, s=50, zorder=3, edgecolors="white", linewidths=0.5)
-    ax.set_title(f"Continuation: $\\|x_{{\\mathrm{{out}}}}\\|$ vs $\\eta$\n{sysid}",
+    ax.plot(lambda_values, out_norms, color="#7c3aed", linewidth=1.6, zorder=2, alpha=0.7)
+    ax.scatter(lambda_values, out_norms, c=color_pts, s=50, zorder=3, edgecolors="white", linewidths=0.5)
+    ax.set_title(f"Continuation: $\\|x_{{\\mathrm{{out}}}}\\|$ vs $\\lambda$\n{sysid}",
                  fontsize=12, fontweight="bold", pad=12)
-    ax.set_xlabel(r"$\eta$", fontsize=11)
+    ax.set_xlabel(r"$\lambda$", fontsize=11)
     ax.set_ylabel(r"$\|x_{\mathrm{out}}\|$", fontsize=11)
-    ax.set_xlim(-0.02, eta_max)
+    ax.set_xlim(-0.02, lambda_max)
     ax.legend(handles=legend_handles, loc="best", fontsize=8,
               framealpha=0.9, facecolor="#f8fafc", edgecolor="#e2e8f0")
+    plt.tight_layout()
+    from .export import intercept_and_export_path
+    intercept_and_export_path(
+        fig,
+        os.path.join(fig_dir, "continuation_tracking_norm.png"),
+        "continuation",
+    )
+    plt.close(fig)
 
     all_statuses = list(dict.fromkeys(
         [s for s in _STATUS_ORDER if s in statuses] +
@@ -338,17 +405,16 @@ def plot_continuation_tracking(
     fig, ax = plt.subplots(figsize=(9, fig_h), dpi=300)
     ax.set_facecolor("#f8fafc")
     ax.grid(True, axis="x", linestyle="--", linewidth=0.5, color="#cbd5e1")
-    for st_val, eta_val in zip(statuses, etas):
+    for st_val, lambda_value in zip(statuses, lambda_values):
         y = status_to_y[st_val]
         col = _STATUS_COLORS.get(st_val, "#64748b")
-        ax.scatter(eta_val, y, color=col, s=80, zorder=3, edgecolors="white", linewidths=0.6)
+        ax.scatter(lambda_value, y, color=col, s=80, zorder=3, edgecolors="white", linewidths=0.6)
     ax.set_yticks(range(len(all_statuses)))
     ax.set_yticklabels(all_statuses, fontsize=9)
     ax.set_title(f"Continuation: Status per Step\n{sysid}",
                  fontsize=12, fontweight="bold", pad=12)
-    ax.set_xlabel(r"$\eta$", fontsize=11)
-    ax.set_xlim(-0.02, eta_max)
+    ax.set_xlabel(r"$\lambda$", fontsize=11)
+    ax.set_xlim(-0.02, lambda_max)
     plt.tight_layout()
-    from .export import intercept_and_export_path
     intercept_and_export_path(fig, os.path.join(fig_dir, "continuation_tracking_status.png"), "continuation")
     plt.close(fig)

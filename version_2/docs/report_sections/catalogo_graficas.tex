@@ -1,0 +1,499 @@
+\section{Catálogo reproducible de gráficas}
+\label{sec:catalogo-graficas}
+
+Esta sección cubre todas las funciones públicas cuyo nombre comienza con
+\codepath{plot_} o \codepath{render_} en
+\codepath{hidden_attractors.plotting}: 33 funciones en la versión documentada.
+Cada imagen fue producida llamando a la librería, no dibujada manualmente. Las
+entradas tampoco son curvas pedagógicas ni matrices sintéticas construidas a
+mano: proceden de cálculos numéricos reproducibles del sistema registrado
+\codepath{chua-nonsmooth}. El caso
+\codepath{chua_nonsmooth_real_system_catalog_20260729} es una reintegración
+con la implementación canónica de la biblioteca.
+
+El vector usado es
+\[
+(\alpha,\beta,\gamma,m_0,m_1,a_1,a_2,\rho)=
+(8.4562,12.0732,0.0052,-0.1768,-1.1468,0.4,-1.5585,1).
+\]
+Según la salida, el contrato numérico corresponde a una trayectoria
+\(q=1\) con \codepath{efork_q1}, una continuación entera en \(\lambda\), un
+barrido de \(\beta\) con RK4, exponentes finito-temporales con QR--Benettin,
+controles integrados desde vecindades de los equilibrios o una clasificación
+de cuenca por tiempo finito. El manifiesto conserva para cada insumo el paso,
+horizonte, condición inicial, malla, umbrales y semilla exactos.
+
+Estos son resultados numéricos reales de un sistema matemático definido, no
+mediciones experimentales ni una nueva campaña de validación. Ninguna imagen
+certifica por sí sola caos, estabilidad asintótica, ocultedad, convergencia de
+un integrador o desempeño científico.
+
+El catálogo completo se regenera desde la raíz de \codepath{version_2} con:
+\begin{verbatim}
+python figure_scripts/generate_plot_catalog_examples.py
+\end{verbatim}
+El archivo
+\codepath{docs/assets/generated_plot_catalog/catalog_results.json} conserva
+la firma inspeccionada, el comando individual, la imagen representativa y el
+estado de cada función, así como las 62 imágenes y sus hashes SHA-256. El
+generador compara su lista con
+\codepath{hidden_attractors.plotting.__all__} y falla si la API y el catálogo
+dejan de coincidir.
+
+\newcommand{\plotcatalogentry}[4]{%
+  \bigskip
+  \noindent\textbf{Función.}\ \codepath{#1}\par
+  \noindent #2\par
+  \noindent\textbf{Llamada directa.}\ \codepath{#3}\par
+  \noindent\textbf{Comando del ejemplo.}\
+  \texttt{python}\ \codepath{figure_scripts/generate_plot_catalog_examples.py}\
+  \texttt{--only}\ \codepath{#1}\par
+  \begin{center}
+    \includegraphics[
+      width=0.82\textwidth,
+      height=0.48\textheight,
+      keepaspectratio
+    ]{#4}\\[-1mm]
+    {\footnotesize Sistema \codepath{chua-nonsmooth} con el vector de
+    parámetros declarado arriba. La entrada procede de la reintegración
+    canónica y del contrato específico registrado en
+    \codepath{catalog_results.json}. Es una salida numérica reproducible de la
+    API, no una medición ni nueva evidencia de validación; por sí sola no
+    demuestra caos, estabilidad, ocultedad o convergencia.}
+  \end{center}
+}
+
+\newcommand{\plotcatalogextra}[3]{%
+  \medskip
+  \noindent\textbf{#2} (\codepath{#1}).\par
+  \begin{center}
+    \includegraphics[
+      width=0.76\textwidth,
+      height=0.39\textheight,
+      keepaspectratio
+    ]{#3}\\[-1mm]
+    {\footnotesize Salida adicional calculada para
+    \codepath{chua-nonsmooth}; parámetros, contrato numérico, procedencia y
+    hash se registran en \codepath{catalog_results.json}. No constituye una
+    medición experimental, nueva validación ni prueba autónoma de una
+    propiedad dinámica.}
+  \end{center}
+}
+
+\subsection{Trayectorias, series y espectros}
+
+\plotcatalogentry
+  {plot_phase_space}
+  {Representa una trayectoria en dos o tres coordenadas, con color temporal
+  opcional. La entrada usual tiene columnas \((t,x,y,z)\).}
+  {plot_phase_space(trajectory, output_path, dims=("x","y","z"))}
+  {assets/generated_plot_catalog/examples/08_plot_phase_space.png}
+
+\plotcatalogentry
+  {plot_phase_projections}
+  {Construye las proyecciones \(x\)-\(y\), \(x\)-\(z\) y \(y\)-\(z\) de una
+  misma trayectoria.}
+  {plot_phase_projections(trajectory, output_path)}
+  {assets/generated_plot_catalog/examples/07_plot_phase_projections.png}
+
+\plotcatalogentry
+  {plot_time_series}
+  {Grafica las componentes seleccionadas contra el tiempo de muestreo.}
+  {plot_time_series(trajectory, output_path, columns=("x","y","z"))}
+  {assets/generated_plot_catalog/examples/10_plot_time_series.png}
+
+\plotcatalogentry
+  {plot_trajectory_overlay}
+  {Superpone dos o más trayectorias etiquetadas para una comparación visual
+  bajo la misma proyección.}
+  {plot_trajectory_overlay(trajectories, labels, title="Comparacion", output_path=output_path)}
+  {assets/generated_plot_catalog/examples/12_plot_trajectory_overlay.png}
+
+\plotcatalogentry
+  {plot_spectrum}
+  {Representa un \codepath{SpectrumResult} calculado previamente, con
+  frecuencia en las unidades declaradas.}
+  {plot_spectrum(spectrum, output_path, x_units="Hz")}
+  {assets/generated_plot_catalog/examples/09_plot_spectrum.png}
+
+\plotcatalogentry
+  {plot_trajectory_spectra}
+  {Calcula y exporta el espectro de las componentes de una trayectoria. Acepta
+  FFT y los alias \codepath{psd}, \codepath{welch} y
+  \codepath{psd_welch}.}
+  {plot_trajectory_spectra(trajectory, output_dir, method="fft", prefix="case")}
+  {assets/generated_plot_catalog/examples/11_plot_trajectory_spectra.png}
+
+\plotcatalogentry
+  {plot_lyapunov_convergence}
+  {Muestra la evolución finito-temporal de los exponentes contenidos en un
+  \codepath{LyapunovResult}; no estima los exponentes por sí sola.}
+  {plot_lyapunov_convergence(result, output_path)}
+  {assets/generated_plot_catalog/examples/03_plot_lyapunov_convergence.png}
+
+\plotcatalogentry
+  {plot_attractor_trajectories}
+  {Genera vistas de una trayectoria y de los equilibrios suministrados usando
+  el contrato de configuración del workflow.}
+  {plot_attractor_trajectories(trajectory, equilibria, config, output_dir)}
+  {assets/generated_plot_catalog/examples/24_plot_attractor_trajectories.png}
+
+\plotcatalogentry
+  {plot_flexible_attractor_and_projections}
+  {Exporta una vista espacial y proyecciones configurables para un caso
+  identificado.}
+  {plot_flexible_attractor_and_projections(trajectory, equilibria, config, output_dir, "case")}
+  {assets/generated_plot_catalog/examples/25_plot_flexible_attractor_and_projections.png}
+
+\plotcatalogentry
+  {plot_timeseries_data}
+  {Exporta las series temporales configuradas y el CSV correspondiente con
+  columnas \(t,x,y,z\).}
+  {plot_timeseries_data(trajectory, config, output_dir, "case")}
+  {assets/generated_plot_catalog/examples/26_plot_timeseries_data.png}
+
+\subsection{Bifurcación, cuencas y estabilidad}
+
+\plotcatalogentry
+  {plot_bifurcation_diagram}
+  {Representa puntos ya postprocesados contra el parámetro; no continúa ramas
+  ni identifica automáticamente bifurcaciones.}
+  {plot_bifurcation_diagram(points, output_path, parameter_label="p", observable_label="x")}
+  {assets/generated_plot_catalog/examples/06_plot_bifurcation_diagram.png}
+
+\plotcatalogentry
+  {plot_basin_slices}
+  {Representa una o varias matrices de clases sobre planos declarados. Los
+  colores reflejan las etiquetas recibidas, no una prueba global de cuenca.}
+  {plot_basin_slices(slices, "system_id", output_dir)}
+  {assets/generated_plot_catalog/examples/13_plot_basin_slices.png}
+
+\plotcatalogentry
+  {plot_basin_slice_file}
+  {Exporta un único corte de cuenca a partir de dos ejes y una matriz de
+  clases.}
+  {plot_basin_slice_file("xy", u, v, classes, "E0", "system_id", output_dir)}
+  {assets/generated_plot_catalog/examples/14_plot_basin_slice_file.png}
+
+\plotcatalogentry
+  {plot_matignon_equilibria}
+  {Ubica autovalores de los Jacobianos de los equilibrios respecto de la
+  frontera angular de Matignon para el orden \(q\).}
+  {plot_matignon_equilibria(system, equilibria, 0.9, output_dir)}
+  {assets/generated_plot_catalog/examples/15_plot_matignon_equilibria.png}
+
+\subsection{Transferencia de Lur'e y función descriptiva}
+
+\plotcatalogentry
+  {plot_lure_nyquist_describing_function}
+  {Compara el lugar de Nyquist de \(W_q\) con la curva
+  \(-1/N(A)\) y marca una semilla armónica suministrada.}
+  {plot_lure_nyquist_describing_function(system.lure, seed, output_path, q=1.0)}
+  {assets/generated_plot_catalog/examples/04_plot_lure_nyquist_describing_function.png}
+
+\plotcatalogentry
+  {plot_lure_transfer_components}
+  {Representa componentes reales, imaginarias y magnitudes de la transferencia
+  de Lur'e alrededor de una semilla.}
+  {plot_lure_transfer_components(system.lure, seed, output_path, q=1.0)}
+  {assets/generated_plot_catalog/examples/05_plot_lure_transfer_components.png}
+
+\plotcatalogentry
+  {plot_nyquist_transfer}
+  {Representa valores complejos de transferencia sobre una malla de
+  frecuencias y candidatos \((A,\omega,k)\).}
+  {plot_nyquist_transfer(omega, W, candidates, config, output_dir)}
+  {assets/generated_plot_catalog/examples/16_plot_nyquist_transfer.png}
+
+\plotcatalogentry
+  {plot_describing_function}
+  {Representa la función descriptiva del sistema y los candidatos entregados
+  por el usuario.}
+  {plot_describing_function(system, candidates, config, output_dir)}
+  {assets/generated_plot_catalog/examples/17_plot_describing_function.png}
+
+\plotcatalogentry
+  {plot_harmonic_residual_map}
+  {Construye el mapa del residuo
+  \(\lvert1+N(A)W(\mathrm{i}\omega)\rvert\). Un mínimo visual no reemplaza la
+  verificación numérica de cierre.}
+  {plot_harmonic_residual_map(system, candidates, config, output_dir)}
+  {assets/generated_plot_catalog/examples/18_plot_harmonic_residual_map.png}
+
+El ejemplo real de estas gráficas declara
+\codepath{transfer_convention="opposite_sign"} y
+\codepath{harmonic_condition="1_plus_WN"}; usa entonces
+\[
+W_{\mathrm{code}}(s)=c^\mathsf{T}(P-sI)^{-1}b,\qquad
+\left|1+N(A)W_{\mathrm{code}}(\mathrm{i}\omega)\right|,
+\qquad W_{\mathrm{code}}(\mathrm{i}\omega_0)=-\frac{1}{k}.
+\]
+La pareja normalizada también aceptada por la API es
+\codepath{standard + 1_minus_WN}. Como
+\(W_{\mathrm{report}}=-W_{\mathrm{code}}\), en ella se representa
+\(\lvert1-N(A)W_{\mathrm{report}}\rvert\) y el cierre queda en
+\(W_{\mathrm{report}}=1/k\). Las funciones infieren la clave complementaria
+si se proporciona solamente una y rechazan parejas de signo incoherentes,
+salvo habilitación explícita.
+
+\subsection{Continuación y controles de vecindad}
+
+\plotcatalogentry
+  {plot_integer_lure_continuation}
+  {Representa los pasos de una continuación de Lur'e de orden entero ya
+  calculada.}
+  {plot_integer_lure_continuation(steps, output_path)}
+  {assets/generated_plot_catalog/examples/02_plot_integer_lure_continuation.png}
+
+\plotcatalogentry
+  {plot_integer_hiddenness_controls}
+  {Compara la trayectoria objetivo con controles enteros suministrados desde
+  vecindades de equilibrios.}
+  {plot_integer_hiddenness_controls(trajectory, probes, output_path)}
+  {assets/generated_plot_catalog/examples/01_plot_integer_hiddenness_controls.png}
+
+\plotcatalogentry
+  {plot_continuation_eta}
+  {Exporta norma final y amplitud pico a pico contra el parámetro de
+  continuación \(\lambda\), además de comparaciones cuando hay varios pasos.
+  El nombre público y los archivos con sufijo \codepath{_eta} se conservan
+  únicamente por compatibilidad.}
+  {plot_continuation_eta(cont_steps, config, output_dir)}
+  {assets/generated_plot_catalog/examples/19_plot_continuation_eta.png}
+
+\plotcatalogentry
+  {plot_continuation_first_last_comparison}
+  {Compara geométricamente las trayectorias del primer y último paso
+  disponibles.}
+  {plot_continuation_first_last_comparison(cont_steps, config, output_dir)}
+  {assets/generated_plot_catalog/examples/20_plot_continuation_first_last_comparison.png}
+
+\plotcatalogentry
+  {plot_continuation_timeseries_comparison}
+  {Compara las series temporales del primer y último paso de la continuación.}
+  {plot_continuation_timeseries_comparison(cont_steps, config, output_dir)}
+  {assets/generated_plot_catalog/examples/21_plot_continuation_timeseries_comparison.png}
+
+\plotcatalogentry
+  {plot_continuation_progression}
+  {Muestra la progresión de estados de entrada, salida y trayectorias a lo
+  largo de los pasos suministrados.}
+  {plot_continuation_progression(cont_steps, config, output_dir)}
+  {assets/generated_plot_catalog/examples/22_plot_continuation_progression.png}
+
+\plotcatalogentry
+  {plot_continuation_tracking}
+  {Exporta por separado la norma rastreada y el estado discreto de cada paso.}
+  {plot_continuation_tracking(cont_steps, config, output_dir)}
+  {assets/generated_plot_catalog/examples/23_plot_continuation_tracking.png}
+
+\plotcatalogentry
+  {plot_neighborhood_control_spheres}
+  {Representa la trayectoria, equilibrios y procedencia de sondas sobre
+  esferas de control declaradas.}
+  {plot_neighborhood_control_spheres(trajectory, probes, equilibria, config, output_dir)}
+  {assets/generated_plot_catalog/examples/27_plot_neighborhood_control_spheres.png}
+
+\plotcatalogentry
+  {plot_sphere_test_results}
+  {Resume los registros de una prueba de esfera para un equilibrio y radio
+  específicos.}
+  {plot_sphere_test_results("E0", equilibrium, radius, probe_runs, output_dir)}
+  {assets/generated_plot_catalog/examples/28_plot_sphere_test_results.png}
+
+\subsection{Renderizadores unificados}
+
+\plotcatalogentry
+  {render_attractor}
+  {Renderiza una trayectoria y sus equilibrios en el almacén de figuras
+  configurado, junto con metadatos.}
+  {render_attractor(trajectory, equilibria, config, run_id="case")}
+  {assets/generated_plot_catalog/examples/29_render_attractor.png}
+
+\plotcatalogentry
+  {render_basin}
+  {Renderiza una matriz de cuenca y sus ejes en PNG, PDF y metadatos JSON.}
+  {render_basin(grid_x, grid_y, basin_grid, config, run_id="case")}
+  {assets/generated_plot_catalog/examples/30_render_basin.png}
+
+\plotcatalogentry
+  {render_nyquist}
+  {Renderiza transferencia, función descriptiva y candidatos complejos con
+  metadatos de procedencia.}
+  {render_nyquist(freqs, W, N, candidates, config, run_id="case")}
+  {assets/generated_plot_catalog/examples/31_render_nyquist.png}
+
+\plotcatalogentry
+  {render_matignon}
+  {Renderiza autovalores y frontera de estabilidad para el orden declarado.}
+  {render_matignon(eigenvalues, q, config, run_id="case")}
+  {assets/generated_plot_catalog/examples/32_render_matignon.png}
+
+\plotcatalogentry
+  {render_all_plots}
+  {Orquesta cualquier subconjunto compatible de atractor, cuenca, Nyquist y
+  Matignon; no define un quinto diagnóstico matemático.}
+  {render_all_plots(trajectory=trajectory, equilibria=equilibria, config=config, run_id="case")}
+  {assets/generated_plot_catalog/examples/33_render_all_plots.png}
+
+\subsection{Registro visual completo de funciones multisalida}
+
+Las fichas anteriores conservan la correspondencia uno a uno entre las 33
+funciones, sus llamadas directas y sus comandos individuales. Diez funciones
+producen más de una imagen. El mismo comando
+\codepath{python figure_scripts/generate_plot_catalog_examples.py --only FUNCTION_NAME}
+indicado en cada ficha regenera su imagen principal y las salidas
+adicionales siguientes. Con ellas, el inventario completo contiene 62 PNG:
+33 representativos y 29 adicionales.
+
+\plotcatalogextra
+  {plot_trajectory_spectra}
+  {Espectro de la componente 1}
+  {assets/generated_plot_catalog/examples/11_plot_trajectory_spectra__02_catalog_fft_component_1.png}
+
+\plotcatalogextra
+  {plot_trajectory_spectra}
+  {Espectro de la componente 2}
+  {assets/generated_plot_catalog/examples/11_plot_trajectory_spectra__03_catalog_fft_component_2.png}
+
+\plotcatalogextra
+  {plot_nyquist_transfer}
+  {Ampliación del entorno de cierre de Nyquist}
+  {assets/generated_plot_catalog/examples/16_plot_nyquist_transfer__02_fig01b_nyquist_zoom_x.png}
+
+\plotcatalogextra
+  {plot_nyquist_transfer}
+  {Partes real e imaginaria de la transferencia}
+  {assets/generated_plot_catalog/examples/16_plot_nyquist_transfer__03_transfer_real_imag.png}
+
+\plotcatalogextra
+  {plot_continuation_eta}
+  {Amplitud pico a pico contra \(\lambda\)}
+  {assets/generated_plot_catalog/examples/19_plot_continuation_eta__02_continuation_amplitude_vs_eta.png}
+
+\plotcatalogextra
+  {plot_continuation_eta}
+  {Comparación espacial del primer y último paso}
+  {assets/generated_plot_catalog/examples/19_plot_continuation_eta__03_continuation_first_last_comparison.png}
+
+\plotcatalogextra
+  {plot_continuation_eta}
+  {Proyecciones del primer y último paso}
+  {assets/generated_plot_catalog/examples/19_plot_continuation_eta__04_continuation_first_last_projections.png}
+
+\plotcatalogextra
+  {plot_continuation_eta}
+  {Comparación de series temporales}
+  {assets/generated_plot_catalog/examples/19_plot_continuation_eta__05_continuation_timeseries_comparison_x.png}
+
+\plotcatalogextra
+  {plot_continuation_eta}
+  {Progresión de la continuación}
+  {assets/generated_plot_catalog/examples/19_plot_continuation_eta__06_continuation_progression.png}
+
+\plotcatalogextra
+  {plot_continuation_first_last_comparison}
+  {Proyecciones del primer y último paso}
+  {assets/generated_plot_catalog/examples/20_plot_continuation_first_last_comparison__02_continuation_first_last_projections.png}
+
+\plotcatalogextra
+  {plot_continuation_tracking}
+  {Estado discreto por paso}
+  {assets/generated_plot_catalog/examples/23_plot_continuation_tracking__02_continuation_tracking_status.png}
+
+\plotcatalogextra
+  {plot_attractor_trajectories}
+  {Proyección \(xy\) de la trayectoria}
+  {assets/generated_plot_catalog/examples/24_plot_attractor_trajectories__02_attractor_xy.png}
+
+\plotcatalogextra
+  {plot_attractor_trajectories}
+  {Proyección \(xz\) de la trayectoria}
+  {assets/generated_plot_catalog/examples/24_plot_attractor_trajectories__03_attractor_xz.png}
+
+\plotcatalogextra
+  {plot_attractor_trajectories}
+  {Proyección \(yz\) de la trayectoria}
+  {assets/generated_plot_catalog/examples/24_plot_attractor_trajectories__04_attractor_yz.png}
+
+\plotcatalogextra
+  {plot_flexible_attractor_and_projections}
+  {Vista flexible en el plano \(xy\)}
+  {assets/generated_plot_catalog/examples/25_plot_flexible_attractor_and_projections__02_catalog_flexible_xy.png}
+
+\plotcatalogextra
+  {plot_flexible_attractor_and_projections}
+  {Vista flexible en el plano \(xz\)}
+  {assets/generated_plot_catalog/examples/25_plot_flexible_attractor_and_projections__03_catalog_flexible_xz.png}
+
+\plotcatalogextra
+  {plot_flexible_attractor_and_projections}
+  {Vista flexible en el plano \(yz\)}
+  {assets/generated_plot_catalog/examples/25_plot_flexible_attractor_and_projections__04_catalog_flexible_yz.png}
+
+\plotcatalogextra
+  {plot_timeseries_data}
+  {Serie temporal de la componente \(y\)}
+  {assets/generated_plot_catalog/examples/26_plot_timeseries_data__02_catalog_series_timeseries_y.png}
+
+\plotcatalogextra
+  {plot_timeseries_data}
+  {Serie temporal de la componente \(z\)}
+  {assets/generated_plot_catalog/examples/26_plot_timeseries_data__03_catalog_series_timeseries_z.png}
+
+\plotcatalogextra
+  {plot_timeseries_data}
+  {Series temporales conjuntas \(x,y,z\)}
+  {assets/generated_plot_catalog/examples/26_plot_timeseries_data__04_catalog_series_timeseries_xyz.png}
+
+\plotcatalogextra
+  {render_attractor}
+  {Renderizado del atractor en el plano \(xy\)}
+  {assets/generated_plot_catalog/examples/29_render_attractor__02_chua-nonsmooth_attractor_xy.png}
+
+\plotcatalogextra
+  {render_attractor}
+  {Renderizado del atractor en el plano \(xz\)}
+  {assets/generated_plot_catalog/examples/29_render_attractor__03_chua-nonsmooth_attractor_xz.png}
+
+\plotcatalogextra
+  {render_attractor}
+  {Renderizado del atractor en el plano \(yz\)}
+  {assets/generated_plot_catalog/examples/29_render_attractor__04_chua-nonsmooth_attractor_yz.png}
+
+\plotcatalogextra
+  {render_all_plots}
+  {Renderizado conjunto del atractor en \(xy\)}
+  {assets/generated_plot_catalog/examples/33_render_all_plots__02_chua-nonsmooth_attractor_xy.png}
+
+\plotcatalogextra
+  {render_all_plots}
+  {Renderizado conjunto del atractor en \(xz\)}
+  {assets/generated_plot_catalog/examples/33_render_all_plots__03_chua-nonsmooth_attractor_xz.png}
+
+\plotcatalogextra
+  {render_all_plots}
+  {Renderizado conjunto del atractor en \(yz\)}
+  {assets/generated_plot_catalog/examples/33_render_all_plots__04_chua-nonsmooth_attractor_yz.png}
+
+\plotcatalogextra
+  {render_all_plots}
+  {Renderizado conjunto de la cuenca finito-temporal}
+  {assets/generated_plot_catalog/examples/33_render_all_plots__05_chua-nonsmooth_basin.png}
+
+\plotcatalogextra
+  {render_all_plots}
+  {Renderizado conjunto de Nyquist}
+  {assets/generated_plot_catalog/examples/33_render_all_plots__06_chua-nonsmooth_nyquist.png}
+
+\plotcatalogextra
+  {render_all_plots}
+  {Renderizado conjunto de Matignon}
+  {assets/generated_plot_catalog/examples/33_render_all_plots__07_chua-nonsmooth_matignon.png}
+
+\noindent
+El nombre \codepath{plot_continuation_eta} y los sufijos
+\codepath{_eta} de algunas rutas se mantienen sólo por compatibilidad. Las
+etiquetas visibles usan el parámetro efectivo \(\lambda\). El manifiesto
+generado exige 33 resultados exitosos y enumera cada una de estas 62 imágenes
+en \codepath{produced_outputs}.

@@ -24,7 +24,10 @@ ALLOWED_SDIST_FILES = {
     "README.md",
     "USER_MANUAL.md",
     "docs",
+    "docs/assets",
+    "docs/javascripts",
     "examples",
+    "figure_scripts",
     "pyproject.toml",
     "setup.cfg",
     "examples/minimal_chua_protocol.py",
@@ -34,11 +37,16 @@ ALLOWED_SDIST_FILES = {
     "docs/installation.md",
     "docs/quick_start.md",
     "docs/scientific_scope.md",
+    "docs/mathematical_diagnostics.md",
+    "docs/plot_function_catalog.md",
+    "docs/javascripts/mathjax.js",
+    "figure_scripts/generate_plot_catalog_examples.py",
 }
 ALLOWED_SDIST_PREFIXES = (
     "hidden_attractors/",
     "hidden_attractors_fo.egg-info/",
     "examples/chua_integer_lure_reference/",
+    "docs/assets/generated_plot_catalog/",
 )
 
 
@@ -153,6 +161,10 @@ def _validate_sdist_contents(sdist: Path) -> None:
         "examples/chua_integer_lure_reference/run_example.py",
         "docs/installation.md",
         "docs/quick_start.md",
+        "docs/mathematical_diagnostics.md",
+        "docs/plot_function_catalog.md",
+        "docs/assets/generated_plot_catalog/catalog_results.json",
+        "figure_scripts/generate_plot_catalog_examples.py",
     }
     missing = sorted(required - names)
     if missing:

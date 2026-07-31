@@ -75,6 +75,11 @@ PUBLIC_SDIST_MANIFEST_DIRECTIVES = {
     "include docs/api_stability.md",
     "include docs/scientific_scope.md",
     "include docs/citation.md",
+    "include docs/mathematical_diagnostics.md",
+    "include docs/plot_function_catalog.md",
+    "include docs/javascripts/mathjax.js",
+    "recursive-include docs/assets/generated_plot_catalog *.png *.json",
+    "include figure_scripts/generate_plot_catalog_examples.py",
     "recursive-exclude tests *",
     "global-exclude __pycache__ *.py[cod] .DS_Store",
 }

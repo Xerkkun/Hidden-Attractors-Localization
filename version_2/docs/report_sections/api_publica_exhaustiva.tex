@@ -1,0 +1,181 @@
+\subsection{Inventario exhaustivo de la superficie pública}
+\label{sec:api-publica-exhaustiva}
+
+La superficie canónica importable desde \codepath{hidden_attractors} contiene
+99 símbolos. La tabla siguiente los enumera todos, sin convertir constantes,
+tipos de datos o envolturas de flujo en procedimientos matemáticos que no son.
+Las 33 funciones públicas de \codepath{hidden_attractors.plotting} se
+documentan por separado, una por una, en la
+Sección~\ref{sec:catalogo-graficas}. Las rutas especializadas de análisis e
+integración que no se reexportan en la raíz se describen en las
+Secciones~12.6, 12.9 y 12.10.
+
+\begin{center}
+\footnotesize
+\begin{longtable}{@{}L{0.16\textwidth}L{0.50\textwidth}L{0.28\textwidth}@{}}
+\toprule
+Grupo & Símbolos públicos reexportados & Papel y fundamento \\
+\midrule
+\endfirsthead
+\toprule
+Grupo & Símbolos públicos reexportados & Papel y fundamento \\
+\midrule
+\endhead
+Estabilidad de API &
+\codepath{EXPERIMENTAL},
+\codepath{INTERNAL},
+\codepath{LEGACY},
+\codepath{STABLE},
+\codepath{api_tier},
+\codepath{assert_tier},
+\codepath{get_tier},
+\codepath{PUBLIC_API_STABLE},
+\codepath{PUBLIC_API_EXPERIMENTAL},
+\codepath{PUBLIC_API_TIERS}
+&
+Metadatos y comprobaciones del contrato de estabilidad. No calculan una
+propiedad dinámica. \\
+\addlinespace
+
+Modelo Chua &
+\codepath{ChuaParameters},
+\codepath{chua_parameters},
+\codepath{chua_arctan_wu2023_parameters},
+\codepath{chua_nonsmooth_parameters},
+\codepath{equilibria_arctan},
+\codepath{equilibria_nonsmooth},
+\codepath{jacobian_arctan},
+\codepath{jacobian_nonsmooth},
+\codepath{rhs_arctan},
+\codepath{rhs_nonsmooth}
+&
+Parámetros, campos \(F(X)\), equilibrios \(F(E)=0\) y Jacobianos
+\(J=\partial F/\partial X\) de los modelos definidos en las Secciones 5 y 6. \\
+\addlinespace
+
+Registro de sistemas &
+\codepath{ChaoticSystem},
+\codepath{LureSystem},
+\codepath{check_system_capability},
+\codepath{get_system},
+\codepath{known_workflows},
+\codepath{list_systems},
+\codepath{register_system},
+\codepath{requirements_for}
+&
+Representación reusable del campo autónomo y, cuando aplica, del
+desdoblamiento \(PX+b\psi(r^\top X)\); además valida capacidades exigidas por
+cada flujo. \\
+\addlinespace
+
+Clases de destino e I/O &
+\codepath{CLASS_LABELS},
+\codepath{TARGET_CLASS_IDS},
+\codepath{class_label},
+\codepath{is_target_class},
+\codepath{load_trajectory_csv}
+&
+Convenciones finitas de clasificación y carga portable de trayectorias. Una
+clase de destino es una etiqueta bajo el contrato declarado, no una prueba
+global de cuenca. \\
+\addlinespace
+
+Análisis y resultados &
+\codepath{BifurcationPoint},
+\codepath{LyapunovComputationRequest},
+\codepath{LyapunovComputationSummary},
+\codepath{LyapunovResult},
+\codepath{PoincareCrossingResult},
+\codepath{RobustnessCase},
+\codepath{SpectrumResult},
+\codepath{TimeSeriesLyapunovResult},
+\codepath{bifurcation_points_from_trajectories},
+\codepath{bifurcation_summary},
+\codepath{compute_boundedness_metrics},
+\codepath{compute_fft_psd},
+\codepath{compute_lyapunov_spectrum},
+\codepath{compute_trajectory_metrics},
+\codepath{detect_poincare_crossings},
+\codepath{estimate_time_series_lyapunov},
+\codepath{integer_qr_benettin_lyapunov_exponents},
+\codepath{integer_system_lyapunov_exponents},
+\codepath{kaplan_yorke_dimension},
+\codepath{trajectory_metrics},
+\codepath{trajectory_metrics_for_system},
+\codepath{validate_lyapunov_method_request},
+\codepath{zero_one_test}
+&
+Tipos estructurados y funciones de caracterización independientes. Sus
+ecuaciones, discretizaciones, unidades, llamadas y límites se presentan en la
+Sección 12. \\
+\addlinespace
+
+Semillas armónicas &
+\codepath{HarmonicSeed},
+\codepath{find_harmonic_seed},
+\codepath{find_lure_harmonic_seed},
+\codepath{find_lure_omega_gain_candidates},
+\codepath{find_omega_gain_candidates},
+\codepath{validate_fractional_order}
+&
+Solución del cierre de balance armónico y validación del orden. Son
+constructores de semillas; no certifican por sí mismos caos ni ocultedad. \\
+\addlinespace
+
+Contratos de flujo &
+\codepath{BasinSliceSpec},
+\codepath{DestinationClassifierSpec},
+\codepath{FullWorkflowContract},
+\codepath{ContinuationPlan},
+\codepath{ContinuationTrace},
+\codepath{DynamicReference},
+\codepath{FINAL_LABELS},
+\codepath{HiddennessTestResult},
+\codepath{IntegratorSpec},
+\codepath{NumericalContract},
+\codepath{OFFICIAL_STAGE_ORDER},
+\codepath{ParameterSweepSpec},
+\codepath{RobustnessCaseSpec},
+\codepath{RobustnessVerdict},
+\codepath{PROTOCOL_VERSION},
+\codepath{PostContinuationDecision},
+\codepath{SEED_FAMILIES},
+\codepath{SoftPrecheckResult},
+\codepath{SphereControlSpec},
+\codepath{StageEnvelope},
+\codepath{StrictRefinementSpec},
+\codepath{TargetReferenceSpec},
+\codepath{TrajectoryDiagnosticsSpec},
+\codepath{WorkflowInputSpec},
+\codepath{UnifiedSeedRecord}
+&
+Tipos, enumeraciones y envolturas que fijan entradas, solver, memoria,
+continuación, muestreo, evidencia y salidas. Formalizan el protocolo, pero no
+añaden una ecuación dinámica distinta. \\
+\addlinespace
+
+Ejecución de flujos &
+\codepath{continue_integer_lure_seed},
+\codepath{final_integer_lure_attractor},
+\codepath{integer_lure_seed},
+\codepath{integrate_integer_lure},
+\codepath{run_integer_lure_hiddenness_controls},
+\codepath{validate_full_workflow_system},
+\codepath{load_config},
+\codepath{save_effective_config},
+\codepath{run_attractor_only_workflow},
+\codepath{run_bifurcation_workflow},
+\codepath{run_basin_workflow},
+\codepath{run_simple_workflow}
+&
+Orquestación reproducible de los métodos anteriores. Las cuatro últimas rutas
+permiten simular, analizar o construir bifurcaciones y cuencas sin iniciar una
+búsqueda de atractor oculto. \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+El inventario anterior se limita de forma deliberada a la API soportada. Los
+auxiliares privados, scripts de validación y backends internos permanecen
+auditables en el código y en \codepath{docs/api_reference.md}, pero no se
+promueven como llamadas de usuario.

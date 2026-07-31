@@ -90,6 +90,60 @@ def test_api_dispatches_cloned_dynamics_without_jacobian() -> None:
     assert "cloned_dynamics_no_jacobian_required" in summary.warnings
 
 
+@pytest.mark.parametrize(
+    "requested_protocol",
+    [
+        "published_block_restart",
+        "published_block_restart_or_experimental_qr",
+        "experimental_qr_block_restart",
+    ],
+)
+def test_memory_protocol_aliases_report_the_effective_block_restart(
+    requested_protocol: str,
+) -> None:
+    result = compute_cloned_dynamics_spectrum(
+        lambda x: -x,
+        np.ones(2),
+        orders=[0.9],
+        h=0.02,
+        t_clone=0.1,
+        n_clones=2,
+        k_blocks=2,
+        delta=1e-3,
+        method="qr",
+        memory_protocol=requested_protocol,
+    )
+    assert result.method_metadata["requested_memory_protocol"] == requested_protocol
+    assert result.method_metadata["effective_memory_protocol"] == "published_block_restart"
+    assert result.method_metadata["memory_protocol"] == "published_block_restart"
+    assert result.method_metadata["requested_protocol_is_alias"] is (
+        requested_protocol != "published_block_restart"
+    )
+
+
+def test_api_summary_separates_requested_and_effective_memory_protocol() -> None:
+    summary = compute_lyapunov_spectrum(
+        rhs=lambda x: -x,
+        x0=np.ones(2),
+        q=0.9,
+        orders=[0.9],
+        method="fractional_cloned_dynamics_abm_qr",
+        h=0.02,
+        t_final=0.2,
+        t_clone=0.1,
+        k_blocks=2,
+        delta=1e-3,
+        memory_protocol="experimental_qr_block_restart",
+    )
+    assert summary.request_summary["requested_memory_protocol"] == (
+        "experimental_qr_block_restart"
+    )
+    assert summary.request_summary["effective_memory_protocol"] == (
+        "published_block_restart"
+    )
+    assert any("compatibility_alias" in warning for warning in summary.warnings)
+
+
 @pytest.mark.parametrize("orders", [[0.0], [1.1], [0.9, 0.8, 0.7]])
 def test_bad_orders_are_rejected(orders: list[float]) -> None:
     with pytest.raises(ValueError):

@@ -291,11 +291,11 @@ def efork_integrate(
     history_times: Optional[np.ndarray] = None,
     history_states: Optional[np.ndarray] = None,
 ) -> Tuple[np.ndarray, np.ndarray, str]:
-    """Integrate a Lur'e system using EFORK-3 (Caputo, 0 < q < 1) or Euler for q = 1.
+    """Integrate a Lur'e system with EFORK-3 or its integer-order limit.
 
-    For ``q == 1.0`` the system is integer-order and is integrated with the
-    forward-Euler / trapezoidal predictor-corrector (not EFORK-3, which is
-    only defined for 0 < q < 1).
+    For ``q == 1.0`` the system is integrated with the three-stage
+    ``EFORK_Q1`` coefficient limit. This is numerically distinct from both
+    forward Euler and the Heun predictor-corrector.
 
     For ``0 < q < 1`` the published three-stage EFORK Caputo method is used,
     either via the native C backend (fast) or the pure Python reference
@@ -325,7 +325,7 @@ def efork_integrate(
     """
     x0_arr = np.asarray(x0, dtype=float)
 
-    # ── Integer order: standard predictor-corrector (Heun), q=1 not EFORK-3 ──
+    # Integer-order endpoint: use the three-stage EFORK_Q1 coefficient limit.
     if q == 1.0:
         p0 = system.lure.matrix + k * np.outer(system.lure.input_vector, system.lure.output_vector)
 

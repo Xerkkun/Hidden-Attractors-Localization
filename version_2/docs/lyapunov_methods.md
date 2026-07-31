@@ -39,20 +39,23 @@ The public registry contains four implemented methods:
 
 | Method | Scope | Recorded validation state |
 | --- | --- | --- |
-| `integer_qr_benettin` | Integer ODE, `q=1` | Synthetic tests and published benchmark validation |
+| `integer_qr_benettin` | Integer ODE, `q=1` | Exact linear controls and internal cross-checks; no quantitative published-spectrum reproduction |
 | `fractional_variational_abm_qr` | Commensurate Caputo, `0<q<1` | Synthetic numerical validation only |
 | `fractional_cloned_dynamics_abm_gs_published` | Fractional or integer cloned dynamics | Recorded published-benchmark discrepancy |
 | `fractional_cloned_dynamics_abm_qr` | Fractional or integer cloned dynamics | Numerical comparison only |
 
-Only `integer_qr_benettin` carries the registry flag for published benchmark
-validation. The other methods are callable finite-time diagnostics whose
-returned warnings and status must remain attached to reported values.
+No current registry entry claims a complete quantitative published-benchmark
+validation. All methods are callable finite-time diagnostics whose returned
+warnings and status must remain attached to reported values.
 
 ## Integer QR--Benettin
 
-The validated `q=1` route propagates the state and variational basis, applies
-QR reorthonormalization at the configured interval, accumulates
-`log(abs(diag(R)))`, and divides by elapsed physical time.
+The controlled `q=1` route propagates the state with the three-stage
+`efork_q1_step` and propagates the variational basis with an explicit Euler
+update. It applies QR reorthonormalization at the configured interval,
+accumulates `log(abs(diag(R)))`, and divides by elapsed physical time.
+Consequently, step-size refinement is required even though the state update
+itself is higher order.
 
 ```python
 from hidden_attractors import integer_system_lyapunov_exponents
@@ -62,7 +65,7 @@ result = integer_system_lyapunov_exponents(
     np.array([0.1, 0.2, 0.3]),
     h=0.01,
     t_final=100.0,
-    burn_in_time=20.0,
+    t_burn=20.0,
 )
 print(result.exponents)
 ```

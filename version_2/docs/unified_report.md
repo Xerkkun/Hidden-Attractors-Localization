@@ -66,8 +66,10 @@ claim is attached to this validation.
 
 - [Quick Start](quick_start.md)
 - [Workflows](workflows.md)
+- [Mathematical Diagnostics](mathematical_diagnostics.md)
 - [Dynamical Analysis](dynamical_analysis.md)
 - [Lyapunov Methods](lyapunov_methods.md)
+- [Plotting Function Catalog](plot_function_catalog.md)
 - [Validation Boundary](validation_evidence.md)
 - [Code Reference Map](code_reference_map.md)
 - [API Reference](api_reference.md)

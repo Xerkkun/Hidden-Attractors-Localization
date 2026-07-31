@@ -11,7 +11,9 @@
     "filtered_by_min_crossing_separation": 0,
     "burn_time": 50.0,
     "caputo_geometric_crossing": false,
-    "exact_poincare_map": true,
+    "exact_poincare_map": false,
+    "sampled_linear_interpolation": true,
+    "classical_integer_section_interpretation": true,
     "uses_classical_rhs_direction": true
   },
   "warnings": [],

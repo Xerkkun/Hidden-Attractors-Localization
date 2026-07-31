@@ -28,7 +28,8 @@
       "negative_direction_filtering": true,
       "no_crossings_status": true,
       "linear_interpolation": true,
-      "caputo_geometric_metadata": true
+      "caputo_geometric_metadata": true,
+      "integer_rhs_direction_and_metadata": true
     },
     "validates": [
       "crossing_detection",

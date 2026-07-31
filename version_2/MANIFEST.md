@@ -13,15 +13,18 @@ the source distribution.
 - `examples/chua_integer_lure_reference/`: validated comprehensive example.
 - `examples/quickstart_equilibria.py` and `examples/minimal_chua_protocol.py`.
 - `README.md`, `USER_MANUAL.md`, `LICENSE`, and packaging metadata.
-- A small whitelist of installation, quick-start, API-stability, scientific
-  scope, and citation pages.
+- A public whitelist of installation, quick-start, API-stability, scientific
+  scope, citation, mathematical-diagnostics, and plotting-catalog pages.
+- The deterministic 33-function plotting gallery, its machine-readable
+  manifest, and the generator that verifies it against the public plotting
+  exports.
 
 ## Excluded
 
 - exploratory configurations and ordinary run outputs;
 - internal study notes and project plans;
 - repository test infrastructure and maintainer release checklists;
-- full validation datasets, large figures, and literature PDFs;
+- full validation datasets, validation figures, and literature PDFs;
 - local caches, compiled artifacts, and editorial files.
 
 The complete validation tree remains available in the matching release tag and

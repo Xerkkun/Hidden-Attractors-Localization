@@ -104,8 +104,8 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
             FINITE_TIME_SCOPE_WARNING,
         ),
         validated_against_synthetic_tests=True,
-        validated_against_published_benchmarks=True,
-        benchmark_status="validated_against_published_benchmarks",
+        validated_against_published_benchmarks=False,
+        benchmark_status="validated_against_exact_linear_controls_and_internal_crosschecks",
 
     ),
 
@@ -215,7 +215,7 @@ LYAPUNOV_METHODS: dict[str, LyapunovMethodInfo] = {
         supports_q_equal_1=True,
         supports_commensurate=True,
         supports_incommensurate=True,
-        memory_protocol="qr_block_restart",
+        memory_protocol="published_block_restart",
     ),
 }
 

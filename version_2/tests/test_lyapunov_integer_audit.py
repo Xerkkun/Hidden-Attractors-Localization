@@ -308,6 +308,10 @@ class TestMethodRegistry:
     def test_integer_qr_benettin_validated(self) -> None:
         info = LYAPUNOV_METHODS["integer_qr_benettin"]
         assert info.validated is True
+        assert info.validated_against_published_benchmarks is False
+        assert info.benchmark_status == (
+            "validated_against_exact_linear_controls_and_internal_crosschecks"
+        )
 
     def test_integer_qr_benettin_q_support(self) -> None:
         info = LYAPUNOV_METHODS["integer_qr_benettin"]

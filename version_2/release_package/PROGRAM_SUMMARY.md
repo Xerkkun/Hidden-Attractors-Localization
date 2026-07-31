@@ -29,6 +29,13 @@ spectral, Poincare, boundedness, bifurcation, and 0-1 diagnostics. Version
 1.1.0 fully integrates Rosenstein/Eckmann Lyapunov reconstruction and
 Kaplan--Yorke dimension for uniformly sampled scalar time series.
 
+Public reference material documents the complete 99-symbol top-level API and
+all 33 plotting/rendering callables. The bundled catalog contains 62
+reproducible numerical PNG outputs calculated from the registered
+`chua-nonsmooth` system: 33 representatives and 29 additional outputs from
+multi-output functions. These examples are not measurements or new validation
+evidence.
+
 Comprehensive software test: the integer Chua Lur'e reference executes search,
 continuation, final integration, sampled-neighborhood controls, and
 deterministic JSON/CSV output. The quick release control is recorded in

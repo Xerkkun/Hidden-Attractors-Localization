@@ -199,6 +199,14 @@ def validate_lyapunov_method_request(
             (f"Method '{request.method}' is not in the LYAPUNOV_METHODS registry.",),
         )
 
+    # A request must select exactly one vector-field source.
+    if (request.system is None) == (request.rhs is None):
+        return (
+            False,
+            "invalid_parameter",
+            ("exactly one of system or rhs must be provided.",),
+        )
+
     # 2. Generic numeric validation
     try:
         q_value = float(request.q)
@@ -225,16 +233,61 @@ def validate_lyapunov_method_request(
         return False, "invalid_parameter", ("t_burn must be non-negative.",)
     if jacobian_eps_value <= 0.0:
         return False, "invalid_parameter", ("jacobian_eps must be positive.",)
-    if request.reorthonormalize_every is not None and int(request.reorthonormalize_every) < 1:
-        return False, "invalid_parameter", ("reorthonormalize_every must be positive.",)
+    if request.reorthonormalize_every is not None:
+        try:
+            every_value = int(request.reorthonormalize_every)
+            every_float = float(request.reorthonormalize_every)
+        except (TypeError, ValueError, OverflowError):
+            return (
+                False,
+                "invalid_parameter",
+                ("reorthonormalize_every must be a positive integer.",),
+            )
+        if (
+            not np.isfinite(every_float)
+            or every_value < 1
+            or every_float != float(every_value)
+        ):
+            return (
+                False,
+                "invalid_parameter",
+                ("reorthonormalize_every must be a positive integer.",),
+            )
     if request.reorthonormalization_time is not None:
-        interval = float(request.reorthonormalization_time)
+        try:
+            interval = float(request.reorthonormalization_time)
+        except (TypeError, ValueError, OverflowError):
+            return (
+                False,
+                "invalid_parameter",
+                ("reorthonormalization_time must be finite and positive.",),
+            )
         if not np.isfinite(interval) or interval <= 0.0:
             return False, "invalid_parameter", ("reorthonormalization_time must be finite and positive.",)
     if request.div_threshold is not None:
-        threshold = float(request.div_threshold)
+        try:
+            threshold = float(request.div_threshold)
+        except (TypeError, ValueError, OverflowError):
+            return (
+                False,
+                "invalid_parameter",
+                ("div_threshold must be finite and positive.",),
+            )
         if not np.isfinite(threshold) or threshold <= 0.0:
             return False, "invalid_parameter", ("div_threshold must be finite and positive.",)
+
+    def system_has_analytic_jacobian(system: object | None) -> bool:
+        if system is None:
+            return False
+        missing = object()
+        try:
+            jacobian_matrix = getattr(system, "jacobian_matrix", None)
+            declared_jacobian = getattr(system, "jacobian", missing)
+        except Exception:
+            return False
+        return callable(jacobian_matrix) and (
+            declared_jacobian is missing or declared_jacobian is not None
+        )
 
     # 3. Method-specific validation
     if request.method == "integer_qr_benettin":
@@ -261,11 +314,8 @@ def validate_lyapunov_method_request(
                 ),
             )
         # Jacobian advisory
-        if request.jacobian is None and request.system is None:
+        if request.jacobian is None and not system_has_analytic_jacobian(request.system):
             warnings.append("analytic_jacobian_missing_finite_difference_used")
-        elif request.jacobian is None:
-            # system provided but may not have analytic jacobian — still ok
-            pass
 
     elif request.method == "fractional_variational_abm_qr":
         # q must be strictly in (0, 1)
@@ -291,14 +341,26 @@ def validate_lyapunov_method_request(
                 ),
             )
         # memory_window required if memory_mode='window'
-        if request.memory_mode == "window" and (
-            request.memory_window is None or int(request.memory_window) < 1
-        ):
-            return (
-                False,
-                "invalid_parameter",
-                ("memory_window must be a positive int when memory_mode='window'.",),
-            )
+        if request.memory_mode == "window":
+            try:
+                memory_window_value = int(request.memory_window)  # type: ignore[arg-type]
+                memory_window_float = float(request.memory_window)  # type: ignore[arg-type]
+            except (TypeError, ValueError, OverflowError):
+                return (
+                    False,
+                    "invalid_parameter",
+                    ("memory_window must be a positive int when memory_mode='window'.",),
+                )
+            if (
+                not np.isfinite(memory_window_float)
+                or memory_window_value < 1
+                or memory_window_float != float(memory_window_value)
+            ):
+                return (
+                    False,
+                    "invalid_parameter",
+                    ("memory_window must be a positive int when memory_mode='window'.",),
+                )
         # Check system.q consistency if system provided
         if request.system is not None:
             sys_q = None
@@ -320,11 +382,8 @@ def validate_lyapunov_method_request(
                     ),
                 )
         # Jacobian advisory
-        if request.jacobian is None and request.system is None:
+        if request.jacobian is None and not system_has_analytic_jacobian(request.system):
             warnings.append("analytic_jacobian_missing_finite_difference_used")
-        elif request.jacobian is None and request.system is not None:
-            if not callable(getattr(request.system, "jacobian_matrix", None)):
-                warnings.append("analytic_jacobian_missing_finite_difference_used")
 
     elif request.method in {
         "fractional_cloned_dynamics_abm_gs_published",
@@ -670,13 +729,26 @@ def compute_lyapunov_spectrum(
             random_seed=extra.get("random_seed"),
             divergence_norm=div_threshold,
         )
+        effective_memory_protocol = str(
+            result.method_metadata.get(
+                "effective_memory_protocol",
+                "published_block_restart",
+            )
+        )
+        if memory_protocol != effective_memory_protocol:
+            all_warnings = all_warnings + (
+                "requested_memory_protocol_is_compatibility_alias;"
+                f" effective_memory_protocol={effective_memory_protocol}",
+            )
         request_summary.update(
             {
                 "orders": [float(value) for value in np.asarray(orders, dtype=float).reshape(-1)],
                 "t_clone": t_clone,
                 "k_blocks": k_blocks,
                 "delta": float(extra.get("delta", 1e-3)),
-                "memory_protocol": memory_protocol,
+                "memory_protocol": effective_memory_protocol,
+                "requested_memory_protocol": memory_protocol,
+                "effective_memory_protocol": effective_memory_protocol,
             }
         )
 

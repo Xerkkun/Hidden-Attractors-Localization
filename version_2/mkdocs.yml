@@ -44,11 +44,13 @@ nav:
       - Integer Chua q=1 Reference: integer_chua_reference.md
       - Fractional Chua q=0.9998 Algebra: fractional_chua_algebra_validation.md
   - Dynamics and Diagnostics:
+      - Mathematical Diagnostics: mathematical_diagnostics.md
       - Dynamical Analysis: dynamical_analysis.md
       - Poincare Diagnostics: poincare_diagnostics.md
       - Lyapunov Methods: lyapunov_methods.md
       - EFORK-3 Published Validation: efork3_validation.md
   - Figures and Reports:
+      - Plotting Function Catalog: plot_function_catalog.md
       - Unified Report: unified_report.md
   - Reference:
       - API Reference: api_reference.md
@@ -67,3 +69,8 @@ markdown_extensions:
       permalink: true
   - tables
   - fenced_code
+  - pymdownx.arithmatex:
+      generic: true
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

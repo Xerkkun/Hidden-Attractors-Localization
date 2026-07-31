@@ -447,3 +447,80 @@ class TestValidateRequestEdgeCases:
         ok, status, _ = validate_lyapunov_method_request(request)
         assert ok is False
         assert status == "memory_mode_not_applicable_for_integer_method"
+
+    @pytest.mark.parametrize(
+        ("system", "rhs"),
+        [
+            (None, None),
+            (object(), _rhs),
+        ],
+    )
+    def test_requires_exactly_one_vector_field_source(
+        self,
+        system: object | None,
+        rhs: object,
+    ) -> None:
+        request = _make_request(system=system, rhs=rhs)
+        ok, status, warnings = validate_lyapunov_method_request(request)
+        assert ok is False
+        assert status == "invalid_parameter"
+        assert warnings == ("exactly one of system or rhs must be provided.",)
+
+    @pytest.mark.parametrize(
+        ("field_name", "bad_value"),
+        [
+            ("reorthonormalize_every", object()),
+            ("reorthonormalization_time", object()),
+            ("div_threshold", object()),
+        ],
+    )
+    def test_nonconvertible_optional_returns_invalid_parameter(
+        self,
+        field_name: str,
+        bad_value: object,
+    ) -> None:
+        request = _make_request(**{field_name: bad_value})
+        ok, status, _ = validate_lyapunov_method_request(request)
+        assert ok is False
+        assert status == "invalid_parameter"
+
+    def test_nonconvertible_memory_window_returns_invalid_parameter(self) -> None:
+        request = _make_request(
+            q=0.9,
+            method="fractional_variational_abm_qr",
+            memory_mode="window",
+            memory_window=object(),
+        )
+        ok, status, _ = validate_lyapunov_method_request(request)
+        assert ok is False
+        assert status == "invalid_parameter"
+
+    @pytest.mark.parametrize("bad_value", [1.5, 0, -1, np.inf, np.nan])
+    def test_reorthonormalize_every_requires_positive_integer(
+        self,
+        bad_value: float,
+    ) -> None:
+        request = _make_request(reorthonormalize_every=bad_value)
+        ok, status, _ = validate_lyapunov_method_request(request)
+        assert ok is False
+        assert status == "invalid_parameter"
+
+    def test_system_without_analytic_jacobian_warns(self) -> None:
+        class SystemWithoutJacobian:
+            jacobian = None
+
+            def evaluate(self, state: np.ndarray) -> np.ndarray:
+                return _rhs(state)
+
+            def jacobian_matrix(self, state: np.ndarray) -> np.ndarray:
+                raise ValueError("No analytic Jacobian is registered.")
+
+        request = _make_request(
+            system=SystemWithoutJacobian(),
+            rhs=None,
+            jacobian=None,
+        )
+        ok, status, warnings = validate_lyapunov_method_request(request)
+        assert ok is True
+        assert status == "compatible"
+        assert "analytic_jacobian_missing_finite_difference_used" in warnings

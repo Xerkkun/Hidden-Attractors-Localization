@@ -149,6 +149,12 @@ def compute_cloned_dynamics_spectrum(
         raise ValueError("integration_mode must be 'fractional_abm' or 'integer_rk4_reference'.")
     if integration_mode == "integer_rk4_reference" and not np.allclose(component_orders, 1.0):
         raise ValueError("integer_rk4_reference is available only when all orders are q=1.")
+    requested_memory_protocol = str(memory_protocol)
+    effective_memory_protocol = (
+        "not_applicable_integer_rk4_reference"
+        if integration_mode == "integer_rk4_reference"
+        else "published_block_restart"
+    )
 
     direction_basis = np.eye(dimension, dtype=float)
     sum_logs = np.zeros(dimension, dtype=float)
@@ -194,7 +200,7 @@ def compute_cloned_dynamics_spectrum(
                 augmented_orders,
                 h,
                 n_steps,
-                memory_protocol="published_block_restart",
+                memory_protocol=effective_memory_protocol,
                 divergence_norm=divergence_norm,
             )
         if integration_status != "ok":
@@ -255,7 +261,12 @@ def compute_cloned_dynamics_spectrum(
         bounded_trajectory=bounded_trajectory,
         method_metadata={
             "no_jacobian_required": True,
-            "memory_protocol": memory_protocol,
+            "memory_protocol": effective_memory_protocol,
+            "requested_memory_protocol": requested_memory_protocol,
+            "effective_memory_protocol": effective_memory_protocol,
+            "requested_protocol_is_alias": (
+                requested_memory_protocol != effective_memory_protocol
+            ),
             "orthonormalization": method,
             "integration_mode": integration_mode,
             "delta": delta,

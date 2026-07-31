@@ -83,6 +83,9 @@ def test_integer_rhs_direction_filters_crossings() -> None:
     assert np.all(positive.points[:, 1] > 0.0)
     assert negative.crossing_count > 0
     assert np.all(negative.points[:, 1] < 0.0)
+    assert positive.section_metadata["exact_poincare_map"] is False
+    assert positive.section_metadata["sampled_linear_interpolation"] is True
+    assert positive.section_metadata["classical_integer_section_interpretation"] is True
 
 
 def test_fractional_mode_is_geometric_and_does_not_require_rhs() -> None:

@@ -23,6 +23,7 @@ def test_qr_registry_contract() -> None:
     assert info.validated_against_published_benchmarks is False
     assert info.requires_jacobian is False
     assert info.orthonormalization == "qr"
+    assert info.memory_protocol == "published_block_restart"
     assert info.benchmark_status == "numerical_comparison_only"
 
 

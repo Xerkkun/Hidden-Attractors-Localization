@@ -187,7 +187,13 @@ def detect_poincare_crossings(
         "filtered_by_min_crossing_separation": filtered_by_separation,
         "burn_time": burn_time,
         "caputo_geometric_crossing": caputo_geometric,
-        "exact_poincare_map": derivative_mode == "integer_rhs",
+        # Every crossing returned by this function comes from two stored
+        # samples and linear interpolation.  Evaluating an integer ODE right
+        # hand side supplies the classical orientation test, but it does not
+        # turn the sampled crossing into an exact return map.
+        "exact_poincare_map": False,
+        "sampled_linear_interpolation": True,
+        "classical_integer_section_interpretation": derivative_mode == "integer_rhs",
         "uses_classical_rhs_direction": derivative_mode == "integer_rhs",
     }
     status = "no_crossings" if points.shape[0] == 0 else "crossings_detected"

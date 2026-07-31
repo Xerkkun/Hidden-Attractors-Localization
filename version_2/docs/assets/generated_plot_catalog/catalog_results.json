@@ -1,0 +1,1121 @@
+{
+  "scope": "public plot_ and render_ exports from hidden_attractors.plotting",
+  "scientific_evidence": false,
+  "input_data_are_real_numerical_outputs": true,
+  "catalog_plot_alone_certifies_scientific_claim": false,
+  "warning": "Every input is computed from the registered nonsmooth Chua system. These reproducible numerical examples must not be treated as new validation or as stand-alone certification of chaos, hiddenness, asymptotic stability, or solver convergence.",
+  "numerical_input_provenance": {
+    "case_id": "chua_nonsmooth_real_system_catalog_20260729",
+    "source_kind": "canonical_library_reintegration",
+    "system_id": "chua-nonsmooth",
+    "system_description": "Fractional-order Chua vector field used by the hidden-attractor workflows.",
+    "parameters": {
+      "model": "nonsmooth",
+      "alpha": 8.4562,
+      "beta": 12.0732,
+      "gamma": 0.0052,
+      "m0": -0.1768,
+      "m1": -1.1468,
+      "a1": 0.4,
+      "a2": -1.5585,
+      "rho": 1.0
+    },
+    "trajectory": {
+      "integrator": "efork_q1",
+      "q": 1.0,
+      "h": 0.01,
+      "t_final": 100.0,
+      "initial_condition": [
+        0.7282151467357212,
+        -0.8854021004889308,
+        -5.297149991940586
+      ]
+    },
+    "continuation": {
+      "method": "integer_lure_lambda_continuation",
+      "lambda_values": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "t_transient": 12.0,
+      "t_keep": 24.0,
+      "h": 0.02
+    },
+    "bifurcation": {
+      "parameter": "beta",
+      "range": [
+        11.5,
+        14.5
+      ],
+      "n_parameter_values": 31,
+      "integrator": "rk4",
+      "h": 0.01,
+      "t_final": 50.0,
+      "t_start": 25.0,
+      "observable": "x",
+      "extraction": "local_maxima",
+      "successful_parameter_values": 31
+    },
+    "lyapunov": {
+      "method": "integer_qr_benettin",
+      "q": 1.0,
+      "h": 0.01,
+      "t_burn": 5.0,
+      "t_final": 30.0,
+      "status": "ok"
+    },
+    "hiddenness_controls": {
+      "radii": [
+        0.08
+      ],
+      "samples_per_radius_per_equilibrium": 4,
+      "random_seed": 20260729,
+      "t_final": 30.0,
+      "t_burn": 15.0,
+      "h": 0.02
+    },
+    "lure_frequency_domain": {
+      "transfer_convention": "opposite_sign",
+      "transfer_definition": "W_code(s)=c^T(P-sI)^(-1)b",
+      "harmonic_condition": "1_plus_WN",
+      "closure": "W_code(i*omega_0)=-1/N(A_0)"
+    },
+    "basin": {
+      "plane": "xy",
+      "fixed_z": 0.0,
+      "grid_shape": [
+        31,
+        31
+      ],
+      "axis_range": [
+        -2.0,
+        2.0
+      ],
+      "integrator": "efork_q1",
+      "q": 1.0,
+      "h": 0.02,
+      "t_final": 35.0,
+      "tail_start": 17.5,
+      "equilibrium_distance_threshold": 0.35,
+      "tail_span_threshold": 1.0,
+      "target_cloud_normalized_distance_threshold": 0.1,
+      "class_counts": {
+        "0": 77,
+        "1": 481,
+        "2": 319,
+        "3": 84,
+        "4": 0
+      },
+      "classification_scope": "finite_time_numerical_example"
+    },
+    "claim_scope": "reproducible_real_system_numerical_example_not_new_validation_evidence"
+  },
+  "representative_path_base": "project_root",
+  "total_public_callables": 33,
+  "requested": 33,
+  "successful": 33,
+  "failed": 0,
+  "results": [
+    {
+      "index": 1,
+      "function": "plot_integer_hiddenness_controls",
+      "signature": "plot_integer_hiddenness_controls(target_trajectory: 'np.ndarray', probes: 'Sequence[IntegerHiddennessProbe]', output_path: 'str | Path', *, dims: 'Sequence[int]' = (0, 1, 2), title: 'str | None' = 'Integer hiddenness controls', max_target_points: 'int' = 2500, max_probe_points: 'int' = 180) -> 'str'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_integer_hiddenness_controls",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/01_plot_integer_hiddenness_controls.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_neighborhood_controls",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "integer_hiddenness_controls.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "integer_hiddenness_controls.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/01_plot_integer_hiddenness_controls.png",
+          "sha256": "a15169d6467c042b0ff5956a488bd539a0736fe3a9e62a4fe535a5f9ffa31a9e"
+        }
+      ],
+      "representative_sha256": "a15169d6467c042b0ff5956a488bd539a0736fe3a9e62a4fe535a5f9ffa31a9e",
+      "status": "ok"
+    },
+    {
+      "index": 2,
+      "function": "plot_integer_lure_continuation",
+      "signature": "plot_integer_lure_continuation(steps: 'Sequence[IntegerLureContinuationStep]', output_path: 'str | Path', *, dims: 'Sequence[int]' = (0, 1, 2), title: 'str | None' = \"Integer Lur'e continuation\", max_points: 'int' = 1500) -> 'str'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_integer_lure_continuation",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/02_plot_integer_lure_continuation.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_lure_continuation",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "integer_lure_continuation.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "integer_lure_continuation.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/02_plot_integer_lure_continuation.png",
+          "sha256": "3d8d68acec9ae47302bbc17c9c19c3b96627abc498d6a35f25e34c9742bbfa99"
+        }
+      ],
+      "representative_sha256": "3d8d68acec9ae47302bbc17c9c19c3b96627abc498d6a35f25e34c9742bbfa99",
+      "status": "ok"
+    },
+    {
+      "index": 3,
+      "function": "plot_lyapunov_convergence",
+      "signature": "plot_lyapunov_convergence(result: 'LyapunovResult', output_path: 'str | Path') -> 'str'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_lyapunov_convergence",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/03_plot_lyapunov_convergence.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_lyapunov",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "lyapunov_convergence.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "lyapunov_convergence.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/03_plot_lyapunov_convergence.png",
+          "sha256": "940640af898b70725eeba9a1ed984f72c926a5d29a0ca8fbc5124456dcbb8e6d"
+        }
+      ],
+      "representative_sha256": "940640af898b70725eeba9a1ed984f72c926a5d29a0ca8fbc5124456dcbb8e6d",
+      "status": "ok"
+    },
+    {
+      "index": 4,
+      "function": "plot_lure_nyquist_describing_function",
+      "signature": "plot_lure_nyquist_describing_function(system: 'LureSystem', seed: 'HarmonicSeed', output_path: 'str | Path', *, q: 'float' = 1.0, method: 'str | None' = None, mu: 'float | None' = None, wmin: 'float' = 1e-05, wmax: 'float' = 50.0, amin: 'float' = 1.00000001, amax: 'float | None' = None, title: 'str' = \"Lur'e Nyquist/DF closure\") -> 'str'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_lure_nyquist_describing_function",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/04_plot_lure_nyquist_describing_function.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_lure_algebra",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "lure_nyquist_df.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "lure_nyquist_df.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/04_plot_lure_nyquist_describing_function.png",
+          "sha256": "c785dfe76d1e8399605a25c42e496dc5f986f693ec9f9ed5eaee6673382ec65f"
+        }
+      ],
+      "representative_sha256": "c785dfe76d1e8399605a25c42e496dc5f986f693ec9f9ed5eaee6673382ec65f",
+      "status": "ok"
+    },
+    {
+      "index": 5,
+      "function": "plot_lure_transfer_components",
+      "signature": "plot_lure_transfer_components(system: 'LureSystem', seed: 'HarmonicSeed', output_path: 'str | Path', *, q: 'float' = 1.0, wmin: 'float' = 0.0001, wmax: 'float' = 10.2, nscan: 'int' = 5000, title: 'str | None' = None) -> 'str'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_lure_transfer_components",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/05_plot_lure_transfer_components.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_lure_algebra",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "lure_transfer_components.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "lure_transfer_components.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/05_plot_lure_transfer_components.png",
+          "sha256": "260f76ffd33fa47dbfdc44765d5e663ae2255fbbf4e45b02c1218278b284f1d9"
+        }
+      ],
+      "representative_sha256": "260f76ffd33fa47dbfdc44765d5e663ae2255fbbf4e45b02c1218278b284f1d9",
+      "status": "ok"
+    },
+    {
+      "index": 6,
+      "function": "plot_bifurcation_diagram",
+      "signature": "plot_bifurcation_diagram(points: 'Sequence[BifurcationPoint]', output_path: 'str | Path', *, parameter_label: 'str' = 'parameter', observable_label: 'str' = 'observable', title: 'str' = 'Bifurcation diagram') -> 'str'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_bifurcation_diagram",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/06_plot_bifurcation_diagram.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_beta_sweep",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "bifurcation_diagram.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "bifurcation_diagram.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/06_plot_bifurcation_diagram.png",
+          "sha256": "718372c3c142e938ab1c50057ffcd3ad43bd0f600c12673a88d7656c4dffb09b"
+        }
+      ],
+      "representative_sha256": "718372c3c142e938ab1c50057ffcd3ad43bd0f600c12673a88d7656c4dffb09b",
+      "status": "ok"
+    },
+    {
+      "index": 7,
+      "function": "plot_phase_projections",
+      "signature": "plot_phase_projections(trajectory: 'np.ndarray', output_path: 'str | Path', *, title: 'str | None' = 'Phase projections', max_points: 'int' = 5000) -> 'str'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_phase_projections",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/07_plot_phase_projections.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_trajectory",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "phase_projections.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "phase_projections.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/07_plot_phase_projections.png",
+          "sha256": "668333b9a13a381d054fecaccd134721978fe359c13e6ca65879e77d3af2faca"
+        }
+      ],
+      "representative_sha256": "668333b9a13a381d054fecaccd134721978fe359c13e6ca65879e77d3af2faca",
+      "status": "ok"
+    },
+    {
+      "index": 8,
+      "function": "plot_phase_space",
+      "signature": "plot_phase_space(trajectory: 'np.ndarray', output_path: 'str | Path', *, dims: 'Sequence[str | int]' = ('x', 'y', 'z'), title: 'str | None' = 'Phase space', max_points: 'int' = 5000, color_by_time: 'bool' = True) -> 'str'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_phase_space",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/08_plot_phase_space.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_trajectory",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "phase_space.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "phase_space.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/08_plot_phase_space.png",
+          "sha256": "eb0933bf8518f9515f44865a6aa7ec3a6dcdc1fb0ed96f30c7ee2137f05fda31"
+        }
+      ],
+      "representative_sha256": "eb0933bf8518f9515f44865a6aa7ec3a6dcdc1fb0ed96f30c7ee2137f05fda31",
+      "status": "ok"
+    },
+    {
+      "index": 9,
+      "function": "plot_spectrum",
+      "signature": "plot_spectrum(spectrum: 'SpectrumResult', output_path: 'str | Path', *, title: 'str | None' = None, x_units: 'str' = 'rad/s', omega_marker: 'float | None' = None, marker_label: 'str | None' = None) -> 'str'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_spectrum",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/09_plot_spectrum.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_trajectory",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "spectrum.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "spectrum.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/09_plot_spectrum.png",
+          "sha256": "71a1cca870f251b285478c5235f1e18269658f4b2b9b3e1df2686782f00420c6"
+        }
+      ],
+      "representative_sha256": "71a1cca870f251b285478c5235f1e18269658f4b2b9b3e1df2686782f00420c6",
+      "status": "ok"
+    },
+    {
+      "index": 10,
+      "function": "plot_time_series",
+      "signature": "plot_time_series(trajectory: 'np.ndarray', output_path: 'str | Path', *, columns: 'Sequence[str | int]' = ('x', 'y', 'z'), title: 'str | None' = 'Time series', max_points: 'int' = 6000) -> 'str'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_time_series",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/10_plot_time_series.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_trajectory",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "time_series.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "time_series.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/10_plot_time_series.png",
+          "sha256": "a9a9ce881de255049ad5ce13b8dba36ffaf5ac404bbaf956de0eabe88764ba87"
+        }
+      ],
+      "representative_sha256": "a9a9ce881de255049ad5ce13b8dba36ffaf5ac404bbaf956de0eabe88764ba87",
+      "status": "ok"
+    },
+    {
+      "index": 11,
+      "function": "plot_trajectory_spectra",
+      "signature": "plot_trajectory_spectra(trajectory: 'np.ndarray', output_dir: 'str | Path', *, method: 'str' = 'fft', components: 'Sequence[int] | None' = None, prefix: 'str' = 'spectrum') -> 'list[str]'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_trajectory_spectra",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/11_plot_trajectory_spectra.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_trajectory",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "catalog_fft_component_0.png",
+        "catalog_fft_component_1.png",
+        "catalog_fft_component_2.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "catalog_fft_component_0.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/11_plot_trajectory_spectra.png",
+          "sha256": "5cca1e8ee6099c5bf52bdfbf174c05af2bbb6bc0ab6ec28bd60a5816df08b11b"
+        },
+        {
+          "output_index": 2,
+          "source_name": "catalog_fft_component_1.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/11_plot_trajectory_spectra__02_catalog_fft_component_1.png",
+          "sha256": "4b0af4e11e3d520c2f23156f77e07e22113750edcbc189f5cf022f79fda0831b"
+        },
+        {
+          "output_index": 3,
+          "source_name": "catalog_fft_component_2.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/11_plot_trajectory_spectra__03_catalog_fft_component_2.png",
+          "sha256": "ff2464abaa1d6b8079051e32f59429403b3d726a40bae333ebf4c2ea24b06eb6"
+        }
+      ],
+      "representative_sha256": "5cca1e8ee6099c5bf52bdfbf174c05af2bbb6bc0ab6ec28bd60a5816df08b11b",
+      "status": "ok"
+    },
+    {
+      "index": 12,
+      "function": "plot_trajectory_overlay",
+      "signature": "plot_trajectory_overlay(trajectories: 'Sequence[np.ndarray]', labels: 'Sequence[str]', *, title: 'str', output_path: 'str | Path', max_points: 'int' = 1500) -> 'str'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_trajectory_overlay",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/12_plot_trajectory_overlay.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_trajectory",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "trajectory_overlay.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "trajectory_overlay.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/12_plot_trajectory_overlay.png",
+          "sha256": "0246c98df19621377814f877ffcb7d1f78824c7f1905bed203f508937b8af497"
+        }
+      ],
+      "representative_sha256": "0246c98df19621377814f877ffcb7d1f78824c7f1905bed203f508937b8af497",
+      "status": "ok"
+    },
+    {
+      "index": 13,
+      "function": "plot_basin_slices",
+      "signature": "plot_basin_slices(basin_data: 'Dict[str, Tuple[np.ndarray, np.ndarray, np.ndarray]]', system_id: 'str', output_dir: 'str | Path') -> 'Dict[str, str]'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_basin_slices",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/13_plot_basin_slices.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_finite_time_basin",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "basin_xy_global.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "basin_xy_global.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/13_plot_basin_slices.png",
+          "sha256": "ce9d8393b3c7573f08a99e8c5847d26b10be1f0cebe4bb59323018b58d528471"
+        }
+      ],
+      "representative_sha256": "ce9d8393b3c7573f08a99e8c5847d26b10be1f0cebe4bb59323018b58d528471",
+      "status": "ok"
+    },
+    {
+      "index": 14,
+      "function": "plot_basin_slice_file",
+      "signature": "plot_basin_slice_file(plane: 'str', u: 'np.ndarray', v: 'np.ndarray', mat: 'np.ndarray', eq_name: 'str', system_id: 'str', output_dir: 'str | Path') -> 'str'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_basin_slice_file",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/14_plot_basin_slice_file.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_finite_time_basin",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "basin_xy_E0.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "basin_xy_E0.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/14_plot_basin_slice_file.png",
+          "sha256": "ce9d8393b3c7573f08a99e8c5847d26b10be1f0cebe4bb59323018b58d528471"
+        }
+      ],
+      "representative_sha256": "ce9d8393b3c7573f08a99e8c5847d26b10be1f0cebe4bb59323018b58d528471",
+      "status": "ok"
+    },
+    {
+      "index": 15,
+      "function": "plot_matignon_equilibria",
+      "signature": "plot_matignon_equilibria(system: 'ChaoticSystem', equilibria: 'Dict[str, np.ndarray]', q: 'float', output_dir: 'str | Path') -> 'str'",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_matignon_equilibria",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/15_plot_matignon_equilibria.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_equilibrium_jacobians",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "matignon_equilibria.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "matignon_equilibria.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/15_plot_matignon_equilibria.png",
+          "sha256": "9eff9a90b18ecc08c0824c00d3a827a12221080ede0205179b0a7d8e7a3a15b3"
+        }
+      ],
+      "representative_sha256": "9eff9a90b18ecc08c0824c00d3a827a12221080ede0205179b0a7d8e7a3a15b3",
+      "status": "ok"
+    },
+    {
+      "index": 16,
+      "function": "plot_nyquist_transfer",
+      "signature": "plot_nyquist_transfer(omega_grid: numpy.ndarray, w_vals: numpy.ndarray, candidates: List[Tuple[float, float, float]], config: dict, output_dir: str) -> None",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_nyquist_transfer",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/16_plot_nyquist_transfer.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_lure_algebra",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "transfer_nyquist.png",
+        "fig01b_nyquist_zoom_x.png",
+        "transfer_real_imag.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "transfer_nyquist.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/16_plot_nyquist_transfer.png",
+          "sha256": "c28de8bda595c221c95b3d11d53be378e5cd50f48125ef9c84b5a2a860ac7b15"
+        },
+        {
+          "output_index": 2,
+          "source_name": "fig01b_nyquist_zoom_x.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/16_plot_nyquist_transfer__02_fig01b_nyquist_zoom_x.png",
+          "sha256": "bb432567f270b592dee435347fc2c422c4631df65365a89fd50cb06abb5638ce"
+        },
+        {
+          "output_index": 3,
+          "source_name": "transfer_real_imag.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/16_plot_nyquist_transfer__03_transfer_real_imag.png",
+          "sha256": "632c8c31ced2b4fe5eaa8170fe7380c31e50877554e120a9010ff2644bc104ec"
+        }
+      ],
+      "representative_sha256": "c28de8bda595c221c95b3d11d53be378e5cd50f48125ef9c84b5a2a860ac7b15",
+      "status": "ok"
+    },
+    {
+      "index": 17,
+      "function": "plot_describing_function",
+      "signature": "plot_describing_function(system: Any, candidates: List[Tuple[float, float, float]], config: dict, output_dir: str) -> None",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_describing_function",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/17_plot_describing_function.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_lure_algebra",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "describing_function.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "describing_function.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/17_plot_describing_function.png",
+          "sha256": "9f3122af4c4f3ead2642f7f0098723ed846f539c152254391bd442e66b4596b8"
+        }
+      ],
+      "representative_sha256": "9f3122af4c4f3ead2642f7f0098723ed846f539c152254391bd442e66b4596b8",
+      "status": "ok"
+    },
+    {
+      "index": 18,
+      "function": "plot_harmonic_residual_map",
+      "signature": "plot_harmonic_residual_map(system: Any, candidates: List[Tuple[float, float, float]], config: dict, output_dir: str) -> None",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_harmonic_residual_map",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/18_plot_harmonic_residual_map.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_lure_algebra",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "harmonic_residual_map.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "harmonic_residual_map.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/18_plot_harmonic_residual_map.png",
+          "sha256": "b82a28f41f3a659d3241d64706dcabb7c0444a13d27700440ec2be89c2f0541a"
+        }
+      ],
+      "representative_sha256": "b82a28f41f3a659d3241d64706dcabb7c0444a13d27700440ec2be89c2f0541a",
+      "status": "ok"
+    },
+    {
+      "index": 19,
+      "function": "plot_continuation_eta",
+      "signature": "plot_continuation_eta(cont_steps: List[dict], config: dict, output_dir: str) -> None",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_continuation_eta",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/19_plot_continuation_eta.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_lure_continuation",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "continuation_norm_vs_eta.png",
+        "continuation_amplitude_vs_eta.png",
+        "continuation_first_last_comparison.png",
+        "continuation_first_last_projections.png",
+        "continuation_timeseries_comparison_x.png",
+        "continuation_progression.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "continuation_norm_vs_eta.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/19_plot_continuation_eta.png",
+          "sha256": "30dc0117b6c583d9f12c69fb48d867e24688497a14425e85d49d60ea38c02f0f"
+        },
+        {
+          "output_index": 2,
+          "source_name": "continuation_amplitude_vs_eta.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/19_plot_continuation_eta__02_continuation_amplitude_vs_eta.png",
+          "sha256": "461d92ff73ba36161cc53d69b821316c2beea257cc3eff308697a8bece7479a0"
+        },
+        {
+          "output_index": 3,
+          "source_name": "continuation_first_last_comparison.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/19_plot_continuation_eta__03_continuation_first_last_comparison.png",
+          "sha256": "1c8b1a4b21f415d8b9f763ea584d974acb3c01c43b50a553a05238af55a9afe8"
+        },
+        {
+          "output_index": 4,
+          "source_name": "continuation_first_last_projections.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/19_plot_continuation_eta__04_continuation_first_last_projections.png",
+          "sha256": "c4640995342830cfb01f2c5e37af67a039b8b9e49b1294d1e6530a9e3cb23036"
+        },
+        {
+          "output_index": 5,
+          "source_name": "continuation_timeseries_comparison_x.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/19_plot_continuation_eta__05_continuation_timeseries_comparison_x.png",
+          "sha256": "9039e9c3731d13c17f7b93fbed46df989c6b5273dc20a65de88a5271e0317156"
+        },
+        {
+          "output_index": 6,
+          "source_name": "continuation_progression.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/19_plot_continuation_eta__06_continuation_progression.png",
+          "sha256": "e740a93239b0c131ffc148b3cf3d010ab4b62ad59ff6313d3915c7dfad4a04af"
+        }
+      ],
+      "representative_sha256": "30dc0117b6c583d9f12c69fb48d867e24688497a14425e85d49d60ea38c02f0f",
+      "status": "ok",
+      "implementation_note": "Produces norm-vs-lambda and amplitude-vs-lambda panels, then delegates the first/last, time-series, and progression views."
+    },
+    {
+      "index": 20,
+      "function": "plot_continuation_first_last_comparison",
+      "signature": "plot_continuation_first_last_comparison(cont_steps: List[dict], config: dict, output_dir: str) -> None",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_continuation_first_last_comparison",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/20_plot_continuation_first_last_comparison.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_lure_continuation",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "continuation_first_last_comparison.png",
+        "continuation_first_last_projections.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "continuation_first_last_comparison.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/20_plot_continuation_first_last_comparison.png",
+          "sha256": "1c8b1a4b21f415d8b9f763ea584d974acb3c01c43b50a553a05238af55a9afe8"
+        },
+        {
+          "output_index": 2,
+          "source_name": "continuation_first_last_projections.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/20_plot_continuation_first_last_comparison__02_continuation_first_last_projections.png",
+          "sha256": "c4640995342830cfb01f2c5e37af67a039b8b9e49b1294d1e6530a9e3cb23036"
+        }
+      ],
+      "representative_sha256": "1c8b1a4b21f415d8b9f763ea584d974acb3c01c43b50a553a05238af55a9afe8",
+      "status": "ok"
+    },
+    {
+      "index": 21,
+      "function": "plot_continuation_timeseries_comparison",
+      "signature": "plot_continuation_timeseries_comparison(cont_steps: List[dict], config: dict, output_dir: str) -> None",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_continuation_timeseries_comparison",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/21_plot_continuation_timeseries_comparison.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_lure_continuation",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "continuation_timeseries_comparison_x.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "continuation_timeseries_comparison_x.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/21_plot_continuation_timeseries_comparison.png",
+          "sha256": "9039e9c3731d13c17f7b93fbed46df989c6b5273dc20a65de88a5271e0317156"
+        }
+      ],
+      "representative_sha256": "9039e9c3731d13c17f7b93fbed46df989c6b5273dc20a65de88a5271e0317156",
+      "status": "ok"
+    },
+    {
+      "index": 22,
+      "function": "plot_continuation_progression",
+      "signature": "plot_continuation_progression(cont_steps: List[dict], config: dict, output_dir: str) -> None",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_continuation_progression",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/22_plot_continuation_progression.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_lure_continuation",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "continuation_progression.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "continuation_progression.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/22_plot_continuation_progression.png",
+          "sha256": "e740a93239b0c131ffc148b3cf3d010ab4b62ad59ff6313d3915c7dfad4a04af"
+        }
+      ],
+      "representative_sha256": "e740a93239b0c131ffc148b3cf3d010ab4b62ad59ff6313d3915c7dfad4a04af",
+      "status": "ok"
+    },
+    {
+      "index": 23,
+      "function": "plot_continuation_tracking",
+      "signature": "plot_continuation_tracking(cont_steps: List[dict], config: dict, output_dir: str) -> None",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_continuation_tracking",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/23_plot_continuation_tracking.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_lure_continuation",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "continuation_tracking_norm.png",
+        "continuation_tracking_status.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "continuation_tracking_norm.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/23_plot_continuation_tracking.png",
+          "sha256": "05184f20c00f3aa140b68242ef957d978fa88f0e7873d7efd5aeb19ba7d178cf"
+        },
+        {
+          "output_index": 2,
+          "source_name": "continuation_tracking_status.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/23_plot_continuation_tracking__02_continuation_tracking_status.png",
+          "sha256": "06222f037a136abc0b50a99c90d91e9f43193a93135a51ae1b7ede9fabf79d2b"
+        }
+      ],
+      "representative_sha256": "05184f20c00f3aa140b68242ef957d978fa88f0e7873d7efd5aeb19ba7d178cf",
+      "status": "ok",
+      "implementation_note": "Produces both norm-vs-lambda and status-per-step panels."
+    },
+    {
+      "index": 24,
+      "function": "plot_attractor_trajectories",
+      "signature": "plot_attractor_trajectories(trajectory: numpy.ndarray, equilibria: Dict[str, numpy.ndarray], config: dict, output_dir: str) -> None",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_attractor_trajectories",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/24_plot_attractor_trajectories.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_trajectory",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "attractor_3d.png",
+        "attractor_xy.png",
+        "attractor_xz.png",
+        "attractor_yz.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "attractor_3d.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/24_plot_attractor_trajectories.png",
+          "sha256": "a973af08acd69b0e7df654678e6ab1b2a40df52b4397f0fb917526676764264f"
+        },
+        {
+          "output_index": 2,
+          "source_name": "attractor_xy.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/24_plot_attractor_trajectories__02_attractor_xy.png",
+          "sha256": "b1f57965d84c275e8638fe58a5dc88f5b40305f88ee1091698016f4555ce4083"
+        },
+        {
+          "output_index": 3,
+          "source_name": "attractor_xz.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/24_plot_attractor_trajectories__03_attractor_xz.png",
+          "sha256": "31c79cb3b4abb1f26667d196598afa77fab166cf44d65fa45c7723e0f0d1cdd3"
+        },
+        {
+          "output_index": 4,
+          "source_name": "attractor_yz.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/24_plot_attractor_trajectories__04_attractor_yz.png",
+          "sha256": "12fcfdbcdfe4cb68e0cc7aa0e780b9934ea9b2777a1f670062ce6af065afd964"
+        }
+      ],
+      "representative_sha256": "a973af08acd69b0e7df654678e6ab1b2a40df52b4397f0fb917526676764264f",
+      "status": "ok"
+    },
+    {
+      "index": 25,
+      "function": "plot_flexible_attractor_and_projections",
+      "signature": "plot_flexible_attractor_and_projections(trajectory: numpy.ndarray, equilibria: Dict[str, numpy.ndarray], config: dict, output_dir: str, file_prefix: str) -> None",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_flexible_attractor_and_projections",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/25_plot_flexible_attractor_and_projections.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_trajectory",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "catalog_flexible_3d.png",
+        "catalog_flexible_xy.png",
+        "catalog_flexible_xz.png",
+        "catalog_flexible_yz.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "catalog_flexible_3d.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/25_plot_flexible_attractor_and_projections.png",
+          "sha256": "a973af08acd69b0e7df654678e6ab1b2a40df52b4397f0fb917526676764264f"
+        },
+        {
+          "output_index": 2,
+          "source_name": "catalog_flexible_xy.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/25_plot_flexible_attractor_and_projections__02_catalog_flexible_xy.png",
+          "sha256": "b1f57965d84c275e8638fe58a5dc88f5b40305f88ee1091698016f4555ce4083"
+        },
+        {
+          "output_index": 3,
+          "source_name": "catalog_flexible_xz.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/25_plot_flexible_attractor_and_projections__03_catalog_flexible_xz.png",
+          "sha256": "31c79cb3b4abb1f26667d196598afa77fab166cf44d65fa45c7723e0f0d1cdd3"
+        },
+        {
+          "output_index": 4,
+          "source_name": "catalog_flexible_yz.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/25_plot_flexible_attractor_and_projections__04_catalog_flexible_yz.png",
+          "sha256": "12fcfdbcdfe4cb68e0cc7aa0e780b9934ea9b2777a1f670062ce6af065afd964"
+        }
+      ],
+      "representative_sha256": "a973af08acd69b0e7df654678e6ab1b2a40df52b4397f0fb917526676764264f",
+      "status": "ok"
+    },
+    {
+      "index": 26,
+      "function": "plot_timeseries_data",
+      "signature": "plot_timeseries_data(trajectory: numpy.ndarray, config: dict, output_dir: str, file_prefix: str) -> None",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_timeseries_data",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/26_plot_timeseries_data.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_trajectory",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "catalog_series_timeseries_x.png",
+        "catalog_series_timeseries_y.png",
+        "catalog_series_timeseries_z.png",
+        "catalog_series_timeseries_xyz.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "catalog_series_timeseries_x.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/26_plot_timeseries_data.png",
+          "sha256": "95dddfc341241b124233b3c638af75414563302f804733848a66ad62d4db7466"
+        },
+        {
+          "output_index": 2,
+          "source_name": "catalog_series_timeseries_y.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/26_plot_timeseries_data__02_catalog_series_timeseries_y.png",
+          "sha256": "2b1b5de9583742d15d041c2b27ebc691262f3b1f7c10379359b293a7ddf6b51a"
+        },
+        {
+          "output_index": 3,
+          "source_name": "catalog_series_timeseries_z.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/26_plot_timeseries_data__03_catalog_series_timeseries_z.png",
+          "sha256": "90090dd4e5d41cec7bf6a6903762e30a390875bd0058fc22f0fca0947a62f04f"
+        },
+        {
+          "output_index": 4,
+          "source_name": "catalog_series_timeseries_xyz.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/26_plot_timeseries_data__04_catalog_series_timeseries_xyz.png",
+          "sha256": "7b9e05c2edcc6963576982642ed8ce9ce0669ceb6dd39d84ffb958d46b08a333"
+        }
+      ],
+      "representative_sha256": "95dddfc341241b124233b3c638af75414563302f804733848a66ad62d4db7466",
+      "status": "ok"
+    },
+    {
+      "index": 27,
+      "function": "plot_neighborhood_control_spheres",
+      "signature": "plot_neighborhood_control_spheres(target_trajectory: numpy.ndarray, probe_results: list, equilibria: Dict[str, numpy.ndarray], config: dict, output_dir: str, max_target_points: int = 5000, max_probe_points: int = 500) -> None",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_neighborhood_control_spheres",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/27_plot_neighborhood_control_spheres.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_neighborhood_controls",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "fig05b_hiddenness_overview.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "fig05b_hiddenness_overview.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/27_plot_neighborhood_control_spheres.png",
+          "sha256": "6ba0c8efa7588c505fb72bb66188abe4291aeb48e7d4a171ec535a50aea14274"
+        }
+      ],
+      "representative_sha256": "6ba0c8efa7588c505fb72bb66188abe4291aeb48e7d4a171ec535a50aea14274",
+      "status": "ok"
+    },
+    {
+      "index": 28,
+      "function": "plot_sphere_test_results",
+      "signature": "plot_sphere_test_results(eq_name: str, eq_pt: numpy.ndarray, radius: float, probe_runs: List[Dict[str, Any]], output_dir: str, trajectory_plot_fraction: float = 0.25, max_trajectories_to_plot: int = 60) -> str",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only plot_sphere_test_results",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/28_plot_sphere_test_results.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_neighborhood_controls",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "fig05c_hiddenness_zoom_E0_r8e-02.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "fig05c_hiddenness_zoom_E0_r8e-02.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/28_plot_sphere_test_results.png",
+          "sha256": "a7ca56a36775b5ae8485d57df443acb3a13a355fbaa4fc163167fa009670af39"
+        }
+      ],
+      "representative_sha256": "a7ca56a36775b5ae8485d57df443acb3a13a355fbaa4fc163167fa009670af39",
+      "status": "ok"
+    },
+    {
+      "index": 29,
+      "function": "render_attractor",
+      "signature": "render_attractor(trajectory: numpy.ndarray, equilibria: Dict[str, numpy.ndarray], config: dict, run_id: str = 'default_run', export_targets: List[str] = None) -> Dict[str, str]",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only render_attractor",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/29_render_attractor.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_trajectory",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "chua-nonsmooth_attractor_3d.png",
+        "chua-nonsmooth_attractor_xy.png",
+        "chua-nonsmooth_attractor_xz.png",
+        "chua-nonsmooth_attractor_yz.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "chua-nonsmooth_attractor_3d.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/29_render_attractor.png",
+          "sha256": "138d31a7ac354ae36491852598571a20aa177675d66774cb153640d5042fb048"
+        },
+        {
+          "output_index": 2,
+          "source_name": "chua-nonsmooth_attractor_xy.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/29_render_attractor__02_chua-nonsmooth_attractor_xy.png",
+          "sha256": "c591133684f999d26da3311b1778f6c1c3dfa776eae9b587b1f940f8112af08c"
+        },
+        {
+          "output_index": 3,
+          "source_name": "chua-nonsmooth_attractor_xz.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/29_render_attractor__03_chua-nonsmooth_attractor_xz.png",
+          "sha256": "bf58f82203b682857d179d03ae5c62d14fe8aa7bd2b7803f6021ea3f80e74017"
+        },
+        {
+          "output_index": 4,
+          "source_name": "chua-nonsmooth_attractor_yz.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/29_render_attractor__04_chua-nonsmooth_attractor_yz.png",
+          "sha256": "8b4efaa75c1c40b26ffef9d0d74fa5ea96f4b7da4690476f4741190d1a2b31f8"
+        }
+      ],
+      "representative_sha256": "138d31a7ac354ae36491852598571a20aa177675d66774cb153640d5042fb048",
+      "status": "ok"
+    },
+    {
+      "index": 30,
+      "function": "render_basin",
+      "signature": "render_basin(grid_x: numpy.ndarray, grid_y: numpy.ndarray, basin_grid: numpy.ndarray, config: dict, run_id: str = 'default_run', export_targets: List[str] = None) -> Tuple[str, str]",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only render_basin",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/30_render_basin.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_q1_finite_time_basin",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "chua-nonsmooth_basin.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "chua-nonsmooth_basin.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/30_render_basin.png",
+          "sha256": "8a08a0dde84ae1215da516b4ca34a5adfdd0668f5bf71961f9951ba177967117"
+        }
+      ],
+      "representative_sha256": "8a08a0dde84ae1215da516b4ca34a5adfdd0668f5bf71961f9951ba177967117",
+      "status": "ok"
+    },
+    {
+      "index": 31,
+      "function": "render_nyquist",
+      "signature": "render_nyquist(freqs: numpy.ndarray, w_evals: numpy.ndarray, n_evals: numpy.ndarray, candidates: List[Tuple[float, float, float]] = None, config: dict = None, run_id: str = 'default_run', export_targets: List[str] = None) -> Tuple[str, str]",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only render_nyquist",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/31_render_nyquist.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_lure_algebra",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "chua-nonsmooth_nyquist.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "chua-nonsmooth_nyquist.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/31_render_nyquist.png",
+          "sha256": "7132cc3cb5fe56cb47437c67988677ca2fbe4b399422aea5ff925858aff4d440"
+        }
+      ],
+      "representative_sha256": "7132cc3cb5fe56cb47437c67988677ca2fbe4b399422aea5ff925858aff4d440",
+      "status": "ok"
+    },
+    {
+      "index": 32,
+      "function": "render_matignon",
+      "signature": "render_matignon(eigenvalues: numpy.ndarray, q: float, config: dict, run_id: str = 'default_run', export_targets: List[str] = None) -> Tuple[str, str]",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only render_matignon",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/32_render_matignon.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_equilibrium_jacobians",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "chua-nonsmooth_matignon.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "chua-nonsmooth_matignon.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/32_render_matignon.png",
+          "sha256": "5de45e4542b79a83b460e2e7a946adb5bd4160c028c2641e99497c149452aa21"
+        }
+      ],
+      "representative_sha256": "5de45e4542b79a83b460e2e7a946adb5bd4160c028c2641e99497c149452aa21",
+      "status": "ok"
+    },
+    {
+      "index": 33,
+      "function": "render_all_plots",
+      "signature": "render_all_plots(trajectory=None, equilibria=None, basin_grid=None, grid_x=None, grid_y=None, freqs=None, w_evals=None, n_evals=None, candidates=None, eigenvalues=None, config=None, run_id='default_run', export_targets=None)",
+      "generator_command": "python figure_scripts/generate_plot_catalog_examples.py --only render_all_plots",
+      "representative_png": "docs/assets/generated_plot_catalog/examples/33_render_all_plots.png",
+      "data_policy": "real_named_system_numerical_output",
+      "input_bundle": "computed_chua_nonsmooth_complete_context",
+      "system_id": "chua-nonsmooth",
+      "claim_scope": "reproducible_numerical_example_not_new_validation_evidence",
+      "produced_png_names": [
+        "chua-nonsmooth_attractor_3d.png",
+        "chua-nonsmooth_attractor_xy.png",
+        "chua-nonsmooth_attractor_xz.png",
+        "chua-nonsmooth_attractor_yz.png",
+        "chua-nonsmooth_basin.png",
+        "chua-nonsmooth_nyquist.png",
+        "chua-nonsmooth_matignon.png"
+      ],
+      "produced_outputs": [
+        {
+          "output_index": 1,
+          "source_name": "chua-nonsmooth_attractor_3d.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/33_render_all_plots.png",
+          "sha256": "138d31a7ac354ae36491852598571a20aa177675d66774cb153640d5042fb048"
+        },
+        {
+          "output_index": 2,
+          "source_name": "chua-nonsmooth_attractor_xy.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/33_render_all_plots__02_chua-nonsmooth_attractor_xy.png",
+          "sha256": "c591133684f999d26da3311b1778f6c1c3dfa776eae9b587b1f940f8112af08c"
+        },
+        {
+          "output_index": 3,
+          "source_name": "chua-nonsmooth_attractor_xz.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/33_render_all_plots__03_chua-nonsmooth_attractor_xz.png",
+          "sha256": "bf58f82203b682857d179d03ae5c62d14fe8aa7bd2b7803f6021ea3f80e74017"
+        },
+        {
+          "output_index": 4,
+          "source_name": "chua-nonsmooth_attractor_yz.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/33_render_all_plots__04_chua-nonsmooth_attractor_yz.png",
+          "sha256": "8b4efaa75c1c40b26ffef9d0d74fa5ea96f4b7da4690476f4741190d1a2b31f8"
+        },
+        {
+          "output_index": 5,
+          "source_name": "chua-nonsmooth_basin.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/33_render_all_plots__05_chua-nonsmooth_basin.png",
+          "sha256": "8a08a0dde84ae1215da516b4ca34a5adfdd0668f5bf71961f9951ba177967117"
+        },
+        {
+          "output_index": 6,
+          "source_name": "chua-nonsmooth_nyquist.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/33_render_all_plots__06_chua-nonsmooth_nyquist.png",
+          "sha256": "7132cc3cb5fe56cb47437c67988677ca2fbe4b399422aea5ff925858aff4d440"
+        },
+        {
+          "output_index": 7,
+          "source_name": "chua-nonsmooth_matignon.png",
+          "catalog_png": "docs/assets/generated_plot_catalog/examples/33_render_all_plots__07_chua-nonsmooth_matignon.png",
+          "sha256": "e272254a6887f4a80a2cfbcce05b1be5fbb32369fece0981d510149a2c3c5a51"
+        }
+      ],
+      "representative_sha256": "138d31a7ac354ae36491852598571a20aa177675d66774cb153640d5042fb048",
+      "status": "ok",
+      "implementation_note": "Orchestrator: produces attractor, basin, Nyquist, and Matignon figures; the first output is representative."
+    }
+  ]
+}

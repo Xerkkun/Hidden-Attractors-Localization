@@ -26,14 +26,13 @@ states are:
 
 | Method identifier | Current validation state |
 | --- | --- |
-| `integer_qr_benettin` | Synthetic tests and published benchmark validation; restricted to `q=1`. |
+| `integer_qr_benettin` | Exact linear controls and internal cross-checks; restricted to `q=1`; no quantitative published-spectrum reproduction. |
 | `fractional_variational_abm_qr` | Synthetic numerical validation only. |
 | `fractional_cloned_dynamics_abm_gs_published` | Implemented diagnostic with a recorded published-benchmark discrepancy. |
 | `fractional_cloned_dynamics_abm_qr` | Implemented numerical-comparison route; no published quantitative-validation claim. |
 
-All four methods return finite-time indicators. Only
-`integer_qr_benettin` carries the registry flag for published benchmark
-validation.
+All four methods return finite-time indicators. No current registry entry
+claims complete quantitative published-benchmark validation.
 
 ## Models, Systems, And Stability
 

@@ -73,10 +73,17 @@ promoted scientific evidence and not a global proof of hiddenness.
 ## Distribution boundary
 
 The wheel contains the importable package and supported runtime resources. The
-source distribution additionally contains selected user documentation and the
-validated integer reference example. Both exclude repository tests, maintainer
-release files, exploratory configurations, generated outputs, large figures,
-and the validation archive.
+source distribution additionally contains selected user documentation, the
+mathematical-diagnostics reference, the complete 33-function plotting catalog,
+its generator and 62 real-system numerical PNG outputs, and the validated
+integer reference example. Both exclude repository tests, maintainer release
+files, exploratory configurations, ordinary workflow outputs, validation-side
+figures, and the validation archive.
+
+The catalog images are computed from the registered `chua-nonsmooth` system
+under the parameters and numerical contracts recorded in
+`catalog_results.json`. They are reproducible examples, not experimental
+measurements or new validation evidence.
 
 Scientific validation records remain in the repository and DOI archive. PyPI
 distributes executable software; it is not the evidence archive.

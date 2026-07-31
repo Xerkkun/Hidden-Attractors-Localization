@@ -1,0 +1,723 @@
+\section{Diagnósticos matemáticos independientes de la búsqueda de ocultedad}
+\label{sec:diagnosticos-independientes}
+
+Las funciones de esta sección aceptan una trayectoria o una serie temporal
+suministrada por la persona usuaria. No ejecutan por sí mismas una búsqueda de
+atractores ocultos y sus salidas no contienen una decisión de cuenca. Para una
+trayectoria uniformemente muestreada se usa
+\[
+ t_n=t_0+n\Delta t,\qquad
+ X_n=(x_{n,1},\ldots,x_{n,d})^\mathsf{T},\qquad n=0,\ldots,N-1.
+\]
+Cuando se declara un tiempo de descarte \(t_{\rm burn}\), todas las métricas se
+calculan sobre el conjunto de índices
+\(\mathcal I=\{n:t_n\geq t_{\rm burn}\}\). Las etiquetas devueltas son
+diagnósticos finito-temporales; no son pruebas asintóticas de acotamiento,
+caos, periodicidad u ocultedad.
+
+\subsection{Métricas de trayectoria y acotamiento}
+
+Para cada componente, \codepath{compute_trajectory_metrics} calcula el rango y
+la varianza de la cola:
+\[
+ R_j=\max_{n\in\mathcal I}x_{n,j}
+     -\min_{n\in\mathcal I}x_{n,j},
+ \qquad
+ s_j^2=\frac{1}{|\mathcal I|}
+ \sum_{n\in\mathcal I}(x_{n,j}-\bar x_j)^2.
+\]
+Si se proporcionan equilibrios \(E_\ell\), también calcula
+\[
+ d_{\min}(X_{N-1})=\min_\ell\|X_{N-1}-E_\ell\|_2
+\]
+y sólo registra contacto final cuando esa distancia no excede
+\codepath{equilibrium_tol}. La etiqueta \codepath{bounded_nontrivial} significa
+únicamente que la trayectoria es finita, no rebasó el radio numérico de
+divergencia y no terminó dentro de la tolerancia de un equilibrio.
+
+\codepath{compute_boundedness_metrics} forma la serie
+\[
+ r_n=
+ \begin{cases}
+ \|X_n\|_2,&\texttt{norm="euclidean"},\\
+ \|X_n\|_\infty,&\texttt{norm="max"},
+ \end{cases}
+\]
+y, con una fracción de ventana \(\gamma\in(0,0.5]\), usa
+\[
+ G=\frac{\operatorname{mean}(r_{N-m},\ldots,r_{N-1})}
+ {\max\{\operatorname{mean}(r_0,\ldots,r_{m-1}),\epsilon_{\rm mach}\}},
+ \qquad m=\max\{2,\operatorname{round}(\gamma N)\}.
+\]
+La implementación clasifica \codepath{unbounded_candidate} si se rebasa
+\codepath{divergence_radius} o si \(G\geq100\); clasifica
+\codepath{bounded_candidate} si el máximo es finito y \(G<10\); los valores
+intermedios son inconclusos. Estos umbrales son reglas operativas de la
+librería, no teoremas de estabilidad.
+
+\begin{verbatim}
+from hidden_attractors import (
+    compute_boundedness_metrics,
+    compute_trajectory_metrics,
+    trajectory_metrics_for_system,
+)
+
+trajectory_metrics = compute_trajectory_metrics(
+    times, states, equilibria=equilibria, t_start=40.0
+)
+system_metrics = trajectory_metrics_for_system(
+    trajectory, system=system, h=0.01, t_start=40.0
+)
+boundedness = compute_boundedness_metrics(
+    times, states, burn_time=40.0,
+    divergence_radius=120.0,
+)
+\end{verbatim}
+
+\codepath{trajectory_metrics_for_system} es una fachada para las mismas
+ecuaciones: acepta una matriz \((t,X)\) y obtiene los equilibrios del objeto
+\codepath{system}, o acepta el diccionario \codepath{equilibria} de forma
+explícita. Si \codepath{has_time=False}, construye
+\(t_n=nh\); si la matriz ya contiene tiempo, \(h\) no modifica sus muestras.
+La función exige una de las dos fuentes de equilibrios y no ejecuta búsqueda
+de semillas ni una prueba de ocultedad.
+
+\begin{verbatim}
+trajectory_metrics_for_system(
+    traj, *, system=None, equilibria=None, h, t_start,
+    divergence_norm=120.0, equilibrium_tol=1.0e-3,
+    has_time=True,
+)
+\end{verbatim}
+
+\subsection{DFT, FFT, potencia, entropía espectral y Welch}
+
+Después de retirar tendencia o media y aplicar una ventana \(w_n\), la
+transformada discreta implementada por NumPy es
+\[
+ Y_k=\sum_{n=0}^{N-1}w_n y_n
+       \exp\!\left(-2\pi\ii\frac{kn}{N}\right),
+ \qquad
+ f_k=\frac{k}{N\Delta t},
+ \qquad 0\leq k\leq\left\lfloor\frac N2\right\rfloor .
+\]
+\codepath{fft_spectrum} devuelve la amplitud unilateral
+\[
+ A_k=\frac{|Y_k|}{\sum_n w_n},
+\]
+mientras que \codepath{compute_fft_psd} usa potencia no normalizada
+\(P_k=|Y_k|^2\) y, por defecto, la normaliza como
+\(p_k=P_k/\sum_jP_j\). De esa distribución obtiene
+\[
+ H_{\rm spec}=
+ -\frac{\sum_{k:p_k>0}p_k\log p_k}{\log K},
+ \qquad
+ D_{\rm peak}=\frac{\max_k p_k}{\sum_kp_k}.
+\]
+La fracción de ancho de banda es el número mínimo de bins de mayor potencia
+que acumulan el \(90\) por ciento, dividido por el número total de bins. La
+clasificación de pico dominante, candidato cuasiperiódico o espectro de banda
+ancha usa umbrales explícitos del código y no certifica caos. La FFT rápida es
+el algoritmo computacional para evaluar la DFT
+\cite{CooleyTukey1965}; la entropía normalizada deriva de la entropía de
+Shannon \cite{Shannon1948}.
+
+Para \codepath{psd_welch}, cada segmento solapado \(r\), de longitud \(L\), se
+centra y multiplica por una ventana de Hann. La estimación implementada es
+\[
+ \widehat S_{yy}(f_k)=
+ \frac1{M}\sum_{r=1}^{M}
+ c_k\frac{\Delta t\left|\sum_{n=0}^{L-1}
+ w_n y_{r,n}\exp(-2\pi\ii kn/L)\right|^2}
+ {\sum_{n=0}^{L-1}w_n^2},
+\]
+donde \(c_k=2\) en los bins interiores positivos y \(c_k=1\) en continua y,
+para longitud par, Nyquist. Esta es la densidad unilateral de Welch
+\cite{Welch1967}; si \(y\) tiene unidades \(U\) y el tiempo unidades \(T\), la
+salida tiene unidades \(U^2/\mathrm{Hz}=U^2T\). La implementación se contrasta
+con \codepath{scipy.signal.welch} usando la misma ventana explícita, solapamiento
+y detrend. La entrada debe estar uniformemente muestreada; aumentar el
+solapamiento no crea información y la ventana intercambia fuga espectral por
+resolución.
+
+\begin{verbatim}
+from hidden_attractors import compute_fft_psd
+from hidden_attractors.analysis import fft_spectrum, psd_welch
+
+summary = compute_fft_psd(
+    times, states[:, 0], burn_time=40.0,
+    window="hann", normalize_power=True,
+)
+fft = fft_spectrum(states[:, 0], h=times[1] - times[0])
+welch = psd_welch(
+    states[:, 0], h=times[1] - times[0],
+    nperseg=512, overlap=0.5,
+)
+\end{verbatim}
+
+\subsection{Cruces de una sección de Poincaré}
+
+\par\smallskip\noindent
+Para la sección \(x_s=c\), la función
+\codepath{detect_poincare_crossings} acepta un cruce positivo cuando
+\[
+ x_{n,s}<c\leq x_{n+1,s},
+ \qquad x_{n+1,s}-x_{n,s}>0,
+\]
+y un cruce negativo cuando
+\[
+ x_{n,s}>c\geq x_{n+1,s},
+ \qquad x_{n+1,s}-x_{n,s}<0.
+\]
+Estas desigualdades evitan contar dos veces una muestra situada exactamente
+en la sección. Con interpolación lineal calcula
+\[
+ \theta_n=\frac{c-x_{n,s}}{x_{n+1,s}-x_{n,s}},\qquad
+ t_\star=t_n+\theta_n(t_{n+1}-t_n),\qquad
+ X_\star=X_n+\theta_n(X_{n+1}-X_n).
+\]
+En \codepath{derivative_mode="integer_rhs"}, además se exige que
+\(F_s(t_\star,X_\star)\) tenga el signo de cruce. En
+\codepath{derivative_mode="geometric_fractional"} sólo se usa la orientación
+de las muestras. Por tanto, para Caputo la salida es una sección geométrica
+numérica y no un mapa de retorno clásico exacto. Tampoco el modo entero es un
+mapa exacto: sigue siendo una interpolación lineal entre muestras; la
+evaluación de \(F\) únicamente aporta la prueba clásica de orientación. En
+consecuencia, la API registra \codepath{exact_poincare_map=False} en todos los
+modos y distingue el caso entero mediante
+\codepath{classical_integer_section_interpretation=True}. La separación entre
+localización del evento y orientación sigue la práctica de cálculo numérico de
+mapas de Poincaré \cite{Henon1982}.
+
+\begin{verbatim}
+from hidden_attractors import detect_poincare_crossings
+
+section = detect_poincare_crossings(
+    times,
+    states,
+    section_variable="x",
+    section_value=0.0,
+    direction="positive",
+    derivative_mode="geometric_fractional",
+    burn_time=40.0,
+)
+\end{verbatim}
+
+\subsection{Prueba 0--1 de Gottwald--Melbourne}
+
+Para una señal escalar \(\phi_j\) y un valor
+\(c\in(\pi/5,4\pi/5)\), la implementación construye
+\[
+ p_c(n)=\sum_{j=1}^{n}\phi_j\cos(jc),\qquad
+ q_c(n)=\sum_{j=1}^{n}\phi_j\sin(jc).
+\]
+Para un retardo \(\ell\), calcula el desplazamiento cuadrático medio
+\[
+ M_c(\ell)=\frac1{N-\ell}
+ \sum_{j=1}^{N-\ell}
+ \left([p_c(j+\ell)-p_c(j)]^2+
+       [q_c(j+\ell)-q_c(j)]^2\right),
+\]
+retira el término oscilatorio
+\[
+ V_{\rm osc}(\ell)=
+ \bar\phi^2\frac{1-\cos(\ell c)}{1-\cos c},
+ \qquad
+ D_c(\ell)=M_c(\ell)-V_{\rm osc}(\ell),
+\]
+y usa la correlación
+\[
+ K_c=\operatorname{corr}\bigl((1,\ldots,L),
+ (D_c(1),\ldots,D_c(L))\bigr).
+\]
+El valor reportado es la mediana de \(K_c\) sobre valores reproducibles de
+\(c\), siguiendo la formulación robusta de
+Gottwald y Melbourne \cite{GottwaldMelbourne2004,GottwaldMelbourne2009}.
+La librería usa \(K>0.8\) como candidato caótico, \(K<0.2\) como candidato
+regular y la zona intermedia como inconclusa. Ruido, tendencia, sobremuestreo
+y transitorios pueden sesgar el resultado.
+
+\begin{verbatim}
+from hidden_attractors import zero_one_test
+
+result_01 = zero_one_test(
+    states[:, 0],
+    n_c=100,
+    random_seed=12345,
+    detrend=True,
+    normalize=True,
+)
+\end{verbatim}
+
+\subsection{Postprocesamiento para diagramas de bifurcación}
+
+La función \codepath{bifurcation_points_from_trajectories} no realiza
+continuación de ramas. Para cada parámetro \(\mu_r\), descarta el transitorio y
+selecciona máximos locales de un observable \(y_n\):
+\[
+ y_n-y_{n-1}\geq0,\qquad y_n-y_{n+1}\geq0.
+\]
+Los modos \codepath{minima}, \codepath{both} y \codepath{sample} cambian esa
+regla. El diagrama es el conjunto
+\(\{(\mu_r,y_{r,n}):n\in\mathcal M_r\}\); no identifica automáticamente
+puntos de bifurcación, estabilidad de ramas ni multiplicadores de Floquet.
+Para un conjunto no vacío \(\mathcal B\) de puntos extraídos,
+\codepath{bifurcation_summary} sólo resume
+\[
+ n_{\mathcal B}=|\mathcal B|,\qquad
+ \mu_{\min}=\min_{b\in\mathcal B}\mu_b,\quad
+ \mu_{\max}=\max_{b\in\mathcal B}\mu_b,
+\]
+\[
+ y_{\min}=\min_{b\in\mathcal B}y_b,\qquad
+ y_{\max}=\max_{b\in\mathcal B}y_b.
+\]
+Si \(\mathcal B\) está vacío devuelve únicamente
+\codepath{n_points=0}; este resumen tampoco localiza bifurcaciones.
+Su firma pública es \codepath{bifurcation_summary(points)}.
+
+\begin{verbatim}
+from hidden_attractors import (
+    bifurcation_points_from_trajectories,
+    bifurcation_summary,
+)
+from hidden_attractors.plotting import plot_bifurcation_diagram
+
+points = bifurcation_points_from_trajectories(
+    scans, observable="x", t_start=40.0, mode="maxima"
+)
+point_summary = bifurcation_summary(points)
+plot_bifurcation_diagram(
+    points, "bifurcation.pdf",
+    parameter_label="mu",
+    observable_label="maximos locales de x",
+)
+\end{verbatim}
+
+\subsection{Exponentes de Lyapunov desde las ecuaciones}
+
+\subsubsection{QR--Benettin para \(q=1\)}
+
+Para \(\dot X=F(X)\), la matriz variacional satisface
+\[
+ \dot\Phi(t)=J(X(t))\Phi(t),\qquad
+ J(X)=\frac{\partial F}{\partial X},\qquad \Phi(0)=I.
+\]
+Después de cada intervalo de reortogonalización,
+\(\Phi_k=Q_kR_k\), y el estimador finito-temporal es
+\[
+ \widehat\lambda_i(T)=
+ \frac1T\sum_{k=1}^{m}\log |(R_k)_{ii}|.
+\]
+Ésta es la ruta \codepath{integer_qr_benettin}, basada en el método de
+Benettin y la práctica de reortogonalización para espectros numéricos
+\cite{Benettin1980a,Benettin1980b,Wolf1985}. Sólo es válida para \(q=1\).
+Si no se proporciona Jacobiano analítico, la librería usa diferencias finitas
+y registra la advertencia correspondiente. La discretización implementada
+debe quedar explícita:
+\[
+ X_{n+1}=\operatorname{EFORK}_{q=1}(F,X_n,h),\qquad
+ \Phi_{n+1}=\Phi_n+hJ(X_n)\Phi_n.
+\]
+Es decir, el estado usa el paso de tres etapas
+\codepath{efork_q1_step}, mientras que la base tangente usa Euler explícito
+antes de cada QR. La exactitud de los exponentes debe comprobarse refinando
+\(h\); la etiqueta QR--Benettin identifica la construcción variacional y la
+reortogonalización, no un mismo integrador de alto orden para ambos bloques.
+\codepath{integer_qr_benettin_lyapunov_exponents} es la fachada canónica
+directa para \(F\), \(J\) y \(X_0\); reutiliza el mismo núcleo y no constituye
+un segundo método. Impone el contrato entero
+\(\lvert q-1\rvert\leq10^{-9}\).
+\codepath{integer_system_lyapunov_exponents} adapta un
+\codepath{ChaoticSystem}: usa su \codepath{evaluate}, emplea
+\codepath{jacobian_matrix} cuando el sistema declara un Jacobiano analítico y,
+en caso contrario, aproxima
+\[
+ J_{ij}(X)\approx
+ \frac{F_i(X+\varepsilon e_j)-F_i(X-\varepsilon e_j)}
+ {2\varepsilon}.
+\]
+La fachada intenta inferir el orden declarado del sistema y lo rechaza cuando
+\(\lvert q_{\mathrm{system}}-1\rvert>10^{-9}\). Si el objeto no declara orden, lo acepta por
+compatibilidad; esa aceptación no demuestra que el modelo sea entero.
+
+\begin{verbatim}
+integer_qr_benettin_lyapunov_exponents(
+    rhs, jacobian, x0, *, h, t_final, t_burn=0.0,
+    reorthonormalize_every=10, jacobian_eps=1.0e-6,
+    div_threshold=None, q=1.0,
+)
+integer_system_lyapunov_exponents(
+    system, x0, *, h, t_final, t_burn=0.0,
+    reorthonormalize_every=10, jacobian_eps=1.0e-6,
+    div_threshold=None,
+)
+\end{verbatim}
+
+\begin{verbatim}
+from hidden_attractors import (
+    integer_qr_benettin_lyapunov_exponents,
+    integer_system_lyapunov_exponents,
+)
+
+direct = integer_qr_benettin_lyapunov_exponents(
+    rhs, jacobian, x0, h=0.01, t_final=20.0,
+    t_burn=2.0, q=1.0,
+)
+registered = integer_system_lyapunov_exponents(
+    system, x0, h=0.01, t_final=20.0, t_burn=2.0,
+)
+\end{verbatim}
+
+\subsubsection{Sistema variacional Caputo ABM--QR}
+
+Para \(0<q<1\), la ruta
+\codepath{fractional_variational_abm_qr} integra el sistema extendido
+\[
+ \CaputoD X=F(X),\qquad
+ \CaputoD\Phi=J(X)\Phi,\qquad \Phi(0)=I
+\]
+con ABM. Como el operador de Caputo depende de la historia, después de
+\(\Phi_k=Q_kR_k\) la implementación coherente transforma cada bloque
+variacional almacenado:
+\[
+ \Phi_j\leftarrow \Phi_jR_k^{-1},
+ \qquad
+ G_j\leftarrow
+ \begin{bmatrix}F(X_j)\\J(X_j)\Phi_j\end{bmatrix},
+ \quad j\leq k.
+\]
+Con \codepath{memory_mode="full"} se conserva toda la historia; una ventana
+finita cambia el problema numérico. El sistema original--variacional se apoya
+en la formulación discutida por Danca y Kuznetsov
+\cite{DancaKuznetsov2018}; la transformación de \emph{toda} la historia
+almacenada después de QR es una extensión propia de esta librería y no una
+reproducción literal del algoritmo publicado. La implementación tiene pruebas
+sintéticas, pero no se presenta como validación cuantitativa publicada para
+todos los modelos, órdenes o superficies no suaves.
+
+\subsubsection{Dinámica clonada}
+
+Las dos rutas clonadas no requieren Jacobiano. En cada bloque se integran una
+trayectoria fiducial y \(d\) copias
+\[
+ X^{(i)}_0=X_0+\delta e_i,\qquad i=1,\ldots,d.
+\]
+Al final del bloque se forma
+\[
+ V_k=\left[
+ X^{(1)}_k-X^{(0)}_k,\ldots,
+ X^{(d)}_k-X^{(0)}_k
+ \right],
+\]
+se ortogonaliza mediante Gram--Schmidt o QR, y se acumulan las normas
+\(\rho_{k,i}\):
+\[
+ \widehat\lambda_i=
+ \frac1{K\,t_{\rm clone}}
+ \sum_{k=1}^{K}\log\frac{\rho_{k,i}}{\delta}.
+\]
+\codepath{fractional_cloned_dynamics_abm_gs_published} sigue la ruta de
+Fischer, Zourmba y Mohamadou \cite{Fischer2020}; la variante
+\codepath{fractional_cloned_dynamics_abm_qr} sustituye GS por QR. Ambas usan
+la misma semántica de reinicio ABM por bloques para la integración
+fraccionaria. La ejecución registra
+\codepath{effective_memory_protocol="published_block_restart"}; los nombres
+anteriores, como \codepath{experimental_qr_block_restart}, sólo se conservan
+en \codepath{requested_memory_protocol} como alias de compatibilidad. La
+diferencia efectiva de la variante es la ortogonalización QR, no otra historia
+de Caputo. Ninguna de las dos es un estimador Caputo de memoria completa.
+
+\begin{center}
+\footnotesize
+\begin{longtable}{@{}L{0.27\textwidth}L{0.12\textwidth}L{0.13\textwidth}L{0.20\textwidth}L{0.20\textwidth}@{}}
+\toprule
+Método solicitado & Orden & Jacobiano & Memoria & Estado de evidencia \\
+\midrule
+\codepath{integer_qr_benettin} & \(q=1\) & Opcional; DF centradas & No aplica & Controles lineales exactos e intercomparación interna; sin reproducción cuantitativa de un espectro publicado.\\
+\codepath{fractional_variational_abm_qr} & \(0<q<1\) & Opcional; DF centradas & Completa o ventana declarada & Implementado; validación sintética, sin claim cuantitativo publicado general.\\
+\codepath{fractional_cloned_dynamics_abm_gs_published} & \(0<q\leq1\) & No & Reinicio por bloques & Reproducción con discrepancia de benchmark registrada.\\
+\codepath{fractional_cloned_dynamics_abm_qr} & \(0<q\leq1\) & No & Reinicio por bloques & Variante numérica para comparación; sin claim publicado.\\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\subsubsection{Contrato explícito de validación del método}
+
+\codepath{validate_lyapunov_method_request} comprueba una
+\codepath{LyapunovComputationRequest} sin ejecutar el integrador y devuelve
+exactamente la terna
+\[
+ (\mathrm{ok},\mathrm{status},\mathrm{warnings}).
+\]
+Para una solicitud compatible devuelve
+\codepath{(True, "compatible", warnings)}; una incompatibilidad ordinaria se
+representa con \codepath{ok=False} y no mediante una excepción. Primero exige
+una fuente y sólo una para el campo vectorial: exactamente una de
+\codepath{system} o \codepath{rhs}:
+\[
+ \mathbf{1}_{\{\mathrm{system}\neq\mathrm{None}\}}+
+ \mathbf{1}_{\{\mathrm{rhs}\neq\mathrm{None}\}}=1.
+\]
+También exige
+\[
+ X_0\in\mathbb{R}^{d},\ d\geq1,\quad
+ h>0,\quad T_{\mathrm{final}}>0,\quad T_{\mathrm{burn}}\geq0,\quad
+ \varepsilon_J>0,
+\]
+con \(X_0\), \(q\), los tiempos, \(h\) y \(\varepsilon_J\) finitos.
+Si se proporciona, \codepath{reorthonormalize_every} debe ser un entero
+positivo. \codepath{memory_window} sólo se inspecciona en la ruta variacional
+con \codepath{memory_mode="window"} y entonces también debe ser un entero
+positivo. Asimismo,
+\codepath{reorthonormalization_time} y \codepath{div_threshold} deben ser
+finitos y positivos.
+
+La validación específica reproduce el registro de métodos: QR--Benettin
+entero requiere \(q=1\) y memoria \codepath{not_applicable}; ABM--QR
+variacional requiere \(0<q<1\), memoria \codepath{full} o
+\codepath{window}, y comprueba la igualdad entre el \(q\) solicitado y el
+declarado por el sistema cuando ambos existen. Las dos rutas de dinámica
+clonada requieren \(0<q\leq1\) y aceptan
+\codepath{not_applicable}, \codepath{published_block_restart} o el alias
+\codepath{experimental_qr_block_restart}. La ausencia de Jacobiano en los
+métodos variacionales produce
+\codepath{analytic_jacobian_missing_finite_difference_used}; las rutas
+clonadas producen \codepath{cloned_dynamics_no_jacobian_required}. Son
+advertencias, no certificaciones de caos, ocultedad o validez fraccionaria.
+
+Los estados de incompatibilidad que puede devolver el código actual son:
+\begin{itemize}
+  \item \codepath{unknown_method};
+  \item \codepath{invalid_parameter};
+  \item \codepath{method_not_valid_for_fractional_caputo};
+  \item \codepath{memory_mode_not_applicable_for_integer_method};
+  \item \codepath{method_not_valid_for_integer_or_out_of_range_q};
+  \item \codepath{memory_mode_must_be_full_or_window_for_fractional_method};
+  \item \codepath{request_q_does_not_match_system_q};
+  \item \codepath{method_not_valid_for_out_of_range_q};
+  \item \codepath{memory_mode_must_be_block_restart_for_cloned_dynamics}.
+\end{itemize}
+
+\begin{verbatim}
+from hidden_attractors import (
+    LyapunovComputationRequest,
+    validate_lyapunov_method_request,
+)
+
+request = LyapunovComputationRequest(
+    system=system, rhs=None, jacobian=None, x0=x0,
+    q=1.0, method="integer_qr_benettin",
+    h=0.01, t_final=20.0, t_burn=2.0,
+    reorthonormalize_every=10,
+    memory_mode="not_applicable",
+)
+ok, status, warnings = validate_lyapunov_method_request(request)
+\end{verbatim}
+
+\begin{verbatim}
+import numpy as np
+from hidden_attractors import compute_lyapunov_spectrum
+
+rhs = lambda x: np.array([-x[0], -2.0*x[1]])
+jac = lambda x: np.array([[-1.0, 0.0], [0.0, -2.0]])
+
+summary = compute_lyapunov_spectrum(
+    rhs=rhs,
+    jacobian=jac,
+    x0=np.array([1.0, 1.0]),
+    q=1.0,
+    method="integer_qr_benettin",
+    h=0.01,
+    t_final=20.0,
+    t_burn=2.0,
+)
+print(summary.result.exponents)
+\end{verbatim}
+
+\subsection{Lyapunov desde una serie temporal escalar}
+
+Esta ruta es distinta de los métodos variacionales. A partir de una señal
+\(s_n\), una reconstrucción por retardos forma \cite{Takens1981}
+\[
+ Y_i=(s_i,s_{i+\tau},\ldots,s_{i+(m-1)\tau})^\mathsf{T}.
+\]
+Rosenstein selecciona para cada \(Y_i\) un vecino temporalmente separado
+\(Y_{j(i)}\) y calcula \cite{Rosenstein1993}
+\[
+ d(k)=\left\langle
+ \log\|Y_{i+k}-Y_{j(i)+k}\|_2
+ \right\rangle_i,\qquad
+ \widehat\lambda_{\max}=
+ \frac1{\Delta t}\frac{\mathrm d d(k)}{\mathrm d k}.
+\]
+Eckmann ajusta mapas lineales locales de la forma
+\[
+ Y_{i+1}-Y_{j+1}\approx
+ A_i(Y_i-Y_j)
+\]
+y obtiene un espectro finito mediante productos y
+reortogonalización \cite{Eckmann1986}. Ordenados
+\(\lambda_1\geq\cdots\geq\lambda_m\), la dimensión de Kaplan--Yorke es
+\cite{Frederickson1983}
+\[
+ D_{\rm KY}=j+
+ \frac{\sum_{i=1}^{j}\lambda_i}{|\lambda_{j+1}|},
+ \qquad
+ j=\max\left\{r:\sum_{i=1}^{r}\lambda_i\geq0\right\}.
+\]
+La función conserva intervalo de muestreo, unidades, parámetros de
+reconstrucción, versión del backend, calidad del ajuste, advertencias y un
+límite explícito para la matriz de distancias. La reconstrucción depende del
+observable, del muestreo, de \(m\), \(\tau\), la exclusión temporal y la
+ventana de ajuste.
+
+\begin{verbatim}
+from hidden_attractors import estimate_time_series_lyapunov
+
+result = estimate_time_series_lyapunov(
+    signal,
+    sample_interval=0.01,
+    time_unit="s",
+    observable="x",
+    rosenstein_emb_dim=8,
+    eckmann_emb_dim=9,
+    eckmann_matrix_dim=3,
+)
+print(result.largest_exponent, result.exponent_unit)
+print(result.spectrum, result.kaplan_yorke_dimension)
+\end{verbatim}
+
+\subsection{Medidas de complejidad mediante backends opcionales}
+
+\codepath{compute_complexity_measures} es un adaptador: no reimplementa
+\codepath{nolds} ni \codepath{antropy}. Según el backend instalado puede
+solicitar:
+\begin{itemize}
+  \item entropía muestral, \(\operatorname{SampEn}(m,r)
+  =-\log(A_{m+1}/B_m)\) \cite{RichmanMoorman2000};
+  \item dimensión de correlación,
+  \(D_2=\lim_{r\to0}\mathrm d\log C(r)/\mathrm d\log r\)
+  \cite{GrassbergerProcaccia1983};
+  \item exponente de Rosenstein y exponente de Hurst
+  \cite{Hurst1951};
+  \item DFA, \(F(s)\propto s^\alpha\) \cite{Peng1994};
+  \item entropía de permutación normalizada \cite{BandtPompe2002} y
+  dimensión fractal de Higuchi \cite{Higuchi1988}.
+\end{itemize}
+Las convenciones exactas, valores predeterminados y correcciones pertenecen a
+la versión registrada del backend. Por ello el resultado debe citar tanto la
+librería adaptadora como el backend que realizó el cálculo.
+
+\begin{verbatim}
+from hidden_attractors.integrations import (
+    available_complexity_backends,
+    compute_complexity_measures,
+)
+
+print(available_complexity_backends())
+complexity = compute_complexity_measures(
+    signal,
+    backend="auto",
+    sample_rate=100.0,
+    measures=[
+        "sample_entropy",
+        "permutation_entropy",
+        "spectral_entropy",
+        "dfa",
+    ],
+)
+\end{verbatim}
+
+\subsection{ADM Wu2023: ecuación implementada y frontera científica}
+
+La ruta \codepath{adm_wu2023_integrate} es una reproducción específica del
+Chua arctan de Wu et al. \cite{Wu2023ArctanChua}. En cada paso aproxima
+\[
+ X_{n+1}=X_n+
+ \sum_{r=1}^{4}C^{(r)}
+ \frac{h^{rq}}{\Gamma(rq+1)}.
+\]
+Sea \(g(x)=\arctan(\rho x)\), \(s=1+\rho^2x_n^2\), y
+\[
+ g'_n=\frac{\rho}{s},\quad
+ g''_n=-\frac{2\rho^3x_n}{s^2},\quad
+ g'''_n=\frac{8\rho^5x_n^2}{s^3}-\frac{2\rho^3}{s^2}.
+\]
+El primer coeficiente es \(C^{(1)}=F(X_n)\). Para la primera componente, los
+polinomios de Adomian usados por el código son
+\[
+\begin{aligned}
+ A_1={}&g'_n C^{(1)}_1,\\
+ A_2={}&g'_n C^{(2)}_1+
+ \frac{g''_n}{2}(C^{(1)}_1)^2
+ \frac{\Gamma(2q+1)}{\Gamma(q+1)^2},\\
+ A_3={}&g'_n C^{(3)}_1+
+ g''_nC^{(1)}_1C^{(2)}_1
+ \frac{\Gamma(3q+1)}{\Gamma(q+1)\Gamma(2q+1)}
+ +\frac{g'''_n}{6}(C^{(1)}_1)^3
+ \frac{\Gamma(3q+1)}{\Gamma(q+1)^3}.
+\end{aligned}
+\]
+Para \(r=1,2,3\), el siguiente nivel satisface
+\[
+\begin{aligned}
+ C^{(r+1)}_1&=-\alpha(1+a_1)C^{(r)}_1
+ +\alpha C^{(r)}_2-\alpha a_2 A_r,\\
+ C^{(r+1)}_2&=C^{(r)}_1-C^{(r)}_2+C^{(r)}_3,\\
+ C^{(r+1)}_3&=-\beta C^{(r)}_2-\gamma C^{(r)}_3.
+\end{aligned}
+\]
+Cada actualización usa únicamente \(X_n\). No contiene la convolución de
+historia de Caputo y no es equivalente a ABM o EFORK-3 con memoria completa.
+Su uso defendible es la reproducción metodológica, no sustituir una
+integración Caputo.
+
+\begin{verbatim}
+import numpy as np
+from hidden_attractors.integrations import adm_wu2023_integrate
+
+times, states, status, info = adm_wu2023_integrate(
+    params={
+        "alpha": 10.0, "beta": 14.87, "gamma": 0.0,
+        "a1": -1.27, "a2": 1.08, "rho": 1.0,
+    },
+    x0=np.array([0.1, 0.0, 0.0]),
+    q=0.99,
+    h=0.005,
+    N=2000,
+)
+\end{verbatim}
+
+\subsection{Integradores: selector y llamadas}
+
+\begin{center}
+\footnotesize
+\begin{longtable}{@{}L{0.25\textwidth}L{0.16\textwidth}L{0.25\textwidth}L{0.26\textwidth}@{}}
+\toprule
+Entrada & Orden & Llamada mínima & Contrato \\
+\midrule
+\codepath{integrate(..., integrator="rk4")} & \(q=1\) &
+\codepath{integrate(rhs,x0,1,h,tf,"rk4")} & RK4 clásico.\\
+\codepath{integrate(..., integrator="heun")} & \(q=1\) &
+\codepath{integrate(rhs,x0,1,h,tf,"heun")} & Trapecio explícito de orden dos.\\
+\codepath{integrate(..., integrator="efork_q1")} & \(q=1\) &
+\codepath{integrate(rhs,x0,1,h,tf,"efork_q1")} & Límite entero de coeficientes EFORK.\\
+\codepath{integrate(..., integrator="abm")} & \(0<q<1\) &
+\codepath{integrate(rhs,x0,q,h,tf,"abm")} & ABM Caputo; declarar memoria.\\
+\codepath{integrate(..., integrator="efork3")} & \(0<q\leq1\) &
+\codepath{integrate(rhs,x0,q,h,tf,"efork3")} & EFORK-3; en \(q=1\) redirige al límite entero.\\
+\codepath{adm_wu2023_integrate} & \(0<q\leq1\) &
+\codepath{adm_wu2023_integrate(params,x0,q,h,N)} & Reproducción arctan local, sin memoria Caputo.\\
+\codepath{integrate_fractional_abm} & órdenes por componente &
+\codepath{integrate_fractional_abm(rhs,x0,orders,h,N)} & Ruta experimental de reinicio por bloques; no es contrato público general no conmensurado.\\
+\bottomrule
+\end{longtable}
+\end{center}
+
+Las funciones de bajo nivel \codepath{integrate_general},
+\codepath{caputo_abm_integrate}, \codepath{efork_integrate},
+\codepath{rk4_integrate} y \codepath{fractional_integrate} existen para control
+avanzado y pruebas. Para código nuevo se prefiere \codepath{integrate}, salvo
+la reproducción ADM, que requiere sus parámetros específicos y se invoca de
+forma directa.

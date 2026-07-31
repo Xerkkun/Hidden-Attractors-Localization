@@ -32,7 +32,9 @@ class SpectrumResult:
     frequency_rad_s : np.ndarray, shape (K,)
         Frequency axis in rad/s (``2π × frequency_hz``).
     values : np.ndarray, shape (K,)
-        Amplitude (FFT) or power spectral density (Welch) values.
+        Amplitude (FFT) or one-sided power spectral density (Welch) values.
+        If the input unit is ``U`` and *h* is expressed in seconds, the Welch
+        values have units ``U**2 / Hz``.
     component : int
         State-component index this spectrum was computed from.
     method : str
@@ -140,7 +142,13 @@ def psd_welch(
     overlap: float = 0.5,
     component: int = 0,
 ) -> SpectrumResult:
-    """Return a simple NumPy Welch power spectral density estimate.
+    """Return a one-sided Welch power spectral density estimate.
+
+    Each centered, Hann-windowed segment uses density scaling
+    ``h / sum(window**2)`` and the interior positive-frequency bins are
+    doubled.  This matches the one-sided ``scaling='density'`` convention of
+    :func:`scipy.signal.welch` when the same explicit window, segment overlap,
+    and mean detrending are used.
 
     Parameters
     ----------
@@ -158,27 +166,38 @@ def psd_welch(
     Returns
     -------
     spectrum : SpectrumResult
-        PSD estimate.  Falls back to :func:`fft_spectrum` if no full
-        segment can be formed.
+        One-sided power spectral density. Falls back to
+        :func:`fft_spectrum` if no full segment can be formed.
     """
 
+    h_value = float(h)
+    overlap_value = float(overlap)
+    if not np.isfinite(h_value) or h_value <= 0.0:
+        raise ValueError("h must be finite and positive.")
+    if not np.isfinite(overlap_value) or not 0.0 <= overlap_value < 1.0:
+        raise ValueError("overlap must satisfy 0 <= overlap < 1.")
     data = np.asarray(values, dtype=float)
     data = data[np.isfinite(data)]
     if data.size < 2:
         return SpectrumResult(np.empty(0), np.empty(0), np.empty(0), int(component), "psd_welch")
     n = min(max(16, int(nperseg)), data.size)
-    step = max(1, int(round(n * (1.0 - float(overlap)))))
+    step = max(1, int(round(n * (1.0 - overlap_value))))
     window = np.hanning(n)
-    scale = float(np.sum(window**2)) * float(h)
+    density_scale = h_value / max(float(np.sum(window**2)), 1.0e-300)
     chunks = []
     for start in range(0, data.size - n + 1, step):
         segment = data[start : start + n]
         segment = segment - float(np.mean(segment))
-        chunks.append((np.abs(np.fft.rfft(segment * window)) ** 2) / max(scale, 1.0e-300))
+        periodogram = (np.abs(np.fft.rfft(segment * window)) ** 2) * density_scale
+        if n % 2 == 0:
+            periodogram[1:-1] *= 2.0
+        else:
+            periodogram[1:] *= 2.0
+        chunks.append(periodogram)
     if not chunks:
         return fft_spectrum(data, h, component=component)
     psd = np.mean(np.vstack(chunks), axis=0)
-    freq = np.fft.rfftfreq(n, d=float(h))
+    freq = np.fft.rfftfreq(n, d=h_value)
     return SpectrumResult(freq, 2.0 * np.pi * freq, psd, int(component), "psd_welch")
 
 

@@ -62,6 +62,22 @@ def test_integrate_dispatch():
     assert len(t_frac) == 51
 
 
+def test_generic_selector_directs_adm_to_specialized_api() -> None:
+    with pytest.raises(
+        ValueError,
+        match=r"adm_wu2023_integrate\(params, x0, q, h, N",
+    ):
+        integrate(
+            lambda state: -state,
+            np.array([1.0]),
+            q=0.98,
+            h=0.01,
+            t_final=0.1,
+            integrator="adm_wu2023",
+            use_c_backend=False,
+        )
+
+
 def test_near_integer_order_validation_and_dispatch_agree() -> None:
     """An order accepted as q=1 must reach the integer solver branch."""
 
