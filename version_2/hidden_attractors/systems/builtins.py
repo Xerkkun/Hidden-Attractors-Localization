@@ -143,14 +143,12 @@ def _chua_lure_system(parameters: Mapping[str, Any]) -> LureSystem:
             return float(np.sqrt(amplitude_sq))
         if abs(k - sat_gain) < 1.0e-10:
             return 1.0
-        grid = np.linspace(1.0 + 1.0e-9, 100.0, 20_000)
-        values = np.array([describing_function(a) - k for a in grid], dtype=float)
-        for i in range(len(grid) - 1):
-            if values[i] == 0.0:
-                return float(grid[i])
-            if values[i] * values[i + 1] < 0.0:
-                return float(_bisect_root(lambda a: describing_function(a) - k, grid[i], grid[i + 1], maxiter=500))
-        raise RuntimeError("No amplitude solved the requested describing-function gain.")
+        left = 1.0 + 1.0e-9
+        right = 100.0
+        residual = lambda amplitude: describing_function(amplitude) - k
+        if residual(left) * residual(right) > 0.0:
+            raise RuntimeError("No amplitude solved the requested describing-function gain.")
+        return float(_bisect_root(residual, left, right, maxiter=500))
 
     return LureSystem(
         name=system_name,

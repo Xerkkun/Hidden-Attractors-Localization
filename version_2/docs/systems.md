@@ -115,6 +115,12 @@ target_seed, trajectory, status = final_integer_lure_attractor(
 probes = run_integer_lure_hiddenness_controls(system, trajectory)
 ```
 
+The default seed route is `direct_integer_transfer`: it recomputes the
+integer Nyquist crossings from the declared `(P, b, r)` realization and then
+solves the registered describing-function relation. Frequency scans are
+library alternatives and require an explicit `search_route` or
+`fallback_route` selection.
+
 The completed reference validation for this route is documented in
 [Integer Chua `q=1` Reference](integer_chua_reference.md).
 

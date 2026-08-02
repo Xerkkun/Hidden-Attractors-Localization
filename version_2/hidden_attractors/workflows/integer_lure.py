@@ -8,7 +8,12 @@ from typing import Any, Iterable, Mapping, Sequence
 import numpy as np
 
 from ..analysis.trajectory import classify_trajectory_against_equilibria, cloud_median_distance, sample_rows
-from ..seed_generation import HarmonicSeed, build_lure_linearized_matrix, find_lure_harmonic_seed
+from ..seed_generation import (
+    HarmonicSeed,
+    build_lure_linearized_matrix,
+    find_integer_lure_harmonic_seed_direct,
+    find_lure_harmonic_seed,
+)
 from ..solvers.integer import efork_q1_integrate
 from ..systems.base import ChaoticSystem
 from ..systems.lure import LureSystem
@@ -84,18 +89,45 @@ def integer_lure_seed(
     wmin: float = 1.0e-5,
     wmax: float = 50.0,
     nscan: int = 40_000,
+    search_route: str = "direct_integer_transfer",
+    fallback_route: str | None = None,
 ) -> HarmonicSeed:
     """Build an integer-order Lur'e seed using ``s=i*omega``.
 
     ``method`` may be ``"classic"`` or ``"machado"``.  The selected system must
-    provide the corresponding describing-function relation.
+    provide the corresponding describing-function relation.  The primary
+    route solves the rational integer transfer condition directly.  Dense
+    frequency scans remain available only through the explicit
+    ``search_route="frequency_scan"`` or
+    ``fallback_route="frequency_scan"`` settings.
     """
 
     if method not in {"classic", "machado"}:
         raise ValueError("method must be 'classic' or 'machado'.")
+    if search_route not in {"direct_integer_transfer", "frequency_scan"}:
+        raise ValueError("search_route must be 'direct_integer_transfer' or 'frequency_scan'.")
+    if fallback_route not in {None, "frequency_scan"}:
+        raise ValueError("fallback_route must be None or 'frequency_scan'.")
+
+    lure = require_lure(system)
+    if search_route == "direct_integer_transfer":
+        try:
+            return find_integer_lure_harmonic_seed_direct(
+                system=lure,
+                branch_index=branch_index,
+                method=method,  # type: ignore[arg-type]
+                mu=mu,
+                theta=theta,
+                wmin=wmin,
+                wmax=wmax,
+            )
+        except (IndexError, RuntimeError, ValueError):
+            if fallback_route != "frequency_scan":
+                raise
+
     return find_lure_harmonic_seed(
         q=1.0,
-        system=require_lure(system),
+        system=lure,
         branch_index=branch_index,
         method=method,  # type: ignore[arg-type]
         mu=mu,

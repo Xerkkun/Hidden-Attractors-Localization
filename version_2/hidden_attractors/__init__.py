@@ -71,7 +71,16 @@ from .models.chua import (
 )
 
 # systems - chaotic-system registry and capability checks
-from .systems import ChaoticSystem, LureSystem, get_system, list_systems, register_system
+from .systems import (
+    ChaoticSystem,
+    ExpressionSystemDefinition,
+    ExpressionValidationError,
+    LureSystem,
+    compile_expression_system,
+    get_system,
+    list_systems,
+    register_system,
+)
 from .systems.requirements import check_system_capability, known_workflows, requirements_for
 
 # basins - classification labels
@@ -79,6 +88,9 @@ from .basins import CLASS_LABELS, TARGET_CLASS_IDS, class_label, is_target_class
 
 # io - portable trajectory loading
 from .io import load_trajectory_csv
+
+# simulation - structured flow/map trajectory generation
+from .simulation import SimulationResult, simulate
 
 # Experimental API
 # analysis - trajectory diagnostics and Lyapunov estimates
@@ -99,9 +111,12 @@ from .analysis import (
     compute_trajectory_metrics,
     detect_poincare_crossings,
     estimate_time_series_lyapunov,
+    fft_spectrum,
     integer_qr_benettin_lyapunov_exponents,
     integer_system_lyapunov_exponents,
     kaplan_yorke_dimension,
+    psd_welch,
+    trajectory_component_spectra,
     trajectory_metrics,
     trajectory_metrics_for_system,
     validate_lyapunov_method_request,
@@ -187,6 +202,11 @@ PUBLIC_API_STABLE = (
 )
 
 PUBLIC_API_EXPERIMENTAL = (
+    "ExpressionSystemDefinition",
+    "ExpressionValidationError",
+    "SimulationResult",
+    "compile_expression_system",
+    "simulate",
     "BifurcationPoint",
     "LyapunovComputationRequest",
     "LyapunovComputationSummary",
@@ -203,9 +223,12 @@ PUBLIC_API_EXPERIMENTAL = (
     "compute_trajectory_metrics",
     "detect_poincare_crossings",
     "estimate_time_series_lyapunov",
+    "fft_spectrum",
     "integer_qr_benettin_lyapunov_exponents",
     "integer_system_lyapunov_exponents",
     "kaplan_yorke_dimension",
+    "psd_welch",
+    "trajectory_component_spectra",
     "trajectory_metrics",
     "trajectory_metrics_for_system",
     "validate_lyapunov_method_request",
@@ -309,6 +332,11 @@ __all__ = [
     # stable: portable IO
     "load_trajectory_csv",
     # experimental: analysis
+    "ExpressionSystemDefinition",
+    "ExpressionValidationError",
+    "SimulationResult",
+    "compile_expression_system",
+    "simulate",
     "BifurcationPoint",
     "LyapunovComputationRequest",
     "LyapunovComputationSummary",
@@ -325,9 +353,12 @@ __all__ = [
     "compute_trajectory_metrics",
     "detect_poincare_crossings",
     "estimate_time_series_lyapunov",
+    "fft_spectrum",
     "integer_qr_benettin_lyapunov_exponents",
     "integer_system_lyapunov_exponents",
     "kaplan_yorke_dimension",
+    "psd_welch",
+    "trajectory_component_spectra",
     "trajectory_metrics",
     "trajectory_metrics_for_system",
     "validate_lyapunov_method_request",

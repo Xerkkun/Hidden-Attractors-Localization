@@ -57,9 +57,12 @@ From a source distribution or repository checkout:
 python examples/chua_integer_lure_reference/run_example.py --quick
 ```
 
-The example runs the integer Lur'e seed, continuation, integration, sampled
-equilibrium-neighborhood controls, and structured outputs. Its finite
-numerical decision is not a global proof.
+The example validates the registered equations, Jacobian, equilibria and
+Lur'e split; recomputes the seed through the direct rational-transfer route;
+then runs continuation, integration, sampled equilibrium-neighborhood
+controls, Nyquist/Fourier figures and structured outputs. It contains no
+frequency-scan, biased-transfer or multiparameter-search configuration. Its
+finite numerical decision is not a global proof.
 
 ## Output locations
 

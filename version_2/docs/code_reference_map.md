@@ -51,8 +51,9 @@ functions and the completed executable integer reference workflow.
 
 | Public interface | Result | Evidence boundary |
 | --- | --- | --- |
+| `hidden_attractors.find_integer_lure_harmonic_seed_direct` | Integer Nyquist/DF seed recomputed from the declared rational Lur'e transfer | Primary integer route; stored Mathematica/MATLAB values are regression references, not inputs. |
 | `hidden_attractors.find_lure_harmonic_seed` | Describing-function seed for a compatible registered Lur'e system | Initialization calculation; a seed is not hiddenness evidence. |
-| `hidden_attractors.integer_lure_seed` and `continue_integer_lure_seed` | Integer reference seed and continuation trace | Covered by the executable integer reference validation. |
+| `hidden_attractors.integer_lure_seed` and `continue_integer_lure_seed` | Direct integer reference seed and continuation trace | Direct transfer is the default; dense scan fallback must be requested explicitly. |
 | `hidden_attractors.integrate_integer_lure` and `final_integer_lure_attractor` | Finite numerical trajectory for the selected continued seed | Solver output under explicit numerical settings. |
 | `hidden_attractors.run_integer_lure_hiddenness_controls` | Finite equilibrium-neighborhood controls with conservative labels | Numerical control record; it does not turn finite sampling into a global basin proof. |
 | `hidden_attractors.validate_full_workflow_system` | Preflight validation of model capabilities required by a workflow | Software-contract validation only. |

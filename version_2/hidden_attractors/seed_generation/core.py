@@ -52,6 +52,9 @@ class HarmonicSeed:
         Machado-family DF.
     mu : float or None
         Machado exponent; ``None`` for classical seeds.
+    search_route : str
+        Numerical route that produced the seed.  The integer reference uses
+        ``"direct_integer_transfer"``; dense scans are explicit fallbacks.
     """
 
     seed: np.ndarray
@@ -63,6 +66,7 @@ class HarmonicSeed:
     branch_index: int
     method: str = "classic"
     mu: float | None = None
+    search_route: str = "unspecified"
 
 
 @dataclass(frozen=True)

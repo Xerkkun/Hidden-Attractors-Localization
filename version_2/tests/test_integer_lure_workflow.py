@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
+import yaml
 
 from hidden_attractors.analysis import integer_system_lyapunov_exponents
 from hidden_attractors.plotting import (
@@ -13,8 +14,12 @@ from hidden_attractors.plotting import (
     plot_lure_nyquist_describing_function,
     plot_lure_transfer_components,
 )
-from hidden_attractors.seed_generation import find_lure_omega_gain_candidates
+from hidden_attractors.seed_generation import (
+    find_integer_lure_omega_gain_candidates_direct,
+    find_lure_omega_gain_candidates,
+)
 from hidden_attractors.systems import ChaoticSystem, get_system
+import hidden_attractors.workflows.integer_lure as integer_lure_module
 from hidden_attractors.workflows.contracts import (
     FullWorkflowContract,
     validate_full_workflow_system,
@@ -31,14 +36,49 @@ from hidden_attractors.workflows.integer_lure import (
 
 import pytest
 
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+@pytest.mark.unit
+def test_integer_reference_example_uses_only_the_direct_primary_route() -> None:
+    config_path = ROOT / "examples" / "chua_integer_lure_reference" / "reproducibility.yaml"
+    config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    seed_search = config["seed_search"]
+    assert seed_search["route"] == "direct_integer_transfer"
+    assert seed_search["fallback_route"] is None
+    assert "nscan" not in seed_search
+    assert "alternative_frequency_scan" not in seed_search
+
 @pytest.mark.unit
 def test_builtin_chua_has_required_lure_form() -> None:
     system = get_system("chua-nonsmooth")
 
     assert system.lure is not None
-    pairs = find_lure_omega_gain_candidates(1.0, system.lure, nscan=1500, wmax=50.0)
+    pairs = find_integer_lure_omega_gain_candidates_direct(system.lure, wmax=50.0)
 
     assert pairs
+    assert pairs[0][0] == pytest.approx(2.039186939959001, abs=1.0e-11)
+    assert pairs[0][1] == pytest.approx(0.20986735451508398, abs=1.0e-11)
+
+
+@pytest.mark.unit
+def test_frequency_scan_remains_an_explicit_alternative() -> None:
+    system = get_system("chua-nonsmooth")
+    assert system.lure is not None
+    pairs = find_lure_omega_gain_candidates(1.0, system.lure, nscan=1500, wmax=50.0)
+    assert pairs
+
+
+@pytest.mark.unit
+def test_default_integer_seed_route_does_not_call_frequency_scan(monkeypatch) -> None:
+    def fail_if_called(*_args, **_kwargs):
+        raise AssertionError("frequency scan must not run in the primary integer route")
+
+    monkeypatch.setattr(integer_lure_module, "find_lure_harmonic_seed", fail_if_called)
+    seed = integer_lure_module.integer_lure_seed(get_system("chua-nonsmooth"))
+    assert seed.search_route == "direct_integer_transfer"
+    assert seed.omega == pytest.approx(2.039186939959001, abs=1.0e-11)
 
 
 @pytest.mark.integration
@@ -46,7 +86,7 @@ def test_integer_lure_seed_and_short_continuation_are_reusable(tmp_path) -> None
     outdir = tmp_path / "integer_lure_seed"
     outdir.mkdir(parents=True, exist_ok=True)
     system = get_system("chua-nonsmooth")
-    seed = integer_lure_seed(system, nscan=1500, wmax=50.0)
+    seed = integer_lure_seed(system, wmax=50.0)
     steps = continue_integer_lure_seed(
         system,
         seed,
@@ -77,7 +117,7 @@ def test_integer_hiddenness_controls_and_lyapunov_smoke(tmp_path) -> None:
     outdir = tmp_path / "integer_lure_hiddenness"
     outdir.mkdir(parents=True, exist_ok=True)
     system = get_system("chua-nonsmooth")
-    seed = integer_lure_seed(system, nscan=1500, wmax=50.0)
+    seed = integer_lure_seed(system, wmax=50.0)
     _target_seed, trajectory, status = final_integer_lure_attractor(
         system,
         seed.seed,

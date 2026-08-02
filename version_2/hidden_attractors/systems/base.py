@@ -8,7 +8,7 @@ Stability: stable
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Callable, Mapping, MutableMapping, Sequence
+from typing import TYPE_CHECKING, Any, Callable, Literal, Mapping, MutableMapping, Sequence
 
 import numpy as np
 
@@ -21,6 +21,7 @@ State = Sequence[float] | np.ndarray
 RhsFunction = Callable[[State, Mapping[str, Any]], State]
 EquilibriaFunction = Callable[[Mapping[str, Any]], Mapping[str, State]]
 JacobianFunction = Callable[[State, Mapping[str, Any]], np.ndarray]
+SystemKind = Literal["flow", "map"]
 
 
 @dataclass(frozen=True)
@@ -71,6 +72,37 @@ class ChaoticSystem:
     workflows: Mapping[str, str] = field(default_factory=dict)
     lure: "LureSystem | None" = None
     full_workflow: "FullWorkflowContract | None" = None
+    kind: SystemKind = "flow"
+    state_names: tuple[str, ...] = field(default_factory=tuple)
+    initial_state: tuple[float, ...] = field(default_factory=tuple)
+    reference: Mapping[str, Any] = field(default_factory=dict)
+    metadata: Mapping[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        """Validate structural metadata without changing legacy constructors."""
+
+        if int(self.dimension) < 1:
+            raise ValueError("dimension must be a positive integer.")
+        if self.kind not in {"flow", "map"}:
+            raise ValueError("kind must be 'flow' or 'map'.")
+        if self.state_names and len(self.state_names) != self.dimension:
+            raise ValueError("state_names must be empty or match dimension.")
+        if self.initial_state and len(self.initial_state) != self.dimension:
+            raise ValueError("initial_state must be empty or match dimension.")
+        if self.initial_state and not np.all(np.isfinite(np.asarray(self.initial_state, dtype=float))):
+            raise ValueError("initial_state must contain only finite values.")
+
+    @property
+    def is_continuous(self) -> bool:
+        """Whether the definition represents a continuous-time flow."""
+
+        return self.kind == "flow"
+
+    @property
+    def is_discrete(self) -> bool:
+        """Whether the definition represents a discrete-time map."""
+
+        return self.kind == "map"
 
     def evaluate(self, state: State, parameters: Mapping[str, Any] | None = None) -> np.ndarray:
         """Evaluate the system vector field at *state*.

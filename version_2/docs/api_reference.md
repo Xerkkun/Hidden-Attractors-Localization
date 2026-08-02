@@ -230,7 +230,10 @@ The experimental top-level surface includes structured contracts and the
 validated integer reference workflow:
 
 - `HarmonicSeed`, `find_harmonic_seed`, `find_lure_harmonic_seed`;
-- `find_lure_omega_gain_candidates`, `find_omega_gain_candidates`;
+- `find_integer_lure_harmonic_seed_direct`,
+  `find_integer_lure_omega_gain_candidates_direct`;
+- `find_lure_omega_gain_candidates`, `find_omega_gain_candidates` (explicit
+  scan alternatives, not the integer-reference default);
 - `NumericalContract`, `FullWorkflowContract`, `WorkflowInputSpec`;
 - `ContinuationPlan`, `ContinuationTrace`, `DynamicReference`;
 - `integer_lure_seed`, `continue_integer_lure_seed`,
@@ -242,6 +245,11 @@ validated integer reference workflow:
 Seed generation and continuation produce candidate initial conditions. Only a
 separate, declared equilibrium-neighborhood contract can support a finite
 hiddenness statement.
+
+For integer Lur'e systems, `integer_lure_seed` defaults to
+`search_route="direct_integer_transfer"`.  A dense frequency scan is performed
+only when `search_route="frequency_scan"` or the caller explicitly enables
+`fallback_route="frequency_scan"`; fallback is never silent.
 
 ## CLI Characterization Commands
 

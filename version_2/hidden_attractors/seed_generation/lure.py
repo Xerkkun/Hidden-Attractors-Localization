@@ -14,6 +14,10 @@ Transfer functions
 Frequency scan
     :func:`find_lure_omega_gain_candidates`
 
+Direct integer route
+    :func:`find_integer_lure_omega_gain_candidates_direct`,
+    :func:`find_integer_lure_harmonic_seed_direct`
+
 Describing functions
     :func:`lure_describing_function`, :func:`lure_machado_describing_function`,
     :func:`solve_lure_amplitude_from_gain`
@@ -31,6 +35,7 @@ from __future__ import annotations
 from typing import Literal
 
 import numpy as np
+from scipy.signal import ss2tf
 
 from ..systems.lure import LureSystem
 from .core import (
@@ -212,6 +217,97 @@ def find_lure_omega_gain_candidates(
         if compatible_only and not system.is_gain_compatible(gain):
             continue
         pairs.append((float(omega), float(gain)))
+    return sorted(pairs, key=lambda item: item[1])
+
+
+def find_integer_lure_omega_gain_candidates_direct(
+    system: LureSystem,
+    *,
+    wmin: float = 0.0,
+    wmax: float = float("inf"),
+    compatible_only: bool = True,
+    root_tolerance: float = 1.0e-8,
+) -> list[tuple[float, float]]:
+    """Solve the integer Nyquist crossing condition without a frequency grid.
+
+    For a real finite-dimensional Lur'e realization, the normalized transfer
+    function ``c^T(sI-P)^(-1)b`` is rational.  This routine obtains its real
+    numerator and denominator polynomials from the declared ``(P,b,c)`` and
+    solves the polynomial condition
+
+    ``Im(N(i*omega) * conjugate(D(i*omega))) = 0``.
+
+    Thus every integer run recomputes the admissible frequencies and gains
+    from the registered system; stored reference values are not inputs.  Dense
+    frequency scans remain available through
+    :func:`find_lure_omega_gain_candidates` as an explicit fallback.
+    """
+
+    lower = float(wmin)
+    upper = float(wmax)
+    tolerance = float(root_tolerance)
+    if lower < 0.0 or upper <= lower:
+        raise ValueError("expected 0 <= wmin < wmax.")
+    if tolerance <= 0.0 or not np.isfinite(tolerance):
+        raise ValueError("root_tolerance must be finite and positive.")
+
+    matrix = np.asarray(system.matrix, dtype=float)
+    bvec = np.asarray(system.input_vector, dtype=float).reshape(-1, 1)
+    cvec = np.asarray(system.output_vector, dtype=float).reshape(1, -1)
+    numerator_rows, denominator = ss2tf(
+        matrix,
+        bvec,
+        cvec,
+        np.zeros((1, 1), dtype=float),
+    )
+    numerator = np.trim_zeros(np.asarray(numerator_rows[0], dtype=float), "f")
+    denominator = np.trim_zeros(np.asarray(denominator, dtype=float), "f")
+    if numerator.size == 0 or denominator.size == 0:
+        raise RuntimeError("the declared Lur'e transfer function is identically zero.")
+
+    # Polynomial coefficients below are stored in ascending powers of omega.
+    numerator_iw = np.array(
+        [coefficient * (1j ** power) for power, coefficient in enumerate(numerator[::-1])],
+        dtype=complex,
+    )
+    denominator_minus_iw = np.array(
+        [coefficient * ((-1j) ** power) for power, coefficient in enumerate(denominator[::-1])],
+        dtype=complex,
+    )
+    imaginary_polynomial = np.imag(
+        np.polynomial.polynomial.polymul(numerator_iw, denominator_minus_iw)
+    )
+    scale = max(float(np.max(np.abs(imaginary_polynomial))), 1.0)
+    imaginary_polynomial[np.abs(imaginary_polynomial) <= tolerance * scale] = 0.0
+    imaginary_polynomial = np.trim_zeros(imaginary_polynomial, "b")
+    if imaginary_polynomial.size <= 1:
+        raise RuntimeError("the integer transfer condition has no isolated frequency roots.")
+
+    roots = np.roots(imaginary_polynomial[::-1])
+    positive_roots = sorted(
+        float(root.real)
+        for root in roots
+        if abs(float(root.imag)) <= tolerance * max(1.0, abs(float(root.real)))
+        and float(root.real) > max(lower, tolerance)
+        and float(root.real) <= upper
+    )
+    unique_roots: list[float] = []
+    for root in positive_roots:
+        if not unique_roots or abs(root - unique_roots[-1]) > 10.0 * tolerance:
+            unique_roots.append(root)
+
+    pairs: list[tuple[float, float]] = []
+    for omega in unique_roots:
+        response = lure_transfer_function(omega, 1.0, system)
+        if abs(float(np.imag(response))) > 100.0 * tolerance:
+            continue
+        real_part = float(np.real(response))
+        if abs(real_part) <= tolerance:
+            continue
+        gain = -1.0 / real_part
+        if compatible_only and not system.is_gain_compatible(gain):
+            continue
+        pairs.append((omega, float(gain)))
     return sorted(pairs, key=lambda item: item[1])
 
 
@@ -663,6 +759,69 @@ def find_lure_harmonic_seed(
         branch_index=index,
         method=method,
         mu=float(mu) if method == "machado" else None,
+        search_route="frequency_scan",
+    )
+
+
+def find_integer_lure_harmonic_seed_direct(
+    system: LureSystem,
+    *,
+    branch_index: int = 0,
+    method: Literal["classic", "machado"] = "classic",
+    mu: float = 1.0,
+    theta: float = 0.0,
+    wmin: float = 0.0,
+    wmax: float = float("inf"),
+    root_tolerance: float = 1.0e-8,
+) -> HarmonicSeed:
+    """Recompute an integer-order harmonic seed by the direct transfer route.
+
+    Frequencies and gains are derived from the registered rational transfer
+    realization, the amplitude is obtained from the registered describing
+    function, and the state seed is reconstructed from the corresponding
+    modal pair.  No frequency grid or stored reference seed is used.
+    """
+
+    if method not in {"classic", "machado"}:
+        raise ValueError("method must be 'classic' or 'machado'.")
+    pairs = find_integer_lure_omega_gain_candidates_direct(
+        system,
+        wmin=wmin,
+        wmax=wmax,
+        compatible_only=(method == "classic"),
+        root_tolerance=root_tolerance,
+    )
+    if not pairs:
+        raise RuntimeError("no direct integer omega/gain candidate was found.")
+    index = int(branch_index)
+    if index < 0 or index >= len(pairs):
+        raise IndexError("branch_index is outside the available direct integer candidates.")
+    omega, gain = pairs[index]
+    amplitude = solve_lure_amplitude_from_gain(
+        gain,
+        system,
+        method=method,
+        mu=mu,
+    )
+    seed, vector, matched = build_lure_fractional_seed(
+        1.0,
+        system,
+        omega,
+        gain,
+        amplitude,
+        theta=theta,
+    )
+    return HarmonicSeed(
+        seed=seed,
+        eigenvector=vector,
+        matched_eigenvalue=matched,
+        omega=float(omega),
+        gain=float(gain),
+        amplitude=float(amplitude),
+        branch_index=index,
+        method=method,
+        mu=float(mu) if method == "machado" else None,
+        search_route="direct_integer_transfer",
     )
 
 
@@ -671,6 +830,8 @@ __all__ = [
     "build_lure_fractional_seed",
     "build_lure_linearized_matrix",
     "find_lure_harmonic_seed",
+    "find_integer_lure_harmonic_seed_direct",
+    "find_integer_lure_omega_gain_candidates_direct",
     "find_lure_omega_gain_candidates",
     "fourier_coefficients_lure",
     "lure_describing_function",

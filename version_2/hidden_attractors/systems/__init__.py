@@ -10,6 +10,7 @@ same analysis and workflow-discovery entry points used by built-in systems.
 
 from .base import ChaoticSystem, SystemRegistry, get_system, list_systems, register_system
 from .builtins import register_builtin_systems
+from .expressions import ExpressionSystemDefinition, ExpressionValidationError, compile_expression_system
 from .lure import LureSystem
 from .requirements import CapabilityReport, Requirement, check_system_capability, known_workflows, requirements_for
 from .fischer_benchmarks import FISCHER_BENCHMARKS, get_fischer_benchmark
@@ -19,10 +20,13 @@ register_builtin_systems()
 __all__ = [
     "CapabilityReport",
     "ChaoticSystem",
+    "ExpressionSystemDefinition",
+    "ExpressionValidationError",
     "LureSystem",
     "Requirement",
     "SystemRegistry",
     "check_system_capability",
+    "compile_expression_system",
     "get_system",
     "known_workflows",
     "list_systems",

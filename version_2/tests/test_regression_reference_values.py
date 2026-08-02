@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from hidden_attractors.seed_generation.lure import find_lure_harmonic_seed
+from hidden_attractors.seed_generation.lure import find_integer_lure_harmonic_seed_direct
 from hidden_attractors.systems import get_system
 
 
@@ -20,11 +20,12 @@ def _read(relative: str) -> dict:
 @pytest.mark.regression
 def test_kuznetsov_seed_regression_against_stored_reference() -> None:
     expected = _read("validation/references/kuznetsov2017_expected.json")
-    seed = find_lure_harmonic_seed(q=1.0, system=get_system("chua-nonsmooth").lure, nscan=10_000)
-    assert abs(seed.omega - expected["omega0"]) < 1.0e-4
-    assert abs(seed.gain - expected["k"]) < 1.0e-4
-    assert abs(seed.amplitude - expected["a0"]) < 1.0e-3
-    assert np.linalg.norm(seed.seed - np.asarray(expected["seed_plus"])) < 1.0e-3
+    seed = find_integer_lure_harmonic_seed_direct(system=get_system("chua-nonsmooth").lure)
+    assert seed.search_route == "direct_integer_transfer"
+    assert abs(seed.omega - expected["omega0"]) < 1.0e-10
+    assert abs(seed.gain - expected["k"]) < 1.0e-10
+    assert abs(seed.amplitude - expected["a0"]) < 1.0e-9
+    assert np.linalg.norm(seed.seed - np.asarray(expected["seed_plus"])) < 1.0e-9
 
 
 @pytest.mark.regression
@@ -99,4 +100,3 @@ def test_fischer_cloned_dynamics_system_structures() -> None:
     assert len(fischer["jerk_system"]["table4_lce_0_1"]) > 0
     assert len(fischer["financial_system"]["table5_lce_0_1"]) > 0
     assert len(fischer["four_wing_system"]["table6_lce_0_1"]) > 0
-
