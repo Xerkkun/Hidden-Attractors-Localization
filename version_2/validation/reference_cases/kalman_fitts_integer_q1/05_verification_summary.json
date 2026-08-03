@@ -1,0 +1,859 @@
+{
+  "final_status": "ok",
+  "target_seed": [
+    -0.8568501753859451,
+    1.5659435663914607,
+    0.5061096169300414,
+    -1.061805076491118
+  ],
+  "candidate_type": "stable_periodic_limit_cycle",
+  "poincare": {
+    "n_same_direction_returns": 25,
+    "period_mean": 11.916996023431395,
+    "period_std": 0.00039934708823006235,
+    "return_state_error_max": 0.00157183380372647,
+    "return_states_tail": [
+      [
+        0.2123469179847409,
+        -1.671154882015496,
+        0.0,
+        1.4722138739551474
+      ],
+      [
+        0.21234050593923612,
+        -1.671062492072417,
+        0.0,
+        1.472915942445783
+      ],
+      [
+        0.2123366365127674,
+        -1.6709688115506,
+        0.0,
+        1.471808893670743
+      ],
+      [
+        0.21234484630116388,
+        -1.6711003607795574,
+        0.0,
+        1.4718072461074316
+      ],
+      [
+        0.21234453824582325,
+        -1.671138614591803,
+        0.0,
+        1.4733600351412401
+      ]
+    ]
+  },
+  "published_regression": {
+    "role": "post_derivation_regression_only_not_seed_input",
+    "point": [
+      -2.11395731851229,
+      0.663680374961913,
+      0.891701229667371,
+      0.279201499188914
+    ],
+    "minimum_trajectory_distance": 0.0004335074150870599,
+    "tolerance": 0.001,
+    "passed": true
+  },
+  "hiddenness": {
+    "summary": {
+      "n_probes": 48,
+      "target_hits": 0,
+      "hidden_candidate_allowed": true,
+      "sampling_modes": [
+        "ball"
+      ],
+      "by_equilibrium": {
+        "E0": {
+          "n": 48,
+          "target_hits": 0,
+          "equilibrium_hits": 40,
+          "diverged": 0
+        }
+      }
+    },
+    "probes": [
+      {
+        "sample_id": 0,
+        "equilibrium": "E0",
+        "radius": 1e-05,
+        "x0": [
+          -7.246150587644338e-06,
+          2.606404748578161e-06,
+          -3.4696767585277733e-06,
+          -4.045198691903547e-07
+        ],
+        "distance_from_equilibrium": 8.455905462188349e-06,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192216401408464
+      },
+      {
+        "sample_id": 1,
+        "equilibrium": "E0",
+        "radius": 1e-05,
+        "x0": [
+          -2.227600854017252e-06,
+          2.6571286238439393e-06,
+          -5.041785912548251e-06,
+          -1.6756665725210275e-06
+        ],
+        "distance_from_equilibrium": 6.344288907253794e-06,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719221330433106
+      },
+      {
+        "sample_id": 2,
+        "equilibrium": "E0",
+        "radius": 1e-05,
+        "x0": [
+          6.308944657166151e-06,
+          7.114694928194523e-06,
+          -6.052909705852251e-07,
+          -2.1533964718670378e-06
+        ],
+        "distance_from_equilibrium": 9.768580251632455e-06,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192471531154944
+      },
+      {
+        "sample_id": 3,
+        "equilibrium": "E0",
+        "radius": 1e-05,
+        "x0": [
+          1.2583930058068578e-06,
+          1.7702387889581451e-06,
+          -3.2618657226023556e-06,
+          5.275508974650308e-06
+        ],
+        "distance_from_equilibrium": 6.571762416650479e-06,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192157193334815
+      },
+      {
+        "sample_id": 4,
+        "equilibrium": "E0",
+        "radius": 1e-05,
+        "x0": [
+          -1.2003019289772e-06,
+          -5.712161329340744e-07,
+          1.3568319677777508e-06,
+          9.383404092428565e-06
+        ],
+        "distance_from_equilibrium": 9.573728528730034e-06,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192066526422465
+      },
+      {
+        "sample_id": 5,
+        "equilibrium": "E0",
+        "radius": 1e-05,
+        "x0": [
+          -1.1289109874288005e-06,
+          -1.2166587753665726e-06,
+          1.2221967675504977e-06,
+          -9.972155861816843e-08
+        ],
+        "distance_from_equilibrium": 2.0635910256342167e-06,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192117523854126
+      },
+      {
+        "sample_id": 6,
+        "equilibrium": "E0",
+        "radius": 1e-05,
+        "x0": [
+          -1.272890166623343e-06,
+          1.4820646022882505e-06,
+          5.1859873162377885e-06,
+          -5.786519424656881e-06
+        ],
+        "distance_from_equilibrium": 8.012180499573937e-06,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192130504752315
+      },
+      {
+        "sample_id": 7,
+        "equilibrium": "E0",
+        "radius": 1e-05,
+        "x0": [
+          -4.2565555913376184e-06,
+          2.2471565961303714e-06,
+          -3.1352013234473193e-06,
+          3.699638444838028e-06
+        ],
+        "distance_from_equilibrium": 6.832626890936541e-06,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.271921907530142
+      },
+      {
+        "sample_id": 8,
+        "equilibrium": "E0",
+        "radius": 1e-05,
+        "x0": [
+          9.706654984458462e-07,
+          -2.5485593263722554e-06,
+          -3.786956940976088e-06,
+          -7.532677135845273e-06
+        ],
+        "distance_from_equilibrium": 8.861129378110065e-06,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719221578822677
+      },
+      {
+        "sample_id": 9,
+        "equilibrium": "E0",
+        "radius": 1e-05,
+        "x0": [
+          7.061773975152208e-07,
+          -4.316977321335924e-06,
+          -4.138540632403406e-07,
+          -6.7817597923835855e-06
+        ],
+        "distance_from_equilibrium": 8.080750013268648e-06,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719233852828929
+      },
+      {
+        "sample_id": 10,
+        "equilibrium": "E0",
+        "radius": 1e-05,
+        "x0": [
+          3.6713398430534005e-06,
+          -5.959126105151679e-06,
+          -2.4749067153538583e-06,
+          -1.788376737892458e-06
+        ],
+        "distance_from_equilibrium": 7.636319452892871e-06,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719245061648633
+      },
+      {
+        "sample_id": 11,
+        "equilibrium": "E0",
+        "radius": 1e-05,
+        "x0": [
+          -5.7848655953121826e-06,
+          -2.5070767082139625e-06,
+          8.640243902040572e-07,
+          7.433405415833092e-06
+        ],
+        "distance_from_equilibrium": 9.785303153183338e-06,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719220724327376
+      },
+      {
+        "sample_id": 12,
+        "equilibrium": "E0",
+        "radius": 0.0001,
+        "x0": [
+          1.8715876113229822e-05,
+          -2.1794872333995473e-05,
+          3.9633162418674665e-05,
+          6.105563298973339e-05
+        ],
+        "distance_from_equilibrium": 7.825521300094322e-05,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192462779207216
+      },
+      {
+        "sample_id": 13,
+        "equilibrium": "E0",
+        "radius": 0.0001,
+        "x0": [
+          1.787146093035629e-06,
+          -2.4607678248164826e-05,
+          -1.4000553367263641e-06,
+          6.920330421343577e-05
+        ],
+        "distance_from_equilibrium": 7.348325788182156e-05,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192465262256327
+      },
+      {
+        "sample_id": 14,
+        "equilibrium": "E0",
+        "radius": 0.0001,
+        "x0": [
+          -1.1934849251211443e-05,
+          -4.0801347812681276e-05,
+          6.268936087844596e-05,
+          1.3754128884979589e-05
+        ],
+        "distance_from_equilibrium": 7.6982612573965e-05,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192453301486275
+      },
+      {
+        "sample_id": 15,
+        "equilibrium": "E0",
+        "radius": 0.0001,
+        "x0": [
+          4.274246416363147e-05,
+          4.637981324091177e-05,
+          3.5138595058497273e-06,
+          -5.8776355819909426e-05
+        ],
+        "distance_from_equilibrium": 8.628448603970836e-05,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192443896907403
+      },
+      {
+        "sample_id": 16,
+        "equilibrium": "E0",
+        "radius": 0.0001,
+        "x0": [
+          1.542012604638283e-06,
+          4.3579971824718366e-05,
+          5.670591029350309e-06,
+          -6.674948798676204e-06
+        ],
+        "distance_from_equilibrium": 4.4478110247662355e-05,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192447972104844
+      },
+      {
+        "sample_id": 17,
+        "equilibrium": "E0",
+        "radius": 0.0001,
+        "x0": [
+          -2.3418011053644896e-05,
+          1.7834395487316736e-05,
+          2.3778543152851883e-05,
+          -7.181510440158422e-06
+        ],
+        "distance_from_equilibrium": 3.851573848157142e-05,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719246537126693
+      },
+      {
+        "sample_id": 18,
+        "equilibrium": "E0",
+        "radius": 0.0001,
+        "x0": [
+          -2.522645063890378e-05,
+          1.630261579455883e-05,
+          -2.187926450310805e-05,
+          -7.061707189773838e-05
+        ],
+        "distance_from_equilibrium": 7.979738186299951e-05,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719247013593613
+      },
+      {
+        "sample_id": 19,
+        "equilibrium": "E0",
+        "radius": 0.0001,
+        "x0": [
+          2.0570032364780812e-05,
+          -1.5822132883257104e-05,
+          5.886282316685966e-05,
+          -2.5911196623009588e-05
+        ],
+        "distance_from_equilibrium": 6.935191548957267e-05,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192470968183086
+      },
+      {
+        "sample_id": 20,
+        "equilibrium": "E0",
+        "radius": 0.0001,
+        "x0": [
+          7.755466803029204e-05,
+          4.5851184819053154e-05,
+          2.4131552270857657e-05,
+          -3.8095878885818486e-06
+        ],
+        "distance_from_equilibrium": 9.334828577687829e-05,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192444972466595
+      },
+      {
+        "sample_id": 21,
+        "equilibrium": "E0",
+        "radius": 0.0001,
+        "x0": [
+          -6.44757581005032e-05,
+          1.1535809770603504e-06,
+          -5.836948827672943e-05,
+          1.8550989256252717e-05
+        ],
+        "distance_from_equilibrium": 8.893587856303043e-05,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719247175283018
+      },
+      {
+        "sample_id": 22,
+        "equilibrium": "E0",
+        "radius": 0.0001,
+        "x0": [
+          -5.1795764000987245e-05,
+          -2.7897202600235886e-06,
+          -2.6835575255886335e-05,
+          -7.589475933670007e-05
+        ],
+        "distance_from_equilibrium": 9.576401360461619e-05,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192471423258746
+      },
+      {
+        "sample_id": 23,
+        "equilibrium": "E0",
+        "radius": 0.0001,
+        "x0": [
+          -6.582365730322703e-05,
+          1.2787185938669672e-05,
+          6.133437922564654e-05,
+          -2.234988872488387e-05
+        ],
+        "distance_from_equilibrium": 9.358252820913153e-05,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719247048397448
+      },
+      {
+        "sample_id": 24,
+        "equilibrium": "E0",
+        "radius": 0.001,
+        "x0": [
+          0.000301130584713095,
+          -0.0007127363873286742,
+          0.0001448896262520908,
+          -8.043959351611395e-05
+        ],
+        "distance_from_equilibrium": 0.0007912877598399261,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27190750445679973
+      },
+      {
+        "sample_id": 25,
+        "equilibrium": "E0",
+        "radius": 0.001,
+        "x0": [
+          0.0001907147088363298,
+          -0.0003530197159383757,
+          -4.4256975568751824e-05,
+          -0.0006357164998125745
+        ],
+        "distance_from_equilibrium": 0.0007530532305409635,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719199122342703
+      },
+      {
+        "sample_id": 26,
+        "equilibrium": "E0",
+        "radius": 0.001,
+        "x0": [
+          -0.0005778107451295094,
+          -0.00020926665168655178,
+          3.524425763377426e-05,
+          0.00038377125838952254
+        ],
+        "distance_from_equilibrium": 0.0007253828817646947,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192197066298274
+      },
+      {
+        "sample_id": 27,
+        "equilibrium": "E0",
+        "radius": 0.001,
+        "x0": [
+          0.0003506827838207992,
+          -0.00044657786833337285,
+          -0.0003826798811208337,
+          -0.00043355339598668077
+        ],
+        "distance_from_equilibrium": 0.0008104459549777047,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719167839992828
+      },
+      {
+        "sample_id": 28,
+        "equilibrium": "E0",
+        "radius": 0.001,
+        "x0": [
+          -0.0008344495098995137,
+          0.0005081583817631048,
+          2.2104874252826922e-05,
+          -9.418216371315325e-05
+        ],
+        "distance_from_equilibrium": 0.0009817789114434372,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27191427405561236
+      },
+      {
+        "sample_id": 29,
+        "equilibrium": "E0",
+        "radius": 0.001,
+        "x0": [
+          -0.0005999368360991753,
+          0.00027367513228351484,
+          -0.00015241610150498058,
+          -0.0006444659519724347
+        ],
+        "distance_from_equilibrium": 0.0009345530036272962,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.271921024773946
+      },
+      {
+        "sample_id": 30,
+        "equilibrium": "E0",
+        "radius": 0.001,
+        "x0": [
+          0.0008391964224155144,
+          8.169252627321717e-05,
+          -2.395267132067034e-05,
+          -0.00019700930921346253
+        ],
+        "distance_from_equilibrium": 0.0008662047694535401,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192356080921737
+      },
+      {
+        "sample_id": 31,
+        "equilibrium": "E0",
+        "radius": 0.001,
+        "x0": [
+          -0.00015828883995262107,
+          -0.0004383062667458271,
+          0.00023536392288526467,
+          -0.0006627687415073616
+        ],
+        "distance_from_equilibrium": 0.0008436980035755705,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719171265233827
+      },
+      {
+        "sample_id": 32,
+        "equilibrium": "E0",
+        "radius": 0.001,
+        "x0": [
+          -0.000582790958241378,
+          0.000206302945754285,
+          -0.00010636671489461012,
+          -0.00043232144289175907
+        ],
+        "distance_from_equilibrium": 0.0007618542606406311,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719221998662117
+      },
+      {
+        "sample_id": 33,
+        "equilibrium": "E0",
+        "radius": 0.001,
+        "x0": [
+          -0.00019735173874942447,
+          9.96087847445794e-05,
+          -0.00012431195249069973,
+          0.00018151108192265936
+        ],
+        "distance_from_equilibrium": 0.0003118803507412697,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192405083795657
+      },
+      {
+        "sample_id": 34,
+        "equilibrium": "E0",
+        "radius": 0.001,
+        "x0": [
+          -0.0002469983650219333,
+          8.361295603828832e-05,
+          0.00012751059623470097,
+          0.0007254311593308745
+        ],
+        "distance_from_equilibrium": 0.0007813505217386333,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719241367721936
+      },
+      {
+        "sample_id": 35,
+        "equilibrium": "E0",
+        "radius": 0.001,
+        "x0": [
+          -0.00033416157183073123,
+          -0.00028867180619224437,
+          5.8719328226910215e-05,
+          0.0007134918870622303
+        ],
+        "distance_from_equilibrium": 0.0008411385142708184,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719209635479901
+      },
+      {
+        "sample_id": 36,
+        "equilibrium": "E0",
+        "radius": 0.01,
+        "x0": [
+          -0.003490762403888934,
+          0.0004977076650372935,
+          0.008874039746929465,
+          -4.487420716266643e-05
+        ],
+        "distance_from_equilibrium": 0.009549017237642508,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27191149226703054
+      },
+      {
+        "sample_id": 37,
+        "equilibrium": "E0",
+        "radius": 0.01,
+        "x0": [
+          -0.0019424078811166438,
+          -0.00596533833317535,
+          0.005636201672819968,
+          0.003704399708173052
+        ],
+        "distance_from_equilibrium": 0.009211273326771196,
+        "status": "ok",
+        "final_class": "bounded_nontrivial",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27155755978689194
+      },
+      {
+        "sample_id": 38,
+        "equilibrium": "E0",
+        "radius": 0.01,
+        "x0": [
+          0.0017576605494648535,
+          -0.009173207737700594,
+          -0.00230044785744776,
+          -0.0016503820371624935
+        ],
+        "distance_from_equilibrium": 0.009759760858729058,
+        "status": "ok",
+        "final_class": "bounded_nontrivial",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27118687198031133
+      },
+      {
+        "sample_id": 39,
+        "equilibrium": "E0",
+        "radius": 0.01,
+        "x0": [
+          -0.002972129084732791,
+          0.006464801626926092,
+          -0.004045141435637819,
+          -0.004335217665977305
+        ],
+        "distance_from_equilibrium": 0.009261991838559162,
+        "status": "ok",
+        "final_class": "bounded_nontrivial",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27149702131360215
+      },
+      {
+        "sample_id": 40,
+        "equilibrium": "E0",
+        "radius": 0.01,
+        "x0": [
+          0.0008508004842018385,
+          0.0021282830751737556,
+          -0.0034122066040652476,
+          -0.0010515755569263318
+        ],
+        "distance_from_equilibrium": 0.004242925331977992,
+        "status": "ok",
+        "final_class": "bounded_nontrivial",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2718392604387018
+      },
+      {
+        "sample_id": 41,
+        "equilibrium": "E0",
+        "radius": 0.01,
+        "x0": [
+          -0.0014075570669081139,
+          -0.00022670965043546389,
+          0.0037748900007310926,
+          -0.007218332997718719
+        ],
+        "distance_from_equilibrium": 0.008269627557863658,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27192026694697685
+      },
+      {
+        "sample_id": 42,
+        "equilibrium": "E0",
+        "radius": 0.01,
+        "x0": [
+          0.0010563664571837782,
+          -0.001493270212182564,
+          0.006170014427069794,
+          0.006340377876580691
+        ],
+        "distance_from_equilibrium": 0.00903411510146611,
+        "status": "ok",
+        "final_class": "bounded_nontrivial",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27188251937627117
+      },
+      {
+        "sample_id": 43,
+        "equilibrium": "E0",
+        "radius": 0.01,
+        "x0": [
+          0.0018305600122648395,
+          -0.006530618323111173,
+          0.004635165850044409,
+          0.0041840794003663384
+        ],
+        "distance_from_equilibrium": 0.00921906766037902,
+        "status": "ok",
+        "final_class": "bounded_nontrivial",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2714844592345414
+      },
+      {
+        "sample_id": 44,
+        "equilibrium": "E0",
+        "radius": 0.01,
+        "x0": [
+          0.0006628827576832914,
+          -0.0003133648245516965,
+          -0.0024245471763531573,
+          0.002152133147246998
+        ],
+        "distance_from_equilibrium": 0.003323810638039035,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.2719204865148221
+      },
+      {
+        "sample_id": 45,
+        "equilibrium": "E0",
+        "radius": 0.01,
+        "x0": [
+          -0.0029987428653772664,
+          0.004926217656826935,
+          -0.0011473050834378844,
+          -0.002246470425795565
+        ],
+        "distance_from_equilibrium": 0.006294681684052104,
+        "status": "ok",
+        "final_class": "bounded_nontrivial",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27162549561547433
+      },
+      {
+        "sample_id": 46,
+        "equilibrium": "E0",
+        "radius": 0.01,
+        "x0": [
+          -0.001551698493808758,
+          0.005105565457751478,
+          0.006241231587324777,
+          -0.004396362529940896
+        ],
+        "distance_from_equilibrium": 0.009314265514809114,
+        "status": "ok",
+        "final_class": "bounded_nontrivial",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27162696477444426
+      },
+      {
+        "sample_id": 47,
+        "equilibrium": "E0",
+        "radius": 0.01,
+        "x0": [
+          0.0017864098409738633,
+          0.00047381036211689367,
+          0.006548783352287783,
+          0.004188902799732962
+        ],
+        "distance_from_equilibrium": 0.007990571095984934,
+        "status": "ok",
+        "final_class": "equilibrium_E0",
+        "target_hit": false,
+        "cloud_distance_norm": 0.27191310105573085
+      }
+    ],
+    "interpretation": "finite_equilibrium_neighborhood_test_not_global_proof"
+  },
+  "lyapunov": {
+    "status": "ok",
+    "exponents": [
+      -0.002836352871024618,
+      -0.024233919954733646,
+      -0.030569800464923864,
+      -0.039886423349650486
+    ],
+    "interpretation": "finite_time_limit_cycle_diagnostic_expected_one_near_zero_exponent"
+  }
+}

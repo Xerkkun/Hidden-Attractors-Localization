@@ -1,0 +1,41 @@
+{
+  "case_id": "pll_lead_lag_integer_q1_reference",
+  "steps": [
+    "contract",
+    "direct",
+    "localization",
+    "verification",
+    "figures"
+  ],
+  "quick": false,
+  "continuation_steps": 101,
+  "direct_route_decision": "rejected_no_positive_imaginary_part_root",
+  "alternative_route": "exact_zero_gain_running_cycle_to_target_loop_gain",
+  "published_initial_conditions_used_for_seed": false,
+  "frequency_scan_used": false,
+  "phase_timings": [
+    {
+      "phase": "contract",
+      "seconds": 0.0054373000166378915
+    },
+    {
+      "phase": "direct",
+      "seconds": 0.0021365000284276903
+    },
+    {
+      "phase": "localization",
+      "seconds": 29.102425699995365
+    },
+    {
+      "phase": "verification",
+      "seconds": 64.47517900000094
+    },
+    {
+      "phase": "figures",
+      "seconds": 3.518682499998249
+    }
+  ],
+  "total_seconds": 97.1038737000199,
+  "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0"
+}

@@ -1,0 +1,42 @@
+{
+  "candidate_states_source": "02_parameter_continuation.csv x_out at each exact Hopf-offset node",
+  "contract": {
+    "lyapunov": {
+      "atol": 2e-12,
+      "max_step": 0.02,
+      "positive_threshold": 0.5,
+      "qr_interval": 0.5,
+      "rtol": 2e-10,
+      "t_accumulate": 60.0,
+      "t_burn": 30.0
+    },
+    "probes": {
+      "atol": 2e-12,
+      "directions": 2,
+      "equilibrium_names": [
+        "E0"
+      ],
+      "equilibrium_tail_span_tol": 1e-05,
+      "equilibrium_tol": 1e-06,
+      "max_step": 0.03,
+      "radii": [
+        1e-07
+      ],
+      "rtol": 2e-10,
+      "sample_step": 0.05,
+      "sampling_mode": "sphere",
+      "t_burn": 80.0,
+      "t_keep": 30.0
+    },
+    "reference": {
+      "burn": 40.0,
+      "duration": 100.0,
+      "max_points": 600,
+      "max_step": 0.03,
+      "safety_factor": 3.0,
+      "sample_step": 0.05
+    }
+  },
+  "finite_sample_only": true,
+  "probe_initial_conditions": "03_candidate_screening_probes.csv"
+}

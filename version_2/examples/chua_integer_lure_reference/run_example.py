@@ -202,15 +202,16 @@ def run_search(cfg: dict[str, Any], context: dict[str, Any]) -> HarmonicSeed:
     declaration = validate_system_declaration(system)
     _write_json(output_dir(cfg) / "00_system_contract.json", declaration)
     seed_cfg = cfg["seed_search"]
-    requested_fallback = seed_cfg.get("fallback_route")
+    if seed_cfg.get("route", "direct_integer_transfer") != "direct_integer_transfer":
+        raise ValueError("the maintained integer Chua example requires the direct transfer route")
+    if seed_cfg.get("fallback_route") is not None:
+        raise ValueError("the maintained integer Chua example does not permit a scan fallback")
     seed = integer_lure_seed(
         system,
         branch_index=int(seed_cfg["branch_index"]),
         method=str(seed_cfg["method"]),
         wmin=float(seed_cfg["omega_min"]),
         wmax=float(seed_cfg["omega_max"]),
-        search_route=str(seed_cfg.get("route", "direct_integer_transfer")),
-        fallback_route=requested_fallback,
     )
     transfer_value = lure_transfer_function(seed.omega, 1.0, system.lure)
     reference = json.loads(REFERENCE_PATH.read_text(encoding="utf-8"))

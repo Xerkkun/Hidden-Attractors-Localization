@@ -69,4 +69,26 @@ API_EXPORT int integrate_fractional_c(
     int num_equilibria
 );
 
+// Tempered-Caputo ABM written directly in physical coordinates.  The
+// exponential conjugation is applied to the history weights, so the stored
+// state and divergence norm remain physical and cannot overflow merely because
+// exp(lambda*t) is large.
+API_EXPORT int integrate_tempered_caputo_abm_c(
+    RhsCallback rhs,
+    void *params,
+    int dim,
+    const double *x0,
+    double q,
+    double tempering,
+    double h,
+    int n_steps,
+    int memory_mode,       // 0: full, 1: sliding restart/window
+    int memory_window_length,
+    double divergence_norm,
+    double *out_times,
+    double *out_states,
+    int *out_samples,
+    int *status_code
+);
+
 #endif // FRACTIONAL_INTEGRATORS_H

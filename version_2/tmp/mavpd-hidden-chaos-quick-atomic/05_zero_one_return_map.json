@@ -1,0 +1,38 @@
+[
+  {
+    "K": 0.9936682692931704,
+    "K_max": 0.9988367561036288,
+    "K_mean": 0.9901919431641794,
+    "K_median": 0.9936682692931704,
+    "K_min": 0.9567506602537164,
+    "K_std": 0.01017547278256467,
+    "c_values_count": 64,
+    "chaos_certified_by_zero_one": false,
+    "coordinate": 0,
+    "detrend": true,
+    "hiddenness_certified_by_zero_one": false,
+    "normalize": true,
+    "random_seed": 20260802,
+    "signal_length": 313,
+    "state": "zero_one_chaotic_candidate",
+    "zero_one_alone_does_not_certify_chaos": true
+  },
+  {
+    "K": 0.9940882466555883,
+    "K_max": 0.9991173817578233,
+    "K_mean": 0.9910684161872538,
+    "K_median": 0.9940882466555883,
+    "K_min": 0.9606346983883512,
+    "K_std": 0.00927099741926293,
+    "c_values_count": 64,
+    "chaos_certified_by_zero_one": false,
+    "coordinate": 2,
+    "detrend": true,
+    "hiddenness_certified_by_zero_one": false,
+    "normalize": true,
+    "random_seed": 20260802,
+    "signal_length": 313,
+    "state": "zero_one_chaotic_candidate",
+    "zero_one_alone_does_not_certify_chaos": true
+  }
+]

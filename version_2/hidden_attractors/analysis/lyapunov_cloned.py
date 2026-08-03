@@ -13,6 +13,7 @@ from typing import Callable, Mapping
 
 import numpy as np
 
+from .._rhs import bind_rhs
 from ..integrations.abm_fractional import (
     classify_component_orders,
     integrate_fractional_abm,
@@ -163,6 +164,7 @@ def compute_cloned_dynamics_spectrum(
     block_history: list[dict[str, object]] = []
     bounded_trajectory = True
     status = "ok"
+    bound_rhs = bind_rhs(rhs, parameters)
 
     for block in range(1, k_blocks + 1):
         initial_copies = np.vstack((state, state + delta * direction_basis.T))
@@ -172,16 +174,7 @@ def compute_cloned_dynamics_spectrum(
             copies = np.asarray(flattened, dtype=float).reshape(dimension + 1, dimension)
             derivatives = []
             for copy in copies:
-                if parameters is not None:
-                    try:
-                        value = rhs(t, copy, parameters)
-                    except TypeError:
-                        value = rhs(copy, parameters)
-                else:
-                    try:
-                        value = rhs(t, copy)
-                    except TypeError:
-                        value = rhs(copy)
+                value = bound_rhs(t, copy)
                 derivatives.append(np.asarray(value, dtype=float))
             return np.asarray(derivatives, dtype=float).reshape(-1)
 

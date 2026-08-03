@@ -7,8 +7,13 @@ tipos de datos o envolturas de flujo en procedimientos matemáticos que no son.
 Las 33 funciones públicas de \codepath{hidden_attractors.plotting} se
 documentan por separado, una por una, en la
 Sección~\ref{sec:catalogo-graficas}. Las rutas especializadas de análisis e
-integración que no se reexportan en la raíz se describen en las
-Secciones~12.6, 12.9 y 12.10.
+integración que no se reexportan en la raíz se describen en sus secciones
+temáticas del presente informe. El módulo experimental
+\codepath{hidden_attractors.fractional} se documenta función por función en la
+Sección~\ref{sec:nucleo-numerico-fraccionario}; entropía de cuencas, delay y
+recurrencia avanzados se mantienen como imports module-qualified y se describen
+en las Secciones~\ref{sec:basin-entropy-uncertainty},
+\ref{sec:delay-embedding-advanced} y \ref{sec:recurrence-advanced}.
 
 \begin{center}
 \footnotesize
@@ -178,4 +183,6 @@ búsqueda de atractor oculto. \\
 El inventario anterior se limita de forma deliberada a la API soportada. Los
 auxiliares privados, scripts de validación y backends internos permanecen
 auditables en el código y en \codepath{docs/api_reference.md}, pero no se
-promueven como llamadas de usuario.
+promueven como llamadas de usuario. La documentación de un símbolo experimental
+module-qualified tampoco implica promoción a la raíz ni a la categoría
+\STABLE; hace visible su contrato para evitar llamadas ambiguas.

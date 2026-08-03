@@ -1,0 +1,21 @@
+{
+  "case_id": "pll_lead_lag_integer_q1_reference",
+  "steps": [
+    "verification"
+  ],
+  "quick": true,
+  "continuation_steps": 21,
+  "direct_route_decision": "rejected_no_positive_imaginary_part_root",
+  "alternative_route": "exact_zero_gain_running_cycle_to_target_loop_gain",
+  "published_initial_conditions_used_for_seed": false,
+  "frequency_scan_used": false,
+  "phase_timings": [
+    {
+      "phase": "verification",
+      "seconds": 117.59793940000236
+    }
+  ],
+  "total_seconds": 117.59794360003434,
+  "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0"
+}

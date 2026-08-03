@@ -62,6 +62,29 @@ def test_integrate_dispatch():
     assert len(t_frac) == 51
 
 
+def test_selector_does_not_mask_rhs_body_typeerror() -> None:
+    calls = 0
+
+    def rhs(t, x):
+        nonlocal calls
+        calls += 1
+        del t, x
+        raise TypeError("selector-rhs-body-typeerror")
+
+    _, _, status = integrate(
+        rhs,
+        np.array([1.0]),
+        q=1.0,
+        h=0.01,
+        t_final=0.1,
+        integrator="heun",
+        use_c_backend=False,
+    )
+
+    assert status == "solver_exception:selector-rhs-body-typeerror"
+    assert calls == 1
+
+
 def test_generic_selector_directs_adm_to_specialized_api() -> None:
     with pytest.raises(
         ValueError,
@@ -78,25 +101,33 @@ def test_generic_selector_directs_adm_to_specialized_api() -> None:
         )
 
 
-def test_near_integer_order_validation_and_dispatch_agree() -> None:
-    """An order accepted as q=1 must reach the integer solver branch."""
+def test_near_integer_order_remains_fractional() -> None:
+    """Only exact q=1 may change the model class to an ODE."""
 
-    q_near_one = 1.0 - 5.0e-11
-    assert validate_integrator_compatibility("rk4", q_near_one) == "rk4"
+    for q_near_one in (1.0 - 5.0e-11, np.nextafter(1.0, 0.0)):
+        with pytest.raises(ValueError, match="only supports integer-order"):
+            validate_integrator_compatibility("rk4", q_near_one)
+        assert validate_integrator_compatibility("efork3", q_near_one) == "efork3"
+
+
+def test_selector_uses_explicit_rhs_when_system_is_only_an_acceleration_hint() -> None:
+    system = SimpleNamespace(evaluate=lambda state: -100.0 * state)
 
     t, x, status = integrate(
-        lambda state: -state,
+        lambda state: -2.0 * state,
         np.array([1.0]),
-        q=q_near_one,
-        h=0.01,
+        q=1.0,
+        h=0.001,
         t_final=0.1,
-        integrator="rk4",
+        integrator="heun",
+        system=system,
         use_c_backend=False,
+        early_stop_config={"enabled": False},
     )
 
     assert status == "ok"
-    assert len(t) == 11
-    assert x[-1, 0] == pytest.approx(np.exp(-0.1), rel=1.0e-6)
+    assert len(t) == 101
+    assert x[-1, 0] == pytest.approx(np.exp(-0.2), rel=2.0e-6)
 
 
 def test_selector_propagates_python_fallback_policy(

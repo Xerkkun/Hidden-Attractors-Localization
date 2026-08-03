@@ -15,7 +15,10 @@ from ..models.chua import (
     rhs_chua,
 )
 from .base import ChaoticSystem, register_system
+from .kalman_fitts import kalman_fitts_2019_system
 from .lure import LureSystem
+from .modified_van_der_pol_duffing import mavpd_2023_system
+from .pll_lead_lag import pll_lead_lag_2015_system
 
 
 def _bisect_root(func, left: float, right: float, *, maxiter: int = 100, xtol: float = 1.0e-12) -> float:
@@ -240,3 +243,6 @@ def register_builtin_systems() -> None:
     register_system(chua_system("nonsmooth"), replace=True)
     register_system(chua_system("arctan"), replace=True)
     register_system(chua_arctan_wu2023_system(), replace=True)
+    register_system(kalman_fitts_2019_system(), replace=True)
+    register_system(mavpd_2023_system(), replace=True)
+    register_system(pll_lead_lag_2015_system(), replace=True)

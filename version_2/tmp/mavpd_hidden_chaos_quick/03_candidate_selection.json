@@ -1,0 +1,19 @@
+{
+  "hopf_boundary": 0.14380379839949112,
+  "no_frequency_sweep": true,
+  "primary_route_failed_before_alternative": true,
+  "selected": {
+    "E0_ambiguous": 0,
+    "E0_probe_count": 12,
+    "E0_target_hits": 0,
+    "eligible_hidden_chaos_screen": true,
+    "equilibrium_stability_margin": 0.05938592786916713,
+    "gamma": 0.15380379839949113,
+    "hopf_offset": 0.01,
+    "lambda_1": 0.7357121044940284,
+    "lambda_2": 0.00645090620531952,
+    "lambda_3": -20.85503401059878,
+    "lyapunov_status": "ok"
+  },
+  "selection_rule": "largest Hopf offset with LLE>0.5 and zero E0 contacts before periodic collapse"
+}

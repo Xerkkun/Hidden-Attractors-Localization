@@ -1,0 +1,108 @@
+{
+  "alternative_triggered": true,
+  "branches": [
+    {
+      "branch_index": 0,
+      "chaotic_at_base": false,
+      "final_lambda": 1.0,
+      "final_state": [
+        0.32519591868243997,
+        -0.010501929814293045,
+        0.7005494274170169
+      ],
+      "lambda_nodes_completed": 21,
+      "lyapunov": {
+        "does_not_prove_chaos_alone": true,
+        "exponents": [
+          -0.00125057289580188,
+          -1.0123388883740463,
+          -13.109600596974872
+        ],
+        "final_state": [
+          0.08234133538634528,
+          -0.0056050097536156935,
+          -0.1813047649523366
+        ],
+        "finite_time_local": true,
+        "metadata": {
+          "atol": 2e-12,
+          "burn_nfev": 78122,
+          "dimension": 3,
+          "div_threshold": 50.0,
+          "jacobian_eps": null,
+          "jacobian_source": "analytic",
+          "max_step": 0.02,
+          "nfev": 348078,
+          "njev": 0,
+          "nlu": 0,
+          "qr_interval": 0.5,
+          "qr_segments": 500,
+          "rtol": 2e-10,
+          "solver": "scipy.integrate.solve_ivp",
+          "solver_method": "DOP853",
+          "t_accumulate_completed": 250.0,
+          "t_accumulate_requested": 250.0,
+          "t_burn_completed": 100.0,
+          "t_burn_requested": 100.0
+        },
+        "method": "integer_dop853_variational_qr",
+        "status": "ok",
+        "sum_exponents": -14.12319005824472,
+        "t_accumulate": 250.0
+      }
+    },
+    {
+      "branch_index": 1,
+      "chaotic_at_base": false,
+      "final_lambda": 1.0,
+      "final_state": [
+        0.29882423981982614,
+        0.1302892899685461,
+        -0.8699276809145375
+      ],
+      "lambda_nodes_completed": 21,
+      "lyapunov": {
+        "does_not_prove_chaos_alone": true,
+        "exponents": [
+          -0.0029948489860484756,
+          -0.39302603540954306,
+          -51.176981776577904
+        ],
+        "final_state": [
+          -0.558727312599669,
+          -0.10606640476498908,
+          -1.5651862756191277
+        ],
+        "finite_time_local": true,
+        "metadata": {
+          "atol": 2e-12,
+          "burn_nfev": 186674,
+          "dimension": 3,
+          "div_threshold": 50.0,
+          "jacobian_eps": null,
+          "jacobian_source": "analytic",
+          "max_step": 0.02,
+          "nfev": 821910,
+          "njev": 0,
+          "nlu": 0,
+          "qr_interval": 0.5,
+          "qr_segments": 500,
+          "rtol": 2e-10,
+          "solver": "scipy.integrate.solve_ivp",
+          "solver_method": "DOP853",
+          "t_accumulate_completed": 250.0,
+          "t_accumulate_requested": 250.0,
+          "t_burn_completed": 100.0,
+          "t_burn_requested": 100.0
+        },
+        "method": "integer_dop853_variational_qr",
+        "status": "ok",
+        "sum_exponents": -51.57300266097349,
+        "t_accumulate": 250.0
+      }
+    }
+  ],
+  "frequency_grid_used": false,
+  "primary_route": "direct_integer_lure",
+  "trigger": "neither direct base branch passes the declared finite-time LLE chaos screen"
+}

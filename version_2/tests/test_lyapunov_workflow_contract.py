@@ -53,7 +53,9 @@ def test_integer_workflow_resolves_method_interval_and_memory(
     summary = lyapunov_workflow.run_lyapunov_workflow(
         {
             "system_id": "chua-nonsmooth",
-            "q": 1.0 - 5.0e-11,
+            # Only the exact endpoint is an integer-order model.  Values
+            # arbitrarily close to one still have fractional memory semantics.
+            "q": 1.0,
             "integrator": "efork3",
             "memory_mode": "full",
             "memory_window_steps": 400,

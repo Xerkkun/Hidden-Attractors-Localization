@@ -8,7 +8,7 @@ and the recorded integer-order EFORK limit.
 from ..native.backends import FractionalChuaBackend
 from .efork_published import EFORK3Coefficients, efork3_caputo_integrate, efork3_coefficients
 from .history import FractionalHistory
-from .integer import efork_q1_integrate, efork_q1_step
+from .integer import dop853_q1_integrate, efork_q1_integrate, efork_q1_step
 
 __all__ = [
     "EFORK3Coefficients",
@@ -16,6 +16,7 @@ __all__ = [
     "FractionalHistory",
     "efork3_caputo_integrate",
     "efork3_coefficients",
+    "dop853_q1_integrate",
     "efork_q1_integrate",
     "efork_q1_step",
 ]

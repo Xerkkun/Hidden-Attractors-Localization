@@ -175,6 +175,7 @@ def plot_lure_nyquist_describing_function(
     amin: float = 1.0 + 1.0e-8,
     amax: float | None = None,
     title: str = "Lur'e Nyquist/DF closure",
+    local_pair_only: bool = False,
 ) -> str:
     """Plot ``W_q(i omega)`` and ``-1/N(A)`` for any Lur'e system."""
 
@@ -206,8 +207,11 @@ def plot_lure_nyquist_describing_function(
     ax.set_title(title)
     ax.legend(loc="best", fontsize=8)
     fig.tight_layout()
-    from .export import intercept_and_export_path
-    intercept_and_export_path(fig, path, "nyquist")
+    from .export import intercept_and_export_path, save_figure_pair_local
+    if local_pair_only:
+        save_figure_pair_local(fig, path)
+    else:
+        intercept_and_export_path(fig, path, "nyquist")
     plt.close(fig)
     return str(path)
 

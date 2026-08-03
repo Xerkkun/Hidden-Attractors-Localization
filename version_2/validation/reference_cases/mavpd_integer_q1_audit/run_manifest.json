@@ -1,0 +1,48 @@
+{
+  "case_id": "mavpd_integer_q1_audit",
+  "steps": [
+    "contract",
+    "primary",
+    "hiddenness",
+    "negative",
+    "posthoc",
+    "figures"
+  ],
+  "quick": false,
+  "q": 1.0,
+  "output_dir": "validation/reference_cases/mavpd_integer_q1_audit",
+  "figures_dir": "validation/reference_cases/mavpd_integer_q1_audit/figures",
+  "probe_input": "examples/modified_van_der_pol_duffing_integer_lure_audit/input/mavpd_integer_hiddenness_initial_conditions.csv",
+  "probe_sha256": "898da9d508339cdd067e2be33ce6f046647dc0e00a43fde5a67b86ff1d7f1505",
+  "frequency_grid_used_for_search": false,
+  "table_1_used_as_search_input": false,
+  "phase_timings": [
+    {
+      "phase": "contract",
+      "seconds": 0.0018145000212825835
+    },
+    {
+      "phase": "primary",
+      "seconds": 213.66272169997683
+    },
+    {
+      "phase": "hiddenness",
+      "seconds": 228.76188880001428
+    },
+    {
+      "phase": "negative",
+      "seconds": 219.32206490001408
+    },
+    {
+      "phase": "posthoc",
+      "seconds": 4.138426600024104
+    },
+    {
+      "phase": "figures",
+      "seconds": 17.953235400025733
+    }
+  ],
+  "total_seconds": 683.8401690999744,
+  "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0"
+}

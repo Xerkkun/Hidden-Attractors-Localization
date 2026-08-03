@@ -28,6 +28,23 @@ JSON_POLICY_KEYS = {
     "unpromoted_outputs",
 }
 
+# These keys are deliberately machine-local pointers produced by the figure
+# promotion transaction.  Their targets and confinement are checked by the
+# dedicated figure/run validators; they are not portable scientific evidence.
+JSON_RUNTIME_PATH_KEYS_BY_SUFFIX = {
+    "/run_manifest.json": {"central_paths", "global_manifest_paths"},
+    "/figures/figure_manifest.json": {"central_paths"},
+    "/figures/global_promotion_receipt.json": {"global_manifest_paths"},
+}
+
+# Frozen source trees and superseded reference cases are immutable
+# reproducibility/archive material.  Applying current publication hygiene to
+# their historical metadata would require rewriting the artifacts themselves.
+NON_ACTIVE_VALIDATION_PREFIXES = (
+    "version_2/validation/reference_cases/archive/",
+    "version_2/validation/source_snapshots/",
+)
+
 LOCAL_PATH_REGEXES = [
     re.compile(r"[A-Za-z]:[\\/]+Users[\\/]"),
     re.compile(r"(^|[^A-Za-z0-9_])[\\/]Users[\\/]"),
@@ -76,15 +93,38 @@ def _bad_string(value: str, *, allow_validation_outputs: bool) -> bool:
 def _scan_json(path: Path) -> list[str]:
     data = json.loads(path.read_text(encoding="utf-8-sig"))
     hits: list[str] = []
+    relative_path = path.relative_to(REPO_ROOT).as_posix()
 
-    def walk(value: Any, keys: tuple[str, ...] = (), policy_context: bool = False) -> None:
+    def is_runtime_path_key(key: str) -> bool:
+        if not relative_path.startswith("version_2/validation/reference_cases/"):
+            return False
+        return any(
+            relative_path.endswith(suffix) and key in allowed_keys
+            for suffix, allowed_keys in JSON_RUNTIME_PATH_KEYS_BY_SUFFIX.items()
+        )
+
+    def walk(
+        value: Any,
+        keys: tuple[str, ...] = (),
+        policy_context: bool = False,
+        runtime_path_context: bool = False,
+    ) -> None:
         if isinstance(value, dict):
             for key, child in value.items():
-                walk(child, (*keys, str(key)), policy_context or key in JSON_POLICY_KEYS)
+                walk(
+                    child,
+                    (*keys, str(key)),
+                    policy_context or key in JSON_POLICY_KEYS,
+                    runtime_path_context or is_runtime_path_key(str(key)),
+                )
         elif isinstance(value, list):
             for idx, child in enumerate(value):
-                walk(child, (*keys, str(idx)), policy_context)
-        elif isinstance(value, str) and _bad_string(value, allow_validation_outputs=policy_context):
+                walk(child, (*keys, str(idx)), policy_context, runtime_path_context)
+        elif (
+            isinstance(value, str)
+            and not runtime_path_context
+            and _bad_string(value, allow_validation_outputs=policy_context)
+        ):
             hits.append(f"{path.relative_to(REPO_ROOT).as_posix()}:{'.'.join(keys)}: {value}")
 
     walk(data)
@@ -110,6 +150,9 @@ def test_no_absolute_paths_in_promoted_evidence() -> None:
             if "outputs/" in path.as_posix():
                 continue
             if not path.is_file() or path in seen:
+                continue
+            relative_path = path.relative_to(REPO_ROOT).as_posix()
+            if relative_path.startswith(NON_ACTIVE_VALIDATION_PREFIXES):
                 continue
             seen.add(path)
             if path.suffix.lower() == ".json":

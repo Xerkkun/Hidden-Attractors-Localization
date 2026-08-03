@@ -1,0 +1,171 @@
+{
+  "candidate_gate": {
+    "attractor_status": "hidden_under_tested_neighborhoods",
+    "boundedness_support": "bounded_nontrivial",
+    "chaos_evidence_level": "strong_chaos_evidence",
+    "chaotic_hidden_promotion_allowed": true,
+    "checked_conditions": {
+      "continuation_eta_path_recorded": true,
+      "continuation_memory_declared": true,
+      "continuation_reaches_target": true,
+      "equilibria_all_found": true,
+      "equilibria_residual_within_tolerance": true,
+      "hiddenness_basin_controls_complete": true,
+      "hiddenness_no_basin_intersection": true,
+      "hiddenness_required_radii_tested": true,
+      "hiddenness_tested_all_equilibria": true,
+      "hiddenness_tested_radii_recorded": true,
+      "hiddenness_zero_equilibrium_contacts": true,
+      "matignon_all_classified": true,
+      "matignon_q_recorded": true,
+      "reproducibility_metadata_complete": true,
+      "robustness_consistent": true,
+      "robustness_tested_h": true,
+      "robustness_tested_integrator": true,
+      "robustness_tested_memory": true,
+      "robustness_tested_t_final": true,
+      "seed_localized": true,
+      "seed_method_supported": true,
+      "seed_source_traceable": true,
+      "trajectory_bounded": true,
+      "trajectory_finite_fraction_acceptable": true,
+      "trajectory_nontrivial": true,
+      "trajectory_post_transient_sufficient": true
+    },
+    "diagnostic_conflicts": [],
+    "evidence_level": "hidden_under_tested_neighborhoods",
+    "hidden_chaos_status": "chaotic_hidden_under_tested_neighborhoods",
+    "hiddenness_evidence_level": "hidden_under_tested_neighborhoods",
+    "hiddenness_promotion_allowed": true,
+    "lyapunov_support": "positive",
+    "missing_conditions": [],
+    "poincare_support": "chaotic",
+    "promotion_allowed": true,
+    "recommended_interpretation": "strong numerical evidence of chaos",
+    "spectral_support": "not_available_or_inconclusive",
+    "verdict": "hidden_under_tested_neighborhoods",
+    "warnings": [],
+    "zero_one_support": "chaotic"
+  },
+  "candidate_parameters": {
+    "delta": 100.0,
+    "gamma": 0.15380379839949113,
+    "rho": 200.0,
+    "xi": 2.85
+  },
+  "candidate_parameter_provenance": "locally_derived_parameter_continuation_not_a_published_parameter_tuple",
+  "case_id": "mavpd_integer_hidden_chaos",
+  "created_at_utc": "2026-08-03T06:36:32.889058+00:00",
+  "frequency_grid_used_for_search": false,
+  "global_proof_claimed": false,
+  "hiddenness": {
+    "ambiguous": 0,
+    "finite_sample_only": true,
+    "global_hiddenness_proved": false,
+    "main": {
+      "ambiguous": 0,
+      "by_equilibrium": {
+        "E+": {
+          "ambiguous": 0,
+          "equilibrium_destinations": 36,
+          "n": 36,
+          "numerical_failures": 0,
+          "target_hits": 0
+        },
+        "E-": {
+          "ambiguous": 0,
+          "equilibrium_destinations": 36,
+          "n": 36,
+          "numerical_failures": 0,
+          "target_hits": 0
+        },
+        "E0": {
+          "ambiguous": 0,
+          "equilibrium_destinations": 36,
+          "n": 36,
+          "numerical_failures": 0,
+          "target_hits": 0
+        }
+      },
+      "finite_sample_only": true,
+      "global_hiddenness_proved": false,
+      "n_probes": 108,
+      "numerical_failures": 0,
+      "sampled_hiddenness_status": "hidden_under_tested_neighborhoods",
+      "target_hits": 0,
+      "tested_all_declared_equilibria": true
+    },
+    "n_probes": 112,
+    "numerical_failures": 0,
+    "sampled_hiddenness_status": "hidden_under_tested_neighborhoods",
+    "target_hits": 0,
+    "targeted_E0_unstable_direction": {
+      "ambiguous": 0,
+      "by_equilibrium": {
+        "E0": {
+          "ambiguous": 0,
+          "equilibrium_destinations": 4,
+          "n": 4,
+          "numerical_failures": 0,
+          "target_hits": 0
+        }
+      },
+      "finite_sample_only": true,
+      "global_hiddenness_proved": false,
+      "n_probes": 4,
+      "numerical_failures": 0,
+      "sampled_hiddenness_status": "hidden_under_tested_neighborhoods",
+      "target_hits": 0,
+      "tested_all_declared_equilibria": true,
+      "unstable_direction": [
+        -0.9474047253773722,
+        -0.029462107178442585,
+        -0.31867894592086266
+      ],
+      "unstable_eigenvalue": {
+        "imag": 0.0,
+        "real": 18.490149760793358
+      }
+    }
+  },
+  "hopf_boundary": 0.14380379839949112,
+  "lyapunov_exponents": [
+    0.6955069525677643,
+    0.0008053423291746455,
+    -20.90613889885511
+  ],
+  "resumed_after_launcher_timeout_seconds": 1800.0,
+  "selected_hopf_offset": 0.01,
+  "timings": [
+    {
+      "phase": "contract_approx_from_artifact_timestamps",
+      "seconds": 3.0,
+      "timing_source": "approximate_after_launcher_timeout"
+    },
+    {
+      "phase": "search_approx_from_artifact_timestamps",
+      "seconds": 1188.5690367221832,
+      "timing_source": "filesystem_timestamp_difference"
+    },
+    {
+      "phase": "diagnostics_approx_from_artifact_timestamps",
+      "seconds": 270.28500509262085,
+      "timing_source": "filesystem_timestamp_difference"
+    },
+    {
+      "phase": "hiddenness_resumed",
+      "seconds": 653.6284857999999,
+      "timing_source": "perf_counter"
+    },
+    {
+      "phase": "candidate_gate_resumed",
+      "seconds": 0.5285966999945231,
+      "timing_source": "perf_counter"
+    },
+    {
+      "phase": "total_active_approx",
+      "seconds": 2116.0111243147985,
+      "timing_source": "mixed_exact_and_artifact_timestamps"
+    }
+  ]
+}

@@ -91,11 +91,15 @@ def test_no_loose_figure_scripts_outside_designated_directories():
         
     for r, d, files in os.walk(version_2_dir):
         # Exclude directories like __pycache__, .pytest_cache
+        excluded_names = {"__pycache__", "build", "local_reports"}
+        if Path(r) == version_2_dir:
+            # version_2/tmp is an ignored staging area, not active source.
+            excluded_names.add("tmp")
         d[:] = [
             dirname
             for dirname in d
             if not dirname.startswith(".")
-            and dirname not in {"__pycache__", "build", "local_reports"}
+            and dirname not in excluded_names
         ]
         
         rel_dir = os.path.relpath(r, ROOT_DIR).replace("\\", "/")

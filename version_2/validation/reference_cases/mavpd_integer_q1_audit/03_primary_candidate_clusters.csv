@@ -1,0 +1,5 @@
+route_id,cluster,branch_index,phase,continuation_used,span_norm,mean_y1
+branch_0_phase_0.0pi,inner_positive,0,0.0,True,1.0481334717523294,0.23344792548432605
+branch_0_phase_1.0pi,inner_negative,0,3.141592653589793,True,1.0481334717523296,-0.23344792548432688
+branch_1_phase_0.0pi,outer_recurrent_candidate,1,0.0,True,4.678672547945794,2.9461537453220717e-06
+branch_1_phase_1.0pi,outer_recurrent_candidate,1,3.141592653589793,True,4.675926924090701,0.0001879472629237765

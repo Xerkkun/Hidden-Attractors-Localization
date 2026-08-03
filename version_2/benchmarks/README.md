@@ -10,11 +10,43 @@ claims about chaos or hiddenness.
 benchmarks/
 ├── conftest.py
 ├── bench_efork_single_trajectory.py
+├── bench_fractional_gl_kernels.py
+├── bench_correlation_sum.py
+├── bench_permutation_entropy.py
+├── bench_multi_term_caputo.py
+├── bench_alignment_indices.py
+├── bench_covariant_lyapunov.py
+├── bench_tempered_convolution_quadrature.py
 ├── bench_basin_grid.py
 └── bench_seed_generation.py
 ```
 
 - `bench_efork_single_trajectory.py` compares supported trajectory backends.
+- `bench_fractional_gl_kernels.py` compares warmed Numba, native-C/OpenMP and
+  offline FFT sampled-data GL operators; build and JIT warm-up are reported
+  separately.
+- `bench_correlation_sum.py` compares the exact same finite q=2 counts through
+  Python, warmed Numba and native C/OpenMP, with cyclic backend ordering and
+  host/build metadata.
+- `bench_permutation_entropy.py` compares identical Bandt--Pompe ordinal
+  histograms through Python, warmed Numba and native C/OpenMP and records a
+  host-local assessment of the automatic backend threshold.
+- `bench_multi_term_caputo.py` separates semantic-facade overhead, exact
+  duplicate-order coalescence during combined-L1 construction, and the shared
+  `O(N^2*d)` history sweep; every timing ratio is gated by numerical parity.
+- `bench_alignment_indices.py` compares identical deterministic tangent
+  histories through NumPy/SVD and warmed Numba/Householder, records JIT cost
+  separately, and gates every timing row by SALI/GALI/log-volume parity.
+- `bench_covariant_lyapunov.py` generates deterministic, dynamically consistent
+  positive-diagonal Q/R histories, checks NumPy/Numba parity before timing, and
+  measures both public-history reconstruction and the complete integer-map CLV
+  pipeline with the first Numba call reported separately.
+- `bench_tempered_convolution_quadrature.py` parity-gates Python, warmed Numba,
+  and offline FFT for tempered RL/Caputo with BDF1/BDF2; FFT remains a batch
+  convolution and is not labelled fast history or an FDE solver.
+- `bench_tempered_fast_history.py` parity-gates recurrent FBDF1/GNGF2
+  Python/Numba against exact-weight direct and offline FFT baselines, times
+  automatic `Q` selection separately, and reports active-history memory.
 - `bench_basin_grid.py` measures basin-classification workload scaling.
 - `bench_seed_generation.py` measures the public describing-function seed
   components.
@@ -35,9 +67,49 @@ standalone entry point:
 
 ```bash
 python benchmarks/bench_efork_single_trajectory.py
+python benchmarks/bench_fractional_gl_kernels.py --repeats 11 --output validation/outputs/benchmarks/fractional_gl_kernels_2026-08-02.json
+python benchmarks/bench_correlation_sum.py --repeats 7 --output validation/outputs/benchmarks/correlation_sum_backends_20260803.json
+python benchmarks/bench_permutation_entropy.py --repeats 5
+python benchmarks/bench_multi_term_caputo.py --repeats 7 --output C:/tmp/hafo_multi_term_caputo_benchmark.json
+python benchmarks/bench_alignment_indices.py --repeats 7 --output validation/outputs/benchmarks/alignment_indices_numpy_numba_20260803.json
+python benchmarks/bench_covariant_lyapunov.py --repeats 7 --output validation/outputs/benchmarks/covariant_lyapunov_numpy_numba_20260803.json
+python benchmarks/bench_tempered_convolution_quadrature.py --repeats 3 --output validation/outputs/benchmarks/tempered_convolution_quadrature_backends_20260803.json
+python benchmarks/bench_tempered_fast_history.py --repeats 3 --output C:/tmp/hafo_tempered_fast_history_benchmark.json
 python benchmarks/bench_basin_grid.py
 python benchmarks/bench_seed_generation.py
 ```
+
+The dated JSON is retained workspace evidence for one host. Preserve its
+environment, compiler/OpenMP, kernel hash, warm-up, repetitions and dispersion
+fields; do not generalize its crossover or speedups to other machines without a
+new run.
+
+For the dated CLV run on this host, warmed Numba reduced the largest complete
+integer-map timing by about 52.8% relative to NumPy. The entire public Numba
+reconstruction phase represented about 1.60% of that warmed end-to-end time;
+even a hypothetical zero-cost replacement gives an idealized ceiling of only
+about 1.016x. This evidence supports retaining NumPy and Numba rather than
+adding a native-C CLV backend now. It does not prove that C can never help:
+profile representative production systems first, then require parity-gated,
+repeated end-to-end C measurements before changing the backend policy.
+
+For the retained tempered-CQ run, FFT had the smallest median in 12/12 finite
+definition/BDF/workload cases, while Numba matched Python exactly and the
+largest FFT difference was `1.95e-13`. FFT was only `1.01x`--`1.30x` faster
+than warmed Numba across these workloads. No C or Julia candidate was
+implemented or timed, so the decision is to retain Python/Numba/FFT and admit a
+new language backend only after an independently verified end-to-end candidate
+beats run-to-run noise on representative HAFO/Toolbox workloads.
+
+For the retained Fast Method II run, all 12 definition/generator/workload cases
+passed parity before timing. Automatic calibration selected `Q=65` for
+`N=128,512` and `Q=129` for `N=2048`. At `N=2048`, the evaluator's analytical
+active-history model was `14,016 B`, versus `131,072 B` for complete base plus
+tempered weight arrays. In these finite batch workloads, direct Numba or offline
+FFT had the smallest median in every case; the recurrent call still preserves
+the distinct compressed-history contract. Neither C nor Julia was implemented
+or measured, so the current decision is not to add either backend without a
+parity-gated end-to-end candidate on representative HAFO/Toolbox workloads.
 
 ## Save and compare a baseline
 

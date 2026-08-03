@@ -190,5 +190,6 @@ Case-specific research records remain outside the installed library and its
 public user documentation.
 
 Ordinary runs write to `outputs/`. Promoted evidence belongs under
-`validation/`, and promoted figures belong under `library_figures/` through the
-central export policy.
+`validation/`, and the active central export policy promotes figures under
+`outputs/library_figures/`. A repository-level `library_figures/` tree may
+exist as legacy evidence, but current runners do not write to it.

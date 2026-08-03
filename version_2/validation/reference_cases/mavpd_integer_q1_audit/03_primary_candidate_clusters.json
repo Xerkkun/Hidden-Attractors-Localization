@@ -1,0 +1,109 @@
+{
+  "method": "greedy_symmetric_median_cloud_distance",
+  "threshold": 0.06,
+  "n_clusters": 3,
+  "selection_rule": "largest_blind_state_span_norm",
+  "selected_cluster": "outer_recurrent_candidate",
+  "clusters": [
+    {
+      "cluster_id": 0,
+      "semantic_label": "inner_positive",
+      "representative_route": "branch_0_phase_0.0pi",
+      "members": [
+        {
+          "route_id": "branch_0_phase_0.0pi",
+          "distance_to_representative": 0.0
+        }
+      ],
+      "signature": {
+        "mean": [
+          0.23344792548432605,
+          3.4082589820267223e-06,
+          0.2332710570181847
+        ],
+        "std": [
+          0.12480611208061189,
+          0.019433635083776494,
+          0.33247156980923814
+        ],
+        "span": [
+          0.37937111720178346,
+          0.05721793812785066,
+          0.9753909152729787
+        ],
+        "span_norm": 1.0481334717523294,
+        "max_norm": 0.8155678952233627
+      }
+    },
+    {
+      "cluster_id": 1,
+      "semantic_label": "inner_negative",
+      "representative_route": "branch_0_phase_1.0pi",
+      "members": [
+        {
+          "route_id": "branch_0_phase_1.0pi",
+          "distance_to_representative": 0.0
+        }
+      ],
+      "signature": {
+        "mean": [
+          -0.23344792548432688,
+          -3.4082589820240923e-06,
+          -0.2332710570181842
+        ],
+        "std": [
+          0.124806112080612,
+          0.019433635083776536,
+          0.33247156980923853
+        ],
+        "span": [
+          0.37937111720178224,
+          0.05721793812785068,
+          0.9753909152729794
+        ],
+        "span_norm": 1.0481334717523296,
+        "max_norm": 0.8155678952233624
+      }
+    },
+    {
+      "cluster_id": 2,
+      "semantic_label": "outer_recurrent_candidate",
+      "representative_route": "branch_1_phase_0.0pi",
+      "members": [
+        {
+          "route_id": "branch_1_phase_0.0pi",
+          "distance_to_representative": 0.0
+        },
+        {
+          "route_id": "branch_1_phase_1.0pi",
+          "distance_to_representative": 0.002873564037242885
+        }
+      ],
+      "signature": {
+        "mean": [
+          -0.0001879472629237765,
+          -0.00010499137471071112,
+          0.0006745647184223208
+        ],
+        "std": [
+          0.4414033936758792,
+          0.10181568435106703,
+          1.598243863694447
+        ],
+        "span": [
+          1.1648638752414335,
+          0.2899996369837936,
+          4.519212869753217
+        ],
+        "span_norm": 4.675926924090701,
+        "max_norm": 2.29906902083261
+      }
+    }
+  ],
+  "route_assignment": {
+    "branch_0_phase_0.0pi": "inner_positive",
+    "branch_0_phase_1.0pi": "inner_negative",
+    "branch_1_phase_0.0pi": "outer_recurrent_candidate",
+    "branch_1_phase_1.0pi": "outer_recurrent_candidate"
+  }
+}

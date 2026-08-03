@@ -42,12 +42,30 @@ nav:
       - Validation Methodology: validation_methodology.md
       - Hiddenness Verification: hiddenness_verification.md
       - Integer Chua q=1 Reference: integer_chua_reference.md
+      - Integer Lur'e Test Catalog: integer_lure_test_catalog.md
+      - Integer Hidden-Chaos Search: integer_hidden_chaos_search.md
+      - Unified Integer/Fractional Engine: fractional_integer_engine.md
+      - Fractional Method Catalog: fractional_method_catalog.md
+      - Variable-Order Caputo Type III: variable_order_caputo_type3.md
+      - Distributed-Order Caputo L1: distributed_order_caputo_l1.md
+      - Multi-Term Caputo L1: multi_term_caputo_l1.md
+      - Tempered BDF Convolution Quadrature: tempered_convolution_quadrature.md
+      - Fast Recurrent Tempered Multistep History: tempered_fast_multistep_history.md
+      - SciSpace Fractional Evidence: scispace_fractional_method_evidence.md
+      - Upstream Function Matrix: upstream_function_matrix.md
+      - Basin Entropy and Uncertainty: basin_uncertainty_metrics.md
       - Fractional Chua q=0.9998 Algebra: fractional_chua_algebra_validation.md
   - Dynamics and Diagnostics:
       - Mathematical Diagnostics: mathematical_diagnostics.md
+      - Common Trajectory Contract: analysis_contracts.md
+      - Permutation Entropy: permutation_entropy.md
+      - Correlation Dimension: correlation_dimension.md
+      - Reconstruction and Advanced Recurrence: trajectory_reconstruction_recurrence.md
       - Dynamical Analysis: dynamical_analysis.md
       - Poincare Diagnostics: poincare_diagnostics.md
       - Lyapunov Methods: lyapunov_methods.md
+      - Integer Covariant Lyapunov Vectors: covariant_lyapunov_vectors.md
+      - Integer SALI and GALI: sali_gali_integer.md
       - EFORK-3 Published Validation: efork3_validation.md
   - Figures and Reports:
       - Plotting Function Catalog: plot_function_catalog.md

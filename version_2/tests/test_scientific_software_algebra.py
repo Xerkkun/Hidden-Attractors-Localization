@@ -131,8 +131,36 @@ def test_matignon_classification_on_controlled_spectra(
     result = classify_equilibrium_stability(_controlled_system(matrix, q), np.zeros(matrix.shape[0]))
     assert result["stability_class"] == expected
     if q < 1.0:
+        assert result["criterion"] == "matignon_commensurate_caputo"
+        assert result["derivative_definition"] == "caputo"
+        assert result["criterion_applicable"] is True
         alpha_min = float(np.min(np.abs(np.angle(np.linalg.eigvals(matrix)))))
         assert result["instability_measure"] == pytest.approx(q - 2.0 * alpha_min / np.pi, abs=1.0e-12)
+    else:
+        assert result["criterion"] == "integer_spectral_abscissa"
+        assert result["derivative_definition"] == "integer_order"
+
+
+@pytest.mark.parametrize(
+    ("derivative_definition", "order_mode", "message"),
+    [
+        ("caputo_fabrizio", "commensurate", "only for commensurate Caputo"),
+        ("caputo", "componentwise", "requires order_mode='commensurate'"),
+    ],
+)
+def test_matignon_rejects_unvalidated_fractional_contracts(
+    derivative_definition: str,
+    order_mode: str,
+    message: str,
+) -> None:
+    system = _controlled_system(np.diag([-1.0, -2.0]), 0.8)
+    with pytest.raises(NotImplementedError, match=message):
+        classify_equilibrium_stability(
+            system,
+            np.zeros(2),
+            derivative_definition=derivative_definition,
+            order_mode=order_mode,
+        )
 
 
 @pytest.mark.parametrize("q", [1.0, 0.6])

@@ -1,0 +1,121 @@
+{
+  "system": "pll-lead-lag-2015",
+  "dimension": 2,
+  "parameters": {
+    "tau1": 0.0448,
+    "tau2": 0.0185,
+    "loop_gain": 500.0,
+    "omega_delta": 178.9
+  },
+  "derived": {
+    "tau1": 0.0448,
+    "tau2": 0.0185,
+    "loop_gain": 500.0,
+    "omega_delta": 178.9,
+    "total_time_constant": 0.0633,
+    "sine_equilibrium": 0.7156,
+    "cosine_focus": 0.6985103005682879,
+    "theta_focus": 0.7974826998815102,
+    "theta_saddle": 2.344109953708283,
+    "x_equilibrium": 0.01602944,
+    "saddle_offset": 1.546627253826773
+  },
+  "reference": {
+    "doi": "10.1109/ICUMT.2015.7382409",
+    "title": "Limitations of PLL simulation: hidden oscillations in MatLab and SPICE",
+    "year": 2015
+  },
+  "state_coordinates": "u=x-x_e; v=theta_delta-theta_focus_unwrapped",
+  "state_space": "R_times_S1",
+  "cylinder_scales": {
+    "u": 0.0224,
+    "v": 3.141592653589793
+  },
+  "lure": {
+    "matrix": [
+      [
+        -15.797788309636653,
+        0.0
+      ],
+      [
+        -7898.894154818326,
+        0.0
+      ]
+    ],
+    "input_vector": [
+      0.353870458135861,
+      -73.06477093206952
+    ],
+    "output_vector": [
+      0.0,
+      1.0
+    ],
+    "nonlinearity": "sin(theta_focus+v)-sin(theta_focus)",
+    "transfer_standard": "c^T(sI-A)^(-1)b",
+    "transfer_code": "c^T(A-sI)^(-1)b",
+    "form": "T1_exact_scalar_after_locked_equilibrium_shift"
+  },
+  "centered_df_at_amplitude_1": {
+    "dc": -0.16802453549911922,
+    "fundamental": 0.6147597338278894,
+    "gain": 0.6147597338278894,
+    "quadrature": 0.0
+  },
+  "max_lure_field_residual": 2.7755575615628914e-17,
+  "jacobian_finite_difference_residual": 2.997355628543629e-08,
+  "coordinate_field_residual": 1.3877787807814457e-17,
+  "transfer_residual": 2.5121479338940403e-15,
+  "equilibria": [
+    {
+      "name": "E_focus",
+      "state": [
+        0.0,
+        0.0
+      ],
+      "rhs_residual": 0.0,
+      "jacobian": [
+        [
+          -15.797788309636653,
+          0.24718216007471802
+        ],
+        [
+          -7898.894154818326,
+          -51.036495104712984
+        ]
+      ],
+      "eigenvalues": [
+        [
+          -33.41714170717482,
+          40.521896614573926
+        ],
+        [
+          -33.41714170717482,
+          -40.521896614573926
+        ]
+      ]
+    },
+    {
+      "name": "E_saddle",
+      "state": [
+        0.0,
+        1.546627253826773
+      ],
+      "rhs_residual": 0.0,
+      "jacobian": [
+        [
+          -15.797788309636653,
+          -0.24718216007471802
+        ],
+        [
+          -7898.894154818326,
+          51.036495104712984
+        ]
+      ],
+      "eigenvalues": [
+        -37.780746595755716,
+        73.01945339083204
+      ]
+    }
+  ],
+  "status": "passed"
+}

@@ -18,6 +18,7 @@ from typing import Any, Sequence
 
 import numpy as np
 
+from .._rhs import bind_rhs
 from ..models.chua import ChuaParameters, chua_nonsmooth_parameters
 from ..parallel import compile_c_target
 from ..paths import PACKAGE_ROOT, get_native_cache
@@ -969,17 +970,28 @@ class GeneralFDEBackend:
         
         # Output buffer for [t, x_0, x_1, ...]
         out = np.empty(rows * (dim + 1), dtype=np.float64)
+        bound_rhs = bind_rhs(rhs)
+        callback_errors: list[BaseException] = []
         
         # Construct C-compatible callback
         def c_rhs(t_val, x_ptr, f_ptr):
             x_arr = np.ctypeslib.as_array(x_ptr, shape=(dim,))
             f_arr = np.ctypeslib.as_array(f_ptr, shape=(dim,))
+            if callback_errors:
+                f_arr.fill(np.nan)
+                return
             try:
-                deriv = np.asarray(rhs(t_val, x_arr), dtype=np.float64)
-            except TypeError:
-                deriv = np.asarray(rhs(x_arr), dtype=np.float64)
-            for d in range(dim):
-                f_arr[d] = deriv[d]
+                deriv = np.asarray(bound_rhs(t_val, x_arr), dtype=np.float64)
+                if deriv.shape != (dim,):
+                    raise ValueError(
+                        f"rhs output shape must be ({dim},), got {deriv.shape}."
+                    )
+                if not np.all(np.isfinite(deriv)):
+                    raise FloatingPointError("rhs returned non-finite values.")
+                f_arr[:] = deriv
+            except BaseException as exc:  # ctypes cannot propagate callback errors
+                callback_errors.append(exc)
+                f_arr.fill(np.nan)
                 
         c_callback = self.RHS_CALLBACK(c_rhs)
         
@@ -1009,7 +1021,10 @@ class GeneralFDEBackend:
                     out
                 )
             )
-            
+
+        if callback_errors:
+            raise callback_errors[0]
+
         if rc < 0:
             raise RuntimeError(f"General FDE solver in C returned error code: {rc}")
             

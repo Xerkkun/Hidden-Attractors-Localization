@@ -1,0 +1,365 @@
+{
+  "primary_xi_3p1": {
+    "system": "modified-van-der-pol-duffing",
+    "q": 1.0,
+    "parameters": {
+      "gamma": 0.1,
+      "delta": 100.0,
+      "rho": 200.0,
+      "xi": 3.1
+    },
+    "reference": {
+      "doi": "10.3390/math11030591",
+      "title": "Existence of Self-Excited and Hidden Attractors in the Modified Autonomous Van Der Pol-Duffing Systems",
+      "year": 2023
+    },
+    "lure": {
+      "matrix": [
+        [
+          10.0,
+          100.0,
+          0.0
+        ],
+        [
+          1.0,
+          -3.1,
+          -1.0
+        ],
+        [
+          0.0,
+          200.0,
+          0.0
+        ]
+      ],
+      "input_vector": [
+        -100.0,
+        0.0,
+        0.0
+      ],
+      "output_vector": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "nonlinearity": "psi(sigma)=sigma^3",
+      "describing_function": "N(A)=3*A^2/4",
+      "transfer_convention": "c^T (P - s I)^(-1) b",
+      "form": "exact_scalar"
+    },
+    "max_lure_field_residual": 0.0,
+    "lure_field_residuals": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "jacobian_finite_difference_residual": 9.846680120110727e-09,
+    "equilibria": [
+      {
+        "label": "E0",
+        "state": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rhs_residual": 0.0,
+        "jacobian": [
+          [
+            10.0,
+            100.0,
+            0.0
+          ],
+          [
+            1.0,
+            -3.1,
+            -1.0
+          ],
+          [
+            0.0,
+            200.0,
+            0.0
+          ]
+        ],
+        "eigenvalues": [
+          [
+            13.179182140318382,
+            0.0
+          ],
+          [
+            -3.1395910701591925,
+            11.91207173549869
+          ],
+          [
+            -3.1395910701591925,
+            -11.91207173549869
+          ]
+        ],
+        "locally_asymptotically_stable": false
+      },
+      {
+        "label": "E+",
+        "state": [
+          0.31622776601683794,
+          0.0,
+          0.31622776601683794
+        ],
+        "rhs_residual": 4.440892098500626e-16,
+        "jacobian": [
+          [
+            -20.0,
+            100.0,
+            0.0
+          ],
+          [
+            1.0,
+            -3.1,
+            -1.0
+          ],
+          [
+            0.0,
+            200.0,
+            0.0
+          ]
+        ],
+        "eigenvalues": [
+          [
+            -23.461845785791205,
+            0.0
+          ],
+          [
+            0.18092289289559804,
+            13.055911953260793
+          ],
+          [
+            0.18092289289559804,
+            -13.055911953260793
+          ]
+        ],
+        "locally_asymptotically_stable": false
+      },
+      {
+        "label": "E-",
+        "state": [
+          -0.31622776601683794,
+          0.0,
+          -0.31622776601683794
+        ],
+        "rhs_residual": 4.440892098500626e-16,
+        "jacobian": [
+          [
+            -20.0,
+            100.0,
+            0.0
+          ],
+          [
+            1.0,
+            -3.1,
+            -1.0
+          ],
+          [
+            0.0,
+            200.0,
+            0.0
+          ]
+        ],
+        "eigenvalues": [
+          [
+            -23.461845785791205,
+            0.0
+          ],
+          [
+            0.18092289289559804,
+            13.055911953260793
+          ],
+          [
+            0.18092289289559804,
+            -13.055911953260793
+          ]
+        ],
+        "locally_asymptotically_stable": false
+      }
+    ],
+    "status": "passed"
+  },
+  "negative_xi_3p5": {
+    "system": "modified-van-der-pol-duffing",
+    "q": 1.0,
+    "parameters": {
+      "gamma": 0.1,
+      "delta": 100.0,
+      "rho": 200.0,
+      "xi": 3.5
+    },
+    "reference": {
+      "doi": "10.3390/math11030591",
+      "title": "Existence of Self-Excited and Hidden Attractors in the Modified Autonomous Van Der Pol-Duffing Systems",
+      "year": 2023
+    },
+    "lure": {
+      "matrix": [
+        [
+          10.0,
+          100.0,
+          0.0
+        ],
+        [
+          1.0,
+          -3.5,
+          -1.0
+        ],
+        [
+          0.0,
+          200.0,
+          0.0
+        ]
+      ],
+      "input_vector": [
+        -100.0,
+        0.0,
+        0.0
+      ],
+      "output_vector": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "nonlinearity": "psi(sigma)=sigma^3",
+      "describing_function": "N(A)=3*A^2/4",
+      "transfer_convention": "c^T (P - s I)^(-1) b",
+      "form": "exact_scalar"
+    },
+    "max_lure_field_residual": 0.0,
+    "lure_field_residuals": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "jacobian_finite_difference_residual": 9.89398302955346e-09,
+    "equilibria": [
+      {
+        "label": "E0",
+        "state": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rhs_residual": 0.0,
+        "jacobian": [
+          [
+            10.0,
+            100.0,
+            0.0
+          ],
+          [
+            1.0,
+            -3.5,
+            -1.0
+          ],
+          [
+            0.0,
+            200.0,
+            0.0
+          ]
+        ],
+        "eigenvalues": [
+          [
+            13.138641774171592,
+            0.0
+          ],
+          [
+            -3.3193208870857935,
+            11.882964486459061
+          ],
+          [
+            -3.3193208870857935,
+            -11.882964486459061
+          ]
+        ],
+        "locally_asymptotically_stable": false
+      },
+      {
+        "label": "E+",
+        "state": [
+          0.31622776601683794,
+          0.0,
+          0.31622776601683794
+        ],
+        "rhs_residual": 4.440892098500626e-16,
+        "jacobian": [
+          [
+            -20.0,
+            100.0,
+            0.0
+          ],
+          [
+            1.0,
+            -3.5,
+            -1.0
+          ],
+          [
+            0.0,
+            200.0,
+            0.0
+          ]
+        ],
+        "eigenvalues": [
+          [
+            -23.506919694297984,
+            0.0
+          ],
+          [
+            0.0034598471489935834,
+            13.044640613203159
+          ],
+          [
+            0.0034598471489935834,
+            -13.044640613203159
+          ]
+        ],
+        "locally_asymptotically_stable": false
+      },
+      {
+        "label": "E-",
+        "state": [
+          -0.31622776601683794,
+          0.0,
+          -0.31622776601683794
+        ],
+        "rhs_residual": 4.440892098500626e-16,
+        "jacobian": [
+          [
+            -20.0,
+            100.0,
+            0.0
+          ],
+          [
+            1.0,
+            -3.5,
+            -1.0
+          ],
+          [
+            0.0,
+            200.0,
+            0.0
+          ]
+        ],
+        "eigenvalues": [
+          [
+            -23.506919694297984,
+            0.0
+          ],
+          [
+            0.0034598471489935834,
+            13.044640613203159
+          ],
+          [
+            0.0034598471489935834,
+            -13.044640613203159
+          ]
+        ],
+        "locally_asymptotically_stable": false
+      }
+    ],
+    "status": "passed"
+  },
+  "contract_decision": "both_parameter_regimes_pass_exact_algebraic_contract"
+}

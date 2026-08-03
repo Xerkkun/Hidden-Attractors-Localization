@@ -1,0 +1,45 @@
+{
+  "case_id": "kalman_fitts_integer_q1_nonchua_reference",
+  "steps": [
+    "contract",
+    "direct",
+    "source",
+    "continuation",
+    "verification",
+    "figures"
+  ],
+  "quick": false,
+  "direct_route_decision": "direct_route_rejected_gain_sign_incompatible_use_published_alternative",
+  "alternative_route": "published_sign_to_tanh_homotopy",
+  "published_target_seed_used": false,
+  "frequency_scan_used": false,
+  "phase_timings": [
+    {
+      "phase": "contract",
+      "seconds": 0.0011457999935373664
+    },
+    {
+      "phase": "direct",
+      "seconds": 0.001887699996586889
+    },
+    {
+      "phase": "source",
+      "seconds": 0.7294514999957755
+    },
+    {
+      "phase": "continuation",
+      "seconds": 16.98491830000421
+    },
+    {
+      "phase": "verification",
+      "seconds": 49.044217100017704
+    },
+    {
+      "phase": "figures",
+      "seconds": 11.039511200040579
+    }
+  ],
+  "total_seconds": 77.80114229995525,
+  "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0"
+}

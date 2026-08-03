@@ -1,0 +1,811 @@
+\subsection{Entropía de cuencas e incertidumbre de estado final}
+\label{sec:basin-entropy-uncertainty}
+
+Estas funciones reciben etiquetas de destino ya calculadas. El mismo código se
+puede aplicar a cuencas de un sistema entero o a etiquetas producidas por un
+solver fraccionario, pero el segundo experimento debe conservar definición de
+derivada, orden, terminal, prehistoria, memoria, integrador, horizonte y
+clasificador. Compartir una métrica de postproceso no vuelve Markoviano al
+sistema fraccionario ni prueba ocultedad global.
+
+Para una caja no vacía \(i\), con proporciones \(p_{ij}\) de cada destino,
+\[
+ S_i=-\sum_jp_{ij}\log p_{ij},\qquad
+ S_b=\frac1{N_c}\sum_{i=1}^{N_c}S_i.
+\]
+Si \(\mathcal B\) contiene las cajas con al menos dos destinos, la entropía de
+frontera es
+\[
+ S_{bb}=\frac1{|\mathcal B|}\sum_{i\in\mathcal B}S_i.
+\]
+\codepath{basin_entropy} divide una rejilla bidimensional entera en cajas no
+solapadas. Por defecto exige cajas completas de igual área;
+\codepath{partial_boxes="drop"} descarta franjas y
+\codepath{"include_equal"} conserva cajas parciales con el mismo peso. Las
+etiquetas ignoradas no forman probabilidades. El kernel Numba cuesta
+\(\mathcal O(N)\)
+en el número de celdas y devuelve conteos de cajas, muestras ignoradas,
+fracción de frontera, base y política parcial. El criterio
+\(S_{bb}>\log 2\) se reporta con margen y tolerancia como condición suficiente
+bajo las hipótesis de Daza et al.~\cite{DazaEtAl2016}; no certifica Wada o
+fractalidad sin convergencia en escala.
+
+Para pares de condiciones de referencia y perturbadas,
+\[
+ f(\varepsilon)=
+ \frac{\#\{k:c_k\ne c'_k\}}{N_{\mathrm{valido}}}.
+\]
+\codepath{uncertainty_fraction} cuesta \(\mathcal O(N)\), usa operaciones
+vectorizadas NumPy y devuelve la fracción y un intervalo de Wilson. Ese
+intervalo supone pares Bernoulli independientes; en
+rejillas espacialmente correlacionadas es sólo descriptivo y no incluye error
+de integración o clasificación. En varias escalas,
+\codepath{estimate_uncertainty_exponent} ajusta por mínimos cuadrados
+\[
+ \log f(\varepsilon)=\alpha\log\varepsilon+\log C.
+\]
+Su costo es \(\mathcal O(S)\) para \(S\) escalas y usa
+\codepath{numpy.linalg.lstsq}. Devuelve \(\alpha\), \(C\), error estándar,
+\(R^2\), escalas y, si se declara la dimensión de muestreo \(D\), la
+estimación \(D-\alpha\). Un buen \(R^2\) no demuestra un régimen asintótico
+\cite{McDonaldEtAl1985}.
+
+\begin{verbatim}
+from hidden_attractors.analysis.basin_uncertainty import (
+    basin_entropy,
+    estimate_uncertainty_exponent,
+    uncertainty_fraction,
+)
+
+entropy = basin_entropy(
+    chua_basin_labels,
+    box_size=(8, 8),
+    ignored_labels=(-1,),
+    partial_boxes="require_complete",
+)
+fractions = [
+    uncertainty_fraction(base, shifted, ignored_labels=(-1,)).fraction
+    for shifted in perturbed_label_grids
+]
+scaling = estimate_uncertainty_exponent(
+    perturbation_scales,
+    fractions,
+    sampling_space_dimension=2,
+)
+\end{verbatim}
+Las matrices del ejemplo deben proceder de corridas Chua con su contrato
+guardado; los nombres no representan datos incluidos automáticamente por la
+librería. \codepath{tests/test_basin_uncertainty.py} verifica cajas exactas,
+ políticas parciales, etiquetas ignoradas, criterio \(\log 2\), intervalo de
+Wilson y ajustes regulares o degenerados.
+
+\subsection{Reconstrucción generalizada por retardos}
+\label{sec:delay-embedding-advanced}
+
+Para pares explícitos \((c_k,\tau_k)\),
+\codepath{generalized_delay_embedding} construye
+\[
+ Y_k(i)=x_{c_k}[i-\tau_k].
+\]
+Los retardos positivos miran al pasado y los negativos al futuro. La función
+interseca exactamente los índices válidos y devuelve vectores, índices ancla y
+tiempos alineados. Su costo y memoria son \(\mathcal O(Mp)\) para \(M\) anclas y \(p\)
+coordenadas; usa NumPy. Con tiempos irregulares conserva los tiempos reales,
+pero no inventa una duración física única para un retardo expresado en índices.
+Takens fundamenta la reconstrucción clásica de dimensión finita
+\cite{Takens1981}; aplicarla a una proyección de una FDE hereditaria no prueba
+que toda su historia admita un embedding difeomorfo finito.
+
+\codepath{estimate_delay_autocorrelation} calcula por FFT con relleno cero
+\[
+ \rho(k)=
+ \frac{\sum_{i=0}^{N-k-1}(x_i-\bar x)(x_{i+k}-\bar x)}
+      {\sum_{i=0}^{N-1}(x_i-\bar x)^2}.
+\]
+Su costo es \(\mathcal O(N\log N)\) con \codepath{numpy.fft}. Selecciona el primer cruce positivo/no positivo o
+el primer mínimo local; si el criterio no aparece, registra
+\codepath{criterion_not_found}.
+
+\codepath{estimate_delay_mutual_information} usa el estimador histográfico
+plug-in
+\[
+ I(k)=\sum_{a,b}p_{ab}(k)
+ \log\frac{p_{ab}(k)}{p_a(k)p_b(k)}
+\]
+en nats. Reutiliza bordes globales fijos mediante
+\codepath{numpy.histogram2d} y cuesta aproximadamente \(\mathcal O(NK)\) para
+\(K\) retardos, además del histograma. Adopta el primer mínimo de
+Fraser--Swinney~\cite{FraserSwinney1986}, pero no su partición adaptativa
+recursiva. \codepath{minimum_pairs} impide que colas con poco solapamiento sean
+mínimos artificiales; el mínimo global sólo se usa mediante fallback explícito.
+
+\codepath{false_nearest_neighbors} compara embeddings de dimensión \(m\) y
+\(m+1\). En norma euclídea, un vecino es falso si
+\[
+ \frac{|\Delta x_{m+1}|}{R_m}>R_{\rm tol}
+ \quad\text{o}\quad
+ \frac{R_{m+1}}{\sigma_x}>A_{\rm tol}.
+\]
+La búsqueda usa \codepath{scipy.spatial.cKDTree}, ventana de Theiler y desempate
+determinista. El costo típico por dimensión es \(\mathcal O(N\log N)\), aunque consultas
+degeneradas pueden ser más costosas; la memoria crece con \(Nm\). La atribución
+Kennel--Brown--Abarbanel es exacta para Euclídea
+\cite{KennelEtAl1992}; Manhattan y Chebyshev se etiquetan como variantes
+generalizadas. Cada dimensión conserva número de vecinos válidos y estado, y no
+se selecciona con menos de las comparaciones mínimas declaradas.
+
+\begin{verbatim}
+from hidden_attractors.analysis.delay_embedding import (
+    estimate_delay_mutual_information,
+    false_nearest_neighbors,
+    generalized_delay_embedding,
+)
+
+delay = estimate_delay_mutual_information(
+    chua_states,
+    column=0,
+    max_lag=300,
+    minimum_pairs=32,
+    dt=0.01,
+    time_unit="s",
+)
+fnn = false_nearest_neighbors(
+    chua_states,
+    column=0,
+    delay=delay.selected_lag,
+    max_dimension=8,
+    theiler_window=50,
+)
+embedding = generalized_delay_embedding(
+    chua_states,
+    ((0, 0), (0, delay.selected_lag), (0, 2 * delay.selected_lag)),
+    dt=0.01,
+    time_unit="s",
+)
+\end{verbatim}
+\codepath{tests/test_delay_embedding_advanced.py} cubre alineación, retardos
+con signo, tiempos irregulares, ACF, información mutua, FNN, Theiler, métricas y
+falta de vecinos. Son diagnósticos de muestra finita, no pruebas de caos.
+
+\subsection{Matrices de recurrencia y RQA avanzada}
+\label{sec:recurrence-advanced}
+
+\codepath{auto_recurrence_matrix} construye
+\[
+ R_{ij}=\mathbf1\{\|x_i-x_j\|\le\varepsilon\};
+\]
+\codepath{cross_recurrence_matrix} usa dos trayectorias y produce una matriz
+rectangular; \codepath{joint_recurrence_matrix} hace el AND de auto-recurrencias
+sincronizadas. Estas construcciones siguen la geometría de Eckmann--Kamphorst--
+Ruelle~\cite{EckmannRecurrence1987} y las convenciones de RQA se apoyan en la
+revisión de Marwan et al.~\cite{MarwanEtAl2007}.
+
+Las normas Euclídea, Manhattan y Chebyshev tienen rutas Numba y NumPy. Las
+distancias se procesan por bloques, con costo \(\mathcal O(NMd)\), pero la matriz booleana
+final sigue ocupando \(\mathcal O(NM)\) y se protege mediante \codepath{max_bytes}. El
+umbral puede ser un radio fijo o una tasa objetivo. En el segundo caso se
+materializan las distancias elegibles, se elige el menor estadístico de orden
+que alcanza el conteo y se incluyen todos los empates; la tasa obtenida puede
+superar la solicitada y la memoria se limita separadamente mediante
+\codepath{max_threshold_bytes}. No hay aún salida sparse.
+
+En recurrencia conjunta, una tupla de radios fija un umbral por componente. La
+tasa objetivo actual selecciona un radio común sobre la distancia máxima antes
+del AND; por ello exige escalas comparables y no equivale a todas las políticas
+componentwise de RecurrenceAnalysis.jl. Para HAFO,
+\codepath{theiler_window=w} excluye \(|i-j|\le w\); así \(w=0\) excluye la línea
+de identidad, mientras que en RecurrenceAnalysis.jl \codepath{theiler=0} la
+incluye. La matriz devuelta es no escribible para evitar que sus conteos y
+metadatos diverjan por mutación posterior.
+
+Sea \(P(l)\) el histograma de longitudes diagonales seleccionadas y \(P(v)\) el
+de longitudes verticales. \codepath{recurrence_quantification_advanced}
+calcula
+\begin{align*}
+ RR &= \frac{N_R}{N_{\rm elegible}},
+ & DET &= \frac{\sum_{l\ge l_{\min}}lP(l)}{N_R},\\
+ L &= \frac{\sum_{l\ge l_{\min}}lP(l)}{\sum_{l\ge l_{\min}}P(l)},
+ & DIV &= \frac1{L_{\max}},\\
+ ENTR &= -\sum_l p_l\log p_l,
+ & LAM &= \frac{\sum_{v\ge v_{\min}}vP(v)}{N_R},\\
+ TT &= \frac{\sum_{v\ge v_{\min}}vP(v)}{\sum_{v\ge v_{\min}}P(v)}.
+\end{align*}
+También devuelve \(L_{\max}\), \(V_{\max}\), entropía vertical y TREND clásico:
+la pendiente de densidad diagonal multiplicada por \(1000\), con borde
+declarado y el mayor cuadrado inicial en matrices rectangulares. La antigua
+pendiente HAFO se conserva como \codepath{normalized_absolute_trend}, separada
+y sin el factor \(1000\). Una distribución de líneas vacía produce
+\codepath{NaN}; sin diagonal válida, \codepath{DIV=inf}.
+El análisis RQA recorre diagonales y columnas en NumPy con costo
+\(\mathcal O(NM)\); la matriz densa de entrada domina su memoria.
+
+\begin{verbatim}
+from hidden_attractors.analysis.recurrence_advanced import (
+    auto_recurrence_matrix,
+    cross_recurrence_matrix,
+    joint_recurrence_matrix,
+    recurrence_quantification_advanced,
+)
+
+rp = auto_recurrence_matrix(
+    embedding.vectors,
+    target_rate=0.03,
+    metric="euclidean",
+    theiler_window=20,
+    backend="auto",
+)
+rqa = recurrence_quantification_advanced(
+    rp,
+    min_diagonal=2,
+    min_vertical=2,
+    trend_border=10,
+)
+cross = cross_recurrence_matrix(integer_embedding, fractional_embedding,
+                                radius=0.2)
+joint = joint_recurrence_matrix(x_embedding, y_embedding,
+                                radius=(0.15, 0.20))
+\end{verbatim}
+Para comparar Chua entero y fraccionario deben alinearse tiempos físicos,
+normalización, transitorio y observable. Una recurrencia entre estados
+proyectados no mide la distancia entre historias completas de una FDE.
+\codepath{tests/test_recurrence_advanced.py} verifica matrices exactas,
+auto/cross/joint, empates de tasa, Theiler, paridad Numba--NumPy, métricas RQA,
+inmutabilidad y guardas de memoria.
+
+\subsection{Entropía de permutación de Bandt--Pompe}
+\label{sec:permutation-entropy}
+
+Para una serie escalar finita $x_0,\ldots,x_{N-1}$, una dimensión ordinal
+$m\geq2$ y un retardo entero $\tau\geq1$, HAFO construye las ventanas forward
+\[
+ \mathbf y_s=(x_s,x_{s+\tau},\ldots,x_{s+(m-1)\tau}),
+ \qquad s=0,\ldots,W-1,
+ \qquad W=N-(m-1)\tau.
+\]
+Cada ventana se ordena de forma ascendente y estable; el índice temporal dentro
+de la ventana rompe empates. La permutación resultante $\pi_s$ se codifica por
+su rango de Lehmer lexicográfico
+\[
+ r(\pi_s)=\sum_{i=0}^{m-2}c_i(m-1-i)!,
+ \qquad
+ c_i=\#\{j>i:\pi_{s,j}<\pi_{s,i}\},
+\]
+de modo que $0\leq r<m!$. Esta convención reproduce el alfabeto ordinal de
+Bandt y Pompe~\cite{BandtPompe2002} y hace auditable cada celda del histograma.
+Si $n_r$ es el conteo del rango $r$ y $V=\sum_r n_r$ el número de ventanas
+aceptadas,
+\[
+ p_r=\frac{n_r}{V},\qquad
+ \widehat H_b=-\sum_{p_r>0}p_r\log_b p_r,
+ \qquad
+ \widehat H_{b,\mathrm{norm}}=
+ \frac{\widehat H_b}{\log_b(m!)}.
+\]
+La normalización usa todo el espacio $m!$, no sólo los patrones observados. El
+estimador es la entropía de Shannon plug-in de ventanas solapadas; por ello
+conserva advertencias de tamaño finito, dependencia y patrones ausentes
+\cite{UnakafovaKeller2013EfficientPermutation,
+ReyEtAl2023PermutationAsymptotic}.
+
+Los empates nunca se resuelven implícitamente. \codepath{stable_index} usa el
+índice temporal como llave secundaria; \codepath{omit} descarta toda ventana
+empatada y cambia el denominador $V$; \codepath{raise} rechaza la serie. Esta
+decisión es especialmente importante con sensores cuantizados
+\cite{TraversaroEtAl2018TiedValues}. El resultado guarda ventanas candidatas,
+válidas, empatadas y omitidas, además de conteos, probabilidades, base,
+muestreo, proyección, backend, referencias y huella de trayectoria.
+
+\codepath{ordinal_pattern_distribution} y \codepath{permutation_entropy}
+aceptan una serie NumPy o una componente explícita de
+\codepath{TrajectoryInput}. El mismo postproceso sirve para una trayectoria
+entera o fraccionaria, pero en el segundo caso el escalar observado no es el
+estado hereditario completo. Definición de derivada, orden, terminal,
+prehistoria y política de memoria permanecen en el contrato; compartir
+$(m,\tau)$ no vuelve equivalentes ambos problemas.
+
+Python, Numba y C producen exactamente el mismo histograma \codepath{uint64}.
+El kernel C/OpenMP paraleliza ventanas, usa histogramas privados bajo un
+presupuesto de 64 MiB y pasa a incrementos atómicos cuando $m!$ haría esa
+estrategia impracticable. El coste directo es
+$\mathcal O(Wm^2+m!)$ y la memoria del histograma es
+$\mathcal O(m!)$; por ello HAFO impone $2\leq m\leq10$. El despacho
+\codepath{auto} usa la política medida siguiente:
+\begin{itemize}
+  \item $m=2$ u $8$: C desde $131\,072$ ventanas;
+  \item $3\leq m\leq7$: C desde $32\,768$ ventanas;
+  \item $m=9$ o $10$: Numba; C sólo mediante selección explícita.
+\end{itemize}
+La última guarda evita la penalización atómica observada para histogramas de
+$9!$ y $10!=3\,628\,800$ celdas. No se cruza Python--C dentro de cada ventana.
+
+El ejemplo oficial compara un oscilador armónico ordinario integrado con RK4
+y su problema componente a componente de Caputo $q=0.85$ resuelto por
+ABM--PECE. Ambos usan la coordenada de posición, $m=4$, $\tau=2$ y base dos:
+\begin{verbatim}
+from hidden_attractors import TrajectoryInput, permutation_entropy
+
+trajectory = TrajectoryInput.from_simulation_result(
+    simulation,
+    projection=("position", "velocity"),
+)
+result = permutation_entropy(
+    trajectory,
+    component="position",
+    embedding_dimension=4,
+    delay=2,
+    tie_policy="stable_index",
+    backend="auto",
+)
+print(result.entropy, result.normalized_entropy)
+\end{verbatim}
+\codepath{examples/permutation_entropy_integer_fractional.py} genera los dos
+problemas completos y emite JSON estricto. La comparación es de API y
+proyección finita: no afirma equivalencia física, tasa de entropía, caos,
+atracción u ocultedad.
+
+El caso independiente
+\codepath{validation/wolfram/cases/permutation_entropy.wl} no lee el código
+HAFO ni este reporte. Verifica diez identidades sobre cuatro fixtures: ventanas
+$m=3$ con $\tau=1,2$, rangos Lehmer, empates \codepath{stable_index}/
+\codepath{omit}, conteos, probabilidades, entropía base dos y normalización.
+La ejecución viva y el artefacto persistido pasaron sus dos pruebas Python de
+comparación; esto certifica concordancia finita de fórmulas, no comportamiento
+asintótico.
+
+\codepath{benchmarks/bench_permutation_entropy.py} separa JIT/compilación del
+tiempo medido, rota el orden Python--Numba--C y distingue pipeline público de
+kernel ordinal. La corrida local de cierre cubrió 21 cargas deterministas,
+$m=2,\ldots,10$ y $4\,096$--$131\,072$ ventanas; todos los histogramas fueron
+idénticos y la política anterior resultó respaldada para esas cargas. Los
+cruces variables de $16\,384$ ventanas para $m=5,7$ se conservan como
+oportunidades, no como umbrales universales. El benchmark es evidencia de
+ingeniería del host, no evidencia dinámica.
+
+\subsection{Suma y dimensión de correlación \texorpdfstring{\(q=2\)}{q=2}}
+\label{sec:correlation-dimension-q2}
+
+Para $N$ puntos ordenados y una ventana de Theiler $w\geq0$, HAFO usa los
+pares no ordenados $i<j$ que satisfacen $j-i>w$. Su número exacto es
+\[
+ M_w=\frac{(N-w)(N-w-1)}{2},
+\]
+y la suma de correlación de orden dos se calcula como
+\[
+ C_2(r)=\frac{1}{M_w}
+ \sum_{\substack{i<j\\j-i>w}}
+ \mathbf 1\!\left\{d(x_i,x_j)<r\right\}.
+\]
+La desigualdad es estricta. Los radios deben ser positivos y estrictamente
+crecientes; las métricas disponibles son Euclídea, Manhattan y Chebyshev. La
+ventana de Theiler evita contar como vecinos geométricos muestras que son
+cercanas sólo por continuidad temporal~\cite{GrassbergerProcaccia1983,
+GrassbergerProcaccia1983Measuring,Theiler1986}.
+
+\codepath{correlation_sum_curve} devuelve radios, conteos enteros, $C_2$,
+denominador, backend efectivo y procedencia de muestreo/proyección. Python es
+la referencia transparente; Numba compila el bucle de pares; el kernel
+C/OpenMP usa acumuladores por hilo y búsqueda binaria sobre los radios. El
+modo \codepath{auto} aplica un umbral conservador de pares y registra cualquier
+fallback. No cruza lenguajes en cada paso del integrador porque opera sobre la
+trayectoria ya producida.
+
+\codepath{fit_correlation_dimension} ajusta
+\[
+ \log C_2(r)=b+D_2\log r
+\]
+únicamente en un \codepath{fit_radius_range} inclusivo declarado por quien
+llama y sólo donde $0<C_2(r)<1$. Devuelve pendiente, intercepto, $R^2$,
+error estándar de la regresión y pendientes locales. HAFO no selecciona una
+región de escala automáticamente: esa decisión requiere análisis explícito y
+la literatura muestra que su extracción en datos finitos es un problema por
+sí mismo~\cite{DeshmukhEtAl2021}.
+
+\begin{verbatim}
+from hidden_attractors import estimate_correlation_dimension
+
+result = estimate_correlation_dimension(
+    sampled_states,
+    radii,
+    theiler_window=25,
+    fit_radius_range=(0.02, 0.15),
+    backend="auto",
+    sampling="uniform dt=0.01 after transient",
+    projection="selected state coordinates",
+)
+\end{verbatim}
+
+La misma llamada acepta trayectorias de solvers enteros o de cualquiera de las
+definiciones fraccionarias disponibles. En el segundo caso $D_2$ caracteriza
+sólo la proyección suministrada: unas coordenadas finitas no representan en
+general todo el estado hereditario. Una validación Wolfram independiente con
+seis puntos exactos, $w=1$ y seis radios reproduce el denominador $10$, los
+conteos $[0,4,6,6,8,10]$ y el ajuste declarado con diferencia máxima
+$3.5527\times10^{-15}$ frente a una tolerancia de $5\times10^{-13}$.
+
+El benchmark reproducible separa calentamiento y medición. En este host, con
+cuatro hilos OpenMP, Numba fue ligeramente más rápido para $31\,626$ pares y
+C/OpenMP para $124\,750$; Python fue mucho más lento en ambas cargas. Esos
+tiempos calibran software local, no prueban superioridad universal ni aportan
+evidencia de dimensión fractal, caos, atracción u ocultedad.
+
+\subsection{Índices de alineamiento SALI, GALI y LDI para orden entero}
+\label{sec:sali-gali-integer}
+
+Sean $w_i\ne0$, $i=1,\ldots,k$, vectores de desviación y
+$\widehat w_i=w_i/\lVert w_i\rVert_2$. El Smaller Alignment Index se define
+por~\cite{Skokos2001AlignmentIndices,SkokosEtAl2004SALI}
+\[
+ \operatorname{SALI}=
+ \min\!\left\{
+  \lVert\widehat w_1+\widehat w_2\rVert_2,
+  \lVert\widehat w_1-\widehat w_2\rVert_2
+ \right\}.
+\]
+Con $W_k=[\widehat w_1\ \cdots\ \widehat w_k]$, el Generalized Alignment
+Index es el volumen exterior~\cite{SkokosBountisAntonopoulos2007GALI}
+\[
+ \operatorname{GALI}_k
+ =\lVert\widehat w_1\wedge\cdots\wedge\widehat w_k\rVert
+ =\sqrt{\det(W_k^{\mathsf T}W_k)}
+ =\prod_{j=1}^{k}\sigma_j(W_k).
+\]
+Para las mismas columnas normalizadas, el Linear Dependence Index coincide
+algebraicamente:
+\[
+ \operatorname{LDI}_k=\prod_{j=1}^{k}\sigma_j(W_k)
+ =\operatorname{GALI}_k.
+\]
+La igualdad permite usar SVD sin expandir productos exteriores. Para
+$k=2$, si $c=\widehat w_1^{\mathsf T}\widehat w_2$, entonces
+\[
+ \operatorname{SALI}^2=2-2|c|,
+ \qquad \operatorname{GALI}_2^2=1-c^2,
+\]
+y se obtiene la identidad exacta de control
+\[
+ 4\operatorname{GALI}_2^2
+ =\operatorname{SALI}^2\bigl(4-\operatorname{SALI}^2\bigr).
+\]
+
+La normalización se aplica a cada columna por separado. No se sustituye la
+familia evolucionada por el factor $Q$ de una ortogonalización recurrente:
+eso mantendría artificialmente independientes las direcciones y eliminaría el
+alineamiento que los índices deben medir. QR sólo puede aplicarse sobre una
+copia para evaluar el volumen o para construir el conjunto inicial.
+
+Para un flujo ordinario autónomo, HAFO resuelve conjuntamente
+\[
+ \dot x=f(x),\qquad \dot V=J_f(x)V,
+ \qquad V\in\mathbb R^{d\times k},
+\]
+mediante DOP853. El transitorio se integra sólo para el estado; después de cada
+segmento las columnas tangentes se normalizan individualmente. Para un mapa,
+\[
+ x_{n+1}=F(n,x_n),\qquad V_{n+1}=D F(n,x_n)V_n,
+\]
+y el Jacobiano se evalúa en $x_n$ antes de actualizar el estado. El método
+alternativo multiparticle propaga una referencia y $k$ vecinos, forma sus
+separaciones y los reinserta a distancia $d_0$ tras cada intervalo. El estudio
+reciente de Manda--Hillebrand--Skokos recomienda para sus controles
+Hamiltonianos en doble precisión $d_0\simeq\sqrt{\epsilon}$, intervalo no
+mayor que uno y error relativo de energía no mayor que
+$\sqrt{\epsilon}$~\cite{MandaHillebrandSkokos2025GALI}; no se convierten esas
+cifras en garantías universales.
+
+\codepath{smaller_alignment_index},
+\codepath{generalized_alignment_index} y
+\codepath{linear_dependence_index} implementan el álgebra instantánea.
+\codepath{alignment_indices_from_tangent_history} recibe exactamente la forma
+\codepath{(n_samples, n_vectors, dimension)}. Las fachadas
+\codepath{integer_flow_alignment_indices},
+\codepath{integer_map_alignment_indices} e
+\codepath{integer_system_alignment_indices} producen series completas y
+conservan valores y logaritmos. Una máscara de censura distingue un volumen que
+subdesbordó a cero de una familia de rango exactamente deficiente.
+\codepath{AlignmentIndexResult} no duplica una serie LDI: para los mismos
+vectores normalizados, el campo \codepath{gali} ya contiene la cantidad
+equivalente.
+
+NumPy/LAPACK SVD es la referencia. El backend Numba usa Householder sobre una
+copia de cada matriz y acumula $\sum_j\log|R_{jj}|$; nunca usa ese $Q$ para
+reiniciar las direcciones. No se añadió un kernel C para matrices pequeñas:
+LAPACK ya es nativo y cruzar Python--C por muestra duplicaría interfaz sin
+eliminar el costo dominante. Julia queda como oráculo por lotes opcional, no
+como dependencia por paso. La formulación SVD y las tasas para mapas y flujos
+se contrastaron también con el trabajo de 2026 de Rolim
+Sales--Leonel--Antonopoulos~\cite{RolimSalesEtAl2026Alignment}.
+
+El ejemplo Hamiltoniano ejecutable es
+\codepath{examples/sali_gali_henon_heiles.py}. Usa
+\[
+ H=\tfrac12(p_x^2+p_y^2+x^2+y^2)+x^2y-\tfrac13y^3
+\]
+y su Jacobiano analítico para comparar, en una ventana finita, la ruta
+variacional y la multiparticle:
+\begin{verbatim}
+python examples/sali_gali_henon_heiles.py
+python benchmarks/bench_alignment_indices.py --output \
+  validation/outputs/benchmarks/alignment_indices_numpy_numba_20260803.json
+\end{verbatim}
+La salida no adjudica la etiqueta ``caótico''. En particular, los índices
+pueden comportarse de forma distinta en sistemas disipativos y no deben usarse
+como clasificador universal aislado~\cite{MaLongZhu2016ChaosIndicators}.
+
+En la ejecución local reproducible del ejemplo con duración 4, ambas rutas
+conservaron una deriva relativa de energía de $8.42\times10^{-16}$; las máximas
+diferencias variacional--multiparticle fueron $1.97\times10^{-8}$ para SALI y
+$7.34\times10^{-9}$ para GALI. El benchmark caliente, sobre historiales
+deterministas de 64, 512 y 4096 muestras, midió razones medianas
+NumPy/Numba de 3.141, 2.122 y 2.018, respectivamente. La compilación de la
+primera llamada Numba tomó 0.532 s; la peor discrepancia GALI fue
+$1.56\times10^{-15}$ y la de log-volumen $3.55\times10^{-15}$. El SHA-256 del
+JSON retenido fue
+\codepath{FF4AEB083FDDB7594857F70DC841413CDDDBD36533CE31F6936CBD29BF2B13D8}.
+Son cifras de ingeniería dependientes del host, no una superioridad universal.
+
+El oráculo independiente
+\codepath{validation/wolfram/cases/sali_gali_integer.wl} trabaja con 80 dígitos,
+reconstruye MatrixPower/MatrixExp y compara Gram--Cauchy--Binet con SVD. Sus
+fixtures son una rotación 3D, un mapa hiperbólico diagonal y un flujo diagonal
+con soluciones cerradas. Prueban definiciones y propagación lineal finita; no
+prueban caos no lineal, convergencia asintótica general, atracción u ocultedad.
+El resumen promovido aprobó 12/12 comprobaciones; la comparación HAFO--Wolfram
+alcanzó una diferencia global máxima de $1.7764\times10^{-15}$ y una diferencia
+máxima de flujo de $8.8818\times10^{-16}$. Su SHA-256 es
+\codepath{299CE6A9A0BB7A3C2CF920AE2F8F9C85A1A11D9244729D80302BDA4513ED6787}.
+
+No existe en esta versión una fachada SALI/GALI/LDI fraccionaria. Reutilizar el
+sistema tangente ODE no representa la perturbación completa de Caputo,
+Riemann--Liouville, Grünwald--Letnikov, Caputo--Fabrizio,
+Atangana--Baleanu u otro operador con memoria. Cada familia requiere una
+ecuación variacional en espacio de historia y una regla de renormalización
+publicada y verificada; por ello 
+\codepath{q != 1} se rechaza y la capacidad permanece
+\codepath{research_required}.
+
+\subsection{Vectores covariantes de Lyapunov para orden entero}
+\label{sec:clv-integer}
+
+Los vectores covariantes de Lyapunov (CLV) describen direcciones del
+desdoblamiento de Oseledets que son transportadas por el cociclo tangente. No
+son, en general, ortogonales. Esta propiedad los distingue de los vectores de
+Gram--Schmidt que produce el cálculo QR del espectro: estos últimos forman una
+base numéricamente estable, mientras que los CLV recuperan direcciones
+covariantes hacia delante y hacia atrás. HAFO implementa para $q=1$ el método
+de Ginelli y colaboradores, junto con los contratos y controles numéricos
+desarrollados en la literatura posterior
+\cite{GinelliEtAl2007CLV,WolfeSamelson2007LyapunovVectors,
+KuptsovParlitz2012CLV,FroylandEtAl2013CLVComparison,
+GinelliEtAl2013CLVReview}.
+
+Para un mapa $x_{n+1}=F(x_n)$ se define $M_n=DF(x_n)$. En un flujo,
+$M_n=D\Phi_{\Delta t_n}(x(t_n))$ es el propagador tangente del segmento. La
+pasada hacia delante aplica QR reducido con diagonal estrictamente positiva:
+\[
+ M_n Q_n=Q_{n+1}R_{n+1},
+ \qquad Q_n^{\mathsf T}Q_n=I,
+ \qquad R_{n+1,ii}>0.
+\]
+Esta convención elimina la ambigüedad de signo de cada factorización, aunque
+la recta CLV final continúa siendo no orientada. Los exponentes de tiempo
+finito se acumulan a partir de la diagonal,
+\[
+ \lambda_i^{(T)}=\frac{1}{T}
+ \sum_n\log R_{n+1,ii},
+\]
+donde $T$ es la duración física observada en un flujo o el número de
+iteraciones observadas en un mapa.
+
+Sea $C_n$ una matriz triangular superior de coeficientes y
+$V_n=Q_nC_n$ la matriz cuyas columnas son CLV. La covariancia proyectiva y la
+identidad QR implican, columna a columna,
+\[
+ R_{n+1}C_n=C_{n+1}D_{n+1},
+ \qquad
+ C_n\ \propto\ R_{n+1}^{-1}C_{n+1},
+ \qquad
+ V_n=Q_nC_n,
+\]
+con $D_{n+1}$ diagonal y no singular que sólo fija las escalas. La pasada
+hacia atrás resuelve el sistema triangular y normaliza cada columna después
+de cada segmento; nunca forma una inversa explícita. Un horizonte futuro
+adicional reduce la dependencia de la matriz terminal. De modo análogo, el
+transitorio QR hacia delante permite que las subvariedades anidadas se
+alineen antes de la ventana retenida. Ambos horizontes son parámetros
+explícitos: la implementación todavía no decide automáticamente su
+convergencia. El análisis reciente de eficiencia recomienda vigilar los
+transitorios y advierte que una evolución hacia atrás excesiva puede degradar
+subespacios centrales degenerados~\cite{DuPlessisHillebrandSkokos2026CLV}.
+
+El contrato de arreglos evita confundir vectores por filas y por columnas:
+\begin{itemize}
+  \item las bases QR tienen forma
+  \codepath{(samples, dimension, n_vectors)};
+  \item los factores observados $R$ tienen forma
+  \codepath{(samples - 1, n_vectors, n_vectors)} y los factores futuros
+  \codepath{(future_segments, n_vectors, n_vectors)};
+  \item la salida pública \codepath{vectors} usa
+  \codepath{(samples, n_vectors, dimension)} y \codepath{coefficients} usa
+  \codepath{(samples, n_vectors, n_vectors)}.
+\end{itemize}
+HAFO rechaza bases no ortonormales, factores que no sean triangulares
+superiores con diagonal positiva y segmentos singulares o casi singulares.
+También estima el espacio de trabajo antes de propagar y aplica por defecto
+una guarda de 512 MiB. NumPy usa \codepath{scipy.linalg.solve_triangular}; el
+backend Numba ejecuta la misma sustitución hacia atrás mediante bucles
+compilados. Para flujos, la fachada integra conjuntamente
+\[
+ \dot x=f(x),\qquad \dot Y=J_f(x)Y
+\]
+con DOP853 y QR por segmentos. Para mapas usa la recurrencia exacta del
+Jacobiano evaluado antes de actualizar el estado. En ambos casos se acepta un
+Jacobiano analítico o, como respaldo declarado, diferencias centrales
+relativas por componente.
+
+El benchmark CLV separado generó historias QR deterministas de mapas lineales
+no normales, exigió paridad NumPy--Numba antes de medir, separó el primer
+llamado JIT y alternó los backends durante siete repeticiones en tres cargas.
+Para 4096 segmentos observados, 1024 segmentos futuros, $d=8$ y cuatro
+vectores, la pasada pública fue $64.42$ veces más rápida con Numba; en el
+pipeline completo la razón fue $2.118$ y la reducción observada fue 52.8\%.
+Sin embargo, la reconstrucción Numba ya calentada ocupó sólo 1.60\% del tiempo
+end-to-end. Aun suponiendo coste cero para toda esa fase, el techo idealizado
+de mejora sería apenas $1.0163$. No se implementa por ello un backend C para
+esta pasada: primero se deberá perfilar una carga productiva y después exigir
+paridad y mediciones C end-to-end repetidas. Esta conclusión es local al host
+y cargas registrados, no una superioridad universal. El artefacto promovido
+es
+\codepath{validation/outputs/benchmarks/covariant_lyapunov_numpy_numba_20260803.json},
+con SHA-256
+\codepath{15A904AC4F67491015DF4A07CFC4353BBC5F2E19C4BC249121F415CCEE7F61BD}.
+
+Para dos direcciones unitarias $\widehat v_i$ y $\widehat v_j$, la API
+geométrica calcula el ángulo no orientado de sus rectas mediante
+\[
+ c_{ij}=\widehat v_i^{\mathsf T}\widehat v_j,
+ \qquad
+ \theta_{ij}=\operatorname{atan2}
+ \left(\sqrt{\max(0,1-c_{ij}^{2})},|c_{ij}|\right)
+ \in[0,\pi/2].
+\]
+La forma con \codepath{atan2} es más estable cerca de $0$ y $\pi/2$ que una
+evaluación directa de \codepath{arccos}. Para grupos de CLV,
+\codepath{covariant_lyapunov_angles} calcula el menor ángulo principal con
+\codepath{scipy.linalg.subspace_angles} y puede devolver promedios móviles
+declarados. Si los exponentes de tiempo finito son repetidos o casi
+degenerados, se cierran las brechas espectrales que controlan la velocidad de
+convergencia~\cite{Noethen2021CLVHilbert}; una columna CLV individual puede no
+ser única o estar mal condicionada. En ese caso deben compararse los
+subespacios covariantes, no forzarse una interpretación de direcciones
+individuales.
+
+Las fachadas públicas son
+\codepath{integer_covariant_vectors_from_qr_history},
+\codepath{integer_flow_covariant_lyapunov_vectors},
+\codepath{integer_map_covariant_lyapunov_vectors},
+\codepath{integer_system_covariant_lyapunov_vectors} y
+\codepath{covariant_lyapunov_angles}. Por ejemplo, para el mapa clásico de
+Hénon,
+\[
+ F(x,y)=(1-1.4x^2+y,\,0.3x),
+ \qquad
+ DF(x,y)=\begin{bmatrix}-2.8x&1\\0.3&0\end{bmatrix},
+\]
+se puede ejecutar:
+\begin{verbatim}
+from hidden_attractors import (
+    covariant_lyapunov_angles,
+    integer_map_covariant_lyapunov_vectors,
+)
+
+result = integer_map_covariant_lyapunov_vectors(
+    henon_map, henon_map_jacobian, [0.0, 0.0],
+    iterations=300,
+    transient_iterations=400,
+    forward_transient_iterations=250,
+    backward_transient_iterations=250,
+    n_vectors=2,
+    seed=20260803,
+    backend="auto",
+    q=1.0,
+)
+angles = covariant_lyapunov_angles(
+    result.vectors,
+    coordinates=result.coordinates,
+    pairs=((0, 1),),
+    unoriented=True,
+)
+\end{verbatim}
+El ejemplo reproducible completo se encuentra en
+\codepath{examples/covariant_lyapunov_henon_map.py}. La ejecución cerrada con
+300 iteraciones observadas, 400 de transitorio de estado y horizontes QR
+hacia delante y hacia atrás de 250 iteraciones resolvió
+\codepath{backend=auto} con Numba y produjo 301 muestras. Los exponentes de
+tiempo finito por iteración fueron $[0.4178061335,-1.6217789378]$; el ángulo
+entre las dos rectas tuvo mínimo, mediana y máximo de
+$[0.0044154621,0.9948201635,1.5661450963]$ rad, y el máximo residuo de
+covariancia proyectiva fue $2.1073424255\times10^{-8}$. Estas cifras describen
+únicamente esa trayectoria y ventana finitas: no certifican caos,
+hiperbolicidad, atracción ni ocultedad.
+
+El oráculo independiente
+\codepath{validation/wolfram/cases/covariant_lyapunov_integer.wl} trabaja con
+80 dígitos, usa su propia ortogonalización de Gram--Schmidt modificada y no lee
+el código HAFO, sus fórmulas ni el reporte. Verifica un mapa no normal 2D y un
+flujo constante no normal 3D mediante soluciones exactas, recurrencia
+triangular, covariancia proyectiva, exponentes y ángulos. Las 17/17
+comprobaciones pasaron. La comparación obligatoria con el núcleo HAFO obtuvo
+diferencias máximas de $3.0658\times10^{-16}$ en rectas,
+$4.3133\times10^{-16}$ en covariancia y $3.3307\times10^{-16}$ en ángulos.
+Los artefactos promovidos y sus SHA-256 son:
+\begin{itemize}
+  \item
+  \codepath{validation/outputs/wolfram/covariant_lyapunov_integer_verified/covariant_lyapunov_integer_validation_summary.json}.
+  \par\noindent SHA-256:
+  \codepath{C2366BC0379B8C73863431CAC8B72742286869293DA6A5CC6C6428C5D9DDB211};
+  \item
+  \codepath{validation/outputs/wolfram/covariant_lyapunov_integer_verified/covariant_lyapunov_integer_comparison.json}.
+  \par\noindent SHA-256:
+  \codepath{24BFCFBECDEAC466F3CBFFF7F7AE4869792D507A6C53E09629D0975A2A729AF0}.
+\end{itemize}
+El alcance de este oráculo es álgebra finita de cociclos lineales
+diagonalizables y consistencia entre implementaciones; no constituye un
+teorema de convergencia CLV no lineal ni prueba caos, atracción u ocultedad.
+
+La capacidad fraccionaria permanece deliberadamente
+\codepath{research_required}. Incluso si se escribe formalmente, por ejemplo,
+${}^{C}D_t^q\delta x=J_f(x(t))\delta x$, el sistema con memoria no induce en
+general el cociclo finito y sin historia que presupone la recurrencia anterior.
+Reiniciar, ortogonalizar o normalizar sólo $\delta x(t)$ puede borrar parte del
+estado hereditario. Caputo, Riemann--Liouville, Grünwald--Letnikov,
+Caputo--Fabrizio y Atangana--Baleanu además difieren en núcleo, prehistoria y
+condiciones iniciales. Por ello las fachadas dinámicas exigen $q=1$ y rechazan
+un orden fraccionario; los ángulos son sólo un postproceso geométrico y no
+validan por sí mismos que un historial suministrado sea un historial CLV. La
+extensión fraccionaria requiere definir y verificar primero el espacio de
+historia, su operador tangente, la covariancia y una renormalización que no
+destruya la memoria.
+
+Comandos de reproducción del bloque:
+\begin{verbatim}
+python examples/covariant_lyapunov_henon_map.py \
+  --iterations 300 --transient-iterations 400 \
+  --forward-transient-iterations 250 \
+  --backward-transient-iterations 250 --backend auto
+
+python -m pytest tests/test_covariant_lyapunov.py \
+  tests/test_covariant_lyapunov_wolfram.py \
+  tests/test_covariant_lyapunov_example.py \
+  tests/test_covariant_lyapunov_benchmark.py -q
+
+python benchmarks/bench_covariant_lyapunov.py --repeats 7 \
+  --output C:/tmp/hafo_covariant_lyapunov_benchmark.json
+\end{verbatim}
+
+\subsection{Comandos reproducibles para el análisis avanzado}
+
+\mbox{}\par
+\begin{verbatim}
+cd version_2
+python -m pytest tests/test_basin_uncertainty.py \
+  tests/test_delay_embedding_advanced.py \
+  tests/test_recurrence_advanced.py \
+  tests/test_correlation_dimension.py \
+  tests/test_native_correlation_sum.py \
+  tests/test_correlation_dimension_example.py \
+  tests/test_analysis_contracts.py \
+  tests/test_permutation_entropy.py \
+  tests/test_native_permutation_entropy.py \
+  tests/test_permutation_entropy_wolfram.py \
+  tests/test_permutation_entropy_example.py \
+  tests/test_alignment_indices.py \
+  tests/test_sali_gali_integer_wolfram.py \
+  tests/test_sali_gali_henon_heiles_example.py \
+  tests/test_covariant_lyapunov.py \
+  tests/test_covariant_lyapunov_wolfram.py \
+  tests/test_covariant_lyapunov_example.py \
+  tests/test_covariant_lyapunov_benchmark.py -q
+\end{verbatim}
+El comando valida fórmulas y contratos sintéticos. No ejecuta por sí mismo una
+campaña Chua, no demuestra fractalidad asintótica y no certifica caos,
+atracción u ocultedad.

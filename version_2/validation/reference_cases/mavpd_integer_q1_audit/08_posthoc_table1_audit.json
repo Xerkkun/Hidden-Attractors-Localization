@@ -1,0 +1,64 @@
+{
+  "operational_search_read_table_1": false,
+  "primary_xi_3p1": {
+    "role": "post_derivation_regression_only",
+    "used_as_search_input": false,
+    "reported_omega": 18.6143,
+    "reported_gain": 0.8951,
+    "reported_seed": [
+      0.3651,
+      0.2903,
+      0.7303
+    ],
+    "posthoc_integrator": "hidden_attractors_fo_EFORK_q1",
+    "integration_status": "ok",
+    "target_cloud_distance_norm": 0.001433371915805641,
+    "same_numerical_cluster_as_blind_target": true,
+    "printed_transfer_value": [
+      -1.3241394685486665,
+      -2.735888883581682
+    ],
+    "printed_nyquist_closure_residual": 2.4558899286978795,
+    "printed_cubic_df_residual_using_seed_y1_as_amplitude": 0.7951264925,
+    "nearest_exact_direct_branch": [
+      13.344755734228839,
+      0.35187905034269
+    ],
+    "printed_vs_nearest_direct_difference": {
+      "omega": 5.269544265771161,
+      "gain": 0.5432209496573099
+    },
+    "interpretation": "posthoc_dynamic_seed_match_does_not_remove_the_printed_Lure_value_discrepancy"
+  },
+  "negative_xi_3p5": {
+    "role": "post_derivation_regression_only",
+    "used_as_search_input": false,
+    "reported_omega": 10.2344,
+    "reported_gain": 0.1136,
+    "reported_seed": [
+      0.3651,
+      0.005,
+      0.7303
+    ],
+    "posthoc_integrator": "hidden_attractors_fo_EFORK_q1",
+    "integration_status": "ok",
+    "target_cloud_distance_norm": 0.001482275721800955,
+    "same_numerical_cluster_as_blind_target": true,
+    "printed_transfer_value": [
+      -7.358636551044352,
+      -0.4464547157701668
+    ],
+    "printed_nyquist_closure_residual": 0.17171941851032604,
+    "printed_cubic_df_residual_using_seed_y1_as_amplitude": 0.013626492500000018,
+    "nearest_exact_direct_branch": [
+      10.83592135474676,
+      0.14976340458930607
+    ],
+    "printed_vs_nearest_direct_difference": {
+      "omega": 0.6015213547467599,
+      "gain": 0.03616340458930606
+    },
+    "interpretation": "posthoc_dynamic_seed_match_does_not_remove_the_printed_Lure_value_discrepancy"
+  },
+  "overall_decision": "published_seeds_match_posthoc_dynamic_clusters_but_printed_frequency_gain_values_do_not_match_the_exact_direct_Lure_branches"
+}

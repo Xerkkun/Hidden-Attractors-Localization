@@ -1,0 +1,323 @@
+{
+  "evidence": {
+    "continuation": {
+      "continuation_mode": "integer",
+      "eta_path": [
+        0.0,
+        0.05,
+        0.1,
+        0.15000000000000002,
+        0.2,
+        0.25,
+        0.30000000000000004,
+        0.35000000000000003,
+        0.4,
+        0.45,
+        0.5,
+        0.55,
+        0.6000000000000001,
+        0.65,
+        0.7000000000000001,
+        0.75,
+        0.8,
+        0.8500000000000001,
+        0.9,
+        0.9500000000000001,
+        1.0
+      ],
+      "final_eta": 1.0,
+      "memory_window_propagated": null,
+      "used": true
+    },
+    "equilibria": {
+      "all_found": true,
+      "max_residual": 0.0
+    },
+    "hiddenness": {
+      "basin_controls_complete": true,
+      "basin_intersection_detected": false,
+      "numerical_failures": 0,
+      "required_radii": [
+        0.001
+      ],
+      "target_hits_from_equilibria": 0,
+      "tested_all_equilibria": true,
+      "tested_radii": [
+        0.001
+      ]
+    },
+    "lyapunov": {
+      "exponents": [
+        0.7313889112450761,
+        0.0022939857330844665,
+        -20.92554285958839
+      ],
+      "method_status": "internal_controls_passed"
+    },
+    "matignon": {
+      "all_classified": true,
+      "q": 1.0
+    },
+    "poincare": {
+      "bounding_box": {
+        "coordinate_0": {
+          "maximum": 0.16374311151338533,
+          "minimum": 0.014173897305885277
+        },
+        "coordinate_1": {
+          "maximum": -0.3169136023102998,
+          "minimum": -0.40884311148326785
+        }
+      },
+      "centroid": [
+        0.07321292632363452,
+        -0.3750229832637528
+      ],
+      "covariance": [
+        [
+          0.002123154081230143,
+          0.00125402677738111
+        ],
+        [
+          0.00125402677738111,
+          0.000744975357799417
+        ]
+      ],
+      "crossing_count": 314,
+      "duplicate_fraction": 0.0,
+      "gate_applicable": true,
+      "interpretation_label": "cloud_like",
+      "nearest_neighbor_stats": {
+        "maximum": 0.003887245380843153,
+        "mean": 0.0005730584456065332,
+        "median": 0.00044743368871988224,
+        "minimum": 1.3175794882935517e-05
+      },
+      "rank_estimate": 2,
+      "recurrence_like_score": 0.9995527664186511,
+      "retained_after_burn": 314,
+      "section_density_estimate": 1788.5428491487548
+    },
+    "robustness": {
+      "consistent": true,
+      "tested_h": true,
+      "tested_integrator": true,
+      "tested_memory": false,
+      "tested_t_final": true
+    },
+    "run_metadata": {
+      "continuation": {
+        "continuation_mode": "integer",
+        "eta_path": [
+          0.0,
+          0.05,
+          0.1,
+          0.15000000000000002,
+          0.2,
+          0.25,
+          0.30000000000000004,
+          0.35000000000000003,
+          0.4,
+          0.45,
+          0.5,
+          0.55,
+          0.6000000000000001,
+          0.65,
+          0.7000000000000001,
+          0.75,
+          0.8,
+          0.8500000000000001,
+          0.9,
+          0.9500000000000001,
+          1.0
+        ],
+        "final_eta": 1.0,
+        "memory_window_propagated": null,
+        "used": true
+      },
+      "created_at_utc": "2026-08-03T05:48:29.178466+00:00",
+      "extra": {
+        "candidate_parameters": {
+          "delta": 100.0,
+          "gamma": 0.15380379839949113,
+          "rho": 200.0,
+          "xi": 2.85
+        }
+      },
+      "lure": {
+        "harmonic_condition": "Im W(i omega)=0 and Re W(i omega)=-1/k",
+        "input_vector": [
+          -100.0,
+          0.0,
+          0.0
+        ],
+        "matrix": [
+          [
+            15.380379839949113,
+            100.0,
+            0.0
+          ],
+          [
+            1.0,
+            -2.85,
+            -1.0
+          ],
+          [
+            0.0,
+            200.0,
+            0.0
+          ]
+        ],
+        "output_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "scalar_nonlinearity": "mavpd_lure_system.<locals>.nonlinearity",
+        "transfer_convention": "c^T (s I-A)^(-1) b; direct polynomial roots"
+      },
+      "numerical_contract": {
+        "h": 0.02,
+        "integrator": {
+          "backend": "python",
+          "caputo": false,
+          "name": "DOP853"
+        },
+        "memory": {
+          "M": null,
+          "is_full_caputo": false,
+          "memory_window_steps": null,
+          "memory_window_time": null,
+          "mode": "not_applicable"
+        },
+        "q": 1.0,
+        "t_burn": 80.0,
+        "t_final": 240.0
+      },
+      "parameters": {
+        "delta": 100.0,
+        "gamma": 0.15380379839949113,
+        "rho": 200.0,
+        "xi": 2.85
+      },
+      "provenance": {
+        "alternative_triggered_after_direct_failure": true,
+        "frequency_grid_used_for_search": false,
+        "source_doi": "10.3390/math11030591"
+      },
+      "random_seed": 20260802,
+      "random_seed_policy": "fixed_reproducible",
+      "run_id": "mavpd_integer_hidden_chaos",
+      "schema_version": "1.0",
+      "seed": {
+        "candidate_id": "mavpd-direct-branch-0",
+        "family": "describing_function",
+        "parameters": {
+          "a0": 0.4315886850827659,
+          "k": 0.13970159481860317,
+          "omega0": 10.597523031056207
+        },
+        "source": "direct_integer_transfer_from_declared_equations",
+        "x0": [
+          0.4315886850827659,
+          0.01713475910344968,
+          0.8631773701655315
+        ]
+      },
+      "software": {
+        "git_commit": "1200203cb92358cb831a6792748693437edf562c",
+        "git_diff_sha256": "b1519f0f2805348f85b3171bcb3e257c2cbf551d58aabaae268d29a94bfb65b0",
+        "numpy_version": "2.4.5",
+        "package_version": "1.0.0",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "python_version": "3.14.3",
+        "scipy_version": "1.17.1",
+        "working_tree_dirty": true
+      },
+      "system": "modified-van-der-pol-duffing",
+      "tolerances": {
+        "boundedness_norm": 120.0,
+        "equilibrium_residual_tol": 1e-08,
+        "lyapunov_positive_tol": 0.02,
+        "matignon_tol": 1e-12,
+        "nontrivial_variance_tol": 1e-08,
+        "spectral_peak_dominance_threshold": 0.8,
+        "target_match_tol": 0.5,
+        "zero_one_chaos_threshold": 0.7,
+        "zero_one_regular_threshold": 0.3
+      },
+      "workflow": "integer_hidden_chaos_search"
+    },
+    "seed": {
+      "localized": true,
+      "method": "describing_function",
+      "source": "direct_integer_transfer_from_declared_equations"
+    },
+    "spectrum": {
+      "gate_applicable": false,
+      "reason": "supporting FFT only; line dominance is not a regularity proof",
+      "state_global": "dominant_periodic_peak"
+    },
+    "trajectory": {
+      "bounded": true,
+      "finite_fraction": 1.0,
+      "minimum_post_transient_length": 1000,
+      "nontrivial": true,
+      "post_transient_rows": 8001
+    },
+    "zero_one": {
+      "K": 0.9929274761353846,
+      "gate_applicable": true,
+      "series": "Poincare return sequence",
+      "state": "zero_one_chaotic_candidate"
+    }
+  },
+  "gate": {
+    "attractor_status": "hidden_under_tested_neighborhoods",
+    "boundedness_support": "bounded_nontrivial",
+    "chaos_evidence_level": "chaos_evidence_inconclusive",
+    "chaotic_hidden_promotion_allowed": false,
+    "checked_conditions": {
+      "continuation_eta_path_recorded": true,
+      "continuation_memory_declared": true,
+      "continuation_reaches_target": true,
+      "equilibria_all_found": true,
+      "equilibria_residual_within_tolerance": true,
+      "hiddenness_basin_controls_complete": true,
+      "hiddenness_no_basin_intersection": true,
+      "hiddenness_required_radii_tested": true,
+      "hiddenness_tested_all_equilibria": true,
+      "hiddenness_tested_radii_recorded": true,
+      "hiddenness_zero_equilibrium_contacts": true,
+      "matignon_all_classified": true,
+      "matignon_q_recorded": true,
+      "reproducibility_metadata_complete": true,
+      "robustness_consistent": true,
+      "robustness_tested_h": true,
+      "robustness_tested_integrator": true,
+      "robustness_tested_memory": true,
+      "robustness_tested_t_final": true,
+      "seed_localized": true,
+      "seed_method_supported": true,
+      "seed_source_traceable": true,
+      "trajectory_bounded": true,
+      "trajectory_finite_fraction_acceptable": true,
+      "trajectory_nontrivial": true,
+      "trajectory_post_transient_sufficient": true
+    },
+    "diagnostic_conflicts": [],
+    "evidence_level": "hidden_under_tested_neighborhoods",
+    "hidden_chaos_status": "hiddenness_only_not_chaotic",
+    "hiddenness_evidence_level": "hidden_under_tested_neighborhoods",
+    "hiddenness_promotion_allowed": true,
+    "lyapunov_support": "not_available",
+    "missing_conditions": [],
+    "poincare_support": "chaotic",
+    "promotion_allowed": true,
+    "recommended_interpretation": "inconclusive chaos evidence",
+    "spectral_support": "not_available_or_inconclusive",
+    "verdict": "hidden_under_tested_neighborhoods",
+    "warnings": [],
+    "zero_one_support": "chaotic"
+  }
+}

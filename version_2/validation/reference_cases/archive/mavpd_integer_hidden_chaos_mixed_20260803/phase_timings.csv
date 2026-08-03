@@ -1,0 +1,4 @@
+phase,seconds,timing_source
+contract,1.4947664000210352,perf_counter
+search,1223.424991100037,perf_counter
+diagnostics,243.79811759997392,perf_counter

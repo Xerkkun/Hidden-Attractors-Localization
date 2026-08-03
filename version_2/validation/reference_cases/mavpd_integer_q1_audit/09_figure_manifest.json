@@ -1,0 +1,17 @@
+{
+  "figures": [
+    "validation/reference_cases/mavpd_integer_q1_audit/figures/primary_nyquist_df.png",
+    "validation/reference_cases/mavpd_integer_q1_audit/figures/primary_transfer_components.png",
+    "validation/reference_cases/mavpd_integer_q1_audit/figures/primary_lambda_continuation.png",
+    "validation/reference_cases/mavpd_integer_q1_audit/figures/primary_outer_candidate.png",
+    "validation/reference_cases/mavpd_integer_q1_audit/figures/primary_outer_projections.png",
+    "validation/reference_cases/mavpd_integer_q1_audit/figures/primary_outer_timeseries.png",
+    "validation/reference_cases/mavpd_integer_q1_audit/figures/primary_shared_hiddenness_controls.png",
+    "validation/reference_cases/mavpd_integer_q1_audit/figures/primary_outer_fft_component_0.png",
+    "validation/reference_cases/mavpd_integer_q1_audit/figures/primary_outer_fft_component_1.png",
+    "validation/reference_cases/mavpd_integer_q1_audit/figures/primary_outer_fft_component_2.png",
+    "validation/reference_cases/mavpd_integer_q1_audit/figures/primary_blind_clusters.png",
+    "validation/reference_cases/mavpd_integer_q1_audit/figures/negative_xi3p5_comparison.png"
+  ],
+  "note": "transfer component grid is visualization only; search used exact polynomial roots"
+}

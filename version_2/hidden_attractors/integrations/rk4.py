@@ -10,6 +10,8 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 
+from .._rhs import bind_rhs
+
 
 def rk4_integrate(
     rhs: Callable[..., np.ndarray],
@@ -53,12 +55,11 @@ def rk4_integrate(
     times[0] = 0.0
     states[0] = x0_arr
 
-    # Normalize rhs to rhs_t(t, x)
+    # Normalize rhs to rhs_t(t, x) once without masking callback errors.
+    bound_rhs = bind_rhs(rhs)
+
     def rhs_t(t: float, x: np.ndarray) -> np.ndarray:
-        try:
-            return np.asarray(rhs(t, x), dtype=float)
-        except (TypeError, ValueError):
-            return np.asarray(rhs(x), dtype=float)
+        return np.asarray(bound_rhs(t, x), dtype=float)
 
     cx = x0_arr.copy()
     status = "ok"

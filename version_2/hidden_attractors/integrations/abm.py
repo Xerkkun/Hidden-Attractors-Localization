@@ -27,11 +27,20 @@ RHS convention
 The RHS callable must accept two arguments: ``rhs(t: float, x: ndarray)``.
 If a legacy single-argument callable is passed, the helper ``eval_rhs``
 attempts the two-argument call first and falls back gracefully.
+
+References
+----------
+K. Diethelm, N. J. Ford, A. D. Freed, "Detailed Error Analysis for a
+Fractional Adams Method", Numerical Algorithms 36, 31-52 (2004),
+https://doi.org/10.1023/B:NUMA.0000027736.85078.be.
+C. Li, C. Tao, "On the fractional Adams method", Computers & Mathematics
+with Applications 58 (2009), https://doi.org/10.1016/j.camwa.2009.07.050.
 """
 
 import numpy as np
 from scipy.special import gamma
 from typing import Any, Callable, Dict, Tuple, Optional, List
+from .._rhs import bind_rhs
 from .fractional_c import fractional_integrate
 
 
@@ -44,16 +53,9 @@ def eval_rhs(
     t: float,
     x: np.ndarray,
 ) -> np.ndarray:
-    """Call ``rhs(t, x)`` or ``rhs(x)`` and return a float64 array.
+    """Call ``rhs(t, x)`` or ``rhs(x)`` without masking callback errors."""
 
-    Tries the two-argument form first.  Falls back to the single-argument
-    form only if a ``TypeError`` is raised.  This allows legacy autonomous
-    RHS functions to work transparently without freezing time at 0.
-    """
-    try:
-        return np.asarray(rhs(t, x), dtype=float)
-    except TypeError:
-        return np.asarray(rhs(x), dtype=float)
+    return np.asarray(bind_rhs(rhs)(t, x), dtype=float)
 
 
 # ---------------------------------------------------------------------------
@@ -103,6 +105,10 @@ def _python_abm_integrate(
     h = float(h)
     t_final = float(t_final)
     n_steps = int(np.ceil(t_final / h))
+    bound_rhs = bind_rhs(rhs)
+
+    def evaluate_rhs(time: float, state: np.ndarray) -> np.ndarray:
+        return np.asarray(bound_rhs(time, state), dtype=float)
 
     if memory_window_steps is None:
         if memory_window_length is not None:
@@ -132,7 +138,7 @@ def _python_abm_integrate(
 
     # Evaluate RHS at each prehistory point using the correct historical time.
     for j in range(K):
-        f_arr[j] = eval_rhs(rhs, t_arr[j], history_states[j])
+        f_arr[j] = evaluate_rhs(t_arr[j], history_states[j])
 
     for step_idx in range(n_steps):
         t_arr[K + step_idx] = t_arr[K - 1] + (step_idx + 1) * h
@@ -191,7 +197,7 @@ def _python_abm_integrate(
         predictor = x_arr[s_idx] + pred_scale * (b_weights @ f_arr[s_idx: n + 1])
 
         try:
-            fp = eval_rhs(rhs, t_n1, predictor)
+            fp = evaluate_rhs(t_n1, predictor)
         except Exception as exc:
             status = f"solver_exception:{exc}"
             break
@@ -231,7 +237,7 @@ def _python_abm_integrate(
         t_arr[n + 1] = t_n1
 
         try:
-            f_arr[n + 1] = eval_rhs(rhs, t_n1, corrected)
+            f_arr[n + 1] = evaluate_rhs(t_n1, corrected)
         except Exception as exc:
             status = f"solver_exception:{exc}"
             break
@@ -264,7 +270,7 @@ def _python_abm_integrate(
                 for k, eq in enumerate(equilibria):
                     diff_norm = np.linalg.norm(corrected - eq)
                     try:
-                        deriv_norm = np.linalg.norm(eval_rhs(rhs, t_n1, corrected))
+                        deriv_norm = np.linalg.norm(evaluate_rhs(t_n1, corrected))
                     except Exception:
                         deriv_norm = 9999.0
 
@@ -324,9 +330,12 @@ def caputo_abm_integrate(
         elif memory_window_time is not None:
             memory_window_steps = int(np.round(float(memory_window_time) / h))
 
-    # Fractional path: normalise rhs to rhs(t, x) for fractional_integrate.
+    # Fractional path: normalize rhs to rhs(t, x) once, without using callback
+    # exceptions to guess arity.
+    bound_rhs = bind_rhs(rhs)
+
     def rhs_t(t_val: float, x_val: np.ndarray) -> np.ndarray:
-        return eval_rhs(rhs, t_val, x_val)
+        return np.asarray(bound_rhs(t_val, x_val), dtype=float)
 
     x0_arr = np.asarray(x0, dtype=float)
     t_arr, x_arr, status, info = fractional_integrate(

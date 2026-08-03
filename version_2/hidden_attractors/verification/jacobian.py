@@ -2,11 +2,19 @@ import numpy as np
 from typing import Any
 
 def compute_jacobian(system: Any, x: np.ndarray) -> np.ndarray:
-    """Evaluate the Jacobian matrix at the state x.
+    """Evaluate the registered Jacobian, with a legacy Chua fallback.
     
     J(x) = P + b * psi'(r^T * x) * r^T
     """
-    x_val = float(x[0])
+    state = np.asarray(x, dtype=float)
+    registered = getattr(system, "jacobian", None)
+    matrix_method = getattr(system, "jacobian_matrix", None)
+    if registered is not None and callable(matrix_method):
+        return np.asarray(matrix_method(state), dtype=float)
+    if getattr(system, "lure", None) is None:
+        raise ValueError("system must define an analytic Jacobian or a legacy Chua Lur'e form.")
+
+    x_val = float(state[0])
     params = system.parameters
     alpha = params.get("alpha", 8.4562)
     

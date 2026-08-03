@@ -8,7 +8,7 @@ Usage (from version_2/ root):
     python validation/python/run_wolfram_validations.py --all
     python validation/python/run_wolfram_validations.py \\
         --case validation/wolfram/cases/chua_fractional_saturation.wl \\
-        --out validation/outputs/wolfram/chua_fractional_saturation
+        --out validation/outputs/wolfram
 
 Requires wolframscript to be available in PATH.
 If wolframscript is not installed, this script fails with a clear message
@@ -40,6 +40,22 @@ DEFAULT_CASES: list[str] = [
     "validation/wolfram/cases/chua_fractional_saturation.wl",
     "validation/wolfram/cases/chua_fractional_arctan.wl",
     "validation/wolfram/cases/chua_fractional_arctan_c590.wl",
+    "validation/wolfram/cases/kalman_fitts_integer.wl",
+    "validation/wolfram/cases/mavpd_integer.wl",
+    "validation/wolfram/cases/pll_lead_lag_integer.wl",
+    "validation/wolfram/cases/sali_gali_integer.wl",
+    "validation/wolfram/cases/covariant_lyapunov_integer.wl",
+    "validation/wolfram/cases/gl_fractional_operator_validation.wl",
+    "validation/wolfram/cases/hadamard_fractional_operator.wl",
+    "validation/wolfram/cases/atangana_baleanu_operator.wl",
+    "validation/wolfram/cases/abc_predictor_corrector.wl",
+    "validation/wolfram/cases/variable_order_caputo_type3_l1.wl",
+    "validation/wolfram/cases/distributed_order_caputo_l1.wl",
+    "validation/wolfram/cases/multi_term_caputo_l1.wl",
+    "validation/wolfram/cases/tempered_convolution_quadrature.wl",
+    "validation/wolfram/cases/tempered_fast_multistep_history.wl",
+    "validation/wolfram/cases/correlation_dimension.wl",
+    "validation/wolfram/cases/permutation_entropy.wl",
 ]
 
 DEFAULT_OUT_BASE = "validation/outputs/wolfram"
@@ -113,7 +129,7 @@ def run_case(
     out_dir = out_dir.resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    cmd = [exe, "-file", str(case_path), "--out", str(out_dir)]
+    cmd = [exe, "-file", str(case_path)]
     import os
     env = os.environ.copy()
     env["WOLFRAM_OUT"] = str(out_dir)
@@ -186,8 +202,13 @@ def main() -> None:
         "--all",
         action="store_true",
         help=(
-            "Run all four built-in cases (integer saturation, fractional "
-            "saturation, bibliographic arctan, and c590 arctan)."
+            "Run all eighteen built-in cases: four Chua validators, five "
+            "non-Chua integer validators (including SALI/GALI alignment and "
+            "covariant Lyapunov vectors), "
+            "seven fractional validators (GL, Hadamard, ABC operator, ABC "
+            "solver, variable-order Type III, distributed-order Caputo L1, "
+            "and multi-term Caputo L1), plus the finite correlation-dimension "
+            "and permutation-entropy cases."
         ),
     )
     parser.add_argument(

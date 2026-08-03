@@ -1,0 +1,129 @@
+{
+  "route": "direct_integer_transfer_no_grid",
+  "frequency_grid_used": false,
+  "fallback_used": false,
+  "analytic_z_polynomial_coefficients": [
+    1.0,
+    -290.39,
+    20000.0
+  ],
+  "analytic_positive_z_roots": [
+    112.30749439376714,
+    178.08250560623284
+  ],
+  "analytic_positive_omega_roots": [
+    10.597523031056227,
+    13.344755734228816
+  ],
+  "omega_gain_pairs_all": [
+    [
+      10.597523031056207,
+      0.13970159481860317
+    ],
+    [
+      13.344755734228839,
+      0.35187905034269
+    ]
+  ],
+  "omega_gain_pairs_compatible": [
+    [
+      10.597523031056207,
+      0.13970159481860317
+    ],
+    [
+      13.344755734228839,
+      0.35187905034269
+    ]
+  ],
+  "seed_execution_order": [
+    {
+      "route_id": "branch_0_phase_0.0pi",
+      "execution_order": 0,
+      "branch_index": 0,
+      "phase": 0.0,
+      "omega": 10.597523031056207,
+      "gain": 0.13970159481860317,
+      "amplitude": 0.4315886850827659,
+      "seed": [
+        0.4315886850827659,
+        0.01713475910344968,
+        0.8631773701655315
+      ],
+      "search_route": "direct_integer_transfer",
+      "transfer_value": [
+        -7.158114417365523,
+        -1.554312234475219e-14
+      ],
+      "nyquist_closure_residual": 2.171398980022548e-15,
+      "describing_function_residual": 2.7755575615628914e-17,
+      "published_table_used": false
+    },
+    {
+      "route_id": "branch_0_phase_1.0pi",
+      "execution_order": 1,
+      "branch_index": 0,
+      "phase": 3.141592653589793,
+      "omega": 10.597523031056207,
+      "gain": 0.13970159481860317,
+      "amplitude": 0.4315886850827659,
+      "seed": [
+        -0.4315886850827659,
+        -0.017134759103449686,
+        -0.8631773701655315
+      ],
+      "search_route": "direct_integer_transfer",
+      "transfer_value": [
+        -7.158114417365523,
+        -1.554312234475219e-14
+      ],
+      "nyquist_closure_residual": 2.171398980022548e-15,
+      "describing_function_residual": 2.7755575615628914e-17,
+      "published_table_used": false
+    },
+    {
+      "route_id": "branch_1_phase_0.0pi",
+      "execution_order": 2,
+      "branch_index": 1,
+      "phase": 0.0,
+      "omega": 13.344755734228839,
+      "gain": 0.35187905034269,
+      "amplitude": 0.6849613617742147,
+      "seed": [
+        0.6849613617742147,
+        0.17252741732512492,
+        1.3699227235484286
+      ],
+      "search_route": "direct_integer_transfer",
+      "transfer_value": [
+        -2.841885582634471,
+        -2.042810365310288e-14
+      ],
+      "nyquist_closure_residual": 7.189079034045707e-15,
+      "describing_function_residual": 5.551115123125783e-17,
+      "published_table_used": false
+    },
+    {
+      "route_id": "branch_1_phase_1.0pi",
+      "execution_order": 3,
+      "branch_index": 1,
+      "phase": 3.141592653589793,
+      "omega": 13.344755734228839,
+      "gain": 0.35187905034269,
+      "amplitude": 0.6849613617742147,
+      "seed": [
+        -0.6849613617742147,
+        -0.17252741732512492,
+        -1.3699227235484284
+      ],
+      "search_route": "direct_integer_transfer",
+      "transfer_value": [
+        -2.841885582634471,
+        -2.042810365310288e-14
+      ],
+      "nyquist_closure_residual": 7.189079034045707e-15,
+      "describing_function_residual": 5.551115123125783e-17,
+      "published_table_used": false
+    }
+  ],
+  "table_1_role": "post_derivation_only_not_read_by_this_function"
+}

@@ -25,7 +25,10 @@ def test_hidden_verified_metadata_requires_full_caputo(valid_run_metadata) -> No
     metadata["numerical_contract"]["memory"]["mode"] = "finite_window"
     metadata["numerical_contract"]["memory"]["is_full_caputo"] = False
     errors = validate_hiddenness_promotion_metadata(metadata)
-    assert "strong candidate promotion requires numerical_contract.memory.is_full_caputo=true" in errors
+    assert (
+        "strong fractional candidate promotion requires "
+        "numerical_contract.memory.is_full_caputo=true"
+    ) in errors
 
 
 def test_fixed_random_seed_policy_requires_integer_seed(valid_run_metadata) -> None:

@@ -9,11 +9,12 @@ clients and reproducible scripts.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, Mapping, Sequence
 
 import numpy as np
 
+from .fractional.problem import FractionalProblem, solve_fractional_system
 from .integrations.selector import integrate
 from .systems import ChaoticSystem, get_system
 
@@ -33,12 +34,29 @@ class SimulationResult:
     requested_steps: int = 0
     completed_steps: int = 0
     metadata: Mapping[str, Any] = field(default_factory=dict)
+    integrator_times: np.ndarray | None = None
+    grid_coordinate: str = "physical_time"
+    backend: str | None = None
+    backend_info: Mapping[str, Any] = field(default_factory=dict)
 
     @property
     def trajectory(self) -> np.ndarray:
         """Return the conventional ``t,state...`` matrix."""
 
         return np.column_stack((self.times, self.states))
+
+    @property
+    def coordinate_times(self) -> np.ndarray:
+        """Return the numerical integrator coordinate.
+
+        Existing integer/map results default to physical time. Fractional
+        results explicitly retain the selected solver clock, including
+        logarithmic ``log(t/a)`` and conformable ``(t-a)^q/q`` grids.
+        """
+
+        if self.integrator_times is None:
+            return self.times
+        return self.integrator_times
 
 
 def _resolve_initial(system: ChaoticSystem, initial_state: Sequence[float] | np.ndarray | None) -> np.ndarray:
@@ -72,6 +90,7 @@ def simulate(
     active_parameters = dict(model.parameters)
     if parameters:
         active_parameters.update(parameters)
+    active_model = replace(model, parameters=active_parameters)
     threshold = None if divergence_norm is None else float(divergence_norm)
     if threshold is not None and (not np.isfinite(threshold) or threshold <= 0.0):
         raise ValueError("divergence_norm must be finite and positive, or None.")
@@ -119,7 +138,7 @@ def simulate(
         raise ValueError("duration must be finite and positive.")
 
     def rhs(_time: float, state: np.ndarray) -> np.ndarray:
-        return model.evaluate(state, active_parameters)
+        return active_model.evaluate(state)
 
     times, states, status = integrate(
         rhs=rhs,
@@ -129,7 +148,7 @@ def simulate(
         t_final=final_time,
         integrator=method,
         divergence_norm=threshold,
-        system=model,
+        system=active_model,
         use_c_backend=bool(use_acceleration),
         allow_python_fallback=True,
         early_stop_config={"enabled": False},
@@ -150,4 +169,76 @@ def simulate(
     )
 
 
-__all__ = ["SimulationResult", "simulate"]
+def simulate_fractional(
+    system: ChaoticSystem | str,
+    problem: FractionalProblem | Mapping[str, Any],
+    parameters: Mapping[str, Any] | None = None,
+    *,
+    use_acceleration: bool = True,
+    allow_python_fallback: bool = True,
+    divergence_norm: float | None = 120.0,
+) -> SimulationResult:
+    """Simulate a fractional flow through the public structured facade.
+
+    ``times`` always contains physical time.  ``coordinate_times`` exposes the
+    actual fixed-step coordinate, including ``log(t/a)`` for Caputo--Hadamard
+    and ``(t-a)^q/q`` for conformable dynamics.
+    The complete :class:`FractionalProblem` contract and the solver's backend
+    metadata are retained for Toolbox Chaos and reproducible clients.
+
+    The returned trajectory is finite numerical evidence only; this facade
+    does not infer chaos, attraction, stability, or hiddenness.
+    """
+
+    if isinstance(problem, FractionalProblem):
+        contract = problem
+    elif isinstance(problem, Mapping):
+        contract = FractionalProblem.from_mapping(problem)
+    else:
+        raise TypeError("problem must be a FractionalProblem or mapping.")
+
+    solution = solve_fractional_system(
+        contract,
+        system,
+        parameters,
+        use_acceleration=bool(use_acceleration),
+        allow_python_fallback=bool(allow_python_fallback),
+        divergence_norm=divergence_norm,
+    )
+    physical_times = np.asarray(solution.times, dtype=float)
+    coordinate_times = np.asarray(solution.coordinate_times, dtype=float)
+    states = np.asarray(solution.states, dtype=float)
+    metadata = dict(solution.metadata)
+    backend_info = dict(metadata.get("backend_info", {}))
+    active_parameters = dict(metadata.get("system_parameters", {}))
+    metadata.update(
+        {
+            "simulation_facade": "simulate_fractional",
+            "fractional_problem": contract.as_metadata(),
+            "time_coordinates": {
+                "physical_field": "times",
+                "integrator_field": "coordinate_times",
+                "integrator_coordinate": contract.grid_coordinate,
+            },
+        }
+    )
+    return SimulationResult(
+        times=physical_times,
+        states=states,
+        status=solution.status,
+        system_name=str(metadata["system_name"]),
+        system_kind=str(metadata["system_kind"]),
+        method=contract.method,
+        parameters=active_parameters,
+        step_size=contract.step,
+        requested_steps=contract.n_steps,
+        completed_steps=max(0, physical_times.size - 1),
+        metadata=metadata,
+        integrator_times=coordinate_times,
+        grid_coordinate=contract.grid_coordinate,
+        backend=solution.backend,
+        backend_info=backend_info,
+    )
+
+
+__all__ = ["SimulationResult", "simulate", "simulate_fractional"]

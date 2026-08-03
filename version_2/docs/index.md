@@ -8,8 +8,9 @@
 
 The characterization API can be used without searching for a hidden
 attractor. It includes trajectory and boundedness metrics, FFT/PSD summaries,
-the 0--1 test, Poincare crossings, bifurcation post-processing, and Lyapunov
-calculations.
+the 0--1 test, Poincare crossings, bifurcation post-processing, Lyapunov
+calculations, integer `q=1` SALI/GALI/LDI, and integer covariant Lyapunov
+vectors with angle diagnostics.
 
 Version 1.1.0 includes the supported scalar time-series Lyapunov interface:
 Rosenstein's largest-exponent estimate, an Eckmann reconstructed spectrum, and
@@ -32,6 +33,7 @@ transient, embedding, estimator, and neighborhood-control settings.
 
 - [Dynamical Analysis](dynamical_analysis.md)
 - [Lyapunov Methods](lyapunov_methods.md)
+- [Integer Covariant Lyapunov Vectors](covariant_lyapunov_vectors.md)
 - [Poincare Diagnostics](poincare_diagnostics.md)
 - [Scientific Scope](scientific_scope.md)
 - [Validation Boundary](validation_evidence.md)

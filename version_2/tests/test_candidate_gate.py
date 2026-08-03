@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from copy import deepcopy
 
+import pytest
+
 from hidden_attractors.verification.candidate_gate import (
     evaluate_candidate_gate,
     normalize_hiddenness_label,
@@ -17,7 +19,7 @@ def _complete_evidence(valid_run_metadata) -> dict:
         "continuation": {"used": True, "eta_path": [0.0, 0.5, 1.0], "continuation_mode": "fractional", "memory_window_propagated": True, "final_eta": 1.0},
         "trajectory": {"bounded": True, "nontrivial": True, "finite_fraction": 1.0, "post_transient_length": 10_000},
         "robustness": {"tested_h": True, "tested_memory": True, "tested_t_final": True, "tested_integrator": True, "consistent": True},
-        "hiddenness": {"tested_all_equilibria": True, "tested_radii": [1.0e-2, 1.0e-3], "required_radii": [1.0e-2, 1.0e-3], "target_hits_from_equilibria": 0, "basin_intersection_detected": False, "basin_controls_complete": True},
+        "hiddenness": {"tested_all_equilibria": True, "tested_radii": [1.0e-2, 1.0e-3], "required_radii": [1.0e-2, 1.0e-3], "coverage_by_equilibrium_radius_complete": True, "target_hits_from_equilibria": 0, "basin_intersection_detected": False, "basin_controls_complete": True, "numerical_failures": 0},
         "lyapunov": {"lambda_max": 0.15, "method_status": "internal_controls_passed"},
         "zero_one": {"K": 0.9},
         "spectrum": {"label": "broadband_spectrum"},
@@ -38,6 +40,43 @@ def test_missing_robustness_is_compatible_only(valid_run_metadata) -> None:
     evidence = _complete_evidence(valid_run_metadata)
     evidence["robustness"]["tested_h"] = False
     assert evaluate_candidate_gate(evidence)["verdict"] == "compatible_with_hiddenness"
+
+
+def test_missing_critical_hiddenness_fields_never_promote(valid_run_metadata) -> None:
+    for key in (
+        "required_radii",
+        "coverage_by_equilibrium_radius_complete",
+        "target_hits_from_equilibria",
+        "basin_intersection_detected",
+        "basin_controls_complete",
+        "numerical_failures",
+    ):
+        evidence = _complete_evidence(valid_run_metadata)
+        evidence["hiddenness"].pop(key)
+        gate = evaluate_candidate_gate(evidence)
+        assert gate["verdict"] != "hidden_under_tested_neighborhoods", key
+        assert gate["promotion_allowed"] is False, key
+
+
+@pytest.mark.parametrize("key", ["target_hits_from_equilibria", "numerical_failures"])
+@pytest.mark.parametrize("bad_count", [-1, 0.5, float("nan")])
+def test_hiddenness_counts_must_be_nonnegative_integers(valid_run_metadata, key, bad_count) -> None:
+    evidence = _complete_evidence(valid_run_metadata)
+    evidence["hiddenness"][key] = bad_count
+
+    gate = evaluate_candidate_gate(evidence)
+
+    assert gate["promotion_allowed"] is False
+    assert gate["verdict"] == "inconclusive"
+
+
+def test_missing_finite_fraction_never_promotes(valid_run_metadata) -> None:
+    evidence = _complete_evidence(valid_run_metadata)
+    evidence["trajectory"].pop("finite_fraction")
+
+    gate = evaluate_candidate_gate(evidence)
+
+    assert gate["promotion_allowed"] is False
 
 
 def test_target_hit_is_self_excited(valid_run_metadata) -> None:

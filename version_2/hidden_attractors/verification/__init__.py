@@ -11,6 +11,11 @@ from .classifiers import classify_hiddenness_verdict
 from .basins import generate_basin_slice
 from .hiddenness_contract import HiddennessVerificationStatus, verify_hiddenness_contract
 from .status_labels import CANONICAL_ATTRACTOR_STATUS, normalize_attractor_status
+from .attractor_reference import (
+    AttractorReferenceCalibration,
+    calibrate_attractor_reference,
+    classify_cloud_against_reference,
+)
 
 __all__ = [
     "solve_equilibria",
@@ -26,4 +31,7 @@ __all__ = [
     "verify_hiddenness_contract",
     "CANONICAL_ATTRACTOR_STATUS",
     "normalize_attractor_status",
+    "AttractorReferenceCalibration",
+    "calibrate_attractor_reference",
+    "classify_cloud_against_reference",
 ]

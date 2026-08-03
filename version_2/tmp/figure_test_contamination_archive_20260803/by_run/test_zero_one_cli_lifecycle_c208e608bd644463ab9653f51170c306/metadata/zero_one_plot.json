@@ -1,0 +1,9 @@
+{
+  "system_id": "unknown_trajectory",
+  "caption_key": "fig_zero_one_phase",
+  "source_script": "cli/chaos_test.py",
+  "source_function": "plot_zero_one_phase_styled",
+  "data_sources": [
+    "zero_one_displacement.csv"
+  ]
+}

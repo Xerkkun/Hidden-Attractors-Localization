@@ -1,0 +1,11 @@
+series,stride,effective_sample_step,samples,K,state
+flow_y1,5,0.1,1601,0.19450017605878014,zero_one_regular_candidate
+flow_y1,10,0.2,801,0.4497056533494838,zero_one_inconclusive
+flow_y1,15,0.3,534,0.76543974290428,zero_one_inconclusive
+flow_y1,20,0.4,401,0.13625006485091679,zero_one_regular_candidate
+flow_y1,25,0.5,321,0.1431291808785095,zero_one_regular_candidate
+flow_y1,30,0.6,267,0.26592921082927934,zero_one_inconclusive
+flow_y1,40,0.8,201,0.5298063594066145,zero_one_inconclusive
+flow_y1,50,1.0,161,0.15003688428141426,zero_one_regular_candidate
+flow_y1,75,1.5,107,0.2698254808486472,zero_one_inconclusive
+flow_y1,100,2.0,81,nan,insufficient_samples

@@ -15,6 +15,7 @@ Scientific boundary:
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+import math
 from typing import Any, Literal, Mapping, Sequence
 
 import numpy as np
@@ -467,6 +468,13 @@ class HiddennessTestResult:
                 and set(self.required_equilibria).issubset(set(self.tested_equilibria)),
                 "tested_radii": self.tested_radii,
                 "required_radii": self.required_radii,
+                "coverage_by_equilibrium_radius_complete": bool(self.required_equilibria)
+                and set(self.required_equilibria).issubset(set(self.tested_equilibria))
+                and bool(self.required_radii)
+                and all(
+                    any(math.isclose(required, tested, rel_tol=1.0e-12, abs_tol=1.0e-15) for tested in self.tested_radii)
+                    for required in self.required_radii
+                ),
                 "target_hits_from_equilibria": self.target_contacts,
                 "basin_intersection_detected": False,
                 "basin_controls_complete": required_planes.issubset(set(self.basin_planes)),

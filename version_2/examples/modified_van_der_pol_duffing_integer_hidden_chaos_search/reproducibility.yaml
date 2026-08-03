@@ -1,0 +1,221 @@
+case_id: mavpd_integer_hidden_chaos
+title: "Structured search for a sampled-hidden chaotic MAVPD attractor"
+scientific_status: "finite_numerical_hidden_chaos_candidate"
+
+source:
+  doi: "10.3390/math11030591"
+  model_role: "published equations; the new parameter point is found numerically"
+  report_values_used_as_search_input: false
+
+system:
+  q: 1.0
+  base_parameters:
+    gamma: 0.1
+    delta: 100.0
+    rho: 200.0
+    xi: 3.1
+
+numerical_safety:
+  divergence_norm: 50.0
+
+visualization:
+  nyquist_frequency_min: 1.0e-5
+  nyquist_frequency_max: 50.0
+  nyquist_amplitude_min: 0.25
+  nyquist_amplitude_max: 1.5
+  time_series_tail: 50.0
+
+primary_route:
+  name: "direct_integer_lure"
+  frequency_grid_used: false
+  fallback_frequency_scan_used: false
+  branch_order: [0, 1]
+  phase: 0.0
+  admissible_omega_min: 1.0e-5
+  admissible_omega_max: 50.0
+  lambda_nodes: 21
+  t_transient: 20.0
+  t_keep: 10.0
+  h: 0.002
+  chaos_screen:
+    t_burn: 100.0
+    t_accumulate: 250.0
+    qr_interval: 0.5
+    rtol: 2.0e-10
+    atol: 2.0e-12
+    max_step: 0.02
+    positive_threshold: 0.02
+  trigger_for_alternative: "neither direct base branch passes the declared finite-time LLE chaos screen"
+
+alternative_parameter_continuation:
+  enabled_only_after_primary_route_failure: true
+  route: "state continuation in xi followed by gamma relative to the derived Hopf boundary"
+  frequency_grid_used: false
+  xi_start: 3.1
+  xi_stop: 2.85
+  xi_step: -0.01
+  xi_endpoint_role: "declared local continuation endpoint; not selected by the candidate screen"
+  source_branch_selection_rule: "lowest direct harmonic frequency among successful direct base branches"
+  gamma_base_step: 0.0025
+  hopf_offsets: [0.002, 0.003, 0.005, 0.008, 0.010, 0.012, 0.015]
+  selection_rule: "largest tested Hopf offset with Lyapunov status ok, finite-time LLE > 0.5, zero sampled E0 contacts, zero ambiguous probes, and zero numerical failures; no transition boundary claimed"
+  node_t_burn: 60.0
+  node_t_keep: 10.0
+  sample_step: 0.02
+  rtol: 2.0e-10
+  atol: 2.0e-12
+  max_step: 0.02
+  screening:
+    lyapunov:
+      t_burn: 100.0
+      t_accumulate: 250.0
+      qr_interval: 0.5
+      rtol: 2.0e-10
+      atol: 2.0e-12
+      max_step: 0.02
+      positive_threshold: 0.5
+    reference:
+      duration: 360.0
+      burn: 160.0
+      sample_step: 0.05
+      max_step: 0.03
+      safety_factor: 3.0
+      max_points: 600
+    probes:
+      equilibrium_names: ["E0"]
+      radii: [1.0e-7, 1.0e-4]
+      directions: 6
+      sampling_mode: "sphere"
+      t_burn: 500.0
+      t_keep: 100.0
+      sample_step: 0.05
+      rtol: 2.0e-10
+      atol: 2.0e-12
+      max_step: 0.03
+      equilibrium_tol: 1.0e-6
+      equilibrium_tail_span_tol: 1.0e-5
+
+candidate_trajectory:
+  t_final: 900.0
+  t_burn: 300.0
+  sample_step: 0.02
+  rtol: 2.0e-11
+  atol: 2.0e-13
+  max_step: 0.01
+  reference_windows: [[300.0, 500.0], [500.0, 700.0], [700.0, 900.0]]
+
+chaos_diagnostics:
+  lyapunov:
+    t_burn: 300.0
+    t_accumulate: 1200.0
+    qr_interval: 0.5
+    rtol: 2.0e-12
+    atol: 2.0e-14
+    max_step: 0.01
+    positive_threshold: 0.02
+  lyapunov_control:
+    perturbation: [1.0e-8, -2.0e-8, 1.0e-8]
+    t_burn: 200.0
+    t_accumulate: 600.0
+    qr_interval: 0.5
+    rtol: 2.0e-10
+    atol: 2.0e-12
+    max_step: 0.02
+  zero_one:
+    n_c: 64
+    random_seed: 20260802
+    flow_strides: [5, 10, 15, 20, 25, 30, 40, 50, 75, 100]
+    return_coordinates: [0, 2]
+  poincare:
+    section_variable: 1
+    section_value: 0.0
+    direction: "positive"
+    min_crossing_separation: 0.05
+    duplicate_tolerance: 1.0e-6
+  spectrum:
+    role_in_gate: "supporting_only; line dominance does not veto positive variational LE"
+
+hiddenness:
+  main_contract: "3 equilibria x 3 radii x 12 deterministic sphere directions"
+  radii: [1.0e-5, 1.0e-3, 1.0e-2]
+  directions: 12
+  sampling_mode: "sphere"
+  targeted_E0_unstable_direction_radii: [1.0e-7, 1.0e-4]
+  t_burn: 400.0
+  t_keep: 100.0
+  sample_step: 0.05
+  rtol: 2.0e-10
+  atol: 2.0e-12
+  max_step: 0.03
+  equilibrium_tol: 1.0e-6
+  equilibrium_tail_span_tol: 1.0e-5
+  reference_safety_factor: 3.0
+  reference_ambiguity_fraction: 0.25
+  reference_max_points: 1000
+  negative_control_points: 100
+  random_seed: 20260802
+
+robustness:
+  memory_applicable: false
+  efork_crosscheck:
+    t_final_cap: 600.0
+    h: 0.002
+    tail_burn_fraction: 0.5
+
+candidate_gate:
+  equilibrium_residual_tol: 1.0e-8
+  matignon_tol: 1.0e-12
+  target_match_tol: 0.5
+  boundedness_norm: 120.0
+  nontrivial_variance_tol: 1.0e-8
+  lyapunov_positive_tol: 0.02
+  zero_one_chaos_threshold: 0.7
+  zero_one_regular_threshold: 0.3
+  spectral_peak_dominance_threshold: 0.8
+
+quick:
+  primary_route:
+    t_transient: 5.0
+    t_keep: 3.0
+    h: 0.004
+    chaos_screen:
+      t_burn: 30.0
+      t_accumulate: 60.0
+  alternative_parameter_continuation:
+    node_t_burn: 15.0
+    node_t_keep: 3.0
+    hopf_offsets: [0.005, 0.010, 0.015]
+    screening:
+      lyapunov:
+        t_burn: 30.0
+        t_accumulate: 60.0
+      reference:
+        duration: 100.0
+        burn: 40.0
+      probes:
+        radii: [1.0e-7]
+        directions: 2
+        t_burn: 80.0
+        t_keep: 30.0
+  candidate_trajectory:
+    t_final: 240.0
+    t_burn: 80.0
+    reference_windows: [[80.0, 130.0], [130.0, 185.0], [185.0, 240.0]]
+  chaos_diagnostics:
+    lyapunov:
+      t_burn: 80.0
+      t_accumulate: 160.0
+    lyapunov_control:
+      t_burn: 60.0
+      t_accumulate: 100.0
+  robustness:
+    efork_crosscheck:
+      h: 0.005
+  hiddenness:
+    t_burn: 100.0
+    t_keep: 40.0
+    directions: 6
+    radii: [1.0e-3]
+
+outputs:
+  output_dir: "validation/reference_cases/mavpd_integer_hidden_chaos"

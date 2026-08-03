@@ -11,6 +11,7 @@ from pathlib import Path
 import platform
 import subprocess
 import sys
+import tomllib
 from typing import Any, Mapping, Sequence
 
 import numpy as np
@@ -109,6 +110,7 @@ class SoftwareMetadata:
     git_commit: str
     working_tree_dirty: bool
     git_diff_sha256: str | None
+    git_diff_hash_scope: str = "tracked_diff_plus_untracked_source_excluding_generated_outputs"
 
 
 @dataclass(frozen=True)
@@ -145,17 +147,17 @@ def _git_output(*args: str) -> str:
         return "unknown"
 
 
-def _dirty_tree_sha256(status: str) -> str:
-    """Hash tracked diffs plus untracked file contents for source-tree audit."""
+def _dirty_tree_sha256() -> str:
+    """Hash source diffs while excluding generated run-output directories."""
 
     digest = sha256()
-    digest.update(status.encode("utf-8"))
     try:
         diff = subprocess.check_output(
             ["git", "-C", str(PROJECT_ROOT), "diff", "--binary", "--no-ext-diff", "HEAD"],
             stderr=subprocess.DEVNULL,
             timeout=20,
         )
+        digest.update(b"tracked-diff\0")
         digest.update(diff)
         untracked = subprocess.check_output(
             ["git", "-C", str(PROJECT_ROOT), "ls-files", "--others", "--exclude-standard", "-z"],
@@ -164,8 +166,18 @@ def _dirty_tree_sha256(status: str) -> str:
         )
         repository_root = Path(_git_output("rev-parse", "--show-toplevel"))
         for relative in sorted(item for item in untracked.split(b"\0") if item):
+            relative_text = relative.decode("utf-8", errors="surrogateescape")
+            parts = tuple(part.lower() for part in Path(relative_text).parts)
+            if (
+                any(part in {"__pycache__", ".pytest_cache", "tmp", "site", "validation_outputs"} for part in parts)
+                or "outputs" in parts
+                or parts[:2] == ("validation", "reference_cases")
+                or parts[:2] == ("validation", "outputs")
+            ):
+                continue
+            digest.update(b"untracked-source\0")
             digest.update(relative)
-            path = repository_root / relative.decode("utf-8", errors="surrogateescape")
+            path = repository_root / relative_text
             if path.is_file():
                 digest.update(path.read_bytes())
     except (OSError, subprocess.SubprocessError):
@@ -174,6 +186,15 @@ def _dirty_tree_sha256(status: str) -> str:
 
 
 def _package_version() -> str:
+    pyproject = PROJECT_ROOT / "pyproject.toml"
+    if pyproject.is_file():
+        try:
+            project = tomllib.loads(pyproject.read_text(encoding="utf-8")).get("project", {})
+            version = project.get("version")
+            if version:
+                return str(version)
+        except (OSError, tomllib.TOMLDecodeError):
+            pass
     try:
         return importlib_metadata.version("hidden-attractors-fo")
     except importlib_metadata.PackageNotFoundError:
@@ -186,7 +207,7 @@ def collect_software_metadata() -> SoftwareMetadata:
     commit = _git_output("rev-parse", "HEAD")
     status = _git_output("status", "--porcelain", "--untracked-files=all")
     dirty = status not in {"", "unknown"}
-    diff_hash = _dirty_tree_sha256(status) if dirty else None
+    diff_hash = _dirty_tree_sha256() if dirty else None
     return SoftwareMetadata(
         python_version=sys.version.split()[0],
         platform=platform.platform(),
@@ -196,6 +217,7 @@ def collect_software_metadata() -> SoftwareMetadata:
         git_commit=commit,
         working_tree_dirty=dirty,
         git_diff_sha256=diff_hash,
+        git_diff_hash_scope="tracked_diff_plus_untracked_source_excluding_generated_outputs",
     )
 
 
@@ -252,6 +274,9 @@ def _normalise_memory_mode(mode: str) -> str:
         "finite_window": "finite_window",
         "window": "finite_window",
         "short_memory": "finite_window",
+        "not_applicable": "not_applicable",
+        "none": "not_applicable",
+        "integer": "not_applicable",
     }
     return aliases.get(str(mode).strip().lower(), str(mode).strip().lower())
 
@@ -408,8 +433,8 @@ def validate_run_metadata(metadata: dict[str, Any]) -> list[str]:
         errors.append("numerical_contract.t_burn must satisfy 0 <= t_burn < t_final")
 
     memory = _require_mapping(numerical, "memory", errors)
-    if memory.get("mode") not in {"full", "finite_window"}:
-        errors.append("numerical_contract.memory.mode must be full or finite_window")
+    if memory.get("mode") not in {"full", "finite_window", "not_applicable"}:
+        errors.append("numerical_contract.memory.mode must be full, finite_window or not_applicable")
     for key in ("M", "memory_window_steps", "memory_window_time", "is_full_caputo"):
         if key not in memory:
             errors.append(f"numerical_contract.memory.{key} is required")
@@ -423,6 +448,16 @@ def validate_run_metadata(metadata: dict[str, Any]) -> list[str]:
         errors.append("numerical_contract.integrator.backend must be python, native or unknown")
     if not isinstance(integrator.get("caputo"), bool):
         errors.append("numerical_contract.integrator.caputo must be boolean")
+    q_value = numerical.get("q")
+    integer_q1 = _is_finite_number(q_value) and math.isclose(
+        float(q_value), 1.0, rel_tol=1.0e-12, abs_tol=1.0e-12
+    )
+    if memory.get("mode") == "not_applicable" and not (
+        integer_q1 and integrator.get("caputo") is False
+    ):
+        errors.append(
+            "numerical_contract.memory.mode=not_applicable is valid only for q=1 with caputo=false"
+        )
 
     if not isinstance(metadata.get("parameters"), Mapping):
         errors.append("parameters must be an object")
@@ -481,8 +516,16 @@ def validate_hiddenness_promotion_metadata(metadata: dict[str, Any] | None) -> l
     numerical = jsonable.get("numerical_contract", {})
     memory = numerical.get("memory", {}) if isinstance(numerical, Mapping) else {}
     integrator = numerical.get("integrator", {}) if isinstance(numerical, Mapping) else {}
-    if memory.get("is_full_caputo") is not True:
-        errors.append("strong candidate promotion requires numerical_contract.memory.is_full_caputo=true")
+    q_value = numerical.get("q") if isinstance(numerical, Mapping) else None
+    integer_q1 = _is_finite_number(q_value) and math.isclose(
+        float(q_value), 1.0, rel_tol=1.0e-12, abs_tol=1.0e-12
+    )
+    caputo = integrator.get("caputo") if isinstance(integrator, Mapping) else None
+    if integer_q1 and caputo is False:
+        if memory.get("mode") == "not_applicable" and memory.get("is_full_caputo") is True:
+            errors.append("integer q=1 memory.mode=not_applicable requires is_full_caputo=false")
+    elif memory.get("is_full_caputo") is not True:
+        errors.append("strong fractional candidate promotion requires numerical_contract.memory.is_full_caputo=true")
     if integrator.get("backend") == "unknown":
         errors.append("strong candidate promotion requires a known integrator backend")
     software = jsonable.get("software", {})

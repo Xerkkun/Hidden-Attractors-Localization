@@ -1,0 +1,1034 @@
+\subsection{Núcleo numérico fraccionario general}
+\label{sec:nucleo-numerico-fraccionario}
+
+Las funciones de esta sección se importan desde
+\codepath{hidden_attractors.fractional}; no se asume que estén reexportadas por
+la raíz \codepath{hidden_attractors}. Los resultados estructurados conservan
+definición, método, órdenes, terminal, malla, política de memoria, backend,
+fuentes y alcance de evidencia. El opt-in \codepath{allow_experimental=True}
+autoriza ejecución, pero no eleva una capacidad experimental a validación
+científica.
+
+\subsubsection{Inventario función por función}
+
+\begin{center}
+\scriptsize
+\begin{longtable}{@{}L{0.23\textwidth}L{0.23\textwidth}L{0.23\textwidth}L{0.23\textwidth}@{}}
+\toprule
+Función & Objeto y semántica & Costo/backend & Límites, prueba y fuente \\
+\midrule
+\endfirsthead
+\toprule
+Función & Objeto y semántica & Costo/backend & Límites, prueba y fuente \\
+\midrule
+\endhead
+\codepath{list_fractional_derivatives},
+\codepath{list_fractional_methods} & Enumeran contratos registrados y permiten filtrar por estado. & \(\mathcal O(K)\) sobre un registro pequeño; Python. & Metadatos, no cálculo numérico; \codepath{test_fractional_contracts_and_gl.py}. \\
+\addlinespace
+\codepath{get_fractional_derivative},
+\codepath{get_fractional_method} & Recuperan una definición o método por nombre estable. & \(\mathcal O(1)\); Python. & Rechazan nombres desconocidos; registro ejercitado por las pruebas de contrato y problema. \\
+\addlinespace
+\codepath{normalize_fractional_orders} & Convierte un orden escalar o uno por componente en un vector de dimensión declarada. & \(\mathcal O(d)\); NumPy. & Valida finitud, intervalo y longitud; \codepath{test_fractional_contracts_and_gl.py}. \\
+\addlinespace
+\codepath{validate_fractional_method} & Comprueba compatibilidad entre definición, método, orden, memoria y opt-in experimental. & \(\mathcal O(d)\); Python. & \codepath{test_fractional_contracts_and_gl.py}; no es validación de convergencia ni estabilidad. \\
+\addlinespace
+\codepath{FractionalProblem} & Contrato serializable de derivada, método, orden, estado inicial, paso, intervalo, coordenada de malla, memoria y kernel. & Construcción \(\mathcal O(d)\). & Los operadores muestreados se registran pero no pasan como solvers; \codepath{test_fractional_problem.py}. \\
+\addlinespace
+\codepath{solve_fractional_problem} & Despacha un \codepath{FractionalProblem} ejecutable sobre un RHS. & Hereda costo y backend del método. & \codepath{test_fractional_problem.py}; devuelve evidencia finita, no clasifica caos u ocultedad. \\
+\addlinespace
+\codepath{solve_fractional_system} & Adaptador de un sistema HAFO registrado al mismo contrato; puente usado por Toolbox Chaos. & Overhead Python por RHS más el solver seleccionado. & \codepath{test_fractional_problem.py}; mapas y ecuaciones en diferencias requieren otro tipo de problema. \\
+\addlinespace
+\codepath{get_fractional_reference} & Recupera por clave una referencia primaria o crítica del registro. & \(\mathcal O(1)\); Python. & \codepath{test_fractional_problem.py}; procedencia no valida por sí misma el método. \\
+\addlinespace
+\codepath{grunwald_letnikov_weights} & Genera \(w_k=(-1)^k\binom{q}{k}\) por recurrencia. & \(\mathcal O(N)\) tiempo y memoria; Numba. & \codepath{test_fractional_contracts_and_gl.py}; Podlubny y Lubich~\cite{Podlubny1999,Lubich1986}. \\
+\addlinespace
+\codepath{grunwald_letnikov_derivative} & Convolución GL directa sobre muestras, cruda o desplazada. & \(\mathcal O(dN^2)\), memoria \(\mathcal O(dN)\); Numba/Python. & Operador, no FDE; Wolfram sólo verifica GL/RL en malla finita. \\
+\addlinespace
+\codepath{native_grunwald_letnikov_weights} & Pesos GL mediante la ABI C. & \(\mathcal O(N)\); C. & Paridad con la recurrencia canónica; backend interno opcional. \\
+\addlinespace
+\codepath{native_grunwald_letnikov_convolution} & Convolución causal de pesos e historia mediante C/OpenMP. & \(\mathcal O(dN^2)\); C/OpenMP según construcción. & Acelera el mismo algoritmo, no cambia su error matemático; \codepath{test_native_grunwald_letnikov.py}. \\
+\addlinespace
+\codepath{native_grunwald_letnikov_derivative} & Envoltura completa de pesos, convolución y metadatos nativos. & \(\mathcal O(dN^2)\); C/OpenMP. & Fallback y metadatos de compilación explícitos; benchmark de host, no promesa universal. \\
+\addlinespace
+\codepath{gl_linear_convolution_fft_length} & Calcula el relleno cero mínimo para convolución lineal sin alias circular. & \(\mathcal O(1)\). & Utilidad de tamaño; no calcula una derivada. \\
+\addlinespace
+\codepath{fast_grunwald_letnikov_derivative} & Convolución GL por FFT en lote. & \(\mathcal O(dN\log N)\), memoria \(\mathcal O(dN)\); NumPy FFT o selección automática. & No es online y puede perder ventaja en mallas cortas; \codepath{test_fast_grunwald_letnikov.py}, Matusiak~\cite{Matusiak2020}. \\
+\addlinespace
+\codepath{integrate_gl_explicit_numba} & Recurrencia explícita de una FDE discreta GL con RHS compilado. & \(\mathcal O(dN^2+NC_F)\); Numba \codepath{nopython}. & Historia completa y convención inicial explícita; no es ABM Caputo. \\
+\addlinespace
+\codepath{integrate_gl_explicit} & Envoltura con RHS genérico y selección Numba/Python. & Igual orden asintótico; Python/Numba. & Trayectoria de un modelo discreto declarado; \codepath{test_fractional_contracts_and_gl.py}. \\
+\addlinespace
+\codepath{lubich_bdf_weights} & Coeficientes de \(\delta(\zeta)^q\) para BDF1 o BDF2. & \(\mathcal O(N)\); Numba. & Sólo \(0<q\le1\); \codepath{test_lubich_convolution_quadrature.py}, Lubich~\cite{Lubich1986,Lubich2004}. \\
+\addlinespace
+\codepath{lubich_convolution_quadrature} & CQ RL cruda o desplazada Caputo sobre una historia uniforme. & Directa \(\mathcal O(dN^2)\) en Python/Numba; FFT \(\mathcal O(dN\log N)\) en lote. & No es solver FDE; BDF2 sin correcciones de arranque~\cite{JinLiZhou2017}. \\
+\addlinespace
+\codepath{hadamard_convolution_quadrature} & CQ Hadamard/Caputo--Hadamard tras \(u=\log(t/a)\). & Directa \(\mathcal O(dN^2)\); FFT \(\mathcal O(dN\log N)\); Python/Numba/FFT. & Exige \(a>0\) y uniformidad en \(u\); operador, no solver; prueba Python y comparación Wolfram finita independiente~\cite{JaradEtAl2012,YinEtAl2024}. \\
+\addlinespace
+\codepath{integrate_caputo_hadamard_abm} & Solver ABM/PECE conmensurado en tiempo logarítmico y RHS en tiempo físico. & \(\mathcal O(dN^2)\), historia \(\mathcal O(dN)\); NumPy o historial C con callback Python. & Malla física no uniforme, historia completa; solución manufacturada y comparación Wolfram finita~\cite{Zheng2021,GreenLiuYan2021}. \\
+\addlinespace
+\codepath{riemann_liouville_gl_derivative} & Envoltura RL explícita sobre muestras. & \(\mathcal O(dN^2)\); Numba/Python. & Semántica \codepath{operator_only}; no acepta una condición puntual como IVP RL. \\
+\addlinespace
+\codepath{tempered_grunwald_letnikov_derivative} & RL templada por conjugación exponencial y GL. & \(\mathcal O(dN^2)\); Numba/Python. & No es Caputo templada; \codepath{test_fractional_contracts_and_gl.py}~\cite{SabzikarEtAl2015}. \\
+\addlinespace
+\codepath{tempered_convolution_quadrature} & CQ BDF1/BDF2 para RL templada o Caputo templada conjugada sobre muestras uniformes. & Directa \(\mathcal O(dN^2)\) en Python/Numba; FFT lineal en lote \(\mathcal O(dN\log N)\). & Operador, no solver ni historia rápida; corrección inicial Caputo exacta y sin correcciones de arranque BDF2~\cite{ChenDeng2015,GuoEtAl2019Tempered,JinLiZhou2017}. \\
+\addlinespace
+\codepath{tempered_fast_multistep_history} & Operador muestral RL templado o Caputo conjugado con ventana local exacta e historia real recurrente FBDF1/GNGF2. & \(\mathcal O(d(Q+n_0)N)\), memoria activa \(\mathcal O(d(Q+n_0))\); Python/Numba. & Calibración \(L^1\) de todos los pesos comprimidos en la malla finita; no es solver FDE ni BDF2 fraccionaria~\cite{GuoEtAl2019Tempered,Lubich1986}. \\
+\addlinespace
+\codepath{integrate_tempered_caputo_abm} & Solver Caputo templado por conjugación y ABM/PECE conmensurado. & \(\mathcal O(dN^2+NC_F)\); historia física amortiguada en C con callback RHS o NumPy. & \(\lambda\ge0\) explícito; reducción exacta a Caputo para \(\lambda=0\), historia completa o ventana declarada~\cite{LiDengZhao2019}. \\
+\addlinespace
+\codepath{variable_order_grunwald_letnikov_derivative} & GL con \(q_n\) fijado en cada salida. & \(\mathcal O(dN^2)\); Numba/Python. & Convención de salida concreta, no universal~\cite{SamkoRoss1993}. \\
+\addlinespace
+\codepath{variable_order_l1_weight}, \codepath{integrate_variable_order_caputo_type3_l1} & Pesos L1 y solver Caputo tipo III con orden temporal prescrito y corrector Picard. & Historia \(\mathcal O(N^2)\), trabajo \(\mathcal O(dN^2)\), almacenamiento \(\mathcal O(dN)\); Numba/Python. & Sólo \(0<\alpha(t)<1\), historia completa y regularidad declarada; pruebas manufacturadas y Wolfram finito~\cite{TavaresEtAl2016,FangEtAl2020}. \\
+\addlinespace
+\codepath{conformable_khalil_derivative} & Aproxima \(T_q^a x=(t-a)^{1-q}x'(t)\). & \(\mathcal O(dN)\); Numba/Python. & Operador local sobre malla; no memoria hereditaria~\cite{KhalilEtAl2014}. \\
+\addlinespace
+\codepath{integrate_conformable_rk4} & Integra un flujo conmensurado en el reloj \(\tau=(t-a)^q/q\). & \(\mathcal O(N(C_F+d))\), salida \(\mathcal O(dN)\); Numba/Python. & RK4 clásico sobre una ODE local reparametrizada; malla física no uniforme y sin memoria hereditaria~\cite{KhalilEtAl2014}. \\
+\addlinespace
+\codepath{caputo_fabrizio_derivative} & Recurrencia exacta por intervalo para el kernel exponencial. & \(\mathcal O(dN)\); Numba/Python. & Estado de definición \codepath{research_required}; operador, no solver~\cite{CaputoFabrizio2015,DiethelmEtAl2020}. \\
+\addlinespace
+\codepath{caputo_fabrizio_derivative_reference} & Suma directa del mismo operador como oráculo interno. & \(\mathcal O(dN^2)\); Python. & Referencia de prueba, no ruta recomendada de producción. \\
+\addlinespace
+\codepath{atangana_baleanu_normalization} & Evalúa la convención explícita \(B(q)=1-q+q/\Gamma(q)\). & \(\mathcal O(1)\); Python. & Opción, no normalización universal; extremos cero y uno documentados. \\
+\addlinespace
+\codepath{abc_linear_product_weights} & Devuelve los dos pesos lineales del predictor--corrector por retardo, con índice cero sin uso. & \(\mathcal O(N)\), memoria \(\mathcal O(N)\); NumPy. & Sólo \(0<q<1\); ecuaciones (9)--(14) de Lee--Kim--Jang y prueba algebraica dedicada~\cite{LeeKimJang2024}. \\
+\addlinespace
+\codepath{abc_piecewise_linear_weights} & Construye pesos de intervalo para el kernel \(E_q\) mediante la serie de \(E_{q,2}\). & \(\mathcal O(NK)\), memoria \(\mathcal O(N)\); Numba/Python. & Sólo \(0<q\le1/2\); verifica convergencia, cancelación, positividad y monotonía~\cite{YadavEtAl2019}. \\
+\addlinespace
+\codepath{atangana_baleanu_caputo_derivative} & Aplica el operador ABC a datos uniformes con interpolación lineal. & Directa \(\mathcal O(dN^2)\) o FFT \(\mathcal O(dN\log N)\), más pesos \(\mathcal O(NK)\). & Experimental con crítica explícita; operador, no solver; Numba/Python/FFT~\cite{AtanganaBaleanu2016,DiethelmEtAl2020}. \\
+\addlinespace
+\codepath{atangana_baleanu_caputo_derivative_reference} & Ruta directa Python transparente del mismo esquema. & \(\mathcal O(dN^2+NK)\). & Oráculo de implementación; la identidad \(q=1/2\) aporta el contraste matemático independiente. \\
+\addlinespace
+\codepath{integrate_abc_predictor_corrector} & Solver ABC conmensurado convencional de Lee--Kim--Jang, con compatibilidad y arranque auditados. & \(\mathcal O(dN^2+NC_F)\), historia \(\mathcal O(dN)\); Numba/Python. & Sólo \(0<q<1\) e historia completa; extensión vectorial HAFO, no SOE ni garantía de orden dos para Chua no suave~\cite{LeeKimJang2024,DiethelmEtAl2020}. \\
+\addlinespace
+\codepath{distributed_order_gl_derivative} & Suma ponderada de operadores GL en nodos de orden. & \(\mathcal O(RdN^2)\); Numba/Python. & Error temporal y de cuadratura en orden; \codepath{test_distributed_order_operator.py}~\cite{CaputoDistributed2001,DiethelmFord2009}. \\
+\addlinespace
+\codepath{integrate_distributed_order_caputo_l1} & Solver Caputo de orden distribuido con kernel L1 combinado y Picard. & \(\mathcal O(RN+N^2d)\), memoria \(\mathcal O(Nd+N+R)\); Numba/Python. & Medida no negativa, historia completa y errores temporal/de orden separados; \(q=1\) usa backward Euler~\cite{DiethelmFord2009,HuEtAl2014Distributed,LinXu2007L1}. \\
+\addlinespace
+\codepath{integrate_multi_term_caputo_l1} & Fachada para una suma finita de derivadas Caputo con coeficientes de ecuación no normalizados. & Canonización \(\mathcal O(R\log R)\), seguida por el mismo kernel \(\mathcal O(RN+N^2d)\); Numba/Python. & Medida atómica discreta, coalescencia exacta y metadatos originales; no es cuadratura de una densidad continua~\cite{DiethelmFord2004MultiOrder,RenSun2014MultiTerm,SheLiSun2022TransformedL1,ZakyMachado2020Atomic}. \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\subsubsection{CQ templada BDF1/BDF2 por conjugación exponencial}
+
+Para \(p\in\{1,2\}\), HAFO usa
+\[
+ \delta_1(\zeta)=1-\zeta,
+ \qquad
+ \delta_2(\zeta)=\frac32-2\zeta+\frac12\zeta^2,
+ \qquad
+ \delta_p(\zeta)^q=\sum_{k\ge0}\omega_k^{(q,p)}\zeta^k.
+\]
+La conjugación exponencial sustituye \(\zeta\) por
+\(e^{-\lambda h}\zeta\), de modo que los pesos realmente aplicados son
+\[
+ \omega_{k,\lambda}^{(q,p)}=
+ e^{-\lambda kh}\omega_k^{(q,p)}.
+\]
+En \(t_n=a+nh\), la ruta RL templada evalúa
+\begin{equation}
+ \mathcal D_{h,p}^{q,\lambda}x_n=
+ h^{-q}\sum_{k=0}^{n}
+ \omega_k^{(q,p)}e^{-\lambda kh}x_{n-k},
+ \label{eq:tempered-cq-rl}
+\end{equation}
+y la ruta Caputo conjugada implementa exactamente
+\begin{equation}
+ {}^C\mathcal D_{h,p}^{q,\lambda}x_n=
+ h^{-q}\left[
+ \sum_{k=0}^{n}\omega_k^{(q,p)}e^{-\lambda kh}x_{n-k}
+ -x_0e^{-\lambda nh}\sum_{k=0}^{n}\omega_k^{(q,p)}
+ \right].
+ \label{eq:tempered-cq-caputo}
+\end{equation}
+La segunda expresión discretiza la Ecuación~\eqref{eq:tempered-caputo-anchor};
+no usa el desplazamiento incorrecto \(x-x_0\). Sólo se materializan
+exponentes no positivos. Un factor que subdesborda a cero descarta un término
+ya irrepresentable, mientras que el estado transformado de crecimiento
+\(e^{+\lambda(t-a)}x(t)\) nunca se construye.
+
+La convención es la derivada conjugada no normalizada: no se resta
+\(\lambda^q x\). El símbolo discreto es
+\(h^{-q}\delta_p(e^{-\lambda h}\zeta)^q\), no
+\([\delta_p(\zeta)/h+\lambda]^q\). HAFO registra el segundo como
+\codepath{tempered_symbol_shift_cq}, todavía planificado, porque sus pesos,
+constantes de error y arranque finitos no son intercambiables
+\cite{SabzikarEtAl2015,ChenDeng2015}. BDF2 usa historia truncada desde el
+terminal, sin una etapa BDF1 ni correcciones de arranque para datos poco
+regulares; por ello no se le atribuyen los órdenes de los esquemas corregidos
+de Jin--Li--Zhou~\cite{JinLiZhou2017}.
+
+La API exige declarar si se evalúa RL como operador o Caputo con valor puntual:
+\begin{verbatim}
+import numpy as np
+from hidden_attractors.fractional import (
+    TEMPERED_CAPUTO_INITIAL_CONDITION,
+    tempered_convolution_quadrature,
+)
+
+times = np.linspace(0.7, 1.7, 513)
+tau = times - times[0]
+orders = np.array([0.58, 0.84])
+tempering = np.array([0.35, 1.10])
+samples = np.column_stack((
+    np.exp(-tempering[0] * tau) * (0.8 + 1.2 * tau**3),
+    np.exp(-tempering[1] * tau) * (-0.3 + 0.7 * tau**4),
+))
+
+result = tempered_convolution_quadrature(
+    samples,
+    orders,
+    tempering=tempering,
+    bdf_order=2,
+    definition="tempered_caputo",
+    times=times,
+    lower_terminal=0.7,
+    initial_condition_semantics=TEMPERED_CAPUTO_INITIAL_CONDITION,
+    backend="fft",
+)
+\end{verbatim}
+El ejemplo reproducible
+\codepath{examples/tempered_convolution_quadrature.py} completa este caso con
+el sistema manufacturado no lineal
+\[
+ {}_a^CD_t^{q_i,\lambda_i}x_i=x_i^2+g_i(t),\qquad
+ x_i=e^{-\lambda_i(t-a)}(x_{0,i}+A_i(t-a)^{\beta_i}),
+\]
+donde \(g_i\) se obtiene de
+\[
+ e^{-\lambda_i(t-a)}A_i
+ \frac{\Gamma(\beta_i+1)}{\Gamma(\beta_i+1-q_i)}
+ (t-a)^{\beta_i-q_i}-x_i^2.
+\]
+Con 512 intervalos, BDF2 y FFT, la ejecución retenida dio errores absolutos
+finales \(4.21911\times10^{-6}\) y \(5.52861\times10^{-6}\). Es consistencia
+manufacturada finita del
+operador, no validación de un solver FDE no lineal ni evidencia de caos,
+atracción u ocultedad.
+
+El oráculo independiente
+\codepath{validation/wolfram/cases/tempered_convolution_quadrature.wl}
+reconstruye los coeficientes BDF y la conjugación sin importar HAFO. La corrida
+retenida aprobó 18 de 18 aserciones. La reconstrucción Python independiente
+difirió como máximo \(1.30842\times10^{-14}\), y la comparación obligatoria
+con la API pública como máximo \(4.44089\times10^{-15}\). Son verificaciones
+algebraico-numéricas de malla finita, no teoremas de convergencia o estabilidad.
+\begin{flushleft}
+\small
+Artefactos canónicos:
+\codepath{validation/outputs/wolfram/tempered_convolution_quadrature_verified/}\\
+Resumen SHA-256:
+\texttt{1B7DEADA82462BCE}\allowbreak\texttt{5ED31534A6D8054F}\allowbreak
+\texttt{BF7DF95171A879F8}\allowbreak\texttt{3612089411D240E6}.\\
+Comparación SHA-256:
+\texttt{0F28C92F47EA4ACB}\allowbreak\texttt{E9871157B9C21C71}\allowbreak
+\texttt{FBB6E863A0C992D1}\allowbreak\texttt{A83B98D59D5334EB}.
+\end{flushleft}
+
+El benchmark reproducible
+\codepath{benchmarks/bench_tempered_convolution_quadrature.py} calienta Numba
+fuera de la medición y compara Python directo, Numba directo y FFT para RL y
+Caputo, BDF1/BDF2 y tres cargas. Numba coincidió exactamente con Python y la
+diferencia FFT máxima fue \(1.95\times10^{-13}\). FFT tuvo la menor mediana en
+12 de 12 casos, con razones Numba/FFT de \(1.09\)--\(1.11\) para
+\((N,d)=(64,2)\), \(1.01\)--\(1.10\) para \((256,3)\) y
+\(1.23\)--\(1.30\) para \((768,4)\). Python/Numba varió respectivamente entre
+\(2.68\)--\(2.93\), \(45.4\)--\(47.8\) y \(312\)--\(359\).
+\begin{flushleft}
+\small
+Evidencia retenida:
+\codepath{validation/outputs/benchmarks/tempered_convolution_quadrature_backends_20260803.json}
+\\
+SHA-256:
+\texttt{B0CC97F37E1EDA87}\allowbreak\texttt{55049F7CF109542D}\allowbreak
+\texttt{727199568371E52F}\allowbreak\texttt{FBA540811AE16E5D}.
+\end{flushleft}
+Esta medición justifica conservar Numba y FFT para la CQ por lotes, pero no se
+transfiere automáticamente al operador recurrente siguiente ni justifica por
+sí sola un backend C o Julia.
+
+\subsubsection{Historia rápida multistep templada FBDF1/GNGF2}
+
+\codepath{tempered_fast_multistep_history} implementa el Fast Method II de eje
+real de Guo et al.~\cite{GuoEtAl2019Tempered} como \textbf{operador sobre
+muestras uniformes}. Recibe la historia completa \(u_n\); no recibe un RHS, no
+avanza una FDE y no convierte una trayectoria de entrada en solución de un
+modelo fraccionario. Admite órdenes por componente \(0<q_i\le1\), templados
+\(\sigma_i\ge0\), las definiciones
+\codepath{tempered_riemann_liouville} y \codepath{tempered_caputo}, y los
+backends \codepath{python} y \codepath{numba}.
+
+Los dos generadores base son los de la
+Ecuación~\eqref{eq:tempered-fast-generators}. Para FBDF1, los pesos locales
+satisfacen
+\[
+ \omega_0=1,\qquad
+ \omega_\ell=\frac{\ell-1-q}{\ell}\omega_{\ell-1}.
+\]
+Para GNGF2 se combina la misma sucesión GL \(g_\ell\) como
+\[
+ \omega_0=1+\frac q2,\qquad
+ \omega_\ell=\left(1+\frac q2\right)g_\ell
+              -\frac q2g_{\ell-1},
+ \quad
+ g_0=1,\qquad g_\ell=\frac{\ell-1-q}{\ell}g_{\ell-1}.
+\]
+Ésta es GNGF2; no es
+\(\bigl(\tfrac32-2z+\tfrac12z^2\bigr)^q\). Sólo cuando \(q=1\) su generador
+se vuelve exactamente \(\tfrac32-2z+\tfrac12z^2\), y el código evita entonces
+la integral real degenerada y devuelve los pesos BDF2 exactos. Esta decisión
+no elimina la CQ BDF2 directa/FFT disponible en
+\codepath{tempered_convolution_quadrature}; mantiene dos objetos matemáticos
+distintos~\cite{Lubich1986}.
+
+Para \(0<q<1\), la representación de eje real usa el signo
+\(-\sin(\pi q)/\pi\) fijado en la
+Ecuación~\eqref{eq:tempered-fast-real-axis}. La identidad beta--reflexión
+recupera exactamente \((-1)^\ell\binom q\ell\) en FBDF1 y constituye una
+prueba algebraica del signo. La API devuelve
+\codepath{quadrature_nodes} como \(r_j=h\lambda_{\mathrm{aux},j}\), no como
+tasas dimensionales. Para cada nodo y componente actualiza
+\[
+ y_m^{(j)}=\frac{e^{-\sigma h}}{1+r_j}
+ \left(y_{m-1}^{(j)}+u_{m-1}\right),
+\]
+que coincide con la Ecuación~\eqref{eq:tempered-fast-recurrence}; no se
+materializa \(e^{+\sigma t}\). En el instante \(n\), la parte local usa
+exactamente \(0\le\ell\le\min(n,n_0)\). Para \(n>n_0\), la parte antigua se
+reconstruye con los estados anteriores y los coeficientes
+\(h^{-q}e^{-n_0\sigma h}a_j(1+r_j)^{-n_0-1}\). Por tanto,
+\[
+ \mathcal D_{h,\mathrm{fast}}^{q,\sigma}u_n=
+ h^{-q}\sum_{\ell=0}^{\min(n,n_0)}
+ e^{-\sigma h\ell}\omega_\ell u_{n-\ell}
+ +h^{-q}e^{-n_0\sigma h}\sum_{j=1}^{Q}
+ a_j(1+r_j)^{-n_0-1}y_{n-n_0}^{(j)}.
+\]
+En Caputo conjugada se resta aparte
+\(h^{-q}u_0e^{-\sigma nh}\sum_{\ell=0}^{n}\omega_\ell\) con la suma parcial
+exacta. La compresión nunca aproxima esa ancla.
+
+La selección automática comienza en \(Q=65\), usa la malla anidada
+\(65,129,257,\ldots\) y aumenta \(Q\) hasta que el error relativo \(L^1\) de \emph{todos} los pesos de
+retardos \(n_0+1,\ldots,N-1\) no supera
+\codepath{relative_tolerance}; una \codepath{quadrature_points} explícita que
+no cumple la tolerancia produce error y un tope automático menor que 65 se
+rechaza cuando existe cola comprimida. La cota
+\codepath{operator_absolute_error_bound} multiplica el error absoluto \(L^1\)
+de esos pesos por \(h^{-q_i}\max_n|u_{n,i}|\). Es una cota de compresión en
+aritmética exacta para la malla finita: no cubre redondeo, truncamiento
+FLMM/CQ, error de solver, convergencia general ni constantes analíticas de la
+regla trapezoidal o sus colas. \codepath{tail_cutoff} sólo determina el
+intervalo truncado y sus metadatos dicen expresamente que no hay certificado
+separado. El costo del lote es \(\mathcal O(d(Q+n_0)N)\); la memoria activa de
+historia es \(\mathcal O(d(Q+n_0))\), más \(\mathcal O(dN)\) para la salida.
+
+La llamada mínima conserva definición y semántica inicial explícitas:
+\begin{verbatim}
+from hidden_attractors.fractional import (
+    TEMPERED_CAPUTO_INITIAL_CONDITION,
+    tempered_fast_multistep_history,
+)
+
+fast = tempered_fast_multistep_history(
+    samples,
+    orders=[0.48, 0.67, 0.83],
+    tempering=[0.10, 0.35, 0.70],
+    multistep_method="gngf2",
+    definition="tempered_caputo",
+    step=0.005,
+    initial_condition_semantics=TEMPERED_CAPUTO_INITIAL_CONDITION,
+    local_history_steps=50,
+    relative_tolerance=1e-9,
+    backend="numba",
+)
+assert fast.compression_tolerance_satisfied
+\end{verbatim}
+
+El ejemplo \codepath{examples/tempered_fast_history_chua.py} genera con
+DOP853 una trayectoria Chua \(q=1\), uniformemente muestreada, y la usa sólo
+como una señal realista de tres canales. Aplica después GNGF2 Caputo templada y
+la compara con una convolución directa independiente
+\(\mathcal O(dN^2)\). Es \emph{postprocesamiento}: no resuelve un Chua
+fraccionario y no aporta evidencia de caos, atracción u ocultedad. Su prueba
+dedicada exige 801 muestras finitas, tolerancia de compresión satisfecha y una
+diferencia rápida--directa no mayor que \(5\times10^{-10}\).
+
+El oráculo independiente
+\codepath{validation/wolfram/cases/tempered_fast_multistep_history.wl}
+trabaja a 80 dígitos y aprobó 13/13 aserciones. Verificó el signo, los
+coeficientes, el límite entero, las cuatro combinaciones
+FBDF1/GNGF2--RL/Caputo, el ancla y la amortiguación de la recurrencia. El mayor
+residuo rápido--directo dentro de Wolfram fue
+\(1.72700092683619\times10^{-26}\); el comparador independiente en precisión
+doble alcanzó \(8.881784197001252\times10^{-15}\), y la comparación contra el
+núcleo público HAFO, \(1.2434497875801753\times10^{-14}\). La evidencia
+retenida vive en
+\codepath{validation/outputs/wolfram/tempered_fast_multistep_history_verified/}.
+Se reproduce con:
+\begin{verbatim}
+python examples/tempered_fast_history_chua.py
+python -m pytest tests/test_tempered_fast_history.py \
+  tests/test_tempered_fast_history_edges.py \
+  tests/test_tempered_fast_history_example.py \
+  tests/test_tempered_fast_history_wolfram.py \
+  tests/test_tempered_fast_history_benchmark.py -q
+\end{verbatim}
+Las pruebas cubren API pública, contrato/capability, paridad Python--Numba,
+FBDF1 frente a CQ directa, GNGF2 frente a una convolución independiente,
+ancla Caputo, límite \(q=1\), ventana puramente local, cota finita y rechazo de
+contratos inválidos. Estas verificaciones no demuestran un teorema general de
+convergencia ni una trayectoria FDE.
+
+El benchmark vertical
+\codepath{benchmarks/bench_tempered_fast_history.py} separó el JIT y la
+selección automática de \(Q\), y midió tres repeticiones de las 12 combinaciones
+RL/Caputo, FBDF1/GNGF2 y tres tamaños. Seleccionó \(Q=65\) para
+\((N,d,n_0)=(128,2,16)\) y \((512,3,32)\), y \(Q=129\) para
+\((2048,4,50)\). Python y Numba rápidos coincidieron bit a bit; las máximas
+diferencias directa--FFT y rápida--directa fueron
+\(5.0004\times10^{-12}\) y \(4.4384\times10^{-8}\), respectivamente. La
+segunda quedó dentro de la cota de compresión más un margen de acumulación
+flotante registrado por separado.
+
+El modelo analítico de memoria activa del evaluador fue 3392, 5472 y
+14016 bytes, frente a 4096, 24576 y 131072 bytes para los dos juegos completos
+de pesos. La ventaja de almacenamiento creció hasta \(9.35\times\) en
+\(N=2048\), excluidas entrada y salida. Las rutas FFT por lotes obtuvieron la
+menor mediana en los doce casos retenidos; esta medición finita no invalida el contrato
+recurrente, pues FFT almacena la historia de pesos y no es \emph{streaming}.
+No se implementó ni midió un candidato C o Julia con semántica idéntica. La
+decisión registrada es
+\codepath{insufficient_evidence_to_add_native_c_or_julia}: C se reconsidera
+sólo si el perfil HAFO/Toolbox muestra un cuello de botella material, y Julia
+sólo como adaptador por lote fijado, nunca por paso.
+
+El artefacto portable se conserva en
+\codepath{validation/outputs/benchmarks/tempered_fast_history_backends_20260803_v2.json}.
+Su SHA-256 es
+\texttt{325D9C4BF2254C6F}\allowbreak\texttt{EA9C295080157345}\allowbreak
+\texttt{485B1A5426329A9D}\allowbreak\texttt{E0F7C3D949417D4F}.
+El puente del repositorio hermano \emph{Toolbox Chaos}, definido en
+\codepath{core/hidden_engine.py}, carga de forma diferida esta API, conserva
+el resultado tipado y consulta el catálogo original mediante
+\codepath{engine_capability}, sin duplicar estados. Cuatro pruebas focales y
+el archivo completo de integración aprobaron juntas 28 de 28 pruebas sobre
+ausencia opcional, delegación, capacidad y rechazo explícito de FFT. Es evidencia de integración
+de software, no de dinámica fraccionaria.
+
+\subsubsection{Solver Caputo templado por conjugación}
+
+El solver usa la identidad
+\[
+ {}_a^CD_t^{q,\lambda}x(t)=e^{-\lambda(t-a)}{}_a^CD_t^q
+ \left(e^{\lambda(\,\cdot-a)}x\right)(t),
+ \qquad v(t)=e^{\lambda(t-a)}x(t),
+\]
+para resolver
+\[
+ {}_a^CD_t^qv(t)=e^{\lambda(t-a)}
+ f\!\left(t,e^{-\lambda(t-a)}v(t)\right),\qquad v(a)=x(a).
+\]
+\codepath{integrate_tempered_caputo_abm} usa esa conjugación para derivar los
+factores \(e^{-\lambda(t_n-t_j)}\) y los aplica directamente al historial
+ABM/PECE. Los kernels Python y C almacenan \(x\), no el estado potencialmente
+enorme \(v\).
+Li--Deng--Zhao~\cite{LiDengZhao2019} proporcionan la definición, la formulación
+de Volterra y un predictor--corrector de Jacobi; la discretización disponible
+en HAFO es el ABM amortiguado algebraicamente equivalente a la transformación y
+no se etiqueta como su algoritmo de Jacobi.
+
+El paso es uniforme en tiempo físico, \(0<q<1\), \(\lambda\ge0\) y un único
+orden común. \codepath{FractionalProblem} exige
+\codepath{kernel_parameters=\{"tempering": lambda\}}. La historia completa es
+la ruta de referencia; una ventana reinicia en \(t_s\) con el ancla exacta
+\(e^{-\lambda(t-t_s)}x(t_s)\) y se marca como modelo numérico aproximado. El
+backend C acelera pesos e historia física, aunque el RHS genérico cruza un
+callback Python. El criterio de divergencia se aplica durante la recurrencia al
+estado físico \(x\), antes de evaluar la siguiente derivada. Como sólo se usan
+exponentes no positivos, un horizonte grande no obliga a almacenar \(v\);
+\codepath{transformed_states} se omite si su reconstrucción desbordaría
+\codepath{float64}.
+
+Una solución manufacturada reproducible es
+\[
+ x_*(t)=e^{-\lambda\tau}(x_0+\tau^p),\qquad
+ f_*(t)=e^{-\lambda\tau}
+ \frac{\Gamma(p+1)}{\Gamma(p+1-q)}\tau^{p-q},\qquad \tau=t-a.
+\]
+La prueba también exige que \(\lambda=0\) reproduzca la trayectoria Caputo.
+Ambas son comprobaciones finitas del solver, no evidencia de estabilidad,
+caos, atracción ni ocultedad.
+
+\begin{verbatim}
+from hidden_attractors.fractional import FractionalProblem
+from hidden_attractors.fractional import solve_fractional_problem
+
+problem = FractionalProblem(
+    derivative="tempered_caputo",
+    method="tempered_caputo_abm_pece_transform",
+    orders=0.7,
+    initial_state=[1.0],
+    step=0.01,
+    t_span=(0.0, 1.0),
+    memory_policy="full_history",
+    kernel_parameters={"tempering": 0.4},
+    allow_experimental=True,
+)
+result = solve_fractional_problem(problem, rhs)
+\end{verbatim}
+
+\subsubsection{Solver Caputo de orden variable tipo III por L1}
+
+Para \(t_n=a+nh\) y \(\alpha_n=\alpha(t_n)\), la aproximación implementada es
+\[
+ \frac{h^{-\alpha_n}}{\Gamma(2-\alpha_n)}
+ \sum_{j=0}^{n-1}a_{n-j-1}^{(n)}(X_{j+1}-X_j),\qquad
+ a_k^{(n)}=(k+1)^{1-\alpha_n}-k^{1-\alpha_n}.
+\]
+Al separar el último incremento, \codepath{integrate_variable_order_caputo_type3_l1}
+resuelve
+\[
+ X_n=X_{n-1}-H_n+\Gamma(2-\alpha_n)h^{\alpha_n}f(t_n,X_n)
+\]
+mediante Picard. La suma histórica directa usa Numba sin \codepath{fastmath} o
+una ruta Python; el corrector conserva tolerancias absoluta/relativa, máximo de
+iteraciones, residuo y diagnóstico del paso fallido. Una iteración de pulido sólo
+se acepta si reduce un residuo que ya satisfacía la tolerancia. No se comprueba
+contractividad ni se infiere regularidad de \(\alpha(t)\).
+
+El programa de orden puede tener firma \codepath{alpha(t)},
+\codepath{alpha(t, initial_state)} o
+\codepath{alpha(t, initial_state, parameters)}. El argumento de estado siempre
+es una copia fija de \(X_0\), nunca el estado evolucionado. El perfil completo
+solicitado se valida puntualmente en \((0,1)\) antes de integrar y el orden
+nominal de \codepath{FractionalProblem} debe coincidir con \(\alpha(a)\). Esta
+decisión mantiene el operador como orden prescrito en el tiempo y evita convertir
+silenciosamente el modelo en \(\alpha(t,X(t))\).
+
+\begin{verbatim}
+problem = FractionalProblem(
+    derivative="caputo_variable_type3",
+    method="vo_caputo_type3_l1",
+    orders=0.55,
+    initial_state=[1.0],
+    step=0.01,
+    t_span=(0.0, 1.0),
+    memory_policy="full_history",
+    kernel_parameters={
+        "order_function": alpha,
+        "order_function_name": "alpha(t)=0.55+0.2*t",
+    },
+    method_options={"initial_regularity": "smooth"},
+    allow_experimental=True,
+)
+result = solve_fractional_problem(problem, rhs, parameters)
+\end{verbatim}
+
+El oráculo Wolfram independiente deriva los pesos por \codepath{Integrate} y
+reconstruye una recurrencia sin leer HAFO. Retiene residuo simbólico cero,
+diferencia máxima Wolfram--HAFO de
+\(1.5543122344752192\times10^{-15}\) y diferencia de trayectoria de
+\(2.220446049250313\times10^{-16}\). Los errores finitos del operador y de la
+recurrencia son diagnósticos de malla; no prueban una tasa global, estabilidad,
+caos, atracción ni ocultedad.
+
+\subsubsection{Solver Caputo de orden distribuido por kernel L1 combinado}
+
+Para nodos \(0<\alpha_r\le1\) y masas efectivas \(\Omega_r\ge0\), el modelo
+discreto aproxima
+\[
+ \sum_{r=1}^{R}\Omega_r\,{}_a^CD_t^{\alpha_r}X(t)=f(t,X(t)).
+\]
+Con
+\[
+ \rho_r=\frac{\Omega_rh^{-\alpha_r}}{\Gamma(2-\alpha_r)},\qquad
+ K_k=\sum_r\rho_r\left[(k+1)^{1-\alpha_r}-k^{1-\alpha_r}\right],
+\]
+la ecuación de paso es
+\[
+ \sum_{k=0}^{n-1}K_k\Delta X_{n-k}=f(t_n,X_n),\qquad K_0>0.
+\]
+HAFO precomputa sólo \(K_k\) y resuelve
+\[
+ X_n=X_{n-1}-K_0^{-1}\sum_{k=1}^{n-1}K_k\Delta X_{n-k}
+      +K_0^{-1}f(t_n,X_n)
+\]
+por Picard. Así evita un tensor orden--tiempo--estado y reduce la estructura
+ingenua \(\mathcal O(RN^2d)\) a \(\mathcal O(RN+N^2d)\). Los metadatos
+separan Numba solicitado, intentado, realmente usado y fallback; un estado no
+finito fallido no se incorpora al prefijo aceptado.
+
+La API distingue masas directas de pesos de cuadratura multiplicados por una
+densidad explícita. Rechaza medidas firmadas, no normaliza por defecto y conserva
+masa cruda/efectiva. El átomo \(\alpha=1\) usa exactamente
+\(K_0=\Omega/h\), \(K_{k>0}=0\), es decir, backward Euler. En presencia de ese
+átomo no se exige \(f(a,X_0)=0\); sin él, el chequeo sólo genera advertencia
+cuando se declara un arranque \codepath{smooth}.
+
+\begin{verbatim}
+problem = FractionalProblem(
+    derivative="caputo_distributed_order",
+    method="distributed_order_caputo_l1",
+    orders=[0.35, 0.80],
+    initial_state=[1.0],
+    step=0.01,
+    t_span=(0.0, 1.0),
+    memory_policy="full_history",
+    kernel_parameters={
+        "order_weights": [0.40, 0.60],
+        "weight_semantics": "nonnegative_mass",
+        "order_quadrature_name": "two_atom_demo",
+    },
+    method_options={"initial_regularity": "smooth"},
+    allow_experimental=True,
+)
+result = solve_fractional_problem(problem, rhs)
+\end{verbatim}
+
+Aquí \codepath{orders} son los nodos de la medida, independientes de la dimensión,
+y el contrato usa \codepath{order_mode=distributed}; no existe un orden nominal
+ignorado. Las fuentes sustentan el marco de cuadratura y L1, principalmente en
+problemas lineales~\cite{CaputoDistributed2001,DiethelmFord2009,HuEtAl2014Distributed,LinXu2007L1}.
+El kernel combinado y Picard son adaptaciones HAFO. La trayectoria finita no
+demuestra convergencia general, estabilidad, caos, atracción ni ocultedad.
+
+El oráculo Wolfram independiente construye cada peso mediante
+\codepath{Integrate}, agrega tres nodos y resuelve una recurrencia lineal afín
+sin leer HAFO. La corrida focal aprobó seis pruebas: residuo simbólico, residuo
+de recurrencia y error afín iguales a cero en el artefacto; la diferencia máxima
+Wolfram--HAFO fue \(1.5543122344752192\times10^{-15}\), con tolerancia
+\(8\times10^{-12}\). Esta identidad finita no constituye una tasa de
+convergencia.
+
+\subsubsection{Fachada Caputo multitérmino como medida atómica}
+
+La ecuación
+\[
+ \sum_{j=1}^{R}c_j\,{}_a^CD_t^{\alpha_j}x(t)=f(t,x(t)),
+ \qquad 0<\alpha_j\le1,\quad c_j\ge0,
+\]
+corresponde exactamente a la medida
+\(
+\mu=\sum_jc_j\delta_{\alpha_j}
+\).
+Por ello, \codepath{integrate_multi_term_caputo_l1} reutiliza el solver anterior
+con \codepath{nonnegative_mass} y \codepath{normalization=none}; no interpreta
+\(c_j\) como pesos de una cuadratura continua ni infiere una densidad. Esta
+distinción concuerda con las formulaciones multiorden y multitérmino, el uso de
+L1 término a término y la reducción por deltas de Dirac
+~\cite{DiethelmFord2004MultiOrder,RenSun2014MultiTerm,SheLiSun2022TransformedL1,ZakyMachado2020Atomic}.
+
+Antes de delegar, la fachada valida todos los órdenes y coeficientes, elimina
+ceros sólo bajo una política explícita, ordena y agrupa únicamente órdenes
+\codepath{float64} exactamente iguales. Para un orden canónico
+\(\widehat\alpha_r\), calcula
+\[
+ \widehat c_r=\operatorname{fsum}
+ \{c_j:\alpha_j=\widehat\alpha_r\}.
+\]
+No usa tolerancia: fusionar órdenes cercanos alteraría el kernel completo. La
+salida conserva órdenes y coeficientes originales, grupos de índices, términos
+nulos, suma de coeficientes y términos canónicos. En particular, una suma
+\(\sum_jc_j\ne1\) permanece sin normalizar y no pierde sus unidades.
+
+\begin{verbatim}
+from hidden_attractors.fractional import integrate_multi_term_caputo_l1
+
+result = integrate_multi_term_caputo_l1(
+    rhs,
+    initial_state=[0.8],
+    orders=[1/3, 2/3, 2/3, 0.55, 1.0],
+    coefficients=[0.4, 0.2, 0.5, 0.0, 0.75],
+    step=0.01,
+    n_steps=100,
+    initial_regularity="nonsmooth",
+)
+\end{verbatim}
+
+Los términos canónicos son
+\((1/3,0.4),(2/3,0.7),(1,0.75)\), cuya masa es \(1.85\), no uno. El átomo
+\(\alpha=1\) conserva la rama backward Euler. La fachada añade
+\(\mathcal O(R\log R)\) una sola vez y no reconstruye el kernel combinado ni
+la historia \(\mathcal O(N^2d)\). Por ello no se añadió un segundo backend C o
+Julia: el trabajo costoso ya está compilado con Numba, mientras duplicar el
+solver aumentaría el contrato de paridad sin acelerar esta capa semántica.
+
+El benchmark del 3 de agosto de 2026 calentó Numba y realizó siete repeticiones
+medidas en Python 3.14.3, NumPy 2.4.5, Numba 0.65.1 y un host de 16 hilos
+lógicos. Para \(R=128\) términos reducidos exactamente a ocho, \(N=256\) y
+dimensión tres, la fachada y el solver canónico produjeron tiempos y estados
+idénticos; la razón de medianas fachada/directo fue \(1.0120\). Al aislar la
+construcción compilada de 4096 lags, la razón no coalescido/coalescido fue
+\(15.0220\); la historia sobre un kernel ya combinado dio \(0.9909\), pues ya
+no depende de \(R\). Son mediciones de ese host y esa carga, no aceleraciones
+universales. El JSON de trabajo tuvo SHA-256
+\codepath{32ac0c43b388ce9664ce4b9cd49f936bfd2e83d704bf463c8c39c6ca219438c9}.
+
+SciSpace se consultó con dos preguntas completas: una sobre ecuaciones Caputo
+multitérmino y métodos L1/predictor--corrector, y otra sobre la equivalencia con
+una medida atómica frente al orden distribuido continuo. Se conservaron los
+identificadores \codepath{3tp7pod1yv}, \codepath{30zlukzu},
+\codepath{1o5cvoa44t}, \codepath{3hf80rfehx} y
+\codepath{3ued1yt7yp}; la columna \codepath{methods_used} se obtuvo para
+\(2/2\) y \(3/3\), respectivamente. La canonización, la política de ceros y el
+wrapper estructurado son adaptaciones HAFO, no resultados atribuidos a esos
+artículos.
+
+El caso Wolfram independiente usa coeficientes racionales cuya suma es
+\(37/20\), incluye \(\alpha=1\), deriva los pesos por integración y verifica
+permutación, coalescencia y una recurrencia afín sin importar HAFO. El ejemplo
+\codepath{multi_term_caputo_relaxation.py} usa otra solución afín manufacturada.
+La ejecución viva marcó \codepath{passed=true}: diferencia máxima
+Wolfram--HAFO de \(3.552713678800501\times10^{-15}\) frente a tolerancia
+\(8\times10^{-12}\), diferencia máxima de kernel del mismo orden, diferencia
+de trayectoria de \(2.220446049250313\times10^{-15}\) e identidad cuadrática
+con diferencia cero. La suite focal aprobó 31 pruebas y omitió una prueba
+opcional porque no se retuvo el artefacto temporal; la corrida usó y eliminó un
+directorio nuevo fuera del repositorio.
+Ambos son controles finitos de implementación; no demuestran una tasa general,
+contractividad de Picard, estabilidad de un flujo caótico, atracción u
+ocultedad.
+
+\subsubsection{Solver conformable en su reloj natural}
+
+Para la derivada conformable desplazada,
+\[
+ T_{q,a}x(t)=(t-a)^{1-q}x'(t)=f(t,x(t)),
+\]
+la transformación
+\[
+ \tau=\frac{(t-a)^q}{q},\qquad
+ t=a+(q\tau)^{1/q}
+\]
+produce la ODE \(dx/d\tau=f(a+(q\tau)^{1/q},x)\).
+\codepath{integrate_conformable_rk4} usa RK4 clásico en una malla uniforme de
+\(\tau\) y devuelve \codepath{clock_times} junto con los tiempos físicos. El
+backend Numba requiere el ABI numérico de RHS; el fallback Python admite un RHS
+genérico y ambos reportan su identidad exacta. \codepath{FractionalProblem}
+exige \codepath{grid_coordinate=conformable_clock}, memoria
+\codepath{none} y un orden común. Esta ruta es una reparametrización local, no
+una aproximación de memoria Caputo, RL, GL o Hadamard.
+
+\subsubsection{Operador Atangana--Baleanu--Caputo sobre muestras}
+
+Con \(\lambda=q/(1-q)\), la integral exacta del kernel de Mittag--Leffler
+sobre cada intervalo lineal usa
+\[
+ \int E_q(-\lambda s^q)\,ds
+ =sE_{q,2}(-\lambda s^q).
+\]
+Así, la convolución causal usa los incrementos \(\Delta x_j\), no pesos ABM
+de Caputo ni la recurrencia exponencial de Caputo--Fabrizio. Un uso reproducible
+es:
+\begin{verbatim}
+import numpy as np
+from hidden_attractors.fractional import (
+    atangana_baleanu_caputo_derivative,
+    atangana_baleanu_normalization,
+)
+
+t = np.linspace(0.0, 1.0, 1025)
+x = 1.0 + t**3
+abc = atangana_baleanu_caputo_derivative(
+    x, t[1] - t[0], 0.5,
+    normalization=atangana_baleanu_normalization,
+    normalization_name="B(q)=1-q+q/Gamma(q)",
+    backend="fft",
+)
+\end{verbatim}
+El backend FFT es una evaluación en lote y no se selecciona automáticamente
+sin un benchmark específico. \codepath{tests/test_atangana_baleanu_operator.py}
+comprueba constante, linealidad, identidad cerrada de orden \(1/2\), pesos y
+paridad Numba--Python--FFT. Este operador conserva el dominio numérico auditado
+\(0<q\le1/2\). No resuelve una FDE y su backend FFT no se reutiliza como si
+fuera el predictor--corrector o una historia online.
+
+El artefacto Wolfram retenido en
+\codepath{validation/outputs/wolfram/atangana_baleanu_operator/} reconstruye
+independientemente el caso \(q=1/2\) sin leer HAFO y marca
+\codepath{passed=true}. \codepath{tests/test_atangana_baleanu_wolfram.py}
+contrasta después las tres rutas públicas. Esta es evidencia del operador en
+una malla finita, no del solver ABC, su arranque, compatibilidad o convergencia.
+
+\subsubsection{Predictor--corrector ABC convencional}
+
+Para \(0<q<1\), \codepath{integrate_abc_predictor_corrector} implementa la
+recurrencia de historia completa de las ecuaciones (9)--(14) de
+Lee--Kim--Jang~\cite{LeeKimJang2024} para
+\[
+ x(t)=x_0+c_q f(t,x(t))+
+ \frac{d_q}{\Gamma(q)}\int_a^t(t-s)^{q-1}f(s,x(s))\,ds,
+ \quad c_q=\frac{1-q}{B(q)},\quad d_q=\frac{q}{B(q)}.
+\]
+La normalización \(B(q)>0\) es un parámetro explícito escalar o funcional; si no
+se suministra otra convención, HAFO registra \(B(q)=1\). El valor y la
+descripción evaluados se guardan en el resultado. Una condición inicial clásica
+regular debe cumplir \(f(a,x_0)=0\). El solver mide ese residuo antes de integrar
+y no oculta una incompatibilidad mediante una tolerancia no registrada.
+
+El artículo supone un valor \(x_1\) con error \(\mathcal O(h^2)\), pero no
+prescribe su construcción. HAFO resuelve para \(x_1\) la ecuación implícita de
+producto--trapecio del primer intervalo por punto fijo; registra tolerancia,
+máximo e iteraciones, y expone \codepath{startup_no_convergence} si falla. Este
+arranque es una decisión de HAFO. La evidencia publicada es escalar; aplicar el
+mismo balance por coordenada a un estado vectorial con un solo orden es también
+una extensión de HAFO.
+
+La ruta convencional cuesta \(\mathcal O(dN^2)\), conserva
+\(\mathcal O(dN)\) valores y declara \codepath{fast_soe_used=False}. No
+implementa la aproximación rápida por suma de exponenciales del mismo artículo
+ni admite
+\codepath{fast_history}. Los backends Numba y Python comparten los pesos y el
+contrato de parada. Un refinamiento de malla observa orden dos en un problema
+escalar cuadrático suave; las soluciones manufacturadas y la paridad de backends
+verifican casos finitos, pero no garantizan ese orden para el campo no suave de Chua,
+ni estabilidad general, caos, atracción u ocultedad. La definición se mantiene
+experimental y se presenta junto con la crítica de kernels no singulares de
+Diethelm et al.~\cite{DiethelmEtAl2020}.
+
+Un problema compatible mínimo puede escribirse como:
+\begin{verbatim}
+import numpy as np
+from hidden_attractors.fractional import integrate_abc_predictor_corrector
+
+def rhs(time, state):
+    del state
+    return np.array([time**2])  # f(0, x0) = 0
+
+result = integrate_abc_predictor_corrector(
+    rhs,
+    initial_state=np.array([1.0]),
+    order=0.7,
+    lower_terminal=0.0,
+    step=0.01,
+    n_steps=100,
+    normalization=1.0,
+    normalization_name="B(q)=1",
+    use_acceleration=False,
+)
+\end{verbatim}
+La trayectoria producida sólo demuestra la ejecución declarada del IVP.
+
+La validación independiente en
+\codepath{validation/wolfram/cases/abc_predictor_corrector.wl} reconstruye las
+integrales de las bases lineales y una recurrencia manufacturada sin importar
+HAFO. El artefacto retenido reporta residuo simbólico cero, discrepancia máxima
+Wolfram--Python de pesos \(3.5388358909926865\times10^{-16}\) y discrepancia de
+trayectoria \(2.220446049250313\times10^{-16}\). El error finito
+\(4.952013688854784\times10^{-4}\) frente a la solución Volterra exacta es un
+diagnóstico de discretización; no certifica convergencia general, estabilidad,
+caos, atracción ni ocultedad.
+
+\subsubsection{CQ de Lubich BDF1/BDF2}
+
+La función generadora del método multipaso define
+\begin{equation}
+ \delta(\zeta)^q=\sum_{k=0}^{\infty}\omega_k\zeta^k,
+ \qquad
+ D_h^q x_n=h^{-q}\sum_{k=0}^{n}\omega_kx_{n-k}.
+ \label{eq:lubich-cq}
+\end{equation}
+HAFO admite
+\[
+ \delta_1(\zeta)=1-\zeta,
+ \qquad
+ \delta_2(\zeta)=\frac32-2\zeta+\frac12\zeta^2.
+\]
+BDF1 coincide exactamente con los pesos GL canónicos. En BDF2, los pesos se
+obtienen en \(\mathcal O(N)\) de la identidad
+\(\delta W'=q\delta'W\). La convención
+\codepath{riemann_liouville} aplica la convolución cruda y exige
+\codepath{operator_only_no_ivp}; \codepath{caputo_shifted} opera sobre
+\(x-x(a)\) y exige \codepath{point_value_shift_x_minus_x0}.
+
+Las rutas directa Python/Numba cuestan \(\mathcal O(dN^2)\). La ruta FFT usa
+relleno cero, calcula una convolución lineal en \(\mathcal O(dN\log N)\) y sólo sirve cuando toda
+la historia ya está disponible. BDF2 usa historia truncada en el terminal, sin
+prehistoria inventada ni correcciones iniciales. Por ello HAFO no hereda los
+órdenes corregidos para datos de baja regularidad analizados en
+\cite{JinLiZhou2017}. El test dedicado verifica BDF1=GL, expansión BDF2 con alta
+precisión, límite entero, monomios, órdenes por componente, mallas y paridad
+Python--Numba--FFT.
+
+Ejemplo sobre muestras uniformes de una coordenada de Chua:
+\begin{verbatim}
+from hidden_attractors.fractional import (
+    CAPUTO_SHIFTED_INITIAL_CONDITION,
+    lubich_convolution_quadrature,
+)
+
+cq = lubich_convolution_quadrature(
+    trajectory[:, 1],
+    0.92,
+    bdf_order=2,
+    definition="caputo_shifted",
+    times=trajectory[:, 0],
+    lower_terminal=float(trajectory[0, 0]),
+    initial_condition_semantics=CAPUTO_SHIFTED_INITIAL_CONDITION,
+    backend="fft",
+)
+\end{verbatim}
+Este código calcula un operador sobre la señal de Chua; no vuelve a integrar el
+sistema ni prueba que la señal sea caótica.
+
+\subsubsection{CQ Hadamard y Caputo--Hadamard}
+
+Con \(u_n=n\bar h\) y \(t_n=ae^{u_n}\), HAFO aplica la
+Ecuación~\eqref{eq:lubich-cq} a la señal transformada \(y(u)=x(ae^u)\). La ruta
+Hadamard tipo RL opera sobre \(x\); la ruta Caputo--Hadamard opera sobre
+\(x-x(a)\). La salida incluye tanto \codepath{times} físicos como
+\codepath{log_times}, pesos, transformación, semántica inicial, costo y fuentes.
+Yin et al. implementan y analizan órdenes BDF mayores y correcciones para
+fuentes singulares~\cite{YinEtAl2024}; HAFO conserva sólo BDF1/BDF2 sin dichas
+correcciones.
+
+\begin{verbatim}
+from hidden_attractors.fractional import (
+    CAPUTO_HADAMARD_INITIAL_CONDITION,
+    hadamard_convolution_quadrature,
+)
+
+operator = hadamard_convolution_quadrature(
+    samples,
+    orders=(0.75, 0.9),
+    bdf_order=2,
+    definition="caputo_hadamard",
+    log_step=0.01,
+    lower_terminal=1.0,
+    initial_condition_semantics=CAPUTO_HADAMARD_INITIAL_CONDITION,
+    backend="numba",
+)
+\end{verbatim}
+
+La comparación independiente en
+\codepath{validation/outputs/wolfram/hadamard_fractional_operator/}, archivo
+\codepath{hadamard_python_comparison.json}, recalcula la transformación
+logarítmica, identidades analíticas y CQ
+BDF1/BDF2 sin importar HAFO. El artefacto retenido marca
+\codepath{passed=true} y una diferencia numérica máxima de
+\(3.019806626980426\times10^{-14}\). Es una comprobación finita del operador y
+de la implementación de la malla, no una cota de error uniforme ni un
+resultado de estabilidad.
+
+\subsubsection{Solver ABM/PECE Caputo--Hadamard en tiempo logarítmico}
+
+El IVP
+\[
+ {}_a^{CH}D_t^q x(t)=f(t,x(t)),\qquad x(a)=x_0,
+\]
+se transforma exactamente mediante~\cite{Zheng2021}
+\[
+ {}_0^CD_u^q y(u)=f(ae^u,y(u)),
+ \qquad y(u)=x(ae^u),\quad u=\log(t/a).
+\]
+\codepath{integrate_caputo_hadamard_abm} reutiliza el ABM/PECE canónico sobre
+una malla uniforme en \(u\). Admite actualmente \(0<q<1\) conmensurado,
+condición puntual, historia completa y \codepath{log_step}. El RHS siempre
+recibe tiempo físico. El backend acelerado usa el historial ABM en C, pero el
+cambio \(u\mapsto ae^u\) y un RHS genérico cruzan un callback Python; se registra
+como tal y no se anuncia como campo puramente C.
+
+Ejemplo de uso del campo real Chua no suave bajo esta definición distinta:
+\begin{verbatim}
+import numpy as np
+from hidden_attractors import chua_nonsmooth_parameters, rhs_nonsmooth
+from hidden_attractors.fractional import integrate_caputo_hadamard_abm
+
+parameters = chua_nonsmooth_parameters()
+
+def physical_rhs(time, state, p):
+    del time
+    return rhs_nonsmooth(state, p)
+
+result = integrate_caputo_hadamard_abm(
+    physical_rhs,
+    initial_state=np.array([0.1, 0.0, 0.0]),
+    order=0.92,
+    parameters=parameters,
+    lower_terminal=1.0,
+    upper_terminal=float(np.exp(2.0)),
+    log_step=0.002,
+    use_acceleration=True,
+)
+\end{verbatim}
+La trayectoria resultante es una demostración finita de la llamada. No reproduce
+los casos Caputo del reporte, no valida caos y no aporta evidencia de ocultedad.
+El test del solver usa forzamiento constante, una potencia manufacturada de
+\(\log(t/a)\), equivalencia con Caputo transformado, tiempo físico del RHS y
+paridad C--Python. Las mallas graduadas de Green--Liu--Yan
+\cite{GreenLiuYan2021} permanecen pendientes. El mismo caso Wolfram compara un
+paso ABM manufacturado y retiene una diferencia máxima de estado de
+\(8.881784197001252\times10^{-16}\). Esta paridad de precisión finita tampoco
+demuestra convergencia general, estabilidad, caos o existencia de atractores.
+
+\subsubsection{Contrato unificado para HAFO y Toolbox Chaos}
+
+\begin{verbatim}
+from hidden_attractors.fractional import (
+    FractionalProblem,
+    solve_fractional_system,
+)
+
+problem = FractionalProblem(
+    derivative="caputo_hadamard",
+    method="caputo_hadamard_abm_pece",
+    orders=0.92,
+    initial_state=[0.1, 0.0, 0.0],
+    step=0.002,
+    t_span=(1.0, 7.38905609893065),
+    grid_coordinate="log_t_over_lower_terminal",
+    memory_policy="full_history",
+    lower_terminal=1.0,
+    allow_experimental=True,
+)
+result = solve_fractional_system(problem, "chua-nonsmooth")
+\end{verbatim}
+El adaptador preserva el mismo resultado estructurado que un RHS directo. Un
+método cuyo contrato dice \codepath{sampled_operator} se rechaza en este
+despacho: registrarlo no lo convierte en integrador.
+
+\subsubsection{Rendimiento, C, Numba y Julia}
+
+C/OpenMP se reserva para convoluciones e historiales con bucles estables y ABI
+numérica simple. Numba conserva RHS definidos por la persona usuaria y rutas
+verificables sin cruzar un intérprete por paso. FFT se usa sólo para operadores
+en lote suficientemente largos. Julia puede actuar como extensión opcional por
+trayectoria o como oráculo cruzado para catálogos especializados; una llamada
+Julia en cada paso destruiría la ventaja de compilación y no forma parte del
+número base. Cualquier razón de aceleración citada por los benchmarks es una
+medición del host, compilador, tamaño de malla y calentamiento registrados, no
+una superioridad universal.
+
+\subsubsection{Comandos de prueba del núcleo}
+
+\begin{verbatim}
+cd version_2
+python -m pytest tests/test_fractional_contracts_and_gl.py \
+  tests/test_fast_grunwald_letnikov.py \
+  tests/test_native_grunwald_letnikov.py \
+  tests/test_lubich_convolution_quadrature.py \
+  tests/test_hadamard_convolution_quadrature.py \
+  tests/test_caputo_hadamard_solver.py \
+  tests/test_hadamard_wolfram.py \
+  tests/test_atangana_baleanu_operator.py \
+  tests/test_abc_predictor_corrector.py \
+  tests/test_abc_predictor_corrector_wolfram.py \
+  tests/test_tempered_caputo_solver.py \
+  tests/test_tempered_caputo_regressions.py \
+  tests/test_tempered_convolution_quadrature.py \
+  tests/test_tempered_convolution_quadrature_example.py \
+  tests/test_tempered_convolution_quadrature_wolfram.py \
+  tests/test_tempered_convolution_quadrature_benchmark.py \
+  tests/test_variable_order_caputo_type3_solver.py \
+  tests/test_variable_order_caputo_type3_wolfram.py \
+  tests/test_distributed_order_caputo_solver.py \
+  tests/test_distributed_order_caputo_wolfram.py \
+  tests/test_conformable_solver.py \
+  tests/test_distributed_order_operator.py -q
+python benchmarks/bench_fractional_gl_kernels.py
+python benchmarks/bench_tempered_convolution_quadrature.py
+\end{verbatim}
+Estas pruebas cubren contratos, fórmulas discretas, soluciones manufacturadas y
+paridad de backends. No son una campaña de dinámica no lineal ni una
+certificación de atractores.

@@ -6,7 +6,10 @@ import numpy as np
 import pytest
 
 from hidden_attractors.analysis import compute_cloned_dynamics_spectrum
-from hidden_attractors.integrations.abm_fractional import integrate_fractional_abm
+from hidden_attractors.integrations.abm_fractional import (
+    classify_component_orders,
+    integrate_fractional_abm,
+)
 
 
 def test_abm_q1_linear_matches_short_exact_exponential() -> None:
@@ -49,6 +52,20 @@ def test_abm_incommensurate_components_decay_with_component_orders() -> None:
     assert np.all(states[-1] < states[0])
     assert np.all(states[-1] > 0.0)
     assert len({round(value, 8) for value in states[-1]}) == 3
+
+
+def test_near_component_orders_remain_exactly_incommensurate() -> None:
+    orders = np.asarray([0.6, np.nextafter(0.6, np.inf)])
+    _, states, status = integrate_fractional_abm(
+        lambda state: np.ones_like(state),
+        np.asarray([0.0, 0.0]),
+        orders=orders,
+        h=0.01,
+        n_steps=10,
+    )
+    assert status == "ok"
+    assert classify_component_orders(orders) == "incommensurate_fractional"
+    assert states[-1, 0] != states[-1, 1]
 
 
 def test_cloned_dynamics_diagnostic_gs_classical_and_q1_rk4_reference_run() -> None:

@@ -39,6 +39,7 @@ if _version_2_dir not in sys.path:
 
 from hidden_attractors.parallel import compile_c_target  # noqa: E402
 from hidden_attractors.paths import get_native_cache      # noqa: E402
+from hidden_attractors._rhs import bind_rhs               # noqa: E402
 from ..native.rhs_registry import get_c_rhs_and_params   # noqa: E402
 
 
@@ -47,15 +48,9 @@ from ..native.rhs_registry import get_c_rhs_and_params   # noqa: E402
 # ---------------------------------------------------------------------------
 
 def eval_rhs(rhs: Callable, t: float, x: np.ndarray) -> np.ndarray:
-    """Evaluate ``rhs(t, x)`` or fall back to ``rhs(x)`` for legacy callables.
+    """Evaluate a supported RHS signature without masking internal errors."""
 
-    Used throughout the Python fallback paths so that non-autonomous RHS
-    functions receive the correct current time instead of a frozen ``t=0.0``.
-    """
-    try:
-        return np.asarray(rhs(t, x), dtype=float)
-    except TypeError:
-        return np.asarray(rhs(x), dtype=float)
+    return np.asarray(bind_rhs(rhs)(t, x), dtype=float)
 
 
 def _shared_suffix() -> str:
@@ -249,7 +244,10 @@ def fractional_integrate(
     times : ndarray, shape (N,)
     states : ndarray, shape (N, dim)
     status : str  — "ok" | "diverged" | "diverged_early" | "converged_equilibrium_early" | …
-    info : dict   — backend metadata
+    info : dict
+        Backend metadata. ``n_steps``/``n_steps_completed`` count completed
+        integration increments; ``n_samples`` counts all stored points and
+        ``n_samples_returned`` counts points after the requested history slice.
     """
     q = float(q)
 
@@ -281,6 +279,7 @@ def fractional_integrate(
 
     if not callable(rhs):
         raise TypeError("rhs must be callable.")
+    bound_rhs = bind_rhs(rhs)
 
     x0_arr = np.ascontiguousarray(x0, dtype=np.float64)
     dim = x0_arr.size
@@ -370,6 +369,7 @@ def fractional_integrate(
         "used_c_backend": False,
         "rhs_source": "python_native",
     }
+    callback_failures: list[BaseException] = []
 
     # -----------------------------------------------------------------------
     # Attempt C backend
@@ -403,16 +403,29 @@ def fractional_integrate(
                     dx_ptr: "ctypes.POINTER(ctypes.c_double)",
                     n_val: int,
                     params_val: int,
-                    _rhs=rhs,
+                    _rhs=bound_rhs,
                     _dim=dim,
                 ) -> None:
                     x_arr = np.ctypeslib.as_array(x_ptr, shape=(_dim,))
                     dx_arr = np.ctypeslib.as_array(dx_ptr, shape=(_dim,))
+                    if callback_failures:
+                        dx_arr.fill(np.nan)
+                        return
                     try:
-                        deriv = np.asarray(_rhs(t_val, x_arr), dtype=np.float64)
-                    except TypeError:
-                        deriv = np.asarray(_rhs(x_arr), dtype=np.float64)
-                    dx_arr[:] = deriv[:_dim]
+                        deriv = np.asarray(
+                            _rhs(t_val, x_arr),
+                            dtype=np.float64,
+                        ).reshape(-1)
+                        if deriv.shape != (_dim,):
+                            raise ValueError(
+                                "rhs output shape must match the state dimension."
+                            )
+                        if not np.all(np.isfinite(deriv)):
+                            raise ValueError("rhs must return only finite derivatives.")
+                        dx_arr[:] = deriv
+                    except BaseException as exc:
+                        callback_failures.append(exc)
+                        dx_arr.fill(np.nan)
 
                 c_rhs = backend.RHS_CALLBACK(_py_rhs_wrapper)
                 c_params = ctypes.c_void_p(None)
@@ -452,14 +465,17 @@ def fractional_integrate(
                 ctypes.c_int(num_eq),
             )
 
+            if callback_failures:
+                raise callback_failures[0]
+
             if rc < 0:
                 raise RuntimeError(
                     f"integrate_fractional_c returned error code {rc}."
                 )
 
-            actual_steps = out_steps_c.value
-            times = out_times[:actual_steps]
-            states = out_states[: actual_steps * dim].reshape(actual_steps, dim)
+            actual_samples = out_steps_c.value
+            times = out_times[:actual_samples]
+            states = out_states[: actual_samples * dim].reshape(actual_samples, dim)
 
             # Map C status codes to string labels
             _STATUS_MAP = {
@@ -471,18 +487,24 @@ def fractional_integrate(
             }
             status = _STATUS_MAP.get(status_code_c.value, f"unknown_{status_code_c.value}")
 
+            start_slice = history_len if (return_history is False and history_len > 0) else 0
+            completed_steps = max(actual_samples - H_eff, 0)
             info.update({
                 "used_c_backend": True,
                 "rhs_source": info["rhs_source"],
-                "n_steps": actual_steps,
+                "n_steps": completed_steps,
+                "n_steps_completed": completed_steps,
+                "n_samples": actual_samples,
+                "n_samples_returned": actual_samples - start_slice,
                 "status_code": status_code_c.value,
                 "truncated_memory": (memory_mode == "window"),
             })
 
-            start_slice = history_len if (return_history is False and history_len > 0) else 0
             return times[start_slice:], states[start_slice:], status, info
 
         except Exception as exc:
+            if callback_failures:
+                raise callback_failures[0]
             if not allow_python_fallback:
                 raise RuntimeError(
                     f"C backend failed and allow_python_fallback=False. "
@@ -502,7 +524,7 @@ def fractional_integrate(
         from .abm import _python_abm_integrate
 
         t_arr, x_arr, status = _python_abm_integrate(
-            rhs, x0_arr, q=q, h=h, t_final=t_final,
+            bound_rhs, x0_arr, q=q, h=h, t_final=t_final,
             divergence_norm=divergence_norm,
             history_times=history_times,
             history_states=history_states,
@@ -515,7 +537,7 @@ def fractional_integrate(
         from .efork import _python_efork3_integrate
 
         def _rhs_t(t_val: float, x_val: np.ndarray) -> np.ndarray:
-            return eval_rhs(rhs, t_val, x_val)
+            return np.asarray(bound_rhs(t_val, x_val), dtype=float)
 
         t_arr, x_arr, status = _python_efork3_integrate(
             rhs=_rhs_t,
@@ -532,6 +554,13 @@ def fractional_integrate(
             equilibria=equilibria,
         )
 
-    info["n_steps"] = len(t_arr)
     start_slice = history_len if (return_history is False and history_len > 0) else 0
+    actual_samples = len(t_arr)
+    completed_steps = max(actual_samples - H_eff, 0)
+    info.update({
+        "n_steps": completed_steps,
+        "n_steps_completed": completed_steps,
+        "n_samples": actual_samples,
+        "n_samples_returned": actual_samples - start_slice,
+    })
     return t_arr[start_slice:], x_arr[start_slice:], status, info

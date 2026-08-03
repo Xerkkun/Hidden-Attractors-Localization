@@ -12,59 +12,30 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from hidden_attractors.systems import ChaoticSystem
+from hidden_attractors.verification.stability import (
+    classify_equilibrium_stability as _classify_stability,
+)
 
 
 def classify_equilibrium_stability(
-    system: ChaoticSystem, eq_point: np.ndarray, q: float, tol: float = 1e-8
+    system: ChaoticSystem,
+    eq_point: np.ndarray,
+    q: float,
+    tol: float = 1e-8,
+    *,
+    derivative_definition: str = "caputo",
+    order_mode: str = "commensurate",
 ) -> Dict[str, Any]:
-    """Classify the local stability of an equilibrium point.
+    """Delegate to the derivative-aware canonical stability classifier."""
 
-    Using standard eigenvalue checks for q=1.0 and Matignon's criterion for q < 1.0.
-    """
-    J = system.jacobian_matrix(eq_point)
-    eigvals = np.linalg.eigvals(J)
-
-    if abs(q - 1.0) < 1e-10:
-        # Integer stability: Re(lambda) < 0
-        stable = bool(all(np.real(val) < 0.0 for val in eigvals))
-        alpha_min = float("nan")
-        instability_measure = float("nan")
-        stability_class = "stable" if stable else "unstable"
-        matignon_margin = float("nan")
-        matignon_threshold = float("nan")
-    else:
-        # Fractional stability (Matignon's criterion): |arg(lambda)| > q * pi / 2
-        angles = np.abs(np.angle(eigvals))
-        threshold = q * np.pi / 2.0
-
-        # margin_i = |arg(lambda_i)| - q*pi/2
-        margins = angles - threshold
-        margin_min = float(np.min(margins))
-
-        if margin_min > tol:
-            stable = True
-            stability_class = "stable"
-        elif margin_min < -tol:
-            stable = False
-            stability_class = "unstable"
-        else:
-            stable = False
-            stability_class = "marginal_or_inconclusive"
-
-        alpha_min = float(np.min(angles))
-        instability_measure = float(q - 2.0 * alpha_min / np.pi)
-        matignon_margin = margin_min
-        matignon_threshold = threshold
-
-    return {
-        "eigenvalues": eigvals,
-        "stable": stable,
-        "stability_class": stability_class,
-        "matignon_margin": matignon_margin,
-        "matignon_threshold": matignon_threshold,
-        "alpha_min": alpha_min,
-        "instability_measure": instability_measure,
-    }
+    return _classify_stability(
+        system,
+        eq_point,
+        tol,
+        q=q,
+        derivative_definition=derivative_definition,
+        order_mode=order_mode,
+    )
 
 
 def plot_matignon_equilibria(
@@ -72,26 +43,35 @@ def plot_matignon_equilibria(
     equilibria: Dict[str, np.ndarray],
     q: float,
     output_dir: str | Path,
+    *,
+    derivative_definition: str = "caputo",
+    order_mode: str = "commensurate",
 ) -> str:
     """Renders the premium Matignon stability plane visualization for all equilibria.
 
     Saves the plot as 'figures/matignon_equilibria.png'.
     """
+    # Validate the scientific criterion before creating output directories.
+    all_eigvals = []
+    eq_details = []
+
+    for name, eq_pt in equilibria.items():
+        res = classify_equilibrium_stability(
+            system,
+            eq_pt,
+            q,
+            derivative_definition=derivative_definition,
+            order_mode=order_mode,
+        )
+        all_eigvals.extend(res["eigenvalues"])
+        eq_details.append((name, res))
+
     output_dir = Path(output_dir)
     fig_dir = output_dir / "figures"
     fig_dir.mkdir(parents=True, exist_ok=True)
 
     fig = plt.figure(figsize=(8, 7), dpi=300)
     ax = fig.add_subplot(111)
-
-    # Pre-calculate eigenvalues to determine limits
-    all_eigvals = []
-    eq_details = []
-
-    for name, eq_pt in equilibria.items():
-        res = classify_equilibrium_stability(system, eq_pt, q)
-        all_eigvals.extend(res["eigenvalues"])
-        eq_details.append((name, res))
 
     all_eigvals = np.array(all_eigvals)
     max_radius = float(np.max(np.abs(all_eigvals))) if len(all_eigvals) > 0 else 1.0
@@ -145,7 +125,7 @@ def plot_matignon_equilibria(
         inst_meas = res["instability_measure"]
         is_stable = res["stable"]
 
-        if abs(q - 1.0) < 1e-10:
+        if q == 1.0:
             info_lines.append(f"{name}: stable={is_stable}")
         else:
             info_lines.append(f"{name}: stable={is_stable} | min|arg|={alpha_min:.3f} | inst_meas={inst_meas:.3f}")

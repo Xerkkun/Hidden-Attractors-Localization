@@ -644,6 +644,21 @@ The result records sampling, embedding, neighbor, fit, backend-version, and
 memory-limit metadata. It is dependent on the observable and reconstruction
 parameters.
 
+## Local Bandt--Pompe permutation entropy
+
+HAFO implements permutation entropy locally through
+`ordinal_pattern_distribution` and `permutation_entropy`. The Python, Numba,
+and C/OpenMP paths share forward delayed windows, lexicographic Lehmer ranks,
+explicit tie policies, and normalization by the complete `m!` outcome space.
+The result retains sampling, projection, trajectory fingerprint, backend, finite
+sample warnings, and the fractional-memory caveat when applicable. See
+[Permutation Entropy](permutation_entropy.md) for the full convention and
+validation contract.
+
+This finite plug-in entropy is an ordinal diagnostic of the supplied scalar
+observable. It is not, by itself, an entropy-rate estimator or a certificate of
+chaos, attraction, or hiddenness.
+
 ## Optional complexity backends
 
 `compute_complexity_measures` delegates to installed `nolds` or `antropy`
@@ -655,7 +670,7 @@ versions. Depending on the backend, it exposes:
   $D_2=\lim_{r\to0}\mathrm d\log C(r)/\mathrm d\log r$;
 - Rosenstein's largest exponent and the Hurst exponent;
 - detrended fluctuation analysis, $F(s)\propto s^\alpha$;
-- normalized permutation and spectral entropy; and
+- normalized permutation entropy (external cross-check) and spectral entropy; and
 - Higuchi fractal dimension.
 
 ```python

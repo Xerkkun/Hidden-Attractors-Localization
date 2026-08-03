@@ -1,0 +1,136 @@
+{
+  "final_status": "ok",
+  "candidate_type": "stable_periodic_running_cycle_on_R_times_S1",
+  "stable_cycle": {
+    "loop_gain": 500.0,
+    "section_velocity": 140.12508491278837,
+    "section_x": 0.004908904250040993,
+    "period": 0.08267666249740024,
+    "multiplier": 0.8172041431534901,
+    "return_residual": 5.684341886080802e-14,
+    "stability": "stable"
+  },
+  "unstable_separator": {
+    "loop_gain": 500.0,
+    "section_velocity": 135.17204741963553,
+    "section_x": 0.005535958796674142,
+    "period": 0.10854177963819657,
+    "multiplier": 1.4411073306966986,
+    "return_residual": -4.831690603168681e-13,
+    "stability": "unstable"
+  },
+  "one_period_checks": {
+    "stable_cylinder_return_error": 2.683259549757891e-15,
+    "separator_cylinder_return_error": 6.178447555819515e-14
+  },
+  "candidate_classification": {
+    "final_class": "target_cycle",
+    "target_hit": true,
+    "winding_tail": 12.03343439304868,
+    "cloud_distance_p90": 0.0006361517478792563,
+    "focus_distance_final": 0.47240302833845693,
+    "saddle_distance_final": 0.20984368045365864
+  },
+  "hiddenness": {
+    "summary": {
+      "n_probes": 96,
+      "target_hits": 0,
+      "numerical_failures": 0,
+      "unresolved": 0,
+      "hidden_candidate_allowed": true,
+      "metric": "scaled_R_times_S1_nearest_neighbor_p90",
+      "interpretation": "finite_equilibrium_neighborhood_test_not_global_proof",
+      "by_equilibrium": {
+        "E_focus": {
+          "n": 48,
+          "target_hits": 0,
+          "focus_hits": 48,
+          "unresolved": 0,
+          "failures": 0
+        },
+        "E_saddle": {
+          "n": 48,
+          "target_hits": 0,
+          "focus_hits": 48,
+          "unresolved": 0,
+          "failures": 0
+        }
+      }
+    },
+    "radii": [
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "samples_per_radius_per_equilibrium": 12,
+    "equilibria": [
+      "E_focus",
+      "E_saddle"
+    ],
+    "metric": "scaled_R_times_S1",
+    "interpretation": "hiddenness_supported_under_tested_cylindrical_neighborhoods_not_global_proof"
+  },
+  "published_regression": {
+    "role": "post_derivation_regression_only_not_seed_input",
+    "cases": [
+      {
+        "x0": 0.0,
+        "theta0": 0.0,
+        "shifted_initial_state": [
+          -0.01602944,
+          -0.7974826998815102
+        ],
+        "expected": "target_cycle",
+        "observed": "target_cycle",
+        "passed": true,
+        "classification": {
+          "final_class": "target_cycle",
+          "target_hit": true,
+          "winding_tail": 12.07620765707438,
+          "cloud_distance_p90": 0.0006319883498516342,
+          "focus_distance_final": 0.7559833234824562,
+          "saddle_distance_final": 0.30666483979458137
+        }
+      },
+      {
+        "x0": 0.005,
+        "theta0": 0.0,
+        "shifted_initial_state": [
+          -0.011029439999999998,
+          -0.7974826998815102
+        ],
+        "expected": "target_cycle",
+        "observed": "target_cycle",
+        "passed": true,
+        "classification": {
+          "final_class": "target_cycle",
+          "target_hit": true,
+          "winding_tail": 12.04428684204149,
+          "cloud_distance_p90": 0.0006694234870884045,
+          "focus_distance_final": 0.42971844102008516,
+          "saddle_distance_final": 0.32191776879746936
+        }
+      },
+      {
+        "x0": 0.00555,
+        "theta0": 0.0,
+        "shifted_initial_state": [
+          -0.01047944,
+          -0.7974826998815102
+        ],
+        "expected": "equilibrium_E_focus",
+        "observed": "equilibrium_E_focus",
+        "passed": true,
+        "classification": {
+          "final_class": "equilibrium_E_focus",
+          "target_hit": false,
+          "winding_tail": 0.0,
+          "cloud_distance_p90": 0.42343460434401875,
+          "focus_distance_final": 6.210060938000143e-15,
+          "saddle_distance_final": 0.49230674513434686
+        }
+      }
+    ]
+  }
+}

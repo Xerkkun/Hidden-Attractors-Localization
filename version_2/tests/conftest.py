@@ -36,6 +36,18 @@ def tmp_path(request: pytest.FixtureRequest) -> Path:
         shutil.rmtree(path, ignore_errors=True)
 
 
+@pytest.fixture(autouse=True)
+def isolate_library_figure_store(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Keep every test away from the maintained global figure store."""
+
+    import hidden_attractors.plotting.export as export_module
+    import hidden_attractors.plotting.manifest as manifest_module
+
+    isolated_root = tmp_path / "library_figures"
+    monkeypatch.setattr(export_module, "LIBRARY_FIGURES_ROOT", isolated_root)
+    monkeypatch.setattr(manifest_module, "LIBRARY_FIGURES_ROOT", isolated_root)
+
+
 @pytest.fixture
 def valid_run_metadata() -> dict:
     """Minimal complete metadata accepted for strong hiddenness promotion."""

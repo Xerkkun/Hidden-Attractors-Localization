@@ -1,0 +1,490 @@
+\subsection{Catálogo de definiciones fraccionarias y frontera de significado}
+\label{sec:fundamentos-fraccionarios-diversos}
+
+El núcleo general vive en \codepath{hidden_attractors/fractional/}. Su regla
+principal es no identificar cuatro objetos distintos: la definición continua
+del operador, la discretización, la semántica de los datos iniciales y el
+backend que ejecuta el cálculo. En particular, evaluar una derivada sobre una
+historia ya muestreada no resuelve automáticamente una ecuación diferencial
+fraccionaria (FDE). Esta separación permite conservar el camino Caputo usado en
+los casos Chua y, al mismo tiempo, estudiar otras familias sin cambiar
+silenciosamente el modelo matemático.
+
+La búsqueda bibliográfica se apoyó en SciSpace. La bitácora de preguntas,
+resultados seleccionados y límites del índice se conserva en
+\codepath{docs/scispace_fractional_method_evidence.md}. SciSpace se usó para
+localizar y comparar candidatos; las fórmulas se contrastaron con artículos
+primarios, libros y páginas editoriales. Algunas referencias, entre ellas la
+transformación de Zheng, no fueron recuperadas por el índice exacto y se
+conservaron sólo después de contrastar su DOI. Por tanto, SciSpace no se trata
+como oráculo matemático ni como evidencia de corrección del código.
+
+\begin{center}
+\footnotesize
+\begin{longtable}{@{}L{0.18\textwidth}L{0.23\textwidth}L{0.19\textwidth}L{0.29\textwidth}@{}}
+\toprule
+Familia & Objeto implementado & Estado & Contrato esencial \\
+\midrule
+Caputo & ABM/PECE y EFORK-3 & Implementado & IVP con datos enteros y memoria declarada; el reporte científico usa principalmente \(0<q<1\). \\
+Grünwald--Letnikov (GL) & Pesos, convolución directa, FFT y solver explícito & Experimental salvo kernels de referencia & Historia terminal truncada o desplazamiento Caputo explícito; malla uniforme. \\
+Riemann--Liouville (RL) & Operador GL/CQ sobre muestras & Experimental & No convierte \(x(a)\) en un IVP RL; exige semántica \codepath{operator_only}. \\
+RL templada & Conjugación exponencial, GL, CQ BDF1/BDF2 e historia rápida FBDF1/GNGF2 & Experimental & GL, CQ e historia rápida son operadores muestreados con semántica \codepath{operator_only}; el parámetro de templado forma parte de la definición. \\
+Caputo templada & CQ BDF1/BDF2, historia rápida FBDF1/GNGF2 y ABM/PECE por conjugación & Experimental & CQ e historia rápida son operadores sobre muestras; ABM/PECE es un solver conmensurado. Todos fijan \(\lambda\ge0\) y la condición puntual de forma explícita. \\
+Orden variable GL & GL con \(q=q_n\) & Experimental & Operador sobre muestras: el orden se fija en cada salida; otras convenciones no son equivalentes. \\
+Caputo de orden variable tipo III & L1 implícito con corrector Picard & Experimental & Solver con perfil temporal prescrito; \(\alpha(t_n)\) se usa en toda la fila histórica. \\
+Orden distribuido & Cuadratura en orden más GL & Experimental & Doble discretización: nodos/pesos en \(q\) y malla temporal. \\
+Conformable & Derivada local de Khalil & Experimental & Operador local; no posee la memoria de Caputo, RL o GL. \\
+Conformable & RK4 en reloj conformable & Experimental & Solver conmensurado sobre \(\tau=(t-a)^q/q\); malla física no uniforme y sin memoria hereditaria. \\
+Caputo--Fabrizio & Operador recurrente exponencial & \codepath{research_required} & Normalización explícita; operador de datos, no solver FDE promovido. \\
+Hadamard y Caputo--Hadamard & CQ BDF1/BDF2 en tiempo logarítmico & Experimental & Terminal \(a>0\), malla uniforme en \(u=\log(t/a)\), no en tiempo físico. \\
+Caputo--Hadamard & ABM/PECE en tiempo logarítmico & Experimental & Solver conmensurado de historia completa y condición puntual \(x(a)\). \\
+Atangana--Baleanu--Caputo (ABC) & Operador muestral con kernel Mittag--Leffler & Experimental con crítica explícita & \(0<q\le1/2\), normalización explícita; directo Numba/Python o FFT. \\
+Atangana--Baleanu--Caputo (ABC) & Predictor--corrector convencional & Experimental & Solver conmensurado, \(0<q<1\), compatibilidad inicial e historia completa \(\mathcal O(dN^2)\); no SOE. \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\subsubsection{Riemann--Liouville, Grünwald--Letnikov y desplazamiento Caputo}
+
+Para \(0<q<1\), la derivada izquierda de Riemann--Liouville es
+\[
+ {}_aD_t^q x(t)=\frac{d}{dt}
+ \left[
+   \frac{1}{\Gamma(1-q)}
+   \int_a^t (t-\tau)^{-q}x(\tau)\,d\tau
+ \right].
+\]
+La definición GL correspondiente se obtiene como el límite
+\[
+ {}_aD_t^q x(t)=\lim_{h\to0^+}h^{-q}
+ \sum_{k=0}^{\lfloor (t-a)/h\rfloor}
+ (-1)^k \binom{q}{k}x(t-kh).
+\]
+Los pesos discretos se generan sin funciones gamma por paso:
+\[
+ w_0=1,\qquad
+ w_k=\left(1-\frac{q+1}{k}\right)w_{k-1}.
+\]
+Para regularidad suficiente y \(0<q<1\), el desplazamiento
+\[
+ {}_a^CD_t^q x(t)={}_aD_t^q\bigl[x(t)-x(a)\bigr]
+\]
+explica la opción \codepath{caputo_shifted}; no autoriza a interpretar la
+convolución cruda como un IVP Caputo. Las referencias clásicas son
+Podlubny~\cite{Podlubny1999} y Lubich~\cite{Lubich1986}.
+
+\subsubsection{Templada, de orden variable y conformable}
+
+La ruta RL templada implementa la conjugación
+\[
+ {}_aD_t^{q,\lambda}x(t)=
+ e^{-\lambda(t-a)}{}_aD_t^q
+ \left(e^{\lambda(\,\cdot-a)}x\right)(t),
+ \qquad \lambda\ge0,
+\]
+y después la discretiza mediante dos rutas distintas: GL en
+\codepath{tempered_grunwald_letnikov_derivative}, sólo para RL, y CQ BDF1/BDF2
+en \codepath{tempered_convolution_quadrature}, que además ofrece la definición
+Caputo conjugada con su corrección explícita. La definición y el parámetro
+\(\lambda\) deben conservarse en los metadatos~\cite{SabzikarEtAl2015}.
+
+La ruta Caputo templada declara, en cambio,
+\[
+ {}_a^CD_t^{q,\lambda}x(t)=e^{-\lambda(t-a)}{}_a^CD_t^q
+ \left(e^{\lambda(\,\cdot-a)}x\right)(t),
+ \qquad 0<q\leq1,\quad \lambda\ge0.
+\]
+Este intervalo corresponde al operador CQ; el solver ABM/PECE templado
+disponible más abajo conserva el contrato más estricto \(0<q<1\).
+Para \(0<q\leq1\), la relación correcta entre ambas definiciones es
+\begin{equation}
+ {}_a^CD_t^{q,\lambda}x(t)=
+ {}_aD_t^{q,\lambda}
+ \left[x(t)-e^{-\lambda(t-a)}x(a)\right].
+ \label{eq:tempered-caputo-anchor}
+\end{equation}
+El ancla Caputo es, por tanto, \(e^{-\lambda(t-a)}x(a)\), no la constante
+física \(x(a)\). Una señal constante no es anulada en general cuando
+\(\lambda>0\), mientras que el ancla exponencial sí lo es. Para
+\(m-1<q<m\) se necesita el jet inicial templado completo
+\(c_j=(D+\lambda)^jx(a+)\), \(j=0,\ldots,m-1\); la CQ pública actual se
+limita deliberadamente a \(0<q\leq1\), donde basta el valor puntual.
+
+Si \(\delta_p(\zeta)^q=\sum_{k\ge0}\omega_k^{(q,p)}\zeta^k\) es la
+CQ BDF1 o BDF2 ordinaria, la conjugación produce
+\[
+ \delta_p(e^{-\lambda h}\zeta)^q
+ =\sum_{k\ge0}e^{-\lambda kh}\omega_k^{(q,p)}\zeta^k.
+\]
+HAFO aplica estos pesos amortiguados sin materializar exponentes positivos y,
+para Caputo, resta dentro del corchete de convolución
+\[
+ x(a)e^{-\lambda nh}\sum_{k=0}^{n}\omega_k^{(q,p)}.
+\]
+El corchete completo se multiplica después por \(h^{-q}\).
+Esta convención no incluye el término \(-\lambda^q x\). Tampoco sustituye en
+malla finita el símbolo anterior por
+\([\delta_p(\zeta)/h+\lambda]^q\): son discretizaciones distintas y la segunda
+permanece registrada como método planificado independiente
+\cite{ChenDeng2015,GuoEtAl2019Tempered,JinLiZhou2017}.
+
+La función \codepath{tempered_fast_multistep_history} añade el Fast Method II
+real de Guo et al.~\cite{GuoEtAl2019Tempered} para una \emph{historia ya
+muestreada}; no integra un lado derecho y no es un solver FDE. Para evitar
+confundir el templado físico con los nodos de cuadratura, en lo que sigue se
+denota por \(\sigma\ge0\) el primero y por
+\(\lambda_{\mathrm{aux},j}>0\) los segundos. HAFO admite, para
+\(0<q<1\), los generadores no templados
+\begin{equation}
+ \Omega_{\mathrm{FBDF1}}(z)=(1-z)^q,
+ \qquad
+ \Omega_{\mathrm{GNGF2}}(z)=(1-z)^q
+ \left(1+\frac q2(1-z)\right).
+ \label{eq:tempered-fast-generators}
+\end{equation}
+El segundo es el generalized Newton--Gregory de orden dos, no la BDF2
+fraccionaria \(\bigl(\tfrac32-2z+\tfrac12z^2\bigr)^q\). Sin embargo, en el
+límite entero
+\[
+ \Omega_{\mathrm{GNGF2}}(z)\big|_{q=1}
+ =(1-z)\left(1+\frac{1-z}{2}\right)
+ =\frac32-2z+\frac12z^2,
+\]
+por lo que a \(q=1\) reduce exactamente a BDF2; HAFO evalúa ese extremo con
+los pesos locales exactos y sin cuadratura auxiliar. La distinción es
+necesaria porque el factor real de la BDF2 fraccionaria cambia de signo sobre
+el eje de integración y exigiría fijar y verificar una rama compleja que esta
+ruta real no implementa. Los generadores siguen la construcción FLMM de
+Lubich~\cite{Lubich1986}.
+
+Si \(\omega_\ell^{(q)}\) denota el peso no templado, el cambio de variable
+\(r=h\lambda_{\mathrm{aux}}\) da, para \(\ell\ge1\),
+\begin{equation}
+ \omega_\ell^{(q)}=
+ -\frac{\sin(\pi q)}{\pi}
+ \int_0^\infty r^q(1+r)^{-\ell-1}F_\Omega(-r)\,dr
+ \simeq \sum_{j=1}^{Q}a_j(1+r_j)^{-\ell-1},
+ \qquad r_j=h\lambda_{\mathrm{aux},j}.
+ \label{eq:tempered-fast-real-axis}
+\end{equation}
+Aquí \(F_\Omega(-r)=1\) para FBDF1 y
+\(F_\Omega(-r)=1-qr/2\) para GNGF2. El signo de la densidad es
+\(-\sin(\pi q)/\pi\), no el positivo. En FBDF1 se comprueba directamente con
+la identidad beta--reflexión
+\[
+ -\frac{\sin(\pi q)}{\pi}
+ B(q+1,\ell-q)
+ =\frac{\Gamma(\ell-q)}{\Gamma(-q)\Gamma(\ell+1)}
+ =(-1)^\ell\binom q\ell,
+\]
+lo que fija algebraicamente el signo de los pesos. La cuadratura trapezoidal
+truncada se construye sobre la recta real logarítmica, siguiendo el marco de
+convergencia exponencial de Trefethen--Weideman
+\cite{TrefethenWeideman2014}; los \(r_j\) guardados por la API son
+adimensionales.
+
+La convolución se separa en una ventana local exacta de retardos
+\(0\le\ell\le n_0\) y una historia anterior comprimida. Con la normalización
+adimensional de estado usada por HAFO, cada nodo se actualiza mediante
+\begin{equation}
+ y_m^{(j)}=\frac{e^{-\sigma h}}{1+r_j}
+ \left(y_{m-1}^{(j)}+u_{m-1}\right),
+ \qquad y_0^{(j)}=0.
+ \label{eq:tempered-fast-recurrence}
+\end{equation}
+El factor \(h\) que aparece en otra normalización del estado se absorbe aquí
+en los coeficientes externos. Por ello la recurrencia anterior es exactamente
+la que ejecutan los backends Python y Numba y sólo contiene factores
+contractivos. Para la definición RL templada se agrega la contribución local
+con pesos \(h^{-q}e^{-\sigma h\ell}\omega_\ell^{(q)}\). Para la definición
+Caputo conjugada se resta, con pesos exactos y no comprimidos, el ancla
+\[
+ h^{-q}u_0e^{-\sigma nh}\sum_{\ell=0}^{n}\omega_\ell^{(q)}.
+\]
+Así, la compresión modifica únicamente la historia RL cruda y no aproxima la
+corrección inicial de la Ecuación~\eqref{eq:tempered-caputo-anchor}.
+
+La calibración compara \emph{cada} peso comprimido en los retardos finitos
+\(n_0+1,\ldots,N-1\) contra la recurrencia exacta del generador y exige
+\[
+ E_{1,i}^{\mathrm{rel}}=
+ \frac{\sum_\ell|\widehat\omega_{\ell,i}-\omega_{\ell,i}|}
+      {\sum_\ell|\omega_{\ell,i}|}
+ \le \varepsilon_{\mathrm{rel}}.
+\]
+El refinamiento automático usa \(Q=65,129,257,\ldots\) hasta satisfacer esa
+desigualdad o falla al alcanzar \codepath{max_quadrature_points}; cuando hay
+cola comprimida y selección automática, el tope debe ser al menos 65. El corte
+\codepath{tail_cutoff} localiza el intervalo de la recta real, pero no se
+publica como cota analítica independiente. En aritmética exacta, la cantidad
+reportada
+\[
+ B_i=h^{-q_i}\max_n|u_{n,i}|
+ \sum_\ell|\widehat\omega_{\ell,i}-\omega_{\ell,i}|
+\]
+acota sólo el error del reemplazo de pesos sobre esa malla. No incluye
+redondeo, error de discretización FLMM/CQ, error de un solver FDE, constantes
+desconocidas de la regla trapezoidal infinita ni una cota separada de colas.
+Con \(d\) componentes, \(Q\) nodos y ventana \(n_0\), el lote cuesta
+\(\mathcal O\!\left(d(Q+n_0)N\right)\) y su memoria activa, excluidas entrada
+y salida, es \(\mathcal O\!\left(d(Q+n_0)\right)\).
+
+Con \(v(t)=e^{\lambda(t-a)}x(t)\), el problema
+\({}_a^CD_t^{q,\lambda}x=f(t,x)\) se convierte exactamente en
+\[
+ {}_a^CD_t^qv(t)=e^{\lambda(t-a)}
+ f\!\left(t,e^{-\lambda(t-a)}v(t)\right),\qquad v(a)=x(a).
+\]
+Li--Deng--Zhao establecen el operador, la formulación integral y un método de
+Jacobi~\cite{LiDengZhao2019}. HAFO reutiliza ABM/PECE después de la
+transformación; no afirma implementar ese predictor--corrector de Jacobi ni
+heredar sus órdenes. El parámetro \(\lambda\), la política de memoria y el
+backend quedan en el contrato. La identidad \(\lambda=0\) recupera Caputo y
+forma parte de las pruebas.
+
+En la convención de orden variable disponible, cada salida usa
+\[
+ D_h^{q_n}x_n=h^{-q_n}\sum_{k=0}^{n}w_k(q_n)x_{n-k}.
+\]
+El orden se evalúa en el instante de salida y todos los pesos de esa fila se
+recalculan con \(q_n\). Esta es una convención concreta entre varias posibles y
+no debe extrapolarse a cualquier definición de orden variable
+\cite{SamkoRoss1993}.
+
+La ruta de trayectoria de orden variable fija, por separado, el Caputo tipo III
+de Tavares--Almeida--Torres~\cite{TavaresEtAl2016}:
+\[
+ {}_a^{C,III}D_t^{\alpha(t)}x(t)=
+ \frac{1}{\Gamma(1-\alpha(t))}
+ \int_a^t(t-s)^{-\alpha(t)}x'(s)\,ds.
+\]
+No contiene términos con \(\alpha'(t)\) y no se identifica con los tipos I/II.
+El L1 usa el valor corriente \(\alpha_n=\alpha(t_n)\) en todos los pesos de la
+salida \(n\); el algoritmo rápido de Fang--Sun--Wang~\cite{FangEtAl2020} queda
+como backend futuro, mientras la implementación actual conserva la historia
+directa. Para un arranque \(C^1\), la ecuación en el terminal exige
+\(f(a,x_0)=0\); un arranque no suave se declara explícitamente y no hereda la
+tasa L1 suave.
+
+La derivada conformable de Khalil es local:
+\[
+ T_q^a x(t)=(t-a)^{1-q}x'(t),\qquad t>a,
+\]
+cuando \(x\) es diferenciable~\cite{KhalilEtAl2014}. Su presencia permite
+comparaciones y modelos que la declaren explícitamente, pero no representa un
+kernel hereditario ni comparte la semántica de memoria de Caputo.
+
+Para un problema conmensurado
+\[
+ T_q^a x(t)=f(t,x(t)),
+\]
+el cambio de reloj
+\[
+ \tau=\frac{(t-a)^q}{q},\qquad
+ \frac{dx}{d\tau}=f\!\left(a+(q\tau)^{1/q},x\right)
+\]
+convierte el modelo en una ODE ordinaria. El solver
+\codepath{integrate_conformable_rk4} aplica RK4 clásico con paso uniforme en
+\(\tau\), devuelve por separado el reloj y el tiempo físico y rechaza órdenes
+distintos por componente porque no existiría un reloj único. La malla física es
+generalmente no uniforme. Esta transformación es local y no crea memoria
+hereditaria; sus trayectorias no deben agregarse a evidencia Caputo, RL, GL o
+Hadamard como si compartieran el mismo operador.
+
+\subsubsection{Caputo--Fabrizio, orden distribuido y ABC}
+
+Con una normalización \(M(q)\) declarada, Caputo--Fabrizio usa el kernel
+exponencial
+\[
+ {}_a^{CF}D_t^q x(t)=
+ \frac{M(q)}{1-q}\int_a^t x'(\tau)
+ \exp\!\left[-\frac{q}{1-q}(t-\tau)\right]d\tau .
+\]
+\codepath{caputo_fabrizio_derivative} actualiza exactamente la contribución
+exponencial por intervalo; \codepath{caputo_fabrizio_derivative_reference}
+conserva una suma directa para contraste. Ambas son funciones sobre datos
+muestreados, no un solver promovido. La definición original y la crítica de
+consistencia se citan juntas~\cite{CaputoFabrizio2015,DiethelmEtAl2020}; no se
+oculta esta controversia detrás de una etiqueta de implementación.
+
+Un operador de orden distribuido toma la forma
+\[
+ \mathcal D_w x(t)=\int_{q_{\min}}^{q_{\max}}
+ w(q)D^q x(t)\,dq
+ \approx \sum_{r=1}^{R}\nu_rD^{q_r}x(t).
+\]
+\codepath{distributed_order_gl_derivative} recibe los nodos \(q_r\), los pesos
+de cuadratura \(\nu_r\) y la historia temporal. Su costo suma el de las
+convoluciones temporales para todos los nodos; el resultado depende de ambas
+resoluciones~\cite{CaputoDistributed2001,DiethelmFord2009}.
+
+El solver específico \codepath{integrate_distributed_order_caputo_l1} restringe
+la base a Caputo y la medida a masas no negativas. Aplica L1 a cada nodo y
+agrega primero los coeficientes en un kernel único, por lo que la historia cuesta
+\(\mathcal O(RN+N^2d)\) en lugar de la suma ingenua
+\(\mathcal O(RN^2d)\). Una masa en \(q=1\) se trata como backward Euler
+exacto. El corrector Picard vectorial y esta agregación son adaptaciones HAFO;
+los análisis publicados de cuadratura/L1 para difusión lineal no prueban
+estabilidad ni dinámica oculta del flujo no lineal~\cite{HuEtAl2014Distributed,LinXu2007L1}.
+
+La familia ABC reemplaza el kernel exponencial por uno de Mittag--Leffler,
+esquemáticamente
+\[
+ {}_a^{ABC}D_t^q x(t)=\frac{B(q)}{1-q}
+ \int_a^t x'(\tau)
+ E_q\!\left(-\frac{q}{1-q}(t-\tau)^q\right)d\tau .
+\]
+Sobre una malla uniforme, HAFO interpola linealmente la historia y usa
+\[
+ {}_a^{ABC}D_{t_n}^q x\approx
+ \frac{B(q)}{1-q}\sum_{j=1}^{n}(x_j-x_{j-1})w_{n-j},
+ \qquad
+ w_k=\frac{F((k+1)h)-F(kh)}{h},
+\]
+\[
+ F(s)=sE_{q,2}\!\left(-\frac{q}{1-q}s^q\right).
+\]
+La función \codepath{abc_piecewise_linear_weights} evalúa la serie definitoria
+de \(E_{q,2}\) y rechaza falta de convergencia, cancelación excesiva o pesos que
+violen positividad/monotonía. La función
+\codepath{atangana_baleanu_caputo_derivative} aplica la convolución directa
+Numba/Python o FFT en lote. Se conserva la restricción analizada
+\(0<q\le1/2\) de Yadav--Pandey--Shukla~\cite{YadavEtAl2019}; la definición
+abstracta no se declara restringida por ello.
+
+La normalización siempre aparece en metadatos. El valor predeterminado es
+\(B(q)=1\), mientras \codepath{atangana_baleanu_normalization} ofrece de forma
+explícita \(B(q)=1-q+q/\Gamma(q)\). La prueba manufacturada de orden \(1/2\)
+usa la identidad \(E_{1/2}(-z)=e^{z^2}\operatorname{erfc}(z)\) y las rutas
+Numba, Python y FFT se contrastan entre sí. Esto valida un cálculo finito, no
+un solver ni una trayectoria ABC.
+
+La definición y la crítica de kernels no singulares se citan juntas
+\cite{AtanganaBaleanu2016,DiethelmEtAl2020}. HAFO mantiene tanto el operador
+como el solver en estado experimental y conserva esa controversia en el alcance
+del resultado; la disponibilidad numérica no resuelve las objeciones teóricas.
+
+El solver \codepath{integrate_abc_predictor_corrector} implementa las
+ecuaciones (9)--(14) convencionales de Lee--Kim--Jang
+\cite{LeeKimJang2024}. Para \(0<q<1\), usa la ecuación integral
+\[
+ x(t)=x_0+c_q f(t,x(t))+
+ \frac{d_q}{\Gamma(q)}\int_a^t(t-s)^{q-1}f(s,x(s))\,ds,
+ \qquad
+ c_q=\frac{1-q}{B(q)},\quad d_q=\frac{q}{B(q)}.
+\]
+Una condición inicial clásica regular debe satisfacer \(f(a,x_0)=0\); HAFO
+calcula ese residuo y rechaza un problema incompatible. La publicación supone
+un primer valor con error \(\mathcal O(h^2)\), pero no da su algoritmo. HAFO
+añade un arranque implícito de producto--trapecio resuelto por punto fijo y
+reporta tanto las iteraciones como la falta de convergencia. Esta elección de
+arranque no se atribuye al artículo.
+
+La recurrencia publicada y su evidencia numérica son escalares. La aplicación
+del mismo balance a cada coordenada de un estado vectorial con orden común es
+una extensión de HAFO. La implementación conserva toda la historia,
+\(\mathcal O(dN^2)\) de trabajo y \(\mathcal O(dN)\) de almacenamiento; no usa
+la variante rápida por sumas de exponenciales. Un refinamiento de malla observa
+orden dos en un problema escalar cuadrático suave; ese resultado no se
+transfiere a Chua no suave ni permite inferir estabilidad, caos,
+atracción u ocultedad de una trayectoria finita.
+
+\subsubsection{Hadamard y Caputo--Hadamard}
+
+Con \(a>0\), el integral de Hadamard usa medida \(ds/s\):
+\[
+ ({}_a^HI_t^\alpha x)(t)=\frac{1}{\Gamma(\alpha)}
+ \int_a^t\left(\log\frac{t}{s}\right)^{\alpha-1}x(s)\frac{ds}{s}.
+\]
+La derivación natural emplea
+\[
+ \delta=t\frac{d}{dt},\qquad
+ u=\log(t/a),\qquad
+ \delta x(t)=\frac{d}{du}x(ae^u).
+\]
+La variante tipo RL aplica \(\delta\) después del integral de orden \(1-q\);
+la variante Caputo--Hadamard aplica el integral a \(\delta x\)
+\cite{JaradEtAl2012}. Esta transformación justifica una malla exponencial
+\(t_n=ae^{n\bar h}\), pero no identifica Hadamard con RL en tiempo físico.
+La discretización y el solver se detallan en la
+Sección~\ref{sec:nucleo-numerico-fraccionario}.
+
+\subsubsection{Qué demuestra la verificación actual}
+
+El caso independiente de Wolfram
+\codepath{validation/wolfram/cases/gl_fractional_operator_validation.wl}
+reconstruye pesos GL/RL, identidades de gamma para monomios, la constante RL y
+el límite \(q=1\). El caso
+\codepath{validation/wolfram/cases/hadamard_fractional_operator.wl} verifica,
+sin leer la implementación de HAFO ni este reporte, la transformación
+logarítmica, identidades Hadamard y Caputo--Hadamard, CQ BDF1/BDF2, el límite
+\(q=1\) y una integración ABM manufacturada. El resumen retenido en
+\codepath{validation/outputs/wolfram/hadamard_fractional_operator/}
+marca \codepath{passed=true}; la peor diferencia de operador fue
+\(3.019806626980426\times10^{-14}\) y la máxima diferencia de estado ABM fue
+\(8.881784197001252\times10^{-16}\).
+
+El caso CQ templado
+\codepath{validation/wolfram/cases/tempered_convolution_quadrature.wl}
+construye los coeficientes BDF1/BDF2, los pesos amortiguados y la corrección
+Caputo mediante recurrencias de alta precisión independientes. El resumen
+promovido en
+\codepath{validation/outputs/wolfram/tempered_convolution_quadrature_verified/}
+aprobó 18 de 18 aserciones. La reconstrucción Python independiente difirió
+como máximo \(1.30841518175551\times10^{-14}\), y la comparación obligatoria
+con el núcleo público de HAFO como máximo
+\(4.44089209850063\times10^{-15}\). Estas cifras sólo demuestran concordancia
+algebraico-numérica en las mallas ensayadas.
+
+El caso separado
+\codepath{validation/wolfram/cases/tempered_fast_multistep_history.wl}
+reconstruye a 80 dígitos, sin importar HAFO, el signo beta--reflexión, ambos
+generadores, el límite GNGF2--BDF2, la recurrencia real, las definiciones RL
+templada y Caputo conjugada y el ancla exponencial. Aprobó 13 de 13 aserciones;
+el máximo residuo interno Wolfram entre historia rápida y directa fue
+\(1.72700092683619\times10^{-26}\). El comparador Python independiente tuvo
+una diferencia máxima \(8.881784197001252\times10^{-15}\), y la comparación
+obligatoria con el núcleo público
+\codepath{hidden_attractors.fractional.tempered_fast_multistep_history}
+alcanzó \(1.2434497875801753\times10^{-14}\). Los artefactos se conservan en
+\codepath{validation/outputs/wolfram/tempered_fast_multistep_history_verified/}.
+Estas magnitudes verifican identidades y una malla finita concreta; no son una
+cota general de la regla trapezoidal, un teorema de solver FDE ni evidencia de
+caos, atracción u ocultedad.
+
+El caso
+\codepath{validation/wolfram/cases/atangana_baleanu_operator.wl} reconstruye
+independientemente, para \(q=1/2\), el kernel, los pesos y tres señales de
+prueba. Su resumen retenido marca \codepath{passed=true} y el comparador de
+\codepath{tests/test_atangana_baleanu_wolfram.py} contrasta las rutas Python,
+Numba y FFT. Esta evidencia pertenece sólo al operador muestral en malla finita;
+no cubre por sí misma el predictor--corrector ABC, su arranque ni su
+compatibilidad inicial. Un segundo caso independiente,
+\codepath{validation/wolfram/cases/abc_predictor_corrector.wl}, deriva por
+integración simbólica los pesos lineales y reconstruye una trayectoria
+manufacturada. El resumen retenido da residuo simbólico cero, discrepancia máxima
+de pesos Wolfram--Python de \(3.5388358909926865\times10^{-16}\) y discrepancia
+de trayectoria de \(2.220446049250313\times10^{-16}\). El error finito
+\(4.952013688854784\times10^{-4}\) frente a la solución Volterra se registra
+sólo como diagnóstico, no como prueba de convergencia.
+
+El caso
+\codepath{validation/wolfram/cases/variable_order_caputo_type3_l1.wl}
+deriva independientemente los pesos L1 mediante integración simbólica, la
+identidad tipo III para potencias, una recurrencia manufacturada y la reducción
+a orden constante. El residuo simbólico fue cero, la máxima diferencia
+Wolfram--HAFO fue \(1.5543122344752192\times10^{-15}\) y la diferencia de
+trayectoria \(2.220446049250313\times10^{-16}\). Los errores finitos del operador
+\(2.0245592\times10^{-2}\) y de la recurrencia
+\(1.4766213\times10^{-2}\) son diagnósticos de una malla, no tasas de
+convergencia.
+
+Estas validaciones son comparaciones algebraicas y de malla finita
+independientes. No
+demuestran convergencia general, estabilidad no lineal, caos u ocultedad, ni
+se extienden automáticamente a Caputo--Fabrizio, a la ruta conformable, al orden
+variable tipo I/II, a otras convenciones de orden variable o al orden
+distribuido. Las demás familias se
+sostienen por soluciones manufacturadas,
+invariantes discretos, paridad de backends y referencias primarias, con su
+alcance declarado en cada resultado.

@@ -1,0 +1,8 @@
+{
+  "consistent": true,
+  "memory_applicable": false,
+  "tested_h": true,
+  "tested_integrator": true,
+  "tested_memory": false,
+  "tested_t_final": true
+}

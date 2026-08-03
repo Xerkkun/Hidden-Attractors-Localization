@@ -1,0 +1,21 @@
+{
+  "route": "direct_integer_transfer_no_grid",
+  "transfer_standard": "-L*(1+tau2*s)/(2*s*(1+(tau1+tau2)*s))",
+  "transfer_code_convention": "+L*(1+tau2*s)/(2*s*(1+(tau1+tau2)*s))",
+  "closure_conventions": {
+    "standard": "1-k*G_standard=0",
+    "code": "1+k*W_code=0"
+  },
+  "positive_imaginary_numerator": {
+    "omega_coefficient": 62392.52886902312,
+    "omega_cubed_coefficient": 73.06477093206952
+  },
+  "analytic_condition": "Im G_kappa(i*omega)=omega*(delta*alpha+n*omega^2)/((kappa*delta-omega^2)^2+(alpha+kappa*n)^2*omega^2)>0 for omega>0",
+  "direct_candidates": [],
+  "decision": "rejected_no_positive_imaginary_part_root",
+  "failure_scope": "bounded_static_real_describing_function",
+  "frequency_scan_used": false,
+  "published_initial_conditions_used": false,
+  "direct_seed_failure": "RuntimeError: no direct integer omega/gain candidate was found.",
+  "fallback_route": null
+}

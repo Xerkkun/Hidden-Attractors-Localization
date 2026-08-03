@@ -14,6 +14,8 @@ from typing import Any, Callable, Sequence
 
 import numpy as np
 
+from .._rhs import bind_rhs
+
 
 ALLOWED_INTERPRETATION_LABELS = {
     "no_crossings",
@@ -56,10 +58,8 @@ def _section_index(section_variable: int | str, dimension: int) -> int:
 
 
 def _call_rhs(rhs: Callable[..., Sequence[float]], time: float, state: np.ndarray) -> np.ndarray:
-    try:
-        value = rhs(float(time), np.asarray(state, dtype=float))
-    except TypeError:
-        value = rhs(np.asarray(state, dtype=float))
+    bound_rhs = bind_rhs(rhs)
+    value = bound_rhs(float(time), np.asarray(state, dtype=float))
     return np.asarray(value, dtype=float)
 
 

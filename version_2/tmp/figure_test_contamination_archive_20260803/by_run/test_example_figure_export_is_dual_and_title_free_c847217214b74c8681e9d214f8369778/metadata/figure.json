@@ -1,0 +1,6 @@
+{
+  "source_script": "examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/run_example.py",
+  "system_id": "modified_van_der_pol_duffing",
+  "q": 1.0,
+  "caption_key": "fig_figure"
+}

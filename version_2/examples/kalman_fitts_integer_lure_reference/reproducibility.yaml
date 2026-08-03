@@ -1,0 +1,78 @@
+case_id: kalman_fitts_integer_q1_nonchua_reference
+system:
+  system_id: kalman-fitts-2019
+  parameters:
+    m1: 0.9
+    m2: 1.1
+    beta: 0.03
+    epsilon: 0.01
+
+direct_route:
+  route: direct_integer_transfer
+  fallback_route: null
+  omega_min: 0.0
+  omega_max: 20.0
+
+switching_seed:
+  method: andronov_switching_point_map
+  source_nonlinearity: sign
+  initial_section_state: [-4.0, -4.0, 0.0, -4.0]
+  max_crossings: 400
+  max_return_period: 8
+  convergence_window: 4
+  convergence_tolerance: 1.0e-8
+  bracket_step: 0.02
+  max_crossing_time: 20.0
+  root_tolerance: 1.0e-12
+
+continuation:
+  route: published_sign_to_tanh_homotopy
+  lambda_values:
+    [0.00, 0.02, 0.04, 0.06, 0.08, 0.10, 0.12, 0.14, 0.16, 0.18,
+     0.20, 0.22, 0.24, 0.26, 0.28, 0.30, 0.32, 0.34, 0.36, 0.38,
+     0.40, 0.42, 0.44, 0.46, 0.48, 0.50, 0.52, 0.54, 0.56, 0.58,
+     0.60, 0.62, 0.64, 0.66, 0.68, 0.70, 0.72, 0.74, 0.76, 0.78,
+     0.80, 0.82, 0.84, 0.86, 0.88, 0.90, 0.92, 0.94, 0.96, 0.98,
+     1.00]
+  t_transient: 100.0
+  t_keep: 20.0
+  h: 0.01
+  div_threshold: 100.0
+
+final_simulation:
+  t_burn: 300.0
+  t_keep: 300.0
+  h: 0.01
+  div_threshold: 100.0
+
+hiddenness:
+  radii: [1.0e-5, 1.0e-4, 1.0e-3, 1.0e-2]
+  samples_per_radius: 12
+  sampling_mode: ball
+  random_seed: 201911747
+  t_final: 600.0
+  t_burn: 150.0
+  h: 0.02
+  div_threshold: 100.0
+  equilibrium_tol: 5.0e-3
+  target_cloud_tol: 0.08
+  max_cloud_points: 800
+
+lyapunov:
+  enabled: true
+  h: 0.01
+  t_final: 600.0
+  t_burn: 100.0
+  reorthonormalize_every: 10
+  div_threshold: 100.0
+
+published_regression:
+  role: post_derivation_regression_only_not_seed_input
+  doi: 10.1016/j.ifacol.2019.11.747
+  table: 2
+  third_cycle_point: [-2.11395731851229, 0.663680374961913, 0.891701229667371, 0.279201499188914]
+  point_distance_tolerance: 1.0e-3
+
+outputs:
+  output_dir: validation/reference_cases/kalman_fitts_integer_q1
+  figures_dir: validation/reference_cases/kalman_fitts_integer_q1/figures

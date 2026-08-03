@@ -29,6 +29,8 @@ IGNORED_GENERATED_DIRS = {
     "dist",
     "egg-info",
     "site",
+    "source_snapshots",
+    "tmp",
     "__pycache__",
 }
 
@@ -114,7 +116,10 @@ def test_no_direct_savefig():
         except ValueError:
             continue
             
-        # Skip tests and generated/install trees.
+        # Skip tests, generated/install trees, and immutable source copies.
+        # Policy is enforced on the live maintained route; snapshots are
+        # byte-for-byte evidence of that route and must not be reclassified as
+        # independent scripts merely because they contain export.py.
         if "tests" in f.parts or any(part in IGNORED_GENERATED_DIRS for part in f.parts):
             continue
             

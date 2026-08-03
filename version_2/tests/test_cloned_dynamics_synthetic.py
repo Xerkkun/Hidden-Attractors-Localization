@@ -49,6 +49,31 @@ def test_fractional_stable_system_is_bounded_and_nonpositive() -> None:
     assert np.all(result.exponents <= 0.0)
 
 
+def test_cloned_dynamics_does_not_reinterpret_rhs_body_typeerror() -> None:
+    calls = 0
+
+    def rhs(t, state):
+        nonlocal calls
+        calls += 1
+        del t, state
+        raise TypeError("cloned-rhs-body-typeerror")
+
+    result = compute_cloned_dynamics_spectrum(
+        rhs,
+        np.ones(2),
+        orders=[1.0],
+        h=0.02,
+        t_clone=0.1,
+        n_clones=2,
+        k_blocks=2,
+        delta=1e-3,
+        integration_mode="integer_rk4_reference",
+    )
+
+    assert result.status == "numerical_failure"
+    assert calls == 1
+
+
 def test_small_delta_scale_preserves_sign_pattern() -> None:
     first = _run_linear(1e-3)
     second = _run_linear(1e-4)

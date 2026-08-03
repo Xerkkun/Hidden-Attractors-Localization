@@ -53,7 +53,11 @@ Compatibility aliases such as old piecewise Chua names are importable only to re
 
 | Module | Contents |
 | --- | --- |
-| `hidden_attractors.analysis` | Lyapunov, scalar-time-series Lyapunov, Kaplan--Yorke dimension, spectral, bifurcation, boundedness, Poincare, 0-1, and trajectory metrics |
+| `hidden_attractors.analysis` | Common integer/fractional trajectory contracts, Bandt--Pompe permutation entropy, integer `q=1` SALI/GALI/LDI indices and covariant Lyapunov vectors/angles, Lyapunov, scalar-time-series Lyapunov, Kaplan--Yorke dimension, q=2 correlation curves/explicit D2 fits, spectral, bifurcation, boundedness, Poincare, 0-1, and trajectory metrics |
+| `hidden_attractors.analysis.basin_uncertainty` | Module-qualified basin entropy and uncertainty diagnostics |
+| `hidden_attractors.analysis.delay_embedding` | Module-qualified generalized embedding, ACF/MI delay selection, and FNN diagnostics |
+| `hidden_attractors.analysis.recurrence_advanced` | Module-qualified auto/cross/joint recurrence and advanced RQA |
+| `hidden_attractors.fractional` | Fractional definitions, problem contracts, sampled operators, ordinary/Hadamard/tempered BDF CQ, distributed-order solvers, and the semantic multi-term Caputo L1 facade |
 | `hidden_attractors.seed_generation` | Harmonic-balance seeds - Chua-specific and generic Lur'e |
 | `hidden_attractors.seed_generation.core` | Shared dataclasses, `validate_fractional_order` |
 | `hidden_attractors.seed_generation.chua` | Implemented DF helpers and `find_harmonic_seed` |
@@ -62,6 +66,22 @@ Compatibility aliases such as old piecewise Chua names are importable only to re
 | `hidden_attractors.plotting` | Phase-space and time-series plot helpers |
 | `hidden_attractors.integrations` | Optional external-tool adapters (`nolds`, `antropy`) |
 | `hidden_attractors.workflows` | Workflow specs, contracts, integer Lur'e pipeline |
+
+The module-qualified entries above are public experimental surfaces even when
+their individual functions are not re-exported at package top level. In that
+case `get_tier(function)` may return `None`; the module docstring and this table
+are the current stability declaration. Promotion to the top-level symbol tier
+requires a synchronized `PUBLIC_API_EXPERIMENTAL` and `__all__` change.
+
+The top-level CLV surface comprises `CovariantQRHistoryResult`,
+`CovariantLyapunovResult`, `CovariantAngleResult`,
+`integer_covariant_vectors_from_qr_history`,
+`integer_flow_covariant_lyapunov_vectors`,
+`integer_map_covariant_lyapunov_vectors`,
+`integer_system_covariant_lyapunov_vectors`, and
+`covariant_lyapunov_angles`. Its experimental contract is restricted to
+memoryless integer dynamics with `q=1`; fractional CLV is
+`research_required`, not an experimental executable facade.
 
 ---
 

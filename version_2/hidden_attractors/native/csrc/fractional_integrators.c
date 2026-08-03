@@ -547,3 +547,191 @@ API_EXPORT int integrate_fractional_c(
     free(t); free(x);
     return 0;
 }
+
+// -----------------------------------------------------------------------------
+// Tempered-Caputo ABM in physical coordinates
+// -----------------------------------------------------------------------------
+
+static double robust_vector_norm(const double *values, int dim) {
+    double norm = 0.0;
+    for (int d = 0; d < dim; ++d) {
+        norm = hypot(norm, values[d]);
+    }
+    return norm;
+}
+
+static int vector_is_finite(const double *values, int dim) {
+    for (int d = 0; d < dim; ++d) {
+        if (!isfinite(values[d])) return 0;
+    }
+    return 1;
+}
+
+API_EXPORT int integrate_tempered_caputo_abm_c(
+    RhsCallback rhs,
+    void *params,
+    int dim,
+    const double *x0,
+    double q,
+    double tempering,
+    double h,
+    int n_steps,
+    int memory_mode,
+    int memory_window_length,
+    double divergence_norm,
+    double *out_times,
+    double *out_states,
+    int *out_samples,
+    int *status_code
+) {
+    if (!rhs || !x0 || dim <= 0 || !(q > 0.0 && q < 1.0) ||
+        !isfinite(tempering) || tempering < 0.0 || !(h > 0.0) ||
+        n_steps < 0 || (memory_mode != 0 && memory_mode != 1) ||
+        (memory_mode == 1 && memory_window_length < 2) ||
+        !out_times || !out_states || !out_samples || !status_code) {
+        return -1;
+    }
+
+    const int total_samples = n_steps + 1;
+    double *times = (double *)calloc((size_t)total_samples, sizeof(double));
+    double *x = (double *)calloc((size_t)total_samples * (size_t)dim, sizeof(double));
+    double *fhist = (double *)calloc((size_t)total_samples * (size_t)dim, sizeof(double));
+    double *pow_q = (double *)malloc((size_t)(total_samples + 2) * sizeof(double));
+    double *pow_q1 = (double *)malloc((size_t)(total_samples + 2) * sizeof(double));
+    double *predictor = (double *)malloc((size_t)dim * sizeof(double));
+    double *fp = (double *)malloc((size_t)dim * sizeof(double));
+    double *corrected = (double *)malloc((size_t)dim * sizeof(double));
+
+    if (!times || !x || !fhist || !pow_q || !pow_q1 || !predictor || !fp || !corrected) {
+        free(times); free(x); free(fhist); free(pow_q); free(pow_q1);
+        free(predictor); free(fp); free(corrected);
+        return -2;
+    }
+
+    for (int d = 0; d < dim; ++d) x[d] = x0[d];
+    for (int idx = 0; idx < total_samples + 2; ++idx) {
+        pow_q[idx] = pow((double)idx, q);
+        pow_q1[idx] = pow((double)idx, q + 1.0);
+    }
+
+    *status_code = 0;
+    int last_idx = 0;
+    double initial_norm = robust_vector_norm(x, dim);
+    if (!vector_is_finite(x, dim) || !isfinite(initial_norm)) {
+        *status_code = 2;
+        goto tempered_copy_results;
+    }
+    if (divergence_norm > 0.0 && initial_norm > divergence_norm) {
+        *status_code = 1;
+        goto tempered_copy_results;
+    }
+
+    rhs(0.0, x, fhist, dim, params);
+    if (!vector_is_finite(fhist, dim)) {
+        *status_code = 2;
+        goto tempered_copy_results;
+    }
+
+    const double hq = pow(h, q);
+    const double pred_scale = hq / tgamma(q + 1.0);
+    const double corr_scale = hq / tgamma(q + 2.0);
+
+    for (int i = 0; i < n_steps; ++i) {
+        int s = 0;
+        if (memory_mode == 1) {
+            s = i - memory_window_length + 1;
+            if (s < 0) s = 0;
+        }
+        const int n_prime = i - s;
+        const double t_next = times[i] + h;
+        const double anchor_damping = exp(
+            -tempering * (((double)i + 1.0) - (double)s) * h
+        );
+
+        for (int d = 0; d < dim; ++d) {
+            predictor[d] = anchor_damping * x[s * dim + d];
+        }
+        for (int j = s; j <= i; ++j) {
+            const int r = i - j;
+            const double weight = pow_q[r + 1] - pow_q[r];
+            const double damping = exp(
+                -tempering * (((double)i + 1.0) - (double)j) * h
+            );
+            for (int d = 0; d < dim; ++d) {
+                predictor[d] += pred_scale * weight * damping * fhist[j * dim + d];
+            }
+        }
+        if (!vector_is_finite(predictor, dim)) {
+            *status_code = 2;
+            break;
+        }
+
+        rhs(t_next, predictor, fp, dim, params);
+        if (!vector_is_finite(fp, dim)) {
+            *status_code = 2;
+            break;
+        }
+
+        for (int d = 0; d < dim; ++d) {
+            corrected[d] = anchor_damping * x[s * dim + d];
+        }
+        const double a0 = pow_q1[n_prime]
+            - ((double)n_prime - q) * pow_q[n_prime + 1];
+        const double first_damping = exp(
+            -tempering * (((double)i + 1.0) - (double)s) * h
+        );
+        for (int d = 0; d < dim; ++d) {
+            corrected[d] += corr_scale * a0 * first_damping * fhist[s * dim + d];
+        }
+        for (int j = s + 1; j <= i; ++j) {
+            const int r = i - j;
+            const double weight = pow_q1[r + 2] + pow_q1[r]
+                - 2.0 * pow_q1[r + 1];
+            const double damping = exp(
+                -tempering * (((double)i + 1.0) - (double)j) * h
+            );
+            for (int d = 0; d < dim; ++d) {
+                corrected[d] += corr_scale * weight * damping * fhist[j * dim + d];
+            }
+        }
+        for (int d = 0; d < dim; ++d) {
+            corrected[d] += corr_scale * fp[d];
+            x[(i + 1) * dim + d] = corrected[d];
+        }
+        times[i + 1] = t_next;
+        last_idx = i + 1;
+
+        if (!vector_is_finite(corrected, dim)) {
+            *status_code = 2;
+            break;
+        }
+        const double norm = robust_vector_norm(corrected, dim);
+        if (!isfinite(norm)) {
+            *status_code = 2;
+            break;
+        }
+        if (divergence_norm > 0.0 && norm > divergence_norm) {
+            *status_code = 1;
+            break;
+        }
+
+        rhs(t_next, corrected, &fhist[(i + 1) * dim], dim, params);
+        if (!vector_is_finite(&fhist[(i + 1) * dim], dim)) {
+            *status_code = 2;
+            break;
+        }
+    }
+
+tempered_copy_results:
+    *out_samples = last_idx + 1;
+    for (int i = 0; i <= last_idx; ++i) {
+        out_times[i] = times[i];
+        for (int d = 0; d < dim; ++d) {
+            out_states[i * dim + d] = x[i * dim + d];
+        }
+    }
+
+    free(times); free(x); free(fhist); free(pow_q); free(pow_q1);
+    free(predictor); free(fp); free(corrected);
+    return 0;
+}

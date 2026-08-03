@@ -1,0 +1,231 @@
+{
+  "base_parameters": {
+    "delta": 100.0,
+    "gamma": 0.1,
+    "rho": 200.0,
+    "xi": 3.1
+  },
+  "case_id": "mavpd_integer_hidden_chaos",
+  "direct_seed_records": [
+    {
+      "a0": 0.4315886850827659,
+      "branch_index": 0,
+      "eigenvector": [
+        {
+          "imag": 0.0,
+          "real": 1.0
+        },
+        {
+          "imag": 0.10597523031056215,
+          "real": 0.039701594818603136
+        },
+        {
+          "imag": -0.7492617794225503,
+          "real": 1.9999999999999996
+        }
+      ],
+      "frequency_grid_used": false,
+      "k": 0.13970159481860317,
+      "matched_eigenvalue": {
+        "imag": 10.59752303105621,
+        "real": -7.105427357601002e-15
+      },
+      "method": "classic",
+      "omega0": 10.597523031056207,
+      "phase": 0.0,
+      "published_table_used": false,
+      "search_route": "direct_integer_transfer",
+      "seed": [
+        0.4315886850827659,
+        0.01713475910344968,
+        0.8631773701655315
+      ]
+    },
+    {
+      "a0": 0.6849613617742147,
+      "branch_index": 1,
+      "eigenvector": [
+        {
+          "imag": 0.0,
+          "real": 1.0
+        },
+        {
+          "imag": 0.13344755734228844,
+          "real": 0.25187905034269
+        },
+        {
+          "imag": -3.774951829153814,
+          "real": 1.9999999999999987
+        }
+      ],
+      "frequency_grid_used": false,
+      "k": 0.35187905034269,
+      "matched_eigenvalue": {
+        "imag": 13.344755734228833,
+        "real": -5.689893001203927e-15
+      },
+      "method": "classic",
+      "omega0": 13.344755734228839,
+      "phase": 0.0,
+      "published_table_used": false,
+      "search_route": "direct_integer_transfer",
+      "seed": [
+        0.6849613617742147,
+        0.17252741732512492,
+        1.3699227235484286
+      ]
+    }
+  ],
+  "equations": [
+    "y1'=delta*gamma*y1+delta*y2-delta*y1^3",
+    "y2'=y1-xi*y2-y3",
+    "y3'=rho*y2"
+  ],
+  "equilibria": [
+    {
+      "eigenvalues": [
+        {
+          "imag": 0.0,
+          "real": 13.179182140318382
+        },
+        {
+          "imag": 11.91207173549869,
+          "real": -3.1395910701591925
+        },
+        {
+          "imag": -11.91207173549869,
+          "real": -3.1395910701591925
+        }
+      ],
+      "name": "E0",
+      "rhs_residual": 0.0,
+      "state": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "eigenvalues": [
+        {
+          "imag": 0.0,
+          "real": -23.461845785791205
+        },
+        {
+          "imag": 13.055911953260793,
+          "real": 0.18092289289559804
+        },
+        {
+          "imag": -13.055911953260793,
+          "real": 0.18092289289559804
+        }
+      ],
+      "name": "E+",
+      "rhs_residual": 4.440892098500626e-16,
+      "state": [
+        0.31622776601683794,
+        0.0,
+        0.31622776601683794
+      ]
+    },
+    {
+      "eigenvalues": [
+        {
+          "imag": 0.0,
+          "real": -23.461845785791205
+        },
+        {
+          "imag": 13.055911953260793,
+          "real": 0.18092289289559804
+        },
+        {
+          "imag": -13.055911953260793,
+          "real": 0.18092289289559804
+        }
+      ],
+      "name": "E-",
+      "rhs_residual": 4.440892098500626e-16,
+      "state": [
+        -0.31622776601683794,
+        0.0,
+        -0.31622776601683794
+      ]
+    }
+  ],
+  "fallback_frequency_scan_used": false,
+  "frequency_grid_used_for_seed": false,
+  "hopf_boundary_at_xi_target": {
+    "coefficients_at_selected_boundary": {
+      "a1": 31.610759679898226,
+      "a2": 181.96816508770996,
+      "a3": 5752.151935979645
+    },
+    "derivation": "At E\u00b1, p(lambda)=lambda^3+a1 lambda^2+a2 lambda+a3; with g=2 delta gamma, a1*a2=a3 becomes xi*g^2+(xi^2-delta)*g+xi*(rho-delta)=0.",
+    "gamma_boundaries": [
+      0.017384798091736965,
+      0.14380379839949112
+    ],
+    "routh_hurwitz_residual_at_boundary": 1.8189894035458565e-12,
+    "selected_high_gamma_boundary": 0.14380379839949112,
+    "values_derived_from_equations": true
+  },
+  "jacobian_residual": 9.846680120110727e-09,
+  "lure": {
+    "A": [
+      [
+        10.0,
+        100.0,
+        0.0
+      ],
+      [
+        1.0,
+        -3.1,
+        -1.0
+      ],
+      [
+        0.0,
+        200.0,
+        0.0
+      ]
+    ],
+    "b": [
+      -100.0,
+      0.0,
+      0.0
+    ],
+    "c": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "describing_function": "N(a)=3*a^2/4",
+    "max_field_residual": 0.0,
+    "psi": "sigma^3"
+  },
+  "mathematica_validation": "validation/wolfram/cases/mavpd_integer.wl",
+  "q": 1.0,
+  "report_values_used_as_search_input": false,
+  "source_doi": "10.3390/math11030591",
+  "transfer_checks": [
+    {
+      "W_iomega": {
+        "imag": -1.554312234475219e-14,
+        "real": -7.158114417365523
+      },
+      "branch_index": 0,
+      "closure_residual": 0.0,
+      "describing_function_residual": 2.7755575615628914e-17,
+      "imaginary_residual": 1.554312234475219e-14
+    },
+    {
+      "W_iomega": {
+        "imag": -2.042810365310288e-14,
+        "real": -2.841885582634471
+      },
+      "branch_index": 1,
+      "closure_residual": 0.0,
+      "describing_function_residual": 5.551115123125783e-17,
+      "imaginary_residual": 2.042810365310288e-14
+    }
+  ]
+}

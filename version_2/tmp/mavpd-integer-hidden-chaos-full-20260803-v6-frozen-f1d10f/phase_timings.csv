@@ -1,0 +1,5 @@
+phase,seconds,timing_source
+contract,0.9954274999909103,perf_counter
+search,1300.6812571999617,perf_counter
+diagnostics,271.0359061000054,perf_counter
+hiddenness,762.3043303000159,perf_counter

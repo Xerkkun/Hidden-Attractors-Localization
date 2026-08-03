@@ -1,0 +1,108 @@
+{
+  "alternative_triggered": true,
+  "branches": [
+    {
+      "branch_index": 0,
+      "chaotic_at_base": false,
+      "final_lambda": 1.0,
+      "final_state": [
+        0.2915793511061912,
+        -0.018437647067552035,
+        0.6264299661927551
+      ],
+      "lambda_nodes_completed": 21,
+      "lyapunov": {
+        "does_not_prove_chaos_alone": true,
+        "exponents": [
+          -0.01586103748375367,
+          -0.9627311940164219,
+          -13.108343377718427
+        ],
+        "final_state": [
+          0.1818058653172187,
+          0.013975780705232024,
+          -0.12046173290824375
+        ],
+        "finite_time_local": true,
+        "metadata": {
+          "atol": 2e-12,
+          "burn_nfev": 23474,
+          "dimension": 3,
+          "div_threshold": 50.0,
+          "jacobian_eps": null,
+          "jacobian_source": "analytic",
+          "max_step": 0.02,
+          "nfev": 88070,
+          "njev": 0,
+          "nlu": 0,
+          "qr_interval": 0.5,
+          "qr_segments": 120,
+          "rtol": 2e-10,
+          "solver": "scipy.integrate.solve_ivp",
+          "solver_method": "DOP853",
+          "t_accumulate_completed": 60.0,
+          "t_accumulate_requested": 60.0,
+          "t_burn_completed": 30.0,
+          "t_burn_requested": 30.0
+        },
+        "method": "integer_dop853_variational_qr",
+        "status": "ok",
+        "sum_exponents": -14.086935609218603,
+        "t_accumulate": 60.0
+      }
+    },
+    {
+      "branch_index": 1,
+      "chaotic_at_base": false,
+      "final_lambda": 1.0,
+      "final_state": [
+        0.5632159130208072,
+        0.11086824817405577,
+        1.4909270460638209
+      ],
+      "lambda_nodes_completed": 21,
+      "lyapunov": {
+        "does_not_prove_chaos_alone": true,
+        "exponents": [
+          -0.004340386602122834,
+          -0.43187450492443646,
+          -51.180287301334495
+        ],
+        "final_state": [
+          -0.5677634344876734,
+          -0.11612718259186716,
+          -1.3874614094661268
+        ],
+        "finite_time_local": true,
+        "metadata": {
+          "atol": 2e-12,
+          "burn_nfev": 52550,
+          "dimension": 3,
+          "div_threshold": 50.0,
+          "jacobian_eps": null,
+          "jacobian_source": "analytic",
+          "max_step": 0.02,
+          "nfev": 204938,
+          "njev": 0,
+          "nlu": 0,
+          "qr_interval": 0.5,
+          "qr_segments": 120,
+          "rtol": 2e-10,
+          "solver": "scipy.integrate.solve_ivp",
+          "solver_method": "DOP853",
+          "t_accumulate_completed": 60.0,
+          "t_accumulate_requested": 60.0,
+          "t_burn_completed": 30.0,
+          "t_burn_requested": 30.0
+        },
+        "method": "integer_dop853_variational_qr",
+        "status": "ok",
+        "sum_exponents": -51.616502192861056,
+        "t_accumulate": 60.0
+      }
+    }
+  ],
+  "frequency_grid_used": false,
+  "primary_route": "direct_integer_lure",
+  "trigger": "direct branches at the base case are regular, not hidden-chaotic"
+}

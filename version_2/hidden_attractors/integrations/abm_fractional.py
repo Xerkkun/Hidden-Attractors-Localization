@@ -13,6 +13,8 @@ from typing import Callable, Mapping
 import numpy as np
 from scipy.special import gamma
 
+from .._rhs import bind_rhs
+
 
 def normalize_component_orders(
     orders: float | list[float] | tuple[float, ...] | np.ndarray,
@@ -37,33 +39,11 @@ def classify_component_orders(orders: np.ndarray) -> str:
     """Classify normalized orders for result metadata."""
 
     values = np.asarray(orders, dtype=float)
-    if np.allclose(values, 1.0):
+    if np.all(values == 1.0):
         return "integer"
-    if np.allclose(values, values[0]):
+    if np.all(values == values[0]):
         return "commensurate_fractional"
     return "incommensurate_fractional"
-
-
-def _eval_rhs(
-    rhs: Callable,
-    t: float,
-    state: np.ndarray,
-    parameters: Mapping[str, float] | None,
-) -> np.ndarray:
-    """Evaluate common autonomous and time-dependent RHS signatures."""
-
-    if parameters is not None:
-        try:
-            return np.asarray(rhs(t, state, parameters), dtype=float)
-        except TypeError:
-            try:
-                return np.asarray(rhs(state, parameters), dtype=float)
-            except TypeError:
-                pass
-    try:
-        return np.asarray(rhs(t, state), dtype=float)
-    except TypeError:
-        return np.asarray(rhs(state), dtype=float)
 
 
 @lru_cache(maxsize=64)
@@ -123,16 +103,17 @@ def integrate_fractional_abm(
 
     anchor = np.asarray(x0, dtype=float).reshape(-1)
     component_orders = normalize_component_orders(orders, anchor.size)
+    bound_rhs = bind_rhs(rhs, parameters)
     times = np.arange(n_steps + 1, dtype=float) * h
     states = np.zeros((n_steps + 1, anchor.size), dtype=float)
     rhs_values = np.zeros_like(states)
     states[0] = anchor
-    rhs_values[0] = _eval_rhs(rhs, 0.0, anchor, parameters)
+    rhs_values[0] = np.asarray(bound_rhs(0.0, anchor), dtype=float)
     if rhs_values[0].shape != anchor.shape:
         raise ValueError("rhs output shape must match x0.")
 
     order_groups = {
-        float(q): np.flatnonzero(np.isclose(component_orders, q))
+        float(q): np.flatnonzero(component_orders == q)
         for q in np.unique(component_orders)
     }
     weights = {
@@ -147,7 +128,10 @@ def integrate_fractional_abm(
                 weights[q][0][n, : n + 1] @ rhs_values[: n + 1, indices]
             )
         try:
-            predicted_rhs = _eval_rhs(rhs, times[n + 1], predictor, parameters)
+            predicted_rhs = np.asarray(
+                bound_rhs(times[n + 1], predictor),
+                dtype=float,
+            )
         except Exception:
             return times[: n + 1], states[: n + 1], "solver_exception"
 
@@ -164,7 +148,10 @@ def integrate_fractional_abm(
             return times[: n + 2], states[: n + 2], "diverged"
         states[n + 1] = corrected
         try:
-            rhs_values[n + 1] = _eval_rhs(rhs, times[n + 1], corrected, parameters)
+            rhs_values[n + 1] = np.asarray(
+                bound_rhs(times[n + 1], corrected),
+                dtype=float,
+            )
         except Exception:
             return times[: n + 2], states[: n + 2], "solver_exception"
 

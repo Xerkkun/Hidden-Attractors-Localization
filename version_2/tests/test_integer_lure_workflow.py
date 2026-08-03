@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import inspect
 from pathlib import Path
 
 import numpy as np
@@ -71,11 +72,11 @@ def test_frequency_scan_remains_an_explicit_alternative() -> None:
 
 
 @pytest.mark.unit
-def test_default_integer_seed_route_does_not_call_frequency_scan(monkeypatch) -> None:
-    def fail_if_called(*_args, **_kwargs):
-        raise AssertionError("frequency scan must not run in the primary integer route")
-
-    monkeypatch.setattr(integer_lure_module, "find_lure_harmonic_seed", fail_if_called)
+def test_default_integer_seed_route_has_no_frequency_scan_arguments() -> None:
+    parameters = inspect.signature(integer_lure_module.integer_lure_seed).parameters
+    assert "nscan" not in parameters
+    assert "search_route" not in parameters
+    assert "fallback_route" not in parameters
     seed = integer_lure_module.integer_lure_seed(get_system("chua-nonsmooth"))
     assert seed.search_route == "direct_integer_transfer"
     assert seed.omega == pytest.approx(2.039186939959001, abs=1.0e-11)

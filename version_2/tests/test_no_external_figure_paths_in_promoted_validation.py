@@ -20,6 +20,19 @@ LEGACY_FIELDS = {
     "unpromoted_outputs",
 }
 
+# Runtime-local promotion pointers are validated for confinement and hashes by
+# the figure/run contract tests.  They are metadata, not portable evidence.
+RUNTIME_PATH_FIELDS_BY_SUFFIX = {
+    "/run_manifest.json": {"central_paths", "global_manifest_paths"},
+    "/figures/figure_manifest.json": {"central_paths"},
+    "/figures/global_promotion_receipt.json": {"global_manifest_paths"},
+}
+
+NON_ACTIVE_VALIDATION_PREFIXES = (
+    "validation/reference_cases/archive/",
+    "validation/source_snapshots/",
+)
+
 BANNED_PATTERNS = [
     re.compile(r"[A-Za-z]:[\\/]+Users[\\/]"),
     re.compile(r"(^|[^A-Za-z0-9_])[\\/]Users[\\/]"),
@@ -64,14 +77,38 @@ def is_policy_markdown_line(lines: list[str], idx: int) -> bool:
     )
 
 
-def scan_json(value: Any, rel_file: str, violations: list[str], in_legacy: bool = False) -> None:
+def scan_json(
+    value: Any,
+    rel_file: str,
+    violations: list[str],
+    in_legacy: bool = False,
+    in_runtime_path_field: bool = False,
+) -> None:
+    def is_runtime_path_key(key: str) -> bool:
+        if not rel_file.startswith("validation/reference_cases/"):
+            return False
+        return any(
+            rel_file.endswith(suffix) and key in allowed_keys
+            for suffix, allowed_keys in RUNTIME_PATH_FIELDS_BY_SUFFIX.items()
+        )
+
     if isinstance(value, dict):
         for key, child in value.items():
-            scan_json(child, rel_file, violations, in_legacy or key in LEGACY_FIELDS)
+            scan_json(
+                child,
+                rel_file,
+                violations,
+                in_legacy or key in LEGACY_FIELDS,
+                in_runtime_path_field or is_runtime_path_key(str(key)),
+            )
     elif isinstance(value, list):
         for item in value:
-            scan_json(item, rel_file, violations, in_legacy)
-    elif isinstance(value, str) and contains_banned_pattern(value, allow_validation_outputs=in_legacy):
+            scan_json(item, rel_file, violations, in_legacy, in_runtime_path_field)
+    elif (
+        isinstance(value, str)
+        and not in_runtime_path_field
+        and contains_banned_pattern(value, allow_validation_outputs=in_legacy)
+    ):
         violations.append(f"JSON {rel_file}: banned path in non-policy value {value!r}")
 
 
@@ -98,11 +135,14 @@ def test_no_external_figure_paths_in_validation_json() -> None:
     for path in VALIDATION_DIR.glob("**/*.json"):
         if "outputs/wolfram" in path.as_posix():
             continue
+        rel_file = path.relative_to(VERSION2_DIR).as_posix()
+        if rel_file.startswith(NON_ACTIVE_VALIDATION_PREFIXES):
+            continue
         try:
             data = json.loads(path.read_text(encoding="utf-8-sig"))
         except Exception:
             continue
-        scan_json(data, path.relative_to(VERSION2_DIR).as_posix(), violations)
+        scan_json(data, rel_file, violations)
     assert not violations, "Banned external paths found in validation JSON:\n" + "\n".join(violations[:100])
 
 
@@ -112,5 +152,8 @@ def test_no_external_figure_paths_in_validation_md() -> None:
     for path in VALIDATION_DIR.glob("**/*.md"):
         if "outputs/wolfram" in path.as_posix():
             continue
-        scan_markdown(path, path.relative_to(VERSION2_DIR).as_posix(), violations)
+        rel_file = path.relative_to(VERSION2_DIR).as_posix()
+        if rel_file.startswith(NON_ACTIVE_VALIDATION_PREFIXES):
+            continue
+        scan_markdown(path, rel_file, violations)
     assert not violations, "Banned external paths found outside legacy/policy markdown sections:\n" + "\n".join(violations[:100])

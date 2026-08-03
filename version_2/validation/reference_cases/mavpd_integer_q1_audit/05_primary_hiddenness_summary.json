@@ -1,0 +1,2511 @@
+{
+  "probe_contract": {
+    "path": "examples/modified_van_der_pol_duffing_integer_lure_audit/input/mavpd_integer_hiddenness_initial_conditions.csv",
+    "sha256": "898da9d508339cdd067e2be33ce6f046647dc0e00a43fde5a67b86ff1d7f1505",
+    "rows": 108,
+    "construction": "3_equilibria_x_3_radii_x_12_explicit_directions",
+    "h": 0.005,
+    "t_final": 260.0,
+    "t_burn": 180.0,
+    "t_keep": 80.0,
+    "equilibrium_tol": 0.001,
+    "target_cloud_tol": 0.08,
+    "max_cloud_points": 500
+  },
+  "cluster_counts": {
+    "inner_positive": 54,
+    "inner_negative": 54,
+    "outer_recurrent_candidate": 0,
+    "unmatched": 0
+  },
+  "target_hits": 0,
+  "hidden_candidate_allowed": true,
+  "interpretation": "finite_shared_equilibrium_neighborhood_screen_not_global_proof",
+  "scientific_status": "outer_periodic_candidate_supported_under_finite_108_probe_contract",
+  "probes": [
+    {
+      "sample_id": 1,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "direction_id": 1,
+      "x0": [
+        1e-05,
+        0.0,
+        0.0
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002241463230682745,
+        "inner_negative": 0.3211470986003813,
+        "outer_recurrent_candidate": 0.10034954897160538
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 2,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "direction_id": 2,
+      "x0": [
+        -1e-05,
+        0.0,
+        0.0
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3211470986003613,
+        "inner_negative": 0.0022414632306831887,
+        "outer_recurrent_candidate": 0.10038102878294428
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 3,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "direction_id": 3,
+      "x0": [
+        0.0,
+        1e-05,
+        0.0
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0022843296643334276,
+        "inner_negative": 0.32168865487009546,
+        "outer_recurrent_candidate": 0.10033866980097829
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 4,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "direction_id": 4,
+      "x0": [
+        0.0,
+        -1e-05,
+        0.0
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32168865487010445,
+        "inner_negative": 0.0022843296643778373,
+        "outer_recurrent_candidate": 0.10033150068490464
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 5,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "direction_id": 5,
+      "x0": [
+        0.0,
+        0.0,
+        1e-05
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3192086880152508,
+        "inner_negative": 0.0021208328247529383,
+        "outer_recurrent_candidate": 0.10027897364208671
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 6,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "direction_id": 6,
+      "x0": [
+        0.0,
+        0.0,
+        -1e-05
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002120832824762998,
+        "inner_negative": 0.3192086880152505,
+        "outer_recurrent_candidate": 0.1002807547318806
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 7,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "direction_id": 7,
+      "x0": [
+        5.527707983925667e-06,
+        0.0,
+        8.333333333333334e-06
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0023141777360957323,
+        "inner_negative": 0.32212612559256987,
+        "outer_recurrent_candidate": 0.10015604615016398
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 8,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "direction_id": 8,
+      "x0": [
+        -6.385801803758553e-06,
+        5.849917548403055e-06,
+        5e-06
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0022783807572071537,
+        "inner_negative": 0.3211473423649147,
+        "outer_recurrent_candidate": 0.10030419227419564
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 9,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "direction_id": 9,
+      "x0": [
+        8.620292708680646e-07,
+        -9.822378925616182e-06,
+        1.6666666666666665e-06
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3209663088325523,
+        "inner_negative": 0.0021651321770787837,
+        "outer_recurrent_candidate": 0.10018321863870298
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 10,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "direction_id": 10,
+      "x0": [
+        5.999288074482012e-06,
+        7.825008934282449e-06,
+        -1.6666666666666675e-06
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002391035286092061,
+        "inner_negative": 0.3217116335644199,
+        "outer_recurrent_candidate": 0.10025912562620891
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 11,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "direction_id": 11,
+      "x0": [
+        -8.52786893732276e-06,
+        -1.5084599390920442e-06,
+        -5e-06
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32113797173655884,
+        "inner_negative": 0.0021474537120450723,
+        "outer_recurrent_candidate": 0.10015315132521535
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 12,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 1e-05,
+      "direction_id": 12,
+      "x0": [
+        4.664032879614043e-06,
+        -2.9668759416993995e-06,
+        -8.333333333333334e-06
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3211572484821106,
+        "inner_negative": 0.0023595921664486047,
+        "outer_recurrent_candidate": 0.1004292750775676
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 13,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "direction_id": 1,
+      "x0": [
+        0.001,
+        0.0,
+        0.0
+      ],
+      "distance_from_equilibrium": 0.001,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002233345828018285,
+        "inner_negative": 0.3220926121035655,
+        "outer_recurrent_candidate": 0.10032807389527948
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 14,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "direction_id": 2,
+      "x0": [
+        -0.001,
+        0.0,
+        0.0
+      ],
+      "distance_from_equilibrium": 0.001,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32209261210356205,
+        "inner_negative": 0.00223334582794073,
+        "outer_recurrent_candidate": 0.100320766448516
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 15,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "direction_id": 3,
+      "x0": [
+        0.0,
+        0.001,
+        0.0
+      ],
+      "distance_from_equilibrium": 0.001,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002219134623089585,
+        "inner_negative": 0.32135335775645624,
+        "outer_recurrent_candidate": 0.10037404482450388
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 16,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "direction_id": 4,
+      "x0": [
+        0.0,
+        -0.001,
+        0.0
+      ],
+      "distance_from_equilibrium": 0.001,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3213533577564655,
+        "inner_negative": 0.0022191346230369465,
+        "outer_recurrent_candidate": 0.10042724081599386
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 17,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "direction_id": 5,
+      "x0": [
+        0.0,
+        0.0,
+        0.001
+      ],
+      "distance_from_equilibrium": 0.001,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32186047038201593,
+        "inner_negative": 0.002314455826596603,
+        "outer_recurrent_candidate": 0.10021464318223332
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 18,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "direction_id": 6,
+      "x0": [
+        0.0,
+        0.0,
+        -0.001
+      ],
+      "distance_from_equilibrium": 0.001,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002314455826594364,
+        "inner_negative": 0.32186047038199517,
+        "outer_recurrent_candidate": 0.10023580241612715
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 19,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "direction_id": 7,
+      "x0": [
+        0.0005527707983925666,
+        0.0,
+        0.0008333333333333334
+      ],
+      "distance_from_equilibrium": 0.001,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0021184130162583193,
+        "inner_negative": 0.3208004949904195,
+        "outer_recurrent_candidate": 0.10020852731739345
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 20,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "direction_id": 8,
+      "x0": [
+        -0.0006385801803758553,
+        0.0005849917548403054,
+        0.0005
+      ],
+      "distance_from_equilibrium": 0.0009999999999999998,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002277669086515204,
+        "inner_negative": 0.32021339861171083,
+        "outer_recurrent_candidate": 0.10034462590406876
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 21,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "direction_id": 9,
+      "x0": [
+        8.620292708680645e-05,
+        -0.0009822378925616183,
+        0.00016666666666666663
+      ],
+      "distance_from_equilibrium": 0.0010000000000000002,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.31932719767913603,
+        "inner_negative": 0.0022700256619855035,
+        "outer_recurrent_candidate": 0.10034513705214854
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 22,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "direction_id": 10,
+      "x0": [
+        0.0005999288074482011,
+        0.0007825008934282448,
+        -0.00016666666666666674
+      ],
+      "distance_from_equilibrium": 0.0009999999999999998,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0023783734529816427,
+        "inner_negative": 0.32109877965134087,
+        "outer_recurrent_candidate": 0.10042807898873696
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 23,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "direction_id": 11,
+      "x0": [
+        -0.000852786893732276,
+        -0.00015084599390920443,
+        -0.0005
+      ],
+      "distance_from_equilibrium": 0.001,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3214167865691459,
+        "inner_negative": 0.0022820294194908874,
+        "outer_recurrent_candidate": 0.10041827256517841
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 24,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.001,
+      "direction_id": 12,
+      "x0": [
+        0.0004664032879614043,
+        -0.00029668759416993993,
+        -0.0008333333333333333
+      ],
+      "distance_from_equilibrium": 0.001,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32086695195537557,
+        "inner_negative": 0.002190300335987824,
+        "outer_recurrent_candidate": 0.1002705137307281
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 25,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "direction_id": 1,
+      "x0": [
+        0.01,
+        0.0,
+        0.0
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002252707436191684,
+        "inner_negative": 0.32201133968916446,
+        "outer_recurrent_candidate": 0.10029939531894569
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 26,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "direction_id": 2,
+      "x0": [
+        -0.01,
+        0.0,
+        0.0
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32201133968916285,
+        "inner_negative": 0.0022527074361766842,
+        "outer_recurrent_candidate": 0.10027439840406313
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 27,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "direction_id": 3,
+      "x0": [
+        0.0,
+        0.01,
+        0.0
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.00244151993154533,
+        "inner_negative": 0.32253521063940394,
+        "outer_recurrent_candidate": 0.10033478854794368
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 28,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "direction_id": 4,
+      "x0": [
+        0.0,
+        -0.01,
+        0.0
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32253521063941326,
+        "inner_negative": 0.0024415199315320135,
+        "outer_recurrent_candidate": 0.10033652018092823
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 29,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "direction_id": 5,
+      "x0": [
+        0.0,
+        0.0,
+        0.01
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3204884541751879,
+        "inner_negative": 0.0021739713107375,
+        "outer_recurrent_candidate": 0.10053235208349562
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 30,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "direction_id": 6,
+      "x0": [
+        0.0,
+        0.0,
+        -0.01
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002173971310737244,
+        "inner_negative": 0.3204884541752195,
+        "outer_recurrent_candidate": 0.10038261859061848
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 31,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "direction_id": 7,
+      "x0": [
+        0.005527707983925666,
+        0.0,
+        0.008333333333333333
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002209014460199805,
+        "inner_negative": 0.3204276437114381,
+        "outer_recurrent_candidate": 0.10036773733128969
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 32,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "direction_id": 8,
+      "x0": [
+        -0.006385801803758553,
+        0.005849917548403054,
+        0.005
+      ],
+      "distance_from_equilibrium": 0.009999999999999998,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0022358265723079838,
+        "inner_negative": 0.32138282210396174,
+        "outer_recurrent_candidate": 0.100343602681616
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 33,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "direction_id": 9,
+      "x0": [
+        0.0008620292708680645,
+        -0.009822378925616182,
+        0.0016666666666666663
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32220884424303026,
+        "inner_negative": 0.0023138334338617685,
+        "outer_recurrent_candidate": 0.10011443801899395
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 34,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "direction_id": 10,
+      "x0": [
+        0.005999288074482011,
+        0.007825008934282448,
+        -0.0016666666666666674
+      ],
+      "distance_from_equilibrium": 0.009999999999999998,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0021823841716490577,
+        "inner_negative": 0.32078990645603894,
+        "outer_recurrent_candidate": 0.10034059743754263
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 35,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "direction_id": 11,
+      "x0": [
+        -0.00852786893732276,
+        -0.0015084599390920441,
+        -0.005
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3213819779973181,
+        "inner_negative": 0.0023552497822056143,
+        "outer_recurrent_candidate": 0.100306331862642
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 36,
+      "source_equilibrium": "P1",
+      "equilibrium": "E0",
+      "radius": 0.01,
+      "direction_id": 12,
+      "x0": [
+        0.004664032879614043,
+        -0.0029668759416993998,
+        -0.008333333333333333
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3203490926946545,
+        "inner_negative": 0.0021616032315845066,
+        "outer_recurrent_candidate": 0.10038332670485466
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 37,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "direction_id": 1,
+      "x0": [
+        0.31623776601683795,
+        0.0,
+        0.31622776601683794
+      ],
+      "distance_from_equilibrium": 1.0000000000010001e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0024317891950525533,
+        "inner_negative": 0.32080276783119194,
+        "outer_recurrent_candidate": 0.10025761535192512
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 38,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "direction_id": 2,
+      "x0": [
+        0.31621776601683793,
+        0.0,
+        0.31622776601683794
+      ],
+      "distance_from_equilibrium": 1.0000000000010001e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.00216848545244906,
+        "inner_negative": 0.32230339170397926,
+        "outer_recurrent_candidate": 0.1003944458100616
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 39,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "direction_id": 3,
+      "x0": [
+        0.31622776601683794,
+        1e-05,
+        0.31622776601683794
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0023551736831166127,
+        "inner_negative": 0.32012808836809675,
+        "outer_recurrent_candidate": 0.1003295977903588
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 40,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "direction_id": 4,
+      "x0": [
+        0.31622776601683794,
+        -1e-05,
+        0.31622776601683794
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0021987637533131426,
+        "inner_negative": 0.3211052390212164,
+        "outer_recurrent_candidate": 0.10037375679177277
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 41,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "direction_id": 5,
+      "x0": [
+        0.31622776601683794,
+        0.0,
+        0.31623776601683795
+      ],
+      "distance_from_equilibrium": 1.0000000000010001e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0023629932701733757,
+        "inner_negative": 0.3217782625020866,
+        "outer_recurrent_candidate": 0.10033275951018222
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 42,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "direction_id": 6,
+      "x0": [
+        0.31622776601683794,
+        0.0,
+        0.31621776601683793
+      ],
+      "distance_from_equilibrium": 1.0000000000010001e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002149028816850784,
+        "inner_negative": 0.3211659907335854,
+        "outer_recurrent_candidate": 0.10033478637385054
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 43,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "direction_id": 7,
+      "x0": [
+        0.31623329372482184,
+        0.0,
+        0.3162360993501713
+      ],
+      "distance_from_equilibrium": 9.999999999984439e-06,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0022168715539168517,
+        "inner_negative": 0.3213482622291505,
+        "outer_recurrent_candidate": 0.10041418724723265
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 44,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "direction_id": 8,
+      "x0": [
+        0.3162213802150342,
+        5.849917548403055e-06,
+        0.3162327660168379
+      ],
+      "distance_from_equilibrium": 9.99999999997177e-06,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0022566701453063226,
+        "inner_negative": 0.31963294735741377,
+        "outer_recurrent_candidate": 0.100342570480867
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 45,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "direction_id": 9,
+      "x0": [
+        0.3162286280461088,
+        -9.822378925616182e-06,
+        0.3162294326835046
+      ],
+      "distance_from_equilibrium": 1.0000000000000597e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0021968342632037795,
+        "inner_negative": 0.32002841936440546,
+        "outer_recurrent_candidate": 0.10028188778369516
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 46,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "direction_id": 10,
+      "x0": [
+        0.31623376530491243,
+        7.825008934282449e-06,
+        0.31622609935017126
+      ],
+      "distance_from_equilibrium": 1.000000000000509e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0022800886245955927,
+        "inner_negative": 0.3210788104195931,
+        "outer_recurrent_candidate": 0.10033481216942686
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 47,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "direction_id": 11,
+      "x0": [
+        0.3162192381479006,
+        -1.5084599390920442e-06,
+        0.31622276601683796
+      ],
+      "distance_from_equilibrium": 1.0000000000009223e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0022809051987554875,
+        "inner_negative": 0.32107911159175334,
+        "outer_recurrent_candidate": 0.10034851841754973
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 48,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 1e-05,
+      "direction_id": 12,
+      "x0": [
+        0.31623243004971757,
+        -2.9668759416993995e-06,
+        0.3162194326835046
+      ],
+      "distance_from_equilibrium": 1.0000000000007153e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002139225170842336,
+        "inner_negative": 0.31908073453840635,
+        "outer_recurrent_candidate": 0.10025646605788824
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 49,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "direction_id": 1,
+      "x0": [
+        0.31722776601683794,
+        0.0,
+        0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.0010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0021413544654737414,
+        "inner_negative": 0.3211471715696697,
+        "outer_recurrent_candidate": 0.1003461419034282
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 50,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "direction_id": 2,
+      "x0": [
+        0.31522776601683794,
+        0.0,
+        0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.0010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0022813823214510023,
+        "inner_negative": 0.3221782655530635,
+        "outer_recurrent_candidate": 0.10022256882871519
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 51,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "direction_id": 3,
+      "x0": [
+        0.31622776601683794,
+        0.001,
+        0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.001,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002283629843896081,
+        "inner_negative": 0.32176367249749394,
+        "outer_recurrent_candidate": 0.10036826064865237
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 52,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "direction_id": 4,
+      "x0": [
+        0.31622776601683794,
+        -0.001,
+        0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.001,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002307167025679132,
+        "inner_negative": 0.3216500422804057,
+        "outer_recurrent_candidate": 0.10031553441850487
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 53,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "direction_id": 5,
+      "x0": [
+        0.31622776601683794,
+        0.0,
+        0.31722776601683794
+      ],
+      "distance_from_equilibrium": 0.0010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0023496322110472152,
+        "inner_negative": 0.32248544568596654,
+        "outer_recurrent_candidate": 0.1003844160358066
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 54,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "direction_id": 6,
+      "x0": [
+        0.31622776601683794,
+        0.0,
+        0.31522776601683794
+      ],
+      "distance_from_equilibrium": 0.0010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0021983844037534853,
+        "inner_negative": 0.32179335194893893,
+        "outer_recurrent_candidate": 0.10034742430000279
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 55,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "direction_id": 7,
+      "x0": [
+        0.3167805368152305,
+        0.0,
+        0.3170610993501713
+      ],
+      "distance_from_equilibrium": 0.0010000000000000093,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002360375202060223,
+        "inner_negative": 0.3230305773241888,
+        "outer_recurrent_candidate": 0.10033994763279602
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 56,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "direction_id": 8,
+      "x0": [
+        0.31558918583646206,
+        0.0005849917548403054,
+        0.31672776601683794
+      ],
+      "distance_from_equilibrium": 0.0010000000000000163,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0021427626886795425,
+        "inner_negative": 0.32129033728440437,
+        "outer_recurrent_candidate": 0.10035682953444312
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 57,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "direction_id": 9,
+      "x0": [
+        0.3163139689439248,
+        -0.0009822378925616183,
+        0.3163944326835046
+      ],
+      "distance_from_equilibrium": 0.0009999999999999992,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0022076947379916774,
+        "inner_negative": 0.3196769613517539,
+        "outer_recurrent_candidate": 0.100257072899838
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 58,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "direction_id": 10,
+      "x0": [
+        0.31682769482428613,
+        0.0007825008934282448,
+        0.3160610993501713
+      ],
+      "distance_from_equilibrium": 0.000999999999999991,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0020398091705144095,
+        "inner_negative": 0.32050628248960594,
+        "outer_recurrent_candidate": 0.10034006050959751
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 59,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "direction_id": 11,
+      "x0": [
+        0.3153749791231057,
+        -0.00015084599390920443,
+        0.31572776601683794
+      ],
+      "distance_from_equilibrium": 0.0009999999999999773,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0022458890936917116,
+        "inner_negative": 0.32120654179408253,
+        "outer_recurrent_candidate": 0.10030421246770926
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 60,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.001,
+      "direction_id": 12,
+      "x0": [
+        0.3166941693047993,
+        -0.00029668759416993993,
+        0.3153944326835046
+      ],
+      "distance_from_equilibrium": 0.0010000000000000052,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0023267423677966175,
+        "inner_negative": 0.3194317242724229,
+        "outer_recurrent_candidate": 0.10030919968809965
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 61,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "direction_id": 1,
+      "x0": [
+        0.32622776601683795,
+        0.0,
+        0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002441148624313675,
+        "inner_negative": 0.3215037840530788,
+        "outer_recurrent_candidate": 0.1003385055159185
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 62,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "direction_id": 2,
+      "x0": [
+        0.30622776601683793,
+        0.0,
+        0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0022559808585117585,
+        "inner_negative": 0.32145568963479365,
+        "outer_recurrent_candidate": 0.10039854417125357
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 63,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "direction_id": 3,
+      "x0": [
+        0.31622776601683794,
+        0.01,
+        0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0022973217040204883,
+        "inner_negative": 0.32153147001530713,
+        "outer_recurrent_candidate": 0.100368070317833
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 64,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "direction_id": 4,
+      "x0": [
+        0.31622776601683794,
+        -0.01,
+        0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0023800516629559282,
+        "inner_negative": 0.3211862366863056,
+        "outer_recurrent_candidate": 0.1003320057719758
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 65,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "direction_id": 5,
+      "x0": [
+        0.31622776601683794,
+        0.0,
+        0.32622776601683795
+      ],
+      "distance_from_equilibrium": 0.010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002345469973324162,
+        "inner_negative": 0.32219005687511526,
+        "outer_recurrent_candidate": 0.10033043460520033
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 66,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "direction_id": 6,
+      "x0": [
+        0.31622776601683794,
+        0.0,
+        0.30622776601683793
+      ],
+      "distance_from_equilibrium": 0.010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.0021870107055923164,
+        "inner_negative": 0.32144996333266285,
+        "outer_recurrent_candidate": 0.10037084168543077
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 67,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "direction_id": 7,
+      "x0": [
+        0.3217554740007636,
+        0.0,
+        0.3245610993501713
+      ],
+      "distance_from_equilibrium": 0.010000000000000016,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002334723330207752,
+        "inner_negative": 0.32118221145414516,
+        "outer_recurrent_candidate": 0.10025277357618295
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 68,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "direction_id": 8,
+      "x0": [
+        0.3098419642130794,
+        0.005849917548403054,
+        0.32122776601683795
+      ],
+      "distance_from_equilibrium": 0.009999999999999986,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002269773454077048,
+        "inner_negative": 0.31898944588435885,
+        "outer_recurrent_candidate": 0.10031694684376792
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 69,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "direction_id": 9,
+      "x0": [
+        0.31708979528770603,
+        -0.009822378925616182,
+        0.3178944326835046
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002413030060007247,
+        "inner_negative": 0.3211759677273771,
+        "outer_recurrent_candidate": 0.10044729219555919
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 70,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "direction_id": 10,
+      "x0": [
+        0.32222705409131996,
+        0.007825008934282448,
+        0.3145610993501713
+      ],
+      "distance_from_equilibrium": 0.010000000000000004,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002235221077901944,
+        "inner_negative": 0.32155156082204606,
+        "outer_recurrent_candidate": 0.10039677975713379
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 71,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "direction_id": 11,
+      "x0": [
+        0.30769989707951517,
+        -0.0015084599390920441,
+        0.31122776601683794
+      ],
+      "distance_from_equilibrium": 0.010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002314340348477262,
+        "inner_negative": 0.3213224390585505,
+        "outer_recurrent_candidate": 0.10030872795643501
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 72,
+      "source_equilibrium": "P2",
+      "equilibrium": "E+",
+      "radius": 0.01,
+      "direction_id": 12,
+      "x0": [
+        0.320891798896452,
+        -0.0029668759416993998,
+        0.3078944326835046
+      ],
+      "distance_from_equilibrium": 0.010000000000000018,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_positive",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.002165000777974477,
+        "inner_negative": 0.320362759764094,
+        "outer_recurrent_candidate": 0.10035577659943223
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 73,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "direction_id": 1,
+      "x0": [
+        -0.31621776601683793,
+        0.0,
+        -0.31622776601683794
+      ],
+      "distance_from_equilibrium": 1.0000000000010001e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3223033917039906,
+        "inner_negative": 0.0021684854523950077,
+        "outer_recurrent_candidate": 0.10047563032457647
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 74,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "direction_id": 2,
+      "x0": [
+        -0.31623776601683795,
+        0.0,
+        -0.31622776601683794
+      ],
+      "distance_from_equilibrium": 1.0000000000010001e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3208027678311885,
+        "inner_negative": 0.0024317891950327497,
+        "outer_recurrent_candidate": 0.10025176682913887
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 75,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "direction_id": 3,
+      "x0": [
+        -0.31622776601683794,
+        1e-05,
+        -0.31622776601683794
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32110523902118576,
+        "inner_negative": 0.002198763753239423,
+        "outer_recurrent_candidate": 0.10037693255855902
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 76,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "direction_id": 4,
+      "x0": [
+        -0.31622776601683794,
+        -1e-05,
+        -0.31622776601683794
+      ],
+      "distance_from_equilibrium": 1e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32012808836809725,
+        "inner_negative": 0.0023551736831509983,
+        "outer_recurrent_candidate": 0.10032874112086655
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 77,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "direction_id": 5,
+      "x0": [
+        -0.31622776601683794,
+        0.0,
+        -0.31621776601683793
+      ],
+      "distance_from_equilibrium": 1.0000000000010001e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32116599073356467,
+        "inner_negative": 0.002149028816919955,
+        "outer_recurrent_candidate": 0.10041488064329845
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 78,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "direction_id": 6,
+      "x0": [
+        -0.31622776601683794,
+        0.0,
+        -0.31623776601683795
+      ],
+      "distance_from_equilibrium": 1.0000000000010001e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3217782625020954,
+        "inner_negative": 0.00236299327016891,
+        "outer_recurrent_candidate": 0.1003391691175346
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 79,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "direction_id": 7,
+      "x0": [
+        -0.31622223830885404,
+        0.0,
+        -0.3162194326835046
+      ],
+      "distance_from_equilibrium": 9.999999999984439e-06,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3204325021146596,
+        "inner_negative": 0.002294504329829121,
+        "outer_recurrent_candidate": 0.1003197843693743
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 80,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "direction_id": 8,
+      "x0": [
+        -0.3162341518186417,
+        5.849917548403055e-06,
+        -0.31622276601683796
+      ],
+      "distance_from_equilibrium": 9.99999999997177e-06,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3211602282262324,
+        "inner_negative": 0.00226675895254048,
+        "outer_recurrent_candidate": 0.10032594950849022
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 81,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "direction_id": 9,
+      "x0": [
+        -0.3162269039875671,
+        -9.822378925616182e-06,
+        -0.31622609935017126
+      ],
+      "distance_from_equilibrium": 1.0000000000000597e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3187482255985508,
+        "inner_negative": 0.002214141956220566,
+        "outer_recurrent_candidate": 0.1002788022163304
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 82,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "direction_id": 10,
+      "x0": [
+        -0.31622176672876345,
+        7.825008934282449e-06,
+        -0.3162294326835046
+      ],
+      "distance_from_equilibrium": 1.000000000000509e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3211532863974996,
+        "inner_negative": 0.0024704416118897427,
+        "outer_recurrent_candidate": 0.10042079939388783
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 83,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "direction_id": 11,
+      "x0": [
+        -0.3162362938857753,
+        -1.5084599390920442e-06,
+        -0.3162327660168379
+      ],
+      "distance_from_equilibrium": 1.0000000000009223e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32157959631552524,
+        "inner_negative": 0.002207318238683416,
+        "outer_recurrent_candidate": 0.10034753876789489
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 84,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 1e-05,
+      "direction_id": 12,
+      "x0": [
+        -0.3162231019839583,
+        -2.9668759416993995e-06,
+        -0.3162360993501713
+      ],
+      "distance_from_equilibrium": 1.0000000000007153e-05,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3224355090112718,
+        "inner_negative": 0.002419185832104918,
+        "outer_recurrent_candidate": 0.10038589912521828
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 85,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "direction_id": 1,
+      "x0": [
+        -0.31522776601683794,
+        0.0,
+        -0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.0010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.322178265553073,
+        "inner_negative": 0.0022813823215277764,
+        "outer_recurrent_candidate": 0.10019955478861507
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 86,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "direction_id": 2,
+      "x0": [
+        -0.31722776601683794,
+        0.0,
+        -0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.0010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3211471715696502,
+        "inner_negative": 0.002141354465551655,
+        "outer_recurrent_candidate": 0.1004054697090443
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 87,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "direction_id": 3,
+      "x0": [
+        -0.31622776601683794,
+        0.001,
+        -0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.001,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32165004228041394,
+        "inner_negative": 0.0023071670257075708,
+        "outer_recurrent_candidate": 0.10034465380620072
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 88,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "direction_id": 4,
+      "x0": [
+        -0.31622776601683794,
+        -0.001,
+        -0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.001,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3217636724975028,
+        "inner_negative": 0.002283629843825558,
+        "outer_recurrent_candidate": 0.10039177644944648
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 89,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "direction_id": 5,
+      "x0": [
+        -0.31622776601683794,
+        0.0,
+        -0.31522776601683794
+      ],
+      "distance_from_equilibrium": 0.0010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32179335194893705,
+        "inner_negative": 0.002198384403755768,
+        "outer_recurrent_candidate": 0.10037662959944858
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 90,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "direction_id": 6,
+      "x0": [
+        -0.31622776601683794,
+        0.0,
+        -0.31722776601683794
+      ],
+      "distance_from_equilibrium": 0.0010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3224854456859774,
+        "inner_negative": 0.0023496322110660404,
+        "outer_recurrent_candidate": 0.10039135992016422
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 91,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "direction_id": 7,
+      "x0": [
+        -0.3156749952184454,
+        0.0,
+        -0.3153944326835046
+      ],
+      "distance_from_equilibrium": 0.0010000000000000093,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3211554677072163,
+        "inner_negative": 0.0022730853092782343,
+        "outer_recurrent_candidate": 0.10040823085790183
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 92,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "direction_id": 8,
+      "x0": [
+        -0.3168663461972138,
+        0.0005849917548403054,
+        -0.31572776601683794
+      ],
+      "distance_from_equilibrium": 0.0010000000000000163,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3192847751676457,
+        "inner_negative": 0.002302096634899996,
+        "outer_recurrent_candidate": 0.1003704057254522
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 93,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "direction_id": 9,
+      "x0": [
+        -0.3161415630897511,
+        -0.0009822378925616183,
+        -0.3160610993501713
+      ],
+      "distance_from_equilibrium": 0.0009999999999999992,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32114535072979067,
+        "inner_negative": 0.002150951092002419,
+        "outer_recurrent_candidate": 0.10047694522631256
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 94,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "direction_id": 10,
+      "x0": [
+        -0.31562783720938975,
+        0.0007825008934282448,
+        -0.3163944326835046
+      ],
+      "distance_from_equilibrium": 0.000999999999999991,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32092507003573917,
+        "inner_negative": 0.002179942773389219,
+        "outer_recurrent_candidate": 0.10040271095608005
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 95,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "direction_id": 11,
+      "x0": [
+        -0.3170805529105702,
+        -0.00015084599390920443,
+        -0.31672776601683794
+      ],
+      "distance_from_equilibrium": 0.0009999999999999773,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3211579207380808,
+        "inner_negative": 0.002377681847411184,
+        "outer_recurrent_candidate": 0.10030882477857543
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 96,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.001,
+      "direction_id": 12,
+      "x0": [
+        -0.31576136272887656,
+        -0.00029668759416993993,
+        -0.3170610993501713
+      ],
+      "distance_from_equilibrium": 0.0010000000000000052,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.31992347784734315,
+        "inner_negative": 0.00234125723954569,
+        "outer_recurrent_candidate": 0.1004829949524122
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 97,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "direction_id": 1,
+      "x0": [
+        -0.30622776601683793,
+        0.0,
+        -0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3214556896347909,
+        "inner_negative": 0.0022559808585541105,
+        "outer_recurrent_candidate": 0.10047325629650482
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 98,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "direction_id": 2,
+      "x0": [
+        -0.32622776601683795,
+        0.0,
+        -0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3215037840530778,
+        "inner_negative": 0.002441148624252657,
+        "outer_recurrent_candidate": 0.10031277028536795
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 99,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "direction_id": 3,
+      "x0": [
+        -0.31622776601683794,
+        0.01,
+        -0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3211862366862855,
+        "inner_negative": 0.0023800516630054576,
+        "outer_recurrent_candidate": 0.10033418998226554
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 100,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "direction_id": 4,
+      "x0": [
+        -0.31622776601683794,
+        -0.01,
+        -0.31622776601683794
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32153147001531557,
+        "inner_negative": 0.0022973217040169755,
+        "outer_recurrent_candidate": 0.10037198039677375
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 101,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "direction_id": 5,
+      "x0": [
+        -0.31622776601683794,
+        0.0,
+        -0.30622776601683793
+      ],
+      "distance_from_equilibrium": 0.010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32144996333266207,
+        "inner_negative": 0.0021870107055852244,
+        "outer_recurrent_candidate": 0.10042796915235269
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 102,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "direction_id": 6,
+      "x0": [
+        -0.31622776601683794,
+        0.0,
+        -0.32622776601683795
+      ],
+      "distance_from_equilibrium": 0.010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3221900568751267,
+        "inner_negative": 0.0023454699733548097,
+        "outer_recurrent_candidate": 0.10030592079555749
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 103,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "direction_id": 7,
+      "x0": [
+        -0.3107000580329123,
+        0.0,
+        -0.3078944326835046
+      ],
+      "distance_from_equilibrium": 0.010000000000000016,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3211865998603192,
+        "inner_negative": 0.0023442936440449987,
+        "outer_recurrent_candidate": 0.1003072241784624
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 104,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "direction_id": 8,
+      "x0": [
+        -0.32261356782059647,
+        0.005849917548403054,
+        -0.31122776601683794
+      ],
+      "distance_from_equilibrium": 0.009999999999999986,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.32144128028022845,
+        "inner_negative": 0.0022941570456724357,
+        "outer_recurrent_candidate": 0.10039512137826195
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 105,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "direction_id": 9,
+      "x0": [
+        -0.31536573674596985,
+        -0.009822378925616182,
+        -0.3145610993501713
+      ],
+      "distance_from_equilibrium": 0.01,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3212286257229473,
+        "inner_negative": 0.0022967970979537447,
+        "outer_recurrent_candidate": 0.1003709032271956
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 106,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "direction_id": 10,
+      "x0": [
+        -0.3102284779423559,
+        0.007825008934282448,
+        -0.3178944326835046
+      ],
+      "distance_from_equilibrium": 0.010000000000000004,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.31962550417192953,
+        "inner_negative": 0.0020954586882737116,
+        "outer_recurrent_candidate": 0.10038015210388443
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 107,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "direction_id": 11,
+      "x0": [
+        -0.3247556349541607,
+        -0.0015084599390920441,
+        -0.32122776601683795
+      ],
+      "distance_from_equilibrium": 0.010000000000000009,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3223565024756429,
+        "inner_negative": 0.002254032946660214,
+        "outer_recurrent_candidate": 0.10023634942586246
+      },
+      "target_hit": false
+    },
+    {
+      "sample_id": 108,
+      "source_equilibrium": "P3",
+      "equilibrium": "E-",
+      "radius": 0.01,
+      "direction_id": 12,
+      "x0": [
+        -0.3115637331372239,
+        -0.0029668759416993998,
+        -0.3245610993501713
+      ],
+      "distance_from_equilibrium": 0.010000000000000018,
+      "status": "ok",
+      "final_class": "bounded_nontrivial",
+      "assigned_cluster": "inner_negative",
+      "matched_cluster": true,
+      "cluster_distances_norm": {
+        "inner_positive": 0.3211782447990743,
+        "inner_negative": 0.0022766188758243378,
+        "outer_recurrent_candidate": 0.10055487450015904
+      },
+      "target_hit": false
+    }
+  ]
+}

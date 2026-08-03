@@ -1,6 +1,7 @@
 import os
 import numpy as np
 from typing import Callable, Tuple, Optional, Any, List
+from .._rhs import bind_rhs
 from .fractional_c import fractional_integrate
 from .abm import caputo_abm_integrate
 from .efork import efork_integrate
@@ -90,12 +91,12 @@ def integrate_general(
     x0_arr = np.asarray(x0, dtype=float)
     dim = x0_arr.size
     
-    # Normalize rhs to rhs_t(t, x)
+    # Normalize rhs to rhs_t(t, x) once without using callback exceptions to
+    # infer arity.
+    bound_rhs = bind_rhs(rhs)
+
     def rhs_t(t: float, x: np.ndarray) -> np.ndarray:
-        try:
-            return np.asarray(rhs(t, x), dtype=float)
-        except (TypeError, ValueError):
-            return np.asarray(rhs(x), dtype=float)
+        return np.asarray(bound_rhs(t, x), dtype=float)
             
     # 1. Non-fractional order q = 1.0: use general Heun's method or EFORK_Q1 limit
     if q == 1.0:

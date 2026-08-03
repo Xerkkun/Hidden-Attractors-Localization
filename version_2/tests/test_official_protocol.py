@@ -326,7 +326,7 @@ def test_hiddenness_test_result_evidence_cases(valid_run_metadata) -> None:
             "continuation": {"used": True, "eta_path": [0.0, 0.5, 1.0], "continuation_mode": "fractional", "memory_window_propagated": True, "final_eta": 1.0},
             "trajectory": {"bounded": True, "nontrivial": True, "finite_fraction": 1.0, "post_transient_length": 10_000},
             "robustness": {"tested_h": True, "tested_memory": True, "tested_t_final": True, "tested_integrator": True, "consistent": True},
-            "hiddenness": {"tested_all_equilibria": True, "tested_radii": [1.0e-2, 1.0e-3], "required_radii": [1.0e-2, 1.0e-3], "target_hits_from_equilibria": 0, "basin_intersection_detected": False, "basin_controls_complete": True},
+            "hiddenness": {"tested_all_equilibria": True, "tested_radii": [1.0e-2, 1.0e-3], "required_radii": [1.0e-2, 1.0e-3], "coverage_by_equilibrium_radius_complete": True, "target_hits_from_equilibria": 0, "basin_intersection_detected": False, "basin_controls_complete": True, "numerical_failures": 0},
             "lyapunov": {"lambda_max": 0.15, "method_status": "internal_controls_passed"},
             "zero_one": {"K": 0.9},
             "spectrum": {"label": "broadband_spectrum"},

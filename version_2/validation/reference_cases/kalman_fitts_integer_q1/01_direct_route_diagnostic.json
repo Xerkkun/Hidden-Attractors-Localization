@@ -1,0 +1,30 @@
+{
+  "route": "direct_integer_transfer_no_grid",
+  "all_transfer_candidates": [
+    [
+      1.0054352291420763,
+      -0.0431687011573857
+    ]
+  ],
+  "describing_function_compatible_candidates": [],
+  "omega": 1.0054352291420763,
+  "gain": -0.0431687011573857,
+  "transfer_value": [
+    23.164931378272676,
+    1.368682944757893e-12
+  ],
+  "nyquist_closure_residual": 5.908426502146412e-14,
+  "theoretical_omega": 1.0054352291420865,
+  "theoretical_gain": -0.04316870115738453,
+  "theoretical_differences": {
+    "omega": 1.021405182655144e-14,
+    "gain": 1.1657341758564144e-15
+  },
+  "tanh_df_range": {
+    "lower_open": 0.0,
+    "upper_open": 100.0
+  },
+  "direct_seed_failure": "RuntimeError: no direct integer omega/gain candidate was found.",
+  "decision": "direct_route_rejected_gain_sign_incompatible_use_published_alternative",
+  "frequency_scan_used": false
+}

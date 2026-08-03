@@ -13,6 +13,7 @@ import importlib
 from typing import Any
 from hidden_attractors.integrations.general import integrate_general
 from hidden_attractors.integrations.fractional_c import GeneralFractionalCBackend
+from hidden_attractors.native.backends import GeneralFDEBackend
 from hidden_attractors.native.rhs_registry import get_c_rhs_and_params
 from hidden_attractors.systems import get_system
 import dataclasses
@@ -62,6 +63,43 @@ def test_integrate_general_linear_system_abm():
     # Check that it decays
     assert x[-1, 0] < x[0, 0]
     assert x[-1, 1] < x[0, 1]
+
+
+def test_legacy_general_c_wrapper_propagates_callback_typeerror() -> None:
+    class FakeLibrary:
+        @staticmethod
+        def integrate_general_efork_c(callback, x0, dim, q, h, t_final, limit, out):
+            del q, h, t_final, limit, out
+            state = (ctypes.c_double * dim)(*x0)
+            derivative = (ctypes.c_double * dim)()
+            callback(0.0, state, derivative)
+            return 1
+
+    GeneralFDEBackend.RHS_CALLBACK = ctypes.CFUNCTYPE(
+        None,
+        ctypes.c_double,
+        ctypes.POINTER(ctypes.c_double),
+        ctypes.POINTER(ctypes.c_double),
+    )
+    backend = GeneralFDEBackend(lib=FakeLibrary())
+    calls = 0
+
+    def rhs(time, state):
+        nonlocal calls
+        calls += 1
+        del time, state
+        raise TypeError("legacy-native-callback-typeerror")
+
+    with pytest.raises(TypeError, match="legacy-native-callback-typeerror"):
+        backend.integrate(
+            rhs,
+            np.array([1.0]),
+            q=0.9,
+            h=0.1,
+            t_final=0.1,
+        )
+
+    assert calls == 1
 
 def test_integrate_general_linear_system_efork():
     # 2. Test general EFORK-3 solver (q = 0.9)

@@ -1,0 +1,367 @@
+{
+  "evidence": {
+    "continuation": {
+      "continuation_mode": "integer",
+      "eta_path": [
+        0.0,
+        0.05,
+        0.1,
+        0.15000000000000002,
+        0.2,
+        0.25,
+        0.30000000000000004,
+        0.35000000000000003,
+        0.4,
+        0.45,
+        0.5,
+        0.55,
+        0.6000000000000001,
+        0.65,
+        0.7000000000000001,
+        0.75,
+        0.8,
+        0.8500000000000001,
+        0.9,
+        0.9500000000000001,
+        1.0
+      ],
+      "final_eta": 1.0,
+      "memory_window_propagated": null,
+      "used": true
+    },
+    "equilibria": {
+      "all_found": true,
+      "max_residual": 0.0
+    },
+    "hiddenness": {
+      "basin_controls_complete": true,
+      "basin_intersection_detected": false,
+      "numerical_failures": 0,
+      "required_radii": [
+        0.001
+      ],
+      "target_hits_from_equilibria": 0,
+      "tested_all_equilibria": true,
+      "tested_radii": [
+        0.001
+      ]
+    },
+    "lyapunov": {
+      "exponents": [
+        0.6729559732456537,
+        0.001149837794556775,
+        -20.90301154045573
+      ],
+      "method_status": "internal_controls_passed"
+    },
+    "matignon": {
+      "all_classified": true,
+      "q": 1.0
+    },
+    "poincare": {
+      "bounding_box": {
+        "coordinate_0": {
+          "maximum": 0.16367669382866673,
+          "minimum": 0.014002090256039329
+        },
+        "coordinate_1": {
+          "maximum": -0.3168436974588499,
+          "minimum": -0.4091513458580478
+        }
+      },
+      "centroid": [
+        0.07260384639436185,
+        -0.37544468725340097
+      ],
+      "covariance": [
+        [
+          0.0020135206331543198,
+          0.00118874660909451
+        ],
+        [
+          0.00118874660909451,
+          0.0007063282999778479
+        ]
+      ],
+      "crossing_count": 313,
+      "duplicate_fraction": 0.0,
+      "gate_applicable": true,
+      "interpretation_label": "cloud_like",
+      "nearest_neighbor_stats": {
+        "maximum": 0.0029322889386012283,
+        "mean": 0.0005407940841792464,
+        "median": 0.00041607617061531927,
+        "minimum": 3.6412237115731987e-05
+      },
+      "rank_estimate": 2,
+      "recurrence_like_score": 0.9995840968767635,
+      "retained_after_burn": 313,
+      "section_density_estimate": 1779.9270401397202
+    },
+    "robustness": {
+      "consistent": true,
+      "memory_applicable": false,
+      "tested_h": true,
+      "tested_integrator": true,
+      "tested_memory": false,
+      "tested_t_final": true
+    },
+    "run_metadata": {
+      "continuation": {
+        "continuation_mode": "integer",
+        "eta_path": [
+          0.0,
+          0.05,
+          0.1,
+          0.15000000000000002,
+          0.2,
+          0.25,
+          0.30000000000000004,
+          0.35000000000000003,
+          0.4,
+          0.45,
+          0.5,
+          0.55,
+          0.6000000000000001,
+          0.65,
+          0.7000000000000001,
+          0.75,
+          0.8,
+          0.8500000000000001,
+          0.9,
+          0.9500000000000001,
+          1.0
+        ],
+        "final_eta": 1.0,
+        "memory_window_propagated": null,
+        "used": true
+      },
+      "created_at_utc": "2026-08-03T07:21:06.747608+00:00",
+      "extra": {
+        "candidate_parameters": {
+          "delta": 100.0,
+          "gamma": 0.15380379839949113,
+          "rho": 200.0,
+          "xi": 2.85
+        }
+      },
+      "lure": {
+        "harmonic_condition": "Im W(i omega)=0 and Re W(i omega)=-1/k",
+        "input_vector": [
+          -100.0,
+          0.0,
+          0.0
+        ],
+        "matrix": [
+          [
+            15.380379839949113,
+            100.0,
+            0.0
+          ],
+          [
+            1.0,
+            -2.85,
+            -1.0
+          ],
+          [
+            0.0,
+            200.0,
+            0.0
+          ]
+        ],
+        "output_vector": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "scalar_nonlinearity": "mavpd_lure_system.<locals>.nonlinearity",
+        "transfer_convention": "c^T (s I-A)^(-1) b; direct polynomial roots"
+      },
+      "numerical_contract": {
+        "h": 0.02,
+        "integrator": {
+          "backend": "python",
+          "caputo": false,
+          "name": "DOP853"
+        },
+        "memory": {
+          "M": null,
+          "is_full_caputo": false,
+          "memory_window_steps": null,
+          "memory_window_time": null,
+          "mode": "not_applicable"
+        },
+        "q": 1.0,
+        "t_burn": 80.0,
+        "t_final": 240.0
+      },
+      "parameters": {
+        "delta": 100.0,
+        "gamma": 0.15380379839949113,
+        "rho": 200.0,
+        "xi": 2.85
+      },
+      "provenance": {
+        "alternative_triggered_after_direct_failure": true,
+        "candidate_parameter_set": "locally_derived_parameter_continuation",
+        "candidate_parameter_set_published": false,
+        "frequency_grid_used_for_search": false,
+        "scientific_source_snapshot": {
+          "algorithm": "sha256",
+          "bundle_sha256": "1811f800dd3c7c78f7d443a8c2188c363745e821340b1eb9739c73ddc64abe23",
+          "files": {
+            "examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/reproducibility.yaml": "5df9972ef0e0530e87853ebab631c77a053ad759afc6a1b27684f72cc2b6d1fa",
+            "examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/run_example.py": "c2d8e2d9e702a20e9d5ce767788e562354aab8fb4589d295c0a730c4c2d998f8",
+            "hidden_attractors/analysis/boundedness.py": "435e07b11681e396e731b0a990e9679245b6c6a6685f2daff6062bc4b4a49283",
+            "hidden_attractors/analysis/lyapunov_adaptive.py": "34a88ce05169d9bb49d00ff7f76f3e0be6eee3dd74bfc83a75ef8862d57453b7",
+            "hidden_attractors/analysis/poincare.py": "ba8588d5905d3411f7a6ced9df50d1f40311cbb3cf001811440b588a3dec7786",
+            "hidden_attractors/analysis/spectral.py": "5e909a538fa817ba1de0a515ef9e329cb5733422d75e44e288a1fc9ef518ca1c",
+            "hidden_attractors/analysis/zero_one.py": "4b9a123fd11bfc33ebc8a42a899023027aacd95498403d3724c397bdd4e399a6",
+            "hidden_attractors/reproducibility.py": "2c7d6d4c3f29ae2562171d4b4a89c1ad85cacb03384e91bc7123e6237d6ccc10",
+            "hidden_attractors/seed_generation/__init__.py": "b2ecae2c33e855da63b2c0fcae3644c06e04431efc658a67f32df1783743112c",
+            "hidden_attractors/seed_generation/core.py": "34ddc2b7ba32c810701a686381e4198fe6ec727429daa8b8eebaadcfd5999237",
+            "hidden_attractors/seed_generation/lure.py": "e8030bbfa315c4db910e723b4ae81e9c1cabe71139c9aefe7328c6cbe4de9bbc",
+            "hidden_attractors/solvers/integer.py": "739dc794ac8e9ec69ce7ebdd6c72dcfe156595fe9755371ffc1cb38c017fd878",
+            "hidden_attractors/systems/base.py": "e4ba89fb9a78a2a8e70d7cb7625de10443690b45222319275886ccf60a4c57c1",
+            "hidden_attractors/systems/lure.py": "0b0a73444f6c93f0fec783bbcbd0fe313b8d2ee386505eee15e71cd93880fc41",
+            "hidden_attractors/systems/modified_van_der_pol_duffing.py": "c6009da07dd4a29b07e6045e24f8dc35fce70de5e580fadd34d65aa57dd955a5",
+            "hidden_attractors/verification/attractor_reference.py": "3a5243370fd60b236996aec6dcd99a2fdc78b349c4e0d2802e5ac82fc67f74ce",
+            "hidden_attractors/verification/candidate_gate.py": "a8004401a3914bd649c6db92577a3c80827c7aef3c3eecb2b6c475f16481a97f",
+            "hidden_attractors/verification/stability.py": "ee13f736d53583bb9180fa700ea373a6a9379f681463f5b3044f9acfd6a45264",
+            "hidden_attractors/workflows/integer_hidden_chaos.py": "98e642ac984474d531669f7d6b9a881da4199aee88e6f208d48be3cce6dfa82a",
+            "hidden_attractors/workflows/integer_lure.py": "bf63a6d43e3b9ed91b1f9acb79d0fe3bb5c5976dcbb6ee694fa2eb33259e6c52",
+            "hidden_attractors/workflows/protocol.py": "1c54b72e204382efa67203b8fb0df2344c6880b17f8e5832a794306c32143818",
+            "validation/wolfram/cases/mavpd_integer.wl": "fea73d6ee9ce75404856b0fb24723239034d4f225ac25a96b518b00a3f08b91a"
+          }
+        },
+        "source_doi": "10.3390/math11030591",
+        "source_scope": "published_model_equations_only"
+      },
+      "random_seed": 20260802,
+      "random_seed_policy": "fixed_reproducible",
+      "run_id": "mavpd_integer_hidden_chaos",
+      "schema_version": "1.0",
+      "seed": {
+        "candidate_id": "mavpd-direct-branch-0",
+        "family": "describing_function",
+        "parameters": {
+          "a0": 0.4315886850827659,
+          "k": 0.13970159481860317,
+          "omega0": 10.597523031056207
+        },
+        "source": "direct_integer_transfer_from_declared_equations",
+        "x0": [
+          0.4315886850827659,
+          0.01713475910344968,
+          0.8631773701655315
+        ]
+      },
+      "software": {
+        "git_commit": "1200203cb92358cb831a6792748693437edf562c",
+        "git_diff_hash_scope": "tracked_diff_plus_untracked_source_excluding_generated_outputs",
+        "git_diff_sha256": "8044266f4e2061cfe81d7188a4171626ae4fab3e579b76ce12348adc8a812f64",
+        "numpy_version": "2.4.5",
+        "package_version": "1.1.0",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "python_version": "3.14.3",
+        "scipy_version": "1.17.1",
+        "working_tree_dirty": true
+      },
+      "system": "modified-van-der-pol-duffing",
+      "tolerances": {
+        "boundedness_norm": 120.0,
+        "equilibrium_residual_tol": 1e-08,
+        "lyapunov_positive_tol": 0.02,
+        "matignon_tol": 1e-12,
+        "nontrivial_variance_tol": 1e-08,
+        "spectral_peak_dominance_threshold": 0.8,
+        "target_match_tol": 0.5,
+        "zero_one_chaos_threshold": 0.7,
+        "zero_one_regular_threshold": 0.3
+      },
+      "workflow": "integer_hidden_chaos_search"
+    },
+    "seed": {
+      "localized": true,
+      "method": "describing_function",
+      "source": "direct_integer_transfer_from_declared_equations"
+    },
+    "spectrum": {
+      "gate_applicable": false,
+      "reason": "supporting FFT only; line dominance is not a regularity proof",
+      "state_global": "dominant_periodic_peak"
+    },
+    "tolerances": {
+      "boundedness_norm": 120.0,
+      "equilibrium_residual_tol": 1e-08,
+      "lyapunov_positive_tol": 0.02,
+      "matignon_tol": 1e-12,
+      "nontrivial_variance_tol": 1e-08,
+      "spectral_peak_dominance_threshold": 0.8,
+      "target_match_tol": 0.5,
+      "zero_one_chaos_threshold": 0.7,
+      "zero_one_regular_threshold": 0.3
+    },
+    "trajectory": {
+      "bounded": true,
+      "finite_fraction": 1.0,
+      "minimum_post_transient_length": 1000,
+      "nontrivial": true,
+      "post_transient_rows": 8001
+    },
+    "zero_one": {
+      "K": 0.9938782579743793,
+      "gate_applicable": true,
+      "series": "Poincare return sequence",
+      "state": "zero_one_chaotic_candidate"
+    }
+  },
+  "gate": {
+    "attractor_status": "hidden_under_tested_neighborhoods",
+    "boundedness_support": "bounded_nontrivial",
+    "chaos_evidence_level": "strong_chaos_evidence",
+    "chaotic_hidden_promotion_allowed": true,
+    "checked_conditions": {
+      "continuation_eta_path_recorded": true,
+      "continuation_memory_declared": true,
+      "continuation_reaches_target": true,
+      "equilibria_all_found": true,
+      "equilibria_residual_within_tolerance": true,
+      "hiddenness_basin_controls_complete": true,
+      "hiddenness_no_basin_intersection": true,
+      "hiddenness_required_radii_tested": true,
+      "hiddenness_tested_all_equilibria": true,
+      "hiddenness_tested_radii_recorded": true,
+      "hiddenness_zero_equilibrium_contacts": true,
+      "matignon_all_classified": true,
+      "matignon_q_recorded": true,
+      "reproducibility_metadata_complete": true,
+      "robustness_consistent": true,
+      "robustness_memory_requirement_satisfied": true,
+      "robustness_tested_h": true,
+      "robustness_tested_integrator": true,
+      "robustness_tested_t_final": true,
+      "seed_localized": true,
+      "seed_method_supported": true,
+      "seed_source_traceable": true,
+      "trajectory_bounded": true,
+      "trajectory_finite_fraction_acceptable": true,
+      "trajectory_nontrivial": true,
+      "trajectory_post_transient_sufficient": true
+    },
+    "diagnostic_conflicts": [],
+    "evidence_level": "hidden_under_tested_neighborhoods",
+    "hidden_chaos_status": "chaotic_hidden_under_tested_neighborhoods",
+    "hiddenness_evidence_level": "hidden_under_tested_neighborhoods",
+    "hiddenness_promotion_allowed": true,
+    "lyapunov_support": "positive",
+    "missing_conditions": [],
+    "poincare_support": "chaotic",
+    "promotion_allowed": true,
+    "recommended_interpretation": "strong numerical evidence of chaos",
+    "spectral_support": "not_available_or_inconclusive",
+    "verdict": "hidden_under_tested_neighborhoods",
+    "warnings": [],
+    "zero_one_support": "chaotic"
+  }
+}

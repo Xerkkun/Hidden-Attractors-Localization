@@ -28,6 +28,8 @@ from typing import Any, Callable, List, Optional, Tuple
 
 import numpy as np
 
+from .._rhs import bind_rhs
+
 # ---------------------------------------------------------------------------
 # Compatibility matrix
 # ---------------------------------------------------------------------------
@@ -44,12 +46,6 @@ _FRACTIONAL_ONLY = {"abm", "adm_wu2023"}
 # Integrators that are ONLY for integer order (fail at q<1)
 _INTEGER_ONLY = {"rk4", "heun", "efork_q1"}
 
-# Orders within this absolute distance of one are treated as the integer
-# endpoint throughout selector and low-level dispatcher code.  Keeping the
-# tolerance in one place prevents validation and dispatch from disagreeing.
-INTEGER_ORDER_ATOL = 1e-10
-
-
 def _canonical_name(integrator: str) -> str:
     """Normalize integrator names for internal dispatch."""
     name = integrator.strip().lower()
@@ -59,7 +55,12 @@ def _canonical_name(integrator: str) -> str:
 
 
 def normalize_fractional_order(q: float) -> float:
-    """Return a validated order, normalising the numerical endpoint to 1."""
+    """Return a validated order without coercing near-integer values.
+
+    Only the exactly represented value ``1.0`` selects an integer solver.
+    A fractional value such as ``nextafter(1.0, 0.0)`` retains fractional
+    memory semantics instead of changing model class through a tolerance.
+    """
 
     try:
         value = float(q)
@@ -75,8 +76,6 @@ def normalize_fractional_order(q: float) -> float:
         raise ValueError(
             f"Fractional order q must be in (0, 1]. Got q={q}."
         )
-    if abs(value - 1.0) < INTEGER_ORDER_ATOL:
-        return 1.0
     return value
 
 
@@ -221,6 +220,22 @@ def integrate(
 
     integrate_general = get_integrator_fn()
 
+    # ``ChaoticSystem.rhs`` follows the registry contract
+    # ``rhs(state, parameters)``.  That two-argument form is intentionally not
+    # guessed by ``bind_rhs`` because it is indistinguishable by arity alone
+    # from ``rhs(time, state)``.  When the exact registered vector field is
+    # supplied, bind its parameter mapping explicitly through ``evaluate``.
+    # A different RHS remains authoritative even when ``system`` is provided
+    # only as an acceleration hint.
+    if system is not None and rhs is getattr(system, "rhs", None):
+
+        def bound_rhs(time: float, state: np.ndarray) -> np.ndarray:
+            del time
+            return system.evaluate(state)
+
+    else:
+        bound_rhs = bind_rhs(rhs)
+
     # Unified signature wrapper to handle autonomous/non-autonomous and parametric system callables
     def wrapped_rhs(*args, **kwargs):
         if len(args) == 2:
@@ -230,15 +245,7 @@ def integrate(
         else:
             raise TypeError(f"RHS callable expects 1 or 2 arguments, got {len(args)}")
 
-        if system is not None:
-            # Use evaluate to automatically bind default parameters
-            return system.evaluate(x)
-        else:
-            # Direct fallback when no system object is provided
-            try:
-                return rhs(x)
-            except TypeError:
-                return rhs(t, x)
+        return bound_rhs(t, x)
 
     return integrate_general(
         rhs=wrapped_rhs,

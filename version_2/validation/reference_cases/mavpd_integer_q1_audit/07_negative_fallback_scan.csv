@@ -1,0 +1,8 @@
+route_id,source,branch,phase,y1_0,y2_0,y3_0,status,assigned_cluster,span_norm
+fallback_branch_0_phase_0.5pi,direct_branch_phase,0,1.5707963267948966,2.7362330012723546e-17,-0.048421480594556934,0.41043695504496597,ok,cycle_negative,0.91784721635531
+fallback_branch_0_phase_1.5pi,direct_branch_phase,0,4.71238898038469,-8.208699003817063e-17,0.04842148059455693,-0.4104369550449661,ok,cycle_positive,0.91784721635531
+fallback_branch_1_phase_0.5pi,direct_branch_phase,1,1.5707963267948966,3.878805778706884e-17,-0.08267350141416936,1.9506885504360627,ok,cycle_positive,0.9178472211652081
+fallback_branch_1_phase_1.5pi,direct_branch_phase,1,4.71238898038469,-1.1636417336120652e-16,0.08267350141416933,-1.9506885504360632,ok,cycle_negative,0.9178472211652087
+fallback_initial_condition_0,deterministic_initial_condition,,,0.05,0.0,0.05,ok,cycle_positive,0.9178470999496208
+fallback_initial_condition_1,deterministic_initial_condition,,,-0.05,0.0,-0.05,ok,cycle_negative,0.9178470999496208
+fallback_initial_condition_2,deterministic_initial_condition,,,0.0,0.05,0.0,ok,cycle_negative,0.9178470395850684

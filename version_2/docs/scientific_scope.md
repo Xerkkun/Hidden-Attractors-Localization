@@ -17,7 +17,9 @@ Implemented tools include:
 - Poincare sections;
 - 0-1 diagnostics;
 - bifurcation helpers;
-- Lyapunov diagnostics for modeled trajectories; and
+- Lyapunov diagnostics for modeled trajectories;
+- finite-time covariant Lyapunov vectors and angle diagnostics for
+  memoryless integer `q=1` flows and maps; and
 - Rosenstein/Eckmann Lyapunov estimates plus Kaplan--Yorke dimension for
   uniformly sampled scalar time series.
 
@@ -44,12 +46,19 @@ form the supported high-level characterization surface:
 | `integer_system_lyapunov_exponents` | Integer-order equation-based Lyapunov spectrum |
 | `validate_lyapunov_method_request` | Method, order, Jacobian, and memory-contract validation |
 | `compute_lyapunov_spectrum` | Structured integer/fractional Lyapunov dispatch |
+| `integer_covariant_vectors_from_qr_history` | Integer `q=1` Ginelli backward reconstruction from a validated QR history |
+| `integer_flow_covariant_lyapunov_vectors`, `integer_map_covariant_lyapunov_vectors`, and `integer_system_covariant_lyapunov_vectors` | Finite-time integer `q=1` CLV histories for flows, maps, or compatible HAFO system objects |
+| `covariant_lyapunov_angles` | Geometric pair and principal-subspace angles for a supplied vector history; it does not validate CLV provenance |
 | `estimate_time_series_lyapunov` | Rosenstein/Eckmann estimates from a uniformly sampled scalar series |
 | `kaplan_yorke_dimension` | Kaplan--Yorke dimension from a supplied exponent spectrum |
 
 All return values are finite-data or finite-time numerical estimates. In
 particular, no Lyapunov, spectral, Poincare, bifurcation, boundedness, or 0-1
 result alone establishes chaos or hiddenness.
+
+The CLV construction facades reject `q != 1`. A nonlocal fractional
+derivative requires an operator-specific history-space tangent cocycle, norm,
+and renormalization rule, so fractional CLV remains `research_required`.
 
 ### Systems and parameters
 
