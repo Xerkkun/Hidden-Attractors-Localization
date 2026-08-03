@@ -103,3 +103,6 @@ validation_outputs/
 outputs/
 runs*/
 figures/
+
+# Expanded local repositories restored from committed reproducibility bundles
+/validation/source_snapshots/git/*.git/
