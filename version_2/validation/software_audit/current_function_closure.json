@@ -1,0 +1,166 @@
+{
+  "schema_version": "1.0",
+  "scope": "all_current_fractional_methods_and_recently_integrated_analysis_capabilities",
+  "closure_rule": "Every current executable method is validated and promoted to an implemented registry state; every non-executable method remains planned or theoretical; a method with a reproduced benchmark discrepancy is quarantined instead of promoted.",
+  "api_stability_rule": "implemented is an execution/validation state; the public compatibility tier remains experimental until a separately reviewed stability release",
+  "evidence_profiles": {
+    "core_caputo": {
+      "tests": ["tests/test_fractional_problem.py", "tests/test_fractional_memory_validation.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": ["validation/wolfram/cases/chua_fractional_arctan.wl"]
+    },
+    "gl_operator": {
+      "tests": ["tests/test_fractional_contracts_and_gl.py", "tests/test_fast_grunwald_letnikov.py", "tests/test_gl_fractional_wolfram.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": ["validation/wolfram/cases/gl_fractional_operator_validation.wl", "validation/outputs/wolfram/gl_fractional_operator_validation/gl_fractional_operator_validation_summary.json"]
+    },
+    "gl_solver": {
+      "tests": ["tests/test_fractional_problem.py", "tests/test_fractional_contracts_and_gl.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": []
+    },
+    "sampled_power_law": {
+      "tests": ["tests/test_sampled_fractional_operators.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": []
+    },
+    "lubich_cq": {
+      "tests": ["tests/test_lubich_convolution_quadrature.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": []
+    },
+    "hadamard_cq": {
+      "tests": ["tests/test_hadamard_convolution_quadrature.py", "tests/test_hadamard_wolfram.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": ["validation/wolfram/cases/hadamard_fractional_operator.wl"]
+    },
+    "caputo_hadamard_solver": {
+      "tests": ["tests/test_caputo_hadamard_solver.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": ["validation/wolfram/cases/hadamard_fractional_operator.wl"]
+    },
+    "caputo_fabrizio_operator": {
+      "tests": ["tests/test_caputo_fabrizio_operator.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": []
+    },
+    "abc_operator": {
+      "tests": ["tests/test_atangana_baleanu_operator.py", "tests/test_atangana_baleanu_wolfram.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": ["validation/wolfram/cases/atangana_baleanu_operator.wl"]
+    },
+    "abc_solver": {
+      "tests": ["tests/test_abc_predictor_corrector.py", "tests/test_abc_predictor_corrector_wolfram.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": ["validation/wolfram/cases/abc_predictor_corrector.wl"]
+    },
+    "tempered_solver": {
+      "tests": ["tests/test_tempered_caputo_solver.py", "tests/test_tempered_caputo_regressions.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": []
+    },
+    "tempered_cq": {
+      "tests": ["tests/test_tempered_convolution_quadrature.py", "tests/test_tempered_convolution_quadrature_wolfram.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": ["validation/wolfram/cases/tempered_convolution_quadrature.wl"]
+    },
+    "tempered_fast": {
+      "tests": ["tests/test_tempered_fast_history.py", "tests/test_tempered_fast_history_edges.py", "tests/test_tempered_fast_history_wolfram.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": ["validation/wolfram/cases/tempered_fast_multistep_history.wl"]
+    },
+    "variable_order_caputo": {
+      "tests": ["tests/test_variable_order_caputo_type3_solver.py", "tests/test_variable_order_caputo_type3_wolfram.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": ["validation/wolfram/cases/variable_order_caputo_type3_l1.wl"]
+    },
+    "distributed_caputo": {
+      "tests": ["tests/test_distributed_order_caputo_solver.py", "tests/test_distributed_order_caputo_wolfram.py"],
+      "docs": ["docs/distributed_order_caputo_l1.md", "docs/fractional_method_catalog.md"],
+      "oracles": ["validation/wolfram/cases/distributed_order_caputo_l1.wl"]
+    },
+    "distributed_gl": {
+      "tests": ["tests/test_distributed_order_operator.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": []
+    },
+    "conformable": {
+      "tests": ["tests/test_conformable_solver.py", "tests/test_sampled_fractional_operators.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": []
+    },
+    "registry_only": {
+      "tests": ["tests/test_fractional_contracts_and_gl.py", "tests/test_fractional_problem.py"],
+      "docs": ["docs/fractional_method_catalog.md"],
+      "oracles": []
+    }
+  },
+  "fractional_methods": {
+    "caputo_abm_pece": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "core_caputo"},
+    "efork3": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "core_caputo"},
+    "gl_direct": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "gl_operator"},
+    "gl_backward_euler_caputo": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "sampled_power_law"},
+    "gl_fft_offline": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "gl_operator"},
+    "gl_explicit_discrete": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "gl_solver"},
+    "convolution_quadrature": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "lubich_cq"},
+    "hadamard_convolution_quadrature": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "hadamard_cq"},
+    "caputo_hadamard_abm_pece": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "caputo_hadamard_solver"},
+    "cf_direct_recursive": {"implementation_status": "implemented", "closure_status": "validated_promoted_operator_under_research_gated_derivative", "evidence_profile": "caputo_fabrizio_operator"},
+    "cf_predictor_corrector": {"implementation_status": "planned", "closure_status": "planned_preserved", "evidence_profile": "registry_only"},
+    "abc_predictor_corrector": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "abc_solver"},
+    "abc_fast_soe_predictor_corrector": {"implementation_status": "planned", "closure_status": "planned_preserved", "evidence_profile": "registry_only"},
+    "abc_sampled_convolution": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "abc_operator"},
+    "tempered_caputo_abm_pece_transform": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "tempered_solver"},
+    "tempered_convolution_quadrature": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "tempered_cq"},
+    "tempered_fast_multistep_history": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "tempered_fast"},
+    "tempered_symbol_shift_cq": {"implementation_status": "planned", "closure_status": "planned_preserved", "evidence_profile": "registry_only"},
+    "tempered_gl_direct": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "sampled_power_law"},
+    "variable_order_pece": {"implementation_status": "planned", "closure_status": "planned_preserved", "evidence_profile": "registry_only"},
+    "vo_caputo_type3_l1": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "variable_order_caputo"},
+    "variable_order_gl_direct": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "sampled_power_law"},
+    "distributed_order_caputo_l1": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "distributed_caputo"},
+    "distributed_order_quadrature": {"implementation_status": "planned", "closure_status": "planned_preserved", "evidence_profile": "registry_only"},
+    "distributed_order_gl_direct": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "distributed_gl"},
+    "local_ode_transform": {"implementation_status": "theoretical_only", "closure_status": "theoretical_boundary_preserved", "evidence_profile": "registry_only"},
+    "conformable_rk4_clock": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "conformable"},
+    "conformable_sampled_local": {"implementation_status": "implemented", "closure_status": "validated_promoted", "evidence_profile": "conformable"}
+  },
+  "promoted_analysis_api": {
+    "generalized_delay_embedding": "tests/test_delay_embedding_advanced.py",
+    "estimate_delay_autocorrelation": "tests/test_delay_embedding_advanced.py",
+    "estimate_delay_mutual_information": "tests/test_delay_embedding_advanced.py",
+    "false_nearest_neighbors": "tests/test_delay_embedding_advanced.py",
+    "recurrence_quantification": "tests/test_recurrence_analysis.py",
+    "recurrence_quantification_advanced": "tests/test_recurrence_advanced.py",
+    "basin_entropy": "tests/test_basin_uncertainty.py",
+    "uncertainty_fraction": "tests/test_basin_uncertainty.py",
+    "estimate_uncertainty_exponent": "tests/test_basin_uncertainty.py",
+    "compute_complexity_measures": "tests/test_dynamical_analysis.py",
+    "available_complexity_backends": "tests/test_dynamical_analysis.py",
+    "external_tool_report": "tests/test_dynamical_analysis.py"
+  },
+  "lyapunov_terminal_verdicts": {
+    "integer_qr_benettin": {"closure_status": "validated_promoted", "validation_scope": "exact linear controls and internal crosschecks"},
+    "fractional_variational_abm_qr": {"closure_status": "synthetic_validated_experimental", "validation_scope": "synthetic controls and grid sensitivity; no published quantitative claim"},
+    "fractional_cloned_dynamics_abm_qr": {"closure_status": "synthetic_validated_experimental", "validation_scope": "synthetic sign/trend comparisons; no published quantitative claim"},
+    "fractional_cloned_dynamics_abm_gs_published": {"closure_status": "quarantined_reproduction_discrepancy", "validation_scope": "published reproduction discrepancy; common API requires allow_quarantined_method"},
+    "fractional_variational_dk2018_block_restart_abm_gs": {"closure_status": "quarantined_reproduction_discrepancy", "validation_scope": "Lorenz passes; Rabinovich-Fabrikant lambda_3 discrepancy reproduced by native and MATLAB oracles"}
+  },
+  "preserved_future_work": [
+    "fractional_difference_equations",
+    "cf_predictor_corrector",
+    "abc_fast_soe_predictor_corrector",
+    "tempered_symbol_shift_cq",
+    "variable_order_pece",
+    "distributed_order_quadrature",
+    "periodic_orbits",
+    "surrogate_testing"
+  ],
+  "reproducibility_commands": [
+    "python -m pytest -q",
+    "python -m pytest -q -m wolfram",
+    "python -m pytest -q -m native",
+    "python -m mkdocs build --strict"
+  ],
+  "scientific_boundary": "All validation is method- and finite-data scoped. No trajectory diagnostic, Lyapunov estimate, recurrence statistic, basin sample, or spectral estimate proves global hiddenness or chaos."
+}

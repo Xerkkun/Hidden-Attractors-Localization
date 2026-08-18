@@ -1,0 +1,292 @@
+{
+  "figures": [
+    {
+      "central_paths": {
+        "pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\pdf\\00_nyquist_direct_seed.pdf",
+        "png": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\png\\00_nyquist_direct_seed.png"
+      },
+      "figure_id": "00_nyquist_direct_seed",
+      "global_promotion_requested": true,
+      "local_pdf": "figures/00_nyquist_direct_seed.pdf",
+      "local_png": "figures/00_nyquist_direct_seed.png",
+      "metadata": {
+        "caption_key": "fig_00_nyquist_direct_seed",
+        "data_sources": [
+          "00_system_contract.json"
+        ],
+        "integrator": "display_only",
+        "memory_mode": "not_applicable_integer_q1",
+        "parameters": {
+          "delta": 100.0,
+          "gamma": 0.1,
+          "rho": 200.0,
+          "xi": 3.1
+        },
+        "q": 1.0,
+        "quick_smoke_only": false,
+        "scientific_source_bundle_sha256": "f1d10f792a3a2c5c30f766167bbb0bdbcc2d4186a7b96b35675eb1acebb008ce",
+        "source_function": "run_contract/run_diagnostics/run_hiddenness",
+        "source_script": "examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/run_example.py",
+        "system_id": "modified_van_der_pol_duffing",
+        "t_burn": 300.0,
+        "t_final": 900.0
+      },
+      "pdf_sha256": "05c18627c8dbde6cb71e2bf0ee5502e536345be82082ea05856de2c634818758",
+      "png_sha256": "8dcc3884de105d347b95ca8f8e932f050037c8905ed57715e1c2dace8657affd",
+      "promoted_to_global_manifest": true,
+      "run_id": "mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d"
+    },
+    {
+      "central_paths": {
+        "pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\pdf\\03_continuation_screen.pdf",
+        "png": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\png\\03_continuation_screen.png"
+      },
+      "figure_id": "03_continuation_screen",
+      "global_promotion_requested": true,
+      "local_pdf": "figures/03_continuation_screen.pdf",
+      "local_png": "figures/03_continuation_screen.png",
+      "metadata": {
+        "caption_key": "fig_03_continuation_screen",
+        "data_sources": [
+          "03_candidate_screening.csv"
+        ],
+        "integrator": "DOP853",
+        "memory_mode": "not_applicable_integer_q1",
+        "parameters": {
+          "delta": 100.0,
+          "gamma": 0.15380379839949113,
+          "rho": 200.0,
+          "xi": 2.85
+        },
+        "q": 1.0,
+        "quick_smoke_only": false,
+        "scientific_source_bundle_sha256": "f1d10f792a3a2c5c30f766167bbb0bdbcc2d4186a7b96b35675eb1acebb008ce",
+        "source_function": "run_contract/run_diagnostics/run_hiddenness",
+        "source_script": "examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/run_example.py",
+        "system_id": "modified_van_der_pol_duffing",
+        "t_burn": 300.0,
+        "t_final": 900.0
+      },
+      "pdf_sha256": "f0b49c2d20c771634702eb2cd99c86150c954ffe004f1478070f27c66549c6de",
+      "png_sha256": "00050ddddaa1f53bc6b821dd0ac5d1ea77a2fd8e2b0e6353bb3bb6326d7a837b",
+      "promoted_to_global_manifest": true,
+      "run_id": "mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d"
+    },
+    {
+      "central_paths": {
+        "pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\pdf\\04_candidate_phase_portraits.pdf",
+        "png": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\png\\04_candidate_phase_portraits.png"
+      },
+      "figure_id": "04_candidate_phase_portraits",
+      "global_promotion_requested": true,
+      "local_pdf": "figures/04_candidate_phase_portraits.pdf",
+      "local_png": "figures/04_candidate_phase_portraits.png",
+      "metadata": {
+        "caption_key": "fig_04_candidate_phase_portraits",
+        "data_sources": [
+          "04_candidate_trajectory.csv"
+        ],
+        "integrator": "DOP853",
+        "memory_mode": "not_applicable_integer_q1",
+        "parameters": {
+          "delta": 100.0,
+          "gamma": 0.15380379839949113,
+          "rho": 200.0,
+          "xi": 2.85
+        },
+        "q": 1.0,
+        "quick_smoke_only": false,
+        "scientific_source_bundle_sha256": "f1d10f792a3a2c5c30f766167bbb0bdbcc2d4186a7b96b35675eb1acebb008ce",
+        "source_function": "run_contract/run_diagnostics/run_hiddenness",
+        "source_script": "examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/run_example.py",
+        "system_id": "modified_van_der_pol_duffing",
+        "t_burn": 300.0,
+        "t_final": 900.0
+      },
+      "pdf_sha256": "f340211bbee41cdaa08398f8f5bfc0f25e67fc4ec098ca920343d4ef3b4e7b12",
+      "png_sha256": "79f61338f22b06d30cf09adbb806dbf93dab27c1ba9ff56e384e02e0872b9b45",
+      "promoted_to_global_manifest": true,
+      "run_id": "mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d"
+    },
+    {
+      "central_paths": {
+        "pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\pdf\\04_candidate_time_series.pdf",
+        "png": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\png\\04_candidate_time_series.png"
+      },
+      "figure_id": "04_candidate_time_series",
+      "global_promotion_requested": true,
+      "local_pdf": "figures/04_candidate_time_series.pdf",
+      "local_png": "figures/04_candidate_time_series.png",
+      "metadata": {
+        "caption_key": "fig_04_candidate_time_series",
+        "data_sources": [
+          "04_candidate_trajectory.csv"
+        ],
+        "integrator": "DOP853",
+        "memory_mode": "not_applicable_integer_q1",
+        "parameters": {
+          "delta": 100.0,
+          "gamma": 0.15380379839949113,
+          "rho": 200.0,
+          "xi": 2.85
+        },
+        "q": 1.0,
+        "quick_smoke_only": false,
+        "scientific_source_bundle_sha256": "f1d10f792a3a2c5c30f766167bbb0bdbcc2d4186a7b96b35675eb1acebb008ce",
+        "source_function": "run_contract/run_diagnostics/run_hiddenness",
+        "source_script": "examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/run_example.py",
+        "system_id": "modified_van_der_pol_duffing",
+        "t_burn": 300.0,
+        "t_final": 900.0
+      },
+      "pdf_sha256": "de1a1db5a1dd5d3c1844fab7fd189e5750fd47cfaed89167ac8f6e564d49ef22",
+      "png_sha256": "8bcdd9d497a7e2d802e9ca1ba311c3adb1cafb4d111ef0a51537736919ef83dd",
+      "promoted_to_global_manifest": true,
+      "run_id": "mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d"
+    },
+    {
+      "central_paths": {
+        "pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\pdf\\05_lyapunov_convergence.pdf",
+        "png": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\png\\05_lyapunov_convergence.png"
+      },
+      "figure_id": "05_lyapunov_convergence",
+      "global_promotion_requested": true,
+      "local_pdf": "figures/05_lyapunov_convergence.pdf",
+      "local_png": "figures/05_lyapunov_convergence.png",
+      "metadata": {
+        "caption_key": "fig_05_lyapunov_convergence",
+        "data_sources": [
+          "05_lyapunov_convergence.csv"
+        ],
+        "integrator": "DOP853",
+        "memory_mode": "not_applicable_integer_q1",
+        "parameters": {
+          "delta": 100.0,
+          "gamma": 0.15380379839949113,
+          "rho": 200.0,
+          "xi": 2.85
+        },
+        "q": 1.0,
+        "quick_smoke_only": false,
+        "scientific_source_bundle_sha256": "f1d10f792a3a2c5c30f766167bbb0bdbcc2d4186a7b96b35675eb1acebb008ce",
+        "source_function": "run_contract/run_diagnostics/run_hiddenness",
+        "source_script": "examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/run_example.py",
+        "system_id": "modified_van_der_pol_duffing",
+        "t_burn": 300.0,
+        "t_final": 900.0
+      },
+      "pdf_sha256": "4650de5e3e79aa7aa71752c62ad20f1c8f775eea4e63f77f4c5fbb17e589b02e",
+      "png_sha256": "9c5f319aa6512d3499b8e2dfc839351bbb7e4f6a7c889c90b2b93f4b2b98a3b2",
+      "promoted_to_global_manifest": true,
+      "run_id": "mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d"
+    },
+    {
+      "central_paths": {
+        "pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\pdf\\05_poincare_section.pdf",
+        "png": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\png\\05_poincare_section.png"
+      },
+      "figure_id": "05_poincare_section",
+      "global_promotion_requested": true,
+      "local_pdf": "figures/05_poincare_section.pdf",
+      "local_png": "figures/05_poincare_section.png",
+      "metadata": {
+        "caption_key": "fig_05_poincare_section",
+        "data_sources": [
+          "05_poincare_section.csv"
+        ],
+        "integrator": "DOP853",
+        "memory_mode": "not_applicable_integer_q1",
+        "parameters": {
+          "delta": 100.0,
+          "gamma": 0.15380379839949113,
+          "rho": 200.0,
+          "xi": 2.85
+        },
+        "q": 1.0,
+        "quick_smoke_only": false,
+        "scientific_source_bundle_sha256": "f1d10f792a3a2c5c30f766167bbb0bdbcc2d4186a7b96b35675eb1acebb008ce",
+        "source_function": "run_contract/run_diagnostics/run_hiddenness",
+        "source_script": "examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/run_example.py",
+        "system_id": "modified_van_der_pol_duffing",
+        "t_burn": 300.0,
+        "t_final": 900.0
+      },
+      "pdf_sha256": "718f910a94e8674d2f98d5f62c76c7d78c40b4549efad349b6879cbdde24d570",
+      "png_sha256": "0a008ee821615974d3fc5603f2b05ea0546ebde0e7054cd8cb38b7c88d4364cb",
+      "promoted_to_global_manifest": true,
+      "run_id": "mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d"
+    },
+    {
+      "central_paths": {
+        "pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\pdf\\05_normalized_fft_power.pdf",
+        "png": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\png\\05_normalized_fft_power.png"
+      },
+      "figure_id": "05_normalized_fft_power",
+      "global_promotion_requested": true,
+      "local_pdf": "figures/05_normalized_fft_power.pdf",
+      "local_png": "figures/05_normalized_fft_power.png",
+      "metadata": {
+        "caption_key": "fig_05_normalized_fft_power",
+        "data_sources": [
+          "05_normalized_fft_power.csv"
+        ],
+        "integrator": "DOP853",
+        "memory_mode": "not_applicable_integer_q1",
+        "parameters": {
+          "delta": 100.0,
+          "gamma": 0.15380379839949113,
+          "rho": 200.0,
+          "xi": 2.85
+        },
+        "q": 1.0,
+        "quick_smoke_only": false,
+        "scientific_source_bundle_sha256": "f1d10f792a3a2c5c30f766167bbb0bdbcc2d4186a7b96b35675eb1acebb008ce",
+        "source_function": "run_contract/run_diagnostics/run_hiddenness",
+        "source_script": "examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/run_example.py",
+        "system_id": "modified_van_der_pol_duffing",
+        "t_burn": 300.0,
+        "t_final": 900.0
+      },
+      "pdf_sha256": "da02d734b176031e9538ce02d1a1b0d98eb98516f37ac864aeb5741e58ebfdce",
+      "png_sha256": "e941ed7368d48ca8556e9f66d08ca44dcb5360fdc891dd1a7e0fcf9a3ab397ef",
+      "promoted_to_global_manifest": true,
+      "run_id": "mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d"
+    },
+    {
+      "central_paths": {
+        "pdf": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\pdf\\07_hiddenness_outcomes.pdf",
+        "png": "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\by_run\\mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d\\png\\07_hiddenness_outcomes.png"
+      },
+      "figure_id": "07_hiddenness_outcomes",
+      "global_promotion_requested": true,
+      "local_pdf": "figures/07_hiddenness_outcomes.pdf",
+      "local_png": "figures/07_hiddenness_outcomes.png",
+      "metadata": {
+        "caption_key": "fig_07_hiddenness_outcomes",
+        "data_sources": [
+          "07_hiddenness_probes.csv"
+        ],
+        "integrator": "DOP853",
+        "memory_mode": "not_applicable_integer_q1",
+        "parameters": {
+          "delta": 100.0,
+          "gamma": 0.15380379839949113,
+          "rho": 200.0,
+          "xi": 2.85
+        },
+        "q": 1.0,
+        "quick_smoke_only": false,
+        "scientific_source_bundle_sha256": "f1d10f792a3a2c5c30f766167bbb0bdbcc2d4186a7b96b35675eb1acebb008ce",
+        "source_function": "run_contract/run_diagnostics/run_hiddenness",
+        "source_script": "examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/run_example.py",
+        "system_id": "modified_van_der_pol_duffing",
+        "t_burn": 300.0,
+        "t_final": 900.0
+      },
+      "pdf_sha256": "6d430fc41cf1551799799ef1ad03af517fc20ee80b1bfc7b5465949e22f633e3",
+      "png_sha256": "4e644ef8c269fc7e38a592e44e177b88e659c4e6be16475493ed9a4adc746bb0",
+      "promoted_to_global_manifest": true,
+      "run_id": "mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d"
+    }
+  ]
+}
