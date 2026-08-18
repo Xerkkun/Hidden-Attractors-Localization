@@ -17,9 +17,8 @@ from hidden_attractors.io import load_trajectory_csv
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_load_trajectory_csv_with_project_columns() -> None:
-    path = ROOT / "outputs" / "tests" / "trajectory_fixture.csv"
-    path.parent.mkdir(parents=True, exist_ok=True)
+def test_load_trajectory_csv_with_project_columns(tmp_path: Path) -> None:
+    path = tmp_path / "trajectory_fixture.csv"
     path.write_text("t,x,y,z\n0,1,2,3\n1,4,5,6\n", encoding="utf-8")
 
     trajectory = load_trajectory_csv(path)
@@ -54,6 +53,32 @@ def test_external_tool_report_documents_companion_tools() -> None:
     assert "nolds" in names
     assert "antropy" in names
     assert "pyComplexity notebook" not in names
+
+
+def test_optional_import_distinguishes_missing_from_broken_initialization(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fake_import(name: str):
+        if name == "nolds":
+            raise ModuleNotFoundError("No module named 'nolds'", name="nolds")
+        if name == "antropy":
+            raise RuntimeError("initializer exploded")
+        return SimpleNamespace()
+
+    monkeypatch.setattr(external_tools.importlib, "import_module", fake_import)
+
+    with pytest.raises(ImportError, match="required.*pip install nolds"):
+        external_tools.require_external("nolds")
+    with pytest.raises(ImportError, match="found but failed.*initializer exploded"):
+        external_tools.require_external("antropy")
+    with pytest.raises(ImportError, match="installed but failed.*initializer exploded"):
+        external_tools.available_complexity_backends()
+
+    rows = {row["name"]: row for row in external_tool_report()}
+    assert rows["nolds"]["status"] == "missing"
+    assert rows["nolds"]["error"] is None
+    assert rows["antropy"]["status"] == "broken"
+    assert "initializer exploded" in rows["antropy"]["error"]
 
 
 def test_rosenstein_adapter_uses_sample_interval(

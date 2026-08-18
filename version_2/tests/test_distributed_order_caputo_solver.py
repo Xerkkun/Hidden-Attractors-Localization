@@ -1039,7 +1039,7 @@ def test_fractional_problem_uses_order_nodes_independently_of_state_dimension() 
     assert len(problem.orders) == 3
     assert problem.order_mode == "distributed"
     assert problem.initial_condition_kind == "classical"
-    assert derivative.implementation_status == "experimental"
+    assert derivative.implementation_status == "implemented"
     assert method.execution_kind == "solver"
     assert method.supports_combination(
         "caputo_distributed_order",
@@ -1112,17 +1112,17 @@ def test_fractional_problem_dispatch_matches_direct_solver_and_metadata() -> Non
     assert dispatched.metadata["claims"] == "finite_numerical_trajectory_only"
 
 
-def test_fractional_problem_requires_experimental_opt_in_at_execution() -> None:
-    blocked = FractionalProblem(
+def test_fractional_problem_accepts_promoted_solver_without_opt_in() -> None:
+    problem = FractionalProblem(
         **_problem_arguments(allow_experimental=False)  # type: ignore[arg-type]
     )
-    with pytest.raises(PermissionError, match="allow_experimental"):
-        solve_fractional_problem(
-            blocked,
-            _zero_rhs,
-            use_acceleration=False,
-            divergence_norm=None,
-        )
+    result = solve_fractional_problem(
+        problem,
+        _zero_rhs,
+        use_acceleration=False,
+        divergence_norm=None,
+    )
+    assert result.status == "ok"
 
 
 def test_fractional_problem_rejects_unconsumed_options_before_execution() -> None:

@@ -43,6 +43,7 @@ DEFAULT_CASES: list[str] = [
     "validation/wolfram/cases/kalman_fitts_integer.wl",
     "validation/wolfram/cases/mavpd_integer.wl",
     "validation/wolfram/cases/pll_lead_lag_integer.wl",
+    "validation/wolfram/cases/geometric_topological_engine.wl",
     "validation/wolfram/cases/sali_gali_integer.wl",
     "validation/wolfram/cases/covariant_lyapunov_integer.wl",
     "validation/wolfram/cases/gl_fractional_operator_validation.wl",
@@ -202,13 +203,14 @@ def main() -> None:
         "--all",
         action="store_true",
         help=(
-            "Run all eighteen built-in cases: four Chua validators, five "
-            "non-Chua integer validators (including SALI/GALI alignment and "
-            "covariant Lyapunov vectors), "
-            "seven fractional validators (GL, Hadamard, ABC operator, ABC "
+            "Run all twenty-one built-in cases: four Chua validators, the "
+            "geometric-topological algebra validator, five non-Chua integer "
+            "validators (including SALI/GALI alignment and covariant "
+            "Lyapunov vectors), "
+            "nine fractional validators (GL, Hadamard, ABC operator and "
             "solver, variable-order Type III, distributed-order Caputo L1, "
-            "and multi-term Caputo L1), plus the finite correlation-dimension "
-            "and permutation-entropy cases."
+            "multi-term Caputo L1, and two tempered-history cases), plus the "
+            "finite correlation-dimension and permutation-entropy cases."
         ),
     )
     parser.add_argument(

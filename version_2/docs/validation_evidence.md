@@ -41,9 +41,24 @@ synthetic validation only, recorded benchmark discrepancy, or numerical
 comparison only. They remain callable diagnostics, not published-validated
 methods.
 
-## Corrected Non-Smooth Chua Record
+### Lyapunov decision margin
 
-The completed `paper07_chua_nonsmooth_corrected` record separates its local
+The default `lyapunov_positive_tol = 0.02` is a project policy margin for
+finite-time decisions, not a universal mathematical threshold or a theorem
+from the literature. Its purpose is to keep near-zero numerical estimates from
+being promoted as positive-exponent evidence. The effective tolerance is
+stored with the reproducibility metadata and may be overridden before a run;
+any override must remain part of the reported evidence provenance.
+
+Crossing that margin is necessary but not sufficient for strong chaos
+evidence. The candidate gate also requires a finite estimate, bounded and
+nontrivial dynamics, method-status controls, and an independent complementary
+diagnostic. Conflicting diagnostics remain explicit rather than being hidden
+by the threshold.
+
+## Non-Smooth Chua Evidence
+
+The retained `paper07_chua_nonsmooth_corrected` record separates its local
 contract from the extended basin audit. The local contract contains 7,200
 ball samples through `r = 0.01`, with zero target contacts and zero numerical
 failures. The radii `0.03`, `0.1`, and `0.3` belong to a separate

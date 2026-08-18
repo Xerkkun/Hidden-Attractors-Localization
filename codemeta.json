@@ -2,7 +2,7 @@
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "name": "hidden-attractors-fo",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "identifier": "https://doi.org/10.17605/OSF.IO/ZGK74",
   "codeRepository": "https://github.com/Xerkkun/Hidden-Attractors-Localization",
   "license": "https://spdx.org/licenses/MIT",
@@ -58,5 +58,5 @@
     ,"time-series Lyapunov exponents"
     ,"dynamical-system characterization"
   ],
-  "datePublished": "2026-07-29"
+  "datePublished": "2026-08-15"
 }

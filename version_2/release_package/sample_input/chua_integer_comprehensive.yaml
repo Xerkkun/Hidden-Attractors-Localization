@@ -14,11 +14,12 @@ system:
     m1: -1.1468
 
 seed_search:
+  route: direct_integer_transfer
+  fallback_route: null
   method: classic
   branch_index: 0
   omega_min: 1.0e-5
   omega_max: 50.0
-  nscan: 40000
 
 continuation:
   lambda_values: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]

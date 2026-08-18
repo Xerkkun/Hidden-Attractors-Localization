@@ -18,6 +18,11 @@ def test_capability_catalog_separates_integer_and_fractional_support() -> None:
     assert basin_entropy.fractional_status == "implemented"
     assert basin_entropy.trajectory_based
 
+    adapters = get_capability("complexity_measure_adapters")
+    assert adapters.integer_status == "implemented"
+    assert adapters.fractional_status == "implemented"
+    assert adapters.trajectory_based
+
     dimension = get_capability("correlation_dimension")
     assert dimension.integer_status == "implemented"
     assert dimension.fractional_status == "implemented"
@@ -37,14 +42,14 @@ def test_capability_catalog_separates_integer_and_fractional_support() -> None:
 
     multi_term = get_capability("multi_term_caputo_l1")
     assert multi_term.integer_status == "implemented_limit"
-    assert multi_term.fractional_status == "experimental"
+    assert multi_term.fractional_status == "implemented"
     assert not multi_term.trajectory_based
     assert multi_term.backend == "numba/python"
     assert "never normalized" in multi_term.notes
 
     tempered_cq = get_capability("tempered_convolution_quadrature")
     assert tempered_cq.integer_status == "not_applicable"
-    assert tempered_cq.fractional_status == "experimental"
+    assert tempered_cq.fractional_status == "implemented"
     assert tempered_cq.backend == "numba/fft"
     assert "offline FFT" in tempered_cq.notes
     assert "Symbol-shift CQ" in tempered_cq.notes

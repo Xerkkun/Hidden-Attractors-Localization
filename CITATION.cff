@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 title: "hidden-attractors-fo: Hidden-Attractor Localization and Dynamical-System Characterization"
-version: "1.1.0"
-date-released: "2026-07-29"
+version: "1.2.0"
+date-released: "2026-08-15"
 doi: "10.17605/OSF.IO/ZGK74"
 authors:
   - family-names: "Moreno Lopez"

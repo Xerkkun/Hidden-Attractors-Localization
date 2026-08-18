@@ -59,6 +59,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
+from hidden_attractors.integrations._history import canonical_history_times
+
 # ---------------------------------------------------------------------------
 # Optional YAML import
 # ---------------------------------------------------------------------------
@@ -460,9 +462,14 @@ def continue_with_history_window(
     history_states = np.asarray(history_states, dtype=float)
     K = len(history_times)
 
-    # Shift times so last history point is at t=0
-    t_offset = history_times[-1] if K > 0 else 0.0
-    shifted_times = history_times - t_offset
+    # Validate the inherited source grid, then reconstruct the relative grid
+    # directly from h to avoid cancellation from subtracting absolute times.
+    shifted_times = canonical_history_times(
+        history_times,
+        h,
+        caller="continue_with_history_window",
+        require_zero_anchor=False,
+    )
 
     x0 = history_states[-1].copy()
 

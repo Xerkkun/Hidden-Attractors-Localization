@@ -18,7 +18,7 @@ def test_attractor_only_integer(tmp_path):
     config = {
         "system_id": "chua_integer_saturation",
         "q": 1.0,
-        "integrator": "heun",
+        "integrator": "rk4",
         "h": 0.01,
         "final_simulation": {
             "t_final": 5.0,
@@ -36,7 +36,7 @@ def test_attractor_only_integer(tmp_path):
 
     assert summary["system_id"] == "chua_integer_saturation"
     assert summary["q"] == 1.0
-    assert summary["integrator"] == "heun"
+    assert summary["integrator"] == "rk4"
     assert len(summary["results"]) == 1
     
     res = summary["results"][0]
@@ -81,3 +81,22 @@ def test_attractor_only_fractional(tmp_path):
     res = summary["results"][0]
     assert res["status"] == "ok"
     assert "diagnostics" in res
+
+
+def test_attractor_only_rejects_misaligned_fixed_step_horizon(tmp_path):
+    config = {
+        "system_id": "chua_integer_saturation",
+        "q": 1.0,
+        "integrator": "rk4",
+        "h": 0.3,
+        "final_simulation": {
+            "t_final": 1.0,
+            "t_burn": 0.0,
+            "initial_condition": [0.1, 0.1, 0.1],
+        },
+        "output_dir": str(tmp_path),
+        "plot_enabled": False,
+    }
+
+    with pytest.raises(ValueError, match="integer number of fixed steps"):
+        run_attractor_only_workflow(config)

@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <math.h>
 #include <string.h>
+#include "native_validation.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -11,6 +12,15 @@
   #define API_EXPORT __declspec(dllexport)
 #else
   #define API_EXPORT __attribute__((visibility("default")))
+#endif
+
+API_EXPORT int chua_basin_abi_version(void) {
+    return 3;
+}
+#if defined(__GNUC__) || defined(__clang__)
+  #define INTERNAL_UNUSED static __attribute__((unused))
+#else
+  #define INTERNAL_UNUSED static
 #endif
 
 // ============================================================
@@ -28,6 +38,16 @@ static double G_A1    = 0.4;
 static double G_A2    = -1.5585;
 static double G_RHO   = 1.0;
 static int    G_WORKERS = 0;
+
+static int chua_parameters_are_valid(void) {
+    return (G_MODEL == 0 || G_MODEL == 1) &&
+           hafo_isfinite(G_ALPHA) && hafo_isfinite(G_BETA) &&
+           hafo_isfinite(G_GAMMA) && hafo_isfinite(G_M0) &&
+           hafo_isfinite(G_M1) &&
+           (G_MODEL == 0 ||
+            (hafo_isfinite(G_A1) && hafo_isfinite(G_A2) &&
+             hafo_isfinite(G_RHO) && G_RHO > 0.0));
+}
 
 // Clases
 #define CLS_EQ         0
@@ -84,7 +104,7 @@ static void chua_equilibria_internal(double *eq_out9) {
             prevx = x;
             prev = cur;
         }
-        if (!isfinite(xp)) {
+        if (!hafo_isfinite(xp)) {
             eq_out9[3] = eq_out9[4] = eq_out9[5] = NAN;
             eq_out9[6] = eq_out9[7] = eq_out9[8] = NAN;
             return;
@@ -182,8 +202,13 @@ static int classify_point(
     int CAP_WIN,
     double MEAN_X_GAP
 ) {
-    const int N = (int)ceil(TMAX / h);
-    const int burn = (int)floor(TBURN / h);
+    int N = 0;
+    int burn = 0;
+    size_t allocation_bytes = 0u;
+    if (!hafo_uniform_step_count(TMAX, h, &N) || N < 1 ||
+        !hafo_uniform_step_count(TBURN, h, &burn) || burn > N ||
+        !hafo_checked_mul_size((size_t)N + 1u, sizeof(double),
+                               &allocation_bytes)) return CLS_UNKNOWN;
     const int nu = ((int)floor(Lm / h) > 1) ? (int)floor(Lm / h) : 1;
     const double ha = pow(h, q);
     const double Rdiv2 = R_DIV * R_DIV;
@@ -193,10 +218,10 @@ static int classify_point(
     double eq[9];
     chua_equilibria_internal(eq);
 
-    double *t = (double*)malloc((size_t)(N + 1) * sizeof(double));
-    double *x = (double*)malloc((size_t)(N + 1) * sizeof(double));
-    double *y = (double*)malloc((size_t)(N + 1) * sizeof(double));
-    double *z = (double*)malloc((size_t)(N + 1) * sizeof(double));
+    double *t = (double*)malloc(allocation_bytes);
+    double *x = (double*)malloc(allocation_bytes);
+    double *y = (double*)malloc(allocation_bytes);
+    double *z = (double*)malloc(allocation_bytes);
     if (!t || !x || !y || !z) {
         free(t); free(x); free(y); free(z);
         return CLS_UNKNOWN;
@@ -229,14 +254,15 @@ static int classify_point(
     x[1] = x0 + c.w1*K1x + c.w2*K2x + c.w3*K3x;
     y[1] = y0 + c.w1*K1y + c.w2*K2y + c.w3*K3y;
     z[1] = z0 + c.w1*K1z + c.w2*K2z + c.w3*K3z;
-    t[1] = h;
+    t[1] = (N == 1) ? TMAX : h;
 
     int hit0 = 0, hitp = 0, hitm = 0;
     double mean_x = 0.0;
     double mean_r2 = 0.0;
     int cnt_tail = 0;
 
-    if (nrm2(x[1], y[1], z[1]) > Rdiv2) {
+    if (!hafo_isfinite(x[1]) || !hafo_isfinite(y[1]) ||
+        !hafo_isfinite(z[1]) || nrm2(x[1], y[1], z[1]) > Rdiv2) {
         free(t); free(x); free(y); free(z);
         return CLS_DIV;
     }
@@ -268,9 +294,11 @@ static int classify_point(
         x[n + 1] = x[n] + c.w1*K1x + c.w2*K2x + c.w3*K3x;
         y[n + 1] = y[n] + c.w1*K1y + c.w2*K2y + c.w3*K3y;
         z[n + 1] = z[n] + c.w1*K1z + c.w2*K2z + c.w3*K3z;
-        t[n + 1] = (n + 1) * h;
+        t[n + 1] = (n + 1 == N) ? TMAX : (double)(n + 1) * h;
 
-        if (nrm2(x[n + 1], y[n + 1], z[n + 1]) > Rdiv2) {
+        if (!hafo_isfinite(x[n + 1]) || !hafo_isfinite(y[n + 1]) ||
+            !hafo_isfinite(z[n + 1]) ||
+            nrm2(x[n + 1], y[n + 1], z[n + 1]) > Rdiv2) {
             free(t); free(x); free(y); free(z);
             return CLS_DIV;
         }
@@ -325,20 +353,20 @@ API_EXPORT void set_chua_params(double alpha, double beta, double gamma, double 
 }
 
 API_EXPORT void set_chua_model(int model) {
-    G_MODEL = (model == 1) ? 1 : 0;
+    G_MODEL = (model == 0 || model == 1) ? model : -1;
 }
 
 API_EXPORT void set_chua_arctan_params(double a1, double a2, double rho) {
     G_A1 = a1;
     G_A2 = a2;
-    G_RHO = (rho > 0.0) ? rho : 1.0;
+    G_RHO = rho;
 }
 
-API_EXPORT void set_basin_workers(int workers) {
+INTERNAL_UNUSED void set_basin_workers(int workers) {
     G_WORKERS = (workers > 0) ? workers : 0;
 }
 
-API_EXPORT void get_chua_params(double *out5) {
+INTERNAL_UNUSED void get_chua_params(double *out5) {
     if (!out5) return;
     out5[0] = G_ALPHA;
     out5[1] = G_BETA;
@@ -367,15 +395,26 @@ API_EXPORT int classify_basin_point(
     int CAP_WIN,
     double MEAN_X_GAP
 ) {
-    if (!(q > 0.0 && q <= 1.0)) return -3;
-    if (!(h > 0.0 && Lm > 0.0 && TMAX > 0.0 && TBURN >= 0.0)) return -4;
+    int steps = 0;
+    int burn_steps = 0;
+    const double seed[3] = {x0, y0, z0};
+    if (!(q > 0.0 && q <= 1.0) || !hafo_isfinite(q) ||
+        !hafo_values_are_finite(seed, 3u) ||
+        !chua_parameters_are_valid()) return -3;
+    if (!hafo_positive_ratio_ceil(Lm, h, &steps) ||
+        !hafo_uniform_step_count(TMAX, h, &steps) || steps < 1 ||
+        !hafo_uniform_step_count(TBURN, h, &burn_steps) || burn_steps > steps ||
+        !hafo_isfinite(R_DIV) || !(R_DIV > 0.0) ||
+        !hafo_isfinite(R_BOUND) || !(R_BOUND > 0.0) ||
+        !hafo_isfinite(EPS_EQ) || !(EPS_EQ > 0.0) || CAP_WIN < 1 ||
+        !hafo_isfinite(MEAN_X_GAP) || !(MEAN_X_GAP > 0.0)) return -4;
     return classify_point(
         x0, y0, z0, q, h, Lm, TMAX, TBURN,
         R_DIV, R_BOUND, EPS_EQ, CAP_WIN, MEAN_X_GAP
     );
 }
 
-API_EXPORT int compute_basin_xy(
+INTERNAL_UNUSED int compute_basin_xy(
     int nx,
     int ny,
     double xmin,
@@ -393,12 +432,27 @@ API_EXPORT int compute_basin_xy(
     double EPS_EQ,
     int CAP_WIN,
     double MEAN_X_GAP,
-    int *out_classes
+    int *out_classes,
+    size_t out_capacity
 ) {
+    int horizon_steps = 0;
+    int burn_steps = 0;
+    size_t required = 0u;
+    const double scalar_inputs[6] = {xmin, xmax, ymin, ymax, z0, q};
     if (nx <= 1 || ny <= 1 || !out_classes) return -1;
-    if (!(xmax > xmin) || !(ymax > ymin)) return -2;
-    if (!(q > 0.0 && q <= 1.0)) return -3;
-    if (!(h > 0.0 && Lm > 0.0 && TMAX > 0.0 && TBURN >= 0.0)) return -4;
+    if (!hafo_checked_mul_size((size_t)nx, (size_t)ny, &required) ||
+        out_capacity < required) return -1;
+    if (!hafo_values_are_finite(scalar_inputs, 6u) ||
+        !(xmax > xmin) || !(ymax > ymin)) return -2;
+    if (!(q > 0.0 && q <= 1.0) || !chua_parameters_are_valid()) return -3;
+    if (!hafo_positive_ratio_ceil(Lm, h, &horizon_steps) ||
+        !hafo_uniform_step_count(TMAX, h, &horizon_steps) || horizon_steps < 1 ||
+        !hafo_uniform_step_count(TBURN, h, &burn_steps) ||
+        burn_steps > horizon_steps ||
+        !hafo_isfinite(R_DIV) || !(R_DIV > 0.0) ||
+        !hafo_isfinite(R_BOUND) || !(R_BOUND > 0.0) ||
+        !hafo_isfinite(EPS_EQ) || !(EPS_EQ > 0.0) || CAP_WIN < 1 ||
+        !hafo_isfinite(MEAN_X_GAP) || !(MEAN_X_GAP > 0.0)) return -4;
 
     const double dx = (xmax - xmin) / (double)(nx - 1);
     const double dy = (ymax - ymin) / (double)(ny - 1);
@@ -418,18 +472,19 @@ API_EXPORT int compute_basin_xy(
             );
         }
 
+        int completed_rows;
         #ifdef _OPENMP
-        #pragma omp atomic
+        #pragma omp atomic capture
         #endif
-        rows_done++;
+        completed_rows = ++rows_done;
 
-        if ((rows_done % 10) == 0 || rows_done == ny) {
+        if ((completed_rows % 10) == 0 || completed_rows == ny) {
             #ifdef _OPENMP
             #pragma omp critical
             #endif
             {
-                fprintf(stderr, "[basin C xy %4d/%4d] %5.1f%%\n", rows_done, ny,
-                        100.0 * (double)rows_done / (double)ny);
+                fprintf(stderr, "[basin C xy %4d/%4d] %5.1f%%\n", completed_rows, ny,
+                        100.0 * (double)completed_rows / (double)ny);
                 fflush(stderr);
             }
         }
@@ -437,7 +492,7 @@ API_EXPORT int compute_basin_xy(
     return 0;
 }
 
-API_EXPORT int compute_basin_plane(
+INTERNAL_UNUSED int compute_basin_plane(
     int nx,
     int ny,
     double umin,
@@ -456,12 +511,28 @@ API_EXPORT int compute_basin_plane(
     double EPS_EQ,
     int CAP_WIN,
     double MEAN_X_GAP,
-    int *out_classes
+    int *out_classes,
+    size_t out_capacity
 ) {
+    int horizon_steps = 0;
+    int burn_steps = 0;
+    size_t required = 0u;
+    const double scalar_inputs[8] = {
+        umin, umax, vmin, vmax, fixed, q, R_DIV, R_BOUND
+    };
     if (nx <= 1 || ny <= 1 || !out_classes) return -1;
-    if (!(umax > umin) || !(vmax > vmin)) return -2;
-    if (!(q > 0.0 && q <= 1.0)) return -3;
-    if (!(h > 0.0 && Lm > 0.0 && TMAX > 0.0 && TBURN >= 0.0)) return -4;
+    if (!hafo_checked_mul_size((size_t)nx, (size_t)ny, &required) ||
+        out_capacity < required) return -1;
+    if (!hafo_values_are_finite(scalar_inputs, 8u) ||
+        !(umax > umin) || !(vmax > vmin)) return -2;
+    if (!(q > 0.0 && q <= 1.0) || !chua_parameters_are_valid()) return -3;
+    if (!hafo_positive_ratio_ceil(Lm, h, &horizon_steps) ||
+        !hafo_uniform_step_count(TMAX, h, &horizon_steps) || horizon_steps < 1 ||
+        !hafo_uniform_step_count(TBURN, h, &burn_steps) ||
+        burn_steps > horizon_steps ||
+        !(R_DIV > 0.0) || !(R_BOUND > 0.0) ||
+        !hafo_isfinite(EPS_EQ) || !(EPS_EQ > 0.0) || CAP_WIN < 1 ||
+        !hafo_isfinite(MEAN_X_GAP) || !(MEAN_X_GAP > 0.0)) return -4;
     if (plane < 0 || plane > 2) return -5;
 
     const double du = (umax - umin) / (double)(nx - 1);
@@ -490,19 +561,20 @@ API_EXPORT int compute_basin_plane(
             );
         }
 
+        int completed_rows;
         #ifdef _OPENMP
-        #pragma omp atomic
+        #pragma omp atomic capture
         #endif
-        rows_done++;
+        completed_rows = ++rows_done;
 
-        if ((rows_done % 10) == 0 || rows_done == ny) {
+        if ((completed_rows % 10) == 0 || completed_rows == ny) {
             #ifdef _OPENMP
             #pragma omp critical
             #endif
             {
                 const char *names[3] = {"xy", "xz", "yz"};
-                fprintf(stderr, "[basin C %s %4d/%4d] %5.1f%%\n", names[plane], rows_done, ny,
-                        100.0 * (double)rows_done / (double)ny);
+                fprintf(stderr, "[basin C %s %4d/%4d] %5.1f%%\n", names[plane], completed_rows, ny,
+                        100.0 * (double)completed_rows / (double)ny);
                 fflush(stderr);
             }
         }

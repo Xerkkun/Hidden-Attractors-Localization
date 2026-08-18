@@ -317,7 +317,7 @@ def test_additional_operator_families_are_public_and_registry_anchored() -> None
 
     assert get_fractional_derivative(
         "tempered_riemann_liouville"
-    ).implementation_status == "experimental"
+    ).implementation_status == "implemented"
     assert get_fractional_method(
         "variable_order_gl_direct"
     ).execution_kind == "sampled_operator"

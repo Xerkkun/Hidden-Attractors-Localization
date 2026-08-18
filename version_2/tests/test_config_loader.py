@@ -56,7 +56,7 @@ def test_load_legacy_flat_yaml_warning(tmp_path):
     yaml_content = """
 system_id: chua_integer_saturation
 q: 1.0
-integrator: heun
+integrator: rk4
 h: 0.002
 t_final: 100.0
 """
@@ -68,7 +68,7 @@ t_final: 100.0
 
     assert cfg["system_id"] == "chua_integer_saturation"
     assert cfg["q"] == 1.0
-    assert cfg["integrator"] == "heun"
+    assert cfg["integrator"] == "rk4"
     assert cfg["h"] == 0.002
     assert cfg["final_simulation"]["t_final"] == 100.0
 
@@ -77,7 +77,7 @@ def test_apply_cli_overrides():
     base_cfg = {
         "system_id": "chua_integer_saturation",
         "q": 1.0,
-        "integrator": "heun",
+        "integrator": "rk4",
         "h": 0.002,
         "final_simulation": {
             "t_final": 100.0,
@@ -141,7 +141,7 @@ system:
 modes:
   dynamics_mode: integer
 integrator:
-  name: heun
+  name: rk4
   h: 0.01
 stages:
   attractor_only: true

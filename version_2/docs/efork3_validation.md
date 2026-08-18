@@ -55,7 +55,7 @@ hidden-attractors validate contract \
 ```
 
 This validation confirms the published EFORK-3 reference implementation and
-the corrected `q=1` Chua rerun. It does not by itself validate
+the retained `q=1` Chua reference. It does not by itself validate
 truncated-memory fractional native trajectories; those require a separate
 fractional evidence package.
 

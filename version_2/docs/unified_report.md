@@ -1,4 +1,4 @@
-# Version 1.1.0 Public Scope
+# Version 1.2.0 Public Scope
 
 The public documentation describes the supported package and the boundaries
 of its completed validation records. Only those supported interfaces and
@@ -55,7 +55,7 @@ Completed validation records are kept separately from the installed API.
 Public calculations can be used on user-supplied systems and data without
 claiming correspondence to any validation case.
 
-The corrected non-smooth Chua record applies this rule explicitly: its local
+The retained non-smooth Chua record applies this rule explicitly: its local
 claim stops at `r = 0.01` after 7,200 zero-contact, zero-failure ball samples.
 The zero-contact samples at `r = 0.03` and `r = 0.1`, followed by 37 contacts
 at `r = 0.3`, are retained as a separate macro-basin audit and do not enlarge
@@ -73,3 +73,19 @@ claim is attached to this validation.
 - [Validation Boundary](validation_evidence.md)
 - [Code Reference Map](code_reference_map.md)
 - [API Reference](api_reference.md)
+
+## Geometric-topological master report
+
+The repository also carries the source and compiled study editions under
+`docs/master_report_geometric_topological/`. They integrate the integer and
+fractional algebra, the geometric/topological framework, the unified reading
+sequence, the Machado theory/validation-only route (not a promoted public
+workflow), the perpetual-point route, and the preregistered TG0-TG8 campaign.
+The accompanying [campaign implementation guide](geometric_topological_campaign.md)
+describes the new experimental modules and their evidence limits.
+
+The software layer is implemented and algebraically audited, and one bounded
+B0--B2 pilot has exercised the declared integer and Caputo routes. The broader
+dynamic-edge and topological-certification layers are not implemented. Existing
+examples retain their original evidence status; a seed, finite-time classifier
+label, or initial edge bracket does not promote a hiddenness or chaos claim.

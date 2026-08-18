@@ -41,7 +41,7 @@ The public registry contains four implemented methods:
 | --- | --- | --- |
 | `integer_qr_benettin` | Integer ODE, `q=1` | Exact linear controls and internal cross-checks; no quantitative published-spectrum reproduction |
 | `fractional_variational_abm_qr` | Commensurate Caputo, `0<q<1` | Synthetic numerical validation only |
-| `fractional_cloned_dynamics_abm_gs_published` | Fractional or integer cloned dynamics | Recorded published-benchmark discrepancy |
+| `fractional_cloned_dynamics_abm_gs_published` | Fractional or integer cloned dynamics | Quarantined: recorded published-benchmark discrepancy; explicit reproduction opt-in required |
 | `fractional_cloned_dynamics_abm_qr` | Fractional or integer cloned dynamics | Numerical comparison only |
 
 No current registry entry claims a complete quantitative published-benchmark
@@ -75,7 +75,7 @@ Caputo-memory algorithm.
 
 ## Scalar Time-Series Route
 
-Version 1.1.0 fully integrates Lyapunov analysis for a uniformly sampled scalar
+The current 1.2.0 surface includes Lyapunov analysis for a uniformly sampled scalar
 observable through `estimate_time_series_lyapunov`.
 
 ```python

@@ -8,6 +8,8 @@ from typing import Callable
 import numpy as np
 from scipy.integrate import solve_ivp
 
+from .._time_grid import exact_fixed_step_count
+
 
 EFORK_Q1_A21 = 0.5
 EFORK_Q1_A31 = 0.5
@@ -52,7 +54,11 @@ def efork_q1_integrate(
     x = np.asarray(x0, dtype=float).copy()
     if x.ndim != 1 or x.size < 1 or not np.all(np.isfinite(x)):
         raise ValueError("x0 must be a finite one-dimensional state vector.")
-    n_steps = int(math.ceil(final_time / h_value))
+    n_steps = exact_fixed_step_count(
+        h_value,
+        final_time,
+        caller="efork_q1_integrate",
+    )
     times = np.empty(n_steps + 1, dtype=float)
     states = np.empty((n_steps + 1, x.size), dtype=float)
     times[0] = 0.0

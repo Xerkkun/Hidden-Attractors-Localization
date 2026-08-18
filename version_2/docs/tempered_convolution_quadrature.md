@@ -2,8 +2,8 @@
 
 ## Scope and status
 
-`tempered_convolution_quadrature` is an **experimental sampled operator** for
-left tempered Riemann--Liouville (RL) and exponentially conjugated Caputo
+`tempered_convolution_quadrature` is an **implemented sampled operator** with an
+**experimental public API** for left tempered Riemann--Liouville (RL) and exponentially conjugated Caputo
 derivatives with $0<q\leq1$. It supports BDF1 and BDF2, scalar or
 componentwise $q_i$ and $\lambda_i$, and direct Python, direct Numba, or
 offline FFT evaluation.
@@ -309,7 +309,6 @@ records:
 - Li, Deng, and Zhao, tempered IVP formulation and predictor--corrector,
   [DOI 10.3934/dcdsb.2019026](https://doi.org/10.3934/dcdsb.2019026).
 
-Recent 2025--2026 results located by SciSpace chiefly extend corrected L1,
-nonuniform meshes, or fast evaluation. They strengthen the backlog but do not
-replace the verified BDF conjugation weights. An older method is retained when
-its algebra and convergence framework remain the appropriate foundation.
+Corrected L1, nonuniform meshes, and fast evaluation are distinct method
+families; they do not replace the BDF conjugation weights defined and verified
+for this contract.

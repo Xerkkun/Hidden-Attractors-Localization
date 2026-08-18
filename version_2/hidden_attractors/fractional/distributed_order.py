@@ -44,6 +44,8 @@ from dataclasses import dataclass
 import numpy as np
 from numba import njit, prange
 
+from ._validation import sample_matrix as _sample_matrix
+
 
 _BACKENDS = frozenset({"auto", "numba", "python"})
 _DEFINITIONS = frozenset(
@@ -93,20 +95,6 @@ class DistributedOrderDerivativeResult:
     working_memory: str
     approximation: str = "double_discretization_order_quadrature_and_time_gl"
     status: str = "finite_numerical_diagnostic"
-
-
-def _sample_matrix(samples: np.ndarray) -> tuple[np.ndarray, bool]:
-    values = np.asarray(samples, dtype=np.float64)
-    was_vector = values.ndim == 1
-    if was_vector:
-        values = values[:, None]
-    if values.ndim != 2 or min(values.shape) < 1:
-        raise ValueError(
-            "samples must have shape (n_times,) or (n_times, dimension)."
-        )
-    if not np.all(np.isfinite(values)):
-        raise ValueError("samples must contain only finite values.")
-    return np.ascontiguousarray(values), was_vector
 
 
 def _finite_vector(values: object, name: str) -> np.ndarray:

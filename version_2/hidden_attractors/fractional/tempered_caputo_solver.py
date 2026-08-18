@@ -47,6 +47,7 @@ from __future__ import annotations
 import ctypes
 from dataclasses import dataclass
 import operator
+import sys
 from types import MappingProxyType
 from typing import Any, Callable, Mapping
 
@@ -54,8 +55,8 @@ import numpy as np
 from scipy.special import gamma
 
 from .._rhs import bind_rhs
+from .._time_grid import checked_array_capacity, exact_fixed_step_count
 from ..integrations.fractional_c import GeneralFractionalCBackend
-from ._log_grid import uniform_step_grid_metrics
 
 
 TEMPERED_CAPUTO_ABM_REFERENCES = (
@@ -298,6 +299,8 @@ def _native_tempered_abm(
             ctypes.c_double,
             vector,
             vector,
+            ctypes.c_size_t,
+            ctypes.c_size_t,
             ctypes.POINTER(ctypes.c_int),
             ctypes.POINTER(ctypes.c_int),
         ]
@@ -345,7 +348,7 @@ def _native_tempered_abm(
     output_samples = ctypes.c_int(0)
     status_code = ctypes.c_int(0)
     effective_divergence = (
-        float("inf") if divergence_norm is None else float(divergence_norm)
+        sys.float_info.max if divergence_norm is None else float(divergence_norm)
     )
     try:
         return_code = function(
@@ -362,6 +365,8 @@ def _native_tempered_abm(
             ctypes.c_double(effective_divergence),
             output_times,
             output_states,
+            ctypes.c_size_t(output_times.size),
+            ctypes.c_size_t(output_states.size),
             ctypes.byref(output_samples),
             ctypes.byref(status_code),
         )
@@ -433,6 +438,8 @@ def integrate_tempered_caputo_abm(
     if not callable(rhs):
         raise TypeError("rhs must be callable.")
     state = _initial_state(initial_state)
+    if state.size > np.iinfo(np.int32).max:
+        raise ValueError("initial_state dimension exceeds the native INT32 range.")
     alpha = _real_scalar(order, name="order")
     if alpha <= 0.0 or alpha >= 1.0:
         raise ValueError("order must lie strictly in (0, 1) for this ABM solver.")
@@ -465,6 +472,8 @@ def integrate_tempered_caputo_abm(
             ) from exc
         if normalized_window < 2:
             raise ValueError("finite_window requires history_window >= 2 samples.")
+        if normalized_window > np.iinfo(np.int32).max:
+            raise ValueError("history_window must not exceed INT32_MAX.")
         normalized_window = int(normalized_window)
     else:
         if history_window is not None:
@@ -481,15 +490,28 @@ def integrate_tempered_caputo_abm(
             raise ValueError("divergence_norm must be positive or None.")
 
     duration = upper - terminal
-    n_steps, residual, tolerance = uniform_step_grid_metrics(
-        duration,
+    native_step_limit = int(np.iinfo(np.int32).max) - 3
+    n_steps = exact_fixed_step_count(
         normalized_step,
+        duration,
+        caller="integrate_tempered_caputo_abm",
+        max_steps=native_step_limit,
     )
-    if n_steps < 1 or residual > tolerance:
+    if n_steps < 1:
         raise ValueError(
             "upper_terminal-lower_terminal must contain an integer number "
             "of step increments."
         )
+    checked_array_capacity(
+        (n_steps + 1,),
+        np.float64,
+        caller="integrate_tempered_caputo_abm output times",
+    )
+    checked_array_capacity(
+        (n_steps + 1, state.size),
+        np.float64,
+        caller="integrate_tempered_caputo_abm output states",
+    )
     maximum_exponent = lam * duration
     bound_rhs = bind_rhs(rhs, parameters)
 

@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 from scipy.integrate import solve_ivp
 
 from hidden_attractors.integrations.adm_wu2023 import (
     adm_wu2023_integrate,
+    adm_wu2023_integrate_from_config,
     rhs_chua_arctan,
 )
 from hidden_attractors.models.chua import chua_parameters, rhs_arctan
@@ -99,3 +101,20 @@ def test_adm_q1_recovers_fourth_order_taylor_convergence() -> None:
     error_coarse = np.linalg.norm(coarse[-1] - reference)
     error_fine = np.linalg.norm(fine[-1] - reference)
     assert error_fine < error_coarse / 10.0
+
+
+def test_adm_config_rejects_misaligned_fixed_step_horizon() -> None:
+    with pytest.raises(ValueError, match="integer number of fixed steps"):
+        adm_wu2023_integrate_from_config(
+            {
+                "alpha": 8.4562,
+                "beta": 12.0732,
+                "gamma": 0.0052,
+                "a1": 0.4,
+                "a2": -1.5585,
+                "q": 0.99,
+                "h": 0.3,
+                "t_final": 1.0,
+            },
+            np.array([0.1, 0.0, 0.0]),
+        )

@@ -14,7 +14,7 @@ PyPI user example.
 | Role | reproduced software reference/control for the Lur'e route |
 | Claim boundary | validates the integer workflow only; it does not validate fractional hiddenness |
 
-Promoted evidence for the corrected integer reference lives under
+Promoted evidence for the retained integer reference lives under
 `validation/reference_cases/chua_integer_q1/`. The hiddenness summary reports no
 target-basin hits from sampled equilibrium neighborhoods under that integer
 contract.

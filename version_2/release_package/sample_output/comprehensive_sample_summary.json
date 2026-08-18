@@ -3,8 +3,8 @@
   "sample_status": "executed",
   "not_promoted_evidence": true,
   "replace_after_execution": false,
-  "release_version": "1.1.0",
-  "executed_on": "2026-07-29",
+  "release_version": "1.2.0",
+  "executed_on": "2026-08-15",
   "command": "python examples/chua_integer_lure_reference/run_example.py --config release_package/sample_input/chua_integer_comprehensive.yaml --quick --steps search continuation verification --output-dir <empty-output-directory>",
   "stages": [
     "search",
@@ -13,9 +13,9 @@
   ],
   "quick_mode": true,
   "runtime": {
-    "elapsed_seconds": 2.455,
+    "elapsed_seconds": 0.2036247,
     "python": "3.14.3",
-    "operating_system": "Microsoft Windows NT 10.0.26200.0",
+    "operating_system": "Windows-11-10.0.26200-SP0",
     "processor": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD"
   },
   "result": {
@@ -28,15 +28,17 @@
     "interpretation": "integer software validation control; finite sampled result, not a global proof"
   },
   "deterministic_output_hashes": {
-    "01_seed_report.json": "a9bd811f8753d3cf056f511ebe2b781fb30b4bc6f4c6d9c577a07b94438735dd",
-    "02_continuation_trace.json": "898e5fe2aa88b69332a382b25858a9dce7ee161eb80123c5179a86dbd94f3d51",
-    "03_final_attractor.csv": "02b14463680d6695c74c936cfea2ffb1cb2497005bf90dc7e4bb880db4d7c390",
-    "03_hiddenness_summary.json": "51be8f9e1449cb50828693c05bc21d9d69bc25a5a02ee251b07fda44647dfc9f",
-    "continuation_steps/continuation_lambda_000.csv": "79f1fcff7ae73193581d38eae5af99e62a6024cc81bb79d6517a37eec17fa919",
-    "continuation_steps/continuation_lambda_001.csv": "2914926be65adb63f922a83384af694ce3625d83a9b0339d53ce553ae3f0be28",
-    "continuation_steps/continuation_lambda_002.csv": "c9277c560d373868cad637f83d6d3a614c7a42e37ed361bdc01962ea73efc223",
-    "continuation_steps/continuation_lambda_003.csv": "1294dac38d2156730fb85db69b3eec2c668ec1f03a678678af209e830d785b55",
-    "continuation_steps/continuation_lambda_004.csv": "74dfe909a35feb67cd44d91caf764ebf8baa86214c7d821c73196f9035e23794"
+    "00_system_contract.json": "6d5116a58e7c6c21cdac9fef674a123f050e477ad02e56cfe5a1ee24d2328244",
+    "01_seed_report.json": "d9517ce0ccfc064d9bf06e20806954b58ba1d64d0e279741cdb46140f5d4afcc",
+    "02_continuation_trace.json": "1036f33591fca2a7f73d6652435b2bbd856ac52a989cc7c051a6593341c95217",
+    "03_final_attractor.csv": "6138cee45985872b57ed18270294950f5f437f13e2a94976a059e9e76ab128e2",
+    "03_hiddenness_initial_conditions.csv": "7b355dd7feb29fc6abdffdd5122695d3a60a72e4714834ae6d99f058da2bf65f",
+    "03_hiddenness_summary.json": "abe031943f3767f4a0edd729fcc91b520af7c4dc9ca4b2d99da3ccb1e1d961fb",
+    "continuation_steps/continuation_lambda_000.csv": "d369f126d6642765fe15c4ddb4e77b11eb45ae283ac3947ef45ccce1f57e57f4",
+    "continuation_steps/continuation_lambda_001.csv": "b5d9393584d07bc02b686d88eba39e9983f5f6e7476f73a94dac6695c10c3ba5",
+    "continuation_steps/continuation_lambda_002.csv": "bb6b9e5b860482d6ee052e4c95ffd89572bd402b1a3eb22405bd898bc058b348",
+    "continuation_steps/continuation_lambda_003.csv": "2d7210c39b83804275f8bc7c20446aadf8512946823ddac4c8c9dacc7f24eba1",
+    "continuation_steps/continuation_lambda_004.csv": "13f827379edfedcb7ed4c965f06740408873cd3f5a07352b0041e92ed303ee1e"
   },
   "repeatability_check": {
     "independent_runs": 2,

@@ -39,7 +39,7 @@
     "figures/figure_manifest.json": "f0e5904769a0a9fecc51b1aca5024a34c6d3956149374b8700dfc115a6354ac0",
     "figures/global_promotion_receipt.json": "9f9d2ab4cbc0ad6f9d376bd0f459094a34fa617af2777ac91866f0abb530bfbe",
     "phase_timings.csv": "afa7a8543244694c39c6e8d624b83b88e83be6cc6eb47fc9483958abacc5b7e3",
-    "run_manifest.json": "ee608b906bf1cc714a172c00de913a1f9330a8b8834426c3bd190b0e63c5e0e7"
+    "run_manifest.json": "c004a297539c2631854e47ea2c4ec525a4e69c7355def9dbfeb4959c6460b658"
   },
   "completed_at_utc": "2026-08-03T11:47:25.582542+00:00",
   "completed_phases": [

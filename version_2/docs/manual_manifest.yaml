@@ -1,5 +1,5 @@
-manual_version: "1.1.0"
-package_version: "1.1.0"
+manual_version: "1.2.0"
+package_version: "1.2.0"
 
 public_cli: "hidden-attractors"
 entry_point: "hidden_attractors.cli.main:main"

@@ -50,10 +50,10 @@ def test_public_api_contract_and_capability_are_executable() -> None:
     )
     assert fractional.TemperedFastHistoryResult is TemperedFastHistoryResult
     method = get_fractional_method("tempered_fast_multistep_history")
-    assert method.implementation_status == "experimental"
+    assert method.implementation_status == "implemented"
     assert method.execution_kind == "sampled_operator"
     capability = get_capability("tempered_fast_multistep_history")
-    assert capability.fractional_status == "experimental"
+    assert capability.fractional_status == "implemented"
     assert capability.backend == "numba/python"
 
 

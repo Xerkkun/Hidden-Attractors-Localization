@@ -30,11 +30,7 @@ root = ParentDirectory[DirectoryName[$InputFileName]];
 Get[FileNameJoin[{root, "common", "ha_validation_common.wl"}]];
 
 systemID = "tempered_fast_multistep_history";
-temporaryRoot = If[
-  $OperatingSystem === "Windows",
-  "C:\\tmp",
-  $TemporaryDirectory
-];
+temporaryRoot = $TemporaryDirectory;
 outDir = EnsureDirectory[
   GetCommandOption[
     "--out",

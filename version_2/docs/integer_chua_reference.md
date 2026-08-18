@@ -155,7 +155,7 @@ times.
 
 | Source | Evidence status | Use in this package |
 | --- | --- | --- |
-| `validation/reference_cases/chua_integer_q1/` | promoted baseline | Machine-readable JSON/CSV and figures for the corrected `q=1` run. |
+| `validation/reference_cases/chua_integer_q1/` | promoted baseline | Machine-readable JSON/CSV and figures for the retained `q=1` run. |
 | Guan and Xie (2025) | published comparison | Example 6 supplies the displayed `omega0`, `k`, `a0`, and starting-point values used in the relative-error table. |
 | Ghoreishi, Ghaffari, and Saad (2023) | reproduced benchmark | Tables 3, 4, 9, and 10 validate the EFORK-3 stage ordering used by this record. |
 

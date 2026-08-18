@@ -47,21 +47,15 @@ def test_registry_does_not_equate_fractional_with_caputo() -> None:
     )
 
 
-def test_method_contract_distinguishes_experimental_abc_from_planned_fast_soe() -> None:
+def test_method_contract_distinguishes_implemented_abc_from_planned_fast_soe() -> None:
     with pytest.raises(ValueError, match="not registered"):
         validate_fractional_method("atangana_baleanu_caputo", "caputo_abm_pece")
-    with pytest.raises(NotImplementedError, match="not implemented"):
-        validate_fractional_method(
-            "atangana_baleanu_caputo",
-            "abc_predictor_corrector",
-        )
-    experimental = validate_fractional_method(
+    implemented = validate_fractional_method(
         "atangana_baleanu_caputo",
         "abc_predictor_corrector",
-        require_implemented=False,
     )
-    assert experimental.implementation_status == "experimental"
-    assert experimental.supported_combinations == (
+    assert implemented.implementation_status == "implemented"
+    assert implemented.supported_combinations == (
         ("atangana_baleanu_caputo", "commensurate", "full_history"),
     )
     planned = validate_fractional_method(
@@ -73,13 +67,13 @@ def test_method_contract_distinguishes_experimental_abc_from_planned_fast_soe() 
     assert planned.implementation_status == "planned"
 
 
-def test_lubich_cq_contract_is_an_experimental_sampled_operator() -> None:
+def test_lubich_cq_contract_is_an_implemented_sampled_operator() -> None:
     method = validate_fractional_method(
         "riemann_liouville",
         "convolution_quadrature",
         require_implemented=False,
     )
-    assert method.implementation_status == "experimental"
+    assert method.implementation_status == "implemented"
     assert method.execution_kind == "sampled_operator"
     assert "tempered_caputo" not in method.derivative_families
 
@@ -99,7 +93,7 @@ def test_tempered_cq_contract_exposes_only_the_executable_batch_lane(
         memory_policy="full_history",
         require_implemented=False,
     )
-    assert method.implementation_status == "experimental"
+    assert method.implementation_status == "implemented"
     assert method.execution_kind == "sampled_operator"
     assert method.supports_combination(derivative, order_mode, "full_history")
     assert "fast_history" not in method.memory_policies
@@ -109,7 +103,7 @@ def test_tempered_cq_contract_exposes_only_the_executable_batch_lane(
 def test_tempered_fast_history_is_executable_while_symbol_shift_stays_planned() -> None:
     fast = get_fractional_method("tempered_fast_multistep_history")
     shifted = get_fractional_method("tempered_symbol_shift_cq")
-    assert fast.implementation_status == "experimental"
+    assert fast.implementation_status == "implemented"
     assert fast.execution_kind == "sampled_operator"
     assert fast.memory_policies == ("fast_history",)
     assert "GNGF2" in fast.accuracy_note

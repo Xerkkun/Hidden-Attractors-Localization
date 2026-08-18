@@ -2,7 +2,7 @@
 
 Program title: `hidden-attractors-fo`
 
-Version: 1.1.0
+Version: 1.2.0
 
 Repository: <https://github.com/Xerkkun/Hidden-Attractors-Localization>
 
@@ -25,11 +25,11 @@ Solution method: scalar Lur'e formulation, describing-function and Nyquist seed
 construction, integer or Caputo continuation, ABM/EFORK integration, finite-time
 diagnostics, all-equilibrium neighborhood tests, structured manifests, and
 reproducible figure export. Independent characterization includes Lyapunov,
-spectral, Poincare, boundedness, bifurcation, and 0-1 diagnostics. Version
-1.1.0 fully integrates Rosenstein/Eckmann Lyapunov reconstruction and
+spectral, Poincare, boundedness, bifurcation, and 0-1 diagnostics. The current
+1.2.0 surface includes Rosenstein/Eckmann Lyapunov reconstruction and
 Kaplan--Yorke dimension for uniformly sampled scalar time series.
 
-Public reference material documents the complete 99-symbol top-level API and
+Public reference material documents the complete 178-symbol top-level API and
 all 33 plotting/rendering callables. The bundled catalog contains 62
 reproducible numerical PNG outputs calculated from the registered
 `chua-nonsmooth` system: 33 representatives and 29 additional outputs from
@@ -48,6 +48,6 @@ hiddenness.
 
 Running time: metadata and smoke checks complete in seconds. Numerical cost
 depends on trajectory length, fractional-memory history, continuation grid, and
-sampled-neighborhood size. The recorded quick comprehensive control took 2.455
-seconds on its stated Windows environment; this value is provenance, not a
+sampled-neighborhood size. The recorded quick comprehensive control took 0.204
+seconds inside the workflow on its stated Windows environment; this value is provenance, not a
 cross-platform benchmark.

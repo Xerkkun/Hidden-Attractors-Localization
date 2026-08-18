@@ -24,9 +24,9 @@ def test_pypi_project_metadata_and_public_cli() -> None:
     project = data["project"]
 
     assert project["name"] == "hidden-attractors-fo"
-    assert project["version"] == "1.1.0"
+    assert project["version"] == "1.2.0"
     assert project["readme"] == "README.md"
-    assert project["requires-python"] == ">=3.11"
+    assert project["requires-python"] == ">=3.11,<3.15"
     assert project["license"] == "MIT"
     assert project["authors"]
     assert project["keywords"]
@@ -68,6 +68,7 @@ def test_pypi_wheel_package_scope_is_narrow() -> None:
     assert find["include"] == ["hidden_attractors*"]
     assert "tools*" in find["exclude"]
     assert "benchmarks*" in find["exclude"]
+    assert "hidden_attractors.native.tests*" in find["exclude"]
     assert "hidden_attractors" in package_data
     assert "native/csrc/*.c" in package_data["hidden_attractors"]
     assert "native/csrc/*.h" in package_data["hidden_attractors"]
@@ -78,6 +79,7 @@ def test_pypi_wheel_package_scope_is_narrow() -> None:
     assert "recursive-include examples/chua_integer_lure_reference" in manifest
     assert "include hidden_attractors/configs/examples/workflow_contract.yaml" in manifest
     assert "recursive-include hidden_attractors *.py *.yaml" not in manifest
+    assert "recursive-exclude hidden_attractors/native/tests *" in manifest
     assert "recursive-exclude tests *" in manifest
     assert not any(
         line.strip().startswith("prune ")

@@ -20,6 +20,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
+from hidden_attractors._time_grid import exact_fixed_step_count
 from hidden_attractors.systems import get_system
 from hidden_attractors.integrations.selector import integrate
 from hidden_attractors.plotting.dynamics import (
@@ -196,7 +197,11 @@ def run_attractor_only_workflow(config: Dict[str, Any]) -> Dict[str, Any]:
         t_final = N * h
     else:
         t_final = float(config.get("final_simulation", {}).get("t_final", 500.0))
-        N = int(math.ceil(t_final / h))
+        N = exact_fixed_step_count(
+            h,
+            t_final,
+            caller="run_attractor_only_workflow",
+        )
 
     t_burn = float(config.get("final_simulation", {}).get("t_burn", 120.0))
     div_norm = float(config.get("final_simulation", {}).get("divergence_norm", 120.0))

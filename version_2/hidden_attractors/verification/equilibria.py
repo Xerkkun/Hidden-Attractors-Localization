@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.optimize import root_scalar
 from typing import Any, Dict
+import warnings
 
 def solve_equilibria(system: Any) -> Dict[str, np.ndarray]:
     """Find all equilibrium points for the given system.
@@ -69,7 +70,20 @@ def solve_equilibria(system: Any) -> Dict[str, np.ndarray]:
                     z_star = -x_star * beta / (gamma + beta)
                     eqs["E+"] = np.array([x_star, y_star, z_star], dtype=float)
                     eqs["E-"] = np.array([-x_star, -y_star, -z_star], dtype=float)
-            except Exception:
-                pass
+                elif not sol.converged:
+                    warnings.warn(
+                        "solve_equilibria: arctan equilibrium root solver did not converge "
+                        f"for model={model!r} on bracket [1e-5, 100.0].",
+                        RuntimeWarning,
+                        stacklevel=2,
+                    )
+            except (ValueError, RuntimeError, OverflowError, FloatingPointError) as exc:
+                warnings.warn(
+                    "solve_equilibria: arctan equilibrium root solver failed "
+                    f"for model={model!r} on bracket [1e-5, 100.0]: "
+                    f"{type(exc).__name__}: {exc}",
+                    RuntimeWarning,
+                    stacklevel=2,
+                )
                 
     return eqs

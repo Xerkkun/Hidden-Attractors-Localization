@@ -16,6 +16,25 @@ from .attractor_reference import (
     calibrate_attractor_reference,
     classify_cloud_against_reference,
 )
+from .destination_classifier import (
+    DESTINATION_CLASSIFIER_SCHEMA_VERSION,
+    DESTINATION_LABELS,
+    DestinationClassification,
+    DestinationClassifierContract,
+    classify_destination,
+)
+from .edge_tracking import (
+    EdgeDestination,
+    EdgeEvaluationContext,
+    EdgeEvaluationRecord,
+    EdgeIteration,
+    EdgeTrackingConfig,
+    EdgeTrackingResult,
+    ScaledCylindricalGeometry,
+    ScaledEuclideanGeometry,
+    edge_destination_from_classification,
+    track_edge_bracket,
+)
 
 __all__ = [
     "solve_equilibria",
@@ -34,4 +53,19 @@ __all__ = [
     "AttractorReferenceCalibration",
     "calibrate_attractor_reference",
     "classify_cloud_against_reference",
+    "DESTINATION_CLASSIFIER_SCHEMA_VERSION",
+    "DESTINATION_LABELS",
+    "DestinationClassification",
+    "DestinationClassifierContract",
+    "classify_destination",
+    "EdgeDestination",
+    "EdgeEvaluationContext",
+    "EdgeEvaluationRecord",
+    "EdgeIteration",
+    "EdgeTrackingConfig",
+    "EdgeTrackingResult",
+    "ScaledCylindricalGeometry",
+    "ScaledEuclideanGeometry",
+    "edge_destination_from_classification",
+    "track_edge_bracket",
 ]

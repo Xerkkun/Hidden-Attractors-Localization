@@ -6,6 +6,7 @@ from typing import Any, Mapping
 
 import numpy as np
 
+from .._numeric import bisect_root as _bisect_root
 from ..models.chua import (
     chua_arctan_wu2023_parameters,
     chua_parameters,
@@ -19,32 +20,6 @@ from .kalman_fitts import kalman_fitts_2019_system
 from .lure import LureSystem
 from .modified_van_der_pol_duffing import mavpd_2023_system
 from .pll_lead_lag import pll_lead_lag_2015_system
-
-
-def _bisect_root(func, left: float, right: float, *, maxiter: int = 100, xtol: float = 1.0e-12) -> float:
-    lo = float(left)
-    hi = float(right)
-    flo = float(func(lo))
-    fhi = float(func(hi))
-    if flo == 0.0:
-        return lo
-    if fhi == 0.0:
-        return hi
-    if flo * fhi > 0.0:
-        raise ValueError("root is not bracketed.")
-    for _ in range(int(maxiter)):
-        mid = 0.5 * (lo + hi)
-        fmid = float(func(mid))
-        if abs(fmid) <= xtol or abs(hi - lo) <= xtol:
-            return mid
-        if flo * fmid <= 0.0:
-            hi = mid
-            fhi = fmid
-        else:
-            lo = mid
-            flo = fmid
-    return 0.5 * (lo + hi)
-
 
 _CHUA_KEYS = {"model", "alpha", "beta", "gamma", "m0", "m1", "a1", "a2", "rho"}
 

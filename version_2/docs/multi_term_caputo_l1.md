@@ -1,6 +1,6 @@
 # Fachada Caputo multitérmino L1
 
-Estado: `experimental`.
+Estado de implementación: `implemented`. Estabilidad de API: `experimental`.
 
 La API `integrate_multi_term_caputo_l1` resuelve la ecuación finita
 
@@ -201,51 +201,17 @@ El benchmark `benchmarks/bench_multi_term_caputo.py` separa el costo de fachada,
 la construcción del kernel y la historia. Sus resultados describen el host y
 las cargas medidas; no establecen una ventaja universal.
 
-La corrida fechada el 3 de agosto de 2026 usó Python 3.14.3, NumPy 2.4.5,
-Numba 0.65.1 y 16 hilos lógicos. Con siete repeticiones medidas después del
-calentamiento, \(R=128\) términos de entrada se redujeron exactamente a ocho,
-con \(N=256\), dimensión tres y paridad exacta de tiempos y estados entre la
-fachada y el solver canónico. La razón de medianas fachada/solver directo fue
-`1.0120`; al aislar sólo la construcción compilada de un kernel de 4096 lags,
-la razón no coalescido/coalescido fue `15.0220`. La historia ya combinada dio
-`0.9909`, como corresponde a una operación que ya no depende de \(R\). Estas
-razones son diagnósticos de un único host y carga, no factores de aceleración
-universales. El JSON de trabajo bajo `C:\tmp` tuvo SHA-256
-`32ac0c43b388ce9664ce4b9cd49f936bfd2e83d704bf463c8c39c6ca219438c9`.
+Los resultados medidos dependen del host, la versión de Numba, el calentamiento
+y el número de términos coalescibles. Por ello la documentación pública no fija
+un factor de aceleración; el benchmark registra por separado fachada,
+construcción del kernel e historia ya combinada.
 
-## Evidencia recuperada con SciSpace
+## Base bibliográfica
 
-Se ejecutaron estas preguntas completas, no búsquedas por palabras clave:
-
-1. **“Which peer-reviewed papers define multi-term Caputo fractional
-   differential equations and derive stable convergent numerical methods,
-   especially L1 or predictor-corrector schemes, with explicit coefficients,
-   initial conditions, consistency, and convergence orders?”**
-
-   - `3tp7pod1yv`: Ren y Sun, L1 para derivadas Caputo temporales
-     multitérmino, con estabilidad y convergencia;
-   - `30zlukzu`: reglas de integración de producto y predictor--corrector para
-     derivadas Caputo con kernels generales.
-
-   SciSpace añadió `methods_used` para `2/2` trabajos.
-
-2. **“Which peer-reviewed papers show that a finite sum of Caputo derivatives
-   is a distributed-order derivative with a discrete atomic measure, and what
-   numerical analysis distinguishes multi-term Caputo equations from genuinely
-   continuous distributed-order equations?”**
-
-   - `1o5cvoa44t`: Kochubei, derivada Caputo--Dzhrbashyan integrada respecto a
-     una medida positiva;
-   - `3hf80rfehx`: discretización de la integral de orden seguida por un método
-     implícito multitérmino;
-   - `3ued1yt7yp`: cuadratura de Gauss adaptativa en el orden, fórmulas de
-     producto y solución iterativa para el caso distribuido continuo.
-
-   SciSpace añadió `methods_used` para `3/3` trabajos.
-
-La búsqueda sirvió para fijar la frontera de atribución. La canonización, el
-wrapper estructurado y la reutilización exacta del kernel son diseño HAFO; no se
-atribuyen a esos artículos.
+Las referencias primarias al final de esta página sustentan la formulación
+multitérmino, el esquema L1 y la interpretación como medida atómica. La
+canonización, el resultado estructurado y la reutilización del kernel son diseño
+de HAFO y no se atribuyen a un resumen de búsqueda.
 
 ## Verificación Wolfram y pruebas
 
@@ -255,14 +221,10 @@ coeficientes racionales cuya suma es `37/20`, comprueba permutación y
 coalescencia, y resuelve una recurrencia afín sin importar HAFO. El comparador
 Python llama únicamente a la fachada pública.
 
-La ejecución viva produjo `passed=true`: diferencia máxima Wolfram--HAFO de
-`3.552713678800501e-15` frente a tolerancia `8e-12`, diferencia máxima del
-kernel de `3.552713678800501e-15`, diferencia de trayectoria de
-`2.220446049250313e-15` e identidad cuadrática con diferencia cero. La suite
-focal terminó con 31 pruebas aprobadas y una omitida; la omisión corresponde al
-test opcional de un artefacto persistido, pues la corrida viva usó y eliminó un
-directorio nuevo bajo `C:\tmp`. No se escribió `validation/outputs` ni el
-`tmp` del repositorio.
+El contrato exige residuo simbólico, residuo discreto, paridad del kernel y
+paridad de trayectoria dentro de las tolerancias registradas por el caso. Esas
+comparaciones son evidencia finita de implementación; no demuestran estabilidad
+general, convergencia caótica, atracción ni ocultedad.
 
 Pruebas focales:
 

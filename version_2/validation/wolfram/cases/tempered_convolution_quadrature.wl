@@ -33,11 +33,7 @@ root = ParentDirectory[DirectoryName[$InputFileName]];
 Get[FileNameJoin[{root, "common", "ha_validation_common.wl"}]];
 
 systemID = "tempered_convolution_quadrature";
-temporaryRoot = If[
-  $OperatingSystem === "Windows",
-  "C:\\tmp",
-  $TemporaryDirectory
-];
+temporaryRoot = $TemporaryDirectory;
 outDir = EnsureDirectory[
   GetCommandOption[
     "--out",

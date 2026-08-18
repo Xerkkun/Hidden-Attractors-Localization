@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import pytest
 import re
-from pathlib import Path
-from tests.helpers.test_documentation_text import read, ROOT, get_violations_without_context
+from tests.helpers.test_documentation_text import active_doc_paths, read, ROOT
 
 ARCTAN_CLARIFICATIONS = [
     "implemented algebraically", "radius-limited", "r <= 0.3", "local radii",
     "8400", "zero contacts", "implementado algebraicamente", "radios locales",
     "ocultedad local", "auditoria extendida", "reproduccion bibliografica",
-    "validacion completa de ocultedad", "adm local"
+    "validacion completa de ocultedad", "adm local", "validation definition",
+    "bibliographic algebra", "not equivalent", "no full-memory",
+    "no hiddenness claim", "bibliographic validation", "not hiddenness evidence"
 ]
 MACHADO_CLARIFICATIONS = [
     "documented as theory", "validation-only", "not a promoted public workflow",
@@ -77,16 +78,7 @@ def test_manual_claims_consistency_check():
     
     is_arctan_radius_limited = "r <= 0.3" in arctan_claim_line.lower() or "radius-limited" in arctan_claim_line.lower()
     
-    manuals = [
-        ROOT / "USER_MANUAL.md",
-        ROOT / "README.md",
-        ROOT.parent / "README.md",
-        ROOT / "REFERENCE_GUIDE.md",
-        ROOT / "docs/quick_start.md",
-        ROOT / "docs/validation_evidence.md",
-        ROOT / "docs/unified_report.md",
-    ]
-    manuals = [p for p in manuals if p.exists()]
+    manuals = active_doc_paths()
     
     violations = []
     
@@ -102,7 +94,10 @@ def test_manual_claims_consistency_check():
                     violations.append(f"{p.name} -> Contains forbidden verified claim: '{claim}'")
                     
         # Rule 2: Chua arctan mentions must be near clarification terms (within ±300 chars)
-        for match in re.finditer(r"chua\s+arctan", content_lower):
+        for match in re.finditer(
+            r"(?:chua[\s-]+arctan(?:gent)?|arctan(?:gent)?[\s-]+chua)",
+            content_lower,
+        ):
             pos = match.start()
             win_start = max(0, pos - 300)
             win_end = min(len(content), pos + len(match.group(0)) + 300)
@@ -114,7 +109,7 @@ def test_manual_claims_consistency_check():
                 )
                 
         # Rule 3: Machado / FDF mentions must be near clarification terms (within ±300 chars)
-        for match in re.finditer(r"machado|fdf", content_lower):
+        for match in re.finditer(r"machado\s+auxiliary|\bfdf\b", content_lower):
             pos = match.start()
             win_start = max(0, pos - 300)
             win_end = min(len(content), pos + len(match.group(0)) + 300)

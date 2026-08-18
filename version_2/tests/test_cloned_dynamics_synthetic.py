@@ -109,10 +109,28 @@ def test_api_dispatches_cloned_dynamics_without_jacobian() -> None:
         t_clone=0.2,
         k_blocks=2,
         delta=1e-3,
+        allow_quarantined_method=True,
     )
     assert summary.result.status == "ok"
     assert summary.result.method_id == "fractional_cloned_dynamics_abm_gs_published"
     assert "cloned_dynamics_no_jacobian_required" in summary.warnings
+    assert "quarantined_method_explicit_reproduction_opt_in" in summary.warnings
+
+
+def test_api_quarantines_published_discrepancy_without_explicit_opt_in() -> None:
+    with pytest.raises(ValueError, match="method_quarantined_by_validation"):
+        compute_lyapunov_spectrum(
+            rhs=lambda x: -x,
+            x0=np.ones(2),
+            q=0.9,
+            orders=[0.9],
+            method="fractional_cloned_dynamics_abm_gs_published",
+            h=0.02,
+            t_final=0.4,
+            t_clone=0.2,
+            k_blocks=2,
+            delta=1e-3,
+        )
 
 
 @pytest.mark.parametrize(

@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.2.0
+
+### Added
+
+- Validated public contracts for the promoted existing fractional-method,
+  dynamical-analysis, and geometric/topological execution paths.
+- Native input-hardening checks and import-order regression coverage.
+
+### Changed
+
+- Publication now requires an exact semantic-version tag that resolves to the
+  workflow source commit.
+- Release identity is distinct from the historical `v1.1.0` source snapshot.
+
+### Fixed
+
+- Public callable names remain callable after importing same-named submodules.
+- Relocated validation runs and test fixtures no longer write into promoted
+  repository evidence directories.
+
 ## 1.1.0
 
 ### Added

@@ -15,6 +15,7 @@ from typing import Any, Callable, Mapping
 import numpy as np
 from scipy.integrate import solve_ivp
 
+from ._system_order import infer_system_order as _infer_system_order
 from .lyapunov import finite_difference_jacobian
 
 
@@ -73,26 +74,6 @@ class AdaptiveLyapunovResult:
         if np.all(np.isfinite(self.exponents)):
             return float(np.sum(self.exponents))
         return float("nan")
-
-
-def _infer_system_order(system: object) -> float | None:
-    """Best-effort extraction of an order declaration from a system object."""
-
-    for attribute in ("q", "order", "fractional_order"):
-        value = getattr(system, attribute, None)
-        if value is not None:
-            try:
-                return float(value)
-            except (TypeError, ValueError):
-                pass
-    for attribute in ("metadata", "parameters", "params"):
-        mapping = getattr(system, attribute, None)
-        if isinstance(mapping, Mapping) and mapping.get("q") is not None:
-            try:
-                return float(mapping["q"])
-            except (TypeError, ValueError):
-                pass
-    return None
 
 
 def integer_dop853_variational_qr(

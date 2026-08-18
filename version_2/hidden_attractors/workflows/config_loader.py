@@ -36,6 +36,8 @@ from typing import Any, Dict, Optional
 
 import yaml
 
+from .._time_grid import exact_fixed_step_count
+
 # ---------------------------------------------------------------------------
 # Default configuration (hierarchical → normalized flat)
 # ---------------------------------------------------------------------------
@@ -571,9 +573,12 @@ def _normalize(cfg: Dict[str, Any]) -> Dict[str, Any]:  # noqa: C901
         cfg["memory_policy"] = "none"
 
     # memory_window_steps / memory_window_length / memory_window_time
-    import numpy as np
     if cfg.get("memory_window_time") is not None and cfg.get("h") is not None:
-        steps = int(round(float(cfg["memory_window_time"]) / float(cfg["h"])))
+        steps = exact_fixed_step_count(
+            float(cfg["h"]),
+            float(cfg["memory_window_time"]),
+            caller="configuration memory_window_time",
+        )
         cfg["memory_window_steps"] = steps
         cfg["memory_window_length"] = steps
     elif cfg.get("memory_window_steps") is not None:
@@ -1019,7 +1024,11 @@ def _normalize_memory_config(flat: Dict[str, Any]) -> None:
                 raise ValueError(
                     "memory_window_time requires an explicit integration step h."
                 )
-            steps = int(round(float(mw_time) / float(h)))
+            steps = exact_fixed_step_count(
+                float(h),
+                float(mw_time),
+                caller="configuration memory_window_time",
+            )
             flat["memory_window_steps"] = steps
             flat["memory_window_length"] = steps
         elif mw_steps is not None:

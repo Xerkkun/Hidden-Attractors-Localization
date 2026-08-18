@@ -2,9 +2,16 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include "fractional_integrators.h"
+#include "native_validation.h"
+
+API_EXPORT int fractional_integrators_abi_version(void) {
+    return 3;
+}
 
 // Predefined RHS for Chua with saturation
-void chua_saturation_rhs_c(double t, const double *x, double *dx, int n, void *params) {
+API_EXPORT void chua_saturation_rhs_c(double t, const double *x, double *dx, int n, void *params) {
+    (void)t;
+    if (!x || !dx || !params || n < 3) return;
     ChuaSaturationParams *p = (ChuaSaturationParams *)params;
     double sigma = x[0];
     double sat_val = sigma;
@@ -18,7 +25,9 @@ void chua_saturation_rhs_c(double t, const double *x, double *dx, int n, void *p
 }
 
 // Predefined RHS for Chua with arctan
-void chua_arctan_rhs_c(double t, const double *x, double *dx, int n, void *params) {
+API_EXPORT void chua_arctan_rhs_c(double t, const double *x, double *dx, int n, void *params) {
+    (void)t;
+    if (!x || !dx || !params || n < 3) return;
     ChuaArctanParams *p = (ChuaArctanParams *)params;
     double sigma = x[0];
     double phi = p->a1 * sigma + p->a2 * atan(p->rho * sigma);
@@ -26,14 +35,6 @@ void chua_arctan_rhs_c(double t, const double *x, double *dx, int n, void *param
     dx[0] = p->alpha * (x[1] - sigma - phi);
     dx[1] = x[0] - x[1] + x[2];
     dx[2] = -p->beta * x[1] - p->gamma * x[2];
-}
-
-API_EXPORT void *get_chua_saturation_rhs(void) {
-    return (void *)chua_saturation_rhs_c;
-}
-
-API_EXPORT void *get_chua_arctan_rhs(void) {
-    return (void *)chua_arctan_rhs_c;
 }
 
 // -----------------------------------------------------------------------------
@@ -66,29 +67,6 @@ static EFORK3 efork3_coeffs(double q, double h) {
     c.w3 = -8.0 * (c.g1 * c.g1) * (2.0 * (c.g2 * c.g2) - c.g3) / (c.g2 * c.g3);
     c.inv_mem_factor = 1.0 / (h * tgamma(2.0 - q));
     return c;
-}
-
-static void memory_component_general(int k, double t_eval, const double *t, const double *arr, int dim, double q, double h, const EFORK3 *c, int memory_mode, int memory_window_length, double *out_mem) {
-    for (int d = 0; d < dim; ++d) {
-        out_mem[d] = 0.0;
-    }
-    const double expo = 1.0 - q;
-    int j_start = 0;
-    if (memory_mode == 1) { // windowed
-        j_start = k - memory_window_length;
-        if (j_start < 0) j_start = 0;
-    }
-    for (int j = j_start; j < k; ++j) {
-        const double v1 = pow(t_eval - t[j], expo);
-        const double v2 = pow(t_eval - t[j + 1], expo);
-        const double term = v1 - v2;
-        for (int d = 0; d < dim; ++d) {
-            out_mem[d] += (arr[dim * (j + 1) + d] - arr[dim * j + d]) * term;
-        }
-    }
-    for (int d = 0; d < dim; ++d) {
-        out_mem[d] *= c->inv_mem_factor;
-    }
 }
 
 static void memory_component_precomputed(int k, const double *arr, int dim, const double *pow_expo, const EFORK3 *c, int memory_mode, int memory_window_length, double *out_mem) {
@@ -130,9 +108,13 @@ API_EXPORT int integrate_fractional_c(
     const double *history_times,
     const double *history_states,
     int history_len,
+    size_t history_times_count,
+    size_t history_states_count,
     double divergence_norm,
     double *out_times,
     double *out_states,
+    size_t out_times_capacity,
+    size_t out_states_capacity,
     int *out_steps,
     int *status_code,
     
@@ -148,27 +130,105 @@ API_EXPORT int integrate_fractional_c(
     int eq_consec_steps,
     double eq_min_time,
     const double *equilibria_pts,
-    int num_equilibria
+    int num_equilibria,
+    size_t equilibria_values_count
 ) {
+    size_t history_state_required = 0u;
+    size_t equilibrium_values_required = 0u;
+    size_t state_values_required = 0u;
+    int nsteps = 0;
+
+    if (!out_steps || !status_code) return -1;
+    *out_steps = 0;
+    *status_code = -1;
+
     // 1. Basic validation
-    if (!rhs || !x0 || dim <= 0 || !(q > 0.0 && q <= 1.0) || !(h > 0.0) || t_final < 0.0 || !out_times || !out_states || !out_steps || !status_code) {
+    if (!rhs || !x0 || dim <= 0 || !(q > 0.0 && q < 1.0) ||
+        !hafo_isfinite(q) || !hafo_isfinite(h) || !hafo_isfinite(t_final) ||
+        !hafo_isfinite(divergence_norm) || !(divergence_norm > 0.0) ||
+        (method != 0 && method != 1) ||
+        (memory_mode != 0 && memory_mode != 1) ||
+        (memory_mode == 0 && memory_window_length != 0) ||
+        (memory_mode == 1 && memory_window_length < 1) ||
+        history_len < 0 || num_equilibria < 0 ||
+        (early_stop_enabled != 0 && early_stop_enabled != 1) ||
+        (div_early_enabled != 0 && div_early_enabled != 1) ||
+        (eq_early_enabled != 0 && eq_early_enabled != 1) ||
+        !hafo_isfinite(div_early_norm) || !(div_early_norm > 0.0) ||
+        div_consec_steps < 1 || !hafo_isfinite(div_growth_factor) ||
+        !(div_growth_factor > 0.0) ||
+        !hafo_isfinite(eq_tol) || !(eq_tol > 0.0) ||
+        !hafo_isfinite(eq_deriv_tol) || !(eq_deriv_tol > 0.0) ||
+        eq_consec_steps < 1 || !hafo_isfinite(eq_min_time) || eq_min_time < 0.0 ||
+        !out_times || !out_states ||
+        !hafo_uniform_step_count(t_final, h, &nsteps) ||
+        !hafo_values_are_finite(x0, (size_t)dim)) {
         return -1;
     }
 
-    // EFORK is only valid for 0 < q < 1
-    if (method == 1 && q >= 1.0) {
-        *status_code = -1;
-        return -1;
+    if (history_len > 0) {
+        if (!history_times || !history_states ||
+            !hafo_checked_mul_size((size_t)history_len, (size_t)dim,
+                                   &history_state_required) ||
+            history_times_count < (size_t)history_len ||
+            history_states_count < history_state_required ||
+            !hafo_values_are_finite(history_times, (size_t)history_len) ||
+            history_state_required > (size_t)INT_MAX ||
+            !hafo_values_are_finite(history_states, history_state_required)) {
+            return -1;
+        }
+        double time_scale = fmax(
+            1.0, (double)(history_len > 1 ? history_len - 1 : 1) * fabs(h)
+        );
+        for (int index = 0; index < history_len; ++index) {
+            time_scale = fmax(time_scale, fabs(history_times[index]));
+        }
+        const double time_tolerance = 64.0 * DBL_EPSILON * time_scale;
+        if (fabs(history_times[history_len - 1]) > time_tolerance) return -1;
+        for (int index = 1; index < history_len; ++index) {
+            const double increment = history_times[index] - history_times[index - 1];
+            if (!(increment > 0.0)) return -1;
+        }
+        for (int index = 0; index < history_len; ++index) {
+            const double expected = (double)(index - (history_len - 1)) * h;
+            if (fabs(history_times[index] - expected) > time_tolerance) return -1;
+        }
+        for (int d = 0; d < dim; ++d) {
+            const double expected = x0[d];
+            const double actual = history_states[(history_len - 1) * dim + d];
+            const double tolerance = 64.0 * DBL_EPSILON *
+                                     fmax(1.0, fmax(fabs(expected), fabs(actual)));
+            if (fabs(expected - actual) > tolerance) return -1;
+        }
     }
 
-    int H = (history_len > 0) ? history_len : 1;
-    int nsteps = (int)ceil(t_final / h);
-    if (nsteps < 0) nsteps = 0;
-    int total_capacity = H + nsteps;
+    if (num_equilibria > 0) {
+        if (!equilibria_pts ||
+            !hafo_checked_mul_size((size_t)num_equilibria, (size_t)dim,
+                                   &equilibrium_values_required) ||
+            equilibria_values_count < equilibrium_values_required ||
+            equilibrium_values_required > (size_t)INT_MAX ||
+            !hafo_values_are_finite(equilibria_pts, equilibrium_values_required)) {
+            return -1;
+        }
+    }
+
+    const int H = (history_len > 0) ? history_len : 1;
+    if (nsteps > INT_MAX - H - 2) return -1;
+    const int total_capacity = H + nsteps;
+    if (!hafo_checked_mul_size((size_t)total_capacity, (size_t)dim,
+                               &state_values_required) ||
+        state_values_required > (size_t)INT_MAX) {
+        return -1;
+    }
+    if (out_times_capacity < (size_t)total_capacity ||
+        out_states_capacity < state_values_required) {
+        return -4;
+    }
 
     // 2. Allocate integration workspace
     double *t = (double *)calloc((size_t)total_capacity, sizeof(double));
-    double *x = (double *)calloc((size_t)total_capacity * (size_t)dim, sizeof(double));
+    double *x = (double *)calloc(state_values_required, sizeof(double));
     if (!t || !x) {
         free(t); free(x);
         return -2;
@@ -182,6 +242,8 @@ API_EXPORT int integrate_fractional_c(
                 x[i * dim + d] = history_states[i * dim + d];
             }
         }
+        t[H - 1] = 0.0;
+        for (int d = 0; d < dim; ++d) x[(H - 1) * dim + d] = x0[d];
     } else {
         t[0] = 0.0;
         for (int d = 0; d < dim; ++d) {
@@ -200,13 +262,18 @@ API_EXPORT int integrate_fractional_c(
     int *eq_consec_counts = NULL;
     if (early_stop_enabled && eq_early_enabled && num_equilibria > 0 && equilibria_pts) {
         eq_consec_counts = (int *)calloc((size_t)num_equilibria, sizeof(int));
+        if (!eq_consec_counts) {
+            free(t);
+            free(x);
+            return -2;
+        }
     }
 
     // -------------------------------------------------------------------------
     // Method 0: Adams-Bashforth-Moulton (ABM)
     // -------------------------------------------------------------------------
     if (method == 0) {
-        double *fhist = (double *)calloc((size_t)total_capacity * (size_t)dim, sizeof(double));
+        double *fhist = (double *)calloc(state_values_required, sizeof(double));
         double *pow_q = (double *)malloc((size_t)(total_capacity + 2) * sizeof(double));
         double *pow_q1 = (double *)malloc((size_t)(total_capacity + 2) * sizeof(double));
         double *predictor = (double *)malloc((size_t)dim * sizeof(double));
@@ -254,7 +321,8 @@ API_EXPORT int integrate_fractional_c(
                 }
             }
 
-            double t_next = t[i] + h;
+            const int local_step = i - (H - 1) + 1;
+            double t_next = (local_step == nsteps) ? t_final : t[i] + h;
             rhs(t_next, predictor, fp, dim, params);
 
             // B. Corrector Step
@@ -325,6 +393,12 @@ API_EXPORT int integrate_fractional_c(
             // EQUILIBRIUM CONVERGENCE EARLY STOP
             if (early_stop_enabled && eq_early_enabled && eq_consec_counts && t_next >= eq_min_time) {
                 int converged_idx = -1;
+                double deriv_norm = 0.0;
+                for (int d = 0; d < dim; ++d) {
+                    const double derivative = fhist[(i + 1) * dim + d];
+                    deriv_norm += derivative * derivative;
+                }
+                deriv_norm = sqrt(deriv_norm);
                 for (int k = 0; k < num_equilibria; ++k) {
                     double diff_norm = 0.0;
                     for (int d = 0; d < dim; ++d) {
@@ -332,20 +406,6 @@ API_EXPORT int integrate_fractional_c(
                         diff_norm += diff * diff;
                     }
                     diff_norm = sqrt(diff_norm);
-
-                    // Compute rhs vector norm at the corrected state to test derivative
-                    double deriv_norm = 0.0;
-                    double *dx_tmp = (double *)malloc((size_t)dim * sizeof(double));
-                    if (dx_tmp) {
-                        rhs(t_next, corrected, dx_tmp, dim, params);
-                        for (int d = 0; d < dim; ++d) {
-                            deriv_norm += dx_tmp[d] * dx_tmp[d];
-                        }
-                        deriv_norm = sqrt(deriv_norm);
-                        free(dx_tmp);
-                    } else {
-                        deriv_norm = 9999.0;
-                    }
 
                     if (diff_norm < eq_tol && deriv_norm < eq_deriv_tol) {
                         eq_consec_counts[k]++;
@@ -369,7 +429,7 @@ API_EXPORT int integrate_fractional_c(
                 *status_code = 1; // diverged
                 break;
             }
-            if (!isfinite(norm)) {
+            if (!hafo_isfinite(norm)) {
                 *status_code = 2; // nonfinite
                 break;
             }
@@ -441,7 +501,8 @@ API_EXPORT int integrate_fractional_c(
             }
 
             // Prediction
-            t[i + 1] = t[i] + h;
+            const int local_step = i - (H - 1) + 1;
+            t[i + 1] = (local_step == nsteps) ? t_final : (double)local_step * h;
             double norm = 0.0;
             for (int d = 0; d < dim; ++d) {
                 double val = x[i * dim + d] + coeffs.w1 * k1[d] + coeffs.w2 * k2[d] + coeffs.w3 * k3[d];
@@ -480,6 +541,12 @@ API_EXPORT int integrate_fractional_c(
             // EQUILIBRIUM CONVERGENCE EARLY STOP
             if (early_stop_enabled && eq_early_enabled && eq_consec_counts && t[i + 1] >= eq_min_time) {
                 int converged_idx = -1;
+                double deriv_norm = 0.0;
+                rhs(t[i + 1], state_ptr, f, dim, params);
+                for (int d = 0; d < dim; ++d) {
+                    deriv_norm += f[d] * f[d];
+                }
+                deriv_norm = sqrt(deriv_norm);
                 for (int k = 0; k < num_equilibria; ++k) {
                     double diff_norm = 0.0;
                     for (int d = 0; d < dim; ++d) {
@@ -487,20 +554,6 @@ API_EXPORT int integrate_fractional_c(
                         diff_norm += diff * diff;
                     }
                     diff_norm = sqrt(diff_norm);
-
-                    // Compute rhs vector norm at the predicted state to test derivative
-                    double deriv_norm = 0.0;
-                    double *dx_tmp = (double *)malloc((size_t)dim * sizeof(double));
-                    if (dx_tmp) {
-                        rhs(t[i + 1], state_ptr, dx_tmp, dim, params);
-                        for (int d = 0; d < dim; ++d) {
-                            deriv_norm += dx_tmp[d] * dx_tmp[d];
-                        }
-                        deriv_norm = sqrt(deriv_norm);
-                        free(dx_tmp);
-                    } else {
-                        deriv_norm = 9999.0;
-                    }
 
                     if (diff_norm < eq_tol && deriv_norm < eq_deriv_tol) {
                         eq_consec_counts[k]++;
@@ -524,7 +577,7 @@ API_EXPORT int integrate_fractional_c(
                 *status_code = 1; // diverged
                 break;
             }
-            if (!isfinite(norm)) {
+            if (!hafo_isfinite(norm)) {
                 *status_code = 2; // nonfinite
                 break;
             }
@@ -562,7 +615,7 @@ static double robust_vector_norm(const double *values, int dim) {
 
 static int vector_is_finite(const double *values, int dim) {
     for (int d = 0; d < dim; ++d) {
-        if (!isfinite(values[d])) return 0;
+        if (!hafo_isfinite(values[d])) return 0;
     }
     return 1;
 }
@@ -581,26 +634,51 @@ API_EXPORT int integrate_tempered_caputo_abm_c(
     double divergence_norm,
     double *out_times,
     double *out_states,
+    size_t out_times_capacity,
+    size_t out_states_capacity,
     int *out_samples,
     int *status_code
 ) {
     if (!rhs || !x0 || dim <= 0 || !(q > 0.0 && q < 1.0) ||
-        !isfinite(tempering) || tempering < 0.0 || !(h > 0.0) ||
-        n_steps < 0 || (memory_mode != 0 && memory_mode != 1) ||
+        !hafo_isfinite(q) || !hafo_isfinite(tempering) || tempering < 0.0 ||
+        !(h > 0.0) || !hafo_isfinite(h) || n_steps < 0 ||
+        n_steps > INT_MAX - 3 ||
+        (memory_mode != 0 && memory_mode != 1) ||
         (memory_mode == 1 && memory_window_length < 2) ||
+        !(divergence_norm > 0.0) || !hafo_isfinite(divergence_norm) ||
+        !hafo_values_are_finite(x0, (size_t)dim) ||
         !out_times || !out_states || !out_samples || !status_code) {
         return -1;
     }
 
     const int total_samples = n_steps + 1;
-    double *times = (double *)calloc((size_t)total_samples, sizeof(double));
-    double *x = (double *)calloc((size_t)total_samples * (size_t)dim, sizeof(double));
-    double *fhist = (double *)calloc((size_t)total_samples * (size_t)dim, sizeof(double));
-    double *pow_q = (double *)malloc((size_t)(total_samples + 2) * sizeof(double));
-    double *pow_q1 = (double *)malloc((size_t)(total_samples + 2) * sizeof(double));
-    double *predictor = (double *)malloc((size_t)dim * sizeof(double));
-    double *fp = (double *)malloc((size_t)dim * sizeof(double));
-    double *corrected = (double *)malloc((size_t)dim * sizeof(double));
+    const size_t total_samples_size = (size_t)total_samples;
+    const size_t power_values = total_samples_size + 2u;
+    size_t state_values = 0u;
+    size_t times_bytes = 0u;
+    size_t states_bytes = 0u;
+    size_t powers_bytes = 0u;
+    size_t vector_bytes = 0u;
+    if (!hafo_checked_mul_size(total_samples_size, (size_t)dim, &state_values) ||
+        state_values > (size_t)INT_MAX ||
+        !hafo_checked_mul_size(total_samples_size, sizeof(double), &times_bytes) ||
+        !hafo_checked_mul_size(state_values, sizeof(double), &states_bytes) ||
+        !hafo_checked_mul_size(power_values, sizeof(double), &powers_bytes) ||
+        !hafo_checked_mul_size((size_t)dim, sizeof(double), &vector_bytes)) {
+        return -1;
+    }
+    if (out_times_capacity < total_samples_size ||
+        out_states_capacity < state_values) {
+        return -3;
+    }
+    double *times = (double *)calloc(1u, times_bytes);
+    double *x = (double *)calloc(1u, states_bytes);
+    double *fhist = (double *)calloc(1u, states_bytes);
+    double *pow_q = (double *)malloc(powers_bytes);
+    double *pow_q1 = (double *)malloc(powers_bytes);
+    double *predictor = (double *)malloc(vector_bytes);
+    double *fp = (double *)malloc(vector_bytes);
+    double *corrected = (double *)malloc(vector_bytes);
 
     if (!times || !x || !fhist || !pow_q || !pow_q1 || !predictor || !fp || !corrected) {
         free(times); free(x); free(fhist); free(pow_q); free(pow_q1);
@@ -617,7 +695,7 @@ API_EXPORT int integrate_tempered_caputo_abm_c(
     *status_code = 0;
     int last_idx = 0;
     double initial_norm = robust_vector_norm(x, dim);
-    if (!vector_is_finite(x, dim) || !isfinite(initial_norm)) {
+    if (!vector_is_finite(x, dim) || !hafo_isfinite(initial_norm)) {
         *status_code = 2;
         goto tempered_copy_results;
     }
@@ -706,7 +784,7 @@ API_EXPORT int integrate_tempered_caputo_abm_c(
             break;
         }
         const double norm = robust_vector_norm(corrected, dim);
-        if (!isfinite(norm)) {
+        if (!hafo_isfinite(norm)) {
             *status_code = 2;
             break;
         }

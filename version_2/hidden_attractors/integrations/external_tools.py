@@ -95,9 +95,23 @@ def require_external(import_name: str, package_name: str | None = None) -> Any:
 
     try:
         return importlib.import_module(import_name)
+    except ModuleNotFoundError as exc:
+        pkg = package_name or import_name
+        if exc.name == import_name or import_name.startswith(f"{exc.name}."):
+            raise ImportError(
+                f"Optional dependency {pkg!r} is required. Install it with "
+                f"`python -m pip install {pkg}`."
+            ) from exc
+        raise ImportError(
+            f"Optional dependency {pkg!r} was found but failed to initialize "
+            f"because module {exc.name!r} is missing."
+        ) from exc
     except Exception as exc:
         pkg = package_name or import_name
-        raise ImportError(f"Optional dependency {pkg!r} is required. Install it with `python -m pip install {pkg}`.") from exc
+        raise ImportError(
+            f"Optional dependency {pkg!r} was found but failed during "
+            f"initialization: {type(exc).__name__}: {exc}"
+        ) from exc
 
 
 def external_tool_report() -> list[dict[str, Any]]:
@@ -106,16 +120,33 @@ def external_tool_report() -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for tool in EXTERNAL_TOOLS:
         available = False
+        status = "not_importable"
+        error: str | None = None
         if tool.import_name:
             try:
                 importlib.import_module(tool.import_name)
                 available = True
-            except Exception:
-                available = False
+                status = "available"
+            except ModuleNotFoundError as exc:
+                if exc.name == tool.import_name or tool.import_name.startswith(
+                    f"{exc.name}."
+                ):
+                    status = "missing"
+                else:
+                    status = "broken"
+                    error = (
+                        f"missing transitive module {exc.name!r} while importing "
+                        f"{tool.import_name!r}"
+                    )
+            except Exception as exc:
+                status = "broken"
+                error = f"{type(exc).__name__}: {exc}"
         rows.append(
             {
                 "name": tool.name,
                 "available": available,
+                "status": status,
+                "error": error,
                 "url": tool.url,
                 "capabilities": list(tool.capabilities),
                 "recommended_use": tool.recommended_use,
@@ -133,8 +164,18 @@ def available_complexity_backends() -> list[str]:
         try:
             importlib.import_module(import_name)
             names.append(import_name)
-        except Exception:
-            continue
+        except ModuleNotFoundError as exc:
+            if exc.name == import_name or import_name.startswith(f"{exc.name}."):
+                continue
+            raise ImportError(
+                f"Optional backend {import_name!r} is installed but broken: "
+                f"missing transitive module {exc.name!r}."
+            ) from exc
+        except Exception as exc:
+            raise ImportError(
+                f"Optional backend {import_name!r} is installed but failed "
+                f"during initialization: {type(exc).__name__}: {exc}"
+            ) from exc
     return names
 
 

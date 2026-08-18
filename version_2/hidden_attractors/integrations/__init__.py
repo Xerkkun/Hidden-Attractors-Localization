@@ -23,27 +23,46 @@ external_tools
     Adapters for ``nolds``, ``antropy``, and similar optional backends.
 """
 
-# ── Validated entry point (recommended for workflows) ───────────────────────
-from .selector import integrate, validate_integrator_compatibility
+from importlib import import_module
 
-# ── Low-level integrators (for direct / advanced use) ───────────────────────
-from .general import integrate_general
-from .abm import caputo_abm_integrate
-from .efork import efork_integrate
-from .rk4 import rk4_integrate
-from .adm_wu2023 import adm_wu2023_integrate
-from .fractional_c import fractional_integrate
-from .abm_fractional import integrate_fractional_abm
+_EXPORT_GROUPS = {
+    ".selector": ("integrate", "validate_integrator_compatibility"),
+    ".general": ("integrate_general",),
+    ".abm": ("caputo_abm_integrate",),
+    ".efork": ("efork_integrate",),
+    ".rk4": ("rk4_integrate",),
+    ".adm_wu2023": ("adm_wu2023_integrate",),
+    ".fractional_c": ("fractional_integrate",),
+    ".abm_fractional": ("integrate_fractional_abm",),
+    ".external_tools": (
+        "EXTERNAL_TOOLS",
+        "ExternalTool",
+        "available_complexity_backends",
+        "compute_complexity_measures",
+        "external_tool_report",
+        "require_external",
+    ),
+}
+_LAZY_EXPORTS = {
+    name: module_name
+    for module_name, names in _EXPORT_GROUPS.items()
+    for name in names
+}
 
-# ── External complexity adapters ─────────────────────────────────────────────
-from .external_tools import (
-    EXTERNAL_TOOLS,
-    ExternalTool,
-    available_complexity_backends,
-    compute_complexity_measures,
-    external_tool_report,
-    require_external,
-)
+
+def __getattr__(name: str):
+    """Resolve an integration symbol on first access."""
+
+    module_name = _LAZY_EXPORTS.get(name)
+    if module_name is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    value = getattr(import_module(module_name, __name__), name)
+    globals()[name] = value
+    return value
+
+
+def __dir__() -> list[str]:
+    return sorted(set(globals()) | set(_LAZY_EXPORTS))
 
 __all__ = [
     # selector

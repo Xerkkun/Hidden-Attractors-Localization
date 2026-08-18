@@ -140,6 +140,78 @@ def _validate_continuation_grid(grid: np.ndarray, source: str) -> np.ndarray:
         raise ValueError(f"{source} must be strictly increasing.")
     return grid
 
+
+def _uniform_harmonic_history_grid(
+    requested_memory_length: float,
+    h: float,
+) -> tuple[np.ndarray, float]:
+    """Return an h-uniform history grid and its effective covered length."""
+
+    requested = float(requested_memory_length)
+    step = float(h)
+    if not np.isfinite(requested) or requested < 0.0:
+        raise ValueError("requested_memory_length must be finite and non-negative.")
+    if not np.isfinite(step) or step <= 0.0:
+        raise ValueError("h must be finite and positive.")
+    n_pre = int(np.ceil(requested / step))
+    effective = n_pre * step
+    return step * np.arange(-n_pre, 1, dtype=float), effective
+
+
+def _evaluate_transfer_grid_with_fallback(
+    omega_grid: np.ndarray,
+    *,
+    vectorized_evaluator: Any,
+    pointwise_evaluator: Any,
+) -> tuple[np.ndarray, dict[str, Any]]:
+    """Evaluate a transfer grid while retaining every fallback failure."""
+
+    grid = np.asarray(omega_grid, dtype=float)
+    diagnostics: dict[str, Any] = {
+        "source": "vectorized_cache",
+        "vectorized_status": "ok",
+        "vectorized_error": None,
+        "pointwise_attempted": 0,
+        "pointwise_success_count": 0,
+        "pointwise_failure_count": 0,
+        "pointwise_failures": [],
+    }
+    try:
+        values = np.asarray(vectorized_evaluator(grid), dtype=complex)
+        if values.shape != grid.shape:
+            raise ValueError(
+                f"vectorized transfer returned shape {values.shape}; expected {grid.shape}."
+            )
+    except Exception as exc:
+        diagnostics["source"] = "pointwise_fallback"
+        diagnostics["vectorized_status"] = "error"
+        diagnostics["vectorized_error"] = {
+            "type": type(exc).__name__,
+            "message": str(exc),
+        }
+        values = np.full(grid.shape, complex(np.nan, np.nan))
+        diagnostics["pointwise_attempted"] = int(grid.size)
+        for index, omega in enumerate(grid):
+            try:
+                values[index] = pointwise_evaluator(float(omega))
+                diagnostics["pointwise_success_count"] += 1
+            except Exception as point_exc:
+                diagnostics["pointwise_failures"].append(
+                    {
+                        "index": index,
+                        "omega": float(omega),
+                        "type": type(point_exc).__name__,
+                        "message": str(point_exc),
+                    }
+                )
+        diagnostics["pointwise_failure_count"] = len(
+            diagnostics["pointwise_failures"]
+        )
+    finite = np.isfinite(values.real) & np.isfinite(values.imag)
+    diagnostics["finite_count"] = int(np.count_nonzero(finite))
+    diagnostics["nonfinite_count"] = int(values.size - np.count_nonzero(finite))
+    return values, diagnostics
+
 def _save_continuation_trace(cont_steps: list, output_dir: str) -> None:
     if not cont_steps:
         return
@@ -151,6 +223,7 @@ def _save_continuation_trace(cont_steps: list, output_dir: str) -> None:
         "x_in_0", "x_in_1", "x_in_2",
         "x_out_0", "x_out_1", "x_out_2",
         "n_steps", "t_end",
+        "requested_memory_length", "effective_memory_length",
         "used_c_backend", "rhs_source", "early_stop_reason",
     ]
     rows = []
@@ -174,6 +247,8 @@ def _save_continuation_trace(cont_steps: list, output_dir: str) -> None:
             "x_out_2":           float(x_out[2]),
             "n_steps":           s.get("n_steps",    0),
             "t_end":             s.get("t_end",      float("nan")),
+            "requested_memory_length": s.get("requested_memory_length", float("nan")),
+            "effective_memory_length": s.get("effective_memory_length", float("nan")),
             "used_c_backend":    s.get("used_c_backend", False),
             "rhs_source":        s.get("rhs_source",  ""),
             "early_stop_reason": s.get("early_stop_reason", ""),
@@ -686,19 +761,24 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         transfer_convention=config["transfer_convention"],
     )
 
-    try:
-        w_vals = W_eval_from_cache(omega_grid, q_seed, seed_transfer_mode, _W_cache)
-    except Exception:
-        w_vals = np.full(len(omega_grid), complex(np.nan, np.nan))
-        for _i, _w in enumerate(omega_grid):
-            try:
-                w_vals[_i] = W_eval(
-                    _w, q_seed, seed_transfer_mode,
-                    _get_lure_matrix(system), _get_lure_input_vector(system), _get_lure_output_vector(system),
-                    transfer_convention=config["transfer_convention"],
-                )
-            except Exception:
-                pass
+    w_vals, transfer_grid_evaluation = _evaluate_transfer_grid_with_fallback(
+        omega_grid,
+        vectorized_evaluator=lambda frequencies: W_eval_from_cache(
+            frequencies,
+            q_seed,
+            seed_transfer_mode,
+            _W_cache,
+        ),
+        pointwise_evaluator=lambda frequency: W_eval(
+            frequency,
+            q_seed,
+            seed_transfer_mode,
+            _get_lure_matrix(system),
+            _get_lure_input_vector(system),
+            _get_lure_output_vector(system),
+            transfer_convention=config["transfer_convention"],
+        ),
+    )
 
     print(f"[{run_id}][{system_id}] Fase 4/7: buscando semillas DF... 45%")
 
@@ -742,6 +822,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
             final_traj=None, matched_ev=None, target_lam=None, modal_res=None, norm_res=None
         )
         summary["run_metadata"] = run_metadata
+        summary["transfer_grid_evaluation"] = transfer_grid_evaluation
         summary["metadata_validation_errors"] = validate_run_metadata(run_metadata)
         _save_summary(summary, output_dir)
         return summary
@@ -868,6 +949,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     
     pre_hist_t = None
     pre_hist_x = None
+    requested_history_length = None
+    effective_history_length = None
     is_fractional_cont = config["continuation_mode"] == "fractional"
     
     if is_fractional_cont and cont_cfg["build_fractional_harmonic_history"]:
@@ -887,13 +970,20 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
             else:
                 Lm_time = n_hist_periods * T0_pre
             
-            n_pre = int(np.ceil(Lm_time / h_val))
-            pre_hist_t = np.linspace(-Lm_time, 0.0, n_pre + 1)
+            requested_history_length = float(Lm_time)
+            pre_hist_t, effective_history_length = _uniform_harmonic_history_grid(
+                requested_history_length,
+                h_val,
+            )
             pre_hist_x = np.array([
                 A0 * np.real(v_norm_pre * np.exp(1j * omega0 * tj))
                 for tj in pre_hist_t
             ])
-            print(f"[{run_id}][{system_id}] Prehistoria armónica: {len(pre_hist_t)} puntos, Lm={Lm_time:.2f}s")
+            print(
+                f"[{run_id}][{system_id}] Prehistoria armónica: {len(pre_hist_t)} puntos, "
+                f"Lm solicitado={requested_history_length:.6g}s, "
+                f"Lm efectivo={effective_history_length:.6g}s"
+            )
         except Exception as exc_pre:
             print(f"[{run_id}][{system_id}] WARNING: No se pudo construir prehistoria armónica: {exc_pre}")
             pre_hist_t = None
@@ -939,7 +1029,12 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
             allow_python_fallback=cont_cfg["allow_python_fallback"],
             q=q_continuation,
         )
-    
+
+    if requested_history_length is not None and effective_history_length is not None:
+        for step_record in cont_steps:
+            step_record["requested_memory_length"] = requested_history_length
+            step_record["effective_memory_length"] = effective_history_length
+
     _save_continuation_trace(cont_steps, output_dir)
     
     successful_steps = [s for s in cont_steps if s["status"] == "ok"]
@@ -1243,6 +1338,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         bib_res=bib_res
     )
     summary["run_metadata"] = run_metadata
+    summary["transfer_grid_evaluation"] = transfer_grid_evaluation
     summary["metadata_validation_errors"] = validate_run_metadata(run_metadata)
     _save_summary(summary, output_dir)
     

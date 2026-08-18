@@ -68,8 +68,11 @@ def test_integrate_general_linear_system_abm():
 def test_legacy_general_c_wrapper_propagates_callback_typeerror() -> None:
     class FakeLibrary:
         @staticmethod
-        def integrate_general_efork_c(callback, x0, dim, q, h, t_final, limit, out):
-            del q, h, t_final, limit, out
+        def integrate_general_efork_c(
+            callback, x0, dim, q, h, t_final, limit, out, out_capacity
+        ):
+            del q, h, t_final, limit
+            assert out_capacity == out.size
             state = (ctypes.c_double * dim)(*x0)
             derivative = (ctypes.c_double * dim)()
             callback(0.0, state, derivative)
@@ -132,14 +135,14 @@ def test_integrate_general_chua_c_backend():
     assert x.shape == (101, 3)
 
 def test_integrate_general_integer_solver():
-    # 4. Test standard 2nd-order Heun integer solver (q = 1.0)
+    # 4. Test classical fourth-order RK4 integer solver (q = 1.0)
     def rhs(x):
         return np.array([-x[0]])
         
     x0 = np.array([10.0])
     
     t, x, status = integrate_general(
-        rhs, x0, q=1.0, h=0.1, t_final=2.0
+        rhs, x0, q=1.0, h=0.1, t_final=2.0, integrator="rk4"
     )
     
     assert status == "ok"

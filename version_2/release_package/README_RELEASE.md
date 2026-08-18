@@ -1,15 +1,15 @@
-# Release package 1.1.0
+# Release package 1.2.0
 
 `hidden-attractors-fo` provides reproducible numerical components for
 integer-order and commensurate Caputo fractional-order Lur'e-compatible
-systems. Version 1.1.0 also exposes independent characterization of dynamical
+systems. The current 1.2.0 surface also exposes independent characterization of dynamical
 systems, trajectories, and scalar time series. It fully integrates
 Rosenstein/Eckmann Lyapunov reconstruction and Kaplan--Yorke dimension for a
 uniformly sampled scalar signal.
 
 ## Publication state
 
-The 1.1.0 source is a locally verified release candidate. This record does not
+The 1.2.0 source is a locally verified release candidate. This record does not
 claim a PyPI publication that has not been independently observed. The public
 package version recorded at verification time is 1.0.0.
 

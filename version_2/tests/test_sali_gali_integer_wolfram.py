@@ -195,7 +195,7 @@ def live_summary_path() -> Path:
         pytest.skip("wolframscript is not installed or discoverable")
     _wolfram_probe_or_skip(executable)
 
-    temp_root = Path(r"C:\tmp") if os.name == "nt" else Path(tempfile.gettempdir())
+    temp_root = Path(tempfile.gettempdir())
     temp_root.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(
         prefix="hafo_sali_gali_integer_",

@@ -19,12 +19,22 @@ computed once per integration call via :func:`efork3_coefficients`.
 from __future__ import annotations
 
 import math
+import warnings
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 from scipy.special import gamma as _gamma
 
+from .._time_grid import checked_array_capacity, exact_fixed_step_count
+from ._history import (
+    validate_divergence_norm,
+    validate_equilibria,
+    validate_fractional_state_and_order,
+    validate_memory_policy,
+    validate_prehistory,
+    validate_rhs_result,
+)
 from .fractional_c import fractional_integrate
 
 
@@ -127,28 +137,53 @@ def _python_efork3_integrate(
     equilibria: Optional[List[np.ndarray]] = None,
 ) -> Tuple[np.ndarray, np.ndarray, str]:
     """Pure-Python EFORK-3 Caputo integration (exact published algorithm)."""
-    q = float(q)
     h = float(h)
     t_final = float(t_final)
-    n_steps = int(np.ceil(t_final / h))
+    x0_arr, q = validate_fractional_state_and_order(
+        x0,
+        q,
+        caller="_python_efork3_integrate",
+        allow_integer_limit=False,
+    )
+    divergence_norm = validate_divergence_norm(
+        divergence_norm,
+        caller="_python_efork3_integrate",
+    )
+    n_steps = exact_fixed_step_count(h, t_final, caller="_python_efork3_integrate")
 
-    x0_arr = np.asarray(x0, dtype=float)
     dim = x0_arr.size
+    equilibria = validate_equilibria(
+        equilibria,
+        dim=dim,
+        caller="_python_efork3_integrate",
+    )
+    memory_mode, memory_window_length = validate_memory_policy(
+        memory_mode,
+        memory_window_length,
+        caller="_python_efork3_integrate",
+    )
 
     coeff = efork3_coefficients(q)
     h_alpha = h ** q
 
     # --- Build combined time / state arrays (prehistory + new integration) ---
-    if history_times is not None and history_states is not None:
-        pre_t = np.asarray(history_times, dtype=float)
-        pre_x = np.asarray(history_states, dtype=float)
-        K = len(pre_t)
-    else:
+    pre_t, pre_x = validate_prehistory(
+        history_times,
+        history_states,
+        x0=x0_arr,
+        h=h,
+        caller="_python_efork3_integrate",
+    )
+    if pre_t is None:
         K = 1
         pre_t = np.array([0.0])
         pre_x = x0_arr.reshape(1, dim)
+    else:
+        K = len(pre_t)
 
     total = K + n_steps
+    checked_array_capacity((total + 1,), float, caller="_python_efork3_integrate")
+    checked_array_capacity((total + 1, dim), float, caller="_python_efork3_integrate")
     times = np.zeros(total + 1, dtype=float)
     states = np.zeros((total + 1, dim), dtype=float)
 
@@ -161,6 +196,16 @@ def _python_efork3_integrate(
         times[K - 1 + step_idx] = t_start + step_idx * h
 
     states[K - 1] = x0_arr
+
+    def evaluate_rhs(time: float, state: np.ndarray) -> np.ndarray:
+        # Do not catch callback exceptions: callers must see their original
+        # type and traceback.  Only the returned value is normalized here.
+        value = rhs(time, state)
+        return validate_rhs_result(
+            value,
+            dim=dim,
+            caller="_python_efork3_integrate",
+        )
 
     # --- Early stop config parsing ---
     esc = early_stop_config if early_stop_config is not None else {}
@@ -196,7 +241,7 @@ def _python_efork3_integrate(
             s_idx = 0
 
         def _mrhs(t_eval: float, state: np.ndarray, _n_abs=n_abs, _s_idx=s_idx) -> np.ndarray:
-            force = np.asarray(rhs(t_eval, state), dtype=float)
+            force = evaluate_rhs(t_eval, state)
             hist = _history_term(t_eval, times, states, _n_abs, q, h, _s_idx)
             return force - hist
 
@@ -244,10 +289,7 @@ def _python_efork3_integrate(
             if eq_enabled and equilibria and t_next >= eq_min_t:
                 for ki, eq in enumerate(equilibria):
                     diff_n = np.linalg.norm(x_next - eq)
-                    try:
-                        deriv_n = np.linalg.norm(rhs(t_next, x_next))
-                    except Exception:
-                        deriv_n = 9999.0
+                    deriv_n = np.linalg.norm(evaluate_rhs(t_next, x_next))
                     if diff_n < eq_t and deriv_n < eq_deriv:
                         eq_consec_counts[ki] += 1
                     else:
@@ -295,7 +337,7 @@ def efork_integrate(
 
     For ``q == 1.0`` the system is integrated with the three-stage
     ``EFORK_Q1`` coefficient limit. This is numerically distinct from both
-    forward Euler and the Heun predictor-corrector.
+    forward Euler and a second-order explicit predictor-corrector.
 
     For ``0 < q < 1`` the published three-stage EFORK Caputo method is used,
     either via the native C backend (fast) or the pure Python reference
@@ -307,7 +349,7 @@ def efork_integrate(
     x0     : Initial condition.
     q      : Caputo fractional order.
     h      : Step size.
-    t_final: Integration end time.
+    t_final: Integration end time containing an integer number of steps.
     memory_mode : "full" or "window".
     memory_window_length : Steps to keep (window mode only).
     k      : Linearisation gain (used in the deformed RHS).
@@ -324,6 +366,11 @@ def efork_integrate(
     t_arr, x_arr, status
     """
     x0_arr = np.asarray(x0, dtype=float)
+    n_steps = exact_fixed_step_count(h, t_final, caller="efork_integrate")
+    divergence_norm = validate_divergence_norm(
+        divergence_norm,
+        caller="efork_integrate",
+    )
 
     # Integer-order endpoint: use the three-stage EFORK_Q1 coefficient limit.
     if q == 1.0:
@@ -343,7 +390,6 @@ def efork_integrate(
             EFORK_Q1_W3,
         )
 
-        n_steps = int(np.ceil(t_final / h))
         dim = x0_arr.size
         t_arr = np.zeros(n_steps + 1, dtype=float)
         x_arr = np.zeros((n_steps + 1, dim), dtype=float)
@@ -420,8 +466,9 @@ def efork_integrate(
                         diff_n = np.linalg.norm(x_next - eq)
                         try:
                             deriv_n = np.linalg.norm(rhs_int(x_next))
-                        except Exception:
-                            deriv_n = 9999.0
+                        except Exception as exc:
+                            status = f"solver_exception:{exc}"
+                            break
                         if diff_n < eq_t and deriv_n < eq_deriv:
                             eq_consec_counts[ki] += 1
                         else:
@@ -429,6 +476,8 @@ def efork_integrate(
                         if eq_consec_counts[ki] >= eq_consec:
                             status = "converged_equilibrium_early"
                             break
+                    if status.startswith("solver_exception:"):
+                        break
                     if status == "converged_equilibrium_early":
                         break
             else:
@@ -469,8 +518,13 @@ def efork_integrate(
                 equilibria=equilibria,
             )
             return t_arr, x_arr, status
-        except Exception:
-            pass  # Fall through to pure Python EFORK-3
+        except Exception as exc:
+            warnings.warn(
+                "Native EFORK backend failed; using the Python reference "
+                f"implementation ({type(exc).__name__}: {exc}).",
+                RuntimeWarning,
+                stacklevel=2,
+            )
 
     # Pure Python EFORK-3 (exact published algorithm)
     return _python_efork3_integrate(

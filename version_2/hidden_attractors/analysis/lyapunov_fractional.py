@@ -81,6 +81,7 @@ from typing import Callable
 import numpy as np
 from scipy.special import gamma as _gamma
 
+from .._time_grid import exact_fixed_step_count
 from .lyapunov import (
     LyapunovResult,
     finite_difference_jacobian,
@@ -182,6 +183,16 @@ class FractionalVariationalQRConfig:
             raise ValueError(f"FractionalVariationalQRConfig: t_final must be positive.")
         if self.t_burn < 0.0:
             raise ValueError(f"FractionalVariationalQRConfig: t_burn must be non-negative.")
+        exact_fixed_step_count(
+            self.h,
+            self.t_final,
+            caller="FractionalVariationalQRConfig.t_final",
+        )
+        exact_fixed_step_count(
+            self.h,
+            self.t_burn,
+            caller="FractionalVariationalQRConfig.t_burn",
+        )
         if self.memory_mode not in ("full", "window"):
             raise ValueError(
                 f"FractionalVariationalQRConfig: memory_mode must be 'full' or 'window';"
@@ -362,16 +373,21 @@ def apply_history_aware_qr_transform(
         R_inv = np.linalg.pinv(R)
         qr_status = "qr_ill_conditioned"
 
-    # Transform all history in [memory_start_index, current_index]
+    # Build the complete transformed history before mutating either list. If
+    # rhs_ext fails, propagating the exception leaves state and derivative
+    # histories coherent instead of retaining a stale RHS sample.
+    transformed_states: list[np.ndarray] = []
+    transformed_rhs: list[np.ndarray] = []
     for j in range(memory_start_index, current_index + 1):
         X_j, Phi_j = unpack_extended_state(states_history[j], n)
         Phi_j_new = Phi_j @ R_inv
-        states_history[j] = pack_extended_state(X_j, Phi_j_new)
-        try:
-            rhs_history[j] = np.asarray(rhs_ext(states_history[j]), dtype=float)
-        except Exception:
-            # If RHS fails on transformed state, keep old value
-            pass
+        transformed = pack_extended_state(X_j, Phi_j_new)
+        transformed_states.append(transformed)
+        transformed_rhs.append(np.asarray(rhs_ext(transformed), dtype=float))
+
+    for offset, j in enumerate(range(memory_start_index, current_index + 1)):
+        states_history[j] = transformed_states[offset]
+        rhs_history[j] = transformed_rhs[offset]
 
     return log_diag, cond_R, qr_status
 
@@ -587,11 +603,13 @@ def fractional_variational_abm_qr(
     h : float
         Step size (positive).
     t_final : float
-        Total integration time (burn-in excluded).
+        Total integration time (burn-in excluded), containing an integer
+        number of fixed steps.
     t_burn : float, default 0.0
         Burn-in integration time.  The extended system is integrated for
         ``t_burn`` before accumulating exponents.  At the burn-in/accumulation
         boundary a history-aware QR reset is applied without accumulation.
+        It must also contain an integer number of steps.
     reorthonormalization_time : float or None, default None
         Physical time between QR steps; converted to step count.
     reorthonormalize_every : int or None, default None
@@ -668,8 +686,16 @@ def fractional_variational_abm_qr(
     # Integrate the extended system for t_burn without accumulating exponents.
     # At the end of burn-in, apply a history-aware QR reset (no accumulation)
     # so the basis Φ starts orthonormal for the accumulation phase.
-    burn_steps = int(max(0, round(t_burn / h)))
-    accu_steps = int(max(0, round(t_final / h)))
+    burn_steps = exact_fixed_step_count(
+        h,
+        t_burn,
+        caller="fractional_variational_abm_qr.t_burn",
+    )
+    accu_steps = exact_fixed_step_count(
+        h,
+        t_final,
+        caller="fractional_variational_abm_qr.t_final",
+    )
     t_burn_effective = burn_steps * h
 
     sums = np.zeros(n, dtype=float)

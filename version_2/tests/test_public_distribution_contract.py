@@ -23,6 +23,8 @@ def _project_version() -> str:
 @pytest.mark.hygiene
 @pytest.mark.release_readiness
 def test_release_version_is_consistent_across_public_metadata() -> None:
+    import hidden_attractors
+
     version = _project_version()
     citation = (REPO_ROOT / "CITATION.cff").read_text(encoding="utf-8")
     citation_version = re.search(r'(?m)^version:\s*["\']?([^"\'\s]+)', citation)
@@ -34,13 +36,14 @@ def test_release_version_is_consistent_across_public_metadata() -> None:
         (RELEASE_ROOT / "sample_output" / "comprehensive_sample_summary.json").read_text(encoding="utf-8")
     )
 
-    assert version == "1.1.0"
+    assert version == "1.2.0"
     assert citation_version is not None
     assert citation_version.group(1) == version
     assert manual["manual_version"] == manual["package_version"] == version
     assert zenodo["version"] == codemeta["version"] == archive["version"] == version
     assert sample["release_version"] == version
     assert archive["release_tag"] == f"v{version}"
+    assert archive["pypi_readiness"]["public_api_symbols"] == len(hidden_attractors.__all__)
 
 
 @pytest.mark.packaging
@@ -56,6 +59,7 @@ def test_sdist_manifest_is_an_explicit_public_whitelist() -> None:
         "include MANIFEST.md",
         "include USER_MANUAL.md",
         "recursive-include hidden_attractors *.py *.c *.h",
+        "recursive-exclude hidden_attractors/native/tests *",
         "include hidden_attractors/configs/examples/workflow_contract.yaml",
         "recursive-include examples/chua_integer_lure_reference *.py *.md *.yaml",
         "include examples/quickstart_equilibria.py",

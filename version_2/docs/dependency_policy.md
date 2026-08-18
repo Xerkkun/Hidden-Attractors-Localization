@@ -6,13 +6,14 @@ This project follows the spirit of the [SPEC-0][spec0] rolling-window support po
 
 ## Python version support
 
-This project follows the spirit of SPEC-0 but intentionally keeps an extended-support window for thesis reproducibility and older scientific environments. The automatic CI matrix currently tests Python 3.11, 3.12, and 3.13.
+This project follows the spirit of SPEC-0 but intentionally keeps an extended-support window for thesis reproducibility and older scientific environments. The automatic CI matrix currently tests Python 3.11, 3.12, and 3.13. Python 3.14 was validated locally on Windows but is not yet tested in CI. Python 3.15 and newer are outside the declared compatibility range.
 
 | Component | Supported/Tested | Policy |
 | :--- | :--- | :--- |
 | Python 3.11 | tested in CI | extended support |
 | Python 3.12 | tested in CI | standard support |
 | Python 3.13 | tested in CI | standard/current support |
+| Python 3.14 | validated locally; not tested in CI | current/experimental support |
 | NumPy >=1.26 | supported | extended lower bound |
 | SciPy >=1.12 | supported | extended lower bound |
 | Matplotlib >=3.8 | supported | extended lower bound |
@@ -41,7 +42,6 @@ Core dependencies (`numpy`, `matplotlib`, `scipy`) are pinned with a **lower bou
 | `dev` | Test suite | `pytest>=8.0`, `pytest-cov>=5.0` |
 | `analysis` | Nonlinear time-series metrics | `antropy>=0.1.6`, `nolds>=0.6.3,<0.7`, `scipy>=1.12` |
 | `docs` | Documentation build | `mkdocs>=1.6`, `mkdocs-material>=9.5`, `mkdocstrings[python]>=0.25` |
-| `legacy` | Frozen legacy scripts | `PyYAML>=6.0`, `scipy>=1.12` |
 | `pydstool` | Numerical continuation | `PyDSTool` (no stable PyPI release, no pin) |
 
 > [!WARNING]
@@ -65,7 +65,7 @@ Exact pins for **reproducible environments** are maintained in a separate
 lockfile (not committed). Collaborators should generate one locally:
 
 ```bash
-pip install -e ".[dev,analysis]"
+pip install -e ".[dev,analysis,docs]"
 pip freeze > requirements-lock.txt   # for your own reference only
 ```
 
@@ -76,8 +76,10 @@ Do **not** commit `requirements-lock.txt` to the repository — the
 
 ## C extension compatibility
 
-The native EFORK backend (`hidden_attractors/native/`) compiles against the
-active Python ABI. Platform-specific notes:
+The native backend (`hidden_attractors/native/`) builds a plain C shared
+library and loads it through `ctypes`; it is not a CPython extension. Binary
+compatibility therefore depends on the C ABI, platform, architecture, compiler
+runtime, and the declared `ctypes` layouts. Platform-specific notes:
 
 | Platform | Requirement |
 | --- | --- |

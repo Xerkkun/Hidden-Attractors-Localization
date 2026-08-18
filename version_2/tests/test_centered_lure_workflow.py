@@ -18,9 +18,39 @@ from hidden_attractors.lure.describing_function import N_quadrature
 from hidden_attractors.verification.stability import classify_equilibrium_stability
 from hidden_attractors.integrations.abm import caputo_abm_integrate
 from hidden_attractors.workflows.centered_lure_df import (
+    _evaluate_transfer_grid_with_fallback,
+    _uniform_harmonic_history_grid,
     build_eta_grid,
     run_centered_lure_df_workflow,
 )
+
+
+def test_harmonic_history_grid_records_ceil_window_on_uniform_h_grid() -> None:
+    times, effective = _uniform_harmonic_history_grid(1.0, 0.3)
+    assert np.allclose(times, [-1.2, -0.9, -0.6, -0.3, 0.0])
+    assert effective == pytest.approx(1.2)
+    assert np.allclose(np.diff(times), 0.3)
+
+
+def test_transfer_grid_fallback_records_each_point_failure() -> None:
+    def pointwise(omega: float) -> complex:
+        if omega == 2.0:
+            raise ArithmeticError("singular frequency")
+        return complex(omega, -omega)
+
+    values, diagnostics = _evaluate_transfer_grid_with_fallback(
+        np.array([1.0, 2.0, 3.0]),
+        vectorized_evaluator=lambda _grid: (_ for _ in ()).throw(
+            RuntimeError("vectorized backend failed")
+        ),
+        pointwise_evaluator=pointwise,
+    )
+    assert diagnostics["source"] == "pointwise_fallback"
+    assert diagnostics["vectorized_error"]["type"] == "RuntimeError"
+    assert diagnostics["pointwise_success_count"] == 2
+    assert diagnostics["pointwise_failure_count"] == 1
+    assert diagnostics["pointwise_failures"][0]["index"] == 1
+    assert np.isnan(values[1])
 
 def get_system_by_id(system_id: str, **kwargs) -> Any:
     name_map = {
@@ -149,7 +179,7 @@ def test_smoke_workflow_short_runs(tmp_path):
         "seed_mode": "integer",
         "continuation_mode": "integer",
         "dynamics_mode": "integer",
-        "integrator": "heun",
+        "integrator": "rk4",
         "memory_mode": "none",
         "memory_policy": "none",
         "use_c_backend": False,

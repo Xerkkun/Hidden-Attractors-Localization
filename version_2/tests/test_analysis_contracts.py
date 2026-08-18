@@ -329,7 +329,7 @@ def test_analysis_result_is_immutable_serializable_and_traceable() -> None:
         backend="hafo_numba",
         status="finite_numerical_diagnostic",
         trajectory_fingerprint=trajectory.fingerprint(),
-        package_versions_and_hashes={"hafo": "1.1.0"},
+        package_versions_and_hashes={"hafo": "1.2.0"},
         warnings=("Finite-sample estimate; not a chaos certificate.",),
         references=("10.1103/PhysRevLett.88.174102",),
     )

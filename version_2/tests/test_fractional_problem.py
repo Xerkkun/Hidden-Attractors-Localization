@@ -176,18 +176,7 @@ def test_execution_rejects_options_that_no_solver_consumes(
         solve_fractional_problem(problem, _constant_python_rhs, [1.0])
 
 
-def test_experimental_gl_requires_opt_in_then_solves_constant_forcing() -> None:
-    blocked = FractionalProblem(
-        "caputo",
-        "gl_explicit_discrete",
-        0.5,
-        [2.0],
-        0.001,
-        (0.0, 1.0),
-    )
-    with pytest.raises(PermissionError, match="allow_experimental"):
-        solve_fractional_problem(blocked, _constant_rhs, [1.0])
-
+def test_promoted_gl_solves_constant_forcing_without_opt_in() -> None:
     problem = FractionalProblem(
         "caputo",
         "gl_explicit_discrete",
@@ -195,7 +184,6 @@ def test_experimental_gl_requires_opt_in_then_solves_constant_forcing() -> None:
         [2.0],
         0.001,
         (0.0, 1.0),
-        allow_experimental=True,
     )
     result = solve_fractional_problem(problem, _constant_rhs, [1.0])
     assert result.status == "ok"

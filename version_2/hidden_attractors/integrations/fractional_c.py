@@ -6,41 +6,35 @@ Architecture
   the native C library (``fractional_integrators.c``) and exposes the
   ``integrate_fractional_c`` entry point via :mod:`ctypes`.
 * :func:`fractional_integrate` is the public API.  It attempts the C backend
-  first; if that fails *and* ``allow_python_fallback=True`` it silently
-  falls back to the pure-Python ABM or EFORK-3 solvers.
-
-Path injection
---------------
-The ``hidden_attractors`` package lives inside ``version_2/`` in the
-workspace root.  The root-level ``hidden_attractors/`` folder contains only
-the ``native/`` sub-directory; all Python modules (``parallel``, ``paths``,
-etc.) reside in ``version_2/hidden_attractors/``.  We inject ``version_2``
-at the front of ``sys.path`` so the correct package wins regardless of the
-working directory.
+  first; if that fails *and* ``allow_python_fallback=True`` it emits a warning,
+  records the native error in the returned provenance, and uses the pure-Python
+  ABM or EFORK-3 solver.
 """
 
 import ctypes
-import hashlib
-import os
+import math
 import sys
+import threading
+import warnings
+from collections.abc import Mapping
+from numbers import Integral
 from pathlib import Path
 from typing import Any, Callable, List, Optional, Tuple
 
 import numpy as np
 
-# ---------------------------------------------------------------------------
-# sys.path injection — must happen before any hidden_attractors import
-# ---------------------------------------------------------------------------
-_file_dir = os.path.dirname(os.path.abspath(__file__))
-_workspace_root = os.path.dirname(os.path.dirname(_file_dir))
-_version_2_dir = os.path.join(_workspace_root, "version_2")
-if _version_2_dir not in sys.path:
-    sys.path.insert(0, _version_2_dir)
-
-from hidden_attractors.parallel import compile_c_target  # noqa: E402
-from hidden_attractors.paths import get_native_cache      # noqa: E402
-from hidden_attractors._rhs import bind_rhs               # noqa: E402
-from ..native.rhs_registry import get_c_rhs_and_params   # noqa: E402
+from .._rhs import bind_rhs
+from .._time_grid import checked_array_capacity, exact_fixed_step_count
+from ..native.rhs_registry import get_c_rhs_and_params
+from ..parallel import load_ctypes_library
+from ..paths import get_native_cache
+from ._history import (
+    validate_divergence_norm,
+    validate_equilibria,
+    validate_memory_policy,
+    validate_prehistory,
+    validate_rhs_result,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -62,6 +56,71 @@ def _shared_suffix() -> str:
     return ".so"
 
 
+def _strict_positive_int(value: Any, name: str) -> int:
+    if isinstance(value, (bool, np.bool_)) or not isinstance(value, Integral):
+        raise TypeError(f"{name} must be an integer.")
+    normalized = int(value)
+    if normalized < 1 or normalized > np.iinfo(np.int32).max:
+        raise ValueError(f"{name} must be between 1 and INT32_MAX.")
+    return normalized
+
+
+def _binary_flag(value: Any, name: str) -> int:
+    if isinstance(value, (bool, np.bool_)):
+        return int(value)
+    if isinstance(value, Integral) and int(value) in (0, 1):
+        return int(value)
+    raise ValueError(f"{name} must be boolean or 0/1.")
+
+
+def _finite_float(value: Any, name: str, *, positive: bool = False,
+                  non_negative: bool = False) -> float:
+    normalized = float(value)
+    if not math.isfinite(normalized):
+        raise ValueError(f"{name} must be finite.")
+    if positive and normalized <= 0.0:
+        raise ValueError(f"{name} must be positive.")
+    if non_negative and normalized < 0.0:
+        raise ValueError(f"{name} must be non-negative.")
+    return normalized
+
+
+def _enforce_effective_horizon(times: np.ndarray, t_final: float) -> np.ndarray:
+    """Reject a real overshoot and canonicalize round-off at the horizon."""
+
+    if len(times) == 0:
+        raise RuntimeError("fractional integrator returned no time samples.")
+    last = float(times[-1])
+    scale = max(abs(last), abs(t_final), 1.0)
+    tolerance = max(
+        64.0 * float(np.finfo(np.float64).eps) * scale,
+        8.0 * math.ulp(last),
+        8.0 * math.ulp(t_final),
+    )
+    if last > t_final + tolerance:
+        raise RuntimeError("fractional trajectory exceeded the validated t_final.")
+    if abs(last - t_final) <= tolerance:
+        if not times.flags.writeable:
+            times = times.copy()
+        times[-1] = t_final
+    return times
+
+
+def _physical_trajectory_start(times: np.ndarray) -> int:
+    """Return the index of the shared ``t=0`` initial condition."""
+
+    if times.ndim != 1 or times.size == 0 or not np.all(np.isfinite(times)):
+        raise RuntimeError("fractional integrator returned an invalid time grid.")
+    start = int(np.searchsorted(times, 0.0, side="left"))
+    if start >= times.size:
+        raise RuntimeError("fractional integrator did not return the t=0 state.")
+    scale = max(1.0, float(np.max(np.abs(times))))
+    tolerance = 64.0 * float(np.finfo(np.float64).eps) * scale
+    if abs(float(times[start])) > tolerance:
+        raise RuntimeError("fractional integrator did not return the t=0 state.")
+    return start
+
+
 # ---------------------------------------------------------------------------
 # Singleton C backend
 # ---------------------------------------------------------------------------
@@ -74,6 +133,7 @@ class GeneralFractionalCBackend:
 
     # Class-level singleton cache — never store instance on the instance itself
     _instance: Optional["GeneralFractionalCBackend"] = None
+    _instance_lock = threading.RLock()
 
     # Ctypes callback type — set during initialisation
     RHS_CALLBACK: Any = None
@@ -84,91 +144,61 @@ class GeneralFractionalCBackend:
     @classmethod
     def get_instance(cls) -> "GeneralFractionalCBackend":
         """Return the singleton, compiling the C library on first call."""
-        if cls._instance is not None:
-            return cls._instance
+        with cls._instance_lock:
+            if cls._instance is not None:
+                return cls._instance
 
-        native_cache = get_native_cache()
+            native_cache = get_native_cache()
+            src_path = (
+                Path(__file__).resolve().parent.parent
+                / "native" / "csrc" / "fractional_integrators.c"
+            )
+            out_path = native_cache / f"fractional_integrators{_shared_suffix()}"
+            result, lib = load_ctypes_library(
+                src_path,
+                out_path,
+                openmp=False,
+                expected_symbols=(
+                    "fractional_integrators_abi_version",
+                    "integrate_fractional_c",
+                    "chua_saturation_rhs_c",
+                    "chua_arctan_rhs_c",
+                ),
+                expected_abi_version=3,
+                abi_version_symbol="fractional_integrators_abi_version",
+            )
 
-        src_path = (
-            Path(__file__).resolve().parent.parent
-            / "native" / "csrc" / "fractional_integrators.c"
-        )
-        header_path = src_path.with_suffix(".h")
-        source_fingerprint = hashlib.sha256(
-            src_path.read_bytes() + header_path.read_bytes()
-        ).hexdigest()[:12]
-        out_path = native_cache / (
-            f"fractional_integrators_{source_fingerprint}{_shared_suffix()}"
-        )
+            # Callback type: void (*RhsCallback)(double t, const double *x,
+            #                                    double *dx, int n, void *params)
+            cls.RHS_CALLBACK = ctypes.CFUNCTYPE(
+                None,
+                ctypes.c_double,
+                ctypes.POINTER(ctypes.c_double),
+                ctypes.POINTER(ctypes.c_double),
+                ctypes.c_int,
+                ctypes.c_void_p,
+            )
+            vector = np.ctypeslib.ndpointer(
+                dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"
+            )
+            lib.integrate_fractional_c.argtypes = [
+                cls.RHS_CALLBACK, ctypes.c_void_p, ctypes.c_int, vector,
+                ctypes.c_double, ctypes.c_double, ctypes.c_double,
+                ctypes.c_int, ctypes.c_int, ctypes.c_int,
+                vector, vector, ctypes.c_int, ctypes.c_size_t, ctypes.c_size_t,
+                ctypes.c_double, vector, vector, ctypes.c_size_t, ctypes.c_size_t,
+                ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int),
+                ctypes.c_int, ctypes.c_int, ctypes.c_double, ctypes.c_int,
+                ctypes.c_double, ctypes.c_int, ctypes.c_double, ctypes.c_double,
+                ctypes.c_int, ctypes.c_double, vector, ctypes.c_int,
+                ctypes.c_size_t,
+            ]
+            lib.integrate_fractional_c.restype = ctypes.c_int
 
-        result = compile_c_target(
-            src_path,
-            out_path,
-            target_kind="shared",
-            openmp=False,
-        )
-
-        lib = ctypes.CDLL(str(result.path.resolve()))
-
-        # Callback type: void (*RhsCallback)(double t, const double *x,
-        #                                    double *dx, int n, void *params)
-        cls.RHS_CALLBACK = ctypes.CFUNCTYPE(
-            None,
-            ctypes.c_double,
-            ctypes.POINTER(ctypes.c_double),
-            ctypes.POINTER(ctypes.c_double),
-            ctypes.c_int,
-            ctypes.c_void_p,
-        )
-
-        # ------------------------------------------------------------------
-        # integrate_fractional_c argument types (must match the C header)
-        # ------------------------------------------------------------------
-        lib.integrate_fractional_c.argtypes = [
-            cls.RHS_CALLBACK,                                             # rhs
-            ctypes.c_void_p,                                              # params
-            ctypes.c_int,                                                 # dim
-            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1,
-                                   flags="C_CONTIGUOUS"),                 # x0
-            ctypes.c_double,                                              # q
-            ctypes.c_double,                                              # h
-            ctypes.c_double,                                              # t_final
-            ctypes.c_int,                                                 # method
-            ctypes.c_int,                                                 # memory_mode
-            ctypes.c_int,                                                 # memory_window_length
-            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1,
-                                   flags="C_CONTIGUOUS"),                 # history_times
-            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1,
-                                   flags="C_CONTIGUOUS"),                 # history_states (flat)
-            ctypes.c_int,                                                 # history_len
-            ctypes.c_double,                                              # divergence_norm
-            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1,
-                                   flags="C_CONTIGUOUS"),                 # out_times
-            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1,
-                                   flags="C_CONTIGUOUS"),                 # out_states (flat)
-            ctypes.POINTER(ctypes.c_int),                                 # out_steps
-            ctypes.POINTER(ctypes.c_int),                                 # status_code
-            # Early-stopping parameters
-            ctypes.c_int,    # early_stop_enabled
-            ctypes.c_int,    # div_early_enabled
-            ctypes.c_double, # div_early_norm
-            ctypes.c_int,    # div_consec_steps
-            ctypes.c_double, # div_growth_factor
-            ctypes.c_int,    # eq_early_enabled
-            ctypes.c_double, # eq_tol
-            ctypes.c_double, # eq_deriv_tol
-            ctypes.c_int,    # eq_consec_steps
-            ctypes.c_double, # eq_min_time
-            np.ctypeslib.ndpointer(dtype=np.float64, ndim=1,
-                                   flags="C_CONTIGUOUS"),                 # equilibria_pts
-            ctypes.c_int,    # num_equilibria
-        ]
-        lib.integrate_fractional_c.restype = ctypes.c_int
-
-        backend = cls()
-        backend.lib = lib
-        cls._instance = backend
-        return backend
+            backend = cls()
+            backend.lib = lib
+            cls._instance = backend
+            return backend
 
 
 # ---------------------------------------------------------------------------
@@ -189,7 +219,7 @@ def fractional_integrate(
     system: Optional[Any] = None,
     params: Optional[Any] = None,         # unused; kept for API compatibility
     use_c_backend: bool = True,
-    divergence_norm: float = 120.0,
+    divergence_norm: float | None = 120.0,
     return_history: bool = False,
     allow_python_fallback: bool = False,
     early_stop_config: Optional[dict] = None,
@@ -212,7 +242,7 @@ def fractional_integrate(
     t_final : float
         Integration end time.
     method : {"abm", "efork", "efork3"}
-        Integration method.  ``"heun"`` and ``"efork_q1"`` are rejected.
+        Integration method.  ``"efork_q1"`` is rejected.
     memory_mode : {"full", "window"}
         Memory truncation mode for the fractional memory sum.
     memory_window_length : int or None
@@ -228,12 +258,15 @@ def fractional_integrate(
         Attempt the native C integrator.  Falls back to Python if False
         or if compilation/execution fails (requires
         ``allow_python_fallback=True``).
-    divergence_norm : float
-        Halt integration when ``‖x‖ > divergence_norm``.
+    divergence_norm : float or None
+        Halt integration when ``‖x‖ > divergence_norm``. ``None`` and positive
+        infinity disable this cutoff; the native ABI receives the largest
+        finite double for that disabled state.
     return_history : bool
         Include the pre-history segment in the returned arrays.
     allow_python_fallback : bool
-        If True and the C backend fails, silently switch to the Python solver.
+        If True and the C backend fails, warn, record ``c_backend_error`` in
+        ``info``, and switch to the Python solver.
     early_stop_config : dict or None
         Early-stopping configuration dictionary.
     equilibria : list of ndarray or None
@@ -249,7 +282,27 @@ def fractional_integrate(
         integration increments; ``n_samples`` counts all stored points and
         ``n_samples_returned`` counts points after the requested history slice.
     """
-    q = float(q)
+    q = _finite_float(q, "q")
+    h = _finite_float(h, "h", positive=True)
+    t_final = _finite_float(t_final, "t_final", non_negative=True)
+    normalized_divergence_norm = validate_divergence_norm(
+        divergence_norm,
+        caller="fractional_integrate",
+    )
+    native_divergence_norm = (
+        sys.float_info.max
+        if normalized_divergence_norm is None
+        else normalized_divergence_norm
+    )
+    if not isinstance(return_history, (bool, np.bool_)):
+        raise TypeError("return_history must be boolean.")
+    native_step_limit = int(np.iinfo(np.int32).max) - 2
+    nsteps = exact_fixed_step_count(
+        h,
+        t_final,
+        caller="fractional_integrate",
+        max_steps=native_step_limit,
+    )
 
     # Guard: fractional backend is only defined for 0 < q < 1
     if q >= 1.0:
@@ -260,9 +313,11 @@ def fractional_integrate(
     if q <= 0.0:
         raise ValueError(f"fractional_integrate: q must be positive, got q={q}.")
 
-    # Validate method
+    # Validate method and memory selectors before lowering them to C enums.
+    if not isinstance(method, str):
+        raise TypeError("method must be a string.")
     method_l = method.lower()
-    if method_l in {"heun", "efork_q1"}:
+    if method_l == "efork_q1":
         raise ValueError(
             f"Integrator '{method}' is not valid for fractional dynamics (q<1). "
             "Use 'abm' or 'efork3'."
@@ -281,82 +336,133 @@ def fractional_integrate(
         raise TypeError("rhs must be callable.")
     bound_rhs = bind_rhs(rhs)
 
-    x0_arr = np.ascontiguousarray(x0, dtype=np.float64)
+    x0_raw = np.asarray(x0, dtype=np.float64)
+    if x0_raw.ndim != 1 or x0_raw.size == 0:
+        raise ValueError("x0 must have shape (dim,) with dim >= 1.")
+    if x0_raw.size > np.iinfo(np.int32).max:
+        raise ValueError("x0 dimension exceeds the native INT32 range.")
+    if not np.all(np.isfinite(x0_raw)):
+        raise ValueError("x0 must contain only finite values.")
+    x0_arr = np.ascontiguousarray(x0_raw, dtype=np.float64)
     dim = x0_arr.size
 
     # Memory parameters
-    mem_val = 0 if memory_mode.lower() == "full" else 1
-    win_len = int(memory_window_length) if memory_window_length is not None else 0
+    if not isinstance(memory_mode, str):
+        raise TypeError("memory_mode must be a string.")
+    memory_mode_l = memory_mode.lower()
+    memory_mode_l, validated_window = validate_memory_policy(
+        memory_mode_l,
+        memory_window_length,
+        caller="fractional_integrate",
+    )
+    if validated_window is not None and validated_window > np.iinfo(np.int32).max:
+        raise ValueError("memory_window_length must not exceed INT32_MAX.")
+    mem_val = 0 if memory_mode_l == "full" else 1
+    win_len = 0 if validated_window is None else validated_window
+    memory_mode = memory_mode_l
+    method = method_l
 
     # Early-stop config parsing (supports both flat and nested formats)
     esc = early_stop_config if early_stop_config is not None else {}
-    es_enabled = int(esc.get("enabled", True))
+    if not isinstance(esc, Mapping):
+        raise TypeError("early_stop_config must be a mapping or None.")
+    div_section = esc.get("divergence", {})
+    eq_section = esc.get("equilibrium", {})
+    if not isinstance(div_section, Mapping) or not isinstance(eq_section, Mapping):
+        raise TypeError("early-stop divergence/equilibrium sections must be mappings.")
+    es_enabled = _binary_flag(esc.get("enabled", True), "early_stop.enabled")
 
-    div_enabled = int(esc.get(
+    div_enabled = _binary_flag(esc.get(
         "divergence_enabled",
-        esc.get("divergence", {}).get("enabled", True),
-    ))
-    div_norm_esc = float(esc.get(
+        div_section.get("enabled", True),
+    ), "early_stop.divergence.enabled")
+    div_norm_esc = _finite_float(esc.get(
         "divergence_norm",
-        esc.get("divergence", {}).get("norm", 80.0),
-    ))
-    div_consec = int(esc.get(
+        div_section.get("norm", 80.0),
+    ), "early_stop.divergence.norm", positive=True)
+    div_consec = _strict_positive_int(esc.get(
         "divergence_consecutive_steps",
-        esc.get("divergence", {}).get("consecutive_steps", 5),
-    ))
-    div_growth = float(esc.get(
+        div_section.get("consecutive_steps", 5),
+    ), "early_stop.divergence.consecutive_steps")
+    div_growth = _finite_float(esc.get(
         "divergence_growth_factor",
-        esc.get("divergence", {}).get("growth_factor", 1.25),
-    ))
+        div_section.get("growth_factor", 1.25),
+    ), "early_stop.divergence.growth_factor", positive=True)
 
-    eq_enabled = int(esc.get(
+    eq_enabled = _binary_flag(esc.get(
         "equilibrium_enabled",
-        esc.get("equilibrium", {}).get("enabled", True),
-    ))
-    eq_tol = float(esc.get(
+        eq_section.get("enabled", True),
+    ), "early_stop.equilibrium.enabled")
+    eq_tol = _finite_float(esc.get(
         "equilibrium_tol",
-        esc.get("equilibrium", {}).get("tol", 1e-3),
-    ))
-    eq_deriv = float(esc.get(
+        eq_section.get("tol", 1e-3),
+    ), "early_stop.equilibrium.tol", positive=True)
+    eq_deriv = _finite_float(esc.get(
         "equilibrium_derivative_tol",
-        esc.get("equilibrium", {}).get("derivative_tol", 1e-4),
-    ))
-    eq_consec = int(esc.get(
+        eq_section.get("derivative_tol", 1e-4),
+    ), "early_stop.equilibrium.derivative_tol", positive=True)
+    eq_consec = _strict_positive_int(esc.get(
         "equilibrium_consecutive_steps",
-        esc.get("equilibrium", {}).get("consecutive_steps", 200),
-    ))
-    eq_min_t = float(esc.get(
+        eq_section.get("consecutive_steps", 200),
+    ), "early_stop.equilibrium.consecutive_steps")
+    eq_min_t = _finite_float(esc.get(
         "equilibrium_min_time",
-        esc.get("equilibrium", {}).get("min_time", 5.0),
-    ))
+        eq_section.get("min_time", 5.0),
+    ), "early_stop.equilibrium.min_time", non_negative=True)
 
     # Equilibria flat buffer
-    if equilibria is not None and len(equilibria) > 0:
-        eq_pts = np.ascontiguousarray(
-            np.concatenate([np.asarray(eq, dtype=np.float64).ravel()
-                            for eq in equilibria]),
-            dtype=np.float64,
-        )
-        num_eq = len(equilibria)
+    validated_equilibria = validate_equilibria(
+        equilibria,
+        dim=dim,
+        caller="fractional_integrate",
+    )
+    if validated_equilibria:
+        eq_pts = np.ascontiguousarray(np.concatenate(validated_equilibria))
+        num_eq = len(validated_equilibria)
+        if num_eq > np.iinfo(np.int32).max:
+            raise ValueError("number of equilibria exceeds the native INT32 range.")
     else:
-        eq_pts = np.empty(1, dtype=np.float64)   # non-empty sentinel for ctypes
+        eq_pts = np.zeros(1, dtype=np.float64)   # non-empty sentinel for ctypes
         num_eq = 0
 
     # Pre-history normalisation
-    if history_times is not None and history_states is not None and len(history_times) > 0:
-        history_times_arr = np.ascontiguousarray(history_times, dtype=np.float64)
-        # history_states may be 2-D (N, dim) or 1-D (N*dim,); normalise to 1-D for C
-        hs = np.asarray(history_states, dtype=np.float64)
-        history_states_flat = np.ascontiguousarray(hs.reshape(-1), dtype=np.float64)
-        history_len = len(history_times_arr)
+    validated_history_times, validated_history_states = validate_prehistory(
+        history_times,
+        history_states,
+        x0=x0_arr,
+        h=h,
+        caller="fractional_integrate",
+    )
+    if validated_history_times is not None:
+        assert validated_history_states is not None
+        history_len = int(validated_history_times.size)
+        if history_len > np.iinfo(np.int32).max:
+            raise ValueError("history length exceeds the native INT32 range.")
+        history_times_arr = validated_history_times
+        history_states_flat = np.ascontiguousarray(
+            validated_history_states.reshape(-1)
+        )
+        history_times_for_solver: Optional[np.ndarray] = history_times_arr
+        history_states_for_solver: Optional[np.ndarray] = validated_history_states
     else:
-        history_times_arr = np.empty(1, dtype=np.float64)   # sentinel
-        history_states_flat = np.empty(dim, dtype=np.float64)  # sentinel
+        history_times_arr = np.zeros(1, dtype=np.float64)   # sentinel
+        history_states_flat = np.zeros(dim, dtype=np.float64)  # sentinel
+        history_times_for_solver = None
+        history_states_for_solver = None
         history_len = 0
 
-    nsteps = int(np.ceil(t_final / h))
     H_eff = max(history_len, 1)
-    total_capacity = H_eff + nsteps + 1
+    total_capacity = H_eff + nsteps
+    checked_array_capacity(
+        (total_capacity,),
+        np.float64,
+        caller="fractional_integrate output times",
+    )
+    checked_array_capacity(
+        (total_capacity, dim),
+        np.float64,
+        caller="fractional_integrate output states",
+    )
 
     info: dict = {
         "method": method,
@@ -364,7 +470,9 @@ def fractional_integrate(
         "memory_window_length": memory_window_length,
         "n_dim": dim,
         "history_len_in": history_len,
-        "divergence_norm": divergence_norm,
+        "divergence_norm": normalized_divergence_norm,
+        "requested_t_final": t_final,
+        "effective_t_final": t_final,
         "allow_python_fallback": allow_python_fallback,
         "used_c_backend": False,
         "rhs_source": "python_native",
@@ -379,7 +487,7 @@ def fractional_integrate(
             backend = GeneralFractionalCBackend.get_instance()
 
             out_times = np.zeros(total_capacity, dtype=np.float64)
-            out_states = np.zeros(total_capacity * dim, dtype=np.float64)
+            out_states = np.zeros((total_capacity, dim), dtype=np.float64).reshape(-1)
 
             out_steps_c = ctypes.c_int(0)
             status_code_c = ctypes.c_int(0)
@@ -412,16 +520,11 @@ def fractional_integrate(
                         dx_arr.fill(np.nan)
                         return
                     try:
-                        deriv = np.asarray(
+                        deriv = validate_rhs_result(
                             _rhs(t_val, x_arr),
-                            dtype=np.float64,
-                        ).reshape(-1)
-                        if deriv.shape != (_dim,):
-                            raise ValueError(
-                                "rhs output shape must match the state dimension."
-                            )
-                        if not np.all(np.isfinite(deriv)):
-                            raise ValueError("rhs must return only finite derivatives.")
+                            dim=_dim,
+                            caller="fractional_integrate",
+                        )
                         dx_arr[:] = deriv
                     except BaseException as exc:
                         callback_failures.append(exc)
@@ -445,9 +548,13 @@ def fractional_integrate(
                 history_times_arr,
                 history_states_flat,
                 ctypes.c_int(history_len),
-                ctypes.c_double(divergence_norm),
+                ctypes.c_size_t(history_times_arr.size),
+                ctypes.c_size_t(history_states_flat.size),
+                ctypes.c_double(native_divergence_norm),
                 out_times,
                 out_states,
+                ctypes.c_size_t(out_times.size),
+                ctypes.c_size_t(out_states.size),
                 ctypes.byref(out_steps_c),
                 ctypes.byref(status_code_c),
                 # Early-stopping
@@ -463,6 +570,7 @@ def fractional_integrate(
                 ctypes.c_double(eq_min_t),
                 eq_pts,
                 ctypes.c_int(num_eq),
+                ctypes.c_size_t(eq_pts.size if num_eq else 0),
             )
 
             if callback_failures:
@@ -474,8 +582,14 @@ def fractional_integrate(
                 )
 
             actual_samples = out_steps_c.value
+            if actual_samples < 1 or actual_samples > total_capacity:
+                raise RuntimeError(
+                    "integrate_fractional_c returned an invalid sample count "
+                    f"{actual_samples} for capacity {total_capacity}."
+                )
             times = out_times[:actual_samples]
             states = out_states[: actual_samples * dim].reshape(actual_samples, dim)
+            times = _enforce_effective_horizon(times, t_final)
 
             # Map C status codes to string labels
             _STATUS_MAP = {
@@ -487,8 +601,9 @@ def fractional_integrate(
             }
             status = _STATUS_MAP.get(status_code_c.value, f"unknown_{status_code_c.value}")
 
-            start_slice = history_len if (return_history is False and history_len > 0) else 0
-            completed_steps = max(actual_samples - H_eff, 0)
+            physical_start = _physical_trajectory_start(times)
+            start_slice = 0 if return_history else physical_start
+            completed_steps = max(actual_samples - physical_start - 1, 0)
             info.update({
                 "used_c_backend": True,
                 "rhs_source": info["rhs_source"],
@@ -496,6 +611,7 @@ def fractional_integrate(
                 "n_steps_completed": completed_steps,
                 "n_samples": actual_samples,
                 "n_samples_returned": actual_samples - start_slice,
+                "effective_t_final": float(times[-1]),
                 "status_code": status_code_c.value,
                 "truncated_memory": (memory_mode == "window"),
             })
@@ -512,6 +628,12 @@ def fractional_integrate(
                 ) from exc
             # Fall through to Python solvers
             info["c_backend_error"] = str(exc)
+            warnings.warn(
+                "The native fractional backend failed; using the requested "
+                f"Python fallback. Native error: {exc}",
+                RuntimeWarning,
+                stacklevel=2,
+            )
 
     # -----------------------------------------------------------------------
     # Python fallback solvers
@@ -525,13 +647,13 @@ def fractional_integrate(
 
         t_arr, x_arr, status = _python_abm_integrate(
             bound_rhs, x0_arr, q=q, h=h, t_final=t_final,
-            divergence_norm=divergence_norm,
-            history_times=history_times,
-            history_states=history_states,
+            divergence_norm=normalized_divergence_norm,
+            history_times=history_times_for_solver,
+            history_states=history_states_for_solver,
             memory_mode=memory_mode,
             memory_window_length=memory_window_length,
             early_stop_config=early_stop_config,
-            equilibria=equilibria,
+            equilibria=validated_equilibria,
         )
     else:
         from .efork import _python_efork3_integrate
@@ -545,22 +667,37 @@ def fractional_integrate(
             q=q,
             h=h,
             t_final=t_final,
-            divergence_norm=divergence_norm,
-            history_times=history_times,
-            history_states=history_states,
+            divergence_norm=normalized_divergence_norm,
+            history_times=history_times_for_solver,
+            history_states=history_states_for_solver,
             memory_mode=memory_mode,
             memory_window_length=memory_window_length,
             early_stop_config=early_stop_config,
-            equilibria=equilibria,
+            equilibria=validated_equilibria,
         )
 
-    start_slice = history_len if (return_history is False and history_len > 0) else 0
+    if len(t_arr) < 1:
+        raise RuntimeError("fractional integrator returned no time samples.")
+    # The Python EFORK reference returns only the physical 0..T segment,
+    # whereas ABM and the C ABI retain prehistory internally.  Normalize both
+    # representations here before applying the public ``return_history`` view.
+    if history_len > 1:
+        time_scale = max(1.0, abs(float(t_arr[0])))
+        zero_tolerance = 64.0 * float(np.finfo(np.float64).eps) * time_scale
+        if float(t_arr[0]) >= -zero_tolerance:
+            assert validated_history_states is not None
+            t_arr = np.concatenate((history_times_arr[:-1], t_arr))
+            x_arr = np.vstack((validated_history_states[:-1], x_arr))
     actual_samples = len(t_arr)
-    completed_steps = max(actual_samples - H_eff, 0)
+    t_arr = _enforce_effective_horizon(t_arr, t_final)
+    physical_start = _physical_trajectory_start(t_arr)
+    start_slice = 0 if return_history else physical_start
+    completed_steps = max(actual_samples - physical_start - 1, 0)
     info.update({
         "n_steps": completed_steps,
         "n_steps_completed": completed_steps,
         "n_samples": actual_samples,
         "n_samples_returned": actual_samples - start_slice,
+        "effective_t_final": float(t_arr[-1]),
     })
     return t_arr[start_slice:], x_arr[start_slice:], status, info

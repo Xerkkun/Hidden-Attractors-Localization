@@ -1,6 +1,6 @@
 # Solver Caputo de orden distribuido L1
 
-Estado: `experimental`.
+Estado de implementación: `implemented`. Estabilidad de API: `experimental`.
 
 HAFO separa dos objetos que no deben confundirse:
 

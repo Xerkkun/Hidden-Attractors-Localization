@@ -58,6 +58,7 @@ validation/wolfram/
 │   ├── kalman_fitts_integer.wl          # source polynomial -> switching seed
 │   ├── mavpd_integer.wl                 # source ODE -> direct harmonic seeds
 │   ├── pll_lead_lag_integer.wl          # source H(s) -> zero-gain running seed
+│   ├── geometric_topological_engine.wl  # Jf, PP/FPP, connecting sets and KCC fixtures
 │   ├── sali_gali_integer.wl              # exact integer tangent alignment indices
 │   ├── covariant_lyapunov_integer.wl     # exact q=1 Ginelli CLV fixtures
 │   ├── gl_fractional_operator_validation.wl # GL/RL formulas and finite grids
@@ -130,6 +131,13 @@ a published target-attractor initial condition. Their inputs are the cited
 source model and exact parameter values. Each script exports
 `report_input_used=false` and records its derivation steps.
 
+`geometric_topological_engine.wl` independently checks the algebra used by the
+experimental geometric engine: the vector acceleration `J_f f`, singular
+Jacobian surfaces, PP/FPP roots, connecting-set residuals, affine covariance,
+Picard--Caputo startup coefficients and the scalar KCC fixture for the PLL.
+Those checks certify finite identities and reference values only. They do not
+certify a basin boundary, an attractor, chaos, hiddenness, or a Conley index.
+
 After generating the Wolfram artifacts, compare them independently with the
 Python implementation:
 
@@ -168,7 +176,7 @@ test with:
 ```powershell
 python validation/python/run_wolfram_validations.py `
     --case validation/wolfram/cases/covariant_lyapunov_integer.wl `
-    --out C:\tmp
+    --out (Join-Path $env:TEMP 'hafo-wolfram')
 python validation/python/covariant_lyapunov_integer_compare_wolfram.py `
     --summary validation/outputs/wolfram/covariant_lyapunov_integer_verified/covariant_lyapunov_integer_validation_summary.json `
     --require-core

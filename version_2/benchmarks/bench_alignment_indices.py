@@ -1,4 +1,4 @@
-"""Benchmark NumPy/SVD and Numba/Householder SALI--GALI history analysis.
+"""Benchmark NumPy/SVD and Numba/Householder on synthetic SALI--GALI histories.
 
 The same deterministic tangent histories and public API are used for both
 backends. Numba compilation is measured separately and excluded from repeated
@@ -183,4 +183,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -22,14 +22,28 @@ from __future__ import annotations
 
 import os
 import platform
+import hashlib
+import ctypes
+import re
 import shutil
+import struct
 import subprocess
+import sys
+import threading
+import time
+import uuid
+from contextlib import contextmanager
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
-from typing import Callable, Dict, List, MutableMapping, Sequence
+from typing import Callable, Dict, Iterator, List, MutableMapping, Sequence
 
 
 ALLOW_NO_OPENMP_ENV = "ALLOW_NO_OPENMP"
+_BUILD_LOCKS_GUARD = threading.Lock()
+_BUILD_LOCKS: dict[Path, threading.RLock] = {}
+_LOCAL_INCLUDE_RE = re.compile(r'^\s*#\s*include\s*"([^"]+)"', re.MULTILINE)
+_CTYPES_ABI_LAYOUT_VERSION = "hafo-ctypes-abi-v3"
 
 
 @dataclass(frozen=True)
@@ -144,7 +158,7 @@ def _compiler_and_flags(openmp: bool, target_kind: str) -> tuple[str, List[str],
 
 def build_c_compile_command(source: Path, output: Path, *, target_kind: str, openmp: bool) -> List[str]:
     compiler, cflags, ldflags = _compiler_and_flags(openmp, target_kind)
-    cmd = [compiler, "-O3"]
+    cmd = [compiler, "-O3", "-std=c11"]
     if target_kind == "shared":
         cmd.append("-shared")
         if platform.system().lower() != "windows":
@@ -153,6 +167,241 @@ def build_c_compile_command(source: Path, output: Path, *, target_kind: str, ope
     cmd.extend(["-o", str(output), str(source), "-lm"])
     cmd.extend(ldflags)
     return cmd
+
+
+def _local_dependencies(source: Path) -> tuple[Path, ...]:
+    """Return the source and recursively included local headers."""
+
+    pending = [source.resolve()]
+    seen: set[Path] = set()
+    while pending:
+        current = pending.pop()
+        if current in seen:
+            continue
+        seen.add(current)
+        try:
+            text = current.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            text = current.read_text(encoding="utf-8", errors="replace")
+        for relative in _LOCAL_INCLUDE_RE.findall(text):
+            dependency = (current.parent / relative).resolve()
+            if not dependency.is_file():
+                raise FileNotFoundError(
+                    f"No existe la dependencia C local {relative!r} incluida por {current}."
+                )
+            pending.append(dependency)
+    return tuple(sorted(seen, key=lambda path: str(path).casefold()))
+
+
+@lru_cache(maxsize=16)
+def _compiler_identity(compiler: str) -> str:
+    resolved = shutil.which(compiler) or compiler
+    try:
+        completed = subprocess.run(
+            [compiler, "--version"],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        version = (completed.stdout or completed.stderr or "").splitlines()
+        first_line = version[0].strip() if version else "unknown-version"
+    except (OSError, subprocess.SubprocessError):
+        first_line = "unknown-version"
+    return f"{Path(resolved).resolve() if Path(resolved).exists() else resolved}|{first_line}"
+
+
+def _native_abi_fingerprint() -> str:
+    """Return platform fields that determine native/ctypes compatibility."""
+
+    return "|".join(
+        (
+            _CTYPES_ABI_LAYOUT_VERSION,
+            sys.platform,
+            platform.system(),
+            platform.machine(),
+            f"pointer-bits={struct.calcsize('P') * 8}",
+            f"byteorder={sys.byteorder}",
+        )
+    )
+
+
+def _content_addressed_output(
+    source: Path,
+    requested_output: Path,
+    *,
+    target_kind: str,
+    openmp: bool,
+) -> tuple[Path, List[str]]:
+    """Return an immutable artifact path derived from all compilation inputs."""
+
+    template = build_c_compile_command(
+        source,
+        Path("__HAFO_NATIVE_OUTPUT__"),
+        target_kind=target_kind,
+        openmp=openmp,
+    )
+    digest = hashlib.sha256()
+    digest.update(b"hafo-native-build-v3\0")
+    digest.update(target_kind.encode("utf-8") + b"\0")
+    digest.update(str(bool(openmp)).encode("ascii") + b"\0")
+    digest.update(_native_abi_fingerprint().encode("utf-8") + b"\0")
+    digest.update(_compiler_identity(template[0]).encode("utf-8") + b"\0")
+    for argument in template:
+        digest.update(str(argument).encode("utf-8") + b"\0")
+    for dependency in _local_dependencies(source):
+        digest.update(str(dependency).encode("utf-8") + b"\0")
+        digest.update(dependency.read_bytes())
+        digest.update(b"\0")
+    short_hash = digest.hexdigest()[:20]
+    suffix = requested_output.suffix
+    stem = requested_output.name[: -len(suffix)] if suffix else requested_output.name
+    artifact = requested_output.with_name(f"{stem}-{short_hash}{suffix}")
+    command = build_c_compile_command(
+        source,
+        artifact,
+        target_kind=target_kind,
+        openmp=openmp,
+    )
+    return artifact, command
+
+
+def _thread_lock_for(path: Path) -> threading.RLock:
+    with _BUILD_LOCKS_GUARD:
+        return _BUILD_LOCKS.setdefault(path, threading.RLock())
+
+
+def _artifact_digest_path(artifact: Path) -> Path:
+    return artifact.with_name(artifact.name + ".sha256")
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _artifact_digest_is_valid(artifact: Path) -> bool:
+    sidecar = _artifact_digest_path(artifact)
+    if not artifact.is_file() or not sidecar.is_file():
+        return False
+    try:
+        expected = sidecar.read_text(encoding="ascii").strip()
+        if not re.fullmatch(r"[0-9a-f]{64}", expected):
+            return False
+        return _sha256_file(artifact) == expected
+    except (OSError, UnicodeError):
+        return False
+
+
+@contextmanager
+def _interprocess_build_lock(path: Path, timeout: float = 120.0) -> Iterator[None]:
+    """Serialize publication of one immutable artifact across processes."""
+
+    local_lock = _thread_lock_for(path)
+    with local_lock:
+        lock_path = path.with_name(path.name + ".lock")
+        lock_path.parent.mkdir(parents=True, exist_ok=True)
+        handle = lock_path.open("a+b")
+        try:
+            handle.seek(0, os.SEEK_END)
+            if handle.tell() == 0:
+                handle.write(b"0")
+                handle.flush()
+            handle.seek(0)
+            deadline = time.monotonic() + timeout
+            while True:
+                try:
+                    if os.name == "nt":
+                        import msvcrt
+
+                        msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+                    else:
+                        import fcntl
+
+                        fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    break
+                except OSError:
+                    if time.monotonic() >= deadline:
+                        raise TimeoutError(f"Timeout esperando el bloqueo de compilacion {lock_path}.")
+                    time.sleep(0.05)
+            try:
+                yield
+            finally:
+                handle.seek(0)
+                if os.name == "nt":
+                    import msvcrt
+
+                    msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+                else:
+                    import fcntl
+
+                    fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+        finally:
+            handle.close()
+
+
+def _compile_immutable_artifact(
+    source: Path,
+    requested_output: Path,
+    *,
+    target_kind: str,
+    openmp: bool,
+    logger: Callable[[str], None] | None,
+) -> tuple[Path, List[str]]:
+    artifact, command = _content_addressed_output(
+        source,
+        requested_output,
+        target_kind=target_kind,
+        openmp=openmp,
+    )
+    if _artifact_digest_is_valid(artifact):
+        return artifact, command
+
+    with _interprocess_build_lock(artifact):
+        if _artifact_digest_is_valid(artifact):
+            return artifact, command
+        sidecar = _artifact_digest_path(artifact)
+        artifact.unlink(missing_ok=True)
+        sidecar.unlink(missing_ok=True)
+        token = f"{os.getpid()}-{threading.get_ident()}-{uuid.uuid4().hex}"
+        temp_suffix = artifact.suffix
+        temp_stem = artifact.name[: -len(temp_suffix)] if temp_suffix else artifact.name
+        temporary = artifact.with_name(f".{temp_stem}.{token}.tmp{temp_suffix}")
+        temporary_sidecar = artifact.with_name(f".{temp_stem}.{token}.tmp.sha256")
+        temp_command = build_c_compile_command(
+            source,
+            temporary,
+            target_kind=target_kind,
+            openmp=openmp,
+        )
+        if logger is not None:
+            logger("Compilando C: " + " ".join(temp_command))
+        try:
+            subprocess.run(
+                temp_command,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            temporary_sidecar.write_text(
+                _sha256_file(temporary) + "\n",
+                encoding="ascii",
+            )
+            os.replace(temporary, artifact)
+            os.replace(temporary_sidecar, sidecar)
+        finally:
+            try:
+                temporary.unlink()
+            except FileNotFoundError:
+                pass
+            try:
+                temporary_sidecar.unlink()
+            except FileNotFoundError:
+                pass
+    return artifact, command
 
 
 def _format_compile_failure(cmd: Sequence[str], exc: subprocess.CalledProcessError) -> str:
@@ -178,81 +427,178 @@ def compile_c_target(
     openmp: bool = True,
     logger: Callable[[str], None] | None = None,
 ) -> CompileResult:
-    """Compile a C backend according to the repository parallel policy."""
+    """Compile an immutable, content-addressed C backend atomically."""
     src = Path(source).resolve()
     out = Path(output).resolve()
     out.parent.mkdir(parents=True, exist_ok=True)
     if not src.exists():
         raise FileNotFoundError(f"No existe el archivo C: {src}")
 
-    # If the output DLL already exists, skip compiling to avoid Windows file-locking permission issues
-    if out.exists():
-        cmd = build_c_compile_command(src, out, target_kind=target_kind, openmp=bool(openmp))
-        return CompileResult(
-            path=out,
-            command=cmd,
-            openmp_requested=bool(openmp),
-            openmp_active=bool(openmp),
-            compiler=cmd[0],
-            target_kind=target_kind,
-        )
-
     def log(message: str) -> None:
         if logger is not None:
             logger(message)
 
+    requested_openmp = bool(openmp)
     try:
-        cmd = build_c_compile_command(src, out, target_kind=target_kind, openmp=bool(openmp))
-    except RuntimeError as exc:
-        if not openmp or not allow_no_openmp():
-            raise
-        no_omp_cmd = build_c_compile_command(src, out, target_kind=target_kind, openmp=False)
-        log(
-            "No se pudo preparar OpenMP y ALLOW_NO_OPENMP=1 esta activo; "
-            "compilando backend sin paralelismo OpenMP. Detalle: " + str(exc)
-        )
-        subprocess.run(no_omp_cmd, check=True)
-        return CompileResult(
-            path=out,
-            command=no_omp_cmd,
-            openmp_requested=True,
-            openmp_active=False,
-            compiler=no_omp_cmd[0],
+        artifact, cmd = _compile_immutable_artifact(
+            src,
+            out,
             target_kind=target_kind,
-        )
-    if not openmp:
-        log("OpenMP deshabilitado por configuracion; backend sin paralelismo OpenMP.")
-    log("Compilando C: " + " ".join(cmd))
-    try:
-        subprocess.run(cmd, check=True, capture_output=bool(openmp), text=True)
-        return CompileResult(
-            path=out,
-            command=cmd,
-            openmp_requested=bool(openmp),
-            openmp_active=bool(openmp),
-            compiler=cmd[0],
-            target_kind=target_kind,
+            openmp=requested_openmp,
+            logger=logger,
         )
     except subprocess.CalledProcessError as exc:
-        if not openmp:
-            raise RuntimeError(_format_compile_failure(cmd, exc)) from exc
-        if not allow_no_openmp():
-            raise RuntimeError(_format_compile_failure(cmd, exc)) from exc
-
-        no_omp_cmd = build_c_compile_command(src, out, target_kind=target_kind, openmp=False)
+        failed_command = list(exc.cmd) if isinstance(exc.cmd, (list, tuple)) else [str(exc.cmd)]
+        if not requested_openmp or not allow_no_openmp():
+            raise RuntimeError(_format_compile_failure(failed_command, exc)) from exc
         log(
             "OpenMP fallo y ALLOW_NO_OPENMP=1 esta activo; "
             "compilando backend sin paralelismo OpenMP."
         )
-        subprocess.run(no_omp_cmd, check=True)
-        return CompileResult(
-            path=out,
-            command=no_omp_cmd,
-            openmp_requested=True,
-            openmp_active=False,
-            compiler=no_omp_cmd[0],
-            target_kind=target_kind,
+        try:
+            artifact, cmd = _compile_immutable_artifact(
+                src,
+                out,
+                target_kind=target_kind,
+                openmp=False,
+                logger=logger,
+            )
+        except subprocess.CalledProcessError as fallback_exc:
+            fallback_command = (
+                list(fallback_exc.cmd)
+                if isinstance(fallback_exc.cmd, (list, tuple))
+                else [str(fallback_exc.cmd)]
+            )
+            raise RuntimeError(
+                _format_compile_failure(fallback_command, fallback_exc)
+            ) from fallback_exc
+        return CompileResult(path=artifact, command=cmd, openmp_requested=True,
+                             openmp_active=False, compiler=cmd[0], target_kind=target_kind)
+    except RuntimeError as exc:
+        if not openmp or not allow_no_openmp():
+            raise
+        log(
+            "No se pudo preparar OpenMP y ALLOW_NO_OPENMP=1 esta activo; "
+            "compilando backend sin paralelismo OpenMP. Detalle: " + str(exc)
         )
+        try:
+            artifact, cmd = _compile_immutable_artifact(
+                src,
+                out,
+                target_kind=target_kind,
+                openmp=False,
+                logger=logger,
+            )
+        except subprocess.CalledProcessError as fallback_exc:
+            fallback_command = (
+                list(fallback_exc.cmd)
+                if isinstance(fallback_exc.cmd, (list, tuple))
+                else [str(fallback_exc.cmd)]
+            )
+            raise RuntimeError(
+                _format_compile_failure(fallback_command, fallback_exc)
+            ) from fallback_exc
+        return CompileResult(path=artifact, command=cmd, openmp_requested=True,
+                             openmp_active=False, compiler=cmd[0], target_kind=target_kind)
+    if not openmp:
+        log("OpenMP deshabilitado por configuracion; backend sin paralelismo OpenMP.")
+    return CompileResult(
+        path=artifact,
+        command=cmd,
+        openmp_requested=requested_openmp,
+        openmp_active=requested_openmp,
+        compiler=cmd[0],
+        target_kind=target_kind,
+    )
+
+
+def load_ctypes_library(
+    source: str | Path,
+    output: str | Path,
+    *,
+    expected_symbols: Sequence[str],
+    expected_abi_version: int | None = None,
+    abi_version_symbol: str = "hafo_native_abi_version",
+    openmp: bool = True,
+    logger: Callable[[str], None] | None = None,
+) -> tuple[CompileResult, ctypes.CDLL]:
+    """Build and load a shared library, healing one poisoned cache entry.
+
+    The content-addressed filename prevents ordinary stale reuse.  This extra
+    load check handles a truncated or externally replaced file at that exact
+    name.  Only the failed immutable artifact is removed, under its build
+    lock, and one atomic rebuild is attempted.
+    """
+
+    required = tuple(str(symbol) for symbol in expected_symbols)
+    if not required or any(not symbol for symbol in required):
+        raise ValueError("expected_symbols must contain at least one symbol name.")
+
+    result = compile_c_target(
+        source,
+        output,
+        target_kind="shared",
+        openmp=openmp,
+        logger=logger,
+    )
+    first_error: BaseException | None = None
+    for attempt in range(2):
+        try:
+            library = ctypes.CDLL(str(result.path.resolve()))
+            missing = [symbol for symbol in required if not hasattr(library, symbol)]
+            if missing:
+                raise AttributeError(
+                    "Native library is missing required symbols: " + ", ".join(missing)
+                )
+            if expected_abi_version is not None:
+                version_function = getattr(library, abi_version_symbol)
+                version_function.argtypes = []
+                version_function.restype = ctypes.c_int
+                actual_version = int(version_function())
+                if actual_version != expected_abi_version:
+                    raise RuntimeError(
+                        f"Native ABI version {actual_version} does not match "
+                        f"expected version {expected_abi_version}."
+                    )
+            return result, library
+        except (OSError, AttributeError, RuntimeError) as exc:
+            if attempt == 1:
+                raise RuntimeError(
+                    f"Native artifact {result.path} failed validation after rebuild: {exc}"
+                ) from exc
+            first_error = exc
+            try:
+                failed_stat = result.path.stat()
+            except FileNotFoundError:
+                failed_stat = None
+            with _interprocess_build_lock(result.path):
+                try:
+                    current_stat = result.path.stat()
+                except FileNotFoundError:
+                    current_stat = None
+                if current_stat is not None and (
+                    failed_stat is None
+                    or (
+                        current_stat.st_size == failed_stat.st_size
+                        and current_stat.st_mtime_ns == failed_stat.st_mtime_ns
+                    )
+                ):
+                    result.path.unlink()
+                    _artifact_digest_path(result.path).unlink(missing_ok=True)
+            if logger is not None:
+                logger(
+                    f"Artefacto nativo invalido descartado ({first_error}); "
+                    "recompilando una vez."
+                )
+            result = compile_c_target(
+                source,
+                output,
+                target_kind="shared",
+                openmp=openmp,
+                logger=logger,
+            )
+
+    raise AssertionError("unreachable native library load state")
 
 
 def parallel_contract(

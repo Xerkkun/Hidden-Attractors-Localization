@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import re
 
 import numpy as np
 import pytest
@@ -251,8 +252,12 @@ def test_hiddenness_c_backends_use_published_k3_stage_order() -> None:
     assert "c.a31 * k2x + c.a32 * k1x" not in native_fractional
     for source in (root / "hidden_attractors" / "native" / "csrc" / "chua_hidden_backend.c",):
         text = source.read_text(encoding="utf-8")
-        assert "coef.a31*K1x+coef.a32*K2x" in text
-        assert "coef.a31*K2x+coef.a32*K1x" not in text
+        assert re.search(
+            r"coef\.a31\s*\*\s*K1x\s*\+\s*coef\.a32\s*\*\s*K2x", text
+        )
+        assert not re.search(
+            r"coef\.a31\s*\*\s*K2x\s*\+\s*coef\.a32\s*\*\s*K1x", text
+        )
         assert "exchange its stored coefficients" not in text
 
 

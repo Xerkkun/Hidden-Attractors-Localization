@@ -13,6 +13,8 @@ from typing import Callable
 
 import numpy as np
 
+from .._time_grid import exact_fixed_step_count
+
 
 @dataclass(frozen=True)
 class EFORK3Coefficients:
@@ -85,9 +87,11 @@ def efork3_caputo_integrate(
     final_time = float(t_final)
     if step <= 0.0 or final_time < 0.0:
         raise ValueError("h must be positive and t_final must be nonnegative.")
-    n_steps = int(round(final_time / step))
-    if not math.isclose(n_steps * step, final_time, rel_tol=0.0, abs_tol=1.0e-12):
-        raise ValueError("t_final must be an integer multiple of h.")
+    n_steps = exact_fixed_step_count(
+        step,
+        final_time,
+        caller="efork3_caputo_integrate",
+    )
     coeff = efork3_coefficients(alpha)
     state0 = np.asarray(y0, dtype=float)
     if state0.ndim != 1:

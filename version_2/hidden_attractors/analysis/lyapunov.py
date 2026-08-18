@@ -47,8 +47,10 @@ from typing import Callable
 
 import numpy as np
 
+from .._time_grid import exact_fixed_step_count
 from ..solvers.integer import efork_q1_step
 from ..systems.base import ChaoticSystem
+from ._system_order import infer_system_order as _infer_system_order
 
 # ---------------------------------------------------------------------------
 # Canonical references for this method
@@ -319,8 +321,16 @@ def integer_lyapunov_exponents(
     if x.ndim != 1 or x.size == 0 or not np.all(np.isfinite(x)):
         raise ValueError("x0 must be a non-empty finite one-dimensional array.")
     n = x.size
-    burn_steps = int(round(t_burn_value / h_value))
-    total_steps = int(round(t_final_value / h_value))
+    burn_steps = exact_fixed_step_count(
+        h_value,
+        t_burn_value,
+        caller="integer_qr_benettin_lyapunov_exponents(t_burn)",
+    )
+    total_steps = exact_fixed_step_count(
+        h_value,
+        t_final_value,
+        caller="integer_qr_benettin_lyapunov_exponents(t_final)",
+    )
     if total_steps < 1:
         raise ValueError("t_final must span at least one integration step.")
     jac = jacobian or (lambda state: finite_difference_jacobian(rhs, state, eps=eps_value))
@@ -501,57 +511,6 @@ def integer_qr_benettin_lyapunov_exponents(
         div_threshold=div_threshold,
         q=1.0,
     )
-
-
-# ---------------------------------------------------------------------------
-# Private helper: defensively infer fractional order from a system object
-# ---------------------------------------------------------------------------
-
-def _infer_system_order(system: object) -> float | None:
-    """Attempt to infer the fractional order *q* from a system object.
-
-    Checks the following attributes in order, returning the first found:
-    - ``system.q``
-    - ``system.order``
-    - ``system.fractional_order``
-    - ``system.metadata.get('q')`` (if ``metadata`` is a mapping)
-    - ``system.params.get('q')``   (if ``params``    is a mapping)
-
-    Returns ``None`` if no order attribute is found (backward-compatible
-    fallback: allow execution without raising).
-
-    Returns
-    -------
-    float or None
-        Inferred fractional order, or ``None`` if undetermined.
-    """
-    # Direct scalar attributes
-    for attr in ("q", "order", "fractional_order"):
-        try:
-            val = getattr(system, attr, None)
-        except Exception:  # noqa: BLE001
-            val = None
-        if val is not None:
-            try:
-                return float(val)
-            except (TypeError, ValueError):
-                pass
-
-    # Mapping attributes: metadata / params
-    for attr in ("metadata", "params"):
-        try:
-            mapping = getattr(system, attr, None)
-        except Exception:  # noqa: BLE001
-            mapping = None
-        if mapping is not None:
-            try:
-                val = mapping.get("q")
-                if val is not None:
-                    return float(val)
-            except (AttributeError, TypeError, ValueError):
-                pass
-
-    return None
 
 
 # ---------------------------------------------------------------------------

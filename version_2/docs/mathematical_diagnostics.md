@@ -486,7 +486,7 @@ They are not full-memory Caputo estimators.
 | --- | --- | --- | --- |
 | `integer_qr_benettin` | `q=1` | Analytic or centered finite differences | Exact linear controls and internal cross-checks |
 | `fractional_variational_abm_qr` | `0<q<1` | Analytic or centered finite differences | Synthetic validation only |
-| `fractional_cloned_dynamics_abm_gs_published` | `0<q<=1` | No | Published reproduction lane with a recorded benchmark discrepancy |
+| `fractional_cloned_dynamics_abm_gs_published` | `0<q<=1` | No | Quarantined published-reproduction lane; explicit opt-in is required because a benchmark discrepancy is recorded |
 | `fractional_cloned_dynamics_abm_qr` | `0<q<=1` | No | Numerical-comparison variant |
 
 ### Explicit method-validation contract
@@ -693,22 +693,12 @@ complexity = compute_complexity_measures(
 )
 ```
 
-The exact defaults and corrections belong to the recorded backend version.
+The exact numerical conventions belong to the selected optional backend and
+its installed version.
 
 ## Ready-to-use integrators
 
-For $\dot X=F(t,X)$, Heun uses
-
-$$
-K_1=F(t_n,X_n),\qquad
-K_2=F(t_n+h,X_n+hK_1),
-$$
-
-$$
-X_{n+1}=X_n+\frac h2(K_1+K_2).
-$$
-
-Classical RK4 uses
+For $\dot X=F(t,X)$, classical RK4 uses
 
 $$
 \begin{aligned}
@@ -768,7 +758,7 @@ times, states, status = integrate(
     q=1.0,
     h=0.01,
     t_final=20.0,
-    integrator="rk4",       # or "heun", "efork_q1"
+    integrator="rk4",       # or "efork_q1"
 )
 
 times_q, states_q, status_q = integrate(

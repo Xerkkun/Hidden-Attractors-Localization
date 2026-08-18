@@ -63,7 +63,7 @@ finita y no necesariamente el estado hereditario completo.
 
 El catálogo y el código actuales ya contienen:
 
-- flujos enteros con RK4/Heun y rutas adaptativas, mapas discretos y ABI genérica
+- flujos enteros con RK4 y rutas adaptativas, mapas discretos y ABI genérica
   Numba;
 - Caputo ABM/PECE y EFORK; ABM/PECE Caputo--Hadamard en tiempo logarítmico;
   Caputo templado por conjugación exponencial más ABM; Caputo de orden variable

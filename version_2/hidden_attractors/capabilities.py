@@ -31,7 +31,7 @@ class Capability:
 _CAPABILITIES = {
     "continuous_simulation": Capability(
         "continuous_simulation", "simulation", "implemented", "implemented", False,
-        "hafo", "RK4/Heun for q=1 and validated fractional method contracts for q<1.",
+        "hafo", "RK4 and the validated EFORK q=1 limit for integer dynamics; validated fractional method contracts for q<1.",
         ("pynamicalsys", "DynamicalSystems.jl"),
     ),
     "discrete_maps": Capability(
@@ -45,13 +45,13 @@ _CAPABILITIES = {
         ("FractionalDiffEq.jl",),
     ),
     "multi_term_caputo_l1": Capability(
-        "multi_term_caputo_l1", "simulation", "implemented_limit", "experimental", False,
+        "multi_term_caputo_l1", "simulation", "implemented_limit", "implemented", False,
         "numba/python", "Finite positive-coefficient Caputo sums reuse the combined distributed-order L1 kernel; coefficients are never normalized, duplicate orders are coalesced exactly, and alpha=1 is the backward-Euler limit.",
         ("DynamicalSystems.jl", "FractionalDiffEq.jl"),
     ),
     "tempered_convolution_quadrature": Capability(
         "tempered_convolution_quadrature", "fractional_operator",
-        "not_applicable", "experimental", False, "numba/fft",
+        "not_applicable", "implemented", False, "numba/fft",
         (
             "BDF1/BDF2 sampled tempered RL and conjugated-Caputo operators; "
             "direct Numba and offline FFT are executable. Symbol-shift CQ "
@@ -62,7 +62,7 @@ _CAPABILITIES = {
     ),
     "tempered_fast_multistep_history": Capability(
         "tempered_fast_multistep_history", "fractional_operator",
-        "not_applicable", "experimental", False, "numba/python",
+        "not_applicable", "implemented", False, "numba/python",
         (
             "Real-axis recurrent Fast Method II for FBDF1 and GNGF2 with an "
             "exact local window, exact conjugated-Caputo anchor, O(Q+n0) "
@@ -119,6 +119,11 @@ _CAPABILITIES = {
     "permutation_entropy": Capability(
         "permutation_entropy", "complexity", "implemented", "implemented", True,
         "c/numba", "Dense Bandt--Pompe ordinal histogram and finite plug-in Shannon entropy with explicit delay, factorial normalization, tie policy, and dimension-aware C/Numba dispatch; not a chaos or hiddenness certificate.",
+        ("pynamicalsys", "DynamicalSystems.jl", "ComplexityMeasures.jl"),
+    ),
+    "complexity_measure_adapters": Capability(
+        "complexity_measure_adapters", "complexity", "implemented", "implemented", True,
+        "nolds/antropy", "Validated adapters with explicit optional-backend and unit contracts; results describe supplied sampled trajectories only.",
         ("pynamicalsys", "DynamicalSystems.jl", "ComplexityMeasures.jl"),
     ),
     "poincare_sections": Capability(

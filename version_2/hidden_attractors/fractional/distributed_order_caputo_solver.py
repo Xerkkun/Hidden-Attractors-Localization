@@ -49,7 +49,6 @@ https://doi.org/10.1007/s10915-021-01726-2.
 from __future__ import annotations
 
 from dataclasses import dataclass
-import operator
 from types import MappingProxyType
 from typing import Any, Callable, Mapping
 import warnings
@@ -57,6 +56,8 @@ import warnings
 import numpy as np
 from numba import njit
 from scipy.special import gamma
+
+from ._validation import strict_count as _strict_count
 
 from .._rhs import bind_rhs
 from .distributed_order import _order_measure
@@ -127,18 +128,6 @@ def _real_scalar(value: Any, *, name: str) -> float:
     if not np.isfinite(normalized):
         raise ValueError(f"{name} must be finite.")
     return normalized
-
-
-def _strict_count(value: Any, *, name: str, minimum: int) -> int:
-    if isinstance(value, (bool, np.bool_)):
-        raise ValueError(f"{name} must be an integer >= {minimum}.")
-    try:
-        normalized = operator.index(value)
-    except TypeError as exc:
-        raise ValueError(f"{name} must be an integer >= {minimum}.") from exc
-    if normalized < minimum:
-        raise ValueError(f"{name} must be >= {minimum}.")
-    return int(normalized)
 
 
 def _vector_norm(values: np.ndarray) -> float:

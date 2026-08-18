@@ -153,7 +153,7 @@ signo fijo.
   columnas y la reconstrucción por lotes.
 - SciPy DOP853 propaga el sistema variacional de flujos con tolerancias
   explícitas.
-- El benchmark fechado del 3 de agosto de 2026 comparó tres cargas con paridad
+- Un benchmark histórico del 3 de agosto de 2026 comparó tres cargas con paridad
   previa y siete repeticiones alternadas. En la carga mayor, Numba redujo el
   tiempo completo del mapa en aproximadamente 52.8 %, pero la reconstrucción
   pública Numba ocupó sólo 1.60 % del tiempo end-to-end calentado. Incluso
@@ -180,13 +180,14 @@ Antes de reservar memoria, HAFO estima el workspace de las historias. Con
 sin contar temporales del integrador. `max_workspace_bytes` permite rechazar
 una configuración antes de una asignación grande.
 
-El registro completo, incluido hardware, versiones, calentamiento, dispersión
-y frontera probatoria, está en
+El registro histórico completo, incluido hardware, versiones, calentamiento,
+dispersión y frontera probatoria, está en
 `validation/outputs/benchmarks/covariant_lyapunov_numpy_numba_20260803.json`
 (SHA-256
 `15A904AC4F67491015DF4A07CFC4353BBC5F2E19C4BC249121F415CCEE7F61BD`).
-Es evidencia de ingeniería para ese host y esas cargas, no una clasificación
-universal de backends.
+Su `script_sha256` corresponde a una revisión anterior y no coincide con el
+script del checkout actual. Por ello documenta aquella ejecución y no valida el
+rendimiento actual; hace falta repetir el benchmark para una decisión nueva.
 
 ## API pública experimental
 

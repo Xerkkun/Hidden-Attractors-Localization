@@ -21,7 +21,7 @@ def test_seed_order_cli_centered(tmp_path):
         "-o", str(output_dir),
         "--df-order", "integer",
         "--q-seed", "1.0",
-        "--integrator", "heun",
+        "--integrator", "rk4",
         "--h", "0.01"
     ]
     

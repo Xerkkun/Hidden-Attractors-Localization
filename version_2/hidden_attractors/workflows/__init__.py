@@ -6,80 +6,42 @@ Stability: experimental
     the changelog and follow the package deprecation policy.
 """
 
-from .contracts import (
-    ContinuationResult,
-    FullWorkflowContract,
-    HiddennessResult,
-    NumericalContract,
-    SeedResult,
-    validate_full_workflow_system,
-)
-from .integer_lure import (
-    IntegerHiddennessProbe,
-    IntegerLureContinuationStep,
-    continue_integer_lure_seed,
-    final_integer_lure_attractor,
-    integer_lure_seed,
-    integrate_integer_lure,
-    run_integer_lure_hiddenness_controls,
-    summarize_integer_hiddenness_controls,
-)
-from .integer_hidden_chaos import (
-    IntegerHiddenChaosProbe,
-    IntegerParameterContinuationStep,
-    continue_integer_parameter_path,
-    deterministic_unit_directions,
-    equilibrium_stability_records,
-    run_integer_hidden_chaos_controls,
-    summarize_integer_hidden_chaos_controls,
-)
-from .switching_lure import (
-    NonlinearityContinuationStep,
-    SwitchingMapSeed,
-    continue_integer_lure_nonlinearity,
-    find_sign_switching_cycle_seed,
-    integer_lure_nonlinearity_homotopy_rhs,
-    sign_nonlinearity,
-)
-from .protocol import (
-    FINAL_LABELS,
-    OFFICIAL_STAGE_ORDER,
-    PROTOCOL_VERSION,
-    ROBUSTNESS_VERDICTS,
-    SCHEMA_VERSION,
-    SEED_FAMILIES,
-    ContinuationPlan,
-    ContinuationStep,
-    ContinuationTrace,
-    DynamicReference,
-    HiddennessTestResult,
-    PostContinuationDecision,
-    RobustnessVerdict,
-    SoftPrecheckResult,
-    StageEnvelope,
-    UnifiedSeedRecord,
-    sample_uniform_ball,
-)
-from .config_loader import load_config, save_effective_config
-from .attractor_only import run_attractor_only_workflow
-from .bifurcation import run_bifurcation_workflow
-from .basin_runner import run_basin_workflow
-from .simple_runner import run_simple_workflow
-from .specs import (
-    BasinSliceSpec,
-    DestinationClassifierSpec,
-    IntegratorSpec,
-    ParameterSweepSpec,
-    RobustnessCaseSpec,
-    SphereControlSpec,
-    StrictRefinementSpec,
-    TargetReferenceSpec,
-    TrajectoryDiagnosticsSpec,
-    WorkflowInputSpec,
-    example_workflow_spec,
-    load_workflow_spec,
-    write_workflow_spec,
-)
+from importlib import import_module
+
+_EXPORT_GROUPS = {
+    ".contracts": ("ContinuationResult", "FullWorkflowContract", "HiddennessResult", "NumericalContract", "SeedResult", "validate_full_workflow_system"),
+    ".integer_lure": ("IntegerHiddennessProbe", "IntegerLureContinuationStep", "continue_integer_lure_seed", "final_integer_lure_attractor", "integer_lure_seed", "integrate_integer_lure", "run_integer_lure_hiddenness_controls", "summarize_integer_hiddenness_controls"),
+    ".integer_hidden_chaos": ("IntegerHiddenChaosProbe", "IntegerParameterContinuationStep", "continue_integer_parameter_path", "deterministic_unit_directions", "equilibrium_stability_records", "run_integer_hidden_chaos_controls", "summarize_integer_hidden_chaos_controls"),
+    ".switching_lure": ("NonlinearityContinuationStep", "SwitchingMapSeed", "continue_integer_lure_nonlinearity", "find_sign_switching_cycle_seed", "integer_lure_nonlinearity_homotopy_rhs", "sign_nonlinearity"),
+    ".protocol": ("FINAL_LABELS", "OFFICIAL_STAGE_ORDER", "PROTOCOL_VERSION", "ROBUSTNESS_VERDICTS", "SCHEMA_VERSION", "SEED_FAMILIES", "ContinuationPlan", "ContinuationStep", "ContinuationTrace", "DynamicReference", "HiddennessTestResult", "PostContinuationDecision", "RobustnessVerdict", "SoftPrecheckResult", "StageEnvelope", "UnifiedSeedRecord", "sample_uniform_ball"),
+    ".config_loader": ("load_config", "save_effective_config"),
+    ".attractor_only": ("run_attractor_only_workflow",),
+    ".bifurcation": ("run_bifurcation_workflow",),
+    ".basin_runner": ("run_basin_workflow",),
+    ".simple_runner": ("run_simple_workflow",),
+    ".geometric_topological_campaign": ("CAMPAIGN_PROTOCOL_VERSION", "CAMPAIGN_SCHEMA_VERSION", "DEFAULT_B0_B2_BUDGETS", "CampaignArtifactPaths", "CampaignBudget", "CampaignManifest", "EdgeRunContext", "append_edge_tracking_result", "initialize_campaign_artifacts", "run_edge_tracking_and_record"),
+    ".specs": ("BasinSliceSpec", "DestinationClassifierSpec", "IntegratorSpec", "ParameterSweepSpec", "RobustnessCaseSpec", "SphereControlSpec", "StrictRefinementSpec", "TargetReferenceSpec", "TrajectoryDiagnosticsSpec", "WorkflowInputSpec", "example_workflow_spec", "load_workflow_spec", "write_workflow_spec"),
+}
+_LAZY_EXPORTS = {
+    name: module_name
+    for module_name, names in _EXPORT_GROUPS.items()
+    for name in names
+}
+
+
+def __getattr__(name: str):
+    """Resolve a workflow symbol on first access."""
+
+    module_name = _LAZY_EXPORTS.get(name)
+    if module_name is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    value = getattr(import_module(module_name, __name__), name)
+    globals()[name] = value
+    return value
+
+
+def __dir__() -> list[str]:
+    return sorted(set(globals()) | set(_LAZY_EXPORTS))
 
 __all__ = [
     "ContinuationPlan",
@@ -145,4 +107,14 @@ __all__ = [
     "run_bifurcation_workflow",
     "run_basin_workflow",
     "run_simple_workflow",
+    "CAMPAIGN_PROTOCOL_VERSION",
+    "CAMPAIGN_SCHEMA_VERSION",
+    "DEFAULT_B0_B2_BUDGETS",
+    "CampaignArtifactPaths",
+    "CampaignBudget",
+    "CampaignManifest",
+    "EdgeRunContext",
+    "append_edge_tracking_result",
+    "initialize_campaign_artifacts",
+    "run_edge_tracking_and_record",
 ]

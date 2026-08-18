@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import ctypes
 from math import gamma
-from types import MappingProxyType
+import sys
+from types import MappingProxyType, SimpleNamespace
 
 import numpy as np
 import pytest
 
+import hidden_attractors.fractional.tempered_caputo_solver as tempered_solver
 from hidden_attractors.fractional import (
     FractionalProblem,
     integrate_tempered_caputo_abm,
@@ -428,6 +431,109 @@ def test_nonintegral_grid_is_rejected_but_large_tempering_stays_physical() -> No
     assert result.solver_info["transformed_states_stored"] is False
 
 
+def test_native_step_limit_is_rejected_before_output_allocation() -> None:
+    native_step_limit = int(np.iinfo(np.int32).max) - 3
+    with pytest.raises(ValueError, match="supported limit"):
+        integrate_tempered_caputo_abm(
+            _zero_rhs,
+            [0.0],
+            0.5,
+            tempering=0.1,
+            lower_terminal=0.0,
+            upper_terminal=float(native_step_limit + 1),
+            step=1.0,
+            use_acceleration=False,
+        )
+
+
+def test_output_capacities_are_checked_before_solver_allocation(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    checked_shapes: list[tuple[int, ...]] = []
+    original = tempered_solver.checked_array_capacity
+
+    def recording_capacity(shape, dtype, *, caller, max_bytes=None):
+        checked_shapes.append(tuple(shape))
+        return original(shape, dtype, caller=caller, max_bytes=max_bytes)
+
+    monkeypatch.setattr(
+        tempered_solver,
+        "checked_array_capacity",
+        recording_capacity,
+    )
+    result = integrate_tempered_caputo_abm(
+        _zero_rhs,
+        [0.0, 1.0],
+        0.5,
+        tempering=0.1,
+        lower_terminal=0.0,
+        upper_terminal=0.2,
+        step=0.1,
+        use_acceleration=False,
+        divergence_norm=None,
+    )
+
+    assert result.status == "ok"
+    assert checked_shapes == [(3,), (3, 2)]
+
+
+def test_native_tempered_abi_receives_element_capacities_and_finite_cutoff(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured: dict[str, object] = {}
+
+    class FakeNativeFunction:
+        argtypes = None
+        restype = None
+
+        def __call__(self, *arguments):
+            captured["arguments"] = arguments
+            arguments[11][:] = np.array([0.0, 0.1, 0.2])
+            arguments[12][:] = np.array([0.0, 1.0, 0.0, 1.0, 0.0, 1.0])
+            ctypes.cast(arguments[15], ctypes.POINTER(ctypes.c_int))[0] = 3
+            ctypes.cast(arguments[16], ctypes.POINTER(ctypes.c_int))[0] = 0
+            return 0
+
+    callback_type = ctypes.CFUNCTYPE(
+        None,
+        ctypes.c_double,
+        ctypes.POINTER(ctypes.c_double),
+        ctypes.POINTER(ctypes.c_double),
+        ctypes.c_int,
+        ctypes.c_void_p,
+    )
+    function = FakeNativeFunction()
+    backend = SimpleNamespace(
+        RHS_CALLBACK=callback_type,
+        lib=SimpleNamespace(integrate_tempered_caputo_abm_c=function),
+    )
+    monkeypatch.setattr(
+        GeneralFractionalCBackend,
+        "get_instance",
+        classmethod(lambda cls: backend),
+    )
+
+    result = integrate_tempered_caputo_abm(
+        _zero_rhs,
+        [0.0, 1.0],
+        0.5,
+        tempering=0.1,
+        lower_terminal=0.0,
+        upper_terminal=0.2,
+        step=0.1,
+        use_acceleration=True,
+        allow_python_fallback=False,
+        divergence_norm=None,
+    )
+
+    arguments = captured["arguments"]
+    assert function.argtypes[13:15] == [ctypes.c_size_t, ctypes.c_size_t]
+    assert arguments[10].value == sys.float_info.max
+    assert arguments[13].value == 3
+    assert arguments[14].value == 6
+    assert result.solver_info["used_c_backend"] is True
+
+
 @pytest.mark.parametrize(
     "bad_rhs",
     [
@@ -527,16 +633,15 @@ def test_native_callback_propagates_late_rhs_shape_failure_when_available() -> N
         )
 
 
-def test_fractional_problem_requires_experimental_opt_in() -> None:
+def test_fractional_problem_accepts_promoted_solver_without_opt_in() -> None:
     problem = _tempered_problem(allow_experimental=False)
-    with pytest.raises(PermissionError, match="allow_experimental=True"):
-        problem.validate_executable()
-    with pytest.raises(PermissionError, match="allow_experimental=True"):
-        solve_fractional_problem(
-            problem,
-            _zero_rhs,
-            use_acceleration=False,
-        )
+    problem.validate_executable()
+    result = solve_fractional_problem(
+        problem,
+        _zero_rhs,
+        use_acceleration=False,
+    )
+    assert result.status == "ok"
 
 
 def test_fractional_problem_dispatches_and_preserves_kernel_metadata() -> None:

@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch, Wedge
 import numpy as np
+from hidden_attractors.plotting.export import intercept_and_export_path
 
 from hidden_attractors.models import chua_nonsmooth_parameters, equilibria_nonsmooth, jacobian_nonsmooth, rhs_nonsmooth
 from hidden_attractors.validation import resolve_wolfram_artifacts
@@ -273,7 +274,6 @@ def write_matignon_plot(rows: list[dict[str, object]], path: Path) -> None:
     ax.set_title("Fractional Chua q=0.9998 regional stability")
     ax.tick_params(axis="x", rotation=45)
     fig.tight_layout()
-    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
     intercept_and_export_path(fig, path, 'attractor')
     plt.close(fig)
 
@@ -346,7 +346,6 @@ def write_matignon_complex_plane_plot(rows: list[dict[str, object]], path: Path)
         framealpha=0.9,
     )
     fig.tight_layout()
-    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
     intercept_and_export_path(fig, path, 'attractor')
     plt.close(fig)
 

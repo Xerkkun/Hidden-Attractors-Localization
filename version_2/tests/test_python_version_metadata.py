@@ -25,6 +25,9 @@ def test_pyproject_python_metadata():
     assert ">=3.11" in requires_python or ">= 3.11" in requires_python, (
         f"requires-python ('{requires_python}') is not compatible with standard >=3.11"
     )
+    assert "<3.15" in requires_python or "< 3.15" in requires_python, (
+        f"requires-python ('{requires_python}') must exclude unvalidated Python >=3.15"
+    )
     
     # 2. Extract versions from classifiers
     classifiers = project.get("classifiers", [])
@@ -35,6 +38,7 @@ def test_pyproject_python_metadata():
         m = re.search(r"Programming Language :: Python :: 3\.(\d+)", c)
         if m:
             classifier_versions.append(f"3.{m.group(1)}")
+    assert set(classifier_versions) == {"3.11", "3.12", "3.13", "3.14"}
             
     # Load CI matrix versions
     ci_path = WORKSPACE_DIR / ".github/workflows/ci.yml"

@@ -3,10 +3,10 @@
 Stability: experimental
 
 Registry entries are capability statements, not claims that mathematically
-different derivatives are interchangeable.  ``implemented`` and selected
-``experimental`` entries have executable HAFO paths; ``planned``,
-``research_required`` and ``theoretical_only`` entries remain non-executable
-through :class:`FractionalProblem`.
+different derivatives are interchangeable.  ``implemented`` entries have
+validated executable HAFO paths; ``planned``, ``research_required`` and
+``theoretical_only`` entries remain non-executable through
+:class:`FractionalProblem`.
 """
 
 from __future__ import annotations
@@ -145,7 +145,7 @@ _DERIVATIVES = {
         (0.0, 1.0),
         "implemented",
         ("gl_direct", "gl_explicit_discrete", "gl_backward_euler_caputo", "gl_fft_offline"),
-        "HAFO implements the direct discrete operator; FDE integration is experimental.",
+        "HAFO implements the direct discrete operator and a separately contracted explicit recurrence.",
         ("podlubny1999", "lubich1986"),
     ),
     "riemann_liouville": FractionalDerivativeDefinition(
@@ -155,7 +155,7 @@ _DERIVATIVES = {
         True,
         "fractional integral/derivative data, not automatically x(t0)=x0",
         (0.0, 1.0),
-        "experimental",
+        "implemented",
         ("gl_direct", "gl_fft_offline", "convolution_quadrature"),
         "The GL discretization is exposed as an approximation only under its regularity assumptions.",
         ("podlubny1999", "lubich1986"),
@@ -179,7 +179,7 @@ _DERIVATIVES = {
         True,
         "operator-specific normalization and classical initial values",
         (0.0, 1.0),
-        "experimental",
+        "implemented",
         (
             "abc_sampled_convolution",
             "abc_predictor_corrector",
@@ -205,7 +205,7 @@ _DERIVATIVES = {
         True,
         "classical initial values plus an explicit tempering parameter",
         (0.0, 1.0),
-        "experimental",
+        "implemented",
         (
             "tempered_caputo_abm_pece_transform",
             "tempered_convolution_quadrature",
@@ -233,7 +233,7 @@ _DERIVATIVES = {
         True,
         "sample history from an explicit lower terminal; operator evaluation only",
         (0.0, 1.0),
-        "experimental",
+        "implemented",
         (
             "tempered_gl_direct",
             "tempered_convolution_quadrature",
@@ -274,7 +274,7 @@ _DERIVATIVES = {
             "nonsmooth starts must be declared and do not inherit smooth L1 accuracy"
         ),
         (0.0, 1.0),
-        "experimental",
+        "implemented",
         ("vo_caputo_type3_l1",),
         (
             "Uses alpha(t_n) throughout the history kernel; it is not Tavares "
@@ -292,7 +292,7 @@ _DERIVATIVES = {
         True,
         "sample history and an explicit variable-order convention",
         (0.0, 1.0),
-        "experimental",
+        "implemented",
         ("variable_order_gl_direct",),
         "Uses q(t_n) for every history weight at output time t_n; other variable-order definitions differ.",
         ("samko_ross1993", "lubich1986"),
@@ -307,7 +307,7 @@ _DERIVATIVES = {
             "no atom at alpha=1 imply f(a,x0)=0"
         ),
         (0.0, 1.0),
-        "experimental",
+        "implemented",
         ("distributed_order_caputo_l1",),
         (
             "Uses an explicit nonnegative discrete order measure. The alpha=1 "
@@ -328,7 +328,7 @@ _DERIVATIVES = {
         True,
         "initial data and a normalized order-density or quadrature rule",
         (0.0, 1.0),
-        "experimental",
+        "implemented",
         ("distributed_order_gl_direct", "distributed_order_quadrature"),
         "The sampled double quadrature is implemented; an FDE solver remains planned.",
         (
@@ -345,7 +345,7 @@ _DERIVATIVES = {
         False,
         "classical local initial values",
         (0.0, 1.0),
-        "experimental",
+        "implemented",
         (
             "conformable_sampled_local",
             "local_ode_transform",
@@ -364,7 +364,7 @@ _DERIVATIVES = {
         True,
         "fractional logarithmic-history data from a strictly positive lower terminal",
         (0.0, 1.0),
-        "experimental",
+        "implemented",
         ("hadamard_convolution_quadrature",),
         "BDF1/BDF2 CQ is evaluated on a grid uniform in log(t/a); operator only.",
         ("jarad_abdeljawad_baleanu2012", "yin_zhang_liu_li2024"),
@@ -376,9 +376,9 @@ _DERIVATIVES = {
         True,
         "classical point value at a strictly positive lower terminal",
         (0.0, 1.0),
-        "experimental",
+        "implemented",
         ("hadamard_convolution_quadrature", "caputo_hadamard_abm_pece"),
-        "CQ is an operator; uniform-log ABM/PECE provides an experimental commensurate solver.",
+        "CQ is an operator; uniform-log ABM/PECE provides an implemented commensurate solver.",
         (
             "jarad_abdeljawad_baleanu2012",
             "zheng2021_caputo_hadamard_transform",
@@ -436,7 +436,7 @@ _METHODS = {
         ("caputo", "grunwald_letnikov"),
         ("commensurate", "componentwise"),
         ("full_history", "finite_window"),
-        "experimental",
+        "implemented",
         "Uses the GL derivative of x-x0; it is not the raw RL/GL initial-value convention.",
         ("podlubny1999",),
         execution_kind="sampled_operator",
@@ -447,7 +447,7 @@ _METHODS = {
         ("caputo", "grunwald_letnikov", "riemann_liouville"),
         ("commensurate", "componentwise"),
         ("full_history",),
-        "experimental",
+        "implemented",
         "Batch O(d N log N) convolution; crossover is host-dependent and configurable.",
         ("lubich1986", "matusiak2020"),
         execution_kind="sampled_operator",
@@ -458,7 +458,7 @@ _METHODS = {
         ("grunwald_letnikov", "caputo"),
         ("commensurate", "componentwise"),
         ("full_history", "finite_window"),
-        "experimental",
+        "implemented",
         "Explicit lagged-RHS recurrence; raw GL and Caputo-shifted initializations remain distinct.",
         ("podlubny1999",),
     ),
@@ -468,7 +468,7 @@ _METHODS = {
         ("caputo", "riemann_liouville"),
         ("commensurate", "componentwise"),
         ("full_history",),
-        "experimental",
+        "implemented",
         "BDF1/BDF2 sampled operator, direct or FFT; no FDE solve or starting corrections.",
         ("lubich1986", "lubich2004", "jin_li_zhou2017"),
         execution_kind="sampled_operator",
@@ -479,7 +479,7 @@ _METHODS = {
         ("hadamard_riemann_liouville", "caputo_hadamard"),
         ("commensurate", "componentwise"),
         ("full_history",),
-        "experimental",
+        "implemented",
         "BDF1/BDF2 sampled operator in log(t/a), direct or FFT; no FDE solve or starting corrections.",
         ("lubich1986", "jarad_abdeljawad_baleanu2012", "yin_zhang_liu_li2024"),
         execution_kind="sampled_operator",
@@ -490,7 +490,7 @@ _METHODS = {
         ("caputo_hadamard",),
         ("commensurate",),
         ("full_history",),
-        "experimental",
+        "implemented",
         "Transforms to Caputo time u=log(t/a); graded meshes and fast history are not implemented.",
         (
             "diethelm_ford_freed2004",
@@ -504,7 +504,7 @@ _METHODS = {
         ("caputo_fabrizio",),
         ("commensurate",),
         ("recursive_kernel",),
-        "experimental",
+        "implemented",
         "Exact exponential-kernel interval integration for piecewise-linear sampled data; operator only.",
         (
             "caputo_fabrizio2015",
@@ -529,7 +529,7 @@ _METHODS = {
         ("atangana_baleanu_caputo",),
         ("commensurate",),
         ("full_history",),
-        "experimental",
+        "implemented",
         (
             "Lee--Kim--Jang equations (9)--(14), with an HAFO implicit "
             "product-trapezoid fixed-point startup; conventional O(N^2) history, "
@@ -566,7 +566,7 @@ _METHODS = {
         ("atangana_baleanu_caputo",),
         ("commensurate",),
         ("full_history",),
-        "experimental",
+        "implemented",
         (
             "Piecewise-linear interval integration for 0 < alpha <= 1/2; "
             "direct Numba/Python or offline FFT. This is an operator, not an FDE solver."
@@ -584,7 +584,7 @@ _METHODS = {
         ("tempered_caputo",),
         ("commensurate",),
         ("full_history", "finite_window"),
-        "experimental",
+        "implemented",
         (
             "Uses v=exp(lambda*(t-a))*x to derive exponentially damped ABM/PECE "
             "history weights, evaluated directly in physical state by C or Python; "
@@ -607,7 +607,7 @@ _METHODS = {
         ("tempered_caputo", "tempered_riemann_liouville"),
         ("commensurate", "componentwise"),
         ("full_history",),
-        "experimental",
+        "implemented",
         (
             "BDF1/BDF2 sampled operator with direct Python/Numba or offline "
             "zero-padded FFT convolution. Uses delta(exp(-lambda*h)*z)**q, "
@@ -628,7 +628,7 @@ _METHODS = {
         ("tempered_caputo", "tempered_riemann_liouville"),
         ("commensurate", "componentwise"),
         ("fast_history",),
-        "experimental",
+        "implemented",
         (
             "Executable real-axis Fast Method II for FBDF1 and the published "
             "second-order GNGF2 generator. Exact local history and the "
@@ -662,7 +662,7 @@ _METHODS = {
         ("tempered_riemann_liouville",),
         ("commensurate", "componentwise"),
         ("full_history",),
-        "experimental",
+        "implemented",
         "Direct O(N^2 d) sampled operator with exponential-conjugation weights.",
         ("sabzikar_meerschaert_chen2015", "lubich1986"),
         execution_kind="sampled_operator",
@@ -683,7 +683,7 @@ _METHODS = {
         ("caputo_variable_type3",),
         ("variable",),
         ("full_history",),
-        "experimental",
+        "implemented",
         (
             "Direct O(N^2 d) L1 history with alpha evaluated at the current "
             "time; Picard solution of the implicit discrete equation is an "
@@ -703,7 +703,7 @@ _METHODS = {
         ("variable_order_grunwald_letnikov",),
         ("variable",),
         ("full_history",),
-        "experimental",
+        "implemented",
         "Direct O(N^2 d) operator with q(t_n) frozen across each output-time history sum.",
         ("samko_ross1993", "lubich1986"),
         execution_kind="sampled_operator",
@@ -714,7 +714,7 @@ _METHODS = {
         ("caputo_distributed_order",),
         ("distributed",),
         ("full_history",),
-        "experimental",
+        "implemented",
         (
             "Precomputes one combined L1 kernel in O(R*N), then advances the "
             "implicit system with O(N^2*d) direct history and a reported "
@@ -748,7 +748,7 @@ _METHODS = {
         ("distributed_order",),
         ("distributed",),
         ("full_history", "finite_window"),
-        "experimental",
+        "implemented",
         "Combines declared order-space quadrature with direct GL time-history sums.",
         ("diethelm_ford2009", "lubich1986", "podlubny1999"),
         execution_kind="sampled_operator",
@@ -769,7 +769,7 @@ _METHODS = {
         ("conformable",),
         ("commensurate",),
         ("none",),
-        "experimental",
+        "implemented",
         (
             "Transforms tau=(t-a)^q/q and applies fixed-step classical RK4; "
             "this is a local ODE solver without hereditary memory."
@@ -783,7 +783,7 @@ _METHODS = {
         ("conformable",),
         ("commensurate", "componentwise"),
         ("none",),
-        "experimental",
+        "implemented",
         "Evaluates (t-a)^(1-q) f'(t); it contains no hereditary state.",
         ("khalil2014",),
         execution_kind="sampled_operator",

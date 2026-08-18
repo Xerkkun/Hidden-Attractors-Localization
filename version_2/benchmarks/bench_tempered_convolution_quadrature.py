@@ -1,4 +1,4 @@
-"""Parity-gated benchmark for HAFO tempered convolution quadrature.
+"""Parity-gated benchmark on synthetic tempered-convolution samples.
 
 The protocol compares the public direct-Python, warmed direct-Numba, and
 zero-padded FFT batch backends for both HAFO tempered definitions and for

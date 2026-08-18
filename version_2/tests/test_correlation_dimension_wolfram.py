@@ -111,7 +111,7 @@ def test_correlation_dimension_comparator_rejects_wrong_system_id(
 
 
 def _live_wolfram_result(executable: str) -> dict[str, object]:
-    temp_root = Path(r"C:\tmp") if os.name == "nt" else Path(tempfile.gettempdir())
+    temp_root = Path(tempfile.gettempdir())
     temp_root.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(
         prefix="hafo_correlation_dimension_",

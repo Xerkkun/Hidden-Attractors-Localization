@@ -1,7 +1,8 @@
 # Caputo de orden variable Tipo III: especificación L1/PECE para HAFO
 
-Fecha de la especificación: 3 de agosto de 2026. Estado: **implementación
-experimental ejecutable y probada de forma enfocada**. HAFO dispone de la
+Fecha de la especificación: 3 de agosto de 2026. Estado de implementación:
+**`implemented`, ejecutable y validada de forma enfocada**. La estabilidad de
+la API continúa siendo **`experimental`**. HAFO dispone de la
 función pública `integrate_variable_order_caputo_type3_l1` y del despacho por
 `FractionalProblem`. Este estado acredita el contrato de software y casos
 numéricos finitos; no transfiere automáticamente a sistemas ODE caóticos no
@@ -709,7 +710,7 @@ no como ausencia de la publicación.
 
 ## Criterio de promoción
 
-La puerta de `planned` a `experimental` ya se cumplió con:
+La puerta de implementación ejecutable a `implemented` ya se cumplió con:
 
 1. implementación Python de referencia;
 2. suma histórica Numba con paridad enfocada;
@@ -721,8 +722,8 @@ La puerta de `planned` a `experimental` ya se cumplió con:
 7. 64 pruebas directas enfocadas aprobadas en la corrida reportada;
 8. oráculo Wolfram independiente y 6 pruebas de artefacto/comparación aprobadas.
 
-Para promover el método más allá de `experimental` todavía se requiere un
-estudio de convergencia global específico para el IVP Tipo III, regularidad
+Para promover la estabilidad de la API más allá de `experimental` todavía se
+requiere un estudio de convergencia global específico para el IVP Tipo III, regularidad
 inicial más amplia, horizontes largos, sistemas no suaves y comparaciones
 independientes sobre mallas/familias adicionales. El algoritmo rápido de Fang
 debe implementarse como backend

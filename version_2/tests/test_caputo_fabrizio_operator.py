@@ -132,6 +132,6 @@ def test_cf_operator_is_public_and_registered_without_enabling_an_fde_solver() -
     from hidden_attractors import fractional
 
     method = get_fractional_method("cf_direct_recursive")
-    assert method.implementation_status == "experimental"
+    assert method.implementation_status == "implemented"
     assert method.derivative_families == ("caputo_fabrizio",)
     assert fractional.caputo_fabrizio_derivative is caputo_fabrizio_derivative

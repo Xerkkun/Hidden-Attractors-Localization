@@ -64,7 +64,9 @@ On Windows PowerShell:
 
 ## Step 2: C-Compiler Toolchain Setup (By Platform)
 
-The library integrates high-performance numerical integrators compiled in C. These compile dynamically on demand. Set up your compiler toolchain below:
+The library includes optional numerical integrators compiled in C. These compile
+dynamically on demand; performance depends on the workload and local toolchain.
+Set up your compiler toolchain below:
 
 ### 1. Windows Setup
 

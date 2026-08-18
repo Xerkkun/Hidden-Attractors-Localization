@@ -1,4 +1,5 @@
 import ctypes
+import math
 from typing import Any, Tuple, Optional
 
 # Define the ctypes Structures mapping the C declarations in fractional_integrators.h
@@ -23,6 +24,11 @@ class ChuaArctanParamsStruct(ctypes.Structure):
 
 # Global registry of C RHS functions
 _C_RHS_REGISTRY = {}
+_EXPLICIT_SYSTEM_ADAPTERS = {
+    "chua-nonsmooth": "chua_fractional_saturation",
+    "chua-arctan": "chua_fractional_arctan",
+    "fractional-chua-arctan-wu2023": "chua_fractional_arctan",
+}
 
 def register_c_rhs(system_id: str, rhs_getter_name: str, params_builder: Any):
     """Register a pre-compiled C RHS by system_id."""
@@ -70,37 +76,49 @@ def build_chua_arctan_params(system: Any) -> ctypes.Structure:
     )
 
 # Register default systems
-register_c_rhs("chua_integer_saturation", "get_chua_saturation_rhs", build_chua_saturation_params)
-register_c_rhs("chua_fractional_saturation", "get_chua_saturation_rhs", build_chua_saturation_params)
-register_c_rhs("chua_fractional_arctan", "get_chua_arctan_rhs", build_chua_arctan_params)
+register_c_rhs("chua_integer_saturation", "chua_saturation_rhs_c", build_chua_saturation_params)
+register_c_rhs("chua_fractional_saturation", "chua_saturation_rhs_c", build_chua_saturation_params)
+register_c_rhs("chua_fractional_arctan", "chua_arctan_rhs_c", build_chua_arctan_params)
 
 def get_c_rhs_and_params(system: Any, lib: Any) -> Tuple[Optional[int], Optional[ctypes.Structure]]:
     """Retrieve the function pointer address and the built ctypes parameters structure for a system."""
     if system is None:
         return None, None
-        
+
     system_id = getattr(system, "system_id", None)
     if system_id is None:
-        name = getattr(system, "name", None)
-        if name:
-            name_normalized = name.lower().replace("-", "_")
-            if "wu2023" in name_normalized or "arctan" in name_normalized:
-                system_id = "chua_fractional_arctan"
-            elif "nonsmooth" in name_normalized or "saturation" in name_normalized:
-                system_id = "chua_fractional_saturation"
-                
+        system_id = _EXPLICIT_SYSTEM_ADAPTERS.get(getattr(system, "name", None))
     if system_id not in _C_RHS_REGISTRY:
         return None, None
-        
+
     entry = _C_RHS_REGISTRY[system_id]
     
-    # Retrieve the C function pointer address from the loaded library
-    getter_func = getattr(lib, entry["rhs_getter"])
-    getter_func.argtypes = []
-    getter_func.restype = ctypes.c_void_p
-    rhs_ptr = getter_func()
+    # Retrieve the exported typed function directly.  The address conversion is
+    # performed by ctypes at the platform ABI boundary, avoiding the non-portable
+    # ISO-C conversion from a function pointer to ``void *``.
+    rhs_func = getattr(lib, entry["rhs_getter"])
+    rhs_func.argtypes = [
+        ctypes.c_double,
+        ctypes.POINTER(ctypes.c_double),
+        ctypes.POINTER(ctypes.c_double),
+        ctypes.c_int,
+        ctypes.c_void_p,
+    ]
+    rhs_func.restype = None
+    rhs_ptr = ctypes.cast(rhs_func, ctypes.c_void_p).value
+    if rhs_ptr is None:
+        raise RuntimeError(f"Native RHS symbol {entry['rhs_getter']!r} has no address.")
     
     # Build parameters structure
     params_struct = entry["builder"](system)
+    for field_name, field_type in params_struct._fields_:
+        if field_type not in (ctypes.c_double, ctypes.c_float):
+            continue
+        field_value = float(getattr(params_struct, field_name))
+        if not math.isfinite(field_value):
+            raise ValueError(
+                f"Native RHS parameter {field_name!r} for {system_id!r} "
+                "must be finite."
+            )
     
     return rhs_ptr, params_struct

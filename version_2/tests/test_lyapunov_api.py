@@ -64,6 +64,25 @@ def _make_request(**kwargs: object) -> LyapunovComputationRequest:
     return LyapunovComputationRequest(**defaults)  # type: ignore[arg-type]
 
 
+def test_system_order_property_failure_is_reported_with_context() -> None:
+    class BrokenOrderSystem:
+        @property
+        def q(self) -> float:
+            raise RuntimeError("broken order property")
+
+    request = _make_request(
+        system=BrokenOrderSystem(),
+        rhs=None,
+        q=0.8,
+        method="fractional_variational_abm_qr",
+        memory_mode="full",
+    )
+    ok, status, messages = validate_lyapunov_method_request(request)
+    assert ok is False
+    assert status == "invalid_parameter"
+    assert messages == ("system.q could not be read: RuntimeError: broken order property",)
+
+
 # ---------------------------------------------------------------------------
 # 1. test_compute_lyapunov_spectrum_integer_rhs
 # ---------------------------------------------------------------------------

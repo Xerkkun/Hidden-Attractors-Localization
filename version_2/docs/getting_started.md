@@ -40,14 +40,23 @@ hidden-attractors inspect-config -c my_workflow.yaml
 hidden-attractors run -c my_workflow.yaml
 ```
 
-Useful inspection and validation checks:
+Useful checks available from the installed package:
 
 ```bash
 hidden-attractors inspect systems
 hidden-attractors inspect candidates --source path/to/candidates.json
 hidden-attractors inspect workflow-requirements
 hidden-attractors seed --help
-hidden-attractors validate contract
+```
+
+The numerical-evidence contract validator needs the matching repository
+configuration and validation tree; it is not a wheel-only check. From a tagged
+checkout, pass those paths explicitly:
+
+```bash
+hidden-attractors validate contract \
+  --contract configs/validation_contract.json \
+  --validation-root validation
 ```
 
 The public release surface is the single `hidden-attractors` command.

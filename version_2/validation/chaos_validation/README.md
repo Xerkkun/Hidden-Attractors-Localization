@@ -215,7 +215,7 @@ post-transient trajectories and close as
 This state means the complementary output bundle is ready for inspection. It
 does not certify chaos, certify hiddenness, assert exact Caputo periodic
 orbits, or automatically promote the separate official protocol diagnostics
-stage. See [F5 Dynamics Diagnostics](../../docs/f5_dynamics_diagnostics.md).
+stage. See [Mathematical Diagnostics](../../docs/mathematical_diagnostics.md).
 
 ## F6 - Integrated chaos validator
 

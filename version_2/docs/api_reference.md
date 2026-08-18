@@ -1,6 +1,6 @@
 # Public API Reference
 
-This reference describes the installed `hidden-attractors-fo` 1.1.0 surface.
+This reference describes the installed `hidden-attractors-fo` 1.2.0 surface.
 Repository-only validation runners, case-specific validation records, paper
 figure generators, and non-public comparison modules are intentionally
 excluded.
@@ -70,6 +70,10 @@ equilibria = equilibria_nonsmooth(parameters)
 Candidate records are not loaded implicitly from the repository. The optional
 `hidden_attractors.candidates` module requires an explicit JSON source so its
 behavior is identical in a checkout and in a wheel installation.
+
+### Complete top-level stable symbol index
+
+- Stable exports: `ChuaParameters`, `chua_parameters`, `chua_arctan_wu2023_parameters`, `chua_nonsmooth_parameters`, `equilibria_arctan`, `equilibria_nonsmooth`, `jacobian_arctan`, `jacobian_nonsmooth`, `rhs_arctan`, `rhs_nonsmooth`, `ChaoticSystem`, `LureSystem`, `check_system_capability`, `get_system`, `known_workflows`, `list_systems`, `register_system`, `requirements_for`, `CLASS_LABELS`, `TARGET_CLASS_IDS`, `class_label`, `is_target_class`, `load_trajectory_csv`.
 
 ## Generic Trajectory Characterization
 
@@ -484,9 +488,11 @@ times, states, status = integrate(
 )
 ```
 
-The selector normalizes values numerically equivalent to `q=1`, respects
-`use_c_backend`, propagates `allow_python_fallback`, and rejects incompatible
-integer/fractional integrator choices.
+The selector uses integer dynamics only for the exactly represented value
+`q=1.0`; a near-one fractional value retains fractional memory semantics. It
+respects `use_c_backend`, propagates `allow_python_fallback`, rejects
+incompatible integer/fractional integrator choices, and requires `t_final / h`
+to be an integer within floating-point tolerance.
 
 ## Hidden-Attractor Workflow APIs
 
@@ -517,6 +523,43 @@ route. It has no `nscan`, `search_route`, or scan-fallback argument. A caller
 that wants a dense scan must invoke a separately named scan function such as
 `find_lure_omega_gain_candidates` or `find_lure_harmonic_seed` explicitly.
 
+### Closed analysis and complexity surface
+
+The following tested capabilities are now top-level members of
+`PUBLIC_API_EXPERIMENTAL`:
+
+- generalized delay embedding, ACF/MI delay selection, and false-nearest-neighbor diagnostics;
+- basic and advanced auto/cross/joint recurrence quantification;
+- basin entropy, uncertainty fraction, and finite-scale uncertainty-exponent fitting;
+- optional `nolds`/`antropy` complexity adapters with explicit backend discovery.
+
+Their promotion is an API exposure decision under finite-data contracts. It
+does not turn any of these diagnostics into a proof of chaos or hiddenness.
+
+### Complete top-level experimental symbol index
+
+The detailed sections above define the numerical contracts. The remaining
+top-level experimental names are listed here so the documented surface stays
+synchronized with `PUBLIC_API_EXPERIMENTAL`; constants carry scope, reference,
+or backend-selection metadata and do not create additional scientific claims.
+
+- Constants and scope metadata: `BASIN_ENTROPY_REFERENCE`, `CORRELATION_DIMENSION_EVIDENCE_SCOPE`, `CORRELATION_DIMENSION_REFERENCE_DOIS`, `CORRELATION_SUM_NATIVE_AUTO_MIN_PAIRS`, `FDE_RECONSTRUCTION_CAVEAT`, `INDEX_LAG_CAVEAT`, `PERMUTATION_ENTROPY_EVIDENCE_SCOPE`, `PERMUTATION_ENTROPY_MAX_EMBEDDING_DIMENSION`, `PERMUTATION_ENTROPY_MAX_PATTERN_STATES`, `PERMUTATION_ENTROPY_NATIVE_AUTO_MIN_WINDOWS`, `PERMUTATION_ENTROPY_NATIVE_AUTO_WINDOW_THRESHOLDS`, `PERMUTATION_ENTROPY_REFERENCE_DOIS`, `UNCERTAINTY_REFERENCE`, `FINAL_LABELS`, `OFFICIAL_STAGE_ORDER`, `PROTOCOL_VERSION`, `SEED_FAMILIES`.
+- Basin uncertainty: `BasinEntropyResult`, `UncertaintyExponentResult`, `UncertaintyFractionResult`, `basin_entropy`, `estimate_uncertainty_exponent`, `uncertainty_fraction`.
+- Correlation dimension: `CorrelationDimensionResult`, `CorrelationSumResult`, `correlation_sum_curve`, `fit_correlation_dimension`.
+- Reconstruction: `DelayEstimateResult`, `FNNDimensionResult`, `FalseNearestNeighborsResult`, `GeneralizedEmbeddingResult`, `estimate_delay_autocorrelation`, `estimate_delay_mutual_information`, `false_nearest_neighbors`, `generalized_delay_embedding`.
+- Lyapunov: `LyapunovResult`, `LyapunovComputationRequest`, `LyapunovComputationSummary`, `compute_lyapunov_spectrum`, `validate_lyapunov_method_request`, `integer_qr_benettin_lyapunov_exponents`, `integer_system_lyapunov_exponents`, `TimeSeriesLyapunovResult`, `estimate_time_series_lyapunov`, `kaplan_yorke_dimension`.
+- Permutation entropy: `OrdinalPatternDistribution`, `PermutationEntropyResult`, `permutation_entropy`, `permutation_entropy_from_distribution`.
+- Recurrence: `RecurrenceQuantificationResult`, `delay_embedding`, `recurrence_matrix`, `recurrence_quantification`, `AdvancedRecurrenceMatrix`, `AdvancedRQAResult`, `auto_recurrence_matrix`, `cross_recurrence_matrix`, `joint_recurrence_matrix`, `recurrence_quantification_advanced`.
+- Spectral and trajectory results: `SpectrumResult`, `fft_spectrum`, `psd_welch`, `trajectory_component_spectra`, `RobustnessCase`, `compute_trajectory_metrics`.
+- Optional complexity adapters: `ExternalTool`, `available_complexity_backends`, `compute_complexity_measures`, `external_tool_report`.
+- Simulation and expression systems: `SimulationResult`, `simulate`, `simulate_fractional`, `ExpressionSystemDefinition`, `ExpressionValidationError`, `compile_expression_system`.
+- Seed and workflow contracts: `validate_fractional_order`, `validate_full_workflow_system`, `integrate_integer_lure`, `HiddennessTestResult`, `RobustnessVerdict`, `PostContinuationDecision`, `SoftPrecheckResult`, `StageEnvelope`, `UnifiedSeedRecord`.
+- Workflow specifications: `BasinSliceSpec`, `DestinationClassifierSpec`, `IntegratorSpec`, `ParameterSweepSpec`, `RobustnessCaseSpec`, `SphereControlSpec`, `StrictRefinementSpec`, `TargetReferenceSpec`, `TrajectoryDiagnosticsSpec`.
+- Alignment and covariant-vector diagnostics: `AlignmentIndexResult`, `CovariantAngleResult`, `CovariantLyapunovResult`, `CovariantQRHistoryResult`, `alignment_indices_from_tangent_history`, `covariant_lyapunov_angles`, `generalized_alignment_index`, `integer_covariant_vectors_from_qr_history`, `integer_flow_alignment_indices`, `integer_flow_covariant_lyapunov_vectors`, `integer_map_alignment_indices`, `integer_map_covariant_lyapunov_vectors`, `integer_system_alignment_indices`, `integer_system_covariant_lyapunov_vectors`, `linear_dependence_index`, `smaller_alignment_index`.
+- Common diagnostics: `AnalysisResult`, `TrajectoryInput`, `BifurcationPoint`, `PoincareCrossingResult`, `bifurcation_points_from_trajectories`, `bifurcation_summary`, `compute_boundedness_metrics`, `compute_fft_psd`, `detect_poincare_crossings`, `estimate_correlation_dimension`, `ordinal_pattern_distribution`, `trajectory_metrics`, `trajectory_metrics_for_system`, `zero_one_test`.
+- Localization and continuation: `ContinuationPlan`, `ContinuationTrace`, `DynamicReference`, `FullWorkflowContract`, `HarmonicSeed`, `NumericalContract`, `WorkflowInputSpec`, `continue_integer_lure_seed`, `final_integer_lure_attractor`, `find_harmonic_seed`, `find_lure_harmonic_seed`, `find_lure_omega_gain_candidates`, `find_omega_gain_candidates`, `integer_lure_seed`, `run_integer_lure_hiddenness_controls`.
+- Configuration and workflow dispatch: `PrehistorySpec`, `load_config`, `save_effective_config`, `run_attractor_only_workflow`, `run_basin_workflow`, `run_bifurcation_workflow`, `run_simple_workflow`.
+
 ### Module-qualified experimental helpers
 
 The maintained research examples also use narrower qualified helpers. These
@@ -534,6 +577,10 @@ top-level compatibility guarantee:
 | `hidden_attractors.verification.calibrate_attractor_reference`, `classify_cloud_against_reference` | Calibrated finite cloud comparison. |
 | `hidden_attractors.verification.candidate_gate.evaluate_candidate_gate` | Joint evidence gate; it does not integrate or prove a global basin statement. |
 | `hidden_attractors.systems.modified_van_der_pol_duffing.mavpd_2023_system`, `mavpd_hopf_gamma_boundaries` | System-specific factory and algebraic Hopf calculation used by the MAVPD example. |
+| `hidden_attractors.geometry` | Local \(f\), \(J_f\), \(J_f f\), critical-surface, PP/FPP-A, connecting-set, PWL, and symmetry diagnostics. |
+| `hidden_attractors.seed_bank` | Provenance-preserving, scale/symmetry/period-aware seed records and deduplication. |
+| `hidden_attractors.verification.classify_destination`, `track_edge_bracket` | Conservative finite-time destination labels and guarded initial edge-bracket refinement. |
+| `hidden_attractors.workflows.initialize_campaign_artifacts`, `run_edge_tracking_and_record` | Initialization-only TG artifacts and auditable bracket histories; unexecuted records are not evidence. |
 
 `find_sign_switching_cycle_seed` and
 `continue_integer_lure_nonlinearity` do not change that default. They form a
@@ -562,7 +609,13 @@ parameter continuation; it does not establish an asymptotic classification.
 The final label
 `chaotic_hidden_under_tested_neighborhoods` remains conditional on the stored
 finite solver, horizon, classifier, radii, and directions, and the locally
-derived candidate has no Julia reproduction yet.
+derived candidate has no independent Julia reproduction in the retained
+evidence.
+
+See [Geometric-Topological Localization Campaign](geometric_topological_campaign.md)
+for the mathematical contracts, examples, and the explicit boundary between
+the implemented initial bracket refiner and the non-implemented time-dependent
+edge trajectory.
 
 ## CLI Characterization Commands
 

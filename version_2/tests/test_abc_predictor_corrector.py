@@ -524,7 +524,7 @@ def test_fractional_problem_rejects_unknown_abc_settings(
         solve_fractional_problem(problem, _zero_rhs, use_acceleration=False)
 
 
-def test_fractional_problem_requires_explicit_abc_opt_in() -> None:
+def test_fractional_problem_accepts_promoted_abc_without_opt_in() -> None:
     problem = FractionalProblem(
         derivative="atangana_baleanu_caputo",
         method="abc_predictor_corrector",
@@ -534,5 +534,5 @@ def test_fractional_problem_requires_explicit_abc_opt_in() -> None:
         t_span=(0.0, 0.2),
         memory_policy="full_history",
     )
-    with pytest.raises(PermissionError, match="allow_experimental=True"):
-        solve_fractional_problem(problem, _zero_rhs, use_acceleration=False)
+    result = solve_fractional_problem(problem, _zero_rhs, use_acceleration=False)
+    assert result.status == "ok"

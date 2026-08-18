@@ -171,7 +171,7 @@ def test_abc_operator_is_public_registered_and_not_an_fde_solver() -> None:
     method = get_fractional_method("abc_sampled_convolution")
     reference = get_fractional_reference("yadav_pandey_shukla2019")
 
-    assert method.implementation_status == "experimental"
+    assert method.implementation_status == "implemented"
     assert method.execution_kind == "sampled_operator"
     assert method.derivative_families == ("atangana_baleanu_caputo",)
     assert reference.doi == "10.1016/j.chaos.2018.11.009"

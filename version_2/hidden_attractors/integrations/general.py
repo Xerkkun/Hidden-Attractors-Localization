@@ -1,7 +1,9 @@
 import os
+import warnings
 import numpy as np
 from typing import Callable, Tuple, Optional, Any, List
 from .._rhs import bind_rhs
+from .._time_grid import exact_fixed_step_count
 from .fractional_c import fractional_integrate
 from .abm import caputo_abm_integrate
 from .efork import efork_integrate
@@ -86,8 +88,13 @@ def integrate_general(
     """
     Unified general solver facade for integrating any system (fractional or integer).
     Supports ABM and EFORK schemes under full or windowed memory with early stopping.
+
+    ``t_final`` must contain an integer number of steps. The facade rejects a
+    misaligned horizon before dispatch so Python, Numba, and native backends
+    cannot silently integrate past it.
     """
     q = normalize_fractional_order(q)
+    n_steps = exact_fixed_step_count(h, t_final, caller="integrate_general")
     x0_arr = np.asarray(x0, dtype=float)
     dim = x0_arr.size
     
@@ -98,9 +105,9 @@ def integrate_general(
     def rhs_t(t: float, x: np.ndarray) -> np.ndarray:
         return np.asarray(bound_rhs(t, x), dtype=float)
             
-    # 1. Non-fractional order q = 1.0: use general Heun's method or EFORK_Q1 limit
+    # 1. Non-fractional order q = 1.0: use classical RK4 or the EFORK_Q1 limit
     if q == 1.0:
-        # --- Fast path: Numba JIT kernel (10×–50× speedup) ---
+        # --- Fast path: Numba JIT kernel ---
         # Only attempted when system is provided and integrator is EFORK-based.
         # Returns None for unknown system types or if Numba is not installed,
         # in which case execution falls through to the pure-Python loop below.
@@ -131,6 +138,12 @@ def integrate_general(
                     raise RuntimeError(
                         "Numba backend failed and allow_python_fallback=False."
                     ) from exc
+                warnings.warn(
+                    "Numba integer backend failed; using the Python backend "
+                    f"({type(exc).__name__}: {exc}).",
+                    RuntimeWarning,
+                    stacklevel=2,
+                )
         elif numba_requested and not allow_python_fallback:
             raise RuntimeError(
                 "Numba backend is unavailable and allow_python_fallback=False."
@@ -147,19 +160,15 @@ def integrate_general(
             )
             use_efork_q1 = True
             status_default = "ok"
-        elif integrator.lower() == "heun":
-            use_efork_q1 = False
-            status_default = "ok"
         elif integrator.lower() == "rk4":
             use_efork_q1 = False
             status_default = "ok"
         else:
             raise ValueError(
                 f"Integrator '{integrator}' is not supported at q=1.0. "
-                "Use 'heun', 'rk4', or 'efork_q1' / 'efork3'."
+                "Use 'rk4' or 'efork_q1' / 'efork3'."
             )
 
-        n_steps = int(np.ceil(t_final / h))
         t_arr = np.zeros(n_steps + 1, dtype=float)
         x_arr = np.zeros((n_steps + 1, dim), dtype=float)
         t_arr[0] = 0.0
@@ -198,11 +207,6 @@ def integrate_general(
                     k2 = h * rhs_t(t_curr + 0.5 * h, x + EFORK_Q1_A21 * k1)
                     k3 = h * rhs_t(t_curr + 0.5 * h, x + EFORK_Q1_A31 * k1 + EFORK_Q1_A32 * k2)
                     x_next = x + EFORK_Q1_W1 * k1 + EFORK_Q1_W2 * k2 + EFORK_Q1_W3 * k3
-                elif integrator.lower() == "heun":
-                    f_curr = rhs_t(t_curr, x)
-                    x_pred = x + h * f_curr
-                    f_next = rhs_t(t_next, x_pred)
-                    x_next = x + 0.5 * h * (f_curr + f_next)
                 elif integrator.lower() == "rk4":
                     k1 = rhs_t(t_curr, x)
                     k2 = rhs_t(t_curr + 0.5 * h, x + 0.5 * h * k1)
@@ -254,8 +258,9 @@ def integrate_general(
                         diff_norm = np.linalg.norm(x_next - eq)
                         try:
                             deriv_norm = np.linalg.norm(rhs_t(t_next, x_next))
-                        except Exception:
-                            deriv_norm = 9999.0
+                        except Exception as exc:
+                            status = f"solver_exception:{exc}"
+                            break
                             
                         if diff_norm < eq_t and deriv_norm < eq_deriv:
                             eq_consec_counts[k] += 1
@@ -265,6 +270,8 @@ def integrate_general(
                         if eq_consec_counts[k] >= eq_consec:
                             converged_eq_idx = k
                             break
+                    if status.startswith("solver_exception:"):
+                        break
                     if converged_eq_idx != -1:
                         status = "converged_equilibrium_early"
                         break
@@ -293,6 +300,12 @@ def integrate_general(
                     "Native Chua backend failed and "
                     "allow_python_fallback=False."
                 ) from exc
+            warnings.warn(
+                "Native Chua backend failed; using the generic backend "
+                f"({type(exc).__name__}: {exc}).",
+                RuntimeWarning,
+                stacklevel=2,
+            )
             native_chua = None
         if native_chua is not None:
             return native_chua

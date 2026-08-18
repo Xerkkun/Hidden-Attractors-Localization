@@ -143,23 +143,20 @@ def test_benchmark_summary_no_chaos_hidden_verified() -> None:
 
 
 # ---------------------------------------------------------------------------
-# 8. test_non_aligned_burn_time_no_bad_elapsed
+# 8. test_non_aligned_burn_time_is_rejected
 # ---------------------------------------------------------------------------
 
-def test_non_aligned_burn_time_no_bad_elapsed() -> None:
-    """Verify that using a non-aligned burn time does not result in negative or non-finite elapsed times."""
+def test_non_aligned_burn_time_is_rejected() -> None:
+    """Do not silently round a Caputo burn horizon onto another fixed grid."""
     from hidden_attractors.analysis.lyapunov_fractional import fractional_variational_abm_qr
     rhs = lambda x: np.array([-x[0]])
     jac = lambda x: np.array([[-1.0]])
-    res = fractional_variational_abm_qr(
-        rhs, jac, np.ones(1),
-        q=0.9, h=0.02, t_burn=0.13, t_final=0.2,
-        reorthonormalization_time=0.10
-    )
-    assert res.status == "ok"
-    assert len(res.times) > 0
-    assert np.all(res.times > 0)
-    assert np.all(np.isfinite(res.exponents))
+    with pytest.raises(ValueError, match="integer number of fixed steps"):
+        fractional_variational_abm_qr(
+            rhs, jac, np.ones(1),
+            q=0.9, h=0.02, t_burn=0.13, t_final=0.2,
+            reorthonormalization_time=0.10
+        )
 
 
 @pytest.mark.native
@@ -196,13 +193,36 @@ def test_nonsmooth_4d_case_remains_qualitative_only() -> None:
     reason="Set RUN_PUBLISHED_LYAPUNOV=1 to run extensive published-value benchmarks.",
 )
 @pytest.mark.parametrize(
-    "filename",
+    ("filename", "expected_status", "expected_failing_components"),
     [
-        "published_dk2018_rabinovich_fabrikant_q0999.yaml",
-        "published_dk2018_lorenz_q0985.yaml",
+        (
+            "published_dk2018_rabinovich_fabrikant_q0999.yaml",
+            "published_benchmark_failed",
+            ["lambda_3"],
+        ),
+        (
+            "published_dk2018_lorenz_q0985.yaml",
+            "published_benchmark_passed_quantitative",
+            [],
+        ),
     ],
 )
-def test_published_native_cases_match_extracted_values(filename: str) -> None:
+def test_published_native_cases_match_or_record_discrepancy(
+    filename: str,
+    expected_status: str,
+    expected_failing_components: list[str],
+) -> None:
     case_data = load_benchmark_case(os.path.join(BENCHMARKS_DIR, filename))
     res = run_benchmark_case(case_data, fast=False)
-    assert res["status"] == "published_benchmark_passed_quantitative"
+    assert res["status"] == expected_status
+    assert res["failing_components"] == expected_failing_components
+    assert np.all(np.isfinite(res["computed_exponents"]))
+
+    if expected_failing_components:
+        differences = np.asarray(res["absolute_differences"], dtype=float)
+        assert np.all(differences[:2] < res["absolute_tolerance"])
+        assert differences[2] >= res["absolute_tolerance"]
+        info = VALIDATION_LYAPUNOV_METHODS[
+            "fractional_variational_dk2018_block_restart_abm_gs"
+        ]
+        assert info.benchmark_status == "recorded_published_discrepancy"

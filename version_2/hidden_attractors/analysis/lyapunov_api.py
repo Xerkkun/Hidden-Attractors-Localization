@@ -96,6 +96,8 @@ class LyapunovComputationRequest:
         Memory window size for methods that support windowed memory.
     extra : dict, default {}
         Additional method-specific parameters.
+        A method with a recorded published-benchmark discrepancy is quarantined
+        unless ``allow_quarantined_method=True`` is supplied explicitly.
 
     Notes
     -----
@@ -367,11 +369,30 @@ def validate_lyapunov_method_request(
             for attr in ("q", "order", "fractional_order"):
                 try:
                     v = getattr(request.system, attr, None)
-                    if v is not None:
+                except AttributeError:
+                    continue
+                except Exception as exc:
+                    return (
+                        False,
+                        "invalid_parameter",
+                        (f"system.{attr} could not be read: {type(exc).__name__}: {exc}",),
+                    )
+                if v is not None:
+                    try:
                         sys_q = float(v)
-                        break
-                except Exception:
-                    pass
+                    except (TypeError, ValueError, OverflowError):
+                        return (
+                            False,
+                            "invalid_parameter",
+                            (f"system.{attr} must be a finite real number.",),
+                        )
+                    if not np.isfinite(sys_q):
+                        return (
+                            False,
+                            "invalid_parameter",
+                            (f"system.{attr} must be a finite real number.",),
+                        )
+                    break
             if sys_q is not None and abs(sys_q - q_val) > 1e-9:
                 return (
                     False,
@@ -410,6 +431,28 @@ def validate_lyapunov_method_request(
                 ),
             )
         warnings.append("cloned_dynamics_no_jacobian_required")
+
+    method_info = LYAPUNOV_METHODS[request.method]
+    if method_info.benchmark_status == "recorded_benchmark_discrepancy":
+        allow_quarantined = request.extra.get("allow_quarantined_method", False)
+        if not isinstance(allow_quarantined, (bool, np.bool_)):
+            return (
+                False,
+                "invalid_parameter",
+                ("allow_quarantined_method must be Boolean.",),
+            )
+        if not bool(allow_quarantined):
+            return (
+                False,
+                "method_quarantined_by_validation",
+                (
+                    f"Method '{request.method}' has a recorded published-benchmark "
+                    "discrepancy and is not promoted for ordinary execution. Set "
+                    "allow_quarantined_method=True only for explicit reproduction "
+                    "or discrepancy analysis.",
+                ),
+            )
+        warnings.append("quarantined_method_explicit_reproduction_opt_in")
 
     return True, "compatible", tuple(warnings)
 

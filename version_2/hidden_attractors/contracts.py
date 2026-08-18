@@ -5,7 +5,7 @@ import numpy as np
 
 VALID_SEED_MODES = {"integer", "fractional"}
 VALID_CONTINUATION_MODES = {"integer", "fractional"}
-VALID_INTEGRATORS = {"abm", "efork3", "efork_q1", "heun", "adm_wu2023", "rk4"}
+VALID_INTEGRATORS = {"abm", "efork3", "efork_q1", "adm_wu2023", "rk4"}
 VALID_MEMORY_POLICIES = {"none", "full_caputo", "finite_window"}
 VALID_TRANSFER_CONVENTIONS = {"standard", "opposite_sign"}
 VALID_HARMONIC_CONDITIONS = {"1_minus_WN", "1_plus_WN"}
@@ -97,15 +97,15 @@ def validate_contracts(config: Dict[str, Any], resolved: bool = False) -> None:
                 q_cont_eff = q_dyn_eff
 
         if integrator == "abm" and abs(q_dyn_eff - 1.0) < 1e-9:
-            raise ValueError("ABM integrator is not allowed for integer-order dynamics (q_dynamics = 1.0). Use 'efork_q1' or 'heun'.")
+            raise ValueError("ABM integrator is not allowed for integer-order dynamics (q_dynamics = 1.0). Use 'rk4' or 'efork_q1'.")
 
-        if integrator in {"heun", "efork_q1"} and q_dyn_eff < 1.0:
+        if integrator in {"rk4", "efork_q1"} and q_dyn_eff < 1.0:
             raise ValueError(f"Integrator '{integrator}' is not allowed for fractional-order dynamics (q_dynamics < 1.0). Use 'abm' or 'efork3'.")
 
         if cont_mode == "integer" and integrator == "abm":
-            raise ValueError("ABM integrator is not allowed for integer continuation. Use 'efork_q1' or 'heun'.")
+            raise ValueError("ABM integrator is not allowed for integer continuation. Use 'rk4' or 'efork_q1'.")
 
-        if cont_mode == "fractional" and integrator in {"heun", "efork_q1"}:
+        if cont_mode == "fractional" and integrator in {"rk4", "efork_q1"}:
             raise ValueError(f"Integrator '{integrator}' is not allowed for fractional continuation. Use 'abm' or 'efork3'.")
 
         if cont_mode == "fractional" and abs(q_cont_eff - 1.0) < 1e-9:

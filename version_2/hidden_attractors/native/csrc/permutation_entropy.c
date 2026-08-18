@@ -33,6 +33,8 @@
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>
+
+#include "native_validation.h"
 #include <stdlib.h>
 
 #if defined(_OPENMP)
@@ -378,7 +380,7 @@ HAFO_PERM_EXPORT int hafo_permutation_entropy_counts(
     }
 
     for (index = 0u; index < n_samples; ++index) {
-        if (!isfinite(signal[index])) {
+        if (!hafo_isfinite(signal[index])) {
             return HAFO_PERM_NONFINITE_INPUT;
         }
     }

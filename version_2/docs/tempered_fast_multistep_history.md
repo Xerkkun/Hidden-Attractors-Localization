@@ -2,8 +2,8 @@
 
 ## Scope and status
 
-`tempered_fast_multistep_history` is an **experimental sampled operator** for
-left tempered Riemann--Liouville (RL) and exponentially conjugated Caputo
+`tempered_fast_multistep_history` is an **implemented sampled operator** with an
+**experimental public API** for left tempered Riemann--Liouville (RL) and exponentially conjugated Caputo
 derivatives with $0<q\leq1$. It evaluates the recent history with exact
 multistep coefficients and compresses only older samples into stable real
 recurrent states. Orders $q_i$ and tempering parameters $\sigma_i$ may be
@@ -304,10 +304,9 @@ cap, the Caputo compression bound, and a finite manufactured refinement. The
 manufactured test separates compression from discretisation and records only
 that error decreases on its fixture; it does not assert a universal order.
 
-The current core/edge/benchmark/Wolfram-focused regression passed 41 tests.
-The Wolfram comparator now labels its independent float64 route correctly as a
-direct convolution, reconstructs the anchor from the retained samples, and
-keeps cross-implementation differences separate from reported L1 calibration
+The Wolfram comparator labels its independent float64 route as a direct
+convolution, reconstructs the anchor from the retained samples, and keeps
+cross-implementation differences separate from reported L1 calibration
 metrics.
 
 ## Measured backend decision
@@ -319,7 +318,7 @@ repeated fast timing still includes validation, exact local weights,
 finite-grid calibration at the fixed validated `Q`, recurrence construction,
 allocation, and returned values.
 
-The retained Windows run used three repetitions for RL/Caputo crossed with
+The retained historical Windows run used three repetitions for RL/Caputo crossed with
 FBDF1/GNGF2 and three workloads. It selected `Q=65` for `(N,d,n0)=(128,2,16)`
 and `(512,3,32)`, and `Q=129` for `(2048,4,50)`. Python and Numba fast results
 were bitwise equal. The largest direct/FFT difference was
@@ -344,10 +343,13 @@ language can never help. C is reconsidered only if representative
 HAFO/Toolbox profiling identifies the recurrence as an end-to-end bottleneck;
 Julia remains a possible pinned whole-batch comparator, never a per-step call.
 
-The portable artifact is
+The historical portable artifact is
 `validation/outputs/benchmarks/tempered_fast_history_backends_20260803_v2.json`
 (SHA-256
 `325D9C4BF2254C6FEA9C295080157345485B1A5426329A9DE0F7C3D949417D4F`).
+Its embedded `script_sha256` identifies an earlier script revision and does not
+match the current checkout. The recorded figures therefore describe that run;
+they are not a current performance claim until the benchmark is repeated.
 
 ## Toolbox Chaos bridge
 

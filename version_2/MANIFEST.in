@@ -6,6 +6,7 @@ include MANIFEST.md
 include USER_MANUAL.md
 
 recursive-include hidden_attractors *.py *.c *.h
+recursive-exclude hidden_attractors/native/tests *
 include hidden_attractors/configs/examples/workflow_contract.yaml
 recursive-include examples/chua_integer_lure_reference *.py *.md *.yaml
 include examples/quickstart_equilibria.py

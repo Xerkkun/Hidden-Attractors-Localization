@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
+from fnmatch import fnmatch
 import re
+
+import yaml
 
 ROOT = Path(__file__).resolve().parents[2]  # version_2 directory
 
@@ -11,34 +14,59 @@ def normalize(text: str) -> str:
     return re.sub(r"\s+", " ", text.lower())
 
 def active_doc_paths() -> list[Path]:
-    candidates = [
+    candidates = {
         ROOT / "USER_MANUAL.md",
         ROOT / "README.md",
+        ROOT / "INSTALL.md",
+        ROOT / "MANIFEST.md",
         ROOT.parent / "README.md",
         ROOT / "REFERENCE_GUIDE.md",
-        ROOT / "INSTALL.md",
-        ROOT / "docs/quick_start.md",
-        ROOT / "docs/installation.md",
-        ROOT / "docs/testing.md",
-        ROOT / "docs/validation_evidence.md",
-        ROOT / "docs/unified_report.md",
-        ROOT / "docs/figure_export_policy.md",
-        ROOT / "docs/manual_manifest.md",
-        ROOT / "docs/manual_manifest.yaml",
-        ROOT / "docs/getting_started.md",
-        ROOT / "docs/workflows.md",
-        ROOT / "docs/examples_index.md",
-        ROOT / "docs/index.md",
-        ROOT / "docs/code_reference_map.md",
-        ROOT / "docs/contributing.md",
-        ROOT / "docs/lure_candidate_route.md",
-        ROOT / "tools/cli/README.md",
-        ROOT / "tools/legacy/README.md",
-        ROOT / "release_package/README_RELEASE.md",
-        ROOT / "release_package/SAMPLE_RUN.md",
-        ROOT / "release_package/reproducibility_checklist.md",
-    ]
-    return [p for p in candidates if p.exists()]
+    }
+
+    config = yaml.safe_load((ROOT / "mkdocs.yml").read_text(encoding="utf-8"))
+    excluded = {
+        line.strip()
+        for line in str(config.get("exclude_docs", "")).splitlines()
+        if line.strip()
+    }
+    docs_root = ROOT / "docs"
+    for path in docs_root.rglob("*.md"):
+        relative = path.relative_to(docs_root).as_posix()
+        if not any(fnmatch(relative, pattern) for pattern in excluded):
+            candidates.add(path)
+
+    for relative_root in ("examples", "benchmarks", "release_package"):
+        base = ROOT / relative_root
+        if base.is_dir():
+            candidates.update(base.rglob("*.md"))
+
+    tools_readme = ROOT / "tools" / "README.md"
+    if tools_readme.is_file():
+        candidates.add(tools_readme)
+
+    return sorted(path for path in candidates if path.is_file())
+
+
+def validation_evidence_doc_paths() -> list[Path]:
+    """Return maintained validation Markdown, excluding immutable snapshots."""
+
+    validation_root = ROOT / "validation"
+    if not validation_root.is_dir():
+        return []
+    excluded_parts = {
+        ("source_snapshots",),
+        ("reference_cases", "archive"),
+    }
+    paths = []
+    for path in validation_root.rglob("*.md"):
+        relative_parts = path.relative_to(validation_root).parts
+        if any(
+            relative_parts[: len(prefix)] == prefix
+            for prefix in excluded_parts
+        ):
+            continue
+        paths.append(path)
+    return sorted(paths)
 
 def find_occurrences(text: str, phrase: str) -> list[int]:
     text_lower = text.lower()

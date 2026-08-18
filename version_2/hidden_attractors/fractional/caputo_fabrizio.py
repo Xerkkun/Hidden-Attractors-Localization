@@ -61,6 +61,8 @@ from typing import Callable, Mapping
 
 import numpy as np
 
+from ._validation import sample_matrix as _validate_samples
+
 try:  # Numba is a core dependency, but keeping the fallback makes the ABI clear.
     from numba import njit
 except ImportError:  # pragma: no cover - exercised only in reduced installations
@@ -131,20 +133,6 @@ if njit is not None:
 
 else:  # pragma: no cover - used only if Numba is absent
     _cf_recurrence_numba = None
-
-
-def _validate_samples(samples: np.ndarray) -> tuple[np.ndarray, bool]:
-    array = np.asarray(samples, dtype=np.float64)
-    was_vector = array.ndim == 1
-    if was_vector:
-        array = array[:, None]
-    if array.ndim != 2 or array.shape[0] < 1 or array.shape[1] < 1:
-        raise ValueError(
-            "samples must have shape (n_times,) or (n_times, dimension)."
-        )
-    if not np.all(np.isfinite(array)):
-        raise ValueError("samples must contain only finite values.")
-    return np.ascontiguousarray(array, dtype=np.float64), was_vector
 
 
 def _validate_grid(step: float, lower_terminal: float) -> tuple[float, float]:

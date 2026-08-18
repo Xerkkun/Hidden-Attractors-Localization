@@ -211,11 +211,12 @@ declara, no lo oculta.
 
 `benchmarks/bench_permutation_entropy.py` separa calentamiento/JIT/compilación,
 rota el orden de los tres backends y mide tanto el pipeline público como el
-kernel de conteo. El barrido local del 3 de agosto de 2026 cubrió 21 cargas
-deterministas, \(m=2,\ldots,10\), 4 096--131 072 ventanas y obtuvo histogramas
-idénticos en Python, Numba y C/OpenMP. Esa corrida respalda la tabla en el host
-medido, pero conserva como oportunidades conservadoras los cruces variables de
-16 384 ventanas; no convierte un benchmark local en superioridad universal.
+kernel de conteo. Se conserva la referencia al barrido local del 3 de agosto de
+2026 sólo como antecedente histórico: no hay un artefacto JSON retenido que
+permita auditarlo contra este checkout. La tabla es una política conservadora
+cubierta por pruebas de despacho y paridad, no una conclusión de rendimiento
+actual. Cualquier recalibración debe conservar la salida del script con entorno,
+hashes, calentamiento, repeticiones y dispersión.
 
 No se cruza la frontera Python--C dentro de cada ventana. Tampoco se inicia
 Julia para una llamada ordinaria. Esta arquitectura permite verificar un solo

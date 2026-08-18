@@ -297,6 +297,6 @@ def test_distributed_operator_is_public_but_not_registered_as_an_fde_solver() ->
 
     derivative = get_fractional_derivative("distributed_order")
     method = get_fractional_method("distributed_order_gl_direct")
-    assert derivative.implementation_status == "experimental"
+    assert derivative.implementation_status == "implemented"
     assert method.execution_kind == "sampled_operator"
     assert fractional.distributed_order_gl_derivative is distributed_order_gl_derivative

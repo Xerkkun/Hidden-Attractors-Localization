@@ -1,4 +1,4 @@
-"""Parity-gated end-to-end benchmark for tempered recurrent fast history.
+"""Parity-gated benchmark on synthetic tempered fast-history samples.
 
 The benchmark covers the public HAFO Fast Method II implementation with the
 FBDF1 and GNGF2 generators, for raw tempered Riemann--Liouville and conjugated
@@ -1008,7 +1008,7 @@ def run_benchmark(
 
 
 def _default_output_path() -> Path:
-    root = Path(r"C:\tmp") if os.name == "nt" else Path(tempfile.gettempdir())
+    root = Path(tempfile.gettempdir())
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S_%fZ")
     return root / f"hafo_tempered_fast_history_benchmark_{stamp}_{os.getpid()}.json"
 

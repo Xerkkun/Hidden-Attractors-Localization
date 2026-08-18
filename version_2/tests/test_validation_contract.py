@@ -3,7 +3,6 @@ from __future__ import annotations
 import sys
 import json
 import shutil
-import uuid
 from pathlib import Path
 
 # Add workspace root and version_2 to sys.path
@@ -20,14 +19,14 @@ def _write_json(path: Path, data: dict) -> None:
     path.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 
-def _case_root(name: str) -> Path:
-    root = Path("__codex_dir_test") / f"{name}_{uuid.uuid4().hex}"
+def _case_root(tmp_path: Path, name: str) -> Path:
+    root = tmp_path / name
     root.mkdir(parents=True)
     return root.resolve()
 
 
-def test_validation_contract_accepts_complete_minimal_tree() -> None:
-    tmp_path = _case_root("validation_contract_complete")
+def test_validation_contract_accepts_complete_minimal_tree(tmp_path: Path) -> None:
+    tmp_path = _case_root(tmp_path, "validation_contract_complete")
     try:
         _assert_complete_minimal_tree(tmp_path)
     finally:
@@ -108,8 +107,8 @@ def _assert_complete_minimal_tree(tmp_path: Path) -> None:
     assert check_validation_contract(contract_path, validation) == []
 
 
-def test_validation_contract_reports_missing_stage_slug_and_files() -> None:
-    tmp_path = _case_root("validation_contract_missing")
+def test_validation_contract_reports_missing_stage_slug_and_files(tmp_path: Path) -> None:
+    tmp_path = _case_root(tmp_path, "validation_contract_missing")
     try:
         _assert_missing_stage_slug_and_files(tmp_path)
     finally:
@@ -136,8 +135,8 @@ def _assert_missing_stage_slug_and_files(tmp_path: Path) -> None:
     assert "stage is missing string field 'slug'" in messages
 
 
-def test_validation_contract_accepts_pending_stages() -> None:
-    tmp_path = _case_root("validation_contract_pending")
+def test_validation_contract_accepts_pending_stages(tmp_path: Path) -> None:
+    tmp_path = _case_root(tmp_path, "validation_contract_pending")
     try:
         contract = {
             "output_root": "validation",
@@ -230,11 +229,11 @@ def test_validation_contract_accepts_pending_stages() -> None:
         shutil.rmtree(tmp_path, ignore_errors=True)
 
 
-def test_validate_efork_integrator_runs_on_temp_dir() -> None:
+def test_validate_efork_integrator_runs_on_temp_dir(tmp_path: Path) -> None:
     import subprocess
     import sys
     import os
-    tmp_path = _case_root("validate_efork_tool_run")
+    tmp_path = _case_root(tmp_path, "validate_efork_tool_run")
     try:
         # Run validate_efork_integrator.py pointing to our temp folder
         _version_2_dir = Path(__file__).resolve().parent.parent

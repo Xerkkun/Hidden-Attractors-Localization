@@ -178,7 +178,13 @@ def _peak_dominance_max(case: dict[str, Any]) -> float | None:
 
 
 def _relative(path: Path) -> str:
-    return path.relative_to(PROJECT_ROOT).as_posix()
+    try:
+        return path.relative_to(PROJECT_ROOT).as_posix()
+    except ValueError:
+        # Tests and reproducible isolated runs may relocate the validation
+        # tree.  Preserve the canonical logical path instead of leaking an
+        # absolute machine-specific temporary directory into the evidence.
+        return (Path("validation") / path.relative_to(VALIDATION_ROOT)).as_posix()
 
 
 def run() -> dict[str, Any]:

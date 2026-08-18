@@ -36,6 +36,7 @@ from operator import index as operator_index
 import numpy as np
 from numba import njit, prange
 
+from ._validation import real_sample_matrix as _sample_matrix
 from .contracts import normalize_fractional_orders
 from .grunwald_letnikov import grunwald_letnikov_weights
 
@@ -165,22 +166,6 @@ def lubich_bdf_weights(
     if bdf_order == 1:
         return grunwald_letnikov_weights(order, count)
     return _bdf2_weights_numba(order, count)
-
-
-def _sample_matrix(samples: np.ndarray) -> tuple[np.ndarray, bool]:
-    if np.iscomplexobj(samples):
-        raise TypeError("samples must be real-valued; complex CQ is not implemented.")
-    values = np.asarray(samples, dtype=np.float64)
-    was_vector = values.ndim == 1
-    if was_vector:
-        values = values[:, None]
-    if values.ndim != 2 or values.shape[0] < 1 or values.shape[1] < 1:
-        raise ValueError(
-            "samples must have shape (n_times,) or (n_times, dimension)."
-        )
-    if not np.all(np.isfinite(values)):
-        raise ValueError("samples must contain only finite values.")
-    return np.ascontiguousarray(values), was_vector
 
 
 def _time_grid(

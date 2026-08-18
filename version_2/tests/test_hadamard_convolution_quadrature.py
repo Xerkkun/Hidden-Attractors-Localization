@@ -31,7 +31,7 @@ def test_registry_keeps_hadamard_families_and_sampled_method_explicit() -> None:
         "caputo_hadamard",
     )
     assert method.execution_kind == "sampled_operator"
-    assert method.implementation_status == "experimental"
+    assert method.implementation_status == "implemented"
 
 
 @pytest.mark.parametrize("definition", ["hadamard_riemann_liouville", "caputo_hadamard"])

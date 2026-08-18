@@ -25,6 +25,11 @@ def test_phase_f_runner_writes_closure_artifacts(tmp_path: Path) -> None:
     assert (output / MATRIX.name).is_file()
     assert (output / "phase_F_closure_decision.md").is_file()
     assert (output / "phase_F_closure_rules.json").is_file()
+    payload = json.loads((output / SUMMARY.name).read_text(encoding="utf-8"))
+    assert payload["decision_thresholds"] == {
+        "lyapunov_positive_threshold": 0.02,
+        "source": "assess_phase_f_closure argument",
+    }
 
 
 def test_phase_f_freezes_as_finite_time_evidence_layer() -> None:

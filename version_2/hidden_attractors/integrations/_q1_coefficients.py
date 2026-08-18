@@ -7,8 +7,8 @@ to the following rational values (Ghoreishi et al., 2023):
     w1  = 2/3,  w2  = 5/3,  w3  = -4/3
 
 These are the *only* correct coefficients to use when ``integrator="efork"``
-and ``q == 1.0``.  Using Heun (standard predictor-corrector) at q=1 would
-produce a numerically different scheme and must NOT be silently substituted.
+and ``q == 1.0``.  A generic second-order predictor-corrector would produce a
+numerically different scheme and must NOT be silently substituted.
 
 These constants are duplicated from
 ``version_2/hidden_attractors/solvers/integer.py`` to avoid a cross-package

@@ -22,7 +22,7 @@ The recorded execution produced:
 - a finite final trajectory;
 - six sampled-neighborhood probes and two target contacts;
 - `hidden_candidate_allowed: false`;
-- 2.455 seconds elapsed on the recorded Windows environment;
+- 0.204 seconds elapsed inside the workflow on the recorded Windows environment;
 - identical deterministic files in two independent runs.
 
 The elapsed time is environment provenance, not a benchmark. The numerical

@@ -126,11 +126,7 @@ def test_comparator_keeps_core_import_optional_and_temp_scoped() -> None:
     assert 'PUBLIC_API_MODULE = "hidden_attractors.fractional"' in text
     assert "PublicTemperedCQAPIUnavailable" in text
     assert "require_core" in text
-    if os.name == "nt":
-        assert DEFAULT_SUMMARY.drive.lower() == "c:"
-        assert str(DEFAULT_SUMMARY).lower().startswith(r"c:\tmp")
-    else:
-        assert str(DEFAULT_SUMMARY).startswith(tempfile.gettempdir())
+    assert DEFAULT_SUMMARY.parent.parent == Path(tempfile.gettempdir())
     assert "validation\\outputs" not in str(DEFAULT_SUMMARY).lower()
 
 
@@ -225,17 +221,14 @@ def live_tempered_cq_summary_path() -> Path:
         pytest.skip("wolframscript is not installed or discoverable")
     _wolfram_probe_or_skip(executable)
 
-    temporary_root = (
-        Path(r"C:\tmp") if os.name == "nt" else Path(tempfile.gettempdir())
-    )
+    temporary_root = Path(tempfile.gettempdir())
     temporary_root.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(
         prefix="hafo_tempered_convolution_quadrature_",
         dir=temporary_root,
     ) as output_name:
         output_dir = Path(output_name)
-        if os.name == "nt":
-            assert str(output_dir.resolve()).lower().startswith("c:\\tmp\\")
+        assert output_dir.resolve().is_relative_to(temporary_root.resolve())
         environment = os.environ.copy()
         environment["WOLFRAM_OUT"] = str(output_dir)
         completed = subprocess.run(

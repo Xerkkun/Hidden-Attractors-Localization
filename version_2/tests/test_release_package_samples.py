@@ -32,6 +32,10 @@ def test_release_sample_inputs_write_only_to_ignored_sample_outputs() -> None:
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
         output_dir = data["outputs"]["output_dir"].replace("\\", "/")
         figures_dir = data["outputs"]["figures_dir"].replace("\\", "/")
+        seed_search = data["seed_search"]
+        assert seed_search["route"] == "direct_integer_transfer"
+        assert seed_search["fallback_route"] is None
+        assert "nscan" not in seed_search
         assert output_dir.startswith("outputs/release_samples/"), output_dir
         assert figures_dir.startswith(output_dir + "/"), figures_dir
         assert "validation/" not in output_dir
@@ -62,7 +66,7 @@ def test_expected_sample_outputs_are_executed_but_not_promoted_evidence() -> Non
         assert data.get("not_promoted_evidence") is True
         assert data.get("replace_after_execution") is False
         assert data.get("sample_status") == "executed"
-        assert data.get("release_version") == "1.1.0"
+        assert data.get("release_version") == "1.2.0"
         assert data["repeatability_check"]["independent_runs"] >= 2
         assert data["repeatability_check"]["deterministic_outputs_identical"] is True
         assert data["deterministic_output_hashes"]

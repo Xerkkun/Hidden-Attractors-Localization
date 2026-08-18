@@ -1,6 +1,13 @@
 import os
 import numpy as np
 from typing import Any, Dict, List, Sequence, Optional
+from .._time_grid import checked_array_capacity, exact_fixed_step_count
+from ..integrations._history import (
+    canonical_history_times,
+    validate_fractional_state_and_order,
+    validate_memory_policy,
+    validate_prehistory,
+)
 from ..integrations.fractional_c import fractional_integrate
 from ..models.chua import chua_parameters
 from ..native.backends import FractionalChuaBackend
@@ -185,8 +192,16 @@ def run_fractional_continuation(
 
     p0 = system.lure.matrix + k_gain * np.outer(system.lure.input_vector, system.lure.output_vector)
 
-    nsteps_tr = int(np.ceil(t_transient / h))
-    nsteps_kp = int(np.ceil(t_keep / h))
+    nsteps_tr = exact_fixed_step_count(
+        h,
+        t_transient,
+        caller="run_fractional_continuation(t_transient)",
+    )
+    nsteps_kp = exact_fixed_step_count(
+        h,
+        t_keep,
+        caller="run_fractional_continuation(t_keep)",
+    )
 
     history_pol = "finite_window" if memory_mode == "window" else "full_caputo"
 
@@ -284,7 +299,12 @@ def run_fractional_continuation(
 
         x_mid = x_tr[-1].copy()
 
-        hist_t = t_tr - t_tr[-1]
+        hist_t = canonical_history_times(
+            t_tr,
+            h,
+            caller="run_fractional_continuation(transient history)",
+            require_zero_anchor=False,
+        )
         hist_x = x_tr
 
         # ── 2. Keep stage ──────────────────────────────────────────────────
@@ -354,7 +374,12 @@ def run_fractional_continuation(
         if status_kp != "ok":
             break
 
-        hist_t = t_kp - t_kp[-1]
+        hist_t = canonical_history_times(
+            t_kp,
+            h,
+            caller="run_fractional_continuation(kept history)",
+            require_zero_anchor=False,
+        )
         hist_x = x_kp
 
         x_in = x_out
@@ -383,28 +408,65 @@ def run_fractional_continuation_abm_monolithic(
     from scipy.special import gamma
     from ..integrations.abm import eval_rhs
 
-    x0_arr = np.asarray(seed_x0, dtype=float)
-    dim = x0_arr.size
     h = float(h)
     q_effective = q if q is not None else float(system.parameters.get("q", 1.0))
-    q = float(q_effective)
+    x0_arr, q = validate_fractional_state_and_order(
+        seed_x0,
+        q_effective,
+        caller="run_fractional_continuation_abm_monolithic",
+        allow_integer_limit=False,
+    )
+    dim = x0_arr.size
+    memory_mode, memory_window_length = validate_memory_policy(
+        memory_mode,
+        memory_window_length,
+        caller="run_fractional_continuation_abm_monolithic",
+    )
 
-    nsteps_tr = int(np.ceil(t_transient / h))
-    nsteps_kp = int(np.ceil(t_keep / h))
+    nsteps_tr = exact_fixed_step_count(
+        h,
+        t_transient,
+        caller="run_fractional_continuation_abm_monolithic(t_transient)",
+    )
+    nsteps_kp = exact_fixed_step_count(
+        h,
+        t_keep,
+        caller="run_fractional_continuation_abm_monolithic(t_keep)",
+    )
     steps_per_stage = nsteps_tr + nsteps_kp
     num_stages = len(lambda_values)
     total_new_steps = num_stages * steps_per_stage
 
-    if history_times is not None and history_states is not None:
-        history_times = np.asarray(history_times, dtype=float)
-        history_states = np.asarray(history_states, dtype=float)
-        K = len(history_times)
-    else:
+    history_times, history_states = validate_prehistory(
+        history_times,
+        history_states,
+        x0=x0_arr,
+        h=h,
+        caller="run_fractional_continuation_abm_monolithic",
+    )
+    if history_times is None:
         K = 1
         history_times = np.array([0.0])
         history_states = x0_arr.reshape(1, dim)
+    else:
+        K = len(history_times)
 
     total_capacity = K + total_new_steps
+    checked_array_capacity(
+        (total_capacity,),
+        float,
+        caller="run_fractional_continuation_abm_monolithic",
+    )
+    checked_array_capacity(
+        (total_capacity, dim),
+        float,
+        caller="run_fractional_continuation_abm_monolithic",
+    )
+    checked_array_capacity(
+        (total_capacity + 2,),
+        float,
+        caller="run_fractional_continuation_abm_monolithic",
+    )
     t_arr = np.zeros(total_capacity, dtype=float)
     x_arr = np.zeros((total_capacity, dim), dtype=float)
     f_arr = np.zeros((total_capacity, dim), dtype=float)

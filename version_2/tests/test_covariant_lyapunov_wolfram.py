@@ -130,11 +130,7 @@ def test_clv_comparator_is_optional_core_and_projective() -> None:
     assert "CORE_LINE_TOLERANCE" in text
     assert "CORE_COVARIANCE_TOLERANCE" in text
     assert "require_core" in text
-    if os.name == "nt":
-        assert DEFAULT_SUMMARY.drive.lower() == "c:"
-        assert str(DEFAULT_SUMMARY).lower().startswith(r"c:\tmp")
-    else:
-        assert str(DEFAULT_SUMMARY).startswith(tempfile.gettempdir())
+    assert DEFAULT_SUMMARY.parent.parent == Path(tempfile.gettempdir())
     assert "validation\\outputs" not in str(DEFAULT_SUMMARY).lower()
 
 
@@ -239,7 +235,7 @@ def live_clv_summary_path() -> Path:
         pytest.skip("wolframscript is not installed or discoverable")
     _wolfram_probe_or_skip(executable)
 
-    temp_root = Path(r"C:\tmp") if os.name == "nt" else Path(tempfile.gettempdir())
+    temp_root = Path(tempfile.gettempdir())
     temp_root.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(
         prefix="hafo_covariant_lyapunov_integer_",

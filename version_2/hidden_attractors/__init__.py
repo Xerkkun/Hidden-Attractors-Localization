@@ -41,6 +41,8 @@ function objects are treated as seed generators, while hiddenness and
 robustness are always numerical post-checks on the causal Caputo model.
 """
 
+from importlib import import_module
+
 # Stability constants (re-exported for convenience)
 from ._stability import (  # noqa: F401
     EXPERIMENTAL,
@@ -51,169 +53,6 @@ from ._stability import (  # noqa: F401
     assert_tier,
     get_tier,
 )
-
-# Stable API
-# models - vector fields, parameters, equilibria
-from .models.chua import (
-    ChuaParameters,
-    chua_arctan_wu2023_parameters,
-    chua_nonsmooth_parameters,
-    chua_parameters,
-    equilibria_arctan,
-    equilibria_nonsmooth,
-    jacobian_arctan,
-    jacobian_nonsmooth,
-    rhs_arctan,
-    rhs_nonsmooth,
-    # Compatibility aliases for recorded runs created with the old label.
-    chua_piecewise_parameters,
-    equilibria_piecewise,
-    jacobian_piecewise,
-    rhs_piecewise,
-)
-
-# systems - chaotic-system registry and capability checks
-from .systems import (
-    ChaoticSystem,
-    ExpressionSystemDefinition,
-    ExpressionValidationError,
-    LureSystem,
-    compile_expression_system,
-    get_system,
-    list_systems,
-    register_system,
-)
-from .systems.requirements import check_system_capability, known_workflows, requirements_for
-
-# basins - classification labels
-from .basins import CLASS_LABELS, TARGET_CLASS_IDS, class_label, is_target_class
-
-# io - portable trajectory loading
-from .io import load_trajectory_csv
-
-# simulation - structured integer/fractional trajectory generation
-from .simulation import SimulationResult, simulate, simulate_fractional
-
-# Experimental API
-# analysis - trajectory diagnostics and Lyapunov estimates
-from .analysis import (
-    AlignmentIndexResult,
-    AnalysisResult,
-    BifurcationPoint,
-    CORRELATION_DIMENSION_EVIDENCE_SCOPE,
-    CORRELATION_DIMENSION_REFERENCE_DOIS,
-    CORRELATION_SUM_NATIVE_AUTO_MIN_PAIRS,
-    CorrelationDimensionResult,
-    CorrelationSumResult,
-    CovariantAngleResult,
-    CovariantLyapunovResult,
-    CovariantQRHistoryResult,
-    OrdinalPatternDistribution,
-    PERMUTATION_ENTROPY_EVIDENCE_SCOPE,
-    PERMUTATION_ENTROPY_MAX_EMBEDDING_DIMENSION,
-    PERMUTATION_ENTROPY_MAX_PATTERN_STATES,
-    PERMUTATION_ENTROPY_NATIVE_AUTO_MIN_WINDOWS,
-    PERMUTATION_ENTROPY_NATIVE_AUTO_WINDOW_THRESHOLDS,
-    PERMUTATION_ENTROPY_REFERENCE_DOIS,
-    PermutationEntropyResult,
-    LyapunovComputationRequest,
-    LyapunovComputationSummary,
-    LyapunovResult,
-    PoincareCrossingResult,
-    PrehistorySpec,
-    RobustnessCase,
-    SpectrumResult,
-    TimeSeriesLyapunovResult,
-    TrajectoryInput,
-    alignment_indices_from_tangent_history,
-    bifurcation_points_from_trajectories,
-    bifurcation_summary,
-    compute_boundedness_metrics,
-    compute_fft_psd,
-    compute_lyapunov_spectrum,
-    compute_trajectory_metrics,
-    correlation_sum_curve,
-    covariant_lyapunov_angles,
-    detect_poincare_crossings,
-    estimate_correlation_dimension,
-    estimate_time_series_lyapunov,
-    fft_spectrum,
-    fit_correlation_dimension,
-    generalized_alignment_index,
-    integer_flow_alignment_indices,
-    integer_flow_covariant_lyapunov_vectors,
-    integer_covariant_vectors_from_qr_history,
-    integer_map_alignment_indices,
-    integer_map_covariant_lyapunov_vectors,
-    integer_qr_benettin_lyapunov_exponents,
-    integer_system_alignment_indices,
-    integer_system_covariant_lyapunov_vectors,
-    integer_system_lyapunov_exponents,
-    kaplan_yorke_dimension,
-    linear_dependence_index,
-    ordinal_pattern_distribution,
-    permutation_entropy,
-    permutation_entropy_from_distribution,
-    psd_welch,
-    smaller_alignment_index,
-    trajectory_component_spectra,
-    trajectory_metrics,
-    trajectory_metrics_for_system,
-    validate_lyapunov_method_request,
-    zero_one_test,
-)
-
-# seed_generation - harmonic-balance seeds (Chua + generic Lur'e)
-from .seed_generation import (
-    HarmonicSeed,
-    find_harmonic_seed,
-    find_lure_harmonic_seed,
-    find_lure_omega_gain_candidates,
-    find_omega_gain_candidates,
-    validate_fractional_order,
-)
-
-# workflows - high-level reproducible numerical pipelines
-from .workflows.contracts import FullWorkflowContract, NumericalContract, validate_full_workflow_system
-from .workflows.protocol import (
-    FINAL_LABELS,
-    OFFICIAL_STAGE_ORDER,
-    PROTOCOL_VERSION,
-    SEED_FAMILIES,
-    ContinuationPlan,
-    ContinuationTrace,
-    DynamicReference,
-    HiddennessTestResult,
-    PostContinuationDecision,
-    RobustnessVerdict,
-    SoftPrecheckResult,
-    StageEnvelope,
-    UnifiedSeedRecord,
-)
-from .workflows.specs import (
-    BasinSliceSpec,
-    DestinationClassifierSpec,
-    IntegratorSpec,
-    ParameterSweepSpec,
-    RobustnessCaseSpec,
-    SphereControlSpec,
-    StrictRefinementSpec,
-    TargetReferenceSpec,
-    TrajectoryDiagnosticsSpec,
-    WorkflowInputSpec,
-)
-from .workflows.integer_lure import (
-    continue_integer_lure_seed,
-    final_integer_lure_attractor,
-    integer_lure_seed,
-    integrate_integer_lure,
-    run_integer_lure_hiddenness_controls,
-)
-from .workflows.config_loader import load_config, save_effective_config
-from .workflows.attractor_only import run_attractor_only_workflow
-from .workflows.bifurcation import run_bifurcation_workflow
-from .workflows.basin_runner import run_basin_workflow
-from .workflows.simple_runner import run_simple_workflow
 
 PUBLIC_API_STABLE = (
     "ChuaParameters",
@@ -248,8 +87,12 @@ PUBLIC_API_EXPERIMENTAL = (
     "compile_expression_system",
     "simulate",
     "simulate_fractional",
+    "AdvancedRecurrenceMatrix",
+    "AdvancedRQAResult",
     "AlignmentIndexResult",
     "AnalysisResult",
+    "BASIN_ENTROPY_REFERENCE",
+    "BasinEntropyResult",
     "BifurcationPoint",
     "CORRELATION_DIMENSION_EVIDENCE_SCOPE",
     "CORRELATION_DIMENSION_REFERENCE_DOIS",
@@ -259,6 +102,12 @@ PUBLIC_API_EXPERIMENTAL = (
     "CovariantAngleResult",
     "CovariantLyapunovResult",
     "CovariantQRHistoryResult",
+    "DelayEstimateResult",
+    "FDE_RECONSTRUCTION_CAVEAT",
+    "FNNDimensionResult",
+    "FalseNearestNeighborsResult",
+    "GeneralizedEmbeddingResult",
+    "INDEX_LAG_CAVEAT",
     "OrdinalPatternDistribution",
     "PERMUTATION_ENTROPY_EVIDENCE_SCOPE",
     "PERMUTATION_ENTROPY_MAX_EMBEDDING_DIMENSION",
@@ -273,9 +122,15 @@ PUBLIC_API_EXPERIMENTAL = (
     "PoincareCrossingResult",
     "PrehistorySpec",
     "RobustnessCase",
+    "RecurrenceQuantificationResult",
     "SpectrumResult",
     "TimeSeriesLyapunovResult",
     "TrajectoryInput",
+    "UNCERTAINTY_REFERENCE",
+    "UncertaintyExponentResult",
+    "UncertaintyFractionResult",
+    "auto_recurrence_matrix",
+    "basin_entropy",
     "alignment_indices_from_tangent_history",
     "bifurcation_points_from_trajectories",
     "bifurcation_summary",
@@ -283,14 +138,21 @@ PUBLIC_API_EXPERIMENTAL = (
     "compute_fft_psd",
     "compute_lyapunov_spectrum",
     "compute_trajectory_metrics",
+    "cross_recurrence_matrix",
     "correlation_sum_curve",
     "covariant_lyapunov_angles",
     "detect_poincare_crossings",
+    "delay_embedding",
     "estimate_correlation_dimension",
+    "estimate_delay_autocorrelation",
+    "estimate_delay_mutual_information",
+    "estimate_uncertainty_exponent",
     "estimate_time_series_lyapunov",
     "fft_spectrum",
     "fit_correlation_dimension",
+    "false_nearest_neighbors",
     "generalized_alignment_index",
+    "generalized_delay_embedding",
     "integer_flow_alignment_indices",
     "integer_flow_covariant_lyapunov_vectors",
     "integer_covariant_vectors_from_qr_history",
@@ -301,17 +163,26 @@ PUBLIC_API_EXPERIMENTAL = (
     "integer_system_covariant_lyapunov_vectors",
     "integer_system_lyapunov_exponents",
     "kaplan_yorke_dimension",
+    "joint_recurrence_matrix",
     "linear_dependence_index",
     "ordinal_pattern_distribution",
     "permutation_entropy",
     "permutation_entropy_from_distribution",
     "psd_welch",
+    "recurrence_matrix",
+    "recurrence_quantification",
+    "recurrence_quantification_advanced",
     "smaller_alignment_index",
     "trajectory_component_spectra",
     "trajectory_metrics",
     "trajectory_metrics_for_system",
     "validate_lyapunov_method_request",
+    "uncertainty_fraction",
     "zero_one_test",
+    "ExternalTool",
+    "available_complexity_backends",
+    "compute_complexity_measures",
+    "external_tool_report",
     "HarmonicSeed",
     "find_harmonic_seed",
     "find_lure_harmonic_seed",
@@ -362,14 +233,89 @@ PUBLIC_API_TIERS = {
     EXPERIMENTAL: PUBLIC_API_EXPERIMENTAL,
 }
 
-# Stamp the declared compatibility tier on every top-level public object.  This
-# keeps runtime introspection aligned with PUBLIC_API_STABLE and
-# PUBLIC_API_EXPERIMENTAL even when the implementation lives in another module.
-for _public_name in PUBLIC_API_STABLE:
-    api_tier(STABLE)(globals()[_public_name])
-for _public_name in PUBLIC_API_EXPERIMENTAL:
-    api_tier(EXPERIMENTAL)(globals()[_public_name])
-del _public_name
+_MODEL_EXPORTS = PUBLIC_API_STABLE[:10]
+_SYSTEM_EXPORTS = (
+    "ChaoticSystem",
+    "LureSystem",
+    "get_system",
+    "list_systems",
+    "register_system",
+    "ExpressionSystemDefinition",
+    "ExpressionValidationError",
+    "compile_expression_system",
+)
+_REQUIREMENT_EXPORTS = (
+    "check_system_capability",
+    "known_workflows",
+    "requirements_for",
+)
+_BASIN_EXPORTS = ("CLASS_LABELS", "TARGET_CLASS_IDS", "class_label", "is_target_class")
+_SIMULATION_EXPORTS = ("SimulationResult", "simulate", "simulate_fractional")
+_INTEGRATION_EXPORTS = (
+    "ExternalTool",
+    "available_complexity_backends",
+    "compute_complexity_measures",
+    "external_tool_report",
+)
+_SEED_EXPORTS = (
+    "HarmonicSeed",
+    "find_harmonic_seed",
+    "find_lure_harmonic_seed",
+    "find_lure_omega_gain_candidates",
+    "find_omega_gain_candidates",
+    "validate_fractional_order",
+)
+_ANALYSIS_EXPORTS = PUBLIC_API_EXPERIMENTAL[
+    PUBLIC_API_EXPERIMENTAL.index("AdvancedRecurrenceMatrix") :
+    PUBLIC_API_EXPERIMENTAL.index("zero_one_test") + 1
+]
+_WORKFLOW_EXPORTS = PUBLIC_API_EXPERIMENTAL[
+    PUBLIC_API_EXPERIMENTAL.index("BasinSliceSpec") :
+]
+
+# Importing the package must only establish its public contract.  Numerical
+# stacks, optional adapters, and workflows are loaded when a symbol is first
+# requested.  Besides improving startup time, this prevents import-time JIT or
+# backend discovery from becoming a hidden package side effect.
+_LAZY_EXPORTS = {
+    **{name: ".models.chua" for name in _MODEL_EXPORTS},
+    **{name: ".models.chua" for name in (
+        "chua_piecewise_parameters",
+        "equilibria_piecewise",
+        "jacobian_piecewise",
+        "rhs_piecewise",
+    )},
+    **{name: ".systems" for name in _SYSTEM_EXPORTS},
+    **{name: ".systems.requirements" for name in _REQUIREMENT_EXPORTS},
+    **{name: ".basins" for name in _BASIN_EXPORTS},
+    "load_trajectory_csv": ".io",
+    **{name: ".simulation" for name in _SIMULATION_EXPORTS},
+    **{name: ".analysis" for name in _ANALYSIS_EXPORTS},
+    **{name: ".integrations" for name in _INTEGRATION_EXPORTS},
+    **{name: ".seed_generation" for name in _SEED_EXPORTS},
+    **{name: ".workflows" for name in _WORKFLOW_EXPORTS},
+}
+
+
+def __getattr__(name: str):
+    """Resolve a declared top-level export on first access."""
+
+    module_name = _LAZY_EXPORTS.get(name)
+    if module_name is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    value = getattr(import_module(module_name, __name__), name)
+    if name in PUBLIC_API_STABLE:
+        api_tier(STABLE)(value)
+    elif name in PUBLIC_API_EXPERIMENTAL:
+        api_tier(EXPERIMENTAL)(value)
+    globals()[name] = value
+    return value
+
+
+def __dir__() -> list[str]:
+    """Include lazy exports in interactive discovery."""
+
+    return sorted(set(globals()) | set(_LAZY_EXPORTS))
 
 __all__ = [
     # stability
@@ -417,8 +363,12 @@ __all__ = [
     "compile_expression_system",
     "simulate",
     "simulate_fractional",
+    "AdvancedRecurrenceMatrix",
+    "AdvancedRQAResult",
     "AlignmentIndexResult",
     "AnalysisResult",
+    "BASIN_ENTROPY_REFERENCE",
+    "BasinEntropyResult",
     "BifurcationPoint",
     "CORRELATION_DIMENSION_EVIDENCE_SCOPE",
     "CORRELATION_DIMENSION_REFERENCE_DOIS",
@@ -428,6 +378,12 @@ __all__ = [
     "CovariantAngleResult",
     "CovariantLyapunovResult",
     "CovariantQRHistoryResult",
+    "DelayEstimateResult",
+    "FDE_RECONSTRUCTION_CAVEAT",
+    "FNNDimensionResult",
+    "FalseNearestNeighborsResult",
+    "GeneralizedEmbeddingResult",
+    "INDEX_LAG_CAVEAT",
     "OrdinalPatternDistribution",
     "PERMUTATION_ENTROPY_EVIDENCE_SCOPE",
     "PERMUTATION_ENTROPY_MAX_EMBEDDING_DIMENSION",
@@ -442,9 +398,15 @@ __all__ = [
     "PoincareCrossingResult",
     "PrehistorySpec",
     "RobustnessCase",
+    "RecurrenceQuantificationResult",
     "SpectrumResult",
     "TimeSeriesLyapunovResult",
     "TrajectoryInput",
+    "UNCERTAINTY_REFERENCE",
+    "UncertaintyExponentResult",
+    "UncertaintyFractionResult",
+    "auto_recurrence_matrix",
+    "basin_entropy",
     "alignment_indices_from_tangent_history",
     "bifurcation_points_from_trajectories",
     "bifurcation_summary",
@@ -452,14 +414,21 @@ __all__ = [
     "compute_fft_psd",
     "compute_lyapunov_spectrum",
     "compute_trajectory_metrics",
+    "cross_recurrence_matrix",
     "correlation_sum_curve",
     "covariant_lyapunov_angles",
     "detect_poincare_crossings",
+    "delay_embedding",
     "estimate_correlation_dimension",
+    "estimate_delay_autocorrelation",
+    "estimate_delay_mutual_information",
+    "estimate_uncertainty_exponent",
     "estimate_time_series_lyapunov",
     "fft_spectrum",
     "fit_correlation_dimension",
+    "false_nearest_neighbors",
     "generalized_alignment_index",
+    "generalized_delay_embedding",
     "integer_flow_alignment_indices",
     "integer_flow_covariant_lyapunov_vectors",
     "integer_covariant_vectors_from_qr_history",
@@ -470,17 +439,26 @@ __all__ = [
     "integer_system_covariant_lyapunov_vectors",
     "integer_system_lyapunov_exponents",
     "kaplan_yorke_dimension",
+    "joint_recurrence_matrix",
     "linear_dependence_index",
     "ordinal_pattern_distribution",
     "permutation_entropy",
     "permutation_entropy_from_distribution",
     "psd_welch",
+    "recurrence_matrix",
+    "recurrence_quantification",
+    "recurrence_quantification_advanced",
     "smaller_alignment_index",
     "trajectory_component_spectra",
     "trajectory_metrics",
     "trajectory_metrics_for_system",
     "validate_lyapunov_method_request",
+    "uncertainty_fraction",
     "zero_one_test",
+    "ExternalTool",
+    "available_complexity_backends",
+    "compute_complexity_measures",
+    "external_tool_report",
     # experimental: seed_generation
     "HarmonicSeed",
     "find_harmonic_seed",

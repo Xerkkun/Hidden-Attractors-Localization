@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+import math
 from typing import Any, Mapping
 
 from hidden_attractors.analysis.lyapunov_methods import (
@@ -14,6 +15,7 @@ from validation.python.lyapunov_method_registry import (
 
 
 PHASE_F_STRUCTURED_STATUS = "phase_F_frozen"
+DEFAULT_LYAPUNOV_POSITIVE_THRESHOLD = 0.02
 FRACTIONAL_CANDIDATE_IDS = (
     "danca2017_chua_fractional_saturation_q09998",
     "wu2023_chua_fractional_arctan_q099",
@@ -80,8 +82,13 @@ def assess_phase_f_closure(
     accepted_fractional_policy_exists: bool = False,
     fischer_resolution_exists: bool = False,
     diagnostic_scope_statement_exists: bool = False,
+    lyapunov_positive_threshold: float = DEFAULT_LYAPUNOV_POSITIVE_THRESHOLD,
 ) -> dict[str, Any]:
     """Evaluate strict and diagnostic Phase F closure routes."""
+
+    threshold = float(lyapunov_positive_threshold)
+    if not math.isfinite(threshold) or threshold < 0.0:
+        raise ValueError("lyapunov_positive_threshold must be finite and non-negative.")
 
     variational = registry["fractional_variational_abm_qr"]
     cloned = registry["fractional_cloned_dynamics_abm_gs_published"]
@@ -148,7 +155,10 @@ def assess_phase_f_closure(
         "scope_note_centralized": True,
         "hiddenness_scope_separated": True,
     }
-    evidence_summary = _phase_f_evidence_summary(f6_cases)
+    evidence_summary = _phase_f_evidence_summary(
+        f6_cases,
+        lyapunov_positive_threshold=threshold,
+    )
     return {
         "stage": "phase_F_closure",
         "status": (
@@ -158,6 +168,10 @@ def assess_phase_f_closure(
         ),
         "phase_F_frozen": route_c_complete,
         "evidence_layer": "finite_time_chaos_evidence",
+        "decision_thresholds": {
+            "lyapunov_positive_threshold": threshold,
+            "source": "assess_phase_f_closure argument",
+        },
         **evidence_summary,
         "structured_diagnostics_closed": route_c_complete,
         "closure_routes": {
@@ -354,7 +368,11 @@ def _method_application(case: Mapping[str, Any] | None, method_id: str) -> dict[
     }
 
 
-def _phase_f_evidence_summary(cases: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
+def _phase_f_evidence_summary(
+    cases: Mapping[str, Mapping[str, Any]],
+    *,
+    lyapunov_positive_threshold: float,
+) -> dict[str, Any]:
     """Summarize F6 case evidence with the frozen positive vocabulary."""
 
     level_aliases = {
@@ -385,7 +403,10 @@ def _phase_f_evidence_summary(cases: Mapping[str, Mapping[str, Any]]) -> dict[st
             {
                 "case_id": case_id,
                 "chaos_evidence_level": level,
-                "lyapunov_support": _lyapunov_support(evidence),
+                "lyapunov_support": _lyapunov_support(
+                    evidence,
+                    positive_threshold=lyapunov_positive_threshold,
+                ),
                 "zero_one_support": evidence.get("zero_one_status"),
                 "spectral_support": evidence.get("psd_fft_status"),
                 "boundedness_support": evidence.get("boundedness_status"),
@@ -420,13 +441,21 @@ def _phase_f_evidence_summary(cases: Mapping[str, Mapping[str, Any]]) -> dict[st
     }
 
 
-def _lyapunov_support(evidence: Mapping[str, Any]) -> str:
+def _lyapunov_support(
+    evidence: Mapping[str, Any],
+    *,
+    positive_threshold: float,
+) -> str:
     values = [
         item.get("lambda_max")
         for item in evidence.get("lyapunov_methods", [])
         if item.get("lambda_max") is not None
     ]
-    return "positive_lambda_max" if any(float(value) > 0.02 for value in values) else "not_available_or_nonpositive"
+    return (
+        "positive_lambda_max"
+        if any(float(value) > positive_threshold for value in values)
+        else "not_available_or_nonpositive"
+    )
 
 
 def _evidence_interpretation(level: str) -> str:
@@ -476,4 +505,5 @@ __all__ = [
     "PHASE_F_STRUCTURED_STATUS",
     "assess_phase_f_closure",
     "build_phase_f_closure_matrix",
+    "DEFAULT_LYAPUNOV_POSITIVE_THRESHOLD",
 ]

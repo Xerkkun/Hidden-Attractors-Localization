@@ -184,8 +184,8 @@ loop gain without using a published initial condition:
 python examples/pll_lead_lag_integer_lure_reference/run_example.py --quick
 ```
 
-Its current reproducible evidence is Python-only; the Julia counterpart is
-still pending.
+Its retained reproducible evidence is Python-only; an independent Julia
+counterpart is outside the current validation scope.
 
 See the [Integer-order Lur'e test catalog](integer_lure_test_catalog.md) for
 the candidate queue and the route required by each system.

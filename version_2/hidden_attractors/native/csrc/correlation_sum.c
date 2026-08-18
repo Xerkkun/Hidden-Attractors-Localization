@@ -28,6 +28,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "native_validation.h"
+
 #if defined(_OPENMP)
   #include <omp.h>
 #endif
@@ -284,12 +286,12 @@ HAFO_CORR_EXPORT int hafo_correlation_sum_counts(
         return HAFO_CORR_ALIASED_BUFFERS;
     }
     for (index = 0u; index < point_values; ++index) {
-        if (!isfinite(points[index])) {
+        if (!hafo_isfinite(points[index])) {
             return HAFO_CORR_NONFINITE_INPUT;
         }
     }
     for (radius_index = 0u; radius_index < n_radii; ++radius_index) {
-        if (!isfinite(radii[radius_index])) {
+        if (!hafo_isfinite(radii[radius_index])) {
             return HAFO_CORR_NONFINITE_INPUT;
         }
         if (!(radii[radius_index] > 0.0)

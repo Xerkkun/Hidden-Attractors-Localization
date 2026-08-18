@@ -19,6 +19,11 @@ exclude_docs: |
   manual_manifest.yaml
   lure_candidate_route.md
   testing_policy.md
+  ecosystem_roadmap.md
+  current_function_closure.md
+  scispace_fractional_method_evidence.md
+  upstream_function_matrix.md
+  master_report_geometric_topological/**
 theme:
   name: material
   features:
@@ -33,6 +38,7 @@ nav:
       - Getting Started: getting_started.md
       - Examples Index: examples_index.md
       - Examples: examples.md
+      - Notebook Example: notebooks.md
       - Adapting New Systems: adapting_new_systems.md
       - Systems: systems.md
       - Workflows: workflows.md
@@ -41,6 +47,7 @@ nav:
       - Validation Boundary: validation_evidence.md
       - Validation Methodology: validation_methodology.md
       - Hiddenness Verification: hiddenness_verification.md
+      - Geometric-Topological Campaign: geometric_topological_campaign.md
       - Integer Chua q=1 Reference: integer_chua_reference.md
       - Integer Lur'e Test Catalog: integer_lure_test_catalog.md
       - Integer Hidden-Chaos Search: integer_hidden_chaos_search.md
@@ -51,8 +58,6 @@ nav:
       - Multi-Term Caputo L1: multi_term_caputo_l1.md
       - Tempered BDF Convolution Quadrature: tempered_convolution_quadrature.md
       - Fast Recurrent Tempered Multistep History: tempered_fast_multistep_history.md
-      - SciSpace Fractional Evidence: scispace_fractional_method_evidence.md
-      - Upstream Function Matrix: upstream_function_matrix.md
       - Basin Entropy and Uncertainty: basin_uncertainty_metrics.md
       - Fractional Chua q=0.9998 Algebra: fractional_chua_algebra_validation.md
   - Dynamics and Diagnostics:

@@ -62,6 +62,8 @@ from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 
+from .._time_grid import exact_fixed_step_count
+
 
 # ---------------------------------------------------------------------------
 # Gamma factor cache
@@ -389,7 +391,11 @@ def adm_wu2023_integrate_from_config(
         N = int(config["N"])
     else:
         t_final = float(config.get("t_final", 100.0))
-        N = int(math.ceil(t_final / h))
+        N = exact_fixed_step_count(
+            h,
+            t_final,
+            caller="adm_wu2023_integrate_from_config",
+        )
 
     times, states, status, info = adm_wu2023_integrate(
         params=config,

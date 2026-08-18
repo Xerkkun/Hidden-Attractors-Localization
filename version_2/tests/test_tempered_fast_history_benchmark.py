@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import importlib.util
 import json
-import os
 import re
 import sys
 import tempfile
@@ -158,7 +157,7 @@ def test_fast_history_benchmark_default_output_is_unique_and_temp_scoped() -> No
     benchmark = _load_benchmark()
     first = benchmark._default_output_path()
     second = benchmark._default_output_path()
-    expected_root = Path(r"C:\tmp") if os.name == "nt" else Path(tempfile.gettempdir())
+    expected_root = Path(tempfile.gettempdir())
     assert first.parent == expected_root
     assert second.parent == expected_root
     assert first != second

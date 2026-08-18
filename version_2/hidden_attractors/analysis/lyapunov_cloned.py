@@ -14,6 +14,7 @@ from typing import Callable, Mapping
 import numpy as np
 
 from .._rhs import bind_rhs
+from .._time_grid import exact_fixed_step_count
 from ..integrations.abm_fractional import (
     classify_component_orders,
     integrate_fractional_abm,
@@ -137,9 +138,13 @@ def compute_cloned_dynamics_spectrum(
         raise ValueError(f"n_clones must equal the state dimension ({dimension}).")
     if h <= 0.0 or t_clone <= 0.0 or delta <= 0.0 or k_blocks < 1:
         raise ValueError("h, t_clone, delta, and k_blocks must be positive.")
-    n_steps = int(round(t_clone / h))
-    if n_steps < 1 or not np.isclose(n_steps * h, t_clone):
-        raise ValueError("t_clone must be an integer multiple of h.")
+    n_steps = exact_fixed_step_count(
+        h,
+        t_clone,
+        caller="compute_cloned_dynamics_spectrum(t_clone)",
+    )
+    if n_steps < 1:
+        raise ValueError("t_clone must span at least one fixed step.")
     if memory_protocol not in {
         "published_block_restart",
         "published_block_restart_or_experimental_qr",

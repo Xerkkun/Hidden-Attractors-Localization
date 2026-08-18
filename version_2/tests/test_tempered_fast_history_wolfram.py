@@ -179,9 +179,7 @@ def live_fast_history_summary_path() -> Path:
     if executable is None:
         pytest.skip("wolframscript is not installed or discoverable")
     _wolfram_probe_or_skip(executable)
-    temporary_root = (
-        Path(r"C:\tmp") if os.name == "nt" else Path(tempfile.gettempdir())
-    )
+    temporary_root = Path(tempfile.gettempdir())
     temporary_root.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(
         prefix="hafo_tempered_fast_history_",

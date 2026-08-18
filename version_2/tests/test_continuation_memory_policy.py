@@ -6,6 +6,21 @@ import pytest
 import yaml
 from pathlib import Path
 from hidden_attractors.cli.run import main
+from hidden_attractors.cli.continuation import (
+    _resolve_multiparameter_memory_policy,
+)
+
+
+def test_multiparameter_memory_window_requires_exact_h_grid() -> None:
+    with pytest.raises(ValueError, match="integer number of fixed steps"):
+        _resolve_multiparameter_memory_policy("finite_window", 1.0, 0.3)
+    mode, steps = _resolve_multiparameter_memory_policy(
+        "finite_window",
+        0.9,
+        0.3,
+    )
+    assert mode == "window"
+    assert steps == 3
 
 
 def _fractional_validation_config(

@@ -74,6 +74,16 @@ def test_memory_window_time():
     assert flat["memory_window_length"] == 200
 
 
+def test_memory_window_time_rejects_nonuniform_grid() -> None:
+    flat = {
+        "memory_mode": "window",
+        "memory_window_time": 1.0,
+        "h": 0.3,
+    }
+    with pytest.raises(ValueError, match="integer number of fixed steps"):
+        _normalize_memory_config(flat)
+
+
 def test_memory_mode_window_missing_window_params():
     """If memory_mode = window, require window parameters."""
     flat = {

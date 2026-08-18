@@ -1,11 +1,28 @@
 # -*- coding: utf-8 -*-
 import re
 from pathlib import Path
+from urllib.parse import unquote
 import pytest
-from tests.helpers.test_documentation_text import active_doc_paths, read
+from tests.helpers.test_documentation_text import (
+    active_doc_paths,
+    read,
+    validation_evidence_doc_paths,
+)
 
 ROOT_DIR = Path(__file__).resolve().parents[1]  # version_2 directory
 WORKSPACE_DIR = ROOT_DIR.parent
+
+DEPRECATION_KEYWORDS = (
+    "deprecated",
+    "deprecation",
+    "legacy",
+    "historical",
+    "migration",
+    "retired",
+    "obsoleto",
+    "deprecado",
+    "migración",
+)
 
 @pytest.mark.hygiene
 def test_markdown_docs_cli_consistency():
@@ -27,6 +44,60 @@ def test_markdown_docs_cli_consistency():
         "Standalone command tokens found instead of the unified CLI:\n"
         + "\n".join(violations)
     )
+
+
+@pytest.mark.hygiene
+def test_maintained_markdown_local_links_resolve() -> None:
+    """Require links in public docs and maintained validation evidence to exist."""
+
+    missing = []
+    link_pattern = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
+    paths = [*active_doc_paths(), *validation_evidence_doc_paths()]
+    for path in paths:
+        for line_number, line in enumerate(read(path).splitlines(), 1):
+            for match in link_pattern.finditer(line):
+                # LaTeX expressions such as ``\left[e^{...}\right](t)`` are
+                # not Markdown links even though they share the same brackets.
+                if "\\" in match.group(0):
+                    continue
+                raw_target = match.group(1)
+                target = raw_target.strip().strip("<>")
+                if not target or target.startswith(
+                    ("#", "http://", "https://", "mailto:", "data:")
+                ):
+                    continue
+                target = unquote(target.split("#", 1)[0].split("?", 1)[0])
+                resolved = (path.parent / target).resolve()
+                if not resolved.exists():
+                    try:
+                        display_path = path.relative_to(ROOT_DIR)
+                    except ValueError:
+                        display_path = path
+                    missing.append(
+                        f"{display_path}:{line_number} -> {raw_target}"
+                    )
+
+    assert missing == [], "Broken local Markdown links:\n" + "\n".join(missing)
+
+
+@pytest.mark.hygiene
+def test_internal_audit_markdown_is_excluded_from_public_docs() -> None:
+    """Keep roadmaps, audit logs, and frozen report sources out of MkDocs."""
+
+    docs_root = ROOT_DIR / "docs"
+    active = {
+        path.relative_to(docs_root).as_posix()
+        for path in active_doc_paths()
+        if path.is_relative_to(docs_root)
+    }
+    internal = {
+        "ecosystem_roadmap.md",
+        "current_function_closure.md",
+        "scispace_fractional_method_evidence.md",
+        "upstream_function_matrix.md",
+    }
+    assert active.isdisjoint(internal)
+    assert not any(path.startswith("master_report_geometric_topological/") for path in active)
 
 @pytest.mark.hygiene
 def test_markdown_docs_no_outdated_test_counts():

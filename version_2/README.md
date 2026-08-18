@@ -1,4 +1,4 @@
-# hidden-attractors-fo 1.1.0
+# hidden-attractors-fo 1.2.0
 
 [![PyPI](https://img.shields.io/pypi/v/hidden-attractors-fo)](https://pypi.org/project/hidden-attractors-fo/)
 [![CI](https://github.com/Xerkkun/Hidden-Attractors-Localization/actions/workflows/ci.yml/badge.svg)](https://github.com/Xerkkun/Hidden-Attractors-Localization/actions/workflows/ci.yml)
@@ -42,7 +42,7 @@ cover generic trajectory and boundedness metrics, FFT/PSD, Poincare sections,
 the 0-1 statistic, bifurcation post-processing, and equation-based Lyapunov
 spectra.
 
-Version 1.1.0 fully integrates Lyapunov estimation from a uniformly sampled
+The current 1.2.0 surface includes Lyapunov estimation from a uniformly sampled
 scalar time series. The structured result combines Rosenstein's largest
 exponent, an Eckmann reconstructed spectrum, and a Kaplan--Yorke dimension
 with units, estimator parameters, backend provenance, fit diagnostics, memory

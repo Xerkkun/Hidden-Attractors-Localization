@@ -1,5 +1,17 @@
 # Release Notes
 
+## 1.2.0
+
+`hidden-attractors-fo` 1.2.0 is the release-candidate identity for the current
+validated source. It retains the stable 1.x API contract while promoting only
+execution paths that already existed and now have complete public contracts,
+tests, and finite-evidence boundaries. It also hardens native input handling,
+same-named submodule imports, relocated validation runs, and the exact
+tag-to-commit publication guard.
+
+No `v1.2.0` tag or public artifact is implied by these local metadata records.
+Publication remains a separate, protected workflow action.
+
 ## 1.1.0
 
 `hidden-attractors-fo` 1.1.0 is a public-library and reproducibility release.

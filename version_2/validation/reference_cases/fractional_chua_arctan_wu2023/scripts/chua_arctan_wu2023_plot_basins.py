@@ -12,6 +12,7 @@ import numpy as np
 
 from hidden_attractors.models import chua_arctan_wu2023_parameters
 from hidden_attractors.native.backends import BasinBackend
+from hidden_attractors.plotting.export import intercept_and_export_path
 
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -54,7 +55,6 @@ def main() -> None:
     ax.set_ylabel("y(0)")
     ax.set_title("Wu2023 arctan Chua: exploratory xy basin slice (z0=0)")
     fig.tight_layout()
-    from version_2.hidden_attractors.plotting.export import intercept_and_export_path
     intercept_and_export_path(fig, args.output, 'attractor')
     plt.close(fig)
     print(f"figure={args.output}")

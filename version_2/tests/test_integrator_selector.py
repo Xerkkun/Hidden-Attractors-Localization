@@ -19,7 +19,6 @@ def test_validate_integrator_compatibility():
     assert validate_integrator_compatibility("abm", 0.95) == "abm"
     assert validate_integrator_compatibility("efork3", 0.98) == "efork3"
     assert validate_integrator_compatibility("rk4", 1.0) == "rk4"
-    assert validate_integrator_compatibility("heun", 1.0) == "heun"
     assert validate_integrator_compatibility("efork_q1", 1.0) == "efork_q1"
 
     # Redirection warning
@@ -39,8 +38,8 @@ def test_validate_integrator_compatibility():
         validate_integrator_compatibility("abm", 1.0)
     with pytest.raises(ValueError, match="only supports integer-order"):
         validate_integrator_compatibility("rk4", 0.95)
-    with pytest.raises(ValueError, match="only supports integer-order"):
-        validate_integrator_compatibility("heun", 0.99)
+    with pytest.raises(ValueError, match="Unknown integrator"):
+        validate_integrator_compatibility("unregistered_integer_scheme", 1.0)
 
 
 def test_integrate_dispatch():
@@ -49,7 +48,7 @@ def test_integrate_dispatch():
         return -x
 
     # Integer integration
-    t, x, status = integrate(rhs, np.array([1.0]), q=1.0, h=0.01, t_final=1.0, integrator="heun")
+    t, x, status = integrate(rhs, np.array([1.0]), q=1.0, h=0.01, t_final=1.0, integrator="rk4")
     assert status == "ok"
     assert len(t) == 101
     assert np.allclose(x[-1], np.exp(-1.0), rtol=1e-2)
@@ -60,6 +59,43 @@ def test_integrate_dispatch():
     )
     assert status_frac == "ok"
     assert len(t_frac) == 51
+
+
+@pytest.mark.parametrize(
+    ("q", "integrator"),
+    ((1.0, "rk4"), (0.9, "abm"), (0.9, "efork3")),
+)
+def test_fixed_step_integrators_reject_horizon_overshoot(q, integrator) -> None:
+    with pytest.raises(ValueError, match="integer number of fixed steps"):
+        integrate(
+            lambda _t, state: np.zeros_like(state),
+            np.array([1.0]),
+            q=q,
+            h=0.3,
+            t_final=1.0,
+            integrator=integrator,
+            use_c_backend=False,
+        )
+
+
+@pytest.mark.parametrize(
+    ("q", "integrator"),
+    ((1.0, "rk4"), (0.9, "abm"), (0.9, "efork3")),
+)
+def test_fixed_step_integrators_accept_aligned_horizon(q, integrator) -> None:
+    times, _, status = integrate(
+        lambda _t, state: np.zeros_like(state),
+        np.array([1.0]),
+        q=q,
+        h=0.3,
+        t_final=0.9,
+        integrator=integrator,
+        use_c_backend=False,
+    )
+
+    assert status == "ok"
+    assert len(times) == 4
+    assert times[-1] == pytest.approx(0.9)
 
 
 def test_selector_does_not_mask_rhs_body_typeerror() -> None:
@@ -77,7 +113,7 @@ def test_selector_does_not_mask_rhs_body_typeerror() -> None:
         q=1.0,
         h=0.01,
         t_final=0.1,
-        integrator="heun",
+        integrator="rk4",
         use_c_backend=False,
     )
 
@@ -119,7 +155,7 @@ def test_selector_uses_explicit_rhs_when_system_is_only_an_acceleration_hint() -
         q=1.0,
         h=0.001,
         t_final=0.1,
-        integrator="heun",
+        integrator="rk4",
         system=system,
         use_c_backend=False,
         early_stop_config={"enabled": False},

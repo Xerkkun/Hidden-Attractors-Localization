@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include "native_validation.h"
 
 #if defined(_WIN32) || defined(__CYGWIN__)
   #define API_EXPORT __declspec(dllexport)
@@ -8,12 +9,17 @@
   #define API_EXPORT __attribute__((visibility("default")))
 #endif
 
+API_EXPORT int general_fde_abi_version(void) {
+    return 3;
+}
+
 // Signature for the Python callback
 typedef void (*RhsCallback)(double t, const double *x, double *f);
 
-static int ceil_steps(double t_final, double h) {
-    if (!(h > 0.0) || t_final < 0.0) return -1;
-    return (int)ceil(t_final / h);
+API_EXPORT int general_fde_rows(double t_final, double h) {
+    int steps = 0;
+    if (!hafo_uniform_step_count(t_final, h, &steps)) return -1;
+    return steps + 1;
 }
 
 typedef struct {
@@ -44,7 +50,7 @@ static EFORK3 efork3_coeffs(double q, double h) {
     return c;
 }
 
-static void memory_component_general(int k, double t_eval, const double *t, const double *arr, int dim, double q, double h, const EFORK3 *c, double *out_mem) {
+static void memory_component_general(int k, double t_eval, const double *t, const double *arr, int dim, double q, const EFORK3 *c, double *out_mem) {
     for (int d = 0; d < dim; ++d) {
         out_mem[d] = 0.0;
     }
@@ -70,15 +76,29 @@ API_EXPORT int integrate_general_efork_c(
     double h,
     double t_final,
     double divergence_norm,
-    double *traj_out
+    double *traj_out,
+    size_t traj_capacity
 ) {
-    if (!rhs || !x0 || dim <= 0 || !(q > 0.0 && q < 1.0) || !(h > 0.0) || t_final < 0.0 || !traj_out) return -1;
-    const int nsteps = ceil_steps(t_final, h);
-    if (nsteps < 0) return -2;
+    int nsteps = 0;
+    size_t state_values = 0u;
+    size_t row_width = 0u;
+    size_t output_values = 0u;
+    if (!rhs || !x0 || dim <= 0 || !(q > 0.0 && q < 1.0) ||
+        !hafo_isfinite(q) || !hafo_isfinite(divergence_norm) ||
+        !(divergence_norm > 0.0) || !traj_out ||
+        !hafo_uniform_step_count(t_final, h, &nsteps) ||
+        !hafo_values_are_finite(x0, (size_t)dim)) return -1;
     const int rows = nsteps + 1;
+    if (!hafo_checked_mul_size((size_t)rows, (size_t)dim, &state_values) ||
+        state_values > (size_t)INT_MAX ||
+        !hafo_checked_mul_size((size_t)rows, (size_t)dim + 1u, &output_values)) {
+        return -2;
+    }
+    row_width = (size_t)dim + 1u;
+    if (traj_capacity < output_values) return -4;
 
     double *t = (double*)calloc((size_t)rows, sizeof(double));
-    double *x = (double*)calloc((size_t)rows * (size_t)dim, sizeof(double));
+    double *x = (double*)calloc(state_values, sizeof(double));
     double *k1 = (double*)malloc((size_t)dim * sizeof(double));
     double *k2 = (double*)malloc((size_t)dim * sizeof(double));
     double *k3 = (double*)malloc((size_t)dim * sizeof(double));
@@ -109,7 +129,7 @@ API_EXPORT int integrate_general_efork_c(
     for (int n = 0; n < nsteps; ++n) {
         // Stage 1
         if (n > 0) {
-            memory_component_general(n, t[n], t, x, dim, q, h, &c, mem);
+            memory_component_general(n, t[n], t, x, dim, q, &c, mem);
         } else {
             for (int d = 0; d < dim; ++d) mem[d] = 0.0;
         }
@@ -125,7 +145,7 @@ API_EXPORT int integrate_general_efork_c(
         }
         const double t2 = t[n] + c.c2 * h;
         if (n > 0) {
-            memory_component_general(n, t2, t, x, dim, q, h, &c, mem);
+            memory_component_general(n, t2, t, x, dim, q, &c, mem);
         } else {
             for (int d = 0; d < dim; ++d) mem[d] = 0.0;
         }
@@ -140,7 +160,7 @@ API_EXPORT int integrate_general_efork_c(
         }
         const double t3 = t[n] + c.c3 * h;
         if (n > 0) {
-            memory_component_general(n, t3, t, x, dim, q, h, &c, mem);
+            memory_component_general(n, t3, t, x, dim, q, &c, mem);
         } else {
             for (int d = 0; d < dim; ++d) mem[d] = 0.0;
         }
@@ -150,7 +170,7 @@ API_EXPORT int integrate_general_efork_c(
         }
 
         // Final prediction
-        t[n + 1] = t[n] + h;
+        t[n + 1] = (n + 1 == nsteps) ? t_final : (double)(n + 1) * h;
         double norm = 0.0;
         for (int d = 0; d < dim; ++d) {
             const double val = x[dim * n + d] + c.w1 * k1[d] + c.w2 * k2[d] + c.w3 * k3[d];
@@ -158,12 +178,17 @@ API_EXPORT int integrate_general_efork_c(
             norm += val * val;
         }
         norm = sqrt(norm);
+        if (!hafo_isfinite(norm)) {
+            free(t); free(x); free(k1); free(k2); free(k3); free(tmp); free(f); free(mem);
+            return -5;
+        }
 
         // Save step to trajectory
         const int out_row = n + 1;
-        traj_out[out_row * (dim + 1) + 0] = t[n + 1];
+        traj_out[(size_t)out_row * row_width] = t[n + 1];
         for (int d = 0; d < dim; ++d) {
-            traj_out[out_row * (dim + 1) + 1 + d] = x[dim * (n + 1) + d];
+            traj_out[(size_t)out_row * row_width + 1u + (size_t)d] =
+                x[dim * (n + 1) + d];
         }
 
         if (divergence_norm > 0.0 && norm > divergence_norm) {
@@ -186,15 +211,26 @@ API_EXPORT int integrate_general_abm_c(
     double h,
     double t_final,
     double divergence_norm,
-    double *traj_out
+    double *traj_out,
+    size_t traj_capacity
 ) {
-    if (!rhs || !x0 || dim <= 0 || !(q > 0.0 && q < 1.0) || !(h > 0.0) || t_final < 0.0 || !traj_out) return -1;
-    const int nsteps = ceil_steps(t_final, h);
-    if (nsteps < 0) return -2;
+    int nsteps = 0;
+    size_t state_values = 0u;
+    size_t output_values = 0u;
+    if (!rhs || !x0 || dim <= 0 || !(q > 0.0 && q < 1.0) ||
+        !hafo_isfinite(q) || !hafo_isfinite(divergence_norm) ||
+        !(divergence_norm > 0.0) || !traj_out ||
+        !hafo_uniform_step_count(t_final, h, &nsteps) ||
+        !hafo_values_are_finite(x0, (size_t)dim)) return -1;
     const int rows = nsteps + 1;
+    const size_t row_width = (size_t)dim + 1u;
+    if (!hafo_checked_mul_size((size_t)rows, (size_t)dim, &state_values) ||
+        state_values > (size_t)INT_MAX ||
+        !hafo_checked_mul_size((size_t)rows, row_width, &output_values)) return -2;
+    if (traj_capacity < output_values) return -4;
 
-    double *state = (double*)calloc((size_t)rows * (size_t)dim, sizeof(double));
-    double *fhist = (double*)calloc((size_t)rows * (size_t)dim, sizeof(double));
+    double *state = (double*)calloc(state_values, sizeof(double));
+    double *fhist = (double*)calloc(state_values, sizeof(double));
     double *pow_q = (double*)calloc((size_t)rows + 1u, sizeof(double));
     double *pow_q1 = (double*)calloc((size_t)rows + 1u, sizeof(double));
     double *predictor = (double*)malloc((size_t)dim * sizeof(double));
@@ -214,6 +250,11 @@ API_EXPORT int integrate_general_abm_c(
         state[d] = x0[d];
     }
     rhs(0.0, state, fhist);
+    if (!hafo_values_are_finite(fhist, (size_t)dim)) {
+        free(state); free(fhist); free(pow_q); free(pow_q1);
+        free(predictor); free(fp); free(corrected);
+        return -5;
+    }
 
     traj_out[0] = 0.0;
     for (int d = 0; d < dim; ++d) {
@@ -239,7 +280,7 @@ API_EXPORT int integrate_general_abm_c(
             }
         }
 
-        const double t_next = (double)(i + 1) * h;
+        const double t_next = (i + 1 == nsteps) ? t_final : (double)(i + 1) * h;
         rhs(t_next, predictor, fp);
 
         // Corrector step
@@ -275,13 +316,23 @@ API_EXPORT int integrate_general_abm_c(
             norm += corrected[d] * corrected[d];
         }
         norm = sqrt(norm);
+        if (!hafo_isfinite(norm)) {
+            free(state); free(fhist); free(pow_q); free(pow_q1);
+            free(predictor); free(fp); free(corrected);
+            return -5;
+        }
         rhs(t_next, corrected, &fhist[dim * (i + 1)]);
+        if (!hafo_values_are_finite(&fhist[dim * (i + 1)], (size_t)dim)) {
+            free(state); free(fhist); free(pow_q); free(pow_q1);
+            free(predictor); free(fp); free(corrected);
+            return -5;
+        }
 
         // Write trajectory
         const int out_row = i + 1;
-        traj_out[out_row * (dim + 1) + 0] = t_next;
+        traj_out[(size_t)out_row * row_width] = t_next;
         for (int d = 0; d < dim; ++d) {
-            traj_out[out_row * (dim + 1) + 1 + d] = corrected[d];
+            traj_out[(size_t)out_row * row_width + 1u + (size_t)d] = corrected[d];
         }
 
         if (divergence_norm > 0.0 && norm > divergence_norm) {

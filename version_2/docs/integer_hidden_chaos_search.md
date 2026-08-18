@@ -318,33 +318,6 @@ additional probes along both signs of the unstable `E0` eigenvector also had
 zero contacts. The resulting finite label is
 `chaotic_hidden_under_tested_neighborhoods`.
 
-## Recorded time
-
-`phase_timings.csv` is written after every completed phase using
-`time.perf_counter`. A resumed run preserves those recorded timers and never
-reconstructs them from mutable file timestamps. The timing table below is
-updated only from a complete canonical run; it measures this workstation and
-configuration and is not a general performance benchmark. The
-`candidate_gate` timing includes both evaluation of the joint gate and figure
-manifest finalization/promotion.
-
-The focused software contract is rerun separately with:
-
-```powershell
-& '..\.venv\Scripts\python.exe' -m pytest `
-  tests\test_candidate_gate.py `
-  tests\test_figure_export_contract.py `
-  tests\test_no_direct_savefig_outside_export.py `
-  tests\test_integer_lure_workflow.py `
-  tests\test_modified_van_der_pol_duffing.py `
-  tests\test_integer_hidden_chaos_workflow.py `
-  tests\test_mavpd_integer_hidden_chaos_example.py `
-  tests\test_integer_nonchua_wolfram.py -q
-```
-
-`PENDING_FINAL_FOCUSED_SUITE_RESULT` is intentionally left for replacement by
-the frozen final run; no earlier test count is promoted here.
-
 ## Evidence boundary
 
 A positive finite-time exponent is not, by itself, a proof of chaos. Likewise,
@@ -353,12 +326,10 @@ is restricted to the declared solver tolerances, observation windows,
 directions, radii, reference calibration, and robustness controls distributed
 across `reproducibility.yaml`, `05_chaos_diagnostics.json`,
 `07_hiddenness_summary.json`, `09_candidate_gate.json`, and
-`run_manifest.json`. The candidate has not yet received an independent Julia
-reproduction; the earlier Python--Julia MAVPD comparison covers the periodic
-`gamma=0.1` audit, not this locally derived chaotic point.
+`run_manifest.json`. An independent Julia reproduction is outside this retained
+evidence; the Python--Julia MAVPD comparison covers the periodic `gamma=0.1`
+audit, not this locally derived chaotic point.
 
-The maintained Kalman--Fitts reference currently supports a hidden periodic
-cycle, not a promoted hidden-chaos result. Any future chaotic search for that
-family requires its own source, executable route, long-run diagnostics, and
-formal neighborhood probes; exploratory states are not evidence for this
-MAVPD example.
+The maintained Kalman--Fitts reference supports a hidden periodic cycle, not a
+promoted hidden-chaos result. It is therefore not evidence for this MAVPD
+example or for hidden chaos in the Kalman--Fitts family.

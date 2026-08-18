@@ -100,7 +100,7 @@ def test_multi_term_comparator_rejects_wrong_system_id(tmp_path: Path) -> None:
 
 
 def _live_wolfram_result(executable: str) -> dict[str, object]:
-    temp_root = Path(r"C:\tmp") if os.name == "nt" else Path(tempfile.gettempdir())
+    temp_root = Path(tempfile.gettempdir())
     temp_root.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(
         prefix="hafo_multi_term_caputo_",
@@ -173,4 +173,3 @@ def test_persisted_multi_term_wolfram_output_matches_python() -> None:
     assert result["passed"] is True
     assert result["cross_implementation_max_diff"] <= result["tolerance"]
     assert "chaos, attraction, or hiddenness" in result["evidence_boundary"]
-

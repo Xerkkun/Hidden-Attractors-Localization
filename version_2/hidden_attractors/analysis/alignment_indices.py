@@ -25,6 +25,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 from .._rhs import bind_rhs
+from ._system_order import declared_system_order as _declared_system_order
 
 try:  # Numba is a declared dependency, but import failure remains recoverable.
     from numba import njit
@@ -965,18 +966,6 @@ def integer_map_alignment_indices(
     except (TypeError, ValueError, RuntimeError, FloatingPointError, OverflowError) as exc:
         return finalize("map_exception", str(exc))
     return finalize("ok")
-
-
-def _declared_system_order(system: object) -> Any:
-    for attribute in ("q", "order", "fractional_order"):
-        value = getattr(system, attribute, None)
-        if value is not None:
-            return value
-    for attribute in ("metadata", "parameters", "params"):
-        mapping = getattr(system, attribute, None)
-        if isinstance(mapping, Mapping) and mapping.get("q") is not None:
-            return mapping["q"]
-    return None
 
 
 def integer_system_alignment_indices(

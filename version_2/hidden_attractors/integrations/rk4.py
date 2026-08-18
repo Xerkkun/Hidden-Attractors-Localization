@@ -5,8 +5,7 @@ Used when q = 1.0 or dynamics_order = 'integer' for direct attractor simulation.
 
 from __future__ import annotations
 
-import math
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, Tuple
 
 import numpy as np
 
@@ -31,7 +30,7 @@ def rk4_integrate(
     h : float
         Step size.
     N : int
-        Number of steps.
+        Number of fixed steps. The exact integration horizon is ``N * h``.
     divergence_norm : float
         Threshold above which the state is considered to have diverged.
 
@@ -102,7 +101,7 @@ def rk4_integrate(
         "integrator": "rk4",
         "integrator_class": "integer_order_solver",
         "scientific_label": "Classical RK4 integer-order (q=1.0) solver.",
-        "hidden_verified": False,
+        "evidence_scope": "integration_only; no chaos or hiddenness decision",
         "h": h,
         "N": N,
         "steps_completed": last_n,

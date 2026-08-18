@@ -24,9 +24,9 @@ Memory modes
 
 RHS convention
 --------------
-The RHS callable must accept two arguments: ``rhs(t: float, x: ndarray)``.
-If a legacy single-argument callable is passed, the helper ``eval_rhs``
-attempts the two-argument call first and falls back gracefully.
+The preferred RHS signature is ``rhs(t: float, x: ndarray)``. Legacy
+single-argument callables are normalized once by ``bind_rhs``; callback
+exceptions are never used to guess the callable signature.
 
 References
 ----------
@@ -41,6 +41,15 @@ import numpy as np
 from scipy.special import gamma
 from typing import Any, Callable, Dict, Tuple, Optional, List
 from .._rhs import bind_rhs
+from .._time_grid import checked_array_capacity, exact_fixed_step_count
+from ._history import (
+    validate_divergence_norm,
+    validate_equilibria,
+    validate_fractional_state_and_order,
+    validate_memory_policy,
+    validate_prehistory,
+    validate_rhs_result,
+)
 from .fractional_c import fractional_integrate
 
 
@@ -92,7 +101,8 @@ def _python_abm_integrate(
     h :
         Step size (seconds).
     t_final :
-        Integration end time.
+        Integration end time. It must contain an integer number of steps;
+        the solver never rounds the horizon upward.
     memory_mode :
         ``"full"`` — full Caputo history (s = 0).
         ``"window"`` — finite-memory approximation; retains
@@ -101,34 +111,69 @@ def _python_abm_integrate(
         Number of derivative samples to retain in window mode.
         Interpreted as an **integer sample count**, not a time duration.
     """
-    q = float(q)
     h = float(h)
     t_final = float(t_final)
-    n_steps = int(np.ceil(t_final / h))
+    x0_arr, q = validate_fractional_state_and_order(
+        x0,
+        q,
+        caller="_python_abm_integrate",
+        allow_integer_limit=True,
+    )
+    divergence_norm = validate_divergence_norm(
+        divergence_norm,
+        caller="_python_abm_integrate",
+    )
+    n_steps = exact_fixed_step_count(h, t_final, caller="_python_abm_integrate")
     bound_rhs = bind_rhs(rhs)
 
     def evaluate_rhs(time: float, state: np.ndarray) -> np.ndarray:
-        return np.asarray(bound_rhs(time, state), dtype=float)
+        # Invoke the callback outside the validator so its own exception and
+        # traceback remain intact.
+        value = bound_rhs(time, state)
+        return validate_rhs_result(
+            value,
+            dim=x0_arr.size,
+            caller="_python_abm_integrate",
+        )
 
     if memory_window_steps is None:
         if memory_window_length is not None:
-            memory_window_steps = int(memory_window_length)
+            memory_window_steps = memory_window_length
         elif memory_window_time is not None:
-            memory_window_steps = int(np.round(float(memory_window_time) / h))
+            memory_window_steps = exact_fixed_step_count(
+                h,
+                memory_window_time,
+                caller="_python_abm_integrate(memory_window_time)",
+            )
 
-    x0_arr = np.asarray(x0, dtype=float)
     dim = x0_arr.size
-
-    if history_times is not None and history_states is not None:
-        history_times = np.asarray(history_times, dtype=float)
-        history_states = np.asarray(history_states, dtype=float)
-        K = len(history_times)
-    else:
+    equilibria = validate_equilibria(
+        equilibria,
+        dim=dim,
+        caller="_python_abm_integrate",
+    )
+    memory_mode, memory_window_steps = validate_memory_policy(
+        memory_mode,
+        memory_window_steps,
+        caller="_python_abm_integrate",
+    )
+    history_times, history_states = validate_prehistory(
+        history_times,
+        history_states,
+        x0=x0_arr,
+        h=h,
+        caller="_python_abm_integrate",
+    )
+    if history_times is None:
         K = 1
         history_times = np.array([0.0])
         history_states = x0_arr.reshape(1, dim)
+    else:
+        K = len(history_times)
 
     total_steps = K + n_steps
+    checked_array_capacity((total_steps,), float, caller="_python_abm_integrate")
+    checked_array_capacity((total_steps, dim), float, caller="_python_abm_integrate")
     t_arr = np.zeros(total_steps, dtype=float)
     x_arr = np.zeros((total_steps, dim), dtype=float)
     f_arr = np.zeros((total_steps, dim), dtype=float)
@@ -196,11 +241,7 @@ def _python_abm_integrate(
 
         predictor = x_arr[s_idx] + pred_scale * (b_weights @ f_arr[s_idx: n + 1])
 
-        try:
-            fp = evaluate_rhs(t_n1, predictor)
-        except Exception as exc:
-            status = f"solver_exception:{exc}"
-            break
+        fp = evaluate_rhs(t_n1, predictor)
 
         # ── Corrector ─────────────────────────────────────────────────────
         # n_prime = n - s_idx (number of prior steps from the window anchor)
@@ -236,11 +277,7 @@ def _python_abm_integrate(
         x_arr[n + 1] = corrected
         t_arr[n + 1] = t_n1
 
-        try:
-            f_arr[n + 1] = evaluate_rhs(t_n1, corrected)
-        except Exception as exc:
-            status = f"solver_exception:{exc}"
-            break
+        f_arr[n + 1] = evaluate_rhs(t_n1, corrected)
 
         last_idx = n + 1
 
@@ -269,10 +306,7 @@ def _python_abm_integrate(
                 converged_eq_idx = -1
                 for k, eq in enumerate(equilibria):
                     diff_norm = np.linalg.norm(corrected - eq)
-                    try:
-                        deriv_norm = np.linalg.norm(evaluate_rhs(t_n1, corrected))
-                    except Exception:
-                        deriv_norm = 9999.0
+                    deriv_norm = np.linalg.norm(evaluate_rhs(t_n1, corrected))
 
                     if diff_norm < eq_t and deriv_norm < eq_deriv:
                         eq_consec_counts[k] += 1
@@ -316,19 +350,30 @@ def caputo_abm_integrate(
     """Integrate a Caputo FDE with the ABM predictor-corrector.
 
     For ``q == 1.0``, raises a ValueError because ABM is defined only for
-    fractional order q < 1.  Use Heun or EFORK_Q1 instead.
+    fractional order q < 1.  Use RK4 or EFORK_Q1 instead.
     """
     if q == 1.0:
         raise ValueError(
             "ABM integrator is only defined for fractional order q < 1. "
-            "For integer order q=1, use integrator='heun' or 'efork_q1'."
+            "For integer order q=1, use integrator='rk4' or 'efork_q1'."
         )
+
+    exact_fixed_step_count(h, t_final, caller="caputo_abm_integrate")
 
     if memory_window_steps is None:
         if memory_window_length is not None:
             memory_window_steps = int(memory_window_length)
         elif memory_window_time is not None:
-            memory_window_steps = int(np.round(float(memory_window_time) / h))
+            memory_window_steps = exact_fixed_step_count(
+                h,
+                memory_window_time,
+                caller="caputo_abm_integrate(memory_window_time)",
+            )
+
+    divergence_norm = validate_divergence_norm(
+        divergence_norm,
+        caller="caputo_abm_integrate",
+    )
 
     # Fractional path: normalize rhs to rhs(t, x) once, without using callback
     # exceptions to guess arity.
@@ -351,7 +396,7 @@ def caputo_abm_integrate(
         history_states=history_states,
         system=system,
         use_c_backend=use_c_backend,
-        divergence_norm=divergence_norm if divergence_norm is not None else 120.0,
+        divergence_norm=divergence_norm,
         return_history=True,
         allow_python_fallback=True,
         early_stop_config=early_stop_config,

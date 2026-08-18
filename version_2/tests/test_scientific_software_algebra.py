@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import importlib
 import json
 from pathlib import Path
 from types import SimpleNamespace
@@ -87,6 +88,19 @@ def test_solve_equilibria_substitution_and_symmetry_for_both_chua_models() -> No
         assert np.allclose(equilibria["E-"], -equilibria["E+"], atol=1.0e-12, rtol=0.0)
         for state in equilibria.values():
             assert np.linalg.norm(rhs(state, parameters)) < 1.0e-8
+
+
+def test_solve_equilibria_reports_root_solver_failure(monkeypatch: pytest.MonkeyPatch) -> None:
+    module = importlib.import_module("hidden_attractors.verification.equilibria")
+    monkeypatch.setattr(
+        module,
+        "root_scalar",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(RuntimeError("root failed")),
+    )
+    with pytest.warns(RuntimeWarning, match="root solver failed.*RuntimeError: root failed"):
+        result = module.solve_equilibria(get_system("fractional-chua-arctan-wu2023"))
+    assert set(result) == {"E0"}
+    np.testing.assert_array_equal(result["E0"], np.zeros(3))
 
 
 def test_compute_jacobian_matches_regional_and_smooth_reference_formulas() -> None:

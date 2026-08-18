@@ -1,4 +1,4 @@
-"""Benchmark the integer-order CLV NumPy and warmed-Numba backends.
+"""Benchmark integer-order CLV backends on synthetic tangent histories.
 
 The benchmark builds deterministic, dynamically consistent positive-diagonal
 QR histories from constant nonnormal linear maps.  Backend parity is enforced
@@ -467,7 +467,7 @@ def _native_c_assessment(records: Sequence[dict[str, object]]) -> dict[str, obje
             "It cannot establish that C would outperform warmed Numba."
         ),
         "evidence_required_before_adding_c": (
-            "Profile representative production systems first. If backward CLV "
+            "Profile representative application systems first. If backward CLV "
             "reconstruction remains a material residual bottleneck, benchmark an "
             "independently verified C candidate with compilation separated, exact "
             "parity gates, multiple dimensions/horizons, and repeated end-to-end "

@@ -12,20 +12,20 @@ def run_integer_continuation(
     t_transient: float = 30.0,
     t_keep: float = 30.0,
     div_threshold: float = 120.0,
-    integrator: str = "efork_q1",
+    integrator: str = "rk4",
     early_stop_config: Optional[Dict] = None,
     equilibria: Optional[List[np.ndarray]] = None,
 ) -> List[Dict[str, Any]]:
     """Execute integer-order parameter continuation for parameter eta (lambda_values)."""
     if integrator == "abm":
-        raise ValueError("ABM is not available for integer continuation q=1. Use 'efork_q1' or 'heun'.")
-    if integrator not in {"efork_q1", "efork3", "efork", "heun"}:
-        raise ValueError(f"Invalid integrator '{integrator}' for integer continuation q=1. Must be one of {{'efork_q1', 'efork3', 'efork', 'heun'}}.")
+        raise ValueError("ABM is not available for integer continuation q=1. Use 'rk4' or 'efork_q1'.")
+    if integrator not in {"rk4", "efork_q1", "efork3", "efork"}:
+        raise ValueError(f"Invalid integrator '{integrator}' for integer continuation q=1. Must be one of {{'rk4', 'efork_q1', 'efork3', 'efork'}}.")
 
     if integrator in {"efork", "efork3", "efork_q1"}:
         eff_integrator = "efork_q1"
     else:
-        eff_integrator = "heun"
+        eff_integrator = "rk4"
 
     x_in = np.asarray(seed_x0, dtype=float).copy()
     steps: List[Dict[str, Any]] = []

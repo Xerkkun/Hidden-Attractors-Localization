@@ -188,8 +188,9 @@ como adaptación propia. Las rutas tipo I/II y la aceleración por bloques de Fa
 siguen pendientes. Para orden distribuido debe separarse el error de cuadratura
 en orden del error temporal.
 
-La promoción a `experimental` se apoyó en las fuentes primarias localizadas y en
-pruebas locales, no en el resumen de SciSpace. El oráculo independiente
+El cierre de implementación como `implemented` y la conservación de la API como
+`experimental` se apoyaron en las fuentes primarias localizadas y en pruebas
+locales, no en el resumen de SciSpace. El oráculo independiente
 `variable_order_caputo_type3_l1.wl` derivó los pesos por integración simbólica y
 reconstruyó una recurrencia sin leer HAFO: residuo simbólico cero, diferencia
 máxima Wolfram--HAFO `1.5543122344752192e-15` y diferencia de trayectoria
@@ -233,8 +234,9 @@ adaptaciones declaradas. Los teoremas publicados para problemas lineales de
 difusión no se extienden a Chua ni a ocultedad. Los errores temporal y de
 cuadratura permanecen separados y no se estiman automáticamente.
 
-La promoción local a `experimental` se cerró con 86 casos directos y 6 pruebas
-Wolfram. El oráculo deriva los pesos mediante `Integrate`, no lee HAFO y resuelve
+El cierre local como `implemented`, con API todavía `experimental`, se completó
+con 86 casos directos y 6 pruebas Wolfram. El oráculo deriva los pesos mediante
+`Integrate`, no lee HAFO y resuelve
 una recurrencia lineal afín: residuo simbólico, residuo discreto y error afín
 `0`; diferencia máxima Wolfram--HAFO `1.5543122344752192e-15` frente a tolerancia
 `8e-12`. Es consistencia finita de implementación, no una extensión de los
@@ -476,8 +478,8 @@ Los resultados 2025--2026 localizados para L1 corregido, mallas no uniformes y
 evaluación rápida fortalecen el backlog de singularidad inicial e historia
 comprimida, pero no reemplazan el núcleo BDF verificado. En particular, un
 método antiguo sigue retenido cuando su álgebra continúa siendo la base del
-algoritmo actual. La promoción a `experimental` se apoya además en reducción
-exacta para `lambda=0`, solapamiento BDF1--GL, refinamiento manufacturado,
+algoritmo actual. El cierre como `implemented`, con API aún `experimental`, se
+apoya además en reducción exacta para `lambda=0`, solapamiento BDF1--GL, refinamiento manufacturado,
 paridad Python/Numba/FFT y un oráculo Wolfram independiente de 80 dígitos; no
 en el resumen de SciSpace por sí solo.
 
@@ -511,8 +513,8 @@ de la malla finita. El teorema de trapecio exponencial de Trefethen--Weideman,
 aproximación real, pero HAFO no inventa sus constantes de franja analítica:
 reporta una verificación a posteriori de compresión, no una cota CQ/FDE.
 
-La promoción a `experimental` depende de pruebas directas Python/Numba,
-reducciones enteras, ejemplo Chua sólo como postprocesamiento y un oráculo
+El cierre como `implemented`, conservando la API `experimental`, depende de
+pruebas directas Python/Numba, reducciones enteras, ejemplo Chua sólo como postprocesamiento y un oráculo
 Wolfram independiente de 80 dígitos que pasó 13/13 aserciones. El detalle
 matemático y los límites de evidencia están en
 [Fast Recurrent Tempered Multistep History](tempered_fast_multistep_history.md).

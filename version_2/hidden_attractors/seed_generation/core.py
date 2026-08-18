@@ -20,6 +20,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from .._numeric import bisect_root as _bisect_root
+
 
 real_dtype = np.float64
 complex_dtype = np.complex128
@@ -176,42 +178,6 @@ def fractional_iomega_power(omega: float, q: float) -> complex:
         raise ValueError("omega must be positive and finite.")
     q_value = validate_fractional_order(q)
     return complex_dtype((w**q_value) * np.exp(1j * np.pi * q_value / 2.0))
-
-
-# ── Private shared helpers ──────────────────────────────────────────────────
-
-def _bisect_root(
-    func,
-    left: float,
-    right: float,
-    *,
-    maxiter: int = 100,
-    xtol: float = 1.0e-12,
-) -> float:
-    """Small dependency-free scalar bisection helper."""
-
-    lo = float(left)
-    hi = float(right)
-    flo = float(func(lo))
-    fhi = float(func(hi))
-    if flo == 0.0:
-        return lo
-    if fhi == 0.0:
-        return hi
-    if flo * fhi > 0.0:
-        raise ValueError("root is not bracketed.")
-    for _ in range(int(maxiter)):
-        mid = 0.5 * (lo + hi)
-        fmid = float(func(mid))
-        if abs(fmid) <= xtol or abs(hi - lo) <= xtol:
-            return mid
-        if flo * fmid <= 0.0:
-            hi = mid
-            fhi = fmid
-        else:
-            lo = mid
-            flo = fmid
-    return 0.5 * (lo + hi)
 
 
 def _solve_scalar_gain(

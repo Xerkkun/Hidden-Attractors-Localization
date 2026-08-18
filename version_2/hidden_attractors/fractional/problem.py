@@ -743,6 +743,41 @@ def _bind_rhs(rhs: Callable, parameters: Any) -> Callable[[float, np.ndarray], n
     return bound
 
 
+def _build_fractional_problem_result(
+    *,
+    problem: FractionalProblem,
+    times: Any,
+    states: Any,
+    status: Any,
+    backend: str,
+    backend_info: dict[str, Any],
+    divergence_norm: float | None,
+    parameters: Any,
+) -> FractionalProblemResult:
+    """Build the immutable result and its serializable provenance metadata."""
+
+    metadata = problem.as_metadata()
+    metadata["backend"] = backend
+    metadata["backend_info"] = _metadata_copy(
+        backend_info,
+        path="backend_info",
+    )
+    metadata["status"] = str(status)
+    metadata["divergence_norm"] = divergence_norm
+    metadata["rhs_parameters"] = _metadata_copy(
+        parameters,
+        path="rhs_parameters",
+    )
+    return FractionalProblemResult(
+        times=np.asarray(times, dtype=float),
+        states=np.asarray(states, dtype=float),
+        status=str(status),
+        backend=backend,
+        problem=problem,
+        metadata=MappingProxyType(metadata),
+    )
+
+
 def solve_fractional_problem(
     problem: FractionalProblem,
     rhs: Callable,
@@ -1163,25 +1198,15 @@ def solve_fractional_problem(
             f"Method {problem.method!r} is an operator or registry entry without a solver dispatcher."
         )
 
-    metadata = problem.as_metadata()
-    metadata["backend"] = backend
-    metadata["backend_info"] = _metadata_copy(
-        backend_info,
-        path="backend_info",
-    )
-    metadata["status"] = str(status)
-    metadata["divergence_norm"] = divergence_norm
-    metadata["rhs_parameters"] = _metadata_copy(
-        parameters,
-        path="rhs_parameters",
-    )
-    return FractionalProblemResult(
-        times=np.asarray(times, dtype=float),
-        states=np.asarray(states, dtype=float),
-        status=str(status),
-        backend=backend,
+    return _build_fractional_problem_result(
         problem=problem,
-        metadata=MappingProxyType(metadata),
+        times=times,
+        states=states,
+        status=status,
+        backend=backend,
+        backend_info=backend_info,
+        divergence_norm=divergence_norm,
+        parameters=parameters,
     )
 
 

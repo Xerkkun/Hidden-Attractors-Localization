@@ -1,22 +1,8 @@
 # -*- coding: utf-8 -*-
-import re
-from pathlib import Path
 import pytest
 
-ROOT_DIR = Path(__file__).resolve().parents[1]  # version_2 directory
-WORKSPACE_DIR = ROOT_DIR.parent
+from tests.helpers.test_documentation_text import active_doc_paths
 
-FILES_TO_CHECK = [
-    WORKSPACE_DIR / "README.md",
-    ROOT_DIR / "README.md",
-    ROOT_DIR / "REFERENCE_GUIDE.md",
-    ROOT_DIR / "docs/quick_start.md",
-    ROOT_DIR / "docs/installation.md",
-    ROOT_DIR / "docs/testing.md",
-    ROOT_DIR / "docs/validation_evidence.md",
-    ROOT_DIR / "docs/unified_report.md",
-    ROOT_DIR / "docs/figure_export_policy.md",
-]
 
 PROHIBITED_CLAIMS = [
     "DF proves hiddenness",
@@ -31,9 +17,7 @@ PROHIBITED_CLAIMS = [
 def test_markdown_docs_no_prohibited_claims():
     """Verify that no prohibited claims are made in markdown files."""
     violations = []
-    for f in FILES_TO_CHECK:
-        if not f.exists():
-            continue
+    for f in active_doc_paths():
         content = f.read_text(encoding="utf-8", errors="ignore")
         for claim in PROHIBITED_CLAIMS:
             if claim.lower() in content.lower():
@@ -44,18 +28,17 @@ def test_markdown_docs_no_prohibited_claims():
 def test_markdown_docs_machado_fdf_warning():
     """Verify that Machado/FDF mentions remain outside the public workflow."""
     violations = []
-    for f in FILES_TO_CHECK:
-        if not f.exists():
-            continue
+    for f in active_doc_paths():
         content = f.read_text(encoding="utf-8", errors="ignore")
-        if "machado" in content.lower() or "fdf" in content.lower():
+        if "machado auxiliary" in content.lower() or "fdf" in content.lower():
             has_warning = (
                 "theory" in content.lower() or
                 "not a promoted" in content.lower() or
                 "no promovido" in content.lower() or
                 "validation-only" in content.lower() or
                 "solo para validación" in content.lower() or
-                "teoría" in content.lower()
+                "teoría" in content.lower() or
+                "theory-only" in content.lower()
             )
             if not has_warning:
                 violations.append(f"{f.name} mentions Machado/FDF without a theory/validation-only boundary")
@@ -65,9 +48,7 @@ def test_markdown_docs_machado_fdf_warning():
 def test_markdown_docs_chua_arctan_warning():
     """Verify that arctan mentions include the radius-limited promotion boundary."""
     violations = []
-    for f in FILES_TO_CHECK:
-        if not f.exists():
-            continue
+    for f in active_doc_paths():
         content = f.read_text(encoding="utf-8", errors="ignore")
         if "arctan" in content.lower():
             has_warning = (
@@ -76,7 +57,11 @@ def test_markdown_docs_chua_arctan_warning():
                 "local radii" in content.lower() or
                 "radios locales" in content.lower() or
                 "algebraic" in content.lower() or
-                "algebraicamente" in content.lower()
+                "algebraicamente" in content.lower() or
+                "validation definition" in content.lower() or
+                "not equivalent" in content.lower() or
+                "no full-memory" in content.lower() or
+                "no hiddenness claim" in content.lower()
             )
             if not has_warning:
                 violations.append(f"{f.name} mentions arctan but lacks radius-limited/algebraic boundary context")

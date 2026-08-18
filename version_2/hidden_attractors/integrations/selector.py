@@ -9,7 +9,7 @@ compatible with the fractional order ``q``.
 Rules
 -----
 - q == 1.0 + abm           → ValueError  (ABM requires 0 < q < 1)
-- q < 1.0  + rk4/heun      → ValueError  (RK4/Heun require integer order)
+- q < 1.0  + rk4           → ValueError  (RK4 requires integer order)
 - q < 1.0  + efork_q1      → ValueError  (efork_q1 is the q=1 limit)
 - q == 1.0 + efork3        → UserWarning + redirect to efork_q1
 - q < 1.0  + adm_wu2023    → compatibility-valid, but the generic
@@ -17,7 +17,7 @@ Rules
                               to the specialized ``adm_wu2023_integrate`` API
 - q < 1.0  + efork3        → allowed
 - q < 1.0  + abm           → allowed
-- q == 1.0 + rk4/heun/efork_q1 → allowed
+- q == 1.0 + rk4/efork_q1  → allowed
 """
 
 from __future__ import annotations
@@ -38,13 +38,16 @@ from .._rhs import bind_rhs
 _FRACTIONAL_INTEGRATORS = {"abm", "efork3", "efork", "adm_wu2023"}
 
 # Set of integrator names valid for q == 1 (integer-order)
-_INTEGER_INTEGRATORS = {"rk4", "heun", "efork_q1", "efork3", "efork"}
+_INTEGER_INTEGRATORS = {"rk4", "efork_q1", "efork3", "efork"}
 
 # Integrators that are ONLY for fractional order (fail at q=1)
 _FRACTIONAL_ONLY = {"abm", "adm_wu2023"}
 
 # Integrators that are ONLY for integer order (fail at q<1)
-_INTEGER_ONLY = {"rk4", "heun", "efork_q1"}
+_INTEGER_ONLY = {"rk4", "efork_q1"}
+
+_KNOWN_INTEGRATORS = _FRACTIONAL_INTEGRATORS | _INTEGER_INTEGRATORS
+
 
 def _canonical_name(integrator: str) -> str:
     """Normalize integrator names for internal dispatch."""
@@ -102,6 +105,12 @@ def validate_integrator_compatibility(integrator: str, q: float) -> str:
     name = _canonical_name(integrator)
     normalized_q = normalize_fractional_order(q)
 
+    if name not in _KNOWN_INTEGRATORS:
+        raise ValueError(
+            f"Unknown integrator {integrator!r}. Supported integrators are "
+            f"{sorted(_KNOWN_INTEGRATORS)}."
+        )
+
     is_integer = normalized_q == 1.0
 
     if is_integer:
@@ -109,13 +118,12 @@ def validate_integrator_compatibility(integrator: str, q: float) -> str:
         if name in _FRACTIONAL_ONLY:
             raise ValueError(
                 f"Integrator '{integrator}' requires q < 1 (fractional Caputo). "
-                f"Got q={q}. Use 'rk4', 'heun', or 'efork_q1' for integer-order systems."
+                f"Got q={q}. Use 'rk4' or 'efork_q1' for integer-order systems."
             )
         if name in ("efork3",):
             warnings.warn(
                 f"Integrator 'efork3' at q=1.0 redirects to the integer-order "
-                f"'efork_q1' limit. For pure integer-order work, prefer 'rk4' or "
-                f"'heun' which are simpler and faster.",
+                f"'efork_q1' limit. For pure integer-order work, prefer 'rk4'.",
                 UserWarning,
                 stacklevel=3,
             )
@@ -171,9 +179,10 @@ def integrate(
     h : float
         Step size.
     t_final : float
-        Integration end time.
+        Integration end time. ``t_final / h`` must be an integer to numerical
+        tolerance; fixed-step solvers never overshoot the requested horizon.
     integrator : str
-        One of 'rk4', 'heun', 'efork_q1', 'efork3', or 'abm'.
+        One of 'rk4', 'efork_q1', 'efork3', or 'abm'.
         ``adm_wu2023`` has a different parameter contract and must be called
         through
         :func:`hidden_attractors.integrations.adm_wu2023_integrate`.

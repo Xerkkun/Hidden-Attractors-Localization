@@ -1,8 +1,9 @@
 # User Manual
 
-This manual covers the installed `hidden-attractors-fo` 1.1.0 library, its
-validated example, runtime paths, and numerical evidence boundaries. It does
-not extend beyond the current validation-backed public capabilities.
+This manual covers the installed `hidden-attractors-fo` 1.2.0 library, the
+example shipped in the source distribution, runtime paths, and numerical
+evidence boundaries. It does not extend beyond the current validation-backed
+public capabilities.
 
 ## 1. Purpose and scientific scope
 
@@ -69,13 +70,16 @@ not expected to run from a wheel alone.
 From that matching tagged checkout, validate its recorded contract with:
 
 ```bash
-hidden-attractors validate contract
+hidden-attractors validate contract \
+  --contract configs/validation_contract.json \
+  --validation-root validation
 ```
 
 ## 4. Validated end-to-end example
 
-The distributed comprehensive example is the integer-order Chua Lur'e
-reference/control:
+The repository and source distribution contain the integer-order Chua Lur'e
+reference/control below. The wheel does not install the `examples/` tree; use a
+tagged checkout or source archive to run it.
 
 ```bash
 python examples/chua_integer_lure_reference/run_example.py --quick
@@ -120,6 +124,11 @@ times, states, status = integrate(
 )
 ```
 
+The fixed-step RK4, ABM, and EFORK facades require ``t_final / h`` to be an
+integer within floating-point tolerance. They reject a non-aligned horizon
+instead of silently integrating past it; for example, ``0.9 / 0.3`` is
+accepted while ``1.0 / 0.3`` is rejected.
+
 Stable and experimental exports are distinguished by the API-tier metadata.
 Experimental diagnostics return structured provenance and must retain their
 documented evidence boundary.
@@ -135,7 +144,7 @@ The public surface includes:
 - equation-based integer and fractional Lyapunov estimators; and
 - scalar-time-series Lyapunov reconstruction.
 
-Version 1.1.0 fully integrates the scalar-series route through
+The current 1.2.0 surface includes the scalar-series route through
 `estimate_time_series_lyapunov`. Install the optional backend and call:
 
 ```bash
@@ -166,7 +175,7 @@ The equations, exact discretization boundaries, validation states, and
 ready-to-use calls for trajectory metrics, boundedness, FFT, the library's
 Welch scaling, Poincare sections, the 0--1 test, bifurcation
 post-processing, equation-based and scalar-series Lyapunov methods,
-complexity adapters, RK4, Heun, ABM, EFORK-3, and ADM are documented in:
+complexity adapters, RK4, ABM, EFORK-3, and ADM are documented in:
 
 - [`docs/mathematical_diagnostics.md`](docs/mathematical_diagnostics.md)
 
@@ -202,8 +211,10 @@ Generated files are written under `./outputs` by default. Set an explicit
 location when required:
 
 ```powershell
-$env:HIDDEN_ATTRACTORS_OUTPUT_DIR = "C:\tmp\hidden-attractors-output"
-$env:HIDDEN_ATTRACTORS_CACHE_DIR = "C:\tmp\hidden-attractors-cache"
+$hafoOutput = Join-Path $env:TEMP "hidden-attractors-output"
+$hafoCache = Join-Path $env:TEMP "hidden-attractors-cache"
+$env:HIDDEN_ATTRACTORS_OUTPUT_DIR = $hafoOutput
+$env:HIDDEN_ATTRACTORS_CACHE_DIR = $hafoCache
 ```
 
 On POSIX shells:

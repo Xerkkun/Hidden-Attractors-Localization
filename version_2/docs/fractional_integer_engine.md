@@ -1,7 +1,8 @@
 # Motor unificado entero y fraccionario de HAFO
 
-Estado: núcleo experimental ejecutable. No constituye por sí mismo evidencia de
-caos, atracción u ocultedad.
+Estado de implementación: las rutas ejecutables registradas están
+`implemented`; la estabilidad de su API continúa siendo `experimental`. Esto no
+constituye por sí mismo evidencia de caos, atracción u ocultedad.
 
 ## Decisión de arquitectura
 
@@ -21,8 +22,9 @@ La frontera numérica es:
 | Matrices pequeñas SALI/GALI/LDI | NumPy/LAPACK de referencia y Numba/Householder caliente | C queda diferido hasta que un benchmark de ensambles demuestre ventaja; Julia sólo compara trayectorias completas. |
 | Catálogos avanzados de análisis | JuliaCall opcional | Una llamada gruesa por trayectoria; nunca una llamada Julia por paso del solver. |
 
-El documento [matriz upstream](upstream_function_matrix.md) contiene la auditoría
-función por función y las fronteras de licencia.
+El [alcance científico](scientific_scope.md) y el catálogo de esta sección fijan
+la arquitectura pública sin convertir comparaciones de bibliotecas en promesas
+de equivalencia.
 
 ## Contrato matemático
 
@@ -64,23 +66,23 @@ silenciosamente `t_span` ni modifica el paso solicitado.
 | --- | --- | --- | --- |
 | Caputo | ABM/PECE | implementado | Solver de trayectoria; historia completa o ventana declarada. |
 | Caputo | EFORK-3 | implementado | Solver conmensurado; memoria completa o finita. |
-| Caputo/GL | recurrencia GL explícita | experimental | Solver discreto con inicialización `caputo_shifted` o `discrete_gl`. |
-| GL / Riemann–Liouville | convolución directa | implementado/experimental | Operador muestreado; no convierte `x(t0)` en dato inicial RL. |
-| Riemann–Liouville templada | GL templada | experimental | Conjugación exponencial sin corrección oculta; no es Caputo templada. |
-| Caputo templada | conjugación exponencial + ABM/PECE amortiguado | experimental | Solver conmensurado en estado físico; historia completa o ventana declarada, con ruta C/Python. |
-| GL de orden variable | GL directa con `q(t_n)` | experimental | Convención concreta; otras definiciones de orden variable no son equivalentes. |
-| Caputo de orden variable tipo III | L1 implícito + corrector Picard | experimental | Solver con orden temporal prescrito, historia completa `O(N²)`, suma Numba/Python y fallo estructurado. |
-| Orden distribuido | cuadratura en orden + GL en tiempo | experimental | Operador con doble discretización, pesos y densidad explícitos. |
-| Caputo multitérmino | fachada semántica + kernel L1 combinado | experimental | Suma finita atómica con coeficientes no negativos sin normalización; reutiliza el solver distribuido y conserva el límite backward Euler. |
-| Hadamard / Caputo--Hadamard | CQ BDF1/BDF2 en `log(t/a)` | experimental | Operador en malla física exponencial; terminal `a>0`, sin solver FDE. |
-| Caputo--Hadamard | ABM/PECE en `log(t/a)` | experimental | Solver conmensurado de historia completa; malla física no uniforme. |
-| Conformable de Khalil | reescalamiento de `f'(t)` | experimental | Operador local, sin memoria hereditaria. |
-| Conformable de Khalil | RK4 en `tau=(t-a)^q/q` | experimental | Solver local conmensurado; paso uniforme en reloj conformable y malla física no uniforme. |
+| Caputo/GL | recurrencia GL explícita | implementado | Solver discreto con inicialización `caputo_shifted` o `discrete_gl`. |
+| GL / Riemann–Liouville | convolución directa | implementado | Operador muestreado; no convierte `x(t0)` en dato inicial RL. |
+| Riemann–Liouville templada | GL templada | implementado | Conjugación exponencial sin corrección oculta; no es Caputo templada. |
+| Caputo templada | conjugación exponencial + ABM/PECE amortiguado | implementado | Solver conmensurado en estado físico; historia completa o ventana declarada, con ruta C/Python. |
+| GL de orden variable | GL directa con `q(t_n)` | implementado | Convención concreta; otras definiciones de orden variable no son equivalentes. |
+| Caputo de orden variable tipo III | L1 implícito + corrector Picard | implementado | Solver con orden temporal prescrito, historia completa `O(N²)`, suma Numba/Python y fallo estructurado. |
+| Orden distribuido | cuadratura en orden + GL en tiempo | implementado | Operador con doble discretización, pesos y densidad explícitos. |
+| Caputo multitérmino | fachada semántica + kernel L1 combinado | implementado | Suma finita atómica con coeficientes no negativos sin normalización; reutiliza el solver distribuido y conserva el límite backward Euler. |
+| Hadamard / Caputo--Hadamard | CQ BDF1/BDF2 en `log(t/a)` | implementado | Operador en malla física exponencial; terminal `a>0`, sin solver FDE. |
+| Caputo--Hadamard | ABM/PECE en `log(t/a)` | implementado | Solver conmensurado de historia completa; malla física no uniforme. |
+| Conformable de Khalil | reescalamiento de `f'(t)` | implementado | Operador local, sin memoria hereditaria. |
+| Conformable de Khalil | RK4 en `tau=(t-a)^q/q` | implementado | Solver local conmensurado; paso uniforme en reloj conformable y malla física no uniforme. |
 | Caputo–Fabrizio | recurrencia exponencial exacta por intervalo | `research_required` | Operador de datos; normalización explícita y sin solver FDE promovido. |
-| Atangana–Baleanu–Caputo | convolución por intervalos lineales | experimental | Operador de datos para `0<q<=1/2`; normalización explícita, Python/Numba/FFT y validación Wolfram finita. |
-| Atangana–Baleanu–Caputo | predictor--corrector de Lee--Kim--Jang | experimental | Solver conmensurado para `0<q<1`, compatibilidad inicial e historia completa `O(N²)`; no SOE. |
-| RL / Caputo templada | CQ BDF1/BDF2 directa o FFT | experimental | Operador muestral por conjugación, no solver; conserva ancla y pesos explícitos. |
-| RL / Caputo templada | Fast Method II FBDF1/GNGF2 | experimental | Ventana exacta y cola recurrente real con tolerancia de compresión finita; GNGF2 no es BDF2 fraccionario. |
+| Atangana–Baleanu–Caputo | convolución por intervalos lineales | implementado | Operador de datos para `0<q<=1/2`; normalización explícita, Python/Numba/FFT y validación Wolfram finita. |
+| Atangana–Baleanu–Caputo | predictor--corrector de Lee--Kim--Jang | implementado | Solver conmensurado para `0<q<1`, compatibilidad inicial e historia completa `O(N²)`; no SOE. |
+| RL / Caputo templada | CQ BDF1/BDF2 directa o FFT | implementado | Operador muestral por conjugación, no solver; conserva ancla y pesos explícitos. |
+| RL / Caputo templada | Fast Method II FBDF1/GNGF2 | implementado | Ventana exacta y cola recurrente real con tolerancia de compresión finita; GNGF2 no es BDF2 fraccionario. |
 | RL / Caputo templada | CQ por símbolo desplazado y correcciones de arranque | planificado | Ruta adicional; no sustituye al ABM templado ni comparte silenciosamente los pesos de conjugación. |
 
 El [catálogo de métodos](fractional_method_catalog.md) documenta fórmulas,
@@ -170,7 +172,9 @@ implícito se resuelve por Picard y reporta tolerancias, iteraciones y
 `corrector_nonconvergence`. Una declaración `smooth` activa el chequeo
 `f(a,x0)=0`; `nonsmooth` no hereda la tasa L1 suave. El método se ejecuta también
 mediante `FractionalProblem(derivative="caputo_variable_type3",
-method="vo_caputo_type3_l1", ..., allow_experimental=True)`.
+method="vo_caputo_type3_l1", ...)`. El campo heredado
+`allow_experimental` se conserva por compatibilidad, pero no es necesario para
+las rutas actualmente clasificadas como `implemented`.
 
 `conformable_khalil_derivative` calcula
 `(t-a)**(1-q) * f'(t)` sobre una derivada ordinaria conocida. Exige una política
@@ -256,8 +260,9 @@ La ruta cuesta `O(d*N**2)` y almacena `O(d*N)` valores históricos. Un test de
 refinamiento observa orden dos en un problema escalar cuadrático suave; las
 pruebas manufacturadas y la paridad Numba--Python comprueban casos finitos, pero
 no establecen ese orden para Chua no suave, estabilidad global, caos, atracción
-ni ocultedad. La definición permanece experimental y se documenta junto con la
-crítica de Diethelm--Garrappa--Giusti--Stynes a kernels no singulares.
+ni ocultedad. La implementación está clasificada como `implemented`; su API
+permanece `experimental` y se documenta junto con la crítica de
+Diethelm--Garrappa--Giusti--Stynes a kernels no singulares.
 
 ### Hadamard y Caputo--Hadamard
 
@@ -265,8 +270,9 @@ crítica de Diethelm--Garrappa--Giusti--Stynes a kernels no singulares.
 BDF1/BDF2 sobre una malla uniforme en `u`. En tiempo físico la malla es
 exponencial y el operador entero límite es `t*d/dt`, no `d/dt`. La ruta cruda y
 la desplazada Caputo--Hadamard tienen tokens iniciales distintos. Python, Numba
-y FFT comparten los pesos canónicos; faltan correcciones de arranque, por lo que
-esta API permanece como operador `experimental`.
+y FFT comparten los pesos canónicos. La implementación está clasificada como
+`implemented`; la API permanece `experimental` y siguen faltando correcciones
+de arranque.
 
 `integrate_caputo_hadamard_abm` proporciona una vía distinta de solver:
 transforma el IVP a Caputo en `u` y usa ABM/PECE de historia completa. Exige
@@ -349,10 +355,10 @@ estado `research_required`, porque cada operador no local necesita una
 ecuación variacional y una norma/renormalización en espacio de historia. Véase
 [SALI, GALI y LDI enteros](sali_gali_integer.md).
 
-La cuadratura de convolución de Lubich BDF1/BDF2 ya está disponible como operador
+La cuadratura de convolución de Lubich BDF1/BDF2 está implementada como operador
 muestreado en `hidden_attractors.fractional.convolution_quadrature`, con rutas
-directas Python/Numba y FFT. No incluye correcciones de arranque ni resuelve una
-FDE; por ello permanece `experimental`.
+directas Python/Numba y FFT. Su promoción no amplía el contrato: no incluye
+correcciones de arranque ni resuelve una FDE.
 
 La misma infraestructura se reutiliza para Hadamard/Caputo--Hadamard únicamente
 después de transformar a tiempo logarítmico. Este reúso elimina duplicación

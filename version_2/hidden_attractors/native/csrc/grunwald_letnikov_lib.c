@@ -30,6 +30,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "native_validation.h"
+
 #if defined(_WIN32) || defined(__CYGWIN__)
   #define HAFO_GL_EXPORT __declspec(dllexport)
 #else
@@ -66,7 +68,7 @@ HAFO_GL_EXPORT int hafo_gl_openmp_enabled(void) {
 }
 
 static int valid_order(double order) {
-    return isfinite(order) && order > 0.0 && order <= 1.0;
+    return hafo_isfinite(order) && order > 0.0 && order <= 1.0;
 }
 
 HAFO_GL_EXPORT int hafo_gl_weights(
@@ -130,7 +132,7 @@ static int apply_gl_history(
     if (scale_as_derivative != 0 && scale_as_derivative != 1) {
         return HAFO_GL_INVALID_MODE;
     }
-    if (scale_as_derivative && (!isfinite(step) || !(step > 0.0))) {
+    if (scale_as_derivative && (!hafo_isfinite(step) || !(step > 0.0))) {
         return HAFO_GL_INVALID_STEP;
     }
 
@@ -143,7 +145,7 @@ static int apply_gl_history(
         }
     }
     for (sample_index = 0u; sample_index < n_times * dimension; ++sample_index) {
-        if (!isfinite(samples[sample_index])) {
+        if (!hafo_isfinite(samples[sample_index])) {
             return HAFO_GL_NONFINITE_INPUT;
         }
     }
@@ -177,7 +179,7 @@ static int apply_gl_history(
             ? pow(step, -order)
             : 1.0;
 
-        if (!isfinite(scale)) {
+        if (!hafo_isfinite(scale)) {
             free(weights);
             free(scales);
             return HAFO_GL_NONFINITE_INPUT;

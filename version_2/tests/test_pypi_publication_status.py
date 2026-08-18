@@ -31,7 +31,7 @@ def test_archive_manifest_records_a_closed_coherent_publication_state() -> None:
     readiness = manifest["pypi_readiness"]
     version = _project_version()
 
-    assert version == "1.1.0"
+    assert version == "1.2.0"
     assert readiness["package_name"] == "hidden-attractors-fo"
     assert readiness["version"] == readiness["target_version"] == manifest["version"] == version
     assert manifest["release_tag"] == f"v{version}"
@@ -58,8 +58,8 @@ def test_release_docs_match_the_recorded_publication_state() -> None:
         VERSION_ROOT / "release_package" / "SAMPLE_RUN.md",
     ]
     false_claims = (
-        "1.1.0 is published",
-        "version 1.1.0 is published",
+        "1.2.0 is published",
+        "version 1.2.0 is published",
         "pypi status: published",
         '"publication_status": "published"',
     )
@@ -79,14 +79,19 @@ def test_release_docs_match_the_recorded_publication_state() -> None:
 def test_publish_workflow_uses_guarded_ref_protected_environment_and_scoped_oidc() -> None:
     workflow = (REPO_ROOT / ".github" / "workflows" / "publish-pypi.yml").read_text(encoding="utf-8")
 
-    assert "Require an authorized version-matched release ref" in workflow
-    assert 'refs/heads/release/v1.1.0' in workflow
-    assert 'version != "1.1.0"' in workflow
-    assert 'git rev-parse origin/main' in workflow
+    assert "Require an exact version-matched tag and commit" in workflow
+    assert 'if not ref.startswith("refs/tags/")' in workflow
+    assert 'tag != f"v{version}"' in workflow
+    assert 'git rev-parse "${tag}^{commit}"' in workflow
+    assert 'test "$(git rev-parse HEAD)" = "$GITHUB_SHA"' in workflow
+    assert 'refs/heads/release/' not in workflow
     assert "environment:\n      name: pypi" in workflow
     assert workflow.count("id-token: write") == 1
 
     verify_text, publish_text = workflow.split("\n  publish:", maxsplit=1)
     assert "id-token: write" not in verify_text
     assert "id-token: write" in publish_text
-    assert "pypa/gh-action-pypi-publish@release/v1" in publish_text
+    assert (
+        "pypa/gh-action-pypi-publish@"
+        "dc37677b2e1c63e2034f94d8a5b11f265b73ba33"
+    ) in publish_text

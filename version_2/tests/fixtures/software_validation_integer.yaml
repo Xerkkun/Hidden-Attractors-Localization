@@ -23,7 +23,7 @@ modes:
   dynamics_mode: "system"
 
 integrator:
-  name: "heun"
+  name: "rk4"
   h: 0.01
   memory_mode: "none"
   memory_policy: "none"

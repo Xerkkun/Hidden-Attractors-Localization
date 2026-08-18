@@ -1,7 +1,7 @@
 """Numba JIT-compiled kernels for the integer-order (q=1.0) EFORK-3 integrator.
 
-Bypasses the Python interpreter overhead in the inner integration loop,
-providing 10×–50× speedup over pure-Python NumPy for the q=1.0 path.
+Bypasses Python interpreter overhead in the inner integration loop. Runtime
+improvement depends on the system, horizon, hardware, and compilation state.
 
 Requires numba >= 0.63.0 (Python 3.14 compatible).
 
@@ -27,6 +27,8 @@ This module is called automatically from ``general.py`` when
 
 import math
 import numpy as np
+
+from .._time_grid import exact_fixed_step_count
 
 # ---------------------------------------------------------------------------
 # Optional Numba import — graceful degradation if not installed
@@ -317,6 +319,12 @@ def integrate_efork3_q1_numba(
     unavailable or the system type is not supported (signals the caller
     to use the Python fallback path).
     """
+    n_steps = exact_fixed_step_count(
+        h,
+        t_final,
+        caller="integrate_efork3_q1_numba",
+    )
+
     if not NUMBA_AVAILABLE:
         return None
 
@@ -345,8 +353,6 @@ def integrate_efork3_q1_numba(
     P    = np.ascontiguousarray(system.lure.matrix, dtype=np.float64)
     b    = np.ascontiguousarray(system.lure.input_vector, dtype=np.float64)
     x0_a = np.asarray(x0, dtype=np.float64)
-
-    n_steps = int(np.ceil(t_final / h))
 
     # Parse early-stop config (mirrors the logic in general.py)
     esc      = early_stop_config if early_stop_config is not None else {}

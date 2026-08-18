@@ -14,6 +14,7 @@ from typing import Any, Mapping, Sequence
 
 import numpy as np
 
+from ._time_grid import exact_fixed_step_count
 from .fractional.problem import FractionalProblem, solve_fractional_system
 from .integrations.selector import integrate
 from .systems import ChaoticSystem, get_system
@@ -153,7 +154,11 @@ def simulate(
         allow_python_fallback=True,
         early_stop_config={"enabled": False},
     )
-    requested = int(np.ceil(final_time / step))
+    requested = exact_fixed_step_count(
+        step,
+        final_time,
+        caller="simulate",
+    )
     return SimulationResult(
         times=np.asarray(times, dtype=float),
         states=np.asarray(states, dtype=float),

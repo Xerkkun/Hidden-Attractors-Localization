@@ -26,6 +26,7 @@ Mathematical constraints enforced:
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -407,7 +408,7 @@ def test_w_eval_direct_fractional() -> None:
 
 @pytest.mark.wolfram
 @pytest.mark.parametrize("system_id", _WOLFRAM_CASES)
-def test_compare_all_summary(system_id: str) -> None:
+def test_compare_all_summary(system_id: str, tmp_path: Path) -> None:
     """Verify that compare_all executes correctly and writes a complete summary JSON."""
     if not _wolfram_outputs_exist(system_id):
         pytest.skip(f"No Wolfram outputs found for '{system_id}'")
@@ -418,7 +419,9 @@ def test_compare_all_summary(system_id: str) -> None:
 
     from compare_with_library import compare_all
 
-    out_dir = repo_root() / "validation" / "outputs" / "wolfram" / system_id
+    persisted_dir = repo_root() / "validation" / "outputs" / "wolfram" / system_id
+    out_dir = tmp_path / system_id
+    shutil.copytree(persisted_dir, out_dir)
     res = compare_all(out_dir, system_id)
 
     assert res["passed"]

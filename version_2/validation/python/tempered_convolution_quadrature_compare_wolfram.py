@@ -19,7 +19,6 @@ import importlib
 import inspect
 import json
 import math
-import os
 import tempfile
 from functools import lru_cache
 from pathlib import Path
@@ -31,7 +30,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
 SYSTEM_ID = "tempered_convolution_quadrature"
-TEMP_ROOT = Path(r"C:\tmp") if os.name == "nt" else Path(tempfile.gettempdir())
+TEMP_ROOT = Path(tempfile.gettempdir())
 DEFAULT_SUMMARY = (
     TEMP_ROOT
     / "hafo_tempered_convolution_quadrature"

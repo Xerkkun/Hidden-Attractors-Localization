@@ -48,8 +48,8 @@ def test_manual_manifest_has_minimal_public_schema() -> None:
 def test_manual_manifest_public_values_are_consistent() -> None:
     data = load_manifest()
 
-    assert data["manual_version"] == "1.1.0"
-    assert data["package_version"] == "1.1.0"
+    assert data["manual_version"] == "1.2.0"
+    assert data["package_version"] == "1.2.0"
     assert data["public_cli"] == "hidden-attractors"
     assert data["entry_point"] == "hidden_attractors.cli.main:main"
 

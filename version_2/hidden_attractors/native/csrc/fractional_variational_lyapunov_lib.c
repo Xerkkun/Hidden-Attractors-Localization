@@ -1,9 +1,12 @@
 #include <complex.h>
+#include <limits.h>
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "native_validation.h"
 
 #if defined(_WIN32) || defined(__CYGWIN__)
   #define API_EXPORT __declspec(dllexport)
@@ -128,7 +131,9 @@ static int add_fft_block(
         }
         for (int i = 0; i < source_count; ++i) {
             const int global_index = source_start + i;
-            work[i] = (skip_global_zero && global_index == 0) ? 0.0 : source[(size_t)i * dim + d];
+            work[i] = (skip_global_zero && global_index == 0)
+                ? 0.0
+                : source[(size_t)i * (size_t)dim + (size_t)d];
         }
         fft(work, nfft, 0);
         for (int i = 0; i < nfft; ++i) work[i] *= kernel_fft[i];
@@ -138,7 +143,8 @@ static int add_fft_block(
          * next ABM step still evaluates its history sum at index end.
          */
         for (int target = source_start + source_count - 1; target <= max_target; ++target) {
-            future[(size_t)target * dim + d] += creal(work[target - source_start]);
+            future[(size_t)target * (size_t)dim + (size_t)d] +=
+                creal(work[target - source_start]);
         }
         free(work);
     }
@@ -163,13 +169,21 @@ static int stream_init(
     stream->pred_kernel = pred_kernel;
     stream->corr_kernel = corr_kernel;
     if (mode == CONVOLUTION_DIRECT) {
-        stream->history = (double*)calloc((size_t)(nsteps + 1) * dim, sizeof(double));
+        stream->history = (double*)calloc(
+            (size_t)(nsteps + 1) * (size_t)dim, sizeof(double)
+        );
         return stream->history ? STATUS_OK : STATUS_ALLOCATION_FAILED;
     }
     if (mode != CONVOLUTION_FFT_BLOCK) return STATUS_INVALID_REQUEST;
-    stream->active = (double*)calloc((size_t)stream->block_size * dim, sizeof(double));
-    stream->future_pred = (double*)calloc((size_t)(nsteps + 1) * dim, sizeof(double));
-    stream->future_corr = (double*)calloc((size_t)(nsteps + 1) * dim, sizeof(double));
+    stream->active = (double*)calloc(
+        (size_t)stream->block_size * (size_t)dim, sizeof(double)
+    );
+    stream->future_pred = (double*)calloc(
+        (size_t)(nsteps + 1) * (size_t)dim, sizeof(double)
+    );
+    stream->future_corr = (double*)calloc(
+        (size_t)(nsteps + 1) * (size_t)dim, sizeof(double)
+    );
     return (stream->active && stream->future_pred && stream->future_corr)
         ? STATUS_OK : STATUS_ALLOCATION_FAILED;
 }
@@ -196,17 +210,29 @@ static int stream_flush(ConvStream *stream) {
     if (rc != STATUS_OK) return rc;
     stream->active_start += stream->active_count;
     stream->active_count = 0;
-    memset(stream->active, 0, (size_t)stream->block_size * stream->dim * sizeof(double));
+    memset(
+        stream->active,
+        0,
+        (size_t)stream->block_size * (size_t)stream->dim * sizeof(double)
+    );
     return STATUS_OK;
 }
 
 static int stream_append(ConvStream *stream, int index, const double *value) {
     if (stream->mode == CONVOLUTION_DIRECT) {
-        memcpy(&stream->history[(size_t)index * stream->dim], value, (size_t)stream->dim * sizeof(double));
+        memcpy(
+            &stream->history[(size_t)index * (size_t)stream->dim],
+            value,
+            (size_t)stream->dim * sizeof(double)
+        );
         return STATUS_OK;
     }
     if (index != stream->active_start + stream->active_count) return STATUS_INVALID_REQUEST;
-    memcpy(&stream->active[(size_t)stream->active_count * stream->dim], value, (size_t)stream->dim * sizeof(double));
+    memcpy(
+        &stream->active[(size_t)stream->active_count * (size_t)stream->dim],
+        value,
+        (size_t)stream->dim * sizeof(double)
+    );
     stream->active_count += 1;
     return stream->active_count == stream->block_size ? stream_flush(stream) : STATUS_OK;
 }
@@ -219,22 +245,34 @@ static void stream_sums(const ConvStream *stream, int index, double *pred, doubl
             const double wp = stream->pred_kernel[index - j];
             const double wc = stream->corr_kernel[index - j];
             for (int d = 0; d < stream->dim; ++d) {
-                const double f = stream->history[(size_t)j * stream->dim + d];
+                const double f = stream->history[
+                    (size_t)j * (size_t)stream->dim + (size_t)d
+                ];
                 pred[d] += wp * f;
                 if (j > 0) corr[d] += wc * f;
             }
         }
         return;
     }
-    memcpy(pred, &stream->future_pred[(size_t)index * stream->dim], (size_t)stream->dim * sizeof(double));
-    memcpy(corr, &stream->future_corr[(size_t)index * stream->dim], (size_t)stream->dim * sizeof(double));
+    memcpy(
+        pred,
+        &stream->future_pred[(size_t)index * (size_t)stream->dim],
+        (size_t)stream->dim * sizeof(double)
+    );
+    memcpy(
+        corr,
+        &stream->future_corr[(size_t)index * (size_t)stream->dim],
+        (size_t)stream->dim * sizeof(double)
+    );
     for (int offset = 0; offset < stream->active_count; ++offset) {
         const int j = stream->active_start + offset;
         if (j > index) break;
         const double wp = stream->pred_kernel[index - j];
         const double wc = stream->corr_kernel[index - j];
         for (int d = 0; d < stream->dim; ++d) {
-            const double f = stream->active[(size_t)offset * stream->dim + d];
+            const double f = stream->active[
+                (size_t)offset * (size_t)stream->dim + (size_t)d
+            ];
             pred[d] += wp * f;
             if (j > 0) corr[d] += wc * f;
         }
@@ -258,16 +296,24 @@ static void transform_variational(double *value, const double *right) {
 static void stream_transform(ConvStream *stream, int current_index, const double *right) {
     if (stream->mode == CONVOLUTION_DIRECT) {
         for (int j = 0; j <= current_index; ++j) {
-            transform_variational(&stream->history[(size_t)j * stream->dim], right);
+            transform_variational(
+                &stream->history[(size_t)j * (size_t)stream->dim], right
+            );
         }
         return;
     }
     for (int j = 0; j < stream->active_count; ++j) {
-        transform_variational(&stream->active[(size_t)j * stream->dim], right);
+        transform_variational(
+            &stream->active[(size_t)j * (size_t)stream->dim], right
+        );
     }
     for (int j = current_index; j <= stream->nsteps; ++j) {
-        transform_variational(&stream->future_pred[(size_t)j * stream->dim], right);
-        transform_variational(&stream->future_corr[(size_t)j * stream->dim], right);
+        transform_variational(
+            &stream->future_pred[(size_t)j * (size_t)stream->dim], right
+        );
+        transform_variational(
+            &stream->future_corr[(size_t)j * (size_t)stream->dim], right
+        );
     }
 }
 
@@ -353,7 +399,7 @@ static int orthonormalize(double *state, double *log_diag, double *right_inverse
             for (int row = 0; row < 3; ++row) v[row] -= dot * q[row * 3 + prev];
         }
         double norm = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-        if (!isfinite(norm) || norm < 1e-300) return STATUS_NONFINITE;
+        if (!hafo_isfinite(norm) || norm < 1e-300) return STATUS_NONFINITE;
         r[col * 3 + col] = norm;
         log_diag[col] = log(norm);
         for (int row = 0; row < 3; ++row) q[row * 3 + col] = v[row] / norm;
@@ -408,7 +454,9 @@ static int integrate_segment(
         extended_rhs(req, predictor, fp);
         const double a0 = pow((double)n, req->q + 1.0) - ((double)n - req->q) * pow((double)(n + 1), req->q);
         for (int d = 0; d < EXT_DIM; ++d) corrected[d] = anchor[d] + corr_scale * (a0 * f0[d] + corr_sum[d] + fp[d]);
-        for (int d = 0; d < EXT_DIM; ++d) if (!isfinite(corrected[d])) rc = STATUS_NONFINITE;
+        for (int d = 0; d < EXT_DIM; ++d) {
+            if (!hafo_isfinite(corrected[d])) rc = STATUS_NONFINITE;
+        }
         if (req->divergence_norm > 0.0) {
             const double norm = sqrt(corrected[0] * corrected[0] + corrected[1] * corrected[1] + corrected[2] * corrected[2]);
             if (norm >= req->divergence_norm) rc = STATUS_DIVERGED;
@@ -428,11 +476,10 @@ static int run_dk2018(
     FractionalLyapunovResult *result,
     double *times,
     double *convergence,
-    int max_rows
+    int max_rows,
+    int total_steps,
+    int interval
 ) {
-    const int total_steps = (int)llround(req->t_final / req->h);
-    const int interval = (int)llround(req->reorthonormalization_time / req->h);
-    if (interval < 1) return STATUS_INVALID_REQUEST;
     double state[EXT_DIM] = {0.0}, sums[3] = {0.0};
     memcpy(state, req->x0, 3 * sizeof(double));
     state[3] = state[7] = state[11] = 1.0;
@@ -450,14 +497,19 @@ static int run_dk2018(
             for (int d = 0; d < 3; ++d) sums[d] += log_diag[d];
             if (rows >= max_rows) return STATUS_OUTPUT_TOO_SMALL;
             times[rows] = t;
-            for (int d = 0; d < 3; ++d) convergence[(size_t)rows * 3 + d] = sums[d] / (t - req->t_burn);
+            for (int d = 0; d < 3; ++d) {
+                convergence[(size_t)rows * 3u + (size_t)d] =
+                    sums[d] / (t - req->t_burn);
+            }
             rows += 1;
         }
     }
     result->steps_completed = completed;
     result->convergence_rows = rows;
     for (int d = 0; d < 3; ++d) {
-        result->exponents[d] = rows ? convergence[(size_t)(rows - 1) * 3 + d] : NAN;
+        result->exponents[d] = rows
+            ? convergence[(size_t)(rows - 1) * 3u + (size_t)d]
+            : NAN;
         result->final_state[d] = state[d];
     }
     return STATUS_OK;
@@ -468,12 +520,11 @@ static int run_fixed_lower_limit(
     FractionalLyapunovResult *result,
     double *times,
     double *convergence,
-    int max_rows
+    int max_rows,
+    int total_steps,
+    int burn_steps,
+    int interval
 ) {
-    const int total_steps = (int)llround((req->t_burn + req->t_final) / req->h);
-    const int burn_steps = (int)llround(req->t_burn / req->h);
-    const int interval = (int)llround(req->reorthonormalization_time / req->h);
-    if (interval < 1) return STATUS_INVALID_REQUEST;
     double *pred_kernel = NULL, *corr_kernel = NULL;
     if (make_kernels(total_steps, req->q, &pred_kernel, &corr_kernel) != STATUS_OK) return STATUS_ALLOCATION_FAILED;
     ConvStream stream;
@@ -498,7 +549,9 @@ static int run_fixed_lower_limit(
         extended_rhs(req, predictor, fp);
         const double a0 = pow((double)n, req->q + 1.0) - ((double)n - req->q) * pow((double)(n + 1), req->q);
         for (int d = 0; d < EXT_DIM; ++d) corrected[d] = anchor[d] + corr_scale * (a0 * f0[d] + corr_sum[d] + fp[d]);
-        for (int d = 0; d < EXT_DIM; ++d) if (!isfinite(corrected[d])) rc = STATUS_NONFINITE;
+        for (int d = 0; d < EXT_DIM; ++d) {
+            if (!hafo_isfinite(corrected[d])) rc = STATUS_NONFINITE;
+        }
         if (req->divergence_norm > 0.0) {
             const double norm = sqrt(corrected[0] * corrected[0] + corrected[1] * corrected[1] + corrected[2] * corrected[2]);
             if (norm >= req->divergence_norm) rc = STATUS_DIVERGED;
@@ -521,7 +574,10 @@ static int run_fixed_lower_limit(
                 for (int d = 0; d < 3; ++d) sums[d] += log_diag[d];
                 if (rows >= max_rows) { rc = STATUS_OUTPUT_TOO_SMALL; break; }
                 times[rows] = elapsed;
-                for (int d = 0; d < 3; ++d) convergence[(size_t)rows * 3 + d] = sums[d] / elapsed;
+                for (int d = 0; d < 3; ++d) {
+                    convergence[(size_t)rows * 3u + (size_t)d] =
+                        sums[d] / elapsed;
+                }
                 rows += 1;
             }
         }
@@ -529,7 +585,9 @@ static int run_fixed_lower_limit(
     result->steps_completed = completed;
     result->convergence_rows = rows;
     for (int d = 0; d < 3; ++d) {
-        result->exponents[d] = rows ? convergence[(size_t)(rows - 1) * 3 + d] : NAN;
+        result->exponents[d] = rows
+            ? convergence[(size_t)(rows - 1) * 3u + (size_t)d]
+            : NAN;
         result->final_state[d] = state[d];
     }
     stream_free(&stream);
@@ -562,6 +620,12 @@ API_EXPORT int fractional_lyapunov_run(
     double *convergence,
     int max_rows
 ) {
+    int final_steps = 0;
+    int burn_steps = 0;
+    int interval_steps = 0;
+    int total_steps = 0;
+    size_t state_values = 0u;
+    size_t convergence_values = 0u;
     if (!request || !result || !times || !convergence || max_rows < 1) return STATUS_INVALID_REQUEST;
     memset(result, 0, sizeof(*result));
     result->abi_version = ABI_VERSION;
@@ -572,16 +636,44 @@ API_EXPORT int fractional_lyapunov_run(
             && request->execution_contract != CONTRACT_FIXED_LOWER_LIMIT_FULL_HISTORY_QR)
         || (request->convolution_mode != CONVOLUTION_DIRECT && request->convolution_mode != CONVOLUTION_FFT_BLOCK)
         || !(request->q > 0.0 && request->q < 1.0)
-        || !(request->h > 0.0)
-        || !(request->t_final > 0.0)
-        || !(request->reorthonormalization_time > 0.0)
+        || !hafo_isfinite(request->q)
+        || !hafo_uniform_step_count(request->t_final, request->h, &final_steps)
+        || final_steps < 1
+        || !hafo_uniform_step_count(request->t_burn, request->h, &burn_steps)
+        || !hafo_uniform_step_count(
+            request->reorthonormalization_time,
+            request->h,
+            &interval_steps
+        )
+        || interval_steps < 1
+        || burn_steps > INT_MAX - 1 - final_steps
+        || request->fft_block_size < 1
+        || !hafo_isfinite(request->divergence_norm)
+        || request->divergence_norm < 0.0
+        || !hafo_values_are_finite(request->x0, 3u)
+        || !hafo_values_are_finite(request->parameters, 8u)
     ) {
         result->status_code = STATUS_INVALID_REQUEST;
         return STATUS_INVALID_REQUEST;
     }
+    total_steps = final_steps + burn_steps;
+    if (!hafo_checked_mul_size(
+            (size_t)total_steps + 1u, (size_t)EXT_DIM, &state_values) ||
+        !hafo_checked_mul_size((size_t)max_rows, 3u, &convergence_values)) {
+        result->status_code = STATUS_INVALID_REQUEST;
+        return STATUS_INVALID_REQUEST;
+    }
+    (void)state_values;
+    (void)convergence_values;
     int rc = request->execution_contract == CONTRACT_DK2018_BLOCK_RESTART_ABM_GS
-        ? run_dk2018(request, result, times, convergence, max_rows)
-        : run_fixed_lower_limit(request, result, times, convergence, max_rows);
+        ? run_dk2018(
+            request, result, times, convergence, max_rows,
+            final_steps, interval_steps
+        )
+        : run_fixed_lower_limit(
+            request, result, times, convergence, max_rows,
+            total_steps, burn_steps, interval_steps
+        );
     result->status_code = rc;
     return rc;
 }

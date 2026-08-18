@@ -16,6 +16,9 @@ from typing import Sequence, Any, Dict, List
 
 import numpy as np
 
+from .._time_grid import exact_fixed_step_count
+from ..integrations._history import canonical_history_times
+
 from ..workflows.config_loader import load_config, apply_cli_overrides, resolve_seed_transfer_contract
 from ..reproducibility import collect_run_metadata, collect_lure_metadata, collect_seed_metadata
 from ..systems import get_system
@@ -88,6 +91,39 @@ def _require_value(mapping: dict[str, Any], key: str, label: str) -> Any:
     if value is None:
         raise ValueError(f"Continuation requires an explicit {label}.")
     return value
+
+
+def _resolve_multiparameter_memory_policy(
+    memory_policy: str,
+    memory_window_time: Any | None,
+    h: float,
+) -> tuple[str, int | None]:
+    """Validate the CLI memory contract and return its integration form."""
+
+    if memory_policy in {"carry_window", "finite_window"}:
+        if memory_window_time is None:
+            raise ValueError(
+                "Windowed multiparameter continuation requires explicit "
+                "continuation.memory_window_time."
+            )
+        window_steps = exact_fixed_step_count(
+            h,
+            float(memory_window_time),
+            caller="multiparameter continuation memory_window_time",
+        )
+        if window_steps < 1:
+            raise ValueError(
+                "continuation.memory_window_time must span at least one step."
+            )
+        return "window", window_steps
+    if memory_policy in {"full_history", "full_caputo"}:
+        return "full", None
+    if memory_policy == "none":
+        return "none", None
+    raise ValueError(
+        "Unsupported multiparameter memory_policy: "
+        f"{memory_policy!r}."
+    )
 
 
 def _resolve_continuation_times(
@@ -194,7 +230,6 @@ def run_scalar_continuation(
     config = apply_cli_overrides(config, overrides)
         
     output_dir = args.output_dir or config.get("output_dir") or "outputs"
-    os.makedirs(output_dir, exist_ok=True)
     
     # Resolve seeds
     seeds = []
@@ -256,19 +291,19 @@ def run_scalar_continuation(
     
     # Validate compatibility between integrator and order
     if continuation_order == "fractional":
-        if integrator in ("rk4", "heun", "efork_q1"):
+        if integrator in ("rk4", "efork_q1"):
             raise ValueError(f"{integrator} only supports integer-order dynamics. Use abm or efork3 for fractional Caputo continuation.")
         validate_integrator_compatibility(integrator, q_continuation)
     else:
         # integer order
         if integrator in ("abm", "adm_wu2023"):
-            raise ValueError(f"{integrator} requires 0<q<1. Use rk4, heun or efork_q1 for integer-order continuation.")
+            raise ValueError(f"{integrator} requires 0<q<1. Use rk4 or efork_q1 for integer-order continuation.")
         validate_integrator_compatibility(integrator, 1.0)
         if integrator == "efork3":
             import warnings
             warnings.warn(
                 "Integrator 'efork3' at q=1.0 redirects to the integer-order 'efork_q1' limit. "
-                "For pure integer-order work, prefer 'rk4' or 'heun' which are simpler and faster.",
+                "For pure integer-order work, prefer 'rk4'.",
                 UserWarning,
                 stacklevel=2
             )
@@ -405,6 +440,10 @@ def run_scalar_continuation(
             "steps_completed": len(steps),
         })
         
+    # Create the destination only after the complete scientific contract has
+    # been validated and the continuation has run successfully.
+    os.makedirs(output_dir, exist_ok=True)
+
     # Write output files
     # 1. continuation_trace.csv
     trace_path = Path(output_dir) / "continuation_trace.csv"
@@ -653,30 +692,13 @@ def run_multiparameter_continuation(
         raise ValueError(
             "Multiparameter continuation requires an explicit memory_policy."
         )
-    memory_window_time = path_config.get("memory_window_time")
-    if memory_policy in {"carry_window", "finite_window"}:
-        if memory_window_time is None:
-            raise ValueError(
-                "Windowed multiparameter continuation requires explicit "
-                "continuation.memory_window_time."
-            )
-        memory_window_length = int(round(float(memory_window_time) / h))
-        if memory_window_length < 1:
-            raise ValueError(
-                "continuation.memory_window_time must span at least one step."
-            )
-        integration_memory_mode = "window"
-    elif memory_policy in {"full_history", "full_caputo"}:
-        memory_window_length = None
-        integration_memory_mode = "full"
-    elif memory_policy == "none":
-        memory_window_length = None
-        integration_memory_mode = "none"
-    else:
-        raise ValueError(
-            "Unsupported multiparameter memory_policy: "
-            f"{memory_policy!r}."
+    integration_memory_mode, memory_window_length = (
+        _resolve_multiparameter_memory_policy(
+            memory_policy,
+            path_config.get("memory_window_time"),
+            h,
         )
+    )
     
     # Resolve seeds
     seeds = []
@@ -732,19 +754,19 @@ def run_multiparameter_continuation(
             
     # Validate compatibility between integrator and order
     if continuation_order == "fractional":
-        if integrator in ("rk4", "heun", "efork_q1"):
+        if integrator in ("rk4", "efork_q1"):
             raise ValueError(f"{integrator} only supports integer-order dynamics. Use abm or efork3 for fractional Caputo continuation.")
         validate_integrator_compatibility(integrator, q_continuation)
     else:
         # integer order
         if integrator in ("abm", "adm_wu2023"):
-            raise ValueError(f"{integrator} requires 0<q<1. Use rk4, heun or efork_q1 for integer-order continuation.")
+            raise ValueError(f"{integrator} requires 0<q<1. Use rk4 or efork_q1 for integer-order continuation.")
         validate_integrator_compatibility(integrator, 1.0)
         if integrator == "efork3":
             import warnings
             warnings.warn(
                 "Integrator 'efork3' at q=1.0 redirects to the integer-order 'efork_q1' limit. "
-                "For pure integer-order work, prefer 'rk4' or 'heun' which are simpler and faster.",
+                "For pure integer-order work, prefer 'rk4'.",
                 UserWarning,
                 stacklevel=2
             )
@@ -891,7 +913,12 @@ def run_multiparameter_continuation(
                 
             # Update history and x_in for next step
             if is_causal:
-                hist_t = t_tr - t_tr[-1]
+                hist_t = canonical_history_times(
+                    t_tr,
+                    h,
+                    caller="continuation CLI transported history",
+                    require_zero_anchor=False,
+                )
                 hist_x = x_tr
             else:
                 hist_t = None
@@ -943,11 +970,7 @@ def run_multiparameter_continuation(
         "memory_policy": memory_policy,
         "history_carried": is_causal,
         "memory_window_time": path_config.get("memory_window_time"),
-        "memory_window_steps": (
-            int(round(float(path_config["memory_window_time"]) / h))
-            if path_config.get("memory_window_time") is not None
-            else None
-        ),
+        "memory_window_steps": memory_window_length,
         "candidates": summaries,
     }
     with open(summary_path, "w", encoding="utf-8") as f:

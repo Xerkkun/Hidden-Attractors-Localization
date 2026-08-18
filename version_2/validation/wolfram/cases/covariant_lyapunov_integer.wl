@@ -21,11 +21,8 @@ validationRoot = ParentDirectory[DirectoryName[$InputFileName]];
 Get[FileNameJoin[{validationRoot, "common", "ha_validation_common.wl"}]];
 
 systemID = "covariant_lyapunov_integer";
-defaultOutDir = If[
-  $OperatingSystem === "Windows",
-  FileNameJoin[{"C:\\tmp", "hafo_covariant_lyapunov_integer"}],
-  FileNameJoin[{$TemporaryDirectory, "hafo_covariant_lyapunov_integer"}]
-];
+defaultOutDir =
+  FileNameJoin[{$TemporaryDirectory, "hafo_covariant_lyapunov_integer"}];
 outDir = EnsureDirectory[GetCommandOption["--out", defaultOutDir]];
 
 workingPrecision = 80;

@@ -306,6 +306,39 @@ class TestHistoryAwareQrTransformsAllHistory:
         )
         assert changed >= 2, f"Expected >=2 changed blocks, got {changed}"
 
+    def test_rhs_failure_leaves_state_and_rhs_histories_unchanged(self) -> None:
+        n = 2
+        states = [
+            pack_extended_state(np.array([float(j), 0.0]), np.eye(n) * (j + 1.0))
+            for j in range(3)
+        ]
+        rhs_vals = [np.full(n + n * n, float(j)) for j in range(3)]
+        states_before = [value.copy() for value in states]
+        rhs_before = [value.copy() for value in rhs_vals]
+        calls = 0
+
+        def failing_rhs(value: np.ndarray) -> np.ndarray:
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                raise RuntimeError("transformed-rhs-failure")
+            return np.zeros_like(value)
+
+        with pytest.raises(RuntimeError, match="transformed-rhs-failure"):
+            apply_history_aware_qr_transform(
+                states,
+                rhs_vals,
+                failing_rhs,
+                n,
+                len(states) - 1,
+                memory_start_index=0,
+            )
+
+        for actual, expected in zip(states, states_before):
+            np.testing.assert_array_equal(actual, expected)
+        for actual, expected in zip(rhs_vals, rhs_before):
+            np.testing.assert_array_equal(actual, expected)
+
 
 # ---------------------------------------------------------------------------
 # 9. Result metadata fields
@@ -533,30 +566,24 @@ class TestNoForbiddenFieldsInLyapunovResult:
 
 
 # ---------------------------------------------------------------------------
-# 15. Non-aligned burn time elapsed handling
+# 15. Fixed-step burn time contract
 # ---------------------------------------------------------------------------
 
-class TestNonAlignedBurnTimeElapsed:
-    """15: Handles non-aligned burn-in times correctly without negative or bad elapsed time."""
+class TestFixedStepBurnTimeContract:
+    """15: Rejects a burn-in horizon that cannot use the declared fixed step."""
 
-    def test_fractional_variational_elapsed_handles_nonaligned_burn(self) -> None:
+    def test_fractional_variational_rejects_nonaligned_burn(self) -> None:
         n = 2
         rhs = lambda x: np.array([-x[0], -2.0 * x[1]])
         jac = lambda x: np.diag([-1.0, -2.0])
-        result = fractional_variational_abm_qr(
-            rhs,
-            jac,
-            np.ones(n),
-            q=0.9,
-            h=0.02,
-            t_burn=0.13,
-            t_final=0.5,
-            reorthonormalization_time=0.10,
-        )
-        assert result.status == "ok"
-        if len(result.times) > 0:
-            diffs = np.diff(result.times)
-            assert np.all(diffs > 0), f"result.times is not strictly increasing: {result.times}"
-            assert result.times[-1] > 0, f"result.times[-1] <= 0: {result.times[-1]}"
-            assert np.all(np.isfinite(result.exponents))
-
+        with pytest.raises(ValueError, match="integer number of fixed steps"):
+            fractional_variational_abm_qr(
+                rhs,
+                jac,
+                np.ones(n),
+                q=0.9,
+                h=0.02,
+                t_burn=0.13,
+                t_final=0.5,
+                reorthonormalization_time=0.10,
+            )

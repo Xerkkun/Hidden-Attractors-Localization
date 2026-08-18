@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
 import re
+import tomllib
 from pathlib import Path
 import pytest
 
 ROOT_DIR = Path(__file__).resolve().parents[1]  # version_2 directory
 WORKSPACE_DIR = ROOT_DIR.parent
+
+
+def _declared_extras() -> set[str]:
+    with (ROOT_DIR / "pyproject.toml").open("rb") as stream:
+        project = tomllib.load(stream)["project"]
+    return set(project.get("optional-dependencies", {}))
 
 @pytest.mark.hygiene
 def test_ci_matrix_versions():
@@ -65,4 +72,28 @@ def test_dependency_policy_spirit_phrases():
     )
     assert any(phrase in content for phrase in ["extended support", "extended-support"]), (
         "docs/dependency_policy.md must reference extended support policy"
+    )
+
+
+@pytest.mark.hygiene
+def test_ci_only_installs_declared_extras() -> None:
+    declared = _declared_extras()
+    content = (WORKSPACE_DIR / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    requested = {
+        extra.strip()
+        for match in re.finditer(r"\.\[([^\]]+)\]", content)
+        for extra in match.group(1).split(",")
+    }
+    assert requested <= declared, f"CI requests undeclared extras: {requested - declared}"
+
+
+@pytest.mark.hygiene
+def test_dependency_policy_only_lists_declared_extras() -> None:
+    declared = _declared_extras()
+    content = (ROOT_DIR / "docs/dependency_policy.md").read_text(encoding="utf-8")
+    extras_section = content.split("## Optional extras", 1)[1].split("\n---", 1)[0]
+    listed = set(re.findall(r"^\|\s*`([^`]+)`\s*\|", extras_section, re.MULTILINE))
+    assert listed == declared, (
+        f"Dependency policy extras differ from pyproject: "
+        f"missing={declared - listed}, undeclared={listed - declared}"
     )

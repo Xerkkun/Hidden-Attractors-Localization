@@ -1,7 +1,7 @@
 # Catálogo verificable de definiciones y métodos fraccionarios
 
-Este documento describe el estado del núcleo fraccionario de HAFO a fecha de
-2026-08-02. Separa cuatro objetos que no deben confundirse: la definición del
+Este documento describe el contrato actual del núcleo fraccionario de HAFO.
+Separa cuatro objetos que no deben confundirse: la definición del
 operador, su discretización, el contrato de condiciones iniciales y memoria, y
 el backend que ejecuta los cálculos. Una función que evalúa una derivada sobre
 muestras conocidas no es, por ese hecho, un solver de una ecuación diferencial
@@ -14,11 +14,10 @@ un sistema arbitrario, existencia de un atractor, caos, atracción ni
 
 ## Criterio bibliográfico y de verificación
 
-SciSpace se utilizó para localizar artículos candidatos y comparar familias de
-métodos. Las fórmulas y decisiones de implementación se apoyan, sin embargo, en
-los artículos primarios, las páginas de los editores y los libros enumerados en
-la [bibliografía](#bibliografia-verificada); un resumen generado por SciSpace no
-es una fuente normativa del código.
+Las fórmulas y decisiones de implementación se apoyan en los artículos
+primarios, las páginas de los editores y los libros enumerados en la
+[bibliografía](#bibliografia-verificada). Los resúmenes de herramientas de
+descubrimiento bibliográfico no son fuentes normativas del código.
 
 Wolfram se usa como oráculo independiente sólo para casos finitos y formulaciones
 específicas, no como validador general de cálculo fraccionario. El caso
@@ -80,25 +79,25 @@ y salida de tamaño `O(Nd)`.
 | ABM/PECE de Caputo | solver FDE | `implemented` | C para sistemas registrados; Python/NumPy de referencia | `solve_fractional_problem`, `caputo_abm_integrate` |
 | EFORK-3 de Caputo | solver FDE | `implemented` | C cuando la ABI admite el sistema; Python en otro caso | `solve_fractional_problem`, `efork_integrate` |
 | GL directo | operador sobre muestras | `implemented` | Numba o C/OpenMP; referencia Python en APIs especializadas | `grunwald_letnikov_derivative` |
-| GL rápido por FFT | operador *batch* de historia completa | `experimental` | `scipy.fft`/pocketfft o selector a Numba directo | `fast_grunwald_letnikov_derivative` |
-| GL desplazado para Caputo | operador sobre muestras | `experimental` | Numba o C/OpenMP | `definition="caputo_shifted"` |
-| Cuadratura de convolución Lubich BDF1/BDF2 | operador sobre muestras | `experimental` | Python, Numba directo o FFT *batch* | `lubich_convolution_quadrature` |
-| Hadamard/Caputo--Hadamard CQ BDF1/BDF2 | operador sobre malla exponencial | `experimental` | Python, Numba directo o FFT *batch* | `hadamard_convolution_quadrature` |
-| Caputo--Hadamard ABM/PECE | solver FDE en tiempo logarítmico uniforme | `experimental` | C con callback transformado o Python/NumPy | `integrate_caputo_hadamard_abm`, `solve_fractional_problem` |
-| Solver explícito GL | solver FDE discreto | `experimental` | Numba para RHS compilado; Python/NumPy para RHS genérico | `integrate_gl_explicit` |
-| RL aproximada por GL | operador sobre muestras | `experimental` | Numba o Python; también C con etiqueta RL | `riemann_liouville_gl_derivative` |
-| RL templada por GL | operador sobre muestras | `experimental` | Numba o Python | `tempered_grunwald_letnikov_derivative` |
-| CQ templada BDF1/BDF2 por conjugación | operador RL templado o Caputo conjugado sobre muestras | `experimental` | Python/Numba directo o FFT *batch* | `tempered_convolution_quadrature` |
-| Caputo templada por conjugación | solver FDE conmensurado en tiempo físico | `experimental` | historia física amortiguada en C con callback RHS o Python/NumPy | `integrate_tempered_caputo_abm`, `solve_fractional_problem` |
-| GL de orden variable | operador sobre muestras | `experimental` | Numba o Python | `variable_order_grunwald_letnikov_derivative` |
-| Caputo de orden variable tipo III | solver FDE L1 implícito en tiempo físico | `experimental` | historia L1 directa en Numba o Python; corrector Picard Python | `integrate_variable_order_caputo_type3_l1`, `solve_fractional_problem` |
-| Conformable de Khalil | operador local y solver RK4 en reloj conformable | `experimental` | Numba o Python | `conformable_khalil_derivative`, `integrate_conformable_rk4` |
-| Caputo--Fabrizio recurrente | operador sobre muestras | `research_required` en definición; método `experimental` | Numba o Python; suma directa Python como oráculo | `caputo_fabrizio_derivative` |
-| Orden distribuido por GL | operador con doble discretización | `experimental` | Numba o Python | `distributed_order_gl_derivative` |
-| Caputo de orden distribuido | solver FDE L1 implícito con medida discreta positiva | `experimental` | kernel combinado e historia Numba o Python; Picard Python | `integrate_distributed_order_caputo_l1`, `solve_fractional_problem` |
-| Caputo multitérmino | fachada de suma finita sobre el solver L1 distribuido | `experimental` | canonización Python `O(R log R)`; kernel e historia Numba o Python; Picard Python | `canonicalize_multi_term_caputo_terms`, `integrate_multi_term_caputo_l1` |
-| Atangana--Baleanu--Caputo | operador sobre muestras con kernel Mittag--Leffler | `experimental` con crítica metodológica explícita | pesos Numba/Python; convolución directa Numba/Python o FFT *batch* | `atangana_baleanu_caputo_derivative` |
-| Predictor--corrector ABC convencional | solver FDE conmensurado de historia completa | `experimental` | Numba para RHS compilado o Python/NumPy | `integrate_abc_predictor_corrector`, `solve_fractional_problem` |
+| GL rápido por FFT | operador *batch* de historia completa | `implemented` | `scipy.fft`/pocketfft o selector a Numba directo | `fast_grunwald_letnikov_derivative` |
+| GL desplazado para Caputo | operador sobre muestras | `implemented` | Numba o C/OpenMP | `definition="caputo_shifted"` |
+| Cuadratura de convolución Lubich BDF1/BDF2 | operador sobre muestras | `implemented` | Python, Numba directo o FFT *batch* | `lubich_convolution_quadrature` |
+| Hadamard/Caputo--Hadamard CQ BDF1/BDF2 | operador sobre malla exponencial | `implemented` | Python, Numba directo o FFT *batch* | `hadamard_convolution_quadrature` |
+| Caputo--Hadamard ABM/PECE | solver FDE en tiempo logarítmico uniforme | `implemented` | C con callback transformado o Python/NumPy | `integrate_caputo_hadamard_abm`, `solve_fractional_problem` |
+| Solver explícito GL | solver FDE discreto | `implemented` | Numba para RHS compilado; Python/NumPy para RHS genérico | `integrate_gl_explicit` |
+| RL aproximada por GL | operador sobre muestras | `implemented` | Numba o Python; también C con etiqueta RL | `riemann_liouville_gl_derivative` |
+| RL templada por GL | operador sobre muestras | `implemented` | Numba o Python | `tempered_grunwald_letnikov_derivative` |
+| CQ templada BDF1/BDF2 por conjugación | operador RL templado o Caputo conjugado sobre muestras | `implemented` | Python/Numba directo o FFT *batch* | `tempered_convolution_quadrature` |
+| Caputo templada por conjugación | solver FDE conmensurado en tiempo físico | `implemented` | historia física amortiguada en C con callback RHS o Python/NumPy | `integrate_tempered_caputo_abm`, `solve_fractional_problem` |
+| GL de orden variable | operador sobre muestras | `implemented` | Numba o Python | `variable_order_grunwald_letnikov_derivative` |
+| Caputo de orden variable tipo III | solver FDE L1 implícito en tiempo físico | `implemented` | historia L1 directa en Numba o Python; corrector Picard Python | `integrate_variable_order_caputo_type3_l1`, `solve_fractional_problem` |
+| Conformable de Khalil | operador local y solver RK4 en reloj conformable | `implemented` | Numba o Python | `conformable_khalil_derivative`, `integrate_conformable_rk4` |
+| Caputo--Fabrizio recurrente | operador sobre muestras | `research_required` en definición; método `implemented` | Numba o Python; suma directa Python como oráculo | `caputo_fabrizio_derivative` |
+| Orden distribuido por GL | operador con doble discretización | `implemented` | Numba o Python | `distributed_order_gl_derivative` |
+| Caputo de orden distribuido | solver FDE L1 implícito con medida discreta positiva | `implemented` | kernel combinado e historia Numba o Python; Picard Python | `integrate_distributed_order_caputo_l1`, `solve_fractional_problem` |
+| Caputo multitérmino | fachada de suma finita sobre el solver L1 distribuido | `implemented` | canonización Python `O(R log R)`; kernel e historia Numba o Python; Picard Python | `canonicalize_multi_term_caputo_terms`, `integrate_multi_term_caputo_l1` |
+| Atangana--Baleanu--Caputo | operador sobre muestras con kernel Mittag--Leffler | `implemented` con crítica metodológica explícita | pesos Numba/Python; convolución directa Numba/Python o FFT *batch* | `atangana_baleanu_caputo_derivative` |
+| Predictor--corrector ABC convencional | solver FDE conmensurado de historia completa | `implemented` | Numba para RHS compilado o Python/NumPy | `integrate_abc_predictor_corrector`, `solve_fractional_problem` |
 
 ## Caputo con Adams--Bashforth--Moulton PECE
 
@@ -124,6 +123,11 @@ acepta órdenes por componente dentro de bloques reiniciados.
 
 - Condición inicial: valores clásicos en `a`. No se reutilizan como datos RL.
 - Malla: uniforme, `t_n=a+n h`.
+- Horizonte: la duración debe contener un número entero de pasos; la fachada
+  rechaza el dato si requeriría sobrepasar el terminal.
+- Prehistoria opcional: tiempos y estados deben tener la misma longitud, forma
+  `(H,d)`, incremento uniforme `h` y un último estado coherente con la condición
+  inicial. Datos no conformes no pertenecen a este contrato.
 - `full_history`: Caputo completo; costo `O(N^2 d)` y almacenamiento de
   trayectoria/RHS `O(Nd)`.
 - `finite_window`: conserva a lo sumo `L` valores de RHS; costo `O(NLd)`. Es un
@@ -183,7 +187,10 @@ contrato verificado.
 
 - Condición inicial clásica de Caputo en un terminal fijo; puede recibir una
   prehistoria explícita.
-- Malla uniforme.
+- Malla uniforme; la duración debe contener un número entero de pasos y nunca
+  se redondea hacia un terminal posterior.
+- Una prehistoria explícita debe usar tiempos uniformes separados por `h`,
+  estados con forma `(H,d)` y un último estado coherente con `x0`.
 - Historia completa: el cálculo directo del término de memoria cuesta
   `O(N^2 d)` y almacena `O(Nd)`.
 - Ventana de `L` pasos: `O(NLd)`; altera el contrato Caputo.
@@ -277,7 +284,7 @@ no una afirmación de que FFT sea más rápida en todo host: el cruce depende de
 CPU, biblioteca, dimensión y calentamiento, y para historias cortas la
 preparación y las asignaciones pueden dominar.
 
-Esta ruta es `experimental`, *batch/offline* y exclusivamente de historia
+Esta ruta está `implemented`, es *batch/offline* y exclusivamente de historia
 completa. No implementa ventana finita, actualización *streaming*, solver FDE ni
 orden variable; para esos contratos se necesita otro algoritmo. El trabajo de
 Matusiak [R22] es un precedente relacionado de convolución FFT fraccionaria, no
@@ -323,8 +330,8 @@ o memoria truncada para esta fórmula exacta.
 - `integrate_gl_explicit_numba` exige un RHS `numba.njit` y un vector numérico
   de parámetros. `integrate_gl_explicit` selecciona esa ruta o un fallback
   Python/NumPy para sistemas declarativos y la GUI.
-- Estado `experimental`: no se atribuye al método una región de estabilidad o
-  un orden general más fuerte que lo verificado.
+- Estado de implementación `implemented`: no se atribuye al método una región
+  de estabilidad ni un orden general más fuerte que lo verificado.
 
 Las pruebas comparan Numba con Python, la solución de `D_C^q x=1` y el límite
 Euler para `q=1`; Wolfram reconstruye de manera independiente esos dos casos
@@ -407,9 +414,9 @@ y `starting_corrections="none_implemented"`.
 
 `tests/test_lubich_convolution_quadrature.py` verifica BDF1=GL, expansión BDF2,
 límite `q=1`, convergencia sobre monomios, orden por componente, malla y paridad
-Python--Numba--FFT. Las bases teóricas son Lubich [R7, R23]. El estado es
-`experimental`: faltan correcciones de arranque, BDF de mayor orden, CQ-RK,
-solvers FDE y validación independiente específica por formulación inicial.
+Python--Numba--FFT. Las bases teóricas son Lubich [R7, R23]. La ruta está
+`implemented` bajo ese contrato limitado; no incluye correcciones de arranque,
+BDF de mayor orden, CQ-RK ni un solver FDE.
 
 ## Hadamard y Caputo--Hadamard por CQ en tiempo logarítmico
 
@@ -570,7 +577,7 @@ conjugación sobre una potencia, el caso `q=1`, validación de parámetros y
 paridad Numba--Python. No hay oráculo Wolfram templado. La definición actual se
 basa en [R8]. El método de Bibi y ur Rehman [R9], que usa integración de producto
 y Newton--Cotes para problemas templados, está verificado bibliográficamente
-pero permanece como candidato de backlog; no describe el kernel GL actual.
+pero corresponde a una extensión no implementada; no describe el kernel GL actual.
 
 ## CQ templada BDF1/BDF2 por conjugación exponencial
 
@@ -598,8 +605,8 @@ rápida ni *streaming*.
 
 El contrato conserva `tempered_symbol_shift_cq` como ruta todavía `planned`
 para `[delta(z)/h+lambda]**q`, que no comparte los pesos ni el ancla discreta.
-La historia recurrente de Guo et al. ya es un operador experimental separado,
-descrito en la sección siguiente. La validación Wolfram independiente de esta
+La historia recurrente de Guo et al. ya es un operador implementado separado,
+con API pública experimental, descrito en la sección siguiente. La validación Wolfram independiente de esta
 CQ directa pasó 18/18 pruebas y la diferencia máxima contra el núcleo público
 fue `4.44089209850063e-15`. Consulte
 [Tempered BDF Convolution Quadrature](tempered_convolution_quadrature.md) para
@@ -903,7 +910,7 @@ Numba acumula un orden a la vez y conserva solo un vector de pesos, de modo que
 la memoria auxiliar es `O(L)` además de la salida, no `O(JNd)`. Existe una
 referencia Python equivalente.
 
-El operador muestral está `experimental`; el solver FDE general
+El operador muestral está `implemented`; el solver FDE general
 `distributed_order_quadrature` continúa `planned`. Las pruebas en
 `tests/test_distributed_order_operator.py`
 verifican que una masa delta reproduce GL, que una combinación coincide con la
@@ -1030,7 +1037,8 @@ identidad cerrada con `erfcx`; otras pruebas contrastan pesos, linealidad y
 paridad Numba--Python--FFT. Solicitudes cuya serie sale del dominio numérico
 comprobado se rechazan.
 
-La definición y sus rutas ejecutables permanecen `experimental` y la crítica de
+La definición y sus rutas ejecutables están `implemented` bajo su dominio
+numérico declarado, y la crítica de
 [R15] forma parte del contrato de evidencia. Esto permite investigar una
 definición solicitada sin presentar los kernels no singulares como equivalentes
 a Caputo ni como libres de restricciones iniciales.
@@ -1083,7 +1091,7 @@ prueba de una tasa de convergencia, estabilidad o dinámica caótica.
 
 ## Métodos registrados que aún no son rutas completas
 
-| Contrato | Estado | Trabajo requerido y fuente |
+| Contrato | Estado | Límite actual y fuente |
 |---|---:|---|
 | `tempered_symbol_shift_cq` | `planned` | Implementar y validar `[delta(z)/h+lambda]**q` como método separado; no es backend de la CQ por conjugación ya ejecutable. |
 | `variable_order_caputo` + `variable_order_pece` | `planned` | Ruta genérica tipo I/II aún no implementada; no sustituye al solver tipo III L1 ya ejecutable. Samko--Ross [R10]. |
@@ -1092,18 +1100,18 @@ prueba de una tasa de convergencia, estabilidad o dinámica caótica.
 | `distributed_order_quadrature` | `planned` | Ruta genérica/CQ con correcciones; no sustituye al solver Caputo L1 específico ya ejecutable. Análisis y CQ: [R17], [R33]. |
 | `local_ode_transform` | `theoretical_only` | Transformación local conformable; debe permanecer fuera de afirmaciones de memoria hereditaria. |
 
-## Backlog numérico priorizado por evidencia
+## Límites y extensiones no implementadas
 
 1. **Historia rápida de Caputo por suma de exponenciales.** Jiang, J. Zhang,
    Q. Zhang y Z. Zhang [R19] reducen el historial directo a
    `O(N*Nexp*d)` de trabajo y `O(Nexp*d)` de memoria auxiliar, con `Nexp`
    dependiente de tolerancia y horizonte. El DOI de la publicación fue
-   verificado. Es la referencia primaria recomendada para un backend de
-   `fast_history`; todavía no está implementado en HAFO.
+   verificado. Es una referencia primaria para esta posible extensión de
+   `fast_history`, que no está implementada en HAFO.
 2. **Caputo de orden superior.** Yan--Pal--Ford [R5] describe métodos directos
-   y Adams de orden superior bajo hipótesis de suavidad. Debe añadirse como un
-   método nuevo y validarse contra soluciones con singularidad inicial; no se
-   debe cambiar silenciosamente el ABM actual.
+   y Adams de orden superior bajo hipótesis de suavidad. Esa familia no está
+   implementada y requeriría validación contra soluciones con singularidad
+   inicial; no forma parte del contrato del ABM actual.
 3. **FDE templadas de mayor orden.** Bibi--ur Rehman [R9] cubre IVP/TVP
    templados mediante Newton--Cotes e interpolación generalizada. Es una familia
    distinta del solver Caputo templado por conjugación+ABM ya implementado y no
@@ -1113,8 +1121,8 @@ prueba de una tasa de convergencia, estabilidad o dinámica caótica.
    [R36] es la referencia para historia rápida tipo III; Ahmed--Izadi--Cattani
    [R11] es candidato para problemas suaves y globales. Ninguno reemplaza
    automáticamente la suma GL congelada ni hereda sus pruebas.
-5. **CF de alto orden.** Cao--Wang--Xu [R14] debe evaluarse únicamente dentro
-   de la pista `research_required` y junto con las restricciones de [R15].
+5. **CF de alto orden.** Cao--Wang--Xu [R14] permanece únicamente bajo el estado
+   `research_required` y sujeto a las restricciones de [R15].
 6. **Historia ABC rápida por SOE.** La variante rápida de [R30] requiere una
    implementación y validación separadas. No debe etiquetarse el
    predictor--corrector convencional `O(N^2)` como rápido ni reutilizar el
@@ -1123,8 +1131,8 @@ prueba de una tasa de convergencia, estabilidad o dinámica caótica.
 Wang y Huang, *High order fast algorithm for the Caputo fractional derivative*,
 está localizado como preprint `arXiv:1705.06101`; no se encontró un DOI de
 publicación revisada por pares que pudiera afirmarse con seguridad en este
-corte. Se conserva como lectura de backlog, no como referencia normativa ni
-como implementación presente.
+corte. Se conserva como referencia contextual de una extensión no implementada,
+no como referencia normativa ni como implementación presente.
 
 ## Bibliografía verificada
 

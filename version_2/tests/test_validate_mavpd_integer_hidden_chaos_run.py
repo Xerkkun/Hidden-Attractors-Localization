@@ -1195,7 +1195,7 @@ def _build_valid_run(tmp_path: Path, *, figure_store_root: Path | None = None):
         "software": {
             "python_version": "3.test",
             "platform": "test-platform",
-            "package_version": "1.1.0",
+            "package_version": "1.2.0",
             "numpy_version": "test",
             "scipy_version": "test",
             "git_commit": "1" * 40,

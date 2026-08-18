@@ -23,8 +23,6 @@ from __future__ import annotations
 import ctypes
 import hashlib
 import operator
-import os
-import shutil
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -32,6 +30,7 @@ from typing import Any, ClassVar
 
 import numpy as np
 
+from .._native_loading import load_shared_library as _load_shared_library
 from ..parallel import compile_c_target
 from ..paths import PACKAGE_ROOT, get_native_cache
 
@@ -143,23 +142,6 @@ def _uint64_array_type() -> Any:
         ndim=1,
         flags="C_CONTIGUOUS",
     )
-
-
-def _load_shared_library(path: Path, compiler: str) -> tuple[Any, str | None]:
-    """Load a DLL while making the compiler runtime visible on Windows."""
-
-    runtime_directory: str | None = None
-    directory_handle = None
-    if sys.platform == "win32" and hasattr(os, "add_dll_directory"):
-        compiler_path = shutil.which(compiler)
-        if compiler_path is not None:
-            runtime_directory = str(Path(compiler_path).resolve().parent)
-            directory_handle = os.add_dll_directory(runtime_directory)
-    try:
-        return ctypes.CDLL(str(path.resolve())), runtime_directory
-    finally:
-        if directory_handle is not None:
-            directory_handle.close()
 
 
 def _validate_points(points: Any) -> np.ndarray:

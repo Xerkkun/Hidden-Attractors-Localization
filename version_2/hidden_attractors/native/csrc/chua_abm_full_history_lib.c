@@ -1,12 +1,17 @@
 #include <math.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include "native_validation.h"
 
 #if defined(_WIN32) || defined(__CYGWIN__)
   #define API_EXPORT __declspec(dllexport)
 #else
   #define API_EXPORT __attribute__((visibility("default")))
 #endif
+
+API_EXPORT int chua_abm_abi_version(void) {
+    return 3;
+}
 
 typedef struct {
     double alpha;
@@ -18,9 +23,9 @@ typedef struct {
 
 static ChuaParams G_PARAMS = {8.4562, 12.0732, 0.0052, -0.1768, -1.1468};
 
-static int ceil_steps(double t_final, double h) {
-    if (!(h > 0.0) || t_final < 0.0) return -1;
-    return (int)ceil(t_final / h);
+static int uniform_steps(double t_final, double h) {
+    int steps = 0;
+    return hafo_uniform_step_count(t_final, h, &steps) ? steps : -1;
 }
 
 static double chua_piecewise(double x, const ChuaParams *p) {
@@ -75,7 +80,7 @@ API_EXPORT void set_abm_chua_params(double alpha, double beta, double gamma, dou
 }
 
 API_EXPORT int abm_rows(double t_final, double h) {
-    const int nsteps = ceil_steps(t_final, h);
+    const int nsteps = uniform_steps(t_final, h);
     return (nsteps < 0) ? -1 : nsteps + 1;
 }
 
@@ -98,17 +103,32 @@ static int integrate_chua_abm_impl(
     double Lm,
     double t_final,
     int truncated_history,
-    double *out
+    double *out,
+    size_t out_capacity
 ) {
-    if (!(q > 0.0 && q <= 1.0) || !(h > 0.0) || t_final < 0.0 || !out) return -1;
-    if (truncated_history && !(Lm > 0.0)) return -1;
-    const int nsteps = ceil_steps(t_final, h);
+    int nu = 1;
+    size_t state_values = 0u;
+    size_t output_values = 0u;
+    const double initial[3] = {x0, y0, z0};
+    if (!(q > 0.0 && q <= 1.0) || !hafo_isfinite(q) || !out ||
+        (truncated_history != 0 && truncated_history != 1) ||
+        !hafo_isfinite(G_PARAMS.alpha) || !hafo_isfinite(G_PARAMS.beta) ||
+        !hafo_isfinite(G_PARAMS.gamma) || !hafo_isfinite(G_PARAMS.m0) ||
+        !hafo_isfinite(G_PARAMS.m1) ||
+        !hafo_values_are_finite(initial, 3u)) return -1;
+    if (truncated_history && !hafo_positive_ratio_ceil(Lm, h, &nu)) return -1;
+    const int nsteps = uniform_steps(t_final, h);
     if (nsteps < 0) return -2;
     const int rows = nsteps + 1;
-    const int nu = truncated_history ? ((int)ceil(Lm / h) > 1 ? (int)ceil(Lm / h) : 1) : nsteps + 1;
+    if (!truncated_history) nu = nsteps + 1;
+    if (!hafo_checked_mul_size((size_t)rows, 3u, &state_values) ||
+        state_values > (size_t)INT_MAX ||
+        !hafo_checked_mul_size((size_t)rows, 4u, &output_values) ||
+        output_values > (size_t)INT_MAX) return -2;
+    if (out_capacity < output_values) return -4;
 
-    double *state = (double*)calloc((size_t)rows * 3u, sizeof(double));
-    double *fhist = (double*)calloc((size_t)rows * 3u, sizeof(double));
+    double *state = (double*)calloc(state_values, sizeof(double));
+    double *fhist = (double*)calloc(state_values, sizeof(double));
     double *pow_q = (double*)calloc((size_t)rows + 1u, sizeof(double));
     double *pow_q1 = (double*)calloc((size_t)rows + 1u, sizeof(double));
     if (!state || !fhist || !pow_q || !pow_q1) {
@@ -123,6 +143,10 @@ static int integrate_chua_abm_impl(
 
     state[0] = x0; state[1] = y0; state[2] = z0;
     rhs(state, &G_PARAMS, fhist);
+    if (!hafo_values_are_finite(fhist, 3u)) {
+        free(state); free(fhist); free(pow_q); free(pow_q1);
+        return -7;
+    }
     const double hq = pow(h, q);
     const double pred_scale = hq / tgamma(q + 1.0);
     const double corr_scale = hq / tgamma(q + 2.0);
@@ -171,6 +195,11 @@ static int integrate_chua_abm_impl(
             corrected[2] += corr_scale * fp[2];
         }
 
+        if (!hafo_values_are_finite(corrected, 3u)) {
+            free(state); free(fhist); free(pow_q); free(pow_q1);
+            return -7;
+        }
+
         state[3 * (i + 1) + 0] = corrected[0];
         state[3 * (i + 1) + 1] = corrected[1];
         state[3 * (i + 1) + 2] = corrected[2];
@@ -178,7 +207,7 @@ static int integrate_chua_abm_impl(
     }
 
     for (int i = 0; i < rows; ++i) {
-        out[4 * i + 0] = (double)i * h;
+        out[4 * i + 0] = (i == nsteps) ? t_final : (double)i * h;
         out[4 * i + 1] = state[3 * i + 0];
         out[4 * i + 2] = state[3 * i + 1];
         out[4 * i + 3] = state[3 * i + 2];
@@ -195,9 +224,12 @@ API_EXPORT int integrate_chua_abm_full_history(
     double q,
     double h,
     double t_final,
-    double *out
+    double *out,
+    size_t out_capacity
 ) {
-    return integrate_chua_abm_impl(x0, y0, z0, q, h, 0.0, t_final, 0, out);
+    return integrate_chua_abm_impl(
+        x0, y0, z0, q, h, 0.0, t_final, 0, out, out_capacity
+    );
 }
 
 API_EXPORT int integrate_chua_abm_truncated_history(
@@ -208,9 +240,12 @@ API_EXPORT int integrate_chua_abm_truncated_history(
     double h,
     double Lm,
     double t_final,
-    double *out
+    double *out,
+    size_t out_capacity
 ) {
-    return integrate_chua_abm_impl(x0, y0, z0, q, h, Lm, t_final, 1, out);
+    return integrate_chua_abm_impl(
+        x0, y0, z0, q, h, Lm, t_final, 1, out, out_capacity
+    );
 }
 
 /*
@@ -220,7 +255,7 @@ API_EXPORT int integrate_chua_abm_truncated_history(
  * stages is retained. In truncated mode the retained state at j0 is the
  * restarted Volterra anchor for a window of duration Lm.
  */
-static void advance_continuation_abm(
+static int advance_continuation_abm(
     double *state,
     double *fhist,
     int i,
@@ -280,7 +315,9 @@ static void advance_continuation_abm(
     state[3 * (i + 1) + 0] = corrected[0];
     state[3 * (i + 1) + 1] = corrected[1];
     state[3 * (i + 1) + 2] = corrected[2];
+    if (!hafo_values_are_finite(corrected, 3u)) return 0;
     rhs_epsilon(corrected, &G_PARAMS, k, eps, &fhist[3 * (i + 1)]);
+    return hafo_values_are_finite(&fhist[3 * (i + 1)], 3u);
 }
 
 /*
@@ -315,22 +352,59 @@ API_EXPORT int compute_continuation_abm(
     double *traj_out,
     double *final_history_out,
     int final_history_capacity,
-    int *final_history_count
+    int *final_history_count,
+    size_t x_in_capacity,
+    size_t x_transient_capacity,
+    size_t x_out_capacity,
+    size_t history_counts_capacity,
+    size_t traj_capacity,
+    size_t final_history_values_capacity
 ) {
+    int nu_steps = 0;
+    size_t stage_state_values = 0u;
+    size_t state_values = 0u;
+    size_t trajectory_rows = 0u;
+    size_t trajectory_values = 0u;
+    size_t final_history_values = 0u;
     if (!lambda_values || n_lambda < 1 || !seed3 || !x_in_out || !x_transient_out || !x_out_out ||
         !history_in_counts || !history_out_counts || !traj_out || !final_history_out || !final_history_count) return -1;
-    if (!(q > 0.0 && q <= 1.0) || !(h > 0.0) || t_transient < 0.0 || t_keep < 0.0) return -2;
-    if (truncated_history && !(Lm > 0.0)) return -3;
-    const int transient_steps = ceil_steps(t_transient, h);
-    const int keep_steps = ceil_steps(t_keep, h);
+    if (!(q > 0.0 && q <= 1.0) || !hafo_isfinite(q) || !hafo_isfinite(k) ||
+        (truncated_history != 0 && truncated_history != 1) ||
+        !hafo_values_are_finite(lambda_values, (size_t)n_lambda) ||
+        !hafo_values_are_finite(seed3, 3u) ||
+        !hafo_isfinite(G_PARAMS.alpha) || !hafo_isfinite(G_PARAMS.beta) ||
+        !hafo_isfinite(G_PARAMS.gamma) || !hafo_isfinite(G_PARAMS.m0) ||
+        !hafo_isfinite(G_PARAMS.m1)) return -2;
+    if (truncated_history && !hafo_positive_ratio_ceil(Lm, h, &nu_steps)) return -3;
+    const int transient_steps = uniform_steps(t_transient, h);
+    const int keep_steps = uniform_steps(t_keep, h);
     if (transient_steps < 0 || keep_steps < 0) return -4;
+    if (transient_steps > INT_MAX - keep_steps) return -4;
     const int stage_steps = transient_steps + keep_steps;
+    if (stage_steps > 0 && n_lambda > (INT_MAX - 2) / stage_steps) return -4;
     const int total_steps = n_lambda * stage_steps;
     const int rows = total_steps + 1;
-    const int nu = truncated_history ? ((int)ceil(Lm / h) > 1 ? (int)ceil(Lm / h) : 1) : rows;
+    const int nu = truncated_history ? nu_steps : rows;
 
-    double *state = (double*)calloc((size_t)rows * 3u, sizeof(double));
-    double *fhist = (double*)calloc((size_t)rows * 3u, sizeof(double));
+    if (!hafo_checked_mul_size((size_t)n_lambda, 3u, &stage_state_values) ||
+        stage_state_values > (size_t)INT_MAX ||
+        !hafo_checked_mul_size((size_t)rows, 3u, &state_values) ||
+        state_values > (size_t)INT_MAX ||
+        !hafo_checked_mul_size((size_t)n_lambda, (size_t)keep_steps + 1u,
+                               &trajectory_rows) ||
+        !hafo_checked_mul_size(trajectory_rows, 4u, &trajectory_values) ||
+        final_history_capacity < 1 ||
+        !hafo_checked_mul_size((size_t)final_history_capacity, 4u,
+                               &final_history_values)) return -4;
+    if (x_in_capacity < stage_state_values ||
+        x_transient_capacity < stage_state_values ||
+        x_out_capacity < stage_state_values ||
+        history_counts_capacity < (size_t)n_lambda ||
+        traj_capacity < trajectory_values ||
+        final_history_values_capacity < final_history_values) return -6;
+
+    double *state = (double*)calloc(state_values, sizeof(double));
+    double *fhist = (double*)calloc(state_values, sizeof(double));
     double *pow_q = (double*)calloc((size_t)rows + 1u, sizeof(double));
     double *pow_q1 = (double*)calloc((size_t)rows + 1u, sizeof(double));
     if (!state || !fhist || !pow_q || !pow_q1) {
@@ -351,6 +425,10 @@ API_EXPORT int compute_continuation_abm(
     for (int stage = 0; stage < n_lambda; ++stage) {
         const double eps = lambda_values[stage];
         rhs_epsilon(&state[3 * cursor], &G_PARAMS, k, eps, &fhist[3 * cursor]);
+        if (!hafo_values_are_finite(&fhist[3 * cursor], 3u)) {
+            free(state); free(fhist); free(pow_q); free(pow_q1);
+            return -7;
+        }
         x_in_out[3 * stage + 0] = state[3 * cursor + 0];
         x_in_out[3 * stage + 1] = state[3 * cursor + 1];
         x_in_out[3 * stage + 2] = state[3 * cursor + 2];
@@ -363,22 +441,33 @@ API_EXPORT int compute_continuation_abm(
         }
 
         for (int step = 0; step < transient_steps; ++step) {
-            advance_continuation_abm(state, fhist, cursor, nu, truncated_history, q, pred_scale, corr_scale, pow_q, pow_q1, k, eps);
+            if (!advance_continuation_abm(state, fhist, cursor, nu,
+                                          truncated_history, q, pred_scale,
+                                          corr_scale, pow_q, pow_q1, k, eps)) {
+                free(state); free(fhist); free(pow_q); free(pow_q1);
+                return -7;
+            }
             cursor += 1;
         }
         x_transient_out[3 * stage + 0] = state[3 * cursor + 0];
         x_transient_out[3 * stage + 1] = state[3 * cursor + 1];
         x_transient_out[3 * stage + 2] = state[3 * cursor + 2];
-        const int traj_offset = stage * (keep_steps + 1) * 4;
+        const size_t traj_offset = (size_t)stage * ((size_t)keep_steps + 1u) * 4u;
         traj_out[traj_offset + 0] = 0.0;
         traj_out[traj_offset + 1] = state[3 * cursor + 0];
         traj_out[traj_offset + 2] = state[3 * cursor + 1];
         traj_out[traj_offset + 3] = state[3 * cursor + 2];
         for (int step = 0; step < keep_steps; ++step) {
-            advance_continuation_abm(state, fhist, cursor, nu, truncated_history, q, pred_scale, corr_scale, pow_q, pow_q1, k, eps);
+            if (!advance_continuation_abm(state, fhist, cursor, nu,
+                                          truncated_history, q, pred_scale,
+                                          corr_scale, pow_q, pow_q1, k, eps)) {
+                free(state); free(fhist); free(pow_q); free(pow_q1);
+                return -7;
+            }
             cursor += 1;
-            const int offset = traj_offset + (step + 1) * 4;
-            traj_out[offset + 0] = (double)(step + 1) * h;
+            const size_t offset = traj_offset + ((size_t)step + 1u) * 4u;
+            traj_out[offset + 0] = (step + 1 == keep_steps)
+                ? t_keep : (double)(step + 1) * h;
             traj_out[offset + 1] = state[3 * cursor + 0];
             traj_out[offset + 2] = state[3 * cursor + 1];
             traj_out[offset + 3] = state[3 * cursor + 2];

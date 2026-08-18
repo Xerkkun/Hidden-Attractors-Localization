@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "native_validation.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -12,6 +13,15 @@
   #define API_EXPORT __declspec(dllexport)
 #else
   #define API_EXPORT __attribute__((visibility("default")))
+#endif
+
+API_EXPORT int chua_frac_backend_abi_version(void) {
+    return 3;
+}
+#if defined(__GNUC__) || defined(__clang__)
+  #define INTERNAL_UNUSED static __attribute__((unused))
+#else
+  #define INTERNAL_UNUSED static
 #endif
 
 typedef struct {
@@ -37,9 +47,9 @@ typedef struct {
 static ChuaParams G_PARAMS = {8.4562, 12.0732, 0.0052, -0.1768, -1.1468, 0.4, -1.5585, 1.0, 0};
 static int G_WORKERS = 0;
 
-static int ceil_steps(double t_final, double h) {
-    if (!(h > 0.0) || t_final < 0.0) return -1;
-    return (int)ceil(t_final / h);
+static int uniform_steps(double t_final, double h) {
+    int steps = 0;
+    return hafo_uniform_step_count(t_final, h, &steps) ? steps : -1;
 }
 
 static double sat_scalar(double x) {
@@ -116,13 +126,49 @@ static int integrate_internal(
     int *full_rows_out,
     int *segment_start_out
 ) {
-    if (!(q > 0.0 && q <= 1.0) || !(h > 0.0) || !(Lm > 0.0) || t_final < 0.0) return -1;
-    const int nsteps = ceil_steps(t_final, h);
+    int nu = 0;
+    size_t full_values = 0u;
+    size_t history_values = 0u;
+    if (!p || !x0 || !full_out || !full_rows_out || !segment_start_out ||
+        history_count < 0 || !(q > 0.0 && q <= 1.0) ||
+        !hafo_isfinite(q) || !hafo_isfinite(k) || !hafo_isfinite(eps) ||
+        (p->model != 0 && p->model != 1) ||
+        !hafo_isfinite(p->alpha_chua) || !hafo_isfinite(p->beta) ||
+        !hafo_isfinite(p->gamma_chua) || !hafo_isfinite(p->m0) ||
+        !hafo_isfinite(p->m1) ||
+        (p->model == 1 &&
+         (!hafo_isfinite(p->a1) || !hafo_isfinite(p->a2) ||
+          !hafo_isfinite(p->rho) || !(p->rho > 0.0))) ||
+        ((history == NULL) != (history_count == 0)) ||
+        !hafo_positive_ratio_ceil(Lm, h, &nu) ||
+        !hafo_values_are_finite(x0, 3u)) return -1;
+    const int nsteps = uniform_steps(t_final, h);
     if (nsteps < 0) return -2;
     const int hist_count = (history && history_count > 0) ? history_count : 1;
     const int start_idx = hist_count - 1;
+    if (nsteps > INT_MAX - hist_count) return -2;
     const int total_rows = hist_count + nsteps;
-    const int nu = (int)ceil(Lm / h) > 1 ? (int)ceil(Lm / h) : 1;
+    if (!hafo_checked_mul_size((size_t)total_rows, 4u, &full_values) ||
+        full_values > (size_t)INT_MAX ||
+        !hafo_checked_mul_size((size_t)history_count, 4u, &history_values) ||
+        history_values > (size_t)INT_MAX ||
+        (history && history_count > 0 &&
+         !hafo_values_are_finite(history, history_values))) return -2;
+    if (history_count > 0) {
+        const double tolerance = 64.0 * DBL_EPSILON * fmax(1.0, fabs(h));
+        if (fabs(history[4 * (history_count - 1)]) > tolerance) return -2;
+        for (int index = 1; index < history_count; ++index) {
+            const double increment = history[4 * index] - history[4 * (index - 1)];
+            if (!(increment > 0.0) || fabs(increment - h) > tolerance) return -2;
+        }
+        for (int component = 0; component < 3; ++component) {
+            const double actual = history[4 * (history_count - 1) + 1 + component];
+            const double expected = x0[component];
+            const double state_tolerance = 64.0 * DBL_EPSILON *
+                fmax(1.0, fmax(fabs(actual), fabs(expected)));
+            if (fabs(actual - expected) > state_tolerance) return -2;
+        }
+    }
     const double hq = pow(h, q);
     const EFORK3 c = efork3_coeffs(q, h);
 
@@ -130,7 +176,7 @@ static int integrate_internal(
     double *x = (double*)calloc((size_t)total_rows, sizeof(double));
     double *y = (double*)calloc((size_t)total_rows, sizeof(double));
     double *z = (double*)calloc((size_t)total_rows, sizeof(double));
-    double *full = (double*)malloc((size_t)total_rows * 4u * sizeof(double));
+    double *full = (double*)malloc(full_values * sizeof(double));
     if (!t || !x || !y || !z || !full) {
         free(t); free(x); free(y); free(z); free(full);
         return -3;
@@ -193,7 +239,12 @@ static int integrate_internal(
         const double xn1 = xn + c.w1 * k1x + c.w2 * k2x + c.w3 * k3x;
         const double yn1 = yn + c.w1 * k1y + c.w2 * k2y + c.w3 * k3y;
         const double zn1 = zn + c.w1 * k1z + c.w2 * k2z + c.w3 * k3z;
-        t[n + 1] = t[n] + h;
+        if (!hafo_isfinite(xn1) || !hafo_isfinite(yn1) || !hafo_isfinite(zn1)) {
+            free(t); free(x); free(y); free(z); free(full);
+            return -4;
+        }
+        const int local_step = n - start_idx + 1;
+        t[n + 1] = (local_step == nsteps) ? t_final : (double)local_step * h;
         x[n + 1] = xn1;
         y[n + 1] = yn1;
         z[n + 1] = zn1;
@@ -259,21 +310,21 @@ API_EXPORT void set_frac_chua_params(double alpha, double beta, double gamma, do
 }
 
 API_EXPORT void set_frac_chua_model(int model) {
-    G_PARAMS.model = (model == 1) ? 1 : 0;
+    G_PARAMS.model = (model == 0 || model == 1) ? model : -1;
 }
 
 API_EXPORT void set_frac_chua_arctan_params(double a1, double a2, double rho) {
     G_PARAMS.a1 = a1;
     G_PARAMS.a2 = a2;
-    G_PARAMS.rho = (rho > 0.0) ? rho : 1.0;
+    G_PARAMS.rho = rho;
 }
 
-API_EXPORT void set_frac_backend_workers(int workers) {
+INTERNAL_UNUSED void set_frac_backend_workers(int workers) {
     G_WORKERS = (workers > 0) ? workers : 0;
 }
 
 API_EXPORT int efork_rows(double t_final, double h) {
-    const int nsteps = ceil_steps(t_final, h);
+    const int nsteps = uniform_steps(t_final, h);
     return (nsteps < 0) ? -1 : nsteps + 1;
 }
 
@@ -281,15 +332,20 @@ API_EXPORT int integrate_chua_efork3(
     double x0, double y0, double z0,
     double q, double h, double Lm, double t_final,
     double k, double eps,
-    double *traj_out
+    double *traj_out,
+    size_t traj_capacity
 ) {
     if (!traj_out) return -10;
+    const int nsteps = uniform_steps(t_final, h);
+    size_t required = 0u;
+    if (nsteps < 0 ||
+        !hafo_checked_mul_size((size_t)nsteps + 1u, 4u, &required)) return -2;
+    if (traj_capacity < required) return -14;
     const double seed[3] = {x0, y0, z0};
     double *full = NULL;
     int full_rows = 0, segment_start = 0;
     const int rc = integrate_internal(&G_PARAMS, seed, q, h, Lm, t_final, k, eps, NULL, 0, &full, &full_rows, &segment_start);
     if (rc != 0) return rc;
-    const int nsteps = ceil_steps(t_final, h);
     write_segment(full, segment_start, nsteps, traj_out);
     free(full);
     return 0;
@@ -314,19 +370,52 @@ API_EXPORT int compute_continuation_efork3(
     int *history_out_counts,
     double *traj_out,
     double t_observe,
-    double *observation_out
+    double *observation_out,
+    size_t x_in_capacity,
+    size_t x_transient_capacity,
+    size_t x_out_capacity,
+    size_t history_counts_capacity,
+    size_t traj_capacity,
+    size_t observation_capacity
 ) {
-    if (!eps_values || !x_seed3 || !x_in_out || !x_transient_out || !x_out_out || !traj_out || !observation_out) return -10;
-    if (n_eps <= 0) return -11;
-    const int keep_steps = ceil_steps(t_keep, h);
-    const int observation_steps = ceil_steps(t_observe, h);
+    int memory_steps = 0;
+    int transient_steps = 0;
+    size_t state_values = 0u;
+    size_t trajectory_rows = 0u;
+    size_t trajectory_values = 0u;
+    size_t observation_values = 0u;
+    size_t memory_values = 0u;
+    if (!eps_values || !x_seed3 || !x_in_out || !x_transient_out ||
+        !x_out_out || !traj_out || !observation_out) return -10;
+    if (n_eps <= 0 || (memory_mode != 0 && memory_mode != 1) ||
+        (memory_update_source != 0 && memory_update_source != 1) ||
+        !(q > 0.0 && q <= 1.0) || !hafo_isfinite(q) ||
+        !hafo_isfinite(k) || !hafo_positive_ratio_ceil(Lm, h, &memory_steps) ||
+        !hafo_uniform_step_count(t_transient, h, &transient_steps) ||
+        !hafo_values_are_finite(eps_values, (size_t)n_eps) ||
+        !hafo_values_are_finite(x_seed3, 3u) ||
+        ((history_in_counts == NULL) != (history_out_counts == NULL))) return -11;
+    const int keep_steps = uniform_steps(t_keep, h);
+    const int observation_steps = uniform_steps(t_observe, h);
     if (keep_steps < 0 || observation_steps < 0) return -12;
-    int max_hist = (int)ceil(Lm / h) + 1;
-    if (max_hist < 2) max_hist = 2;
-    double *mem_current = (double*)calloc((size_t)max_hist * 4u, sizeof(double));
-    double *mem_trans = (double*)calloc((size_t)max_hist * 4u, sizeof(double));
-    double *mem_keep = (double*)calloc((size_t)max_hist * 4u, sizeof(double));
-    double *mem_next = (double*)calloc((size_t)max_hist * 4u, sizeof(double));
+    (void)transient_steps;
+    if (!hafo_checked_mul_size((size_t)n_eps, 3u, &state_values) ||
+        state_values > (size_t)INT_MAX ||
+        !hafo_checked_mul_size((size_t)n_eps, (size_t)keep_steps + 1u,
+                               &trajectory_rows) ||
+        !hafo_checked_mul_size(trajectory_rows, 4u, &trajectory_values) ||
+        !hafo_checked_mul_size((size_t)observation_steps + 1u, 4u,
+                               &observation_values) ||
+        !hafo_checked_mul_size((size_t)memory_steps + 1u, 4u,
+                               &memory_values)) return -12;
+    if (x_in_capacity < state_values || x_transient_capacity < state_values ||
+        x_out_capacity < state_values || traj_capacity < trajectory_values ||
+        observation_capacity < observation_values ||
+        (history_in_counts && history_counts_capacity < (size_t)n_eps)) return -14;
+    double *mem_current = (double*)calloc(memory_values, sizeof(double));
+    double *mem_trans = (double*)calloc(memory_values, sizeof(double));
+    double *mem_keep = (double*)calloc(memory_values, sizeof(double));
+    double *mem_next = (double*)calloc(memory_values, sizeof(double));
     if (!mem_current || !mem_trans || !mem_keep || !mem_next) {
         free(mem_current); free(mem_trans); free(mem_keep); free(mem_next);
         return -13;
@@ -506,7 +595,7 @@ static int bifurcation_one_seed(
     return 0;
 }
 
-API_EXPORT int compute_bifurcation_sweep_efork3(
+INTERNAL_UNUSED int compute_bifurcation_sweep_efork3(
     int param_type,
     const double *values,
     int n_values,
@@ -540,11 +629,11 @@ API_EXPORT int compute_bifurcation_sweep_efork3(
             params_for_value(&p, &q, param_type, values[i]);
             double final_pos[3], final_neg[3];
             int rc = bifurcation_one_seed(&p, cur_pos, q, h, Lm, t_total, t_burn, max_peaks, values[i],
-                                          pos_x + (size_t)i * max_peaks, pos_y + (size_t)i * max_peaks,
+                                          pos_x + (size_t)i * (size_t)max_peaks, pos_y + (size_t)i * (size_t)max_peaks,
                                           pos_count + i, final_pos);
             if (rc != 0) return rc;
             rc = bifurcation_one_seed(&p, cur_neg, q, h, Lm, t_total, t_burn, max_peaks, values[i],
-                                      neg_x + (size_t)i * max_peaks, neg_y + (size_t)i * max_peaks,
+                                      neg_x + (size_t)i * (size_t)max_peaks, neg_y + (size_t)i * (size_t)max_peaks,
                                       neg_count + i, final_neg);
             if (rc != 0) return rc;
             cur_pos[0] = final_pos[0]; cur_pos[1] = final_pos[1]; cur_pos[2] = final_pos[2];
@@ -564,11 +653,11 @@ API_EXPORT int compute_bifurcation_sweep_efork3(
         params_for_value(&p, &q, param_type, values[i]);
         double final_pos[3], final_neg[3];
         int rc = bifurcation_one_seed(&p, seed_pos3, q, h, Lm, t_total, t_burn, max_peaks, values[i],
-                                      pos_x + (size_t)i * max_peaks, pos_y + (size_t)i * max_peaks,
+                                      pos_x + (size_t)i * (size_t)max_peaks, pos_y + (size_t)i * (size_t)max_peaks,
                                       pos_count + i, final_pos);
         if (rc == 0) {
             rc = bifurcation_one_seed(&p, seed_neg3, q, h, Lm, t_total, t_burn, max_peaks, values[i],
-                                      neg_x + (size_t)i * max_peaks, neg_y + (size_t)i * max_peaks,
+                                      neg_x + (size_t)i * (size_t)max_peaks, neg_y + (size_t)i * (size_t)max_peaks,
                                       neg_count + i, final_neg);
         }
         if (rc != 0) {

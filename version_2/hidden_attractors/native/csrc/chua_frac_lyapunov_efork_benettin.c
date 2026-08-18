@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include "native_validation.h"
 
 /*
 chua_frac_lyapunov_efork_benettin.c
@@ -126,7 +129,7 @@ static void copy_vector(double *dst, const double *src, int n) {
     for (int i = 0; i < n; ++i) dst[i] = src[i];
 }
 
-static void qr_gram_schmidt_3x3(const double Yin[3][3], double Q[3][3], double R[3][3]) {
+static void qr_gram_schmidt_3x3(double Yin[3][3], double Q[3][3], double R[3][3]) {
     memset(R, 0, 9 * sizeof(double));
     double v[3];
 
@@ -155,7 +158,7 @@ static void qr_gram_schmidt_3x3(const double Yin[3][3], double Q[3][3], double R
     for (int i = 0; i < 3; ++i) Q[i][2] = v[i] / R[2][2];
 }
 
-static void invert_upper_triangular_3x3(const double R[3][3], double M[3][3]) {
+static void invert_upper_triangular_3x3(double R[3][3], double M[3][3]) {
     memset(M, 0, 9 * sizeof(double));
     M[2][2] = 1.0 / R[2][2];
     M[1][1] = 1.0 / R[1][1];
@@ -166,7 +169,7 @@ static void invert_upper_triangular_3x3(const double R[3][3], double M[3][3]) {
     M[0][2] = (R[0][1]*R[1][2] - R[0][2]*R[1][1]) / (R[0][0] * R[1][1] * R[2][2]);
 }
 
-static void right_multiply_history_window(double **hist, int start_idx, int end_idx, const double M[3][3]) {
+static void right_multiply_history_window(double **hist, int start_idx, int end_idx, double M[3][3]) {
     /* hist[c][n], c=0..11. Solo transforma columnas tangentes (3..11) para n in [start_idx, end_idx]. */
     for (int n = start_idx; n <= end_idx; ++n) {
         double Y[3][3], Ynew[3][3];
@@ -188,21 +191,59 @@ static void right_multiply_history_window(double **hist, int start_idx, int end_
     }
 }
 
-static void run_fractional_le(const double x_init[3], const Params *p, const char *csv_path) {
+static int run_fractional_le(const double x_init[3], const Params *p, const char *csv_path) {
     const int D = 12;
-    const int burn_steps = (int) llround(p->t_burn / p->h);
-    const int block_steps = (int) llround(p->t_block / p->h);
+    int burn_steps = 0;
+    int block_steps = 0;
+    int nu = 0;
+    size_t sample_count = 0u;
+    size_t sample_bytes = 0u;
+    const double system_parameters[5] = {
+        p ? p->alpha_chua : 0.0,
+        p ? p->beta : 0.0,
+        p ? p->gamma_chua : 0.0,
+        p ? p->m0 : 0.0,
+        p ? p->m1 : 0.0,
+    };
+    if (!x_init || !p || !hafo_values_are_finite(x_init, 3u) ||
+        !hafo_values_are_finite(system_parameters, 5u) ||
+        !(p->alpha_chua > 0.0) || !(p->beta > 0.0) ||
+        !(p->q > 0.0 && p->q <= 1.0) || !hafo_isfinite(p->q) ||
+        !hafo_positive_ratio_ceil(p->Lm, p->h, &nu) ||
+        !hafo_uniform_step_count(p->t_burn, p->h, &burn_steps) ||
+        !hafo_uniform_step_count(p->t_block, p->h, &block_steps) ||
+        block_steps < 1 || p->n_blocks < 1 ||
+        p->n_blocks > (INT_MAX - burn_steps) / block_steps) {
+        fprintf(stderr, "Parametros de integracion Lyapunov invalidos.\n");
+        return -1;
+    }
     const int total_steps = burn_steps + p->n_blocks * block_steps;
-    const int nu = (int) ceil(p->Lm / p->h);
+    sample_count = (size_t)total_steps + 1u;
+    if (!hafo_checked_mul_size(sample_count, sizeof(double), &sample_bytes)) {
+        fprintf(stderr, "Tamano de integracion Lyapunov fuera de rango.\n");
+        return -1;
+    }
+    (void)sample_bytes;
     const double hq = pow(p->h, p->q);
     const EFORK3 c = efork3_coeffs(p->q);
 
-    double *tgrid = (double*) calloc((size_t)total_steps + 1, sizeof(double));
-    double **hist = (double**) calloc(D, sizeof(double*));
-    for (int i = 0; i < D; ++i) hist[i] = (double*) calloc((size_t)total_steps + 1, sizeof(double));
+    double *tgrid = (double*) calloc(sample_count, sizeof(double));
+    double **hist = (double**) calloc((size_t)D, sizeof(double*));
     if (!tgrid || !hist) {
         fprintf(stderr, "No se pudo asignar memoria.\n");
-        exit(1);
+        free(tgrid);
+        free(hist);
+        return -2;
+    }
+    for (int i = 0; i < D; ++i) {
+        hist[i] = (double*) calloc(sample_count, sizeof(double));
+        if (!hist[i]) {
+            for (int j = 0; j < i; ++j) free(hist[j]);
+            free(hist);
+            free(tgrid);
+            fprintf(stderr, "No se pudo asignar memoria.\n");
+            return -2;
+        }
     }
 
     tgrid[0] = 0.0;
@@ -223,7 +264,10 @@ static void run_fractional_le(const double x_init[3], const Params *p, const cha
         fcsv = fopen(csv_path, "w");
         if (!fcsv) {
             fprintf(stderr, "No se pudo abrir CSV de convergencia: %s\n", csv_path);
-            exit(1);
+            for (int i = 0; i < D; ++i) free(hist[i]);
+            free(hist);
+            free(tgrid);
+            return -3;
         }
         fprintf(fcsv, "block,time,lambda1,lambda2,lambda3,stretch1,stretch2,stretch3\n");
     }
@@ -249,6 +293,16 @@ static void run_fractional_le(const double x_init[3], const Params *p, const cha
         for (int i = 0; i < D; ++i) {
             hist[i][n+1] = u[i] + hq * (c.w1 * rhs1[i] + c.w2 * rhs2[i] + c.w3 * rhs3[i]);
         }
+        for (int i = 0; i < D; ++i) {
+            if (!hafo_isfinite(hist[i][n + 1])) {
+                fprintf(stderr, "La integracion Lyapunov produjo valores no finitos.\n");
+                if (fcsv) fclose(fcsv);
+                for (int j = 0; j < D; ++j) free(hist[j]);
+                free(hist);
+                free(tgrid);
+                return -4;
+            }
+        }
 
         /* Ortonormalización cada bloque, después del burn-in */
         if ((n + 1) > burn_steps && ((n + 1 - burn_steps) % block_steps == 0)) {
@@ -263,6 +317,15 @@ static void run_fractional_le(const double x_init[3], const Params *p, const cha
 
             qr_gram_schmidt_3x3(Y, Q, R);
             invert_upper_triangular_3x3(R, M);
+            if (!hafo_values_are_finite(&R[0][0], 9u) ||
+                !hafo_values_are_finite(&M[0][0], 9u)) {
+                fprintf(stderr, "La reortogonalizacion Lyapunov produjo valores no finitos.\n");
+                if (fcsv) fclose(fcsv);
+                for (int j = 0; j < D; ++j) free(hist[j]);
+                free(hist);
+                free(tgrid);
+                return -4;
+            }
 
             /* Benettin estándar: acumular log de los factores de estiramiento */
             sum_logs[0] += log(fabs(R[0][0]));
@@ -300,6 +363,29 @@ static void run_fractional_le(const double x_init[3], const Params *p, const cha
     for (int i = 0; i < D; ++i) free(hist[i]);
     free(hist);
     free(tgrid);
+    return 0;
+}
+
+static int parse_finite_double(const char *text, double *value) {
+    char *end = NULL;
+    if (!text || !value) return 0;
+    errno = 0;
+    const double parsed = strtod(text, &end);
+    if (errno == ERANGE || end == text || !end || *end != '\0' ||
+        !hafo_isfinite(parsed)) return 0;
+    *value = parsed;
+    return 1;
+}
+
+static int parse_positive_int(const char *text, int *value) {
+    char *end = NULL;
+    if (!text || !value) return 0;
+    errno = 0;
+    const long parsed = strtol(text, &end, 10);
+    if (errno == ERANGE || end == text || !end || *end != '\0' ||
+        parsed < 1 || parsed > INT_MAX) return 0;
+    *value = (int)parsed;
+    return 1;
 }
 
 int main(int argc, char *argv[]) {
@@ -312,28 +398,35 @@ int main(int argc, char *argv[]) {
 
     Params p;
     double x0[3];
-    x0[0] = strtod(argv[1], NULL);
-    x0[1] = strtod(argv[2], NULL);
-    x0[2] = strtod(argv[3], NULL);
-    p.alpha_chua = strtod(argv[4], NULL);
-    p.beta = strtod(argv[5], NULL);
-    p.gamma_chua = strtod(argv[6], NULL);
-    p.m0 = strtod(argv[7], NULL);
-    p.m1 = strtod(argv[8], NULL);
-    p.q = strtod(argv[9], NULL);
+    if (!parse_finite_double(argv[1], &x0[0]) ||
+        !parse_finite_double(argv[2], &x0[1]) ||
+        !parse_finite_double(argv[3], &x0[2]) ||
+        !parse_finite_double(argv[4], &p.alpha_chua) ||
+        !parse_finite_double(argv[5], &p.beta) ||
+        !parse_finite_double(argv[6], &p.gamma_chua) ||
+        !parse_finite_double(argv[7], &p.m0) ||
+        !parse_finite_double(argv[8], &p.m1) ||
+        !parse_finite_double(argv[9], &p.q) ||
+        !parse_finite_double(argv[10], &p.h) ||
+        !parse_finite_double(argv[11], &p.Lm) ||
+        !parse_finite_double(argv[12], &p.t_burn) ||
+        !parse_positive_int(argv[13], &p.n_blocks) ||
+        !parse_finite_double(argv[14], &p.t_block)) {
+        fprintf(stderr, "Todos los argumentos deben ser numeros finitos y block_count un entero positivo.\n");
+        return 2;
+    }
     if (!(p.q > 0.0 && p.q <= 1.0)) {
         fprintf(stderr, "El orden fraccionario q debe cumplir 0 < q <= 1.\n");
         return 2;
     }
-    p.h = strtod(argv[10], NULL);
-    p.Lm = strtod(argv[11], NULL);
-    p.t_burn = strtod(argv[12], NULL);
-    p.n_blocks = (int) strtol(argv[13], NULL, 10);
-    p.t_block = strtod(argv[14], NULL);
+    if (!(p.h > 0.0) || !(p.Lm > 0.0) || p.t_burn < 0.0 || !(p.t_block > 0.0)) {
+        fprintf(stderr, "h, memory_length y block_time deben ser positivos; burn_time no negativo.\n");
+        return 2;
+    }
 
     const char *csv_path = getenv("CHUA_LE_CSV");
     if (!csv_path) csv_path = "chua_frac_le_convergence.csv";
 
-    run_fractional_le(x0, &p, csv_path);
-    return 0;
+    const int status = run_fractional_le(x0, &p, csv_path);
+    return status == 0 ? 0 : 3;
 }

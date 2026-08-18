@@ -33,7 +33,7 @@ def _write_integer_validation_config(path: Path) -> None:
                     "q_dynamics": 1.0,
                 },
                 "integrator": {
-                    "name": "heun",
+                    "name": "rk4",
                     "h": 0.01,
                     "memory_mode": "none",
                     "memory_policy": "none",

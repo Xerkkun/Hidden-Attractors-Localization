@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 import tomllib
 from pathlib import Path
 
@@ -13,6 +15,23 @@ PUBLICATION_STATE_PAIRS = {
     ("verified_release_candidate", "not_published"),
     ("published", "published"),
 }
+
+
+@pytest.mark.release_readiness
+def test_submission_strict_release_validator_passes() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(VERSION_ROOT / "tools" / "release" / "validate_release_readiness.py"),
+            "--submission-strict",
+        ],
+        cwd=VERSION_ROOT,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        check=False,
+    )
+    assert result.returncode == 0, result.stdout
 
 
 @pytest.mark.release_readiness
@@ -61,7 +80,7 @@ def test_archive_manifest_records_prepared_release_without_self_reference() -> N
     with (VERSION_ROOT / "pyproject.toml").open("rb") as handle:
         version = tomllib.load(handle)["project"]["version"]
 
-    assert version == manifest["version"] == "1.1.0"
+    assert version == manifest["version"] == "1.2.0"
     assert manifest["release_tag"] == f"v{version}"
     assert manifest["source_commit_policy"] == "release_tag_resolves_to_source_commit"
     assert "commit" not in manifest

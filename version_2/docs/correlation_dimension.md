@@ -109,14 +109,13 @@ normalización y comparación estricta; no se cruza Python, Julia o C por cada
 paso de un integrador.
 
 El benchmark reproducible `benchmarks/bench_correlation_sum.py` separa
-compilación/JIT de las muestras cronometradas y verifica conteos idénticos. En
-la ejecución local del 3 de agosto de 2026 (`OMP_NUM_THREADS=4`), para 31 626 pares y 24 radios las
-medianas fueron Python `0.428362 s`, Numba `0.001054 s` y C/OpenMP
-`0.001227 s`; para 124 750 pares y 48 radios fueron `1.552896 s`, `0.003584 s`
-y `0.003183 s`, respectivamente. Son medidas de este host y estas dos cargas,
-no un ranking universal. El umbral de `auto` es una política conservadora que
-también evita atribuir a la ejecución sostenida el coste de construir el
-backend; puede volver a calibrarse con el mismo script en cada plataforma.
+compilación/JIT de las muestras cronometradas y verifica conteos idénticos. Se
+conserva la mención de una ejecución local del 3 de agosto de 2026 únicamente
+como antecedente histórico: su JSON crudo no está retenido en este checkout y,
+por tanto, sus tiempos no son evidencia auditable del código actual. El umbral
+de `auto` es una política conservadora sometida a pruebas funcionales; para
+recalibrarlo hay que ejecutar el script y conservar su salida, entorno, hashes,
+calentamiento y dispersión en la plataforma objetivo.
 
 ## Trayectorias enteras y fraccionarias
 

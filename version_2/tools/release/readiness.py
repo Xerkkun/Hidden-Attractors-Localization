@@ -66,6 +66,7 @@ PUBLIC_SDIST_MANIFEST_DIRECTIVES = {
     "include MANIFEST.md",
     "include USER_MANUAL.md",
     "recursive-include hidden_attractors *.py *.c *.h",
+    "recursive-exclude hidden_attractors/native/tests *",
     "include hidden_attractors/configs/examples/workflow_contract.yaml",
     "recursive-include examples/chua_integer_lure_reference *.py *.md *.yaml",
     "include examples/quickstart_equilibria.py",
@@ -266,11 +267,23 @@ def _text_path_hits(path: Path, root: Path) -> list[str]:
 def _promoted_local_path_hits(root: Path) -> list[str]:
     hits: list[str] = []
     seen: set[Path] = set()
+    eligible_result = _git(
+        root,
+        "ls-files",
+        "--cached",
+    )
+    if eligible_result.returncode != 0:
+        raise RuntimeError(eligible_result.stderr.strip() or "git ls-files failed")
+    eligible = {
+        (root / relative.strip()).resolve()
+        for relative in eligible_result.stdout.splitlines()
+        if relative.strip()
+    }
     for pattern in PROMOTED_SCAN_PATTERNS:
         for path in root.glob(pattern):
             if "outputs/wolfram" in path.as_posix():
                 continue
-            if not path.is_file() or path in seen:
+            if not path.is_file() or path.resolve() not in eligible or path in seen:
                 continue
             seen.add(path)
             if path.suffix.lower() == ".json":
@@ -301,7 +314,7 @@ def _pypi_readiness_checks(root: Path, version_root: Path, manifest: dict[str, A
         metadata_details.append(f"project.version is not a stable semantic version: {project_version}")
     if project.get("readme") != "README.md":
         metadata_details.append(f"project.readme={project.get('readme')}")
-    if project.get("requires-python") != ">=3.11":
+    if project.get("requires-python") != ">=3.11,<3.15":
         metadata_details.append(f"requires-python={project.get('requires-python')}")
     if project.get("license") != "MIT":
         metadata_details.append(f"license={project.get('license')}")
@@ -328,7 +341,13 @@ def _pypi_readiness_checks(root: Path, version_root: Path, manifest: dict[str, A
     if find_config.get("include") != ["hidden_attractors*"]:
         metadata_details.append(f"package include={find_config.get('include')}")
     excluded = set(find_config.get("exclude", []))
-    for pattern in ("tools*", "benchmarks*", "tests*", "examples*"):
+    for pattern in (
+        "tools*",
+        "benchmarks*",
+        "tests*",
+        "examples*",
+        "hidden_attractors.native.tests*",
+    ):
         if pattern not in excluded:
             metadata_details.append(f"package exclude missing {pattern}")
     hidden_data = package_data.get("hidden_attractors", [])
@@ -400,7 +419,7 @@ def _pypi_readiness_checks(root: Path, version_root: Path, manifest: dict[str, A
             "python -m pip install dist/*.whl",
             "hidden-attractors --help",
             "hidden-attractors seed --help",
-            "actions/upload-artifact@v4",
+            "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
         ):
             if required_text not in workflow_text:
                 workflow_details.append(f"package.yml missing {required_text}")
@@ -413,14 +432,17 @@ def _pypi_readiness_checks(root: Path, version_root: Path, manifest: dict[str, A
     else:
         publish_text = publish_workflow.read_text(encoding="utf-8-sig")
         for required_text in (
-            "Require an authorized version-matched release ref",
-            "refs/heads/release/v1.1.0",
+            "Require an exact version-matched tag and commit",
+            'if not ref.startswith("refs/tags/")',
+            'tag != f"v{version}"',
+            'git rev-parse "${tag}^{commit}"',
+            'test "$(git rev-parse HEAD)" = "$GITHUB_SHA"',
             'python -m pytest -q -m "not slow"',
             "python -m build",
             "python -m twine check dist/*",
-            "actions/upload-artifact@v4",
-            "actions/download-artifact@v4",
-            "pypa/gh-action-pypi-publish@release/v1",
+            "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+            "pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33",
             "environment:",
             "name: pypi",
         ):
