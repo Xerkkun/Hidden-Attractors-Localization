@@ -49,34 +49,47 @@ site/
 *.ind
 
 # Generated project outputs
-outputs/
-runs*/
-hidden_verify/
-chua_piecewise/
+/outputs/
+/runs*/
+/hidden_verify/
+/chua_piecewise/
 /native/
-artifacts/reference_runs/native/
+/artifacts/reference_runs/native/
 .runtime_cache/
 .runtime_native/
 
 # Ignore all dynamically generated output files under validation/outputs
-validation/outputs/**/*
+/validation/outputs/**/*
+
+# Keep raw campaign trajectories local; summaries, contracts, and metadata are
+# the compact promoted evidence surface.
+/validation/06_geometric_topological_campaign/**/trajectories/
 
 # But keep the committed/required reference case data
-!validation/outputs/**/.gitkeep
-!validation/outputs/**/.gitignore
-!validation/outputs/integrator_method_validation/*.csv
-!validation/outputs/integrator_method_validation/*.json
-!validation/outputs/lyapunov_benchmarks/**/*.csv
-!validation/outputs/lyapunov_benchmarks/**/*.json
-!validation/outputs/published_cases/**/*.json
-!validation/outputs/published_continuation_comparison/**/*.csv
-!validation/outputs/published_continuation_comparison/**/*.json
+!/validation/outputs/**/
+!/validation/outputs/**/.gitkeep
+!/validation/outputs/**/.gitignore
+!/validation/outputs/integrator_method_validation/*.csv
+!/validation/outputs/integrator_method_validation/*.json
+!/validation/outputs/integrator_crosscheck/**/*.csv
+!/validation/outputs/integrator_crosscheck/**/*.json
+!/validation/outputs/lyapunov_benchmarks/**/*.csv
+!/validation/outputs/lyapunov_benchmarks/**/*.json
+!/validation/outputs/continuation_memory_validation/**/*.csv
+!/validation/outputs/continuation_memory_validation/**/*.json
+!/validation/outputs/fractional_memory_validation/**/*.csv
+!/validation/outputs/fractional_memory_validation/**/*.json
+!/validation/outputs/candidate_chaos_hiddenness/**/report/*.csv
+!/validation/outputs/candidate_chaos_hiddenness/**/report/*.json
+!/validation/outputs/published_cases/**/*.json
+!/validation/outputs/published_continuation_comparison/**/*.csv
+!/validation/outputs/published_continuation_comparison/**/*.json
 
 # pytest-benchmark baselines (platform-specific; store explicitly when needed)
-.benchmarks/
+/.benchmarks/
 
 # Generated project figures
-library_figures/
+/library_figures/
 
 # Clean repository strategy: Ignore all dynamic/generated graphic outputs
 *.png
@@ -86,23 +99,39 @@ library_figures/
 *.jpeg
 
 # Unignore documentation assets
-!docs/assets/**/*.png
-!docs/assets/**/*.pdf
-!docs/assets/**/*.svg
-!docs/assets/**/*.jpg
-!docs/assets/**/*.jpeg
+!/docs/assets/**/*.png
+!/docs/assets/**/*.pdf
+!/docs/assets/**/*.svg
+!/docs/assets/**/*.jpg
+!/docs/assets/**/*.jpeg
+
+# The master report is a self-contained, buildable documentation deliverable.
+!/docs/master_report_geometric_topological/figures/**/*.png
+!/docs/master_report_geometric_topological/figures/**/*.pdf
+!/docs/master_report_geometric_topological/integer_assets/**/*.png
+!/docs/master_report_geometric_topological/integer_assets/**/*.pdf
+!/docs/master_report_geometric_topological/reporte_maestro_atractores_ocultos.pdf
+!/docs/master_report_geometric_topological/reporte_maestro_lectura_estudio.pdf
 
 # Unignore committed validation reference cases (ground-truth plots)
-!validation/reference_cases/**/*.png
-!validation/reference_cases/**/*.pdf
-!validation/reference_cases/**/*.jpg
-!validation/reference_cases/**/*.jpeg
+!/validation/reference_cases/**/*.png
+!/validation/reference_cases/**/*.pdf
+!/validation/reference_cases/**/*.jpg
+!/validation/reference_cases/**/*.jpeg
+
+# Selected figures belong to the compact geometric-topological evidence bundle.
+!/validation/06_geometric_topological_campaign/**/*.png
+!/validation/06_geometric_topological_campaign/**/*.pdf
 
 # Local/regenerable directories
 validation_outputs/
-outputs/
-runs*/
-figures/
+/outputs/
+/runs*/
+/figures/
+/tmp/
 
 # Expanded local repositories restored from committed reproducibility bundles
 /validation/source_snapshots/git/*.git/
+
+# Expanded MAVPD snapshots are reproducible from the committed bundle in git/.
+/validation/source_snapshots/mavpd_integer_hidden_chaos_*/

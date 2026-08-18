@@ -43,18 +43,18 @@ venv/
 *.ilg
 *.ind
 
-# Generated project outputs
-outputs/
-runs*/
-hidden_verify/
-chua_piecewise/
+# Generated project outputs at the repository root
+/outputs/
+/runs*/
+/hidden_verify/
+/chua_piecewise/
 /native/
 .pytest_tmp/
 .runtime_cache/
 .runtime_native/
 
-# Generated project figures
-figures/
+# Generated project figures at the repository root
+/figures/
 
 # Clean repository strategy: Ignore all dynamic/generated graphic outputs
 *.png
@@ -84,3 +84,19 @@ figures/
 # Local editor/workspace settings
 .vscode/
 *.code-workspace
+
+# Local-only context, archives, and editorial working trees
+/.codex/
+/contexto_arquitectura_hidden_attractors_fo.md
+/LOCAL_ENV_NOTES.md
+/paper/
+/_archived_figure_scripts/
+/DF y NC Chua entero y fraccionario/
+/DF y NC Chua entero y fraccionario copy/
+/version_2/local_reports/
+
+# Local synchronization and generated LaTeX work areas
+/.tmp.driveupload/
+/.tmp.drivedownload/
+/version_2/artifacts/latex_build/
+/version_2/docs/$out/
