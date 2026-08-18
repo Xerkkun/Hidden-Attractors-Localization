@@ -1,0 +1,231 @@
+{
+  "schema_version": "1.1",
+  "trajectory_id": "chua_arctan_wu_caputo_q099_tg_pilot__wu_published_adm_plus__B1__abm_pece_full_memory_native",
+  "case_id": "chua_arctan_wu_caputo_q099_tg_pilot",
+  "system_id": "fractional_chua_arctan_wu2023",
+  "seed": {
+    "seed_id": "wu_published_adm_plus",
+    "system_id": "fractional_chua_arctan_wu2023",
+    "route": "imported",
+    "state": [
+      13.8,
+      0.7093,
+      -19.8768
+    ],
+    "order_kind": "caputo",
+    "q": 0.99,
+    "parameter_set_id": "wu2023_q0p99",
+    "initialization_kind": "point_initial_value",
+    "lower_terminal": 0.0,
+    "initial_time": 0.0,
+    "history_reference": null,
+    "history_coverage": null,
+    "source_artifact": "validation/reference_cases/fractional_chua_arctan_wu2023/reproducibility.yaml",
+    "source_record_id": "published_ADM_positive",
+    "generation_residual": null,
+    "score": null,
+    "priority": 60,
+    "parent_seed_id": null,
+    "transform_name": "identity",
+    "metadata": {
+      "symmetry": "+",
+      "initialization_semantics": "new Caputo reset at a=t0=0",
+      "published_ADM_transfer_warning": true
+    }
+  },
+  "contract_id": "chua_arctan_wu_caputo_q099_tg_pilot_geometric_topological_initial_pilot_v1",
+  "physical_budget": {
+    "level": "B1",
+    "normalized_step": 0.01,
+    "normalized_horizon": 100.0,
+    "transient_fraction": 0.5,
+    "tau_star": 0.2704709949,
+    "step": 0.0027047099489999997,
+    "horizon": 27.047099489999997,
+    "burn_time": 13.523549744999999,
+    "nominal_steps": 10000
+  },
+  "solver": {
+    "solver_id": "abm_pece_full_memory_native",
+    "family": "abm",
+    "step_factor": 1.0,
+    "rtol": null,
+    "atol": null,
+    "full_memory": true,
+    "use_native_backend": true
+  },
+  "solver_info": {
+    "method": "abm",
+    "memory_mode": "full",
+    "memory_window_length": null,
+    "n_dim": 3,
+    "history_len_in": 0,
+    "divergence_norm": 120.0,
+    "allow_python_fallback": false,
+    "used_c_backend": true,
+    "rhs_source": "compiled_c_registry",
+    "n_steps": 10000,
+    "n_steps_completed": 10000,
+    "n_samples": 10001,
+    "n_samples_returned": 10001,
+    "status_code": 0,
+    "truncated_memory": false
+  },
+  "classification": {
+    "schema_version": "1.0",
+    "label": "periodic",
+    "destination_id": "periodic:unlabeled",
+    "subtype": "projected_near_periodic_caputo",
+    "confidence": 0.5212719177094501,
+    "is_ambiguous": false,
+    "reasons": [
+      "spectral_window_and_period_return_tests_passed"
+    ],
+    "metrics": {
+      "integration_status": "ok",
+      "dimension": 3,
+      "n_samples": 10001,
+      "finite_fraction": 1.0,
+      "burn_time": 13.523549744999999,
+      "classifier_contract": {
+        "burn_time": 13.523549744999999,
+        "order_kind": "caputo",
+        "coordinate_scale": [
+          14.0,
+          3.5,
+          20.0
+        ],
+        "periodic_coordinates": {},
+        "require_declared_scale": true,
+        "min_tail_samples": 128,
+        "max_cloud_points": 500,
+        "divergence_radius": 120.0,
+        "divergence_radius_kind": "absolute",
+        "escape_persistence_fraction": 0.5,
+        "equilibrium_tolerance": 0.001,
+        "equilibrium_quantile_factor": 5.0,
+        "equilibrium_span_factor": 10.0,
+        "equilibrium_window_fraction": 0.2,
+        "minimum_nontrivial_span": 0.01,
+        "periodic_dominant_power_min": 0.45,
+        "periodic_entropy_max": 0.35,
+        "periodic_frequency_drift_max": 0.08,
+        "periodic_return_error_max": 0.12,
+        "periodic_windows": 4,
+        "recurrence_cloud_distance_max": 0.18,
+        "recurrence_centroid_drift_max": 0.2,
+        "recurrence_span_drift_max": 0.35,
+        "recurrence_covariance_drift_max": 0.5,
+        "recurrence_radius": 0.08,
+        "recurrence_rate_min": 0.0001,
+        "recurrence_theiler_samples": 10,
+        "recurrence_min_lag_time": 1.0,
+        "recurrence_excursion_radius": 0.25,
+        "recurrence_return_fraction_min": 0.002,
+        "recurrence_min_return_count": 3,
+        "reference_distance_max": 0.16,
+        "reference_separation_margin": 0.04,
+        "minimum_confidence": 0.05
+      },
+      "n_tail_samples": 5001,
+      "coordinate_scale": [
+        14.0,
+        3.5,
+        20.0
+      ],
+      "coordinate_scale_source": "declared",
+      "periodic_coordinates": {},
+      "metric_space": "scaled_euclidean",
+      "divergence_radius_kind": "absolute",
+      "final_radius_norm": 5.843419375565627,
+      "maximum_radius_norm": 24.208062391071284,
+      "tail_escape_fraction": 0.0,
+      "tail_span_scaled": [
+        0.4479152587013767,
+        1.4921795196791368,
+        0.9918878592377999
+      ],
+      "max_tail_span_scaled": 1.4921795196791368,
+      "closest_equilibrium": "E+",
+      "closest_equilibrium_final_distance_norm": 0.6248649468239463,
+      "closest_equilibrium_q95_distance_norm": 0.7011821207814624,
+      "closest_equilibrium_window_span_norm": 1.655559627007517,
+      "sampling_interval": 0.0027047099490005166,
+      "sampling_relative_jitter": 0.0,
+      "periodicity_available": true,
+      "dominant_component": 1,
+      "dominant_frequency_hz": 0.5175120742636551,
+      "dominant_power_ratio": 0.6549642533446758,
+      "spectral_entropy": 0.11095602499696873,
+      "relative_frequency_drift": 0.0007993605115908224,
+      "period_lag_samples": 714,
+      "period_return_error": 0.11526784647585148,
+      "periodic_gate_passed": true,
+      "half_cloud_distance_norm": 0.02200409043576171,
+      "half_centroid_drift_norm": 0.11400385277914371,
+      "half_span_drift_norm": 0.15146138433464515,
+      "half_covariance_drift_norm": 0.12384868185863383,
+      "recurrence_radius_norm": 0.08,
+      "recurrence_theiler_samples": 10,
+      "recurrence_theiler_coordinate": "subsampled_cloud_index",
+      "recurrence_eligible_pairs": 151710,
+      "recurrence_rate": 0.03547557840616967,
+      "recurrence_min_lag_time": 1.0,
+      "recurrence_excursion_radius_norm": 0.25,
+      "excursion_return_count": 2691,
+      "excursion_return_fraction": 6.7275,
+      "stationarity_gate_passed": true,
+      "reference_match_status": "not_requested",
+      "reference_match": "",
+      "reference_distance_norm": null,
+      "reference_second_distance_norm": null,
+      "reference_distances_norm": {}
+    },
+    "evidence_status": "finite_time_destination_diagnostic",
+    "scientific_warnings": [
+      "This classification does not prove attraction, chaos, or hiddenness.",
+      "Caputo periodicity is a projected finite-time label, not an exact periodic-orbit claim."
+    ]
+  },
+  "observables": {
+    "n_tail_samples": 5001,
+    "tail_centroid_scaled": [
+      -0.0036285524113502995,
+      -0.009086697052563207,
+      0.005688292376113167
+    ],
+    "tail_span_scaled": [
+      0.4479152587013767,
+      1.4921795196791368,
+      0.9918878592377999
+    ],
+    "tail_covariance_scaled": [
+      [
+        0.02438079429057992,
+        0.06501911139299411,
+        -0.026355400375104875
+      ],
+      [
+        0.06501911139299411,
+        0.23983981498006662,
+        0.00041553919628511553
+      ],
+      [
+        -0.026355400375104875,
+        0.00041553919628511553,
+        0.10667671287559986
+      ]
+    ],
+    "tail_radius_max_scaled": 0.7837237133299292,
+    "final_state": [
+      2.8803514529906495,
+      1.988630409911874,
+      -4.679153192487309
+    ]
+  },
+  "trajectory_artifact": "trajectories/chua_arctan_wu_caputo_q099_tg_pilot__wu_published_adm_plus__B1__abm_pece_full_memory_native.csv",
+  "trajectory_sha256": "a0e9f30bc512bc6a4aaf7fbe6003da4ab1273b4219191aff6de1fa4a285b3c1e",
+  "elapsed_seconds": 0.4800374000042211,
+  "evidence_level": "EV-TG2",
+  "claims_scope": "finite-time trajectory and destination diagnostic only"
+}

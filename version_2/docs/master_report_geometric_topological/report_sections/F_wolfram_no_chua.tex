@@ -1,0 +1,85 @@
+\section{Núcleo reproducible de las comprobaciones Wolfram}
+
+El siguiente extracto contiene las identidades centrales. Las evaluaciones
+numéricas se hicieron con \texttt{NSolve}, \texttt{Eigenvalues},
+\texttt{CharacteristicPolynomial} y precisión ampliada después de construir
+los campos con racionales exactos.
+
+\begin{lstlisting}[style=wl,language={},caption={Comprobación simbólica de las dos realizaciones.}]
+ClearAll["Global`*"];
+
+(* Generalized Lorenz *)
+r = 34/5; aL = -1/2; sigma = -aL r;
+fL = {-sigma (x1 - x2) - aL x2 x3,
+      r x1 - x2 - x1 x3,
+      -x3 + x1 x2};
+AL = {{-sigma, sigma, 0}, {r, -1, 0}, {0, 0, -1}};
+BL = {{-aL, 0, 0}, {0, -1, 0}, {0, 0, 1}};
+phiL = {x2 x3, x1 x3, x1 x2};
+Expand[AL.{x1, x2, x3} + BL.phiL - fL]
+(* {0,0,0} *)
+
+deltaL = (z + sigma) (z + 1) - sigma r;
+expectedWL = {
+ {-aL (z + 1)/deltaL, -sigma/deltaL, 0},
+ {-aL r/deltaL, -(z + sigma)/deltaL, 0},
+ {0, 0, 1/(z + 1)}};
+FullSimplify[Inverse[z IdentityMatrix[3] - AL].BL - expectedWL]
+(* 3 x 3 zero matrix *)
+
+(* Rabinovich-Fabrikant *)
+aR = 1/10; bR = 719/2500;
+fR = {y (zz - 1 + x^2) + aR x,
+      x (3 zz + 1 - x^2) + aR y,
+      -2 zz (bR + x y)};
+AR = {{aR, -1, 0}, {1, aR, 0}, {0, 0, -2 bR}};
+BR = {{1, 1, 0, 0, 0},
+      {0, 0, 3, -1, 0},
+      {0, 0, 0, 0, -2}};
+phiR = {y zz, x^2 y, x zz, x^3, x y zz};
+Expand[AR.{x, y, zz} + BR.phiR - fR]
+(* {0,0,0} *)
+
+deltaR = (z - aR)^2 + 1;
+expectedWR = {
+ {(z-aR)/deltaR, (z-aR)/deltaR, -3/deltaR,
+  1/deltaR, 0},
+ {1/deltaR, 1/deltaR, 3 (z-aR)/deltaR,
+  -(z-aR)/deltaR, 0},
+ {0, 0, 0, 0, -2/(z + 2 bR)}};
+FullSimplify[Inverse[z IdentityMatrix[3] - AR].BR - expectedWR]
+(* 3 x 5 zero matrix *)
+\end{lstlisting}
+
+\begin{lstlisting}[style=wl,language={},caption={Equilibrios, espectros y margen de Matignon.}]
+matignonMargin[vals_List, q_] :=
+ N[Min[(Abs[Arg[#]] &) /@ vals] - q Pi/2, 16];
+
+jL = D[fL, {{x1, x2, x3}}];
+solL = {x1, x2, x3} /.
+ NSolve[Thread[fL == 0], {x1, x2, x3}, Reals];
+Table[{p, Eigenvalues[jL /. Thread[{x1,x2,x3}->p]],
+       matignonMargin[
+        N[Eigenvalues[jL /. Thread[{x1,x2,x3}->p]], 20],
+        199/200]}, {p, solL}];
+
+jR = D[fR, {{x, y, zz}}];
+solR = {x, y, zz} /.
+ NSolve[Thread[fR == 0], {x, y, zz}, Reals];
+Table[{p, Eigenvalues[jR /. Thread[{x,y,zz}->p]],
+       matignonMargin[
+        N[Eigenvalues[jR /. Thread[{x,y,zz}->p]], 20],
+        499/500]}, {p, solR}];
+\end{lstlisting}
+
+\section{Trazabilidad local de las fuentes}
+
+El corte se realizó sobre la revisión HAFO fechada el 10 de agosto de 2026.
+Para mantener el reporte legible no se imprimen huellas criptográficas. Las
+fuentes decisivas quedan identificadas por sus rutas:
+\begin{itemize}
+ \item \path{version_2/validation/references/published_validation_data_extraction_v1.json};
+ \item \path{version_2/validation/published_reference_coverage.json};
+ \item \path{Articulos verano 2026/03_metodologia_localizacion/main.tex};
+ \item \path{Articulos verano 2026/03_metodologia_localizacion/README.md}.
+\end{itemize}

@@ -1,0 +1,153 @@
+\section{Matriz maestra de validación Wolfram}
+\label{app:wolfram-master}
+
+La validación se ejecutó en dos capas. La primera conserva los artefactos
+Wolfram Language del repositorio y sus resúmenes JSON. La segunda volvió a
+evaluar, en un kernel Wolfram independiente, las identidades comunes y los
+casos fraccionarios no Chua. Los archivos fuente y resultados se incluyen en
+el paquete de fuentes que acompaña a este PDF.
+
+\begin{longtable}{@{}L{0.25\linewidth}C{0.12\linewidth}L{0.31\linewidth}L{0.24\linewidth}@{}}
+\caption{Validadores y frontera de su conclusión.}
+\label{tab:wolfram-master}\\
+\toprule
+Sistema & Pruebas & Alcance algebraico & No demuestra\\
+\midrule
+\endfirsthead
+\toprule
+Sistema & Pruebas & Alcance algebraico & No demuestra\\
+\midrule
+\endhead
+Chua PWL entero & 6/6 & Lur'e, polinomio, transferencia, equilibrios,
+semilla modal & Caos u ocultedad global.\\
+Chua PWL fraccionario & 6/6 & Sustitución \(z=s^q\), transferencia,
+equilibrios y similitud de semilla & Que la continuación alcance caos.\\
+Chua arctangente Wu & 10/10 & Lur'e, Jacobiano, DF cerrada, equilibrios,
+Matignon y ramas & Equivalencia ADM--Caputo causal.\\
+Chua arctangente c590 & 10/10 & Álgebra, tres equilibrios, Matignon y
+consistencia del candidato registrado & Origen DF de la semilla; está
+declarado como búsqueda entera.\\
+Kalman--Fitts & 11/11 & Polinomio publicado, transferencia,
+\(\omega\), ganancia negativa y mapa de conmutación & Ocultedad fuera de las
+48 sondas.\\
+MAVPD & 11/11 & Campo, Jacobiano, Routh--Hopf, transferencia, DF cúbica y
+semillas & Transversalidad o coeficiente de Lyapunov del Hopf local.\\
+PLL lead--lag & 10/10 & Filtro, equilibrio trasladado, obstrucción,
+ecuación de Andronov y semilla \(L=0\) & Separación topológica global en el
+cilindro.\\
+Lorenz generalizado & motor integrado & Campo MIMO, transferencia,
+equilibrios, polinomios, espectros y Matignon & Semilla, atractor o cuenca
+local reproducida.\\
+Rabinovich--Fabrikant & motor integrado & Campo MIMO, transferencia, cinco
+equilibrios, polinomios, espectros y Matignon & Semilla, atractor o cuenca
+local reproducida.\\
+Muñoz--Pacheco & motor integrado & Realización MIMO y ausencia de
+equilibrios para \(a=0.35\) & Reproducción del caos publicado.\\
+Jerk cuadrático & motor integrado & Realización MIMO y obstrucción escalar
+por rango del Hessiano & Existencia del atractor publicado.\\
+Machado \(\mu=2\), Chua PWL & motor integrado & Rama compleja, derivada de
+\(N\), amplitud y dos residuos separados & Que el cierre auxiliar sea el
+balance físico del sistema original.\\
+Puntos perpetuos & motor integrado & Raíces exactas MAVPD/Muñoz, residuos
+Lorenz/RF y contraejemplos Caputo & Suficiencia del método, evento de historia,
+caos u ocultedad.\\
+\bottomrule
+\end{longtable}
+
+\subsection{Identidades revaluadas}
+
+Con la convención \(W_+\), el kernel devolvió
+\begin{align}
+ r^{\mathsf T}(zI-P)^{-1}b
+ &=-\frac{\alpha Q(z)}{\Delta_\ell(z)},&
+ \det(zI-P)&=\Delta_\ell(z),\\
+ N_{\mathrm{cub}}(A)&=\frac34A^2,&
+ N_{\mathrm{sat}}(A)
+ &=\frac{2\Delta}{\pi}
+ \left[
+ \arcsin\frac1A+\frac{\sqrt{A^2-1}}{A^2}
+ \right],\\
+ N_{\arctan}(A)&=
+ \frac{2a_2}{\rho A^2}
+ \left(\sqrt{1+\rho^2A^2}-1\right).
+\end{align}
+Los residuos de las tres expresiones cerradas fueron exactamente cero bajo
+sus hipótesis \(A>0\), \(A>1\) y \(\rho>0\), respectivamente.
+
+Para Kalman--Fitts,
+\[
+ W(s)=-\frac{s^2}{p(s)},\qquad
+ \omega_0^2=\frac{2\beta^2+m_1^2+m_2^2}{2},
+\]
+y
+\[
+ k=-\left[
+ 4\beta^2+
+ \frac{(m_1^2-m_2^2)^2}
+ {2(2\beta^2+m_1^2+m_2^2)}
+ \right]
+ =-0.0431687011573845.
+\]
+Para PLL,
+\[
+ \Im G(\mathrm i\omega)=
+ \frac{L[1+\omega^2\tau_2(\tau_1+\tau_2)]}
+ {2\omega[1+\omega^2(\tau_1+\tau_2)^2]}>0.
+\]
+Así, las dos obstrucciones no son decisiones heurísticas: proceden de
+identidades simbólicas.
+
+\subsection{Corrección espectral del Lorenz generalizado}
+
+El espectro verificado en el origen es
+\[
+ \{-7.15580467734555,\ 2.75580467734555,\ -1\},
+\]
+y en los dos equilibrios no nulos,
+\[
+ \{-5.37029951773135,\
+ -0.0148502411343243\pm3.83248917224188\,\mathrm i\}.
+\]
+El margen de Matignon de los no nulos es
+\(0.0117287914887683>0\). Los valores impresos en la extracción bibliográfica
+no reproducen la traza ni el polinomio característico; la clasificación
+cualitativa, sin embargo, no cambia.
+
+\subsection{Machado y puntos perpetuos}
+
+En Chua PWL, \(q=0.9998\), \(\mu=2\), Wolfram devolvió
+\begin{align}
+ W_q(\mathrm i\omega_0)
+ &=4.761387970782572-1.52\times10^{-13}\mathrm i,\\
+ N(A_2)&=0.458282437981291,\\
+ \rho_{\mathrm{aux}}&=2.16\times10^{-13},\\
+ \rho_{\mathrm{fis}}&=1.182060487425029.
+\end{align}
+La diferencia entre los últimos dos renglones es el resultado auditado
+principal: una semilla auxiliar precisa no es balance armónico físico.
+
+Para MAVPD y Muñoz--Pacheco, la sustitución de todas las raíces de
+\cref{sec:pp-case-audit} en \(J_f f\) dio cero exacto. También se verificaron
+los contraejemplos
+\begin{equation}
+ {}^{\mathrm C}D^q[c]=0,\qquad
+ \frac{d^2}{dt^2}
+ \left[x_0+\frac{ct^q}{\Gamma(q+1)}\right]
+ =\frac{ct^{q-2}}{\Gamma(q-1)}.
+\end{equation}
+Por tanto, la traducción Caputo del reporte no usa una aceleración ordinaria
+ni una regla de cadena inexistente.
+
+\subsection{Reproducibilidad}
+
+El paquete de la monografía conserva
+\path{wolfram/topologia_geometria_hidden_validation.wl} y su salida textual
+\path{wolfram/topologia_geometria_hidden_validation.txt}. La versión integrada
+al repositorio es
+\path{version_2/validation/wolfram/cases/geometric_topological_engine.wl}; su
+salida promovida se encuentra en
+\path{version_2/validation/06_geometric_topological_campaign/wolfram/}. El motor
+produce 50 comprobaciones, un resumen JSON y evidencia textual. Valida las
+identidades geométrico--topológicas, Machado y los residuos de puntos perpetuos
+dentro de su alcance algebraico; no añade evidencia dinámica ni reetiqueta
+otras campañas como reejecutadas.

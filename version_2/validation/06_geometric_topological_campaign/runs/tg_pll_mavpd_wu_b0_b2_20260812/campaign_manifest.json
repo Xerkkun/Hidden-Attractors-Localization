@@ -1,0 +1,83 @@
+{
+  "campaign_id": "tg_pll_mavpd_wu_b0_b2_20260812",
+  "cases": [
+    "pll_lead_lag_integer_q1_tg_pilot",
+    "mavpd_integer_q1_xi31_tg_pilot",
+    "chua_arctan_wu_caputo_q099_tg_pilot"
+  ],
+  "budgets": [
+    {
+      "level": "B0",
+      "normalized_step": 0.02,
+      "normalized_horizon": 50.0,
+      "transient_fraction": 0.5,
+      "seed_scope": "minimum_seed_bank",
+      "purpose": "screen_obvious errors, event failures, and escapes"
+    },
+    {
+      "level": "B1",
+      "normalized_step": 0.01,
+      "normalized_horizon": 100.0,
+      "transient_fraction": 0.5,
+      "seed_scope": "complete_initial_seed_bank",
+      "purpose": "first destination assignment"
+    },
+    {
+      "level": "B2",
+      "normalized_step": 0.005,
+      "normalized_horizon": 200.0,
+      "transient_fraction": 0.6,
+      "seed_scope": "ambiguous_and_edge_seeds",
+      "purpose": "classification and observable convergence"
+    }
+  ],
+  "status": "initial_pilot_execution_contract",
+  "schema_version": "1.1",
+  "protocol_version": "geometric_topological_TG0_TG8_v1",
+  "claims_scope": "finite-time finite-resolution numerical localization; edge records currently cover initial-data boundary bisection only, with no global hiddenness, Wada, isolating-block, or Conley-index claim",
+  "metadata": {
+    "pilot_protocol_version": "geometric_topological_initial_pilot_v1",
+    "case_contracts": [
+      "pll_lead_lag_integer_q1_tg_pilot_geometric_topological_initial_pilot_v1",
+      "mavpd_integer_q1_xi31_tg_pilot_geometric_topological_initial_pilot_v1",
+      "chua_arctan_wu_caputo_q099_tg_pilot_geometric_topological_initial_pilot_v1"
+    ],
+    "dynamic_execution_requested": true,
+    "edge_scope": "initial_data_boundary_bisection_steps_1_to_4_only"
+  },
+  "case_id_semantics": "cases contains experimental case identifiers; each artifact records system_id separately as the dynamical-model identifier",
+  "artifacts": {
+    "seed_bank": "seed_bank.csv",
+    "trajectory_metrics": "trajectory_metrics.csv",
+    "edge_brackets": "edge_brackets.csv",
+    "outer_enclosures": "outer_enclosures.json",
+    "evidence_decisions": "evidence_decisions.json"
+  },
+  "budget_contract": {
+    "B0": {
+      "normalized_step": 0.02,
+      "normalized_horizon": 50.0,
+      "transient_fraction": 0.5,
+      "nominal_steps": 2500,
+      "seed_scope": "minimum_seed_bank",
+      "purpose": "screen_obvious errors, event failures, and escapes"
+    },
+    "B1": {
+      "normalized_step": 0.01,
+      "normalized_horizon": 100.0,
+      "transient_fraction": 0.5,
+      "nominal_steps": 10000,
+      "seed_scope": "complete_initial_seed_bank",
+      "purpose": "first destination assignment"
+    },
+    "B2": {
+      "normalized_step": 0.005,
+      "normalized_horizon": 200.0,
+      "transient_fraction": 0.6,
+      "nominal_steps": 40000,
+      "seed_scope": "ambiguous_and_edge_seeds",
+      "purpose": "classification and observable convergence"
+    }
+  },
+  "status_policy": "campaign_manifest is an immutable initialization contract; partial edge or trajectory records do not promote campaign status, and TG decisions belong in evidence_decisions.json"
+}

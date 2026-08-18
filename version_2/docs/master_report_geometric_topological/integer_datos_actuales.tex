@@ -1,0 +1,50 @@
+% Instantanea de evidencia para el informe comparativo.
+% Actualizar estas macros solamente desde una corrida canonica validada.
+
+\newcommand{\FechaCorteDatos}{3 de agosto de 2026}
+
+% Chua no suave: contrato full compartido Python--Julia; no corresponde al
+% carril histórico EFORK--3 de 369/69/66.
+\newcommand{\ChuaPythonTotal}{910.341}
+\newcommand{\ChuaJuliaTotal}{43.959}
+\newcommand{\ChuaRatio}{20.709}
+\newcommand{\ChuaProbeCount}{504}
+
+% Kalman--Fitts, corridas completas.
+\newcommand{\KFPythonTotal}{77.801}
+\newcommand{\KFJuliaTotal}{30.479}
+\newcommand{\KFRatio}{2.553}
+\newcommand{\KFProbeCount}{48}
+
+% MAVPD. Python empaqueta xi=3.1 y xi=3.5; el total Julia principal citado
+% corresponde solo a xi=3.1 y xi=3.5 se reporta por separado.
+\newcommand{\MAVPDPythonQuickBundle}{321.219}
+\newcommand{\MAVPDPythonFullBundle}{683.840}
+\newcommand{\MAVPDJuliaXiThreeOneQuick}{68.988}
+\newcommand{\MAVPDJuliaXiThreeFiveQuick}{69.245}
+\newcommand{\MAVPDJuliaXiThreeOneFull}{73.214}
+\newcommand{\MAVPDJuliaXiThreeFiveFull}{77.377}
+\newcommand{\MAVPDProbeCount}{108}
+\newcommand{\MAVPDPythonStatus}{full, comparador cruzado aprobado}
+\newcommand{\MAVPDNegativePythonStatus}{full, 108 sondeos comunes y 24 contactos por ciclo}
+\newcommand{\MAVPDQuickAssignmentMatches}{108}
+\newcommand{\MAVPDQuickOuterDecisionMatches}{108}
+\newcommand{\MAVPDQuickCloudDistance}{0.000520488}
+\newcommand{\MAVPDPythonPeriod}{0.493177986749}
+\newcommand{\MAVPDJuliaQuickPeriod}{0.493177892159}
+\newcommand{\MAVPDFullAssignmentMatches}{108}
+\newcommand{\MAVPDFullOuterDecisionMatches}{108}
+\newcommand{\MAVPDFullCloudDistance}{0.00061096936}
+\newcommand{\MAVPDJuliaFullPeriod}{0.493178150753}
+\newcommand{\MAVPDFullBundleRatio}{4.541060}
+\newcommand{\MAVPDJuliaFullBundleSum}{150.590}
+
+% PLL lead--lag: comparación full--full cerrada; el bloque siguiente conserva
+% únicamente el control quick de Python. La evidencia full vive en
+% integer_julia_comparison_generated.tex.
+\newcommand{\PLLPythonQuickTotal}{129.986}
+\newcommand{\PLLProbeCount}{96}
+\newcommand{\PLLStablePeriod}{0.082676662497401}
+\newcommand{\PLLStableMultiplier}{0.8172041431535}
+\newcommand{\PLLSeparatrixPeriod}{0.108541779638193}
+\newcommand{\PLLSeparatrixMultiplier}{1.4411073306965}

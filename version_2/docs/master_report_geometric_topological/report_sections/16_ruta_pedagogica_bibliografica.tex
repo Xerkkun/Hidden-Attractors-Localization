@@ -1,0 +1,288 @@
+\section{Guía de entrada: tres lenguajes para una misma dinámica}
+\label{sec:ruta-geometrica-libros}
+
+Este capítulo fija el vocabulario con el que se leerá el reporte. No presupone una
+formación previa en topología, pero sí cálculo diferencial e integral, álgebra
+lineal y la resolución elemental de ecuaciones diferenciales. La meta no es
+memorizar un catálogo de definiciones: es aprender a pasar de una ecuación a
+una afirmación geométrica precisa, reconocer sus hipótesis, demostrar lo que
+sea accesible y distinguirlo de lo que sólo sugiere una simulación.
+
+El orden bibliográfico rector se presenta, numerado y con criterios de avance,
+en la \cref{sec:programa-estudio-bibliografico}. Las actividades de este
+capítulo preparan esa ruta y no constituyen un itinerario paralelo.
+
+Los tres títulos adquiridos cumplen funciones diferentes. La ficha
+bibliográfica disponible identifica el texto de Amster como una introducción
+a métodos de disparo, puntos fijos y grado topológico en problemas no lineales
+\cite{Amster2021MetodosTopologicos}. El libro de Nahmad-Achar desarrolla el
+lenguaje de topología y geometría diferencial, variedades, formas y Stokes,
+con aplicaciones físicas \cite{NahmadAchar2022Topologia}. Los tomos de
+Jaurez Rosas, Ortiz Bobadilla, Palma Márquez y Rosales González se orientan
+a la teoría geométrica de las ecuaciones diferenciales
+\cite{JaurezEtAl2021TGEDI,JaurezEtAl2021TGEDII}. El número
+\texttt{8626000002609} es el código comercial del paquete de ambos tomos, no el
+ISBN de ninguno de ellos; los ISBN individuales se registran en la
+bibliografía.
+
+\begin{remark}[alcance de las referencias de lectura]
+No se asignan páginas ni capítulos que no hayan sido verificados directamente
+en los ejemplares. La correspondencia siguiente es temática. Si se incorporan
+fotografías de los índices, podrá convertirse posteriormente en una tabla
+exacta de capítulo, sección y ejercicios sin modificar la cadena matemática.
+\end{remark}
+
+\subsection{Tres significados de la palabra topológico}
+
+\begin{definition}[topología del espacio de fases]
+Una \emph{topología} sobre un conjunto $X$ es una familia $\mathcal T$ de
+subconjuntos, llamados abiertos, que contiene $\varnothing$ y $X$, es cerrada
+bajo uniones arbitrarias y bajo intersecciones finitas. La pareja
+$(X,\mathcal T)$ es un espacio topológico.
+\end{definition}
+
+En dinámica, esta estructura permite decir rigurosamente qué significa estar
+cerca, converger, depender continuamente de datos, tener una vecindad de un
+equilibrio o separar una cuenca de otra. Una métrica induce una topología, pero
+la topología conserva menos información que la distancia: un homeomorfismo
+puede deformar una bola en un elipsoide sin romper continuidad, conexidad o
+compacidad.
+
+La expresión \emph{métodos topológicos} puede referirse, sin embargo, a tres
+carriles distintos:
+
+\begin{enumerate}
+ \item \textbf{Geometría diferencial:} variedades, espacios tangentes,
+ campos vectoriales, formas diferenciales y métricas. Responde dónde vive el
+ sistema y qué estructuras geométricas posee.
+ \item \textbf{Dinámica topológica y teoría geométrica de EDO:} flujos,
+ equivalencias, conjuntos invariantes, variedades estable e inestable,
+ secciones de Poincaré, bifurcaciones y mecanismos de caos. Responde cómo se
+ organiza globalmente el conjunto de órbitas.
+ \item \textbf{Análisis no lineal topológico:} teoremas de punto fijo, grado
+ de Brouwer o Leray--Schauder y continuación. Responde si una solución,
+ equilibrio u órbita periódica debe existir aun sin calcularla.
+\end{enumerate}
+
+\begin{center}
+\begin{tikzpicture}[
+ box/.style={draw=Azul,rounded corners,fill=AzulClaro,align=center,
+              minimum width=4.4cm,minimum height=1.25cm},
+ arr/.style={-{Latex[length=2.5mm]},thick,draw=GrisOscuro},
+ node distance=1.7cm and 1.15cm]
+ \node[box] (geom) {Variedades y geometría\\campo $f\in T_xM$};
+ \node[box,right=of geom] (flow) {Flujo y dinámica\\$\varphi_t:M\to M$};
+ \node[box,right=of flow] (top) {Invariantes y topología\\cuencas, retornos, conjugación};
+ \node[box,below=of flow] (exist) {Existencia topológica\\punto fijo, grado, continuación};
+ \draw[arr] (geom) -- node[above,font=\small]{integra} (flow);
+ \draw[arr] (flow) -- node[above,font=\small]{organiza} (top);
+ \draw[arr] (exist) -- node[right,font=\small]{garantiza objetos} (flow);
+ \draw[arr,dashed] (top) to[bend left=18]
+   node[below,font=\small]{formula el problema de ocultedad} (exist);
+\end{tikzpicture}
+
+\smallskip
+\small\textbf{Diagrama conceptual.} Los tres lenguajes que se enlazan con la
+metodología del reporte.
+\end{center}
+
+\subsection{Contrato de aprendizaje: definición, hipótesis, prueba y cálculo}
+
+Para cada concepto se seguirá la misma secuencia:
+
+\begin{enumerate}[label=\textbf{G\arabic*.}]
+ \item escribir la definición con cuantificadores y espacio ambiente;
+ \item listar las hipótesis del teorema antes de emplearlo;
+ \item reconstruir el argumento o, cuando exceda el nivel de la guía,
+ identificar exactamente qué paso se cita;
+ \item estudiar un ejemplo positivo y un contraejemplo;
+ \item traducir la afirmación a una operación numérica verificable;
+ \item declarar qué conclusión no se obtiene de ese cálculo.
+\end{enumerate}
+
+Por ejemplo, una nube aparentemente complicada no es una definición de caos;
+un exponente finito positivo no demuestra una herradura; cero contactos en
+una muestra no demuestra separación global de cuencas. Esta disciplina conecta
+el estudio teórico con los niveles de evidencia L0--L6 del reporte.
+
+\subsection{Diccionario entre el cálculo algebraico y la geometría}
+
+\begin{table}[H]
+\centering
+\caption{El mismo objeto visto desde cuatro niveles.}
+\label{tab:diccionario-algebra-geometria}
+\small
+\begin{tabularx}{\textwidth}{@{}L{2.7cm}YYY@{}}
+\toprule
+Objeto & Escritura algebraica & Lectura geométrica & Pregunta topológica \\
+\midrule
+Campo & $\dot x=f(x)$ & vector $f(x)\in T_xM$ & ¿define un flujo continuo? \\
+Equilibrio & $f(e)=0$ & singularidad del campo & ¿qué retrato local conserva un homeomorfismo? \\
+Órbita & $\{\varphi_t(x_0)\}$ & curva integral orientada & ¿cuáles son sus conjuntos límite? \\
+Linealización & $\dot\xi=J_f(e)\xi$ & acción tangente local & ¿hay conjugación local con el sistema lineal? \\
+Ciclo & $\varphi_T(x)=x$ & curva cerrada invariante & ¿es aislado y qué separa en el espacio? \\
+Retorno & $P:\Sigma\to\Sigma$ & intersección sucesiva con una sección & ¿qué revela la dinámica iterada de $P$? \\
+Cuenca & $\mathcal B(A)$ & conjunto de estados que convergen a $A$ & ¿cómo es su frontera y qué la separa? \\
+Ocultedad & $\mathcal B(A)\cap U_e=\varnothing$ & inaccesibilidad desde equilibrios & ¿la separación es local, muestreada o global? \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Cuatro ejemplos mínimos antes de entrar al caos}
+
+\subsubsection{Un punto silla y sus variedades invariantes}
+
+Considérese
+\begin{equation}
+ \dot x=x,\qquad \dot y=-y.
+ \label{eq:guide-linear-saddle}
+\end{equation}
+La solución es $\varphi_t(x_0,y_0)=(e^t x_0,e^{-t}y_0)$. Por tanto,
+\[
+ W^s(0)=\{(0,y):y\in\R\},\qquad
+ W^u(0)=\{(x,0):x\in\R\}.
+\]
+La primera recta contiene exactamente los estados que convergen al origen
+cuando $t\to+\infty$; la segunda hace lo mismo cuando $t\to-\infty$. No basta
+dibujar flechas: la fórmula demuestra invariancia porque un punto de cada eje
+permanece en ese eje para todo tiempo de existencia.
+
+\subsubsection{Una frontera de cuenca calculable}
+
+Para
+\begin{equation}
+ \dot x=x-x^3=x(1-x^2),
+ \label{eq:guide-bistable-line}
+\end{equation}
+los equilibrios son $-1,0,1$. El signo del campo muestra que
+$\mathcal B(-1)=(-\infty,0)$ y $\mathcal B(1)=(0,\infty)$, mientras que
+$\{0\}$ es la frontera común. Este ejemplo separa tres conceptos: atractor,
+cuenca y frontera. Una imagen del atractor no contiene por sí sola la
+información de su cuenca.
+
+\subsubsection{La topología cilíndrica del PLL}
+
+Una fase $\theta$ y $\theta+2\pi$ representan el mismo punto. Por eso el PLL
+no vive naturalmente en $\R^2$, sino en $\R\times S^1$. La distancia angular
+correcta utiliza
+\begin{equation}
+ d_{S^1}(\theta_1,\theta_2)
+ =\min_{k\in\mathbb Z}|\theta_1-\theta_2+2\pi k|.
+ \label{eq:guide-circle-distance}
+\end{equation}
+Una curva que parece escapar horizontalmente en un rectángulo puede ser una
+órbita cerrada sobre el cilindro. Esta observación explica por qué el
+expediente PLL emplea retornos módulo $2\pi$, separatriz cilíndrica y una
+métrica envuelta.
+
+\subsubsection{Existencia de un ciclo como punto fijo}
+
+Sea $\Sigma$ una sección transversal y $P:\Sigma\to\Sigma$ el primer retorno.
+Si $P(z)=z$, la órbita que sale de $z$ vuelve al mismo punto y genera una
+órbita periódica. Así, los teoremas de punto fijo del carril de Amster pueden
+garantizar ciclos cuando se verifican las hipótesis del operador de retorno.
+El argumento no prueba caos: un único punto fijo atractivo corresponde a un
+ciclo regular.
+
+\subsection{Mapa de problemas dentro de la ruta única}
+
+La tabla siguiente no cambia el orden oficial: explica qué producto del
+proyecto corresponde a cada etapa de la
+\cref{sec:programa-estudio-bibliografico}.
+
+\begin{longtable}{@{}L{1.05cm}L{3.0cm}L{4.1cm}L{5.45cm}@{}}
+\caption{Secuencia recomendada y producto verificable de cada etapa.}
+\label{tab:ruta-estudio-geometrica}\\
+\toprule
+Etapa & Núcleo conceptual & Fuente temática principal & Producto dentro del proyecto \\
+\midrule
+\endfirsthead
+\toprule
+Etapa & Núcleo conceptual & Fuente temática principal & Producto dentro del proyecto \\
+\midrule
+\endhead
+1 & Abiertos, continuidad, compacidad, conexidad y cocientes & Nahmad-Achar & Justificar $S^1=\R/(2\pi\mathbb Z)$ y la métrica cilíndrica del PLL. \\
+2 & Variedades, cartas, tangentes y campos & Nahmad-Achar; Teoría geométrica I & Interpretar $\dot x=f(x)$ como sección de $TM$ y reconocer coordenadas físicas. \\
+3 & Existencia, unicidad, dependencia continua y flujo & Teoría geométrica I & Identificar dónde Chua PWL sólo es regionalmente $C^1$. \\
+4 & Equilibrios, linealización y Hartman--Grobman & Teoría geométrica I--II & Separar espectro, estabilidad local y retrato topológico local. \\
+5 & Variedades estable, inestable y central & Teoría geométrica II & Formular las separatrices relevantes de Chua, MAVPD y PLL. \\
+6 & Poincaré, monodromía y Floquet & Teoría geométrica II & Reconstruir el multiplicador del ciclo PLL y auditar el retorno MAVPD. \\
+7 & Puntos fijos, disparo y grado & Amster & Distinguir existencia de ciclo de su localización numérica. \\
+8 & Bifurcaciones y conexiones homoclínicas & Teoría geométrica II & Diseñar continuaciones que registren estabilidad y no sólo amplitud. \\
+9 & Caos topológico y dinámica simbólica & Fuentes clásicas complementarias & Comparar herradura o entropía con Lyapunov, FFT y prueba $0$--$1$. \\
+10 & Cuencas, fronteras y ocultedad & Este reporte & Sustituir la frase ``se ve oculto'' por un contrato de separación declarado. \\
+11 & Semidinámica Caputo en historias & Capítulo fraccionario de esta guía & Diferenciar cuenca funcional, sección de reinicio y continuidad con memoria. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Actividades guiadas conectadas con los expedientes}
+
+\begin{enumerate}[label=\textbf{A\arabic*.}]
+ \item \textbf{Chua PWL.} En cada región, calcule el flujo lineal afín y
+ compruebe cómo una trayectoria cruza la superficie $x=\pm1$. Determine qué
+ afirmaciones requieren derivada clásica y cuáles sólo continuidad.
+ \item \textbf{Kalman--Fitts.} Use el Jacobiano para clasificar el equilibrio y
+ describa la cuenca del ciclo candidato. Explique por qué cero contactos en 48
+ sondeos no determina su topología global ni prueba ocultedad.
+ \item \textbf{MAVPD.} Defina una sección transversal y derive las condiciones
+ que evitan cruces tangenciales. Compare el conjunto de cruces interpolados
+ del reporte con un verdadero mapa de primer retorno.
+ \item \textbf{PLL.} Demuestre que la proyección $\R\to S^1$ identifica fases
+ separadas por $2\pi k$. Reconstruya la distancia de
+ \cref{eq:guide-circle-distance} y explique por qué una distancia euclídea
+ sin envolver puede clasificar mal dos órbitas próximas.
+ \item \textbf{Puntos perpetuos.} Verifique que $J_f(p)f(p)=0$ no es invariante
+ bajo un cambio de coordenadas no lineal. Discuta qué significaría reemplazar
+ la aceleración ordinaria por una aceleración covariante en una variedad.
+ \item \textbf{Cuencas.} Para \cref{eq:guide-bistable-line}, muestree una malla
+ que no contenga $0$. Explique por qué el experimento aproxima bien ambas
+ cuencas, pero no descubre por sí solo la frontera exacta.
+ \item \textbf{Lectura crítica.} Tome una figura numérica archivada de uno de
+ los expedientes y escriba
+ dos columnas: ``lo que muestra'' y ``lo que no demuestra''. Incluya
+ acotamiento finito, recurrencia, caos topológico y ocultedad.
+\end{enumerate}
+
+\subsection{Autoevaluación conceptual}
+
+Antes de avanzar a la teoría fraccionaria, el lector debería poder responder,
+sin recurrir a una figura:
+
+\begin{enumerate}
+ \item ¿Cuál es la diferencia entre una trayectoria, una órbita y un flujo?
+ \item ¿Qué propiedades conserva un homeomorfismo y cuáles requieren una
+ métrica o una estructura diferenciable?
+ \item ¿Por qué Hartman--Grobman exige hiperbolicidad?
+ \item ¿Por qué un punto fijo de Poincaré representa un ciclo?
+ \item ¿Qué diferencia hay entre probar la existencia de una órbita y
+ localizar una condición inicial en su cuenca?
+ \item ¿Por qué una sección de Poincaré finita no prueba una conjugación
+ con un corrimiento simbólico?
+ \item ¿Qué parte de la definición de atractor oculto es topológica y qué
+ parte del protocolo del reporte es sólo estadística o numérica?
+\end{enumerate}
+
+\subsection{Pistas y criterios de autocorrección}
+
+\begin{itemize}
+ \item En \textbf{A1}, la continuidad del campo no implica continuidad del
+ Jacobiano. La respuesta debe separar las tres regiones y las dos superficies
+ de conmutación.
+ \item En \textbf{A2}, una clasificación local correcta sólo controla una
+ vecindad del equilibrio. La respuesta debe nombrar al menos un objeto global
+ que no determine el espectro.
+ \item En \textbf{A3}, una sección $h(x)=0$ es transversal cuando
+ $\nabla h(x)^{\mathsf T}f(x)\neq0$ en el cruce. Debe explicarse qué falla si
+ ese producto se anula.
+ \item En \textbf{A4}, el entero $k$ se elige para minimizar la diferencia
+ angular. Una verificación correcta prueba también la desigualdad triangular
+ o reconoce que se trata de la métrica cociente inducida.
+ \item En \textbf{A5}, busque el término Hessiano que aparece en la segunda
+ derivada de un cambio no lineal. Omitirlo conduce precisamente a la falsa
+ invariancia de los puntos perpetuos.
+ \item En \textbf{A6}, el diagrama de signos proporciona una prueba exacta en
+ una dimensión. La malla sólo proporciona evidencia finita.
+ \item En \textbf{A7}, ``estructura irregular'', ``caos'' y ``ocultedad'' deben
+ aparecer en niveles distintos; ninguna figura aislada certifica las dos
+ últimas propiedades.
+\end{itemize}

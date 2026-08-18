@@ -1,0 +1,674 @@
+% Este archivo es una biblioteca de derivaciones. Cada bloque se inserta en el
+% lugar del cuerpo donde se usa, mediante \HAFOderivationpart. No se imprime
+% como apéndice independiente.
+\ifnum\HAFOderivationpart=1\relax
+\subsection{Derivación completa de la forma de Lur'e}
+\label{app:verificacion_lure}
+
+Sea \(h(x)=\ell x+\psi(x)\). La primera ecuación de los dos modelos es
+\[
+{}^{\mathrm C}D_{t_0}^{q}x
+=\alpha(y-x-h(x)).
+\]
+Al distribuir \(\alpha\),
+\begin{align}
+\alpha(y-x-h(x))
+&=\alpha y-\alpha x-\alpha\ell x-\alpha\psi(x)\nonumber\\
+&=-\alpha(1+\ell)x+\alpha y-\alpha\psi(x).
+\label{eq:expansion_primera_fila}
+\end{align}
+Por otra parte,
+\[
+PX=
+\begin{pmatrix}
+-\alpha(1+\ell)x+\alpha y\\
+x-y+z\\
+-\beta y-\gamma z
+\end{pmatrix},
+\qquad
+b\psi(r^{\T}X)=
+\begin{pmatrix}
+-\alpha\psi(x)\\0\\0
+\end{pmatrix}.
+\]
+La suma reproduce \cref{eq:expansion_primera_fila} y las otras dos
+ecuaciones. Para la saturación se toma
+\(\ell=m_1\) y
+\(\psi=(m_0-m_1)\operatorname{sat}\); para la arctangente,
+\(\ell=a_1\) y \(\psi=a_2\arctan(\rho\,\cdot)\).
+
+\fi
+\ifnum\HAFOderivationpart=2\relax
+\subsection{Derivación completa del determinante y la transferencia}
+\label{app:transferencia_explicita}
+
+Con \(\lambda=s^q\),
+\begin{equation}
+\lambda I-P=
+\begin{pmatrix}
+\lambda+\alpha(1+\ell)&-\alpha&0\\
+-1&\lambda+1&-1\\
+0&\beta&\lambda+\gamma
+\end{pmatrix}.
+\label{eq:matriz_resolvente}
+\end{equation}
+El menor de la posición \((1,1)\) es
+\begin{align}
+Q(\lambda)
+&=
+\det
+\begin{pmatrix}
+\lambda+1&-1\\
+\beta&\lambda+\gamma
+\end{pmatrix}\nonumber\\
+&=(\lambda+1)(\lambda+\gamma)+\beta.
+\label{eq:menor_Q}
+\end{align}
+Al desarrollar \(\det(\lambda I-P)\) por la primera fila,
+\begin{align}
+\Delta_\ell(\lambda)
+&=\bigl[\lambda+\alpha(1+\ell)\bigr]Q(\lambda)
+-(-\alpha)
+\det
+\begin{pmatrix}
+-1&-1\\
+0&\lambda+\gamma
+\end{pmatrix}\nonumber\\
+&=\bigl[\lambda+\alpha(1+\ell)\bigr]Q(\lambda)
+-\alpha(\lambda+\gamma).
+\label{eq:determinante_transferencia}
+\end{align}
+
+Para calcular la primera componente de
+\((\lambda I-P)^{-1}b\), la regla de Cramer sustituye la primera columna de
+\cref{eq:matriz_resolvente} por
+\(b=(-\alpha,0,0)^{\T}\). El determinante del numerador es
+\[
+\det
+\begin{pmatrix}
+-\alpha&-\alpha&0\\
+0&\lambda+1&-1\\
+0&\beta&\lambda+\gamma
+\end{pmatrix}
+=-\alpha Q(\lambda).
+\]
+Como \(r^{\T}\) selecciona esa primera componente,
+\begin{equation}
+W_q(s)
+=r^{\T}(s^qI-P)^{-1}b
+=-\alpha\frac{Q(s^q)}{\Delta_\ell(s^q)}.
+\label{eq:transferencia_cramer}
+\end{equation}
+
+La identidad
+\[
+P-s^qI=-(s^qI-P)
+\]
+implica
+\[
+r^{\T}(P-s^qI)^{-1}b=-W_q(s).
+\]
+Por ello, cambiar el orden de los términos dentro de la resolvente cambia
+simultáneamente el signo de la transferencia y el signo del cierre. No cambia
+la solución física si ambas modificaciones se realizan de manera coherente.
+
+\fi
+\ifnum\HAFOderivationpart=3\relax
+\subsection{Derivación completa de los equilibrios}
+\label{app:equilibrios}
+
+En un equilibrio \(e=(x_e,y_e,z_e)^{\T}\), las dos últimas ecuaciones de
+ambos sistemas dan
+\[
+0=x_e-y_e+z_e,\qquad
+0=-\beta y_e-\gamma z_e.
+\]
+De la primera,
+\[
+z_e=y_e-x_e.
+\]
+Al sustituirla en la segunda,
+\begin{align*}
+0
+&=-\beta y_e-\gamma(y_e-x_e)\\
+&=-(\beta+\gamma)y_e+\gamma x_e.
+\end{align*}
+Si \(\beta+\gamma\neq0\),
+\begin{equation}
+y_e=\frac{\gamma}{\beta+\gamma}x_e,\qquad
+z_e=-\frac{\beta}{\beta+\gamma}x_e.
+\label{eq:equilibrios_yz}
+\end{equation}
+La primera ecuación de equilibrio exige
+\[
+0=y_e-x_e-h(x_e).
+\]
+Mediante \cref{eq:equilibrios_yz},
+\begin{equation}
+h(x_e)+\frac{\beta}{\beta+\gamma}x_e=0.
+\label{eq:equilibrio_escalar_comun}
+\end{equation}
+Esta única ecuación escalar determina todos los equilibrios; las otras dos
+coordenadas se recuperan después con \cref{eq:equilibrios_yz}.
+
+\subsubsection{Equilibrios del Chua no suave}
+
+En la región \(|x_e|<1\), \(h(x_e)=m_0x_e\). Entonces
+\begin{equation}
+\left(m_0+\frac{\beta}{\beta+\gamma}\right)x_e=0.
+\label{eq:equilibrio_interior_ns}
+\end{equation}
+Cuando el coeficiente no es cero, la única raíz interior es \(x_e=0\).
+
+Para \(x_e>1\),
+\[
+h(x_e)=m_1x_e+(m_0-m_1),
+\]
+y \cref{eq:equilibrio_escalar_comun} queda
+\[
+\left(m_1+\frac{\beta}{\beta+\gamma}\right)x_e+(m_0-m_1)=0.
+\]
+Por tanto,
+\begin{equation}
+x_\star=
+\frac{m_1-m_0}
+{m_1+\dfrac{\beta}{\beta+\gamma}}.
+\label{eq:raiz_exterior_ns}
+\end{equation}
+Si \(x_\star>1\), existe el equilibrio positivo. Como la no linealidad es
+impar, existe también la raíz \(-x_\star<-1\). Los tres equilibrios son
+\begin{equation}
+E_0=(0,0,0),\qquad
+E_\pm=
+\left(
+\pm x_\star,\,
+\pm\frac{\gamma}{\beta+\gamma}x_\star,\,
+\mp\frac{\beta}{\beta+\gamma}x_\star
+\right).
+\label{eq:equilibrios_ns_simbolicos}
+\end{equation}
+La condición regional \(x_\star>1\) debe comprobarse; no basta con resolver la
+ecuación lineal exterior.
+
+\subsubsection{Equilibrios del Chua con arctangente}
+
+Al usar
+\(h(x)=a_1x+a_2\arctan(\rho x)\) en
+\cref{eq:equilibrio_escalar_comun}, se obtiene
+\begin{equation}
+\left(a_1+\frac{\beta}{\beta+\gamma}\right)x_e
++a_2\arctan(\rho x_e)=0.
+\label{eq:equilibrio_escalar_arctan}
+\end{equation}
+La expresión es impar, de modo que \(x_e=0\) siempre es raíz y toda raíz
+positiva no nula tiene una compañera negativa. Las raíces no nulas se
+determinan numéricamente y se sustituyen en \cref{eq:equilibrios_yz}. Esta
+ecuación se evalúa con \(\rho=1\) para el caso bibliográfico y con el valor de
+\(\rho\) de \cref{eq:parametros_c590} para el caso \texttt{c590}; no deben
+intercambiarse las dos parametrizaciones.
+
+\fi
+\ifnum\HAFOderivationpart=4\relax
+\subsection{Derivación completa de los jacobianos regionales}
+\label{app:jacobianos}
+
+Para la forma de Lur'e,
+\[
+F(X)=PX+b\psi(r^{\T}X).
+\]
+La regla de la cadena produce
+\begin{equation}
+J_e=P+b\,\psi'(r^{\T}e)r^{\T}.
+\label{eq:jacobiano_lure}
+\end{equation}
+Como \(r^{\T}e=x_e\), solamente cambia la entrada \((1,1)\).
+
+En el sistema no suave,
+\[
+\psi'_{\mathrm{ns}}(x)=
+\begin{cases}
+m_0-m_1,&|x|<1,\\
+0,&|x|>1.
+\end{cases}
+\]
+Por ello,
+\begin{equation}
+J_{\mathrm{in}}=
+\begin{pmatrix}
+-\alpha(1+m_0)&\alpha&0\\
+1&-1&1\\
+0&-\beta&-\gamma
+\end{pmatrix},
+\qquad
+J_{\mathrm{out}}=
+\begin{pmatrix}
+-\alpha(1+m_1)&\alpha&0\\
+1&-1&1\\
+0&-\beta&-\gamma
+\end{pmatrix}.
+\label{eq:jacobianos_ns}
+\end{equation}
+En \(x=\pm1\) la derivada clásica no existe. Los equilibrios usados en este
+reporte no se encuentran sobre esas superficies, por lo que se emplea el
+jacobiano de la región que contiene a cada uno.
+
+Para la arctangente,
+\[
+\psi'_{\mathrm a}(x)
+=\frac{a_2\rho}{1+\rho^2x^2},
+\]
+y
+\begin{equation}
+J_e=
+\begin{pmatrix}
+\displaystyle
+-\alpha\left(1+a_1+
+\frac{a_2\rho}{1+\rho^2x_e^2}\right)
+&\alpha&0\\[3mm]
+1&-1&1\\
+0&-\beta&-\gamma
+\end{pmatrix}.
+\label{eq:jacobiano_arctan}
+\end{equation}
+Los valores propios de
+\cref{eq:jacobianos_ns,eq:jacobiano_arctan} se clasifican con
+\cref{eq:matignon}; la estabilidad local no sustituye el sondeo de cuenca.
+
+\fi
+\ifnum\HAFOderivationpart=5\relax
+\subsection{Derivación completa del polinomio característico}
+\label{app:polinomio_caracteristico}
+
+Sea \(g=h'(x_e)\) la pendiente total de la no linealidad en un equilibrio.
+El jacobiano de cualquiera de las dos familias puede escribirse como
+\begin{equation}
+J(g)=
+\begin{pmatrix}
+-\alpha(1+g)&\alpha&0\\
+1&-1&1\\
+0&-\beta&-\gamma
+\end{pmatrix}.
+\label{eq:jacobiano_pendiente_total}
+\end{equation}
+Por tanto,
+\[
+\lambda I-J(g)=
+\begin{pmatrix}
+\lambda+\alpha(1+g)&-\alpha&0\\
+-1&\lambda+1&-1\\
+0&\beta&\lambda+\gamma
+\end{pmatrix}.
+\]
+El desarrollo por la primera fila, igual al de
+\cref{eq:determinante_transferencia}, produce
+\begin{equation}
+\chi_g(\lambda)
+=\bigl[\lambda+\alpha(1+g)\bigr]
+\bigl[(\lambda+1)(\lambda+\gamma)+\beta\bigr]
+-\alpha(\lambda+\gamma).
+\label{eq:polinomio_caracteristico_agrupado}
+\end{equation}
+Como
+\[
+(\lambda+1)(\lambda+\gamma)+\beta
+=\lambda^2+(1+\gamma)\lambda+(\beta+\gamma),
+\]
+la multiplicación y agrupación por potencias de \(\lambda\) da
+\begin{equation}
+\begin{aligned}
+\chi_g(\lambda)
+={}&\lambda^3+
+\bigl[1+\gamma+\alpha(1+g)\bigr]\lambda^2\\
+&+\bigl[
+\beta+\gamma+\alpha(1+g)(1+\gamma)-\alpha
+\bigr]\lambda\\
+&+\alpha\bigl[(1+g)(\beta+\gamma)-\gamma\bigr].
+\end{aligned}
+\label{eq:polinomio_caracteristico_expandido}
+\end{equation}
+En el sistema no suave se sustituye \(g=m_0\) en \(E_0\) y \(g=m_1\)
+en \(E_\pm\). En el sistema con arctangente,
+\[
+g=a_1+\frac{a_2\rho}{1+\rho^2x_e^2}.
+\]
+Las raíces de \cref{eq:polinomio_caracteristico_expandido} son los valores
+propios utilizados en \cref{eq:matignon}; así, la clasificación local se
+obtiene a partir del mismo campo que define la integración.
+
+\fi
+\ifnum\HAFOderivationpart=6\relax
+\subsection{Derivación completa para la saturación centrada}
+\label{app:df_saturacion_centrada}
+
+Sea
+\[
+\psi_{\mathrm{ns}}(\sigma)=\Delta\operatorname{sat}(\sigma),
+\qquad \Delta=m_0-m_1.
+\]
+Si \(0<A\leq1\), no hay saturación y
+\[
+\psi_{\mathrm{ns}}(A\sin\theta)=\Delta A\sin\theta.
+\]
+Como \(\int_0^\pi\sin^2\theta\dd\theta=\pi/2\),
+\[
+N_{\mathrm{ns}}(A)
+=\frac{2}{\pi A}\Delta A\frac{\pi}{2}
+=\Delta.
+\]
+
+Para \(A>1\), defínase
+\[
+\theta_0=\arcsin\left(\frac1A\right),
+\qquad 0<\theta_0<\frac{\pi}{2}.
+\]
+En \(0\leq\theta\leq\theta_0\) y
+\(\pi-\theta_0\leq\theta\leq\pi\), la entrada permanece en la parte lineal;
+en el intervalo central la saturación vale \(1\). Entonces
+\begin{align}
+N_{\mathrm{ns}}(A)
+&=\frac{2\Delta}{\pi A}
+\left[
+2A\int_0^{\theta_0}\sin^2\theta\dd\theta
++\int_{\theta_0}^{\pi-\theta_0}\sin\theta\dd\theta
+\right]\nonumber\\
+&=\frac{2\Delta}{\pi A}
+\left[
+A\theta_0-\frac{A}{2}\sin(2\theta_0)
++2\cos\theta_0
+\right]\nonumber\\
+&=\frac{2\Delta}{\pi A}
+\left[A\theta_0+\cos\theta_0\right].
+\label{eq:df_sat_pasos}
+\end{align}
+En el último paso se usó
+\[
+\frac{A}{2}\sin(2\theta_0)
+=A\sin\theta_0\cos\theta_0
+=\cos\theta_0.
+\]
+Finalmente,
+\[
+\cos\theta_0
+=\sqrt{1-\frac1{A^2}}
+=\frac{\sqrt{A^2-1}}{A},
+\]
+y \cref{eq:df_sat_pasos} se convierte en
+\[
+N_{\mathrm{ns}}(A)
+=\Delta\frac{2}{\pi}
+\left[
+\arcsin\left(\frac1A\right)
++\frac{\sqrt{A^2-1}}{A^2}
+\right],
+\]
+que coincide con \cref{eq:df_saturacion}.
+
+\fi
+\ifnum\HAFOderivationpart=7\relax
+\subsection{Derivación completa de la saturación sesgada}
+\label{app:df_saturacion_sesgada}
+
+Considérese
+\[
+u(\theta)=c+A\cos\theta,\qquad A>0.
+\]
+Para escribir una fórmula que incluya los casos parcialmente y completamente
+saturados, se define
+\[
+[v]_{-1}^{1}=\max(-1,\min(1,v))
+\]
+y los ángulos
+\begin{equation}
+\theta_+
+=\arccos\left[\frac{1-c}{A}\right]_{-1}^{1},
+\qquad
+\theta_-
+=\arccos\left[\frac{-1-c}{A}\right]_{-1}^{1}.
+\label{eq:angulos_saturacion_sesgada}
+\end{equation}
+Como \((1-c)/A>(-1-c)/A\) y \(\arccos\) es decreciente,
+\(0\leq\theta_+\leq\theta_-\leq\pi\). En el intervalo
+\([0,\pi]\),
+\[
+\operatorname{sat}(u(\theta))=
+\begin{cases}
+1,&0\leq\theta\leq\theta_+,\\
+c+A\cos\theta,&\theta_+\leq\theta\leq\theta_-,\\
+-1,&\theta_-\leq\theta\leq\pi.
+\end{cases}
+\]
+La simetría respecto de \(2\pi\) permite integrar solamente en
+\([0,\pi]\). Para \(\psi=\Delta\operatorname{sat}\),
+\begin{align}
+\Psi_0(c,A)
+=\frac{\Delta}{\pi}\Big[
+&\theta_+
++c(\theta_--\theta_+)
++A(\sin\theta_--\sin\theta_+)\nonumber\\
+&-(\pi-\theta_-)
+\Big].
+\label{eq:psi0_saturacion_cerrada}
+\end{align}
+
+Para la componente fundamental se usan
+\[
+\int\cos\theta\dd\theta=\sin\theta,\qquad
+\int\cos^2\theta\dd\theta
+=\frac{\theta}{2}+\frac{\sin2\theta}{4}.
+\]
+La sustitución por intervalos da
+\begin{align}
+\Psi_1(c,A)
+=\frac{2\Delta}{\pi}\Bigg[
+&\sin\theta_++\sin\theta_-
++c(\sin\theta_--\sin\theta_+)\nonumber\\
+&+\frac{A}{2}(\theta_--\theta_+)
++\frac{A}{4}
+\bigl(\sin2\theta_--\sin2\theta_+\bigr)
+\Bigg].
+\label{eq:psi1_saturacion_cerrada}
+\end{align}
+Las operaciones de recorte en
+\cref{eq:angulos_saturacion_sesgada} hacen que
+\cref{eq:psi0_saturacion_cerrada,eq:psi1_saturacion_cerrada} sigan siendo
+válidas cuando alguna de las tres regiones tiene longitud cero.
+
+La ecuación de media puede reducirse a una igualdad escalar. De
+\cref{eq:transferencia_cramer},
+\begin{align}
+W_q(0)
+&=-\alpha
+\frac{\beta+\gamma}
+{\alpha(1+\ell)(\beta+\gamma)-\alpha\gamma}\nonumber\\
+&=-\frac{\beta+\gamma}
+{(1+\ell)(\beta+\gamma)-\gamma}.
+\label{eq:ganancia_dc}
+\end{align}
+Por tanto,
+\begin{equation}
+c=W_q(0)\Psi_0(c,A),
+\label{eq:cierre_dc_escalar}
+\end{equation}
+y el cierre armónico es
+\[
+1-W_q(\ii\omega)\frac{\Psi_1(c,A)}{A}=0.
+\]
+Estas tres ecuaciones reales ---una para la media, y las partes real e
+imaginaria del cierre--- determinan \((c,A,\omega)\).
+
+\fi
+\ifnum\HAFOderivationpart=8\relax
+\subsection{Derivación completa para la arctangente}
+\label{app:df_arctan}
+
+Sea
+\[
+\psi_{\mathrm a}(\sigma)=a_2\arctan(\rho\sigma),
+\qquad
+\xi=\rho A.
+\]
+Se define
+\[
+I(\xi)=
+\int_0^\pi\arctan(\xi\sin\theta)\sin\theta\dd\theta.
+\]
+Como \(I(0)=0\), puede calcularse \(I\) integrando su derivada:
+\begin{align}
+I'(\xi)
+&=\int_0^\pi
+\frac{\sin^2\theta}{1+\xi^2\sin^2\theta}\dd\theta\nonumber\\
+&=\frac1{\xi^2}
+\left[
+\pi-\int_0^\pi
+\frac{\dd\theta}{1+\xi^2\sin^2\theta}
+\right]\nonumber\\
+&=\frac{\pi}{\xi^2}
+\left(1-\frac1{\sqrt{1+\xi^2}}\right).
+\label{eq:derivada_integral_arctan}
+\end{align}
+En la última igualdad se usó la integral estándar
+\[
+\int_0^\pi\frac{\dd\theta}{1+\xi^2\sin^2\theta}
+=\frac{\pi}{\sqrt{1+\xi^2}}.
+\]
+Una primitiva que se anula en \(\xi=0\) es
+\begin{equation}
+I(\xi)
+=\pi\frac{\sqrt{1+\xi^2}-1}{\xi}.
+\label{eq:integral_arctan}
+\end{equation}
+Al sustituir \(\xi=\rho A\) en
+\cref{eq:df_centrada},
+\begin{align}
+N_{\mathrm a}(A)
+&=\frac{2a_2}{\pi A}I(\rho A)\nonumber\\
+&=\frac{2a_2}{\rho A^2}
+\left(\sqrt{1+\rho^2A^2}-1\right)\nonumber\\
+&=\frac{2a_2\rho}
+{1+\sqrt{1+\rho^2A^2}}.
+\label{eq:df_arctan_derivada}
+\end{align}
+
+Si el cierre exige \(N_{\mathrm a}(A)=k\), la amplitud puede despejarse.
+De la forma racionalizada,
+\[
+1+\sqrt{1+\rho^2A^2}=\frac{2a_2\rho}{k}.
+\]
+Al aislar la raíz, elevar al cuadrado y simplificar,
+\begin{equation}
+A^2
+=\frac{4a_2(a_2\rho-k)}{k^2\rho}.
+\label{eq:amplitud_arctan}
+\end{equation}
+La solución se acepta solamente si el lado derecho es positivo y la igualdad
+previa a elevar al cuadrado tiene lado derecho no menor que \(2\). De manera
+equivalente, para \(A>0\), \(k\) tiene el mismo signo que \(a_2\) y se
+encuentra estrictamente entre \(0\) y \(a_2\rho\), con el orden de los
+extremos ajustado al signo de \(a_2\).
+
+\fi
+\ifnum\HAFOderivationpart=9\relax
+\subsection{Derivación completa de la identidad modal y su normalización}
+\label{app:identidad_modal}
+
+Sea \(P_0=P+bkr^{\T}\). Entonces
+\[
+\zeta I-P_0=(\zeta I-P)-bkr^{\T}.
+\]
+Si \(\zeta I-P\) es invertible, el lema del determinante matricial
+\(\det(M+uv^{\T})=\det(M)(1+v^{\T}M^{-1}u)\), con
+\[
+M=\zeta I-P,\qquad u=-bk,\qquad v=r,
+\]
+produce
+\begin{align}
+\det(\zeta I-P_0)
+&=\det(\zeta I-P)
+\left[1-kr^{\T}(\zeta I-P)^{-1}b\right]\nonumber\\
+&=\det(\zeta I-P)\bigl[1-kG(\zeta)\bigr],
+\label{eq:lema_determinante_aplicado}
+\end{align}
+donde
+\[
+G(\zeta)=r^{\T}(\zeta I-P)^{-1}b,
+\qquad W_q(s)=G(s^q).
+\]
+Por continuidad, la identidad polinómica se extiende también a los valores en
+los que la resolvente de \(P\) es singular. Si
+\[
+1-kG(\zeta_0)=0,
+\]
+entonces \(\det(\zeta_0I-P_0)=0\), de modo que existe
+\(v\neq0\) con \(P_0v=\zeta_0v\). Siempre que \(r^{\T}v\neq0\), se reemplaza
+\(v\) por \(v/(r^{\T}v)\) y se obtiene \(r^{\T}v=1\). Ésta es la
+normalización usada en \cref{eq:modo_normalizado,eq:semilla_modal}.
+
+En la rama sesgada,
+\[
+X_1=\bigl[(\ii\omega_0)^qI-P\bigr]^{-1}b\Psi_1.
+\]
+Al premultiplicar por \(r^{\T}\),
+\[
+r^{\T}X_1
+=W_q(\ii\omega_0)\Psi_1
+=W_q(\ii\omega_0)N_1A.
+\]
+El cierre \(1-W_qN_1=0\) prueba algebraicamente que
+\(r^{\T}X_1=A\).
+
+\fi
+\ifnum\HAFOderivationpart=10\relax
+\subsection{Derivación completa de la homotopía afín}
+\label{app:homotopia_afin}
+
+La aproximación sesgada separa
+\[
+\psi(\sigma)
+=\Psi_0+N_1(\sigma-c)
++\bigl[\psi(\sigma)-\Psi_0-N_1(\sigma-c)\bigr].
+\]
+Se definen
+\begin{equation}
+P_{\mathrm a}=P+N_1br^{\T},\qquad
+d_{\mathrm a}=b(\Psi_0-N_1c).
+\label{eq:parametros_homotopia_afin}
+\end{equation}
+La familia de campos es
+\begin{equation}
+\begin{aligned}
+F_\varepsilon(X)
+&=P_{\mathrm a}X+d_{\mathrm a}\\
+&\quad+\varepsilon b
+\left[
+\psi(r^{\T}X)-\Psi_0-N_1(r^{\T}X-c)
+\right],
+\qquad 0\leq\varepsilon\leq1.
+\end{aligned}
+\label{eq:homotopia_afin}
+\end{equation}
+
+En \(\varepsilon=0\), la media \(\bar X\) de
+\cref{eq:cierre_dc_sesgado} es un equilibrio del auxiliar:
+\begin{align*}
+F_0(\bar X)
+&=P\bar X+bN_1c+b\Psi_0-bN_1c\\
+&=P\bar X+b\Psi_0=0.
+\end{align*}
+Para una perturbación \(\xi=X-\bar X\),
+\[
+F_0(\bar X+\xi)=P_{\mathrm a}\xi,
+\]
+de modo que el auxiliar conserva tanto la media como el modo armónico.
+
+En \(\varepsilon=1\), al agrupar términos,
+\begin{align*}
+F_1(X)
+&=PX+bN_1r^{\T}X+b\Psi_0-bN_1c\\
+&\quad+b\psi(r^{\T}X)-b\Psi_0-bN_1r^{\T}X+bN_1c\\
+&=PX+b\psi(r^{\T}X).
+\end{align*}
+Así, el extremo final de \cref{eq:homotopia_afin} es exactamente el sistema
+físico de \cref{eq:lure_comun}. Una homotopía centrada de la forma
+\(P_0X+\varepsilon b[\psi(\sigma)-k\sigma]\) no conserva, en general, la
+media \(c\neq0\); por eso no se utiliza para la rama sesgada.
+\fi

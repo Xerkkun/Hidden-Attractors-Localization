@@ -1,0 +1,68 @@
+\begin{center}
+\resizebox{0.96\linewidth}{!}{%
+\begin{tikzpicture}[
+  font=\small,
+  >=Latex,
+  box/.style={draw=GrisOscuro,rounded corners=3pt,align=center,inner sep=5pt},
+  arr/.style={-{Latex[length=2mm]},thick,GrisOscuro}
+]
+  % Carril algebraico FPP-A.
+  \path[draw=Azul,very thick,rounded corners=6pt,fill=AzulClaro]
+    (0.15,0.95) rectangle (7.15,7.00);
+  \node[font=\bfseries,Azul] at (3.65,6.67)
+    {FPP--A: semilla algebraica};
+  \node[box,fill=white] (root) at (2.00,5.35)
+    {\(J_f(p)f(p)=0\)\\\(f(p)\neq0\)};
+  \node[box,fill=white] (embed) at (5.35,5.35)
+    {perfil constante\\\(\iota(p)\in\mathfrak C\)};
+  \draw[arr] (root)--node[above]{\(\iota\)}(embed);
+  \node[box,fill=white,text width=5.85cm] (expansion) at (3.65,3.45)
+    {\(\displaystyle x(h)=p+\frac{h^q}{\Gamma(q+1)}f(p)\)\\[-0.1em]
+     \(\displaystyle\hphantom{x(h)={}}+
+       \frac{h^{2q}}{\Gamma(2q+1)}J_f(p)f(p)+O(h^{3q})\)\\[0.25em]
+     la condición anula el coeficiente de \(h^{2q}\)};
+  \draw[arr] (embed.south) to[bend left=12] (expansion.east);
+  \node[draw=Rojo,rounded corners=2pt,fill=white,text=Rojo,align=center] at (3.65,1.55)
+    {propone una salida local; no define\\una aceleración global ni un invariante};
+
+  % Carril historico FPP-H.
+  \path[draw=Naranja,very thick,rounded corners=6pt,fill=NaranjaClaro]
+    (7.45,0.95) rectangle (14.85,7.00);
+  \node[font=\bfseries,Naranja] at (11.15,6.67)
+    {FPP--H: evento sobre una historia};
+  \draw[GrisOscuro,very thick] (8.05,5.45)--(14.10,5.45);
+  \foreach \x in {8.05,8.80,9.55,10.30,11.05,11.80,12.55,13.30,14.10}
+    {\fill[GrisOscuro] (\x,5.45) circle (1.15pt);}
+  \node[below] at (8.05,5.37) {\(0\)};
+  \node[below] at (14.10,5.37) {\(t\)};
+  \node[above] at (11.05,5.55) {registro \(x|_{[0,t]}\)};
+
+  \node[box,fill=white,text width=2.35cm] (profile) at (9.25,3.72)
+    {perfil \(m_t\)\\dato para continuar};
+  \node[box,fill=white,text width=3.10cm] (operator) at (12.92,3.72)
+    {\(\mathcal A_{q,q}[x](t)\)\\usa el registro histórico};
+  \draw[arr] (9.20,5.40)--(profile.north);
+  \draw[arr] (12.65,5.40)--(operator.north);
+  \node[text=Rojo,font=\large] at (11.05,3.72) {\(\not\equiv\)};
+  \node[text=Rojo,fill=NaranjaClaro,inner sep=1pt] at (11.15,4.45)
+    {objetos distintos};
+  \node[box,fill=white,text width=3.10cm] (event) at (12.92,1.85)
+    {evento: \(\mathcal A_{q,q}[x](t)=0\)\\con \(f(x(t))\neq0\)};
+  \draw[arr] (operator)--(event);
+  \node[box,fill=white,text width=2.35cm] at (9.25,1.85)
+    {la trayectoria portadora y su memoria deben conservarse};
+
+  \node[box,fill=Gris] at (7.50,0.30)
+    {sólo para \(q=1\), y bajo regularidad, la regla de cadena recupera
+     \(\frac{\mathrm d}{\mathrm dt}f(x(t))=J_f(x(t))f(x(t))\)};
+\end{tikzpicture}%
+}
+\par\smallskip
+\begin{minipage}{0.92\linewidth}
+\small\textbf{Dos objetos diferentes para \(0<q<1\).}
+FPP--A cancela el primer término de curvatura no trivial de la expansión local
+Picard--Caputo y sirve como semilla. FPP--H es un evento dependiente del pasado
+a lo largo de una trayectoria. Ninguno de los dos, por sí solo, certifica una
+cuenca, recurrencia ni un atractor.
+\end{minipage}
+\end{center}

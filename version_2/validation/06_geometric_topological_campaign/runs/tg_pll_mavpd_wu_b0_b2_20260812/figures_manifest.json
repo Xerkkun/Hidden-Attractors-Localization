@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.1",
+  "figures": [
+    {
+      "id": "00_ruta_geometrico_topologica",
+      "title": "Ruta complementaria geometrico-topologica",
+      "png": "00_ruta_geometrico_topologica.png",
+      "pdf": "00_ruta_geometrico_topologica.pdf",
+      "sources": [
+        "PILOT_PROTOCOL_VERSION"
+      ],
+      "claims_scope": "pedagogical diagram or finite-time numerical evidence"
+    },
+    {
+      "id": "01_pll_pp_y_borde",
+      "title": "PLL: puntos perpetuos y biseccion inicial de frontera",
+      "png": "01_pll_pp_y_borde.png",
+      "pdf": "01_pll_pp_y_borde.pdf",
+      "sources": [
+        "trajectory_metrics.csv",
+        "edge_brackets.csv",
+        "03_stable_reference_cycle.csv"
+      ],
+      "claims_scope": "pedagogical diagram or finite-time numerical evidence"
+    },
+    {
+      "id": "02_mavpd_pp_superficie_destinos",
+      "title": "MAVPD: puntos perpetuos, superficie critica y destinos",
+      "png": "02_mavpd_pp_superficie_destinos.png",
+      "pdf": "02_mavpd_pp_superficie_destinos.pdf",
+      "sources": [
+        "trajectory_metrics.csv",
+        "MAVPD reference clouds"
+      ],
+      "claims_scope": "pedagogical diagram or finite-time numerical evidence"
+    },
+    {
+      "id": "03_wu_fpp_caputo_b0_b2",
+      "title": "Wu q=.99: FPP-A bajo memoria Caputo completa",
+      "png": "03_wu_fpp_caputo_b0_b2.png",
+      "pdf": "03_wu_fpp_caputo_b0_b2.pdf",
+      "sources": [
+        "trajectory_metrics.csv",
+        "Caputo ABM and EFORK full-memory trajectories"
+      ],
+      "claims_scope": "pedagogical diagram or finite-time numerical evidence"
+    },
+    {
+      "id": "04_matriz_destinos_b0_b2",
+      "title": "Matriz de destinos por semilla, presupuesto y solver",
+      "png": "04_matriz_destinos_b0_b2.png",
+      "pdf": "04_matriz_destinos_b0_b2.pdf",
+      "sources": [
+        "trajectory_metrics.csv"
+      ],
+      "claims_scope": "pedagogical diagram or finite-time numerical evidence"
+    }
+  ],
+  "result_figures_are_finite_time_only": true
+}

@@ -1,0 +1,56 @@
+\begin{center}
+\resizebox{0.96\linewidth}{!}{%
+\begin{tikzpicture}[font=\small,>=Latex]
+  \path[draw=GrisOscuro,very thick,rounded corners=8pt,fill=Gris]
+    (0.20,0.35) rectangle (14.70,5.45);
+  \node[anchor=north west,font=\bfseries] at (0.45,5.25)
+    {espacio funcional \(\mathfrak C\) (representación esquemática)};
+
+  % Cuenca funcional: la lengua superior entra en U_e sin tocar el corte cercano.
+  \path[draw=Verde,very thick,fill=VerdeClaro]
+    (4.35,3.05)
+    .. controls (5.05,3.85) and (6.15,3.90) .. (7.05,3.30)
+    .. controls (8.15,4.70) and (11.85,4.80) .. (13.55,3.65)
+    .. controls (14.15,3.20) and (14.05,1.70) .. (13.20,1.25)
+    .. controls (11.90,0.65) and (9.10,0.90) .. (7.95,1.75)
+    .. controls (7.25,2.25) and (7.00,2.65) .. (6.35,2.75)
+    .. controls (5.55,2.88) and (4.85,2.55) .. (4.35,3.05) -- cycle;
+  \node[Verde,align=center] at (10.70,3.55)
+    {cuenca funcional\\\(\mathcal B_{\mathfrak C}(A)\)};
+  \node[draw=Verde,very thick,circle,fill=white,minimum size=8mm] (A) at (12.35,2.55) {\(A\)};
+
+  % Corte finito-dimensional de perfiles constantes.
+  \draw[GrisOscuro,very thick]
+    (0.85,1.55) .. controls (4.15,1.95) and (8.40,1.35) .. (13.95,1.75);
+  \node[anchor=west,fill=white,inner sep=2pt] (slice) at (0.70,2.55)
+    {sección de reinicio \(\iota(\mathbb R^n)\)};
+  \draw[-{Latex[length=1.7mm]},GrisOscuro] (slice.south)--(1.65,1.66);
+  \draw[Verde,line width=3pt]
+    (8.30,1.50) .. controls (10.10,1.40) and (12.05,1.48) .. (13.55,1.69);
+  \node[Verde,anchor=south,fill=white,inner sep=1pt] at (10.65,1.62)
+    {\(\iota[\mathcal B_{\mathrm{reset}}(A)]\)};
+
+  % Equilibrio y vecindad funcional.
+  \node[draw=Azul,very thick,circle,fill=AzulClaro,minimum size=7mm] (Ee) at (3.70,1.82) {\(E_e\)};
+  \draw[Azul,very thick,dashed] (3.70,1.82) ellipse (1.25cm and 1.42cm);
+  \node[Azul,anchor=east,align=right] at (2.35,3.00)
+    {vecindad funcional\\\(U_e\)};
+  \draw[-{Latex[length=2mm]},Azul] (2.45,2.83)--(2.85,2.55);
+  \node[Naranja,align=center] at (5.15,4.40)
+    {perfil no constante cercano\\que pertenece a la cuenca};
+  \draw[-{Latex[length=2mm]},Naranja,thick] (5.15,4.05)--(4.72,3.12);
+
+  \node[draw=GrisOscuro,rounded corners=2pt,fill=white,align=center] at (7.45,0.60)
+    {ocultedad funcional \(\Longrightarrow\) ocultedad de reinicio;
+     el recíproco no vale en general};
+\end{tikzpicture}%
+}
+\par\smallskip
+\begin{minipage}{0.92\linewidth}
+\small\textbf{Esquema, no cuenca calculada.}
+La figura muestra una configuración compatible con la jerarquía lógica: una
+bola del corte de reinicio puede evitar la cuenca mientras una perturbación
+funcional cercana sí la alcanza. No atribuye esta geometría a PLL, MAVPD, Wu ni
+a otro caso del banco actual.
+\end{minipage}
+\end{center}

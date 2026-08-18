@@ -1,0 +1,369 @@
+\section{Forma de Lur'e, transferencia y función descriptiva}
+\label{sec:lure_transferencia}
+
+\subsection{Separación común de los dos sistemas}
+
+Los sistemas de \cref{eq:chua_no_suave,eq:chua_arctan} tienen la misma
+estructura. Se escribe
+\[
+X=(x,y,z)^{\T},\qquad
+\sigma=r^{\T}X=x,\qquad
+h(x)=\ell x+\psi(x),
+\]
+y se separa la parte lineal de la no linealidad escalar:
+\begin{equation}
+\begin{aligned}
+{}^{\mathrm C}D_{t_0}^{q}X
+&=PX+b\,\psi(\sigma),&
+\sigma&=r^{\T}X,\\
+P&=
+\begin{pmatrix}
+-\alpha(1+\ell)&\alpha&0\\
+1&-1&1\\
+0&-\beta&-\gamma
+\end{pmatrix},&
+b&=
+\begin{pmatrix}
+-\alpha\\0\\0
+\end{pmatrix},&
+r&=
+\begin{pmatrix}
+1\\0\\0
+\end{pmatrix}.
+\end{aligned}
+\label{eq:lure_comun}
+\end{equation}
+La correspondencia con cada modelo es
+\begin{equation}
+\begin{array}{c|c|c}
+\text{modelo}&\ell&\psi(\sigma)\\ \hline
+\text{Chua no suave}
+&m_1&(m_0-m_1)\operatorname{sat}(\sigma)\\[1mm]
+\text{Chua con arctangente}
+&a_1&a_2\arctan(\rho\sigma).
+\end{array}
+\label{eq:correspondencia_lure}
+\end{equation}
+La igualdad se verifica ahora fila por fila, antes de usar la realización:
+\begingroup
+\def\HAFOderivationpart{1}
+\input{report_sections/A_derivaciones_algebraicas}
+\endgroup
+La comprobación fija también el signo: el vector \(b\) contiene \(-\alpha\), mientras que
+\(\psi\) conserva el signo de sus parámetros. No se introduce un signo
+adicional durante el balance armónico.
+
+En \cref{eq:lure_comun}, \(q\) designa únicamente el orden fraccionario. El
+vector de entrada se denota por \(b\), de modo que no se confunden dos objetos
+matemáticos distintos. Para \(q=1\), el miembro izquierdo se reemplaza por
+\(\dot X\) y se recupera la representación de Lur'e de orden entero utilizada
+por Leonov y Kuznetsov
+\cite{LeonovKuznetsov2013,KuznetsovEtAl2017}.
+
+\subsection{Transferencia obtenida de la transformada de Laplace}
+
+Sea
+\[
+U(s)=\mathcal L_u\{\psi(\sigma(t_0+u))\}(s),\qquad
+\widehat X(s)=\mathcal L_u\{X(t_0+u)\}(s).
+\]
+Al aplicar \cref{eq:laplace_caputo} a \cref{eq:lure_comun} resulta
+\begin{equation}
+(s^qI-P)\widehat X(s)
+=s^{q-1}X(t_0)+b\,U(s).
+\label{eq:lure_laplace}
+\end{equation}
+Por tanto, la salida \(\Sigma(s)=r^{\T}\widehat X(s)\) es
+\begin{equation}
+\begin{aligned}
+\Sigma(s)
+&=r^{\T}(s^qI-P)^{-1}s^{q-1}X(t_0)
+  +W_q(s)U(s),\\
+W_q(s)&=r^{\T}(s^qI-P)^{-1}b.
+\end{aligned}
+\label{eq:transferencia_fraccionaria}
+\end{equation}
+El primer término de \cref{eq:transferencia_fraccionaria} es la respuesta
+debida a la condición inicial. La transferencia \(W_q\) es, por definición,
+la relación entre la entrada y la salida cuando se separa ese término. Así,
+\(W_q\) no es una definición independiente introducida por conveniencia:
+surge directamente al aplicar la transformada de Laplace a la derivada de
+Caputo y resolver el bloque lineal.
+
+El numerador y el denominador no se citan como un resultado externo: se
+obtienen a continuación mediante menores, expansión del determinante y regla
+de Cramer.
+\begingroup
+\def\HAFOderivationpart{2}
+\input{report_sections/A_derivaciones_algebraicas}
+\endgroup
+Para reutilizar el resultado, se denota
+\[
+G(\lambda)=r^{\T}(\lambda I-P)^{-1}b.
+\]
+El cálculo anterior se resume como
+\begin{equation}
+\begin{aligned}
+\Delta_\ell(\lambda)
+&=\det(\lambda I-P)\\
+&=\bigl[\lambda+\alpha(1+\ell)\bigr]Q(\lambda)
+  -\alpha(\lambda+\gamma),\\
+G(\lambda)&=-\alpha\frac{Q(\lambda)}{\Delta_\ell(\lambda)},\\
+W_q(s)&=G(s^q).
+\end{aligned}
+\label{eq:transferencia_explicita}
+\end{equation}
+Sobre el eje imaginario se usa
+\(\lambda=(\ii\omega)^q\) con la rama principal de
+\cref{eq:rama_principal}.
+
+\subsection{Convención de signo y condición de cierre}
+
+Supóngase que la componente fundamental de la no linealidad se aproxima por
+\[
+\psi(\sigma(t))\simeq N\,\sigma(t).
+\]
+De \cref{eq:transferencia_fraccionaria}, con la respuesta de condición inicial
+separada, se obtiene
+\[
+\Sigma=W_qN\Sigma.
+\]
+Una respuesta armónica no nula requiere
+\begin{equation}
+R(\omega,N)
+=1-W_q(\ii\omega)N=0.
+\label{eq:cierre_armonico}
+\end{equation}
+Cuando \(N\) es real, \cref{eq:cierre_armonico} equivale a
+\begin{equation}
+\Im W_q(\ii\omega_0)=0,\qquad
+N=\frac{1}{\Re W_q(\ii\omega_0)}.
+\label{eq:condiciones_fase_ganancia}
+\end{equation}
+
+Algunas referencias y rutinas escriben la transferencia como
+\[
+W_q^{-}(s)=r^{\T}(P-s^qI)^{-1}b=-W_q(s).
+\]
+Con esa definición, el mismo cierre se escribe
+\[
+1+W_q^{-}(\ii\omega)N=0,\qquad
+N=-\frac{1}{\Re W_q^{-}(\ii\omega)}.
+\]
+Las dos escrituras son algebraicamente equivalentes. En este reporte se usa
+exclusivamente la convención de
+\cref{eq:transferencia_fraccionaria,eq:cierre_armonico}; por ello, no se
+introduce un parámetro de signo ajustable.
+
+\subsection{Función descriptiva centrada}
+
+La convención de primer armónico que se emplea a continuación sigue el
+tratamiento clásico de la función descriptiva y sus extensiones para
+no linealidades estáticas\cite{GelbVanderVelde1968,Atherton1975,AthertonTanYerogluKavuranYuce2014}.
+Para una entrada \(\sigma=A\sin\theta\), \(A>0\), y una no linealidad
+estática e impar, la proyección sobre el primer armónico es
+\begin{equation}
+N_\psi(A)
+=\frac{2}{\pi A}\int_0^\pi
+\psi(A\sin\theta)\sin\theta\dd\theta.
+\label{eq:df_centrada}
+\end{equation}
+La integral de \cref{eq:df_centrada} no contiene un operador temporal. Por
+ello, \(N_\psi\) depende de la no linealidad y de la amplitud, mientras que el
+orden \(q\) entra en la transferencia mediante
+\((\ii\omega)^q\). La función descriptiva no se hace ``fraccionaria''
+modificando arbitrariamente la integral; la adaptación fraccionaria ocurre en
+el bloque dinámico.
+
+Para el Chua no suave, sea
+\[
+\Delta=m_0-m_1,\qquad
+\psi_{\mathrm{ns}}(\sigma)=\Delta\operatorname{sat}(\sigma).
+\]
+La evaluación exacta de \cref{eq:df_centrada} se desarrolla sin saltos:
+\begingroup
+\def\HAFOderivationpart{6}
+\input{report_sections/A_derivaciones_algebraicas}
+\endgroup
+Por tanto,
+\begin{equation}
+N_{\mathrm{ns}}(A)=
+\begin{cases}
+\Delta,&0<A\leq1,\\[1mm]
+\displaystyle
+\Delta\frac{2}{\pi}
+\left[
+\arcsin\!\left(\frac1A\right)
++\frac{\sqrt{A^2-1}}{A^2}
+\right],&A>1.
+\end{cases}
+\label{eq:df_saturacion}
+\end{equation}
+
+Para la arctangente, se calcula primero la integral y se justifican la
+racionalización y las condiciones del despeje de amplitud:
+\begingroup
+\def\HAFOderivationpart{8}
+\input{report_sections/A_derivaciones_algebraicas}
+\endgroup
+En consecuencia, para
+\(\psi_{\mathrm a}(\sigma)=a_2\arctan(\rho\sigma)\), la forma que se usará es
+\begin{equation}
+\begin{aligned}
+N_{\mathrm a}(A)
+&=\frac{2a_2}{\rho A^2}
+\left(\sqrt{1+\rho^2A^2}-1\right)\\
+&=\frac{2a_2\rho}
+{1+\sqrt{1+\rho^2A^2}}.
+\end{aligned}
+\label{eq:df_arctan}
+\end{equation}
+La segunda forma evita cancelación por resta cuando \(\rho A\) es pequeño.
+
+\subsection{Función descriptiva sesgada y cierre de la componente continua}
+
+Una oscilación localizada lejos del origen no debe forzarse a tener media
+cero. Para una entrada
+\[
+\sigma(\theta)=c+A\cos\theta
+\]
+se conservan la componente continua y el primer armónico:
+\begin{equation}
+\begin{aligned}
+\Psi_0(c,A)
+&=\frac{1}{2\pi}\int_0^{2\pi}
+\psi(c+A\cos\theta)\dd\theta,\\
+\Psi_1(c,A)
+&=\frac{1}{\pi}\int_0^{2\pi}
+\psi(c+A\cos\theta)\cos\theta\dd\theta,\\
+N_1(c,A)&=\frac{\Psi_1(c,A)}{A}.
+\end{aligned}
+\label{eq:df_sesgada}
+\end{equation}
+La aproximación correspondiente es
+\[
+\psi(c+A\cos\theta)
+\simeq\Psi_0(c,A)+\Psi_1(c,A)\cos\theta.
+\]
+La primera igualdad que debe satisfacerse es la de la media. Si
+\(\det P\neq0\),
+\begin{equation}
+\bar X=-P^{-1}b\,\Psi_0(c,A),\qquad
+c=r^{\T}\bar X=W_q(0)\Psi_0(c,A).
+\label{eq:cierre_dc_sesgado}
+\end{equation}
+Después se impone el cierre del primer armónico:
+\begin{equation}
+1-W_q(\ii\omega)N_1(c,A)=0.
+\label{eq:cierre_sesgado}
+\end{equation}
+Por consiguiente, la búsqueda sesgada resuelve simultáneamente una ecuación de
+media y una ecuación compleja de balance. Usar solamente
+\cref{eq:cierre_sesgado} deja indeterminado el nivel alrededor del cual
+oscila la semilla.
+
+Para la saturación, \(\Psi_0\) y \(\Psi_1\) se obtienen separando los
+intervalos en los que \(c+A\cos\theta\) está por encima de \(1\), entre
+\(-1\) y \(1\), o por debajo de \(-1\):
+\begingroup
+\def\HAFOderivationpart{7}
+\input{report_sections/A_derivaciones_algebraicas}
+\endgroup
+Esta separación también permite verificar una cuadratura numérica sin evaluar
+la saturación en una malla excesivamente fina.
+
+\subsection{Construcción modal de las semillas}
+
+Sea \(k=N_\psi(A_0)\) para una rama centrada, o
+\(k=N_1(c,A)\) para una rama sesgada, y defínase
+\begin{equation}
+P_0=P+bkr^{\T},\qquad
+\zeta_0=(\ii\omega_0)^q,\qquad
+G(\zeta)=r^{\T}(\zeta I-P)^{-1}b.
+\label{eq:matriz_auxiliar}
+\end{equation}
+La transferencia de \cref{eq:transferencia_fraccionaria} satisface
+\(W_q(s)=G(s^q)\); \(s\) es la variable de Laplace y
+\(\zeta=s^q\) es la variable espectral.
+El lema del determinante da
+\begin{equation}
+\det(\zeta I-P_0)
+=\det(\zeta I-P)\bigl(1-kG(\zeta)\bigr).
+\label{eq:identidad_modal}
+\end{equation}
+La identidad y la normalización se justifican mediante el lema del
+determinante matricial:
+\begingroup
+\def\HAFOderivationpart{9}
+\input{report_sections/A_derivaciones_algebraicas}
+\endgroup
+Como
+\(W_q(\ii\omega_0)=G((\ii\omega_0)^q)=G(\zeta_0)\), al cumplirse el cierre
+\(\zeta_0\) es un valor propio del sistema lineal auxiliar. Se calcula un
+vector \(v\) mediante
+\begin{equation}
+(P_0-\zeta_0I)v=0,\qquad r^{\T}v=1,
+\label{eq:modo_normalizado}
+\end{equation}
+y la familia de fases centradas es
+\begin{equation}
+X_{\mathrm{seed}}(\theta_s)
+=A_0\Re\!\left(\e^{\ii\theta_s}v\right),
+\qquad 0\leq\theta_s<2\pi.
+\label{eq:semilla_modal}
+\end{equation}
+Además del residuo de \cref{eq:modo_normalizado}, se verifica que el tercer
+modo de \(P_0\) queda en el sector estable de Matignon. El par
+\(\zeta_0,\overline{\zeta_0}\) se encuentra sobre la frontera angular
+\(|\arg\zeta|=q\pi/2\) del problema auxiliar; ésa es la contraparte
+fraccionaria del par \(\pm\ii\omega_0\) del caso entero.
+
+Para la rama sesgada se reconstruyen por separado la media y el armónico. Con
+\(\bar X\) dada por \cref{eq:cierre_dc_sesgado},
+\begin{equation}
+\begin{aligned}
+\bigl[(\ii\omega_0)^qI-P\bigr]X_1
+&=b\,\Psi_1(c,A),\\
+X_{\mathrm{seed}}(\theta_s)
+&=\bar X+\Re\!\left(\e^{\ii\theta_s}X_1\right).
+\end{aligned}
+\label{eq:semilla_sesgada}
+\end{equation}
+El cierre implica
+\[
+r^{\T}X_1=W_q(\ii\omega_0)\Psi_1
+=W_q(\ii\omega_0)N_1A=A,
+\]
+de modo que la primera componente de
+\cref{eq:semilla_sesgada} tiene exactamente la media \(c\) y la amplitud
+\(A\) usadas en \cref{eq:df_sesgada}.
+
+La semilla armónica pertenece al problema auxiliar de Liouville--Weyl. La
+trayectoria física se obtiene después al integrarla y continuarla con el
+operador causal de Caputo. Por tanto, el cierre armónico es un procedimiento
+de localización, no una sustitución de la integración causal.
+
+\subsection{Recuperación del caso entero y separación del caso \texttt{c590}}
+
+Para funciones regulares y valores donde existe la resolvente,
+\begin{equation}
+\begin{aligned}
+\lim_{q\to1^-}{}^{\mathrm C}D_{t_0}^{q}X(t)&=\dot X(t),&
+\lim_{q\to1^-}(\ii\omega)^q&=\ii\omega,\\
+\lim_{q\to1^-}W_q(s)
+&=r^{\T}(sI-P)^{-1}b,&
+\lim_{q\to1^-}\frac{(t-\tau)^{q-1}}{\Gamma(q)}&=1.
+\end{aligned}
+\label{eq:limite_q_uno}
+\end{equation}
+Así, \cref{eq:cierre_armonico,eq:modo_normalizado,eq:semilla_modal} recuperan
+la construcción de Leonov--Kuznetsov cuando \(q=1\).
+
+La fórmula \cref{eq:df_arctan} valida la no linealidad bibliográfica con
+\(\rho=1\) y también la forma algebraica general con \(\rho>0\). Sin embargo,
+la condición inicial registrada para el caso \texttt{c590} de
+\cref{eq:parametros_c590} no procede de esa función descriptiva. Fue
+seleccionada mediante una búsqueda acotada en orden entero y refinada después
+con problemas de Caputo independientes. La rama armónica de arctangente y la
+ruta dinámica de \texttt{c590} se mantienen, por ello, como procedimientos
+distintos.

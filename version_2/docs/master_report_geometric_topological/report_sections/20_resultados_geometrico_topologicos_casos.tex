@@ -1,0 +1,559 @@
+\section{Resultados algebraicos geométrico--topológicos por caso}
+\label{sec:resultados-gt-casos}
+
+Esta sección aplica el atlas de la
+\cref{sec:localizacion-geometrico-topologica} a los campos ya fijados en el
+reporte. Los resultados presentes son ecuaciones exactas, raíces algebraicas,
+simetrías y obstrucciones. La campaña de la \cref{sec:campana-gt} fija cómo
+decidir qué partes de las superficies y curvas pertenecen a cada cuenca; la
+\cref{sec:resultados-piloto-gt} ejecuta ya su primera ronda B0--B2 para PLL,
+MAVPD y Wu. En los casos de Caputo, $F$, $DF\,F$ y
+$\mathcal C_{\mathrm{PC}}$ son objetos de arranque en el corte de historias
+constantes; no se reinterpretan como velocidad y aceleración globales.
+
+\subsection{Plantilla común de cálculo}
+
+Para cada campo $F=(F_1,\ldots,F_n)^{\mathsf T}$ se ejecutan, en este orden,
+las operaciones
+\begin{align}
+ J(X)&=DF(X), & A(X)&=J(X)F(X),
+ \label{casegt:eq:JA}\\
+ S_i^v&=\{F_i=0\}, & S_i^a&=\{A_i=0\},
+ \label{casegt:eq:surfaces}\\
+ S_J&=\{\det J=0\}, &
+ \mathcal C&=\{F_iA_j-F_jA_i=0,\ i<j\}.
+ \label{casegt:eq:singular-connecting}
+\end{align}
+Después se resuelve $A=0$, se eliminan las raíces con $F=0$, se comprueba la
+región de suavidad y se deduplica por las simetrías. Un PP debe satisfacer
+necesariamente $\det J=0$; esta criba evita resolver sistemas polinómicos
+innecesarios cuando el Jacobiano es globalmente invertible.
+
+\subsection{Chua PWL entero y fraccionario: superficies por regiones}
+\label{subsec:casegt-chua-pwl}
+
+En una región donde la característica es $\phi(x)=mx+d$,
+\begin{equation}
+ F_1=\alpha[y-(1+m)x-d],\quad
+ F_2=x-y+z,\quad F_3=-\beta y-\gamma z.
+ \label{casegt:eq:chua-pwl-field}
+\end{equation}
+El jacobiano regional y su determinante son
+\begin{equation}
+ J_m=
+ \begin{bmatrix}
+ -\alpha(1+m)&\alpha&0\\
+ 1&-1&1\\
+ 0&-\beta&-\gamma
+ \end{bmatrix},
+ \qquad
+ \det J_m=-\alpha[\beta+(\beta+\gamma)m].
+ \label{casegt:eq:chua-pwl-J}
+\end{equation}
+Multiplicando $J_mF$ se obtiene, sin términos omitidos,
+\begin{equation}
+ A_1=\alpha[-(1+m)F_1+F_2],\quad
+ A_2=F_1-F_2+F_3,\quad
+ A_3=-\beta F_2-\gamma F_3.
+ \label{casegt:eq:chua-pwl-A}
+\end{equation}
+Por tanto, las seis superficies regionales son los planos afines
+\begin{align}
+ S_1^v&:\ y-(1+m)x-d=0,&
+ S_1^a&:\ -(1+m)F_1+F_2=0,\nonumber\\
+ S_2^v&:\ x-y+z=0,&
+ S_2^a&:\ F_1-F_2+F_3=0,\\
+ S_3^v&:\ \beta y+\gamma z=0,&
+ S_3^a&:\ \beta F_2+\gamma F_3=0.
+ \label{casegt:eq:chua-pwl-surfaces}
+\end{align}
+La curva conectante regional es el conjunto de ceros de
+\begin{equation}
+ F_1A_2-F_2A_1=0,
+ \quad F_1A_3-F_3A_1=0,
+ \quad F_2A_3-F_3A_2=0.
+ \label{casegt:eq:chua-pwl-CC}
+\end{equation}
+
+Con $m_0=-0.1768$, $m_1=-1.1468$ y los parámetros activos,
+\begin{equation}
+ \det J_{m_0}=-84.035507517056,
+ \qquad
+ \det J_{m_1}=15.037737580544.
+ \label{casegt:eq:chua-pwl-dets}
+\end{equation}
+Así, $S_J$ es vacío dentro de las tres regiones y no existen PP regionales no
+estacionarios. En $x=\pm1$ se evaluaron ambos jacobianos laterales y tampoco se
+anula la aceleración lateral. Esto es un control negativo del método PP, pero
+no elimina las superficies, las curvas conectantes ni las semillas de función
+descriptiva. La simetría central relaciona $X$ con $-X$ y reduce a la mitad las
+condiciones iniciales; los cruces $x=\pm1$ se integrarán como eventos exactos.
+
+Para $q=0.9998$, las mismas ecuaciones definen
+$\mathcal C_{\mathrm{PC}}$ sólo como atlas de arranque. Las superficies
+$F_i=0$ no tienen el teorema de cobertura de una velocidad ordinaria; los
+eventos globales se calculan con historia completa.
+
+\subsection{Chua arctangente: superficie singular cerrada y dos escalas}
+\label{subsec:casegt-chua-arctan}
+
+Sea
+\begin{equation}
+ h(x)=a_1x+a_2\arctan(\rho x),
+ \qquad
+ h'(x)=a_1+\frac{a_2\rho}{1+\rho^2x^2}.
+ \label{casegt:eq:arctan-h}
+\end{equation}
+El campo conserva la forma de \eqref{casegt:eq:chua-pwl-field} sustituyendo
+$mx+d$ por $h(x)$. Entonces
+\begin{align}
+ A_1&=\alpha[F_2-(1+h'(x))F_1],\nonumber\\
+ A_2&=F_1-F_2+F_3,\\
+ A_3&=-\beta F_2-\gamma F_3,
+ \label{casegt:eq:arctan-A}
+\end{align}
+y
+\begin{equation}
+ \det J(x)=-\alpha\{\beta+(\beta+\gamma)h'(x)\}.
+ \label{casegt:eq:arctan-det}
+\end{equation}
+La superficie singular se reduce a dos planos $x=\pm x_\star$ cuando
+\begin{equation}
+ x_\star^2=\frac{1}{\rho^2}
+ \left[
+ \frac{a_2\rho}{-\beta/(\beta+\gamma)-a_1}-1
+ \right]>0.
+ \label{casegt:eq:arctan-xstar}
+\end{equation}
+En $x=x_\star$, defina $p=h'(x_\star)$ y
+\begin{equation}
+ U=-\frac{\beta x_\star+(\beta+\gamma)h(x_\star)}
+ {\gamma+(1+\gamma)p+(\beta+\gamma)/\alpha}.
+ \label{casegt:eq:arctan-U}
+\end{equation}
+Resolver $A=0$ da
+\begin{equation}
+ y_\star=x_\star+h(x_\star)+\frac{U}{\alpha},
+ \qquad
+ z_\star=h(x_\star)+(1+p)U+\frac{U}{\alpha}.
+ \label{casegt:eq:arctan-yz}
+\end{equation}
+El segundo punto es el simétrico central. Para Wu, $q=0.99$,
+\begin{equation}
+ p_\pm=\pm
+ \begin{pmatrix}
+ 0.3369817810952545\\
+ 0.0815749282686440\\
+ -0.2549832342782551
+ \end{pmatrix},
+ \qquad \lVert F(p_\pm)\rVert=1.39124162716\ldots.
+ \label{casegt:eq:wu-pp}
+\end{equation}
+Para c590, $q=0.9999$,
+\begin{equation}
+ p_\pm=\pm
+ \begin{pmatrix}
+ 1.213090022614086\\
+ -20.18726992409549\\
+ -21.54936334065728
+ \end{pmatrix},
+ \qquad \lVert F(p_\pm)\rVert=545.099830348\ldots.
+ \label{casegt:eq:c590-pp}
+\end{equation}
+Wolfram anula $JF$ en ambos pares a la precisión de trabajo. El primer par fue
+integrado causalmente con memoria completa mediante ABM--PECE y EFORK3: ambas
+rutas permanecieron acotadas, pero sin destino terminal común ni convergencia
+corta al umbral preregistrado, por lo que el resultado llega sólo a EV--TG2
+(\cref{sec:resultados-piloto-gt}). El segundo es un control
+de escala: una raíz algebraicamente exacta y muy lejana puede ser una semilla
+dinámicamente inútil o divergente. La norma de $F$ entra por ello en el filtro
+antes de integrar.
+
+\subsection{Kalman--Fitts: sin PP, pero con sección crítica natural}
+\label{subsec:casegt-kalman}
+
+Expanda
+\begin{equation}
+ p(s)=(s^2+2\beta s+m_1^2+\beta^2)
+       (s^2+2\beta s+m_2^2+\beta^2)
+ =s^4+a_3s^3+a_2s^2+a_1s+a_0.
+ \label{casegt:eq:kalman-poly}
+\end{equation}
+Con $(m_1,m_2,\beta)=(0.9,1.1,0.03)$,
+\begin{equation}
+ (a_0,a_1,a_2,a_3)
+ =(0.98191881,0.121308,2.0254,0.12).
+ \label{casegt:eq:kalman-coefficients}
+\end{equation}
+En coordenadas compañeras,
+\begin{equation}
+ F=(x_2,x_3,x_4,g)^{\mathsf T},
+ \quad
+ g=-a_0x_1-a_1x_2-a_2x_3-a_3x_4
+ -\tanh(x_3/\varepsilon).
+ \label{casegt:eq:kalman-field}
+\end{equation}
+Si
+\begin{equation}
+ \kappa(x_3)=a_2+\varepsilon^{-1}
+ \operatorname{sech}^2(x_3/\varepsilon),
+ \label{casegt:eq:kalman-kappa}
+\end{equation}
+la multiplicación por el jacobiano produce
+\begin{equation}
+ A=(x_3,x_4,g,H)^{\mathsf T},
+ \quad
+ H=-a_0x_2-a_1x_3-\kappa(x_3)x_4-a_3g.
+ \label{casegt:eq:kalman-A}
+\end{equation}
+Así,
+\begin{align}
+ S_1^v&:\ x_2=0,& S_1^a&:\ x_3=0,\nonumber\\
+ S_2^v&:\ x_3=0,& S_2^a&:\ x_4=0,\nonumber\\
+ S_3^v&:\ x_4=0,& S_3^a&:\ g=0,\\
+ S_4^v&:\ g=0,& S_4^a&:\ H=0.
+ \label{casegt:eq:kalman-surfaces}
+\end{align}
+La sección $x_3=0$ usada en el mapa de conmutación del expediente es a la vez
+$S_2^v$ y $S_1^a$: el método existente ya estaba utilizando una superficie
+geométrica privilegiada.
+
+Además,
+\begin{equation}
+ \det J=a_0=(\beta^2+m_1^2)(\beta^2+m_2^2)
+ =0.98191881>0.
+ \label{casegt:eq:kalman-det}
+\end{equation}
+No existe $S_J$ ni PP no estacionario. La curva conectante sí puede existir;
+sus seis ecuaciones son
+\begin{gather}
+ x_2x_4-x_3^2=0,
+ \quad x_2g-x_3x_4=0,
+ \quad x_2H-x_3g=0,\nonumber\\
+ x_3g-x_4^2=0,
+ \quad x_3H-x_4g=0,
+ \quad x_4H-g^2=0.
+ \label{casegt:eq:kalman-CC}
+\end{gather}
+Se parametrizarán sus componentes reales dentro del dominio acotado y se
+compararán contra la semilla del mapa de conmutación. El campo es impar, así
+que sólo se conserva un representante de cada par.
+
+\subsection{MAVPD: superficie singular, PP exactos y fallo informativo}
+\label{subsec:casegt-mavpd}
+
+Para
+\begin{equation}
+ F_1=\delta(\gamma u+v-u^3),\quad
+ F_2=u-\xi v-w,\quad F_3=\rho v,
+ \label{casegt:eq:mavpd-field}
+\end{equation}
+se obtiene
+\begin{align}
+ A_1&=\delta[(\gamma-3u^2)F_1+F_2],\nonumber\\
+ A_2&=F_1-\xi F_2-F_3,\\
+ A_3&=\rho F_2,
+ \label{casegt:eq:mavpd-A}
+\end{align}
+y las superficies
+\begin{align}
+ S_1^v&:\ \gamma u+v-u^3=0,&
+ S_1^a&:\ (\gamma-3u^2)F_1+F_2=0,\nonumber\\
+ S_2^v&:\ u-\xi v-w=0,&
+ S_2^a&:\ F_1-\xi F_2-F_3=0,\nonumber\\
+ S_3^v&:\ v=0,& S_3^a&:\ F_2=0.
+ \label{casegt:eq:mavpd-surfaces}
+\end{align}
+Como
+\begin{equation}
+ \det J=\delta\rho(\gamma-3u^2),
+ \qquad
+ S_J=\left\{u=\pm\sqrt{\gamma/3}\right\},
+ \label{casegt:eq:mavpd-det}
+\end{equation}
+resolver $A=0$ fuera de los equilibrios da exactamente
+\begin{equation}
+ u_\star=\pm\sqrt{\frac\gamma3},
+ \quad
+ v_\star=\frac{2\delta\gamma u_\star}{3(\rho-\delta)},
+ \quad
+ w_\star=u_\star-\xi v_\star.
+ \label{casegt:eq:mavpd-PP}
+\end{equation}
+Los tres menores $F_iA_j-F_jA_i$ definen la curva conectante y contienen estos
+dos puntos. Para $\delta=100$, $\rho=200$, $\gamma=0.1$, $\xi=3.1$,
+\begin{equation}
+ p_\pm=\pm(0.1825741858351,0.0121716123890,0.1448421874291).
+ \label{casegt:eq:mavpd-PP-numeric}
+\end{equation}
+El piloto B0--B2 lleva estos PP a los ciclos internos y las semillas DF1 a la
+rama exterior. La persistencia de horizonte no alcanza el umbral: la deriva
+B1--B2 es $26.24\%$ para los PP y $10.69\%$ para DF1. Además, el bracket entre
+ambas rutas encuentra un tercer destino, de modo que no define todavía una
+separatriz binaria. El máximo conservador es EV--TG2 y no EV--TG4
+(\cref{sec:resultados-piloto-gt}). Es un resultado negativo útil: confirma que
+$\operatorname{PP}\subset\mathcal C$ no cubre todas las cuencas. La campaña
+ampliada deberá muestrear las superficies completas, las ramas de $\mathcal C$
+y el borde entre ciclos. La simetría $X\mapsto-X$ reduce el banco a un hemisferio;
+los parámetros $\xi=3.5$ y el candidato caótico en $\xi=2.85$ funcionarán como
+control negativo y extensión, respectivamente.
+
+\subsection{PLL: curvas en el cilindro y banco KCC natural}
+\label{subsec:casegt-pll}
+
+Con $T=\tau_1+\tau_2$ y el campo de \cref{int:eq:pll}, escriba
+$F=(F_x,F_\theta)^{\mathsf T}$. Entonces
+\begin{align}
+ A_x&=\frac1T\left[-F_x+\frac{\tau_1}{2}
+ \cos\theta\,F_\theta\right],\nonumber\\
+ A_\theta&=-\frac LT\left[F_x+\frac{\tau_2}{2}
+ \cos\theta\,F_\theta\right].
+ \label{casegt:eq:pll-A}
+\end{align}
+Las superficies críticas, que ahora son curvas sobre
+$\R\times S^1$, quedan
+\begin{align}
+ S_x^v&:\ x=\frac{\tau_1}{2}\sin\theta,&
+ S_x^a&:\ -F_x+\frac{\tau_1}{2}\cos\theta F_\theta=0,\nonumber\\
+ S_\theta^v&:\ x=\frac{T\omega_\Delta}{L}
+ -\frac{\tau_2}{2}\sin\theta,&
+ S_\theta^a&:\ F_x+\frac{\tau_2}{2}\cos\theta F_\theta=0.
+ \label{casegt:eq:pll-surfaces}
+\end{align}
+El determinante
+\begin{equation}
+ \det J=\frac{L\cos\theta}{2T}
+ \label{casegt:eq:pll-det}
+\end{equation}
+anula en los dos círculos
+$\theta=\pi/2,3\pi/2\pmod{2\pi}$. Las intersecciones no estacionarias de
+$A_x=A_\theta=0$ son
+\begin{equation}
+ p_1=(\tau_1/2,\pi/2),
+ \qquad p_2=(-\tau_1/2,3\pi/2),
+ \label{casegt:eq:pll-PP}
+\end{equation}
+si $\omega_\Delta\mp L/2\ne0$. La curva conectante es
+\begin{equation}
+ -LF_x^2+
+ \left(1-\frac{L\tau_2}{2}\cos\theta\right)F_xF_\theta
+ -\frac{\tau_1}{2}\cos\theta\,F_\theta^2=0.
+ \label{casegt:eq:pll-CC}
+\end{equation}
+No hay simetría central para $\omega_\Delta\ne0$; sólo la transformación de
+cubierta $\theta\mapsto\theta+2\pi k$. En B0--B2, $p_+$ converge de manera
+robusta al foco y alcanza EV--TG3, mientras $p_-$ queda como transitorio acotado
+sin destino y en EV--TG2. El bracket propuesto se rechaza porque sus extremos
+siguen sin resolver; no existe trayectoria de borde ni EV--TG4. El ciclo silla
+y el ciclo estable ya localizados continúan siendo controles para una ventana
+posterior más larga, el retorno intervalar y el invariante KCC de
+\eqref{gt:eq:pll-kcc-P}; véase la \cref{sec:resultados-piloto-gt}.
+
+\subsection{Lorenz generalizado fraccionario: dos semillas FPP--A}
+\label{subsec:casegt-lorenz}
+
+Con $(\sigma,r,a)=(17/5,34/5,-1/2)$,
+\begin{equation}
+ F=\left(
+ -\frac{17}{5}x+\frac{17}{5}y+\frac12yz,
+ \frac{34}{5}x-y-xz,
+ -z+xy
+ \right)^{\mathsf T}.
+ \label{casegt:eq:lorenz-field}
+\end{equation}
+Las tres superficies $S_i^v$ son los ceros de los tres componentes anteriores.
+La multiplicación exacta $A=DF\,F$ da
+\begin{align}
+ A_1={}&\frac{867}{25}x-\frac{374}{25}y+\frac{1}{2}xy^2
+ -\frac{27}{10}yz-\frac12xz^2,\nonumber\\
+ A_2={}&-\frac{748}{25}x+\frac{603}{25}y-x^2y
+ +\frac{27}{5}xz-\frac12yz^2,\\
+ A_3={}&\frac{34}{5}x^2-\frac{27}{5}xy+\frac{17}{5}y^2
+ +z-x^2z+\frac12y^2z.
+ \label{casegt:eq:lorenz-A}
+\end{align}
+Por tanto $S_i^a$ son las tres superficies algebraicas
+$A_i=0$, y $\mathcal C_{\mathrm{PC}}$ se obtiene de los tres menores
+$F_iA_j-F_jA_i$. El determinante general es
+\begin{align}
+ \det J={}&-ay^2+2axyz+az^2-axyr-azr-\sigma
+ -\sigma x^2-\sigma xy-\sigma z+\sigma r.
+ \label{casegt:eq:lorenz-det}
+\end{align}
+
+Wolfram resolvió $A=0$: tres raíces son los equilibrios y las dos restantes
+son
+\begin{equation}
+ p_1=(-0.745966861002653,12.66180451381419,-7.442305306160726),
+ \quad
+ p_2=(-p_{1x},-p_{1y},p_{1z}).
+ \label{casegt:eq:lorenz-PP}
+\end{equation}
+El residuo máximo de $A$ es menor que $10^{-45}$ y
+$\lVert F(p_i)\rVert=23.42210895339\ldots$. La simetría
+$(x,y,z)\mapsto(-x,-y,z)$ permite integrar un representante por perfil de
+memoria. En $q=0.995$ estas raíces son semillas FPP--A; todavía no son una
+reproducción dinámica local. Antes de buscar una frontera entre $E_+$, $E_-$ y
+el candidato se exige un conjunto absorbente y control de no explosión.
+
+\subsection{Rabinovich--Fabrikant: ocho semillas en cuatro clases}
+\label{subsec:casegt-rf}
+
+Con
+\begin{align}
+ F_1&=y(z-1+x^2)+ax,\nonumber\\
+ F_2&=x(3z+1-x^2)+ay,\\
+ F_3&=-2z(b+xy),
+ \label{casegt:eq:rf-field}
+\end{align}
+el jacobiano es
+\begin{equation}
+ J=\begin{bmatrix}
+ 2xy+a&z-1+x^2&y\\
+ 3z+1-3x^2&a&3x\\
+ -2yz&-2xz&-2(b+xy)
+ \end{bmatrix}.
+ \label{casegt:eq:rf-J}
+\end{equation}
+En forma factorizada, las aceleraciones son
+\begin{align}
+ A_1&=(2xy+a)F_1+(z-1+x^2)F_2+yF_3,\nonumber\\
+ A_2&=(3z+1-3x^2)F_1+aF_2+3xF_3,\\
+ A_3&=-2yzF_1-2xzF_2-2(b+xy)F_3.
+ \label{casegt:eq:rf-A}
+\end{align}
+Estas expresiones definen $S_i^a$ sin expandir innecesariamente el polinomio.
+Con $(a,b)=(0.1,0.2876)$, $A=0$ tiene 13 raíces reales: cinco equilibrios y ocho
+PP. Cuatro representantes son
+\begin{align}
+ p_1&=(-1.04880884817015,1.14415510709471,0),\nonumber\\
+ p_2&=(0.948683298050514,0.843274042711568,0),\nonumber\\
+ p_3&=(0.217907153070161,0.326271267123146,1.202380810758825),\\
+ p_4&=(-0.197739086435437,0.226277627330655,0.822145202940591).
+ \label{casegt:eq:rf-PP}
+\end{align}
+Los otros cuatro se obtienen mediante
+$(x,y,z)\mapsto(-x,-y,z)$. Sus normas de campo son, respectivamente,
+\begin{equation}
+ 0.21950\ldots,
+ \quad0.17951\ldots,
+ \quad1.34455\ldots,
+ \quad0.76891\ldots.
+ \label{casegt:eq:rf-PP-speeds}
+\end{equation}
+Wolfram verifica residuos menores que $10^{-40}$ y pertenencia a $S_J$. Para
+$q=0.998$, la campaña usa cuatro representantes, sus perfiles perturbados y un
+destino explícito de escape. Por los términos cúbicos, un bloque acotado debe
+preceder cualquier afirmación de recurrencia o índice.
+
+\subsection{Muñoz--Pacheco: cuatro raíces exactas sin equilibrios}
+\label{subsec:casegt-munoz}
+
+El campo publicado es
+\begin{equation}
+ F=(yz+x(y-a),\ 1-|x|,\ -xy-z)^{\mathsf T}.
+ \label{casegt:eq:munoz-field}
+\end{equation}
+Fije una región $x\ne0$ y $s=\operatorname{sign}x$. Entonces
+\begin{equation}
+ J_s=\begin{bmatrix}
+ y-a&z+x&y\\
+ -s&0&0\\
+ -y&-x&-1
+ \end{bmatrix},
+ \label{casegt:eq:munoz-J}
+\end{equation}
+y
+\begin{align}
+ A_1&=(y-a)F_1+(z+x)F_2+yF_3,\nonumber\\
+ A_2&=-sF_1,\\
+ A_3&=-yF_1-xF_2-F_3.
+ \label{casegt:eq:munoz-A}
+\end{align}
+Además,
+\begin{equation}
+ \det J_s=s(-x+xy-z).
+ \label{casegt:eq:munoz-det}
+\end{equation}
+De $A_2=0$ se obtiene $F_1=0$. Como no hay equilibrios, $F_2\ne0$ en una
+raíz PP; $A_3=0$ implica $F_3=-xF_2$. Al sustituir en $A_1=0$ resulta
+$z=x(y-1)$, y de $F_1=0$ se deduce $y^2=a$. Si
+\begin{equation}
+ u_\varepsilon=2(1-\varepsilon\sqrt a),
+ \qquad \varepsilon\in\{-1,1\},
+ \label{casegt:eq:munoz-u}
+\end{equation}
+las cuatro raíces exactas son
+\begin{equation}
+ (x,y,z)=
+ (s u_\varepsilon,\ \varepsilon\sqrt a,\
+ -s u_\varepsilon^2/2),
+ \qquad s\in\{-1,1\}.
+ \label{casegt:eq:munoz-PP}
+\end{equation}
+Para $a=0.35$ se obtienen
+\begin{align}
+ &(\pm0.816784043380077,\ 0.591607978309962,
+ \ \mp0.333568086760154),\nonumber\\
+ &(\pm3.183215956619923,\ -0.591607978309962,
+ \ \mp5.066431913239846).
+ \label{casegt:eq:munoz-PP-numeric}
+\end{align}
+Sus normas de campo son $0.2365640964\ldots$ y $7.2845066702\ldots$. Todas
+están separadas de $x=0$, por lo que el cálculo regional es válido. La simetría
+es $(x,y,z)\mapsto(-x,y,-z)$. Para $q=0.97$ y $0.996$ estas raíces son semillas
+Picard--Caputo. Como no existen equilibrios, la definición usual de ocultedad
+por vecindades de equilibrios es vacía; aquí se estudiarán localización,
+coexistencia, aislamiento y dependencia de la historia, no se presentará la
+ausencia de equilibrios como prueba de caos.
+
+\subsection{Resumen de lo obtenido antes de integrar}
+
+\begin{longtable}{@{}L{3.1cm}L{3.0cm}L{3.0cm}L{4.2cm}@{}}
+\caption{Resultado algebraico actual y pregunta dinámica siguiente.}
+\label{tab:casegt-summary}\\
+\toprule
+Caso & Superficie singular/PP & Simetría útil & Pregunta que queda abierta\\
+\midrule
+\endfirsthead
+\toprule
+Caso & Superficie singular/PP & Simetría útil & Pregunta que queda abierta\\
+\midrule
+\endhead
+Chua PWL & $S_J=\varnothing$ regional; sin PP & Central, con intercambio de
+regiones & ¿Qué componentes de $S_i^v,S_i^a,\mathcal C$ caen en la cuenca
+oculta?\\
+Chua arctan Wu & Dos PP moderados & Central & FPP--A acotados, sin destino común;
+EV--TG2 y prueba de convergencia pendiente.\\
+Chua c590 & Dos PP con $\lVert F\rVert\approx545$ & Central & ¿Escapan bajo
+todo refinamiento o existe una ruta de borde?\\
+Kalman--Fitts & $\det J>0$; sin PP & Central & ¿La curva conectante recupera el
+ciclo hallado por conmutación?\\
+MAVPD & Dos PP exactos & Central & PP interiores y DF exterior; tercer destino
+en el bracket, máximo EV--TG2.\\
+PLL & Dos PP sobre círculos singulares & Cubierta angular & $p_+$ alcanza
+EV--TG3; $p_-$ y el borde quedan sin resolver.\\
+Lorenz $q=0.995$ & Dos FPP--A & $(-x,-y,z)$ & ¿Existe región absorbente y borde
+funcional entre $E_\pm$ y el candidato?\\
+RF $q=0.998$ & Ocho FPP--A, cuatro clases & $(-x,-y,z)$ & ¿Qué semillas son
+acotadas, recurrentes y distintas de los cinco equilibrios?\\
+Muñoz $q=0.97/0.996$ & Cuatro FPP--A exactos & $(-x,y,-z)$ & ¿Cómo se separan
+las cuencas funcionales de los estados caótico y periódico publicados?\\
+\bottomrule
+\end{longtable}
+
+\ifHAFOdigitalcontent
+\subsection{Trazado de la validación algebraica}
+
+La reconstrucción independiente se conserva en
+\codepath{wolfram/topologia_geometria_hidden_validation.wl} y su salida legible
+en \codepath{wolfram/topologia_geometria_hidden_validation.txt}. Su contraparte
+integrada al repositorio es
+\codepath{version_2/validation/wolfram/cases/geometric_topological_engine.wl}.
+La corrida contiene 50 comprobaciones aprobadas y ninguna fallida. Los
+resultados por caso no se obtuvieron leyendo las nubes dinámicas: los campos,
+jacobianos, determinantes, simetrías y raíces se reconstruyeron desde las
+ecuaciones. El alcance de esta evidencia es algebraico. Los artefactos de la
+primera campaña dinámica están trazados por separado en la
+\cref{sec:resultados-piloto-gt}.
+\fi

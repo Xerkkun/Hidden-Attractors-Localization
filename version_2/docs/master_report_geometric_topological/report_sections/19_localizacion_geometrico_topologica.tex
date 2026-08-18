@@ -1,0 +1,582 @@
+\section{Localización geométrico--topológica de atractores ocultos}
+\label{sec:localizacion-geometrico-topologica}
+
+Esta sección convierte el lenguaje geométrico de las secciones anteriores en
+un método de búsqueda. Su propósito no es reemplazar la función descriptiva,
+la continuación o los puntos perpetuos, sino proporcionarles un atlas común:
+superficies que todo conjunto compacto invariante debe cortar, curvas que
+organizan la curvatura del campo, separatrices que aproximan fronteras de
+cuenca y objetos topológicos que, bajo hipótesis adicionales, pueden
+certificar la existencia de un conjunto invariante.
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance=7mm and 7mm,
+  every node/.style={draw,rounded corners,align=center,font=\small,
+    inner sep=5pt},
+  arr/.style={-{Latex[length=2mm]},thick}
+]
+\node (alg) {álgebra del campo\\$f,Df,Df\,f$};
+\node (atlas) [right=of alg] {atlas geométrico\\superficies y curvas};
+\node (seed) [right=of atlas] {banco de semillas\\DF, Machado, PP, CC};
+\node (dyn) [below=of seed] {transporte causal\\y clasificación};
+\node (basin) [left=of dyn] {frontera de cuenca\\borde y grafos};
+\node (cert) [left=of basin] {certificación relativa\\bloque e índice};
+\draw[arr] (alg)--(atlas);
+\draw[arr] (atlas)--(seed);
+\draw[arr] (seed)--(dyn);
+\draw[arr] (dyn)--(basin);
+\draw[arr] (basin)--(cert);
+\draw[arr,dashed] (cert)--node[left,draw=none,font=\scriptsize]
+  {refinar} (alg);
+\end{tikzpicture}
+\end{center}
+
+\ifHAFOPedagogy
+\subsection{Qué se necesita saber antes y en qué orden estudiarlo}
+\label{subsec:gt-prerequisitos}
+
+Complete las etapas 1--7 de \cref{sec:programa-estudio-bibliografico}. Antes de
+usar esta propuesta debe poder:
+\begin{enumerate}
+  \item calcular $Df$, $Df\,f$, espectros y derivadas de Lie;
+  \item definir flujo, cuenca, frontera, sección y mapa de retorno;
+  \item interpretar grado, homotopía y punto fijo sin confundir existencia con
+        atracción;
+  \item distinguir periodicidad, recurrencia, caos y ocultedad;
+  \item para Caputo, derivar la ecuación de Volterra y declarar la historia.
+\end{enumerate}
+Las páginas y ejercicios exactos están únicamente en la ruta inicial para no
+repetir inventarios bibliográficos dentro de la teoría.
+\fi
+
+\subsection{Ventajas, aportes y límites del enfoque}
+\label{subsec:gt-ventajas}
+
+El aporte operativo es convertir una búsqueda ciega en una búsqueda por
+objetos matemáticos de dimensión menor y, después, someter esos objetos a una
+cadena de pruebas cada vez más fuerte.
+
+\begin{enumerate}
+ \item \textbf{Reducción dimensional.} En $\R^3$, una superficie crítica
+ reemplaza un barrido volumétrico por un barrido bidimensional; una curva
+ conectante lo reduce a una familia unidimensional. Esto no garantiza éxito,
+ pero aumenta la densidad de semillas informativas con el mismo presupuesto.
+ \item \textbf{Complementariedad estructural.} La función descriptiva explota
+ la estructura de Lur'e y busca oscilaciones casi armónicas. Las superficies y
+ curvas dependen directamente de $f$ y $Df$; siguen existiendo cuando no hay
+ cierre escalar, cuando la ganancia armónica es inadmisible o cuando no hay PP.
+ \item \textbf{Diagnóstico de fracaso.} Un determinante jacobiano no nulo puede
+ excluir PP; una falta de bloque absorbente puede detener un caso antes de
+ calcular Lyapunov; una frontera que cambia al refinar revela que la
+ clasificación dinámica todavía no es estable.
+ \item \textbf{Geometría de la cuenca.} El seguimiento de borde, las variedades
+ estables, la entropía de cuenca y las pruebas de Wada describen cómo se
+ separan los destinos, no sólo qué trayectoria se dibujó
+ \cite{DazaEtAl2016BasinEntropy,DazaEtAl2015Wada}.
+ \item \textbf{Puente hacia certificación.} Una aproximación exterior por
+ cajas puede producir un grafo de recurrencia; con aritmética validada puede
+ sostener un bloque aislante y un índice de Conley. Ésta es una afirmación más
+ fuerte que una nube, aunque todavía debe enlazarse con la cuenca para hablar
+ de ocultedad.
+ \item \textbf{Control de coordenadas y memoria.} La formulación covariante
+ muestra qué cantidades sobreviven a cambios de carta. En Caputo obliga a
+ declarar si se estudia una historia heredada o un PVI reiniciado, evitando
+ trasladar sin prueba la geometría puntual de una ODE.
+\end{enumerate}
+
+Las limitaciones son igualmente importantes. Ninguna superficie crítica,
+curva conectante, región KCC, exponente de Lyapunov, entropía de cuenca o índice
+de Conley aislado prueba simultáneamente atracción, caos y ocultedad. El método
+produce semillas, restricciones y certificados parciales. La afirmación final
+debe conservar separados: existencia del conjunto, atracción, tipo dinámico,
+geometría de la frontera y exclusión de vecindades de equilibrios.
+
+\subsection{Superficies críticas y teorema de cobertura por observables}
+\label{subsec:gt-superficies}
+
+Sea
+\begin{equation}
+ \dot x=f(x),\qquad f\in C^1(U,\R^n),
+ \label{gt:eq:ode}
+\end{equation}
+y sea $h\in C^2(U,\R)$ un observable. Sus dos primeras derivadas a lo largo
+del flujo son
+\begin{equation}
+ L_fh(x)=Dh(x)f(x),
+ \qquad
+ L_f^2h(x)=D(L_fh)(x)f(x).
+ \label{gt:eq:lie-observable}
+\end{equation}
+Para $h_i(x)=x_i$,
+\begin{equation}
+ L_fh_i=f_i,qquad L_f^2h_i=(Df\,f)_i.
+ \label{gt:eq:velocity-acceleration}
+\end{equation}
+Se definen, siguiendo el método de superficies críticas de Godara et al.
+\cite{GodaraEtAl2018CriticalSurfaces},
+\begin{equation}
+ S_i^v=\{x:f_i(x)=0\},
+ \qquad
+ S_i^a=\{x:(Df(x)f(x))_i=0\}.
+ \label{gt:eq:critical-surfaces}
+\end{equation}
+La superficie distinta
+\begin{equation}
+ S_J=\{x:\det Df(x)=0\}
+ \label{gt:eq:singular-jacobian-surface}
+\end{equation}
+se llamará \emph{superficie de Jacobiano singular}; no debe confundirse con
+las superficies de velocidad o aceleración de \eqref{gt:eq:critical-surfaces}.
+
+\begin{proposition}[Cobertura por extremos]
+\label{prop:gt-critical-coverage}
+Sea $A\subset U$ compacto e invariante para el flujo completo de
+\eqref{gt:eq:ode}. Entonces, para todo $h\in C^2(U)$,
+\[
+ A\cap\{L_fh=0\}\ne\varnothing,
+ \qquad
+ A\cap\{L_f^2h=0\}\ne\varnothing.
+\]
+En particular, $A$ corta $S_i^v$ y $S_i^a$ para cada coordenada $i$.
+\end{proposition}
+
+\begin{proof}
+La restricción $h|_A$ alcanza máximo en algún $p\in A$. Como la órbita
+$t\mapsto\varphi_t(p)$ permanece en $A$ para tiempos positivos y negativos,
+$t=0$ es un máximo de $h(\varphi_t(p))$ y su derivada es
+$L_fh(p)=0$. Aplique el mismo argumento a la función continua
+$L_fh|_A$: si no es constante, uno de sus extremos anula
+$L_f(L_fh)=L_f^2h$; si es constante, la compacidad de una órbita impide que esa
+constante sea no nula para $h=x_i$, y el resultado también se cumple. Para un
+observable general constante a lo largo de $A$, $L_f^2h$ ya es cero.
+\end{proof}
+
+Si $A$ es un atractor, su cuenca $\mathcal B(A)$ es abierta. Si además
+$p\in A\cap S_i^v$ es un punto regular de $f_i$, entonces el teorema de la
+función implícita convierte $S_i^v$ en una hipersuperficie cerca de $p$ y
+\begin{equation}
+ \mathcal B(A)\cap S_i^v
+ \label{gt:eq:relative-open-basin}
+\end{equation}
+contiene un abierto relativo no vacío. Éste es el fundamento de muestrear una
+superficie en vez de todo el volumen. La proposición no dice dónde está la
+intersección, no da su medida global y no garantiza que una malla finita la
+alcance.
+
+\subsection{Curvas conectantes, puntos perpetuos y geometría intrínseca}
+\label{subsec:gt-connecting}
+
+Escriba velocidad y aceleración euclidianas como
+\begin{equation}
+ v=f(x),\qquad a=Df(x)f(x).
+ \label{gt:eq:va}
+\end{equation}
+En un punto con $v\ne0$, la curvatura de la órbita satisface
+\begin{equation}
+ \kappa(x)=\frac{\lVert v\wedge a\rVert}{\lVert v\rVert^3}.
+ \label{gt:eq:curvature}
+\end{equation}
+La curva conectante algebraica se obtiene imponiendo curvatura nula
+\cite{GilmoreEtAl2010Connecting,GuanXie2021Connecting}:
+\begin{align}
+ \mathcal C
+ &=\{x:f(x)\ne0,\ \operatorname{rank}[f(x)\ \ Df(x)f(x)]\le1\}
+ \label{gt:eq:connecting-rank}\\
+ &=\{x:f_i a_j-f_j a_i=0,\ i<j,\ f(x)\ne0\}.
+ \label{gt:eq:connecting-minors}
+\end{align}
+Equivalentemente, existe $\lambda\in\R$ tal que
+\begin{equation}
+ Df(x)f(x)=\lambda f(x).
+ \label{gt:eq:connecting-eigen}
+\end{equation}
+Los puntos perpetuos de la \cref{sec:perpetual-points} son el subconjunto
+$\lambda=0$. Por tanto,
+\begin{equation}
+ \operatorname{PP}\subset\mathcal C,
+ \qquad
+ \operatorname{PP}\subset S_J,
+ \label{gt:eq:pp-inclusions}
+\end{equation}
+pero un punto de $\mathcal C$ con $\lambda\ne0$ no tiene por qué pertenecer a
+$S_J$. La propuesta publicada de usar $\mathcal C$ para localizar atractores
+ocultos es un antecedente, no una contribución nueva de este reporte. Tampoco
+se ha demostrado que toda curva conectante atraviese toda cuenca; se usa como
+familia priorizada de condiciones iniciales.
+
+La aceleración $Df\,f$ no es intrínseca bajo una carta no lineal. Si
+$y=g(x)$ y $\widetilde f(y)=Dg(x)f(x)$, entonces
+\begin{equation}
+ D\widetilde f(y)\widetilde f(y)
+ =Dg(x)Df(x)f(x)+D^2g(x)[f(x),f(x)].
+ \label{gt:eq:nonlinear-coordinate-acceleration}
+\end{equation}
+El término hessiano desaparece sólo para cambios afines. En una variedad
+riemanniana $(M,\mathsf g)$ con conexión de Levi--Civita $\nabla$, la cantidad
+geométrica apropiada es
+\begin{equation}
+ a_\nabla=\nabla_f f,
+ \qquad
+ a_\nabla^\perp
+ =a_\nabla-\frac{\mathsf g(a_\nabla,f)}{\mathsf g(f,f)}f.
+ \label{gt:eq:covariant-normal-acceleration}
+\end{equation}
+La condición $a_\nabla^\perp=0$ es independiente de la carta y también es
+invariante bajo reparametrizaciones positivas del tiempo: si
+$\widehat f=\rho f$, entonces
+\begin{equation}
+ \nabla_{\widehat f}\widehat f
+ =\rho^2\nabla_f f+\rho f(\rho)f,
+ \label{gt:eq:time-rescaling-covariant}
+\end{equation}
+de modo que la parte normal sólo se multiplica por $\rho^2$. En cambio, la
+condición fuerte $\nabla_f f=0$ no es orbitalmente invariante. Ésta es la razón
+para conservar las coordenadas físicas del PLL y declarar la métrica usada.
+
+\subsection{KCC/Jacobi: región geométrica de enfoque, no certificado de cuenca}
+\label{subsec:gt-kcc}
+
+La teoría de Kosambi--Cartan--Chern (KCC) parte de un semispray
+\begin{equation}
+ \ddot x^i+2G^i(x,y)=0,
+ \qquad y^i=\dot x^i.
+ \label{gt:eq:kcc-semispray}
+\end{equation}
+Define la conexión no lineal
+$N^i{}_j=\partial G^i/\partial y^j$ y una ecuación de desviación
+\begin{equation}
+ \frac{D^2\xi^i}{dt^2}=P^i{}_j\xi^j.
+ \label{gt:eq:kcc-deviation}
+\end{equation}
+Con la convención usada aquí,
+\begin{equation}
+ P^i{}_j=-2\frac{\partial G^i}{\partial x^j}
+ -2G^\ell\frac{\partial N^i{}_j}{\partial y^\ell}
+ +y^\ell\frac{\partial N^i{}_j}{\partial x^\ell}
+ +N^i{}_\ell N^\ell{}_j.
+ \label{gt:eq:kcc-P}
+\end{equation}
+Partes reales negativas de los valores propios de $P$ corresponden a enfoque
+de desviaciones en esta convención; positivas, a dispersión. Roy, Ray y Roy
+Chowdhury aplicaron KCC directamente a la predicción de regiones asociadas con
+atractores ocultos \cite{RoyRayChowdhury2024KCC}. Por tanto, KCC ya es un
+antecedente de localización.
+
+Hay dos cautelas. Primero, una EDO de primer orden no determina una única
+reducción de segundo orden fuera de la restricción $y=f(x)$; eliminaciones
+distintas pueden inducir semisprays distintos. Segundo, estabilidad de Jacobi
+no equivale a estabilidad de Lyapunov, atracción o caos. En esta metodología,
+los invariantes KCC sólo ordenan puntos de las superficies y curvas antes de
+integrarlos.
+
+El PLL ofrece una reducción natural. De
+\cref{int:eq:pll-andronov}, con $y=\dot\theta$,
+\begin{equation}
+ G(\theta,y)=
+ -\frac{\omega_\Delta}{2T}+\frac{L}{4T}\sin\theta
+ +\frac{1}{2T}\left(1+\frac{\tau_2L}{2}\cos\theta\right)y,
+ \label{gt:eq:pll-kcc-G}
+\end{equation}
+y
+\begin{align}
+ N(\theta)&=\frac{1}{2T}
+ \left(1+\frac{\tau_2L}{2}\cos\theta\right),\\
+ P(\theta,y)&=N(\theta)^2-\frac{L}{2T}\cos\theta
+ +\frac{\tau_2L}{4T}y\sin\theta.
+ \label{gt:eq:pll-kcc-P}
+\end{align}
+En los equilibrios bloqueados del expediente, Wolfram obtiene
+\begin{equation}
+ P(\theta_f,0)=-1642.02410524\ldots,
+ \qquad
+ P(\theta_s,0)=3069.17107927\ldots.
+ \label{gt:eq:pll-kcc-values}
+\end{equation}
+El signo concuerda con enfoque de Jacobi en el foco y dispersión en la silla;
+no prueba la existencia del ciclo corredor ni su ocultedad.
+
+\subsection{Cuencas, seguimiento de borde y topología computacional}
+\label{subsec:gt-set-oriented}
+
+Suponga que $A_1$ y $A_2$ son destinos atrayentes con cuencas abiertas. El
+\emph{edge tracking} toma $x_0\in\mathcal B(A_1)$ y
+$x_1\in\mathcal B(A_2)$ y biseca el segmento mientras los extremos conserven
+destinos distintos. En sistemas con una frontera organizada por una silla o
+un ciclo silla, la trayectoria intermedia aproxima su variedad estable. Es un
+método de frontera, no una prueba de que ésta sea suave ni única. La entropía
+de cuenca cuantifica incertidumbre de destino; su criterio $S_{bb}>\log2$ es
+suficiente para fractalidad bajo las hipótesis de su construcción, pero una
+entropía grande no demuestra Wada \cite{DazaEtAl2016BasinEntropy}. Para Wada
+se requiere una prueba específica y al menos tres cuencas
+\cite{DazaEtAl2015Wada}.
+
+Para superar la dependencia de trayectorias largas, particione un dominio
+compacto $D$ en cajas $B_1,\ldots,B_N$ y fije un tiempo $\tau>0$. El grafo de
+la aplicación $\varphi_\tau$ tiene una arista
+\begin{equation}
+ B_i\longrightarrow B_j
+ \quad\Longleftrightarrow\quad
+ \varphi_\tau(B_i)\cap B_j\ne\varnothing.
+ \label{gt:eq:box-graph}
+\end{equation}
+Una evaluación puntual genera sólo un grafo heurístico. Una
+\emph{aproximación exterior} encierra rigurosamente
+$\varphi_\tau(B_i)$; sus componentes fuertemente conexas contienen la
+recurrencia posible. Los algoritmos orientados a conjuntos y las
+descomposiciones de Morse son antecedentes establecidos
+\cite{DellnitzHohmann1997Subdivision,KaliesEtAl2005ChainRecurrence,
+MischaikowEtAl2016Conley}.
+
+Sea $N_A$ una unión de cajas. Si
+\begin{equation}
+ \varphi_\tau(N_A)\subset\operatorname{int}N_A,
+ \label{gt:eq:attracting-block}
+\end{equation}
+$N_A$ es un bloque atrayente para el mapa muestreado. Si además su índice de
+Conley es no trivial, existe un conjunto invariante aislado en él. Para usar
+esto en ocultedad se necesita todavía excluir la cuenca desde los equilibrios.
+
+\begin{proposition}[Certificado relativo de no alcance]
+\label{prop:gt-relative-hiddenness}
+Sea el grafo de cajas una aproximación exterior validada de
+$\varphi_\tau$ sobre $D$. Sea $N_A\subset D$ un bloque atrayente que contiene
+al atractor $A$, y sea $U_E$ una unión de cajas que contiene vecindades de todos
+los equilibrios. Suponga que toda órbita iniciada en $U_E$ permanece en $D$ y
+que el grafo no contiene un camino de $U_E$ a $N_A$. Entonces ninguna órbita
+iniciada en $U_E$ pertenece a $\mathcal B(A)$.
+\end{proposition}
+
+\begin{proof}
+Si una órbita de $U_E$ fuera atraída por $A$, terminaría entrando en el
+vecindario atrapante $N_A$. Sus imágenes sucesivas a tiempos $k\tau$ inducirían
+un camino de cajas desde $U_E$ hasta $N_A$, contradiciendo la hipótesis de no
+alcance. La aproximación exterior es esencial: un grafo construido con un solo
+punto por caja podría omitir el camino real.
+\end{proof}
+
+El resultado certifica ocultedad sólo respecto del dominio, las vecindades y
+el modelo declarados. Si se cambia el radio o existe una salida no controlada
+de $D$, la conclusión debe recalcularse.
+
+\subsection{Traslado correcto a Caputo}
+\label{subsec:gt-caputo-transfer}
+
+Para
+\begin{equation}
+ {}^{\mathrm C}D_{t_0}^{q}x(t)=F(x(t)),
+ \qquad 0<q<1,
+ \label{gt:eq:caputo}
+\end{equation}
+la ecuación de Volterra es
+\begin{equation}
+ x(t)=x_0+\frac1{\Gamma(q)}
+ \int_{t_0}^{t}(t-s)^{q-1}F(x(s))\,ds.
+ \label{gt:eq:caputo-volterra}
+\end{equation}
+El valor $x(t)$ no determina por sí solo el futuro. La semidinámica rigurosa se
+construye en un espacio funcional de perfiles
+\cite{CongTuan2017Nonlocal,DoanKloeden2021Semidynamical,
+DoanKloeden2024Attractors}. Por ello hay dos geometrías distintas:
+
+\begin{enumerate}
+ \item el \emph{corte de reinicio}, formado por historias constantes y usado
+ por los PVI bibliográficos;
+ \item la \emph{geometría funcional}, donde una condición inicial es un perfil
+ y la distancia incluye memoria.
+\end{enumerate}
+
+Si $\iota:\R^n\to\mathfrak C$ inserta estados como perfiles constantes y
+$\mathcal B_{\mathfrak C}(\mathcal A)$ es la cuenca funcional, se define
+\begin{equation}
+ B_0(\mathcal A)=\iota^{-1}
+ \bigl(\mathcal B_{\mathfrak C}(\mathcal A)\bigr).
+ \label{gt:eq:reset-basin}
+\end{equation}
+Excluir una vecindad funcional de cada perfil de equilibrio implica excluir su
+corte constante; la recíproca no es válida. Esta separación entre
+\emph{ocultedad funcional} y \emph{ocultedad de reinicio} no fue localizada en
+los antecedentes consultados y se propone como parte del proyecto.
+
+Las superficies $F_i(x)=0$ siguen siendo conjuntos algebraicos útiles en el
+corte de reinicio, pero ya no son superficies de velocidad ordinaria: en
+general $\dot x(t)\ne F(x(t))$. Por tanto, la
+\cref{prop:gt-critical-coverage} no se traslada sustituyendo simplemente
+$f$ por $F$. Si $x_i$ es diferenciable para $t>t_0$, la superficie funcional
+que detecta extremos es
+\begin{equation}
+ \widehat S_i^v
+ =\{\Phi_t:\mathcal V_i[\Phi_t]=\dot x_i(t)=0\},
+ \label{gt:eq:functional-critical-surface}
+\end{equation}
+y depende de la historia $\Phi_t$. En puntos no suaves o cerca del arranque se
+trabaja directamente con \eqref{gt:eq:caputo-volterra}; no se inventa una
+segunda derivada clásica.
+
+\subsubsection{Curva conectante Picard--Caputo}
+
+Para $F\in C^2$ y $h=t-t_0\downarrow0$, la iteración de Picard produce
+\begin{equation}
+ x(t_0+h)=p+
+ \frac{F(p)}{\Gamma(q+1)}h^q+
+ \frac{DF(p)F(p)}{\Gamma(2q+1)}h^{2q}
+ +O(h^{3q}).
+ \label{gt:eq:picard-caputo-two-terms}
+\end{equation}
+Con el parámetro natural $s=h^q$,
+\begin{equation}
+ \left.\frac{dx}{ds}\right|_{0}
+ =\frac{F(p)}{\Gamma(q+1)},
+ \qquad
+ \left.\frac{d^2x}{ds^2}\right|_{0}
+ =\frac{2DF(p)F(p)}{\Gamma(2q+1)}.
+ \label{gt:eq:picard-s-derivatives}
+\end{equation}
+Esto motiva el conjunto algebraico de arranque
+\begin{equation}
+ \mathcal C_{\mathrm{PC}}
+ =\{p:F(p)\ne0,\
+ \operatorname{rank}[F(p)\ \ DF(p)F(p)]\le1\}.
+ \label{gt:eq:picard-caputo-connecting}
+\end{equation}
+El conjunto es independiente de $q$, pero el peso relativo de los términos en
+\eqref{gt:eq:picard-caputo-two-terms} sí depende de $q$. No es una curva
+global de la semidinámica: sólo genera semillas en el corte de reinicio.
+
+En una variedad con conexión $\nabla$, la aceleración covariante de esta curva
+de arranque es
+\begin{equation}
+ \mathcal A_{q,\nabla}(p)=
+ \frac{2DF(p)F(p)}{\Gamma(2q+1)}
+ +\frac{\Gamma_p(F(p),F(p))}{\Gamma(q+1)^2}.
+ \label{gt:eq:covariant-picard-acceleration}
+\end{equation}
+Wolfram verificó que \eqref{gt:eq:covariant-picard-acceleration} transforma
+como vector cuando también se transforma la conexión, y que
+$\mathcal A_{1,\nabla}=\nabla_FF$. Esta formulación covariante y su uso como
+filtro de semillas Caputo son una deducción del proyecto. No afirman una regla
+de cadena fraccionaria para $F(x(t))$.
+
+\subsubsection{Evento conectante dependiente de historia}
+
+El carril global conserva la definición secuencial ya introducida:
+\begin{equation}
+ \mathcal A_q[x](t)
+ ={}^{\mathrm C}D_{t_0}^{q}[F(x(\cdot))](t).
+ \label{gt:eq:history-acceleration}
+\end{equation}
+Un evento conectante de historia satisface
+\begin{equation}
+ F(x(t))\ne0,
+ \qquad
+ \Pi_{F(x(t))}^{\perp}\mathcal A_q[x](t)=0,
+ \label{gt:eq:history-connecting-event}
+\end{equation}
+donde
+\begin{equation}
+ \Pi_F^\perp A=A-\frac{\langle A,F\rangle}{\lVert F\rVert^2}F.
+ \label{gt:eq:history-normal-projection}
+\end{equation}
+El caso $\mathcal A_q=0$ es el evento FPP--H. Dos historias que llegan al mismo
+$x(t)$ pueden producir valores diferentes en
+\eqref{gt:eq:history-acceleration}; por ello el evento no es un punto de
+$\R^n$. Numéricamente se buscan mínimos convergentes de
+\begin{equation}
+ r_{\mathrm{CC},q}(t)=
+ \frac{\lVert\Pi_F^\perp\mathcal A_q[x](t)\rVert}
+ {1+\lVert\mathcal A_q[x](t)\rVert},
+ \label{gt:eq:history-connecting-residual}
+\end{equation}
+al refinar paso y horizonte; un mínimo visual aislado no basta.
+
+\subsubsection{Elevación exponencial y topología aproximada}
+
+La representación del núcleo
+\begin{equation}
+ K_q(t)=\frac{t^{q-1}}{\Gamma(q)}
+ \approx\sum_{\ell=1}^{m}w_\ell e^{-\eta_\ell t}
+ \label{gt:eq:soe-kernel}
+\end{equation}
+induce variables de memoria
+\begin{align}
+ z_\ell(t)&=\int_{t_0}^{t}e^{-\eta_\ell(t-s)}F(x(s))\,ds,\\
+ \dot z_\ell&=-\eta_\ell z_\ell+F(x),
+ \qquad
+ x=x_0+\sum_{\ell=1}^{m}w_\ell z_\ell.
+ \label{gt:eq:soe-lift}
+\end{align}
+Las aproximaciones racionales por sumas de exponenciales y sus análisis de
+estabilidad y convergencia son antecedentes numéricos
+\cite{KhristenkoWohlmuth2023Rational}. Lo nuevo propuesto no es la elevación,
+sino usarla como puente controlado hacia grafos de cajas e índice de Conley.
+Para identificar un resultado del sistema elevado con el Caputo original se
+exigirán: cota uniforme del error de núcleo, cota de error de solución, un
+bloque aislante común durante la homotopía exacto--aproximación y persistencia
+al aumentar $m$ y el horizonte. Sin esos cuatro elementos, el índice pertenece
+sólo a la aproximación finita.
+
+\subsection{Mapa de antecedentes, deducciones y novedad defendible}
+\label{subsec:gt-novelty-map}
+
+\begin{longtable}{@{}L{4.0cm}L{3.0cm}L{6.2cm}@{}}
+\caption{Qué existía y qué añade esta formulación.}
+\label{tab:gt-novelty-map}\\
+\toprule
+Objeto & Estado & Fundamento y límite\\
+\midrule
+\endfirsthead
+\toprule
+Objeto & Estado & Fundamento y límite\\
+\midrule
+\endhead
+Superficies $f_i=0$ y $(Df\,f)_i=0$ para localizar oscilaciones & Antecedente
+& Godara et al.\ \cite{GodaraEtAl2018CriticalSurfaces}. La prueba por extremos
+se presenta aquí para fijar hipótesis; es una formalización del fundamento, no
+la invención del método.\\
+Curvas $Df\,f=\lambda f$ & Antecedente & Gilmore et al.\ y Guan--Xie
+\cite{GilmoreEtAl2010Connecting,GuanXie2021Connecting}. Su intersección con
+todas las cuencas continúa siendo hipótesis numérica, no teorema general.\\
+Puntos perpetuos & Antecedente & Prasad et al.\ y Dudkowski et al.; la
+\cref{sec:perpetual-points} contiene alcance y contraejemplos.\\
+KCC para atractores ocultos & Antecedente & Roy, Ray y Roy Chowdhury
+\cite{RoyRayChowdhury2024KCC}. Aquí se integra como ranking y se explicitan
+dependencia de la reducción y límites probatorios.\\
+Métodos de cajas, Morse e índice de Conley & Antecedente general &
+\cite{DellnitzHohmann1997Subdivision,KaliesEtAl2005ChainRecurrence,
+MischaikowEtAl2016Conley}. No fueron creados para HAFO ni prueban ocultedad por
+sí solos.\\
+Semidinámica de Caputo en perfiles & Antecedente riguroso & Cong--Tuan,
+Doan--Kloeden \cite{CongTuan2017Nonlocal,DoanKloeden2021Semidynamical,
+DoanKloeden2024Attractors}.\\
+Ocultedad funcional frente a ocultedad de reinicio & Propuesta del proyecto &
+Se deduce de la inclusión de historias constantes en el espacio funcional. La
+implicación funcional$\Rightarrow$reinicio fue verificada lógicamente; la
+recíproca falla.\\
+Curva conectante Picard--Caputo y aceleración covariante
+$\mathcal A_{q,\nabla}$ & Propuesta del proyecto & Derivada de la expansión de
+Volterra con $s=h^q$ y de geometría diferencial. Es un filtro de arranque, no
+una órbita conectante global.\\
+Evento conectante FPP--H sobre historias & Propuesta del proyecto & Usa la
+derivada secuencial conservando el terminal inferior. Requiere convergencia
+respecto de paso, historia y horizonte.\\
+Bloque atrayente + índice no trivial + no alcance desde equilibrios & Propuesta
+de integración & La \cref{prop:gt-relative-hiddenness} combina herramientas
+existentes en un certificado relativo. Falta ejecutarlo con aproximaciones
+exteriores validadas.\\
+Elevación de memoria + continuación del bloque aislante & Programa de
+investigación & La suma de exponenciales es antecedente; la preservación del
+índice durante la homotopía al núcleo Caputo exacto debe demostrarse.\\
+Banco unido DF--Machado--continuación--PP--superficies--CC--KCC & Aporte
+metodológico & La novedad defendible es la integración causal, las reglas de
+evidencia y la comparación con igual presupuesto, no cada herramienta por
+separado.\\
+\bottomrule
+\end{longtable}
+
+\begin{proposalbox}
+\textbf{Regla de redacción de tesis.} Se usará ``antecedente'' para una
+construcción publicada, ``deducción'' para una consecuencia demostrada aquí y
+``propuesta'' para un protocolo todavía no cerrado dinámicamente. Ningún
+resultado de Wolfram sobre $f$, $Df$ o $Df\,f$ se describirá como prueba de
+atracción, caos, cuenca u ocultedad.
+\end{proposalbox}

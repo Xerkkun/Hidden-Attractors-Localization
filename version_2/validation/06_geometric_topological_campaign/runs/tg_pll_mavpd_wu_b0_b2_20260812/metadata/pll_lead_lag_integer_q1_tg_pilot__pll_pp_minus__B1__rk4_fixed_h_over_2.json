@@ -1,0 +1,216 @@
+{
+  "schema_version": "1.1",
+  "trajectory_id": "pll_lead_lag_integer_q1_tg_pilot__pll_pp_minus__B1__rk4_fixed_h_over_2",
+  "case_id": "pll_lead_lag_integer_q1_tg_pilot",
+  "system_id": "pll-lead-lag-2015",
+  "seed": {
+    "seed_id": "pll_pp_minus",
+    "system_id": "pll-lead-lag-2015",
+    "route": "perpetual_point",
+    "state": [
+      -0.038429439999999995,
+      3.9149062805031796
+    ],
+    "order_kind": "integer",
+    "q": 1.0,
+    "parameter_set_id": "pll_bianchi2015",
+    "initialization_kind": "point_initial_value",
+    "lower_terminal": null,
+    "initial_time": null,
+    "history_reference": null,
+    "history_coverage": null,
+    "source_artifact": "validation/06_geometric_topological_campaign/wolfram/geometric_topological_engine_validation_summary.json",
+    "source_record_id": "PLL_PP_negative",
+    "generation_residual": null,
+    "score": null,
+    "priority": 11,
+    "parent_seed_id": null,
+    "transform_name": "identity",
+    "metadata": {}
+  },
+  "contract_id": "pll_lead_lag_integer_q1_tg_pilot_geometric_topological_initial_pilot_v1",
+  "physical_budget": {
+    "level": "B1",
+    "normalized_step": 0.01,
+    "normalized_horizon": 100.0,
+    "transient_fraction": 0.5,
+    "tau_star": 0.0073247672,
+    "step": 7.324767200000001e-05,
+    "horizon": 0.7324767200000001,
+    "burn_time": 0.36623836000000004,
+    "nominal_steps": 10000
+  },
+  "solver": {
+    "solver_id": "rk4_fixed_h_over_2",
+    "family": "rk4",
+    "step_factor": 0.5,
+    "rtol": null,
+    "atol": null,
+    "full_memory": false,
+    "use_native_backend": false
+  },
+  "solver_info": {
+    "integrator": "rk4",
+    "integrator_class": "integer_order_solver",
+    "scientific_label": "Classical RK4 integer-order (q=1.0) solver.",
+    "h": 3.6623836000000005e-05,
+    "N": 20000,
+    "steps_completed": 20000,
+    "t_final_reached": 0.7324767200000001,
+    "divergence_norm_threshold": Infinity,
+    "max_norm": 93.70772755630225,
+    "configured_step": 3.6623836000000005e-05,
+    "independent_fixed_step": true
+  },
+  "classification": {
+    "schema_version": "1.0",
+    "label": "transient",
+    "destination_id": "transient:unsettled",
+    "subtype": "bounded_unsettled_transient",
+    "confidence": 1.0,
+    "is_ambiguous": false,
+    "reasons": [
+      "tail_statistics_or_clouds_have_not_stabilized",
+      "extend_time_horizon_before_promotion"
+    ],
+    "metrics": {
+      "integration_status": "ok",
+      "dimension": 2,
+      "n_samples": 20001,
+      "finite_fraction": 1.0,
+      "burn_time": 0.36623836000000004,
+      "classifier_contract": {
+        "burn_time": 0.36623836000000004,
+        "order_kind": "integer",
+        "coordinate_scale": [
+          0.0224,
+          3.141592653589793
+        ],
+        "periodic_coordinates": {
+          "1": 6.283185307179586
+        },
+        "require_declared_scale": true,
+        "min_tail_samples": 128,
+        "max_cloud_points": 500,
+        "divergence_radius": 120.0,
+        "divergence_radius_kind": "scaled",
+        "escape_persistence_fraction": 0.5,
+        "equilibrium_tolerance": 1e-05,
+        "equilibrium_quantile_factor": 5.0,
+        "equilibrium_span_factor": 10.0,
+        "equilibrium_window_fraction": 0.2,
+        "minimum_nontrivial_span": 0.01,
+        "periodic_dominant_power_min": 0.45,
+        "periodic_entropy_max": 0.35,
+        "periodic_frequency_drift_max": 0.08,
+        "periodic_return_error_max": 0.12,
+        "periodic_windows": 4,
+        "recurrence_cloud_distance_max": 0.18,
+        "recurrence_centroid_drift_max": 0.2,
+        "recurrence_span_drift_max": 0.35,
+        "recurrence_covariance_drift_max": 0.5,
+        "recurrence_radius": 0.08,
+        "recurrence_rate_min": 0.0001,
+        "recurrence_theiler_samples": 10,
+        "recurrence_min_lag_time": 1.0,
+        "recurrence_excursion_radius": 0.25,
+        "recurrence_return_fraction_min": 0.002,
+        "recurrence_min_return_count": 3,
+        "reference_distance_max": 0.12,
+        "reference_separation_margin": 0.03,
+        "minimum_confidence": 0.05
+      },
+      "n_tail_samples": 10001,
+      "coordinate_scale": [
+        0.0224,
+        3.141592653589793
+      ],
+      "coordinate_scale_source": "declared",
+      "periodic_coordinates": {
+        "1": 6.283185307179586
+      },
+      "metric_space": "cylindrical_product_embedding",
+      "divergence_radius_kind": "scaled",
+      "final_radius_norm": 0.5398720035540219,
+      "maximum_radius_norm": 1.8739178471031872,
+      "tail_escape_fraction": 0.0,
+      "tail_span_scaled": [
+        0.3583260891657556,
+        0.6366197562568104,
+        0.6366197102415516
+      ],
+      "max_tail_span_scaled": 0.6366197562568104,
+      "closest_equilibrium": "E_focus",
+      "closest_equilibrium_final_distance_norm": 0.5398720035540219,
+      "closest_equilibrium_q95_distance_norm": 0.9585884422781262,
+      "closest_equilibrium_window_span_norm": 0.9550793727881814,
+      "sampling_interval": 3.662383600000485e-05,
+      "sampling_relative_jitter": 3.0314220078557843e-12,
+      "periodicity_available": true,
+      "dominant_component": 2,
+      "dominant_frequency_hz": 13.65094593038899,
+      "dominant_power_ratio": 0.5500477105003501,
+      "spectral_entropy": 0.16767102132589395,
+      "relative_frequency_drift": 0.5001999200319872,
+      "period_lag_samples": 2000,
+      "period_return_error": 0.30644578815222434,
+      "periodic_gate_passed": false,
+      "half_cloud_distance_norm": 0.015094372767107619,
+      "half_centroid_drift_norm": 0.07389929404743152,
+      "half_span_drift_norm": 0.005739974496325049,
+      "half_covariance_drift_norm": 0.09453854794691015,
+      "recurrence_radius_norm": 0.08,
+      "recurrence_theiler_samples": 10,
+      "recurrence_theiler_coordinate": "subsampled_cloud_index",
+      "recurrence_eligible_pairs": 151710,
+      "recurrence_rate": 0.07932239140465362,
+      "recurrence_min_lag_time": 1.0,
+      "recurrence_excursion_radius_norm": 0.25,
+      "excursion_return_count": 0,
+      "excursion_return_fraction": 0.0,
+      "stationarity_gate_passed": true,
+      "reference_match_status": "matched",
+      "reference_match": "running_cycle",
+      "reference_distance_norm": 0.025114581368520426,
+      "reference_second_distance_norm": null,
+      "reference_distances_norm": {
+        "running_cycle": 0.025114581368520426
+      }
+    },
+    "evidence_status": "finite_time_destination_diagnostic",
+    "scientific_warnings": [
+      "This classification does not prove attraction, chaos, or hiddenness."
+    ]
+  },
+  "observables": {
+    "n_tail_samples": 10001,
+    "tail_centroid_scaled": [
+      -0.35508899222802875,
+      0.18221979600085955
+    ],
+    "tail_span_scaled": [
+      0.3583260891657556,
+      1.9994868229442608
+    ],
+    "tail_covariance_scaled": [
+      [
+        0.012440286510439498,
+        0.0356856662663097
+      ],
+      [
+        0.0356856662663097,
+        0.2219679943784433
+      ]
+    ],
+    "tail_radius_max_scaled": 1.0561128438481202,
+    "final_state": [
+      -0.011463696525955845,
+      93.70772685509893
+    ]
+  },
+  "trajectory_artifact": "trajectories/pll_lead_lag_integer_q1_tg_pilot__pll_pp_minus__B1__rk4_fixed_h_over_2.csv",
+  "trajectory_sha256": "ed9e40ca4378f032dbb19034c19167967b5f516b23c0f27bb108bf67ef4c44ef",
+  "elapsed_seconds": 1.9807336000012583,
+  "evidence_level": "EV-TG2",
+  "claims_scope": "finite-time trajectory and destination diagnostic only"
+}

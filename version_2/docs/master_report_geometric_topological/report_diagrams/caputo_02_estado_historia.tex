@@ -1,0 +1,48 @@
+\begin{center}
+\resizebox{0.96\linewidth}{!}{%
+\begin{tikzpicture}[
+  font=\small,
+  >=Latex,
+  perfil/.style={draw=GrisOscuro,rounded corners=3pt,minimum width=3.6cm,minimum height=1.15cm,align=center},
+  futuro/.style={draw=GrisOscuro,rounded corners=3pt,minimum width=3.7cm,minimum height=1.15cm,align=center},
+  arr/.style={-{Latex[length=2mm]},thick,GrisOscuro}
+]
+  \path[draw=GrisOscuro,rounded corners=4pt]
+    (0.15,0.25) rectangle (4.45,4.85);
+  \node[anchor=north west,fill=white,inner sep=2pt] at (0.38,4.68)
+    {\(\mathfrak C\): perfiles funcionales};
+  \node[perfil,fill=AzulClaro] (mone) at (2.30,3.55)
+    {\(m_1\)\\perfil completo, trazo continuo};
+  \node[perfil,fill=NaranjaClaro,dashed] (mtwo) at (2.30,1.55)
+    {\(m_2\)\\perfil completo, trazo discontinuo};
+
+  \node[circle,draw=GrisOscuro,very thick,fill=Gris,minimum size=1.25cm,align=center]
+    (xstar) at (7.25,2.55) {\(x_\ast\)};
+  \node[align=center] at (7.25,4.52) {proyección puntual\\en \(\mathbb R^n\)};
+
+  \node[futuro,fill=AzulClaro] (yone) at (12.35,3.55)
+    {continuación \(y_{m_1}\)\\determinada por \(m_1\)};
+  \node[futuro,fill=NaranjaClaro,dashed] (ytwo) at (12.35,1.55)
+    {continuación \(y_{m_2}\)\\determinada por \(m_2\)};
+  \node[draw=Rojo,rounded corners=2pt,align=center,text=Rojo] (unknown) at (12.35,2.55)
+    {el punto solo\\no selecciona un futuro};
+
+  \draw[arr,Azul] (mone)--node[above,pos=0.56]{Volterra con \(m_1\)}(yone);
+  \draw[arr,Naranja,dashed] (mtwo)--node[below,pos=0.56]{Volterra con \(m_2\)}(ytwo);
+  \draw[arr] (mone.east) to[bend right=15] node[above,sloped]{\(\operatorname{ev}_0\)} (xstar.north west);
+  \draw[arr,dashed] (mtwo.east) to[bend left=15] node[below,sloped]{\(\operatorname{ev}_0\)} (xstar.south west);
+  \draw[-{Latex[length=2mm]},dashed,Rojo] (xstar)--(unknown);
+
+  \node[draw=GrisOscuro,rounded corners=2pt,fill=Gris,align=center] at (7.25,0.22)
+    {\(m_1(0)=m_2(0)=x_\ast\), pero \(m_1\neq m_2\) en \(\mathfrak C\)};
+\end{tikzpicture}%
+}
+\par\smallskip
+\begin{minipage}{0.92\linewidth}
+\small\textbf{Estado frente a historia.}
+En la realización funcional de Volterra pueden existir perfiles distintos con
+la misma evaluación en cero. El dibujo expresa una posibilidad estructural;
+no afirma que dos trayectorias concretas del banco numérico ya hayan exhibido
+esa coincidencia.
+\end{minipage}
+\end{center}

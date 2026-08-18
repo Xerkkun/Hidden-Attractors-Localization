@@ -1,0 +1,93 @@
+{
+  "case_id": "chua_arctan_wu_caputo_q099_tg_pilot",
+  "system_id": "fractional_chua_arctan_wu2023",
+  "parameter_set_id": "wu2023_q0p99",
+  "order_kind": "caputo",
+  "q": 0.99,
+  "parameters": {
+    "model": "arctan",
+    "alpha": 8.4562,
+    "beta": 12.0732,
+    "gamma": 0.0052,
+    "m0": -0.1768,
+    "m1": -1.1468,
+    "a1": 0.4,
+    "a2": -1.5585,
+    "rho": 1.0,
+    "system_name": "fractional_chua_arctan_wu2023_lure"
+  },
+  "tau_star": 0.2704709949,
+  "tau_star_basis": "minimum of max|lambda|^(-1/q) and the predeclared core-bank Caputo crossing time; the spectral time is active and all runs retain full memory",
+  "coordinate_scale": [
+    14.0,
+    3.5,
+    20.0
+  ],
+  "periodic_coordinates": {},
+  "divergence_radius": 120.0,
+  "divergence_radius_kind": "absolute",
+  "lower_terminal": 0.0,
+  "initial_time": 0.0,
+  "history_mode": "caputo_full_memory_reset",
+  "primary_solver": {
+    "solver_id": "abm_pece_full_memory_native",
+    "family": "abm",
+    "step_factor": 1.0,
+    "rtol": null,
+    "atol": null,
+    "full_memory": true,
+    "use_native_backend": true
+  },
+  "secondary_solver": {
+    "solver_id": "efork3_full_memory_native",
+    "family": "efork3",
+    "step_factor": 1.0,
+    "rtol": null,
+    "atol": null,
+    "full_memory": true,
+    "use_native_backend": true
+  },
+  "classifier_overrides": {
+    "reference_distance_max": 0.16,
+    "reference_separation_margin": 0.04
+  },
+  "reference_artifacts": {},
+  "contract_id": "chua_arctan_wu_caputo_q099_tg_pilot_geometric_topological_initial_pilot_v1",
+  "protocol_version": "geometric_topological_initial_pilot_v1",
+  "physical_budgets": {
+    "B0": {
+      "level": "B0",
+      "normalized_step": 0.02,
+      "normalized_horizon": 50.0,
+      "transient_fraction": 0.5,
+      "tau_star": 0.2704709949,
+      "step": 0.005409419897999999,
+      "horizon": 13.523549744999999,
+      "burn_time": 6.761774872499999,
+      "nominal_steps": 2500
+    },
+    "B1": {
+      "level": "B1",
+      "normalized_step": 0.01,
+      "normalized_horizon": 100.0,
+      "transient_fraction": 0.5,
+      "tau_star": 0.2704709949,
+      "step": 0.0027047099489999997,
+      "horizon": 27.047099489999997,
+      "burn_time": 13.523549744999999,
+      "nominal_steps": 10000
+    },
+    "B2": {
+      "level": "B2",
+      "normalized_step": 0.005,
+      "normalized_horizon": 200.0,
+      "transient_fraction": 0.6,
+      "tau_star": 0.2704709949,
+      "step": 0.0013523549744999998,
+      "horizon": 54.094198979999994,
+      "burn_time": 32.456519388,
+      "nominal_steps": 40000
+    }
+  },
+  "claim_limit": "finite-time finite-resolution localization; no global attraction, hiddenness, Wada, isolating-block, or Conley-index claim"
+}

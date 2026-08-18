@@ -1,0 +1,54 @@
+\begin{center}
+\resizebox{0.96\linewidth}{!}{%
+\begin{tikzpicture}[
+  font=\small,
+  >=Latex,
+  caja/.style={draw=GrisOscuro,rounded corners=2pt,fill=Gris,inner sep=5pt,align=center},
+  flecha/.style={-{Latex[length=2mm]},GrisOscuro}
+]
+  % Panel temporal: todos los tiempos pasados alimentan la observacion actual.
+  \node[caja,anchor=west] at (0.15,4.35)
+    {Forma de Volterra\\[-0.1em]
+     \(\displaystyle x(t)=x_0+\int_0^t K_q(t-s)f(x(s))\,\mathrm ds\)};
+  \draw[very thick,GrisOscuro] (0.65,0.95)--(7.15,0.95);
+  \foreach \x/\lab in {0.65/{0},2.05/{s_1},3.45/{s_2},4.85/{s_3},6.15/{s_4},7.15/{t}}
+    {\draw[GrisOscuro] (\x,0.82)--(\x,1.08) node[below=3pt] {\(\lab\)};}
+  \node[circle,draw=Azul,very thick,fill=AzulClaro,minimum size=8mm] (obs) at (7.15,3.15) {\(x(t)\)};
+  \draw[flecha,line width=0.45pt] (0.85,1.10) to[bend left=18] (obs.west);
+  \draw[flecha,line width=0.60pt] (2.15,1.10) to[bend left=22] (obs.west);
+  \draw[flecha,line width=0.80pt] (3.50,1.10) to[bend left=26] (obs.west);
+  \draw[flecha,line width=1.05pt] (4.90,1.10) to[bend left=31] (obs.west);
+  \draw[flecha,line width=1.35pt] (6.15,1.10) to[bend left=39] (obs.south);
+  \node[align=center,GrisOscuro] at (3.55,0.12)
+    {todo el intervalo \([0,t]\) contribuye; el grosor sólo recuerda\\
+     que, para el kernel mostrado, los retardos pequeños tienen mayor peso};
+
+  % Panel del kernel en funcion del retardo r=t-s.
+  \begin{scope}[shift={(9.05,0.55)}]
+    \draw[-{Latex[length=2mm]},GrisOscuro] (0,0)--(5.35,0)
+      node[below left=1pt] {retardo \(r=t-s\)};
+    \draw[-{Latex[length=2mm]},GrisOscuro] (0,0)--(0,3.75)
+      node[above,align=center] {\(K_q(r)\)};
+    \draw[Azul,very thick,domain=0.12:4.85,samples=90,smooth,variable=\r]
+      plot ({\r},{1.18*pow(\r,-0.30)});
+    \node[Azul,anchor=west] at (2.15,2.25) {\(q=0.7\) (forma normalizada)};
+    \draw[dashed,GrisOscuro] (0.28,0)--(0.28,2.02);
+    \node[align=left,anchor=west] at (0.45,3.25)
+      {singularidad integrable\\cuando \(r\downarrow0\)};
+    \draw[-{Latex[length=1.7mm]},GrisOscuro] (1.50,3.12)--(0.38,2.23);
+    \node[align=left,anchor=west] at (2.55,0.75)
+      {cola algebraica\\cuando crece \(r\)};
+    \draw[-{Latex[length=1.7mm]},GrisOscuro] (3.58,1.15)--(4.45,1.02);
+    \node[caja,anchor=north west] at (0.35,4.48)
+      {\(\displaystyle K_q(r)=\frac{r^{q-1}}{\Gamma(q)},\quad 0<q<1\)};
+  \end{scope}
+\end{tikzpicture}%
+}
+\par\smallskip
+\begin{minipage}{0.92\linewidth}
+\small\textbf{Lectura conceptual.}
+El kernel de Caputo no selecciona únicamente el último estado: vuelve a
+ponderar el intervalo completo desde el terminal inferior. La curva usa
+\(q=0.7\); no representa datos de ninguno de los casos de estudio.
+\end{minipage}
+\end{center}

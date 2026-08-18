@@ -1,0 +1,88 @@
+\section{Discusión de resultados}
+\label{sec:discusion}
+
+El control en \(q=1\) muestra que la transferencia, la construcción modal de
+la semilla y la continuación recuperan el procedimiento entero de
+Leonov--Kuznetsov \cite{LeonovKuznetsov2013,KuznetsovEtAl2017}. Para
+\(0<q<1\), la adaptación conserva la misma idea de localización, pero distingue
+dos problemas que cumplen funciones diferentes: Liouville--Weyl proporciona el
+predictor armónico estacionario y el problema de valor inicial de Caputo
+determina la trayectoria causal. Esta separación permite usar la información
+frecuencial sin sustituir la memoria que forma parte del sistema fraccionario.
+
+Las reconstrucciones bibliográficas establecen controles claros para comparar
+las rutas propuestas. Con los parámetros nominales de Danca
+\cite{Danca2017}, la integración ABM de \cref{eq:chua_no_suave} produce una
+trayectoria postransitoria de apariencia periódica. La ruta propuesta para el
+mismo sistema físico construye su propia semilla sesgada, la transporta con
+memoria de Caputo y también alcanza un conjunto atrayente de apariencia
+periódica, con una frecuencia dominante próxima a la del control
+bibliográfico. Ambos cálculos se documentan como experimentos independientes:
+uno reconstruye el contrato publicado y el otro evalúa la metodología
+propuesta. El conjunto de la ruta propuesta es regular y de apariencia
+periódica; los diagnósticos aplicados no lo clasifican como caótico. La
+comparación adicional con
+\((m_0,m_1)=(-0.2,-1.2)\) produce contactos desde vecindades de los
+equilibrios externos y confirma que el clasificador distingue un conjunto
+autoexcitado del caso localizado.
+
+En la familia con arctangente, las condiciones iniciales y la recurrencia ADM
+publicadas por Wu et al. \cite{Wu2023ArctanChua} producen dos trayectorias
+simétricas de apariencia periódica. El caso \texttt{c590} de
+\cref{eq:chua_arctan,eq:parametros_c590} procede de una exploración acotada en
+\(q=1\), una selección cuantitativa y un refinamiento mediante problemas de
+Caputo independientes. Su trayectoria postransitoria es aperiódica bajo el
+filtro empleado. La comparación muestra que el régimen observado resulta de
+la combinación entre la forma arctangente, los parámetros, la semilla y el
+contrato fraccionario.
+
+Los sondeos separan el alcance local predeclarado de la exploración
+macroscópica. Para el sistema no suave, el contrato local \(r\leq0.01\)
+produjo \(0/7\,200\) contactos y cero fallos numéricos; éste es el soporte
+finito para la compatibilidad local con ocultedad del conjunto regular. La
+extensión macroscópica añadió 10\,200 sondas en \(r=0.03,0.1,0.3\):
+\(0/6\,600\) contactos en los dos primeros radios y \(37/3\,600\) en el
+tercero. El acumulado combinado es \(0/13\,800\) hasta \(r=0.1\), pero no
+extiende hasta ese radio el contrato local ni su afirmación de ocultedad. Para
+\texttt{c590} se obtuvieron \(0/8\,400\) contactos hasta \(r=0.3\),
+\(22/2\,400\) en \(r=1\) y \(588/2\,700\) en \(r=2\), con 131 divergencias
+en este último bloque. El primer contacto aparece en \(r=1\); \(r=2\) es una
+auditoría macroscópica adicional y no amplía el dominio local sin contactos.
+
+La principal ventaja frente a una búsqueda por prueba y error es que cada
+decisión tiene una regla repetible. En el caso no suave, la función
+descriptiva sesgada, el residuo del cierre armónico, la construcción modal y
+la continuación causal determinan la semilla. En el caso con arctangente, el
+dominio de exploración, la puntuación, la criba dinámica y el refinamiento
+fraccionario determinan los parámetros y la condición inicial. Finalmente,
+los radios, las cantidades de muestras, las semillas pseudoaleatorias, el
+integrador y el clasificador quedan fijados antes del sondeo. Así, la
+localización de la semilla y la clasificación de su cuenca se pueden revisar
+por separado y repetir con el mismo contrato numérico.
+
+\section{Conclusiones}
+\label{sec:conclusiones}
+\enlargethispage{2\baselineskip}
+
+Se desarrollaron dos rutas teórico--numéricas para localizar conjuntos
+atrayentes en sistemas de Chua fraccionarios. En
+\cref{eq:chua_no_suave}, una función descriptiva sesgada construye la semilla
+y una continuación causal de 21 etapas conserva una sola historia de Caputo.
+En \cref{eq:chua_arctan}, una exploración acotada en orden entero y el
+refinamiento mediante problemas de Caputo determinan el caso
+\texttt{c590}. La formulación contiene como límite el procedimiento de
+Leonov--Kuznetsov cuando \(q=1\).
+
+Las reconstrucciones de Danca y Wu proporcionaron los controles
+bibliográficos, mientras que las dos rutas propuestas produjeron,
+respectivamente, un conjunto postransitorio regular de apariencia periódica,
+que no se clasifica como caótico, y uno aperiódico. Para el sistema no suave,
+las \(7\,200\) sondas sin contactos ni fallos sustentan compatibilidad con
+ocultedad únicamente bajo el contrato local \(r\leq0.01\); la extensión
+macroscópica registra \(0/6\,600\) contactos en \(r=0.03,0.1\) y
+\(37/3\,600\) en \(r=0.3\), sin ampliar esa afirmación local. Para
+\texttt{c590}, \(0/8\,400\) contactos hasta \(r=0.3\), \(22/2\,400\) en
+\(r=1\) y \(588/2\,700\) en \(r=2\), con 131 divergencias en este último,
+delimitan el acceso bajo el sondeo superficial declarado. La ausencia de
+contactos hasta \(r=0.3\) es una conclusión limitada a la muestra finita y no
+demuestra separación global de la cuenca.

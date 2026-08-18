@@ -1,0 +1,178 @@
+\section{Validación algebraica independiente con Wolfram Language}
+\label{app:wolfram}
+
+Las identidades simbólicas utilizadas en el reporte se verifican en una
+implementación de Wolfram Language separada del integrador numérico. La
+separación es útil porque las ecuaciones se construyen de nuevo a partir de
+los parámetros, en lugar de reutilizar matrices o resultados calculados por
+el código de simulación.
+
+\subsection{Organización de los validadores}
+
+La carpeta \codepath{version_2/validation/wolfram/} contiene dos niveles:
+\begin{enumerate}
+ \item los módulos comunes
+ \codepath{common/chua_saturation_validation.wl} y
+ \codepath{common/chua_arctan_validation.wl}, que implementan las identidades
+ simbólicas;
+ \item los archivos de caso de \codepath{cases/}, que fijan parámetros,
+ órdenes, semillas de búsqueda y tolerancias.
+\end{enumerate}
+
+Para la saturación se ejecutan los casos
+\codepath{chua_integer_saturation.wl} y
+\codepath{chua_fractional_saturation.wl}. Para la arctangente existen dos
+validaciones diferentes:
+\begin{itemize}
+ \item \codepath{chua_fractional_arctan.wl} usa los parámetros bibliográficos
+ de Wu et al., incluido \(\rho=1\);
+ \item \codepath{chua_fractional_arctan_c590.wl} usa los parámetros propios de
+ \cref{eq:parametros_c590}, incluido \(\rho=1.7984259333\), y la semilla
+ registrada en \cref{eq:semilla_c590}.
+\end{itemize}
+Esta segunda validación hace explícita la sustitución \(\rho\neq1\) y evita
+usar el caso bibliográfico como comprobación algebraica de \texttt{c590}.
+
+\subsection{Identidades verificadas}
+
+Cada validador reconstruye y simplifica las siguientes expresiones:
+\begin{enumerate}
+ \item igualdad entre el campo original y la forma de Lur'e
+ \(PX+b\psi(r^{\T}X)\);
+ \item identidad de la transferencia
+ \(r^{\T}(\zeta I-P)^{-1}b=-\alpha N(\zeta)/\Delta_\ell(\zeta)\);
+ \item identidad del determinante del sistema auxiliar obtenida mediante el
+ lema del determinante;
+ \item ecuación escalar de los equilibrios, jacobiano y polinomio
+ característico;
+ \item forma cerrada de la función descriptiva;
+ \item sustitución de \(\zeta=(\ii\omega)^q\) en la rama principal;
+ \item residuos numéricos de los equilibrios y márgenes de Matignon.
+\end{enumerate}
+
+En la familia con saturación también se comprueba la transformación modal
+\begin{equation}
+P_0S=SH_q,\qquad
+H_q=
+\begin{bmatrix}
+\zeta_r&-\zeta_i&0\\
+\zeta_i& \zeta_r&0\\
+0&0&-d
+\end{bmatrix},
+\label{eq:wolfram_similitud}
+\end{equation}
+y se calcula la semilla como \(A_0S_{\cdot1}\). En la familia con arctangente
+se integra simbólicamente la primera armónica y se simplifica hasta la forma
+cerrada de \cref{eq:df_arctan}. Para \texttt{c590}, el archivo conserva
+la procedencia de la semilla como búsqueda entera acotada seguida de
+refinamiento de Caputo; la función descriptiva se verifica como identidad de
+la familia, no se usa para seleccionar esa semilla.
+
+\subsection{Ejecución y salidas}
+
+Desde la raíz de \codepath{version_2}, cada caso puede ejecutarse con
+\begin{verbatim}
+wolframscript -file validation/wolfram/cases/
+  chua_fractional_saturation.wl
+wolframscript -file validation/wolfram/cases/
+  chua_fractional_arctan.wl
+wolframscript -file validation/wolfram/cases/
+  chua_fractional_arctan_c590.wl
+\end{verbatim}
+En una terminal, cada instrucción debe escribirse en una sola línea. La variable
+de entorno \verb|WOLFRAM_OUT| permite elegir el directorio de salida. Cada
+ejecución produce un resumen JSON, tablas CSV de equilibrios, jacobianos y
+valores propios, y los datos de las ramas armónicas cuando corresponden.
+
+\subsection{Auditoría geométrica, topológica y de memoria}
+
+La extensión geométrico--topológica y de memoria se auditó además mediante
+\codepath{wolfram/topologia_geometria_hidden_validation.wl}. La salida completa
+y legible se conserva en
+\codepath{wolfram/topologia_geometria_hidden_validation.txt}. La ejecución
+terminó con 50 comprobaciones aprobadas y ninguna fallida.
+
+En particular, para
+\[
+ q=\frac45,\qquad \lambda=-\frac45,\qquad
+ t=\frac35,\qquad s=\frac7{10},
+\]
+se obtuvo
+\begin{align}
+ E_q\!\left(\lambda(t+s)^q\right)
+ &=
+ 0.3911882069642177396\ldots,\\
+ E_q(\lambda t^q)E_q(\lambda s^q)
+ &=
+ 0.3209479300285948495\ldots,
+\end{align}
+con residuo \(0.0702402769356228901\ldots\). Esto valida el
+contraejemplo algebraico a un semigrupo temporal sobre el estado puntual. El
+control \(q=1\) devolvió residuo simbólico cero. De forma independiente, el
+programa verificó
+\[
+ I^\beta I^\alpha t^\mu=I^{\alpha+\beta}t^\mu
+\]
+con residuo simbólico cero, mostrando que la propiedad de composición en el
+\emph{orden del operador} no es la ley temporal que falla al borrar memoria.
+
+La expansión escalar de Mittag--Leffler coincidió exactamente con los dos
+primeros términos de Picard--Caputo hasta \(h^{2q}\); al refinar
+\(h=1/10,1/20,1/40,1/80\), el error dividido por \(h^{3q}\) convergió hacia el
+coeficiente teórico de tercer orden. Para la geometría entera también se
+reconstruyeron los jacobianos desde los campos y se obtuvieron:
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Caso & determinantes evaluados & índices locales \\
+\midrule
+Chua PWL & \(-84.035507517056\), \(15.037737580544\)
+ & \((-1,1,1)\)\\
+MAVPD & \(2000,-4000,-4000\) & \((1,-1,-1)\)\\
+PLL & \(2758.72946512,-2758.72946512\) & \((1,-1)\)\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Estas comprobaciones son algebraicas y numéricas acotadas. Los signos validan
+índices locales; sus sumas no son por sí mismas un certificado global de grado
+de Brouwer, porque no se fijó una región acotada ni se excluyeron ceros sobre
+su frontera. El programa tampoco prueba trayectorias, cuencas, atractores,
+ocultedad, entropía o caos, ni reemplaza los teoremas funcionales de
+semidinámica citados en la \cref{sec:geometria-topologia-caputo}.
+
+\subsection{Auditoría del localizador geométrico--topológico propuesto}
+
+La realización algebraica se reconstruyó sin leer resultados desde las nubes
+numéricas. La misma cobertura está integrada al repositorio en
+\codepath{version_2/validation/wolfram/cases/
+geometric_topological_engine.wl}; allí genera un resumen JSON compatible con el
+ejecutor común y repite las 50 decisiones PASS/FAIL sin leer el reporte como
+entrada. Además de la expansión Picard--Caputo y de las covariancias declaradas en
+\cref{sec:localizacion-geometrico-topologica}, la corrida verifica:
+\begin{enumerate}
+ \item las superficies regionales de aceleración de Chua PWL;
+ \item las superficies de aceleración de MAVPD y la inclusión de sus puntos
+ perpetuos en la curva conectante;
+ \item la aceleración en forma compañera y los seis menores de rango de
+ Kalman--Fitts;
+ \item las superficies de aceleración y la ecuación de curva conectante del
+ PLL;
+ \item la identidad del segundo invariante KCC del PLL y los signos
+ \[
+ P(\theta_f,0)=-1642.024105242218\ldots<0,
+ \qquad
+ P(\theta_s,0)=3069.171079266960\ldots>0;
+ \]
+ \item los determinantes, simetrías, raíces y residuos de Chua arctangente,
+ Lorenz generalizado, Rabinovich--Fabrikant y Muñoz--Pacheco.
+\end{enumerate}
+El signo de una curvatura KCC, la anulación de un menor o una raíz de
+\(J_FF\) son propiedades algebraicas locales. Por separado no demuestran que
+exista un atractor, que sea caótico ni que su cuenca sea oculta. Esas preguntas
+corresponden a la campaña dinámica de la \cref{sec:campana-gt}.
+
+La validación algebraica comprueba las operaciones que enlazan
+\cref{eq:chua_no_suave,eq:chua_arctan} con las ecuaciones auxiliares. La
+caracterización dinámica se completa con los PVI, los controles de paso y los
+sondeos descritos en \cref{sec:integracion_continuacion,sec:protocolos,sec:resultados}.

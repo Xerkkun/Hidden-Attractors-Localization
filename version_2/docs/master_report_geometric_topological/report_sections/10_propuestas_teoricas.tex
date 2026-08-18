@@ -1,0 +1,455 @@
+\section{Propuestas teóricas del proyecto y frontera de novedad}
+\label{part:theory}
+
+\subsection{Regla de atribución}
+\label{sec:theory-attribution}
+
+La forma de Lur'e, la función descriptiva, el balance armónico, el criterio de
+Matignon, la equivalencia Caputo--Volterra, el algoritmo ABM, la continuación
+de bifurcaciones y las realizaciones multivariables poseen literatura previa
+\cite{Leonov2013HiddenAttractors,LeonovKuznetsov2013,Matignon1996,
+DiethelmFordFreed2002,bonani1999,rogov2019}. SciSpace localizó además un
+antecedente explícito de autorreproducción afín de atractores fraccionarios
+\cite{sayed2020}. Por ello, ninguno de esos ingredientes aislados se presenta
+como nuevo.
+
+La novedad potencial del proyecto reside en una \emph{integración
+especializada}: decidir antes de la búsqueda si una realización escalar es
+exacta; cambiar de ruta cuando existe una obstrucción demostrable; extender el
+cierre a diccionarios multicanal; preservar una historia causal de Caputo; y
+mantener separados álgebra, localización, dinámica y evidencia finita de
+cuenca. Las proposiciones siguientes están demostradas dentro de sus hipótesis,
+pero su prioridad histórica sólo podría establecerse mediante una revisión
+sistemática adicional.
+
+\begin{longtable}{L{0.28\linewidth}L{0.27\linewidth}L{0.37\linewidth}}
+\caption{Frontera entre fundamento conocido y propuesta del proyecto.}
+\label{tab:novelty-map}\\
+\toprule
+Elemento & Fundamento previo & Formulación defendible\\
+\midrule
+\endfirsthead
+\toprule
+Elemento & Fundamento previo & Formulación defendible\\
+\midrule
+\endhead
+Certificado de rango uno & Geometría de realizaciones Lur'e & Preprocesador
+especializado potencialmente original.\\
+Saltos PWA compartidos & Realimentación escalar PWA & Criterio algebraico
+especializado; prioridad no establecida.\\
+Equivalencia afín & Regla lineal de Caputo y antecedente
+\cite{sayed2020} & No es nueva; se usa para transportar contratos de cuenca.\\
+Diccionario MIMO & Lur'e y balance multivariable
+\cite{bonani1999,rogov2019} & Síntesis para candidatos ocultos; no invención
+de MIMO.\\
+Historia única de Caputo & Ecuación de Volterra & Propuesta
+teórico--numérica más fuerte del proyecto.\\
+Machado \(N^\mu\) & Función descriptiva fraccionaria publicada
+\cite{Machado2015FDF} & No es nueva; se propone separar residuo auxiliar y
+residuo físico en cada semilla.\\
+Puntos perpetuos enteros & Condición \(J_f f=0\) y localización heurística
+\cite{Prasad2015Perpetual,DudkowskiPrasadKapitaniak2017} & No son nuevos ni
+suficientes; se integran como carril de semillas.\\
+FPP--A/FPP--H & Volterra, expansión Picard y operador Caputo secuencial &
+Extensión propuesta: separar estado de arranque y evento con historia.\\
+Separación continuación/congelación/reset & No localidad de Caputo &
+Disciplina metodológica potencialmente original.\\
+Protocolo L0--L6 y niveles EV--TG0--EV--TG7 & Definición de atractor oculto y
+validación numérica & Integración reproducible; no nuevo teorema dinámico.\\
+\bottomrule
+\end{longtable}
+
+\subsection{Certificado de realizabilidad escalar por rango uno}
+\label{sec:rank-one-certificate}
+
+Sea \(\Omega\subset\mathbb R^n\) abierto y conexo, y
+\(f\in C^1(\Omega,\mathbb R^n)\). Fijados \(A\in\mathbb R^{n\times n}\),
+\(b,r\in\mathbb R^n\setminus\{0\}\), escribimos
+\begin{equation}
+ g(x)=f(x)-Ax,\qquad
+ P_b^\perp=I-\frac{bb^{\mathsf T}}{b^{\mathsf T}b},\qquad
+ P_r^\perp=I-\frac{rr^{\mathsf T}}{r^{\mathsf T}r}.
+ \label{eq:th-projectors}
+\end{equation}
+
+\begin{proposition}[necesidad]
+\label{prop:rank-one-necessary}
+Si existe \(\psi\in C^1(r^{\mathsf T}\Omega,\mathbb R)\) tal que
+\[
+ f(x)=Ax+b\,\psi(r^{\mathsf T}x)
+\]
+en \(\Omega\), entonces
+\begin{equation}
+ P_b^\perp g(x)=0,\qquad
+ Dg(x)P_r^\perp=0,\qquad
+ \operatorname{rank}Dg(x)\leq1
+ \label{eq:th-rank-necessary}
+\end{equation}
+para todo \(x\in\Omega\).
+\end{proposition}
+
+\begin{proof}
+La primera igualdad sigue de
+\(g(x)=b\psi(r^{\mathsf T}x)\in\operatorname{span}\{b\}\). Por la regla de la
+cadena,
+\[
+ Dg(x)=b\,\psi'(r^{\mathsf T}x)\,r^{\mathsf T}.
+\]
+Como \(r^{\mathsf T}P_r^\perp=0\), se obtiene
+\(Dg(x)P_r^\perp=0\). La matriz exterior \(br^{\mathsf T}\) tiene rango uno,
+y multiplicarla por un escalar no puede aumentar el rango.
+\end{proof}
+
+La condición de rango por sí sola no basta: una dirección de salida o de
+entrada que varíe con \(x\) también puede producir Jacobianos de rango uno. La
+prueba debe conservar \(b\) y \(r\) fijos.
+
+\begin{proposition}[suficiencia sobre fibras conexas]
+\label{prop:rank-one-sufficient}
+Supóngase que cada fibra
+\(\Omega_s=\{x\in\Omega:r^{\mathsf T}x=s\}\) es conexa o vacía. Si
+\[
+ P_b^\perp g(x)=0,\qquad Dg(x)P_r^\perp=0
+\]
+en \(\Omega\), entonces existe una función
+\(\psi:r^{\mathsf T}\Omega\to\mathbb R\) tal que
+\[
+ f(x)=Ax+b\,\psi(r^{\mathsf T}x).
+\]
+\end{proposition}
+
+\begin{proof}
+La primera igualdad permite definir
+\[
+ \lambda(x)=\frac{b^{\mathsf T}g(x)}{b^{\mathsf T}b},
+ \qquad g(x)=b\lambda(x).
+\]
+Derivando, \(Dg=b\,D\lambda\). Como \(b\neq0\), la segunda hipótesis implica
+\(D\lambda(x)P_r^\perp=0\). Sea \(x(\tau)\) una curva \(C^1\) contenida en una
+fibra. Entonces \(r^{\mathsf T}\dot x(\tau)=0\), es decir,
+\(\dot x=P_r^\perp\dot x\), y
+\[
+ \frac{d}{d\tau}\lambda(x(\tau))
+ =D\lambda(x(\tau))P_r^\perp\dot x(\tau)=0.
+\]
+Así, \(\lambda\) es constante en cada fibra conexa. Definir
+\(\psi(s)=\lambda(x)\) para cualquier \(x\in\Omega_s\) es, por tanto, no
+ambiguo, y \(g(x)=b\psi(r^{\mathsf T}x)\).
+\end{proof}
+
+\begin{proposalbox}
+\textbf{Aporte propuesto.} Usar
+\(\|P_b^\perp g\|\) y \(\|DgP_r^\perp\|\) como certificado exacto o residual
+antes de resolver balance armónico. El sistema sólo entra a la ruta escalar D0
+si ambos residuos son cero simbólicamente o menores que una tolerancia
+justificada. Si fallan, se intenta una transformación T1 o una realización M1.
+
+\textbf{Prueba de falsación.} Aplicar el certificado a una familia con
+Hessiano no lineal de rango mayor que uno. El jerk cuadrático de
+\cref{sec:cand-jerk} debe ser rechazado por D0 y aceptado por M1.
+\end{proposalbox}
+
+\subsection{Criterio de saltos compartidos en campos PWA}
+\label{sec:pwa-shared-jumps}
+
+Considérese una partición en regiones \(\Omega_j\) y un campo afín por partes
+\[
+ f_j(x)=A_jx+d_j.
+\]
+Elegimos una región base \(j=0\).
+
+\begin{proposition}[realización PWA escalar exacta]
+\label{prop:pwa-shared}
+Si existen \(b,r\neq0\) y escalares \(\gamma_j,\delta_j\) tales que
+\begin{equation}
+ A_j-A_0=b\gamma_jr^{\mathsf T},\qquad
+ d_j-d_0=b\delta_j
+ \label{eq:th-pwa-jumps}
+\end{equation}
+para toda región, entonces
+\begin{equation}
+ f_j(x)=A_0x+d_0+b\bigl(\gamma_jr^{\mathsf T}x+\delta_j\bigr).
+ \label{eq:th-pwa-realization}
+\end{equation}
+Si, además, la etiqueta regional \(j\) depende sólo de
+\(\sigma=r^{\mathsf T}x\), existe una característica escalar PWA
+\(\psi(\sigma)\) que reproduce todo el campo.
+\end{proposition}
+
+\begin{proof}
+Sustituir \cref{eq:th-pwa-jumps} en
+\(A_jx+d_j\) da \cref{eq:th-pwa-realization}. Si cada región es la preimagen
+de un intervalo \(I_j\) por \(r^{\mathsf T}x\), se define
+\(\psi(\sigma)=\gamma_j\sigma+\delta_j\) para \(\sigma\in I_j\).
+\end{proof}
+
+Las condiciones son también necesarias para una realización escalar que use
+el mismo \(A_0,d_0,b,r\) y una \(\psi\) afín en cada intervalo. La continuidad
+en una frontera \(\sigma=s_j\) añade
+\[
+ \gamma_{j^-}s_j+\delta_{j^-}
+ =\gamma_{j^+}s_j+\delta_{j^+}.
+\]
+Una discontinuidad controlada puede admitirse, pero entonces debe declararse
+la solución diferencial utilizada.
+
+\begin{proposalbox}
+\textbf{Aporte propuesto.} El criterio convierte la inspección informal de una
+no linealidad PWA en una prueba de matrices de rango uno y de geometría de
+regiones. Está motivado por el diodo PWL de Chua, pero permite descartar
+rápidamente campos cuyas superficies de conmutación no comparten el observable
+\(r^{\mathsf T}x\).
+\end{proposalbox}
+
+\subsection{Equivalencia afín y transporte correcto de cuencas}
+\label{sec:affine-caputo}
+
+Sea \(x=Tz+c\), con \(T\) invertible y \(c\) constante. Para Caputo
+\({}^{\mathrm C}D^q c=0\) y
+\[
+ {}^{\mathrm C}D^q x=T\,{}^{\mathrm C}D^q z.
+\]
+Si
+\[
+ {}^{\mathrm C}D^q x=Ax+b\psi(r^{\mathsf T}x),
+\]
+entonces
+\begin{equation}
+ {}^{\mathrm C}D^q z
+ =T^{-1}ATz+T^{-1}(Ac)
+ +T^{-1}b\,
+ \psi\!\left(r^{\mathsf T}Tz+r^{\mathsf T}c\right).
+ \label{eq:th-affine-caputo}
+\end{equation}
+Para una transformación puramente lineal \(c=0\),
+\[
+ A_z=T^{-1}AT,\quad b_z=T^{-1}b,\quad r_z=T^{\mathsf T}r.
+\]
+
+La transformación no autoriza a conservar esferas numéricamente iguales. Una
+bola en coordenadas físicas,
+\[
+ \|x-x_e\|_2\leq\rho,
+\]
+se convierte en el elipsoide
+\begin{equation}
+ (z-z_e)^{\mathsf T}T^{\mathsf T}T(z-z_e)\leq\rho^2.
+ \label{eq:th-ellipsoid}
+\end{equation}
+Usar una bola de radio \(\rho\) en \(z\) cambia el experimento salvo cuando
+\(T\) es ortogonal. Esta observación es esencial para comparar cuencas antes y
+después de una transformación T1.
+
+\begin{remark}
+La equivalencia afín de sistemas fraccionarios no se reclama como nueva; la
+literatura incluye transformaciones afines para autorreproducción de
+atractores ocultos \cite{sayed2020}. La contribución del presente flujo es
+transportar también el contrato de ocultedad y las tolerancias.
+\end{remark}
+
+\subsection{Realización polinómica multicanal y minimalidad}
+\label{sec:mimo-dictionary}
+
+Cuando el certificado escalar falla, se usa
+\begin{equation}
+ {}^{\mathrm C}D^q x=Ax+d+B\Phi(Cx),
+ \qquad
+ W(z)=C(zI-A)^{-1}B.
+ \label{eq:th-mimo}
+\end{equation}
+\(\Phi=(\phi_1,\ldots,\phi_m)^{\mathsf T}\) es un diccionario declarado de
+monomios, funciones PWA o funciones suaves. La verificación exacta es
+\[
+ R(x)=f(x)-Ax-d-B\Phi(Cx)\equiv0.
+\]
+
+Para polinomios, un diccionario completo de monomios reproduce siempre el
+campo; el problema científico es encontrar uno pequeño y estructuralmente
+útil. Dos identidades permiten reorganizar términos cruzados:
+\begin{align}
+ uv&=\frac14\bigl[(u+v)^2-(u-v)^2\bigr],
+ \label{eq:th-square-polarization}\\
+ uvw&=\frac1{24}\bigl[(u+v+w)^3+(u-v-w)^3
+ +(v-u-w)^3+(w-u-v)^3\bigr].
+ \label{eq:th-cubic-polarization}
+\end{align}
+Son identidades algebraicas conocidas, no resultados nuevos. Su utilidad aquí
+es exhibir canales escalares de cuadrados o cubos cuando ello simplifica
+\(W(z)\) y los coeficientes de Fourier.
+
+La minimalidad no se decide contando monomios solamente. Si un término
+cuadrático escalar tiene la forma \(\psi(r^{\mathsf T}x)\) con
+\(\psi(s)=\kappa s^2\), su Hessiano es
+\[
+ \nabla^2[\kappa(r^{\mathsf T}x)^2]=2\kappa rr^{\mathsf T},
+\]
+de rango a lo sumo uno. Un Hessiano de rango mayor que uno prueba que ese
+término no puede reducirse a un solo canal cuadrático.
+
+\subsection{Balance armónico sesgado y multiharmónico}
+\label{sec:multiharmonic}
+
+Se aproxima el estado estacionario por
+\begin{equation}
+ x_H(t)=X_0+
+ \sum_{h=1}^{H}\left(X_he^{\mathrm i h\omega t}
+ +\overline{X_h}e^{-\mathrm i h\omega t}\right).
+ \label{eq:th-fourier-state}
+\end{equation}
+Sea \(y_H=Cx_H\). Los coeficientes exactos del diccionario son
+\begin{equation}
+ \widehat\Phi_h(X_0,\ldots,X_H)
+ =\frac1{2\pi}\int_0^{2\pi}
+ \Phi\!\bigl(y_H(\theta)\bigr)e^{-\mathrm i h\theta}\,d\theta.
+ \label{eq:th-phi-fourier}
+\end{equation}
+Al igualar coeficientes en \cref{eq:th-mimo}, se obtiene
+\begin{align}
+ 0&=AX_0+d+B\widehat\Phi_0,
+ \label{eq:th-dc-balance}\\
+ \bigl[(\mathrm ih\omega)^qI-A\bigr]X_h
+ &=B\widehat\Phi_h,\qquad h=1,\ldots,H.
+ \label{eq:th-harmonic-balance}
+\end{align}
+La rama principal es
+\[
+ (\mathrm ih\omega)^q=(h\omega)^q
+ \left[\cos\frac{q\pi}{2}+\mathrm i\sin\frac{q\pi}{2}\right].
+\]
+El sistema real se obtiene separando partes reales e imaginarias y fijando una
+fase, por ejemplo \(\Im(e_j^{\mathsf T}X_1)=0\). Sin esa condición, la
+invariancia temporal deja una familia continua de soluciones equivalentes.
+
+Una no linealidad cuadrática excitada por un fundamental genera DC y segundo
+armónico; una cúbica genera fundamental y tercero. Por eso \(H=1\) no cierra
+exactamente Lorenz, RF, Genesio--Tesi o el jerk cuadrático. Los mínimos
+estructurales \(H\ge2\) y \(H\ge3\) son puntos de partida, no garantías de
+convergencia. Se exige el residual omitido
+\[
+ \eta_H^2=\sum_{|h|>H}\|\widehat\Phi_h\|_2^2
+\]
+o una prueba de estabilización al aumentar \(H\).
+
+\begin{proposalbox}
+\textbf{Aporte propuesto.} Acoplar el certificado D0/T1/M1 con
+\cref{eq:th-dc-balance,eq:th-harmonic-balance}; una semilla M1 sólo se promueve
+si satisface fase, cierre DC, residuo de armónicos omitidos y residual del
+campo original. Esto traslada balance armónico MIMO conocido a un contrato
+reproducible de localización de atractores ocultos.
+\end{proposalbox}
+
+\subsection{Homotopía causal de Caputo con una sola historia}
+\label{sec:single-history}
+
+Para \(0<q<1\), una continuación parametrizada por
+\(\varepsilon(t)\) debe interpretarse como el único problema no autónomo
+\begin{equation}
+ x(t)=x_0+\frac1{\Gamma(q)}
+ \int_{t_0}^{t}(t-\tau)^{q-1}
+ F_{\varepsilon(\tau)}(x(\tau))\,d\tau.
+ \label{eq:th-single-history}
+\end{equation}
+Si \(\varepsilon\) cambia en tiempos \(t_j\), las contribuciones de
+\([t_0,t_j]\) permanecen en el integral para todo \(t>t_j\). Reiniciar en cada
+etapa con
+\[
+ x(t_j)=x_j,\qquad
+ {}^{\mathrm C}D_{t_j}^q x=F_{\varepsilon_j}(x)
+\]
+elimina esa historia y define otro PVI.
+
+\begin{proposition}[distinción de tres objetos]
+\label{prop:history-three-objects}
+En una continuación Caputo deben distinguirse:
+\begin{enumerate}
+ \item la trayectoria no autónoma completa de
+ \cref{eq:th-single-history};
+ \item el segmento posterior a \(t_J\) con
+ \(\varepsilon(t)=\varepsilon_\star\), pero con la historia heredada desde
+ \(t_0\);
+ \item la solución autónoma reinicializada en \(t_J\), con terminal inferior
+ \(t_J\) y estado inicial \(x(t_J)\).
+\end{enumerate}
+Los objetos 2 y 3 tienen el mismo campo instantáneo y el mismo estado en
+\(t_J\), pero en general no satisfacen la misma ecuación integral.
+\end{proposition}
+
+\begin{proof}
+Para el objeto 2, separar el integral en \(t_J\) produce
+\[
+ \int_{t_0}^{t_J}(t-\tau)^{q-1}
+ F_{\varepsilon(\tau)}(x(\tau))\,d\tau
+ +\int_{t_J}^{t}(t-\tau)^{q-1}
+ F_{\varepsilon_\star}(x(\tau))\,d\tau.
+\]
+El primer término depende de \(t\) y no es una constante absorbible en la
+condición inicial. El objeto 3 contiene únicamente el segundo integral con
+otra trayectoria. Salvo \(q=1\), una historia nula o una coincidencia
+especial, las soluciones difieren.
+\end{proof}
+
+La propuesta metodológica es conservar el objeto 2 durante el transporte y
+evaluar además el objeto 3 como prueba independiente del campo final. Sólo el
+objeto 3 responde directamente a «¿qué hace el PVI autónomo final desde ese
+estado sin memoria heredada?». Ambos resultados deben archivarse.
+
+\begin{proposalbox}
+\textbf{Aporte propuesto.} La historia única, el campo final congelado y el
+reset común de todas las sondas forman un contrato explícito. Su fundamento es
+la no localidad de Volterra, no una analogía con ODE. Una validación futura
+debe demostrar existencia, unicidad y dependencia continua respecto de
+\(\varepsilon\) bajo hipótesis de Lipschitz uniformes.
+\end{proposalbox}
+
+\subsection{Cero contactos, primer contacto y alcance estadístico}
+\label{sec:zero-contact}
+
+Si las condiciones se extraen de manera i.i.d. de una distribución declarada
+y cada ensayo tiene probabilidad de contacto \(p\), observar cero contactos en
+\(N\) ensayos da el límite superior unilateral exacto
+\begin{equation}
+ p\leq1-\alpha^{1/N}
+ \label{eq:th-binomial-upper}
+\end{equation}
+con confianza \(1-\alpha\). Para \(\alpha=0.05\), el límite es aproximadamente
+\(3/N\) cuando \(N\) es grande. Esta interpretación no se aplica
+automáticamente a mallas deterministas ni a trayectorias dependientes. En esos
+casos el conteo es descriptivo y la afirmación correcta conserva la geometría
+de muestreo.
+
+El protocolo recomendado informa para cada equilibrio y radio:
+\[
+ (N_{\rm contacto},N_{\rm otro},N_{\rm divergente},
+ N_{\rm ambiguo},N_{\rm fallo})
+\]
+y busca el primer radio con contacto. El primer contacto refuta la separación
+para ese punto; cero contactos no prueba que ninguna vecindad intercepte la
+cuenca.
+
+\subsection{Taxonomía de rutas y protocolo L0--L6}
+\label{sec:l0-l6}
+
+La selección estructural precede a la integración:
+
+\begin{description}[style=nextline,leftmargin=2.7em,labelwidth=2.2em]
+ \item[D0] realización Lur'e escalar exacta y cierre directo;
+ \item[T1] transformación afín u observable que produce D0;
+ \item[A1] ruta alternativa activada por una obstrucción demostrada
+ (mapa de conmutación, ganancia cero, frontera de Hopf);
+ \item[M1] realización multicanal y balance sesgado/multiharmónico.
+\end{description}
+
+La promoción dinámica sigue:
+\begin{description}[style=nextline,leftmargin=2.7em,labelwidth=2.2em]
+ \item[L0] fuente, ecuaciones y parámetros congelados;
+ \item[L1] álgebra y equilibrios verificados;
+ \item[L2] semilla con residual y origen registrado;
+ \item[L3] continuación con trazas y memoria declarada;
+ \item[L4] recurrencia y clasificación dinámica;
+ \item[L5] sondeos de todos los equilibrios y primer contacto;
+ \item[L6] reproducción independiente y robustez de paso/horizonte.
+\end{description}
+
+La taxonomía no demuestra existencia de un atractor. Su función es impedir que
+una semilla, un espectro o una figura aislada se presente como validación
+completa.

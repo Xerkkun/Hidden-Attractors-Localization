@@ -1,0 +1,357 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[spanish,es-tabla,es-nodecimaldot,es-noshorthands]{babel}
+\usepackage[a4paper,margin=2.15cm,headheight=15pt]{geometry}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsfonts,mathtools,bm,amsthm}
+\usepackage{booktabs,longtable,tabularx,array,multirow}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{environ}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{xurl}
+\usepackage{lastpage}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\makeatletter
+\renewcommand*\l@subsection{\@dottedtocline{2}{1.5em}{3.4em}}
+\makeatother
+\crefname{equation}{ecuación}{ecuaciones}
+\Crefname{equation}{Ecuación}{Ecuaciones}
+\crefname{figure}{figura}{figuras}
+\Crefname{figure}{Figura}{Figuras}
+\crefname{table}{tabla}{tablas}
+\Crefname{table}{Tabla}{Tablas}
+\crefname{section}{sección}{secciones}
+\Crefname{section}{Sección}{Secciones}
+\crefname{subsection}{sección}{secciones}
+\Crefname{subsection}{Sección}{Secciones}
+\providecommand{\crefrangeconjunction}{}
+\providecommand{\crefpairconjunction}{}
+\providecommand{\crefmiddleconjunction}{}
+\providecommand{\creflastconjunction}{}
+\renewcommand{\crefrangeconjunction}{ a }
+\renewcommand{\crefpairconjunction}{ y }
+\renewcommand{\crefmiddleconjunction}{, }
+\renewcommand{\creflastconjunction}{ y }
+
+\definecolor{Azul}{HTML}{164B73}
+\definecolor{AzulClaro}{HTML}{EAF2F8}
+\definecolor{Verde}{HTML}{277A58}
+\definecolor{VerdeClaro}{HTML}{EAF6F0}
+\definecolor{Naranja}{HTML}{B35A00}
+\definecolor{NaranjaClaro}{HTML}{FFF2E3}
+\definecolor{Rojo}{HTML}{9B2C2C}
+\definecolor{Gris}{HTML}{F2F4F6}
+\definecolor{GrisOscuro}{HTML}{48515A}
+\definecolor{azulHA}{HTML}{153B5B}
+\definecolor{verdeHA}{HTML}{2E6F5E}
+\definecolor{ambarHA}{HTML}{9A6700}
+\definecolor{rojoHA}{HTML}{9D2A2A}
+\definecolor{grisHA}{HTML}{4A5560}
+\definecolor{grisClaro}{HTML}{F4F6F7}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=Azul,
+  citecolor=Verde,
+  urlcolor=Azul,
+  pdfauthor={}
+}
+\ifdefined\HAFOPrintEdition
+  \hypersetup{
+    pdftitle={Guía de estudio de sistemas dinámicos enteros y fraccionarios},
+    pdfsubject={Topología, geometría diferencial, sistemas dinámicos, caos y cálculo fraccionario}
+  }
+\else
+  \hypersetup{
+    pdftitle={Reporte maestro de localización de atractores ocultos enteros y fraccionarios},
+    pdfsubject={Álgebra, verificación cruzada, geometría, topología, memoria y evidencia de cuencas}
+  }
+\fi
+
+\graphicspath{
+  {figures/paper07/}
+  {figures/}
+  {figures/pdf/}
+  {integer_assets/}
+  {figures/chua_master/}
+  {figures/kalman_fitts/}
+  {figures/mavpd_audit/}
+  {figures/mavpd_chaos/}
+  {figures/pll/}
+  {figures/c590_basin/}
+}
+
+\setlength{\emergencystretch}{3em}
+\setlength{\parindent}{1.1em}
+\setlength{\parskip}{0.22em}
+\renewcommand{\arraystretch}{1.15}
+\setlist{itemsep=0.25em,topsep=0.4em,leftmargin=*}
+\numberwithin{equation}{section}
+\captionsetup{font=small,labelfont=bf}
+\sisetup{
+  output-decimal-marker={,},
+  group-separator={\,},
+  group-minimum-digits=4
+}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\newtheorem{definition}{Definición}[section]
+\newtheorem{proposition}[definition]{Proposición}
+\newtheorem{remark}[definition]{Observación}
+
+% Dos salidas desde una sola fuente. El núcleo científico es común; únicamente
+% la guía impresa activa los recursos pedagógicos y únicamente la monografía
+% digital activa el atlas y la trazabilidad extendida.
+\newif\ifHAFOPedagogy
+\newif\ifHAFOdigitalcontent
+\ifdefined\HAFOPrintEdition
+  \HAFOPedagogytrue
+  \HAFOdigitalcontentfalse
+  % El índice muestra sólo partes y secciones; las subsecciones se leen en orden.
+  \setcounter{tocdepth}{1}
+\else
+  \HAFOPedagogyfalse
+  \HAFOdigitalcontenttrue
+  % El índice muestra sólo partes y secciones; las subsecciones se leen en orden.
+  \setcounter{tocdepth}{1}
+\fi
+
+% Las figuras se clasifican una por una. No se redefine globalmente el entorno
+% figure: una figura común se conserva en ambas ediciones y una figura digital
+% se omite de la guía de impresión de forma explícita.
+\newenvironment{hafocommonfigure}[1][H]
+  {\begin{figure}[#1]}
+  {\end{figure}}
+\NewEnviron{hafodigitalfigure}[1][H]{%
+  \ifHAFOdigitalcontent
+    \begin{figure}[#1]\BODY\end{figure}%
+  \fi
+}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\CaputoD}{{}^{\mathrm C}D_{t_0}^{q}}
+\newcommand{\CD}{{}^{\mathrm C}\!D_{t_0}^{q}}
+\newcommand{\LW}{{}^{\mathrm{LW}}D_t^q}
+\newcommand{\T}{\mathsf T}
+\newcommand{\trans}{^{\mathsf T}}
+\newcommand{\dd}{\,\mathrm d}
+\newcommand{\e}{\mathrm e}
+\newcommand{\target}{\mathcal A_\star}
+\newcommand{\basin}{\mathcal B_{t_0}^{\mathrm{reset}}}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\codepath}[1]{\path{#1}}
+\newcommand{\ruta}[1]{\path{#1}}
+\newcommand{\hafo}{\texttt{hidden-attractors-\allowbreak fo}}
+\newcommand{\juliads}{\texttt{DynamicalSystems.\allowbreak jl}}
+\newcommand{\attractorsjl}{\texttt{Attractors.\allowbreak jl}}
+\newcommand{\statusref}{\textcolor{ambarHA}{\textbf{referencia solamente}}}
+\newcommand{\ok}{\textcolor{verdeHA}{\textbf{verificado}}}
+\newcommand{\corr}{\textcolor{rojoHA}{\textbf{corrección}}}
+
+\newcommand{\evidencebox}[1]{%
+  \begin{center}
+  \colorbox{AzulClaro}{\parbox{0.93\linewidth}{#1}}
+  \end{center}
+}
+\newcommand{\warningbox}[1]{%
+  \begin{center}
+  \colorbox{NaranjaClaro}{\parbox{0.93\linewidth}{#1}}
+  \end{center}
+}
+
+\newenvironment{hallazgo}[1]{%
+  \par\medskip\noindent
+  \begin{minipage}{\linewidth}
+  \color{azulHA}\hrule height 0.8pt
+  \vspace{4pt}\textbf{#1}\par\smallskip
+  \color{black}
+}{%
+  \par\smallskip\color{azulHA}\hrule height 0.8pt
+  \end{minipage}\par\medskip
+}
+
+\newenvironment{proposalbox}{%
+  \par\medskip\noindent
+  \begin{minipage}{\linewidth}
+  \color{Naranja}\hrule height 0.8pt
+  \vspace{4pt}\color{black}
+}{%
+  \par\smallskip\color{Naranja}\hrule height 0.8pt
+  \end{minipage}\par\medskip
+}
+
+\lstdefinestyle{wl}{
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{azulHA}\bfseries,
+  commentstyle=\color{verdeHA},
+  stringstyle=\color{rojoHA},
+  backgroundcolor=\color{grisClaro},
+  frame=single,
+  rulecolor=\color{gray!45},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  tabsize=2
+}
+
+\input{integer_datos_actuales}
+\input{integer_mavpd_chaos_generated}
+\input{integer_julia_comparison_generated}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Reporte maestro de atractores ocultos}
+\fancyhead[R]{\small Álgebra, geometría, memoria y cuencas}
+\fancyfoot[C]{\thepage}
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyhead[L]{\small Reporte maestro de atractores ocultos}
+  \fancyhead[R]{\small Álgebra, geometría, memoria y cuencas}
+  \fancyfoot[C]{\thepage}
+}
+
+\ifdefined\HAFOPrintEdition
+\fancyhead[L]{\small Guía de estudio de atractores ocultos}
+\fancyhead[R]{\small Geometría, dinámica, caos y memoria}
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyhead[L]{\small Guía de estudio de atractores ocultos}
+  \fancyhead[R]{\small Geometría, dinámica, caos y memoria}
+  \fancyfoot[C]{\thepage}
+}
+\fi
+
+\begin{document}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\centering
+\vspace*{0.18\textheight}
+{\LARGE\bfseries Localización de atractores ocultos\\[0.35em]
+en sistemas enteros y fraccionarios\par}
+\vspace{1.2em}
+\ifdefined\HAFOPrintEdition
+  {\Large Guía secuencial de teoría, lectura y ejercicios\par}
+\else
+  {\Large Teoría, derivaciones, casos y resultados\par}
+\fi
+\vfill
+{\large Topología, geometría diferencial, sistemas dinámicos, caos y
+cálculo fraccionario\par}
+\end{titlepage}
+
+\ifdefined\HAFOPrintEdition
+\clearpage
+\tableofcontents
+\else
+\tableofcontents
+\fi
+\clearpage
+\hypersetup{pageanchor=true}
+
+\ifHAFOPedagogy
+  \part{Antes: lenguaje y prerrequisitos}
+\else
+  \part{Fundamentos y alcance}
+\fi
+\label{part:guia-geometrica-entera}
+\input{report_sections/00_alcance_inventario}
+\ifHAFOPedagogy
+  \input{report_sections/16_programa_estudio_bibliografico}
+\fi
+\clearpage
+\input{report_sections/01_introduccion_antecedentes}
+\begingroup
+\def\HAFOModelsOnly{1}
+\input{report_sections/02_modelos_y_fundamentos}
+\endgroup
+\begingroup
+\def\HAFONoGeoPosterior{1}
+\input{report_sections/14_guia_geometrica_topologica_entera}
+\endgroup
+\begingroup
+\def\HAFOFractionalOnly{1}
+\input{report_sections/02_modelos_y_fundamentos}
+\endgroup
+\input{report_sections/15_geometria_topologia_caputo}
+\input{report_sections/17_metodos_topologicos_existencia}
+
+\clearpage
+\ifHAFOPedagogy
+  \part{Durante: construcción de la metodología}
+\else
+  \part{Métodos de localización}
+\fi
+\label{part:metodologia}
+\input{report_sections/03_lure_transferencia_funcion_descriptiva}
+\input{report_sections/12_machado_funcion_descriptiva}
+\input{report_sections/04_integracion_continuacion}
+\input{report_sections/13_puntos_perpetuos}
+\input{report_sections/19_localizacion_geometrico_topologica}
+\input{report_sections/05_protocolos_experimentales}
+\input{report_sections/21_campana_dinamica_geometrico_topologica}
+\input{report_sections/10_propuestas_teoricas}
+
+\clearpage
+\part{Casos estudiados}
+\label{part:casos}
+\input{report_sections/06_resultados}
+\input{report_sections/08_enteros_reproducidos}
+\input{report_sections/09_fraccionarios_no_chua}
+\input{report_sections/20_resultados_geometrico_topologicos_casos}
+\input{report_sections/22_resultados_piloto_geometrico_topologico}
+
+\clearpage
+\ifHAFOPedagogy
+  \part{Después: síntesis y trabajo futuro}
+\else
+  \part{Síntesis y problemas abiertos}
+\fi
+\label{part:futuro}
+\input{report_sections/11_candidatos_compatibles}
+\begingroup
+\def\HAFOGeoPosteriorOnly{1}
+\input{report_sections/14_guia_geometrica_topologica_entera}
+\endgroup
+\input{report_sections/07_discusion_conclusiones}
+
+\ifHAFOdigitalcontent
+\clearpage
+\appendix
+\part{Validación y trazabilidad digital}
+\label{part:validacion-digital}
+\input{report_sections/B_trazabilidad_pruebas}
+\input{report_sections/C_validacion_wolfram}
+\input{report_sections/D_validacion_maestra}
+\input{report_sections/F_wolfram_no_chua}
+\input{report_sections/E_atlas_figuras}
+\fi
+
+\begingroup
+\footnotesize
+\bibliographystyle{unsrt}
+\bibliography{references}
+\endgroup
+
+\end{document}

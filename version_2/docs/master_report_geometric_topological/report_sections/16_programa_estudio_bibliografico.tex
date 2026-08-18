@@ -1,0 +1,652 @@
+\section{Empiece aquí: ruta autosuficiente de estudio}
+\label{sec:programa-estudio-bibliografico}
+
+Este volumen físico contiene el itinerario obligatorio: definiciones,
+hipótesis, demostraciones y deducciones necesarias, metodologías, contratos
+numéricos, resultados, tablas, discusión, ejercicios y comprobaciones. Puede
+estudiarse de principio a fin sin abrir otro PDF. Siga las etapas en el orden
+indicado y use las referencias bibliográficas únicamente para ampliar una
+demostración, contrastar el texto original de un resultado o continuar una
+línea de investigación.
+
+En cada etapa, las acciones \emph{Estudie aquí}, \emph{Resuelva} y
+\emph{Avance cuando pueda} forman la ruta interna. Toda instrucción
+\emph{Lea}, \emph{Lea primero} o \emph{consulte} que mencione un libro o un
+archivo externo es una lectura complementaria opcional: su ausencia no impide
+seguir el desarrollo del volumen ni interpretar sus resultados.
+
+\begin{center}
+\fbox{\parbox{0.93\linewidth}{
+\textbf{Convención para lecturas complementarias.} En los cuatro libros cuyo índice fue
+fotografiado, ``p.'' significa la página \emph{impresa}. En los archivos de las
+bibliotecas locales, ``PDF'' significa la página física que muestra el visor,
+contada desde la primera hoja del archivo. No son numeraciones
+intercambiables. Devaney, Hilborn y Guckenheimer--Holmes están escaneados en
+pliegos dobles; sus rangos de visor se indican como aproximados.
+}}
+\end{center}
+
+Si se desea ampliar el estudio, las fuentes locales originalmente inventariadas
+se encuentran en:
+\begin{sloppypar}
+\begin{itemize}
+  \item \texttt{C:\textbackslash Users\textbackslash moren\textbackslash
+        Desktop\textbackslash Sistemas Dinamicos y Caos};
+  \item \texttt{C:\textbackslash Users\textbackslash moren\textbackslash
+        Desktop\textbackslash Calculo Fraccionario}.
+\end{itemize}
+\end{sloppypar}
+
+\subsection{Regla de fuentes: el volumen para estudiar, las fuentes para contrastar}
+
+Este volumen desarrolla las definiciones generales, las demostraciones
+necesarias, los ejercicios y las técnicas numéricas. Los libros citados ofrecen
+ampliaciones opcionales. Una afirmación sobre un atractor oculto
+concreto se apoya primero en el artículo que publicó el modelo, los parámetros,
+la condición inicial y la prueba de cuenca; después se contrasta con la
+reproducción de este reporte. Los volúmenes recopilatorios sirven como mapa de
+familias, no como sustituto del artículo original.
+
+\begin{center}
+\begin{tabularx}{0.96\linewidth}{@{}L{3.1cm}Y Y@{}}
+\toprule
+Pregunta & Fuente que se lee primero & Fuente que completa la lectura \\
+\midrule
+¿Qué significa oculto? &
+Artículos fundacionales y de síntesis
+\cite{LeonovKuznetsovVagaitsev2011,LeonovKuznetsov2013,DudkowskiEtAl2016} &
+Libros recopilatorios
+\cite{PhamEtAl2018HiddenAttractors,PhamVolosKapitaniak2017Systems,WangKuznetsovChen2021Multistability}. \\
+¿Cómo se localizó un caso? &
+Artículo original del método y del sistema
+\cite{KuznetsovEtAl2017,Danca2017,Wu2023ArctanChua} &
+Derivación algebraica y expediente numérico del caso en este reporte. \\
+¿Qué prueba una gráfica? &
+Artículos de diagnóstico, cuencas y fronteras
+\cite{datseris2022,DazaEtAl2016BasinEntropy,DazaEtAl2015Wada} &
+Textos de caos para aprender el observable y sus hipótesis. \\
+¿Qué aporta un candidato bibliográfico? &
+Artículo que fija ecuaciones, parámetros, orden e inicialización
+\cite{Danca2017HiddenFO,munoz2018,wang2020} &
+Libro compilado para comparar familias y realizaciones. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Orden lógico: de la dinámica a la localización}
+
+Los nombres de las materias no fijan por sí solos un orden de aprendizaje.
+En particular, no conviene comenzar por exponentes de Lyapunov, atractores
+extraños o dimensión fractal sin saber antes qué son un flujo, una órbita, un
+conjunto invariante y una cuenca. La dependencia usada en este volumen es
+\[
+\begin{aligned}
+&\boxed{\text{EDO y álgebra lineal}}
+\longrightarrow
+\boxed{\text{sistemas dinámicos}}
+\longrightarrow
+\boxed{\text{topología y geometría local}}
+\\[0.55em]
+&\hspace{2.2cm}\longrightarrow
+\boxed{\text{caos y cuencas}}
+\longrightarrow
+\boxed{\text{Caputo y memoria}}
+\longrightarrow
+\boxed{\text{localización algebraico--numérica}}.
+\end{aligned}
+\]
+
+La topología y la geometría aparecen dos veces. En una primera pasada dan el
+lenguaje mínimo de proximidad, continuidad, invariancia, tangencia y
+transversalidad. En una segunda pasada proporcionan grado, continuación,
+variedades invariantes, homoclinicidad y espacios funcionales. Esa doble pasada
+evita estudiar teoría abstracta sin saber todavía qué problema dinámico debe
+resolver.
+
+\begin{longtable}{@{}L{2.2cm}L{3.2cm}L{4.7cm}L{3.3cm}@{}}
+\toprule
+Bloque & Objeto central & Qué debe poder hacer al terminar & Para qué se usa después \\
+\midrule
+\endfirsthead
+\toprule
+Bloque & Objeto central & Qué debe poder hacer al terminar & Para qué se usa después \\
+\midrule
+\endhead
+Sistemas dinámicos &
+Flujo, órbita, equilibrio y ciclo &
+Pasar de $\dot x=f(x)$ al campo, su flujo local, el jacobiano y la primera
+variación &
+Linealización, Poincaré, continuación y clasificación de destinos. \\
+Geometría y topología mínimas &
+Espacio de fases, conjuntos invariantes y cuencas &
+Reconocer tangencia, transversalidad, separatrices y cambios de coordenadas &
+Ocultedad, superficies críticas, PP y borde de cuenca. \\
+Caos &
+Recurrencia, expansión y complejidad &
+Separar acotación, recurrencia, atracción, caos y ocultedad &
+Evitar que una FFT o un exponente positivo se conviertan en una conclusión
+excesiva. \\
+Cálculo fraccionario &
+Gamma, Mittag--Leffler, Caputo y Volterra &
+Declarar orden, terminal inferior, rama compleja, datos iniciales e historia &
+Transferencia $W_q$, Matignon, ABM--PECE y continuación causal. \\
+Topología funcional &
+Estado--historia y operadores integrales &
+Distinguir cuenca funcional de cuenca de reinicio y retorno puntual de retorno
+funcional &
+FPP, continuidad con memoria y pruebas fraccionarias coherentes. \\
+Métodos de localización &
+Semillas DF, Machado, continuación, PP/FPP y borde &
+Derivar cada semilla, declarar sus hipótesis y medir su residuo &
+Banco unificado y campañas comparables. \\
+Evidencia numérica &
+Convergencia, clasificación y sondeos &
+Comparar paso, horizonte, solucionador, memoria, destino y vecindades de
+equilibrios &
+Afirmaciones limitadas y reproducibles de atracción, caos y ocultedad. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Secuencia interna obligatoria y apoyo bibliográfico opcional}
+
+\subsubsection*{Etapa 1. Campo vectorial, solución lineal y estabilidad local}
+
+\textbf{Lea primero.}
+\begin{enumerate}
+  \item \emph{Teoría geométrica de ecuaciones diferenciales I}
+        \cite{JaurezEtAl2021TGEDI}: cap.~1,
+        p.~1; cap.~3, pp.~53--80; cap.~4, pp.~93--155; cap.~6,
+        pp.~245--292.
+  \item \emph{Teoría geométrica de ecuaciones diferenciales II}
+        \cite{JaurezEtAl2021TGEDII}: cap.~8,
+        pp.~69--98; en particular existencia y unicidad, p.~73; primera
+        variación, p.~74; dependencia del dato inicial, p.~92; y
+        Grobman--Hartman para dinámica discreta, p.~94.
+  \item Si falta repaso de EDO: \emph{Métodos topológicos en el estudio de las
+        ecuaciones diferenciales no lineales}
+        \cite{Amster2021MetodosTopologicos}, apéndice A, pp.~319--327.
+  \item Para fijar la intuición antes de las pruebas: archivo
+        \texttt{Strogatz - Nonlinear Dynamics and Chaos.pdf}
+        \cite{Strogatz2015Nonlinear}, PDF~30--50 para flujo y estabilidad y
+        PDF~140--212 para sistemas lineales y plano de fases.
+\end{enumerate}
+
+\textbf{Estudie aquí.} Las definiciones de campo, flujo, órbita,
+linealización, equilibrio e hiperbolicidad en
+\cref{sec:geo-proposito}.
+
+\textbf{Resuelva.} Para un sistema lineal $\dot x=Ax$, demuestre que
+$\varphi_t(x_0)=e^{tA}x_0$ y que
+$\varphi_{t+s}=\varphi_t\circ\varphi_s$. Después calcule el jacobiano y el
+espectro del equilibrio nulo de uno de los casos enteros.
+
+\textbf{Avance cuando pueda} explicar por qué la unicidad produce la ley de
+flujo y por qué un valor propio con parte real nula impide aplicar directamente
+Hartman--Grobman.
+
+\subsubsection*{Etapa 2. Espacio de fases, topología y derivada de Lie}
+
+\textbf{Lea.} En \emph{Topología y geometría diferencial con aplicaciones a
+la física} \cite{NahmadAchar2022Topologia}: coordenadas adaptadas y curvas
+integrales, §§11.3--11.5,
+pp.~124--125; derivadas de Lie de funciones y campos, §§11.6--11.10,
+pp.~125--127; derivada de Lie de formas, §§11.12--11.14, pp.~128--130;
+ejercicios §§11.15--11.18, pp.~131--133. El índice fotografiado no muestra los
+capítulos 1--10: no se asignan páginas que no fueron verificadas.
+
+\textbf{Estudie aquí.} Espacio de fases, variedad, tangente, invariancia,
+cuenca, frontera de cuenca y cilindro del PLL en
+\cref{sec:geo-proposito}.
+
+\textbf{Resuelva.} Pruebe que $\mathbb R\times S^1$ es el espacio natural del
+PLL y escriba una distancia que identifique $\theta$ con $\theta+2\pi$.
+Calcule también $L_fV=\nabla V\cdot f$ para $V(x)=\|x\|^2/2$.
+
+\textbf{Avance cuando pueda} distinguir el dibujo de una trayectoria, la
+órbita como conjunto y el flujo como familia de aplicaciones.
+
+\subsubsection*{Etapa 3. Órbitas periódicas, Poincaré y Floquet}
+
+\textbf{Lea en este orden.}
+\begin{enumerate}
+  \item \emph{Teoría geométrica de ecuaciones diferenciales II}
+        \cite{JaurezEtAl2021TGEDII}, cap.~9:
+        rectificación y Poincaré, pp.~113--115; Floquet y monodromía,
+        pp.~121--141; Poincaré--Bendixson, p.~150; índice de Poincaré,
+        p.~155; haz tangente y campos en variedades, p.~176.
+  \item Archivo \texttt{Strogatz - Nonlinear Dynamics and Chaos.pdf}
+        \cite{Strogatz2015Nonlinear}:
+        PDF~215--260 para ciclos y Poincaré--Bendixson; PDF~261--325 para
+        bifurcaciones, Hopf, retorno y Floquet.
+\end{enumerate}
+
+\textbf{Estudie aquí.} Sección transversal, mapa de retorno, monodromía,
+multiplicadores y estabilidad orbital en \cref{sec:geo-proposito}.
+
+\textbf{Resuelva.} Ejercicios 7.3.1--7.3.3 del archivo de Strogatz
+(PDF~250--251) y 8.4.3--8.4.4 (PDF~313--314). Construya después una sección
+transversal para el PLL o MAVPD y explique qué representa un multiplicador de
+módulo mayor que uno.
+
+\textbf{Avance cuando pueda} explicar por qué un punto fijo de Poincaré
+representa una órbita periódica, no un equilibrio del campo original.
+
+\subsubsection*{Etapa 4. Grado, disparo y continuación}
+
+\textbf{Lea.} En \emph{Métodos topológicos en el estudio de las ecuaciones
+diferenciales no lineales} \cite{Amster2021MetodosTopologicos}: condiciones
+periódicas, p.~67; índice de curvas,
+pp.~74--82; método de disparo, p.~84; Brouwer y Poincaré, p.~99; cap.~3,
+grado de Brouwer, pp.~103--145; problemas, pp.~153--155.
+
+\textbf{Estudie aquí.} \Cref{sec:metodos-topologicos-existencia}: residual de
+disparo, punto fijo, grado de Brouwer, homotopía y continuación.
+
+\textbf{Resuelva.} Calcule el grado de $F(x)=x$ y de $F(x)=-x$ en la bola
+unidad. Después escriba el residual $P(z)-z$ de un mapa de retorno y enumere
+las hipótesis que faltan antes de atribuirle un grado.
+
+\textbf{Avance cuando pueda} distinguir «existe un cero» de «el cero atrae» y
+de «el atractor es oculto».
+
+\subsubsection*{Etapa 5. Caos: mecanismo, diagnóstico y cuencas}
+
+\textbf{Paso 5A: mecanismo dinámico.} Lea primero el archivo de Strogatz
+\cite{Strogatz2015Nonlinear}.
+\begin{itemize}
+  \item PDF~326--371: Lorenz y geometría del flujo;
+  \item PDF~372--421: mapas, sensibilidad y exponentes de Lyapunov;
+  \item PDF~422--445: dimensión fractal;
+  \item PDF~446--476: atractores extraños.
+\end{itemize}
+Resuelva 9.2.2--9.2.3 y 9.3.8--9.3.9 (PDF~366--368),
+10.3.7--10.3.8 y 10.5.1--10.5.4 (PDF~413--417), y 12.1.7 (PDF~472).
+
+\textbf{Paso 5B: del dibujo al diagnóstico.} En el ejemplar físico
+\emph{Exploring Chaos} \cite{Davies2004ExploringChaos}, lea puntos fijos y
+estabilidad, p.~19; órbitas numéricas frente a exactas, p.~41; Fourier,
+Lyapunov, caos y ergodicidad, pp.~44--60; bifurcaciones, pp.~65--106; y,
+antes de usar \emph{edge tracking}, sistemas bidimensionales y fronteras de
+cuenca, pp.~107--148, en especial §4.7, p.~134. Para flujos, complete con
+plano de fase, Poincaré y ecuaciones variacionales, pp.~184--193.
+
+Después use el ejemplar físico \emph{Chaos and Time-Series Analysis}
+\cite{Sprott2003ChaosTimeSeries}: flujos no caóticos, pp.~46--71; teoría de
+sistemas dinámicos, pp.~72--103; exponentes de Lyapunov, pp.~104--126;
+atractores extraños, pp.~127--158; bifurcaciones, pp.~159--183; propiedades de
+series, pp.~213--242; predicción y ruido, pp.~243--272; dimensión fractal,
+pp.~302--328. El apéndice A, pp.~417--440, es un banco de comparación, no una
+lista de atractores ocultos certificados.
+
+\textbf{Paso 5C: cuencas y mecanismo topológico.} Lea
+\textit{Alligood, Sauer \& Yorke - Chaos An Introduction to Dynamical
+Systems.pdf} \cite{AlligoodSauerYorke1996Chaos}: cuencas, PDF~146--165;
+fronteras y dimensión,
+PDF~181--209; Lyapunov y herradura, PDF~211--247; atractores y medidas,
+PDF~248--289; EDO y conjuntos límite, PDF~290--375; caos en flujos,
+PDF~376--415; variedades, homoclinicidad y crisis, PDF~416--463. Resuelva los
+\emph{Challenges} 4 (PDF~199--201), 7 (PDF~330--334), 8
+(PDF~363--364) y 10 (PDF~444--451).
+
+\textbf{Para demostraciones topológicas,} use
+\texttt{Devaney - An Introduction to Chaotic Dynamical Systems.pdf}
+\cite{Devaney1989Chaotic}:
+dinámica simbólica, conjugación y caos, PDF aprox.~29--33; homoclinicidad,
+PDF aprox.~70; atractores, hiperbolicidad y variedades invariantes,
+PDF aprox.~110--125; Hopf, PDF aprox.~129. El archivo está escaneado a dos
+páginas por hoja.
+Si prefiere continuar en papel, \emph{A First Course in Chaotic Dynamical
+Systems} es el acompañamiento físico anterior a este texto más formal. Como la
+fotografía sólo muestra el lomo, no se le asignan páginas.
+
+\textbf{Estudie aquí.} Homoclinicidad, herradura, dinámica simbólica, entropía,
+fronteras fractales y límites de los diagnósticos en
+\cref{sec:geo-proposito}.
+
+\textbf{Avance cuando pueda} separar cinco afirmaciones: acotación,
+recurrencia, atracción, caos y ocultedad. Ninguna implica automáticamente las
+otras cuatro.
+
+\subsubsection*{Etapa 6. Gamma, Mittag--Leffler, Laplace y Caputo}
+
+\textbf{Paso 6A: definiciones y límites de validez.} En el ejemplar físico
+\emph{The Fractional Calculus} \cite{OldhamSpanier1974Fractional}, lea Gamma,
+p.~16; definiciones y equivalencias, pp.~47--60; propiedades generales,
+pp.~69--94, en particular composición, p.~89, y dependencia del límite
+inferior, p.~90. Lea Laplace, p.~136, después de fijar la definición del
+operador. Esta obra da el lenguaje histórico; para el PVI causal de Caputo se
+usará Diethelm como referencia principal.
+
+\textbf{Paso 6B: cálculo guiado.} Lea en el archivo de ejercicios
+fraccionarios \cite{Oliveira2019SolvedFractional}.
+\begin{enumerate}
+  \item \texttt{Oliveira - Solved Exercises in Fractional Calculus.pdf}:
+        Gamma y funciones especiales, PDF~30--41; Mittag--Leffler,
+        PDF~81--124; Laplace, PDF~130--137; definiciones GL, RL, Caputo y
+        Hadamard, PDF~179--189.
+  \item Ejercicios de Mittag--Leffler 13--16 y 30--32: enunciados
+        PDF~142--145 y soluciones PDF~148--172.
+  \item Ejercicios RL--Caputo 12, 14, 15, 20, 25, 32, 33 y 40: enunciados
+        PDF~191--194 y soluciones PDF~197--224.
+\end{enumerate}
+
+\textbf{Paso 6C: interpretación y formulación causal.} Acompañe con
+\texttt{Herrmann - Fractional Calculus An Introduction for Physicists.pdf}
+\cite{Herrmann2014Fractional}: Gamma/Mittag--Leffler, PDF~28--35; GL y
+Riemann--Caputo, PDF~36--53; integrales, derivadas y semigrupo,
+PDF~64--89. Resuelva 3.3 (PDF~52; solución PDF~423), 5.1--5.2
+(PDF~89; soluciones PDF~428--429) y 6.1 (PDF~97; solución PDF~432).
+
+Termine con el ejemplar físico \emph{The Analysis of Fractional Differential
+Equations} \cite{Diethelm2010AnalysisFDE}: operadores RL y GL, pp.~13--47;
+definición y propiedades de Caputo, pp.~49--65; y Mittag--Leffler,
+pp.~67--73. No continúe a los sistemas antes de poder explicar por qué RL,
+GL y Caputo no son nombres intercambiables.
+
+\textbf{Estudie aquí.} Funciones especiales, integral de
+Riemann--Liouville, derivada de Caputo, transformada de Laplace y criterio de
+Matignon en \cref{sec:fundamentos}.
+
+\textbf{Avance cuando pueda} obtener
+\[
+\mathcal L\!\left\{t^{\beta-1}E_{\alpha,\beta}(\lambda t^\alpha)\right\}
+=\frac{s^{\alpha-\beta}}{s^\alpha-\lambda}
+\]
+y explicar qué datos iniciales aparecen en la transformada de Caputo.
+
+\subsubsection*{Etapa 7. Historia, Volterra y dinámica de Caputo}
+
+\textbf{Paso 7A: memoria e inicialización.}
+\begin{enumerate}
+  \item En el archivo de Herrmann \cite{Herrmann2014Fractional}: no localidad
+        y memoria, PDF~108--126;
+        ejercicio 8.1, PDF~126; solución, PDF~436.
+  \item En \texttt{Das - Kindergarten of Fractional Calculus.pdf}
+        \cite{Das2020Kindergarten}:
+        ramas complejas y cortes para $s^q$, PDF~41--47; integración RL,
+        PDF~84--93; inicialización, kernel y convolución, PDF~109 y
+        PDF~119--135; relación RL--Caputo, PDF~156--165; historia,
+        inicialización y Laplace, PDF~247--286; FDE por Laplace,
+        PDF~292--310; sistemas multivariables, PDF~333--375.
+\end{enumerate}
+
+\textbf{Paso 7B: PVI, regularidad y estabilidad.} En Diethelm
+\cite{Diethelm2010AnalysisFDE}, lea existencia, pp.~85--92; unicidad,
+pp.~93--108; perturbación de datos, pp.~109--115; regularidad,
+pp.~116--126; ecuaciones lineales, pp.~133--156; y estabilidad,
+pp.~157--166. El criterio angular de Matignon se estudia además en su artículo
+original \cite{Matignon1996}; no debe atribuirse al libro.
+
+\textbf{Paso 7C: operador integral y cálculo numérico.} En
+\emph{Métodos topológicos} \cite{Amster2021MetodosTopologicos}, lea función de
+Green, p.~229; Schauder, pp.~245--267; y Leray--Schauder, pp.~273--300.
+Para ABM fraccionario consulte el algoritmo de una ecuación en Diethelm,
+pp.~195--210, y el caso multi-término, pp.~211--228. Después contraste el
+algoritmo con el artículo predictor--corrector original
+\cite{DiethelmFordFreed2002}.
+
+\textbf{Estudie aquí.} Ecuación integral de Volterra, perfil de memoria,
+semidinámica funcional, cuenca funcional y retorno sobre historias en
+\cref{sec:geometria-topologia-caputo}.
+
+\textbf{Resuelva.} Construya dos historias $\phi_1$ y $\phi_2$ con el mismo
+valor terminal y pasados distintos. Explique por qué el mismo punto actual no
+determina necesariamente el mismo futuro. Derive además la forma de Volterra
+del PVI de Caputo.
+
+\textbf{Avance cuando pueda} explicar por qué reiniciar desde $x(t_*)$
+cambia el problema y por qué una sección puntual de Poincaré deja de ser un
+mapa de estado en general.
+
+\subsubsection*{Etapa 8. Metodología de localización}
+
+Estudie, en este orden, la forma de Lur'e y la transferencia fraccionaria
+(\cref{sec:lure_transferencia}); la función descriptiva de Machado
+(\cref{sec:machado-fdf}); integración y continuación causal
+(\cref{sec:integracion_continuacion}); puntos perpetuos
+(\cref{sec:perpetual-points}); y localización geométrico--topológica
+(\cref{sec:localizacion-geometrico-topologica}).
+
+Antes de la primera derivación de Lur'e, lea en Slotine--Li
+\cite{SlotineLi1991} estabilidad avanzada y realimentación, PDF~119--175;
+al comenzar la función descriptiva, lea PDF~176--209. Vuelva al libro sólo
+después de derivar aquí la integral de Fourier, para que la fórmula tabulada no
+reemplace el cálculo.
+
+\textbf{Lea los artículos al llegar al método correspondiente, no todos al
+principio.} Las tres carpetas de artículos proporcionadas se depuraron por
+DOI, título y revista. Los resúmenes automáticos de SciSpace, presentaciones,
+CSV y reportes internos no se emplean como literatura primaria.
+
+\begin{longtable}{@{}L{3.0cm}L{6.0cm}L{4.4cm}@{}}
+\toprule
+Pregunta de tesis & Artículos principales & Qué se toma de ellos \\
+\midrule
+\endfirsthead
+\toprule
+Pregunta de tesis & Artículos principales & Qué se toma de ellos \\
+\midrule
+\endhead
+Definición y origen &
+\cite{LeonovKuznetsovVagaitsev2011,Leonov2013HiddenAttractors,LeonovKuznetsov2013} &
+Definición operacional, distinción autoexcitado--oculto y primer mecanismo de
+localización en Chua. \\
+Función descriptiva y continuación &
+\cite{KuznetsovEtAl2017,Machado2015FDF,BarbosaMachado2002BacklashImpact} &
+Balance armónico, construcción de semilla y alcance auxiliar de la potencia
+fraccionaria de Machado. \\
+Casos fraccionarios &
+\cite{Danca2017,Wu2023ArctanChua,Danca2017HiddenFO,munoz2018,wang2020} &
+Ecuaciones, parámetros, orden, inicialización y evidencia publicada de cada
+familia; no se transfieren conclusiones entre parámetros. \\
+Puntos perpetuos &
+\cite{Prasad2015Perpetual,DudkowskiPrasadKapitaniak2017,NazarimehrSaediJafari2017} &
+Definición, uso como semilla y contraejemplos a su suficiencia. \\
+Curvas y superficies de localización &
+\cite{GilmoreEtAl2010Connecting,GuanXie2021Connecting,GodaraEtAl2018CriticalSurfaces} &
+Objetos geométricos que generan semillas; no certifican por sí solos la
+atracción ni la ocultedad. \\
+Cuencas y fronteras &
+\cite{datseris2022,DazaEtAl2016BasinEntropy,DazaEtAl2015Wada} &
+Clasificación finita, incertidumbre y pruebas de frontera bajo dominio y
+resolución declarados. \\
+Síntesis del campo &
+\cite{DudkowskiEtAl2016,GuanXie2025} &
+Taxonomía y comparación de métodos; para un caso se vuelve siempre al artículo
+original. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Uso de los libros compilados.} Para clasificar familias, consulte
+primero \emph{Systems with Hidden Attractors}
+\cite{PhamVolosKapitaniak2017Systems}: equilibrios estables, pp.~21--35;
+infinitos equilibrios, pp.~37--50; sin equilibrios, pp.~51--63; y circuitos,
+pp.~79--102. Use después \emph{Nonlinear Dynamical Systems with Self-Excited
+and Hidden Attractors} \cite{PhamEtAl2018HiddenAttractors} como catálogo
+amplio, y el capítulo fraccionario, pp.~199--238, de
+\emph{Chaotic Systems with Multistability and Hidden Attractors}
+\cite{WangKuznetsovChen2021Multistability}. De cada capítulo elegido extraiga
+su referencia original y complete la ficha de ecuaciones, parámetros, orden,
+condición inicial y prueba de cuenca antes de incorporarlo como candidato.
+
+\textbf{Resuelva antes de pasar a los casos.}
+\begin{enumerate}
+  \item Derive $W_q(s)=c^{\mathsf T}(s^qI-A)^{-1}b$ y declare la rama de
+        $s^q$.
+  \item Obtenga una función descriptiva desde su integral de Fourier; no
+        empiece por la fórmula final.
+  \item Demuestre por qué $Df(p)f(p)=0$ define un punto perpetuo entero y por
+        qué no puede interpretarse como una regla de cadena de Caputo.
+  \item Dibuje, en un mismo esquema, semillas de función descriptiva,
+        Machado, continuación, PP/FPP y borde de cuenca.
+\end{enumerate}
+
+\textbf{Puente entre la teoría estudiada y cada método.}
+\begin{longtable}{@{}L{3.0cm}L{3.6cm}L{3.9cm}L{2.8cm}@{}}
+\toprule
+Método & Desarrollo algebraico indispensable & Desarrollo dinámico o geométrico & Prueba numérica mínima \\
+\midrule
+\endfirsthead
+\toprule
+Método & Desarrollo algebraico indispensable & Desarrollo dinámico o geométrico & Prueba numérica mínima \\
+\midrule
+\endhead
+DF centrada, sesgada y Machado &
+Realización de Lur'e, resolvente, integral de Fourier, rama de potencia y cierre
+DC--fundamental &
+Interpretar la solución como predictor de semilla, no como prueba de atractor &
+Residuo del cierre, ramas, simetría e integración desde la semilla. \\
+Continuación &
+Familia $f_\lambda$, parametrización y condición inicial transportada &
+Persistencia local y pérdida posible de una rama o de su estabilidad &
+Malla en $\lambda$, paso refinado y misma historia causal. \\
+PP y FPP &
+$Df(p)f(p)=0$, $f(p)\ne0$, singularidad de $Df$ y expansión Picard--Caputo &
+Covariancia afín, región suave y diferencia entre punto y evento con historia &
+Residuo escalado, perturbaciones y destino con memoria completa. \\
+Semillas geométricas y borde &
+Superficies críticas, curvas conectantes y distancias escaladas &
+Cuencas, separatrices, métrica cilíndrica y posible tercer destino &
+Clasificador calibrado, tres brackets y dos solucionadores. \\
+Caos y ocultedad &
+Equilibrios, jacobianos, espectros y regiones de sondeo &
+Atracción, recurrencia y exclusión de contacto con vecindades de todos los
+equilibrios &
+Convergencia de observables, controles negativos y radios predeclarados. \\
+\bottomrule
+\end{longtable}
+
+\subsubsection*{Etapa 9. Casos, resultados y campaña dinámica}
+
+No lea un caso como una sucesión de gráficas. Use tres pasadas, siempre en el
+mismo orden:
+\begin{enumerate}
+  \item \textbf{Pasada algebraica:} escriba el campo, calcule equilibrios,
+        jacobiano, polinomio característico, simetrías, realización, transferencia
+        y ecuaciones de semilla que correspondan.
+  \item \textbf{Pasada numérica:} declare solucionador, paso, horizonte,
+        tolerancias, escala, transitorio y clasificador; para Caputo añada orden,
+        terminal inferior, inicialización e historia completa.
+  \item \textbf{Pasada de evidencia:} identifique destino, convergencia entre
+        presupuestos, recurrencia, diagnóstico de caos, sondeos de cuenca y
+        alcance exacto de la conclusión.
+\end{enumerate}
+
+Lea primero los enteros: Chua, Kalman--Fitts, MAVPD y PLL. Sólo después lea los
+fraccionarios: Chua no suave, Chua arctangente, Lorenz generalizado y
+Rabinovich--Fabrikant. Para cada sistema complete una ficha con siete renglones:
+espacio de fases, equilibrios, estabilidad local, ruta de semilla, contrato de
+integración, destino observado y alcance de la prueba de cuenca. Termine con los
+protocolos y la campaña TG0--TG8.
+
+\textbf{Compuerta antes de aceptar un resultado.} Debe poder reproducir los
+residuos algebraicos; explicar por qué la semilla es sólo un punto de partida;
+mostrar estabilidad del destino al refinar el cálculo; y distinguir una prueba
+finita de vecindades de una afirmación global sobre la cuenca.
+
+\textbf{Pregunta de control.} Si una trayectoria tiene exponente de Lyapunov
+positivo, ¿qué falta para afirmar que su conjunto límite es un atractor oculto?
+La respuesta debe mencionar atracción, robustez numérica y vecindades de todos
+los equilibrios.
+
+\subsubsection*{Etapa 10. Profundización; no es prerrequisito}
+
+\begin{itemize}
+  \item \emph{Topología y geometría diferencial con aplicaciones a la
+        física}: conexiones, pp.~135--142; geodésicas, pp.~143--149;
+        torsión y curvatura, pp.~151--165; métrica pseudo-riemanniana,
+        pp.~165--186; variedades simplécticas, p.~194.
+  \item \emph{Teoría geométrica de ecuaciones diferenciales II}: formas
+        normales y bifurcaciones, pp.~185--244.
+  \item \textit{Guckenheimer \& Holmes - Nonlinear Oscillations Dynamical
+        Systems and Bifurcations.pdf} \cite{GuckenheimerHolmes1983}: flujo e
+        invariancia, PDF aprox.~6--39;
+        variedad central y formas normales, PDF aprox.~65--89; promediación y
+        Melnikov, PDF aprox.~90--119; herradura y entropía,
+        PDF aprox.~120--149; Lorenz, Shilnikov y conexiones globales,
+        PDF aprox.~150--184.
+  \item \texttt{Hilborn - Chaos and Nonlinear Dynamics.pdf}
+        \cite{Hilborn2000Chaos}: Poincaré y
+        bifurcaciones, PDF aprox.~38--60; homoclinicidad, herradura y
+        Lyapunov, PDF aprox.~61--80; entropía, dimensiones y reconstrucción,
+        PDF aprox.~162--220.
+  \item En Diethelm \cite{Diethelm2010AnalysisFDE}: ecuaciones multi-término,
+        pp.~167--186, sólo después de dominar el caso conmensurable.
+  \item En Oldham--Spanier \cite{OldhamSpanier1974Fractional}:
+        semiderivadas, pp.~120--132; técnicas numéricas y series,
+        pp.~148--164; ecuación de Abel, p.~192; difusión, pp.~207--218.
+\end{itemize}
+
+\subsection{Qué función cumple cada archivo restante}
+
+\begin{longtable}{@{}L{5.3cm}L{8.3cm}@{}}
+\toprule
+Archivo & Cuándo consultarlo \\
+\midrule
+\endfirsthead
+\toprule
+Archivo & Cuándo consultarlo \\
+\midrule
+\endhead
+\texttt{Falconer - Fractal Geometry Mathematical Foundations.pdf}
+\cite{Falconer2014Fractal} &
+Después de estudiar fronteras de cuenca: dimensión de caja, PDF~59--75;
+Hausdorff, PDF~76--97; cálculo de dimensiones, PDF~98--114; sistemas
+dinámicos, PDF~238--264. \\
+\texttt{Falconer - Fractal Geometry (Solution Manual).pdf} &
+Sólo después de intentar el texto: soluciones 1--3, PDF~1--21; 4--8,
+PDF~22--39; 9--13, PDF~40--71; 14--18, PDF~72--95. \\
+\texttt{Barnsley - Fractals Everywhere.pdf} &
+Después de Falconer si se requieren IFS: métricas y topología, PDF~12--48;
+contracciones, PDF~49--129; dinámica, PDF~130--185; dimensión,
+PDF~186--219. \\
+\texttt{Barnsley - SuperFractals.pdf} &
+Futuro: topología, PDF~19--99; transformaciones, PDF~100--200; semigrupos,
+PDF~201--323; atractores IFS, PDF~324--395. \\
+\texttt{Lorenz - The Essence of Chaos.pdf} &
+Después de Strogatz: panorama, PDF~9--30; historia y atractor,
+PDF~116--165; excursiones matemáticas, PDF~188--207. \\
+\texttt{Mandelbrot - La Geometria Fractal de la Naturaleza (Espanol).pdf} &
+Consulta visual: índice, PDF~7--9; dimensión, PDF~33; atractores fractales,
+PDF~277; Browniano fraccionario desde PDF~367. Para pruebas use Falconer. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Ejemplares físicos y páginas verificadas}
+
+Cuatro títulos de la fotografía no tienen copia en las dos carpetas locales.
+Sus intervalos se verificaron en índices editoriales; por ello, en las etapas
+5--7 se usa la página \emph{impresa}, no la página de un visor:
+
+\begin{center}
+\begin{tabularx}{0.97\linewidth}{@{}L{4.8cm}L{3.2cm}Y@{}}
+\toprule
+Ejemplar sin PDF local & Etapa & Lectura inicial \\
+\midrule
+\emph{Exploring Chaos} \cite{Davies2004ExploringChaos} &
+5 & pp.~19, 41--60 y 107--148. \\
+\emph{Chaos and Time-Series Analysis} \cite{Sprott2003ChaosTimeSeries} &
+5 & pp.~46--183 y 213--272. \\
+\emph{The Fractional Calculus} \cite{OldhamSpanier1974Fractional} &
+6 & pp.~16, 47--60, 69--94 y 136. \\
+\emph{The Analysis of Fractional Differential Equations}
+\cite{Diethelm2010AnalysisFDE} &
+6--7 & pp.~13--73, 85--126, 133--166 y 195--228. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Los ejemplares físicos de Strogatz y Devaney sí tienen copia PDF local y se
+leen mediante los intervalos de visor indicados arriba. \emph{A First Course in
+Chaotic Dynamical Systems} también está en papel y en Drive, pero se conserva
+como acompañamiento; la secuencia principal ya queda cubierta por Strogatz,
+Alligood y el texto avanzado de Devaney.
+
+\subsection{Límites bibliográficos que no deben confundirse con resultados}
+
+Los tres PDF locales de cálculo fraccionario no derivan el criterio de
+Matignon ni el esquema ABM--PECE. Esos resultados se justifican con sus fuentes
+específicas en el cuerpo matemático del reporte. El cap.~9 del archivo de Das,
+dedicado a variantes modificadas de cálculo fraccionario, queda fuera de la
+ruta Caputo. Del mismo modo, los textos de fractales no sustituyen la teoría de
+flujos, cuencas, estabilidad o bifurcación.

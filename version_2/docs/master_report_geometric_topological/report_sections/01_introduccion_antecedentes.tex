@@ -1,0 +1,176 @@
+\section{Introducción}
+\label{sec:introduccion}
+
+Un atractor \(\mathcal A\) se denomina \emph{autoexcitado} cuando su cuenca de
+atracción intersecta una vecindad de, al menos, un punto de equilibrio. En ese
+caso es posible iniciar una trayectoria cerca del equilibrio, descartar el
+transitorio y observar cómo la trayectoria se aproxima al atractor. Un
+atractor se denomina \emph{oculto} cuando su cuenca permanece separada de
+vecindades suficientemente pequeñas de todos los equilibrios
+\cite{LeonovKuznetsov2013,KuznetsovEtAl2017}. La palabra ``oculto'' describe,
+por tanto, una propiedad de la cuenca: el procedimiento habitual de comenzar
+cerca de un equilibrio no proporciona directamente una condición inicial que
+alcance el atractor.
+
+La dificultad de localización tiene dos partes. Primero debe encontrarse una
+semilla dentro de una región de la cuenca cuya posición se desconoce. Después
+debe estudiarse el destino de condiciones iniciales próximas a todos los
+equilibrios. La primera parte es un problema de búsqueda; la segunda es un
+problema de clasificación de cuencas. Cuando coexisten varios destinos, la
+cuenca buscada puede ser estrecha, estar alejada de los equilibrios o presentar
+fronteras complejas. Una estrategia de prueba y error depende fuertemente de
+las condiciones iniciales elegidas y no indica cómo repetir la búsqueda en
+otro conjunto de parámetros.
+
+En un sistema de orden fraccionario aparece una dificultad adicional. Para una
+derivada de Caputo, el valor de \(X(t)\) depende de la historia calculada desde
+el instante inicial \(t_0\). La condición inicial, el orden \(q\), el paso de
+integración, el horizonte temporal y la política de memoria forman parte del
+problema dinámico. Reiniciar una continuación utilizando solamente el último
+vector de estado cambia la historia y, por ello, cambia el problema de valor
+inicial. El orden \(q\) también modifica la estabilidad local: la condición
+usual \(\Re\lambda<0\) se sustituye por el criterio angular de Matignon
+\cite{Matignon1996}.
+
+Este reporte desarrolla dos rutas complementarias:
+
+\begin{enumerate}
+  \item para el Chua no suave, la semilla se obtiene mediante una función
+  descriptiva sesgada y se transporta con una continuación causal que conserva
+  una sola historia de Caputo;
+  \item para el Chua con arctangente, los parámetros se exploran primero en
+  orden entero y la condición inicial se refina después mediante problemas de
+  valor inicial de Caputo independientes.
+\end{enumerate}
+
+En ambos casos, los sondeos de cuenca comienzan en el mismo instante de memoria.
+El caso no suave conserva la regla de completar el primer radio con contactos.
+En \texttt{c590} se añadió una auditoría macroscópica en \(r=2\) después del
+primer contacto observado en \(r=1\). El mayor radio local sin contactos y los
+bloques macroscópicos se reportan por separado. El alcance \emph{local} se fija
+por el contrato predeclarado. Los cálculos cubren radios, geometrías,
+cantidades de muestras y horizontes declarados. Una caracterización global
+exigiría describir la cuenca completa en un dominio no acotado y con resolución
+arbitrariamente fina, tarea que es especialmente costosa cuando cada
+trayectoria de Caputo acumula toda su historia.
+
+\section{Antecedentes y métodos de referencia}
+\label{sec:antecedentes}
+
+\subsection{Leonov y Kuznetsov: método en orden entero}
+
+Leonov, Kuznetsov y colaboradores formularon un procedimiento
+analítico--numérico para localizar atractores ocultos en sistemas tipo Lur'e
+\cite{LeonovKuznetsov2013,KuznetsovEtAl2017}. El procedimiento entero puede
+resumirse en cuatro operaciones:
+
+\begin{enumerate}
+  \item separar el sistema en un bloque lineal y una no linealidad escalar;
+  \item aproximar la respuesta de la no linealidad por su componente
+  fundamental y resolver una condición de balance armónico;
+  \item construir una condición inicial a partir del modo oscilatorio del
+  sistema lineal auxiliar;
+  \item transportar esa condición inicial, mediante continuación, hasta el
+  sistema no lineal original.
+\end{enumerate}
+
+La función descriptiva determina una frecuencia, una ganancia equivalente y
+una amplitud. Esos valores se utilizan para construir la semilla. La
+clasificación del atractor se obtiene posteriormente al estudiar la cuenca
+alrededor de los equilibrios. Esta separación entre \emph{localización} y
+\emph{clasificación de cuenca} se conserva en toda la metodología propuesta.
+
+\subsection{Danca: Chua fraccionario no suave}
+
+Danca estudió atractores ocultos en varios sistemas fraccionarios, incluido un
+sistema de Chua con saturación \cite{Danca2017}. El artículo usa derivadas
+de Caputo de orden conmensurable, clasifica los equilibrios mediante Matignon e integra
+el problema con un predictor--corrector Adams--Bashforth--Moulton. Para el
+ejemplo de Chua se reportan
+\[
+q=0.9998,\qquad
+(\alpha,\beta,\gamma)=(8.4562,12.0732,0.0052),\qquad
+(m_0,m_1)=(-0.1768,-1.1468).
+\]
+La verificación descrita en la referencia usa 200 trayectorias alrededor de un
+equilibrio externo con radio \(\delta=0.01\) y emplea la simetría para el
+equilibrio opuesto.
+
+La reconstrucción realizada en este trabajo conserva la ecuación, los
+parámetros, el orden y el integrador de la referencia. El artículo no
+proporciona la condición inicial exacta de la figura del atractor ni los
+valores intermedios de la construcción armónica
+\((\omega_0,k,A_0)\). Por ello, la reconstrucción utiliza la semilla obtenida
+al aplicar el cierre armónico entero a los parámetros publicados y declara
+esta elección de manera explícita. La ruta propuesta usa los mismos parámetros
+nominales, pero calcula una nueva semilla sesgada y aplica una continuación
+compatible con la memoria de Caputo.
+
+\subsection{Wu et al.: Chua fraccionario con arctangente}
+
+Wu et al. propusieron un sistema de Chua fraccionario con no linealidad
+arctangente \cite{Wu2023ArctanChua}. La referencia emplea una función
+descriptiva, una recurrencia local de descomposición de Adomian y las
+condiciones iniciales opuestas
+\[
+X_{0,+}=(13.8,\;0.7093,\;-19.8768)^{\T},
+\qquad X_{0,-}=-X_{0,+}.
+\]
+Los parámetros publicados se expresan mediante
+\[
+h(x)=mx+(n-m)\arctan(x),\qquad
+m=0.4,\qquad n=-1.1585,
+\]
+de modo que, en la notación empleada aquí,
+\[
+a_1=0.4,\qquad a_2=n-m=-1.5585,\qquad \rho=1,\qquad q=0.99.
+\]
+
+La reconstrucción bibliográfica reproduce la recurrencia ADM local y las dos
+condiciones iniciales publicadas. La ruta propuesta para el sistema con
+arctangente es independiente: explora un dominio acotado de parámetros en
+\(q=1\), selecciona un caso mediante reglas reproducibles y refina la semilla
+con problemas de Caputo de memoria completa.
+
+\subsection{Relación entre las tres referencias}
+
+Las referencias cumplen funciones diferentes dentro del estudio:
+
+\begin{table}[H]
+\centering
+\caption{Papel de los trabajos de referencia en la metodología.}
+\label{tab:papel_referencias}
+\begin{tabularx}{\linewidth}{L{0.22\linewidth}Y Y}
+\toprule
+Referencia & Elemento recuperado & Uso en este reporte\\
+\midrule
+Leonov--Kuznetsov
+& Función descriptiva, construcción modal y continuación en \(q=1\)
+& Caso límite y fundamento de la ruta de localización\\
+Danca
+& Chua no suave, Caputo, Matignon y ABM
+& Reconstrucción bibliográfica y sistema base de la ruta sesgada\\
+Wu et al.
+& Chua con arctangente, condiciones iniciales y ADM local
+& Reconstrucción bibliográfica y comparación con la ruta independiente
+\texttt{c590}\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+La jerarquía bibliográfica del resto del reporte es deliberada. La definición,
+la localización y los parámetros de cada atractor se atribuyen a artículos de
+investigación
+\cite{LeonovKuznetsovVagaitsev2011,Leonov2013HiddenAttractors,Danca2017,KuznetsovEtAl2017,Wu2023ArctanChua};
+los métodos geométricos se remiten también a sus trabajos originales
+\cite{DudkowskiPrasadKapitaniak2017,GuanXie2021Connecting,GodaraEtAl2018CriticalSurfaces}.
+Los libros compilados
+\cite{PhamEtAl2018HiddenAttractors,PhamVolosKapitaniak2017Systems,WangKuznetsovChen2021Multistability}
+se usan para ordenar familias y encontrar antecedentes. Ningún parámetro,
+condición inicial o reclamo de ocultedad se sostiene únicamente en un capítulo
+recopilatorio o en un resumen automático.
+
+El orden lógico del reporte sigue esa separación: primero se definen los
+sistemas y los fundamentos; después se derivan las ecuaciones comunes; luego
+se describen los protocolos bibliográficos y las dos rutas propuestas; por
+último se comparan los resultados obtenidos.

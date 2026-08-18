@@ -1,0 +1,320 @@
+\section{Criterio de selección}
+\label{sec:candidate-selection}
+
+La selección cruzó el catálogo de sistemas, los manifiestos de validación, el
+manuscrito metodológico y las fuentes bibliográficas primarias. Se priorizaron
+sistemas que cumplen simultáneamente:
+
+\begin{enumerate}
+ \item derivada ordinaria o Caputo conmensurable \(q\in(0,1]\);
+ \item ecuaciones, parámetros, orden e iniciales publicados;
+ \item no linealidades representables por D0, T1, A1 o M1;
+ \item un reclamo publicado de atractor oculto, cuenca o coexistencia;
+ \item tamaño compatible con ABM de memoria completa y una reproducción
+ independiente;
+ \item valor científico como prueba de una parte aún no cerrada del método.
+\end{enumerate}
+
+Se excluyen del carril actual sistemas incommensurables, Caputo--Fabrizio,
+Atangana--Baleanu, retardados, discretos o complejos. No son imposibles, pero
+su símbolo de transferencia, su condición de estabilidad y su contrato de
+memoria no son intercambiables con Caputo conmensurable.
+
+\section{Prioridad 1: sistema fraccionario sin equilibrio de Muñoz--Pacheco}
+\label{sec:cand-munoz}
+
+La fuente primaria \cite{munoz2018} propone
+\begin{equation}
+\begin{aligned}
+ {}^{\mathrm C}D^q x&=yz+x(y-a),\\
+ {}^{\mathrm C}D^q y&=1-|x|,\\
+ {}^{\mathrm C}D^q z&=-xy-z.
+\end{aligned}
+\label{eq:cand-munoz}
+\end{equation}
+Para \(a=0.35,q=0.97\), publica un atractor caótico desde
+\((1,1,1)\). Para \(a=0.35,q=0.996\), publica coexistencia de un candidato
+caótico desde \((1,1,1)\) y uno periódico desde \((0,75,-50)\), junto con un
+corte de cuenca. Esto lo convierte en el candidato fraccionario no Chua más
+completo encontrado.
+
+\subsection{Realización M1 exacta}
+
+Con \(X=(x,y,z)^{\mathsf T}\),
+\[
+ \Phi(X)=(yz,xy,|x|)^{\mathsf T},
+\]
+se tiene
+\begin{equation}
+ {}^{\mathrm C}D^qX=A X+d+B\Phi(X),
+ \label{eq:cand-munoz-mimo}
+\end{equation}
+donde
+\begin{equation}
+ A=\begin{pmatrix}
+ -a&0&0\\0&0&0\\0&0&-1
+ \end{pmatrix},\quad
+ d=\begin{pmatrix}0\\1\\0\end{pmatrix},\quad
+ B=\begin{pmatrix}
+ 1&1&0\\
+ 0&0&-1\\
+ 0&-1&0
+ \end{pmatrix}.
+ \label{eq:cand-munoz-matrices}
+\end{equation}
+La multiplicación da
+\[
+ AX+d+B\Phi=
+ \begin{pmatrix}
+ -ax+yz+xy\\1-|x|\\-z-xy
+ \end{pmatrix},
+\]
+idéntica a \cref{eq:cand-munoz}. Wolfram devolvió el residual
+\(\{0,0,0\}\).
+
+Con \(C=I\) y \(z_f=s^q\), la matriz de transferencia es especialmente simple:
+\begin{equation}
+ W(z_f)=(z_fI-A)^{-1}B
+ =\begin{pmatrix}
+ \dfrac1{z_f+a}&\dfrac1{z_f+a}&0\\[0.8em]
+ 0&0&-\dfrac1{z_f}\\[0.8em]
+ 0&-\dfrac1{z_f+1}&0
+ \end{pmatrix}.
+ \label{eq:cand-munoz-transfer}
+\end{equation}
+El término constante \(d\) obliga a resolver el balance DC; los productos
+cuadráticos generan segundo armónico y \(|x|\) exige cuadratura PWA exacta o
+una homotopía suavizada. El cierre mínimo es M1 con \(H\ge2\).
+
+\subsection{Demostración completa de ausencia de equilibrios}
+
+En equilibrio, la segunda ecuación exige \(|x|=1\), de modo que
+\(x=\pm1\neq0\). La tercera da
+\[
+ z=-xy.
+\]
+Al sustituir en la primera,
+\[
+ 0=y(-xy)+x(y-a)
+ =x(-y^2+y-a).
+\]
+Como \(x\neq0\), debe cumplirse
+\begin{equation}
+ y^2-y+a=0.
+ \label{eq:cand-munoz-equilibrium}
+\end{equation}
+Su discriminante es
+\[
+ \Delta_y=1-4a.
+\]
+Para \(a=0.35\), \(\Delta_y=-0.4<0\); por tanto, no existe equilibrio real.
+Wolfram confirmó \texttt{Reduce[...,Reals]=False}. Bajo la definición usual,
+cualquier atractor del sistema es oculto por ausencia de equilibrios. Aun así,
+deben reproducirse recurrencia y caos: la ausencia de equilibrios no transforma
+una trayectoria transitoria o divergente en atractor.
+
+Para \(x\neq0\), el Jacobiano regional es
+\begin{equation}
+ J(X)=
+ \begin{pmatrix}
+ y-a&z+x&y\\
+ -\operatorname{sign}(x)&0&0\\
+ -y&-x&-1
+ \end{pmatrix}.
+ \label{eq:cand-munoz-jacobian}
+\end{equation}
+No se aplica Matignon en equilibrios porque éstos no existen. La validación
+debe concentrarse en el integrador nonsuave, la coexistencia y la robustez de
+los diagnósticos.
+
+\begin{proposalbox}
+\textbf{Plan L0--L6.} Congelar \(a=0.35\), \(q=0.97\) y \(q=0.996\), las dos
+iniciales y el convenio de \(|x|\); derivar coeficientes M1; resolver \(H=2,3,4\)
+y controlar \(\eta_H\); continuar una semilla; integrar Caputo con memoria
+completa; reproducir la cuenca \(x=0\); comparar ABM con otro integrador. Como
+no hay equilibrios, L5 se sustituye por exploración de cuenca, coexistencia y
+frontera de divergencia.
+\end{proposalbox}
+
+\section{Prioridad 2: jerk cuadrático entero con equilibrio estable}
+\label{sec:cand-jerk}
+
+Liu, Sang, Wang y Ahmad \cite{liu2021} estudian
+\begin{equation}
+ \dot x=y,\qquad
+ \dot y=z,\qquad
+ \dot z=-x-y-1.1z-2.59z^2+xy.
+ \label{eq:cand-jerk}
+\end{equation}
+La fuente reporta un atractor caótico oculto desde
+\((0,-1.5,0)\), además de cortes de cuenca y una realización de circuito.
+
+\subsection{Parte lineal, equilibrio y estabilidad}
+
+Con \(X=(x,y,z)^{\mathsf T}\),
+\begin{equation}
+ A=\begin{pmatrix}
+ 0&1&0\\0&0&1\\-1&-1&-1.1
+ \end{pmatrix}.
+ \label{eq:cand-jerk-A}
+\end{equation}
+Las dos primeras ecuaciones de equilibrio dan \(y=z=0\); la tercera da
+\(x=0\). El origen es el único equilibrio. Su polinomio característico es
+\begin{equation}
+ p(s)=s^3+1.1s^2+s+1.
+ \label{eq:cand-jerk-charpoly}
+\end{equation}
+El criterio de Routh--Hurwitz para un cúbico exige coeficientes positivos y
+\(1.1\cdot1>1\), ambas condiciones satisfechas. El equilibrio único es
+asintóticamente estable. Un atractor coexistente no puede localizarse
+siguiendo la variedad inestable del origen y, si su cuenca está separada de una
+vecindad del mismo, es oculto.
+
+\subsection{Realización M1 y obstrucción escalar}
+
+Definimos
+\[
+ \Phi(X)=(xy,z^2)^{\mathsf T},\qquad
+ B=\begin{pmatrix}0&0\\0&0\\1&-2.59\end{pmatrix}.
+\]
+Entonces
+\[
+ AX+B\Phi(X)=
+ (y,z,-x-y-1.1z+xy-2.59z^2)^{\mathsf T},
+\]
+y Wolfram devuelve residual nulo.
+
+Aunque los dos canales actúan en la dirección \(e_3\), no pueden reducirse a
+una no linealidad cuadrática de un único observable. Para
+\[
+ Q(x,y,z)=xy-2.59z^2
+\]
+se tiene
+\begin{equation}
+ \nabla^2Q=
+ \begin{pmatrix}
+ 0&1&0\\1&0&0\\0&0&-5.18
+ \end{pmatrix},
+ \qquad \operatorname{rank}\nabla^2Q=3.
+ \label{eq:cand-jerk-hessian}
+\end{equation}
+En cambio, \(Q=\kappa(r^{\mathsf T}X)^2\) implicaría
+\(\nabla^2Q=2\kappa rr^{\mathsf T}\), de rango a lo sumo uno. Esto falsifica
+D0 y justifica M1.
+
+Como ambas entradas llegan al último estado, la transferencia es
+\begin{equation}
+ W(s)=\frac1{p(s)}
+ \begin{pmatrix}
+ 1&-2.59\\
+ s&-2.59s\\
+ s^2&-2.59s^2
+ \end{pmatrix}.
+ \label{eq:cand-jerk-transfer}
+\end{equation}
+Los términos cuadráticos requieren DC y segundo armónico. Este sistema es,
+por tanto, el primer banco entero recomendado para demostrar que M1 añade
+capacidad real sobre los casos escalares ya cerrados.
+
+\section{Prioridad 3: sistema Liu extendido fraccionario}
+\label{sec:cand-extended-liu}
+
+La fuente \cite{wang2020} usa
+\begin{equation}
+\begin{aligned}
+ {}^{\mathrm C}D^q x&=a(y-x),\\
+ {}^{\mathrm C}D^q y&=bx-kxz+d\,\operatorname{sign}(w)+m,\\
+ {}^{\mathrm C}D^q z&=-cz+hx^2,\\
+ {}^{\mathrm C}D^q w&=-gy.
+\end{aligned}
+\label{eq:cand-liu}
+\end{equation}
+Una realización exacta usa
+\[
+ \Phi=(xz,x^2,\operatorname{sign}w)^{\mathsf T},
+\]
+\[
+ A=\begin{pmatrix}
+ -a&a&0&0\\ b&0&0&0\\0&0&-c&0\\0&-g&0&0
+ \end{pmatrix},\quad
+ d_0=(0,m,0,0)^{\mathsf T},
+\]
+\[
+ B=\begin{pmatrix}
+ 0&0&0\\-k&0&d\\0&h&0\\0&0&0
+ \end{pmatrix}.
+\]
+Wolfram confirmó el residual nulo.
+
+Para \(a=10,b=40,c=2.5,k=1,h=4,g=5,d=m=20\), las ecuaciones de equilibrio
+dan sucesivamente \(y=x\), \(y=0\), \(x=0\), \(z=0\), y
+\[
+ 20\,\operatorname{sign}(w)+20=0.
+\]
+Con \(\operatorname{sign}(0)=0\), la solución es la semirrecta
+\begin{equation}
+ x=y=z=0,\qquad w<0,
+ \label{eq:cand-liu-equilibria}
+\end{equation}
+no un sistema sin equilibrios. Antes de promover el caso deben congelarse
+\(q\), la rama dinámica, las iniciales, la convención en \(w=0\) y el protocolo
+para una variedad continua de equilibrios.
+
+\section{Cola interna y controles}
+\label{sec:candidate-queue}
+
+\begin{longtable}{@{}L{0.23\linewidth}L{0.20\linewidth}L{0.24\linewidth}L{0.25\linewidth}@{}}
+\caption{Portafolio compatible y requisito de promoción.}
+\label{tab:candidate-portfolio}\\
+\toprule
+Familia & Ruta estructural & Activo disponible & Falta decisiva\\
+\midrule
+\endfirsthead
+\toprule
+Familia & Ruta estructural & Activo disponible & Falta decisiva\\
+\midrule
+\endhead
+Leonov--Kuznetsov (162) & D0+A1 & Ecuaciones y semilla parciales &
+Congelar característica PWA y criterio por etapa.\\
+Genesio--Tesi & D0 sesgado, \(H\ge2\) & Realización
+\(\psi(x)=x^2\) & Parámetros, iniciales y manifiesto L0 congelados.\\
+Jerk con seno hiperbólico & D0, DF con \(I_1\) & Derivación simbólica &
+Resolver ambigüedad de fuente \(\sinh\) frente a función inversa.\\
+Oscilador memristivo & T1 sobre variedad & Cierre cúbico sesgado &
+Constante de la variedad, parámetros e iniciales.\\
+Jerk PWA & D0 PWA & Estructura tipo Chua & Congelar fuente; usar como control
+de generalización, no como familia distante.\\
+Fischer jerk exponencial & D0 con DC & Parámetros y diagnóstico &
+Control bibliográfico/Lyapunov; clasificación de cuenca no reproducida
+localmente.\\
+Lorenz generalizado & M1, \(H\ge2\) & Álgebra completa de este reporte &
+Raíz armónica, continuación, integración y cuenca.\\
+Rabinovich--Fabrikant & M1, \(H\ge3\) & Álgebra completa de este reporte &
+Raíz armónica, continuación, integración y cuenca.\\
+Sistema financiero Fischer & M1+PWA & Banco Lyapunov & Resolver discrepancias
+y separar del modelo financiero del manuscrito.\\
+Four-wing Fischer & M1 cuadrático & Banco Lyapunov & Semilla y búsqueda de
+ocultamiento inexistentes.\\
+Debbouche fraccionario & M1+signo & DOI y parámetros parciales
+\cite{debbouche2021} & Congelar ecuaciones, órdenes e iniciales de una rama.\\
+\bottomrule
+\end{longtable}
+
+\section{Orden recomendado de ejecución}
+\label{sec:candidate-order}
+
+\begin{enumerate}
+ \item ejecutar primero el jerk cuadrático entero: elimina el costo de memoria
+ fraccionaria y prueba de forma limpia el salto D0 \(\to\) M1;
+ \item ejecutar después el sistema de Muñoz--Pacheco: prueba M1, nonsuavidad,
+ Caputo y coexistencia, con ecuaciones e iniciales publicadas;
+ \item resolver el balance multiharmónico de Lorenz generalizado y RF usando
+ las realizaciones ya auditadas, sin prometer ocultedad hasta L5;
+ \item cerrar Genesio--Tesi como control escalar sesgado;
+ \item dejar Liu extendido y Debbouche para una segunda ola, porque las
+ variedades de equilibrio y el signo introducen contratos adicionales.
+\end{enumerate}
+
+Esta secuencia maximiza información científica por costo: primero falsifica o
+confirma la extensión M1 en ODE, luego añade memoria Caputo y nonsuavidad, y
+sólo después aborda los casos bibliográficos cuya semilla no está publicada.

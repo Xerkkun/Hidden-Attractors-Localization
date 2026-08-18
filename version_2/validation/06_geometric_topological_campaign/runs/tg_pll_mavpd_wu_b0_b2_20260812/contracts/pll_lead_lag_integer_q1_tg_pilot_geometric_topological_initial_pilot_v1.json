@@ -1,0 +1,92 @@
+{
+  "case_id": "pll_lead_lag_integer_q1_tg_pilot",
+  "system_id": "pll-lead-lag-2015",
+  "parameter_set_id": "pll_bianchi2015",
+  "order_kind": "integer",
+  "q": 1.0,
+  "parameters": {
+    "tau1": 0.0448,
+    "tau2": 0.0185,
+    "loop_gain": 500.0,
+    "omega_delta": 178.9
+  },
+  "tau_star": 0.0073247672,
+  "tau_star_basis": "minimum of inverse maximum nonzero spectral rate and the predeclared-bank scaled crossing time; the PLL perpetual-point crossing time is active",
+  "coordinate_scale": [
+    0.0224,
+    3.141592653589793
+  ],
+  "periodic_coordinates": {
+    "1": 6.283185307179586
+  },
+  "divergence_radius": 120.0,
+  "divergence_radius_kind": "scaled",
+  "lower_terminal": null,
+  "initial_time": null,
+  "history_mode": "not_applicable",
+  "primary_solver": {
+    "solver_id": "dop853_rtol1e-10_atol1e-12",
+    "family": "dop853",
+    "step_factor": 1.0,
+    "rtol": 1e-10,
+    "atol": 1e-12,
+    "full_memory": false,
+    "use_native_backend": false
+  },
+  "secondary_solver": {
+    "solver_id": "rk4_fixed_h_over_2",
+    "family": "rk4",
+    "step_factor": 0.5,
+    "rtol": null,
+    "atol": null,
+    "full_memory": false,
+    "use_native_backend": false
+  },
+  "classifier_overrides": {
+    "equilibrium_tolerance": 1e-05,
+    "reference_distance_max": 0.12,
+    "reference_separation_margin": 0.03,
+    "periodic_return_error_max": 0.12
+  },
+  "reference_artifacts": {
+    "running_cycle": "validation\\reference_cases\\pll_lead_lag_integer_q1_full\\03_stable_reference_cycle.csv"
+  },
+  "contract_id": "pll_lead_lag_integer_q1_tg_pilot_geometric_topological_initial_pilot_v1",
+  "protocol_version": "geometric_topological_initial_pilot_v1",
+  "physical_budgets": {
+    "B0": {
+      "level": "B0",
+      "normalized_step": 0.02,
+      "normalized_horizon": 50.0,
+      "transient_fraction": 0.5,
+      "tau_star": 0.0073247672,
+      "step": 0.00014649534400000002,
+      "horizon": 0.36623836000000004,
+      "burn_time": 0.18311918000000002,
+      "nominal_steps": 2500
+    },
+    "B1": {
+      "level": "B1",
+      "normalized_step": 0.01,
+      "normalized_horizon": 100.0,
+      "transient_fraction": 0.5,
+      "tau_star": 0.0073247672,
+      "step": 7.324767200000001e-05,
+      "horizon": 0.7324767200000001,
+      "burn_time": 0.36623836000000004,
+      "nominal_steps": 10000
+    },
+    "B2": {
+      "level": "B2",
+      "normalized_step": 0.005,
+      "normalized_horizon": 200.0,
+      "transient_fraction": 0.6,
+      "tau_star": 0.0073247672,
+      "step": 3.6623836000000005e-05,
+      "horizon": 1.4649534400000002,
+      "burn_time": 0.878972064,
+      "nominal_steps": 40000
+    }
+  },
+  "claim_limit": "finite-time finite-resolution localization; no global attraction, hiddenness, Wada, isolating-block, or Conley-index claim"
+}

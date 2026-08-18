@@ -1,0 +1,262 @@
+{
+	"system_id":"geometric_topological_engine",
+	"validation_scope":"symbolic_geometric_topological_identities_and_case_residuals",
+	"report_input_used":false,
+	"tests":[
+		{
+			"name":"Picard-Caputo coefficients",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"s=h^q startup velocity",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"s=h^q startup acceleration",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"nonlinear transform JF.F = Dg JF.F + Hess(g)[F,F]",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"affine specialization removes Hessian term",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"covariant startup acceleration transforms as a vector",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"q=1 recovers nabla_F F",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"functional ball exclusion implies restart-slice exclusion",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"restart exclusion does not imply functional exclusion",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"z_l'=-eta_l z_l+phi",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"exponential memory initial value",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"q=1 Volterra kernel equals one",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"q=1 one-mode lift eta=0,w=1 gives x'=F",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Chua PWL has no active critical surface",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Chua PWL central symmetry",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Chua PWL outer-region symmetry",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Chua PWL PP elimination by invertible J",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Chua arctan detJ identity",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Chua arctan odd symmetry",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Wu PP\/FPP representative residual",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"c590 PP\/FPP representative residual",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"MAVPD critical surface u^2=gam\/3",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"MAVPD exact PP",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"MAVPD field symmetry",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"MAVPD JF.F symmetry",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Kalman-Fitts detJ constant nonzero",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Kalman-Fitts odd symmetry",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Kalman-Fitts no nonstationary PP by invertible J",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"PLL critical circles cos(theta)=0",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"PLL exact PP representatives",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"PLL deck symmetry",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Generalized_Lorenz field symmetry",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Generalized_Lorenz JF.F symmetry",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Generalized Lorenz refined PP",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Generalized Lorenz PP lies on detJ=0",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Rabinovich_Fabrikant field symmetry",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Rabinovich_Fabrikant JF.F symmetry",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"RF four refined PP representatives",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"RF PP representatives lie on detJ=0",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Munoz four exact regional PP",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Munoz regional symmetry",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Chua regional acceleration surfaces",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"MAVPD acceleration surfaces",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"MAVPD PP belongs to connecting curve",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Kalman-Fitts acceleration surfaces",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"Kalman-Fitts six connecting-curve minors",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"PLL acceleration surfaces",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"PLL connecting-curve equation",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"PLL KCC invariant identity",
+			"passed":true,
+			"details":{}
+		},
+		{
+			"name":"PLL KCC signs at focus and saddle",
+			"passed":true,
+			"details":{}
+		}
+	],
+	"passed":true,
+	"files":{
+		"text_evidence":"topologia_geometria_hidden_validation.txt"
+	},
+	"evidence_boundary":"No attraction, chaos, basin topology, Conley index, or hiddenness claim is established."
+}

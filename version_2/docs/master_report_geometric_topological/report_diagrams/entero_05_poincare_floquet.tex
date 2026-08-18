@@ -1,0 +1,65 @@
+\begin{center}
+\begin{minipage}{0.96\linewidth}
+\centering
+\begin{tikzpicture}[
+  scale=0.90,
+  transform shape,
+  >=Latex,
+  every node/.style={font=\small},
+  flow/.style={-{Latex[length=2.3mm]},very thick,draw=Azul},
+  point/.style={circle,fill=GrisOscuro,inner sep=1.9pt}
+]
+  \draw[rounded corners=6pt,thick,GrisOscuro] (0.10,0.15) rectangle (7.35,5.75);
+  \node[font=\bfseries] at (3.72,5.40) {Órbita y sección transversal};
+  \draw[very thick,Azul] (2.75,2.78) ellipse (2.15 and 1.45);
+  \draw[flow] (2.12,4.16) -- (3.00,4.20);
+  \node[Azul] at (1.05,1.18) {$\gamma$};
+
+  \draw[very thick,Rojo] (3.45,2.78) -- (6.65,2.78);
+  \node[Rojo,above] at (6.25,2.78) {$\Sigma$};
+  \node[point] (p) at (4.90,2.78) {};
+  \node[above=2pt] at (p.north) {$p=P(p)$};
+  \node[point] (x) at (3.82,2.78) {};
+  \node[below=2pt] at (x.south) {$x$};
+  \node[point] (px) at (4.38,2.78) {};
+  \node[below=2pt] at (px.south) {$P(x)$};
+  \draw[flow,draw=GrisOscuro]
+    (x) .. controls (6.40,5.25) and (0.25,5.30) .. (0.35,2.75)
+        .. controls (0.30,0.20) and (6.20,0.15) .. (px);
+  \node[fill=white,inner sep=2pt] at (3.55,0.52)
+    {$P(x)=\varphi_{\tau(x)}(x)$};
+  \node[align=center,text=GrisOscuro] at (3.72,4.82)
+    {$T_pM=T_p\Sigma\oplus\operatorname{span}\{f(p)\}$};
+
+  \draw[rounded corners=6pt,thick,GrisOscuro] (7.75,0.15) rectangle (13.95,5.75);
+  \node[font=\bfseries] at (10.85,5.40) {Multiplicadores};
+  \coordinate (c) at (10.65,2.82);
+  \draw[GrisOscuro,thin] (8.55,2.82) -- (13.15,2.82);
+  \draw[GrisOscuro,thin] (10.65,0.72) -- (10.65,4.92);
+  \draw[very thick,Azul] (c) circle (1.60);
+  \node[below right,text=Azul] at (11.80,1.60) {$|\mu|=1$};
+
+  \fill[GrisOscuro] (12.25,2.82) circle (2.5pt);
+  \node[above right] at (12.25,2.82) {$\mu_1=1$ tangencial};
+  \fill[Verde] (10.00,3.48) circle (2.5pt);
+  \fill[Verde] (11.15,1.92) circle (2.5pt);
+  \node[align=right,Verde] at (9.25,4.10) {transversales\\contractivos};
+  \draw[Rojo,very thick,fill=white] (12.78,3.78) circle (2.8pt);
+  \node[align=left,Rojo] at (12.58,4.52) {alternativa\\expansiva};
+
+  \node[draw=GrisOscuro,rounded corners,fill=white,inner sep=4pt]
+    at (10.85,0.45)
+    {$\operatorname{spec}\Phi(T)=\{1\}\cup\operatorname{spec}DP(p)$};
+\end{tikzpicture}%
+\end{minipage}
+
+\smallskip
+\begin{minipage}{0.92\linewidth}
+\small\textbf{Lectura pedagógica.}
+La órbita periódica se reduce al punto fijo $P(p)=p$ de un retorno sobre la
+sección. La monodromía siempre conserva la dirección tangente con multiplicador
+$1$; los $n-1$ multiplicadores restantes son los autovalores de $DP(p)$.
+Los puntos interiores y el punto exterior representan criterios alternativos,
+no un mismo espectro medido.
+\end{minipage}
+\end{center}

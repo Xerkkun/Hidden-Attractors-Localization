@@ -1,0 +1,101 @@
+WOLFRAM TOPOLOGY-GEOMETRY HIDDEN-ATTRACTOR VALIDATION
+Kernel: 14.3.0 for Microsoft Windows (64-bit) (July 8, 2025)
+Scope: exact identities and bounded high-precision residuals only
+
+[A] PICARD--CAPUTO STARTUP EXPANSION
+I_q_1 = h^q/Gamma[1 + q]
+I_q_t^q_over_Gamma_qplus1 = h^(2*q)/Gamma[1 + 2*q]
+Picard_residual_through_h_2q = {0, 0}
+CHECK Picard-Caputo coefficients : PASS
+
+[B] COVARIANT STARTUP ACCELERATION AND COORDINATE CHANGES
+CHECK s=h^q startup velocity : PASS
+CHECK s=h^q startup acceleration : PASS
+Nonlinear_JF_F_transform_residual = {0, 0}
+CHECK nonlinear transform JF.F = Dg JF.F + Hess(g)[F,F] : PASS
+CHECK affine specialization removes Hessian term : PASS
+Covariant_fractional_startup_residual = {0, 0}
+CHECK covariant startup acceleration transforms as a vector : PASS
+CHECK q=1 recovers nabla_F F : PASS
+
+[C] EQUIVARIANCE AND FUNCTIONAL-TO-RESTART LOGIC
+CHECK functional ball exclusion implies restart-slice exclusion : PASS
+CHECK restart exclusion does not imply functional exclusion : PASS
+
+[D] EXPONENTIAL-KERNEL MARKOV LIFT
+Exponential_memory_ODE_residual = 0
+CHECK z_l'=-eta_l z_l+phi : PASS
+CHECK exponential memory initial value : PASS
+CHECK q=1 Volterra kernel equals one : PASS
+CHECK q=1 one-mode lift eta=0,w=1 gives x'=F : PASS
+
+[E] CASE-BY-CASE ALGEBRAIC GEOMETRY
+Chua_PWL_detJ_formula = -(alpha*(beta + beta*m + gamma*m))
+Chua_PWL_active_detJ_values = {-656527402477/7812500000, 7342645303/488281250}
+CHECK Chua PWL has no active critical surface : PASS
+CHECK Chua PWL central symmetry : PASS
+CHECK Chua PWL outer-region symmetry : PASS
+CHECK Chua PWL PP elimination by invertible J : PASS
+CHECK Chua arctan detJ identity : PASS
+CHECK Chua arctan odd symmetry : PASS
+Chua_arctan_Wu_PP_positive = <|"point" -> {0.336981781095254466319125968794496120154187471838901686377203030850265486926266153521130980065372`70., 0.081574928268643988246464126261220633313721178115406428502670391776273823953979691769085084008889`70., -0.25498323427825505635368578880104285105691693172255056784420452543267059580946571102667489288792`70.}, "fieldNorm" -> 1.391241627161407546277612272195068371248461887460908207046005542200519273762120810226636163123044`69.0550908871999, "accResidual" -> 0``68.99293481072809, "detResidual" -> 0``68.53529038769621|>
+Chua_arctan_c590_PP_positive = <|"point" -> {1.213090022614085747736324278572740779744102810449610367077074688470632621677129881776913816932486`70., -20.187269924095489423407447132619490524484625595389764383586917843577024388266284179958976109495921`70., -21.549363340657277780663118273440748991481644946498435925087082577225629072131217124362451207122319`70.}, "fieldNorm" -> 545.09983034786064183358260490988441156775834295105824146675996676832685713211843`69.89028239956083, "accResidual" -> 0``65.81113710310323, "detResidual" -> 0``67.14373752063409|>
+CHECK Wu PP/FPP representative residual : PASS
+CHECK c590 PP/FPP representative residual : PASS
+MAVPD_detJ = delta*rhoM*(gam - 3*u^2)
+MAVPD_PP_positive = {Sqrt[gam]/Sqrt[3], (2*delta*gam^(3/2))/(3*Sqrt[3]*(-delta + rhoM)), Sqrt[gam]/Sqrt[3] - (2*delta*gam^(3/2)*xi)/(3*Sqrt[3]*(-delta + rhoM))}
+CHECK MAVPD critical surface u^2=gam/3 : PASS
+CHECK MAVPD exact PP : PASS
+MAVPD_equivariance_residual = {0, 0, 0}
+MAVPD_JF_F_symmetry_residual = {0, 0, 0}
+CHECK MAVPD field symmetry : PASS
+CHECK MAVPD JF.F symmetry : PASS
+Kalman_Fitts_detJ = (betak^2 + mb1^2)*(betak^2 + mb2^2)
+Kalman_Fitts_detJ_numeric = 0.9819188099999999999999999999999999999999999999999999999999`30.
+CHECK Kalman-Fitts detJ constant nonzero : PASS
+CHECK Kalman-Fitts odd symmetry : PASS
+CHECK Kalman-Fitts no nonstationary PP by invertible J : PASS
+PLL_detJ = (lp*Cos[ptheta])/(2*(tau1p + tau2p))
+PLL_PP_acceleration_1 = {0, 0}
+PLL_PP_acceleration_2 = {0, 0}
+CHECK PLL critical circles cos(theta)=0 : PASS
+CHECK PLL exact PP representatives : PASS
+CHECK PLL deck symmetry : PASS
+Generalized_Lorenz_equivariance_residual = {0, 0, 0}
+Generalized_Lorenz_JF_F_symmetry_residual = {0, 0, 0}
+CHECK Generalized_Lorenz field symmetry : PASS
+CHECK Generalized_Lorenz JF.F symmetry : PASS
+Generalized_Lorenz_detJ = -(aL*ly^2) + 2*aL*lx*ly*lz + aL*lz^2 - aL*lx*ly*rL - aL*lz*rL - sigL - lx^2*sigL - lx*ly*sigL - lz*sigL + rL*sigL
+Generalized_Lorenz_PP_refined = {-0.7459668610026529153387923458582542906587819915197522158268`40., 12.6618045138141943063432736639546644999476588301907276688324`40., -7.4423053061607259175446827424536994076806066485109083158146`40.}
+Generalized_Lorenz_PP_JF_F_residual = {0``67.12453931856282, 0``66.68767157815313, 0``66.7316664813149}
+CHECK Generalized Lorenz refined PP : PASS
+CHECK Generalized Lorenz PP lies on detJ=0 : PASS
+Rabinovich_Fabrikant_equivariance_residual = {0, 0, 0}
+Rabinovich_Fabrikant_JF_F_symmetry_residual = {0, 0, 0}
+CHECK Rabinovich_Fabrikant field symmetry : PASS
+CHECK Rabinovich_Fabrikant JF.F symmetry : PASS
+RF_detJ = -2*(br + ar^2*br - 4*br*rx^2 + 3*br*rx^4 + rx*ry + ar^2*rx*ry + 2*ar*br*rx*ry - 4*rx^3*ry + 3*rx^5*ry + 2*ar*rx^2*ry^2 + 2*br*rz - 3*ar*rx^2*rz - 6*rx^3*ry*rz - ar*ry^2*rz - 3*br*rz^2 + 3*rx*ry*rz^2)
+RF_PP_representatives_refined = {{-1.0488088481701515469914535136799375984752718576815039848757`35., 1.1441551070947107785361311058326591983366602083798225289554`35., 0}, {0.9486832980505137995996680633298155601158665417975650480573`35., 0.8432740427115678218663716118487249423252147038200578204954`35., 0}, {0.2179071530701612242589664974061669082826596315813375045804`35., 0.3262712671231463798027509138472426525382883360741859852817`35., 1.2023808107588248648106748241310142813891502842520064228363`35.}, {-0.1977390864354372869777558249698587052277714761956103368954`35., 0.226277627330655286324735875303290486161913603083492344869`35., 0.8221452029405911410508546522883110948963076037155420859335`35.}}
+RF_PP_JF_F_max_residuals = {0``69.15029243730007, 0``69.46470370611884, 0``69.36776350671492, 0``69.77642094343997}
+CHECK RF four refined PP representatives : PASS
+CHECK RF PP representatives lie on detJ=0 : PASS
+Munoz_regional_detJ = (-mx + mx*my - mz)*sg
+Munoz_exact_PP_residuals = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
+CHECK Munoz four exact regional PP : PASS
+CHECK Munoz regional symmetry : PASS
+
+[F] CRITICAL SURFACES, CONNECTING CURVES AND PLL KCC
+CHECK Chua regional acceleration surfaces : PASS
+CHECK MAVPD acceleration surfaces : PASS
+CHECK MAVPD PP belongs to connecting curve : PASS
+CHECK Kalman-Fitts acceleration surfaces : PASS
+CHECK Kalman-Fitts six connecting-curve minors : PASS
+CHECK PLL acceleration surfaces : PASS
+CHECK PLL connecting-curve equation : PASS
+PLL_KCC_deviation_curvature = (4 + lp*Cos[ptheta]*(-4*(2*tau1p + tau2p) + lp*tau2p^2*Cos[ptheta]) + 4*lp*py*tau2p*(tau1p + tau2p)*Sin[ptheta])/(16*(tau1p + tau2p)^2)
+PLL_KCC_locked_equilibrium_values = {-1642.02410524221807525258940270655171767476`30., 3069.17107926696045650088920629487083799002`30.}
+CHECK PLL KCC invariant identity : PASS
+CHECK PLL KCC signs at focus and saddle : PASS
+
+SUMMARY: 0 failed checks
+INTERPRETATION: PASS validates algebra or a declared high-precision residual; it does not prove attraction, chaos, basin topology or hiddenness.

@@ -1,0 +1,508 @@
+\section{Resultados}
+\label{sec:resultados}
+
+Los resultados se presentan en el mismo orden que los protocolos. Primero se
+resumen las reconstrucciones bibliográficas; después se muestran los dos casos
+obtenidos por la metodología propuesta. En el caso no suave se completa el
+primer radio con contactos. Para \texttt{c590} se distingue la partición local
+\(r\leq0.3\) de la auditoría macroscópica en \(r=1\) y \(r=2\).
+
+\subsection{Reconstrucciones bibliográficas}
+\label{subsec:resultados_bibliograficos}
+
+\subsubsection{Recuperación del caso entero}
+
+Para \cref{eq:parametros_enteros}, la primera rama del cierre de
+Leonov--Kuznetsov produjo
+\begin{equation}
+\omega_0=2.039186939959,\qquad
+k=0.209867354515,\qquad
+A_0=5.856145086257,
+\label{eq:resultados_armonicos_enteros}
+\end{equation}
+y la condición modal
+\begin{equation}
+X_0=(5.856145086257,\ 0.369331578247,\ -8.366536168332)^{\T}.
+\label{eq:resultado_semilla_entera}
+\end{equation}
+Los valores propios de la matriz auxiliar fueron
+\[
+\lambda_1=-1.538510163250,\qquad
+\lambda_{2,3}\simeq\pm2.039186939959\,\mathrm i,
+\]
+con residuo complejo de cierre \(9.93\times10^{-16}\). Bajo el carril
+histórico EFORK--3 \((T=320,\ T_{\mathrm{burn}}=80)\) y su clasificador por
+huellas de sección, las 504 sondas produjeron 369 convergencias a equilibrio,
+69 divergencias y 66 trayectorias clasificadas como otro destino; ninguna hizo
+contacto con la nube objetivo.
+
+\subsubsection{Danca y Wu bajo sus contratos reconstruidos}
+
+La reconstrucción nominal de Danca con
+\cref{eq:semilla_danca_diagnostica} permaneció acotada. Después del transitorio
+presentó una frecuencia dominante de \(0.3679852806\) ciclos por unidad de
+tiempo y medianas de la prueba 0--1
+\begin{equation}
+(K_x,K_y,K_z)
+=(0.0736852160,\ 0.0214448125,\ -0.0012988924).
+\label{eq:resultado_danca_k}
+\end{equation}
+Estos valores corresponden a una trayectoria de apariencia periódica bajo el
+contrato ABM de \cref{subsec:protocolos_bibliograficos}.
+
+La recurrencia ADM de Wu permaneció acotada para las dos condiciones de
+\cref{eq:semillas_wu_protocolo}. Las trayectorias fueron simétricas y de
+apariencia periódica después del transitorio. Las tres componentes tuvieron
+frecuencia dominante \(0.5398920216\) ciclos por unidad de tiempo, deriva
+relativa nula y entropías espectrales
+\[
+(H_x,H_y,H_z)
+=(0.11607348,\ 0.11106582,\ 0.11095067).
+\]
+
+\begin{table}[H]
+\centering
+\caption{Resultados numéricos de los tres controles bibliográficos.}
+\label{tab:resultados_referencias}
+\begin{tabularx}{\linewidth}{L{0.20\linewidth}L{0.27\linewidth}Y}
+\toprule
+Control & Configuración evaluada & Resultado reproducido\\
+\midrule
+Leonov--Kuznetsov, carril histórico EFORK--3
+& \(q=1\), parámetros de \cref{eq:parametros_enteros}
+& \(\omega_0=2.03918694\), \(A_0=5.85614509\);
+0 contactos en 504 sondas\\
+Danca
+& \(q=0.9998\), ABM completo, \(h=0.01\), \(T=500\)
+& Trayectoria acotada de apariencia periódica,
+\(f_d=0.36798528\)\\
+Wu et al.
+& \(q=0.99\), ADM local de orden cuatro, dos semillas publicadas
+& Dos trayectorias simétricas de apariencia periódica,
+\(f_d=0.53989202\)\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{hafodigitalfigure}[H]
+\centering
+\includegraphics[width=0.96\linewidth]{bibliographic_reproducibility_controls_es}
+\caption{Controles de reproducibilidad. Los paneles de Danca y Wu muestran las
+trayectorias obtenidas con sus contratos reconstruidos. La continuación no
+suave propuesta y el control con pendientes distintas se presentan como
+experimentos independientes y no como resultados de las referencias.}
+\label{fig:controles_bibliograficos}
+\end{hafodigitalfigure}
+
+\FloatBarrier
+\subsection{Caso no suave localizado con semilla sesgada}
+\label{subsec:resultados_no_suave}
+
+\subsubsection{Raíz, semilla y continuación}
+
+La exploración de 2\,430 inicios seleccionó, dentro del par nominal,
+\begin{equation}
+\begin{aligned}
+A&=4.577882721023,&
+c&=2.776397003274,\\
+\omega&=2.040286051079,&
+N_1&=0.210022792962,&
+\Psi_0&=0.408770376181.
+\end{aligned}
+\label{eq:resultado_raiz_no_suave}
+\end{equation}
+La norma del residuo de la cuadratura trapezoidal usada por el solucionador fue
+\(4.55\times10^{-16}\). Una reevaluación independiente de las integrales
+continuas mediante cuadratura adaptativa, separando los puntos de quiebre de
+la saturación, produjo \(1.9\times10^{-7}\), menor que el umbral de aceptación
+\(10^{-4}\). Ambas cifras corresponden a evaluaciones numéricas diferentes del
+mismo cierre.
+
+La condición inicial construida fue
+\begin{equation}
+X_{\mathrm{sem}}
+=(7.354279724297,\ 0.290968778784,\ -9.316054818666)^{\T}.
+\label{eq:resultado_semilla_no_suave}
+\end{equation}
+Después de transportar una sola memoria a través de los 21 niveles, el estado
+final fue
+\begin{equation}
+X_{\mathrm{end}}
+=(0.822310709850,\ 1.465272703995,\ 1.292308250248)^{\T}.
+\label{eq:resultado_endpoint_no_suave}
+\end{equation}
+
+\begin{hafodigitalfigure}[H]
+\centering
+\includegraphics[width=0.90\linewidth]{nonsmooth_numerical_continuation}
+\caption{Continuación numérica del sistema auxiliar al sistema no suave
+original. Los niveles \(\varepsilon=0,0.05,\ldots,1\) comparten una sola
+historia de Caputo.}
+\label{fig:continuacion_no_suave_paper07}
+\end{hafodigitalfigure}
+
+El problema autónomo iniciado en \cref{eq:resultado_endpoint_no_suave}
+produjo el conjunto postransitorio archivado para el caso no suave. Su parte
+postransitoria tuvo apariencia periódica, frecuencia dominante
+\(0.3699815009\) y entropías
+\begin{equation}
+(H_x,H_y,H_z)
+=(0.11526785,\ 0.10497088,\ 0.10339964).
+\label{eq:entropias_no_suave}
+\end{equation}
+En conjunto, estos diagnósticos lo clasifican como un régimen regular de
+apariencia periódica, no como un atractor caótico.
+Las 36 perturbaciones alrededor de \(X_{\mathrm{end}}\) hicieron contacto con
+la nube objetivo: 12 de 12 para cada radio \(10^{-6}\), \(10^{-4}\) y
+\(10^{-2}\).
+
+\begin{hafodigitalfigure}[H]
+\centering
+\includegraphics[width=0.86\linewidth]{nonsmooth_final_attractor}
+\caption{Conjunto atrayente postransitorio obtenido para
+\cref{eq:chua_no_suave,eq:parametros_no_suave} desde el extremo de la
+continuación causal.}
+\label{fig:atractor_no_suave_paper07}
+\end{hafodigitalfigure}
+
+\subsubsection{Sondeo volumétrico}
+
+El protocolo completo reunió 17\,400 problemas de valor inicial, 5\,800
+alrededor de cada equilibrio, sin fallos numéricos. De ellos, 7\,200
+corresponden al contrato local predeclarado \(r\leq0.01\), y 10\,200 a la
+extensión macroscópica diagnóstica en \(r=0.03,0.1,0.3\). La
+\cref{tab:sondeo_no_suave_completo} contiene todos los radios ejecutados y
+todas las clases del clasificador.
+
+\begingroup
+\setlength{\tabcolsep}{10pt}
+\setlength{\LTleft}{\fill}
+\setlength{\LTright}{\fill}
+\begin{longtable}{@{}ccrrrrr@{}}
+\caption{Conteos completos del sondeo volumétrico del sistema no suave.}
+\label{tab:sondeo_no_suave_completo}\\
+\toprule
+Equilibrio & \(r\) & \(N\) & Objetivo & Equilibrio & Divergencia & Otro\\
+\midrule
+\endfirsthead
+\multicolumn{7}{c}{\tablename\ \thetable\ (continuación)}\\
+\toprule
+Equilibrio & \(r\) & \(N\) & Objetivo & Equilibrio & Divergencia & Otro\\
+\midrule
+\endhead
+\midrule
+\multicolumn{7}{r}{Continúa en la página siguiente}\\
+\endfoot
+\bottomrule
+\endlastfoot
+\multirow{10}{*}{\(E_0\)}
+& \(10^{-5}\) & 80 & 0 & 80 & 0 & 0\\
+& \(3{\times}10^{-5}\) & 120 & 0 & 120 & 0 & 0\\
+& \(10^{-4}\) & 160 & 0 & 160 & 0 & 0\\
+& \(3{\times}10^{-4}\) & 240 & 0 & 240 & 0 & 0\\
+& \(10^{-3}\) & 400 & 0 & 400 & 0 & 0\\
+& \(3{\times}10^{-3}\) & 600 & 0 & 600 & 0 & 0\\
+& \(10^{-2}\) & 800 & 0 & 800 & 0 & 0\\
+& \(0.03\) & 1000 & 0 & 1000 & 0 & 0\\
+& \(0.1\) & 1200 & 0 & 1200 & 0 & 0\\
+& \(0.3\) & 1200 & 0 & 1200 & 0 & 0\\
+\midrule
+\multirow{10}{*}{\(E_+\)}
+& \(10^{-5}\) & 80 & 0 & 0 & 39 & 41\\
+& \(3{\times}10^{-5}\) & 120 & 0 & 0 & 63 & 57\\
+& \(10^{-4}\) & 160 & 0 & 0 & 80 & 80\\
+& \(3{\times}10^{-4}\) & 240 & 0 & 0 & 116 & 124\\
+& \(10^{-3}\) & 400 & 0 & 0 & 189 & 211\\
+& \(3{\times}10^{-3}\) & 600 & 0 & 0 & 277 & 323\\
+& \(10^{-2}\) & 800 & 0 & 0 & 393 & 407\\
+& \(0.03\) & 1000 & 0 & 0 & 490 & 510\\
+& \(0.1\) & 1200 & 0 & 4 & 588 & 608\\
+& \(0.3\) & 1200 & 19 & 7 & 591 & 583\\
+\midrule
+\pagebreak[4]
+\multirow{10}{*}{\(E_-\)}
+& \(10^{-5}\) & 80 & 0 & 0 & 41 & 39\\
+& \(3{\times}10^{-5}\) & 120 & 0 & 0 & 56 & 64\\
+& \(10^{-4}\) & 160 & 0 & 0 & 81 & 79\\
+& \(3{\times}10^{-4}\) & 240 & 0 & 0 & 122 & 118\\
+& \(10^{-3}\) & 400 & 0 & 0 & 204 & 196\\
+& \(3{\times}10^{-3}\) & 600 & 0 & 0 & 309 & 291\\
+& \(10^{-2}\) & 800 & 0 & 0 & 394 & 406\\
+& \(0.03\) & 1000 & 0 & 0 & 488 & 512\\
+& \(0.1\) & 1200 & 0 & 4 & 593 & 603\\
+& \(0.3\) & 1200 & 18 & 12 & 596 & 574\\
+\end{longtable}
+\endgroup
+
+En el contrato local se registraron cero contactos y cero fallos numéricos en
+las 7\,200 sondas con \(r\leq0.01\). Este es el alcance usado para evaluar la
+compatibilidad local con ocultedad del conjunto atrayente regular.
+
+La extensión macroscópica, que no amplía ese contrato local, añadió 10\,200
+sondas. Las 6\,600 correspondientes a \(r=0.03\) y \(r=0.1\) produjeron cero
+contactos; al combinarlas con el contrato local se obtiene el acumulado
+\(0/13\,800\) hasta \(r=0.1\). El primer radio con contactos de la extensión
+fue \(r=0.3\); después de completar sus 3\,600 sondas se registraron 37
+contactos: cero desde \(E_0\), 19 desde \(E_+\) y 18 desde \(E_-\). Las
+distancias iniciales de esos contactos a su equilibrio estuvieron entre
+\(0.1941805298\) y \(0.2997254735\). Por tanto, la extensión macroscópica
+delimita el intervalo de acceso muestreado
+\[
+0.1<r_{\mathrm{contacto}}\leq0.3
+\]
+sin convertirlo en el alcance del contrato local.
+
+\begin{hafodigitalfigure}[H]
+\centering
+\begin{subfigure}[t]{0.49\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{nonsmooth_first_harmonic_comparison_es}
+  \caption{Trayectoria y primer armónico.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{nonsmooth_volumetric_probe_overview_es}
+  \caption{Sondas volumétricas representativas.}
+\end{subfigure}
+\caption{Diagnósticos del caso no suave. La comparación armónica describe el
+carácter regular de la respuesta; las sondas muestran ejemplos de las clases
+usadas en \cref{tab:sondeo_no_suave_completo}.}
+\label{fig:diagnosticos_no_suave_paper07}
+\end{hafodigitalfigure}
+
+\FloatBarrier
+\subsection{Caso con arctangente \texttt{c590}}
+\label{subsec:resultados_c590}
+
+\subsubsection{Selección en orden entero y refinamiento de Caputo}
+
+En la exploración global, 894 de los 2\,400 casos quedaron separados del
+control y 884 fueron además no triviales. De éstos, 823 se clasificaron como
+regulares de apariencia periódica y 61 permanecieron en la categoría
+exploratoria no periódica. El índice global de base cero 1731 obtuvo la mayor
+puntuación, \(S=0.3021129950\), y definió el centro
+\begin{equation}
+\begin{aligned}
+p_b={}&(18.4857295104,\ 21.9669521100,\ 0.0052746106,\\
+&0.0262974930,\ -3.2087779245,\ 1.9492612035),\\
+X_b={}&(7.0796053271,\ 0.5079327671,\ -14.4903935267)^{\T}.
+\end{aligned}
+\label{eq:resultado_centro_c590}
+\end{equation}
+
+La exploración local generó 1\,000 casos: 170 quedaron separados del control
+y 148 fueron también no triviales. Entre estos últimos hubo 87 respuestas
+exploratorias no periódicas y 61 regulares de apariencia periódica.
+\texttt{c590}, índice local de base cero 590, ocupó el rango 10 por puntuación.
+La auditoría variacional de los 30 mejores casos seleccionó \texttt{c590} con
+\begin{equation}
+(\lambda_1,\lambda_2,\lambda_3)
+=(0.4699043683,\ 0.0010414594,\ -19.0491693716)
+\label{eq:resultado_lyapunov_entero_c590}
+\end{equation}
+y semilla entera
+\begin{equation}
+X_0^{\mathrm{int}}
+=(7.6733768929,\ 0.5079327671,\ -14.4903935267)^{\T}.
+\label{eq:resultado_semilla_entera_c590}
+\end{equation}
+
+Los parámetros finales son los de \cref{eq:parametros_c590}. Sus equilibrios
+son
+\begin{equation}
+E_0=(0,0,0),\qquad
+E_\pm=(\pm4.6494055135,\ \pm0.0017970023,\ \mp4.6476085112).
+\label{eq:equilibrios_c590_resultados}
+\end{equation}
+El criterio de Matignon clasificó \(E_0\) como inestable y \(E_\pm\) como
+estables; el margen de los equilibrios externos fue
+\(7.42265\times10^{-4}\).
+
+El refinamiento seleccionó \(q=0.9999\) y el estado de índice 9, extraído en
+\(t\simeq240\):
+\begin{equation}
+X_0^{\mathrm{frac}}
+=(5.8642449791,\ 1.5847111486,\ 3.2155806478)^{\T}.
+\label{eq:resultado_semilla_fraccionaria_c590}
+\end{equation}
+En la auditoría larga, las medianas remuestreadas fueron
+\begin{equation}
+(K_{0.0025},K_{0.005},K_{0.01})
+=(0.865843,\ 0.885089,\ 0.740058).
+\label{eq:resultado_k_pasos_c590}
+\end{equation}
+Los dos pasos refinados superaron el umbral de selección 0.8; el tercer valor
+documenta la sensibilidad al paso más grande.
+
+\begin{hafodigitalfigure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{arctan_fractional_refinement_es}
+\caption{Búsqueda en orden entero y refinamiento fraccionario del caso
+\texttt{c590}. Cada valor de \(q\) corresponde a un problema de Caputo
+independiente; el estado seleccionado se extrae de la trayectoria
+\(q=0.9999\).}
+\label{fig:refinamiento_c590_paper07}
+\end{hafodigitalfigure}
+
+La trayectoria final permaneció acotada en los tres pasos. Sobre 30\,000
+estados postransitorios, ninguna componente cumplió el filtro de apariencia
+periódica. Las entropías espectrales, fracciones de potencia dominante y
+derivas relativas fueron
+\begin{equation}
+\begin{aligned}
+(H_x,H_y,H_z)
+&=(0.394751,\ 0.261922,\ 0.315229),\\
+(R_x,R_y,R_z)
+&=(0.122163,\ 0.290492,\ 0.241937),\\
+(\Delta_{f,x},\Delta_{f,y},\Delta_{f,z})
+&=(0.941176,\ 0.029412,\ 0.029412).
+\end{aligned}
+\label{eq:metricas_finales_c590}
+\end{equation}
+La respuesta se clasifica, por tanto, como aperiódica bajo el filtro
+postransitorio declarado.
+
+\begin{hafodigitalfigure}[H]
+\centering
+\includegraphics[width=0.86\linewidth]{arctan_final_attractor}
+\caption{Conjunto postransitorio del sistema
+\cref{eq:chua_arctan,eq:parametros_c590} para \(q=0.9999\),
+\(h=0.005\) y la condición \cref{eq:resultado_semilla_fraccionaria_c590}.}
+\label{fig:atractor_c590_paper07}
+\end{hafodigitalfigure}
+
+\subsubsection{Sondeo superficial}
+
+El registro canónico reúne 13\,500 trayectorias: 8\,400 en la partición local
+\(r\leq0.3\) y 5\,100 en la auditoría macroscópica \(r\in\{1,2\}\). El primer
+contacto se observó en \(r=1\), pero se retuvo \(r=2\) como bloque adicional.
+La \cref{tab:sondeo_c590_completo} contiene todos los conteos del experimento
+declarado.
+
+\begingroup
+\setlength{\tabcolsep}{10pt}
+\setlength{\LTleft}{\fill}
+\setlength{\LTright}{\fill}
+\begin{longtable}{@{}ccrrrrr@{}}
+\caption{Conteos completos del sondeo sobre superficies esféricas de
+\texttt{c590}.}
+\label{tab:sondeo_c590_completo}\\
+\toprule
+Equilibrio & \(r\) & \(N\) & Objetivo & Equilibrio & Divergencia & Otro\\
+\midrule
+\endfirsthead
+\multicolumn{7}{c}{\tablename\ \thetable\ (continuación)}\\
+\toprule
+Equilibrio & \(r\) & \(N\) & Objetivo & Equilibrio & Divergencia & Otro\\
+\midrule
+\endhead
+\midrule
+\multicolumn{7}{r}{Continúa en la página siguiente}\\
+\endfoot
+\bottomrule
+\endlastfoot
+\multirow{9}{*}{\(E_0\)}
+& \(10^{-5}\) & 100 & 0 & 0 & 0 & 100\\
+& \(10^{-4}\) & 200 & 0 & 0 & 0 & 200\\
+& \(10^{-3}\) & 300 & 0 & 0 & 0 & 300\\
+& \(10^{-2}\) & 400 & 0 & 0 & 0 & 400\\
+& \(0.03\) & 500 & 0 & 0 & 0 & 500\\
+& \(0.1\) & 600 & 0 & 0 & 0 & 600\\
+& \(0.3\) & 700 & 0 & 0 & 0 & 700\\
+& \(1\) & 800 & 22 & 0 & 0 & 778\\
+& \(2\) & 900 & 289 & 0 & 67 & 544\\
+\midrule
+\pagebreak[4]
+\multirow{9}{*}{\(E_+\)}
+& \(10^{-5}\) & 100 & 0 & 2 & 0 & 98\\
+& \(10^{-4}\) & 200 & 0 & 0 & 0 & 200\\
+& \(10^{-3}\) & 300 & 0 & 0 & 0 & 300\\
+& \(10^{-2}\) & 400 & 0 & 0 & 0 & 400\\
+& \(0.03\) & 500 & 0 & 0 & 0 & 500\\
+& \(0.1\) & 600 & 0 & 0 & 0 & 600\\
+& \(0.3\) & 700 & 0 & 0 & 0 & 700\\
+& \(1\) & 800 & 0 & 0 & 0 & 800\\
+& \(2\) & 900 & 150 & 0 & 37 & 713\\
+\midrule
+\multirow{9}{*}{\(E_-\)}
+& \(10^{-5}\) & 100 & 0 & 2 & 0 & 98\\
+& \(10^{-4}\) & 200 & 0 & 0 & 0 & 200\\
+& \(10^{-3}\) & 300 & 0 & 0 & 0 & 300\\
+& \(10^{-2}\) & 400 & 0 & 0 & 0 & 400\\
+& \(0.03\) & 500 & 0 & 0 & 0 & 500\\
+& \(0.1\) & 600 & 0 & 0 & 0 & 600\\
+& \(0.3\) & 700 & 0 & 0 & 0 & 700\\
+& \(1\) & 800 & 0 & 0 & 0 & 800\\
+& \(2\) & 900 & 149 & 0 & 27 & 724\\
+\end{longtable}
+\endgroup
+
+Las 8\,400 trayectorias con \(r\leq0.3\) produjeron cero contactos; 8\,396
+completaron el horizonte y cuatro convergieron anticipadamente a \(E_\pm\) en
+\(r=10^{-5}\). En \(r=1\) hubo 22 contactos entre 2\,400 trayectorias, todos
+desde \(E_0\). En \(r=2\) hubo 588 contactos entre 2\,700 trayectorias: 289
+desde \(E_0\), 150 desde \(E_+\) y 149 desde \(E_-\); en este bloque se
+registraron 131 divergencias. En total se ejecutaron 13\,500 pruebas y se
+observaron 610 contactos. El primer radio observado satisface
+\[
+0.3<r_{\mathrm{primer\ contacto}}\leq1.
+\]
+
+\begin{hafodigitalfigure}[H]
+\centering
+\begin{subfigure}[t]{0.49\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{arctan_first_harmonic_comparison_es}
+  \caption{Trayectoria y primer armónico.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{arctan_spherical_probe_overview_es}
+  \caption{Sondas superficiales representativas.}
+\end{subfigure}
+\caption{Diagnósticos de \texttt{c590}. La comparación con el primer armónico
+acompaña el filtro de aperiodicidad. El panel de sondas muestra nueve historias
+representativas seleccionadas en el subconjunto hasta \(r=1\); no es una
+gráfica de conteos. La \cref{tab:sondeo_c590_completo} incorpora además la
+auditoría canónica en \(r=2\).}
+\label{fig:diagnosticos_c590_paper07}
+\end{hafodigitalfigure}
+
+\FloatBarrier
+\subsection{Delimitación local obtenida}
+\label{subsec:delimitacion_local}
+
+\begin{table}[H]
+\centering
+\caption{Alcance local predeclarado y acceso observado en los sondeos
+extendidos.}
+\label{tab:intervalos_locales}
+\begin{tabularx}{\linewidth}{L{0.26\linewidth}C{0.18\linewidth}C{0.18\linewidth}Y}
+\toprule
+Sistema & Geometría & Alcance o intervalo & Conteos correspondientes\\
+\midrule
+No suave, \(q=0.9998\)
+& Bola volumétrica
+& Local: \(r\leq0.01\)
+& Local: \(0/7\,200\), cero fallos;
+macro: \(0/6\,600\) en \(0.03,0.1\) y
+\(37/3\,600\) en \(0.3\)\\
+\texttt{c590}, \(q=0.9999\)
+& Superficie esférica
+& Separación observada hasta \(r=0.3\); revisión macroscópica en \(r=1,2\)
+& \(0/8\,400\) hasta \(0.3\);
+\(22/2\,400\) en \(1\);
+\(588/2\,700\) en \(2\), con 131 divergencias\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Dentro de las bolas, horizontes y reglas de contacto del contrato local
+\(r\leq0.01\), el conjunto regular no suave es compatible con la definición
+local de atractor oculto. Los radios \(0.03\), \(0.1\) y \(0.3\) describen una
+extensión macroscópica de la geometría de cuenca y no amplían la afirmación de
+ocultedad más allá del contrato local. Para \texttt{c590}, la compatibilidad
+local se limita a las superficies, radios, horizontes y reglas de contacto con
+\(r\leq0.3\). Los contactos observados en \(r=1\) y \(r=2\) describen acceso
+macroscópico a la cuenca. Todos estos resultados proceden de muestras finitas
+y no constituyen una prueba global de separación de cuencas.

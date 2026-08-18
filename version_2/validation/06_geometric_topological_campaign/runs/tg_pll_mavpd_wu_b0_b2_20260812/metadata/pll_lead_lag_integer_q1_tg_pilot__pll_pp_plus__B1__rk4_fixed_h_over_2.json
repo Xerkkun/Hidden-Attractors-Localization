@@ -1,0 +1,183 @@
+{
+  "schema_version": "1.1",
+  "trajectory_id": "pll_lead_lag_integer_q1_tg_pilot__pll_pp_plus__B1__rk4_fixed_h_over_2",
+  "case_id": "pll_lead_lag_integer_q1_tg_pilot",
+  "system_id": "pll-lead-lag-2015",
+  "seed": {
+    "seed_id": "pll_pp_plus",
+    "system_id": "pll-lead-lag-2015",
+    "route": "perpetual_point",
+    "state": [
+      0.006370560000000001,
+      0.7733136269133863
+    ],
+    "order_kind": "integer",
+    "q": 1.0,
+    "parameter_set_id": "pll_bianchi2015",
+    "initialization_kind": "point_initial_value",
+    "lower_terminal": null,
+    "initial_time": null,
+    "history_reference": null,
+    "history_coverage": null,
+    "source_artifact": "validation/06_geometric_topological_campaign/wolfram/geometric_topological_engine_validation_summary.json",
+    "source_record_id": "PLL_PP_positive",
+    "generation_residual": null,
+    "score": null,
+    "priority": 10,
+    "parent_seed_id": null,
+    "transform_name": "identity",
+    "metadata": {}
+  },
+  "contract_id": "pll_lead_lag_integer_q1_tg_pilot_geometric_topological_initial_pilot_v1",
+  "physical_budget": {
+    "level": "B1",
+    "normalized_step": 0.01,
+    "normalized_horizon": 100.0,
+    "transient_fraction": 0.5,
+    "tau_star": 0.0073247672,
+    "step": 7.324767200000001e-05,
+    "horizon": 0.7324767200000001,
+    "burn_time": 0.36623836000000004,
+    "nominal_steps": 10000
+  },
+  "solver": {
+    "solver_id": "rk4_fixed_h_over_2",
+    "family": "rk4",
+    "step_factor": 0.5,
+    "rtol": null,
+    "atol": null,
+    "full_memory": false,
+    "use_native_backend": false
+  },
+  "solver_info": {
+    "integrator": "rk4",
+    "integrator_class": "integer_order_solver",
+    "scientific_label": "Classical RK4 integer-order (q=1.0) solver.",
+    "h": 3.6623836000000005e-05,
+    "N": 20000,
+    "steps_completed": 20000,
+    "t_final_reached": 0.7324767200000001,
+    "divergence_norm_threshold": Infinity,
+    "max_norm": 0.7733398668144879,
+    "configured_step": 3.6623836000000005e-05,
+    "independent_fixed_step": true
+  },
+  "classification": {
+    "schema_version": "1.0",
+    "label": "equilibrium",
+    "destination_id": "equilibrium:E_focus",
+    "subtype": "tail_converged_to_known_equilibrium",
+    "confidence": 0.9999983944388245,
+    "is_ambiguous": false,
+    "reasons": [
+      "final_and_tail_equilibrium_tests_passed"
+    ],
+    "metrics": {
+      "integration_status": "ok",
+      "dimension": 2,
+      "n_samples": 20001,
+      "finite_fraction": 1.0,
+      "burn_time": 0.36623836000000004,
+      "classifier_contract": {
+        "burn_time": 0.36623836000000004,
+        "order_kind": "integer",
+        "coordinate_scale": [
+          0.0224,
+          3.141592653589793
+        ],
+        "periodic_coordinates": {
+          "1": 6.283185307179586
+        },
+        "require_declared_scale": true,
+        "min_tail_samples": 128,
+        "max_cloud_points": 500,
+        "divergence_radius": 120.0,
+        "divergence_radius_kind": "scaled",
+        "escape_persistence_fraction": 0.5,
+        "equilibrium_tolerance": 1e-05,
+        "equilibrium_quantile_factor": 5.0,
+        "equilibrium_span_factor": 10.0,
+        "equilibrium_window_fraction": 0.2,
+        "minimum_nontrivial_span": 0.01,
+        "periodic_dominant_power_min": 0.45,
+        "periodic_entropy_max": 0.35,
+        "periodic_frequency_drift_max": 0.08,
+        "periodic_return_error_max": 0.12,
+        "periodic_windows": 4,
+        "recurrence_cloud_distance_max": 0.18,
+        "recurrence_centroid_drift_max": 0.2,
+        "recurrence_span_drift_max": 0.35,
+        "recurrence_covariance_drift_max": 0.5,
+        "recurrence_radius": 0.08,
+        "recurrence_rate_min": 0.0001,
+        "recurrence_theiler_samples": 10,
+        "recurrence_min_lag_time": 1.0,
+        "recurrence_excursion_radius": 0.25,
+        "recurrence_return_fraction_min": 0.002,
+        "recurrence_min_return_count": 3,
+        "reference_distance_max": 0.12,
+        "reference_separation_margin": 0.03,
+        "minimum_confidence": 0.05
+      },
+      "n_tail_samples": 10001,
+      "coordinate_scale": [
+        0.0224,
+        3.141592653589793
+      ],
+      "coordinate_scale_source": "declared",
+      "periodic_coordinates": {
+        "1": 6.283185307179586
+      },
+      "metric_space": "cylindrical_product_embedding",
+      "divergence_radius_kind": "scaled",
+      "final_radius_norm": 1.0854144026599312e-11,
+      "maximum_radius_norm": 0.3761314169624683,
+      "tail_escape_fraction": 0.0,
+      "tail_span_scaled": [
+        8.280967327098962e-07,
+        6.723455125978717e-12,
+        2.3330710757786845e-06
+      ],
+      "max_tail_span_scaled": 2.3330710757786845e-06,
+      "closest_equilibrium": "E_focus",
+      "closest_equilibrium_final_distance_norm": 1.0854144026599312e-11,
+      "closest_equilibrium_q95_distance_norm": 1.1406541307434399e-10,
+      "closest_equilibrium_window_span_norm": 1.449960862147256e-10
+    },
+    "evidence_status": "finite_time_destination_diagnostic",
+    "scientific_warnings": [
+      "This classification does not prove attraction, chaos, or hiddenness."
+    ]
+  },
+  "observables": {
+    "n_tail_samples": 10001,
+    "tail_centroid_scaled": [
+      -5.640361574312748e-08,
+      -4.851962359663203e-08
+    ],
+    "tail_span_scaled": [
+      8.280967327098962e-07,
+      2.333071075716604e-06
+    ],
+    "tail_covariance_scaled": [
+      [
+        2.258452434282405e-14,
+        5.699247910322054e-15
+      ],
+      [
+        5.699247910322054e-15,
+        1.0301527711770759e-13
+      ]
+    ],
+    "tail_radius_max_scaled": 2.088880884661013e-06,
+    "final_state": [
+      -1.5618296227589465e-13,
+      2.613321440520788e-11
+    ]
+  },
+  "trajectory_artifact": "trajectories/pll_lead_lag_integer_q1_tg_pilot__pll_pp_plus__B1__rk4_fixed_h_over_2.csv",
+  "trajectory_sha256": "ef7ea348d18ba5b0a34be303b80ec737970beaf771725599eca4a87aadcfbc54",
+  "elapsed_seconds": 1.6433189999988826,
+  "evidence_level": "EV-TG2",
+  "claims_scope": "finite-time trajectory and destination diagnostic only"
+}

@@ -1,0 +1,167 @@
+\section{Trazabilidad de datos, cálculos y pruebas}
+\label{app:trazabilidad}
+
+Las rutas de este apéndice se expresan con respecto a la raíz del repositorio.
+El punto de entrada de la evidencia del artículo es
+\codepath{version_2/validation/paper07_chua/}. En esa carpeta,
+\codepath{manifest.json} relaciona cada afirmación numérica con sus archivos
+de origen y \codepath{evidence_manifest.json} comprueba que el paquete
+compacto esté completo e íntegro. La carpeta
+\codepath{evidence/} contiene los datos necesarios para auditar los resultados
+archivados sin depender de una figura ni de una transcripción manual. Esta
+integridad no implica que cada campaña histórica pueda reintegrarse desde una
+copia limpia.
+
+La trazabilidad sigue siempre la misma cadena:
+\[
+\text{parámetros y contrato}
+\longrightarrow
+\text{semilla}
+\longrightarrow
+\text{trayectoria}
+\longrightarrow
+\text{sondeo}
+\longrightarrow
+\text{tabla o figura}.
+\]
+Los archivos JSON fijan parámetros, tolerancias y decisiones; los CSV
+conservan etapas o resultados por condición inicial; y los NPZ almacenan
+bancos de parámetros, semillas o trayectorias cuando es necesario preservar
+arreglos completos.
+
+\subsection{Cadena del sistema no suave}
+
+La información del caso de \cref{eq:chua_no_suave} se encuentra en
+\codepath{version_2/validation/paper07_chua/evidence/nonsmooth_corrected/}.
+La lectura recomendada es la siguiente:
+
+\begin{enumerate}
+  \item \codepath{candidate_and_reference.json} registra la raíz sesgada
+  seleccionada, la semilla modal y la trayectoria de referencia;
+  \item \codepath{numerical_contract.json} fija \(q\), el paso, los
+  horizontes, el integrador ABM--PECE y la política de memoria;
+  \item \codepath{continuation_stages.csv} conserva, en orden, los 21 valores
+  de \(\eta\) y el estado alcanzado en cada etapa;
+  \item \codepath{target_reproduction_runs.csv} documenta las reintegraciones
+  usadas para comprobar la atracción local del conjunto objetivo;
+  \item \codepath{result.json} reúne la semilla, el extremo de continuación y
+  el diagnóstico postransitorio.
+\end{enumerate}
+
+El sondeo volumétrico usado en las tablas del reporte se conserva en
+\codepath{nonsmooth_corrected/extended_first_contact_clean/}. Dentro de esa
+carpeta, \codepath{extended_numerical_contract.json} fija el contrato,
+\codepath{extended_probe_plan.csv} enumera los radios y tamaños de muestra,
+\codepath{extended_probe_runs.csv} registra una fila por condición inicial y
+\codepath{extended_probe_summary.csv} contiene los conteos agregados.
+\codepath{extended_result.json} separa las \(7\,200\) pruebas del contrato
+local \(r\leq0.01\) de las \(10\,200\) pruebas de la extensión macroscópica,
+comprueba el total de \(17\,400\) y registra el corte después de completar
+\(r=0.3\), primer radio con contactos.
+\codepath{target_cloud_nn_sample.csv} fija la muestra del conjunto objetivo
+empleada para medir contacto.
+
+La integridad de esta evidencia fijada se comprueba mediante
+\codepath{version_2/validation/paper07_chua/scripts/
+sync_paper07_evidence.py}. El programa verifica el manifiesto compacto y, con
+la opción correspondiente, su paridad con las fuentes canónicas. Esta
+comprobación valida los artefactos conservados; no se presenta como una nueva
+ejecución de la campaña numérica completa.
+
+\subsection{Cadena del sistema con arctangente}
+
+El registro canónico actualmente promovido para \texttt{c590} se encuentra en
+\codepath{version_2/validation/chua_fractional_arctan_c590/}. El manifiesto
+\codepath{version_2/validation/paper07_chua/manifest.json} conserva el origen de
+la semilla como búsqueda entera acotada y refinamiento de Caputo, y el nombre
+\texttt{c590} identifica el índice de aquella búsqueda local. El paquete
+compacto valida los resultados retenidos, pero no contiene ya los programas
+históricos de regeneración de las exploraciones global y local; por tanto, no
+se afirma que esa etapa pueda repetirse desde este apéndice.
+
+Los sondeos sobre superficies esféricas se encuentran en
+\codepath{version_2/validation/chua_fractional_arctan_c590/}. Para las tablas
+de este reporte se emplean, en orden,
+\codepath{hiddenness_scaled_rows.csv},
+\codepath{hiddenness_r003_rows.csv},
+\codepath{hiddenness_r010_rows.csv},
+\codepath{hiddenness_r030_rows.csv} y
+\codepath{hiddenness_r100_rows.csv},
+\codepath{hiddenness_r200_rows.csv}, junto con sus archivos
+\codepath{*_run_config.json}. Esas seis corridas reúnen \(13\,500\)
+condiciones iniciales: \(0/8\,400\) contactos hasta \(r=0.3\),
+\(22/2\,400\) en \(r=1\) y \(588/2\,700\) en \(r=2\), con 131
+divergencias en este último bloque.
+
+Las trayectorias representativas fijadas y su manifiesto se conservan en
+\codepath{version_2/validation/paper07_chua/evidence/probe_story_trajectories/};
+son la fuente de los gráficos que ilustran los destinos de las sondas y forman
+parte del manifiesto de integridad.
+
+\subsection{Controles bibliográficos y validación algebraica}
+
+Los controles de las referencias se mantienen separados de los dos resultados
+propuestos:
+
+\begin{itemize}
+  \item Leonov--Kuznetsov:
+  \codepath{version_2/validation/published_cases/kuznetsov2017_chua_integer.yaml}
+  y \codepath{version_2/validation/reference_cases/chua_integer_q1/};
+  \item Danca:
+  \codepath{version_2/validation/published_cases/danca2017_chua_fractional_saturation.yaml};
+  \item Wu et al.:
+  \codepath{version_2/validation/published_cases/wu2023_chua_fractional_arctan.yaml}
+  y
+  \codepath{version_2/validation/reference_cases/fractional_chua_arctan_wu2023/}.
+\end{itemize}
+
+\codepath{version_2/validation/published_reference_coverage.json} indica qué
+ecuaciones, parámetros, condiciones iniciales y procedimientos se verifican
+en cada control. La comprobación simbólica se describe en
+\cref{app:wolfram}; en particular, el archivo específico de
+\texttt{c590} usa el valor \(\rho\neq1\) de \cref{eq:parametros_c590}.
+
+\subsection{Pruebas automatizadas relevantes}
+
+Las pruebas se agrupan por la propiedad científica que protegen:
+
+\begin{table}[H]
+\centering
+\caption{Pruebas que enlazan la implementación con el procedimiento descrito.}
+\label{tab:pruebas_trazabilidad}
+\begin{tabularx}{\linewidth}{L{0.33\linewidth}Y}
+\toprule
+Prueba & Propiedad comprobada\\
+\midrule
+\codepath{version_2/tests/test_summarize_c590_hiddenness.py}
+& Agregación de las seis corridas de \texttt{c590}, conteos por radio y frontera
+de la afirmación finita.\\
+\codepath{version_2/tests/test_continuation_memory_policy.py} y
+\codepath{version_2/tests/test_fractional_memory_validation.py}
+& Conservación de la memoria causal y consistencia del integrador
+fraccionario.\\
+\codepath{version_2/tests/test_published_case_reproduction.py},
+\codepath{version_2/tests/test_published_continuation_comparison.py} y
+\codepath{version_2/tests/test_published_validation_coverage.py}
+& Separación y cobertura de los controles de Leonov--Kuznetsov, Danca y Wu.\\
+\codepath{version_2/tests/test_official_wolfram_artifacts.py}
+& Correspondencia entre los casos algebraicos, sus parámetros y sus salidas.\\
+\codepath{version_2/tests/test_sync_paper07_evidence.py}
+& Completitud del paquete compacto de evidencia del artículo.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Desde \codepath{version_2/}, una comprobación corta de procedencia e integridad
+se realiza con:
+\begin{verbatim}
+python validation/paper07_chua/scripts/sync_paper07_evidence.py \
+  --verify --verify-sources
+python -m pytest -q tests/test_summarize_c590_hiddenness.py \
+  tests/test_sync_paper07_evidence.py \
+  tests/test_official_wolfram_artifacts.py
+\end{verbatim}
+Cada instrucción larga puede escribirse en una sola línea. Esta secuencia
+comprueba la asociación entre parámetros, semillas, contratos y archivos
+canónicos. No equivale a reejecutar las campañas integrales que produjeron los
+artefactos fijados.

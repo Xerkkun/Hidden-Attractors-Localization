@@ -1,0 +1,682 @@
+\section{Ruta de lectura con la biblioteca local y compartida}
+\label{sec:ruta-biblioteca-local-drive}
+
+Esta sección convierte las bibliotecas señaladas por la autora en un programa
+de estudio verificable. No se infiere el contenido de un libro a partir de su
+nombre: se revisaron portadas, páginas legales, índices y texto extraíble de
+los tres ejemplares de cálculo fraccionario disponibles localmente, y se
+inspeccionaron los índices de los tres volúmenes directamente pertinentes de
+la carpeta compartida de Google Drive. La finalidad no es acumular citas, sino
+asignar a cada fuente una pregunta matemática concreta.
+
+\subsection{Un solo orden de lectura}
+\label{sec:ruta-unica-estudio}
+
+Ésta es la ruta oficial del volumen. Las actividades situadas en otros
+capítulos sirven para practicar una etapa, pero no abren itinerarios
+paralelos. Se avanza de manera acumulativa: una etapa se da por terminada
+cuando puede realizarse su comprobación de salida sin copiar fórmulas.
+
+\begin{longtable}{@{}L{1.1cm}L{2.4cm}L{5.5cm}L{5.05cm}@{}}
+\caption{Orden progresivo antes, durante y después del contenido de tesis.}
+\label{tab:ruta-unica-biblioteca}\\
+\toprule
+Etapa & Momento & Lectura y archivos & Comprobación para avanzar \\
+\midrule
+\endfirsthead
+\toprule
+Etapa & Momento & Lectura y archivos & Comprobación para avanzar \\
+\midrule
+\endhead
+0 & Preliminar opcional &
+Diagnóstico con \path{[Anton] Algebra lineal.pdf},
+\path{[Marsden] Calculo Vectorial 3rd Ed.PDF} y
+\texttt{Cálculo Infinitesimal - Michael Spivak - Universidad de Brandeis.pdf},
+en la subcarpeta \texttt{Cálculo vectorial y álgebra lineal}. &
+Calcular determinantes, valores propios, derivadas parciales, un jacobiano y
+una integral impropia. Si estos productos ya son fluidos, no se releen los
+libros completos. \\
+1 & Antes: base analítica &
+Kantorovich, archivo \path{978-3-030-91222-2.pdf}: derivadas,
+integrales, varias variables, series y EDO, pp.\ 243--760
+\cite{Kantorovich2022Fundamentals}. Oliveira: Gamma, beta,
+Mittag--Leffler y transformadas \cite{Oliveira2019SolvedFractional}. &
+Derivar una identidad beta--Gamma, resolver un sistema lineal por resolvente y
+justificar las condiciones de una transformada de Laplace. \\
+2 & Antes: EDO y topología &
+Los tres libros UNAM; Hirsch--Smale--Devaney, archivo cuyo nombre comienza
+\path{[Pure and Applied Mathematics (Academic Press), 60] Hirsch...pdf},
+caps.\ 1--10 \cite{HirschSmaleDevaney2013}. &
+Distinguir espacio, métrica y topología; demostrar existencia local bajo las
+hipótesis declaradas; definir flujo, órbita, invariancia, conjunto
+\(\omega\)-límite y cuenca. \\
+3 & Antes: dinámica y caos entero &
+ Hirsch--Smale--Devaney, caps.\ 12 y 14--16; Hoppensteadt,
+ \path{(Applied Mathematical Sciences, 94) Frank C. Hoppensteadt - Analysis and Simulation of Chaotic Systems-Springer (2000).pdf};
+ Wimberger, \path{978-3-031-01249-5.pdf}, pp.\ 9--152
+ \cite{Wimberger2022Nonlinear}; Vallejo--Sanjuán,
+ \path{978-3-319-51893-0.pdf}; y los capítulos 5--6 de
+ \path{978-3-662-53685-8.pdf}. &
+Construir un mapa de Poincaré sencillo; separar ciclo, bifurcación,
+homoclinicidad, herradura, exponente finito y definición topológica de caos. \\
+4 & Antes: cálculo fraccionario &
+ Oliveira, Herrmann y Das, en
+ la colección local identificada en este reporte como
+ \path{Biblioteca local/Calculo Fraccionario}; después, la
+ \cref{sec:geometria-topologia-caputo}; como contraste numérico especializado,
+ \path{978-981-19-3273-1.pdf}. &
+Pasar de Caputo a Volterra; declarar terminal inferior e historia; refutar la
+ley de semigrupo puntual con Mittag--Leffler; evaluar
+\((\mathrm i\omega)^q\) en una rama declarada. \\
+5 & Durante: métodos de localización &
+Kantorovich II, \path{978-3-031-46320-4.pdf}: álgebra lineal,
+análisis complejo, Fourier y Laplace, pp.\ 1--717
+\cite{Kantorovich2024Advanced}; Cicogna,
+\path{978-3-030-59472-5.pdf}, pp.\ 57--127
+\cite{Cicogna2020Exercises};
+\cref{sec:lure_transferencia,sec:machado-fdf,sec:integracion_continuacion,sec:perpetual-points}. &
+Reconstruir sin saltos una transferencia, una función descriptiva, una
+semilla modal y una homotopía; explicar por qué Machado y puntos perpetuos son
+localizadores complementarios y no pruebas de ocultedad. \\
+6 & Durante: protocolos y casos &
+\cref{sec:modelos,sec:fundamentos}; expedientes enteros y fraccionarios del
+volumen; Pham--Volos--Kapitaniak,
+\path{978-3-319-53721-4.pdf}; Wang--Kuznetsov--Chen,
+\path{978-3-030-75821-9.pdf}; volumen de Pham et al.\ con nombre largo
+\path{(Studies in Systems, Decision and Control 133)...Hidden Attractor.pdf}. &
+Para un caso, entregar modelo, parámetros, equilibrios, estabilidad, método
+de semilla, contrato de memoria, clasificación y sondeo de cuenca, indicando
+qué conclusión permanece abierta. \\
+7 & Después: profundización &
+ Kuznetsov, \path{978-3-031-22007-4.pdf}; Amster; teoría geométrica II;
+ Putkaradze, \path{978-3-031-84977-0.pdf}, caps.\ 3--9; el capítulo
+ geométrico de Lorenz en \path{978-3-0348-0697-8.pdf}; y material posterior
+ de la \cref{sec:geo-study-plan}. &
+Formular una continuación de bifurcaciones, una pregunta de grado o punto
+fijo y un protocolo geométrico que distinga evidencia numérica de teorema. \\
+8 & Futuro: extensión de tesis &
+\cref{sec:candidate-selection,sec:cand-munoz,sec:cand-jerk,sec:cand-extended-liu};
+capítulos selectivos de circuitos y control en
+\path{978-3-031-55460-5.pdf} y \path{978-3-031-36364-1.pdf}. &
+Proponer un candidato con ecuaciones congeladas, prueba de compatibilidad
+estructural, oráculo numérico, criterio de continuación y ensayo de cuenca
+predeclarado. \\
+\bottomrule
+\end{longtable}
+
+\begin{remark}[cómo usar la ruta]
+No se recomienda imprimir ni leer linealmente todos los PDF de la biblioteca.
+Los textos núcleo sostienen las etapas; los demás se consultan por capítulos
+cuando una pregunta de tesis los activa. Cada etapa produce una demostración,
+un cálculo o un contrato verificable, no sólo páginas leídas.
+\end{remark}
+
+\subsection{Proveniencia y límite de la inspección}
+
+El primer corpus está en
+\path{Biblioteca local/Calculo Fraccionario} y contiene los ejemplares de
+Oliveira, Herrmann y Das. El segundo se consultó en la carpeta compartida
+\url{https://drive.google.com/drive/folders/12G8I9Of-uC4HMMmruElm3pGb7UzYvN9L}.
+Allí se verificaron, entre otros, Hirsch--Smale--Devaney,
+Hoppensteadt y el volumen colectivo editado por Pham, Vaidyanathan, Volos y
+Kapitaniak \cite{HirschSmaleDevaney2013,Hoppensteadt2000Chaotic,
+PhamEtAl2018HiddenAttractors}. La vista de Drive confirmó cincuenta elementos
+en la raíz y permitió inspeccionar además la subcarpeta
+\texttt{Cálculo vectorial y álgebra lineal} y el volumen
+\path{Introducing Fractals - Nigel Lesmoir-Gordon.pdf}. Los archivos cuyo
+nombre es sólo un eISBN se resolvieron contra fichas editoriales primarias
+cuando podían aportar prerrequisitos, dinámica, transformadas,
+bifurcaciones, atractores ocultos o realización circuital. Los restantes
+permanecen inventariados sin convertirlos automáticamente en lecturas de
+tesis. Esta regla evita atribuir a un archivo una edición o un tema
+equivocados.
+
+La ruta original de la unidad \path{G:} no fue legible desde el entorno de
+compilación. El enlace de Drive permitió, sin embargo, inspeccionar la carpeta
+compartida que la usuaria indicó como su segunda biblioteca. La inspección
+directa de un índice o de una ficha editorial se distingue de la simple
+confirmación de que el nombre del archivo existe.
+
+\subsection{Tres libros de cálculo fraccionario, tres funciones distintas}
+
+\begin{table}[H]
+\centering
+\caption{Función pedagógica de los libros fraccionarios inspeccionados.}
+\label{tab:ruta-frac-books}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.24\textwidth}L{0.29\textwidth}Y@{}}
+\toprule
+Fuente & Núcleo verificado & Papel dentro de esta metodología \\
+\midrule
+Oliveira \cite{Oliveira2019SolvedFractional} &
+Funciones especiales (pp.\ 17--67), Mittag--Leffler (69--113), transformadas
+integrales (115--167), derivadas fraccionarias (169--222) y aplicaciones
+(223--307). &
+Es la fuente de trabajo algebraico: Gamma, Mittag--Leffler, Laplace,
+funciones de Green, ecuaciones integrales de Volterra y ejercicios con
+solución. \\
+Herrmann \cite{Herrmann2014Fractional} &
+Operadores fraccionarios y semigrupo en el orden (caps.\ 3 y 5), oscilador
+fraccionario (cap.\ 6), no localidad y memoria (cap.\ 8), y formalismos de
+simetría, tensores y campos (caps.\ 13, 16 y 23--25). &
+Ofrece intuición física y puentes geométricos. Sus ``grupos fraccionarios'' y
+``fractors'' son formalismos específicos; no se presentan como geometría
+universal de sistemas Caputo. \\
+Das \cite{Das2020Kindergarten} &
+Integración (pp.\ 47--99), derivadas (100--154), inicialización y Laplace
+generalizada (210--254), ecuaciones diferenciales e integrales fraccionarias
+(255--343) y ramas complejas en el apéndice E (466--470). &
+Es un puente conceptual amplio, útil para terminal inferior, inicialización,
+sistemas vectoriales y ramas de \(s^q\). Su tono deliberadamente informal
+requiere respaldar los teoremas con una fuente analítica rigurosa. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Los números anteriores son páginas impresas. Para localizar rápidamente el
+material en los PDF locales se usa la correspondencia de la
+\cref{tab:ruta-frac-pdf-pages}.
+
+\begin{longtable}{@{}L{0.21\textwidth}L{0.35\textwidth}L{0.35\textwidth}@{}}
+\caption{Correspondencia entre tema, página impresa y página PDF.}
+\label{tab:ruta-frac-pdf-pages}\\
+\toprule
+Fuente & Tema y página impresa & Página del PDF \\
+\midrule
+\endfirsthead
+\toprule
+Fuente & Tema y página impresa & Página del PDF \\
+\midrule
+\endhead
+Oliveira & Mittag--Leffler, pp.\ 69--113 & PDF 81--125 \\
+Oliveira & Transformadas, pp.\ 115--167 & PDF 126--178 \\
+Oliveira & Derivadas fraccionarias, pp.\ 169--222 & PDF 179--232 \\
+Oliveira & Volterra/Green: ejercicios 33, 35, 36 y 38,
+pp.\ 277, 280, 281 y 283 & PDF 287, 290, 291 y 293 \\
+Das & Riemann--Liouville y Caputo, \S\S3.7--3.10,
+pp.\ 119--125 & PDF 156--162 \\
+Das & Inicialización, cap.\ 5, pp.\ 210--254 & PDF 247--291 \\
+Das & Sistemas vectoriales, \S7.13, p.\ 322 y \S7.17, p.\ 335 &
+PDF 359 y 372 \\
+Das & Ramas complejas y superficies de Riemann, apéndice E,
+pp.\ 466--470 & PDF 503--507 \\
+Herrmann & Definiciones y operadores, \S3.4.2 y \S\S5.2--5.3,
+pp.\ 26 y 45--52 & PDF 47 y 66--73 \\
+Herrmann & Interpretación geométrica elemental, \S5.7, p.\ 62 & PDF 83 \\
+Herrmann & Semigrupo en el orden, \S5.9.1, p.\ 66 & PDF 87 \\
+Herrmann & No localidad y memoria, cap.\ 8, pp.\ 87--106 & PDF 108--127 \\
+Herrmann & Tensores, campos y gauge, caps.\ 23--25,
+pp.\ 353--378 & PDF 374--399 \\
+\bottomrule
+\end{longtable}
+
+\subsection{La distinción que organiza toda la lectura fraccionaria}
+
+Las fuentes contienen identidades de composición de integrales, por ejemplo
+\begin{equation}
+ I^\alpha I^\beta=I^{\alpha+\beta}.
+ \label{eq:library-order-semigroup}
+\end{equation}
+La igualdad es un semigrupo respecto al \emph{orden} del operador. No implica
+la ley temporal
+\begin{equation}
+ \Phi(t+s,x_0)=\Phi\bigl(t,\Phi(s,x_0)\bigr)
+ \label{eq:library-false-time-semigroup}
+\end{equation}
+para el estado instantáneo de un PVI Caputo. La
+\cref{sec:geometria-topologia-caputo} deriva la razón desde la ecuación de
+Volterra: al desplazar el tiempo aparece un perfil de memoria que no queda
+determinado sólo por \(x(s)\). Éste es el punto donde el cálculo fraccionario
+se convierte en una pregunta de sistemas dinámicos sobre un espacio de
+historias.
+
+Análogamente, una fórmula generalizada de Leibniz o de cadena debe conservarse
+con la definición exacta bajo la cual fue obtenida. No se puede sustituir por
+la regla ordinaria
+\[
+ D_C^q[f(x(t))]=Df(x(t))D_C^q x(t),
+\]
+que es falsa en general. Los desarrollos de puntos perpetuos y de cambio de
+coordenadas del informe se construyen precisamente sin usar esa identidad.
+
+\subsection{Ramas complejas y función de transferencia fraccionaria}
+
+La transferencia fraccionaria evalúa \(z=s^q\). En el eje imaginario,
+\begin{equation}
+ (\ii\omega)^q
+ =\omega^q\exp\!\left(\ii q\frac{\pi}{2}\right),
+ \qquad \omega>0,
+ \label{eq:library-principal-branch}
+\end{equation}
+si se declara la rama principal. El apéndice de Das sobre ramas y superficies
+de Riemann ofrece un apoyo visual para entender por qué \(s^q\) es multivaluada
+antes de elegir una rama. Esta topología pertenece al análisis complejo de la
+transferencia; no es la topología de una cuenca o de un atractor. Mantener
+separadas ambas nociones evita usar la palabra ``topológico'' sin especificar
+el objeto.
+
+El control mínimo para todo cálculo de frecuencia es, por tanto:
+\begin{enumerate}
+ \item declarar el corte y la rama de \(s^q\);
+ \item comprobar \(q=1\) como límite entero;
+ \item verificar por separado partes real e imaginaria;
+ \item no cambiar la rama durante una continuación;
+ \item registrar la convención de realimentación de \(W_+\) o \(W_-\).
+\end{enumerate}
+
+\subsection{La biblioteca geométrica y caótica de Drive}
+
+El índice de Hirsch--Smale--Devaney
+\cite{HirschSmaleDevaney2013} permite una ruta especialmente cercana al
+proyecto:
+\begin{enumerate}
+ \item capítulos 1--6: ecuaciones y sistemas lineales, retratos y
+ clasificación;
+ \item capítulos 7--9: existencia, dependencia continua, ecuación variacional,
+ equilibrios y técnicas globales;
+ \item capítulo 10: secciones locales, mapa de Poincaré, conjuntos límite y
+ Poincaré--Bendixson;
+ \item capítulo 12: circuitos, Liénard, Van der Pol y bifurcación de Hopf;
+ \item capítulo 14: sistema y atractor de Lorenz;
+ \item capítulo 15: dinámica discreta, caos, dinámica simbólica, corrimiento y
+ conjunto de Cantor;
+ \item capítulo 16: Shilnikov, herradura, doble scroll, homoclinicidad y una
+ exploración del circuito de Chua;
+ \item capítulo 17: prueba de existencia, unicidad, dependencia continua y
+ diferenciabilidad del flujo.
+\end{enumerate}
+
+Hoppensteadt \cite{Hoppensteadt2000Chaotic} añade una ruta aplicada que encaja
+con dos expedientes concretos: ecuaciones angulares y cilindro del PLL en
+\S2.2; sistemas disipativos y PLL en \S2.4; mapas estroboscópicos en \S2.5;
+variedades estable/inestable en \S3.2.3; estabilidad orbital y retorno de
+Poincaré en \S3.5; y bifurcación, función implícita y métodos topológicos en el
+capítulo 4. Así, la geometría cilíndrica del PLL deja de ser una corrección de
+dibujo y se convierte en parte del modelo matemático.
+
+El volumen de Pham et al. \cite{PhamEtAl2018HiddenAttractors} cumple otra
+función. Su índice separa una parte de sistemas con atractores autoexcitados y
+otra de sistemas con atractores ocultos. La segunda incluye órbitas
+periódicas, toros invariantes y caos en sistemas cuadráticos sin equilibrio,
+un oscilador Duffing memristivo, Rikitake, sistemas de cuatro y cinco
+dimensiones y sincronización. Es un catálogo de modelos y antecedentes, no un
+teorema general de ocultedad. Cada modelo que se importe debe volver a pasar
+por el contrato algebraico, el contrato del integrador y el sondeo de cuenca
+de este reporte.
+
+La resolución de los archivos nombrados sólo por eISBN reveló cuatro textos
+adicionales de alta prioridad:
+
+\begin{itemize}
+  \item \emph{Chaotic Systems with Multistability and Hidden Attractors}
+        \cite{WangKuznetsovChen2021Multistability}: sistemas con equilibrios
+        estables, sin equilibrios, con curvas o superficies de equilibrios
+        (pp.\ 29--146); sistemas hipercaóticos, fraccionarios, memristivos y
+        jerk con atractores ocultos (pp.\ 149--308); y multistabilidad
+        simétrica o asimétrica (pp.\ 311--375).
+  \item \emph{Systems with Hidden Attractors}
+        \cite{PhamVolosKapitaniak2017Systems}: clasificación compacta por
+        equilibrios estables (pp.\ 21--35), infinitos equilibrios (37--50),
+        ausencia de equilibrios (51--63), sincronización (65--77) y
+        realización circuital (79--102).
+  \item \emph{Nonlinear Dynamics} \cite{DatserisParlitz2022Nonlinear}:
+        dinámica continua, definición y medición de caos, bifurcaciones,
+        entropía, dimensión fractal, coordenadas de retardo y análisis de
+        series de tiempo (pp.\ 1--119). Su código Julia es un complemento
+        natural de la reproducción con \juliads, pero una llamada de software
+        no sustituye las hipótesis del teorema que implementa.
+  \item \emph{Elements of Applied Bifurcation Theory}
+        \cite{Kuznetsov2023Bifurcation}: equivalencia topológica y estabilidad
+        estructural (pp.\ 47--87), bifurcaciones de equilibrios y ciclos
+        (89--228), órbitas homoclínicas y heteroclínicas (229--279) y análisis
+        numérico de bifurcaciones (569--655).
+\end{itemize}
+
+Estos hallazgos también afinan el portafolio de candidatos. Las familias sin
+equilibrio, con equilibrios estables, con continuos de equilibrios,
+fraccionarias, jerk y memristivas son \emph{fuentes de modelos}, no candidatos
+promovidos automáticamente. Para cada capítulo seleccionado deben congelarse
+ecuaciones, parámetros, orden, condición inicial publicada y criterio de
+cuenca; después se aplica la criba de realización escalar/MIMO, regularidad
+PWA, compatibilidad de memoria y disponibilidad de un oráculo numérico. Esta
+secuencia conserva la diferencia entre «aparece en un libro de atractores
+ocultos» y «fue reproducido bajo el contrato HAFO».
+
+\subsection{Otros archivos relevantes y por qué no cumplen la misma función}
+
+El inventario amplio mostró que la biblioteca es mayor de lo que reflejaba la
+primera edición. Los siguientes archivos sí aportan piezas concretas, pero se
+leen selectivamente:
+
+\begin{longtable}{@{}L{5.25cm}L{4.1cm}L{4.65cm}@{}}
+\caption{Archivos complementarios identificados en Drive.}
+\label{tab:drive-complementarios}\\
+\toprule
+Archivo & Contenido útil & Uso recomendado \\
+\midrule
+\endfirsthead
+\toprule
+Archivo & Contenido útil & Uso recomendado \\
+\midrule
+\endhead
+\path{978-3-030-91222-2.pdf} &
+Cálculo, varias variables, series y EDO, pp.\ 243--760. &
+Prerrequisito de consulta; no reemplaza un texto de dinámica. \\
+\path{978-3-031-46320-4.pdf} &
+Álgebra lineal y espectral, análisis complejo, Fourier y Laplace,
+pp.\ 1--717. &
+Resolventes, \(s^q\), transferencia y balance armónico. \\
+\path{978-3-030-59472-5.pdf} &
+Variable compleja, Fourier, Laplace y distribuciones, pp.\ 57--127. &
+Banco de ejercicios durante función descriptiva y transferencia. \\
+\path{978-3-031-01249-5.pdf} &
+Sistemas dinámicos, formulación hamiltoniana y sistemas disipativos,
+pp.\ 9--152. &
+Segundo puente hacia caos; la parte cuántica queda como lectura futura. \\
+\path{978-3-031-55460-5.pdf} &
+Sistemas LTI, Laplace, realimentación y osciladores. &
+Después de la metodología, para realización física y lectura de lazo. \\
+\path{978-3-031-36364-1.pdf} &
+Impedancia compleja, Laplace y electrónica no lineal. &
+Consulta para circuitos de Chua; no es fuente de ocultedad. \\
+\path{Introducing Fractals - Nigel Lesmoir-Gordon.pdf} &
+Introducción visual a autosimilitud y dimensión fractal. &
+Motivación posterior a la definición matemática; no demuestra caos ni Wada. \\
+\path{[Marion,_Thornton]_Classical_Dynamics_of_Particles_and_Systems.pdf} &
+Mecánica clásica lagrangiana y hamiltoniana. &
+Referencia futura para sistemas conservativos, no prerrequisito de HAFO. \\
+\path{978-1-4939-1360-2.pdf},
+\path{978-1-4939-1366-4.pdf},
+\path{978-3-030-04360-5.pdf},
+\path{978-3-030-38585-9.pdf} y
+\path{978-3-030-48028-8.pdf} &
+Historia y cursos generales de física o mecánica. &
+Biblioteca general: no se insertan en la ruta principal de la tesis. \\
+\path{01_mechanics_lim.pdf}, \path{02_electromagnetism_lim.pdf},
+\path{03_quantum_lim.pdf}, \path{05_modernphysics_lim.pdf} y
+\path{5_ThermalPhysics_Reif_BPC.pdf} &
+Física general por áreas. &
+Consulta disciplinaria; no anteceden a Caputo, Lur'e o cuencas. \\
+\bottomrule
+\end{longtable}
+
+En la subcarpeta \texttt{Cálculo vectorial y álgebra lineal} también se
+confirmaron, entre otros,
+\path{[Grossman] Algebra lineal 7 ed.pdf},
+\texttt{Algebra-Lineal-y-sus-}\allowbreak
+\texttt{Aplicaciones-3ra-Edición-}\allowbreak
+\texttt{David-C.-Lay.pdf},
+\texttt{Cálculo Vectorial (Calidad Mejorada) }\allowbreak
+\texttt{(Jerrold E. Marsden, Anthony J. Tromba) }\allowbreak
+\texttt{(Z-Library).pdf}
+y varios solucionarios. Se elige un solo texto principal de álgebra y uno de
+cálculo vectorial; los duplicados y solucionarios sirven para práctica, no
+para crear otra etapa.
+
+Esta clasificación es deliberadamente negativa cuando corresponde. Una guía
+completa no consiste en recomendar todos los archivos: también debe explicar
+qué libros pueden posponerse sin dejar un hueco matemático en la tesis.
+
+\paragraph{Cierre del inventario que antes estaba pendiente.}
+Los veintiún PDF de la lista provisional se abrieron uno por uno en Drive. El
+visor permitió verificar portada, número total de páginas y esquema interno.
+En \path{978-3-031-55202-1.pdf} el esquema no estaba embebido y en
+\path{978-981-19-3273-1.pdf} el texto no era extraíble; en esos dos casos se
+contrastó la identificación y la tabla de contenido con la ficha editorial
+primaria de Springer. Se añadió además \path{978-3-030-65129-9.pdf}, visible en
+la misma raíz. Por tanto, ninguno de estos nombres queda ya como ``pendiente''.
+
+\begin{longtable}{@{}L{3.10cm}L{4.35cm}L{4.35cm}L{2.70cm}@{}}
+\caption{Identificación cerrada de los archivos nombrados mediante eISBN.}
+\label{tab:drive-isbn-cerrado}\\
+\toprule
+Archivo & Identificación verificada & Núcleo del índice & Decisión para HAFO \\
+\midrule
+\endfirsthead
+\toprule
+Archivo & Identificación verificada & Núcleo del índice & Decisión para HAFO \\
+\midrule
+\endhead
+\path{978-3-030-63643-2.pdf} &
+Volker Ziemann, \emph{Physics and Finance}. &
+Procesos estocásticos, Fokker--Planck, series de tiempo, fractales y control
+óptimo. & Consulta digital. \\
+\path{978-3-030-87742-2.pdf} &
+Samir Khene, \emph{Topics and Solved Exercises at the Boundary of Classical
+and Modern Physics}. &
+Átomos, interacción materia--radiación, cuerpo negro y termodinámica. &
+Tangencial. \\
+\path{978-3-031-35074-0.pdf} &
+Francesco Scotognella, \emph{Exercises in Classical Physics---Mechanics and
+Thermodynamics}. &
+Cinemática, dinámica, energía, cuerpo rígido, fluidos y termodinámica. &
+Repaso opcional. \\
+\path{978-3-031-55202-1.pdf} &
+José Rachid Mohallem, \emph{Lagrangian and Hamiltonian Mechanics}. &
+Principio variacional, mecánica lagrangiana, hamiltoniana y teoría de campos. &
+Consulta selectiva. \\
+\path{978-3-031-67940-7.pdf} &
+Teruo Matsushita, \emph{Exercises in Electricity and Magnetism}. &
+Electrostática, corrientes, magnetismo, inducción, Maxwell y ondas. &
+Apoyo circuital. \\
+\path{978-3-031-82834-8.pdf} &
+Teruo Matsushita, \emph{Electricity and Magnetism}, tercera edición. &
+Fenómenos eléctricos y magnéticos estáticos y dependientes del tiempo. &
+Apoyo circuital. \\
+\path{978-3-031-82904-8.pdf} &
+Tarek I. Zohdi, \emph{A Beginner's Primer: Basic Concepts in Mechanics}. &
+Esfuerzo, deformación, vigas, torsión, elementos finitos y continuo. &
+Fuera de ruta. \\
+\path{978-3-031-84977-0.pdf} &
+Vakhtang Putkaradze, \emph{A Concise Introduction to Classical Mechanics}. &
+Variedades de configuración, estabilidad lineal, Hamilton, formas
+diferenciales y transformaciones canónicas. & Alta selectiva. \\
+\path{978-3-031-93666-1.pdf} &
+Rudolf P. Huebener, \emph{Conductors, Semiconductors, Superconductors}, cuarta
+edición. &
+Bandas, semiconductores, superconductividad, magnetismo y nanoestructuras. &
+Fuera de ruta. \\
+\path{978-3-319-00750-2.pdf} &
+Antonis Modinos, \emph{From Aristotle to Schrödinger}. &
+Historia de la mecánica, termodinámica, electromagnetismo y cuántica. &
+Lectura cultural. \\
+\path{978-3-319-21816-8.pdf} &
+Kerry Kuehn, \emph{A Student's Guide Through the Great Physics Texts}, vol.
+III. &
+Electricidad, magnetismo, óptica, energía y textos históricos. &
+Lectura histórica. \\
+\path{978-3-319-21828-1.pdf} &
+Kerry Kuehn, \emph{A Student's Guide Through the Great Physics Texts}, vol.
+IV. &
+Calor, entropía, difusión, teoría atómica y cuántica. & Contexto remoto. \\
+\path{978-3-319-51893-0.pdf} &
+Juan C. Vallejo y Miguel A. F. Sanjuán, \emph{Predictability of Chaotic
+Dynamics}. &
+Exponentes de Lyapunov de tiempo finito, regímenes, escalas y predictibilidad. &
+Alta prioridad. \\
+\path{978-3-319-78361-1.pdf} &
+Giovanni Landi y Alessandro Zampini, \emph{Linear Algebra and Analytic Geometry
+for Physical Sciences}. &
+Matrices, determinantes, sistemas, diagonalización y teoremas espectrales. &
+Prerrequisito duplicado. \\
+\path{978-3-0348-0697-8.pdf} &
+B. Duplantier, S. Nonnenmacher y V. Rivasseau (eds.), \emph{Chaos: Poincaré
+Seminar 2010}. &
+Atractor de Lorenz, su topología y lectura estadística; dínamos y caos
+cuántico. & Alta selectiva. \\
+\path{978-3-662-46221-8.pdf} &
+Bronshtein, Semendyayev, Musiol y Mühlig, \emph{Handbook of Mathematics}, sexta
+edición. &
+EDO, sistemas dinámicos y caos, transformadas y análisis numérico. &
+Consulta digital. \\
+\path{978-3-662-53685-8.pdf} &
+Dietrich Stauffer, H. Eugene Stanley y Annick Lesne, \emph{From Newton to
+Mandelbrot}, tercera edición. &
+Fractales, sistemas dinámicos, bifurcaciones y caos, capítulos 5--6. &
+Media--alta. \\
+\path{978-981-15-2471-4.pdf} &
+Rajendra K. Bera, \emph{The Amazing World of Quantum Computing}. &
+Mecánica cuántica, Fourier, compuertas y algoritmos cuánticos. &
+Fuera de ruta. \\
+\path{978-981-16-7802-8.pdf} &
+Kaushik Bhattacharya y Soumik Mukhopadhyay, \emph{Introduction to Advanced
+Electrodynamics}. &
+Fourier, covariancia, invariancia gauge y principio de acción. & Tangencial. \\
+\path{978-981-16-8139-4.pdf} &
+Amal Kumar Raychaudhuri, \emph{Classical Theory of Electricity and Magnetism}. &
+Maxwell, ondas, plasma, magnetohidrodinámica y formulación variacional. &
+Apoyo físico. \\
+\path{978-981-19-3273-1.pdf} &
+Kehui Sun, Shaobo He y Huihai Wang, \emph{Solution and Characteristic Analysis
+of Fractional-Order Chaotic Systems}. &
+Aproximación frecuencial, predictor--corrector, Adomian, algoritmos, dinámica,
+complejidad y circuitos. & Prioridad máxima. \\
+\path{978-3-030-65129-9.pdf} &
+R. Prasad, \emph{Analog and Digital Electronic Circuits}. &
+Análisis de circuitos, Laplace, Fourier, realimentación, diodos y
+amplificadores. & Consulta circuital. \\
+\bottomrule
+\end{longtable}
+
+La prioridad anterior se refiere a esta tesis, no a la calidad general del
+libro. El núcleo añadido a la ruta queda formado por
+\path{978-981-19-3273-1.pdf} y \path{978-3-319-51893-0.pdf}; la formación
+geométrica se refuerza con \path{978-3-031-84977-0.pdf},
+\path{978-3-0348-0697-8.pdf} y los capítulos 5--6 de
+\path{978-3-662-53685-8.pdf}. Los restantes permanecen disponibles como
+consulta digital o se excluyen explícitamente de la secuencia principal.
+
+\subsection{Qué leer alrededor de cada procedimiento de tesis}
+\label{sec:lecturas-por-procedimiento}
+
+\begin{longtable}{@{}L{3.1cm}L{4.0cm}L{4.1cm}L{3.0cm}@{}}
+\caption{Lectura antes--durante--después enlazada con el desarrollo del reporte.}
+\label{tab:lectura-procedimientos}\\
+\toprule
+Procedimiento & Antes & Durante & Después \\
+\midrule
+\endfirsthead
+\toprule
+Procedimiento & Antes & Durante & Después \\
+\midrule
+\endhead
+Equilibrios, jacobiano y Matignon &
+Kantorovich I: varias variables y EDO; Hirsch--Smale--Devaney, caps.\ 7--9. &
+\cref{sec:modelos,sec:fundamentos}: reducción escalar, pertenencia regional,
+polinomio y margen angular. &
+Comparar estabilidad local, índice y cuenca; resolver un caso PWA y uno suave. \\
+Transferencia \(W_q\) &
+Kantorovich II: álgebra espectral, compleja y Laplace; Das: ramas complejas. &
+\cref{sec:lure_transferencia}: resolvente, menores, Cramer, rama de \(s^q\) y
+convención de signo. &
+Recuperar \(q=1\), verificar partes real e imaginaria y localizar polos. \\
+Función descriptiva centrada y sesgada &
+Cicogna: Fourier/Laplace; proyección ortogonal y saturación por intervalos. &
+\cref{sec:lure_transferencia}: las integrales se derivan en el punto de uso. &
+Comprobar límites \(A\to0\), \(A\to\infty\) y el residuo de cierre físico. \\
+Machado &
+Función descriptiva clásica, potencias complejas y selección de rama. &
+\cref{sec:machado-fdf}: separar \(N^\mu\) auxiliar de la proyección física. &
+Comparar semillas y ambos residuos; no promover una trayectoria por el cierre
+auxiliar solamente. \\
+Continuación causal Caputo &
+Volterra, memoria completa; Kuznetsov para la idea de continuación y Amster
+para la lectura topológica. &
+\cref{sec:integracion_continuacion}: homotopía afín, historia única y reinicio
+como operación distinta. &
+Refinar paso, política de memoria y parámetro; estudiar operadores sobre
+historias. \\
+Puntos perpetuos &
+Regla de cadena entera, jacobiano, flujo y cambios de coordenadas. &
+\cref{sec:perpetual-points}: PP entero, obstrucciones Caputo, FPP--A y FPP--H. &
+Pilotos con refinamiento de memoria; investigar formulación covariante o
+funcional sin llamarla teoría establecida. \\
+Chua entero y fraccionario &
+Hirsch--Smale--Devaney, caps.\ 12 y 16; textos fraccionarios de la etapa 4. &
+Capítulos de casos: sustituir parámetros en las identidades ya demostradas,
+sin volver a esconder álgebra en apéndices. &
+Pham et al., Pham--Volos--Kapitaniak y Wang--Kuznetsov--Chen para comparar
+familias y realizaciones. \\
+Kalman--Fitts, MAVPD y PLL &
+Poincaré, Floquet, cilindro y cuencas; Hoppensteadt, \S\S2.2--4. &
+Expedientes enteros: realización, continuación, regularidad y ocultedad. &
+Kuznetsov: bifurcaciones; capítulos electrónicos sólo si se construye una
+realización física. \\
+Lorenz, Rabinovich--Fabrikant y candidatos &
+Hirsch--Smale--Devaney, cap.\ 14; Caputo, Matignon y realización MIMO. &
+Capítulos fraccionarios no Chua y \cref{sec:candidate-selection}. &
+Ejecutar el protocolo completo antes de convertir un ejemplo bibliográfico en
+resultado HAFO. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Correspondencia temática con la ruta única}
+
+Los bloques siguientes no son una segunda secuencia. Traducen las etapas
+numeradas de la \cref{tab:ruta-unica-biblioteca} a preguntas temáticas y
+evitan mezclar prematuramente cálculo de operadores, geometría clásica y
+dinámica con memoria.
+
+\begin{itemize}[leftmargin=0pt,label={}]
+ \item \textbf{Bloque A: base analítica.} Oliveira, funciones especiales,
+ Mittag--Leffler y transformadas; reproducir cada identidad con cálculo
+ simbólico y revisar dominios de convergencia.
+ \item \textbf{Bloque B: derivadas e inicialización.} Comparar Riemann--Liouville y
+ Caputo en Oliveira y Das; anotar terminal inferior, regularidad e información
+ inicial requerida.
+ \item \textbf{Bloque C: EDO geométrica.} Estudiar flujo, órbita, invariancia,
+ linealización, mapa de Poincaré y conjuntos límite en
+ Hirsch--Smale--Devaney y en los tomos geométricos de la UNAM.
+ \item \textbf{Bloque D: existencia topológica.} Estudiar disparo, punto fijo, grado de
+ Brouwer y Leray--Schauder con Amster; resolver después los ejemplos de la
+ \cref{sec:metodos-topologicos-existencia}.
+ \item \textbf{Bloque E: caos geométrico.} Relacionar Lorenz, dinámica simbólica,
+ homoclinicidad y herradura con las secciones numéricas, sin identificar
+ retrato complicado con prueba de caos.
+ \item \textbf{Bloque F: memoria.} Leer no localidad en Herrmann e inicialización en
+ Das, derivar la ecuación de Volterra y construir el estado funcional de la
+ \cref{sec:geometria-topologia-caputo}.
+ \item \textbf{Bloque G: retorno fraccionario.} Sustituir el mapa puntual de Poincaré
+ por un operador de retorno sobre historias; estudiar cuándo su proyección al
+ espacio \(x\) deja de ser un mapa univaluado.
+ \item \textbf{Bloque H: aplicación HAFO.} Para cada caso, completar una ficha con
+ espacio de fase, regularidad, simetría, equilibrios, conjuntos invariantes,
+ cuenca, método de semilla y nivel de evidencia.
+\end{itemize}
+
+\subsection{Ejercicios de lectura activa y autocorrección}
+
+\begin{enumerate}[label=\textbf{BL\arabic*.}]
+ \item Demuestre \eqref{eq:library-order-semigroup} para funciones de prueba
+ adecuadas usando integrales beta. Enumere las hipótesis que permiten cambiar
+ el orden de integración.
+ \item Para \(D_C^q x=\lambda x\), escriba la solución con
+ Mittag--Leffler y compruebe numéricamente que, para \(0<q<1\), en general
+ \(E_q(\lambda(t+s)^q)\ne E_q(\lambda t^q)E_q(\lambda s^q)\).
+ \item Dibuje el dominio cortado usado para definir la rama principal de
+ \(s^q\). Calcule los valores límite a ambos lados del corte negativo.
+ \item En el PLL, identifique los bordes que deben pegarse para obtener
+ \(\R\times S^1\). Explique qué error introduce medir la fase sin envolver.
+ \item Construya el mapa de Poincaré de un ciclo plano sencillo. Liste las
+ hipótesis que garantizan tiempo de retorno local continuo.
+ \item Tome una figura caótica archivada de un expediente. Escriba tres afirmaciones que la
+ figura apoya y tres que no demuestra: invariancia, transitividad, entropía
+ positiva, homoclinicidad, atracción y ocultedad.
+ \item Para una historia Caputo almacenada, construya dos perfiles con el mismo
+ valor actual pero pasado distinto. Explique por qué la proyección del retorno
+ puede ser multivaluada.
+ \item Seleccione un capítulo del volumen de atractores ocultos y redacte el
+ contrato mínimo para convertirlo en candidato HAFO: ecuaciones exactas,
+ parámetros, orden, semilla, integrador, memoria, clasificación dinámica y
+ prueba de cuenca.
+\end{enumerate}
+
+\paragraph{Pistas y criterios de comprobación.}
+En BL1 debe aparecer la identidad beta y una justificación de Fubini. BL2 se
+puede refutar ya con términos de orden \(ts\) o mediante valores de alta
+precisión. BL3 debe mostrar la discontinuidad de argumento en \(\pm\pi\). BL4
+debe usar una distancia cilíndrica. BL5 exige transversalidad al campo. BL6
+debe separar evidencia finita de definición asintótica. BL7 queda incompleto
+si sólo compara \(x(t)\); debe comparar el perfil de memoria. BL8 no puede
+concluir ``oculto'' sólo porque el capítulo use esa palabra: debe reconstruir
+el sondeo respecto de todos los equilibrios relevantes.

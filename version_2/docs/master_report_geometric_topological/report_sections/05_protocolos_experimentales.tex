@@ -1,0 +1,430 @@
+\section{Protocolos experimentales}
+\label{sec:protocolos}
+
+Esta sección fija los experimentos antes de presentar sus resultados. La
+separación es importante porque compartir una familia de ecuaciones o un mismo
+conjunto de parámetros no convierte dos trayectorias en la misma
+reproducción. En particular, la reconstrucción de Danca y la ruta no suave
+propuesta usan los parámetros de \cref{eq:parametros_no_suave}, pero emplean
+semillas y procedimientos de continuación diferentes. De manera análoga, la
+reconstrucción de Wu y el caso \texttt{c590} pertenecen a
+\cref{eq:chua_arctan}, aunque usan parámetros, condiciones iniciales e
+integradores distintos.
+
+\begin{table}[H]
+\centering
+\caption{Carriles experimentales y función de cada uno en el reporte.}
+\label{tab:carriles_experimentales}
+\begin{tabularx}{\linewidth}{L{0.23\linewidth}L{0.25\linewidth}Y}
+\toprule
+Carril & Contrato dinámico & Propósito\\
+\midrule
+Leonov--Kuznetsov, \(q=1\)
+& Sistema entero y control EFORK--3 en \(q=1\)
+& Recuperar la construcción armónica y el procedimiento entero\\
+Danca, \(q=0.9998\)
+& Caputo ABM con memoria completa
+& Reconstruir los datos publicados y evaluar una semilla diagnóstica
+declarada\\
+Wu, \(q=0.99\)
+& Recurrencia ADM local de orden cuatro
+& Reintegrar las dos condiciones iniciales publicadas\\
+No suave propuesto
+& Función descriptiva sesgada, continuación Caputo y ABM
+& Localizar y sondear el conjunto atrayente obtenido con la nueva semilla\\
+\texttt{c590}
+& Búsqueda RK4 en \(q=1\), refinamiento Caputo ABM
+& Seleccionar parámetros, refinar la semilla y sondear el conjunto final\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Integración causal mediante ABM--PECE}
+\label{subsec:protocolo_abm}
+
+Los problemas de Caputo de las rutas propuestas y de la reconstrucción de
+Danca se integran con el predictor--corrector
+Adams--Bashforth--Moulton. Para
+\[
+{}^{\mathrm C}D_{t_0}^{q}X(t)=F(t,X(t)),\qquad X(t_0)=X_0,
+\]
+se discretiza la ecuación de Volterra de \cref{eq:volterra} en
+\(t_n=t_0+nh\). Si \(F_j=F(t_j,X_j)\), el predictor es
+\begin{equation}
+X_{n+1}^{\mathrm P}
+=X_0+\frac{h^q}{\Gamma(q+1)}
+\sum_{j=0}^{n}b_{j,n+1}F_j,
+\qquad
+b_{j,n+1}=(n+1-j)^q-(n-j)^q .
+\label{eq:abm_predictor_protocolo}
+\end{equation}
+El campo se evalúa una vez en el estado predicho y se aplica el corrector
+\begin{equation}
+X_{n+1}
+=X_0+\frac{h^q}{\Gamma(q+2)}
+\left[
+F(t_{n+1},X_{n+1}^{\mathrm P})
++\sum_{j=0}^{n}a_{j,n+1}F_j
+\right],
+\label{eq:abm_corrector_protocolo}
+\end{equation}
+con
+\begin{equation}
+a_{j,n+1}=
+\begin{cases}
+n^{q+1}-(n-q)(n+1)^q, & j=0,\\
+(n-j+2)^{q+1}-2(n-j+1)^{q+1}+(n-j)^{q+1},
+&1\leq j\leq n.
+\end{cases}
+\label{eq:abm_pesos_protocolo}
+\end{equation}
+
+En cada paso se realizan, en este orden, las siguientes operaciones:
+
+\begin{enumerate}
+  \item se conservan todos los pares \((X_j,F_j)\) calculados desde \(t_0\);
+  \item se forma la suma histórica del predictor
+  \cref{eq:abm_predictor_protocolo};
+  \item se evalúa el campo en \(X_{n+1}^{\mathrm P}\);
+  \item se forma la suma histórica del corrector
+  \cref{eq:abm_corrector_protocolo};
+  \item se agregan \(X_{n+1}\) y \(F_{n+1}\) a la historia.
+\end{enumerate}
+
+Ninguno de los términos \(j=0,\ldots,n\) se elimina. Por tanto, el costo
+directo es \(O(N^2)\) y el almacenamiento es \(O(N)\) para \(N\) pasos
+\cite{DiethelmFordFreed2002}. Cada sonda de cuenca constituye un problema de
+valor inicial independiente con el mismo instante \(t_0\) y su propia memoria.
+En la continuación no suave, en cambio, los 21 niveles comparten una sola
+historia; sólo al terminar la continuación se inicia el problema autónomo que
+define la nube objetivo.
+
+\subsection{Métrica de contacto y clasificación de destinos}
+\label{subsec:clasificador}
+
+Sea \(\mathcal C_h=\{A_k\}\) la nube postransitoria del conjunto objetivo y sea
+\(Y=\{Y_j\}\) el segmento postransitorio de una sonda. Después del submuestreo
+declarado, la distancia usada para decidir un contacto es
+\begin{equation}
+D_{90}(Y,\mathcal C_h)
+=Q_{0.90}\left(
+\left\{\min_k\|Y_j-A_k\|_2\right\}_j
+\right).
+\label{eq:d90_protocolo}
+\end{equation}
+Se registra un contacto cuando
+\begin{equation}
+D_{90}(Y,\mathcal C_h)\leq\delta .
+\label{eq:contacto_protocolo}
+\end{equation}
+El percentil 90 evita que unos pocos puntos cercanos determinen por sí solos
+la clasificación. Antes de ejecutar los sondeos se fijan la nube, el
+submuestreo y \(\delta\); el umbral no se ajusta después de observar los
+resultados.
+
+Cada trayectoria se asigna a una de cuatro clases:
+
+\begin{enumerate}
+  \item \emph{objetivo}, si satisface \cref{eq:contacto_protocolo};
+  \item \emph{equilibrio}, si satisface el criterio estacionario declarado;
+  \item \emph{divergencia}, si alcanza el umbral de crecimiento;
+  \item \emph{otro destino}, para las trayectorias finitas restantes.
+\end{enumerate}
+
+\subsection{Protocolos de reconstrucción bibliográfica}
+\label{subsec:protocolos_bibliograficos}
+
+\subsubsection{Control entero de Leonov--Kuznetsov: carril histórico EFORK--3}
+
+Se usa \cref{eq:chua_entero,eq:parametros_enteros}. El cierre armónico
+selecciona la primera rama positiva y construye la condición modal. El control
+dinámico almacenado utiliza EFORK--3 evaluado en \(q=1\), con paso \(h=0.01\).
+La prueba de vecindades emplea
+\[
+r\in\{10^{-5},3{\times}10^{-5},10^{-4},3{\times}10^{-4},
+10^{-3},3{\times}10^{-3},10^{-2}\}
+\]
+y 24 condiciones por radio alrededor de cada uno de los tres equilibrios. El
+conteo total es
+\[
+3\ \text{equilibrios}\times7\ \text{radios}\times24\ \text{muestras}
+=504.
+\]
+Este expediente usa \(T=320\), \(T_{\mathrm{burn}}=80\) y el clasificador
+histórico de huellas de sección contra 89 puntos de referencia. Sus
+coordenadas de sondeo no son el banco compartido de la comparación
+Python--Julia.
+Este carril comprueba la recuperación numérica del caso \(q=1\); no suministra
+la semilla de ninguno de los dos casos fraccionarios propuestos.
+
+\subsubsection{Reconstrucción de Danca}
+
+Se conservan la ecuación \cref{eq:chua_no_suave}, los parámetros
+\cref{eq:parametros_no_suave} y el orden \(q=0.9998\). La condición inicial
+diagnóstica se obtiene al aplicar el cierre armónico entero a esos parámetros:
+\begin{equation}
+X_0^{\mathrm D}
+=(5.8561450863,\ 0.3693315782,\ -8.3665361683)^{\T}.
+\label{eq:semilla_danca_diagnostica}
+\end{equation}
+Esta condición se declara como una reconstrucción y no como una condición
+inicial publicada por Danca. La trayectoria se calcula mediante Caputo
+ABM--PECE con memoria completa,
+\[
+h=0.01,\qquad T=500,\qquad T_{\mathrm{burn}}=250.
+\]
+La clasificación postransitoria utiliza espectro de potencia y prueba 0--1.
+El protocolo de vecindad descrito en la referencia se conserva como control:
+200 condiciones con \(\delta=0.01\) alrededor de un equilibrio externo y la
+simetría para el equilibrio opuesto \cite{Danca2017}.
+
+\subsubsection{Reconstrucción de Wu}
+
+Se emplean \cref{eq:chua_arctan,eq:parametros_wu} y las condiciones iniciales
+publicadas
+\begin{equation}
+X_{0,+}^{\mathrm W}
+=(13.8,\ 0.7093,\ -19.8768)^{\T},
+\qquad X_{0,-}^{\mathrm W}=-X_{0,+}^{\mathrm W}.
+\label{eq:semillas_wu_protocolo}
+\end{equation}
+La recurrencia se ejecuta con el ADM local de orden cuatro usado en la
+reproducción bibliográfica:
+\[
+q=0.99,\qquad h=0.01,\qquad N=10\,000,\qquad
+T=100,\qquad T_{\mathrm{burn}}=50.
+\]
+Este actualizador local no acumula una historia ABM de Caputo. Por ello, sus
+resultados se presentan únicamente dentro del carril de Wu y no se combinan
+con \texttt{c590}.
+
+\subsection{Ruta propuesta para el sistema no suave}
+\label{subsec:protocolo_no_suave}
+
+\subsubsection{Exploración y selección de la semilla}
+
+La exploración considera nueve pares de pendientes:
+\begin{equation}
+m_1\in\{-1.1468,-1.20,-1.25\},\qquad
+m_0\in\{-0.1768,-0.20,-0.24\}.
+\label{eq:malla_pendientes_no_suave}
+\end{equation}
+Para cada par se inicializa el solucionador con cinco valores de
+\(A\in[0.5,10]\), nueve de \(c\in[-8,8]\) y seis de
+\(\omega\in[0.5,6]\). Por tanto,
+\begin{equation}
+5\times9\times6=270\ \text{inicios por par},\qquad
+9\times270=2\,430\ \text{inicios totales}.
+\label{eq:conteo_busqueda_no_suave}
+\end{equation}
+
+La ecuación de cierre sesgada se resuelve mediante mínimos cuadrados de región
+de confianza reflectiva con
+\[
+A\in[10^{-6},25],\qquad c\in[-12,12],\qquad
+\omega\in[0.1,8],
+\]
+\[
+f_{\mathrm{tol}}=x_{\mathrm{tol}}=10^{-10},\qquad
+g_{\mathrm{tol}}=10^{-8},\qquad N_{\mathrm{eval}}\leq300.
+\]
+Las integrales de la función descriptiva usan una regla trapezoidal periódica
+con 8\,192 nodos. Una raíz pasa a la etapa siguiente si el solucionador
+converge, \(A\geq0.5\), \(0.5\leq\omega\leq6\) y la norma del residuo es menor
+que \(10^{-4}\). Las raíces se deduplican con tolerancia \(10^{-3}\) en
+\((A,c,\omega)\), se conservan como máximo dos por par y, dentro del par
+nominal de \cref{eq:parametros_no_suave}, se selecciona la raíz con
+\(c>0.05\) y menor residuo.
+
+\subsubsection{Continuación con una sola memoria}
+
+La semilla seleccionada se transporta mediante
+\[
+\varepsilon_k=0.05k,\qquad k=0,\ldots,20.
+\]
+Cada uno de los 21 niveles usa \(h=0.01\), 30 unidades de transitorio y 30
+unidades retenidas. El integrador no se reinicia al cambiar
+\(\varepsilon_k\): las sumas de
+\cref{eq:abm_predictor_protocolo,eq:abm_corrector_protocolo} mantienen todos
+los estados calculados desde el inicio del nivel \(\varepsilon=0\). El estado
+final en \(\varepsilon=1\) inicia después un nuevo problema autónomo con
+\[
+q=0.9998,\qquad h=0.01,\qquad T=300,\qquad
+T_{\mathrm{burn}}=100.
+\]
+La atracción local del objetivo se comprueba con 12 perturbaciones en cada uno
+de los radios \(10^{-6}\), \(10^{-4}\) y \(10^{-2}\).
+
+\subsubsection{Sondeo volumétrico}
+
+Alrededor del equilibrio \(e_i\), una condición se genera mediante
+\begin{equation}
+X_{0,i\ell m}
+=e_i+r_\ell U_{i\ell m}^{1/3}d_{i\ell m},
+\qquad
+U_{i\ell m}\sim\mathcal U(0,1),\quad
+d_{i\ell m}\sim\mathcal U(\mathbb S^2).
+\label{eq:muestreo_bola}
+\end{equation}
+El factor \(U^{1/3}\) produce una distribución uniforme respecto del volumen
+de la bola. El plan nominal por equilibrio es
+\begin{equation}
+\begin{aligned}
+r_\ell\in\{&
+10^{-5},3{\times}10^{-5},10^{-4},3{\times}10^{-4},
+10^{-3},3{\times}10^{-3},10^{-2},\\
+&0.03,0.1,0.3,1,2\},\\
+N_\ell\in\{&
+80,120,160,240,400,600,800,1000,1200,1200,1500,1500\}.
+\end{aligned}
+\label{eq:plan_bolas_no_suave}
+\end{equation}
+Se usa PCG64 con semilla
+\[
+s_{i\ell}=42+100i+10\ell .
+\]
+Cada sonda utiliza ABM--PECE de memoria completa con
+\[
+q=0.9998,\quad h=0.01,\quad T=200,\quad
+T_{\mathrm{burn}}=50,\quad\delta=0.5.
+\]
+La convergencia temprana requiere \(t\geq25\), distancia menor que
+\(10^{-3}\) a un equilibrio, norma del campo menor que \(10^{-4}\) y 50 pasos
+consecutivos. La divergencia temprana requiere cinco normas consecutivas
+mayores que 80 o cinco razones de crecimiento mayores que 1.25; el corte duro
+es 120. Una trayectoria que completa el horizonte también se clasifica como
+equilibrio si su distancia final a alguno de ellos no excede 0.5.
+
+\subsection{Ruta propuesta para el caso \texttt{c590}}
+\label{subsec:protocolo_c590}
+
+\subsubsection{Exploración global y local en
+\texorpdfstring{\(q=1\)}{q=1}}
+
+La exploración global genera 2\,400 casos con PCG64 y semilla
+\(2026062304\):
+\begin{equation}
+\begin{aligned}
+\alpha&\sim\mathcal U(5,22),&
+\beta&\sim\mathcal U(6,35),&
+\gamma&=10^{\mathcal U(-3,-0.5)},\\
+a_1&\sim\mathcal U(-0.1,1),&
+a_2&\sim\mathcal U(-3.5,-0.4),&
+\rho&\sim\mathcal U(0.4,2.8).
+\end{aligned}
+\label{eq:distribucion_global_c590}
+\end{equation}
+Cada parámetro se integra simultáneamente desde una semilla candidata y desde
+el control \((10^{-3},0,0)^{\T}\), con RK4 fijo,
+\[
+q=1,\qquad h=0.01,\qquad T=200,\qquad T_{\mathrm{burn}}=100.
+\]
+La respuesta candidata debe permanecer acotada y separada de la respuesta del
+control según la distancia \(D_{90}\). Entre las respuestas no triviales se
+selecciona el caso de mayor puntuación exploratoria.
+
+Alrededor de ese caso se generan 1\,000 perturbaciones con PCG64 y semilla
+\(2026062305\):
+\begin{equation}
+\begin{aligned}
+\alpha&=\alpha_b\exp\mathcal N(0,0.18),&
+\beta&=\beta_b\exp\mathcal N(0,0.18),\\
+\gamma&=\gamma_b\exp\mathcal N(0,0.35),&
+a_1&=a_{1,b}+\mathcal N(0,0.12),\\
+a_2&=a_{2,b}\exp\mathcal N(0,0.15),&
+\rho&=\rho_b\exp\mathcal N(0,0.15).
+\end{aligned}
+\label{eq:perturbacion_local_c590}
+\end{equation}
+La integración local usa \(h=0.01\), \(T=240\) y
+\(T_{\mathrm{burn}}=120\). Los 30 casos no periódicos con mayor puntuación se
+auditan mediante RK4 variacional y ortonormalización QR, con
+\[
+h=0.005,\qquad T_{\mathrm{burn}}=200,\qquad
+T_{\mathrm{med}}=300,
+\]
+y una reortogonalización cada diez pasos. Se selecciona el mayor exponente
+principal entre los casos acotados, separados del control, con \(E_0\)
+inestable y \(E_\pm\) estables.
+
+\subsubsection{Refinamiento fraccionario y selección de la condición inicial}
+
+Los órdenes
+\[
+q\in\{0.9995,0.9998,0.9999,0.99995\}
+\]
+se evalúan como problemas de Caputo independientes. Cada problema empieza en
+\(t_0=0\) con la semilla entera seleccionada y usa ABM de memoria completa,
+\[
+h=0.005,\qquad T=300,\qquad T_{\mathrm{burn}}=150.
+\]
+De la trayectoria con \(q=0.9999\) se extraen 16 estados, en los índices
+\[
+30\,001,32\,000,\ldots,60\,000,
+\]
+que corresponden aproximadamente a \(t=150.005,\ldots,300\). Cada estado
+inicia un nuevo problema de Caputo. La criba corta usa \(h=0.0025\),
+\(T=180\) y \(T_{\mathrm{burn}}=90\); los supervivientes se verifican además
+con \(h=0.005\) y \(h=0.01\). La auditoría larga usa
+\[
+h\in\{0.0025,0.005,0.01\},\qquad
+T=300,\qquad T_{\mathrm{burn}}=150.
+\]
+La selección exige acotación en los tres pasos y mediana remuestreada de la
+prueba 0--1 mayor que 0.8 en los dos pasos refinados
+\(h=0.0025\) y \(h=0.005\).
+
+\subsubsection{Sondeo sobre superficies esféricas}
+
+Las condiciones iniciales son
+\begin{equation}
+X_{0,i\ell m}=e_i+r_\ell d_{i\ell m},
+\qquad d_{i\ell m}\in\mathbb S^2,
+\label{eq:muestreo_superficie_c590}
+\end{equation}
+donde las direcciones combinan los seis semiejes cartesianos y una
+distribución determinista de Fibonacci esférica. El plan por equilibrio es
+\begin{equation}
+\begin{aligned}
+r_\ell&\in\{10^{-5},10^{-4},10^{-3},10^{-2},0.03,0.1,0.3,1,2\},\\
+N_\ell&\in\{100,200,300,400,500,600,700,800,900\}.
+\end{aligned}
+\label{eq:plan_superficies_c590}
+\end{equation}
+Cada sonda usa
+\[
+q=0.9999,\qquad h=0.005,\qquad
+T=180,\qquad T_{\mathrm{burn}}=90.
+\]
+La nube objetivo se simetriza como
+\(\mathcal C_h^\pm=\mathcal C_h\cup(-\mathcal C_h)\). Su calibración fija
+\begin{equation}
+d_{90}^{\mathrm{cal}}=0.2950508245,\qquad
+\delta=2d_{90}^{\mathrm{cal}}=0.5901016489.
+\label{eq:umbral_c590}
+\end{equation}
+La detección temprana de equilibrio se activa en \(t=45\) y requiere distancia
+menor que \(10^{-6}\), norma del campo menor que \(10^{-4}\) y 50 pasos
+consecutivos. El umbral de divergencia es \(\|X\|_2=120\).
+
+\subsection{Partición local y auditoría macroscópica}
+\label{subsec:detencion_primer_contacto}
+
+Los radios se procesan en orden ascendente y se completa cada bloque alrededor
+de \(E_0\), \(E_+\) y \(E_-\). La partición local comprende \(r\leq0.3\).
+La auditoría macroscópica conserva además \(r=1\) y \(r=2\). Se define
+\[
+H_\ell=\sum_{i,m}
+\mathbf 1\!\left[
+D_{90}(Y_{i\ell m},\mathcal C_h)\leq\delta
+\right],
+\]
+y se registra
+\begin{equation}
+\ell_\star=\min\{\ell:H_\ell>0\}.
+\label{eq:primer_radio_contacto}
+\end{equation}
+Este índice es un estadístico del primer radio de contacto, no una regla de
+truncamiento del registro canónico. Para \texttt{c590}, \(\ell_\star\)
+corresponde a \(r=1\); el bloque \(r=2\) se retiene para cuantificar la
+sensibilidad macroscópica y las divergencias.

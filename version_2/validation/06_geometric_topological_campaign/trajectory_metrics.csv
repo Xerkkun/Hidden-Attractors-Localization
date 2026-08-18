@@ -1,0 +1,1 @@
+schema_version,campaign_id,case_id,system_id,seed_id,contract_id,budget_level,integrator_id,history_mode,classifier_id,window_start,window_stop,integration_status,destination_label,destination_subtype,classification_confidence,is_ambiguous,metrics_json,evidence_level

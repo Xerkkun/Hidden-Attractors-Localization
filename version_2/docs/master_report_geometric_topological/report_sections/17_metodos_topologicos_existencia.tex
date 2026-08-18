@@ -1,0 +1,306 @@
+\section{Métodos topológicos de existencia: disparo, puntos fijos y grado}
+\label{sec:metodos-topologicos-existencia}
+
+\ifHAFOPedagogy
+\paragraph{Lectura previa.}
+Para el bloque finito-dimensional complete la etapa 4 de
+\cref{sec:programa-estudio-bibliografico}. Para Schauder y Leray--Schauder
+complete además la parte funcional de la etapa 7. No use estos teoremas hasta
+haber identificado el espacio, el operador, el dominio y la condición en su
+frontera.
+\fi
+
+El adjetivo \emph{topológico} en el texto de Amster no significa, en primer
+lugar, ``caos topológico''. Se refiere a herramientas que garantizan ceros o
+puntos fijos sin construir una fórmula explícita para ellos
+\cite{Amster2021MetodosTopologicos}. Esta distinción permite insertar esos
+métodos en el proyecto sin pedirles una conclusión que no proporcionan.
+
+\subsection{De una ecuación diferencial a un operador}
+
+Hay tres traducciones fundamentales:
+
+\begin{enumerate}
+ \item un equilibrio es un cero de $f$:
+ \[
+ f(e)=0;
+ \]
+ \item al elegir una sección local transversal en un punto de una órbita
+ periódica, el retorno local asociado tiene allí un punto fijo:
+ \[
+  P(z)=z;
+ \]
+ en una sección global con varias intersecciones, la misma órbita puede
+ corresponder a un punto periódico de periodo \(k>1\);
+ \item una solución del PVI autónomo de Caputo
+ \[
+  {}^{\mathrm C}D_{t_0+}^{q}x(t)=f(x(t)),\qquad
+  x(t_0)=x_0,\qquad 0<q<1,
+ \]
+ es un punto fijo del operador de Volterra:
+ \begin{equation}
+  (\mathcal Kx)(t)=x_0+
+  \frac{1}{\Gamma(q)}\int_{t_0}^{t}(t-\tau)^{q-1}
+  f(x(\tau))\,d\tau.
+  \label{eq:guide-caputo-fixed-operator}
+ \end{equation}
+\end{enumerate}
+
+El primer problema es finito-dimensional; el tercero vive en un espacio de
+funciones. El segundo puede ser finito-dimensional, pero exige que el primer
+retorno esté definido y dependa continuamente de la condición inicial.
+
+\subsection{Espacio funcional mínimo para los argumentos de existencia}
+
+En el intervalo compacto \(J=[t_0,T]\), el espacio
+\begin{equation}
+ X=C(J,\R^n),\qquad
+ \|x\|_\infty=\max_{t\in J}\|x(t)\|,
+ \label{eq:guide-sup-norm}
+\end{equation}
+es completo: toda sucesión de Cauchy uniforme converge a una función continua.
+Por tanto, \(X\) es un espacio de Banach. Esta propiedad es la que permite
+aplicar el teorema de contracción al operador integral, no sólo el hecho de que
+sus elementos sean funciones.
+
+Un operador \(K:X\to X\) es \emph{compacto} si envía conjuntos acotados en
+conjuntos relativamente compactos. En \(C(J,\R^n)\), el criterio de
+Arzelà--Ascoli reduce esta comprobación a dos tareas: acotación uniforme y
+equicontinuidad de la familia imagen. El núcleo de Volterra proporciona un
+módulo de continuidad de orden fraccionario, de modo que puede hacer compacto
+al operador de Caputo aun cuando éste no sea contractivo. Compacidad y
+contracción cumplen funciones distintas: la primera apoya existencia por grado;
+la segunda añade unicidad e iteración convergente
+\cite{Deimling1985,Amster2021MetodosTopologicos}.
+
+\paragraph{Comprobación breve.}
+Demuestre que una bola cerrada de \(C(J,\R^n)\) no es compacta en general;
+después identifique qué hipótesis adicional de Arzelà--Ascoli falta. Éste es el
+contraejemplo que impide sustituir ``acotado'' por ``compacto'' en dimensión
+infinita.
+
+\subsection{Disparo: transformar condiciones de frontera en un cero}
+
+Considérese
+\begin{equation}
+ u''=F(t,u,u'),\qquad u(0)=a,\qquad u(T)=b.
+ \label{eq:guide-shooting-bvp}
+\end{equation}
+Para cada pendiente inicial $s$, resuélvase el PVI
+$u(0)=a$, $u'(0)=s$ y defínase
+\begin{equation}
+ S(s)=u(T;s)-b.
+ \label{eq:guide-shooting-residual}
+\end{equation}
+Entonces $S(s_*)=0$ si y sólo si el disparo $s_*$ resuelve el problema de
+frontera. La equivalencia es elemental; lo difícil es demostrar que $S$ está
+definido y es continuo en un intervalo adecuado.
+
+El análogo para un ciclo es un residual de retorno. Si $z\in\Sigma$ y
+$\tau(z)>0$ es el primer tiempo de retorno,
+\begin{equation}
+ P(z)=\varphi_{\tau(z)}(z),\qquad R(z)=P(z)-z.
+ \label{eq:guide-return-residual}
+\end{equation}
+Un cero de $R$ proporciona un ciclo. En el PLL, el retorno se construye sobre
+el cilindro; en MAVPD, una sección transversal reduce localmente el problema
+de una órbita en $\R^3$ a la iteración de un mapa en dimensión dos.
+
+\subsection{Teorema de contracción: existencia, unicidad y aproximación}
+
+\begin{proposition}[punto fijo de Banach]
+Sea $(X,d)$ completo y $T:X\to X$ una contracción: existe $0<L<1$ tal que
+$d(Tx,Ty)\leq Ld(x,y)$. Entonces $T$ posee un único punto fijo $x_*$ y, para
+cualquier $x_0$, la iteración $x_{n+1}=Tx_n$ converge a $x_*$.
+\end{proposition}
+
+\begin{proof}
+La estimación
+\[
+ d(x_{n+1},x_n)\leq L^n d(x_1,x_0)
+\]
+y la suma de la serie geométrica muestran que $(x_n)$ es de Cauchy. Por
+completitud, $x_n\to x_*$. La continuidad de $T$ da $Tx_*=x_*$. Si $y_*$ fuera
+otro punto fijo,
+$d(x_*,y_*)\leq Ld(x_*,y_*)$, de donde $x_*=y_*$.
+\end{proof}
+
+Si \(f\) es \(L\)-Lipschitz en una bola cerrada que \(\mathcal K\) envía en sí
+misma y
+ \[
+  \frac{L(T-t_0)^q}{\Gamma(q+1)}<1,
+ \]
+entonces \(\mathcal K\) es contractivo. En un intervalo temporal
+ suficientemente corto, esto prueba existencia y unicidad local del PVI de
+ Caputo, pero no existencia de un atractor ni periodicidad. Para
+ \(m-1<q<m\) se requieren \(m\) datos iniciales y el término libre incluye el
+ polinomio inicial correspondiente.
+
+\subsection{Brouwer y el grado en dimensión finita}
+
+\begin{proposition}[punto fijo de Brouwer]
+Toda aplicación continua $T:\overline B\to\overline B$ de una bola cerrada de
+$\R^n$ en sí misma tiene al menos un punto fijo.
+\end{proposition}
+
+La conclusión es existencial: no afirma unicidad, estabilidad ni proporciona
+un algoritmo rápido. El grado de Brouwer refina esta idea para un mapa continuo
+$F:\overline\Omega\to\R^n$ y un valor $y\notin F(\partial\Omega)$. Se denota
+\[
+ \deg(F,\Omega,y)\in\mathbb Z.
+\]
+Sus propiedades operativas son:
+
+\begin{enumerate}
+ \item \textbf{Existencia:} si $\deg(F,\Omega,y)\neq0$, entonces
+ $F(x)=y$ para algún $x\in\Omega$.
+ \item \textbf{Normalización:}
+ $\deg(I,\Omega,y)=1$ cuando $y\in\Omega$.
+ \item \textbf{Aditividad:} el grado se suma al separar regiones que contienen
+ todos los ceros.
+ \item \textbf{Invariancia homotópica:} si
+ $H:[0,1]\times\overline\Omega\to\R^n$ es continua y
+ $y\notin H(\lambda,\partial\Omega)$ para todo $\lambda$, entonces
+ \begin{equation}
+  \deg(H(0,\cdot),\Omega,y)
+  =\deg(H(1,\cdot),\Omega,y).
+  \label{eq:guide-degree-homotopy}
+ \end{equation}
+\end{enumerate}
+
+Si $F$ es $C^1$, $y$ es valor regular y hay un número finito de preimágenes,
+\begin{equation}
+ \deg(F,\Omega,y)=
+ \sum_{x\in F^{-1}(y)\cap\Omega}
+ \operatorname{sgn}\det DF(x).
+ \label{eq:guide-degree-regular}
+\end{equation}
+Esta fórmula no es la definición general, pero permite calcular y comprender
+la orientación local de cada cero.
+
+\paragraph{Ejemplo.}
+Para $F(x)=x-x^3$ en $\Omega=(-2,2)$, los ceros son $-1,0,1$ y
+$F'(x)=1-3x^2$. Por tanto,
+\[
+ \deg(F,(-2,2),0)=-1+1-1=-1.
+\]
+El grado no nulo garantiza que al menos un equilibrio persiste bajo toda
+homotopía que no haga cruzar un cero por la frontera. El cálculo no determina
+cuáles de los tres equilibrios son atractores; esa información requiere el
+signo de la linealización o un argumento dinámico.
+
+\subsection{Grado del residual de retorno y continuación}
+
+Para ciclos se aplica el grado a
+\begin{equation}
+ F(z)=P(z)-z.
+ \label{eq:guide-degree-return}
+\end{equation}
+Si $\deg(P-I,\Omega,0)\neq0$, existe un punto fijo de $P$ en $\Omega$ y, por
+consiguiente, una órbita periódica, siempre que el retorno esté bien definido.
+En una familia $P_\lambda$, la invariancia homotópica conserva existencia
+mientras ningún cero alcance $\partial\Omega$ y el retorno no pierda su
+dominio. Esto proporciona una base topológica para la continuación, distinta
+de simplemente reutilizar numéricamente el último estado.
+
+La continuación armónica del reporte transporta primero una semilla aproximada.
+Una mejora futura consiste en corregir cada nodo resolviendo
+$P_\lambda(z)-z=0$ y calcular el grado o el índice local del punto fijo. Así se
+separan:
+
+\[
+ \text{predictor armónico}
+ \longrightarrow
+ \text{corrector de retorno}
+ \longrightarrow
+ \text{certificado topológico en la región}.
+\]
+
+\subsection{Leray--Schauder y el operador integral de Caputo}
+
+En un espacio de Banach $X$, sea $\mathcal K:X\to X$ compacto. El grado de
+Leray--Schauder se aplica a $I-\mathcal K$ y conserva las propiedades esenciales
+del grado finito-dimensional. Si
+\[
+ \deg_{LS}(I-\mathcal K,\Omega,0)\neq0,
+\]
+entonces $\mathcal K$ tiene un punto fijo en $\Omega$.
+
+Para \cref{eq:guide-caputo-fixed-operator}, tómese
+$X=C([t_0,T],\R^n)$. Si $f$ es continua y está acotada por $M$ sobre una región
+que contiene las funciones consideradas, entonces
+\begin{equation}
+ \|\mathcal Kx-x_0\|_\infty
+ \leq \frac{M(T-t_0)^q}{\Gamma(q+1)}.
+ \label{eq:guide-caputo-operator-bound}
+\end{equation}
+Además, la familia $\mathcal K(\Omega)$ es uniformemente acotada y posee un
+módulo de continuidad de orden $|t-s|^q$. El teorema de Arzelà--Ascoli permite
+obtener compacidad relativa. Bajo una condición a priori que impida puntos
+fijos en $\partial\Omega$, el grado puede demostrar existencia de soluciones.
+
+Este razonamiento es compatible con la memoria porque trabaja directamente
+con funciones completas. Sin embargo:
+
+\begin{itemize}
+ \item el punto fijo de $\mathcal K$ es una trayectoria en $[t_0,T]$, no un
+ punto fijo del campo $f$;
+ \item existencia en un horizonte finito no implica atracción asintótica;
+ \item el grado no prueba caos, ocultedad ni coexistencia de cuencas;
+ \item una continuación en $q$ requiere cotas a priori uniformes y una
+ homotopía que no reinicie inadvertidamente la memoria.
+\end{itemize}
+
+\subsection{Conexión concreta con los métodos del reporte}
+
+\begin{table}[H]
+\centering
+\caption{Qué aporta y qué no aporta cada formulación topológica.}
+\label{tab:topological-method-boundary}
+\small
+\begin{tabularx}{\textwidth}{@{}L{3.0cm}YY@{}}
+\toprule
+Objeto & Conclusión posible & Conclusión que requiere otra prueba \\
+\midrule
+$f(e)=0$ y grado de $f$ & existencia robusta de algún equilibrio & estabilidad, cuenca u ocultedad \\
+$P(z)-z=0$ & existencia de un ciclo & que sea atractivo, oculto o caótico \\
+Cierre DF/Machado & semilla armónica aproximada & punto fijo del retorno verdadero \\
+Grado de $P-I$ & persistencia de algún retorno fijo & forma global y tamaño de su cuenca \\
+$x=\mathcal Kx$ en Caputo & existencia de un PVI en horizonte finito & atractor funcional de largo tiempo \\
+Sondeos de cuenca & acceso o no acceso en la muestra declarada & topología completa de la frontera \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\ifHAFOPedagogy
+\subsection{Problemas de aprendizaje}
+
+\begin{enumerate}[label=\textbf{T\arabic*.}]
+ \item Construya el residual de disparo para $u''+u=0$ con
+ $u(0)=0$, $u(\pi/2)=1$. Demuestre continuidad y encuentre el cero.
+ \item Para un retorno escalar continuo $P:[a,b]\to[a,b]$, pruebe mediante el
+ teorema del valor intermedio que $P$ tiene un punto fijo. Relacione el
+ argumento con Brouwer en dimensión uno.
+ \item Calcule el grado de $F(x)=x^3-x$ en regiones que aíslen cada cero y
+ compruebe la propiedad de aditividad.
+ \item Formule el residual de retorno del PLL respetando la identificación
+ angular. Explique por qué $P-I$ debe escribirse en una carta local o mediante
+ una diferencia angular envuelta.
+ \item Para el operador \cref{eq:guide-caputo-fixed-operator}, derive
+ \cref{eq:guide-caputo-operator-bound}. Indique exactamente dónde se usa que
+ $0<q<1$ y que $f$ está acotada.
+ \item Diseñe una homotopía entre el sistema entero y uno fraccionario. Liste
+ las cotas uniformes que faltaría probar antes de invocar grado o continuación.
+\end{enumerate}
+
+\paragraph{Pistas.}
+En \textbf{T1}, $u(t;s)=s\sin t$ y el residual es afín. Para \textbf{T2},
+aplique el teorema del valor intermedio a $P(x)-x$ y use que $P([a,b])$ queda
+dentro del mismo intervalo. En \textbf{T3}, aísle primero los ceros y sume los
+signos de la derivada. En \textbf{T4}, una resta ordinaria de ángulos no está
+bien definida en $S^1$; trabaje en una carta o con una diferencia envuelta. En
+\textbf{T5}, la cota sale de integrar exactamente
+$(t-\tau)^{q-1}$. En \textbf{T6}, una respuesta completa debe fijar el espacio
+de funciones, el terminal inferior, el horizonte, una región acotada y una
+cota que sea uniforme en el parámetro de homotopía.
+\fi

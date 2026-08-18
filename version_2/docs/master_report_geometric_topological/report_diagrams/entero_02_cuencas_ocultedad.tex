@@ -1,0 +1,69 @@
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\resizebox{0.96\linewidth}{!}{%
+\begin{tikzpicture}[
+  >=Latex,
+  every node/.style={font=\small},
+  flow/.style={-{Latex[length=2.3mm]},thick,draw=GrisOscuro},
+  point/.style={circle,fill=GrisOscuro,inner sep=1.8pt}
+]
+  \begin{scope}
+    \clip[rounded corners=7pt] (0.2,0.25) rectangle (13.8,6.0);
+    \fill[VerdeClaro] (0.2,0.25) rectangle (13.8,6.0);
+    \fill[AzulClaro]
+      (0.2,0.25) -- (6.35,0.25)
+      .. controls (5.55,1.15) and (6.85,1.75) .. (6.05,2.55)
+      .. controls (5.30,3.25) and (6.65,4.25) .. (6.35,6.0)
+      -- (0.2,6.0) -- cycle;
+  \end{scope}
+  \draw[rounded corners=7pt,very thick,GrisOscuro] (0.2,0.25) rectangle (13.8,6.0);
+  \node[anchor=north west,font=\bfseries] at (0.45,5.82) {Espacio de fases \(M\)};
+  \node[font=\bfseries,Azul] at (2.55,5.15) {$\mathcal B(A_1)$};
+  \node[font=\bfseries,Verde] at (10.55,5.15) {$\mathcal B(A_h)$};
+
+  % Frontera común, punto silla y transporte sobre la frontera.
+  \draw[very thick,Naranja]
+    (6.35,0.25)
+    .. controls (5.55,1.15) and (6.85,1.75) .. (6.05,2.55)
+    .. controls (5.30,3.25) and (6.65,4.25) .. (6.35,6.0);
+  \draw[very thick,GrisOscuro,densely dashed]
+    (6.00,2.30) .. controls (5.55,3.05) and (6.55,3.75) .. (6.24,4.45);
+  \node[point,label=right:$S$] (s) at (6.00,3.05) {};
+  \node[align=left,fill=white,inner sep=2pt] at (7.78,4.15)
+    {componente candidata\\$W^s(S)$};
+  \node[point,label=left:$x$] (xb0) at (6.20,1.15) {};
+  \node[point,label=right:$\varphi_t(x)$] (xb1) at (6.08,2.35) {};
+  \draw[flow] (xb0) .. controls (5.78,1.62) and (6.35,1.95) .. (xb1);
+  \node[rotate=90,Naranja,font=\bfseries] at (5.45,4.90)
+    {$\partial\mathcal B(A_h)$};
+
+  % Atractores y vecindad de equilibrio que no toca la cuenca oculta.
+  \draw[very thick,Azul] (2.55,2.55) circle (0.43);
+  \fill[Azul] (2.55,2.55) circle (2pt);
+  \node[below=2pt] at (2.55,2.05) {$A_1$};
+  \draw[very thick,Verde] (10.65,2.70) ellipse (0.78 and 0.42);
+  \node[below=5pt] at (10.65,2.15) {$A_h$ oculto};
+  \draw[flow,draw=Azul] (4.40,1.10) .. controls (3.55,1.45) and (3.0,1.90) .. (2.75,2.30);
+  \draw[flow,draw=Verde] (12.75,4.25) .. controls (11.95,3.75) and (11.35,3.30) .. (10.95,2.98);
+
+  \fill[GrisOscuro] (1.50,4.00) circle (2pt);
+  \node[left=2pt] at (1.50,4.00) {$e$};
+  \draw[GrisOscuro,dashed,thick] (1.50,4.00) circle (0.72);
+  \node[above] at (1.50,4.72) {$U_e$};
+  \node[draw=GrisOscuro,rounded corners,fill=white,inner sep=3pt]
+    at (3.28,3.95) {$U_e\cap\mathcal B(A_h)=\varnothing$};
+\end{tikzpicture}%
+}
+
+\smallskip
+\begin{minipage}{0.92\linewidth}
+\small\textbf{Lectura pedagógica.}
+La ocultedad se expresa por vecindades de los equilibrios que no intersectan la
+cuenca del atractor oculto. La frontera de una cuenca es invariante bajo un
+flujo completo, pero identificarla globalmente con $W^s(S)$ exige excluir
+otros conjuntos invariantes; el trazo discontinuo representa sólo una
+componente candidata.
+\end{minipage}
+\end{minipage}
+\end{center}

@@ -1,0 +1,237 @@
+\section{Integración y continuación numérica}
+\label{sec:integracion_continuacion}
+
+Esta sección transforma las ecuaciones continuas de las secciones anteriores
+en un procedimiento numérico. Se distinguen cuidadosamente tres operaciones:
+integrar un problema de valor inicial de Caputo, continuar el sistema no suave
+sin borrar su historia y reiniciar después el sistema autónomo para evaluar una
+condición inicial bajo un convenio común de memoria.
+
+\subsection{Esquema ABM--PECE de memoria completa}
+\label{sec:abm}
+
+Sea
+\begin{equation}
+ {}^{\mathrm C}D_{t_0}^{q}X(t)=F(t,X(t)),\qquad X(t_0)=X_0,
+ \qquad 0<q\leq 1,
+\label{eq:pvi_abm}
+\end{equation}
+y sea \(t_n=t_0+nh\) una malla uniforme. La forma de Volterra
+\cref{eq:volterra} se evalúa en \(t_{n+1}\):
+\begin{equation}
+ X(t_{n+1})=X_0+
+ \frac{1}{\Gamma(q)}
+ \sum_{j=0}^{n}
+ \int_{t_j}^{t_{j+1}}
+ (t_{n+1}-\tau)^{q-1}F(\tau,X(\tau))\dd\tau.
+\label{eq:volterra_por_intervalos}
+\end{equation}
+El esquema predictor--corrector de Adams--Bashforth--Moulton (ABM--PECE)
+se obtiene al aproximar \(F\) por una constante en el predictor y por una
+interpolación lineal en el corrector \cite{DiethelmFordFreed2002}.
+
+En el predictor se sustituye
+\(F(\tau,X(\tau))\) por \(F_j=F(t_j,X_j)\) en cada subintervalo. Como
+\begin{align}
+\int_{t_j}^{t_{j+1}}(t_{n+1}-\tau)^{q-1}\dd\tau
+&=\frac{h^q}{q}
+\left[(n+1-j)^q-(n-j)^q\right],
+\end{align}
+y \(q\Gamma(q)=\Gamma(q+1)\), resulta
+\begin{equation}
+ X_{n+1}^{\mathrm P}=X_0+
+ \frac{h^q}{\Gamma(q+1)}
+ \sum_{j=0}^{n}b_{j,n+1}F_j,
+\qquad
+ b_{j,n+1}=(n+1-j)^q-(n-j)^q.
+\label{eq:abm_predictor}
+\end{equation}
+
+Para el corrector se integra la interpolación lineal de \(F\). Después de
+agrupar los coeficientes asociados con cada nodo se obtiene
+\begin{equation}
+\begin{aligned}
+ X_{n+1}
+ =X_0+\frac{h^q}{\Gamma(q+2)}
+ \left[
+ F\!\left(t_{n+1},X_{n+1}^{\mathrm P}\right)
+ +\sum_{j=0}^{n}a_{j,n+1}F_j
+ \right],
+\end{aligned}
+\label{eq:abm_corrector}
+\end{equation}
+con
+\begin{equation}
+a_{j,n+1}=
+\begin{cases}
+n^{q+1}-(n-q)(n+1)^q, & j=0,\\[0.25em]
+(n-j+2)^{q+1}+(n-j)^{q+1}
+-2(n-j+1)^{q+1}, & 1\leq j\leq n.
+\end{cases}
+\label{eq:pesos_abm}
+\end{equation}
+La secuencia \emph{PECE} significa: predecir \(X_{n+1}^{\mathrm P}\), evaluar
+el campo en ese predictor, corregir para obtener \(X_{n+1}\) y evaluar
+finalmente \(F_{n+1}\), que se conserva para el siguiente paso.
+
+Las sumas de \cref{eq:abm_predictor,eq:abm_corrector} comienzan siempre en
+\(j=0\). Por ello, una integración de \(N\) pasos utiliza toda la historia
+\(\{F_0,\ldots,F_N\}\). En este reporte \emph{memoria completa} significa
+exactamente que ningún término anterior se elimina ni se sustituye por una
+ventana móvil.
+
+\begin{remark}[Recuperación del caso entero]
+Para \(q=1\), \(b_{j,n+1}=1\). Además, los pesos del corrector son \(1\) en
+los extremos y \(2\) en los nodos interiores; el factor
+\(\Gamma(3)^{-1}=1/2\) produce la regla trapezoidal compuesta. Así,
+\cref{eq:abm_predictor,eq:abm_corrector} recuperan el predictor de
+Adams--Bashforth de un paso y el corrector trapezoidal del problema entero.
+\end{remark}
+
+\subsection{Continuación causal del Chua no suave}
+\label{sec:continuacion_causal}
+
+La semilla sesgada obtenida mediante
+\cref{eq:cierre_dc_sesgado,eq:semilla_sesgada} pertenece a un sistema
+auxiliar linealizado. Antes de discretizar el parámetro de continuación se
+deriva la familia afín y se comprueba que conserva la componente continua, el
+modo armónico y los dos extremos:
+\begingroup
+\def\HAFOderivationpart{10}
+\input{report_sections/A_derivaciones_algebraicas}
+\endgroup
+
+En la implementación se escribe \(\eta=\varepsilon\). Por tanto,
+\(\eta=0\) es el auxiliar usado para construir la semilla y \(\eta=1\) es
+exactamente el Chua no suave de \cref{eq:chua_no_suave}; no queda un término
+residual de la aproximación armónica.
+
+Se usan los niveles
+\begin{equation}
+\eta_k=0.05k,\qquad k=0,\ldots,20.
+\label{eq:niveles_eta}
+\end{equation}
+Cada nivel ocupa \(60\) unidades de tiempo: las primeras \(30\) permiten el
+ajuste al nuevo campo y las siguientes \(30\) registran la respuesta. Si
+\(t_k=t_0+60k\), el parámetro se define como
+\begin{equation}
+\eta(t)=\eta_k,
+\qquad t\in[t_k,t_{k+1}),\qquad k=0,\ldots,20.
+\label{eq:eta_tiempo}
+\end{equation}
+Todo el intervalo \([t_0,t_{21}]\) se integra como un solo problema
+\begin{equation}
+{}^{\mathrm C}D_{t_0}^{q}X(t)=F_{\eta(t)}(X(t)).
+\label{eq:continuacion_unica_historia}
+\end{equation}
+Cuando \(k\) aumenta, únicamente cambia el campo \(F_{\eta_k}\); el índice
+inicial de las sumas ABM continúa siendo \(j=0\). Esta es la adaptación
+fundamental de la continuación de Leonov--Kuznetsov al operador de Caputo.
+Usar el último estado como nueva condición inicial en cada nivel produciría
+veintiún problemas diferentes y perdería la memoria acumulada.
+
+La búsqueda sesgada entrega
+\begin{equation}
+\begin{aligned}
+A&=4.5778827210,&
+c&=2.7763970033,&
+\omega&=2.0402860511,\\
+X_{\mathrm{sem}}&=
+(7.3542797243,\;0.2909687788,\;-9.3160548187)^{\T}.
+\end{aligned}
+\label{eq:datos_semilla_no_suave}
+\end{equation}
+Al completar \(\eta=1\), el último vector de la historia es
+\begin{equation}
+X_{\mathrm{fin}}=
+(0.8223107098,\;1.4652727040,\;1.2923082502)^{\T}.
+\label{eq:endpoint_no_suave}
+\end{equation}
+
+\subsection{Reinicio controlado para la trayectoria objetivo}
+\label{sec:reinicio_objetivo}
+
+La continuación de \cref{eq:continuacion_unica_historia} demuestra que existe
+un camino causal desde la semilla auxiliar hasta el sistema original. Para
+comparar esa condición final con las condiciones iniciales de los sondeos se
+realiza después una operación distinta:
+\begin{equation}
+{}^{\mathrm C}D_{0}^{q}X(t)=PX(t)+b\psi(r^{\T}X(t)),
+\qquad X(0)=X_{\mathrm{fin}}.
+\label{eq:reset_objetivo_no_suave}
+\end{equation}
+Este reinicio es intencional. Define una trayectoria autónoma del sistema
+objetivo con el mismo convenio de memoria que todas las trayectorias de
+\cref{eq:cuenca_reset}. De esta ejecución se descarta el transitorio y se
+construye la nube de referencia \(\target\) usada por el clasificador.
+
+Así, las dos operaciones tienen propósitos diferentes:
+\begin{enumerate}
+ \item la continuación conserva la historia para trasladar la semilla sin
+ cambiar el problema fraccionario durante el recorrido;
+ \item el reinicio estandariza el límite inferior y permite comparar cuencas
+ bajo un único contrato de Caputo.
+\end{enumerate}
+
+\subsection{Refinamiento fraccionario del caso con arctangente}
+\label{sec:refinamiento_c590}
+
+El caso \texttt{c590} de \cref{eq:parametros_c590} sigue una ruta distinta.
+Primero se explora el sistema entero \(q=1\), donde una trayectoria queda
+determinada por el estado instantáneo y puede integrarse eficientemente con
+RK4. La exploración acotada produce un sistema y una trayectoria fuente. De
+esa trayectoria se extraen estados postransitorios, que se usan como banco de
+semillas para problemas fraccionarios.
+
+Para cada orden \(q\) y cada semilla \(X_0^{(j)}\) se resuelve un problema
+independiente:
+\begin{equation}
+{}^{\mathrm C}D_{0}^{q}X^{(j,q)}(t)
+=F_{\mathrm a}\!\left(X^{(j,q)}(t)\right),
+\qquad X^{(j,q)}(0)=X_0^{(j)}.
+\label{eq:pvi_refinamiento_c590}
+\end{equation}
+Los órdenes ensayados son
+\begin{equation}
+q\in\{0.9995,\;0.9998,\;0.9999,\;0.99995\}.
+\label{eq:ordenes_refinamiento}
+\end{equation}
+Cambiar \(q\) modifica el operador y el núcleo de memoria; por esa razón no se
+transporta una historia entre órdenes. Cada fila de la exploración es un PVI
+completo con su propio \(t_0=0\).
+
+Los candidatos que permanecen acotados se comparan en
+\(h\in\{0.0025,0.005,0.01\}\). La regla de selección exige acotamiento en los
+tres pasos y un estadístico \(0\)-\(1\) mediano mayor que \(0.8\) en
+\(h=0.0025\) y \(h=0.005\). La semilla seleccionada, identificada como
+\texttt{seed9}, corresponde al tiempo nominal \(t=240\) de la trayectoria
+fuente:
+\begin{equation}
+X_{0,\mathrm{c590}}=
+(5.8642449791,\;1.5847111486,\;3.2155806478)^{\T}.
+\label{eq:semilla_c590}
+\end{equation}
+La trayectoria final se calcula con \(q=0.9999\), \(h=0.005\) y memoria
+completa. La exploración entera localiza una región prometedora; la integración
+de \cref{eq:pvi_refinamiento_c590} verifica la respuesta bajo el operador de
+Caputo que define el sistema estudiado.
+
+\subsection{Control de convergencia y reproducibilidad numérica}
+\label{sec:control_numerico}
+
+Un resultado se acepta únicamente cuando se conserva al cambiar el paso dentro
+del conjunto declarado y cuando el integrador finaliza sin valores no finitos
+ni desbordamiento. Para las trayectorias objetivo se registran, como mínimo:
+\begin{equation}
+\left(
+q,\ h,\ T,\ T_{\mathrm{burn}},\ X_0,\
+\text{integrador},\ \text{política de memoria}
+\right).
+\label{eq:contrato_numerico_minimo}
+\end{equation}
+El estado postransitorio se analiza con el mismo contrato utilizado para crear
+la nube objetivo. Los ensayos de robustez del caso no suave repitieron
+\(36\) combinaciones y las \(36\) reprodujeron la misma clase de destino. En
+el caso con arctangente, la selección cruzada entre pasos precede al sondeo de
+cuenca. Esta separación evita que una sola ejecución o un único paso funcionen
+simultáneamente como búsqueda, selección y evidencia final.

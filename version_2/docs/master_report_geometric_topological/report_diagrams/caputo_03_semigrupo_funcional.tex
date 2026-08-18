@@ -1,0 +1,50 @@
+\begin{center}
+\resizebox{0.96\linewidth}{!}{%
+\begin{tikzpicture}[
+  font=\small,
+  >=Latex,
+  nodo/.style={draw=GrisOscuro,rounded corners=3pt,minimum width=2.55cm,minimum height=0.95cm,align=center},
+  arr/.style={-{Latex[length=2mm]},thick,GrisOscuro}
+]
+  \node[draw=Verde,rounded corners=5pt,fill=VerdeClaro,fit={(0.15,3.05) (14.65,5.75)},
+        label={[Verde,anchor=north west]north west:carril funcional en \(\mathfrak C\)}] {};
+  \node[nodo,fill=white] (mzero) at (1.65,4.25) {\(m_0=\iota(x_0)\)};
+  \node[nodo,fill=white] (mt) at (5.80,4.25) {\(m_t=S_tm_0\)};
+  \node[nodo,fill=white] (mts) at (12.20,4.25) {\(m_{t+s}=S_s m_t\)};
+  \draw[arr] (mzero)--node[above]{\(S_t\)}(mt);
+  \draw[arr] (mt)--node[above]{\(S_s\)}(mts);
+  \draw[arr,Verde] (mzero.north) to[bend left=24]
+    node[above]{\(S_{t+s}=S_s\circ S_t\)} (mts.north);
+  \node[draw=Verde,circle,very thick,fill=white] at (13.75,4.25) {\(\checkmark\)};
+
+  \node[draw=Rojo,rounded corners=5pt,fill=NaranjaClaro,fit={(0.15,0.15) (14.65,2.85)},
+        label={[Rojo,anchor=north west]north west:carril puntual en \(\mathbb R^n\)}] {};
+  \node[nodo,fill=white] (xzero) at (1.65,1.20) {\(x_0\)};
+  \node[nodo,fill=white] (xt) at (5.80,1.20)
+    {\(x(t)=\operatorname{ev}_0m_t\)};
+  \node[nodo,fill=white] (reset) at (9.55,1.75)
+    {reinicio\\\(z(s)=\operatorname{ev}_0S_s\iota(x(t))\)};
+  \node[nodo,fill=white] (inherit) at (12.20,0.55)
+    {continuación\\\(x(t+s)=\operatorname{ev}_0m_{t+s}\)};
+
+  \draw[arr] (xzero)--node[above]{\(\Phi_t=\operatorname{ev}_0S_t\iota\)}(xt);
+  \draw[arr,dashed,Rojo] (xt)--node[above,sloped]{borra memoria}(reset);
+  \draw[arr,Azul] (xzero.south) to[bend right=17]
+    node[below]{\(\Phi_{t+s}\)} (inherit.west);
+  \node[text=Rojo,font=\large] at (12.80,1.72) {\(\neq\) en general};
+
+  \draw[arr] (xzero.north)--node[left]{\(\iota\)}(mzero.south);
+  \draw[arr] (mt.south)--node[left]{\(\operatorname{ev}_0\)}(xt.north);
+  \draw[arr] (mts.south)--node[right]{\(\operatorname{ev}_0\)}(inherit.north);
+  \node[align=center,GrisOscuro] at (7.35,2.55)
+    {la retracción \(\iota\circ\operatorname{ev}_0\) no es la identidad en \(\mathfrak C\)};
+\end{tikzpicture}%
+}
+\par\smallskip
+\begin{minipage}{0.92\linewidth}
+\small\textbf{Dónde se restaura la composición.}
+Bajo las hipótesis de existencia y unicidad declaradas, \(S_t\) compone sobre
+perfiles. La familia puntual \(\Phi_t=\operatorname{ev}_0S_t\iota\) no forma,
+en general, un semigrupo porque cada composición puntual introduce un reinicio.
+\end{minipage}
+\end{center}

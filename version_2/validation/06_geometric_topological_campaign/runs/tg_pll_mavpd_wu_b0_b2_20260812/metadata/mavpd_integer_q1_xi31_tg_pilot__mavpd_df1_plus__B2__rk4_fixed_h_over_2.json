@@ -1,0 +1,228 @@
+{
+  "schema_version": "1.1",
+  "trajectory_id": "mavpd_integer_q1_xi31_tg_pilot__mavpd_df1_plus__B2__rk4_fixed_h_over_2",
+  "case_id": "mavpd_integer_q1_xi31_tg_pilot",
+  "system_id": "modified-van-der-pol-duffing",
+  "seed": {
+    "seed_id": "mavpd_df1_plus",
+    "system_id": "modified-van-der-pol-duffing",
+    "route": "describing_function",
+    "state": [
+      0.6849613617742147,
+      0.17252741732512492,
+      1.3699227235484286
+    ],
+    "order_kind": "integer",
+    "q": 1.0,
+    "parameter_set_id": "mavpd_xi3p1",
+    "initialization_kind": "point_initial_value",
+    "lower_terminal": null,
+    "initial_time": null,
+    "history_reference": null,
+    "history_coverage": null,
+    "source_artifact": "validation/reference_cases/mavpd_integer_q1_audit/01_primary_direct_branches.json",
+    "source_record_id": "primary_branch_1_positive",
+    "generation_residual": null,
+    "score": null,
+    "priority": 30,
+    "parent_seed_id": null,
+    "transform_name": "identity",
+    "metadata": {
+      "symmetry": "+"
+    }
+  },
+  "contract_id": "mavpd_integer_q1_xi31_tg_pilot_geometric_topological_initial_pilot_v1",
+  "physical_budget": {
+    "level": "B2",
+    "normalized_step": 0.005,
+    "normalized_horizon": 200.0,
+    "transient_fraction": 0.6,
+    "tau_star": 0.04262239251,
+    "step": 0.00021311196255,
+    "horizon": 8.524478502000001,
+    "burn_time": 5.1146871012,
+    "nominal_steps": 40000
+  },
+  "solver": {
+    "solver_id": "rk4_fixed_h_over_2",
+    "family": "rk4",
+    "step_factor": 0.5,
+    "rtol": null,
+    "atol": null,
+    "full_memory": false,
+    "use_native_backend": false
+  },
+  "solver_info": {
+    "integrator": "rk4",
+    "integrator_class": "integer_order_solver",
+    "scientific_label": "Classical RK4 integer-order (q=1.0) solver.",
+    "h": 0.000106555981275,
+    "N": 80000,
+    "steps_completed": 80000,
+    "t_final_reached": 8.524478502000001,
+    "divergence_norm_threshold": 120.0,
+    "max_norm": 2.9463485875284827,
+    "configured_step": 0.000106555981275,
+    "independent_fixed_step": true
+  },
+  "classification": {
+    "schema_version": "1.0",
+    "label": "periodic",
+    "destination_id": "reference:outer_cycle",
+    "subtype": "near_periodic_integer_flow",
+    "confidence": 0.6246376032444211,
+    "is_ambiguous": false,
+    "reasons": [
+      "spectral_window_and_period_return_tests_passed"
+    ],
+    "metrics": {
+      "integration_status": "ok",
+      "dimension": 3,
+      "n_samples": 80001,
+      "finite_fraction": 1.0,
+      "burn_time": 5.1146871012,
+      "classifier_contract": {
+        "burn_time": 5.1146871012,
+        "order_kind": "integer",
+        "coordinate_scale": [
+          0.6,
+          0.15,
+          2.4
+        ],
+        "periodic_coordinates": {},
+        "require_declared_scale": true,
+        "min_tail_samples": 128,
+        "max_cloud_points": 500,
+        "divergence_radius": 120.0,
+        "divergence_radius_kind": "scaled",
+        "escape_persistence_fraction": 0.5,
+        "equilibrium_tolerance": 0.001,
+        "equilibrium_quantile_factor": 5.0,
+        "equilibrium_span_factor": 10.0,
+        "equilibrium_window_fraction": 0.2,
+        "minimum_nontrivial_span": 0.01,
+        "periodic_dominant_power_min": 0.45,
+        "periodic_entropy_max": 0.35,
+        "periodic_frequency_drift_max": 0.08,
+        "periodic_return_error_max": 0.12,
+        "periodic_windows": 4,
+        "recurrence_cloud_distance_max": 0.18,
+        "recurrence_centroid_drift_max": 0.2,
+        "recurrence_span_drift_max": 0.35,
+        "recurrence_covariance_drift_max": 0.5,
+        "recurrence_radius": 0.08,
+        "recurrence_rate_min": 0.0001,
+        "recurrence_theiler_samples": 10,
+        "recurrence_min_lag_time": 1.0,
+        "recurrence_excursion_radius": 0.25,
+        "recurrence_return_fraction_min": 0.002,
+        "recurrence_min_return_count": 3,
+        "reference_distance_max": 0.16,
+        "reference_separation_margin": 0.04,
+        "minimum_confidence": 0.05
+      },
+      "n_tail_samples": 32001,
+      "coordinate_scale": [
+        0.6,
+        0.15,
+        2.4
+      ],
+      "coordinate_scale_source": "declared",
+      "periodic_coordinates": {},
+      "metric_space": "scaled_euclidean",
+      "divergence_radius_kind": "scaled",
+      "final_radius_norm": 1.3469674557920461,
+      "maximum_radius_norm": 1.7181356494488504,
+      "tail_escape_fraction": 0.0,
+      "tail_span_scaled": [
+        1.9582636643188054,
+        1.9924898091458914,
+        1.9350372643083058
+      ],
+      "max_tail_span_scaled": 1.9924898091458914,
+      "closest_equilibrium": "E-",
+      "closest_equilibrium_final_distance_norm": 1.0625737191530544,
+      "closest_equilibrium_q95_distance_norm": 1.8140391733515504,
+      "closest_equilibrium_window_span_norm": 3.3505912259939237,
+      "sampling_interval": 0.00010655598127495836,
+      "sampling_relative_jitter": 8.33532204455289e-12,
+      "periodicity_available": true,
+      "dominant_component": 0,
+      "dominant_frequency_hz": 2.0528473545907184,
+      "dominant_power_ratio": 0.6469642602302358,
+      "spectral_entropy": 0.1016984795628618,
+      "relative_frequency_drift": 0.00012498437695293555,
+      "period_lag_samples": 4572,
+      "period_return_error": 0.06809244415527979,
+      "periodic_gate_passed": true,
+      "half_cloud_distance_norm": 0.01073591843503413,
+      "half_centroid_drift_norm": 0.19402753562728114,
+      "half_span_drift_norm": 0.03909443416123721,
+      "half_covariance_drift_norm": 0.018538637411664345,
+      "recurrence_radius_norm": 0.08,
+      "recurrence_theiler_samples": 10,
+      "recurrence_theiler_coordinate": "subsampled_cloud_index",
+      "recurrence_eligible_pairs": 151710,
+      "recurrence_rate": 0.020407356140003954,
+      "recurrence_min_lag_time": 1.0,
+      "recurrence_excursion_radius_norm": 0.25,
+      "excursion_return_count": 698,
+      "excursion_return_fraction": 1.745,
+      "stationarity_gate_passed": true,
+      "reference_match_status": "matched",
+      "reference_match": "outer_cycle",
+      "reference_distance_norm": 0.018051616112992372,
+      "reference_second_distance_norm": 0.8219801282942653,
+      "reference_distances_norm": {
+        "inner_positive": 0.822414802371187,
+        "inner_negative": 0.8219801282942653,
+        "outer_cycle": 0.018051616112992372
+      }
+    },
+    "evidence_status": "finite_time_destination_diagnostic",
+    "scientific_warnings": [
+      "This classification does not prove attraction, chaos, or hiddenness."
+    ]
+  },
+  "observables": {
+    "n_tail_samples": 32001,
+    "tail_centroid_scaled": [
+      0.010238743897079513,
+      0.010099833334401566,
+      0.001858383654860274
+    ],
+    "tail_span_scaled": [
+      1.9582636643188054,
+      1.9924898091458914,
+      1.9350372643083058
+    ],
+    "tail_covariance_scaled": [
+      [
+        0.5442161006961251,
+        0.36290568478064,
+        0.34041159105700347
+      ],
+      [
+        0.36290568478064,
+        0.4734979754010534,
+        -0.002207074991431396
+      ],
+      [
+        0.34041159105700347,
+        -0.002207074991431396,
+        0.46267555609212396
+      ]
+    ],
+    "tail_radius_max_scaled": 1.402361903488633,
+    "final_state": [
+      -0.5579371201098137,
+      -0.14617233767189194,
+      -0.0018369660237496747
+    ]
+  },
+  "trajectory_artifact": "trajectories/mavpd_integer_q1_xi31_tg_pilot__mavpd_df1_plus__B2__rk4_fixed_h_over_2.csv",
+  "trajectory_sha256": "3b9daf736c62e59f9ad72fc347e6d158c8ad973954c2ed4abb79399828c47446",
+  "elapsed_seconds": 6.137028299999656,
+  "evidence_level": "EV-TG2",
+  "claims_scope": "finite-time trajectory and destination diagnostic only"
+}
