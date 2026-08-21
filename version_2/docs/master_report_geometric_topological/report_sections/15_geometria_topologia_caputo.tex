@@ -1,13 +1,36 @@
+% Selector de bloques para la edición secuencial. El contrato de llamada es
+% \def\HAFOCaputoBlockSelect{1} junto con exactamente una de las banderas
+% \HAFOCaputoBlockMemory, \HAFOCaputoBlockBasins,
+% \HAFOCaputoBlockReturn o \HAFOCaputoBlockProtocol. Sin selector se conserva
+% la sección completa y el mismo nivel de encabezados que en la versión original.
+\def\HAFOCaputoShowMemory{1}
+\def\HAFOCaputoShowBasins{1}
+\def\HAFOCaputoShowReturn{1}
+\def\HAFOCaputoShowProtocol{1}
+\ifdefined\HAFOCaputoBlockSelect
+  \def\HAFOCaputoShowMemory{0}
+  \def\HAFOCaputoShowBasins{0}
+  \def\HAFOCaputoShowReturn{0}
+  \def\HAFOCaputoShowProtocol{0}
+  \ifdefined\HAFOCaputoBlockMemory
+    \def\HAFOCaputoShowMemory{1}
+  \fi
+  \ifdefined\HAFOCaputoBlockBasins
+    \def\HAFOCaputoShowBasins{1}
+  \fi
+  \ifdefined\HAFOCaputoBlockReturn
+    \def\HAFOCaputoShowReturn{1}
+  \fi
+  \ifdefined\HAFOCaputoBlockProtocol
+    \def\HAFOCaputoShowProtocol{1}
+  \fi
+\fi
+
+\ifnum\HAFOCaputoShowMemory=1\relax
 \section{Geometría y topología de sistemas de Caputo: del punto a la memoria}
 \label{sec:geometria-topologia-caputo}
 
-\ifHAFOPedagogy
-\paragraph{Antes de leer esta sección.}
-Complete las etapas 6 y 7 de \cref{sec:programa-estudio-bibliografico}. Debe
-poder transformar un PVI de Caputo en una ecuación de Volterra y explicar el
-papel del terminal inferior. Si aún interpreta $x(t)$ como un estado de Markov,
-vuelva a la lectura sobre no localidad y memoria antes de continuar.
-\fi
+\HAFOCardMemory
 
 Esta sección traduce el lenguaje geométrico de las ecuaciones diferenciales
 ordinarias al problema fraccionario que se estudia en el reporte. El cambio
@@ -171,6 +194,14 @@ resultados de Cong y Tuan; en general no se genera una dinámica autónoma sobre
 
 \subsection{Contraejemplo explícito: Mittag--Leffler no es exponencial}
 
+\ifHAFOPedagogy
+\begin{bloqueestudio}{Ejercicios}
+Compare numéricamente
+\(E_q[-a(t+s)^q]\) y \(E_q(-at^q)E_q(-as^q)\) para \(q=0.8\).
+Repita con \(q=1\) e interprete la diferencia.
+\end{bloqueestudio}
+\fi
+
 El fallo de la ley de semigrupo puntual ya aparece en la ecuación escalar
 \begin{equation}
  {}^{\mathrm C}D_{0+}^{q}x=\lambda x,\qquad x(0)=x_0.
@@ -210,6 +241,14 @@ donde \(S_t\) será la semidinámica funcional e
 expresión inserta \(\iota\circ\operatorname{ev}_0\): borra la memoria.
 
 \subsection{El espacio de fase correcto y la semidinámica}
+
+\ifHAFOPedagogy
+\begin{bloqueestudio}{Ejercicios}
+Elija dos perfiles que coincidan en \([0,1]\) y difieran después de
+\(\theta=2\); estime \(d_{\mathfrak C}\). Repita moviendo la diferencia a
+\(\theta=20\).
+\end{bloqueestudio}
+\fi
 
 Sea
 \begin{equation}
@@ -324,6 +363,12 @@ periódicas bajo las hipótesis finitas usuales.\\
 \end{tabularx}
 \end{table}
 
+\fi
+
+\ifnum\HAFOCaputoShowBasins=1\relax
+\ifdefined\HAFOCaputoBlockSelect
+\section{Órbitas, invariancia y cuencas de sistemas de Caputo}
+\fi
 \subsection{Órbita funcional, proyección y conjunto límite}
 
 La órbita positiva completa de \(m\in\mathfrak C\) es
@@ -442,6 +487,14 @@ de una ODE no se transfieren sustituyendo simplemente \(e^{At}\) por
 \(E_q(At^q)\).
 
 \subsection{Cuenca funcional frente a sección de reinicio}
+
+\ifHAFOPedagogy
+\begin{bloqueestudio}{Ejercicios}
+Dibuje \(\iota(\mathbb R^3)\subset\mathfrak C\) para Chua. Compare una bola
+euclídea alrededor de un equilibrio con una bola funcional y construya una
+perturbación de historia que conserve el valor terminal.
+\end{bloqueestudio}
+\fi
 \label{subsec:geofo-two-basins}
 
 La inmersión de reinicio
@@ -512,6 +565,12 @@ informar \emph{sistema sin equilibrios con conjunto atrayente observado} y
 estudiar su cuenca funcional, en vez de interpretar la vacuidad lógica como
 una prueba geométrica fuerte de ocultedad.
 
+\fi
+
+\ifnum\HAFOCaputoShowReturn=1\relax
+\ifdefined\HAFOCaputoBlockSelect
+\section{Retorno, recurrencia y puntos perpetuos con memoria}
+\fi
 \subsection{Cambios de coordenadas, conjugación y geometría diferencial}
 
 En una ODE sobre una variedad diferenciable, la regla de la cadena hace que un
@@ -572,6 +631,13 @@ respecto de cartas no lineales.
 \end{remark}
 
 \subsection{Secciones de Poincaré: de mapa puntual a operador funcional}
+
+\ifHAFOPedagogy
+\begin{bloqueestudio}{Ejercicios}
+Guarde en cada cruce \(x(t_k)\) y un vector de memoria. Determine si dos cruces
+cercanos en estado conservan sucesores cercanos al condicionar por la historia.
+\end{bloqueestudio}
+\fi
 
 Para una ODE, una hipersuperficie
 \begin{equation}
@@ -745,6 +811,12 @@ el límite entero bajo regularidad.\\
 \end{tabularx}
 \end{table}
 
+\fi
+
+\ifnum\HAFOCaputoShowProtocol=1\relax
+\ifdefined\HAFOCaputoBlockSelect
+\section{Protocolo geométrico y lectura de casos fraccionarios}
+\fi
 \subsection{Protocolo numérico geométrico para Caputo}
 \label{subsec:geofo-numerical-protocol}
 
@@ -866,63 +938,6 @@ Este ejemplo permite identificar todos los objetos:
 \end{itemize}
 Es el banco mínimo recomendado para comprobar que una implementación distingue
 correctamente continuación y reinicio antes de estudiar Chua.
-
-\ifHAFOPedagogy
-\subsection{Guía de estudio y ejercicios de comprobación}
-
-Estos seis niveles son el orden \emph{interno} de este capítulo, una vez
-alcanzada la etapa fraccionaria de la ruta única en
-\cref{sec:programa-estudio-bibliografico}.
-Conectan los conceptos abstractos con el reporte sin suponer de inicio teoría
-avanzada de espacios funcionales.
-
-\paragraph{Nivel 1: del campo al flujo.}
-Para una ODE, demostrar la ley \(\varphi_{t+s}=\varphi_t\circ\varphi_s\) usando
-unicidad. Identificar órbitas, equilibrios, conjuntos invariantes y cuencas en
-MAVPD o PLL. Después localizar exactamente qué paso usa que el estado puntual
-es completo.
-
-\paragraph{Nivel 2: de Caputo a Volterra.}
-Derivar \cref{eq:geofo-split-memory} y comprobar
-\(m_t(0)=x(t)\). Para la relajación escalar, comparar numéricamente
-\begin{equation*}
- E_q[-a(t+s)^q]
- \quad\text{y}\quad
- E_q(-at^q)E_q(-as^q).
-\end{equation*}
-La diferencia es la primera prueba de que el reinicio cambia el sistema
-observado.
-
-\paragraph{Nivel 3: topología funcional.}
-Elegir dos perfiles que coincidan en \([0,1]\) pero difieran después de
-\(\theta=2\), y estimar \(d_{\mathfrak C}\). Repetir moviendo la diferencia a
-\(\theta=20\). Este ejercicio muestra cómo la topología uniforme en compactos
-pondera ventanas cada vez más lejanas.
-
-\paragraph{Nivel 4: geometría de cuencas.}
-Para Chua, dibujar la inmersión \(\iota(\mathbb R^3)\) como una sección dentro
-de \(\mathfrak C\). Explicar por qué una bola euclídea alrededor de un
-equilibrio no es una bola funcional y construir perturbaciones de la forma
-\cref{eq:geofo-history-probes}.
-
-\paragraph{Nivel 5: retorno y recurrencia.}
-Construir primero una sección de Poincaré en MAVPD entero. En el caso Caputo,
-guardar para cada cruce tanto \(x(t_k)\) como un vector de memoria. Verificar si
-dos cruces cercanos en estado tienen sucesores cercanos después de condicionar
-por la memoria. Si no, el gráfico puntual es una relación y no un mapa.
-
-\paragraph{Nivel 6: afirmación topológica.}
-Antes de usar las palabras \emph{atractor}, \emph{ciclo}, \emph{separatriz},
-\emph{entropía} o \emph{conjugación}, escribir explícitamente:
-\begin{enumerate}[label=(\alph*)]
- \item el espacio en el que vive el objeto;
- \item la semidinámica u operador respecto del cual es invariante;
- \item la topología o métrica usada;
- \item la evidencia analítica y la evidencia numérica disponibles.
-\end{enumerate}
-Si falta uno de esos cuatro elementos, la afirmación se conserva como
-diagnóstico o conjetura.
-\fi
 
 \subsection{Mapa de resultados establecidos, adaptaciones y problemas abiertos}
 
@@ -1125,3 +1140,4 @@ memoria; FPP--H se registra como evento de historia; y las cuencas puntuales se
 etiquetan como secciones de reinicio. Sólo después de estas traducciones tiene
 sentido buscar variedades, índices topológicos, entropía o mecanismos
 homoclínicos para los sistemas fraccionarios concretos.
+\fi

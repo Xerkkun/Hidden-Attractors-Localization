@@ -158,6 +158,84 @@ Wu et al.
 \end{tabularx}
 \end{table}
 
+\subsection{Análisis matemático de los artículos primarios}
+
+\begin{longtable}{@{}L{0.16\textwidth}L{0.22\textwidth}L{0.28\textwidth}L{0.26\textwidth}@{}}
+\caption{Operaciones que deben reconstruirse al estudiar el estado del arte.}
+\label{tab:articulos-operaciones}\\
+\toprule
+Núcleo & Artículos & Formalismo que debe reproducirse & Lectura correcta \\
+\midrule
+\endfirsthead
+\toprule
+Núcleo & Artículos & Formalismo que debe reproducirse & Lectura correcta \\
+\midrule
+\endhead
+Atractor oculto y localización
+& \cite{LeonovKuznetsovVagaitsev2011,LeonovKuznetsov2013,KuznetsovEtAl2017}
+& Realización de Lur'e; resolvente; función descriptiva; identidad modal;
+homotopía desde un sistema auxiliar.
+& La construcción produce una semilla. Atracción, caos y ocultedad requieren
+integración y prueba de cuenca separadas. \\
+Caputo y atractores ocultos
+& \cite{Danca2017,Danca2017HiddenFO}
+& PVI de Caputo; equilibrios; jacobiano; criterio de Matignon; PECE; sondeos en
+vecindades.
+& El espectro es local y los sondeos son finitos. La memoria y el terminal
+inferior forman parte del problema. \\
+Operador y método numérico
+& \cite{Matignon1996,DiethelmFordFreed2002}
+& Transformada de Laplace; Mittag--Leffler; forma de Volterra; pesos predictor
+y corrector; orden de convergencia.
+& Matignon no clasifica cuencas. PECE aproxima un PVI declarado; no corrige una
+historia reiniciada o indefinida. \\
+Función descriptiva fraccionaria
+& \cite{BarbosaMachado2002BacklashImpact,Machado2015FDF}
+& Coeficiente fundamental complejo; dependencia de frecuencia; ramas de
+\(N^\mu\); cierre auxiliar y cierre físico.
+& Es un predictor armónico. La potencia de Machado puede diversificar semillas,
+pero no sustituye la proyección de Fourier de la no linealidad física. \\
+Puntos perpetuos
+& \cite{Prasad2015Perpetual,DudkowskiPrasadKapitaniak2017,NazarimehrSaediJafari2017}
+& \(Df(p)f(p)=0\), exclusión de equilibrios, singularidad de \(Df\),
+covariancia afín y contraejemplos.
+& Un PP es una semilla heurística, no un localizador universal. FPP--A y FPP--H
+son extensiones del proyecto y deben conservar el formalismo de memoria. \\
+Geometría del campo
+& \cite{GuanXie2021Connecting,GodaraEtAl2018CriticalSurfaces}
+& Menores, superficies \(\det Df=0\), campos derivados, curvas conectantes y
+transversalidad.
+& Estos objetos organizan semillas y regiones; no prueban por sí solos
+invariancia, atracción ni una frontera global. \\
+Topología de cuencas
+& \cite{DazaEtAl2016BasinEntropy,DazaEtAl2015Wada}
+& Partición del dominio, entropía de cuenca, refinamiento y criterio de Wada.
+& Una imagen entremezclada es evidencia finita. La afirmación topológica exige
+convergencia o caracterización del conjunto de frontera. \\
+Dinámica con memoria
+& \cite{DoanKloeden2024Attractors}
+& Semidinámica en un espacio de historias, invariancia funcional, atracción y
+proyección al estado observable.
+& La geometría puntual de una ODE no se traslada a Caputo mediante una regla de
+cadena local ni mediante reinicios sucesivos. \\
+\bottomrule
+\end{longtable}
+
+\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+Lea cada fila junto con la sección donde se ejecuta su formalismo: atractores
+ocultos en la introducción y Lur'e; Caputo en fundamentos e integración; PP en
+su capítulo; geometría y cuencas en localización geométrico--topológica.
+\end{bloqueestudio}
+
+\begin{bloqueestudio}{Ejercicios}
+Para cada núcleo reconstruya: ecuación, hipótesis, derivación, parámetros,
+inicialización, algoritmo, observable, conclusión y límite. Después responda:
+¿qué resultado del artículo se reproduce, qué parte se adapta y qué parte es
+una propuesta nueva de la tesis?
+\end{bloqueestudio}
+\fi
+
 La jerarquía bibliográfica del resto del reporte es deliberada. La definición,
 la localización y los parámetros de cada atractor se atribuyen a artículos de
 investigación
@@ -169,8 +247,3 @@ Los libros compilados
 se usan para ordenar familias y encontrar antecedentes. Ningún parámetro,
 condición inicial o reclamo de ocultedad se sostiene únicamente en un capítulo
 recopilatorio o en un resumen automático.
-
-El orden lógico del reporte sigue esa separación: primero se definen los
-sistemas y los fundamentos; después se derivan las ecuaciones comunes; luego
-se describen los protocolos bibliográficos y las dos rutas propuestas; por
-último se comparan los resultados obtenidos.

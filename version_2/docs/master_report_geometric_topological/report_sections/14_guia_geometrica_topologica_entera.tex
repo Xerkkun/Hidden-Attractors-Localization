@@ -1,4 +1,19 @@
+% Selectores de bloques para la edición de estudio. Sin
+% \HAFOGeoBlockSelect se conserva íntegro el orden histórico A--F. Si el
+% selector está activo, pueden habilitarse uno o varios bloques mediante
+% \HAFOGeoBlockIntroFlow, \HAFOGeoBlockBasins, \HAFOGeoBlockDegree,
+% \HAFOGeoBlockLinear, \HAFOGeoBlockPoincare y \HAFOGeoBlockChaos.
+\ifdefined\ifHAFOGeoRenderBlock\else
+  \newif\ifHAFOGeoRenderBlock
+\fi
+
 \ifdefined\HAFOGeoPosteriorOnly\else
+\HAFOGeoRenderBlocktrue
+\ifdefined\HAFOGeoBlockSelect
+  \HAFOGeoRenderBlockfalse
+  \ifdefined\HAFOGeoBlockIntroFlow\HAFOGeoRenderBlocktrue\fi
+\fi
+\ifHAFOGeoRenderBlock
 \section{Propósito y alcance geométrico--topológico}
 \label{sec:geo-proposito}
 
@@ -43,21 +58,6 @@ Al terminar esta guía, el lector debería poder:
         demostración.
 \end{enumerate}
 
-\subsection{Lectura previa exacta}
-
-Antes de continuar, complete las etapas 1--5 de
-\cref{sec:programa-estudio-bibliografico}. Allí se indican páginas impresas de
-los cuatro libros físicos, páginas del visor de los PDF locales, ejercicios y
-una comprobación para decidir si puede avanzar. El orden mínimo es
-\[
-\text{campo y flujo}
-\longrightarrow \text{espacio de fases}
-\longrightarrow \text{Poincaré--Floquet}
-\longrightarrow \text{grado}
-\longrightarrow \text{caos y cuencas}.
-\]
-No empiece por conexiones, curvatura o geometría fractal: esas lecturas son de
-profundización y aparecen al final de la ruta.
 \fi
 
 \subsection{Escalera de afirmaciones}
@@ -96,8 +96,11 @@ algebraica y ayudar a verificar una hipótesis de G2 o G3. Una integración
 numérica sigue siendo G1 mientras no incluya cotas rigurosas que cubran el
 continuo relevante.
 
+\HAFOStudyNeedspace
 \section{Lenguaje mínimo de topología y geometría diferencial}
 \label{sec:geo-lenguaje}
+
+\HAFOCardTopology
 
 Esta parte se restringe primero a ecuaciones autónomas de orden entero
 \begin{equation}
@@ -297,8 +300,11 @@ el cilindro aunque no lo parezca en el recubrimiento \(\R^2\). \\
 \end{tabularx}
 \end{table}
 
+\HAFOStudyNeedspace
 \section{Del problema de valor inicial al flujo}
 \label{sec:geo-flujo}
+
+\HAFOCardFlow
 
 \subsection{Existencia, unicidad y dependencia de la condición inicial}
 
@@ -449,8 +455,18 @@ sí sola no decide cuál alternativa ocurre. En el expediente MAVPD, los ciclos
 internos aparecen como un par simétrico, mientras que la extensión externa
 debe comprobarse por sus propias trayectorias.
 
+\fi
+\HAFOGeoRenderBlocktrue
+\ifdefined\HAFOGeoBlockSelect
+  \HAFOGeoRenderBlockfalse
+  \ifdefined\HAFOGeoBlockBasins\HAFOGeoRenderBlocktrue\fi
+\fi
+\ifHAFOGeoRenderBlock
+\HAFOStudyNeedspace
 \section{Conjuntos límite, atracción y cuencas}
 \label{sec:geo-limit-basins}
+
+\HAFOCardBasins
 
 \subsection{Qué queda después del transitorio}
 
@@ -608,8 +624,18 @@ el reporte: reemplazaría la mera permanencia observada por un argumento G3 de
 acotación y existencia de un conjunto invariante. Aun así, habría que separar
 periodicidad, caos y ocultedad mediante argumentos adicionales.
 
+\fi
+\HAFOGeoRenderBlocktrue
+\ifdefined\HAFOGeoBlockSelect
+  \HAFOGeoRenderBlockfalse
+  \ifdefined\HAFOGeoBlockDegree\HAFOGeoRenderBlocktrue\fi
+\fi
+\ifHAFOGeoRenderBlock
+\HAFOStudyNeedspace
 \section{Métodos topológicos: índice, grado y disparo}
 \label{sec:geo-degree}
+
+\HAFOCardDegree
 
 Esta sección forma el puente más directo con los métodos topológicos de
 existencia. El principio central es que un número entero puede permanecer
@@ -835,8 +861,18 @@ covariante bajo cambios afines, pero una transformación no lineal introduce
 términos Hessianos. En consecuencia, un punto perpetuo es un localizador
 dependiente de la representación, no una clase topológica del flujo.
 
+\fi
+\HAFOGeoRenderBlocktrue
+\ifdefined\HAFOGeoBlockSelect
+  \HAFOGeoRenderBlockfalse
+  \ifdefined\HAFOGeoBlockLinear\HAFOGeoRenderBlocktrue\fi
+\fi
+\ifHAFOGeoRenderBlock
+\HAFOStudyNeedspace
 \section{Geometría lineal local y variedades invariantes}
 \label{sec:geo-stable-manifolds}
+
+\HAFOCardLinearGeometry
 
 Los resultados de esta sección requieren declarar regularidad e
 hiperbolicidad; una gráfica de trayectorias no reemplaza esas hipótesis
@@ -1097,8 +1133,18 @@ se aplica por piezas y las contribuciones internas deben emparejarse en
 \(x=\pm1\). Esta formulación ofrece una conexión directa entre el libro de
 topología y geometría diferencial y los cálculos de divergencia del reporte.
 
+\fi
+\HAFOGeoRenderBlocktrue
+\ifdefined\HAFOGeoBlockSelect
+  \HAFOGeoRenderBlockfalse
+  \ifdefined\HAFOGeoBlockPoincare\HAFOGeoRenderBlocktrue\fi
+\fi
+\ifHAFOGeoRenderBlock
+\HAFOStudyNeedspace
 \section{Mapas de Poincaré, monodromía y teoría de Floquet}
 \label{sec:geo-poincare-floquet}
+
+\HAFOCardPoincare
 
 El paso flujo--retorno reduce la estabilidad orbital a dinámica discreta, pero
 sólo después de verificar transversalidad, existencia del primer retorno y
@@ -1281,8 +1327,18 @@ al añadir la fase; y un campo no único puede tener cruces que destruyen el
 argumento planar.
 \end{remark}
 
+\fi
+\HAFOGeoRenderBlocktrue
+\ifdefined\HAFOGeoBlockSelect
+  \HAFOGeoRenderBlockfalse
+  \ifdefined\HAFOGeoBlockChaos\HAFOGeoRenderBlocktrue\fi
+\fi
+\ifHAFOGeoRenderBlock
+\HAFOStudyNeedspace
 \section{Homoclinicidad, herraduras y significados de caos}
 \label{sec:geo-homoclinic-chaos}
+
+\HAFOCardChaos
 
 Esta sección delimita una agenda. No se afirma que los expedientes actuales
 ya contengan una prueba homoclínica. Las definiciones y el mecanismo de
@@ -1490,6 +1546,8 @@ métodos algebraicos del reporte.
 
 \subsection{Fronteras suaves, fractales y Wada: agenda, no conclusión}
 
+\HAFOCardFractal
+
 Si dos cuencas coexisten, una malla puede sugerir una frontera suave o
 irregular. Para estudiar esa sugerencia se puede medir la fracción de pares
 de condiciones a distancia \(\varepsilon\) que terminan en destinos distintos.
@@ -1510,7 +1568,11 @@ tres destinos coexistentes; Kalman--Fitts sólo exhibe en el contrato actual el
 origen, el ciclo y estados todavía no clasificados, por lo que no debe
 declararse Wada.
 
-\ifHAFOPedagogy
+\fi
+
+% El banco acumulado se conserva en la monografía digital completa. La guía
+% de estudio usa los ejercicios distribuidos junto a cada bloque matemático.
+\ifHAFOdigitalcontent
 \section{Ejemplos cortos, contraejemplos y actividades guiadas}
 \label{sec:geo-activities}
 
@@ -1719,43 +1781,11 @@ qué una evidencia más débil no basta.
 \fi
 
 \ifdefined\HAFONoGeoPosterior\else
+\ifdefined\HAFOGeoBlockSelect\else
 \section{Material posterior: profundización y agenda de investigación}
 \label{sec:geo-study-plan}
 
-\ifHAFOPedagogy
-Esta sección se estudia \emph{después} de los capítulos metodológicos y de los
-casos. No abre otra secuencia de lectura: prolonga las etapas avanzadas de la
-ruta única de \cref{sec:programa-estudio-bibliografico}.
-
-\subsection{Secuencia conceptual recomendada}
-
-\begin{enumerate}
-  \item \textbf{Topología básica y espacios de fases.} Abiertos, continuidad,
-        compacidad, conexidad, cociente \(S^1=\R/(2\pi\mathbb Z)\) y frontera.
-        Producto: reconstruir el cilindro PLL y su métrica.
-  \item \textbf{Variedades y campos.} Cartas, tangentes, diferencial y empuje
-        de campos. Producto: derivar~\eqref{geo:eq:pushforward} para una
-        transformación T1 del reporte.
-  \item \textbf{Existencia, unicidad y flujo.} Problema de Cauchy, dependencia
-        continua, flujo local y completitud. Producto: declarar el dominio
-        matemático de cada caso entero.
-  \item \textbf{Dinámica cualitativa.} Órbitas, invariancia,
-        \(\alpha/\omega\)-límites, atracción y cuencas. Producto: reinterpretar
-        una figura archivada de cada expediente con una definición precisa.
-  \item \textbf{Dinámica local.} Linealización, hiperbolicidad,
-        Hartman--Grobman y variedades estables, inestables y centrales.
-        Producto: tabla
-        de espectros e índices con hipótesis verificadas.
-  \item \textbf{Ciclos.} Sección, retorno, monodromía y Floquet. Producto:
-        multiplicadores de PLL y MAVPD con refinamiento.
-  \item \textbf{Métodos topológicos.} Disparo, grado de Brouwer y homotopía;
-        después, Leray--Schauder. Producto: dominio de grado para el caso
-        Kalman--Fitts.
-  \item \textbf{Geometría global y caos.} Separatrices, homoclinicidad,
-        herraduras, entropía y fronteras fractales. Producto: piloto riguroso
-         MAVPD antes de trasladarlo a Chua PWL.
-\end{enumerate}
-\fi
+\HAFOCardFuture
 
 \subsection{Matriz de proyectos posibles}
 
@@ -1821,4 +1851,5 @@ topológico demostrado. Mantener separadas estas capas es la conexión central
 entre los ejemplos del reporte y la teoría geométrica de ecuaciones
 diferenciales.
 \end{hallazgo}
+\fi
 \fi

@@ -1,0 +1,512 @@
+% Tarjetas visibles sólo en la edición pedagógica. Se invocan en el punto
+% matemático correspondiente; el archivo no produce contenido por sí solo.
+
+\newcommand{\HAFOProblemStateMemory}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Formalismo.} Para \(A\in\mathbb R^{n\times n}\), compare
+\(\dot x=Ax\) con \({}^{\mathrm C}D^q x=Ax\): solución fundamental,
+composición temporal, espacio de fases y dato inicial. Verifique el caso
+escalar con \(e^{\lambda t}\) y \(E_q(\lambda t^q)\).
+
+\textbf{Interpretación.} Identifique exactamente dónde falla el semigrupo
+puntual para \(q<1\).
+
+\textbf{Defensa oral.} Explique en dos minutos por qué el estado de Caputo no
+queda determinado sólo por \(x(t)\).
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOProblemStabilityBasins}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Formalismo.} Para un Chua entero y uno fraccionario, calcule
+equilibrios y espectros, aplique el criterio de estabilidad correspondiente y
+defina la cuenca en el espacio de estados o de historias.
+
+\textbf{Interpretación.} Separe estabilidad local, atracción y contacto de
+cuenca.
+
+\textbf{Defensa oral.} Responda por qué tener todos los equilibrios inestables
+no demuestra que un atractor sea oculto.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOProblemReturn}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Formalismo.} Construya una sección para PLL o MAVPD, formule
+\(P-I\) y las hipótesis de grado. Después escriba el operador de retorno
+Caputo sobre historias.
+
+\textbf{Interpretación.} Distinga punto fijo de retorno, estabilidad del ciclo
+y existencia por grado.
+
+\textbf{Defensa oral.} Explique por qué la proyección puntual de un retorno
+Caputo no conserva toda la información dinámica.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOProblemChaos}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Formalismo.} Compare una trayectoria entera y una Caputo con la
+misma matriz de observables. Separe acotación, recurrencia, atracción, caos,
+cuenca y ocultedad.
+
+\textbf{Interpretación.} Identifique qué afirmaciones son topológicas y cuáles
+son sólo numéricas y finitas.
+
+\textbf{Defensa oral.} Explique por qué una FFT o un exponente positivo aislado
+no certifican simultáneamente caos, atracción y ocultedad.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOProblemLocalization}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Formalismo.} En un mismo sistema produzca semillas por dos rutas
+entre DF, Machado, continuación, PP/FPP y borde. Compare residuos algebraicos,
+contrato de memoria, destino y prueba de cuenca bajo el mismo presupuesto.
+
+\textbf{Interpretación.} Determine qué aporta cada ruta y qué afirmación no
+puede sostener por sí sola.
+
+\textbf{Defensa oral.} Distinga con precisión semilla, trayectoria, conjunto
+límite, atractor y atractor oculto.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOThesisDefense}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Simulacro de defensa.} Responda sin consultar el texto y después
+contraste cada respuesta con las derivaciones:
+\begin{enumerate}[nosep]
+  \item ¿Cómo se pasa del campo a equilibrios, jacobiano, espectro y
+  clasificación local?
+  \item ¿Cuál es la diferencia entre atractor autoexcitado y oculto y cómo se
+  ensaya su cuenca?
+  \item ¿Cómo se obtiene la realización de Lur'e, \(W_q\) y el cierre de
+  balance armónico?
+  \item ¿Qué predicen DF y Machado y qué no certifican?
+  \item ¿Por qué Caputo exige Volterra, terminal inferior e historia completa?
+  \item ¿Cómo se continúa un sistema fraccionario sin reiniciar la memoria?
+  \item ¿Qué significan PP, FPP--A y FPP--H y cuándo pueden fallar?
+  \item ¿Qué aportan grado, Poincaré, variedades, superficies críticas y borde
+  de cuenca?
+  \item ¿Qué evidencia separa acotación, recurrencia, atracción, caos y
+  ocultedad?
+  \item Para cada caso del reporte: ¿qué es previo, qué es propuesta del
+  proyecto, qué se verificó y qué permanece abierto?
+\end{enumerate}
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardTopology}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+\begin{itemize}[nosep]
+  \item \emph{Topología y geometría diferencial con aplicaciones a la física}
+  \cite{NahmadAchar2022Topologia}: coordenadas adaptadas y curvas integrales,
+  §§11.3--11.5, pp.~124--125; derivadas de Lie, §§11.6--11.14,
+  pp.~125--130.
+\end{itemize}
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Resuelva §§11.15--11.18, pp.~131--133. Calcule
+\(L_fV=\nabla V\cdot f\) para \(V(x)=\|x\|^2/2\).
+
+\textbf{Investigación.} Demuestre que \(\mathbb R\times S^1\) es el espacio
+de fases del PLL y defina una distancia con
+\(\theta\sim\theta+2\pi\).
+\end{bloqueestudio}
+\begin{bloqueestudio}{Lecturas complementarias}
+Mismo libro: conexiones lineales, pp.~135--142.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardFlow}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+\begin{itemize}[nosep]
+  \item \emph{Teoría geométrica de ecuaciones diferenciales I}
+  \cite{JaurezEtAl2021TGEDI}: cap.~1, p.~1; cap.~3, pp.~53--80; cap.~4,
+  pp.~93--155.
+  \item \emph{Teoría geométrica de ecuaciones diferenciales II}
+  \cite{JaurezEtAl2021TGEDII}: cap.~8, pp.~69--98; existencia y unicidad,
+  p.~73; primera variación, p.~74; dependencia del dato inicial, p.~92.
+  \item \texttt{Strogatz - Nonlinear Dynamics and Chaos.pdf}
+  \cite{Strogatz2015Nonlinear}: PDF~30--50 y 140--212.
+\end{itemize}
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Resuelva Strogatz 2.4.1--2.4.8, 2.5.1--2.5.5 y 2.6.2,
+PDF~57--59. Para \(\dot x=Ax\), demuestre
+\(\varphi_t(x_0)=e^{tA}x_0\) y
+\(\varphi_{t+s}=\varphi_t\circ\varphi_s\).
+
+\textbf{Investigación.} Calcule el jacobiano y el espectro del origen en un
+caso entero. Explique qué falla en
+Hartman--Grobman si hay valores propios sobre el eje imaginario.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Lecturas complementarias}
+\emph{Métodos topológicos en el estudio de las ecuaciones diferenciales no
+lineales} \cite{Amster2021MetodosTopologicos}: apéndice A, pp.~319--327.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardBasins}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+\begin{itemize}[nosep]
+  \item \emph{Exploring Chaos} \cite{Davies2004ExploringChaos}:
+  sistemas bidimensionales y fronteras de cuenca, pp.~107--148; §4.7,
+  p.~134.
+  \item \texttt{Alligood, Sauer \& Yorke - Chaos.pdf}
+  \cite{AlligoodSauerYorke1996Chaos}: cuencas, PDF~146--165; fronteras,
+  PDF~181--209.
+\end{itemize}
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Resuelva Alligood--Sauer--Yorke, \emph{Challenge} 4,
+PDF~199--201.
+
+\textbf{Investigación.} Para dos atractores \(A_1,A_2\), escriba
+\(\mathcal B(A_i)\), su frontera común y un par de puntos para una bisección
+de borde. Indique qué resultado sería sólo local y finito.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Lecturas complementarias}
+Alligood--Sauer--Yorke: \emph{Challenge} 10, PDF~444--451.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardDegree}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+\emph{Métodos topológicos} \cite{Amster2021MetodosTopologicos}: índice de
+curvas, pp.~74--82; disparo, p.~84; Brouwer y Poincaré, p.~99; grado de
+Brouwer, pp.~103--145.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Resuelva los problemas del cap.~3, pp.~153--155, y calcule
+\(\deg(I,B,0)\), \(\deg(-I,B,0)\).
+
+\textbf{Investigación.} Para un mapa de retorno \(P\),
+formule \(F(z)=P(z)-z\) y enumere las hipótesis necesarias para usar el grado.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardLinearGeometry}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+\emph{Teoría geométrica de ecuaciones diferenciales II}
+\cite{JaurezEtAl2021TGEDII}: primera variación, p.~74; dependencia del dato
+inicial, p.~92; Grobman--Hartman, p.~94.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Resuelva Strogatz 6.5.11, PDF~206, y 6.8.6--6.8.7,
+PDF~213--214. Derive \(\dot\Phi=Df(x(t))\Phi\), \(\Phi(0)=I\).
+
+\textbf{Investigación.} Para un equilibrio de Chua, MAVPD, Kalman--Fitts o
+PLL, separe subespacios estable, inestable y central.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardPoincare}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+\begin{itemize}[nosep]
+  \item \emph{Teoría geométrica de ecuaciones diferenciales II}
+  \cite{JaurezEtAl2021TGEDII}: rectificación y Poincaré, pp.~113--115;
+  Floquet y monodromía, pp.~121--141; Poincaré--Bendixson, p.~150.
+  \item Strogatz \cite{Strogatz2015Nonlinear}: PDF~215--260 y 261--325.
+\end{itemize}
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Resuelva Strogatz 7.3.1--7.3.3, PDF~250--251, y demuestre
+que una órbita periódica da un punto fijo del retorno.
+
+\textbf{Investigación.} Construya una sección transversal para PLL o MAVPD y
+explique un multiplicador de módulo mayor que uno.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Lecturas complementarias}
+Strogatz 8.4.3--8.4.4, PDF~313--314.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardChaos}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+\begin{itemize}[nosep]
+  \item Strogatz \cite{Strogatz2015Nonlinear}: Lorenz, PDF~326--371;
+  Lyapunov y mapas, PDF~372--421; atractores extraños, PDF~446--476.
+  \item Alligood--Sauer--Yorke \cite{AlligoodSauerYorke1996Chaos}:
+  Lyapunov y herradura, PDF~211--247; atractores, PDF~248--289; caos en
+  flujos, PDF~376--415; variedades y crisis, PDF~416--463.
+\end{itemize}
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Resuelva Strogatz 9.2.2--9.2.3 y 9.3.8--9.3.9,
+PDF~366--368; 10.3.7--10.3.8 y 10.5.1--10.5.4, PDF~413--417.
+
+\textbf{Investigación.} Defina por separado acotación, recurrencia, atracción,
+caos y ocultedad. Construya un contraejemplo para cada implicación inválida.
+
+\textbf{Integrador.} Repita la tabla de implicaciones para una trayectoria de
+Caputo: sustituya periodicidad exacta por recurrencia proyectada y declare qué
+información depende de la historia.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Lecturas complementarias}
+\begin{itemize}[nosep]
+  \item \emph{Exploring Chaos} \cite{Davies2004ExploringChaos}, pp.~44--60,
+  65--106 y 184--193.
+  \item \emph{Chaos and Time-Series Analysis}
+  \cite{Sprott2003ChaosTimeSeries}, pp.~72--183, 213--272 y 302--328.
+  \item Devaney \cite{Devaney1989Chaotic}: PDF aprox.~29--33, 70,
+  110--129.
+  \item Hilborn \cite{Hilborn2000Chaos}: PDF aprox.~38--80 y 162--220.
+\end{itemize}
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardFractal}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas complementarias}
+\begin{itemize}[nosep]
+  \item Falconer \cite{Falconer2014Fractal}: dimensión de caja,
+  PDF~59--75; Hausdorff, PDF~76--97; sistemas dinámicos, PDF~238--264.
+  \item \texttt{Barnsley - Fractals Everywhere.pdf}: métricas y topología,
+  PDF~12--48; contracciones, PDF~49--129; dimensión, PDF~186--219.
+  \item Mandelbrot: consulta visual, PDF~33 y 277; para pruebas use Falconer.
+\end{itemize}
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Resuelva un ejercicio de dimensión de caja de Falconer,
+cap.~2; contraste después con el solucionario, PDF~1--21.
+
+\textbf{Investigación.} Calcule la dimensión de una frontera de cuenca en dos
+refinamientos y explique por qué el resultado no demuestra Wada.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardFractional}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+\begin{itemize}[nosep]
+  \item Oliveira \cite{Oliveira2019SolvedFractional}: Gamma, PDF~30--41;
+  Mittag--Leffler, PDF~81--124; Laplace, PDF~130--137; GL, RL y Caputo,
+  PDF~179--189.
+  \item Herrmann \cite{Herrmann2014Fractional}: PDF~28--53 y 64--89.
+  \item \emph{The Analysis of Fractional Differential Equations}
+  \cite{Diethelm2010AnalysisFDE}: pp.~13--73.
+\end{itemize}
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Oliveira: ejercicios 13--16 y 30--32,
+PDF~142--172; ejercicios RL--Caputo 12, 14, 15, 20, 25, 32, 33 y 40,
+PDF~191--224. Obtenga
+\(\mathcal L\{t^{\beta-1}E_{\alpha,\beta}(\lambda t^\alpha)\}
+=s^{\alpha-\beta}/(s^\alpha-\lambda)\).
+
+\textbf{Investigación.} Derive la transformada de Caputo con sus datos
+iniciales y compare RL, GL y Caputo en \(t^\mu\).
+
+\textbf{Integrador.} Resuelva \(\dot x=\lambda x\) y
+\({}^{\mathrm C}D^q x=\lambda x\). Compare \(e^{\lambda t}\) con
+\(E_q(\lambda t^q)\), la ley de semigrupo y los criterios espectrales entero y
+de Matignon.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Lecturas complementarias}
+Oldham--Spanier \cite{OldhamSpanier1974Fractional}: p.~16,
+pp.~47--60, 69--94 y 136. Herrmann: ejercicios 3.3, 5.1--5.2 y 6.1;
+soluciones PDF~423, 428--429 y 432.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardMemory}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+\begin{itemize}[nosep]
+  \item Herrmann \cite{Herrmann2014Fractional}: no localidad y memoria,
+  PDF~108--126.
+  \item Das \cite{Das2020Kindergarten}: ramas de \(s^q\), PDF~41--47;
+  inicialización y convolución, PDF~109 y 119--135; historia y Laplace,
+  PDF~247--310; sistemas multivariables, PDF~333--375.
+  \item Diethelm \cite{Diethelm2010AnalysisFDE}: existencia, unicidad,
+  regularidad y estabilidad, pp.~85--166.
+\end{itemize}
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Herrmann: ejercicio 8.1, PDF~126; solución, PDF~436.
+Derive la ecuación integral de Volterra.
+
+\textbf{Investigación.} Construya dos historias con el mismo valor terminal y
+pasados distintos; muestre por qué reiniciar cambia el PVI y por qué un retorno
+puntual no es, en general, un mapa de estado.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Lecturas complementarias}
+Matignon \cite{Matignon1996} para el criterio angular.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardExistence}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+\emph{Métodos topológicos} \cite{Amster2021MetodosTopologicos}: función de
+Green, p.~229; Schauder, pp.~245--267; Leray--Schauder, pp.~273--300.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Resuelva Amster 7.9.1--7.9.2, pp.~313--316.
+
+\textbf{Investigación.} Escriba el PVI de Caputo como
+\(x=x_0+I^qf(x)\). Identifique continuidad,
+compacidad y cota a priori requeridas por Schauder o Leray--Schauder; distinga
+existencia de atracción y ocultedad.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardLure}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+Slotine--Li \cite{SlotineLi1991}: realimentación y estabilidad,
+PDF~119--175; función descriptiva, PDF~176--209. Para atractores ocultos:
+Leonov--Kuznetsov \cite{LeonovKuznetsovVagaitsev2011,LeonovKuznetsov2013}
+y localización de Chua \cite{KuznetsovEtAl2017}.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Resuelva Slotine--Li, cap.~5, PDF~207--209, y obtenga una
+función descriptiva desde su integral de Fourier.
+
+\textbf{Investigación.} Derive
+\(W_q(s)=c^{\mathsf T}(s^qI-A)^{-1}b\), fije la rama de \(s^q\) y verifique
+la equivalencia de \(1-W_+N=0\) y \(1+W_-N=0\).
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardMachado}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+Machado \cite{Machado2015FDF} y Barbosa--Machado
+\cite{BarbosaMachado2002BacklashImpact}.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Para \(N=re^{i\theta}\), escriba todas las ramas de
+\(N^\mu\) y calcule la principal en \(\mu=1/2\).
+
+\textbf{Investigación.} Para \(N_\mu=N^\mu\), calcule por separado el
+residuo auxiliar y el balance físico; determine cuándo la potencia sólo
+diversifica semillas.
+
+\textbf{Integrador.} Obtenga dos semillas de ramas distintas, intégrelas con
+el mismo contrato entero o Caputo y compare destino y contacto con las cuencas
+conocidas.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardContinuation}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+Diethelm \cite{Diethelm2010AnalysisFDE}: ABM, pp.~195--210; caso
+multi-término, pp.~211--228. Predictor--corrector original
+\cite{DiethelmFordFreed2002}.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Derive los pesos predictor y corrector desde Volterra y
+aplíquelos a \({}^{\mathrm C}D^qx=-x\).
+
+\textbf{Investigación.} Escriba una homotopía \(f_\lambda\), transporte una
+semilla y demuestre por qué reiniciar la memoria en cada \(\lambda\) define
+otro problema.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardPerpetual}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+Prasad \cite{Prasad2015Perpetual}; Dudkowski--Prasad--Kapitaniak
+\cite{DudkowskiPrasadKapitaniak2017}; contraejemplos
+\cite{NazarimehrSaediJafari2017,NagChowdhuryGhosh2020}.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Para \(\dot x=f(x)\), derive
+\(\ddot x=Df(x)f(x)\) y resuelva los PP de dos campos polinomiales sencillos.
+
+\textbf{Investigación.} Resuelva \(Df(p)f(p)=0\), \(f(p)\ne0\), en un caso
+del reporte. Desde Volterra obtenga
+\(h^{2q}Df(p)f(p)/\Gamma(2q+1)\) sin usar una regla de cadena falsa.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardGeometric}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+Curvas conectantes \cite{GilmoreEtAl2010Connecting,GuanXie2021Connecting};
+superficies críticas \cite{GodaraEtAl2018CriticalSurfaces}; cuencas y Wada
+\cite{DazaEtAl2016BasinEntropy,DazaEtAl2015Wada}.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Para un campo plano, calcule \(Df\), \(Df\,f\),
+\(\det Df\) y sus conjuntos de nivel cero.
+
+\textbf{Investigación.} Repita el cálculo en PLL o MAVPD. Formule una
+bisección entre dos destinos con métrica escalada; añada un tercer destino y
+describa el fallo.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardProtocols}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+Datseris--Parlitz \cite{datseris2022} para observables numéricos; entropía de
+cuenca \cite{DazaEtAl2016BasinEntropy}; Wada \cite{DazaEtAl2015Wada}.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Para una órbita conocida, calcule retorno, período dominante
+y variación al reducir el paso.
+
+\textbf{Investigación.} Construya una matriz
+semilla\(\times\)orden--memoria\(\times\)paso\(\times\)horizonte
+\(\times\)solucionador. Separe
+destino, atracción, caos, contacto con equilibrios y ocultedad.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardCases}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+Artículos primarios de los casos: Chua
+\cite{LeonovKuznetsovVagaitsev2011,KuznetsovEtAl2017}; sistemas
+fraccionarios \cite{Danca2017,Danca2017HiddenFO,Wu2023ArctanChua}; candidatos
+no Chua \cite{munoz2018,wang2020}. Las revisiones
+\cite{DudkowskiEtAl2016,GuanXie2025} se usan después para comparar métodos.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Recalcule equilibrios, jacobiano y clasificación local de un
+caso entero y uno fraccionario.
+
+\textbf{Investigación.} Para cada caso complete: campo; espacio de fases;
+equilibrios; estabilidad; semilla; integración; destino; caos; cuenca;
+conclusión autorizada. Compare en paralelo un caso entero y uno fraccionario:
+qué objetos permanecen en el espacio de estados y cuáles pasan al espacio de
+historias.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardCandidates}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+\emph{Systems with Hidden Attractors}
+\cite{PhamVolosKapitaniak2017Systems}: pp.~21--63 y 79--102; catálogo
+\cite{PhamEtAl2018HiddenAttractors}; capítulo fraccionario, pp.~199--238,
+en \cite{WangKuznetsovChen2021Multistability}.
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Seleccione un candidato y recupere su artículo original.
+Registre ecuaciones, parámetros, orden, inicialización y equilibrios.
+
+\textbf{Integrador.} Calcule jacobiano y estabilidad local; use el criterio
+entero o de Matignon según corresponda. Después diseñe una semilla y una prueba
+de cuenca que separen atracción, caos y ocultedad.
+\end{bloqueestudio}
+\fi}
+
+\newcommand{\HAFOCardFuture}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas complementarias}
+\begin{itemize}[nosep]
+  \item \emph{Topología y geometría diferencial}: conexiones, pp.~135--142;
+  geodésicas, pp.~143--149; torsión y curvatura, pp.~151--165; métrica,
+  pp.~165--186.
+  \item \emph{Teoría geométrica de ecuaciones diferenciales II}:
+  formas normales y bifurcaciones, pp.~185--244.
+  \item Guckenheimer--Holmes \cite{GuckenheimerHolmes1983}: PDF aprox.~6--39,
+  65--119 y 120--184.
+  \item \texttt{Barnsley - SuperFractals.pdf}: PDF~19--99, 201--395;
+  Lorenz, PDF~9--30 y 116--207; Mandelbrot, PDF~33, 277 y desde 367.
+  \item Diethelm \cite{Diethelm2010AnalysisFDE}: multi-término,
+  pp.~167--186. Oldham--Spanier \cite{OldhamSpanier1974Fractional}:
+  pp.~120--132, 148--164, 192 y 207--218.
+\end{itemize}
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+Elija un caso entero y uno Caputo. Formule para ambos una pregunta futura sobre
+variedades, retorno o frontera de cuenca; escriba el objeto geométrico, el
+espacio de fases correcto, la prueba numérica y la hipótesis que aún faltaría
+demostrar.
+\end{bloqueestudio}
+\fi}

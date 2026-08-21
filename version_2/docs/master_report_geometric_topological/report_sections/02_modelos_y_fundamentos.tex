@@ -120,8 +120,20 @@ objeto que ya fue obtenido paso a paso.
 \fi
 
 \ifdefined\HAFOModelsOnly\else
+\begingroup
+% Sin selector se conserva el bloque completo. En la edición de estudio,
+% HAFOFractionalBlockSelect permite insertar por separado los operadores y la
+% estabilidad sin duplicar el contenido.
+\ifdefined\HAFOFractionalBlockSelect\else
+  \def\HAFOFractionalBlockOperators{1}
+  \def\HAFOFractionalBlockStability{1}
+\fi
+
+\ifdefined\HAFOFractionalBlockOperators
 \section{Fundamentos fraccionarios}
 \label{sec:fundamentos}
+
+\HAFOCardFractional
 
 \subsection{Funciones especiales e integral de Riemann--Liouville}
 
@@ -312,7 +324,13 @@ Si \(\dot X_-\in L^1(-\infty,t_0)\),
 La ecuación armónica de Liouville--Weyl proporciona así el predictor
 frecuencial. La trayectoria que se evalúa y sondea se calcula después con
 Caputo y un límite inferior finito.
+\fi
 
+\ifdefined\HAFOFractionalBlockStability
+\ifdefined\HAFOFractionalBlockOperators\else
+\section{Estabilidad fraccionaria y cuencas con memoria}
+\label{sec:fundamentos-estabilidad}
+\fi
 \subsection{Linealización y criterio de Matignon}
 
 Sea \(e\) un equilibrio de
@@ -364,4 +382,6 @@ X_0\in\R^3:
 \end{equation}
 Esta definición deja fijo el convenio de memoria. Todos los sondeos alrededor
 de los equilibrios se interpretan dentro de \cref{eq:cuenca_reset}.
+\fi
+\endgroup
 \fi

@@ -23,6 +23,8 @@
 \usepackage{xurl}
 \usepackage{lastpage}
 \usepackage{url}
+\usepackage{tocloft}
+\usepackage{needspace}
 \usepackage{hyperref}
 \usepackage[nameinlink,noabbrev]{cleveref}
 \makeatletter
@@ -63,6 +65,19 @@
 \definecolor{grisHA}{HTML}{4A5560}
 \definecolor{grisClaro}{HTML}{F4F6F7}
 
+% Jerarquía visual del índice: partes como capítulos principales y secciones
+% como entradas subordinadas.
+\setlength{\cftbeforepartskip}{1.15em}
+\setlength{\cftbeforesecskip}{0.12em}
+\setlength{\cftpartindent}{0em}
+\setlength{\cftsecindent}{1.8em}
+\setlength{\cftpartnumwidth}{2.8em}
+\setlength{\cftsecnumwidth}{3.2em}
+\renewcommand{\cftpartfont}{\large\bfseries\color{azulHA}}
+\renewcommand{\cftpartpagefont}{\large\bfseries\color{azulHA}}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
+
 \hypersetup{
   colorlinks=true,
   linkcolor=Azul,
@@ -81,6 +96,10 @@
     pdfsubject={Álgebra, verificación cruzada, geometría, topología, memoria y evidencia de cuencas}
   }
 \fi
+
+\newcommand{\HAFOStudyNeedspace}{%
+  \ifHAFOPedagogy\Needspace{12\baselineskip}\fi
+}
 
 \graphicspath{
   {figures/paper07/}
@@ -201,6 +220,21 @@
   \end{minipage}\par\medskip
 }
 
+% Recuadro pedagógico distribuido. Sus únicos títulos de uso son
+% Lecturas, Ejercicios y Lecturas complementarias. No usa minipage para poder
+% dividirse de forma limpia cuando una lista ocupa más de una página.
+\newenvironment{bloqueestudio}[1]{%
+  \par\medskip\pagebreak[2]\noindent
+  {\color{azulHA}\hrule height 0.8pt}%
+  \vspace{4pt}%
+  \noindent\textbf{\textcolor{azulHA}{#1}}%
+  \par\smallskip
+}{%
+  \par\smallskip
+  {\color{azulHA}\hrule height 0.8pt}%
+  \par\medskip
+}
+
 \lstdefinestyle{wl}{
   basicstyle=\ttfamily\footnotesize,
   keywordstyle=\color{azulHA}\bfseries,
@@ -271,60 +305,161 @@ cálculo fraccionario\par}
 \hypersetup{pageanchor=true}
 
 \ifHAFOPedagogy
-  \part{Antes: lenguaje y prerrequisitos}
+  \part[Curso básico integrado]{Curso básico integrado: sistemas dinámicos,
+  caos, cálculo fraccionario, topología y teoría geométrica de EDO}
 \else
   \part{Fundamentos y alcance}
 \fi
 \label{part:guia-geometrica-entera}
-\input{report_sections/00_alcance_inventario}
+\input{report_sections/16_tarjetas_estudio_secuencial}
 \ifHAFOPedagogy
   \input{report_sections/16_programa_estudio_bibliografico}
+
+  \clearpage
+  \begingroup
+  \def\HAFOModelsOnly{1}
+  \input{report_sections/02_modelos_y_fundamentos}
+  \endgroup
+
+  \begingroup
+  \def\HAFONoGeoPosterior{1}
+  \def\HAFOGeoBlockSelect{1}
+  \def\HAFOGeoBlockIntroFlow{1}
+  \input{report_sections/14_guia_geometrica_topologica_entera}
+  \endgroup
+  \begingroup
+  \def\HAFOFractionalOnly{1}
+  \def\HAFOFractionalBlockSelect{1}
+  \def\HAFOFractionalBlockOperators{1}
+  \input{report_sections/02_modelos_y_fundamentos}
+  \endgroup
+  \begingroup
+  \def\HAFOCaputoBlockSelect{1}
+  \def\HAFOCaputoBlockMemory{1}
+  \input{report_sections/15_geometria_topologia_caputo}
+  \endgroup
+  \HAFOProblemStateMemory
+
+  \begingroup
+  \def\HAFONoGeoPosterior{1}
+  \def\HAFOGeoBlockSelect{1}
+  \def\HAFOGeoBlockLinear{1}
+  \input{report_sections/14_guia_geometrica_topologica_entera}
+  \endgroup
+  \begingroup
+  \def\HAFONoGeoPosterior{1}
+  \def\HAFOGeoBlockSelect{1}
+  \def\HAFOGeoBlockBasins{1}
+  \input{report_sections/14_guia_geometrica_topologica_entera}
+  \endgroup
+  \begingroup
+  \def\HAFOFractionalOnly{1}
+  \def\HAFOFractionalBlockSelect{1}
+  \def\HAFOFractionalBlockStability{1}
+  \input{report_sections/02_modelos_y_fundamentos}
+  \endgroup
+  \begingroup
+  \def\HAFOCaputoBlockSelect{1}
+  \def\HAFOCaputoBlockBasins{1}
+  \input{report_sections/15_geometria_topologia_caputo}
+  \endgroup
+  \HAFOProblemStabilityBasins
+
+  \begingroup
+  \def\HAFONoGeoPosterior{1}
+  \def\HAFOGeoBlockSelect{1}
+  \def\HAFOGeoBlockDegree{1}
+  \input{report_sections/14_guia_geometrica_topologica_entera}
+  \endgroup
+  \begingroup
+  \def\HAFONoGeoPosterior{1}
+  \def\HAFOGeoBlockSelect{1}
+  \def\HAFOGeoBlockPoincare{1}
+  \input{report_sections/14_guia_geometrica_topologica_entera}
+  \endgroup
+  \input{report_sections/17_metodos_topologicos_existencia}
+  \begingroup
+  \def\HAFOCaputoBlockSelect{1}
+  \def\HAFOCaputoBlockReturn{1}
+  \input{report_sections/15_geometria_topologia_caputo}
+  \endgroup
+  \HAFOProblemReturn
+
+  \begingroup
+  \def\HAFONoGeoPosterior{1}
+  \def\HAFOGeoBlockSelect{1}
+  \def\HAFOGeoBlockChaos{1}
+  \input{report_sections/14_guia_geometrica_topologica_entera}
+  \endgroup
+  \begingroup
+  \def\HAFOCaputoBlockSelect{1}
+  \def\HAFOCaputoBlockProtocol{1}
+  \input{report_sections/15_geometria_topologia_caputo}
+  \endgroup
+  \HAFOProblemChaos
+\else
+  \input{report_sections/00_alcance_inventario}
+  \clearpage
+  \input{report_sections/01_introduccion_antecedentes}
+  \begingroup
+  \def\HAFOModelsOnly{1}
+  \input{report_sections/02_modelos_y_fundamentos}
+  \endgroup
+  \begingroup
+  \def\HAFONoGeoPosterior{1}
+  \input{report_sections/14_guia_geometrica_topologica_entera}
+  \endgroup
+  \begingroup
+  \def\HAFOFractionalOnly{1}
+  \input{report_sections/02_modelos_y_fundamentos}
+  \endgroup
+  \input{report_sections/15_geometria_topologia_caputo}
+  \input{report_sections/17_metodos_topologicos_existencia}
 \fi
-\clearpage
-\input{report_sections/01_introduccion_antecedentes}
-\begingroup
-\def\HAFOModelsOnly{1}
-\input{report_sections/02_modelos_y_fundamentos}
-\endgroup
-\begingroup
-\def\HAFONoGeoPosterior{1}
-\input{report_sections/14_guia_geometrica_topologica_entera}
-\endgroup
-\begingroup
-\def\HAFOFractionalOnly{1}
-\input{report_sections/02_modelos_y_fundamentos}
-\endgroup
-\input{report_sections/15_geometria_topologia_caputo}
-\input{report_sections/17_metodos_topologicos_existencia}
 
 \clearpage
 \ifHAFOPedagogy
-  \part{Durante: construcción de la metodología}
+  \part[Construcción teórica]{Construcción teórica de la investigación}
 \else
   \part{Métodos de localización}
 \fi
 \label{part:metodologia}
+\ifHAFOPedagogy
+  \input{report_sections/01_introduccion_antecedentes}
+\fi
 \input{report_sections/03_lure_transferencia_funcion_descriptiva}
 \input{report_sections/12_machado_funcion_descriptiva}
 \input{report_sections/04_integracion_continuacion}
 \input{report_sections/13_puntos_perpetuos}
 \input{report_sections/19_localizacion_geometrico_topologica}
 \input{report_sections/05_protocolos_experimentales}
+\HAFOProblemLocalization
 \input{report_sections/21_campana_dinamica_geometrico_topologica}
 \input{report_sections/10_propuestas_teoricas}
 
 \clearpage
-\part{Casos estudiados}
+\ifHAFOPedagogy
+  \part[Resultados e interpretación]{Resultados e interpretación}
+\else
+  \part{Casos estudiados}
+\fi
 \label{part:casos}
-\input{report_sections/06_resultados}
-\input{report_sections/08_enteros_reproducidos}
+\ifHAFOPedagogy
+  \input{report_sections/00_alcance_inventario}
+  \HAFOCardCases
+  \input{report_sections/08_enteros_reproducidos}
+  \input{report_sections/06_resultados}
+\else
+  \input{report_sections/06_resultados}
+  \input{report_sections/08_enteros_reproducidos}
+\fi
 \input{report_sections/09_fraccionarios_no_chua}
 \input{report_sections/20_resultados_geometrico_topologicos_casos}
 \input{report_sections/22_resultados_piloto_geometrico_topologico}
 
 \clearpage
 \ifHAFOPedagogy
-  \part{Después: síntesis y trabajo futuro}
+  \part[Profundización y futuro]{Profundización y pruebas futuras}
 \else
   \part{Síntesis y problemas abiertos}
 \fi
@@ -335,6 +470,7 @@ cálculo fraccionario\par}
 \input{report_sections/14_guia_geometrica_topologica_entera}
 \endgroup
 \input{report_sections/07_discusion_conclusiones}
+\HAFOThesisDefense
 
 \ifHAFOdigitalcontent
 \clearpage
