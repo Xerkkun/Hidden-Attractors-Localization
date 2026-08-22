@@ -55,9 +55,8 @@ CASE_RELPATH = "validation/wolfram/cases/tempered_convolution_quadrature.wl"
 PERSISTED_DIR = (
     ROOT
     / "validation"
-    / "outputs"
-    / "wolfram"
-    / "tempered_convolution_quadrature_verified"
+    / "reference_cases"
+    / "tempered_convolution_quadrature"
 )
 PERSISTED_SUMMARY = (
     PERSISTED_DIR / "tempered_convolution_quadrature_validation_summary.json"

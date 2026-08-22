@@ -28,8 +28,7 @@ CASE_PATH = (
 PERSISTED_SUMMARY = (
     ROOT
     / "validation"
-    / "outputs"
-    / "wolfram"
+    / "reference_cases"
     / SYSTEM_ID
     / f"{SYSTEM_ID}_summary.json"
 )

@@ -153,16 +153,24 @@ def test_fast_history_benchmark_minimal_protocol_and_memory_semantics() -> None:
     )
 
 
-def test_fast_history_benchmark_default_output_is_unique_and_temp_scoped() -> None:
+def test_fast_history_benchmark_default_output_is_unique_and_temp_scoped(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     benchmark = _load_benchmark()
-    first = benchmark._default_output_path()
-    second = benchmark._default_output_path()
+
+    class FrozenDateTime:
+        @classmethod
+        def now(cls, timezone_value):
+            return benchmark.datetime(2026, 8, 22, tzinfo=timezone_value)
+
+    monkeypatch.setattr(benchmark, "datetime", FrozenDateTime)
+    outputs = [benchmark._default_output_path() for _ in range(32)]
     expected_root = Path(tempfile.gettempdir())
-    assert first.parent == expected_root
-    assert second.parent == expected_root
-    assert first != second
-    assert first.suffix == ".json"
-    assert "tempered_fast_history" in first.name
+    assert {output.parent for output in outputs} == {expected_root}
+    assert len(set(outputs)) == len(outputs)
+    assert all(output.suffix == ".json" for output in outputs)
+    assert all("tempered_fast_history" in output.name for output in outputs)
+    assert all(re.search(r"_[0-9a-f]{32}\.json$", output.name) for output in outputs)
 
 
 @pytest.mark.parametrize("repeats", [True, 0, 2, 3.5])

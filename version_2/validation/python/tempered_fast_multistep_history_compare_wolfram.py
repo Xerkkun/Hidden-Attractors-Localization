@@ -36,9 +36,8 @@ DEFAULT_SUMMARY = (
 PERSISTED_SUMMARY = (
     ROOT
     / "validation"
-    / "outputs"
-    / "wolfram"
-    / "tempered_fast_multistep_history_verified"
+    / "reference_cases"
+    / "tempered_fast_multistep_history"
     / f"{SYSTEM_ID}_validation_summary.json"
 )
 

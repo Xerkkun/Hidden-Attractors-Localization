@@ -2,7 +2,11 @@ import json
 import pytest
 import matplotlib.pyplot as plt
 from pathlib import Path
-from hidden_attractors.plotting.export import export_figure, promote_local_figure_pairs_batch
+from hidden_attractors.plotting.export import (
+    export_figure,
+    promote_local_figure_pairs_batch,
+    save_report_figure_pair,
+)
 
 
 def _write_local_pair(root, figure_id):
@@ -71,6 +75,36 @@ def test_export_figure_saves_both_formats(tmp_path, monkeypatch):
     # Assert paths reside within tmp_path (subpath verification)
     assert tmp_path in pdf_path.parents
     assert tmp_path in png_path.parents
+
+
+@pytest.mark.plotting
+def test_report_pair_preserves_panel_titles_and_export_options(tmp_path, monkeypatch):
+    fig, axis = plt.subplots()
+    axis.set_title("(a) finite benchmark")
+    calls = []
+
+    def record_save(path, **kwargs):
+        calls.append((Path(path), kwargs))
+
+    monkeypatch.setattr(fig, "savefig", record_save)
+    pdf_path, png_path = save_report_figure_pair(
+        fig,
+        tmp_path / "report" / "overview",
+        dpi=300,
+        pad_inches=0.08,
+        pdf_metadata={"Creator": "HAFO validation"},
+    )
+
+    assert axis.get_title() == "(a) finite benchmark"
+    assert (pdf_path, png_path) == (
+        tmp_path / "report" / "overview.pdf",
+        tmp_path / "report" / "overview.png",
+    )
+    assert [path.suffix for path, _ in calls] == [".pdf", ".png"]
+    assert calls[0][1]["metadata"] == {"Creator": "HAFO validation"}
+    assert calls[0][1]["pad_inches"] == calls[1][1]["pad_inches"] == 0.08
+    assert calls[1][1]["dpi"] == 300
+    plt.close(fig)
 
 
 @pytest.mark.plotting

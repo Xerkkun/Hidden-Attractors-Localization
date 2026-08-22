@@ -58,6 +58,50 @@ def save_figure_pair_local(fig, output_path, dpi=300):
     return pdf_path, png_path
 
 
+def save_report_figure_pair(
+    fig,
+    output_path,
+    *,
+    dpi=300,
+    pad_inches=0.08,
+    pdf_metadata=None,
+):
+    """Save a report-local PDF/PNG pair while preserving panel titles.
+
+    Report composites may use semantic panel labels such as ``(a)`` through
+    ``(d)``.  This centralized route enforces the white-background and paired
+    export contract without applying the title-free promotion policy used by
+    :func:`save_figure_pair_local`.
+    """
+
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    png_path = output_path.with_suffix(".png")
+    pdf_path = output_path.with_suffix(".pdf")
+    fig.patch.set_facecolor("white")
+    for axis in fig.axes:
+        axis.set_facecolor("white")
+    fig.savefig(
+        pdf_path,
+        format="pdf",
+        bbox_inches="tight",
+        pad_inches=float(pad_inches),
+        facecolor="white",
+        transparent=False,
+        metadata=dict(pdf_metadata or {}),
+    )
+    fig.savefig(
+        png_path,
+        format="png",
+        dpi=int(dpi),
+        bbox_inches="tight",
+        pad_inches=float(pad_inches),
+        facecolor="white",
+        transparent=False,
+    )
+    return pdf_path, png_path
+
+
 @dataclass(frozen=True)
 class _FileSnapshot:
     data: bytes

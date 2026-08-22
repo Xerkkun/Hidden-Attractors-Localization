@@ -39,6 +39,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
 import numba
 import numpy as np
@@ -1010,7 +1011,10 @@ def run_benchmark(
 def _default_output_path() -> Path:
     root = Path(tempfile.gettempdir())
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S_%fZ")
-    return root / f"hafo_tempered_fast_history_benchmark_{stamp}_{os.getpid()}.json"
+    return root / (
+        f"hafo_tempered_fast_history_benchmark_"
+        f"{stamp}_{os.getpid()}_{uuid4().hex}.json"
+    )
 
 
 def main(argv: list[str] | None = None) -> None:

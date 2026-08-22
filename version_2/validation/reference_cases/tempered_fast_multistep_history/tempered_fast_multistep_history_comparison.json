@@ -1,0 +1,58 @@
+{
+  "cross_implementation_passed": true,
+  "cross_implementation_performed": true,
+  "cross_implementation_result": {
+    "max_diff": 1.2434497875801753e-14,
+    "metrics": {
+      "fbdf1_tempered_caputo_max_diff": 7.993605777301127e-15,
+      "fbdf1_tempered_caputo_reported_l1_relative_error": 1.3222060593139077e-15,
+      "fbdf1_tempered_riemann_liouville_max_diff": 7.105427357601002e-15,
+      "fbdf1_tempered_riemann_liouville_reported_l1_relative_error": 1.3222060593139077e-15,
+      "gngf2_tempered_caputo_max_diff": 1.2434497875801753e-14,
+      "gngf2_tempered_caputo_reported_l1_relative_error": 1.3827456943843134e-15,
+      "gngf2_tempered_riemann_liouville_max_diff": 1.0658141036401503e-14,
+      "gngf2_tempered_riemann_liouville_reported_l1_relative_error": 1.3827456943843134e-15
+    },
+    "passed": true,
+    "quadrature_points": {
+      "fbdf1_tempered_caputo": 129,
+      "fbdf1_tempered_riemann_liouville": 129,
+      "gngf2_tempered_caputo": 129,
+      "gngf2_tempered_riemann_liouville": 129
+    },
+    "tolerance": 5e-10
+  },
+  "independent": {
+    "convention_contract_match": true,
+    "independence_flags_match": true,
+    "numeric_max_diff": 8.881784197001252e-15,
+    "numeric_metrics": {
+      "elapsed_grid_max_diff": 0.0,
+      "fbdf1_anchor_residual": 1.9028994871820436e-26,
+      "fbdf1_tempered_caputo_direct_max_diff": 5.329070518200751e-15,
+      "fbdf1_tempered_caputo_fast_max_diff": 5.329070518200751e-15,
+      "fbdf1_tempered_caputo_wolfram_residual": 1.7270009268361867e-26,
+      "fbdf1_tempered_riemann_liouville_direct_max_diff": 5.329070518200751e-15,
+      "fbdf1_tempered_riemann_liouville_fast_max_diff": 5.329070518200751e-15,
+      "fbdf1_tempered_riemann_liouville_wolfram_residual": 1.7270009268361867e-26,
+      "gngf2_anchor_residual": 1.9028994871820416e-26,
+      "gngf2_tempered_caputo_direct_max_diff": 8.881784197001252e-15,
+      "gngf2_tempered_caputo_fast_max_diff": 8.881784197001252e-15,
+      "gngf2_tempered_caputo_wolfram_residual": 1.7270009268361826e-26,
+      "gngf2_tempered_riemann_liouville_direct_max_diff": 8.881784197001252e-15,
+      "gngf2_tempered_riemann_liouville_fast_max_diff": 8.881784197001252e-15,
+      "gngf2_tempered_riemann_liouville_wolfram_residual": 1.7270009268361826e-26
+    },
+    "passed": true,
+    "path": "C:\\tmp\\hafo_tempered_fast_history_wolfram_20260803_02\\tempered_fast_multistep_history_validation_summary.json",
+    "source_anchors_match": true,
+    "system_id": "tempered_fast_multistep_history",
+    "tolerance": 3e-12,
+    "wolfram_tests_pass": true
+  },
+  "passed": true,
+  "public_core_available": true,
+  "public_core_diagnostic": "hidden_attractors.fractional.tempered_fast_multistep_history",
+  "require_core": true,
+  "system_id": "tempered_fast_multistep_history"
+}

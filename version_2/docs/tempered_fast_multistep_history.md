@@ -286,7 +286,7 @@ at most $8.881784197001252\times10^{-15}$. A separately required call through
 the public HAFO core differed by at most
 $1.2434497875801753\times10^{-14}$, using 129 nodes in all four retained
 FBDF1/GNGF2 by RL/Caputo cases. The portable evidence is under
-`validation/outputs/wolfram/tempered_fast_multistep_history_verified/`.
+`validation/reference_cases/tempered_fast_multistep_history/`.
 
 These results validate finite algebra and cross-implementation consistency.
 They are not a general convergence, stability, long-time dynamics, or

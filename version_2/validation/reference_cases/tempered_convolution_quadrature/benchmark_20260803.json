@@ -1,0 +1,1252 @@
+{
+  "backend_policy_assessment": {
+    "c_admission_gate": "First profile representative HAFO and Toolbox Chaos workloads. Add a native-C candidate only if a residual convolution bottleneck remains after warmed Numba/FFT selection, then require independent parity, compiler/build provenance, repeated kernel and end-to-end timings, and a measured gain larger than inter-run noise.",
+    "decision": "do_not_add_native_c_or_julia_from_this_evidence",
+    "fft_contract": "FFT is an offline zero-padded linear batch convolution. It is not a fast-history compression, streaming recurrence, online operator, or fractional differential-equation solver.",
+    "julia_admission_gate": "Use Julia only when a materially better algorithm or maintained implementation cannot be reproduced efficiently in the Python/Numba/C stack, and measure process startup, data transfer, deployment cost, parity, and end-to-end benefit before adopting the bridge.",
+    "julia_candidate_implemented_or_measured": false,
+    "native_c_candidate_implemented_or_measured": false,
+    "observed_fastest_backend_counts": {
+      "fft": 12,
+      "numba": 0,
+      "python": 0
+    },
+    "reasoning": "The measurements compare only the three existing public software routes. They provide no C or Julia implementation, parity result, build cost, call-overhead measurement, or end-to-end application profile, so they cannot establish that either additional language would improve HAFO. A finite fastest-backend count is descriptive, not a universal crossover rule.",
+    "retain_backends": [
+      "python_direct",
+      "numba_direct",
+      "fft_batch"
+    ]
+  },
+  "benchmark_id": "hafo_tempered_convolution_quadrature_backends_20260803",
+  "evidence_boundary": "host- and workload-specific finite software timing only; no FDE solver, convergence-order, stability, dynamics, chaos, attraction, or hiddenness claim",
+  "generated_at_utc": "2026-08-03T18:46:28.260835+00:00",
+  "host": {
+    "logical_cpu_count": 16,
+    "machine": "AMD64",
+    "numba": "0.65.1",
+    "numba_threads": 16,
+    "numpy": "2.4.5",
+    "perf_counter": {
+      "implementation": "QueryPerformanceCounter()",
+      "monotonic": true,
+      "resolution_seconds": 1e-07
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD",
+    "python": "3.14.3",
+    "python_implementation": "CPython"
+  },
+  "measurement_protocol": {
+    "backend_order": "Python/Numba/FFT cyclically rotated across repetitions",
+    "backend_parity_before_measurement": true,
+    "backends": [
+      "python",
+      "numba",
+      "fft"
+    ],
+    "bdf_orders": [
+      1,
+      2
+    ],
+    "clock": "time.perf_counter_ns",
+    "definitions": [
+      "tempered_riemann_liouville",
+      "tempered_caputo"
+    ],
+    "fft_scope": "zero-padded offline linear batch convolution; not fast-history",
+    "garbage_collection": "collected before and outside each timed call",
+    "measured_repetitions_per_backend_case": 3,
+    "numba_first_public_call_seconds_including_initialization_or_jit": 1.2225061000000002,
+    "numba_warmed_confirmation_seconds_excluded_from_measurements": 0.0005233,
+    "numba_warmup_workload_excluded_from_measurements": true,
+    "parity_atol": 5e-10,
+    "parity_rtol": 5e-11,
+    "public_call_scope": "validation, BDF weight generation, exponential damping, optional Caputo correction, scaling, and convolution"
+  },
+  "portable_json_contract": "the payload contains no repository, source, output, cache, or temporary absolute filesystem path",
+  "schema_version": 1,
+  "scope": "tempered_fractional_sampled_operator_backend_performance",
+  "script_sha256": "691ec4dceb2a30e70674959ab6ba3a817f42702bad47375433334d0ef3f37242",
+  "workloads": [
+    {
+      "cases": [
+        {
+          "backend_execution_order_by_repetition": [
+            [
+              "python",
+              "numba",
+              "fft"
+            ],
+            [
+              "numba",
+              "fft",
+              "python"
+            ],
+            [
+              "fft",
+              "python",
+              "numba"
+            ]
+          ],
+          "fft_scope": "offline zero-padded one-shot linear batch convolution; not streaming, online, fast-history, or an FDE solver",
+          "finite_run_ratios": {
+            "numba_over_fft_median": 1.1075101882398604,
+            "python_over_fft_median": 3.0133902581020764,
+            "python_over_numba_median": 2.7208691081128435
+          },
+          "observed_fastest_backend_by_median": "fft",
+          "operator_case": {
+            "bdf_order": 1,
+            "definition": "tempered_riemann_liouville",
+            "initial_condition_semantics": "tempered_operator_only_no_ivp",
+            "name": "tempered_rl_bdf1"
+          },
+          "parity": {
+            "atol": 5e-10,
+            "comparisons": {
+              "fft": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 1.2878587085651816e-14,
+                "weights_exactly_equal_to_python": true
+              },
+              "numba": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 0.0,
+                "weights_exactly_equal_to_python": true
+              }
+            },
+            "reference_backend": "python",
+            "rtol": 5e-11
+          },
+          "parity_checked_before_measurement": true,
+          "ratio_interpretation": "numerator median divided by denominator median for this finite host run; greater than one means the numerator took longer",
+          "timing": {
+            "fft": {
+              "mean_seconds": 0.0005686333333333333,
+              "median_seconds": 0.0005153,
+              "minimum_seconds": 0.0005121,
+              "population_stdev_seconds": 7.769844843295708e-05,
+              "q25_seconds": 0.0005137,
+              "q75_seconds": 0.0005969,
+              "samples_seconds": [
+                0.0006785000000000001,
+                0.0005121,
+                0.0005153
+              ]
+            },
+            "numba": {
+              "mean_seconds": 0.0008389000000000001,
+              "median_seconds": 0.0005707,
+              "minimum_seconds": 0.0005229000000000001,
+              "population_stdev_seconds": 0.00041355244729860644,
+              "q25_seconds": 0.0005468000000000001,
+              "q75_seconds": 0.0009969,
+              "samples_seconds": [
+                0.0005707,
+                0.0014231,
+                0.0005229000000000001
+              ]
+            },
+            "python": {
+              "mean_seconds": 0.0015432666666666667,
+              "median_seconds": 0.0015528,
+              "minimum_seconds": 0.0015233,
+              "population_stdev_seconds": 1.412334552749063e-05,
+              "q25_seconds": 0.00153805,
+              "q75_seconds": 0.00155325,
+              "samples_seconds": [
+                0.0015537,
+                0.0015233,
+                0.0015528
+              ]
+            }
+          }
+        },
+        {
+          "backend_execution_order_by_repetition": [
+            [
+              "python",
+              "numba",
+              "fft"
+            ],
+            [
+              "numba",
+              "fft",
+              "python"
+            ],
+            [
+              "fft",
+              "python",
+              "numba"
+            ]
+          ],
+          "fft_scope": "offline zero-padded one-shot linear batch convolution; not streaming, online, fast-history, or an FDE solver",
+          "finite_run_ratios": {
+            "numba_over_fft_median": 1.0859564164648912,
+            "python_over_fft_median": 3.179176755447942,
+            "python_over_numba_median": 2.9275362318840576
+          },
+          "observed_fastest_backend_by_median": "fft",
+          "operator_case": {
+            "bdf_order": 2,
+            "definition": "tempered_riemann_liouville",
+            "initial_condition_semantics": "tempered_operator_only_no_ivp",
+            "name": "tempered_rl_bdf2"
+          },
+          "parity": {
+            "atol": 5e-10,
+            "comparisons": {
+              "fft": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 1.965094753586527e-14,
+                "weights_exactly_equal_to_python": true
+              },
+              "numba": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 0.0,
+                "weights_exactly_equal_to_python": true
+              }
+            },
+            "reference_backend": "python",
+            "rtol": 5e-11
+          },
+          "parity_checked_before_measurement": true,
+          "ratio_interpretation": "numerator median divided by denominator median for this finite host run; greater than one means the numerator took longer",
+          "timing": {
+            "fft": {
+              "mean_seconds": 0.0004955,
+              "median_seconds": 0.0004956,
+              "minimum_seconds": 0.0004907000000000001,
+              "population_stdev_seconds": 3.879003308411394e-06,
+              "q25_seconds": 0.00049315,
+              "q75_seconds": 0.0004979,
+              "samples_seconds": [
+                0.0004907000000000001,
+                0.0005002,
+                0.0004956
+              ]
+            },
+            "numba": {
+              "mean_seconds": 0.0005625000000000001,
+              "median_seconds": 0.0005382000000000001,
+              "minimum_seconds": 0.0005135000000000001,
+              "population_stdev_seconds": 5.280271457668314e-05,
+              "q25_seconds": 0.00052585,
+              "q75_seconds": 0.0005870000000000001,
+              "samples_seconds": [
+                0.0005135000000000001,
+                0.0005382000000000001,
+                0.0006358000000000001
+              ]
+            },
+            "python": {
+              "mean_seconds": 0.0016913666666666669,
+              "median_seconds": 0.0015756000000000001,
+              "minimum_seconds": 0.00152,
+              "population_stdev_seconds": 0.0002042988062182994,
+              "q25_seconds": 0.0015478000000000002,
+              "q75_seconds": 0.00177705,
+              "samples_seconds": [
+                0.0015756000000000001,
+                0.00152,
+                0.0019785000000000002
+              ]
+            }
+          }
+        },
+        {
+          "backend_execution_order_by_repetition": [
+            [
+              "python",
+              "numba",
+              "fft"
+            ],
+            [
+              "numba",
+              "fft",
+              "python"
+            ],
+            [
+              "fft",
+              "python",
+              "numba"
+            ]
+          ],
+          "fft_scope": "offline zero-padded one-shot linear batch convolution; not streaming, online, fast-history, or an FDE solver",
+          "finite_run_ratios": {
+            "numba_over_fft_median": 1.0942379182156134,
+            "python_over_fft_median": 2.9306691449814126,
+            "python_over_numba_median": 2.6782741634109053
+          },
+          "observed_fastest_backend_by_median": "fft",
+          "operator_case": {
+            "bdf_order": 1,
+            "definition": "tempered_caputo",
+            "initial_condition_semantics": "tempered_caputo_conjugated_point_value_shift",
+            "name": "tempered_caputo_bdf1"
+          },
+          "parity": {
+            "atol": 5e-10,
+            "comparisons": {
+              "fft": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 1.27675647831893e-14,
+                "weights_exactly_equal_to_python": true
+              },
+              "numba": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 0.0,
+                "weights_exactly_equal_to_python": true
+              }
+            },
+            "reference_backend": "python",
+            "rtol": 5e-11
+          },
+          "parity_checked_before_measurement": true,
+          "ratio_interpretation": "numerator median divided by denominator median for this finite host run; greater than one means the numerator took longer",
+          "timing": {
+            "fft": {
+              "mean_seconds": 0.0005399666666666667,
+              "median_seconds": 0.0005380000000000001,
+              "minimum_seconds": 0.0005317000000000001,
+              "population_stdev_seconds": 7.679554385220233e-06,
+              "q25_seconds": 0.0005348500000000001,
+              "q75_seconds": 0.0005441,
+              "samples_seconds": [
+                0.0005502,
+                0.0005380000000000001,
+                0.0005317000000000001
+              ]
+            },
+            "numba": {
+              "mean_seconds": 0.0006214000000000001,
+              "median_seconds": 0.0005887,
+              "minimum_seconds": 0.0005522000000000001,
+              "population_stdev_seconds": 7.357884659782774e-05,
+              "q25_seconds": 0.0005704500000000001,
+              "q75_seconds": 0.0006560000000000001,
+              "samples_seconds": [
+                0.0005887,
+                0.0005522000000000001,
+                0.0007233000000000001
+              ]
+            },
+            "python": {
+              "mean_seconds": 0.0015643666666666667,
+              "median_seconds": 0.0015767,
+              "minimum_seconds": 0.0015224000000000001,
+              "population_stdev_seconds": 3.0503806684120953e-05,
+              "q25_seconds": 0.0015495500000000002,
+              "q75_seconds": 0.0015853500000000001,
+              "samples_seconds": [
+                0.0015940000000000001,
+                0.0015224000000000001,
+                0.0015767
+              ]
+            }
+          }
+        },
+        {
+          "backend_execution_order_by_repetition": [
+            [
+              "python",
+              "numba",
+              "fft"
+            ],
+            [
+              "numba",
+              "fft",
+              "python"
+            ],
+            [
+              "fft",
+              "python",
+              "numba"
+            ]
+          ],
+          "fft_scope": "offline zero-padded one-shot linear batch convolution; not streaming, online, fast-history, or an FDE solver",
+          "finite_run_ratios": {
+            "numba_over_fft_median": 1.1089337175792509,
+            "python_over_fft_median": 3.232276657060519,
+            "python_over_numba_median": 2.914760914760915
+          },
+          "observed_fastest_backend_by_median": "fft",
+          "operator_case": {
+            "bdf_order": 2,
+            "definition": "tempered_caputo",
+            "initial_condition_semantics": "tempered_caputo_conjugated_point_value_shift",
+            "name": "tempered_caputo_bdf2"
+          },
+          "parity": {
+            "atol": 5e-10,
+            "comparisons": {
+              "fft": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 1.965094753586527e-14,
+                "weights_exactly_equal_to_python": true
+              },
+              "numba": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 0.0,
+                "weights_exactly_equal_to_python": true
+              }
+            },
+            "reference_backend": "python",
+            "rtol": 5e-11
+          },
+          "parity_checked_before_measurement": true,
+          "ratio_interpretation": "numerator median divided by denominator median for this finite host run; greater than one means the numerator took longer",
+          "timing": {
+            "fft": {
+              "mean_seconds": 0.0005195999999999999,
+              "median_seconds": 0.0005205,
+              "minimum_seconds": 0.0005148,
+              "population_stdev_seconds": 3.6083237105337193e-06,
+              "q25_seconds": 0.00051765,
+              "q75_seconds": 0.000522,
+              "samples_seconds": [
+                0.0005235,
+                0.0005205,
+                0.0005148
+              ]
+            },
+            "numba": {
+              "mean_seconds": 0.0006933999999999999,
+              "median_seconds": 0.0005772,
+              "minimum_seconds": 0.0005571,
+              "population_stdev_seconds": 0.00017873292925479626,
+              "q25_seconds": 0.00056715,
+              "q75_seconds": 0.00076155,
+              "samples_seconds": [
+                0.0005772,
+                0.0005571,
+                0.0009459000000000001
+              ]
+            },
+            "python": {
+              "mean_seconds": 0.0017495666666666667,
+              "median_seconds": 0.0016824000000000001,
+              "minimum_seconds": 0.0015148000000000002,
+              "population_stdev_seconds": 0.0002241952175126747,
+              "q25_seconds": 0.0015986000000000002,
+              "q75_seconds": 0.00186695,
+              "samples_seconds": [
+                0.0016824000000000001,
+                0.0015148000000000002,
+                0.0020515
+              ]
+            }
+          }
+        }
+      ],
+      "fixture": {
+        "description": "fixed smooth multi-frequency history plus a seeded low-amplitude integrated perturbation; nonzero initial values",
+        "input_sha256": "b0b59e5b9e43597c336758f13fa784de88b3bd35fcf88194a35679eee9a5039b",
+        "orders": [
+          0.43,
+          0.91
+        ],
+        "step": 0.004,
+        "tempering": [
+          0.17,
+          1.07
+        ]
+      },
+      "workload": {
+        "dimension": 2,
+        "n_times": 64,
+        "name": "small_n64_d2",
+        "seed": 2026080311
+      }
+    },
+    {
+      "cases": [
+        {
+          "backend_execution_order_by_repetition": [
+            [
+              "python",
+              "numba",
+              "fft"
+            ],
+            [
+              "numba",
+              "fft",
+              "python"
+            ],
+            [
+              "fft",
+              "python",
+              "numba"
+            ]
+          ],
+          "fft_scope": "offline zero-padded one-shot linear batch convolution; not streaming, online, fast-history, or an FDE solver",
+          "finite_run_ratios": {
+            "numba_over_fft_median": 1.012098167991704,
+            "python_over_fft_median": 48.33460076045627,
+            "python_over_numba_median": 47.7568306010929
+          },
+          "observed_fastest_backend_by_median": "fft",
+          "operator_case": {
+            "bdf_order": 1,
+            "definition": "tempered_riemann_liouville",
+            "initial_condition_semantics": "tempered_operator_only_no_ivp",
+            "name": "tempered_rl_bdf1"
+          },
+          "parity": {
+            "atol": 5e-10,
+            "comparisons": {
+              "fft": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 4.6629367034256575e-14,
+                "weights_exactly_equal_to_python": true
+              },
+              "numba": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 0.0,
+                "weights_exactly_equal_to_python": true
+              }
+            },
+            "reference_backend": "python",
+            "rtol": 5e-11
+          },
+          "parity_checked_before_measurement": true,
+          "ratio_interpretation": "numerator median divided by denominator median for this finite host run; greater than one means the numerator took longer",
+          "timing": {
+            "fft": {
+              "mean_seconds": 0.0005781,
+              "median_seconds": 0.0005786000000000001,
+              "minimum_seconds": 0.0005733,
+              "population_stdev_seconds": 3.7318449414018878e-06,
+              "q25_seconds": 0.00057595,
+              "q75_seconds": 0.0005805000000000001,
+              "samples_seconds": [
+                0.0005786000000000001,
+                0.0005733,
+                0.0005824000000000001
+              ]
+            },
+            "numba": {
+              "mean_seconds": 0.0006084,
+              "median_seconds": 0.0005856,
+              "minimum_seconds": 0.0005592,
+              "population_stdev_seconds": 5.203998462720758e-05,
+              "q25_seconds": 0.0005724,
+              "q75_seconds": 0.0006330000000000001,
+              "samples_seconds": [
+                0.0005856,
+                0.0005592,
+                0.0006804000000000001
+              ]
+            },
+            "python": {
+              "mean_seconds": 0.027899633333333337,
+              "median_seconds": 0.027966400000000002,
+              "minimum_seconds": 0.0277107,
+              "population_stdev_seconds": 0.0001354969700358243,
+              "q25_seconds": 0.027838550000000004,
+              "q75_seconds": 0.0279941,
+              "samples_seconds": [
+                0.028021800000000003,
+                0.0277107,
+                0.027966400000000002
+              ]
+            }
+          }
+        },
+        {
+          "backend_execution_order_by_repetition": [
+            [
+              "python",
+              "numba",
+              "fft"
+            ],
+            [
+              "numba",
+              "fft",
+              "python"
+            ],
+            [
+              "fft",
+              "python",
+              "numba"
+            ]
+          ],
+          "fft_scope": "offline zero-padded one-shot linear batch convolution; not streaming, online, fast-history, or an FDE solver",
+          "finite_run_ratios": {
+            "numba_over_fft_median": 1.0954218558147695,
+            "python_over_fft_median": 52.054376425188565,
+            "python_over_numba_median": 47.519935948759006
+          },
+          "observed_fastest_backend_by_median": "fft",
+          "operator_case": {
+            "bdf_order": 2,
+            "definition": "tempered_riemann_liouville",
+            "initial_condition_semantics": "tempered_operator_only_no_ivp",
+            "name": "tempered_rl_bdf2"
+          },
+          "parity": {
+            "atol": 5e-10,
+            "comparisons": {
+              "fft": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 8.237854842718662e-14,
+                "weights_exactly_equal_to_python": true
+              },
+              "numba": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 0.0,
+                "weights_exactly_equal_to_python": true
+              }
+            },
+            "reference_backend": "python",
+            "rtol": 5e-11
+          },
+          "parity_checked_before_measurement": true,
+          "ratio_interpretation": "numerator median divided by denominator median for this finite host run; greater than one means the numerator took longer",
+          "timing": {
+            "fft": {
+              "mean_seconds": 0.0005718666666666666,
+              "median_seconds": 0.0005701,
+              "minimum_seconds": 0.0005599,
+              "population_stdev_seconds": 1.0566088312247936e-05,
+              "q25_seconds": 0.000565,
+              "q75_seconds": 0.00057785,
+              "samples_seconds": [
+                0.0005701,
+                0.0005856,
+                0.0005599
+              ]
+            },
+            "numba": {
+              "mean_seconds": 0.0006292333333333334,
+              "median_seconds": 0.0006245000000000001,
+              "minimum_seconds": 0.0005484,
+              "population_stdev_seconds": 6.80149166645736e-05,
+              "q25_seconds": 0.0005864500000000001,
+              "q75_seconds": 0.00066965,
+              "samples_seconds": [
+                0.0005484,
+                0.0007148,
+                0.0006245000000000001
+              ]
+            },
+            "python": {
+              "mean_seconds": 0.0310478,
+              "median_seconds": 0.029676200000000003,
+              "minimum_seconds": 0.0279614,
+              "population_stdev_seconds": 0.0032290821977769483,
+              "q25_seconds": 0.028818800000000002,
+              "q75_seconds": 0.032591,
+              "samples_seconds": [
+                0.029676200000000003,
+                0.035505800000000004,
+                0.0279614
+              ]
+            }
+          }
+        },
+        {
+          "backend_execution_order_by_repetition": [
+            [
+              "python",
+              "numba",
+              "fft"
+            ],
+            [
+              "numba",
+              "fft",
+              "python"
+            ],
+            [
+              "fft",
+              "python",
+              "numba"
+            ]
+          ],
+          "fft_scope": "offline zero-padded one-shot linear batch convolution; not streaming, online, fast-history, or an FDE solver",
+          "finite_run_ratios": {
+            "numba_over_fft_median": 1.0075995374194615,
+            "python_over_fft_median": 45.78093507351726,
+            "python_over_numba_median": 45.435645187735695
+          },
+          "observed_fastest_backend_by_median": "fft",
+          "operator_case": {
+            "bdf_order": 1,
+            "definition": "tempered_caputo",
+            "initial_condition_semantics": "tempered_caputo_conjugated_point_value_shift",
+            "name": "tempered_caputo_bdf1"
+          },
+          "parity": {
+            "atol": 5e-10,
+            "comparisons": {
+              "fft": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 4.6629367034256575e-14,
+                "weights_exactly_equal_to_python": true
+              },
+              "numba": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 0.0,
+                "weights_exactly_equal_to_python": true
+              }
+            },
+            "reference_backend": "python",
+            "rtol": 5e-11
+          },
+          "parity_checked_before_measurement": true,
+          "ratio_interpretation": "numerator median divided by denominator median for this finite host run; greater than one means the numerator took longer",
+          "timing": {
+            "fft": {
+              "mean_seconds": 0.0006114666666666667,
+              "median_seconds": 0.0006053,
+              "minimum_seconds": 0.0005938,
+              "population_stdev_seconds": 1.749444356233016e-05,
+              "q25_seconds": 0.00059955,
+              "q75_seconds": 0.0006203000000000001,
+              "samples_seconds": [
+                0.0006353,
+                0.0006053,
+                0.0005938
+              ]
+            },
+            "numba": {
+              "mean_seconds": 0.0006048333333333334,
+              "median_seconds": 0.0006099,
+              "minimum_seconds": 0.0005843,
+              "population_stdev_seconds": 1.512731157726169e-05,
+              "q25_seconds": 0.0005971,
+              "q75_seconds": 0.0006151,
+              "samples_seconds": [
+                0.0006099,
+                0.0006203000000000001,
+                0.0005843
+              ]
+            },
+            "python": {
+              "mean_seconds": 0.027650800000000003,
+              "median_seconds": 0.027711200000000002,
+              "minimum_seconds": 0.027503100000000003,
+              "population_stdev_seconds": 0.00010501545917943026,
+              "q25_seconds": 0.027607150000000004,
+              "q75_seconds": 0.027724650000000003,
+              "samples_seconds": [
+                0.0277381,
+                0.027503100000000003,
+                0.027711200000000002
+              ]
+            }
+          }
+        },
+        {
+          "backend_execution_order_by_repetition": [
+            [
+              "python",
+              "numba",
+              "fft"
+            ],
+            [
+              "numba",
+              "fft",
+              "python"
+            ],
+            [
+              "fft",
+              "python",
+              "numba"
+            ]
+          ],
+          "fft_scope": "offline zero-padded one-shot linear batch convolution; not streaming, online, fast-history, or an FDE solver",
+          "finite_run_ratios": {
+            "numba_over_fft_median": 1.0142506142506142,
+            "python_over_fft_median": 46.05552825552825,
+            "python_over_numba_median": 45.40843023255813
+          },
+          "observed_fastest_backend_by_median": "fft",
+          "operator_case": {
+            "bdf_order": 2,
+            "definition": "tempered_caputo",
+            "initial_condition_semantics": "tempered_caputo_conjugated_point_value_shift",
+            "name": "tempered_caputo_bdf2"
+          },
+          "parity": {
+            "atol": 5e-10,
+            "comparisons": {
+              "fft": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 8.237854842718662e-14,
+                "weights_exactly_equal_to_python": true
+              },
+              "numba": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 0.0,
+                "weights_exactly_equal_to_python": true
+              }
+            },
+            "reference_backend": "python",
+            "rtol": 5e-11
+          },
+          "parity_checked_before_measurement": true,
+          "ratio_interpretation": "numerator median divided by denominator median for this finite host run; greater than one means the numerator took longer",
+          "timing": {
+            "fft": {
+              "mean_seconds": 0.0006186666666666667,
+              "median_seconds": 0.0006105,
+              "minimum_seconds": 0.0005970000000000001,
+              "population_stdev_seconds": 2.1803414615350666e-05,
+              "q25_seconds": 0.0006037500000000001,
+              "q75_seconds": 0.0006295000000000001,
+              "samples_seconds": [
+                0.0006485,
+                0.0005970000000000001,
+                0.0006105
+              ]
+            },
+            "numba": {
+              "mean_seconds": 0.0006254,
+              "median_seconds": 0.0006192000000000001,
+              "minimum_seconds": 0.0005976,
+              "population_stdev_seconds": 2.56078113082708e-05,
+              "q25_seconds": 0.0006084,
+              "q75_seconds": 0.0006393000000000001,
+              "samples_seconds": [
+                0.0006594000000000001,
+                0.0006192000000000001,
+                0.0005976
+              ]
+            },
+            "python": {
+              "mean_seconds": 0.0282406,
+              "median_seconds": 0.0281169,
+              "minimum_seconds": 0.027889800000000003,
+              "population_stdev_seconds": 0.00034809604996322415,
+              "q25_seconds": 0.028003350000000003,
+              "q75_seconds": 0.028416,
+              "samples_seconds": [
+                0.0287151,
+                0.0281169,
+                0.027889800000000003
+              ]
+            }
+          }
+        }
+      ],
+      "fixture": {
+        "description": "fixed smooth multi-frequency history plus a seeded low-amplitude integrated perturbation; nonzero initial values",
+        "input_sha256": "e67eb7f3f812a0a580260f05d6a139c2cf253952fe9e986f1a682a48464c511f",
+        "orders": [
+          0.43,
+          0.67,
+          0.91
+        ],
+        "step": 0.004,
+        "tempering": [
+          0.17,
+          0.62,
+          1.07
+        ]
+      },
+      "workload": {
+        "dimension": 3,
+        "n_times": 256,
+        "name": "medium_n256_d3",
+        "seed": 2026080312
+      }
+    },
+    {
+      "cases": [
+        {
+          "backend_execution_order_by_repetition": [
+            [
+              "python",
+              "numba",
+              "fft"
+            ],
+            [
+              "numba",
+              "fft",
+              "python"
+            ],
+            [
+              "fft",
+              "python",
+              "numba"
+            ]
+          ],
+          "fft_scope": "offline zero-padded one-shot linear batch convolution; not streaming, online, fast-history, or an FDE solver",
+          "finite_run_ratios": {
+            "numba_over_fft_median": 1.2719264153387746,
+            "python_over_fft_median": 427.6341495012307,
+            "python_over_numba_median": 336.20981870034626
+          },
+          "observed_fastest_backend_by_median": "fft",
+          "operator_case": {
+            "bdf_order": 1,
+            "definition": "tempered_riemann_liouville",
+            "initial_condition_semantics": "tempered_operator_only_no_ivp",
+            "name": "tempered_rl_bdf1"
+          },
+          "parity": {
+            "atol": 5e-10,
+            "comparisons": {
+              "fft": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 9.50350909079134e-14,
+                "weights_exactly_equal_to_python": true
+              },
+              "numba": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 0.0,
+                "weights_exactly_equal_to_python": true
+              }
+            },
+            "reference_backend": "python",
+            "rtol": 5e-11
+          },
+          "parity_checked_before_measurement": true,
+          "ratio_interpretation": "numerator median divided by denominator median for this finite host run; greater than one means the numerator took longer",
+          "timing": {
+            "fft": {
+              "mean_seconds": 0.0007666000000000001,
+              "median_seconds": 0.0007719000000000001,
+              "minimum_seconds": 0.0007513,
+              "population_stdev_seconds": 1.098756873319421e-05,
+              "q25_seconds": 0.0007616000000000001,
+              "q75_seconds": 0.00077425,
+              "samples_seconds": [
+                0.0007766,
+                0.0007513,
+                0.0007719000000000001
+              ]
+            },
+            "numba": {
+              "mean_seconds": 0.0009777666666666669,
+              "median_seconds": 0.0009818000000000001,
+              "minimum_seconds": 0.0009484000000000001,
+              "population_stdev_seconds": 2.2512564393146226e-05,
+              "q25_seconds": 0.0009651000000000001,
+              "q75_seconds": 0.0009924500000000002,
+              "samples_seconds": [
+                0.0010031,
+                0.0009818000000000001,
+                0.0009484000000000001
+              ]
+            },
+            "python": {
+              "mean_seconds": 0.3390535333333333,
+              "median_seconds": 0.3300908,
+              "minimum_seconds": 0.32998550000000004,
+              "population_stdev_seconds": 0.012749749852796673,
+              "q25_seconds": 0.33003815000000003,
+              "q75_seconds": 0.34358755,
+              "samples_seconds": [
+                0.3570843,
+                0.32998550000000004,
+                0.3300908
+              ]
+            }
+          }
+        },
+        {
+          "backend_execution_order_by_repetition": [
+            [
+              "python",
+              "numba",
+              "fft"
+            ],
+            [
+              "numba",
+              "fft",
+              "python"
+            ],
+            [
+              "fft",
+              "python",
+              "numba"
+            ]
+          ],
+          "fft_scope": "offline zero-padded one-shot linear batch convolution; not streaming, online, fast-history, or an FDE solver",
+          "finite_run_ratios": {
+            "numba_over_fft_median": 1.2283556828537951,
+            "python_over_fft_median": 440.8069261814868,
+            "python_over_numba_median": 358.8593534711182
+          },
+          "observed_fastest_backend_by_median": "fft",
+          "operator_case": {
+            "bdf_order": 2,
+            "definition": "tempered_riemann_liouville",
+            "initial_condition_semantics": "tempered_operator_only_no_ivp",
+            "name": "tempered_rl_bdf2"
+          },
+          "parity": {
+            "atol": 5e-10,
+            "comparisons": {
+              "fft": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 1.949551631241775e-13,
+                "weights_exactly_equal_to_python": true
+              },
+              "numba": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 0.0,
+                "weights_exactly_equal_to_python": true
+              }
+            },
+            "reference_backend": "python",
+            "rtol": 5e-11
+          },
+          "parity_checked_before_measurement": true,
+          "ratio_interpretation": "numerator median divided by denominator median for this finite host run; greater than one means the numerator took longer",
+          "timing": {
+            "fft": {
+              "mean_seconds": 0.0007733000000000001,
+              "median_seconds": 0.0007681000000000001,
+              "minimum_seconds": 0.0007676,
+              "population_stdev_seconds": 7.71016644870051e-06,
+              "q25_seconds": 0.00076785,
+              "q75_seconds": 0.0007761500000000001,
+              "samples_seconds": [
+                0.0007681000000000001,
+                0.0007842000000000001,
+                0.0007676
+              ]
+            },
+            "numba": {
+              "mean_seconds": 0.0009710666666666668,
+              "median_seconds": 0.0009435000000000001,
+              "minimum_seconds": 0.000942,
+              "population_stdev_seconds": 4.0050495904822744e-05,
+              "q25_seconds": 0.00094275,
+              "q75_seconds": 0.0009856,
+              "samples_seconds": [
+                0.000942,
+                0.0010277,
+                0.0009435000000000001
+              ]
+            },
+            "python": {
+              "mean_seconds": 0.34192010000000006,
+              "median_seconds": 0.33858380000000005,
+              "minimum_seconds": 0.32984850000000004,
+              "population_stdev_seconds": 0.011463824356935454,
+              "q25_seconds": 0.33421615000000005,
+              "q75_seconds": 0.34795590000000004,
+              "samples_seconds": [
+                0.32984850000000004,
+                0.33858380000000005,
+                0.35732800000000003
+              ]
+            }
+          }
+        },
+        {
+          "backend_execution_order_by_repetition": [
+            [
+              "python",
+              "numba",
+              "fft"
+            ],
+            [
+              "numba",
+              "fft",
+              "python"
+            ],
+            [
+              "fft",
+              "python",
+              "numba"
+            ]
+          ],
+          "fft_scope": "offline zero-padded one-shot linear batch convolution; not streaming, online, fast-history, or an FDE solver",
+          "finite_run_ratios": {
+            "numba_over_fft_median": 1.3022270636649722,
+            "python_over_fft_median": 406.44069232631324,
+            "python_over_numba_median": 312.1119992564365
+          },
+          "observed_fastest_backend_by_median": "fft",
+          "operator_case": {
+            "bdf_order": 1,
+            "definition": "tempered_caputo",
+            "initial_condition_semantics": "tempered_caputo_conjugated_point_value_shift",
+            "name": "tempered_caputo_bdf1"
+          },
+          "parity": {
+            "atol": 5e-10,
+            "comparisons": {
+              "fft": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 9.50350909079134e-14,
+                "weights_exactly_equal_to_python": true
+              },
+              "numba": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 0.0,
+                "weights_exactly_equal_to_python": true
+              }
+            },
+            "reference_backend": "python",
+            "rtol": 5e-11
+          },
+          "parity_checked_before_measurement": true,
+          "ratio_interpretation": "numerator median divided by denominator median for this finite host run; greater than one means the numerator took longer",
+          "timing": {
+            "fft": {
+              "mean_seconds": 0.0008319333333333335,
+              "median_seconds": 0.0008262,
+              "minimum_seconds": 0.0008256,
+              "population_stdev_seconds": 8.535937102756925e-06,
+              "q25_seconds": 0.0008259000000000001,
+              "q75_seconds": 0.0008351000000000001,
+              "samples_seconds": [
+                0.0008262,
+                0.0008256,
+                0.000844
+              ]
+            },
+            "numba": {
+              "mean_seconds": 0.0010516333333333335,
+              "median_seconds": 0.0010759,
+              "minimum_seconds": 0.0009697000000000001,
+              "population_stdev_seconds": 5.9518587199480996e-05,
+              "q25_seconds": 0.0010228000000000001,
+              "q75_seconds": 0.0010926,
+              "samples_seconds": [
+                0.0011093000000000001,
+                0.0009697000000000001,
+                0.0010759
+              ]
+            },
+            "python": {
+              "mean_seconds": 0.33960966666666664,
+              "median_seconds": 0.3358013,
+              "minimum_seconds": 0.33576860000000003,
+              "population_stdev_seconds": 0.005408982656244669,
+              "q25_seconds": 0.33578495,
+              "q75_seconds": 0.3415302,
+              "samples_seconds": [
+                0.34725910000000004,
+                0.33576860000000003,
+                0.3358013
+              ]
+            }
+          }
+        },
+        {
+          "backend_execution_order_by_repetition": [
+            [
+              "python",
+              "numba",
+              "fft"
+            ],
+            [
+              "numba",
+              "fft",
+              "python"
+            ],
+            [
+              "fft",
+              "python",
+              "numba"
+            ]
+          ],
+          "fft_scope": "offline zero-padded one-shot linear batch convolution; not streaming, online, fast-history, or an FDE solver",
+          "finite_run_ratios": {
+            "numba_over_fft_median": 1.2309944945531215,
+            "python_over_fft_median": 392.9271406817383,
+            "python_over_numba_median": 319.1948805785517
+          },
+          "observed_fastest_backend_by_median": "fft",
+          "operator_case": {
+            "bdf_order": 2,
+            "definition": "tempered_caputo",
+            "initial_condition_semantics": "tempered_caputo_conjugated_point_value_shift",
+            "name": "tempered_caputo_bdf2"
+          },
+          "parity": {
+            "atol": 5e-10,
+            "comparisons": {
+              "fft": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 1.949551631241775e-13,
+                "weights_exactly_equal_to_python": true
+              },
+              "numba": {
+                "base_weights_exactly_equal_to_python": true,
+                "maximum_absolute_value_difference_from_python": 0.0,
+                "weights_exactly_equal_to_python": true
+              }
+            },
+            "reference_backend": "python",
+            "rtol": 5e-11
+          },
+          "parity_checked_before_measurement": true,
+          "ratio_interpretation": "numerator median divided by denominator median for this finite host run; greater than one means the numerator took longer",
+          "timing": {
+            "fft": {
+              "mean_seconds": 0.0008434666666666668,
+              "median_seconds": 0.0008537000000000001,
+              "minimum_seconds": 0.0008028,
+              "population_stdev_seconds": 2.9914804956000586e-05,
+              "q25_seconds": 0.00082825,
+              "q75_seconds": 0.0008638000000000001,
+              "samples_seconds": [
+                0.0008739,
+                0.0008537000000000001,
+                0.0008028
+              ]
+            },
+            "numba": {
+              "mean_seconds": 0.0010403,
+              "median_seconds": 0.0010509,
+              "minimum_seconds": 0.0010002000000000001,
+              "population_stdev_seconds": 2.938605111273031e-05,
+              "q25_seconds": 0.00102555,
+              "q75_seconds": 0.00106035,
+              "samples_seconds": [
+                0.0010509,
+                0.0010698,
+                0.0010002000000000001
+              ]
+            },
+            "python": {
+              "mean_seconds": 0.33957763333333335,
+              "median_seconds": 0.3354419,
+              "minimum_seconds": 0.3332136,
+              "population_stdev_seconds": 0.00747998018104922,
+              "q25_seconds": 0.33432775000000003,
+              "q75_seconds": 0.34275965,
+              "samples_seconds": [
+                0.35007740000000004,
+                0.3354419,
+                0.3332136
+              ]
+            }
+          }
+        }
+      ],
+      "fixture": {
+        "description": "fixed smooth multi-frequency history plus a seeded low-amplitude integrated perturbation; nonzero initial values",
+        "input_sha256": "880564bf14a82d26fd2ba9079a0ef51e89191a4392bc6d51aaafc8d91b80c9ed",
+        "orders": [
+          0.43,
+          0.59,
+          0.75,
+          0.91
+        ],
+        "step": 0.004,
+        "tempering": [
+          0.17,
+          0.47,
+          0.77,
+          1.07
+        ]
+      },
+      "workload": {
+        "dimension": 4,
+        "n_times": 768,
+        "name": "large_n768_d4",
+        "seed": 2026080313
+      }
+    }
+  ]
+}

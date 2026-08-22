@@ -12,9 +12,9 @@
       -1.061805076491118
     ],
     "target_seed_source": "validation/reference_cases/kalman_fitts_integer_q1/05_verification_summary.json",
-    "target_seed_source_sha256": "3016a41e95d6ccf0c581a800411ab511a53b81f67520fba12404175d233961e6",
+    "target_seed_source_sha256": "b25ff99b1f44517a41d43a8741f9cc93f520eaa7830da3869602da4eedf124bd",
     "canonical_cloud_source": "validation/reference_cases/kalman_fitts_integer_q1/04_final_attractor.csv",
-    "canonical_cloud_source_sha256": "64388fb8e07a6c3e80ee9e76a010e9d536e5458fce84f2eff3db87f145750b02",
+    "canonical_cloud_source_sha256": "5034499bf88421fa17da82798c7dbc7c6057f3af7ee8cbc09f318d29b56fe58e",
     "canonical_cloud_points_used": 800,
     "canonical_cloud_scale": 6.812663748129227,
     "canonical_period": 11.916996023431395,

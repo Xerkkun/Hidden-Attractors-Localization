@@ -20,9 +20,9 @@ BENCHMARK = (
 PERSISTED_BENCHMARK = (
     Path(__file__).resolve().parents[1]
     / "validation"
-    / "outputs"
-    / "benchmarks"
-    / "tempered_convolution_quadrature_backends_20260803.json"
+    / "reference_cases"
+    / "tempered_convolution_quadrature"
+    / "benchmark_20260803.json"
 )
 
 

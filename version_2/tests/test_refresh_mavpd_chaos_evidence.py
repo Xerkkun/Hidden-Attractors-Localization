@@ -13,8 +13,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = (
     ROOT
-    / "local_reports"
-    / "comparacion_dynamicalsystems_hafo_enteros"
+    / "tools"
+    / "validation"
     / "refresh_mavpd_chaos_evidence.py"
 )
 

@@ -262,7 +262,7 @@ The retained Wolfram run passed 18/18 assertions. The independent Python
 reconstruction differed by at most $1.3085\times10^{-14}$; the required
 public-core comparison differed by at most $4.441\times10^{-15}$. The
 portable files are under
-`validation/outputs/wolfram/tempered_convolution_quadrature_verified/`.
+`validation/reference_cases/tempered_convolution_quadrature/`.
 
 ## Measured backend decision
 
@@ -285,7 +285,7 @@ measure a C or Julia candidate and therefore cannot justify either. A native C
 route is admitted only after profiling exposes a residual production
 bottleneck and an independently verified implementation beats inter-run noise
 end to end. The retained JSON is
-`validation/outputs/benchmarks/tempered_convolution_quadrature_backends_20260803.json`.
+`validation/reference_cases/tempered_convolution_quadrature/benchmark_20260803.json`.
 
 ## Primary sources and SciSpace evidence
 

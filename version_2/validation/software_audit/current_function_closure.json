@@ -12,7 +12,7 @@
     "gl_operator": {
       "tests": ["tests/test_fractional_contracts_and_gl.py", "tests/test_fast_grunwald_letnikov.py", "tests/test_gl_fractional_wolfram.py"],
       "docs": ["docs/fractional_method_catalog.md"],
-      "oracles": ["validation/wolfram/cases/gl_fractional_operator_validation.wl", "validation/outputs/wolfram/gl_fractional_operator_validation/gl_fractional_operator_validation_summary.json"]
+      "oracles": ["validation/wolfram/cases/gl_fractional_operator_validation.wl", "validation/reference_cases/gl_fractional_operator_validation/gl_fractional_operator_validation_summary.json"]
     },
     "gl_solver": {
       "tests": ["tests/test_fractional_problem.py", "tests/test_fractional_contracts_and_gl.py"],

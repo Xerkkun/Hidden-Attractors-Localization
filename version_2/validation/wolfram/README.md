@@ -460,7 +460,7 @@ convergence. The public-core comparator is:
 
 ```powershell
 python validation/python/tempered_convolution_quadrature_compare_wolfram.py `
-  --summary validation/outputs/wolfram/tempered_convolution_quadrature_verified/tempered_convolution_quadrature_validation_summary.json `
+  --summary validation/reference_cases/tempered_convolution_quadrature/tempered_convolution_quadrature_validation_summary.json `
   --require-core
 ```
 

@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
 
+from hidden_attractors.plotting.export import save_report_figure_pair
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DK_CSV = ROOT / (
@@ -155,15 +157,13 @@ def main() -> None:
         fontsize=8.8,
     )
 
-    pdf_path = OUT_DIR / "lyapunov_validation_overview.pdf"
-    png_path = OUT_DIR / "lyapunov_validation_overview.png"
-    fig.savefig(
-        pdf_path,
-        bbox_inches="tight",
+    pdf_path, png_path = save_report_figure_pair(
+        fig,
+        OUT_DIR / "lyapunov_validation_overview",
+        dpi=300,
         pad_inches=0.08,
-        metadata={"Creator": "HAFO validation"},
+        pdf_metadata={"Creator": "HAFO validation"},
     )
-    fig.savefig(png_path, bbox_inches="tight", pad_inches=0.08)
     plt.close(fig)
 
     summary = {
