@@ -47,7 +47,15 @@ hidden-attractors inspect systems
 hidden-attractors inspect candidates --source path/to/candidates.json
 hidden-attractors inspect workflow-requirements
 hidden-attractors seed --help
+hidden-attractors update --check
 ```
+
+The update check queries stable PyPI releases and does not change the active
+environment. An upgrade requires interactive confirmation or the explicit
+`--yes` flag; prereleases require `--pre`. A development checkout newer than
+the public PyPI release is reported as newer and is not downgraded.
+On Windows, the active `.exe` launcher prints the exact pip command for a new
+prompt instead of attempting to replace itself while it is running.
 
 The numerical-evidence contract validator needs the matching repository
 configuration and validation tree; it is not a wheel-only check. From a tagged

@@ -67,8 +67,24 @@ def test_release_readiness_metadata_files_exist() -> None:
 def test_citation_records_archive_doi_without_requiring_article_doi() -> None:
     citation = (REPO_ROOT / "CITATION.cff").read_text(encoding="utf-8")
     assert "10.17605/OSF.IO/ZGK74" in citation
-    assert "archived software release" in citation
+    assert "evolving project, not an immutable version archive" in citation
     assert "CPC" not in citation
+
+
+@pytest.mark.hygiene
+@pytest.mark.release_readiness
+def test_release_candidate_date_is_consistent_across_public_metadata() -> None:
+    citation = (REPO_ROOT / "CITATION.cff").read_text(encoding="utf-8")
+    zenodo = json.loads((REPO_ROOT / ".zenodo.json").read_text(encoding="utf-8"))
+    codemeta = json.loads((REPO_ROOT / "codemeta.json").read_text(encoding="utf-8"))
+    archive = json.loads(
+        (VERSION_ROOT / "release_package" / "archive_manifest.json").read_text(encoding="utf-8")
+    )
+
+    assert 'date-released: "2026-08-21"' in citation
+    assert zenodo["publication_date"] == "2026-08-21"
+    assert codemeta["datePublished"] == "2026-08-21"
+    assert archive["release_date"] == "2026-08-21"
 
 
 @pytest.mark.hygiene

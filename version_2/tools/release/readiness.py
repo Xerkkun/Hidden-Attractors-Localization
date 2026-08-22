@@ -328,7 +328,7 @@ def _pypi_readiness_checks(root: Path, version_root: Path, manifest: dict[str, A
     if not classifiers:
         metadata_details.append("classifiers missing")
     dependencies = project.get("dependencies", [])
-    for dependency in ("numpy", "matplotlib", "scipy", "numba", "PyYAML"):
+    for dependency in ("numpy", "matplotlib", "scipy", "numba", "PyYAML", "packaging"):
         if not any(str(item).lower().startswith(dependency.lower()) for item in dependencies):
             metadata_details.append(f"runtime dependency missing: {dependency}")
     scripts = project.get("scripts", {})

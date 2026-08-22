@@ -4,7 +4,7 @@
   "archive_title": "hidden-attractors-fo: Hidden-Attractor Localization and Dynamical-System Characterization",
   "version": "1.2.0",
   "release_tag": "v1.2.0",
-  "release_date": "2026-08-15",
+  "release_date": "2026-08-21",
   "release_state": "verified_release_candidate",
   "publication_status": "not_published",
   "source_commit_policy": "release_tag_resolves_to_source_commit",

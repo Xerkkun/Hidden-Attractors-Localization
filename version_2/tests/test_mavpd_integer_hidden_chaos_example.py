@@ -185,6 +185,17 @@ def test_completed_run_promotes_all_figures_with_its_exact_run_id(tmp_path: Path
 
     assert all(row["promoted_to_global_manifest"] for row in promoted_rows)
     assert {row["run_id"] for row in promoted_rows} == {status["run_id"]}
+    assert all(
+        path.startswith("library_figures/")
+        and not Path(path).is_absolute()
+        and "\\" not in path
+        for row in promoted_rows
+        for path in row["central_paths"].values()
+    )
+    assert updated["global_figure_promotion"]["global_manifest_paths"] == [
+        "library_figures/manifests/figure_manifest.json",
+        "library_figures/manifests/figure_manifest.csv",
+    ]
     assert updated["global_figure_promotion"]["run_id"] == status["run_id"]
     global_manifest = json.loads(
         (library_root / "manifests" / "figure_manifest.json").read_text(encoding="utf-8")

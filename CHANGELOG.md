@@ -7,6 +7,10 @@
 - Validated public contracts for the promoted existing fractional-method,
   dynamical-analysis, and geometric/topological execution paths.
 - Native input-hardening checks and import-order regression coverage.
+- A conservative `hidden-attractors update` command that checks stable PyPI
+  releases, invokes pip only after explicit confirmation in supported launch
+  contexts, refuses self-replacement from an active Windows `.exe` launcher,
+  and handles failures without automatic elevation or downgrade.
 
 ### Changed
 

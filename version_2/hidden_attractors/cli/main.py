@@ -22,6 +22,7 @@ GROUPS = {
     "run": None,
     "init": None,
     "inspect-config": None,
+    "update": None,
     "inspect": ["candidates", "systems", "workflow-requirements"],
     "validate": ["contract", "bibliography"],
     "protocol": ["generate-seeds", "soft-precheck", "continue", "filter-survivors", "build-reference", "robustness", "hiddenness", "diagnostics"],
@@ -58,6 +59,10 @@ def dispatch(group: str, cmd: str | None, argv: Sequence[str]) -> None:
         parser.add_argument("-c", "--config", type=str, required=True, help="Path to YAML configuration file")
         args, extra_args = parser.parse_known_args(argv)
         inspect_config_cmd(args, extra_args)
+
+    elif group == "update":
+        from .update import update_cmd
+        update_cmd(argv)
         
     elif group == "inspect":
         if cmd == "candidates":
@@ -144,6 +149,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     subparsers.add_parser("run", add_help=False, help="Run an experiment configuration")
     subparsers.add_parser("init", add_help=False, help="Copy template configs to the current directory")
     subparsers.add_parser("inspect-config", add_help=False, help="Preview the normalized configuration")
+    subparsers.add_parser("update", add_help=False, help="Check PyPI and optionally update this package")
     
     # 2. Grouped commands
     inspect_parser = subparsers.add_parser("inspect", help="Inspect candidates, systems, or workflows")

@@ -13,6 +13,9 @@ The 1.2.0 source is a locally verified release candidate. This record does not
 claim a PyPI publication that has not been independently observed. The public
 package version recorded at verification time is 1.0.0.
 
+Publish and independently verify HAFO 1.2.0 on PyPI before releasing a Toolbox
+Chaos build that advertises or requires this 1.2.0 command/API surface.
+
 The release contract is machine-readable in `archive_manifest.json`.
 
 ## Installation
@@ -32,7 +35,12 @@ import hidden_attractors
 ```bash
 hidden-attractors --help
 hidden-attractors inspect systems
+hidden-attractors update --check
 ```
+
+The installed Windows `.exe` launcher performs checks but does not invoke pip
+to replace itself. After it exits, run the exact interpreter command it prints
+from a new prompt.
 
 Development installation from `version_2/`:
 

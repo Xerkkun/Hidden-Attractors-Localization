@@ -22,13 +22,14 @@ This project follows the spirit of SPEC-0 but intentionally keeps an extended-su
 
 ## Core dependencies
 
-Core dependencies (`numpy`, `matplotlib`, `scipy`) are pinned with a **lower bound only**. Upper bounds are intentionally omitted to avoid unnecessary conflicts in user environments.
+Core dependencies are pinned with a **lower bound only**. Upper bounds are intentionally omitted to avoid unnecessary conflicts in user environments.
 
 | Package | Current lower bound | Released | SPEC-0 drop date | Note |
 | --- | --- | --- | --- | --- |
 | `numpy` | `>=1.26` | 2023-06 | 2025-06 | Extended support |
 | `matplotlib` | `>=3.8` | 2023-09 | 2025-09 | Extended support |
 | `scipy` | `>=1.12` | 2024-01 | 2026-01 | Extended support |
+| `packaging` | `>=24.0` | 2024-03 | not SPEC-0 governed | PEP 440 version and Python-compatibility checks for safe CLI updates |
 
 > [!NOTE]
 > Lower bounds are maintained beyond their strict SPEC-0 drop dates under our extended support model. They will be bumped pragmatically on minor releases of this package if required by new API features or when dropping older Python minor versions.

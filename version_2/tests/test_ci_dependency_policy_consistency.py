@@ -88,6 +88,25 @@ def test_ci_only_installs_declared_extras() -> None:
 
 
 @pytest.mark.hygiene
+def test_windows_matrix_jobs_enable_long_paths_before_checkout() -> None:
+    content = (WORKSPACE_DIR / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    guarded_checkout = re.compile(
+        r"- name: Enable long paths on Windows\s+"
+        r"if: runner\.os == 'Windows'\s+"
+        r"working-directory: \.\s+"
+        r"shell: pwsh\s+"
+        r"run: git config --global core\.longpaths true\s+"
+        r"(?:#.*\s+)?- uses: actions/checkout@",
+        re.MULTILINE,
+    )
+
+    assert len(guarded_checkout.findall(content)) == 2, (
+        "Both CI matrices that include windows-latest must enable core.longpaths "
+        "in the ephemeral runner before actions/checkout."
+    )
+
+
+@pytest.mark.hygiene
 def test_dependency_policy_only_lists_declared_extras() -> None:
     declared = _declared_extras()
     content = (ROOT_DIR / "docs/dependency_policy.md").read_text(encoding="utf-8")

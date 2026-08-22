@@ -363,6 +363,30 @@ def _restore_local_snapshots(snapshots: Mapping[Path, bytes | None]) -> None:
             temporary.unlink(missing_ok=True)
 
 
+def _portable_figure_store_path(path: str | Path, *, figure_store_root: str | Path) -> str:
+    """Return a canonical logical path confined to the configured figure store.
+
+    The physical store may live outside the source checkout through
+    ``HIDDEN_ATTRACTORS_OUTPUT_DIR``.  Metadata nevertheless uses the stable
+    logical prefix ``library_figures`` relative to the configured output root
+    and never serializes that
+    machine-specific physical root.
+    """
+
+    store_root = Path(figure_store_root).expanduser().resolve()
+    candidate = Path(path).expanduser().resolve()
+    try:
+        relative = candidate.relative_to(store_root)
+    except ValueError as exc:
+        raise RuntimeError(
+            f"promoted path must remain inside the configured figure store: {candidate}"
+        ) from exc
+    rendered = relative.as_posix()
+    if not rendered or rendered == "." or ".." in relative.parts:
+        raise RuntimeError(f"promoted path is not a canonical figure-store path: {path}")
+    return candidate.relative_to(store_root.parent).as_posix()
+
+
 def _promote_completed_figures(
     output: Path,
     rows: Sequence[Mapping[str, Any]],
@@ -413,6 +437,13 @@ def _promote_completed_figures(
             promoted_pairs = tuple(transaction["promoted_pairs"])
             if len(promoted_pairs) != len(rows):
                 raise RuntimeError("global promotion returned an incomplete figure batch")
+            manifest_paths = tuple(Path(path).resolve() for path in transaction["manifest_paths"])
+            if len(manifest_paths) != 2:
+                raise RuntimeError("global promotion did not return the JSON/CSV manifest pair")
+            figure_store_roots = {path.parent.parent for path in manifest_paths}
+            if len(figure_store_roots) != 1:
+                raise RuntimeError("global promotion manifests do not share one figure-store root")
+            figure_store_root = figure_store_roots.pop()
             promotion_seconds = time.perf_counter() - promotion_started
             promoted_rows = []
             for row, (central_pdf, central_png) in zip(rows, promoted_pairs, strict=True):
@@ -420,7 +451,14 @@ def _promote_completed_figures(
                     {
                         **dict(row),
                         "promoted_to_global_manifest": True,
-                        "central_paths": {"pdf": str(central_pdf), "png": str(central_png)},
+                        "central_paths": {
+                            "pdf": _portable_figure_store_path(
+                                central_pdf, figure_store_root=figure_store_root
+                            ),
+                            "png": _portable_figure_store_path(
+                                central_png, figure_store_root=figure_store_root
+                            ),
+                        },
                     }
                 )
             receipt = {
@@ -430,7 +468,10 @@ def _promote_completed_figures(
                 "figure_count": len(promoted_rows),
                 "figure_ids": [row["figure_id"] for row in promoted_rows],
                 "seconds": promotion_seconds,
-                "global_manifest_paths": [str(path) for path in transaction["manifest_paths"]],
+                "global_manifest_paths": [
+                    _portable_figure_store_path(path, figure_store_root=figure_store_root)
+                    for path in manifest_paths
+                ],
             }
             updated_timings = []
             gate_timing_found = False

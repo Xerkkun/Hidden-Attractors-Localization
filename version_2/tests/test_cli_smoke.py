@@ -21,6 +21,7 @@ from hidden_attractors.cli.run import main
     ["run"],
     ["init"],
     ["inspect-config"],
+    ["update"],
     ["validate"],
     ["protocol"],
     ["bifurcation"],

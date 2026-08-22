@@ -62,7 +62,35 @@ hidden-attractors continuation --help
 hidden-attractors lyapunov --help
 hidden-attractors validate --help
 hidden-attractors protocol --help
+hidden-attractors update --check
 ```
+
+The update command checks stable PyPI releases by default. It does not modify
+the active environment in `--check` mode, without explicit `--yes` approval in
+a non-interactive terminal, or when the installed/development version is newer
+than PyPI. In an interactive terminal, running `hidden-attractors update`
+requires a `y`/`yes` confirmation before pip starts. Use `--pre` only when you
+intend to consider prereleases. After it selects a release, the CLI prints its
+exact version-pinned, isolated command against the official PyPI index, for
+example:
+
+```bash
+"PYTHON" -m pip --isolated install --upgrade --index-url https://pypi.org/simple hidden-attractors-fo==VERSION_SHOWN_BY_CHECK
+```
+
+If checking PyPI fails before pip starts, no package change is made. Pip itself
+is not transactional: after pip starts, a failure or timeout may leave partial
+changes, so inspect the active environment before retrying. The generic
+`python -m pip install --upgrade hidden-attractors-fo` command is a simpler
+fallback and is not equivalent to the pinned, isolated command printed by the
+CLI. A prerelease selection also adds `--pre` to that printed command.
+
+When invoked through the installed `hidden-attractors.exe` on Windows, the CLI
+does not run pip from the still-active launcher, even with `--yes`. Exit first,
+then run the exact printed `sys.executable -m pip ...` command in a new prompt.
+The simpler `py -m pip install --upgrade hidden-attractors-fo` is suitable only
+when `py` selects the intended environment. `--check` continues to work from
+the Windows launcher.
 
 Repository-only release checks may require the tagged validation tree and are
 not expected to run from a wheel alone.

@@ -28,6 +28,20 @@ hidden-attractors --help
 hidden-attractors inspect systems
 ```
 
+Check for a stable PyPI update without changing the active environment:
+
+```bash
+hidden-attractors update --check
+```
+
+Use `hidden-attractors update --yes` only when you intend to upgrade the active
+Python environment. Prereleases are excluded by default, and a local version
+newer than PyPI is never downgraded.
+
+An active Windows `hidden-attractors.exe` does not replace itself. It prints
+the exact `sys.executable -m pip ...` command to run from a new prompt after the
+launcher exits; `hidden-attractors update --check` remains available normally.
+
 For development from this directory:
 
 ```bash

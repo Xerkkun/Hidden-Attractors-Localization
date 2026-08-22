@@ -11,8 +11,8 @@
     "07_hiddenness_outcomes"
   ],
   "global_manifest_paths": [
-    "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\manifests\\figure_manifest.json",
-    "C:\\Users\\moren\\Desktop\\Codes\\Hidden Attractors Fractional Order\\version_2\\outputs\\library_figures\\manifests\\figure_manifest.csv"
+    "library_figures/manifests/figure_manifest.json",
+    "library_figures/manifests/figure_manifest.csv"
   ],
   "run_id": "mavpd_integer_hidden_chaos-full-20260803T110818509512Z-f1d10f792a3a-1e2527c6895d",
   "scientific_source_bundle_sha256": "f1d10f792a3a2c5c30f766167bbb0bdbcc2d4186a7b96b35675eb1acebb008ce",

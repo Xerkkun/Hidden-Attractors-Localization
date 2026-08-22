@@ -12,7 +12,7 @@ License: MIT
 
 Programming language: Python, with optional native C backends.
 
-Dependencies: NumPy, SciPy, Matplotlib, Numba, and PyYAML. Optional analysis and
+Dependencies: NumPy, SciPy, Matplotlib, Numba, PyYAML, and Packaging. Optional analysis and
 documentation dependencies are declared as installation extras.
 
 Nature of problem: reproducible localization, numerical integration,

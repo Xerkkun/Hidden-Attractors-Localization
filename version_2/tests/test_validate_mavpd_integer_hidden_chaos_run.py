@@ -1340,7 +1340,9 @@ def _build_valid_run(tmp_path: Path, *, figure_store_root: Path | None = None):
             ):
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes(local_path.read_bytes())
-            central_paths[suffix] = str(global_root / "by_run" / run_id / suffix / f"{figure_id}.{suffix}")
+            central_paths[suffix] = (
+                global_root / "by_run" / run_id / suffix / f"{figure_id}.{suffix}"
+            ).relative_to(global_root.parent).as_posix()
         metadata_path = global_root / "by_run" / run_id / "metadata" / f"{figure_id}.json"
         _write_json(metadata_path, metadata)
         local_figure_rows.append(
@@ -1402,7 +1404,10 @@ def _build_valid_run(tmp_path: Path, *, figure_store_root: Path | None = None):
         "figure_count": 8,
         "figure_ids": list(module.FIGURE_IDS),
         "seconds": 0.25,
-        "global_manifest_paths": [str(global_manifest_json), str(global_manifest_csv)],
+        "global_manifest_paths": [
+            global_manifest_json.relative_to(global_root.parent).as_posix(),
+            global_manifest_csv.relative_to(global_root.parent).as_posix(),
+        ],
     }
     timings = [
         {"phase": "contract", "seconds": 1.0, "timing_source": "perf_counter"},

@@ -36,10 +36,10 @@
     "figures/05_poincare_section.png": "0a008ee821615974d3fc5603f2b05ea0546ebde0e7054cd8cb38b7c88d4364cb",
     "figures/07_hiddenness_outcomes.pdf": "6d430fc41cf1551799799ef1ad03af517fc20ee80b1bfc7b5465949e22f633e3",
     "figures/07_hiddenness_outcomes.png": "4e644ef8c269fc7e38a592e44e177b88e659c4e6be16475493ed9a4adc746bb0",
-    "figures/figure_manifest.json": "f0e5904769a0a9fecc51b1aca5024a34c6d3956149374b8700dfc115a6354ac0",
-    "figures/global_promotion_receipt.json": "9f9d2ab4cbc0ad6f9d376bd0f459094a34fa617af2777ac91866f0abb530bfbe",
+    "figures/figure_manifest.json": "42e7602f6e7d156dc2f3ee91ed9a25a6cc399e93638059c8f8c8e8b3b40afc47",
+    "figures/global_promotion_receipt.json": "209998ad2eb16a9747a67771633fa190779aa3c84b45dd3fcd2fcf93330073d4",
     "phase_timings.csv": "afa7a8543244694c39c6e8d624b83b88e83be6cc6eb47fc9483958abacc5b7e3",
-    "run_manifest.json": "c004a297539c2631854e47ea2c4ec525a4e69c7355def9dbfeb4959c6460b658"
+    "run_manifest.json": "7df404b145ba802f3374fb1d504bdf2d0787fdd5cb7a844d186b88153d426763"
   },
   "completed_at_utc": "2026-08-03T11:47:25.582542+00:00",
   "completed_phases": [

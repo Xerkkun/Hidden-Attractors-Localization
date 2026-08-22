@@ -12,6 +12,20 @@ tag-to-commit publication guard.
 No `v1.2.0` tag or public artifact is implied by these local metadata records.
 Publication remains a separate, protected workflow action.
 
+The unified CLI now includes `hidden-attractors update`. It checks stable PyPI
+releases by default, never treats a lower public version as a reason to
+downgrade a newer local checkout, and invokes pip only after interactive
+confirmation or `--yes`.
+
+On Windows, `--yes` does not invoke pip from an active installed
+`hidden-attractors.exe`; the command exits with an explanation and the exact
+version-pinned `sys.executable -m pip ...` command to run from a new prompt.
+This avoids claiming that a running launcher can replace itself.
+
+Release ordering: publish and independently verify `hidden-attractors-fo`
+1.2.0 on PyPI before publishing a Toolbox Chaos release that advertises or
+requires the 1.2.0 HAFO surface.
+
 ## 1.1.0
 
 `hidden-attractors-fo` 1.1.0 is a public-library and reproducibility release.
