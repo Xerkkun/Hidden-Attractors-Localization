@@ -31,12 +31,14 @@ on:
     paths:
       - "version_2/**"
       - "src/**"
+      - ".gitattributes"
       - ".github/workflows/ci.yml"
   pull_request:
     branches: ["main", "master", "dev", "develop"]
     paths:
       - "version_2/**"
       - "src/**"
+      - ".gitattributes"
       - ".github/workflows/ci.yml"
   workflow_dispatch:          # permite disparar manualmente desde la UI
 
