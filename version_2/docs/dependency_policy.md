@@ -41,7 +41,7 @@ Core dependencies are pinned with a **lower bound only**. Upper bounds are inten
 | Extra | Purpose | Key packages |
 | --- | --- | --- |
 | `dev` | Test suite | `pytest>=8.0`, `pytest-cov>=5.0` |
-| `analysis` | Nonlinear time-series metrics | `antropy>=0.1.6`, `nolds>=0.6.3,<0.7`, `scipy>=1.12` |
+| `analysis` | Nonlinear time-series metrics | `antropy>=0.1.6`, `nolds>=0.6.2,<0.6.3` on Python 3.11, `nolds>=0.6.3,<0.7` on Python 3.12+, `scipy>=1.12` |
 | `docs` | Documentation build | `mkdocs>=1.6`, `mkdocs-material>=9.5`, `mkdocstrings[python]>=0.25` |
 | `pydstool` | Numerical continuation | `PyDSTool` (no stable PyPI release, no pin) |
 

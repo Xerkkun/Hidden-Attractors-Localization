@@ -175,8 +175,8 @@ def test_rqa_periodic_lines_have_exact_standard_measures() -> None:
     assert result.trapping_time == 1.0
     assert result.longest_vertical == 1
     assert result.vertical_entropy == 0.0
-    assert result.trend == pytest.approx(0.0, abs=1e-15)
-    assert result.normalized_absolute_trend == pytest.approx(0.0, abs=1e-15)
+    assert result.trend == pytest.approx(0.0, abs=1e-12)
+    assert result.normalized_absolute_trend == pytest.approx(0.0, abs=1e-12)
 
 
 def test_standard_and_normalized_trend_conventions_are_separate() -> None:

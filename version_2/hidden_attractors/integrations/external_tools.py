@@ -42,7 +42,7 @@ EXTERNAL_TOOLS: tuple[ExternalTool, ...] = (
         name="nolds",
         import_name="nolds",
         url="https://pypi.org/project/nolds/",
-        install_hint="python -m pip install nolds",
+        install_hint='python -m pip install "hidden-attractors-fo[analysis]"',
         capabilities=("sample entropy", "correlation dimension", "Lyapunov exponents", "Hurst exponent", "DFA"),
         recommended_use="Use for scalar nonlinear time-series measures from simulated coordinates.",
     ),

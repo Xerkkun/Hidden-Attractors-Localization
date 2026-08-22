@@ -34,6 +34,7 @@ PROHIBITED_ROOT_PATTERNS = [
 
 ALLOWED_TOP_LEVEL = {
     ".github",
+    ".gitattributes",
     ".gitignore",
     "README.md",
     "version_2",

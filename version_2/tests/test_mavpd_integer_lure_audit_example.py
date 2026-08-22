@@ -6,6 +6,7 @@ import hashlib
 import importlib.util
 from pathlib import Path
 
+import numpy as np
 import pytest
 import yaml
 
@@ -71,11 +72,20 @@ def test_direct_route_recomputes_every_primary_branch_with_branch_zero_first() -
 
     assert payload["frequency_grid_used"] is False
     assert payload["fallback_used"] is False
-    assert payload["omega_gain_pairs_all"] == pytest.approx(
+    actual_pairs = np.asarray(payload["omega_gain_pairs_all"], dtype=float)
+    expected_pairs = np.asarray(
         [
             (10.597523031056207, 0.13970159481860317),
             (13.344755734228839, 0.35187905034269),
-        ]
+        ],
+        dtype=float,
+    )
+    assert actual_pairs.shape == (2, 2)
+    np.testing.assert_allclose(
+        actual_pairs,
+        expected_pairs,
+        rtol=0.0,
+        atol=2.0e-12,
     )
     assert [(entry["branch_index"], entry["phase"]) for entry in entries] == [
         (0, 0.0),

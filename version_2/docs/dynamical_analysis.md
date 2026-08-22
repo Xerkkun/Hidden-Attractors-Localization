@@ -191,9 +191,11 @@ When `lyapunov_rosenstein` is selected, `sample_rate` is converted to
 Install one backend when those measures are needed:
 
 ```bash
-python -m pip install nolds
-python -m pip install antropy
+python -m pip install "hidden-attractors-fo[analysis]"
 ```
+
+The `analysis` extra selects a `nolds` release compatible with the active
+Python interpreter.
 
 ## Example Script
 

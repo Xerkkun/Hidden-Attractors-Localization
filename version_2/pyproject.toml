@@ -53,7 +53,8 @@ dev = [
 # Optional scientific analysis
 analysis = [
   "antropy>=0.1.6",
-  "nolds>=0.6.3,<0.7",
+  "nolds>=0.6.2,<0.6.3; python_version < '3.12'",
+  "nolds>=0.6.3,<0.7; python_version >= '3.12'",
 ]
 # Documentation build
 docs = [

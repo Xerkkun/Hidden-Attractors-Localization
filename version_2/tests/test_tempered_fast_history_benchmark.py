@@ -157,11 +157,12 @@ def test_fast_history_benchmark_default_output_is_unique_and_temp_scoped(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     benchmark = _load_benchmark()
+    real_datetime = benchmark.datetime
 
     class FrozenDateTime:
         @classmethod
         def now(cls, timezone_value):
-            return benchmark.datetime(2026, 8, 22, tzinfo=timezone_value)
+            return real_datetime(2026, 8, 22, tzinfo=timezone_value)
 
     monkeypatch.setattr(benchmark, "datetime", FrozenDateTime)
     outputs = [benchmark._default_output_path() for _ in range(32)]

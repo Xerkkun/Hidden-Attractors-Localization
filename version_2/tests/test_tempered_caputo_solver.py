@@ -150,6 +150,7 @@ def test_zero_tempering_is_exact_caputo_abm_software_reduction(
     np.testing.assert_array_equal(tempered.states, direct_states)
     np.testing.assert_array_equal(tempered.transformed_states, direct_states)
     assert tempered.solver_info["lambda_zero_reduction"] is True
+    assert tempered.solver_info["lambda_zero_lane"] == "canonical_fractional_integrate"
     assert tempered.solver_info["n_steps_completed"] == direct_info["n_steps_completed"]
 
 

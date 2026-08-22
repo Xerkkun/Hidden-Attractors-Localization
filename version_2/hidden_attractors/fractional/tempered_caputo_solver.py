@@ -56,7 +56,7 @@ from scipy.special import gamma
 
 from .._rhs import bind_rhs
 from .._time_grid import checked_array_capacity, exact_fixed_step_count
-from ..integrations.fractional_c import GeneralFractionalCBackend
+from ..integrations.fractional_c import GeneralFractionalCBackend, fractional_integrate
 
 
 TEMPERED_CAPUTO_ABM_REFERENCES = (
@@ -533,7 +533,28 @@ def integrate_tempered_caputo_abm(
         return np.ascontiguousarray(derivative)
 
     c_backend_error: str | None = None
-    if use_acceleration:
+    lambda_zero_canonical_lane = lam == 0.0
+    if lambda_zero_canonical_lane:
+        local_times, states, status, info = fractional_integrate(
+            rhs=evaluate_physical_rhs,
+            x0=state,
+            q=alpha,
+            h=normalized_step,
+            t_final=float(np.nextafter(normalized_step * n_steps, -np.inf)),
+            method="abm",
+            memory_mode="full" if policy == "full_history" else "window",
+            memory_window_length=normalized_window,
+            use_c_backend=bool(use_acceleration),
+            divergence_norm=(
+                float("inf")
+                if physical_divergence is None
+                else physical_divergence
+            ),
+            return_history=True,
+            allow_python_fallback=bool(allow_python_fallback),
+            early_stop_config={"enabled": False},
+        )
+    elif use_acceleration:
         try:
             local_times, states, status, info = _native_tempered_abm(
                 evaluate_physical_rhs,
@@ -579,14 +600,23 @@ def integrate_tempered_caputo_abm(
 
     local_times = np.asarray(local_times, dtype=np.float64)
     states = np.asarray(states, dtype=np.float64)
+    if not np.all(np.isfinite(states)):
+        status = "nonfinite_solution"
     times = terminal + local_times
 
     used_c = bool(info.get("used_c_backend", False))
-    backend = (
-        "native_c_tempered_abm_physical"
-        if used_c
-        else "python_numpy_tempered_abm_physical"
-    )
+    if lambda_zero_canonical_lane:
+        backend = (
+            "native_c_caputo_abm_canonical"
+            if used_c
+            else "python_numpy_caputo_abm_canonical"
+        )
+    else:
+        backend = (
+            "native_c_tempered_abm_physical"
+            if used_c
+            else "python_numpy_tempered_abm_physical"
+        )
     logarithmic_limit = float(np.log(np.finfo(np.float64).max))
     transformed_states: np.ndarray | None
     if maximum_exponent < logarithmic_limit - 2.0:
@@ -622,6 +652,11 @@ def integrate_tempered_caputo_abm(
             "n_samples": len(times),
             "n_samples_returned": len(times),
             "lambda_zero_reduction": lam == 0.0,
+            "lambda_zero_lane": (
+                "canonical_fractional_integrate"
+                if lambda_zero_canonical_lane
+                else None
+            ),
             "memory_mode": "full" if policy == "full_history" else "window",
             "history_window": normalized_window,
             "truncated_memory": policy == "finite_window",
