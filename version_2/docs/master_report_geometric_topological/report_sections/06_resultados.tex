@@ -1,11 +1,10 @@
 \section{Resultados}
 \label{sec:resultados}
 
-Los resultados se presentan en el mismo orden que los protocolos. Primero se
-resumen las reconstrucciones bibliográficas; después se muestran los dos casos
-obtenidos por la metodología propuesta. En el caso no suave se completa el
-primer radio con contactos. Para \texttt{c590} se distingue la partición local
-\(r\leq0.3\) de la auditoría macroscópica en \(r=1\) y \(r=2\).
+Los resultados se agrupan en reconstrucciones bibliográficas y casos obtenidos
+por la metodología propuesta. En el caso no suave se completa el primer radio
+con contactos. Para \texttt{c590} se distingue la partición local
+\(r\leq0.3\) de la evaluación macroscópica en \(r=1\) y \(r=2\).
 
 \subsection{Reconstrucciones bibliográficas}
 \label{subsec:resultados_bibliograficos}
@@ -30,13 +29,13 @@ Los valores propios de la matriz auxiliar fueron
 \lambda_1=-1.538510163250,\qquad
 \lambda_{2,3}\simeq\pm2.039186939959\,\mathrm i,
 \]
-con residuo complejo de cierre \(9.93\times10^{-16}\). Bajo el carril
-histórico EFORK--3 \((T=320,\ T_{\mathrm{burn}}=80)\) y su clasificador por
+con residuo complejo de cierre \(9.93\times10^{-16}\). Con la configuración
+EFORK--3 de referencia \((T=320,\ T_{\mathrm{burn}}=80)\) y su clasificador por
 huellas de sección, las 504 sondas produjeron 369 convergencias a equilibrio,
 69 divergencias y 66 trayectorias clasificadas como otro destino; ninguna hizo
 contacto con la nube objetivo.
 
-\subsubsection{Danca y Wu bajo sus contratos reconstruidos}
+\subsubsection{Danca y Wu bajo sus protocolos reconstruidos}
 
 La reconstrucción nominal de Danca con
 \cref{eq:semilla_danca_diagnostica} permaneció acotada. Después del transitorio
@@ -48,7 +47,7 @@ tiempo y medianas de la prueba 0--1
 \label{eq:resultado_danca_k}
 \end{equation}
 Estos valores corresponden a una trayectoria de apariencia periódica bajo el
-contrato ABM de \cref{subsec:protocolos_bibliograficos}.
+protocolo ABM de \cref{subsec:protocolos_bibliograficos}.
 
 La recurrencia ADM de Wu permaneció acotada para las dos condiciones de
 \cref{eq:semillas_wu_protocolo}. Las trayectorias fueron simétricas y de
@@ -68,7 +67,7 @@ relativa nula y entropías espectrales
 \toprule
 Control & Configuración evaluada & Resultado reproducido\\
 \midrule
-Leonov--Kuznetsov, carril histórico EFORK--3
+Leonov--Kuznetsov, configuración EFORK--3 de referencia
 & \(q=1\), parámetros de \cref{eq:parametros_enteros}
 & \(\omega_0=2.03918694\), \(A_0=5.85614509\);
 0 contactos en 504 sondas\\
@@ -84,15 +83,15 @@ Wu et al.
 \end{tabularx}
 \end{table}
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \includegraphics[width=0.96\linewidth]{bibliographic_reproducibility_controls_es}
 \caption{Controles de reproducibilidad. Los paneles de Danca y Wu muestran las
-trayectorias obtenidas con sus contratos reconstruidos. La continuación no
+trayectorias obtenidas con sus protocolos reconstruidos. La continuación no
 suave propuesta y el control con pendientes distintas se presentan como
 experimentos independientes y no como resultados de las referencias.}
 \label{fig:controles_bibliograficos}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
 \FloatBarrier
 \subsection{Caso no suave localizado con semilla sesgada}
@@ -132,14 +131,14 @@ X_{\mathrm{end}}
 \label{eq:resultado_endpoint_no_suave}
 \end{equation}
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \includegraphics[width=0.90\linewidth]{nonsmooth_numerical_continuation}
 \caption{Continuación numérica del sistema auxiliar al sistema no suave
 original. Los niveles \(\varepsilon=0,0.05,\ldots,1\) comparten una sola
 historia de Caputo.}
 \label{fig:continuacion_no_suave_paper07}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
 El problema autónomo iniciado en \cref{eq:resultado_endpoint_no_suave}
 produjo el conjunto postransitorio archivado para el caso no suave. Su parte
@@ -156,20 +155,21 @@ Las 36 perturbaciones alrededor de \(X_{\mathrm{end}}\) hicieron contacto con
 la nube objetivo: 12 de 12 para cada radio \(10^{-6}\), \(10^{-4}\) y
 \(10^{-2}\).
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \includegraphics[width=0.86\linewidth]{nonsmooth_final_attractor}
 \caption{Conjunto atrayente postransitorio obtenido para
 \cref{eq:chua_no_suave,eq:parametros_no_suave} desde el extremo de la
 continuación causal.}
 \label{fig:atractor_no_suave_paper07}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
+\ifHAFOBasinMaterial
 \subsubsection{Sondeo volumétrico}
 
 El protocolo completo reunió 17\,400 problemas de valor inicial, 5\,800
 alrededor de cada equilibrio, sin fallos numéricos. De ellos, 7\,200
-corresponden al contrato local predeclarado \(r\leq0.01\), y 10\,200 a la
+corresponden al protocolo local predeclarado \(r\leq0.01\), y 10\,200 a la
 extensión macroscópica diagnóstica en \(r=0.03,0.1,0.3\). La
 \cref{tab:sondeo_no_suave_completo} contiene todos los radios ejecutados y
 todas las clases del clasificador.
@@ -234,13 +234,13 @@ Equilibrio & \(r\) & \(N\) & Objetivo & Equilibrio & Divergencia & Otro\\
 \end{longtable}
 \endgroup
 
-En el contrato local se registraron cero contactos y cero fallos numéricos en
+En el protocolo local se registraron cero contactos y cero fallos numéricos en
 las 7\,200 sondas con \(r\leq0.01\). Este es el alcance usado para evaluar la
 compatibilidad local con ocultedad del conjunto atrayente regular.
 
-La extensión macroscópica, que no amplía ese contrato local, añadió 10\,200
+La extensión macroscópica, evaluada por separado del protocolo local, añadió 10\,200
 sondas. Las 6\,600 correspondientes a \(r=0.03\) y \(r=0.1\) produjeron cero
-contactos; al combinarlas con el contrato local se obtiene el acumulado
+contactos; al combinarlas con el protocolo local se obtiene el acumulado
 \(0/13\,800\) hasta \(r=0.1\). El primer radio con contactos de la extensión
 fue \(r=0.3\); después de completar sus 3\,600 sondas se registraron 37
 contactos: cero desde \(E_0\), 19 desde \(E_+\) y 18 desde \(E_-\). Las
@@ -250,25 +250,24 @@ delimita el intervalo de acceso muestreado
 \[
 0.1<r_{\mathrm{contacto}}\leq0.3
 \]
-sin convertirlo en el alcance del contrato local.
+dentro de la extensión diagnóstica y fuera del alcance local predeclarado.
+\fi
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
-\begin{subfigure}[t]{0.49\linewidth}
-  \centering
-  \includegraphics[width=\linewidth]{nonsmooth_first_harmonic_comparison_es}
-  \caption{Trayectoria y primer armónico.}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.49\linewidth}
-  \centering
-  \includegraphics[width=\linewidth]{nonsmooth_volumetric_probe_overview_es}
-  \caption{Sondas volumétricas representativas.}
-\end{subfigure}
-\caption{Diagnósticos del caso no suave. La comparación armónica describe el
-carácter regular de la respuesta; las sondas muestran ejemplos de las clases
-usadas en \cref{tab:sondeo_no_suave_completo}.}
+\includegraphics[width=0.86\linewidth]{nonsmooth_first_harmonic_comparison_es}
+\caption{Trayectoria y primer armónico del caso no suave. La comparación
+armónica describe el carácter regular de la respuesta.}
 \label{fig:diagnosticos_no_suave_paper07}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
+
+\begin{hafobasinfigure}[H]
+\centering
+\includegraphics[width=0.86\linewidth]{nonsmooth_volumetric_probe_overview_es}
+\caption{Sondas volumétricas representativas de las clases usadas en
+\cref{tab:sondeo_no_suave_completo}.}
+\label{fig:sondeos_no_suave_paper07}
+\end{hafobasinfigure}
 
 \FloatBarrier
 \subsection{Caso con arctangente \texttt{c590}}
@@ -294,7 +293,7 @@ La exploración local generó 1\,000 casos: 170 quedaron separados del control
 y 148 fueron también no triviales. Entre estos últimos hubo 87 respuestas
 exploratorias no periódicas y 61 regulares de apariencia periódica.
 \texttt{c590}, índice local de base cero 590, ocupó el rango 10 por puntuación.
-La auditoría variacional de los 30 mejores casos seleccionó \texttt{c590} con
+La evaluación variacional de los 30 mejores casos seleccionó \texttt{c590} con
 \begin{equation}
 (\lambda_1,\lambda_2,\lambda_3)
 =(0.4699043683,\ 0.0010414594,\ -19.0491693716)
@@ -325,7 +324,7 @@ X_0^{\mathrm{frac}}
 =(5.8642449791,\ 1.5847111486,\ 3.2155806478)^{\T}.
 \label{eq:resultado_semilla_fraccionaria_c590}
 \end{equation}
-En la auditoría larga, las medianas remuestreadas fueron
+En la evaluación de horizonte largo, las medianas remuestreadas fueron
 \begin{equation}
 (K_{0.0025},K_{0.005},K_{0.01})
 =(0.865843,\ 0.885089,\ 0.740058).
@@ -362,19 +361,20 @@ derivas relativas fueron
 La respuesta se clasifica, por tanto, como aperiódica bajo el filtro
 postransitorio declarado.
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \includegraphics[width=0.86\linewidth]{arctan_final_attractor}
 \caption{Conjunto postransitorio del sistema
 \cref{eq:chua_arctan,eq:parametros_c590} para \(q=0.9999\),
 \(h=0.005\) y la condición \cref{eq:resultado_semilla_fraccionaria_c590}.}
 \label{fig:atractor_c590_paper07}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
+\ifHAFOBasinMaterial
 \subsubsection{Sondeo superficial}
 
 El registro canónico reúne 13\,500 trayectorias: 8\,400 en la partición local
-\(r\leq0.3\) y 5\,100 en la auditoría macroscópica \(r\in\{1,2\}\). El primer
+\(r\leq0.3\) y 5\,100 en la evaluación macroscópica \(r\in\{1,2\}\). El primer
 contacto se observó en \(r=1\), pero se retuvo \(r=2\) como bloque adicional.
 La \cref{tab:sondeo_c590_completo} contiene todos los conteos del experimento
 declarado.
@@ -447,28 +447,27 @@ observaron 610 contactos. El primer radio observado satisface
 \[
 0.3<r_{\mathrm{primer\ contacto}}\leq1.
 \]
+\fi
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
-\begin{subfigure}[t]{0.49\linewidth}
-  \centering
-  \includegraphics[width=\linewidth]{arctan_first_harmonic_comparison_es}
-  \caption{Trayectoria y primer armónico.}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.49\linewidth}
-  \centering
-  \includegraphics[width=\linewidth]{arctan_spherical_probe_overview_es}
-  \caption{Sondas superficiales representativas.}
-\end{subfigure}
-\caption{Diagnósticos de \texttt{c590}. La comparación con el primer armónico
-acompaña el filtro de aperiodicidad. El panel de sondas muestra nueve historias
-representativas seleccionadas en el subconjunto hasta \(r=1\); no es una
-gráfica de conteos. La \cref{tab:sondeo_c590_completo} incorpora además la
-auditoría canónica en \(r=2\).}
+\includegraphics[width=0.86\linewidth]{arctan_first_harmonic_comparison_es}
+\caption{Trayectoria y primer armónico de \texttt{c590}. La comparación
+armónica acompaña el filtro de aperiodicidad.}
 \label{fig:diagnosticos_c590_paper07}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
+
+\begin{hafobasinfigure}[H]
+\centering
+\includegraphics[width=0.86\linewidth]{arctan_spherical_probe_overview_es}
+\caption{Nueve historias representativas de los sondeos superficiales hasta
+\(r=1\). La \cref{tab:sondeo_c590_completo} incorpora además la evaluación
+canónica en \(r=2\).}
+\label{fig:sondeos_c590_paper07}
+\end{hafobasinfigure}
 
 \FloatBarrier
+\ifHAFOBasinMaterial
 \subsection{Delimitación local obtenida}
 \label{subsec:delimitacion_local}
 
@@ -497,12 +496,13 @@ macro: \(0/6\,600\) en \(0.03,0.1\) y
 \end{tabularx}
 \end{table}
 
-Dentro de las bolas, horizontes y reglas de contacto del contrato local
+Dentro de las bolas, horizontes y reglas de contacto del protocolo local
 \(r\leq0.01\), el conjunto regular no suave es compatible con la definición
 local de atractor oculto. Los radios \(0.03\), \(0.1\) y \(0.3\) describen una
 extensión macroscópica de la geometría de cuenca y no amplían la afirmación de
-ocultedad más allá del contrato local. Para \texttt{c590}, la compatibilidad
+ocultedad más allá del protocolo local. Para \texttt{c590}, la compatibilidad
 local se limita a las superficies, radios, horizontes y reglas de contacto con
 \(r\leq0.3\). Los contactos observados en \(r=1\) y \(r=2\) describen acceso
 macroscópico a la cuenca. Todos estos resultados proceden de muestras finitas
 y no constituyen una prueba global de separación de cuencas.
+\fi

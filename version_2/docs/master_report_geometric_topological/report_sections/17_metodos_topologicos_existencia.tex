@@ -3,11 +3,10 @@
 
 \HAFOCardExistence
 
-El adjetivo \emph{topológico} en el texto de Amster no significa, en primer
-lugar, ``caos topológico''. Se refiere a herramientas que garantizan ceros o
-puntos fijos sin construir una fórmula explícita para ellos
-\cite{Amster2021MetodosTopologicos}. Esta distinción permite insertar esos
-métodos en el proyecto sin pedirles una conclusión que no proporcionan.
+En Amster, el adjetivo \emph{topológico} designa herramientas que garantizan
+ceros o puntos fijos sin construir una fórmula explícita para ellos
+\cite{Amster2021MetodosTopologicos}; no constituye por sí mismo una afirmación
+de caos topológico.
 
 \subsection{De una ecuación diferencial a un operador}
 
@@ -66,7 +65,7 @@ contracción cumplen funciones distintas: la primera apoya existencia por grado;
 la segunda añade unicidad e iteración convergente
 \cite{Deimling1985,Amster2021MetodosTopologicos}.
 
-\paragraph{Comprobación breve.}
+\paragraph{Ejercicio sobre compacidad.}
 Demuestre que una bola cerrada de \(C(J,\R^n)\) no es compacta en general;
 después identifique qué hipótesis adicional de Arzelà--Ascoli falta. Éste es el
 contraejemplo que impide sustituir ``acotado'' por ``compacto'' en dimensión
@@ -86,8 +85,8 @@ $u(0)=a$, $u'(0)=s$ y defínase
  \label{eq:guide-shooting-residual}
 \end{equation}
 Entonces $S(s_*)=0$ si y sólo si el disparo $s_*$ resuelve el problema de
-frontera. La equivalencia es elemental; lo difícil es demostrar que $S$ está
-definido y es continuo en un intervalo adecuado.
+frontera. La equivalencia es inmediata; su aplicación requiere demostrar que
+$S$ está definido y es continuo en un intervalo adecuado.
 
 El análogo para un ciclo es un residual de retorno. Si $z\in\Sigma$ y
 $\tau(z)>0$ es el primer tiempo de retorno,
@@ -196,9 +195,9 @@ mientras ningún cero alcance $\partial\Omega$ y el retorno no pierda su
 dominio. Esto proporciona una base topológica para la continuación, distinta
 de simplemente reutilizar numéricamente el último estado.
 
-La continuación armónica del reporte transporta primero una semilla aproximada.
-Una mejora futura consiste en corregir cada nodo resolviendo
-$P_\lambda(z)-z=0$ y calcular el grado o el índice local del punto fijo. Así se
+La continuación armónica transporta primero una semilla aproximada. Una
+formulación más rigurosa consiste en corregir cada nodo mediante la resolución
+de $P_\lambda(z)-z=0$ y en calcular el grado o el índice local del punto fijo. Así se
 separan:
 
 \[
@@ -244,11 +243,11 @@ con funciones completas. Sin embargo:
  homotopía que no reinicie inadvertidamente la memoria.
 \end{itemize}
 
-\subsection{Conexión concreta con los métodos del reporte}
+\subsection{Relación con los métodos de localización y continuación}
 
 \begin{table}[H]
 \centering
-\caption{Qué aporta y qué no aporta cada formulación topológica.}
+\caption{Alcance de las formulaciones topológicas.}
 \label{tab:topological-method-boundary}
 \small
 \begin{tabularx}{\textwidth}{@{}L{3.0cm}YY@{}}

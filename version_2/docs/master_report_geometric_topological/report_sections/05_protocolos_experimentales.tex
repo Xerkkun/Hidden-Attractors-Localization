@@ -3,10 +3,9 @@
 
 \HAFOCardProtocols
 
-Esta sección fija los experimentos antes de presentar sus resultados. La
-separación es importante porque compartir una familia de ecuaciones o un mismo
-conjunto de parámetros no convierte dos trayectorias en la misma
-reproducción. En particular, la reconstrucción de Danca y la ruta no suave
+Los protocolos experimentales se fijan antes de evaluar los resultados.
+Compartir una familia de ecuaciones o un mismo conjunto de parámetros no hace
+equivalentes dos trayectorias. La reconstrucción de Danca y la ruta no suave
 propuesta usan los parámetros de \cref{eq:parametros_no_suave}, pero emplean
 semillas y procedimientos de continuación diferentes. De manera análoga, la
 reconstrucción de Wu y el caso \texttt{c590} pertenecen a
@@ -15,11 +14,11 @@ integradores distintos.
 
 \begin{table}[H]
 \centering
-\caption{Carriles experimentales y función de cada uno en el reporte.}
+\caption{Rutas experimentales y función de cada una en el análisis.}
 \label{tab:carriles_experimentales}
 \begin{tabularx}{\linewidth}{L{0.23\linewidth}L{0.25\linewidth}Y}
 \toprule
-Carril & Contrato dinámico & Propósito\\
+Ruta & Protocolo dinámico & Propósito\\
 \midrule
 Leonov--Kuznetsov, \(q=1\)
 & Sistema entero y control EFORK--3 en \(q=1\)
@@ -133,10 +132,14 @@ Cada trayectoria se asigna a una de cuatro clases:
   \item \emph{otro destino}, para las trayectorias finitas restantes.
 \end{enumerate}
 
+La cuarta clase no significa atractor regular ni caótico. Una cola irregular o
+sensible al horizonte se clasifica como \emph{transitorio no resuelto} hasta
+completar el protocolo CT0--CT6 de \cref{subsec:protocolo-transitorios}.
+
 \subsection{Protocolos de reconstrucción bibliográfica}
 \label{subsec:protocolos_bibliograficos}
 
-\subsubsection{Control entero de Leonov--Kuznetsov: carril histórico EFORK--3}
+\subsubsection{Control entero de Leonov--Kuznetsov: configuración de referencia EFORK--3}
 
 Se usa \cref{eq:chua_entero,eq:parametros_enteros}. El cierre armónico
 selecciona la primera rama positiva y construye la condición modal. El control
@@ -152,12 +155,12 @@ conteo total es
 3\ \text{equilibrios}\times7\ \text{radios}\times24\ \text{muestras}
 =504.
 \]
-Este expediente usa \(T=320\), \(T_{\mathrm{burn}}=80\) y el clasificador
-histórico de huellas de sección contra 89 puntos de referencia. Sus
+Esta evaluación usa \(T=320\), \(T_{\mathrm{burn}}=80\) y el clasificador
+de referencia basado en huellas de sección y 89 puntos. Sus
 coordenadas de sondeo no son el banco compartido de la comparación
 Python--Julia.
-Este carril comprueba la recuperación numérica del caso \(q=1\); no suministra
-la semilla de ninguno de los dos casos fraccionarios propuestos.
+Esta ruta comprueba la recuperación numérica del caso \(q=1\) y se mantiene
+independiente de las semillas de los dos casos fraccionarios propuestos.
 
 \subsubsection{Reconstrucción de Danca}
 
@@ -196,9 +199,8 @@ reproducción bibliográfica:
 q=0.99,\qquad h=0.01,\qquad N=10\,000,\qquad
 T=100,\qquad T_{\mathrm{burn}}=50.
 \]
-Este actualizador local no acumula una historia ABM de Caputo. Por ello, sus
-resultados se presentan únicamente dentro del carril de Wu y no se combinan
-con \texttt{c590}.
+Este actualizador local no acumula una historia ABM de Caputo. Sus resultados
+se presentan exclusivamente en la ruta de Wu, separada de \texttt{c590}.
 
 \subsection{Ruta propuesta para el sistema no suave}
 \label{subsec:protocolo_no_suave}
@@ -347,7 +349,9 @@ T_{\mathrm{med}}=300,
 \]
 y una reortogonalización cada diez pasos. Se selecciona el mayor exponente
 principal entre los casos acotados, separados del control, con \(E_0\)
-inestable y \(E_\pm\) estables.
+inestable y \(E_\pm\) estables. Este valor es un diagnóstico de ventana; su
+interpretación y las pruebas adicionales de predictibilidad se fijan en
+\cref{sec:confiabilidad-dinamica}.
 
 \subsubsection{Refinamiento fraccionario y selección de la condición inicial}
 
@@ -367,7 +371,7 @@ De la trayectoria con \(q=0.9999\) se extraen 16 estados, en los índices
 que corresponden aproximadamente a \(t=150.005,\ldots,300\). Cada estado
 inicia un nuevo problema de Caputo. La criba corta usa \(h=0.0025\),
 \(T=180\) y \(T_{\mathrm{burn}}=90\); los supervivientes se verifican además
-con \(h=0.005\) y \(h=0.01\). La auditoría larga usa
+con \(h=0.005\) y \(h=0.01\). La evaluación de horizonte largo usa
 \[
 h\in\{0.0025,0.005,0.01\},\qquad
 T=300,\qquad T_{\mathrm{burn}}=150.
@@ -409,12 +413,12 @@ La detección temprana de equilibrio se activa en \(t=45\) y requiere distancia
 menor que \(10^{-6}\), norma del campo menor que \(10^{-4}\) y 50 pasos
 consecutivos. El umbral de divergencia es \(\|X\|_2=120\).
 
-\subsection{Partición local y auditoría macroscópica}
+\subsection{Partición local y evaluación macroscópica}
 \label{subsec:detencion_primer_contacto}
 
 Los radios se procesan en orden ascendente y se completa cada bloque alrededor
 de \(E_0\), \(E_+\) y \(E_-\). La partición local comprende \(r\leq0.3\).
-La auditoría macroscópica conserva además \(r=1\) y \(r=2\). Se define
+La evaluación macroscópica conserva además \(r=1\) y \(r=2\). Se define
 \[
 H_\ell=\sum_{i,m}
 \mathbf 1\!\left[

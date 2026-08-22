@@ -1,12 +1,12 @@
-\section{Función descriptiva fraccionaria de Machado y transferencia sesgada}
+\section[Función descriptiva fraccionaria de Machado]
+{Función descriptiva fraccionaria de Machado y transferencia sesgada}
 \label{sec:machado-fdf}
 
 \HAFOCardMachado
 
-Esta sección responde dos preguntas que deben mantenerse separadas. La primera
-es cómo entra un desplazamiento continuo en una realización de Lur'e; la
-segunda es qué significa elevar una función descriptiva a un orden real en el
-sentido propuesto por Machado \cite{Machado2015FDF}. Ninguna de las dos
+Se distinguen dos operaciones: la incorporación de un desplazamiento continuo
+en una realización de Lur'e y la elevación de una función descriptiva a un orden
+real en el sentido propuesto por Machado \cite{Machado2015FDF}. Ninguna de las dos
 operaciones cambia por sí sola el orden de Caputo del bloque dinámico.
 
 \subsection{Transferencia, sesgo y transferencia incremental}
@@ -44,10 +44,9 @@ Un sesgo en la entrada no crea automáticamente otra transferencia. Si
  \label{eq:biased-input}
 \end{equation}
 el bloque lineal continúa siendo \(W_q\); lo que cambia son el valor medio y
-el fundamental de \(\psi(\sigma_0+A\cos\vartheta)\). Por eso, en el resto del
-informe, la expresión ``transferencia sesgada'' debe leerse como abreviatura
-de \emph{cierre con función descriptiva sesgada}, no como un nuevo operador
-lineal.
+el fundamental de \(\psi(\sigma_0+A\cos\vartheta)\). La expresión
+``transferencia sesgada'' designa de forma abreviada el \emph{cierre con función
+descriptiva sesgada}; no define un nuevo operador lineal.
 
 Existe, sin embargo, un tercer objeto legítimo. Si \(\psi\) es diferenciable
 en un punto de operación \(\bar\sigma\), la linealización incremental es
@@ -59,9 +58,9 @@ en un punto de operación \(\bar\sigma\), la linealización incremental es
  \label{eq:incremental-biased-transfer}
 \end{equation}
 Esta transferencia describe perturbaciones pequeñas alrededor del punto de
-operación. No debe usarse simultáneamente con una función descriptiva que ya
-contenga la misma pendiente, pues se contaría dos veces. En una característica
-PWA sobre una frontera se necesita especificar pendiente lateral, derivada de
+operación. Su uso es alternativo al de una función descriptiva que ya contenga
+la misma pendiente, pues la combinación contaría esa contribución dos veces. En
+una característica PWA sobre una frontera se necesita especificar pendiente lateral, derivada de
 Clarke o convención de Filippov; sin esa declaración
 \cref{eq:incremental-biased-transfer} no es un objeto único.
 
@@ -141,9 +140,9 @@ La rama principal es
  \qquad \operatorname{Arg}N\in(-\pi,\pi].
  \label{eq:machado-principal}
 \end{equation}
-Una continuación no debe aplicar la rama principal punto a punto cuando la
-curva cruza \(( -\infty,0]\). Deben desenvolverse la fase, fijarse una hoja y
-registrarse los cruces del corte.
+Cuando la curva cruza \(( -\infty,0]\), la continuación requiere desenvolver la
+fase, fijar una hoja y registrar los cruces del corte, en lugar de aplicar la
+rama principal punto a punto.
 
 Para un DF real hay tres casos:
 \begin{enumerate}
@@ -214,8 +213,8 @@ real, el cierre auxiliar se separa en
  N(A)&=N_\star\left(\frac{k}{N_\star}\right)^{1/\mu}.
  \label{eq:machado-amplitude}
 \end{align}
-Para \(N_\star=1\), se resuelve \(N(A)=k^{1/\mu}\). Además de verificar que
-el objetivo pertenece al rango de \(N\), se debe controlar
+Para \(N_\star=1\), se resuelve \(N(A)=k^{1/\mu}\). La evaluación incluye la
+pertenencia del objetivo al rango de \(N\) y el control de
 \begin{equation}
  \frac{dA}{d\mu}
  =-\frac{N(A)\log[N(A)/N_\star]}{\mu N'(A)},
@@ -224,7 +223,7 @@ el objetivo pertenece al rango de \(N\), se debe controlar
 pues la raíz está mal condicionada cerca de \(N'(A)=0\), \(N=0\) o un
 extremo de la curva de ganancia.
 
-Cada candidato debe conservar, sin mezclarlos,
+El registro de cada candidato conserva por separado
 \begin{align}
  \rho_{\mathrm{aux}}
  &=\left|1-W_q(\mathrm i\omega)N_{\mu,N_\star}(A,\omega)\right|,
@@ -282,14 +281,14 @@ con hoja registrada, y el cierre sustituto
  1-W_q(\mathrm i\omega)N_{\mu,b,N_\star}(\sigma_0,A)=0.
  \label{eq:machado-biased-closure}
 \end{equation}
-No se eleva \(\Psi_0\) a \(\mu\): es el valor medio físico que entra en el
-equilibrio afín. También se evalúa
+El valor medio físico \(\Psi_0\), que entra en el equilibrio afín, conserva su
+valor sin elevarse a \(\mu\). También se evalúa
 \begin{equation}
  \rho_{\mathrm{fis},b}
  =\left|1-W_q(\mathrm i\omega)N_b(\sigma_0,A)\right|.
  \label{eq:machado-biased-physical-residual}
 \end{equation}
-Las evaluaciones sesgadas validadas en este volumen usan \(\mu=1\); coinciden
+Las evaluaciones sesgadas registradas en la validación disponible usan \(\mu=1\); coinciden
 con la familia sesgada clásica y no validan todavía
 \cref{eq:machado-biased-family} para \(\mu\neq1\).
 
@@ -338,7 +337,7 @@ produjo
  &=4.761387970782572-1.52\times10^{-13}\mathrm i,\\
  k&=0.21002279296212067.
 \end{align}
-El carril clásico \(\mu=1\) da
+La referencia clásica \(\mu=1\) da
 \(A_{\mathrm{cl}}=5.851767785486093\). Para \(\mu=2\), HAFO registra
 \begin{equation}
  A_2=2.628433514775448,
@@ -362,7 +361,7 @@ modal no sustituye los dos residuos algebraicos de
 reportarse por separado y con nombres inequívocos.
 \end{warningbox}
 
-\subsection{Casos convenientes, casos riesgosos y protocolo}
+\subsection{Condiciones de aplicabilidad y protocolo}
 
 La familia de Machado es especialmente pertinente cuando:
 \begin{enumerate}

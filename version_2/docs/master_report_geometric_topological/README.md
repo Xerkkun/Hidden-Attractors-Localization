@@ -20,6 +20,13 @@ guía añade objetivos, prerrequisitos, ejercicios, pistas y autocontroles. La
 monografía digital añade trazabilidad reproducible y el atlas completo de
 figuras promovidas.
 
+El núcleo común incluye además una teoría explícita de puntos perpetuos de
+orden entero y su extensión metodológica a Caputo (FPP--A/FPP--H), junto con
+predictibilidad, shadowing, exponentes de Lyapunov de tiempo finito, caos
+transitorio, sillas caóticas, crisis y una ruta de Conley. Las afirmaciones
+publicadas se separan de las adaptaciones del proyecto y de los programas de
+prueba todavía abiertos.
+
 La ruta de aprendizaje de la guía avanza por dependencias internas: EDO y
 álgebra lineal, sistemas dinámicos, topología y geometría local, caos y cuencas,
 cálculo fraccionario y dinámica con memoria; sólo después aplica los métodos de
@@ -27,7 +34,7 @@ localización. Las lecturas externas son ampliaciones opcionales y no son
 necesarias para seguir las demostraciones, reproducir las tablas ni interpretar
 los resultados del volumen impreso.
 
-Las dos ediciones comparten los diagramas vectoriales que forman parte de una
+Los diagramas vectoriales forman parte de una
 explicación matemática y cinco figuras seleccionadas del piloto: la ruta
 conceptual y cuatro resultados representativos de PLL, MAVPD y Wu. Las figuras
 numéricas restantes se declaran individualmente como digitales; el atlas
@@ -49,7 +56,7 @@ incluyen desde la fuente principal.
 
 ## Verificación algebraica cruzada
 
-`wolfram/topologia_geometria_hidden_validation.wl` contiene la auditoría
+`wolfram/topologia_geometria_hidden_validation.wl` contiene la comprobación
 simbólica y numérica de la extensión geométrico--topológica. Su salida registrada
 está en `wolfram/topologia_geometria_hidden_validation.txt`. La contraparte
 integrada se encuentra en

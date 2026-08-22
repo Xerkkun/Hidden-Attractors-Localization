@@ -7,14 +7,14 @@ El punto de entrada de la evidencia del artículo es
 \codepath{manifest.json} relaciona cada afirmación numérica con sus archivos
 de origen y \codepath{evidence_manifest.json} comprueba que el paquete
 compacto esté completo e íntegro. La carpeta
-\codepath{evidence/} contiene los datos necesarios para auditar los resultados
+\codepath{evidence/} contiene los datos necesarios para verificar los resultados
 archivados sin depender de una figura ni de una transcripción manual. Esta
 integridad no implica que cada campaña histórica pueda reintegrarse desde una
 copia limpia.
 
 La trazabilidad sigue siempre la misma cadena:
 \[
-\text{parámetros y contrato}
+\text{parámetros y protocolo}
 \longrightarrow
 \text{semilla}
 \longrightarrow
@@ -33,7 +33,7 @@ arreglos completos.
 
 La información del caso de \cref{eq:chua_no_suave} se encuentra en
 \codepath{version_2/validation/paper07_chua/evidence/nonsmooth_corrected/}.
-La lectura recomendada es la siguiente:
+Los artefactos se organizan de la siguiente manera:
 
 \begin{enumerate}
   \item \codepath{candidate_and_reference.json} registra la raíz sesgada
@@ -48,40 +48,39 @@ La lectura recomendada es la siguiente:
   el diagnóstico postransitorio.
 \end{enumerate}
 
-El sondeo volumétrico usado en las tablas del reporte se conserva en
+El sondeo volumétrico usado en las tablas numéricas se conserva en
 \codepath{nonsmooth_corrected/extended_first_contact_clean/}. Dentro de esa
-carpeta, \codepath{extended_numerical_contract.json} fija el contrato,
+carpeta, \codepath{extended_numerical_contract.json} fija el protocolo,
 \codepath{extended_probe_plan.csv} enumera los radios y tamaños de muestra,
 \codepath{extended_probe_runs.csv} registra una fila por condición inicial y
 \codepath{extended_probe_summary.csv} contiene los conteos agregados.
-\codepath{extended_result.json} separa las \(7\,200\) pruebas del contrato
+\codepath{extended_result.json} separa las \(7\,200\) pruebas del protocolo
 local \(r\leq0.01\) de las \(10\,200\) pruebas de la extensión macroscópica,
 comprueba el total de \(17\,400\) y registra el corte después de completar
 \(r=0.3\), primer radio con contactos.
 \codepath{target_cloud_nn_sample.csv} fija la muestra del conjunto objetivo
 empleada para medir contacto.
 
-La integridad de esta evidencia fijada se comprueba mediante
+La integridad de esta evidencia se comprueba mediante
 \codepath{version_2/validation/paper07_chua/scripts/
 sync_paper07_evidence.py}. El programa verifica el manifiesto compacto y, con
-la opción correspondiente, su paridad con las fuentes canónicas. Esta
-comprobación valida los artefactos conservados; no se presenta como una nueva
-ejecución de la campaña numérica completa.
+la opción correspondiente, su paridad con las fuentes de referencia. La
+comprobación valida la integridad y asociación de los artefactos conservados;
+la regeneración de la campaña numérica queda fuera de su alcance.
 
 \subsection{Cadena del sistema con arctangente}
 
-El registro canónico actualmente promovido para \texttt{c590} se encuentra en
+El conjunto de evidencia de referencia para \texttt{c590} se encuentra en
 \codepath{version_2/validation/chua_fractional_arctan_c590/}. El manifiesto
 \codepath{version_2/validation/paper07_chua/manifest.json} conserva el origen de
 la semilla como búsqueda entera acotada y refinamiento de Caputo, y el nombre
 \texttt{c590} identifica el índice de aquella búsqueda local. El paquete
-compacto valida los resultados retenidos, pero no contiene ya los programas
-históricos de regeneración de las exploraciones global y local; por tanto, no
-se afirma que esa etapa pueda repetirse desde este apéndice.
+compacto valida los resultados retenidos. Los programas de regeneración de las
+exploraciones global y local quedan fuera del paquete.
 
 Los sondeos sobre superficies esféricas se encuentran en
 \codepath{version_2/validation/chua_fractional_arctan_c590/}. Para las tablas
-de este reporte se emplean, en orden,
+numéricas se emplean, en orden,
 \codepath{hiddenness_scaled_rows.csv},
 \codepath{hiddenness_r003_rows.csv},
 \codepath{hiddenness_r010_rows.csv},
@@ -162,6 +161,6 @@ python -m pytest -q tests/test_summarize_c590_hiddenness.py \
   tests/test_official_wolfram_artifacts.py
 \end{verbatim}
 Cada instrucción larga puede escribirse en una sola línea. Esta secuencia
-comprueba la asociación entre parámetros, semillas, contratos y archivos
-canónicos. No equivale a reejecutar las campañas integrales que produjeron los
-artefactos fijados.
+comprueba la asociación entre parámetros, semillas, protocolos y archivos de
+referencia. Su alcance es la integridad de los artefactos fijados, no la
+regeneración de las campañas integrales.

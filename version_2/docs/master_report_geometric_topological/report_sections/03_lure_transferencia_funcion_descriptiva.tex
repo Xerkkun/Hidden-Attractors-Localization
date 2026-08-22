@@ -46,17 +46,17 @@ La correspondencia con cada modelo es
 \end{array}
 \label{eq:correspondencia_lure}
 \end{equation}
-La igualdad se verifica ahora fila por fila, antes de usar la realización:
+La equivalencia se obtiene por comparación componente a componente:
 \begingroup
 \def\HAFOderivationpart{1}
 \input{report_sections/A_derivaciones_algebraicas}
 \endgroup
 La comprobación fija también el signo: el vector \(b\) contiene \(-\alpha\), mientras que
-\(\psi\) conserva el signo de sus parámetros. No se introduce un signo
-adicional durante el balance armónico.
+\(\psi\) conserva el signo de sus parámetros. Esta convención determina el
+signo empleado en el balance armónico.
 
 En \cref{eq:lure_comun}, \(q\) designa únicamente el orden fraccionario. El
-vector de entrada se denota por \(b\), de modo que no se confunden dos objetos
+vector de entrada se denota por \(b\); así, ambos símbolos designan objetos
 matemáticos distintos. Para \(q=1\), el miembro izquierdo se reemplaza por
 \(\dot X\) y se recupera la representación de Lur'e de orden entero utilizada
 por Leonov y Kuznetsov
@@ -86,15 +86,13 @@ W_q(s)&=r^{\T}(s^qI-P)^{-1}b.
 \label{eq:transferencia_fraccionaria}
 \end{equation}
 El primer término de \cref{eq:transferencia_fraccionaria} es la respuesta
-debida a la condición inicial. La transferencia \(W_q\) es, por definición,
-la relación entre la entrada y la salida cuando se separa ese término. Así,
-\(W_q\) no es una definición independiente introducida por conveniencia:
-surge directamente al aplicar la transformada de Laplace a la derivada de
-Caputo y resolver el bloque lineal.
+debida a la condición inicial. La transferencia \(W_q\) es, por definición, la
+relación entre la entrada y la salida cuando se separa ese término. Se obtiene
+directamente al aplicar la transformada de Laplace a la derivada de Caputo y
+resolver el bloque lineal.
 
-El numerador y el denominador no se citan como un resultado externo: se
-obtienen a continuación mediante menores, expansión del determinante y regla
-de Cramer.
+El numerador y el denominador se derivan mediante menores, expansión del
+determinante y regla de Cramer.
 \begingroup
 \def\HAFOderivationpart{2}
 \input{report_sections/A_derivaciones_algebraicas}
@@ -152,14 +150,13 @@ Con esa definición, el mismo cierre se escribe
 1+W_q^{-}(\ii\omega)N=0,\qquad
 N=-\frac{1}{\Re W_q^{-}(\ii\omega)}.
 \]
-Las dos escrituras son algebraicamente equivalentes. En este reporte se usa
-exclusivamente la convención de
-\cref{eq:transferencia_fraccionaria,eq:cierre_armonico}; por ello, no se
-introduce un parámetro de signo ajustable.
+Las dos escrituras son algebraicamente equivalentes. Se adopta la convención de
+\cref{eq:transferencia_fraccionaria,eq:cierre_armonico}, que fija de manera
+unívoca el signo del cierre.
 
 \subsection{Función descriptiva centrada}
 
-La convención de primer armónico que se emplea a continuación sigue el
+La convención de primer armónico sigue el
 tratamiento clásico de la función descriptiva y sus extensiones para
 no linealidades estáticas\cite{GelbVanderVelde1968,Atherton1975,AthertonTanYerogluKavuranYuce2014}.
 Para una entrada \(\sigma=A\sin\theta\), \(A>0\), y una no linealidad
@@ -173,16 +170,16 @@ N_\psi(A)
 La integral de \cref{eq:df_centrada} no contiene un operador temporal. Por
 ello, \(N_\psi\) depende de la no linealidad y de la amplitud, mientras que el
 orden \(q\) entra en la transferencia mediante
-\((\ii\omega)^q\). La función descriptiva no se hace ``fraccionaria''
-modificando arbitrariamente la integral; la adaptación fraccionaria ocurre en
-el bloque dinámico.
+\((\ii\omega)^q\). El carácter fraccionario entra mediante el bloque dinámico;
+la integral de la función descriptiva conserva su definición estática.
 
 Para el Chua no suave, sea
 \[
 \Delta=m_0-m_1,\qquad
 \psi_{\mathrm{ns}}(\sigma)=\Delta\operatorname{sat}(\sigma).
 \]
-La evaluación exacta de \cref{eq:df_centrada} se desarrolla sin saltos:
+La evaluación exacta de \cref{eq:df_centrada} se obtiene por integración por
+tramos:
 \begingroup
 \def\HAFOderivationpart{6}
 \input{report_sections/A_derivaciones_algebraicas}
@@ -224,8 +221,8 @@ La segunda forma evita cancelación por resta cuando \(\rho A\) es pequeño.
 
 \subsection{Función descriptiva sesgada y cierre de la componente continua}
 
-Una oscilación localizada lejos del origen no debe forzarse a tener media
-cero. Para una entrada
+Una oscilación localizada lejos del origen requiere, en general, una componente
+media no nula. Para una entrada
 \[
 \sigma(\theta)=c+A\cos\theta
 \]

@@ -3,9 +3,8 @@
 
 \HAFOCardGeometric
 
-Esta sección convierte el lenguaje geométrico de las secciones anteriores en
-un método de búsqueda. Su propósito no es reemplazar la función descriptiva,
-la continuación o los puntos perpetuos, sino proporcionarles un atlas común:
+Los métodos de localización se organizan en un marco geométrico común que
+complementa la función descriptiva, la continuación y los puntos perpetuos:
 superficies que todo conjunto compacto invariante debe cortar, curvas que
 organizan la curvatura del campo, separatrices que aproximan fronteras de
 cuenca y objetos topológicos que, bajo hipótesis adicionales, pueden
@@ -34,12 +33,12 @@ certificar la existencia de un conjunto invariante.
 \end{tikzpicture}
 \end{center}
 
-\subsection{Ventajas, aportes y límites del enfoque}
+\subsection{Alcance y limitaciones del enfoque}
 \label{subsec:gt-ventajas}
 
-El aporte operativo es convertir una búsqueda ciega en una búsqueda por
-objetos matemáticos de dimensión menor y, después, someter esos objetos a una
-cadena de pruebas cada vez más fuerte.
+El procedimiento sustituye la búsqueda volumétrica indiferenciada por una
+búsqueda sobre objetos matemáticos de dimensión menor, seguida de pruebas con
+niveles crecientes de evidencia.
 
 \begin{enumerate}
  \item \textbf{Reducción dimensional.} En $\R^3$, una superficie crítica
@@ -105,13 +104,13 @@ Se definen, siguiendo el método de superficies críticas de Godara et al.
  S_i^a=\{x:(Df(x)f(x))_i=0\}.
  \label{gt:eq:critical-surfaces}
 \end{equation}
-La superficie distinta
+El conjunto distinto
 \begin{equation}
  S_J=\{x:\det Df(x)=0\}
  \label{gt:eq:singular-jacobian-surface}
 \end{equation}
-se llamará \emph{superficie de Jacobiano singular}; no debe confundirse con
-las superficies de velocidad o aceleración de \eqref{gt:eq:critical-surfaces}.
+se denomina \emph{superficie de Jacobiano singular} y es distinto de las
+superficies de velocidad o aceleración de \eqref{gt:eq:critical-surfaces}.
 
 \begin{proposition}[Cobertura por extremos]
 \label{prop:gt-critical-coverage}
@@ -184,10 +183,10 @@ $\lambda=0$. Por tanto,
  \label{gt:eq:pp-inclusions}
 \end{equation}
 pero un punto de $\mathcal C$ con $\lambda\ne0$ no tiene por qué pertenecer a
-$S_J$. La propuesta publicada de usar $\mathcal C$ para localizar atractores
-ocultos es un antecedente, no una contribución nueva de este reporte. Tampoco
-se ha demostrado que toda curva conectante atraviese toda cuenca; se usa como
-familia priorizada de condiciones iniciales.
+$S_J$. El uso publicado de $\mathcal C$ para localizar atractores ocultos
+constituye un antecedente. Como no se ha demostrado que toda curva conectante
+atraviese toda cuenca, aquí se emplea como familia priorizada de condiciones
+iniciales.
 
 La aceleración $Df\,f$ no es intrínseca bajo una carta no lineal. Si
 $y=g(x)$ y $\widetilde f(y)=Dg(x)f(x)$, entonces
@@ -218,7 +217,7 @@ de modo que la parte normal sólo se multiplica por $\rho^2$. En cambio, la
 condición fuerte $\nabla_f f=0$ no es orbitalmente invariante. Ésta es la razón
 para conservar las coordenadas físicas del PLL y declarar la métrica usada.
 
-\subsection{KCC/Jacobi: región geométrica de enfoque, no certificado de cuenca}
+\subsection{KCC/Jacobi y regiones geométricas de enfoque}
 \label{subsec:gt-kcc}
 
 La teoría de Kosambi--Cartan--Chern (KCC) parte de un semispray
@@ -270,7 +269,7 @@ y
  +\frac{\tau_2L}{4T}y\sin\theta.
  \label{gt:eq:pll-kcc-P}
 \end{align}
-En los equilibrios bloqueados del expediente, Wolfram obtiene
+En los equilibrios bloqueados del PLL, Wolfram obtiene
 \begin{equation}
  P(\theta_f,0)=-1642.02410524\ldots,
  \qquad
@@ -280,6 +279,7 @@ En los equilibrios bloqueados del expediente, Wolfram obtiene
 El signo concuerda con enfoque de Jacobi en el foco y dispersión en la silla;
 no prueba la existencia del ciclo corredor ni su ocultedad.
 
+\ifHAFOBasinMaterial
 \subsection{Cuencas, seguimiento de borde y topología computacional}
 \label{subsec:gt-set-oriented}
 
@@ -342,8 +342,9 @@ punto por caja podría omitir el camino real.
 El resultado certifica ocultedad sólo respecto del dominio, las vecindades y
 el modelo declarados. Si se cambia el radio o existe una salida no controlada
 de $D$, la conclusión debe recalcularse.
+\fi
 
-\subsection{Traslado correcto a Caputo}
+\subsection{Formulación para sistemas de Caputo}
 \label{subsec:gt-caputo-transfer}
 
 Para
@@ -380,7 +381,8 @@ $\mathcal B_{\mathfrak C}(\mathcal A)$ es la cuenca funcional, se define
 Excluir una vecindad funcional de cada perfil de equilibrio implica excluir su
 corte constante; la recíproca no es válida. Esta separación entre
 \emph{ocultedad funcional} y \emph{ocultedad de reinicio} no fue localizada en
-los antecedentes consultados y se propone como parte del proyecto.
+los antecedentes consultados; se presenta como formulación metodológica cuya
+prioridad bibliográfica requiere una revisión más amplia.
 
 Las superficies $F_i(x)=0$ siguen siendo conjuntos algebraicos útiles en el
 corte de reinicio, pero ya no son superficies de velocidad ordinaria: en
@@ -394,7 +396,7 @@ que detecta extremos es
  \label{gt:eq:functional-critical-surface}
 \end{equation}
 y depende de la historia $\Phi_t$. En puntos no suaves o cerca del arranque se
-trabaja directamente con \eqref{gt:eq:caputo-volterra}; no se inventa una
+trabaja directamente con \eqref{gt:eq:caputo-volterra}, sin introducir una
 segunda derivada clásica.
 
 \subsubsection{Curva conectante Picard--Caputo}
@@ -438,12 +440,13 @@ de arranque es
 Wolfram verificó que \eqref{gt:eq:covariant-picard-acceleration} transforma
 como vector cuando también se transforma la conexión, y que
 $\mathcal A_{1,\nabla}=\nabla_FF$. Esta formulación covariante y su uso como
-filtro de semillas Caputo son una deducción del proyecto. No afirman una regla
+filtro de semillas Caputo son consecuencias de las identidades precedentes. No afirman una regla
 de cadena fraccionaria para $F(x(t))$.
 
 \subsubsection{Evento conectante dependiente de historia}
 
-El carril global conserva la definición secuencial ya introducida:
+La formulación dependiente de la historia conserva la definición secuencial ya
+introducida:
 \begin{equation}
  \mathcal A_q[x](t)
  ={}^{\mathrm C}D_{t_0}^{q}[F(x(\cdot))](t).
@@ -471,7 +474,8 @@ $\R^n$. Numéricamente se buscan mínimos convergentes de
  {1+\lVert\mathcal A_q[x](t)\rVert},
  \label{gt:eq:history-connecting-residual}
 \end{equation}
-al refinar paso y horizonte; un mínimo visual aislado no basta.
+al refinar paso y horizonte; el criterio requiere convergencia y no sólo un
+mínimo visual aislado.
 
 \subsubsection{Elevación exponencial y topología aproximada}
 
@@ -491,19 +495,19 @@ induce variables de memoria
 \end{align}
 Las aproximaciones racionales por sumas de exponenciales y sus análisis de
 estabilidad y convergencia son antecedentes numéricos
-\cite{KhristenkoWohlmuth2023Rational}. Lo nuevo propuesto no es la elevación,
-sino usarla como puente controlado hacia grafos de cajas e índice de Conley.
+\cite{KhristenkoWohlmuth2023Rational}. La propuesta consiste en emplear la
+elevación como puente controlado hacia grafos de cajas e índice de Conley.
 Para identificar un resultado del sistema elevado con el Caputo original se
 exigirán: cota uniforme del error de núcleo, cota de error de solución, un
 bloque aislante común durante la homotopía exacto--aproximación y persistencia
 al aumentar $m$ y el horizonte. Sin esos cuatro elementos, el índice pertenece
 sólo a la aproximación finita.
 
-\subsection{Mapa de antecedentes, deducciones y novedad defendible}
+\subsection{Antecedentes, deducciones y formulaciones metodológicas}
 \label{subsec:gt-novelty-map}
 
 \begin{longtable}{@{}L{4.0cm}L{3.0cm}L{6.2cm}@{}}
-\caption{Qué existía y qué añade esta formulación.}
+\caption{Procedencia y alcance de los componentes de la formulación.}
 \label{tab:gt-novelty-map}\\
 \toprule
 Objeto & Estado & Fundamento y límite\\
@@ -515,15 +519,14 @@ Objeto & Estado & Fundamento y límite\\
 \endhead
 Superficies $f_i=0$ y $(Df\,f)_i=0$ para localizar oscilaciones & Antecedente
 & Godara et al.\ \cite{GodaraEtAl2018CriticalSurfaces}. La prueba por extremos
-se presenta aquí para fijar hipótesis; es una formalización del fundamento, no
-la invención del método.\\
+explicita las hipótesis y formaliza el fundamento del método.\\
 Curvas $Df\,f=\lambda f$ & Antecedente & Gilmore et al.\ y Guan--Xie
 \cite{GilmoreEtAl2010Connecting,GuanXie2021Connecting}. Su intersección con
 todas las cuencas continúa siendo hipótesis numérica, no teorema general.\\
 Puntos perpetuos & Antecedente & Prasad et al.\ y Dudkowski et al.; la
 \cref{sec:perpetual-points} contiene alcance y contraejemplos.\\
 KCC para atractores ocultos & Antecedente & Roy, Ray y Roy Chowdhury
-\cite{RoyRayChowdhury2024KCC}. Aquí se integra como ranking y se explicitan
+\cite{RoyRayChowdhury2024KCC}. Se emplea para ordenar candidatos y se explicitan
 dependencia de la reducción y límites probatorios.\\
 Métodos de cajas, Morse e índice de Conley & Antecedente general &
 \cite{DellnitzHohmann1997Subdivision,KaliesEtAl2005ChainRecurrence,
@@ -532,35 +535,41 @@ sí solos.\\
 Semidinámica de Caputo en perfiles & Antecedente riguroso & Cong--Tuan,
 Doan--Kloeden \cite{CongTuan2017Nonlocal,DoanKloeden2021Semidynamical,
 DoanKloeden2024Attractors}.\\
-Ocultedad funcional frente a ocultedad de reinicio & Propuesta del proyecto &
+Ocultedad funcional frente a ocultedad de reinicio & Formulación evaluada &
 Se deduce de la inclusión de historias constantes en el espacio funcional. La
 implicación funcional$\Rightarrow$reinicio fue verificada lógicamente; la
 recíproca falla.\\
 Curva conectante Picard--Caputo y aceleración covariante
-$\mathcal A_{q,\nabla}$ & Propuesta del proyecto & Derivada de la expansión de
+$\mathcal A_{q,\nabla}$ & Formulación evaluada & Derivada de la expansión de
 Volterra con $s=h^q$ y de geometría diferencial. Es un filtro de arranque, no
 una órbita conectante global.\\
-Evento conectante FPP--H sobre historias & Propuesta del proyecto & Usa la
+Evento conectante FPP--H sobre historias & Formulación evaluada & Usa la
 derivada secuencial conservando el terminal inferior. Requiere convergencia
 respecto de paso, historia y horizonte.\\
 Bloque atrayente + índice no trivial + no alcance desde equilibrios & Propuesta
-de integración & La \cref{prop:gt-relative-hiddenness} combina herramientas
+de integración &
+\ifHAFOBasinMaterial
+La \cref{prop:gt-relative-hiddenness}
+\else
+El criterio de no alcance mediante una aproximación exterior
+\fi
+combina herramientas
 existentes en un certificado relativo. Falta ejecutarlo con aproximaciones
 exteriores validadas.\\
 Elevación de memoria + continuación del bloque aislante & Programa de
 investigación & La suma de exponenciales es antecedente; la preservación del
 índice durante la homotopía al núcleo Caputo exacto debe demostrarse.\\
-Banco unido DF--Machado--continuación--PP--superficies--CC--KCC & Aporte
-metodológico & La novedad defendible es la integración causal, las reglas de
-evidencia y la comparación con igual presupuesto, no cada herramienta por
-separado.\\
+Banco unido DF--Machado--continuación--PP--superficies--CC--KCC & Integración
+metodológica & La formulación integra la evolución causal, las reglas de
+evidencia y la comparación con igual presupuesto; las herramientas individuales
+conservan su procedencia bibliográfica.\\
 \bottomrule
 \end{longtable}
 
 \begin{proposalbox}
-\textbf{Regla de redacción de tesis.} Se usará ``antecedente'' para una
-construcción publicada, ``deducción'' para una consecuencia demostrada aquí y
-``propuesta'' para un protocolo todavía no cerrado dinámicamente. Ningún
-resultado de Wolfram sobre $f$, $Df$ o $Df\,f$ se describirá como prueba de
-atracción, caos, cuenca u ocultedad.
+\textbf{Terminología de atribución.} ``Antecedente'' designa una construcción
+publicada; ``deducción'', una consecuencia demostrada en las proposiciones precedentes; y
+``propuesta'', un protocolo todavía no cerrado dinámicamente. Los resultados de
+Wolfram sobre $f$, $Df$ o $Df\,f$ se limitan a la verificación algebraica y no
+constituyen pruebas de atracción, caos, cuenca u ocultedad.
 \end{proposalbox}

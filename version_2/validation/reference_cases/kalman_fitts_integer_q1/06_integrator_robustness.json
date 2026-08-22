@@ -1,0 +1,1124 @@
+{
+  "schema_version": 1,
+  "case_id": "kalman_fitts_integer_q1",
+  "system_id": "kalman-fitts-2019",
+  "purpose": "finite_time_integrator_step_and_horizon_robustness",
+  "evidence_scope": "boundedness, Poincare period/return consistency, and geometric cloud agreement only; not a proof of periodicity, attraction, hiddenness, or global basin separation",
+  "inputs": {
+    "target_seed": [
+      -0.8568501753859451,
+      1.5659435663914607,
+      0.5061096169300414,
+      -1.061805076491118
+    ],
+    "target_seed_source": "validation/reference_cases/kalman_fitts_integer_q1/05_verification_summary.json",
+    "target_seed_source_sha256": "3016a41e95d6ccf0c581a800411ab511a53b81f67520fba12404175d233961e6",
+    "canonical_cloud_source": "validation/reference_cases/kalman_fitts_integer_q1/04_final_attractor.csv",
+    "canonical_cloud_source_sha256": "64388fb8e07a6c3e80ee9e76a010e9d536e5458fce84f2eff3db87f145750b02",
+    "canonical_cloud_points_used": 800,
+    "canonical_cloud_scale": 6.812663748129227,
+    "canonical_period": 11.916996023431395,
+    "seed_to_cloud_first_row_residual": 0.0,
+    "system_parameters": {
+      "m1": 0.9,
+      "m2": 1.1,
+      "beta": 0.03,
+      "epsilon": 0.01
+    },
+    "system_reference": {
+      "doi": "10.1016/j.ifacol.2019.11.747",
+      "title": "Coexistence of hidden attractors and multistability in counterexamples to the Kalman conjecture",
+      "year": 2019
+    }
+  },
+  "matrix_contract": {
+    "configurations": [
+      {
+        "config_id": "dop853_standard",
+        "integrator": "DOP853",
+        "output_h": 0.01,
+        "rtol": 1e-09,
+        "atol": 1e-12,
+        "max_step": 0.05
+      },
+      {
+        "config_id": "dop853_tight",
+        "integrator": "DOP853",
+        "output_h": 0.01,
+        "rtol": 1e-11,
+        "atol": 1e-13,
+        "max_step": 0.01
+      },
+      {
+        "config_id": "rk4_h_0p01",
+        "integrator": "RK4",
+        "h": 0.01
+      },
+      {
+        "config_id": "rk4_h_0p005",
+        "integrator": "RK4",
+        "h": 0.005
+      }
+    ],
+    "horizons": [
+      300.0,
+      600.0
+    ],
+    "horizon_rationale": "T=300 matches the maintained final retained window; T=600 doubles it and matches the maintained hiddenness integration horizon",
+    "analysis_start_fraction": 0.5,
+    "poincare_section": "upward crossings of x3=0 with linear interpolation",
+    "return_window": "last 20 crossings after the analysis start",
+    "cloud_metric": "symmetric median nearest-neighbour distance",
+    "cloud_normalization": "Euclidean norm of canonical coordinate spans",
+    "max_cloud_points": 800,
+    "divergence_norm": 100.0,
+    "thresholds": {
+      "period_relative_error_max": 0.005,
+      "period_cv_max": 0.005,
+      "return_state_error_max": 0.02,
+      "cloud_distance_normalized_max": 0.02
+    }
+  },
+  "rows": [
+    {
+      "case_id": "kalman_fitts_integer_q1",
+      "config_id": "dop853_standard",
+      "integrator": "DOP853",
+      "horizon": 300.0,
+      "output_h": 0.01,
+      "internal_h": null,
+      "rtol": 1e-09,
+      "atol": 1e-12,
+      "max_step": 0.05,
+      "status": "ok",
+      "n_output_rows": 30001,
+      "t_reached": 300.0,
+      "finite_fraction": 1.0,
+      "boundedness_status": "bounded_candidate",
+      "max_norm": 2.5132985598368216,
+      "norm_growth_ratio": 1.000772403049778,
+      "n_returns": 12,
+      "period_mean": 11.916937707511995,
+      "period_std": 1.9049740459986728e-06,
+      "period_cv": 1.5985432606548307e-07,
+      "period_relative_error": 4.893508337623453e-06,
+      "return_state_error_max": 0.0014019371269520181,
+      "return_state_error_median": 0.0008145523546698449,
+      "cloud_distance": 0.0023379064676151214,
+      "cloud_distance_normalized": 0.0003431706824305127,
+      "bounded_finite_time": true,
+      "period_consistent": true,
+      "return_consistent": true,
+      "cloud_consistent": true,
+      "configuration_consistent": true,
+      "elapsed_seconds": 2.7138409000181127,
+      "discrepancy_reason": ""
+    },
+    {
+      "case_id": "kalman_fitts_integer_q1",
+      "config_id": "dop853_standard",
+      "integrator": "DOP853",
+      "horizon": 600.0,
+      "output_h": 0.01,
+      "internal_h": null,
+      "rtol": 1e-09,
+      "atol": 1e-12,
+      "max_step": 0.05,
+      "status": "ok",
+      "n_output_rows": 60001,
+      "t_reached": 600.0,
+      "finite_fraction": 1.0,
+      "boundedness_status": "bounded_candidate",
+      "max_norm": 2.5132985473794487,
+      "norm_growth_ratio": 1.0009312912277555,
+      "n_returns": 25,
+      "period_mean": 11.916938028076341,
+      "period_std": 1.8703355480953555e-06,
+      "period_cv": 1.5694766085791832e-07,
+      "period_relative_error": 4.8666085764761984e-06,
+      "return_state_error_max": 0.0013164787480666302,
+      "return_state_error_median": 0.0007005852573454013,
+      "cloud_distance": 0.0013855609979661725,
+      "cloud_distance_normalized": 0.00020338021208615365,
+      "bounded_finite_time": true,
+      "period_consistent": true,
+      "return_consistent": true,
+      "cloud_consistent": true,
+      "configuration_consistent": true,
+      "elapsed_seconds": 8.09336660002009,
+      "discrepancy_reason": ""
+    },
+    {
+      "case_id": "kalman_fitts_integer_q1",
+      "config_id": "dop853_tight",
+      "integrator": "DOP853",
+      "horizon": 300.0,
+      "output_h": 0.01,
+      "internal_h": null,
+      "rtol": 1e-11,
+      "atol": 1e-13,
+      "max_step": 0.01,
+      "status": "ok",
+      "n_output_rows": 30001,
+      "t_reached": 300.0,
+      "finite_fraction": 1.0,
+      "boundedness_status": "bounded_candidate",
+      "max_norm": 2.513298560852481,
+      "norm_growth_ratio": 1.0007724031646912,
+      "n_returns": 12,
+      "period_mean": 11.916937704456025,
+      "period_std": 1.9049619538577146e-06,
+      "period_cv": 1.5985331140443942e-07,
+      "period_relative_error": 4.893764775545687e-06,
+      "return_state_error_max": 0.0014019243122106308,
+      "return_state_error_median": 0.0008144766275695547,
+      "cloud_distance": 0.0023380529925091363,
+      "cloud_distance_normalized": 0.00034319219015486725,
+      "bounded_finite_time": true,
+      "period_consistent": true,
+      "return_consistent": true,
+      "cloud_consistent": true,
+      "configuration_consistent": true,
+      "elapsed_seconds": 17.566753300023265,
+      "discrepancy_reason": ""
+    },
+    {
+      "case_id": "kalman_fitts_integer_q1",
+      "config_id": "dop853_tight",
+      "integrator": "DOP853",
+      "horizon": 600.0,
+      "output_h": 0.01,
+      "internal_h": null,
+      "rtol": 1e-11,
+      "atol": 1e-13,
+      "max_step": 0.01,
+      "status": "ok",
+      "n_output_rows": 60001,
+      "t_reached": 600.0,
+      "finite_fraction": 1.0,
+      "boundedness_status": "bounded_candidate",
+      "max_norm": 2.513298548398276,
+      "norm_growth_ratio": 1.000931291253914,
+      "n_returns": 25,
+      "period_mean": 11.916938025030433,
+      "period_std": 1.8703119735984345e-06,
+      "period_cv": 1.5694568266361846e-07,
+      "period_relative_error": 4.866864170118119e-06,
+      "return_state_error_max": 0.0013165196201551249,
+      "return_state_error_median": 0.000700651135866143,
+      "cloud_distance": 0.0013857463348078965,
+      "cloud_distance_normalized": 0.00020340741684020814,
+      "bounded_finite_time": true,
+      "period_consistent": true,
+      "return_consistent": true,
+      "cloud_consistent": true,
+      "configuration_consistent": true,
+      "elapsed_seconds": 38.44563610001933,
+      "discrepancy_reason": ""
+    },
+    {
+      "case_id": "kalman_fitts_integer_q1",
+      "config_id": "rk4_h_0p01",
+      "integrator": "RK4",
+      "horizon": 300.0,
+      "output_h": 0.01,
+      "internal_h": 0.01,
+      "rtol": null,
+      "atol": null,
+      "max_step": null,
+      "status": "ok",
+      "n_output_rows": 30001,
+      "t_reached": 300.0,
+      "finite_fraction": 1.0,
+      "boundedness_status": "bounded_candidate",
+      "max_norm": 2.5133423012301352,
+      "norm_growth_ratio": 1.0007742003753384,
+      "n_returns": 12,
+      "period_mean": 11.916923230067853,
+      "period_std": 8.059121090152571e-05,
+      "period_cv": 6.7627532162147554e-06,
+      "period_relative_error": 6.108365178460376e-06,
+      "return_state_error_max": 0.001338239746602395,
+      "return_state_error_median": 0.0007811994661833021,
+      "cloud_distance": 0.0028951476667003796,
+      "cloud_distance_normalized": 0.0004249655896337749,
+      "bounded_finite_time": true,
+      "period_consistent": true,
+      "return_consistent": true,
+      "cloud_consistent": true,
+      "configuration_consistent": true,
+      "elapsed_seconds": 2.644147499988321,
+      "discrepancy_reason": ""
+    },
+    {
+      "case_id": "kalman_fitts_integer_q1",
+      "config_id": "rk4_h_0p01",
+      "integrator": "RK4",
+      "horizon": 600.0,
+      "output_h": 0.01,
+      "internal_h": 0.01,
+      "rtol": null,
+      "atol": null,
+      "max_step": null,
+      "status": "ok",
+      "n_output_rows": 60001,
+      "t_reached": 600.0,
+      "finite_fraction": 1.0,
+      "boundedness_status": "bounded_candidate",
+      "max_norm": 2.513342720740312,
+      "norm_growth_ratio": 1.000934715039968,
+      "n_returns": 25,
+      "period_mean": 11.916937262141056,
+      "period_std": 7.846040492678651e-05,
+      "period_cv": 6.583940420333297e-06,
+      "period_relative_error": 4.930881089739463e-06,
+      "return_state_error_max": 0.0014435700593260438,
+      "return_state_error_median": 0.0007160938844171825,
+      "cloud_distance": 0.0018921227754110617,
+      "cloud_distance_normalized": 0.00027773611693820104,
+      "bounded_finite_time": true,
+      "period_consistent": true,
+      "return_consistent": true,
+      "cloud_consistent": true,
+      "configuration_consistent": true,
+      "elapsed_seconds": 6.358681699988665,
+      "discrepancy_reason": ""
+    },
+    {
+      "case_id": "kalman_fitts_integer_q1",
+      "config_id": "rk4_h_0p005",
+      "integrator": "RK4",
+      "horizon": 300.0,
+      "output_h": 0.005,
+      "internal_h": 0.005,
+      "rtol": null,
+      "atol": null,
+      "max_step": null,
+      "status": "ok",
+      "n_output_rows": 60001,
+      "t_reached": 300.0,
+      "finite_fraction": 1.0,
+      "boundedness_status": "bounded_candidate",
+      "max_norm": 2.51329864338363,
+      "norm_growth_ratio": 1.0007696870429645,
+      "n_returns": 12,
+      "period_mean": 11.916937708597162,
+      "period_std": 3.643178479263541e-07,
+      "period_cv": 3.057143175830537e-08,
+      "period_relative_error": 4.893417277132263e-06,
+      "return_state_error_max": 0.00041824816593548673,
+      "return_state_error_median": 0.00024917921203618227,
+      "cloud_distance": 0.004375464157767153,
+      "cloud_distance_normalized": 0.0006422545306112702,
+      "bounded_finite_time": true,
+      "period_consistent": true,
+      "return_consistent": true,
+      "cloud_consistent": true,
+      "configuration_consistent": true,
+      "elapsed_seconds": 6.222661900013918,
+      "discrepancy_reason": ""
+    },
+    {
+      "case_id": "kalman_fitts_integer_q1",
+      "config_id": "rk4_h_0p005",
+      "integrator": "RK4",
+      "horizon": 600.0,
+      "output_h": 0.005,
+      "internal_h": 0.005,
+      "rtol": null,
+      "atol": null,
+      "max_step": null,
+      "status": "ok",
+      "n_output_rows": 120001,
+      "t_reached": 600.0,
+      "finite_fraction": 1.0,
+      "boundedness_status": "bounded_candidate",
+      "max_norm": 2.513298636243603,
+      "norm_growth_ratio": 1.0009283674015492,
+      "n_returns": 25,
+      "period_mean": 11.91693772379457,
+      "period_std": 3.5942297168476754e-07,
+      "period_cv": 3.01606822168003e-08,
+      "period_relative_error": 4.892142005432349e-06,
+      "return_state_error_max": 0.00042614462021045064,
+      "return_state_error_median": 0.00021489267125349498,
+      "cloud_distance": 0.006298148822923646,
+      "cloud_distance_normalized": 0.0009244766886745485,
+      "bounded_finite_time": true,
+      "period_consistent": true,
+      "return_consistent": true,
+      "cloud_consistent": true,
+      "configuration_consistent": true,
+      "elapsed_seconds": 12.58805140000186,
+      "discrepancy_reason": ""
+    }
+  ],
+  "details": [
+    {
+      "config_id": "dop853_standard",
+      "horizon": 300.0,
+      "analysis_start": 150.0,
+      "boundedness": {
+        "burn_time": 150.0,
+        "norm": "euclidean",
+        "post_transient_rows": 15001,
+        "finite_fraction": 1.0,
+        "nonfinite_count": 0,
+        "divergence_radius": 100.0,
+        "boundedness_proves_chaos": false,
+        "chaos_certified_by_boundedness": false,
+        "hiddenness_certified_by_boundedness": false,
+        "max_norm": 2.5132985598368216,
+        "R_observed": 2.5132985598368216,
+        "min_norm": 1.8524678459011357,
+        "mean_norm": 2.2218831156500314,
+        "median_norm": 2.2239343397077898,
+        "final_norm": 2.1360397549725256,
+        "norm_growth_ratio": 1.000772403049778,
+        "coordinate_min": [
+          -2.402452598165051,
+          -1.6710819339495833,
+          -0.9325709560208776,
+          -1.4734745864718095
+        ],
+        "coordinate_max": [
+          2.4024526506948756,
+          1.671081822179364,
+          0.932571007355593,
+          1.4734706651706182
+        ],
+        "coordinate_span": [
+          4.804905248859926,
+          3.3421637561289472,
+          1.8651419633764705,
+          2.9469452516424277
+        ],
+        "boundedness_status": "bounded_candidate"
+      },
+      "coordinate_extrema": {
+        "minimum": [
+          -2.402452598165051,
+          -1.6710819339495833,
+          -0.9325709560208776,
+          -1.4734745864718095
+        ],
+        "maximum": [
+          2.4024526506948756,
+          1.671081822179364,
+          0.932571007355593,
+          1.4734706651706182
+        ],
+        "span": [
+          4.804905248859926,
+          3.3421637561289472,
+          1.8651419633764705,
+          2.9469452516424277
+        ]
+      },
+      "return_states_tail": [
+        [
+          0.21233901969392774,
+          -1.6710720340098804,
+          0.0,
+          1.4725296616986308
+        ],
+        [
+          0.21234347675886017,
+          -1.6710725423886212,
+          0.0,
+          1.4725773354247809
+        ],
+        [
+          0.2123406254888662,
+          -1.6710635742077118,
+          0.0,
+          1.4716707361775736
+        ],
+        [
+          0.21233838538327607,
+          -1.671068411944215,
+          0.0,
+          1.4721797585542968
+        ],
+        [
+          0.21234326593708713,
+          -1.6710772406613688,
+          0.0,
+          1.4729942484390997
+        ]
+      ]
+    },
+    {
+      "config_id": "dop853_standard",
+      "horizon": 600.0,
+      "analysis_start": 300.0,
+      "boundedness": {
+        "burn_time": 300.0,
+        "norm": "euclidean",
+        "post_transient_rows": 30001,
+        "finite_fraction": 1.0,
+        "nonfinite_count": 0,
+        "divergence_radius": 100.0,
+        "boundedness_proves_chaos": false,
+        "chaos_certified_by_boundedness": false,
+        "hiddenness_certified_by_boundedness": false,
+        "max_norm": 2.5132985473794487,
+        "R_observed": 2.5132985473794487,
+        "min_norm": 1.8524678011045037,
+        "mean_norm": 2.2245237687077104,
+        "median_norm": 2.2268640714409544,
+        "final_norm": 2.511080967382266,
+        "norm_growth_ratio": 1.0009312912277555,
+        "coordinate_min": [
+          -2.4024525860537542,
+          -1.6710818177353273,
+          -0.9325709599934454,
+          -1.4734788641615675
+        ],
+        "coordinate_max": [
+          2.4024525965920738,
+          1.6710817892146648,
+          0.9325709314449179,
+          1.4734783176327395
+        ],
+        "coordinate_span": [
+          4.804905182645828,
+          3.342163606949992,
+          1.8651418914383633,
+          2.946957181794307
+        ],
+        "boundedness_status": "bounded_candidate"
+      },
+      "coordinate_extrema": {
+        "minimum": [
+          -2.4024525860537542,
+          -1.6710818177353273,
+          -0.9325709599934454,
+          -1.4734788641615675
+        ],
+        "maximum": [
+          2.4024525965920738,
+          1.6710817892146648,
+          0.9325709314449179,
+          1.4734783176327395
+        ],
+        "span": [
+          4.804905182645828,
+          3.342163606949992,
+          1.8651418914383633,
+          2.946957181794307
+        ]
+      },
+      "return_states_tail": [
+        [
+          0.21234006980675,
+          -1.6710634202269137,
+          0.0,
+          1.4716538313421057
+        ],
+        [
+          0.21233862671864348,
+          -1.671070185106117,
+          0.0,
+          1.4723543824513874
+        ],
+        [
+          0.21234344967465035,
+          -1.6710746537108896,
+          0.0,
+          1.472769610599632
+        ],
+        [
+          0.21234113822254977,
+          -1.6710639442638577,
+          0.0,
+          1.471711470786314
+        ],
+        [
+          0.21233832394988564,
+          -1.6710670391095692,
+          0.0,
+          1.472039952656552
+        ]
+      ]
+    },
+    {
+      "config_id": "dop853_tight",
+      "horizon": 300.0,
+      "analysis_start": 150.0,
+      "boundedness": {
+        "burn_time": 150.0,
+        "norm": "euclidean",
+        "post_transient_rows": 15001,
+        "finite_fraction": 1.0,
+        "nonfinite_count": 0,
+        "divergence_radius": 100.0,
+        "boundedness_proves_chaos": false,
+        "chaos_certified_by_boundedness": false,
+        "hiddenness_certified_by_boundedness": false,
+        "max_norm": 2.513298560852481,
+        "R_observed": 2.513298560852481,
+        "min_norm": 1.852467846289535,
+        "mean_norm": 2.2218831164771027,
+        "median_norm": 2.2239343636724485,
+        "final_norm": 2.1360397824677024,
+        "norm_growth_ratio": 1.0007724031646912,
+        "coordinate_min": [
+          -2.402452599429711,
+          -1.671081934368795,
+          -0.9325709559224963,
+          -1.4734745872398134
+        ],
+        "coordinate_max": [
+          2.4024526519560254,
+          1.671081822610143,
+          0.9325710072443963,
+          1.473470667609453
+        ],
+        "coordinate_span": [
+          4.804905251385737,
+          3.342163756978938,
+          1.8651419631668926,
+          2.9469452548492665
+        ],
+        "boundedness_status": "bounded_candidate"
+      },
+      "coordinate_extrema": {
+        "minimum": [
+          -2.402452599429711,
+          -1.671081934368795,
+          -0.9325709559224963,
+          -1.4734745872398134
+        ],
+        "maximum": [
+          2.4024526519560254,
+          1.671081822610143,
+          0.9325710072443963,
+          1.473470667609453
+        ],
+        "span": [
+          4.804905251385737,
+          3.342163756978938,
+          1.8651419631668926,
+          2.9469452548492665
+        ]
+      },
+      "return_states_tail": [
+        [
+          0.21233901982329592,
+          -1.6710720347908243,
+          0.0,
+          1.4725296942096187
+        ],
+        [
+          0.21234347677933502,
+          -1.6710725424338528,
+          0.0,
+          1.4725772990747699
+        ],
+        [
+          0.2123406254524995,
+          -1.6710635745827727,
+          0.0,
+          1.4716707295335392
+        ],
+        [
+          0.2123383854538222,
+          -1.671068412675539,
+          0.0,
+          1.4721797885028869
+        ],
+        [
+          0.21234326601840883,
+          -1.6710772405584042,
+          0.0,
+          1.47299420266376
+        ]
+      ]
+    },
+    {
+      "config_id": "dop853_tight",
+      "horizon": 600.0,
+      "analysis_start": 300.0,
+      "boundedness": {
+        "burn_time": 300.0,
+        "norm": "euclidean",
+        "post_transient_rows": 30001,
+        "finite_fraction": 1.0,
+        "nonfinite_count": 0,
+        "divergence_radius": 100.0,
+        "boundedness_proves_chaos": false,
+        "chaos_certified_by_boundedness": false,
+        "hiddenness_certified_by_boundedness": false,
+        "max_norm": 2.513298548398276,
+        "R_observed": 2.513298548398276,
+        "min_norm": 1.8524678015539036,
+        "mean_norm": 2.2245237696550486,
+        "median_norm": 2.2268640927257293,
+        "final_norm": 2.5110809762014754,
+        "norm_growth_ratio": 1.000931291253914,
+        "coordinate_min": [
+          -2.4024525873289173,
+          -1.67108181818148,
+          -0.9325709598377119,
+          -1.4734788633332003
+        ],
+        "coordinate_max": [
+          2.402452597861634,
+          1.671081789680318,
+          0.9325709312794138,
+          1.473478314790028
+        ],
+        "coordinate_span": [
+          4.804905185190551,
+          3.342163607861798,
+          1.8651418911171258,
+          2.9469571781232284
+        ],
+        "boundedness_status": "bounded_candidate"
+      },
+      "coordinate_extrema": {
+        "minimum": [
+          -2.4024525873289173,
+          -1.67108181818148,
+          -0.9325709598377119,
+          -1.4734788633332003
+        ],
+        "maximum": [
+          2.402452597861634,
+          1.671081789680318,
+          0.9325709312794138,
+          1.473478314790028
+        ],
+        "span": [
+          4.804905185190551,
+          3.342163607861798,
+          1.8651418911171258,
+          2.9469571781232284
+        ]
+      },
+      "return_states_tail": [
+        [
+          0.21234006968717006,
+          -1.671063420645942,
+          -8.673617379884035e-19,
+          1.4716538296464972
+        ],
+        [
+          0.21233862688321464,
+          -1.6710701862009025,
+          0.0,
+          1.4723544466315706
+        ],
+        [
+          0.21234344973748057,
+          -1.6710746532564338,
+          0.0,
+          1.4727695312732092
+        ],
+        [
+          0.21234113806287785,
+          -1.6710639444964777,
+          0.0,
+          1.4717114485042087
+        ],
+        [
+          0.21233832398538346,
+          -1.6710670400549854,
+          0.0,
+          1.4720400054384215
+        ]
+      ]
+    },
+    {
+      "config_id": "rk4_h_0p01",
+      "horizon": 300.0,
+      "analysis_start": 150.0,
+      "boundedness": {
+        "burn_time": 150.0,
+        "norm": "euclidean",
+        "post_transient_rows": 15001,
+        "finite_fraction": 1.0,
+        "nonfinite_count": 0,
+        "divergence_radius": 100.0,
+        "boundedness_proves_chaos": false,
+        "chaos_certified_by_boundedness": false,
+        "hiddenness_certified_by_boundedness": false,
+        "max_norm": 2.5133423012301352,
+        "R_observed": 2.5133423012301352,
+        "min_norm": 1.8524557006921043,
+        "mean_norm": 2.2218854299758672,
+        "median_norm": 2.223883020610617,
+        "final_norm": 2.136134791139342,
+        "norm_growth_ratio": 1.0007742003753384,
+        "coordinate_min": [
+          -2.4025064540839014,
+          -1.6711024717530376,
+          -0.9325739228278715,
+          -1.4734977516773244
+        ],
+        "coordinate_max": [
+          2.402506363110099,
+          1.6711023228835715,
+          0.9325740156337555,
+          1.4734968890469182
+        ],
+        "coordinate_span": [
+          4.805012817194001,
+          3.342204794636609,
+          1.865147938461627,
+          2.9469946407242427
+        ],
+        "boundedness_status": "bounded_candidate"
+      },
+      "coordinate_extrema": {
+        "minimum": [
+          -2.4025064540839014,
+          -1.6711024717530376,
+          -0.9325739228278715,
+          -1.4734977516773244
+        ],
+        "maximum": [
+          2.402506363110099,
+          1.6711023228835715,
+          0.9325740156337555,
+          1.4734968890469182
+        ],
+        "span": [
+          4.805012817194001,
+          3.342204794636609,
+          1.865147938461627,
+          2.9469946407242427
+        ]
+      },
+      "return_states_tail": [
+        [
+          0.2123411675174998,
+          -1.6710904927520638,
+          0.0,
+          1.4726576369617048
+        ],
+        [
+          0.21234309394530404,
+          -1.6710758568919593,
+          0.0,
+          1.4724378177871054
+        ],
+        [
+          0.21233880854181733,
+          -1.6710443590678878,
+          0.0,
+          1.4716572653363624
+        ],
+        [
+          0.2123398786230261,
+          -1.671078680712809,
+          0.0,
+          1.472275090989819
+        ],
+        [
+          0.21234400858415808,
+          -1.6710893247495726,
+          0.0,
+          1.4728365364441687
+        ]
+      ]
+    },
+    {
+      "config_id": "rk4_h_0p01",
+      "horizon": 600.0,
+      "analysis_start": 300.0,
+      "boundedness": {
+        "burn_time": 300.0,
+        "norm": "euclidean",
+        "post_transient_rows": 30001,
+        "finite_fraction": 1.0,
+        "nonfinite_count": 0,
+        "divergence_radius": 100.0,
+        "boundedness_proves_chaos": false,
+        "chaos_certified_by_boundedness": false,
+        "hiddenness_certified_by_boundedness": false,
+        "max_norm": 2.513342720740312,
+        "R_observed": 2.513342720740312,
+        "min_norm": 1.8524561485621842,
+        "mean_norm": 2.2245248497423744,
+        "median_norm": 2.226819536930985,
+        "final_norm": 2.511143732814708,
+        "norm_growth_ratio": 1.000934715039968,
+        "coordinate_min": [
+          -2.4025063960544566,
+          -1.6711022604465877,
+          -0.9325739793134419,
+          -1.4734951203502604
+        ],
+        "coordinate_max": [
+          2.4025064853832188,
+          1.671102454840577,
+          0.9325738989016259,
+          1.4734925569244017
+        ],
+        "coordinate_span": [
+          4.805012881437675,
+          3.342204715287165,
+          1.8651478782150677,
+          2.946987677274662
+        ],
+        "boundedness_status": "bounded_candidate"
+      },
+      "coordinate_extrema": {
+        "minimum": [
+          -2.4025063960544566,
+          -1.6711022604465877,
+          -0.9325739793134419,
+          -1.4734951203502604
+        ],
+        "maximum": [
+          2.4025064853832188,
+          1.671102454840577,
+          0.9325738989016259,
+          1.4734925569244017
+        ],
+        "span": [
+          4.805012881437675,
+          3.342204715287165,
+          1.8651478782150677,
+          2.946987677274662
+        ]
+      },
+      "return_states_tail": [
+        [
+          0.21233851860043673,
+          -1.6710460693261657,
+          0.0,
+          1.4716596659637444
+        ],
+        [
+          0.2123406560240928,
+          -1.6710864657481412,
+          0.0,
+          1.4725103462952915
+        ],
+        [
+          0.2123434851868947,
+          -1.671080866766539,
+          0.0,
+          1.472575097512973
+        ],
+        [
+          0.21233905334443512,
+          -1.6710443869832752,
+          0.0,
+          1.4716737197219183
+        ],
+        [
+          0.21233950450767441,
+          -1.6710740292732196,
+          0.0,
+          1.4721559762080916
+        ]
+      ]
+    },
+    {
+      "config_id": "rk4_h_0p005",
+      "horizon": 300.0,
+      "analysis_start": 150.0,
+      "boundedness": {
+        "burn_time": 150.0,
+        "norm": "euclidean",
+        "post_transient_rows": 30001,
+        "finite_fraction": 1.0,
+        "nonfinite_count": 0,
+        "divergence_radius": 100.0,
+        "boundedness_proves_chaos": false,
+        "chaos_certified_by_boundedness": false,
+        "hiddenness_certified_by_boundedness": false,
+        "max_norm": 2.51329864338363,
+        "R_observed": 2.51329864338363,
+        "min_norm": 1.8524678492332705,
+        "mean_norm": 2.221890637563979,
+        "median_norm": 2.22393585080366,
+        "final_norm": 2.1360415692781602,
+        "norm_growth_ratio": 1.0007696870429645,
+        "coordinate_min": [
+          -2.4024527360216426,
+          -1.671081993860089,
+          -0.9325709505665404,
+          -1.4734799199440907
+        ],
+        "coordinate_max": [
+          2.402452786293599,
+          1.6710818822830633,
+          0.9325709987506046,
+          1.4734721129297885
+        ],
+        "coordinate_span": [
+          4.8049055223152415,
+          3.342163876143152,
+          1.8651419493171448,
+          2.946952032873879
+        ],
+        "boundedness_status": "bounded_candidate"
+      },
+      "coordinate_extrema": {
+        "minimum": [
+          -2.4024527360216426,
+          -1.671081993860089,
+          -0.9325709505665404,
+          -1.4734799199440907
+        ],
+        "maximum": [
+          2.402452786293599,
+          1.6710818822830633,
+          0.9325709987506046,
+          1.4734721129297885
+        ],
+        "span": [
+          4.8049055223152415,
+          3.342163876143152,
+          1.8651419493171448,
+          2.946952032873879
+        ]
+      },
+      "return_states_tail": [
+        [
+          0.21234179651118834,
+          -1.6710778864513403,
+          0.0,
+          1.4729777953321685
+        ],
+        [
+          0.21234236495007108,
+          -1.6710780219756978,
+          0.0,
+          1.4729910954501366
+        ],
+        [
+          0.21234219095234308,
+          -1.6710803744838834,
+          0.0,
+          1.473224078516345
+        ],
+        [
+          0.21234193805425927,
+          -1.6710772428557876,
+          0.0,
+          1.4729132549810993
+        ],
+        [
+          0.2123426047499602,
+          -1.6710797390289915,
+          0.0,
+          1.473162420798071
+        ]
+      ]
+    },
+    {
+      "config_id": "rk4_h_0p005",
+      "horizon": 600.0,
+      "analysis_start": 300.0,
+      "boundedness": {
+        "burn_time": 300.0,
+        "norm": "euclidean",
+        "post_transient_rows": 60001,
+        "finite_fraction": 1.0,
+        "nonfinite_count": 0,
+        "divergence_radius": 100.0,
+        "boundedness_proves_chaos": false,
+        "chaos_certified_by_boundedness": false,
+        "hiddenness_certified_by_boundedness": false,
+        "max_norm": 2.513298636243603,
+        "R_observed": 2.513298636243603,
+        "min_norm": 1.85246784131814,
+        "mean_norm": 2.224522198172736,
+        "median_norm": 2.2268655723558486,
+        "final_norm": 2.5110816606105835,
+        "norm_growth_ratio": 1.0009283674015492,
+        "coordinate_min": [
+          -2.4024527411840846,
+          -1.6710818925091717,
+          -0.932570970707114,
+          -1.4734802528285815
+        ],
+        "coordinate_max": [
+          2.4024527409397054,
+          1.6710818888010524,
+          0.9325709730399155,
+          1.473480203558669
+        ],
+        "coordinate_span": [
+          4.8049054821237895,
+          3.342163781310224,
+          1.8651419437470296,
+          2.9469604563872505
+        ],
+        "boundedness_status": "bounded_candidate"
+      },
+      "coordinate_extrema": {
+        "minimum": [
+          -2.4024527411840846,
+          -1.6710818925091717,
+          -0.932570970707114,
+          -1.4734802528285815
+        ],
+        "maximum": [
+          2.4024527409397054,
+          1.6710818888010524,
+          0.9325709730399155,
+          1.473480203558669
+        ],
+        "span": [
+          4.8049054821237895,
+          3.342163781310224,
+          1.8651419437470296,
+          2.9469604563872505
+        ]
+      },
+      "return_states_tail": [
+        [
+          0.2123426029231956,
+          -1.6710818215731909,
+          0.0,
+          1.473361156879467
+        ],
+        [
+          0.21234183165021417,
+          -1.6710774573231422,
+          0.0,
+          1.4729350353055073
+        ],
+        [
+          0.21234249720875095,
+          -1.671078703579787,
+          0.0,
+          1.4730600736837782
+        ],
+        [
+          0.21234195789065308,
+          -1.6710793206186743,
+          0.0,
+          1.4731216905174092
+        ],
+        [
+          0.21234207050811557,
+          -1.671077292886681,
+          0.0,
+          1.4729179732552329
+        ]
+      ]
+    }
+  ],
+  "summary": {
+    "n_rows": 8,
+    "n_consistent": 8,
+    "n_discrepant": 0,
+    "all_configurations_consistent": true,
+    "discrepancies": [],
+    "interpretation": "A consistent row supports finite-time numerical persistence of the maintained cycle under that solver contract only."
+  },
+  "environment": {
+    "python": "3.14.7 (tags/v3.14.7:823f032, Aug  5 2026, 10:51:32) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.4.2",
+    "scipy": "1.17.1"
+  }
+}

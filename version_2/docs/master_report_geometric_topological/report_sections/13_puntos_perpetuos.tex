@@ -1,15 +1,17 @@
-\section{Puntos perpetuos: teoría entera, extensión Caputo y uso complementario}
+\section[Puntos perpetuos enteros y extensiones Caputo]
+{Puntos perpetuos: teoría entera, extensión Caputo y uso complementario}
 \label{sec:perpetual-points}
 
 \HAFOCardPerpetual
 
-\subsection{Antecedentes, promesa original y resultados negativos}
+\subsection{Antecedentes, alcance y contraejemplos}
 
 Prasad introdujo los puntos perpetuos para campos autónomos ordinarios como
 puntos de velocidad no nula y aceleración nula
 \cite{Prasad2015Perpetual}. Dudkowski, Prasad y Kapitaniak desarrollaron su uso
 como condiciones iniciales para rastrear atractores coexistentes, incluidos
-atractores raros u ocultos \cite{DudkowskiPrasadKapitaniak2017}, y estudios
+atractores raros u ocultos
+\cite{DudkowskiPrasadKapitaniak2015,DudkowskiPrasadKapitaniak2017}, y estudios
 posteriores compararon puntos regulares y perpetuos en varios tipos de
 sistemas \cite{DudkowskiPrasadKapitaniak2018}.
 
@@ -22,13 +24,41 @@ sistema sin equilibrios cuyo atractor no se encuentra por esta vía
 \cite{NagChowdhuryGhosh2020}. Por tanto, un PP es una semilla geométrica, no
 una condición necesaria ni suficiente para un atractor oculto.
 
-La búsqueda semántica realizada con SciSpace recuperó esos trabajos enteros y
-las críticas, pero no localizó una publicación primaria que formule puntos
-perpetuos para sistemas de Caputo preservando explícitamente la memoria, la
-falta de regla de cadena local y la ausencia general de semigrupo. La
-extensión fraccionaria que sigue se presenta, en consecuencia, como una
-\emph{propuesta del proyecto con fundamento derivado aquí}, no como una
+La revisión del corpus bibliográfico local ---artículos descargados y
+colección de Zotero--- recuperó trabajos directos sobre puntos perpetuos y sus
+límites \cite{DudkowskiPrasadKapitaniak2015,NazarimehrSaediJafari2017,
+NagChowdhuryGhosh2020}, además de revisiones generales de atractores ocultos y
+métodos de localización \cite{DudkowskiEtAl2016,GuanXie2025}, pero no localizó
+una publicación primaria que formule puntos perpetuos para sistemas
+de Caputo preservando explícitamente la memoria, la falta de regla de cadena
+local y la ausencia general de semigrupo. Este resultado acota el corpus
+consultado; no demuestra inexistencia bibliográfica universal. La extensión
+fraccionaria que sigue se formula, en consecuencia, como una
+\emph{propuesta metodológica derivada de la formulación de Caputo}, no como una
 teoría ya establecida.
+
+\begin{table}[H]
+\centering
+\caption{Procedencia bibliográfica y alcance matemático de las construcciones.}
+\label{tab:pp-status-map}
+\small
+\begin{tabularx}{\linewidth}{@{}L{0.30\linewidth}Y@{}}
+\toprule
+Construcción & Procedencia y significado \\
+\midrule
+PP entero, \(Df(p)f(p)=0\), \(f(p)\ne0\) & Definición publicada y semilla
+heurística con contraejemplos conocidos. \\
+Caputo, Volterra, Picard, inicialización y L1 & Herramientas publicadas sobre
+las que se construye la extensión. \\
+FPP--A & Formulación propuesta: cancela el término local de orden
+\(h^{2q}\); no es aceleración fraccionaria global. \\
+FPP--H & Formulación propuesta: evento dependiente de la historia, no punto
+intrínseco de \(\mathbb R^n\). \\
+Caso inconmensurable y versión Bouligand/PWA & Propuestas teóricas que exigen
+desarrollo adicional. \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{Derivación completa para una ODE autónoma}
 
@@ -54,7 +84,7 @@ Un punto \(p\in\Omega\) es perpetuo para \cref{eq:pp-ode} si
 La segunda condición excluye todos los equilibrios.
 \end{definition}
 
-El algoritmo algebraico correcto resuelve primero las \(n\) ecuaciones
+El algoritmo algebraico consiste en resolver primero las \(n\) ecuaciones
 \begin{equation}
  a(x):=J_f(x)f(x)=0,
  \label{eq:pp-algebraic-system}
@@ -153,17 +183,17 @@ En un campo PWA \(f_j(x)=A_jx+d_j\), los PP interiores de la región
 Una raíz algebraica fuera de su región se descarta. Sobre una superficie de
 conmutación se necesitan aceleraciones laterales, una selección de Clarke o
 una convención de Filippov; una igualdad obtenida con una derivada inexistente
-no se promueve como PP.
+no se clasifica como PP.
 
 Para un sistema forzado \(\dot x=f(t,x)\), la aceleración es
 \begin{equation}
  \ddot x=\partial_t f(t,x)+J_xf(t,x)f(t,x).
 \end{equation}
-Omitir \(\partial_t f\) cambia la definición. El presente reporte se restringe
-a campos autónomos o a una extensión autónoma declarada con la fase del
+Omitir \(\partial_t f\) cambia la definición. El análisis se restringe a
+campos autónomos o a una extensión autónoma declarada con la fase del
 forzamiento como estado adicional.
 
-\subsection{Por qué la traducción ingenua a Caputo falla}
+\subsection{Limitaciones de la extensión directa a Caputo}
 
 Considérese ahora el PVI conmensurable
 \begin{equation}
@@ -171,7 +201,7 @@ Considérese ahora el PVI conmensurable
  \qquad x(t_0)=x_0,\qquad 0<q<1.
  \label{eq:pp-caputo-ivp}
 \end{equation}
-No es correcto escribir
+La siguiente regla de cadena local no es válida en general:
 \begin{equation}
  {}^{\mathrm C}D^q[f(x(t))]
  \stackrel{\text{en general}}{\neq}
@@ -251,7 +281,7 @@ soluciones no constantes exactamente periódicas
 debe decirse oscilación acotada, recurrencia o periodicidad aparente en ventana
 finita, salvo que se cambie el operador o su terminal inferior.
 
-\subsection{Carril FPP--A: semilla algebraica de arranque Picard--Caputo}
+\subsection{FPP--A: semilla algebraica de arranque Picard--Caputo}
 
 La ecuación integral equivalente a \cref{eq:pp-caputo-ivp} es
 \begin{equation}
@@ -329,7 +359,7 @@ La norma del coeficiente Hessiano y la pendiente log--log \(2q\) sirven para
 ordenar semillas degeneradas. No constituyen estabilidad de Lyapunov, pues
 una FPP no es un equilibrio.
 
-\subsection{Carril FPP--H: evento perpetuo dependiente de historia}
+\subsection{FPP--H: evento perpetuo dependiente de historia}
 
 Definimos la velocidad fraccionaria a lo largo de una trayectoria por
 \begin{equation}
@@ -389,7 +419,7 @@ las componentes con \(q_j=q_\star\). La expansión componente a componente da
  J_f(x_0)P_\star f(x_0)+o(h^{q_\star}).
  \label{eq:pp-incommensurate-leading}
 \end{equation}
-La primera cancelación correcta es
+La condición de cancelación del término dominante es
 \begin{equation}
  J_f(x_0)P_\star f(x_0)=0,
  \label{eq:pp-incommensurate-condition}
@@ -422,7 +452,7 @@ de \cref{eq:fpph-sequential-definition} es
  (g_{n-j}-g_{n-j-1}).
  \label{eq:fpph-l1}
 \end{equation}
-El diagnóstico normalizado usado en el piloto es
+El diagnóstico normalizado usado en el experimento numérico es
 \begin{equation}
  \eta_{q,n}
  =\frac{\|\mathcal A_{q,n}^{L1}\|_2}{1+\|f(x_n)\|_2}.
@@ -430,8 +460,8 @@ El diagnóstico normalizado usado en el piloto es
 \end{equation}
 Se excluye un intervalo de arranque, se buscan mínimos locales y se exige
 \(\|f(x_n)\|>\nu\). Un cero vectorial a lo largo de una curva unidimensional
-no es genérico; por eso una promoción requiere que el mínimo y la trayectoria
-converjan al usar \(h,h/2\) y, en una ventana corta, \(h/4\), siempre con el
+no es genérico; por eso su clasificación como evento requiere que el mínimo y
+la trayectoria converjan al usar \(h,h/2\) y, en una ventana corta, \(h/4\), siempre con el
 mismo terminal inferior y la misma política de memoria. Un umbral visual no
 es suficiente.
 
@@ -461,11 +491,11 @@ prehistoria prescrita. La cuenca observada es entonces
  =\iota^{-1}[\mathcal B_{\mathfrak C}(\mathcal A)].
  \label{eq:pp-reset-section-basin}
 \end{equation}
-Separación sobre esta sección es más débil que separación en todo el espacio
-funcional. Los sondeos de este reporte certifican únicamente la convención de
+La separación en la sección de reinicio es más débil que la separación en todo
+el espacio funcional. Los sondeos realizados certifican únicamente la convención de
 reinicio declarada; no reclaman \cref{eq:pp-functional-hiddenness}.
 
-\subsection{Banco entero publicado de regresión}
+\subsection{Ejemplo entero publicado para verificación}
 
 Un ejemplo algebraicamente cerrado de la literatura es
 \begin{align}
@@ -501,8 +531,8 @@ Con \(\alpha=-0.05\), las coordenadas \(y\) son
 \(f=(y,0,0)^\mathsf T\neq0\). La literatura reporta destinos diferentes:
 la raíz positiva localiza el atractor oculto y la negativa produce una órbita
 no acotada \cite{Prasad2015Perpetual,DudkowskiPrasadKapitaniak2018}. Es una
-prueba de regresión obligatoria para una implementación general, porque evita
-codificar la falsa regla «todo PP funciona».
+prueba de regresión necesaria para una implementación general, porque evita
+suponer que todo punto perpetuo localiza el atractor de interés.
 
 En estas raíces,
 \begin{equation}
@@ -518,17 +548,17 @@ por lo que \cref{eq:pp-hessian-tiebreaker} predice
 \end{equation}
 La pendiente \(2q\) es una prueba numérica directa de la traducción Caputo.
 
-\subsection{Resolución algebraica en los ejemplos del reporte}
+\subsection{Resolución algebraica en los sistemas analizados}
 \label{sec:pp-case-audit}
 
-Para esta guía se resolvió \(J_f f=0\) con álgebra simbólica, se eliminaron los
+Se resolvió \(J_f f=0\) con álgebra simbólica, se eliminaron los
 equilibrios, se sustituyó cada raíz a precisión alta y se comprobaron las
 regiones PWA y las simetrías. La
 \cref{tab:pp-case-map} resume el resultado; después se muestran las
 derivaciones representativas.
 
 \begin{longtable}{@{}L{0.20\linewidth}L{0.25\linewidth}L{0.25\linewidth}L{0.22\linewidth}@{}}
-\caption{Aplicabilidad de puntos perpetuos en los expedientes del reporte.}
+\caption{Aplicabilidad de puntos perpetuos en los sistemas analizados.}
 \label{tab:pp-case-map}\\
 \toprule
 Caso & Raíces no estacionarias & Uso propuesto & Estado de evidencia\\
@@ -543,23 +573,23 @@ negativo; DF y continuación siguen siendo necesarios & Wolfram algebraico.\\
 Chua arctan Wu & Un par simétrico & Semillas FPP--A fraccionarias & Wolfram;
 dinámica PP pendiente.\\
 Chua arctan c590 & Un par muy lejano, con \(\|f\|\approx545\) & Control de
-divergencia/mala semilla & Wolfram; no promover.\\
+divergencia y de semillas inadecuadas & Wolfram; requiere validación adicional.\\
 Kalman--Fitts & Ninguna, porque \(\det J_f=0.98191881\) & Control negativo de
-la criba singular & Wolfram y expediente A1 existente.\\
-MAVPD & Dos raíces cerradas por parámetro & Primer piloto entero & Wolfram,
+la condición singular necesaria & Wolfram y análisis A1 existente.\\
+MAVPD & Dos raíces cerradas por parámetro & Experimento preliminar entero & Wolfram,
 DOP853 y figuras nuevas.\\
 PLL lead--lag & Dos raíces por vuelta del cilindro & Comparar con órbita
 corredora en coordenadas físicas & Wolfram; dinámica PP pendiente.\\
-Lorenz generalizado \(q=0.995\) & Dos raíces no estacionarias & Segundo piloto
+Lorenz generalizado \(q=0.995\) & Dos raíces no estacionarias & Segundo experimento
 fraccionario tras Muñoz & Wolfram; caso aún de referencia.\\
-Rabinovich--Fabrikant \(q=0.998\) & Ocho raíces en cuatro pares & Banco MIMO
+Rabinovich--Fabrikant \(q=0.998\) & Ocho raíces en cuatro pares & Caso de referencia MIMO
 con deduplicación por simetría & Wolfram; caso aún de referencia.\\
-Muñoz--Pacheco \(q=0.97\) & Cuatro raíces cerradas & Primer piloto Caputo
+Muñoz--Pacheco \(q=0.97\) & Cuatro raíces cerradas & Experimento preliminar Caputo
 FPP--A/FPP--H & Wolfram, ABM completo y figuras nuevas.\\
 \bottomrule
 \end{longtable}
 
-\subsubsection{MAVPD: solución cerrada y piloto entero}
+\subsubsection{MAVPD: solución cerrada y experimento preliminar entero}
 
 Para
 \begin{equation}
@@ -591,9 +621,9 @@ con \(\gamma>0\), \(\rho\neq\delta\). Para
 Wolfram devolvió \(J_f(p_\pm)f(p_\pm)=0\) exactamente y
 \(\|f(p_\pm)\|=3.44265186329548\).
 
-El piloto DOP853, \(t\in[0,120]\), tolerancias
+El experimento DOP853, \(t\in[0,120]\), con tolerancias
 \(10^{-10}/10^{-12}\), llegó desde ambos PP a las órbitas periódicas
-simétricas ya conocidas del expediente. En \(t\ge80\) los rangos fueron
+simétricas ya conocidas del análisis. En \(t\ge80\) los rangos fueron
 \((0.37943,0.05722,0.97545)\). El detector registró 74 y 75 máximos, periodos
 medios \(0.53760\) y \(0.53730\), y coeficientes de variación \(0.0361\) y
 \(0.0223\), respectivamente. Así, la clasificación periódica queda
@@ -601,17 +631,17 @@ respaldada por los diagnósticos cuantitativos y no sólo por la figura. Esto de
 de localización en este caso, no suficiencia general ni una nueva prueba de
 ocultedad.
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
  \centering
  \includegraphics[width=0.98\linewidth]{figures/perpetual/perpetual_mavpd_integer.png}
- \caption{Piloto PP entero en MAVPD, \(\xi=3.1\). Las cruces son los PP
+ \caption{Experimento PP entero en MAVPD, \(\xi=3.1\). Las cruces son los PP
  exactos; las curvas son los destinos después del transitorio. El panel
  derecho muestra que \(J_f f=0\) sólo en el instante inicial y no a lo largo de
  toda la órbita.}
  \label{fig:pp-mavpd-pilot}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
-\subsubsection{Muñoz--Pacheco: cuatro raíces cerradas y piloto Caputo}
+\subsubsection{Muñoz--Pacheco: cuatro raíces cerradas y experimento preliminar Caputo}
 
 Para
 \begin{equation}
@@ -660,17 +690,17 @@ Wolfram dio residuo vectorial exactamente cero; las normas del campo son
 \(0.2365640964\) y \(7.2845066702\). Todas las raíces están separadas de
 \(x=0\), por lo que la derivada regional de \(|x|\) es válida.
 
-El piloto Caputo usó \(q=0.97\), PECE de Diethelm con historia completa,
+El experimento Caputo usó \(q=0.97\), PECE de Diethelm con historia completa,
 \(h=0.01\) y \(t_f=35\). Las cuatro trayectorias permanecieron finitas; las
 normas máximas fueron \(6.421\) para el par interior y \(10.178\) para el
 exterior. Los rangos no triviales no certifican un atractor ni caos: son una
-prueba de que las cuatro semillas generan órbitas computables y un banco para
+prueba de que las cuatro semillas generan órbitas computables y un caso de referencia para
 refinar paso, horizonte y clasificación.
 
 \begin{hafodigitalfigure}[H]
  \centering
  \includegraphics[width=0.96\linewidth]{figures/perpetual/perpetual_munoz_caputo.png}
- \caption{Piloto Caputo desde las cuatro semillas FPP--A exactas de
+ \caption{Experimento Caputo desde las cuatro semillas FPP--A exactas de
  Muñoz--Pacheco. Las cruces indican el estado inicial. Las curvas muestran
  trayectorias finitas, no una afirmación de atracción ni ocultedad.}
  \label{fig:pp-munoz-pilot}
@@ -680,7 +710,7 @@ Para FPP1 se calculó además \cref{eq:fpph-l1}. En el horizonte común
 \([2,17.5]\), las curvas \(h=0.01\) y \(h=0.005\) concuerdan cualitativamente,
 pero ningún mínimo converge a cero: el refinamiento dio un mínimo normalizado
 aproximado \(0.0871\) cerca de \(t=11.965\). La corrida gruesa alcanzó
-\(0.0254\) en \(t=32.33\), fuera del horizonte fino, y por eso no se promueve
+\(0.0254\) en \(t=32.33\), fuera del horizonte fino, y por eso no se clasifica
 como evento FPP--H. El panel de arranque sí muestra que el cociente de
 \cref{eq:pp-startup-limit} decrece hacia el residuo algebraico cero al refinar
 \(h\).
@@ -750,7 +780,7 @@ incluida la derivada de \(\tanh\), a la constante
  \det J_f=0.98191881\neq0.
 \end{equation}
 Por \cref{eq:pp-singular-screen}, no existe PP. El mapa de conmutación y la
-ruta A1 del expediente son, de nuevo, complementos indispensables.
+metodología A1 del análisis son, de nuevo, complementos indispensables.
 
 \subsubsection{PLL lead--lag}
 
@@ -829,7 +859,7 @@ presupuesto a cada uno.
  excluir \(\|f\|\leq\nu\), verificar región y residuo a 50 dígitos en Wolfram.
  \item[PP2] En entero, integrar desde cada PP, perturbaciones radiales
  \(10^{-6},10^{-4},10^{-2}\) y controles aleatorios de igual norma, con la
- configuración del expediente.
+ configuración analizada.
  \item[PP3] En Caputo, distinguir FPP--A de FPP--H; usar historia completa como
  oráculo, terminal inferior común, \(h,h/2\) y una réplica corta \(h/4\).
  \item[PP4] Clasificar destino, recurrencia, robustez y, para FPP--H, mínimos de
@@ -839,7 +869,7 @@ presupuesto a cada uno.
 \end{description}
 
 Para Muñoz--Pacheco no hay equilibrios; la condición usual de cuenca separada
-de vecindades de equilibrios es vacua. El piloto evalúa capacidad de
+de vecindades de equilibrios es vacua. El experimento evalúa capacidad de
 localización y coexistencia, no distingue por sí solo entre autoexcitación y
 ocultedad. El control de Nag Chowdhury--Ghosh debe acompañar cualquier
 afirmación de generalidad.
@@ -878,16 +908,17 @@ La estrategia propuesta usa la \emph{unión} de semillas. Para cada caso se
 compara, con igual presupuesto, DF clásica, DF sesgada, Machado, balance MIMO,
 FPP--A y controles aleatorios; la continuación transporta las supervivientes;
 FPP--H diagnostica la historia; y los sondeos de cuenca conservan el nivel
-probatorio final. No se selecciona un único método ganador.
+probatorio final. La comparación no establece superioridad universal de un
+método.
 
-\subsection{Frontera de novedad}
+\subsection{Procedencia bibliográfica y alcance}
 
 \begin{proposalbox}
-\textbf{Fundamento conocido.} La definición \(J_f f=0\), su uso como semilla y
+\textbf{Resultados establecidos.} La definición \(J_f f=0\), su uso como semilla y
 sus limitaciones pertenecen a la literatura de puntos perpetuos. Caputo,
 Volterra, Picard y L1 son herramientas establecidas.
 
-\textbf{Propuesta del proyecto.} (i) reinterpretar \(J_f f=0\) para
+\textbf{Formulaciones evaluadas.} (i) reinterpretar \(J_f f=0\) para
 \(0<q<1\) como cancelación del coeficiente \(h^{2q}\) de la expansión
 Picard--Caputo, con el límite de arranque
 \cref{eq:pp-startup-limit}; (ii) separar esa semilla de estado FPP--A del
@@ -895,15 +926,15 @@ evento estado--historia FPP--H; (iii) exigir historia común, refinamiento L1 y
 comparación con reset; y (iv) integrar PP con DF, Machado, balance MIMO,
 continuación y sondeos de cuenca dentro de una matriz de evidencia.
 
-La revisión actual no encontró esta formulación completa en una fuente
-primaria. Eso la hace potencialmente original, no establece prioridad
-histórica definitiva. Una publicación deberá incluir una revisión sistemática
-adicional y teoremas de existencia/regularidad para
+La formulación completa no se identificó en el corpus revisado. Su prioridad
+histórica permanece indeterminada y requiere una revisión sistemática
+adicional, además de teoremas de existencia y regularidad para
 \cref{eq:fpph-history-integral}.
 \end{proposalbox}
 
-La primera agenda numérica queda ordenada así: MAVPD \(q=1\) como control
-positivo; Chua PWL y Kalman como controles sin PP; Muñoz--Pacheco \(q=0.97\)
-como primer banco FPP--A/FPP--H; Lorenz \(q=0.995\) y RF \(q=0.998\) como
-siguientes pruebas MIMO; Wu \(q=0.99\) como control fraccionario con expediente
-existente; c590 como prueba de rechazo de semillas lejanas.
+La evaluación numérica propuesta comienza con MAVPD \(q=1\) como control
+positivo y con Chua PWL y Kalman como controles sin PP. Muñoz--Pacheco
+\(q=0.97\) constituye el primer caso de referencia FPP--A/FPP--H; Lorenz
+\(q=0.995\) y RF \(q=0.998\) proporcionan las siguientes pruebas MIMO; Wu
+\(q=0.99\) actúa como control fraccionario con análisis existente; y c590,
+como prueba de rechazo de semillas lejanas.

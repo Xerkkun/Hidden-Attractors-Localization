@@ -100,9 +100,9 @@ a_2&=-3.3367815123,\\
 Los dos conjuntos de parámetros pertenecen a la misma familia
 \cref{eq:chua_arctan}, pero corresponden a experimentos independientes.
 
-Las ecuaciones anteriores no se usarán como una caja negra. Antes de introducir
-la estabilidad fraccionaria se desarrollan sus equilibrios, sus jacobianos y
-su polinomio característico; así, el criterio de Matignon se aplicará a un
+El análisis de las ecuaciones incluye sus equilibrios, sus jacobianos y su
+polinomio característico antes de introducir la estabilidad fraccionaria; así,
+el criterio de Matignon se aplica a un
 objeto que ya fue obtenido paso a paso.
 
 \begingroup
@@ -137,8 +137,8 @@ objeto que ya fue obtenido paso a paso.
 
 \subsection{Funciones especiales e integral de Riemann--Liouville}
 
-El cálculo fraccionario usa tres objetos que conviene dominar antes de
-introducir una derivada. Para \(z>0\) y \(a,b>0\),
+El cálculo fraccionario se apoya en tres objetos previos a la definición de una
+derivada. Para \(z>0\) y \(a,b>0\),
 \begin{align}
  \Gamma(z)&=\int_0^\infty t^{z-1}e^{-t}\,\dd t,
  &\Gamma(z+1)&=z\Gamma(z),\label{eq:gamma-fractional}\\
@@ -165,9 +165,8 @@ Riemann--Liouville es
 \end{equation}
 La identidad beta--Gamma permite probar
 \(I_{t_0}^{\alpha}I_{t_0}^{\beta}=I_{t_0}^{\alpha+\beta}\) bajo las
-hipótesis usuales de integrabilidad. Esta ley para integrales no debe
-confundirse con una ley de semigrupo temporal para el estado puntual de un
-PVI con memoria.
+hipótesis usuales de integrabilidad. Esta ley para integrales es distinta de
+una ley de semigrupo temporal para el estado puntual de un PVI con memoria.
 
 \subsection{Riemann--Liouville y Caputo: diferencia operativa}
 
@@ -225,17 +224,17 @@ Esta igualdad es la base del integrador ABM y de la continuación con memoria:
 en ambos casos se discretiza una sola integral cuyo límite inferior permanece
 fijo.
 
-La ruta numérica se desarrolla en \cref{sec:abm}. Como ejercicio previo a los
-casos tridimensionales, conviene resolver una ecuación lineal cuya solución se
-exprese con \cref{eq:mittag-leffler-definition}, derivar los pesos del
-predictor y del corrector y comparar \(h\), \(h/2\) y \(h/4\). Una
-aproximación de memoria corta sólo es admisible si declara qué parte del
-integral se elimina y acota ese error; no es un cambio meramente informático.
+La ruta numérica se desarrolla en \cref{sec:abm}. Una validación preliminar
+consiste en resolver una ecuación lineal cuya solución se exprese con
+\cref{eq:mittag-leffler-definition}, derivar los pesos del predictor y del
+corrector y comparar \(h\), \(h/2\) y \(h/4\). Una aproximación de memoria
+corta requiere identificar la parte eliminada del integral y acotar el error;
+por tanto, modifica el modelo numérico además de su implementación.
 
 \subsection{Transformada de Laplace de la derivada de Caputo}
 
-La relación en Laplace se obtiene directamente de \cref{eq:caputo}. Para no
-ocultar el instante de inicio, se introduce
+La relación en Laplace se obtiene directamente de \cref{eq:caputo}. Para hacer
+explícito el instante de inicio, se introduce
 \[
 u=t-t_0,\qquad \widetilde X(u)=X(t_0+u),\qquad u\geq0.
 \]
@@ -328,7 +327,11 @@ Caputo y un límite inferior finito.
 
 \ifdefined\HAFOFractionalBlockStability
 \ifdefined\HAFOFractionalBlockOperators\else
+\ifHAFOBasinMaterial
 \section{Estabilidad fraccionaria y cuencas con memoria}
+\else
+\section{Estabilidad fraccionaria}
+\fi
 \label{sec:fundamentos-estabilidad}
 \fi
 \subsection{Linealización y criterio de Matignon}
@@ -366,11 +369,12 @@ m_M(e)=
 Un margen positivo indica estabilidad local; un margen no positivo indica que
 al menos un modo queda dentro o sobre el sector inestable.
 
+\ifHAFOBasinMaterial
 \subsection{Cuenca con convenio común de memoria}
 
 Para comparar condiciones iniciales en Caputo se fija el mismo \(t_0\) y se
 inicia cada problema con la historia definida por su propio valor \(X_0\).
-La cuenca usada en este reporte es
+Con este convenio de memoria, la cuenca se define por
 \begin{equation}
 \basin(\mathcal A)=
 \left\{
@@ -382,6 +386,7 @@ X_0\in\R^3:
 \end{equation}
 Esta definición deja fijo el convenio de memoria. Todos los sondeos alrededor
 de los equilibrios se interpretan dentro de \cref{eq:cuenca_reset}.
+\fi
 \fi
 \endgroup
 \fi

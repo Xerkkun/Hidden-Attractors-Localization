@@ -60,11 +60,11 @@ no certifican simultáneamente caos, atracción y ocultedad.
 
 \newcommand{\HAFOProblemLocalization}{\ifHAFOPedagogy
 \begin{bloqueestudio}{Ejercicios}
-\textbf{Formalismo.} En un mismo sistema produzca semillas por dos rutas
+\textbf{Formalismo.} En un mismo sistema produzca semillas mediante dos métodos
 entre DF, Machado, continuación, PP/FPP y borde. Compare residuos algebraicos,
-contrato de memoria, destino y prueba de cuenca bajo el mismo presupuesto.
+especificación de memoria, destino y prueba de cuenca bajo el mismo presupuesto.
 
-\textbf{Interpretación.} Determine qué aporta cada ruta y qué afirmación no
+\textbf{Interpretación.} Determine qué aporta cada método y qué afirmación no
 puede sostener por sí sola.
 
 \textbf{Defensa oral.} Distinga con precisión semilla, trayectoria, conjunto
@@ -91,7 +91,7 @@ contraste cada respuesta con las derivaciones:
   de cuenca?
   \item ¿Qué evidencia separa acotación, recurrencia, atracción, caos y
   ocultedad?
-  \item Para cada caso del reporte: ¿qué es previo, qué es propuesta del
+  \item Para cada caso analizado: ¿qué es previo, qué es propuesta del
   proyecto, qué se verificó y qué permanece abierto?
 \end{enumerate}
 \end{bloqueestudio}
@@ -250,6 +250,10 @@ información depende de la historia.
   65--106 y 184--193.
   \item \emph{Chaos and Time-Series Analysis}
   \cite{Sprott2003ChaosTimeSeries}, pp.~72--183, 213--272 y 302--328.
+  \item Ott \cite{Ott2002Chaos}: conjuntos caóticos no atractores y
+  fronteras, pp.~168--210; crisis y transitorios, pp.~304--344.
+  \item T{\'e}l--Gruiz \cite{TelGruiz2006Chaotic}: sillas, escapes,
+  fronteras y caos transitorio, pp.~191--225.
   \item Devaney \cite{Devaney1989Chaotic}: PDF aprox.~29--33, 70,
   110--129.
   \item Hilborn \cite{Hilborn2000Chaos}: PDF aprox.~38--80 y 162--220.
@@ -283,6 +287,8 @@ refinamientos y explique por qué el resultado no demuestra Wada.
   Mittag--Leffler, PDF~81--124; Laplace, PDF~130--137; GL, RL y Caputo,
   PDF~179--189.
   \item Herrmann \cite{Herrmann2014Fractional}: PDF~28--53 y 64--89.
+  \item Das \cite{Das2020Kindergarten}: construcción y relación RL--Caputo,
+  PDF~156--163; evaluación discreta GL/RL, PDF~183--185.
   \item \emph{The Analysis of Fractional Differential Equations}
   \cite{Diethelm2010AnalysisFDE}: pp.~13--73.
 \end{itemize}
@@ -300,7 +306,9 @@ iniciales y compare RL, GL y Caputo en \(t^\mu\).
 \textbf{Integrador.} Resuelva \(\dot x=\lambda x\) y
 \({}^{\mathrm C}D^q x=\lambda x\). Compare \(e^{\lambda t}\) con
 \(E_q(\lambda t^q)\), la ley de semigrupo y los criterios espectrales entero y
-de Matignon.
+de Matignon. Después aproxime \({}^{\mathrm C}D^qx=-ax\) con GL/RL y resuelva
+el PVI con ABM--PECE; explique por qué discretizar un operador no equivale
+automáticamente a resolver el mismo PVI Caputo.
 \end{bloqueestudio}
 \begin{bloqueestudio}{Lecturas complementarias}
 Oldham--Spanier \cite{OldhamSpanier1974Fractional}: p.~16,
@@ -314,11 +322,21 @@ soluciones PDF~423, 428--429 y 432.
 \begin{itemize}[nosep]
   \item Herrmann \cite{Herrmann2014Fractional}: no localidad y memoria,
   PDF~108--126.
-  \item Das \cite{Das2020Kindergarten}: ramas de \(s^q\), PDF~41--47;
-  inicialización y convolución, PDF~109 y 119--135; historia y Laplace,
-  PDF~247--310; sistemas multivariables, PDF~333--375.
-  \item Diethelm \cite{Diethelm2010AnalysisFDE}: existencia, unicidad,
-  regularidad y estabilidad, pp.~85--166.
+  \item Das \cite{Das2020Kindergarten}: contexto analítico, PDF~41--47;
+  ramas y cortes, PDF~43--44 y apéndice detallado PDF~503--507;
+  inicialización, kernels y memoria desvaneciente RL, PDF~109--110 y 119--135;
+  historia e inicialización RL, PDF~247--255; GL y composición, PDF~256--259;
+  relación RL--Caputo, PDF~259--264; inicialización Caputo, PDF~264--273;
+  seno con terminal inferior, PDF~273--274;
+  Laplace con inicialización, PDF~275--291; resolución de EFD, PDF~292--310;
+  EFD lineales e integrales, PDF~333--357; ecuaciones secuenciales, matrices y
+  funciones alfa-exponenciales, PDF~358--371; sistemas multivariables,
+  PDF~372--375.
+  \item Oliveira \cite{Oliveira2019SolvedFractional}: ejercicio 26 sobre
+  efecto de memoria, PDF~272--273.
+  \item Diethelm \cite{Diethelm2010AnalysisFDE}: PVI Caputo de término único,
+  existencia, unicidad, perturbaciones, regularidad y estabilidad,
+  pp.~85--126 y 157--162.
 \end{itemize}
 \end{bloqueestudio}
 \begin{bloqueestudio}{Ejercicios}
@@ -327,10 +345,14 @@ Derive la ecuación integral de Volterra.
 
 \textbf{Investigación.} Construya dos historias con el mismo valor terminal y
 pasados distintos; muestre por qué reiniciar cambia el PVI y por qué un retorno
-puntual no es, en general, un mapa de estado.
+puntual no es, en general, un mapa de estado. Continúe una trayectoria con
+historia heredada y reinicie otra desde el mismo punto; identifique el término
+libre de Volterra que cambia.
 \end{bloqueestudio}
 \begin{bloqueestudio}{Lecturas complementarias}
 Matignon \cite{Matignon1996} para el criterio angular.
+Li--Chen--Podlubny \cite{LiChenPodlubny2010} para estabilidad directa y
+Mittag--Leffler; no es una prueba de caos ni ocultedad.
 \end{bloqueestudio}
 \fi}
 
@@ -379,17 +401,19 @@ Machado \cite{Machado2015FDF} y Barbosa--Machado
 residuo auxiliar y el balance físico; determine cuándo la potencia sólo
 diversifica semillas.
 
-\textbf{Integrador.} Obtenga dos semillas de ramas distintas, intégrelas con
-el mismo contrato entero o Caputo y compare destino y contacto con las cuencas
+\textbf{Integrador.} Obtenga dos semillas de ramas distintas, intégrelas bajo
+una misma especificación numérica, entera o Caputo, y compare destino y contacto con las cuencas
 conocidas.
 \end{bloqueestudio}
 \fi}
 
 \newcommand{\HAFOCardContinuation}{\ifHAFOPedagogy
 \begin{bloqueestudio}{Lecturas}
-Diethelm \cite{Diethelm2010AnalysisFDE}: ABM, pp.~195--210; caso
-multi-término, pp.~211--228. Predictor--corrector original
-\cite{DiethelmFordFreed2002}.
+Diethelm \cite{Diethelm2010AnalysisFDE}: ABM, pp.~195--210; esquema numérico
+multi-término, pp.~211--224, con ejercicio en p.~225. Comparación de
+aproximación frecuencial, predictor--corrector y Adomian en
+Sun--He--Wang \cite{SunHeWang2022FractionalChaos}, pp.~27--74.
+Predictor--corrector original \cite{DiethelmFordFreed2002}.
 \end{bloqueestudio}
 \begin{bloqueestudio}{Ejercicios}
 \textbf{Básicos.} Derive los pesos predictor y corrector desde Volterra y
@@ -397,23 +421,37 @@ aplíquelos a \({}^{\mathrm C}D^qx=-x\).
 
 \textbf{Investigación.} Escriba una homotopía \(f_\lambda\), transporte una
 semilla y demuestre por qué reiniciar la memoria en cada \(\lambda\) define
-otro problema.
+otro problema. Compare dos algoritmos únicamente después de igualar operador,
+terminal inferior, historia, paso y tolerancia.
 \end{bloqueestudio}
 \fi}
 
 \newcommand{\HAFOCardPerpetual}{\ifHAFOPedagogy
 \begin{bloqueestudio}{Lecturas}
 Prasad \cite{Prasad2015Perpetual}; Dudkowski--Prasad--Kapitaniak
-\cite{DudkowskiPrasadKapitaniak2017}; contraejemplos
-\cite{NazarimehrSaediJafari2017,NagChowdhuryGhosh2020}.
+\cite{DudkowskiPrasadKapitaniak2015,DudkowskiPrasadKapitaniak2017,
+DudkowskiPrasadKapitaniak2018};
+contraejemplos \cite{NazarimehrSaediJafari2017,NagChowdhuryGhosh2020};
+revisión de métodos \cite{GuanXie2025}. Das, Oliveira y Herrmann sustentan
+operadores, inicialización y memoria, pero no formulan puntos perpetuos
+fraccionarios: FPP--A y FPP--H se presentan como formulaciones metodológicas,
+no como resultados de esas fuentes.
 \end{bloqueestudio}
 \begin{bloqueestudio}{Ejercicios}
 \textbf{Básicos.} Para \(\dot x=f(x)\), derive
 \(\ddot x=Df(x)f(x)\) y resuelva los PP de dos campos polinomiales sencillos.
 
-\textbf{Investigación.} Resuelva \(Df(p)f(p)=0\), \(f(p)\ne0\), en un caso
-del reporte. Desde Volterra obtenga
-\(h^{2q}Df(p)f(p)/\Gamma(2q+1)\) sin usar una regla de cadena falsa.
+\textbf{Investigación.} Resuelva \(Df(p)f(p)=0\), \(f(p)\ne0\), en uno de los
+sistemas analizados. Desde Volterra obtenga
+\(h^{2q}Df(p)f(p)/\Gamma(2q+1)\) sin suponer una regla de cadena no válida para
+Caputo y explique
+por qué su cancelación no es aceleración fraccionaria global.
+
+\textbf{Integrador.} Para \(f(x)=Ax+d\), compare FPP--A y FPP--H. Después,
+en un campo no lineal, evalúe el evento FPP--H con toda la historia y contraste
+continuación heredada contra reinicio. Repita L1 con \(h,h/2,h/4\) y terminal
+inferior común; un mínimo observado gráficamente no constituye un evento
+validado.
 \end{bloqueestudio}
 \fi}
 
@@ -435,8 +473,9 @@ describa el fallo.
 
 \newcommand{\HAFOCardProtocols}{\ifHAFOPedagogy
 \begin{bloqueestudio}{Lecturas}
-Datseris--Parlitz \cite{datseris2022} para observables numéricos; entropía de
-cuenca \cite{DazaEtAl2016BasinEntropy}; Wada \cite{DazaEtAl2015Wada}.
+Datseris--Wagemakers \cite{datseris2022} para estimación de cuencas; entropía de
+cuenca \cite{DazaEtAl2016BasinEntropy}; clasificación de cuencas
+\cite{SprottXiong2015Basins}; Wada \cite{DazaEtAl2015Wada}.
 \end{bloqueestudio}
 \begin{bloqueestudio}{Ejercicios}
 \textbf{Básicos.} Para una órbita conocida, calcule retorno, período dominante
@@ -449,10 +488,44 @@ destino, atracción, caos, contacto con equilibrios y ocultedad.
 \end{bloqueestudio}
 \fi}
 
+\newcommand{\HAFOCardReliability}{\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+\begin{itemize}[nosep]
+  \item Vallejo--Sanju{\'a}n \cite{VallejoSanjuan2017Predictability}:
+  error y \emph{shadowing}, pp.~13--22; FTLE y regímenes, pp.~25--87;
+  predictibilidad, pp.~91--126; algoritmo, pp.~129--136.
+  \item Datseris--Parlitz \cite{DatserisParlitz2022Nonlinear}: Lyapunov y
+  horizonte de predictibilidad, pp.~37--48; bifurcaciones y dimensión,
+  pp.~53--85; algoritmo de Lyapunov, pp.~211--216.
+  \item Ott \cite{Ott2002Chaos}, pp.~168--210 y 304--344, y
+  T{\'e}l--Gruiz \cite{TelGruiz2006Chaotic}, pp.~191--225, para sillas,
+  escapes, fronteras y crisis.
+  \item Caso primario de transitorio oculto
+  \cite{Danca2016HiddenTransient}; exponentes fraccionarios y su algoritmo
+  \cite{DancaKuznetsov2018Lyapunov}; memoria e inicialización
+  \cite{Sabatier2021InfiniteMemory}.
+\end{itemize}
+\end{bloqueestudio}
+\begin{bloqueestudio}{Ejercicios}
+\textbf{Básicos.} Derive una cota de Gronwall para el defecto de una EDO y la
+fórmula heurística del horizonte de predictibilidad. Calcule FTLE en tres
+ventanas y muestre su distribución, no sólo la media.
+
+\textbf{Investigación.} Fije una región de escape, estime la supervivencia
+de un conjunto de semillas y compare una ley exponencial con una cola no
+exponencial. Trate las trayectorias que no escaparon como datos censurados.
+
+\textbf{Integrador.} Repita el diseño para Caputo en el espacio de historias:
+defina las historias muestreadas, conserve el terminal inferior y separe
+continuación de reinicio. Indique qué parte vive sólo en la proyección.
+\end{bloqueestudio}
+\fi}
+
 \newcommand{\HAFOCardCases}{\ifHAFOPedagogy
 \begin{bloqueestudio}{Lecturas}
 Artículos primarios de los casos: Chua
-\cite{LeonovKuznetsovVagaitsev2011,KuznetsovEtAl2017}; sistemas
+\cite{LeonovKuznetsovVagaitsev2011,KuznetsovEtAl2017,
+KuznetsovEtAl2023ChuaExperiments}; sistemas
 fraccionarios \cite{Danca2017,Danca2017HiddenFO,Wu2023ArctanChua}; candidatos
 no Chua \cite{munoz2018,wang2020}. Las revisiones
 \cite{DudkowskiEtAl2016,GuanXie2025} se usan después para comparar métodos.
@@ -496,6 +569,10 @@ de cuenca que separen atracción, caos y ocultedad.
   formas normales y bifurcaciones, pp.~185--244.
   \item Guckenheimer--Holmes \cite{GuckenheimerHolmes1983}: PDF aprox.~6--39,
   65--119 y 120--184.
+  \item Jost \cite{Jost2005Dynamical}: conjuntos invariantes aislados,
+  pares índice y Conley, pp.~70--97; entropía y dinámica simbólica,
+  pp.~99--110. Esta lectura introduce herramientas avanzadas y no sustituye
+  una prueba completa.
   \item \texttt{Barnsley - SuperFractals.pdf}: PDF~19--99, 201--395;
   Lorenz, PDF~9--30 y 116--207; Mandelbrot, PDF~33, 277 y desde 367.
   \item Diethelm \cite{Diethelm2010AnalysisFDE}: multi-término,
@@ -504,9 +581,9 @@ de cuenca que separen atracción, caos y ocultedad.
 \end{itemize}
 \end{bloqueestudio}
 \begin{bloqueestudio}{Ejercicios}
-Elija un caso entero y uno Caputo. Formule para ambos una pregunta futura sobre
+Elija un caso entero y uno Caputo. Formule para ambos un problema abierto sobre
 variedades, retorno o frontera de cuenca; escriba el objeto geométrico, el
-espacio de fases correcto, la prueba numérica y la hipótesis que aún faltaría
-demostrar.
+espacio de fases correspondiente, la prueba numérica y la hipótesis que aún
+faltaría demostrar.
 \end{bloqueestudio}
 \fi}

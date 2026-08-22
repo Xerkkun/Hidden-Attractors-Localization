@@ -1,12 +1,11 @@
 \section{Resultados algebraicos geométrico--topológicos por caso}
 \label{sec:resultados-gt-casos}
 
-Esta sección aplica el atlas de la
-\cref{sec:localizacion-geometrico-topologica} a los campos ya fijados en el
-reporte. Los resultados presentes son ecuaciones exactas, raíces algebraicas,
+El atlas de la \cref{sec:localizacion-geometrico-topologica} se aplica a los
+campos fijados. Esta etapa proporciona ecuaciones exactas, raíces algebraicas,
 simetrías y obstrucciones. La campaña de la \cref{sec:campana-gt} fija cómo
 decidir qué partes de las superficies y curvas pertenecen a cada cuenca; la
-\cref{sec:resultados-piloto-gt} ejecuta ya su primera ronda B0--B2 para PLL,
+\cref{sec:resultados-piloto-gt} documenta la ejecución B0--B2 para PLL,
 MAVPD y Wu. En los casos de Caputo, $F$, $DF\,F$ y
 $\mathcal C_{\mathrm{PC}}$ son objetos de arranque en el corte de historias
 constantes; no se reinterpretan como velocidad y aceleración globales.
@@ -214,7 +213,7 @@ Así,
  S_4^v&:\ g=0,& S_4^a&:\ H=0.
  \label{casegt:eq:kalman-surfaces}
 \end{align}
-La sección $x_3=0$ usada en el mapa de conmutación del expediente es a la vez
+La sección $x_3=0$ usada en el mapa de conmutación es a la vez
 $S_2^v$ y $S_1^a$: el método existente ya estaba utilizando una superficie
 geométrica privilegiada.
 
@@ -288,13 +287,17 @@ dos puntos. Para $\delta=100$, $\rho=200$, $\gamma=0.1$, $\xi=3.1$,
 \end{equation}
 El piloto B0--B2 lleva estos PP a los ciclos internos y las semillas DF1 a la
 rama exterior. La persistencia de horizonte no alcanza el umbral: la deriva
-B1--B2 es $26.24\%$ para los PP y $10.69\%$ para DF1. Además, el bracket entre
+B1--B2 es $26.24\%$ para los PP y $10.69\%$ para DF1.
+\ifHAFOBasinMaterial
+Además, el bracket entre
 ambas rutas encuentra un tercer destino, de modo que no define todavía una
 separatriz binaria. El máximo conservador es EV--TG2 y no EV--TG4
 (\cref{sec:resultados-piloto-gt}). Es un resultado negativo útil: confirma que
 $\operatorname{PP}\subset\mathcal C$ no cubre todas las cuencas. La campaña
 ampliada deberá muestrear las superficies completas, las ramas de $\mathcal C$
-y el borde entre ciclos. La simetría $X\mapsto-X$ reduce el banco a un hemisferio;
+y el borde entre ciclos.
+\fi
+La simetría $X\mapsto-X$ reduce el banco a un hemisferio;
 los parámetros $\xi=3.5$ y el candidato caótico en $\xi=2.85$ funcionarán como
 control negativo y extensión, respectivamente.
 
@@ -341,11 +344,15 @@ si $\omega_\Delta\mp L/2\ne0$. La curva conectante es
  \label{casegt:eq:pll-CC}
 \end{equation}
 No hay simetría central para $\omega_\Delta\ne0$; sólo la transformación de
-cubierta $\theta\mapsto\theta+2\pi k$. En B0--B2, $p_+$ converge de manera
+cubierta $\theta\mapsto\theta+2\pi k$.
+En B0--B2, $p_+$ converge de manera
 robusta al foco y alcanza EV--TG3, mientras $p_-$ queda como transitorio acotado
-sin destino y en EV--TG2. El bracket propuesto se rechaza porque sus extremos
-siguen sin resolver; no existe trayectoria de borde ni EV--TG4. El ciclo silla
-y el ciclo estable ya localizados continúan siendo controles para una ventana
+sin destino y en EV--TG2.
+\ifHAFOBasinMaterial
+El bracket propuesto se rechaza porque sus extremos
+siguen sin resolver; no existe trayectoria de borde ni EV--TG4.
+\fi
+El ciclo silla y el ciclo estable ya localizados continúan siendo controles para una ventana
 posterior más larga, el retorno intervalar y el invariante KCC de
 \eqref{gt:eq:pll-kcc-P}; véase la \cref{sec:resultados-piloto-gt}.
 
@@ -454,7 +461,7 @@ El campo publicado es
  F=(yz+x(y-a),\ 1-|x|,\ -xy-z)^{\mathsf T}.
  \label{casegt:eq:munoz-field}
 \end{equation}
-Fije una región $x\ne0$ y $s=\operatorname{sign}x$. Entonces
+En una región $x\ne0$, con $s=\operatorname{sign}x$,
 \begin{equation}
  J_s=\begin{bmatrix}
  y-a&z+x&y\\
@@ -502,10 +509,9 @@ Para $a=0.35$ se obtienen
 Sus normas de campo son $0.2365640964\ldots$ y $7.2845066702\ldots$. Todas
 están separadas de $x=0$, por lo que el cálculo regional es válido. La simetría
 es $(x,y,z)\mapsto(-x,y,-z)$. Para $q=0.97$ y $0.996$ estas raíces son semillas
-Picard--Caputo. Como no existen equilibrios, la definición usual de ocultedad
-por vecindades de equilibrios es vacía; aquí se estudiarán localización,
-coexistencia, aislamiento y dependencia de la historia, no se presentará la
-ausencia de equilibrios como prueba de caos.
+Picard--Caputo. En ausencia de equilibrios, el análisis se centra en
+localización, coexistencia, aislamiento y dependencia de la historia; esa
+ausencia no aporta evidencia de caos.
 
 \subsection{Resumen de lo obtenido antes de integrar}
 
@@ -529,10 +535,18 @@ Chua c590 & Dos PP con $\lVert F\rVert\approx545$ & Central & ¿Escapan bajo
 todo refinamiento o existe una ruta de borde?\\
 Kalman--Fitts & $\det J>0$; sin PP & Central & ¿La curva conectante recupera el
 ciclo hallado por conmutación?\\
-MAVPD & Dos PP exactos & Central & PP interiores y DF exterior; tercer destino
-en el bracket, máximo EV--TG2.\\
-PLL & Dos PP sobre círculos singulares & Cubierta angular & $p_+$ alcanza
-EV--TG3; $p_-$ y el borde quedan sin resolver.\\
+MAVPD & Dos PP exactos & Central &
+\ifHAFOBasinMaterial
+PP interiores y DF exterior; tercer destino en el bracket, máximo EV--TG2.
+\else
+Semillas PP y DF disponibles para comparación dinámica.
+\fi\\
+PLL & Dos PP sobre círculos singulares & Cubierta angular &
+\ifHAFOBasinMaterial
+$p_+$ alcanza EV--TG3; $p_-$ y el borde quedan sin resolver.
+\else
+PP y retorno disponibles para comparación dinámica en el cilindro.
+\fi\\
 Lorenz $q=0.995$ & Dos FPP--A & $(-x,-y,z)$ & ¿Existe región absorbente y borde
 funcional entre $E_\pm$ y el candidato?\\
 RF $q=0.998$ & Ocho FPP--A, cuatro clases & $(-x,-y,z)$ & ¿Qué semillas son
@@ -550,10 +564,10 @@ La reconstrucción independiente se conserva en
 en \codepath{wolfram/topologia_geometria_hidden_validation.txt}. Su contraparte
 integrada al repositorio es
 \codepath{version_2/validation/wolfram/cases/geometric_topological_engine.wl}.
-La corrida contiene 50 comprobaciones aprobadas y ninguna fallida. Los
-resultados por caso no se obtuvieron leyendo las nubes dinámicas: los campos,
-jacobianos, determinantes, simetrías y raíces se reconstruyeron desde las
-ecuaciones. El alcance de esta evidencia es algebraico. Los artefactos de la
+La corrida contiene 50 comprobaciones aprobadas y ninguna fallida. Los campos,
+jacobianos, determinantes, simetrías y raíces se reconstruyeron directamente
+desde las ecuaciones, de manera independiente de las nubes dinámicas. El
+alcance de esta evidencia es algebraico. Los artefactos de la
 primera campaña dinámica están trazados por separado en la
 \cref{sec:resultados-piloto-gt}.
 \fi

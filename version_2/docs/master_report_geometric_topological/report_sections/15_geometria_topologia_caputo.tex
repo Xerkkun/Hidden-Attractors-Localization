@@ -1,4 +1,4 @@
-% Selector de bloques para la edición secuencial. El contrato de llamada es
+% Selector de bloques para la edición secuencial. La interfaz de llamada es
 % \def\HAFOCaputoBlockSelect{1} junto con exactamente una de las banderas
 % \HAFOCaputoBlockMemory, \HAFOCaputoBlockBasins,
 % \HAFOCaputoBlockReturn o \HAFOCaputoBlockProtocol. Sin selector se conserva
@@ -32,9 +32,9 @@
 
 \HAFOCardMemory
 
-Esta sección traduce el lenguaje geométrico de las ecuaciones diferenciales
-ordinarias al problema fraccionario que se estudia en el reporte. El cambio
-conceptual decisivo es el siguiente:
+En los sistemas de Caputo, la memoria obliga a formular la dinámica en un
+espacio funcional. La diferencia con las ecuaciones diferenciales ordinarias
+se resume así:
 
 \begin{center}
 \fbox{\parbox{0.91\linewidth}{
@@ -46,24 +46,25 @@ evoluciona como una semidinámica es un perfil funcional de memoria.
 \end{center}
 
 La distinción no es terminológica. Cambia qué significa órbita, sección de
-Poincaré, cuenca, invariancia, atractor, conjugación y punto perpetuo. El
-propósito conceptual es que cada gráfico tridimensional de los casos estudiados pueda
-leerse como lo que realmente es: una \emph{proyección} de una evolución
-funcional, no necesariamente el retrato de fase completo.
+Poincaré, cuenca, invariancia, atractor, conjugación y punto perpetuo. Los
+gráficos tridimensionales de los casos estudiados representan una
+\emph{proyección} de una evolución funcional, no necesariamente el retrato de
+fase completo.
 
-\begin{hallazgo}{Convención epistemológica de la sección}
-Se marcarán tres niveles. Los resultados sobre Volterra, semidinámicas
+\begin{hallazgo}{Estado de los resultados}
+Los resultados se clasifican en tres niveles. Las propiedades relativas a
+Volterra, semidinámicas
 funcionales, ausencia general de dinámica finito-dimensional y no existencia
 de soluciones periódicas exactas pertenecen a teoría establecida
 \cite{CongTuan2017Nonlocal,DoanKloeden2021Semidynamical,
 TavazoeiHaeri2009,KaslikSivasundaram2012}. La separación entre cuenca
 funcional y cuenca de reinicio, y su incorporación al protocolo de atractores
-ocultos, es una adaptación metodológica de este proyecto. La certificación de
+ocultos, constituyen una adaptación metodológica evaluada. La certificación de
 atractores compactos, variedades invariantes, entropía o herraduras en los
 casos concretos permanece abierta.
 \end{hallazgo}
 
-\subsection{Recordatorio: por qué un flujo ordinario vive en el espacio de estados}
+\subsection{Flujo ordinario en el espacio de estados}
 
 Considérese primero la ODE autónoma
 \begin{equation}
@@ -115,9 +116,9 @@ tiempo de observación. Por ello no basta guardar una suma constante del pasado.
 
 \input{report_diagrams/caputo_01_kernel_memoria}
 
-Para existencia global y continuidad de la semidinámica funcional que se
-usará abajo es suficiente suponer que \(f\) es globalmente Lipschitz. En los
-sistemas polinomiales del reporte, que sólo son localmente Lipschitz, debe
+Para garantizar existencia global y continuidad de la semidinámica funcional
+es suficiente suponer que \(f\) es globalmente Lipschitz. En los sistemas
+polinomiales analizados, que sólo son localmente Lipschitz, debe
 añadirse una cota a priori que descarte explosión en tiempo finito o restringir
 la construcción al intervalo máximo de existencia. Una trayectoria numérica
 acotada en una ventana finita no sustituye esa prueba.
@@ -240,7 +241,7 @@ donde \(S_t\) será la semidinámica funcional e
 \(\iota(x)(\theta)\equiv x\) la inmersión de perfiles constantes. La segunda
 expresión inserta \(\iota\circ\operatorname{ev}_0\): borra la memoria.
 
-\subsection{El espacio de fase correcto y la semidinámica}
+\subsection{Espacio de fases funcional y semidinámica}
 
 \ifHAFOPedagogy
 \begin{bloqueestudio}{Ejercicios}
@@ -320,7 +321,7 @@ mientras el término libre es \(m(t+s+\theta)\). El resultado es
 la teoría de ecuaciones integrales de Volterra.
 \end{proof}
 
-Debe precisarse el alcance de esta ampliación. Los perfiles constantes
+Esta ampliación tiene el siguiente alcance. Los perfiles constantes
 \(\iota(x_0)\) representan exactamente los PVI convencionales de
 \cref{eq:geofo-caputo-pvi}; un perfil general \(m\in\mathfrak C\) es un dato
 admisible de la extensión de Volterra
@@ -376,7 +377,7 @@ La órbita positiva completa de \(m\in\mathfrak C\) es
  \mathcal O^+(m)=\{S_tm:t\geq0\}\subset\mathfrak C.
  \label{eq:geofo-functional-orbit}
 \end{equation}
-El retrato dibujado en el reporte es su proyección
+El retrato de fase observable es su proyección
 \begin{equation}
  \mathcal O_x^+(m)=
  \{\operatorname{ev}_0(S_tm):t\geq0\}\subset\mathbb R^n.
@@ -513,7 +514,7 @@ es
  \label{eq:geofo-reset-basin}
 \end{equation}
 
-\begin{definition}[ocultedad funcional: adaptación fuerte del proyecto]
+\begin{definition}[definición propuesta de ocultedad funcional]
 Sea \(A\subset\mathfrak C\) un atractor y sean \(E_e\) los perfiles fijos de
 todos los equilibrios. Diremos que \(A\) es funcionalmente oculto respecto de
 esos equilibrios si para cada \(e\) existe una vecindad abierta
@@ -550,13 +551,13 @@ lo haga. Por tanto,
 \input{report_diagrams/caputo_04_cuenca_funcional}
 
 \begin{proposalbox}
-Las definiciones anteriores son una traducción conservadora del criterio
-clásico de cuenca. No se presentan como una definición universal ya aceptada
-de atractor oculto fraccionario. El nivel actualmente verificable por el
+Las definiciones anteriores constituyen una adaptación conservadora del
+criterio clásico de cuenca, no una definición universal ya aceptada de atractor
+oculto fraccionario. El nivel actualmente verificable por el
 software es \cref{eq:geofo-reset-hiddenness}, con radios, malla, integrador,
 terminal inferior y política de memoria declarados. La condición funcional
-\cref{eq:geofo-functional-hiddenness} requiere un programa de análisis y
-muestreo adicional.
+\cref{eq:geofo-functional-hiddenness} requiere un análisis y un muestreo
+adicionales del espacio funcional.
 \end{proposalbox}
 
 Si el sistema no tiene equilibrios, como el candidato de Muñoz--Pacheco, la
@@ -604,8 +605,8 @@ conjuga las semidinámicas correspondientes:
  H_{T,c}\circ S_t=\widetilde S_t\circ H_{T,c}.
  \label{eq:geofo-affine-conjugacy}
 \end{equation}
-Esta igualdad fundamenta la transformación afín de atractores y cuencas usada
-en el reporte.
+Esta igualdad fundamenta la transformación afín de atractores y cuencas
+empleada en los análisis.
 
 Abstractamente, dos semidinámicas \(S_t\) sobre \(X\) y \(\widetilde S_t\)
 sobre \(Y\) son topológicamente conjugadas si existe un homeomorfismo
@@ -615,8 +616,8 @@ sobre \(Y\) son topológicamente conjugadas si existe un homeomorfismo
  \qquad t\geq0.
  \label{eq:geofo-topological-conjugacy}
 \end{equation}
-Éste es el nivel correcto para transportar invariancia, recurrencia y
-propiedades topológicas. Un homeomorfismo puntual
+La conjugación funcional transporta invariancia, recurrencia y propiedades
+topológicas. Un homeomorfismo puntual
 \(h:\mathbb R^n\to\mathbb R^n\) puede inducir una conjugación abstracta de
 perfiles, pero la semidinámica transformada no tiene por qué escribirse como
 una ecuación autónoma local \({}^{\mathrm C}D^qy=g(y)\).
@@ -625,8 +626,8 @@ una ecuación autónoma local \({}^{\mathrm C}D^qy=g(y)\).
 Una formulación intrínseca de derivadas fraccionarias sobre una variedad debe
 especificar cómo comparar datos situados en espacios tangentes de tiempos
 distintos, por ejemplo mediante una conexión, transporte paralelo o una
-inmersión ambiente. El Caputo componente a componente utilizado en el reporte
-es una formulación extrínseca en \(\mathbb R^n\); no se reclama independencia
+inmersión ambiente. El Caputo componente a componente es una formulación
+extrínseca en \(\mathbb R^n\); no se reclama independencia
 respecto de cartas no lineales.
 \end{remark}
 
@@ -698,7 +699,7 @@ las coordenadas observadas o la existencia de una variedad inercial adecuada.
 
 \input{report_diagrams/caputo_05_poincare_funcional}
 
-\subsection{Periodicidad exacta, recurrencia y vocabulario correcto}
+\subsection{Periodicidad exacta y recurrencia: distinciones terminológicas}
 
 Para terminal inferior finito, orden no entero y las hipótesis regulares
 consideradas en la literatura, una solución no constante de un sistema Caputo
@@ -708,7 +709,8 @@ derivada fraccionaria de una función periódica no conserva, en general, el
 mismo período; el kernel sigue recordando el arranque.
 
 Esto no impide observar curvas cerradas con precisión gráfica, oscilaciones
-persistentes o recurrencia muy fuerte. Conviene medir por separado
+persistentes o recurrencia muy fuerte. Estas observaciones motivan dos medidas
+distintas:
 \begin{align}
  R_x(T;t)&=\|x(t+T)-x(t)\|_2,
  \label{eq:geofo-point-recurrence}\\
@@ -716,8 +718,8 @@ persistentes o recurrencia muy fuerte. Conviene medir por separado
  d_{\mathfrak C}(m_{t+T},m_t).
  \label{eq:geofo-memory-recurrence}
 \end{align}
-Un \(R_x\) pequeño no obliga a que \(R_{\mathfrak C}\) sea pequeño. En el
-reporte deben usarse expresiones como \emph{oscilación acotada},
+Un \(R_x\) pequeño no obliga a que \(R_{\mathfrak C}\) sea pequeño. Según la
+evidencia disponible, la terminología aplicable incluye \emph{oscilación acotada},
 \emph{recurrencia proyectada}, \emph{lazo aparentemente periódico en una
 ventana} o \emph{régimen asintóticamente periódico}, según la evidencia. La
 expresión \emph{ciclo límite Caputo exacto} requiere cambiar el operador, llevar
@@ -757,8 +759,8 @@ De forma análoga:
 
 \subsection{Puntos perpetuos vistos desde el espacio funcional}
 
-La \cref{sec:perpetual-points} introdujo dos carriles que ahora pueden
-interpretarse geométricamente.
+La \cref{sec:perpetual-points} introdujo dos construcciones que admiten una
+interpretación geométrica.
 
 \paragraph{FPP--A: semilla sobre la sección de reinicio.}
 Una raíz
@@ -792,7 +794,7 @@ secuencial.
 \begin{table}[ht]
 \centering
 \small
-\caption{Lectura geométrica de FPP--A y FPP--H.}
+\caption{Interpretación geométrica de FPP--A y FPP--H.}
 \label{tab:geofo-fpp-geometry}
 \begin{tabularx}{\linewidth}{@{}L{0.16\linewidth}Y Y@{}}
 \toprule
@@ -815,18 +817,19 @@ el límite entero bajo regularidad.\\
 
 \ifnum\HAFOCaputoShowProtocol=1\relax
 \ifdefined\HAFOCaputoBlockSelect
-\section{Protocolo geométrico y lectura de casos fraccionarios}
+\section{Protocolo geométrico para sistemas fraccionarios}
 \fi
 \subsection{Protocolo numérico geométrico para Caputo}
 \label{subsec:geofo-numerical-protocol}
 
-El siguiente protocolo complementa, no reemplaza, los niveles L0--L6 del
-reporte.
+El protocolo C1--C10 extiende los niveles L0--L6 mediante controles
+funcionales de memoria.
 
 \begin{enumerate}[label=\textbf{C\arabic*.}]
  \item \textbf{Fijar el operador.} Registrar definición de Caputo, órdenes
  \(q_j\), terminal inferior, datos iniciales, kernel, malla, integrador y
- política de memoria. Una ventana truncada o un reinicio define otro contrato.
+ política de memoria. Una ventana truncada o un reinicio define otra
+ especificación numérica.
 
  \item \textbf{Probar existencia en el dominio usado.} Documentar Lipschitz
  global, crecimiento lineal, región absorbente o, como mínimo, el intervalo
@@ -837,7 +840,7 @@ reporte.
  \(E_e=\iota(e)\), calcular \(J_f(e)\) y el margen de Matignon. Esto fija la
  geometría local desde la cual se diseñarán perturbaciones.
 
- \item \textbf{Conservar dos carriles.} Para cada estado candidato \(p\),
+ \item \textbf{Comparar reinicio y continuación heredada.} Para cada estado candidato \(p\),
  ejecutar (a) un PVI reiniciado desde \(\iota(p)\) y (b), cuando \(p\) provenga
  de una trayectoria, la continuación desde su perfil heredado \(m_t\). No
  confundir una evolución con la otra.
@@ -898,10 +901,10 @@ componente,
  \int_0^t(t+\theta-s)^{q_j-1}f_j(x(s))\,\mathrm ds.
  \label{eq:geofo-incommensurate-profile}
 \end{equation}
-No debe promediarse el orden ni reutilizarse un único conjunto de pesos para
-todas las componentes.
+Cada componente requiere su propio orden y su correspondiente conjunto de
+pesos.
 
-\subsection{Ejemplo pedagógico completo: relajación escalar}
+\subsection{Ejemplo: relajación escalar}
 
 Considérese
 \begin{equation}
@@ -936,13 +939,13 @@ Este ejemplo permite identificar todos los objetos:
  \cref{eq:geofo-false-ml-product};
  \item no hay ciclo periódico no constante ni posibilidad de atractor oculto.
 \end{itemize}
-Es el banco mínimo recomendado para comprobar que una implementación distingue
-correctamente continuación y reinicio antes de estudiar Chua.
+La relajación escalar constituye un caso de verificación para comprobar que
+una implementación distingue continuación y reinicio antes de estudiar Chua.
 
-\subsection{Mapa de resultados establecidos, adaptaciones y problemas abiertos}
+\subsection{Estatus de resultados, adaptaciones y problemas abiertos}
 
 \begin{longtable}{@{}L{0.22\linewidth}L{0.34\linewidth}L{0.36\linewidth}@{}}
-\caption{Frontera de teoría y novedad en la reformulación geométrica Caputo.}
+\caption{Clasificación por estatus teórico de la reformulación geométrica Caputo.}
 \label{tab:geofo-theory-boundary}\\
 \toprule
 Nivel & Contenido & Estatus \\
@@ -961,12 +964,12 @@ TavazoeiHaeri2009,KaslikSivasundaram2012}.\\
 Consecuencia directa & Perfil \(m_t\), separación algebraica de memoria,
 identidades de continuar frente a reiniciar, proyección
 \(\operatorname{ev}_0\) y operador de retorno funcional. &
-Derivado aquí de la formulación establecida; no se reclama como teorema nuevo.\\
-Adaptación del proyecto & Jerarquía entre cuenca funcional y cuenca de
+Consecuencia derivada de la formulación establecida; no se reclama como teorema nuevo.\\
+Formulación metodológica & Jerarquía entre cuenca funcional y cuenca de
 reinicio; definición operacional de ocultedad funcional; protocolo C1--C10;
-lectura geométrica complementaria de función descriptiva, continuación y
+interpretación geométrica complementaria de función descriptiva, continuación y
 FPP--A/FPP--H. &
-Propuesta metodológica que debe contrastarse con más literatura y ejemplos.\\
+Formulación que requiere contraste con más literatura y ejemplos.\\
 Abierto para los casos & Existencia de atractores compactos funcionales,
 regiones absorbentes para Lorenz/RF, perturbaciones funcionales cerca de
 equilibrios y convergencia de retornos con memoria. &
@@ -979,7 +982,7 @@ aislados.\\
 \bottomrule
 \end{longtable}
 
-\begin{hallazgo}{Síntesis geométrica para leer el reporte}
+\begin{hallazgo}{Síntesis de la formulación geométrica}
 El modelo Caputo no elimina la teoría geométrica: obliga a cambiar su espacio
 de fase. El estado puntual es una coordenada observable; el perfil de memoria
 es el estado dinámico. Las semillas de Lur'e, Machado y FPP--A entran por una
@@ -989,8 +992,8 @@ con evidencia adicional, en una vecindad funcional. Esta jerarquía permite que
 los métodos se complementen sin atribuir a ninguno una prueba que no posee.
 \end{hallazgo}
 
-En campos afines globales, la linealidad de Caputo hace coincidir ambos
-carriles. En Chua PWL, esa coincidencia sólo es local mientras toda la memoria
+En campos afines globales, la linealidad de Caputo hace coincidir ambas
+construcciones. En Chua PWL, esa coincidencia sólo es local mientras toda la memoria
 relevante permanezca en una misma región; después de cruzar una frontera, el
 evento FPP--H conserva contribuciones de las regiones anteriores.
 
@@ -1028,14 +1031,14 @@ Los métodos se complementan así:
 mientras FPP--H actúa como diagnóstico a lo largo de la historia y el sondeo de
 cuenca clasifica el destino bajo una convención de memoria explícita.
 
-\subsection{Lectura caso por caso de los ejemplos fraccionarios}
+\subsection{Aplicación a los sistemas fraccionarios analizados}
 
 \subsubsection{Chua PWL y Chua arctangente}
 
 La saturación continua PWL es globalmente Lipschitz y el campo de Chua tiene
 crecimiento a lo sumo lineal; la arctangente también es globalmente Lipschitz.
-Estos casos son, por ello, los bancos más limpios del reporte para construir
-una semidinámica global sobre \(\mathfrak C\).
+Estos casos son, por ello, los más adecuados para construir una semidinámica
+global sobre \(\mathfrak C\).
 
 Los planos de conmutación \(x=\pm1\) siguen siendo hipersuperficies en la
 proyección puntual, pero no dividen el espacio funcional en sólo tres regiones:
@@ -1056,15 +1059,15 @@ demuestran invariancia funcional.
 \subsubsection{Lorenz generalizado y Rabinovich--Fabrikant}
 
 Los campos de Lorenz y RF son suaves, pero polinomiales y no globalmente
-Lipschitz. Para promover sus nubes numéricas a atractores funcionales se
-necesitan dos pasos que esta formulación todavía no contiene:
+Lipschitz. Para interpretar los conjuntos numéricos observados como atractores
+funcionales se necesitan dos pasos que esta formulación todavía no contiene:
 \begin{enumerate}
  \item demostrar existencia global o una región absorbente hacia adelante;
  \item demostrar asintótica compacidad de la semidinámica en el espacio
  funcional apropiado.
 \end{enumerate}
-La verificación de equilibrios, espectros de Matignon y realizaciones de Lur'e
-de la \cref{part:nonchua} es álgebra local correcta, pero no completa esos dos
+Los cálculos de equilibrios, espectros de Matignon y realizaciones de Lur'e de
+la \cref{part:nonchua} son válidos localmente, pero no completan esos dos
 pasos. Los puntos perpetuos calculados para ambos sistemas son semillas FPP--A
 de referencia hasta que se ejecute una integración Caputo con memoria completa
 y un protocolo de cuenca.
@@ -1087,14 +1090,14 @@ presentado demuestra integración finita desde esas semillas, pero no certifica:
  \item un evento FPP--H estable bajo refinamiento;
  \item una propiedad topológica de caos.
 \end{itemize}
-Al no haber equilibrios, el próximo objetivo geométrico debe ser construir y
-comparar cuencas de diferentes perfiles de reinicio, no aplicar de forma vacía
-el criterio clásico de vecindades de equilibrios.
+En ausencia de equilibrios, el análisis geométrico pertinente consiste en
+construir y comparar cuencas de diferentes perfiles de reinicio, en lugar de
+aplicar de forma vacía el criterio clásico de vecindades de equilibrios.
 
 \begin{table}[ht]
 \centering
 \small
-\caption{Objeto geométrico correcto y siguiente prueba por familia.}
+\caption{Objeto geométrico y verificación requerida por familia.}
 \label{tab:geofo-case-program}
 \begin{tabularx}{\linewidth}{@{}L{0.20\linewidth}L{0.31\linewidth}Y@{}}
 \toprule
@@ -1116,7 +1119,7 @@ Convergencia temporal/espacial, destino común y búsqueda FPP--H refinada.\\
 \end{tabularx}
 \end{table}
 
-\subsection{Cierre: cómo cambia la pregunta geométrica}
+\subsection{Reformulación del problema geométrico en sistemas de Caputo}
 
 En orden entero se pregunta dónde está la órbita en \(\mathbb R^n\), qué
 variedades la organizan y qué cuenca la conduce al atractor. En Caputo deben
@@ -1129,13 +1132,12 @@ formularse dos preguntas simultáneas:
 \end{equation}
 La primera produce los retratos de fase y es indispensable para interpretar el
 circuito o modelo físico. La segunda decide si existen invariancia, retorno,
-atracción y ocultedad en sentido dinámico. El puente entre ambas es la
-evaluación \(\operatorname{ev}_0\), y el puente desde una condición inicial
-convencional es la inmersión \(\iota\).
+atracción y ocultedad en sentido dinámico. La evaluación
+\(\operatorname{ev}_0\) relaciona el estado funcional con su observación
+puntual, mientras \(\iota\) incorpora las condiciones iniciales convencionales.
 
-Por ello, una profundización posterior no consiste en descartar los métodos ya
-usados, sino en elevar sus resultados al espacio correcto: las semillas de
-función descriptiva y FPP--A se conservan; la continuación debe preservar
+Una formulación funcional conserva las semillas de función descriptiva y
+FPP--A; la continuación debe preservar
 memoria; FPP--H se registra como evento de historia; y las cuencas puntuales se
 etiquetan como secciones de reinicio. Sólo después de estas traducciones tiene
 sentido buscar variedades, índices topológicos, entropía o mecanismos

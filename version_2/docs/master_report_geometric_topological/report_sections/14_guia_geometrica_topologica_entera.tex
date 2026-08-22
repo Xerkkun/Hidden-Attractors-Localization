@@ -38,7 +38,7 @@ topológica cambia el centro de atención. En lugar de preguntar solamente
 \ifHAFOPedagogy
 \subsection{Objetivos de aprendizaje}
 
-Al terminar esta guía, el lector debería poder:
+Los objetivos de aprendizaje son:
 
 \begin{enumerate}
   \item identificar correctamente el espacio de fases de Chua, MAVPD,
@@ -60,11 +60,11 @@ Al terminar esta guía, el lector debería poder:
 
 \fi
 
-\subsection{Escalera de afirmaciones}
-\label{geo:subsec:escalera}
+\subsection{Jerarquía de evidencia geométrica}
+\label{geo:subsec:jerarquia-evidencia}
 
-Para evitar que una gráfica cargue más significado del que posee, se usará la
-siguiente escalera.
+Las afirmaciones se clasifican en cuatro niveles para distinguir visualización,
+evidencia numérica y demostración.
 
 \begin{table}[H]
 \centering
@@ -109,7 +109,7 @@ Esta parte se restringe primero a ecuaciones autónomas de orden entero
 \end{equation}
 donde \(M\) es una variedad diferenciable, usualmente \(\R^n\) o el cilindro
 \(\R\times S^1\). Esta restricción no es decorativa: el flujo y la propiedad de
-grupo que se construirán aquí no se trasladan sin más a un PVI causal de
+grupo de las ODE no se trasladan sin más a un PVI causal de
 Caputo con memoria. La extensión fraccionaria debe formularse por separado.
 El lenguaje topológico y diferencial de esta parte sigue
 \cite{NahmadAchar2022Topologia}; la teoría de flujo y estabilidad se apoya en
@@ -171,7 +171,7 @@ como \(h^{-1}\) son continuas.
 Un homeomorfismo puede estirar una bola hasta convertirla en un elipsoide, sin
 romper conexidad ni vecindades. Ésta es la razón por la cual la ocultedad,
 formulada mediante vecindades, puede transportarse topológicamente, mientras
-que un contrato de «radio \(10^{-3}\)» no se transporta conservando el mismo
+que una especificación de «radio \(10^{-3}\)» no se transporta conservando el mismo
 número.
 
 \begin{definition}[Interior, clausura y frontera]
@@ -271,7 +271,7 @@ Para una transformación afín \(x=Tz+c\), una bola física alrededor de
  \label{geo:eq:ball-to-ellipsoid}
 \end{equation}
 Así se conecta la equivalencia afín ya usada por las realizaciones D0/T1 con
-la geometría de los contratos de cuenca.
+la geometría de las especificaciones de muestreo de cuenca.
 
 \subsection{Regularidad de los cuatro casos enteros}
 
@@ -308,7 +308,7 @@ el cilindro aunque no lo parezca en el recubrimiento \(\R^2\). \\
 
 \subsection{Existencia, unicidad y dependencia de la condición inicial}
 
-\begin{proposition}[Picard--Lindelöf local, forma usada aquí]
+\begin{proposition}[Picard--Lindelöf local]
 Sea \(f:U\subset\R^n\to\R^n\) localmente Lipschitz. Para cada
 \(x_0\in U\) existe una única solución maximal
 \(x(\,\cdot\,;x_0)\) de~\eqref{geo:eq:edo-manifold} definida en un intervalo
@@ -349,7 +349,7 @@ Las curvas \(u(t)=\varphi_{t+s}(x)\) y
 satisfacen \(u(0)=v(0)=\varphi_s(x)\). La unicidad implica \(u=v\).
 \end{proof}
 
-\begin{remark}[Por qué autonomía importa]
+\begin{remark}[Papel de la autonomía en la propiedad de flujo]
 En una ecuación no autónoma \(\dot x=f(t,x)\) se usa un proceso de dos tiempos
 \(\varphi(t,t_0,x_0)\). La identidad~\eqref{geo:eq:flow-group} no puede
 escribirse eliminando \(t_0\) a menos que se amplíe el espacio con una variable
@@ -451,7 +451,7 @@ MAVPD y Kalman--Fitts poseen esta simetría impar. Por ejemplo, si
  \label{geo:eq:symmetric-basins}
 \end{equation}
 Los dos conjuntos pueden coincidir o formar un par distinto; la simetría por
-sí sola no decide cuál alternativa ocurre. En el expediente MAVPD, los ciclos
+sí sola no decide cuál alternativa ocurre. En el caso MAVPD, los ciclos
 internos aparecen como un par simétrico, mientras que la extensión externa
 debe comprobarse por sus propias trayectorias.
 
@@ -468,7 +468,7 @@ debe comprobarse por sus propias trayectorias.
 
 \HAFOCardBasins
 
-\subsection{Qué queda después del transitorio}
+\subsection{Conjuntos límite después del transitorio}
 
 \begin{definition}[Conjunto \texorpdfstring{\(\omega\)-límite}{omega-límite}]
 Para una órbita positiva completa,
@@ -520,7 +520,7 @@ Su cuenca es
  \operatorname{dist}(\varphi_t(x),A)\to0\}.
  \label{geo:eq:basin}
 \end{equation}
-En esta guía, un atractor asintóticamente estable es un compacto invariante
+Se adopta como atractor asintóticamente estable un compacto invariante
 que atrae una vecindad y es estable en el sentido de Lyapunov.
 \end{definition}
 
@@ -619,8 +619,8 @@ distancia uniforme positiva tendría una subsucesión límite perteneciente a
 todas las colas, contradicción.
 \end{proof}
 
-Construir un \(N\) así alrededor de un candidato fortalecería sustancialmente
-el reporte: reemplazaría la mera permanencia observada por un argumento G3 de
+Construir un \(N\) así alrededor de un candidato elevaría la evidencia de
+permanencia observada a un argumento G3 de
 acotación y existencia de un conjunto invariante. Aun así, habría que separar
 periodicidad, caos y ocultedad mediante argumentos adicionales.
 
@@ -637,8 +637,9 @@ periodicidad, caos y ocultedad mediante argumentos adicionales.
 
 \HAFOCardDegree
 
-Esta sección forma el puente más directo con los métodos topológicos de
-existencia. El principio central es que un número entero puede permanecer
+El grado topológico relaciona la existencia de soluciones con invariantes
+enteros bajo homotopía. El principio central es que un número entero puede
+permanecer
 constante durante una deformación aun cuando no se conozcan explícitamente
 las soluciones \cite{Amster2021MetodosTopologicos}.
 
@@ -652,7 +653,7 @@ Sean \(\Omega\subset\R^n\) un abierto acotado,
 aditividad y invariancia por homotopías que no llevan la frontera sobre \(y\).
 \end{definition}
 
-No se reconstruye aquí toda su teoría, pero se usan dos consecuencias.
+Se emplean las dos consecuencias siguientes.
 
 \begin{proposition}[Existencia e invariancia homotópica]
 Con los datos anteriores:
@@ -688,7 +689,7 @@ El sumando es el índice local de la raíz.
 
 \subsection{Ejemplo resuelto: índices de los equilibrios de Chua}
 
-En una región de pendiente \(m\), el reporte verificó
+En una región de pendiente \(m\), se obtiene
 \begin{equation}
  \det J_m=-\alpha[\beta+(\beta+\gamma)m].
  \label{geo:eq:chua-index-det}
@@ -735,7 +736,7 @@ El signo sólo es índice; no indica por sí mismo estabilidad. Una matriz de
 dimensión tres puede tener determinante negativo y, sin embargo, diferentes
 combinaciones de dimensiones estable e inestable.
 
-Para Kalman--Fitts, el cálculo simbólico del reporte obtuvo
+Para Kalman--Fitts, el cálculo simbólico produce
 \(\det Df(X)=0.98191881>0\). El origen, único equilibrio, tiene índice \(+1\)
 y el Jacobiano nunca se hace singular. Esto explica a la vez por qué la criba
 de puntos perpetuos no produce raíces y por qué el grado del equilibrio no
@@ -784,9 +785,9 @@ pérdida de todas las soluciones por la frontera.
 En un enfoque de dimensión infinita, una solución periódica se formula como
 punto fijo de un operador integral sobre un espacio de funciones. El grado de
 Leray--Schauder extiende esta estrategia cuando el operador es una
-perturbación compacta de la identidad y se tienen cotas a priori. Es una ruta
-natural para una fase posterior, pero no debe invocarse sin probar compacidad
-y ausencia de soluciones sobre la frontera funcional.
+perturbación compacta de la identidad y se tienen cotas a priori. Su aplicación
+requiere probar compacidad y ausencia de soluciones sobre la frontera
+funcional.
 
 \section{Conjugación, equivalencia orbital y propiedades invariantes}
 \label{sec:geo-equivalence}
@@ -816,8 +817,13 @@ Los flujos son orbitalmente equivalentes si \(h\) lleva cada órbita sobre una
 Una conjugación topológica lleva equilibrios a equilibrios, órbitas periódicas
 a órbitas periódicas con el mismo periodo, conjuntos invariantes a conjuntos
 invariantes, conjuntos \(\omega\)-límite a conjuntos \(\omega\)-límite y
-cuencas a cuencas. En particular, la ocultedad definida por
-\eqref{geo:eq:hidden-topological} se conserva.
+cuencas a cuencas. En particular,
+\ifHAFOBasinMaterial
+la ocultedad definida por \eqref{geo:eq:hidden-topological}
+\else
+la separación topológica entre las vecindades de los equilibrios y la cuenca
+\fi
+se conserva.
 \end{proposition}
 
 \begin{proof}
@@ -874,7 +880,7 @@ dependiente de la representación, no una clase topológica del flujo.
 
 \HAFOCardLinearGeometry
 
-Los resultados de esta sección requieren declarar regularidad e
+Estos resultados requieren declarar regularidad e
 hiperbolicidad; una gráfica de trayectorias no reemplaza esas hipótesis
 \cite{JaurezEtAl2021TGEDI,JaurezEtAl2021TGEDII,HirschSmaleDevaney2013}.
 
@@ -1011,15 +1017,15 @@ La igualdad de Routh--Hurwitz usada para la frontera candidata de Hopf MAVPD
 coloca un par sobre el eje imaginario y sugiere una variedad central
 bidimensional. Para afirmar una bifurcación de Hopf deben comprobarse además
 la simplicidad del par, la transversalidad del cruce y una condición de no
-degeneración, normalmente mediante el primer coeficiente de Lyapunov. El
-reporte no presenta aún esas tres pruebas, por lo que conserva correctamente
-la expresión «frontera candidata».
+degeneración, normalmente mediante el primer coeficiente de Lyapunov. Esas tres
+pruebas aún no están disponibles, por lo que la expresión «frontera candidata»
+conserva el alcance de la evidencia.
 
 \subsection{Alcance caso por caso}
 
 \begin{table}[H]
 \centering
-\caption{Uso correcto del teorema de la variedad estable en los expedientes.}
+\caption{Hipótesis y alcance del teorema de la variedad estable en los casos analizados.}
 \label{geo:tab:stable-manifold-scope}
 \small
 \begin{tabularx}{\textwidth}{@{}L{0.17\textwidth}YY@{}}
@@ -1130,8 +1136,8 @@ una región atrapante.
 En el PLL se usa la forma global \(dx\wedge d\theta\) sobre el cilindro; en
 Chua, el campo es continuo pero sólo suave por regiones, de modo que el balance
 se aplica por piezas y las contribuciones internas deben emparejarse en
-\(x=\pm1\). Esta formulación ofrece una conexión directa entre el libro de
-topología y geometría diferencial y los cálculos de divergencia del reporte.
+\(x=\pm1\). Esta formulación relaciona la teoría de topología y geometría
+diferencial con los cálculos de divergencia presentados.
 
 \fi
 \HAFOGeoRenderBlocktrue
@@ -1241,13 +1247,13 @@ Como el multiplicador tangente es \(1\), el transversal es exactamente
  \qquad T_{\!f}=\tau_1+\tau_2.
  \label{geo:eq:pll-floquet-divergence}
 \end{equation}
-Aquí se usa \(T_f\) para el parámetro del filtro y \(T\) para el periodo de la
+Se usa \(T_f\) para el parámetro del filtro y \(T\) para el periodo de la
 órbita. Si la integral es negativa, \(0<\mu_\perp<1\) y el ciclo es estable;
 si es positiva, \(\mu_\perp>1\) y es inestable. Esta identidad explica
 geométricamente los multiplicadores reportados para el ciclo corredor estable
 y la órbita separadora inestable.
 
-\subsection{Lectura correcta de los expedientes}
+\subsection{Interpretación geométrica de los casos analizados}
 
 \begin{table}[H]
 \centering
@@ -1256,7 +1262,7 @@ y la órbita separadora inestable.
 \small
 \begin{tabularx}{\textwidth}{@{}L{0.17\textwidth}YY@{}}
 \toprule
-Caso & Lectura disponible & Siguiente verificación geométrica \\
+Caso & Evidencia disponible & Siguiente verificación geométrica \\
 \midrule
 Chua PWL & La recurrencia y las nubes apoyan un conjunto caótico; las órbitas
 cruzan regiones PWL. & Declarar sección y orientación; propagar la primera
@@ -1287,7 +1293,7 @@ se integra la ecuación variacional en cada región y se tratan explícitamente
 los tiempos de evento; en un roce, la diferenciabilidad del retorno puede
 fallar.
 
-\subsection{Poincaré--Bendixson y por qué la dimensión importa}
+\subsection{Alcance dimensional del teorema de Poincaré--Bendixson}
 
 \begin{proposition}[Poincaré--Bendixson, versión planar]
 Sea \(f\in C^1\) en un abierto del plano y sea una semiórbita positiva
@@ -1316,8 +1322,8 @@ versión anular de Poincaré--Bendixson, su organización por focos, sillas y
 ciclos corredores es la esperada. El devanado angular debe conservarse: una
 órbita que aumenta \(2\pi\) por vuelta es periódica en el cilindro, aunque no
 sea cerrada en el recubrimiento. Esta limitación dimensional hace al PLL un
-banco para cuencas y separatrices, no el primer banco para demostrar una
-herradura de flujo.
+caso adecuado para estudiar cuencas y separatrices, pero no para establecer
+inicialmente una herradura de flujo.
 
 \begin{remark}[Límites del teorema]
 Compacidad, unicidad, autonomía, dimensión y topología del espacio son
@@ -1340,8 +1346,8 @@ argumento planar.
 
 \HAFOCardChaos
 
-Esta sección delimita una agenda. No se afirma que los expedientes actuales
-ya contengan una prueba homoclínica. Las definiciones y el mecanismo de
+Los casos analizados todavía no contienen una prueba homoclínica. Las
+definiciones y el mecanismo de
 herradura se estudian en
 \cite{HirschSmaleDevaney2013,DatserisParlitz2022Nonlinear}; su uso en un caso
 requiere además cerrar numérica o analíticamente las hipótesis geométricas.
@@ -1365,7 +1371,7 @@ Una proximidad visual entre dos curvas no prueba que se intersecten; una
 intersección numérica no prueba transversalidad; y una conexión no transversal
 no activa automáticamente el teorema de herradura.
 
-\begin{proposition}[Teorema de Smale--Birkhoff, versión de agenda]
+\begin{proposition}[Teorema de Smale--Birkhoff]
 Sea \(P\) un difeomorfismo \(C^1\) con un punto periódico hiperbólico. Si sus
 variedades estable e inestable poseen un punto homoclínico transversal,
 entonces algún iterado de \(P\) posee un conjunto compacto invariante sobre el
@@ -1375,9 +1381,8 @@ simbólico sobre un número finito de símbolos.
 
 La demostración completa construye tiras que se estiran, contraen y cruzan,
 define rectángulos de Markov y codifica cada órbita por la sucesión de tiras
-visitadas. No se reproduce como «demostración breve» porque precisamente esa
-construcción global es lo que tendría que verificarse en un caso del reporte.
-El teorema sí fija con claridad las hipótesis que faltan.
+visitadas. Su aplicación exige verificar esa construcción global en el sistema
+analizado; el teorema fija con precisión las hipótesis necesarias.
 
 \input{report_diagrams/entero_06_homoclinica_herradura}
 
@@ -1416,8 +1421,8 @@ un iterado proporciona la cota
  h_{\mathrm{top}}(P)\ge\frac{\log2}{k},
  \label{geo:eq:horseshoe-entropy-bound}
 \end{equation}
-porque \(h_{\mathrm{top}}(P^k|_\Lambda)=\log2\). Éste es un puente demostrable
-entre geometría de variedades, codificación simbólica y complejidad
+porque \(h_{\mathrm{top}}(P^k|_\Lambda)=\log2\). Esta cota relaciona de manera
+demostrable la geometría de variedades, la codificación simbólica y la complejidad
 topológica; una estimación espectral o una FFT no proporciona esta cota.
 
 \begin{definition}[Transitividad y caos de Devaney]
@@ -1436,7 +1441,7 @@ demuestra encontrando unas cuantas. Por eso la conjugación simbólica es mucho
 más fuerte que una nube visual: entrega ambas propiedades sobre un conjunto
 invariante bien definido.
 
-\subsection{No hay una sola definición operativa de caos}
+\subsection{Nociones no equivalentes de caos}
 
 \begin{table}[H]
 \centering
@@ -1469,7 +1474,7 @@ homoclínica transversal o cobertura de conos/rectángulos verificada. \\
 \subsection{Protocolo propuesto para Chua y MAVPD}
 
 Para convertir los diagnósticos actuales en una investigación geométrica de
-caos, el orden correcto es:
+caos, el análisis se organiza en las siguientes etapas:
 
 \begin{enumerate}
   \item fijar una sección transversal y un mapa de primer retorno bien
@@ -1489,10 +1494,10 @@ caos, el orden correcto es:
 
 En Chua deben añadirse eventos exactos en \(x=\pm1\) y excluir roces dentro
 del dominio del retorno. En MAVPD, la suavidad evita esa dificultad, por lo
-que el candidato caótico local es el primer banco conveniente para desarrollar
-el protocolo.
+que el candidato caótico local constituye un caso inicial adecuado para
+desarrollar el protocolo.
 
-\section{Lectura geométrica unificada de los cuatro casos}
+\section{Comparación geométrica de los cuatro casos}
 \label{sec:geo-four-cases}
 
 \begin{table}[H]
@@ -1524,10 +1529,10 @@ separatrices de la silla? \\
 \end{tabularx}
 \end{table}
 
-\subsection{Qué cambia al mirar la ocultedad geométricamente}
+\subsection{Reformulación geométrica de la ocultedad}
 
 La metodología de función descriptiva, puntos perpetuos o mapa de conmutación
-localiza una semilla. La geometría comienza después:
+localiza una semilla. El análisis geométrico complementario identifica después:
 \begin{equation}
  \text{semilla}
  \longrightarrow
@@ -1541,10 +1546,10 @@ localiza una semilla. La geometría comienza después:
  \label{geo:eq:geometry-workflow}
 \end{equation}
 Ningún localizador sustituye esos pasos. A la inversa, conocer una separatriz
-o un índice topológico puede producir semillas nuevas y complementar a los
-métodos algebraicos del reporte.
+o un índice topológico puede producir semillas nuevas y complementar los
+métodos algebraicos analizados.
 
-\subsection{Fronteras suaves, fractales y Wada: agenda, no conclusión}
+\subsection{Fronteras suaves, fractales y de Wada: criterios y evidencia disponible}
 
 \HAFOCardFractal
 
@@ -1564,13 +1569,13 @@ tres o más cuencas pertenece simultáneamente a las fronteras de todas. Una
 imagen con tres colores entremezclados no basta: se requieren algoritmos de
 refinamiento y, para una prueba, una caracterización del conjunto invariante
 que genera la frontera. Chua y MAVPD son candidatos naturales si se confirman
-tres destinos coexistentes; Kalman--Fitts sólo exhibe en el contrato actual el
+tres destinos coexistentes; Kalman--Fitts sólo exhibe en la especificación actual el
 origen, el ciclo y estados todavía no clasificados, por lo que no debe
 declararse Wada.
 
 \fi
 
-% El banco acumulado se conserva en la monografía digital completa. La guía
+% El material acumulado se conserva en la monografía digital completa. La guía
 % de estudio usa los ejercicios distribuidos junto a cada bloque matemático.
 \ifHAFOdigitalcontent
 \section{Ejemplos cortos, contraejemplos y actividades guiadas}
@@ -1727,9 +1732,9 @@ dominio \(U\) que contenga la órbita seguida y enumere qué cotas serían
 necesarias para verificar~\eqref{geo:eq:kalman-degree-boundary}.
 
 \paragraph{Pista.}
-No basta evaluar 51 valores de \(\lambda\). Hay que cubrir el continuo
-\([0,1]\times\partial U\), controlar tiempos de retorno y excluir tangencias
-con la sección.
+La evaluación de 51 valores de \(\lambda\) no cubre el continuo
+\([0,1]\times\partial U\). La verificación requiere controlar los tiempos de
+retorno y excluir tangencias con la sección.
 
 \paragraph{Autocontrol.}
 Una respuesta completa distingue: existencia del mapa, continuidad en
@@ -1757,9 +1762,9 @@ En el candidato caótico MAVPD, busque un punto periódico silla de \(P^k\),
 calcule sus direcciones estable e inestable y continúe pequeños segmentos.
 Registre la distancia y el ángulo en cada aproximación de intersección.
 
-\paragraph{Criterio de promoción.}
-No usar la palabra «herradura» hasta encerrar una intersección transversal o
-verificar una cobertura equivalente. Una distancia pequeña con ángulo mal
+\paragraph{Criterio de validación.}
+El término «herradura» queda reservado para una intersección transversal
+encerrada o una cobertura equivalente. Una distancia pequeña con ángulo mal
 condicionado es una pista G1, no una prueba.
 
 \subsection{Actividad 10: defensa oral de una afirmación}
@@ -1773,8 +1778,8 @@ Elija una de las frases siguientes y defiéndala durante cinco minutos:
   \item «La homotopía de Kalman conserva una órbita periódica».
 \end{enumerate}
 
-La defensa debe separar: definición; hipótesis del teorema; evidencia del
-reporte; conclusión realmente autorizada; y un contraejemplo que muestre por
+La defensa debe separar: definición; hipótesis del teorema; evidencia numérica
+disponible; conclusión realmente autorizada; y un contraejemplo que muestre por
 qué una evidencia más débil no basta.
 
 \fi
@@ -1782,12 +1787,12 @@ qué una evidencia más débil no basta.
 
 \ifdefined\HAFONoGeoPosterior\else
 \ifdefined\HAFOGeoBlockSelect\else
-\section{Material posterior: profundización y agenda de investigación}
+\section{Problemas de profundización e investigación}
 \label{sec:geo-study-plan}
 
 \HAFOCardFuture
 
-\subsection{Matriz de proyectos posibles}
+\subsection{Problemas de investigación y requisitos}
 
 \begin{table}[H]
 \centering
@@ -1796,7 +1801,7 @@ qué una evidencia más débil no basta.
 \small
 \begin{tabularx}{\textwidth}{@{}L{0.21\textwidth}L{0.20\textwidth}YY@{}}
 \toprule
-Proyecto & Banco inicial & Resultado mínimo & Promoción rigurosa \\
+Proyecto & Caso de referencia & Resultado mínimo & Condición de validación rigurosa \\
 \midrule
 Frontera cilíndrica & PLL & Mapa de cuenca refinado y ciclo separador con
 multiplicador & Encierro del retorno y caracterización de la componente de
@@ -1818,9 +1823,9 @@ Topología de cuencas & Chua/MAVPD & Exponente de incertidumbre multirresolució
 \end{tabularx}
 \end{table}
 
-\subsection{Plantilla para futuras afirmaciones}
+\subsection{Criterios para formular conclusiones geométricas}
 
-Toda subsección geométrica nueva debería contestar explícitamente:
+Toda conclusión geométrica debe especificar explícitamente:
 
 \begin{enumerate}
   \item \textbf{Espacio:} ¿\(M=\R^n\), un cilindro, un cociente o una
@@ -1841,15 +1846,14 @@ Toda subsección geométrica nueva debería contestar explícitamente:
 
 \begin{hallazgo}{Conexión entre localización y teoría geométrica}
 La teoría geométrica no reemplaza la función descriptiva, la continuación ni
-los puntos perpetuos. Les asigna un lugar preciso: son mecanismos para entrar
-en una región del espacio de fases. El flujo determina la órbita; el conjunto
+los puntos perpetuos. Estos métodos proporcionan condiciones iniciales en una
+región del espacio de fases. El flujo determina la órbita; el conjunto
 \(\omega\)-límite identifica el destino; las variedades y los mapas de retorno
 explican su organización local; las cuencas y sus fronteras formulan la
 ocultedad; y una estructura como una intersección homoclínica transversal
 puede, con hipótesis verificadas, convertir evidencia de caos en un mecanismo
-topológico demostrado. Mantener separadas estas capas es la conexión central
-entre los ejemplos del reporte y la teoría geométrica de ecuaciones
-diferenciales.
+topológico demostrado. La separación de estos niveles relaciona los sistemas
+analizados con la teoría geométrica de ecuaciones diferenciales.
 \end{hallazgo}
 \fi
 \fi

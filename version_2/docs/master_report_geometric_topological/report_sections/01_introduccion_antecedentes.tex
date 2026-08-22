@@ -32,7 +32,7 @@ inicial. El orden \(q\) también modifica la estabilidad local: la condición
 usual \(\Re\lambda<0\) se sustituye por el criterio angular de Matignon
 \cite{Matignon1996}.
 
-Este reporte desarrolla dos rutas complementarias:
+Se desarrollan dos rutas complementarias:
 
 \begin{enumerate}
   \item para el Chua no suave, la semilla se obtiene mediante una función
@@ -45,10 +45,10 @@ Este reporte desarrolla dos rutas complementarias:
 
 En ambos casos, los sondeos de cuenca comienzan en el mismo instante de memoria.
 El caso no suave conserva la regla de completar el primer radio con contactos.
-En \texttt{c590} se añadió una auditoría macroscópica en \(r=2\) después del
+En \texttt{c590} se añadió una evaluación macroscópica en \(r=2\) después del
 primer contacto observado en \(r=1\). El mayor radio local sin contactos y los
 bloques macroscópicos se reportan por separado. El alcance \emph{local} se fija
-por el contrato predeclarado. Los cálculos cubren radios, geometrías,
+por el protocolo predefinido. Los cálculos cubren radios, geometrías,
 cantidades de muestras y horizontes declarados. Una caracterización global
 exigiría describir la cuenca completa en un dominio no acotado y con resolución
 arbitrariamente fina, tarea que es especialmente costosa cuando cada
@@ -96,7 +96,7 @@ La verificación descrita en la referencia usa 200 trayectorias alrededor de un
 equilibrio externo con radio \(\delta=0.01\) y emplea la simetría para el
 equilibrio opuesto.
 
-La reconstrucción realizada en este trabajo conserva la ecuación, los
+La reconstrucción conserva la ecuación, los
 parámetros, el orden y el integrador de la referencia. El artículo no
 proporciona la condición inicial exacta de la figura del atractor ni los
 valores intermedios de la construcción armónica
@@ -142,7 +142,7 @@ Las referencias cumplen funciones diferentes dentro del estudio:
 \label{tab:papel_referencias}
 \begin{tabularx}{\linewidth}{L{0.22\linewidth}Y Y}
 \toprule
-Referencia & Elemento recuperado & Uso en este reporte\\
+Referencia & Elemento recuperado & Función metodológica\\
 \midrule
 Leonov--Kuznetsov
 & Función descriptiva, construcción modal y continuación en \(q=1\)
@@ -161,14 +161,14 @@ Wu et al.
 \subsection{Análisis matemático de los artículos primarios}
 
 \begin{longtable}{@{}L{0.16\textwidth}L{0.22\textwidth}L{0.28\textwidth}L{0.26\textwidth}@{}}
-\caption{Operaciones que deben reconstruirse al estudiar el estado del arte.}
+\caption{Operaciones matemáticas asociadas con el estado del arte.}
 \label{tab:articulos-operaciones}\\
 \toprule
-Núcleo & Artículos & Formalismo que debe reproducirse & Lectura correcta \\
+Núcleo & Artículos & Formalismo reconstruido & Alcance de la interpretación \\
 \midrule
 \endfirsthead
 \toprule
-Núcleo & Artículos & Formalismo que debe reproducirse & Lectura correcta \\
+Núcleo & Artículos & Formalismo reconstruido & Alcance de la interpretación \\
 \midrule
 \endhead
 Atractor oculto y localización
@@ -200,7 +200,8 @@ Puntos perpetuos
 & \(Df(p)f(p)=0\), exclusión de equilibrios, singularidad de \(Df\),
 covariancia afín y contraejemplos.
 & Un PP es una semilla heurística, no un localizador universal. FPP--A y FPP--H
-son extensiones del proyecto y deben conservar el formalismo de memoria. \\
+son formulaciones propuestas para Caputo y deben conservar el formalismo de
+memoria. \\
 Geometría del campo
 & \cite{GuanXie2021Connecting,GodaraEtAl2018CriticalSurfaces}
 & Menores, superficies \(\det Df=0\), campos derivados, curvas conectantes y
@@ -236,8 +237,8 @@ una propuesta nueva de la tesis?
 \end{bloqueestudio}
 \fi
 
-La jerarquía bibliográfica del resto del reporte es deliberada. La definición,
-la localización y los parámetros de cada atractor se atribuyen a artículos de
+La atribución bibliográfica distingue las funciones de cada tipo de fuente. La
+definición, la localización y los parámetros de cada atractor se atribuyen a artículos de
 investigación
 \cite{LeonovKuznetsovVagaitsev2011,Leonov2013HiddenAttractors,Danca2017,KuznetsovEtAl2017,Wu2023ArctanChua};
 los métodos geométricos se remiten también a sus trabajos originales

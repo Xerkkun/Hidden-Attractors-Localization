@@ -17,12 +17,13 @@ sistemas que cumplen simultáneamente:
  \item valor científico como prueba de una parte aún no cerrada del método.
 \end{enumerate}
 
-Se excluyen del carril actual sistemas incommensurables, Caputo--Fabrizio,
-Atangana--Baleanu, retardados, discretos o complejos. No son imposibles, pero
-su símbolo de transferencia, su condición de estabilidad y su contrato de
-memoria no son intercambiables con Caputo conmensurable.
+La ruta actual excluye sistemas incommensurables, Caputo--Fabrizio,
+Atangana--Baleanu, retardados, discretos o complejos, cuyos símbolos de
+transferencia, condiciones de estabilidad y protocolos de memoria difieren de
+Caputo conmensurable.
 
-\section{Prioridad 1: sistema fraccionario sin equilibrio de Muñoz--Pacheco}
+\section[Prioridad 1: sistema Muñoz--Pacheco sin equilibrio]
+{Prioridad 1: sistema fraccionario sin equilibrio de Muñoz--Pacheco}
 \label{sec:cand-munoz}
 
 La fuente primaria \cite{munoz2018} propone
@@ -125,9 +126,9 @@ Para \(x\neq0\), el Jacobiano regional es
  \end{pmatrix}.
  \label{eq:cand-munoz-jacobian}
 \end{equation}
-No se aplica Matignon en equilibrios porque éstos no existen. La validación
-debe concentrarse en el integrador nonsuave, la coexistencia y la robustez de
-los diagnósticos.
+La ausencia de equilibrios hace inaplicable el criterio de Matignon local. La
+validación se concentra en el integrador no suave, la coexistencia y la
+robustez de los diagnósticos.
 
 \begin{proposalbox}
 \textbf{Plan L0--L6.} Congelar \(a=0.35\), \(q=0.97\) y \(q=0.996\), las dos
@@ -214,9 +215,9 @@ Como ambas entradas llegan al último estado, la transferencia es
  \end{pmatrix}.
  \label{eq:cand-jerk-transfer}
 \end{equation}
-Los términos cuadráticos requieren DC y segundo armónico. Este sistema es,
-por tanto, el primer banco entero recomendado para demostrar que M1 añade
-capacidad real sobre los casos escalares ya cerrados.
+Los términos cuadráticos requieren DC y segundo armónico. Este sistema ofrece
+un control entero para evaluar si M1 amplía la cobertura respecto de los casos
+escalares.
 
 \section{Prioridad 3: sistema Liu extendido fraccionario}
 \label{sec:cand-extended-liu}
@@ -258,15 +259,15 @@ Con \(\operatorname{sign}(0)=0\), la solución es la semirrecta
  x=y=z=0,\qquad w<0,
  \label{eq:cand-liu-equilibria}
 \end{equation}
-no un sistema sin equilibrios. Antes de promover el caso deben congelarse
-\(q\), la rama dinámica, las iniciales, la convención en \(w=0\) y el protocolo
+no un sistema sin equilibrios. Su evaluación requiere fijar \(q\), la rama
+dinámica, las condiciones iniciales, la convención en \(w=0\) y el protocolo
 para una variedad continua de equilibrios.
 
-\section{Cola interna y controles}
+\section{Candidatos adicionales y controles}
 \label{sec:candidate-queue}
 
 \begin{longtable}{@{}L{0.23\linewidth}L{0.20\linewidth}L{0.24\linewidth}L{0.25\linewidth}@{}}
-\caption{Portafolio compatible y requisito de promoción.}
+\caption{Familias compatibles y evidencia pendiente.}
 \label{tab:candidate-portfolio}\\
 \toprule
 Familia & Ruta estructural & Activo disponible & Falta decisiva\\
@@ -289,9 +290,9 @@ de generalización, no como familia distante.\\
 Fischer jerk exponencial & D0 con DC & Parámetros y diagnóstico &
 Control bibliográfico/Lyapunov; clasificación de cuenca no reproducida
 localmente.\\
-Lorenz generalizado & M1, \(H\ge2\) & Álgebra completa de este reporte &
+Lorenz generalizado & M1, \(H\ge2\) & Álgebra completa verificada &
 Raíz armónica, continuación, integración y cuenca.\\
-Rabinovich--Fabrikant & M1, \(H\ge3\) & Álgebra completa de este reporte &
+Rabinovich--Fabrikant & M1, \(H\ge3\) & Álgebra completa verificada &
 Raíz armónica, continuación, integración y cuenca.\\
 Sistema financiero Fischer & M1+PWA & Banco Lyapunov & Resolver discrepancias
 y separar del modelo financiero del manuscrito.\\
@@ -302,21 +303,21 @@ Debbouche fraccionario & M1+signo & DOI y parámetros parciales
 \bottomrule
 \end{longtable}
 
-\section{Orden recomendado de ejecución}
+\section{Secuencia de evaluación propuesta}
 \label{sec:candidate-order}
 
 \begin{enumerate}
- \item ejecutar primero el jerk cuadrático entero: elimina el costo de memoria
- fraccionaria y prueba de forma limpia el salto D0 \(\to\) M1;
- \item ejecutar después el sistema de Muñoz--Pacheco: prueba M1, nonsuavidad,
- Caputo y coexistencia, con ecuaciones e iniciales publicadas;
- \item resolver el balance multiharmónico de Lorenz generalizado y RF usando
- las realizaciones ya auditadas, sin prometer ocultedad hasta L5;
- \item cerrar Genesio--Tesi como control escalar sesgado;
- \item dejar Liu extendido y Debbouche para una segunda ola, porque las
- variedades de equilibrio y el signo introducen contratos adicionales.
+ \item evaluar primero el jerk cuadrático entero, que elimina el costo de
+ memoria fraccionaria y aísla la extensión D0 \(\to\) M1;
+ \item evaluar después el sistema de Muñoz--Pacheco, que combina M1,
+ no suavidad, Caputo y coexistencia con ecuaciones e iniciales publicadas;
+ \item resolver el balance multiharmónico de Lorenz generalizado y RF mediante
+ las realizaciones verificadas, manteniendo la ocultedad pendiente hasta L5;
+ \item completar Genesio--Tesi como control escalar sesgado;
+ \item reservar Liu extendido y Debbouche para una fase posterior, porque las
+ variedades de equilibrio y el signo requieren protocolos adicionales.
 \end{enumerate}
 
-Esta secuencia maximiza información científica por costo: primero falsifica o
-confirma la extensión M1 en ODE, luego añade memoria Caputo y nonsuavidad, y
-sólo después aborda los casos bibliográficos cuya semilla no está publicada.
+La secuencia prioriza el menor costo computacional y el aislamiento de la
+hipótesis M1; después incorpora memoria Caputo, no suavidad y casos
+bibliográficos sin semilla publicada.

@@ -1517,18 +1517,10 @@ def _save_figure(fig: plt.Figure, output: Path, *, title: str, sources: Sequence
     }
 
 
-def render_campaign_figures(
-    cases: Mapping[str, CaseDefinition],
-    results: Sequence[TrajectoryResult],
-    *,
-    run_root: Path,
-    edge_records: Mapping[str, Any],
-) -> list[dict[str, Any]]:
-    """Render conceptual and finite-time result figures in PDF and PNG."""
+def render_campaign_route_figure(*, run_root: Path) -> dict[str, Any]:
+    """Render only the conceptual route figure for report synchronization."""
 
     output = run_root / "figures"
-    manifest: list[dict[str, Any]] = []
-
     fig, ax = plt.subplots(figsize=(12.0, 3.5))
     ax.set_axis_off()
     boxes = (
@@ -1547,18 +1539,32 @@ def render_campaign_figures(
     ax.text(
         0.5,
         0.12,
-        "Cada flecha conserva contrato, procedencia y nivel de evidencia; ninguna semilla prueba ocultedad.",
+        (
+            "Cada flecha indica la configuración numérica, la procedencia y el nivel de evidencia; "
+            "ninguna semilla prueba ocultedad."
+        ),
         ha="center",
         fontsize=9,
     )
-    manifest.append(
-        _save_figure(
-            fig,
-            output / "00_ruta_geometrico_topologica",
-            title="Ruta complementaria geometrico-topologica",
-            sources=("PILOT_PROTOCOL_VERSION",),
-        )
+    return _save_figure(
+        fig,
+        output / "00_ruta_geometrico_topologica",
+        title="Ruta complementaria geometrico-topologica",
+        sources=("PILOT_PROTOCOL_VERSION",),
     )
+
+
+def render_campaign_figures(
+    cases: Mapping[str, CaseDefinition],
+    results: Sequence[TrajectoryResult],
+    *,
+    run_root: Path,
+    edge_records: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    """Render conceptual and finite-time result figures in PDF and PNG."""
+
+    output = run_root / "figures"
+    manifest: list[dict[str, Any]] = [render_campaign_route_figure(run_root=run_root)]
 
     by_key = {(r.case_id, r.seed_id, r.budget_level, r.integrator_id): r for r in results}
     pll = cases["pll_lead_lag_integer_q1_tg_pilot"]
@@ -2062,6 +2068,7 @@ __all__ = [
     "compute_central_symmetry_diagnostics",
     "finalize_existing_pilot",
     "load_persisted_results",
+    "render_campaign_route_figure",
     "render_campaign_figures",
     "resume_existing_pilot_trajectories",
     "run_and_classify_seed",

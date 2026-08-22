@@ -17,8 +17,8 @@ trayectoria postransitoria de apariencia periódica. La ruta propuesta para el
 mismo sistema físico construye su propia semilla sesgada, la transporta con
 memoria de Caputo y también alcanza un conjunto atrayente de apariencia
 periódica, con una frecuencia dominante próxima a la del control
-bibliográfico. Ambos cálculos se documentan como experimentos independientes:
-uno reconstruye el contrato publicado y el otro evalúa la metodología
+bibliográfico. Ambos cálculos son experimentos independientes: uno reconstruye
+el protocolo publicado y el otro evalúa la metodología
 propuesta. El conjunto de la ruta propuesta es regular y de apariencia
 periódica; los diagnósticos aplicados no lo clasifican como caótico. La
 comparación adicional con
@@ -34,23 +34,24 @@ simétricas de apariencia periódica. El caso \texttt{c590} de
 Caputo independientes. Su trayectoria postransitoria es aperiódica bajo el
 filtro empleado. La comparación muestra que el régimen observado resulta de
 la combinación entre la forma arctangente, los parámetros, la semilla y el
-contrato fraccionario.
+protocolo fraccionario.
 
+\ifHAFOBasinMaterial
 Los sondeos separan el alcance local predeclarado de la exploración
-macroscópica. Para el sistema no suave, el contrato local \(r\leq0.01\)
+macroscópica. Para el sistema no suave, el protocolo local \(r\leq0.01\)
 produjo \(0/7\,200\) contactos y cero fallos numéricos; éste es el soporte
 finito para la compatibilidad local con ocultedad del conjunto regular. La
 extensión macroscópica añadió 10\,200 sondas en \(r=0.03,0.1,0.3\):
 \(0/6\,600\) contactos en los dos primeros radios y \(37/3\,600\) en el
-tercero. El acumulado combinado es \(0/13\,800\) hasta \(r=0.1\), pero no
-extiende hasta ese radio el contrato local ni su afirmación de ocultedad. Para
+tercero. El acumulado combinado es \(0/13\,800\) hasta \(r=0.1\); la afirmación
+de ocultedad conserva el alcance local predeclarado. Para
 \texttt{c590} se obtuvieron \(0/8\,400\) contactos hasta \(r=0.3\),
 \(22/2\,400\) en \(r=1\) y \(588/2\,700\) en \(r=2\), con 131 divergencias
 en este último bloque. El primer contacto aparece en \(r=1\); \(r=2\) es una
-auditoría macroscópica adicional y no amplía el dominio local sin contactos.
+evaluación macroscópica adicional y no amplía el dominio local sin contactos.
+\fi
 
-La principal ventaja frente a una búsqueda por prueba y error es que cada
-decisión tiene una regla repetible. En el caso no suave, la función
+Cada decisión sigue una regla reproducible. En el caso no suave, la función
 descriptiva sesgada, el residuo del cierre armónico, la construcción modal y
 la continuación causal determinan la semilla. En el caso con arctangente, el
 dominio de exploración, la puntuación, la criba dinámica y el refinamiento
@@ -58,7 +59,7 @@ fraccionario determinan los parámetros y la condición inicial. Finalmente,
 los radios, las cantidades de muestras, las semillas pseudoaleatorias, el
 integrador y el clasificador quedan fijados antes del sondeo. Así, la
 localización de la semilla y la clasificación de su cuenca se pueden revisar
-por separado y repetir con el mismo contrato numérico.
+por separado y repetir con el mismo protocolo numérico.
 
 \section{Conclusiones}
 \label{sec:conclusiones}
@@ -76,9 +77,11 @@ Leonov--Kuznetsov cuando \(q=1\).
 Las reconstrucciones de Danca y Wu proporcionaron los controles
 bibliográficos, mientras que las dos rutas propuestas produjeron,
 respectivamente, un conjunto postransitorio regular de apariencia periódica,
-que no se clasifica como caótico, y uno aperiódico. Para el sistema no suave,
+que no se clasifica como caótico, y uno aperiódico.
+\ifHAFOBasinMaterial
+Para el sistema no suave,
 las \(7\,200\) sondas sin contactos ni fallos sustentan compatibilidad con
-ocultedad únicamente bajo el contrato local \(r\leq0.01\); la extensión
+ocultedad únicamente bajo el protocolo local \(r\leq0.01\); la extensión
 macroscópica registra \(0/6\,600\) contactos en \(r=0.03,0.1\) y
 \(37/3\,600\) en \(r=0.3\), sin ampliar esa afirmación local. Para
 \texttt{c590}, \(0/8\,400\) contactos hasta \(r=0.3\), \(22/2\,400\) en
@@ -86,3 +89,4 @@ macroscópica registra \(0/6\,600\) contactos en \(r=0.03,0.1\) y
 delimitan el acceso bajo el sondeo superficial declarado. La ausencia de
 contactos hasta \(r=0.3\) es una conclusión limitada a la muestra finita y no
 demuestra separación global de la cuenca.
+\fi

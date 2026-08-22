@@ -1,6 +1,6 @@
 \section{Alcance y criterio de evidencia}
 
-Este informe separa cuatro afirmaciones que suelen mezclarse:
+El análisis distingue cuatro niveles de evidencia:
 
 \begin{enumerate}
   \item \textbf{derivación}: existencia de una rama armónica compatible y de
@@ -13,15 +13,13 @@ Este informe separa cuatro afirmaciones que suelen mezclarse:
         de vecindades de todos los equilibrios.
 \end{enumerate}
 
-Un candidato no se llama oculto sólo porque la continuación lo encuentre.
-Debe superar además el protocolo de vecindades. Del mismo modo, un exponente
-de Lyapunov positivo no demuestra ocultedad, y cero contactos en una muestra
-finita no demuestra globalmente que la cuenca esté desconectada de todas las
-vecindades posibles.
+La continuación establece la localización de un candidato. La clasificación
+dinámica requiere diagnósticos convergentes y la compatibilidad con ocultedad
+queda limitada al banco de vecindades y al horizonte declarados.
 
-\evidencebox{\textbf{Regla de redacción.} \emph{Compatible con ocultedad bajo
+\evidencebox{\textbf{Interpretación.} \emph{Compatible con ocultedad bajo
 el protocolo finito} significa exactamente que ninguna condición inicial del
-contrato ensayado alcanzó la nube candidata. \emph{Oculto según la fuente}
+banco ensayado alcanzó la nube candidata. \emph{Oculto según la fuente}
 atribuye el rótulo a la bibliografía. \emph{Ocultedad certificada en un
 dominio} se reserva para un argumento que cubra el continuo declarado. Ninguna
 de las dos primeras expresiones significa una prueba topológica global de la
@@ -47,8 +45,8 @@ matemático, y \juliads{} se usó para integración y diagnósticos dinámicos.
 Las comparaciones MAVPD cerradas cubren tanto los candidatos periódicos de
 $\gamma=0.1$ como la extensión caótica en $\xi=\MAVPDChaosXi$. En esta última,
 Julia vuelve a derivar las ramas, activa la alternativa sólo después del fallo
-del cribado directo, transporta el estado y selecciona $\gamma$ sin leer
-artefactos Python. PLL replica de igual modo la ruta T1 + A1; las condiciones
+del cribado directo, transporta el estado y selecciona $\gamma$ sin utilizar
+estados ni resultados de Python. PLL replica de igual modo la ruta T1 + A1; las condiciones
 comunes se leen únicamente durante la verificación posterior.
 \fi
 
@@ -56,7 +54,7 @@ comunes se leen únicamente durante la verificación posterior.
 
 \subsection{Declaración Lur'e y ruta directa D0}
 
-El contrato escalar base es
+La formulación escalar base es
 \begin{equation}
   \dot X=PX+b\,\psi(\sigma),\qquad
   \sigma=c^{\mathsf T}X,
@@ -128,7 +126,7 @@ la localización es ciega respecto de la semilla y de la tabla publicadas.
 \ifHAFOdigitalcontent
 Los campos \texttt{published\_seed\_used=false} y
 \texttt{table\_1\_used\_as\_search\_input=false} conservan esa separación en
-los manifiestos de la edición digital.
+los manifiestos de resultados.
 \fi
 
 \subsection{Protocolo de ocultedad}
@@ -148,8 +146,8 @@ condiciones iniciales, junto con sus radios, direcciones, paso, transitorio,
 horizonte y tolerancia geométrica. En cada comparación cruzada los dos entornos
 reciben las mismas coordenadas.
 \ifHAFOdigitalcontent
-El archivo CSV y el manifiesto de la corrida identifican físicamente ese
-conjunto en la edición digital.
+El archivo CSV y el manifiesto de la corrida identifican ese conjunto mediante
+rutas y registros verificables.
 \fi
 
 \begin{center}
@@ -180,7 +178,7 @@ conjunto en la edición digital.
 sistemas enteros.
 \end{center}
 
-\section{Caso 1: Chua no suave de orden entero}
+\section[Caso 1: Chua no suave entero]{Caso 1: Chua no suave de orden entero}
 
 \subsection{Modelo y derivación}
 
@@ -234,7 +232,7 @@ fue \(0.04296875\), equivalente a 22 impactos de los 512 lanzamientos. Las
 semillas de la función descriptiva se usaron sólo después para confirmar la
 correspondencia de las ramas positiva y negativa.
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \begin{subfigure}[t]{0.49\textwidth}
   \centering
@@ -248,31 +246,35 @@ correspondencia de las ramas positiva y negativa.
 \end{subfigure}
 \caption{Localización independiente en el Chua no suave.}
 \label{int:fig:chua-localization}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
-\subsection{Prueba común Python--Julia: contrato \emph{full} independiente del
-carril histórico}
+\subsection{Comparación dinámica Python--Julia}
 
+\ifHAFOBasinMaterial
+\paragraph{Protocolo \emph{full} independiente de la configuración EFORK--3 de referencia.}
 Ambos códigos evaluaron exactamente \ChuaProbeCount{} condiciones:
 3 equilibrios, 7 radios entre \(10^{-5}\) y \(10^{-2}\), y 24 puntos por
 equilibrio y radio. Se usaron \(t_f=500\), \(t_{\mathrm{burn}}=120\),
 tolerancia de equilibrio \(10^{-3}\) y tolerancia normalizada de nube \(0.08\).
 Este banco comparte exactamente las 504 coordenadas, generadas en bolas
-uniformes con semilla NumPy 123456789. No es la corrida histórica
+uniformes con semilla NumPy 123456789. No es la corrida EFORK--3 de referencia
 \(T=320\), \(T_{\mathrm{burn}}=80\), que usa otras coordenadas y un
 clasificador por huellas de sección.
+\fi
 
 \begin{table}[H]
 \centering
-\caption{Comparación cerrada de Chua.}
+\caption{Comparación Python--Julia del caso de Chua.}
 \small
 \begin{tabularx}{\textwidth}{@{}lYY@{}}
 \toprule
 Magnitud & Python/\hafo{} & Julia \\
 \midrule
+\ifHAFOBasinMaterial
 Clases finales coincidentes & \multicolumn{2}{c}{504 de 504} \\
 Conteos comunes & \multicolumn{2}{c}{152 en \(E_0\), 198 acotadas no triviales, 154 divergentes} \\
 Contactos con candidato & 0 & 0 \\
+\fi
 Exponentes de Lyapunov finitos &
 \((0.14018,\ 0.01319,\ -1.20304)\) &
 \((0.14591,\ -0.00052,\ -1.17115)\) \\
@@ -283,10 +285,12 @@ Tiempo interno completo (s) & \ChuaPythonTotal & \ChuaJuliaTotal \\
 \end{tabularx}
 \end{table}
 
-Los conteos \(152/198/154\) pertenecen exclusivamente a este contrato
-\emph{full} compartido. Los conteos \(369/69/66\) del carril histórico usan
+\ifHAFOBasinMaterial
+Los conteos \(152/198/154\) pertenecen exclusivamente a este protocolo
+\emph{full} compartido. Los conteos \(369/69/66\) de la configuración de referencia usan
 otro horizonte, otras coordenadas y otro clasificador. El invariante común es
 cero contactos con la nube objetivo, no la partición de destinos.
+\fi
 
 Los dos espectros son compatibles con un exponente máximo positivo. Esa
 observación apoya la clasificación caótica local, pero no sustituye la prueba
@@ -297,17 +301,18 @@ son distintos: Python invierte tiempo principalmente en la verificación local
 y Julia en descubrimiento global, trayectorias y figuras.
 \fi
 
-\begin{hafodigitalfigure}[H]
+\begin{hafobasinfigure}[H]
 \centering
 \includegraphics[width=0.82\textwidth]{chua_python_hiddenness.png}
 \caption{Control de vecindades de los tres equilibrios en Python. El
 comparador usó las mismas 504 coordenadas en Julia.}
 \label{int:fig:chua-hiddenness}
-\end{hafodigitalfigure}
+\end{hafobasinfigure}
 
-\section{Caso 2: Kalman--Fitts, sistema no Chua de cuarto orden}
+\section[Caso 2: Kalman--Fitts no Chua]
+{Caso 2: Kalman--Fitts, sistema no Chua de cuarto orden}
 
-\subsection{Contrato y rechazo de la ruta directa}
+\subsection{Formulación y rechazo de la ruta directa}
 
 El sistema exacto es
 \begin{equation}
@@ -344,7 +349,7 @@ semilla. El punto de la Tabla 2 se comparó sólo después y quedó a distancia
 \(4.34\times10^{-4}\) de la trayectoria Python y
 \(4.30\times10^{-4}\) de la Julia.
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \begin{subfigure}[t]{0.49\textwidth}
   \centering
@@ -358,16 +363,17 @@ semilla. El punto de la Tabla 2 se comparó sólo después y quedó a distancia
 \end{subfigure}
 \caption{Ruta alternativa reproducida para Kalman--Fitts.}
 \label{int:fig:kf}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
-\subsection{Ciclo límite y sondeo finito de vecindades}
+\subsection{Ciclo límite y comparación dinámica}
 
 El candidato es un ciclo límite estable. El periodo medio fue
 \(11.9169960\) en Python y \(11.9169380\) en Julia, con diferencia
 \(5.81\times10^{-5}\). La distancia normalizada entre nubes fue
 \(2.10\times10^{-3}\).
 
-El contrato compartido contiene \KFProbeCount{} condiciones alrededor del
+\ifHAFOBasinMaterial
+El protocolo compartido contiene \KFProbeCount{} condiciones alrededor del
 único equilibrio: 4 radios de \(10^{-5}\) a \(10^{-2}\) y 12 condiciones por
 radio. Los dos códigos produjeron 40 convergencias al equilibrio, 8 estados
 acotados no triviales y cero contactos con el ciclo. Las
@@ -376,6 +382,7 @@ coincidieron punto por punto.
 Por tanto, el ciclo es compatible con ocultedad bajo estas 48 condiciones
 iniciales. El muestreo no prueba que la cuenca esté separada de toda vecindad
 abierta del equilibrio.
+\fi
 
 \begin{table}[H]
 \centering
@@ -388,7 +395,9 @@ Magnitud & Python/\hafo{} & Julia \\
 Ruta directa & Rechazo por \(k<0\) & Rechazo por \(k<0\) \\
 Mapa de conmutación & 135 iteraciones, retorno 2 & 135 iteraciones, retorno 2 \\
 Periodo del ciclo & 11.9169960 & 11.9169380 \\
+\ifHAFOBasinMaterial
 Contactos en 48 sondeos & 0 & 0 \\
+\fi
 \ifHAFOdigitalcontent
 Tiempo interno completo (s) & \KFPythonTotal & \KFJuliaTotal \\
 \fi
@@ -397,13 +406,14 @@ Tiempo interno completo (s) & \KFPythonTotal & \KFJuliaTotal \\
 \end{table}
 
 \ifHAFOdigitalcontent
-La razón de tiempos fue \KFRatio{} bajo una ruta científica y un contrato RK4
+La razón de tiempos fue \KFRatio{} bajo una ruta científica y un protocolo RK4
 comparables. Las pilas de integración, cálculo de Lyapunov y figuras siguen
 siendo diferentes, por lo que la razón describe estas ejecuciones, no una
 propiedad general de Python y Julia.
 \fi
 
-\section{Caso 3: Van der Pol--Duffing autónomo modificado}
+\section[Caso 3: Van der Pol--Duffing modificado]
+{Caso 3: Van der Pol--Duffing autónomo modificado}
 
 \subsection{Modelo y forma D0 exacta}
 
@@ -450,8 +460,8 @@ El caso Wolfram conserva además la convención resolvente
 \]
 Por tanto, su cálculo \(k=1/\operatorname{Re}W(i\omega)\) es exactamente el
 mismo que \(k=-1/\operatorname{Re}G(i\omega)\) en
-\eqref{int:eq:mavpd-direct-scalars}; no hay un cambio de signo introducido por una
-tabla ni por el informe.
+\eqref{int:eq:mavpd-direct-scalars}; el signo queda fijado por la derivación
+algebraica.
 La función descriptiva, obtenida de su integral de primer armónico, es
 \begin{equation}
   \mathcal N(a)=\frac{3a^2}{4}.
@@ -511,7 +521,7 @@ Se ejecutaron ambas ramas con fases \(0\) y \(\pi\), y 21 valores
 simétricos; la rama 1 conduce al conjunto externo. La selección se hizo por
 mayor extensión de estado, sin leer la Tabla 1 de la fuente.
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \begin{subfigure}[t]{0.49\textwidth}
   \centering
@@ -525,13 +535,15 @@ mayor extensión de estado, sin leer la Tabla 1 de la fuente.
 \end{subfigure}
 \caption{Ruta directa MAVPD con \(\xi=3.1\).}
 \label{int:fig:mavpd-route}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
 \subsection{Comparación cruzada del caso periódico}
 
+\ifHAFOBasinMaterial
 El conjunto común contiene \MAVPDProbeCount{} condiciones: 3 equilibrios, 3 radios
 \((10^{-5},10^{-3},10^{-2})\) y 12 direcciones explícitas por equilibrio y
 radio. Se usaron \(h=0.005\), transitorio 180 y cola 80.
+\fi
 
 El comparador posterior confirmó:
 
@@ -539,11 +551,13 @@ El comparador posterior confirmó:
   \item diferencia máxima de frecuencias \(2.31\times10^{-14}\), de
         ganancias \(3.50\times10^{-15}\), de amplitudes
         \(3.44\times10^{-15}\) y de semillas \(7.45\times10^{-15}\);
+\ifHAFOBasinMaterial
   \item \MAVPDFullAssignmentMatches{} de \MAVPDProbeCount{} asignaciones de
         clúster, clases finales y decisiones sobre el candidato externo
         coincidentes;
   \item 54 trayectorias hacia el ciclo interno positivo, 54 hacia el negativo
         y cero hacia el externo en cada implementación;
+\fi
   \item distancia normalizada entre nubes externas
         \(\MAVPDFullCloudDistance\);
   \item periodos \(\MAVPDPythonPeriod\) en Python y
@@ -551,14 +565,16 @@ El comparador posterior confirmó:
   \item ninguna ruta alternativa para \(\xi=3.1\).
 \end{itemize}
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \includegraphics[width=0.94\textwidth]{mavpd_python_julia_overlay_full.png}
 \caption{Comparación posterior MAVPD \emph{full}. Las localizaciones se
-ejecutaron independientemente; las 108 coordenadas se compartieron sólo para
-el control de ocultedad.}
+ejecutaron independientemente.
+\ifHAFOBasinMaterial
+Las 108 coordenadas se compartieron sólo para el control de ocultedad.
+\fi}
 \label{int:fig:mavpd-overlay}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
 \subsection{Clasificación dinámica y discrepancia con la fuente}
 
@@ -571,18 +587,18 @@ El espectro variacional independiente en el cálculo declarado fue
 \]
 y la prueba 0--1 dio mediana \(K=0.000440085726\) sobre 64 valores de \(c\).
 En conjunto con la sección de Poincaré, estos diagnósticos apoyan un ciclo
-estable de periodo uno bajo el contrato numérico; la prueba 0--1 aislada no
+estable de periodo uno bajo el protocolo numérico; la prueba 0--1 aislada no
 constituye una demostración analítica de periodicidad. El cálculo independiente
 en Julia obtuvo \((-0.0042733,-0.3910810,-51.1961919)\), consistente con la
 misma clase.
 
 La fuente denomina al conjunto \emph{atractor oculto cuasiperiódico}. Esa
 etiqueta no se reproduce para las ecuaciones declaradas: la conclusión local
-de este informe es \emph{candidato periódico estable}. Esto no corrige la
-fuente por decreto; documenta una discrepancia reproducible entre su etiqueta
+obtenida es \emph{candidato periódico estable}. La diferencia documenta una
+discrepancia reproducible entre la etiqueta de la fuente
 y la dinámica obtenida con integración y sección de mayor precisión.
 
-\begin{hafodigitalfigure}[H]
+\begin{hafobasinfigure}[H]
 \centering
 \begin{subfigure}[t]{0.49\textwidth}
   \centering
@@ -595,11 +611,11 @@ y la dinámica obtenida con integración y sección de mayor precisión.
   \caption{Julia \emph{full}: clúster externo con cero impactos.}
 \end{subfigure}
 \caption{Ciclo externo compatible con ocultedad bajo las 108 sondas del
-contrato finito para \(\xi=3.1\).}
+protocolo finito para \(\xi=3.1\).}
 \label{int:fig:mavpd-hiddenness}
-\end{hafodigitalfigure}
+\end{hafobasinfigure}
 
-\subsection{Auditoría algebraica de la fuente}
+\subsection{Comprobación algebraica de la fuente}
 
 Se preservan tres discrepancias:
 
@@ -607,7 +623,7 @@ Se preservan tres discrepancias:
   \item La fuente imprime \(\Theta=-\delta e_1\),
         \(s=-e_1\) y \(\zeta(\sigma)=\sigma^3\). Juntas producen
         \(+\delta y_1^3\), mientras que la ecuación del sistema contiene
-        \(-\delta y_1^3\). El contrato local usa la ecuación original y la
+        \(-\delta y_1^3\). La formulación evaluada usa la ecuación original y la
         forma exacta \(b=-\delta e_1\), \(c=e_1\).
   \item Para \(\xi=3.1\), los valores impresos
         \(\omega=18.6143\), \(|k|=0.8951\) dejan residuo de cierre
@@ -620,6 +636,7 @@ Las semillas impresas sí terminan, en una prueba posterior, en los mismos
 clústeres dinámicos que la búsqueda independiente. Esa coincidencia dinámica
 no elimina la discrepancia algebraica de frecuencia y ganancia.
 
+\ifHAFOBasinMaterial
 \subsection{\texorpdfstring{\(\xi=3.5\): control negativo de ocultedad}{xi=3.5: control negativo de ocultedad}}
 
 La ruta directa recalculó dos ramas:
@@ -643,13 +660,19 @@ las ecuaciones y controles ensayados.
 cerrada: 24 contactos con el ciclo seleccionado en cada implementación, con
 108 condiciones por entorno. Ambos activaron la
 alternativa sólo después del contacto y no apareció un clúster nuevo.}
+\fi
 
 \subsection{Extensión caótica: continuación relativa a una frontera candidata de Hopf}
 \label{int:subsec:mavpd-chaos}
 
-Los dos regímenes anteriores responden si la ruta directa localiza conjuntos
-ocultos periódicos bajo un contrato común. No responden si la misma familia
-contiene un atractor que sea simultáneamente caótico y oculto. Para estudiar
+\ifHAFOBasinMaterial
+Los dos regímenes anteriores evalúan conjuntos periódicos bajo un protocolo
+común.
+\else
+El régimen periódico anterior establece el punto de comparación dinámico.
+\fi
+La posible coexistencia de caos y ocultedad en la misma
+familia requiere un análisis adicional. Para estudiar
 esa pregunta se creó primero un ejemplo independiente en Python y después una
 reproducción independiente en Julia. Cada ejecución vuelve a partir de
 \eqref{int:eq:mavpd}, recalcula la forma Lur'e, las dos semillas directas y sus 21
@@ -667,7 +690,7 @@ $\widehat\lambda_1>0.02$. Éste es el fallo registrado que habilita la ruta
 alternativa; no se presupone que una trayectoria finita con exponente máximo
 ligeramente negativo haya quedado clasificada matemáticamente como regular.
 
-La ruta alternativa tampoco fija silenciosamente un índice de rama. Entre las
+La ruta alternativa tampoco fija de antemano un índice de rama. Entre las
 ramas directas con integración exitosa selecciona, en cada ejecución, la de
 menor frecuencia armónica directa. La regla eligió aquí la rama 0,
 $\omega_0=10.5975230$; su estado final de continuación $\lambda$ alimentó el
@@ -706,6 +729,7 @@ nodo. La inspección se restringe a desplazamientos declarados respecto de
 $\gamma_H$; no es un barrido de frecuencias ni una exploración arbitraria de
 condiciones iniciales.
 
+\ifHAFOBasinMaterial
 \begin{table}[H]
 \centering
 \caption{Cribado local MAVPD alrededor de la frontera alta candidata de Hopf. Los
@@ -721,10 +745,16 @@ $\gamma-\gamma_H$ & $\widehat\lambda_1$ & Contactos desde $E_0$ & Lectura del cr
 \input{mavpd_chaos_screening_rows.tex}
 \end{tabular}
 \end{table}
+\fi
 
 La regla selecciona el mayor desplazamiento declarado con cálculo de Lyapunov
-válido, $\widehat\lambda_1>0.5$, cero contactos preliminares, cero casos
-ambiguos y cero fallos numéricos: así se obtiene
+válido y $\widehat\lambda_1>0.5$
+\ifHAFOBasinMaterial
+, cero contactos preliminares, cero casos ambiguos y cero fallos numéricos
+\else
+y con los demás filtros de admisibilidad satisfechos
+\fi
+: así se obtiene
 \[
  (\xi,\gamma,\delta,\rho)=
  (\MAVPDChaosXi,\MAVPDChaosGamma,100,200),\qquad
@@ -736,18 +766,18 @@ parámetro publicado en \cite{matouk2023}. Por tanto, sólo $\gamma$ se seleccio
 en este cribado: la tupla completa no se presenta como una optimización conjunta
 de $\xi$ y $\gamma$.
 
-\begin{hafodigitalfigure}[H]
+\begin{hafobasinfigure}[H]
 \centering
 \includegraphics[width=0.90\textwidth]{mavpd_chaos_screen.png}
 \caption{Continuación en parámetros y cribado conjunto de exponente máximo y
 contactos desde $E_0$. La selección ocurre después del fallo dinámico de las
 ramas directas, no mediante una malla de frecuencias.}
 \label{int:fig:mavpd-chaos-screen}
-\end{hafodigitalfigure}
+\end{hafobasinfigure}
 
 \begin{table}[H]
 \centering
-\caption{Contrato numérico canónico de la extensión MAVPD caótica.}
+\caption{Protocolo numérico de la extensión MAVPD caótica.}
 \label{int:tab:mavpd-chaos-contract}
 \footnotesize
 \begin{tabularx}{\textwidth}{@{}L{0.19\textwidth}L{0.34\textwidth}Y@{}}
@@ -761,9 +791,11 @@ Transporte A1 por nodo & $t_b=60$, $t_k=10$, muestra $0.02$ &
 DOP853, $(2\,10^{-10},2\,10^{-12})$, $\Delta t_{\max}=0.02$ \\
 Referencia del cribado & duración 360, descarte 160, muestra $0.05$,
 600 puntos máximos & DOP853, $\Delta t_{\max}=0.03$; factor de seguridad 3 \\
+\ifHAFOBasinMaterial
 Sondeos preliminares $E_0$ & $t_b=500$, $t_k=100$, muestra $0.05$;
 2 radios, 6 direcciones & DOP853, $(2\,10^{-10},2\,10^{-12})$,
 $\Delta t_{\max}=0.03$ \\
+\fi
 Trayectoria estricta & $t_f=900$, $t_b=300$, muestra $0.02$ &
 DOP853, $(2\,10^{-11},2\,10^{-13})$, $\Delta t_{\max}=0.01$ \\
 Lyapunov estricto & $t_b=300$, $t_{LE}=1200$, QR $0.5$ &
@@ -772,9 +804,11 @@ $\Delta t_{\max}=0.01$ \\
 Control Lyapunov combinado & estado candidato perturbado; $t_b=200$,
 $t_{LE}=600$, QR $0.5$ & DOP853 variacional,
 $(2\,10^{-10},2\,10^{-12})$, $\Delta t_{\max}=0.02$ \\
+\ifHAFOBasinMaterial
 Ocultedad final & $t_b=400$, $t_k=100$, muestra $0.05$;
 108 sondeos principales + 4 dirigidos & DOP853, $(2\,10^{-10},2\,10^{-12})$,
 $\Delta t_{\max}=0.03$; referencia máxima 1000 puntos \\
+\fi
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -832,7 +866,7 @@ la misma trayectoria y el mismo horizonte. Como control de integrador, una
 trayectoria EFORK de paso fijo $h=0.002$ alcanzó la misma nube de referencia
 calibrada. Cada cifra es finito-temporal y ninguna, aislada, prueba caos.
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \begin{subfigure}[t]{0.98\textwidth}
   \centering
@@ -849,7 +883,7 @@ calibrada. Cada cifra es finito-temporal y ninguna, aislada, prueba caos.
 \caption{Geometría y evolución temporal del candidato MAVPD caótico. Estas
 figuras muestran acotamiento y estructura, no ocultedad.}
 \label{int:fig:mavpd-chaos-trajectory}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
 La sección $y_2=0$ con orientación positiva retuvo
 \MAVPDChaosPoincareCount{} cruces no duplicados. Los cruces se obtuvieron por
@@ -860,10 +894,10 @@ retorno dio medianas $K=\MAVPDChaosReturnKOne$ y
 $K=\MAVPDChaosReturnKTwo$ \cite{gottwald2009}. En cambio, la prueba 0--1 sobre
 el flujo fue sensible al submuestreo: 3 de 10 pasos dieron etiqueta de
 candidato caótico, 1 dio etiqueta regular y 6 quedaron inconclusos. Todos esos
-resultados se conservan; la compuerta usa la secuencia de retorno y no
-selecciona a posteriori el paso más conveniente.
+resultados se conservan; el criterio conjunto usa la secuencia de retorno con
+el paso fijado antes de la clasificación.
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \begin{subfigure}[t]{0.49\textwidth}
   \centering
@@ -877,21 +911,22 @@ selecciona a posteriori el paso más conveniente.
 \end{subfigure}
 \caption{Diagnósticos dinámicos principales del candidato caótico.}
 \label{int:fig:mavpd-chaos-diagnostics}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
-La transformada de Fourier normalizada se conserva como evidencia auxiliar.
-No es una PSD de Welch y su resultado global es inconcluso: la dominancia de
-líneas no activa una compuerta de descarte, no anula por sí sola un exponente
-variacional positivo ni certifica regularidad.
+La transformada de Fourier normalizada se conserva como evidencia auxiliar y
+se distingue de una PSD de Welch. Su resultado global es inconcluso: la
+dominancia de líneas se interpreta junto con el exponente variacional y los
+demás diagnósticos, sin clasificar por sí sola la regularidad.
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \includegraphics[width=0.82\textwidth]{mavpd_chaos_fft.png}
 \caption{Potencia FFT normalizada del candidato. Es un diagnóstico de apoyo,
 no una PSD ni una prueba autónoma de caos.}
 \label{int:fig:mavpd-chaos-fft}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
+\ifHAFOBasinMaterial
 \subsubsection*{Ocultedad bajo vecindades ensayadas}
 
 El clasificador de la nube candidata se calibró con tres ventanas temporales
@@ -920,7 +955,7 @@ $\min_j d_N(N_\ell,R_j)>\tau+m$; de lo contrario se concluye que los controles
 se solapan y la calibración se rechaza. El umbral no se fija desde una órbita
 periódica.
 
-El contrato principal contiene \MAVPDChaosMainProbes{} trayectorias:
+El protocolo principal contiene \MAVPDChaosMainProbes{} trayectorias:
 3 equilibrios, radios $(10^{-5},10^{-3},10^{-2})$ y 12 direcciones esféricas
 deterministas por radio. Se añadieron \MAVPDChaosTargetedProbes{} controles
 dirigidos sobre ambos signos del autovector inestable de $E_0$, en radios
@@ -928,19 +963,20 @@ $10^{-7}$ y $10^{-4}$. En total hubo \MAVPDChaosTotalProbes{} trayectorias,
 \MAVPDChaosHits{} contactos con la nube candidata, cero ambigüedades y cero
 fallos numéricos; todas terminaron en un equilibrio.
 
-\begin{hafodigitalfigure}[H]
+\begin{hafobasinfigure}[H]
 \centering
 \includegraphics[width=0.88\textwidth]{mavpd_chaos_hiddenness.png}
 \caption{Resultados de los sondeos alrededor de $E_0$, $E_+$ y $E_-$, junto
 con los controles dirigidos del autovector inestable. Cero contactos es una
-conclusión finita restringida a este contrato.}
+conclusión finita restringida a este protocolo.}
 \label{int:fig:mavpd-chaos-hiddenness}
-\end{hafodigitalfigure}
+\end{hafobasinfigure}
 
-La compuerta conjunta concluyó que el resultado es compatible con caos y
-ocultedad únicamente bajo las vecindades ensayadas. Esto significa evidencia
-numérica fuerte de caos junto con ausencia de contactos en las vecindades
-declaradas; no significa una prueba global de desconexión de la cuenca.
+La evaluación conjunta clasificó el resultado como compatible con caos y
+ocultedad únicamente bajo las vecindades ensayadas. Los diagnósticos numéricos
+y la ausencia de contactos se restringen a las ventanas y vecindades
+declaradas; la desconexión global de la cuenca permanece sin demostrar.
+\fi
 
 \subsubsection*{Reproducción independiente en Julia y comparación posterior}
 
@@ -950,8 +986,11 @@ fallaron el umbral dinámico. La regla de menor $\omega_0$ volvió a seleccionar
 la rama 0; después transportó el estado de $\xi=3.10$ a $2.85$, derivó la misma
 frontera de Routh--Hurwitz y seleccionó de nuevo el desplazamiento $0.010$.
 Durante esa localización no leyó la semilla, el estado terminal ni $\gamma$ de
-Python. El intercambio de las condiciones de ocultedad ocurrió únicamente en
-la fase posterior de comparación.
+Python.
+\ifHAFOBasinMaterial
+El intercambio de las condiciones de ocultedad ocurrió únicamente en la fase
+posterior de comparación.
+\fi
 
 \begin{table}[H]
 \centering
@@ -971,9 +1010,11 @@ $\widehat\lambda_3$ & \MAVPDChaosLEThree & \MAVPDChaosJuliaLEThree \\
 $D_{KY}$ & \MAVPDChaosKY & \MAVPDChaosJuliaKY \\
 Cruces de Poincaré & \MAVPDChaosPoincareCount & \MAVPDChaosJuliaPoincareCount \\
 Mediana $K$ sobre retornos & \MAVPDChaosReturnKOne & \MAVPDChaosJuliaReturnK \\
+\ifHAFOBasinMaterial
 Decisiones de sondeo coincidentes &
 \MAVPDChaosTotalProbes/\MAVPDChaosTotalProbes &
 \MAVPDChaosJuliaProbeMatches/\MAVPDChaosTotalProbes \\
+\fi
 \ifHAFOdigitalcontent
 Tiempo interno total (s) & \MAVPDChaosPythonComparedTotal & \MAVPDChaosJuliaTotal \\
 \fi
@@ -981,15 +1022,17 @@ Tiempo interno total (s) & \MAVPDChaosPythonComparedTotal & \MAVPDChaosJuliaTota
 \end{tabularx}
 \end{table}
 
-La comparación cruzada quedó \MAVPDChaosJuliaAgreement: coincidieron
-exactamente $\xi$, $\gamma$, el desplazamiento de Hopf y las
-\MAVPDChaosTotalProbes{} condiciones
-iniciales, estados, destinos y decisiones de contacto. Las estadísticas de la
-nube postransitoria y los diagnósticos de caos quedaron dentro de sus bandas
-predeclaradas. Es una reproducción numérica independiente bajo el contrato
+La comparación cruzada coincidió exactamente en $\xi$, $\gamma$ y el
+desplazamiento de Hopf. Las estadísticas de la nube postransitoria y los
+diagnósticos de caos quedaron dentro de sus bandas predeclaradas.
+\ifHAFOBasinMaterial
+Además, la comparación quedó \MAVPDChaosJuliaAgreement para las
+\MAVPDChaosTotalProbes{} condiciones iniciales, estados, destinos y decisiones
+de contacto. Es una reproducción numérica independiente bajo el protocolo
 finito; no eleva cero contactos a una prueba global de ocultedad.
+\fi
 
-\begin{hafodigitalfigure}[H]
+\begin{hafobasinfigure}[H]
 \centering
 \begin{subfigure}[t]{0.49\textwidth}
   \centering
@@ -1002,11 +1045,11 @@ finito; no eleva cero contactos a una prueba global de ocultedad.
   \caption{Decisión de los 112 sondeos finitos en Julia.}
 \end{subfigure}
 \caption{Artefactos de la reproducción Julia MAVPD. El primer panel es un
-diagnóstico de continuación; el segundo resume un contrato finito de cuenca.}
+diagnóstico de continuación; el segundo resume un protocolo finito de cuenca.}
 \label{int:fig:mavpd-chaos-julia}
-\end{hafodigitalfigure}
+\end{hafobasinfigure}
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \begin{subfigure}[t]{0.49\textwidth}
   \centering
@@ -1021,7 +1064,7 @@ diagnóstico de continuación; el segundo resume un contrato finito de cuenca.}
 \caption{Diagnósticos intermedios Julia MAVPD. Nyquist no suministra una malla
 de búsqueda ni selecciona $\omega_0$; la FFT no se denomina PSD.}
 \label{int:fig:mavpd-chaos-julia-spectral}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
 \ifHAFOdigitalcontent
 Python usa DOP853 adaptativo en la trayectoria y el problema variacional;
@@ -1071,7 +1114,7 @@ Pruebas $0$--$1$ y espectro &
 \texttt{zero\_one\_test} y
 \texttt{spectral\_diagnostics\_multicoordinate}; esta última exporta potencia
 FFT normalizada, no PSD de Welch. \\
-Referencia de nube y compuerta &
+Referencia de nube y criterio de evaluación &
 \ruta{hidden_attractors/verification/attractor_reference.py},
 \ruta{hidden_attractors/verification/candidate_gate.py} &
 \texttt{calibrate\_attractor\_reference},
@@ -1082,20 +1125,20 @@ Exportación de figuras &
 \ruta{examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/run_example.py} &
 \texttt{save\_figure\_pair\_local},
 \texttt{promote\_local\_figure\_pairs\_batch} y
-\texttt{\_finalize\_figure\_manifest}: pares PNG/PDF locales y promoción sólo
-tras la compuerta completa. \\
+\texttt{\_finalize\_figure\_manifest}: pares PNG/PDF locales y copia al
+destino final después de completar la evaluación. \\
 Libro de ejecución &
 \ruta{examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/run_example.py} &
 \texttt{\_new\_run\_status}, \texttt{\_record\_run\_phase},
 \texttt{\_verify\_recorded\_artifacts} y la comprobación de configuración
 enlazan el ID de corrida, la configuración, sus fases y el inventario de
 artefactos. \\
-Ejemplo y contrato &
+Ejemplo y configuración &
 \ruta{examples/modified_van_der_pol_duffing_integer_hidden_chaos_search/} &
 \ruta{run_example.py}, \ruta{reproducibility.yaml} y exportación de evidencia. \\
 Validación simbólica &
 \ruta{validation/wolfram/cases/mavpd_integer.wl} &
-Derivación independiente desde el campo fuente; no lee el informe ni artefactos Python. \\
+Derivación independiente desde el campo fuente, sin utilizar tablas ni resultados Python. \\
 Implementación Julia caótica &
 \ruta{src/mavpd_hidden_chaos_demo.jl} y
 \ruta{input/mavpd_integer_hidden_chaos.yaml} &
@@ -1133,7 +1176,7 @@ if (-not (Test-Path -LiteralPath $gitDir)) {
 }
 $gitDir = (Resolve-Path -LiteralPath $gitDir).Path
 $stage = Join-Path $repo 'tmp\mavpd-integer-hidden-chaos-full-frozen-staging'
-if (Test-Path -LiteralPath $stage) { throw 'use un staging fresco' }
+if (Test-Path -LiteralPath $stage) { throw 'el directorio de staging ya existe; use uno nuevo' }
 
 & $python validation\python\freeze_mavpd_scientific_sources.py `
   --snapshot-root $snapshot --verify-only
@@ -1154,14 +1197,14 @@ try {
 La forma modular es deliberada: al ejecutar desde el snapshot, su paquete
 \ruta{hidden_attractors/}, su runner, su YAML y su caso Wolfram quedan delante
 de cualquier instalación editable. \texttt{HIDDEN\_ATTRACTORS\_OUTPUT\_DIR}
-conserva la promoción global en \ruta{outputs/library_figures/}, fuera del
+conserva la copia global en \ruta{outputs/library_figures/}, fuera del
 snapshot. \texttt{PYTHONDONTWRITEBYTECODE} evita escribir cachés dentro del
-árbol congelado. El directorio de \emph{staging} debe ser nuevo en cada
+árbol congelado. El directorio temporal de ejecución debe ser nuevo en cada
 repetición.
 
 Los dos comandos siguientes se ejecutan intencionalmente contra el
-\emph{checkout} actual porque sólo son pruebas rápidas no promocionables; no
-sustentan las cifras, los tiempos ni la etiqueta científica de la corrida
+\emph{checkout} actual porque sólo son pruebas rápidas; su alcance excluye las
+cifras, los tiempos y la clasificación científica de la corrida
 \emph{full}:
 
 \begin{small}
@@ -1177,26 +1220,26 @@ python `
 \end{verbatim}
 \end{small}
 
-La corrida completa siempre se genera en un directorio de \emph{staging}
-explícito y fresco. Antes de copiarla al paquete canónico se exige que
+La corrida completa siempre se genera en un directorio temporal de ejecución
+exclusivo. Antes de copiarla al paquete de referencia se exige que
 \ruta{run_status.json} declare \texttt{status=complete} y
-\texttt{quick\_mode=false}, que la compuerta científica permita la promoción
+\texttt{quick\_mode=false}, que el criterio científico acepte el resultado
 y que el inventario de \texttt{artifacts} corresponda a archivos locales
 completos. El origen es
 \ruta{tmp/mavpd-integer-hidden-chaos-full-frozen-staging/} y la copia
 recuperable se dirige a
 \ruta{validation/reference_cases/mavpd_integer_hidden_chaos/}; si esa ruta ya
-existe, primero se archiva explícitamente y no se sobrescribe en silencio.
+existe, se archiva antes del reemplazo.
 
 La opción \texttt{--resume-validated-candidate} se reserva para una corrida
-interrumpida cuyos artefactos de contrato, selección, trayectoria,
+interrumpida cuyos artefactos de configuración, selección, trayectoria,
 diagnósticos y estabilidad ya hayan sido validados; recalibra la referencia
-antes de repetir los sondeos y la compuerta. No sustituye una corrida completa
+antes de repetir los sondeos y la evaluación conjunta. No sustituye una corrida completa
 para un benchmark de tiempo.
 
 Después de copiar el paquete, el validador de sólo lectura vuelve a comprobar
-la referencia canónica y su promoción activa; a continuación el refresco del
-informe copia siete pares y genera 22 macros y las siete filas de cribado:
+la referencia y su estado activo; a continuación el generador de activos
+copia siete pares y genera 22 macros y las siete filas de cribado:
 
 \begin{lstlisting}[style=wl,language={}]
 python -B `
@@ -1216,9 +1259,9 @@ python -B `
   --report-date '3 de agosto de 2026'
 \end{lstlisting}
 
-La auditoría canónica terminó con \texttt{ok=true}, cero errores y 29 de 29
+La verificación canónica concluyó con \texttt{ok=true}, cero errores y 29 de 29
 grupos aprobados: 180 fuentes, 40 artefactos del libro de ejecución, 112
-sondeos y ocho pares gráficos ligados al mismo ID de corrida. El refresco
+sondeos y ocho pares gráficos ligados al mismo ID de corrida. La actualización
 registró \texttt{passed\_with\_active\_promotion} y conserva la relación entre
 origen, destino e ID de corrida en
 \ruta{assets/mavpd_chaos_assets_provenance.json}.
@@ -1235,17 +1278,17 @@ python `
 \end{verbatim}
 \end{small}
 
-Esta ejecución se realizó después de cerrar v8, sobre el archivo Wolfram vivo
-reforzado. Es una auditoría algebraica posterior: no cambia el bundle
-\texttt{f1d10f...}, no alimenta la búsqueda numérica y no se incluye en su
-tiempo. El control \texttt{report\_not\_used} confinó los dos archivos de
+La validación Wolfram se ejecutó sobre la fuente algebraica actual. Es
+independiente del paquete fijado \texttt{f1d10f...}, de la búsqueda numérica y
+de su tiempo de ejecución. El control \texttt{report\_not\_used} confinó los dos archivos de
 entrada declarados a \ruta{validation/wolfram/}; la revisión estática del caso
 no encontró otra lectura de ecuaciones o resultados.
 
 La suite Wolfram MAVPD registró 11 de 11 comprobaciones algebraicas aprobadas:
 forma Lur'e, Jacobiano, polinomio característico, igualdad de Hopf, estabilidad
 local del punto seleccionado, polinomio de frecuencia, función descriptiva,
-ramas, residuos de semillas, equilibrios y ausencia de lectura del reporte.
+ramas, residuos de semillas, equilibrios y dependencia exclusiva del campo y
+los parámetros declarados.
 La comparación posterior con Python aprobó matrices, transferencia, semillas y
 frontera de Hopf. Para la comprobación posterior de estabilidad, el bloque
 \texttt{Step 2b} del archivo Wolfram declara explícitamente $\xi=57/20$, que
@@ -1280,10 +1323,10 @@ python -m pytest `
 
 La ejecución focal final registró 134 pruebas aprobadas en 106.64 s. Después
 de la suite, los manifiestos activos conservaron 73 filas, cero entradas de
-prueba y la misma relación de artefactos que después de la promoción v8.
+prueba y la misma relación de artefactos del conjunto de referencia.
 Sus pruebas rápidas cubren la declaración del modelo, reconstrucción en cada
-nodo, separación entre ruta primaria y alternativa, compuerta conjunta,
-ejecución de contrato en un directorio temporal y comparación Wolfram--Python.
+nodo, separación entre ruta primaria y alternativa, evaluación conjunta,
+ejecución del protocolo en un directorio temporal y comparación Wolfram--Python.
 Este resultado comprueba compatibilidad y ausencia de rupturas dentro del
 alcance focal; no constituye 134 pruebas independientes del atractor ni
 reemplaza la campaña científica larga que genera las trayectorias y sondeos de
@@ -1303,11 +1346,11 @@ Los valores temporales se leen de
 \toprule
 Fase & Tiempo (s) \\
 \midrule
-Contrato algebraico y numérico & \MAVPDChaosContractTime \\
+Configuración algebraica y numérica & \MAVPDChaosContractTime \\
 Búsqueda directa y continuación alternativa & \MAVPDChaosSearchTime \\
 Diagnósticos estrictos & \MAVPDChaosDiagnosticsTime \\
 Sondeos de ocultedad & \MAVPDChaosHiddennessTime \\
-Compuerta conjunta y finalización/promoción de figuras & \MAVPDChaosGateTime \\
+Evaluación conjunta y finalización de figuras & \MAVPDChaosGateTime \\
 \midrule
 Total & \MAVPDChaosTotalTime \\
 \bottomrule
@@ -1412,7 +1455,7 @@ La trazabilidad de esa comprobación se conserva en
 \ruta{scripts/validate_pll_lead_lag_published_regression.jl}.
 \fi
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \begin{subfigure}[t]{0.49\textwidth}
   \centering
@@ -1426,8 +1469,9 @@ La trazabilidad de esa comprobación se conserva en
 \end{subfigure}
 \caption{Localización T1 + A1 del PLL lead--lag.}
 \label{int:fig:pll-route}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 
+\ifHAFOBasinMaterial
 \subsection{Sondeos cilíndricos y estado comparativo}
 
 El sondeo común usó \PLLProbeCount{} condiciones:
@@ -1436,22 +1480,24 @@ direcciones por radio. Ninguna alcanzó el ciclo. Las 48 condiciones alrededor
 del foco y las 48 alrededor del punto silla terminaron en el foco. Por tanto,
 la corrida apoya ocultedad bajo estas vecindades cilíndricas finitas.
 
-\begin{hafodigitalfigure}[H]
+\begin{hafobasinfigure}[H]
 \centering
 \includegraphics[width=0.82\textwidth]{julia_pll_cylindrical_hiddenness_probes.png}
 \caption{Visualización Julia de las condiciones iniciales comunes del control
 PLL, expresadas en las coordenadas envueltas del cilindro.}
 \label{int:fig:pll-hiddenness}
-\end{hafodigitalfigure}
+\end{hafobasinfigure}
+\fi
 
 Julia implementó independientemente la misma distancia angular, el mapa de
 retorno y la continuación desde la solución exacta en $L=0$; no leyó estados
-Python ni las condiciones publicadas para localizar las órbitas. La
-comparación posterior
-quedó \PLLJuliaAgreement: coincidieron \PLLJuliaProbeMatches{} de
-\PLLProbeCount{} estados y decisiones de contacto, así como los destinos de
-las \PLLJuliaDestinationMatches{} trayectorias. Las órbitas interpoladas sobre
-una fase normalizada difirieron como máximo
+Python ni las condiciones publicadas para localizar las órbitas.
+\ifHAFOBasinMaterial
+La comparación posterior quedó \PLLJuliaAgreement: coincidieron
+\PLLJuliaProbeMatches{} de \PLLProbeCount{} estados y decisiones de contacto,
+así como los destinos de las \PLLJuliaDestinationMatches{} trayectorias.
+\fi
+Las órbitas interpoladas sobre una fase normalizada difirieron como máximo
 \PLLStableOrbitMaxDistance{} (estable) y
 \PLLSeparatorOrbitMaxDistance{} (separatriz) en la métrica cilíndrica escalada.
 
@@ -1469,7 +1515,7 @@ y \PLLQuickDestinationMatches{} destinos coincidentes; sus tiempos fueron
 \PLLPythonQuickTotal{} s en Python y \PLLJuliaQuickTotal{} s en Julia.
 \fi
 
-\begin{hafodigitalfigure}[H]
+\begin{hafocommonfigure}[H]
 \centering
 \begin{subfigure}[t]{0.49\textwidth}
   \centering
@@ -1483,7 +1529,7 @@ y \PLLQuickDestinationMatches{} destinos coincidentes; sus tiempos fueron
 \end{subfigure}
 \caption{Artefactos independientes de la ruta PLL T1 + A1 en Julia.}
 \label{int:fig:pll-julia}
-\end{hafodigitalfigure}
+\end{hafocommonfigure}
 \ifHAFOdigitalcontent
 \section{Tiempos de ejecución}
 
@@ -1495,14 +1541,14 @@ conjunto \(\xi=3.1+\xi=3.5\); el candidato caótico es una corrida
 \small
 \begin{tabularx}{\textwidth}{@{}p{0.21\textwidth}p{0.16\textwidth}YYp{0.25\textwidth}@{}}
 \toprule
-Caso & Contrato & Python (s) & Julia (s) & Lectura correcta \\
+Caso & Protocolo & Python (s) & Julia (s) & Lectura correcta \\
 \midrule
 Chua no suave & completo, 504 sondeos &
 \ChuaPythonTotal & \ChuaJuliaTotal &
 Razón \ChuaRatio; las rutas de localización son distintas. \\
 Kalman--Fitts & completo, 48 sondeos &
 \KFPythonTotal & \KFJuliaTotal &
-Razón \KFRatio; misma ruta matemática y contrato RK4. \\
+Razón \KFRatio; misma ruta matemática y protocolo RK4. \\
 MAVPD, paquete conjunto & full, dos regímenes &
 \MAVPDPythonFullBundle &
 \MAVPDJuliaFullBundleSum\textsuperscript{\dag} &
@@ -1530,7 +1576,7 @@ procesos independientes: \(73.213712+77.3767144=150.5904264\) s.\par}
 \warningbox{\textbf{El paquete MAVPD periódico no es un benchmark de
 rendimiento.} El cociente
 \MAVPDFullBundleRatio{} sólo divide los tiempos observados de dos paquetes.
-Coinciden las ramas directas, las 21 etapas de continuación y el contrato de
+Coinciden las ramas directas, las 21 etapas de continuación y el protocolo de
 ocultedad \emph{full} \((h=0.005,\ t_{\mathrm{burn}}=180,\
 t_{\mathrm{keep}}=80)\), pero difieren la localización y refinamiento del
 candidato, la alternativa para \(\xi=3.5\), las regresiones posteriores, las
@@ -1549,7 +1595,7 @@ En Chua, la verificación Python consumió \(886.948\) s de los
 consumieron \(16.985\) s y \(49.044\) s, respectivamente. En el paquete MAVPD
 Python \emph{full}, las fases principales fueron \(213.663\) s para
 localización \(\xi=3.1\), \(228.762\) s para sus sondeos y \(219.322\) s para
-la auditoría \(\xi=3.5\). En Julia \emph{full} para \(\xi=3.1\), las figuras
+la evaluación de control \(\xi=3.5\). En Julia \emph{full} para \(\xi=3.1\), las figuras
 consumieron \(50.232\) s de un total de
 \(\MAVPDJuliaXiThreeOneFull\) s. En PLL Python \emph{full}, el costo dominante
 fue la verificación de 96 trayectorias, con \PLLPythonFullVerificationTime{} s;
@@ -1579,21 +1625,22 @@ Un solo canal no lineal escalar. \\
 T1 & Transformación compatible e invertible, desplazamiento de equilibrio,
 variedad invariante documentada o PWA de rango uno &
 Lleva el sistema a D0 conservando la interpretación dinámica necesaria. &
-Debe registrarse la inversa y la métrica correcta, por ejemplo angular. \\
+La transformación registra la inversa y la métrica correspondiente, por ejemplo angular. \\
 A1 & La forma escalar existe, pero la ruta directa se rechaza con una razón
 matemática &
 Habilita mapa de conmutación, homotopía publicada u otra alternativa. &
-No puede ocultar el fallo directo ni usar una semilla publicada como atajo. \\
+Conserva el diagnóstico de incompatibilidad directa y excluye semillas
+publicadas de la inicialización. \\
 M1 & Varios canales no lineales independientes &
 Reserva para una futura extensión multicanal. &
-Fuera del contrato escalar actual. \\
+Requiere una formulación multicanal adicional. \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \subsection{Lote principal guardado}
 
-La cola canónica vive en
+El catálogo de casos pendientes se conserva en
 \ruta{docs/integer_lure_test_catalog.md}. La inclusión de un sistema certifica
 compatibilidad estructural o interés como control; no certifica que ya se haya
 localizado un atractor oculto.
@@ -1610,14 +1657,17 @@ Prior. & Sistema & Clase & Estado y papel científico \\
 \midrule
 \endhead
 Base & Chua no suave entero & D0 &
-Compatible con ocultedad bajo contrato finito; reproducido en Python y Julia. \\
+Compatible con ocultedad bajo el protocolo finito; reproducido en Python y Julia. \\
 Base & Kalman--Fitts de cuarto orden & D0 + A1 &
 No Chua; ciclo límite localizado por mapa de conmutación y continuación,
 compatible con ocultedad bajo el sondeo; reproducido en Python y Julia. \\
 1 & Van der Pol--Duffing autónomo modificado & D0 &
 \(\xi=3.1\): comparación aprobada, 108/108 coincidencias y cero
-contactos externos. \(\xi=3.5\): control negativo, 24/24 contactos con el
-ciclo seleccionado. \(\xi=\MAVPDChaosXi\): candidato caótico compatible con
+contactos externos.
+\ifHAFOBasinMaterial
+\(\xi=3.5\): control negativo, 24/24 contactos con el ciclo seleccionado.
+\fi
+\(\xi=\MAVPDChaosXi\): candidato caótico compatible con
 ocultedad bajo \MAVPDChaosTotalProbes{} sondeos en las vecindades declaradas;
 comparación Python--Julia aprobada punto por punto. \\
 2 & PLL bifásico con filtro lead--lag & T1 + A1 &
@@ -1628,8 +1678,8 @@ Ecuaciones y ruta de saturación disponibles; falta congelar el manifiesto y
 verificar la función por tramos en la fuente. \\
 4 & Jerk exponencial de Fischer, \(q=1\) & D0 con balance DC &
 Control bibliográfico y de Lyapunov: equilibrio inestable; se conserva la
-discrepancia del tercer exponente. Sin una campaña de cuenca local, este
-reporte no lo clasifica como autoexcitado ni oculto. \\
+discrepancia del tercer exponente. Sin una campaña de cuenca local, la evidencia
+disponible no permite clasificarlo como autoexcitado ni oculto. \\
 \bottomrule
 \end{longtable}
 
@@ -1638,8 +1688,8 @@ reporte no lo clasifica como autoexcitado ni oculto. \\
 Leonov--Kuznetsov, sistema (162), es el siguiente candidato D0 + A1. La
 fuente usa una familia de saturaciones, transporta el estado terminal entre
 etapas y luego continúa la no linealidad hasta \(\tanh\)
-\cite{LeonovKuznetsov2013}. Antes de implementarlo debe verificarse visualmente la
-fórmula completa por tramos y congelarse un manifiesto entero.
+\cite{LeonovKuznetsov2013}. Su implementación requiere verificar la fórmula
+completa por tramos y fijar un manifiesto entero.
 
 El jerk exponencial de Fischer se conserva como control D0 con balance DC y
 como banco de exponentes con discrepancias documentadas \cite{fischer2020}.
@@ -1654,9 +1704,8 @@ Rasul--Salih. Faltan parámetros, condiciones iniciales o la verificación de
 la ecuación exacta en su fuente primaria.
 
 Lorenz, Rabinovich--Fabrikant, el sistema financiero, el sistema \emph{four
-wing} y modelos con productos no lineales independientes son M1. Pueden
-estudiarse con Julia, pero no deben presentarse como fallos de la ruta Lur'e
-escalar D0/T1.
+wing} y los modelos con productos no lineales independientes son M1. Su estudio
+con Julia queda fuera de las hipótesis de la ruta Lur'e escalar D0/T1.
 
 \section{Comparación metodológica}
 
@@ -1677,7 +1726,7 @@ periódico y caótico; ruta A1 cilíndrica equivalente en PLL \\
 Frecuencia y semilla & Produce \(\omega_0,k,a_0,X_0\) con residuos & Puede
 reproducir esos valores en scripts específicos; \attractorsjl{} no los
 produce automáticamente \\
-Generalidad & Restringida al contrato D0/T1 y alternativas A1 registradas &
+Generalidad & Restringida a D0/T1 y a las alternativas A1 registradas &
 Más amplia para mapas, flujos, cuencas y recurrencias \\
 Ocultedad & Flujo explícito de equilibrios y nube candidata & Protocolo
 añadido al ejemplo; no es una etiqueta automática de la biblioteca \\
@@ -1694,7 +1743,7 @@ matemática. La búsqueda por recurrencias aporta generalidad y no necesita una
 transformación Lur'e, pero
 su éxito depende del dominio, partición, número de muestras y tamaño de la
 cuenca. No son métodos rivales intercambiables: son rutas complementarias y
-se vuelven comparables sólo al compartir el contrato posterior de ocultedad.
+se vuelven comparables sólo al compartir el protocolo posterior de ocultedad.
 
 \ifHAFOdigitalcontent
 \section{Reproducibilidad y separación del código de prueba}
@@ -1724,9 +1773,8 @@ se vuelven comparables sólo al compartir el contrato posterior de ocultedad.
 
 Las ecuaciones reutilizables están en
 \ruta{hidden_attractors/systems/}; la orquestación, exportación y gráficas
-pertenecen a \ruta{examples/}; las aserciones de regresión pertenecen a
-\ruta{tests/}. No se añadieron condiciones de prueba dentro de las funciones
-científicas.
+pertenecen a \ruta{examples/}; las aserciones de regresión permanecen en
+\ruta{tests/}, separadas de las funciones científicas.
 
 \subsection{Artefactos Julia y comparadores}
 
@@ -1766,15 +1814,15 @@ salidas que no corresponden al inventario registrado. En PLL, el CSV común de
 regresiones publicadas pertenecen a verificación/pruebas, no al flujo de
 localización científica.
 
-\subsection{Qué falta para el siguiente cierre}
+\subsection{Trabajo pendiente}
 
 \enlargethispage{2\baselineskip}
 
 \begin{enumerate}
-  \item promover Leonov--Kuznetsov sólo después de congelar desde la fuente su
-        no linealidad por tramos;
-  \item mantener los casos M1 fuera del contrato escalar hasta crear una
-        extensión multicanal explícita.
+  \item incorporar Leonov--Kuznetsov después de fijar desde la fuente su no
+        linealidad por tramos;
+  \item formular una extensión multicanal explícita antes de evaluar los casos
+        M1 con el procedimiento escalar.
 \end{enumerate}
 \fi
 
@@ -1784,30 +1832,30 @@ localización científica.
   \item La ruta entera principal recalcula frecuencia, ganancia, amplitud y
         semilla desde el sistema; no usa 40\,000 frecuencias ni valores
         publicados como entrada.
-  \item Chua confirma que una búsqueda global Julia puede descubrir el
-        candidato sin conocer su posición y después coincidir con Python en
-        504 controles de ocultedad.
-  \item Kalman--Fitts confirma que una incompatibilidad directa puede
-        conducir limpiamente a una ruta A1, sin convertir el caso en un
-        barrido no documentado.
-  \item MAVPD con \(\xi=3.1\) confirma una transformación D0 no Chua:
-        ramas, semillas, continuación, 108 asignaciones y periodo coinciden
-        entre Python y Julia. La dinámica local apoya un
+  \item En Chua, la búsqueda global en Julia localizó el candidato sin conocer
+        su posición y coincidió con Python en 504 controles de ocultedad.
+  \item En Kalman--Fitts, la incompatibilidad directa condujo a una ruta A1
+        definida por el mapa de conmutación y la continuación.
+  \item En MAVPD con \(\xi=3.1\), Python y Julia coincidieron en ramas,
+        semillas, continuación, 108 asignaciones y periodo. La dinámica local apoya un
         ciclo estable, no la etiqueta cuasiperiódica de la fuente.
+\ifHAFOBasinMaterial
   \item MAVPD con \(\xi=3.5\) funciona como control negativo: los contactos
-        desde vecindades de los equilibrios impiden llamarlo oculto bajo el
-        contrato ensayado.
-  \item La extensión MAVPD con \(\xi=\MAVPDChaosXi\) demuestra que la ruta
-        mantenida puede explorar más allá de los ciclos directos: una frontera
-        de Hopf derivada y una continuación local produjeron evidencia fuerte
-        de caos y cero contactos en \MAVPDChaosTotalProbes{} sondeos. Julia
+        desde vecindades de los equilibrios impiden llamarlo oculto bajo las
+        condiciones ensayadas.
+\fi
+  \item En la extensión MAVPD con \(\xi=\MAVPDChaosXi\), una frontera de Hopf
+        derivada y una continuación local produjeron diagnósticos finitos
+        compatibles con caos y cero contactos en \MAVPDChaosTotalProbes{}
+        sondeos. Julia
         reprodujo independientemente la selección y coincidió en las
         \MAVPDChaosTotalProbes{}
         decisiones; la etiqueta sigue siendo finita, no global.
   \item PLL extiende la batería a una transformación T1 con obstrucción directa
         demostrable y ruta A1 sobre un cilindro. Python y Julia coinciden en
-        órbitas, estabilidad y \PLLProbeCount{} decisiones bajo el contrato
+        órbitas, estabilidad y \PLLProbeCount{} decisiones bajo el protocolo
         comparable declarado.
   \item El catálogo D0/T1/A1/M1 preserva la disciplina de alcance y evita
-        presentar sistemas multicanal como fallos del contrato escalar.
+        atribuir al procedimiento escalar los casos multicanal que quedan fuera
+        de sus hipótesis.
 \end{enumerate}

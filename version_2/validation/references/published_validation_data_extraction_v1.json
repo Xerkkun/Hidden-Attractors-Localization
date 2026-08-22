@@ -174,14 +174,15 @@
           },
           "eigenspectra": {
             "X0": [
-              2.5576,
+              -7.155804677345547,
               -1.0,
-              -7.5576
+              2.755804677345547
             ],
             "X1": [
-              "-5.9570",
-              "-0.0215 ± 3.6026i"
-            ]
+              "-5.370299517731351",
+              "-0.0148502411343243 ± 3.832489172241882i"
+            ],
+            "basis": "recomputed_from_declared_equations_and_parameters"
           },
           "neighborhood_test": {
             "unstable_equilibrium": "X0",

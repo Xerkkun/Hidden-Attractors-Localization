@@ -1,8 +1,9 @@
-\section{Primer piloto dinámico geométrico--topológico: PLL, MAVPD y Wu}
+\section[Piloto geométrico--topológico: PLL, MAVPD y Wu]
+{Piloto dinámico geométrico--topológico: PLL, MAVPD y Wu}
 \label{sec:resultados-piloto-gt}
 
-Esta sección cierra la primera ejecución de la campaña preregistrada en la
-\cref{sec:campana-gt}. Se integraron el PLL lead--lag y el MAVPD con $q=1$, y
+La campaña B0--B2 preregistrada en la
+\cref{sec:campana-gt} integró el PLL lead--lag y el MAVPD con $q=1$, y
 el Chua arctangente de Wu con $q=0.99$, bajo los presupuestos B0--B2. El banco
 contiene 24 registros de semilla; se conservaron 90 trayectorias y 12 registros
 de evaluación de borde. Las 90 integraciones terminaron con estado numérico
@@ -21,10 +22,8 @@ aislante ni índice de Conley.
 \includegraphics[width=0.96\linewidth]{figures/geometric_topological_pilot/00_ruta_geometrico_topologica.pdf}
 
 \smallskip
-\small\textbf{Ruta conceptual del piloto.} La figura se conserva en las dos
-ediciones porque explica la relación entre álgebra, semillas, transporte
-causal, clasificación, borde y nivel de evidencia; no es una gráfica de
-resultado.
+\small\textbf{Ruta conceptual del piloto.} Relación entre álgebra, semillas,
+transporte causal, clasificación, borde y nivel de evidencia.
 \end{center}
 \end{hafocommonfigure}
 
@@ -40,7 +39,7 @@ adimensionales
  h=\widehat h\,\tau_*,\quad T=\widehat T\,\tau_*.
  \label{pilot:eq-budget-dimensionalization}
 \end{equation}
-Aquí se documenta cómo se fijó $\tau_*$ antes de clasificar destinos. Sea
+La escala $\tau_*$ se fijó antes de clasificar destinos. Sea
 $S=\operatorname{diag}(s_1,\ldots,s_n)$ la escala declarada del estado y
 \begin{equation}
  \lVert v\rVert_S=\lVert S^{-1}v\rVert_2.
@@ -122,8 +121,8 @@ central FPP--A/FDF.\\
 \endgroup
 
 En Wu, las semillas IDF transferidas y las condiciones ADM publicadas se
-mantuvieron como controles externos al banco central que fijó la escala. No se
-les permitió cambiar el contrato después de añadirlas. Si se incluye la
+mantuvieron como controles externos al banco central que fijó la escala. El
+protocolo permaneció fijado al incorporarlas. Si se incluye la
 condición ADM de gran amplitud en el mínimo de
 \eqref{pilot:eq-tau-crossing}, se obtiene $0.09700513591$; esta sensibilidad
 queda como prueba de estrés pendiente. No invalida EV--TG2, pero impide usar el
@@ -321,11 +320,11 @@ es independiente de $q$; los pesos temporales y la evolución causal sí depende
 de $q$. No se afirma que una FPP--A sea una aceleración global nula ni un evento
 FPP--H dependiente de historia.
 
-\subsection{Compuertas de promoción empleadas}
+\subsection{Criterios de asignación de evidencia}
 \label{subsec:pilot-gates}
 
 Cada corrida debía permanecer finita y dentro del radio declarado para obtener
-EV--TG2. Para una semilla individual, la promoción a EV--TG3 exigió
+EV--TG2. Para una semilla individual, la asignación EV--TG3 exigió
 simultáneamente:
 \begin{enumerate}
  \item coincidencia del destino resuelto entre los dos solucionadores;
@@ -356,13 +355,14 @@ asignación terminal. Por ello esta ruta permanece en EV--TG2. Las semillas del
 ciclo y del separador también quedaron transitorias bajo los horizontes físicos
 de esta normalización.
 
+\ifHAFOBasinMaterial
 El bracket preregistrado alrededor de
 $(-0.0104934812033,-0.7974826998815)$ tenía extremos separados por
 $2\,10^{-5}$ en $u$, es decir anchura cilíndrica escalada
 $8.928571\,10^{-4}$. Como ambos extremos siguieron sin destino terminal en B1,
-la bisección se rechazó porque sus extremos no tenían destino resuelto; no se
-redujo la anchura y no se
-construyó una órbita de borde.
+la bisección concluyó porque sus extremos no tenían destino resuelto; la
+anchura permaneció sin cambios y la órbita de borde quedó pendiente.
+\fi
 
 \subsection{Resultados del MAVPD: los PP localizan ciclos interiores}
 \label{subsec:pilot-mavpd-results}
@@ -372,11 +372,12 @@ la nube interna positiva y $p_-$ la nube interna negativa en B1 y B2, con
 DOP853 y RK4.
 Para $p_+$ en B2, el error corto fue $2.68\,10^{-14}$ y la diferencia entre
 solucionadores en el mismo presupuesto fue $2.66\,10^{-6}$. No obstante, la
-diferencia de observables B1--B2 fue $0.262445>0.05$; por la compuerta
-predeclarada, la ruta no puede subir a EV--TG3. Las semillas DF de la segunda
+diferencia de observables B1--B2 fue $0.262445>0.05$; según el criterio
+predeclarado, la ruta permanece en EV--TG2. Las semillas DF de la segunda
 rama sí alcanzaron el ciclo exterior de referencia en B1--B2, pero su deriva de
 horizonte fue $0.106908>0.05$. El nivel máximo del caso permanece EV--TG2.
 
+\ifHAFOBasinMaterial
 El segmento de borde entre $p_+$ y la semilla DF exterior comenzó con anchura
 escalada $1.450687592$. El primer punto medio fue clasificado como ciclo
 exterior y redujo la anchura a $0.7253437961$. El segundo punto medio,
@@ -385,8 +386,9 @@ interior negativo de referencia. La bisección binaria se detuvo por la aparici�
 de ese tercer destino. Esto revela que el segmento no separa sólo dos
 cuencas; no demuestra Wada y obliga a estratificar la región antes de reanudar
 edge tracking.
+\fi
 
-\subsection{Resultados de Wu: primera prueba causal desde FPP--A}
+\subsection{Resultados de Wu: evaluación causal desde FPP--A}
 \label{subsec:pilot-wu-results}
 
 El banco Caputo comparó el par FPP--A con dos ramas de función descriptiva
@@ -413,7 +415,7 @@ probado.
 Las semillas FDF2, IDF2 y ADM publicadas produjeron colas acotadas recurrentes,
 pero en B2 ABM las clasificó en varios casos como periódicas sin identificar el
 destino, mientras EFORK--3 las mantuvo como recurrentes sin identificarlo. La
-discrepancia impide promoción. Además, en Caputo toda clasificación periódica
+discrepancia impide asignar EV--TG3. Además, en Caputo toda clasificación periódica
 significa únicamente
 \emph{casi periodicidad proyectada a tiempo finito}; no afirma la existencia de
 una órbita periódica exacta. El nivel máximo de Wu queda en EV--TG2.
@@ -421,22 +423,26 @@ una órbita periódica exacta. El nivel máximo de Wu queda en EV--TG2.
 \begingroup
 \footnotesize
 \begin{longtable}{@{}L{2.0cm}L{2.6cm}L{3.4cm}L{3.8cm}L{2.0cm}@{}}
-\caption{Síntesis de destinos y compuertas del primer piloto.}
+\caption{Síntesis de destinos y criterios del primer piloto.}
 \label{pilot:tab-results-summary}\\
 \toprule
-Caso & Ruta & Destino observado & Compuerta decisiva & Nivel\\
+Caso & Ruta & Destino observado & Criterio decisivo & Nivel\\
 \midrule
 \endfirsthead
 \toprule
-Caso & Ruta & Destino observado & Compuerta decisiva & Nivel\\
+Caso & Ruta & Destino observado & Criterio decisivo & Nivel\\
 \midrule
 \endhead
 PLL & PP $p_+$ & Equilibrio $E_{\rm focus}$ & Destino y observables robustos B0--B2 & EV--TG3\\
 PLL & PP $p_-$ & Transitorio acotado sin resolver & Falta destino terminal & EV--TG2\\
+\ifHAFOBasinMaterial
 PLL & bracket & Dos extremos sin resolver & Bisección rechazada antes de iterar & No EV--TG4\\
+\fi
 MAVPD & PP $p_\pm$ & Ciclos interiores simétricos & Deriva B1--B2 de $26.24\%$ & EV--TG2\\
 MAVPD & DF exterior & Ciclo exterior de referencia & Deriva B1--B2 de $10.69\%$ & EV--TG2\\
+\ifHAFOBasinMaterial
 MAVPD & bracket & Aparece un tercer destino & Segmento no binario & No EV--TG4\\
+\fi
 Wu & FPP--A $p_\pm$ & Transitorio acotado & Error corto ABM--EFORK $>10^{-3}$ & EV--TG2\\
 Wu & FDF2, IDF2 y ADM & Recurrente o casi periódico proyectado & Desacuerdo de etiqueta en B2 & EV--TG2\\
 \bottomrule
@@ -446,23 +452,23 @@ Wu & FDF2, IDF2 y ADM & Recurrente o casi periódico proyectado & Desacuerdo de 
 \subsection{Gráficas de la evidencia finita}
 \label{subsec:pilot-digital-figures}
 
-\begin{hafocommonfigure}
+\begin{hafobasinfigure}
 \begin{center}
 \includegraphics[width=0.96\linewidth]{figures/geometric_topological_pilot/01_pll_pp_y_borde.pdf}
 
 \small\textbf{PLL.} Transporte de los PP y bracket inicial. Los destinos y la
-anchura corresponden al contrato finito B0--B2.
+anchura corresponden al protocolo finito B0--B2.
 \end{center}
-\end{hafocommonfigure}
+\end{hafobasinfigure}
 
-\begin{hafocommonfigure}
+\begin{hafobasinfigure}
 \begin{center}
 \includegraphics[width=0.96\linewidth]{figures/geometric_topological_pilot/02_mavpd_pp_superficie_destinos.pdf}
 
 \small\textbf{MAVPD.} Superficie singular, PP, nubes de referencia y aparición
 de un tercer destino sobre el segmento de borde.
 \end{center}
-\end{hafocommonfigure}
+\end{hafobasinfigure}
 
 \begin{hafocommonfigure}
 \begin{center}
@@ -473,46 +479,44 @@ FPP--A. La comparación ABM--EFORK es finita y no certifica periodicidad.
 \end{center}
 \end{hafocommonfigure}
 
-\begin{hafocommonfigure}
+\begin{hafobasinfigure}
 \begin{center}
 \includegraphics[width=0.96\linewidth]{figures/geometric_topological_pilot/04_matriz_destinos_b0_b2.pdf}
 
 \small\textbf{Matriz de campaña.} Etiquetas por semilla, presupuesto y
 solucionador; una celda periódica de Caputo es sólo una etiqueta proyectada.
 \end{center}
-\end{hafocommonfigure}
+\end{hafobasinfigure}
 
-\subsection{Antecedentes, deducciones del reporte y novedad limitada}
+\subsection{Antecedentes y alcance específico de la campaña}
 \label{subsec:pilot-novelty}
 
 \begin{longtable}{@{}L{3.2cm}L{4.1cm}L{5.8cm}@{}}
-\caption{Separación entre antecedentes y aportes de esta campaña.}
+\caption{Antecedentes y evaluaciones realizadas en la campaña.}
 \label{pilot:tab-novelty}\\
 \toprule
-Componente & Fundamento previo & Qué se aporta aquí\\
+Componente & Fundamento previo & Evaluación realizada en la campaña\\
 \midrule
 \endfirsthead
 \toprule
-Componente & Fundamento previo & Qué se aporta aquí\\
+Componente & Fundamento previo & Evaluación realizada en la campaña\\
 \midrule
 \endhead
 PP entero & Definición $JF=0$, $F\ne0$, y uso como localizador
 \cite{Prasad2015Perpetual,DudkowskiPrasadKapitaniak2017,
 DudkowskiPrasadKapitaniak2018}. & Derivación y comparación homogénea con DF,
-destinos de referencia y presupuestos B0--B2 en PLL y MAVPD; no es una nueva
-definición de PP.\\
+destinos de referencia y presupuestos B0--B2 en PLL y MAVPD.\\
 Curvas y superficies & Superficies críticas y curvas conectantes
 \cite{GilmoreEtAl2010Connecting,GuanXie2021Connecting}. & Integración de esas
-semillas con un banco trazable y compuertas de evidencia; no se propone un
-nuevo teorema de cobertura.\\
+semillas con un banco trazable y criterios de evidencia.\\
 FPP--A & Volterra y expansión Picard de Caputo; ABM causal
-\cite{DiethelmFordFreed2002}. & Propuesta del reporte: interpretar $JF=0$ como
+\cite{DiethelmFordFreed2002}. & Formulación evaluada: interpretar $JF=0$ como
 cancelación del coeficiente $h^{2q}$ y probarla como semilla de reinicio, sin
 llamarla aceleración fraccionaria global.\\
 Memoria & La dinámica Caputo requiere declarar terminal e historia
 \cite{CongTuan2017Nonlocal,DoanKloeden2021Semidynamical}. & Comparación ABM y
 EFORK--3 con el mismo $t_0$, reset y memoria completa, separada de las semillas
-ADM históricas.\\
+ADM publicadas.\\
 Escala $\tau_*$ & Análisis dimensional y escalas espectrales estándar. & Regla
 operativa \eqref{pilot:eq-tau-star}, congelada antes de clasificar, que hace
 comparables B0--B2 entre tres familias muy distintas. Es protocolo, no
@@ -523,23 +527,22 @@ bisección inicial en prueba de ocultedad o certificado topológico.\\
 \bottomrule
 \end{longtable}
 
-Los números de esta sección son resultados nuevos de la campaña local, no una
-reivindicación de descubrimiento bibliográfico de los modelos o de los métodos
-componentes. La deducción teórica específica es el carril FPP--A basado en
-\eqref{pilot:eq-wu-picard-expansion}; su utilidad observada en Wu alcanza sólo
-EV--TG2.
+Las magnitudes reportadas proceden de la campaña local. Los modelos y métodos
+componentes proceden de las referencias citadas; el elemento específico
+evaluado es la ruta FPP--A basada en
+\eqref{pilot:eq-wu-picard-expansion}, cuyo alcance observado en Wu es EV--TG2.
 
-\subsection{Qué falta para la siguiente promoción}
+\subsection{Trabajo pendiente para ampliar el nivel de evidencia}
 
-El siguiente paso no es etiquetar estas colas como atractores ocultos. Debe:
+Las tareas pendientes son:
 \begin{enumerate}
  \item ampliar el PLL hasta resolver los dos extremos antes de reiniciar el
  edge tracking;
  \item estratificar las tres cuencas encontradas en MAVPD y construir al menos
  tres brackets no colineales;
  \item repetir Wu con $h,h/2,h/4$, una ventana común más larga y un tercer
- oráculo compatible antes de interpretar las discrepancias ABM--EFORK;
- \item ejecutar B3 sólo sobre las rutas que superen esas compuertas;
- \item dejar TG7, bloques aislantes e índice de Conley para una campaña
+ integrador compatible antes de interpretar las discrepancias ABM--EFORK;
+ \item ejecutar B3 sobre las rutas que satisfagan esos criterios;
+ \item abordar TG7, los bloques aislantes y el índice de Conley en una campaña
  posterior con imágenes exteriores validadas.
 \end{enumerate}

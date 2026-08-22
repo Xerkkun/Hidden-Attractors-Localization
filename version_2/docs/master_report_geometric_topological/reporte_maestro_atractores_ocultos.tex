@@ -29,6 +29,9 @@
 \usepackage[nameinlink,noabbrev]{cleveref}
 \makeatletter
 \renewcommand*\l@subsection{\@dottedtocline{2}{1.5em}{3.4em}}
+% Reserve a legible right gutter for three-digit page numbers in the long TOC.
+\renewcommand{\@pnumwidth}{2.4em}
+\renewcommand{\@tocrmarg}{4.2em}
 \makeatother
 \crefname{equation}{ecuación}{ecuaciones}
 \Crefname{equation}{Ecuación}{Ecuaciones}
@@ -72,7 +75,9 @@
 \setlength{\cftpartindent}{0em}
 \setlength{\cftsecindent}{1.8em}
 \setlength{\cftpartnumwidth}{2.8em}
-\setlength{\cftsecnumwidth}{3.2em}
+\setlength{\cftsecnumwidth}{3.6em}
+\renewcommand{\cftsecaftersnum}{.\hspace{0.4em}}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftsecdotsep}}
 \renewcommand{\cftpartfont}{\large\bfseries\color{azulHA}}
 \renewcommand{\cftpartpagefont}{\large\bfseries\color{azulHA}}
 \renewcommand{\cftsecfont}{\normalfont}
@@ -92,7 +97,7 @@
   }
 \else
   \hypersetup{
-    pdftitle={Reporte maestro de localización de atractores ocultos enteros y fraccionarios},
+    pdftitle={Localización de atractores ocultos en sistemas enteros y fraccionarios},
     pdfsubject={Álgebra, verificación cruzada, geometría, topología, memoria y evidencia de cuencas}
   }
 \fi
@@ -140,24 +145,35 @@
 % digital activa el atlas y la trazabilidad extendida.
 \newif\ifHAFOPedagogy
 \newif\ifHAFOdigitalcontent
+\newif\ifHAFOBasinMaterial
 \ifdefined\HAFOPrintEdition
   \HAFOPedagogytrue
   \HAFOdigitalcontentfalse
+  \HAFOBasinMaterialfalse
   % El índice muestra sólo partes y secciones; las subsecciones se leen en orden.
   \setcounter{tocdepth}{1}
 \else
   \HAFOPedagogyfalse
   \HAFOdigitalcontenttrue
+  \HAFOBasinMaterialtrue
   % El índice muestra sólo partes y secciones; las subsecciones se leen en orden.
   \setcounter{tocdepth}{1}
 \fi
 
-% Las figuras se clasifican una por una. No se redefine globalmente el entorno
-% figure: una figura común se conserva en ambas ediciones y una figura digital
-% se omite de la guía de impresión de forma explícita.
+% Las figuras se clasifican por su función científica. Los atractores
+% localizados, series, espectros, secciones de Poincaré y diagnósticos de
+% Lyapunov pertenecen a hafocommonfigure y se conservan en ambas ediciones.
+% hafobasinfigure se reserva para mapas y cortes de cuencas de atracción, que
+% sólo forman parte de la monografía completa. hafodigitalfigure conserva la
+% trazabilidad gráfica extendida reservada para la salida completa.
 \newenvironment{hafocommonfigure}[1][H]
   {\begin{figure}[#1]}
   {\end{figure}}
+\NewEnviron{hafobasinfigure}[1][H]{%
+  \ifHAFOBasinMaterial
+    \begin{figure}[#1]\BODY\end{figure}%
+  \fi
+}
 \NewEnviron{hafodigitalfigure}[1][H]{%
   \ifHAFOdigitalcontent
     \begin{figure}[#1]\BODY\end{figure}%
@@ -256,12 +272,12 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small Reporte maestro de atractores ocultos}
+\fancyhead[L]{\small Atractores ocultos enteros y fraccionarios}
 \fancyhead[R]{\small Álgebra, geometría, memoria y cuencas}
 \fancyfoot[C]{\thepage}
 \fancypagestyle{plain}{%
   \fancyhf{}
-  \fancyhead[L]{\small Reporte maestro de atractores ocultos}
+  \fancyhead[L]{\small Atractores ocultos enteros y fraccionarios}
   \fancyhead[R]{\small Álgebra, geometría, memoria y cuencas}
   \fancyfoot[C]{\thepage}
 }
@@ -346,24 +362,28 @@ cálculo fraccionario\par}
   \def\HAFOGeoBlockLinear{1}
   \input{report_sections/14_guia_geometrica_topologica_entera}
   \endgroup
-  \begingroup
-  \def\HAFONoGeoPosterior{1}
-  \def\HAFOGeoBlockSelect{1}
-  \def\HAFOGeoBlockBasins{1}
-  \input{report_sections/14_guia_geometrica_topologica_entera}
-  \endgroup
+  \ifHAFOBasinMaterial
+    \begingroup
+    \def\HAFONoGeoPosterior{1}
+    \def\HAFOGeoBlockSelect{1}
+    \def\HAFOGeoBlockBasins{1}
+    \input{report_sections/14_guia_geometrica_topologica_entera}
+    \endgroup
+  \fi
   \begingroup
   \def\HAFOFractionalOnly{1}
   \def\HAFOFractionalBlockSelect{1}
   \def\HAFOFractionalBlockStability{1}
   \input{report_sections/02_modelos_y_fundamentos}
   \endgroup
-  \begingroup
-  \def\HAFOCaputoBlockSelect{1}
-  \def\HAFOCaputoBlockBasins{1}
-  \input{report_sections/15_geometria_topologia_caputo}
-  \endgroup
-  \HAFOProblemStabilityBasins
+  \ifHAFOBasinMaterial
+    \begingroup
+    \def\HAFOCaputoBlockSelect{1}
+    \def\HAFOCaputoBlockBasins{1}
+    \input{report_sections/15_geometria_topologia_caputo}
+    \endgroup
+    \HAFOProblemStabilityBasins
+  \fi
 
   \begingroup
   \def\HAFONoGeoPosterior{1}
@@ -433,6 +453,7 @@ cálculo fraccionario\par}
 \input{report_sections/13_puntos_perpetuos}
 \input{report_sections/19_localizacion_geometrico_topologica}
 \input{report_sections/05_protocolos_experimentales}
+\input{report_sections/23_confiabilidad_predictibilidad_transitorios}
 \HAFOProblemLocalization
 \input{report_sections/21_campana_dinamica_geometrico_topologica}
 \input{report_sections/10_propuestas_teoricas}

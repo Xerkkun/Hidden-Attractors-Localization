@@ -3,8 +3,7 @@
 
 \HAFOCardContinuation
 
-Esta sección transforma las ecuaciones continuas de las secciones anteriores
-en un procedimiento numérico. Se distinguen cuidadosamente tres operaciones:
+El procedimiento numérico distingue tres operaciones:
 integrar un problema de valor inicial de Caputo, continuar el sistema no suave
 sin borrar su historia y reiniciar después el sistema autónomo para evaluar una
 condición inicial bajo un convenio común de memoria.
@@ -78,8 +77,8 @@ finalmente \(F_{n+1}\), que se conserva para el siguiente paso.
 
 Las sumas de \cref{eq:abm_predictor,eq:abm_corrector} comienzan siempre en
 \(j=0\). Por ello, una integración de \(N\) pasos utiliza toda la historia
-\(\{F_0,\ldots,F_N\}\). En este reporte \emph{memoria completa} significa
-exactamente que ningún término anterior se elimina ni se sustituye por una
+\(\{F_0,\ldots,F_N\}\). El término \emph{memoria completa} indica que ningún
+término anterior se elimina ni se sustituye por una
 ventana móvil.
 
 \begin{remark}[Recuperación del caso entero]
@@ -153,8 +152,8 @@ X_{\mathrm{fin}}=
 \subsection{Reinicio controlado para la trayectoria objetivo}
 \label{sec:reinicio_objetivo}
 
-La continuación de \cref{eq:continuacion_unica_historia} demuestra que existe
-un camino causal desde la semilla auxiliar hasta el sistema original. Para
+La continuación de \cref{eq:continuacion_unica_historia} proporciona un camino
+causal desde la semilla auxiliar hasta el sistema original. Para
 comparar esa condición final con las condiciones iniciales de los sondeos se
 realiza después una operación distinta:
 \begin{equation}
@@ -163,16 +162,17 @@ realiza después una operación distinta:
 \label{eq:reset_objetivo_no_suave}
 \end{equation}
 Este reinicio es intencional. Define una trayectoria autónoma del sistema
-objetivo con el mismo convenio de memoria que todas las trayectorias de
-\cref{eq:cuenca_reset}. De esta ejecución se descarta el transitorio y se
-construye la nube de referencia \(\target\) usada por el clasificador.
+objetivo con el mismo instante inicial y el mismo convenio de memoria que las
+trayectorias empleadas en los sondeos. De esta ejecución se descarta el
+transitorio y se construye la nube de referencia \(\target\) usada por el
+clasificador.
 
 Así, las dos operaciones tienen propósitos diferentes:
 \begin{enumerate}
  \item la continuación conserva la historia para trasladar la semilla sin
  cambiar el problema fraccionario durante el recorrido;
  \item el reinicio estandariza el límite inferior y permite comparar cuencas
- bajo un único contrato de Caputo.
+ bajo un único convenio de Caputo.
 \end{enumerate}
 
 \subsection{Refinamiento fraccionario del caso con arctangente}
@@ -231,7 +231,7 @@ q,\ h,\ T,\ T_{\mathrm{burn}},\ X_0,\
 \right).
 \label{eq:contrato_numerico_minimo}
 \end{equation}
-El estado postransitorio se analiza con el mismo contrato utilizado para crear
+El estado postransitorio se analiza con la misma especificación utilizada para crear
 la nube objetivo. Los ensayos de robustez del caso no suave repitieron
 \(36\) combinaciones y las \(36\) reprodujeron la misma clase de destino. En
 el caso con arctangente, la selección cruzada entre pasos precede al sondeo de

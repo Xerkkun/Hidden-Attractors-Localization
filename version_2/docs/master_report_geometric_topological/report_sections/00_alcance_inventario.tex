@@ -5,21 +5,21 @@
   \section{Alcance, niveles de evidencia e inventario de casos}
   \label{sec:master-scope}
 
-  El documento integra en una sola cadena científica la formulación de los
+  El documento articula la formulación de los
   modelos, las realizaciones de Lur'e, la generación de semillas, la continuación,
   la integración causal, la clasificación dinámica y los sondeos de cuenca. La
   topología y la geometría diferencial se emplean para precisar los objetos
   invariantes, las fronteras y las hipótesis que permitirían elevar evidencia
   numérica finita a una afirmación matemática dentro de un dominio declarado.
-  Las dos ediciones conservan este núcleo completo; la guía añade recursos de
-  estudio y la monografía digital añade trazabilidad y evidencia gráfica extensa.
+  Este núcleo se acompaña de recursos de estudio, trazabilidad computacional y
+  evidencia gráfica extensa.
 
-  El alcance no se amplía por simple concatenación. Cada afirmación se coloca en
-  uno de los siguientes niveles:
+  La escala siguiente asigna a cada afirmación el nivel correspondiente a la
+  evidencia disponible:
 \fi
 
 \begin{longtable}{@{}L{0.16\linewidth}L{0.28\linewidth}L{0.48\linewidth}@{}}
-\caption{Escala de evidencia usada en todo el reporte.}\label{tab:master-levels}\\
+\caption{Escala de evidencia empleada en el documento.}\label{tab:master-levels}\\
 \toprule
 Nivel & Nombre & Afirmación autorizada\\
 \midrule
@@ -36,8 +36,8 @@ Wolfram Language.\\
 E2 & semilla & Existe una condición inicial producida por función descriptiva,
 familia auxiliar de Machado, punto perpetuo, mapa de conmutación, órbita de
 ganancia cero o búsqueda acotada declarada.\\
-E3 & continuación & La semilla fue transportada hasta el campo objetivo bajo un
-contrato de continuación reproducible.\\
+E3 & continuación & La semilla fue transportada hasta el campo objetivo mediante
+un protocolo de continuación reproducible.\\
 E4 & dinámica & El conjunto final fue integrado y clasificado mediante
 retornos, Lyapunov, prueba \(0\)--\(1\), Poincaré u otros diagnósticos finitos.\\
 E5 & separación local & Condiciones iniciales predeclaradas alrededor de todos
@@ -48,13 +48,13 @@ la localización o la clasificación sin leer la trayectoria objetivo.\\
 \end{longtable}
 
 \ifHAFOdigitalcontent
-E5 no es una prueba global. Si se ensayan \(N\) condiciones y no se observa
-contacto, el resultado exacto es «cero contactos bajo ese muestreo, radios,
-horizonte y tolerancia». En particular, una divergencia no se cuenta como
-confirmación de separación: se reporta por separado.
+E5 expresa evidencia finita y no una prueba global. Si se ensayan \(N\)
+condiciones sin observar contacto, el resultado exacto es «cero contactos bajo
+ese muestreo, radios, horizonte y tolerancia». Las divergencias se registran
+por separado y no cuentan como confirmación de separación.
 
-La escala E0--E6 describe el máximo alcanzado por el \emph{expediente completo}
-de un caso. La escala EV--TG0--EV--TG7 usada en la campaña
+La escala E0--E6 describe el máximo alcanzado por la evaluación integral de un
+caso. La escala EV--TG0--EV--TG7 usada en la campaña
 geométrico--topológica describe, en cambio, una ruta o una semilla concreta:
 EV--TG2 corresponde a destino dinámico finito, EV--TG3 añade una obstrucción
 local de equilibrio y los niveles superiores exigen evidencia de borde,
@@ -63,16 +63,16 @@ identifican término a término y no deben combinarse tomando el máximo de una
 ruta como estado de todo el caso.
 \fi
 
-\subsection{Inventario de expedientes incluidos}
+\subsection{Inventario de casos incluidos}
 
 \begin{longtable}{@{}L{0.22\linewidth}C{0.08\linewidth}L{0.19\linewidth}L{0.43\linewidth}@{}}
 \caption{Casos algebraicos, dinámicos y candidatos.}\label{tab:master-cases}\\
 \toprule
-Sistema o carril & Orden & Máximo nivel & Estado conservador\\
+Sistema o ruta & Orden & Máximo nivel & Estado según la evidencia\\
 \midrule
 \endfirsthead
 \toprule
-Sistema o carril & Orden & Máximo nivel & Estado conservador\\
+Sistema o ruta & Orden & Máximo nivel & Estado según la evidencia\\
 \midrule
 \endhead
 Chua PWL canónico & \(q=1\) & E6 & Candidato caótico compatible con ocultedad
@@ -80,7 +80,7 @@ bajo dos campañas independientes de 504 sondas, ambas con 0 contactos. Sus
 particiones de destinos no son comparables porque usan coordenadas, horizontes
 y clasificadores distintos. Semilla DF verificada.\\
 Chua PWL «nearby» & \(q=0.9998\) & E5 & Control rechazado: 1305
-contactos de 4050 y 1395 divergencias; autoexcitado bajo el contrato ensayado.\\
+contactos de 4050 y 1395 divergencias; autoexcitado bajo el protocolo ensayado.\\
 Chua PWL exacto de Danca, centrado & \(q=0.9998\) & E2 & Dos semillas
 armónicas; no confundir con el extremo sesgado.\\
 Chua PWL exacto de Danca, sesgado & \(q=0.9998\) & E5 & Extremo
@@ -102,33 +102,33 @@ MAVPD, \(\xi=3.1\) & \(q=1\) & E6 & Ciclo periódico externo, 0/108
 contactos. La etiqueta publicada de cuasiperiodicidad no se reproduce. Dos PP
 exactos llegan a las órbitas simétricas en el piloto nuevo.\\
 MAVPD, \(\xi=3.5\) & \(q=1\) & E6 & Control negativo: aparecen 24
-contactos; no es oculto bajo el contrato común.\\
+contactos; no es oculto bajo el protocolo común.\\
 MAVPD local, \(\xi=2.85\) & \(q=1\) & E6 & Candidato compatible con caos bajo
 diagnósticos finitos en \(\gamma=0.15380379839949113\); 0/112 contactos y
 verificación Python--Julia.\\
 PLL lead--lag & \(q=1\) & E6 & Ruta directa obstruida; órbita corredora en
 ganancia cero y continuación a \(L=500\); 0/96 contactos cilíndricos.\\
 Lorenz generalizado de Danca & \(q=0.995\) & E1 & Realización MIMO,
-equilibrios, espectros corregidos y sistema de balance verificados; sin semilla
-resuelta, corrida local ni figura promovida.\\
+equilibrios, espectros verificados y sistema de balance; sin semilla
+resuelta, ejecución local ni figura de resultados validada.\\
 Rabinovich--Fabrikant de Danca & \(q=0.998\) & E1 & Realización MIMO,
 cinco equilibrios, Matignon y sistema de balance verificados; sin corrida local
-ni figura promovida.\\
+ni figura de resultados validada.\\
 Muñoz--Pacheco, piloto PP & \(q=0.97\) & E2 & Cuatro semillas FPP--A exactas y
 trayectorias PECE de historia completa finitas hasta \(t=35\); sin
 clasificación de atractor ni evento FPP--H convergente.\\
-Portafolio adicional & mixto & E0--E1 & Diseños o candidatos compatibles;
-se presentan con pruebas de estructura y una agenda L0--L6, nunca como
-atractores ya reproducidos.\\
+Candidatos adicionales & mixto & E0--E1 & Diseños o candidatos compatibles
+con pruebas de estructura y un plan de validación L0--L6; su estado no corresponde a
+atractores reproducidos.\\
 \bottomrule
 \end{longtable}
 
 \ifHAFOdigitalcontent
-Los 18 registros de semillas y los tres supervivientes históricos del Chua
-fraccionario son rutas del mismo modelo, no 21 atractores distintos. Los
-bancos DK2018, Fischer y EFORK3 comprueban exponentes o integradores; tampoco
-se promueven a evidencia de localización u ocultedad.
-El nivel de la tabla es el máximo alcanzado por el expediente completo. Cada
+Los 18 registros de semillas y los tres supervivientes archivados del Chua
+fraccionario son rutas del mismo modelo, no 21 atractores distintos.
+Las pruebas de DK2018, Fischer y EFORK3 evalúan exponentes o integradores; su alcance
+no incluye evidencia de localización u ocultedad.
+El nivel de la tabla es el máximo alcanzado por la evaluación integral. Cada
 semilla, rama o trayectoria conserva su nivel propio y no hereda
 automáticamente el máximo del caso.
 \fi
@@ -155,22 +155,22 @@ La convención frecuente en los informes enteros es
  \label{eq:master-wminus}
 \end{equation}
 Por tanto, \(N=1/\Re W_+\) y \(N=-1/\Re W_-\) son la misma condición. Esta
-igualdad resuelve la aparente contradicción de signos entre documentos
-históricos. Se reserva \(q\) para el orden fraccionario y se usa \(b\), no
+igualdad establece la equivalencia entre las dos convenciones de signo. Se
+reserva \(q\) para el orden fraccionario y se usa \(b\), no
 «\(q\)», para el vector de entrada.
 
 \ifHAFOdigitalcontent
-\subsection{Qué certifica y qué no certifica Wolfram}
+\subsection{Alcance de la verificación con Wolfram Language}
 
 Los siete validadores archivados de Chua, Kalman--Fitts, MAVPD y PLL tienen
-\texttt{passed=true}. En esta auditoría se volvió a evaluar mediante el kernel
-Wolfram la forma de Lur'e, las transferencias, tres funciones descriptivas, las
-dos realizaciones fraccionarias no Chua, la familia auxiliar de Machado y las
-ecuaciones de puntos perpetuos. Se obtuvieron residuos simbólicos nulos para
-las identidades declaradas. Esto certifica álgebra y números derivados; no
-certifica por sí solo la existencia de un atractor, el carácter caótico de una
-trayectoria, la convergencia de un evento dependiente de historia ni la
-topología global de una cuenca.
+\texttt{passed=true}. La evaluación mediante el kernel Wolfram de la forma de
+Lur'e, las transferencias, tres funciones descriptivas, las dos realizaciones
+fraccionarias no Chua, la familia auxiliar de Machado y las ecuaciones de
+puntos perpetuos produjo residuos simbólicos nulos para las identidades
+declaradas. Su alcance comprende el álgebra y los números derivados; la
+existencia de un atractor, el carácter caótico de una trayectoria, la
+convergencia de un evento dependiente de historia y la topología global de una
+cuenca requieren pruebas adicionales.
 \fi
 
 \subsection{Convenciones científicas adoptadas}
@@ -180,7 +180,7 @@ documento:
 
 \begin{enumerate}
   \item la amplitud canónica del Chua entero es
-  \(5.856145086257\), no el redondeo histórico \(5.8576\);
+  \(5.856145086257\), no el valor redondeado de la fuente \(5.8576\);
   \item el extremo PWL sesgado de \(q=0.9998\) se denomina regular/periódico;
   \item c590 conserva como origen de semilla la búsqueda entera acotada y el
   refinamiento Caputo independiente;
@@ -188,9 +188,9 @@ documento:
   Volterra; reiniciar ventanas define otros problemas de valor inicial;
   \item la magnitud FFT se denomina espectro de amplitud o normalizado; sólo
   una estimación Welch con unidades puede llamarse PSD;
-  \item los espectros impresos del Lorenz generalizado no satisfacen el
-  polinomio característico. Se sustituyen por los valores Wolfram de la sección
-  dedicada al Lorenz generalizado;
+  \item los espectros del Lorenz generalizado se calculan a partir de los
+  Jacobianos declarados y satisfacen los polinomios característicos y las
+  identidades de traza de la sección correspondiente;
   \item la transferencia sesgada del bloque original y la transferencia
   incremental alrededor de un sesgo se mantienen separadas: esta última
   incorpora la pendiente local una sola vez;
@@ -205,14 +205,14 @@ documento:
   separado la existencia y atracción del conjunto candidato.
 \end{enumerate}
 
-\subsection{Atribución bibliográfica y alcance de la contribución}
+\subsection{Procedencia bibliográfica y alcance de las formulaciones}
 
-Las atribuciones se apoyan en los artículos y libros primarios citados. No se
-atribuye novedad a la forma de Lur'e, al balance armónico MIMO, a la potencia de
-Machado, a los puntos perpetuos enteros ni a las transformaciones afines
-fraccionarias, que tienen antecedentes explícitos. No se localizó una teoría
-primaria que traslade los puntos perpetuos a Caputo conservando explícitamente
-la memoria; por ello FPP--A y FPP--H se declaran propuestas del proyecto, no
-resultados establecidos. La contribución defendible consiste en integrar esos
-fundamentos con una continuación causal, contratos explícitos de memoria y una
-disciplina conservadora de evidencia.
+Los artículos y libros primarios citados sustentan las atribuciones. La forma de
+Lur'e, el balance armónico MIMO, la potencia de Machado, los puntos perpetuos
+enteros y las transformaciones afines fraccionarias tienen antecedentes
+explícitos. La revisión no localizó una teoría primaria que traslade los puntos
+perpetuos a Caputo conservando explícitamente la memoria; por ello FPP--A y
+FPP--H se formulan como propuestas metodológicas y no como resultados
+establecidos. La integración metodológica combina esos fundamentos con una
+continuación causal, especificaciones explícitas de memoria y criterios de
+evidencia ajustados al alcance de cada prueba.

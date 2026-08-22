@@ -1,11 +1,14 @@
-\section{Núcleo reproducible de las comprobaciones Wolfram}
+\section{Comprobaciones algebraicas reproducibles en Wolfram Language}
 
-El siguiente extracto contiene las identidades centrales. Las evaluaciones
-numéricas se hicieron con \texttt{NSolve}, \texttt{Eigenvalues},
-\texttt{CharacteristicPolynomial} y precisión ampliada después de construir
-los campos con racionales exactos.
+Las identidades de realización, los equilibrios, los jacobianos, los
+polinomios característicos y los espectros se evaluaron a partir de los campos
+vectoriales declarados. Los coeficientes decimales finitos se representaron
+como racionales exactos antes de aplicar \texttt{NSolve},
+\texttt{Eigenvalues} y el determinante
+\(\det(\lambda I-J)\). Para cada valor propio se evaluó de nuevo el polinomio
+característico y se comparó la suma espectral con la traza del jacobiano.
 
-\begin{lstlisting}[style=wl,language={},caption={Comprobación simbólica de las dos realizaciones.}]
+\begin{lstlisting}[style=wl,language={},caption={Comprobación simbólica de las realizaciones de Lorenz generalizado y Rabinovich--Fabrikant.}]
 ClearAll["Global`*"];
 
 (* Generalized Lorenz *)
@@ -72,14 +75,37 @@ Table[{p, Eigenvalues[jR /. Thread[{x,y,zz}->p]],
         499/500]}, {p, solR}];
 \end{lstlisting}
 
-\section{Trazabilidad local de las fuentes}
+\section{Archivos de cálculo y resultados numéricos}
 
-El corte se realizó sobre la revisión HAFO fechada el 10 de agosto de 2026.
-Para mantener el reporte legible no se imprimen huellas criptográficas. Las
-fuentes decisivas quedan identificadas por sus rutas:
+La comprobación conjunta de Lorenz generalizado, Lorenz estándar,
+Rabinovich--Fabrikant en los dos conjuntos de parámetros, jerk exponencial,
+sistema financiero y four-wing se encuentra en los siguientes archivos:
 \begin{itemize}
- \item \path{version_2/validation/references/published_validation_data_extraction_v1.json};
- \item \path{version_2/validation/published_reference_coverage.json};
- \item \path{Articulos verano 2026/03_metodologia_localizacion/main.tex};
- \item \path{Articulos verano 2026/03_metodologia_localizacion/README.md}.
+ \item \path{docs/master_report_geometric_topological/wolfram/no_chua_complete_algebra_validation.wl};
+ \item \path{docs/master_report_geometric_topological/wolfram/no_chua_complete_algebra_validation.json}.
 \end{itemize}
+
+La salida estructurada registra residuos nulos en las identidades de
+realización, en las ecuaciones de equilibrio, en la sustitución de los valores
+propios en los polinomios característicos y en la igualdad entre suma espectral
+y traza, a la precisión utilizada. En particular, para Lorenz generalizado se
+obtienen
+\begin{align*}
+ p_0(\lambda)&=\lambda^3+5.4\lambda^2-15.32\lambda-19.72,\\
+ p_{\pm}(\lambda)&=\lambda^3+5.4\lambda^2
+ +14.8476942706167\lambda+78.88,
+\end{align*}
+con los espectros consignados en el cuerpo del informe. La suma de cada terna
+es \(-5.4\), igual a la traza de su jacobiano.
+
+Los tres candidatos enteros se verifican con programas dedicados, que parten
+de sus ecuaciones y parámetros y producen los datos empleados en las tablas:
+\begin{itemize}
+ \item \path{validation/wolfram/cases/kalman_fitts_integer.wl};
+ \item \path{validation/wolfram/cases/mavpd_integer.wl};
+ \item \path{validation/wolfram/cases/pll_lead_lag_integer.wl}.
+\end{itemize}
+La estabilidad numérica adicional de Kalman--Fitts se consigna en
+\path{validation/reference_cases/kalman_fitts_integer_q1/06_integrator_robustness_matrix.csv};
+contiene ocho combinaciones de
+integrador, paso y horizonte, todas consistentes con el ciclo localizado.

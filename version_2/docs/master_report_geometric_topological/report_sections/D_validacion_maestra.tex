@@ -11,11 +11,11 @@ el paquete de fuentes que acompaña a este PDF.
 \caption{Validadores y frontera de su conclusión.}
 \label{tab:wolfram-master}\\
 \toprule
-Sistema & Pruebas & Alcance algebraico & No demuestra\\
+Sistema & Pruebas & Alcance algebraico & Límite de alcance\\
 \midrule
 \endfirsthead
 \toprule
-Sistema & Pruebas & Alcance algebraico & No demuestra\\
+Sistema & Pruebas & Alcance algebraico & Límite de alcance\\
 \midrule
 \endhead
 Chua PWL entero & 6/6 & Lur'e, polinomio, transferencia, equilibrios,
@@ -97,7 +97,7 @@ Para PLL,
 Así, las dos obstrucciones no son decisiones heurísticas: proceden de
 identidades simbólicas.
 
-\subsection{Corrección espectral del Lorenz generalizado}
+\subsection{Espectro verificado del Lorenz generalizado}
 
 El espectro verificado en el origen es
 \[
@@ -108,10 +108,11 @@ y en los dos equilibrios no nulos,
  \{-5.37029951773135,\
  -0.0148502411343243\pm3.83248917224188\,\mathrm i\}.
 \]
-El margen de Matignon de los no nulos es
-\(0.0117287914887683>0\). Los valores impresos en la extracción bibliográfica
-no reproducen la traza ni el polinomio característico; la clasificación
-cualitativa, sin embargo, no cambia.
+El origen es inestable por el autovalor positivo
+\(2.75580467734555\). En los dos equilibrios no nulos, todas las partes reales
+son negativas y el margen de Matignon es
+\(0.0117287914887683>0\); por tanto, ambos son asintóticamente estables para el
+orden conmensurable evaluado.
 
 \subsection{Machado y puntos perpetuos}
 
@@ -123,7 +124,7 @@ En Chua PWL, \(q=0.9998\), \(\mu=2\), Wolfram devolvió
  \rho_{\mathrm{aux}}&=2.16\times10^{-13},\\
  \rho_{\mathrm{fis}}&=1.182060487425029.
 \end{align}
-La diferencia entre los últimos dos renglones es el resultado auditado
+La diferencia entre los últimos dos renglones es el resultado verificado
 principal: una semilla auxiliar precisa no es balance armónico físico.
 
 Para MAVPD y Muñoz--Pacheco, la sustitución de todas las raíces de
@@ -135,19 +136,19 @@ los contraejemplos
  \left[x_0+\frac{ct^q}{\Gamma(q+1)}\right]
  =\frac{ct^{q-2}}{\Gamma(q-1)}.
 \end{equation}
-Por tanto, la traducción Caputo del reporte no usa una aceleración ordinaria
-ni una regla de cadena inexistente.
+La traducción Caputo emplea el coeficiente de Picard--Caputo, distinto de una
+aceleración ordinaria y sin invocar una regla de cadena no válida.
 
 \subsection{Reproducibilidad}
 
-El paquete de la monografía conserva
+Los archivos reproducibles son
 \path{wolfram/topologia_geometria_hidden_validation.wl} y su salida textual
-\path{wolfram/topologia_geometria_hidden_validation.txt}. La versión integrada
-al repositorio es
+\path{wolfram/topologia_geometria_hidden_validation.txt}. La implementación
+equivalente se encuentra en
 \path{version_2/validation/wolfram/cases/geometric_topological_engine.wl}; su
-salida promovida se encuentra en
+salida de referencia se encuentra en
 \path{version_2/validation/06_geometric_topological_campaign/wolfram/}. El motor
 produce 50 comprobaciones, un resumen JSON y evidencia textual. Valida las
 identidades geométrico--topológicas, Machado y los residuos de puntos perpetuos
-dentro de su alcance algebraico; no añade evidencia dinámica ni reetiqueta
-otras campañas como reejecutadas.
+dentro de su alcance algebraico. La evidencia dinámica corresponde a las
+campañas numéricas independientes.

@@ -1,0 +1,359 @@
+\section[Confiabilidad dinámica y niveles de evidencia]
+{Confiabilidad dinámica: predictibilidad, caos transitorio y
+\mbox{niveles} de evidencia}
+\label{sec:confiabilidad-dinamica}
+
+\HAFOCardReliability
+
+La confiabilidad dinámica se descompone en cuatro problemas: si la trayectoria
+calculada aproxima el PVI declarado; si el comportamiento irregular persiste al ampliar
+la ventana; si existe un conjunto invariante que atrae un abierto; y si su
+cuenca queda separada de toda vecindad de los equilibrios. Un diagnóstico
+positivo en una pregunta no responde automáticamente las siguientes.
+
+El análisis articula la teoría de Lyapunov de
+\cref{sec:geo-stable-manifolds}, la formulación funcional de Caputo de
+\cref{sec:geometria-topologia-caputo} y las especificaciones numéricas de
+\cref{sec:protocolos}. Las fuentes seleccionadas cumplen tres funciones
+precisas: predictibilidad y exponentes de tiempo finito
+\cite{VallejoSanjuan2017Predictability,DatserisParlitz2022Nonlinear};
+sillas caóticas, escapes y crisis
+\cite{Ott2002Chaos,TelGruiz2006Chaotic}; y comparación de algoritmos
+fraccionarios \cite{SunHeWang2022FractionalChaos}. Los artículos descargados
+aportan casos de control y límites de interpretación
+\cite{Danca2016HiddenTransient,Sabatier2021InfiniteMemory,
+ClementeLopezEtAl2022Poincare,GuanXie2025}.
+
+\evidencebox{\textbf{Jerarquía de afirmaciones.} Los términos
+\emph{trayectoria irregular},
+\emph{FTLE positivo}, \emph{conjunto caótico transitorio},
+\emph{atractor caótico} y \emph{atractor oculto} son afirmaciones
+progresivamente diferentes, sujetas a hipótesis y criterios de validación
+propios.}
+
+\subsection{Error de trayectoria y horizonte de predictibilidad}
+
+Considérese primero la EDO autónoma
+\begin{equation}
+ \dot x=f(x),\qquad x(t_0)=x_0,
+ \label{eq:reliability-ode}
+\end{equation}
+con \(f\) Lipschitz de constante \(L\) en la región recorrida. Una curva
+numérica diferenciable por tramos \(\widetilde x\) posee el defecto
+\begin{equation}
+ r_h(t)=\dot{\widetilde x}(t)-f(\widetilde x(t)).
+ \label{eq:reliability-defect}
+\end{equation}
+Si \(e=x-\widetilde x\), la desigualdad de Gronwall da
+\begin{equation}
+ \|e(t)\|
+ \leq \e^{L(t-t_0)}\|e(t_0)\|
+ +\int_{t_0}^{t}\e^{L(t-s)}\|r_h(s)\|\,\dd s .
+ \label{eq:reliability-gronwall}
+\end{equation}
+La convergencia local del integrador no impide que el error de una trayectoria
+individual crezca rápidamente. En un régimen con exponente principal
+\(\lambda_1>0\), la estimación heurística
+\begin{equation}
+ T_{\mathrm{pred}}
+ \approx\frac{1}{\lambda_1}
+ \log\!\left(\frac{\varepsilon_{\mathrm{adm}}}
+                   {\varepsilon_0}\right)
+ \label{eq:reliability-predictability-horizon}
+\end{equation}
+relaciona incertidumbre inicial \(\varepsilon_0\), tolerancia admisible y
+horizonte de predictibilidad. No es un teorema universal: depende de la órbita,
+la dirección de perturbación, la norma, la ventana y el régimen dinámico
+\cite{VallejoSanjuan2017Predictability}.
+
+Que dos integraciones dejen de coincidir punto a punto después de
+\(T_{\mathrm{pred}}\) no invalida por sí solo una comparación estadística.
+Pero que ambas produzcan distribuciones de puntos visualmente parecidas tampoco verifica el mismo
+destino. Deben compararse, al menos, tiempos de escape, clases terminales,
+distribuciones de retorno, espectros y exponentes en varias ventanas.
+
+\subsection{Alcance y limitaciones del sombreado}
+
+Sea \(P:X\to X\) un mapa sobre un espacio métrico. Una sucesión
+\((z_k)\) es una \(\delta\)-pseudoórbita si
+\begin{equation}
+ d(P(z_k),z_{k+1})\leq\delta .
+ \label{eq:reliability-pseudo-orbit}
+\end{equation}
+Está \(\varepsilon\)-sombreada si existe \(y\in X\) tal que
+\begin{equation}
+ d(P^k(y),z_k)\leq\varepsilon
+ \quad\text{para todos los índices de la ventana considerada}.
+ \label{eq:reliability-shadowing}
+\end{equation}
+Los teoremas de \emph{shadowing} requieren hipótesis, típicamente
+hiperbolicidad o variantes controladas. Cuando aplican, aseguran proximidad a
+\emph{alguna} órbita exacta; no obligan a que esa órbita empiece en el dato
+nominal ni a que pertenezca a la misma cuenca cerca de una frontera
+\cite{Ott2002Chaos,VallejoSanjuan2017Predictability}.
+
+La precisión nominal del integrador no sustituye un argumento de sombreado. La
+evaluación registra paso, tolerancias, segundo método,
+residuo cuando es accesible y estabilidad de los observables. Cerca de una
+frontera de cuenca, una perturbación numérica pequeña puede seleccionar un
+destino verdadero distinto; ésa es una propiedad dinámica que debe
+cuantificarse, no ocultarse.
+
+\subsection{Exponentes de Lyapunov de tiempo finito}
+
+Para \cref{eq:reliability-ode}, sea \(Y\) la matriz fundamental
+\begin{equation}
+ \dot Y(t)=Df(x(t))Y(t),\qquad Y(t_0)=I.
+ \label{eq:reliability-variational}
+\end{equation}
+Si \(\sigma_i(Y)\) son sus valores singulares, los exponentes de Lyapunov de
+tiempo finito (FTLE) sobre una ventana de longitud \(T\) son
+\begin{equation}
+ \Lambda_i(t_0,T;x_0)
+ =\frac1T\log\sigma_i\!\left(Y(t_0+T;t_0,x_0)\right).
+ \label{eq:reliability-ftle}
+\end{equation}
+A diferencia del límite asintótico de
+\cref{geo:eq:lyapunov-definition}, \(\Lambda_i\) depende de \(x_0\), \(t_0\),
+\(T\), la norma y el tratamiento numérico. Esta dependencia es informativa:
+su distribución a lo largo de ventanas revela intermitencia, regiones
+pegajosas y pérdida temporal de hiperbolicidad
+\cite{VallejoSanjuan2017Predictability}.
+
+Un FTLE principal positivo en una ventana autoriza la frase
+«expansión finita observada». No prueba por sí solo:
+\begin{itemize}
+ \item que el exponente asintótico exista o sea positivo;
+ \item que la trayectoria pertenezca a un atractor;
+ \item que haya herradura, entropía topológica positiva o transitividad;
+ \item que la cuenca sea oculta.
+\end{itemize}
+La verificación mínima conserva la longitud y el solapamiento de las ventanas,
+el intervalo de reortogonalización, la base tangente inicial, el transitorio
+descartado y la convergencia al variar paso y horizonte. Una media sin su
+distribución puede ocultar ventanas de escape.
+
+\subsection{El defecto de Volterra en Caputo}
+
+Para
+\begin{equation}
+ {}^{\mathrm C}D_{t_0}^{q}x(t)=f(x(t)),\qquad 0<q<1,
+ \label{eq:reliability-caputo}
+\end{equation}
+la comprobación natural no es
+\cref{eq:reliability-defect}, sino el defecto integral
+\begin{equation}
+ \rho_h(t)=\widetilde x(t)-x_0
+ -\frac1{\Gamma(q)}
+ \int_{t_0}^{t}(t-s)^{q-1}f(\widetilde x(s))\,\dd s .
+ \label{eq:reliability-volterra-defect}
+\end{equation}
+Si \(f\) es Lipschitz y el PVI está bien planteado, una desigualdad fraccionaria
+de Gronwall conduce, bajo las hipótesis usuales, a una cota del tipo
+\cite{Lin2013GeneralizedGronwall}
+\begin{equation}
+ \|x(t)-\widetilde x(t)\|
+ \leq
+ \|\rho_h\|_{\infty,[t_0,t]}
+ E_q\!\left(L(t-t_0)^q\right).
+ \label{eq:reliability-fractional-gronwall}
+\end{equation}
+La función de Mittag--Leffler sustituye a la exponencial, pero la memoria no
+desaparece. El defecto en una ventana tardía contiene contribuciones de todo
+el intervalo previo.
+
+Los modelos fraccionarios admiten realizaciones con un continuo de escalas y
+una memoria efectivamente infinita \cite{Sabatier2021InfiniteMemory}. Por eso,
+comparar ABM--PECE, aproximación frecuencial o Adomian es útil para estudiar
+sesgo algorítmico \cite{SunHeWang2022FractionalChaos}, pero sólo son
+comparables si resuelven el mismo operador, el mismo terminal inferior y la
+misma inicialización. Un truncamiento de memoria define otro experimento salvo
+que su error esté controlado.
+
+La ecuación variacional fraccionaria es la de
+\cref{eq:geofo-fractional-variational}; también conserva historia. Reiniciar
+vectores tangentes como en una ODE ordinaria sin especificar cómo se transporta
+su memoria no reproduce automáticamente esa ecuación. El algoritmo de
+Danca--Kuznetsov \cite{DancaKuznetsov2018Lyapunov} aporta una referencia
+reproducible para calcular exponentes fraccionarios, no una certificación
+automática de caos u ocultedad. Del mismo modo, una
+sección proyectada puede ser un detector numérico útil
+\cite{ClementeLopezEtAl2022Poincare}, pero no se convierte por ello en un mapa
+de Poincaré finito-dimensional: el retorno riguroso vive en el espacio de
+historias.
+
+\subsection{Silla caótica, escape y supervivencia}
+
+Sea \(D\) una región compacta de un flujo entero \(\varphi_t\). El conjunto
+invariante maximal en \(D\) es
+\begin{equation}
+ \operatorname{Inv}(D)
+ =\{x\in D:\varphi_t(x)\in D\ \text{para todo }t\in\mathbb R\}.
+ \label{eq:reliability-maximal-invariant}
+\end{equation}
+Una \emph{silla caótica} es, en términos operativos, un conjunto caótico
+invariante no atractor con direcciones estables e inestables. Las condiciones
+iniciales próximas a su conjunto estable pueden permanecer mucho tiempo en
+la región, mostrar expansión y recurrencia, y después escapar a un equilibrio,
+un ciclo, otro atractor o infinito \cite{Ott2002Chaos,TelGruiz2006Chaotic}.
+
+Para una condición inicial \(x_0\in D\), se define el tiempo de primera salida
+\begin{equation}
+ \tau_D(x_0)=
+ \inf\{t\geq0:\varphi_t(x_0)\notin D\},
+ \label{eq:reliability-exit-time}
+\end{equation}
+con \(\tau_D=\infty\) si no se observa salida. Para un conjunto de muestreo
+\(U\subset D\) con medida \(\mu\), la supervivencia empírica es
+\begin{equation}
+ S_D(t)=
+ \frac{\mu\{x_0\in U:\tau_D(x_0)>t\}}{\mu(U)}.
+ \label{eq:reliability-survival}
+\end{equation}
+En regímenes hiperbólicos puede aparecer
+\(S_D(t)\sim C\e^{-\kappa t}\), donde \(\kappa\) es una tasa de escape; en
+regímenes no hiperbólicos son posibles colas no exponenciales. Ajustar una
+recta en una sola escala no demuestra ninguna de las dos leyes. Deben variarse
+la región \(D\), la distribución de semillas, el paso y la ventana de ajuste.
+
+El artículo de Danca sobre Rabinovich--Fabrikant documenta precisamente
+trayectorias ocultas con comportamiento caótico transitorio
+\cite{Danca2016HiddenTransient}. Su título emplea «atractores caóticos
+transitorios», terminología extendida en la literatura. Para evitar una
+contradicción asintótica, se adoptan los términos \emph{conjunto caótico
+transitorio} o \emph{transitorio oculto} hasta demostrar atracción. La revisión
+reciente de localización también distingue atractores de conjuntos
+transitorios ocultos \cite{GuanXie2025}.
+
+\subsection{Crisis y cambio del destino asintótico}
+
+Una crisis es una bifurcación global en la que un conjunto caótico entra en
+contacto con una silla u órbita periódica inestable y, en particular para una
+crisis de frontera, con la variedad estable que forma parte de la frontera de
+su cuenca. Las tres configuraciones que deben distinguirse son:
+\begin{description}[style=nextline,leftmargin=3.5em]
+ \item[Crisis interior] el atractor cambia bruscamente de tamaño al acceder a
+ nuevas regiones; antes y después sigue existiendo un atractor.
+ \item[Crisis de frontera] el atractor colisiona con la frontera de su cuenca
+ y deja de atraer; la dinámica caótica previa puede sobrevivir como silla y
+ producir transitorios largos.
+ \item[Crisis de fusión] dos o más componentes atractoras se unen al variar un
+ parámetro.
+\end{description}
+Una nube más grande o una caída abrupta del tiempo de residencia sólo sugiere
+una crisis. Para sostener el mecanismo se necesita localizar el objeto
+inestable implicado y seguir su intersección con el conjunto o con la frontera
+\cite{Ott2002Chaos,TelGruiz2006Chaotic}.
+
+En un problema Caputo, \(D\), la silla y sus conjuntos estable e inestable
+deben formularse para la semidinámica en el espacio funcional de
+\cref{eq:geofo-history-space}. Un escape de la proyección en
+\(\mathbb R^n\) puede ser un observable útil, pero dos perfiles con igual
+estado terminal pueden tener tiempos de salida distintos. Toda curva de
+supervivencia fraccionaria debe fijar la familia de historias muestreadas y
+separar continuación con historia de reinicio.
+
+\subsection{Protocolo CT0--CT6 para distinguir atracción y transitorios prolongados}
+\label{subsec:protocolo-transitorios}
+
+\begin{description}[style=nextline,leftmargin=3.4em,labelwidth=2.9em]
+ \item[CT0] Fijar campo, parámetros, operador, terminal inferior,
+ inicialización, región de observación y criterio de escape.
+ \item[CT1] Verificar convergencia de la trayectoria o de los observables con
+ \(h,h/2\) y, en una réplica corta, \(h/4\); usar un segundo integrador que
+ represente el mismo PVI.
+ \item[CT2] Calcular FTLE en varias longitudes y posiciones de ventana;
+ conservar la distribución y no sólo la media.
+ \item[CT3] Extender el horizonte de cada destino irregular y medir
+ \(\tau_D\). Una trayectoria que no escapó se registra como censurada, no como
+ prueba de \(\tau_D=\infty\).
+ \item[CT4] Muestrear un conjunto de semillas y estimar \(S_D(t)\) con
+ intervalos de confianza; repetir al cambiar \(D\) y el refinamiento.
+ \item[CT5] Para clasificar el conjunto como atractor, comprobar invariancia
+ numérica de la cola
+ y convergencia desde un abierto de perturbaciones, separando regímenes
+ coexistentes.
+ \item[CT6] Sólo después aplicar el sondeo de vecindades de equilibrios. La
+ ocultedad es una afirmación de cuenca, no una consecuencia del tiempo de
+ residencia, del FTLE o de una crisis.
+\end{description}
+
+\begin{longtable}{@{}L{0.22\linewidth}L{0.31\linewidth}L{0.37\linewidth}@{}}
+\caption{Niveles de evidencia dinámica y controles mínimos.}
+\label{tab:reliability-promotion}\\
+\toprule
+Afirmación & Evidencia mínima & Lo que todavía no demuestra\\
+\midrule
+\endfirsthead
+\toprule
+Afirmación & Evidencia mínima & Lo que todavía no demuestra\\
+\midrule
+\endhead
+Trayectoria del PVI & Refinamiento, misma especificación e integrador independiente
+o defecto controlado & Seguimiento punto a punto para tiempo arbitrario.\\
+Expansión finita & Distribución FTLE robusta en ventanas declaradas &
+Exponente asintótico, entropía o atracción.\\
+Caos transitorio & Irregularidad robusta seguida de escapes y supervivencia
+cuantificada & Existencia o hiperbolicidad de una silla sin análisis
+geométrico.\\
+Atractor numérico & Cola aparentemente invariante y atracción robusta desde
+un abierto muestreado & Prueba matemática global de invariancia o
+atracción.\\
+Atractor caótico & Atracción más diagnósticos caóticos convergentes &
+Herradura o entropía topológica sin argumento adicional.\\
+Atractor oculto & Atractor identificado y ausencia de contacto en sondeos
+anidados de todos los equilibrios & Separación global de cuencas a partir de
+un conjunto finito de sondas.\\
+\bottomrule
+\end{longtable}
+
+Las clases «otro destino» y «transitorio no resuelto» son resultados
+científicamente válidos y se conservan cuando la evidencia no permite asignar
+un comportamiento regular o caótico. En particular, las semillas FPP--A de
+\cref{sec:perpetual-points} pueden entrar cerca de una silla caótica o salir
+de ella; la cancelación local del término \(h^{2q}\) no decide el destino
+asintótico.
+
+\subsection{Índice de Conley y certificación mediante discretizaciones}
+
+El índice de Conley permite estudiar conjuntos invariantes aislados sin
+conocer todas sus órbitas. Sea \(N\) una vecindad compacta. Es aislante si
+\begin{equation}
+ \operatorname{Inv}(N)\subset\operatorname{int}N.
+ \label{eq:reliability-isolating-neighborhood}
+\end{equation}
+Un par índice \((N_1,N_0)\) separa una región que retiene la dinámica de su
+conjunto de salida. El índice de Conley es, esquemáticamente, el tipo de
+homotopía apuntado del cociente \(N_1/N_0\). Un índice no trivial implica que
+el bloque contiene un conjunto invariante; la invariancia por continuación
+permite transportarlo mientras se conserve el aislamiento
+\cite{Jost2005Dynamical,MischaikowEtAl2016Conley}.
+
+Esto no certifica automáticamente que el conjunto sea atractor, caótico u
+oculto. Su aplicación en HAFO requiere un bloque compacto con condición de
+salida verificada; un flujo, semiflujo o mapa de retorno bien definido; un par
+índice válido; y la relación entre el conjunto aislado y la cuenca objetivo.
+En Caputo, el bloque pertenece al espacio funcional de memoria. La obra de Jost
+proporciona los fundamentos; la certificación computacional requiere además los
+métodos de cajas de \cref{sec:localizacion-geometrico-topologica} y un análisis
+específico del sistema.
+
+\subsection{Cuestiones de síntesis sobre confiabilidad dinámica}
+
+\begin{enumerate}
+ \item ¿Por qué un exponente positivo en tiempo finito no prueba caos
+ asintótico?
+ \item ¿Qué diferencia hay entre error pequeño, sombreado y conservación del
+ destino de cuenca?
+ \item ¿Cómo puede una silla caótica producir una nube que parece atractora
+ durante miles de iteraciones?
+ \item ¿Qué cambia al definir escape y supervivencia para Caputo?
+ \item ¿Qué observación distingue una crisis de frontera de una expansión
+ interior del atractor?
+ \item ¿Qué hipótesis faltan entre un grafo de cajas y un índice de Conley
+ válido?
+\end{enumerate}
+
+La resolución de estas cuestiones requiere citar la definición, indicar el
+espacio de fases correspondiente, identificar el observable finito y delimitar
+la afirmación que ese observable todavía no autoriza.

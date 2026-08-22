@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "source_files": {
+    "validation/chaos_validation/lyapunov_methods/F4_internal_validation/F4_3_fractional_published_dk2018/dk2018_published_results.csv": "08afa79da40a9476afe4bc2fe463f144d98510faccccef12c2c53ce948242802",
+    "validation/chaos_validation/lyapunov_methods/fractional_cloned_dynamics_abm_gs_published/discrepancy_diagnostics/fischer2020_row_classification.csv": "ebbba990b6691dc85779e10b94a890d40cda0920e79da603753f4d6c773bdbd3"
+  },
+  "row_counts": {
+    "dk2018": 2,
+    "fischer2020": 24
+  },
+  "fischer_classification": {
+    "jerk": {
+      "quantitative": 0,
+      "sign": 4,
+      "discrepancy": 4
+    },
+    "financial": {
+      "quantitative": 5,
+      "sign": 2,
+      "discrepancy": 1
+    },
+    "four_wing": {
+      "quantitative": 5,
+      "sign": 0,
+      "discrepancy": 3
+    }
+  },
+  "outputs": {
+    "lyapunov_validation_overview.pdf": "5393def655c1c1d68a40baf3d25b1edd71ce9ef81eca74aecb1c7512bb8496a1",
+    "lyapunov_validation_overview.png": "8af7cf0b4d2c99a367fd817079b4f8020eed00d77aed466dda37c0d1dd50f4ca"
+  }
+}

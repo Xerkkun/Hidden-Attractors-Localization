@@ -1,12 +1,10 @@
-\section{Campaña dinámica geométrico--topológica: de la semilla a la certificación}
+\section[Campaña geométrico--topológica]
+{Campaña dinámica geométrico--topológica: protocolo y niveles de evidencia}
 \label{sec:campana-gt}
 
-Las secciones anteriores ya establecieron la geometría de flujo para \(q=1\),
-la formulación funcional apropiada para Caputo, la construcción armónica, la
-continuación y el papel limitado de los puntos perpetuos. Aquí no se repite esa
-teoría. Se convierte en una \emph{campaña experimental preregistrada} para los
-casos del reporte. Su propósito es contestar, en orden, cuatro preguntas que
-no deben confundirse:
+Los fundamentos geométricos, funcionales y armónicos se integran en una
+\emph{campaña experimental preregistrada} para los casos evaluados. La campaña
+examina cuatro preguntas distintas:
 
 \begin{enumerate}
   \item ¿la semilla produce una evolución causal acotada durante la ventana
@@ -19,34 +17,34 @@ no deben confundirse:
         finita a una afirmación matemática dentro de un dominio declarado?
 \end{enumerate}
 
-\begin{hallazgo}{Estado de los resultados de esta sección}
-La primera ronda B0--B2 ya fue ejecutada para PLL, MAVPD y Wu, con 24 semillas,
+\begin{hallazgo}{Estado de la campaña B0--B2}
+La campaña B0--B2 se ejecutó para PLL, MAVPD y Wu, con 24 semillas,
 90 trayectorias causales y 12 registros de borde. El máximo conservador es
 EV--TG3 para una ruta del PLL y EV--TG2 para MAVPD y Wu; los detalles aparecen
 en la \cref{sec:resultados-piloto-gt}. Fronteras de cuenca certificadas,
 trayectorias prolongadas de borde, bloques aislantes, índices de Conley y
-decisiones de ocultedad permanecen \textbf{pendientes}. Ninguna tabla declara
-que se haya encontrado un atractor nuevo, caótico u oculto.
+decisiones de ocultedad permanecen \textbf{pendientes}.
 \end{hallazgo}
 
 \ifHAFOdigitalcontent
-\begin{hallazgo}{Primera capa de software disponible}
-Ya se implementó una primera versión experimental del motor geométrico, el
-banco unificado de semillas, el clasificador conservador de destinos y el
-seguimiento de bordes. El motor calcula por separado \(f(x)\), \(J_f(x)\) y
+\begin{hallazgo}{Software experimental disponible}
+El motor geométrico experimental implementa un banco unificado de semillas,
+un clasificador conservador de destinos y seguimiento de bordes. El motor
+calcula por separado \(f(x)\), \(J_f(x)\) y
 \(J_f(x)f(x)\); evalúa superficies críticas, residuos PP y FPP--A, curvas
 conectantes, simetrías afines y regiones PWL. El banco conserva la procedencia,
-el contrato entero o Caputo, el terminal inferior y la referencia de historia.
+el protocolo entero o Caputo, el terminal inferior y la referencia de historia.
 El clasificador distingue equilibrio, movimiento casi periódico proyectado,
-recurrencia acotada, escape, transitorio y ambigüedad. La primera capa del
-seguimiento de bordes exige destinos terminales distintos, confirmados con más
+recurrencia acotada, escape, transitorio y ambigüedad. El seguimiento de bordes
+exige destinos terminales distintos, confirmados con más
 de un presupuesto, y conserva cada evaluación de la bisección inicial. Todavía
 no cointegra el par estrecho, no lo reencuadra durante la evolución ni construye
-la trayectoria prolongada de borde exigida por los pasos 5--6 de este capítulo.
+la trayectoria prolongada de borde exigida por los pasos 5--6 del protocolo de
+seguimiento de borde.
 
-Esta disponibilidad hizo posible la primera ejecución controlada, pero no
-completa TG0--TG8. Las pruebas unitarias verifican contratos y casos sintéticos,
-Wolfram verifica las identidades algebraicas declaradas y el piloto compara
+La implementación cubre TG0--TG3 mediante una ejecución controlada. Las
+pruebas unitarias verifican protocolos y casos sintéticos, Wolfram verifica las
+identidades algebraicas declaradas y el piloto compara
 presupuesto, horizonte y solucionador; todavía faltan las campañas completas
 sobre cada sistema. En particular, una semilla aceptada, una
 clasificación finita o un borde convergente no prueban por sí solos atracción,
@@ -58,12 +56,12 @@ La implementación se localiza en
 \ruta{version_2/hidden_attractors/verification/destination_classifier.py},
 \ruta{version_2/hidden_attractors/verification/edge_tracking.py} y
 \ruta{version_2/hidden_attractors/workflows/geometric_topological_campaign.py}.
-La evidencia de campaña se inicia, sin fabricar resultados, en
+Los artefactos de la campaña se conservan en
 \ruta{version_2/validation/06_geometric_topological_campaign/}.
 \end{hallazgo}
 \fi
 
-\subsection{Contrato común: qué sistema y qué espacio se están probando}
+\subsection{Definición común del sistema y del espacio evaluado}
 \label{camp:contrato-comun}
 
 Cada corrida comenzará con una ficha inmutable que contenga el campo \(f\), el
@@ -74,14 +72,14 @@ el caso ordinario se estudiará
  \dot x=f(x;\mu),\qquad x(0)=x_0,
  \label{camp:eq-ode-contract}
 \end{equation}
-mientras que el carril fraccionario conmensurable fijará explícitamente
+mientras que la ruta fraccionaria conmensurable fijará explícitamente
 \begin{equation}
  {}^{\mathrm C}D_{t_0+}^{q}x(t)=f(x(t);\mu),
  \qquad 0<q<1,\qquad x(t_0)=x_0.
  \label{camp:eq-caputo-contract}
 \end{equation}
-Si un caso usa órdenes no conmensurables, el contrato almacenará cada
-\(q_i\); no se sustituirá ese sistema por uno con un orden promedio.
+Si un caso usa órdenes no conmensurables, la ficha almacenará cada \(q_i\) y
+conservará el vector de órdenes durante la evaluación.
 
 Para comparar distancias entre variables con escalas diferentes se fijará una
 matriz diagonal \(S=\operatorname{diag}(s_1,\ldots,s_n)\), \(s_i>0\), antes de
@@ -125,7 +123,7 @@ norma ponderada previamente fijada, por ejemplo
  \label{camp:eq-history-distance}
 \end{equation}
 El valor de \(\eta\), la ventana en que se discretiza el perfil y el error de
-truncamiento formarán parte del contrato, no se elegirán después de ver el
+truncamiento formarán parte del protocolo y se fijarán antes de evaluar el
 resultado.
 
 Para campos por partes se conservará, además, la convención sobre los planos
@@ -173,10 +171,9 @@ Chua arctangente, Wu
   o a la ampliación del horizonte.\\
 
 Chua arctangente, \texttt{c590}
-& La gran norma del campo en el par FPP--A lo convierte en control de una
-  semilla algebraicamente correcta pero dinámicamente poco prometedora; la
-  ruta armónica y la continuación deben competir con ella.
-& El FPP--A sólo parece exitoso por un horizonte corto, o cualquier ruta
+& La gran norma del campo convierte el par FPP--A en un control de viabilidad
+  dinámica, que se compara con las rutas armónica y de continuación.
+& La acotación del FPP--A aparece sólo en horizontes cortos, o alguna ruta
   rebasa de manera reproducible la región acotada declarada.\\
 
 Kalman--Fitts
@@ -231,16 +228,17 @@ Muñoz--Pacheco, \(q=0.97\) y \(q=0.996\)
 & Las cuatro semillas FPP--A y la conmutación \(x=0\) permiten estudiar
   coexistencia y accesibilidad en ambos órdenes.
 & El evento \(x=0\) no converge, la recurrencia desaparece o los dos órdenes
-  sólo parecen distintos por la ventana temporal. Como no hay equilibrios, el
-  rótulo usual de atractor oculto no se aplicará vacíamente.\\
+  sólo parecen distintos por la ventana temporal. En ausencia de equilibrios,
+  el análisis se formula en términos de coexistencia, aislamiento y dependencia
+  de la historia.\\
 \bottomrule
 \end{longtable}
 
 \subsection{Banco unido de semillas y reducción por simetría}
 \label{camp:banco-semillas}
 
-La campaña no permitirá que un método gane por disponer de más intentos. Se
-construirá primero la unión etiquetada
+La comparación asignará cuotas homogéneas a cada método y construirá la unión
+etiquetada
 \begin{equation}
  \mathcal S_0=
  \mathcal S_{\mathrm{DF}}
@@ -255,16 +253,16 @@ construirá primero la unión etiquetada
 \end{equation}
 Cada semilla conservará su procedencia, parámetros, fase, amplitud, región del
 campo, historia inicial y transformación de coordenadas. La deduplicación se
-hará después de aplicar \cref{camp:eq-quotient-distance}; nunca se borrará la
-etiqueta del método que produjo un representante coincidente.
+aplicará después de \cref{camp:eq-quotient-distance} y conservará la procedencia
+de todos los métodos que produzcan representantes coincidentes.
 
 \paragraph{Semillas armónicas.}
 \(\mathcal S_{\mathrm{DF}}\) contendrá las soluciones de balance fundamental y,
-cuando el residuo lo exija, las fases del balance multiharmónico. El carril de
+cuando el residuo lo exija, las fases del balance multiharmónico. La ruta de
 Machado \(\mathcal S_{\mathrm{Mach}}\) se usará cuando la aproximación racional
 fraccionaria y su banda de frecuencia estén declaradas. Una raíz de la
 ecuación de frecuencia que queda fuera de esa banda se conservará como control
-rechazado, no como semilla promovida. Las fases \(0,\pi/2,\pi,3\pi/2\) se
+rechazado y quedará excluida del banco activo. Las fases \(0,\pi/2,\pi,3\pi/2\) se
 probarán cuando el balance no fija una fase única.
 
 \paragraph{Continuación causal.}
@@ -276,12 +274,12 @@ semilla puntual.
 
 \paragraph{Puntos perpetuos y FPP--A.}
 \(\mathcal S_{\mathrm{PP/FPP}}\) contendrá todas las raíces reales no
-estacionarias de \(J_f f=0\) admitidas por el dominio. En el carril Caputo se
+estacionarias de \(J_f f=0\) admitidas por el dominio. En la ruta Caputo se
 interpretarán únicamente como cancelación del segundo coeficiente de
-Picard--Caputo, según \cref{sec:perpetual-points}; no se llamarán puntos de
-aceleración fraccionaria nula. Chua PWL y Kalman--Fitts son controles sin PP;
-su banco no se rellenará con minimizadores numéricos que no satisfagan las
-ecuaciones.
+Picard--Caputo, según \cref{sec:perpetual-points}. Se describirán como semillas
+FPP--A, distintas de puntos de aceleración fraccionaria nula. Chua PWL y
+Kalman--Fitts son controles sin PP; su banco contendrá sólo raíces que satisfagan
+las ecuaciones.
 
 \paragraph{Superficies críticas y curvas conectantes.}
 Para cada componente se muestrearán
@@ -323,7 +321,7 @@ Para \(q<1\), \(\mathcal A_i\) y \(\mathcal C\) se interpretan como conjuntos
 del desarrollo local de Picard--Caputo en la variable \(s=(t-t_0)^q\); no se
 les atribuye el significado de aceleración física puntual.
 
-\paragraph{Ranking KCC, no certificación.}
+\paragraph{Indicador KCC de priorización.}
 Cuando se adopte una elevación de segundo orden explícita, se evaluará el
 tensor de desviación \(P(x)\) de esa convención y el indicador
 \begin{equation}
@@ -348,16 +346,16 @@ construyen hasta que ambos extremos hayan pasado el control de convergencia.
 \subsection{Las nueve etapas TG0--TG8}
 \label{camp:etapas}
 
-\subsubsection*{TG0: fijar el objeto y congelar el contrato}
+\subsubsection*{TG0: fijar el objeto y el protocolo}
 
 Se registran \cref{camp:eq-ode-contract} o
 \cref{camp:eq-caputo-contract}, terminal inferior, órdenes, parámetros,
 escalas, simetrías, regiones no suaves, dominio de prueba y definición del
 destino. También se fija si la afirmación buscada concierne al espacio de
-estados, a la sección de reinicio o al espacio funcional. Si falta uno de
-estos datos, la campaña no comienza.
+estados, a la sección de reinicio o al espacio funcional. Estos datos definen
+la entrada mínima de la campaña.
 
-\subsubsection*{TG1: auditoría algebraica antes de integrar}
+\subsubsection*{TG1: verificación algebraica antes de integrar}
 
 Se calculan equilibrios, Jacobianos, espectros, criterio de estabilidad
 correspondiente, simetrías, divergencia, planos de conmutación, funciones de
@@ -374,8 +372,8 @@ computacional \(D\), un radio de escape \(R_{\mathrm{esc}}\), una cota sobre el
 campo y una regla de ampliación. Una trayectoria se etiqueta
 \emph{escape observado} sólo si cruza \(R_{\mathrm{esc}}\) con crecimiento
 persistente y el evento se reproduce al refinar; de otro modo se etiqueta
-\emph{indeterminada}. Lorenz generalizado y RF no pasan a TG5 sin superar esta
-compuerta.
+\emph{indeterminada}. Lorenz generalizado y RF requieren este criterio de
+permanencia antes de TG5.
 
 \subsubsection*{TG3: construir, estratificar y deduplicar semillas}
 
@@ -401,8 +399,8 @@ cuando tengan sentido, las dos ramas siguientes:
  \end{cases}
  \label{camp:eq-history-pair}
 \end{equation}
-No se empalma el último punto de un archivo con un integrador Caputo nuevo y
-se presenta ese empalme como memoria heredada. En campos PWL cada lado del
+La memoria heredada se reconstruye desde el terminal inferior; un PVI Caputo
+nuevo desde el último punto se registra como reinicio. En campos PWL cada lado del
 evento se evalúa con su fórmula declarada y se rechaza una corrida si la
 secuencia de regiones cambia sin converger con \(h\).
 
@@ -412,9 +410,10 @@ Se aplican los presupuestos de \cref{camp:tab-budgets} y los observables de
 \cref{camp:observables}. La concordancia punto a punto sólo se exige durante
 una ventana corta, pues dos trayectorias caóticas pueden separarse aun cuando
 representen el mismo invariante. A tiempos largos se comparan clasificador,
-medidas empíricas, retornos y exponentes. Una etiqueta dinámica no se promueve
-si depende de un único paso, integrador u horizonte.
+medidas empíricas, retornos y exponentes. Una etiqueta dinámica se acepta
+cuando es estable frente al paso, el integrador y el horizonte declarados.
 
+\ifHAFOBasinMaterial
 \subsubsection*{TG6: geometría de cuenca y seguimiento de borde}
 
 Se sondean vecindades de equilibrios, tubos alrededor de curvas conectantes y
@@ -422,21 +421,22 @@ celdas donde dos destinos vecinos difieren. Se refina la frontera por
 bisección y continuación de borde, como se detalla en
 \cref{camp:edge-tracking}. Esta etapa entrega una frontera numérica dependiente
 de resolución; no entrega aún una variedad estable exacta.
+\fi
 
 \subsubsection*{TG7: grafo exterior, bloque aislante e índice}
 
 Sólo las regiones persistentes pasan al método orientado a conjuntos. Se
 construye una aplicación multivaluada exterior y se buscan componentes
 fuertemente conexas, pares índice y bloques aislantes. Una integración de
-centros de caja no es suficiente: las imágenes deben encerrarse con aritmética
+centros de caja aporta una exploración preliminar; las imágenes se encierran con aritmética
 intervalar o con cotas validadas. En Caputo la certificación se formula en el
 espacio de memoria o en una elevación finita cuyo error de kernel y de solución
 esté acotado; véase \cref{camp:caputo-lift}.
 
 \subsubsection*{TG8: decidir, documentar y limitar la afirmación}
 
-Cada caso termina en una de cuatro decisiones: \emph{detener},
-\emph{reformular}, \emph{conservar como candidato} o \emph{promover}. La
+Cada caso termina en una de cuatro decisiones: \emph{concluir la rama},
+\emph{reformular}, \emph{conservar como candidato} o \emph{ampliar el nivel de evidencia}. La
 decisión se toma con reglas anteriores a la corrida y con un nivel de evidencia
 de \cref{camp:evidence-levels}. Un fallo de un localizador no se transforma en
 un fallo del sistema: se registra qué rama del banco falló y se conserva la
@@ -449,7 +449,7 @@ Sea \(\tau_*\) una escala temporal fijada por el menor de: periodo lineal
 dominante, inverso de la tasa espectral no nula más grande y tiempo de cruce de
 la no linealidad. Se trabajará con
 \(\widehat h=h/\tau_*\) y \(\widehat T=T/\tau_*\). Esto evita que el mismo valor
-nominal de \(h\) sea fino en Chua y grueso en el PLL. Si el expediente ya tiene
+nominal de \(h\) sea fino en Chua y grueso en el PLL. Si el registro ya tiene
 una escala validada más estricta, prevalece la más estricta.
 
 \begin{table}[H]
@@ -467,7 +467,7 @@ B1 & \(10^{-2}\) & \(100\) & \(1/2\) & banco completo inicial &
 primera asignación de destino\\
 B2 & \(5\times10^{-3}\) & \(200\) & \(3/5\) & semillas ambiguas y frontera &
 convergencia de clasificación y observables\\
-B3 & \(2.5\times10^{-3}\) & \(400\) & \(2/3\) & sólo candidatos promovibles &
+B3 & \(2.5\times10^{-3}\) & \(400\) & \(2/3\) & candidatos con evidencia B2 &
 retornos largos, borde y preparación topológica\\
 \bottomrule
 \end{tabularx}
@@ -479,18 +479,18 @@ el \(\widehat h\) del nivel y localización explícita de eventos. El control
 independiente será un método implícito apropiado para rigidez o un RK de paso
 fijo con \(\widehat h/2\); no compartirá interpolador ni detector de eventos.
 
-En Caputo el oráculo de memoria completa será ABM--PECE con suma desde \(t_0\).
+En Caputo el integrador de referencia de memoria completa será ABM--PECE con suma desde \(t_0\).
 Se compararán \(h,h/2,h/4\) en ventanas comunes. El segundo solucionador será
 una cuadratura de convolución BDF2 o EFORK--3 sólo después de comprobar que
 implementa el mismo operador, terminal inferior, orden y condición inicial.
 Una coincidencia con un método que resuelve otra derivada fraccionaria no es
 validación cruzada.
 
-El costo cuadrático del oráculo impide usarlo de manera indiscriminada en B3.
+El costo cuadrático del integrador de referencia limita su uso en B3.
 Ese nivel empleará un algoritmo acelerado sólo después de validarlo en B0--B2,
 y conservará ventanas y semillas testigo calculadas con la suma histórica
-directa. La reducción de costo nunca autoriza a reducir también la longitud de
-memoria sin declararlo.
+directa. Cualquier reducción de la longitud de memoria se declara y valida por
+separado.
 
 La comparación larga de dos trayectorias caóticas usará ventanas estadísticas.
 En la ventana corta \(0\leq t\leq10\tau_*\) se exigirá
@@ -530,8 +530,8 @@ La elevación es exacta para el kernel aproximado, no para
 \end{equation}
 El tramo singular \([0,h_{\min}]\) se integrará con una corrección local
 analítica o cuadratura dedicada y su error se sumará a
-\(\varepsilon_K^{(m)}\); no se descartará. También se medirá el error de
-solución frente al oráculo de memoria completa en B0--B2. Los
+\(\varepsilon_K^{(m)}\). También se medirá el error de solución frente al
+integrador de referencia de memoria completa en B0--B2. Los
 presupuestos serán \(m=8,16,32,64\). Se detendrá el refinamiento sólo cuando
 dos valores consecutivos conserven destinos y métricas dentro de las
 tolerancias de TG5.
@@ -563,9 +563,9 @@ Cada trayectoria producirá observables con unidades y ventanas explícitas:
         transitorio;
   \item histograma o medida empírica sobre una sección transversal;
   \item tiempos de retorno, dispersión del retorno y número de cruces válidos;
-  \item espectro de Lyapunov cuando el contrato variacional sea válido;
-  \item prueba \(0--1\), entropía o complejidad sólo como diagnósticos
-        complementarios, nunca como sustitutos de convergencia;
+  \item espectro de Lyapunov cuando la formulación variacional sea válida;
+  \item prueba \(0--1\), entropía o complejidad como diagnósticos
+        complementarios a las pruebas de convergencia;
   \item para Caputo, sensibilidad al reinicio, a la historia heredada y al
         número de modos de memoria.
 \end{enumerate}
@@ -580,8 +580,8 @@ usará el conjunto
 \end{equation}
 En Caputo se evita llamar \emph{ciclo límite} a una nube casi periódica; se
 informa como recurrencia proyectada salvo que exista un resultado teórico
-compatible con la memoria. Un exponente máximo positivo se promoverá sólo si
-converge con el paso, la ventana, el algoritmo QR y el modelo de memoria.
+compatible con la memoria. Un exponente máximo se clasificará como positivo
+cuando converja con el paso, la ventana, el algoritmo QR y el modelo de memoria.
 
 El clasificador \texttt{destination\_classifier\_v1\_1} separa incidencia y
 multiplicidad de retorno. El campo
@@ -592,18 +592,19 @@ origen distintas con al menos un retorno; y
 y el número de muestras de recurrencia, por lo que pertenece a \([0,1]\).
 El alias histórico \texttt{excursion\_return\_count} conserva el conteo de
 pares, mientras \texttt{excursion\_return\_pairs\_per\_sample} guarda la
-cantidad anterior no acotada. Los artefactos originales de la campaña,
-producidos con el esquema 1.0, permanecen sellados y se interpretan con su
-semántica original; las corridas nuevas usan el esquema 1.1. La corrección no
+cantidad anterior no acotada. Los artefactos generados con el esquema 1.0 se
+conservan sin modificación y se interpretan según esa semántica; las
+ejecuciones posteriores emplean el esquema 1.1. El cambio de esquema no
 eleva por sí misma ningún nivel EV--TG ni convierte recurrencia finita en
 atracción asintótica.
 
 Para comparar dos nubes \(A\) y \(B\) se emplearán simultáneamente distancia
 de centroides, diferencia de covarianzas y una distancia entre medidas
-empíricas. La coincidencia visual no basta. Si los tres indicadores discrepan,
-el destino será \emph{ambiguo} aunque la proyección se parezca a una figura ya
-publicada.
+empíricas. Dos nubes se considerarán concordantes únicamente cuando los tres
+indicadores cumplan las tolerancias declaradas; en otro caso el destino se
+clasificará como \emph{ambiguo}.
 
+\ifHAFOBasinMaterial
 \subsection{Sondeo de cuencas y seguimiento de borde}
 \label{camp:edge-tracking}
 
@@ -644,6 +645,7 @@ La geometría del borde se cuantificará mediante el exponente de incertidumbre
 y la entropía de cuenca en resoluciones sucesivas. Una afirmación Wada sólo se
 considerará si existen al menos tres destinos y un test de frontera común
 estable al refinar; una imagen coloreada no es evidencia suficiente.
+\fi
 
 \subsection{Grafo exterior, aislamiento e índice de Conley}
 \label{camp:set-oriented}
@@ -684,7 +686,7 @@ de los equilibrios hasta el bloque candidato será una afirmación relativa a
 necesitan imágenes exteriores intervalares de todas esas cajas y una cobertura
 de la vecindad, no sólo sondas puntuales. Aun entonces, el índice prueba
 invariancia aislada, no por sí solo atracción, caos u ocultedad; estas
-propiedades requieren compuertas adicionales.
+propiedades requieren evidencia adicional.
 
 \subsection{Controles positivos, negativos y de consistencia}
 \label{camp:controls}
@@ -715,42 +717,42 @@ Los controles se ejecutan con la misma infraestructura que los candidatos:
         estimar la tasa de falsos hallazgos debidos a una clasificación laxa.
 \end{enumerate}
 
-\subsection{Reglas de detener, reformular, conservar o promover}
+\subsection{Criterios de cierre, reformulación y conservación}
 \label{camp:decision-rules}
 
-\paragraph{Detener una rama.}
-Se detiene si el sistema viola el contrato, si el residuo algebraico no baja
+\paragraph{Concluir una rama.}
+La rama concluye si el sistema no satisface las hipótesis del protocolo, si el residuo algebraico no baja
 con precisión, si el escape se reproduce en B1--B2, si un evento PWL no
 converge o si el segundo integrador resuelve un operador fraccionario distinto.
-Detener una rama no autoriza a descartar las otras ramas de
-\cref{camp:eq-seed-union}.
+Las demás ramas de \cref{camp:eq-seed-union} se evalúan de manera independiente.
 
 \paragraph{Reformular.}
 Se reformula si el destino cambia con \(h\), si el horizonte sólo muestra un
 transitorio, si el clasificador depende de una escala mal condicionada, si el
 lift cambia de topología al aumentar \(m\), o si el borde desaparece al usar
-la métrica correcta. La reformulación puede cambiar escala, sección o dominio,
-pero debe generar un contrato nuevo; no se edita retrospectivamente el
-anterior.
+la métrica correcta. La reformulación puede cambiar escala, sección o dominio y
+genera un registro nuevo que conserva la configuración anterior.
 
 \paragraph{Conservar como candidato.}
 Se conserva cuando existe acotación finita, recurrencia y concordancia de
 clasificador entre B1--B2 y dos solucionadores, pero todavía no hay bloque
-aislante ni exclusión rigurosa de cuencas de equilibrio. La palabra permitida
-es \emph{candidato}; quedan prohibidas \emph{atractor oculto demostrado} y
-\emph{caos certificado}.
+aislante ni exclusión rigurosa de cuencas de equilibrio. En este nivel la
+clasificación es \emph{candidato}; las categorías \emph{atractor oculto
+demostrado} y \emph{caos certificado} requieren la evidencia adicional de los
+niveles posteriores.
 
-\paragraph{Promover.}
-La promoción dinámica requiere B3, observables convergentes, perturbaciones
-que regresan y una frontera reproducible. La promoción topológica requiere
-además TG7. En Caputo toda promoción indicará si concierne a la sección reset,
-a una clase de historias o al lift aproximado. Una propiedad demostrada para
-el lift no se transfiere por parecido visual.
+\paragraph{Ampliar el nivel de evidencia.}
+El nivel dinámico siguiente requiere B3, observables convergentes,
+perturbaciones que regresan y una frontera reproducible; el nivel topológico
+requiere además TG7. En Caputo el resultado especificará si concierne a la
+sección de reinicio, a una clase de historias o a la elevación aproximada. La
+transferencia de una propiedad de la elevación al problema Caputo requiere una
+cota de equivalencia explícita.
 
 \subsection{Escala de evidencia EV--TG0--EV--TG7}
 \label{camp:evidence-levels}
 
-Para no confundirla con las etapas TG0--TG8, en los expedientes cada nivel se
+Para distinguirla de las etapas TG0--TG8, en los registros cada nivel se
 escribirá como \(\mathrm{EV}\text{-}\mathrm{TG}k\). La numeración mide la
 fuerza de la evidencia, no el orden de ejecución.
 
@@ -787,16 +789,15 @@ nivel funcional Caputo.\\
 Una muestra finita alrededor de equilibrios puede alcanzar como máximo
 EV--TG4. Para EV--TG6 hace falta cubrir una vecindad completa mediante
 enclosures validados o un argumento analítico. En Muñoz--Pacheco, donde no hay
-equilibrios, EV--TG6 no se obtiene de manera vacía: se informa coexistencia,
-accesibilidad y frontera, y se declara que la definición basada en cuencas de
-equilibrio no discrimina ese caso.
+equilibrios, EV--TG6 se formula mediante coexistencia, accesibilidad y frontera;
+la definición basada en cuencas de equilibrio no discrimina ese caso.
 
 \subsection{Tabla de ejecución por caso}
 \label{camp:case-execution}
 
 \begin{longtable}{@{}p{0.16\linewidth}p{0.22\linewidth}p{0.25\linewidth}p{0.28\linewidth}@{}}
-\caption{Orden de ejecución y compuerta mínima. La última columna distingue la
-primera ronda ejecutada de los pasos que siguen pendientes.}
+\caption{Orden de ejecución y criterio mínimo. La última columna distingue la
+ejecución completada de los pasos que siguen pendientes.}
 \label{camp:tab-case-execution}\\
 \toprule
 Caso & Semillas prioritarias & Geometría y controles & Salida ejecutada o pendiente\\
@@ -818,7 +819,7 @@ Chua PWL, fraccionario
 
 Wu, \(q=0.99\)
 & Semillas publicadas, DF/Machado, par FPP--A y conectante.
-& Simetría central; no usar periodicidad exacta.
+& Simetría central; la periodicidad exacta no se presupone.
 & Ejecutado B0--B2: FPP--A acotados sin destino común, EV--TG2; convergencia y
 borde siguen pendientes.\\
 
@@ -835,11 +836,15 @@ Kalman--Fitts
 MAVPD, \(\xi=3.1\)
 & PP para ciclos interiores; DF y continuación para rama exterior; edge seeds.
 & Simetría central y destinos de referencia como controles.
-& Ejecutado B0--B2: destinos interiores/exterior y tercer destino en bracket,
-EV--TG2; separatriz reproducible pendiente.\\
+& \ifHAFOBasinMaterial
+Ejecutado B0--B2: destinos interiores/exterior y tercer destino en bracket,
+EV--TG2; separatriz reproducible pendiente.
+\else
+Nivel máximo conservador EV--TG2.
+\fi\\
 
 MAVPD, \(\xi=3.5\)
-& Mismo banco transportado sin retocar cuotas.
+& Mismo banco transportado con las cuotas predeclaradas.
 & Control de accesibilidad y comparación con \(\xi=3.1\).
 & B1--B2: diagrama que confirme o refute la separación.\\
 
@@ -851,8 +856,12 @@ MAVPD, \(\xi=2.85\)
 PLL lead--lag
 & PP por vuelta, semilla T1+A1, retorno escalar y borde.
 & Cilindro, ángulo módulo \(2\pi\) y carta sin corte artificial.
-& Ejecutado B0--B2: $p_+\to E_{\rm focus}$, EV--TG3; $p_-$ y bracket sin
-resolver, EV--TG4 pendiente.\\
+& \ifHAFOBasinMaterial
+Ejecutado B0--B2: $p_+\to E_{\rm focus}$, EV--TG3; $p_-$ y bracket sin
+resolver, EV--TG4 pendiente.
+\else
+Nivel máximo conservador EV--TG3.
+\fi\\
 
 Lorenz generalizado, \(q=0.995\)
 & Par FPP--A, armónicas multiharmónicas y semillas de equilibrio.
@@ -879,7 +888,7 @@ Muñoz, \(q=0.996\)
 \subsection{Orden práctico de la campaña}
 \label{camp:execution-order}
 
-La primera ronda ya cubrió MAVPD $\xi=3.1$, PLL y Wu. Para continuar detectando
+B0--B2 ya cubrió MAVPD $\xi=3.1$, PLL y Wu. Para continuar detectando
 fallos baratos antes de lanzar las corridas fraccionarias más costosas, el orden
 recomendado desde este punto es:
 
@@ -895,36 +904,33 @@ recomendado desde este punto es:
         TG2 y validar el lift de memoria.
 \end{enumerate}
 
-Este orden no expresa una jerarquía de importancia científica. Reduce el
-riesgo de gastar el mayor presupuesto en un caso cuando aún no se ha probado
-que el detector de eventos, el clasificador o la representación de memoria
-funcionan en controles conocidos.
+El orden asigna primero los presupuestos bajos a controles conocidos y reserva
+B3 para casos cuyos detectores, clasificadores y representaciones de memoria
+ya fueron verificados.
 
 \ifHAFOdigitalcontent
 \subsection{Trazado digital}
 \label{camp:digital-trace}
 
-La edición digital conserva, sin incorporar listados de código, la primera
-ficha ejecutada bajo
+La primera ficha ejecutada se conserva, sin incorporar listados de código, en
 \ruta{version_2/validation/06_geometric_topological_campaign/runs/
 tg_pll_mavpd_wu_b0_b2_20260812/}. Allí se encuentran
 \ruta{campaign_manifest.json}, \ruta{seed_bank.csv},
 \ruta{trajectory_metrics.csv}, \ruta{edge_brackets.csv},
 \ruta{outer_enclosures.json}, \ruta{evidence_decisions.json} y
 \ruta{run_summary.json}.
-Cada registro enlazará modelo, semilla, contrato, integrador, historia, ventana,
+Cada registro enlazará modelo, semilla, protocolo, integrador, historia, ventana,
 clasificador y nivel EV--TG, sin información administrativa ajena al protocolo.
 \fi
 
 \begin{proposalbox}
-\textbf{Regla final de lectura.} La función descriptiva, Machado, la
-continuación, PP/FPP, superficies críticas, curvas conectantes, ranking KCC,
-edge tracking y métodos orientados a conjuntos no compiten por ser el único
-método de localización. Forman una cadena de costo y fuerza crecientes. Los
-primeros proponen semillas; la integración causal descarta incompatibilidades;
-la geometría de cuenca organiza destinos; y la topología validada, cuando sea
-posible, establece qué parte de esa organización puede sostener una
-afirmación matemática. La primera ronda aporta resultados dinámicos finitos
-EV--TG2/3, pero los niveles EV--TG4 y EV--TG7, la topología certificada y la
-ocultedad global siguen siendo hipótesis de trabajo, no resultados.
+\textbf{Relación entre métodos.} La función descriptiva, Machado, la
+continuación, PP/FPP, superficies críticas, curvas conectantes, el indicador
+KCC, el seguimiento de borde y los métodos orientados a conjuntos se organizan
+por costo computacional y alcance inferencial. Los primeros proponen semillas;
+la integración causal evalúa su viabilidad; la geometría de cuenca organiza
+destinos; y la topología validada establece, cuando es posible, el alcance de
+una afirmación matemática. B0--B2 aporta resultados dinámicos finitos
+EV--TG2/3; EV--TG4, EV--TG7, la topología certificada y la ocultedad global
+permanecen pendientes.
 \end{proposalbox}

@@ -1,7 +1,7 @@
-\section{Propuestas teóricas del proyecto y frontera de novedad}
+\section{Alcance y atribución de las propuestas teóricas}
 \label{part:theory}
 
-\subsection{Regla de atribución}
+\subsection{Antecedentes y alcance}
 \label{sec:theory-attribution}
 
 La forma de Lur'e, la función descriptiva, el balance armónico, el criterio de
@@ -10,11 +10,11 @@ de bifurcaciones y las realizaciones multivariables poseen literatura previa
 \cite{Leonov2013HiddenAttractors,LeonovKuznetsov2013,Matignon1996,
 DiethelmFordFreed2002,bonani1999,rogov2019}. SciSpace localizó además un
 antecedente explícito de autorreproducción afín de atractores fraccionarios
-\cite{sayed2020}. Por ello, ninguno de esos ingredientes aislados se presenta
-como nuevo.
+\cite{sayed2020}. Estos antecedentes delimitan el alcance de las formulaciones
+evaluadas.
 
-La novedad potencial del proyecto reside en una \emph{integración
-especializada}: decidir antes de la búsqueda si una realización escalar es
+La propuesta integra de forma especializada las siguientes operaciones:
+decidir antes de la búsqueda si una realización escalar es
 exacta; cambiar de ruta cuando existe una obstrucción demostrable; extender el
 cierre a diccionarios multicanal; preservar una historia causal de Caputo; y
 mantener separados álgebra, localización, dinámica y evidencia finita de
@@ -23,7 +23,7 @@ pero su prioridad histórica sólo podría establecerse mediante una revisión
 sistemática adicional.
 
 \begin{longtable}{L{0.28\linewidth}L{0.27\linewidth}L{0.37\linewidth}}
-\caption{Frontera entre fundamento conocido y propuesta del proyecto.}
+\caption{Antecedentes y alcance de las formulaciones evaluadas.}
 \label{tab:novelty-map}\\
 \toprule
 Elemento & Fundamento previo & Formulación defendible\\
@@ -34,26 +34,25 @@ Elemento & Fundamento previo & Formulación defendible\\
 \midrule
 \endhead
 Certificado de rango uno & Geometría de realizaciones Lur'e & Preprocesador
-especializado potencialmente original.\\
+especializado cuya prioridad histórica queda por establecer.\\
 Saltos PWA compartidos & Realimentación escalar PWA & Criterio algebraico
 especializado; prioridad no establecida.\\
 Equivalencia afín & Regla lineal de Caputo y antecedente
-\cite{sayed2020} & No es nueva; se usa para transportar contratos de cuenca.\\
+\cite{sayed2020} & Se aplica al transporte de protocolos de cuenca.\\
 Diccionario MIMO & Lur'e y balance multivariable
-\cite{bonani1999,rogov2019} & Síntesis para candidatos ocultos; no invención
-de MIMO.\\
-Historia única de Caputo & Ecuación de Volterra & Propuesta
-teórico--numérica más fuerte del proyecto.\\
+\cite{bonani1999,rogov2019} & Aplicación a la síntesis de candidatos ocultos.\\
+Historia única de Caputo & Ecuación de Volterra & Formulación
+teórico--numérica basada en la conservación explícita de la historia.\\
 Machado \(N^\mu\) & Función descriptiva fraccionaria publicada
-\cite{Machado2015FDF} & No es nueva; se propone separar residuo auxiliar y
+\cite{Machado2015FDF} & Se propone separar residuo auxiliar y
 residuo físico en cada semilla.\\
 Puntos perpetuos enteros & Condición \(J_f f=0\) y localización heurística
-\cite{Prasad2015Perpetual,DudkowskiPrasadKapitaniak2017} & No son nuevos ni
-suficientes; se integran como carril de semillas.\\
+\cite{Prasad2015Perpetual,DudkowskiPrasadKapitaniak2017} & Se integran como
+una ruta de semillas, con verificación dinámica posterior.\\
 FPP--A/FPP--H & Volterra, expansión Picard y operador Caputo secuencial &
 Extensión propuesta: separar estado de arranque y evento con historia.\\
 Separación continuación/congelación/reset & No localidad de Caputo &
-Disciplina metodológica potencialmente original.\\
+Separación metodológica entre continuación, congelación del campo y reinicio.\\
 Protocolo L0--L6 y niveles EV--TG0--EV--TG7 & Definición de atractor oculto y
 validación numérica & Integración reproducible; no nuevo teorema dinámico.\\
 \bottomrule
@@ -138,7 +137,7 @@ ambiguo, y \(g(x)=b\psi(r^{\mathsf T}x)\).
 \end{proof}
 
 \begin{proposalbox}
-\textbf{Aporte propuesto.} Usar
+\textbf{Criterio propuesto.} Usar
 \(\|P_b^\perp g\|\) y \(\|DgP_r^\perp\|\) como certificado exacto o residual
 antes de resolver balance armónico. El sistema sólo entra a la ruta escalar D0
 si ambos residuos son cero simbólicamente o menores que una tolerancia
@@ -194,7 +193,7 @@ Una discontinuidad controlada puede admitirse, pero entonces debe declararse
 la solución diferencial utilizada.
 
 \begin{proposalbox}
-\textbf{Aporte propuesto.} El criterio convierte la inspección informal de una
+\textbf{Criterio propuesto.} El criterio convierte la inspección informal de una
 no linealidad PWA en una prueba de matrices de rango uno y de geometría de
 regiones. Está motivado por el diodo PWL de Chua, pero permite descartar
 rápidamente campos cuyas superficies de conmutación no comparten el observable
@@ -241,10 +240,9 @@ Usar una bola de radio \(\rho\) en \(z\) cambia el experimento salvo cuando
 después de una transformación T1.
 
 \begin{remark}
-La equivalencia afín de sistemas fraccionarios no se reclama como nueva; la
-literatura incluye transformaciones afines para autorreproducción de
-atractores ocultos \cite{sayed2020}. La contribución del presente flujo es
-transportar también el contrato de ocultedad y las tolerancias.
+La literatura incluye transformaciones afines para autorreproducción de
+atractores ocultos \cite{sayed2020}. La formulación evaluada transporta además
+el protocolo de ocultedad y las tolerancias.
 \end{remark}
 
 \subsection{Realización polinómica multicanal y minimalidad}
@@ -273,8 +271,8 @@ campo; el problema científico es encontrar uno pequeño y estructuralmente
  +(v-u-w)^3+(w-u-v)^3\bigr].
  \label{eq:th-cubic-polarization}
 \end{align}
-Son identidades algebraicas conocidas, no resultados nuevos. Su utilidad aquí
-es exhibir canales escalares de cuadrados o cubos cuando ello simplifica
+Estas identidades algebraicas permiten exhibir canales escalares de cuadrados
+o cubos cuando ello simplifica
 \(W(z)\) y los coeficientes de Fourier.
 
 La minimalidad no se decide contando monomios solamente. Si un término
@@ -331,10 +329,10 @@ convergencia. Se exige el residual omitido
 o una prueba de estabilización al aumentar \(H\).
 
 \begin{proposalbox}
-\textbf{Aporte propuesto.} Acoplar el certificado D0/T1/M1 con
-\cref{eq:th-dc-balance,eq:th-harmonic-balance}; una semilla M1 sólo se promueve
-si satisface fase, cierre DC, residuo de armónicos omitidos y residual del
-campo original. Esto traslada balance armónico MIMO conocido a un contrato
+\textbf{Procedimiento propuesto.} Acoplar el certificado D0/T1/M1 con
+\cref{eq:th-dc-balance,eq:th-harmonic-balance}; una semilla M1 se admite como
+candidata cuando satisface fase, cierre DC, residuo de armónicos omitidos y
+residual del campo original. Esto traslada el balance armónico MIMO conocido a un protocolo
 reproducible de localización de atractores ocultos.
 \end{proposalbox}
 
@@ -394,13 +392,14 @@ objeto 3 responde directamente a «¿qué hace el PVI autónomo final desde ese
 estado sin memoria heredada?». Ambos resultados deben archivarse.
 
 \begin{proposalbox}
-\textbf{Aporte propuesto.} La historia única, el campo final congelado y el
-reset común de todas las sondas forman un contrato explícito. Su fundamento es
+\textbf{Protocolo propuesto.} La historia única, el campo final congelado y el
+reinicio común de todas las sondas forman un protocolo explícito. Su fundamento es
 la no localidad de Volterra, no una analogía con ODE. Una validación futura
 debe demostrar existencia, unicidad y dependencia continua respecto de
 \(\varepsilon\) bajo hipótesis de Lipschitz uniformes.
 \end{proposalbox}
 
+\ifHAFOBasinMaterial
 \subsection{Cero contactos, primer contacto y alcance estadístico}
 \label{sec:zero-contact}
 
@@ -425,6 +424,7 @@ El protocolo recomendado informa para cada equilibrio y radio:
 y busca el primer radio con contacto. El primer contacto refuta la separación
 para ese punto; cero contactos no prueba que ninguna vecindad intercepte la
 cuenca.
+\fi
 
 \subsection{Taxonomía de rutas y protocolo L0--L6}
 \label{sec:l0-l6}
@@ -439,7 +439,7 @@ La selección estructural precede a la integración:
  \item[M1] realización multicanal y balance sesgado/multiharmónico.
 \end{description}
 
-La promoción dinámica sigue:
+Los niveles de evaluación dinámica son:
 \begin{description}[style=nextline,leftmargin=2.7em,labelwidth=2.2em]
  \item[L0] fuente, ecuaciones y parámetros congelados;
  \item[L1] álgebra y equilibrios verificados;
