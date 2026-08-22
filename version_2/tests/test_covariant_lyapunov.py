@@ -45,8 +45,12 @@ FLOW_EXACT = np.column_stack(
 def _line_distance(first: np.ndarray, second: np.ndarray) -> float:
     first = first / np.linalg.norm(first)
     second = second / np.linalg.norm(second)
-    cosine = float(np.clip(abs(first @ second), 0.0, 1.0))
-    return float(np.sqrt(max(0.0, 1.0 - cosine * cosine)))
+    first_projector = np.outer(first, first)
+    second_projector = np.outer(second, second)
+    return float(
+        np.linalg.norm(first_projector - second_projector, ord="fro")
+        / np.sqrt(2.0)
+    )
 
 
 def _maximum_line_error(history: np.ndarray, exact_columns: np.ndarray) -> float:
@@ -336,4 +340,3 @@ def test_nearly_degenerate_spectrum_keeps_subspace_warning_without_chaos_label()
     assert result.metadata["near_degenerate_finite_time_spectrum"] is True
     assert any("nonunique" in warning for warning in result.methodological_warnings)
     assert not hasattr(result, "is_chaotic")
-

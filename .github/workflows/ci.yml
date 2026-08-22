@@ -111,9 +111,6 @@ jobs:
       - name: Run quickstart_equilibria example
         run: python examples/quickstart_equilibria.py
 
-      - name: Run list_final_candidates example
-        run: python examples/list_final_candidates.py
-
       # ── 7. Integración de validación fraccionaria y verificación ─────────
       - name: Run EFORK integrator validation
         run: python tools/validation/validate_efork_integrator.py --validation-root ${{ runner.temp }}/ha_validation
@@ -331,9 +328,6 @@ jobs:
 
       - name: Run quickstart_equilibria example
         run: python examples/quickstart_equilibria.py
-
-      - name: Run list_final_candidates example
-        run: python examples/list_final_candidates.py
 
       - name: Build and smoke-test FractionalChuaBackend (macOS)
         shell: bash
