@@ -58,6 +58,34 @@ static int has_arg(int argc, char **argv, const char *key) {
     return 0;
 }
 
+static char *duplicate_text(const char *text) {
+    const size_t bytes = strlen(text) + 1u;
+    char *copy = (char *)malloc(bytes);
+    if (copy) memcpy(copy, text, bytes);
+    return copy;
+}
+
+static char *next_comma_token(char *text, char **state) {
+    char *token;
+    char *separator;
+    if (!state) return NULL;
+    token = text ? text : *state;
+    if (!token) return NULL;
+    while (*token == ',') ++token;
+    if (*token == '\0') {
+        *state = NULL;
+        return NULL;
+    }
+    separator = strchr(token, ',');
+    if (separator) {
+        *separator = '\0';
+        *state = separator + 1;
+    } else {
+        *state = NULL;
+    }
+    return token;
+}
+
 static double parse_finite_text(const char *text, const char *key) {
     char *end = NULL;
     double value;
@@ -135,9 +163,9 @@ static void parse_vec3_arg(
         fprintf(stderr, "Falta argumento %s\n", key);
         exit(EXIT_FAILURE);
     }
-    buffer = strdup(text);
+    buffer = duplicate_text(text);
     if (!buffer) die_errno("No se pudo reservar memoria para vec3");
-    token = strtok_r(buffer, ",", &save);
+    token = next_comma_token(buffer, &save);
     for (int i = 0; i < 3; ++i) {
         if (!token) {
             free(buffer);
@@ -145,7 +173,7 @@ static void parse_vec3_arg(
             exit(EXIT_FAILURE);
         }
         out[i] = parse_finite_text(token, key);
-        token = strtok_r(NULL, ",", &save);
+        token = next_comma_token(NULL, &save);
     }
     if (token) {
         free(buffer);
@@ -166,7 +194,7 @@ static void parse_radii_arg(
     size_t bytes = 0u;
     int index = 0;
     if (!text || !*text) die("Falta argumento --radii");
-    buffer = strdup(text);
+    buffer = duplicate_text(text);
     if (!buffer) die_errno("No se pudo reservar memoria para radii");
     for (const char *cursor = text; *cursor; ++cursor) {
         if (*cursor == ',') {
@@ -186,7 +214,7 @@ static void parse_radii_arg(
         free(buffer);
         die_errno("No se pudo reservar memoria para radii[]");
     }
-    token = strtok_r(buffer, ",", &save);
+    token = next_comma_token(buffer, &save);
     while (token) {
         const double radius = parse_finite_text(token, key);
         if (!(radius > 0.0)) {
@@ -196,7 +224,7 @@ static void parse_radii_arg(
             die("Todos los radios deben ser positivos");
         }
         sampling->radii[index++] = radius;
-        token = strtok_r(NULL, ",", &save);
+        token = next_comma_token(NULL, &save);
     }
     if ((size_t)index != count) {
         free(buffer);
@@ -675,13 +703,13 @@ static int eq_filter_allows(const SamplingCfg *s,const char *name){
     const int written=snprintf(buf,sizeof(buf),"%s",filter);
     if(written<0 || (size_t)written>=sizeof(buf)) die("Filtro de equilibrios demasiado largo");
     char *save=NULL;
-    char *tok=strtok_r(buf,",",&save);
+    char *tok=next_comma_token(buf,&save);
     while(tok){
         while(*tok==' '||*tok=='\t') tok++;
         char *end=tok+strlen(tok);
         while(end>tok && (end[-1]==' '||end[-1]=='\t'||end[-1]=='\r'||end[-1]=='\n')) *--end='\0';
         if(strcmp(tok,name)==0) return 1;
-        tok=strtok_r(NULL,",",&save);
+        tok=next_comma_token(NULL,&save);
     }
     return 0;
 }
