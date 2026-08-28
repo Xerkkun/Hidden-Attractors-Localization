@@ -26,7 +26,8 @@ PyPI receives the software distribution defined by `MANIFEST.in`. Scientific
 validation datasets remain in the tagged repository and DOI archive. Publishing
 the package does not alter their scientific status.
 
-The verified 1.2.1 release-candidate manifest records
-`publication_status: not_published`.
-Publication must not be inferred from local builds, passing tests, or the
-presence of a version string.
+Version 1.2.1 was published to production PyPI through the guarded workflow.
+The post-publication manifest records `publication_status: published` and
+`current_public_version: 1.2.1`. Publication is established by the
+independently observable PyPI record, not inferred from local builds, passing
+tests, or the presence of a version string.

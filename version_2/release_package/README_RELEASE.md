@@ -9,9 +9,10 @@ uniformly sampled scalar signal.
 
 ## Publication state
 
-The 1.2.1 source is a locally verified release candidate. This record does not
-claim a PyPI publication that has not been independently observed. The public
-package version recorded at verification time is 1.2.0.
+Version 1.2.1 is publicly available on production PyPI. Publication was
+independently verified through the PyPI JSON endpoint, a clean installation,
+and the installed CLI. The release tag `v1.2.1` identifies the source commit
+used by Trusted Publishing.
 
 This patch repairs the PyPI documentation destinations. It does not change the
 numerical implementation, public API, dependencies, or scientific-evidence
