@@ -18,7 +18,7 @@ hidden-attractors inspect systems
 
 ## Characterize a scalar time series
 
-The current 1.2.0 surface includes Lyapunov diagnostics for uniformly sampled scalar
+The installed surface includes Lyapunov diagnostics for uniformly sampled scalar
 time series. Install the analysis extra and call:
 
 ```python

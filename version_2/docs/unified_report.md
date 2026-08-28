@@ -1,4 +1,4 @@
-# Version 1.2.0 Public Scope
+# Installed Public Scope
 
 The public documentation describes the supported package and the boundaries
 of its completed validation records. Only those supported interfaces and

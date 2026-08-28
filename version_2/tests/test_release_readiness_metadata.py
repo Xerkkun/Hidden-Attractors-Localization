@@ -81,10 +81,10 @@ def test_release_candidate_date_is_consistent_across_public_metadata() -> None:
         (VERSION_ROOT / "release_package" / "archive_manifest.json").read_text(encoding="utf-8")
     )
 
-    assert 'date-released: "2026-08-21"' in citation
-    assert zenodo["publication_date"] == "2026-08-21"
-    assert codemeta["datePublished"] == "2026-08-21"
-    assert archive["release_date"] == "2026-08-21"
+    assert 'date-released: "2026-08-28"' in citation
+    assert zenodo["publication_date"] == "2026-08-28"
+    assert codemeta["datePublished"] == "2026-08-28"
+    assert archive["release_date"] == "2026-08-28"
 
 
 @pytest.mark.hygiene
@@ -96,7 +96,7 @@ def test_archive_manifest_records_prepared_release_without_self_reference() -> N
     with (VERSION_ROOT / "pyproject.toml").open("rb") as handle:
         version = tomllib.load(handle)["project"]["version"]
 
-    assert version == manifest["version"] == "1.2.0"
+    assert version == manifest["version"] == "1.2.1"
     assert manifest["release_tag"] == f"v{version}"
     assert manifest["source_commit_policy"] == "release_tag_resolves_to_source_commit"
     assert "commit" not in manifest

@@ -1,6 +1,6 @@
 # User Manual
 
-This manual covers the installed `hidden-attractors-fo` 1.2.0 library, the
+This manual covers the installed `hidden-attractors-fo` library, the
 example shipped in the source distribution, runtime paths, and numerical
 evidence boundaries. It does not extend beyond the current validation-backed
 public capabilities.
@@ -172,7 +172,7 @@ The public surface includes:
 - equation-based integer and fractional Lyapunov estimators; and
 - scalar-time-series Lyapunov reconstruction.
 
-The current 1.2.0 surface includes the scalar-series route through
+The installed surface includes the scalar-series route through
 `estimate_time_series_lyapunov`. Install the optional backend and call:
 
 ```bash

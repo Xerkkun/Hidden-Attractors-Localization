@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1
+
+### Fixed
+
+- PyPI documentation links now use canonical absolute GitHub URLs instead of
+  relative paths that PyPI resolved below the package page.
+
 ## 1.2.0
 
 ### Added

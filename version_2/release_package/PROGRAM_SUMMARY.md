@@ -2,7 +2,7 @@
 
 Program title: `hidden-attractors-fo`
 
-Version: 1.2.0
+Version: 1.2.1
 
 Repository: <https://github.com/Xerkkun/Hidden-Attractors-Localization>
 
@@ -25,8 +25,8 @@ Solution method: scalar Lur'e formulation, describing-function and Nyquist seed
 construction, integer or Caputo continuation, ABM/EFORK integration, finite-time
 diagnostics, all-equilibrium neighborhood tests, structured manifests, and
 reproducible figure export. Independent characterization includes Lyapunov,
-spectral, Poincare, boundedness, bifurcation, and 0-1 diagnostics. The current
-1.2.0 surface includes Rosenstein/Eckmann Lyapunov reconstruction and
+spectral, Poincare, boundedness, bifurcation, and 0-1 diagnostics. The installed
+surface includes Rosenstein/Eckmann Lyapunov reconstruction and
 Kaplan--Yorke dimension for uniformly sampled scalar time series.
 
 Public reference material documents the complete 178-symbol top-level API and

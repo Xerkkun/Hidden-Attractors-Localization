@@ -66,7 +66,9 @@ def test_expected_sample_outputs_are_executed_but_not_promoted_evidence() -> Non
         assert data.get("not_promoted_evidence") is True
         assert data.get("replace_after_execution") is False
         assert data.get("sample_status") == "executed"
-        assert data.get("release_version") == "1.2.0"
+        assert data.get("release_version") == "1.2.1"
+        assert data.get("validated_numerical_baseline_version") == "1.2.0"
+        assert data.get("documentation_patch_reuses_validated_output") is True
         assert data["repeatability_check"]["independent_runs"] >= 2
         assert data["repeatability_check"]["deterministic_outputs_identical"] is True
         assert data["deterministic_output_hashes"]

@@ -1,6 +1,6 @@
 # Public API Reference
 
-This reference describes the installed `hidden-attractors-fo` 1.2.0 surface.
+This reference describes the installed `hidden-attractors-fo` surface.
 Repository-only validation runners, case-specific validation records, paper
 figure generators, and non-public comparison modules are intentionally
 excluded.

@@ -3,7 +3,9 @@
   "sample_status": "executed",
   "not_promoted_evidence": true,
   "replace_after_execution": false,
-  "release_version": "1.2.0",
+  "release_version": "1.2.1",
+  "validated_numerical_baseline_version": "1.2.0",
+  "documentation_patch_reuses_validated_output": true,
   "executed_on": "2026-08-15",
   "command": "python examples/chua_integer_lure_reference/run_example.py --config release_package/sample_input/chua_integer_comprehensive.yaml --quick --steps search continuation verification --output-dir <empty-output-directory>",
   "stages": [

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hidden-attractors-fo"
-version = "1.2.0"
+version = "1.2.1"
 description = "Hidden-attractor localization and independent dynamical-system and time-series characterization."
 readme = "README.md"
 requires-python = ">=3.11,<3.15"

@@ -75,7 +75,7 @@ Caputo-memory algorithm.
 
 ## Scalar Time-Series Route
 
-The current 1.2.0 surface includes Lyapunov analysis for a uniformly sampled scalar
+The installed surface includes Lyapunov analysis for a uniformly sampled scalar
 observable through `estimate_time_series_lyapunov`.
 
 ```python

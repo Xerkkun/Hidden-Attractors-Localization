@@ -36,7 +36,7 @@ def test_release_version_is_consistent_across_public_metadata() -> None:
         (RELEASE_ROOT / "sample_output" / "comprehensive_sample_summary.json").read_text(encoding="utf-8")
     )
 
-    assert version == "1.2.0"
+    assert version == "1.2.1"
     assert citation_version is not None
     assert citation_version.group(1) == version
     assert manual["manual_version"] == manual["package_version"] == version

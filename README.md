@@ -31,7 +31,7 @@ hidden-attractors inspect systems
 The library can calculate finite-time characteristics independently of a
 hidden-attractor search: trajectory and boundedness metrics, FFT/PSD,
 Poincare sections, the 0-1 statistic, bifurcation post-processing, and
-equation-based Lyapunov spectra. The current 1.2.0 surface includes Lyapunov
+equation-based Lyapunov spectra. The installed surface includes Lyapunov
 estimation from uniformly sampled scalar time series using Rosenstein and
 Eckmann reconstruction plus Kaplan--Yorke dimension.
 

@@ -1,5 +1,17 @@
 # Release Notes
 
+## 1.2.1
+
+`hidden-attractors-fo` 1.2.1 is a documentation-only patch. The PyPI long
+description now links the user manual, installation guide, quick start, API
+stability policy, scientific scope, and citation guide to their canonical
+GitHub locations. No numerical implementation, public API, dependency, or
+scientific-evidence contract changes in this patch.
+
+The public version observed while preparing this patch is 1.2.0. Publication
+of 1.2.1 remains a separate, protected workflow action. The existing OSF
+project DOI remains `10.17605/OSF.IO/ZGK74`.
+
 ## 1.2.0
 
 `hidden-attractors-fo` 1.2.0 is the release-candidate identity for the current

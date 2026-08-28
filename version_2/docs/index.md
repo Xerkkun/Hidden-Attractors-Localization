@@ -12,7 +12,7 @@ the 0--1 test, Poincare crossings, bifurcation post-processing, Lyapunov
 calculations, integer `q=1` SALI/GALI/LDI, and integer covariant Lyapunov
 vectors with angle diagnostics.
 
-The current 1.2.0 surface includes the supported scalar time-series Lyapunov interface:
+The installed surface includes the supported scalar time-series Lyapunov interface:
 Rosenstein's largest-exponent estimate, an Eckmann reconstructed spectrum, and
 the associated Kaplan--Yorke dimension through the optional `nolds` backend.
 

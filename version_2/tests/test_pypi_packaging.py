@@ -24,7 +24,7 @@ def test_pypi_project_metadata_and_public_cli() -> None:
     project = data["project"]
 
     assert project["name"] == "hidden-attractors-fo"
-    assert project["version"] == "1.2.0"
+    assert project["version"] == "1.2.1"
     assert project["readme"] == "README.md"
     assert project["requires-python"] == ">=3.11,<3.15"
     assert project["license"] == "MIT"
@@ -58,6 +58,31 @@ def test_pypi_readme_and_release_files_exist() -> None:
     assert (VERSION_ROOT / "release_package" / "PUBLISHING_POLICY.md").exists()
     assert (REPO_ROOT / ".github" / "workflows" / "package.yml").exists()
     assert (REPO_ROOT / ".github" / "workflows" / "publish-pypi.yml").exists()
+
+
+def test_pypi_readme_uses_absolute_documentation_links() -> None:
+    readme = (VERSION_ROOT / "README.md").read_text(encoding="utf-8")
+    destinations = {
+        match.group(1).split(maxsplit=1)[0].strip("<>")
+        for match in re.finditer(r"(?<!!)\[[^\]]+\]\(([^)]+)\)", readme)
+    }
+    relative = sorted(
+        destination
+        for destination in destinations
+        if not destination.startswith(("https://", "http://", "mailto:", "#"))
+    )
+    assert not relative, f"PyPI README contains relative links: {relative}"
+
+    base = "https://github.com/Xerkkun/Hidden-Attractors-Localization/blob/main/version_2/"
+    expected = {
+        base + "USER_MANUAL.md",
+        base + "docs/installation.md",
+        base + "docs/quick_start.md",
+        base + "docs/api_stability.md",
+        base + "docs/scientific_scope.md",
+        base + "docs/citation.md",
+    }
+    assert expected <= destinations
 
 
 def test_pypi_wheel_package_scope_is_narrow() -> None:

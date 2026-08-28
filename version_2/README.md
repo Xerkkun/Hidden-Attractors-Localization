@@ -1,4 +1,4 @@
-# hidden-attractors-fo 1.2.0
+# hidden-attractors-fo
 
 [![PyPI](https://img.shields.io/pypi/v/hidden-attractors-fo)](https://pypi.org/project/hidden-attractors-fo/)
 [![CI](https://github.com/Xerkkun/Hidden-Attractors-Localization/actions/workflows/ci.yml/badge.svg)](https://github.com/Xerkkun/Hidden-Attractors-Localization/actions/workflows/ci.yml)
@@ -56,7 +56,7 @@ cover generic trajectory and boundedness metrics, FFT/PSD, Poincare sections,
 the 0-1 statistic, bifurcation post-processing, and equation-based Lyapunov
 spectra.
 
-The current 1.2.0 surface includes Lyapunov estimation from a uniformly sampled
+The installed surface includes Lyapunov estimation from a uniformly sampled
 scalar time series. The structured result combines Rosenstein's largest
 exponent, an Eckmann reconstructed spectrum, and a Kaplan--Yorke dimension
 with units, estimator parameters, backend provenance, fit diagnostics, memory
@@ -107,7 +107,7 @@ from hidden_attractors.workflows.config_loader import load_config
 ## Scientific Scope
 
 The supported scope and evidence boundaries are summarized in
-[`docs/scientific_scope.md`](docs/scientific_scope.md).
+[`docs/scientific_scope.md`](https://github.com/Xerkkun/Hidden-Attractors-Localization/blob/main/version_2/docs/scientific_scope.md).
 
 Describing-function and Nyquist calculations construct seeds. Continuation
 transports those seeds. Phase portraits, spectra, Poincare sections, 0-1
@@ -147,12 +147,12 @@ The canonical freeze record is `validation/freeze_audit/`.
 
 ## Documentation
 
-- [User Manual](USER_MANUAL.md)
-- [Installation](docs/installation.md)
-- [Quick Start](docs/quick_start.md)
-- [API Stability](docs/api_stability.md)
-- [Scientific Scope](docs/scientific_scope.md)
-- [Citation](docs/citation.md)
+- [User Manual](https://github.com/Xerkkun/Hidden-Attractors-Localization/blob/main/version_2/USER_MANUAL.md)
+- [Installation](https://github.com/Xerkkun/Hidden-Attractors-Localization/blob/main/version_2/docs/installation.md)
+- [Quick Start](https://github.com/Xerkkun/Hidden-Attractors-Localization/blob/main/version_2/docs/quick_start.md)
+- [API Stability](https://github.com/Xerkkun/Hidden-Attractors-Localization/blob/main/version_2/docs/api_stability.md)
+- [Scientific Scope](https://github.com/Xerkkun/Hidden-Attractors-Localization/blob/main/version_2/docs/scientific_scope.md)
+- [Citation](https://github.com/Xerkkun/Hidden-Attractors-Localization/blob/main/version_2/docs/citation.md)
 
 ## Citation and license
 

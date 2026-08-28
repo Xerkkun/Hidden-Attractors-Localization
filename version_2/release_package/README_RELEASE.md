@@ -1,20 +1,21 @@
-# Release package 1.2.0
+# Release package 1.2.1
 
 `hidden-attractors-fo` provides reproducible numerical components for
 integer-order and commensurate Caputo fractional-order Lur'e-compatible
-systems. The current 1.2.0 surface also exposes independent characterization of dynamical
+systems. The installed surface also exposes independent characterization of dynamical
 systems, trajectories, and scalar time series. It fully integrates
 Rosenstein/Eckmann Lyapunov reconstruction and Kaplan--Yorke dimension for a
 uniformly sampled scalar signal.
 
 ## Publication state
 
-The 1.2.0 source is a locally verified release candidate. This record does not
+The 1.2.1 source is a locally verified release candidate. This record does not
 claim a PyPI publication that has not been independently observed. The public
-package version recorded at verification time is 1.0.0.
+package version recorded at verification time is 1.2.0.
 
-Publish and independently verify HAFO 1.2.0 on PyPI before releasing a Toolbox
-Chaos build that advertises or requires this 1.2.0 command/API surface.
+This patch repairs the PyPI documentation destinations. It does not change the
+numerical implementation, public API, dependencies, or scientific-evidence
+contracts.
 
 The release contract is machine-readable in `archive_manifest.json`.
 

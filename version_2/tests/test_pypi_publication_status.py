@@ -31,7 +31,7 @@ def test_archive_manifest_records_a_closed_coherent_publication_state() -> None:
     readiness = manifest["pypi_readiness"]
     version = _project_version()
 
-    assert version == "1.2.0"
+    assert version == "1.2.1"
     assert readiness["package_name"] == "hidden-attractors-fo"
     assert readiness["version"] == readiness["target_version"] == manifest["version"] == version
     assert manifest["release_tag"] == f"v{version}"
@@ -58,8 +58,8 @@ def test_release_docs_match_the_recorded_publication_state() -> None:
         VERSION_ROOT / "release_package" / "SAMPLE_RUN.md",
     ]
     false_claims = (
-        "1.2.0 is published",
-        "version 1.2.0 is published",
+        "1.2.1 is published",
+        "version 1.2.1 is published",
         "pypi status: published",
         '"publication_status": "published"',
     )
