@@ -3,10 +3,12 @@
 
 \HAFOCardExistence
 
-En Amster, el adjetivo \emph{topológico} designa herramientas que garantizan
-ceros o puntos fijos sin construir una fórmula explícita para ellos
-\cite{Amster2021MetodosTopologicos}; no constituye por sí mismo una afirmación
-de caos topológico.
+Los métodos topológicos garantizan la existencia de ceros o puntos fijos a
+partir de propiedades de continuidad, compacidad y comportamiento en la
+frontera de un dominio \cite{Amster2021MetodosTopologicos}. Aplicados a un
+campo o a un mapa de retorno, ayudan a localizar equilibrios y ciclos y a
+demostrar su persistencia. La estabilidad y la ocultedad requieren, además,
+un análisis dinámico y de cuencas.
 
 \subsection{De una ecuación diferencial a un operador}
 
@@ -42,6 +44,35 @@ El primer problema es finito-dimensional; el tercero vive en un espacio de
 funciones. El segundo puede ser finito-dimensional, pero exige que el primer
 retorno esté definido y dependa continuamente de la condición inicial.
 
+La interpretación de la tercera equivalencia requiere fijar el dominio
+del operador fraccionario. Para una función continua $x$ con $x(t_0)=x_0$,
+la derivada regularizada se define por
+\begin{equation}
+ {}^{\mathrm C}D_{t_0+}^{q}x
+ :=\frac{d}{dt}I_{t_0+}^{1-q}(x-x_0),
+ \label{eq:guide-regularized-caputo}
+\end{equation}
+cuando la integral del miembro derecho es absolutamente continua.
+Si $x=x_0+I^qg$ con $g=f\circ x$ continua, la composición de integrales
+da $I^{1-q}(x-x_0)=I^1g$ y, al derivar, se obtiene $g$.
+La composición se justifica por Fubini: $g$ es acotada en el intervalo,
+y la integral interior del producto de núcleos es
+\[
+ \int_s^t(t-u)^{-q}(u-s)^{q-1}\,du
+ =B(1-q,q)=\Gamma(1-q)\Gamma(q).
+\]
+Sus singularidades son integrables porque $0<q<1$. Recíprocamente, si
+\cref{eq:guide-regularized-caputo} vale $g$, se integra para obtener
+$I^{1-q}(x-x_0)=I^1g$, ya que ambas expresiones se anulan en $t_0$.
+Aplicar $I^q$ da $I^1(x-x_0)=I^{q+1}g$; derivar recupera
+$x-x_0=I^qg$. Si además $x$ es absolutamente continua, escribir
+$x-x_0=I^1x'$ muestra que
+\cref{eq:guide-regularized-caputo} coincide con la definición clásica
+$I^{1-q}x'$. La existencia obtenida abajo con $f$ meramente continua
+es, por tanto, existencia de una solución de Volterra y de esta derivada
+regularizada; usar la definición clásica exige verificar adicionalmente
+la continuidad absoluta de $x$.
+
 \subsection{Espacio funcional mínimo para los argumentos de existencia}
 
 En el intervalo compacto \(J=[t_0,T]\), el espacio
@@ -55,8 +86,10 @@ Por tanto, \(X\) es un espacio de Banach. Esta propiedad es la que permite
 aplicar el teorema de contracción al operador integral, no sólo el hecho de que
 sus elementos sean funciones.
 
-Un operador \(K:X\to X\) es \emph{compacto} si envía conjuntos acotados en
-conjuntos relativamente compactos. En \(C(J,\R^n)\), el criterio de
+Un operador \(K:X\to X\) es \emph{compacto y continuo} cuando
+es continuo y envía conjuntos acotados en conjuntos relativamente compactos.
+Para operadores no lineales, la segunda propiedad no implica por sí sola la
+primera. En \(C(J,\R^n)\), el criterio de
 Arzelà--Ascoli reduce esta comprobación a dos tareas: acotación uniforme y
 equicontinuidad de la familia imagen. El núcleo de Volterra proporciona un
 módulo de continuidad de orden fraccionario, de modo que puede hacer compacto
@@ -87,6 +120,11 @@ $u(0)=a$, $u'(0)=s$ y defínase
 Entonces $S(s_*)=0$ si y sólo si el disparo $s_*$ resuelve el problema de
 frontera. La equivalencia es inmediata; su aplicación requiere demostrar que
 $S$ está definido y es continuo en un intervalo adecuado.
+Una condición suficiente es que $F$ sea continua en $t$, localmente
+Lipschitz en $(u,u')$ y que las soluciones correspondientes a las
+pendientes del intervalo permanezcan en un compacto común hasta $T$.
+La teoría del PVI da entonces unicidad, existencia hasta $T$ y dependencia
+continua respecto de $s$; evaluar en $T$ conserva esa continuidad.
 
 El análogo para un ciclo es un residual de retorno. Si $z\in\Sigma$ y
 $\tau(z)>0$ es el primer tiempo de retorno,
@@ -98,10 +136,34 @@ Un cero de $R$ proporciona un ciclo. En el PLL, el retorno se construye sobre
 el cilindro; en MAVPD, una sección transversal reduce localmente el problema
 de una órbita en $\R^3$ a la iteración de un mapa en dimensión dos.
 
+Para justificar la continuidad local del retorno, escriba la sección como
+$\Sigma=\{h=0\}$, con $h$ de clase $C^1$ y $Dh\ne0$.
+Si $\varphi_{\tau_*}(z_*)\in\Sigma$ y
+$Dh(\varphi_{\tau_*}(z_*))f(\varphi_{\tau_*}(z_*))\ne0$, el teorema
+de la función implícita aplicado a
+$h(\varphi_t(z))=0$ produce una rama $C^1$ de tiempos $\tau(z)$,
+siempre que $f\in C^1$. Para identificarla como primer retorno debe
+excluirse un cruce anterior, además de asegurar existencia hasta ese tiempo.
+Sobre una región donde estas condiciones persisten, $P$ es $C^1$.
+Al derivar la identidad de cruce, con $n^{\mathsf T}=Dh(P(z))$, se obtiene
+\begin{align}
+ D\tau(z)&=-\frac{n^{\mathsf T}D_z\varphi_{\tau(z)}(z)}
+                   {n^{\mathsf T}f(P(z))},\nonumber\\
+ DP(z)&=\left[I-\frac{f(P(z))n^{\mathsf T}}
+                        {n^{\mathsf T}f(P(z))}\right]
+                        D_z\varphi_{\tau(z)}(z).
+ \label{eq:guide-return-derivative}
+\end{align}
+En estas fórmulas, $D_z\varphi_{\tau(z)}$ deriva el flujo manteniendo
+fijo el tiempo de evaluación; la contribución de $D\tau$ aparece en
+el factor de proyección. La restricción a $T_z\Sigma$ es la derivada
+del retorno en la sección. Así se separa la estabilidad transversal
+del movimiento a lo largo de la órbita.
+
 \subsection{Teorema de contracción: existencia, unicidad y aproximación}
 
 \begin{proposition}[punto fijo de Banach]
-Sea $(X,d)$ completo y $T:X\to X$ una contracción: existe $0<L<1$ tal que
+Sea $(X,d)$ un espacio completo no vacío y $T:X\to X$ una contracción: existe $0<L<1$ tal que
 $d(Tx,Ty)\leq Ld(x,y)$. Entonces $T$ posee un único punto fijo $x_*$ y, para
 cualquier $x_0$, la iteración $x_{n+1}=Tx_n$ converge a $x_*$.
 \end{proposition}
@@ -111,20 +173,43 @@ La estimación
 \[
  d(x_{n+1},x_n)\leq L^n d(x_1,x_0)
 \]
-y la suma de la serie geométrica muestran que $(x_n)$ es de Cauchy. Por
+y, para \(m>n\), la desigualdad triangular dan
+\[
+ d(x_m,x_n)\le\sum_{j=n}^{m-1}L^j d(x_1,x_0)
+ \le\frac{L^n}{1-L}d(x_1,x_0).
+\]
+El último miembro tiende a cero, por lo que $(x_n)$ es de Cauchy. Por
 completitud, $x_n\to x_*$. La continuidad de $T$ da $Tx_*=x_*$. Si $y_*$ fuera
 otro punto fijo,
 $d(x_*,y_*)\leq Ld(x_*,y_*)$, de donde $x_*=y_*$.
 \end{proof}
 
-Si \(f\) es \(L\)-Lipschitz en una bola cerrada que \(\mathcal K\) envía en sí
-misma y
- \[
-  \frac{L(T-t_0)^q}{\Gamma(q+1)}<1,
- \]
-entonces \(\mathcal K\) es contractivo. En un intervalo temporal
- suficientemente corto, esto prueba existencia y unicidad local del PVI de
- Caputo, pero no existencia de un atractor ni periodicidad. Para
+Para aplicar el teorema, elija una bola de estados
+\(B=\overline B(x_0,R)\) donde \(f\) sea \(L\)-Lipschitz, y sea
+\(M=\max_{u\in B}\|f(u)\|\). En el espacio de funciones use la bola
+cerrada completa
+\[
+ \mathcal D=\{x\in C([t_0,T],\R^n):\|x-x_0\|_\infty\le R\},
+ \qquad \Delta=T-t_0,
+\]
+donde \(x_0\) también designa la función constante. Para \(x,y\in\mathcal D\),
+integrar el núcleo da
+\begin{align*}
+ \|\mathcal Kx-x_0\|_\infty
+ &\le\frac{M\Delta^q}{\Gamma(q+1)},\\
+ \|\mathcal Kx-\mathcal Ky\|_\infty
+ &\le\frac{L\Delta^q}{\Gamma(q+1)}\|x-y\|_\infty,
+\end{align*}
+pues \(\int_{t_0}^t(t-s)^{q-1}\,ds=(t-t_0)^q/q\) y
+\(q\Gamma(q)=\Gamma(q+1)\). Si
+\(M\Delta^q/\Gamma(q+1)\le R\) y
+\(L\Delta^q/\Gamma(q+1)<1\), entonces
+\(\mathcal K:\mathcal D\to\mathcal D\) es una contracción.
+Ambas condiciones se cumplen al tomar \(\Delta\) suficientemente pequeño.
+Esto prueba existencia y unicidad local del PVI de Caputo: cualquier solución
+con el mismo dato permanece inicialmente en \(B\), por continuidad, y
+coincide allí con el punto fijo. No prueba existencia de un atractor ni
+periodicidad. Para
  \(m-1<q<m\) se requieren \(m\) datos iniciales y el término libre incluye el
  polinomio inicial correspondiente.
 
@@ -136,8 +221,10 @@ $\R^n$ en sí misma tiene al menos un punto fijo.
 \end{proposition}
 
 La conclusión es existencial: no afirma unicidad, estabilidad ni proporciona
-un algoritmo rápido. El grado de Brouwer refina esta idea para un mapa continuo
-$F:\overline\Omega\to\R^n$ y un valor $y\notin F(\partial\Omega)$. Se denota
+un algoritmo rápido. El grado de Brouwer refina esta idea cuando
+$\Omega\subset\R^n$ es abierta y acotada, el mapa
+$F:\overline\Omega\to\R^n$ es continuo y
+$y\notin F(\partial\Omega)$. Se denota
 \[
  \deg(F,\Omega,y)\in\mathbb Z.
 \]
@@ -167,8 +254,8 @@ Si $F$ es $C^1$, $y$ es valor regular y hay un número finito de preimágenes,
  \operatorname{sgn}\det DF(x).
  \label{eq:guide-degree-regular}
 \end{equation}
-Esta fórmula no es la definición general, pero permite calcular y comprender
-la orientación local de cada cero.
+Esta fórmula expresa el grado como la suma de las orientaciones locales de
+los ceros regulares.
 
 \paragraph{Ejemplo.}
 Para $F(x)=x-x^3$ en $\Omega=(-2,2)$, los ceros son $-1,0,1$ y
@@ -188,37 +275,160 @@ Para ciclos se aplica el grado a
  F(z)=P(z)-z.
  \label{eq:guide-degree-return}
 \end{equation}
-Si $\deg(P-I,\Omega,0)\neq0$, existe un punto fijo de $P$ en $\Omega$ y, por
-consiguiente, una órbita periódica, siempre que el retorno esté bien definido.
+Sea \(\Omega\) un abierto acotado en una carta de la sección, y supóngase
+que \(P\) está definido y es continuo en \(\overline\Omega\), con
+\(P(z)\ne z\) en \(\partial\Omega\). Si
+$\deg(P-I,\Omega,0)\neq0$, existe un punto fijo de $P$ en $\Omega$ y, por
+consiguiente, una órbita periódica.
 En una familia $P_\lambda$, la invariancia homotópica conserva existencia
 mientras ningún cero alcance $\partial\Omega$ y el retorno no pierda su
 dominio. Esto proporciona una base topológica para la continuación, distinta
 de simplemente reutilizar numéricamente el último estado.
 
-La continuación armónica transporta primero una semilla aproximada. Una
-formulación más rigurosa consiste en corregir cada nodo mediante la resolución
-de $P_\lambda(z)-z=0$ y en calcular el grado o el índice local del punto fijo. Así se
-separan:
+La continuación armónica proporciona una semilla aproximada. La resolución
+de $P_\lambda(z)-z=0$ corrige esa aproximación, y el cálculo validado del
+grado o del índice local establece existencia en un dominio. Las tres etapas
+son:
 
 \[
  \text{predictor armónico}
  \longrightarrow
  \text{corrector de retorno}
  \longrightarrow
- \text{certificado topológico en la región}.
+ \text{existencia demostrada en la región}.
 \]
+
+\subsection{Ejemplo resuelto: localización y clasificación de un ciclo oculto}
+\label{subsec:guide-hidden-cycle-topology}
+
+Considérese el sistema polinomial planar
+\begin{equation}
+ \begin{aligned}
+ \dot x&=-Q(x,y)x-y,\qquad
+ \dot y=x-Q(x,y)y,\\
+ Q(x,y)&=(x^2+y^2-a^2)(x^2+y^2-b^2),
+ \end{aligned}
+ \label{eq:guide-hidden-cycle-field}
+\end{equation}
+con \(0<a<b\). Para \(r=\sqrt{x^2+y^2}>0\), se calcula
+\[
+ \dot r=\frac{x\dot x+y\dot y}{r}
+ =\frac{-Q(x^2+y^2)}r=-Qr,\qquad
+ \dot\theta=\frac{x\dot y-y\dot x}{r^2}
+ =\frac{x^2+y^2}{r^2}=1.
+\]
+Por tanto,
+\begin{equation}
+ \dot r=g(r):=-r(r^2-a^2)(r^2-b^2),
+ \qquad \dot\theta=1.
+ \label{eq:guide-hidden-cycle-radial}
+\end{equation}
+El único equilibrio es el origen, pues la matriz
+\(\left(\begin{smallmatrix}-Q&-1\\1&-Q\end{smallmatrix}\right)\)
+que multiplica a \((x,y)\) tiene determinante \(Q^2+1>0\).
+En el origen, \(Q=a^2b^2\), y los términos procedentes de derivar
+\(Q\) están multiplicados por \(x\) o \(y\) y se anulan.
+El polinomio característico del Jacobiano es
+\((\lambda+a^2b^2)^2+1\). Sus autovalores son
+\(-a^2b^2\pm\mathrm i\), de modo que es un foco asintóticamente estable.
+Los círculos \(C_a=\{r=a\}\) y \(C_b=\{r=b\}\) son órbitas periódicas
+de periodo \(2\pi\).
+
+El signo de \(g\) determina todos los destinos radiales:
+\[
+ \begin{array}{c|ccc}
+ r & (0,a)&(a,b)&(b,\infty)\\ \hline
+ \dot r&<0&>0&<0
+ \end{array}
+\]
+Las soluciones están acotadas hacia adelante y
+\begin{equation}
+ \mathcal B(\{0\})=\{r<a\},\qquad
+ \mathcal B(C_b)=\{r>a\},\qquad
+ \partial\mathcal B(C_b)=C_a.
+ \label{eq:guide-hidden-cycle-basins}
+\end{equation}
+En efecto, la unicidad impide cruzar los radios invariantes \(a\) y \(b\),
+y \(r(t)\le\max\{r(0),b\}\). Esta cota y la regularidad polinómica
+excluyen explosión en tiempo finito. En cada intervalo de la tabla,
+\(r(t)\) es monótona y acotada, por lo que tiene un límite \(\ell\).
+Si \(g(\ell)\ne0\), por continuidad \(\dot r\) conservaría un signo y
+un módulo separado de cero para tiempos grandes, lo cual impediría ese
+límite. Así, \(g(\ell)=0\). La dirección de monotonía selecciona
+\(r(t)\to0\) si \(r(0)<a\), y \(r(t)\to b\) si \(r(0)>a\).
+Como la distancia de un punto al círculo \(C_b\) es \(|r-b|\), esto
+prueba las cuencas indicadas. Su frontera común es \(C_a\), una
+separatriz repulsiva, y \(C_b\)
+es un ciclo atractivo. Toda bola centrada en el origen de radio menor que
+\(a\) queda fuera de \(\mathcal B(C_b)\); el ciclo \(C_b\) es oculto.
+
+La misma geometría permite localizar el ciclo por retorno. Elija
+\(a<r_-<b<r_+\). En el anillo
+\(N=\{r_-\leq r\leq r_+\}\), el campo apunta hacia dentro en ambas
+componentes de la frontera. Sobre la semirrecta \(\theta=0\), el retorno
+\(P\) tiene tiempo constante \(2\pi\) y satisface
+\[
+ P(r_-)-r_->0,\qquad P(r_+)-r_+<0.
+\]
+Para calcular el grado, defina
+\(H_\lambda(r)=(1-\lambda)[P(r)-r]+\lambda(b-r)\).
+Ambos sumandos son positivos en \(r_-\) y negativos en \(r_+\);
+por tanto, \(H_\lambda\) nunca se anula en la frontera del intervalo.
+La invariancia homotópica y la derivada \((b-r)'=-1\) dan
+\[
+ \deg(P-I,(r_-,r_+),0)
+ =\deg(b-I,(r_-,r_+),0)=-1.
+\]
+Existe así un punto fijo. El análisis radial lo identifica como \(r=b\):
+fuera de ese radio, \(r(t)\) es estrictamente monótona y no puede volver
+a su valor inicial en tiempo \(2\pi\).
+La derivada \(u(t)=\partial r(t;r_0)/\partial r_0\) satisface
+\(\dot u=g'(r(t;r_0))u\), \(u(0)=1\). En el ciclo \(r=b\),
+\(u(t)=e^{g'(b)t}\). Además,
+\[
+ g'(r)=-5r^4+3(a^2+b^2)r^2-a^2b^2,\qquad
+ g'(b)=-2b^2(b^2-a^2).
+\]
+Su multiplicador transversal es, por ello,
+\begin{equation}
+ P'(b)=\exp\bigl(2\pi g'(b)\bigr)
+ =\exp\bigl[-4\pi b^2(b^2-a^2)\bigr]\in(0,1).
+ \label{eq:guide-hidden-cycle-multiplier}
+\end{equation}
+Análogamente, \(g'(a)=2a^2(b^2-a^2)>0\), de modo que
+\(P'(a)=\exp[4\pi a^2(b^2-a^2)]>1\), lo que confirma la
+repulsión transversal de \(C_a\).
+El grado localiza un ciclo, el multiplicador establece su estabilidad y la
+frontera \(C_a\) demuestra la separación de su cuenca respecto del
+equilibrio. Son argumentos complementarios: el grado del campo en cualquier
+disco centrado en el origen es \(+1\), porque el único cero es regular y
+\(\det Df(0)=a^4b^4+1>0\). Sólo detecta ese equilibrio; no
+detecta los dos ciclos. El atractor oculto del ejemplo es periódico, lo que
+muestra que ocultedad y caos son propiedades distintas.
+
+\input{report_diagrams/entero_07_ciclo_oculto_exacto}
+
+\ifHAFOPedagogy
+\paragraph{Ejercicio.}
+Fije \(a=1\) y \(b=2\). Calcule los multiplicadores de ambos ciclos y
+los destinos de reinicios con radios \(1/2\), \(3/2\) y \(3\).
+Explique qué parte de la clasificación seguiría siendo desconocida si sólo
+se dispusiera del índice del origen o del grado del retorno en el anillo.
+\fi
 
 \subsection{Leray--Schauder y el operador integral de Caputo}
 
-En un espacio de Banach $X$, sea $\mathcal K:X\to X$ compacto. El grado de
-Leray--Schauder se aplica a $I-\mathcal K$ y conserva las propiedades esenciales
-del grado finito-dimensional. Si
+En un espacio de Banach $X$, sea $\Omega\subset X$ abierta y acotada, y sea
+$\mathcal K:\overline\Omega\to X$ continua y compacta. Si
+$x\ne\mathcal Kx$ para todo $x\in\partial\Omega$, está definido el grado de
+Leray--Schauder de $I-\mathcal K$. Conserva las propiedades esenciales del
+grado finito-dimensional. Si
 \[
  \deg_{LS}(I-\mathcal K,\Omega,0)\neq0,
 \]
 entonces $\mathcal K$ tiene un punto fijo en $\Omega$.
 
-Para \cref{eq:guide-caputo-fixed-operator}, tómese
+Para el operador \eqref{eq:guide-caputo-fixed-operator}, tómese
 $X=C([t_0,T],\R^n)$. Si $f$ es continua y está acotada por $M$ sobre una región
 que contiene las funciones consideradas, entonces
 \begin{equation}
@@ -226,10 +436,51 @@ que contiene las funciones consideradas, entonces
  \leq \frac{M(T-t_0)^q}{\Gamma(q+1)}.
  \label{eq:guide-caputo-operator-bound}
 \end{equation}
-Además, la familia $\mathcal K(\Omega)$ es uniformemente acotada y posee un
-módulo de continuidad de orden $|t-s|^q$. El teorema de Arzelà--Ascoli permite
-obtener compacidad relativa. Bajo una condición a priori que impida puntos
-fijos en $\partial\Omega$, el grado puede demostrar existencia de soluciones.
+Para verificar equicontinuidad, sean \(t_0\le s\le t\le T\).
+Al separar la integral en \([t_0,s]\) y \([s,t]\), el núcleo decreciente
+\(u^{q-1}\) produce
+\begin{align*}
+ \|\mathcal Kx(t)-\mathcal Kx(s)\|
+ &\le\frac M{\Gamma(q)}\left[
+ \int_{t_0}^{s}\bigl((s-\tau)^{q-1}-(t-\tau)^{q-1}\bigr)\,d\tau
+ +\int_s^t(t-\tau)^{q-1}\,d\tau\right]\\
+ &=\frac M{\Gamma(q+1)}
+ \bigl[(s-t_0)^q-(t-t_0)^q+2(t-s)^q\bigr]\\
+ &\le\frac{2M}{\Gamma(q+1)}|t-s|^q.
+\end{align*}
+Esta cota es uniforme respecto de \(x\). Junto con
+\eqref{eq:guide-caputo-operator-bound}, permite aplicar Arzelà--Ascoli
+y obtener compacidad relativa de la imagen. La continuidad de
+\(\mathcal K\) también debe comprobarse: si \(x_j\to x\) uniformemente
+y sus valores pertenecen a un compacto de estados, la continuidad uniforme
+de \(f\) en ese compacto implica \(f\circ x_j\to f\circ x\)
+uniformemente. Integrar el núcleo da entonces
+\[
+ \|\mathcal Kx_j-\mathcal Kx\|_\infty
+ \le\frac{(T-t_0)^q}{\Gamma(q+1)}
+ \|f\circ x_j-f\circ x\|_\infty\longrightarrow0.
+\]
+
+Un cálculo concreto del grado proporciona existencia local sin exigir
+Lipschitz. Sea \(f\) continua en \(\overline B(x_0,R)\), con
+\(\|f\|\le M\), y tome \(T>t_0\) tan próximo a \(t_0\) que
+\(M(T-t_0)^q/\Gamma(q+1)<R\). En
+\(\Omega=\{x\in X:\|x-x_0\|_\infty<R\}\), considere la homotopía
+compacta
+\[
+ \mathcal H_\lambda x=x_0+\lambda(\mathcal Kx-x_0),
+ \qquad 0\le\lambda\le1.
+\]
+Si \(x=\mathcal H_\lambda x\), la cota anterior fuerza
+\(\|x-x_0\|_\infty<R\). Ningún punto fijo alcanza
+\(\partial\Omega\), por lo que la normalización y la invariancia
+homotópica dan
+\[
+ \deg_{LS}(I-\mathcal K,\Omega,0)
+ =\deg_{LS}(I-x_0,\Omega,0)=1.
+\]
+Existe, por tanto, una solución del PVI en \([t_0,T]\). La continuidad
+por sí sola no garantiza su unicidad.
 
 Este razonamiento es compatible con la memoria porque trabaja directamente
 con funciones completas. Sin embargo:

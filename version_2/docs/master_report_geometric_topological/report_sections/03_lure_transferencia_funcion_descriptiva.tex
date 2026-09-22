@@ -123,12 +123,14 @@ Supóngase que la componente fundamental de la no linealidad se aproxima por
 \[
 \psi(\sigma(t))\simeq N\,\sigma(t).
 \]
-De \cref{eq:transferencia_fraccionaria}, con la respuesta de condición inicial
-separada, se obtiene
+En el predictor estacionario de Liouville--Weyl, sea \(S_1\) el fasor de
+la salida \(\sigma\). La transferencia del bloque lineal da
 \[
-\Sigma=W_qN\Sigma.
+S_1=W_q(\ii\omega)N S_1.
 \]
-Una respuesta armónica no nula requiere
+Esta igualdad relaciona fasores estacionarios; la respuesta al dato inicial
+de \cref{eq:transferencia_fraccionaria} se trata por separado en el PVI
+causal. Una respuesta armónica no nula del predictor requiere
 \begin{equation}
 R(\omega,N)
 =1-W_q(\ii\omega)N=0.
@@ -140,6 +142,10 @@ Cuando \(N\) es real, \cref{eq:cierre_armonico} equivale a
 N=\frac{1}{\Re W_q(\ii\omega_0)}.
 \label{eq:condiciones_fase_ganancia}
 \end{equation}
+Se exige además que la transferencia sea finita, que su parte real no sea
+cero y que la ganancia resultante pertenezca al rango de la función
+descriptiva. La condición de fase por sí sola no garantiza una amplitud
+admisible.
 
 Algunas referencias y rutinas escriben la transferencia como
 \[
@@ -153,6 +159,20 @@ N=-\frac{1}{\Re W_q^{-}(\ii\omega)}.
 Las dos escrituras son algebraicamente equivalentes. Se adopta la convención de
 \cref{eq:transferencia_fraccionaria,eq:cierre_armonico}, que fija de manera
 unívoca el signo del cierre.
+
+Una similitud real \(X=SY\), con \(S\) invertible, transforma los datos
+en \(\widetilde P=S^{-1}PS\), \(\widetilde b=S^{-1}b\) y
+\(\widetilde r^{\T}=r^{\T}S\). La identidad
+\[
+ (s^qI-\widetilde P)^{-1}=S^{-1}(s^qI-P)^{-1}S
+\]
+da \(\widetilde W_q=W_q\). El modo y la semilla se transforman con
+\(S^{-1}\), sin cambiar el cierre. Si se usa además un desplazamiento
+\(X=SY+d\), debe conservarse el término afín \(S^{-1}Pd\) y el
+sesgo \(r^{\T}d\) dentro de la no linealidad. Cuando \(d\) es un
+equilibrio, \(Pd+b\psi(r^{\T}d)=0\) permite escribir exactamente
+la característica desplazada
+\(\psi(r^{\T}SY+r^{\T}d)-\psi(r^{\T}d)\).
 
 \subsection{Función descriptiva centrada}
 
@@ -172,6 +192,11 @@ ello, \(N_\psi\) depende de la no linealidad y de la amplitud, mientras que el
 orden \(q\) entra en la transferencia mediante
 \((\ii\omega)^q\). El carácter fraccionario entra mediante el bloque dinámico;
 la integral de la función descriptiva conserva su definición estática.
+La imparidad anula la media; la simetría de
+\(\psi(A\sin\theta)\) entre los semiperiodos y su proyección ortogonal
+producen el factor \(2/(\pi A)\). No se aplica una derivada temporal a
+esta integral, de modo que sustituir \(N_\psi\) por \(N_\psi^q\) sería
+una modificación adicional del cierre, no una consecuencia de Caputo.
 
 Para el Chua no suave, sea
 \[
@@ -342,9 +367,90 @@ trayectoria física se obtiene después al integrarla y continuarla con el
 operador causal de Caputo. Por tanto, el cierre armónico es un procedimiento
 de localización, no una sustitución de la integración causal.
 
+\subsection{Defecto de arranque entre el armónico de Weyl y el PVI de Caputo}
+\label{subsec:armonic-weyl-caputo-defect}
+
+La identidad estacionaria
+\(D_{\mathrm W}^{q}e^{\ii\omega t}=(\ii\omega)^qe^{\ii\omega t}\)
+utiliza una historia extendida hacia \(-\infty\). Para \(0<q<1\) y
+\(\omega>0\), puede justificarse por regularización de Abel:
+\begin{equation}
+ \int_0^\infty u^{-q}e^{-(\varepsilon+\ii\omega)u}\,\dd u
+ =\Gamma(1-q)(\varepsilon+\ii\omega)^{q-1},
+ \qquad\varepsilon>0.
+ \label{eq:weyl-abel-harmonic}
+\end{equation}
+Al multiplicar por \(\ii\omega/\Gamma(1-q)\) y tomar
+\(\varepsilon\downarrow0\), se obtiene el multiplicador
+\((\ii\omega)^q\) en la rama principal. La formulación por Fourier
+produce el mismo resultado.
+
+En cambio, para el armónico suave iniciado en \(t_0=0\), la definición
+de Caputo y el cambio \(u=t-s\) dan
+\begin{equation}
+ {}^{\mathrm C}D_0^q e^{\ii\omega t}
+ =\frac{\ii\omega e^{\ii\omega t}}{\Gamma(1-q)}
+    \int_0^t u^{-q}e^{-\ii\omega u}\,\dd u.
+ \label{eq:caputo-harmonic-finite-history}
+\end{equation}
+Restar la integral estacionaria muestra explícitamente el defecto:
+\begin{equation}
+ \begin{aligned}
+ {}^{\mathrm C}D_0^q e^{\ii\omega t}
+       -(\ii\omega)^qe^{\ii\omega t}
+ &=-\frac{\ii\omega e^{\ii\omega t}}{\Gamma(1-q)}\\
+ &\quad\times\int_t^\infty u^{-q}e^{-\ii\omega u}\,\dd u.
+ \end{aligned}
+ \label{eq:caputo-weyl-startup-defect}
+\end{equation}
+La integral impropia converge por el criterio de Dirichlet. El lado de
+Caputo satisface, cerca de cero,
+\[
+ {}^{\mathrm C}D_0^q e^{\ii\omega t}
+ =\frac{\ii\omega}{\Gamma(2-q)}t^{1-q}
+      +O(t^{2-q}),
+\]
+y tiende a cero, mientras que
+\((\ii\omega)^qe^{\ii\omega t}\to(\ii\omega)^q\ne0\).
+Esta comparación corresponde a un armónico suave prescrito, no a la
+regularidad de toda solución de un PVI fraccionario. Una solución causal
+del auxiliar requiere la respuesta de arranque impuesta por su dato inicial.
+
+El truncamiento armónico introduce un defecto diferente: las componentes
+de Fourier de \(\psi\) que no se retienen en el cierre. Ni la igualdad
+de la media ni la del fundamental anulan esas componentes. Por eso, la
+semilla se obtiene del problema estacionario y se evalúa después en el
+PVI causal, sin identificar ambos problemas. Los resultados de
+no periodicidad con terminal inferior finito respaldan esta separación
+\cite{TavazoeiHaeri2009,AreaLosadaNieto2014}.
+
+Danca describe la linealización armónica y la continuación como métodos
+de localización, y resuelve los PVI fraccionarios mediante ABM
+\cite{Danca2017}. Wu et al. trasladan el algoritmo de Leonov a Chua
+con arctangente y construyen un auxiliar con transferencias racionales
+en una variable compleja \(p\), incluido un bloque
+\(p^2+\omega_0^2\) \cite{Wu2023ArctanChua}. Una similitud matricial
+sigue siendo válida para Caputo, pero interpretar los polos como una
+frecuencia temporal requiere la relación espectral
+\(p=(\ii\omega)^q\). Para \(q<1\), un par conservado en
+\(\pm\ii\omega_0\) queda en el sector estable, mientras que
+\cref{eq:matriz_auxiliar} sitúa el par en la frontera angular.
+
+Wu et al. reconocen expresamente la no periodicidad exacta y la pérdida
+de parte de la memoria histórica en su aproximación por descomposición
+de Adomian en subintervalos; también distinguen los contornos
+numéricamente periódicos de la periodicidad matemática
+\cite{Wu2023ArctanChua}. Reutilizar una semilla entera es un ensayo
+causal legítimo, pero no demuestra la persistencia del objeto que la
+motivó. La función descriptiva estática puede conservarse sin introducir
+\(q\) en su integral de Fourier; la modificación del bloque dinámico
+y el tratamiento de la historia deben justificarse por separado.
+
 \subsection{Recuperación del caso entero y separación del caso \texttt{c590}}
 
-Para funciones regulares y valores donde existe la resolvente,
+Para \(X\in C^1\), con \(t>t_0\), y valores donde existe la resolvente
+en la rama fijada, se tienen los límites siguientes; el del núcleo se
+entiende para \(\tau<t\):
 \begin{equation}
 \begin{aligned}
 \lim_{q\to1^-}{}^{\mathrm C}D_{t_0}^{q}X(t)&=\dot X(t),&
@@ -355,14 +461,46 @@ Para funciones regulares y valores donde existe la resolvente,
 \end{aligned}
 \label{eq:limite_q_uno}
 \end{equation}
-Así, \cref{eq:cierre_armonico,eq:modo_normalizado,eq:semilla_modal} recuperan
-la construcción de Leonov--Kuznetsov cuando \(q=1\).
+Las matrices de la realización y las integrales estáticas de Fourier no
+dependen del orden. La continuidad del inverso matricial, que se deduce
+de su expresión mediante adjunta y determinante no nulo, hace que
+\cref{eq:cierre_armonico,eq:modo_normalizado,eq:semilla_modal} recuperen
+las fórmulas enteras cuando \(q=1\). La continuidad de las raíces del
+balance requiere, además, una condición de no degeneración.
 
-La fórmula \cref{eq:df_arctan} valida la no linealidad bibliográfica con
+Para la rama sesgada, defina el residual real
+\begin{equation}
+ \mathcal F(c,A,\omega;q)=
+ \begin{pmatrix}
+ c-W_q(0)\Psi_0(c,A)\\
+ \Re[1-W_q(\ii\omega)N_1(c,A)]\\
+ \Im[1-W_q(\ii\omega)N_1(c,A)]
+ \end{pmatrix}.
+ \label{eq:balance-branch-implicit-residual}
+\end{equation}
+Si \(\mathcal F\) es \(C^1\) cerca de una raíz con \(q=1\),
+\(A>0\), \(\omega>0\), y
+\(D_{(c,A,\omega)}\mathcal F\) es invertible, el teorema de la función
+implícita proporciona una rama local
+\((c(q),A(q),\omega(q))\) que converge a esa raíz. Para la rama
+centrada se usa el residual de dos componentes reales en \((A,\omega)\).
+Se mantienen fuera de los polos la frecuencia y la ganancia continua
+cuando ésta interviene.
+
+En dicha rama, la ganancia, la media y el modo normalizado son funciones
+continuas de \(q\); por tanto, también lo son la semilla y los
+coeficientes de la homotopía afín. En \(q=1\),
+\(\bar X+\Re(Ave^{\ii\omega t})\) es una solución exacta del
+auxiliar, pues \(P_0v=\ii\omega v\) y la media es un equilibrio
+del campo afín. El campo no lineal final conserva los errores de
+truncamiento hasta que se estudia su trayectoria. Si el Jacobiano del
+balance se hace singular, la rama puede bifurcarse o terminar; los
+límites de las fórmulas no prueban continuación global ni persistencia
+de un atractor \cite{LeonovKuznetsov2013,KuznetsovEtAl2017}.
+
+La fórmula \cref{eq:df_arctan} corresponde a la no linealidad bibliográfica con
 \(\rho=1\) y también la forma algebraica general con \(\rho>0\). Sin embargo,
-la condición inicial registrada para el caso \texttt{c590} de
-\cref{eq:parametros_c590} no procede de esa función descriptiva. Fue
-seleccionada mediante una búsqueda acotada en orden entero y refinada después
-con problemas de Caputo independientes. La rama armónica de arctangente y la
-ruta dinámica de \texttt{c590} se mantienen, por ello, como procedimientos
-distintos.
+la condición inicial del caso \texttt{c590} de
+\cref{eq:parametros_c590} procede de una búsqueda acotada en orden entero y
+de su refinamiento mediante problemas de Caputo independientes. Esta
+construcción no utiliza el cierre armónico de arctangente.

@@ -1,0 +1,301 @@
+\section{Cuencas muestreadas y transporte de las condiciones iniciales}
+\label{bre:bas:section}
+
+Los retratos de fase describen la trayectoria alcanzada desde una semilla;
+los sondeos y cortes siguientes muestran cómo cambia el destino al cambiar
+el dato inicial. En Caputo, cada punto del muestreo define un PVI nuevo con
+terminal inferior cero y la misma convención de reinicio. Los colores
+clasifican trayectorias en una ventana finita. La continuación, en cambio,
+transporta una condición inicial entre sistemas: su gráfica debe leerse
+junto con el parámetro que cambia y el tratamiento de la memoria.
+
+\subsection{Chua no suave: sondeos dentro de bolas}
+\label{bre:bas:pwl}
+
+Para el caso de la Sec.~\ref{bre:res:chua-pwl}, con $q=0.9998$, se
+muestrearon los tres equilibrios mediante
+$X_0=e+rU^{1/3}d$, con $U$ uniforme en $[0,1]$ y $d$ uniforme en la
+esfera unidad, independientes. Por tanto, $r$ es el radio de la bola y
+la distancia de una sonda concreta puede ser menor que $r$. Se usaron
+ABM--PECE con memoria completa, $h=0.01$, horizonte máximo $T=200$ y
+descarte de 50. El criterio de contacto fue el percentil 90 de distancias
+euclidianas a la nube objetivo, con umbral $0.5$ y hasta 2000 puntos de
+cada cola. Los criterios de equilibrio y salida pudieron detener antes
+una integración; una salida numérica no demuestra explosión matemática.
+
+El protocolo local reunió 7200 trayectorias en los siete radios desde
+$10^{-5}$ hasta $10^{-2}$ y no registró contactos. La extensión a
+$r=0.03,0.1,0.3$ añadió 10\,200 trayectorias. Hasta $r=0.1$ el
+acumulado fue $0/13\,800$; en las 3600 sondas de $r=0.3$ aparecieron
+37 contactos, 19 desde la bola de $E_+$ y 18 desde la de $E_-$.
+Sus distancias iniciales efectivas estuvieron entre $0.1941805298$ y
+$0.2997254735$. El primer radio ensayado con acceso delimita una escala
+de búsqueda; no estima la distancia mínima exacta a la cuenca.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.74\textwidth]{pwl_sondeos_volumetricos.pdf}
+ \caption{Chua no suave de Caputo: nueve historias representativas de un
+ banco de 17\,400 sondas volumétricas. Se distinguen el objetivo, los
+ equilibrios y las trayectorias con destinos diferentes. Los triángulos
+ señalan el primer cruce del encuadre por las dos historias de salida
+ representadas; no son estados finales. La figura no dibuja la frontera
+ de una cuenca ni representa todas las sondas.}
+ \label{bre:bas:fig-pwl-volume}
+\end{figure*}
+
+La Fig.~\ref{bre:bas:fig-pwl-volume} permite comparar transitorios que
+parten de vecindades semejantes y terminan en clases distintas. Sus ejes
+conservan las coordenadas físicas, con límites ajustados por componente;
+la caja tridimensional no impone una misma escala numérica a los tres
+ejes. Los contactos a radio macroscópico se interpretan separadamente de
+la ausencia observada dentro del protocolo local.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.98\textwidth]{pwl_nube_volumetrica_conteos.pdf}
+ \caption{Condiciones iniciales y destinos del sondeo volumétrico PWL.
+ Arriba: las 1200 condiciones efectivamente integradas en la bola de
+ radio $0.3$ de cada equilibrio, trasladadas a coordenadas locales
+ $X_0-e$, con la misma escala física en los tres ejes. El signo $+$
+ marca el centro; no se normalizan ni se superponen bolas de radios
+ diferentes. Abajo: conteos apilados de los diez radios, 5800
+ trayectorias por equilibrio. Los colores indican la clasificación de
+ horizonte finito obtenida mediante ABM--PECE con $h=0.01$, memoria
+ completa, $T\leq200$ y descarte de 50. El amarillo muestra los
+ 37 contactos, todos en las bolas de radio $0.3$ de $E_\pm$.
+ La densidad visual del panel superior no representa una densidad
+ invariante del flujo ni una probabilidad certificada de atracción.}
+ \label{bre:bas:fig-pwl-clouds}
+\end{figure*}
+
+La Fig.~\ref{bre:bas:fig-pwl-clouds} representa las condiciones iniciales
+para el radio mayor ensayado. Los equilibrios de
+\eqref{bre:res:chua-equilibrium-reduction} usados en la traslación son
+\[
+ E_0=0,\qquad E_\pm\simeq\pm\begin{pmatrix}
+ 6.5883078865\\0.0028364023\\-6.5854714843
+ \end{pmatrix}.
+\]
+Todas las condiciones iniciales satisfacen $\norm{X_0-e}/r\leq1$.
+Los conteos suman 5827 destinos de equilibrio, 5826 de otra clase,
+5710 salidas y 37 contactos.
+
+\subsection{Chua arctangente: superficies esféricas y cortes planos}
+\label{bre:bas:arctan}
+
+En c590 se mantienen los parámetros de
+\eqref{bre:res:c590-parameters} y $q=0.9999$. Las 13\,500 sondas
+pertenecen a superficies $X_0=e+rd$, mediante direcciones axiales y una
+distribución de Fibonacci sobre la esfera. Se usaron nueve radios,
+$10^{-5},10^{-4},10^{-3},10^{-2},0.03,0.1,0.3,1,2$, con
+100, 200, $\ldots$, 900 direcciones por equilibrio, respectivamente.
+No se trata de un muestreo uniforme del volumen de las bolas.
+Las integraciones utilizaron ABM con memoria completa, $h=0.005$,
+$T=180$ y descarte de 90, conservando las reglas de parada del protocolo.
+
+Hasta $r=0.3$ hubo cero contactos entre 8400 trayectorias. En $r=1$
+hubo 22 de 2400, todos desde $E_0$; en $r=2$, 588 de 2700, repartidos
+en 289, 150 y 149 desde $E_0,E_+,E_-$. El total fue 610 contactos.
+Los otros destinos fueron 4 equilibrios, 131 salidas y 12\,755
+trayectorias de otra clase. Esta última categoría no determina por sí
+sola un atractor diferente: puede contener transitorios todavía no
+resueltos por la ventana y el clasificador.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.65\textwidth]{arctan_sondeos_superficiales.pdf}
+ \caption{c590: nueve historias representativas seleccionadas de los
+ sondeos sobre superficies esféricas hasta $r=1$. El conteo completo de
+ 13\,500 pruebas incorpora además el bloque $r=2$, que no se representa
+ mediante historias adicionales en esta figura. Las circunferencias
+ aparentes son proyecciones de trayectorias; no delimitan bolas de muestreo
+ ni prueban periodicidad exacta del PVI de Caputo.}
+ \label{bre:bas:fig-arctan-sphere}
+\end{figure*}
+
+Un análisis complementario fijó $z(0)$ y clasificó datos
+$(x(0),y(0),z(0))$ en cinco planos. Los cortes se eligieron a partir de
+las coordenadas de los equilibrios y los percentiles 10, 50 y 90 de la
+nube postransitoria simétrica $A_+\cup A_-$:
+\[
+ z(0)\in\{-12.56295,-4.64761,0,4.64761,12.56295\}.
+\]
+El rectángulo común fue
+$x(0)\in[-11.238014,11.238014]$,
+$y(0)\in[-4.311997,4.311997]$. Se mantuvieron $h=0.005$, $T=180$
+y descarte de 90. El contacto con una nube de referencia se evaluó
+mediante el percentil 90 y umbral $0.5901016489$; la tolerancia de
+clasificación a equilibrio fue $0.5$. Estas tolerancias describen
+vecindad numérica en coordenadas físicas, no igualdad de conjuntos límite.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=\textwidth]{c590_cuencas_multicorte.pdf}
+ \caption{Clasificación por destinos de c590 sobre cinco cortes $xy$.
+ Las estrellas identifican equilibrios contenidos en el plano; los
+ círculos sólo proyectan equilibrios de otros planos, con su separación
+ $\Delta z$. La retícula visual es $241\times241$ por corte y contiene
+ relleno categórico: los 290\,405 nodos mostrados corresponden a
+ 62\,416 trayectorias efectivamente integradas, no a una integración
+ independiente por píxel. El gris incluye relleno y omisiones heredadas;
+ la etiqueta gráfica de divergencia sólo se interpreta como resultado
+ dinámico en los nodos cuya integración fue realizada.}
+ \label{bre:bas:fig-c590-slices}
+\end{figure*}
+
+La retícula se refinó de forma adaptativa: se conservaron 35\,941
+integraciones de la malla precedente y se integraron 26\,475 centros
+de celdas cuyos cuatro vértices tenían clases distintas. Los nodos
+restantes recibieron relleno categórico sin suavizado. Una máscara
+separa los nodos calculados de ese relleno y de las omisiones grises
+heredadas; por ello las áreas coloreadas no proporcionan directamente
+fracciones de volumen de las cuencas. Entre los nodos realmente
+integrados hubo 17\,369 contactos con $A_+$, 17\,514 con $A_-$,
+843 destinos de equilibrio, 10\,331 de otra clase acotada y 16\,359
+salidas, sin fallos numéricos registrados. Los cortes muestran regiones
+de acceso y zonas donde conviene refinar; no establecen conectividad
+global, dimensión de frontera ni exclusión de una vecindad tridimensional.
+
+\subsection{Chua entero: destinos cerca de los equilibrios}
+\label{bre:bas:integer}
+
+Para el Chua entero de la Sec.~\ref{bre:res:chua-integer}, el control
+comparado tomó las mismas 504 condiciones en las dos implementaciones:
+tres equilibrios, siete radios entre $10^{-5}$ y $10^{-2}$ y 24 puntos
+uniformes dentro de cada bola. Con $T=500$, descarte de 120,
+tolerancia de equilibrio $10^{-3}$ y tolerancia normalizada a la nube
+$0.08$, coincidieron las 504 clases: 152 trayectorias hacia $E_0$,
+198 acotadas no triviales y 154 salidas. Ninguna hizo contacto con el
+candidato. La concordancia reproduce el resultado del muestreo común;
+no amplía sus radios ni convierte sus etiquetas finitas en una prueba
+asintótica.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.72\textwidth]{chua_entero_sondeos.png}
+ \caption{Trayectorias del control de vecindades del Chua entero, con la
+ nube objetivo en verde. Los ejes $x0,x1,x2$ designan las tres componentes
+ del estado $(x,y,z)$, no tiempos iniciales. La escala amplia conserva
+ las trayectorias que abandonan la región del candidato; el retrato
+ detallado del objetivo aparece en la Fig.~\ref{bre:res:fig-chua-integer}.}
+ \label{bre:bas:fig-integer-probes}
+\end{figure*}
+
+\subsection{MAVPD: selección por continuación y sondeo del candidato}
+\label{bre:bas:mavpd}
+
+La continuación descrita en la Sec.~\ref{bre:res:mavpd} transportó la
+rama de menor frecuencia desde $(\xi,\gamma)=(3.1,0.1)$ hasta
+$\xi=2.85$, y después modificó $\gamma$. La
+Fig.~\ref{bre:bas:fig-mavpd} compara el exponente máximo finito con
+$-\max\operatorname{Re}\lambda(DF(E_\pm))$, positivo cuando los
+equilibrios laterales son linealmente estables. El exponente de una
+trayectoria y el margen local de un equilibrio miden objetos distintos.
+Los siete desplazamientos respecto de
+$\gamma_H=0.14380379839949112$ no definen una curva de bifurcación
+continua certificada: los segmentos sólo enlazan valores ensayados.
+
+En los desplazamientos $0.002,0.003,0.005$, el sondeo preliminar de
+$E_0$ dio 6 contactos de 12. En $0.008$ y $0.010$ hubo cero contactos
+y exponentes máximos mayores que $0.5$. La regla prefijada seleccionó
+el mayor de estos desplazamientos, $\gamma=0.15380379839949113$;
+un exponente positivo aislado no fue el único criterio.
+En cada nivel del transporte se descartaron 60 unidades y se retuvieron
+10, con DOP853, tolerancias $2\times10^{-10}$ y $2\times10^{-12}$,
+y paso máximo $0.02$.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.49\textwidth]{mavpd_continuacion_cribado.pdf}\hfill
+ \includegraphics[width=0.49\textwidth]{mavpd_sondeos_destinos.pdf}
+ \caption{MAVPD. Izquierda: cribado de los niveles de continuación en
+ $\gamma$; la tasa azul es un exponente de tiempo finito y la naranja
+ es el margen lineal de $E_\pm$. Derecha: destinos de las 112 sondas
+ del candidato seleccionado. Las barras 40, 36 y 36 cuentan condiciones
+ lanzadas alrededor de $E_0,E_+,E_-$ que terminaron en algún equilibrio;
+ no indican que todas hayan vuelto al equilibrio del que partieron.
+ La barra de contactos con el objetivo es nula en los tres grupos.}
+ \label{bre:bas:fig-mavpd}
+\end{figure*}
+
+El sondeo final utilizó 108 direcciones esféricas deterministas: tres
+equilibrios, radios $10^{-5},10^{-3},10^{-2}$ y doce direcciones por
+radio. Se añadieron cuatro condiciones en ambos sentidos del autovector
+inestable de $E_0$, a distancias $10^{-7}$ y $10^{-4}$. Se descartaron
+400 unidades y se conservaron 100; DOP853 usó tolerancias
+$2\times10^{-10}$ y $2\times10^{-12}$ y paso máximo $0.03$.
+Todas las sondas terminaron en un equilibrio, sin contactos con el
+candidato, ambigüedades ni fallos. Es una exploración localizada de
+destinos cerca de los equilibrios, no un mapa volumétrico completo.
+
+\subsection{PLL: continuación de la ganancia y vecindades cilíndricas}
+\label{bre:bas:pll}
+
+Con $(\tau_1,\tau_2,\omega_\Delta)=(0.0448,0.0185,178.9)$, la
+continuación aumenta la ganancia $L$ desde cero hasta 500 en pasos de 5.
+La Fig.~\ref{bre:bas:fig-pll} representa la velocidad angular y la
+coordenada del filtro en la sección $\theta=0$. Cada punto representa
+un ciclo obtenido del problema de retorno del nivel correspondiente;
+no es una muestra consecutiva de una trayectoria a parámetros fijos.
+En $L=0$, la coordenada $x$ procede de la solución explícita de la
+Sec.~\ref{bre:res:pll}, pues la inversión basada en dividir por $L$
+sólo es válida cuando $L>0$.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.94\textwidth]{pll_continuacion_ganancia.pdf}\\[4pt]
+ \includegraphics[width=0.66\textwidth]{pll_sondeos_cilindricos.pdf}
+ \caption{PLL. Arriba: continuación de las coordenadas de retorno hasta
+ $L=500$. Abajo: las 96 condiciones iniciales de los sondeos, expresadas
+ mediante $u=x-x_e$ y la fase desplazada y envuelta $v$. Los dos grupos
+ corresponden al foco y a la silla. La figura inferior representa datos
+ iniciales, no una frontera de cuenca; sus 96 trayectorias terminaron en
+ el foco bajo el protocolo indicado.}
+ \label{bre:bas:fig-pll}
+\end{figure*}
+
+En el nivel final se usó la distancia cilíndrica escalada con escalas
+$s_u=\tau_1/2=0.0224$ y $s_v=\pi$. Alrededor del foco y de la silla
+se tomaron doce puntos uniformes dentro de cada bola escalada, para
+$r=10^{-5},10^{-4},10^{-3},10^{-2}$: 96 condiciones en total.
+El horizonte fue 5 y la cola evaluada tuvo longitud 1, con paso máximo
+$0.002$, tolerancia al foco $10^{-5}$ y umbral de contacto con la nube
+$0.01$. Las 48 sondas de cada equilibrio terminaron en el foco.
+La coexistencia del ciclo corredor con el foco y la separatriz calculada
+explica la utilidad de continuar un ciclo lejano; la exclusión matemática
+de vecindades completas exigiría validar la separación de cuencas.
+
+\subsection{Kalman--Fitts: del retorno por conmutación al ciclo suave}
+\label{bre:bas:kalman}
+
+La Fig.~\ref{bre:bas:fig-kalman} completa la ruta de la
+Sec.~\ref{bre:res:kalman}: a partir del retorno del sistema con signo se
+transporta el estado por los 51 niveles de
+$(1-\lambda)\operatorname{sign}(c^{\T}X)+
+\lambda\tanh(c^{\T}X/0.01)$. Los puntos superiores son estados al
+finalizar cada etapa, de duración 120 y paso $0.01$; su variación refleja
+tanto el cambio de sistema como la fase alcanzada. No son amplitudes
+extremas, puntos fijos ni un diagrama de bifurcación.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.78\textwidth]{kalman_continuacion_signo_tanh.pdf}\\[4pt]
+ \includegraphics[width=0.96\textwidth]{kalman_ciclo_proyecciones.pdf}
+ \caption{Kalman--Fitts. Arriba: los cuatro estados terminales de la
+ continuación desde signo hasta tangente hiperbólica. Abajo: proyecciones
+ del régimen final del sistema suave, con $(x,y,z)=(x_1,x_2,x_3)$;
+ la cuarta coordenada permanece en la integración. La geometría se
+ contrasta con el periodo numérico $11.9169960234$ y los controles
+ de retorno e integración de la Sec.~\ref{bre:res:kalman}.}
+ \label{bre:bas:fig-kalman}
+\end{figure*}
+
+El control local alrededor del único equilibrio utilizó 48 datos
+uniformes dentro de bolas de cuatro dimensiones: doce para cada radio
+$10^{-5},10^{-4},10^{-3},10^{-2}$. Con horizonte 600, descarte 150 y
+paso $0.02$, ninguno contactó con el ciclo. Cuarenta recibieron etiqueta
+de equilibrio y ocho quedaron acotados sin contacto bajo la tolerancia
+utilizada. Estos ocho resultados no se reinterpretan como convergencias
+asintóticas ya resueltas. La trayectoria final, los retornos y el sondeo
+local aportan controles complementarios a la continuación.

@@ -1,0 +1,635 @@
+\section{Puntos perpetuos y localización geométrico--topológica}
+\label{bre:geo:section}
+
+La búsqueda algebraica produce condiciones iniciales antes de integrar el
+sistema. La geometría reduce el dominio donde se buscan; el retorno y el
+grado pueden convertir una aproximación en una prueba de existencia. Estas
+tres operaciones requieren justificaciones distintas: un cero algebraico
+no implica atracción y un conjunto invariante no es necesariamente oculto.
+
+\subsection{Qué se anula en un punto perpetuo}
+
+Para una EDO autónoma $\dot x=f(x)$, con $f\in C^1$, la regla de la cadena
+da $\ddot x=Df(x)f(x)$. Escriba $A(x)=Df(x)f(x)$.
+Un punto perpetuo (PP) satisface $A(p)=0$ y $f(p)\ne0$
+\cite{Prasad2015Perpetual,DudkowskiPrasadKapitaniak2017}. Por tanto,
+\begin{equation}
+ \operatorname{PP}\subset\{x:\det Df(x)=0\}.
+ \label{bre:geo:singular}
+\end{equation}
+En efecto, un Jacobiano invertible sólo anula el vector cero. La inclusión
+es necesaria, no suficiente: después de resolver la condición singular se
+sustituye en todas las componentes de $A$ y se excluyen los equilibrios.
+Una raíz PP tampoco obliga a que $A(x(t))$ siga siendo cero para $t>t_0$.
+
+En el PVI conmensurable de Caputo, $\Caputo{q}x=f(x)$, $0<q<1$, la
+identidad $\Caputo{q}(f\circ x)=Df(x)f(x)$ no es válida en general. Su
+interpretación correcta en el arranque se obtiene de Volterra. Para
+$h=t-t_0\ge0$ y $f\in C^2$ cerca de $x_0$, sea $f_0=f(x_0)$ y
+$J_0=Df(x_0)$. La identidad de potencias obtenida mediante la integral
+beta en \eqref{bre:fund:power} permite integrar cada término de la
+expansión; todos sus exponentes son mayores que $-1$.
+En un intervalo local donde $\norm{f}\le M$, Volterra da primero
+$\norm{x(t_0+h)-x_0}\le Mh^q/\Gamma(q+1)$.
+La diferenciabilidad de $f$ implica $f(x(t_0+h))=f_0+O(h^q)$;
+integrar de nuevo produce
+$x-x_0=f_0h^q/\Gamma(q+1)+O(h^{2q})$. Al sustituir
+$f(x)=f_0+J_0(x-x_0)+O(\norm{x-x_0}^2)$ en Volterra se obtiene
+\begin{equation}
+ x(t_0+h)=x_0+\frac{f_0h^q}{\Gamma(q+1)}
+ +\frac{J_0f_0h^{2q}}{\Gamma(2q+1)}+O(h^{3q}).
+ \label{bre:geo:picard}
+\end{equation}
+En este paso el resto $O(h^{2q})$ del integrando se transforma en
+$O(h^{3q})$ por \eqref{bre:fund:power}; no se ha compuesto ninguna
+derivada fraccionaria. Así, una semilla FPP--A satisface $J_0f_0=0$, $f_0\ne0$: cancela el
+segundo coeficiente de esta expansión. Con $f\in C^1$ basta el límite
+\begin{equation}
+ \Gamma(q+1)\frac{f(x(t_0+h))-f_0}{h^q}\longrightarrow J_0f_0.
+ \label{bre:geo:startup}
+\end{equation}
+Las raíces son independientes de $q$; su destino dinámico no lo es.
+En particular, ni $\ddot x(t_0)$, generalmente singular, ni la derivada
+secuencial se pueden sustituir por $J_0f_0$.
+
+Si $v_q(t)=f(x(t))$ es absolutamente continua, un evento FPP--H depende
+de toda la historia:
+\begin{equation}
+ \mathcal A_q[x](t)=\frac1{\Gamma(1-q)}
+ \int_{t_0}^t(t-s)^{-q}\frac{\dd}{\dd s}f(x(s))\,\dd s.
+ \label{bre:geo:history}
+\end{equation}
+El evento se define en instantes $t>t_0$ donde esta integral es finita;
+la continuidad absoluta sólo asegura su existencia casi en todas partes.
+Se exige $\mathcal A_q[x](t)=0$ y $f(x(t))\ne0$. Para el campo constante
+$f=c\ne0$, la solución es $x=x_0+ch^q/\Gamma(q+1)$:
+$\mathcal A_q=0$, aunque $\ddot x=ch^{q-2}/\Gamma(q-1)\ne0$.
+El ejemplo separa las nociones sin recurrir a una aproximación numérica.
+Tampoco se supone una ley de semigrupo, excluida en general por
+\eqref{bre:fund:nosemigroup}; las propiedades parciales de composición
+requieren dominios adicionales \cite{Cong2023Semigroup}.
+Un mínimo pequeño de una discretización de \eqref{bre:geo:history} sólo
+es un candidato; debe persistir al refinar paso y horizonte común.
+
+\subsection{Coordenadas, curvatura y memoria}
+
+Para un difeomorfismo local $y=g(x)$ de clase $C^2$, el campo de una EDO es
+$\widetilde f=Dg\,f$ y
+\begin{equation}
+ D\widetilde f\,\widetilde f
+ =Dg\,Df\,f+D^2g[f,f].
+ \label{bre:geo:coordinate-law}
+\end{equation}
+Por ello los PP euclidianos se conservan bajo cambios afines invertibles,
+pero no bajo cambios generales. Fijada una métrica y su conexión, la
+aceleración covariante $\nabla_f f$ sí representa un vector intrínseco.
+Su parte normal es
+\begin{equation}
+ a^\perp=\nabla_f f-
+ \frac{\langle\nabla_f f,f\rangle}{\langle f,f\rangle}f,
+ \qquad f\ne0.
+ \label{bre:geo:normal}
+\end{equation}
+Al cambiar el tiempo mediante $\widehat f=\rho f$, con $\rho\in C^1$ y $\rho>0$,
+$\nabla_{\widehat f}\widehat f=\rho^2\nabla_f f+\rho f(\rho)f$;
+así $\widehat a^\perp=\rho^2a^\perp$. La condición de curvatura normal
+nula es orbitalmente invariante; la condición fuerte $\nabla_f f=0$ no.
+
+En Caputo debe transportarse la curva de arranque, no recalcularse una
+ecuación fraccionaria usando la regla de la cadena ordinaria. Con
+$s=h^q$, \eqref{bre:geo:picard} tiene la forma
+$x=x_0+Us+Vs^2/2+o(s^2)$, donde
+\begin{equation}
+ U=\frac{f_0}{\Gamma(q+1)},\qquad
+ V=\frac{2J_0f_0}{\Gamma(2q+1)}.
+ \label{bre:geo:jet}
+\end{equation}
+Taylor aplicado a $g$ da exactamente
+\begin{equation}
+ U_y=Dg\,U,\qquad V_y=Dg\,V+D^2g[U,U].
+ \label{bre:geo:jet-law}
+\end{equation}
+Aquí $\Gamma[U,U]$ denota las componentes
+$\Gamma^i{}_{jk}U^jU^k$ de la conexión, distintas de la función gamma.
+La ley de transformación de los símbolos de Christoffel cancela el
+término hessiano de \eqref{bre:geo:jet-law}; por ello
+$V+\Gamma[U,U]$ es un vector. Se transportan los coeficientes de la
+curva, sin afirmar que el nuevo campo satisfaga una ecuación Caputo de
+la misma forma. En cambio, recalcular
+$2D\widetilde f\,\widetilde f/\Gamma(2q+1)$ introduce el defecto
+\begin{equation}
+ \left[\frac2{\Gamma(2q+1)}-\frac1{\Gamma(q+1)^2}\right]D^2g[f_0,f_0].
+ \label{bre:geo:jet-defect}
+\end{equation}
+Para $q=1/2$, $f=(1,0)$ y $g(x)=(x_1,x_2+x_1^2)$, su segunda
+componente es $4-8/\pi\ne0$. Esta diferencia obliga a declarar las
+coordenadas físicas, la métrica y el tipo de historia de cada semilla.
+
+\subsection{Resolución algebraica de las semillas}
+
+\subsubsection{MAVPD}
+Considérese
+\begin{equation}
+ \begin{aligned}
+ f_1&=\delta(\gamma u+v-u^3),\\
+ f_2&=u-\xi v-w,\qquad f_3=\rho v.
+ \end{aligned}
+ \label{bre:geo:mavpd}
+\end{equation}
+Con $\delta\rho\ne0$, las filas tercera y segunda de $Df\,f=0$
+imponen $f_2=0$ y $f_1=f_3=\rho v$. La primera queda
+$\delta(\gamma-3u^2)f_1=0$. En un PP, $f_1\ne0$, por lo que
+$u^2=\gamma/3$. Para $\gamma>0$, $\rho\ne\delta$,
+\begin{equation}
+ \begin{aligned}
+ u_\star&=\pm\sqrt{\gamma/3},\qquad
+ v_\star=\frac{2\delta\gamma u_\star}{3(\rho-\delta)},\\
+ w_\star&=u_\star-\xi v_\star.
+ \end{aligned}
+ \label{bre:geo:mavpd-roots}
+\end{equation}
+La segunda fórmula procede de
+$\delta(2\gamma u_\star/3+v_\star)=\rho v_\star$; la tercera, de
+$f_2=0$. Estas sustituciones comprueban todas las ecuaciones y agotan las
+ramas no estacionarias bajo las hipótesis indicadas. Para
+$(\delta,\rho,\gamma,\xi)=(100,200,0.1,3.1)$ hay un par simétrico.
+Sus integraciones alcanzan ciclos interiores recurrentes en los horizontes
+estudiados; la estabilidad asintótica requiere evidencia adicional.
+
+\subsubsection{Muñoz--Pacheco}
+Para $a=0.35$,
+\begin{equation}
+ f=(yz+x(y-a),\ 1-|x|,\ -xy-z)^{\T}.
+ \label{bre:geo:munoz}
+\end{equation}
+No hay equilibrios: $f_2=0$ exige $|x|=1$, $f_3=0$ da $z=-xy$, y
+\[
+ f_1=-x(y^2-y+a)
+ =-x\bigl[(y-\tfrac12)^2+a-\tfrac14\bigr]\ne0
+\]
+porque $a=0.35>1/4$ y $x=\pm1$.
+En cada región $s=\operatorname{sign}x=\pm1$, la
+segunda fila de $Df\,f=0$ da $f_1=0$; la tercera, $f_3=-xf_2$; la
+primera, $f_2(z+x-xy)=0$. Si $f_2=0$, todo $f$ sería cero, imposible.
+Entonces $z=x(y-1)$. Sustituir en $f_3=-xf_2$ da
+$y=1-|x|/2$; sustituir en $f_1=0$ da $x(y^2-a)=0$. Resultan
+\begin{equation}
+ \begin{aligned}
+ u_\varepsilon&=2(1-\varepsilon\sqrt a),\\
+ p_{s,\varepsilon}&=(su_\varepsilon,\ \varepsilon\sqrt a,
+                   -su_\varepsilon^2/2),
+ \end{aligned}
+ \label{bre:geo:munoz-roots}
+\end{equation}
+con $s,\varepsilon=\pm1$. Puesto que $0<a<1$, los cuatro puntos
+pertenecen a las regiones usadas en la derivación; son todas sus raíces PP.
+
+En $x=0$ no existe un Jacobiano clásico único. La derivada direccional
+de $f$ en dirección $f=(yz,1,-z)$ tiene segunda componente $-|yz|$.
+Su anulación exige $yz=0$; si $z\ne0$, entonces $y=0$ y la tercera
+componente vale $z\ne0$. Queda la recta $(0,y,0)$, donde ambos
+Jacobianos laterales anulan $f$. Estos candidatos direccionales generan
+\begin{equation}
+ x(t)=z(t)=0,\quad
+ y(t)=y_0+\frac{(t-t_0)^q}{\Gamma(q+1)},\quad 0<q\le1,
+ \label{bre:geo:munoz-boundary}
+\end{equation}
+como se comprueba sustituyendo en Volterra. Son soluciones no acotadas.
+Las cuatro raíces suaves sí generan trayectorias finitas en los ensayos
+Caputo; ese resultado por sí solo no demuestra atracción ni caos.
+
+\subsubsection{Chua arctangente}
+Sea $h(x)=a_1x+a_2\arctan(\rho x)$ y
+\begin{equation}
+ \begin{aligned}
+ f_1&=\alpha(y-x-h(x)),\qquad f_2=x-y+z,\\
+ f_3&=-\beta y-\gamma z.
+ \end{aligned}
+ \label{bre:geo:chua}
+\end{equation}
+Escriba $U=f_1$ y $p=h'(x)$. Las dos primeras filas de $Df\,f=0$
+dan $f_2=(1+p)U$ y $f_3=pU$; $U=0$ sería un equilibrio. La tercera
+fila impone $[\beta+(\beta+\gamma)p]U=0$. Si
+$\alpha\rho(\beta+\gamma)\ne0$, se resuelve primero
+\begin{equation}
+ p=-\frac\beta{\beta+\gamma},\qquad
+ x^2=\rho^{-2}\left(\frac{a_2\rho}{p-a_1}-1\right).
+ \label{bre:geo:arctan-x}
+\end{equation}
+Un valor negativo de $x^2$ excluye raíces reales. Si $p=a_1$, se usa
+$h'=a_1+a_2\rho/(1+\rho^2x^2)$ sin dividir: no hay solución finita
+cuando $a_2\rho\ne0$; si $a_2\rho=0$ la restricción es degenerada.
+Para cada $x$ admisible, $f_1=U$ y $f_2=(1+p)U$ reconstruyen
+\begin{equation}
+ \begin{aligned}
+ y&=x+h(x)+U/\alpha,\\
+ z&=h(x)+(1+p)U+U/\alpha.
+ \end{aligned}
+ \label{bre:geo:arctan-yz}
+\end{equation}
+La ecuación $f_3=pU$ equivale a
+\begin{equation}
+ \begin{aligned}
+ &\left[\gamma+(1+\gamma)p+\frac{\beta+\gamma}{\alpha}\right]U\\
+ &\hspace{2em}=-\beta x-(\beta+\gamma)h(x).
+ \end{aligned}
+ \label{bre:geo:arctan-U}
+\end{equation}
+Se resuelve esta ecuación lineal y se exige $U\ne0$. Si su coeficiente
+es cero, un término derecho no nulo excluye la raíz; si ambos son cero,
+la familia se comprueba en el sistema original. En Wu y c590 los
+denominadores son no nulos y se obtiene un par simétrico. Los transitorios
+acotados de Wu aún no resuelven un destino asintótico; el par de c590,
+muy alejado y con $\norm{f}\approx545$, necesita control de escape.
+
+\subsubsection{PLL lead--lag}
+En el cilindro $(x,\theta\bmod2\pi)$, con $T=\tau_1+\tau_2>0$,
+\begin{equation}
+ \begin{aligned}
+ f_x&=-x/T+\tau_1\sin\theta/(2T),\\
+ f_\theta&=\omega_\Delta-Lx/T-\tau_2L\sin\theta/(2T).
+ \end{aligned}
+ \label{bre:geo:pll}
+\end{equation}
+El determinante es $L\cos\theta/(2T)$. Para $L\ne0$, un PP exige
+$\cos\theta=0$. Allí $Df$ tiene columnas $(-1/T,-L/T)^{\T}$ y cero;
+por tanto $Df\,f=0$ equivale a $f_x=0$. Así
+\begin{equation}
+ p_+=(\tau_1/2,\pi/2),\qquad
+ p_-=(-\tau_1/2,3\pi/2),
+ \label{bre:geo:pll-roots}
+\end{equation}
+si $\omega_\Delta\mp L/2\ne0$, respectivamente. Cada igualdad nula
+convierte esa raíz en equilibrio y obliga a excluirla. La semilla positiva
+del caso estudiado llega al foco; la negativa conserva un transitorio
+acotado sin destino resuelto. PP localiza semillas, no selecciona por sí
+solo el ciclo corredor.
+
+\subsubsection{Exclusiones: Chua PWL, Kalman--Fitts y jerk}
+Para Chua PWL, en una región de pendiente $m$,
+$\det Df=-\alpha[\beta+(\beta+\gamma)m]$. Si es no nulo en todas las
+regiones, \eqref{bre:geo:singular} excluye PP suaves. En una frontera
+continua, la derivada direccional usa el Jacobiano de la región hacia la
+que apunta $f$; si $f$ es tangente, ambos productos laterales coinciden.
+La invertibilidad de ambos excluye también una raíz direccional no
+estacionaria. Con $(\alpha,\beta,\gamma)=(8.4562,12.0732,0.0052)$ y
+$(m_0,m_1)=(-0.1768,-1.1468)$, los determinantes son
+$-84.035507517056$ y $15.037737580544$, respectivamente, ambos no nulos.
+
+Kalman--Fitts tiene $\dot X=AX+e_4\tanh(-X_3/0.01)$, donde $A$ es
+compañera de $s^4+0.12s^3+2.0254s^2+0.121308s+0.98191881$.
+El término no lineal sólo modifica la tercera entrada de la última fila
+del Jacobiano. En una matriz compañera de orden cuatro el determinante
+es el coeficiente constante, inalterado: $\det Df=0.98191881\ne0$.
+No hay PP, aunque otras rutas sí localizan ciclos.
+
+Para cualquier jerk $f=(y,z,G)^{\T}$,
+\begin{equation}
+ Df\,f=(z,\ G,\ G_xy+G_yz+G_zG)^{\T}.
+ \label{bre:geo:jerk}
+\end{equation}
+Toda raíz satisface $z=G=0$ y $G_xy=0$. En el jerk cuadrático
+$G=-x-y-1.1z-2.59z^2+xy$, esto da $y(y-1)=0$. Para $y=0$ queda
+el origen; para $y=1$, $G(x,1,0)=-1$, imposible. En el exponencial
+$G=-az-I_c(e^{y/(nV_T)}-1)-x$, con $nV_T\ne0$, $G_x=-1$ fuerza
+$y=0$ y después $x=z=0$. Ambos carecen de PP y, por
+\eqref{bre:geo:picard}, de semillas FPP--A conmensurables.
+
+\subsection{Eliminación y conteo exhaustivo: Lorenz y RF}
+
+Los sistemas polinomiales requieren distinguir una raíz del eliminante de
+una solución del sistema. El resultante $\operatorname{Res}_v(P,Q)$ es
+el determinante de Sylvester: anula necesariamente toda raíz común, pero
+puede incorporar caídas de grado y denominadores. Se reconstruyen las
+variables y se comprueban las ramas excepcionales antes de contar PP.
+Para contar raíces reales se usa la sucesión de Sturm
+$S_0=P$, $S_1=P'$, $S_{j+1}=-\operatorname{rem}(S_{j-1},S_j)$.
+Si $V_P(t)$ cuenta cambios de signo omitiendo ceros,
+$V_P(a)-V_P(b)$ cuenta raíces distintas entre extremos que no son raíces.
+
+\subsubsection{Lorenz generalizado}
+Para el campo
+\begin{equation}
+ \begin{aligned}
+ f_1&=-17(x-y)/5+yz/2,\\
+ f_2&=34x/5-y-xz,\qquad f_3=-z+xy,
+ \end{aligned}
+ \label{bre:geo:lorenz}
+\end{equation}
+la rama $x=0$, $y\ne0$ exigiría simultáneamente
+$z=-748/135$, $z^2=1206/25$; la rama $y=0$, $x\ne0$ exigiría
+$z=748/135$, $z^2=1734/25$. Ambas son imposibles; $x=y=0$ da el
+origen. Para $xy\ne0$, tome $u=x^2>0$, $v=y/x\ne0$. Dividir las
+dos primeras componentes de $Df\,f$ entre $x$ produce
+\begin{equation}
+ v^2u/2+c_1=0,\quad -vu+c_2=0,\quad uc_3+z=0,
+ \label{bre:geo:lorenz-reduced}
+\end{equation}
+con
+\begin{equation}
+ \begin{aligned}
+ c_1&=867/25-374v/25-27vz/10-z^2/2,\\
+ c_2&=-748/25+603v/25+27z/5-vz^2/2,\\
+ c_3&=34/5-27v/5+17v^2/5+(v^2/2-1)z.
+ \end{aligned}
+ \label{bre:geo:lorenz-c}
+\end{equation}
+Eliminar $u=c_2/v$ deja
+\begin{equation}
+ \begin{aligned}
+ L&=(3468-2992v+1206v^2)/25-(2+v^2)z^2,\\
+ Q&=vz+c_2c_3,
+ \end{aligned}
+ \label{bre:geo:lorenz-LQ}
+\end{equation}
+y $L=Q=0$. Defina exactamente el polinomio de grado ocho
+\begin{equation}
+ P_L(z)=\frac{-5^{12}\operatorname{Res}_v(L,Q)}
+ {(25z^2-1206)(25z^2-986)}.
+ \label{bre:geo:lorenz-eliminant}
+\end{equation}
+La división es exacta y da
+\begin{equation}
+ \begin{aligned}
+ P_L(z)={}&781250z^8-94421875z^6\\
+ &-112200000z^5+3621441250z^4\\
+ &+6045336000z^3-60977294900z^2\\
+ &-150632718720z-231894425384.
+ \end{aligned}
+ \label{bre:geo:lorenz-polynomial}
+\end{equation}
+El resto de $Q$ entre $L$, respecto de $v$, es
+$(R_1v+R_0)/[125(25z^2-1206)]$, donde
+\begin{equation}
+ \begin{aligned}
+ R_0&=18307572+4398240z\\
+    &\hspace{1.5em}+2697400z^2-50625z^4,\\
+ R_1&=-2864840+647540z-1739100z^2\\
+    &\hspace{1.5em}-422500z^3+3125z^5.
+ \end{aligned}
+ \label{bre:geo:lorenz-remainder}
+\end{equation}
+Se verifica $\gcd(R_1,(25z^2-986)P_L)=1$; así $v=-R_0/R_1$,
+$u=c_2/v$, $x=\pm\sqrt u$, $y=vx$. Para $25z^2-1206=0$,
+$L=0$ exigiría $v=66/187$, pero
+$\gcd(25z^2-1206,Q(66/187,z))=1$ tras eliminar denominadores.
+Esa rama es vacía. Fuera de ella, el coeficiente principal de $L$ no
+se anula: el resultante cero equivale a una raíz común de $L$ con
+su resto lineal, lo que justifica la reconstrucción. Las variaciones de Sturm,
+en el orden $-\infty,-7.443,-7.442,9.321,9.322,+\infty$, son
+$(5,5,4,4,3,3)$. Hay exactamente dos raíces de $P_L$; sus
+reconstrucciones tienen $(z,u)\approx(-7.4423053,0.5564666)$ y
+$(9.3218988,-81.6209147)$. La evaluación racional por intervalos, usando
+la forma equivalente
+\begin{equation}
+ u=603/25-z^2/2+(-748/25+27z/5)/v,
+ \label{bre:geo:lorenz-sign}
+\end{equation}
+da respectivamente $0.29<u<0.83$ y $-82<u<-81$ en los dos intervalos
+aislantes; sólo la primera permite $x$ real.
+El factor $25z^2-986$ da exactamente $u=29/5+z$:
+para $z>0$, $u\approx12.0801274$ reconstruye el par de equilibrios;
+para $z<0$, $u<0$. Junto al origen quedan tres
+equilibrios y dos PP. La sustitución del par PP da
+$\norm{f}\approx23.4221>0$; la eliminación es exhaustiva, pero su
+dinámica fraccionaria desde esas semillas sigue pendiente.
+
+\subsubsection{Rabinovich--Fabrikant}
+Sea
+\begin{equation}
+ \begin{aligned}
+ f_1&=y(z-1+x^2)+ax,\quad a=1/10,\\
+ f_2&=x(3z+1-x^2)+ay,\quad b=719/2500,\\
+ f_3&=-2z(b+xy).
+ \end{aligned}
+ \label{bre:geo:rf}
+\end{equation}
+Para $x=0$, $A_1=2y[(a-b)z-a]$ y
+$A_3=2z[2b^2-y^2(z-1)]$. Si $y=0$ queda $z=0$; si $y\ne0$,
+$z=a/(a-b)<0$ haría imposible $y^2(z-1)=2b^2>0$. Sólo queda el
+origen. Para $x\ne0$, sean $u=x^2>0$, $v=xy$, $H=u+z-1$,
+$K=3z+1-u$. La multiplicación $Df\,f$ da
+\begin{equation}
+ \begin{aligned}
+ E_1=xA_1&=u(a^2+HK)+2v[a(u+H)-bz]\\
+         &\quad+2(u-1)v^2,\\
+ E_2=xA_2&=Dv+C,\\
+ E_3=-uA_3/(2z)&=(z-1-u)v^2+2u(a-2b)v\\
+               &\quad+u(uK-2b^2),
+ \end{aligned}
+ \label{bre:geo:rf-reduced}
+\end{equation}
+donde $E_3$ se usa sólo para $z\ne0$ y
+\begin{equation}
+ \begin{aligned}
+ D&=3z^2-6uz-2z-3u^2+4u+a^2-1,\\
+ C&=2u[a(3z+1-2u)-3bz].
+ \end{aligned}
+ \label{bre:geo:rf-DC}
+\end{equation}
+En $z=0$, $A_3=0$ idénticamente y
+\begin{equation}
+ \begin{aligned}
+ \operatorname{Res}_v(E_1,E_2)|_{z=0}
+ ={}&-10^{-6}u(10u-11)(10u-9)\\
+ &\times[100(u-1)^2+1]\\
+ &\times[100(3u-1)^2+1].
+ \end{aligned}
+ \label{bre:geo:rf-z0}
+\end{equation}
+Los factores cuadráticos son positivos; $u>0$ deja
+$(u,v)=(9/10,4/5)$ y $(11/10,-6/5)$. Cada par reconstruye dos
+raíces, $x=\pm\sqrt u$, $y=v/x$. No son equilibrios porque, en
+$z=0$, el determinante del sistema $f_1=f_2=0$ es
+$a^2+(u-1)^2>0$ y sólo admite $x=y=0$.
+
+Para $z\ne0$, se separa $D=0$ antes de dividir. De $C=0$ y $u>0$,
+$u=u_D=(1250-7035z)/2500$; imponer además $D=0$ da
+$d_D(z)=65000-1953500z-967947z^2=0$. Tras sustituir $u_D$,
+\begin{equation}
+ \begin{aligned}
+ R_D(z)&=\operatorname{Res}_v(E_1(u_D,v,z),E_3(u_D,v,z)),\\
+ \gcd(d_D,R_D)&=1.
+ \end{aligned}
+ \label{bre:geo:rf-exception}
+\end{equation}
+Por tanto esa rama es vacía. Con $D\ne0$, $v=-C/D$ y las ecuaciones
+restantes son los siguientes polinomios explícitos:
+\begin{equation}
+ \begin{aligned}
+ P&=u(a^2+HK)D^2-2CD[a(u+H)-bz]\\
+  &\quad+2(u-1)C^2,\\
+ Q&=(z-1-u)C^2-2u(a-2b)CD\\
+  &\quad+u(uK-2b^2)D^2.
+ \end{aligned}
+ \label{bre:geo:rf-PQ}
+\end{equation}
+Defina $S=32264900u^2-215503200u+82528417$,
+$E=53150000u^2-71900000u+516961$ y
+\begin{equation}
+ P_R=\operatorname{pp}\left(
+ \frac{\operatorname{Res}_z(P,Q)}{u^{13}S^4E}\right),\qquad\deg P_R=14.
+ \label{bre:geo:rf-eliminant}
+\end{equation}
+Aquí $\operatorname{pp}$ elimina denominadores y el máximo común divisor
+de coeficientes, y fija positivo el coeficiente principal. Para evaluar
+directamente el polinomio, escriba $P_R(u)=\sum_{k=0}^{14}m_k10^{e_k}u^k$,
+con los enteros de la tabla siguiente:
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}rrr@{}}
+\hline
+$k$&$m_k$&$e_k$\\\hline
+0&172890165175624363345259174569803&0\\
+1&14469699682074574386521765557812&2\\
+2&$-18396580138862579542741337855542518$&2\\
+3&15478807059059016799618863592551164&4\\
+4&$-483305962260027081263570393541627373$&4\\
+5&56915116746512318338898887806915&9\\
+6&$-1629237154908128789498842947039615$&8\\
+7&95325977171002410189945625&14\\
+8&125564435311034818006205569375&13\\
+9&$-433337883019314447578125$&19\\
+10&81563269511051918346484375&17\\
+11&$-99102930618837890625$&23\\
+12&77980731527669677734375&20\\
+13&$-358729705810546875$&25\\
+14&722605133056640625&24\\\hline
+\end{tabular}
+\end{center}
+Las raíces de $S$
+en $u>0$ sólo levantan a $D=C=0$, rama ya excluida; las dos raíces
+positivas de $E$ dan los cuatro equilibrios no nulos. En efecto,
+$f_3=0$, $z\ne0$ exige $v=-b$; de $xf_1=au+vH=0$ se obtiene
+$z=1-u+au/b$. La ecuación $xf_2=uK+av=0$ reduce a
+$(4b-3a)u^2-4bu+ab^2=0$, exactamente $E(u)=0$ tras multiplicar
+por $62500000$. Sus dos raíces son positivas porque su producto y su
+suma son positivos y su discriminante es positivo. La sustitución
+reconstruye dos signos de $x$ por raíz y verifica las tres componentes.
+Para $P_R$, las variaciones de Sturm en
+$0,0.0391,0.0392,0.0474,0.0475,+\infty$ son $(7,7,6,6,5,5)$:
+exactamente dos raíces positivas.
+
+La reconstrucción tampoco se infiere del resultante. La base reducida
+mónica de $\langle P,Q,P_R\rangle$, en orden lexicográfico $z>u$, es
+$\{P_R/\operatorname{lc}(P_R),z-Z(u)\}$, con $\deg Z=13$.
+Esto define unívocamente $Z$ mediante los polinomios anteriores. La
+división exacta da $P(u,Z)\equiv Q(u,Z)\equiv0\pmod{P_R}$ y
+\begin{equation}
+ \begin{aligned}
+ \gcd(P_R,Z)&=\gcd(P_R,D(u,Z))=1,\\
+ \gcd(P_R,bD(u,Z)-C(u,Z))&=1.
+ \end{aligned}
+ \label{bre:geo:rf-lift}
+\end{equation}
+Cada raíz positiva $u$ tiene un único $z=Z(u)$ real, no nulo, con
+$D\ne0$. Se reconstruyen $v=-C/D$, $x=\pm\sqrt u$, $y=v/x$.
+El último máximo común divisor excluye $v=-b$, luego $f_3\ne0$.
+Los pares $(u,z)$ son aproximadamente $(0.03910075,0.82214520)$ y
+$(0.04748353,1.20238081)$. Producen cuatro PP; sumados a los cuatro
+del plano $z=0$, resultan ocho PP y cinco equilibrios. Cada exclusión
+es algebraica; la clasificación de sus destinos exige integración.
+
+\subsection{Superficies, retorno y prueba de ocultedad}
+
+En una EDO $C^1$, para $h\in C^2$ defina
+$L_fh=Dh\,f$ y $L_f^2h=D(L_fh)f$. Si $A$ es compacto e invariante
+para el flujo completo, entonces
+\begin{equation}
+ A\cap\{L_fh=0\}\ne\varnothing,\qquad
+ A\cap\{L_f^2h=0\}\ne\varnothing.
+ \label{bre:geo:coverage}
+\end{equation}
+En efecto, $h|_A$ alcanza un máximo; la órbita completa por ese punto
+permanece en $A$, por lo que su derivada es cero. Aplicar el mismo
+argumento a $L_fh|_A$ prueba la segunda afirmación. Para $h=x_i$ se
+obtienen las superficies $f_i=0$ y $(Df\,f)_i=0$
+\cite{GodaraEtAl2018CriticalSurfaces}. Si $A$ es un atractor con cuenca
+abierta y la superficie es regular en una intersección, la cuenca
+contiene allí un abierto relativo de la superficie. Esto justifica
+muestrearla; ninguna malla finita garantiza alcanzar ese abierto.
+
+Otra familia de semillas satisface
+$\operatorname{rank}[f\ \ Df\,f]\le1$, $f\ne0$, equivalente a
+$Df\,f=\lambda f$. En tres dimensiones basta anular los menores
+$f_iA_j-f_jA_i$. Los PP corresponden a $\lambda=0$; las curvas
+conectantes generales sólo anulan la curvatura, sin un teorema de
+cobertura de todas las cuencas \cite{GilmoreEtAl2010Connecting}.
+Las variedades estables de sillas y los ciclos repulsivos pueden separar
+destinos; una bisección entre condiciones de cuencas distintas aproxima
+esa frontera mientras ambas clasificaciones sean fiables.
+
+Para demostrar existencia de un ciclo entero se construye una sección
+transversal y un retorno continuo $P(z)=\varphi_{\tau(z)}(z)$ definido
+en $\overline\Omega$. Si $P(z)\ne z$ en $\partial\Omega$ y
+$\deg(P-I,\Omega,0)\ne0$, existe un punto fijo interior
+\cite{Amster2021MetodosTopologicos}. Una homotopía conserva el grado
+mientras mantenga el dominio del retorno y no cruce un cero por la
+frontera. La estabilidad requiere controlar $DP$; la ocultedad requiere
+excluir su cuenca desde vecindades de todos los equilibrios.
+
+Un ejemplo permite realizar las tres pruebas. Para $0<a<b$, tome
+\begin{equation}
+ \begin{aligned}
+ \dot x&=-Qx-y,\qquad\dot y=x-Qy,\\
+ Q&=(x^2+y^2-a^2)(x^2+y^2-b^2).
+ \end{aligned}
+ \label{bre:geo:cycle}
+\end{equation}
+El único equilibrio es el origen, pues $Q^2+1>0$. Su Jacobiano tiene
+autovalores $-a^2b^2\pm\ii$, luego es un foco estable. Para $r>0$,
+$x\dot x+y\dot y=-Qr^2$ y $x\dot y-y\dot x=r^2$, de donde
+\begin{equation}
+ \dot r=g(r)=-r(r^2-a^2)(r^2-b^2),\qquad\dot\theta=1.
+ \label{bre:geo:radial}
+\end{equation}
+Los radios $a,b$ son ciclos de periodo $2\pi$. El signo de $g$ es
+negativo en $(0,a)$, positivo en $(a,b)$ y negativo en $(b,\infty)$.
+La unicidad impide cruzar esos radios y da
+$r(t)\le\max\{r(0),b\}$, excluyendo explosión finita. Cada solución
+radial no constante es monótona y acotada. Su límite $\ell$ debe
+satisfacer $g(\ell)=0$: de lo contrario $|\dot r|$ estaría separado
+de cero y no habría límite. La dirección de monotonía determina
+\begin{equation}
+ \mathcal B(0)=\{r<a\},\quad
+ \mathcal B(C_b)=\{r>a\},\quad
+ \partial\mathcal B(C_b)=C_a.
+ \label{bre:geo:basins}
+\end{equation}
+Así $C_a$ es la separatriz y $C_b$ un atractor oculto: toda bola
+centrada en el único equilibrio con radio menor que $a$ evita su cuenca.
+
+El retorno sobre $\theta=0$ tiene tiempo $2\pi$. Elija
+$a<r_-<b<r_+$. Entonces $P(r_-)-r_->0$ y $P(r_+)-r_+<0$.
+La homotopía $(1-\lambda)(P(r)-r)+\lambda(b-r)$ conserva esos signos
+en la frontera, de modo que $\deg(P-I,(r_-,r_+),0)=-1$.
+Existe un punto fijo; la monotonía radial lo identifica como $b$.
+La ecuación variacional $\dot u=g'(b)u$, $u(0)=1$, produce
+\begin{equation}
+ P'(b)=e^{-4\pi b^2(b^2-a^2)}\in(0,1),
+ \label{bre:geo:multiplier}
+\end{equation}
+porque $g'(b)=-2b^2(b^2-a^2)$. Grado, multiplicador y cuenca prueban,
+respectivamente, existencia, atracción y ocultedad; el ejemplo es periódico,
+no caótico. El grado del propio campo sólo detectaría el equilibrio.
+
+Para problemas sin reducción radial, una alternativa divide un dominio
+$D$ en cajas y encierra rigurosamente sus imágenes a tiempo $\tau$.
+Si un bloque $N_A$ cumple
+$\varphi_\tau(N_A)\subset\operatorname{int}N_A$ y contiene un atractor
+$A\subset\operatorname{int}N_A$, un grafo exterior sin camino desde
+vecindades $U_E$ de todos los equilibrios hasta $N_A$ excluye
+$U_E\cap\mathcal B(A)$, siempre que esas órbitas no salgan de $D$.
+De pertenecer alguna a la cuenca, acabaría entrando en $N_A$ y sus
+imágenes sucesivas formarían el camino prohibido. Un grafo de muestras
+puntuales puede omitir imágenes y no permite esta prueba.
+
+Estas construcciones de flujo y retorno no se trasladan a Caputo por
+reinicios puntuales. En el operador de Volterra un punto fijo representa
+una trayectoria en un intervalo, no un ciclo; con terminal inferior
+finito no hay soluciones autónomas no constantes exactamente periódicas
+bajo las hipótesis usuales \cite{TavazoeiHaeri2009,KaslikSivasundaram2012}.
+Una certificación asintótica exige una dinámica de historias admisibles,
+compacidad y atracción en su topología relativa. Las superficies y
+semillas de arranque conservan utilidad computacional, pero sus
+conclusiones se limitan al PVI y al protocolo de memoria declarados.

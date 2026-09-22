@@ -2,7 +2,7 @@
 \label{sec:introduccion}
 
 Un atractor \(\mathcal A\) se denomina \emph{autoexcitado} cuando su cuenca de
-atracción intersecta una vecindad de, al menos, un punto de equilibrio. En ese
+atracción intersecta toda vecindad de, al menos, un punto de equilibrio. En ese
 caso es posible iniciar una trayectoria cerca del equilibrio, descartar el
 transitorio y observar cómo la trayectoria se aproxima al atractor. Un
 atractor se denomina \emph{oculto} cuando su cuenca permanece separada de
@@ -45,14 +45,17 @@ Se desarrollan dos rutas complementarias:
 
 En ambos casos, los sondeos de cuenca comienzan en el mismo instante de memoria.
 El caso no suave conserva la regla de completar el primer radio con contactos.
-En \texttt{c590} se añadió una evaluación macroscópica en \(r=2\) después del
-primer contacto observado en \(r=1\). El mayor radio local sin contactos y los
+En \texttt{c590}, los sondeos comprenden también \(r=2\); el primer contacto
+se observa en \(r=1\). El mayor radio local sin contactos y los
 bloques macroscópicos se reportan por separado. El alcance \emph{local} se fija
 por el protocolo predefinido. Los cálculos cubren radios, geometrías,
-cantidades de muestras y horizontes declarados. Una caracterización global
-exigiría describir la cuenca completa en un dominio no acotado y con resolución
-arbitrariamente fina, tarea que es especialmente costosa cuando cada
-trayectoria de Caputo acumula toda su historia.
+cantidades de muestras y horizontes declarados. Una demostración de ocultedad
+exigiría excluir el continuo de datos iniciales en alguna vecindad de cada
+equilibrio, bajo el convenio de memoria declarado, y justificar el destino
+asintótico correspondiente. Describir toda la cuenca es un problema más
+amplio; la exclusión puede probarse mediante regiones invariantes o un
+certificado validado de no alcance. En Caputo debe especificarse además la
+clase de perfiles admisibles sobre la que se formula esa exclusión.
 
 \section{Antecedentes y métodos de referencia}
 \label{sec:antecedentes}
@@ -101,8 +104,8 @@ parámetros, el orden y el integrador de la referencia. El artículo no
 proporciona la condición inicial exacta de la figura del atractor ni los
 valores intermedios de la construcción armónica
 \((\omega_0,k,A_0)\). Por ello, la reconstrucción utiliza la semilla obtenida
-al aplicar el cierre armónico entero a los parámetros publicados y declara
-esta elección de manera explícita. La ruta propuesta usa los mismos parámetros
+al aplicar el cierre armónico entero a los parámetros publicados.
+La ruta propuesta usa los mismos parámetros
 nominales, pero calcula una nueva semilla sesgada y aplica una continuación
 compatible con la memoria de Caputo.
 
@@ -224,7 +227,7 @@ cadena local ni mediante reinicios sucesivos. \\
 
 \ifHAFOPedagogy
 \begin{bloqueestudio}{Lecturas}
-Lea cada fila junto con la sección donde se ejecuta su formalismo: atractores
+Relacione los formalismos de la tabla con sus aplicaciones: atractores
 ocultos en la introducción y Lur'e; Caputo en fundamentos e integración; PP en
 su capítulo; geometría y cuencas en localización geométrico--topológica.
 \end{bloqueestudio}
@@ -232,19 +235,14 @@ su capítulo; geometría y cuencas en localización geométrico--topológica.
 \begin{bloqueestudio}{Ejercicios}
 Para cada núcleo reconstruya: ecuación, hipótesis, derivación, parámetros,
 inicialización, algoritmo, observable, conclusión y límite. Después responda:
-¿qué resultado del artículo se reproduce, qué parte se adapta y qué parte es
-una propuesta nueva de la tesis?
+¿cuáles son las hipótesis de cada método y qué conclusiones permiten
+obtener en el sistema considerado?
 \end{bloqueestudio}
 \fi
 
-La atribución bibliográfica distingue las funciones de cada tipo de fuente. La
-definición, la localización y los parámetros de cada atractor se atribuyen a artículos de
-investigación
-\cite{LeonovKuznetsovVagaitsev2011,Leonov2013HiddenAttractors,Danca2017,KuznetsovEtAl2017,Wu2023ArctanChua};
-los métodos geométricos se remiten también a sus trabajos originales
+Los fundamentos de la localización y la definición de ocultedad se desarrollan
+en \cite{LeonovKuznetsovVagaitsev2011,Leonov2013HiddenAttractors,Danca2017,KuznetsovEtAl2017,Wu2023ArctanChua}.
+Los métodos geométricos complementarios se estudian en
 \cite{DudkowskiPrasadKapitaniak2017,GuanXie2021Connecting,GodaraEtAl2018CriticalSurfaces}.
-Los libros compilados
-\cite{PhamEtAl2018HiddenAttractors,PhamVolosKapitaniak2017Systems,WangKuznetsovChen2021Multistability}
-se usan para ordenar familias y encontrar antecedentes. Ningún parámetro,
-condición inicial o reclamo de ocultedad se sostiene únicamente en un capítulo
-recopilatorio o en un resumen automático.
+Las monografías \cite{PhamEtAl2018HiddenAttractors,PhamVolosKapitaniak2017Systems,WangKuznetsovChen2021Multistability}
+ofrecen una clasificación de familias y fenómenos de multistabilidad.

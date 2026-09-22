@@ -1,41 +1,13 @@
-\section{Validación algebraica independiente con Wolfram Language}
+\section{Identidades de transferencia, memoria y geometría}
 \label{app:wolfram}
 
-Las identidades simbólicas de las formulaciones consideradas se verifican en una
-implementación de Wolfram Language separada del integrador numérico. La
-separación es útil porque las ecuaciones se construyen de nuevo a partir de
-los parámetros, en lugar de reutilizar matrices o resultados calculados por
-el código de simulación.
-
-\subsection{Organización de los validadores}
-
-La carpeta \codepath{version_2/validation/wolfram/} contiene dos niveles:
-\begin{enumerate}
- \item los módulos comunes
- \codepath{common/chua_saturation_validation.wl} y
- \codepath{common/chua_arctan_validation.wl}, que implementan las identidades
- simbólicas;
- \item los archivos de caso de \codepath{cases/}, que fijan parámetros,
- órdenes, semillas de búsqueda y tolerancias.
-\end{enumerate}
-
-Para la saturación se ejecutan los casos
-\codepath{chua_integer_saturation.wl} y
-\codepath{chua_fractional_saturation.wl}. Para la arctangente existen dos
-validaciones diferentes:
-\begin{itemize}
- \item \codepath{chua_fractional_arctan.wl} usa los parámetros bibliográficos
- de Wu et al., incluido \(\rho=1\);
- \item \codepath{chua_fractional_arctan_c590.wl} usa los parámetros propios de
- \cref{eq:parametros_c590}, incluido \(\rho=1.7984259333\), y la semilla
- registrada en \cref{eq:semilla_c590}.
-\end{itemize}
-Esta segunda validación hace explícita la sustitución \(\rho\neq1\) y evita
-usar el caso bibliográfico como comprobación algebraica de \texttt{c590}.
+Las realizaciones de Lur'e permiten expresar el campo mediante matrices y
+no linealidades explícitas. Su consistencia se comprueba sustituyendo la
+realización en el campo original y simplificando la diferencia.
 
 \subsection{Identidades verificadas}
 
-Cada validador reconstruye y simplifica las siguientes expresiones:
+Las identidades fundamentales son:
 \begin{enumerate}
  \item igualdad entre el campo original y la forma de Lur'e
  \(PX+b\psi(r^{\T}X)\);
@@ -63,36 +35,27 @@ H_q=
 \end{equation}
 y se calcula la semilla como \(A_0S_{\cdot1}\). En la familia con arctangente
 se integra simbólicamente la primera armónica y se simplifica hasta la forma
-cerrada de \cref{eq:df_arctan}. Para \texttt{c590}, el archivo conserva
-la procedencia de la semilla como búsqueda entera acotada seguida de
-refinamiento de Caputo; la función descriptiva se verifica como identidad de
-la familia, no se usa para seleccionar esa semilla.
+cerrada de \cref{eq:df_arctan}. Para c590, la semilla se obtiene mediante búsqueda entera acotada y
+refinamiento de Caputo. La identidad de función descriptiva caracteriza la
+familia arctangente, independientemente del procedimiento de selección.
 
-\subsection{Ejecución y salidas}
+\subsection{Composición temporal y memoria}
 
-Desde la raíz de \codepath{version_2}, cada caso puede ejecutarse con
-\begin{verbatim}
-wolframscript -file validation/wolfram/cases/
-  chua_fractional_saturation.wl
-wolframscript -file validation/wolfram/cases/
-  chua_fractional_arctan.wl
-wolframscript -file validation/wolfram/cases/
-  chua_fractional_arctan_c590.wl
-\end{verbatim}
-En una terminal, cada instrucción se ejecuta en una sola línea. La variable
-de entorno \verb|WOLFRAM_OUT| permite elegir el directorio de salida. Cada
-ejecución produce un resumen JSON, tablas CSV de equilibrios, jacobianos y
-valores propios, y los datos de las ramas armónicas cuando corresponden.
+La expansión
+\[
+ E_q(\lambda h^q)=1+\frac{\lambda h^q}{\Gamma(1+q)}+O(h^{2q})
+\]
+permite comparar dos evoluciones de duración \(h\). Para \(0<q<1\) y
+\(\lambda\ne0\),
+\[
+ E_q\bigl(\lambda(2h)^q\bigr)-E_q(\lambda h^q)^2
+ =\frac{\lambda(2^q-2)}{\Gamma(1+q)}h^q+O(h^{2q}).
+\]
+El coeficiente principal es distinto de cero, pues \(2^q<2\). Por tanto,
+la diferencia no se anula para todo \(h>0\) suficientemente pequeño y la ley
+de semigrupo puntual falla. Una evaluación concreta ilustra su magnitud.
 
-\subsection{Verificación geométrica, topológica y de memoria}
-
-La extensión geométrico--topológica y de memoria se auditó además mediante
-\codepath{wolfram/topologia_geometria_hidden_validation.wl}. La salida completa
-y legible se conserva en
-\codepath{wolfram/topologia_geometria_hidden_validation.txt}. La ejecución
-terminó con 50 comprobaciones aprobadas y ninguna fallida.
-
-En particular, para
+Para
 \[
  q=\frac45,\qquad \lambda=-\frac45,\qquad
  t=\frac35,\qquad s=\frac7{10},
@@ -106,21 +69,37 @@ se obtuvo
  &=
  0.3209479300285948495\ldots,
 \end{align}
-con residuo \(0.0702402769356228901\ldots\). Esto valida el
-contraejemplo algebraico a un semigrupo temporal sobre el estado puntual. El
-control \(q=1\) devolvió residuo simbólico cero. De forma independiente, el
-programa verificó
+con residuo \(0.0702402769356228901\ldots\). Por tanto, la solución de Mittag--Leffler no satisface la ley de semigrupo
+temporal sobre el estado puntual. Para \(q=1\), la identidad exponencial
+restablece dicha ley. En cambio, la integral fraccionaria satisface
 \[
  I^\beta I^\alpha t^\mu=I^{\alpha+\beta}t^\mu
 \]
-con residuo simbólico cero, mostrando que la propiedad de composición en el
-\emph{orden del operador} no es la ley temporal que falla al borrar memoria.
+para \(\alpha,\beta>0\) y \(\mu>-1\), con terminal inferior cero. En efecto,
+el cambio \(s=tu\) y la integral beta dan
+\begin{align*}
+ I^\alpha t^\mu
+ &=\frac{t^{\mu+\alpha}}{\Gamma(\alpha)}
+   \int_0^1(1-u)^{\alpha-1}u^\mu\,\mathrm du
+ =\frac{\Gamma(\mu+1)}{\Gamma(\mu+\alpha+1)}t^{\mu+\alpha},\\
+ I^\beta I^\alpha t^\mu
+ &=\frac{\Gamma(\mu+1)}{\Gamma(\mu+\alpha+1)}
+   \frac{\Gamma(\mu+\alpha+1)}{\Gamma(\mu+\alpha+\beta+1)}
+   t^{\mu+\alpha+\beta}
+ =I^{\alpha+\beta}t^\mu.
+\end{align*}
+Esta composición se refiere al
+\emph{orden del operador}; no expresa evolución temporal.
 
-La expansión escalar de Mittag--Leffler coincidió exactamente con los dos
-primeros términos de Picard--Caputo hasta \(h^{2q}\); al refinar
-\(h=1/10,1/20,1/40,1/80\), el error dividido por \(h^{3q}\) convergió hacia el
-coeficiente teórico de tercer orden. Para la geometría entera también se
-reconstruyeron los jacobianos desde los campos y se obtuvieron:
+En el campo escalar \(f(x)=\lambda x\), las dos primeras iteraciones de
+Picard--Caputo producen
+\(x_0[1+\lambda h^q/\Gamma(1+q)+\lambda^2h^{2q}/\Gamma(1+2q)]\).
+Al restarlas de la solución \(x_0E_q(\lambda h^q)\) y dividir por
+\(h^{3q}\), el límite es \(x_0\lambda^3/\Gamma(1+3q)\), directamente de
+la serie. El refinamiento \(h=1/10,1/20,1/40,1/80\) reproduce ese límite.
+
+En geometría entera, un equilibrio no degenerado \(e\) tiene índice
+\(\operatorname{sgn}\det J_f(e)\). Los valores de los casos considerados son:
 \begin{center}
 \begin{tabular}{@{}lll@{}}
 \toprule
@@ -137,20 +116,26 @@ PLL & \(2758.72946512,-2758.72946512\) & \((1,-1)\)\\
 Estas comprobaciones determinan identidades, residuos e índices locales. Un
 certificado global de grado de Brouwer requeriría una región acotada y la
 ausencia de ceros en su frontera. Las trayectorias, cuencas, atractores,
-ocultedad, entropía y caos se evalúan mediante las campañas dinámicas y los
-teoremas funcionales citados en la \cref{sec:geometria-topologia-caputo}.
+ocultedad, entropía y caos requieren las campañas dinámicas y las hipótesis de
+atracción y perfiles admisibles de la \cref{sec:geometria-topologia-caputo}.
+En particular, la \cref{prop:geofo-full-space-obstruction} descarta la
+atracción de una vecindad abierta en todo el espacio de términos libres; una
+identidad simbólica no elimina esa obstrucción.
 
-\subsection{Comprobación del localizador geométrico--topológico propuesto}
+\subsection{Propiedades del localizador geométrico--topológico}
 
-La realización algebraica se reconstruyó directamente desde los campos, de
-manera independiente de las nubes numéricas. La misma cobertura está integrada al repositorio en
-\codepath{version_2/validation/wolfram/cases/
-geometric_topological_engine.wl}; allí genera un resumen JSON compatible con el
-ejecutor común y repite las 50 decisiones PASS/FAIL sin utilizar las tablas ni
-las conclusiones numéricas como datos de entrada. Además de la expansión
-Picard--Caputo y de las covariancias declaradas en
-\cref{sec:localizacion-geometrico-topologica}, la corrida verifica:
+La expansión de Picard--Caputo y las leyes de transformación de la
+\cref{sec:localizacion-geometrico-topologica} conducen a las siguientes
+propiedades:
 \begin{enumerate}
+ \item la covariancia de la curva de arranque transportada y, por separado,
+ el defecto al recalcular sus coeficientes a partir del campo transformado:
+ $(a_q-b_q)D^2g[F,F]$. El contraejemplo con $q=1/2$ produce
+ $(0,4-8/\pi)\ne0$, mientras la aceleración covariante de la curva transportada
+ es nula;
+ \item las identidades racionales de $\nabla V\cdot F$ y del resto no negativo
+ en la \cref{prop:geofo-lorenz-boundedness}. La comparación de Caputo y la
+ continuación global se justifican en la demostración de esa proposición;
  \item las superficies regionales de aceleración de Chua PWL;
  \item las superficies de aceleración de MAVPD y la inclusión de sus puntos
  perpetuos en la curva conectante;

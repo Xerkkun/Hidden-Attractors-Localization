@@ -1,10 +1,10 @@
 \section{Resultados}
 \label{sec:resultados}
 
-Los resultados se agrupan en reconstrucciones bibliográficas y casos obtenidos
-por la metodología propuesta. En el caso no suave se completa el primer radio
-con contactos. Para \texttt{c590} se distingue la partición local
-\(r\leq0.3\) de la evaluación macroscópica en \(r=1\) y \(r=2\).
+Las reconstrucciones bibliográficas proporcionan los controles para evaluar
+los casos localizados mediante la metodología propuesta. Los sondeos
+cuantifican el contacto con cada conjunto candidato a distintas distancias
+de los equilibrios.
 
 \subsection{Reconstrucciones bibliográficas}
 \label{subsec:resultados_bibliograficos}
@@ -86,10 +86,8 @@ Wu et al.
 \begin{hafocommonfigure}[H]
 \centering
 \includegraphics[width=0.96\linewidth]{bibliographic_reproducibility_controls_es}
-\caption{Controles de reproducibilidad. Los paneles de Danca y Wu muestran las
-trayectorias obtenidas con sus protocolos reconstruidos. La continuación no
-suave propuesta y el control con pendientes distintas se presentan como
-experimentos independientes y no como resultados de las referencias.}
+\caption{Trayectorias de los controles bibliográficos de Danca y Wu,
+de la continuación no suave propuesta y del control con pendientes distintas.}
 \label{fig:controles_bibliograficos}
 \end{hafocommonfigure}
 
@@ -141,19 +139,20 @@ historia de Caputo.}
 \end{hafocommonfigure}
 
 El problema autónomo iniciado en \cref{eq:resultado_endpoint_no_suave}
-produjo el conjunto postransitorio archivado para el caso no suave. Su parte
-postransitoria tuvo apariencia periódica, frecuencia dominante
+produjo una trayectoria postransitoria de apariencia periódica, con frecuencia dominante
 \(0.3699815009\) y entropías
 \begin{equation}
 (H_x,H_y,H_z)
 =(0.11526785,\ 0.10497088,\ 0.10339964).
 \label{eq:entropias_no_suave}
 \end{equation}
-En conjunto, estos diagnósticos lo clasifican como un régimen regular de
-apariencia periódica, no como un atractor caótico.
-Las 36 perturbaciones alrededor de \(X_{\mathrm{end}}\) hicieron contacto con
-la nube objetivo: 12 de 12 para cada radio \(10^{-6}\), \(10^{-4}\) y
-\(10^{-2}\).
+Los diagnósticos indican un régimen regular de apariencia periódica.
+Las 36 perturbaciones alrededor de \(X_{\mathrm{end}}\), integradas con ABM,
+\(h=0.01\) y memoria completa, hicieron contacto con la nube objetivo: 12 de
+12 para cada radio \(10^{-6}\), \(10^{-4}\) y \(10^{-2}\). Son pruebas de
+robustez respecto de la condición inicial a paso fijo. La convergencia de ese
+control respecto de \(h\) requiere la comparación descrita en
+\cref{sec:control_numerico}.
 
 \begin{hafocommonfigure}[H]
 \centering
@@ -306,16 +305,37 @@ X_0^{\mathrm{int}}
 \label{eq:resultado_semilla_entera_c590}
 \end{equation}
 
-Los parámetros finales son los de \cref{eq:parametros_c590}. Sus equilibrios
-son
+Los parámetros finales son los de \cref{eq:parametros_c590}. Para hallar los
+equilibrios se resuelven primero las dos últimas ecuaciones:
+\[
+ x-y+z=0,\qquad \beta y+\gamma z=0
+ \quad\Longrightarrow\quad
+ y=\frac{\gamma x}{\beta+\gamma},\qquad
+ z=-\frac{\beta x}{\beta+\gamma}.
+\]
+Al sustituir en la primera y usar
+\(h(x)=a_1x+a_2\arctan(\rho x)\), queda la ecuación escalar impar
+\[
+ \left(a_1+\frac{\beta}{\beta+\gamma}\right)x
+           +a_2\arctan(\rho x)=0.
+\]
+El origen es una raíz; las raíces no nulas aparecen por pares de signos
+opuestos. Su evaluación para los parámetros seleccionados da
 \begin{equation}
 E_0=(0,0,0),\qquad
 E_\pm=(\pm4.6494055135,\ \pm0.0017970023,\ \mp4.6476085112).
 \label{eq:equilibrios_c590_resultados}
 \end{equation}
-El criterio de Matignon clasificó \(E_0\) como inestable y \(E_\pm\) como
-estables; el margen de los equilibrios externos fue
-\(7.42265\times10^{-4}\).
+Para aplicar el criterio de Matignon se evalúa el Jacobiano en cada punto y
+se calcula el margen angular
+\[
+ m_q(E)=\min_{\lambda\in\sigma(DF(E))}
+        \left(|\operatorname{Arg}\lambda|-\frac{q\pi}{2}\right).
+\]
+Un margen positivo coloca todos los autovalores fuera del sector de
+inestabilidad; un autovalor estrictamente dentro de ese sector da margen
+negativo. El cálculo clasificó \(E_0\) como inestable y \(E_\pm\) como
+estables, con margen \(7.42265\times10^{-4}\) para los equilibrios externos.
 
 El refinamiento seleccionó \(q=0.9999\) y el estado de índice 9, extraído en
 \(t\simeq240\):
@@ -373,7 +393,11 @@ postransitorio declarado.
 \ifHAFOBasinMaterial
 \subsubsection{Sondeo superficial}
 
-El registro canónico reúne 13\,500 trayectorias: 8\,400 en la partición local
+El número de trayectorias se obtiene multiplicando por los tres equilibrios
+las muestras de cada radio. El bloque local contiene
+\(3(100+200+300+400+500+600+700)=8\,400\) sondas; los radios \(1\) y \(2\)
+añaden \(3\cdot800=2\,400\) y \(3\cdot900=2\,700\), respectivamente.
+El sondeo reúne 13\,500 trayectorias: 8\,400 en la partición local
 \(r\leq0.3\) y 5\,100 en la evaluación macroscópica \(r\in\{1,2\}\). El primer
 contacto se observó en \(r=1\), pero se retuvo \(r=2\) como bloque adicional.
 La \cref{tab:sondeo_c590_completo} contiene todos los conteos del experimento

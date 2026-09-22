@@ -2,20 +2,16 @@
 {Piloto dinámico geométrico--topológico: PLL, MAVPD y Wu}
 \label{sec:resultados-piloto-gt}
 
-La campaña B0--B2 preregistrada en la
-\cref{sec:campana-gt} integró el PLL lead--lag y el MAVPD con $q=1$, y
-el Chua arctangente de Wu con $q=0.99$, bajo los presupuestos B0--B2. El banco
-contiene 24 registros de semilla; se conservaron 90 trayectorias y 12 registros
-de evaluación de borde. Las 90 integraciones terminaron con estado numérico
-\texttt{ok}. Este conteo no equivale a 90 atractores: una misma semilla se
-repite por presupuesto y solucionador, y cada clasificación sigue siendo una
-observación a tiempo y resolución finitos.
+La campaña B0--B2 de \cref{sec:campana-gt} integró el PLL lead--lag y el
+MAVPD con \(q=1\), y el Chua arctangente de Wu con \(q=0.99\). El banco de
+24 semillas produjo 90 trayectorias y 12 evaluaciones de borde al combinar
+presupuestos y solucionadores. Todas las integraciones finalizaron sin fallos
+numéricos.
 
-El máximo alcanzado por caso fue EV--TG3 para el PLL y EV--TG2 para MAVPD y
-Wu. En el PLL sólo la ruta $p_+$ alcanzó EV--TG3; las demás semillas conservan
-su propio nivel inferior. No se obtuvo EV--TG4, no se ejecutó TG7 y no se
-establece atracción global, ocultedad global, propiedad de Wada, bloque
-aislante ni índice de Conley.
+La ruta \(p_+\) del PLL alcanzó EV--TG3. Las restantes rutas del PLL, MAVPD
+y Wu permanecieron en EV--TG2 o por debajo, según los criterios detallados en
+\cref{subsec:pilot-gates}. Quedaron pendientes la resolución del borde
+EV--TG4 y la validación topológica TG7.
 
 \begin{hafocommonfigure}
 \begin{center}
@@ -193,17 +189,26 @@ Al multiplicar por el Jacobiano,
  \left[F_x+\frac{\tau_2}{2}\cos\theta F_\theta\right].
  \label{pilot:eq-pll-acceleration}
 \end{equation}
-Sumar las dos ecuaciones lineales en $F_x$ muestra que, si $F\ne0$, debe
-cumplirse $\cos\theta=0$; equivalentemente,
-$\det J=L\cos\theta/(2T)=0$. Sustituyendo
+Imponer \(A_x=A_\theta=0\) equivale a
+\[
+ F_x=\frac{\tau_1}{2}\cos\theta F_\theta,
+ \qquad F_x=-\frac{\tau_2}{2}\cos\theta F_\theta.
+\]
+Igualar los lados derechos da \(T\cos\theta F_\theta/2=0\). Si
+\(F_\theta=0\), ambas ecuaciones obligan a \(F_x=0\) y el punto es un
+equilibrio. En un PP, por tanto, \(F_\theta\ne0\), \(\cos\theta=0\) y
+\(F_x=0\). La misma condición se refleja en
+\(\det J=L\cos\theta/(2T)=0\). Sustituyendo
 $\theta=\pi/2,3\pi/2$ en $A=0$ se obtienen
 \begin{equation}
  p_1=(\tau_1/2,\pi/2),\qquad
  p_2=(-\tau_1/2,3\pi/2),
  \label{pilot:eq-pll-pp-original}
 \end{equation}
-si $\omega_\Delta\mp L/2\ne0$. Wolfram anuló exactamente ambos vectores
-$A(p_i)$. En la carta usada para integrar,
+En esos puntos, \(F(p_1)=(0,\omega_\Delta-L/2)\) y
+\(F(p_2)=(0,\omega_\Delta+L/2)\); son PP cuando la segunda componente
+respectiva es distinta de cero. Sustituir \(F_x=0\) y \(\cos\theta=0\) en
+\eqref{pilot:eq-pll-acceleration} anula exactamente ambos vectores \(A(p_i)\). En la carta usada para integrar,
 $u=x-x_e$, $v=\theta-\theta_e$, con
 $(x_e,\theta_e)=(0.01602944,0.7974826998815102)$, las semillas fueron
 \begin{equation}
@@ -236,7 +241,9 @@ $(\gamma-3u^2)F_1=0$. La rama $F_1=0$ es estacionaria; en la rama PP,
  u_*^2=\frac\gamma3,\qquad
  \delta\left(\frac{2\gamma u_*}{3}+v_*\right)=\rho v_*.
 \end{equation}
-Por tanto,
+Bajo \(\gamma>0\), \(\delta,\rho>0\) y \(\rho\ne\delta\), despejar la
+segunda ecuación da \((\rho-\delta)v_*=2\delta\gamma u_*/3\). La condición
+\(F_2=0\) da \(w_*=u_*-\xi v_*\). Por tanto,
 \begin{equation}
  u_*=\pm\sqrt{\frac\gamma3},\qquad
  v_*=\frac{2\delta\gamma u_*}{3(\rho-\delta)},
@@ -267,7 +274,12 @@ se obtiene, sin invocar una regla de cadena fraccionaria,
  A_2=F_1-F_2+F_3,\quad A_3=-\beta F_2-\gamma F_3.
  \label{pilot:eq-wu-JF}
 \end{equation}
-Además,
+El determinante se expande por la primera fila:
+\[
+ \det J=-\alpha(1+h')(\beta+\gamma)+\alpha\gamma
+       =-\alpha[\beta+(\beta+\gamma)h'].
+\]
+En particular,
 \begin{equation}
  \det J(x)=-\alpha\{\beta+(\beta+\gamma)h'(x)\}.
  \label{pilot:eq-wu-detJ}
@@ -281,8 +293,23 @@ $p=h'(x_*)=-\beta/(\beta+\gamma)$ y
  \right].
  \label{pilot:eq-wu-xstar}
 \end{equation}
-Definiendo $U=F_1$, las ecuaciones $A_1=A_2=0$ dan
-$F_2=(1+p)U$ y $F_3=pU$. Al sustituir las definiciones de $F_i$,
+Esta raíz requiere \(\rho\ne0\), \(p-a_1\ne0\) y un radicando no
+negativo. Se obtiene al despejar
+\(1+\rho^2x_*^2=a_2\rho/(p-a_1)\) en
+\(h'(x_*)=a_1+a_2\rho/(1+\rho^2x_*^2)=p\).
+Definiendo \(U=F_1\), las ecuaciones \(A_1=A_2=0\) dan
+\(F_2=(1+p)U\), \(F_3=pU\). Las definiciones de \(F_1,F_2\) permiten
+escribir
+\[
+ y_*=x_*+h(x_*)+U/\alpha,\qquad
+ z_*=h(x_*)+(1+p)U+U/\alpha.
+\]
+Sustituirlas en \(F_3=-\beta y_*-\gamma z_*=pU\) produce
+\[
+ -\beta x_*-(\beta+\gamma)h(x_*)
+ =\left[p+\gamma(1+p)+\frac{\beta+\gamma}{\alpha}\right]U.
+\]
+Si el coeficiente de \(U\) es distinto de cero, se obtiene
 \begin{equation}
  U=-\frac{\beta x_*+(\beta+\gamma)h(x_*)}
  {\gamma+(1+\gamma)p+(\beta+\gamma)/\alpha},
@@ -292,7 +319,7 @@ $F_2=(1+p)U$ y $F_3=pU$. Al sustituir las definiciones de $F_i$,
  z_*=h(x_*)+(1+p)U+\frac U\alpha.
  \label{pilot:eq-wu-pp-solution}
 \end{equation}
-Así se recupera el par validado por Wolfram
+La evaluación de estas expresiones da el par
 \begin{equation}
  \begin{aligned}
  p_\pm={}&\pm(0.3369817810952545,
@@ -302,12 +329,29 @@ Así se recupera el par validado por Wolfram
  \end{aligned}
  \label{pilot:eq-wu-fppa-numeric}
 \end{equation}
-con residuo $\lVert J(p_\pm)F(p_\pm)\rVert=0$ a 68 dígitos de precisión
-registrada y determinante nulo a 68 dígitos.
+con residuo $\lVert J(p_\pm)F(p_\pm)\rVert$ y determinante numéricamente
+nulos a 68 dígitos de precisión.
 
-La razón para llamarlas FPP--A en Caputo no es que
-${}^{\mathrm C}D^q({}^{\mathrm C}D^qX)=0$. Desde Volterra y una iteración de
-Picard,
+Para interpretar estas raíces en Caputo, supóngase \(F\in C^2\) cerca de
+\(X_0\), con derivadas acotadas, y escríbase \(F_0=F(X_0)\),
+\(J_0=DF(X_0)\). La forma de Volterra y el acotamiento local del campo dan
+\(X(t_0+s)-X_0=O(s^q)\). La primera sustitución produce
+\[
+ X(t_0+s)-X_0=\frac{s^q}{\Gamma(q+1)}F_0+O(s^{2q}),
+\]
+y el desarrollo de Taylor del campo da
+\[
+ F(X(t_0+s))=F_0+
+ \frac{s^q}{\Gamma(q+1)}J_0F_0+O(s^{2q}).
+\]
+Al integrar cada término contra el núcleo de Volterra,
+\[
+ \frac1{\Gamma(q)\Gamma(q+1)}
+ \int_0^h(h-s)^{q-1}s^q\,\dd s
+ =\frac{h^{2q}}{\Gamma(2q+1)},
+\]
+por la identidad beta de \cref{camp:eq-fractional-convolution}; el resto
+\(O(s^{2q})\) integra a \(O(h^{3q})\). En consecuencia,
 \begin{equation}
  X(t_0+h)=X_0+
  \frac{h^q}{\Gamma(q+1)}F_0+
@@ -317,13 +361,13 @@ Picard,
 Por tanto $J_0F_0=0$ cancela el primer término de curvatura del arranque. El
 conjunto espacial de raíces coincide con el conjunto PP de la ODE asociada y
 es independiente de $q$; los pesos temporales y la evolución causal sí dependen
-de $q$. No se afirma que una FPP--A sea una aceleración global nula ni un evento
-FPP--H dependiente de historia.
+de $q$. Esta cancelación local se distingue de la aceleración fraccionaria
+y de los eventos FPP--H dependientes de la historia.
 
 \subsection{Criterios de asignación de evidencia}
 \label{subsec:pilot-gates}
 
-Cada corrida debía permanecer finita y dentro del radio declarado para obtener
+Cada integración debía permanecer finita y dentro del radio declarado para obtener
 EV--TG2. Para una semilla individual, la asignación EV--TG3 exigió
 simultáneamente:
 \begin{enumerate}
@@ -332,8 +376,8 @@ simultáneamente:
  \item diferencia relativa de observables no mayor que $5\%$;
  \item persistencia del destino y de los observables entre B1 y B2.
 \end{enumerate}
-El nivel informado para un caso es el máximo alcanzado por una ruta
-preregistrada; no eleva automáticamente las demás semillas. EV--TG4 requería,
+El nivel de cada caso es el máximo alcanzado por sus rutas; cada semilla
+conserva su clasificación individual. EV--TG4 requería,
 además, sondeo completo de vecindades, tres brackets dinámicos no colineales y
 una trayectoria de borde coevolucionada y reencuadrada. Ninguno de esos tres
 requisitos se completó.
@@ -356,7 +400,7 @@ ciclo y del separador también quedaron transitorias bajo los horizontes físico
 de esta normalización.
 
 \ifHAFOBasinMaterial
-El bracket preregistrado alrededor de
+El intervalo inicial de borde alrededor de
 $(-0.0104934812033,-0.7974826998815)$ tenía extremos separados por
 $2\,10^{-5}$ en $u$, es decir anchura cilíndrica escalada
 $8.928571\,10^{-4}$. Como ambos extremos siguieron sin destino terminal en B1,
@@ -508,36 +552,31 @@ DudkowskiPrasadKapitaniak2018}. & Derivación y comparación homogénea con DF,
 destinos de referencia y presupuestos B0--B2 en PLL y MAVPD.\\
 Curvas y superficies & Superficies críticas y curvas conectantes
 \cite{GilmoreEtAl2010Connecting,GuanXie2021Connecting}. & Integración de esas
-semillas con un banco trazable y criterios de evidencia.\\
+semillas con un banco común de semillas y criterios de convergencia.\\
 FPP--A & Volterra y expansión Picard de Caputo; ABM causal
-\cite{DiethelmFordFreed2002}. & Formulación evaluada: interpretar $JF=0$ como
-cancelación del coeficiente $h^{2q}$ y probarla como semilla de reinicio, sin
-llamarla aceleración fraccionaria global.\\
+\cite{DiethelmFordFreed2002}. & Cancelación del coeficiente $h^{2q}$ al imponer $JF=0$ y evaluación de las
+raíces como semillas de reinicio.\\
 Memoria & La dinámica Caputo requiere declarar terminal e historia
 \cite{CongTuan2017Nonlocal,DoanKloeden2021Semidynamical}. & Comparación ABM y
 EFORK--3 con el mismo $t_0$, reset y memoria completa, separada de las semillas
 ADM publicadas.\\
 Escala $\tau_*$ & Análisis dimensional y escalas espectrales estándar. & Regla
-operativa \eqref{pilot:eq-tau-star}, congelada antes de clasificar, que hace
-comparables B0--B2 entre tres familias muy distintas. Es protocolo, no
-invariante dinámico.\\
+\eqref{pilot:eq-tau-star}, fijada antes de clasificar, para comparar los
+presupuestos B0--B2 entre familias.\\
 Niveles EV--TG & Diagnósticos numéricos y bisección de borde son técnicas
 existentes. & Regla conservadora que impide convertir trayectoria, etiqueta o
 bisección inicial en prueba de ocultedad o certificado topológico.\\
 \bottomrule
 \end{longtable}
 
-Las magnitudes reportadas proceden de la campaña local. Los modelos y métodos
-componentes proceden de las referencias citadas; el elemento específico
-evaluado es la ruta FPP--A basada en
-\eqref{pilot:eq-wu-picard-expansion}, cuyo alcance observado en Wu es EV--TG2.
+La expansión \eqref{pilot:eq-wu-picard-expansion} sustenta la selección de
+semillas FPP--A; su evaluación dinámica en Wu alcanza EV--TG2.
 
-\subsection{Trabajo pendiente para ampliar el nivel de evidencia}
+\subsection{Ampliación de la campaña}
 
-Las tareas pendientes son:
 \begin{enumerate}
  \item ampliar el PLL hasta resolver los dos extremos antes de reiniciar el
- edge tracking;
+ seguimiento de borde;
  \item estratificar las tres cuencas encontradas en MAVPD y construir al menos
  tres brackets no colineales;
  \item repetir Wu con $h,h/2,h/4$, una ventana común más larga y un tercer

@@ -17,10 +17,7 @@ trayectoria postransitoria de apariencia periódica. La ruta propuesta para el
 mismo sistema físico construye su propia semilla sesgada, la transporta con
 memoria de Caputo y también alcanza un conjunto atrayente de apariencia
 periódica, con una frecuencia dominante próxima a la del control
-bibliográfico. Ambos cálculos son experimentos independientes: uno reconstruye
-el protocolo publicado y el otro evalúa la metodología
-propuesta. El conjunto de la ruta propuesta es regular y de apariencia
-periódica; los diagnósticos aplicados no lo clasifican como caótico. La
+bibliográfico. Los diagnósticos de ambos cálculos indican un régimen regular. La
 comparación adicional con
 \((m_0,m_1)=(-0.2,-1.2)\) produce contactos desde vecindades de los
 equilibrios externos y confirma que el clasificador distingue un conjunto
@@ -51,15 +48,12 @@ en este último bloque. El primer contacto aparece en \(r=1\); \(r=2\) es una
 evaluación macroscópica adicional y no amplía el dominio local sin contactos.
 \fi
 
-Cada decisión sigue una regla reproducible. En el caso no suave, la función
-descriptiva sesgada, el residuo del cierre armónico, la construcción modal y
-la continuación causal determinan la semilla. En el caso con arctangente, el
-dominio de exploración, la puntuación, la criba dinámica y el refinamiento
-fraccionario determinan los parámetros y la condición inicial. Finalmente,
-los radios, las cantidades de muestras, las semillas pseudoaleatorias, el
-integrador y el clasificador quedan fijados antes del sondeo. Así, la
-localización de la semilla y la clasificación de su cuenca se pueden revisar
-por separado y repetir con el mismo protocolo numérico.
+La función descriptiva sesgada determina la semilla no suave mediante el
+cierre armónico, la construcción modal y la continuación causal. En el caso
+con arctangente, la exploración paramétrica y el refinamiento fraccionario
+seleccionan la condición inicial. La evaluación posterior de cuenca emplea
+radios, muestras y tolerancias previamente fijados; su alcance depende de
+estos parámetros y del horizonte de integración.
 
 \section{Conclusiones}
 \label{sec:conclusiones}
@@ -74,19 +68,32 @@ refinamiento mediante problemas de Caputo determinan el caso
 \texttt{c590}. La formulación contiene como límite el procedimiento de
 Leonov--Kuznetsov cuando \(q=1\).
 
-Las reconstrucciones de Danca y Wu proporcionaron los controles
-bibliográficos, mientras que las dos rutas propuestas produjeron,
-respectivamente, un conjunto postransitorio regular de apariencia periódica,
-que no se clasifica como caótico, y uno aperiódico.
+Las reconstrucciones de Danca y Wu proporcionan controles bibliográficos
+regulares. Las rutas propuestas producen, respectivamente, una trayectoria
+postransitoria de apariencia periódica y otra aperiódica. En el caso no
+suave, las perturbaciones de la condición inicial a paso fijo confirman
+contacto con la nube objetivo; queda pendiente el refinamiento temporal
+especificado en \cref{sec:control_numerico}.
 \ifHAFOBasinMaterial
-Para el sistema no suave,
-las \(7\,200\) sondas sin contactos ni fallos sustentan compatibilidad con
-ocultedad únicamente bajo el protocolo local \(r\leq0.01\); la extensión
-macroscópica registra \(0/6\,600\) contactos en \(r=0.03,0.1\) y
-\(37/3\,600\) en \(r=0.3\), sin ampliar esa afirmación local. Para
-\texttt{c590}, \(0/8\,400\) contactos hasta \(r=0.3\), \(22/2\,400\) en
-\(r=1\) y \(588/2\,700\) en \(r=2\), con 131 divergencias en este último,
-delimitan el acceso bajo el sondeo superficial declarado. La ausencia de
-contactos hasta \(r=0.3\) es una conclusión limitada a la muestra finita y no
-demuestra separación global de la cuenca.
+Los sondeos delimitan regiones muestreadas sin contacto y detectan acceso a
+las nubes candidatas al aumentar el radio. La compatibilidad con ocultedad
+es local y depende del protocolo finito; la separación de cuencas en un
+continuo de condiciones iniciales requiere un argumento adicional.
 \fi
+
+Los sistemas enteros no Chua amplían la evaluación a Kalman--Fitts, MAVPD y
+PLL. El mapa de conmutación, la continuación paramétrica y el retorno
+cilíndrico permiten localizar conjuntos en modelos con obstrucciones
+diferentes al balance armónico directo. La cobertura de sistemas
+fraccionarios no Chua es todavía parcial y requiere los controles de
+convergencia y cuenca indicados en \cref{sec:cobertura-cuatro-familias}.
+
+Los PP exactos de PLL y MAVPD proporcionan semillas geométricas; los criterios
+de ausencia de PP en modelos de tipo jerk delimitan las hipótesis bajo las
+cuales ese recurso está disponible. Su condición algebraica no determina el
+destino de la trayectoria. La utilidad topológica reside en complementar la
+localización con un argumento sobre las cuencas: el ejemplo de
+\cref{subsec:guide-hidden-cycle-topology} separa la existencia del ciclo de la
+exclusión de vecindades de equilibrio. Esta distinción establece las
+condiciones necesarias para convertir un candidato localizado en un
+resultado de ocultedad.

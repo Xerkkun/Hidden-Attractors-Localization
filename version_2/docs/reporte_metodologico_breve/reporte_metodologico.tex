@@ -1,0 +1,81 @@
+\documentclass[journal,10pt,letterpaper]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla,es-nodecimaldot,es-noshorthands]{babel}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{graphicx,booktabs,array,tabularx,multirow}
+\usepackage{enumitem,microtype,stfloats,placeins}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit}
+\usepackage{cite}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={Metodología para la localización y evaluación de atractores ocultos en sistemas enteros y fraccionarios},pdfauthor={María Fernanda Moreno-López},pdfsubject={Balance armónico, puntos perpetuos, integración de Caputo y cuencas de atracción}}
+\graphicspath{{figuras/}}
+\setlength{\headheight}{13pt}
+\setlength{\headsep}{12pt}
+\setlength{\columnsep}{0.24in}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\footnotesize Metodología de localización y evaluación de atractores ocultos}
+\fancyfoot[C]{\footnotesize\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\fancypagestyle{IEEEtitlepagestyle}{\fancyhf{}\fancyfoot[C]{\footnotesize\thepage}\renewcommand{\headrulewidth}{0pt}}
+\raggedbottom
+\emergencystretch=0.5em
+\newcommand{\R}{\mathbb R}
+\newcommand{\C}{\mathbb C}
+\newcommand{\dd}{\,\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\T}{\mathsf T}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\Caputo}[1]{{}^{\mathrm C}D_{t_0}^{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newtheorem{proposition}{Proposición}[section]
+\newtheorem{definition}[proposition]{Definición}
+\newtheorem{remark}[proposition]{Observación}
+\renewcommand{\proofname}{Demostración}
+\renewcommand{\IEEEkeywordsname}{Palabras clave}
+\setlist[enumerate]{leftmargin=*,itemsep=2pt,topsep=3pt}
+\setlist[itemize]{leftmargin=*,itemsep=2pt,topsep=3pt}
+\title{Metodología para la localización y evaluación de atractores ocultos en sistemas enteros y fraccionarios}
+\author{María Fernanda Moreno-López}
+\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+La localización de un atractor oculto requiere construir condiciones iniciales
+fuera de las regiones accesibles mediante perturbaciones de los equilibrios
+y distinguir la atracción de la recurrencia observada a tiempo finito.
+Se desarrolla un procedimiento que combina análisis algebraico del campo,
+balance armónico, puntos perpetuos, continuación e integración numérica.
+Las ecuaciones de Caputo se formulan mediante integrales de Volterra, con
+terminal inferior y memoria explícitos. Se justifican las condiciones de
+estabilidad, los procedimientos de generación de semillas, la discretización
+y los criterios de comparación dinámica. El análisis geométrico y topológico
+precisa el papel de las separatrices, los retornos y los conjuntos invariantes.
+Los resultados comprenden sistemas tipo Chua y no Chua de orden entero y
+fraccionario, con trayectorias, indicadores numéricos y sondeos de cuenca.
+Las demostraciones de existencia o acotación se distinguen de los resultados
+de localización y de las clasificaciones sustentadas en muestras finitas.
+\end{abstract}
+\begin{IEEEkeywords}
+Atractores ocultos, derivada de Caputo, función descriptiva, puntos perpetuos,
+continuación numérica, cuencas de atracción.
+\end{IEEEkeywords}
+\input{secciones/01_fundamentos_procedimiento}
+\input{secciones/02_balance_semillas}
+\input{secciones/04_puntos_topologia}
+\input{secciones/03_integracion_validacion}
+\input{secciones/03b_diagnosticos}
+\input{secciones/05_resultados}
+\input{secciones/05b_cuencas_continuacion}
+\FloatBarrier
+\input{secciones/06_sintesis}
+\clearpage
+\bibliographystyle{ieeetr}
+\bibliography{referencias}
+\end{document}

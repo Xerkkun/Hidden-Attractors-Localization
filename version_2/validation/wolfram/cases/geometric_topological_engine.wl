@@ -6,8 +6,9 @@
 
   Exact scope:
     A. Picard--Caputo startup coefficients through h^(2 q).
-    B. Reparameterized covariant acceleration and coordinate changes.
-    C. Equivariance of J_F F and the functional-to-restart implication.
+    B. Covariance of the transported startup two-jet; nonzero defect of
+       recomputing the Caputo coefficient from a nonlinearly pushed field.
+    C. Equivariance of J_F F and the conditional functional-to-restart logic.
     D. Exponential-kernel Markov lift and the q=1 endpoint.
     E. Case-by-case critical surfaces and PP/FPP residuals for Chua PWL,
        Chua arctan Wu/c590, MAVPD, Kalman--Fitts, PLL, generalized Lorenz,
@@ -130,18 +131,61 @@ aYCov0 = FullSimplify[aYOrd0 + gammaYvv];
 aXCov0 = 2 (j0 . f0)/Gamma[2 q + 1];
 aYCovTarget = FullSimplify[dg . aXCov0];
 covariantResidual = FullSimplify[aYCov0 - aYCovTarget];
-show["Covariant_fractional_startup_residual", covariantResidual];
-check["covariant startup acceleration transforms as a vector",
+show["Transported_startup_two_jet_covariant_residual", covariantResidual];
+check["transported startup two-jet acceleration transforms as a vector",
   covariantResidual === {0, 0}];
 check["q=1 recovers nabla_F F",
   FullSimplify[{2/Gamma[2 q + 1], 1/Gamma[q + 1]^2} /. q -> 1]
     === {1, 1}];
+
+(* Recomputing a fresh Caputo startup coefficient from fieldY is a different
+   operation from transporting curveXfrac.  Its defect must NOT be zero. *)
+recomputedCovariantY = FullSimplify[
+  2 ordinaryAccelerationY/Gamma[2 q + 1] +
+    {0, -2 c fieldY[[1]]^2/Gamma[q + 1]^2}];
+transportedPhysicalCoefficientY = FullSimplify[
+  (dg . (2 (jfieldX . fieldX)/Gamma[2 q + 1])) /.
+    Thread[xvars -> ginverse]];
+recomputedDefectY = FullSimplify[
+  recomputedCovariantY - transportedPhysicalCoefficientY];
+recomputedDefectTarget = FullSimplify[
+  (2/Gamma[2 q + 1] - 1/Gamma[q + 1]^2) hessianTermX /.
+    Thread[xvars -> ginverse]];
+show["Recomputed_Caputo_coefficient_defect", recomputedDefectY];
+check["recomputed field formula has (a_q-b_q) Hess(g)[F,F] defect",
+  FullSimplify[recomputedDefectY - recomputedDefectTarget] === {0, 0}];
+check["recomputed coefficient defect vanishes for affine charts",
+  FullSimplify[recomputedDefectY /. c -> 0] === {0, 0}];
+check["recomputed coefficient defect vanishes at q=1",
+  FullSimplify[recomputedDefectY /. q -> 1] === {0, 0}];
+
+(* Explicit counterexample: F_x=(1,0), q=1/2, g=(x1,x2+x1^2).
+   The physical and transported covariant accelerations vanish, whereas
+   direct recomputation in y gives (0,4-8/Pi). *)
+exampleFieldY = FullSimplify[
+  (dg . {1, 0}) /. Thread[xvars -> ginverse] /. c -> 1];
+exampleRecomputed = FullSimplify[
+  2 (D[exampleFieldY, {yvars}] . exampleFieldY)/Gamma[2] +
+    {0, -2 exampleFieldY[[1]]^2/Gamma[3/2]^2}];
+exampleTransported = FullSimplify[aYCov0 /.
+  {f1 -> 1, f2 -> 0, j11 -> 0, j12 -> 0, j21 -> 0, j22 -> 0,
+   c -> 1, q -> 1/2}];
+show["Nonlinear_chart_counterexample_recomputed", exampleRecomputed];
+show["Nonlinear_chart_counterexample_transported", exampleTransported];
+check["q=1/2 nonlinear chart recomputation is nonzero (0,4-8/Pi)",
+  FullSimplify[exampleRecomputed - {0, 4 - 8/Pi}] === {0, 0} &&
+    TrueQ[FullSimplify[exampleRecomputed[[2]] > 0]]];
+check["same counterexample transported two-jet acceleration is zero",
+  exampleTransported === {0, 0}];
 
 (* ------------------------------------------------------------------ *)
 (* C. Equivariance and basin-logic implication.                       *)
 (* ------------------------------------------------------------------ *)
 emit[""];
 emit["[C] EQUIVARIANCE AND FUNCTIONAL-TO-RESTART LOGIC"];
+(* These tautologies assume an admissible profile space and the indicated
+   inclusion. They prove neither existence of such a space nor exclusion in
+   all C([0,infinity),R^n), where open attraction is obstructed. *)
 Clear[rBall, fBall, basin];
 functionalImpliesRestart = TautologyQ[
   Implies[Implies[rBall, fBall] && Implies[fBall, Not[basin]],
@@ -150,7 +194,7 @@ functionalImpliesRestart = TautologyQ[
 restartDoesNotImplyFunctional = Not@TautologyQ[
   Implies[Implies[rBall, Not[basin]], Implies[fBall, Not[basin]]],
   {rBall, fBall, basin}];
-check["functional ball exclusion implies restart-slice exclusion",
+check["conditional admissible-profile exclusion implies restart exclusion",
   functionalImpliesRestart];
 check["restart exclusion does not imply functional exclusion",
   restartDoesNotImplyFunctional];
@@ -333,6 +377,18 @@ lField = {-sigL (lx - ly) - aL ly lz, rL lx - ly - lx lz,
   -lz + lx ly};
 lJ = D[lField, {lVars}]; lDet = Factor[Det[lJ]];
 lRules = {sigL -> 17/5, rL -> 34/5, aL -> -1/2};
+(* Rational Lyapunov identities only: fractional convex composition,
+   comparison and continuation are mathematical arguments in the report. *)
+lLyapunov = lx^2 + ly^2 + (lz - 102/5)^2/2;
+lLyapunovDerivative = Expand[D[lLyapunov, {lVars}] . (lField /. lRules)];
+lLyapunovTarget = -34 lx^2/5 - 2 ly^2 - lz^2 + 102 lz/5;
+lLyapunovSlack = Expand[-lLyapunov + 5202/25 - lLyapunovDerivative];
+show["Generalized_Lorenz_Lyapunov_gradV_dot_F", lLyapunovDerivative];
+show["Generalized_Lorenz_Lyapunov_comparison_slack", lLyapunovSlack];
+check["Generalized Lorenz rational quadratic Lyapunov identity",
+  Expand[lLyapunovDerivative - lLyapunovTarget] === 0];
+check["Generalized Lorenz rational nonnegative comparison slack identity",
+  Expand[lLyapunovSlack - (29 lx^2/5 + ly^2 + lz^2/2)] === 0];
 equivarianceAudit["Generalized_Lorenz", lField, lVars,
   DiagonalMatrix[{-1, -1, 1}]];
 lStart = {-0.745966861002653`30, 12.66180451381419`30,

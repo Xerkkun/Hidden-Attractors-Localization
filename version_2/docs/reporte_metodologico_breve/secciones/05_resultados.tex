@@ -1,0 +1,1100 @@
+\section{Aplicaciones y resultados numéricos}
+\label{bre:res:section}
+
+Las aplicaciones distinguen la obtención de una raíz algebraica, la
+construcción de una condición inicial y la clasificación de la trayectoria
+resultante. El cierre armónico se evalúa mediante los residuos de la
+sección~\ref{bre:bal:sec}; las integraciones y los contactos se interpretan
+con los criterios de la sección~\ref{bre:num:seccion}. En las comparaciones
+fraccionarias, cada reinicio tiene terminal inferior \(t_0=0\) y memoria
+inicial nueva, salvo la continuación expresamente descrita con historia
+heredada. Las frecuencias espectrales se expresan en ciclos por unidad de
+tiempo; las frecuencias \(\omega\) del balance son angulares.
+Las raíces y magnitudes calculadas se muestran redondeadas; las identidades
+exactas corresponden a sus expresiones algebraicas. Los parámetros
+decimales declarados fijan el problema de cada ensayo.
+
+\subsection{Chua no suave de orden entero}
+\label{bre:res:chua-integer}
+
+Se considera el campo de Chua de \eqref{bre:bal:chua}, con
+\[
+ \begin{aligned}
+ (\alpha,\beta,\gamma)&=(8.4562,12.0732,0.0052),\\
+ (m_0,m_1)&=(-0.1768,-1.1468),\qquad q=1,
+ \end{aligned}
+\]
+y característica \(h(x)=m_1x+(m_0-m_1)\operatorname{sat}(x)\)
+\cite{LeonovKuznetsov2013}. Para \(\beta+\gamma\ne0\), las ecuaciones de
+equilibrio segunda y tercera se resuelven como
+\begin{equation}
+ y=\frac{\gamma x}{\beta+\gamma},\qquad
+ z=-\frac{\beta x}{\beta+\gamma},\qquad
+ h(x)+\frac{\beta x}{\beta+\gamma}=0.
+ \label{bre:res:chua-equilibrium-reduction}
+\end{equation}
+La última identidad se obtiene sustituyendo las primeras en
+\(y-x-h(x)=0\). Sean
+\(\kappa=m_1+\beta/(\beta+\gamma)\) y \(d=m_0-m_1\).
+En \(|x|\leq1\), queda \((\kappa+d)x=0\); como
+\(\kappa+d>0\), sólo se obtiene el origen. En \(|x|>1\),
+\(\kappa x+d\operatorname{sign}(x)=0\), por lo que
+\[
+ x=-\frac d\kappa\operatorname{sign}(x).
+\]
+Aquí \(\kappa<0\) y \(-d/\kappa>1\): hay exactamente dos raíces externas,
+una por signo, cuyas otras coordenadas da
+\eqref{bre:res:chua-equilibrium-reduction}. Ninguna está en un quiebre.
+Para una característica diferenciable en el equilibrio, con pendiente
+\(m=h'(x_e)\), el Jacobiano y su polinomio son
+\begin{equation}
+ \begin{gathered}
+ J_e=\begin{pmatrix}
+ -\alpha(1+m)&\alpha&0\\1&-1&1\\0&-\beta&-\gamma
+ \end{pmatrix},\\
+ p_e(s)=[s+\alpha(1+m)]D(s)-\alpha(s+\gamma),\\
+ D(s)=s^2+(1+\gamma)s+\beta+\gamma.
+ \end{gathered}
+ \label{bre:res:chua-jacobian}
+\end{equation}
+La expansión del determinante sigue \eqref{bre:bal:characteristic}; se usa
+\(m_0\) en el origen y \(m_1\) en los equilibrios externos. La misma
+matriz permite aplicar Matignon al cambiar el orden, sin cambiar los
+equilibrios del campo.
+
+La raíz de fase, la ganancia y la amplitud
+calculadas por \eqref{bre:bal:phase-polynomial} y
+\eqref{bre:bal:saturation-df} son
+\[
+ \begin{aligned}
+ \omega_0&=2.039186939959,\\
+ k&=0.209867354515,\qquad A_0=5.856145086252.
+ \end{aligned}
+\]
+La reconstrucción modal de \eqref{bre:bal:seed} produce
+\begin{equation}
+ X_0=\begin{pmatrix}
+ 5.856145086252\\0.369331578246\\-8.366536168324
+ \end{pmatrix}.
+ \label{bre:res:chua-integer-seed}
+\end{equation}
+Los residuos del cierre complejo y de la función descriptiva fueron,
+respectivamente, \(3.26\times10^{-15}\) y \(1.98\times10^{-13}\). Estas
+cifras verifican las ecuaciones usadas para generar la semilla; la
+continuación y los diagnósticos posteriores determinan su destino.
+Una búsqueda independiente por recurrencias, con 512 condiciones iniciales,
+identificó dos conjuntos recurrentes y 22 contactos. La fracción
+\(22/512=0.04296875\) se refiere al dominio y a la muestra elegidos.
+
+La comparación de vecindades empleó las mismas 504 coordenadas en dos
+integraciones independientes: tres equilibrios, siete radios entre
+\(10^{-5}\) y \(10^{-2}\), y 24 puntos uniformes en cada bola. El horizonte
+fue \(T=500\), con descarte inicial de 120; las tolerancias de clasificación
+fueron \(10^{-3}\) para equilibrio y \(0.08\) para la distancia normalizada
+a la nube. Coincidieron las 504 clases: 152 trayectorias hacia el origen,
+198 acotadas no triviales y 154 divergentes según el detector. Ninguna
+alcanzó la nube candidata. Los espectros de Lyapunov finitos fueron
+\[
+ \begin{aligned}
+ \widehat\lambda^{(1)}&=(0.14018,0.01319,-1.20304),\\
+ \widehat\lambda^{(2)}&=(0.14591,-0.00052,-1.17115).
+ \end{aligned}
+\]
+El exponente máximo positivo y la geometría de la
+Fig.~\ref{bre:res:fig-chua-integer} respaldan un candidato caótico bajo esas
+ventanas. La ausencia de contactos sólo establece compatibilidad con
+ocultedad en el sondeo finito.
+
+El control EFORK--3 de referencia utilizó un protocolo diferente:
+\(T=320\), descarte de 80, otras 504 coordenadas y un clasificador por huellas
+de sección. Produjo 369 convergencias a equilibrio, 69 divergencias y 66
+trayectorias hacia otro destino, también sin contactos. Estos conteos no se
+suman a los anteriores ni se interpretan como repeticiones del mismo ensayo.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.72\textwidth]{chua_entero.png}
+ \caption{Trayectoria candidata del Chua no suave entero, localizada mediante
+ semilla armónica y continuación. La representación corresponde a una ventana
+ postransitoria; la clasificación dinámica utiliza además exponentes y sondeos.}
+ \label{bre:res:fig-chua-integer}
+\end{figure*}
+
+\subsection{Chua de Caputo no suave: continuación de una semilla sesgada}
+\label{bre:res:chua-pwl}
+
+Se mantienen los cinco parámetros anteriores y se fija \(q=0.9998\).
+Como control, iniciar directamente el PVI de Caputo desde
+\eqref{bre:res:chua-integer-seed}, con ABM de memoria completa,
+\(h=0.01\), \(T=500\) y descarte de 250, produjo una respuesta acotada
+con frecuencia dominante \(0.3679852806\). Las medianas de la prueba 0--1
+fueron
+\[
+ \begin{aligned}
+ K_x&=0.0736852160,\qquad K_y=0.0214448125,\\
+ K_z&=-0.0012988924.
+ \end{aligned}
+\]
+Es una reconstrucción numérica relacionada con el caso de
+Danca~\cite{Danca2017}; la condición inicial se obtuvo por balance y no se
+atribuye a la fuente como dato publicado.
+
+La localización sesgada resolvió el cierre de
+\eqref{bre:bal:bias-closure}. Se ensayaron 2430 inicios y se seleccionó,
+en el par nominal de pendientes,
+\[
+ \begin{aligned}
+ A&=4.577882721023,&c&=2.776397003274,\\
+ \omega&=2.040286051079,&N_1&=0.210022792962,\\
+ \Psi_0&=0.408770376181.
+ \end{aligned}
+\]
+La integración trapezoidal periódica de los coeficientes utilizó 8192 nodos
+y dio un residuo de \(4.55\times10^{-16}\). Al reevaluar las integrales
+continuas con cuadratura adaptativa y separar los quiebres de la saturación,
+el residuo fue \(1.9\times10^{-7}\), menor que el umbral \(10^{-4}\). La
+segunda cifra controla la aproximación de las integrales, no sólo la
+resolución del sistema discretizado. La semilla y el extremo obtenido son
+\begin{equation}
+ \begin{aligned}
+ X_{\rm sem}&=\begin{pmatrix}
+ 7.354279724297\\0.290968778784\\-9.316054818666
+ \end{pmatrix},\\
+ X_{\rm end}&=\begin{pmatrix}
+ 0.822310709850\\1.465272703995\\1.292308250248
+ \end{pmatrix}.
+ \end{aligned}
+ \label{bre:res:pwl-seeds}
+\end{equation}
+La homotopía \eqref{bre:bal:homotopy} se integró en 21 niveles,
+\(\varepsilon_k=0.05k\), con \(h=0.01\) y 60 unidades por nivel. Cada nivel
+conservó 30 unidades después de su tramo inicial de ajuste. Las sumas de
+Caputo mantuvieron la historia desde el primer nivel, como exige
+\eqref{bre:num:continuacion-integral}; el tiempo total fue \(21\cdot60=1260\).
+La Fig.~\ref{bre:res:fig-pwl-continuation} muestra ese transporte.
+
+Desde \(X_{\rm end}\) se inició un PVI autónomo nuevo, con \(h=0.01\),
+\(T=300\) y descarte de 100. Su frecuencia dominante fue
+\(0.3699815009\), y sus entropías espectrales
+\((0.11526785,0.10497088,0.10339964)\). La respuesta tiene apariencia
+periódica en la ventana retenida, como muestra la
+Fig.~\ref{bre:res:fig-pwl-final}; no se afirma una solución periódica exacta
+del PVI de Caputo con terminal finito. Las 36 perturbaciones de
+\(X_{\rm end}\), doce para cada radio \(10^{-6},10^{-4},10^{-2}\),
+alcanzaron la nube objetivo con \(h=0.01\) y memoria completa. Este resultado
+mide sensibilidad al dato inicial a paso fijo. El refinamiento
+\(h,h/2,h/4\) de ese banco sigue pendiente.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.96\textwidth]{continuacion_caputo.pdf}
+ \caption{Continuación causal del Chua no suave, \(q=0.9998\).
+ Los 21 niveles de la homotopía comparten una sola historia. El estado final
+ se utiliza después para definir un PVI autónomo con memoria reiniciada.}
+ \label{bre:res:fig-pwl-continuation}
+\end{figure*}
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.96\textwidth]{chua_caputo_pwl.pdf}
+ \caption{Respuesta postransitoria desde \(X_{\rm end}\),
+ \(q=0.9998\), \(h=0.01\). La regularidad observada y los contactos desde
+ perturbaciones son resultados finitos; no establecen periodicidad exacta.}
+ \label{bre:res:fig-pwl-final}
+\end{figure*}
+
+El sondeo de vecindades utilizó bolas uniformes, con la construcción de la
+sección~\ref{bre:num:sondeos}. Cada sonda se integró con \(h=0.01\),
+\(T=200\), descarte de 50 y umbral de contacto \(D_{90}\leq0.5\).
+El detector de equilibrio requería, desde \(t=25\), distancia menor que
+\(10^{-3}\), norma del campo menor que \(10^{-4}\) y 50 pasos consecutivos;
+al final del horizonte se admitía distancia a equilibrio no mayor que 0.5.
+El detector de divergencia usó cinco normas consecutivas mayores que 80 o
+cinco razones consecutivas de crecimiento mayores que 1.25, con corte duro
+120. Son criterios numéricos finitos, distintos de probar convergencia o
+explosión asintótica.
+
+Se ejecutaron 17\,400 trayectorias: 7200 en radios \(r\leq0.01\) y
+10\,200 en \(r=0.03,0.1,0.3\). No hubo contactos en las 7200 sondas locales
+ni en las 6600 correspondientes a \(r=0.03,0.1\). En \(r=0.3\), entre
+3600 sondas, se observaron 37 contactos: 19 desde el equilibrio positivo y
+18 desde el negativo. Sus distancias iniciales reales al equilibrio
+estuvieron entre \(0.1941805298\) y \(0.2997254735\). Por tanto, el primer
+radio de bola muestreado con acceso fue 0.3; esta observación no localiza
+una frontera continua de cuenca. Todos los conteos corresponden al mismo
+convenio de reinicio.
+
+\subsection{Chua con arctangente: control de Wu y candidato c590}
+\label{bre:res:arctan}
+
+La característica se fija como
+\begin{equation}
+ h(x)=a_1x+a_2\arctan(\rho x),\qquad
+ \Caputo qx=\alpha[y-x-h(x)].
+ \label{bre:res:arctan-convention}
+\end{equation}
+Así, el coeficiente lineal de \(x\) dentro del corchete es \(-(1+a_1)\).
+En el control de Wu, \(a_1=0.4\); el número 1.4 corresponde a \(1+a_1\).
+Los restantes parámetros son
+\[
+ \begin{aligned}
+ q&=0.99,&(\alpha,\beta,\gamma)&=(8.4562,12.0732,0.0052),\\
+ a_2&=-1.5585,&\rho&=1.
+ \end{aligned}
+\]
+La recurrencia ADM local de orden cuatro, \(h=0.01\), \(T=100\) y descarte
+de 50, desde \(X_{0,\pm}=\pm(13.8,0.7093,-19.8768)^{\T}\), produjo dos
+respuestas simétricas acotadas, con frecuencia dominante \(0.5398920216\)
+y entropías \((0.11607348,0.11106582,0.11095067)\)
+\cite{Wu2023ArctanChua}. Este control reconstruye la recurrencia local;
+la sección~\ref{bre:num:adm-local} demuestra por qué no se identifica con
+la integración causal de memoria completa.
+
+El candidato c590 utiliza la misma familia de campos, con
+\begin{equation}
+ \begin{aligned}
+ q&=0.9999,&\alpha&=21.8493569066,\\
+ \beta&=19.0818408409,&\gamma&=0.0073780120,\\
+ a_1&=0.0422897934,&a_2&=-3.3367815123,\\
+ \rho&=1.7984259333.
+ \end{aligned}
+ \label{bre:res:c590-parameters}
+\end{equation}
+La exploración inicial en orden entero evaluó 2400 casos globales y 1000
+casos locales; el espectro variacional de la selección entera fue
+\((0.4699043683,0.0010414594,-19.0491693716)\). Su semilla
+\((7.6733768929,0.5079327671,-14.4903935267)^{\T}\) se utilizó para evaluar
+por separado los órdenes \(0.9995,0.9998,0.9999,0.99995\), todos mediante
+ABM de memoria completa, \(h=0.005\), \(T=300\) y descarte de 150.
+No se transportó una historia entre órdenes distintos.
+
+De la trayectoria con \(q=0.9999\) se extrajeron 16 estados entre
+\(t\simeq150\) y 300. Cada estado definió un reinicio independiente. La
+criba corta usó \(h=0.0025\), \(T=180\) y descarte de 90; el control largo
+comparó \(h=0.0025,0.005,0.01\), con \(T=300\) y descarte de 150.
+La selección, extraída cerca de \(t=240\), fue
+\begin{equation}
+ X_0^{\rm frac}=\begin{pmatrix}
+ 5.8642449791\\1.5847111486\\3.2155806478
+ \end{pmatrix}.
+ \label{bre:res:c590-seed}
+\end{equation}
+Permaneció acotada en los tres pasos; las medianas remuestreadas de la
+prueba 0--1 fueron
+\[
+ (K_{0.0025},K_{0.005},K_{0.01})=(0.865843,0.885089,0.740058).
+\]
+Los dos pasos finos superaron el umbral de selección 0.8. El valor del paso
+mayor muestra sensibilidad numérica y evita atribuir a ese control una
+convergencia monótona no observada.
+
+Las ecuaciones estacionarias de las componentes segunda y tercera dan
+\(y=\gamma x/(\beta+\gamma)\) y
+\(z=-\beta x/(\beta+\gamma)\). La primera se reduce a
+\[
+ \left(a_1+\frac{\beta}{\beta+\gamma}\right)x
+       +a_2\arctan(\rho x)=0.
+\]
+Esta reducción también permite contar las raíces. Escriba
+\(g(x)=\kappa_a x+a_2\arctan(\rho x)\), con
+\(\kappa_a=a_1+\beta/(\beta+\gamma)>0\). La función es impar, y
+\[
+ \begin{aligned}
+ g'(0)&=\kappa_a+a_2\rho<0,\\
+ g''(x)&=\frac{-2a_2\rho^3x}{(1+\rho^2x^2)^2}>0\quad(x>0).
+ \end{aligned}
+\]
+Además, \(g'(x)\to\kappa_a>0\) y \(g(x)\to+\infty\) cuando
+\(x\to+\infty\). La derivada estrictamente creciente tiene un único cero
+positivo; la función decrece desde \(g(0)=0\), alcanza un mínimo negativo
+y luego crece hasta infinito. Existe exactamente una raíz positiva; por
+imparidad, exactamente una negativa, además del origen. Sus valores producen
+\[
+ E_0=0,\qquad E_\pm=\pm\begin{pmatrix}
+ 4.6494055135\\0.0017970023\\-4.6476085112
+ \end{pmatrix}.
+\]
+El origen es inestable. El margen angular de Matignon de los equilibrios
+externos es \(7.42265\times10^{-4}>0\), por lo que son localmente estables
+para el orden fijado. Su coexistencia con una trayectoria candidata exige
+estudiar cuencas; la estabilidad local no decide el destino de
+\eqref{bre:res:c590-seed}.
+
+Sobre 30\,000 estados postransitorios, ninguna componente cumplió el filtro
+de apariencia periódica. Las entropías espectrales fueron
+\((0.394751,0.261922,0.315229)\); las fracciones de potencia dominante,
+\((0.122163,0.290492,0.241937)\); y las derivas relativas de frecuencia,
+\((0.941176,0.029412,0.029412)\). Las
+Figs.~\ref{bre:res:fig-c590} y~\ref{bre:res:fig-c590-diagnostics} acompañan
+estos indicadores. La conclusión es un candidato aperiódico, con indicios
+numéricos de caos; los exponentes enteros no se transfieren automáticamente
+al sistema de Caputo.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.96\textwidth]{chua_caputo_arctan.pdf}
+ \caption{Trayectoria postransitoria de c590, \(q=0.9999\), \(h=0.005\),
+ desde \eqref{bre:res:c590-seed}. El intervalo de observación es finito.}
+ \label{bre:res:fig-c590}
+\end{figure*}
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.96\textwidth]{arctan_diagnosticos.pdf}
+ \caption{Trayectoria postransitoria de c590 y reconstrucción de su
+ primer armónico, con frecuencia \(f_1=0.67451\). La diferencia geométrica
+ muestra la parte de la respuesta que no describe ese armónico. La
+ clasificación dinámica utiliza además el control de paso y la prueba 0--1.}
+ \label{bre:res:fig-c590-diagnostics}
+\end{figure*}
+
+El sondeo de cuenca utilizó superficies esféricas, con seis semiejes y
+direcciones de Fibonacci, en lugar de bolas uniformes. Cada PVI usó
+\(h=0.005\), \(T=180\) y descarte de 90. La referencia incluyó la nube y
+su inversión central. La calibración dio
+\(d_{90}^{\rm cal}=0.2950508245\) y umbral
+\(\delta=0.5901016489\). La parada por equilibrio se activó desde
+\(t=45\), con distancia \(<10^{-6}\), norma del campo \(<10^{-4}\) y
+50 pasos consecutivos; el corte de divergencia fue \(\norm{X}_2=120\).
+Las 8400 sondas con \(r\leq0.3\) dieron cero contactos: 8396 completaron el
+horizonte y cuatro terminaron anticipadamente por el criterio de equilibrio.
+En \(r=1\) hubo 22 contactos de 2400, todos desde \(E_0\); en \(r=2\),
+588 de 2700, distribuidos como 289, 150 y 149 desde \(E_0,E_+,E_-\).
+Los contactos macroscópicos describen acceso a la nube bajo el muestreo
+superficial. La ausencia local de contactos no excluye todas las condiciones
+de una vecindad abierta.
+
+\subsection{MAVPD entero: ciclos, candidato caótico y puntos perpetuos}
+\label{bre:res:mavpd}
+
+El campo MAVPD se definió en \eqref{bre:geo:mavpd}. Se fijan
+\(\delta=100\), \(\rho=200\), mientras \(\xi\) y \(\gamma\) seleccionan el
+régimen \cite{matouk2023}. La parte lineal de Lur'e tiene
+\(b=-\delta e_1\), \(c=e_1\) y \(\psi(u)=u^3\). La transferencia en la
+convención \(W=c^{\T}(sI-P)^{-1}b\) es
+\begin{equation}
+ \begin{aligned}
+ W(s)&=-\frac{\delta D(s)}{Q(s)},\qquad D(s)=s^2+\xi s+\rho,\\
+ Q(s)&=(s-\delta\gamma)D(s)-\delta s.
+ \end{aligned}
+ \label{bre:res:mavpd-transfer}
+\end{equation}
+Como \(\cos^3\theta=(3\cos\theta+\cos3\theta)/4\), el primer armónico de
+\((A\cos\theta)^3\) tiene amplitud \(3A^3/4\), y
+\(N(A)=3A^2/4\). La condición de fase, después de eliminar el denominador
+no nulo y poner \(z=\omega^2\), queda
+\begin{equation}
+ z^2+(\delta-2\rho+\xi^2)z+\rho(\rho-\delta)=0.
+ \label{bre:res:mavpd-frequency}
+\end{equation}
+Para precisar la ganancia, el polinomio de \(P+kbc^{\T}\) se obtiene
+reemplazando \(\gamma\) por \(\gamma-k\). Su parte real en
+\(s=\ii\omega\) impone
+\(\delta(k-\gamma)(\rho-z)=\xi z\); por tanto,
+\[
+ k=\gamma+\frac{\xi z}{\delta(\rho-z)},\qquad
+ A=\sqrt{4k/3},
+\]
+para una raíz con \(z>0\), \(z\ne\rho\), \(k>0\). El modo normalizado es
+\[
+ v=\begin{pmatrix}
+ 1\\ k-\gamma+\ii\omega/\delta\\
+ \rho/\delta-\ii\rho(k-\gamma)/\omega
+ \end{pmatrix},\qquad Y_0(\theta)=A\operatorname{Re}(v e^{\ii\theta}).
+\]
+Así se fija la semilla sin escoger sus componentes por separado.
+
+\subsubsection{Régimen periódico y comparación con PP}
+Para \((\xi,\gamma)=(3.1,0.1)\), las ramas son
+\[
+ \begin{array}{c|rr}
+ &\text{rama 0}&\text{rama 1}\\\hline
+ \omega&10.5975230311&13.3447557342\\
+ k&0.1397015948&0.3518790503\\
+ A&0.4315886851&0.6849613618
+ \end{array}
+\]
+y las semillas de fase cero son
+\[
+ Y_{0,0}=\begin{pmatrix}0.4315887\\0.0171348\\0.8631774\end{pmatrix},
+ \qquad Y_{0,1}=\begin{pmatrix}0.6849614\\0.1725274\\1.3699227\end{pmatrix}.
+\]
+Se integraron ambas ramas con fases
+\(0,\pi\) y 21 niveles de continuación. Cada nivel utilizó RK4 con
+\(h=0.002\), transitorio de 20 y cola de 10. La primera rama alcanzó dos
+ciclos internos simétricos; la segunda, el conjunto externo de la
+Fig.~\ref{bre:res:fig-mavpd-periodic}. Un refinamiento DOP853 empleó
+tolerancias \((2\times10^{-11},2\times10^{-13})\), paso máximo 0.005,
+transitorio de 600 y ventana de 1200; registró 2433 retornos positivos a
+\(y_2=0\).
+
+En otro control de sección, DOP853 con eventos densos registró 405
+cruces; el rango de los últimos retornos fue del orden de \(10^{-13}\).
+El periodo fue \(0.493177986749\), con desviación estándar
+\(1.25\times10^{-14}\). Un cálculo independiente dio
+\(0.493178150753\), y la distancia normalizada entre nubes externas fue
+\(0.00061096936\). El espectro finito
+\((-0.0017614,-0.3887396,-51.1886634)\) y la mediana 0--1
+\(K=0.000440085726\) respaldan un ciclo estable de periodo uno. La
+clasificación cuasiperiódica de la fuente no se reproduce para estas
+ecuaciones y estos controles.
+
+El sondeo común, con \(h=0.005\), transitorio de 180 y cola de 80, empleó
+108 condiciones: tres equilibrios, radios \(10^{-5},10^{-3},10^{-2}\) y
+12 direcciones por radio. Hubo 54 destinos en cada ciclo interno y cero
+contactos con el externo, coincidentes en ambos cálculos. Para
+\(\xi=3.5\), conservando \(\gamma=0.1\), el mismo banco dio 24 contactos
+con cada uno de los dos ciclos internos. Este control demuestra la
+capacidad del sondeo para detectar acceso; no convierte el radio mínimo
+ensayado en una prueba sobre radios arbitrariamente pequeños.
+
+Los PP exactos de \eqref{bre:geo:mavpd-roots}, para \(\xi=3.1\), son
+\[
+ p_\pm=\pm\begin{pmatrix}
+ 0.1825741858350554\\0.01217161238900369\\0.1448421874291439
+ \end{pmatrix}.
+\]
+Satisfacen \(J_f(p_\pm)f(p_\pm)=0\) y
+\(\norm{f(p_\pm)}=3.44265186329548>0\). El experimento DOP853 desde esos
+puntos, \(T=120\), tolerancias \(10^{-10}/10^{-12}\), alcanzó los ciclos
+simétricos. En \(t\geq80\), los rangos de las componentes fueron
+\((0.37943,0.05722,0.97545)\). El detector registró 74 y 75 máximos,
+periodos medios \(0.53760,0.53730\) y coeficientes de variación
+\(0.0361,0.0223\). Estos indicadores pertenecen al piloto desde PP y no al
+periodo del ciclo externo. La Fig.~\ref{bre:res:fig-mavpd-pp} muestra que
+la cancelación inicial de \(J_ff\) no se conserva a lo largo de la órbita.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.96\textwidth]{mavpd_periodico.png}
+ \caption{MAVPD periódico, \(\xi=3.1\). Arriba: proyecciones del ciclo
+ externo en los planos \(y_1y_2\) y \(y_1y_3\). Abajo: clasificación de las
+ 108 sondas, con 54 destinos en cada ciclo interno y ninguno en el externo,
+ y continuación de la rama 1. Los paneles describen experimentos distintos
+ dentro del mismo caso.}
+ \label{bre:res:fig-mavpd-periodic}
+\end{figure*}
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.96\textwidth]{mavpd_pp.png}
+ \caption{MAVPD entero desde los dos PP exactos. Las cruces indican las
+ semillas; el diagnóstico de aceleración distingue su anulación inicial
+ de la evolución posterior.}
+ \label{bre:res:fig-mavpd-pp}
+\end{figure*}
+
+\subsubsection{Continuación hacia un candidato caótico}
+Las dos ramas en \((\xi,\gamma)=(3.1,0.1)\) no superaron el cribado
+finito \(\widehat\lambda_1>0.02\). Se transportó entonces la rama de menor
+frecuencia desde \(\xi=3.10\) hasta 2.85 en pasos de \(-0.01\), y luego
+se varió \(\gamma\) respecto de una frontera espectral calculada.
+En \(E_\pm=(\pm\sqrt\gamma,0,\pm\sqrt\gamma)\), el polinomio del
+Jacobiano es \(\lambda^3+b_1\lambda^2+b_2\lambda+b_3\), con
+\[
+ b_1=\xi+2\delta\gamma,\quad
+ b_2=\rho-\delta+2\delta\gamma\xi,\quad
+ b_3=2\delta\gamma\rho.
+\]
+Para una raíz \(\lambda=\ii\Omega\), \(\Omega>0\), sus partes real e
+imaginaria imponen \(b_3-b_1\Omega^2=0\) y
+\(\Omega(b_2-\Omega^2)=0\). Por tanto,
+\(\Omega^2=b_2>0\) y \(b_1b_2=b_3\). Con \(g=2\delta\gamma\),
+\begin{equation}
+ \begin{split}
+ b_1b_2-b_3
+ &=(\xi+g)(\rho-\delta+\xi g)-\rho g\\
+ &=\xi g^2+(\xi^2-\delta)g+\xi(\rho-\delta).
+ \end{split}
+ \label{bre:res:mavpd-hopf}
+\end{equation}
+En \(\xi=2.85\), la raíz alta da
+\(\gamma_H=0.14380379839949112\). Es una frontera candidata de Hopf;
+no se ha demostrado aquí transversalidad ni no degeneración de la
+bifurcación. El cribado de desplazamientos seleccionó
+\[
+ \gamma=\gamma_H+0.010=0.15380379839949113.
+\]
+Se seleccionó el mayor desplazamiento ensayado con exponente válido
+\(\widehat\lambda_1>0.5\), cero contactos preliminares, cero ambigüedades y
+cero fallos. El valor \(\xi=2.85\) fue fijado como extremo del transporte,
+no obtenido por una optimización conjunta.
+
+La trayectoria estricta usó DOP853, \(T=900\), descarte de 300, muestreo
+0.02, tolerancias \((2\times10^{-11},2\times10^{-13})\) y paso máximo 0.01.
+El cálculo variacional separado usó descarte de 300, acumulación de 1200,
+QR cada 0.5 y tolerancias \((2\times10^{-12},2\times10^{-14})\). Se obtuvo
+\[
+ \begin{aligned}
+ \widehat\lambda_1&=0.7133503985,\quad
+ \widehat\lambda_2=-0.0009058833,\\
+ \widehat\lambda_3&=-20.9236249563,\quad D_{KY}=2.0340497651.
+ \end{aligned}
+\]
+La estimación de Kaplan--Yorke usa
+\(D_{KY}=2+(\widehat\lambda_1+\widehat\lambda_2)/|\widehat\lambda_3|\),
+pues las dos primeras suman positivamente y la suma total es negativa.
+Un control que perturbó el estado y modificó simultáneamente tolerancias,
+paso máximo y ventanas dio \(\widehat\lambda_1=0.6830338121\).
+La integración independiente produjo
+\((0.6938035753,0.0017936287,-20.9005938240)\).
+Los exponentes máximos positivos persisten en estos controles finitos.
+
+La sección \(y_2=0\), con orientación positiva, retuvo 1174 cruces mediante
+interpolación lineal entre muestras. Las medianas 0--1 de dos coordenadas
+de retorno fueron \(0.9985162431\) y \(0.9984323397\). Sobre el flujo,
+el resultado fue sensible al submuestreo: tres de diez pasos apoyaron la
+clase caótica, uno la regular y seis fueron inconclusos. Por eso la
+interpretación conjunta se apoya en retornos y exponentes, con su error
+finito, y no en una sola prueba 0--1. La
+Fig.~\ref{bre:res:fig-mavpd-chaos} reúne geometría y evolución variacional.
+Un control EFORK con \(h=0.002\) alcanzó la misma nube calibrada.
+
+Los 108 sondeos principales y cuatro dirigidos sobre ambos signos del
+autovector inestable del origen, en radios \(10^{-7}\) y \(10^{-4}\),
+sumaron 112 trayectorias. Todas terminaron en un equilibrio según el
+clasificador; no hubo contactos con la nube candidata, ambigüedades ni
+fallos numéricos. Los sondeos principales usaron radios
+\(10^{-5},10^{-3},10^{-2}\), doce direcciones por equilibrio y radio,
+transitorio de 400 y cola de 100. El resultado constituye evidencia
+numérica de un candidato caótico compatible con ocultedad en ese banco;
+la separación de vecindades continuas permanece sin certificar.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.96\textwidth]{mavpd_fases.pdf}\\[3pt]
+ \includegraphics[width=0.76\textwidth]{mavpd_lyapunov.pdf}
+ \caption{MAVPD, \(\xi=2.85\), \(\gamma=0.15380379839949113\).
+ Arriba: proyecciones de la trayectoria postransitoria. Abajo: evolución de
+ los exponentes variacionales finitos. Los controles de paso, integrador,
+ retornos y condiciones iniciales delimitan la clasificación numérica.}
+ \label{bre:res:fig-mavpd-chaos}
+\end{figure*}
+
+\subsection{Kalman--Fitts: obstrucción de ganancia y mapa de conmutación}
+\label{bre:res:kalman}
+
+El sistema de cuarto orden es
+\begin{equation}
+ \begin{gathered}
+ \dot X=AX+b\tanh(c^{\T}X/\varepsilon),\\
+ b=e_4,\quad c=-e_3,\quad\varepsilon=0.01,
+ \end{gathered}
+ \label{bre:res:kalman-field}
+\end{equation}
+con \(A\) compañera, última fila \((-a_0,-a_1,-a_2,-a_3)\), y polinomio
+\[
+ \begin{aligned}
+ p_A(s)&=[(s+\beta)^2+m_1^2][(s+\beta)^2+m_2^2],\\
+ (m_1,m_2,\beta)&=(0.9,1.1,0.03),\\
+ (a_0,a_1,a_2,a_3)&=(0.98191881,0.121308,2.0254,0.12).
+ \end{aligned}
+\]
+Las tres primeras filas de \(A\) desplazan consecutivamente las
+coordenadas. La condición de equilibrio obliga a \(x_2=x_3=x_4=0\), y
+la última ecuación da \(x_1=0\) porque \(a_0>0\)
+\cite{kalman2019}. El Jacobiano en el origen tiene polinomio
+\(s^4+a_3s^3+(a_2+1/\varepsilon)s^2+a_1s+a_0\). Sus coeficientes son
+positivos, y las otras dos desigualdades de Routh--Hurwitz dan
+\[
+ \begin{aligned}
+ a_3(a_2+1/\varepsilon)-a_1&=12.12174>0,\\
+ a_3(a_2+1/\varepsilon)a_1-a_1^2-a_3^2a_0
+ &=1.456324405056>0.
+ \end{aligned}
+\]
+El único equilibrio es localmente asintóticamente estable.
+
+Al resolver \((sI-A)v=b\), las tres primeras filas imponen
+\(v_j=s^{j-1}v_1\), y la cuarta da \(p_A(s)v_1=1\). De aquí
+\(W(s)=-s^2/p_A(s)\). La condición de fase da
+\(\omega_0^2=a_1/a_3\), y la ganancia requerida es
+\[
+ \begin{aligned}
+ \omega_0&=1.005435229142,\\
+ k&=\frac{\omega_0^4-a_2\omega_0^2+a_0}{\omega_0^2}
+   =-0.043168701157.
+ \end{aligned}
+\]
+Para \(u=A\cos\theta/\varepsilon\), la función descriptiva es
+\[
+ N(A)=\frac1{\pi\varepsilon}\int_0^{2\pi}
+         \frac{\tanh u}{u}\cos^2\theta\,\dd\theta.
+\]
+La extensión continua en \(u=0\) vale uno, y
+\(0<\tanh u/u\leq1\); por ello \(N(A)>0\) para \(A>0\).
+No existe amplitud que satisfaga la ganancia negativa. Esta obstrucción
+justifica cambiar de localizador.
+
+El precursor reemplaza \(\tanh\) por \(\operatorname{sign}\).
+En un semiespacio con signo fijo \(\sigma\in\{-1,1\}\), la solución exacta
+es
+\begin{equation}
+ \Phi_\sigma(t,X)=e^{At}X+A^{-1}(e^{At}-I)b\sigma.
+ \label{bre:res:kalman-flow}
+\end{equation}
+Se obtiene integrando la fuerza constante:
+\(\int_0^t e^{A(t-s)}\,\dd s=A^{-1}(e^{At}-I)\), con \(A\) invertible.
+En \(\Sigma=\{c^{\T}X=0\}\), se elige el signo de salida y se busca el
+primer cero transversal de \(c^{\T}\Phi_\sigma(t,X)\) después de abandonar
+la sección. Si \(t_+(X)\) es ese tiempo, el mapa es
+\(\Pi(X)=\Phi_\sigma(t_+(X),X)\). La transversalidad permite distinguir
+el retorno de un contacto tangencial. El precursor convergió en 135
+iteraciones a un retorno de periodo dos, \(\Pi^2(X)=X\), con semilla
+\[
+ X_{\rm sw}=\begin{pmatrix}
+ 0.212347571803\\-1.671123727247\\0\\1.478087383043
+ \end{pmatrix}.
+\]
+Se continuó la no linealidad
+\((1-\lambda)\operatorname{sign}\sigma+
+\lambda\tanh(\sigma/\varepsilon)\) en 51 nodos
+\(\lambda=0,0.02,\ldots,1\). Cada nodo utilizó RK4, \(h=0.01\),
+transitorio de 100 y ventana retenida de 20. La corrida final descartó
+300 unidades y conservó otras 300.
+
+El ciclo resultante tuvo periodo \(11.9169960234\), frente a
+\(11.9169379538\) en una integración independiente. Su espectro finito
+fue
+\[
+ \widehat\lambda=\begin{pmatrix}
+ -0.00283635\\-0.02423392\\-0.03056980\\-0.03988642
+ \end{pmatrix},
+\]
+compatible con un exponente tangencial próximo a cero y tres negativos.
+Los controles combinaron DOP853 con dos ajustes de tolerancias y RK4 con
+\(h=0.01,0.005\), en horizontes 300 y 600. En las ocho configuraciones,
+los errores relativos de periodo estuvieron entre \(4.87\times10^{-6}\)
+y \(6.11\times10^{-6}\), y las distancias normalizadas entre nubes,
+entre \(2.03\times10^{-4}\) y \(9.24\times10^{-4}\).
+
+De las 48 condiciones alrededor del origen, doce en cada radio
+\(10^{-5},10^{-4},10^{-3},10^{-2}\), cuarenta se clasificaron en el
+equilibrio y ocho como acotadas no triviales; ninguna contactó el ciclo.
+Ambos cálculos coincidieron punto por punto. La evidencia favorece un
+ciclo estable compatible con ocultedad bajo ese sondeo. Una demostración
+requiere además un dominio de retorno con atracción certificada y una
+vecindad explícita del origen contenida en su cuenca local.
+
+\subsection{PLL: retorno sobre el cilindro desde una solución exacta}
+\label{bre:res:pll}
+
+El PLL de \eqref{bre:geo:pll} tiene
+\(\tau_1=0.0448\), \(\tau_2=0.0185\), \(L=500\) y
+\(\omega_\Delta=178.9\) \cite{pll2015}. Para separar la constante del
+filtro de los horizontes de integración, se escribe
+\(T_f=\tau_1+\tau_2=0.0633\). Sus ecuaciones son
+\begin{equation}
+ \begin{aligned}
+ \dot x&=-\frac{x}{T_f}+\frac{\tau_1}{2T_f}\sin\theta,\\
+ \dot\theta&=\omega_\Delta-\frac L{T_f}x
+                    -\frac{\tau_2L}{2T_f}\sin\theta.
+ \end{aligned}
+ \label{bre:res:pll-field}
+\end{equation}
+El estado pertenece a \(\R\times S^1\). Las condiciones estacionarias
+imponen \(x_e=(\tau_1/2)\sin\theta_e\) y
+\(\sin\theta_e=2\omega_\Delta/L=0.7156\). En una vuelta se obtienen
+\[
+ \begin{aligned}
+ x_e&=0.01602944,\\
+ \theta_f&=0.797482699881,\qquad
+ \theta_s=2.344109953708.
+ \end{aligned}
+\]
+El Jacobiano tiene
+\[
+ \operatorname{tr}J_e=-\frac{1+\tau_2L\cos\theta_e/2}{T_f},\qquad
+ \det J_e=\frac{L\cos\theta_e}{2T_f}.
+\]
+El primer punto es un foco estable, con espectro
+\(-33.41714171\pm40.52189661\ii\); el segundo es una silla, con espectro
+\((-37.78074660,73.01945339)\).
+
+Después de trasladar el equilibrio y conservar la no linealidad sinusoidal,
+la transferencia es
+\[
+ \begin{aligned}
+ W(s)&=-\frac L2\frac{1+\tau_2s}{s(1+T_fs)},\\
+ \operatorname{Im}W(\ii\omega)
+ &=\frac{L(1+\tau_2T_f\omega^2)}{2\omega(1+T_f^2\omega^2)}>0.
+ \end{aligned}
+\]
+No hay cruce real para \(\omega>0\), de modo que el cierre directo con
+una función descriptiva estática real no proporciona semilla.
+
+Para \(L>0\), introducir \(y=\dot\theta\) permite despejar
+\[
+ x=\frac{T_f}{L}(\omega_\Delta-y)-\frac{\tau_2}{2}\sin\theta.
+\]
+Derivar \(y\), sustituir \(\dot x\) y agrupar
+\(\tau_1+\tau_2=T_f\) da
+\[
+ T_f\dot y=\omega_\Delta-\frac L2\sin\theta
+              -\left(1+\frac{\tau_2L}{2}\cos\theta\right)y.
+\]
+En una rotación positiva, \(y>0\) permite usar \(\theta\) como variable
+independiente y dividir entre \(\dot\theta=y\):
+\begin{equation}
+ \frac{\dd y}{\dd\theta}=H_L(\theta,y)
+ =\frac{\omega_\Delta-(L/2)\sin\theta}{T_fy}
+    -\frac{1+(\tau_2L/2)\cos\theta}{T_f}.
+ \label{bre:res:pll-angle}
+\end{equation}
+El mapa \(P_L(y_0)=y(2\pi;y_0)\) sólo se define en los datos que conservan
+\(y>0\) durante toda la vuelta. Un punto fijo da una órbita corredora, con
+periodo físico \(\mathcal T=\int_0^{2\pi}y(\theta)^{-1}\,\dd\theta\).
+Si \(z=\partial y/\partial y_0\), la diferenciación del PVI produce
+\[
+ \begin{gathered}
+ z'=-\frac{\omega_\Delta-(L/2)\sin\theta}{T_f y^2}z,\\
+ z(0)=1,\qquad P_L'(y_0)=z(2\pi).
+ \end{gathered}
+\]
+Por ello \(|P_L'|<1\) implica atracción transversal local del punto fijo
+y \(|P_L'|>1\), repulsión. El criterio se aplica al retorno de la ODE
+sobre el cilindro, no a un mapa de estados instantáneos de Caputo.
+
+En \(L=0\), \eqref{bre:res:pll-angle} posee
+\(y(\theta)\equiv\omega_\Delta\), con
+\[
+ \mathcal T_0=\frac{2\pi}{\omega_\Delta},\qquad
+ P_0'(\omega_\Delta)=e^{-2\pi/(T_f\omega_\Delta)}.
+\]
+La reconstrucción que divide entre \(L\) no se usa en ese extremo.
+En las variables originales, \(\theta(t)=\omega_\Delta t\), y proponer
+\(x_p=A\sin\theta+B\cos\theta\) en la ecuación del filtro conduce a
+\(A-\omega_\Delta T_fB=\tau_1/2\) y
+\(\omega_\Delta T_fA+B=0\). Resolver estas dos ecuaciones da
+\begin{equation}
+ x_p(\theta)=\frac{\tau_1}{2[1+(\omega_\Delta T_f)^2]}
+              (\sin\theta-\omega_\Delta T_f\cos\theta).
+ \label{bre:res:pll-zero-gain}
+\end{equation}
+Las demás soluciones difieren en \(Ce^{-t/T_f}\). Su contracción durante
+una vuelta coincide con \(P_0'\), lo que justifica utilizar esta órbita
+exacta para iniciar la continuación en 101 valores hasta \(L=500\).
+El retorno usó tolerancias \((2\times10^{-11},2\times10^{-13})\) y paso
+angular máximo 0.02.
+
+En la sección \(\theta=0\pmod{2\pi}\), se encontraron los resultados de
+la Tabla~\ref{bre:res:tab-pll}. Los errores de retorno cilíndrico fueron
+\(2.68\times10^{-15}\) para el ciclo estable y \(6.18\times10^{-14}\)
+para la órbita inestable. La reproducción independiente dio periodos
+\(0.0826766624969991\) y \(0.108541779641824\), con multiplicadores
+\(0.817204143145181\) y \(1.44110733084579\).
+Las diferencias angulares se calcularon módulo \(2\pi\).
+
+\begin{table}[t]
+ \centering
+ \caption{Retornos del PLL en \(L=500\), con fase inicial cero.}
+ \label{bre:res:tab-pll}
+ \begin{tabular}{@{}lrr@{}}
+ \toprule
+ Magnitud & Ciclo estable & Órbita inestable\\\midrule
+ \(y_0\) & 140.125084913 & 135.172047420\\
+ \(x_0\) & 0.004908904250 & 0.005535958797\\
+ \(\mathcal T\) & 0.0826766624974 & 0.1085417796382\\
+ \(P_L'(y_0)\) & 0.8172041431535 & 1.4411073306967\\
+ \bottomrule
+ \end{tabular}
+\end{table}
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.90\textwidth]{pll_cilindro.pdf}
+ \caption{PLL sobre el cilindro de fase. El retorno distingue una órbita
+ corredora estable y una órbita periódica inestable que organiza la
+ separación entre destinos. Las distancias respetan la periodicidad angular.}
+ \label{bre:res:fig-pll}
+\end{figure*}
+
+Los sondeos utilizaron los dos equilibrios, cuatro radios
+\(10^{-5},10^{-4},10^{-3},10^{-2}\) y doce direcciones por radio.
+Las 96 condiciones terminaron en el foco y ninguna contactó el ciclo;
+las clasificaciones coincidieron entre los dos cálculos. La órbita
+inestable de la Fig.~\ref{bre:res:fig-pll} aporta una descripción de la
+frontera que el balance armónico directo no ofrecía. Los valores numéricos
+del retorno y los sondeos no sustituyen encierros intervalares ni una
+prueba global de separación de cuencas.
+
+\subsection{Sistemas fraccionarios no Chua}
+\label{bre:res:nonchua-fo}
+
+\subsubsection{Lorenz generalizado: estabilidad local y absorción}
+El campo de \eqref{bre:geo:lorenz} corresponde a
+\((\sigma,r,a)=(3.4,6.8,-0.5)\), con \(\sigma=-ar\), y se considera a
+\(q=0.995\) \cite{Danca2017}. Para calcular los equilibrios, la tercera
+ecuación da \(z=xy\). La segunda queda
+\(rx-y-x^2y=0\), y como \(1+x^2>0\),
+\[
+ y=\frac{rx}{1+x^2},\qquad z=\frac{rx^2}{1+x^2}.
+\]
+Si \(x=0\), se obtiene el origen. Si \(x\ne0\), sustituir estas
+expresiones en la primera ecuación y usar \(\sigma=-ar\) da, con
+\(u=x^2>0\),
+\[
+ 0=arx\left[1-\frac r{1+u}-\frac{ru}{(1+u)^2}\right].
+\]
+Como \(arx\ne0\), se puede dividir y multiplicar por \((1+u)^2\):
+\begin{equation}
+ \begin{aligned}
+ 0&=(1+u)^2-r(1+u)-ru\\
+  &=u^2+2(1-r)u+(1-r),\\
+ u_\pm&=r-1\pm\sqrt{r(r-1)}.
+ \end{aligned}
+ \label{bre:res:lorenz-equilibria-algebra}
+\end{equation}
+Para \(r>1\), \(\sqrt{r(r-1)}>r-1\), de modo que \(u_-<0\) se excluye
+y \(u_+>0\) genera dos signos de \(x\). Son todos los equilibrios: el
+origen y
+\[
+ E_\pm=\begin{pmatrix}
+ \pm3.47564776512854\\\pm1.80689408468029\\6.28012738724303
+ \end{pmatrix}.
+\]
+El Jacobiano es
+\begin{equation}
+ J_L=\begin{pmatrix}
+ -\sigma&\sigma-az&-ay\\r-z&-1&-x\\y&x&-1
+ \end{pmatrix}.
+ \label{bre:res:lorenz-jacobian}
+\end{equation}
+En el origen, la tercera coordenada se desacopla, por lo que
+\[
+ p_0(s)=(s+1)[(s+\sigma)(s+1)-\sigma r].
+\]
+La sustitución de los equilibrios exactos en el campo lo anula; el residuo
+máximo al evaluar sus coordenadas numéricas fue \(1.07\times10^{-14}\).
+El origen tiene autovalores
+\[
+ \begin{aligned}
+ \lambda_1&=-7.15580467734555,\\
+ \lambda_2&=2.75580467734555,\qquad \lambda_3=-1,
+ \end{aligned}
+\]
+y es inestable. En \(E_\pm\), los autovalores son
+\[
+ \begin{aligned}
+ \lambda_1&=-5.37029951773135,\\
+ \lambda_{2,3}&=-0.0148502411343235
+                    \pm3.83248917224189\ii.
+ \end{aligned}
+\]
+El margen angular a \(q=0.995\) es \(0.0117287914887680>0\), de modo que
+ambos equilibrios externos son localmente estables.
+La eliminación de la sección~\ref{bre:geo:section} proporciona además dos
+semillas FPP--A, relacionadas por \((x,y,z)\mapsto(-x,-y,z)\).
+En las variables \(u=x^2\), \(v=y/x\), una raíz tiene
+\((u,v,z)\simeq(0.5564665577,-16.9736823118,-7.4423053062)\), y se
+reconstruye mediante \(x=\pm\sqrt u\), \(y=vx\). Su norma de campo es
+\(23.42210895339\). Su integración y clasificación de destinos siguen
+pendientes; resolver \(J_ff=0\) no determina su cuenca.
+
+Para este campo sí puede demostrarse una cota global, válida para cualquier
+reinicio y para \(0<q\leq1\). Considérese
+\begin{equation}
+ V(x,y,z)=x^2+y^2+\tfrac12(z-20.4)^2.
+ \label{bre:res:lorenz-V}
+\end{equation}
+Su Hessiana \(\operatorname{diag}(2,2,1)\) es definida positiva. En cada
+intervalo compacto de existencia, \(X-X_0=I^qF(X)\), con \(F(X)\)
+acotado. La desigualdad convexa \eqref{bre:fund:convex}, aplicada a
+\(V(X_0+\xi)-V(X_0)\), justifica
+\({}^{\mathrm C}D^q V(X)\leq\nabla V(X)\cdot F(X)\); no se utiliza una
+regla de cadena fraccionaria con igualdad
+\cite{Gomoyunov2018Convex}. El cálculo específico es
+\begin{align*}
+ \nabla V\cdot F
+ & =2x[-3.4(x-y)+0.5yz]\\
+ &\quad+2y[6.8x-y-xz]+(z-20.4)(-z+xy)\\
+ &=-6.8x^2-2y^2-z^2+20.4z\\
+ &=-V+208.08-5.8x^2-y^2-\tfrac12z^2\\
+ &\leq -V+208.08.
+\end{align*}
+Los términos \(xyz\) se cancelan porque sus coeficientes suman
+\(1-2+1=0\); los términos \(xy\), porque
+\(6.8+13.6-20.4=0\). La constante es
+\(20.4^2/2=208.08\).
+
+Escribiendo \(v(t)=V(X(t))\) y
+\(r(t)=208.08-v(t)-{}^{\mathrm C}D^qv(t)\geq0\), la fórmula lineal de
+variación \eqref{bre:fund:variation} da
+\begin{align*}
+ v(t)&=v(0)E_q(-t^q)+208.08[1-E_q(-t^q)]\\
+ &\quad-\int_0^t(t-s)^{q-1}E_{q,q}(-(t-s)^q)r(s)\,\dd s.
+\end{align*}
+El núcleo es no negativo. Para \(0<q<1\), esto se sigue de la
+representación positiva \cite{Podlubny1999}
+\[
+ E_q(-t^q)=\frac{\sin(\pi q)}{\pi}
+ \int_0^\infty
+ \frac{e^{-ut}u^{q-1}}{u^{2q}+2u^q\cos(\pi q)+1}\,\dd u,
+\]
+pues al derivar para \(t>0\) se obtiene
+\(-\frac{\dd}{\dd t}E_q(-t^q)=t^{q-1}E_{q,q}(-t^q)\geq0\).
+Integrar esta identidad da
+\(\int_0^t u^{q-1}E_{q,q}(-u^q)\,\dd u=1-E_q(-t^q)\), usado para
+la fuerza constante. La representación implica también
+\(0<E_q(-t^q)\leq1\) y \(E_q(-t^q)\to0\). Para \(q=1\), las mismas
+propiedades corresponden a \(e^{-t}\). Por consiguiente,
+\begin{equation}
+ \begin{aligned}
+ V(X(t))&\leq208.08+[V(X_0)-208.08]E_q(-t^q),\\
+ V(X(t))&\leq\max\{V(X_0),208.08\}.
+ \end{aligned}
+ \label{bre:res:lorenz-bound}
+\end{equation}
+Los subniveles de \(V\) son compactos. La cota impide que una solución
+maximal abandone todos los compactos en tiempo finito; la continuación de
+Volterra con historia conservada establece existencia global y unicidad.
+Para una familia acotada \(B\) de reinicios, sea
+\(C_B=\sup_{X_0\in B}V(X_0)<\infty\). Entonces
+\[
+ \sup_{X_0\in B}V(X(t;X_0))
+ \leq208.08+(C_B-208.08)_+E_q(-t^q).
+\]
+Dado \(\epsilon>0\), elegir un tiempo desde el cual el último término sea
+menor que \(\epsilon\) prueba absorción uniforme por
+\(\{V\leq208.08+\epsilon\}\). Esta conclusión controla todas las
+trayectorias de reinicio; no identifica un atractor oculto ni demuestra
+atracción en un espacio funcional admisible aún por construir.
+
+\subsubsection{Rabinovich--Fabrikant: candidatos algebraicos}
+El campo \eqref{bre:geo:rf} se evalúa con
+\((a,b,q)=(0.1,0.2876,0.998)\) \cite{Danca2017}. La ecuación estacionaria
+tercera es \(z(b+xy)=0\). Si \(z=0\), las primeras dos se escriben,
+con \(u=x^2\), como
+\[
+ \begin{pmatrix}a&u-1\\1-u&a\end{pmatrix}
+ \begin{pmatrix}x\\y\end{pmatrix}=0.
+\]
+Su determinante \(a^2+(u-1)^2>0\) exige \(x=y=0\); esta rama sólo da el
+origen. Si \(z\ne0\), entonces \(xy=-b\ne0\), por lo que \(x\ne0\) y
+\(y=-b/x\). La primera ecuación, multiplicada por \(x\), da
+\(-b(z-1+u)+au=0\), de donde
+\[
+ z=1+\frac{a-b}{b}u.
+\]
+La segunda, también multiplicada por \(x\), es
+\(u(3z+1-u)-ab=0\). Sustituir \(z\) y multiplicar por \(b\) produce
+\begin{equation}
+ \begin{aligned}
+ &(3a-4b)u^2+4bu-ab^2=0,\\
+ &u_\pm=\frac{b[-2\pm\sqrt{4+a(3a-4b)}]}{3a-4b}.
+ \end{aligned}
+ \label{bre:res:rf-equilibria-algebra}
+\end{equation}
+Para los parámetros elegidos, \(3a-4b=-0.8504\); el discriminante es
+positivo y las raíces tienen suma y producto positivos. Ambas son
+positivas y distintas. Cada una permite reconstruir dos equilibrios:
+\(x=\pm\sqrt u\), \(y=-b/x\),
+\(z=1+(a-b)u/b\). La sustitución verifica \(z\ne0\) y las tres ecuaciones.
+Se obtienen exactamente cinco equilibrios:
+\[
+ \begin{gathered}
+ E_0=(0,0,0),\\
+ E_{1,2}=\begin{pmatrix}
+ \mp1.15997695583801\\\pm0.247935959893466\\0.122306917444673
+ \end{pmatrix},\\
+ E_{3,4}=\begin{pmatrix}
+ \mp0.085021329989515\\\pm3.38268055834300\\0.995284804098130
+ \end{pmatrix}.
+ \end{gathered}
+\]
+El Jacobiano es
+\begin{equation}
+ J_R=\begin{pmatrix}
+ a+2xy&z-1+x^2&y\\
+ 3z+1-3x^2&a&3x\\
+ -2yz&-2xz&-2(b+xy)
+ \end{pmatrix}.
+ \label{bre:res:rf-jacobian}
+\end{equation}
+En el origen, sus bloques dan
+\(p_0(s)=(s+2b)[(s-a)^2+1]\) y autovalores
+\(-2b,a\pm\ii\). El par complejo tiene orden crítico
+\(2\arctan(1/a)/\pi=0.936548965138893\), menor que 0.998.
+Así, el origen es inestable. La evaluación en \(E_{3,4}\) también da
+inestabilidad, mientras \(E_{1,2}\) son estables, con margen angular
+\(0.0435197213462810\). Los equilibrios exactos anulan el campo; el
+residuo máximo de sus coordenadas numéricas fue \(1.06\times10^{-14}\). El conteo algebraico exhaustivo de
+la sección~\ref{bre:geo:section} produce ocho FPP--A: cuatro en \(z=0\) y
+cuatro fuera de ese plano. La realización multicanal permite formular el
+balance de \eqref{bre:bal:mimo-balance}; ni sus ecuaciones ni las raíces
+FPP--A reemplazan la continuación e integración del campo original.
+Quedan pendientes los destinos de los cuatro pares de semillas, sus
+controles de acotación y paso, y el sondeo de los cinco equilibrios.
+
+\subsubsection{Muñoz--Pacheco: integración desde FPP--A}
+El campo \eqref{bre:geo:munoz} tiene \(a=0.35\) y se evalúa a
+\(q=0.97\) \cite{munoz2018}. No tiene equilibrios: \(f_2=0\) exigiría
+\(|x|=1\), \(f_3=0\) impondría \(z=-xy\), y la primera componente
+quedaría
+\[
+ f_1=-x(y^2-y+a)=-x\bigl[(y-1/2)^2+0.10\bigr]\ne0.
+\] Las cuatro raíces suaves de
+\eqref{bre:geo:munoz-roots} son
+\[
+ \begin{gathered}
+ p_{1,2}=\begin{pmatrix}
+ \pm0.816784043380077\\0.591607978309962\\\mp0.333568086760154
+ \end{pmatrix},\\
+ p_{3,4}=\begin{pmatrix}
+ \pm3.183215956619923\\-0.591607978309962\\\mp5.066431913239846
+ \end{pmatrix}.
+ \end{gathered}
+\]
+Son condiciones iniciales algebraicas, separadas de la superficie no suave
+\(x=0\). PECE con historia completa, \(h=0.01\) y \(T=35\), produjo las
+cuatro trayectorias de la Fig.~\ref{bre:res:fig-munoz}. Las normas máximas
+observadas fueron 6.421 para el par interior y 10.178 para el exterior.
+Estos máximos sólo establecen finitud durante la ventana calculada.
+La ausencia de equilibrios hace vacua la parte de la definición de ocultedad
+que compara sus vecindades; siguen siendo necesarias existencia de un
+conjunto invariante, atracción y acotación de la respuesta.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.96\textwidth]{munoz_semillas.png}
+ \caption{Muñoz--Pacheco, \(q=0.97\), desde cuatro semillas FPP--A exactas,
+ con \(h=0.01\) y \(T=35\). Las cruces marcan las condiciones iniciales.
+ Las trayectorias son resultados preliminares de integración causal.}
+ \label{bre:res:fig-munoz}
+\end{figure*}
+
+En el diagnóstico FPP--H de \eqref{bre:geo:history}, la comparación de
+\(h=0.01\) y \(h=0.005\) sobre \([2,17.5]\) no produjo un mínimo
+convergente a cero. El mínimo normalizado fino fue aproximadamente 0.0871
+cerca de \(t=11.965\). El valor grueso 0.0254 en \(t=32.33\) queda fuera
+del horizonte fino y no constituye una comparación de convergencia.
+No se ha identificado un evento FPP--H. La familia direccional de frontera
+\((0,y_0,0)\) tampoco ofrece un candidato acotado: sus soluciones exactas
+son \(x=z=0\), \(y=y_0+t^q/\Gamma(q+1)\), como se dedujo en
+\eqref{bre:geo:munoz-boundary}. La comparación de paso y horizonte de las
+cuatro semillas suaves, y la reproducción del caso publicado a \(q=0.996\),
+permanecen pendientes.
+
+\subsubsection{Comparaciones de exponentes con otros parámetros}
+Los ensayos anteriores no se confunden con dos comparaciones dinámicas de
+referencia \cite{fischer2020}. En el Lorenz estándar
+\[
+ \begin{aligned}
+ \Caputo qx&=\sigma(y-x),\\
+ \Caputo qy&=\rho x-y-xz,\\
+ \Caputo qz&=xy-\beta z,
+ \end{aligned}
+\]
+con \((\sigma,\rho,\beta,q)=(10,200,8/3,0.985)\), el dato \(X_0=(0.1,0.1,0.1)\), \(h=0.001\), \(T=500\) e intervalo de
+ortogonalización \(T_R=5\) dieron
+\((-0.0027791532,-0.0868071712,-1.6224574503)\). La diferencia máxima
+respecto de \((-0.0026,-0.0870,-1.6225)\) fue menor que
+\(1.93\times10^{-4}\). La concordancia cuantitativa verifica ese cálculo
+finito de referencia; no aporta un candidato caótico ni resultados sobre
+el Lorenz generalizado anterior.
+
+Para RF con \((a,b,q)=(0.1,0.98,0.999)\), desde el mismo dato inicial,
+\(h=0.005\), \(T=300\) y \(T_R=0.02\), el espectro calculado fue
+\((0.0611165030,0.0038981399,-1.8324646836)\), frente a
+\((0.0749,0.0018,-2.0850)\). La diferencia del tercer exponente,
+\(0.2525353\), excedió la tolerancia 0.05 y fue reproducida por otro
+solucionador. El primer exponente positivo motiva estudiar la dinámica,
+pero el ensayo no incluyó localización de una semilla ni sondeos de
+vecindades. Por tanto, estos parámetros y sus diagnósticos no completan
+la evaluación del candidato RF con \(b=0.2876\).

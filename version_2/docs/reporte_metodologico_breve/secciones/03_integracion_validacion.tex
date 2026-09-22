@@ -1,0 +1,551 @@
+\section{Integración causal y validación numérica}
+\label{bre:num:seccion}
+
+La integración determina si una semilla obtenida mediante balance armónico o
+criterios geométricos alcanza un régimen persistente del sistema estudiado.
+Para interpretar esa trayectoria deben fijarse el campo, los parámetros, el
+orden, la condición inicial, el terminal inferior y el tratamiento de la
+memoria. La comparación entre métodos conserva estos datos; los cambios de
+paso, horizonte o aproximación del núcleo se evalúan por separado.
+
+\subsection{Discretización de Volterra mediante ABM--PECE}
+\label{bre:num:pece}
+
+Considérese el problema conmensurable
+\begin{equation}
+ {}^{\mathrm C}D_{t_0}^{q}X(t)=F(t,X(t)),\qquad X(t_0)=X_0,
+ \quad 0<q\leq1,
+ \label{bre:num:pvi}
+\end{equation}
+con $F$ continua y localmente Lipschitz respecto del estado. En un intervalo
+de existencia, su forma integral es
+\begin{equation}
+ X(t)=X_0+\frac1{\Gamma(q)}
+ \int_{t_0}^{t}(t-s)^{q-1}F(s,X(s))\,\dd s.
+ \label{bre:num:volterra}
+\end{equation}
+El esquema de Adams--Bashforth--Moulton con secuencia PECE integra este núcleo
+exactamente y aproxima el campo dentro de cada intervalo
+\cite{DiethelmFordFreed2002}. En la malla $t_n=t_0+nh$, sea
+$F_j=F(t_j,X_j)$. Sustituir el campo por $F_j$ en $[t_j,t_{j+1}]$ da
+\[
+ \int_{t_j}^{t_{j+1}}(t_{n+1}-s)^{q-1}\,\dd s
+ =\frac{h^q}{q}\bigl[(n+1-j)^q-(n-j)^q\bigr].
+\]
+Como $q\Gamma(q)=\Gamma(q+1)$, el predictor es
+\begin{align}
+ X_{n+1}^{\mathrm P}
+ &=X_0+\frac{h^q}{\Gamma(q+1)}\sum_{j=0}^{n}b_{j,n+1}F_j,
+ \label{bre:num:predictor}\\
+ b_{j,n+1}&=(n+1-j)^q-(n-j)^q.\nonumber
+\end{align}
+
+Para el corrector se interpola linealmente:
+\[
+ F(t_j+hu,X(t_j+hu))\approx(1-u)F_j+uF_{j+1},
+ \qquad 0\leq u\leq1.
+\]
+Con $r=n+1-j$, las contribuciones del intervalo son
+$h^q[L_q(r)F_j+R_q(r)F_{j+1}]$, antes del factor $1/\Gamma(q)$. Las
+integrales de las dos funciones base se calculan mediante
+\begin{align}
+ I_q(r)&=\int_0^1(r-u)^{q-1}\,\dd u
+       =\frac{r^q-(r-1)^q}{q},\nonumber\\
+ R_q(r)&=\int_0^1u(r-u)^{q-1}\,\dd u\nonumber\\
+       &=rI_q(r)-\frac{r^{q+1}-(r-1)^{q+1}}{q+1},\nonumber\\
+ L_q(r)&=I_q(r)-R_q(r).
+ \label{bre:num:pesos-integrales}
+\end{align}
+La expresión de $R_q$ sigue del cambio $v=r-u$, que transforma $u$ en
+$r-v$. Al reunir denominadores se obtiene
+\begin{align*}
+ q(q+1)L_q(r)&=(q+1-r)r^q+(r-1)^{q+1},\\
+ q(q+1)R_q(r)&=r^{q+1}-(r+q)(r-1)^q.
+\end{align*}
+El nodo inicial recibe sólo $L_q(n+1)$; un nodo interior $j$ recibe
+$R_q(n+2-j)+L_q(n+1-j)$; el extremo nuevo recibe $R_q(1)$. En un nodo
+interior, los términos proporcionales a $r^q$ se combinan como
+$[(q+1-r)-(r+1+q)]r^q=-2r^{q+1}$. Por tanto, los pesos normalizados son
+\begin{align}
+ a_{0,n+1}&=n^{q+1}-(n-q)(n+1)^q,\nonumber\\
+ a_{j,n+1}&=(n-j+2)^{q+1}+(n-j)^{q+1}\nonumber\\
+ &\hspace{1.1cm}-2(n-j+1)^{q+1},\quad 1\leq j\leq n.
+ \label{bre:num:pesos-corrector}
+\end{align}
+Además, $q(q+1)R_q(1)=1$ y
+$q(q+1)\Gamma(q)=\Gamma(q+2)$. Evaluar el campo desconocido del extremo en
+el predictor produce
+\begin{equation}
+ \begin{split}
+ X_{n+1}=X_0+\frac{h^q}{\Gamma(q+2)}\Bigl[
+ &F(t_{n+1},X_{n+1}^{\mathrm P})\\
+ &+\sum_{j=0}^{n}a_{j,n+1}F_j\Bigr].
+ \end{split}
+ \label{bre:num:corrector}
+\end{equation}
+La secuencia consiste en predecir, evaluar el campo, corregir y evaluar de
+nuevo $F_{n+1}=F(t_{n+1},X_{n+1})$. Este último valor se incorpora a la
+historia. Las sumas comienzan siempre en $j=0$: la implementación directa de
+$N$ pasos requiere $O(N^2)$ operaciones y $O(N)$ almacenamiento para una
+dimensión de estado fija.
+
+\subsection{Límite entero y significado del predictor}
+\label{bre:num:limite-entero}
+
+Para $q=1$, $b_{j,n+1}=1$, $a_{0,n+1}=1$ y los pesos interiores del
+corrector son $2$. Las fórmulas recuperan las cuadraturas compuestas
+rectangular izquierda y trapezoidal de la ecuación integral; el extremo
+derecho de la segunda se evalúa en el predictor. En particular,
+\[
+ X_{n+1}^{\mathrm P}=X_0+h\sum_{j=0}^{n}F_j
+ =X_n^{\mathrm P}+hF_n\qquad(n\geq1).
+\]
+La recurrencia parte del predictor anterior, mientras que el estado corregido
+satisface
+\begin{align*}
+ X_n&=X_0+\frac h2\Bigl[F_0+2\sum_{j=1}^{n-1}F_j
+                         +F(t_n,X_n^{\mathrm P})\Bigr],\\
+ X_n^{\mathrm P}-X_n&=\frac h2\bigl[F_0-F(t_n,X_n^{\mathrm P})\bigr].
+\end{align*}
+Por ello $X_{n+1}^{\mathrm P}$ no es, en general, el paso local
+$X_n+hF_n$ iniciado en el estado corregido. Para $\dot x=x$, $x_0=1$, el
+primer corrector da $x_1=1+h+h^2/2$, mientras que
+\[
+ x_2^{\mathrm P}-(x_1+hx_1)=-h^2/2.
+\]
+Este ejemplo distingue las identidades exactas de los pesos de una
+identificación incorrecta con un método local de un paso.
+
+\subsection{Continuación con historia y reinicio del sistema objetivo}
+\label{bre:num:continuacion}
+
+Sea $F_\eta$ una familia que une un sistema auxiliar, en $\eta=0$, con el
+campo objetivo, en $\eta=1$. Se prescribe $\eta(t)=\eta_k$ en
+$[t_k,t_{k+1})$ y se resuelve un único problema
+${}^{\mathrm C}D_{t_0}^{q}X=F_{\eta(t)}(X)$. Cambiar $\eta$ modifica el
+campo a partir de ese instante y conserva las evaluaciones anteriores.
+
+La contribución de la historia previa al nivel $k$ es
+\begin{equation}
+ H_k(t)=\frac1{\Gamma(q)}\int_{t_0}^{t_k}
+             (t-s)^{q-1}F_{\eta(s)}(X(s))\,\dd s.
+ \label{bre:num:historia-heredada}
+\end{equation}
+Separar la integral en $t_k$ y usar $X(t_k)=X_0+H_k(t_k)$ da
+\begin{equation}
+ \begin{split}
+ X(t)={}&X(t_k)+H_k(t)-H_k(t_k)\\
+ &+\frac1{\Gamma(q)}\int_{t_k}^{t}
+            (t-s)^{q-1}F_{\eta_k}(X(s))\,\dd s.
+ \end{split}
+ \label{bre:num:continuacion-integral}
+\end{equation}
+Un reinicio en $t_k$ elimina $H_k(t)-H_k(t_k)$. Para $q=1$, el núcleo es
+constante y esa diferencia se anula. Para $0<q<1$, el peso de toda la
+historia cambia al avanzar $t$, de modo que el estado terminal no basta para
+reconstruir la evolución heredada.
+
+Si el parámetro cambia por saltos, el campo dependiente del tiempo es
+continuo por tramos. La formulación integral conserva sentido, pero una
+estimación de interpolación basada en derivadas temporales acotadas no puede
+atravesar esos saltos sin tratamiento adicional. Los tiempos \(t_k\) se
+incluyen como fronteras de la partición de cuadratura. En cada lado se usa la
+rama correspondiente; una interpolación lineal del campo debe distinguir
+\(F_{\eta_{k-1}}(X(t_k))\) de \(F_{\eta_k}(X(t_k))\). La trayectoria es
+continua, aunque los dos valores del campo puedan diferir. Si una
+discretización usa un único valor nodal, el defecto causado por esa elección
+forma parte del control numérico de la transición.
+
+Al finalizar la continuación puede definirse un experimento autónomo nuevo,
+\[
+ {}^{\mathrm C}D_0^q Z(t)=F_1(Z(t)),\qquad Z(0)=X(t_{\mathrm{fin}}).
+\]
+Su objetivo es comparar esa condición inicial con los sondeos bajo un mismo
+terminal inferior y una misma inicialización de memoria. La continuación
+transporta una historia; el reinicio establece la trayectoria de referencia
+del campo objetivo. Cambiar el orden $q$ también exige especificar un nuevo
+problema, pues cambia el núcleo de la ecuación integral.
+
+\subsection{Comparación con la recurrencia ADM local}
+\label{bre:num:adm-local}
+
+Wu et al. distinguen la recurrencia local \(X_{n+1}=\Phi_h(X_n)\) de un
+predictor--corrector que utiliza la historia. Su ecuación (27) conserva
+explícitamente el incremento de esa historia, y los autores advierten la
+pérdida de memoria histórica del ADM por subintervalos en integraciones
+largas \cite{Wu2023ArctanChua}. La diferencia se precisa restando la ecuación
+de Volterra en \(t_n\) de la misma ecuación en \(t_{n+1}\):
+\begin{multline}
+ X(t_{n+1})-X(t_n)=\mathcal M_n\\
+ +\frac1{\Gamma(q)}\int_{t_n}^{t_{n+1}}
+ (t_{n+1}-s)^{q-1}F(s,X(s))\,\dd s,
+ \label{bre:num:incremento-exacto}
+\end{multline}
+\begin{equation}
+ \begin{split}
+ \mathcal M_n&=\frac1{\Gamma(q)}\int_{t_0}^{t_n}B_n(s)F(s,X(s))\,\dd s,\\
+ B_n(s)&=(t_{n+1}-s)^{q-1}-(t_n-s)^{q-1}.
+ \end{split}
+ \label{bre:num:incremento-memoria}
+\end{equation}
+La integral sobre $[t_n,t_{n+1}]$ describe el intervalo nuevo.
+$\mathcal M_n$ repondera los intervalos anteriores y equivale a
+\(H_n(t_{n+1})-H_n(t_n)\) en
+\eqref{bre:num:continuacion-integral}, para un campo fijo. Se anula cuando
+\(q=1\), pero en general no lo hace para \(0<q<1\). Una expansión ADM
+local, aunque aumente su orden de truncamiento, no recupera ese término si
+se reinicia usando sólo \(X_n\).
+
+El campo constante \(F(t,x)=v\ne0\), con \(t_0=0\), proporciona un
+contraejemplo explícito. La solución causal exacta y su incremento son
+\begin{align*}
+ X(t)&=X_0+\frac{t^q}{\Gamma(q+1)}v,\\
+ X(t_{n+1})-X(t_n)
+ &=\frac{h^q}{\Gamma(q+1)}[(n+1)^q-n^q]v.
+\end{align*}
+Resolver exactamente cada intervalo reiniciado produciría, en cambio,
+\(\widehat X_{n+1}-\widehat X_n=h^qv/\Gamma(q+1)\). La contribución omitida
+es
+\[
+ \mathcal M_n=\frac{h^q}{\Gamma(q+1)}
+               [(n+1)^q-n^q-1]v.
+\]
+En un horizonte fijo \(T=Nh\), el reinicio repetido da
+\[
+ \widehat X_N=X_0+\frac{Th^{q-1}}{\Gamma(q+1)}v,
+ \qquad
+ X(T)=X_0+\frac{T^q}{\Gamma(q+1)}v.
+\]
+Para \(q<1\), la primera expresión ni siquiera converge a la segunda al
+reducir \(h\). El error procede de omitir la historia, aun con solución
+local exacta. Por ello una reconstrucción del algoritmo ADM publicado y una
+integración causal con terminal fijo cumplen funciones de comparación
+diferentes. La transferencia de una semilla entre ambas rutas requiere
+reintegrarla bajo el operador de Caputo y el convenio de memoria elegidos,
+y evaluar de nuevo su destino.
+
+\subsection{Defecto integral, error de memoria y refinamiento}
+\label{bre:num:error}
+
+Una curva numérica continua $\widetilde X$ se contrasta con el problema de
+Caputo mediante su defecto de Volterra,
+\begin{equation}
+ \begin{split}
+ \rho_h(t)={}&\widetilde X(t)-X_0\\
+ &-\frac1{\Gamma(q)}\int_{t_0}^{t}
+       (t-s)^{q-1}F(s,\widetilde X(s))\,\dd s.
+ \end{split}
+ \label{bre:num:defecto}
+\end{equation}
+Supóngase que la solución y la aproximación permanecen en una región donde
+$F$ es Lipschitz respecto del estado, con constante $L$. Restar sus
+ecuaciones y tomar normas produce, para $t_0=0$,
+\[
+ u(t)\leq A+\frac L{\Gamma(q)}\int_0^t(t-s)^{q-1}u(s)\,\dd s,
+ \quad u=\norm{X-\widetilde X},
+\]
+donde $A=\norm{\rho_h}_{\infty,[0,T]}$. La estimación se deriva iterando
+la integral fraccionaria $I^q$. La identidad beta
+\[
+ \int_0^t(t-s)^{a-1}s^{b-1}\,\dd s
+ =t^{a+b-1}\frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}
+\]
+para $a,b>0$ implica $I^aI^b=I^{a+b}$ y
+$I^{jq}1=t^{jq}/\Gamma(jq+1)$. Después de $N$ sustituciones,
+\[
+ u(t)\leq A\sum_{j=0}^{N-1}\frac{L^jt^{jq}}{\Gamma(jq+1)}
+             +L^N(I^{Nq}u)(t).
+\]
+El último término está acotado por
+$\norm{u}_\infty(LT^q)^N/\Gamma(Nq+1)$ y tiende a cero. Así se obtiene
+la desigualdad de Gronwall fraccionaria \cite{Gomoyunov2018Convex},
+\begin{equation}
+ \sup_{0\leq t\leq T}\norm{X(t)-\widetilde X(t)}
+ \leq A E_q(LT^q).
+ \label{bre:num:gronwall}
+\end{equation}
+Para $q=1$, $E_1(z)=\exp z$. La cota es condicional a la permanencia en
+la región indicada; una certificación requiere justificar también esa
+permanencia y acotar el defecto, incluida su cuadratura.
+
+Una aproximación de memoria debe controlar el núcleo en una norma adecuada.
+Para $K_q(t)=t^{q-1}/\Gamma(q)$, una suma finita
+$K_m(t)=\sum_{\ell=1}^m w_\ell\exp(-\eta_\ell t)$, con pesos y tasas
+positivos, es acotada en cero y no aproxima uniformemente la singularidad si
+$q<1$. Se separa $[0,\delta]$ y se exige
+\begin{equation}
+ \begin{split}
+ \varepsilon_K(T)&=\int_0^T|K_q(s)-\widetilde K_m(s)|\,\dd s\\
+ &\leq\varepsilon_{\mathrm{loc}}+(T-\delta)\varepsilon_\infty,
+ \qquad T\geq\delta.
+ \end{split}
+ \label{bre:num:error-nucleo}
+\end{equation}
+Aquí $\widetilde K_m$ incluye el tratamiento local elegido,
+$\varepsilon_{\mathrm{loc}}$ es su error integral en $[0,\delta]$ y
+$\varepsilon_\infty$ acota el error en $[\delta,T]$. Una corrección local
+exacta hace $\varepsilon_{\mathrm{loc}}=0$, pero conserva la necesidad de
+almacenar la historia reciente.
+
+Si $\norm{F}\leq M$ en la región y el defecto de cuadratura es a lo sumo
+$\varepsilon_{\mathrm{quad}}$, sumar y restar $K_q*F(X_m)$ separa el error
+de campo del error de núcleo. La segunda contribución está acotada por
+$M\varepsilon_K$, por lo que \eqref{bre:num:gronwall} da
+\begin{equation}
+ \norm{X-X_m}_{\infty,[0,T]}
+ \leq(M\varepsilon_K+\varepsilon_{\mathrm{quad}})E_q(LT^q).
+ \label{bre:num:error-soe}
+\end{equation}
+Esta estimación tiene horizonte finito. Por ejemplo, sin corrección local,
+las variables $z_\ell(t)=\int_0^t e^{-\eta_\ell(t-s)}F(s,X_m(s))\,\dd s$
+satisfacen
+\[
+ \dot z_\ell=-\eta_\ell z_\ell+F(t,X_m),\qquad
+ X_m=X_0+\sum_\ell w_\ell z_\ell.
+\]
+Para $F(x)=-ax$, $a>0$, el equilibrio proyectado es
+$x_m^*=x_0/(1+a\sum_\ell w_\ell/\eta_\ell)$, pues
+$z_\ell^*=-ax_m^*/\eta_\ell$. Puede diferir del límite cero del problema
+de Caputo. Por ello la concordancia en $[0,T]$ no establece por sí sola
+equivalencia de atractores o cuencas al llevar $T$ a infinito.
+
+\paragraph{Regularidad y error de cuadratura.}
+Los pesos exactos no eliminan la singularidad del arranque. Si \(F\) es
+\(C^1\) cerca de \((t_0,X_0)\), la acotación del campo en
+\eqref{bre:num:volterra} da \(X(t_0+s)-X_0=O(s^q)\). Por Lipschitz,
+\(F(t_0+s,X(t_0+s))=F_0+O(s^q)\), donde \(F_0=F(t_0,X_0)\). Una nueva
+sustitución en la integral produce
+\begin{equation}
+ X(t_0+s)=X_0+\frac{s^q}{\Gamma(q+1)}F_0+O(s^{2q}).
+ \label{bre:num:arranque}
+\end{equation}
+Si \(0<q<1\) y \(F_0\ne0\), el cociente
+\((X(t_0+s)-X_0)/s\) tiene norma no acotada cuando \(s\to0^+\). Así, la
+suavidad del campo no implica una solución con derivadas temporales acotadas
+en el terminal inferior.
+
+Para precisar el papel de la regularidad, supóngase provisionalmente que
+\(g(t)=F(t,X(t))\) tiene derivadas temporales acotadas
+\(\norm{g'}\leq M_1\) y \(\norm{g''}\leq M_2\) en toda la ventana.
+La interpolación constante tiene error a lo sumo \(M_1h\). La interpolación
+lineal \(\ell_j\) en un intervalo de longitud \(h\) satisface
+\[
+ \norm{g(t)-\ell_j(t)}
+ \leq\frac{M_2}{2}(t-t_j)(t_{j+1}-t)
+ \leq\frac{M_2h^2}{8}.
+\]
+Esta cota se obtiene integrando dos veces el resto, nulo en ambos extremos;
+el núcleo de esa representación tiene integral absoluta
+\((t-t_j)(t_{j+1}-t)/2\). Multiplicar ambos errores por el núcleo positivo y
+usar \(\int_0^T K_q(s)\,\dd s=T^q/\Gamma(q+1)\) da
+\[
+ \varepsilon_{\mathrm P}\leq\frac{M_1T^q}{\Gamma(q+1)}h,
+ \qquad
+ \varepsilon_{\mathrm L}\leq\frac{M_2T^q}{8\Gamma(q+1)}h^2.
+\]
+Estas son cotas de cuadratura sobre valores exactos de la trayectoria.
+Sustituir el campo del extremo por su evaluación en el predictor añade a la
+segunda cota, a lo sumo,
+\[
+ \frac{Lh^q}{\Gamma(q+2)}\varepsilon_{\mathrm P}.
+\]
+La consistencia resultante es \(O(h^2+h^{1+q})\) bajo esas hipótesis. Pasar
+a un orden global del método requiere controlar además la propagación de
+los errores nodales. Si las derivadas de \(g\) no son acotadas cerca de
+\(t_0\), las cotas anteriores no son aplicables con constantes uniformes;
+se necesita estimar el tramo inicial, introducir correcciones de arranque o
+analizar una malla graduada. En las evaluaciones a paso uniforme se conserva
+la evidencia de refinamiento sin atribuirle automáticamente el orden del
+régimen suave.
+
+\paragraph{Comparaciones a resolución creciente.}
+El refinamiento temporal compara el mismo problema con $h,h/2,h/4$, usando
+una malla común para medir el error de trayectoria en una ventana corta.
+Después compara observables postransitorios al ampliar $T$ y el tiempo de
+descarte. Si se aproxima la memoria, se varían además sus modos o longitud,
+con error de núcleo controlado. La persistencia de una etiqueta clasifica
+el destino al nivel de resolución evaluado; para estimar un orden de
+convergencia se necesitan diferencias cuantitativas de la misma magnitud.
+Con la distancia de \eqref{bre:num:distancia}, en una ventana corta fija \(I_c\) se define
+\[
+ E_h=\max_{t\in I_c}d_S(X_h(t),X_{h/2}(t)).
+\]
+Si \(E_h\simeq Ch^p\), con \(C>0\), entonces
+\(E_h/E_{h/2}\simeq2^p\) y
+\(p\simeq\log_2(E_h/E_{h/2})\). Esta estimación requiere diferencias no
+nulas y un régimen asintótico de discretización; no se aplica a trayectorias
+caóticas arbitrariamente largas. Perturbar $X_0$ a paso fijo evalúa otra propiedad: la robustez frente
+a condiciones iniciales.
+
+\subsection{Escalas, crecimiento tangente y comparación de nubes}
+\label{bre:num:metricas}
+
+La escala de las variables se fija mediante
+$S=\operatorname{diag}(s_1,\ldots,s_n)$, $s_i>0$, y la distancia
+\begin{equation}
+ d_S(x,y)=\norm{S^{-1}(x-y)}_2.
+ \label{bre:num:distancia}
+\end{equation}
+Para comparar escalas temporales se fija además \(\tau_*>0\). Con
+\(t=t_0+\tau_*\theta\), \(Y(\theta)=S^{-1}X(t_0+\tau_*\theta)\), el
+cambio de variable en Volterra da
+\[
+ {}^{\mathrm C}D_0^qY(\theta)
+ =\tau_*^q S^{-1}F(t_0+\tau_*\theta,SY(\theta)).
+\]
+El factor \(\tau_*^q\) proviene del producto
+\(\tau_*^{q-1}\tau_*\) entre el núcleo y el diferencial. Por tanto,
+\(\widehat h=h/\tau_*\), \(\widehat T=T/\tau_*\) para una duración física \(T\); las escalas se
+fijan antes de clasificar destinos. Si se usa una tasa espectral
+\(\lambda\) de una linealización fraccionaria, su dimensión es
+\(\mathrm{tiempo}^{-q}\), y una escala dimensionalmente coherente es
+\(\tau_*=|\lambda|^{-1/q}\), para \(\lambda\ne0\).
+
+Con $S=I$ se recupera la distancia euclidiana. En una variable angular se
+usa la diferencia mínima módulo $2\pi$. Si se identifica un grupo finito
+$G$ de simetrías, la expresión
+$d_{S,G}(x,y)=\min_{g\in G}d_S(x,gy)$ define una métrica entre órbitas
+cuando cada $g$ es una isometría. Para $g(x)=A_gx+b_g$, esto exige
+$A_g^{\mathsf T}S^{-2}A_g=S^{-2}$. La invariancia permite cambiar
+representantes, y la desigualdad triangular sigue de
+$d_S(x,ghz)\leq d_S(x,gy)+d_S(gy,ghz)$.
+
+En orden entero, para un campo \(C^1\), la matriz tangente satisface
+\(\dot Y=DF(X(t))Y\), \(Y(0)=I\). En un campo continuo y \(C^1\) por
+regiones, la integración variacional usa el Jacobiano de cada región y
+resuelve los cruces de sus interfaces. En un cruce transversal de un campo
+continuo, la matriz tangente es continua; los contactos tangenciales
+requieren un análisis específico. Sobre una ventana de longitud $T$, el
+crecimiento en la norma escalada se calcula con
+$Y_S=S^{-1}YS$. Puesto que
+$\norm{Y_Sv}_2^2=v^{\mathsf T}Y_S^{\mathsf T}Y_Sv$, los factores
+principales de amplificación son los valores singulares $\sigma_i(Y_S)$.
+Los exponentes de tiempo finito son
+\begin{equation}
+ \Lambda_i(T)=\frac1T\log\sigma_i(Y_S(T)).
+ \label{bre:num:ftle}
+\end{equation}
+La acumulación de factores triangulares mediante reortogonalización QR
+proporciona estimadores de los exponentes de Lyapunov
+\cite{Benettin1980a}; sus valores finitos dependen de la ventana y de la
+base inicial. Un exponente máximo positivo indica expansión durante el
+intervalo observado. El horizonte heurístico de predicción
+$T_{\mathrm{pred}}\simeq\lambda_1^{-1}
+\log(\varepsilon_{\mathrm{adm}}/\varepsilon_0)$ se obtiene al resolver
+$\varepsilon_0e^{\lambda_1T}=\varepsilon_{\mathrm{adm}}$, para
+$0<\varepsilon_0<\varepsilon_{\mathrm{adm}}$ y $\lambda_1>0$
+\cite{VallejoSanjuan2017Predictability}. Después de ese horizonte son
+especialmente relevantes las distribuciones de retorno, los tiempos de
+escape y los observables estadísticos convergentes.
+
+En Caputo, la ecuación variacional conserva el mismo terminal inferior y
+la historia del campo tangente. Para $F\in C^1$ en una región que contenga
+las trayectorias próximas durante $[0,T]$, derivar Volterra respecto del
+dato inicial produce
+\begin{equation}
+ Y(t)=I+\frac1{\Gamma(q)}\int_0^t(t-s)^{q-1}J(s)Y(s)\,\dd s.
+ \label{bre:num:tangent-memory}
+\end{equation}
+Aquí $J(s)=DF(X(s))$. La derivación se justifica tomando cocientes
+incrementales: el teorema
+fundamental del cálculo expresa la diferencia de $F$ mediante la integral
+de $DF$ sobre el segmento entre las soluciones. Su convergencia uniforme
+en el compacto y la desigualdad integral de Gronwall hacen converger esos
+cocientes a la única solución lineal anterior. En regiones no suaves se
+necesita justificar separadamente esa diferenciabilidad.
+
+Si en un tiempo $\tau$ se factoriza $Y(\tau)=QR$ con $R$ invertible,
+el cambio de base $Z(t)=Y(t)R^{-1}$ satisface
+\begin{equation}
+ Z(t)=R^{-1}+\frac1{\Gamma(q)}
+ \int_0^t(t-s)^{q-1}J(s)Y(s)R^{-1}\,\dd s.
+ \label{bre:num:qr-memory}
+\end{equation}
+Por tanto, se transforman también el dato inicial tangente y todos los
+valores históricos de $JY$. Conservar sólo $Z(\tau)=Q$ y reiniciar la
+integral en $\tau$ elimina una contribución no constante del pasado.
+Para $q=1$ esa contribución sí se reduce al estado tangente en $\tau$.
+La identidad exige invertibilidad del factor utilizado; ésta debe
+comprobarse, pues una matriz fundamental fraccionaria no hereda sin prueba
+todas las propiedades de la de una EDO.
+Al comparar algoritmos variacionales fraccionarios, incluidos los de
+\cite{DancaKuznetsov2018Lyapunov}, se comprueba esta compatibilidad antes
+de interpretar sus exponentes.
+
+Para una nube objetivo $A=\{a_k\}$ y una cola de trayectoria
+$B=\{b_j\}_{j=1}^{N}$, un criterio de contacto es
+\begin{equation}
+ D_{90}(B,A)=Q_{0.90}\bigl(\{\min_k d_S(b_j,a_k)\}_j\bigr)
+ \leq\varepsilon_A.
+ \label{bre:num:contacto}
+\end{equation}
+El percentil se calcula después del submuestreo declarado. Si las distancias
+ordenadas son $d_{(1)}\leq\cdots\leq d_{(N)}$, se interpola entre las
+posiciones $i+1$ e $i+2$, con $i=\lfloor0.90(N-1)\rfloor$ y peso
+$0.90(N-1)-i$; para $N=1$ se toma la única distancia. Es un estadístico
+dirigido: una sonda puede aproximar parte de la nube sin recorrerla toda.
+La referencia, las escalas y el umbral se fijan antes del sondeo. La
+concordancia geométrica se contrasta además con el destino terminal y la
+estabilidad de los observables al variar paso y horizonte.
+
+\subsection{Sondeos, salidas y censura temporal}
+\label{bre:num:sondeos}
+
+Alrededor de cada equilibrio $e$ se distinguen muestras volumétricas y
+superficiales. En dimensión $n$, una muestra uniforme en una bola euclidiana
+de radio $r$ es $x_0=e+rU^{1/n}d$, donde $U$ es uniforme en $[0,1]$ y
+$d$ es independiente y uniforme en la esfera unidad. En efecto,
+$\Pr(rU^{1/n}\leq a)=(a/r)^n$, la fracción de volumen contenida en el
+radio $a$. En el sondeo superficial se usa $x_0=e+rd$; una distribución
+determinista de direcciones proporciona un conteo a una resolución angular
+fija. Los radios, direcciones y cantidades de muestras determinan el alcance
+de la ausencia de contactos.
+
+Para separar recurrencia y escape, sea $D$ una región cerrada de observación de un
+flujo $\varphi_t$. El tiempo de primera salida es
+\begin{equation}
+ \tau_D(x_0)=\inf\{t\geq0:\varphi_t(x_0)\notin D\},
+ \qquad \inf\varnothing=\infty.
+ \label{bre:num:salida}
+\end{equation}
+Una integración hasta $T$ proporciona el dato censurado
+\begin{equation}
+ \widetilde\tau_D=\min(\tau_D,T),\qquad
+ \Delta_D=\mathbf1_{\{\tau_D\leq T\}}.
+ \label{bre:num:censura}
+\end{equation}
+En el cálculo se especifican la función de evento, su dirección de cruce,
+la interpolación y la tolerancia. Si localmente $D=\{g\leq0\}$, una salida
+transversal cumple $g(X(\tau_D))=0$ y
+$\nabla g\cdot F>0$. Para $g_j\leq0<g_{j+1}$, el cero de la interpolación
+lineal es
+\[
+ \widehat\tau_D=t_j-
+ \frac{g_j}{g_{j+1}-g_j}(t_{j+1}-t_j).
+\]
+Si el cruce es único y la derivada temporal del evento es al menos
+$\nu>0$, un error uniforme $\varepsilon_g$ de la función de evento implica
+un error de raíz a lo sumo $\varepsilon_g/\nu$, más la tolerancia del
+buscador. Esta estimación incluye el error de trayectoria y de
+interpolación. Sin control entre muestras pueden omitirse salidas y
+reentradas. La ausencia de escape detectado se considera censura derecha;
+un fallo del integrador constituye un resultado distinto.
+
+Para datos iniciales en un conjunto medible $U\subset D$ y una medida con
+$0<\mu(U)<\infty$, la supervivencia se define por
+\begin{equation}
+ S_D(t)=\frac{\mu\{x_0\in U:\tau_D(x_0)>t\}}{\mu(U)}.
+ \label{bre:num:supervivencia}
+\end{equation}
+Con $N$ semillas de igual peso y un horizonte común, para $t<T$ se estima
+mediante $N^{-1}\sum_j\mathbf1_{\{\widetilde\tau_D^{(j)}>t\}}$, porque
+$\min(\tau_D,T)>t$ equivale a $\tau_D>t$ en ese intervalo. Los intervalos
+de confianza requieren un modelo de muestreo; los conteos de una malla
+determinista no lo proporcionan por sí solos. Para una trayectoria de Caputo, \eqref{bre:num:salida} se aplica a su
+evolución causal con el terminal inferior fijado, sin presuponer un
+semiflujo sobre el estado proyectado. Se especifica la familia de historias
+o reinicios: dos estados proyectados iguales pueden
+tener escapes diferentes si sus memorias difieren. La persistencia, la
+atracción y la separación respecto de los equilibrios requieren controles
+propios; una trayectoria larga o un exponente positivo de tiempo finito no
+sustituye esos argumentos.

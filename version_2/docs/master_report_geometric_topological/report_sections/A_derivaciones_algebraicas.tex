@@ -249,7 +249,7 @@ J_{\mathrm{out}}=
 \label{eq:jacobianos_ns}
 \end{equation}
 En \(x=\pm1\) la derivada clásica no existe. Los equilibrios usados en este
-reporte no se encuentran sobre esas superficies, por lo que se emplea el
+análisis no se encuentran sobre esas superficies, por lo que se emplea el
 jacobiano de la región que contiene a cada uno.
 
 Para la arctangente,
@@ -512,7 +512,10 @@ Se define
 I(\xi)=
 \int_0^\pi\arctan(\xi\sin\theta)\sin\theta\dd\theta.
 \]
-Como \(I(0)=0\), puede calcularse \(I\) integrando su derivada:
+Como \(I(0)=0\), puede calcularse \(I\) integrando su derivada.
+La diferenciación bajo la integral es válida porque el integrando y su
+derivada respecto de \(\xi\) son continuos y están uniformemente
+acotados en cada intervalo compacto de \(\xi\). Para \(\xi>0\),
 \begin{align}
 I'(\xi)
 &=\int_0^\pi
@@ -526,12 +529,18 @@ I'(\xi)
 \left(1-\frac1{\sqrt{1+\xi^2}}\right).
 \label{eq:derivada_integral_arctan}
 \end{align}
-En la última igualdad se usó la integral estándar
-\[
-\int_0^\pi\frac{\dd\theta}{1+\xi^2\sin^2\theta}
-=\frac{\pi}{\sqrt{1+\xi^2}}.
-\]
-Una primitiva que se anula en \(\xi=0\) es
+Para justificar la última igualdad, la simetría respecto de \(\pi/2\)
+reduce la integral a dos veces \([0,\pi/2]\). Con
+\(u=\tan\theta\), \(\sin^2\theta=u^2/(1+u^2)\) y
+\(\dd\theta=\dd u/(1+u^2)\), se obtiene
+\begin{align*}
+ \int_0^\pi\frac{\dd\theta}{1+\xi^2\sin^2\theta}
+ &=2\int_0^\infty\frac{\dd u}{1+(1+\xi^2)u^2}\\
+ &=\frac{2}{\sqrt{1+\xi^2}}
+ \left[\arctan\!\left(u\sqrt{1+\xi^2}\right)\right]_0^\infty
+ =\frac{\pi}{\sqrt{1+\xi^2}}.
+\end{align*}
+Una primitiva con límite cero cuando \(\xi\to0\) es
 \begin{equation}
 I(\xi)
 =\pi\frac{\sqrt{1+\xi^2}-1}{\xi}.
@@ -549,7 +558,8 @@ N_{\mathrm a}(A)
 \label{eq:df_arctan_derivada}
 \end{align}
 
-Si el cierre exige \(N_{\mathrm a}(A)=k\), la amplitud puede despejarse.
+Para \(\rho>0\), \(a_2\ne0\) y \(k\ne0\), si el cierre exige
+\(N_{\mathrm a}(A)=k\), la amplitud puede despejarse.
 De la forma racionalizada,
 \[
 1+\sqrt{1+\rho^2A^2}=\frac{2a_2\rho}{k}.
@@ -593,15 +603,30 @@ donde
 G(\zeta)=r^{\T}(\zeta I-P)^{-1}b,
 \qquad W_q(s)=G(s^q).
 \]
-Por continuidad, la identidad polinómica se extiende también a los valores en
-los que la resolvente de \(P\) es singular. Si
+El producto del lado derecho tiene la expresión polinómica
+\[
+ \det(\zeta I-P)-k r^{\T}\operatorname{adj}(\zeta I-P)b.
+\]
+Esta expresión extiende la identidad a los polos; no asigna allí un valor
+a la resolvente ni a \(G\). Fuera de los polos, si
 \[
 1-kG(\zeta_0)=0,
 \]
-entonces \(\det(\zeta_0I-P_0)=0\), de modo que existe
-\(v\neq0\) con \(P_0v=\zeta_0v\). Siempre que \(r^{\T}v\neq0\), se reemplaza
-\(v\) por \(v/(r^{\T}v)\) y se obtiene \(r^{\T}v=1\). Ésta es la
-normalización usada en \cref{eq:modo_normalizado,eq:semilla_modal}.
+entonces \(\det(\zeta_0I-P_0)=0\). Puede construirse directamente el
+vector normalizado
+\[
+ v=k(\zeta_0I-P)^{-1}b.
+\]
+En efecto, \(r^{\T}v=kG(\zeta_0)=1\), de modo que \(v\ne0\), y
+\[
+ (\zeta_0I-P_0)v
+ =(\zeta_0I-P)v-bkr^{\T}v=bk-bk=0.
+\]
+Si se obtiene primero un autovector por otro procedimiento, su proyección
+\(r^{\T}v\) tampoco puede anularse: de lo contrario sería un
+autovector de \(P\) en \(\zeta_0\), contradiciendo la invertibilidad
+del resolvente. Por tanto, se puede dividir por esa proyección y obtener
+la normalización usada en \cref{eq:modo_normalizado,eq:semilla_modal}.
 
 En la rama sesgada,
 \[

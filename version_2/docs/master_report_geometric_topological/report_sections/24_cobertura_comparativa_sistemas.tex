@@ -1,0 +1,244 @@
+\section{Comparación de familias y problemas pendientes}
+\label{sec:cobertura-cuatro-familias}
+
+La comparación comprende dos características independientes: la estructura
+del campo y el orden de la derivada. Los sistemas tipo Chua conservan la
+arquitectura del circuito con una no linealidad escalar; los sistemas no Chua
+incluyen tanto otras realizaciones de Lur'e como campos con varias
+interacciones no lineales. La representación de Lur'e, por sí sola, no
+identifica un sistema como Chua. El orden entero corresponde a \(q=1\); el
+orden fraccionario conmensurable, a una derivada de Caputo común de orden
+\(0<q<1\).
+
+En cada familia se distinguen cuatro problemas: resolver las ecuaciones
+algebraicas, construir una semilla, determinar su destino dinámico y
+caracterizar la cuenca del conjunto alcanzado. La existencia de equilibrios o
+de puntos perpetuos resueltos no implica la existencia de un atractor
+localizado. Asimismo, un resultado negativo, como la ausencia de puntos
+perpetuos o la convergencia hacia un equilibrio, delimita la aplicabilidad
+del método y forma parte de la comparación.
+
+\subsection{Resultados en las cuatro familias}
+
+\begin{longtable}{@{}L{0.16\linewidth}L{0.25\linewidth}L{0.25\linewidth}L{0.26\linewidth}@{}}
+\caption{Cobertura algebraica y dinámica por familia.}
+\label{tab:cobertura-cuatro-familias}\\
+\toprule
+Familia & Sistemas representativos & Desarrollo disponible & Problema pendiente\\
+\midrule
+\endfirsthead
+\toprule
+Familia & Sistemas representativos & Desarrollo disponible & Problema pendiente\\
+\midrule
+\endhead
+Chua entero
+& Chua PWL canónico; arctangente como sistema auxiliar de búsqueda.
+& Equilibrios, espectros, transferencia, función descriptiva y semilla modal
+del PWL; continuación, diagnósticos dinámicos y comparación independiente.
+& Extender la reproducción a las ramas coexistentes no evaluadas con el
+mismo detalle. La exclusión de vecindades continuas sigue sin demostrarse.\\
+No Chua entero
+& Kalman--Fitts, MAVPD y PLL.
+& Álgebra y localización numérica; ciclos de Kalman--Fitts, MAVPD y PLL;
+candidato caótico de MAVPD. Sondeos locales y comparación entre integradores.
+& Certificar atracción y separación de cuencas; completar el análisis de
+frontera. Los puntos perpetuos no sustituyen las otras rutas.\\
+Chua fraccionario
+& PWL de Danca, arctangente de Wu y c590.
+& Álgebra, estabilidad de Matignon y semillas; continuación causal PWL;
+candidato c590; trayectorias desde semillas FPP--A de Wu.
+& Refinamiento de paso del extremo PWL sesgado; destino asintótico de las
+semillas de Wu; convergencia conjunta de memoria, horizonte y clasificación.\\
+No Chua fraccionario
+& Lorenz generalizado, Rabinovich--Fabrikant y Muñoz--Pacheco.
+& Realizaciones, equilibrios y semillas FPP--A; absorción de Lorenz;
+trayectorias preliminares de Muñoz--Pacheco.
+& Integrar y clasificar Lorenz y RF desde las semillas calculadas; completar
+convergencia, atracción y clasificación del caso Muñoz--Pacheco.\\
+\bottomrule
+\end{longtable}
+
+Las cuatro familias cuentan con resultados algebraicos. La cobertura dinámica
+es desigual: los sistemas enteros poseen varios casos de localización y los
+Chua fraccionarios cuentan con candidatos y controles extensos. En los
+sistemas fraccionarios no Chua, el resultado dinámico de Muñoz--Pacheco es
+preliminar; las pruebas de absorción de Lorenz y las raíces de
+Rabinovich--Fabrikant aún no se acompañan de una caracterización local de sus
+atractores. Los cálculos de exponentes descritos en la
+\cref{sec:nonchua-dynamic-benchmarks} son comparaciones de métodos y no
+completan esa localización.
+
+\subsection{Procedimientos pendientes por sistema}
+
+\begin{longtable}{@{}L{0.24\linewidth}L{0.32\linewidth}L{0.36\linewidth}@{}}
+\caption{Desarrollos necesarios para completar la comparación.}
+\label{tab:procedimientos-pendientes}\\
+\toprule
+Sistema & Resultado disponible & Desarrollo pendiente\\
+\midrule
+\endfirsthead
+\toprule
+Sistema & Resultado disponible & Desarrollo pendiente\\
+\midrule
+\endhead
+Chua PWL entero
+& Semilla armónica y candidato caótico canónico; ausencia de PP regionales.
+& Reproducir las otras ramas caótica y periódica de coexistencia con
+condiciones iniciales, paso y horizonte explícitos; comparar sus cuencas.\\
+Chua PWL, \(q=0.9998\)
+& Dos semillas centradas; extremo sesgado regular; 36 perturbaciones del dato
+inicial a paso fijo.
+& Evaluar \(h,h/2,h/4\) con memoria completa y horizonte común; distinguir
+sensibilidad al dato inicial de convergencia del integrador.\\
+Chua arctangente de Wu, \(q=0.99\)
+& Equilibrios, cierre armónico, dos FPP--A y trayectorias de dos integradores.
+& Resolver el destino de los transitorios mediante refinamiento y ampliación
+del horizonte. La recurrencia ADM publicada y el PVI Caputo causal requieren
+comparaciones separadas.\\
+Chua arctangente c590, \(q=0.9999\)
+& Candidato aperiódico y sondeos locales; un par FPP--A alejado de la
+trayectoria candidata.
+& Evaluar ese par con controles de escape y perturbaciones; demostrar la
+separación de vecindades si se pretende una clasificación rigurosa.\\
+Kalman--Fitts, \(q=1\)
+& Ciclo estable numérico, ruta de conmutación y obstrucción del cierre directo;
+ausencia de PP.
+& Establecer un dominio de retorno y una cota de contracción, o un argumento
+equivalente de atracción; calcular una vecindad explícita del origen contenida
+en su cuenca local de estabilidad.\\
+MAVPD, \(q=1\)
+& PP exactos y ciclos para \(\xi=3.1\); control con contacto para
+\(\xi=3.5\); candidato caótico para \(\xi=2.85\).
+& Comparar PP, función descriptiva y búsqueda directa bajo los mismos
+parámetros; caracterizar las tres cuencas detectadas al aproximar la frontera.\\
+PLL, \(q=1\)
+& Órbita corredora en el cilindro y dos PP por vuelta; un PP llega al
+equilibrio y el otro permanece transitorio en el experimento geométrico.
+& Resolver el segundo destino, certificar el retorno cilíndrico mediante
+encierros intervalares y caracterizar la componente de frontera detectada.\\
+Lorenz generalizado, \(q=0.995\)
+& Tres equilibrios, dos FPP--A, balance MIMO, existencia global, absorción y
+precompacidad de perfiles.
+& Integrar las dos semillas y controles próximos; resolver el balance MIMO si
+se usa esa ruta; determinar recurrencia, atracción y cuencas.\\
+Rabinovich--Fabrikant, \(q=0.998\), \((a,b)=(0.1,0.2876)\)
+& Cinco equilibrios, ocho FPP--A y formulación de balance MIMO.
+& Integrar los cuatro pares de semillas; controlar existencia y acotación,
+comparar métodos y horizontes, y estudiar vecindades de los cinco equilibrios.\\
+Muñoz--Pacheco, \(q=0.97\)
+& Ausencia de equilibrios, cuatro FPP--A en regiones suaves y trayectorias
+hasta \(t=35\); una recta de candidatos direccionales en la frontera genera
+soluciones no acotadas.
+& Obtener convergencia de paso y horizonte, acotación y atracción; contrastar
+las semillas con los datos publicados. El evento FPP--H no está resuelto.\\
+Muñoz--Pacheco, \(q=0.996\)
+& Parámetros e iniciales publicados para coexistencia.
+& Reproducir las dos respuestas con memoria completa y comprobar la
+coexistencia bajo el mismo método, tolerancias y horizonte.\\
+Jerk cuadrático de Liu
+& Campo, realización, equilibrios y ausencia de PP no estacionarios.
+& Localizar mediante balance, continuación o búsqueda directa; estudiar
+destino, robustez y cuenca.\\
+Liu extendido
+& Realización MIMO exacta y semirrecta de equilibrios
+\(x=y=z=0,\ w<0\), con \(\operatorname{sign}(0)=0\).
+& Fijar el orden y la convención de solución en la discontinuidad; estudiar
+estabilidad de la variedad de equilibrios y resolver PP por regiones antes
+de construir e integrar semillas.\\
+\bottomrule
+\end{longtable}
+
+Para Lorenz estándar, RF con \(b=0.98\), jerk exponencial, sistema financiero
+y sistema de cuatro alas existen desarrollos algebraicos y comparaciones de
+exponentes. Los parámetros de estos ensayos son distintos de los casos de
+atractores ocultos de Lorenz generalizado y RF con \(b=0.2876\).
+Su incorporación como casos de localización requiere estudiar semillas y
+cuencas de manera específica. Las discrepancias entre exponentes deben
+resolverse antes de utilizarlos como referencia cuantitativa.
+
+Los candidatos adicionales de la \cref{sec:candidate-queue} requieren datos
+previos al cálculo dinámico. En Genesio--Tesi faltan los parámetros y las
+condiciones iniciales del caso seleccionado; en el oscilador memristivo, la
+constante de la variedad invariante y sus parámetros; en el jerk PWA, el
+campo regional y las superficies de conmutación. El ejemplo (162) de
+Leonov--Kuznetsov requiere precisar su característica PWA, y el jerk con seno
+hiperbólico exige resolver la ambigüedad entre esa función y su inversa en la
+fuente. Sus representaciones estructurales constituyen puntos de partida
+algebraicos, sin resultados locales de clasificación de atractores.
+
+\subsection{Cobertura del procedimiento de puntos perpetuos}
+
+Para un campo \(f\in C^1\), la resolución algebraica consiste en determinar
+\[
+ \mathcal P(f)=\{p:J_f(p)f(p)=0,\ f(p)\ne0\}.
+\]
+La condición \(\det J_f(p)=0\) reduce la búsqueda, pero no sustituye las
+ecuaciones vectoriales. En campos definidos por regiones se resuelve cada
+sistema interior, se comprueba la pertenencia a su región y se estudian por
+separado las superficies donde el jacobiano no existe. Una enumeración
+completa exige justificar la ausencia de otras raíces reales, mediante
+eliminación algebraica, aislamiento de raíces o una demostración directa.
+
+La \cref{sec:pp-case-audit} proporciona raíces para Chua arctangente, MAVPD,
+PLL, Lorenz generalizado, RF con \(b=0.2876\) y Muñoz--Pacheco, junto con
+controles de ausencia para Chua PWL y Kalman--Fitts. Los dos sistemas jerk
+también admiten una demostración de ausencia. Permanecen pendientes los
+desarrollos específicos de PP para Lorenz estándar, RF con \(b=0.98\),
+sistema financiero, sistema de cuatro alas y Liu extendido. La ausencia de PP
+en un sistema no impide localizar atractores mediante otros métodos.
+
+En Muñoz--Pacheco, las cuatro raíces suaves no incluyen la recta
+\(\{(0,y,0):y\in\mathbb R\}\), situada en la superficie de conmutación.
+Allí no existe un jacobiano clásico, aunque ambos jacobianos laterales
+anulan el campo. La solución exacta permanece en esa recta y satisface
+\(y(t)=y_0+(t-t_0)^q/\Gamma(q+1)\); su crecimiento excluye la atracción
+por un conjunto acotado. Esta rama pertenece al criterio direccional por
+regiones y debe distinguirse de los puntos perpetuos clásicos.
+
+Si se conserva el mismo campo y sólo cambia \(q\), las raíces de
+\(J_ff=0\) permanecen iguales. En orden entero son puntos de aceleración
+nula; para Caputo conmensurable definen semillas FPP--A mediante la expansión
+de arranque. El orden modifica la trayectoria y su estabilidad, por lo cual
+la evaluación dinámica debe repetirse. El evento FPP--H depende de la
+historia y requiere un cálculo adicional del operador secuencial y de su
+convergencia.
+
+\subsection{Función del análisis topológico}
+
+La topología interviene en problemas distintos. El grado de Brouwer permite
+demostrar la existencia de un equilibrio; aplicado a \(I-P\), donde \(P\)
+es un retorno bien definido, puede establecer la existencia de una órbita
+periódica. Las variedades invariantes y las separatrices orientan la búsqueda
+de fronteras de cuenca. Un bloque aislante delimita dinámica invariante y
+permite aplicar el índice de Conley. Cada herramienta requiere hipótesis
+propias de continuidad, compacidad, transversalidad o aislamiento, desarrolladas
+en las \cref{sec:geo-degree,sec:geo-poincare-floquet,sec:metodos-topologicos-existencia,sec:localizacion-geometrico-topologica}.
+El ejemplo de la \cref{subsec:guide-hidden-cycle-topology} combina un anillo
+atrapante, un retorno y una separatriz para demostrar la existencia de un
+ciclo oculto y calcular su cuenca exactamente.
+
+La clasificación de ocultedad añade una condición sobre la cuenca. Una vez
+establecidos el atractor \(\mathcal A\) y su espacio de fases \(X\), deben
+existir vecindades \(U_e\) de todos los equilibrios tales que
+\[
+ U_e\cap\mathcal B_X(\mathcal A)=\varnothing.
+\]
+El grado y el índice local de un equilibrio no implican esta exclusión. En
+el caso entero, una región positivamente invariante contenida en otra cuenca
+puede proporcionar el argumento. Para Caputo, la condición debe formularse
+en un espacio de perfiles admisibles o respecto de una clase de datos
+iniciales definida; la proyección puntual no conserva toda la información.
+
+En Kalman--Fitts, la estabilidad asintótica del origen ya garantiza la
+existencia de una vecindad atraída por él. Si se demuestra un atractor
+compacto separado del origen, esa vecindad queda excluida de su cuenca. El
+cálculo de un radio explícito y la certificación del ciclo son pasos
+adicionales.
+
+Los cálculos de la \cref{sec:resultados-piloto-gt} contienen aproximaciones
+de frontera y destinos de semillas geométricas. El intervalo de PLL y el
+tercer destino de MAVPD orientan el muestreo posterior, pero aún no constituyen
+una caracterización topológica de la frontera. Las superficies críticas y
+los PP restringen regiones de búsqueda. La certificación puede apoyarse en
+un retorno, un conjunto aislante u otro argumento que demuestre atracción
+y separación de cuencas.

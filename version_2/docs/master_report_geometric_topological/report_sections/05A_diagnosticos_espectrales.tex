@@ -1,0 +1,81 @@
+\subsection{Definición de los indicadores espectrales y de la prueba 0--1}
+\label{diag:master:definition}
+
+Para una componente postransitoria $u_j$, muestreada uniformemente con
+intervalo $\Delta t$, se sustrae su media $\bar u$ y se aplica una ventana
+$w_j$. Con $N$ muestras, la transformada discreta es
+\begin{equation}
+ S_k=\sum_{j=0}^{N-1}w_j(u_j-\bar u)e^{-2\pi\ii jk/N},
+ \qquad f_k=\frac{k}{N\Delta t}.
+ \label{diag:master:dft}
+\end{equation}
+La ventana de Hann es $w_j=[1-\cos(2\pi j/(N-1))]/2$.
+La representación de módulo emplea $|S_k|/\sum_jw_j$; es distinta de
+una densidad espectral de potencia. Para una PSD unilateral por Welch,
+cada segmento usa el factor $\Delta t/\sum_jw_j^2$ sobre $|S_k|^2$;
+se duplican las frecuencias positivas interiores, excepto Nyquist
+cuando está presente, y se promedian los segmentos. Esta normalización
+conserva las unidades de potencia por unidad de frecuencia.
+
+Para cuantificar concentración espectral se excluye el modo cero y se
+normalizan las potencias $P_k=|S_k|^2$ en los $m$ modos positivos:
+\begin{equation}
+ p_k=\frac{P_k}{\sum_{\ell=1}^mP_\ell},\qquad
+ H=-\frac{\sum_{k=1}^mp_k\log p_k}{\log m}.
+ \label{diag:master:entropy}
+\end{equation}
+Se requiere $m>1$ y potencia total positiva; una señal constante se trata
+por separado. Con $0\log0=0$, se obtiene $0\le H\le1$:
+la cota inferior sigue de $p_k\le1$ y la superior de la concavidad del
+logaritmo, que maximiza la entropía en $p_k=1/m$.
+El cociente de potencia dominante es $\max_kp_k$, y la frecuencia
+dominante corresponde al modo que lo alcanza. Para comparar ventanas se
+conservan paso de muestreo, longitud y ventana; de otro modo cambian la
+resolución $1/(N\Delta t)$ y el número de modos usados en $H$.
+La deriva relativa usada en el clasificador compara los máximos de
+ventanas parciales mediante $(f_{\max}-f_{\min})/f_{\max}$, cuando
+$f_{\max}>0$ y todas las frecuencias parciales son positivas. Si alguna
+es nula o no puede estimarse, el clasificador asigna deriva infinita y
+no acepta el filtro de periodicidad. Una señal transitoria o una resolución insuficiente pueden
+producir banda ancha sin demostrar caos.
+
+La prueba 0--1 utiliza al menos $N=100$ muestras finitas de una señal
+preparada $\phi_j$, después de
+declarar el descarte, submuestreo, eliminación de tendencia y
+normalización \cite{gottwald2009}. Para $c\in(0,\pi)$, define
+\begin{align}
+ p_c(n)&=\sum_{j=1}^n\phi_j\cos(jc),\nonumber\\
+ q_c(n)&=\sum_{j=1}^n\phi_j\sin(jc).
+ \label{diag:master:translations}
+\end{align}
+El desplazamiento cuadrático medio a un retardo $n<N$ es
+\begin{equation}
+ M_c(n)=\frac1{N-n}\sum_{j=1}^{N-n}
+ \bigl[\Delta_np_c(j)^2+\Delta_nq_c(j)^2\bigr],
+ \label{diag:master:msd}
+\end{equation}
+donde $\Delta_np_c(j)=p_c(j+n)-p_c(j)$, y análogamente para $q_c$.
+Se elimina el término oscilatorio de la media mediante
+\begin{equation}
+ D_c(n)=M_c(n)-\bar\phi^{\,2}
+                 \frac{1-\cos(nc)}{1-\cos c}.
+ \label{diag:master:modified-msd}
+\end{equation}
+La corrección procede de sumar la progresión geométrica
+$\sum_{j=1}^n e^{\ii jc}$ y calcular su módulo al cuadrado:
+$|\sum_{j=1}^n e^{\ii jc}|^2=(1-\cos nc)/(1-\cos c)$.
+Por tanto, resta exactamente la contribución de una señal constante.
+
+Para el vector de retardos $n=1,\ldots,n_{\max}$ se calcula
+$K_c=\operatorname{corr}(n,D_c(n))$. El valor comunicado es la mediana
+de $K_c$ sobre los valores de $c$ elegidos; se conserva esa selección al
+comparar ensayos. En el procedimiento de correlación utilizado,
+$n_{\max}=\min(\max(20,\lfloor N/10\rfloor),500)$.
+Una varianza nula del desplazamiento no admite correlación de Pearson;
+se trata como caso degenerado regular. Los umbrales operativos
+$K<0.2$, $K>0.8$ y el intervalo intermedio describen, respectivamente,
+compatibilidad regular, compatibilidad caótica e indeterminación de ese
+diagnóstico finito. Un valor ligeramente negativo es posible por la
+correlación muestral. Ruido, transitorios y sobremuestreo afectan el
+resultado; la mediana y la comparación de varios intervalos de muestreo
+reducen sensibilidades concretas, sin demostrar caos ni ocultedad.

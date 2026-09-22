@@ -1,111 +1,46 @@
-\section{Comprobaciones algebraicas reproducibles en Wolfram Language}
+\section{Cálculo algebraico de equilibrios y espectros}
+\label{app:algebra-espectros}
 
-Las identidades de realización, los equilibrios, los jacobianos, los
-polinomios característicos y los espectros se evaluaron a partir de los campos
-vectoriales declarados. Los coeficientes decimales finitos se representaron
-como racionales exactos antes de aplicar \texttt{NSolve},
-\texttt{Eigenvalues} y el determinante
-\(\det(\lambda I-J)\). Para cada valor propio se evaluó de nuevo el polinomio
-característico y se comparó la suma espectral con la traza del jacobiano.
+Para un campo polinomial con parámetros racionales, las ecuaciones
+\(f(p)=0\), el jacobiano \(J_f(p)\) y el polinomio
+\(p_p(\lambda)=\det(\lambda I-J_f(p))\) pueden obtenerse mediante
+operaciones exactas. La representación racional de un decimal finito conserva
+el parámetro declarado; el redondeo se introduce al aproximar las raíces.
+Para evaluar una aproximación \(\widetilde p\) y sus valores propios
+\(\widetilde\lambda_j\), se consideran
+\[
+ r_f=\|f(\widetilde p)\|,\qquad
+ r_j=|p_{\widetilde p}(\widetilde\lambda_j)|,\qquad
+ r_{\mathrm{tr}}=
+ \left|\sum_j\widetilde\lambda_j-\operatorname{tr}J_f(\widetilde p)\right|.
+\]
+Un residuo pequeño indica consistencia numérica. La existencia y unicidad de
+una raíz próxima requieren una cota adicional, por ejemplo mediante un
+teorema de Newton validado; el residuo aislado no proporciona esa cota.
 
-\begin{lstlisting}[style=wl,language={},caption={Comprobación simbólica de las realizaciones de Lorenz generalizado y Rabinovich--Fabrikant.}]
-ClearAll["Global`*"];
-
-(* Generalized Lorenz *)
-r = 34/5; aL = -1/2; sigma = -aL r;
-fL = {-sigma (x1 - x2) - aL x2 x3,
-      r x1 - x2 - x1 x3,
-      -x3 + x1 x2};
-AL = {{-sigma, sigma, 0}, {r, -1, 0}, {0, 0, -1}};
-BL = {{-aL, 0, 0}, {0, -1, 0}, {0, 0, 1}};
-phiL = {x2 x3, x1 x3, x1 x2};
-Expand[AL.{x1, x2, x3} + BL.phiL - fL]
-(* {0,0,0} *)
-
-deltaL = (z + sigma) (z + 1) - sigma r;
-expectedWL = {
- {-aL (z + 1)/deltaL, -sigma/deltaL, 0},
- {-aL r/deltaL, -(z + sigma)/deltaL, 0},
- {0, 0, 1/(z + 1)}};
-FullSimplify[Inverse[z IdentityMatrix[3] - AL].BL - expectedWL]
-(* 3 x 3 zero matrix *)
-
-(* Rabinovich-Fabrikant *)
-aR = 1/10; bR = 719/2500;
-fR = {y (zz - 1 + x^2) + aR x,
-      x (3 zz + 1 - x^2) + aR y,
-      -2 zz (bR + x y)};
-AR = {{aR, -1, 0}, {1, aR, 0}, {0, 0, -2 bR}};
-BR = {{1, 1, 0, 0, 0},
-      {0, 0, 3, -1, 0},
-      {0, 0, 0, 0, -2}};
-phiR = {y zz, x^2 y, x zz, x^3, x y zz};
-Expand[AR.{x, y, zz} + BR.phiR - fR]
-(* {0,0,0} *)
-
-deltaR = (z - aR)^2 + 1;
-expectedWR = {
- {(z-aR)/deltaR, (z-aR)/deltaR, -3/deltaR,
-  1/deltaR, 0},
- {1/deltaR, 1/deltaR, 3 (z-aR)/deltaR,
-  -(z-aR)/deltaR, 0},
- {0, 0, 0, 0, -2/(z + 2 bR)}};
-FullSimplify[Inverse[z IdentityMatrix[3] - AR].BR - expectedWR]
-(* 3 x 5 zero matrix *)
-\end{lstlisting}
-
-\begin{lstlisting}[style=wl,language={},caption={Equilibrios, espectros y margen de Matignon.}]
-matignonMargin[vals_List, q_] :=
- N[Min[(Abs[Arg[#]] &) /@ vals] - q Pi/2, 16];
-
-jL = D[fL, {{x1, x2, x3}}];
-solL = {x1, x2, x3} /.
- NSolve[Thread[fL == 0], {x1, x2, x3}, Reals];
-Table[{p, Eigenvalues[jL /. Thread[{x1,x2,x3}->p]],
-       matignonMargin[
-        N[Eigenvalues[jL /. Thread[{x1,x2,x3}->p]], 20],
-        199/200]}, {p, solL}];
-
-jR = D[fR, {{x, y, zz}}];
-solR = {x, y, zz} /.
- NSolve[Thread[fR == 0], {x, y, zz}, Reals];
-Table[{p, Eigenvalues[jR /. Thread[{x,y,zz}->p]],
-       matignonMargin[
-        N[Eigenvalues[jR /. Thread[{x,y,zz}->p]], 20],
-        499/500]}, {p, solR}];
-\end{lstlisting}
-
-\section{Archivos de cálculo y resultados numéricos}
-
-La comprobación conjunta de Lorenz generalizado, Lorenz estándar,
-Rabinovich--Fabrikant en los dos conjuntos de parámetros, jerk exponencial,
-sistema financiero y four-wing se encuentra en los siguientes archivos:
-\begin{itemize}
- \item \path{docs/master_report_geometric_topological/wolfram/no_chua_complete_algebra_validation.wl};
- \item \path{docs/master_report_geometric_topological/wolfram/no_chua_complete_algebra_validation.json}.
-\end{itemize}
-
-La salida estructurada registra residuos nulos en las identidades de
-realización, en las ecuaciones de equilibrio, en la sustitución de los valores
-propios en los polinomios característicos y en la igualdad entre suma espectral
-y traza, a la precisión utilizada. En particular, para Lorenz generalizado se
-obtienen
+En el Lorenz generalizado con
+\((\sigma,r,a)=(3.4,6.8,-0.5)\), los polinomios característicos son
 \begin{align*}
  p_0(\lambda)&=\lambda^3+5.4\lambda^2-15.32\lambda-19.72,\\
  p_{\pm}(\lambda)&=\lambda^3+5.4\lambda^2
- +14.8476942706167\lambda+78.88,
+ +14.8476942706167\lambda+78.88.
 \end{align*}
-con los espectros consignados en el cuerpo del informe. La suma de cada terna
-es \(-5.4\), igual a la traza de su jacobiano.
+El coeficiente lineal de \(p_\pm\) se muestra redondeado. La suma espectral
+es \(-5.4\), igual a la traza de los tres jacobianos. Para un sistema Caputo
+conmensurable de orden \(q\), si ningún autovalor es cero, el margen angular
+\[
+ m_q(p)=\min_j|\arg\lambda_j|-\frac{q\pi}{2}
+\]
+determina la estabilidad asintótica del sistema lineal cuando es positivo.
+Su aplicación al campo no lineal requiere las hipótesis de regularidad y
+linealización establecidas en los fundamentos.
 
-Los tres candidatos enteros se verifican con programas dedicados, que parten
-de sus ecuaciones y parámetros y producen los datos empleados en las tablas:
-\begin{itemize}
- \item \path{validation/wolfram/cases/kalman_fitts_integer.wl};
- \item \path{validation/wolfram/cases/mavpd_integer.wl};
- \item \path{validation/wolfram/cases/pll_lead_lag_integer.wl}.
-\end{itemize}
-La estabilidad numérica adicional de Kalman--Fitts se consigna en
-\path{validation/reference_cases/kalman_fitts_integer_q1/06_integrator_robustness_matrix.csv};
-contiene ocho combinaciones de
-integrador, paso y horizonte, todas consistentes con el ciclo localizado.
+Las realizaciones de Lorenz generalizado y Rabinovich--Fabrikant se comprueban
+mediante las identidades
+\[
+ AX+B\Phi(X)-f(X)=0,\qquad
+ (zI-A)W(z)-B=0,
+\]
+en el dominio \(\det(zI-A)\ne0\). Estas igualdades justifican las
+transferencias empleadas en el balance MIMO. La solución del balance y la
+integración desde sus semillas constituyen problemas posteriores.

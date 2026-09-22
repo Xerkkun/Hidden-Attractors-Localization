@@ -1,0 +1,520 @@
+\section{Problema de localización y secuencia metodológica}
+\label{bre:fund:problema}
+
+Sea $F:\Omega\subset\R^n\to\R^n$ un campo definido en un abierto.
+Se consideran el problema entero $\dot X=F(X)$ y el problema conmensurable
+\begin{equation}
+ \Caputo q X(t)=F(X(t)),\qquad X(t_0)=X_0,
+ \quad 0<q<1.
+ \label{bre:fund:pvi}
+\end{equation}
+La formulación conmensurable asigna el mismo orden a todas las componentes.
+El caso $q=1$ se interpreta como una ecuación diferencial ordinaria (EDO).
+La estructura tipo Chua y el orden de la derivada son características
+independientes: una realización de Lur'e puede describir un sistema no Chua.
+
+En orden entero, sea $\varphi_t$ el flujo hacia adelante, sobre los datos
+cuyas soluciones existen. Para un compacto invariante y atractivo $A$, su cuenca es
+\begin{equation}
+ \mathcal B(A)=\{X_0:\operatorname{dist}(\varphi_t(X_0),A)\to0\}.
+ \label{bre:fund:cuenca}
+\end{equation}
+Aquí se exige existencia global de las trayectorias incluidas en la cuenca.
+La clasificación usual denomina oculto a un atractor cuya cuenca no
+interseca vecindades suficientemente pequeñas de ningún equilibrio
+\cite{LeonovKuznetsov2013,DudkowskiEtAl2016}. Con
+$\mathcal E=\{e:F(e)=0\}$, la condición precisa es
+\begin{equation}
+ \forall e\in\mathcal E\ \exists r_e>0:
+ B(e,r_e)\cap\mathcal B(A)=\varnothing.
+ \label{bre:fund:hidden}
+\end{equation}
+El orden de los cuantificadores permite radios distintos para equilibrios
+distintos. Un contacto a gran distancia de $e$ no contradice la existencia
+de un radio menor excluido de la cuenca. Si $\mathcal E$ es vacío, la
+condición es vacua; todavía debe establecerse la existencia de un atractor.
+
+La metodología comprende seis operaciones encadenadas:
+\begin{enumerate}
+ \item Fijar campo, parámetros, dominio, orden, terminal inferior y
+ convención de solución; resolver los equilibrios y su estabilidad local.
+ \item Construir semillas mediante balance armónico, puntos perpetuos,
+ continuación desde un problema resoluble o búsqueda acotada.
+ \item Transportar las semillas al campo objetivo conservando la historia
+ en los problemas fraccionarios.
+ \item Integrar el campo autónomo bajo un mismo convenio de inicialización,
+ separar el transitorio y comparar paso, horizonte y memoria.
+ \item Identificar destinos mediante trayectorias, secciones, espectros,
+ recurrencia e indicadores variacionales compatibles con el modelo.
+ \item Estudiar la atracción y la separación respecto de los equilibrios;
+ aplicar retornos, regiones invariantes o métodos topológicos cuando sus
+ hipótesis estén verificadas.
+\end{enumerate}
+La resolución algebraica determina candidatos; la integración determina
+su destino a tiempo finito. La demostración de atracción y la exclusión de
+vecindades completas son problemas adicionales, con hipótesis propias.
+
+\section{Fundamento analítico de la formulación fraccionaria}
+\label{bre:fund:caputo}
+
+\subsection{Integral fraccionaria y dominio del operador}
+
+Para $a>0$ y $g\in L^\infty([t_0,T],\R^n)$, se define
+\begin{equation}
+ (I_{t_0}^a g)(t)=\frac1{\Gamma(a)}
+ \int_{t_0}^{t}(t-s)^{a-1}g(s)\dd s.
+ \label{bre:fund:integral}
+\end{equation}
+El núcleo es integrable en $s=t$ porque $a-1>-1$. En particular,
+\begin{equation}
+ \norm{I_{t_0}^a g(t)}\le
+ \frac{(t-t_0)^a}{\Gamma(a+1)}\norm g_\infty,
+ \label{bre:fund:integralbound}
+\end{equation}
+al integrar la potencia y usar $\Gamma(a+1)=a\Gamma(a)$.
+Esta cota prueba la continuidad en el terminal inferior y la anulación
+del incremento allí.
+
+La composición $I^aI^b=I^{a+b}$ requiere el mismo terminal inferior.
+Para justificarla, escriba la integral doble sobre
+$t_0\le s\le u\le t$. Su integral absoluta es finita por la acotación de
+$g$ y la integrabilidad de ambos núcleos; Fubini permite cambiar el orden.
+La integral interior se calcula con $u=s+(t-s)v$:
+\begin{align}
+ &\int_s^t(t-u)^{a-1}(u-s)^{b-1}\dd u \nonumber\\
+ &\quad=(t-s)^{a+b-1}\int_0^1(1-v)^{a-1}v^{b-1}\dd v\nonumber\\
+ &\quad=(t-s)^{a+b-1}\frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}.
+ \label{bre:fund:beta}
+\end{align}
+Sustituir esta expresión en la integral exterior da la composición.
+La identidad se extiende a $g\in L^1$: Tonelli aplicado al valor absoluto
+proporciona, con $H=T-t_0$,
+\[
+ \norm{I^a g}_{L^1}\le\frac{H^a}{\Gamma(a+1)}\norm g_{L^1}.
+\]
+La integral doble es entonces absolutamente integrable en el intervalo y
+Fubini demuestra la composición casi en todas partes. Esta extensión
+permite aplicarla a la derivada ordinaria de una función absolutamente continua.
+La misma sustitución demuestra, para $\mu>-1$,
+\begin{equation}
+ I_{t_0}^a(t-t_0)^\mu
+ =\frac{\Gamma(\mu+1)}{\Gamma(\mu+a+1)}(t-t_0)^{\mu+a}.
+ \label{bre:fund:power}
+\end{equation}
+
+Si $X$ es absolutamente continua, la derivada clásica de Caputo es
+\begin{equation}
+ \Caputo q X=I_{t_0}^{1-q}X'
+ =\frac1{\Gamma(1-q)}\int_{t_0}^{t}(t-s)^{-q}X'(s)\dd s,
+ \label{bre:fund:classical}
+\end{equation}
+donde la integral se entiende en los puntos en los cuales existe, al menos
+casi en todas partes. Para no imponer una regularidad temporal que no se
+haya demostrado, se utiliza también la definición
+\begin{equation}
+ \Caputo q X=\frac{\dd}{\dd t}I_{t_0}^{1-q}(X-X_0),
+ \label{bre:fund:generalized}
+\end{equation}
+cuando $X$ es continua, $X(t_0)=X_0$ y el término derivado es
+absolutamente continuo. Ambas definiciones coinciden sobre su dominio
+común: $X-X_0=I^1X'$ y la composición de integrales da
+$I^{1-q}(X-X_0)=I^1I^{1-q}X'$, cuya derivada es $I^{1-q}X'$.
+Las soluciones se buscan en la clase $X_0+I_{t_0}^q(L^\infty)$ sobre
+cada intervalo compacto de existencia \cite{Gomoyunov2018Convex}.
+
+\subsection{Elección de Caputo y significado del dato inicial}
+\label{bre:fund:initialchoice}
+
+La elección del operador forma parte del modelo. Para $0<q<1$, Caputo
+permite prescribir el valor ordinario $X(t_0)=X_0$ y anula las constantes.
+La derivada de Riemann--Liouville, definida por
+$D_{\rm RL}^qX=(\dd/\dd t)I^{1-q}X$, satisface sobre el dominio anterior
+\begin{equation}
+ D_{\rm RL}^qX=\Caputo qX+
+ \frac{X_0}{\Gamma(1-q)}(t-t_0)^{-q},\quad t>t_0.
+ \label{bre:fund:RLbridge}
+\end{equation}
+En efecto, se separa $X=(X-X_0)+X_0$ y se deriva
+$I^{1-q}X_0=X_0(t-t_0)^{1-q}/\Gamma(2-q)$.
+Por tanto, el mismo PVI puede escribirse con Riemann--Liouville si se
+incorpora ese término singular de inicialización. Sustituir el operador
+y conservar sin cambios el segundo miembro produce, en general, otro
+problema. La conveniencia de Caputo aquí procede de los datos iniciales
+puntuales y de la formulación causal elegida; no establece una superioridad
+universal sobre otros operadores.
+
+El valor inicial de $X$ no debe confundirse con el valor de su derivada
+fraccionaria en el extremo. Para el campo constante $F(X)=v$, Volterra da
+\begin{equation}
+ X(t)=X_0+\frac{(t-t_0)^q}{\Gamma(q+1)}v.
+ \label{bre:fund:startupconstant}
+\end{equation}
+Su derivada ordinaria es $v(t-t_0)^{q-1}/\Gamma(q)$, integrable pero
+no acotada cuando $v\ne0$. Sustituirla en Caputo y aplicar la integral beta
+da $\Caputo qX(t)=v$ para todo $t>t_0$. Así, el límite por la derecha
+puede ser distinto de cero. Asignar cero a una integral de intervalo vacío
+en $t=t_0$ es una convención de extremo; no autoriza a imponer
+$F(X_0)=0$. La ecuación se exige para $t>t_0$ en el sentido de solución
+declarado, y el dato inicial se obtiene por continuidad de $X$.
+
+El operador de Liouville--Weyl, con historia desde $-\infty$, permite
+analizar armónicos estacionarios. Su relación con el operador causal de
+Caputo justifica el predictor armónico mediante un término explícito de
+historia; no identifica ambos problemas iniciales. Las diferencias de
+Grünwald--Letnikov pueden aproximar operadores compatibles con estas
+formulaciones cuando se fijan la inicialización y la memoria apropiadas.
+El nombre de la discretización, por sí solo, no determina el PVI que resuelve.
+
+\subsection{Equivalencia con Volterra y existencia local}
+
+Si $g(t)=F(X(t))$ es acotada, la ecuación integral correspondiente es
+\begin{equation}
+ X(t)=X_0+I_{t_0}^q[F(X)](t).
+ \label{bre:fund:volterra}
+\end{equation}
+Aplicar $I^{1-q}$ a $X-X_0$ y usar \eqref{bre:fund:beta} produce
+$I^1g$. Su derivada es $g$ casi en todas partes, de modo que
+\eqref{bre:fund:generalized} satisface \eqref{bre:fund:pvi}.
+Recíprocamente, integrar \eqref{bre:fund:generalized} da
+$I^{1-q}(X-X_0)=I^1g$: la constante es cero por la continuidad en $t_0$.
+Al restar $I^{1-q}I^qg=I^1g$, queda $I^{1-q}h=0$, con
+$h=X-X_0-I^qg$. Aplicar $I^q$ da $I^1h=0$; al derivar se obtiene
+$h=0$ casi en todas partes y, por continuidad, en todo el intervalo.
+Así se demuestra la equivalencia, sin introducir $X'$ donde no esté
+justificado \cite{Podlubny1999}.
+
+Supóngase ahora $F$ localmente Lipschitz en $X$. Elija una bola cerrada
+$\overline B(X_0,R)\subset\Omega$ y constantes $M,L$ tales que
+$\norm{F(X)}\le M$ y
+$\norm{F(X)-F(Y)}\le L\norm{X-Y}$ en ella. Sobre
+\[
+ \mathcal X=\{X\in C([t_0,t_0+\tau],\R^n):
+               \norm{X-X_0}_\infty\le R\}
+\]
+se define $\mathcal TX=X_0+I^q[F(X)]$. La estimación anterior da
+\begin{align}
+ \norm{\mathcal TX-X_0}_\infty&\le\frac{M\tau^q}{\Gamma(q+1)},\nonumber\\
+ \norm{\mathcal TX-\mathcal TY}_\infty
+ &\le\frac{L\tau^q}{\Gamma(q+1)}\norm{X-Y}_\infty.
+ \label{bre:fund:contraction}
+\end{align}
+Por tanto, escoger $M\tau^q/\Gamma(q+1)\le R$ y
+$L\tau^q/\Gamma(q+1)<1$ hace de $\mathcal T$ una contracción de un
+subconjunto cerrado de un espacio de Banach en sí mismo. Su único punto
+fijo es la solución local. Para campos dependientes del tiempo se requieren
+las mismas cotas uniformes, además de medibilidad temporal y continuidad
+espacial; la formulación integral cubre campos por tramos durante la
+continuación. Un campo PWL continuo es localmente Lipschitz, aunque su
+jacobiano no exista en las superficies de conmutación.
+
+La extensión a tiempos mayores conserva la integral acumulada. Si la
+solución permanece en un compacto de $\Omega$ hasta un supuesto tiempo
+máximo finito, $F(X)$ permanece acotada. La cota de continuidad de $I^q$
+proporciona un límite al aproximarse a ese tiempo y la misma construcción
+contractiva, con la historia fijada, extiende la solución. En consecuencia,
+la pérdida de existencia global exige abandonar todos los compactos del
+dominio. Esta alternativa se usa al demostrar acotación en Lorenz.
+
+\subsection{Transformada de Laplace y respuesta lineal}
+
+Trasladando $t_0$ a cero, supóngase $X-X_0=I^qg$ y
+$e^{-\sigma t}g\in L^1([0,\infty))$ para algún $\sigma>0$.
+Fubini con peso exponencial garantiza las transformadas de $X-X_0$,
+$H=I^{1-q}(X-X_0)=I^1g$ y $H'=g$ en un semiplano derecho.
+La transformada del núcleo de \eqref{bre:fund:integral}
+es $s^{-a}$. Se obtiene de la integral gamma mediante $v=st$ para
+$s>0$ real; la identidad se extiende analíticamente al semiplano de
+convergencia con la rama principal. Fubini, ahora con peso exponencial,
+convierte la convolución en producto. Como
+$I^{1-q}(X-X_0)$ se anula inicialmente,
+\begin{align}
+ \mathcal L\{\Caputo qX\}(s)
+ &=s\,s^{q-1}\left(\widehat X(s)-\frac{X_0}{s}\right)\nonumber\\
+ &=s^q\widehat X(s)-s^{q-1}X_0.
+ \label{bre:fund:laplace}
+\end{align}
+El término inicial no desaparece salvo cuando $X_0=0$.
+Para $\Caputo qX=AX+Bu$, $y=CX$, se sigue
+\begin{align}
+ \widehat X(s)&=(s^qI-A)^{-1}s^{q-1}X_0\nonumber\\
+ &\quad+(s^qI-A)^{-1}B\widehat u(s),\nonumber\\
+ W_q(s)&=C(s^qI-A)^{-1}B.
+ \label{bre:fund:transfer}
+\end{align}
+La transferencia describe la respuesta a la entrada con condición inicial
+nula. En el balance armónico se usa
+$(\ii k\omega)^q=(k\omega)^q e^{\ii q\pi/2}$ para $k>0$ y el conjugado
+para $k<0$. El modo constante tiene multiplicador cero. Se fija
+$s^q=\exp(q\operatorname{Log}s)$, con
+$\operatorname{Arg}s\in(-\pi,\pi)$.
+
+La expansión del resolvente para $\norm A<|s|^q$ produce
+\[
+ (s^qI-A)^{-1}s^{q-1}
+ =\sum_{j=0}^\infty A^j s^{-qj-1}.
+\]
+La transformada inversa de cada término y la convergencia de la serie
+de Mittag--Leffler dan
+\begin{equation}
+ X(t)=E_q(At^q)X_0,\quad
+ E_{q,\beta}(Z)=\sum_{j=0}^\infty\frac{Z^j}{\Gamma(qj+\beta)},
+ \label{bre:fund:ML}
+\end{equation}
+con $E_q=E_{q,1}$. Para una fuerza $g$, el mismo resolvente da
+\begin{equation}
+ X(t)=E_q(At^q)X_0+
+ \int_0^t K_A(t-s)g(s)\dd s,
+ \label{bre:fund:variation}
+\end{equation}
+donde $K_A(t)=t^{q-1}E_{q,q}(At^q)$. La convolución se interpreta sobre
+intervalos finitos aun cuando no se haya demostrado una cota exponencial
+global para el problema no lineal.
+Para justificar la fórmula sin una inversión formal, supóngase
+$g\in L^\infty([0,T])$ e itérese
+$X=X_0+I^q(AX+g)$. La composición de integrales produce las series
+$\sum_{j\ge0}A^jt^{qj}X_0/\Gamma(qj+1)$ y
+$\sum_{j\ge0}A^jI^{q(j+1)}g$. Sus normas están dominadas,
+respectivamente, por las series escalares con términos
+$\norm A^jT^{qj}\norm{X_0}/\Gamma(qj+1)$ y
+$\norm A^jT^{q(j+1)}\norm g_\infty/\Gamma(q(j+1)+1)$.
+Ambas convergen; la convergencia uniforme permite integrar la suma,
+verificar Volterra y obtener \eqref{bre:fund:variation} por unicidad.
+
+\subsection{Equilibrios, linealización y estabilidad}
+
+Un equilibrio satisface $F(e)=0$, porque Caputo anula las constantes.
+Si $F\in C^1$ cerca de $e$, escriba
+\begin{equation}
+ F(e+\xi)=J_e\xi+R(\xi),\qquad J_e=DF(e).
+ \label{bre:fund:linearization}
+\end{equation}
+El teorema fundamental del cálculo en una bola convexa proporciona
+\begin{align}
+ R(\xi)-R(\eta)
+ &=\int_0^1[DF(e+\eta+s(\xi-\eta))-J_e]\nonumber\\
+ &\hspace{24mm}\cdot(\xi-\eta)\dd s,\nonumber\\
+ \norm{R(\xi)-R(\eta)}&\le\ell_r\norm{\xi-\eta},\nonumber\\
+ \ell_r&=\sup_{\norm u\le r}\norm{DF(e+u)-J_e}\longrightarrow0.
+ \label{bre:fund:smallremainder}
+\end{align}
+En particular, $R(\xi)=o(\norm\xi)$; una cota cuadrática requiere
+$DF$ localmente Lipschitz, por ejemplo $F\in C^2$. En un campo PWL,
+este argumento clásico se aplica a equilibrios interiores a una región.
+
+El criterio de Matignon para $0<q<1$ establece estabilidad asintótica del
+sistema lineal si y sólo si todos los autovalores son no nulos y
+\begin{equation}
+ |\operatorname{Arg}\lambda_j(J_e)|>q\pi/2.
+ \label{bre:fund:matignon}
+\end{equation}
+La condición caracteriza el decaimiento de \eqref{bre:fund:ML}, incluidos
+los bloques de Jordan \cite{Matignon1996}. Su aplicación no lineal requiere
+el teorema de linealización y la pequeñez Lipschitz del resto
+\cite{CongDoanSiegmundTuan2016}. El mecanismo puede verse en
+\eqref{bre:fund:variation}: bajo el sector estricto existen
+\begin{align*}
+ M_A&=\sup_{t\ge0}\norm{E_q(J_et^q)}<\infty,\\
+ C_A&=\int_0^\infty\norm{K_{J_e}(s)}\dd s<\infty.
+\end{align*}
+Estas estimaciones son consecuencias de las cotas sectoriales de
+Mittag--Leffler. Cerca de cero el núcleo es del orden $t^{q-1}$,
+integrable; en el infinito su decaimiento es del orden $t^{-q-1}$.
+Se elige $r$ con $C_A\ell_r<1$ y
+$M_A\norm{\xi_0}<(1-C_A\ell_r)r$.
+La fórmula de variación impide que la solución alcance por primera vez
+la frontera de la bola y da estabilidad. Para la atracción, se separa
+la convolución en una parte de tiempo inicial fijo, que tiende a cero,
+y una cola. Si $L=\limsup_{t\to\infty}\norm{\xi(t)}$, resulta
+$L\le C_A\ell_rL$, de donde $L=0$.
+Así se explicita la función de cada hipótesis del resultado no lineal.
+
+El margen $m_q(e)=\min_j(|\operatorname{Arg}\lambda_j|-q\pi/2)$
+cuantifica la distancia angular a la frontera. $m_q>0$ verifica el criterio
+estricto; $m_q<0$ señala un modo lineal creciente. Si $m_q=0$ o existe un
+autovalor nulo, el argumento anterior no decide la estabilidad. Para $q=1$
+se recupera el criterio de Hurwitz $\operatorname{Re}\lambda_j<0$.
+Un margen pequeño requiere controlar el error de los autovalores antes
+de asignar su signo.
+
+\subsection{Memoria y espacio de estados}
+
+La evolución puntual de Caputo no satisface, en general, la ley de
+semigrupo. El ejemplo escalar $\Caputo q x=\lambda x$ lo muestra:
+\begin{align}
+ &E_q\bigl(\lambda(2h)^q\bigr)-E_q(\lambda h^q)^2\nonumber\\
+ &\quad=\frac{\lambda(2^q-2)}{\Gamma(1+q)}h^q+O(h^{2q}).
+ \label{bre:fund:nosemigroup}
+\end{align}
+Para $\lambda\ne0$ y $0<q<1$ el coeficiente principal no es cero.
+La composición de integrales de \eqref{bre:fund:beta} concierne a los
+órdenes de los operadores; no autoriza a reiniciar la evolución temporal.
+
+Si $t_0=0$, dividir Volterra en $[0,t]$ y $[t,t+\theta]$ produce
+\begin{align}
+ m_t(\theta)&=X_0+\frac1{\Gamma(q)}
+  \int_0^t(t+\theta-s)^{q-1}F(X(s))\dd s,\nonumber\\
+ X(t+\theta)&=m_t(\theta)+\frac1{\Gamma(q)}
+  \int_0^\theta(\theta-u)^{q-1}F(X(t+u))\dd u.
+ \label{bre:fund:profile}
+\end{align}
+El perfil $m_t$ determina la continuación; $m_t(0)=X(t)$ es sólo una
+evaluación. La construcción de un semiflujo sobre perfiles exige
+bien planteamiento global y continuidad en el espacio elegido
+\cite{DoanKloeden2021Semidynamical}. No basta adoptar sin restricciones
+todo $C([0,\infty),\R^n)$ con la topología de convergencia uniforme en
+compactos. En efecto, para cualquier $c$, el término libre
+\begin{equation}
+ m_c(\theta)=c-\frac{\theta^q}{\Gamma(q+1)}F(c)
+ \label{bre:fund:artificial}
+\end{equation}
+produce la solución constante $X\equiv c$. La continuación conserva
+$m_c$, aunque $F(c)\ne0$. En el campo $F(x)=-x$, estos perfiles fijos
+se aproximan al perfil cero cuando $c\to0$: el equilibrio estable de
+reinicio no atrae una vecindad de todos los perfiles.
+
+Para definir atracción funcional se especifica un espacio admisible
+$\mathcal X_{\rm adm}$, positivamente invariante, con semiflujo continuo
+$S_t$. Para un compacto estrictamente invariante $A$ y una familia
+de reinicios $\iota(B)$, con $\iota(X_0)(\theta)=X_0$, la atracción uniforme
+requiere $\iota(B)\subset\mathcal X_{\rm adm}$ y
+significa
+\begin{equation}
+ \sup_{X_0\in B}\operatorname{dist}_{\mathcal X}
+       (S_t\iota(X_0),A)\longrightarrow0.
+ \label{bre:fund:resetattraction}
+\end{equation}
+Se debe indicar qué conjuntos $B$ se incluyen; un atractor local no tiene
+que atraer todos los reinicios acotados. La ocultedad funcional excluye
+vecindades de los perfiles de equilibrio en $\mathcal X_{\rm adm}$.
+La ocultedad bajo reinicio excluye bolas de $X_0$ según
+\eqref{bre:fund:hidden}, usando esa misma atracción. Los sondeos
+numéricos de este estudio exploran reinicios finitos y destinos observables;
+no construyen por sí solos un espacio funcional admisible ni verifican
+la convergencia uniforme de \eqref{bre:fund:resetattraction}.
+
+\subsection{Acotación sin aplicar una regla de la cadena ordinaria}
+
+Para Caputo no se sustituye $\Caputo q[V(X)]$ por
+$\nabla V(X)\cdot F(X)$. Si $V$ es convexa y $C^1$ con gradiente
+localmente Lipschitz, y $X-X_0\in I^q(L^\infty)$, se dispone de
+\begin{equation}
+ \Caputo q[V(X(t))]\le\nabla V(X(t))\cdot\Caputo qX(t).
+ \label{bre:fund:convex}
+\end{equation}
+La desigualdad se cumple casi en todas partes. El resultado también asegura la regularidad fraccionaria de
+$V(X)-V(X_0)$ \cite{Gomoyunov2018Convex}. Para ver el signo en el caso
+suave, fije $t$ y defina el resto convexo
+$\Phi(s)=V(X(s))-V(X(t))-\nabla V(X(t))\cdot(X(s)-X(t))\ge0$.
+Entonces $\Phi(t)=0$ y la diferencia entre ambos miembros, multiplicada
+por $\Gamma(1-q)$, es
+\begin{align}
+ \int_0^t(t-s)^{-q}\Phi'(s)\dd s
+ &=-t^{-q}\Phi(0)\nonumber\\
+ &\quad-q\int_0^t(t-s)^{-q-1}\Phi(s)\dd s\le0.
+ \label{bre:fund:convexproof}
+\end{align}
+La integración por partes se hace primero hasta $t-\varepsilon$.
+Con trayectoria Lipschitz y gradiente Lipschitz,
+$\Phi(s)=O((t-s)^2)$, por lo cual el término del extremo tiende a cero
+y la integral converge. Para la clase $I^q(L^\infty)$, la extensión se
+realiza por aproximación y compacidad; no se presupone la existencia de
+$X'$ en toda esa clase. En la sección de resultados se aplica esta
+desigualdad al Lorenz generalizado y se exhibe la cota obtenida.
+
+Los modelos autónomos de Caputo con terminal inferior fijo y orden no
+entero no admiten las órbitas periódicas no constantes propias de una EDO
+bajo las hipótesis del teorema de no periodicidad
+\cite{TavazoeiHaeri2009,AreaLosadaNieto2014}. Por ello, un ciclo del
+problema armónico estacionario, una curva cerrada dibujada por una muestra
+y una solución periódica exacta del PVI causal son objetos distintos.
+La construcción armónica emplea el primero como predictor; la evaluación
+numérica posterior se refiere siempre al PVI declarado.
+
+\subsection{Qué permite trasladar un método de orden entero}
+\label{bre:fund:transfermethods}
+
+Las ecuaciones $F(e)=0$ y las realizaciones algebraicas del mismo campo no
+dependen de $q$. Su reutilización es exacta. En cambio, sustituir
+$\ii\omega$ por $(\ii\omega)^q$ sólo traslada la respuesta del operador
+lineal estacionario: la selección de una trayectoria causal requiere
+resolver nuevamente Volterra. La misma separación se aplica a los puntos
+perpetuos, cuya ecuación algebraica se conserva, pero cambia su
+interpretación como aceleración.
+
+Una relación rigurosa con el caso entero puede establecerse a tiempo
+finito. Sean $X_q$ y $X_1$ soluciones con el mismo dato inicial, sobre
+$[0,T]$, contenidas en un compacto común en el cual $F$ esté acotado por
+$M$ y sea Lipschitz con constante $L$. Ponga
+\[
+ k_q(t)=\frac{t^{q-1}}{\Gamma(q)},\qquad
+ \varepsilon_q=\int_0^T|k_q(t)-1|\dd t.
+\]
+Para $q\in[q_*,1]$, $q_*>0$, el integrando está dominado por un múltiplo
+de $t^{q_*-1}+1$, integrable en $[0,T]$. Como $k_q(t)\to1$ para
+$t>0$ cuando $q\to1$, la convergencia dominada da
+$\varepsilon_q\to0$. Con $e_q(t)=\norm{X_q(t)-X_1(t)}$, restar ambas
+ecuaciones integrales produce
+\begin{align}
+ e_q(t)
+ &\le M\varepsilon_q\nonumber\\
+ &\quad+L\int_0^t k_q(t-s)e_q(s)\dd s,\nonumber\\
+ \sup_{0\le t\le T}e_q(t)
+ &\le M\varepsilon_q E_q(LT^q)\longrightarrow0.
+ \label{bre:fund:qtoone}
+\end{align}
+La última desigualdad procede de iterar la integral positiva:
+el término de orden $j$ es
+$(Lt^q)^j/\Gamma(qj+1)$, y su suma es $E_q(Lt^q)$.
+El factor de Mittag--Leffler permanece uniformemente acotado para
+$q\in[q_*,1]$: ponga $B=L\max(T,T^{q_*})$. Para $j$ suficientemente
+grande, la monotonía de $\Gamma$ en el semieje correspondiente permite
+dominar su término por $B^j/\Gamma(q_*j+1)$; la serie dominante converge.
+Los términos restantes son un número finito de funciones continuas de $q$.
+La hipótesis de compacto común se verifica directamente o se utiliza la
+estimación hasta el primer tiempo de salida. Esta prueba justifica
+comparar trayectorias enteras y fraccionarias en una ventana controlada.
+No proporciona una estimación uniforme para $T\to\infty$; por tanto, no
+demuestra persistencia de un atractor, de su cuenca ni de su ocultedad al
+variar $q$. Esos problemas requieren controlar por separado la dinámica
+asintótica y el espacio de estados.
+
+\begin{table*}[t]
+\centering
+\caption{Condiciones de adaptación de los métodos enteros al problema causal de Caputo.}
+\label{bre:fund:adaptationtable}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.19\textwidth}L{0.30\textwidth}Y@{}}
+\toprule
+Operación & Resultado utilizable & Hipótesis o desarrollo adicional\\
+\midrule
+Equilibrios y realización & $F(e)=0$ e identidad de la realización del campo. &
+Mismo campo, dominio y parámetros; tratar las regiones no suaves antes de derivar.\\
+Linealización & Matriz $DF(e)$ y resto de Taylor. &
+Regularidad $C^1$, pequeñez Lipschitz del resto y sector estricto de Matignon.\\
+Balance armónico & Multiplicador de Fourier $(\ii k\omega)^q$ y coeficientes de la no linealidad. &
+Problema auxiliar estacionario; rama compleja fijada, residuo físico y control de armónicos omitidos.\\
+Continuación & Familia de campos con extremos algebraicamente comprobados. &
+Una sola historia para la familia causal; un reinicio posterior define un nuevo PVI. La persistencia asintótica no se sigue de continuidad a tiempo finito.\\
+Puntos perpetuos & Ecuación $DF\,F=0$ para generar semillas. &
+Expansión de arranque en $t^q$; no identificarla con $X''=0$. Los eventos secuenciales dependen de la historia.\\
+Retornos y cuencas & Cruces observados y destinos de reinicios. &
+Operador funcional cuando se conserva memoria; hipótesis de retorno, atracción y exclusión de vecindades completas.\\
+Lyapunov y compacidad & Desigualdad convexa y estimaciones integrales. &
+Verificar la clase $I^q(L^\infty)$, continuación global y el espacio de perfiles; no usar una regla de la cadena ordinaria.\\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+Danca estudia Lorenz generalizado, Rabinovich--Fabrikant y Chua PWL con
+Caputo, estabilidad sectorial y un predictor--corrector fraccionario
+\cite{Danca2017}. Wu et al. construyen condiciones iniciales para Chua
+con arctangente mediante una adaptación del procedimiento de
+Leonov y emplean ADM en la simulación \cite{Wu2023ArctanChua}.
+Ambos trabajos reconocen la dificultad de interpretar la periodicidad en
+orden fraccionario; Wu et al. también discuten la pérdida de historia de
+su aproximación por intervalos. Estas contribuciones suministran modelos,
+parámetros y procedimientos de búsqueda. La validez de una operación
+concreta se determina, además, por las hipótesis de la
+Tabla~\ref{bre:fund:adaptationtable}. Reproducir una recurrencia publicada
+y aproximar el PVI de Caputo con memoria completa son verificaciones
+distintas, que se comparan mediante el operador integral correspondiente.

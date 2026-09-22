@@ -1,0 +1,124 @@
+\section{Aplicación de la metodología y alcance de las conclusiones}
+\label{bre:closing}
+
+\subsection{Condiciones que deben acompañar a cada resultado}
+
+El procedimiento comienza con una ecuación bien definida. Para cada caso
+se especifican el campo, sus parámetros, las coordenadas y escalas, el
+dominio y las superficies donde cambia su regularidad. En orden
+fraccionario se añaden el operador, el orden de cada componente, el
+terminal inferior y la inicialización. El argumento de existencia local
+se aplica en el dominio utilizado; la existencia global exige una cota
+adicional o se limita la conclusión al intervalo anterior a la salida.
+Un cambio de unidades temporales modifica el segundo miembro mediante
+la potencia $q$ de la escala, como se deduce del cambio de variable en
+la integral de Caputo.
+
+La construcción algebraica de una semilla requiere sustituirla en las
+ecuaciones originales. En las eliminaciones se examinan por separado
+los factores divididos y los denominadores nulos; se descartan los
+equilibrios cuando se buscan PP. En un balance armónico se conservan el
+signo de realimentación, el término medio y la fase de reconstrucción.
+El residuo se calcula en las coordenadas físicas, incluyendo el efecto
+de los armónicos descartados. Una raíz aproximada de las ecuaciones
+proyectadas no establece la existencia de una solución de la ecuación
+funcional completa.
+
+La continuación debe llegar al campo objetivo. En una EDO, el estado final
+de una etapa basta para comenzar la siguiente. En Caputo se conserva la
+contribución de todas las etapas anteriores y se tratan las discontinuidades
+temporales de la familia. Si después se utiliza el estado final como dato
+de un PVI autónomo con memoria nula, se declara ese reinicio y se integra
+su nueva trayectoria. El balance estacionario, la trayectoria durante la
+continuación y la trayectoria autónoma de reinicio corresponden a tres
+problemas relacionados, con condiciones iniciales distintas.
+
+La validación numérica compara aproximaciones del mismo problema.
+Refinar paso, ampliar horizonte y variar una perturbación inicial
+responden a preguntas distintas. La comparación entre códigos tampoco
+sustituye una cota de error si ambos comparten una inicialización
+inconsistente. El residuo integral y los ejemplos exactos de control
+permiten examinar el operador efectivamente aproximado. Para soluciones
+sensibles, la separación puntual de trayectorias a tiempos largos se
+complementa con retornos y observables definidos sobre ventanas
+equivalentes; no se exige una coincidencia punto por punto incompatible
+con la sensibilidad dinámica.
+
+La identificación de un destino atractivo exige algo más que acotación
+observada. Una región positivamente invariante puede contener varios
+destinos. Un exponente variacional estimado positivo, una señal de banda
+ancha o un estadístico cercano al régimen caótico aportan diagnósticos
+complementarios, sin constituir por separado una demostración de caos.
+La ausencia de contactos en un conjunto finito de condiciones iniciales
+tampoco implica la exclusión de una vecindad abierta completa.
+
+\subsection{Cobertura de las cuatro familias}
+
+La Tabla~\ref{bre:closing:coverage} organiza el alcance de los cálculos.
+La distinción entre tipo Chua y no Chua corresponde a la estructura del
+campo; la distinción entre orden entero y fraccionario corresponde al
+operador temporal. Una representación de Lur'e en un sistema no Chua no
+cambia esa clasificación.
+
+\begin{table*}[t]
+\centering
+\caption{Resultados disponibles y operaciones adicionales para una conclusión más fuerte.}
+\label{bre:closing:coverage}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.14\textwidth}L{0.20\textwidth}Y Y@{}}
+\toprule
+Familia & Sistemas & Resultado establecido o calculado & Desarrollo adicional\\
+\midrule
+Entero tipo Chua & Chua PWL & Equilibrios, estabilidad, balance y semilla;
+trayectorias, comparación entre implementaciones e indicadores finitos. &
+Control de atracción y separación de vecindades completas para una prueba de ocultedad.\\
+Entero no Chua & MAVPD, Kalman--Fitts, PLL &
+Balance o demostración de su obstrucción; rutas alternativas, retornos e
+indicadores. Resolución de PP y ausencia de PP según el sistema. &
+Validación de los operadores de retorno y de sus dominios; regiones
+invariantes que separen cuencas. En MAVPD, prueba de caos adicional a los exponentes estimados.\\
+Fraccionario tipo Chua & PWL y arctangente &
+Formulación causal, estabilidad sectorial, semillas y trayectorias con
+memoria. Sondeos de reinicio; controles de paso donde se indican. &
+Completar el refinamiento del caso PWL; controlar el espacio de perfiles,
+la atracción y la exclusión de vecindades para fortalecer la clasificación.\\
+Fraccionario no Chua & Lorenz generalizado, RF, Muñoz--Pacheco &
+Equilibrios y PP/FPP--A; acotación y absorción de Lorenz. Integraciones
+piloto de semillas Muñoz y diagnósticos específicos RF. &
+Completar localización autónoma con memoria y controles por caso;
+establecer atracción y cuencas. En RF, no trasladar resultados entre
+valores distintos de $b$.\\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+Para Lorenz generalizado, la cota absorbente permite continuar todas las
+soluciones de reinicio y restringe la región de búsqueda. No identifica
+el conjunto límite al que llega cada semilla. El siguiente cálculo
+consiste en integrar las semillas algebraicas bajo un mismo PVI,
+comparar los destinos al refinar la discretización y analizar su
+atracción. Para RF, cada conjunto de parámetros requiere sus propios
+equilibrios, márgenes sectoriales, condiciones iniciales y controles de
+existencia durante el horizonte usado. Para Muñoz--Pacheco, la ausencia
+de equilibrios elimina una condición de exclusión local, pero no
+demuestra acotación ni atracción: la trayectoria exacta no acotada sobre
+$x=z=0$ impide inferir acotación global a partir de los pilotos.
+
+El análisis topológico puede reducir esta parte del trabajo cuando se
+construye un objeto al que aplicar un teorema. Un grado no nulo permite
+probar un cero del mapa correspondiente; un retorno contractivo en un
+dominio invariante permite probar un punto fijo atractivo; una
+separatriz demostrada puede excluir el acceso desde una región. El
+objeto, su dominio, la regularidad y la condición de frontera deben
+verificarse antes de aplicar el resultado. En orden fraccionario, la
+proyección puntual de una trayectoria no proporciona automáticamente
+un mapa de retorno: es necesario conservar la memoria o justificar una
+reducción funcional compatible.
+
+Los desarrollos anteriores permiten ejecutar la búsqueda y reconocer el
+alcance preciso de cada resultado. Las cuestiones abiertas se expresan
+como operaciones matemáticas o numéricas concretas: construir un
+dominio invariante, validar un retorno, controlar el defecto integral,
+identificar una familia admisible de historias o excluir vecindades
+completas. De este modo, la metodología distingue los pasos resueltos
+de las hipótesis que todavía requieren demostración o cálculo.

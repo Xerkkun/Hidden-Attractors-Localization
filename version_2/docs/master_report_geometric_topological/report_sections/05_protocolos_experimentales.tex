@@ -3,14 +3,12 @@
 
 \HAFOCardProtocols
 
-Los protocolos experimentales se fijan antes de evaluar los resultados.
-Compartir una familia de ecuaciones o un mismo conjunto de parámetros no hace
-equivalentes dos trayectorias. La reconstrucción de Danca y la ruta no suave
-propuesta usan los parámetros de \cref{eq:parametros_no_suave}, pero emplean
-semillas y procedimientos de continuación diferentes. De manera análoga, la
-reconstrucción de Wu y el caso \texttt{c590} pertenecen a
-\cref{eq:chua_arctan}, aunque usan parámetros, condiciones iniciales e
-integradores distintos.
+Los protocolos especifican parámetros, condición inicial, integrador y
+memoria antes de clasificar las trayectorias. Danca y la ruta no suave
+propuesta comparten los parámetros de \cref{eq:parametros_no_suave}, con
+semillas y continuaciones diferentes. Wu y el caso \texttt{c590} pertenecen a
+\cref{eq:chua_arctan}, con parámetros, condiciones iniciales e integradores
+propios.
 
 \begin{table}[H]
 \centering
@@ -69,7 +67,10 @@ F(t_{n+1},X_{n+1}^{\mathrm P})
 \right],
 \label{eq:abm_corrector_protocolo}
 \end{equation}
-con
+Los coeficientes siguientes resultan de integrar las funciones lineales
+\(1-u\) y \(u\) en cada intervalo contra el núcleo, según
+\cref{eq:abm_integrales_pesos}; cada nodo interior reúne dos contribuciones y
+cada extremo sólo una:
 \begin{equation}
 a_{j,n+1}=
 \begin{cases}
@@ -99,6 +100,13 @@ valor inicial independiente con el mismo instante \(t_0\) y su propia memoria.
 En la continuación no suave, en cambio, los 21 niveles comparten una sola
 historia; sólo al terminar la continuación se inicia el problema autónomo que
 define la nube objetivo.
+Las hipótesis que relacionan los pesos con un orden de consistencia se
+precisan en \cref{subsec:numerical-startup-consistency}. En particular, un
+campo suave puede generar una singularidad temporal en el arranque; por eso
+la comparación de pasos debe conservar \(t_0\), el horizonte y el tratamiento
+de ese tramo inicial. Para los cambios de nivel de continuación se aplica
+además la distinción entre los valores laterales del campo expuesta en
+\cref{subsec:numerical-continuation-interfaces}.
 
 \subsection{Métrica de contacto y clasificación de destinos}
 \label{subsec:clasificador}
@@ -113,6 +121,20 @@ D_{90}(Y,\mathcal C_h)
 \right).
 \label{eq:d90_protocolo}
 \end{equation}
+Para calcular el percentil, se ordenan las \(M\) distancias
+\(d_j=\min_k\|Y_j-A_k\|_2\) como
+\(d_{(1)}\leq\cdots\leq d_{(M)}\). Con interpolación lineal, si
+\(v=0.90(M-1)\), \(i=\lfloor v\rfloor\) y \(\theta=v-i\), entonces
+\[
+ Q_{0.90}=(1-\theta)d_{(i+1)}+\theta d_{(i+2)},
+\]
+con \(Q_{0.90}=d_{(1)}\) si \(M=1\); cuando \(\theta=0\) sólo se toma el
+primer término. Esta definición precisa el tratamiento de muestras finitas.
+\(D_{90}\) es una distancia dirigida de la sonda hacia la referencia:
+puede ser pequeña aunque la sonda recorra sólo una parte de la nube. Por
+ello funciona como criterio de contacto, no como prueba de igualdad entre
+conjuntos invariantes.
+
 Se registra un contacto cuando
 \begin{equation}
 D_{90}(Y,\mathcal C_h)\leq\delta .
@@ -201,6 +223,79 @@ T=100,\qquad T_{\mathrm{burn}}=50.
 \]
 Este actualizador local no acumula una historia ABM de Caputo. Sus resultados
 se presentan exclusivamente en la ruta de Wu, separada de \texttt{c590}.
+La diferencia entre los problemas integrados puede establecerse sin depender
+de la precisión de la expansión local.
+
+\paragraph{Incremento exacto y efecto del reinicio local.}
+\label{subsec:numerical-adm-history}
+Wu et al. distinguen la recurrencia local \(X_{n+1}=\Phi_h(X_n)\) de un
+predictor--corrector que utiliza la historia. Su ecuación (27) incluye
+explícitamente el incremento de esa historia, y los autores reconocen la
+pérdida de memoria histórica del ADM por subintervalos en integraciones
+largas \cite{Wu2023ArctanChua}. Para precisar la comparación, se resta la
+ecuación de Volterra en \(t_n\) de la misma ecuación en \(t_{n+1}\). Se
+separa la integral nueva, sobre \([t_n,t_{n+1}]\), de las dos integrales
+sobre \([t_0,t_n]\), y se obtiene
+\begin{equation}
+ \begin{aligned}
+ X(t_{n+1})-X(t_n)={}&\mathcal M_n\\
+ &+\frac1{\Gamma(q)}\int_{t_n}^{t_{n+1}}
+ (t_{n+1}-s)^{q-1}F(s,X(s))\,\dd s,
+ \end{aligned}
+ \label{eq:numerical-adm-increment}
+\end{equation}
+\begin{equation}
+ \begin{aligned}
+ \mathcal M_n&=\frac1{\Gamma(q)}\int_{t_0}^{t_n}
+                  B_n(s)F(s,X(s))\,\dd s,\\
+ B_n(s)&=(t_{n+1}-s)^{q-1}-(t_n-s)^{q-1}.
+ \end{aligned}
+ \label{eq:numerical-adm-memory}
+\end{equation}
+La integral sobre \([t_n,t_{n+1}]\) describe el intervalo nuevo;
+\(\mathcal M_n\) repondera los anteriores y coincide con
+\(H_n(t_{n+1})-H_n(t_n)\) en
+\cref{eq:continuacion_memoria_heredada}, para un campo fijo. Para \(n=0\),
+la integral histórica es vacía. Para \(n\geq1\), los dos núcleos son
+integrables aunque el segundo sea singular en \(s=t_n\). Cuando \(q=1\),
+\(B_n=0\); cuando \(0<q<1\), el incremento histórico no se anula en general.
+Una expansión ADM local de mayor orden no reconstruye ese término si cada
+intervalo se reinicia usando únicamente \(X_n\).
+
+El campo constante \(F(t,x)=v\ne0\), con \(t_0=0\), permite calcular el
+defecto de forma exacta. La integral de Volterra da
+\[
+ X(t)=X_0+\frac{v}{\Gamma(q)}\int_0^t(t-s)^{q-1}\,\dd s
+     =X_0+\frac{t^q}{\Gamma(q+1)}v.
+\]
+En \(t_n=nh\), el incremento causal es
+\[
+ X(t_{n+1})-X(t_n)
+ =\frac{h^q}{\Gamma(q+1)}[(n+1)^q-n^q]v.
+\]
+Si cada subintervalo se resuelve exactamente después de reiniciar el
+terminal inferior, su incremento es
+\(\widehat X_{n+1}-\widehat X_n=h^qv/\Gamma(q+1)\). Restar ambos incrementos
+identifica la historia omitida:
+\begin{equation}
+ \mathcal M_n=\frac{h^q}{\Gamma(q+1)}
+               [(n+1)^q-n^q-1]v.
+ \label{eq:numerical-adm-counterexample}
+\end{equation}
+Para un horizonte fijo \(T=Nh\), sumar los \(N\) incrementos locales da
+\[
+ \widehat X_N=X_0+\frac{Nh^q}{\Gamma(q+1)}v
+             =X_0+\frac{Th^{q-1}}{\Gamma(q+1)}v,
+ \qquad
+ X(T)=X_0+\frac{T^q}{\Gamma(q+1)}v.
+\]
+Si \(q<1\), \(h^{q-1}\to\infty\) al reducir el paso; la sucesión de
+reinicios no converge a la solución causal en ese horizonte, pese a que
+cada problema local se resolvió exactamente. Por consiguiente, reconstruir
+el algoritmo ADM publicado y resolver el PVI de Caputo con terminal fijo
+son comparaciones diferentes. La transferencia de una semilla requiere
+reintegrarla bajo el operador y el convenio de memoria elegidos, y evaluar
+de nuevo su destino.
 
 \subsection{Ruta propuesta para el sistema no suave}
 \label{subsec:protocolo_no_suave}
@@ -256,8 +351,13 @@ final en \(\varepsilon=1\) inicia después un nuevo problema autónomo con
 q=0.9998,\qquad h=0.01,\qquad T=300,\qquad
 T_{\mathrm{burn}}=100.
 \]
-La atracción local del objetivo se comprueba con 12 perturbaciones en cada uno
-de los radios \(10^{-6}\), \(10^{-4}\) y \(10^{-2}\).
+La robustez local del contacto con la nube objetivo se evalúa mediante
+12 perturbaciones de \(X_0\) en cada uno de los radios \(10^{-6}\),
+\(10^{-4}\) y \(10^{-2}\): 36 ejecuciones con ABM, \(h=0.01\) y memoria
+completa. Este banco no varía el paso. El control de convergencia
+\(h,h/2,h/4\) permanece pendiente de una evidencia específica, según
+\cref{sec:control_numerico}; los contactos finitos tampoco demuestran por sí
+solos atracción de una vecindad abierta.
 
 \subsubsection{Sondeo volumétrico}
 
@@ -270,8 +370,17 @@ U_{i\ell m}\sim\mathcal U(0,1),\quad
 d_{i\ell m}\sim\mathcal U(\mathbb S^2).
 \label{eq:muestreo_bola}
 \end{equation}
-El factor \(U^{1/3}\) produce una distribución uniforme respecto del volumen
-de la bola. El plan nominal por equilibrio es
+Se toman independientes \(U\) y \(d\). Si \(R=r_\ell U^{1/3}\), para
+\(0\leq a\leq r_\ell\) se tiene
+\[
+ \Pr(R\leq a)=\Pr\!\left(U\leq\frac{a^3}{r_\ell^3}\right)
+ =\frac{a^3}{r_\ell^3},\qquad
+ p_R(a)=\frac{3a^2}{r_\ell^3}.
+\]
+El elemento de volumen es \(a^2\,\dd a\,\dd\Omega\); al combinar
+\(p_R\) con la densidad angular \(1/(4\pi)\), la densidad espacial es la
+constante \(3/(4\pi r_\ell^3)\). Así se obtiene uniformidad volumétrica.
+El plan nominal por equilibrio es
 \begin{equation}
 \begin{aligned}
 r_\ell\in\{&
@@ -389,7 +498,13 @@ X_{0,i\ell m}=e_i+r_\ell d_{i\ell m},
 \label{eq:muestreo_superficie_c590}
 \end{equation}
 donde las direcciones combinan los seis semiejes cartesianos y una
-distribución determinista de Fibonacci esférica. El plan por equilibrio es
+distribución determinista de Fibonacci esférica. A diferencia de
+\cref{eq:muestreo_bola}, aquí \(\|X_0-e_i\|_2=r_\ell\) en todas las
+muestras. La medida de referencia es superficial, con elemento
+\(r_\ell^2\sin\vartheta\,\dd\vartheta\,\dd\varphi\), y el banco
+determinista proporciona un conteo a esa resolución angular. Los contactos
+superficiales y volumétricos responden, por tanto, a distribuciones distintas.
+El plan por equilibrio es
 \begin{equation}
 \begin{aligned}
 r_\ell&\in\{10^{-5},10^{-4},10^{-3},10^{-2},0.03,0.1,0.3,1,2\},\\
@@ -430,7 +545,7 @@ y se registra
 \ell_\star=\min\{\ell:H_\ell>0\}.
 \label{eq:primer_radio_contacto}
 \end{equation}
-Este índice es un estadístico del primer radio de contacto, no una regla de
-truncamiento del registro canónico. Para \texttt{c590}, \(\ell_\star\)
+Este índice identifica el primer radio muestreado con contactos. Para \texttt{c590}, \(\ell_\star\)
 corresponde a \(r=1\); el bloque \(r=2\) se retiene para cuantificar la
 sensibilidad macroscópica y las divergencias.
+\input{report_sections/05A_diagnosticos_espectrales}

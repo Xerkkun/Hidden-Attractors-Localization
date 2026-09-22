@@ -11,7 +11,7 @@ escalar con \(e^{\lambda t}\) y \(E_q(\lambda t^q)\).
 \textbf{Interpretación.} Identifique exactamente dónde falla el semigrupo
 puntual para \(q<1\).
 
-\textbf{Defensa oral.} Explique en dos minutos por qué el estado de Caputo no
+\textbf{Explicación.} Explique por qué el estado de Caputo no
 queda determinado sólo por \(x(t)\).
 \end{bloqueestudio}
 \fi}
@@ -25,7 +25,7 @@ defina la cuenca en el espacio de estados o de historias.
 \textbf{Interpretación.} Separe estabilidad local, atracción y contacto de
 cuenca.
 
-\textbf{Defensa oral.} Responda por qué tener todos los equilibrios inestables
+\textbf{Explicación.} Responda por qué tener todos los equilibrios inestables
 no demuestra que un atractor sea oculto.
 \end{bloqueestudio}
 \fi}
@@ -39,7 +39,7 @@ Caputo sobre historias.
 \textbf{Interpretación.} Distinga punto fijo de retorno, estabilidad del ciclo
 y existencia por grado.
 
-\textbf{Defensa oral.} Explique por qué la proyección puntual de un retorno
+\textbf{Explicación.} Explique por qué la proyección puntual de un retorno
 Caputo no conserva toda la información dinámica.
 \end{bloqueestudio}
 \fi}
@@ -53,7 +53,7 @@ cuenca y ocultedad.
 \textbf{Interpretación.} Identifique qué afirmaciones son topológicas y cuáles
 son sólo numéricas y finitas.
 
-\textbf{Defensa oral.} Explique por qué una FFT o un exponente positivo aislado
+\textbf{Explicación.} Explique por qué una FFT o un exponente positivo aislado
 no certifican simultáneamente caos, atracción y ocultedad.
 \end{bloqueestudio}
 \fi}
@@ -67,15 +67,15 @@ especificación de memoria, destino y prueba de cuenca bajo el mismo presupuesto
 \textbf{Interpretación.} Determine qué aporta cada método y qué afirmación no
 puede sostener por sí sola.
 
-\textbf{Defensa oral.} Distinga con precisión semilla, trayectoria, conjunto
+\textbf{Explicación.} Distinga con precisión semilla, trayectoria, conjunto
 límite, atractor y atractor oculto.
 \end{bloqueestudio}
 \fi}
 
 \newcommand{\HAFOThesisDefense}{\ifHAFOPedagogy
 \begin{bloqueestudio}{Ejercicios}
-\textbf{Simulacro de defensa.} Responda sin consultar el texto y después
-contraste cada respuesta con las derivaciones:
+\textbf{Síntesis.} Justifique las respuestas mediante las definiciones y
+las derivaciones correspondientes:
 \begin{enumerate}[nosep]
   \item ¿Cómo se pasa del campo a equilibrios, jacobiano, espectro y
   clasificación local?
@@ -91,8 +91,8 @@ contraste cada respuesta con las derivaciones:
   de cuenca?
   \item ¿Qué evidencia separa acotación, recurrencia, atracción, caos y
   ocultedad?
-  \item Para cada caso analizado: ¿qué es previo, qué es propuesta del
-  proyecto, qué se verificó y qué permanece abierto?
+  \item Para cada caso analizado, ¿qué hipótesis sostienen las conclusiones y
+  cuáles son los problemas pendientes?
 \end{enumerate}
 \end{bloqueestudio}
 \fi}
@@ -128,7 +128,7 @@ Mismo libro: conexiones lineales, pp.~135--142.
   \item \emph{Teoría geométrica de ecuaciones diferenciales II}
   \cite{JaurezEtAl2021TGEDII}: cap.~8, pp.~69--98; existencia y unicidad,
   p.~73; primera variación, p.~74; dependencia del dato inicial, p.~92.
-  \item \texttt{Strogatz - Nonlinear Dynamics and Chaos.pdf}
+  \item Strogatz, \emph{Nonlinear Dynamics and Chaos}
   \cite{Strogatz2015Nonlinear}: PDF~30--50 y 140--212.
 \end{itemize}
 \end{bloqueestudio}
@@ -154,7 +154,7 @@ lineales} \cite{Amster2021MetodosTopologicos}: apéndice A, pp.~319--327.
   \item \emph{Exploring Chaos} \cite{Davies2004ExploringChaos}:
   sistemas bidimensionales y fronteras de cuenca, pp.~107--148; §4.7,
   p.~134.
-  \item \texttt{Alligood, Sauer \& Yorke - Chaos.pdf}
+  \item Alligood, Sauer y Yorke, \emph{Chaos}
   \cite{AlligoodSauerYorke1996Chaos}: cuencas, PDF~146--165; fronteras,
   PDF~181--209.
 \end{itemize}
@@ -266,7 +266,7 @@ información depende de la historia.
 \begin{itemize}[nosep]
   \item Falconer \cite{Falconer2014Fractal}: dimensión de caja,
   PDF~59--75; Hausdorff, PDF~76--97; sistemas dinámicos, PDF~238--264.
-  \item \texttt{Barnsley - Fractals Everywhere.pdf}: métricas y topología,
+  \item Barnsley, \emph{Fractals Everywhere}: métricas y topología,
   PDF~12--48; contracciones, PDF~49--129; dimensión, PDF~186--219.
   \item Mandelbrot: consulta visual, PDF~33 y 277; para pruebas use Falconer.
 \end{itemize}
@@ -348,6 +348,14 @@ pasados distintos; muestre por qué reiniciar cambia el PVI y por qué un retorn
 puntual no es, en general, un mapa de estado. Continúe una trayectoria con
 historia heredada y reinicie otra desde el mismo punto; identifique el término
 libre de Volterra que cambia.
+
+\textbf{Perfiles admisibles.} Para \(f(x)=-x\), verifique que
+\(m_c(\theta)=c[1+\theta^q/\Gamma(q+1)]\) es fijo bajo el semiflujo de
+Volterra. Use \(c\to0\) para explicar por qué la atracción de reinicios no
+implica atracción de una vecindad abierta de todos los términos libres.
+Distinga la familia local \(\mathcal D_A\), el universo global
+\(\mathcal D\) y un espacio invariante \(X_{\mathrm{adm}}\) cuya
+construcción debe justificarse.
 \end{bloqueestudio}
 \begin{bloqueestudio}{Lecturas complementarias}
 Matignon \cite{Matignon1996} para el criterio angular.
@@ -366,7 +374,8 @@ Green, p.~229; Schauder, pp.~245--267; Leray--Schauder, pp.~273--300.
 
 \textbf{Investigación.} Escriba el PVI de Caputo como
 \(x=x_0+I^qf(x)\). Identifique continuidad,
-compacidad y cota a priori requeridas por Schauder o Leray--Schauder; distinga
+compacidad y cota a priori requeridas por Schauder o Leray--Schauder; declare
+el abierto acotado y la exclusión de puntos fijos en su frontera. Distinga
 existencia de atracción y ocultedad.
 \end{bloqueestudio}
 \fi}
@@ -536,7 +545,7 @@ caso entero y uno fraccionario.
 
 \textbf{Investigación.} Para cada caso complete: campo; espacio de fases;
 equilibrios; estabilidad; semilla; integración; destino; caos; cuenca;
-conclusión autorizada. Compare en paralelo un caso entero y uno fraccionario:
+conclusión matemática. Compare en paralelo un caso entero y uno fraccionario:
 qué objetos permanecen en el espacio de estados y cuáles pasan al espacio de
 historias.
 \end{bloqueestudio}
@@ -573,7 +582,7 @@ de cuenca que separen atracción, caos y ocultedad.
   pares índice y Conley, pp.~70--97; entropía y dinámica simbólica,
   pp.~99--110. Esta lectura introduce herramientas avanzadas y no sustituye
   una prueba completa.
-  \item \texttt{Barnsley - SuperFractals.pdf}: PDF~19--99, 201--395;
+  \item \emph{Superfractals}, de Barnsley: PDF~19--99, 201--395;
   Lorenz, PDF~9--30 y 116--207; Mandelbrot, PDF~33, 277 y desde 367.
   \item Diethelm \cite{Diethelm2010AnalysisFDE}: multi-término,
   pp.~167--186. Oldham--Spanier \cite{OldhamSpanier1974Fractional}:

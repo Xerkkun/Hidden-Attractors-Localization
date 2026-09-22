@@ -49,10 +49,10 @@ niveles crecientes de evidencia.
  la estructura de Lur'e y busca oscilaciones casi armónicas. Las superficies y
  curvas dependen directamente de $f$ y $Df$; siguen existiendo cuando no hay
  cierre escalar, cuando la ganancia armónica es inadmisible o cuando no hay PP.
- \item \textbf{Diagnóstico de fracaso.} Un determinante jacobiano no nulo puede
+ \item \textbf{Exclusión de candidatos.} Un determinante jacobiano no nulo puede
  excluir PP; una falta de bloque absorbente puede detener un caso antes de
  calcular Lyapunov; una frontera que cambia al refinar revela que la
- clasificación dinámica todavía no es estable.
+ clasificación dinámica depende de la discretización.
  \item \textbf{Geometría de la cuenca.} El seguimiento de borde, las variedades
  estables, la entropía de cuenca y las pruebas de Wada describen cómo se
  separan los destinos, no sólo qué trayectoria se dibujó
@@ -60,7 +60,7 @@ niveles crecientes de evidencia.
  \item \textbf{Puente hacia certificación.} Una aproximación exterior por
  cajas puede producir un grafo de recurrencia; con aritmética validada puede
  sostener un bloque aislante y un índice de Conley. Ésta es una afirmación más
- fuerte que una nube, aunque todavía debe enlazarse con la cuenca para hablar
+ fuerte que una nube; debe enlazarse con la cuenca para hablar
  de ocultedad.
  \item \textbf{Control de coordenadas y memoria.} La formulación covariante
  muestra qué cantidades sobreviven a cambios de carta. En Caputo obliga a
@@ -93,7 +93,7 @@ del flujo son
 \end{equation}
 Para $h_i(x)=x_i$,
 \begin{equation}
- L_fh_i=f_i,qquad L_f^2h_i=(Df\,f)_i.
+ L_fh_i=f_i,\qquad L_f^2h_i=(Df\,f)_i.
  \label{gt:eq:velocity-acceleration}
 \end{equation}
 Se definen, siguiendo el método de superficies críticas de Godara et al.
@@ -128,11 +128,8 @@ En particular, $A$ corta $S_i^v$ y $S_i^a$ para cada coordenada $i$.
 La restricción $h|_A$ alcanza máximo en algún $p\in A$. Como la órbita
 $t\mapsto\varphi_t(p)$ permanece en $A$ para tiempos positivos y negativos,
 $t=0$ es un máximo de $h(\varphi_t(p))$ y su derivada es
-$L_fh(p)=0$. Aplique el mismo argumento a la función continua
-$L_fh|_A$: si no es constante, uno de sus extremos anula
-$L_f(L_fh)=L_f^2h$; si es constante, la compacidad de una órbita impide que esa
-constante sea no nula para $h=x_i$, y el resultado también se cumple. Para un
-observable general constante a lo largo de $A$, $L_f^2h$ ya es cero.
+$L_fh(p)=0$. El mismo argumento aplicado a $L_fh|_A$ da un punto
+$r\in A$ con $L_f^2h(r)=0$, incluso cuando $L_fh|_A$ es constante.
 \end{proof}
 
 Si $A$ es un atractor, su cuenca $\mathcal B(A)$ es abierta. Si además
@@ -183,10 +180,10 @@ $\lambda=0$. Por tanto,
  \label{gt:eq:pp-inclusions}
 \end{equation}
 pero un punto de $\mathcal C$ con $\lambda\ne0$ no tiene por qué pertenecer a
-$S_J$. El uso publicado de $\mathcal C$ para localizar atractores ocultos
-constituye un antecedente. Como no se ha demostrado que toda curva conectante
-atraviese toda cuenca, aquí se emplea como familia priorizada de condiciones
-iniciales.
+$S_J$. El uso de $\mathcal C$ como familia de condiciones iniciales no
+presupone intersección con todas las cuencas. La condición de curvatura nula
+organiza la búsqueda, pero no constituye un teorema de cobertura como
+\cref{prop:gt-critical-coverage}.
 
 La aceleración $Df\,f$ no es intrínseca bajo una carta no lineal. Si
 $y=g(x)$ y $\widetilde f(y)=Dg(x)f(x)$, entonces
@@ -269,7 +266,7 @@ y
  +\frac{\tau_2L}{4T}y\sin\theta.
  \label{gt:eq:pll-kcc-P}
 \end{align}
-En los equilibrios bloqueados del PLL, Wolfram obtiene
+En los equilibrios bloqueados del PLL se obtiene
 \begin{equation}
  P(\theta_f,0)=-1642.02410524\ldots,
  \qquad
@@ -319,21 +316,26 @@ Sea $N_A$ una unión de cajas. Si
 \end{equation}
 $N_A$ es un bloque atrayente para el mapa muestreado. Si además su índice de
 Conley es no trivial, existe un conjunto invariante aislado en él. Para usar
-esto en ocultedad se necesita todavía excluir la cuenca desde los equilibrios.
+este resultado para clasificar ocultedad se requiere excluir la cuenca desde
+vecindades de todos los equilibrios.
 
 \begin{proposition}[Certificado relativo de no alcance]
 \label{prop:gt-relative-hiddenness}
 Sea el grafo de cajas una aproximación exterior validada de
-$\varphi_\tau$ sobre $D$. Sea $N_A\subset D$ un bloque atrayente que contiene
-al atractor $A$, y sea $U_E$ una unión de cajas que contiene vecindades de todos
+$\varphi_\tau$ sobre $D$, con existencia del flujo en los intervalos
+considerados. Sea $N_A\subset D$ un bloque atrayente con
+$A\subset\operatorname{int}N_A$, donde $A$ es un atractor compacto,
+y sea $U_E$ una unión de cajas que contiene vecindades de todos
 los equilibrios. Suponga que toda órbita iniciada en $U_E$ permanece en $D$ y
 que el grafo no contiene un camino de $U_E$ a $N_A$. Entonces ninguna órbita
 iniciada en $U_E$ pertenece a $\mathcal B(A)$.
 \end{proposition}
 
 \begin{proof}
-Si una órbita de $U_E$ fuera atraída por $A$, terminaría entrando en el
-vecindario atrapante $N_A$. Sus imágenes sucesivas a tiempos $k\tau$ inducirían
+Como $A$ es compacto y está en $\operatorname{int}N_A$, su distancia al
+complemento de ese interior es positiva. Si una órbita de $U_E$ fuera
+atraída por $A$, sus estados a tiempos $k\tau$ terminarían dentro de
+$N_A$. Sus imágenes sucesivas a esos tiempos inducirían
 un camino de cajas desde $U_E$ hasta $N_A$, contradiciendo la hipótesis de no
 alcance. La aproximación exterior es esencial: un grafo construido con un solo
 punto por caja podría omitir el camino real.
@@ -342,6 +344,16 @@ punto por caja podría omitir el camino real.
 El resultado certifica ocultedad sólo respecto del dominio, las vecindades y
 el modelo declarados. Si se cambia el radio o existe una salida no controlada
 de $D$, la conclusión debe recalcularse.
+
+La utilidad topológica depende de la decisión buscada. Un índice no trivial
+certifica la existencia de un conjunto invariante aislado; la inclusión
+\eqref{gt:eq:attracting-block} aporta una región atrapante; y el no alcance de
+\cref{prop:gt-relative-hiddenness} excluye una parte de la cuenca. Ninguno de
+esos resultados clasifica por sí solo el conjunto como periódico o caótico.
+Los grafos obtenidos por muestreo, la entropía de cuenca y las regiones KCC
+sirven para priorizar dónde refinar el análisis. Se convierten en certificados
+sólo cuando se cumplen las hipótesis del teorema correspondiente y se controlan
+los errores de aproximación.
 \fi
 
 \subsection{Formulación para sistemas de Caputo}
@@ -371,18 +383,33 @@ DoanKloeden2024Attractors}. Por ello hay dos geometrías distintas:
  y la distancia incluye memoria.
 \end{enumerate}
 
-Si $\iota:\R^n\to\mathfrak C$ inserta estados como perfiles constantes y
-$\mathcal B_{\mathfrak C}(\mathcal A)$ es la cuenca funcional, se define
+El semiflujo algebraico sobre todos los términos libres
+$\mathfrak C=C([0,\infty),\R^n)$ no proporciona por sí solo una teoría de
+atractores locales: con la topología compacto-abierta, ningún compacto puede
+atraer una vecindad abierta de ese espacio bajo las hipótesis de existencia
+global de la \cref{prop:geofo-full-space-obstruction}. Allí se demuestra también
+que la cuenca de cualquier conjunto no vacío positivamente invariante es
+densa en $\mathfrak C$, lo cual impide excluir vecindades funcionales de
+equilibrios. Por ello se debe fijar un espacio invariante de perfiles
+admisibles $X_{\mathrm{adm}}$ con topología relativa y existencia/continuidad
+justificadas, o una familia declarada de reinicios que se pretende atraer.
+
+En la primera opción, si $\iota:\R^n\to X_{\mathrm{adm}}$ inserta los estados de
+reinicio admitidos como perfiles constantes y
+$\mathcal B_{X_{\mathrm{adm}}}(\mathcal A)$ es la cuenca relativa, se define
 \begin{equation}
  B_0(\mathcal A)=\iota^{-1}
- \bigl(\mathcal B_{\mathfrak C}(\mathcal A)\bigr).
+ \bigl(\mathcal B_{X_{\mathrm{adm}}}(\mathcal A)\bigr).
  \label{gt:eq:reset-basin}
 \end{equation}
-Excluir una vecindad funcional de cada perfil de equilibrio implica excluir su
-corte constante; la recíproca no es válida. Esta separación entre
-\emph{ocultedad funcional} y \emph{ocultedad de reinicio} no fue localizada en
-los antecedentes consultados; se presenta como formulación metodológica cuya
-prioridad bibliográfica requiere una revisión más amplia.
+Si no se admiten todos los estados, el dominio de $\iota$ se restringe
+explícitamente. Por continuidad de $\iota$, excluir una vecindad relativa de
+cada perfil de equilibrio implica excluir su corte constante; la recíproca
+no se deduce de esa inclusión. Esta implicación es condicional a la elección
+y justificación de $X_{\mathrm{adm}}$, y no elimina la obstrucción en todo
+$\mathfrak C$. En la segunda opción se estudia atracción relativa a familias
+de reinicios, sin exigir una vecindad abierta de perfiles. Los sondeos finitos
+siguen describiendo el corte de reinicio; no certifican la ocultedad funcional.
 
 Las superficies $F_i(x)=0$ siguen siendo conjuntos algebraicos útiles en el
 corte de reinicio, pero ya no son superficies de velocidad ordinaria: en
@@ -409,15 +436,24 @@ Para $F\in C^2$ y $h=t-t_0\downarrow0$, la iteración de Picard produce
  +O(h^{3q}).
  \label{gt:eq:picard-caputo-two-terms}
 \end{equation}
-Con el parámetro natural $s=h^q$,
+Con el parámetro natural $s=h^q$, se escribe
+$x(t_0+s^{1/q})=p+Us+Vs^2/2+O(s^3)$. Sus coeficientes quedan
+definidos por los límites
 \begin{equation}
- \left.\frac{dx}{ds}\right|_{0}
- =\frac{F(p)}{\Gamma(q+1)},
- \qquad
- \left.\frac{d^2x}{ds^2}\right|_{0}
- =\frac{2DF(p)F(p)}{\Gamma(2q+1)}.
+ \begin{aligned}
+ U&=\lim_{s\downarrow0}\frac{x(t_0+s^{1/q})-p}{s}
+   =\frac{F(p)}{\Gamma(q+1)},\\
+ V&=\lim_{s\downarrow0}
+ \frac{2[x(t_0+s^{1/q})-p-sU]}{s^2}
+   =\frac{2DF(p)F(p)}{\Gamma(2q+1)}.
+ \end{aligned}
  \label{gt:eq:picard-s-derivatives}
 \end{equation}
+Este desarrollo de segundo orden basta para transportar el arranque bajo
+una carta $C^2$. Si la curva reparametrizada es $C^2$ hasta $s=0$,
+$U,V$ coinciden además con sus dos derivadas clásicas. No se deduce esa
+regularidad diferenciando el resto $O(s^3)$; las construcciones siguientes
+usan los coeficientes definidos por los límites.
 Esto motiva el conjunto algebraico de arranque
 \begin{equation}
  \mathcal C_{\mathrm{PC}}
@@ -429,30 +465,80 @@ El conjunto es independiente de $q$, pero el peso relativo de los términos en
 \eqref{gt:eq:picard-caputo-two-terms} sí depende de $q$. No es una curva
 global de la semidinámica: sólo genera semillas en el corte de reinicio.
 
-En una variedad con conexión $\nabla$, la aceleración covariante de esta curva
-de arranque es
+La carta física en la que se formuló el PVI debe permanecer identificada.
+En ella, defina los coeficientes del desarrollo de orden dos por
+\[
+ U_x=\frac{F(p)}{\Gamma(q+1)},\qquad
+ V_x=\frac{2DF(p)F(p)}{\Gamma(2q+1)}.
+\]
+Si se dota al espacio de una conexión $\nabla$, el coeficiente cuadrático
+covariante del arranque, denominado aquí aceleración de arranque, es
 \begin{equation}
- \mathcal A_{q,\nabla}(p)=
+ \mathcal A_{q,\nabla,x}=V_x+\Gamma_x(U_x,U_x)=
  \frac{2DF(p)F(p)}{\Gamma(2q+1)}
  +\frac{\Gamma_p(F(p),F(p))}{\Gamma(q+1)^2}.
  \label{gt:eq:covariant-picard-acceleration}
 \end{equation}
-Wolfram verificó que \eqref{gt:eq:covariant-picard-acceleration} transforma
-como vector cuando también se transforma la conexión, y que
-$\mathcal A_{1,\nabla}=\nabla_FF$. Esta formulación covariante y su uso como
-filtro de semillas Caputo son consecuencias de las identidades precedentes. No afirman una regla
-de cadena fraccionaria para $F(x(t))$.
+Para una carta $y=g(x)$ de clase $C^2$, se transporta \emph{la misma curva}
+y su desarrollo:
+\begin{equation}
+ \begin{aligned}
+ U_y&=Dg\,U_x,\qquad
+ V_y=Dg\,V_x+D^2g[U_x,U_x],\\
+ \mathcal A_{q,\nabla,y}&=V_y+\Gamma_y(U_y,U_y).
+ \end{aligned}
+ \label{gt:eq:transported-picard-jet}
+\end{equation}
+La ley de transformación de la conexión da
+\[
+ \Gamma_y(Dg\,U_x,Dg\,U_x)
+ =Dg\,\Gamma_x(U_x,U_x)-D^2g[U_x,U_x].
+\]
+Al sumarla a la expresión de $V_y$, los términos hessianos se cancelan y
+$\mathcal A_{q,\nabla,y}=Dg\,\mathcal A_{q,\nabla,x}$. Ésta es la
+covariancia del desarrollo transportado. Para $q=1$ se recupera $\nabla_FF$.
+
+Es una operación distinta sustituir $F_y=Dg\,F$ en la fórmula de la carta
+física y volver a calcular sus coeficientes como si se hubiera formulado el
+mismo PVI de Caputo en $y$. Si $\mathcal A^{\rm rec}_y$ denota ese nuevo
+cálculo y
+\[
+ a_q=\frac{2}{\Gamma(2q+1)},\qquad
+ b_q=\frac{1}{\Gamma(q+1)^2},
+\]
+entonces \eqref{gt:eq:nonlinear-coordinate-acceleration} y la ley de la
+conexión dan
+\begin{equation}
+ \mathcal A^{\rm rec}_y-Dg\,\mathcal A_{q,\nabla,x}
+ =(a_q-b_q)D^2g[F,F].
+ \label{gt:eq:picard-recomputed-defect}
+\end{equation}
+Este defecto no se anula en general para $0<q<1$. Por ejemplo, para
+$q=1/2$, $F=(1,0)$, conexión plana en $x$ y
+$g(x_1,x_2)=(x_1,x_2+x_1^2)$, se tiene $\mathcal A_{q,\nabla,x}=0$,
+$F_y=(1,2y_1)$ y $\Gamma^2_{11}=-2$. El nuevo cálculo produce
+\[
+ \mathcal A^{\rm rec}_y=(0,4-8/\pi)\ne(0,0),
+\]
+mientras que el desarrollo transportado tiene aceleración covariante nula.
+La fórmula conserva su forma para cambios afines, cuyo Hessiano es cero;
+para cambios no lineales se usa \eqref{gt:eq:transported-picard-jet}.
+Así, la condición algebraica \eqref{gt:eq:picard-caputo-connecting} es un
+filtro en la carta física, y su versión geométrica requiere transportar
+tanto la curva como la conexión y, para proyecciones normales, la métrica.
+No se afirma una regla de cadena fraccionaria para $F(x(t))$.
 
 \subsubsection{Evento conectante dependiente de historia}
 
-La formulación dependiente de la historia conserva la definición secuencial ya
-introducida:
+Si $F(x(\cdot))$ es absolutamente continua en el intervalo desde el terminal
+inferior y la integral definitoria es finita en el tiempo evaluado, la
+aceleración secuencial conserva la historia:
 \begin{equation}
  \mathcal A_q[x](t)
  ={}^{\mathrm C}D_{t_0}^{q}[F(x(\cdot))](t).
  \label{gt:eq:history-acceleration}
 \end{equation}
-Un evento conectante de historia satisface
+Un evento conectante de historia, evaluado en $t>t_0$, satisface
 \begin{equation}
  F(x(t))\ne0,
  \qquad
@@ -490,86 +576,128 @@ induce variables de memoria
  z_\ell(t)&=\int_{t_0}^{t}e^{-\eta_\ell(t-s)}F(x(s))\,ds,\\
  \dot z_\ell&=-\eta_\ell z_\ell+F(x),
  \qquad
- x=x_0+\sum_{\ell=1}^{m}w_\ell z_\ell.
+ x=x_0+\sum_{\ell=1}^{m}w_\ell z_\ell,
+ \quad z_\ell(t_0)=0.
  \label{gt:eq:soe-lift}
 \end{align}
 Las aproximaciones racionales por sumas de exponenciales y sus análisis de
 estabilidad y convergencia son antecedentes numéricos
-\cite{KhristenkoWohlmuth2023Rational}. La propuesta consiste en emplear la
-elevación como puente controlado hacia grafos de cajas e índice de Conley.
-Para identificar un resultado del sistema elevado con el Caputo original se
-exigirán: cota uniforme del error de núcleo, cota de error de solución, un
-bloque aislante común durante la homotopía exacto--aproximación y persistencia
-al aumentar $m$ y el horizonte. Sin esos cuatro elementos, el índice pertenece
-sólo a la aproximación finita.
+\cite{KhristenkoWohlmuth2023Rational}. La elevación permite construir
+grafos de cajas e índices de Conley para la aproximación de memoria.
+Para $0<q<1$, $K_q$ es singular en cero y una suma finita de exponenciales
+es acotada allí; su error uniforme en $(0,T]$ es infinito. El control
+apropiado sobre un horizonte finito es
+\begin{equation}
+ \varepsilon_K(T)=\int_0^T|K_q(u)-\widetilde K(u)|\,du.
+ \label{gt:eq:soe-L1-kernel-error}
+\end{equation}
+Alternativamente, una cota uniforme $\varepsilon_\infty$ en $[\delta,T]$
+se combina con el error local integrado $\varepsilon_{\rm local}$ en
+$[0,\delta]$, dando
+$\varepsilon_K(T)\le\varepsilon_{\rm local}+(T-\delta)\varepsilon_\infty$.
+Si se incorpora una corrección local de la singularidad, debe añadirse su
+contribución a la reconstrucción de $x$ en \eqref{gt:eq:soe-lift}; ese esquema
+ya no coincide con la suma finita pura escrita arriba.
 
-\subsection{Antecedentes, deducciones y formulaciones metodológicas}
+Si ambas soluciones de Volterra comparten el reinicio y permanecen en una
+región donde $F$ es $L$-Lipschitz y $\|F\|\le M$, restar sus ecuaciones y
+usar el núcleo exacto en el término Lipschitz da, con el origen temporal
+trasladado a $t_0$,
+\[
+ e(t)\le M\varepsilon_K(T)+L I^qe(t),\qquad
+ e(t)=\|x(t_0+t)-x_m(t_0+t)\|,\quad 0\le t\le T.
+\]
+La desigualdad de Grönwall fraccionaria implica
+\begin{equation}
+ \sup_{0\le t-t_0\le T}\|x(t)-x_m(t)\|
+ \le M\varepsilon_K(T)E_q(LT^q).
+ \label{gt:eq:soe-finite-solution-error}
+\end{equation}
+Un defecto adicional de cuadratura uniformemente acotado por
+$\varepsilon_{\rm quad}$ sustituye el prefactor por
+$M\varepsilon_K(T)+\varepsilon_{\rm quad}$. Es una estimación a tiempo
+finito; el factor de Mittag--Leffler no proporciona control uniforme cuando
+$T\to\infty$.
+
+La diferencia asintótica ya aparece para $F(x)=-ax$, $a>0$. Con pesos y tasas
+positivos, el equilibrio proyectado del sistema elevado satisface
+\[
+ x_m^*=\frac{x_0}{1+a\sum_\ell w_\ell/\eta_\ell},
+\]
+que no es el límite cero de $x_0E_q(-a(t-t_0)^q)$ cuando $x_0\ne0$.
+Para $a=w_1=\eta_1=x_0=1$, $t_0=0$ y $z_1(0)=0$, la solución elevada es
+exactamente $x_m(t)=(1+e^{-2t})/2$. Por tanto, una buena aproximación finita
+no preserva automáticamente los atractores ni el límite asintótico.
+
+Para transferir un índice al Caputo original se requieren, además de los
+errores de núcleo y solución, una homotopía admisible con un bloque aislante
+común y el teorema de continuación correspondiente. Se debe declarar el
+espacio común de la homotopía, o las identificaciones que comparan espacios
+de distinta dimensión, y justificar el aislamiento uniforme. La persistencia
+observada al aumentar $m$ y el horizonte es un control adicional, no reemplaza
+esas hipótesis. Mientras no se cierre ese puente, el índice pertenece sólo
+a la aproximación finita.
+
+\subsection{Alcance de las construcciones geométricas y topológicas}
 \label{subsec:gt-novelty-map}
 
 \begin{longtable}{@{}L{4.0cm}L{3.0cm}L{6.2cm}@{}}
-\caption{Procedencia y alcance de los componentes de la formulación.}
+\caption{Resultados, indicadores y condiciones de aplicación.}
 \label{tab:gt-novelty-map}\\
 \toprule
-Objeto & Estado & Fundamento y límite\\
+Objeto & Tipo de resultado & Fundamento y límite\\
 \midrule
 \endfirsthead
 \toprule
-Objeto & Estado & Fundamento y límite\\
+Objeto & Tipo de resultado & Fundamento y límite\\
 \midrule
 \endhead
-Superficies $f_i=0$ y $(Df\,f)_i=0$ para localizar oscilaciones & Antecedente
+Superficies $f_i=0$ y $(Df\,f)_i=0$ para localizar oscilaciones & Cobertura demostrada
 & Godara et al.\ \cite{GodaraEtAl2018CriticalSurfaces}. La prueba por extremos
 explicita las hipótesis y formaliza el fundamento del método.\\
-Curvas $Df\,f=\lambda f$ & Antecedente & Gilmore et al.\ y Guan--Xie
+Curvas $Df\,f=\lambda f$ & Semillas geométricas & Gilmore et al.\ y Guan--Xie
 \cite{GilmoreEtAl2010Connecting,GuanXie2021Connecting}. Su intersección con
 todas las cuencas continúa siendo hipótesis numérica, no teorema general.\\
-Puntos perpetuos & Antecedente & Prasad et al.\ y Dudkowski et al.; la
+Puntos perpetuos & Semillas algebraicas & Prasad et al.\ y Dudkowski et al.; la
 \cref{sec:perpetual-points} contiene alcance y contraejemplos.\\
-KCC para atractores ocultos & Antecedente & Roy, Ray y Roy Chowdhury
+KCC para atractores ocultos & Indicador de enfoque & Roy, Ray y Roy Chowdhury
 \cite{RoyRayChowdhury2024KCC}. Se emplea para ordenar candidatos y se explicitan
 dependencia de la reducción y límites probatorios.\\
-Métodos de cajas, Morse e índice de Conley & Antecedente general &
+Métodos de cajas, Morse e índice de Conley & Herramientas topológicas &
 \cite{DellnitzHohmann1997Subdivision,KaliesEtAl2005ChainRecurrence,
-MischaikowEtAl2016Conley}. No fueron creados para HAFO ni prueban ocultedad por
-sí solos.\\
-Semidinámica de Caputo en perfiles & Antecedente riguroso & Cong--Tuan,
+MischaikowEtAl2016Conley}. Requieren aproximaciones exteriores o bloques
+aislantes para certificar existencia; la ocultedad exige además exclusión de
+cuenca.\\
+Semidinámica de Caputo en perfiles & Realización funcional & Cong--Tuan,
 Doan--Kloeden \cite{CongTuan2017Nonlocal,DoanKloeden2021Semidynamical,
 DoanKloeden2024Attractors}.\\
-Ocultedad funcional frente a ocultedad de reinicio & Formulación evaluada &
-Se deduce de la inclusión de historias constantes en el espacio funcional. La
-implicación funcional$\Rightarrow$reinicio fue verificada lógicamente; la
-recíproca falla.\\
+Ocultedad funcional frente a ocultedad de reinicio & Definición relativa &
+La implicación funcional$\Rightarrow$reinicio es condicional a un espacio
+admisible. La atracción abierta y la exclusión funcional están obstruidas en
+todo $\mathfrak C$; se requieren perfiles restringidos o atracción relativa
+a reinicios.\\
 Curva conectante Picard--Caputo y aceleración covariante
-$\mathcal A_{q,\nabla}$ & Formulación evaluada & Derivada de la expansión de
-Volterra con $s=h^q$ y de geometría diferencial. Es un filtro de arranque, no
-una órbita conectante global.\\
-Evento conectante FPP--H sobre historias & Formulación evaluada & Usa la
+$\mathcal A_{q,\nabla}$ & Desarrollo local & Derivada de la expansión de
+Volterra con $s=h^q$ y del transporte del desarrollo de orden dos. Recalcular
+con $F_y=DgF$ introduce el defecto de
+\eqref{gt:eq:picard-recomputed-defect}; es un filtro de arranque.\\
+Evento conectante FPP--H sobre historias & Evento de historia & Usa la
 derivada secuencial conservando el terminal inferior. Requiere convergencia
 respecto de paso, historia y horizonte.\\
-Bloque atrayente + índice no trivial + no alcance desde equilibrios & Propuesta
-de integración &
+Bloque atrayente + índice no trivial + no alcance desde equilibrios & Certificado
+condicional &
 \ifHAFOBasinMaterial
 La \cref{prop:gt-relative-hiddenness}
 \else
 El criterio de no alcance mediante una aproximación exterior
 \fi
-combina herramientas
-existentes en un certificado relativo. Falta ejecutarlo con aproximaciones
+excluye la cuenca dentro del dominio controlado; requiere aproximaciones
 exteriores validadas.\\
-Elevación de memoria + continuación del bloque aislante & Programa de
-investigación & La suma de exponenciales es antecedente; la preservación del
-índice durante la homotopía al núcleo Caputo exacto debe demostrarse.\\
-Banco unido DF--Machado--continuación--PP--superficies--CC--KCC & Integración
-metodológica & La formulación integra la evolución causal, las reglas de
-evidencia y la comparación con igual presupuesto; las herramientas individuales
-conservan su procedencia bibliográfica.\\
+Elevación de memoria + continuación del bloque aislante & Aproximación numérica &
+La preservación del índice durante la homotopía al núcleo Caputo exacto
+requiere aislamiento uniforme.\\
+DF, Machado, continuación, PP, superficies, CC y KCC & Comparación de métodos &
+La evolución causal y un presupuesto común permiten comparar las semillas
+sin confundir localización, recurrencia y ocultedad.\\
 \bottomrule
 \end{longtable}
-
-\begin{proposalbox}
-\textbf{Terminología de atribución.} ``Antecedente'' designa una construcción
-publicada; ``deducción'', una consecuencia demostrada en las proposiciones precedentes; y
-``propuesta'', un protocolo todavía no cerrado dinámicamente. Los resultados de
-Wolfram sobre $f$, $Df$ o $Df\,f$ se limitan a la verificación algebraica y no
-constituyen pruebas de atracción, caos, cuenca u ocultedad.
-\end{proposalbox}

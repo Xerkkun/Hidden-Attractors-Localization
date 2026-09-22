@@ -14,12 +14,20 @@ CHECK s=h^q startup acceleration : PASS
 Nonlinear_JF_F_transform_residual = {0, 0}
 CHECK nonlinear transform JF.F = Dg JF.F + Hess(g)[F,F] : PASS
 CHECK affine specialization removes Hessian term : PASS
-Covariant_fractional_startup_residual = {0, 0}
-CHECK covariant startup acceleration transforms as a vector : PASS
+Transported_startup_two_jet_covariant_residual = {0, 0}
+CHECK transported startup two-jet acceleration transforms as a vector : PASS
 CHECK q=1 recovers nabla_F F : PASS
+Recomputed_Caputo_coefficient_defect = {0, 2*c*fA[y1, -(c*y1^2) + y2]^2*(-Gamma[1 + q]^(-2) + 2/Gamma[1 + 2*q])}
+CHECK recomputed field formula has (a_q-b_q) Hess(g)[F,F] defect : PASS
+CHECK recomputed coefficient defect vanishes for affine charts : PASS
+CHECK recomputed coefficient defect vanishes at q=1 : PASS
+Nonlinear_chart_counterexample_recomputed = {0, 4 - 8/Pi}
+Nonlinear_chart_counterexample_transported = {0, 0}
+CHECK q=1/2 nonlinear chart recomputation is nonzero (0,4-8/Pi) : PASS
+CHECK same counterexample transported two-jet acceleration is zero : PASS
 
 [C] EQUIVARIANCE AND FUNCTIONAL-TO-RESTART LOGIC
-CHECK functional ball exclusion implies restart-slice exclusion : PASS
+CHECK conditional admissible-profile exclusion implies restart exclusion : PASS
 CHECK restart exclusion does not imply functional exclusion : PASS
 
 [D] EXPONENTIAL-KERNEL MARKOV LIFT
@@ -61,6 +69,10 @@ PLL_PP_acceleration_2 = {0, 0}
 CHECK PLL critical circles cos(theta)=0 : PASS
 CHECK PLL exact PP representatives : PASS
 CHECK PLL deck symmetry : PASS
+Generalized_Lorenz_Lyapunov_gradV_dot_F = (-34*lx^2)/5 - 2*ly^2 + (102*lz)/5 - lz^2
+Generalized_Lorenz_Lyapunov_comparison_slack = (29*lx^2)/5 + ly^2 + lz^2/2
+CHECK Generalized Lorenz rational quadratic Lyapunov identity : PASS
+CHECK Generalized Lorenz rational nonnegative comparison slack identity : PASS
 Generalized_Lorenz_equivariance_residual = {0, 0, 0}
 Generalized_Lorenz_JF_F_symmetry_residual = {0, 0, 0}
 CHECK Generalized_Lorenz field symmetry : PASS

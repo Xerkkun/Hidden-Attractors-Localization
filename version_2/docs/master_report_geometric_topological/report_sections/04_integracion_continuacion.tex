@@ -48,8 +48,38 @@ y \(q\Gamma(q)=\Gamma(q+1)\), resulta
 \label{eq:abm_predictor}
 \end{equation}
 
-Para el corrector se integra la interpolación lineal de \(F\). Después de
-agrupar los coeficientes asociados con cada nodo se obtiene
+Para el corrector se interpola en cada intervalo mediante
+\[
+ F(t_j+hu,X(t_j+hu))\approx(1-u)F_j+uF_{j+1},\qquad 0\leq u\leq1.
+\]
+Al poner \(r=n+1-j\), su contribución a la integral, antes de dividir por
+\(\Gamma(q)\), es
+\(h^q[L_q(r)F_j+R_q(r)F_{j+1}]\), donde
+\begin{align}
+ I_q(r)&=\int_0^1(r-u)^{q-1}\,\dd u
+       =\frac{r^q-(r-1)^q}{q},\\
+ R_q(r)&=\int_0^1u(r-u)^{q-1}\,\dd u
+       =rI_q(r)-\frac{r^{q+1}-(r-1)^{q+1}}{q+1},\\
+ L_q(r)&=I_q(r)-R_q(r).
+ \label{eq:abm_integrales_pesos}
+\end{align}
+La segunda igualdad se obtiene con \(v=r-u\), de modo que
+\(u=r-v\). Al llevar las expresiones al denominador \(q(q+1)\),
+\begin{align}
+ q(q+1)L_q(r)&=(q+1-r)r^q+(r-1)^{q+1},\\
+ q(q+1)R_q(r)&=r^{q+1}-(r+q)(r-1)^q.
+\end{align}
+El nodo inicial recibe sólo \(L_q(n+1)\); cada nodo interior \(j\) recibe
+\(R_q(n+2-j)+L_q(n+1-j)\); el extremo nuevo recibe \(R_q(1)\).
+Por tanto,
+\begin{align}
+ q(q+1)L_q(n+1)&=n^{q+1}-(n-q)(n+1)^q,\\
+ q(q+1)[R_q(r+1)+L_q(r)]
+  &=(r+1)^{q+1}-2r^{q+1}+(r-1)^{q+1},\\
+ q(q+1)R_q(1)&=1.
+\end{align}
+Finalmente, \(q(q+1)\Gamma(q)=\Gamma(q+2)\). El valor desconocido
+\(F_{n+1}\) del extremo se evalúa en el predictor y se obtiene
 \begin{equation}
 \begin{aligned}
  X_{n+1}
@@ -85,9 +115,114 @@ ventana móvil.
 Para \(q=1\), \(b_{j,n+1}=1\). Además, los pesos del corrector son \(1\) en
 los extremos y \(2\) en los nodos interiores; el factor
 \(\Gamma(3)^{-1}=1/2\) produce la regla trapezoidal compuesta. Así,
-\cref{eq:abm_predictor,eq:abm_corrector} recuperan el predictor de
-Adams--Bashforth de un paso y el corrector trapezoidal del problema entero.
+\cref{eq:abm_predictor,eq:abm_corrector} recuperan las cuadraturas compuestas
+rectangular izquierda y trapezoidal de la ecuación integral; el extremo
+derecho del corrector se evalúa en el predictor. En particular,
+\[
+ X_{n+1}^{\mathrm P}=X_0+h\sum_{j=0}^{n}F_j
+\]
+satisface \(X_{n+1}^{\mathrm P}=X_n^{\mathrm P}+hF_n\) para \(n\geq1\).
+El corrector, en cambio, satisface
+\[
+ X_n=X_0+\frac h2\left[F_0+2\sum_{j=1}^{n-1}F_j
+                    +F(t_n,X_n^{\mathrm P})\right],
+ \qquad
+ X_n^{\mathrm P}-X_n=\frac h2[F_0-F(t_n,X_n^{\mathrm P})].
+\]
+En consecuencia, el predictor no coincide, en general, con el paso local de
+Adams--Bashforth de orden uno
+\(X_n+hF_n\) iniciado en el estado corregido. Por ejemplo, para
+\(\dot x=x\), \(x_0=1\), se obtiene \(x_1=1+h+h^2/2\) y
+\(x_2^{\mathrm P}-(x_1+hx_1)=-h^2/2\). La identificación con cuadraturas
+integrales conserva los pesos del esquema y precisa su límite entero.
 \end{remark}
+
+\subsection{Regularidad del arranque y consistencia de la cuadratura}
+\label{subsec:numerical-startup-consistency}
+
+La integración exacta del núcleo singular no elimina la singularidad temporal
+de la solución. Supóngase que \(F\) es \(C^1\) cerca de \((t_0,X_0)\) y que
+la solución permanece inicialmente en ese entorno. La acotación del campo en
+\cref{eq:volterra} implica
+\[
+ \norm{X(t_0+s)-X_0}\leq \frac{M s^q}{\Gamma(q+1)}.
+\]
+Como \(0<q\leq1\), el incremento temporal \(s\) es también \(O(s^q)\) cuando
+\(s\to0^+\). La regularidad de \(F\) da entonces
+\(F(t_0+s,X(t_0+s))=F_0+R(s)\), con \(F_0=F(t_0,X_0)\) y
+\(\norm{R(s)}\leq C s^q\). Al sustituir en Volterra, el término constante
+se integra exactamente. Para el resto, el cambio \(u=s v\) produce
+\[
+ \begin{aligned}
+ \frac1{\Gamma(q)}\int_0^s(s-u)^{q-1}\norm{R(u)}\,\dd u
+ &\leq\frac{C s^{2q}}{\Gamma(q)}
+        \int_0^1(1-v)^{q-1}v^q\,\dd v\\
+ &=\frac{C\Gamma(q+1)}{\Gamma(2q+1)}s^{2q}.
+ \end{aligned}
+\]
+Por tanto,
+\begin{equation}
+ X(t_0+s)=X_0+\frac{s^q}{\Gamma(q+1)}F_0+O(s^{2q}).
+ \label{eq:numerical-startup-expansion}
+\end{equation}
+Si \(0<q<1\) y \(F_0\ne0\), dividir esta identidad por \(s\) muestra que
+\(\norm{X(t_0+s)-X_0}/s\) no es acotado al aproximarse al terminal inferior:
+el término principal es de orden \(s^{q-1}\) y el resto es menor por un
+factor \(s^q\). La suavidad del campo no basta, pues, para suponer derivadas
+temporales acotadas de la solución.
+
+Para aislar el error de cuadratura, supóngase provisionalmente que
+\(g(t)=F(t,X(t))\) pertenece a \(C^2([t_0,t_0+T])\), con
+\(\norm{g'}\leq M_1\) y \(\norm{g''}\leq M_2\). En
+\([a,b]=[t_j,t_{j+1}]\), \(b-a=h\), la interpolación constante satisface
+\(\norm{g(t)-g(a)}\leq M_1h\). Para la interpolación lineal \(\ell_j\), el
+resto \(r=g-\ell_j\) cumple \(r(a)=r(b)=0\) y \(r''=g''\). Integrar dos
+veces e imponer ambas condiciones de borde da
+\[
+ \begin{aligned}
+ r(t)={}&-\frac{b-t}{h}\int_a^t(u-a)g''(u)\,\dd u\\
+        &-\frac{t-a}{h}\int_t^b(b-u)g''(u)\,\dd u.
+ \end{aligned}
+\]
+La desigualdad triangular, válida también para campos vectoriales, implica
+\[
+ \begin{aligned}
+ \norm{r(t)}
+ &\leq\frac{M_2}{2h}\bigl[(b-t)(t-a)^2+(t-a)(b-t)^2\bigr]\\
+ &=\frac{M_2}{2}(t-a)(b-t)\leq\frac{M_2h^2}{8}.
+ \end{aligned}
+\]
+Al integrar los errores contra el núcleo positivo y usar
+\(\int_0^T u^{q-1}\,\dd u/\Gamma(q)=T^q/\Gamma(q+1)\), se obtienen los
+defectos sobre datos nodales exactos
+\begin{equation}
+ \varepsilon_{\mathrm P}\leq\frac{M_1T^q}{\Gamma(q+1)}h,
+ \qquad
+ \varepsilon_{\mathrm L}\leq\frac{M_2T^q}{8\Gamma(q+1)}h^2.
+ \label{eq:numerical-quadrature-defects}
+\end{equation}
+El primero corresponde al predictor y el segundo a la interpolación lineal
+con el valor exacto del campo en el extremo nuevo. Si \(F\) es
+\(L\)-Lipschitz respecto del estado en un entorno que contiene la solución y
+el predictor, evaluar ese extremo en \(X_{n+1}^{\mathrm P}\) añade a lo sumo
+\(L\varepsilon_{\mathrm P}\) al error del campo. Su peso en el corrector es
+\(h^q/\Gamma(q+2)\); por ello el defecto PECE satisface
+\begin{equation}
+ \varepsilon_{\mathrm{PECE}}
+ \leq \varepsilon_{\mathrm L}
+       +\frac{Lh^q}{\Gamma(q+2)}\varepsilon_{\mathrm P}
+ =O(h^2+h^{1+q}).
+ \label{eq:numerical-pece-consistency}
+\end{equation}
+Esta es una estimación de consistencia al insertar valores exactos en la
+cuadratura. Un orden global requiere además controlar la propagación de los
+errores nodales \cite{DiethelmFordFreed2002}. Cuando \(g'\) o \(g''\) no son
+acotadas cerca de \(t_0\), no existen las constantes uniformes usadas en
+\cref{eq:numerical-quadrature-defects}. En ese caso se debe estimar por
+separado el tramo inicial, introducir correcciones de arranque o analizar
+una malla graduada. Los refinamientos de \cref{sec:control_numerico} se
+interpretan según la regularidad efectiva de cada problema, sin atribuirles
+automáticamente el orden del régimen suave.
 
 \subsection{Continuación causal del Chua no suave}
 \label{sec:continuacion_causal}
@@ -102,7 +237,7 @@ modo armónico y los dos extremos:
 \input{report_sections/A_derivaciones_algebraicas}
 \endgroup
 
-En la implementación se escribe \(\eta=\varepsilon\). Por tanto,
+Con la notación \(\eta=\varepsilon\),
 \(\eta=0\) es el auxiliar usado para construir la semilla y \(\eta=1\) es
 exactamente el Chua no suave de \cref{eq:chua_no_suave}; no queda un término
 residual de la aproximación armónica.
@@ -130,6 +265,48 @@ inicial de las sumas ABM continúa siendo \(j=0\). Esta es la adaptación
 fundamental de la continuación de Leonov--Kuznetsov al operador de Caputo.
 Usar el último estado como nueva condición inicial en cada nivel produciría
 veintiún problemas diferentes y perdería la memoria acumulada.
+
+La diferencia puede verse directamente en la ecuación integral. Para
+\(t\in[t_k,t_{k+1})\), defínase la contribución heredada
+\[
+ H_k(t)=\frac1{\Gamma(q)}\int_{t_0}^{t_k}
+ (t-s)^{q-1}F_{\eta(s)}(X(s))\,\dd s.
+\]
+Como \(X(t_k)=X_0+H_k(t_k)\), resulta
+\begin{equation}
+ X(t)=X(t_k)+H_k(t)-H_k(t_k)
+ +\frac1{\Gamma(q)}\int_{t_k}^{t}(t-s)^{q-1}
+                 F_{\eta_k}(X(s))\,\dd s.
+ \label{eq:continuacion_memoria_heredada}
+\end{equation}
+Un reinicio en \(t_k\) elimina \(H_k(t)-H_k(t_k)\). Para \(q=1\), el
+núcleo es constante y esa diferencia es cero. Para \(0<q<1\), el núcleo
+pondera de nuevo toda la historia al avanzar \(t\); en general la diferencia
+permanece y no puede determinarse sólo a partir de \(X(t_k)\).
+
+\paragraph{Interfaces entre niveles de continuación.}
+\label{subsec:numerical-continuation-interfaces}
+Si \(\eta(t)\) cambia por saltos, el campo dependiente del tiempo es continuo
+por tramos. La formulación integral conserva sentido, pero las cotas de
+interpolación de \cref{subsec:numerical-startup-consistency} no pueden
+atravesar esos saltos con una derivada temporal acotada. Los tiempos \(t_k\)
+deben ser fronteras de los subintervalos de cuadratura. La trayectoria es
+continua y posee un único valor \(X(t_k)\), mientras que los valores límite
+del campo son, en general, distintos:
+\[
+ g(t_k^-)=F_{\eta_{k-1}}(X(t_k)),\qquad
+ g(t_k^+)=F_{\eta_k}(X(t_k)).
+\]
+La interpolación lineal en el intervalo que termina en \(t_k\) utiliza el
+primer valor; la del intervalo que comienza allí utiliza el segundo. El
+valor del integrando en un punto aislado no cambia la integral exacta, pero
+su elección como dato nodal sí cambia el interpolante en un intervalo de
+longitud positiva. Si una discretización emplea un único valor en esa
+interfaz, el defecto correspondiente forma parte del control numérico de la
+transición. Esta condición de cuadratura se distingue de conservar la
+historia: ambas son necesarias para aplicar el análisis de consistencia
+por tramos. El efecto de omitir por completo la historia se calcula en
+\cref{subsec:numerical-adm-history}.
 
 La búsqueda sesgada entrega
 \begin{equation}
@@ -161,11 +338,9 @@ realiza después una operación distinta:
 \qquad X(0)=X_{\mathrm{fin}}.
 \label{eq:reset_objetivo_no_suave}
 \end{equation}
-Este reinicio es intencional. Define una trayectoria autónoma del sistema
-objetivo con el mismo instante inicial y el mismo convenio de memoria que las
-trayectorias empleadas en los sondeos. De esta ejecución se descarta el
-transitorio y se construye la nube de referencia \(\target\) usada por el
-clasificador.
+El reinicio define una trayectoria autónoma con el mismo instante inicial y
+el mismo convenio de memoria de los sondeos. Su segmento postransitorio
+constituye la nube de referencia \(\target\) del clasificador.
 
 Así, las dos operaciones tienen propósitos diferentes:
 \begin{enumerate}
@@ -218,12 +393,14 @@ completa. La exploración entera localiza una región prometedora; la integraci�
 de \cref{eq:pvi_refinamiento_c590} verifica la respuesta bajo el operador de
 Caputo que define el sistema estudiado.
 
-\subsection{Control de convergencia y reproducibilidad numérica}
+\subsection{Control de convergencia numérica}
 \label{sec:control_numerico}
 
-Un resultado se acepta únicamente cuando se conserva al cambiar el paso dentro
-del conjunto declarado y cuando el integrador finaliza sin valores no finitos
-ni desbordamiento. Para las trayectorias objetivo se registran, como mínimo:
+La aceptación de convergencia respecto del paso requiere conservar el resultado
+al cambiar \(h\) dentro del conjunto declarado y completar las integraciones
+sin valores no finitos ni desbordamiento. Este requisito se distingue de la
+robustez frente a perturbaciones de la condición inicial. Para las trayectorias
+objetivo se registran, como mínimo:
 \begin{equation}
 \left(
 q,\ h,\ T,\ T_{\mathrm{burn}},\ X_0,\
@@ -232,8 +409,19 @@ q,\ h,\ T,\ T_{\mathrm{burn}},\ X_0,\
 \label{eq:contrato_numerico_minimo}
 \end{equation}
 El estado postransitorio se analiza con la misma especificación utilizada para crear
-la nube objetivo. Los ensayos de robustez del caso no suave repitieron
-\(36\) combinaciones y las \(36\) reprodujeron la misma clase de destino. En
-el caso con arctangente, la selección cruzada entre pasos precede al sondeo de
-cuenca. Esta separación evita que una sola ejecución o un único paso funcionen
-simultáneamente como búsqueda, selección y evidencia final.
+la nube objetivo. En el caso no suave se integraron \(36\) perturbaciones de
+la condición inicial a \(h=0.01\), con ABM y memoria completa: \(12\) para
+cada radio \(10^{-6},10^{-4},10^{-2}\). Las \(36\) hicieron contacto con la
+nube objetivo. Este resultado documenta robustez respecto de \(X_0\) a ese
+paso. La convergencia respecto de \(h\) requiere todavía una comparación
+\(h,h/2,h/4\) del mismo problema de valor inicial.
+
+La comparación conservará el campo, los
+parámetros, \(X_0\), terminal inferior, horizonte, política de memoria y
+observables. Se evaluará el error de trayectoria en una ventana corta y, en el
+régimen postransitorio, nube, amplitudes, frecuencia y decisión de contacto con
+tolerancias predeclaradas. La coincidencia de etiquetas controla la
+clasificación, pero no estima por sí sola el orden de convergencia. Las variaciones de \(X_0\), \(h\), horizonte y memoria se evaluarán por separado.
+En el caso con arctangente, la selección cruzada entre pasos descrita en
+\cref{sec:refinamiento_c590} precede al sondeo de cuenca y constituye un
+control distinto.

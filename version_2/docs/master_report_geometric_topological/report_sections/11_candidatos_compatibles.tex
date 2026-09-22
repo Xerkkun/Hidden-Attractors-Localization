@@ -3,27 +3,25 @@
 
 \HAFOCardCandidates
 
-La selección cruzó el catálogo de sistemas, los manifiestos de validación, el
-manuscrito metodológico y las fuentes bibliográficas primarias. Se priorizaron
-sistemas que cumplen simultáneamente:
+Los candidatos se seleccionan mediante los siguientes criterios:
 
 \begin{enumerate}
  \item derivada ordinaria o Caputo conmensurable \(q\in(0,1]\);
  \item ecuaciones, parámetros, orden e iniciales publicados;
  \item no linealidades representables por D0, T1, A1 o M1;
- \item un reclamo publicado de atractor oculto, cuenca o coexistencia;
+ \item un resultado bibliográfico sobre atractores ocultos, cuencas o coexistencia;
  \item tamaño compatible con ABM de memoria completa y una reproducción
  independiente;
- \item valor científico como prueba de una parte aún no cerrada del método.
+ \item una estructura que permita evaluar realizabilidad, memoria o coexistencia.
 \end{enumerate}
 
-La ruta actual excluye sistemas incommensurables, Caputo--Fabrizio,
+La búsqueda principal excluye sistemas inconmensurables, Caputo--Fabrizio,
 Atangana--Baleanu, retardados, discretos o complejos, cuyos símbolos de
 transferencia, condiciones de estabilidad y protocolos de memoria difieren de
 Caputo conmensurable.
 
-\section[Prioridad 1: sistema Muñoz--Pacheco sin equilibrio]
-{Prioridad 1: sistema fraccionario sin equilibrio de Muñoz--Pacheco}
+\section[Sistema Muñoz--Pacheco sin equilibrio]
+{Sistema fraccionario sin equilibrio de Muñoz--Pacheco}
 \label{sec:cand-munoz}
 
 La fuente primaria \cite{munoz2018} propone
@@ -38,8 +36,8 @@ La fuente primaria \cite{munoz2018} propone
 Para \(a=0.35,q=0.97\), publica un atractor caótico desde
 \((1,1,1)\). Para \(a=0.35,q=0.996\), publica coexistencia de un candidato
 caótico desde \((1,1,1)\) y uno periódico desde \((0,75,-50)\), junto con un
-corte de cuenca. Esto lo convierte en el candidato fraccionario no Chua más
-completo encontrado.
+corte de cuenca. Estos datos permiten comparar localización, coexistencia y
+dependencia del orden fraccionario.
 
 \subsection{Realización M1 exacta}
 
@@ -72,8 +70,7 @@ La multiplicación da
  -ax+yz+xy\\1-|x|\\-z-xy
  \end{pmatrix},
 \]
-idéntica a \cref{eq:cand-munoz}. Wolfram devolvió el residual
-\(\{0,0,0\}\).
+idéntica a \cref{eq:cand-munoz}.
 
 Con \(C=I\) y \(z_f=s^q\), la matriz de transferencia es especialmente simple:
 \begin{equation}
@@ -111,7 +108,7 @@ Su discriminante es
  \Delta_y=1-4a.
 \]
 Para \(a=0.35\), \(\Delta_y=-0.4<0\); por tanto, no existe equilibrio real.
-Wolfram confirmó \texttt{Reduce[...,Reals]=False}. Bajo la definición usual,
+Bajo la definición usual,
 cualquier atractor del sistema es oculto por ausencia de equilibrios. Aun así,
 deben reproducirse recurrencia y caos: la ausencia de equilibrios no transforma
 una trayectoria transitoria o divergente en atractor.
@@ -131,15 +128,18 @@ validación se concentra en el integrador no suave, la coexistencia y la
 robustez de los diagnósticos.
 
 \begin{proposalbox}
-\textbf{Plan L0--L6.} Congelar \(a=0.35\), \(q=0.97\) y \(q=0.996\), las dos
+\textbf{Evaluación dinámica.} Fijar \(a=0.35\), \(q=0.97\) y \(q=0.996\), las dos
 iniciales y el convenio de \(|x|\); derivar coeficientes M1; resolver \(H=2,3,4\)
-y controlar \(\eta_H\); continuar una semilla; integrar Caputo con memoria
+y controlar el residual físico \(\epsilon_H\) de
+\cref{eq:th-physical-harmonic-tail}, junto con DC, fase, residuos retenidos y
+error de cuadratura; conservar \(\eta_H\) como diagnóstico del diccionario;
+continuar una semilla; integrar Caputo con memoria
 completa; reproducir la cuenca \(x=0\); comparar ABM con otro integrador. Como
 no hay equilibrios, L5 se sustituye por exploración de cuenca, coexistencia y
 frontera de divergencia.
 \end{proposalbox}
 
-\section{Prioridad 2: jerk cuadrático entero con equilibrio estable}
+\section{Jerk cuadrático entero con equilibrio estable}
 \label{sec:cand-jerk}
 
 Liu, Sang, Wang y Ahmad \cite{liu2021} estudian
@@ -185,7 +185,7 @@ Entonces
  AX+B\Phi(X)=
  (y,z,-x-y-1.1z+xy-2.59z^2)^{\mathsf T},
 \]
-y Wolfram devuelve residual nulo.
+que reproduce exactamente el campo.
 
 Aunque los dos canales actúan en la dirección \(e_3\), no pueden reducirse a
 una no linealidad cuadrática de un único observable. Para
@@ -219,7 +219,7 @@ Los términos cuadráticos requieren DC y segundo armónico. Este sistema ofrece
 un control entero para evaluar si M1 amplía la cobertura respecto de los casos
 escalares.
 
-\section{Prioridad 3: sistema Liu extendido fraccionario}
+\section{Sistema Liu extendido fraccionario}
 \label{sec:cand-extended-liu}
 
 La fuente \cite{wang2020} usa
@@ -247,7 +247,7 @@ Una realización exacta usa
  0&0&0\\-k&0&d\\0&h&0\\0&0&0
  \end{pmatrix}.
 \]
-Wolfram confirmó el residual nulo.
+La sustitución de estas matrices reproduce las cuatro componentes del campo.
 
 Para \(a=10,b=40,c=2.5,k=1,h=4,g=5,d=m=20\), las ecuaciones de equilibrio
 dan sucesivamente \(y=x\), \(y=0\), \(x=0\), \(z=0\), y
@@ -270,23 +270,23 @@ para una variedad continua de equilibrios.
 \caption{Familias compatibles y evidencia pendiente.}
 \label{tab:candidate-portfolio}\\
 \toprule
-Familia & Ruta estructural & Activo disponible & Falta decisiva\\
+Familia & Ruta estructural & Construcción disponible & Problema por resolver\\
 \midrule
 \endfirsthead
 \toprule
-Familia & Ruta estructural & Activo disponible & Falta decisiva\\
+Familia & Ruta estructural & Construcción disponible & Problema por resolver\\
 \midrule
 \endhead
 Leonov--Kuznetsov (162) & D0+A1 & Ecuaciones y semilla parciales &
-Congelar característica PWA y criterio por etapa.\\
+Precisar la característica PWA y el criterio por etapa.\\
 Genesio--Tesi & D0 sesgado, \(H\ge2\) & Realización
-\(\psi(x)=x^2\) & Parámetros, iniciales y manifiesto L0 congelados.\\
+\(\psi(x)=x^2\) & Fijar parámetros e iniciales para el estudio dinámico.\\
 Jerk con seno hiperbólico & D0, DF con \(I_1\) & Derivación simbólica &
 Resolver ambigüedad de fuente \(\sinh\) frente a función inversa.\\
 Oscilador memristivo & T1 sobre variedad & Cierre cúbico sesgado &
 Constante de la variedad, parámetros e iniciales.\\
-Jerk PWA & D0 PWA & Estructura tipo Chua & Congelar fuente; usar como control
-de generalización, no como familia distante.\\
+Jerk PWA & D0 PWA & Estructura tipo Chua & Fijar el campo regional y evaluar
+el efecto de sus superficies de conmutación.\\
 Fischer jerk exponencial & D0 con DC & Parámetros y diagnóstico &
 Control bibliográfico/Lyapunov; clasificación de cuenca no reproducida
 localmente.\\
@@ -295,15 +295,15 @@ Raíz armónica, continuación, integración y cuenca.\\
 Rabinovich--Fabrikant & M1, \(H\ge3\) & Álgebra completa verificada &
 Raíz armónica, continuación, integración y cuenca.\\
 Sistema financiero Fischer & M1+PWA & Banco Lyapunov & Resolver discrepancias
-y separar del modelo financiero del manuscrito.\\
-Four-wing Fischer & M1 cuadrático & Banco Lyapunov & Semilla y búsqueda de
-ocultamiento inexistentes.\\
+y distinguir la no linealidad \(|x|\) de otros modelos financieros.\\
+Four-wing Fischer & M1 cuadrático & Diagnósticos de Lyapunov & Localizar una
+semilla y estudiar la cuenca.\\
 Debbouche fraccionario & M1+signo & DOI y parámetros parciales
-\cite{debbouche2021} & Congelar ecuaciones, órdenes e iniciales de una rama.\\
+\cite{debbouche2021} & Fijar ecuaciones, órdenes e iniciales de una rama.\\
 \bottomrule
 \end{longtable}
 
-\section{Secuencia de evaluación propuesta}
+\section{Secuencia de evaluación}
 \label{sec:candidate-order}
 
 \begin{enumerate}

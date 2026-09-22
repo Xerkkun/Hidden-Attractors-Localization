@@ -1,0 +1,862 @@
+\section{Balance armónico y construcción de semillas}
+\label{bre:bal:sec}
+
+La localización comienza al separar una parte lineal resoluble y una
+no linealidad cuyos coeficientes de Fourier puedan calcularse. El balance
+determina frecuencia, amplitud y, cuando es necesaria, una componente
+media. Estos datos se convierten en un estado inicial mediante el
+resolvente del sistema; después se integra el campo original o una
+continuación que termina exactamente en él. La construcción sigue el
+método de función descriptiva y localización por continuación
+\cite{GelbVanderVelde1968,LeonovKuznetsov2013,KuznetsovEtAl2017}.
+
+\subsection{Realización escalar y convención de transferencia}
+\label{bre:bal:lure}
+
+Considérese un sistema autónomo con orden conmensurable
+\(0<q\leq1\), terminal inferior fijo \(t_0\) y realización exacta
+\begin{equation}
+ \Caputo{q}X=PX+b\psi(\sigma),\qquad
+ \sigma=r^{\T}X,
+ \label{bre:bal:lure-eq}
+\end{equation}
+donde \(X\in\R^n\), \(P\in\R^{n\times n}\) y
+\(b,r\in\R^n\). Para \(q=1\), el operador es la derivada ordinaria.
+La palabra exacta exige comprobar
+\(PX+b\psi(r^{\T}X)-F(X)\equiv0\) en el dominio del campo.
+En particular, una aproximación local de \(F\) no constituye por sí
+sola una realización de Lur'e del sistema completo.
+
+Para Chua, escriba \(h(x)=\ell x+\psi(x)\) en
+\begin{equation}
+ \begin{aligned}
+ \Caputo{q}x&=\alpha[y-x-h(x)],\\
+ \Caputo{q}y&=x-y+z,\\
+ \Caputo{q}z&=-\beta y-\gamma z.
+ \end{aligned}
+ \label{bre:bal:chua}
+\end{equation}
+La primera componente se expande como
+\(-\alpha(1+\ell)x+\alpha y-\alpha\psi(x)\). Por ello,
+\begin{equation}
+ \begin{gathered}
+ P=\begin{pmatrix}
+ -\alpha(1+\ell)&\alpha&0\\
+ 1&-1&1\\0&-\beta&-\gamma
+ \end{pmatrix},\\
+ b=(-\alpha,0,0)^{\T},\qquad r=(1,0,0)^{\T}.
+ \end{gathered}
+ \label{bre:bal:chua-matrices}
+\end{equation}
+Las dos características consideradas corresponden a
+\begin{equation}
+ \begin{array}{c|c|c}
+ &\ell&\psi(\sigma)\\\hline
+ \text{saturación}&m_1&\Delta\operatorname{sat}(\sigma)\\
+ \text{arctangente}&a_1&a_2\arctan(\rho\sigma)
+ \end{array}
+ \label{bre:bal:nonlinearities}
+\end{equation}
+con \(\Delta=m_0-m_1\), \(\rho>0\) y
+\(\operatorname{sat}(s)=\max(-1,\min(1,s))\). El signo negativo de
+\(b\) se conserva: cambiarlo sin modificar \(\psi\) cambia el campo.
+
+Tras trasladar \(t_0\) a cero, la transformada de Laplace satisface
+\begin{equation}
+ (s^qI-P)\widehat X(s)=s^{q-1}X(t_0)+bU(s),
+ \label{bre:bal:laplace}
+\end{equation}
+donde \(U\) es la transformada de \(\psi(\sigma)\). Se utiliza
+exclusivamente la convención
+\begin{equation}
+ \begin{aligned}
+ W_q(s)&=r^{\T}(s^qI-P)^{-1}b,\\
+ \widehat\sigma(s)
+ &=r^{\T}(s^qI-P)^{-1}s^{q-1}X(t_0)\\
+ &\quad+W_q(s)U(s).
+ \end{aligned}
+ \label{bre:bal:transfer}
+\end{equation}
+La transferencia relaciona entrada y salida después de separar la respuesta
+del dato inicial. Las expresiones con resolvente requieren
+\(\det(s^qI-P)\ne0\).
+
+\subsection{Resolvente, polinomio y condición de fase de Chua}
+\label{bre:bal:resolvent}
+
+Defina \(\lambda=s^q\), \(a_P=\alpha(1+\ell)\),
+\(d_0=\beta+\gamma\) y \(d_1=1+\gamma\). Entonces
+\begin{equation}
+ \lambda I-P=\begin{pmatrix}
+ \lambda+a_P&-\alpha&0\\
+ -1&\lambda+1&-1\\
+ 0&\beta&\lambda+\gamma
+ \end{pmatrix}.
+ \label{bre:bal:resolvent-matrix}
+\end{equation}
+El menor superior izquierdo es
+\begin{equation}
+ Q(\lambda)=(\lambda+1)(\lambda+\gamma)+\beta
+ =\lambda^2+d_1\lambda+d_0.
+ \label{bre:bal:minor}
+\end{equation}
+La expansión por la primera fila da
+\begin{equation}
+ \begin{aligned}
+ D_\ell(\lambda)
+ &:={\det}(\lambda I-P)\\
+ &=(\lambda+a_P)Q(\lambda)-\alpha(\lambda+\gamma)\\
+ &=\lambda^3+(d_1+a_P)\lambda^2\\
+ &\quad +(d_0+a_Pd_1-\alpha)\lambda+a_Pd_0-\alpha\gamma.
+ \end{aligned}
+ \label{bre:bal:characteristic}
+\end{equation}
+Al reemplazar la primera columna por \(b\), el determinante de Cramer
+es \(-\alpha Q(\lambda)\). Como \(r^{\T}\) selecciona la primera
+coordenada,
+\begin{equation}
+ W_q(s)=-\frac{\alpha Q(s^q)}{D_\ell(s^q)}.
+ \label{bre:bal:chua-transfer}
+\end{equation}
+Este cálculo fija simultáneamente numerador, denominador y signo.
+
+Para \(q=1\), la ecuación de fase se reduce a un polinomio real.
+Ponga \(z=\omega^2\), con \(\omega>0\), y escriba
+\begin{equation}
+ \begin{aligned}
+ Q(\ii\omega)&=d_0-z+\ii d_1\omega,\\
+ D_\ell(\ii\omega)&=D_R+\ii D_I,\\
+ D_R&=a_Pd_0-\alpha\gamma-(d_1+a_P)z,\\
+ D_I&=\omega(d_0+a_Pd_1-\alpha-z).
+ \end{aligned}
+ \label{bre:bal:phase-parts}
+\end{equation}
+Multiplicar por el conjugado del denominador proporciona
+\begin{equation}
+ \Im W_1(\ii\omega)
+ =-\alpha\frac{d_1\omega D_R-(d_0-z)D_I}{D_R^2+D_I^2}.
+ \label{bre:bal:phase-imag}
+\end{equation}
+Fuera de los polos, dividir el numerador por \(\omega\) y agrupar
+términos equivale a resolver
+\begin{equation}
+ \begin{aligned}
+ 0={}&z^2+(\alpha+d_1^2-2d_0)z\\
+ &+d_0^2-\alpha d_0+\alpha\gamma d_1.
+ \end{aligned}
+ \label{bre:bal:phase-polynomial}
+\end{equation}
+Sólo se conservan raíces \(z>0\) que mantengan
+\(D_\ell(\ii\sqrt z)\ne0\). Para \(q<1\) se evalúa
+\eqref{bre:bal:chua-transfer} en
+\begin{equation}
+ \zeta=(\ii\omega)^q
+ =\omega^q\left(\cos\frac{\pi q}{2}
+       +\ii\sin\frac{\pi q}{2}\right),
+ \label{bre:bal:spectral-frequency}
+\end{equation}
+con la rama principal. La frecuencia temporal es \(\omega\);
+\(\zeta\) es la variable espectral que entra en el resolvente.
+
+\subsection{Proyección de Fourier y balance centrado}
+\label{bre:bal:df}
+
+Para \(\sigma=A\cos\theta\), \(A>0\), el fasor fundamental de la
+salida estática es
+\begin{equation}
+ Y_1(A)=\frac1\pi\int_0^{2\pi}
+ \psi(A\cos\theta)e^{-\ii\theta}\,\dd\theta,
+ \qquad N(A)=Y_1(A)/A.
+ \label{bre:bal:fourier-df}
+\end{equation}
+La parte seno se anula porque \(\psi(A\cos\theta)\) es par en
+\(\theta\). Si además \(\psi\) es impar, su media es cero y, mediante
+un desplazamiento de fase y simetría entre semiperiodos,
+\begin{equation}
+ N(A)=\frac{2}{\pi A}\int_0^\pi
+ \psi(A\sin\theta)\sin\theta\,\dd\theta\in\R.
+ \label{bre:bal:df-sine}
+\end{equation}
+La integral pertenece a la característica estática: no contiene \(q\).
+El orden fraccionario entra a través del bloque dinámico \(W_q\).
+Si la no linealidad posee histéresis o estado interno, debe calcularse el
+fasor de su respuesta periódica; en ese caso \(N\) puede ser complejo
+y depender de la frecuencia y de la historia interna.
+
+Al retener sólo el fundamental, la salida del bloque lineal debe
+reproducir la entrada \(\sigma\). Así,
+\(A=W_q(\ii\omega)Y_1\), y la ecuación de cierre es
+\begin{equation}
+ 1-W_q(\ii\omega)N(A)=0.
+ \label{bre:bal:physical-closure}
+\end{equation}
+Para \(N\) real, una solución finita no nula exige
+\begin{equation}
+ \Im W_q(\ii\omega)=0,\qquad
+ N(A)=k:=\frac1{\Re W_q(\ii\omega)}.
+ \label{bre:bal:phase-gain}
+\end{equation}
+Después de la condición de fase debe comprobarse que \(k\) pertenece al
+rango real de \(N\). Una intersección de fase cuya ganancia no puede
+alcanzar la no linealidad no produce amplitud admisible.
+
+\subsubsection{Saturación}
+Para \(\psi(s)=\Delta\operatorname{sat}(s)\) y \(0<A\leq1\),
+\(\psi(A\sin\theta)=\Delta A\sin\theta\); como
+\(\int_0^\pi\sin^2\theta\,\dd\theta=\pi/2\), resulta
+\(N(A)=\Delta\). Si \(A>1\), sea
+\(\theta_0=\arcsin(1/A)\). Los tramos no saturados son
+\([0,\theta_0]\) y \([\pi-\theta_0,\pi]\); en el tramo central la
+saturación vale uno. Por ello,
+\begin{equation}
+ \begin{aligned}
+ N(A)&=\frac{2\Delta}{\pi A}
+ \left[2A\int_0^{\theta_0}\sin^2\theta\,\dd\theta
+       +2\cos\theta_0\right]\\
+ &=\frac{2\Delta}{\pi A}
+ \left[A\theta_0-\frac A2\sin(2\theta_0)+2\cos\theta_0\right]\\
+ &=\frac{2\Delta}{\pi}
+ \left[\arcsin\frac1A+\frac{\sqrt{A^2-1}}{A^2}\right].
+ \end{aligned}
+ \label{bre:bal:saturation-df}
+\end{equation}
+El último paso usa \(A\sin\theta_0=1\). Para \(\Delta>0\),
+\begin{equation}
+ N'(A)=-\frac{4\Delta\sqrt{A^2-1}}{\pi A^3}<0
+ \quad(A>1).
+ \label{bre:bal:saturation-derivative}
+\end{equation}
+Además, \(N(1)=\Delta\) y \(N(A)\to0\) al crecer \(A\).
+Existe una única amplitud saturada para \(0<k<\Delta\). Si
+\(k=\Delta\), toda amplitud \(0<A\leq1\) satisface el balance lineal
+y éste no selecciona una amplitud aislada.
+
+\subsubsection{Arctangente}
+Sea \(\psi(s)=a_2\arctan(\rho s)\), \(\xi=\rho A\), y defina
+\(I(\xi)=\int_0^\pi\arctan(\xi\sin\theta)\sin\theta\,\dd\theta\).
+La diferenciación bajo la integral es válida por continuidad y acotación
+del integrando y de su derivada en intervalos compactos de \(\xi\).
+Para \(\xi>0\),
+\begin{equation}
+ \begin{aligned}
+ I'(\xi)&=\int_0^\pi
+ \frac{\sin^2\theta}{1+\xi^2\sin^2\theta}\,\dd\theta\\
+ &=\frac1{\xi^2}\left[\pi-
+ \int_0^\pi\frac{\dd\theta}{1+\xi^2\sin^2\theta}\right].
+ \end{aligned}
+ \label{bre:bal:arctan-integral}
+\end{equation}
+La integral restante se reduce por simetría a dos veces el intervalo
+\([0,\pi/2]\). Con \(u=\tan\theta\), se transforma en
+\(2\int_0^\infty[1+(1+\xi^2)u^2]^{-1}\,\dd u
+=\pi/\sqrt{1+\xi^2}\). La función
+\(\pi(\sqrt{1+\xi^2}-1)/\xi\) tiene la derivada obtenida y límite
+cero en \(\xi=0\), igual a \(I(0)\). Se concluye
+\begin{equation}
+ \begin{aligned}
+ N(A)&=\frac{2a_2}{\pi A}I(\rho A)\\
+ &=\frac{2a_2}{\rho A^2}
+       \left(\sqrt{1+\rho^2A^2}-1\right)\\
+ &=\frac{2a_2\rho}{1+\sqrt{1+\rho^2A^2}}.
+ \end{aligned}
+ \label{bre:bal:arctan-df}
+\end{equation}
+La última forma evita la resta de números próximos cuando \(A\) es
+pequeño. Si \(a_2\ne0\), la ecuación \(N(A)=k\) se despeja como
+\begin{equation}
+ A^2=\frac{4a_2(a_2\rho-k)}{k^2\rho}.
+ \label{bre:bal:arctan-amplitude}
+\end{equation}
+Antes de elevar al cuadrado se tiene
+\(\sqrt{1+\rho^2A^2}=2a_2\rho/k-1\). Por tanto, para \(A>0\),
+la condición completa es \(0<k/(a_2\rho)<1\); impone el signo
+correcto y evita aceptar raíces introducidas por el cuadrado.
+
+\subsection{Balance de media y fundamental sesgado}
+\label{bre:bal:bias}
+
+Para localizar una oscilación alrededor de una media distinta de cero,
+tome \(\sigma=c+A\cos\theta\). Defina los coeficientes físicos
+\begin{equation}
+ \begin{aligned}
+ \Psi_0(c,A)&=\frac1{2\pi}\int_0^{2\pi}
+       \psi(c+A\cos\theta)\,\dd\theta,\\
+ \Psi_1(c,A)&=\frac1\pi\int_0^{2\pi}
+       \psi(c+A\cos\theta)\cos\theta\,\dd\theta,\\
+ N_1(c,A)&=\Psi_1(c,A)/A.
+ \end{aligned}
+ \label{bre:bal:bias-fourier}
+\end{equation}
+La media del bloque dinámico satisface \(P\bar X+b\Psi_0=0\).
+Si \(P\) es invertible,
+\begin{equation}
+ \bar X=-P^{-1}b\Psi_0,\qquad
+ c=r^{\T}\bar X=W_q(0)\Psi_0.
+ \label{bre:bal:dc}
+\end{equation}
+Para Chua,
+\begin{equation}
+ W_q(0)=-\frac{\beta+\gamma}
+ {(1+\ell)(\beta+\gamma)-\gamma}.
+ \label{bre:bal:chua-dc}
+\end{equation}
+Si \(P\) es singular, se resuelven directamente las ecuaciones de
+media, sin usar \(P^{-1}\) ni una ganancia continua infinita.
+
+La condición armónica sigue siendo
+\begin{equation}
+ 1-W_q(\ii\omega)N_1(c,A)=0.
+ \label{bre:bal:bias-closure}
+\end{equation}
+La ecuación de media y las partes real e imaginaria de
+\eqref{bre:bal:bias-closure} son tres ecuaciones reales para
+\((c,A,\omega)\). Mantener la media evita tratar el desplazamiento
+del ciclo como una coordenada libre sin ecuación.
+
+Para la saturación, las integrales se evalúan por tramos incluso cuando
+la entrada queda totalmente saturada. Con
+\([u]_{-1}^{1}=\max(-1,\min(1,u))\), sean
+\begin{equation}
+ \theta_+=\arccos\left[\frac{1-c}{A}\right]_{-1}^{1},\qquad
+ \theta_-=\arccos\left[\frac{-1-c}{A}\right]_{-1}^{1}.
+ \label{bre:bal:bias-crossings}
+\end{equation}
+Se cumple \(0\leq\theta_+\leq\theta_-\leq\pi\). En
+\([0,\pi]\), la salida normalizada vale sucesivamente
+\(1\), \(c+A\cos\theta\) y \(-1\), con cambios en esos
+ángulos. Integrar cada tramo da
+\begin{equation}
+ \begin{aligned}
+ \Psi_0=\frac\Delta\pi\bigl[&\theta_++\theta_--\pi
+       +c(\theta_--\theta_+)\\
+       &+A(\sin\theta_--\sin\theta_+)\bigr].
+ \end{aligned}
+ \label{bre:bal:bias-sat-dc}
+\end{equation}
+Para el fundamental se usan las primitivas
+\(\int\cos\theta\,\dd\theta=\sin\theta\) y
+\(\int\cos^2\theta\,\dd\theta=\theta/2+\sin(2\theta)/4\).
+La suma de los tres tramos es
+\begin{equation}
+ \begin{aligned}
+ \Psi_1=\frac{2\Delta}\pi\bigl[&\sin\theta_++\sin\theta_-
+       +c(\sin\theta_--\sin\theta_+)\\
+       &+\tfrac A2(\theta_--\theta_+)\\
+       &+\tfrac A4(\sin2\theta_--\sin2\theta_+)\bigr].
+ \end{aligned}
+ \label{bre:bal:bias-sat-first}
+\end{equation}
+Los ángulos recortados hacen desaparecer automáticamente un tramo de
+longitud cero. En \(c=0\), la media se anula y
+\(\Psi_1/A\) recupera \eqref{bre:bal:saturation-df}.
+
+\subsection{Modo normalizado, semilla y equivalencias}
+\label{bre:bal:modal}
+
+Fijada una raíz de balance, sea \(k=N(A)\) o \(k=N_1(c,A)\), y
+\(P_k=P+bkr^{\T}\). Si \(\zeta I-P\) es invertible, el lema del
+determinante matricial proporciona
+\begin{equation}
+ \begin{aligned}
+ \det(\zeta I-P_k)
+ &=\det(\zeta I-P)\\
+ &\quad\times\left[1-kr^{\T}(\zeta I-P)^{-1}b\right].
+ \end{aligned}
+ \label{bre:bal:det-lemma}
+\end{equation}
+En \(\zeta=(\ii\omega)^q\), el corchete es cero por el cierre.
+Un modo normalizado se construye directamente, sin una elección
+arbitraria de escala, mediante
+\begin{equation}
+ v=k(\zeta I-P)^{-1}b.
+ \label{bre:bal:mode}
+\end{equation}
+En efecto, \(r^{\T}v=kW_q(\ii\omega)=1\) y
+\((\zeta I-P_k)v=bk-bkr^{\T}v=0\).
+Para Chua, las dos últimas filas de esta ecuación dan
+\begin{equation}
+ v=\left(1,\frac{\zeta+\gamma}{Q(\zeta)},
+               -\frac\beta{Q(\zeta)}\right)^{\T}.
+ \label{bre:bal:chua-mode}
+\end{equation}
+La igualdad presupone \(Q(\zeta)\ne0\), condición que se comprueba
+junto con la existencia del resolvente.
+
+En la rama sesgada, \(\Psi_1=kA\) y
+\(X_1=(\zeta I-P)^{-1}b\Psi_1=Av\). Se obtiene la familia de semillas
+\begin{equation}
+ X_{\mathrm{sem}}(\varphi)=\bar X+Re(Av e^{\ii\varphi}),
+ \qquad 0\leq\varphi<2\pi,
+ \label{bre:bal:seed}
+\end{equation}
+con \(\bar X=0\) en la rama centrada. La salida es exactamente
+\(r^{\T}X_{\mathrm{sem}}=c+A\cos\varphi\). El par
+\(\zeta,\overline\zeta\) está en la frontera angular
+\(|\arg\zeta|=q\pi/2\) del auxiliar. Para usarlo como predictor de
+una oscilación dominante se comprueba que los demás modos satisfagan el
+criterio angular estricto de estabilidad; el balance por sí solo no
+establece esa propiedad \cite{Matignon1996}.
+
+Una similitud real \(X=SY\), con \(S\) invertible, transforma
+\(P,b,r^{\T}\) en \(S^{-1}PS,S^{-1}b,r^{\T}S\).
+Como
+\((s^qI-S^{-1}PS)^{-1}=S^{-1}(s^qI-P)^{-1}S\),
+la transferencia no cambia y la semilla se transforma por
+\(Y_{\mathrm{sem}}=S^{-1}X_{\mathrm{sem}}\).
+Si se añade un desplazamiento \(X=SY+d\), deben conservarse también
+el término constante \(S^{-1}Pd\) y el argumento
+\(r^{\T}SY+r^{\T}d\); si \(d\) es equilibrio, se cancelan usando
+\(Pd+b\psi(r^{\T}d)=0\) y la no linealidad incremental
+\(\psi(r^{\T}SY+r^{\T}d)-\psi(r^{\T}d)\).
+
+Otra equivalencia consiste en redistribuir una ganancia \(a>0\):
+\(\widetilde b=ab\), \(\widetilde\psi=\psi/a\).
+Entonces \(\widetilde W_q=aW_q\),
+\(\widetilde N=N/a\), y
+\(\widetilde W_q\widetilde N=W_qN\). El campo, el cierre y el modo
+\(\widetilde k(\zeta I-P)^{-1}\widetilde b=v\) permanecen iguales.
+Esta comprobación permite comparar realizaciones con diferentes escalas
+sin confundir una ganancia de representación con un cambio del modelo.
+
+\subsection{Del armónico estacionario al PVI causal}
+\label{bre:bal:weyl-caputo}
+
+El balance usa la acción del operador estacionario de Liouville--Weyl
+sobre los armónicos:
+\(D_{\mathrm W}^{q}e^{\ii\omega t}=(\ii\omega)^qe^{\ii\omega t}\).
+Para \(0<q<1\), esta identidad se interpreta por Fourier o mediante
+regularización de Abel de la integral sobre toda la historia. En efecto,
+para \(\varepsilon>0\),
+\begin{equation}
+ \int_0^\infty u^{-q}e^{-(\varepsilon+\ii\omega)u}\,\dd u
+ =\Gamma(1-q)(\varepsilon+\ii\omega)^{q-1}.
+ \label{bre:bal:abel}
+\end{equation}
+Multiplicar por \(\ii\omega/\Gamma(1-q)\) y tomar
+\(\varepsilon\downarrow0\) produce la rama de
+\eqref{bre:bal:spectral-frequency}.
+
+En el cálculo siguiente se fija \(t_0=0\). La derivada de Caputo
+retiene sólo el intervalo \([0,t]\).
+Para el mismo armónico suave,
+\begin{equation}
+ \Caputo{q}e^{\ii\omega t}
+ =\frac{\ii\omega e^{\ii\omega t}}{\Gamma(1-q)}
+   \int_0^t u^{-q}e^{-\ii\omega u}\,\dd u.
+ \label{bre:bal:caputo-harmonic}
+\end{equation}
+Restar la integral sobre \([0,\infty)\) revela el defecto inicial:
+\begin{equation}
+ \begin{aligned}
+ \Caputo{q}e^{\ii\omega t}-\zeta e^{\ii\omega t}
+ ={}&-\frac{\ii\omega e^{\ii\omega t}}{\Gamma(1-q)}\\
+ &\times\int_t^\infty u^{-q}e^{-\ii\omega u}\,\dd u.
+ \end{aligned}
+ \label{bre:bal:initial-defect}
+\end{equation}
+La integral impropia converge para \(\omega>0\) por el criterio de
+Dirichlet. Cerca de cero,
+\(\Caputo{q}e^{\ii\omega t}
+=\ii\omega t^{1-q}/\Gamma(2-q)+O(t^{2-q})\), mientras
+\(\zeta e^{\ii\omega t}\to\zeta\ne0\).
+Por consiguiente, incluso el armónico del auxiliar lineal exige una
+respuesta de arranque en el PVI de Caputo. Para \(q=1\), la identidad
+ordinaria no presenta este defecto.
+
+En el sistema no lineal se añade un segundo defecto: los armónicos
+descartados de \(\psi\). El balance de primer armónico no los hace
+cero. La semilla de \eqref{bre:bal:seed} localiza un estado, pero la
+trayectoria causal debe obtenerse resolviendo el PVI. Los resultados
+de no periodicidad para sistemas autónomos de Caputo con terminal
+inferior finito impiden interpretar sin más el cierre estacionario como
+una órbita periódica exacta del PVI
+\cite{TavazoeiHaeri2009,AreaLosadaNieto2014}.
+
+La distinción permite precisar el traslado de los métodos publicados.
+Danca utiliza el PVI de Caputo y ABM, y describe la localización mediante
+linealización armónica y continuación, junto con exploraciones numéricas
+de las vecindades de equilibrios \cite{Danca2017}. Wu et al. aplican a
+Chua con arctangente el algoritmo de localización de Leonov y construyen
+un auxiliar mediante transferencias racionales en una variable compleja
+\(p\), con un bloque de denominador \(p^2+\omega_0^2\)
+\cite{Wu2023ArctanChua}. La reducción algebraica de una matriz por
+similitud sigue siendo válida en Caputo; interpretar sus polos como una
+frecuencia temporal requiere además la relación \(p=(\ii\omega)^q\).
+En particular, conservar autovalores \(\pm\ii\omega_0\) con \(q<1\)
+los sitúa estrictamente en el sector estable de Matignon, no en su
+frontera. Es posible conservar una semilla obtenida en orden entero y
+probarla en Caputo, pero eso constituye un PVI distinto del predictor
+que recalcula la fase con \(s^q\).
+
+Wu et al. reconocen expresamente tanto la no periodicidad exacta como
+la pérdida de parte de la memoria histórica al emplear su aproximación
+por descomposición de Adomian en subintervalos. También distinguen los
+contornos numéricamente periódicos de la periodicidad matemática
+\cite{Wu2023ArctanChua}. El problema pendiente al transferir una
+prueba entera es demostrar persistencia y atracción con la memoria
+causal declarada; no se resuelve sólo reproduciendo un contorno o
+reutilizando una fórmula de estado inicial. La independencia de \(q\)
+en \eqref{bre:bal:df-sine} sí es legítima para una característica
+estática: elevar \(N\) a \(q\) no se deduce ni de Fourier ni de
+la transformada de Caputo.
+
+\subsection{Continuación que conserva la media y el campo final}
+\label{bre:bal:continuation}
+
+La descomposición
+\(\psi(\sigma)=\Psi_0+k(\sigma-c)
++[\psi(\sigma)-\Psi_0-k(\sigma-c)]\) define el auxiliar afín
+\(P_k=P+bkr^{\T}\), \(d_k=b(\Psi_0-kc)\), y la familia
+\begin{equation}
+ \begin{aligned}
+ F_\varepsilon(X)&=P_kX+d_k+\varepsilon b\delta\psi(r^{\T}X),\\
+ \delta\psi(\sigma)&=\psi(\sigma)-\Psi_0-k(\sigma-c),
+ \qquad 0\leq\varepsilon\leq1.
+ \end{aligned}
+ \label{bre:bal:homotopy}
+\end{equation}
+En \(\varepsilon=0\),
+\(F_0(\bar X)=P\bar X+bk c+b(\Psi_0-kc)=0\), y
+\(F_0(\bar X+\xi)=P_k\xi\). En \(\varepsilon=1\), los términos
+\(bk r^{\T}X\), \(b\Psi_0\) y \(bkc\) se cancelan con los del
+corchete y queda exactamente \(F_1(X)=PX+b\psi(r^{\T}X)\).
+Una homotopía que omita \(d_k\) pierde esta correspondencia cuando
+\(c\ne0\).
+
+Se inicia en \(X_{\mathrm{sem}}\), se hace crecer
+\(\varepsilon(t)\) por etapas y se evalúa una única integral causal:
+\begin{equation}
+ \begin{aligned}
+ X(t)=X_{\mathrm{sem}}+\frac1{\Gamma(q)}
+ \int_{t_0}^t(t-s)^{q-1}F_{\varepsilon(s)}(X(s))\,\dd s.
+ \end{aligned}
+ \label{bre:bal:causal-continuation}
+\end{equation}
+Cada valor pasado del campo conserva el parámetro que tuvo en ese
+instante. Al cambiar de etapa se prolonga esa historia. La continuidad
+numérica de una rama sólo permite seguir candidatos: no demuestra que
+exista un atractor en todos los parámetros intermedios. Para un estudio
+de cuencas con reinicios se realiza después un PVI autónomo del campo
+final con el mismo terminal inferior y convenio de memoria usados en
+los demás lanzamientos.
+
+\subsubsection{Recuperación del método entero}
+Las matrices \(P,b,r\), las proyecciones \(\Psi_0,\Psi_1\) y
+la identidad algebraica de la homotopía no dependen del orden. Para
+una frecuencia positiva fija y fuera de los polos,
+\begin{equation}
+ \begin{aligned}
+ (\ii\omega)^q&\longrightarrow\ii\omega,\\
+ W_q(\ii\omega)&\longrightarrow r^{\T}(\ii\omega I-P)^{-1}b
+ \qquad(q\to1^-).
+ \end{aligned}
+ \label{bre:bal:integer-limit}
+\end{equation}
+La continuidad del inverso matricial se obtiene, por ejemplo, de su
+expresión mediante la adjunta y el determinante no nulo. Por tanto,
+el cierre converge a \(1-W_1N=0\); para Chua, su ecuación de fase
+es precisamente \eqref{bre:bal:phase-polynomial}.
+
+La continuidad de las \emph{raíces} requiere una hipótesis adicional.
+Para la rama sesgada, forme el residual real
+\begin{equation}
+ \mathcal F(c,A,\omega;q)=\begin{pmatrix}
+ c-W_q(0)\Psi_0\\
+ \Re(1-W_q(\ii\omega)N_1)\\
+ \Im(1-W_q(\ii\omega)N_1)
+ \end{pmatrix}.
+ \label{bre:bal:branch-residual}
+\end{equation}
+Si \(\mathcal F\) es \(C^1\) cerca de una raíz con \(q=1\),
+\(A>0\), \(\omega>0\), y su Jacobiano respecto de
+\((c,A,\omega)\) es invertible, el teorema de la función implícita
+produce una rama local \((c(q),A(q),\omega(q))\) que converge a
+esa raíz. Para el balance centrado se aplica el mismo argumento a
+las dos ecuaciones reales en \((A,\omega)\).
+
+En esa rama, \(k(q)=N_1(c(q),A(q))\), \(P_{k(q)}\), \(v(q)\),
+\(\bar X(q)\) y la semilla de \eqref{bre:bal:seed} convergen a sus
+expresiones enteras porque se construyen mediante funciones continuas
+y resolventes no singulares. En \(q=1\),
+\(\bar X+\Re(Av e^{\ii\omega t})\) resuelve exactamente el auxiliar
+afín: al derivarla, \(\ii\omega v=P_kv\) y \(F_0(\bar X)=0\)
+dan la igualdad componente a componente. El campo final sigue
+requiriendo la continuación y su validación dinámica. Si falla la
+invertibilidad del Jacobiano del balance, pueden fusionarse o terminar
+ramas; el límite de las fórmulas no demuestra su continuación global.
+
+\subsection{Ejemplo calculado: Chua con saturación y \texorpdfstring{\(q=0.9998\)}{q=0.9998}}
+\label{bre:bal:example}
+
+Tome
+\begin{equation}
+ \begin{gathered}
+ (\alpha,\beta,\gamma)=(8.4562,12.0732,0.0052),\\
+ (m_0,m_1)=(-0.1768,-1.1468),\qquad q=0.9998.
+ \end{gathered}
+ \label{bre:bal:example-parameters}
+\end{equation}
+La separación da \(\ell=-1.1468\), \(\Delta=0.9700\),
+\(d_0=12.0784\), \(d_1=1.0052\). Como control entero, el polinomio
+de fase de \eqref{bre:bal:phase-polynomial} es
+\(z^2-14.69017296z+43.794581375648\). Para el orden fraccionario
+indicado, se resuelve directamente \(\Im W_q(\ii\omega)=0\).
+Una de las ramas proporciona
+\begin{equation}
+ \begin{aligned}
+ \omega&\simeq2.04028605108,\\
+ W_q(\ii\omega)&\simeq4.76138797078,\\
+ k&\simeq0.210022792962,\\
+ \zeta&\simeq0.000640883348+2.03999498963\ii.
+ \end{aligned}
+ \label{bre:bal:example-frequency}
+\end{equation}
+Como \(0<k<\Delta\), la ecuación centrada tiene una amplitud única
+saturada, \(A\simeq5.85176778549\). Para localizar una rama sesgada
+se conserva la misma condición de fase y se resuelve
+\begin{equation}
+ c-6.79206998612\Psi_0(c,A)=0,\qquad
+ \Psi_1(c,A)-kA=0.
+ \label{bre:bal:example-system}
+\end{equation}
+Las fórmulas por tramos dan, con cifras redondeadas,
+\begin{equation}
+ \begin{aligned}
+ c&\simeq2.776397,& A&\simeq4.577883,\\
+ \theta_+&\simeq1.969299,&\theta_-&\simeq2.540861,\\
+ \Psi_0&\simeq0.408770354,&\Psi_1&\simeq0.961459759.
+ \end{aligned}
+ \label{bre:bal:example-bias}
+\end{equation}
+Se verifica \(W_q(0)\Psi_0\simeq c\) y
+\(\Psi_1/A\simeq k\). Las dos últimas ecuaciones de la media dan
+\(\bar y=\gamma c/(\beta+\gamma)\) y
+\(\bar z=-\beta c/(\beta+\gamma)\), por lo que
+\begin{equation}
+ \bar X\simeq(2.776397,\ 0.001195296,\ -2.775202)^{\T}.
+ \label{bre:bal:example-mean}
+\end{equation}
+La sustitución de \(\zeta\) en \eqref{bre:bal:chua-mode} produce
+\begin{equation}
+ v\simeq\begin{pmatrix}
+ 1\\0.063298582+0.241242519\ii\\
+ -1.428794382+0.370525917\ii
+ \end{pmatrix}.
+ \label{bre:bal:example-mode}
+\end{equation}
+Para fase \(\varphi=0\), la suma \(\bar X+A\Re v\) proporciona
+\begin{equation}
+ X_{\mathrm{sem}}\simeq
+ (7.354280,\ 0.290969,\ -9.316055)^{\T}.
+ \label{bre:bal:example-seed}
+\end{equation}
+El tercer valor propio del auxiliar es aproximadamente
+\(-1.54110635\): se obtiene restando \(2\Re\zeta\) de
+\(\operatorname{tr}P_k\), y está en el sector estable. Así quedan
+determinados el modo, la media, la escala y el estado inicial. La
+continuación usa \eqref{bre:bal:homotopy}; la naturaleza del destino se
+establece después mediante integración y análisis de cuencas.
+
+\subsection{Familia de Machado y residuo del modelo físico}
+\label{bre:bal:machado}
+
+Machado propone elevar una función descriptiva a un orden real
+\cite{Machado2015FDF}. Para distinguir esta operación del orden
+dinámico \(q\), se denota su exponente por \(\mu>0\). Con una escala
+positiva \(N_\star\) de las mismas unidades que \(N\), la familia es
+\begin{equation}
+ N_{\mu,\star}=N_\star
+ \exp\left[\mu\operatorname{Log}(N/N_\star)\right].
+ \label{bre:bal:machado-definition}
+\end{equation}
+Sobre \(N>0\) es real y unívoca. Para \(N\) complejo se fija una
+hoja del logaritmo y se continúa su fase; para \(N<0\), la potencia
+principal es, en general, compleja. En \(N=0\), la extensión
+\(0^\mu=0\) no permite utilizar el logaritmo. La normalización evita
+elevar directamente una magnitud dimensional a un exponente distinto
+de uno. No hay una identidad que obligue a imponer \(\mu=q\).
+
+En la rama positiva, el cierre auxiliar
+\(1-W_q(\ii\omega)N_{\mu,\star}=0\) conserva la condición de
+fase, pero sustituye la ecuación de amplitud por
+\begin{equation}
+ N(A)=N_\star\left(\frac{k}{N_\star}\right)^{1/\mu},
+ \qquad k>0.
+ \label{bre:bal:machado-amplitude}
+\end{equation}
+Se comprueba nuevamente el rango de \(N\). Al derivar
+\(\mu\log[N(A)/N_\star]=\log(k/N_\star)\), con \(k\) fijo,
+se obtiene
+\begin{equation}
+ \frac{\dd A}{\dd\mu}
+ =-\frac{N(A)\log[N(A)/N_\star]}{\mu N'(A)}.
+ \label{bre:bal:machado-sensitivity}
+\end{equation}
+Esta fórmula identifica pérdida de condicionamiento cuando
+\(N'(A)\) se aproxima a cero. El modo se calcula con la ganancia
+auxiliar \(k\), y la nueva amplitud modifica la semilla.
+
+La potencia no es el coeficiente de Fourier de la característica
+original. Por ello se calculan separadamente
+\begin{equation}
+ \begin{aligned}
+ \rho_{\mathrm{aux}}&=|1-W_q(\ii\omega)N_{\mu,\star}(A)|,\\
+ \rho_{\mathrm{fis}}&=|1-W_q(\ii\omega)N(A)|.
+ \end{aligned}
+ \label{bre:bal:machado-residuals}
+\end{equation}
+En el ejemplo anterior, con \(N_\star=1\) y \(\mu=2\),
+\(A\simeq2.62843351478\), \(N(A)\simeq0.458282437981\) y
+\(N(A)^2\simeq k\). El cierre auxiliar tiene residuo del orden de
+\(10^{-13}\), pero el físico vale aproximadamente \(1.18206048743\).
+La nueva semilla diversifica la búsqueda; no resuelve el balance físico
+de primer armónico.
+
+La escala también interviene en la invariancia de representación. Bajo
+\(b\mapsto ab\), \(N\mapsto N/a\), debe hacerse
+\(N_\star\mapsto N_\star/a\); entonces
+\(N_{\mu,\star}\mapsto N_{\mu,\star}/a\), y el cierre auxiliar no
+cambia. Si se mantiene una potencia desnuda \(N^\mu\), el producto
+se transforma en \(a^{1-\mu}W_qN^\mu\), que depende de la escala
+elegida cuando \(\mu\ne1\).
+
+En una rama sesgada se mantiene la media física \(\Psi_0\) y sólo
+se aplica la potencia a \(N_1\). Se resuelven
+\(c=W_q(0)\Psi_0\) y
+\(1-W_qN_{1,\mu,\star}=0\), registrando además
+\(|1-W_qN_1|\). La ganancia auxiliar correspondiente se inserta en
+la homotopía afín para conservar \(F_1=F\). Esta construcción escalar
+no autoriza potencias elemento a elemento en un problema multicanal.
+
+\subsection{Balance multicanal y control del residuo completo}
+\label{bre:bal:mimo}
+
+Para no linealidades acopladas se emplea la identidad exacta
+\begin{equation}
+ F(X)=AX+B\Phi(CX),\qquad
+ W_q(s)=C(s^qI-A)^{-1}B,
+ \label{bre:bal:mimo-model}
+\end{equation}
+con \(A\in\R^{n\times n}\), \(B\in\R^{n\times m}\),
+\(C\in\R^{p\times n}\) y \(\Phi:\R^p\to\R^m\).
+Si \(K=D\Phi(C\bar X)\), la linealización tiene matriz
+\(A+BKC\). Fuera de los polos, la identidad
+\(\det(I-UV)=\det(I-VU)\) permite escribir
+\begin{equation}
+ \begin{aligned}
+ \det(\zeta I-A-BKC)
+ &=\det(\zeta I-A)\\
+ &\quad\times\det[I_p-W_q(\ii\omega)K].
+ \end{aligned}
+ \label{bre:bal:mimo-linear}
+\end{equation}
+Aquí se fija $\zeta=(\ii\omega)^q$. Este predictor usa una derivada local.
+Para amplitudes finitas se
+calculan los coeficientes de Fourier de \(\Phi\) sobre la señal
+propuesta, sin sustituir sus productos por ganancias escalares separadas.
+
+Sea
+\begin{equation}
+ X^{(H)}(\theta)=\sum_{k=-H}^{H}X_ke^{\ii k\theta},\qquad
+ X_{-k}=\overline{X_k},\quad X_0\in\R^n.
+ \label{bre:bal:fourier-state}
+\end{equation}
+Aquí \(X_1\) es un coeficiente complejo de Fourier: una componente
+\(A\cos\theta\) tiene coeficientes \(A/2\) en \(k=\pm1\).
+En \eqref{bre:bal:seed}, en cambio, \(Av\) era el fasor completo.
+La reconstrucción que conserva esta normalización es
+\begin{equation}
+ X_{\mathrm{sem}}(\varphi)=X_0+
+       2\Re\sum_{k=1}^{H}X_ke^{\ii k\varphi}.
+ \label{bre:bal:mimo-seed}
+\end{equation}
+Si \(u=\sum U_ke^{\ii k\theta}\) y
+\(v=\sum V_ke^{\ii k\theta}\), al multiplicar las series y reunir
+los términos con el mismo exponente se obtiene
+\begin{equation}
+ \widehat{uv}_k=\sum_jU_jV_{k-j},\qquad
+ \widehat{uvw}_k=\sum_j\sum_lU_jV_lW_{k-j-l}.
+ \label{bre:bal:convolutions}
+\end{equation}
+Las sumas se extienden sobre enteros, tomando coeficientes cero fuera
+del intervalo retenido. Para polinomios cuadráticos o cúbicos esto
+calcula exactamente la no linealidad de la señal truncada, incluidos
+los armónicos generados hasta \(2H\) o \(3H\).
+
+Por ejemplo, para el Lorenz generalizado,
+\begin{equation}
+ \begin{gathered}
+ A=\begin{pmatrix}-\sigma&\sigma&0\\r&-1&0\\0&0&-1\end{pmatrix},
+ \quad B=\operatorname{diag}(-a,-1,1),\quad C=I,\\
+ \Phi(X)=(yz,xz,xy)^{\T}.
+ \end{gathered}
+ \label{bre:bal:lorenz-mimo}
+\end{equation}
+La primera componente del coeficiente no lineal es
+\(\widehat\Phi_{1,k}=\sum_jX_{2,j}X_{3,k-j}\); las otras dos se
+obtienen de \(xz\) y \(xy\). Para una señal de un solo armónico,
+\(x=c_x+a_x\cos\theta\), \(y=c_y+a_y\cos\theta\), el producto
+contiene media \(c_xc_y+a_xa_y/2\), fundamental
+\((c_xa_y+c_ya_x)\cos\theta\) y segundo armónico
+\((a_xa_y/2)\cos2\theta\). Así se ve por qué deben conservarse
+tanto la media como el acoplamiento entre canales.
+
+Defina
+\(\widehat\Phi_k=(2\pi)^{-1}\int_0^{2\pi}
+\Phi(CX^{(H)}(\theta))e^{-\ii k\theta}\,\dd\theta\).
+El balance estacionario es
+\begin{equation}
+ \begin{aligned}
+ AX_0+B\widehat\Phi_0&=0,\\
+ [ (\ii k\omega)^qI-A]X_k-B\widehat\Phi_k&=0,
+ \quad 1\leq k\leq H.
+ \end{aligned}
+ \label{bre:bal:mimo-balance}
+\end{equation}
+Si \(X_1\) tiene alguna componente no nula, se añade una condición de fase,
+\(\Im(e_j^{\T}X_1)=0\), con \(\Re(e_j^{\T}X_1)>0\).
+Si el primer coeficiente se anula, se fija la fase mediante otro
+armónico no nulo.
+Son \(n+2nH+1\) incógnitas reales, incluida \(\omega\), y el mismo
+número de ecuaciones. La desigualdad excluye la solución estacionaria
+de amplitud cero en la coordenada elegida.
+
+Resolver las ecuaciones retenidas no anula el residuo fuera de ellas.
+Sea
+\(\mathcal R(\theta)=D_{\mathrm W}^qX^{(H)}-AX^{(H)}
+-B\Phi(CX^{(H)})\). Sus coeficientes son
+\begin{equation}
+ \begin{aligned}
+ \mathcal R_0&=-AX_0-B\widehat\Phi_0,\\
+ \mathcal R_k&=[(\ii k\omega)^qI-A]X_k-B\widehat\Phi_k
+       \quad(1\leq k\leq H),\\
+ \mathcal R_k&=-B\widehat\Phi_k\quad(k>H).
+ \end{aligned}
+ \label{bre:bal:mimo-residual}
+\end{equation}
+Para señales reales, los índices negativos son los conjugados. Si el
+residuo pertenece a \(L^2\), Parseval, con la norma euclídea, da
+\begin{equation}
+ \frac1{2\pi}\int_0^{2\pi}\norm{\mathcal R(\theta)}^2\,\dd\theta
+ =\norm{\mathcal R_0}^2+2\sum_{k=1}^{\infty}\norm{\mathcal R_k}^2.
+ \label{bre:bal:parseval-residual}
+\end{equation}
+La cola física se mide mediante \(B\widehat\Phi_k\), no sólo por
+\(\widehat\Phi_k\): el campo depende de la combinación de canales
+impuesta por \(B\), que puede tener núcleo. Se controlan las ecuaciones
+retenidas y esta cola al aumentar \(H\). Si se emplea cuadratura de
+Fourier en lugar de convoluciones exactas, se refina también la malla
+angular para distinguir error de cuadratura y truncamiento.
+
+Cuando \((\ii k\omega)^qI-A\) es invertible, el tamaño
+\(\norm{[(\ii k\omega)^qI-A]^{-1}B\widehat\Phi_k}\) estima la
+respuesta lineal al armónico omitido y detecta resonancias. No sustituye
+un teorema de error para el problema no lineal, que requeriría controlar
+la inversa del operador de balance y sus derivadas.
+
+La secuencia de cálculo queda determinada: verificar la realización;
+resolver fase, media y amplitud o el balance multiharmónico; reconstruir
+la semilla con su fase; evaluar el residuo físico completo; continuar
+hasta el campo original y analizar allí el PVI causal. Una raíz
+algebraica aceptable debe superar tanto las condiciones de dominio
+del resolvente como las comprobaciones de residuo y condicionamiento.

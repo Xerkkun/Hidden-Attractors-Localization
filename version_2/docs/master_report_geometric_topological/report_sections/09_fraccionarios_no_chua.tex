@@ -1,4 +1,4 @@
-\section[Candidatos fraccionarios no Chua]{Candidatos fraccionarios no Chua: álgebra verificada y alcance dinámico}
+\section[Candidatos fraccionarios no Chua]{Sistemas fraccionarios no Chua: realización y dinámica}
 \label{part:nonchua}
 
 \section{Sistemas considerados y alcance de la evidencia}
@@ -6,8 +6,8 @@
 Dos sistemas fraccionarios no Chua están vinculados de forma explícita con
 atractores ocultos en la bibliografía analizada: el Lorenz generalizado y el
 sistema de Rabinovich--Fabrikant (RF), ambos estudiados por
-Danca~\cite{Danca2017}. Además, el software evaluó el Lorenz estándar y otra
-parametrización de RF como referencias para exponentes de Lyapunov, así como
+Danca~\cite{Danca2017}. El Lorenz estándar y otra
+parametrización de RF sirven como referencias para exponentes de Lyapunov, junto con
 los sistemas jerk exponencial, financiero y \emph{four-wing} de
 Fischer et al.~\cite{fischer2020}. Ambos conjuntos de casos tienen alcances
 distintos y se presentan por separado.
@@ -15,45 +15,34 @@ distintos y se presentan por separado.
 \begin{table}[ht]
 \centering
 \small
-\caption{Clasificación de la evidencia localizada.}
+\caption{Sistemas y alcance del análisis.}
 \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{0.23\linewidth}
 >{\raggedright\arraybackslash}p{0.19\linewidth}X}
 \toprule
-Caso & Estado local & Evidencia disponible y límite\\
+Caso & Análisis & Resultado y límite\\
 \midrule
-Lorenz generalizado, \(q=0.995\) & \statusref &
-Ecuaciones, parámetros, equilibrios y espectros recalculados, junto con un
-ensayo bibliográfico de vecindad. No existe sistema integrado, semilla, corrida
-de continuación ni artefacto de cuenca local.\\
-Rabinovich--Fabrikant, \(q=0.998\) & \statusref &
-Ecuaciones, parámetros, cinco equilibrios, espectros publicados y radios de
-vecindad. No existe reproducción local del atractor ni de su cuenca.\\
+Lorenz generalizado, \(q=0.995\) & Algebraico &
+Realización multicanal, tres equilibrios y espectros; existencia global y
+absorción de reinicios. La dinámica del candidato y su cuenca se conocen
+por la referencia bibliográfica.\\
+Rabinovich--Fabrikant, \(q=0.998\) & Algebraico &
+Realización multicanal, cinco equilibrios, espectros y radios bibliográficos
+de vecindad. Falta reproducir el atractor y su cuenca.\\
 Lorenz estándar, RF \(b=0.98\), jerk, financiero y four-wing & diagnóstico
 numérico & Ecuaciones, parámetros, análisis local, protocolo de integración y
 comparaciones de exponentes de Lyapunov. Estas pruebas no incluyeron una
 búsqueda de cuencas ni certifican ocultedad.\\
-Genesio--Tesi, jerk hiperbólico y otras familias del Artículo 03 & diseño &
-Poseen realizaciones algebraicas propuestas, pero el prerregistro no Chua sigue
-sin ejecuciones L0--L6 completas.\\
+Genesio--Tesi, jerk hiperbólico y otras familias escalares & Algebraico &
+Realizaciones escalares y cierres armónicos; falta completar la localización
+y la evaluación dinámica.\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Los diseños para Genesio--Tesi, sistemas memristivos y otras familias que no
-cuentan con una ejecución registrada se mantienen como propuestas. En cambio,
-los cinco sistemas de referencia dinámica se desarrollan en esta sección hasta
-el nivel algebraico y numérico alcanzado por las corridas disponibles. La
-ausencia de continuación desde una semilla y de sondeos de vecindad impide
-interpretar sus exponentes de Lyapunov como evidencia de ocultedad.
-
-Los datos de referencia se conservan en
-\path{version_2/validation/references/published_validation_data_extraction_v1.json};
-y su clasificación procede de
-\path{version_2/validation/published_reference_coverage.json}. En esta última,
-los dos casos están marcados como \texttt{reference\_data\_only}, sin sistema
-implementado, pruebas ni artefactos de validación. Por ello, en lo que sigue la
-palabra \emph{candidato} significa \emph{caso prioritario para implementar y
-buscar}, no \emph{atractor localmente reproducido}.
+Las realizaciones de Genesio--Tesi y de los sistemas memristivos proporcionan
+problemas de localización. Los cinco sistemas de referencia dinámica permiten
+comparar diagnósticos de Lyapunov, pero carecen de continuación desde una
+semilla y de sondeos de vecindad. Sus exponentes no establecen ocultedad.
 
 \section[Marco común de realización]{Marco común de realización y localización}
 
@@ -238,7 +227,7 @@ muestreo declarado. Esta distinción se conserva en todo el documento.
 
 \subsection{Modelo, parámetros y simetría}
 
-El sistema registrado es
+El sistema es
 \begin{equation}
 \begin{aligned}
  {}^{\mathrm C}D^qx_1&=-\sigma(x_1-x_2)-a x_2x_3,\\
@@ -334,8 +323,9 @@ Como \(C_L=I_3\), la multiplicación por \(B_L\) da
  \end{pmatrix}_{z=s^q}.
  \label{nc:eq:lorenz-transfer}
 \end{equation}
-Wolfram redujo a cero las nueve entradas de la diferencia entre
-\(C_L(s^qI-A_L)^{-1}B_L\) y~\eqref{nc:eq:lorenz-transfer}.
+Las nueve entradas de la diferencia entre
+\(C_L(s^qI-A_L)^{-1}B_L\) y~\eqref{nc:eq:lorenz-transfer} se anulan
+idénticamente.
 
 \subsection{Derivación de los puntos de equilibrio}
 
@@ -524,7 +514,7 @@ historia ni una semilla de balance armónico. Para cerrar esa laguna se requiere
 
 \subsection{Modelo, parámetros y simetría}
 
-El sistema RF registrado es
+El sistema RF es
 \begin{equation}
 \begin{aligned}
  {}^{\mathrm C}D^qx_1&=x_2(x_3-1+x_1^2)+a x_1,\\
@@ -580,10 +570,9 @@ En efecto,
 \begin{equation}
  A_Rx+B_R\Phi_R(x)=F_R(x)
 \end{equation}
-componente a componente. Wolfram simplificó el residuo simbólico a
-\((0,0,0)\trans\).
+componente a componente.
 
-Si una implementación exige potencias de mediciones lineales, los productos
+Para expresar los canales como potencias de mediciones lineales, los productos
 pueden factorizarse sin aproximación mediante
 \begin{equation}
  uv=\frac{(u+v)^2-(u-v)^2}{4}
@@ -598,7 +587,7 @@ Estas identidades cambian el número de canales, no el campo vectorial.
 
 \subsection{Derivación completa de la transferencia RF}
 
-De nuevo, sea \(z=s^q\). Entonces
+Con \(z=s^q\),
 \begin{equation}
  zI-A_R=
  \begin{pmatrix}
@@ -696,8 +685,8 @@ Ordenando por \(|x_1|\), se obtienen
  \ 0.995284804098130).
  \label{nc:eq:rf-e34}
 \end{align}
-Wolfram redujo exactamente a cero el campo evaluado en las dos ramas
-algebraicas de~\eqref{nc:eq:rf-u}; el máximo residuo numérico fue
+El campo se anula exactamente en las dos ramas
+algebraicas de~\eqref{nc:eq:rf-u}; el máximo residuo de su evaluación numérica es
 \(1.06\times10^{-14}\).
 
 \subsection{Jacobiano, polinomios y Matignon}
@@ -834,7 +823,7 @@ se requiere:
 \input{report_sections/09A_bancos_dinamicos_no_chua}
 \clearpage
 
-\section{Comparación y prioridad de implementación}
+\section{Comparación de los problemas de localización}
 
 \begin{table}[ht]
 \centering
@@ -852,34 +841,29 @@ Estables a \(q\) objetivo & \(E_+,E_-\) & \(E_1,E_2\)\\
 Inestables a \(q\) objetivo & \(E_0\) & \(E_0,E_3,E_4\)\\
 Simetría & \((x_1,x_2,x_3)\mapsto(-x_1,-x_2,x_3)\) & la misma\\
 Riesgo algebraico & bajo--medio & medio--alto\\
-Riesgo numérico & historia y cuenca & historia, cubics, divergencia y transitorios\\
-Estado local & referencia solamente & referencia solamente\\
+Dificultad numérica & historia y cuenca & historia, términos cúbicos,
+divergencia y transitorios\\
+Dinámica del candidato & referencia bibliográfica & referencia bibliográfica\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-La prioridad recomendada es implementar primero Lorenz generalizado. Su campo
-es cuadrático, requiere menos canales y \(H=2\), y la cuenca publicada alrededor
-del único equilibrio inestable ofrece un control inicial simple. RF debe ser el
-segundo caso: es científicamente valioso, pero los términos cúbicos, los tres
-equilibrios inestables y las trayectorias divergentes elevan el costo de una
-decisión fiable.
+Lorenz generalizado requiere menos canales y una truncación inicial \(H=2\).
+Su cota absorbente controla las trayectorias de reinicio y la cuenca
+bibliográfica alrededor del único equilibrio inestable ofrece una referencia
+para los sondeos. RF incorpora términos cúbicos, tres equilibrios inestables y
+trayectorias divergentes; exige mayor resolución armónica y controles de escape.
 
-Esta prioridad no es una afirmación sobre cuál atractor es ``más oculto''. Es
-una decisión de verificabilidad: conviene cerrar primero el caso con menor
-número de grados armónicos y de destinos de cuenca.
+\section{Identidades y estabilidad local}
 
-\section{Verificación algebraica cruzada con Wolfram Language}
-
-Las comprobaciones se ejecutaron en un kernel Wolfram Language sin estado
-persistente. Se usaron parámetros racionales
-\(r=34/5\), \(a_L=-1/2\), \(a_R=1/10\) y \(b_R=719/2500\) para evitar que el
-redondeo antecediera al álgebra.
+Los parámetros racionales
+\(r=34/5\), \(a_L=-1/2\), \(a_R=1/10\) y \(b_R=719/2500\) permiten
+mantener exactas las identidades antes de evaluar las raíces numéricas.
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{0.34\linewidth}
 >{\raggedright\arraybackslash}p{0.17\linewidth}
 >{\raggedright\arraybackslash}p{0.40\linewidth}}
-\caption{Matriz de verificación Wolfram.}\\
+\caption{Identidades algebraicas y clasificación local.}\\
 \toprule
 Comprobación & Resultado & Evidencia\\
 \midrule
@@ -913,26 +897,17 @@ Coinciden con la fuente al redondeo: \(E_{1,2}\) estables;
 \bottomrule
 \end{longtable}
 
-La verificación Wolfram cubre la realización algebraica. No se ejecutó una
-integración de Caputo ni una campaña de cuencas en Wolfram; por tanto, este
-resultado no debe etiquetarse como reproducción dinámica.
+Estas identidades determinan la realización algebraica y la estabilidad
+local. La localización del candidato requiere resolver el balance armónico,
+integrar el PVI causal y estudiar su cuenca.
 
-\section{Conclusiones}
+\section{Condiciones para la evaluación dinámica}
 
-\begin{enumerate}
- \item Los dos candidatos fraccionarios no Chua con procedencia directa de
- atractor oculto son Lorenz generalizado y Rabinovich--Fabrikant.
- \item Ambos admiten una realización de Lur'e multicanal exacta. Para Lorenz se
- obtuvo una transferencia \(3\times3\); para RF, una transferencia \(3\times5\).
- \item Se derivaron todos los equilibrios desde las ecuaciones, sus Jacobianos,
- polinomios característicos y márgenes de Matignon.
- \item Los espectros de Lorenz satisfacen los polinomios característicos y las
- identidades de traza obtenidas a partir de las ecuaciones declaradas.
- \item Las ecuaciones~\eqref{nc:eq:lorenz-hb-system} y
- \eqref{nc:eq:rf-hb-system} son la realización algebraica completa necesaria para
- generar semillas; todavía no se han obtenido raíces numéricas validadas.
- \item La próxima evidencia científica debe ser dinámica: solución armónica
- convergente, continuación causal, evaluación autónoma, robustez y sondeos de
- todos los equilibrios. Hasta entonces, ambos casos se conservan como evidencia
- bibliográfica y algebraica, sin validación dinámica.
-\end{enumerate}
+Las ecuaciones~\eqref{nc:eq:lorenz-hb-system} y
+\eqref{nc:eq:rf-hb-system} definen los problemas multiharmónicos de generación
+de semillas. Sus raíces numéricas requieren control del residual físico y
+del truncamiento. Una semilla obtenida por esta ruta debe integrarse con
+historia causal, continuarse cuando sea necesario y evaluarse con el campo
+final fijo. La recurrencia, la robustez y los sondeos de todos los equilibrios
+son problemas dinámicos independientes de las identidades algebraicas y de
+los espectros locales.

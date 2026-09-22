@@ -7,29 +7,19 @@
 
 La confiabilidad dinámica se descompone en cuatro problemas: si la trayectoria
 calculada aproxima el PVI declarado; si el comportamiento irregular persiste al ampliar
-la ventana; si existe un conjunto invariante que atrae un abierto; y si su
-cuenca queda separada de toda vecindad de los equilibrios. Un diagnóstico
-positivo en una pregunta no responde automáticamente las siguientes.
+la ventana; si existe un conjunto invariante que atrae los datos declarados; y
+si su cuenca queda separada de una vecindad de cada equilibrio. Para ODE la
+atracción local puede formularse sobre un abierto del espacio de estados; en
+Caputo se especifica la familia de reinicios o un espacio admisible invariante
+\(X_{\mathrm{adm}}\) con su topología relativa. Cada propiedad requiere criterios propios, desde el control del error hasta
+la separación de cuencas.
 
-El análisis articula la teoría de Lyapunov de
-\cref{sec:geo-stable-manifolds}, la formulación funcional de Caputo de
-\cref{sec:geometria-topologia-caputo} y las especificaciones numéricas de
-\cref{sec:protocolos}. Las fuentes seleccionadas cumplen tres funciones
-precisas: predictibilidad y exponentes de tiempo finito
-\cite{VallejoSanjuan2017Predictability,DatserisParlitz2022Nonlinear};
-sillas caóticas, escapes y crisis
-\cite{Ott2002Chaos,TelGruiz2006Chaotic}; y comparación de algoritmos
-fraccionarios \cite{SunHeWang2022FractionalChaos}. Los artículos descargados
-aportan casos de control y límites de interpretación
-\cite{Danca2016HiddenTransient,Sabatier2021InfiniteMemory,
-ClementeLopezEtAl2022Poincare,GuanXie2025}.
-
-\evidencebox{\textbf{Jerarquía de afirmaciones.} Los términos
-\emph{trayectoria irregular},
-\emph{FTLE positivo}, \emph{conjunto caótico transitorio},
-\emph{atractor caótico} y \emph{atractor oculto} son afirmaciones
-progresivamente diferentes, sujetas a hipótesis y criterios de validación
-propios.}
+La teoría de Lyapunov permite estudiar la predictibilidad y la expansión de
+perturbaciones \cite{VallejoSanjuan2017Predictability,DatserisParlitz2022Nonlinear}.
+Los tiempos de escape y las crisis distinguen la recurrencia transitoria de
+la atracción \cite{Ott2002Chaos,TelGruiz2006Chaotic}. En sistemas
+fraccionarios, ambos análisis deben incorporar el operador y la memoria del
+problema de Caputo \cite{SunHeWang2022FractionalChaos,Sabatier2021InfiniteMemory}.
 
 \subsection{Error de trayectoria y horizonte de predictibilidad}
 
@@ -39,12 +29,24 @@ Considérese primero la EDO autónoma
  \label{eq:reliability-ode}
 \end{equation}
 con \(f\) Lipschitz de constante \(L\) en la región recorrida. Una curva
-numérica diferenciable por tramos \(\widetilde x\) posee el defecto
+numérica continua y diferenciable por tramos \(\widetilde x\) posee el defecto
 \begin{equation}
  r_h(t)=\dot{\widetilde x}(t)-f(\widetilde x(t)).
  \label{eq:reliability-defect}
 \end{equation}
-Si \(e=x-\widetilde x\), la desigualdad de Gronwall da
+Si \(e=x-\widetilde x\), integrar la diferencia de las ecuaciones da
+\[
+ e(t)=e(t_0)+\int_{t_0}^t[f(x(s))-f(\widetilde x(s))]\,\dd s
+                  -\int_{t_0}^tr_h(s)\,\dd s.
+\]
+Por Lipschitz y la desigualdad triangular,
+\[
+ u(t):=\|e(t)\|\leq\|e(t_0)\|
+            +\int_{t_0}^t[Lu(s)+\|r_h(s)\|]\,\dd s=:v(t).
+\]
+La función \(v\) es absolutamente continua y cumple
+\(v'\leq Lv+\|r_h\|\) casi en todas partes. Multiplicar por
+\(\e^{-L(t-t_0)}\) e integrar conduce a
 \begin{equation}
  \|e(t)\|
  \leq \e^{L(t-t_0)}\|e(t_0)\|
@@ -61,16 +63,17 @@ individual crezca rápidamente. En un régimen con exponente principal
                    {\varepsilon_0}\right)
  \label{eq:reliability-predictability-horizon}
 \end{equation}
-relaciona incertidumbre inicial \(\varepsilon_0\), tolerancia admisible y
-horizonte de predictibilidad. No es un teorema universal: depende de la órbita,
+se obtiene de \(\varepsilon_{\mathrm{adm}}\approx
+\varepsilon_0\e^{\lambda_1T_{\mathrm{pred}}}\), al tomar logaritmos, con
+\(0<\varepsilon_0<\varepsilon_{\mathrm{adm}}\). Relaciona incertidumbre
+inicial, tolerancia admisible y horizonte de predictibilidad. No es un teorema universal: depende de la órbita,
 la dirección de perturbación, la norma, la ventana y el régimen dinámico
 \cite{VallejoSanjuan2017Predictability}.
 
-Que dos integraciones dejen de coincidir punto a punto después de
-\(T_{\mathrm{pred}}\) no invalida por sí solo una comparación estadística.
-Pero que ambas produzcan distribuciones de puntos visualmente parecidas tampoco verifica el mismo
-destino. Deben compararse, al menos, tiempos de escape, clases terminales,
-distribuciones de retorno, espectros y exponentes en varias ventanas.
+Después de \(T_{\mathrm{pred}}\), la comparación puede centrarse en
+estadísticas convergentes: tiempos de escape, clases terminales,
+distribuciones de retorno, espectros y exponentes en varias ventanas. La
+semejanza visual de las nubes requiere el contraste de esos observables.
 
 \subsection{Alcance y limitaciones del sombreado}
 
@@ -96,8 +99,7 @@ La precisión nominal del integrador no sustituye un argumento de sombreado. La
 evaluación registra paso, tolerancias, segundo método,
 residuo cuando es accesible y estabilidad de los observables. Cerca de una
 frontera de cuenca, una perturbación numérica pequeña puede seleccionar un
-destino verdadero distinto; ésa es una propiedad dinámica que debe
-cuantificarse, no ocultarse.
+destino distinto. Su sensibilidad debe cuantificarse.
 
 \subsection{Exponentes de Lyapunov de tiempo finito}
 
@@ -106,8 +108,16 @@ Para \cref{eq:reliability-ode}, sea \(Y\) la matriz fundamental
  \dot Y(t)=Df(x(t))Y(t),\qquad Y(t_0)=I.
  \label{eq:reliability-variational}
 \end{equation}
-Si \(\sigma_i(Y)\) son sus valores singulares, los exponentes de Lyapunov de
-tiempo finito (FTLE) sobre una ventana de longitud \(T\) son
+Una perturbación infinitesimal inicial \(v\) evoluciona como \(Yv\).
+El cociente de amplificación satisface
+\[
+ \frac{\|Yv\|_2^2}{\|v\|_2^2}
+ =\frac{v^{\mathsf T}Y^{\mathsf T}Yv}{v^{\mathsf T}v}.
+\]
+Los extremos principales son los autovalores de la matriz simétrica positiva
+\(Y^{\mathsf T}Y\); sus raíces cuadradas son los valores singulares
+\(\sigma_i(Y)\). Tomar el logaritmo de cada factor de amplificación y
+dividir por la duración define los exponentes de tiempo finito (FTLE):
 \begin{equation}
  \Lambda_i(t_0,T;x_0)
  =\frac1T\log\sigma_i\!\left(Y(t_0+T;t_0,x_0)\right).
@@ -120,8 +130,8 @@ su distribución a lo largo de ventanas revela intermitencia, regiones
 pegajosas y pérdida temporal de hiperbolicidad
 \cite{VallejoSanjuan2017Predictability}.
 
-Un FTLE principal positivo en una ventana autoriza la frase
-«expansión finita observada». No prueba por sí solo:
+Un FTLE principal positivo indica expansión durante la ventana considerada.
+Se necesitan argumentos adicionales para establecer:
 \begin{itemize}
  \item que el exponente asintótico exista o sea positivo;
  \item que la trayectoria pertenezca a un atractor;
@@ -140,16 +150,23 @@ Para
  {}^{\mathrm C}D_{t_0}^{q}x(t)=f(x(t)),\qquad 0<q<1,
  \label{eq:reliability-caputo}
 \end{equation}
-la comprobación natural no es
-\cref{eq:reliability-defect}, sino el defecto integral
+el defecto apropiado a la forma de Volterra es
 \begin{equation}
  \rho_h(t)=\widetilde x(t)-x_0
  -\frac1{\Gamma(q)}
  \int_{t_0}^{t}(t-s)^{q-1}f(\widetilde x(s))\,\dd s .
  \label{eq:reliability-volterra-defect}
 \end{equation}
-Si \(f\) es Lipschitz y el PVI está bien planteado, una desigualdad fraccionaria
-de Gronwall conduce, bajo las hipótesis usuales, a una cota del tipo
+Restar esta identidad de la ecuación exacta de Volterra produce
+\[
+ x(t)-\widetilde x(t)=-\rho_h(t)+\frac1{\Gamma(q)}
+ \int_{t_0}^t(t-s)^{q-1}[f(x(s))-f(\widetilde x(s))]\,\dd s.
+\]
+Si el PVI tiene solución en el intervalo considerado y \(f\) es Lipschitz
+de constante \(L\) en una región que contiene ambas curvas, su norma satisface
+\(u\leq\|\rho_h\|_\infty+LI^qu\). La iteración de integrales fraccionarias
+empleada en \cref{camp:prop-soe-error-finite}, trasladando el origen a \(t_0\),
+suma la serie de Mittag--Leffler y da
 \cite{Lin2013GeneralizedGronwall}
 \begin{equation}
  \|x(t)-\widetilde x(t)\|
@@ -158,9 +175,8 @@ de Gronwall conduce, bajo las hipótesis usuales, a una cota del tipo
  E_q\!\left(L(t-t_0)^q\right).
  \label{eq:reliability-fractional-gronwall}
 \end{equation}
-La función de Mittag--Leffler sustituye a la exponencial, pero la memoria no
-desaparece. El defecto en una ventana tardía contiene contribuciones de todo
-el intervalo previo.
+La cota contiene la función de Mittag--Leffler y el defecto acumulado desde
+\(t_0\), incluidas las contribuciones anteriores a una ventana tardía.
 
 Los modelos fraccionarios admiten realizaciones con un continuo de escalas y
 una memoria efectivamente infinita \cite{Sabatier2021InfiniteMemory}. Por eso,
@@ -173,14 +189,11 @@ que su error esté controlado.
 La ecuación variacional fraccionaria es la de
 \cref{eq:geofo-fractional-variational}; también conserva historia. Reiniciar
 vectores tangentes como en una ODE ordinaria sin especificar cómo se transporta
-su memoria no reproduce automáticamente esa ecuación. El algoritmo de
-Danca--Kuznetsov \cite{DancaKuznetsov2018Lyapunov} aporta una referencia
-reproducible para calcular exponentes fraccionarios, no una certificación
-automática de caos u ocultedad. Del mismo modo, una
-sección proyectada puede ser un detector numérico útil
-\cite{ClementeLopezEtAl2022Poincare}, pero no se convierte por ello en un mapa
-de Poincaré finito-dimensional: el retorno riguroso vive en el espacio de
-historias.
+su memoria no reproduce automáticamente esa ecuación. El cálculo de exponentes fraccionarios puede contrastarse con
+Danca--Kuznetsov \cite{DancaKuznetsov2018Lyapunov}. Las secciones proyectadas
+proporcionan detectores numéricos de retorno
+\cite{ClementeLopezEtAl2022Poincare}; su formulación dinámica rigurosa
+pertenece al espacio de historias.
 
 \subsection{Silla caótica, escape y supervivencia}
 
@@ -203,27 +216,87 @@ Para una condición inicial \(x_0\in D\), se define el tiempo de primera salida
  \inf\{t\geq0:\varphi_t(x_0)\notin D\},
  \label{eq:reliability-exit-time}
 \end{equation}
-con \(\tau_D=\infty\) si no se observa salida. Para un conjunto de muestreo
-\(U\subset D\) con medida \(\mu\), la supervivencia empírica es
+con la convención \(\inf\varnothing=\infty\): este valor corresponde a una
+órbita exacta que nunca sale, no a una integración finita sin salida detectada.
+Si se observa hasta \(T\), el registro ideal de tiempo y censura es
+\begin{equation}
+ \widetilde\tau_D=\min\{\tau_D,T\},\qquad
+ \Delta_D=\mathbf 1_{\{\tau_D\leq T\}}.
+ \label{eq:reliability-censored-exit}
+\end{equation}
+En el cálculo, estos campos se estiman con un detector de eventos cuya
+función de cruce, dirección, tolerancia e interpolación deben declararse. La
+ausencia de salida detectada se registra como censura derecha. La afirmación
+\(\tau_D>T\) sobre la órbita exacta requiere controlar todos los posibles
+cruces entre muestras; sin ese control sólo se afirma que el detector no
+encontró salida a su resolución. Un fallo del integrador se distingue de una
+trayectoria observada sin escape.
+
+Para precisar la detección, supóngase localmente
+\(D=\{x:g(x)\leq0\}\), con \(g\in C^1\). Una salida transversal satisface
+\[
+ g(x(\tau_D))=0,\qquad
+ \frac{\dd}{\dd t}g(x(t))\bigg|_{t=\tau_D}
+ =\nabla g(x(\tau_D))\cdot f(x(\tau_D))>0.
+\]
+Si dos muestras consecutivas cumplen \(g_j\leq0<g_{j+1}\), la interpolación
+lineal \(g_j+(t-t_j)(g_{j+1}-g_j)/(t_{j+1}-t_j)\) tiene el cero
+\[
+ \widehat\tau_D=t_j-
+ \frac{g_j}{g_{j+1}-g_j}(t_{j+1}-t_j).
+\]
+Esta fórmula aproxima el evento de la curva interpolada. Si el cero exacto
+es único en ese intervalo, la derivada de \(g(x(t))\) está acotada
+inferiormente por \(\nu>0\), y el error uniforme de la función de evento es
+\(\varepsilon_g\), el teorema del valor medio da un error de raíz a lo sumo
+\(\varepsilon_g/\nu\), más la tolerancia temporal del buscador de ceros.
+Aquí \(\varepsilon_g\) debe incluir el error de trayectoria y el de
+interpolación. Sin transversalidad o sin control entre muestras pueden
+omitirse salidas y reentradas, incluso si los signos en los nodos coinciden.
+
+Para un conjunto medible de datos \(U\subset D\) y una medida declarada
+\(\mu\) con \(0<\mu(U)<\infty\), la función de supervivencia es
 \begin{equation}
  S_D(t)=
  \frac{\mu\{x_0\in U:\tau_D(x_0)>t\}}{\mu(U)}.
  \label{eq:reliability-survival}
 \end{equation}
+Como \(\{\tau_D>t_2\}\subseteq\{\tau_D>t_1\}\) si \(t_2>t_1\),
+\(S_D\) es no creciente y pertenece a \([0,1]\). La finitud de \(\mu(U)\)
+y la continuidad de la medida sobre conjuntos decrecientes dan
+\[
+ \lim_{t\to\infty}S_D(t)
+ =\frac{\mu\{x_0\in U:\tau_D(x_0)=\infty\}}{\mu(U)}.
+\]
+Este límite asintótico no se determina a partir de un único horizonte finito.
+
+Para un banco de \(N\) semillas con pesos iguales, la medida empírica es
+\(\mu_N=N^{-1}\sum_{j=1}^N\delta_{x_0^{(j)}}\). Con un horizonte común
+\(T\), su supervivencia observada se calcula, para \(0\leq t<T\), mediante
+\begin{equation}
+ \widehat S_D(t)=\frac1N\sum_{j=1}^N
+                      \mathbf1_{\{\widetilde\tau_D^{(j)}>t\}}.
+ \label{eq:reliability-empirical-survival}
+\end{equation}
+En efecto, \(\min(\tau_D^{(j)},T)>t\) equivale a
+\(\tau_D^{(j)}>t\) cuando \(t<T\). El indicador de censura permite
+separar salidas detectadas de observaciones detenidas en \(T\); en este
+último tiempo ya no se usa la identidad anterior para inferir supervivencia
+posterior. Con horizontes distintos se necesita un tratamiento estadístico de
+la censura y sus hipótesis. Los intervalos de confianza requieren un modelo
+de muestreo; una malla determinista proporciona conteos descriptivos a una
+resolución fija.
 En regímenes hiperbólicos puede aparecer
 \(S_D(t)\sim C\e^{-\kappa t}\), donde \(\kappa\) es una tasa de escape; en
 regímenes no hiperbólicos son posibles colas no exponenciales. Ajustar una
 recta en una sola escala no demuestra ninguna de las dos leyes. Deben variarse
 la región \(D\), la distribución de semillas, el paso y la ventana de ajuste.
 
-El artículo de Danca sobre Rabinovich--Fabrikant documenta precisamente
-trayectorias ocultas con comportamiento caótico transitorio
-\cite{Danca2016HiddenTransient}. Su título emplea «atractores caóticos
-transitorios», terminología extendida en la literatura. Para evitar una
-contradicción asintótica, se adoptan los términos \emph{conjunto caótico
-transitorio} o \emph{transitorio oculto} hasta demostrar atracción. La revisión
-reciente de localización también distingue atractores de conjuntos
-transitorios ocultos \cite{GuanXie2025}.
+En Rabinovich--Fabrikant se han descrito trayectorias ocultas con
+comportamiento caótico transitorio \cite{Danca2016HiddenTransient}.
+La denominación \emph{transitorio oculto} distingue estos conjuntos de los
+atractores cuya atracción asintótica ha sido establecida
+\cite{GuanXie2025}.
 
 \subsection{Crisis y cambio del destino asintótico}
 
@@ -246,8 +319,11 @@ inestable implicado y seguir su intersección con el conjunto o con la frontera
 \cite{Ott2002Chaos,TelGruiz2006Chaotic}.
 
 En un problema Caputo, \(D\), la silla y sus conjuntos estable e inestable
-deben formularse para la semidinámica en el espacio funcional de
-\cref{eq:geofo-history-space}. Un escape de la proyección en
+deben formularse para una semidinámica bien definida en un espacio admisible
+invariante \(X_{\mathrm{adm}}\subset\mathfrak C\), con la topología relativa
+declarada en \cref{sec:geometria-topologia-caputo}. La realización en todo
+\(\mathfrak C\) de \cref{eq:geofo-history-space} no basta para atribuirle
+atracción local. Un escape de la proyección en
 \(\mathbb R^n\) puede ser un observable útil, pero dos perfiles con igual
 estado terminal pueden tener tiempos de salida distintos. Toda curva de
 supervivencia fraccionaria debe fijar la familia de historias muestreadas y
@@ -258,21 +334,27 @@ separar continuación con historia de reinicio.
 
 \begin{description}[style=nextline,leftmargin=3.4em,labelwidth=2.9em]
  \item[CT0] Fijar campo, parámetros, operador, terminal inferior,
- inicialización, región de observación y criterio de escape.
+  inicialización, región de observación, detector de escape, tolerancias y
+  tratamiento de la censura.
  \item[CT1] Verificar convergencia de la trayectoria o de los observables con
  \(h,h/2\) y, en una réplica corta, \(h/4\); usar un segundo integrador que
  represente el mismo PVI.
  \item[CT2] Calcular FTLE en varias longitudes y posiciones de ventana;
  conservar la distribución y no sólo la media.
  \item[CT3] Extender el horizonte de cada destino irregular y medir
- \(\tau_D\). Una trayectoria que no escapó se registra como censurada, no como
- prueba de \(\tau_D=\infty\).
+  los tiempos e indicadores de \cref{eq:reliability-censored-exit}. Una
+  trayectoria sin salida detectada se registra como censurada, no como prueba
+  de \(\tau_D=\infty\); se controla la resolución de los cruces.
  \item[CT4] Muestrear un conjunto de semillas y estimar \(S_D(t)\) con
- intervalos de confianza; repetir al cambiar \(D\) y el refinamiento.
+  el esquema de censura y, si el muestreo lo justifica, intervalos de confianza;
+  repetir al cambiar \(D\) y el refinamiento. Para medidas empíricas de mallas
+  se reportan los conteos y su resolución.
  \item[CT5] Para clasificar el conjunto como atractor, comprobar invariancia
  numérica de la cola
- y convergencia desde un abierto de perturbaciones, separando regímenes
- coexistentes.
+  y convergencia desde perturbaciones muestreadas en la familia de datos
+  declarada, separando regímenes coexistentes. La atracción de un abierto de
+  estados o de una vecindad relativa de \(X_{\mathrm{adm}}\) requiere una
+  justificación adicional a la muestra finita.
  \item[CT6] Sólo después aplicar el sondeo de vecindades de equilibrios. La
  ocultedad es una afirmación de cuenca, no una consecuencia del tiempo de
  residencia, del FTLE o de una crisis.
@@ -329,14 +411,18 @@ el bloque contiene un conjunto invariante; la invariancia por continuación
 permite transportarlo mientras se conserve el aislamiento
 \cite{Jost2005Dynamical,MischaikowEtAl2016Conley}.
 
-Esto no certifica automáticamente que el conjunto sea atractor, caótico u
-oculto. Su aplicación en HAFO requiere un bloque compacto con condición de
+La aplicación del índice requiere un bloque compacto con condición de
 salida verificada; un flujo, semiflujo o mapa de retorno bien definido; un par
 índice válido; y la relación entre el conjunto aislado y la cuenca objetivo.
-En Caputo, el bloque pertenece al espacio funcional de memoria. La obra de Jost
-proporciona los fundamentos; la certificación computacional requiere además los
-métodos de cajas de \cref{sec:localizacion-geometrico-topologica} y un análisis
-específico del sistema.
+En Caputo, el bloque pertenece a un espacio funcional admisible de memoria.
+Si se obtiene de una elevación finita, su transporte al problema original
+requiere una homotopía en un espacio común, admisibilidad y aislamiento
+uniforme, según \cref{camp:caputo-lift}. La certificación computacional
+combina este argumento con los métodos de cajas de
+\cref{sec:localizacion-geometrico-topologica} y las propiedades del sistema
+estudiado. Los controles finitos de paso, modos y horizonte aportan evidencia
+numérica, mientras la atracción, el caos y la ocultedad requieren sus
+respectivas demostraciones.
 
 \subsection{Cuestiones de síntesis sobre confiabilidad dinámica}
 

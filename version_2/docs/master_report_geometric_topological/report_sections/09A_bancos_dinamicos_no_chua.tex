@@ -1,13 +1,12 @@
 \section{Sistemas no Chua evaluados como referencias dinámicas}
 \label{sec:nonchua-dynamic-benchmarks}
 
-\subsection{Clasificación homogénea de los casos ejecutados}
+\subsection{Clasificación y alcance de los resultados}
 
-Los sistemas no Chua ejecutados se dividen en dos grupos. El primero contiene
+Los sistemas no Chua se dividen en dos grupos. El primero contiene
 los casos enteros en los que la localización produjo un conjunto recurrente y
 se completaron pruebas de periodicidad o caos, vecindades de los equilibrios y
-comparación independiente. Los controles de estabilidad numérica se consignan
-sólo cuando existe el artefacto canónico correspondiente. El segundo contiene
+comparación independiente. El segundo contiene
 referencias fraccionarias empleadas para evaluar algoritmos de exponentes de
 Lyapunov. En estas últimas no se ejecutó una localización por continuación ni un
 análisis de vecindades; por consiguiente, sus resultados caracterizan el método
@@ -17,7 +16,7 @@ numérico y no establecen ocultedad.
 \small
 \setlength{\tabcolsep}{3pt}
 \begin{longtable}{@{}L{0.19\linewidth}L{0.16\linewidth}L{0.18\linewidth}L{0.40\linewidth}@{}}
-\caption{Cobertura homogénea de los sistemas no Chua ejecutados.}
+\caption{Dinámica y diagnósticos de los sistemas no Chua.}
 \label{tab:nonchua-unified-evidence}\\
 \toprule
 Sistema & Orden & Conjunto o diagnóstico & Resultado numérico y alcance\\
@@ -29,19 +28,19 @@ Sistema & Orden & Conjunto o diagnóstico & Resultado numérico y alcance\\
 \endhead
 Kalman--Fitts & \(1\) & Ciclo límite estable &
 \(T=11.9169960\); 48 condiciones alrededor del único equilibrio, sin contactos
-con el ciclo; reproducción independiente en Julia.\\
+con el ciclo; reproducción independiente.\\
 MAVPD, \(\xi=3.1\) & \(1\) & Ciclo externo estable &
 \(T=0.493177986749\), \(K_{0-1}=4.40086\times10^{-4}\), espectro
 \((-0.0017614,-0.3887396,-51.1886634)\); 108 condiciones alrededor de tres
-equilibrios, sin contactos; comparación Python--Julia.\\
+equilibrios, sin contactos; reproducción independiente.\\
 MAVPD, \(\xi=2.85\) & \(1\) & Candidato caótico &
 \(\widehat\lambda_1=\MAVPDChaosLEOne\), \(D_{KY}=\MAVPDChaosKY\); sección de
 Poincaré y prueba 0--1 sobre retornos; \MAVPDChaosTotalProbes{} condiciones de
-vecindad y controles dirigidos, sin contactos; comparación Python--Julia.\\
+vecindad y controles dirigidos, sin contactos; reproducción independiente.\\
 PLL lead--lag & \(1\) & Ciclo corrido estable &
 \(T=\PLLPythonStablePeriod\), multiplicador
 \(\PLLPythonStableMultiplier\); 96 condiciones alrededor de dos equilibrios,
-sin contactos; reproducción independiente en Julia.\\
+sin contactos; reproducción independiente.\\
 Lorenz estándar & \(q=0.985\) & Referencia variacional &
 Tres exponentes finito-temporales dentro de la tolerancia publicada; no se
 realizó una búsqueda de atractor oculto.\\
@@ -135,9 +134,9 @@ exponente que converge lentamente a cero y tres exponentes negativos. Se
 integraron 48 condiciones alrededor de \(E_0\), con radios
 \(10^{-5},10^{-4},10^{-3},10^{-2}\) y 12 muestras por radio: 40 terminaron
 en el equilibrio, ocho quedaron acotadas y no triviales, y ninguna contactó
-el ciclo. La implementación independiente reprodujo el retorno de periodo dos,
+el ciclo. Un segundo cálculo reprodujo el retorno de periodo dos,
 las 48 clasificaciones y el ciclo con periodo \(11.9169379538\); la diferencia
-de periodos fue \(5.81\times10^{-5}\). La matriz canónica de estabilidad
+de periodos fue \(5.81\times10^{-5}\). El análisis de estabilidad
 numérica combina DOP853 estándar y ajustado con RK4 a
 \(h=0.01\) y \(h=0.005\), cada uno en horizontes 300 y 600. Las ocho
 configuraciones fueron consistentes: el error relativo del periodo quedó entre
@@ -300,7 +299,7 @@ equilibrios y cuatro controles sobre ambos signos de la dirección inestable de
 \(E_0\): las 112 trayectorias terminaron en equilibrios, sin contactos,
 ambigüedades ni fallos. La matriz de estabilidad numérica registró consistencia
 al variar integrador, paso y horizonte; la memoria no es aplicable al sistema
-entero. Una implementación independiente recuperó los mismos parámetros y las
+entero. Un cálculo independiente, con los mismos parámetros, reprodujo las
 112 decisiones; obtuvo
 \(\widehat\lambda=(0.6938035753,0.0017936287,-20.9005938240)\), 1175 cruces y
 \(K=0.9971592730\). La clasificación resultante es candidato caótico oculto bajo
@@ -355,13 +354,20 @@ Los espectros son
 El primero es un foco estable y el segundo una silla.
 
 \paragraph{Localización y configuración.}
-La transferencia normalizada de la forma trasladada es
+Con \(c=(0,1)^{\mathsf T}\), la transferencia de la forma trasladada es
 \begin{equation}
- G(s)=-\frac{L}{2}\frac{1+\tau_2s}{s(1+Ts)}.
+ W_+(s)=c^{\mathsf T}(sI-P)^{-1}b
+ =-\frac{L}{2}\frac{1+\tau_2s}{s(1+Ts)},\qquad G(s)=-W_+(s).
  \label{ncbench:eq:pll-transfer}
 \end{equation}
-La expresión algebraica satisface \(\operatorname{Im}G(i\omega)>0\) para todo
-\(\omega>0\); no existe un cruce directo compatible con una función
+Al multiplicar numerador y denominador por el conjugado del denominador,
+\[
+ \operatorname{Im}W_+(\ii\omega)
+ =\frac{L(1+\tau_2T\omega^2)}{2\omega(1+T^2\omega^2)}>0,
+ \qquad \omega>0,
+\]
+pues \(L,\tau_2,T>0\). Así, \(\operatorname{Im}G(\ii\omega)<0\) y ninguna
+convención tiene un cruce directo compatible con una función
 descriptiva estática real y acotada. Al eliminar \(x\) y definir
 \(y=\dot\theta\), la ruta alternativa usa
 \begin{equation}
@@ -391,7 +397,7 @@ Los errores de retorno cilíndrico son \(2.68\times10^{-15}\) y
 \(6.18\times10^{-14}\), respectivamente. El sondeo usa los dos equilibrios,
 cuatro radios \(10^{-5},10^{-4},10^{-3},10^{-2}\) y 12 muestras por radio:
 las 96 condiciones terminaron en el foco y ninguna alcanzó el ciclo. La
-implementación independiente reprodujo el periodo y multiplicador estables
+evaluación independiente reprodujo el periodo y multiplicador estables
 como \(0.0826766624969991\) y \(0.817204143145181\), coincidió en las 96
 decisiones y mantuvo distancias cilíndricas máximas de
 \(3.28\times10^{-12}\) para el ciclo y \(1.82\times10^{-11}\) para la
@@ -474,7 +480,7 @@ En el origen y en los equilibrios externos se obtienen, respectivamente,
  p_{\pm}(\lambda)&=\lambda^3+\frac{41}{3}\lambda^2
  +560\lambda+\frac{31840}{3}.
 \end{align}
-Los espectros verificados con Wolfram Language son
+Los espectros son
 \begin{align}
  \operatorname{spec}J_L(E_0)&=
  \{-50.4471912359382,\ 39.4471912359382,\ -2.66666666666667\},\\
@@ -516,8 +522,7 @@ produce dos raíces positivas. Los cinco equilibrios son
  E_{1,2}&=(\mp1.028490164199,\ \pm0.952853059867,\ 0.050145943152),\\
  E_{3,4}&=(\mp0.158369537232,\ \pm6.188058746190,\ 0.977478366240).
 \end{align}
-La sustitución en el campo deja residuo cero a la precisión exportada por
-Wolfram.
+La sustitución de las expresiones exactas de los equilibrios anula el campo.
 
 Los polinomios característicos, iguales dentro de cada par simétrico, son
 \begin{align}
@@ -573,7 +578,7 @@ y las copias se reinician en \(X_k+\delta q_j^{(k)}\). El estimador es
  \sum_{k=1}^{K}\log\frac{|r_{ii}^{(k)}|}{\delta}.
  \label{ncbench:eq:cloned}
 \end{equation}
-La implementación usa ABM dentro de cada bloque y Gram--Schmidt modificado.
+Cada bloque se integra mediante ABM y usa Gram--Schmidt modificado.
 Para órdenes fraccionarios, el reinicio descarta la memoria anterior al bloque;
 por ello los valores son indicadores locales finito-temporales del protocolo
 publicado, no exponentes de una evolución de Caputo con memoria completa.
@@ -614,7 +619,7 @@ son
  p_J(\lambda)=\lambda^3+\frac12\lambda^2
  +\frac{\lambda}{5200000}+1.
 \end{equation}
-Wolfram Language produce
+Los valores propios son
 \begin{equation}
  \operatorname{spec}J_J(0)=
  \{-1.197429262748,\ 0.348714631374
@@ -831,9 +836,8 @@ La tolerancia cuantitativa por componente es \(0.05\). Por sistema, la
 distribución \emph{cuantitativa/patrón de signos/discrepancia} es \(0/4/4\)
 para jerk, \(5/2/1\) para el sistema financiero y \(5/0/3\) para four-wing.
 De las 24 filas, 10 cumplen esa tolerancia, 6 conservan únicamente el patrón
-de signos bajo el criterio declarado y 8 presentan discrepancias. En consecuencia, el estado
-global es \emph{comparación publicada con discrepancias registradas}; no se
-considera una validación integral del método.
+de signos bajo el criterio declarado y 8 presentan discrepancias. La
+concordancia es parcial y depende del sistema y de sus órdenes.
 
 \begin{hafocommonfigure}[H]
 \centering
@@ -847,12 +851,13 @@ patrón de signos y discrepancias.}
 
 \subsection{Alcance de las conclusiones dinámicas}
 
-Los exponentes de Lorenz, RF, jerk, financiero y four-wing verifican rutas de
-cálculo bajo configuraciones publicadas. No sustituyen las etapas de
-localización y ocultedad: falta una semilla obtenida de las ecuaciones, una
-continuación hasta el sistema objetivo, la identificación de una nube o ciclo
-recurrente, la robustez frente a paso y método, y el análisis de vecindades de
-todos los equilibrios. Por esta razón, ninguno de estos cinco sistemas se añade
-a la lista de atractores ocultos localizados. La evidencia de mayor nivel en el
-conjunto no Chua corresponde a Kalman--Fitts, MAVPD y PLL, cuyos resultados y
-figuras se presentan en la sección de sistemas enteros.
+Los exponentes de Lorenz, RF, jerk, financiero y four-wing comparan métodos
+de cálculo bajo configuraciones publicadas. La clasificación de ocultedad
+requiere localizar un conjunto recurrente, comprobar su persistencia al
+variar paso y método, y analizar vecindades de todos los equilibrios. La
+continuación hasta el sistema objetivo se utiliza cuando la ruta de
+localización la requiere; las semillas directas y los PP permiten otras
+rutas. Estos cinco casos tienen diagnósticos de Lyapunov, pero carecen del
+análisis de cuenca necesario para clasificarlos como ocultos. Kalman--Fitts,
+MAVPD y PLL sí cuentan con conjuntos localizados y sondeos de vecindad,
+dentro del alcance finito indicado en sus resultados.

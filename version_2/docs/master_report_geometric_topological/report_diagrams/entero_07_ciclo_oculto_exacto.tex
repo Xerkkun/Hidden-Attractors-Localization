@@ -1,0 +1,50 @@
+\begin{hafocommonfigure}[H]
+\centering
+\resizebox{0.94\linewidth}{!}{%
+\begin{tikzpicture}[font=\small,>=Latex]
+  \begin{scope}[shift={(2.7,2.75)}]
+    \fill[VerdeClaro] (-2.5,-2.5) rectangle (2.5,2.5);
+    \fill[AzulClaro] (0,0) circle (1);
+    \draw[->,GrisOscuro] (-2.55,0)--(2.6,0) node[right] {$x$};
+    \draw[->,GrisOscuro] (0,-2.55)--(0,2.6) node[above] {$y$};
+    \draw[Rojo,very thick,dashed] (0,0) circle (1);
+    \draw[Verde,very thick] (0,0) circle (2);
+    \draw[->,Verde,very thick] (20:2) arc (20:65:2);
+    \draw[->,Verde,very thick] (200:2) arc (200:245:2);
+    \draw[->,Rojo,thick] (115:1) arc (115:155:1);
+    \fill[Azul] (0,0) circle (0.055);
+    \node[Azul,below left] at (0,0) {$0$};
+    \node[fill=AzulClaro,text=Azul] at (-0.07,-0.58) {$r<1$};
+    \node[Rojo,fill=white,inner sep=1.4pt] at (0.75,0.9) {$C_1$};
+    \node[Verde,fill=VerdeClaro,inner sep=1.4pt] at (-1.66,1.35) {$C_2$};
+    \node[Verde] at (1.65,-2.23) {$r>1$};
+  \end{scope}
+  \node[font=\bfseries,anchor=west] at (5.95,5.25)
+    {Dinámica radial};
+  \node[anchor=west] at (5.95,4.68)
+    {$\dot r=-r(r^2-1)(r^2-4)$};
+  \draw[->,GrisOscuro] (6.05,3.8)--(12.75,3.8) node[right] {$r$};
+  \foreach \x/\lab in {6.2/0,8.35/1,10.5/2}{
+    \draw (\x,3.68)--(\x,3.92);
+    \node[below] at (\x,3.63) {$\lab$};
+  }
+  \draw[->,Azul,very thick] (7.85,4.12)--(6.65,4.12);
+  \draw[->,Verde,very thick] (8.8,4.12)--(10.05,4.12);
+  \draw[->,Verde,very thick] (12.25,4.12)--(11,4.12);
+  \node[anchor=west,Azul] at (5.95,2.76)
+    {$\mathcal B(\{0\})=\{r<1\}$};
+  \node[anchor=west,Verde] at (5.95,2.08)
+    {$\mathcal B(C_2)=\{r>1\}$};
+  \node[anchor=west,Rojo] at (5.95,1.40)
+    {$\partial\mathcal B(C_2)=C_1$};
+  \node[anchor=west] at (5.95,0.62)
+    {$B_{1/2}(0)\cap\mathcal B(C_2)=\varnothing$};
+\end{tikzpicture}%
+}
+\caption{Cuencas exactas del sistema \eqref{eq:guide-hidden-cycle-field}
+con \(a=1\) y \(b=2\). El disco azul converge al origen; la región verde
+converge al ciclo \(C_2\). El ciclo repulsivo \(C_1\) separa ambas cuencas.
+Las flechas radiales indican el signo de \(\dot r\), mientras las flechas
+circunferenciales representan \(\dot\theta=1\).}
+\label{fig:ciclo-oculto-exacto}
+\end{hafocommonfigure}

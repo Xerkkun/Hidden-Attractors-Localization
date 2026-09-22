@@ -1,62 +1,9 @@
-\section{Matriz maestra de validación Wolfram}
+\section{Balance armónico y espectros locales}
 \label{app:wolfram-master}
 
-La validación se ejecutó en dos capas. La primera conserva los artefactos
-Wolfram Language del repositorio y sus resúmenes JSON. La segunda volvió a
-evaluar, en un kernel Wolfram independiente, las identidades comunes y los
-casos fraccionarios no Chua. Los archivos fuente y resultados se incluyen en
-el paquete de fuentes que acompaña a este PDF.
+\subsection{Funciones descriptivas y obstrucciones de balance}
 
-\begin{longtable}{@{}L{0.25\linewidth}C{0.12\linewidth}L{0.31\linewidth}L{0.24\linewidth}@{}}
-\caption{Validadores y frontera de su conclusión.}
-\label{tab:wolfram-master}\\
-\toprule
-Sistema & Pruebas & Alcance algebraico & Límite de alcance\\
-\midrule
-\endfirsthead
-\toprule
-Sistema & Pruebas & Alcance algebraico & Límite de alcance\\
-\midrule
-\endhead
-Chua PWL entero & 6/6 & Lur'e, polinomio, transferencia, equilibrios,
-semilla modal & Caos u ocultedad global.\\
-Chua PWL fraccionario & 6/6 & Sustitución \(z=s^q\), transferencia,
-equilibrios y similitud de semilla & Que la continuación alcance caos.\\
-Chua arctangente Wu & 10/10 & Lur'e, Jacobiano, DF cerrada, equilibrios,
-Matignon y ramas & Equivalencia ADM--Caputo causal.\\
-Chua arctangente c590 & 10/10 & Álgebra, tres equilibrios, Matignon y
-consistencia del candidato registrado & Origen DF de la semilla; está
-declarado como búsqueda entera.\\
-Kalman--Fitts & 11/11 & Polinomio publicado, transferencia,
-\(\omega\), ganancia negativa y mapa de conmutación & Ocultedad fuera de las
-48 sondas.\\
-MAVPD & 11/11 & Campo, Jacobiano, Routh--Hopf, transferencia, DF cúbica y
-semillas & Transversalidad o coeficiente de Lyapunov del Hopf local.\\
-PLL lead--lag & 10/10 & Filtro, equilibrio trasladado, obstrucción,
-ecuación de Andronov y semilla \(L=0\) & Separación topológica global en el
-cilindro.\\
-Lorenz generalizado & motor integrado & Campo MIMO, transferencia,
-equilibrios, polinomios, espectros y Matignon & Semilla, atractor o cuenca
-local reproducida.\\
-Rabinovich--Fabrikant & motor integrado & Campo MIMO, transferencia, cinco
-equilibrios, polinomios, espectros y Matignon & Semilla, atractor o cuenca
-local reproducida.\\
-Muñoz--Pacheco & motor integrado & Realización MIMO y ausencia de
-equilibrios para \(a=0.35\) & Reproducción del caos publicado.\\
-Jerk cuadrático & motor integrado & Realización MIMO y obstrucción escalar
-por rango del Hessiano & Existencia del atractor publicado.\\
-Machado \(\mu=2\), Chua PWL & motor integrado & Rama compleja, derivada de
-\(N\), amplitud y dos residuos separados & Que el cierre auxiliar sea el
-balance físico del sistema original.\\
-Puntos perpetuos & motor integrado & Raíces exactas MAVPD/Muñoz, residuos
-Lorenz/RF y contraejemplos Caputo & Suficiencia del método, evento de historia,
-caos u ocultedad.\\
-\bottomrule
-\end{longtable}
-
-\subsection{Identidades revaluadas}
-
-Con la convención \(W_+\), el kernel devolvió
+Con la convención \(W_+\), se obtiene
 \begin{align}
  r^{\mathsf T}(zI-P)^{-1}b
  &=-\frac{\alpha Q(z)}{\Delta_\ell(z)},&
@@ -71,8 +18,17 @@ Con la convención \(W_+\), el kernel devolvió
  \frac{2a_2}{\rho A^2}
  \left(\sqrt{1+\rho^2A^2}-1\right).
 \end{align}
-Los residuos de las tres expresiones cerradas fueron exactamente cero bajo
-sus hipótesis \(A>0\), \(A>1\) y \(\rho>0\), respectivamente.
+La expresión cúbica corresponde a \(\psi(u)=u^3\), con \(A>0\); la de
+saturación usa \(\Delta=m_0-m_1\) y se aplica a \(A>1\). Para la arctangente se supone
+\(A>0\) y \(\rho>0\). Las dos últimas expresiones se obtienen de la
+proyección \cref{eq:df_centrada}, mediante la integración por tramos y por
+partes desarrollada junto a \cref{eq:df_saturacion,eq:df_arctan}.
+En el caso cúbico,
+\[
+ N_{\mathrm{cub}}(A)=\frac{2A^2}{\pi}\int_0^\pi\sin^4\theta\,\mathrm d\theta
+ =\frac{2A^2}{\pi}\frac{3\pi}{8}=\frac34A^2,
+\]
+pues \(\sin^4\theta=(3-4\cos2\theta+\cos4\theta)/8\).
 
 Para Kalman--Fitts,
 \[
@@ -90,16 +46,28 @@ y
 \]
 Para PLL,
 \[
- \Im G(\mathrm i\omega)=
+ \Im W_+(\mathrm i\omega)=
  \frac{L[1+\omega^2\tau_2(\tau_1+\tau_2)]}
  {2\omega[1+\omega^2(\tau_1+\tau_2)^2]}>0.
 \]
-Así, las dos obstrucciones no son decisiones heurísticas: proceden de
-identidades simbólicas.
+Se supone \(L,\tau_1,\tau_2,\omega>0\); en la convención alternativa,
+\(\Im W_-=-\Im W_+<0\). En ambas convenciones la parte imaginaria conserva
+su signo y no se anula a frecuencia positiva.
+La ganancia negativa de Kalman--Fitts y el signo de la parte imaginaria
+del PLL obstruyen el cierre directo de función descriptiva en los casos
+considerados.
 
-\subsection{Espectro verificado del Lorenz generalizado}
+\subsection{Espectro del Lorenz generalizado}
 
-El espectro verificado en el origen es
+En el origen, el jacobiano se descompone en un bloque de dimensión dos y la
+dirección \(z\). Por ello,
+\[
+ p_0(\lambda)=(\lambda+1)
+ \bigl[(\lambda+3.4)(\lambda+1)-3.4\cdot6.8\bigr]
+ =(\lambda+1)(\lambda^2+4.4\lambda-19.72).
+\]
+Las raíces del segundo factor son \(-2.2\pm\sqrt{24.56}\).
+El espectro en el origen es
 \[
  \{-7.15580467734555,\ 2.75580467734555,\ -1\},
 \]
@@ -111,12 +79,23 @@ y en los dos equilibrios no nulos,
 El origen es inestable por el autovalor positivo
 \(2.75580467734555\). En los dos equilibrios no nulos, todas las partes reales
 son negativas y el margen de Matignon es
-\(0.0117287914887683>0\); por tanto, ambos son asintóticamente estables para el
-orden conmensurable evaluado.
+\[
+ m_{0.995}
+ =\frac{(1-0.995)\pi}{2}
+  +\arctan\!\left(\frac{0.0148502411343243}{3.83248917224188}\right)
+ =0.0117287914887683>0.
+\]
+Aquí se ha utilizado
+\(\arg(-\delta+\mathrm i\omega)=\pi/2+\arctan(\delta/\omega)\),
+con \(\delta,\omega>0\). El autovalor real negativo tiene argumento de
+módulo \(\pi\), de modo que el mínimo corresponde al par complejo. El campo
+es polinomial y satisface las hipótesis de linealización de los fundamentos;
+ambos equilibrios son localmente asintóticamente estables para \(q=0.995\).
 
 \subsection{Machado y puntos perpetuos}
 
-En Chua PWL, \(q=0.9998\), \(\mu=2\), Wolfram devolvió
+En Chua PWL, \(q=0.9998\), \(\mu=2\), los residuos de
+\cref{eq:machado-rho-aux,eq:machado-rho-phys} dan
 \begin{align}
  W_q(\mathrm i\omega_0)
  &=4.761387970782572-1.52\times10^{-13}\mathrm i,\\
@@ -124,31 +103,20 @@ En Chua PWL, \(q=0.9998\), \(\mu=2\), Wolfram devolvió
  \rho_{\mathrm{aux}}&=2.16\times10^{-13},\\
  \rho_{\mathrm{fis}}&=1.182060487425029.
 \end{align}
-La diferencia entre los últimos dos renglones es el resultado verificado
-principal: una semilla auxiliar precisa no es balance armónico físico.
+El residuo auxiliar es pequeño, mientras el residuo físico permanece del
+orden de la unidad. Por ello, esta amplitud resuelve el cierre auxiliar, pero
+no el balance armónico del campo original.
 
-Para MAVPD y Muñoz--Pacheco, la sustitución de todas las raíces de
-\cref{sec:pp-case-audit} en \(J_f f\) dio cero exacto. También se verificaron
-los contraejemplos
-\begin{equation}
- {}^{\mathrm C}D^q[c]=0,\qquad
- \frac{d^2}{dt^2}
- \left[x_0+\frac{ct^q}{\Gamma(q+1)}\right]
- =\frac{ct^{q-2}}{\Gamma(q-1)}.
-\end{equation}
-La traducción Caputo emplea el coeficiente de Picard--Caputo, distinto de una
-aceleración ordinaria y sin invocar una regla de cadena no válida.
-
-\subsection{Reproducibilidad}
-
-Los archivos reproducibles son
-\path{wolfram/topologia_geometria_hidden_validation.wl} y su salida textual
-\path{wolfram/topologia_geometria_hidden_validation.txt}. La implementación
-equivalente se encuentra en
-\path{version_2/validation/wolfram/cases/geometric_topological_engine.wl}; su
-salida de referencia se encuentra en
-\path{version_2/validation/06_geometric_topological_campaign/wolfram/}. El motor
-produce 50 comprobaciones, un resumen JSON y evidencia textual. Valida las
-identidades geométrico--topológicas, Machado y los residuos de puntos perpetuos
-dentro de su alcance algebraico. La evidencia dinámica corresponde a las
-campañas numéricas independientes.
+Para MAVPD y para las raíces suaves de Muñoz--Pacheco, la sustitución de las
+coordenadas de \cref{sec:pp-case-audit} en \(J_f f\) da cero exacto. La diferencia entre
+esta ecuación y la aceleración temporal se observa en el campo constante
+\(f(x)=c\ne0\). Para \(0<q<1\), su solución es
+\(x(t)=x_0+ct^q/\Gamma(q+1)\), de donde
+\begin{align*}
+ J_ff&=0,\qquad {}^{\mathrm C}D^q[f(x(t))]={}^{\mathrm C}D^q[c]=0,\\
+ x''(t)&=\frac{cq(q-1)t^{q-2}}{\Gamma(q+1)}
+       =\frac{ct^{q-2}}{\Gamma(q-1)}\ne0,\qquad t>0.
+\end{align*}
+La última igualdad usa dos veces \(\Gamma(z+1)=z\Gamma(z)\).
+Por tanto, la cancelación de \(J_ff\) o de la derivada secuencial no equivale
+a aceleración ordinaria nula.

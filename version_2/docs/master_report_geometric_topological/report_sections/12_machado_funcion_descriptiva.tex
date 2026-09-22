@@ -58,11 +58,25 @@ en un punto de operación \(\bar\sigma\), la linealización incremental es
  \label{eq:incremental-biased-transfer}
 \end{equation}
 Esta transferencia describe perturbaciones pequeñas alrededor del punto de
-operación. Su uso es alternativo al de una función descriptiva que ya contenga
-la misma pendiente, pues la combinación contaría esa contribución dos veces. En
-una característica PWA sobre una frontera se necesita especificar pendiente lateral, derivada de
-Clarke o convención de Filippov; sin esa declaración
-\cref{eq:incremental-biased-transfer} no es un objeto único.
+operación constante cuando existe un equilibrio \(\bar x\) con
+\(r^{\mathsf T}\bar x=\bar\sigma\). Para comprobarlo, ponga
+\(\xi=x-\bar x\) y
+\[
+ \psi_{\mathrm{res}}(u)
+ =\psi(\bar\sigma+u)-\psi(\bar\sigma)-\psi'(\bar\sigma)u.
+\]
+La cancelación \(P\bar x+b\psi(\bar\sigma)=0\) da
+\( {}^{\mathrm C}D_{0+}^{q}\xi
+=P_{\bar\sigma}\xi+b\psi_{\mathrm{res}}(r^{\mathsf T}\xi)\).
+Si \(\bar x\) no es equilibrio, queda el término afín
+\(P\bar x+b\psi(\bar\sigma)\), que debe conservarse.
+La función descriptiva del residuo es la de la característica desplazada
+menos \(\psi'(\bar\sigma)\); usar con esta transferencia una función
+descriptiva que aún contenga esa pendiente contaría la contribución dos veces.
+En una frontera PWA puede no existir la derivada clásica: se deben
+analizar las pendientes regionales y los cruces o justificar un marco
+de derivadas generalizadas. Elegir una pendiente sin esa justificación
+no produce una linealización clásica única.
 
 \subsection{Dos fraccionalidades distintas}
 
@@ -156,7 +170,7 @@ Para un DF real hay tres casos:
 \end{enumerate}
 
 También existe una restricción dimensional. Si \(N\) tiene unidades,
-\(N^\mu\) cambia las unidades. Con una escala \(N_\star\) de las mismas
+\(N^\mu\) cambia las unidades. Con una escala positiva \(N_\star\) de las mismas
 unidades se define
 \begin{equation}
  N_{\mu,N_\star}(A,\omega)
@@ -165,6 +179,33 @@ unidades se define
 \end{equation}
 La normalización adoptada en los ejemplos equivale a \(N_\star=1\); presupone,
 por tanto, que la función descriptiva fue adimensionalizada.
+
+Esta escala también controla la equivalencia entre realizaciones. Para
+\(a>0\), el cambio
+\(\widetilde b=ab\), \(\widetilde\psi=\psi/a\) conserva el campo
+\(PX+b\psi(r^{\mathsf T}X)\). La transferencia y el coeficiente físico
+se transforman como
+\[
+ \widetilde W_q=aW_q,\qquad \widetilde N=N/a,
+ \qquad \widetilde W_q\widetilde N=W_qN.
+\]
+Para conservar también el cierre auxiliar se transforma la escala mediante
+\(\widetilde N_\star=N_\star/a\). Entonces
+\begin{equation}
+ \widetilde N_{\mu,\widetilde N_\star}
+ =\frac{N_\star}{a}
+ \left[\frac{N/a}{N_\star/a}\right]^\mu
+ =\frac{N_{\mu,N_\star}}{a},
+ \label{eq:machado-scale-covariance}
+\end{equation}
+y se mantiene
+\(\widetilde W_q\widetilde N_{\mu,\widetilde N_\star}
+=W_qN_{\mu,N_\star}\), con la misma hoja porque el cociente
+normalizado no cambia. En cambio, una potencia sin escala da
+\(\widetilde W_q\widetilde N^\mu=a^{1-\mu}W_qN^\mu\): para
+\(\mu\ne1\), su resultado depende del reparto arbitrario de ganancia.
+La especificación de \(N_\star\) forma parte del método y de la
+comparación entre realizaciones.
 
 \subsection{Familia auxiliar normalizada sobre la rama positiva}
 
@@ -203,7 +244,9 @@ La familia auxiliar usa
  =1-W_q(\mathrm i\omega)N_{\mu,N_\star}(A,\omega)=0.
  \label{eq:machado-aux-closure}
 \end{equation}
-Ambos coinciden para \(\mu=1\), no para \(\mu\neq1\). Si \(N(A)>0\) es
+Ambos coinciden idénticamente para \(\mu=1\); para \(\mu\ne1\) no
+son equivalentes en general, aunque pueden coincidir en valores particulares,
+como \(N=N_\star\). Si \(N(A)>0\) es
 real, el cierre auxiliar se separa en
 \begin{align}
  \operatorname{Im}W_q(\mathrm i\omega)&=0,
@@ -214,14 +257,19 @@ real, el cierre auxiliar se separa en
  \label{eq:machado-amplitude}
 \end{align}
 Para \(N_\star=1\), se resuelve \(N(A)=k^{1/\mu}\). La evaluación incluye la
-pertenencia del objetivo al rango de \(N\) y el control de
+pertenencia del objetivo al rango de \(N\). Si \(N\) es diferenciable,
+\(N'(A)\ne0\), y se mantienen fijos \(k\) y \(N_\star\), derivar
+\(\mu\log[N(A)/N_\star]=\log(k/N_\star)\) proporciona
 \begin{equation}
  \frac{dA}{d\mu}
  =-\frac{N(A)\log[N(A)/N_\star]}{\mu N'(A)},
  \label{eq:machado-sensitivity}
 \end{equation}
-pues la raíz está mal condicionada cerca de \(N'(A)=0\), \(N=0\) o un
-extremo de la curva de ganancia.
+El crecimiento de este cociente mide la sensibilidad de la amplitud a
+\(\mu\). Cerca de \(N'(A)=0\) debe revisarse la invertibilidad de la
+ecuación de amplitud; en \(N=0\) la formulación logarítmica deja de
+estar definida. Si el numerador y el denominador se anulan a la vez,
+la fórmula por sí sola no decide el condicionamiento.
 
 El registro de cada candidato conserva por separado
 \begin{align}
@@ -276,7 +324,7 @@ Una familia auxiliar sesgada posible es
  =N_\star\left[\frac{N_b(\sigma_0,A)}{N_\star}\right]^\mu,
  \label{eq:machado-biased-family}
 \end{equation}
-con hoja registrada, y el cierre sustituto
+con hoja fijada, y el cierre sustituto
 \begin{equation}
  1-W_q(\mathrm i\omega)N_{\mu,b,N_\star}(\sigma_0,A)=0.
  \label{eq:machado-biased-closure}
@@ -288,12 +336,12 @@ valor sin elevarse a \(\mu\). También se evalúa
  =\left|1-W_q(\mathrm i\omega)N_b(\sigma_0,A)\right|.
  \label{eq:machado-biased-physical-residual}
 \end{equation}
-Las evaluaciones sesgadas registradas en la validación disponible usan \(\mu=1\); coinciden
-con la familia sesgada clásica y no validan todavía
-\cref{eq:machado-biased-family} para \(\mu\neq1\).
+Las evaluaciones sesgadas usan \(\mu=1\), correspondiente a la familia
+sesgada clásica. La aplicación de \cref{eq:machado-biased-family} con
+\(\mu\neq1\) requiere evaluar separadamente el cierre auxiliar y el físico.
 
-\subsection[Ejemplo Wolfram: Chua PWL, q=0.9998]
-{Ejemplo Wolfram: Chua PWL, \(q=0.9998\)}
+\subsection[Chua PWL, q=0.9998]
+{Chua PWL con \(q=0.9998\)}
 
 Para
 \[
@@ -323,22 +371,21 @@ La no linealidad residual es
  \end{cases}
  \label{eq:machado-chua-df}
 \end{equation}
-Wolfram confirma
+La derivación respecto de la amplitud da
 \begin{equation}
  N'(A)=-\frac{4\Delta\sqrt{A^2-1}}{\pi A^3}<0,
  \qquad A>1.
  \label{eq:machado-chua-monotone}
 \end{equation}
 
-En la rama \(\omega_0=2.0402860510795615\), la evaluación independiente
-produjo
+En la rama \(\omega_0=2.0402860510795615\),
 \begin{align}
  W_q(\mathrm i\omega_0)
  &=4.761387970782572-1.52\times10^{-13}\mathrm i,\\
  k&=0.21002279296212067.
 \end{align}
 La referencia clásica \(\mu=1\) da
-\(A_{\mathrm{cl}}=5.851767785486093\). Para \(\mu=2\), HAFO registra
+\(A_{\mathrm{cl}}=5.851767785486093\). Para \(\mu=2\), se obtiene
 \begin{equation}
  A_2=2.628433514775448,
  \quad N(A_2)=0.458282437981291,

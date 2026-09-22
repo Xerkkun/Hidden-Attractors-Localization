@@ -51,17 +51,19 @@ gráficos tridimensionales de los casos estudiados representan una
 \emph{proyección} de una evolución funcional, no necesariamente el retrato de
 fase completo.
 
-\begin{hallazgo}{Estado de los resultados}
-Los resultados se clasifican en tres niveles. Las propiedades relativas a
-Volterra, semidinámicas
-funcionales, ausencia general de dinámica finito-dimensional y no existencia
-de soluciones periódicas exactas pertenecen a teoría establecida
+\begin{hallazgo}{Memoria, atracción y espacio de fases}
+La formulación de Volterra permite construir una semidinámica funcional,
+aunque el estado puntual no genere en general una dinámica autónoma. Los
+PVI con reinicio tampoco admiten soluciones no constantes exactamente
+periódicas bajo las hipótesis de no periodicidad
 \cite{CongTuan2017Nonlocal,DoanKloeden2021Semidynamical,
 TavazoeiHaeri2009,KaslikSivasundaram2012}. La separación entre cuenca
-funcional y cuenca de reinicio, y su incorporación al protocolo de atractores
-ocultos, constituyen una adaptación metodológica evaluada. La certificación de
-atractores compactos, variedades invariantes, entropía o herraduras en los
-casos concretos permanece abierta.
+funcional y cuenca de reinicio exige especificar las familias que se atraen:
+el espacio completo de términos libres no admite atracción compacta de un
+abierto. Para el Lorenz generalizado se demuestra aquí existencia global,
+absorción y precompacidad de las órbitas de reinicio. Identificar sus
+destinos, demostrar su atracción o establecer caos requiere argumentos
+adicionales.
 \end{hallazgo}
 
 \subsection{Flujo ordinario en el espacio de estados}
@@ -309,6 +311,11 @@ Si \(f\) es globalmente Lipschitz, los operadores de
 \end{proposition}
 
 \begin{proof}[Idea algebraica de la propiedad de semigrupo]
+Separar la integral en el tiempo \(t\) muestra primero que la curva
+\(v\mapsto x_m(t+v)\) resuelve la ecuación de Volterra con término libre
+\(S_tm\). La unicidad implica
+\(x_{S_tm}(v)=x_m(t+v)\); ésta es la identidad que permite componer los
+operadores.
 Al calcular \(S_s(S_tm)\), la contribución heredada se separa en una integral
 sobre \([0,t]\) y otra sobre \([t,t+s]\). En la segunda se hace el cambio
 \(u=t+v\). Ambas integrales se unen en
@@ -317,8 +324,25 @@ sobre \([0,t]\) y otra sobre \([t,t+s]\). En la segunda se hace el cambio
  (t+s+\theta-u)^{q-1}f(x_m(u))\,\mathrm du,
 \end{equation*}
 mientras el término libre es \(m(t+s+\theta)\). El resultado es
-\((S_{t+s}m)(\theta)\). Existencia, unicidad y continuidad se obtienen mediante
-la teoría de ecuaciones integrales de Volterra.
+\((S_{t+s}m)(\theta)\). Si \(L\) es una constante Lipschitz de \(f\),
+la dependencia respecto del término libre satisface, en cada \([0,T]\),
+\[
+ \sup_{0\leq t\leq T}\|x_m(t)-x_n(t)\|
+ \leq\|m-n\|_{C([0,T])}E_q(LT^q),
+\]
+por la desigualdad de Grönwall fraccionaria. Junto con la continuidad de las
+integrales de núcleo débilmente singular, esta cota proporciona la
+continuidad de \(S\) en la topología compacto-abierta. Para la existencia
+global, \(\|f(u)\|\le\|f(0)\|+L\|u\|\) y la misma desigualdad dan,
+en cada horizonte finito \(T\),
+\[
+ \sup_{0\le t\le T}\|x_m(t)\|
+ \le\left(\|m\|_{C([0,T])}
+       +\frac{\|f(0)\|T^q}{\Gamma(q+1)}\right)E_q(LT^q).
+\]
+No puede ocurrir explosión en tiempo finito; el teorema de continuación de
+Volterra prolonga la solución para todo \(t\ge0\)
+\cite{DoanKloeden2021Semidynamical}.
 \end{proof}
 
 Esta ampliación tiene el siguiente alcance. Los perfiles constantes
@@ -327,10 +351,12 @@ Esta ampliación tiene el siguiente alcance. Los perfiles constantes
 admisible de la extensión de Volterra
 \cref{eq:geofo-general-volterra}, pero no tiene por qué provenir de una
 prehistoria física única. En consecuencia, toda afirmación de cuenca funcional
-es relativa a esta realización semidinámica declarada. Esta precisión evita
-confundir \emph{ampliar el espacio para restaurar la propiedad de semigrupo}
-con \emph{afirmar que toda función continua es una condición inicial física del
-circuito}.
+es relativa a esta realización semidinámica declarada. Además, restaurar el
+semigrupo en todo \(\mathfrak C\) no proporciona automáticamente un espacio
+adecuado para la atracción: los términos libres arbitrarios producen las
+obstrucciones demostradas en \cref{prop:geofo-full-space-obstruction}.
+La restauración de la propiedad de semigrupo no convierte todos los términos
+libres continuos en memorias realizables por el sistema físico.
 
 La geometría y la diferencia entre evolución funcional y reinicio puntual se
 resumen en el diagrama siguiente.
@@ -352,14 +378,16 @@ Evolución & Flujo o semiflujo \(\varphi_t\) puntual & Semidinámica \(S_t\)
 funcional; el reinicio puntual no es composición de \(S_t\).\\
 Órbita & Curva en \(\mathbb R^n\) & Curva \(t\mapsto m_t\) en
 \(\mathfrak C\), proyectada como \(t\mapsto x(t)\).\\
-Equilibrio & Punto \(e\) con \(f(e)=0\) & Perfil fijo
-\(E_e(\theta)\equiv e\).\\
-Cuenca & Subconjunto del espacio de estados & Subconjunto de
-\(\mathfrak C\); la cuenca de reinicio es su corte por \(\iota(\mathbb R^n)\).\\
+Equilibrio & Punto \(e\) con \(f(e)=0\) & Perfil fijo constante
+\(E_e(\theta)\equiv e\); en todo \(\mathfrak C\) hay además puntos fijos
+artificiales.\\
+Cuenca & Subconjunto del espacio de estados & Cuenca de reinicio o cuenca
+relativa a un espacio admisible; la atracción abierta en todo
+\(\mathfrak C\) está obstruida.\\
 Poincaré & Mapa sobre una sección finito-dimensional & Operador sobre
 \(\widehat\Sigma\subset\mathfrak C\); su proyección puede ser multivaluada.\\
-Periodicidad & Ciclos permitidos & No hay soluciones no constantes exactamente
-periódicas bajo las hipótesis finitas usuales.\\
+Periodicidad & Ciclos permitidos & El PVI con reinicio no tiene soluciones
+no constantes exactamente periódicas bajo las hipótesis finitas usuales.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -427,7 +455,9 @@ para todo \(m\in U\). Su cuenca es
 \end{equation}
 \end{definition}
 
-En el problema Caputo se toma \(X=\mathfrak C\). Si \(e\) satisface
+Esta definición abstracta no puede aplicarse a un abierto del espacio completo
+\(\mathfrak C\) para la extensión de Volterra anterior. Antes de precisar
+la obstrucción, observemos que, si \(e\) satisface
 \(f(e)=0\), el perfil constante
 \begin{equation}
  E_e:=\iota(e),\qquad E_e(\theta)=e,
@@ -436,7 +466,111 @@ En el problema Caputo se toma \(X=\mathfrak C\). Si \(e\) satisface
 es un punto fijo: \(S_tE_e=E_e\). Así, un equilibrio puntual se convierte en
 un equilibrio de la semidinámica funcional.
 
-La proyección \(A_x=\operatorname{ev}_0(A)\) de un atractor funcional es
+\begin{proposition}[obstrucciones en el espacio de todos los términos libres]
+\label{prop:geofo-full-space-obstruction}
+Supóngase \(f\) globalmente Lipschitz y considérese \(S_t\) sobre
+\(\mathfrak C\) con la topología compacto-abierta.
+\begin{enumerate}
+ \item Ningún compacto no vacío atrae todos los perfiles de un abierto no vacío.
+ \item Para cada \(c\in\mathbb R^n\), el perfil
+ \begin{equation}
+  m_c(\theta)=c-\frac{\theta^q}{\Gamma(q+1)}f(c)
+  \label{eq:geofo-artificial-fixed-profile}
+ \end{equation}
+ es fijo, incluso cuando \(f(c)\ne0\).
+ \item Si \(A\ne\varnothing\) es positivamente invariante, su conjunto
+ de atracción puntual \(\mathcal B_{\mathfrak C}(A)\) es denso en
+ \(\mathfrak C\).
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+Sea \(U\) un abierto que contiene a \(m\). Elíjase un entero \(N\) tal
+que \(2^{-N}\) sea menor que el radio de una bola centrada en \(m\)
+contenida en \(U\). Cualquier perfil que coincida con \(m\) en \([0,N]\)
+pertenece a esa bola, pues la cola de la métrica
+\cref{eq:geofo-compact-open-metric} es a lo sumo \(2^{-N}\).
+Escojamos una curva continua \(y\) igual a \(x_m\) hasta \(N\) y con
+\(\|y(t)\|\to\infty\). El término libre
+\[
+ \widetilde m(t)=y(t)-\frac1{\Gamma(q)}
+ \int_0^t(t-s)^{q-1}f(y(s))\,\mathrm ds
+\]
+es continuo, coincide con \(m\) hasta \(N\) y su solución es \(y\), por
+unicidad. Si \(A\) es compacto, \(\operatorname{ev}_0(A)\) es acotado.
+Por tanto, la diferencia entre \(\operatorname{ev}_0(S_t\widetilde m)=y(t)\)
+y cualquier punto de \(\operatorname{ev}_0(A)\) diverge. Si
+\(r_t=\operatorname{dist}(y(t),\operatorname{ev}_0(A))\), el sumando
+\(k=1\) de la métrica da
+\[
+ \operatorname{dist}_{\mathfrak C}(S_t\widetilde m,A)
+ \geq\frac12\frac{r_t}{1+r_t}.
+\]
+Como \(r_t\to\infty\), el límite inferior de esa distancia es al menos
+\(1/2\), lo que impide la atracción.
+
+Para el segundo enunciado, sustituir \(x_{m_c}(t)\equiv c\) en la ecuación
+de Volterra verifica la solución constante. La integral en
+\cref{eq:geofo-semiflow-operator} vale
+\(f(c)[(t+\theta)^q-\theta^q]/\Gamma(q+1)\), de donde
+\(S_tm_c=m_c\). Estos perfiles no representan equilibrios del PVI con
+reinicio salvo que \(f(c)=0\).
+
+Finalmente, dados \(m,N\) y \(a\in A\), construyamos \(y=x_m\) hasta
+\(N\), interpolémosla continuamente hasta \(a(0)\) en \(T=N+1\) y
+continuemos con \(y(T+\theta)=x_a(\theta)\). Con el mismo término libre
+\(\widetilde m=y-I^qf(y)\), la separación de la integral da
+\[
+ (S_T\widetilde m)(\theta)
+ =x_a(\theta)-\frac1{\Gamma(q)}
+   \int_0^\theta(\theta-u)^{q-1}f(x_a(u))\,\mathrm du
+ =a(\theta).
+\]
+La invariancia positiva implica que la órbita queda en \(A\) desde \(T\).
+Así, toda vecindad de \(m\) contiene un perfil de su cuenca.
+\end{proof}
+
+En particular, para \(f(x)=-x\), los perfiles
+\(m_c(\theta)=c[1+\theta^q/\Gamma(q+1)]\) son fijos y se aproximan a
+\(E_0\) cuando \(c\to0\). La estabilidad asintótica del reinicio escalar
+no implica atracción de \(E_0\) en todo \(\mathfrak C\). Asimismo, si
+hay equilibrios, la densidad de la cuenca de cualquier conjunto no vacío
+positivamente invariante impide excluir una vecindad abierta de \(E_e\).
+
+\begin{definition}[atracción relativa a familias de reinicio]
+\label{def:geofo-reset-family-attraction}
+El universo de familias de reinicio acotadas es
+\begin{equation}
+ \mathcal D=\{\iota(B):B\subset\mathbb R^n\text{ acotado y no vacío}\}.
+ \label{eq:geofo-reset-universe}
+\end{equation}
+Para estudiar un candidato local se especifica una subfamilia
+\(\mathcal D_A\subseteq\mathcal D\) de datos situados en su región
+candidata de atracción. Un compacto estrictamente invariante \(A\)
+atrae esa familia si todas las soluciones correspondientes son globales y
+\begin{equation}
+ \sup_{x_0\in B}
+ \operatorname{dist}_{\mathfrak C}(S_t\iota(x_0),A)\longrightarrow0,
+ \qquad \iota(B)\in\mathcal D_A.
+ \label{eq:geofo-relative-reset-attraction}
+\end{equation}
+La elección \(\mathcal D_A=\mathcal D\) expresa atracción de todas las
+familias acotadas de reinicios; no se exige esta propiedad global a un
+candidato local.
+\end{definition}
+
+La condición uniforme \cref{eq:geofo-relative-reset-attraction} es una
+propiedad por demostrar, distinta tanto de la atracción punto a punto como
+de atraer un abierto de \(\mathfrak C\). Esta distinción se estudia también
+en el preprint \cite{CuiKloedenXin2026CaputoDynamics}. Su aplicación a un
+sistema concreto exige verificar las hipótesis de atracción. Otra posibilidad es
+construir un espacio de perfiles admisibles
+\(X_{\mathrm{adm}}\subset\mathfrak C\), positivamente invariante y con un
+semiflujo continuo en la topología relativa. Deben definirse la admisibilidad,
+el dominio de existencia y las propiedades del cierre que aseguran la
+continuidad de la evolución.
+
+La proyección \(A_x=\operatorname{ev}_0(A)\) de un compacto funcional es
 compacta porque \(\operatorname{ev}_0\) es continua. No obstante, no debe
 declararse automáticamente \emph{atractor invariante en \(\mathbb R^n\)}: no
 existe, en general, una semidinámica puntual respecto de la cual comprobar esa
@@ -471,7 +605,10 @@ Para orden conmensurable, el criterio de Matignon exige
 como condición de estabilidad asintótica lineal
 \cite{Matignon1996}. Bajo hipótesis adicionales, la estabilidad de
 Mittag--Leffler se extiende al sistema no lineal
-\cite{LiChenPodlubny2009}.
+\cite{LiChenPodlubny2009,CongTuanTrinh2020Asymptotic}. Estas conclusiones
+se refieren al PVI con reinicio; no implican estabilidad atractiva en el
+espacio completo de términos libres, como demuestra
+\cref{eq:geofo-artificial-fixed-profile}.
 
 Geométricamente, \cref{eq:geofo-matignon} describe un sector angular del plano
 espectral. No determina por sí sola:
@@ -493,7 +630,10 @@ de una ODE no se transfieren sustituyendo simplemente \(e^{At}\) por
 \begin{bloqueestudio}{Ejercicios}
 Dibuje \(\iota(\mathbb R^3)\subset\mathfrak C\) para Chua. Compare una bola
 euclídea alrededor de un equilibrio con una bola funcional y construya una
-perturbación de historia que conserve el valor terminal.
+perturbación de historia que conserve el valor terminal. Explique por qué
+esta perturbación no pertenece automáticamente a un espacio de perfiles
+admisibles y por qué la densidad de la cuenca en todo \(\mathfrak C\) no
+implica densidad de su sección de reinicio.
 \end{bloqueestudio}
 \fi
 \label{subsec:geofo-two-basins}
@@ -513,20 +653,31 @@ es
  \subset\mathbb R^n.
  \label{eq:geofo-reset-basin}
 \end{equation}
+Aquí se supone que el semiflujo está definido en los perfiles considerados.
+En un espacio restringido \(X_{\mathrm{adm}}\), se usa
+\(\iota^{-1}[\mathcal B_{X_{\mathrm{adm}}}(A)]\) y se incluyen sólo los
+reinicios cuya imagen pertenece a dicho espacio. La igualdad de conjuntos
+expresa atracción puntual; no demuestra la atracción uniforme de familias
+de \cref{eq:geofo-relative-reset-attraction}.
 
-\begin{definition}[definición propuesta de ocultedad funcional]
-Sea \(A\subset\mathfrak C\) un atractor y sean \(E_e\) los perfiles fijos de
-todos los equilibrios. Diremos que \(A\) es funcionalmente oculto respecto de
-esos equilibrios si para cada \(e\) existe una vecindad abierta
-\(U_e\subset\mathfrak C\) de \(E_e\) tal que
+\begin{definition}[ocultedad funcional relativa a perfiles admisibles]
+Supóngase construido un espacio \(X_{\mathrm{adm}}\subset\mathfrak C\)
+positivamente invariante, con semiflujo continuo en la topología relativa y
+que contenga los perfiles \(E_e\) de los equilibrios considerados.
+Sea \(A\subset X_{\mathrm{adm}}\) un atractor local en ese espacio.
+Diremos que \(A\) es funcionalmente oculto respecto de esos equilibrios si
+para cada \(e\) existe una vecindad \(U_e\) de \(E_e\), abierta en
+\(X_{\mathrm{adm}}\), tal que
 \begin{equation}
- U_e\cap\mathcal B_{\mathfrak C}(A)=\varnothing.
+ U_e\cap\mathcal B_{X_{\mathrm{adm}}}(A)=\varnothing.
  \label{eq:geofo-functional-hiddenness}
 \end{equation}
 \end{definition}
 
 \begin{definition}[ocultedad sobre la sección de reinicio]
-Diremos que \(A\) es oculto bajo la convención de reinicio si para cada
+Sea \(A\) un compacto invariante cuya atracción respecto de una familia
+\(\mathcal D_A\) esté establecida. Diremos que \(A\) es oculto bajo la
+convención de reinicio si para cada
 equilibrio \(e\) existe \(\rho_e>0\) tal que
 \begin{equation}
  B_{\mathbb R^n}(e,\rho_e)
@@ -535,10 +686,15 @@ equilibrio \(e\) existe \(\rho_e>0\) tal que
 \end{equation}
 \end{definition}
 
-La primera condición implica la segunda porque \(\iota\) es continua. El
-recíproco es falso en general: puede existir una memoria no constante muy
-próxima a \(E_e\) que llegue a \(A\), aunque ningún perfil constante cercano
-lo haga. Por tanto,
+La primera condición implica la exclusión de cuenca de
+\cref{eq:geofo-reset-hiddenness} si, para cada equilibrio, existe una
+vecindad euclídea \(V_e\) tal que \(\iota(V_e)\subset X_{\mathrm{adm}}\)
+y se usa la misma cuenca relativa. En efecto, la continuidad de
+\(\iota:V_e\to X_{\mathrm{adm}}\) hace que la preimagen de \(U_e\)
+contenga una bola alrededor de \(e\). La implicación inversa no se deduce:
+los perfiles constantes no agotan las direcciones funcionales admisibles.
+La atracción uniforme de \(\mathcal D_A\) sigue siendo una hipótesis
+separada. Bajo esas condiciones,
 \begin{equation}
  \text{ocultedad funcional}
  \Longrightarrow
@@ -551,14 +707,66 @@ lo haga. Por tanto,
 \input{report_diagrams/caputo_04_cuenca_funcional}
 
 \begin{proposalbox}
-Las definiciones anteriores constituyen una adaptación conservadora del
-criterio clásico de cuenca, no una definición universal ya aceptada de atractor
-oculto fraccionario. El nivel actualmente verificable por el
-software es \cref{eq:geofo-reset-hiddenness}, con radios, malla, integrador,
-terminal inferior y política de memoria declarados. La condición funcional
-\cref{eq:geofo-functional-hiddenness} requiere un análisis y un muestreo
-adicionales del espacio funcional.
+La ocultedad funcional en todo \(\mathfrak C\) está descartada por
+\cref{prop:geofo-full-space-obstruction} cuando existen equilibrios; su
+formulación relativa requiere construir y justificar
+\(X_{\mathrm{adm}}\). Los sondeos finitos aproximan la condición
+\cref{eq:geofo-reset-hiddenness} con radios, malla, integrador, terminal
+inferior y política de memoria declarados. Esos sondeos no verifican toda una
+bola de reinicios ni prueban por sí solos la atracción uniforme de
+\(\mathcal D_A\). Los sondeos no constantes tampoco sustituyen la
+construcción del espacio admisible.
 \end{proposalbox}
+
+\subsection{Estabilidad local y separación de cuencas de reinicio}
+
+La estabilidad de los equilibrios puede aportar una exclusión de cuenca
+demostrable. El paso necesario consiste en relacionar la convergencia de
+estados con la de sus perfiles heredados.
+
+\begin{proposition}[separación respecto de un equilibrio atractivo]
+\label{prop:geofo-reset-equilibrium-separation}
+Sea \(f\) continuo y supóngase bien planteado el PVI con reinicio. Si una
+solución global satisface \(x(t)\to e\), con \(f(e)=0\), entonces
+\(m_t\to E_e\) en \(\mathfrak C\). En consecuencia, si todos los
+reinicios de una vecindad \(V_e\) convergen a \(e\) y un compacto
+\(A\subset\mathfrak C\) no contiene a \(E_e\), se tiene
+\[
+ V_e\cap\mathcal B_{\mathrm{reset}}(A)=\varnothing.
+\]
+\end{proposition}
+
+\begin{proof}
+La ecuación de continuación permite escribir
+\[
+ m_t(\theta)-e=x(t+\theta)-e
+ -\frac1{\Gamma(q)}\int_0^\theta
+   (\theta-s)^{q-1}f(x(t+s))\,\mathrm ds.
+\]
+Por tanto, para cada \(\Theta>0\),
+\begin{align*}
+ \sup_{0\leq\theta\leq\Theta}\|m_t(\theta)-e\|
+ &\leq\sup_{u\in[t,t+\Theta]}\|x(u)-e\|\\
+ &\quad+\frac{\Theta^q}{\Gamma(q+1)}
+       \sup_{u\in[t,t+\Theta]}\|f(x(u))\|
+ \longrightarrow0.
+\end{align*}
+Esto es convergencia uniforme en compactos. Como \(A\) es compacto y
+\(E_e\notin A\), la distancia
+\(\operatorname{dist}_{\mathfrak C}(E_e,A)\) es positiva.
+Una órbita de perfiles que converge a \(E_e\) no puede aproximarse también
+a \(A\), lo que prueba la exclusión.
+\end{proof}
+
+Si todos los equilibrios satisfacen un teorema de estabilidad asintótica local
+para reinicios, y un compacto invariante \(A\) no contiene ninguno de sus
+perfiles, esta proposición establece la separación exigida por
+\cref{eq:geofo-reset-hiddenness}. Para clasificar \(A\) como atractor
+oculto queda por demostrar su atracción respecto de la familia
+\(\mathcal D_A\). Así, Matignon y el teorema no lineal correspondiente
+pueden excluir regiones próximas a los equilibrios, mientras la localización
+del candidato debe buscarse fuera de ellas. La conclusión concierne a
+reinicios; no establece ocultedad funcional en todo \(\mathfrak C\).
 
 Si el sistema no tiene equilibrios, como el candidato de Muñoz--Pacheco, la
 condición basada en vecindades de equilibrios se vuelve vacía. Es preferible
@@ -627,8 +835,7 @@ Una formulación intrínseca de derivadas fraccionarias sobre una variedad debe
 especificar cómo comparar datos situados en espacios tangentes de tiempos
 distintos, por ejemplo mediante una conexión, transporte paralelo o una
 inmersión ambiente. El Caputo componente a componente es una formulación
-extrínseca en \(\mathbb R^n\); no se reclama independencia
-respecto de cartas no lineales.
+extrínseca en \(\mathbb R^n\) y depende de la carta física elegida.
 \end{remark}
 
 \subsection{Secciones de Poincaré: de mapa puntual a operador funcional}
@@ -702,11 +909,14 @@ las coordenadas observadas o la existencia de una variedad inercial adecuada.
 \subsection{Periodicidad exacta y recurrencia: distinciones terminológicas}
 
 Para terminal inferior finito, orden no entero y las hipótesis regulares
-consideradas en la literatura, una solución no constante de un sistema Caputo
-autónomo no puede ser exactamente periódica
+consideradas en la literatura, una solución no constante del PVI con reinicio
+de un sistema Caputo autónomo no puede ser exactamente periódica
 \cite{TavazoeiHaeri2009,KaslikSivasundaram2012}. La razón estructural es que la
 derivada fraccionaria de una función periódica no conserva, en general, el
 mismo período; el kernel sigue recordando el arranque.
+La afirmación no se extiende a soluciones con términos libres arbitrarios
+\(m\in\mathfrak C\), que pueden construirse a partir de una curva
+prescrita mediante \(m=y-I^qf(y)\).
 
 Esto no impide observar curvas cerradas con precisión gráfica, oscilaciones
 persistentes o recurrencia muy fuerte. Estas observaciones motivan dos medidas
@@ -733,11 +943,39 @@ operador funcional como \(\mathcal P\), no únicamente a la nube proyectada.
 
 \subsection{Exponentes, entropía y límites de la evidencia numérica}
 
-La ecuación variacional formal a lo largo de una trayectoria es
+Para $f\in C^1$ en una región que contenga las trayectorias próximas
+durante un horizonte finito, la derivación respecto del dato inicial de
+la ecuación de Volterra da
+\begin{equation}
+ Y(t)=I+\frac1{\Gamma(q)}\int_0^t(t-s)^{q-1}J_f(x(s))Y(s)\,\mathrm ds.
+ \label{eq:geofo-tangent-volterra}
+\end{equation}
+Para justificar el paso, se consideran cocientes incrementales del dato
+inicial. El teorema fundamental del cálculo expresa la diferencia del
+campo mediante la integral de $Df$ sobre el segmento entre ambas
+soluciones. La continuidad uniforme de $Df$ en el compacto y Gronwall
+fraccionario hacen converger esos cocientes a la única solución de
+\cref{eq:geofo-tangent-volterra}. En campos no suaves esta diferenciabilidad
+requiere un argumento adicional. La ecuación variacional a lo largo de
+la trayectoria es
 \begin{equation}
  {}^{\mathrm C}D_{0+}^{q}\xi(t)=J_f(x(t))\xi(t).
- \label{eq:geofo-fractional-variational}
+\label{eq:geofo-fractional-variational}
 \end{equation}
+El efecto de la reortogonalización se obtiene algebraicamente. Si
+$Y(\tau)=QR$, con $R$ invertible, el cambio de base $Z(t)=Y(t)R^{-1}$
+satisface
+\[
+ Z(t)=R^{-1}+\frac1{\Gamma(q)}\int_0^t(t-s)^{q-1}
+ J_f(x(s))Y(s)R^{-1}\,\mathrm ds.
+\]
+Además del valor $Z(\tau)=Q$, deben transformarse el dato inicial tangente
+y todos los valores históricos del integrando. Reiniciar en $\tau$ usando
+sólo $Q$ elimina la contribución del pasado, que depende del tiempo futuro
+cuando $0<q<1$. Para $q=1$ dicha contribución se reduce al estado tangente
+en $\tau$. La invertibilidad de $R$ se comprueba: no se atribuyen sin
+demostración a la matriz fundamental fraccionaria todas las propiedades
+de la correspondiente matriz de una EDO.
 También ella conserva memoria. Un exponente positivo calculado con una técnica
 fraccionaria apropiada aporta evidencia de crecimiento de perturbaciones, pero
 no demuestra por sí solo una herradura de Smale, conjugación a un corrimiento,
@@ -759,8 +997,8 @@ De forma análoga:
 
 \subsection{Puntos perpetuos vistos desde el espacio funcional}
 
-La \cref{sec:perpetual-points} introdujo dos construcciones que admiten una
-interpretación geométrica.
+Las dos construcciones de puntos perpetuos de \cref{sec:perpetual-points}
+actúan sobre objetos geométricos diferentes.
 
 \paragraph{FPP--A: semilla sobre la sección de reinicio.}
 Una raíz
@@ -790,6 +1028,12 @@ reconstruir de manera única todos los valores pasados usados por el diagnóstic
 secuencial.
 
 \input{report_diagrams/caputo_06_fppa_fpph}
+
+En campos afines globales, la linealidad de Caputo hace coincidir las
+expresiones \(\mathcal A_{q,q}[x](t)\) y \(J_ff(x(t))\). En Chua PWL,
+esa coincidencia es local mientras toda la memoria relevante permanezca
+en una misma región; después de cruzar una frontera, FPP--H conserva
+contribuciones de las regiones anteriores.
 
 \begin{table}[ht]
 \centering
@@ -882,16 +1126,20 @@ funcionales de memoria.
   \qquad \|\alpha\|\leq\delta,
   \label{eq:geofo-history-probes}
  \end{equation}
- con funciones base continuas \(\psi_k\). Integrar la ecuación de Volterra
- generalizada y buscar contacto con la cuenca. Este muestreo no prueba una
- bola abierta completa en \(\mathfrak C\), pero puede refutar una afirmación
- funcional demasiado fuerte.
+ con funciones base continuas \(\psi_k\). Si se pretende estudiar ocultedad
+ funcional, demostrar primero que los perfiles pertenecen al espacio
+ \(X_{\mathrm{adm}}\) declarado e integrar su continuación sin abandonar
+ ese espacio. Sin esa justificación, son sondeos de la extensión de Volterra,
+ útiles para estudiar sensibilidad al término libre, pero no pruebas sobre
+ memorias admisibles. La atracción abierta en todo \(\mathfrak C\) ya está
+ descartada analíticamente por \cref{prop:geofo-full-space-obstruction}.
 
  \item \textbf{Separar niveles de conclusión.} Exigir, en orden: identidad
  algebraica; convergencia del integrador; conjunto acotado persistente;
- recurrencia funcional; atracción de una familia de perfiles; separación de
- cuenca de reinicio; y, sólo con argumentos adicionales, ocultedad funcional o
- caos topológico.
+ recurrencia funcional; atracción de una familia local \(\mathcal D_A\)
+ de reinicios o de perfiles admisibles; separación de cuenca de reinicio; y,
+ sólo en un \(X_{\mathrm{adm}}\) construido y con argumentos adicionales,
+ ocultedad funcional o caos topológico.
 \end{enumerate}
 
 Para órdenes inconmensurables \(q_j\), el perfil se define componente a
@@ -931,71 +1179,79 @@ Al poner \(\theta=0\) se recupera \(m_t(0)=x(t)\), pero para
 
 Este ejemplo permite identificar todos los objetos:
 \begin{itemize}
- \item el punto fijo funcional es \(E_0(\theta)\equiv0\);
+ \item el único perfil constante de equilibrio es \(E_0(\theta)\equiv0\);
  \item la órbita verdadera es \(\{m_t:t\geq0\}\subset\mathfrak C\);
  \item la curva \(x(t)\) es su proyección por \(\operatorname{ev}_0\);
  \item toda la recta pertenece a la cuenca de reinicio de \(E_0\);
  \item las aplicaciones puntuales no forman un semigrupo por
  \cref{eq:geofo-false-ml-product};
- \item no hay ciclo periódico no constante ni posibilidad de atractor oculto.
+ \item ningún reinicio produce un ciclo periódico no constante ni un
+ destino oculto diferente de \(E_0\).
 \end{itemize}
+La \cref{prop:geofo-reset-equilibrium-separation} asegura la convergencia
+de cada perfil a \(E_0\). En este caso, la estimación de su demostración es
+\[
+ \sup_{0\leq\theta\leq\Theta}|m_t(\theta)|
+ \leq\left(1+\frac{a\Theta^q}{\Gamma(q+1)}\right)
+       \sup_{u\in[t,t+\Theta]}|x(u)|\longrightarrow0.
+\]
+La cota es uniforme para \(x_0\) en conjuntos acotados, de modo que
+\(\{E_0\}\) atrae el universo \(\mathcal D\). Sin embargo, no atrae
+ninguna vecindad abierta de \(E_0\) en todo \(\mathfrak C\): cada una
+contiene puntos fijos artificiales
+\cref{eq:geofo-artificial-fixed-profile} con \(c\ne0\).
 La relajación escalar constituye un caso de verificación para comprobar que
 una implementación distingue continuación y reinicio antes de estudiar Chua.
 
-\subsection{Estatus de resultados, adaptaciones y problemas abiertos}
+\subsection{Alcance de los resultados geométricos}
 
 \begin{longtable}{@{}L{0.22\linewidth}L{0.34\linewidth}L{0.36\linewidth}@{}}
-\caption{Clasificación por estatus teórico de la reformulación geométrica Caputo.}
+\caption{Resultados y condiciones del análisis geométrico de Caputo.}
 \label{tab:geofo-theory-boundary}\\
 \toprule
-Nivel & Contenido & Estatus \\
+Tipo de resultado & Contenido & Fundamento o condición \\
 \midrule
 \endfirsthead
 \toprule
-Nivel & Contenido & Estatus \\
+Tipo de resultado & Contenido & Fundamento o condición \\
 \midrule
 \endhead
 Teoría establecida & Equivalencia Caputo--Volterra; ausencia general de
 semigrupo sobre \(\mathbb R^n\); semidinámica sobre \(\mathfrak C\); criterio
-de Matignon; no periodicidad exacta bajo hipótesis finitas. &
+de Matignon para reinicios; no periodicidad exacta de soluciones no constantes
+del PVI bajo hipótesis finitas. &
 Respaldado por
 \cite{Matignon1996,CongTuan2017Nonlocal,DoanKloeden2021Semidynamical,
 TavazoeiHaeri2009,KaslikSivasundaram2012}.\\
 Consecuencia directa & Perfil \(m_t\), separación algebraica de memoria,
 identidades de continuar frente a reiniciar, proyección
-\(\operatorname{ev}_0\) y operador de retorno funcional. &
-Consecuencia derivada de la formulación establecida; no se reclama como teorema nuevo.\\
-Formulación metodológica & Jerarquía entre cuenca funcional y cuenca de
-reinicio; definición operacional de ocultedad funcional; protocolo C1--C10;
+\(\operatorname{ev}_0\), operador de retorno funcional y obstrucción de
+atracción abierta en todo \(\mathfrak C\). &
+Derivación algebraica de los perfiles y
+\cref{prop:geofo-full-space-obstruction}.\\
+Resultado para Lorenz & Existencia global y absorción de reinicios;
+precompacidad de sus perfiles para cada familia acotada. &
+Demostrado para los parámetros indicados en
+\cref{prop:geofo-lorenz-boundedness,prop:geofo-profile-precompact}; no
+certifica un destino caótico u oculto.\\
+Atracción y cuencas & Jerarquía entre cuenca funcional y cuenca de
+reinicio con hipótesis de admisibilidad; atracción relativa a
+\(\mathcal D_A\); ocultedad en \(X_{\mathrm{adm}}\); protocolo C1--C10;
 interpretación geométrica complementaria de función descriptiva, continuación y
 FPP--A/FPP--H. &
-Formulación que requiere contraste con más literatura y ejemplos.\\
-Abierto para los casos & Existencia de atractores compactos funcionales,
-regiones absorbentes para Lorenz/RF, perturbaciones funcionales cerca de
+Formulación relativa que requiere construir el espacio admisible y demostrar
+la atracción de las familias declaradas.\\
+Problemas de los modelos & Identificación y atracción de candidatos concretos;
+regiones absorbentes para RF, perfiles admisibles cerca de
 equilibrios y convergencia de retornos con memoria. &
 No se deduce de la evidencia finita presentada.\\
-Abierto de largo alcance & Variedades estables/inestables intrínsecas,
+Estructuras globales & Variedades estables/inestables intrínsecas,
 homoclinicidad, índice de Conley, descomposición de Morse, entropía topológica,
 herraduras y geometría fractal de cuencas en el espacio funcional. &
-Programa de investigación; no debe inferirse de retratos, FFT o exponentes
-aislados.\\
+Requieren un espacio de fases apropiado y argumentos globales de invariancia,
+aislamiento o intersección transversal.\\
 \bottomrule
 \end{longtable}
-
-\begin{hallazgo}{Síntesis de la formulación geométrica}
-El modelo Caputo no elimina la teoría geométrica: obliga a cambiar su espacio
-de fase. El estado puntual es una coordenada observable; el perfil de memoria
-es el estado dinámico. Las semillas de Lur'e, Machado y FPP--A entran por una
-sección de reinicio; la continuación causal recorre perfiles; FPP--H diagnostica
-una historia; y la ocultedad se evalúa primero en la cuenca de reinicio y, sólo
-con evidencia adicional, en una vecindad funcional. Esta jerarquía permite que
-los métodos se complementen sin atribuir a ninguno una prueba que no posee.
-\end{hallazgo}
-
-En campos afines globales, la linealidad de Caputo hace coincidir ambas
-construcciones. En Chua PWL, esa coincidencia sólo es local mientras toda la memoria
-relevante permanezca en una misma región; después de cruzar una frontera, el
-evento FPP--H conserva contribuciones de las regiones anteriores.
 
 \subsection{Conexión con la función descriptiva y la continuación causal}
 
@@ -1049,7 +1305,10 @@ local no puede aplicarse retrospectivamente a toda la convolución.
 Los equilibrios \(e_j\) se levantan a perfiles fijos \(E_{e_j}\). Los sondeos
 esféricos realizados alrededor de \(e_j\) exploran únicamente
 \(\iota[B(e_j,\rho)]\). Para fortalecer la afirmación topológica habría que
-perturbar también perfiles no constantes próximos a \(E_{e_j}\).
+construir primero un espacio \(X_{\mathrm{adm}}\) adecuado y después
+estudiar perfiles no constantes próximos a \(E_{e_j}\) dentro de él.
+La suavidad y la existencia global sobre \(\mathfrak C\) no eliminan
+la obstrucción de \cref{prop:geofo-full-space-obstruction}.
 
 En Chua arctangente, la suavidad permite calcular sin ambigüedad \(J_f\), la
 linealización de Matignon y FPP--A. Aun así, la semilla sesgada y el cierre de
@@ -1059,18 +1318,228 @@ demuestran invariancia funcional.
 \subsubsection{Lorenz generalizado y Rabinovich--Fabrikant}
 
 Los campos de Lorenz y RF son suaves, pero polinomiales y no globalmente
-Lipschitz. Para interpretar los conjuntos numéricos observados como atractores
-funcionales se necesitan dos pasos que esta formulación todavía no contiene:
-\begin{enumerate}
- \item demostrar existencia global o una región absorbente hacia adelante;
- \item demostrar asintótica compacidad de la semidinámica en el espacio
- funcional apropiado.
-\end{enumerate}
-Los cálculos de equilibrios, espectros de Matignon y realizaciones de Lur'e de
-la \cref{part:nonchua} son válidos localmente, pero no completan esos dos
-pasos. Los puntos perpetuos calculados para ambos sistemas son semillas FPP--A
-de referencia hasta que se ejecute una integración Caputo con memoria completa
-y un protocolo de cuenca.
+Lipschitz. En el Lorenz generalizado de \cref{part:nonchua}, la estructura
+cuadrática permite cerrar la existencia global y la absorción para reinicios.
+
+\begin{proposition}[existencia global y absorción del Lorenz generalizado]
+\label{prop:geofo-lorenz-boundedness}
+Sean \(\sigma=3.4\), \(r=6.8\), \(a=-0.5\), un orden conmensurable
+\(0<q\leq1\) y un terminal inferior fijo, tomado como cero. Para el campo
+\begin{equation}
+ F(x,y,z)=\begin{pmatrix}
+ -3.4(x-y)+0.5yz\\
+ 6.8x-y-xz\\
+ -z+xy
+ \end{pmatrix},
+ \qquad
+ V(x,y,z)=x^2+y^2+\tfrac12(z-20.4)^2,
+ \label{eq:geofo-lorenz-lyapunov}
+\end{equation}
+todo PVI de Caputo con reinicio \(X(0)=X_0\in\mathbb R^3\) tiene una
+solución global única y satisface
+\begin{equation}
+ V(X(t))\leq V(X_0)E_q(-t^q)
+       +208.08\,[1-E_q(-t^q)].
+ \label{eq:geofo-lorenz-comparison}
+\end{equation}
+En particular,
+\begin{equation}
+ V(X(t))\leq\max\{V(X_0),208.08\},
+ \qquad \limsup_{t\to\infty}V(X(t))\leq208.08.
+ \label{eq:geofo-lorenz-ultimate-bound}
+\end{equation}
+Para cada \(\varepsilon>0\), el elipsoide
+\(\{X:V(X)\leq208.08+\varepsilon\}\) absorbe las trayectorias de
+cualquier familia acotada de reinicios, con tiempo de entrada uniforme
+para esa familia.
+\end{proposition}
+
+\begin{proof}
+Primero supóngase \(0<q<1\). La suavidad del campo da existencia y unicidad
+local. En cualquier intervalo
+compacto anterior al tiempo maximal, la solución pertenece a la clase
+\(X-X_0=I^qF(X)\), con \(F(X)\) acotado. La desigualdad de composición
+para funciones convexas en esta clase de soluciones
+\cite[Lema~3.1]{Gomoyunov2018Convex} se aplica a
+\(\xi=X-X_0\) y \(W(\xi)=V(X_0+\xi)-V(X_0)\): así,
+\(\xi(0)=0\), \(W(0)=0\), y la Hessiana constante
+\(D^2W=\operatorname{diag}(2,2,1)\) es positiva definida.
+Por tanto, \(W\) es convexa y \(\nabla W\) es Lipschitz.
+El lema garantiza asimismo
+\(V(X(\cdot))-V(X_0)\in I^q(L^\infty)\) en cada intervalo compacto;
+la derivada y la posterior comparación escalar están definidas en esa clase.
+Se obtiene
+\({}^{\mathrm C}D^qV(X(t))\leq\nabla V(X(t))\cdot F(X(t))\)
+para casi todo \(t\) del intervalo considerado.
+No se utiliza una regla de cadena fraccionaria con igualdad. Para precisar
+el signo en el caso suave, fije $t$ y ponga
+\[
+ \Phi(s)=V(X(s))-V(X(t))-\nabla V(X(t))\cdot(X(s)-X(t))\ge0.
+\]
+La convexidad da la desigualdad y $\Phi(t)=0$. La diferencia entre
+${}^{\mathrm C}D^q[V(X)](t)$ y
+$\nabla V(X(t))\cdot{}^{\mathrm C}D^qX(t)$, multiplicada por
+$\Gamma(1-q)$, es
+\[
+ \int_0^t(t-s)^{-q}\Phi'(s)\,\mathrm ds
+ =-t^{-q}\Phi(0)-q\int_0^t(t-s)^{-q-1}\Phi(s)\,\mathrm ds\le0.
+\]
+La integración por partes se realiza primero hasta $t-\varepsilon$.
+Si $X$ y $\nabla V$ son Lipschitz, $\Phi(s)=O((t-s)^2)$;
+el término de extremo tiende a cero y la integral converge.
+El lema citado extiende el argumento por aproximación a la clase
+$I^q(L^\infty)$ usada aquí, sin exigir esa regularidad ordinaria de la
+trayectoria. El cálculo algebraico es
+\begin{align}
+ \nabla V\cdot F
+ &=2x[-3.4(x-y)+0.5yz]
+   +2y[6.8x-y-xz]\nonumber\\
+ &\quad +(z-20.4)(-z+xy)\nonumber\\
+ &=-6.8x^2-2y^2-z^2+20.4z\nonumber\\
+ &=-V+208.08-5.8x^2-y^2-\tfrac12z^2
+ \leq -V+208.08.
+ \label{eq:geofo-lorenz-dissipation}
+\end{align}
+Los términos cúbicos suman \((1-2+1)xyz=0\), y el coeficiente de
+\(xy\) es \(6.8+13.6-20.4=0\). Además,
+\(\tfrac12(20.4)^2=208.08\), lo que da la última igualdad.
+
+Para detallar la comparación escalar, sea \(v(t)=V(X(t))\) y escriba
+\(r(t)=208.08-v(t)-{}^{\mathrm C}D^qv(t)\geq0\) casi en todas partes.
+El residuo \(r\) pertenece a \(L^\infty\) en cada horizonte finito.
+La fórmula de variación de constantes de
+\({}^{\mathrm C}D^qv=-v+208.08-r\), obtenida al resolver su ecuación
+integral lineal, es
+\begin{align*}
+ v(t)&=v(0)E_q(-t^q)+208.08[1-E_q(-t^q)]\\
+ &\quad-\int_0^t(t-s)^{q-1}E_{q,q}(-(t-s)^q)r(s)\,\mathrm ds.
+\end{align*}
+El término constante se integra usando
+\(\int_0^t u^{q-1}E_{q,q}(-u^q)\,\mathrm du=1-E_q(-t^q)\).
+Esta identidad y
+\[
+ t^{q-1}E_{q,q}(-t^q)
+ =-\frac{\mathrm d}{\mathrm dt}E_q(-t^q)
+\]
+se deducen al integrar y derivar la serie de Mittag--Leffler, respectivamente.
+Para \(0<q<1\), \(E_q(-t^q)\) es positiva y decreciente
+\cite{Podlubny1999}; el núcleo de la integral sustraída es, por tanto,
+no negativo. Se obtiene
+\cref{eq:geofo-lorenz-comparison}. Puesto que
+\(0<E_q(-t^q)\leq1\) y \(E_q(-t^q)\to0\), se obtiene
+\cref{eq:geofo-lorenz-ultimate-bound} mientras exista la solución.
+
+La función \(V\) es coerciva: sus subniveles son compactos. La cota anterior
+mantiene la solución maximal en uno de ellos, \(K\). Para excluir un tiempo
+maximal finito \(T_*\), elija un corte suave igual a uno en una vecindad de
+\(K\) y de soporte compacto. El campo recortado es globalmente Lipschitz y
+su PVI de Volterra tiene solución global. Por unicidad, ésta coincide con la
+original en \([0,T_*)\). Por continuidad, su estado en \(T_*\) pertenece
+a \(K\), y permanece en la vecindad donde ambos campos coinciden durante
+un intervalo posterior. La misma solución integral, con toda su historia,
+prolonga entonces el PVI original más allá de \(T_*\), contradicción.
+La solución es global. Si \(B\) es un
+conjunto acotado de reinicios, \(C_B=\sup_{X_0\in B}V(X_0)<\infty\), y
+\[
+ \sup_{X_0\in B}V(X(t;X_0))
+ \leq208.08+(C_B-208.08)_+E_q(-t^q).
+\]
+El último término es menor que \(\varepsilon\) para todo tiempo
+suficientemente grande, uniformemente en \(B\). Para \(q=1\) se usa
+la desigualdad ordinaria y \(E_1(-t)=e^{-t}\).
+\end{proof}
+
+\begin{proposition}[precompacidad de perfiles de reinicios acotados]
+\label{prop:geofo-profile-precompact}
+Sea una familia de soluciones globales con reinicio de orden
+\(0<q<1\), cuyos estados y campos satisfagan uniformemente
+\(\|X(t)\|\leq R\) y \(\|F(X(t))\|\leq M\) para \(t\geq0\).
+Entonces sus perfiles heredados verifican, para
+\(0\leq\theta_1\leq\theta_2\),
+\begin{align}
+ \|m_t(\theta_2)-m_t(\theta_1)\|
+ &\leq\frac{M}{\Gamma(q+1)}|\theta_2-\theta_1|^q,
+ \label{eq:geofo-profile-holder}\\
+ \|m_t(\theta)\|&\leq R+\frac{M\theta^q}{\Gamma(q+1)}.
+ \label{eq:geofo-profile-bound}
+\end{align}
+La unión de estas órbitas de perfiles es precompacta en
+\(\mathfrak C\). En particular, el resultado se aplica al Lorenz anterior
+para cada conjunto acotado de reinicios, incluido \(q=0.995\).
+\end{proposition}
+
+\begin{proof}
+La monotonía de \(s^{q-1}\) permite acotar la diferencia de las integrales
+que definen \(m_t\) por
+\[
+ \frac{M}{\Gamma(q+1)}
+ \bigl[(t+\theta_1)^q-\theta_1^q
+       -(t+\theta_2)^q+\theta_2^q\bigr].
+\]
+Como \((t+\theta_1)^q\le(t+\theta_2)^q\), el corchete es a lo sumo
+\(\theta_2^q-\theta_1^q\). La subaditividad de \(s^q\) da
+\(\theta_2^q=(\theta_1+\theta_2-\theta_1)^q
+\le\theta_1^q+(\theta_2-\theta_1)^q\), de donde resulta
+\cref{eq:geofo-profile-holder}.
+Como \(m_t(0)=X(t)\), se obtiene también
+\cref{eq:geofo-profile-bound}. En cada intervalo \([0,\Theta]\), los
+perfiles están uniformemente acotados y son equicontinuos. El teorema de
+Arzelà--Ascoli proporciona una subsucesión convergente en \([0,1]\), de
+ella otra en \([0,2]\), y así sucesivamente. La diagonal converge en cada
+compacto a un perfil continuo; los límites coinciden en los intervalos
+superpuestos. Para la métrica \cref{eq:geofo-compact-open-metric}, se fija
+primero \(N\) con \(2^{-N}<\varepsilon/2\) y después se hace menor que
+\(\varepsilon/2\) la suma de los primeros \(N\) términos mediante esa
+convergencia uniforme. La cola es menor que \(2^{-N}\). Así, toda sucesión
+tiene una subsucesión convergente en \(\mathfrak C\), lo que demuestra
+precompacidad.
+Para Lorenz, \cref{prop:geofo-lorenz-boundedness} proporciona un compacto
+común para los estados de la familia, y la continuidad de \(F\) da \(M\).
+\end{proof}
+
+Para interpretar el cierre como espacio dinámico no se invoca la proposición
+global de \(\mathfrak C\) directamente con el campo polinomial. Fijado
+un conjunto acotado de reinicios \(B\), se toma una extensión globalmente
+Lipschitz \(\widetilde F\) que coincide con \(F\) en un entorno del
+compacto común visitado; un corte suave de soporte compacto la proporciona.
+El semiflujo de \(\widetilde F\) coincide con el original en esas órbitas.
+Su continuidad muestra que el cierre de la unión de órbitas es compacto y
+positivamente invariante. En cualquier perfil de ese cierre, los estados de
+su continuación permanecen en el mismo compacto, por continuidad de
+\(\operatorname{ev}_0S_t\); por tanto, allí también coinciden ambos campos.
+Se obtiene así un semiflujo continuo del Lorenz original sobre ese cierre.
+Cada órbita tiene un conjunto \(\omega\)-límite no vacío y compacto.
+Su invariancia positiva se sigue de la continuidad. Para la inclusión
+inversa, si \(a=\lim_jS_{t_j}m\) y \(s>0\), la compacidad permite
+extraer una subsucesión \(S_{t_j-s}m\to b\in\omega(m)\); entonces
+\(S_sb=a\). Así, \(S_s\omega(m)=\omega(m)\) sin suponer inversas
+del semiflujo. También atrae la órbita: una sucesión de tiempos con distancia
+positiva uniforme a \(\omega(m)\) tendría, por compacidad, un límite
+perteneciente al propio conjunto, contradicción.
+Esta construcción depende de \(B\):
+no demuestra atracción de un abierto de todo \(\mathfrak C\), no
+identifica un mismo destino para diferentes reinicios y no establece
+ocultedad funcional ni caos.
+
+\ifHAFOPedagogy
+\begin{bloqueestudio}{Ejercicios}
+Compruebe las cancelaciones de \cref{eq:geofo-lorenz-dissipation} y deduzca
+cotas explícitas para \(|x|\), \(|y|\) y \(|z-20.4|\) a partir de
+\(V\leq C\). Para un conjunto de reinicios con \(V(X_0)\leq C_B\),
+exprese la condición que debe satisfacer el tiempo de absorción en términos
+de \(E_q(-t^q)\) y \(\varepsilon\). Justifique cada uso de
+Arzelà--Ascoli en \cref{prop:geofo-profile-precompact} y explique por qué
+estas cotas no prueban la existencia de un atractor oculto concreto.
+\end{bloqueestudio}
+\fi
+
+En Rabinovich--Fabrikant permanecen pendientes una cota que excluya explosión
+en el dominio pertinente y el control correspondiente de perfiles. La
+estimación de Lorenz no se transfiere a RF sin una demostración propia.
+Los cálculos de equilibrios, espectros y realizaciones de Lur'e de
+\cref{part:nonchua}, así como las semillas FPP--A, deben complementarse
+con reproducción Caputo y estudio de cuenca para identificar los destinos
+dinámicos de ambos modelos.
 
 La simetría puntual de Lorenz o RF puede levantar una simetría funcional
 mediante aplicación punto a punto si conmuta con el campo y con el kernel. Esa
@@ -1085,7 +1554,8 @@ parámetros considerados \cite{munoz2018}. Sus cuatro raíces FPP--A verificadas
 proporcionan estados de arranque algebraicamente motivados. El cálculo
 presentado demuestra integración finita desde esas semillas, pero no certifica:
 \begin{itemize}
- \item un atractor compacto en \(\mathfrak C\);
+ \item un compacto invariante con atracción de una familia local
+ \(\mathcal D_A\) de reinicios;
  \item convergencia de las cuatro memorias hacia el mismo conjunto;
  \item un evento FPP--H estable bajo refinamiento;
  \item una propiedad topológica de caos.
@@ -1101,18 +1571,21 @@ aplicar de forma vacía el criterio clásico de vecindades de equilibrios.
 \label{tab:geofo-case-program}
 \begin{tabularx}{\linewidth}{@{}L{0.20\linewidth}L{0.31\linewidth}Y@{}}
 \toprule
-Familia & Objeto establecido en este volumen & Comprobación geométrica requerida \\
+Familia & Resultados disponibles & Problema geométrico \\
 \midrule
 Chua PWL fraccionario & Perfiles de reinicio, continuación causal, sondeos
-puntuales y regiones PWA & Perturbaciones funcionales cerca de perfiles de
-equilibrio y retornos con memoria.\\
+puntuales y regiones PWA & Espacio de perfiles admisibles, atracción relativa
+y retornos con memoria.\\
 Chua arctangente & Campo suave, Matignon, semillas sesgadas, Machado y FPP--A &
-Comparar continuación heredada con reinicio y construir cuenca funcional
-aproximada.\\
-Lorenz \(q=0.995\) & Álgebra, equilibrios, espectros y FPP--A de referencia &
-Existencia global, región absorbente, reproducción dinámica y cuenca.\\
+Comparar continuación heredada con reinicio y estudiar cuencas en el espacio
+admisible declarado.\\
+Lorenz \(q=0.995\) & Álgebra, equilibrios, espectros, FPP--A; existencia
+global, absorción y precompacidad de perfiles de reinicios acotados &
+Reproducción dinámica, identificación del destino y atracción de
+\(\mathcal D_A\), cuenca y ocultedad de reinicio.\\
 RF \(q=0.998\) & Álgebra, cinco equilibrios, espectros y ocho FPP--A &
-Igual que Lorenz, más deduplicación por simetría en el espacio funcional.\\
+Existencia global y control de perfiles; reproducción y cuenca; deduplicación
+por simetría en el espacio funcional.\\
 Muñoz--Pacheco \(q=0.97\) & Cuatro FPP--A e integración PECE finita con historia completa &
 Convergencia temporal/espacial, destino común y búsqueda FPP--H refinada.\\
 \bottomrule
@@ -1131,8 +1604,9 @@ formularse dos preguntas simultáneas:
  \label{eq:geofo-two-geometric-questions}
 \end{equation}
 La primera produce los retratos de fase y es indispensable para interpretar el
-circuito o modelo físico. La segunda decide si existen invariancia, retorno,
-atracción y ocultedad en sentido dinámico. La evaluación
+circuito o modelo físico. La segunda exige declarar el espacio y la familia
+de datos antes de estudiar invariancia, retorno, atracción y ocultedad en
+sentido dinámico. La evaluación
 \(\operatorname{ev}_0\) relaciona el estado funcional con su observación
 puntual, mientras \(\iota\) incorpora las condiciones iniciales convencionales.
 
