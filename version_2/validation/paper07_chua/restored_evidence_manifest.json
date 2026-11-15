@@ -1,0 +1,184 @@
+{
+  "schema_version": "1.0",
+  "artifact_role": "exact_historical_restoration",
+  "created_for": "P03 restoration admission 2026-11-09",
+  "scientific_scope": "Byte-exact recovery of four pre-existing Paper07 figure inputs; not a new integration or scientific reclassification. The original 43-artifact evidence manifest remains unchanged.",
+  "artifact_count": 4,
+  "total_size_bytes": 1711042,
+  "missing_historical_input": "version_2/validation/paper07_chua/evidence/probe_story_trajectories/manifest.json",
+  "artifacts": [
+    {
+      "group": "c590_reconstruction_restored",
+      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/q_scan/summary.json",
+      "size_bytes": 6722,
+      "sha256": "a39e8cb22afcc6b4ab4850ffbab2aaa19325cd93ed189c3bab490ac81c68c30d",
+      "restoration_provenance": {
+        "audit_record_sha256": "da9e832412df18b14f433b9c17eff1d52fb5e7a3b012d54a11a035f829a4e02e",
+        "origins": [
+          {
+            "kind": "working_tree_size_match",
+            "location": "version_2/local_reports/retired_public_docs/paper07_c590_discovery/c590_reconstruction/caputo_seed9/q_scan/summary.json",
+            "bytes": "6722",
+            "sha256": "a39e8cb22afcc6b4ab4850ffbab2aaa19325cd93ed189c3bab490ac81c68c30d",
+            "exact_required_hash": "True",
+            "location_root": "repository_root"
+          },
+          {
+            "kind": "working_tree_size_match",
+            "location": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/q_scan/summary.json",
+            "bytes": "6722",
+            "sha256": "a39e8cb22afcc6b4ab4850ffbab2aaa19325cd93ed189c3bab490ac81c68c30d",
+            "exact_required_hash": "True",
+            "location_root": "repository_root"
+          }
+        ],
+        "git_history": []
+      }
+    },
+    {
+      "group": "c590_reconstruction_restored",
+      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/target.npz",
+      "size_bytes": 1644150,
+      "sha256": "bea3cf9e334d50b3d9d317a142d8238a6680961981395e831b15ddd47d873c98",
+      "restoration_provenance": {
+        "audit_record_sha256": "da9e832412df18b14f433b9c17eff1d52fb5e7a3b012d54a11a035f829a4e02e",
+        "origins": [
+          {
+            "kind": "working_tree_size_match",
+            "location": "version_2/local_reports/retired_public_docs/paper07_c590_discovery/c590_reconstruction/caputo_seed9/target.npz",
+            "bytes": "1644150",
+            "sha256": "bea3cf9e334d50b3d9d317a142d8238a6680961981395e831b15ddd47d873c98",
+            "exact_required_hash": "True",
+            "location_root": "repository_root"
+          },
+          {
+            "kind": "working_tree_size_match",
+            "location": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/target.npz",
+            "bytes": "1644150",
+            "sha256": "bea3cf9e334d50b3d9d317a142d8238a6680961981395e831b15ddd47d873c98",
+            "exact_required_hash": "True",
+            "location_root": "repository_root"
+          },
+          {
+            "kind": "working_tree_size_match",
+            "location": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/survivor_long_audit/seed09_h0p005.npz",
+            "bytes": "1644150",
+            "sha256": "bea3cf9e334d50b3d9d317a142d8238a6680961981395e831b15ddd47d873c98",
+            "exact_required_hash": "True",
+            "location_root": "repository_root"
+          },
+          {
+            "kind": "git_blob_size_match",
+            "location": "git_blob:86ca1ce9b02e0a36e47e426ac9986b2a9b7a5c24",
+            "bytes": "1644150",
+            "sha256": "bea3cf9e334d50b3d9d317a142d8238a6680961981395e831b15ddd47d873c98",
+            "exact_required_hash": "True"
+          }
+        ],
+        "git_history": [
+          {
+            "git_blob": "86ca1ce9b02e0a36e47e426ac9986b2a9b7a5c24",
+            "commits": [
+              "af7ff9e7fd4943c98100a5a6f693f6593c2bbcad 2026-07-29T11:14:36-06:00 release: finalize public 1.1.0 distribution",
+              "79440109d591e234c01c7966befa5f2737f57e29 2026-07-28T10:46:13-06:00 Add manifest for paper07 Chua reproducibility validation"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "group": "c590_reconstruction_restored",
+      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/integer_local/recorded_selection_c590.npz",
+      "size_bytes": 58985,
+      "sha256": "c22572477f282fc41a7ceeb66db4917b0c1044f6e41fd3a73ced5af7baaecf88",
+      "restoration_provenance": {
+        "audit_record_sha256": "da9e832412df18b14f433b9c17eff1d52fb5e7a3b012d54a11a035f829a4e02e",
+        "origins": [
+          {
+            "kind": "working_tree_size_match",
+            "location": "version_2/local_reports/retired_public_docs/paper07_c590_discovery/c590_reconstruction/integer_local/recorded_selection_c590.npz",
+            "bytes": "58985",
+            "sha256": "c22572477f282fc41a7ceeb66db4917b0c1044f6e41fd3a73ced5af7baaecf88",
+            "exact_required_hash": "True",
+            "location_root": "repository_root"
+          },
+          {
+            "kind": "working_tree_size_match",
+            "location": "version_2/outputs/paper07_c590_discovery_reconstruction/integer_local/recorded_selection_c590.npz",
+            "bytes": "58985",
+            "sha256": "c22572477f282fc41a7ceeb66db4917b0c1044f6e41fd3a73ced5af7baaecf88",
+            "exact_required_hash": "True",
+            "location_root": "repository_root"
+          },
+          {
+            "kind": "git_blob_size_match",
+            "location": "git_blob:36ad22ec2fc2b86f8471f65e1dadcab85a35c168",
+            "bytes": "58985",
+            "sha256": "c22572477f282fc41a7ceeb66db4917b0c1044f6e41fd3a73ced5af7baaecf88",
+            "exact_required_hash": "True"
+          }
+        ],
+        "git_history": [
+          {
+            "git_blob": "36ad22ec2fc2b86f8471f65e1dadcab85a35c168",
+            "commits": [
+              "af7ff9e7fd4943c98100a5a6f693f6593c2bbcad 2026-07-29T11:14:36-06:00 release: finalize public 1.1.0 distribution",
+              "79440109d591e234c01c7966befa5f2737f57e29 2026-07-28T10:46:13-06:00 Add manifest for paper07 Chua reproducibility validation"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "group": "c590_reconstruction_restored",
+      "path": "version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/seed_refinement/seeds.npz",
+      "size_bytes": 1185,
+      "sha256": "d5c92275fadd4388b91a7f2fa6730b051ad405fee21762c3e1baa851130dd67b",
+      "restoration_provenance": {
+        "audit_record_sha256": "da9e832412df18b14f433b9c17eff1d52fb5e7a3b012d54a11a035f829a4e02e",
+        "origins": [
+          {
+            "kind": "working_tree_size_match",
+            "location": "version_2/local_reports/retired_public_docs/paper07_c590_discovery/c590_reconstruction/caputo_seed9/seed_refinement/seeds.npz",
+            "bytes": "1185",
+            "sha256": "d5c92275fadd4388b91a7f2fa6730b051ad405fee21762c3e1baa851130dd67b",
+            "exact_required_hash": "True",
+            "location_root": "repository_root"
+          },
+          {
+            "kind": "working_tree_size_match",
+            "location": "version_2/outputs/paper07_c590_discovery_reconstruction/caputo_seed9/seed_refinement/seeds.npz",
+            "bytes": "1185",
+            "sha256": "d5c92275fadd4388b91a7f2fa6730b051ad405fee21762c3e1baa851130dd67b",
+            "exact_required_hash": "True",
+            "location_root": "repository_root"
+          },
+          {
+            "kind": "git_blob_size_match",
+            "location": "git_blob:570f9001d295592606c81656dd48056b1a2a0b0b",
+            "bytes": "1185",
+            "sha256": "d5c92275fadd4388b91a7f2fa6730b051ad405fee21762c3e1baa851130dd67b",
+            "exact_required_hash": "True"
+          }
+        ],
+        "git_history": [
+          {
+            "git_blob": "570f9001d295592606c81656dd48056b1a2a0b0b",
+            "commits": [
+              "af7ff9e7fd4943c98100a5a6f693f6593c2bbcad 2026-07-29T11:14:36-06:00 release: finalize public 1.1.0 distribution",
+              "79440109d591e234c01c7966befa5f2737f57e29 2026-07-28T10:46:13-06:00 Add manifest for paper07 Chua reproducibility validation"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "path_roots": {
+    "repository_root": "Repository root containing version_2/"
+  },
+  "path_normalization": {
+    "date": "2026-11-09",
+    "previous_manifest_sha256": "7dad952f23fa3cee4bf6d26a5908dcd3202c62286d4cac24d2f7fccb0c013cee",
+    "scope": "Only machine-specific origin paths replaced by repository-relative locations. Artifact fingerprints, Git object IDs and original audit-record hashes unchanged."
+  }
+}

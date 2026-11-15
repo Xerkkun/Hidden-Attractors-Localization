@@ -1,3 +1,5 @@
 # Scientific evidence whose byte-level SHA-256 is part of a public contract.
 version_2/examples/modified_van_der_pol_duffing_integer_lure_audit/input/mavpd_integer_hiddenness_initial_conditions.csv text eol=lf
 version_2/benchmarks/bench_tempered_convolution_quadrature.py text eol=lf
+# Preserve the exact recovered Paper07 JSON digest across Windows checkouts.
+version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/q_scan/summary.json -text

@@ -4,6 +4,10 @@ This command inventories only the fixed, result-level artifacts retained in
 ``validation`` and records a SHA-256 manifest. Verification uses only tracked
 closed validation evidence.
 
+Four byte-exact historical restorations are admitted by a separate sidecar.
+Their admission does not modify the closed scientific manifest or certify the
+historical dynamics; unknown files and changed restored bytes remain errors.
+
 Examples
 --------
 Update the tracked package after completing the fixed validation runs::
@@ -36,6 +40,13 @@ REPOSITORY_ROOT = VERSION_ROOT.parent
 PACKAGE_ROOT = VERSION_ROOT / "validation" / "paper07_chua"
 EVIDENCE_ROOT = PACKAGE_ROOT / "evidence"
 MANIFEST_PATH = PACKAGE_ROOT / "evidence_manifest.json"
+RESTORED_MANIFEST_PATH = PACKAGE_ROOT / "restored_evidence_manifest.json"
+RESTORED_RELATIVE_PATHS = frozenset({
+    "c590_reconstruction/caputo_seed9/q_scan/summary.json",
+    "c590_reconstruction/caputo_seed9/target.npz",
+    "c590_reconstruction/integer_local/recorded_selection_c590.npz",
+    "c590_reconstruction/caputo_seed9/seed_refinement/seeds.npz",
+})
 CANONICAL_TEXT_SUFFIXES = frozenset({".csv", ".json", ".md", ".txt"})
 
 NONSMOOTH_SOURCE = EVIDENCE_ROOT / "nonsmooth_corrected"
@@ -196,6 +207,71 @@ def _repository_relative(path: Path) -> str:
         ) from exc
 
 
+def restored_artifact_records() -> tuple[dict[str, Any], ...]:
+    """Read the separately admitted, byte-exact historical restorations.
+
+    The closed 43-artifact scientific manifest stays unchanged. This sidecar
+    admits only the four fixed P03 recoveries and never regenerates their hashes
+    from the current files. Exact binary/text bytes, rather than LF-normalized
+    metadata, are required for these historical hash recoveries.
+    """
+    manifest = _read_json(RESTORED_MANIFEST_PATH)
+    if manifest.get("artifact_role") != "exact_historical_restoration":
+        raise ValueError("invalid restored evidence manifest role")
+    records = manifest.get("artifacts")
+    if not isinstance(records, list) or len(records) != 4:
+        raise ValueError("restored evidence manifest must declare four artifacts")
+    expected = {
+        _repository_relative(EVIDENCE_ROOT / relative)
+        for relative in RESTORED_RELATIVE_PATHS
+    }
+    paths = [record.get("path") for record in records]
+    if len(paths) != len(set(paths)) or set(paths) != expected:
+        raise ValueError("restored evidence inventory mismatch")
+    if manifest.get("artifact_count") != len(records):
+        raise ValueError("restored evidence artifact_count is stale")
+    for record in records:
+        if record.get("group") != "c590_reconstruction_restored":
+            raise ValueError("invalid restored artifact group")
+        size = record.get("size_bytes")
+        digest = record.get("sha256")
+        if not isinstance(size, int) or size <= 0 or not isinstance(digest, str) or len(digest) != 64:
+            raise ValueError("invalid restored artifact fingerprint")
+        if not record.get("restoration_provenance"):
+            raise ValueError("restored artifact lacks restoration provenance")
+    if manifest.get("total_size_bytes") != sum(record["size_bytes"] for record in records):
+        raise ValueError("restored evidence total_size_bytes is stale")
+    return tuple(records)
+
+
+def declared_evidence_destinations() -> set[Path]:
+    """Return the closed core plus the explicitly restored evidence subtree."""
+    core = {
+        spec.destination.resolve() for spec in artifact_specs()
+        if spec.destination.is_relative_to(EVIDENCE_ROOT)
+    }
+    restored = {
+        (REPOSITORY_ROOT / record["path"]).resolve()
+        for record in restored_artifact_records()
+    }
+    return core | restored
+
+
+def verify_restored_artifacts() -> dict[str, int]:
+    """Reject any missing or altered recovered bytes without replacing them."""
+    records = restored_artifact_records()
+    for record in records:
+        path = REPOSITORY_ROOT / record["path"]
+        if not path.is_file():
+            raise FileNotFoundError(f"missing restored artifact: {record['path']}")
+        if path.stat().st_size != record["size_bytes"]:
+            raise ValueError(f"restored size mismatch for {record['path']}")
+        if sha256_file(path) != record["sha256"]:
+            raise ValueError(f"restored SHA-256 mismatch for {record['path']}")
+    return {"artifact_count": len(records),
+            "total_size_bytes": sum(record["size_bytes"] for record in records)}
+
+
 def _validate_scientific_contracts(nonsmooth_root: Path) -> None:
     """Reject an incomplete or scientifically different validation result."""
 
@@ -301,16 +377,15 @@ def sync_package() -> dict[str, Any]:
         paths = ", ".join(_repository_relative(path) for path in missing)
         raise FileNotFoundError(f"missing source artifacts: {paths}")
     validate_source_contracts()
+    # Validate recovered bytes before pruning: --sync must not erase a recovery
+    # because the separately frozen scientific core predates its admission.
+    verify_restored_artifacts()
 
     for spec in specs:
         spec.destination.parent.mkdir(parents=True, exist_ok=True)
         if spec.source.resolve() != spec.destination.resolve():
             shutil.copy2(spec.source, spec.destination)
-    removed = _prune_evidence_directory(
-        spec.destination
-        for spec in specs
-        if spec.destination.is_relative_to(EVIDENCE_ROOT)
-    )
+    removed = _prune_evidence_directory(declared_evidence_destinations())
 
     payload = _manifest_payload(specs)
     payload["pruned_stale_files"] = removed
@@ -372,11 +447,8 @@ def verify_package(*, verify_sources: bool = False) -> dict[str, Any]:
             if source_digest != digest:
                 raise ValueError(f"source SHA-256 mismatch for {path_text}")
 
-    expected_evidence = {
-        spec.destination.resolve()
-        for spec in specs
-        if spec.destination.is_relative_to(EVIDENCE_ROOT)
-    }
+    restored = verify_restored_artifacts()
+    expected_evidence = declared_evidence_destinations()
     actual_evidence = (
         {
             path.resolve()
@@ -433,6 +505,9 @@ def verify_package(*, verify_sources: bool = False) -> dict[str, Any]:
         "artifact_count": len(specs),
         "total_size_bytes": total_size,
         "source_parity_verified": verify_sources,
+        "restored_artifact_count": restored["artifact_count"],
+        "restored_total_size_bytes": restored["total_size_bytes"],
+        "total_declared_artifact_count": len(specs) + restored["artifact_count"],
     }
 
 
