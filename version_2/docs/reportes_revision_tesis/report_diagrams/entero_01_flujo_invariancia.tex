@@ -1,0 +1,51 @@
+\begin{center}
+\resizebox{0.96\linewidth}{!}{%
+\begin{tikzpicture}[
+  >=Latex,
+  every node/.style={font=\small},
+  flow/.style={-{Latex[length=2.4mm]},thick,draw=Azul},
+  vector/.style={-{Latex[length=2.4mm]},very thick},
+  point/.style={circle,fill=GrisOscuro,inner sep=1.8pt},
+  panel/.style={draw=GrisOscuro,rounded corners=5pt,thick}
+]
+  % Propiedad de composición del flujo.
+  \draw[panel] (0,0) rectangle (6.25,5.05);
+  \node[font=\bfseries] at (3.12,4.68) {Composición temporal};
+  \node[point,label=left:$x$] (x) at (0.95,3.25) {};
+  \node[point,label=above:$\varphi_s(x)$] (xs) at (4.95,3.25) {};
+  \node[point,label=below:$\varphi_{t+s}(x)$] (xts) at (4.95,0.95) {};
+  \draw[flow] (x) -- node[above] {$\varphi_s$} (xs);
+  \draw[flow] (xs) -- node[right] {$\varphi_t$} (xts);
+  \draw[flow,dashed] (x) -- node[below left] {$\varphi_{t+s}$} (xts);
+  \node[align=center,text=GrisOscuro] at (3.0,0.38)
+    {$\varphi_t\!\circ\!\varphi_s=\varphi_{t+s}$\\por unicidad};
+
+  % Criterio geométrico de entrada estricta.
+  \draw[panel] (6.65,0) rectangle (13.9,5.05);
+  \node[font=\bfseries] at (10.27,4.68) {Invariancia positiva};
+  \path[fill=AzulClaro,draw=Azul,very thick]
+    plot[smooth cycle,tension=0.85] coordinates {
+      (7.45,1.25) (8.05,3.65) (10.05,4.05)
+      (12.35,3.60) (13.0,1.55) (10.35,0.65)
+    };
+  \node[font=\large] at (9.75,2.25) {$N=\{h\leq0\}$};
+  \node[point,label=above left:$x_b\in\partial N$] (xb) at (12.32,3.60) {};
+  \draw[vector,draw=GrisOscuro] (xb) -- ++(1.08,0.65)
+    node[right,align=left] {$n=\nabla h/\|\nabla h\|$\\normal exterior};
+  \draw[vector,draw=Rojo] (xb) -- ++(-1.30,-0.68)
+    node[below left] {$f(x_b)$};
+  \draw[flow] (8.25,1.55) .. controls (9.15,1.05) and (10.55,1.10) .. (11.35,1.72);
+  \node[fill=white,inner sep=2pt] at (10.0,0.35)
+    {$\nabla h(x_b)\!\cdot\!f(x_b)<0\ \Longrightarrow\ \varphi_t(N)\subset N$};
+\end{tikzpicture}%
+}
+
+\smallskip
+\begin{minipage}{0.92\linewidth}
+\small\textbf{Lectura pedagógica.}
+La identidad de composición convierte las soluciones únicas en un flujo. El
+signo estrictamente negativo de la derivada de $h$ en la frontera impide la
+salida hacia $h>0$; prueba invariancia positiva, no necesariamente la igualdad
+\(\varphi_t(N)=N\) para todo tiempo.
+\end{minipage}
+\end{center}

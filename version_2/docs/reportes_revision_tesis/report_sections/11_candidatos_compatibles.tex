@@ -1,0 +1,357 @@
+\section{Criterio de selección}
+\label{sec:candidate-selection}
+
+\HAFOCardCandidates
+
+Seleccionamos sistemas en los que la representación algebraica y el
+problema dinámico puedan contrastarse por separado. Consideramos:
+
+\begin{enumerate}
+ \item derivada ordinaria o Caputo conmensurable \(q\in(0,1]\);
+ \item ecuaciones, parámetros, orden e iniciales publicados;
+ \item no linealidades representables por D0, T1, A1 o M1;
+ \item un resultado bibliográfico sobre atractores ocultos, cuencas o coexistencia;
+ \item tamaño compatible con ABM de memoria completa y una reproducción
+ independiente;
+ \item una estructura que permita evaluar realizabilidad, memoria o coexistencia.
+\end{enumerate}
+
+La búsqueda principal excluye sistemas inconmensurables, Caputo--Fabrizio,
+Atangana--Baleanu, retardados, discretos o complejos, cuyos símbolos de
+transferencia, condiciones de estabilidad y protocolos de memoria difieren de
+Caputo conmensurable.
+
+\section[Sistema Muñoz--Pacheco sin equilibrio]
+{Sistema fraccionario sin equilibrio de Muñoz--Pacheco}
+\label{sec:cand-munoz}
+
+La fuente primaria \cite{munoz2018} propone
+\begin{equation}
+\begin{aligned}
+ {}^{\mathrm C}D^q x&=yz+x(y-a),\\
+ {}^{\mathrm C}D^q y&=1-|x|,\\
+ {}^{\mathrm C}D^q z&=-xy-z.
+\end{aligned}
+\label{eq:cand-munoz}
+\end{equation}
+Para \(a=0.35,q=0.97\), publica un atractor caótico desde
+\((1,1,1)\). Para \(a=0.35,q=0.996\), publica coexistencia de un candidato
+caótico desde \((1,1,1)\) y uno periódico desde \((0,75,-50)\), junto con un
+corte de cuenca. Estos datos permiten comparar localización, coexistencia y
+dependencia del orden fraccionario.
+
+\subsection{Realización M1 exacta}
+
+Con \(X=(x,y,z)^{\mathsf T}\),
+\[
+ \Phi(X)=(yz,xy,|x|)^{\mathsf T},
+\]
+se tiene
+\begin{equation}
+ {}^{\mathrm C}D^qX=A X+d+B\Phi(X),
+ \label{eq:cand-munoz-mimo}
+\end{equation}
+donde
+\begin{equation}
+ A=\begin{pmatrix}
+ -a&0&0\\0&0&0\\0&0&-1
+ \end{pmatrix},\quad
+ d=\begin{pmatrix}0\\1\\0\end{pmatrix},\quad
+ B=\begin{pmatrix}
+ 1&1&0\\
+ 0&0&-1\\
+ 0&-1&0
+ \end{pmatrix}.
+ \label{eq:cand-munoz-matrices}
+\end{equation}
+La multiplicación da
+\[
+ AX+d+B\Phi=
+ \begin{pmatrix}
+ -ax+yz+xy\\1-|x|\\-z-xy
+ \end{pmatrix},
+\]
+idéntica a \cref{eq:cand-munoz}.
+
+Con \(C=I\) y \(z_f=s^q\), el bloque lineal es diagonal:
+\[
+ z_fI-A=\operatorname{diag}(z_f+a,z_f,z_f+1).
+\]
+Para \(z_f\notin\{-a,0,-1\}\), invertimos cada entrada diagonal y
+multiplicamos por las tres columnas de \(B\). Obtenemos
+\begin{equation}
+ W(z_f)=(z_fI-A)^{-1}B
+ =\begin{pmatrix}
+ \dfrac1{z_f+a}&\dfrac1{z_f+a}&0\\[0.8em]
+ 0&0&-\dfrac1{z_f}\\[0.8em]
+ 0&-\dfrac1{z_f+1}&0
+ \end{pmatrix}.
+ \label{eq:cand-munoz-transfer}
+\end{equation}
+La transferencia describe la respuesta a los canales no lineales con dato
+inicial nulo; el término constante \(d\) interviene por separado en el
+balance DC. Si los estados contienen un primer armónico, los productos
+\(xy\) y \(yz\) producen una componente media y un segundo armónico.
+Por ello tomamos M1 con \(H\ge2\) como primera aproximación. El valor
+absoluto puede generar armónicos de órdenes superiores: se integra por
+regiones en el cálculo de Fourier, o se aproxima mediante una homotopía
+suavizada cuyo error debe controlarse.
+
+\subsection{Demostración completa de ausencia de equilibrios}
+
+En equilibrio, la segunda ecuación exige \(|x|=1\), de modo que
+\(x=\pm1\neq0\). La tercera da
+\[
+ z=-xy.
+\]
+Al sustituir en la primera,
+\[
+ 0=y(-xy)+x(y-a)
+ =x(-y^2+y-a).
+\]
+Como \(x\neq0\), debe cumplirse
+\begin{equation}
+ y^2-y+a=0.
+ \label{eq:cand-munoz-equilibrium}
+\end{equation}
+Su discriminante es
+\[
+ \Delta_y=1-4a.
+\]
+Para \(a=0.35\), \(\Delta_y=-0.4<0\); por tanto, no existe equilibrio real.
+Bajo la definición usual,
+cualquier atractor del sistema es oculto por ausencia de equilibrios. Aun así,
+deben reproducirse recurrencia y caos: la ausencia de equilibrios no transforma
+una trayectoria transitoria o divergente en atractor.
+
+Para \(x\neq0\), el Jacobiano regional es
+\begin{equation}
+ J(X)=
+ \begin{pmatrix}
+ y-a&z+x&y\\
+ -\operatorname{sign}(x)&0&0\\
+ -y&-x&-1
+ \end{pmatrix}.
+ \label{eq:cand-munoz-jacobian}
+\end{equation}
+La ausencia de equilibrios hace inaplicable el criterio de Matignon local. La
+validación se concentra en el integrador no suave, la coexistencia y la
+robustez de los diagnósticos.
+
+\begin{proposalbox}
+Para comparar las respuestas publicadas mantenemos \(a=0.35\), los órdenes
+\(q=0.97\) y \(q=0.996\), las condiciones iniciales indicadas y la misma
+definición de \(|x|\). La sucesión de truncaciones \(H=2,3,4\) permite
+examinar por separado el balance DC, la fase, los residuos retenidos y la
+cola física \(\epsilon_H\) de \cref{eq:th-physical-harmonic-tail};
+\(\eta_H\) mide la contribución del diccionario elegido. La condición inicial
+reconstruida define después un PVI de Caputo con memoria completa. El corte
+\(x=0\), las respuestas coexistentes y la frontera de escape son los objetos
+dinámicos de comparación. Al no existir equilibrios, el análisis de cuenca
+reemplaza al sondeo de sus vecindades; la concordancia entre ABM y un segundo
+integrador se evalúa sobre el mismo PVI.
+\end{proposalbox}
+
+\section{Jerk cuadrático entero con equilibrio estable}
+\label{sec:cand-jerk}
+
+Liu, Sang, Wang y Ahmad \cite{liu2021} estudian
+\begin{equation}
+ \dot x=y,\qquad
+ \dot y=z,\qquad
+ \dot z=-x-y-1.1z-2.59z^2+xy.
+ \label{eq:cand-jerk}
+\end{equation}
+La fuente reporta un atractor caótico oculto desde
+\((0,-1.5,0)\), además de cortes de cuenca y una realización de circuito.
+
+\subsection{Parte lineal, equilibrio y estabilidad}
+
+Con \(X=(x,y,z)^{\mathsf T}\),
+\begin{equation}
+ A=\begin{pmatrix}
+ 0&1&0\\0&0&1\\-1&-1&-1.1
+ \end{pmatrix}.
+ \label{eq:cand-jerk-A}
+\end{equation}
+Las dos primeras ecuaciones de equilibrio dan \(y=z=0\); la tercera da
+\(x=0\). El origen es el único equilibrio. Su polinomio característico es
+\begin{equation}
+ p(s)=s^3+1.1s^2+s+1.
+ \label{eq:cand-jerk-charpoly}
+\end{equation}
+En efecto, al expandir el determinante de
+\[
+ sI-A=\begin{pmatrix}s&-1&0\\0&s&-1\\1&1&s+1.1\end{pmatrix}
+\]
+por la primera fila resulta \(s[s(s+1.1)+1]+1\).
+La primera columna de la tabla de Routh es
+\[
+ 1,\qquad 1.1,\qquad \frac{1.1\cdot1-1}{1.1},\qquad 1.
+\]
+Sus entradas son positivas. El equilibrio único es
+asintóticamente estable. Un atractor coexistente no puede localizarse
+siguiendo la variedad inestable del origen y, si su cuenca está separada de una
+vecindad del mismo, es oculto.
+
+\subsection{Realización M1 y obstrucción escalar}
+
+Definimos
+\[
+ \Phi(X)=(xy,z^2)^{\mathsf T},\qquad
+ B=\begin{pmatrix}0&0\\0&0\\1&-2.59\end{pmatrix}.
+\]
+Entonces
+\[
+ AX+B\Phi(X)=
+ (y,z,-x-y-1.1z+xy-2.59z^2)^{\mathsf T},
+\]
+que reproduce exactamente el campo.
+
+Aunque los dos canales actúan en la dirección \(e_3\), no pueden reducirse a
+una no linealidad cuadrática de un único observable. Para
+\[
+ Q(x,y,z)=xy-2.59z^2
+\]
+se tiene
+\begin{equation}
+ \nabla^2Q=
+ \begin{pmatrix}
+ 0&1&0\\1&0&0\\0&0&-5.18
+ \end{pmatrix},
+ \qquad \operatorname{rank}\nabla^2Q=3.
+ \label{eq:cand-jerk-hessian}
+\end{equation}
+El determinante de esta Hessiana es \(5.18\ne0\), de donde procede el
+rango tres. En cambio, \(Q=\kappa(r^{\mathsf T}X)^2\) implicaría
+\(\nabla^2Q=2\kappa rr^{\mathsf T}\), de rango a lo sumo uno. Esto falsifica
+D0 y justifica M1.
+
+Para obtener la transferencia resolvemos \((sI-A)v=e_3\). Las dos
+primeras filas dan \(v_2=sv_1\), \(v_3=s^2v_1\), y la última da
+\(p(s)v_1=1\). Como la segunda columna de \(B\) es \(-2.59e_3\),
+para \(p(s)\ne0\) obtenemos
+\begin{equation}
+ W(s)=\frac1{p(s)}
+ \begin{pmatrix}
+ 1&-2.59\\
+ s&-2.59s\\
+ s^2&-2.59s^2
+ \end{pmatrix}.
+ \label{eq:cand-jerk-transfer}
+\end{equation}
+Los términos cuadráticos requieren DC y segundo armónico. Este sistema ofrece
+un control entero para evaluar si M1 amplía la cobertura respecto de los casos
+escalares.
+
+\section{Sistema Liu extendido fraccionario}
+\label{sec:cand-extended-liu}
+
+La fuente \cite{wang2020} usa
+\begin{equation}
+\begin{aligned}
+ {}^{\mathrm C}D^q x&=a(y-x),\\
+ {}^{\mathrm C}D^q y&=bx-kxz+d\,\operatorname{sign}(w)+m,\\
+ {}^{\mathrm C}D^q z&=-cz+hx^2,\\
+ {}^{\mathrm C}D^q w&=-gy.
+\end{aligned}
+\label{eq:cand-liu}
+\end{equation}
+Una realización exacta usa
+\[
+ \Phi=(xz,x^2,\operatorname{sign}w)^{\mathsf T},
+\]
+\[
+ A=\begin{pmatrix}
+ -a&a&0&0\\ b&0&0&0\\0&0&-c&0\\0&-g&0&0
+ \end{pmatrix},\quad
+ d_0=(0,m,0,0)^{\mathsf T},
+\]
+\[
+ B=\begin{pmatrix}
+ 0&0&0\\-k&0&d\\0&h&0\\0&0&0
+ \end{pmatrix}.
+\]
+La multiplicación permite comprobar cada canal:
+\[
+ AX+d_0+B\Phi=
+ \begin{pmatrix}
+ -ax+ay\\bx-kxz+d\operatorname{sign}(w)+m\\-cz+hx^2\\-gy
+ \end{pmatrix}.
+\]
+Así, el término constante y el salto del signo permanecen explícitos y no
+se absorben en una linealización.
+
+Para \(a=10,b=40,c=2.5,k=1,h=4,g=5,d=m=20\), las ecuaciones de equilibrio
+dan sucesivamente \(y=x\), \(y=0\), \(x=0\), \(z=0\), y
+\[
+ 20\,\operatorname{sign}(w)+20=0.
+\]
+Con \(\operatorname{sign}(0)=0\), la solución es la semirrecta
+\begin{equation}
+ x=y=z=0,\qquad w<0,
+ \label{eq:cand-liu-equilibria}
+\end{equation}
+no un sistema sin equilibrios. Su evaluación requiere fijar \(q\), la rama
+dinámica, las condiciones iniciales, la convención en \(w=0\) y el protocolo
+para una variedad continua de equilibrios.
+
+\HAFOStudyNeedspace
+\section{Candidatos adicionales y controles}
+\label{sec:candidate-queue}
+
+\begin{longtable}{@{}L{0.23\linewidth}L{0.20\linewidth}L{0.24\linewidth}L{0.25\linewidth}@{}}
+\caption{Familias compatibles y problemas dinámicos asociados.}
+\label{tab:candidate-portfolio}\\
+\toprule
+Familia & Ruta estructural & Construcción disponible & Problema por resolver\\
+\midrule
+\endfirsthead
+\toprule
+Familia & Ruta estructural & Construcción disponible & Problema por resolver\\
+\midrule
+\endhead
+Leonov--Kuznetsov (162) & D0+A1 & Ecuaciones y semilla parciales &
+Precisar la característica PWA y el criterio por etapa.\\
+Genesio--Tesi & D0 sesgado, \(H\ge2\) & Realización
+\(\psi(x)=x^2\) & Fijar parámetros e iniciales para el estudio dinámico.\\
+Jerk con seno hiperbólico & D0, DF con \(I_1\) & Derivación simbólica &
+Resolver ambigüedad de fuente \(\sinh\) frente a función inversa.\\
+Oscilador memristivo & T1 sobre variedad & Cierre cúbico sesgado &
+Constante de la variedad, parámetros e iniciales.\\
+Jerk PWA & D0 PWA & Estructura tipo Chua & Fijar el campo regional y evaluar
+el efecto de sus superficies de conmutación.\\
+Fischer jerk exponencial & D0 con DC & Parámetros y diagnóstico &
+Control bibliográfico/Lyapunov; clasificación de cuenca no reproducida
+localmente.\\
+Lorenz generalizado & M1, \(H\ge2\) & Álgebra completa verificada &
+Raíz armónica, continuación, integración y cuenca.\\
+Rabinovich--Fabrikant & M1, \(H\ge3\) & Álgebra completa verificada &
+Raíz armónica, continuación, integración y cuenca.\\
+Sistema financiero Fischer & M1+PWA & Banco Lyapunov & Resolver discrepancias
+y distinguir la no linealidad \(|x|\) de otros modelos financieros.\\
+Four-wing Fischer & M1 cuadrático & Diagnósticos de Lyapunov & Localizar una
+semilla y estudiar la cuenca.\\
+Debbouche fraccionario & M1+signo & DOI y parámetros parciales
+\cite{debbouche2021} & Fijar ecuaciones, órdenes e iniciales de una rama.\\
+\bottomrule
+\end{longtable}
+
+\section{Relación entre los problemas de localización}
+\label{sec:candidate-order}
+
+El jerk cuadrático entero aísla la extensión D0 \(\to\) M1 sin introducir
+el costo de la memoria. Muñoz--Pacheco añade tres dificultades distintas:
+la no suavidad, la historia de Caputo y la coexistencia dependiente del orden.
+Lorenz generalizado y RF permiten estudiar el balance multiharmónico con
+realizaciones polinómicas explícitas, mientras que Genesio--Tesi proporciona
+un contraste escalar con sesgo. Estas diferencias hacen posible atribuir un
+fallo de localización a una etapa concreta, en lugar de agruparlo bajo la
+etiqueta de complejidad del sistema.
+
+Liu extendido requiere además definir la solución en la discontinuidad y
+analizar una variedad continua de equilibrios. En los modelos de Debbouche,
+la elección de una rama debe fijar simultáneamente ecuaciones, órdenes y
+condiciones iniciales. Las realizaciones algebraicas anteriores permiten
+formular esas comparaciones, pero el destino de cada semilla se determina
+integrando el correspondiente problema dinámico.

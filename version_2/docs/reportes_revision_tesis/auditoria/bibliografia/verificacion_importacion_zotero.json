@@ -1,0 +1,2210 @@
+{
+  "status": "current_library_verified_with_collective_credit_caution",
+  "source_bib_entries": 141,
+  "matched_entries": 141,
+  "missing_entries": [],
+  "zotero_library_regular_items": 254,
+  "thesis_collection_regular_items": 176,
+  "report_entries_in_thesis_collection": 131,
+  "report_entries_library_only": [
+    "AthertonTanYerogluKavuranYuce2014",
+    "Danca2016HiddenTransient",
+    "KaslikSivasundaram2012",
+    "KuznetsovEtAl2023ChuaExperiments",
+    "LiChenPodlubny2009",
+    "LiChenPodlubny2010",
+    "Lin2013GeneralizedGronwall",
+    "MendesSalgadoAguirre2019",
+    "NagChowdhuryGhosh2020",
+    "kuznetsov2017localization"
+  ],
+  "new_regular_items_imported": 92,
+  "imported_identity_and_creators_verified": 91,
+  "imported_records_with_issues": [
+    {
+      "latex_key": "scipy2020",
+      "zotero_item_key": "DHBVUAVY",
+      "title": "SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python",
+      "DOI": "10.1038/s41592-019-0686-2",
+      "author_count": 111,
+      "expected_personal_author_surnames": [
+        "virtanen",
+        "gommers",
+        "oliphant",
+        "haberland",
+        "reddy",
+        "cournapeau",
+        "burovski",
+        "peterson",
+        "weckesser",
+        "bright",
+        "vanderwalt",
+        "brett",
+        "wilson",
+        "millman",
+        "mayorov",
+        "nelson",
+        "jones",
+        "kern",
+        "larson",
+        "carey",
+        "polat",
+        "feng",
+        "moore",
+        "vanderplas",
+        "laxalde",
+        "perktold",
+        "cimrman",
+        "henriksen",
+        "quintero",
+        "harris",
+        "archibald",
+        "ribeiro",
+        "pedregosa",
+        "vanmulbregt",
+        "vijaykumar",
+        "bardelli",
+        "rothberg",
+        "hilboll",
+        "kloeckner",
+        "scopatz",
+        "lee",
+        "rokem",
+        "woods",
+        "fulton",
+        "masson",
+        "haggstrom",
+        "fitzgerald",
+        "nicholson",
+        "hagen",
+        "pasechnik",
+        "olivetti",
+        "martin",
+        "wieser",
+        "silva",
+        "lenders",
+        "wilhelm",
+        "young",
+        "price",
+        "ingold",
+        "allen",
+        "lee",
+        "audren",
+        "probst",
+        "dietrich",
+        "silterra",
+        "webber",
+        "slavic",
+        "nothman",
+        "buchner",
+        "kulick",
+        "schonberger",
+        "demirandacardoso",
+        "reimer",
+        "harrington",
+        "rodriguez",
+        "nuneziglesias",
+        "kuczynski",
+        "tritz",
+        "thoma",
+        "newville",
+        "kummerer",
+        "bolingbroke",
+        "tartre",
+        "pak",
+        "smith",
+        "nowaczyk",
+        "shebanov",
+        "pavlyk",
+        "brodtkorb",
+        "lee",
+        "mcgibbon",
+        "feldbauer",
+        "lewis",
+        "tygier",
+        "sievert",
+        "vigna",
+        "peterson",
+        "more",
+        "pudlik",
+        "oshima",
+        "pingel",
+        "robitaille",
+        "spura",
+        "jones",
+        "cera",
+        "leslie",
+        "zito",
+        "krauss",
+        "upadhyay",
+        "halchenko",
+        "vazquezbaeza"
+      ],
+      "expected_collective_creators": [
+        "SciPy 1.0 Contributors"
+      ],
+      "zotero_author_surnames": [
+        "virtanen",
+        "gommers",
+        "oliphant",
+        "haberland",
+        "reddy",
+        "cournapeau",
+        "burovski",
+        "peterson",
+        "weckesser",
+        "bright",
+        "vanderwalt",
+        "brett",
+        "wilson",
+        "millman",
+        "mayorov",
+        "nelson",
+        "jones",
+        "kern",
+        "larson",
+        "carey",
+        "polat",
+        "feng",
+        "moore",
+        "vanderplas",
+        "laxalde",
+        "perktold",
+        "cimrman",
+        "henriksen",
+        "quintero",
+        "harris",
+        "archibald",
+        "ribeiro",
+        "pedregosa",
+        "vanmulbregt",
+        "vijaykumar",
+        "bardelli",
+        "rothberg",
+        "hilboll",
+        "kloeckner",
+        "scopatz",
+        "lee",
+        "rokem",
+        "woods",
+        "fulton",
+        "masson",
+        "haggstrom",
+        "fitzgerald",
+        "nicholson",
+        "hagen",
+        "pasechnik",
+        "olivetti",
+        "martin",
+        "wieser",
+        "silva",
+        "lenders",
+        "wilhelm",
+        "young",
+        "price",
+        "ingold",
+        "allen",
+        "lee",
+        "audren",
+        "probst",
+        "dietrich",
+        "silterra",
+        "webber",
+        "slavic",
+        "nothman",
+        "buchner",
+        "kulick",
+        "schonberger",
+        "demirandacardoso",
+        "reimer",
+        "harrington",
+        "rodriguez",
+        "nuneziglesias",
+        "kuczynski",
+        "tritz",
+        "thoma",
+        "newville",
+        "kummerer",
+        "bolingbroke",
+        "tartre",
+        "pak",
+        "smith",
+        "nowaczyk",
+        "shebanov",
+        "pavlyk",
+        "brodtkorb",
+        "lee",
+        "mcgibbon",
+        "feldbauer",
+        "lewis",
+        "tygier",
+        "sievert",
+        "vigna",
+        "peterson",
+        "more",
+        "pudlik",
+        "oshima",
+        "pingel",
+        "robitaille",
+        "spura",
+        "jones",
+        "cera",
+        "leslie",
+        "zito",
+        "krauss",
+        "upadhyay",
+        "halchenko",
+        "vazquezbaeza"
+      ],
+      "in_thesis_collection": true,
+      "issues": [
+        "collective_credit_missing"
+      ]
+    }
+  ],
+  "imported_records": [
+    {
+      "latex_key": "Fuchs2013",
+      "zotero_item_key": "CFP8QLQD",
+      "title": "Nonlinear Dynamics in Complex Systems",
+      "DOI": "10.1007/978-3-642-33552-5",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "fuchs"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "fuchs"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Petras2022",
+      "zotero_item_key": "44Y2HUVF",
+      "title": "The fractional-order Lorenz-type systems: A review",
+      "DOI": "10.1007/s13540-022-00016-4",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "petras"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "petras"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Danca2017HiddenFO",
+      "zotero_item_key": "D4K39LLZ",
+      "title": "Unusual dynamics and hidden attractors of the Rabinovich–Fabrikant system",
+      "DOI": "10.1007/s11071-016-3276-1",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "danca",
+        "kuznetsov",
+        "chen"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "danca",
+        "kuznetsov",
+        "chen"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Leonov2013HiddenAttractors",
+      "zotero_item_key": "AJYHNSB5",
+      "title": "Hidden attractor in smooth Chua systems",
+      "DOI": "10.1016/j.physd.2012.05.016",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "leonov",
+        "kuznetsov",
+        "vagaitsev"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "leonov",
+        "kuznetsov",
+        "vagaitsev"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "AreaLosadaNieto2014",
+      "zotero_item_key": "FBWB6HNQ",
+      "title": "On Fractional Derivatives and Primitives of Periodic Functions",
+      "DOI": "10.1155/2014/392598",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "area",
+        "losada",
+        "nieto"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "area",
+        "losada",
+        "nieto"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Benettin1980a",
+      "zotero_item_key": "GZZZYBSD",
+      "title": "Lyapunov Characteristic Exponents for Smooth Dynamical Systems and for Hamiltonian Systems; A Method for Computing All of Them. Part 1: Theory",
+      "DOI": "10.1007/bf02128236",
+      "author_count": 4,
+      "expected_personal_author_surnames": [
+        "benettin",
+        "galgani",
+        "giorgilli",
+        "strelcyn"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "benettin",
+        "galgani",
+        "giorgilli",
+        "strelcyn"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Benettin1980b",
+      "zotero_item_key": "T63NGPIM",
+      "title": "Lyapunov Characteristic Exponents for Smooth Dynamical Systems and for Hamiltonian Systems; A Method for Computing All of Them. Part 2: Numerical Application",
+      "DOI": "10.1007/bf02128237",
+      "author_count": 4,
+      "expected_personal_author_surnames": [
+        "benettin",
+        "galgani",
+        "giorgilli",
+        "strelcyn"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "benettin",
+        "galgani",
+        "giorgilli",
+        "strelcyn"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Skokos2010",
+      "zotero_item_key": "X7HVF2T3",
+      "title": "The Lyapunov Characteristic Exponents and Their Computation",
+      "DOI": "10.1007/978-3-642-04458-8_2",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "skokos"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "skokos"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "ChristiansenRugh1997",
+      "zotero_item_key": "D8FTQRXK",
+      "title": "Computing Lyapunov Spectra with Continuous Gram–Schmidt Orthonormalization",
+      "DOI": "10.1088/0951-7715/10/5/004",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "christiansen",
+        "rugh"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "christiansen",
+        "rugh"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Ghoreishi2023",
+      "zotero_item_key": "CVZPFKN4",
+      "title": "Fractional Order Runge–Kutta Methods",
+      "DOI": "10.48550/arxiv.2210.13138",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "ghoreishi",
+        "ghaffari"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "ghoreishi",
+        "ghaffari"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Deng2007",
+      "zotero_item_key": "MNG28NSD",
+      "title": "Short Memory Principle and a Predictor–Corrector Approach for Fractional Differential Equations",
+      "DOI": "10.1016/j.cam.2006.06.008",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "deng"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "deng"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "HaiYuXuRen2022",
+      "zotero_item_key": "L3BUCL4L",
+      "title": "Stability Analysis of Fractional Differential Equations with the Short-Term Memory Property",
+      "DOI": "10.1007/s13540-022-00049-9",
+      "author_count": 4,
+      "expected_personal_author_surnames": [
+        "hai",
+        "yu",
+        "xu",
+        "ren"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "hai",
+        "yu",
+        "xu",
+        "ren"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Agarwal2025",
+      "zotero_item_key": "5AMIEITA",
+      "title": "Stability of Nonlinear Switched Fractional Differential Equations with Short Memory",
+      "DOI": "10.3390/fractalfract9090598",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "agarwal",
+        "hristova",
+        "oregan"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "agarwal",
+        "hristova",
+        "oregan"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Deimling1985",
+      "zotero_item_key": "K5TQZHYM",
+      "title": "Nonlinear Functional Analysis",
+      "DOI": "",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "deimling"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "deimling"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Khalil2002",
+      "zotero_item_key": "4B97SXS6",
+      "title": "Nonlinear Systems",
+      "DOI": "",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "khalil"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "khalil"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Monje2010",
+      "zotero_item_key": "NG28TQLX",
+      "title": "Fractional-order Systems and Controls: Fundamentals and Applications",
+      "DOI": "10.1007/978-1-84996-335-0",
+      "author_count": 5,
+      "expected_personal_author_surnames": [
+        "monje",
+        "chen",
+        "vinagre",
+        "xue",
+        "feliubatlle"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "monje",
+        "chen",
+        "vinagre",
+        "xue",
+        "feliubatlle"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "KrylovBogoliubov1950",
+      "zotero_item_key": "VB8I2XDE",
+      "title": "Introduction to Non-linear Mechanics",
+      "DOI": "",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "krylov",
+        "bogoliubov"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "krylov",
+        "bogoliubov"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Atherton1975",
+      "zotero_item_key": "B7NAXXNX",
+      "title": "Nonlinear Control Engineering: Describing Function Analysis and Design",
+      "DOI": "",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "atherton"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "atherton"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "YerogluTan2015",
+      "zotero_item_key": "U7EN9H8N",
+      "title": "Note on Describing Function Analysis of Fractional Order Nonlinear Control Systems",
+      "DOI": "",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "yeroglu",
+        "tan"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "yeroglu",
+        "tan"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "DuarteMachado2009Coulomb",
+      "zotero_item_key": "BQCFDUF3",
+      "title": "Fractional Describing Function of Systems with Coulomb Friction",
+      "DOI": "10.1007/s11071-008-9405-8",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "duarte",
+        "tenreiromachado"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "duarte",
+        "tenreiromachado"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "CaponettoEtAl2013Relay",
+      "zotero_item_key": "MH6WGWGS",
+      "title": "Analysis and Shaping of the Self-Sustained Oscillations in Relay Controlled Fractional-Order Systems",
+      "DOI": "10.2478/s13540-013-0007-x",
+      "author_count": 5,
+      "expected_personal_author_surnames": [
+        "caponetto",
+        "maione",
+        "pisano",
+        "rapaic",
+        "usai"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "caponetto",
+        "maione",
+        "pisano",
+        "rapaic",
+        "usai"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "BarbosaJesusMachado2015",
+      "zotero_item_key": "8X2BLR7E",
+      "title": "Analysis of a Fractional-Order Nonlinear System with Hysteresis Nonlinearity via Describing Function",
+      "DOI": "10.5890/jand.2015.03.007",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "barbosa",
+        "jesus",
+        "machado"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "barbosa",
+        "jesus",
+        "machado"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "BarbosaMachado2002BacklashImpact",
+      "zotero_item_key": "P9B22AZ9",
+      "title": "Fractional Describing Function Analysis of Systems with Backlash and Impact Phenomena",
+      "DOI": "",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "barbosa",
+        "machado"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "barbosa",
+        "machado"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "kochenburger1950frequency",
+      "zotero_item_key": "SHWK3E9N",
+      "title": "A Frequency Response Method for Analyzing and Synthesizing Contactor Servomechanisms",
+      "DOI": "",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "kochenburger"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "kochenburger"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "nuij2006hosidf",
+      "zotero_item_key": "ZGXRADCK",
+      "title": "Higher-order sinusoidal input describing functions for the analysis of non-linear systems with harmonic responses",
+      "DOI": "",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "nuij",
+        "bosgra",
+        "steinbuch"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "nuij",
+        "bosgra",
+        "steinbuch"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "CafagnaGrassi2010",
+      "zotero_item_key": "WY7PW7N8",
+      "title": "An Effective Method for Detecting Chaos in Fractional-Order Systems",
+      "DOI": "10.1142/s0218127410025958",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "cafagna",
+        "grassi"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "cafagna",
+        "grassi"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "DudkowskiPrasadKapitaniak2017",
+      "zotero_item_key": "7U22U97G",
+      "title": "Perpetual Points: New Tool for Localization of Coexisting Attractors in Dynamical Systems",
+      "DOI": "10.1142/s0218127417500638",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "dudkowski",
+        "prasad",
+        "kapitaniak"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "dudkowski",
+        "prasad",
+        "kapitaniak"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "DudkowskiPrasadKapitaniak2018",
+      "zotero_item_key": "XVU6C9ZF",
+      "title": "Describing Chaotic Attractors: Regular and Perpetual Points",
+      "DOI": "10.1063/1.4991801",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "dudkowski",
+        "prasad",
+        "kapitaniak"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "dudkowski",
+        "prasad",
+        "kapitaniak"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "JafariNazarimehrSprott2015",
+      "zotero_item_key": "H4UM6U9H",
+      "title": "Limitation of Perpetual Points for Confirming Conservation in Dynamical Systems",
+      "DOI": "10.1142/s0218127415501825",
+      "author_count": 4,
+      "expected_personal_author_surnames": [
+        "jafari",
+        "nazarimehr",
+        "sprott",
+        "golpayegani"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "jafari",
+        "nazarimehr",
+        "sprott",
+        "golpayegani"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "GilmoreEtAl2010Connecting",
+      "zotero_item_key": "TAEYT2NT",
+      "title": "Connecting Curves for Dynamical Systems",
+      "DOI": "10.1088/1751-8113/43/25/255101",
+      "author_count": 5,
+      "expected_personal_author_surnames": [
+        "gilmore",
+        "ginoux",
+        "jones",
+        "letellier",
+        "freitas"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "gilmore",
+        "ginoux",
+        "jones",
+        "letellier",
+        "freitas"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "ShchedrinEtAl2018Composite",
+      "zotero_item_key": "PJTKRXA6",
+      "title": "Fractional Derivative of Composite Functions: Exact Results and Physical Applications",
+      "DOI": "10.48550/arxiv.1803.05018",
+      "author_count": 4,
+      "expected_personal_author_surnames": [
+        "shchedrin",
+        "smith",
+        "gladkina",
+        "carr"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "shchedrin",
+        "smith",
+        "gladkina",
+        "carr"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Gomoyunov2018Convex",
+      "zotero_item_key": "VNB2TMDB",
+      "title": "Fractional Derivatives of Convex Lyapunov Functions and Control Problems in Fractional Order Systems",
+      "DOI": "10.1515/fca-2018-0066",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "gomoyunov"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "gomoyunov"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "CongTuanTrinh2020Asymptotic",
+      "zotero_item_key": "VX8ZBT7X",
+      "title": "On Asymptotic Properties of Solutions to Fractional Differential Equations",
+      "DOI": "10.1016/j.jmaa.2019.123759",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "cong",
+        "tuan",
+        "trinh"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "cong",
+        "tuan",
+        "trinh"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "CuiKloedenXin2026CaputoDynamics",
+      "zotero_item_key": "9BHM4B7U",
+      "title": "Analysis of the Dynamics of Caputo Fractional Differential Equations",
+      "DOI": "10.48550/arxiv.2607.05799",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "cui",
+        "kloeden",
+        "xin"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "cui",
+        "kloeden",
+        "xin"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Cong2023Semigroup",
+      "zotero_item_key": "56HR6FRK",
+      "title": "Semigroup Property of Fractional Differential Operators and Its Applications",
+      "DOI": "10.3934/dcdsb.2022064",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "cong"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "cong"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "CongTuan2017Nonlocal",
+      "zotero_item_key": "R3CZDM4B",
+      "title": "Generation of Nonlocal Fractional Dynamical Systems by Fractional Differential Equations",
+      "DOI": "10.1216/jie-2017-29-4-585",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "cong",
+        "tuan"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "cong",
+        "tuan"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "attractorsapi",
+      "zotero_item_key": "XD9IHD6G",
+      "title": "Attractors.jl API",
+      "DOI": "",
+      "author_count": 0,
+      "expected_personal_author_surnames": [],
+      "expected_collective_creators": [
+        "JuliaDynamics"
+      ],
+      "zotero_author_surnames": [],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "fischer2020",
+      "zotero_item_key": "C2SDI5GN",
+      "title": "Lyapunov Exponents Spectrum Estimation of Fractional Order Nonlinear Systems Using Cloned Dynamics",
+      "DOI": "10.1016/j.apnum.2020.03.027",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "fischer",
+        "zourmba",
+        "mohamadou"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "fischer",
+        "zourmba",
+        "mohamadou"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "scipy2020",
+      "zotero_item_key": "DHBVUAVY",
+      "title": "SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python",
+      "DOI": "10.1038/s41592-019-0686-2",
+      "author_count": 111,
+      "expected_personal_author_surnames": [
+        "virtanen",
+        "gommers",
+        "oliphant",
+        "haberland",
+        "reddy",
+        "cournapeau",
+        "burovski",
+        "peterson",
+        "weckesser",
+        "bright",
+        "vanderwalt",
+        "brett",
+        "wilson",
+        "millman",
+        "mayorov",
+        "nelson",
+        "jones",
+        "kern",
+        "larson",
+        "carey",
+        "polat",
+        "feng",
+        "moore",
+        "vanderplas",
+        "laxalde",
+        "perktold",
+        "cimrman",
+        "henriksen",
+        "quintero",
+        "harris",
+        "archibald",
+        "ribeiro",
+        "pedregosa",
+        "vanmulbregt",
+        "vijaykumar",
+        "bardelli",
+        "rothberg",
+        "hilboll",
+        "kloeckner",
+        "scopatz",
+        "lee",
+        "rokem",
+        "woods",
+        "fulton",
+        "masson",
+        "haggstrom",
+        "fitzgerald",
+        "nicholson",
+        "hagen",
+        "pasechnik",
+        "olivetti",
+        "martin",
+        "wieser",
+        "silva",
+        "lenders",
+        "wilhelm",
+        "young",
+        "price",
+        "ingold",
+        "allen",
+        "lee",
+        "audren",
+        "probst",
+        "dietrich",
+        "silterra",
+        "webber",
+        "slavic",
+        "nothman",
+        "buchner",
+        "kulick",
+        "schonberger",
+        "demirandacardoso",
+        "reimer",
+        "harrington",
+        "rodriguez",
+        "nuneziglesias",
+        "kuczynski",
+        "tritz",
+        "thoma",
+        "newville",
+        "kummerer",
+        "bolingbroke",
+        "tartre",
+        "pak",
+        "smith",
+        "nowaczyk",
+        "shebanov",
+        "pavlyk",
+        "brodtkorb",
+        "lee",
+        "mcgibbon",
+        "feldbauer",
+        "lewis",
+        "tygier",
+        "sievert",
+        "vigna",
+        "peterson",
+        "more",
+        "pudlik",
+        "oshima",
+        "pingel",
+        "robitaille",
+        "spura",
+        "jones",
+        "cera",
+        "leslie",
+        "zito",
+        "krauss",
+        "upadhyay",
+        "halchenko",
+        "vazquezbaeza"
+      ],
+      "expected_collective_creators": [
+        "SciPy 1.0 Contributors"
+      ],
+      "zotero_author_surnames": [
+        "virtanen",
+        "gommers",
+        "oliphant",
+        "haberland",
+        "reddy",
+        "cournapeau",
+        "burovski",
+        "peterson",
+        "weckesser",
+        "bright",
+        "vanderwalt",
+        "brett",
+        "wilson",
+        "millman",
+        "mayorov",
+        "nelson",
+        "jones",
+        "kern",
+        "larson",
+        "carey",
+        "polat",
+        "feng",
+        "moore",
+        "vanderplas",
+        "laxalde",
+        "perktold",
+        "cimrman",
+        "henriksen",
+        "quintero",
+        "harris",
+        "archibald",
+        "ribeiro",
+        "pedregosa",
+        "vanmulbregt",
+        "vijaykumar",
+        "bardelli",
+        "rothberg",
+        "hilboll",
+        "kloeckner",
+        "scopatz",
+        "lee",
+        "rokem",
+        "woods",
+        "fulton",
+        "masson",
+        "haggstrom",
+        "fitzgerald",
+        "nicholson",
+        "hagen",
+        "pasechnik",
+        "olivetti",
+        "martin",
+        "wieser",
+        "silva",
+        "lenders",
+        "wilhelm",
+        "young",
+        "price",
+        "ingold",
+        "allen",
+        "lee",
+        "audren",
+        "probst",
+        "dietrich",
+        "silterra",
+        "webber",
+        "slavic",
+        "nothman",
+        "buchner",
+        "kulick",
+        "schonberger",
+        "demirandacardoso",
+        "reimer",
+        "harrington",
+        "rodriguez",
+        "nuneziglesias",
+        "kuczynski",
+        "tritz",
+        "thoma",
+        "newville",
+        "kummerer",
+        "bolingbroke",
+        "tartre",
+        "pak",
+        "smith",
+        "nowaczyk",
+        "shebanov",
+        "pavlyk",
+        "brodtkorb",
+        "lee",
+        "mcgibbon",
+        "feldbauer",
+        "lewis",
+        "tygier",
+        "sievert",
+        "vigna",
+        "peterson",
+        "more",
+        "pudlik",
+        "oshima",
+        "pingel",
+        "robitaille",
+        "spura",
+        "jones",
+        "cera",
+        "leslie",
+        "zito",
+        "krauss",
+        "upadhyay",
+        "halchenko",
+        "vazquezbaeza"
+      ],
+      "in_thesis_collection": true,
+      "issues": [
+        "collective_credit_missing"
+      ]
+    },
+    {
+      "latex_key": "gottwald2009",
+      "zotero_item_key": "WQ6D44LD",
+      "title": "On the Implementation of the 0–1 Test for Chaos",
+      "DOI": "10.1137/080718851",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "gottwald",
+        "melbourne"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "gottwald",
+        "melbourne"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "henon1982",
+      "zotero_item_key": "33YIMQK3",
+      "title": "On the Numerical Computation of Poincaré Maps",
+      "DOI": "10.1016/0167-2789(82)90034-3",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "henon"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "henon"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "bonani1999",
+      "zotero_item_key": "HVIUE7DU",
+      "title": "A Harmonic Balance Approach to Bifurcation Analysis of Limit Cycles",
+      "DOI": "10.1109/iscas.1999.780154",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "bonani",
+        "gilli"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "bonani",
+        "gilli"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "rogov2019",
+      "zotero_item_key": "BCZJ8JP6",
+      "title": "Pattern Analysis in Networks of Diffusively Coupled Lur'e Systems",
+      "DOI": "10.1142/s0218127419502006",
+      "author_count": 5,
+      "expected_personal_author_surnames": [
+        "rogov",
+        "pogromsky",
+        "steur",
+        "michiels",
+        "nijmeijer"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "rogov",
+        "pogromsky",
+        "steur",
+        "michiels",
+        "nijmeijer"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "sayed2020",
+      "zotero_item_key": "FKHY4KDG",
+      "title": "Self-Reproducing Hidden Attractors in Fractional-Order Chaotic Systems Using Affine Transformations",
+      "DOI": "10.1109/ojcas.2020.3030756",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "sayed",
+        "radwan"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "sayed",
+        "radwan"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "munoz2018",
+      "zotero_item_key": "ZDBFH4R5",
+      "title": "A New Fractional-Order Chaotic System with Different Families of Hidden and Self-Excited Attractors",
+      "DOI": "10.3390/e20080564",
+      "author_count": 6,
+      "expected_personal_author_surnames": [
+        "munozpacheco",
+        "zambranoserrano",
+        "volos",
+        "jafari",
+        "kengne",
+        "rajagopal"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "munozpacheco",
+        "zambranoserrano",
+        "volos",
+        "jafari",
+        "kengne",
+        "rajagopal"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "liu2021",
+      "zotero_item_key": "XTZX2GDL",
+      "title": "Chaotic Dynamics by Some Quadratic Jerk Systems",
+      "DOI": "10.3390/axioms10030227",
+      "author_count": 4,
+      "expected_personal_author_surnames": [
+        "liu",
+        "sang",
+        "wang",
+        "ahmad"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "liu",
+        "sang",
+        "wang",
+        "ahmad"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "wang2020",
+      "zotero_item_key": "54Z22J4K",
+      "title": "Fractional-Order Hidden Attractor Based on the Extended Liu System",
+      "DOI": "10.1155/2020/1418272",
+      "author_count": 6,
+      "expected_personal_author_surnames": [
+        "wang",
+        "liu",
+        "cai",
+        "liu",
+        "wang",
+        "zheng"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "wang",
+        "liu",
+        "cai",
+        "liu",
+        "wang",
+        "zheng"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "debbouche2021",
+      "zotero_item_key": "8ZE4RNQZ",
+      "title": "Generating Multidirectional Variable Hidden Attractors via Newly Commensurate and Incommensurate Non-Equilibrium Fractional-Order Chaotic Systems",
+      "DOI": "10.3390/e23030261",
+      "author_count": 7,
+      "expected_personal_author_surnames": [
+        "debbouche",
+        "momani",
+        "ouannas",
+        "shatnawi",
+        "grassi",
+        "dibi",
+        "batiha"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "debbouche",
+        "momani",
+        "ouannas",
+        "shatnawi",
+        "grassi",
+        "dibi",
+        "batiha"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Amster2021MetodosTopologicos",
+      "zotero_item_key": "PDPT5V89",
+      "title": "Métodos topológicos en el estudio de las ecuaciones diferenciales no lineales",
+      "DOI": "",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "amster"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "amster"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "NahmadAchar2022Topologia",
+      "zotero_item_key": "5FPZU3YC",
+      "title": "Topología y geometría diferencial con aplicaciones a la física",
+      "DOI": "",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "nahmadachar"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "nahmadachar"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "JaurezEtAl2021TGEDI",
+      "zotero_item_key": "EC92RDDA",
+      "title": "Teoría geométrica de ecuaciones diferenciales I",
+      "DOI": "",
+      "author_count": 4,
+      "expected_personal_author_surnames": [
+        "jaurezrosas",
+        "ortizbobadilla",
+        "palmamarquez",
+        "rosalesgonzalez"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "jaurezrosas",
+        "ortizbobadilla",
+        "palmamarquez",
+        "rosalesgonzalez"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "JaurezEtAl2021TGEDII",
+      "zotero_item_key": "BYWFMHH8",
+      "title": "Teoría geométrica de ecuaciones diferenciales II",
+      "DOI": "",
+      "author_count": 4,
+      "expected_personal_author_surnames": [
+        "jaurezrosas",
+        "ortizbobadilla",
+        "palmamarquez",
+        "rosalesgonzalez"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "jaurezrosas",
+        "ortizbobadilla",
+        "palmamarquez",
+        "rosalesgonzalez"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Hoppensteadt2000Chaotic",
+      "zotero_item_key": "N9DFCVJE",
+      "title": "Analysis and Simulation of Chaotic Systems",
+      "DOI": "10.1007/b98824",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "hoppensteadt"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "hoppensteadt"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "PhamEtAl2018HiddenAttractors",
+      "zotero_item_key": "T7HBYTA8",
+      "title": "Nonlinear Dynamical Systems with Self-Excited and Hidden Attractors",
+      "DOI": "10.1007/978-3-319-71243-7",
+      "author_count": 0,
+      "expected_personal_author_surnames": [],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Herrmann2014Fractional",
+      "zotero_item_key": "N69YHJNZ",
+      "title": "Fractional Calculus: An Introduction for Physicists",
+      "DOI": "10.1142/8934",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "herrmann"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "herrmann"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Das2020Kindergarten",
+      "zotero_item_key": "HG3AYDJX",
+      "title": "Kindergarten of Fractional Calculus",
+      "DOI": "",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "das"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "das"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "OldhamSpanier1974Fractional",
+      "zotero_item_key": "KTUCTX7M",
+      "title": "The Fractional Calculus: Theory and Applications of Differentiation and Integration to Arbitrary Order",
+      "DOI": "",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "oldham",
+        "spanier"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "oldham",
+        "spanier"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Davies2004ExploringChaos",
+      "zotero_item_key": "GW7DPAID",
+      "title": "Exploring Chaos: Theory and Experiment",
+      "DOI": "",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "davies"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "davies"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Sprott2003ChaosTimeSeries",
+      "zotero_item_key": "4EUB4FVS",
+      "title": "Chaos and Time-Series Analysis",
+      "DOI": "10.1093/oso/9780198508397.001.0001",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "sprott"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "sprott"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "AlligoodSauerYorke1996Chaos",
+      "zotero_item_key": "87PPW7QI",
+      "title": "Chaos: An Introduction to Dynamical Systems",
+      "DOI": "10.1007/978-3-642-59281-2",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "alligood",
+        "sauer",
+        "yorke"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "alligood",
+        "sauer",
+        "yorke"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Devaney1989Chaotic",
+      "zotero_item_key": "K9GQW6AN",
+      "title": "An Introduction to Chaotic Dynamical Systems",
+      "DOI": "",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "devaney"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "devaney"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "GuckenheimerHolmes1983",
+      "zotero_item_key": "6GQ5IUB7",
+      "title": "Nonlinear Oscillations, Dynamical Systems, and Bifurcations of Vector Fields",
+      "DOI": "10.1007/978-1-4612-1140-2",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "guckenheimer",
+        "holmes"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "guckenheimer",
+        "holmes"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "SlotineLi1991",
+      "zotero_item_key": "N8XANG35",
+      "title": "Applied Nonlinear Control",
+      "DOI": "",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "slotine",
+        "li"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "slotine",
+        "li"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Hilborn2000Chaos",
+      "zotero_item_key": "Y2Y35V4E",
+      "title": "Chaos and Nonlinear Dynamics: An Introduction for Scientists and Engineers",
+      "DOI": "",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "hilborn"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "hilborn"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Falconer2014Fractal",
+      "zotero_item_key": "3AS5PUED",
+      "title": "Fractal Geometry: Mathematical Foundations and Applications",
+      "DOI": "",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "falconer"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "falconer"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "PhamVolosKapitaniak2017Systems",
+      "zotero_item_key": "EURMQ2WY",
+      "title": "Systems with Hidden Attractors: From Theory to Realization in Circuits",
+      "DOI": "10.1007/978-3-319-53721-4",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "pham",
+        "volos",
+        "kapitaniak"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "pham",
+        "volos",
+        "kapitaniak"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "DatserisParlitz2022Nonlinear",
+      "zotero_item_key": "A9D8SSWP",
+      "title": "Nonlinear Dynamics: A Concise Introduction Interlaced with Code",
+      "DOI": "10.1007/978-3-030-91032-7",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "datseris",
+        "parlitz"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "datseris",
+        "parlitz"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Kuznetsov2023Bifurcation",
+      "zotero_item_key": "HC4RQH47",
+      "title": "Elements of Applied Bifurcation Theory",
+      "DOI": "10.1007/978-3-031-22007-4",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "kuznetsov"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "kuznetsov"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Kantorovich2022Fundamentals",
+      "zotero_item_key": "99B8DQ88",
+      "title": "Mathematics for Natural Scientists: Fundamentals and Basics",
+      "DOI": "10.1007/978-3-030-91222-2",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "kantorovich"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "kantorovich"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Kantorovich2024Advanced",
+      "zotero_item_key": "7Q8JQ4X8",
+      "title": "Mathematics for Natural Scientists II: Advanced Methods",
+      "DOI": "10.1007/978-3-031-46320-4",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "kantorovich"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "kantorovich"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Cicogna2020Exercises",
+      "zotero_item_key": "3Z4SXELK",
+      "title": "Exercises and Problems in Mathematical Methods of Physics",
+      "DOI": "10.1007/978-3-030-59472-5",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "cicogna"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "cicogna"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Wimberger2022Nonlinear",
+      "zotero_item_key": "WM5LHJKT",
+      "title": "Nonlinear Dynamics and Quantum Chaos: An Introduction",
+      "DOI": "10.1007/978-3-031-01249-5",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "wimberger"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "wimberger"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "RoyRayChowdhury2024KCC",
+      "zotero_item_key": "XQDPQGWE",
+      "title": "Kosambi–Cartan–Chern Perspective on Chaos: Unveiling Hidden Attractors in Nonlinear Autonomous Systems",
+      "DOI": "10.1103/physreve.109.044205",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "roy",
+        "ray",
+        "chowdhury"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "roy",
+        "ray",
+        "chowdhury"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "DazaEtAl2015Wada",
+      "zotero_item_key": "ZGDZDM9G",
+      "title": "Testing for Basins of Wada",
+      "DOI": "10.1038/srep16579",
+      "author_count": 4,
+      "expected_personal_author_surnames": [
+        "daza",
+        "wagemakers",
+        "sanjuan",
+        "yorke"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "daza",
+        "wagemakers",
+        "sanjuan",
+        "yorke"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "DellnitzHohmann1997Subdivision",
+      "zotero_item_key": "4BWIENUQ",
+      "title": "A Subdivision Algorithm for the Computation of Unstable Manifolds and Global Attractors",
+      "DOI": "10.1007/s002110050240",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "dellnitz",
+        "hohmann"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "dellnitz",
+        "hohmann"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "KaliesEtAl2005ChainRecurrence",
+      "zotero_item_key": "XPYYITU5",
+      "title": "An Algorithmic Approach to Chain Recurrence",
+      "DOI": "10.1007/s10208-004-0163-9",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "kalies",
+        "mischaikow",
+        "vandervorst"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "kalies",
+        "mischaikow",
+        "vandervorst"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "MischaikowEtAl2016Conley",
+      "zotero_item_key": "KPXLFJVY",
+      "title": "Discretization Strategies for Computing Conley Indices and Morse Decompositions of Flows",
+      "DOI": "10.3934/jcd.2016001",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "mischaikow",
+        "mrozek",
+        "weilandt"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "mischaikow",
+        "mrozek",
+        "weilandt"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "KhristenkoWohlmuth2023Rational",
+      "zotero_item_key": "2UVLQLU9",
+      "title": "Solving Time-Fractional Differential Equations via Rational Approximation",
+      "DOI": "10.1093/imanum/drac022",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "khristenko",
+        "wohlmuth"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "khristenko",
+        "wohlmuth"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Ott2002Chaos",
+      "zotero_item_key": "JU97IC5T",
+      "title": "Chaos in Dynamical Systems",
+      "DOI": "",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "ott"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "ott"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "TelGruiz2006Chaotic",
+      "zotero_item_key": "XCRGJGWW",
+      "title": "Chaotic Dynamics: An Introduction Based on Classical Mechanics",
+      "DOI": "",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "tel",
+        "gruiz"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "tel",
+        "gruiz"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "VallejoSanjuan2017Predictability",
+      "zotero_item_key": "9QTDTNCU",
+      "title": "Predictability of Chaotic Dynamics: A Finite-Time Lyapunov Exponents Approach",
+      "DOI": "10.1007/978-3-319-51893-0",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "vallejo",
+        "sanjuan"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "vallejo",
+        "sanjuan"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Jost2005Dynamical",
+      "zotero_item_key": "4ACIGKMT",
+      "title": "Dynamical Systems: Examples of Complex Behaviour",
+      "DOI": "",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "jost"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "jost"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "SunHeWang2022FractionalChaos",
+      "zotero_item_key": "2R6RPFD9",
+      "title": "Solution and Characteristic Analysis of Fractional-Order Chaotic Systems",
+      "DOI": "10.1007/978-981-19-3273-1",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "sun",
+        "he",
+        "wang"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "sun",
+        "he",
+        "wang"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "DoanKloeden2022Triangular",
+      "zotero_item_key": "B9PCIGHR",
+      "title": "Attractors of Caputo fractional differential equations with triangular vector fields",
+      "DOI": "10.1007/s13540-022-00030-6",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "doan",
+        "kloeden"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "doan",
+        "kloeden"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "DuanLanLi2022WeylCaputo",
+      "zotero_item_key": "GJUF2J5T",
+      "title": "A Comparative Study of Responses of Fractional Oscillator to Sinusoidal Excitation in the Weyl and Caputo Senses",
+      "DOI": "10.3390/fractalfract6120692",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "duan",
+        "lan",
+        "li"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "duan",
+        "lan",
+        "li"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "OrtigueiraMachadoTrujillo2017Periodic",
+      "zotero_item_key": "6CRPBB35",
+      "title": "Fractional derivatives and periodic functions",
+      "DOI": "10.1007/s40435-015-0215-9",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "ortigueira",
+        "machado",
+        "trujillo"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "ortigueira",
+        "machado",
+        "trujillo"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "StephensWanner2014IsolatingBlocks",
+      "zotero_item_key": "2RUBVX3V",
+      "title": "Rigorous Validation of Isolating Blocks for Flows and Their Conley Indices",
+      "DOI": "10.1137/140971075",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "stephens",
+        "wanner"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "stephens",
+        "wanner"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "DayJungeMischaikow2004InfiniteDimensional",
+      "zotero_item_key": "QH234K6K",
+      "title": "A Rigorous Numerical Method for the Global Analysis of Infinite-Dimensional Discrete Dynamical Systems",
+      "DOI": "10.1137/030600210",
+      "author_count": 3,
+      "expected_personal_author_surnames": [
+        "day",
+        "junge",
+        "mischaikow"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "day",
+        "junge",
+        "mischaikow"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "JiangZhangZhangZhang2017FastCaputo",
+      "zotero_item_key": "XX6VAAS3",
+      "title": "Fast Evaluation of the Caputo Fractional Derivative and Its Applications to Fractional Diffusion Equations",
+      "DOI": "10.4208/cicp.oa-2016-0136",
+      "author_count": 4,
+      "expected_personal_author_surnames": [
+        "jiang",
+        "zhang",
+        "zhang",
+        "zhang"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "jiang",
+        "zhang",
+        "zhang",
+        "zhang"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "DancaFeckan2024MemoryPrinciple",
+      "zotero_item_key": "HGIIK9L5",
+      "title": "Memory Principle of the MATLAB Code for Lyapunov Exponents of Fractional-Order",
+      "DOI": "10.1142/s0218127424501566",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "danca",
+        "feckan"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "danca",
+        "feckan"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "Danca2026ImprovedLyapunov",
+      "zotero_item_key": "H5W9IPH2",
+      "title": "Improved Matlab Code for Lyapunov Exponents of Fractional-Order Systems",
+      "DOI": "10.1142/s0218127426501725",
+      "author_count": 1,
+      "expected_personal_author_surnames": [
+        "danca"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "danca"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    },
+    {
+      "latex_key": "ZhuLi2026PeriodicAlmostPeriodic",
+      "zotero_item_key": "5CPJ9E9K",
+      "title": "Fractional integrals and derivatives of periodic and almost periodic functions",
+      "DOI": "10.1007/s13540-026-00582-x",
+      "author_count": 2,
+      "expected_personal_author_surnames": [
+        "zhu",
+        "li"
+      ],
+      "expected_collective_creators": [],
+      "zotero_author_surnames": [
+        "zhu",
+        "li"
+      ],
+      "in_thesis_collection": true,
+      "issues": []
+    }
+  ],
+  "key_map_file": "mapa_claves_latex_zotero.csv",
+  "source_bib_sha256": "3a8a2ca32abdf9f336ab76360abc7af83fc682289532b6e3fc2c8624a73da4e1",
+  "preservation_boundary": "No se fusionaron ni eliminaron fichas previas. Se importaron 92 fichas locales faltantes; los duplicados ya existentes permanecen. Las claves LaTeX se conservan en el manuscrito y mapa; note se traduce como nota hija en Zotero, no como Extra. No se consultaron adjuntos ni full text."
+}

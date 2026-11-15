@@ -1,0 +1,1805 @@
+{
+  "fecha": "2026-11-09",
+  "stage": "reading_indexes_after_recoverable_cleanup",
+  "source": "reportes_revision",
+  "source_root": "thesis_directory",
+  "destination": "version_2/docs/reportes_revision_tesis",
+  "destination_root": "repository_root",
+  "files_verified_before_self_record": 358,
+  "files_total_including_self": 359,
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 9011,
+      "sha256": "5a190d601dacc1a1bcecbb49a8cf0b2361825a48c3b80d3610b573f52aeba608"
+    },
+    {
+      "path": "README.md",
+      "bytes": 10834,
+      "sha256": "3136811ffd9cf5b097b865c83493661c0d619e021adfb8cc14ffecdc3dbac63a"
+    },
+    {
+      "path": "auditoria/bibliografia/README.md",
+      "bytes": 3740,
+      "sha256": "e1610c32536e19bb9551713b9e1147bc0532d6a5a5cb8dfe9734c15f5fc13bbc"
+    },
+    {
+      "path": "auditoria/bibliografia/ajustes_autores_solo_importacion.json",
+      "bytes": 3300,
+      "sha256": "e264362822c6d832574291672306c587ef5f99026eed6fb28fb482968b7feed4"
+    },
+    {
+      "path": "auditoria/bibliografia/auditar_bibliografia_completa.py",
+      "bytes": 15538,
+      "sha256": "8475e5caceec7dab82cb9c4f5884f6573de3bf37568fcce8c41102a5d896291f"
+    },
+    {
+      "path": "auditoria/bibliografia/bibliografia_auditoria.csv",
+      "bytes": 11177,
+      "sha256": "2ba6ae193e9606f6c0acb3a619d0da7b14b5e0ed6e0e1e588004bc62736cb67a"
+    },
+    {
+      "path": "auditoria/bibliografia/bibliografia_completa_auditoria.csv",
+      "bytes": 77939,
+      "sha256": "56f04c2e09d7871c53d08b6cd6077ced4b7d59c4b5d7e95bb0f6c087e82ad03f"
+    },
+    {
+      "path": "auditoria/bibliografia/bibliografia_completa_resumen.json",
+      "bytes": 22317,
+      "sha256": "4e3e0e3c712d1fb43a8c6ef3917077c73aa017889667fd4aa9081e36df363da1"
+    },
+    {
+      "path": "auditoria/bibliografia/citas_por_edicion.json",
+      "bytes": 82507,
+      "sha256": "ac7ba888a761533226401dfc2cf0117895d0d75d1273ad11d6a4241d99e74c48"
+    },
+    {
+      "path": "auditoria/bibliografia/conclusiones_bibliograficas.json",
+      "bytes": 6332,
+      "sha256": "0b4c4110248b609800a2215889177c671f14c1ef30961fc2fcf77e7190c09ece"
+    },
+    {
+      "path": "auditoria/bibliografia/cotejo_registral_preimportacion.csv",
+      "bytes": 19661,
+      "sha256": "299f9bf0789f31e68699f1277a65df264439672c754974c8158bbd07fdb9beea"
+    },
+    {
+      "path": "auditoria/bibliografia/cotejo_registral_preimportacion.json",
+      "bytes": 200365,
+      "sha256": "0a4be8598e13e624a9071e93ba56bbd7658800f98cb19a8a9bef9963ebe64307"
+    },
+    {
+      "path": "auditoria/bibliografia/discrepancias_actuales_zotero.csv",
+      "bytes": 600,
+      "sha256": "07533a02fbd0e32ba2b7be7bfc3176127ef2eb011b86ae0d7bfbce49bacb32ad"
+    },
+    {
+      "path": "auditoria/bibliografia/errores_metadatos_corregidos.csv",
+      "bytes": 1694,
+      "sha256": "afffc6a3fe1fc0a47a759b2e51c8b6984acbe3827c3a0fdd96b4e634600b67eb"
+    },
+    {
+      "path": "auditoria/bibliografia/fazzino_preprint_metadatos_primarios.json",
+      "bytes": 3435,
+      "sha256": "6d64e6c46462f3c853aa683d1487e8ca660a0a60d1384fb48c4639ea82501578"
+    },
+    {
+      "path": "auditoria/bibliografia/importar_primera_ficha.bib",
+      "bytes": 489,
+      "sha256": "486ed4a3c4ee26b61e1337f5d49f5f15dfe22addfbb3a98689c6c6e86491c08f"
+    },
+    {
+      "path": "auditoria/bibliografia/importar_restantes_91.bib",
+      "bytes": 41314,
+      "sha256": "76a0fd2589a03c216d7e5cc69ef233ffef67db86e8947d348ee90e85c793985a"
+    },
+    {
+      "path": "auditoria/bibliografia/mapa_claves_latex_zotero.csv",
+      "bytes": 39213,
+      "sha256": "ced8e05f5f54bfcde3e546f0651d54e8e0594fab5bb5338ff7c2c3d73b225e51"
+    },
+    {
+      "path": "auditoria/bibliografia/metadatos_crossref_verificados.json",
+      "bytes": 30025,
+      "sha256": "0257b4f7306394d9cc1902a9bdd8781c1257906ddb052ce3cb2b49820c46d7c0"
+    },
+    {
+      "path": "auditoria/bibliografia/plan_importacion_referencias_locales.json",
+      "bytes": 58583,
+      "sha256": "c8034021ca81213c8cb2a16f27d8e46297f5baf849b0bdd1fcdabc5755a92ee4"
+    },
+    {
+      "path": "auditoria/bibliografia/recomendaciones_coasesor.csv",
+      "bytes": 3465,
+      "sha256": "6793c75fadd9a4e4a8529c3506975b6d7e5a52e8500e4b279a6b78d3c6ba4db4"
+    },
+    {
+      "path": "auditoria/bibliografia/referencias_complementarias.bib",
+      "bytes": 4512,
+      "sha256": "2a01474b8dd420be6c7a70ad94f6113b1322b499daa1f9319d379918bf8db4a4"
+    },
+    {
+      "path": "auditoria/bibliografia/referencias_locales_faltantes_importar.bib",
+      "bytes": 41805,
+      "sha256": "a204179ccc2cbd22a92949434d7bda40e5cf2d0ab46dac4072b08d5e0aaeb064"
+    },
+    {
+      "path": "auditoria/bibliografia/scispace_busqueda_1.json",
+      "bytes": 17338,
+      "sha256": "abbab7e570ca15329b8fdecc4d6ecfe46995b1cf2c0ee736ea33346613c22a9b"
+    },
+    {
+      "path": "auditoria/bibliografia/scispace_busqueda_2.json",
+      "bytes": 17824,
+      "sha256": "33632af9eb419a81093dd5973854d7bfec59a82dea676739535121e4a1cd653a"
+    },
+    {
+      "path": "auditoria/bibliografia/scispace_busqueda_3.json",
+      "bytes": 17080,
+      "sha256": "8a401e0579d82c5bdc8dcd9b7dadfac2071b0df7308b780f63d4200c0c050ff5"
+    },
+    {
+      "path": "auditoria/bibliografia/scispace_busqueda_4.json",
+      "bytes": 17438,
+      "sha256": "1219e8e6c1c71e7ce37c48a73b23532ec4c20e112474f4aac75f1bc0abe5f754"
+    },
+    {
+      "path": "auditoria/bibliografia/scispace_busqueda_5.json",
+      "bytes": 14235,
+      "sha256": "742fd8c39318d3d55d44fc48ab7d72a2ba598f00c86f6cb5bbcf87937ee8c07f"
+    },
+    {
+      "path": "auditoria/bibliografia/scispace_fichas_seleccion.json",
+      "bytes": 6598,
+      "sha256": "430c914610c6f02dda7d4ea62189ed89cafb9cd8ca83a33da87dc6848d78610d"
+    },
+    {
+      "path": "auditoria/bibliografia/seleccion_bibliografica_verificada.json",
+      "bytes": 51842,
+      "sha256": "d243224c93de1b15d3e24a246dc593a08b1fa93f93a98f4c249c73f289163cad"
+    },
+    {
+      "path": "auditoria/bibliografia/verificacion_importacion_zotero.json",
+      "bytes": 60355,
+      "sha256": "c4496086758cd65b9e5994d35a35525939b37087491a77cb1f67f0a66f7db7a7"
+    },
+    {
+      "path": "auditoria/bibliografia/verificar_doi_preimportacion.py",
+      "bytes": 3509,
+      "sha256": "e7f32f31feb58c26c807512ec016e572a94a3bff6890676a516e577062f64404"
+    },
+    {
+      "path": "auditoria/bibliografia/verificar_importacion_zotero.py",
+      "bytes": 5235,
+      "sha256": "b07a7218e38c2e985365c9a15d4d5ffbb0250792a9e17b58d1bd8905ad7a33d7"
+    },
+    {
+      "path": "auditoria/matematica.csv",
+      "bytes": 32963,
+      "sha256": "2216eca3163a3a867f9b1a1fcc51d8ae0bc65f8f0adf03a2626ded95aa3c5512"
+    },
+    {
+      "path": "auditoria/preservacion_originales.json",
+      "bytes": 437,
+      "sha256": "d3c0ae828a920172f6f715b75628ba76aa2545e61fa68166a3e9386cc1aa43ab"
+    },
+    {
+      "path": "auditoria/qa_visual_estudio.json",
+      "bytes": 10441,
+      "sha256": "386a5051fff2e7b4adede2a54b975cba9f7ebe5a57da6e158292d687c6f8a818"
+    },
+    {
+      "path": "auditoria/qa_visual_teorico.json",
+      "bytes": 9813,
+      "sha256": "7a0f44e0ac01c0062508d1238e217e16cc193e7bc4bddc1a26be21d024bce81f"
+    },
+    {
+      "path": "auditoria/resultados/C02_independent_restart.npz",
+      "bytes": 803069,
+      "sha256": "a182d0dfa25df079df84b9419bd299367cae9a1018a2a92557ac8deb0fa8cbf8"
+    },
+    {
+      "path": "auditoria/resultados/c02_control.json",
+      "bytes": 1514,
+      "sha256": "9cf3d9bfecbd0d67df2d37a89a15c61f593832695a5e22f5bc8a1e99a6d909c3"
+    },
+    {
+      "path": "auditoria/resultados/conteos_campanas.csv",
+      "bytes": 2945,
+      "sha256": "214e5519c1b4372f844a9ca62a6b23b8bb37470e44226517baf38c79cb6093c4"
+    },
+    {
+      "path": "auditoria/resultados/cotejo_pll_mavpd.csv",
+      "bytes": 12075,
+      "sha256": "680f546b877fbff31648ed8e846ea78b4e253e474c218e576a568c0cc171a491"
+    },
+    {
+      "path": "auditoria/resultados/generar_c02_desde_datos.py",
+      "bytes": 2446,
+      "sha256": "5826b17a5677f009c2f88aac39ea17829d5e78fc8e262431d28edddf0d1bd4be"
+    },
+    {
+      "path": "auditoria/resultados/verificacion_resultados.json",
+      "bytes": 23429,
+      "sha256": "149d307e4869df19802a5b1175a3edbfea046f79ba5eeed60bd54d2399df61c6"
+    },
+    {
+      "path": "auditoria/resultados/verificar_registros.py",
+      "bytes": 10247,
+      "sha256": "f9750e48e478081d87caa985d9c33afd6fdf7cda2b6b4b001ed14e7926a25c08"
+    },
+    {
+      "path": "auditoria/resultados_figuras.csv",
+      "bytes": 12116,
+      "sha256": "f1fbd229a6066e0703256d4ef1a2c1410b0296e79ba9b499c6ee3f2dff281727"
+    },
+    {
+      "path": "auditoria/verificacion_final.json",
+      "bytes": 14406,
+      "sha256": "f9a0ec59d0297463eb48fc4122ce603467ff4cb8e0779e1c7daa4f21b3a421a5"
+    },
+    {
+      "path": "auditoria/verificar_entregables.py",
+      "bytes": 4473,
+      "sha256": "9f9ba2aa6aefefe334579f736e2ac9c651555588416c25b63b5ea057ea432534"
+    },
+    {
+      "path": "auditoria/wolfram/abm_picard_lorenz.json",
+      "bytes": 1209,
+      "sha256": "bfd2b277b7d14e22978c2623d8e9335a6dbeac970d67254d8bb73d8a02895a61"
+    },
+    {
+      "path": "auditoria/wolfram/abm_picard_lorenz.wl",
+      "bytes": 1925,
+      "sha256": "7dd0ab277a93da7c6d646af18da74d450b26ef625251737b3933aa4edf516b72"
+    },
+    {
+      "path": "auditoria/wolfram/lure_estabilidad.json",
+      "bytes": 2364,
+      "sha256": "828e455f9c4374a42f186d1c5a23c63cb8f11a8588bd3e64b6e44b3e139627f2"
+    },
+    {
+      "path": "auditoria/wolfram/lure_estabilidad.wl",
+      "bytes": 1826,
+      "sha256": "3b49affaa9f55b4dd9238f8d547c5a9abf016e88be78d16c535a4027339cdbeb"
+    },
+    {
+      "path": "auditoria/wolfram/no_chua_recalculado.json",
+      "bytes": 2720,
+      "sha256": "88d53d29227dabe23faf484f83fd8940d572fe48b2fef22c4f2d810b5617b54a"
+    },
+    {
+      "path": "auditoria/wolfram/no_chua_recalculado.wl",
+      "bytes": 8812,
+      "sha256": "bd6582f66a9a9f5e57b85ae297f5c739ba28d5ed1a4252064b2fedc89caaa591"
+    },
+    {
+      "path": "auditoria/wolfram/puntos_perpetuos_kalman_fitts.json",
+      "bytes": 1271,
+      "sha256": "5888022ca5c529929ec4aefbf1ad8537c90686fb00a3a9564d7354c0bfaa47be"
+    },
+    {
+      "path": "auditoria/wolfram/puntos_perpetuos_kalman_fitts.wl",
+      "bytes": 2129,
+      "sha256": "933db883922466a287095e63d2b1b15bfaf9a795a62bb31ea4503ebe13f4dab5"
+    },
+    {
+      "path": "auditoria/wolfram/resumen_comprobaciones.json",
+      "bytes": 3733,
+      "sha256": "69c4e6e6c18e0b4626b40633fd63b6a75897c5e3328d6566cddc8cf6a94ae080"
+    },
+    {
+      "path": "compilar_reportes.ps1",
+      "bytes": 618,
+      "sha256": "31194d237e09c38461b5b991070216a52e88feb14f85eb10c453016bbaa45d38"
+    },
+    {
+      "path": "figures/c590_basin/basin_cut_00.png",
+      "bytes": 219122,
+      "sha256": "5c88378496688d20fd55830c1862542db46d06ad353c400a026e0b1704c612dc"
+    },
+    {
+      "path": "figures/c590_basin/basin_cut_00_equilibria.png",
+      "bytes": 153604,
+      "sha256": "9fac81ba0d9eabc42284ab9020d0397b9c9a938e32c5f8ecfbc4a2106c8c0540"
+    },
+    {
+      "path": "figures/c590_basin/basin_cut_01.png",
+      "bytes": 304819,
+      "sha256": "37031049051c52557f2848ac3f58e13a509ff283b80eed26d5376a2096753d0a"
+    },
+    {
+      "path": "figures/c590_basin/basin_cut_01_equilibria.png",
+      "bytes": 174579,
+      "sha256": "59c035bf5753bd2b285caa1f861fb36a8a6650d312752e17326f2ffd6a8dd745"
+    },
+    {
+      "path": "figures/c590_basin/basin_cut_02.png",
+      "bytes": 291198,
+      "sha256": "d405cbafed8ab3419535985c5a40976d1ed069b8c3453f9bd6d86606de000243"
+    },
+    {
+      "path": "figures/c590_basin/basin_cut_02_equilibria.png",
+      "bytes": 165081,
+      "sha256": "7302b43e0de276539f02cf967007e07d91cf444dfad05ae1b64ccf7963d6ccf4"
+    },
+    {
+      "path": "figures/c590_basin/basin_cut_03.png",
+      "bytes": 298860,
+      "sha256": "09d20ec7c444d1824b25bd34a37a7fc1c275981a4e40e2b33018552d7e41a185"
+    },
+    {
+      "path": "figures/c590_basin/basin_cut_03_equilibria.png",
+      "bytes": 175360,
+      "sha256": "6b3ad3c61f2ac77143be098e27915443a583bdd7987f49c2669b61c07dfeba24"
+    },
+    {
+      "path": "figures/c590_basin/basin_cut_04.png",
+      "bytes": 219502,
+      "sha256": "2a862cd2471aa08375a7dffe8dc4b444b3775d5873becb4b93a380e15cacab09"
+    },
+    {
+      "path": "figures/c590_basin/basin_cut_04_equilibria.png",
+      "bytes": 153154,
+      "sha256": "cfc2d71a8bb7a2e34758d532f0a7b588fc81ba2abed3508ce1cae94c05afd427"
+    },
+    {
+      "path": "figures/c590_basin/basin_multislice.pdf",
+      "bytes": 99394,
+      "sha256": "8a3ec61cfb86b812c44046e58a78a5fa23c8d77e66e6870a809703fb6b6939b3"
+    },
+    {
+      "path": "figures/c590_basin/basin_multislice.png",
+      "bytes": 393773,
+      "sha256": "855a64163e1a165800c0853e730dc5a7c980296badab5b8a3df0c55be4eb423d"
+    },
+    {
+      "path": "figures/c590_basin/basin_multislice_equilibria.pdf",
+      "bytes": 136318,
+      "sha256": "eeabdef63da529c8d0693b167592e71a81694a244317511a4819999d952f7cce"
+    },
+    {
+      "path": "figures/c590_basin/basin_multislice_equilibria.png",
+      "bytes": 657532,
+      "sha256": "ea6a2d346380eecb5438640ece350cd16637d7d909b47b8ee3c79b5fb8861f57"
+    },
+    {
+      "path": "figures/c590_basin/z_cut_selection.pdf",
+      "bytes": 23402,
+      "sha256": "b4e73d90541885f1139e72223c6c77a5044035f6c6dc7e1a29606b8b21997e94"
+    },
+    {
+      "path": "figures/c590_basin/z_cut_selection.png",
+      "bytes": 93658,
+      "sha256": "1bca51310141ba67e8ec17ff49d2e70e1cbab4c4bab664bad9ab21759b4dc648"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_arctan_c590_fig00_initial_seed.pdf",
+      "bytes": 162450,
+      "sha256": "d0082bc837236e61fc0ec2f7e58d69fa662bdef1d3cbde1935e518619360bc93"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_arctan_c590_fig03_attractor.pdf",
+      "bytes": 144546,
+      "sha256": "655a5179492b2e27c8d9236b9ec88395940b29fd3c04211c64843e7165176a54"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_arctan_c590_fig04_timeseries.pdf",
+      "bytes": 34372,
+      "sha256": "5c8aa6eaea8f1344d152e54d2d0d51933ac8281d41c69bf448d64ea5438cab07"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_arctan_c590_fig11_fft.pdf",
+      "bytes": 21808,
+      "sha256": "3070a5ba31ae34392f1c90a304112ad48a0b6186c540d05bcb377510480b3a25"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_arctan_c590_fig12_lyapunov_two_methods.pdf",
+      "bytes": 31492,
+      "sha256": "05e7127fa8122449df5b8aacd44f682437fdc25bdc788b519136c1124956b8c2"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_arctan_c590_fig13_E0_hiddenness_spherical_3d.pdf",
+      "bytes": 200434,
+      "sha256": "b9529100fd62022feeb15de6aac7b017df4f4852b596d8004584273b4eafc814"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_arctan_c590_fig13_Em_hiddenness_spherical_3d.pdf",
+      "bytes": 165727,
+      "sha256": "a85d676b7b32c0a4809c1d6a9bb7c5cb9bbffe68bcdf85afff6b6e43768e021e"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_arctan_c590_fig13_Ep_hiddenness_spherical_3d.pdf",
+      "bytes": 165706,
+      "sha256": "79d8611888bb8a020b1b3934a98f8aa6ee7da9845f2306617d8ba3c6a646c87f"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_arctan_c590_fig14_hiddenness_contact_heatmap.pdf",
+      "bytes": 20637,
+      "sha256": "e0663b5684a508a42c4f0b787be1325fa52dc402582e414b78e0e75ef193ab47"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_biased_fig01a_transfer_real.pdf",
+      "bytes": 84806,
+      "sha256": "d9a1cde54401f0235c643025b574b29bf2d339fd34535e9b9ae114d1bcfbac72"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_biased_fig01b_transfer_imag.pdf",
+      "bytes": 79235,
+      "sha256": "0d4d399b113a757e876a9dc546b0f5d764635a8a2df583b441c84f7dea12b72b"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_biased_fig02_continuation_story.pdf",
+      "bytes": 230503,
+      "sha256": "8441c6a6bb0608ec84b5fe6a04fe875282be7079d459651d2efd94c5ad53d4f4"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_biased_fig03_attractor.pdf",
+      "bytes": 27978,
+      "sha256": "4c6dcd974665f64f215bf6e34bb694030d8a4e5bb687bca792fdbdedfb8adde9"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_biased_fig04_projections.pdf",
+      "bytes": 55072,
+      "sha256": "5eaa3244d0eadea40ffcfa187595c3ba766e90ec17ff000e30e26f1efee4d3f3"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_biased_fig04_timeseries.pdf",
+      "bytes": 423080,
+      "sha256": "4f45c3b02e46aa1279ff4bc45cf4bf35ce198d6a036785c5d73f896ce2967daa"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_biased_fig11_fft.pdf",
+      "bytes": 14339,
+      "sha256": "06945b2cd3b522af859aae2040e4f874eb827c6e70d3a8aa31eea6439ac46f0f"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_biased_fig12_lyapunov.pdf",
+      "bytes": 175745,
+      "sha256": "8520096d7723cb5668da58f9634e4330b013f5336d27f7596928f15e1770d262"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_biased_fig13_E0_hiddenness_spherical_3d.pdf",
+      "bytes": 398008,
+      "sha256": "82abe781660adbc34beb456393c090e67e452815591bf769c6e07d4c04e11c1a"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_biased_fig13_Em_hiddenness_spherical_3d.pdf",
+      "bytes": 379271,
+      "sha256": "e480e23e19975c63eb729576ffbfb741ecf6affe8facb805f2c3d131f565d901"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_biased_fig13_Ep_hiddenness_spherical_3d.pdf",
+      "bytes": 379278,
+      "sha256": "a99538a388d3db8d954826e18dd04b3dd09788fb6da9b3ce23d93623f63ce7c3"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_biased_fig14_hiddenness_contact_heatmap.pdf",
+      "bytes": 18116,
+      "sha256": "c7c1a3a2bcb3a17f9cab0434786e6698d80c058e01a445028f8616b8bcde6fe5"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_biased_fig15_extended_heatmap.pdf",
+      "bytes": 21344,
+      "sha256": "b24e36656f2a5b4b975381acbad62862c1300aed8ccca3e37cd30572b7584e1a"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_fig01a_transfer_real.pdf",
+      "bytes": 81938,
+      "sha256": "0afb6daf2f5446aa69a6605b1d73c7559949eec6870f4cfb279d7eb318f9e88e"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_fig01b_transfer_imag.pdf",
+      "bytes": 86613,
+      "sha256": "da1105a5a9d9a8fc4eac57f0f7c8fcf87f791ba7fcdf62da2a8d37becb2bd4a2"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_fig02_continuation_story.pdf",
+      "bytes": 140490,
+      "sha256": "38f54116aa1680208cdea2e90b42509c714b9dd8f512a0c2fb47939cb0511cf1"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_fig03_final_attractor.pdf",
+      "bytes": 105972,
+      "sha256": "7f99c247506dc006df0807b8d6a2802ec5740912323908bb01756a5e36bee69d"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_fig03abc_final_attractor_projections.pdf",
+      "bytes": 197472,
+      "sha256": "886df31ab6539812127a964b130b3979b77462cbb0582c940fa478ecf8e4dd66"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_fig04_time_series.pdf",
+      "bytes": 223773,
+      "sha256": "05ee99472b5bcb37908d977f02a845b83c1582857f3d6308f4718911d927634e"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_fig11a_fft_x.pdf",
+      "bytes": 14349,
+      "sha256": "33ea5346b59c57288235f0fbdf885e26b3649aa22b93f190f2934f70fd41d47d"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_fig12_lyapunov_two_methods.pdf",
+      "bytes": 170988,
+      "sha256": "3753d9d2b9106104c8d50502138dbe0a64be7f20b3fef47ec83659992ee6745b"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_fig13_E0_hiddenness_spherical_3d.pdf",
+      "bytes": 393783,
+      "sha256": "06616e8746e8355dfab74922420bc409538c4c509c191859adf446743303fef1"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_fig13_Em_hiddenness_spherical_3d.pdf",
+      "bytes": 396317,
+      "sha256": "a3725230dcadd37d2a52a10202bd1cab7217a26dd1ce8e26096aab1aff930b88"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_fig13_Ep_hiddenness_spherical_3d.pdf",
+      "bytes": 396268,
+      "sha256": "43f3f5978b05611f09cb55069c904a1277320ff30ad9da87e37c53d50d1641e6"
+    },
+    {
+      "path": "figures/chua_master/chua_frac_ns_fig14_hiddenness_contact_heatmap.pdf",
+      "bytes": 20435,
+      "sha256": "87907e0185af62a44efd8f56b038489966a9e5816511b741fd05d337259d5f19"
+    },
+    {
+      "path": "figures/chua_master/chua_nonlinearity_piecewise_vs_arctan.pdf",
+      "bytes": 13083,
+      "sha256": "c2e6df4f45bb36d61b9d3d5d65590a15b5b679473c999fbf12efeb44a1e9fb50"
+    },
+    {
+      "path": "figures/chua_master/danca_frac_phase_3d.pdf",
+      "bytes": 139011,
+      "sha256": "58cf561f0da4b215a76fd473ca1eb1d764359caa926f8fff1b22169b6d6ccc5c"
+    },
+    {
+      "path": "figures/chua_master/danca_frac_projections.pdf",
+      "bytes": 124582,
+      "sha256": "6d826340dbaf6738dbe86368dc2859f6cd035b257e57d63058936ebb572925f7"
+    },
+    {
+      "path": "figures/chua_master/danca_frac_spectrum_x.pdf",
+      "bytes": 118636,
+      "sha256": "1e74f59cc6cc21ea5ff3fbbf1b16ebd45ef82f518eb3f34290678e1ebb706a3e"
+    },
+    {
+      "path": "figures/chua_master/danca_frac_time_series.pdf",
+      "bytes": 271067,
+      "sha256": "a386066be4ad5160dfa550178b3141c6a086d7cd7972882f8e2e13541609fa05"
+    },
+    {
+      "path": "figures/chua_master/fig01_nyquist_df.pdf",
+      "bytes": 15881,
+      "sha256": "dd9173eec5dbb60b36404d12001ca32bd593821e5c60ce22f7662b6818e2af65"
+    },
+    {
+      "path": "figures/chua_master/fig01c_transfer_real_imag.pdf",
+      "bytes": 22620,
+      "sha256": "6022bcf82294070d12a08c8205f3f4ae1612644a506f71c0ba4cd722a4d57edd"
+    },
+    {
+      "path": "figures/chua_master/fig02d_continuation_story.pdf",
+      "bytes": 127606,
+      "sha256": "e78d6bd30a00d63f5b14f514493f96e6c1af9d0290652fcc255cf19859a1511f"
+    },
+    {
+      "path": "figures/chua_master/fig03_final_attractor.pdf",
+      "bytes": 41569,
+      "sha256": "3f7895664cba6445db3c8a238dd94bd75d5c382d2f9b77790a3447b7ad746403"
+    },
+    {
+      "path": "figures/chua_master/fig05b_hiddenness_overview.pdf",
+      "bytes": 190080,
+      "sha256": "077bd95e6ad44dcb158e68c2cd6cbe2f560d52604e759a34747c892042e179f6"
+    },
+    {
+      "path": "figures/chua_master/fig06a_basin_overlay_z0.pdf",
+      "bytes": 16950,
+      "sha256": "4bcfd653c6ffa212e578360aeca393c7beaaff00f618000c8963985728c92efb"
+    },
+    {
+      "path": "figures/chua_master/fig06b_basin_overlay_zfinal.pdf",
+      "bytes": 17284,
+      "sha256": "e9cf6f885b57e60617e755577817fc5e798cc88a2dc50dd7963d5882b57d27d4"
+    },
+    {
+      "path": "figures/chua_master/fig10b_basin_xz_final_state.pdf",
+      "bytes": 17416,
+      "sha256": "fa13448f9f7f447615ba79df1907576b01dc0b767d321b22f504d37782c91e1a"
+    },
+    {
+      "path": "figures/chua_master/fig10c_basin_yz_final_state.pdf",
+      "bytes": 16243,
+      "sha256": "e5431448ca5422cea612d7bc1198e967754559a3c9475d65c73750b2727e67cf"
+    },
+    {
+      "path": "figures/chua_master/fig11a_fft_x.pdf",
+      "bytes": 16885,
+      "sha256": "8e448707cf3386b7b7a7073804c2c0fede5a83676691e3571ae1153090d183ab"
+    },
+    {
+      "path": "figures/chua_master/fig11d_psd_x.pdf",
+      "bytes": 32358,
+      "sha256": "7be9c02c1abf001dc56bb9e8c5900343f94bf93f382e847cf4de8b61df69cc9a"
+    },
+    {
+      "path": "figures/chua_master/fig13_lyapunov_convergence.pdf",
+      "bytes": 16250,
+      "sha256": "7d93d62cb22424d929607a7b80a9f1aff7b796bc1c9a4361276cb850f3752be4"
+    },
+    {
+      "path": "figures/chua_master/matignon_complex_plane.pdf",
+      "bytes": 99329,
+      "sha256": "b2b144e4d216a74d97a97b3e8ced4ddccaf8347ce29a0f5c69b1a74560087dc5"
+    },
+    {
+      "path": "figures/chua_master/wu2023_chua_fractional_arctan_q099_x0_minus_phase3d.pdf",
+      "bytes": 159877,
+      "sha256": "9a5c5924ba999bb7cb00e6ded4ad7962a99324632309ff4a9c9dde2e255def8a"
+    },
+    {
+      "path": "figures/chua_master/wu2023_chua_fractional_arctan_q099_x0_minus_projections.pdf",
+      "bytes": 181622,
+      "sha256": "18db153d9ea79dec9201e5a4e2de0cbb6ffc3266473b17083d51c81aa97a2669"
+    },
+    {
+      "path": "figures/chua_master/wu2023_chua_fractional_arctan_q099_x0_minus_timeseries.pdf",
+      "bytes": 414043,
+      "sha256": "04f28e6e2a0ee36975f7ed0399f7b1bd7581e5b8d63b5fed6a6f7c0fddce8447"
+    },
+    {
+      "path": "figures/chua_master/wu2023_chua_fractional_arctan_q099_x0_plus_phase3d.pdf",
+      "bytes": 159850,
+      "sha256": "8ef2694015df81b2da2bd445cf7b9a414c859b56465ec49a8272ded7f8637bac"
+    },
+    {
+      "path": "figures/chua_master/wu2023_chua_fractional_arctan_q099_x0_plus_projections.pdf",
+      "bytes": 181620,
+      "sha256": "50a8bcd59a821b28fc808639a25c5229eebe69f7f0facde20ff95714f91b037c"
+    },
+    {
+      "path": "figures/chua_master/wu2023_chua_fractional_arctan_q099_x0_plus_timeseries.pdf",
+      "bytes": 418630,
+      "sha256": "82710e819cbe7c0389ce371517b215c4c60293e34b29f2c56185eb01a990da84"
+    },
+    {
+      "path": "figures/correcciones/cobertura_multidestino.png",
+      "bytes": 79690,
+      "sha256": "67ddd327c55e7c471a56cf444e7e08627ff1672d8ba80661738729c651ef097e"
+    },
+    {
+      "path": "figures/correcciones/comparacion_504_politicas.png",
+      "bytes": 115501,
+      "sha256": "77f5ecc7019b44f2041d70733eb0936516ac27706374490d78d9b0fe1ad98702"
+    },
+    {
+      "path": "figures/geometric_topological_pilot/00_ruta_geometrico_topologica.pdf",
+      "bytes": 17743,
+      "sha256": "ae774332964126b1f52995417b1000ac51a6c92290d1773beb72774cd8d8e846"
+    },
+    {
+      "path": "figures/geometric_topological_pilot/00_ruta_geometrico_topologica.png",
+      "bytes": 66002,
+      "sha256": "75974b2623133a5d55b50afe198ff7fb6e37632a760b920f18fe41b632d99905"
+    },
+    {
+      "path": "figures/geometric_topological_pilot/01_pll_pp_y_borde.pdf",
+      "bytes": 40612,
+      "sha256": "3aaa0d8f5c62a3918a49072c6f981f88cb904d749ab12c0ca71482d83753ba57"
+    },
+    {
+      "path": "figures/geometric_topological_pilot/01_pll_pp_y_borde.png",
+      "bytes": 197964,
+      "sha256": "44d2175ea06c2bc370a4b3d951c12601d72a2b7edd80c0044cc4412c9698b986"
+    },
+    {
+      "path": "figures/geometric_topological_pilot/02_mavpd_pp_superficie_destinos.pdf",
+      "bytes": 62157,
+      "sha256": "a6095ccafe7b9ae0c53b11feec83d79fbbe327a2a8e516a37c0aea49b2b0d2f9"
+    },
+    {
+      "path": "figures/geometric_topological_pilot/02_mavpd_pp_superficie_destinos.png",
+      "bytes": 243926,
+      "sha256": "084ac1d46c14d804bed8d09075d5709b3c3ed8634f1074247effe3183b580a2a"
+    },
+    {
+      "path": "figures/geometric_topological_pilot/03_wu_fpp_caputo_b0_b2.pdf",
+      "bytes": 32875,
+      "sha256": "0aa0282a72cf269914d95dffe3f48d9261368a114332bb4333c6cbb05e156ab8"
+    },
+    {
+      "path": "figures/geometric_topological_pilot/03_wu_fpp_caputo_b0_b2.png",
+      "bytes": 318632,
+      "sha256": "83a3574e138aa4aebd8dbeb11efc9597d8f922f9aeab8a436b719a267a3a0e41"
+    },
+    {
+      "path": "figures/geometric_topological_pilot/04_matriz_destinos_b0_b2.pdf",
+      "bytes": 21112,
+      "sha256": "517729b04fea2a2fbebd37eeaca20d34351742c316a6f4b67400b201beda9fa2"
+    },
+    {
+      "path": "figures/geometric_topological_pilot/04_matriz_destinos_b0_b2.png",
+      "bytes": 71117,
+      "sha256": "e1b8aa43108ca82c55893787905d50f0b4eaefe442fb58da7d51c12fd277e724"
+    },
+    {
+      "path": "figures/kalman_fitts/01_direct_route_incompatibility.pdf",
+      "bytes": 18579,
+      "sha256": "d253cf7c78a92c956702add6a4ed782cc54fcc6e9d71b3ac480f94e86bad637f"
+    },
+    {
+      "path": "figures/kalman_fitts/02_switching_map_convergence.pdf",
+      "bytes": 12807,
+      "sha256": "88abca87c6eb3660c60f4d6686cff2ea918443cd6480d30e7c411cb49a6d56ce"
+    },
+    {
+      "path": "figures/kalman_fitts/03_sign_to_tanh_continuation.pdf",
+      "bytes": 17162,
+      "sha256": "fe269762fd89304cd119589c8530963179a66cf6c7afbdb9b182ba2b43ebbb6a"
+    },
+    {
+      "path": "figures/kalman_fitts/04_hidden_limit_cycle_3d.pdf",
+      "bytes": 96896,
+      "sha256": "5f974f2985d041a05629089e8df897287f6b7344ec651480a70ab565307d0d01"
+    },
+    {
+      "path": "figures/kalman_fitts/05_hidden_limit_cycle_projections.pdf",
+      "bytes": 128891,
+      "sha256": "941df85cc8c50614f2a9120a983b6cad4fac36e4670a48a6bfd5ea9517c82d83"
+    },
+    {
+      "path": "figures/kalman_fitts/06_hidden_limit_cycle_timeseries.pdf",
+      "bytes": 46986,
+      "sha256": "a95bf120e6225ff742cf3d3ca5b8598df6d3c03f90005271d65bf32960e19f4f"
+    },
+    {
+      "path": "figures/kalman_fitts/07_equilibrium_neighborhood_controls.pdf",
+      "bytes": 39183,
+      "sha256": "01074f5348c4e902892a30d402ec94e86bffe45204795b70fe310d8e8cce775e"
+    },
+    {
+      "path": "figures/kalman_fitts/08_kalman_fitts_fft_component_0.pdf",
+      "bytes": 10525,
+      "sha256": "4a3873ac3fc35118872068c876c1e9a83ac919de5449e11583fff4ed92c7a90a"
+    },
+    {
+      "path": "figures/kalman_fitts/08_kalman_fitts_fft_component_1.pdf",
+      "bytes": 10133,
+      "sha256": "c445687fee7df1ab7152610beefb45c8c014ea56dfe0d5cab303f75b04a9fbd6"
+    },
+    {
+      "path": "figures/kalman_fitts/08_kalman_fitts_fft_component_2.pdf",
+      "bytes": 9833,
+      "sha256": "6ef6d3718b8c09237e34b97162a1b81eb5ca6062893d8a779af7098ed24cfe51"
+    },
+    {
+      "path": "figures/kalman_fitts/08_kalman_fitts_fft_component_3.pdf",
+      "bytes": 10981,
+      "sha256": "3450d8c43ec6758fd45228cfb50afabe6cba0ca0762346f20c4996d87b9ca420"
+    },
+    {
+      "path": "figures/kalman_fitts/09_kalman_fitts_psd_component_0.pdf",
+      "bytes": 10727,
+      "sha256": "98d8ca8a572beb0b259272a59c5cc61aaa3736a01c7fecc6595d739cd6514944"
+    },
+    {
+      "path": "figures/kalman_fitts/09_kalman_fitts_psd_component_1.pdf",
+      "bytes": 11822,
+      "sha256": "30a62d8436e25b1df4b5aa2e6634bc28f8f57855c12a19418cbf9279e20ad48c"
+    },
+    {
+      "path": "figures/kalman_fitts/09_kalman_fitts_psd_component_2.pdf",
+      "bytes": 11370,
+      "sha256": "7c312ca586785aa86038c15d000dae711e90a9b1a1e124200a8c97391eb40669"
+    },
+    {
+      "path": "figures/kalman_fitts/09_kalman_fitts_psd_component_3.pdf",
+      "bytes": 11912,
+      "sha256": "bb8b26c69506d5b208fdaad2592b775dacde894160756cbd653ae0ff26501007"
+    },
+    {
+      "path": "figures/kalman_fitts/10_lyapunov_convergence.pdf",
+      "bytes": 37673,
+      "sha256": "a83e1f38adf4c5d8b6a318564b80625a4c4736277f17d6159e292fac4181c382"
+    },
+    {
+      "path": "figures/mavpd_audit/negative_xi3p5_comparison.pdf",
+      "bytes": 72902,
+      "sha256": "a1ab4e7a8a5a2e4e46d4b0c4a6a331a3d1d1e1793160df9b0be0c5376d6d8d23"
+    },
+    {
+      "path": "figures/mavpd_audit/primary_blind_clusters.pdf",
+      "bytes": 87790,
+      "sha256": "263ef18cd718fd8783eb505e537873d94a847a98296543173c6eb48c6ac1bef5"
+    },
+    {
+      "path": "figures/mavpd_audit/primary_lambda_continuation.pdf",
+      "bytes": 324813,
+      "sha256": "57bcd563299d2d404f86624079641bdb5f6e21a056069643962ef850d0df62f0"
+    },
+    {
+      "path": "figures/mavpd_audit/primary_nyquist_df.pdf",
+      "bytes": 14633,
+      "sha256": "e49e30b4f5f24432921d8dd01b8628c04052416d3f957ed38130a714c5cf9b91"
+    },
+    {
+      "path": "figures/mavpd_audit/primary_outer_candidate.pdf",
+      "bytes": 140254,
+      "sha256": "00fed39c44ae4a474392a6a29af3a39cee52c38f4fedd00502712c10a10496e1"
+    },
+    {
+      "path": "figures/mavpd_audit/primary_outer_fft_component_0.pdf",
+      "bytes": 10072,
+      "sha256": "3f10c2a34676779b6ecc53a45d1c55424cc05a26ae46077adfe833c31e558e34"
+    },
+    {
+      "path": "figures/mavpd_audit/primary_outer_fft_component_1.pdf",
+      "bytes": 10169,
+      "sha256": "071e837506c9139cf6ffa0ce523b1136fec2ac4915d73e9248da5a6b2702acfe"
+    },
+    {
+      "path": "figures/mavpd_audit/primary_outer_fft_component_2.pdf",
+      "bytes": 10384,
+      "sha256": "f5f0aded8d8f15883405e562d9389df3d2f2542e7b7cc97660691c47c295ac4a"
+    },
+    {
+      "path": "figures/mavpd_audit/primary_outer_projections.pdf",
+      "bytes": 166054,
+      "sha256": "758e3cb07ce01d73338775d4394604b8a8fdbe9f86152819ff3d87c2d3c2296f"
+    },
+    {
+      "path": "figures/mavpd_audit/primary_outer_timeseries.pdf",
+      "bytes": 158786,
+      "sha256": "adc7d02949f9f374aa80cc648780bdbfb4fa7e8c9464fe41c319c007e960ed22"
+    },
+    {
+      "path": "figures/mavpd_audit/primary_shared_hiddenness_controls.pdf",
+      "bytes": 74829,
+      "sha256": "5093342d8e98ff8daf8f8c6a605b753c95c755d9be8dea2337181fe46841ebd8"
+    },
+    {
+      "path": "figures/mavpd_audit/primary_transfer_components.pdf",
+      "bytes": 20273,
+      "sha256": "493d08487193671eb712133e8147232e3b572c28046e2fa7e8096fa28edc261b"
+    },
+    {
+      "path": "figures/mavpd_chaos/00_nyquist_direct_seed.pdf",
+      "bytes": 15717,
+      "sha256": "05c18627c8dbde6cb71e2bf0ee5502e536345be82082ea05856de2c634818758"
+    },
+    {
+      "path": "figures/mavpd_chaos/03_continuation_screen.pdf",
+      "bytes": 14781,
+      "sha256": "f0b49c2d20c771634702eb2cd99c86150c954ffe004f1478070f27c66549c6de"
+    },
+    {
+      "path": "figures/mavpd_chaos/04_candidate_phase_portraits.pdf",
+      "bytes": 1410191,
+      "sha256": "f340211bbee41cdaa08398f8f5bfc0f25e67fc4ec098ca920343d4ef3b4e7b12"
+    },
+    {
+      "path": "figures/mavpd_chaos/04_candidate_time_series.pdf",
+      "bytes": 49637,
+      "sha256": "de1a1db5a1dd5d3c1844fab7fd189e5750fd47cfaed89167ac8f6e564d49ef22"
+    },
+    {
+      "path": "figures/mavpd_chaos/05_lyapunov_convergence.pdf",
+      "bytes": 36172,
+      "sha256": "4650de5e3e79aa7aa71752c62ad20f1c8f775eea4e63f77f4c5fbb17e589b02e"
+    },
+    {
+      "path": "figures/mavpd_chaos/05_normalized_fft_power.pdf",
+      "bytes": 280375,
+      "sha256": "da02d734b176031e9538ce02d1a1b0d98eb98516f37ac864aeb5741e58ebfdce"
+    },
+    {
+      "path": "figures/mavpd_chaos/05_poincare_section.pdf",
+      "bytes": 28980,
+      "sha256": "718f910a94e8674d2f98d5f62c76c7d78c40b4549efad349b6879cbdde24d570"
+    },
+    {
+      "path": "figures/mavpd_chaos/07_hiddenness_outcomes.pdf",
+      "bytes": 11928,
+      "sha256": "6d430fc41cf1551799799ef1ad03af517fc20ee80b1bfc7b5465949e22f633e3"
+    },
+    {
+      "path": "figures/nonchua_benchmarks/lyapunov_validation_overview.pdf",
+      "bytes": 31746,
+      "sha256": "5393def655c1c1d68a40baf3d25b1edd71ce9ef81eca74aecb1c7512bb8496a1"
+    },
+    {
+      "path": "figures/nonchua_benchmarks/lyapunov_validation_overview.png",
+      "bytes": 316575,
+      "sha256": "8af7cf0b4d2c99a367fd817079b4f8020eed00d77aed466dda37c0d1dd50f4ca"
+    },
+    {
+      "path": "figures/nonchua_benchmarks/lyapunov_validation_overview_manifest.json",
+      "bytes": 1113,
+      "sha256": "309ef819cc89e0603cd1497d3326e9345ebf3b1ce4b67d5f132572303823d18a"
+    },
+    {
+      "path": "figures/paper07/arctan_final_attractor.pdf",
+      "bytes": 247473,
+      "sha256": "09610951f023fce3f2ebd16c4b71f703f3b3ff517a874dec67ea6a2be093c9bc"
+    },
+    {
+      "path": "figures/paper07/arctan_final_attractor.png",
+      "bytes": 631474,
+      "sha256": "59d1ed7cb4493856eaaf418527b6a80f386f6b6eaa295d828545df3bad8654ac"
+    },
+    {
+      "path": "figures/paper07/arctan_first_harmonic_comparison.pdf",
+      "bytes": 128402,
+      "sha256": "1b8497ae69515d15d52bf9b7010135b050c8e2fcc2011d3f0639661f22151974"
+    },
+    {
+      "path": "figures/paper07/arctan_first_harmonic_comparison.png",
+      "bytes": 401485,
+      "sha256": "d063d743fbddb64620efb302731dfe2438ecdedfe179969265c611f08fdfb331"
+    },
+    {
+      "path": "figures/paper07/arctan_first_harmonic_comparison_en.pdf",
+      "bytes": 128462,
+      "sha256": "6f1442d9444bb81acb329c0f17e3818a8292f069b299ef752634683df8e62898"
+    },
+    {
+      "path": "figures/paper07/arctan_first_harmonic_comparison_en.png",
+      "bytes": 390030,
+      "sha256": "5e2f7a4be474ddd679fe366109d90ccae07193f1ab02f75e6147b1f7e8dab375"
+    },
+    {
+      "path": "figures/paper07/arctan_first_harmonic_comparison_es.pdf",
+      "bytes": 128405,
+      "sha256": "9adf90ff8ae878b13818cdc34e6fdd5f23728c00b6da40dbc29edfc0b9a42bd9"
+    },
+    {
+      "path": "figures/paper07/arctan_first_harmonic_comparison_es.png",
+      "bytes": 401485,
+      "sha256": "d063d743fbddb64620efb302731dfe2438ecdedfe179969265c611f08fdfb331"
+    },
+    {
+      "path": "figures/paper07/arctan_fractional_refinement.pdf",
+      "bytes": 182754,
+      "sha256": "bd0fb1e66c4070713474626d94b4001373133b10d9d63c7bd1da71bf27aa7b7e"
+    },
+    {
+      "path": "figures/paper07/arctan_fractional_refinement.png",
+      "bytes": 1352893,
+      "sha256": "f14c2019dfff69229fbbcb14612814203c6841582e275a9e5475b8a41f86e38a"
+    },
+    {
+      "path": "figures/paper07/arctan_fractional_refinement_en.pdf",
+      "bytes": 181967,
+      "sha256": "2fffc6196f37bee7fc464d274c856e628009c9e7f9a9ae2754aca8abf050890b"
+    },
+    {
+      "path": "figures/paper07/arctan_fractional_refinement_en.png",
+      "bytes": 1348600,
+      "sha256": "da2509c63bcc1ae880d8a811882bdb2efd037a9a4c73634c5a5a7989d4dbb4ab"
+    },
+    {
+      "path": "figures/paper07/arctan_fractional_refinement_es.pdf",
+      "bytes": 182757,
+      "sha256": "9f54604c1b28b31625f3b52d641a13ce3b66f016c71a40e20b19621c3e36e19b"
+    },
+    {
+      "path": "figures/paper07/arctan_fractional_refinement_es.png",
+      "bytes": 1352893,
+      "sha256": "f14c2019dfff69229fbbcb14612814203c6841582e275a9e5475b8a41f86e38a"
+    },
+    {
+      "path": "figures/paper07/arctan_spherical_probe_overview.pdf",
+      "bytes": 166012,
+      "sha256": "b91a8367b350de2e61f9ef5f36e3019d4b36826caa8444db1dfec33632b9e1d8"
+    },
+    {
+      "path": "figures/paper07/arctan_spherical_probe_overview.png",
+      "bytes": 776611,
+      "sha256": "66d434d12d50d62896a74873f82db692b83ff765a63fa78782e1529ce521c798"
+    },
+    {
+      "path": "figures/paper07/arctan_spherical_probe_overview_en.pdf",
+      "bytes": 165173,
+      "sha256": "c1102ebfe8af56add7f02f46fe8477ce6223242de052d6761aaa5fe14263c45c"
+    },
+    {
+      "path": "figures/paper07/arctan_spherical_probe_overview_en.png",
+      "bytes": 767886,
+      "sha256": "73b5e64bc9002ca1ac8b0271a8d14706b0e6dce1878a2f5fc3d53885118519ca"
+    },
+    {
+      "path": "figures/paper07/arctan_spherical_probe_overview_es.pdf",
+      "bytes": 166015,
+      "sha256": "f087a347e45895f76fc4869640cf2d3fe68b4bdf4835407f684e6db017e6b013"
+    },
+    {
+      "path": "figures/paper07/arctan_spherical_probe_overview_es.png",
+      "bytes": 776611,
+      "sha256": "66d434d12d50d62896a74873f82db692b83ff765a63fa78782e1529ce521c798"
+    },
+    {
+      "path": "figures/paper07/bibliographic_reproducibility_controls.pdf",
+      "bytes": 294355,
+      "sha256": "1e88c884ef7e508a9e87ea8a2cc8546d74f239da121765fe69ea91d9b5e8f67e"
+    },
+    {
+      "path": "figures/paper07/bibliographic_reproducibility_controls.png",
+      "bytes": 769602,
+      "sha256": "0db17f5e6c18bbb4f88a49fc3a77029f1d887d51dc40f06b632d6806f5043b5c"
+    },
+    {
+      "path": "figures/paper07/bibliographic_reproducibility_controls_en.pdf",
+      "bytes": 295088,
+      "sha256": "738e72ea0fac8767b50dad044d1a5f5a4e95a646d7f458e3da7366ddd60d7bc8"
+    },
+    {
+      "path": "figures/paper07/bibliographic_reproducibility_controls_en.png",
+      "bytes": 767330,
+      "sha256": "b5c374e12f255c1a3021dfd2ad974a971e26ce8c3a1fbb447fef69345845b693"
+    },
+    {
+      "path": "figures/paper07/bibliographic_reproducibility_controls_es.pdf",
+      "bytes": 294358,
+      "sha256": "105eab67d0f8f55fc6a9a0016b3d4e0c0669d06741abb7867eb358ccefffcde7"
+    },
+    {
+      "path": "figures/paper07/bibliographic_reproducibility_controls_es.png",
+      "bytes": 769602,
+      "sha256": "0db17f5e6c18bbb4f88a49fc3a77029f1d887d51dc40f06b632d6806f5043b5c"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_final_attractor.pdf",
+      "bytes": 220264,
+      "sha256": "548118563bd0c48fb7b73675b8a15e85db0df7e0a7d8f25a5bb922a44738eb53"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_final_attractor.png",
+      "bytes": 215230,
+      "sha256": "2a93fc02ad67d18b42860f5c25c2f6eab21dec845cd82f5f0f559a092522653f"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_first_harmonic_comparison.pdf",
+      "bytes": 120549,
+      "sha256": "b1a0d57878aebbdce3b6e734b6205f622ba1270745d9f1a02e538d04cc55579c"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_first_harmonic_comparison.png",
+      "bytes": 215653,
+      "sha256": "e359ec233f81524b54639db8be641585ffef6b03c37f6667268283742da10754"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_first_harmonic_comparison_en.pdf",
+      "bytes": 120487,
+      "sha256": "a2a29f0724cbb5c1a6568f673b10887c1d8341bea40d24ba29494d875736bef5"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_first_harmonic_comparison_en.png",
+      "bytes": 206092,
+      "sha256": "35fa43192248ac260e7ee72bf3b991598522ca33f4c45e3e6509fee62dab1d3b"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_first_harmonic_comparison_es.pdf",
+      "bytes": 120552,
+      "sha256": "e01073e71b65bd151cfccd5408c6c3b4e66dd03efcf2c8b1762e2ff285d88a8f"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_first_harmonic_comparison_es.png",
+      "bytes": 215653,
+      "sha256": "e359ec233f81524b54639db8be641585ffef6b03c37f6667268283742da10754"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_numerical_continuation.pdf",
+      "bytes": 214456,
+      "sha256": "41f5962b1fdd0439779a4cf73b95e3d5230079e2acac65092168f76173ad4e3a"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_numerical_continuation.png",
+      "bytes": 509379,
+      "sha256": "15083dd8078e9466a8635a2d98d386430da1f2ab49f483eff35a4737094edb92"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_volumetric_probe_overview.pdf",
+      "bytes": 185656,
+      "sha256": "1769489ddf0ed0b0af0c4ed79a1054954be8a52e6e6991a1a76f95c58e50afa0"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_volumetric_probe_overview.png",
+      "bytes": 541326,
+      "sha256": "02c121745082d953ee506ad729d7430675bab29ae664823012f44633a92b1360"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_volumetric_probe_overview_en.pdf",
+      "bytes": 185938,
+      "sha256": "bd5a4d750eb2603b3679e3dafd5767ba9a89910b184e7354718140dc63d97564"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_volumetric_probe_overview_en.png",
+      "bytes": 526023,
+      "sha256": "1202db54ad26500fa8ffdb8444e48de9c972a8bf0bf36b30e3b1905351c6fea6"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_volumetric_probe_overview_es.pdf",
+      "bytes": 185659,
+      "sha256": "a6f74f5fa355dc321335a5f72c5831877945f2d2f9b3e2fc3ad7c5c367c2d07f"
+    },
+    {
+      "path": "figures/paper07/nonsmooth_volumetric_probe_overview_es.png",
+      "bytes": 541326,
+      "sha256": "02c121745082d953ee506ad729d7430675bab29ae664823012f44633a92b1360"
+    },
+    {
+      "path": "figures/paper07/paper07_homogeneous_figures_manifest.json",
+      "bytes": 36146,
+      "sha256": "95221b39de1591929547ea4ec2bf01004c98193c5e973bbd73a0f907a007c0b8"
+    },
+    {
+      "path": "figures/perpetual/perpetual_caputo_history_diagnostics.png",
+      "bytes": 163571,
+      "sha256": "a30468e5f004ea0504d31fae0a110927cab60c0c5bf6bb2261e9c66667b69403"
+    },
+    {
+      "path": "figures/perpetual/perpetual_mavpd_integer.png",
+      "bytes": 249798,
+      "sha256": "8c708378d58c928d7eb50dfe043abd20e12f56fbc7da2847db523d65203326a1"
+    },
+    {
+      "path": "figures/perpetual/perpetual_munoz_caputo.png",
+      "bytes": 439822,
+      "sha256": "e74031dea3b5bd7b7fe6ff30afbfbe946eb5a736c8a68f0409effa52d5154c7e"
+    },
+    {
+      "path": "figures/pll/01_direct_transfer_obstruction.pdf",
+      "bytes": 14710,
+      "sha256": "987824fb666970facd1709eaffb825b73dec4a442844f8bf8703921407ca2d87"
+    },
+    {
+      "path": "figures/pll/02_loop_gain_continuation.pdf",
+      "bytes": 16782,
+      "sha256": "84ae125f31da982471ad21d654cd479e6fdf0b3e67bc2d7bacd99f1f9f9fe8ca"
+    },
+    {
+      "path": "figures/pll/03_phase_cylinder_cycles.pdf",
+      "bytes": 16348,
+      "sha256": "e5caaa91899e80b296f59ac0d0e387297ec3b7a6668cc877ad7fc4c340979896"
+    },
+    {
+      "path": "figures/pll/04_cylindrical_hiddenness_probes.pdf",
+      "bytes": 15223,
+      "sha256": "693720587dbd4e39e3eab4c354f90c6c3723e7a5c7f20e4964bacb5a788725cb"
+    },
+    {
+      "path": "figures/revision/c02_reinicio_validado.pdf",
+      "bytes": 26957,
+      "sha256": "93b187fa93f103b2cc2b3a5f814bd808054234bd6a6777133adef8e69237c250"
+    },
+    {
+      "path": "figures/revision/cota_iid_cero_contactos.pdf",
+      "bytes": 15120,
+      "sha256": "499d6c1dc8c12ae96349b0690ddebcc8094d279088a9cb9bd41a7c9d1185a8c2"
+    },
+    {
+      "path": "figures/revision/cota_iid_cero_contactos.png",
+      "bytes": 65439,
+      "sha256": "c4bdfcdbb118680c3f13bea50c8b232a81ce8311ce76014cb6bce07862258d4a"
+    },
+    {
+      "path": "figures/revision/datos_figuras_revision.json",
+      "bytes": 483,
+      "sha256": "3515c1f97d50b2c4f95f127a555d71f78e7f35cb67262fb758074c36314a8923"
+    },
+    {
+      "path": "figures/revision/reinicio_caputo.csv",
+      "bytes": 72113,
+      "sha256": "2d48bd33045c629be78646a1e6607732de526d76fd1a8fe7cd87c175fd122f8e"
+    },
+    {
+      "path": "figures/revision/reinicio_caputo.pdf",
+      "bytes": 17873,
+      "sha256": "b19f1735fec6fd97e31930c964f8cdeeac737a8b3aea5402bb7802b0082b2381"
+    },
+    {
+      "path": "figures/revision/reinicio_caputo.png",
+      "bytes": 89363,
+      "sha256": "01341021ad99b11a55eb7909d6d042f9cd2f170d41d8450f0ebd76a0bdfcaaf3"
+    },
+    {
+      "path": "generar_figuras_revision.py",
+      "bytes": 3406,
+      "sha256": "23f124bf93edea0afebef798e092dc5be4ebc1fc7ea0b0e6a77d957fefcaced9"
+    },
+    {
+      "path": "integer_assets/chua_julia_candidates.png",
+      "bytes": 478307,
+      "sha256": "b5fab9af28dd810fed77e2de14670bc99d4a550435eba059624c7ccf06b01220"
+    },
+    {
+      "path": "integer_assets/chua_python_attractor.png",
+      "bytes": 886131,
+      "sha256": "c625109c6598b4f68d6e65cd9f2ce325ab8ec25490217ef5cbf0fdd168e25f99"
+    },
+    {
+      "path": "integer_assets/chua_python_hiddenness.png",
+      "bytes": 343290,
+      "sha256": "b42343a86d869a90648261f506dcc7b75e23eb7defa5ed207bde0a716a30b3cc"
+    },
+    {
+      "path": "integer_assets/julia_comparison_assets_manifest.json",
+      "bytes": 13826,
+      "sha256": "b0c5c23e7812e48e8392efe282451b05d9b2382892510edeb2f70b3f8438bc76"
+    },
+    {
+      "path": "integer_assets/julia_mavpd_chaos_amplitude_spectrum.pdf",
+      "bytes": 161417,
+      "sha256": "621dc64641b7e5257992186b597cb668edf2e5b8e308630a9a6ac58403301421"
+    },
+    {
+      "path": "integer_assets/julia_mavpd_chaos_amplitude_spectrum.png",
+      "bytes": 321351,
+      "sha256": "7fd03fe1af176a8093e0e861d12a53c2228aadbb4f749b19da23c405dfe3e925"
+    },
+    {
+      "path": "integer_assets/julia_mavpd_chaos_candidate_phase_portraits.pdf",
+      "bytes": 610922,
+      "sha256": "e87c545d4466bb34187e080dec58ebd01800448bf28403277a66f847cf05e8aa"
+    },
+    {
+      "path": "integer_assets/julia_mavpd_chaos_candidate_phase_portraits.png",
+      "bytes": 149689,
+      "sha256": "97809dd4c11d19a1c079361507ccd0159dfffad5c5993f74b75a0d1c9b94c973"
+    },
+    {
+      "path": "integer_assets/julia_mavpd_chaos_gamma_screen.pdf",
+      "bytes": 10355,
+      "sha256": "3b3562507e5f6603afe12113b37979641ea7afe68bf7414a6f369a8ed003edf9"
+    },
+    {
+      "path": "integer_assets/julia_mavpd_chaos_gamma_screen.png",
+      "bytes": 89574,
+      "sha256": "ac6933197c413e8d223e984615ca384fa556e5caccca452e2bf9fb4c23bbebed"
+    },
+    {
+      "path": "integer_assets/julia_mavpd_chaos_hiddenness_outcomes.pdf",
+      "bytes": 6114,
+      "sha256": "bce858a9cc8c1f48d58ea36f8f83446bc3cfd18e17f40514c49b21cff8845d4f"
+    },
+    {
+      "path": "integer_assets/julia_mavpd_chaos_hiddenness_outcomes.png",
+      "bytes": 39270,
+      "sha256": "949b402b222e60fcd2e93598a8e84764a4afd90a6fc8315bbb39fbcf0386141f"
+    },
+    {
+      "path": "integer_assets/julia_mavpd_chaos_lyapunov_spectrum.pdf",
+      "bytes": 6352,
+      "sha256": "9c5686b3b63d368dc12f1b5f71cb2b0d785bf787b258c0010dcb4fb209213295"
+    },
+    {
+      "path": "integer_assets/julia_mavpd_chaos_lyapunov_spectrum.png",
+      "bytes": 33291,
+      "sha256": "377eb9279fe86637057a6650e7337c32ec5d82dba5a8caa57c60353c0677bf58"
+    },
+    {
+      "path": "integer_assets/julia_mavpd_chaos_nyquist_diagnostic.pdf",
+      "bytes": 7999,
+      "sha256": "def2b3bf854a6b5e65f69260a8098b18a15d4a886345c57c1db2b63cc38f8d81"
+    },
+    {
+      "path": "integer_assets/julia_mavpd_chaos_nyquist_diagnostic.png",
+      "bytes": 64322,
+      "sha256": "46db2a8be187c3de7e234b5df10741da866fe02cf4560983ff71cd408fcdfa3a"
+    },
+    {
+      "path": "integer_assets/julia_pll_cylindrical_hiddenness_probes.pdf",
+      "bytes": 9986,
+      "sha256": "6b64bb9376475df9a46e88bddeddb915ca9e73c3b5895ffd8c21bf17a134ffe0"
+    },
+    {
+      "path": "integer_assets/julia_pll_cylindrical_hiddenness_probes.png",
+      "bytes": 70337,
+      "sha256": "ccce037384959bd94b7f41b384930705698173bf5ae30cb13c75048ffa1ea018"
+    },
+    {
+      "path": "integer_assets/julia_pll_direct_transfer_obstruction.pdf",
+      "bytes": 12588,
+      "sha256": "eebe499f4175d67fc1a31bd78ee21388c05ddf8d6089934f3fa7327fb7badf74"
+    },
+    {
+      "path": "integer_assets/julia_pll_direct_transfer_obstruction.png",
+      "bytes": 68208,
+      "sha256": "5711f199d8a43372922ffcd25e79d53109bb3fd88892c88fa7ccba66baf8cd71"
+    },
+    {
+      "path": "integer_assets/julia_pll_loop_gain_continuation.pdf",
+      "bytes": 14222,
+      "sha256": "a223d9e0d35f5e30ef1dc28a89e1fd6b4c6b3ac98b3e9f33430c94200759c884"
+    },
+    {
+      "path": "integer_assets/julia_pll_loop_gain_continuation.png",
+      "bytes": 101043,
+      "sha256": "e72b51069ba64ee1e4daae587fa5502366a0f3164bf915de6109b9a1e4892385"
+    },
+    {
+      "path": "integer_assets/julia_pll_phase_cylinder_cycles.pdf",
+      "bytes": 26771,
+      "sha256": "9dfd2cb0d2c03c37ff3fd6a6363deec7d0cbe18ae6ba480004a3c9a7df4d455c"
+    },
+    {
+      "path": "integer_assets/julia_pll_phase_cylinder_cycles.png",
+      "bytes": 96241,
+      "sha256": "bc25424b8a8b9a9d2c8b92260440fdc8fa5952ef1bc9d8a1ad8c63b0b866a08d"
+    },
+    {
+      "path": "integer_assets/kalman_continuation.png",
+      "bytes": 284690,
+      "sha256": "31c7b29e3a3896d3f79d6eb1ebe838abd08b9e4b89cf1b0b1209055294aadda4"
+    },
+    {
+      "path": "integer_assets/kalman_python_julia_overlay.png",
+      "bytes": 291007,
+      "sha256": "862d3c5a82e4151bc95746ada0bcc6eedb6618acd2f6b62583ac0c06e5e8891e"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_assets_provenance.json",
+      "bytes": 7296,
+      "sha256": "e670333a8bf5ed04c85e4b452fcb8e64bb61020d5e18a03270d5a1d26cdab921"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_fft.pdf",
+      "bytes": 280375,
+      "sha256": "da02d734b176031e9538ce02d1a1b0d98eb98516f37ac864aeb5741e58ebfdce"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_fft.png",
+      "bytes": 337731,
+      "sha256": "e941ed7368d48ca8556e9f66d08ca44dcb5360fdc891dd1a7e0fcf9a3ab397ef"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_hiddenness.pdf",
+      "bytes": 11928,
+      "sha256": "6d430fc41cf1551799799ef1ad03af517fc20ee80b1bfc7b5465949e22f633e3"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_hiddenness.png",
+      "bytes": 53992,
+      "sha256": "4e644ef8c269fc7e38a592e44e177b88e659c4e6be16475493ed9a4adc746bb0"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_lyapunov.pdf",
+      "bytes": 36172,
+      "sha256": "4650de5e3e79aa7aa71752c62ad20f1c8f775eea4e63f77f4c5fbb17e589b02e"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_lyapunov.png",
+      "bytes": 134741,
+      "sha256": "9c5f319aa6512d3499b8e2dfc839351bbb7e4f6a7c889c90b2b93f4b2b98a3b2"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_phase_portraits.pdf",
+      "bytes": 1410191,
+      "sha256": "f340211bbee41cdaa08398f8f5bfc0f25e67fc4ec098ca920343d4ef3b4e7b12"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_phase_portraits.png",
+      "bytes": 146769,
+      "sha256": "79f61338f22b06d30cf09adbb806dbf93dab27c1ba9ff56e384e02e0872b9b45"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_poincare.pdf",
+      "bytes": 28980,
+      "sha256": "718f910a94e8674d2f98d5f62c76c7d78c40b4549efad349b6879cbdde24d570"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_poincare.png",
+      "bytes": 157080,
+      "sha256": "0a008ee821615974d3fc5603f2b05ea0546ebde0e7054cd8cb38b7c88d4364cb"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_screen.pdf",
+      "bytes": 14781,
+      "sha256": "f0b49c2d20c771634702eb2cd99c86150c954ffe004f1478070f27c66549c6de"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_screen.png",
+      "bytes": 109124,
+      "sha256": "00050ddddaa1f53bc6b821dd0ac5d1ea77a2fd8e2b0e6353bb3bb6326d7a837b"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_time_series.pdf",
+      "bytes": 49637,
+      "sha256": "de1a1db5a1dd5d3c1844fab7fd189e5750fd47cfaed89167ac8f6e564d49ef22"
+    },
+    {
+      "path": "integer_assets/mavpd_chaos_time_series.png",
+      "bytes": 933035,
+      "sha256": "8bcdd9d497a7e2d802e9ca1ba311c3adb1cafb4d111ef0a51537736919ef83dd"
+    },
+    {
+      "path": "integer_assets/mavpd_julia_candidates.png",
+      "bytes": 384041,
+      "sha256": "8ee7373b86ffdc6836fea5c681ec9c19ec7b6e5cdf209b7175d1233c02c0c015"
+    },
+    {
+      "path": "integer_assets/mavpd_nyquist_df.png",
+      "bytes": 81645,
+      "sha256": "14890a0361549838370736e2b43ec638e18b2514951805a954144e847a7a9e9a"
+    },
+    {
+      "path": "integer_assets/mavpd_python_clusters.png",
+      "bytes": 383196,
+      "sha256": "0afd6ebc4adb2ea18829d1ed41d9970de45400992103b5488c776784bbdb4c2c"
+    },
+    {
+      "path": "integer_assets/mavpd_python_hiddenness.png",
+      "bytes": 355045,
+      "sha256": "6fefdcc56d53348cb11a2de908dfca7c496477eac244c3d764b3046981148abb"
+    },
+    {
+      "path": "integer_assets/mavpd_python_julia_overlay_full.png",
+      "bytes": 319362,
+      "sha256": "049547bb8eac35c150025c40a75da2b039a028ded495fa6d36f50f90749955ed"
+    },
+    {
+      "path": "integer_assets/mavpd_python_julia_overlay_quick.png",
+      "bytes": 319271,
+      "sha256": "147cbed7b67e8826057fa099960f64414973a1f034ad3107776d0ca684f60914"
+    },
+    {
+      "path": "integer_assets/mavpd_xi3p5_negative.png",
+      "bytes": 427670,
+      "sha256": "bb12f6944f3ebbb74e4dc14e8c3390ee87d34eb4cf8cf8795d755f47dd91a762"
+    },
+    {
+      "path": "integer_assets/pll_cylindrical_hiddenness.pdf",
+      "bytes": 15223,
+      "sha256": "693720587dbd4e39e3eab4c354f90c6c3723e7a5c7f20e4964bacb5a788725cb"
+    },
+    {
+      "path": "integer_assets/pll_cylindrical_hiddenness.png",
+      "bytes": 105794,
+      "sha256": "81eabebdae3233fe359b4154fcfb648ace90e54bdcbd521377239a8592b78b14"
+    },
+    {
+      "path": "integer_assets/pll_phase_cylinder_cycles.pdf",
+      "bytes": 16348,
+      "sha256": "e5caaa91899e80b296f59ac0d0e387297ec3b7a6668cc877ad7fc4c340979896"
+    },
+    {
+      "path": "integer_assets/pll_phase_cylinder_cycles.png",
+      "bytes": 148365,
+      "sha256": "dd0c2abd3a3e54225981c8d04a9cf251fe1f3d626d9dba2bec236f85997fac44"
+    },
+    {
+      "path": "integer_assets/pll_transfer_obstruction.pdf",
+      "bytes": 14710,
+      "sha256": "987824fb666970facd1709eaffb825b73dec4a442844f8bf8703921407ca2d87"
+    },
+    {
+      "path": "integer_assets/pll_transfer_obstruction.png",
+      "bytes": 114331,
+      "sha256": "bce27f5ca2af9827d66693a5bcabd8399186b0ea4c09e0a21133e9867870003e"
+    },
+    {
+      "path": "integer_datos_actuales.tex",
+      "bytes": 2293,
+      "sha256": "0d9e743afbd63f02151bce2be7143081404bb78773692f7392aae500fcdeb06f"
+    },
+    {
+      "path": "integer_julia_comparison_generated.tex",
+      "bytes": 4925,
+      "sha256": "bacacffce43d081f9fc12cf5aa921a907edbde90979c14792c72ad76d5c9b521"
+    },
+    {
+      "path": "integer_mavpd_chaos_generated.tex",
+      "bytes": 1344,
+      "sha256": "b4b25a4a1f4cb2a242a7c68cdae30e0a8ddf270f281d9e801c9f17a7534ea77b"
+    },
+    {
+      "path": "mavpd_chaos_screening_rows.tex",
+      "bytes": 744,
+      "sha256": "4183b9cc2c880c77d09d242066016d904cc7f8e2d0c8ecc2fc065d7850cdcd7c"
+    },
+    {
+      "path": "references.bib",
+      "bytes": 54484,
+      "sha256": "3a8a2ca32abdf9f336ab76360abc7af83fc682289532b6e3fc2c8624a73da4e1"
+    },
+    {
+      "path": "report_diagrams/caputo_01_kernel_memoria.tex",
+      "bytes": 2717,
+      "sha256": "8e944d15bd5c77d1bebf359b715e12157075713bd98afebd0b119bc8b8d4eca3"
+    },
+    {
+      "path": "report_diagrams/caputo_02_estado_historia.tex",
+      "bytes": 2312,
+      "sha256": "d841af84aa1dfc3fc2a03c261118bacb9143390feb9e8a5b8c5bf140d183b8e0"
+    },
+    {
+      "path": "report_diagrams/caputo_03_semigrupo_funcional.tex",
+      "bytes": 2547,
+      "sha256": "788a3e4d3b76a258270cd906540d7e7d24482d6da5dfe6e880d9adc47d3354be"
+    },
+    {
+      "path": "report_diagrams/caputo_04_cuenca_funcional.tex",
+      "bytes": 2971,
+      "sha256": "000e8d97b6f7a2bf0ba9de33506525b8d11f922b50fd80a6704b3ac982a4e5d3"
+    },
+    {
+      "path": "report_diagrams/caputo_05_poincare_funcional.tex",
+      "bytes": 2941,
+      "sha256": "dfac826b69c5258dc46aa881d17fa72ea91a432029cb1147460829d2225293df"
+    },
+    {
+      "path": "report_diagrams/caputo_06_fppa_fpph.tex",
+      "bytes": 3144,
+      "sha256": "4e1dc0c16468a3ac77bc2bc8fafb38d206d27b8a494c670e95b20ce4569c426a"
+    },
+    {
+      "path": "report_diagrams/entero_01_flujo_invariancia.tex",
+      "bytes": 2275,
+      "sha256": "3c5982875470a67c34276eca0eaae302029294f426439779d9c9ef624c350a0e"
+    },
+    {
+      "path": "report_diagrams/entero_02_cuencas_ocultedad.tex",
+      "bytes": 2993,
+      "sha256": "66ea235b7574cf03d0c05502f1f9b9e67b8285b74c06874fe4bb2fcd7e0e8220"
+    },
+    {
+      "path": "report_diagrams/entero_03_grado_indice.tex",
+      "bytes": 2449,
+      "sha256": "304c2767ed91ea74fb0817561f1a514862c26bc863d7f4ca81a9982bd180683e"
+    },
+    {
+      "path": "report_diagrams/entero_04_variedades_invariantes.tex",
+      "bytes": 2688,
+      "sha256": "d7c2fe83ad271c7963cba75c0ae19421131c9574c5c3cca5774eced749456129"
+    },
+    {
+      "path": "report_diagrams/entero_05_poincare_floquet.tex",
+      "bytes": 2698,
+      "sha256": "a013d63212ce76131018f2eae41d99d0a44669df55586dfcf765d4e76dfaff72"
+    },
+    {
+      "path": "report_diagrams/entero_06_homoclinica_herradura.tex",
+      "bytes": 2945,
+      "sha256": "063dfd1a5a292cb183e93765ce150030517608a858279bfec2a9c08eab20ff95"
+    },
+    {
+      "path": "report_diagrams/entero_07_ciclo_oculto_exacto.tex",
+      "bytes": 2196,
+      "sha256": "ef8fefd02afbe5a7f5625c288114132311b0d4b1f31b4fe3a020cb4c28de40b6"
+    },
+    {
+      "path": "report_sections/00_alcance_inventario.tex",
+      "bytes": 10726,
+      "sha256": "29418192ebbf744b484d5984b55ca7d96862b9e1991fe24315467241caa79b87"
+    },
+    {
+      "path": "report_sections/01_introduccion_antecedentes.tex",
+      "bytes": 14006,
+      "sha256": "61d38b93e67a119397829ed0c5dc180e740c40c372a4b0d733aafe19f054cda9"
+    },
+    {
+      "path": "report_sections/02_modelos_y_fundamentos.tex",
+      "bytes": 23620,
+      "sha256": "a1dd19bffe7caa524cc3f460556912e884aa993a5b5bf0bb411cd89bf8fdaa71"
+    },
+    {
+      "path": "report_sections/03_lure_transferencia_funcion_descriptiva.tex",
+      "bytes": 18789,
+      "sha256": "8ff55dd68d7979c14c91476e179e7f45d31157681d0c82f7057532852241f839"
+    },
+    {
+      "path": "report_sections/04_integracion_continuacion.tex",
+      "bytes": 19058,
+      "sha256": "6534d446874b2fc0b47ae3a683d350ceb81a3a172ad3cb9a0949de1245263f9a"
+    },
+    {
+      "path": "report_sections/05A_diagnosticos_espectrales.tex",
+      "bytes": 4624,
+      "sha256": "19cd60484a2d6840f36cb45ef503edbbcd507ada880fc0fbe6b4ba5380e4fbb4"
+    },
+    {
+      "path": "report_sections/05_protocolos_experimentales.tex",
+      "bytes": 22822,
+      "sha256": "ab8429035ce0536ed33c2905c2869c5d86c026fd860921600c265a9a5d75888e"
+    },
+    {
+      "path": "report_sections/06_resultados.tex",
+      "bytes": 23079,
+      "sha256": "af251a892bcf18b5808255e3e94ccbab7b1f9c18b7dae59faf4e172a48cfd6dc"
+    },
+    {
+      "path": "report_sections/07_discusion_conclusiones.tex",
+      "bytes": 6379,
+      "sha256": "c4e62ff59ff5e3f981a8fbba65aaef86fafb514fb7c1bac7db06bfa438f3ea18"
+    },
+    {
+      "path": "report_sections/08_enteros_reproducidos.tex",
+      "bytes": 68010,
+      "sha256": "fc7ab2139da5986cc08b24db2ad545c5673bf0a6062b74074828df07db8f2516"
+    },
+    {
+      "path": "report_sections/09A_bancos_dinamicos_no_chua.tex",
+      "bytes": 35973,
+      "sha256": "15cf1ce458a311c2f7763bfc3fd996c2ed78437ac7e6b2fb18ab8033f598e300"
+    },
+    {
+      "path": "report_sections/09_fraccionarios_no_chua.tex",
+      "bytes": 29523,
+      "sha256": "9da043cef240e2a0c38dde2f4c34dc3023c9258686f2a5652a8bea20544a6b89"
+    },
+    {
+      "path": "report_sections/10_propuestas_teoricas.tex",
+      "bytes": 22835,
+      "sha256": "9ee5186c271137f698d64b0877d0532aae45a080d4834ecb74b0e205267ddab8"
+    },
+    {
+      "path": "report_sections/11_candidatos_compatibles.tex",
+      "bytes": 11062,
+      "sha256": "a0293a23032276051afa890d87089c4c437054536808bfd316e2d06067d4efbe"
+    },
+    {
+      "path": "report_sections/12_machado_funcion_descriptiva.tex",
+      "bytes": 17931,
+      "sha256": "d8f5d56a5ac7ddc4442305d2a7752b14255dae8a9d2a58bf6c1254273d4f45ce"
+    },
+    {
+      "path": "report_sections/13_puntos_perpetuos.tex",
+      "bytes": 56699,
+      "sha256": "0d1ea32a4faeccbd19547ecc609bde0b1120d94f5905e9fbf880b3d303bd0405"
+    },
+    {
+      "path": "report_sections/14_guia_geometrica_topologica_entera.tex",
+      "bytes": 84215,
+      "sha256": "b6e365d8651ec3ff13c5a9719505eea18d030de53af8f9e0c5e3f738fd322698"
+    },
+    {
+      "path": "report_sections/15_geometria_topologia_caputo.tex",
+      "bytes": 73094,
+      "sha256": "9d2c6c2e3b349b23e52ae65eae0a7b82d9f22f4b7d832d0a3d1aa663f8111614"
+    },
+    {
+      "path": "report_sections/16_programa_estudio_bibliografico.tex",
+      "bytes": 1418,
+      "sha256": "96d6e70e8cd3670dd85f75e86294d470776eead632bbdcf4434cfd8b98505125"
+    },
+    {
+      "path": "report_sections/16_ruta_pedagogica_bibliografica.tex",
+      "bytes": 15521,
+      "sha256": "26d5baff023f63c91ca1e54ff59f6152f769c0fbaf5efec9fc8af01d851ae4bc"
+    },
+    {
+      "path": "report_sections/16_tarjetas_estudio_secuencial.tex",
+      "bytes": 26732,
+      "sha256": "58c81489699fff1dd8faa49d2f5b81619f736d9fdf8acc971a217080b916d60f"
+    },
+    {
+      "path": "report_sections/17_metodos_topologicos_existencia.tex",
+      "bytes": 23101,
+      "sha256": "65a7842f1135c4a3fc85a4faf272328174cbdb4daa95ec20fedd6643b099c33b"
+    },
+    {
+      "path": "report_sections/18_ruta_biblioteca_local_drive.tex",
+      "bytes": 35499,
+      "sha256": "781d99da71de5d1c05d5c291323f95781591b95304831d5d70184bf3df14d2d9"
+    },
+    {
+      "path": "report_sections/19_localizacion_geometrico_topologica.tex",
+      "bytes": 31667,
+      "sha256": "a4b0af9d4270c56b40c8b7889071d2a7c78429f590175cd6399e1f0e4429bc5f"
+    },
+    {
+      "path": "report_sections/20_resultados_geometrico_topologicos_casos.tex",
+      "bytes": 20640,
+      "sha256": "ec184ff83c65c536f94f6f8421ac53099e8a86c55d43b99451ee0c6af23c9e61"
+    },
+    {
+      "path": "report_sections/21_campana_dinamica_geometrico_topologica.tex",
+      "bytes": 56000,
+      "sha256": "fca43c3ef0873c7e11095e3928c8a28ade36103b0771ae42854a610d5bb68158"
+    },
+    {
+      "path": "report_sections/22_resultados_piloto_geometrico_topologico.tex",
+      "bytes": 25092,
+      "sha256": "f3a133d5915a81b9aa12a1dbe35586feb5c26c0cd130c8ff70426b0c53ae2231"
+    },
+    {
+      "path": "report_sections/23_confiabilidad_predictibilidad_transitorios.tex",
+      "bytes": 22293,
+      "sha256": "f4b7964d2f4818f530262d9100f10b3bbc8b565e34bd2e99a9b41b9a7516d77b"
+    },
+    {
+      "path": "report_sections/24_cobertura_comparativa_sistemas.tex",
+      "bytes": 14073,
+      "sha256": "b6c3d675575348351238c79738680965dba85b618ab12e40ea235ef8a01f05f6"
+    },
+    {
+      "path": "report_sections/25_contraste_metodologico_revision.tex",
+      "bytes": 20973,
+      "sha256": "52b4bc6ed0f1825cda404290198e979ab4808dd569d7483cc84a62201aa310d1"
+    },
+    {
+      "path": "report_sections/27_correcciones_sin_hardware.tex",
+      "bytes": 16538,
+      "sha256": "e9ed729c585ae9065de1be158b514bfb0889ac1defbd53130186bcd3d7ca4700"
+    },
+    {
+      "path": "report_sections/A_derivaciones_algebraicas.tex",
+      "bytes": 18697,
+      "sha256": "0af0822eac75ed8bba5d6825b907e24847a3b1e59fb19bf75b9a40d96a5d9807"
+    },
+    {
+      "path": "report_sections/B_trazabilidad_pruebas.tex",
+      "bytes": 7919,
+      "sha256": "6bb1742d026fef901520a336e3f8534ff7cec4f6b28cd90bfc2af5456ce3bc99"
+    },
+    {
+      "path": "report_sections/C_validacion_wolfram.tex",
+      "bytes": 7103,
+      "sha256": "8deb8af8fcf2ccbdc2dd157f1974b1efc51ff911c99dec01e9ce6040b6c84bc9"
+    },
+    {
+      "path": "report_sections/D_validacion_maestra.tex",
+      "bytes": 4404,
+      "sha256": "23dfc9c9abe3e6ba0075ec0c6352ef573a715741538a7acd7e04e657a7811744"
+    },
+    {
+      "path": "report_sections/E_atlas_figuras.tex",
+      "bytes": 33053,
+      "sha256": "f80f35210b44dc3b5cd9846759bbbafc6c616c89f50b23dfe181a16fd12882c5"
+    },
+    {
+      "path": "report_sections/F_wolfram_no_chua.tex",
+      "bytes": 2096,
+      "sha256": "c13ff279c4dcd4395d8af5cfb405bf10dd0d82a2180de3f7a44117506ff86c23"
+    },
+    {
+      "path": "reporte_maestro_atractores_ocultos.pdf",
+      "bytes": 23833060,
+      "sha256": "eae9d09eeea20691b90dadc5e17a3d596ac660331aacd80d7b915a95b31fa87c"
+    },
+    {
+      "path": "reporte_maestro_atractores_ocultos.tex",
+      "bytes": 16688,
+      "sha256": "974d6230f9b9acec5a9222ef0fc9a1cd449670a1fd07498b8a9b53a5a8ab5c95"
+    },
+    {
+      "path": "reporte_maestro_lectura_estudio.pdf",
+      "bytes": 8183205,
+      "sha256": "df89ddd5f461e4aaaedf9014f21066662e7a623c5e4e3e1d7bc4a83a5c694468"
+    },
+    {
+      "path": "reporte_maestro_lectura_estudio.tex",
+      "bytes": 74,
+      "sha256": "fb96ee1dd36a5644652ca96c3646abf8cf3024f0857f7dbae412c0bb2535f69e"
+    },
+    {
+      "path": "wolfram/no_chua_complete_algebra_validation.json",
+      "bytes": 30525,
+      "sha256": "ade4cbcbb00b2ffb2efbb68226b556033714f72448fa7bcf3d806a03eca87d7a"
+    },
+    {
+      "path": "wolfram/no_chua_complete_algebra_validation.wl",
+      "bytes": 8449,
+      "sha256": "02d266cbe3c665bdc65f16b55b0a59838d2549d79322a142d29d63e409133b89"
+    },
+    {
+      "path": "wolfram/topologia_geometria_hidden_validation.txt",
+      "bytes": 8125,
+      "sha256": "393126d6b622519e3622f8c5fe73c0fdafaeea4c95e5297ad80c81c79d6ab4c5"
+    },
+    {
+      "path": "wolfram/topologia_geometria_hidden_validation.wl",
+      "bytes": 25964,
+      "sha256": "dc3b9e6b394111a6190c7718ccbc2ad6fc5002d4567728a434fe04cfb6158dc6"
+    },
+    {
+      "path": "wolfram_evidence/topologia_geometria_hidden/topologia_geometria_hidden_validation.txt",
+      "bytes": 8125,
+      "sha256": "393126d6b622519e3622f8c5fe73c0fdafaeea4c95e5297ad80c81c79d6ab4c5"
+    }
+  ],
+  "hash_inventory_status": "MATCH_EXCLUDING_SELF_RECORD",
+  "excluded_self_record": "auditoria/duplicacion_verificada.json",
+  "scope": "Current report-copy byte parity after README and QA storage metadata changes. Scientific PDF/source bytes preserved; no new scientific campaign validation."
+}

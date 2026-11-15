@@ -1,0 +1,12 @@
+{
+  "scope": "Curvas analiticas y cota condicional; no son campanas nuevas ni estimaciones aplicadas a mallas deterministas.",
+  "caputo_half_solution": "exp(t)*erfc(sqrt(t)) = erfcx(sqrt(t))",
+  "restart_at_s": 2.0,
+  "maximum_restart_difference_on_interval": 0.14466699554904544,
+  "integer_semigroup_residual": 2.7755575615628914e-17,
+  "iid_confidence_level": 0.95,
+  "iid_upper_bounds": {
+    "7200": 0.00041598738012988166,
+    "8400": 0.00035657120784169245
+  }
+}

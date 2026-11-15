@@ -1,0 +1,270 @@
+\section{Campo, geometría y existencia de soluciones}
+\label{sec:ruta-geometrica-libros}
+
+Consideramos tres formas complementarias de estudiar una ecuación dinámica.
+La geometría diferencial identifica el espacio de fases y el campo tangente;
+la teoría geométrica describe las órbitas, sus límites y sus cuencas; los
+métodos topológicos establecen existencia de ceros y puntos fijos mediante
+continuidad, compacidad y comportamiento en la frontera. Estas perspectivas
+se enlazan cuando pasamos de una ecuación a un retorno o a un operador
+integral.
+
+El lenguaje de variedades, formas y Stokes se desarrolla en
+\cite{NahmadAchar2022Topologia}. La construcción del flujo, la linealización
+y las variedades invariantes corresponden a la teoría geométrica de
+\cite{JaurezEtAl2021TGEDI,JaurezEtAl2021TGEDII}. Los métodos de disparo,
+puntos fijos y grado de \cite{Amster2021MetodosTopologicos} permiten formular
+problemas de existencia aun cuando no dispongamos de una solución explícita.
+La relación con los operadores fraccionarios se organiza en
+\cref{sec:programa-estudio-bibliografico}.
+
+\subsection{Tres estructuras topológicas de la dinámica}
+
+\begin{definition}[topología del espacio de fases]
+Una topología sobre un conjunto \(X\) es una familia \(\mathcal T\) de
+subconjuntos, llamados abiertos, que contiene \(\varnothing\) y \(X\), es
+cerrada bajo uniones arbitrarias y bajo intersecciones finitas. La pareja
+\((X,\mathcal T)\) es un espacio topológico.
+\end{definition}
+
+Una métrica induce abiertos mediante bolas. La topología resultante permite
+definir continuidad, convergencia y vecindades, pero no conserva una distancia
+particular. Si \(h:X\to Y\) es un homeomorfismo, \(h\) y \(h^{-1}\)
+transportan abiertos; por eso conservan conexidad y compacidad. Una bola
+puede transformarse en un elipsoide sin que cambie esa estructura.
+
+En una variedad diferenciable, el campo \(f(x)\in T_xM\) asigna un vector
+tangente a cada punto. Al integrarlo construimos el flujo
+\(\varphi_t:M\to M\). La dinámica topológica estudia la acción de esas
+aplicaciones sobre conjuntos invariantes y cuencas. Por otra parte, el grado
+de un campo o de un residual de retorno estudia la existencia de ceros. El
+grado y el flujo se relacionan a través de sus objetos, pero responden a
+preguntas distintas.
+
+\begin{center}
+\begin{tikzpicture}[
+ box/.style={draw=Azul,rounded corners,fill=AzulClaro,align=center,
+              minimum width=4.4cm,minimum height=1.25cm},
+ arr/.style={-{Latex[length=2.5mm]},thick,draw=GrisOscuro},
+ node distance=1.7cm and 1.15cm]
+ \node[box] (geom) {Variedades y geometría\\campo $f(x)\in T_xM$};
+ \node[box,right=of geom] (flow) {Flujo y dinámica\\$\varphi_t:M\to M$};
+ \node[box,right=of flow] (top) {Conjuntos invariantes\\cuencas y retornos};
+ \node[box,below=of flow] (exist) {Existencia topológica\\punto fijo y grado};
+ \draw[arr] (geom) -- node[above,font=\small]{integración} (flow);
+ \draw[arr] (flow) -- node[above,font=\small]{evolución} (top);
+ \draw[arr] (exist) -- node[right,font=\small]{existencia de objetos} (flow);
+ \draw[arr,dashed] (top) to[bend left=18]
+   node[below,font=\small]{residual de retorno} (exist);
+\end{tikzpicture}
+\end{center}
+
+\subsection{Del cálculo algebraico al objeto geométrico}
+
+Para un equilibrio resolvemos \(f(e)=0\) y calculamos \(Df(e)\).
+La matriz describe la evolución de perturbaciones pequeñas, mientras que
+la cuenca contiene todos los datos cuyo futuro se aproxima al mismo destino.
+Para un ciclo, la ecuación relevante pasa a ser \(P(z)-z=0\) sobre una
+sección transversal. Así, cambiar de objeto modifica también el operador
+al que se aplica el cálculo algebraico.
+
+\begin{table}[H]
+\centering
+\caption{Relación entre expresiones algebraicas y objetos dinámicos.}
+\label{tab:diccionario-algebra-geometria}
+\small
+\begin{tabularx}{\textwidth}{@{}L{2.4cm}YYY@{}}
+\toprule
+Objeto & Expresión & Geometría & Propiedad dinámica \\
+\midrule
+Campo & $\dot x=f(x)$ & Vector en $T_xM$ & Evolución local del estado. \\
+Equilibrio & $f(e)=0$ & Singularidad del campo & Órbita estacionaria. \\
+Órbita & $\{\varphi_t(x_0)\}$ & Curva integral orientada & Límites temporales. \\
+Linealización & $\dot\xi=Df(e)\xi$ & Dinámica tangente & Estabilidad local. \\
+Ciclo & $\varphi_T(x)=x$ & Curva cerrada regular & Periodicidad orbital. \\
+Retorno & $P:\Sigma\to\Sigma$ & Cruces sucesivos & Estabilidad transversal. \\
+Cuenca & $\mathcal B(A)$ & Datos atraídos por $A$ & Organización de destinos. \\
+Ocultedad & $\mathcal B(A)\cap U_e=\varnothing$ & Separación de vecindades &
+Inaccesibilidad desde equilibrios próximos. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Una silla lineal y sus variedades}
+
+Consideremos
+\begin{equation}
+ \dot x=x,\qquad \dot y=-y.
+ \label{eq:guide-linear-saddle}
+\end{equation}
+Separar variables da \(\dd x/x=\dd t\) y \(\dd y/y=-\dd t\) para las
+componentes no nulas. Al incorporar también las soluciones nulas y el dato
+inicial, encontramos
+\(\varphi_t(x_0,y_0)=(e^tx_0,e^{-t}y_0)\). Para converger al origen en
+tiempo positivo es necesario \(x_0=0\), porque \(|e^tx_0|\to\infty\)
+si \(x_0\ne0\); con \(x_0=0\), la segunda componente siempre tiende a
+cero. Para tiempo negativo se intercambian los papeles. Por tanto,
+\[
+ W^s(0)=\{(0,y):y\in\R\},\qquad
+ W^u(0)=\{(x,0):x\in\R\}.
+\]
+La misma fórmula demuestra invariancia de ambos ejes. Fuera de ellos,
+\(x(t)y(t)=x_0y_0\), de modo que las órbitas están contenidas en ramas de
+hipérbolas. Las variedades estable e inestable organizan así un retrato
+calculable, además de proporcionar direcciones tangentes.
+
+\subsection{Una frontera de cuenca explícita}
+
+Para
+\begin{equation}
+ \dot x=x-x^3=x(1-x^2),
+ \label{eq:guide-bistable-line}
+\end{equation}
+los ceros son \(-1,0,1\), con derivadas \(-2,1,-2\), respectivamente.
+Si \(0<x<1\), el campo es positivo; si \(x>1\), es negativo. Por
+unicidad las soluciones no cruzan el equilibrio \(1\), por lo que cada
+solución positiva es monótona hacia él y permanece acotada. Su límite
+\(\ell\) satisface \(\ell-\ell^3=0\): si el campo no se anulara en el
+límite, una velocidad de signo fijo impediría la convergencia. El signo del
+campo cerca del origen excluye ese punto como destino de un dato positivo.
+Por simetría impar, los datos negativos convergen a \(-1\).
+
+También podemos comprobarlo mediante una solución explícita. Para
+\(x_0\ne0\), ponemos \(u=x^2\); entonces \(\dot u=2u(1-u)\).
+La separación de variables da
+\(\log|u/(1-u)|=2t+C\) cuando \(u\ne1\), y conduce a
+\[
+ x(t)=\frac{\operatorname{sgn}(x_0)}
+ {\sqrt{1+(x_0^{-2}-1)e^{-2t}}},\qquad t\ge0.
+\]
+La expresión incluye los equilibrios \(x_0=\pm1\) por sustitución
+directa; \(x_0=0\) da la solución nula. Así,
+\(\mathcal B(-1)=(-\infty,0)\), \(\mathcal B(1)=(0,\infty)\) y
+\(\{0\}\) es la frontera común. Una malla que no incluya el cero puede
+aproximar ambas cuencas sin determinar por sí misma ese punto fronterizo.
+
+\subsection{Fase angular y distancia en el PLL}
+
+Las fases \(\theta\) y \(\theta+2\pi k\), \(k\in\mathbb Z\),
+representan el mismo punto. El cociente \(\R/(2\pi\mathbb Z)\) se
+identifica con \(S^1\) mediante
+\([\theta]\mapsto(\cos\theta,\sin\theta)\). En consecuencia, el espacio
+del PLL es \(\R\times S^1\), y la distancia angular es
+\begin{equation}
+ d_{S^1}(\theta_1,\theta_2)
+ =\min_{k\in\mathbb Z}|\theta_1-\theta_2+2\pi k|.
+ \label{eq:guide-circle-distance}
+\end{equation}
+Cambiar un representante angular sólo desplaza el entero que minimiza la
+expresión. Para la desigualdad triangular, elijamos enteros minimizadores
+\(k_{12}\), \(k_{23}\). La diferencia de la pareja \((1,3)\) con entero
+\(k_{12}+k_{23}\) es la suma de las otras dos diferencias; por la
+desigualdad triangular real y por la minimización,
+\[
+ d_{S^1}(\theta_1,\theta_3)\le
+ d_{S^1}(\theta_1,\theta_2)+d_{S^1}(\theta_2,\theta_3).
+\]
+La métrica producto combina esta distancia con la componente real. Un ciclo
+corredor avanza \(2\pi\) en el recubrimiento angular y regresa al mismo
+punto del cilindro; por eso su aparente apertura en un plano no representa
+escape del espacio de fases.
+
+\subsection{Retorno, punto fijo y ciclo}
+
+Sea \(\Sigma\) una sección transversal y \(P\) su primer retorno local.
+Si \(P(z)=z\), el tiempo de retorno \(T=\tau(z)>0\) satisface
+\(\varphi_T(z)=z\). La propiedad de flujo implica
+\(\varphi_{t+T}(z)=\varphi_t(\varphi_T(z))=\varphi_t(z)\); por tanto
+la órbita es periódica. La transversalidad excluye un equilibrio en ese
+punto. La estabilidad de este ciclo depende de las iteraciones próximas de
+\(P\), y por ello de sus multiplicadores transversales, mientras que su
+existencia puede establecerse por un teorema de punto fijo o por grado.
+
+En Caputo, el mismo punto de sección puede tener sucesores distintos según
+su memoria. El retorno se levanta entonces al espacio de perfiles y la
+observación puntual define una relación proyectada. El cambio de espacio
+conserva el problema geométrico, pero modifica el dato que determina una
+continuación.
+
+\subsection{Conexiones entre las herramientas geométricas}
+
+\begin{longtable}{@{}L{0.8cm}L{3.1cm}L{4.1cm}L{5.55cm}@{}}
+\caption{Conexiones entre objetos, fuentes teóricas y sistemas.}
+\label{tab:ruta-estudio-geometrica}\\
+\toprule
+ & Objeto & Fundamento & Aplicación \\
+\midrule
+\endfirsthead
+\toprule
+ & Objeto & Fundamento & Aplicación \\
+\midrule
+\endhead
+1 & Continuidad, compacidad y cocientes & Nahmad-Achar & Cilindro del PLL y
+distancia angular. \\
+2 & Cartas, tangentes y campos & Nahmad-Achar; teoría geométrica I &
+Campo como sección de $TM$ y cambios de coordenadas. \\
+3 & Existencia, unicidad y flujo & Teoría geométrica I & Regiones suaves y
+cruces de Chua PWL. \\
+4 & Linealización e hiperbolicidad & Teoría geométrica I--II & Retrato local
+de los equilibrios. \\
+5 & Variedades invariantes & Teoría geométrica II & Separatrices de Chua,
+MAVPD y PLL. \\
+6 & Poincaré y Floquet & Teoría geométrica II & Retornos y multiplicadores
+de los ciclos PLL y MAVPD. \\
+7 & Disparo, punto fijo y grado & Amster & Existencia de ceros del campo y
+del residual de retorno. \\
+8 & Bifurcaciones y conexiones & Teoría geométrica II & Persistencia de
+órbitas y cambios de estabilidad. \\
+9 & Dinámica simbólica & Teoría del caos & Herraduras, entropía y crecimiento
+de perturbaciones. \\
+10 & Cuencas y fronteras & Definiciones de atracción y ocultedad & Separación
+respecto de vecindades de equilibrios. \\
+11 & Semidinámica de Caputo & Ecuación de Volterra & Perfiles, retornos
+funcionales y cuencas de reinicio. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Problemas sobre los sistemas estudiados}
+
+Para Chua PWL, calcule la solución afín de cada región y relacione el signo
+de \(\dot x\) en \(x=\pm1\) con la transversalidad. El campo continuo
+produce soluciones únicas, aunque el Jacobiano cambie al atravesar los
+planos. En Kalman--Fitts, compare el espectro del equilibrio con la cuenca
+del ciclo: el primero controla el entorno local y la segunda incorpora
+trayectorias que parten lejos de él. Los 48 sondeos próximos al equilibrio
+son una muestra de esa relación, no la descripción del continuo de datos.
+
+Para MAVPD, elija \(H(y)=0\), calcule \(\nabla H\cdot f\) y determine
+dónde el retorno es transversal. Relacione la convergencia de los cruces
+del ciclo reproducido con la estabilidad de un punto fijo de \(P\). Para
+PLL, compare en el recubrimiento y en el cilindro dos fases próximas a
+\(-\pi\) y \(\pi\); calcule su distancia angular y explique la
+identificación que cierra el ciclo corredor.
+
+\subsection{Aceleración y cambios de coordenadas}
+
+Para \(\dot x=f(x)\) y un difeomorfismo \(h\in C^2\), derivamos dos
+veces \(y=h(x)\):
+\[
+ \dot y=Dh(x)f(x),\qquad
+ \ddot y=D^2h(x)[f(x),f(x)]+Dh(x)Df(x)f(x).
+\]
+Si \(Df(p)f(p)=0\) y \(f(p)\ne0\), el término Hessiano puede ser no
+nulo; por tanto, un punto perpetuo clásico depende de la representación
+no lineal. En el ejemplo \(\dot x=1\), cualquier punto anula la
+aceleración; con \(y=e^x\), tenemos \(\dot y=y\) y \(\ddot y=y>0\).
+El cambio es un difeomorfismo de \(\R\) a \((0,\infty)\) y preserva
+las órbitas, pero no la aceleración ordinaria. Estudie cómo una conexión
+introduce el término adicional necesario para definir aceleración covariante
+en una variedad.
+
+\subsection{De la estabilidad local a la cuenca}
+
+La distinción entre trayectoria parametrizada, órbita y flujo aparece ya en
+los ejemplos lineales. El grado añade una conclusión de existencia y
+Poincaré traduce una órbita periódica en un punto fijo, pero la cuenca se
+define mediante el límite de todas las trayectorias que convergen al mismo
+conjunto. Para un atractor oculto, esa cuenca evita una vecindad de cada
+equilibrio. En la formulación de Caputo, la misma condición depende además
+de si comparamos perfiles funcionales o la sección de perfiles constantes
+que corresponde a los reinicios convencionales.

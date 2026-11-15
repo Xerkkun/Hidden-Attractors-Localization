@@ -1,0 +1,286 @@
+{
+  "assets": [
+    {
+      "bytes": 89574,
+      "case": "mavpd_integer_hidden_chaos",
+      "destination": "assets/julia_mavpd_chaos_gamma_screen.png",
+      "format": "png",
+      "role": "gamma_screen",
+      "sha256": "ac6933197c413e8d223e984615ca384fa556e5caccca452e2bf9fb4c23bbebed",
+      "source": "julia-dynamical-systems-demo/output/mavpd_integer_hidden_chaos/full/figures/gamma_screen.png"
+    },
+    {
+      "bytes": 10355,
+      "case": "mavpd_integer_hidden_chaos",
+      "destination": "assets/julia_mavpd_chaos_gamma_screen.pdf",
+      "format": "pdf",
+      "role": "gamma_screen",
+      "sha256": "3b3562507e5f6603afe12113b37979641ea7afe68bf7414a6f369a8ed003edf9",
+      "source": "julia-dynamical-systems-demo/output/mavpd_integer_hidden_chaos/full/figures/gamma_screen.pdf"
+    },
+    {
+      "bytes": 149689,
+      "case": "mavpd_integer_hidden_chaos",
+      "destination": "assets/julia_mavpd_chaos_candidate_phase_portraits.png",
+      "format": "png",
+      "role": "candidate_phase_portraits",
+      "sha256": "97809dd4c11d19a1c079361507ccd0159dfffad5c5993f74b75a0d1c9b94c973",
+      "source": "julia-dynamical-systems-demo/output/mavpd_integer_hidden_chaos/full/figures/candidate_phase_portraits.png"
+    },
+    {
+      "bytes": 610922,
+      "case": "mavpd_integer_hidden_chaos",
+      "destination": "assets/julia_mavpd_chaos_candidate_phase_portraits.pdf",
+      "format": "pdf",
+      "role": "candidate_phase_portraits",
+      "sha256": "e87c545d4466bb34187e080dec58ebd01800448bf28403277a66f847cf05e8aa",
+      "source": "julia-dynamical-systems-demo/output/mavpd_integer_hidden_chaos/full/figures/candidate_phase_portraits.pdf"
+    },
+    {
+      "bytes": 33291,
+      "case": "mavpd_integer_hidden_chaos",
+      "destination": "assets/julia_mavpd_chaos_lyapunov_spectrum.png",
+      "format": "png",
+      "role": "lyapunov_spectrum",
+      "sha256": "377eb9279fe86637057a6650e7337c32ec5d82dba5a8caa57c60353c0677bf58",
+      "source": "julia-dynamical-systems-demo/output/mavpd_integer_hidden_chaos/full/figures/lyapunov_spectrum.png"
+    },
+    {
+      "bytes": 6352,
+      "case": "mavpd_integer_hidden_chaos",
+      "destination": "assets/julia_mavpd_chaos_lyapunov_spectrum.pdf",
+      "format": "pdf",
+      "role": "lyapunov_spectrum",
+      "sha256": "9c5686b3b63d368dc12f1b5f71cb2b0d785bf787b258c0010dcb4fb209213295",
+      "source": "julia-dynamical-systems-demo/output/mavpd_integer_hidden_chaos/full/figures/lyapunov_spectrum.pdf"
+    },
+    {
+      "bytes": 39270,
+      "case": "mavpd_integer_hidden_chaos",
+      "destination": "assets/julia_mavpd_chaos_hiddenness_outcomes.png",
+      "format": "png",
+      "role": "hiddenness_outcomes",
+      "sha256": "949b402b222e60fcd2e93598a8e84764a4afd90a6fc8315bbb39fbcf0386141f",
+      "source": "julia-dynamical-systems-demo/output/mavpd_integer_hidden_chaos/full/figures/hiddenness_outcomes.png"
+    },
+    {
+      "bytes": 6114,
+      "case": "mavpd_integer_hidden_chaos",
+      "destination": "assets/julia_mavpd_chaos_hiddenness_outcomes.pdf",
+      "format": "pdf",
+      "role": "hiddenness_outcomes",
+      "sha256": "bce858a9cc8c1f48d58ea36f8f83446bc3cfd18e17f40514c49b21cff8845d4f",
+      "source": "julia-dynamical-systems-demo/output/mavpd_integer_hidden_chaos/full/figures/hiddenness_outcomes.pdf"
+    },
+    {
+      "bytes": 64322,
+      "case": "mavpd_integer_hidden_chaos",
+      "destination": "assets/julia_mavpd_chaos_nyquist_diagnostic.png",
+      "format": "png",
+      "role": "nyquist_diagnostic_not_localization",
+      "sha256": "46db2a8be187c3de7e234b5df10741da866fe02cf4560983ff71cd408fcdfa3a",
+      "source": "julia-dynamical-systems-demo/output/mavpd_integer_hidden_chaos/full/figures/nyquist_diagnostic.png"
+    },
+    {
+      "bytes": 7999,
+      "case": "mavpd_integer_hidden_chaos",
+      "destination": "assets/julia_mavpd_chaos_nyquist_diagnostic.pdf",
+      "format": "pdf",
+      "role": "nyquist_diagnostic_not_localization",
+      "sha256": "def2b3bf854a6b5e65f69260a8098b18a15d4a886345c57c1db2b63cc38f8d81",
+      "source": "julia-dynamical-systems-demo/output/mavpd_integer_hidden_chaos/full/figures/nyquist_diagnostic.pdf"
+    },
+    {
+      "bytes": 321351,
+      "case": "mavpd_integer_hidden_chaos",
+      "destination": "assets/julia_mavpd_chaos_amplitude_spectrum.png",
+      "format": "png",
+      "role": "post_transient_amplitude_spectrum_not_psd",
+      "sha256": "7fd03fe1af176a8093e0e861d12a53c2228aadbb4f749b19da23c405dfe3e925",
+      "source": "julia-dynamical-systems-demo/output/mavpd_integer_hidden_chaos/full/figures/amplitude_spectrum.png"
+    },
+    {
+      "bytes": 161417,
+      "case": "mavpd_integer_hidden_chaos",
+      "destination": "assets/julia_mavpd_chaos_amplitude_spectrum.pdf",
+      "format": "pdf",
+      "role": "post_transient_amplitude_spectrum_not_psd",
+      "sha256": "621dc64641b7e5257992186b597cb668edf2e5b8e308630a9a6ac58403301421",
+      "source": "julia-dynamical-systems-demo/output/mavpd_integer_hidden_chaos/full/figures/amplitude_spectrum.pdf"
+    },
+    {
+      "bytes": 68208,
+      "case": "pll_lead_lag_integer_q1",
+      "destination": "assets/julia_pll_direct_transfer_obstruction.png",
+      "format": "png",
+      "role": "direct_transfer_obstruction",
+      "sha256": "5711f199d8a43372922ffcd25e79d53109bb3fd88892c88fa7ccba66baf8cd71",
+      "source": "julia-dynamical-systems-demo/output/pll_lead_lag_integer/full/figures/01_direct_transfer_obstruction.png"
+    },
+    {
+      "bytes": 12588,
+      "case": "pll_lead_lag_integer_q1",
+      "destination": "assets/julia_pll_direct_transfer_obstruction.pdf",
+      "format": "pdf",
+      "role": "direct_transfer_obstruction",
+      "sha256": "eebe499f4175d67fc1a31bd78ee21388c05ddf8d6089934f3fa7327fb7badf74",
+      "source": "julia-dynamical-systems-demo/output/pll_lead_lag_integer/full/figures/01_direct_transfer_obstruction.pdf"
+    },
+    {
+      "bytes": 101043,
+      "case": "pll_lead_lag_integer_q1",
+      "destination": "assets/julia_pll_loop_gain_continuation.png",
+      "format": "png",
+      "role": "loop_gain_continuation",
+      "sha256": "e72b51069ba64ee1e4daae587fa5502366a0f3164bf915de6109b9a1e4892385",
+      "source": "julia-dynamical-systems-demo/output/pll_lead_lag_integer/full/figures/02_loop_gain_continuation.png"
+    },
+    {
+      "bytes": 14222,
+      "case": "pll_lead_lag_integer_q1",
+      "destination": "assets/julia_pll_loop_gain_continuation.pdf",
+      "format": "pdf",
+      "role": "loop_gain_continuation",
+      "sha256": "a223d9e0d35f5e30ef1dc28a89e1fd6b4c6b3ac98b3e9f33430c94200759c884",
+      "source": "julia-dynamical-systems-demo/output/pll_lead_lag_integer/full/figures/02_loop_gain_continuation.pdf"
+    },
+    {
+      "bytes": 96241,
+      "case": "pll_lead_lag_integer_q1",
+      "destination": "assets/julia_pll_phase_cylinder_cycles.png",
+      "format": "png",
+      "role": "phase_cylinder_cycles",
+      "sha256": "bc25424b8a8b9a9d2c8b92260440fdc8fa5952ef1bc9d8a1ad8c63b0b866a08d",
+      "source": "julia-dynamical-systems-demo/output/pll_lead_lag_integer/full/figures/03_phase_cylinder_cycles.png"
+    },
+    {
+      "bytes": 26771,
+      "case": "pll_lead_lag_integer_q1",
+      "destination": "assets/julia_pll_phase_cylinder_cycles.pdf",
+      "format": "pdf",
+      "role": "phase_cylinder_cycles",
+      "sha256": "9dfd2cb0d2c03c37ff3fd6a6363deec7d0cbe18ae6ba480004a3c9a7df4d455c",
+      "source": "julia-dynamical-systems-demo/output/pll_lead_lag_integer/full/figures/03_phase_cylinder_cycles.pdf"
+    },
+    {
+      "bytes": 70337,
+      "case": "pll_lead_lag_integer_q1",
+      "destination": "assets/julia_pll_cylindrical_hiddenness_probes.png",
+      "format": "png",
+      "role": "cylindrical_hiddenness_probes",
+      "sha256": "ccce037384959bd94b7f41b384930705698173bf5ae30cb13c75048ffa1ea018",
+      "source": "julia-dynamical-systems-demo/output/pll_lead_lag_integer/full/figures/04_cylindrical_hiddenness_probes.png"
+    },
+    {
+      "bytes": 9986,
+      "case": "pll_lead_lag_integer_q1",
+      "destination": "assets/julia_pll_cylindrical_hiddenness_probes.pdf",
+      "format": "pdf",
+      "role": "cylindrical_hiddenness_probes",
+      "sha256": "6b64bb9376475df9a46e88bddeddb915ca9e73c3b5895ffd8c21bf17a134ffe0",
+      "source": "julia-dynamical-systems-demo/output/pll_lead_lag_integer/full/figures/04_cylindrical_hiddenness_probes.pdf"
+    },
+    {
+      "bytes": 114331,
+      "case": "pll_lead_lag_integer_q1_python_full",
+      "destination": "assets/pll_transfer_obstruction.png",
+      "format": "png",
+      "role": "direct_transfer_obstruction",
+      "sha256": "bce27f5ca2af9827d66693a5bcabd8399186b0ea4c09e0a21133e9867870003e",
+      "source": "validation/reference_cases/pll_lead_lag_integer_q1_full/figures/01_direct_transfer_obstruction.png"
+    },
+    {
+      "bytes": 14710,
+      "case": "pll_lead_lag_integer_q1_python_full",
+      "destination": "assets/pll_transfer_obstruction.pdf",
+      "format": "pdf",
+      "role": "direct_transfer_obstruction",
+      "sha256": "987824fb666970facd1709eaffb825b73dec4a442844f8bf8703921407ca2d87",
+      "source": "validation/reference_cases/pll_lead_lag_integer_q1_full/figures/01_direct_transfer_obstruction.pdf"
+    },
+    {
+      "bytes": 148365,
+      "case": "pll_lead_lag_integer_q1_python_full",
+      "destination": "assets/pll_phase_cylinder_cycles.png",
+      "format": "png",
+      "role": "phase_cylinder_cycles",
+      "sha256": "dd0c2abd3a3e54225981c8d04a9cf251fe1f3d626d9dba2bec236f85997fac44",
+      "source": "validation/reference_cases/pll_lead_lag_integer_q1_full/figures/03_phase_cylinder_cycles.png"
+    },
+    {
+      "bytes": 16348,
+      "case": "pll_lead_lag_integer_q1_python_full",
+      "destination": "assets/pll_phase_cylinder_cycles.pdf",
+      "format": "pdf",
+      "role": "phase_cylinder_cycles",
+      "sha256": "e5caaa91899e80b296f59ac0d0e387297ec3b7a6668cc877ad7fc4c340979896",
+      "source": "validation/reference_cases/pll_lead_lag_integer_q1_full/figures/03_phase_cylinder_cycles.pdf"
+    },
+    {
+      "bytes": 105794,
+      "case": "pll_lead_lag_integer_q1_python_full",
+      "destination": "assets/pll_cylindrical_hiddenness.png",
+      "format": "png",
+      "role": "cylindrical_hiddenness_probes",
+      "sha256": "81eabebdae3233fe359b4154fcfb648ace90e54bdcbd521377239a8592b78b14",
+      "source": "validation/reference_cases/pll_lead_lag_integer_q1_full/figures/04_cylindrical_hiddenness_probes.png"
+    },
+    {
+      "bytes": 15223,
+      "case": "pll_lead_lag_integer_q1_python_full",
+      "destination": "assets/pll_cylindrical_hiddenness.pdf",
+      "format": "pdf",
+      "role": "cylindrical_hiddenness_probes",
+      "sha256": "693720587dbd4e39e3eab4c354f90c6c3723e7a5c7f20e4964bacb5a788725cb",
+      "source": "validation/reference_cases/pll_lead_lag_integer_q1_full/figures/04_cylindrical_hiddenness_probes.pdf"
+    }
+  ],
+  "comparisons": {
+    "mavpd_integer_hidden_chaos": {
+      "julia_run_id": "mavpd_integer_hidden_chaos_20260803T143002_a8bca9ee6266",
+      "julia_source_bundle_unchanged": true,
+      "julia_source_manifest_sha256": "0ed65fadd7b12e026092379eb18578cbf6a03128f3f5c62247d63ed1f37722ac",
+      "overall_agreement": true,
+      "path": "julia-dynamical-systems-demo/output/comparison/mavpd_integer_hidden_chaos_comparison_full.json",
+      "scope": "full_python_vs_full_julia",
+      "sha256": "0dbc4675b988d2eccc8b0c43acbac6de6a47e2b6b2b5afca90fa9c6fdf4b3dfa"
+    },
+    "pll_lead_lag_integer_q1": {
+      "full_manifest_sha256": "bc464444901fbe8ec38aa590b2d7c2f7eee10ca748387aa60aa525ba09466139",
+      "full_posthoc_manifest_sha256": "164dddd95c994dfd7a13d6f011f615a6c8509045addc16a6d8e8146a0ec6f924",
+      "full_posthoc_run_id": "pll_lead_lag_integer_q1_reference_posthoc_full_20260803T144125_1a6a738dd480c",
+      "full_run_id": "pll_lead_lag_integer_q1_reference_full_20260803T144050_1a69f078a9398",
+      "full_source_sha256": "53d9d724fc21c4f49d7a8229b07be64c1ee06ef709f10aff16618c8195c1bb73",
+      "overall_agreement": true,
+      "path": "julia-dynamical-systems-demo/output/comparison/pll_lead_lag_integer_comparison_full.json",
+      "python_full_manifest_sha256": "cec3092e0477c5b83fed2bbfd0c9ec466e369dea4f266a8b63370876070e2522",
+      "scope": "full_python_vs_full_julia",
+      "secondary_quick": {
+        "overall_agreement": true,
+        "path": "julia-dynamical-systems-demo/output/comparison/pll_lead_lag_integer_comparison_quick.json",
+        "quick_manifest_sha256": "95e42ba54a41c4d25fc6195104b184a5ad51d84791ea3e92efb0e72f4214e53c",
+        "quick_posthoc_manifest_sha256": "9b979839a51e9cfbc240bb3071271d122adf27e1ac91b48750da54691c76b59c",
+        "quick_posthoc_run_id": "pll_lead_lag_integer_q1_reference_posthoc_quick_20260803T144124_1a6a7010dfb38",
+        "quick_run_id": "pll_lead_lag_integer_q1_reference_quick_20260803T144052_1a69f779da92c",
+        "quick_source_sha256": "53d9d724fc21c4f49d7a8229b07be64c1ee06ef709f10aff16618c8195c1bb73",
+        "role": "secondary_homologous_comparison",
+        "scope": "quick_python_vs_quick_julia",
+        "sha256": "91027f2d78ebead7263c834d84fe5380e0699af17d6687211cbf3d5af734b969"
+      },
+      "sha256": "45b3ba49ff24e4c0394490bb29efb7b64a8f7b7ac4453143b3325f3111e288a1"
+    }
+  },
+  "evidence_boundary": "posthoc finite numerical cross-runtime agreement; neither global chaos nor global hiddenness proof",
+  "generated_tex": {
+    "bytes": 4855,
+    "path": "julia_comparison_generated.tex",
+    "sha256": "8990da9aa44a106201c1e0f0aa0c56dfd503699ed88031fe151921a989495d07"
+  },
+  "generator": {
+    "atomic_writes": true,
+    "path": "local_reports/comparacion_dynamicalsystems_hafo_enteros/refresh_julia_comparison_evidence.py",
+    "sha256": "0fc35082b79649615a8c17b2424dfd7c9753844800f37b6d182e89c3f7a5b2cd",
+    "stdlib_only": true
+  },
+  "schema_version": "1.0"
+}

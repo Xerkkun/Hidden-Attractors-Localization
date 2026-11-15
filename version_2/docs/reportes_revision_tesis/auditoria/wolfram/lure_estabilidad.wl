@@ -1,0 +1,22 @@
+ClearAll["Global`*"];
+p={{-a (1+l),a,0},{1,-1,1},{0,-b,-c}}; u={-a,0,0}; r={1,0,0};
+qq=z^2+(1+c)z+b+c; delta=(z+a(1+l))qq-a(z+c);
+g=Together[r.Inverse[z IdentityMatrix[3]-p].u];
+checks=<|"determinant_identity"->TrueQ[Expand[Det[z IdentityMatrix[3]-p]-delta]===0],"transfer_identity"->TrueQ[Together[g+a qq/delta]===0],"feedback_characteristic_identity"->TrueQ[Expand[Det[z IdentityMatrix[3]-(p+Outer[Times,u,r] n)]-(delta+a qq n)]===0]|>;
+pars={a->84562/10000,b->120732/10000,c->52/10000};
+m0=-1768/10000;m1=-11468/10000;
+xe=-(m0-m1)/(m1+(b/(b+c)/.pars));
+eig0=Eigenvalues[N[p/.Join[{l->m0},pars],40]];
+eig1=Eigenvalues[N[p/.Join[{l->m1},pars],40]];
+marg0=Min[Abs[Arg[#]]&/@eig0]-(9998/10000) Pi/2;
+marg1=Min[Abs[Arg[#]]&/@eig1]-(9998/10000) Pi/2;
+pa={a->218493569066/10^10,b->190818408409/10^10,c->73780120/10^10};
+a1=422897934/10^10;a2=-33367815123/10^10;rho=17984259333/10^10;
+eqfun[x_]=(a1+(b/(b+c)/.pa))x+a2 ArcTan[rho x];
+xa=x/.FindRoot[eqfun[x]==0,{x,SetPrecision[4.65,50]},WorkingPrecision->45,AccuracyGoal->30,PrecisionGoal->30];
+slope[x_]=a1+a2 rho/(1+rho^2 x^2);
+eiga0=Eigenvalues[N[p/.Join[{l->slope[0]},pa],40]];
+eiga1=Eigenvalues[N[p/.Join[{l->slope[xa]},pa],40]];
+marga0=Min[Abs[Arg[#]]&/@eiga0]-(9999/10000)Pi/2;
+marga1=Min[Abs[Arg[#]]&/@eiga1]-(9999/10000)Pi/2;
+<|"checks"->checks,"Q"->qq,"Delta"->Expand[delta],"G"->g,"PWL_outer_x"->N[xe,18],"PWL_eigen_origin"->eig0,"PWL_eigen_outer"->eig1,"PWL_Matignon_margin_origin_q09998"->N[marg0,18],"PWL_Matignon_margin_outer_q09998"->N[marg1,18],"arctan_outer_x"->N[xa,18],"arctan_outer_equilibrium"->N[{xa,(c/(b+c)/.pa)xa,-(b/(b+c)/.pa)xa},18],"arctan_margin_origin_q09999"->N[marga0,18],"arctan_margin_outer_q09999"->N[marga1,18],"arctan_eigen_outer"->eiga1,"scope"->"Algebra and linearized commensurate local stability only; no chaos or hiddenness certificate"|>

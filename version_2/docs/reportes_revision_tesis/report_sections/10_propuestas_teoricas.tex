@@ -1,0 +1,593 @@
+\section{Realización, balance armónico y continuación causal}
+\label{part:theory}
+
+\subsection{Fundamentos de la localización}
+\label{sec:theory-attribution}
+
+La forma de Lur'e, la función descriptiva, el balance armónico, el criterio de
+Matignon, la equivalencia Caputo--Volterra, el algoritmo ABM, la continuación
+de bifurcaciones y las realizaciones multivariables poseen literatura previa
+\cite{Leonov2013HiddenAttractors,LeonovKuznetsov2013,Matignon1996,
+DiethelmFordFreed2002,bonani1999,rogov2019}. La autorreproducción afín de
+atractores fraccionarios se estudia en \cite{sayed2020}.
+
+La estructura del campo determina la ruta de localización. Cuando la parte
+no lineal depende de un único observable y actúa en una dirección fija,
+podemos reducirla a una característica escalar. Si esa factorización es
+imposible, una transformación admisible o un diccionario multicanal conserva
+las interacciones que el modelo escalar perdería. El balance construye las
+semillas de cada realización; la evolución causal y las cuencas determinan
+después sus destinos.
+
+\begin{longtable}{L{0.28\linewidth}L{0.27\linewidth}L{0.37\linewidth}}
+\caption{Fundamentos y función de cada construcción.}
+\label{tab:novelty-map}\\
+\toprule
+Elemento & Fundamento & Función matemática\\
+\midrule
+\endfirsthead
+\toprule
+Elemento & Fundamento & Función matemática\\
+\midrule
+\endhead
+Certificado de rango uno & Geometría de realizaciones Lur'e & Distinguir una
+realización escalar exacta de una aproximación.\\
+Saltos PWA compartidos & Realimentación escalar PWA & Identificar direcciones
+comunes de entrada y salida en las regiones afines.\\
+Equivalencia afín & Regla lineal de Caputo y antecedente
+\cite{sayed2020} & Transportar el campo y las vecindades de cuenca.\\
+Diccionario MIMO & Lur'e y balance multivariable
+\cite{bonani1999,rogov2019} & Construir semillas multiharmónicas.\\
+Historia única de Caputo & Ecuación de Volterra & Conservar las contribuciones
+anteriores durante la continuación.\\
+Machado \(N^\mu\) & Función descriptiva fraccionaria publicada
+\cite{Machado2015FDF} & Separar residuo auxiliar y físico en cada semilla.\\
+Puntos perpetuos enteros & Condición \(J_f f=0\) y localización heurística
+\cite{Prasad2015Perpetual,DudkowskiPrasadKapitaniak2017} & Se integran como
+una ruta de semillas, con verificación dinámica posterior.\\
+FPP--A/FPP--H & Volterra, expansión Picard y operador Caputo secuencial &
+Separar estado de arranque y evento con historia.\\
+Separación continuación/congelación/reset & No localidad de Caputo &
+Separación metodológica entre continuación, congelación del campo y reinicio.\\
+Protocolo L0--L6 y niveles EV--TG0--EV--TG7 & Definición de atractor oculto y
+validación numérica & Distinguir semilla, recurrencia, cuenca y certificación.\\
+\bottomrule
+\end{longtable}
+
+\subsection{Certificado de realizabilidad escalar por rango uno}
+\label{sec:rank-one-certificate}
+
+Sea \(\Omega\subset\mathbb R^n\) abierto y conexo, y
+\(f\in C^1(\Omega,\mathbb R^n)\). Fijados \(A\in\mathbb R^{n\times n}\),
+\(b,r\in\mathbb R^n\setminus\{0\}\), escribimos
+\begin{equation}
+ g(x)=f(x)-Ax,\qquad
+ P_b^\perp=I-\frac{bb^{\mathsf T}}{b^{\mathsf T}b},\qquad
+ P_r^\perp=I-\frac{rr^{\mathsf T}}{r^{\mathsf T}r}.
+ \label{eq:th-projectors}
+\end{equation}
+
+\begin{proposition}[necesidad]
+\label{prop:rank-one-necessary}
+Si existe \(\psi\in C^1(r^{\mathsf T}\Omega,\mathbb R)\) tal que
+\[
+ f(x)=Ax+b\,\psi(r^{\mathsf T}x)
+\]
+en \(\Omega\), entonces
+\begin{equation}
+ P_b^\perp g(x)=0,\qquad
+ Dg(x)P_r^\perp=0,\qquad
+ \operatorname{rank}Dg(x)\leq1
+ \label{eq:th-rank-necessary}
+\end{equation}
+para todo \(x\in\Omega\).
+\end{proposition}
+
+\begin{proof}
+La primera igualdad sigue de
+\(g(x)=b\psi(r^{\mathsf T}x)\in\operatorname{span}\{b\}\). Por la regla de la
+cadena,
+\[
+ Dg(x)=b\,\psi'(r^{\mathsf T}x)\,r^{\mathsf T}.
+\]
+Como \(r^{\mathsf T}P_r^\perp=0\), se obtiene
+\(Dg(x)P_r^\perp=0\). La matriz exterior \(br^{\mathsf T}\) tiene rango uno,
+y multiplicarla por un escalar no puede aumentar el rango.
+\end{proof}
+
+La condición de rango por sí sola no basta: una dirección de salida o de
+entrada que varíe con \(x\) también puede producir Jacobianos de rango uno. La
+prueba debe conservar \(b\) y \(r\) fijos.
+
+\begin{proposition}[suficiencia sobre fibras conexas]
+\label{prop:rank-one-sufficient}
+Supóngase que cada fibra
+\(\Omega_s=\{x\in\Omega:r^{\mathsf T}x=s\}\) es conexa o vacía. Si
+\[
+ P_b^\perp g(x)=0,\qquad Dg(x)P_r^\perp=0
+\]
+en \(\Omega\), entonces existe una función
+\(\psi:r^{\mathsf T}\Omega\to\mathbb R\) tal que
+\[
+ f(x)=Ax+b\,\psi(r^{\mathsf T}x).
+\]
+\end{proposition}
+
+\begin{proof}
+La primera igualdad permite definir
+\[
+ \lambda(x)=\frac{b^{\mathsf T}g(x)}{b^{\mathsf T}b},
+ \qquad g(x)=b\lambda(x).
+\]
+Derivando, \(Dg=b\,D\lambda\). Como \(b\neq0\), la segunda hipótesis implica
+\(D\lambda(x)P_r^\perp=0\). Sea \(x(\tau)\) una curva \(C^1\) contenida en una
+fibra. Entonces \(r^{\mathsf T}\dot x(\tau)=0\), es decir,
+\(\dot x=P_r^\perp\dot x\), y
+\[
+ \frac{d}{d\tau}\lambda(x(\tau))
+ =D\lambda(x(\tau))P_r^\perp\dot x(\tau)=0.
+\]
+Cada fibra es un abierto relativo del hiperplano \(r^{\mathsf T}x=s\).
+Su conexión implica conexión por caminos a trozos \(C^1\); integrar la
+derivada nula a lo largo de esos caminos demuestra que \(\lambda\) es
+constante en toda la fibra. Definimos entonces
+\(\psi(s)=\lambda(x)\), con cualquier \(x\in\Omega_s\), y obtenemos
+\(g(x)=b\psi(r^{\mathsf T}x)\).
+La regularidad también se conserva. Para \(x_*\in\Omega_{s_*}\), la apertura
+de \(\Omega\) permite usar, cerca de \(s_*\), la sección
+\(x(s)=x_*+(s-s_*)r/(r^{\mathsf T}r)\). Como
+\(r^{\mathsf T}x(s)=s\), allí \(\psi(s)=\lambda(x(s))\) es \(C^1\).
+Estas secciones locales coinciden en sus solapamientos por la constancia en
+las fibras.
+\end{proof}
+
+Las identidades de \cref{prop:rank-one-sufficient} proporcionan una
+decisión estructural antes del balance: la realización D0 es exacta cuando
+se cumplen en todo el dominio y las fibras son conexas. Los residuos
+numéricos pequeños, en cambio, describen una aproximación del campo en el
+dominio donde se miden. Una transformación T1 o una realización M1 permite
+conservar los términos que impiden la reducción escalar.
+
+La diferencia entre rango puntual y dirección común se aprecia con
+\(g(x,y)=(x^2+y^2,0)^{\mathsf T}\). Su Jacobiano tiene rango uno fuera
+del origen, pero el gradiente de su componente no lineal es \((2x,2y)\),
+cuya dirección cambia con el estado. Si se escribiera como
+\(b\psi(r^{\mathsf T}(x,y))\) con \(b,r\) constantes, el Hessiano de la
+primera componente tendría rango a lo sumo uno. Sin embargo,
+\(D^2(x^2+y^2)=2I\) tiene rango dos. Esta obstrucción también fundamenta
+la elección M1 para el jerk cuadrático de \cref{sec:cand-jerk}.
+
+\begin{proposition}[defecto uniforme de una aproximación escalar]
+\label{prop:rank-one-approximation-bound}
+Sea \(D\subset\Omega\) un dominio de evaluación. Supóngase que
+\[
+ \sup_{x\in D}\|P_b^\perp g(x)\|_2\le\varepsilon_b,
+ \qquad
+ \sup_{x\in D}\|Dg(x)P_r^\perp\|_{2\to2}\le\varepsilon_r.
+\]
+Para cada fibra no vacía \(D_s=\{x\in D:r^{\mathsf T}x=s\}\), elíjase
+\(x_s\in D_s\). Supóngase que cada \(x\in D_s\) puede unirse a \(x_s\)
+por una curva a trozos \(C^1\) contenida en \(D_s\), de longitud a lo sumo
+\(L_{\rm fib}<\infty\), uniforme en \(s\) y \(x\). Entonces
+\[
+ \psi_D(s)=\frac{b^{\mathsf T}g(x_s)}{b^{\mathsf T}b}
+\]
+satisface
+\[
+ \sup_{x\in D}\|f(x)-Ax-b\psi_D(r^{\mathsf T}x)\|_2
+ \le\varepsilon_b+L_{\rm fib}\varepsilon_r.
+\]
+\end{proposition}
+
+\begin{proof}
+Escriba \(Q_b=I-P_b^\perp\). Para \(x\in D_s\), el defecto es
+\(P_b^\perp g(x)+Q_b[g(x)-g(x_s)]\). A lo largo de una curva \(\gamma\)
+contenida en la fibra, \(\gamma'=P_r^\perp\gamma'\); por tanto,
+\[
+ \|g(x)-g(x_s)\|_2
+ \le\int\|Dg(\gamma)P_r^\perp\|_{2\to2}\|\gamma'\|_2
+ \le L_{\rm fib}\varepsilon_r.
+\]
+La cota sigue de \(\|Q_b\|_{2\to2}=1\) y la desigualdad triangular.
+\end{proof}
+
+El enunciado controla el defecto del campo en \(D\); no demuestra por sí solo
+regularidad de la sección elegida \(s\mapsto x_s\), equivalencia dinámica ni
+proximidad de atractores. Si se usa \(\psi_D\) como un nuevo campo, deben
+justificarse además su regularidad y el control de sus soluciones. Un muestreo
+finito no establece las dos cotas uniformes de la proposición sin un control
+adicional entre muestras.
+
+La necesidad del dominio y de \(L_{\rm fib}\) se ve con
+\(g(x,y)=(\varepsilon y,0)\), \(A=0\) y \(b=r=e_1\) en
+\(\mathbb R^2\). El residual de salida es cero y el transversal vale
+\(\varepsilon\), por pequeño que sea; sin embargo, \(g\) no depende sólo de
+\(x\), y para toda \(\psi\) el error uniforme respecto de
+\(b\psi(x)\) es infinito cuando \(\varepsilon>0\).
+
+\subsection{Criterio de saltos compartidos en campos PWA}
+\label{sec:pwa-shared-jumps}
+
+Considérese una partición en regiones \(\Omega_j\) y un campo afín por partes
+\[
+ f_j(x)=A_jx+d_j.
+\]
+Elegimos una región base \(j=0\).
+
+\begin{proposition}[realización PWA escalar exacta]
+\label{prop:pwa-shared}
+Si existen \(b,r\neq0\) y escalares \(\gamma_j,\delta_j\) tales que
+\begin{equation}
+ A_j-A_0=b\gamma_jr^{\mathsf T},\qquad
+ d_j-d_0=b\delta_j
+ \label{eq:th-pwa-jumps}
+\end{equation}
+para toda región, entonces
+\begin{equation}
+ f_j(x)=A_0x+d_0+b\bigl(\gamma_jr^{\mathsf T}x+\delta_j\bigr).
+ \label{eq:th-pwa-realization}
+\end{equation}
+Si, además, la etiqueta regional \(j\) depende sólo de
+\(\sigma=r^{\mathsf T}x\), existe una característica escalar PWA
+\(\psi(\sigma)\) que reproduce todo el campo.
+\end{proposition}
+
+\begin{proof}
+Sustituir \cref{eq:th-pwa-jumps} en
+\(A_jx+d_j\) da \cref{eq:th-pwa-realization}. Si cada región es la preimagen
+de un intervalo \(I_j\) por \(r^{\mathsf T}x\), se define
+\(\psi(\sigma)=\gamma_j\sigma+\delta_j\) para \(\sigma\in I_j\).
+\end{proof}
+
+Las condiciones son también necesarias para una realización escalar que use
+el mismo \(A_0,d_0,b,r\) y una \(\psi\) afín en cada intervalo. La continuidad
+en una frontera \(\sigma=s_j\) añade
+\[
+ \gamma_{j^-}s_j+\delta_{j^-}
+ =\gamma_{j^+}s_j+\delta_{j^+}.
+\]
+Una discontinuidad controlada puede admitirse, pero entonces debe declararse
+la solución diferencial utilizada.
+
+Las diferencias no nulas entre matrices regionales tienen
+rango uno y comparten direcciones de entrada y salida. La geometría de las
+regiones debe depender del mismo observable \(r^{\mathsf T}x\). El diodo
+PWL de Chua satisface esta estructura; superficies de conmutación incompatibles
+con ese observable impiden la realización escalar.
+
+\subsection{Equivalencia afín y transporte correcto de cuencas}
+\label{sec:affine-caputo}
+
+Sea \(x=Tz+c\), con \(T\) invertible y \(c\) constante. Para Caputo
+\({}^{\mathrm C}D^q c=0\) y
+\[
+ {}^{\mathrm C}D^q x=T\,{}^{\mathrm C}D^q z.
+\]
+Si
+\[
+ {}^{\mathrm C}D^q x=Ax+b\psi(r^{\mathsf T}x),
+\]
+entonces
+\begin{equation}
+ {}^{\mathrm C}D^q z
+ =T^{-1}ATz+T^{-1}(Ac)
+ +T^{-1}b\,
+ \psi\!\left(r^{\mathsf T}Tz+r^{\mathsf T}c\right).
+ \label{eq:th-affine-caputo}
+\end{equation}
+Para una transformación puramente lineal \(c=0\),
+\[
+ A_z=T^{-1}AT,\quad b_z=T^{-1}b,\quad r_z=T^{\mathsf T}r.
+\]
+
+La transformación no autoriza a conservar esferas numéricamente iguales. Una
+bola en coordenadas físicas,
+\[
+ \|x-x_e\|_2\leq\rho,
+\]
+se convierte en el elipsoide
+\begin{equation}
+ (z-z_e)^{\mathsf T}T^{\mathsf T}T(z-z_e)\leq\rho^2.
+ \label{eq:th-ellipsoid}
+\end{equation}
+Usar una bola de radio \(\rho\) en \(z\) cambia el experimento salvo cuando
+\(T\) es ortogonal. Esta observación es esencial para comparar cuencas antes y
+después de una transformación T1.
+
+\begin{remark}
+La literatura incluye transformaciones afines para autorreproducción de
+atractores ocultos \cite{sayed2020}. La formulación evaluada transporta además
+el protocolo de ocultedad y las tolerancias.
+\end{remark}
+
+\subsection{Realización polinómica multicanal y minimalidad}
+\label{sec:mimo-dictionary}
+
+Cuando el certificado escalar falla, se usa
+\begin{equation}
+ {}^{\mathrm C}D^q x=Ax+d+B\Phi(Cx),
+ \qquad
+ W(z)=C(zI-A)^{-1}B.
+ \label{eq:th-mimo}
+\end{equation}
+\(\Phi=(\phi_1,\ldots,\phi_m)^{\mathsf T}\) es un diccionario declarado de
+monomios, funciones PWA o funciones suaves. La verificación exacta es
+\[
+ R(x)=f(x)-Ax-d-B\Phi(Cx)\equiv0.
+\]
+
+Para polinomios, un diccionario completo de monomios reproduce siempre el
+campo; el problema científico es encontrar uno pequeño y estructuralmente
+útil. Dos identidades permiten reorganizar términos cruzados:
+\begin{align}
+ uv&=\frac14\bigl[(u+v)^2-(u-v)^2\bigr],
+ \label{eq:th-square-polarization}\\
+ uvw&=\frac1{24}\bigl[(u+v+w)^3+(u-v-w)^3
+ +(v-u-w)^3+(w-u-v)^3\bigr].
+ \label{eq:th-cubic-polarization}
+\end{align}
+Estas identidades algebraicas permiten exhibir canales escalares de cuadrados
+o cubos cuando ello simplifica
+\(W(z)\) y los coeficientes de Fourier.
+
+La minimalidad no se decide contando monomios solamente. Si un término
+cuadrático escalar tiene la forma \(\psi(r^{\mathsf T}x)\) con
+\(\psi(s)=\kappa s^2\), su Hessiano es
+\[
+ \nabla^2[\kappa(r^{\mathsf T}x)^2]=2\kappa rr^{\mathsf T},
+\]
+de rango a lo sumo uno. Un Hessiano de rango mayor que uno prueba que ese
+término no puede reducirse a un solo canal cuadrático.
+
+\subsection{Balance armónico sesgado y multiharmónico}
+\label{sec:multiharmonic}
+
+Se aproxima el estado estacionario por
+\begin{equation}
+ x_H(t)=X_0+
+ \sum_{h=1}^{H}\left(X_he^{\mathrm i h\omega t}
+ +\overline{X_h}e^{-\mathrm i h\omega t}\right).
+ \label{eq:th-fourier-state}
+\end{equation}
+Sea \(y_H=Cx_H\). Los coeficientes exactos del diccionario son
+\begin{equation}
+ \widehat\Phi_h(X_0,\ldots,X_H)
+ =\frac1{2\pi}\int_0^{2\pi}
+ \Phi\!\bigl(y_H(\theta)\bigr)e^{-\mathrm i h\theta}\,d\theta.
+ \label{eq:th-phi-fourier}
+\end{equation}
+La reconstrucción de estos coeficientes es explícita para diccionarios
+polinómicos. Si \(Y_k=CX_k\), con \(X_{-k}=\overline{X_k}\) y
+\(X_k=0\) para \(|k|>H\), el producto de dos componentes satisface
+\begin{equation}
+ \widehat{(y_i y_j)}_h
+ =\sum_{k=-H}^{H}(Y_k)_i(Y_{h-k})_j.
+ \label{eq:th-quadratic-convolution}
+\end{equation}
+La identidad se obtiene al multiplicar las dos sumas de Fourier y agrupar
+los términos con exponente \(e^{\mathrm ih\theta}\). Para un producto
+cúbico, el mismo argumento da
+\begin{equation}
+ \widehat{(y_i y_j y_\ell)}_h
+ =\sum_{k=-H}^{H}\sum_{m=-H}^{H}
+ (Y_k)_i(Y_m)_j(Y_{h-k-m})_\ell.
+ \label{eq:th-cubic-convolution}
+\end{equation}
+En particular, el coeficiente medio de un producto cuadrático contiene
+\((Y_0)_i(Y_0)_j+2\operatorname{Re}\sum_{k=1}^{H}
+(Y_k)_i\overline{(Y_k)_j}\). Los productos generan así DC y armónicos
+hasta \(2H\) o \(3H\), respectivamente; truncar de nuevo a \(H\) deja
+los residuos de \cref{eq:th-physical-harmonic-tail}.
+
+Al igualar coeficientes en \cref{eq:th-mimo}, se obtiene
+\begin{align}
+ 0&=AX_0+d+B\widehat\Phi_0,
+ \label{eq:th-dc-balance}\\
+ \bigl[(\mathrm ih\omega)^qI-A\bigr]X_h
+ &=B\widehat\Phi_h,\qquad h=1,\ldots,H.
+ \label{eq:th-harmonic-balance}
+\end{align}
+El término constante \(d\) sólo contribuye a \(h=0\); la derivada
+estacionaria de esa componente es cero. Para \(h\ne0\), el operador de
+Liouville--Weyl multiplica el coeficiente por \((\mathrm ih\omega)^q\),
+mientras \(A\) actúa componente a componente. Estas tres contribuciones
+producen las ecuaciones anteriores. La rama principal es
+\[
+ (\mathrm ih\omega)^q=(h\omega)^q
+ \left[\cos\frac{q\pi}{2}+\mathrm i\sin\frac{q\pi}{2}\right].
+\]
+El sistema real se obtiene separando partes reales e imaginarias y fijando una
+fase, por ejemplo \(\Im(e_j^{\mathsf T}X_1)=0\). Sin esa condición, la
+invariancia temporal deja una familia continua de soluciones equivalentes.
+
+Una no linealidad cuadrática excitada por un fundamental genera DC y segundo
+armónico; una cúbica genera fundamental y tercero. Por eso \(H=1\) no cierra
+exactamente Lorenz, RF, Genesio--Tesi o el jerk cuadrático. Los mínimos
+estructurales \(H\ge2\) y \(H\ge3\) son puntos de partida, no garantías de
+convergencia. Para \(|h|>H\), el coeficiente omitido del residual de la
+ecuación es \(R_h=-B\widehat\Phi_h\). Su medida física es
+\begin{equation}
+ \epsilon_H^2=\sum_{|h|>H}\|B\widehat\Phi_h\|_2^2,
+ \qquad
+ \eta_H^2=\sum_{|h|>H}\|\widehat\Phi_h\|_2^2.
+ \label{eq:th-physical-harmonic-tail}
+\end{equation}
+La cantidad \(\eta_H\) sólo mide la cola del diccionario. Si la composición
+\(\Phi(Cx_H)\) es cuadrado integrable, Parseval identifica
+\(\epsilon_H\) con la norma cuadrática media de la parte omitida del
+residual físico. Se tiene
+\(\epsilon_H\le\|B\|_{2\to2}\eta_H\), pero la recíproca puede fallar por
+cancelación entre canales.
+
+Por ejemplo, para \(q=1\),
+\[
+ A=\begin{pmatrix}0&-1\\1&0\end{pmatrix},\qquad
+ B=\begin{pmatrix}1&-1\\0&0\end{pmatrix},\qquad
+ \Phi(x)=(x_1^2,x_1^2)^{\mathsf T},
+\]
+la contribución \(B\Phi\) se anula idénticamente y
+\(x(t)=(\cos t,\sin t)^{\mathsf T}\) es una solución exacta con \(H=1\).
+No obstante, \(\eta_1^2=1/4\), mientras \(\epsilon_1=0\). Por ello una
+cota impuesta sólo a \(\eta_H\) puede rechazar una solución exacta y depende
+del escalamiento o redundancia del diccionario.
+
+Para aceptar el cierre se controlan, en escalas físicas declaradas, el
+residual DC \(R_0=-AX_0-d-B\widehat\Phi_0\), los residuos retenidos
+\(R_h=[(\mathrm ih\omega)^qI-A]X_h-B\widehat\Phi_h\), la fase y
+\(\epsilon_H\), además del error de cuadratura. Al aumentar \(H\) se
+comprueba la estabilización con tolerancias predeclaradas. Si la no linealidad
+genera infinitos armónicos, una FFT finita necesita además una cota de cola y
+control de aliasing. Para \(0<q<1\), estos residuos pertenecen al cierre
+estacionario de Liouville--Weyl; su pequeñez no demuestra una solución
+periódica exacta del PVI causal de Caputo.
+
+Acoplamos la realización D0/T1/M1 con
+\cref{eq:th-dc-balance,eq:th-harmonic-balance}; una semilla M1 se admite como
+candidata cuando satisface fase, cierre DC, residual físico \(\epsilon_H\) de
+armónicos omitidos y
+residual del campo original.
+
+\subsection{Homotopía causal de Caputo con una sola historia}
+\label{sec:single-history}
+
+Para \(0<q<1\), una continuación parametrizada por
+\(\varepsilon(t)\) debe interpretarse como el único problema no autónomo
+\begin{equation}
+ x(t)=x_0+\frac1{\Gamma(q)}
+ \int_{t_0}^{t}(t-\tau)^{q-1}
+ F_{\varepsilon(\tau)}(x(\tau))\,d\tau.
+ \label{eq:th-single-history}
+\end{equation}
+Si \(\varepsilon\) cambia en tiempos \(t_j\), las contribuciones de
+\([t_0,t_j]\) permanecen en el integral para todo \(t>t_j\). Reiniciar en cada
+etapa con
+\[
+ x(t_j)=x_j,\qquad
+ {}^{\mathrm C}D_{t_j}^q x=F_{\varepsilon_j}(x)
+\]
+elimina esa historia y define otro PVI.
+
+\begin{proposition}[distinción de tres objetos]
+\label{prop:history-three-objects}
+En una continuación Caputo deben distinguirse:
+\begin{enumerate}
+ \item la trayectoria no autónoma completa de
+ \cref{eq:th-single-history};
+ \item el segmento posterior a \(t_J\) con
+ \(\varepsilon(t)=\varepsilon_\star\), pero con la historia heredada desde
+ \(t_0\);
+ \item la solución autónoma reinicializada en \(t_J\), con terminal inferior
+ \(t_J\) y estado inicial \(x(t_J)\).
+\end{enumerate}
+Los objetos 2 y 3 tienen el mismo campo instantáneo y el mismo estado en
+\(t_J\), pero en general no satisfacen la misma ecuación integral.
+\end{proposition}
+
+\begin{proof}
+Para el objeto 2, separar el integral en \(t_J\) produce
+\[
+ \int_{t_0}^{t_J}(t-\tau)^{q-1}
+ F_{\varepsilon(\tau)}(x(\tau))\,d\tau
+ +\int_{t_J}^{t}(t-\tau)^{q-1}
+ F_{\varepsilon_\star}(x(\tau))\,d\tau.
+\]
+El primer término depende de \(t\) y no es una constante absorbible en la
+condición inicial. El objeto 3 contiene únicamente el segundo integral con
+otra trayectoria. Salvo \(q=1\), una historia nula o una coincidencia
+especial, las soluciones difieren.
+\end{proof}
+
+El segmento con campo congelado conserva la memoria del transporte. El PVI
+reiniciado permite, en cambio, evaluar el campo autónomo final desde ese
+estado sin las contribuciones anteriores. Comparar ambas soluciones separa
+la accesibilidad producida por la historia de la accesibilidad desde un dato
+puntual.
+
+La dependencia respecto de la homotopía puede controlarse en un horizonte
+finito. Supongamos que \(F_\varepsilon\) es uniformemente
+\(L\)-Lipschitz en el estado y que
+\(\|F_\varepsilon(x)-F_\eta(x)\|\le M|\varepsilon-\eta|\) en una
+región común que contiene ambas soluciones. Para programas de parámetro con
+\(\delta=\|\varepsilon-\eta\|_\infty\) y el mismo dato inicial,
+restar las dos ecuaciones de Volterra da
+\[
+ e(t)\le\frac{M\delta(t-t_0)^q}{\Gamma(q+1)}+L(I^qe)(t),
+ \qquad e(t)=\|x_\varepsilon(t)-x_\eta(t)\|.
+\]
+La identidad \(I^aI^b=I^{a+b}\), obtenida integrando el producto de núcleos
+mediante la función beta, permite iterar esta desigualdad. Cada sustitución
+añade el término
+\(M\delta L^j(t-t_0)^{(j+1)q}/\Gamma((j+1)q+1)\). Como las soluciones
+son acotadas en el intervalo común, el resto tiende a cero y resulta
+\begin{equation}
+ e(t)\le M\delta\sum_{j=0}^\infty
+ \frac{L^j(t-t_0)^{(j+1)q}}{\Gamma((j+1)q+1)}
+ =\frac{M\delta}{L}\bigl[E_q(L(t-t_0)^q)-1\bigr],\quad L>0.
+ \label{eq:homotopia-dependencia-parametro-volterra}
+\end{equation}
+Para \(L=0\) queda \(M\delta(t-t_0)^q/\Gamma(q+1)\).
+Aquí \(E_q(z)=\sum_{j\ge0}z^j/\Gamma(jq+1)\). La cota justifica
+dependencia continua mientras ambas soluciones permanezcan en la región
+común; no establece persistencia asintótica de un atractor.
+
+\ifHAFOBasinMaterial
+\subsection{Cero contactos, primer contacto y alcance estadístico}
+\label{sec:zero-contact}
+
+Si las condiciones se extraen de manera i.i.d. de una distribución declarada
+y cada ensayo tiene probabilidad de contacto \(p\), observar cero contactos en
+\(N\) ensayos da el límite superior unilateral exacto
+\begin{equation}
+ p\leq1-\alpha^{1/N}
+ \label{eq:th-binomial-upper}
+\end{equation}
+con confianza \(1-\alpha\). En efecto, la probabilidad de cero contactos
+es \((1-p)^N\). El extremo superior se obtiene de
+\((1-p_{\rm sup})^N=\alpha\), de donde
+\(p_{\rm sup}=1-\exp[(\log\alpha)/N]\). Al desarrollar la exponencial,
+\[
+ p_{\rm sup}=-\frac{\log\alpha}{N}+O(N^{-2}).
+\]
+Para \(\alpha=0.05\), \(-\log\alpha=2.995732\ldots\), lo que produce
+la aproximación \(3/N\). Esta interpretación no se aplica
+automáticamente a mallas deterministas ni a trayectorias dependientes. En esos
+casos el conteo es descriptivo y la afirmación correcta conserva la geometría
+de muestreo.
+
+En particular, las direcciones de Fibonacci sobre las esferas de
+\texttt{c590} forman un banco determinista: el cociente de contactos es
+descriptivo y no admite automáticamente el intervalo binomial anterior.
+Los cero contactos PWL y los de \texttt{c590} usan distribuciones y contratos
+distintos; sus denominadores no deben sumarse para estimar una misma
+probabilidad ni un volumen de cuenca.
+
+El protocolo recomendado informa para cada equilibrio y radio:
+\[
+ (N_{\rm contacto},N_{\rm otro},N_{\rm divergente},
+ N_{\rm ambiguo},N_{\rm fallo})
+\]
+y busca el primer radio con contacto. El primer contacto refuta la separación
+para ese punto; cero contactos no prueba que ninguna vecindad intercepte la
+cuenca.
+\fi
+
+\subsection{Taxonomía de rutas y protocolo L0--L6}
+\label{sec:l0-l6}
+
+La realización escalar exacta y su cierre directo constituyen la ruta D0.
+Cuando una transformación afín admisible produce esa estructura empleamos
+T1; una obstrucción del cierre puede conducir a una ruta A1 basada, por
+ejemplo, en un mapa de conmutación, ganancia cero o frontera de Hopf. Si la
+interacción no lineal necesita varios canales, M1 conserva el diccionario y
+su balance sesgado o multiharmónico.
+
+La evaluación dinámica comienza con el campo y los parámetros fijados (L0)
+y sus equilibrios e identidades algebraicas (L1). El balance o la
+construcción geométrica proporciona una semilla y su residuo (L2); su
+transporte determina una trayectoria causal con una historia definida (L3).
+La recurrencia y el tipo dinámico se estudian en L4. El sondeo de todos los
+equilibrios y el primer contacto describen la separación de cuencas en L5;
+la comparación independiente de paso, horizonte e integrador corresponde a
+L6. Estas operaciones responden a propiedades distintas: la existencia de
+una semilla no determina su destino, y una trayectoria recurrente aislada
+no describe por sí sola la cuenca de atracción.

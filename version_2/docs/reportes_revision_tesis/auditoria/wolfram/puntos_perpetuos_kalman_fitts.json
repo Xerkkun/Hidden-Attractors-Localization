@@ -1,0 +1,9 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Out[1]= <|\"checks\" -> <|\"arctan_singular_determinant\" -> True, \"arctan_PP_residual_below_1e_30\" -> True, \"arctan_PP_non_equilibrium\" -> True, \"PWL_two_regions_nonsingular\" -> True, \"KF_polynomial\" -> True, \"KF_transfer\" -> True, \"KF_jacobian_polynomial\" -> True, \"KF_Routh_positive\" -> True, \"KF_direct_gain_negative\" -> True|>, \"c590_PP_positive_x\" -> {1.2130900226140857477363242785727407797441028104496103670771`45., -20.187269924095489423407447132619490524484625595389764383587`45., -21.549363340657277780663118273440748991481644946498435925087`45.}, \"c590_PP_JF_residual_norm\" -> 0``40.80981415311671, \"c590_PP_field_norm\" -> 545.0998303478606418335826049098844115677583429510582414667402`35., \"PWL_determinants\" -> {-84.035507517056`18., 15.037737580544`18.}, \"KF_coefficients\" -> {0.98191881`18., 0.121308`18., 2.0254`18., 0.12`18.}, \"KF_Routh_differences\" -> {12.12174`18., 1.456324405056`18.}, \"KF_direct_frequency\" -> 1.00543522914208650678770448403935307495`18., \"KF_direct_gain\" -> -0.04316870115738450885349688396478385597`18., \"scope\" -> \"PP algebra and scalar Lure admissibility only; no asymptotic destination follows.\"|>"
+    }
+  ],
+  "isError": false
+}

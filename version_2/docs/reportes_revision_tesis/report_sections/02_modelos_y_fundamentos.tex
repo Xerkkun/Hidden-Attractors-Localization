@@ -1,0 +1,673 @@
+\ifdefined\HAFOFractionalOnly\else
+\section{Sistemas estudiados}
+\label{sec:modelos}
+
+\subsection{Sistema de Chua entero de referencia}
+
+El sistema entero utilizado para recuperar el método de
+Leonov--Kuznetsov es
+\begin{equation}
+\begin{aligned}
+ \dot x &=\alpha\bigl(y-x-f(x)\bigr),\\
+ \dot y &=x-y+z,\\
+ \dot z &=-\beta y-\gamma z,\\
+ f(x)&=m_1x+(m_0-m_1)\operatorname{sat}(x),
+\end{aligned}
+\label{eq:chua_entero}
+\end{equation}
+donde
+\begin{equation}
+\operatorname{sat}(x)=
+\begin{cases}
+-1,&x<-1,\\
+x,&|x|\leq1,\\
+1,&x>1.
+\end{cases}
+\label{eq:saturacion}
+\end{equation}
+El caso de referencia usa
+\begin{equation}
+(\alpha,\beta,\gamma,m_0,m_1)
+=(8.4562,12.0732,0.0052,-0.1768,-1.1468).
+\label{eq:parametros_enteros}
+\end{equation}
+
+\subsection{Chua fraccionario no suave}
+
+El primer sistema de estudio sustituye las tres derivadas ordinarias de
+\cref{eq:chua_entero} por derivadas de Caputo de orden conmensurable:
+\begin{equation}
+\begin{aligned}
+ {}^{\mathrm C}D_{t_0}^{q}x
+ &=\alpha\bigl(y-x-f_{\mathrm{ns}}(x)\bigr),\\
+ {}^{\mathrm C}D_{t_0}^{q}y
+ &=x-y+z,\\
+ {}^{\mathrm C}D_{t_0}^{q}z
+ &=-\beta y-\gamma z,\\
+ f_{\mathrm{ns}}(x)
+ &=m_1x+(m_0-m_1)\operatorname{sat}(x),
+\qquad 0<q\leq1.
+\end{aligned}
+\label{eq:chua_no_suave}
+\end{equation}
+Los parámetros nominales y el orden son
+\begin{equation}
+\begin{aligned}
+q&=0.9998, &
+(\alpha,\beta,\gamma)&=(8.4562,12.0732,0.0052),\\
+(m_0,m_1)&=(-0.1768,-1.1468).
+\end{aligned}
+\label{eq:parametros_no_suave}
+\end{equation}
+
+\subsection{Chua fraccionario con arctangente}
+
+El segundo sistema de estudio es
+\begin{equation}
+\begin{aligned}
+ {}^{\mathrm C}D_{t_0}^{q}x
+ &=\alpha\bigl(y-x-h_{\mathrm a}(x)\bigr),\\
+ {}^{\mathrm C}D_{t_0}^{q}y
+ &=x-y+z,\\
+ {}^{\mathrm C}D_{t_0}^{q}z
+ &=-\beta y-\gamma z,\\
+ h_{\mathrm a}(x)&=a_1x+a_2\arctan(\rho x).
+\end{aligned}
+\label{eq:chua_arctan}
+\end{equation}
+La reconstrucción de Wu et al. usa
+\begin{equation}
+\begin{aligned}
+q&=0.99,&
+(\alpha,\beta,\gamma)&=(8.4562,12.0732,0.0052),\\
+a_1&=0.4,&a_2&=-1.5585,&\rho&=1.
+\end{aligned}
+\label{eq:parametros_wu}
+\end{equation}
+El segundo caso de esta familia usa
+\begin{equation}
+\begin{aligned}
+q&=0.9999,&
+\alpha&=21.8493569066,&
+\beta&=19.0818408409,\\
+\gamma&=0.0073780120,&
+a_1&=0.0422897934,&
+a_2&=-3.3367815123,\\
+\rho&=1.7984259333.
+\end{aligned}
+\label{eq:parametros_c590}
+\end{equation}
+Los dos conjuntos de parámetros pertenecen a la misma familia
+\cref{eq:chua_arctan}, pero corresponden a experimentos independientes.
+
+Los equilibrios, los jacobianos y los polinomios característicos determinan
+los datos espectrales necesarios para aplicar el criterio de estabilidad
+fraccionaria.
+
+\begingroup
+\def\HAFOderivationpart{3}
+\input{report_sections/A_derivaciones_algebraicas}
+\endgroup
+\begingroup
+\def\HAFOderivationpart{4}
+\input{report_sections/A_derivaciones_algebraicas}
+\endgroup
+\begingroup
+\def\HAFOderivationpart{5}
+\input{report_sections/A_derivaciones_algebraicas}
+\endgroup
+\fi
+
+\ifdefined\HAFOModelsOnly\else
+\begingroup
+% Sin selector se muestra el bloque completo; las banderas siguientes
+% HAFOFractionalBlockSelect permite insertar por separado los operadores y la
+% estabilidad sin duplicar el contenido.
+\ifdefined\HAFOFractionalBlockSelect\else
+  \def\HAFOFractionalBlockOperators{1}
+  \def\HAFOFractionalBlockStability{1}
+\fi
+
+\ifdefined\HAFOFractionalBlockOperators
+\section{Fundamentos fraccionarios}
+\label{sec:fundamentos}
+
+\HAFOCardFractional
+
+\subsection{Funciones especiales e integral de Riemann--Liouville}
+
+El cálculo fraccionario se apoya en tres objetos previos a la definición de una
+derivada. Para \(z>0\) y \(a,b>0\),
+\begin{align}
+ \Gamma(z)&=\int_0^\infty t^{z-1}e^{-t}\,\dd t,
+ &\Gamma(z+1)&=z\Gamma(z),\label{eq:gamma-fractional}\\
+ B(a,b)&=\int_0^1 u^{a-1}(1-u)^{b-1}\,\dd u
+ =\frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}.\label{eq:beta-gamma}
+\end{align}
+La recurrencia de Gamma procede de integrar por partes:
+\[
+ \Gamma(z+1)=[-t^ze^{-t}]_0^\infty+
+ z\int_0^\infty t^{z-1}e^{-t}\,\dd t=z\Gamma(z).
+\]
+Los extremos se anulan porque \(z>0\). Para relacionar Beta y Gamma,
+escribimos el producto como una integral en el primer cuadrante y hacemos
+\(x=ru\), \(y=r(1-u)\), cuyo jacobiano absoluto es \(r\):
+\begin{align*}
+ \Gamma(a)\Gamma(b)
+ &=\int_0^\infty\!\int_0^\infty
+ x^{a-1}y^{b-1}e^{-(x+y)}\,\dd x\,\dd y\\
+ &=\int_0^\infty r^{a+b-1}e^{-r}\,\dd r
+   \int_0^1u^{a-1}(1-u)^{b-1}\,\dd u
+ =\Gamma(a+b)B(a,b).
+\end{align*}
+La positividad del integrando permite aplicar Tonelli y las condiciones
+\(a,b>0\) aseguran la integrabilidad en los extremos.
+La función de Mittag--Leffler de dos parámetros,
+\begin{equation}
+ E_{\alpha,\beta}(z)=\sum_{k=0}^{\infty}
+ \frac{z^k}{\Gamma(\alpha k+\beta)},
+ \qquad \alpha>0,
+ \label{eq:mittag-leffler-definition}
+\end{equation}
+generaliza a la exponencial porque \(E_{1,1}(z)=e^z\). Estas funciones
+aparecen de manera natural al resolver ecuaciones lineales fraccionarias
+\cite{Podlubny1999,Monje2010,Oliveira2019SolvedFractional}.
+
+Para \(\alpha>0\), la integral fraccionaria izquierda de
+Riemann--Liouville es
+\begin{equation}
+ (I_{t_0}^{\alpha}g)(t)=\frac{1}{\Gamma(\alpha)}
+ \int_{t_0}^{t}(t-\tau)^{\alpha-1}g(\tau)\,\dd\tau.
+ \label{eq:rl-integral}
+\end{equation}
+Para \(g\) continua en un intervalo compacto, \(\|g\|\) está acotada y
+los núcleos son integrables porque \(\alpha,\beta>0\). Al escribir la
+composición antes de intercambiar las integrales tenemos
+\[
+ I_{t_0}^{\alpha}I_{t_0}^{\beta}g(t)=
+ \frac1{\Gamma(\alpha)\Gamma(\beta)}
+ \int_{t_0}^t\int_{t_0}^{\tau}
+ (t-\tau)^{\alpha-1}(\tau-s)^{\beta-1}g(s)\,\dd s\,\dd\tau.
+\]
+El triángulo \(t_0\le s\le\tau\le t\) se recorre también con
+\(t_0\le s\le t\), \(s\le\tau\le t\). Fubini permite esta inversión;
+la integral interior resultante se evalúa con
+\(\tau=s+(t-s)u\) y \(\dd\tau=(t-s)\dd u\):
+\begin{align*}
+ \int_s^t(t-\tau)^{\alpha-1}(\tau-s)^{\beta-1}\,\mathrm d\tau
+ &=(t-s)^{\alpha+\beta-1}
+   \int_0^1(1-u)^{\alpha-1}u^{\beta-1}\,\mathrm du\\
+ &=(t-s)^{\alpha+\beta-1}
+   \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}.
+\end{align*}
+Al cancelar los factores Gamma exteriores se obtiene
+\(I_{t_0}^{\alpha}I_{t_0}^{\beta}g=I_{t_0}^{\alpha+\beta}g\).
+La misma identidad se extiende a funciones integrables donde las expresiones
+están definidas: para $H=T-t_0$, Tonelli da
+\[
+ \|I^\alpha g\|_{L^1}\leq
+ \frac{H^\alpha}{\Gamma(\alpha+1)}\|g\|_{L^1}.
+\]
+Esta cota permite aplicar Fubini a la composición para $g\in L^1$ y obtener
+la igualdad casi en todas partes. En particular, cubre $g=X'$ cuando $X$ es
+absolutamente continua. Esta ley para integrales es distinta de
+una ley de semigrupo temporal para el estado puntual de un PVI con memoria.
+
+\subsection{Riemann--Liouville y Caputo: diferencia operativa}
+
+Sea \(m-1<q<m\), \(m\in\mathbb N\). Las dos derivadas izquierdas se ordenan de
+modo distinto:
+\begin{equation}
+ {}^{\mathrm{RL}}D_{t_0}^{q}X
+ =\frac{\dd^m}{\dd t^m}I_{t_0}^{m-q}X,
+ \qquad
+ {}^{\mathrm C}D_{t_0}^{q}X
+ =I_{t_0}^{m-q}X^{(m)}.
+ \label{eq:rl-caputo-general}
+\end{equation}
+Para \(0<q<1\), la derivada de Caputo de una constante es cero, mientras que
+\({}^{\mathrm{RL}}D_{t_0}^{q}c=
+c(t-t_0)^{-q}/\Gamma(1-q)\). Caputo admite los datos clásicos
+\(X^{(k)}(t_0)\), \(k=0,\ldots,m-1\); Riemann--Liouville conduce en general a
+datos fraccionarios. Tampoco se pueden cancelar o componer derivadas
+fraccionarias sin conservar los términos de borde. En los modelos que
+consideramos, el operador, el terminal inferior y los datos iniciales forman
+parte conjunta del problema: fijan la contribución de memoria que aparece
+en la ecuación integral
+\cite{Podlubny1999,Monje2010}.
+
+Para $0<q<1$, la diferencia entre ambos operadores se expresa exactamente como
+\begin{equation}
+ {}^{\mathrm{RL}}D_{t_0}^qX
+ ={}^{\mathrm C}D_{t_0}^qX+
+ \frac{X_0(t-t_0)^{-q}}{\Gamma(1-q)},\qquad t>t_0.
+ \label{eq:rl-caputo-initial-bridge}
+\end{equation}
+Se demuestra separando $X=(X-X_0)+X_0$ y derivando
+$I^{1-q}X_0=X_0(t-t_0)^{1-q}/\Gamma(2-q)$.
+El mismo PVI puede formularse con Riemann--Liouville si se incorpora ese
+término de inicialización. Reemplazar sólo el operador y conservar el
+segundo miembro produce, en general, un modelo diferente. Caputo se elige
+aquí porque el experimento prescribe valores ordinarios del estado y un
+terminal inferior finito. La elección responde a esos datos y al convenio
+de memoria, sin establecer una superioridad universal sobre otros operadores.
+
+El comportamiento en el extremo debe distinguirse del dato inicial.
+Para $F(X)=v\ne0$, la solución es
+\begin{equation}
+ X(t)=X_0+\frac{(t-t_0)^q}{\Gamma(q+1)}v,
+ \qquad X'(t)=\frac{(t-t_0)^{q-1}}{\Gamma(q)}v.
+ \label{eq:caputo-initial-endpoint}
+\end{equation}
+La derivada ordinaria es integrable y no acotada en el arranque.
+Al sustituirla en la definición de Caputo y poner
+\(u=(s-t_0)/(t-t_0)\), los factores de \(t-t_0\) se cancelan:
+\[
+ {}^{\mathrm C}D_{t_0}^qX(t)=
+ \frac{v}{\Gamma(1-q)\Gamma(q)}
+ \int_0^1(1-u)^{-q}u^{q-1}\,\dd u=v.
+\]
+Aquí usamos \(B(q,1-q)=\Gamma(q)\Gamma(1-q)\), de modo que la
+ecuación se cumple para todo \(t>t_0\);
+su límite por la derecha no es cero. Asignar cero a una integral de
+intervalo vacío en $t=t_0$ es una convención de extremo y no exige
+$F(X_0)=0$. El PVI impone la ecuación para $t>t_0$ en el sentido declarado
+y recupera el dato inicial por continuidad de $X$.
+
+\subsection{Derivada de Caputo y forma integral}
+
+Para \(0<q<1\) y \(X:[t_0,T]\to\R^3\) absolutamente continua, la derivada de
+Caputo es
+\begin{equation}
+{}^{\mathrm C}D_{t_0}^{q}X(t)
+=\frac{1}{\Gamma(1-q)}
+\int_{t_0}^{t}(t-\tau)^{-q}\dot X(\tau)\dd\tau.
+\label{eq:caputo}
+\end{equation}
+La derivada ordinaria se encuentra dentro de la integral y el núcleo
+\((t-\tau)^{-q}\) pondera toda la historia entre \(t_0\) y \(t\). Por esta
+razón, \(X(t)\) por sí solo no contiene toda la información necesaria para
+continuar la misma solución.
+
+Considérese el problema
+\begin{equation}
+{}^{\mathrm C}D_{t_0}^{q}X(t)=F(t,X(t)),
+\qquad X(t_0)=X_0.
+\label{eq:pvi_caputo}
+\end{equation}
+Al aplicar la integral fraccionaria de Riemann--Liouville
+\cref{eq:rl-integral}
+y usar
+\(I_{t_0}^{q}{}^{\mathrm C}D_{t_0}^{q}X
+=I_{t_0}^{q}I_{t_0}^{1-q}\dot X
+=I_{t_0}^{1}\dot X=X-X_0\), se obtiene la
+ecuación de Volterra equivalente
+\begin{equation}
+X(t)=X_0+\frac{1}{\Gamma(q)}
+\int_{t_0}^{t}(t-\tau)^{q-1}F(\tau,X(\tau))\dd\tau.
+\label{eq:volterra}
+\end{equation}
+Recíprocamente, si \(g(t)=F(t,X(t))\) es continua y
+\(X-X_0=I_{t_0}^qg\), la ley de composición implica
+\[
+ \frac{\mathrm d}{\mathrm dt}I_{t_0}^{1-q}(X-X_0)
+ =\frac{\mathrm d}{\mathrm dt}I_{t_0}^{1}g=g.
+\]
+Esta expresión define la derivada de Caputo en la clase integral de
+soluciones continuas \(X-X_0\in I_{t_0}^q(C)\); coincide con
+\eqref{eq:caputo} cuando \(X\) es absolutamente continua.
+La formulación integral permite así tratar el PVI sin atribuir regularidad
+clásica adicional a toda integral fraccionaria de una función continua.
+Para campos medibles en el tiempo, como una continuación por etapas,
+se usa la clase $X_0+I_{t_0}^q(L^\infty)$ sobre intervalos compactos y
+${}^{\mathrm C}D^qX=(\mathrm d/\mathrm dt)I^{1-q}(X-X_0)$ casi en todas
+partes. En esta clase $I^{1-q}(X-X_0)=I^1g$ es absolutamente continua.
+Recíprocamente, integrar la derivada generalizada da esa identidad, con
+constante nula en $t_0$. Si $h=X-X_0-I^qg$, entonces $I^{1-q}h=0$;
+aplicar $I^q$ y derivar $I^1h=0$ da $h=0$ casi en todas partes y, por
+continuidad, en todo el intervalo. Esta prueba establece ambas direcciones
+de la equivalencia sin suponer la existencia de $X'$ en toda la clase integral
+\cite{Gomoyunov2018Convex}.
+La ecuación \eqref{eq:volterra} es la base del integrador ABM y de la continuación con memoria:
+en ambos casos se discretiza una sola integral cuyo límite inferior permanece
+fijo.
+
+La existencia local se obtiene directamente por contracción. En una bola
+cerrada $\overline B(X_0,R)$ contenida en el dominio, supóngase
+$\|F(t,X)\|\le M$ y Lipschitz espacial uniforme con constante $L$.
+El operador $\mathcal TX=X_0+I^q[F(\cdot,X)]$ satisface
+\[
+ \|\mathcal TX-X_0\|_\infty\le\frac{M\tau^q}{\Gamma(q+1)},
+ \qquad
+ \|\mathcal TX-\mathcal TY\|_\infty
+ \le\frac{L\tau^q}{\Gamma(q+1)}\|X-Y\|_\infty.
+\]
+Elegir el primer coeficiente menor o igual que $R$ y el segundo estrictamente
+menor que uno permite aplicar el teorema de Banach sobre las curvas continuas
+que permanecen en la bola. Para tiempos posteriores se conserva la historia
+acumulada. Si una solución permanece en un compacto del dominio hasta un
+tiempo máximo finito, la acotación del campo y la continuidad de su integral
+fraccionaria permiten extenderla con esa historia; por tanto, no puede
+terminar allí su intervalo maximal. Este argumento fundamenta el uso de
+cotas absorbentes para demostrar existencia global.
+
+La discretización ABM de \cref{sec:abm} aproxima esta integral mediante
+interpolantes del campo en cada subintervalo. Los pesos incorporan la integral
+exacta del núcleo singular y todos los intervalos anteriores contribuyen al
+estado actual. En una ecuación lineal, la solución de Mittag--Leffler permite
+medir el error de esa cuadratura al comparar \(h\), \(h/2\) y \(h/4\).
+Si conservamos sólo \([t-H,t]\), el término suprimido es
+\[
+ \frac1{\Gamma(q)}\int_{t_0}^{t-H}(t-s)^{q-1}F(s,X(s))\,\dd s.
+\]
+Para \(t-t_0>H>0\) y \(\|F\|\le M\), su norma queda acotada por
+\(M[(t-t_0)^q-H^q]/\Gamma(q+1)\). Esta cota muestra qué información
+se pierde al truncar la memoria y por qué el refinamiento del paso, por sí
+solo, no elimina el error de truncamiento histórico.
+
+\subsection{Transformada de Laplace de la derivada de Caputo}
+
+Supóngase que \(X\) es absolutamente continua en intervalos compactos y
+que \(X\) y \(\dot X\) tienen crecimiento a lo sumo exponencial, de modo
+que sus transformadas y la convolución convergen en un semiplano derecho.
+La relación en Laplace se obtiene de \cref{eq:caputo}. Para hacer
+explícito el instante de inicio, se introduce
+\[
+u=t-t_0,\qquad \widetilde X(u)=X(t_0+u),\qquad u\geq0.
+\]
+Entonces
+\[
+{}^{\mathrm C}D_{0}^{q}\widetilde X
+=I_0^{1-q}\widetilde X',
+\]
+y la propiedad de convolución da
+\begin{align}
+\mathcal L_u\!\left\{I_0^{1-q}\widetilde X'\right\}(s)
+&=s^{-(1-q)}
+\mathcal L_u\!\left\{\widetilde X'\right\}(s)\nonumber\\
+&=s^{q-1}\left[s\widehat{\widetilde X}(s)-\widetilde X(0)\right].
+\end{align}
+Por tanto,
+\begin{equation}
+\boxed{
+\mathcal L_u\!\left\{{}^{\mathrm C}D_0^q\widetilde X(u)\right\}(s)
+=s^q\widehat{\widetilde X}(s)-s^{q-1}X(t_0).
+}
+\label{eq:laplace_caputo}
+\end{equation}
+El término \(s^{q-1}X(t_0)\) contiene la condición inicial. La función de
+transferencia resulta de aplicar
+\cref{eq:laplace_caputo} al bloque lineal y separar la respuesta debida a la
+entrada.
+
+La misma identidad de Laplace vale en la clase generalizada si
+$g={}^{\mathrm C}D^qX$ tiene integrabilidad exponencial y
+$X-X_0=I^qg$. Basta que $e^{-\sigma t}g\in L^1([0,\infty))$ para algún
+$\sigma>0$: Fubini con ese peso justifica la convolución, y tanto
+$X-X_0$ como $H=I^{1-q}(X-X_0)=I^1g$ y $H'=g$ tienen las
+transformadas necesarias en un semiplano derecho. En efecto,
+\[
+ \mathcal L\!\left\{\frac{\mathrm d}{\mathrm dt}
+ I^{1-q}(X-X_0)\right\}
+ =s\,s^{q-1}\left(\widehat X-\frac{X_0}{s}\right),
+\]
+porque $I^{1-q}(X-X_0)$ se anula en el extremo.
+La propiedad de convolución exige integrabilidad absoluta con el peso
+exponencial; no se deduce de una existencia global que aún no esté probada.
+La rama es $s^q=\exp(q\operatorname{Log}s)$, con
+$\operatorname{Arg}s\in(-\pi,\pi)$.
+
+\subsection{Liouville--Weyl como predictor armónico}
+
+Un sistema autónomo de Caputo con límite inferior fijo no posee, en general,
+soluciones periódicas exactas no constantes
+\cite{TavazoeiHaeri2009,AreaLosadaNieto2014}. Sin embargo, la construcción de
+una semilla requiere evaluar la respuesta a un armónico. Para ello se utiliza
+un problema auxiliar estacionario definido sobre una historia extendida hacia
+\(-\infty\). En el sentido de Fourier, el operador de Liouville--Weyl satisface
+\cite{Vigue2019}
+\begin{equation}
+{}^{\mathrm{LW}}D_t^q\e^{\ii\omega t}
+=(\ii\omega)^q\e^{\ii\omega t},
+\qquad
+(\ii\omega)^q
+=\omega^q\e^{\ii q\pi/2},
+\quad \omega>0.
+\label{eq:lw_armonico}
+\end{equation}
+Se adopta la rama principal:
+\begin{equation}
+(\ii\omega)^q
+=\omega^q\left[
+\cos\left(\frac{q\pi}{2}\right)
++\ii\sin\left(\frac{q\pi}{2}\right)
+\right].
+\label{eq:rama_principal}
+\end{equation}
+
+La relación entre el problema auxiliar y la dinámica causal puede escribirse
+de forma explícita. Sea \(\overline X(t)=X_-(t)\) para \(t\leq t_0\) y
+\(\overline X(t)=X(t)\) para \(t\geq t_0\), con continuidad en \(t_0\).
+Supóngase además que ambas ramas son localmente absolutamente continuas
+y que converge la integral impropia que aparece a continuación.
+Para una historia armónica se utiliza la convergencia oscilatoria o su
+regularización de Abel, precisada en el desarrollo del balance.
+En este dominio,
+\begin{equation}
+\begin{aligned}
+{}_{-\infty}^{\mathrm{CW}}D_t^q\overline X(t)
+&=
+\frac{1}{\Gamma(1-q)}
+\int_{-\infty}^{t}(t-\tau)^{-q}\dot{\overline X}(\tau)\dd\tau\\
+&={}^{\mathrm C}D_{t_0}^{q}X(t)+\mathcal E_{X_-}(t),
+\end{aligned}
+\label{eq:puente_weyl_caputo}
+\end{equation}
+donde
+\begin{equation}
+\mathcal E_{X_-}(t)=
+\frac{1}{\Gamma(1-q)}
+\int_{-\infty}^{t_0}(t-\tau)^{-q}\dot X_-(\tau)\dd\tau.
+\label{eq:memoria_previa}
+\end{equation}
+Si \(\dot X_-\in L^1(-\infty,t_0)\),
+\begin{equation}
+\|\mathcal E_{X_-}(t)\|
+\leq
+\frac{\|\dot X_-\|_{L^1(-\infty,t_0)}}{\Gamma(1-q)}
+(t-t_0)^{-q}.
+\label{eq:cota_memoria_previa}
+\end{equation}
+La ecuación armónica de Liouville--Weyl proporciona así el predictor
+frecuencial. La trayectoria que se evalúa y sondea se calcula después con
+Caputo y un límite inferior finito.
+
+\subsection{Recuperación del orden entero a tiempo finito}
+\label{sec:limite-entero-tiempo-finito}
+
+Las identidades algebraicas del campo, como $F(e)=0$, no dependen del
+orden. Para comparar las trayectorias sí se necesita una estimación.
+Sean $X_q$ y $X_1$ soluciones con el mismo dato inicial en $[0,T]$,
+contenidas en un compacto común donde $\|F\|\le M$ y $F$ sea Lipschitz
+con constante $L$. Defina
+\[
+ k_q(t)=\frac{t^{q-1}}{\Gamma(q)},\qquad
+ \varepsilon_q=\int_0^T|k_q(t)-1|\,\mathrm dt.
+\]
+Si $q\in[q_*,1]$, $q_*>0$, el integrando está dominado por una constante
+por $t^{q_*-1}+1$, integrable en $[0,T]$. La convergencia puntual
+$k_q(t)\to1$ para $t>0$ implica $\varepsilon_q\to0$ por convergencia
+dominada. Restar las ecuaciones de Volterra y usar la cota Lipschitz da
+\begin{align*}
+ \|X_q(t)-X_1(t)\|
+ &\le M\varepsilon_q+
+ L\int_0^t k_q(t-s)\|X_q(s)-X_1(s)\|\,\mathrm ds,\\
+ \sup_{0\le t\le T}\|X_q(t)-X_1(t)\|
+ &\le M\varepsilon_q E_q(LT^q)\longrightarrow0.
+\end{align*}
+Para justificar la segunda desigualdad, escribimos
+\(u(t)=\|X_q(t)-X_1(t)\|\) y \(a=M\varepsilon_q\). La iteración de
+\(u\le a+LI^qu\), usando la composición de integrales, da para cada \(N\)
+\[
+ u(t)\le a\sum_{j=0}^{N-1}\frac{L^jt^{qj}}{\Gamma(qj+1)}
+       +L^NI^{qN}u(t).
+\]
+Como \(u\) es acotada en \([0,T]\), el resto es a lo sumo
+\(\|u\|_\infty L^NT^{qN}/\Gamma(qN+1)\), que tiende a cero.
+La suma límite es precisamente \(aE_q(Lt^q)\).
+El factor $E_q(LT^q)$ permanece uniformemente acotado. Para comprobarlo,
+ponga $B=L\max(T,T^{q_*})$; la cola de su serie está dominada por
+$\sum_j B^j/\Gamma(q_*j+1)$, convergente, porque $\Gamma$ es creciente
+para argumentos suficientemente grandes. Los términos restantes son
+finitos y continuos en $q$.
+
+La hipótesis de compacto común se comprueba mediante una cota uniforme o
+se usa el argumento hasta un primer tiempo de salida. El resultado
+justifica una comparación sobre una ventana fija; no permite intercambiar
+los límites $q\to1$ y $T\to\infty$. La persistencia de atractores,
+cuencas u ocultedad exige control asintótico adicional. Asimismo, la
+continuación de una raíz del balance armónico requiere que su Jacobiano
+respecto de las incógnitas sea invertible, y la continuación causal
+conserva la historia. Son requisitos distintos de la continuidad a
+tiempo finito demostrada aquí.
+\fi
+
+\ifdefined\HAFOFractionalBlockStability
+\ifdefined\HAFOFractionalBlockOperators\else
+\ifHAFOBasinMaterial
+\section{Estabilidad fraccionaria y cuencas con memoria}
+\else
+\section{Estabilidad fraccionaria}
+\fi
+\label{sec:fundamentos-estabilidad}
+\fi
+\subsection{Linealización y criterio de Matignon}
+
+Sea \(e\) un equilibrio de
+\[
+{}^{\mathrm C}D_{t_0}^{q}X=F(X),\qquad F(e)=0.
+\]
+Con \(X=e+\xi\) y \(F\) diferenciable en \(e\),
+\[
+F(e+\xi)=J_e\xi+o(\|\xi\|),
+\qquad
+J_e=\left.\frac{\partial F}{\partial X}\right|_{X=e}.
+\]
+El resto es cuadrático si se supone, por ejemplo, \(F\in C^{1,1}\) localmente
+o \(F\in C^2\). La diferenciabilidad por sí sola no basta: para
+\(F(x)=|x|^{3/2}\), \(F'(0)=0\), pero el resto no es
+\(\mathcal O(|x|^2)\). En un modelo PWL, el Jacobiano clásico se usa cuando el
+equilibrio pertenece al interior de una región afín; un equilibrio sobre una
+superficie de conmutación requiere un análisis específico.
+La aproximación lineal es
+\begin{equation}
+{}^{\mathrm C}D_{t_0}^{q}\xi=J_e\xi.
+\label{eq:lineal_caputo}
+\end{equation}
+Para orden conmensurable \(0<q<1\), el sistema lineal es asintóticamente
+estable si y sólo si todos los valores propios de \(J_e\) son no nulos y
+cumplen el criterio de Matignon \cite{Matignon1996}
+\begin{equation}
+|\arg\lambda_j(J_e)|>\frac{q\pi}{2}.
+\label{eq:matignon}
+\end{equation}
+La solución del problema lineal es
+\[
+ \xi(t)=E_q\!\left(J_e(t-t_0)^q\right)\xi(t_0),
+ \qquad
+ E_q(J_e\tau^q)=\sum_{k=0}^{\infty}
+ \frac{J_e^k\tau^{qk}}{\Gamma(qk+1)}.
+\]
+Para derivarla trasladamos \(t_0\) a cero y transformamos la ecuación:
+\(s^q\widehat\xi-s^{q-1}\xi(0)=J_e\widehat\xi\). En un semiplano
+donde \(\|J_e/s^q\|<1\), expandimos el resolvente como serie geométrica:
+\[
+ (s^qI-J_e)^{-1}s^{q-1}
+ =\sum_{k=0}^{\infty}J_e^ks^{-qk-1}.
+\]
+La transformada inversa de \(s^{-qk-1}\) es
+\(t^{qk}/\Gamma(qk+1)\). La convergencia de la serie de
+Mittag--Leffler en todo horizonte finito identifica la solución escrita arriba. El criterio de Matignon caracteriza el decaimiento de
+esta solución, incluidos los bloques de Jordan; por eso se aplica al
+espectro completo, no sólo a la traza o al determinante de \(J_e\).
+Para trasladar esta conclusión al equilibrio no lineal se aplica el teorema de
+linealización correspondiente. Una hipótesis suficiente es \(F\in C^1\) en
+una vecindad de \(e\). Para comprobar la condición sobre el resto, defina
+\(R(\xi)=F(e+\xi)-J_e\xi\) y escoja una bola convexa de radio
+\(\delta\) contenida en esa vecindad. El teorema fundamental del cálculo da
+\begin{align*}
+ R(\xi)-R(\eta)
+ &=\int_0^1\bigl[DF(e+\eta+s(\xi-\eta))-J_e\bigr]
+                (\xi-\eta)\,\mathrm ds,\\
+ \|R(\xi)-R(\eta)\|
+ &\leq\sup_{\|u\|\leq\delta}\|DF(e+u)-J_e\|\,
+          \|\xi-\eta\|.
+\end{align*}
+La continuidad de \(DF\) hace que el supremo tienda a cero cuando
+\(\delta\to0\). Ésta es la pequeñez Lipschitz requerida por el teorema
+no lineal. Bajo el criterio angular
+estricto, el equilibrio es localmente estable en el sentido de
+Mittag--Leffler \cite{CongTuanTrinh2020Asymptotic}.
+El mecanismo de la estabilidad asintótica puede explicitarse mediante
+variación de constantes \cite{CongDoanSiegmundTuan2016}. Bajo el sector
+estricto, las estimaciones de Mittag--Leffler proporcionan
+\[
+ M_J=\sup_{t\ge0}\|E_q(J_et^q)\|<\infty,\qquad
+ C_J=\int_0^\infty\|t^{q-1}E_{q,q}(J_et^q)\|\,\mathrm dt<\infty.
+\]
+El núcleo es $O(t^{q-1})$ en cero y $O(t^{-q-1})$ en el infinito.
+Sea $\ell_\delta$ la constante Lipschitz del resto en la bola anterior.
+Se elige $\delta$ con $C_J\ell_\delta<1$ y un dato inicial tal que
+$M_J\|\xi_0\|<(1-C_J\ell_\delta)\delta$. La representación
+\[
+ \xi(t)=E_q(J_et^q)\xi_0+
+ \int_0^t(t-s)^{q-1}E_{q,q}(J_e(t-s)^q)R(\xi(s))\,\mathrm ds
+\]
+excluye un primer alcance de la frontera y da estabilidad local.
+Para la atracción, se divide la convolución en un intervalo inicial fijo,
+cuyo aporte tiende a cero, y la cola. Si
+$a=\limsup_{t\to\infty}\|\xi(t)\|$, la integrabilidad del núcleo da
+$a\le C_J\ell_\delta a$; por tanto, $a=0$.
+La fórmula integral puede verificarse en horizontes finitos mediante la
+serie de Volterra: los términos están dominados por
+$\|J_e\|^jT^{qj}/\Gamma(qj+1)$ y, para la fuerza acotada, por
+$\|J_e\|^jT^{q(j+1)}/\Gamma(q(j+1)+1)$. La convergencia uniforme
+permite integrar término a término y la unicidad identifica la solución.
+Se define el margen angular
+\begin{equation}
+m_M(e)=
+\min_j\left(
+|\arg\lambda_j(J_e)|-\frac{q\pi}{2}
+\right).
+\label{eq:margen_matignon}
+\end{equation}
+Cuando todos los autovalores son no nulos, un margen positivo satisface el
+criterio estricto de estabilidad lineal y un margen negativo identifica al
+menos un modo lineal estrictamente inestable. El caso \(m_M=0\) exige estudiar
+la frontera angular y los términos no lineales. Si existe un autovalor cero,
+su argumento no está definido y el criterio angular no decide su contribución
+a la estabilidad.
+
+\ifHAFOBasinMaterial
+\subsection{Cuenca con convenio común de memoria}
+
+Para comparar condiciones iniciales en Caputo se fija el mismo \(t_0\) y se
+inicia cada problema con la historia definida por su propio valor \(X_0\).
+Con este convenio de memoria, la cuenca se define por
+\begin{equation}
+\basin(\mathcal A)=
+\left\{
+X_0\in\R^3:
+\operatorname{dist}\bigl(X(t;t_0,X_0),\mathcal A\bigr)\to0
+\ \text{cuando}\ t\to\infty
+\right\}.
+\label{eq:cuenca_reset}
+\end{equation}
+La fijación del terminal inferior y del perfil inicial permite comparar los
+destinos de los reinicios alrededor de los equilibrios. La convergencia
+proyectada de \cref{eq:cuenca_reset} debe distinguirse de la convergencia
+de perfiles en un espacio funcional.
+\fi
+\fi
+\endgroup
+\fi

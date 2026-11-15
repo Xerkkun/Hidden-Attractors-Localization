@@ -1,0 +1,134 @@
+\subsection{Definición de los indicadores espectrales y de la prueba 0--1}
+\label{diag:master:definition}
+
+Para una componente postransitoria $u_j$, muestreada uniformemente con
+intervalo $\Delta t$, se sustrae su media $\bar u$ y se aplica una ventana
+$w_j$. Con $N$ muestras, la transformada discreta es
+\begin{equation}
+ S_k=\sum_{j=0}^{N-1}w_j(u_j-\bar u)e^{-2\pi\ii jk/N},
+ \qquad f_k=\frac{k}{N\Delta t}.
+ \label{diag:master:dft}
+\end{equation}
+Para la ventana de Hann tomamos \(N\geq3\) y
+\(w_j=[1-\cos(2\pi j/(N-1))]/2\). La representación de módulo emplea
+\(|S_k|/\sum_jw_j\). Para obtener una densidad de potencia partimos de
+\(v_j=w_j(u_j-\bar u)\) y definimos la normalización bilateral
+\[
+ P_k^{(2)}=\frac{\Delta t}{\sum_jw_j^2}|S_k|^2,
+ \qquad \Delta f=\frac1{N\Delta t}.
+\]
+La identidad de Parseval, con la convención de
+\cref{diag:master:dft}, es
+\(\sum_{k=0}^{N-1}|S_k|^2=N\sum_{j=0}^{N-1}|v_j|^2\). Sustituyéndola,
+\begin{align*}
+ \sum_{k=0}^{N-1}P_k^{(2)}\Delta f
+ &=\frac{\Delta t}{\sum_jw_j^2}\,
+   \frac1{N\Delta t}\sum_{k=0}^{N-1}|S_k|^2\\
+ &=\frac{\sum_jw_j^2(u_j-\bar u)^2}{\sum_jw_j^2}.
+\end{align*}
+La integral discreta de la densidad recupera así la media cuadrática
+ponderada por la ventana. Para una señal real, las potencias en \(k\) y
+\(N-k\) coinciden. Al pasar a una PSD unilateral sumamos cada pareja,
+lo que duplica los modos positivos interiores. El modo cero y el de
+Nyquist, cuando \(N\) es par, no tienen una pareja distinta y se conservan
+sin duplicación. Welch promedia estas estimaciones entre segmentos.
+Si \(u\) tiene unidades \(U\), la PSD tiene unidades \(U^2\) por unidad
+de frecuencia; el módulo de la transformada conserva unidades \(U\).
+
+Para cuantificar concentración espectral se excluye el modo cero y se
+normalizan las potencias $P_k=|S_k|^2$ en los $m$ modos positivos:
+\begin{equation}
+ p_k=\frac{P_k}{\sum_{\ell=1}^mP_\ell},\qquad
+ H=-\frac{\sum_{k=1}^mp_k\log p_k}{\log m}.
+ \label{diag:master:entropy}
+\end{equation}
+Se requiere $m>1$ y potencia total positiva; una señal constante se trata
+por separado. Adoptamos \(0\log0=0\). Como \(0<p_k\leq1\) en los modos
+con potencia positiva, cada término \(-p_k\log p_k\) es no negativo.
+Para la cota superior, sea \(r\leq m\) el número de esos modos. La
+concavidad del logaritmo da
+\[
+ -\sum_{p_k>0}p_k\log p_k
+ =\sum_{p_k>0}p_k\log\frac1{p_k}
+ \leq\log\!\left(\sum_{p_k>0}p_k\frac1{p_k}\right)
+ =\log r\leq\log m.
+\]
+Dividiendo por \(\log m>0\), resulta \(0\leq H\leq1\). La entropía
+es cero si toda la potencia se concentra en un modo y alcanza uno si
+\(p_k=1/m\) en los \(m\) modos.
+El cociente de potencia dominante es $\max_kp_k$, y la frecuencia
+dominante corresponde al modo que lo alcanza. Para comparar ventanas se
+conservan paso de muestreo, longitud y ventana; de otro modo cambian la
+resolución $1/(N\Delta t)$ y el número de modos usados en $H$.
+La deriva relativa usada en el clasificador compara los máximos de
+ventanas parciales mediante $(f_{\max}-f_{\min})/f_{\max}$, cuando
+$f_{\max}>0$ y todas las frecuencias parciales son positivas. Si alguna
+es nula o no puede estimarse, el clasificador asigna deriva infinita y
+no acepta el filtro de periodicidad. Una señal transitoria o una resolución insuficiente pueden
+producir banda ancha sin demostrar caos.
+
+La prueba 0--1 utiliza al menos $N=100$ muestras finitas de una señal
+preparada $\phi_j$, después de
+declarar el descarte, submuestreo, eliminación de tendencia y
+normalización \cite{gottwald2009}. Para $c\in(0,\pi)$, define
+\begin{align}
+ p_c(n)&=\sum_{j=1}^n\phi_j\cos(jc),\nonumber\\
+ q_c(n)&=\sum_{j=1}^n\phi_j\sin(jc).
+ \label{diag:master:translations}
+\end{align}
+El desplazamiento cuadrático medio a un retardo $n<N$ es
+\begin{equation}
+ M_c(n)=\frac1{N-n}\sum_{j=1}^{N-n}
+ \bigl[\Delta_np_c(j)^2+\Delta_nq_c(j)^2\bigr],
+ \label{diag:master:msd}
+\end{equation}
+donde $\Delta_np_c(j)=p_c(j+n)-p_c(j)$, y análogamente para $q_c$.
+Se elimina el término oscilatorio de la media mediante
+\begin{equation}
+ D_c(n)=M_c(n)-\bar\phi^{\,2}
+                 \frac{1-\cos(nc)}{1-\cos c}.
+ \label{diag:master:modified-msd}
+\end{equation}
+Para ver el origen de la corrección, tomamos primero una señal
+constante \(\phi_j=\bar\phi\). La suma compleja de las dos traslaciones
+es una progresión geométrica:
+\[
+ \sum_{j=1}^ne^{\ii jc}
+ =e^{\ii c}\frac{1-e^{\ii nc}}{1-e^{\ii c}},\qquad
+ \left|\sum_{j=1}^ne^{\ii jc}\right|^2
+ =\frac{(1-e^{\ii nc})(1-e^{-\ii nc})}
+       {(1-e^{\ii c})(1-e^{-\ii c})}
+ =\frac{2-2\cos(nc)}{2-2\cos c}.
+\]
+El factor de fase que aparece al desplazar el intervalo no cambia el módulo.
+Como \(c\in(0,\pi)\), el denominador es positivo. Multiplicar la última
+expresión por \(\bar\phi^2\) da la contribución constante al desplazamiento;
+al restarla obtenemos \cref{diag:master:modified-msd}.
+
+Para el vector de retardos $n=1,\ldots,n_{\max}$ se calcula
+\(K_c=\operatorname{corr}(n,D_c(n))\). Si \(L=n_{\max}\),
+\(\bar n=L^{-1}\sum_{n=1}^Ln\) y
+\(\bar D_c=L^{-1}\sum_{n=1}^LD_c(n)\), la correlación es
+\[
+ K_c=\frac{\sum_{n=1}^L(n-\bar n)(D_c(n)-\bar D_c)}
+ {\sqrt{\sum_{n=1}^L(n-\bar n)^2\,
+                \sum_{n=1}^L(D_c(n)-\bar D_c)^2}}.
+\]
+El valor comunicado es la mediana
+de $K_c$ sobre los valores de $c$ elegidos; se conserva esa selección al
+comparar ensayos. En el procedimiento de correlación utilizado,
+$n_{\max}=\min(\max(20,\lfloor N/10\rfloor),500)$.
+Una varianza nula del desplazamiento no admite correlación de Pearson;
+se trata como caso degenerado regular. Los umbrales operativos
+$K<0.2$, $K>0.8$ y el intervalo intermedio describen, respectivamente,
+compatibilidad regular, compatibilidad caótica e indeterminación de ese
+diagnóstico finito. Un valor ligeramente negativo es posible por la
+correlación muestral. Ruido, transitorios y sobremuestreo afectan el
+resultado; la mediana y la comparación de varios intervalos de muestreo
+reducen sensibilidades concretas, sin demostrar caos ni ocultedad.
+
+Al comparar trayectorias mantenemos la misma preparación de la señal.
+Un cambio de ventana, submuestreo o eliminación de tendencia puede modificar
+\(H\) y \(K\) aunque el campo y los parámetros sean los mismos. Por ello
+interpretamos estas magnitudes junto con los retornos y los controles de
+integración.

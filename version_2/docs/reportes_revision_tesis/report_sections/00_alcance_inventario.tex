@@ -1,0 +1,164 @@
+\section{Planteamiento de la localización y sistemas estudiados}
+\label{sec:master-scope}
+
+La localización de un atractor oculto comienza con una dificultad concreta:
+iniciar cerca de los equilibrios puede llevar a otros destinos. Necesitamos
+construir condiciones iniciales en regiones de la cuenca que no conocemos de
+antemano. Para ello combinamos información del campo, aproximaciones
+armónicas y continuación. Una vez obtenida la trayectoria, estudiamos su
+atracción, su régimen dinámico y su relación con las vecindades de equilibrio.
+
+Cada operación responde a una pregunta distinta. Resolver una identidad del
+campo permite transformar las ecuaciones; integrar una semilla permite
+examinar su destino; sondear vecindades permite estudiar el acceso a ese
+destino. Esta relación se resume en la \cref{tab:master-levels}.
+
+\begin{longtable}{@{}L{0.23\linewidth}L{0.30\linewidth}L{0.39\linewidth}@{}}
+\caption{Operaciones de localización e información que proporcionan.}
+\label{tab:master-levels}\\
+\toprule
+Operación & Magnitud calculada & Interpretación dinámica\\\midrule
+\endfirsthead
+\toprule Operación & Magnitud calculada & Interpretación dinámica\\\midrule
+\endhead
+Realización de Lur'e & Matrices, no linealidad y resolvente & Identifica la
+estructura de realimentación del campo.\\
+Balance armónico & Frecuencia, amplitud y sesgo & Propone una condición
+oscilatoria aproximada para iniciar la búsqueda.\\
+Geometría del campo & Equilibrios, jacobiano y puntos perpetuos & Organiza
+regiones y condiciones iniciales mediante propiedades locales.\\
+Continuación & Trayectoria a lo largo de un parámetro auxiliar & Transporta
+una respuesta del sistema auxiliar al sistema de interés.\\
+Diagnósticos de trayectoria & Retornos, espectros y crecimiento variacional &
+Caracteriza la respuesta en el intervalo de observación.\\
+Sondeos de vecindades & Destinos por equilibrio y radio & Examina si las
+condiciones próximas a los equilibrios alcanzan la respuesta localizada.\\
+Comparación independiente & Diferencias entre métodos, pasos y lenguajes &
+Evalúa la sensibilidad de las conclusiones a la discretización.\\
+\bottomrule
+\end{longtable}
+
+\subsection{Sistemas estudiados}
+
+Los modelos enteros permiten trabajar con un flujo sobre un espacio de
+estados finito dimensional. En los modelos de Caputo fijamos además el
+terminal inferior y la historia. Comparamos los casos de
+\cref{tab:master-cases} bajo estas dos formulaciones, conservando los
+parámetros y las condiciones iniciales de cada experimento.
+
+\begin{longtable}{@{}L{0.25\linewidth}C{0.08\linewidth}L{0.59\linewidth}@{}}
+\caption{Sistemas, órdenes y respuestas observadas.}\label{tab:master-cases}\\
+\toprule
+Sistema & Orden & Resultado principal\\\midrule
+\endfirsthead
+\toprule Sistema & Orden & Resultado principal\\\midrule
+\endhead
+Chua PWL canónico & \(q=1\) & Semilla de función descriptiva y continuación.
+La comparación terminal de 504 condiciones distingue 168 destinos de
+equilibrio, 171 cruces de norma y 165 respuestas inconclusas.\\
+Chua PWL cercano & \(q=0.9998\) & Control autoexcitado: 1305 contactos de
+4050 condiciones y 1395 divergencias bajo el protocolo ensayado.\\
+Chua PWL de Danca, centrado & \(q=0.9998\) & Dos semillas armónicas para los
+parámetros nominales, distintas de la semilla sesgada.\\
+Chua PWL de Danca, sesgado & \(q=0.9998\) & Oscilación regular con frecuencia
+dominante reproducida. Los sondeos locales dan \(0/7200\) contactos y la
+extensión a \(r=0.3\) registra 37.\\
+Chua arctangente de Wu & \(q=0.99\) & Respuestas simétricas regulares con
+ADM local; este método reinicia la memoria en cada subintervalo.\\
+Chua arctangente c590 & \(q=0.9999\) & Respuesta aperiódica en la
+exploración inicial y sensibilidad posterior al integrador y al paso.
+Los sondeos registran \(0/8400\), \(22/2400\) y \(588/2700\) contactos
+en los bloques de radio hasta \(0.3\), \(1\) y \(2\), respectivamente.\\
+Kalman--Fitts & \(q=1\) & Ciclo estable localizado mediante mapa de
+conmutación y homotopía signo--tanh, con una obstrucción algebraica del
+balance armónico directo.\\
+MAVPD, \(\xi=3.1\) & \(q=1\) & Ciclo periódico externo de cuenca oculta en
+la clasificación numérica: \(0/108\) contactos locales. Las semillas PP
+exactas alcanzan las ramas interiores simétricas.\\
+MAVPD, \(\xi=3.5\) & \(q=1\) & Control negativo con 24 contactos desde las
+vecindades: la cuenca es accesible bajo el protocolo común.\\
+MAVPD, \(\xi=2.85\) & \(q=1\) & Régimen caótico para
+\(\gamma=0.15380379839949113\), con \(0/112\) contactos locales;
+Python y Julia coinciden en las 112 decisiones de destino.\\
+PLL lead--lag & \(q=1\) & Ciclo de rotación sobre el cilindro de fases y
+\(0/96\) contactos locales; el cierre armónico directo está obstruido.\\
+Lorenz generalizado & \(q=0.995\) & Realización MIMO, equilibrios y dos
+semillas FPP--A. Las integraciones desde esas semillas se aproximan a los
+equilibrios simétricos.\\
+Rabinovich--Fabrikant & \(q=0.998\) & Realización MIMO, cinco equilibrios,
+clasificación de Matignon y ocho semillas FPP--A.\\
+Muñoz--Pacheco & \(q=0.97\) & Cuatro semillas FPP--A exactas y
+trayectorias PECE de historia completa hasta \(t=35\).\\
+Otras familias & Mixto & Construcciones compatibles con Lur'e y con la
+búsqueda geométrica, cuyo destino requiere integración específica.\\
+\bottomrule
+\end{longtable}
+
+En cada fila, un contacto es una decisión calculada con una referencia,
+una distancia y una ventana temporal determinadas. La comparación entre
+semillas emplea esa misma definición de destino. Las ramas y las semillas
+que llegan a una misma respuesta se agrupan antes de contar respuestas
+distintas; así evitamos identificar el número de condiciones iniciales con
+el número de atractores.
+
+\subsection{Convención de realimentación}
+
+Consideramos la representación
+\begin{equation}
+ {}^{\mathrm C}D_{t_0}^{q}x=Px+b\,\psi(r^{\mathsf T}x),\qquad
+ W_+(z)=r^{\mathsf T}(zI-P)^{-1}b,\qquad z=s^q.
+ \label{eq:master-wplus}
+\end{equation}
+El orden se denota por \(q\) y el vector de entrada por \(b\). Si aproximamos
+la no linealidad mediante una ganancia real \(N\), la salida fundamental
+\(\Sigma\ne0\) satisface \(\Sigma=W_+(z)N\Sigma\). Al pasar todo al
+primer miembro y dividir por \(\Sigma\), obtenemos
+\begin{equation}
+ 1-W_+(z)N=0.
+ \label{eq:master-closure}
+\end{equation}
+Escribiendo \(W_+=W_R+\ii W_I\), el cierre se separa en
+\[
+ 1-NW_R=0,\qquad NW_I=0.
+\]
+La primera igualdad impide \(N=0\). Por tanto, necesitamos \(W_I=0\) y
+\(W_R\ne0\), y la ganancia queda fijada por \(N=1/W_R\). Aún debemos
+comprobar que esa ganancia pertenece al rango de la función descriptiva.
+
+Si usamos la resolvente en el orden contrario,
+\begin{equation}
+ \begin{aligned}
+ W_-(z)&=r^{\mathsf T}(P-zI)^{-1}b
+        =-r^{\mathsf T}(zI-P)^{-1}b=-W_+(z),\\
+ 1+W_-(z)N&=0.
+ \end{aligned}
+ \label{eq:master-wminus}
+\end{equation}
+La igualdad \((P-zI)^{-1}=-(zI-P)^{-1}\) vale cuando la resolvente existe.
+Así, \(-1/\Re W_-=1/\Re W_+\): ambas convenciones dan la misma condición
+si el signo del cierre se cambia junto con el de la transferencia.
+
+\subsection{Escalas y variables de comparación}
+
+La semilla canónica de Chua entero tiene amplitud
+\(A_0=5.856145086257\). Al introducir un sesgo distinguimos la
+transferencia original de la incremental: la pendiente local se incorpora
+una sola vez en el bloque lineal. En la familia auxiliar de Machado
+evaluamos por separado el cierre con \(N^\mu\) y el balance físico con
+\(N\), porque corresponden a ecuaciones diferentes.
+
+La amplitud espectral, la potencia y la densidad espectral de potencia
+tienen normalizaciones y unidades distintas. Del mismo modo, una semilla
+FPP--A es una condición algebraica del arranque de Picard--Caputo, mientras
+que un evento FPP--H se evalúa sobre una trayectoria con historia. Estas
+distinciones fijan las magnitudes que podemos comparar sin cambiar de
+problema dinámico.
+
+Para clasificar la ocultedad estudiamos el acceso a la respuesta desde
+vecindades de todos los equilibrios. En los sondeos especificamos radios,
+distribución de condiciones iniciales, horizonte y tolerancias. Un argumento
+analítico de separación debe cubrir una vecindad completa; en Caputo debe
+precisar también la clase de historias admisibles. Cuando no existen
+equilibrios, la condición de separación respecto de ellos es vacía, pero
+la existencia y la atracción del conjunto siguen siendo propiedades que
+hay que establecer.

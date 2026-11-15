@@ -1,0 +1,20 @@
+iq[r_]:=(r^q-(r-1)^q)/q;
+rr[r_]:=r iq[r]-(r^(q+1)-(r-1)^(q+1))/(q+1);
+ll[r_]:=iq[r]-rr[r];
+ass=q>0&&r>1&&n>0;
+p1=FullSimplify[q(q+1)ll[r]-((q+1-r)r^q+(r-1)^(q+1)),ass];
+p2=FullSimplify[q(q+1)rr[r]-(r^(q+1)-(r+q)(r-1)^q),ass];
+p3=FullSimplify[q(q+1)(rr[r+1]+ll[r])-((r+1)^(q+1)-2r^(q+1)+(r-1)^(q+1)),ass];
+p4=FullSimplify[q(q+1)ll[n+1]-(n^(q+1)-(n-q)(n+1)^q),ass];
+betaResidual=FullSimplify[Beta[q,q+1]/(Gamma[q]Gamma[q+1])-1/Gamma[2q+1],q>0];
+nonlinearChartDefect=1/Gamma[q+1]^2-2/Gamma[2q+1];
+x1=1+h+h^2/2;
+x2P=1+h(1+x1);
+predictorLocalDifference=Expand[x2P-(x1+h x1)];
+f={-(17/5)(x-y)+(1/2)y z,(34/5)x-y-x z,-z+x y};
+v=x^2+y^2+(z-102/5)^2/2;
+vdot=Expand[D[v,{{x,y,z}}].f];
+vtarget=-v+5202/25-(29/5)x^2-y^2-z^2/2;
+lorenzResidual=Expand[vdot-vtarget];
+checks=<|"ABM_left_weight"->TrueQ[p1===0],"ABM_right_weight"->TrueQ[p2===0],"ABM_interior_weight"->TrueQ[p3===0],"ABM_initial_weight"->TrueQ[p4===0],"Picard_beta_coefficient"->TrueQ[betaResidual===0],"q1_nonlinear_chart_defect_vanishes"->TrueQ[(nonlinearChartDefect/.q->1)===0],"qhalf_nonlinear_chart_defect_nonzero"->TrueQ[FullSimplify[nonlinearChartDefect/.q->1/2]!=0],"q1_predictor_counterexample"->TrueQ[predictorLocalDifference===-h^2/2],"Lorenz_dissipation_identity"->TrueQ[lorenzResidual===0]|>;
+<|"checks"->checks,"ABM_residuals"->{p1,p2,p3,p4},"q1_ABM_left_right_interior"->FullSimplify[{q(q+1)ll[r],q(q+1)rr[r],q(q+1)(rr[r+1]+ll[r])}/.q->1,r>1],"Picard_second_coefficient"->1/Gamma[2q+1],"nonlinear_chart_second_order_defect_divided_by_a2x02"->nonlinearChartDefect,"qhalf_chart_defect"->N[nonlinearChartDefect/.q->1/2,20],"Lorenz_vdot"->vdot,"Lorenz_ultimate_V_bound"->5202/25,"IID_zero_contact_upper_95percent_n7200"->N[1-(1/20)^(1/7200),16],"IID_zero_contact_upper_95percent_n8400"->N[1-(1/20)^(1/8400),16],"scope"->"Exact algebra and conditional independent-sampling bound. Deterministic finite sphere grids do not satisfy the IID hypothesis automatically."|>

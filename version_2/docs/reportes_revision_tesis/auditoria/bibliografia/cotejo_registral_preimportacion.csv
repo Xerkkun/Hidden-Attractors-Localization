@@ -1,0 +1,125 @@
+﻿key,doi,local_title,registry_title,registry,status,author_family_check
+Fuchs2013,10.1007/978-3-642-33552-5,{Nonlinear Dynamics in Complex Systems},Nonlinear Dynamics in Complex Systems,Crossref,DOI_titulo_coinciden,coinciden
+Petras2022,10.1007/s13540-022-00016-4,{The fractional-order Lorenz-type systems: A review},The fractional-order Lorenz-type systems: A review,Crossref,DOI_titulo_coinciden,coinciden
+Danca2017HiddenFO,10.1007/s11071-016-3276-1,Unusual dynamics and hidden attractors of the Rabinovich--Fabrikant system,Unusual dynamics and hidden attractors of the Rabinovich–Fabrikant system,Crossref,DOI_titulo_coinciden,coinciden
+Leonov2013HiddenAttractors,10.1016/j.physd.2012.05.016,Hidden attractor in smooth Chua systems,Hidden attractor in smooth Chua systems,Crossref,DOI_titulo_coinciden,coinciden
+AreaLosadaNieto2014,10.1155/2014/392598,On Fractional Derivatives and Primitives of Periodic Functions,On Fractional Derivatives and Primitives of Periodic Functions,Crossref,DOI_titulo_coinciden,coinciden
+Benettin1980a,10.1007/BF02128236,Lyapunov Characteristic Exponents for Smooth Dynamical Systems and for Hamiltonian Systems; A Method for Computing All of Them. Part 1: Theory,Lyapunov Characteristic Exponents for smooth dynamical systems and for hamiltonian systems; a method for computing all of them. Part 1: Theory,Crossref,DOI_titulo_coinciden,coinciden
+Benettin1980b,10.1007/BF02128237,Lyapunov Characteristic Exponents for Smooth Dynamical Systems and for Hamiltonian Systems; A Method for Computing All of Them. Part 2: Numerical Application,Lyapunov Characteristic Exponents for smooth dynamical systems and for hamiltonian systems; A method for computing all of them. Part 2: Numerical application,Crossref,DOI_titulo_coinciden,coinciden
+Skokos2010,10.1007/978-3-642-04458-8_2,The Lyapunov Characteristic Exponents and Their Computation,The Lyapunov Characteristic Exponents and Their Computation,Crossref,DOI_titulo_coinciden,coinciden
+ChristiansenRugh1997,10.1088/0951-7715/10/5/004,Computing Lyapunov Spectra with Continuous Gram--Schmidt Orthonormalization,Computing Lyapunov spectra with continuous Gram - Schmidt orthonormalization,Crossref,DOI_titulo_coinciden,coinciden
+Ghoreishi2023,10.48550/arXiv.2210.13138,Fractional Order Runge--Kutta Methods,Fractional Order Runge-Kutta Methods,DataCite,DOI_titulo_coinciden,coinciden
+Deng2007,10.1016/j.cam.2006.06.008,Short Memory Principle and a Predictor--Corrector Approach for Fractional Differential Equations,Short memory principle and a predictor–corrector approach for fractional differential equations,Crossref,DOI_titulo_coinciden,coinciden
+HaiYuXuRen2022,10.1007/s13540-022-00049-9,Stability Analysis of Fractional Differential Equations with the Short-Term Memory Property,Stability analysis of fractional differential equations with the short-term memory property,Crossref,DOI_titulo_coinciden,coinciden
+Agarwal2025,10.3390/fractalfract9090598,Stability of Nonlinear Switched Fractional Differential Equations with Short Memory,Stability of Nonlinear Switched Fractional Differential Equations with Short Memory,Crossref,DOI_titulo_coinciden,coinciden
+Deimling1985,,Nonlinear Functional Analysis,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+Khalil2002,,Nonlinear Systems,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+Monje2010,10.1007/978-1-84996-335-0,Fractional-order Systems and Controls: Fundamentals and Applications,Fractional-order Systems and Controls,Crossref,DOI_titulo_base_coincide_subtitulo_local,coinciden
+KrylovBogoliubov1950,,Introduction to Non-linear Mechanics,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+Atherton1975,,Nonlinear Control Engineering: Describing Function Analysis and Design,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+YerogluTan2015,,Note on Describing Function Analysis of Fractional Order Nonlinear Control Systems,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+DuarteMachado2009Coulomb,10.1007/s11071-008-9405-8,Fractional Describing Function of Systems with Coulomb Friction,Fractional describing function of systems with Coulomb friction,Crossref,DOI_titulo_coinciden,revisar
+CaponettoEtAl2013Relay,10.2478/s13540-013-0007-x,"Analysis and Shaping of the Self-Sustained Oscillations in
+             Relay Controlled Fractional-Order Systems",Analysis and shaping of the self-sustained oscillations in relay controlled fractional-order systems,Crossref,DOI_titulo_coinciden,coinciden
+BarbosaJesusMachado2015,10.5890/JAND.2015.03.007,Analysis of a Fractional-Order Nonlinear System with Hysteresis Nonlinearity via Describing Function,Analysis of a Fractional-Order Nonlinear System with Hysteresis Nonlinearity via Describing Function,Crossref,DOI_titulo_coinciden,coinciden
+BarbosaMachado2002BacklashImpact,,Fractional Describing Function Analysis of Systems with Backlash and Impact Phenomena,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+kochenburger1950frequency,,A Frequency Response Method for Analyzing and Synthesizing Contactor Servomechanisms,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+nuij2006hosidf,,Higher-order sinusoidal input describing functions for the analysis of non-linear systems with harmonic responses,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+CafagnaGrassi2010,10.1142/S0218127410025958,"An Effective Method for Detecting Chaos in Fractional-Order
+             Systems",AN EFFECTIVE METHOD FOR DETECTING CHAOS IN FRACTIONAL-ORDER SYSTEMS,Crossref,DOI_titulo_coinciden,coinciden
+DudkowskiPrasadKapitaniak2017,10.1142/S0218127417500638,"Perpetual Points: New Tool for Localization of Coexisting
+             Attractors in Dynamical Systems",Perpetual Points: New Tool for Localization of Coexisting Attractors in Dynamical Systems,Crossref,DOI_titulo_coinciden,coinciden
+DudkowskiPrasadKapitaniak2018,10.1063/1.4991801,Describing Chaotic Attractors: Regular and Perpetual Points,Describing chaotic attractors: Regular and perpetual points,Crossref,DOI_titulo_coinciden,coinciden
+JafariNazarimehrSprott2015,10.1142/S0218127415501825,"Limitation of Perpetual Points for Confirming Conservation in
+             Dynamical Systems",Limitation of Perpetual Points for Confirming Conservation in Dynamical Systems,Crossref,DOI_titulo_coinciden,coinciden
+GilmoreEtAl2010Connecting,10.1088/1751-8113/43/25/255101,Connecting Curves for Dynamical Systems,Connecting curves for dynamical systems,Crossref,DOI_titulo_coinciden,coinciden
+ShchedrinEtAl2018Composite,10.48550/arXiv.1803.05018,"Fractional Derivative of Composite Functions: Exact Results
+                  and Physical Applications",Fractional derivative of composite functions: exact results and physical applications,DataCite,DOI_titulo_coinciden,coinciden
+Gomoyunov2018Convex,10.1515/fca-2018-0066,"Fractional Derivatives of Convex Lyapunov Functions and Control
+             Problems in Fractional Order Systems",Fractional Derivatives of Convex Lyapunov Functions and Control Problems in Fractional Order Systems,Crossref,DOI_titulo_coinciden,coinciden
+CongTuanTrinh2020Asymptotic,10.1016/j.jmaa.2019.123759,"On Asymptotic Properties of Solutions to Fractional
+             Differential Equations",On asymptotic properties of solutions to fractional differential equations,Crossref,DOI_titulo_coinciden,coinciden
+CuiKloedenXin2026CaputoDynamics,10.48550/arXiv.2607.05799,"Analysis of the Dynamics of Caputo Fractional Differential
+             Equations",Analysis of the dynamics of Caputo fractional differential equations,DataCite,DOI_titulo_coinciden,coinciden
+Cong2023Semigroup,10.3934/dcdsb.2022064,"Semigroup Property of Fractional Differential Operators and Its
+             Applications",Semigroup property of fractional differential operators and its applications,Crossref,DOI_titulo_coinciden,coinciden
+CongTuan2017Nonlocal,10.1216/JIE-2017-29-4-585,"Generation of Nonlocal Fractional Dynamical Systems by
+             Fractional Differential Equations",Generation of nonlocal fractional dynamical systems by fractional differential equations,Crossref,DOI_titulo_coinciden,coinciden
+attractorsapi,,{Attractors.jl} {API},,,sin_DOI_metadatos_locales_ISBN,no_disponible
+fischer2020,10.1016/j.apnum.2020.03.027,"Lyapunov Exponents Spectrum Estimation of Fractional Order
+             Nonlinear Systems Using Cloned Dynamics",Lyapunov exponents spectrum estimation of fractional order nonlinear systems using Cloned Dynamics,Crossref,DOI_titulo_coinciden,coinciden
+scipy2020,10.1038/s41592-019-0686-2,"{SciPy} 1.0: Fundamental Algorithms for Scientific Computing
+             in Python",SciPy 1.0: fundamental algorithms for scientific computing in Python,Crossref,DOI_titulo_coinciden,revisar
+gottwald2009,10.1137/080718851,On the Implementation of the 0--1 Test for Chaos,On the Implementation of the 0–1 Test for Chaos,Crossref,DOI_titulo_coinciden,coinciden
+henon1982,10.1016/0167-2789(82)90034-3,On the Numerical Computation of Poincar{\'e} Maps,On the numerical computation of Poincaré maps,Crossref,DOI_titulo_coinciden,coinciden
+bonani1999,10.1109/ISCAS.1999.780154,A Harmonic Balance Approach to Bifurcation Analysis of Limit Cycles,A harmonic balance approach to bifurcation analysis of limit cycles,Crossref,DOI_titulo_coinciden,coinciden
+rogov2019,10.1142/S0218127419502006,"Pattern Analysis in Networks of Diffusively Coupled
+             Lur'e Systems",Pattern Analysis in Networks of Diffusively Coupled Lur’e Systems,Crossref,DOI_titulo_coinciden,coinciden
+sayed2020,10.1109/OJCAS.2020.3030756,"Self-Reproducing Hidden Attractors in Fractional-Order Chaotic
+             Systems Using Affine Transformations",Self-Reproducing Hidden Attractors in Fractional-Order Chaotic Systems Using Affine Transformations,Crossref,DOI_titulo_coinciden,coinciden
+munoz2018,10.3390/e20080564,"A New Fractional-Order Chaotic System with Different Families of
+             Hidden and Self-Excited Attractors",A New Fractional-Order Chaotic System with Different Families of Hidden and Self-Excited Attractors,Crossref,DOI_titulo_coinciden,coinciden
+liu2021,10.3390/axioms10030227,Chaotic Dynamics by Some Quadratic Jerk Systems,Chaotic Dynamics by Some Quadratic Jerk Systems,Crossref,DOI_titulo_coinciden,coinciden
+wang2020,10.1155/2020/1418272,"Fractional-Order Hidden Attractor Based on the Extended
+             Liu System",Fractional-Order Hidden Attractor Based on the Extended Liu System,Crossref,DOI_titulo_coinciden,coinciden
+debbouche2021,10.3390/e23030261,"Generating Multidirectional Variable Hidden Attractors via Newly
+             Commensurate and Incommensurate Non-Equilibrium Fractional-Order
+             Chaotic Systems",Generating Multidirectional Variable Hidden Attractors via Newly Commensurate and Incommensurate Non-Equilibrium Fractional-Order Chaotic Systems,Crossref,DOI_titulo_coinciden,revisar
+Amster2021MetodosTopologicos,,"M{\'e}todos topol{\'o}gicos en el estudio de las ecuaciones
+               diferenciales no lineales",,,sin_DOI_metadatos_locales_ISBN,no_disponible
+NahmadAchar2022Topologia,,"Topolog{\'i}a y geometr{\'i}a diferencial con aplicaciones a
+               la f{\'i}sica",,,sin_DOI_metadatos_locales_ISBN,no_disponible
+JaurezEtAl2021TGEDI,,Teor{\'i}a geom{\'e}trica de ecuaciones diferenciales I,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+JaurezEtAl2021TGEDII,,Teor{\'i}a geom{\'e}trica de ecuaciones diferenciales II,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+Hoppensteadt2000Chaotic,10.1007/b98824,Analysis and Simulation of Chaotic Systems,Analysis and Simulation of Chaotic Systems,Crossref,DOI_titulo_coinciden,no_disponible
+PhamEtAl2018HiddenAttractors,10.1007/978-3-319-71243-7,"Nonlinear Dynamical Systems with Self-Excited and Hidden
+               Attractors",Nonlinear Dynamical Systems with Self-Excited and Hidden Attractors,Crossref,DOI_titulo_coinciden,no_disponible
+Herrmann2014Fractional,10.1142/8934,Fractional Calculus: An Introduction for Physicists,Fractional Calculus,Crossref,DOI_titulo_base_coincide_subtitulo_local,coinciden
+Das2020Kindergarten,,Kindergarten of Fractional Calculus,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+OldhamSpanier1974Fractional,,"The Fractional Calculus: Theory and Applications of
+               Differentiation and Integration to Arbitrary Order",,,sin_DOI_metadatos_locales_ISBN,no_disponible
+Davies2004ExploringChaos,,Exploring Chaos: Theory and Experiment,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+Sprott2003ChaosTimeSeries,10.1093/oso/9780198508397.001.0001,Chaos and Time-Series Analysis,Chaos and Time-Series Analysis,Crossref,DOI_titulo_coinciden,coinciden
+AlligoodSauerYorke1996Chaos,10.1007/978-3-642-59281-2,Chaos: An Introduction to Dynamical Systems,Chaos,Crossref,DOI_titulo_base_coincide_subtitulo_local,coinciden
+Devaney1989Chaotic,,An Introduction to Chaotic Dynamical Systems,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+GuckenheimerHolmes1983,10.1007/978-1-4612-1140-2,"Nonlinear Oscillations, Dynamical Systems, and Bifurcations of
+               Vector Fields","Nonlinear Oscillations, Dynamical Systems, and Bifurcations of Vector Fields",Crossref,DOI_titulo_coinciden,coinciden
+SlotineLi1991,,Applied Nonlinear Control,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+Hilborn2000Chaos,,"Chaos and Nonlinear Dynamics: An Introduction for Scientists
+               and Engineers",,,sin_DOI_metadatos_locales_ISBN,no_disponible
+Falconer2014Fractal,,Fractal Geometry: Mathematical Foundations and Applications,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+PhamVolosKapitaniak2017Systems,10.1007/978-3-319-53721-4,"Systems with Hidden Attractors: From Theory to Realization in
+               Circuits",Systems with Hidden Attractors,Crossref,DOI_titulo_base_coincide_subtitulo_local,coinciden
+DatserisParlitz2022Nonlinear,10.1007/978-3-030-91032-7,"Nonlinear Dynamics: A Concise Introduction Interlaced with
+               Code",Nonlinear Dynamics,Crossref,DOI_titulo_base_coincide_subtitulo_local,coinciden
+Kuznetsov2023Bifurcation,10.1007/978-3-031-22007-4,Elements of Applied Bifurcation Theory,Elements of Applied Bifurcation Theory,Crossref,DOI_titulo_coinciden,coinciden
+Kantorovich2022Fundamentals,10.1007/978-3-030-91222-2,Mathematics for Natural Scientists: Fundamentals and Basics,Mathematics for Natural Scientists,Crossref,DOI_titulo_base_coincide_subtitulo_local,coinciden
+Kantorovich2024Advanced,10.1007/978-3-031-46320-4,Mathematics for Natural Scientists II: Advanced Methods,Mathematics for Natural Scientists II,Crossref,DOI_titulo_base_coincide_subtitulo_local,coinciden
+Cicogna2020Exercises,10.1007/978-3-030-59472-5,Exercises and Problems in Mathematical Methods of Physics,Exercises and Problems in Mathematical Methods of Physics,Crossref,DOI_titulo_coinciden,coinciden
+Wimberger2022Nonlinear,10.1007/978-3-031-01249-5,Nonlinear Dynamics and Quantum Chaos: An Introduction,Nonlinear Dynamics and Quantum Chaos,Crossref,DOI_titulo_base_coincide_subtitulo_local,coinciden
+RoyRayChowdhury2024KCC,10.1103/PhysRevE.109.044205,"Kosambi--Cartan--Chern Perspective on Chaos: Unveiling Hidden
+             Attractors in Nonlinear Autonomous Systems",Kosambi-Cartan-Chern perspective on chaos: Unveiling hidden attractors in nonlinear autonomous systems,Crossref,DOI_titulo_coinciden,coinciden
+DazaEtAl2015Wada,10.1038/srep16579,Testing for Basins of Wada,Testing for Basins of Wada,Crossref,DOI_titulo_coinciden,coinciden
+DellnitzHohmann1997Subdivision,10.1007/s002110050240,"A Subdivision Algorithm for the Computation of Unstable
+             Manifolds and Global Attractors",A subdivision algorithm for the computation of unstable manifolds and global attractors,Crossref,DOI_titulo_coinciden,coinciden
+KaliesEtAl2005ChainRecurrence,10.1007/s10208-004-0163-9,An Algorithmic Approach to Chain Recurrence,An Algorithmic Approach to Chain Recurrence,Crossref,DOI_titulo_coinciden,coinciden
+MischaikowEtAl2016Conley,10.3934/jcd.2016001,"Discretization Strategies for Computing Conley Indices and
+             Morse Decompositions of Flows",Discretization strategies for computing Conley indices and Morse decompositions of flows,Crossref,DOI_titulo_coinciden,coinciden
+KhristenkoWohlmuth2023Rational,10.1093/imanum/drac022,"Solving Time-Fractional Differential Equations via Rational
+             Approximation",Solving time-fractional differential equations via rational approximation,Crossref,DOI_titulo_coinciden,coinciden
+Ott2002Chaos,,Chaos in Dynamical Systems,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+TelGruiz2006Chaotic,,Chaotic Dynamics: An Introduction Based on Classical Mechanics,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+VallejoSanjuan2017Predictability,10.1007/978-3-319-51893-0,"Predictability of Chaotic Dynamics: A Finite-Time Lyapunov
+               Exponents Approach",Predictability of Chaotic Dynamics,Crossref,DOI_titulo_base_coincide_subtitulo_local,coinciden
+Jost2005Dynamical,,Dynamical Systems: Examples of Complex Behaviour,,,sin_DOI_metadatos_locales_ISBN,no_disponible
+SunHeWang2022FractionalChaos,10.1007/978-981-19-3273-1,"Solution and Characteristic Analysis of Fractional-Order
+               Chaotic Systems",Solution and Characteristic Analysis of Fractional-Order Chaotic Systems,Crossref,DOI_titulo_coinciden,coinciden
+DoanKloeden2022Triangular,10.1007/s13540-022-00030-6,{Attractors of Caputo fractional differential equations with triangular vector fields},Attractors of Caputo fractional differential equations with triangular vector fields,Crossref,DOI_titulo_coinciden,coinciden
+DuanLanLi2022WeylCaputo,10.3390/fractalfract6120692,{A Comparative Study of Responses of Fractional Oscillator to Sinusoidal Excitation in the Weyl and Caputo Senses},A Comparative Study of Responses of Fractional Oscillator to Sinusoidal Excitation in the Weyl and Caputo Senses,Crossref,DOI_titulo_coinciden,coinciden
+OrtigueiraMachadoTrujillo2017Periodic,10.1007/s40435-015-0215-9,{Fractional derivatives and periodic functions},Fractional derivatives and periodic functions,Crossref,DOI_titulo_coinciden,coinciden
+StephensWanner2014IsolatingBlocks,10.1137/140971075,{Rigorous Validation of Isolating Blocks for Flows and Their Conley Indices},Rigorous Validation of Isolating Blocks for Flows and Their Conley Indices,Crossref,DOI_titulo_coinciden,coinciden
+DayJungeMischaikow2004InfiniteDimensional,10.1137/030600210,{A Rigorous Numerical Method for the Global Analysis of Infinite-Dimensional Discrete Dynamical Systems},A Rigorous Numerical Method for the Global Analysis of Infinite-Dimensional Discrete Dynamical Systems,Crossref,DOI_titulo_coinciden,coinciden
+JiangZhangZhangZhang2017FastCaputo,10.4208/cicp.OA-2016-0136,{Fast Evaluation of the Caputo Fractional Derivative and Its Applications to Fractional Diffusion Equations},Fast Evaluation of the Caputo Fractional Derivative and Its Applications to Fractional Diffusion Equations,Crossref,DOI_titulo_coinciden,coinciden
+DancaFeckan2024MemoryPrinciple,10.1142/S0218127424501566,{Memory Principle of the MATLAB Code for Lyapunov Exponents of Fractional-Order},Memory Principle of the MATLAB Code for Lyapunov Exponents of Fractional-Order,Crossref,DOI_titulo_coinciden,coinciden
+Danca2026ImprovedLyapunov,10.1142/S0218127426501725,{Improved Matlab Code for Lyapunov Exponents of Fractional-Order Systems},Improved Matlab Code for Lyapunov Exponents of Fractional-Order Systems,Crossref,DOI_titulo_coinciden,coinciden
+ZhuLi2026PeriodicAlmostPeriodic,10.1007/s13540-026-00582-x,{Fractional integrals and derivatives of periodic and almost periodic functions},Fractional integrals and derivatives of periodic and almost periodic functions,Crossref,DOI_titulo_coinciden,coinciden

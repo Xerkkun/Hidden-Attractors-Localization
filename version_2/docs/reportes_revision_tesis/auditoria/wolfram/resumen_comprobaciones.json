@@ -1,0 +1,134 @@
+{
+  "fecha": "2026-11-08",
+  "herramienta": "Wolfram Language mediante plugin Wolfram conectado",
+  "numero_decisiones_declaradas": 25,
+  "todas_satisfechas": true,
+  "alcance": "Identidades exactas y residuos/valores para los parámetros declarados; no valida integraciones, caos, cuencas completas ni ocultación global. El grupo no Chua agrega siete identidades bajo una decisión; no se suman dos veces.",
+  "comprobaciones": [
+    {
+      "grupo": "abm_picard_lorenz",
+      "comprobacion": "ABM_left_weight",
+      "resultado": true
+    },
+    {
+      "grupo": "abm_picard_lorenz",
+      "comprobacion": "ABM_right_weight",
+      "resultado": true
+    },
+    {
+      "grupo": "abm_picard_lorenz",
+      "comprobacion": "ABM_interior_weight",
+      "resultado": true
+    },
+    {
+      "grupo": "abm_picard_lorenz",
+      "comprobacion": "ABM_initial_weight",
+      "resultado": true
+    },
+    {
+      "grupo": "abm_picard_lorenz",
+      "comprobacion": "Picard_beta_coefficient",
+      "resultado": true
+    },
+    {
+      "grupo": "abm_picard_lorenz",
+      "comprobacion": "q1_nonlinear_chart_defect_vanishes",
+      "resultado": true
+    },
+    {
+      "grupo": "abm_picard_lorenz",
+      "comprobacion": "qhalf_nonlinear_chart_defect_nonzero",
+      "resultado": true
+    },
+    {
+      "grupo": "abm_picard_lorenz",
+      "comprobacion": "q1_predictor_counterexample",
+      "resultado": true
+    },
+    {
+      "grupo": "abm_picard_lorenz",
+      "comprobacion": "Lorenz_dissipation_identity",
+      "resultado": true
+    },
+    {
+      "grupo": "lure_estabilidad",
+      "comprobacion": "determinant_identity",
+      "resultado": true
+    },
+    {
+      "grupo": "lure_estabilidad",
+      "comprobacion": "transfer_identity",
+      "resultado": true
+    },
+    {
+      "grupo": "lure_estabilidad",
+      "comprobacion": "feedback_characteristic_identity",
+      "resultado": true
+    },
+    {
+      "grupo": "no_chua_recalculado",
+      "comprobacion": "all_exact_identities",
+      "resultado": true
+    },
+    {
+      "grupo": "no_chua_recalculado",
+      "comprobacion": "equilibrium_residual_bound",
+      "resultado": true
+    },
+    {
+      "grupo": "no_chua_recalculado",
+      "comprobacion": "characteristic_residual_bound",
+      "resultado": true
+    },
+    {
+      "grupo": "no_chua_recalculado",
+      "comprobacion": "trace_residual_bound",
+      "resultado": true
+    },
+    {
+      "grupo": "puntos_perpetuos_kalman_fitts",
+      "comprobacion": "arctan_singular_determinant",
+      "resultado": true
+    },
+    {
+      "grupo": "puntos_perpetuos_kalman_fitts",
+      "comprobacion": "arctan_PP_residual_below_1e_30",
+      "resultado": true
+    },
+    {
+      "grupo": "puntos_perpetuos_kalman_fitts",
+      "comprobacion": "arctan_PP_non_equilibrium",
+      "resultado": true
+    },
+    {
+      "grupo": "puntos_perpetuos_kalman_fitts",
+      "comprobacion": "PWL_two_regions_nonsingular",
+      "resultado": true
+    },
+    {
+      "grupo": "puntos_perpetuos_kalman_fitts",
+      "comprobacion": "KF_polynomial",
+      "resultado": true
+    },
+    {
+      "grupo": "puntos_perpetuos_kalman_fitts",
+      "comprobacion": "KF_transfer",
+      "resultado": true
+    },
+    {
+      "grupo": "puntos_perpetuos_kalman_fitts",
+      "comprobacion": "KF_jacobian_polynomial",
+      "resultado": true
+    },
+    {
+      "grupo": "puntos_perpetuos_kalman_fitts",
+      "comprobacion": "KF_Routh_positive",
+      "resultado": true
+    },
+    {
+      "grupo": "puntos_perpetuos_kalman_fitts",
+      "comprobacion": "KF_direct_gain_negative",
+      "resultado": true
+    }
+  ]
+}

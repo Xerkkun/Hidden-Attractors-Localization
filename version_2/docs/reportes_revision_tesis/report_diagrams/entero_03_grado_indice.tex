@@ -1,0 +1,58 @@
+\begin{center}
+\resizebox{0.96\linewidth}{!}{%
+\begin{tikzpicture}[
+  >=Latex,
+  every node/.style={font=\small},
+  map/.style={-{Latex[length=2.5mm]},very thick,draw=GrisOscuro},
+  rootp/.style={circle,draw=Azul,fill=AzulClaro,very thick,minimum size=7mm},
+  rootm/.style={rectangle,draw=Rojo,fill=NaranjaClaro,very thick,minimum size=7mm}
+]
+  \node[font=\bfseries] at (3.35,5.10) {Ceros dentro de \(\Omega\)};
+  \path[fill=Gris,draw=GrisOscuro,very thick]
+    plot[smooth cycle,tension=0.85] coordinates {
+      (0.75,1.15) (0.70,3.75) (2.40,4.60)
+      (5.30,4.20) (6.05,2.35) (4.95,0.65) (2.10,0.55)
+    };
+  \node[anchor=north west] at (1.00,4.25) {$\Omega$};
+  \node[rootp] (xp) at (2.05,2.80) {$+1$};
+  \node[rootm] (xm) at (3.55,1.55) {$-1$};
+  \node[rootp] (xpp) at (4.55,3.25) {$+1$};
+  \node[below=2pt] at (xp.south) {$x_1$};
+  \node[below=2pt] at (xm.south) {$x_2$};
+  \node[below=2pt] at (xpp.south) {$x_3$};
+  \draw[-{Latex[length=1.8mm]},Azul,thick] (0.88,2.05) -- ++(-0.48,0.35);
+  \draw[-{Latex[length=1.8mm]},Azul,thick] (2.95,4.45) -- ++(-0.24,0.42);
+  \draw[-{Latex[length=1.8mm]},Azul,thick] (5.70,3.25) -- ++(0.52,0.22);
+  \draw[map] (6.55,2.80) -- node[above,align=center]
+    {$\widehat F=F/\|F\|$\\sobre \(\partial\Omega\)} (8.25,2.80);
+
+  \node[font=\bfseries] at (10.85,5.10) {Número de vueltas en \(S^1\)};
+  \draw[very thick,Azul] (10.85,2.75) circle (1.55);
+  \draw[-{Latex[length=2.4mm]},very thick,Azul]
+    (12.40,2.75) arc[start angle=0,end angle=310,radius=1.55];
+  \draw[GrisOscuro,thin] (8.95,2.75) -- (12.75,2.75);
+  \draw[GrisOscuro,thin] (10.85,0.85) -- (10.85,4.65);
+  \fill[GrisOscuro] (12.40,2.75) circle (2pt);
+  \node[right] at (12.40,2.75) {$1$};
+  \node[align=center] at (10.85,2.75)
+    {$\deg(F,\Omega,0)$\\$=+1$};
+
+  \node[draw=GrisOscuro,rounded corners,fill=white,inner sep=4pt]
+    at (7.10,-0.05)
+    {$\displaystyle F(x_j)=0,\qquad
+      \deg(F,\Omega,0)
+      =\sum_{F(x_j)=0}\operatorname{sgn}\det DF(x_j)
+      =(+1)+(-1)+(+1)=1$};
+\end{tikzpicture}%
+}
+
+\smallskip
+\begin{minipage}{0.92\linewidth}
+\small\textbf{Lectura pedagógica.}
+En dimensión dos, el grado puede verse como el número de vueltas del campo
+normalizado sobre la frontera. Los signos locales se suman y certifican la
+existencia de al menos un cero cuando el total no es nulo; no determinan por sí
+solos estabilidad, cuenca ni caos. El patrón mostrado es esquemático, no un
+retrato de fase.
+\end{minipage}
+\end{center}

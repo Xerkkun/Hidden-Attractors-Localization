@@ -1,0 +1,952 @@
+\section[Candidatos fraccionarios no Chua]{Sistemas fraccionarios no Chua: realización y dinámica}
+\label{part:nonchua}
+
+\section{Sistemas considerados}
+
+Estudiamos dos problemas relacionados: representar exactamente el campo
+mediante canales estáticos y determinar qué condiciones iniciales permiten
+alcanzar sus conjuntos atractivos. Desarrollamos primero la representación,
+los equilibrios y la estabilidad local. La cota de absorción de Lorenz
+controla el crecimiento de las soluciones; la identificación de un atractor
+requiere, además, estudiar el destino de las semillas y sus cuencas.
+
+Dos sistemas fraccionarios no Chua están vinculados de forma explícita con
+atractores ocultos en la bibliografía analizada: el Lorenz generalizado y el
+sistema de Rabinovich--Fabrikant (RF), ambos estudiados por
+Danca~\cite{Danca2017}. El Lorenz estándar y otra
+parametrización de RF sirven como referencias para exponentes de Lyapunov, junto con
+los sistemas jerk exponencial, financiero y \emph{four-wing} de
+Fischer et al.~\cite{fischer2020}. Ambos conjuntos de casos tienen alcances
+distintos y se presentan por separado.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Sistemas y alcance del análisis.}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{0.23\linewidth}
+>{\raggedright\arraybackslash}p{0.19\linewidth}X}
+\toprule
+Caso & Análisis & Resultado y límite\\
+\midrule
+Lorenz generalizado, \(q=0.995\) & Algebraico &
+Realización multicanal, tres equilibrios y espectros; existencia global y
+absorción de reinicios. La dinámica del candidato y su cuenca se conocen
+por la referencia bibliográfica.\\
+Rabinovich--Fabrikant, \(q=0.998\) & Algebraico &
+Realización multicanal, cinco equilibrios, espectros y radios bibliográficos
+de vecindad. Falta reproducir el atractor y su cuenca.\\
+Lorenz estándar, RF \(b=0.98\), jerk, financiero y four-wing & diagnóstico
+numérico & Ecuaciones, parámetros, análisis local, protocolo de integración y
+comparaciones de exponentes de Lyapunov. Estas pruebas no incluyeron una
+búsqueda de cuencas ni certifican ocultedad.\\
+Genesio--Tesi, jerk hiperbólico y otras familias escalares & Algebraico &
+Realizaciones escalares y cierres armónicos; falta completar la localización
+y la evaluación dinámica.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Las realizaciones de Genesio--Tesi y de los sistemas memristivos proporcionan
+problemas de localización. Los cinco sistemas de referencia dinámica permiten
+comparar diagnósticos de Lyapunov, pero carecen de continuación desde una
+semilla y de sondeos de vecindad. Sus exponentes no establecen ocultedad.
+
+\section[Marco común de realización]{Marco común de realización y localización}
+
+\subsection{Dinámica de Caputo y transferencia fraccionaria}
+
+Para \(0<q<1\) y un estado absolutamente continuo en cada intervalo de
+integración, la derivada de Caputo con terminal inferior \(t_0\) se escribe
+\begin{equation}
+ {}^{\mathrm C}D_{t_0}^{q}x(t)
+ =\frac{1}{\Gamma(1-q)}
+ \int_{t_0}^{t}(t-\tau)^{-q}x'(\tau)\,d\tau .
+ \label{nc:eq:caputo}
+\end{equation}
+La ecuación autónoma
+\begin{equation}
+ {}^{\mathrm C}D_{t_0}^{q}x(t)=F(x(t)),\qquad x(t_0)=x_0,
+ \label{nc:eq:ivp}
+\end{equation}
+es equivalente a la ecuación integral de Volterra
+\begin{equation}
+ x(t)=x_0+\frac{1}{\Gamma(q)}
+ \int_{t_0}^{t}(t-\tau)^{q-1}F(x(\tau))\,d\tau .
+ \label{nc:eq:volterra}
+\end{equation}
+La historia desde \(t_0\) es parte del problema; no puede reiniciarse durante
+una continuación sin declarar que se ha definido un problema diferente.
+
+Para el bloque lineal
+\begin{equation}
+ {}^{\mathrm C}D_{t_0}^{q}x=Ax+Bu,
+ \qquad y=Cx,
+ \label{nc:eq:linear-block}
+\end{equation}
+introducimos el tiempo transcurrido \(u=t-t_0\) y definimos
+\(X(s)=\int_0^\infty e^{-su}x(t_0+u)\,du\). En el semiplano donde
+existen las transformadas, la identidad de Caputo da
+\begin{equation}
+ \mathcal L\{{}^{\mathrm C}D_{t_0}^{q}x\}(s)
+ =s^qX(s)-s^{q-1}x(t_0).
+\end{equation}
+Al transformar la ecuación lineal resulta
+\[
+ (s^qI-A)X(s)=s^{q-1}x(t_0)+BU(s).
+\]
+Con estado inicial nulo y \(s^q\notin\operatorname{spec}(A)\),
+la transferencia entrada--salida es
+\begin{equation}
+ W_q(s)=C(s^qI-A)^{-1}B.
+ \label{nc:eq:transfer-general}
+\end{equation}
+Se usa la rama principal. En el predictor armónico,
+\begin{equation}
+ (\ii k\omega)^q=(k\omega)^q
+ \exp\!\left(\ii\frac{q\pi}{2}\right),\qquad k>0.
+ \label{nc:eq:principal-branch}
+\end{equation}
+Esta sustitución produce un problema algebraico estacionario; no afirma la
+existencia de una órbita periódica exacta del PVI causal de Caputo.
+
+\subsection{Realización de Lur'e multicanal}
+
+Los dos candidatos no son escalares en su no linealidad. Se usa la forma exacta
+\begin{equation}
+ {}^{\mathrm C}D_{t_0}^{q}x=Ax+B\Phi(Cx),
+ \qquad x\in\RR^n,
+ \label{nc:eq:mimo-lure}
+\end{equation}
+con \(\Phi:\RR^p\to\RR^m\) estática. La identidad que debe comprobarse es
+\begin{equation}
+ Ax+B\Phi(Cx)-F(x)\equiv0.
+ \label{nc:eq:lure-residual}
+\end{equation}
+No basta que las expresiones coincidan en una trayectoria o en un equilibrio.
+
+Sea \(\bar y=C\bar x\) un sesgo y
+\begin{equation}
+ K=D\Phi(\bar y)\in\RR^{m\times p}.
+\end{equation}
+La ecuación de cierre linealizada del primer armónico es
+\begin{equation}
+ \det\!\left[I_p-W_q(\ii\omega)K\right]=0.
+ \label{nc:eq:det-closure}
+\end{equation}
+Para amplitud finita, \(K\) se sustituye por los coeficientes de Fourier
+exactos de la no linealidad.
+
+\subsection{Coeficientes exactos y balance multiharmónico}
+
+Se adopta la convención compleja
+\begin{equation}
+ x(\theta)=\sum_{k=-H}^{H}X_k e^{\ii k\theta},
+ \qquad X_{-k}=\overline{X_k},\qquad X_0\in\RR^n,
+ \label{nc:eq:fourier-state}
+\end{equation}
+con \(\theta=\omega t\). Si \(u\) y \(v\) tienen coeficientes \(U_k,V_k\),
+la multiplicación no se aproxima: sus coeficientes son la convolución
+\begin{equation}
+ \widehat{(uv)}_k=\sum_{m\in\mathbb Z}U_mV_{k-m}.
+ \label{nc:eq:conv2}
+\end{equation}
+Para un producto triple,
+\begin{equation}
+ \widehat{(uvw)}_k
+ =\sum_{m\in\mathbb Z}\sum_{n\in\mathbb Z}
+ U_mV_nW_{k-m-n}.
+ \label{nc:eq:conv3}
+\end{equation}
+En una truncación se toma \(U_k=0\) para \(|k|>H\). Esto calcula exactamente
+los coeficientes retenidos de la señal truncada; la omisión de armónicos altos
+se controla aumentando \(H\).
+
+Si \(\widehat\Phi_k\) denota el coeficiente \(k\) de \(\Phi(Cx(\theta))\), el
+sistema completo de balance es
+\begin{align}
+ AX_0+B\widehat\Phi_0&=0,
+ \label{nc:eq:hb0}\\
+ \left[(\ii k\omega)^qI-A\right]X_k-B\widehat\Phi_k&=0,
+ \qquad k=1,\ldots,H.
+ \label{nc:eq:hbk}
+\end{align}
+Las incógnitas son \(X_0,X_1,\ldots,X_H,\omega\), junto con una condición de
+fase, por ejemplo
+\begin{equation}
+ \operatorname{Im}(e_j\trans X_1)=0,\qquad
+ \operatorname{Re}(e_j\trans X_1)>0.
+ \label{nc:eq:phase-condition}
+\end{equation}
+Una familia de estados iniciales se reconstruye mediante
+\begin{equation}
+ x_{\mathrm{sem}}(\varphi)=X_0+
+ 2\operatorname{Re}\sum_{k=1}^{H}X_ke^{\ii k\varphi}.
+ \label{nc:eq:seed-reconstruction}
+\end{equation}
+
+\subsection{Continuación causal}
+
+Definimos \(\bar u=\Phi(\bar y)\) y el auxiliar afín
+\begin{equation}
+ A_{\mathrm a}=A+BKC,\qquad
+ d_{\mathrm a}=B(\bar u-K\bar y).
+ \label{nc:eq:auxiliary}
+\end{equation}
+La homotopía exacta es
+\begin{equation}
+ F_\varepsilon(x)=A_{\mathrm a}x+d_{\mathrm a}
+ +\varepsilon B\left[
+ \Phi(Cx)-\bar u-K(Cx-\bar y)
+ \right],\qquad 0\leq\varepsilon\leq1.
+ \label{nc:eq:homotopy}
+\end{equation}
+Para comprobar los extremos, desarrollamos el término no lineal:
+\[
+ F_\varepsilon(x)=Ax+BKCx+B\bar u-BK\bar y
+ +\varepsilon\bigl[B\Phi(Cx)-B\bar u-BKCx+BK\bar y\bigr].
+\]
+En \(\varepsilon=1\) se cancelan los términos constantes y los términos
+lineales añadidos; en \(\varepsilon=0\) permanece el campo afín. Por tanto,
+\begin{equation}
+ F_0(x)=A_{\mathrm a}x+d_{\mathrm a},
+ \qquad F_1(x)=Ax+B\Phi(Cx).
+\end{equation}
+En Caputo, la continuación debe evaluarse sobre una sola historia:
+\begin{equation}
+ x(t)=x_{\mathrm{sem}}+
+ \frac{1}{\Gamma(q)}\int_{t_0}^{t}
+ (t-\tau)^{q-1}F_{\varepsilon(\tau)}(x(\tau))\,d\tau.
+ \label{nc:eq:causal-homotopy}
+\end{equation}
+
+\subsection{Estabilidad local y cuencas}
+
+Para un equilibrio \(e\) con Jacobiano \(J(e)\) y espectro
+\(\{\lambda_j\}\), el sistema lineal con orden conmensurable \(q\) es
+asintóticamente estable si
+\begin{equation}
+ |\arg\lambda_j|>\frac{q\pi}{2}
+ \quad\text{para todo }j.
+ \label{nc:eq:matignon}
+\end{equation}
+Medimos la separación respecto de la frontera de estabilidad mediante
+\begin{equation}
+ m_M(e;q)=\min_j|\arg\lambda_j|-\frac{q\pi}{2}.
+ \label{nc:eq:margin}
+\end{equation}
+Un margen positivo sitúa todo el espectro dentro del sector estable. Para
+un campo \(C^1\) en una vecindad del equilibrio, la condición estricta
+permite inferir estabilidad asintótica local del sistema no lineal.
+
+La ocultedad exige que la cuenca del conjunto atractivo no intersecte
+vecindades abiertas de los equilibrios. Un número finito de trayectorias sobre
+radios o direcciones discretos sólo sustenta una afirmación respecto del
+muestreo declarado. En los resultados numéricos especificamos por ello los
+radios, las direcciones y el horizonte usados.
+
+\clearpage
+\section[Caso I: Lorenz generalizado fraccionario]
+{Caso I: sistema de Lorenz generalizado fraccionario}
+
+\subsection{Modelo, parámetros y simetría}
+
+El sistema es
+\begin{equation}
+\begin{aligned}
+ {}^{\mathrm C}D^qx_1&=-\sigma(x_1-x_2)-a x_2x_3,\\
+ {}^{\mathrm C}D^qx_2&=r x_1-x_2-x_1x_3,\\
+ {}^{\mathrm C}D^qx_3&=-x_3+x_1x_2,
+\end{aligned}
+ \qquad \sigma=-ar,\quad a<0.
+\label{nc:eq:lorenz-model}
+\end{equation}
+El caso bibliográfico usa
+\begin{equation}
+ r=6.8,\qquad a=-0.5,\qquad \sigma=3.4,
+ \qquad q=0.995.
+ \label{nc:eq:lorenz-parameters}
+\end{equation}
+El campo es equivariante bajo
+\begin{equation}
+ \mathcal S(x_1,x_2,x_3)=(-x_1,-x_2,x_3).
+ \label{nc:eq:lorenz-symmetry}
+\end{equation}
+Por tanto, los equilibrios no nulos, semillas y trayectorias aparecen en pares
+simétricos.
+
+\subsection{Realización exacta de Lur'e multicanal}
+
+Agrupando términos lineales y monomios se obtiene
+\begin{equation}
+ A_L=
+ \begin{pmatrix}
+ -\sigma&\sigma&0\\ r&-1&0\\0&0&-1
+ \end{pmatrix},\qquad
+ B_L=
+ \begin{pmatrix}
+ -a&0&0\\0&-1&0\\0&0&1
+ \end{pmatrix},
+ \qquad C_L=I_3,
+ \label{nc:eq:lorenz-abc}
+\end{equation}
+y
+\begin{equation}
+ \Phi_L(x)=
+ \begin{pmatrix}
+ x_2x_3\\x_1x_3\\x_1x_2
+ \end{pmatrix}.
+ \label{nc:eq:lorenz-phi}
+\end{equation}
+La comprobación se hace componente a componente:
+\begin{align*}
+ [A_Lx+B_L\Phi_L(x)]_1
+ &=-\sigma x_1+\sigma x_2-a x_2x_3,\\
+ [A_Lx+B_L\Phi_L(x)]_2
+ &=r x_1-x_2-x_1x_3,\\
+ [A_Lx+B_L\Phi_L(x)]_3
+ &=-x_3+x_1x_2.
+\end{align*}
+Luego el residuo de la ecuación~\eqref{nc:eq:lure-residual} es idénticamente
+\((0,0,0)\trans\).
+
+\subsection{Derivación completa de la matriz de transferencia}
+
+Escribimos \(z=s^q\). Entonces
+\begin{equation}
+ zI-A_L=
+ \begin{pmatrix}
+ z+\sigma&-\sigma&0\\
+ -r&z+1&0\\
+ 0&0&z+1
+ \end{pmatrix}.
+\end{equation}
+El determinante del bloque superior es
+\begin{equation}
+ \Delta_L(z)=(z+\sigma)(z+1)-\sigma r.
+ \label{nc:eq:lorenz-delta}
+\end{equation}
+La adjunta del bloque superior es
+\(\begin{psmallmatrix}z+1&\sigma\\r&z+\sigma\end{psmallmatrix}\).
+Al dividirla por \(\Delta_L(z)\) y conservar el bloque escalar obtenemos,
+para \(\Delta_L(z)(z+1)\ne0\),
+\begin{equation}
+ (zI-A_L)^{-1}=
+ \begin{pmatrix}
+ \dfrac{z+1}{\Delta_L}&\dfrac{\sigma}{\Delta_L}&0\\[7pt]
+ \dfrac{r}{\Delta_L}&\dfrac{z+\sigma}{\Delta_L}&0\\[7pt]
+ 0&0&\dfrac{1}{z+1}
+ \end{pmatrix}.
+\end{equation}
+Como \(C_L=I_3\), la multiplicación por \(B_L\) da
+\begin{equation}
+ W_{L,q}(s)=
+ \begin{pmatrix}
+ \dfrac{-a(z+1)}{\Delta_L}&
+ \dfrac{-\sigma}{\Delta_L}&0\\[8pt]
+ \dfrac{-ar}{\Delta_L}&
+ \dfrac{-(z+\sigma)}{\Delta_L}&0\\[8pt]
+ 0&0&\dfrac{1}{z+1}
+ \end{pmatrix}_{z=s^q}.
+ \label{nc:eq:lorenz-transfer}
+\end{equation}
+Las nueve entradas de la diferencia entre
+\(C_L(s^qI-A_L)^{-1}B_L\) y~\eqref{nc:eq:lorenz-transfer} se anulan
+idénticamente.
+
+\subsection{Derivación de los puntos de equilibrio}
+
+En un equilibrio la derivada de Caputo de un estado constante es cero. La
+tercera ecuación de~\eqref{nc:eq:lorenz-model} impone
+\begin{equation}
+ x_3=x_1x_2.
+ \label{nc:eq:lorenz-eq1}
+\end{equation}
+La segunda da
+\begin{equation}
+ x_2(1+x_1^2)=r x_1,
+ \qquad
+ x_2=\frac{r x_1}{1+x_1^2}.
+ \label{nc:eq:lorenz-eq2}
+\end{equation}
+Si \(x_1=0\), las ecuaciones restantes producen
+\begin{equation}
+ E_0=(0,0,0).
+\end{equation}
+Para \(x_1\neq0\), usamos \(\sigma=-ar\) en la primera ecuación:
+\begin{align}
+ 0&=ar(x_1-x_2)-a x_2x_3,\\
+ r(x_1-x_2)&=x_1x_2^2.
+ \label{nc:eq:lorenz-eq3}
+\end{align}
+Sea \(u=x_1^2\). Al sustituir~\eqref{nc:eq:lorenz-eq2} en
+\eqref{nc:eq:lorenz-eq3} y dividir por \(rx_1\), que no se anula para
+los parámetros considerados, obtenemos
+\[
+ 1-\frac{r}{1+u}=\frac{ru}{(1+u)^2}.
+\]
+Como \(u=x_1^2\ge0\), el denominador \(1+u\) es positivo. Al multiplicar
+por \((1+u)^2\) resulta
+\begin{equation}
+ (1+u)^2-r(1+2u)=0,
+\end{equation}
+o, equivalentemente,
+\begin{equation}
+ u^2+2(1-r)u+(1-r)=0.
+\end{equation}
+Por la fórmula cuadrática,
+\begin{equation}
+ u_{\pm}=r-1\pm\sqrt{r(r-1)}.
+ \label{nc:eq:lorenz-u}
+\end{equation}
+Para \(r=6.8\), \(u_-=r-1-\sqrt{r(r-1)}<0\) y no produce equilibrios
+reales. Con
+\begin{equation}
+ u=u_+=r-1+\sqrt{r(r-1)},
+\end{equation}
+los otros dos equilibrios son
+\begin{equation}
+ E_{\pm}=\left(
+ \pm\sqrt u,
+ \pm\frac{r\sqrt u}{1+u},
+ \frac{ru}{1+u}
+ \right).
+ \label{nc:eq:lorenz-equilibria}
+\end{equation}
+Numéricamente,
+\begin{equation}
+ E_{\pm}=(\pm3.47564776512854,
+ \ \pm1.80689408468029,
+ \ 6.28012738724303).
+ \label{nc:eq:lorenz-equilibria-num}
+\end{equation}
+La sustitución simbólica de~\eqref{nc:eq:lorenz-equilibria} en el campo produjo
+residuo exactamente nulo; el mayor residuo numérico de los tres equilibrios fue
+\(1.07\times10^{-14}\).
+
+\subsection{Jacobiano, polinomios característicos y espectro}
+
+La derivación de cada componente respecto de los tres estados da
+\begin{equation}
+ J_L(x)=
+ \begin{pmatrix}
+ -\sigma&\sigma-a x_3&-a x_2\\
+ r-x_3&-1&-x_1\\
+ x_2&x_1&-1
+ \end{pmatrix}.
+ \label{nc:eq:lorenz-jacobian}
+\end{equation}
+En el origen, el tercer estado queda desacoplado y el bloque superior tiene
+traza \(-\sigma-1\) y determinante \(\sigma(1-r)\). De ahí
+\begin{equation}
+ p_0(\lambda)
+ =(\lambda+1)\left[(\lambda+\sigma)(\lambda+1)-\sigma r\right].
+\end{equation}
+Con~\eqref{nc:eq:lorenz-parameters},
+\begin{equation}
+ p_0(\lambda)=
+ \lambda^3+5.4\lambda^2-15.32\lambda-19.72,
+\end{equation}
+y
+\begin{equation}
+ \operatorname{spec}J_L(E_0)=
+ \{-7.15580467734555,\ 2.75580467734555,\ -1\}.
+ \label{nc:eq:lorenz-origin-spectrum}
+\end{equation}
+El valor propio real positivo hace inestable a \(E_0\) para todo \(q>0\).
+
+En cualquiera de los equilibrios \(E_{\pm}\), el polinomio mónico es
+\begin{equation}
+ p_{\pm}(\lambda)=
+ \lambda^3+5.4\lambda^2
+ +14.8476942706167\lambda+78.88,
+\end{equation}
+con espectro
+\begin{equation}
+ \operatorname{spec}J_L(E_{\pm})=
+ \left\{
+ -5.37029951773135,
+ -0.0148502411343235\pm3.83248917224189\ii
+ \right\}.
+ \label{nc:eq:lorenz-outer-spectrum}
+\end{equation}
+Para el par complejo,
+\begin{equation}
+ q_{\mathrm{crit}}=
+ \frac{2|\arg\lambda|}{\pi}=1.00246678056773,
+\end{equation}
+de modo que \(E_{\pm}\) es localmente estable para \(q=0.995\). El margen es
+\begin{equation}
+ m_M(E_{\pm};0.995)=0.0117287914887680>0.
+\end{equation}
+
+\subsection{Sistema algebraico de la semilla armónica}
+
+Para \(H\geq2\), escribimos \(X_{j,k}\) para el coeficiente \(k\) de \(x_j\).
+Los coeficientes no lineales son
+\begin{equation}
+ \widehat\Phi_{L,k}=
+ \begin{pmatrix}
+ \displaystyle\sum_m X_{2,m}X_{3,k-m}\\[5pt]
+ \displaystyle\sum_m X_{1,m}X_{3,k-m}\\[5pt]
+ \displaystyle\sum_m X_{1,m}X_{2,k-m}
+ \end{pmatrix}.
+ \label{nc:eq:lorenz-fourier-phi}
+\end{equation}
+Por tanto, una semilla no se obtiene escogiendo una condición inicial al azar,
+sino resolviendo
+\begin{align}
+ A_LX_0+B_L\widehat\Phi_{L,0}&=0,\\
+ \left[(\ii k\omega)^qI-A_L\right]X_k
+ -B_L\widehat\Phi_{L,k}&=0,
+ \quad k=1,\ldots,H,\\
+ \operatorname{Im}(e_j\trans X_1)&=0.
+ \label{nc:eq:lorenz-hb-system}
+\end{align}
+La linealización alrededor de un sesgo \(\bar x\) usa
+\begin{equation}
+ K_L(\bar x)=D\Phi_L(\bar x)=
+ \begin{pmatrix}
+ 0&\bar x_3&\bar x_2\\
+ \bar x_3&0&\bar x_1\\
+ \bar x_2&\bar x_1&0
+ \end{pmatrix}
+ \label{nc:eq:lorenz-k}
+\end{equation}
+y el predictor local
+\begin{equation}
+ \det\left[I_3-W_{L,q}(\ii\omega)K_L(\bar x)\right]=0.
+ \label{nc:eq:lorenz-local-closure}
+\end{equation}
+La solución de~\eqref{nc:eq:lorenz-hb-system} debe verificarse con \(H\) y
+\(H+1\), reconstruirse mediante~\eqref{nc:eq:seed-reconstruction} y transportarse
+con~\eqref{nc:eq:causal-homotopy}.
+
+\subsection{Del balance armónico a la dinámica}
+
+La referencia declara \(q=0.995\), un atractor representado gráficamente y 50
+trayectorias desde una vecindad de radio \(0.3\) del origen que llegan a los dos
+equilibrios estables. Sin embargo, la evidencia disponible no especifica la
+condición inicial del atractor, el paso, el horizonte, el transitorio, la
+historia ni una semilla de balance armónico. Nuestra formulación separa
+estas elecciones. Las raíces de~\eqref{nc:eq:lorenz-hb-system}, calculadas
+para \(H=2,3,\ldots\), definen semillas mediante
+\eqref{nc:eq:seed-reconstruction}; el residual y la distorsión permiten
+comparar truncaciones. La continuación conserva una sola historia de Caputo.
+Si desde su estado terminal iniciamos una evaluación autónoma, fijamos un
+nuevo terminal inferior y, por tanto, un PVI distinto, cuya respuesta debe
+estudiarse por separado. La comparación entre pasos, horizontes e integradores
+determina qué rasgos persisten. El sondeo de los tres equilibrios completa
+la información bibliográfica, concentrada en el origen.
+
+\clearpage
+\section[Caso II: Rabinovich--Fabrikant fraccionario]
+{Caso II: sistema de Rabinovich--Fabrikant fraccionario}
+
+\subsection{Modelo, parámetros y simetría}
+
+El sistema RF es
+\begin{equation}
+\begin{aligned}
+ {}^{\mathrm C}D^qx_1&=x_2(x_3-1+x_1^2)+a x_1,\\
+ {}^{\mathrm C}D^qx_2&=x_1(3x_3+1-x_1^2)+a x_2,\\
+ {}^{\mathrm C}D^qx_3&=-2x_3(b+x_1x_2),
+\end{aligned}
+\label{nc:eq:rf-model}
+\end{equation}
+con
+\begin{equation}
+ a=0.1,\qquad b=0.2876,\qquad q=0.998.
+ \label{nc:eq:rf-parameters}
+\end{equation}
+También es equivariante bajo
+\begin{equation}
+ \mathcal S(x_1,x_2,x_3)=(-x_1,-x_2,x_3).
+\end{equation}
+
+\subsection{Realización polinómica multicanal exacta}
+
+Desarrollamos los productos del campo:
+\begin{align*}
+ F_1&=a x_1-x_2+x_2x_3+x_1^2x_2,\\
+ F_2&=x_1+a x_2+3x_1x_3-x_1^3,\\
+ F_3&=-2b x_3-2x_1x_2x_3.
+\end{align*}
+Una realización directa, sin variables auxiliares dinámicas, es
+\begin{equation}
+ A_R=
+ \begin{pmatrix}
+ a&-1&0\\1&a&0\\0&0&-2b
+ \end{pmatrix},\qquad C_R=I_3,
+ \label{nc:eq:rf-a}
+\end{equation}
+\begin{equation}
+ B_R=
+ \begin{pmatrix}
+ 1&1&0&0&0\\
+ 0&0&3&-1&0\\
+ 0&0&0&0&-2
+ \end{pmatrix},
+ \label{nc:eq:rf-b}
+\end{equation}
+y
+\begin{equation}
+ \Phi_R(x)=
+ \begin{pmatrix}
+ x_2x_3\\x_1^2x_2\\x_1x_3\\x_1^3\\x_1x_2x_3
+ \end{pmatrix}.
+ \label{nc:eq:rf-phi}
+\end{equation}
+En efecto,
+\begin{equation}
+ A_Rx+B_R\Phi_R(x)=F_R(x)
+\end{equation}
+componente a componente.
+
+Para expresar los canales como potencias de mediciones lineales, los productos
+pueden factorizarse sin aproximación mediante
+\begin{equation}
+ uv=\frac{(u+v)^2-(u-v)^2}{4}
+ \label{nc:eq:square-identity}
+\end{equation}
+y
+\begin{equation}
+ uvw=\frac{(u+v+w)^3+(u-v-w)^3+(-u+v-w)^3+(-u-v+w)^3}{24}.
+ \label{nc:eq:cubic-identity}
+\end{equation}
+Estas identidades cambian el número de canales, no el campo vectorial.
+
+\subsection{Derivación completa de la transferencia RF}
+
+Con \(z=s^q\),
+\begin{equation}
+ zI-A_R=
+ \begin{pmatrix}
+ z-a&1&0\\-1&z-a&0\\0&0&z+2b
+ \end{pmatrix}.
+\end{equation}
+Definimos
+\begin{equation}
+ \Delta_R(z)=(z-a)^2+1.
+ \label{nc:eq:rf-delta}
+\end{equation}
+La adjunta del bloque \(2\times2\) cambia el signo de sus entradas fuera
+de la diagonal. Para \(\Delta_R(z)(z+2b)\ne0\), la inversa es
+\begin{equation}
+ (zI-A_R)^{-1}=
+ \begin{pmatrix}
+ \dfrac{z-a}{\Delta_R}&\dfrac{-1}{\Delta_R}&0\\[7pt]
+ \dfrac{1}{\Delta_R}&\dfrac{z-a}{\Delta_R}&0\\[7pt]
+ 0&0&\dfrac{1}{z+2b}
+ \end{pmatrix}.
+\end{equation}
+Al multiplicar por las cinco columnas de \(B_R\),
+\begin{equation}
+ W_{R,q}(s)=
+ \begin{pmatrix}
+ \dfrac{z-a}{\Delta_R}&
+ \dfrac{z-a}{\Delta_R}&
+ \dfrac{-3}{\Delta_R}&
+ \dfrac{1}{\Delta_R}&0\\[8pt]
+ \dfrac{1}{\Delta_R}&
+ \dfrac{1}{\Delta_R}&
+ \dfrac{3(z-a)}{\Delta_R}&
+ \dfrac{-(z-a)}{\Delta_R}&0\\[8pt]
+ 0&0&0&0&\dfrac{-2}{z+2b}
+ \end{pmatrix}_{z=s^q}.
+ \label{nc:eq:rf-transfer}
+\end{equation}
+La diferencia simbólica entre~\eqref{nc:eq:rf-transfer} y
+\((s^qI-A_R)^{-1}B_R\) fue la matriz nula \(3\times5\).
+
+\subsection{Equilibrios: reducción a una ecuación cuadrática}
+
+El origen
+\begin{equation}
+ E_0=(0,0,0)
+\end{equation}
+es un equilibrio. Para comprobar que no omitimos otros sobre el plano
+\(x_3=0\), multiplicamos las dos primeras ecuaciones por \(x_1\) y
+\(x_2\), respectivamente, y sumamos:
+\[
+ x_1F_1+x_2F_2=a(x_1^2+x_2^2)=0.
+\]
+Como \(a=0.1>0\), resulta \(x_1=x_2=0\). Para un equilibrio con
+\(x_3\neq0\), la tercera ecuación exige
+\begin{equation}
+ x_1x_2=-b,\qquad x_2=-\frac{b}{x_1}.
+ \label{nc:eq:rf-product}
+\end{equation}
+La primera ecuación, multiplicada por \(x_1\), da
+\begin{equation}
+ -b(x_3-1+x_1^2)+a x_1^2=0,
+\end{equation}
+de donde
+\begin{equation}
+ x_3=1+\frac{a-b}{b}x_1^2.
+ \label{nc:eq:rf-z}
+\end{equation}
+Sea \(u=x_1^2\). La segunda ecuación, multiplicada por \(x_1\), es
+\begin{equation}
+ u(3x_3+1-u)-ab=0.
+\end{equation}
+Sustituyendo~\eqref{nc:eq:rf-z}, el factor entre paréntesis queda
+\[
+ 3x_3+1-u=4+\frac{3a-4b}{b}u.
+\]
+Al multiplicar la ecuación por \(b\ne0\), se llega a
+\begin{equation}
+ (3a-4b)u^2+4bu-ab^2=0.
+ \label{nc:eq:rf-u-polynomial}
+\end{equation}
+Con
+\begin{equation}
+ R=\sqrt{4+a(3a-4b)},
+\end{equation}
+el discriminante es \(16b^2+4ab^2(3a-4b)=4b^2R^2\).
+Para \(b>0\) y \(3a-4b\ne0\), la fórmula cuadrática da
+\begin{equation}
+ u_{\pm}=\frac{b(-2\pm R)}{3a-4b}.
+ \label{nc:eq:rf-u}
+\end{equation}
+Para~\eqref{nc:eq:rf-parameters}, ambas son positivas. Cada una genera un par
+simétrico:
+\begin{equation}
+ E_{\pm}^{(u)}=\left(
+ \pm\sqrt u,\ \mp\frac{b}{\sqrt u},
+ 1+\frac{a-b}{b}u
+ \right).
+ \label{nc:eq:rf-equilibria-general}
+\end{equation}
+Agrupando las soluciones en sus dos pares simétricos, obtenemos
+\begin{align}
+ E_{1,2}&=(\mp1.15997695583801,
+ \ \pm0.247935959893466,
+ \ 0.122306917444673),
+ \label{nc:eq:rf-e12}\\
+ E_{3,4}&=(\mp0.085021329989515,
+ \ \pm3.38268055834300,
+ \ 0.995284804098130).
+ \label{nc:eq:rf-e34}
+\end{align}
+El campo se anula exactamente en las dos ramas
+algebraicas de~\eqref{nc:eq:rf-u}; el máximo residuo de su evaluación numérica es
+\(1.06\times10^{-14}\).
+
+\subsection{Jacobiano, polinomios y Matignon}
+
+La diferenciación de~\eqref{nc:eq:rf-model} da
+\begin{equation}
+ J_R(x)=
+ \begin{pmatrix}
+ 2x_1x_2+a&x_3-1+x_1^2&x_2\\
+ 3x_3+1-3x_1^2&a&3x_1\\
+ -2x_2x_3&-2x_1x_3&-2(b+x_1x_2)
+ \end{pmatrix}.
+ \label{nc:eq:rf-jacobian}
+\end{equation}
+En el origen,
+\begin{equation}
+ p_0(\lambda)=(\lambda+2b)\left[(\lambda-a)^2+1\right],
+\end{equation}
+y
+\begin{equation}
+ \operatorname{spec}J_R(E_0)=
+ \{-0.5752,\ 0.1\pm1.0\ii\}.
+\end{equation}
+El par complejo tiene
+\begin{equation}
+ q_{\mathrm{crit}}=0.936548965138893.
+\end{equation}
+Como \(q=0.998>q_{\mathrm{crit}}\), \(E_0\) es inestable y
+\begin{equation}
+ m_M(E_0;0.998)=-0.0965270598375723.
+\end{equation}
+
+En \(E_{1,2}\),
+\begin{equation}
+ p_{1,2}(\lambda)=
+ \lambda^3+0.3752\lambda^2
+ +2.20397205132125\lambda+0.556792727146772,
+\end{equation}
+\begin{equation}
+ \operatorname{spec}J_R(E_{1,2})=
+ \{-0.256175578455019,
+ -0.059512210772491\pm1.47307134859472\ii\}.
+\end{equation}
+El mínimo crítico es
+\begin{equation}
+ q_{\mathrm{crit}}=1.02570551509697>1,
+\end{equation}
+por lo que el par \(E_{1,2}\) es estable para todo \(0<q\leq1\); en particular,
+\begin{equation}
+ m_M(E_{1,2};0.998)=0.0435197213462810>0.
+\end{equation}
+
+En \(E_{3,4}\),
+\begin{equation}
+ p_{3,4}(\lambda)=
+ \lambda^3+0.3752\lambda^2
+ +22.7628315898639\lambda-4.53095664529540,
+\end{equation}
+\begin{equation}
+ \operatorname{spec}J_R(E_{3,4})=
+ \{0.198062714510438,
+ -0.286631357255219\pm4.77432885589854\ii\}.
+\end{equation}
+El valor propio positivo implica inestabilidad para todo \(q>0\). Estos
+resultados coinciden, dentro del redondeo impreso, con la fuente primaria.
+
+\subsection{Sistema algebraico de la semilla RF}
+
+El Jacobiano estático de~\eqref{nc:eq:rf-phi}, evaluado en un sesgo \(\bar x\), es
+\begin{equation}
+ K_R(\bar x)=
+ \begin{pmatrix}
+ 0&\bar x_3&\bar x_2\\
+ 2\bar x_1\bar x_2&\bar x_1^2&0\\
+ \bar x_3&0&\bar x_1\\
+ 3\bar x_1^2&0&0\\
+ \bar x_2\bar x_3&\bar x_1\bar x_3&\bar x_1\bar x_2
+ \end{pmatrix}.
+ \label{nc:eq:rf-k}
+\end{equation}
+El predictor local satisface
+\begin{equation}
+ \det\left[I_3-W_{R,q}(\ii\omega)K_R(\bar x)\right]=0.
+ \label{nc:eq:rf-local-closure}
+\end{equation}
+
+Para el balance de amplitud finita partimos de \(H=3\). Las cinco
+componentes no lineales se calculan sin ambigüedad por
+\begin{equation}
+ \widehat\Phi_{R,k}=
+ \begin{pmatrix}
+ \displaystyle\sum_m X_{2,m}X_{3,k-m}\\[5pt]
+ \displaystyle\sum_{m,n}X_{1,m}X_{1,n}X_{2,k-m-n}\\[5pt]
+ \displaystyle\sum_m X_{1,m}X_{3,k-m}\\[5pt]
+ \displaystyle\sum_{m,n}X_{1,m}X_{1,n}X_{1,k-m-n}\\[5pt]
+ \displaystyle\sum_{m,n}X_{1,m}X_{2,n}X_{3,k-m-n}
+ \end{pmatrix}.
+ \label{nc:eq:rf-fourier-phi}
+\end{equation}
+El sistema de semillas es
+\begin{align}
+ A_RX_0+B_R\widehat\Phi_{R,0}&=0,\\
+ \left[(\ii k\omega)^qI-A_R\right]X_k
+ -B_R\widehat\Phi_{R,k}&=0,
+ \quad k=1,\ldots,H,\\
+ \operatorname{Im}(e_j\trans X_1)&=0.
+ \label{nc:eq:rf-hb-system}
+\end{align}
+La contribución cúbica genera armónicos por encima de \(H\). Por ello, cada raíz
+debe continuar a \(H+1\), y la cola omitida debe registrarse como índice de
+distorsión. Sólo después se reconstruye~\eqref{nc:eq:seed-reconstruction} y se
+aplica la homotopía~\eqref{nc:eq:homotopy}.
+
+\subsection{Relación con las respuestas publicadas}
+
+La fuente usa \(q=0.998\) y vecindades de radio \(0.1\) alrededor de los
+equilibrios inestables \(E_0,E_3,E_4\). La evidencia disponible no incluye la
+condición inicial publicada del conjunto verde, una semilla algebraica, la
+especificación completa del integrador ABM y su memoria, ni las trayectorias de
+vecindad. El balance~\eqref{nc:eq:rf-hb-system} proporciona una ruta
+independiente para construir condiciones iniciales en distintas ramas y
+fases. Su continuación conserva la historia causal; la comparación con un
+segundo integrador de memoria completa permite examinar la sensibilidad
+numérica. La clasificación distingue convergencia a \(E_{1,2}\), crecimiento
+sin cota observada, transitorios y contacto con el conjunto de referencia.
+Los sondeos alrededor de los cinco equilibrios, incluidos los estables,
+permiten relacionar esas respuestas con la geometría de cuenca publicada.
+
+\clearpage
+\input{report_sections/09A_bancos_dinamicos_no_chua}
+\clearpage
+
+\section{Comparación de los problemas de localización}
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Comparación algebraica de los dos candidatos prioritarios.}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{0.24\linewidth}XX}
+\toprule
+Propiedad & Lorenz generalizado & Rabinovich--Fabrikant\\
+\midrule
+Orden no lineal & cuadrático & cuadrático y cúbico\\
+Canales elegidos & 3 & 5\\
+Truncación inicial & \(H=2\) & \(H=3\)\\
+Equilibrios & 3 & 5\\
+Estables a \(q\) objetivo & \(E_+,E_-\) & \(E_1,E_2\)\\
+Inestables a \(q\) objetivo & \(E_0\) & \(E_0,E_3,E_4\)\\
+Simetría & \((x_1,x_2,x_3)\mapsto(-x_1,-x_2,x_3)\) & la misma\\
+Riesgo algebraico & bajo--medio & medio--alto\\
+Dificultad numérica & historia y cuenca & historia, términos cúbicos,
+divergencia y transitorios\\
+Dinámica del candidato & referencia bibliográfica & referencia bibliográfica\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Lorenz generalizado requiere menos canales y una truncación inicial \(H=2\).
+Su cota absorbente controla las trayectorias de reinicio y la cuenca
+bibliográfica alrededor del único equilibrio inestable ofrece una referencia
+para los sondeos. RF incorpora términos cúbicos, tres equilibrios inestables y
+trayectorias divergentes; exige mayor resolución armónica y controles de escape.
+
+\section{Identidades y estabilidad local}
+
+Los parámetros racionales
+\(r=34/5\), \(a_L=-1/2\), \(a_R=1/10\) y \(b_R=719/2500\) permiten
+mantener exactas las identidades antes de evaluar las raíces numéricas.
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.34\linewidth}
+>{\raggedright\arraybackslash}p{0.17\linewidth}
+>{\raggedright\arraybackslash}p{0.40\linewidth}}
+\caption{Identidades algebraicas y clasificación local.}\\
+\toprule
+Comprobación & Resultado & Evidencia\\
+\midrule
+\endfirsthead
+\toprule
+Comprobación & Resultado & Evidencia\\
+\midrule
+\endhead
+Identidad Lur'e de Lorenz & \ok &
+\(A_Lx+B_L\Phi_L(x)-F_L(x)=0\) en las tres componentes.\\
+Transferencia de Lorenz & \ok &
+Las nueve entradas del residuo simbólico son cero.\\
+Equilibrios de Lorenz & \ok &
+Residuo simbólico cero; máximo numérico \(1.07\times10^{-14}\).\\
+Espectros de Lorenz & \ok &
+Los valores propios satisfacen los polinomios característicos declarados; su
+suma coincide con la traza de cada Jacobiano y los residuos numéricos son
+inferiores a \(10^{-12}\).\\
+Clasificación de Matignon de Lorenz & \ok &
+\(E_0\) inestable; \(E_{\pm}\) estables a \(q=0.995\), margen \(0.0117288\).\\
+Identidad Lur'e de RF & \ok &
+\(A_Rx+B_R\Phi_R(x)-F_R(x)=0\) en las tres componentes.\\
+Transferencia de RF & \ok &
+Las quince entradas del residuo simbólico son cero.\\
+Equilibrios RF & \ok &
+Las dos ramas de~\eqref{nc:eq:rf-u} dan residuo simbólico cero; máximo numérico
+\(1.06\times10^{-14}\).\\
+Espectros y Matignon de RF & \ok &
+Coinciden con la fuente al redondeo: \(E_{1,2}\) estables;
+\(E_0,E_{3,4}\) inestables a \(q=0.998\).\\
+\bottomrule
+\end{longtable}
+
+Estas identidades determinan la realización algebraica y la estabilidad
+local. La localización del candidato requiere resolver el balance armónico,
+integrar el PVI causal y estudiar su cuenca.
+
+\section{Condiciones para la evaluación dinámica}
+
+Las ecuaciones~\eqref{nc:eq:lorenz-hb-system} y
+\eqref{nc:eq:rf-hb-system} definen los problemas multiharmónicos de generación
+de semillas. Sus raíces numéricas requieren control del residual físico y
+del truncamiento. Una semilla obtenida por esta ruta debe integrarse con
+historia causal, continuarse cuando sea necesario y evaluarse con el campo
+final fijo. La recurrencia, la robustez y los sondeos de todos los equilibrios
+son problemas dinámicos independientes de las identidades algebraicas y de
+los espectros locales.

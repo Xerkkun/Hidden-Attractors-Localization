@@ -1,0 +1,2816 @@
+{
+  "monografia": [
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 10
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 10
+    },
+    {
+      "key": "Matignon1996",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 33
+    },
+    {
+      "key": "DuanLanLi2022WeylCaputo",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 39
+    },
+    {
+      "key": "OrtigueiraMachadoTrujillo2017Periodic",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 47
+    },
+    {
+      "key": "ZhuLi2026PeriodicAlmostPeriodic",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 47
+    },
+    {
+      "key": "DancaFeckan2024MemoryPrinciple",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 56
+    },
+    {
+      "key": "Danca2026ImprovedLyapunov",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 56
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 94
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 94
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 116
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 142
+    },
+    {
+      "key": "LeonovKuznetsovVagaitsev2011",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 205
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 205
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 205
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 211
+    },
+    {
+      "key": "Danca2017HiddenFO",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 211
+    },
+    {
+      "key": "Matignon1996",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 217
+    },
+    {
+      "key": "DiethelmFordFreed2002",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 217
+    },
+    {
+      "key": "BarbosaMachado2002BacklashImpact",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 223
+    },
+    {
+      "key": "Machado2015FDF",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 223
+    },
+    {
+      "key": "Prasad2015Perpetual",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 229
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 229
+    },
+    {
+      "key": "NazarimehrSaediJafari2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 229
+    },
+    {
+      "key": "GuanXie2021Connecting",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 236
+    },
+    {
+      "key": "GodaraEtAl2018CriticalSurfaces",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 236
+    },
+    {
+      "key": "DazaEtAl2016BasinEntropy",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 242
+    },
+    {
+      "key": "DazaEtAl2015Wada",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 242
+    },
+    {
+      "key": "DoanKloeden2024Attractors",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 247
+    },
+    {
+      "key": "LeonovKuznetsovVagaitsev2011",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 271
+    },
+    {
+      "key": "Leonov2013HiddenAttractors",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 271
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 271
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 271
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 271
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 273
+    },
+    {
+      "key": "GuanXie2021Connecting",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 273
+    },
+    {
+      "key": "GodaraEtAl2018CriticalSurfaces",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 273
+    },
+    {
+      "key": "PhamEtAl2018HiddenAttractors",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 274
+    },
+    {
+      "key": "PhamVolosKapitaniak2017Systems",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 274
+    },
+    {
+      "key": "WangKuznetsovChen2021Multistability",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 274
+    },
+    {
+      "key": "NahmadAchar2022Topologia",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 114
+    },
+    {
+      "key": "JaurezEtAl2021TGEDI",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 115
+    },
+    {
+      "key": "JaurezEtAl2021TGEDII",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 115
+    },
+    {
+      "key": "HirschSmaleDevaney2013",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 115
+    },
+    {
+      "key": "NahmadAchar2022Topologia",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 231
+    },
+    {
+      "key": "Amster2021MetodosTopologicos",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 662
+    },
+    {
+      "key": "JaurezEtAl2021TGEDI",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 916
+    },
+    {
+      "key": "JaurezEtAl2021TGEDII",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 916
+    },
+    {
+      "key": "HirschSmaleDevaney2013",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 916
+    },
+    {
+      "key": "Skokos2010",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 943
+    },
+    {
+      "key": "DatserisParlitz2022Nonlinear",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 943
+    },
+    {
+      "key": "Kuznetsov2023Bifurcation",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1045
+    },
+    {
+      "key": "JaurezEtAl2021TGEDII",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1045
+    },
+    {
+      "key": "JaurezEtAl2021TGEDII",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1194
+    },
+    {
+      "key": "HirschSmaleDevaney2013",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1194
+    },
+    {
+      "key": "Kuznetsov2023Bifurcation",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1194
+    },
+    {
+      "key": "HirschSmaleDevaney2013",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1249
+    },
+    {
+      "key": "Kuznetsov2023Bifurcation",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1249
+    },
+    {
+      "key": "HirschSmaleDevaney2013",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1432
+    },
+    {
+      "key": "DatserisParlitz2022Nonlinear",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1432
+    },
+    {
+      "key": "Podlubny1999",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 156
+    },
+    {
+      "key": "Monje2010",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 156
+    },
+    {
+      "key": "Oliveira2019SolvedFractional",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 156
+    },
+    {
+      "key": "Podlubny1999",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 208
+    },
+    {
+      "key": "Monje2010",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 208
+    },
+    {
+      "key": "Gomoyunov2018Convex",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 293
+    },
+    {
+      "key": "TavazoeiHaeri2009",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 380
+    },
+    {
+      "key": "AreaLosadaNieto2014",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 380
+    },
+    {
+      "key": "Vigue2019",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 384
+    },
+    {
+      "key": "Matignon1996",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 517
+    },
+    {
+      "key": "CongTuanTrinh2020Asymptotic",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 551
+    },
+    {
+      "key": "CongDoanSiegmundTuan2016",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 553
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 59
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 59
+    },
+    {
+      "key": "TavazoeiHaeri2009",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 59
+    },
+    {
+      "key": "KaslikSivasundaram2012",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 59
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 194
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 315
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 350
+    },
+    {
+      "key": "CuiKloedenXin2026CaputoDynamics",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 578
+    },
+    {
+      "key": "Matignon1996",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 625
+    },
+    {
+      "key": "LiChenPodlubny2009",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 627
+    },
+    {
+      "key": "CongTuanTrinh2020Asymptotic",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 627
+    },
+    {
+      "key": "TavazoeiHaeri2009",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 933
+    },
+    {
+      "key": "KaslikSivasundaram2012",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 933
+    },
+    {
+      "key": "fischer2020",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1004
+    },
+    {
+      "key": "Matignon1996",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1243
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1243
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1243
+    },
+    {
+      "key": "TavazoeiHaeri2009",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1243
+    },
+    {
+      "key": "KaslikSivasundaram2012",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1243
+    },
+    {
+      "key": "Gomoyunov2018Convex",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1387
+    },
+    {
+      "key": "Podlubny1999",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1450
+    },
+    {
+      "key": "munoz2018",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1577
+    },
+    {
+      "key": "Amster2021MetodosTopologicos",
+      "file": "report_sections\\17_metodos_topologicos_existencia.tex",
+      "line": 8
+    },
+    {
+      "key": "Deimling1985",
+      "file": "report_sections\\17_metodos_topologicos_existencia.tex",
+      "line": 99
+    },
+    {
+      "key": "Amster2021MetodosTopologicos",
+      "file": "report_sections\\17_metodos_topologicos_existencia.tex",
+      "line": 99
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 63
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 63
+    },
+    {
+      "key": "GelbVanderVelde1968",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 181
+    },
+    {
+      "key": "Atherton1975",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 181
+    },
+    {
+      "key": "AthertonTanYerogluKavuranYuce2014",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 181
+    },
+    {
+      "key": "TavazoeiHaeri2009",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 425
+    },
+    {
+      "key": "AreaLosadaNieto2014",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 425
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 429
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 432
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 443
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 499
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 499
+    },
+    {
+      "key": "Machado2015FDF",
+      "file": "report_sections\\12_machado_funcion_descriptiva.tex",
+      "line": 9
+    },
+    {
+      "key": "Machado2015FDF",
+      "file": "report_sections\\12_machado_funcion_descriptiva.tex",
+      "line": 95
+    },
+    {
+      "key": "DuarteMachado2009Coulomb",
+      "file": "report_sections\\12_machado_funcion_descriptiva.tex",
+      "line": 416
+    },
+    {
+      "key": "Machado2015FDF",
+      "file": "report_sections\\12_machado_funcion_descriptiva.tex",
+      "line": 416
+    },
+    {
+      "key": "DiethelmFordFreed2002",
+      "file": "report_sections\\04_integracion_continuacion.tex",
+      "line": 32
+    },
+    {
+      "key": "DiethelmFordFreed2002",
+      "file": "report_sections\\04_integracion_continuacion.tex",
+      "line": 219
+    },
+    {
+      "key": "Prasad2015Perpetual",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 11
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2015",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 14
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2017",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 14
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2018",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 16
+    },
+    {
+      "key": "NazarimehrSaediJafari2017",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 20
+    },
+    {
+      "key": "JafariNazarimehrSprott2015",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 22
+    },
+    {
+      "key": "NagChowdhuryGhosh2020",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 24
+    },
+    {
+      "key": "DudkowskiEtAl2016",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 28
+    },
+    {
+      "key": "GuanXie2025",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 28
+    },
+    {
+      "key": "GilmoreEtAl2010Connecting",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 164
+    },
+    {
+      "key": "GuanXie2021Connecting",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 167
+    },
+    {
+      "key": "ShchedrinEtAl2018Composite",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 232
+    },
+    {
+      "key": "Cong2023Semigroup",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 246
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 273
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 273
+    },
+    {
+      "key": "TavazoeiHaeri2009",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 276
+    },
+    {
+      "key": "KaslikSivasundaram2012",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 276
+    },
+    {
+      "key": "Prasad2015Perpetual",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 566
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2018",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 566
+    },
+    {
+      "key": "DazaEtAl2016BasinEntropy",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 60
+    },
+    {
+      "key": "DazaEtAl2015Wada",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 60
+    },
+    {
+      "key": "GodaraEtAl2018CriticalSurfaces",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 101
+    },
+    {
+      "key": "GilmoreEtAl2010Connecting",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 166
+    },
+    {
+      "key": "GuanXie2021Connecting",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 166
+    },
+    {
+      "key": "RoyRayChowdhury2024KCC",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 251
+    },
+    {
+      "key": "DazaEtAl2016BasinEntropy",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 299
+    },
+    {
+      "key": "DazaEtAl2015Wada",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 301
+    },
+    {
+      "key": "DellnitzHohmann1997Subdivision",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 317
+    },
+    {
+      "key": "KaliesEtAl2005ChainRecurrence",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 317
+    },
+    {
+      "key": "MischaikowEtAl2016Conley",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 317
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 384
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 384
+    },
+    {
+      "key": "DoanKloeden2024Attractors",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 384
+    },
+    {
+      "key": "KhristenkoWohlmuth2023Rational",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 593
+    },
+    {
+      "key": "GodaraEtAl2018CriticalSurfaces",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 664
+    },
+    {
+      "key": "GilmoreEtAl2010Connecting",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 667
+    },
+    {
+      "key": "GuanXie2021Connecting",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 667
+    },
+    {
+      "key": "RoyRayChowdhury2024KCC",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 672
+    },
+    {
+      "key": "DellnitzHohmann1997Subdivision",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 675
+    },
+    {
+      "key": "KaliesEtAl2005ChainRecurrence",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 675
+    },
+    {
+      "key": "MischaikowEtAl2016Conley",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 675
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 680
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 680
+    },
+    {
+      "key": "DoanKloeden2024Attractors",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 680
+    },
+    {
+      "key": "DiethelmFordFreed2002",
+      "file": "report_sections\\05_protocolos_experimentales.tex",
+      "line": 104
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\05_protocolos_experimentales.tex",
+      "line": 212
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\05_protocolos_experimentales.tex",
+      "line": 241
+    },
+    {
+      "key": "gottwald2009",
+      "file": "report_sections\\05A_diagnosticos_espectrales.tex",
+      "line": 45
+    },
+    {
+      "key": "VallejoSanjuan2017Predictability",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 18
+    },
+    {
+      "key": "DatserisParlitz2022Nonlinear",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 18
+    },
+    {
+      "key": "Ott2002Chaos",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 20
+    },
+    {
+      "key": "TelGruiz2006Chaotic",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 20
+    },
+    {
+      "key": "SunHeWang2022FractionalChaos",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 22
+    },
+    {
+      "key": "Sabatier2021InfiniteMemory",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 22
+    },
+    {
+      "key": "VallejoSanjuan2017Predictability",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 71
+    },
+    {
+      "key": "Ott2002Chaos",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 96
+    },
+    {
+      "key": "VallejoSanjuan2017Predictability",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 96
+    },
+    {
+      "key": "VallejoSanjuan2017Predictability",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 131
+    },
+    {
+      "key": "Lin2013GeneralizedGronwall",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 170
+    },
+    {
+      "key": "Sabatier2021InfiniteMemory",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 182
+    },
+    {
+      "key": "SunHeWang2022FractionalChaos",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 184
+    },
+    {
+      "key": "DancaKuznetsov2018Lyapunov",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 193
+    },
+    {
+      "key": "ClementeLopezEtAl2022Poincare",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 195
+    },
+    {
+      "key": "Ott2002Chaos",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 211
+    },
+    {
+      "key": "TelGruiz2006Chaotic",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 211
+    },
+    {
+      "key": "Danca2016HiddenTransient",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 296
+    },
+    {
+      "key": "GuanXie2025",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 299
+    },
+    {
+      "key": "Ott2002Chaos",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 319
+    },
+    {
+      "key": "TelGruiz2006Chaotic",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 319
+    },
+    {
+      "key": "Jost2005Dynamical",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 413
+    },
+    {
+      "key": "MischaikowEtAl2016Conley",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 413
+    },
+    {
+      "key": "Gomoyunov2018Convex",
+      "file": "report_sections\\21_campana_dinamica_geometrico_topologica.tex",
+      "line": 723
+    },
+    {
+      "key": "Leonov2013HiddenAttractors",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 10
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 10
+    },
+    {
+      "key": "Matignon1996",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 10
+    },
+    {
+      "key": "DiethelmFordFreed2002",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 10
+    },
+    {
+      "key": "bonani1999",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 10
+    },
+    {
+      "key": "rogov2019",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 10
+    },
+    {
+      "key": "sayed2020",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 12
+    },
+    {
+      "key": "sayed2020",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 37
+    },
+    {
+      "key": "bonani1999",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 39
+    },
+    {
+      "key": "rogov2019",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 39
+    },
+    {
+      "key": "Machado2015FDF",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 43
+    },
+    {
+      "key": "Prasad2015Perpetual",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 45
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2017",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 45
+    },
+    {
+      "key": "sayed2020",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 290
+    },
+    {
+      "key": "DuanLanLi2022WeylCaputo",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 114
+    },
+    {
+      "key": "DoanKloeden2022Triangular",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 299
+    },
+    {
+      "key": "CuiKloedenXin2026CaputoDynamics",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 304
+    },
+    {
+      "key": "DancaFeckan2024MemoryPrinciple",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 311
+    },
+    {
+      "key": "Danca2026ImprovedLyapunov",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 311
+    },
+    {
+      "key": "StephensWanner2014IsolatingBlocks",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 320
+    },
+    {
+      "key": "DayJungeMischaikow2004InfiniteDimensional",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 322
+    },
+    {
+      "key": "JiangZhangZhangZhang2017FastCaputo",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 329
+    },
+    {
+      "key": "kalman2019",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 394
+    },
+    {
+      "key": "matouk2023",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 549
+    },
+    {
+      "key": "matouk2023",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 919
+    },
+    {
+      "key": "scipy2020",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 974
+    },
+    {
+      "key": "Benettin1980a",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 987
+    },
+    {
+      "key": "henon1982",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 1060
+    },
+    {
+      "key": "gottwald2009",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 1062
+    },
+    {
+      "key": "pll2015",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 1255
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 1568
+    },
+    {
+      "key": "fischer2020",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 1572
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\09_fraccionarios_no_chua.tex",
+      "line": 16
+    },
+    {
+      "key": "fischer2020",
+      "file": "report_sections\\09_fraccionarios_no_chua.tex",
+      "line": 19
+    },
+    {
+      "key": "kalman2019",
+      "file": "report_sections\\09A_bancos_dinamicos_no_chua.tex",
+      "line": 77
+    },
+    {
+      "key": "matouk2023",
+      "file": "report_sections\\09A_bancos_dinamicos_no_chua.tex",
+      "line": 156
+    },
+    {
+      "key": "pll2015",
+      "file": "report_sections\\09A_bancos_dinamicos_no_chua.tex",
+      "line": 317
+    },
+    {
+      "key": "DancaKuznetsov2018Lyapunov",
+      "file": "report_sections\\09A_bancos_dinamicos_no_chua.tex",
+      "line": 415
+    },
+    {
+      "key": "fischer2020",
+      "file": "report_sections\\09A_bancos_dinamicos_no_chua.tex",
+      "line": 572
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 447
+    },
+    {
+      "key": "Prasad2015Perpetual",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 557
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2017",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 557
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2018",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 557
+    },
+    {
+      "key": "GilmoreEtAl2010Connecting",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 561
+    },
+    {
+      "key": "GuanXie2021Connecting",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 561
+    },
+    {
+      "key": "DiethelmFordFreed2002",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 564
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 567
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 567
+    },
+    {
+      "key": "munoz2018",
+      "file": "report_sections\\11_candidatos_compatibles.tex",
+      "line": 27
+    },
+    {
+      "key": "liu2021",
+      "file": "report_sections\\11_candidatos_compatibles.tex",
+      "line": 145
+    },
+    {
+      "key": "wang2020",
+      "file": "report_sections\\11_candidatos_compatibles.tex",
+      "line": 225
+    },
+    {
+      "key": "debbouche2021",
+      "file": "report_sections\\11_candidatos_compatibles.tex",
+      "line": 302
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\07_discusion_conclusiones.tex",
+      "line": 6
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\07_discusion_conclusiones.tex",
+      "line": 6
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\07_discusion_conclusiones.tex",
+      "line": 15
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\07_discusion_conclusiones.tex",
+      "line": 27
+    }
+  ],
+  "guia_estudio": [
+    {
+      "key": "NahmadAchar2022Topologia",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardTopology]",
+      "line": 5
+    },
+    {
+      "key": "NahmadAchar2022Topologia",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 114
+    },
+    {
+      "key": "JaurezEtAl2021TGEDI",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 115
+    },
+    {
+      "key": "JaurezEtAl2021TGEDII",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 115
+    },
+    {
+      "key": "HirschSmaleDevaney2013",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 115
+    },
+    {
+      "key": "NahmadAchar2022Topologia",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 231
+    },
+    {
+      "key": "JaurezEtAl2021TGEDI",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardFlow]",
+      "line": 5
+    },
+    {
+      "key": "JaurezEtAl2021TGEDII",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardFlow]",
+      "line": 8
+    },
+    {
+      "key": "Strogatz2015Nonlinear",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardFlow]",
+      "line": 11
+    },
+    {
+      "key": "Amster2021MetodosTopologicos",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardFlow]",
+      "line": 26
+    },
+    {
+      "key": "Oliveira2019SolvedFractional",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex [macro HAFOCardFractional]",
+      "line": 4
+    },
+    {
+      "key": "Herrmann2014Fractional",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex [macro HAFOCardFractional]",
+      "line": 7
+    },
+    {
+      "key": "Das2020Kindergarten",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex [macro HAFOCardFractional]",
+      "line": 8
+    },
+    {
+      "key": "Diethelm2010AnalysisFDE",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex [macro HAFOCardFractional]",
+      "line": 11
+    },
+    {
+      "key": "OldhamSpanier1974Fractional",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex [macro HAFOCardFractional]",
+      "line": 32
+    },
+    {
+      "key": "Podlubny1999",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 156
+    },
+    {
+      "key": "Monje2010",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 156
+    },
+    {
+      "key": "Oliveira2019SolvedFractional",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 156
+    },
+    {
+      "key": "Podlubny1999",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 208
+    },
+    {
+      "key": "Monje2010",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 208
+    },
+    {
+      "key": "Gomoyunov2018Convex",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 293
+    },
+    {
+      "key": "TavazoeiHaeri2009",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 380
+    },
+    {
+      "key": "AreaLosadaNieto2014",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 380
+    },
+    {
+      "key": "Vigue2019",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 384
+    },
+    {
+      "key": "Herrmann2014Fractional",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex [macro HAFOCardMemory]",
+      "line": 4
+    },
+    {
+      "key": "Das2020Kindergarten",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex [macro HAFOCardMemory]",
+      "line": 6
+    },
+    {
+      "key": "Oliveira2019SolvedFractional",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex [macro HAFOCardMemory]",
+      "line": 16
+    },
+    {
+      "key": "Diethelm2010AnalysisFDE",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex [macro HAFOCardMemory]",
+      "line": 18
+    },
+    {
+      "key": "Matignon1996",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex [macro HAFOCardMemory]",
+      "line": 42
+    },
+    {
+      "key": "LiChenPodlubny2010",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex [macro HAFOCardMemory]",
+      "line": 43
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 59
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 59
+    },
+    {
+      "key": "TavazoeiHaeri2009",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 59
+    },
+    {
+      "key": "KaslikSivasundaram2012",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 59
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 194
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 315
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 350
+    },
+    {
+      "key": "JaurezEtAl2021TGEDII",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardLinearGeometry]",
+      "line": 4
+    },
+    {
+      "key": "JaurezEtAl2021TGEDI",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 916
+    },
+    {
+      "key": "JaurezEtAl2021TGEDII",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 916
+    },
+    {
+      "key": "HirschSmaleDevaney2013",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 916
+    },
+    {
+      "key": "Skokos2010",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 943
+    },
+    {
+      "key": "DatserisParlitz2022Nonlinear",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 943
+    },
+    {
+      "key": "Kuznetsov2023Bifurcation",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1045
+    },
+    {
+      "key": "JaurezEtAl2021TGEDII",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1045
+    },
+    {
+      "key": "Davies2004ExploringChaos",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardBasins]",
+      "line": 4
+    },
+    {
+      "key": "AlligoodSauerYorke1996Chaos",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardBasins]",
+      "line": 8
+    },
+    {
+      "key": "Matignon1996",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 517
+    },
+    {
+      "key": "CongTuanTrinh2020Asymptotic",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 551
+    },
+    {
+      "key": "CongDoanSiegmundTuan2016",
+      "file": "report_sections\\02_modelos_y_fundamentos.tex",
+      "line": 553
+    },
+    {
+      "key": "CuiKloedenXin2026CaputoDynamics",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 578
+    },
+    {
+      "key": "Matignon1996",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 625
+    },
+    {
+      "key": "LiChenPodlubny2009",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 627
+    },
+    {
+      "key": "CongTuanTrinh2020Asymptotic",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 627
+    },
+    {
+      "key": "Amster2021MetodosTopologicos",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardDegree]",
+      "line": 3
+    },
+    {
+      "key": "Amster2021MetodosTopologicos",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 662
+    },
+    {
+      "key": "JaurezEtAl2021TGEDII",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardPoincare]",
+      "line": 5
+    },
+    {
+      "key": "Strogatz2015Nonlinear",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardPoincare]",
+      "line": 7
+    },
+    {
+      "key": "JaurezEtAl2021TGEDII",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1194
+    },
+    {
+      "key": "HirschSmaleDevaney2013",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1194
+    },
+    {
+      "key": "Kuznetsov2023Bifurcation",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1194
+    },
+    {
+      "key": "HirschSmaleDevaney2013",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1249
+    },
+    {
+      "key": "Kuznetsov2023Bifurcation",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1249
+    },
+    {
+      "key": "Amster2021MetodosTopologicos",
+      "file": "report_sections\\17_metodos_topologicos_existencia.tex [macro HAFOCardExistence]",
+      "line": 3
+    },
+    {
+      "key": "Amster2021MetodosTopologicos",
+      "file": "report_sections\\17_metodos_topologicos_existencia.tex",
+      "line": 8
+    },
+    {
+      "key": "Deimling1985",
+      "file": "report_sections\\17_metodos_topologicos_existencia.tex",
+      "line": 99
+    },
+    {
+      "key": "Amster2021MetodosTopologicos",
+      "file": "report_sections\\17_metodos_topologicos_existencia.tex",
+      "line": 99
+    },
+    {
+      "key": "TavazoeiHaeri2009",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 933
+    },
+    {
+      "key": "KaslikSivasundaram2012",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 933
+    },
+    {
+      "key": "fischer2020",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1004
+    },
+    {
+      "key": "Strogatz2015Nonlinear",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardChaos]",
+      "line": 4
+    },
+    {
+      "key": "AlligoodSauerYorke1996Chaos",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardChaos]",
+      "line": 6
+    },
+    {
+      "key": "Davies2004ExploringChaos",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardChaos]",
+      "line": 24
+    },
+    {
+      "key": "Sprott2003ChaosTimeSeries",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardChaos]",
+      "line": 27
+    },
+    {
+      "key": "Ott2002Chaos",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardChaos]",
+      "line": 28
+    },
+    {
+      "key": "TelGruiz2006Chaotic",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardChaos]",
+      "line": 30
+    },
+    {
+      "key": "Devaney1989Chaotic",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardChaos]",
+      "line": 32
+    },
+    {
+      "key": "Hilborn2000Chaos",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardChaos]",
+      "line": 34
+    },
+    {
+      "key": "HirschSmaleDevaney2013",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1432
+    },
+    {
+      "key": "DatserisParlitz2022Nonlinear",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "line": 1432
+    },
+    {
+      "key": "Falconer2014Fractal",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardFractal]",
+      "line": 4
+    },
+    {
+      "key": "Matignon1996",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1243
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1243
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1243
+    },
+    {
+      "key": "TavazoeiHaeri2009",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1243
+    },
+    {
+      "key": "KaslikSivasundaram2012",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1243
+    },
+    {
+      "key": "Gomoyunov2018Convex",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1387
+    },
+    {
+      "key": "Podlubny1999",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1450
+    },
+    {
+      "key": "munoz2018",
+      "file": "report_sections\\15_geometria_topologia_caputo.tex",
+      "line": 1577
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 10
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 10
+    },
+    {
+      "key": "Matignon1996",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 33
+    },
+    {
+      "key": "DuanLanLi2022WeylCaputo",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 39
+    },
+    {
+      "key": "OrtigueiraMachadoTrujillo2017Periodic",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 47
+    },
+    {
+      "key": "ZhuLi2026PeriodicAlmostPeriodic",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 47
+    },
+    {
+      "key": "DancaFeckan2024MemoryPrinciple",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 56
+    },
+    {
+      "key": "Danca2026ImprovedLyapunov",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 56
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 94
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 94
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 116
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 142
+    },
+    {
+      "key": "LeonovKuznetsovVagaitsev2011",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 205
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 205
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 205
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 211
+    },
+    {
+      "key": "Danca2017HiddenFO",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 211
+    },
+    {
+      "key": "Matignon1996",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 217
+    },
+    {
+      "key": "DiethelmFordFreed2002",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 217
+    },
+    {
+      "key": "BarbosaMachado2002BacklashImpact",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 223
+    },
+    {
+      "key": "Machado2015FDF",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 223
+    },
+    {
+      "key": "Prasad2015Perpetual",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 229
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 229
+    },
+    {
+      "key": "NazarimehrSaediJafari2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 229
+    },
+    {
+      "key": "GuanXie2021Connecting",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 236
+    },
+    {
+      "key": "GodaraEtAl2018CriticalSurfaces",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 236
+    },
+    {
+      "key": "DazaEtAl2016BasinEntropy",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 242
+    },
+    {
+      "key": "DazaEtAl2015Wada",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 242
+    },
+    {
+      "key": "DoanKloeden2024Attractors",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 247
+    },
+    {
+      "key": "LeonovKuznetsovVagaitsev2011",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 271
+    },
+    {
+      "key": "Leonov2013HiddenAttractors",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 271
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 271
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 271
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 271
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2017",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 273
+    },
+    {
+      "key": "GuanXie2021Connecting",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 273
+    },
+    {
+      "key": "GodaraEtAl2018CriticalSurfaces",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 273
+    },
+    {
+      "key": "PhamEtAl2018HiddenAttractors",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 274
+    },
+    {
+      "key": "PhamVolosKapitaniak2017Systems",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 274
+    },
+    {
+      "key": "WangKuznetsovChen2021Multistability",
+      "file": "report_sections\\01_introduccion_antecedentes.tex",
+      "line": 274
+    },
+    {
+      "key": "SlotineLi1991",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex [macro HAFOCardLure]",
+      "line": 3
+    },
+    {
+      "key": "LeonovKuznetsovVagaitsev2011",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex [macro HAFOCardLure]",
+      "line": 5
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex [macro HAFOCardLure]",
+      "line": 5
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex [macro HAFOCardLure]",
+      "line": 6
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 63
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 63
+    },
+    {
+      "key": "GelbVanderVelde1968",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 181
+    },
+    {
+      "key": "Atherton1975",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 181
+    },
+    {
+      "key": "AthertonTanYerogluKavuranYuce2014",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 181
+    },
+    {
+      "key": "TavazoeiHaeri2009",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 425
+    },
+    {
+      "key": "AreaLosadaNieto2014",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 425
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 429
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 432
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 443
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 499
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "line": 499
+    },
+    {
+      "key": "Machado2015FDF",
+      "file": "report_sections\\12_machado_funcion_descriptiva.tex [macro HAFOCardMachado]",
+      "line": 3
+    },
+    {
+      "key": "BarbosaMachado2002BacklashImpact",
+      "file": "report_sections\\12_machado_funcion_descriptiva.tex [macro HAFOCardMachado]",
+      "line": 4
+    },
+    {
+      "key": "Machado2015FDF",
+      "file": "report_sections\\12_machado_funcion_descriptiva.tex",
+      "line": 9
+    },
+    {
+      "key": "Machado2015FDF",
+      "file": "report_sections\\12_machado_funcion_descriptiva.tex",
+      "line": 95
+    },
+    {
+      "key": "DuarteMachado2009Coulomb",
+      "file": "report_sections\\12_machado_funcion_descriptiva.tex",
+      "line": 416
+    },
+    {
+      "key": "Machado2015FDF",
+      "file": "report_sections\\12_machado_funcion_descriptiva.tex",
+      "line": 416
+    },
+    {
+      "key": "Diethelm2010AnalysisFDE",
+      "file": "report_sections\\04_integracion_continuacion.tex [macro HAFOCardContinuation]",
+      "line": 3
+    },
+    {
+      "key": "SunHeWang2022FractionalChaos",
+      "file": "report_sections\\04_integracion_continuacion.tex [macro HAFOCardContinuation]",
+      "line": 6
+    },
+    {
+      "key": "DiethelmFordFreed2002",
+      "file": "report_sections\\04_integracion_continuacion.tex [macro HAFOCardContinuation]",
+      "line": 7
+    },
+    {
+      "key": "DiethelmFordFreed2002",
+      "file": "report_sections\\04_integracion_continuacion.tex",
+      "line": 32
+    },
+    {
+      "key": "DiethelmFordFreed2002",
+      "file": "report_sections\\04_integracion_continuacion.tex",
+      "line": 219
+    },
+    {
+      "key": "Prasad2015Perpetual",
+      "file": "report_sections\\13_puntos_perpetuos.tex [macro HAFOCardPerpetual]",
+      "line": 3
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2015",
+      "file": "report_sections\\13_puntos_perpetuos.tex [macro HAFOCardPerpetual]",
+      "line": 4
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2017",
+      "file": "report_sections\\13_puntos_perpetuos.tex [macro HAFOCardPerpetual]",
+      "line": 4
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2018",
+      "file": "report_sections\\13_puntos_perpetuos.tex [macro HAFOCardPerpetual]",
+      "line": 4
+    },
+    {
+      "key": "NazarimehrSaediJafari2017",
+      "file": "report_sections\\13_puntos_perpetuos.tex [macro HAFOCardPerpetual]",
+      "line": 6
+    },
+    {
+      "key": "NagChowdhuryGhosh2020",
+      "file": "report_sections\\13_puntos_perpetuos.tex [macro HAFOCardPerpetual]",
+      "line": 6
+    },
+    {
+      "key": "GuanXie2025",
+      "file": "report_sections\\13_puntos_perpetuos.tex [macro HAFOCardPerpetual]",
+      "line": 7
+    },
+    {
+      "key": "Prasad2015Perpetual",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 11
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2015",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 14
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2017",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 14
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2018",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 16
+    },
+    {
+      "key": "NazarimehrSaediJafari2017",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 20
+    },
+    {
+      "key": "JafariNazarimehrSprott2015",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 22
+    },
+    {
+      "key": "NagChowdhuryGhosh2020",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 24
+    },
+    {
+      "key": "DudkowskiEtAl2016",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 28
+    },
+    {
+      "key": "GuanXie2025",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 28
+    },
+    {
+      "key": "GilmoreEtAl2010Connecting",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 164
+    },
+    {
+      "key": "GuanXie2021Connecting",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 167
+    },
+    {
+      "key": "ShchedrinEtAl2018Composite",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 232
+    },
+    {
+      "key": "Cong2023Semigroup",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 246
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 273
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 273
+    },
+    {
+      "key": "TavazoeiHaeri2009",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 276
+    },
+    {
+      "key": "KaslikSivasundaram2012",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 276
+    },
+    {
+      "key": "Prasad2015Perpetual",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 566
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2018",
+      "file": "report_sections\\13_puntos_perpetuos.tex",
+      "line": 566
+    },
+    {
+      "key": "GilmoreEtAl2010Connecting",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex [macro HAFOCardGeometric]",
+      "line": 3
+    },
+    {
+      "key": "GuanXie2021Connecting",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex [macro HAFOCardGeometric]",
+      "line": 3
+    },
+    {
+      "key": "GodaraEtAl2018CriticalSurfaces",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex [macro HAFOCardGeometric]",
+      "line": 4
+    },
+    {
+      "key": "DazaEtAl2016BasinEntropy",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex [macro HAFOCardGeometric]",
+      "line": 5
+    },
+    {
+      "key": "DazaEtAl2015Wada",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex [macro HAFOCardGeometric]",
+      "line": 5
+    },
+    {
+      "key": "DazaEtAl2016BasinEntropy",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 60
+    },
+    {
+      "key": "DazaEtAl2015Wada",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 60
+    },
+    {
+      "key": "GodaraEtAl2018CriticalSurfaces",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 101
+    },
+    {
+      "key": "GilmoreEtAl2010Connecting",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 166
+    },
+    {
+      "key": "GuanXie2021Connecting",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 166
+    },
+    {
+      "key": "RoyRayChowdhury2024KCC",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 251
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 384
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 384
+    },
+    {
+      "key": "DoanKloeden2024Attractors",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 384
+    },
+    {
+      "key": "KhristenkoWohlmuth2023Rational",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 593
+    },
+    {
+      "key": "GodaraEtAl2018CriticalSurfaces",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 664
+    },
+    {
+      "key": "GilmoreEtAl2010Connecting",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 667
+    },
+    {
+      "key": "GuanXie2021Connecting",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 667
+    },
+    {
+      "key": "RoyRayChowdhury2024KCC",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 672
+    },
+    {
+      "key": "DellnitzHohmann1997Subdivision",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 675
+    },
+    {
+      "key": "KaliesEtAl2005ChainRecurrence",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 675
+    },
+    {
+      "key": "MischaikowEtAl2016Conley",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 675
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 680
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 680
+    },
+    {
+      "key": "DoanKloeden2024Attractors",
+      "file": "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "line": 680
+    },
+    {
+      "key": "datseris2022",
+      "file": "report_sections\\05_protocolos_experimentales.tex [macro HAFOCardProtocols]",
+      "line": 3
+    },
+    {
+      "key": "DazaEtAl2016BasinEntropy",
+      "file": "report_sections\\05_protocolos_experimentales.tex [macro HAFOCardProtocols]",
+      "line": 4
+    },
+    {
+      "key": "SprottXiong2015Basins",
+      "file": "report_sections\\05_protocolos_experimentales.tex [macro HAFOCardProtocols]",
+      "line": 5
+    },
+    {
+      "key": "DazaEtAl2015Wada",
+      "file": "report_sections\\05_protocolos_experimentales.tex [macro HAFOCardProtocols]",
+      "line": 5
+    },
+    {
+      "key": "DiethelmFordFreed2002",
+      "file": "report_sections\\05_protocolos_experimentales.tex",
+      "line": 104
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\05_protocolos_experimentales.tex",
+      "line": 212
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\05_protocolos_experimentales.tex",
+      "line": 241
+    },
+    {
+      "key": "gottwald2009",
+      "file": "report_sections\\05A_diagnosticos_espectrales.tex",
+      "line": 45
+    },
+    {
+      "key": "VallejoSanjuan2017Predictability",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex [macro HAFOCardReliability]",
+      "line": 4
+    },
+    {
+      "key": "DatserisParlitz2022Nonlinear",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex [macro HAFOCardReliability]",
+      "line": 7
+    },
+    {
+      "key": "Ott2002Chaos",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex [macro HAFOCardReliability]",
+      "line": 10
+    },
+    {
+      "key": "TelGruiz2006Chaotic",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex [macro HAFOCardReliability]",
+      "line": 11
+    },
+    {
+      "key": "Danca2016HiddenTransient",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex [macro HAFOCardReliability]",
+      "line": 14
+    },
+    {
+      "key": "DancaKuznetsov2018Lyapunov",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex [macro HAFOCardReliability]",
+      "line": 15
+    },
+    {
+      "key": "Sabatier2021InfiniteMemory",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex [macro HAFOCardReliability]",
+      "line": 16
+    },
+    {
+      "key": "VallejoSanjuan2017Predictability",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 18
+    },
+    {
+      "key": "DatserisParlitz2022Nonlinear",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 18
+    },
+    {
+      "key": "Ott2002Chaos",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 20
+    },
+    {
+      "key": "TelGruiz2006Chaotic",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 20
+    },
+    {
+      "key": "SunHeWang2022FractionalChaos",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 22
+    },
+    {
+      "key": "Sabatier2021InfiniteMemory",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 22
+    },
+    {
+      "key": "VallejoSanjuan2017Predictability",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 71
+    },
+    {
+      "key": "Ott2002Chaos",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 96
+    },
+    {
+      "key": "VallejoSanjuan2017Predictability",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 96
+    },
+    {
+      "key": "VallejoSanjuan2017Predictability",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 131
+    },
+    {
+      "key": "Lin2013GeneralizedGronwall",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 170
+    },
+    {
+      "key": "Sabatier2021InfiniteMemory",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 182
+    },
+    {
+      "key": "SunHeWang2022FractionalChaos",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 184
+    },
+    {
+      "key": "DancaKuznetsov2018Lyapunov",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 193
+    },
+    {
+      "key": "ClementeLopezEtAl2022Poincare",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 195
+    },
+    {
+      "key": "Ott2002Chaos",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 211
+    },
+    {
+      "key": "TelGruiz2006Chaotic",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 211
+    },
+    {
+      "key": "Danca2016HiddenTransient",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 296
+    },
+    {
+      "key": "GuanXie2025",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 299
+    },
+    {
+      "key": "Ott2002Chaos",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 319
+    },
+    {
+      "key": "TelGruiz2006Chaotic",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 319
+    },
+    {
+      "key": "Jost2005Dynamical",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 413
+    },
+    {
+      "key": "MischaikowEtAl2016Conley",
+      "file": "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "line": 413
+    },
+    {
+      "key": "Gomoyunov2018Convex",
+      "file": "report_sections\\21_campana_dinamica_geometrico_topologica.tex",
+      "line": 723
+    },
+    {
+      "key": "Leonov2013HiddenAttractors",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 10
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 10
+    },
+    {
+      "key": "Matignon1996",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 10
+    },
+    {
+      "key": "DiethelmFordFreed2002",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 10
+    },
+    {
+      "key": "bonani1999",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 10
+    },
+    {
+      "key": "rogov2019",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 10
+    },
+    {
+      "key": "sayed2020",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 12
+    },
+    {
+      "key": "sayed2020",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 37
+    },
+    {
+      "key": "bonani1999",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 39
+    },
+    {
+      "key": "rogov2019",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 39
+    },
+    {
+      "key": "Machado2015FDF",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 43
+    },
+    {
+      "key": "Prasad2015Perpetual",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 45
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2017",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 45
+    },
+    {
+      "key": "sayed2020",
+      "file": "report_sections\\10_propuestas_teoricas.tex",
+      "line": 290
+    },
+    {
+      "key": "DuanLanLi2022WeylCaputo",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 114
+    },
+    {
+      "key": "DoanKloeden2022Triangular",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 299
+    },
+    {
+      "key": "CuiKloedenXin2026CaputoDynamics",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 304
+    },
+    {
+      "key": "DancaFeckan2024MemoryPrinciple",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 311
+    },
+    {
+      "key": "Danca2026ImprovedLyapunov",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 311
+    },
+    {
+      "key": "StephensWanner2014IsolatingBlocks",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 320
+    },
+    {
+      "key": "DayJungeMischaikow2004InfiniteDimensional",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 322
+    },
+    {
+      "key": "JiangZhangZhangZhang2017FastCaputo",
+      "file": "report_sections\\25_contraste_metodologico_revision.tex",
+      "line": 329
+    },
+    {
+      "key": "LeonovKuznetsovVagaitsev2011",
+      "file": "reporte_maestro_atractores_ocultos.tex [macro HAFOCardCases]",
+      "line": 4
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "reporte_maestro_atractores_ocultos.tex [macro HAFOCardCases]",
+      "line": 4
+    },
+    {
+      "key": "KuznetsovEtAl2023ChuaExperiments",
+      "file": "reporte_maestro_atractores_ocultos.tex [macro HAFOCardCases]",
+      "line": 4
+    },
+    {
+      "key": "Danca2017",
+      "file": "reporte_maestro_atractores_ocultos.tex [macro HAFOCardCases]",
+      "line": 6
+    },
+    {
+      "key": "Danca2017HiddenFO",
+      "file": "reporte_maestro_atractores_ocultos.tex [macro HAFOCardCases]",
+      "line": 6
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "reporte_maestro_atractores_ocultos.tex [macro HAFOCardCases]",
+      "line": 6
+    },
+    {
+      "key": "munoz2018",
+      "file": "reporte_maestro_atractores_ocultos.tex [macro HAFOCardCases]",
+      "line": 7
+    },
+    {
+      "key": "wang2020",
+      "file": "reporte_maestro_atractores_ocultos.tex [macro HAFOCardCases]",
+      "line": 7
+    },
+    {
+      "key": "DudkowskiEtAl2016",
+      "file": "reporte_maestro_atractores_ocultos.tex [macro HAFOCardCases]",
+      "line": 8
+    },
+    {
+      "key": "GuanXie2025",
+      "file": "reporte_maestro_atractores_ocultos.tex [macro HAFOCardCases]",
+      "line": 8
+    },
+    {
+      "key": "kalman2019",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 394
+    },
+    {
+      "key": "matouk2023",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 549
+    },
+    {
+      "key": "matouk2023",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 919
+    },
+    {
+      "key": "scipy2020",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 974
+    },
+    {
+      "key": "Benettin1980a",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 987
+    },
+    {
+      "key": "henon1982",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 1060
+    },
+    {
+      "key": "gottwald2009",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 1062
+    },
+    {
+      "key": "pll2015",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 1255
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 1568
+    },
+    {
+      "key": "fischer2020",
+      "file": "report_sections\\08_enteros_reproducidos.tex",
+      "line": 1572
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\09_fraccionarios_no_chua.tex",
+      "line": 16
+    },
+    {
+      "key": "fischer2020",
+      "file": "report_sections\\09_fraccionarios_no_chua.tex",
+      "line": 19
+    },
+    {
+      "key": "kalman2019",
+      "file": "report_sections\\09A_bancos_dinamicos_no_chua.tex",
+      "line": 77
+    },
+    {
+      "key": "matouk2023",
+      "file": "report_sections\\09A_bancos_dinamicos_no_chua.tex",
+      "line": 156
+    },
+    {
+      "key": "pll2015",
+      "file": "report_sections\\09A_bancos_dinamicos_no_chua.tex",
+      "line": 317
+    },
+    {
+      "key": "DancaKuznetsov2018Lyapunov",
+      "file": "report_sections\\09A_bancos_dinamicos_no_chua.tex",
+      "line": 415
+    },
+    {
+      "key": "fischer2020",
+      "file": "report_sections\\09A_bancos_dinamicos_no_chua.tex",
+      "line": 572
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 447
+    },
+    {
+      "key": "Prasad2015Perpetual",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 557
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2017",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 557
+    },
+    {
+      "key": "DudkowskiPrasadKapitaniak2018",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 557
+    },
+    {
+      "key": "GilmoreEtAl2010Connecting",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 561
+    },
+    {
+      "key": "GuanXie2021Connecting",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 561
+    },
+    {
+      "key": "DiethelmFordFreed2002",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 564
+    },
+    {
+      "key": "CongTuan2017Nonlocal",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 567
+    },
+    {
+      "key": "DoanKloeden2021Semidynamical",
+      "file": "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "line": 567
+    },
+    {
+      "key": "PhamVolosKapitaniak2017Systems",
+      "file": "report_sections\\11_candidatos_compatibles.tex [macro HAFOCardCandidates]",
+      "line": 4
+    },
+    {
+      "key": "PhamEtAl2018HiddenAttractors",
+      "file": "report_sections\\11_candidatos_compatibles.tex [macro HAFOCardCandidates]",
+      "line": 5
+    },
+    {
+      "key": "WangKuznetsovChen2021Multistability",
+      "file": "report_sections\\11_candidatos_compatibles.tex [macro HAFOCardCandidates]",
+      "line": 6
+    },
+    {
+      "key": "munoz2018",
+      "file": "report_sections\\11_candidatos_compatibles.tex",
+      "line": 27
+    },
+    {
+      "key": "liu2021",
+      "file": "report_sections\\11_candidatos_compatibles.tex",
+      "line": 145
+    },
+    {
+      "key": "wang2020",
+      "file": "report_sections\\11_candidatos_compatibles.tex",
+      "line": 225
+    },
+    {
+      "key": "debbouche2021",
+      "file": "report_sections\\11_candidatos_compatibles.tex",
+      "line": 302
+    },
+    {
+      "key": "GuckenheimerHolmes1983",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardFuture]",
+      "line": 9
+    },
+    {
+      "key": "Jost2005Dynamical",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardFuture]",
+      "line": 11
+    },
+    {
+      "key": "Diethelm2010AnalysisFDE",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardFuture]",
+      "line": 17
+    },
+    {
+      "key": "OldhamSpanier1974Fractional",
+      "file": "report_sections\\14_guia_geometrica_topologica_entera.tex [macro HAFOCardFuture]",
+      "line": 18
+    },
+    {
+      "key": "LeonovKuznetsov2013",
+      "file": "report_sections\\07_discusion_conclusiones.tex",
+      "line": 6
+    },
+    {
+      "key": "KuznetsovEtAl2017",
+      "file": "report_sections\\07_discusion_conclusiones.tex",
+      "line": 6
+    },
+    {
+      "key": "Danca2017",
+      "file": "report_sections\\07_discusion_conclusiones.tex",
+      "line": 15
+    },
+    {
+      "key": "Wu2023ArctanChua",
+      "file": "report_sections\\07_discusion_conclusiones.tex",
+      "line": 27
+    }
+  ]
+}

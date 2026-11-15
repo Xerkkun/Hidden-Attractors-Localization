@@ -1,0 +1,1596 @@
+{
+  "selection_count": 15,
+  "new_for_report": 10,
+  "existing_anchors": 5,
+  "zotero_collection_count": 176,
+  "scispace_searches": 5,
+  "scope": "Seleccion de15 trabajos con alcance de lectura explicito;14 pertenecen al bib actual y Fazzino es candidato externo no citado. La seleccion no implica lectura integral.",
+  "papers": [
+    {
+      "key": "DoanKloeden2022Triangular",
+      "title": "Attractors of Caputo fractional differential equations with triangular vector fields",
+      "authors": "Doan, Thai Son; Kloeden, Peter E.",
+      "year": "2022",
+      "doi": "10.1007/s13540-022-00030-6",
+      "priority": "P1",
+      "in_report_bib": true,
+      "zotero_item_key": "B9PCIGHR",
+      "primary_url": "https://link.springer.com/article/10.1007/s13540-022-00030-6",
+      "full_text_consulted_url": "https://arxiv.org/pdf/2108.11715",
+      "scispace_url": "https://scispace.com/papers/attractors-of-caputo-fractional-differential-equations-with-30tbzwmm?utm_source=chatgpt&utm_medium=tool",
+      "reading_scope": "Texto primario PDF: introduccion, seccion3, Th3.1 y Remark3.3; pagina editorial y metadatos Crossref",
+      "reason": "Restringe equivalencia de conjuntos atractores a forma producto triangular g_i=h_i(x_<i)f_i(x_i), C1, disipacion global y no degeneracion.",
+      "limits": "No cubre triangular general ni sistemas Lure arbitrarios; Remark3.3 deja abierto el caso general. SciSpace atribuye incorrectamente John Wyver; autores primarios son Doan y Kloeden.",
+      "metadata": {
+        "title": [
+          "Attractors of Caputo fractional differential equations with triangular vector fields"
+        ],
+        "author": [
+          {
+            "given": "Thai Son",
+            "family": "Doan",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "given": "Peter E.",
+            "family": "Kloeden",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "container-title": [
+          "Fractional Calculus and Applied Analysis"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2022,
+              4
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2022,
+              4,
+              18
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2022,
+              4
+            ]
+          ]
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2022,
+              4
+            ]
+          ]
+        },
+        "volume": "25",
+        "issue": "2",
+        "page": "720-734",
+        "DOI": "10.1007/s13540-022-00030-6",
+        "type": "journal-article",
+        "URL": "https://doi.org/10.1007/s13540-022-00030-6"
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    },
+    {
+      "key": "DuanLanLi2022WeylCaputo",
+      "title": "A Comparative Study of Responses of Fractional Oscillator to Sinusoidal Excitation in the Weyl and Caputo Senses",
+      "authors": "Duan, Jun-Sheng; Lan, Yu-Jie; Li, Ming",
+      "year": "2022",
+      "doi": "10.3390/fractalfract6120692",
+      "priority": "P1",
+      "in_report_bib": true,
+      "zotero_item_key": "GJUF2J5T",
+      "primary_url": "https://www.mdpi.com/2504-3110/6/12/692",
+      "full_text_consulted_url": "https://www.mdpi.com/2504-3110/6/12/692",
+      "scispace_url": "https://scispace.com/papers/a-comparative-study-of-responses-of-fractional-oscillator-to-dp9ve696?utm_source=chatgpt&utm_medium=tool",
+      "reading_scope": "Texto editorial completo, secciones2-3, ec15-16 y52-54; abstract y ficha SciSpace; extract_data limitado contrastado con primaria",
+      "reason": "Proporciona ejemplo analitico de componente periodica Weyl mas transitorios exponenciales y algebraicos del IVP Caputo.",
+      "limits": "Oscilador lineal forzado; no demuestra existencia ni persistencia de un atractor no lineal autonomo localizado por balance armonico.",
+      "metadata": {
+        "title": [
+          "A Comparative Study of Responses of Fractional Oscillator to Sinusoidal Excitation in the Weyl and Caputo Senses"
+        ],
+        "author": [
+          {
+            "ORCID": "https://orcid.org/0000-0002-0986-1128",
+            "authenticated-orcid": false,
+            "given": "Jun-Sheng",
+            "family": "Duan",
+            "sequence": "first",
+            "affiliation": [
+              {
+                "name": "School of Sciences, Shanghai Institute of Technology, Shanghai 201418, China"
+              }
+            ],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "ORCID": "https://orcid.org/0000-0002-3502-9167",
+            "authenticated-orcid": false,
+            "given": "Yu-Jie",
+            "family": "Lan",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "School of Sciences, Shanghai Institute of Technology, Shanghai 201418, China"
+              }
+            ],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "ORCID": "https://orcid.org/0000-0002-2725-353X",
+            "authenticated-orcid": false,
+            "given": "Ming",
+            "family": "Li",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Ocean College, Zhejiang University, Zhoushan 316021, China"
+              },
+              {
+                "name": "Village 1, East China Normal University, Shanghai 200062, China"
+              }
+            ],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "container-title": [
+          "Fractal and Fractional"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2022,
+              11,
+              23
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2022,
+              11,
+              23
+            ]
+          ]
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2022,
+              11,
+              23
+            ]
+          ]
+        },
+        "volume": "6",
+        "issue": "12",
+        "page": "692",
+        "DOI": "10.3390/fractalfract6120692",
+        "type": "journal-article",
+        "link": [
+          {
+            "URL": "https://www.mdpi.com/2504-3110/6/12/692/pdf",
+            "content-type": "unspecified",
+            "content-version": "vor",
+            "intended-application": "similarity-checking"
+          }
+        ],
+        "URL": "https://doi.org/10.3390/fractalfract6120692"
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    },
+    {
+      "key": "OrtigueiraMachadoTrujillo2017Periodic",
+      "title": "Fractional derivatives and periodic functions",
+      "authors": "Ortigueira, Manuel D.; Machado, J. Tenreiro; Trujillo, Juan J.",
+      "year": "2017",
+      "doi": "10.1007/s40435-015-0215-9",
+      "priority": "P1",
+      "in_report_bib": true,
+      "zotero_item_key": "6CRPBB35",
+      "primary_url": "https://link.springer.com/article/10.1007/s40435-015-0215-9",
+      "full_text_consulted_url": "",
+      "scispace_url": "https://scispace.com/papers/fractional-derivatives-and-periodic-functions-34dmtj4rfz?utm_source=chatgpt&utm_medium=tool",
+      "reading_scope": "Resumen editorial y ficha SciSpace; metadatos Crossref. Texto de pago no leido.",
+      "reason": "Aclara la diferencia entre derivadas sobre R de una funcion periodica y operadores causales con terminal finito.",
+      "limits": "No citar hipotesis o demostraciones no consultadas. Publicacion online2015; volumen impreso2017.",
+      "metadata": {
+        "title": [
+          "Fractional derivatives and periodic functions"
+        ],
+        "author": [
+          {
+            "given": "Manuel D.",
+            "family": "Ortigueira",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "J. Tenreiro",
+            "family": "Machado",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Juan J.",
+            "family": "Trujillo",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "container-title": [
+          "International Journal of Dynamics and Control"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2015,
+              11,
+              3
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2015,
+              11,
+              3
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2017,
+              3
+            ]
+          ]
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2015,
+              11,
+              3
+            ]
+          ]
+        },
+        "volume": "5",
+        "issue": "1",
+        "page": "72-78",
+        "DOI": "10.1007/s40435-015-0215-9",
+        "type": "journal-article",
+        "URL": "https://doi.org/10.1007/s40435-015-0215-9"
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    },
+    {
+      "key": "StephensWanner2014IsolatingBlocks",
+      "title": "Rigorous Validation of Isolating Blocks for Flows and Their Conley Indices",
+      "authors": "Stephens, Thomas; Wanner, Thomas",
+      "year": "2014",
+      "doi": "10.1137/140971075",
+      "priority": "P1",
+      "in_report_bib": true,
+      "zotero_item_key": "2RUBVX3V",
+      "primary_url": "https://epubs.siam.org/doi/abs/10.1137/140971075",
+      "full_text_consulted_url": "https://conservancy.umn.edu/bitstreams/2341d42c-c65c-40e8-9abe-14e2a21791a8/download",
+      "scispace_url": "https://scispace.com/papers/rigorous-validation-of-isolating-blocks-for-flows-and-their-32j1387ztx?utm_source=chatgpt&utm_medium=tool",
+      "reading_scope": "Resumen editorial SIAM, ficha SciSpace y extraccion textual sobre bloques/salida; portada PDF institucional; demostracion completa no auditada.",
+      "reason": "Distingue calculo de indicadores geometricos de validacion por intervalos de bloques aislantes y conjuntos de salida.",
+      "limits": "El resultado trata flujos ODE; su transferencia a Caputo requiere evolucion en espacio de memoria y cotas para aproximaciones.",
+      "metadata": {
+        "title": [
+          "Rigorous Validation of Isolating Blocks for Flows and Their Conley Indices"
+        ],
+        "author": [
+          {
+            "given": "Thomas",
+            "family": "Stephens",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Thomas",
+            "family": "Wanner",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "container-title": [
+          "SIAM Journal on Applied Dynamical Systems"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2014,
+              1
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2014,
+              12,
+              10
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2014,
+              1
+            ]
+          ]
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2014,
+              1
+            ]
+          ]
+        },
+        "volume": "13",
+        "issue": "4",
+        "page": "1847-1878",
+        "DOI": "10.1137/140971075",
+        "type": "journal-article",
+        "URL": "https://doi.org/10.1137/140971075"
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    },
+    {
+      "key": "DayJungeMischaikow2004InfiniteDimensional",
+      "title": "A Rigorous Numerical Method for the Global Analysis of Infinite-Dimensional Discrete Dynamical Systems",
+      "authors": "Day, S.; Junge, O.; Mischaikow, K.",
+      "year": "2004",
+      "doi": "10.1137/030600210",
+      "priority": "P2",
+      "in_report_bib": true,
+      "zotero_item_key": "QH234K6K",
+      "primary_url": "https://epubs.siam.org/doi/10.1137/030600210",
+      "full_text_consulted_url": "",
+      "scispace_url": "https://scispace.com/papers/a-rigorous-numerical-method-for-the-global-analysis-of-1e19up425k?utm_source=chatgpt&utm_medium=tool",
+      "reading_scope": "Resumen y metadatos editoriales SIAM; texto completo no auditado.",
+      "reason": "Esquema de numerica rigurosa para mapas infinito-dimensionales mediante aproximaciones finitas, informacion analitica e indice de Conley.",
+      "limits": "No es un algoritmo listo para IVP Caputo; no trasladar las certificaciones del modelo Kot-Schaffer al software HAFO.",
+      "metadata": {
+        "title": [
+          "A Rigorous Numerical Method for the Global Analysis of Infinite-Dimensional Discrete Dynamical Systems"
+        ],
+        "author": [
+          {
+            "given": "S.",
+            "family": "Day",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "O.",
+            "family": "Junge",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "K.",
+            "family": "Mischaikow",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "container-title": [
+          "SIAM Journal on Applied Dynamical Systems"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2004,
+              1
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2006,
+              8,
+              7
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2004,
+              1
+            ]
+          ]
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2004,
+              1
+            ]
+          ]
+        },
+        "volume": "3",
+        "issue": "2",
+        "page": "117-160",
+        "DOI": "10.1137/030600210",
+        "type": "journal-article",
+        "link": [
+          {
+            "URL": "https://epubs.siam.org/doi/pdf/10.1137/030600210",
+            "content-type": "unspecified",
+            "content-version": "vor",
+            "intended-application": "similarity-checking"
+          }
+        ],
+        "URL": "https://doi.org/10.1137/030600210"
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    },
+    {
+      "key": "JiangZhangZhangZhang2017FastCaputo",
+      "title": "Fast Evaluation of the Caputo Fractional Derivative and Its Applications to Fractional Diffusion Equations",
+      "authors": "Jiang, Shidong; Zhang, Jiwei; Zhang, Qian; Zhang, Zhimin",
+      "year": "2017",
+      "doi": "10.4208/cicp.OA-2016-0136",
+      "priority": "P1",
+      "in_report_bib": true,
+      "zotero_item_key": "XX6VAAS3",
+      "primary_url": "https://digitalcommons.njit.edu/fac_pubs/9707/",
+      "full_text_consulted_url": "https://arxiv.org/pdf/1511.03453",
+      "scispace_url": "https://scispace.com/papers/fast-evaluation-of-the-caputo-fractional-derivative-and-its-3e1j5v4qwe?utm_source=chatgpt&utm_medium=tool",
+      "reading_scope": "PDF arXiv, seccion1 y formulacion del corte local/historia; resumen institucional y metadatos; extract_data sobre alcance.",
+      "reason": "Compresion SOE del nucleo con tolerancia explicita en [dt,T], manteniendo una aproximacion de toda la historia.",
+      "limits": "Error del nucleo y convergencia de difusion lineal no equivalen a shadowing o preservacion de atractores caoticos no lineales.",
+      "metadata": {
+        "title": [
+          "Fast Evaluation of the Caputo Fractional Derivative and Its Applications to Fractional Diffusion Equations"
+        ],
+        "author": [
+          {
+            "given": "Shidong",
+            "family": "Jiang",
+            "sequence": "first",
+            "affiliation": [
+              {
+                "id": [
+                  {
+                    "id": "https://ror.org/05e74xb87",
+                    "id-type": "ROR",
+                    "asserted-by": "publisher"
+                  }
+                ],
+                "name": "Department of Mathematical Science, New Jersey Institute of Technology, Newark, United States"
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Jiwei",
+            "family": "Zhang",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "id": [
+                  {
+                    "id": "https://ror.org/04tavf782",
+                    "id-type": "ROR",
+                    "asserted-by": "publisher"
+                  }
+                ],
+                "name": "Beijing Computational Science Research Center, Beijing, China"
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Qian",
+            "family": "Zhang",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "id": [
+                  {
+                    "id": "https://ror.org/04tavf782",
+                    "id-type": "ROR",
+                    "asserted-by": "publisher"
+                  }
+                ],
+                "name": "Beijing Computational Science Research Center, Beijing, China"
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Zhimin",
+            "family": "Zhang",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "id": [
+                  {
+                    "id": "https://ror.org/04tavf782",
+                    "id-type": "ROR",
+                    "asserted-by": "publisher"
+                  }
+                ],
+                "name": "Beijing Computational Science Research Center, Beijing, China"
+              },
+              {
+                "id": [
+                  {
+                    "id": "https://ror.org/01070mq45",
+                    "id-type": "ROR",
+                    "asserted-by": "publisher"
+                  }
+                ],
+                "name": "Department of Mathematics, Wayne State University, Detroit, United States"
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "container-title": [
+          "Communications in Computational Physics"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2018,
+              4,
+              9
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2018,
+              4,
+              9
+            ]
+          ]
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2018,
+              4,
+              9
+            ]
+          ]
+        },
+        "volume": "21",
+        "issue": "3",
+        "page": "650-678",
+        "DOI": "10.4208/cicp.oa-2016-0136",
+        "type": "journal-article",
+        "URL": "https://doi.org/10.4208/cicp.oa-2016-0136"
+      },
+      "metadata_year_correction": {
+        "year_used": 2017,
+        "primary_evidence": "CiCP21(3),650-678,March2017; NJIT primary institutional record publication_date2017-03-01",
+        "url": "https://digitalcommons.njit.edu/fac_pubs/9707/",
+        "crossref_issued_date": "2018-04-09",
+        "note": "Registry online/issued date conflicts with issue year. Use issue year2017."
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    },
+    {
+      "key": "DancaFeckan2024MemoryPrinciple",
+      "title": "Memory Principle of the MATLAB Code for Lyapunov Exponents of Fractional-Order",
+      "authors": "Danca, Marius-F.; Fečkan, Michal",
+      "year": "2024",
+      "doi": "10.1142/S0218127424501566",
+      "priority": "P1",
+      "in_report_bib": true,
+      "zotero_item_key": "HGIIK9L5",
+      "primary_url": "https://arxiv.org/abs/2406.04686",
+      "full_text_consulted_url": "https://arxiv.org/html/2406.04686v1",
+      "scispace_url": "https://scispace.com/papers/memory-principle-of-the-matlab-code-for-lyapunov-exponents-zpel5ony29d5?utm_source=chatgpt&utm_medium=tool",
+      "reading_scope": "Texto arXiv, secciones3.1-3.2, Prop3.4 y seccion4/Prop4.1 con llamada FDE12; editorial403, metadatos Crossref.",
+      "reason": "Identifica el codigo de LE2018 como algoritmo impulsivo de lower-limit cambiante.",
+      "limits": "Full memory en el articulo incluye memoria de cada segmento CLL; no prueba conservacion de la historia causal desde t0 ni cociclo clasico para el estado proyectado.",
+      "metadata": {
+        "title": [
+          "Memory Principle of the MATLAB Code for Lyapunov Exponents of Fractional-Order"
+        ],
+        "author": [
+          {
+            "ORCID": "https://orcid.org/0000-0001-7699-8709",
+            "authenticated-orcid": false,
+            "given": "Marius-F.",
+            "family": "Danca",
+            "sequence": "first",
+            "affiliation": [
+              {
+                "name": "STAR-UBB Institute, Bebes-Bolyai University, Cluj-Napoca, Romania"
+              },
+              {
+                "name": "Romanian Institute of Science and Technology, Cluj-Napoca, Romania"
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "ORCID": "https://orcid.org/0000-0002-7385-6737",
+            "authenticated-orcid": false,
+            "given": "Michal",
+            "family": "Fečkan",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Department of Mathematical Analysis and Numerical Mathematics, Faculty of Mathematics, Physics and Informatics, Comenius University in Bratislava, Bratislava, Slovakia"
+              },
+              {
+                "name": "Mathematical Institute of Slovak Academy of Sciences, Bratislava, Slovakia"
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "container-title": [
+          "International Journal of Bifurcation and Chaos"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2024,
+              8,
+              28
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2024,
+              8,
+              28
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2024,
+              9,
+              30
+            ]
+          ]
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2024,
+              8,
+              28
+            ]
+          ]
+        },
+        "volume": "34",
+        "issue": "12",
+        "article-number": "2450156",
+        "DOI": "10.1142/s0218127424501566",
+        "type": "journal-article",
+        "link": [
+          {
+            "URL": "https://www.worldscientific.com/doi/pdf/10.1142/S0218127424501566",
+            "content-type": "unspecified",
+            "content-version": "vor",
+            "intended-application": "similarity-checking"
+          }
+        ],
+        "URL": "https://doi.org/10.1142/s0218127424501566"
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    },
+    {
+      "key": "Danca2026ImprovedLyapunov",
+      "title": "Improved Matlab Code for Lyapunov Exponents of Fractional-Order Systems",
+      "authors": "Danca, Marius-F.",
+      "year": "2026",
+      "doi": "10.1142/S0218127426501725",
+      "priority": "P1",
+      "in_report_bib": true,
+      "zotero_item_key": "H5W9IPH2",
+      "primary_url": "https://arxiv.org/abs/2604.09334",
+      "full_text_consulted_url": "https://arxiv.org/html/2604.09334v1",
+      "scispace_url": "https://scispace.com/papers/improved-matlab-code-for-lyapunov-exponents-of-fractional-h4ekd91sye42?utm_source=chatgpt&utm_medium=tool",
+      "reading_scope": "Texto arXiv, secciones2-4, conclusion y descripcion QR/CLL; ficha SciSpace; metadatos editoriales via Crossref.",
+      "reason": "Comparador contemporaneo de QR mas integrador LIL para exponentes numericos de tiempo finito.",
+      "limits": "Seccion4 liga la memoria al marco impulsivo CLL de2024; mejora numerica no certifica exponente asintotico ni caos del IVP original.",
+      "metadata": {
+        "title": [
+          "Improved Matlab Code for Lyapunov Exponents of Fractional-Order Systems"
+        ],
+        "author": [
+          {
+            "ORCID": "https://orcid.org/0000-0001-7699-8709",
+            "authenticated-orcid": false,
+            "given": "Marius-F.",
+            "family": "Danca",
+            "sequence": "first",
+            "affiliation": [
+              {
+                "name": "STAR-UBB Institute, Babes-Bolyai University, Cluj-Napoca, Romania"
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "container-title": [
+          "International Journal of Bifurcation and Chaos"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2026,
+              7,
+              9
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2026,
+              7,
+              9
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2026,
+              9,
+              30
+            ]
+          ]
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2026,
+              7,
+              9
+            ]
+          ]
+        },
+        "volume": "36",
+        "issue": "12",
+        "article-number": "2650172",
+        "DOI": "10.1142/s0218127426501725",
+        "type": "journal-article",
+        "link": [
+          {
+            "URL": "https://www.worldscientific.com/doi/pdf/10.1142/S0218127426501725",
+            "content-type": "unspecified",
+            "content-version": "vor",
+            "intended-application": "similarity-checking"
+          }
+        ],
+        "URL": "https://doi.org/10.1142/s0218127426501725"
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    },
+    {
+      "key": "ZhuLi2026PeriodicAlmostPeriodic",
+      "title": "Fractional integrals and derivatives of periodic and almost periodic functions",
+      "authors": "Zhu, Sigang; Li, Hong-Xu",
+      "year": "2026",
+      "doi": "10.1007/s13540-026-00582-x",
+      "priority": "P2",
+      "in_report_bib": true,
+      "zotero_item_key": "5CPJ9E9K",
+      "primary_url": "https://link.springer.com/article/10.1007/s13540-026-00582-x",
+      "full_text_consulted_url": "",
+      "scispace_url": "",
+      "reading_scope": "Resumen editorial, referencias y metadatos Crossref; texto completo de pago no leido.",
+      "reason": "Actualiza resultados de periodicidad/asintoticidad para operadores Riemann-Liouville, Caputo y Liouville; diferencia funciones periodicas y casi periodicas.",
+      "limits": "No adoptar condiciones exactas sin consultar teoremas. El resumen advierte que media cero no basta automaticamente en el caso casi periodico.",
+      "metadata": {
+        "title": [
+          "Fractional integrals and derivatives of periodic and almost periodic functions"
+        ],
+        "author": [
+          {
+            "given": "Sigang",
+            "family": "Zhu",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "ORCID": "https://orcid.org/0000-0003-0871-6233",
+            "authenticated-orcid": false,
+            "given": "Hong-Xu",
+            "family": "Li",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "container-title": [
+          "Fractional Calculus and Applied Analysis"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2026,
+              9,
+              9
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2026,
+              9,
+              9
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2026,
+              10
+            ]
+          ]
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2026,
+              9,
+              9
+            ]
+          ]
+        },
+        "volume": "29",
+        "issue": "5",
+        "page": "3352-3381",
+        "DOI": "10.1007/s13540-026-00582-x",
+        "type": "journal-article",
+        "URL": "https://doi.org/10.1007/s13540-026-00582-x"
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    },
+    {
+      "key": "Fazzino2026MemoryLyapunovPreprint",
+      "title": "Lyapunov exponents of fractional-order systems: a definition from the diffusive representation, the ageing of memory, and what memory truncation measures",
+      "authors": "Fazzino, Stefano",
+      "year": "2026",
+      "doi": "10.5281/zenodo.23367741",
+      "priority": "DISCUSION",
+      "in_report_bib": false,
+      "zotero_item_key": "",
+      "primary_url": "https://zenodo.org/records/23367741",
+      "full_text_consulted_url": "",
+      "scispace_url": "https://scispace.com/papers/lyapunov-exponents-of-fractional-order-systems-a-definition-nwr2ye82x59i?utm_source=chatgpt&utm_medium=tool",
+      "reading_scope": "Metadatos oficiales Zenodo y DataCite; abstract/ficha SciSpace. Manuscrito y teoremas no auditados.",
+      "reason": "Candidato para contrastar la definicion del espectro en representacion difusiva y los efectos del truncamiento de memoria.",
+      "limits": "PREPRINT, no articulo arbitrado. SciSpace lo clasifica erroneamente como Journal Article y cita DOI de concepto/version anterior. No usar sus afirmaciones fuertes como demostraciones.",
+      "metadata": {
+        "title": [
+          "Lyapunov exponents of fractional-order systems: a definition from the diffusive representation, the ageing of memory, and what memory truncation measures"
+        ],
+        "author": [
+          {
+            "given": "Stefano",
+            "family": "Fazzino"
+          }
+        ],
+        "DOI": "10.5281/zenodo.23367741",
+        "published": {
+          "date-parts": [
+            [
+              2026,
+              10,
+              14
+            ]
+          ]
+        },
+        "type": "posted-content"
+      },
+      "in_zotero_library": false,
+      "in_thesis_collection": false
+    },
+    {
+      "key": "CongTuanTrinh2020Asymptotic",
+      "title": "On asymptotic properties of solutions to fractional differential equations",
+      "authors": "Cong, N.D.; Tuan, H.T.; Trinh, H.",
+      "year": "2020",
+      "doi": "10.1016/j.jmaa.2019.123759",
+      "priority": "ANCLA",
+      "in_report_bib": true,
+      "zotero_item_key": "VX8ZBT7X",
+      "primary_url": "https://arxiv.org/abs/1810.12520",
+      "full_text_consulted_url": "",
+      "scispace_url": "",
+      "reading_scope": "Resumen y metadatos oficiales arXiv; metadatos Crossref; texto de teoremas no auditado en esta revision.",
+      "reason": "Ancla para velocidades algebraicas y estabilidad Mittag-Leffler frente a interpretaciones exponenciales.",
+      "limits": "Mantener las hipotesis del resultado y no convertir una tasa de decaimiento a equilibrio en afirmacion universal sobre todo espectro caotico.",
+      "metadata": {
+        "title": [
+          "On asymptotic properties of solutions to fractional differential equations"
+        ],
+        "author": [
+          {
+            "given": "N.D.",
+            "family": "Cong",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "H.T.",
+            "family": "Tuan",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "ORCID": "https://orcid.org/0000-0003-3438-9969",
+            "authenticated-orcid": false,
+            "given": "H.",
+            "family": "Trinh",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "container-title": [
+          "Journal of Mathematical Analysis and Applications"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2020,
+              4
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2020,
+              4
+            ]
+          ]
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2020,
+              4
+            ]
+          ]
+        },
+        "volume": "484",
+        "issue": "2",
+        "page": "123759",
+        "article-number": "123759",
+        "DOI": "10.1016/j.jmaa.2019.123759",
+        "type": "journal-article",
+        "link": [
+          {
+            "URL": "https://api.elsevier.com/content/article/PII:S0022247X19310273?httpAccept=text/xml",
+            "content-type": "text/xml",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          },
+          {
+            "URL": "https://api.elsevier.com/content/article/PII:S0022247X19310273?httpAccept=text/plain",
+            "content-type": "text/plain",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          }
+        ],
+        "URL": "https://doi.org/10.1016/j.jmaa.2019.123759"
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    },
+    {
+      "key": "DoanKloeden2024Attractors",
+      "title": "Attractors of Caputo semi-dynamical systems",
+      "authors": "Doan, T. S.; Kloeden, P. E.",
+      "year": "2024",
+      "doi": "10.1007/s13540-024-00324-x",
+      "priority": "ANCLA",
+      "in_report_bib": true,
+      "zotero_item_key": "FKXTT7WM",
+      "primary_url": "https://link.springer.com/article/10.1007/s13540-024-00324-x",
+      "full_text_consulted_url": "",
+      "scispace_url": "",
+      "reading_scope": "Metadatos Crossref y referencia primaria contrastada en Cui2026; demostracion completa no auditada en esta revision.",
+      "reason": "Ancla existente para atractores del semisistema de Caputo en espacio funcional.",
+      "limits": "No identifica por si sola ocultedad en la proyeccion R^d; explicitar universo de atraccion y topologia.",
+      "metadata": {
+        "title": [
+          "Attractors of Caputo semi-dynamical systems"
+        ],
+        "author": [
+          {
+            "given": "T. S.",
+            "family": "Doan",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "P. E.",
+            "family": "Kloeden",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "container-title": [
+          "Fractional Calculus and Applied Analysis"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2024,
+              8,
+              7
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2024,
+              8,
+              7
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2024,
+              10
+            ]
+          ]
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2024,
+              8,
+              7
+            ]
+          ]
+        },
+        "volume": "27",
+        "issue": "5",
+        "page": "2305-2316",
+        "DOI": "10.1007/s13540-024-00324-x",
+        "type": "journal-article",
+        "link": [
+          {
+            "URL": "https://link.springer.com/content/pdf/10.1007/s13540-024-00324-x.pdf",
+            "content-type": "application/pdf",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          },
+          {
+            "URL": "https://link.springer.com/article/10.1007/s13540-024-00324-x/fulltext.html",
+            "content-type": "text/html",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          },
+          {
+            "URL": "https://link.springer.com/content/pdf/10.1007/s13540-024-00324-x.pdf",
+            "content-type": "application/pdf",
+            "content-version": "vor",
+            "intended-application": "similarity-checking"
+          }
+        ],
+        "URL": "https://doi.org/10.1007/s13540-024-00324-x"
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    },
+    {
+      "key": "Vigue2019",
+      "title": "Continuation of periodic solutions for systems with fractional derivatives",
+      "authors": "Vigué, Pierre; Vergez, Christophe; Lombard, Bruno; Cochelin, Bruno",
+      "year": "2019",
+      "doi": "10.1007/s11071-018-4577-3",
+      "priority": "ANCLA",
+      "in_report_bib": true,
+      "zotero_item_key": "KLLCDTIT",
+      "primary_url": "https://link.springer.com/article/10.1007/s11071-018-4577-3",
+      "full_text_consulted_url": "",
+      "scispace_url": "https://scispace.com/papers/continuation-of-periodic-solutions-for-systems-with-120r0tsvq7?utm_source=chatgpt&utm_medium=tool",
+      "reading_scope": "Ficha SciSpace y metadatos Crossref; texto de demostraciones no releido.",
+      "reason": "Ancla ya presente para continuacion de estados periodicos con derivadas fraccionarias.",
+      "limits": "Precisar operador e inicializacion; no identificar sin prueba una orbita periodica estacionaria con IVP Caputo causal.",
+      "metadata": {
+        "title": [
+          "Continuation of periodic solutions for systems with fractional derivatives"
+        ],
+        "author": [
+          {
+            "given": "Pierre",
+            "family": "Vigué",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Christophe",
+            "family": "Vergez",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Bruno",
+            "family": "Lombard",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Bruno",
+            "family": "Cochelin",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "container-title": [
+          "Nonlinear Dynamics"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2018,
+              10,
+              1
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2018,
+              10,
+              1
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2019,
+              1
+            ]
+          ]
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2018,
+              10,
+              1
+            ]
+          ]
+        },
+        "volume": "95",
+        "issue": "1",
+        "page": "479-493",
+        "DOI": "10.1007/s11071-018-4577-3",
+        "type": "journal-article",
+        "URL": "https://doi.org/10.1007/s11071-018-4577-3"
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    },
+    {
+      "key": "Haacker2026",
+      "title": "Hill-type stability analysis of periodic solutions of fractional-order differential equations",
+      "authors": "Haacker, Paul-Erik; Leine, Remco I.; Chaudhary, Renu; Diethelm, Kai; Schmidt, André; Hashemishahraki, Safoura",
+      "year": "2026",
+      "doi": "10.1007/s11071-025-12196-8",
+      "priority": "ANCLA",
+      "in_report_bib": true,
+      "zotero_item_key": "6AYMMXJ8",
+      "primary_url": "https://link.springer.com/article/10.1007/s11071-025-12196-8",
+      "full_text_consulted_url": "",
+      "scispace_url": "https://scispace.com/papers/hill-type-stability-analysis-of-periodic-solutions-of-yc5c5tj8uq6b?utm_source=chatgpt&utm_medium=tool",
+      "reading_scope": "Ficha SciSpace y metadatos Crossref; texto de teoremas no releido.",
+      "reason": "Ancla existente para estabilidad tipo Hill de soluciones periodicas en el problema fraccionario adecuado.",
+      "limits": "Aplicar solo tras declarar estado periodico e historia; no sustituye estabilidad global de un candidato Caputo.",
+      "metadata": {
+        "title": [
+          "Hill-type stability analysis of periodic solutions of fractional-order differential equations"
+        ],
+        "author": [
+          {
+            "given": "Paul-Erik",
+            "family": "Haacker",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Remco I.",
+            "family": "Leine",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Renu",
+            "family": "Chaudhary",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Kai",
+            "family": "Diethelm",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "André",
+            "family": "Schmidt",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Safoura",
+            "family": "Hashemishahraki",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "container-title": [
+          "Nonlinear Dynamics"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2026,
+              3
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2026,
+              3,
+              5
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2026,
+              3
+            ]
+          ]
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2026,
+              3
+            ]
+          ]
+        },
+        "volume": "114",
+        "issue": "5",
+        "article-number": "334",
+        "DOI": "10.1007/s11071-025-12196-8",
+        "type": "journal-article",
+        "link": [
+          {
+            "URL": "https://link.springer.com/content/pdf/10.1007/s11071-025-12196-8.pdf",
+            "content-type": "application/pdf",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          },
+          {
+            "URL": "https://link.springer.com/article/10.1007/s11071-025-12196-8",
+            "content-type": "text/html",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          },
+          {
+            "URL": "https://link.springer.com/content/pdf/10.1007/s11071-025-12196-8.pdf",
+            "content-type": "application/pdf",
+            "content-version": "vor",
+            "intended-application": "similarity-checking"
+          }
+        ],
+        "URL": "https://doi.org/10.1007/s11071-025-12196-8"
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    },
+    {
+      "key": "CuiKloedenXin2026CaputoDynamics",
+      "title": "Analysis of the dynamics of Caputo fractional differential equations",
+      "authors": "Cui, Hongyong; Kloeden, Peter E.; Xin, Jie",
+      "year": "2026",
+      "doi": "10.48550/arXiv.2607.05799",
+      "priority": "ANCLA",
+      "in_report_bib": true,
+      "zotero_item_key": "9BHM4B7U",
+      "primary_url": "https://arxiv.org/abs/2607.05799",
+      "full_text_consulted_url": "https://arxiv.org/html/2607.05799v1",
+      "scispace_url": "",
+      "reading_scope": "Texto arXiv, ec1.1-1.2, secciones3-4, Th4.5-4.9 y Remark4.7.",
+      "reason": "Marco funcional, universo D y proyeccion Omega*={f(0):f en A}.",
+      "limits": "PREPRINTv1. Th4.6 da atractor PRECOMPACTO; Remark4.7 deja compactitud ABIERTA. No declarar compacto ni concluir hiddenness de una malla finita.",
+      "metadata": {
+        "title": [
+          "Analysis of the dynamics of Caputo fractional differential equations"
+        ],
+        "author": [
+          {
+            "given": "Hongyong",
+            "family": "Cui"
+          },
+          {
+            "given": "Peter E.",
+            "family": "Kloeden"
+          },
+          {
+            "given": "Jie",
+            "family": "Xin"
+          }
+        ],
+        "DOI": "10.48550/arXiv.2607.05799",
+        "type": "posted-content"
+      },
+      "in_zotero_library": true,
+      "in_thesis_collection": true
+    }
+  ],
+  "current_report_bib_selected_count": 14,
+  "current_candidate_outside_report_count": 1
+}

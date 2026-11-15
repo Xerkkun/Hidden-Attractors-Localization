@@ -1,0 +1,113 @@
+\section{Discusión de resultados}
+\label{sec:discusion}
+
+La localización depende de la estructura del sistema y de la respuesta que
+buscamos. En los sistemas de Lur'e, el balance armónico relaciona la
+frecuencia y la amplitud con la transferencia del bloque lineal. Cuando la
+ganancia requerida pertenece al rango de la función descriptiva, esa
+relación proporciona una semilla. La continuación permite transportarla
+hasta el campo de interés. En \(q=1\), esta construcción recupera el método
+de Leonov--Kuznetsov \cite{LeonovKuznetsov2013,KuznetsovEtAl2017}.
+
+Las obstrucciones de Kalman--Fitts y PLL muestran por qué necesitamos rutas
+complementarias. En Kalman--Fitts, la ganancia que exige el cierre directo
+es negativa y queda fuera del rango de la función descriptiva de \(\tanh\).
+El mapa de conmutación y la homotopía signo--tanh permiten localizar el
+ciclo por otra vía. En PLL, la parte imaginaria de la transferencia
+conserva su signo a frecuencia positiva; la continuación de la ganancia
+de lazo y el retorno sobre el cilindro aprovechan la geometría de fase
+que el cierre directo no resuelve.
+
+En PLL localizamos numéricamente un ciclo de cuenca oculta: las 96
+condiciones próximas a los equilibrios no alcanzan el ciclo y sus destinos
+coinciden en la comparación Python--Julia. MAVPD presenta un ciclo periódico
+externo para \(\xi=3.1\), con \(0/108\) contactos locales, y un régimen
+caótico para \(\xi=2.85\), \(\gamma=0.15380379839949113\), con
+\(0/112\) contactos. La comparación independiente coincide en las 112
+decisiones del segundo caso. El retorno periódico del primer caso permite
+distinguirlo de la cuasiperiodicidad atribuida en la referencia. Al cambiar
+a \(\xi=3.5\), aparecen 24 contactos: la respuesta pasa a ser accesible
+desde las vecindades ensayadas. Este control muestra que la clasificación
+depende de los parámetros y de la cuenca, no sólo de la forma visual de
+la trayectoria.
+
+Los puntos perpetuos también distinguen destinos dentro de un mismo
+modelo. En las ocho repeticiones de MAVPD, la ruta PP produce 91 contactos
+interiores de 96 semillas y cinco transitorios; la función descriptiva
+reparte sus contactos entre las referencias interior y exterior. Una
+comparación restringida al atractor externo perdería esa diferencia.
+En PLL, PP obtiene seis contactos por cada doce semillas en todas las
+repeticiones, mientras que el muestreo uniforme varía entre cuatro y siete.
+La estabilidad de una ruta y su cobertura son propiedades diferentes; los
+resultados no establecen una ventaja uniforme de un generador.
+
+Para \(0<q<1\), la construcción frecuencial y la evolución causal cumplen
+funciones distintas. El operador de Liouville--Weyl proporciona un predictor
+armónico estacionario; el PVI de Caputo conserva la contribución de la
+historia desde un terminal inferior fijo. En Chua PWL, la semilla sesgada
+se transporta a través de 21 etapas con una sola historia. La respuesta
+autónoma tiene una frecuencia dominante consistente con la reconstrucción
+de los parámetros de Danca \cite{Danca2017}. El reinicio independiente
+reproduce esa frecuencia, con una diferencia máxima de entropía espectral
+de \(2.2243710\times10^{-4}\). La recurrencia ADM local de Wu
+\cite{Wu2023ArctanChua}, en cambio, reinicia la memoria en cada intervalo
+y produce dos respuestas simétricas regulares. La coincidencia de una
+figura o de una frecuencia no identifica estos dos problemas de evolución.
+
+\ifHAFOBasinMaterial
+En el sondeo PWL, las \(7200\) condiciones del dominio local
+\(r\leq0.01\) no alcanzan la referencia. Los radios \(0.03\) y \(0.1\)
+añaden \(6600\) condiciones sin contacto y el radio \(0.3\) produce
+37 contactos de \(3600\). Así observamos un acceso a la respuesta al
+alejarnos de los equilibrios. En c590, los conteos son \(0/8400\) hasta
+\(r=0.3\), \(22/2400\) en \(r=1\) y \(588/2700\) en \(r=2\),
+con 131 divergencias en este último bloque. Estos sondeos describen el
+acceso muestreado; no fijan una frontera exacta entre radios que no se
+han explorado de forma continua.
+\fi
+
+En c590, la sensibilidad a la discretización afecta la interpretación de
+esos contactos. El contraste L1--PECE de memoria completa sólo coincide en
+siete de 18 comparaciones de destino, y cuatro de seis PVI cambian alguna
+etiqueta al variar método o paso. La semilla de referencia con PECE y
+\(h=0.0025\) alcanza la norma de parada en \(t=176.05\). Por ello,
+el comportamiento aperiódico de una trayectoria a paso fijo no permite
+concluir una cuenca robusta respecto del refinamiento. El caso aporta
+información sobre sensibilidad numérica y sobre la necesidad de contrastar
+la trayectoria antes de interpretar sus mapas como cuencas asintóticas.
+
+\section{Conclusiones}
+\label{sec:conclusiones}
+
+La representación de Lur'e, el balance armónico y la continuación forman
+una ruta de localización que se complementa con la geometría del campo.
+Las derivaciones establecen cuándo una ganancia y una semilla son
+compatibles con las ecuaciones; las integraciones y los sondeos establecen
+qué respuesta alcanzan bajo las condiciones ensayadas. Esta separación
+permite interpretar tanto los éxitos como las obstrucciones sin exigir
+que un mismo generador funcione en todas las familias.
+
+Los resultados enteros de PLL y MAVPD proporcionan ejemplos numéricos de
+atractores ocultos periódicos y caóticos, con sondeos próximos a todos los
+equilibrios y comparaciones independientes de destino. Kalman--Fitts amplía
+la localización a un caso en el que falla el cierre armónico directo.
+Los controles MAVPD \(\xi=3.5\) y Lorenz generalizado muestran, a su vez,
+que una semilla algebraicamente válida puede alcanzar una respuesta
+autoexcitada o aproximarse a un equilibrio.
+
+La adaptación a Caputo exige conservar la historia durante la continuación.
+El reinicio puntual cambia el PVI, incluso en una ecuación lineal escalar.
+La ruta PWL sesgada produce una oscilación regular y un dominio muestreado
+sin contactos locales; el contraste c590 muestra que el paso y el método
+pueden cambiar el destino calculado. El análisis de memoria y de error
+forma, por tanto, parte de la metodología de localización.
+
+Quedan problemas matemáticos concretos: justificar la persistencia de las
+respuestas fraccionarias bajo refinamiento, caracterizar su atracción en
+un espacio de historias y construir regiones invariantes que expliquen la
+separación de cuencas. El ciclo de
+\cref{subsec:guide-hidden-cycle-topology} muestra cómo un argumento
+topológico puede completar la localización con una separación demostrada.
+Extender esa relación a los sistemas con memoria requiere controlar la
+historia y la aproximación del operador, además de sus proyecciones
+finitas en el espacio de estados.

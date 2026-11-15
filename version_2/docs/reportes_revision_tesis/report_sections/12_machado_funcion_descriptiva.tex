@@ -1,0 +1,508 @@
+\section[Función descriptiva fraccionaria de Machado]
+{Función descriptiva fraccionaria de Machado y transferencia sesgada}
+\label{sec:machado-fdf}
+
+\HAFOCardMachado
+
+Se distinguen dos operaciones: la incorporación de un desplazamiento continuo
+en una realización de Lur'e y la elevación de una función descriptiva a un orden
+real en el sentido propuesto por Machado \cite{Machado2015FDF}. Ninguna de las dos
+operaciones cambia por sí sola el orden de Caputo del bloque dinámico.
+
+\subsection{Transferencia, sesgo y transferencia incremental}
+\label{sec:biased-transfer-distinction}
+
+Considérese la realización conmensurable
+\begin{equation}
+ {}^{\mathrm C}D_{0+}^{q}x(t)
+ =Px(t)+b\,\psi(\sigma(t)),
+ \qquad
+ \sigma(t)=r^{\mathsf T}x(t),
+ \qquad 0<q\leq1.
+ \label{eq:machado-lure}
+\end{equation}
+La transferencia entrada--salida del bloque lineal es
+\begin{equation}
+ W_q(s)=r^{\mathsf T}(s^qI-P)^{-1}b=G(s^q).
+ \label{eq:machado-Wq}
+\end{equation}
+Para el predictor armónico se fija la rama principal
+\begin{equation}
+ (\mathrm i\omega)^q
+ =\omega^q
+ \left[
+ \cos\!\left(\frac{\pi q}{2}\right)
+ +\mathrm i\sin\!\left(\frac{\pi q}{2}\right)
+ \right],
+ \qquad \omega>0.
+ \label{eq:machado-iomegaq}
+\end{equation}
+
+Un sesgo en la entrada no crea automáticamente otra transferencia. Si
+\begin{equation}
+ \sigma(t)=\sigma_0+A\cos(\omega t),
+ \label{eq:biased-input}
+\end{equation}
+el bloque lineal continúa siendo \(W_q\); lo que cambia son el valor medio y
+el fundamental de \(\psi(\sigma_0+A\cos\vartheta)\). La expresión
+``transferencia sesgada'' designa de forma abreviada el \emph{cierre con función
+descriptiva sesgada}; no define un nuevo operador lineal.
+
+Existe, sin embargo, un tercer objeto legítimo. Si \(\psi\) es diferenciable
+en un punto de operación \(\bar\sigma\), la linealización incremental es
+\begin{equation}
+ P_{\bar\sigma}=P+b\psi'(\bar\sigma)r^{\mathsf T},
+ \qquad
+ W_{q,\bar\sigma}^{\mathrm{inc}}(s)
+ =r^{\mathsf T}(s^qI-P_{\bar\sigma})^{-1}b.
+ \label{eq:incremental-biased-transfer}
+\end{equation}
+Esta transferencia describe perturbaciones pequeñas alrededor del punto de
+operación constante cuando existe un equilibrio \(\bar x\) con
+\(r^{\mathsf T}\bar x=\bar\sigma\). Para comprobarlo, ponga
+\(\xi=x-\bar x\) y
+\[
+ \psi_{\mathrm{res}}(u)
+ =\psi(\bar\sigma+u)-\psi(\bar\sigma)-\psi'(\bar\sigma)u.
+\]
+La cancelación \(P\bar x+b\psi(\bar\sigma)=0\) da
+\( {}^{\mathrm C}D_{0+}^{q}\xi
+=P_{\bar\sigma}\xi+b\psi_{\mathrm{res}}(r^{\mathsf T}\xi)\).
+Si \(\bar x\) no es equilibrio, queda el término afín
+\(P\bar x+b\psi(\bar\sigma)\), que debe conservarse.
+La función descriptiva del residuo es la de la característica desplazada
+menos \(\psi'(\bar\sigma)\); usar con esta transferencia una función
+descriptiva que aún contenga esa pendiente contaría la contribución dos veces.
+En una frontera PWA puede no existir la derivada clásica: se deben
+analizar las pendientes regionales y los cruces o justificar un marco
+de derivadas generalizadas. Elegir una pendiente sin esa justificación
+no produce una linealización clásica única.
+
+El efecto de absorber la pendiente también puede verse en la resolvente.
+Sea \(a=\psi'(\bar\sigma)\) y \(M=s^qI-P\), con \(M\) invertible.
+Para \(1-aW_q(s)\ne0\), la identidad de Sherman--Morrison da
+\[
+ (M-a b r^{\mathsf T})^{-1}
+ =M^{-1}+\frac{aM^{-1}br^{\mathsf T}M^{-1}}{1-aW_q(s)}.
+\]
+Al multiplicar por \(r^{\mathsf T}\) y \(b\), resulta
+\begin{equation}
+ W_{q,\bar\sigma}^{\mathrm{inc}}(s)
+ =W_q(s)+\frac{aW_q(s)^2}{1-aW_q(s)}
+ =\frac{W_q(s)}{1-aW_q(s)}.
+ \label{eq:machado-transferencia-incremental-resolvente}
+\end{equation}
+Si \(N_b\) es la ganancia de la característica desplazada, el residuo
+no lineal tiene ganancia \(N_b-a\). Por tanto,
+\[
+ 1-W_{q,\bar\sigma}^{\mathrm{inc}}(s)\,[N_b-a]
+ =\frac{1-W_q(s)N_b}{1-aW_q(s)}.
+\]
+Fuera de los polos indicados, ambos cierres tienen las mismas raíces. Esta
+identidad muestra por qué el cambio de bloque lineal exige restar la misma
+pendiente al coeficiente de Fourier.
+
+\subsection{Dos fraccionalidades distintas}
+
+La fraccionalidad de \cref{eq:machado-Wq} pertenece al bloque dinámico: se
+sustituye \(s\) por \(s^q\). Es distinta de la
+\emph{función descriptiva fraccionaria} propuesta por Machado. En nuestra
+notación, la operación central de esa propuesta es
+\begin{equation}
+ {}^{\mu}\!N(A,\omega)
+ =\bigl[N(A,\omega)\bigr]^\mu.
+ \label{eq:machado-published}
+\end{equation}
+El artículo original estudia la potencia de funciones descriptivas complejas,
+principalmente para backlash, propone una interpretación análoga a elementos
+fraccionarios y discute una realización aproximada mediante asociaciones de
+elementos con backlash \cite{Machado2015FDF}. La realizabilidad general no se
+establece como teorema. Por tanto, \cref{eq:machado-published} no transforma
+automáticamente una no linealidad estática cualquiera en una no linealidad
+fraccionaria físicamente equivalente.
+
+En particular,
+\begin{equation}
+ q\neq\mu\quad\text{en general}.
+ \label{eq:q-not-mu}
+\end{equation}
+El parámetro \(q\) es el orden de la derivada del sistema; \(\mu\) recorre una
+familia de ganancias armónicas. No hay fundamento para imponer \(\mu=q\), ni
+aparece en el cierre un producto de órdenes \(q\mu\).
+
+\subsection{Función descriptiva física y convención fasorial}
+
+Para una entrada centrada
+\[
+ \sigma(t)=A\cos(\omega t),\qquad A>0,
+\]
+sea \(Y_1(A,\omega)\) el fasor fundamental de la salida. Adoptamos
+\begin{equation}
+ Y_1(A,\omega)
+ =\frac{1}{\pi}\int_{0}^{2\pi}
+ y(\vartheta;A,\omega)e^{-\mathrm i\vartheta}\,d\vartheta,
+ \qquad
+ N(A,\omega)=\frac{Y_1(A,\omega)}{A}.
+ \label{eq:machado-classical-df}
+\end{equation}
+Si \(\psi\) es estática, impar y sin memoria,
+\(y(\vartheta;A)=\psi(A\cos\vartheta)\), la parte seno se anula y
+\begin{equation}
+ N(A)=\frac{1}{\pi A}\int_{0}^{2\pi}
+ \psi(A\cos\vartheta)\cos\vartheta\,d\vartheta\in\mathbb R.
+ \label{eq:machado-real-df}
+\end{equation}
+Si hay histéresis, impacto o un estado interno, \(Y_1\) puede depender de
+\(\omega\), de la órbita periódica interna y de su prehistoria. Sustituirlo por
+\cref{eq:machado-real-df} sería entonces una pérdida de modelo.
+
+\subsection{Potencias complejas, hojas y unidades}
+
+Sea
+\[
+ N(A,\omega)=\rho(A,\omega)e^{\mathrm i\phi(A,\omega)},
+ \qquad \rho>0.
+\]
+La potencia compleja es multivaluada:
+\begin{equation}
+ \bigl[N(A,\omega)\bigr]_{\ell}^{\mu}
+ =\rho^\mu
+ \exp\!\left\{\mathrm i\mu[\phi+2\pi\ell]\right\},
+ \qquad \ell\in\mathbb Z.
+ \label{eq:machado-multivalued}
+\end{equation}
+La rama principal es
+\begin{equation}
+ \bigl[N(A,\omega)\bigr]_{\mathrm{pr}}^{\mu}
+ =\exp\!\left[\mu\operatorname{Log}N(A,\omega)\right],
+ \qquad \operatorname{Arg}N\in(-\pi,\pi].
+ \label{eq:machado-principal}
+\end{equation}
+Cuando la curva cruza \(( -\infty,0]\), la continuación requiere desenvolver la
+fase, fijar una hoja y registrar los cruces del corte, en lugar de aplicar la
+rama principal punto a punto.
+
+Para un DF real hay tres casos:
+\begin{enumerate}
+ \item Si \(N>0\), existe una rama real positiva única.
+ \item Si \(N=0\) y \(\mu>0\), puede extenderse por continuidad con
+       \(0^\mu=0\), pero \(\operatorname{Log}N\) no existe y la sensibilidad
+       es singular para \(0<\mu<1\).
+ \item Si \(N<0\) y \(\mu\notin\mathbb Z\), la rama principal es compleja.
+       Algunos exponentes racionales con denominador impar admiten una raíz
+       real, que no tiene por qué coincidir con la rama principal.
+\end{enumerate}
+
+También existe una restricción dimensional. Si \(N\) tiene unidades,
+\(N^\mu\) cambia las unidades. Con una escala positiva \(N_\star\) de las mismas
+unidades se define
+\begin{equation}
+ N_{\mu,N_\star}(A,\omega)
+ =N_\star\left[\frac{N(A,\omega)}{N_\star}\right]^\mu.
+ \label{eq:machado-normalized}
+\end{equation}
+La normalización adoptada en los ejemplos equivale a \(N_\star=1\); presupone,
+por tanto, que la función descriptiva fue adimensionalizada.
+
+Esta escala también controla la equivalencia entre realizaciones. Para
+\(a>0\), el cambio
+\(\widetilde b=ab\), \(\widetilde\psi=\psi/a\) conserva el campo
+\(PX+b\psi(r^{\mathsf T}X)\). La transferencia y el coeficiente físico
+se transforman como
+\[
+ \widetilde W_q=aW_q,\qquad \widetilde N=N/a,
+ \qquad \widetilde W_q\widetilde N=W_qN.
+\]
+Para conservar también el cierre auxiliar se transforma la escala mediante
+\(\widetilde N_\star=N_\star/a\). Entonces
+\begin{equation}
+ \widetilde N_{\mu,\widetilde N_\star}
+ =\frac{N_\star}{a}
+ \left[\frac{N/a}{N_\star/a}\right]^\mu
+ =\frac{N_{\mu,N_\star}}{a},
+ \label{eq:machado-scale-covariance}
+\end{equation}
+y se mantiene
+\(\widetilde W_q\widetilde N_{\mu,\widetilde N_\star}
+=W_qN_{\mu,N_\star}\), con la misma hoja porque el cociente
+normalizado no cambia. En cambio, una potencia sin escala da
+\(\widetilde W_q\widetilde N^\mu=a^{1-\mu}W_qN^\mu\): para
+\(\mu\ne1\), su resultado depende del reparto arbitrario de ganancia.
+La especificación de \(N_\star\) forma parte del método y de la
+comparación entre realizaciones.
+
+\subsection{Familia auxiliar normalizada sobre la rama positiva}
+
+Sobre la rama real positiva se define
+\begin{equation}
+ N_\mu^{(+)}(A)=N(A)^\mu,
+ \qquad N(A)>0,\quad \mu>0,
+ \label{eq:hafo-machado}
+\end{equation}
+para \(N(A)>0\) y \(\mu>0\). Esta familia es aplicable al Chua no suave bajo
+esa restricción; quedan fuera \(N(A)\leq0\), \(\mu\leq0\), una función
+descriptiva compleja y la rama arctangente aquí considerada. Para
+\(\mu\neq1\),
+\begin{equation}
+ N_\mu^{(+)}(A)
+ \neq\frac{1}{\pi A}\int_0^{2\pi}
+ \psi(A\cos\vartheta)\cos\vartheta\,d\vartheta
+ \label{eq:machado-not-physical-fourier}
+\end{equation}
+en general. En consecuencia, el nombre preciso es
+\emph{familia auxiliar inspirada en Machado}: modifica la ecuación de
+amplitud y diversifica semillas, pero no es el coeficiente de Fourier físico
+de la no linealidad original.
+
+\subsection{Cierre centrado: residuo físico y residuo auxiliar}
+
+El cierre físico de primer armónico es
+\begin{equation}
+ R_{\mathrm{fis}}(A,\omega;q)
+ =1-W_q(\mathrm i\omega)N(A,\omega)=0.
+ \label{eq:machado-physical-closure}
+\end{equation}
+La familia auxiliar usa
+\begin{equation}
+ R_{\mu}(A,\omega;q)
+ =1-W_q(\mathrm i\omega)N_{\mu,N_\star}(A,\omega)=0.
+ \label{eq:machado-aux-closure}
+\end{equation}
+Ambos coinciden idénticamente para \(\mu=1\); para \(\mu\ne1\) no
+son equivalentes en general, aunque pueden coincidir en valores particulares,
+como \(N=N_\star\). Si \(N(A)>0\) es
+real, el cierre auxiliar se separa en
+\begin{align}
+ \operatorname{Im}W_q(\mathrm i\omega)&=0,
+ \label{eq:machado-frequency}\\
+ k(\omega)=\frac{1}{\operatorname{Re}W_q(\mathrm i\omega)}&>0,
+ \label{eq:machado-gain}\\
+ N(A)&=N_\star\left(\frac{k}{N_\star}\right)^{1/\mu}.
+ \label{eq:machado-amplitude}
+\end{align}
+Para \(N_\star=1\), se resuelve \(N(A)=k^{1/\mu}\). La evaluación incluye la
+pertenencia del objetivo al rango de \(N\). Si \(N\) es diferenciable,
+\(N'(A)\ne0\), y se mantienen fijos \(k\) y \(N_\star\), derivar
+\(\mu\log[N(A)/N_\star]=\log(k/N_\star)\) da primero
+\[
+ \log\frac{N(A)}{N_\star}
+ +\mu\frac{N'(A)}{N(A)}\frac{\dd A}{\dd\mu}=0.
+\]
+Despejando la derivada de la amplitud obtenemos
+\begin{equation}
+ \frac{dA}{d\mu}
+ =-\frac{N(A)\log[N(A)/N_\star]}{\mu N'(A)},
+ \label{eq:machado-sensitivity}
+\end{equation}
+El crecimiento de este cociente mide la sensibilidad de la amplitud a
+\(\mu\). Cerca de \(N'(A)=0\) debe revisarse la invertibilidad de la
+ecuación de amplitud; en \(N=0\) la formulación logarítmica deja de
+estar definida. Si el numerador y el denominador se anulan a la vez,
+la fórmula por sí sola no decide el condicionamiento.
+
+Cuantificamos la diferencia entre ambos cierres mediante
+\begin{align}
+ \rho_{\mathrm{aux}}
+ &=\left|1-W_q(\mathrm i\omega)N_{\mu,N_\star}(A,\omega)\right|,
+ \label{eq:machado-rho-aux}\\
+ \rho_{\mathrm{fis}}
+ &=\left|1-W_q(\mathrm i\omega)N(A,\omega)\right|.
+ \label{eq:machado-rho-phys}
+\end{align}
+Un \(\rho_{\mathrm{aux}}\) pequeño no implica un \(\rho_{\mathrm{fis}}\)
+pequeño. Si el cierre auxiliar es exacto, \(W_qN_{\mu,N_\star}=1\),
+la diferencia física se expresa directamente como
+\begin{equation}
+ R_{\mathrm{fis}}
+ =1-\frac{N}{N_{\mu,N_\star}}
+ =1-\left(\frac{N}{N_\star}\right)^{1-\mu}
+ \quad\text{en la rama real positiva}.
+ \label{eq:machado-defecto-fisico-en-raiz-auxiliar}
+\end{equation}
+Así, un cierre auxiliar preciso puede apartarse mucho del físico cuando
+\(N/N_\star\) está lejos de uno. La igualdad \(\mu=1\), o el valor
+particular \(N=N_\star\), anula ese defecto.
+
+Para reconstruir una semilla sustituta se forma
+\begin{equation}
+ P_k=P+bkr^{\mathsf T},\qquad
+ \lambda=(\mathrm i\omega)^q,\qquad
+ P_kv=\lambda v,\qquad r^{\mathsf T}v=1,
+ \label{eq:machado-modal}
+\end{equation}
+y
+\begin{equation}
+ x_{\mathrm{seed}}=A\operatorname{Re}(ve^{\mathrm i\theta_0}).
+ \label{eq:machado-seed}
+\end{equation}
+Es una semilla del sustituto linealizado por \(k\), no una solución armónica
+exacta del PVI causal de Caputo.
+
+\subsection{Cierre sesgado de Machado}
+
+Para \cref{eq:biased-input}, los coeficientes físicos son
+\begin{align}
+ \Psi_0(\sigma_0,A)
+ &=\frac{1}{2\pi}\int_0^{2\pi}
+ \psi(\sigma_0+A\cos\vartheta)\,d\vartheta,
+ \label{eq:machado-biased-dc}\\
+ Y_1(\sigma_0,A)
+ &=\frac{1}{\pi}\int_0^{2\pi}
+ \psi(\sigma_0+A\cos\vartheta)e^{-\mathrm i\vartheta}\,d\vartheta,
+ \label{eq:machado-biased-y1}\\
+ N_b(\sigma_0,A)&=\frac{Y_1(\sigma_0,A)}{A}.
+ \label{eq:machado-biased-df}
+\end{align}
+El cierre continuo permanece físico:
+\begin{equation}
+ \sigma_0-W_q(0)\Psi_0(\sigma_0,A)=0.
+ \label{eq:machado-biased-dc-closure}
+\end{equation}
+Una familia auxiliar sesgada posible es
+\begin{equation}
+ N_{\mu,b,N_\star}(\sigma_0,A)
+ =N_\star\left[\frac{N_b(\sigma_0,A)}{N_\star}\right]^\mu,
+ \label{eq:machado-biased-family}
+\end{equation}
+con hoja fijada, y el cierre sustituto
+\begin{equation}
+ 1-W_q(\mathrm i\omega)N_{\mu,b,N_\star}(\sigma_0,A)=0.
+ \label{eq:machado-biased-closure}
+\end{equation}
+El valor medio físico \(\Psi_0\), que entra en el equilibrio afín, conserva su
+valor sin elevarse a \(\mu\). También se evalúa
+\begin{equation}
+ \rho_{\mathrm{fis},b}
+ =\left|1-W_q(\mathrm i\omega)N_b(\sigma_0,A)\right|.
+ \label{eq:machado-biased-physical-residual}
+\end{equation}
+Las evaluaciones sesgadas usan \(\mu=1\), correspondiente a la familia
+sesgada clásica. La aplicación de \cref{eq:machado-biased-family} con
+\(\mu\neq1\) requiere evaluar separadamente el cierre auxiliar y el físico.
+
+\subsection[Chua PWL, q=0.9998]
+{Chua PWL con \(q=0.9998\)}
+
+Para
+\[
+ \alpha=8.4562,\quad \beta=12.0732,\quad \gamma=0.0052,
+ \quad m_1=-1.1468,
+ \quad \Delta=m_0-m_1=0.97,
+\]
+se usa
+\begin{equation}
+ P=\begin{pmatrix}
+ -\alpha(1+m_1)&\alpha&0\\
+ 1&-1&1\\
+ 0&-\beta&-\gamma
+ \end{pmatrix},\qquad
+ b=\begin{pmatrix}-\alpha\\0\\0\end{pmatrix},\qquad
+ r=\begin{pmatrix}1\\0\\0\end{pmatrix}.
+ \label{eq:machado-chua-realization}
+\end{equation}
+La no linealidad residual es
+\(\psi(\sigma)=\Delta\operatorname{sat}(\sigma)\), con
+\begin{equation}
+ N(A)=\begin{cases}
+ \Delta,&0<A\leq1,\\[1mm]
+ \displaystyle\frac{2\Delta}{\pi}
+ \left[\arcsin\!\left(\frac1A\right)
+ +\frac{\sqrt{A^2-1}}{A^2}\right],&A>1.
+ \end{cases}
+ \label{eq:machado-chua-df}
+\end{equation}
+La derivación respecto de la amplitud da
+\begin{equation}
+ N'(A)=-\frac{4\Delta\sqrt{A^2-1}}{\pi A^3}<0,
+ \qquad A>1.
+ \label{eq:machado-chua-monotone}
+\end{equation}
+
+En la rama \(\omega_0=2.0402860510795615\),
+\begin{align}
+ W_q(\mathrm i\omega_0)
+ &=4.761387970782572-1.52\times10^{-13}\mathrm i,\\
+ k&=0.21002279296212067.
+\end{align}
+La referencia clásica \(\mu=1\) da
+\(A_{\mathrm{cl}}=5.851767785486093\). Para \(\mu=2\), se obtiene
+\begin{equation}
+ A_2=2.628433514775448,
+ \quad N(A_2)=0.458282437981291,
+ \quad N(A_2)^2=0.21002279296207582.
+\end{equation}
+Por tanto,
+\begin{align}
+ \rho_{\mathrm{aux}}&=2.16\times10^{-13},\\
+ \rho_{\mathrm{fis}}&=1.182060487425029.
+ \label{eq:machado-two-residuals-example}
+\end{align}
+El cierre sustituto es preciso, pero el balance físico del Chua original no
+se satisface. La rama \(\mu=2\) sólo justifica una condición inicial diferente
+para la integración causal posterior.
+
+En el ejemplo, \(1-N(A_2)/N(A_2)^2=1-1/N(A_2)\) reproduce el
+residuo físico de \cref{eq:machado-two-residuals-example}. El error de
+reconstrucción modal mide otra igualdad, \((P_k-\lambda I)v=0\), y
+no se combina con estos residuos: una semilla puede reconstruir con precisión
+el modo del auxiliar y conservar un defecto físico de orden uno.
+
+\subsection{Aplicabilidad y comparación de semillas}
+
+La construcción original es especialmente pertinente para backlash, fricción
+o histéresis con una función descriptiva compleja y una fase continua
+\cite{DuarteMachado2009Coulomb,Machado2015FDF}. Para una característica
+estática real, la rama positiva y monótona permite variar amplitudes sin
+ambigüedad de hoja, siempre que la ganancia sea adimensional o esté
+normalizada por \(N_\star\). El valor \(\mu=1\) proporciona el control
+clásico de esa misma realización.
+
+La derivación cambia cuando \(N\) se anula, cambia de signo o atraviesa el
+corte logarítmico. La resonancia intensa, los impactos y una respuesta de
+banda ancha también pueden hacer insuficiente el primer armónico. En una
+realización MIMO, una potencia funcional matricial requiere definir el
+espectro, las ramas y los posibles bloques de Jordan; no coincide con elevar
+cada entrada de la matriz a una potencia escalar.
+
+En Chua PWL centrado empleamos la familia positiva como diversificador de
+amplitudes. Su uso en Chua arctangente, Kalman--Fitts o MAVPD constituye una
+construcción adicional que exige justificar su ganancia y su rama. En PLL,
+\(2J_1(A)/A\) cambia de signo y tiene ceros: el dominio real positivo se
+divide en intervalos separados, o se continúa una rama compleja explícita.
+
+La comparación parte de las integrales físicas \(N\), \(\Psi_0\) y
+\(N_b\), y fija \(q,\mu,N_\star\) y la hoja antes de resolver las
+ecuaciones. Además de \(\rho_{\mathrm{aux}}\) y
+\(\rho_{\mathrm{fis}}\), la distorsión de la no linealidad se mide por
+\[
+ H_{\mathrm{NL}}=
+ \frac{(\sum_{n\ge2}|Y_n|^2)^{1/2}}{|Y_1|},\qquad Y_1\ne0.
+\]
+El bloque lineal filtra cada armónico por separado. Si las sumas convergen y
+\(W_q(\mathrm i\omega)Y_1\ne0\), la distorsión de la salida es
+\begin{equation}
+ H_{\mathrm{salida}}=
+ \frac{\left(\sum_{n\ge2}|W_q(\mathrm in\omega)Y_n|^2\right)^{1/2}}
+ {|W_q(\mathrm i\omega)Y_1|}.
+ \label{eq:machado-distorsion-salida-filtrada}
+\end{equation}
+Una distorsión elevada puede exigir más armónicos aunque la ecuación auxiliar
+se resuelva con precisión.
+
+Las semillas clásica, sesgada, multiharmónica, perpetua y aleatoria se
+comparan con la misma asignación de integraciones. En cada caso integramos
+el campo original con terminal inferior, prehistoria, paso y horizonte
+comunes. El refinamiento de paso y horizonte separa el efecto de la amplitud
+inicial de las diferencias del método numérico; los destinos y los sondeos
+de cuenca determinan después la utilidad dinámica de cada semilla.
+
+El balance con \(s^q\) sigue siendo un predictor estacionario de tipo
+Liouville--Weyl. En un PVI causal de Caputo,
+\[
+ \mathcal L\{{}^{\mathrm C}D^qx\}
+ =s^qX(s)-s^{q-1}x(0),
+\]
+de modo que una semilla sinusoidal no es por sí misma una solución periódica
+exacta desde \(t=0\). Machado complementa la función descriptiva clásica, el
+cierre sesgado y la continuación; no reemplaza la memoria causal ni las
+pruebas de cuenca.

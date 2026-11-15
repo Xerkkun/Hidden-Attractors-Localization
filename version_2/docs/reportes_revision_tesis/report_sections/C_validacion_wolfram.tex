@@ -1,0 +1,185 @@
+\section{Identidades de transferencia, memoria y geometría}
+\label{app:wolfram}
+
+Las realizaciones de Lur'e permiten expresar el campo mediante matrices y
+no linealidades explícitas. Su consistencia se comprueba sustituyendo la
+realización en el campo original y simplificando la diferencia.
+
+\subsection{Identidades verificadas}
+
+Las identidades fundamentales son:
+\begin{enumerate}
+ \item igualdad entre el campo original y la forma de Lur'e
+ \(PX+b\psi(r^{\T}X)\);
+ \item identidad de la transferencia
+\(r^{\T}(\zeta I-P)^{-1}b=-\alpha Q(\zeta)/\Delta_\ell(\zeta)\);
+ \item identidad del determinante del sistema auxiliar obtenida mediante el
+ lema del determinante;
+ \item ecuación escalar de los equilibrios, jacobiano y polinomio
+ característico;
+ \item forma cerrada de la función descriptiva;
+ \item sustitución de \(\zeta=(\ii\omega)^q\) en la rama principal;
+ \item residuos numéricos de los equilibrios y márgenes de Matignon.
+\end{enumerate}
+
+En la familia con saturación también se comprueba la transformación modal
+\begin{equation}
+P_0S=SH_q,\qquad
+H_q=
+\begin{bmatrix}
+\zeta_r&-\zeta_i&0\\
+\zeta_i& \zeta_r&0\\
+0&0&-d
+\end{bmatrix},
+\label{eq:wolfram_similitud}
+\end{equation}
+y se calcula la semilla como \(A_0S_{\cdot1}\). En la familia con arctangente
+se integra simbólicamente la primera armónica y se simplifica hasta la forma
+cerrada de \cref{eq:df_arctan}. Para c590, la semilla se obtiene mediante búsqueda entera acotada y
+refinamiento de Caputo. La identidad de función descriptiva caracteriza la
+familia arctangente, independientemente del procedimiento de selección.
+
+\subsection{Composición temporal y memoria}
+
+La expansión
+\[
+ E_q(\lambda h^q)=1+\frac{\lambda h^q}{\Gamma(1+q)}+O(h^{2q})
+\]
+permite comparar dos evoluciones de duración \(h\). Para \(0<q<1\) y
+\(\lambda\ne0\),
+\[
+ E_q\bigl(\lambda(2h)^q\bigr)-E_q(\lambda h^q)^2
+ =\frac{\lambda(2^q-2)}{\Gamma(1+q)}h^q+O(h^{2q}).
+\]
+El coeficiente principal es distinto de cero, pues \(2^q<2\). Por tanto,
+la diferencia no se anula para todo \(h>0\) suficientemente pequeño y la ley
+de semigrupo puntual falla. Una evaluación concreta ilustra su magnitud.
+
+Para
+\[
+ q=\frac45,\qquad \lambda=-\frac45,\qquad
+ t=\frac35,\qquad s=\frac7{10},
+\]
+se obtuvo
+\begin{align}
+ E_q\!\left(\lambda(t+s)^q\right)
+ &=
+ 0.3911882069642177396\ldots,\\
+ E_q(\lambda t^q)E_q(\lambda s^q)
+ &=
+ 0.3209479300285948495\ldots,
+\end{align}
+con residuo \(0.0702402769356228901\ldots\). Por tanto, la solución de Mittag--Leffler no satisface la ley de semigrupo
+temporal sobre el estado puntual. Para \(q=1\), la identidad exponencial
+restablece dicha ley. En cambio, la integral fraccionaria satisface
+\[
+ I^\beta I^\alpha t^\mu=I^{\alpha+\beta}t^\mu
+\]
+para \(\alpha,\beta>0\) y \(\mu>-1\), con terminal inferior cero. En efecto,
+el cambio \(s=tu\) y la integral beta dan
+\begin{align*}
+ I^\alpha t^\mu
+ &=\frac{t^{\mu+\alpha}}{\Gamma(\alpha)}
+   \int_0^1(1-u)^{\alpha-1}u^\mu\,\mathrm du
+ =\frac{\Gamma(\mu+1)}{\Gamma(\mu+\alpha+1)}t^{\mu+\alpha},\\
+ I^\beta I^\alpha t^\mu
+ &=\frac{\Gamma(\mu+1)}{\Gamma(\mu+\alpha+1)}
+   \frac{\Gamma(\mu+\alpha+1)}{\Gamma(\mu+\alpha+\beta+1)}
+   t^{\mu+\alpha+\beta}
+ =I^{\alpha+\beta}t^\mu.
+\end{align*}
+Esta composición se refiere al
+\emph{orden del operador}; no expresa evolución temporal.
+
+En el campo escalar \(f(x)=\lambda x\), comenzamos con la función
+constante \(x^{[0]}(t)=x_0\). La primera iteración de Picard da
+\[
+ x^{[1]}(t)=x_0+I^q(\lambda x_0)
+ =x_0+\frac{\lambda x_0t^q}{\Gamma(1+q)}.
+\]
+La segunda sustituye este resultado en la integral:
+\begin{align*}
+ x^{[2]}(t)
+ &=x_0+I^q\!\left(\lambda x_0+
+                  \frac{\lambda^2x_0t^q}{\Gamma(1+q)}\right)\\
+ &=x_0+\frac{\lambda x_0t^q}{\Gamma(1+q)}
+       +\frac{\lambda^2x_0}{\Gamma(1+q)}
+         \frac{\Gamma(1+q)t^{2q}}{\Gamma(1+2q)}\\
+ &=x_0\left[1+\frac{\lambda t^q}{\Gamma(1+q)}
+               +\frac{\lambda^2t^{2q}}{\Gamma(1+2q)}\right].
+\end{align*}
+Al restarla de \(x_0E_q(\lambda t^q)\), los tres términos mostrados se
+cancelan. El resto comienza en
+\(x_0\lambda^3t^{3q}/\Gamma(1+3q)\), de modo que
+\[
+ \lim_{h\to0^+}\frac{x_0E_q(\lambda h^q)-x^{[2]}(h)}{h^{3q}}
+ =\frac{x_0\lambda^3}{\Gamma(1+3q)}.
+\]
+El refinamiento \(h=1/10,1/20,1/40,1/80\) permite contrastar ese término
+principal con la evaluación numérica.
+
+En geometría entera, un equilibrio no degenerado \(e\) tiene índice
+\(\operatorname{sgn}\det J_f(e)\). Los valores de los casos considerados son:
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Caso & determinantes evaluados & índices locales \\
+\midrule
+Chua PWL & \(-84.035507517056\), \(15.037737580544\)
+ & \((-1,1,1)\)\\
+MAVPD & \(2000,-4000,-4000\) & \((1,-1,-1)\)\\
+PLL & \(2758.72946512,-2758.72946512\) & \((1,-1)\)\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Estas comprobaciones determinan identidades, residuos e índices locales. Un
+certificado global de grado de Brouwer requeriría una región acotada y la
+ausencia de ceros en su frontera. Las trayectorias, cuencas, atractores,
+ocultedad, entropía y caos requieren las campañas dinámicas y las hipótesis de
+atracción y perfiles admisibles de la \cref{sec:geometria-topologia-caputo}.
+En particular, la \cref{prop:geofo-full-space-obstruction} descarta la
+atracción de una vecindad abierta en todo el espacio de términos libres; una
+identidad simbólica no elimina esa obstrucción.
+
+\subsection{Propiedades del localizador geométrico--topológico}
+
+La expansión de Picard--Caputo y las leyes de transformación de la
+\cref{sec:localizacion-geometrico-topologica} conducen a las siguientes
+propiedades:
+\begin{enumerate}
+ \item la covariancia de la curva de arranque transportada y, por separado,
+ el defecto al recalcular sus coeficientes a partir del campo transformado:
+ $(a_q-b_q)D^2g[F,F]$. El contraejemplo con $q=1/2$ produce
+ $(0,4-8/\pi)\ne0$, mientras la aceleración covariante de la curva transportada
+ es nula;
+ \item las identidades racionales de $\nabla V\cdot F$ y del resto no negativo
+ en la \cref{prop:geofo-lorenz-boundedness}. La comparación de Caputo y la
+ continuación global se justifican en la demostración de esa proposición;
+ \item las superficies regionales de aceleración de Chua PWL;
+ \item las superficies de aceleración de MAVPD y la inclusión de sus puntos
+ perpetuos en la curva conectante;
+ \item la aceleración en forma compañera y los seis menores de rango de
+ Kalman--Fitts;
+ \item las superficies de aceleración y la ecuación de curva conectante del
+ PLL;
+ \item la identidad del segundo invariante KCC del PLL y los signos
+ \[
+ P(\theta_f,0)=-1642.024105242218\ldots<0,
+ \qquad
+ P(\theta_s,0)=3069.171079266960\ldots>0;
+ \]
+ \item los determinantes, simetrías, raíces y residuos de Chua arctangente,
+ Lorenz generalizado, Rabinovich--Fabrikant y Muñoz--Pacheco.
+\end{enumerate}
+El signo de una curvatura KCC, la anulación de un menor o una raíz de
+\(J_FF\) son propiedades algebraicas locales. Por separado no demuestran que
+exista un atractor, que sea caótico ni que su cuenca sea oculta. Esas preguntas
+corresponden a la campaña dinámica de la \cref{sec:campana-gt}.
+
+La validación algebraica comprueba las operaciones que enlazan
+\cref{eq:chua_no_suave,eq:chua_arctan} con las ecuaciones auxiliares. La
+caracterización dinámica requiere además los PVI, los controles de paso y los
+sondeos descritos en \cref{sec:integracion_continuacion,sec:protocolos,sec:resultados}.
+La comparación de discretizaciones de \cref{sec:correcciones-noviembre}
+permite examinar cómo esas operaciones se reflejan en los destinos calculados.

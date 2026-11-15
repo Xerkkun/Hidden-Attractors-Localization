@@ -1,0 +1,127 @@
+{
+  "descripcion": "Evaluación de funciones escalares; no se integraron trayectorias.",
+  "dimensiones_cm": [
+    15,
+    7.25
+  ],
+  "fuente_parametros": "02_modelos_y_fundamentos.tex",
+  "fuente_sha256": "f97429d86cf92659e965a7b2efb0072348336ccd024058b5acf5aa1fa33c6eca",
+  "script_sha256": "668927cd242b1cbfe6d2c872dbaef9f76763823e184739b11b8f2a1aa5afeaad",
+  "metodo_raices": "scipy.optimize.brentq",
+  "casos": [
+    {
+      "caso": "PWL nominal",
+      "parametros": {
+        "nombre": "PWL nominal",
+        "tipo": "pwl",
+        "alpha": 8.4562,
+        "beta": 12.0732,
+        "gamma": 0.0052,
+        "m0": -0.1768,
+        "m1": -1.1468,
+        "etiqueta_fuente": "eq:parametros_enteros"
+      },
+      "raices": [
+        -6.588307886538865,
+        0.0,
+        6.588307886538865
+      ],
+      "residuos_G": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "intervalo_brentq_positivo": [
+        6.552517720264219,
+        6.605564764552024
+      ],
+      "limites_x": [
+        -8.433034094769747,
+        8.433034094769747
+      ],
+      "limites_y": [
+        -0.9626402908994567,
+        0.9626402908994567
+      ]
+    },
+    {
+      "caso": "Wu: arctangente",
+      "parametros": {
+        "nombre": "Wu: arctangente",
+        "tipo": "arctan",
+        "alpha": 8.4562,
+        "beta": 12.0732,
+        "gamma": 0.0052,
+        "a1": 0.4,
+        "a2": -1.5585,
+        "rho": 1.0,
+        "etiqueta_fuente": "eq:parametros_wu"
+      },
+      "raices": [
+        -0.6096791169752989,
+        0.0,
+        0.6096791169752989
+      ],
+      "residuos_G": [
+        3.1086244689504383e-15,
+        0.0,
+        -3.1086244689504383e-15
+      ],
+      "intervalo_brentq_positivo": [
+        0.6072837998322808,
+        0.612200171218097
+      ],
+      "limites_x": [
+        -0.7803892697283825,
+        0.7803892697283825
+      ],
+      "limites_y": [
+        -0.06954538902713561,
+        0.06954538902713561
+      ]
+    },
+    {
+      "caso": "c590: arctangente",
+      "parametros": {
+        "nombre": "c590: arctangente",
+        "tipo": "arctan",
+        "alpha": 21.8493569066,
+        "beta": 19.0818408409,
+        "gamma": 0.007378012,
+        "a1": 0.0422897934,
+        "a2": -3.3367815123,
+        "rho": 1.7984259333,
+        "etiqueta_fuente": "eq:parametros_c590"
+      },
+      "raices": [
+        -4.64940551363956,
+        0.0,
+        4.64940551363956
+      ],
+      "residuos_G": [
+        8.881784197001252e-16,
+        0.0,
+        -8.881784197001252e-16
+      ],
+      "intervalo_brentq_positivo": [
+        4.632686548435055,
+        4.670191266315677
+      ],
+      "limites_x": [
+        -5.951239057458637,
+        5.951239057458637
+      ],
+      "limites_y": [
+        -2.9757343399595295,
+        2.9757343399595295
+      ]
+    }
+  ],
+  "salidas": [
+    {
+      "path": "equilibrios_reduccion_escalar.pdf",
+      "sha256": "e717137866507b3b8a6e5ef9027b1db649a0541798024c359547428bd38811e6",
+      "bytes": 15262
+    }
+  ]
+}

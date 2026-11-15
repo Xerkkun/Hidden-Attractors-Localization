@@ -1,0 +1,311 @@
+\section{Fundamentos analíticos y geométricos de la localización}
+\label{sec:ruta-biblioteca-local-drive}
+
+La localización de un atractor combina operaciones que pertenecen a teorías
+distintas. El álgebra lineal determina equilibrios y modos locales; Fourier
+proporciona una aproximación armónica; la teoría de ecuaciones diferenciales
+permite interpretar la trayectoria; y la geometría de cuencas relaciona esa
+trayectoria con otras respuestas del sistema. En orden fraccionario se añade
+la memoria: el valor actual del estado no contiene, en general, toda la
+información necesaria para continuar una solución.
+
+\subsection{Dependencias entre los fundamentos}
+\label{sec:ruta-unica-estudio}
+
+El resolvente de una matriz exige conocer su espectro; una transferencia
+fraccionaria añade la elección de una rama compleja; y el balance armónico
+usa después ambas construcciones. Un mapa de Poincaré presupone existencia
+y unicidad del flujo, además de transversalidad. Estas dependencias explican
+por qué una identidad algebraica y una conclusión sobre la cuenca requieren
+argumentos diferentes.
+
+\begin{longtable}{@{}L{0.21\linewidth}L{0.34\linewidth}L{0.37\linewidth}@{}}
+\caption{Fundamentos y problemas de localización.}
+\label{tab:ruta-unica-biblioteca}\\
+\toprule
+Fundamento & Construcción & Aplicación\\
+\midrule
+\endfirsthead
+\toprule
+Fundamento & Construcción & Aplicación\\
+\midrule
+\endhead
+Álgebra lineal & Jacobiano, espectro y resolvente. & Equilibrios, estabilidad y transferencia.\\
+Análisis de operadores & Integrales beta y transformadas. & Volterra y respuesta de Caputo.\\
+Fourier y variable compleja & Rama de $s^q$ y convolución armónica. & Semilla y balance con sesgo.\\
+Teoría de EDO & Existencia y ecuación variacional. & Flujo y sensibilidad inicial.\\
+Geometría dinámica & Retorno y variedades invariantes. & Ciclos y separatrices.\\
+Topología & Grado y conjuntos aislantes. & Existencia de dinámica invariante.\\
+Memoria & Perfiles de historia. & Continuación causal y cuencas funcionales.\\
+Análisis numérico & Refinamiento y comparación independiente. & Persistencia de los resultados.\\
+\bottomrule
+\end{longtable}
+
+El cálculo multivariable y las EDO se desarrollan en
+Kantorovich~\cite{Kantorovich2022Fundamentals}, pp.\ 243--760; el álgebra
+espectral, el análisis complejo, Fourier y Laplace se reúnen en
+\cite{Kantorovich2024Advanced}, pp.\ 1--717. Los ejercicios de
+Cicogna~\cite{Cicogna2020Exercises}, pp.\ 57--127, relacionan transformadas,
+distribuciones y representación frecuencial. Para la dinámica no lineal,
+Wimberger~\cite{Wimberger2022Nonlinear}, pp.\ 9--152, conecta sistemas
+disipativos y formulación geométrica.
+
+\subsection{Definición, inicialización y respuesta fraccionaria}
+
+\begin{table}[H]
+\centering
+\caption{Perspectivas analíticas del cálculo fraccionario.}
+\label{tab:ruta-frac-books}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.24\textwidth}L{0.29\textwidth}Y@{}}
+\toprule
+Fuente & Desarrollo analítico & Relación con el problema dinámico \\
+\midrule
+Oliveira \cite{Oliveira2019SolvedFractional} &
+Funciones especiales (pp.\ 17--67), Mittag--Leffler (69--113), transformadas
+integrales (115--167), derivadas fraccionarias (169--222) y aplicaciones
+(223--307). &
+Es la fuente de trabajo algebraico: Gamma, Mittag--Leffler, Laplace,
+funciones de Green, ecuaciones integrales de Volterra y ejercicios con
+solución. \\
+Herrmann \cite{Herrmann2014Fractional} &
+Operadores fraccionarios y semigrupo en el orden (caps.\ 3 y 5), oscilador
+fraccionario (cap.\ 6), no localidad y memoria (cap.\ 8), y formalismos de
+simetría, tensores y campos (caps.\ 13, 16 y 23--25). &
+Ofrece intuición física y puentes geométricos. Sus ``grupos fraccionarios'' y
+``fractors'' son formalismos específicos; no se presentan como geometría
+universal de sistemas Caputo. \\
+Das \cite{Das2020Kindergarten} &
+Integración (pp.\ 47--99), derivadas (100--154), inicialización y Laplace
+generalizada (210--254), ecuaciones diferenciales e integrales fraccionarias
+(255--343) y ramas complejas en el apéndice E (466--470). &
+Es un puente conceptual amplio, útil para terminal inferior, inicialización,
+sistemas vectoriales y ramas de \(s^q\). Su tono deliberadamente informal
+requiere respaldar los teoremas con una fuente analítica rigurosa. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Los números anteriores son páginas impresas. La correspondencia con la
+paginación digital de los ejemplares consultados se presenta en la
+\cref{tab:ruta-frac-pdf-pages}.
+
+\begin{longtable}{@{}L{0.21\textwidth}L{0.35\textwidth}L{0.35\textwidth}@{}}
+\caption{Correspondencia entre tema, página impresa y página PDF.}
+\label{tab:ruta-frac-pdf-pages}\\
+\toprule
+Fuente & Tema y página impresa & Página del PDF \\
+\midrule
+\endfirsthead
+\toprule
+Fuente & Tema y página impresa & Página del PDF \\
+\midrule
+\endhead
+Oliveira & Mittag--Leffler, pp.\ 69--113 & PDF 81--125 \\
+Oliveira & Transformadas, pp.\ 115--167 & PDF 126--178 \\
+Oliveira & Derivadas fraccionarias, pp.\ 169--222 & PDF 179--232 \\
+Oliveira & Volterra/Green: ejercicios 33, 35, 36 y 38,
+pp.\ 277, 280, 281 y 283 & PDF 287, 290, 291 y 293 \\
+Das & Riemann--Liouville y Caputo, \S\S3.7--3.10,
+pp.\ 119--125 & PDF 156--162 \\
+Das & Inicialización, cap.\ 5, pp.\ 210--254 & PDF 247--291 \\
+Das & Sistemas vectoriales, \S7.13, p.\ 322 y \S7.17, p.\ 335 &
+PDF 359 y 372 \\
+Das & Ramas complejas y superficies de Riemann, apéndice E,
+pp.\ 466--470 & PDF 503--507 \\
+Herrmann & Definiciones y operadores, \S3.4.2 y \S\S5.2--5.3,
+pp.\ 26 y 45--52 & PDF 47 y 66--73 \\
+Herrmann & Interpretación geométrica elemental, \S5.7, p.\ 62 & PDF 83 \\
+Herrmann & Semigrupo en el orden, \S5.9.1, p.\ 66 & PDF 87 \\
+Herrmann & No localidad y memoria, cap.\ 8, pp.\ 87--106 & PDF 108--127 \\
+Herrmann & Tensores, campos y gauge, caps.\ 23--25,
+pp.\ 353--378 & PDF 374--399 \\
+\bottomrule
+\end{longtable}
+
+\subsection{Composición en el orden y evolución temporal}
+
+Para $\alpha,\beta>0$ definimos
+\[
+ I_{t_0}^{\alpha}f(t)=\frac1{\Gamma(\alpha)}
+ \int_{t_0}^t(t-u)^{\alpha-1}f(u)\,du.
+\]
+Si $f$ es continua sobre el intervalo finito considerado, el integrando
+iterado es absolutamente integrable. Fubini permite intercambiar el orden
+en el triángulo $t_0\le v\le u\le t$:
+\[
+ I_{t_0}^\alpha I_{t_0}^\beta f(t)=
+ \frac1{\Gamma(\alpha)\Gamma(\beta)}
+ \int_{t_0}^t f(v)\int_v^t
+ (t-u)^{\alpha-1}(u-v)^{\beta-1}\,du\,dv.
+\]
+Con $u=v+(t-v)r$, $du=(t-v)dr$, la integral interior es
+\[
+ (t-v)^{\alpha+\beta-1}B(\beta,\alpha)
+ =(t-v)^{\alpha+\beta-1}
+ \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}.
+\]
+Por tanto,
+\begin{equation}
+ I_{t_0}^\alpha I_{t_0}^\beta=I_{t_0}^{\alpha+\beta}.
+ \label{eq:library-order-semigroup}
+\end{equation}
+Esta identidad compone órdenes de integración, no tiempos de evolución.
+La diferencia se ve en ${}^{\mathrm C}D_0^q x=\lambda x$, cuya solución
+es $x(t)=E_q(\lambda t^q)x_0$. Para $0<q<1$, $\lambda\ne0$ y $h$ pequeño,
+\begin{align*}
+ E_q(\lambda(2h)^q)&=1+\frac{2^q\lambda h^q}{\Gamma(q+1)}+O(h^{2q}),\\
+ E_q(\lambda h^q)^2&=1+\frac{2\lambda h^q}{\Gamma(q+1)}+O(h^{2q}).
+\end{align*}
+Como $2^q\ne2$, ambas expresiones difieren ya en el primer término no
+constante. En consecuencia, la identidad
+\begin{equation}
+ \Phi(t+s,x_0)=\Phi\bigl(t,\Phi(s,x_0)\bigr)
+ \label{eq:library-false-time-semigroup}
+\end{equation}
+no describe, en general, la evolución proyectada sobre el estado puntual de
+Caputo. Reiniciar desde $x(s)$ omite la contribución de la historia anterior
+a $s$, desarrollada en \cref{sec:geometria-topologia-caputo}.
+
+La regla de cadena ordinaria presenta otra diferencia. Con $x(t)=t$ y
+$g(x)=x^2$,
+\[
+ {}^{\mathrm C}D_0^q[t^2]=\frac{2t^{2-q}}{\Gamma(3-q)},\qquad
+ g'(t){}^{\mathrm C}D_0^q[t]=\frac{2t^{2-q}}{\Gamma(2-q)}.
+\]
+Puesto que $\Gamma(3-q)=(2-q)\Gamma(2-q)$, las fórmulas sólo coinciden
+en el límite entero $q=1$. Los cambios de coordenadas y las semillas FPP--A
+se construyen por ello desde Volterra, sin suponer esa regla de cadena.
+
+\subsection{Ramas complejas y transferencia}
+
+Definimos $s^q=\exp(q\operatorname{Log}s)$ sobre
+$\mathbb C\setminus(-\infty,0]$, con $\arg s\in(-\pi,\pi)$. Si
+$s=\ii\omega$ y $\omega>0$,
+\begin{equation}
+ (\ii\omega)^q=\omega^q\exp\!\left(\ii q\frac\pi2\right).
+ \label{eq:library-principal-branch}
+\end{equation}
+Sus partes real e imaginaria son $\omega^q\cos(q\pi/2)$ y
+$\omega^q\sin(q\pi/2)$; para $q=1$ recuperamos $\ii\omega$. A ambos
+lados del corte negativo, los límites son $r^qe^{\pm\ii q\pi}$,
+$r>0$. La elección de rama se mantiene fija durante la continuación.
+La superficie de Riemann de esta potencia y la topología de una cuenca
+son objetos diferentes.
+
+La transferencia $C(s^qI-A)^{-1}B$ existe donde el resolvente está definido.
+Su signo depende del convenio de realimentación, de modo que el cierre debe
+conservar simultáneamente la rama y la definición de $W_+$ o $W_-$.
+Las derivaciones concretas se presentan en
+\cref{sec:lure_transferencia,sec:machado-fdf}.
+
+\subsection{Geometría de EDO y familias con atractores ocultos}
+
+Hirsch--Smale--Devaney
+\cite{HirschSmaleDevaney2013} conecta las construcciones utilizadas en los
+modelos estudiados:
+\begin{enumerate}
+ \item capítulos 1--6: ecuaciones y sistemas lineales, retratos y
+ clasificación;
+ \item capítulos 7--9: existencia, dependencia continua, ecuación variacional,
+ equilibrios y técnicas globales;
+ \item capítulo 10: secciones locales, mapa de Poincaré, conjuntos límite y
+ Poincaré--Bendixson;
+ \item capítulo 12: circuitos, Liénard, Van der Pol y bifurcación de Hopf;
+ \item capítulo 14: sistema y atractor de Lorenz;
+ \item capítulo 15: dinámica discreta, caos, dinámica simbólica, corrimiento y
+ conjunto de Cantor;
+ \item capítulo 16: Shilnikov, herradura, doble scroll, homoclinicidad y una
+ exploración del circuito de Chua;
+ \item capítulo 17: prueba de existencia, unicidad, dependencia continua y
+ diferenciabilidad del flujo.
+\end{enumerate}
+
+Hoppensteadt \cite{Hoppensteadt2000Chaotic} añade una ruta aplicada que encaja
+con dos sistemas concretos: ecuaciones angulares y cilindro del PLL en
+\S2.2; sistemas disipativos y PLL en \S2.4; mapas estroboscópicos en \S2.5;
+variedades estable/inestable en \S3.2.3; estabilidad orbital y retorno de
+Poincaré en \S3.5; y bifurcación, función implícita y métodos topológicos en el
+capítulo 4. La identificación de fases módulo $2\pi$ forma parte del estado del PLL;
+una distancia entre fases sin envolver puede separar artificialmente dos
+representantes del mismo punto del cilindro.
+
+El volumen de Pham et al. \cite{PhamEtAl2018HiddenAttractors} cumple otra
+función. Su índice separa una parte de sistemas con atractores autoexcitados y
+otra de sistemas con atractores ocultos. La segunda incluye órbitas
+periódicas, toros invariantes y caos en sistemas cuadráticos sin equilibrio,
+un oscilador Duffing memristivo, Rikitake, sistemas de cuatro y cinco
+dimensiones y sincronización. Es un catálogo de modelos y antecedentes, no un
+teorema general de ocultedad. La comparación entre esos modelos requiere fijar sus ecuaciones, sus
+parámetros y sus condiciones iniciales; la estructura de los equilibrios
+orienta después el estudio de la cuenca.
+
+\begin{itemize}
+  \item \emph{Chaotic Systems with Multistability and Hidden Attractors}
+        \cite{WangKuznetsovChen2021Multistability}: sistemas con equilibrios
+        estables, sin equilibrios, con curvas o superficies de equilibrios
+        (pp.\ 29--146); sistemas hipercaóticos, fraccionarios, memristivos y
+        jerk con atractores ocultos (pp.\ 149--308); y multistabilidad
+        simétrica o asimétrica (pp.\ 311--375).
+  \item \emph{Systems with Hidden Attractors}
+        \cite{PhamVolosKapitaniak2017Systems}: clasificación compacta por
+        equilibrios estables (pp.\ 21--35), infinitos equilibrios (37--50),
+        ausencia de equilibrios (51--63), sincronización (65--77) y
+        realización circuital (79--102).
+  \item \emph{Nonlinear Dynamics} \cite{DatserisParlitz2022Nonlinear}:
+        dinámica continua, definición y medición de caos, bifurcaciones,
+        entropía, dimensión fractal, coordenadas de retardo y análisis de
+        series de tiempo (pp.\ 1--119). Su código Julia es un complemento
+        natural de la reproducción con \juliads, pero las hipótesis de cada algoritmo determinan qué diagnóstico puede
+        inferirse de sus resultados.
+  \item \emph{Elements of Applied Bifurcation Theory}
+        \cite{Kuznetsov2023Bifurcation}: equivalencia topológica y estabilidad
+        estructural (pp.\ 47--87), bifurcaciones de equilibrios y ciclos
+        (89--228), órbitas homoclínicas y heteroclínicas (229--279) y análisis
+        numérico de bifurcaciones (569--655).
+\end{itemize}
+
+\subsection{Sensibilidad, recurrencia y cuencas}
+\label{sec:lecturas-por-procedimiento}
+
+\begin{longtable}{@{}L{0.24\linewidth}L{0.34\linewidth}L{0.34\linewidth}@{}}
+\caption{Información complementaria en el estudio de una respuesta.}
+\label{tab:lectura-procedimientos}
+\label{tab:drive-complementarios}
+\label{tab:drive-isbn-cerrado}\\
+\toprule
+Objeto & Construcción & Interpretación\\
+\midrule
+\endfirsthead
+\toprule
+Objeto & Construcción & Interpretación\\
+\midrule
+\endhead
+Equilibrios & Reducción escalar, pertenencia regional y espectro. & Estabilidad local y acceso desde su vecindad.\\
+Balance armónico & Sesgo, proyección de Fourier y residual físico. & Condición inicial aproximada.\\
+Continuación & Homotopía y ecuación integral con historia única. & Transporte de la respuesta.\\
+Puntos perpetuos & $JF=0$, $F\ne0$ y desarrollo de arranque. & Cancelación local y destino posterior.\\
+Exponentes finitos & Separación de trayectorias en una ventana. & Sensibilidad y predictibilidad local.\\
+Secciones & Retornos y dispersión de cruces. & Ciclo o nube no periódica.\\
+Variedades invariantes & Separatrices y condiciones de acceso. & Coexistencia y fronteras de cuenca.\\
+Topología & Grado y conjuntos aislantes. & Existencia bajo hipótesis de continuidad y aislamiento.\\
+\bottomrule
+\end{longtable}
+
+Una tasa de separación positiva durante una ventana puede pertenecer a un
+transitorio. Una figura irregular tampoco determina por sí sola invariancia,
+transitividad o entropía positiva. La combinación de trayectoria, retornos,
+variaciones y cuenca relaciona cada diagnóstico con el objeto que mide.
+
+En las EDO, existencia y unicidad permiten trasladar una condición inicial
+a lo largo de su órbita. En Caputo, trasladar sólo su valor puntual define
+en general otra solución. Dos historias con el mismo valor actual pueden
+conservar contribuciones distintas del pasado al futuro. Un retorno
+proyectado sobre $x$ puede perder la univocidad que tendría sobre un espacio
+de perfiles adecuadamente definido.
+
+Estas diferencias organizan la metodología: las identidades de realización
+y balance proporcionan semillas; los integradores aproximan el PVI declarado;
+y los diagnósticos describen sus soluciones en los intervalos estudiados.
+La geometría relaciona después esas soluciones con invariancia, atracción
+y fronteras de cuenca.

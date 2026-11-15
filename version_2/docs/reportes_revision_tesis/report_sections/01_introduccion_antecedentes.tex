@@ -1,0 +1,726 @@
+\section{Introducción}
+\label{sec:introduccion}
+
+\subsection{Multiestabilidad y localización de atractores}
+
+Un mismo sistema dinámico puede presentar respuestas muy diferentes sin
+cambiar sus parámetros. Un conjunto de condiciones iniciales puede conducir
+a un equilibrio, mientras que otro produce una oscilación sostenida o una
+respuesta caótica. Esta coexistencia, conocida como \emph{multiestabilidad},
+hace que la posición inicial sea tan relevante como las ecuaciones para
+comprender el comportamiento observado. En electrónica, interesa tanto por
+la posibilidad de seleccionar regímenes de operación como por la aparición
+de oscilaciones que un análisis alrededor del punto de funcionamiento puede
+pasar por alto \cite{DudkowskiEtAl2016,WangKuznetsovChen2021Multistability}.
+
+La noción de atractor permite describir las respuestas hacia las que evoluciona
+un conjunto de estados iniciales. Su cuenca de atracción reúne los datos que
+alcanzan esa respuesta a largo plazo. Conocer un atractor y conocer su cuenca
+son problemas relacionados, pero diferentes: una trayectoria puede mostrar
+con claridad una oscilación sin revelar desde dónde es accesible. Los textos
+de sistemas dinámicos desarrollan esta relación entre estabilidad local,
+comportamiento asintótico y organización del espacio de fases
+\cite{HirschSmaleDevaney2013,Strogatz2015Nonlinear}.
+
+La distinción entre atractores autoexcitados y ocultos surge precisamente de
+la relación de sus cuencas con los equilibrios. Un atractor \(\mathcal A\) es
+\emph{autoexcitado} cuando su cuenca intersecta toda vecindad de, al menos,
+un equilibrio; es \emph{oculto} cuando, para cada equilibrio, existe una
+vecindad que no intersecta esa cuenca
+\cite{LeonovKuznetsov2013,DudkowskiEtAl2016}. En el primer caso, comenzar
+suficientemente cerca de un equilibrio adecuado puede proporcionar una
+trayectoria que llegue al atractor. En el segundo, la búsqueda debe alcanzar
+otra parte del espacio de estados. El término oculto se refiere a esta
+dificultad de acceso desde los equilibrios: puede describir tanto una
+oscilación regular como un atractor caótico.
+
+Esta diferencia cambia la manera de estudiar un modelo. Si todas las
+simulaciones se inician cerca de sus equilibrios, algunas respuestas pueden
+quedar sin observar, incluso cuando el modelo sea de dimensión baja. Por
+otro lado, encontrar una trayectoria interesante mediante prueba y error
+deja abierta una pregunta práctica: cómo volver a encontrarla al variar
+los parámetros, cambiar el orden de derivación o aplicar la búsqueda a
+otro sistema. La localización analítico--numérica aborda esa pregunta al
+construir condiciones iniciales a partir de la estructura de las ecuaciones
+\cite{LeonovKuznetsovVagaitsev2011,KuznetsovEtAl2017}.
+
+La motivación de esta investigación parte de ese problema. Buscamos que la
+obtención de una respuesta dinámica pueda explicarse desde el modelo: qué
+información permite proponer una condición inicial, cómo se transporta esa
+condición hasta el sistema de interés y cómo se identifica el destino
+alcanzado. La selección de la condición inicial deja así de ser un dato
+aislado y se convierte en una parte del método que puede estudiarse y
+compararse.
+
+\subsection{Orden fraccionario, memoria y aplicación digital}
+
+Los sistemas de orden fraccionario amplían este problema al incorporar
+operadores cuya acción depende de un intervalo de la evolución. En esta
+tesis trabajamos principalmente con la derivada de Caputo, adecuada para
+formular problemas de valor inicial con condiciones puntuales habituales.
+Para \(0<q<1\), su acción sobre una función suficientemente regular es
+\[
+{}^{\mathrm C}D_{t_0}^{q}X(t)
+=\frac{1}{\Gamma(1-q)}
+\int_{t_0}^{t}(t-\tau)^{-q}X'(\tau)\,\mathrm d\tau.
+\]
+Aquí \(q\) es el orden, \(t_0\) el instante inicial y \(\Gamma\) la función
+gamma. La integral muestra cómo intervienen los valores anteriores de la
+evolución: el peso depende de la distancia temporal \(t-\tau\). El efecto
+de memoria pertenece, por tanto, a la ecuación que se pretende resolver
+\cite{Podlubny1999,Diethelm2010AnalysisFDE}.
+
+Esta propiedad ofrece una forma de estudiar respuestas que dependen de su
+evolución previa, pero también obliga a precisar qué ocurre durante una
+búsqueda. En una ecuación diferencial ordinaria, el estado en un instante
+intermedio permite continuar la solución. En un problema de Caputo con
+terminal inferior fijo, continuar desde ese instante requiere conservar la
+contribución de la historia anterior. Si se toma únicamente el último
+vector de estado como un nuevo dato inicial, se define otro problema.
+La diferencia resulta especialmente relevante al encadenar etapas de
+continuación o comparar algoritmos de localización
+\cite{Diethelm2020_afcee,DoanKloeden2021Semidynamical}.
+
+El orden también influye en la estabilidad. En el caso lineal conmensurable,
+la condición depende del ángulo de los valores propios respecto del eje real
+positivo, mediante el criterio de Matignon. La extensión de ese análisis a
+un sistema no lineal requiere además las hipótesis correspondientes de
+linealización \cite{Matignon1996,CongDoanSiegmundTuan2016}. Por ello,
+modificar \(q\) no equivale simplemente a recorrer más despacio las
+trayectorias del sistema entero: puede cambiar la estabilidad y la
+coexistencia de respuestas.
+
+La aplicación que da contexto a la tesis es el cifrado de imágenes mediante
+secuencias producidas por sistemas fraccionarios multiestables. El interés
+consiste en estudiar cómo seleccionar y reproducir un régimen dinámico y
+cómo convertir su evolución en una secuencia digital. La realización de
+sistemas fraccionarios en DSP y de generadores pseudoaleatorios en ESP32 y
+FPGA ofrece antecedentes concretos de esa transición entre modelo,
+algoritmo e implementación
+\cite{Wu2023ArctanChua,Fraga2026_54625}.
+
+En esa transición, las propiedades del modelo continuo deben relacionarse
+con las de su representación digital. La precisión aritmética, la
+aproximación de memoria, el muestreo y la conversión a enteros intervienen
+en la secuencia obtenida. La multiestabilidad añade la necesidad de asegurar
+que la inicialización selecciona la respuesta buscada y que esa selección
+puede repetirse. Así, el estudio de los atractores y sus cuencas proporciona
+una base para elegir el generador y sus condiciones de operación, mientras
+que la evaluación del cifrado examina la transformación de la imagen y su
+resistencia a ataques \cite{Alvarez2006_3e24c,Lima2025_99c51}.
+
+La relación entre estas tareas orienta el trabajo: antes de utilizar una
+secuencia, necesitamos comprender qué dinámica la produce, cómo se obtiene
+y qué decisiones numéricas afectan su reproducción. Después podemos
+examinar su utilidad en una aplicación digital concreta. Esta secuencia de
+preguntas conecta el problema matemático de localización con la finalidad
+electrónica de la investigación.
+
+\section{Antecedentes y estado del arte}
+\label{sec:antecedentes}
+
+El circuito de Chua ocupa un lugar importante en el estudio experimental y
+matemático del caos por la relación directa entre una realización electrónica
+de pocos elementos y un modelo no lineal de baja dimensión. Matsumoto mostró
+en 1984 un atractor caótico de este circuito
+\cite{Matsumoto1984Chua}. Años después, la búsqueda de respuestas que no se
+obtienen al iniciar cerca de sus equilibrios abrió otra línea de estudio
+dentro de la misma familia. Leonov, Kuznetsov y Vagaitsev localizaron
+atractores ocultos de Chua en 2011, y el análisis posterior de una
+característica suave mostró que el fenómeno también aparece fuera de los
+modelos con característica lineal por tramos
+\cite{LeonovKuznetsovVagaitsev2011,Leonov2013HiddenAttractors}.
+
+El interés del problema va más allá de un circuito particular. La revisión
+de Leonov y Kuznetsov relaciona las oscilaciones ocultas con problemas
+clásicos de estabilidad absoluta, entre ellos las conjeturas de Aizerman y
+Kalman \cite{LeonovKuznetsov2013}. Estos problemas muestran por qué la
+estabilidad de una familia de aproximaciones lineales no basta, en general,
+para describir toda la dinámica del sistema no lineal. Las dos conjeturas
+imponen condiciones diferentes sobre la característica de realimentación;
+comparten la dificultad de pasar de una información local o sectorial a
+una conclusión global. Un ejemplo posterior de la familia Kalman--Fitts
+presenta coexistencia de un equilibrio localmente estable y ciclos ocultos
+\cite{kalman2019}.
+
+Desde la perspectiva de ingeniería, esa coexistencia significa que un
+funcionamiento aparentemente estable puede depender de la inicialización
+o de la magnitud de una perturbación. En los lazos de amarre de fase,
+Leonov y colaboradores documentan cómo ciertas simulaciones y modelos
+simplificados pueden omitir oscilaciones relevantes para interpretar el
+funcionamiento del dispositivo \cite{pll2015}. La localización de
+atractores ocultos responde, por tanto, a una necesidad de análisis de
+regímenes coexistentes, además del interés por construir nuevos ejemplos.
+
+\subsection{Leonov y Kuznetsov: método en orden entero}
+
+Leonov, Kuznetsov y colaboradores formularon un procedimiento
+analítico--numérico para localizar atractores ocultos en sistemas tipo Lur'e
+\cite{LeonovKuznetsov2013,KuznetsovEtAl2017}. La separación en un bloque lineal y una no linealidad escalar permite
+calcular la transferencia. Al proyectar la respuesta no lineal sobre su
+componente fundamental obtenemos una condición de balance armónico. La
+frecuencia y la ganancia resultantes definen un sistema lineal auxiliar y
+un modo oscilatorio. A partir de ese modo construimos la condición inicial
+y la transportamos por continuación hasta el campo original.
+
+El balance armónico combina la transferencia y la función descriptiva para
+obtener una frecuencia, una ganancia equivalente y una amplitud. Estos
+valores permiten construir la semilla; el estudio posterior de su cuenca
+establece si la respuesta localizada es accesible desde las vecindades
+de los equilibrios.
+
+La ventaja de esta construcción es que aprovecha la estructura de
+realimentación del modelo. En lugar de integrar una gran cantidad de
+condiciones iniciales sin orientación, utiliza la respuesta frecuencial
+de la parte lineal y una aproximación de la no linealidad para proponer
+una oscilación inicial. Su aplicabilidad depende de que exista una
+realización adecuada, de que el cierre armónico admita una solución y
+de que la continuación alcance el sistema original. Cuando una de esas
+condiciones falla, la dificultad aporta información sobre la estructura
+del caso y motiva una ruta de localización diferente.
+
+\subsection{Danca: Chua fraccionario no suave}
+
+Danca estudió atractores ocultos en varios sistemas fraccionarios, incluido un
+sistema de Chua con saturación \cite{Danca2017}. El artículo usa derivadas
+de Caputo de orden conmensurable, clasifica los equilibrios mediante Matignon e integra
+el problema con un predictor--corrector Adams--Bashforth--Moulton. Para el
+ejemplo de Chua se reportan
+\[
+q=0.9998,\qquad
+(\alpha,\beta,\gamma)=(8.4562,12.0732,0.0052),\qquad
+(m_0,m_1)=(-0.1768,-1.1468).
+\]
+La verificación descrita en la referencia usa 200 trayectorias alrededor de un
+equilibrio externo con radio \(\delta=0.01\) y emplea la simetría para el
+equilibrio opuesto.
+
+La reconstrucción conserva la ecuación, los
+parámetros, el orden y el integrador de la referencia. El artículo no
+proporciona la condición inicial exacta de la figura del atractor ni los
+valores intermedios de la construcción armónica
+\((\omega_0,k,A_0)\). Por ello, la reconstrucción utiliza la semilla obtenida
+al aplicar el cierre armónico entero a los parámetros publicados.
+La ruta propuesta usa los mismos parámetros
+nominales, pero calcula una nueva semilla sesgada y aplica una continuación
+compatible con la memoria de Caputo.
+
+\subsection{Wu et al.: Chua fraccionario con arctangente}
+
+Wu et al. propusieron un sistema de Chua fraccionario con no linealidad
+arctangente \cite{Wu2023ArctanChua}. La referencia emplea una función
+descriptiva, una recurrencia local de descomposición de Adomian y las
+condiciones iniciales opuestas
+\[
+X_{0,+}=(13.8,\;0.7093,\;-19.8768)^{\T},
+\qquad X_{0,-}=-X_{0,+}.
+\]
+Los parámetros publicados se expresan mediante
+\[
+h(x)=mx+(n-m)\arctan(x),\qquad
+m=0.4,\qquad n=-1.1585,
+\]
+de modo que, en la notación empleada aquí,
+\[
+a_1=0.4,\qquad a_2=n-m=-1.5585,\qquad \rho=1,\qquad q=0.99.
+\]
+
+La reconstrucción bibliográfica reproduce la recurrencia ADM local y las dos
+condiciones iniciales publicadas. La ruta propuesta para el sistema con
+arctangente es independiente: explora un dominio acotado de parámetros en
+\(q=1\), selecciona un caso mediante reglas reproducibles y refina la semilla
+con problemas de Caputo de memoria completa.
+
+Los antecedentes de Danca y Wu permiten formular una comparación con
+modelos concretos y parámetros publicados. También muestran que dos
+trabajos descritos como fraccionarios pueden construir sus trayectorias
+mediante procedimientos distintos. Por ello, la comparación de resultados
+debe considerar conjuntamente la no linealidad, el operador, la
+inicialización y la forma en que el método numérico trata la memoria.
+
+\subsection{Memoria, estabilidad y periodicidad en el marco fraccionario}
+
+La formulación de Caputo puede expresarse como una ecuación integral de
+Volterra. Para el problema
+\[
+{}^{\mathrm C}D_{t_0}^{q}X(t)=F(X(t)),\qquad X(t_0)=X_0,
+\qquad 0<q<1,
+\]
+donde \(F\) es el campo vectorial y \(X_0\) el estado inicial, la expresión
+integral equivalente es
+\[
+X(t)=X_0+\frac{1}{\Gamma(q)}
+\int_{t_0}^{t}(t-\tau)^{q-1}F(X(\tau))\,\mathrm d\tau.
+\]
+El valor de \(X(t)\) depende de las contribuciones del campo a lo largo de
+todo el intervalo. Esta formulación es la base de numerosos métodos
+numéricos y permite identificar qué información se conserva cuando se
+continúa una solución \cite{Diethelm2010AnalysisFDE,DiethelmFordFreed2002}.
+
+El predictor--corrector de Adams--Bashforth--Moulton de Diethelm, Ford y
+Freed proporciona una referencia para integrar estos problemas
+\cite{DiethelmFordFreed2002}. Las aproximaciones de memoria corta y los
+métodos rápidos buscan reducir el costo de las sumas de historia. Su
+pertinencia depende de cómo aproximan el núcleo y de sus controles de error:
+truncar una historia, comprimirla y comenzar un nuevo problema desde el
+último estado son operaciones diferentes
+\cite{Deng2007,KhristenkoWohlmuth2023Rational,JiangZhangZhangZhang2017FastCaputo}.
+Diethelm, Garrappa y Stynes explican además que la regularidad de la solución
+cerca del instante inicial afecta el orden de convergencia, y que una
+recurrencia local no reproduce automáticamente un operador no local
+\cite{Diethelm2020_afcee}.
+
+El estudio de atractores exige precisar también el espacio en el que se
+considera la evolución. Los trabajos de Doan y Kloeden construyen marcos
+semidinámicos para ecuaciones autónomas de Caputo y desarrollan el análisis
+de sus atractores \cite{DoanKloeden2021Semidynamical,DoanKloeden2024Attractors}.
+Estos antecedentes permiten relacionar el estado observable con la
+información de memoria necesaria para describir una continuación. En la
+experimentación, fijar una inicialización común hace posible comparar las
+cuencas obtenidas para una misma clase de datos iniciales.
+
+La periodicidad constituye otro punto de encuentro entre la teoría y la
+localización armónica. Los resultados de Tavazoei y Haeri, y de Kaslik y
+Sivasundaram, establecen restricciones para soluciones periódicas exactas
+en formulaciones fraccionarias causales bajo sus respectivas hipótesis
+\cite{TavazoeiHaeri2009,KaslikSivasundaram2012}. Una oscilación que parece
+cerrarse después de un transitorio no identifica por sí sola la misma
+noción de periodicidad que se emplea en una ecuación diferencial ordinaria.
+La diferencia importa cuando se utiliza el balance armónico para construir
+una condición inicial.
+
+Los operadores de Weyl permiten formular el análisis de señales periódicas
+con otra historia temporal. Vigué y colaboradores estudian la continuación
+de soluciones periódicas en ese marco; Haacker y colaboradores desarrollan
+un análisis de estabilidad de tipo Hill para la formulación de
+Liouville--Weyl \cite{Vigue2019,Haacker2026}. En un oscilador lineal forzado,
+Duan, Lan y Li identifican en la respuesta de Caputo una componente
+periódica de Weyl acompañada de términos transitorios, incluida una cola
+algebraica \cite{DuanLanLi2022WeylCaputo}. Este ejemplo explica por qué la
+aproximación armónica puede ser informativa sin identificarla con toda la
+evolución causal del sistema no lineal. Los estudios sobre derivadas de
+funciones periódicas y casi periódicas completan esta distinción entre
+operador, dominio temporal y respuesta
+\cite{OrtigueiraMachadoTrujillo2017Periodic,ZhuLi2026PeriodicAlmostPeriodic}.
+
+\subsection{Métodos geométricos y estudio de las cuencas}
+
+La función descriptiva es una de varias formas de obtener información para
+la búsqueda. Los puntos perpetuos, introducidos por Prasad, se definen
+mediante una condición de aceleración nula del campo y velocidad no nula.
+En un sistema entero \(\dot X=F(X)\), esa condición se escribe
+\[
+DF(p)F(p)=0,\qquad F(p)\neq0.
+\]
+Su interés consiste en proponer estados especiales del campo que pueden
+emplearse como condiciones iniciales
+\cite{Prasad2015Perpetual,DudkowskiPrasadKapitaniak2015,DudkowskiPrasadKapitaniak2017}.
+La pregunta relevante es qué destinos alcanzan esas semillas en cada
+modelo. Los estudios de suficiencia y los contraejemplos muestran que
+su utilidad depende del sistema, por lo que resulta natural compararlos
+con otras construcciones bajo las mismas condiciones de integración
+\cite{NazarimehrSaediJafari2017}.
+
+Las curvas conectantes y las superficies críticas extraen otra información
+de las derivadas del campo. Guan y Xie utilizan curvas conectantes para
+orientar la localización, mientras que Godara y colaboradores estudian
+estructuras topológicas asociadas con sistemas multiestables
+\cite{GuanXie2021Connecting,GodaraEtAl2018CriticalSurfaces}.
+Estas construcciones son especialmente interesantes cuando una
+representación de realimentación escalar no resulta suficiente o cuando el
+cierre armónico directo no tiene solución. Los ejemplos de
+Rabinovich--Fabrikant amplían además el estudio de dinámicas y atractores
+ocultos fuera de la familia de Chua \cite{Danca2017HiddenFO}.
+
+Una vez localizada una respuesta, la cuenca permite estudiar su accesibilidad
+y la coexistencia con otros destinos. Sprott y Xiong proponen clasificar y
+cuantificar cuencas considerando su extensión y la distribución de
+condiciones iniciales \cite{SprottXiong2015Basins}. La entropía de cuenca
+de Daza y colaboradores relaciona la incertidumbre del destino con la
+resolución y la coexistencia de respuestas
+\cite{DazaEtAl2016BasinEntropy}. El cálculo computacional de cuencas y la
+identificación de atractores mediante recurrencias ofrecen herramientas
+adicionales para explorar estos problemas \cite{datseris2022}.
+
+Estas contribuciones sitúan el análisis de cuencas como una parte de la
+localización. Un corte plano facilita observar la distribución de destinos;
+los sondeos alrededor de los equilibrios responden a la clasificación de
+ocultedad; una exploración más amplia describe regiones de accesibilidad.
+Las tres observaciones aportan información complementaria. La resolución,
+el dominio y el horizonte deben acompañar la interpretación de cada
+figura, especialmente si se estudian fronteras entremezcladas o propiedades
+como Wada \cite{DazaEtAl2015Wada}.
+
+\subsection{Diagnósticos dinámicos y comparación numérica}
+
+La caracterización de una trayectoria combina su geometría y su evolución
+temporal. Proyecciones del espacio de estados, secciones de Poincaré,
+espectros y estimaciones de exponentes de Lyapunov responden a preguntas
+distintas sobre recurrencia, frecuencias y sensibilidad. En orden entero,
+los métodos variacionales de Benettin y colaboradores proporcionan un
+fundamento clásico para calcular exponentes
+\cite{Benettin1980a,Benettin1980b}. Para los sistemas fraccionarios se han
+propuesto adaptaciones variacionales, mapas de Poincaré y otros
+diagnósticos \cite{DancaKuznetsov2018Lyapunov,fischer2020,ClementeLopezEtAl2022Poincare}.
+
+En Caputo, el tratamiento de memoria interviene también en el problema
+variacional. Danca y Fečkan identifican un esquema impulsivo con terminal
+inferior cambiante en el código que analizan; una propuesta posterior
+incorpora QR y el integrador LIL manteniendo esa interpretación
+\cite{DancaFeckan2024MemoryPrinciple,Danca2026ImprovedLyapunov}.
+Por ello, al comparar estimaciones es necesario relacionar cada número con
+su ecuación variacional, su intervalo de observación y su política de
+renormalización. Esta precisión permite interpretar discrepancias entre
+algoritmos sin atribuirlas de inmediato a un cambio del sistema físico.
+
+La comparación numérica tiene una función científica dentro de la
+propuesta. Reducir el paso y ampliar el horizonte permite examinar la
+persistencia de la respuesta; utilizar otra implementación ayuda a
+detectar decisiones que dependen del algoritmo. La revisión de buenas
+prácticas de cálculo fraccionario proporciona el contexto para estos
+contrastes \cite{Diethelm2020_afcee}. El propósito es establecer qué
+características de la dinámica se reproducen bajo condiciones comparables
+y qué diferencias merecen un análisis adicional.
+
+\subsection{Multiestabilidad, generación de secuencias y cifrado de imágenes}
+
+Las aplicaciones de los atractores ocultos se han desarrollado junto con
+su estudio teórico y su realización electrónica. Las monografías sobre
+sistemas con atractores autoexcitados y ocultos reúnen ejemplos y
+construcciones en distintos modelos, incluidas implementaciones analógicas
+y digitales \cite{PhamEtAl2018HiddenAttractors,PhamVolosKapitaniak2017Systems}.
+El trabajo experimental sobre Chua vincula directamente la teoría de
+localización con la observación de respuestas del circuito
+\cite{KuznetsovEtAl2023ChuaExperiments}. Esta conexión resulta relevante
+para una tesis en electrónica: un modelo localizado numéricamente debe
+poder relacionarse con una realización y unas condiciones de operación.
+
+En el ámbito fraccionario, Wu y colaboradores incluyen una implementación
+DSP del sistema con arctangente \cite{Wu2023ArctanChua}. De la Fraga y
+Tlelo-Cuautle estudian la implementación de un generador pseudoaleatorio
+basado en Lorenz fraccionario en ESP32 y FPGA
+\cite{Fraga2026_54625}. Son antecedentes de tareas distintas: localizar
+y representar una respuesta dinámica, por una parte, y producir una
+secuencia digital mediante una arquitectura determinada, por otra.
+Su relación motiva estudiar conjuntamente el modelo, el integrador y la
+extracción de la secuencia, en lugar de elegirlos de manera independiente.
+
+La precisión finita introduce una diferencia esencial. Si una realización
+digital es determinista y autónoma, y su estado completo, incluida la
+memoria del algoritmo, admite sólo un número finito de valores, alguna
+configuración debe repetirse si la ejecución se prolonga suficientemente.
+A partir de esa repetición, la evolución vuelve a recorrer los mismos
+estados. Por ello, la ausencia de periodicidad del modelo continuo no
+garantiza por sí sola las propiedades de la secuencia implementada.
+Álvarez y Li sitúan la descripción de la implementación, el manejo de claves
+y el análisis de seguridad entre los requisitos básicos de un criptosistema
+basado en caos \cite{Alvarez2006_3e24c}. Lima y colaboradores estudian una
+arquitectura que aprovecha diferencias de precisión finita entre dos
+realizaciones digitales de Chua para el cifrado de imágenes
+\cite{Lima2025_99c51}; ese resultado muestra que el efecto aritmético puede
+formar parte de una construcción explícita y debe analizarse como tal.
+
+La multiestabilidad ofrece varios regímenes posibles con los mismos
+parámetros, lo que hace interesante la selección de condiciones iniciales
+para producir secuencias. A la vez, exige identificar qué regiones llevan
+a equilibrios, oscilaciones regulares o respuestas caóticas. El tamaño
+nominal de un conjunto de parámetros y condiciones iniciales no equivale
+automáticamente al número de claves distinguibles y útiles de una
+implementación \cite{Alvarez2006_3e24c}. El estudio de cuencas permite
+relacionar esa selección con el comportamiento del generador.
+
+La evaluación estadística de una secuencia y la seguridad del cifrado
+aportan evidencias diferentes. Zhao, Shi y Ding presentan un ataque de
+texto claro elegido contra un algoritmo específico que combina caos y
+codificación de ADN, aun cuando sus pruebas estadísticas sugerían buenas
+propiedades \cite{Zhao2025_98e42}. Este antecedente justifica incluir
+un análisis de la estructura de transformación y del escenario de ataque
+cuando se estudia una aplicación propia. La tesis conecta así localización,
+generación digital y cifrado mediante preguntas que pueden evaluarse
+por separado y relacionarse después.
+
+\subsection{Síntesis de los métodos y problema pendiente}
+
+La revisión reciente de Guan y Xie reúne métodos analíticos, numéricos y
+geométricos de localización \cite{GuanXie2025}. El campo dispone, por tanto,
+de varias rutas de búsqueda, tanto para sistemas clásicos como para
+familias fraccionarias. La cuestión que interesa aquí es cómo relacionar
+esas rutas con una formulación causal y con una comparación que conserve
+el mismo problema de evolución. Los tres antecedentes principales de
+Chua proporcionan un punto de partida concreto para esa relación:
+
+\begin{table}[H]
+\centering
+\caption{Papel de los trabajos de referencia en la metodología.}
+\label{tab:papel_referencias}
+\begin{tabularx}{\linewidth}{L{0.22\linewidth}Y Y}
+\toprule
+Referencia & Elemento recuperado & Función metodológica\\
+\midrule
+Leonov--Kuznetsov
+& Función descriptiva, construcción modal y continuación en \(q=1\)
+& Caso límite y fundamento de la ruta de localización\\
+Danca
+& Chua no suave, Caputo, Matignon y ABM
+& Reconstrucción bibliográfica y sistema base de la ruta sesgada\\
+Wu et al.
+& Chua con arctangente, condiciones iniciales y ADM local
+& Reconstrucción bibliográfica y comparación con la ruta independiente
+\texttt{c590}\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Análisis matemático de los artículos primarios}
+
+\begin{longtable}{@{}L{0.16\textwidth}L{0.22\textwidth}L{0.28\textwidth}L{0.26\textwidth}@{}}
+\caption{Operaciones matemáticas asociadas con el estado del arte.}
+\label{tab:articulos-operaciones}\\
+\toprule
+Núcleo & Artículos & Formalismo reconstruido & Alcance de la interpretación \\
+\midrule
+\endfirsthead
+\toprule
+Núcleo & Artículos & Formalismo reconstruido & Alcance de la interpretación \\
+\midrule
+\endhead
+Atractor oculto y localización
+& \cite{LeonovKuznetsovVagaitsev2011,LeonovKuznetsov2013,KuznetsovEtAl2017}
+& Realización de Lur'e; resolvente; función descriptiva; identidad modal;
+homotopía desde un sistema auxiliar.
+& La construcción produce una semilla. Atracción, caos y ocultedad requieren
+integración y prueba de cuenca separadas. \\
+Caputo y atractores ocultos
+& \cite{Danca2017}
+& PVI de Caputo; equilibrios; jacobiano; criterio de Matignon; PECE; sondeos en
+vecindades.
+& El espectro es local y los sondeos son finitos. La memoria y el terminal
+inferior forman parte del problema. \\
+Operador y método numérico
+& \cite{Matignon1996,DiethelmFordFreed2002}
+& Transformada de Laplace; Mittag--Leffler; forma de Volterra; pesos predictor
+y corrector; orden de convergencia.
+& Matignon no clasifica cuencas. PECE aproxima un PVI declarado; no corrige una
+historia reiniciada o indefinida. \\
+Función descriptiva fraccionaria
+& \cite{BarbosaMachado2002BacklashImpact,Machado2015FDF}
+& Coeficiente fundamental complejo; dependencia de frecuencia; ramas de
+\(N^\mu\); cierre auxiliar y cierre físico.
+& Es un predictor armónico. La potencia de Machado puede diversificar semillas,
+pero no sustituye la proyección de Fourier de la no linealidad física. \\
+Puntos perpetuos
+& \cite{Prasad2015Perpetual,DudkowskiPrasadKapitaniak2017,NazarimehrSaediJafari2017}
+& \(Df(p)f(p)=0\), exclusión de equilibrios, singularidad de \(Df\),
+covariancia afín y contraejemplos.
+& Un PP es una semilla heurística, no un localizador universal. FPP--A y FPP--H
+son formulaciones propuestas para Caputo y deben conservar el formalismo de
+memoria. \\
+Geometría del campo
+& \cite{GuanXie2021Connecting,GodaraEtAl2018CriticalSurfaces}
+& Menores, superficies \(\det Df=0\), campos derivados, curvas conectantes y
+transversalidad.
+& Estos objetos organizan semillas y regiones; no prueban por sí solos
+invariancia, atracción ni una frontera global. \\
+Topología de cuencas
+& \cite{DazaEtAl2016BasinEntropy,DazaEtAl2015Wada}
+& Partición del dominio, entropía de cuenca, refinamiento y criterio de Wada.
+& Una imagen entremezclada es evidencia finita. La afirmación topológica exige
+convergencia o caracterización del conjunto de frontera. \\
+Dinámica con memoria
+& \cite{DoanKloeden2024Attractors}
+& Semidinámica en un espacio de historias, invariancia funcional, atracción y
+proyección al estado observable.
+& La geometría puntual de una ODE no se traslada a Caputo mediante una regla de
+cadena local ni mediante reinicios sucesivos. \\
+\bottomrule
+\end{longtable}
+
+La comparación permite identificar un problema metodológico concreto.
+Una semilla puede derivarse con precisión y conducir a un destino distinto
+del esperado; una aproximación armónica puede ser útil para iniciar una
+búsqueda sin describir toda la evolución de Caputo; una respuesta puede
+persistir en un integrador y cambiar al modificar la discretización. Estas
+posibilidades forman parte del problema de localización y deben examinarse
+en una misma secuencia de análisis. De otro modo, es difícil saber si dos
+procedimientos difieren por la información que utilizan para buscar o
+porque integran problemas distintos.
+
+La propuesta de esta tesis consiste en conectar la generación estructurada
+de semillas con la evolución causal, la identificación de destinos y el
+estudio de cuencas. El balance armónico, la continuación y la geometría
+del campo aportan información complementaria. El objetivo es determinar
+cuándo resulta útil cada información, cómo combinarlas y cómo comparar
+su desempeño con una exploración directa del mismo sistema. Este
+planteamiento conserva la función de los métodos publicados y permite
+estudiar las modificaciones propuestas mediante casos y contrastes
+específicos.
+
+\subsection{Problema y preguntas de investigación}
+\label{sec:cap1-problema}
+
+El problema central es construir un procedimiento que permita localizar
+y caracterizar atractores ocultos en sistemas multiestables de orden
+fraccionario, relacionando la estructura matemática del modelo con las
+condiciones iniciales que alcanzan sus respuestas. El interés no se limita
+a obtener una trayectoria: necesitamos explicar la ruta que lleva a ella,
+examinar su estabilidad frente a decisiones numéricas y establecer cómo
+se relaciona su cuenca con los equilibrios.
+
+La pregunta que guía la investigación es: \emph{¿cómo combinar información
+de realimentación, aproximaciones armónicas y geometría del campo para
+localizar atractores ocultos en sistemas fraccionarios, conservando una
+formulación causal de memoria y obteniendo resultados que puedan
+reproducirse y compararse?} La aplicación al cifrado añade la pregunta de
+cómo utilizar las respuestas seleccionadas para producir secuencias
+digitales y evaluar una transformación reversible de imágenes.
+
+Esta pregunta se desarrolla en cuatro problemas relacionados:
+\begin{enumerate}
+\item ¿Qué propiedades del modelo permiten construir una semilla y en qué
+      casos una obstrucción del cierre armónico exige utilizar otra ruta?
+\item ¿Cómo transportar o refinar esa semilla sin confundir una
+      continuación con memoria acumulada y una sucesión de problemas
+      iniciales independientes?
+\item ¿Qué respuestas se localizan, con qué costo y con qué relación
+      respecto de las vecindades de los equilibrios, al comparar métodos
+      bajo un presupuesto y un protocolo comunes?
+\item ¿Cómo influyen la selección del régimen, la discretización y la
+      precisión finita en la generación de secuencias y en su utilización
+      para el cifrado de imágenes?
+\end{enumerate}
+
+\subsection{Hipótesis de trabajo y contribución metodológica}
+\label{sec:cap1-hipotesis}
+
+La hipótesis de trabajo es que la información armónica y la geometría del
+campo permiten orientar de manera complementaria la selección de
+condiciones iniciales, de modo que una búsqueda estructurada puede
+localizar respuestas que no se observan al iniciar cerca de los equilibrios.
+En sistemas de Caputo, esa información debe integrarse con un tratamiento
+explícito de la historia para que la comparación corresponda al mismo
+problema de evolución. La utilidad de la combinación se contrasta mediante
+los destinos alcanzados, la persistencia de las respuestas y el costo
+computacional, frente a rutas alternativas con condiciones comparables.
+
+La aportación se centra en la relación entre esas etapas. Para el Chua
+no suave estudiamos una función descriptiva sesgada y una continuación
+con historia acumulada. Para el Chua con arctangente consideramos una
+exploración inicial en orden entero y un refinamiento posterior mediante
+problemas independientes de Caputo. Los casos Kalman--Fitts, MAVPD y PLL
+permiten comparar la búsqueda armónica con mapas de conmutación,
+homotopías y semillas geométricas. Las extensiones a otras familias
+fraccionarias permiten estudiar hasta dónde se conserva esa utilidad
+cuando cambia la estructura del campo.
+
+El alcance general se apoya en distinguir qué parte de la construcción
+depende de una realimentación escalar y cuál puede formularse mediante
+varios canales o mediante propiedades geométricas. La comparación incluye
+casos donde una ruta funciona y casos donde no alcanza el destino
+buscado. Esta diversidad permite identificar condiciones de aplicación y
+explicar por qué una misma fórmula de inicialización puede producir
+resultados diferentes en dos modelos.
+
+\subsection{Objetivo general y objetivos específicos}
+\label{sec:cap1-objetivos}
+
+El objetivo general es desarrollar y evaluar una metodología matemática
+y computacional para localizar y caracterizar atractores ocultos en
+sistemas multiestables de orden fraccionario, utilizando el orden entero
+como referencia y relacionando la estructura del modelo, la memoria de
+Caputo y las cuencas de atracción. A partir de los sistemas seleccionados,
+se estudia su utilización para generar secuencias digitales y para una
+aplicación de cifrado de imágenes.
+
+Los objetivos específicos son:
+\begin{enumerate}
+\item Formular los modelos de estudio, calcular sus equilibrios y
+      jacobianos, y establecer la clasificación de estabilidad local
+      correspondiente al orden de derivación y a las hipótesis de cada caso.
+\item Construir y analizar condiciones iniciales mediante realizaciones
+      de realimentación, función descriptiva, balance armónico y métodos
+      geométricos complementarios, identificando sus condiciones de
+      admisibilidad y sus posibles obstrucciones.
+\item Desarrollar las rutas de continuación y refinamiento de semillas,
+      diferenciando las aproximaciones periódicas utilizadas para
+      inicializar la búsqueda de la evolución causal del sistema original.
+\item Comparar integradores, pasos, horizontes y tratamientos de memoria
+      para determinar qué características de las respuestas persisten y
+      cómo cambia el costo de obtenerlas.
+\item Caracterizar los destinos y las cuencas mediante trayectorias,
+      diagnósticos dinámicos, cortes y sondeos alrededor de todos los
+      equilibrios, contrastando la localización estructurada con otras
+      estrategias de búsqueda.
+\item Relacionar cada resultado con sus parámetros, condiciones iniciales,
+      métodos y datos de cálculo, de forma que las figuras y las
+      comparaciones puedan reconstruirse a partir de la misma formulación.
+\item Estudiar la generación de secuencias y el cifrado reversible de
+      imágenes con los sistemas seleccionados, considerando la precisión
+      finita, el costo de implementación y la evaluación criptográfica
+      del esquema utilizado.
+\end{enumerate}
+
+\subsection{Alcance y delimitación}
+\label{sec:cap1-alcance}
+
+El núcleo del trabajo comprende sistemas autónomos de dimensión finita
+en orden entero y modelos con derivadas de Caputo de orden conmensurable
+\(0<q<1\). La formulación de realimentación permite aplicar el análisis
+armónico cuando la estructura y el cierre lo admiten. Los métodos
+geométricos amplían la comparación a casos en los que esa construcción
+directa resulta insuficiente. No se presupone que todas las familias
+tengan la misma no linealidad ni que una única semilla pueda localizar
+todas sus respuestas.
+
+La selección de casos responde a funciones diferentes dentro del estudio.
+Chua permite relacionar las construcciones publicadas con las rutas
+fraccionarias propuestas; Kalman--Fitts y PLL permiten examinar
+obstrucciones armónicas y alternativas de continuación; MAVPD permite
+comparar destinos coexistentes y semillas geométricas. Los casos de
+Lorenz generalizado, Rabinovich--Fabrikant y Muñoz--Pacheco aportan
+contrastes en otras familias fraccionarias. El interés de incluirlos es
+examinar qué elementos del procedimiento se conservan al cambiar el modelo.
+
+La localización se evalúa numéricamente mediante problemas de valor
+inicial y protocolos de cuenca especificados. Las afirmaciones sobre
+estabilidad, periodicidad y caos se relacionan con el análisis matemático
+y los diagnósticos que las sustentan. Los sondeos finitos proporcionan
+evidencia numérica de accesibilidad u ocultedad a las escalas estudiadas;
+una exclusión matemática de una vecindad completa exige un argumento
+adicional sobre esa región. En Caputo, la clase de inicializaciones de
+memoria forma parte de la definición del problema de cuenca.
+
+La aplicación digital considera la selección del régimen dinámico, la
+generación de la secuencia y la transformación de imágenes como etapas
+relacionadas. Su evaluación comprende reproducción, reversibilidad,
+estadística y análisis de seguridad del esquema. El comportamiento del
+oscilador motiva la construcción y define sus condiciones de operación;
+las propiedades criptográficas se estudian sobre el algoritmo que
+efectivamente transforma la imagen.
+
+\subsection{Organización de la tesis}
+\label{sec:cap1-organizacion}
+
+La tesis se organiza en cinco capítulos. El primero presenta el contexto,
+los antecedentes, el problema y los objetivos de la investigación.
+El segundo introduce los sistemas de estudio y desarrolla el análisis
+de sus ecuaciones, equilibrios y estabilidad. El tercero expone la
+formulación teórica y la metodología de localización, continuación e
+integración. El cuarto reúne los resultados, las comparaciones entre
+métodos y el análisis de las cuencas y de los regímenes observados.
+El quinto aborda la implementación digital y la aplicación al cifrado
+de imágenes, relacionando sus resultados con el análisis dinámico previo.
+
+\ifHAFOPedagogy
+\begin{bloqueestudio}{Lecturas}
+Leonov--Kuznetsov desarrolla la inicialización armónica; Danca estudia
+Chua con Caputo y Wu utiliza una recurrencia ADM local. La comparación
+requiere identificar en cada caso la ecuación de evolución y el dato inicial.
+\end{bloqueestudio}
+
+\begin{bloqueestudio}{Ejercicios}
+Para el Chua no suave, obtenga el jacobiano en cada equilibrio y relacione su
+espectro con el criterio de Matignon. Explique después por qué esa
+clasificación local no determina el destino de una semilla armónica alejada
+del equilibrio. Repita la comparación para un punto perpetuo.
+\end{bloqueestudio}
+\fi

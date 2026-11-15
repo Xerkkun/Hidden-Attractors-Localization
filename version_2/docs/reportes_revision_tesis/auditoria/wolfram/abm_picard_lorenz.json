@@ -1,0 +1,9 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Out[1]= <|\"checks\" -> <|\"ABM_left_weight\" -> True, \"ABM_right_weight\" -> True, \"ABM_interior_weight\" -> True, \"ABM_initial_weight\" -> True, \"Picard_beta_coefficient\" -> True, \"q1_nonlinear_chart_defect_vanishes\" -> True, \"qhalf_nonlinear_chart_defect_nonzero\" -> True, \"q1_predictor_counterexample\" -> True, \"Lorenz_dissipation_identity\" -> True|>, \"ABM_residuals\" -> {0, 0, 0, 0}, \"q1_ABM_left_right_interior\" -> {1, 1, 2}, \"Picard_second_coefficient\" -> Gamma[1 + 2*q]^(-1), \"nonlinear_chart_second_order_defect_divided_by_a2x02\" -> Gamma[1 + q]^(-2) - 2/Gamma[1 + 2*q], \"qhalf_chart_defect\" -> -0.72676045526483731384892989301988510373`20., \"Lorenz_vdot\" -> (-34*x^2)/5 - 2*y^2 + (102*z)/5 - z^2, \"Lorenz_ultimate_V_bound\" -> 5202/25, \"IID_zero_contact_upper_95percent_n7200\" -> 0.00041598738012988162060203557341220565`16., \"IID_zero_contact_upper_95percent_n8400\" -> 0.00035657120784169240043469032843210658`16., \"scope\" -> \"Exact algebra and conditional independent-sampling bound. Deterministic finite sphere grids do not satisfy the IID hypothesis automatically.\"|>"
+    }
+  ],
+  "isError": false
+}

@@ -1,0 +1,64 @@
+\section{Cálculo algebraico de equilibrios y espectros}
+\label{app:algebra-espectros}
+
+Para un campo polinomial con parámetros racionales, las ecuaciones
+\(f(p)=0\), el jacobiano \(J_f(p)\) y el polinomio
+\(p_p(\lambda)=\det(\lambda I-J_f(p))\) pueden obtenerse mediante
+operaciones exactas. La representación racional de un decimal finito conserva
+el parámetro declarado; el redondeo se introduce al aproximar las raíces.
+Para evaluar una aproximación \(\widetilde p\) y sus valores propios
+\(\widetilde\lambda_j\), se consideran
+\[
+ r_f=\|f(\widetilde p)\|,\qquad
+ r_j=|p_{\widetilde p}(\widetilde\lambda_j)|,\qquad
+ r_{\mathrm{tr}}=
+ \left|\sum_j\widetilde\lambda_j-\operatorname{tr}J_f(\widetilde p)\right|.
+\]
+Un residuo pequeño indica consistencia numérica. La existencia y unicidad de
+una raíz próxima requieren una cota adicional, por ejemplo mediante un
+teorema de Newton validado; el residuo aislado no proporciona esa cota.
+
+Para ver cómo los residuos se relacionan con las matrices, consideramos
+un jacobiano de dimensión tres \(J=(j_{ab})\). La expansión de
+\(\det(\lambda I-J)\) por su primera fila es
+\begin{align*}
+ p(\lambda)
+ &=(\lambda-j_{11})[(\lambda-j_{22})(\lambda-j_{33})-j_{23}j_{32}]\\
+ &\quad-j_{12}[j_{21}(\lambda-j_{33})+j_{23}j_{31}]\\
+ &\quad-j_{13}[j_{21}j_{32}+(\lambda-j_{22})j_{31}].
+\end{align*}
+Al reunir las potencias de \(\lambda\), resulta
+\[
+ p(\lambda)=\lambda^3-\operatorname{tr}(J)\lambda^2
+ +\left[(j_{11}j_{22}-j_{12}j_{21})
+       +(j_{11}j_{33}-j_{13}j_{31})
+       +(j_{22}j_{33}-j_{23}j_{32})\right]\lambda-\det J.
+\]
+El coeficiente cuadrático fija así la suma de las raíces, mientras que
+el término independiente fija su producto. En el Lorenz generalizado con
+\((\sigma,r,a)=(3.4,6.8,-0.5)\), sustituir los jacobianos de los tres
+equilibrios produce
+\begin{align*}
+ p_0(\lambda)&=\lambda^3+5.4\lambda^2-15.32\lambda-19.72,\\
+ p_{\pm}(\lambda)&=\lambda^3+5.4\lambda^2
+ +14.8476942706167\lambda+78.88.
+\end{align*}
+El coeficiente lineal de \(p_\pm\) se muestra redondeado. La suma espectral
+es \(-5.4\), igual a la traza de los tres jacobianos. Para un sistema Caputo
+conmensurable de orden \(q\), si ningún autovalor es cero, el margen angular
+\[
+ m_q(p)=\min_j|\arg\lambda_j|-\frac{q\pi}{2}
+\]
+determina la estabilidad asintótica del sistema lineal cuando es positivo.
+Su aplicación al campo no lineal requiere las hipótesis de regularidad y
+linealización establecidas en los fundamentos.
+
+Las realizaciones de Lorenz generalizado y Rabinovich--Fabrikant se comprueban
+mediante las identidades
+\[
+ AX+B\Phi(X)-f(X)=0,\qquad
+ (zI-A)W(z)-B=0,
+\]
+en el dominio \(\det(zI-A)\ne0\). Estas igualdades justifican las
+transferencias empleadas en el balance MIMO. La solución del balance y la
+integración desde sus semillas constituyen problemas posteriores.

@@ -1,0 +1,40 @@
+{
+  "config": {
+    "q": 0.9998,
+    "h": 0.01,
+    "t_final": 300.0,
+    "burn": 100.0,
+    "memory": "full_from_t0"
+  },
+  "rows": 30001,
+  "max_norm": 10.865527276361915,
+  "spectral": [
+    {
+      "dominant_frequency": 0.3699815009249538,
+      "spectral_entropy": 0.11504541687414939
+    },
+    {
+      "dominant_frequency": 0.3699815009249538,
+      "spectral_entropy": 0.1049399784495761
+    },
+    {
+      "dominant_frequency": 0.3699815009249538,
+      "spectral_entropy": 0.10327595730107164
+    }
+  ],
+  "spectral_contract": "mean removed, Hann window, DC bin excluded, normalized FFT power entropy/log(number of retained bins)",
+  "frequency_agrees_at_displayed_precision": true,
+  "max_entropy_error_vs_recorded": 0.00022243709652967902,
+  "interpretation": "Regular dominant oscillation; no proof of an exact Caputo periodic orbit or hiddenness",
+  "source_control_json_sha256": "a011797341cd4de0460db83eea16c9f7aa71e09e44411c378b36c7fe0b1a954c",
+  "data_file": "C02_independent_restart.npz",
+  "data_sha256": "a182d0dfa25df079df84b9419bd299367cae9a1018a2a92557ac8deb0fa8cbf8",
+  "figure_file": "../../figures/revision/c02_reinicio_validado.pdf",
+  "figure_sha256": "93b187fa93f103b2cc2b3a5f814bd808054234bd6a6777133adef8e69237c250",
+  "display_interval": [
+    280,
+    300
+  ],
+  "regeneration": "python generar_c02_desde_datos.py --output <new-output.pdf>",
+  "source_generator_sha256": "d564047cd9e5419143ab435bff111a1a86fff386bb6cced72f805ae2b3205869"
+}

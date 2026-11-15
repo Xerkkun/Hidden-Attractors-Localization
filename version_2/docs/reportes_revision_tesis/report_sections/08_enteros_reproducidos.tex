@@ -1,0 +1,1654 @@
+\section{Localización y dinámica de los sistemas enteros}
+
+Estudiamos cuatro realizaciones de Lur'e que permiten contrastar distintas
+rutas de localización. En Chua y MAVPD obtenemos condiciones iniciales a
+partir del balance armónico; en Kalman--Fitts, una incompatibilidad de signo
+conduce a un mapa de conmutación; y en PLL, la fase de la transferencia obliga
+a trabajar con un retorno sobre el cilindro. La comparación independiente
+entre Python y Julia examina tanto las condiciones iniciales como los
+conjuntos alcanzados.
+
+El análisis conecta cuatro problemas:
+
+\begin{enumerate}
+  \item \textbf{derivación}: existencia de una rama armónica compatible y de
+        una semilla obtenida desde el modelo;
+  \item \textbf{localización}: integración y continuación hasta un conjunto
+        recurrente del sistema original;
+  \item \textbf{clasificación dinámica}: periodicidad, regularidad o
+        comportamiento compatible con caos bajo un diagnóstico finito;
+  \item \textbf{ocultedad}: ausencia de contacto desde un conjunto explícito
+        de vecindades de todos los equilibrios.
+\end{enumerate}
+
+Identificamos los ciclos mediante sus retornos y su estabilidad; para el caos
+combinamos espectros variacionales, secciones y diagnósticos sobre las series.
+La denominación de atractor oculto numérico incorpora, además, la ausencia de
+acceso desde las condiciones muestreadas alrededor de todos los equilibrios.
+Por ello indicamos los radios, las direcciones, el horizonte y el criterio de
+contacto de cada experimento. El análisis de una vecindad continua es una
+cuestión matemática adicional, distinta de esos resultados de simulación.
+
+\section{Ruta matemática y numérica común}
+
+\subsection{Declaración Lur'e y ruta directa D0}
+
+La formulación escalar base es
+\begin{equation}
+  \dot X=PX+b\,\psi(\sigma),\qquad
+  \sigma=c^{\mathsf T}X,
+  \label{int:eq:lure}
+\end{equation}
+con una comprobación numérica de que el campo de \eqref{int:eq:lure} coincide con
+las ecuaciones originales. Se verifican también los equilibrios, el Jacobiano
+analítico contra diferencias finitas y el espectro local.
+
+La transferencia se define por
+\begin{equation}
+  G(s)=c^{\mathsf T}(P-sI)^{-1}b.
+  \label{int:eq:transfer}
+\end{equation}
+Para justificar el signo del cierre, considérese primero la ganancia lineal
+\(\psi(\sigma)=k\sigma\) y un modo \(X(t)=v\e^{st}\). Entonces
+\[
+ (sI-P)v=bk\,c^{\mathsf T}v.
+\]
+Si \(sI-P\) es invertible y \(c^{\mathsf T}v\ne0\), multiplicar por
+\(c^{\mathsf T}(sI-P)^{-1}\) y cancelar \(c^{\mathsf T}v\) da
+\[
+ 1=k\,c^{\mathsf T}(sI-P)^{-1}b=-kG(s).
+\]
+Equivalentemente, el lema del determinante para una perturbación de rango uno
+da
+\[
+ \det(sI-P-kbc^{\mathsf T})=\det(sI-P)[1+kG(s)].
+\]
+Estas identidades se aplican fuera de los polos de la transferencia. Para
+\(s=i\omega_0\) y \(k\) real, separarlas en partes real e imaginaria
+produce el cierre siguiente. La ganancia de primer armónico de una entrada
+\(a\cos\theta\) es
+\[
+ \mathcal N(a)=\frac1{\pi a}\int_0^{2\pi}
+                   \psi(a\cos\theta)\cos\theta\,\dd\theta.
+\]
+Se obtiene por proyección sobre \(\cos\theta\), cuya norma cuadrática en
+un periodo es \(\pi\). El cierre retiene esa componente; los armónicos
+superiores se evalúan posteriormente mediante la integración del campo.
+
+La ruta directa resuelve
+\begin{equation}
+  \operatorname{Im}G(i\omega_0)=0,\qquad
+  k=-\frac{1}{\operatorname{Re}G(i\omega_0)},\qquad
+  \mathcal N(a_0)=k.
+  \label{int:eq:balance}
+\end{equation}
+La frecuencia \(\omega_0\) se obtiene de las raíces polinómicas o de la
+ecuación escalar derivada de la transferencia. El diagrama de Nyquist
+representa las ramas resultantes.
+
+Para cada rama compatible se forma \(P_0=P+kbc^{\mathsf T}\). Un vector
+normalizado se obtiene directamente como
+\[
+ v=k(i\omega_0I-P)^{-1}b,\qquad
+ c^{\mathsf T}v=-kG(i\omega_0)=1.
+\]
+La ecuación resolvente implica \(P_0v=i\omega_0v\). Por ser \(P_0\) real,
+\[
+ X_{\rm aux}(t)=a_0\operatorname{Re}
+       \bigl(v\e^{i(\omega_0t+\theta)}\bigr),\qquad
+ c^{\mathsf T}X_{\rm aux}(t)=a_0\cos(\omega_0t+\theta)
+\]
+es una solución exacta del sistema auxiliar. Su estado inicial es la semilla
+\(X_0=a_0\operatorname{Re}(v\e^{i\theta})\). La continuación entera es
+\begin{equation}
+  \dot X=P_0X+\lambda b
+  \left[\psi(c^{\mathsf T}X)-k\,c^{\mathsf T}X\right],
+  \qquad 0\leq\lambda\leq1.
+  \label{int:eq:homotopy}
+\end{equation}
+En $\lambda=0$ queda el oscilador armónico auxiliar y en $\lambda=1$ se
+recupera exactamente el sistema original.
+
+\subsection{Ruta alternativa A1}
+
+Si \eqref{int:eq:balance} no produce una ganancia compatible, una amplitud real,
+una continuación persistente o candidatos que superen el objetivo dinámico
+declarado, se recurre a una alternativa adecuada a esa obstrucción. En Kalman--Fitts, la única rama directa tiene
+ganancia negativa, incompatible con la función descriptiva positiva de
+\(\tanh\). Entonces se usa un mapa de conmutación de Andronov para
+\(\operatorname{sign}(\sigma)\) y una homotopía
+\begin{equation}
+  \psi_\lambda(\sigma)=
+  (1-\lambda)\operatorname{sign}(\sigma)
+  +\lambda\tanh(\sigma/\varepsilon).
+  \label{int:eq:sign-tanh}
+\end{equation}
+
+Los barridos de frecuencia, las transferencias sesgadas y la continuación
+multiparámetro son alternativas reservadas para fallos explícitos. No forman
+parte de la ruta principal de orden entero. En la extensión caótica MAVPD, la
+ruta D0 sí produce semillas y continuación, pero ninguna de sus dos ramas base
+supera el cribado finito de caos; sólo entonces se habilita una continuación
+paramétrica estructurada alrededor de una frontera de Hopf derivada.
+
+\subsection{Localización y contraste independiente}
+
+Las semillas se calculan a partir de las ecuaciones del modelo. Los valores
+publicados y los obtenidos previamente mediante cálculo simbólico se emplean
+para contrastar el cierre algebraico y el destino de las trayectorias una
+vez completada la localización. La comparación entre Python y Julia utiliza
+cálculos independientes con un protocolo común de evaluación.
+
+\subsection{Protocolo de ocultedad}
+
+Después de localizar una nube candidata \(\mathcal A_h\), se construyen
+condiciones iniciales alrededor de \emph{todos} los equilibrios. Para una
+condición \(X_0\), la cola de su trayectoria se compara con:
+
+\begin{enumerate}
+  \item las tolerancias de convergencia a cada equilibrio;
+  \item la nube candidata mediante una distancia normalizada;
+  \item umbrales de divergencia y de conjunto acotado no trivial.
+\end{enumerate}
+
+La conclusión \emph{sin contacto} queda ligada al conjunto explícito de
+condiciones iniciales, junto con sus radios, direcciones, paso, transitorio,
+horizonte y tolerancia geométrica. En cada comparación cruzada los dos entornos
+reciben las mismas coordenadas.
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance=0.55cm and 0.9cm,
+  box/.style={draw=Azul,rounded corners,fill=AzulClaro,align=center,
+              text width=3.45cm,minimum height=0.88cm},
+  alt/.style={draw=Naranja,rounded corners,fill=NaranjaClaro,align=center,
+              text width=3.45cm,minimum height=0.88cm},
+  arrow/.style={-{Latex[length=2.3mm]},thick}
+]
+\node[box] (model) {Ecuaciones, Jacobiano,\\equilibrios y forma Lur'e};
+\node[box,below=of model] (direct) {Transferencia directa\\$\omega_0\to k\to a_0\to X_0$};
+\node[box,below=of direct] (cont) {Continuación al\\sistema original};
+\node[box,below=of cont] (dyn) {Candidato y\\diagnóstico dinámico};
+\node[box,below=of dyn] (hidden) {Sondeos comunes\\de ocultedad};
+\node[alt,right=of direct] (fallback) {Ruta alternativa sólo\\tras fallo documentado};
+\draw[arrow] (model)--(direct);
+\draw[arrow] (direct)--(cont);
+\draw[arrow] (cont)--(dyn);
+\draw[arrow] (dyn)--(hidden);
+\draw[arrow,dashed,draw=Naranja] (direct)--(fallback);
+\draw[arrow,dashed,draw=Naranja] (fallback.south)--(dyn.east);
+\end{tikzpicture}
+
+\smallskip
+\small\textbf{Diagrama metodológico.} Jerarquía de búsqueda usada para los
+sistemas enteros.
+\end{center}
+
+\section[Caso 1: Chua no suave entero]{Caso 1: Chua no suave de orden entero}
+
+\subsection{Modelo y derivación}
+
+El sistema es
+\begin{align}
+ \dot x&=\alpha\,[y-x-\phi(x)],\nonumber\\
+ \dot y&=x-y+z,\nonumber\\
+ \dot z&=-\beta y-\gamma z, \label{int:eq:chua}\\
+ \phi(x)&=m_1x+(m_0-m_1)\operatorname{sat}(x),\qquad
+ \operatorname{sat}(x)=\min(1,\max(-1,x)).\nonumber
+\end{align}
+Se usaron
+\[
+ \alpha=8.4562,\quad \beta=12.0732,\quad \gamma=0.0052,\quad
+ m_0=-0.1768,\quad m_1=-1.1468.
+\]
+La forma D0 exacta toma \(c=e_1\), \(b=-\alpha e_1\), una parte lineal
+con pendiente base \(m_1\) y
+\(\psi(\sigma)=(m_0-m_1)\operatorname{sat}(\sigma)\).
+
+Escribiendo \(a_P=\alpha(1+m_1)\), la matriz lineal y el polinomio
+intermedio son
+\[
+ P=\begin{pmatrix}-a_P&\alpha&0\\1&-1&1\\0&-\beta&-\gamma\end{pmatrix},
+ \qquad D(s)=s^2+(1+\gamma)s+\beta+\gamma.
+\]
+Las dos últimas filas de \((sI-P)v=b\) dan
+\(v_3=-\beta v_2/(s+\gamma)\) y
+\(v_1=D(s)v_2/(s+\gamma)\). La primera fila produce
+\[
+ [(s+a_P)D(s)-\alpha(s+\gamma)]v_1=-\alpha D(s).
+\]
+Por tanto,
+\begin{equation}
+ G(s)=\frac{\alpha D(s)}{(s+a_P)D(s)-\alpha(s+\gamma)}.
+ \label{int:eq:chua-transfer-derived}
+\end{equation}
+Con \(d_0=\beta+\gamma\), \(d_1=1+\gamma\), \(z=\omega^2\), el numerador
+complejo de \(G(i\omega)\) es \(\alpha(d_0-z+id_1\omega)\), y el
+denominador tiene partes
+\[
+ A=a_Pd_0-\alpha\gamma-(d_1+a_P)z,\qquad
+ B=\omega(d_0+a_Pd_1-\alpha-z).
+\]
+Como \(\operatorname{Im}G=\alpha[d_1\omega A-(d_0-z)B]/(A^2+B^2)\),
+la condición imaginaria, para \(\omega>0\) y \(A^2+B^2>0\), equivale a
+\[
+ z^2+(\alpha+d_1^2-2d_0)z+d_0^2-\alpha d_0+\alpha\gamma d_1=0.
+\]
+Cada raíz positiva se comprueba en el resolvente antes de calcular \(k\).
+Normalizando el primer componente del modo a uno, sus otras componentes son
+\[
+ v_2=\frac{i\omega+\gamma}{D(i\omega)},\qquad
+ v_3=-\frac{\beta}{D(i\omega)}.
+\]
+Así se obtienen los tres componentes de la semilla a partir de la amplitud y
+la fase, sin ajustar coordenadas independientemente.
+
+Sea \(\Delta=m_0-m_1\). Para \(0<a\leq1\), la saturación permanece en su
+tramo lineal y \(\mathcal N(a)=\Delta\). Para \(a>1\), el ángulo de cruce
+es \(\theta_c=\arccos(1/a)\). La simetría impar y la simetría entre
+cuadrantes reducen la integral a
+\begin{align*}
+ \mathcal N(a)
+ &=\frac{4\Delta}{\pi a}
+   \left[\int_0^{\theta_c}\cos\theta\,\dd\theta
+       +a\int_{\theta_c}^{\pi/2}\cos^2\theta\,\dd\theta\right]\\
+ &=\frac{4\Delta}{\pi a}
+   \left[\sin\theta_c+a\left(\frac\pi4-\frac{\theta_c}{2}
+                              -\frac{\sin2\theta_c}{4}\right)\right].
+\end{align*}
+Usando \(\pi/2-\theta_c=\arcsin(1/a)\),
+\(\sin\theta_c=\sqrt{a^2-1}/a\) y
+\(\sin2\theta_c=2\sqrt{a^2-1}/a^2\), se obtiene
+\begin{equation}
+ \mathcal N(a)=\frac{2(m_0-m_1)}{\pi}
+ \left[
+ \arcsin\!\left(\frac1a\right)
+ +\frac{\sqrt{a^2-1}}{a^2}
+ \right].
+\end{equation}
+El balance armónico produjo
+\[
+ \omega_0=2.039186939959,\qquad
+ k=0.209867354515,\qquad
+ a_0=5.856145086252,
+\]
+y la semilla
+\[
+ X_0=(5.856145086252,\ 0.369331578246,\ -8.366536168324)^{\mathsf T}.
+\]
+El residuo de cierre de Nyquist fue \(3.26\times10^{-15}\) y el de la
+función descriptiva \(1.98\times10^{-13}\). El contraste posterior con los cálculos de
+Mathematica y MATLAB dio diferencias máximas del orden de \(10^{-12}\).
+
+\subsection{Localización por recurrencias}
+
+La búsqueda por recurrencias en Julia evaluó 512 condiciones iniciales en
+un dominio y una partición prefijados. Encontró dos conjuntos recurrentes,
+identificados mediante las etiquetas 2 y 3, con 22 contactos entre los 512
+lanzamientos: una fracción muestral de \(0.04296875\). Las semillas de la
+función descriptiva confirmaron posteriormente la correspondencia con las
+ramas positiva y negativa.
+
+\begin{hafocommonfigure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{chua_python_attractor.png}
+  \caption{\hafo{}: candidato obtenido por semilla y continuación.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{chua_julia_candidates.png}
+  \caption{Julia: dos conjuntos descubiertos por recurrencias globales.}
+\end{subfigure}
+\caption{Localización independiente en el Chua no suave.}
+\label{int:fig:chua-localization}
+\end{hafocommonfigure}
+
+\subsection{Comparación dinámica Python--Julia}
+
+\ifHAFOBasinMaterial
+\paragraph{Protocolo de comparación cruzada.}
+Ambos cálculos evaluaron \ChuaProbeCount{} condiciones:
+3 equilibrios, 7 radios entre \(10^{-5}\) y \(10^{-2}\), y 24 puntos por
+equilibrio y radio. Se usaron \(t_f=500\), \(t_{\mathrm{burn}}=120\),
+tolerancia de equilibrio \(10^{-3}\) y tolerancia normalizada de nube \(0.08\).
+Las 504 coordenadas se generaron uniformemente en bolas, con semilla
+pseudoaleatoria 123456789. El control EFORK--3 de referencia emplea
+\(T=320\), \(T_{\mathrm{burn}}=80\), otras coordenadas y un clasificador
+por huellas de sección.
+\fi
+
+\begin{table}[H]
+\centering
+\caption{Comparación Python--Julia para Chua con el protocolo de 504
+condiciones comunes. El control EFORK--3 emplea otro banco y otro horizonte.}
+\small
+\begin{tabularx}{\textwidth}{@{}lYY@{}}
+\toprule
+Magnitud & Python/\hafo{} & Julia \\
+\midrule
+\ifHAFOBasinMaterial
+Clases finales coincidentes & \multicolumn{2}{c}{504 de 504} \\
+Conteos comunes & \multicolumn{2}{c}{152 en \(E_0\), 198 acotadas no triviales, 154 divergentes} \\
+Contactos con candidato & 0 & 0 \\
+\fi
+Exponentes de Lyapunov finitos &
+\((0.14018,\ 0.01319,\ -1.20304)\) &
+\((0.14591,\ -0.00052,\ -1.17115)\) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\ifHAFOBasinMaterial
+Los conteos \(152/198/154\) pertenecen exclusivamente a este protocolo
+de comparación cruzada. Los conteos \(369/69/66\) de la configuración de referencia usan
+otro horizonte, otras coordenadas y otro clasificador. Ambos protocolos dieron cero contactos con la nube objetivo.
+\fi
+
+Los dos espectros tienen exponente máximo positivo y son consistentes con la
+respuesta caótica observada. La diferencia en el segundo exponente ilustra
+su sensibilidad a la duración y al procedimiento variacional; los sondeos
+aportan por separado la información de acceso desde los equilibrios.
+
+\begin{hafobasinfigure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{chua_python_hiddenness.png}
+\caption{Control de vecindades de los tres equilibrios en Python. El
+comparador usó las mismas 504 coordenadas en Julia.}
+\label{int:fig:chua-hiddenness}
+\end{hafobasinfigure}
+
+\section[Caso 2: Kalman--Fitts no Chua]
+{Caso 2: Kalman--Fitts, sistema no Chua de cuarto orden}
+
+\subsection{Formulación y rechazo de la ruta directa}
+
+El sistema exacto es
+\begin{equation}
+ \dot X=AX+b\tanh\!\left(\frac{c^{\mathsf T}X}{\varepsilon}\right),
+ \quad b=e_4,\quad c=-e_3,\quad \varepsilon=0.01,
+ \label{int:eq:kf}
+\end{equation}
+La matriz compañera se define por
+\[
+ A=\begin{pmatrix}
+ 0&1&0&0\\0&0&1&0\\0&0&0&1\\-a_0&-a_1&-a_2&-a_3
+ \end{pmatrix},
+ \qquad
+ p_A(s)=\bigl[(s+\beta)^2+m_1^2\bigr]
+         \bigl[(s+\beta)^2+m_2^2\bigr].
+\]
+Al expandir el producto,
+\begin{align*}
+ a_0&=(m_1^2+\beta^2)(m_2^2+\beta^2),&
+ a_1&=2\beta(m_1^2+m_2^2+2\beta^2),\\
+ a_2&=m_1^2+m_2^2+6\beta^2,&a_3&=4\beta.
+\end{align*}
+Los parámetros publicados \(m_1=0.9\), \(m_2=1.1\), \(\beta=0.03\)
+\cite{kalman2019} dan
+\((a_0,a_1,a_2,a_3)=(0.98191881,0.121308,2.0254,0.12)\).
+Las tres primeras ecuaciones de equilibrio imponen
+\(x_2=x_3=x_4=0\); la cuarta queda \(-a_0x_1=0\), de modo que el único
+equilibrio es el origen. Su Jacobiano es \(A+bc^{\mathsf T}/\varepsilon\)
+y tiene polinomio
+\[
+ s^4+a_3s^3+(a_2+1/\varepsilon)s^2+a_1s+a_0.
+\]
+Todos los coeficientes son positivos. Las dos desigualdades adicionales de
+Routh--Hurwitz para este polinomio mónico son
+\[
+ a_3(a_2+1/\varepsilon)-a_1=12.12174>0,
+\]
+\[
+ a_3(a_2+1/\varepsilon)a_1-a_1^2-a_3^2a_0
+ =1.456324405056>0.
+\]
+Por tanto, el equilibrio es localmente asintóticamente estable.
+
+Para calcular la transferencia se resuelve \((sI-A)v=b\): las tres primeras
+filas dan \(v_2=sv_1\), \(v_3=s^2v_1\), \(v_4=s^3v_1\), y la última da
+\(p_A(s)v_1=1\). Como \(c=-e_3\),
+\[
+ c^{\mathsf T}(sI-A)^{-1}b=-\frac{s^2}{p_A(s)},\qquad
+ G(s)=\frac{s^2}{p_A(s)}.
+\]
+En \(s=i\omega\), las partes real e imaginaria del denominador son
+\(R=\omega^4-a_2\omega^2+a_0\) e
+\(I=\omega(a_1-a_3\omega^2)\). De aquí
+\[
+ \operatorname{Im}G(i\omega)=\frac{\omega^2I}{R^2+I^2},\qquad
+ \omega_0^2=\frac{a_1}{a_3},\qquad
+ k=\frac{\omega_0^4-a_2\omega_0^2+a_0}{\omega_0^2}.
+\]
+La ruta directa, sin malla de frecuencias, encontró
+\[
+ \omega_0=1.005435229142,\qquad k=-0.043168701157.
+\]
+Para la no linealidad hiperbólica,
+\[
+ \mathcal N(a)=\frac1{\pi\varepsilon}\int_0^{2\pi}
+  \frac{\tanh u}{u}\cos^2\theta\,\dd\theta,
+ \qquad u=\frac{a\cos\theta}{\varepsilon},
+\]
+con valor continuo \(\tanh u/u=1\) en \(u=0\). Para \(u\ne0\),
+\(0<\tanh u/u<1\), de modo que \(0<\mathcal N(a)<1/\varepsilon\).
+Además, \(\mathcal N(a)\to1/\varepsilon\) cuando \(a\to0^+\), mientras
+\(\mathcal N(a)\leq4/(\pi a)\to0\) cuando \(a\to\infty\). La continuidad
+y estas cotas dan el rango \((0,100)\).
+Por tanto, la ganancia negativa se rechaza matemáticamente y no
+existe amplitud directa compatible. Python y Julia coincidieron en
+\(\omega_0\) a \(1.02\times10^{-14}\) y en \(k\) a
+\(1.09\times10^{-15}\).
+
+\subsection{Mapa de conmutación y continuación A1}
+
+En cada semiespacio \(\operatorname{sign}(c^{\mathsf T}X)=\sigma\),
+\(\sigma\in\{-1,1\}\), el precursor satisface \(\dot X=AX+b\sigma\).
+La variación de constantes y la invertibilidad de \(A\) dan
+\begin{equation}
+ \Phi_\sigma(t,X)=\e^{At}X+
+                   A^{-1}(\e^{At}-I)b\sigma.
+ \label{int:eq:kf-switching-flow}
+\end{equation}
+En efecto, \(\int_0^t\e^{A(t-s)}\,\dd s=A^{-1}(\e^{At}-I)\). En la
+sección \(\Sigma=\{X:c^{\mathsf T}X=0\}\), el lado de salida se elige
+según el signo de \(c^{\mathsf T}(AX+b\sigma)\). El tiempo \(t_+(X)>0\)
+es el primer cero transversal de
+\(c^{\mathsf T}\Phi_\sigma(t,X)\) después de abandonar la sección. Así se
+define el mapa de conmutación
+\(\Pi(X)=\Phi_\sigma(t_+(X),X)\). Una órbita de periodo dos cumple
+\(\Pi^2(X)=X\), con \(\Pi(X)\ne X\); el periodo continuo suma los dos
+tiempos de vuelo. La transversalidad excluye los contactos tangenciales en
+los que el siguiente cruce no queda definido de este modo.
+
+El mapa de sección de la no linealidad \(\operatorname{sign}(\sigma)\)
+convergió en 135 iteraciones a una órbita de retorno de periodo 2 y generó
+\[
+ X_{\mathrm{sw}}=
+ (0.212347571803,\ -1.671123727247,\ 0,\ 1.478087383043)^{\mathsf T}.
+\]
+Después se aplicaron 51 valores de \(\lambda\) en
+\eqref{int:eq:sign-tanh}. Ninguna implementación leyó el punto publicado como
+semilla. El punto de la Tabla 2 se comparó sólo después y quedó a distancia
+\(4.34\times10^{-4}\) de la trayectoria Python y
+\(4.30\times10^{-4}\) de la Julia.
+
+\begin{hafocommonfigure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{kalman_continuation.png}
+  \caption{Homotopía \(\operatorname{sign}\to\tanh\) en Python.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{kalman_python_julia_overlay.png}
+  \caption{Nubes finales generadas independientemente.}
+\end{subfigure}
+\caption{Ruta alternativa reproducida para Kalman--Fitts.}
+\label{int:fig:kf}
+\end{hafocommonfigure}
+
+\subsection{Ciclo límite y comparación dinámica}
+
+La sección de retorno y su persistencia entre métodos identifican un ciclo
+límite estable. El periodo medio fue
+\(11.9169960\) en Python y \(11.9169380\) en Julia, con diferencia
+\(5.81\times10^{-5}\). La distancia normalizada entre nubes fue
+\(2.10\times10^{-3}\).
+
+\ifHAFOBasinMaterial
+El protocolo compartido contiene \KFProbeCount{} condiciones alrededor del
+único equilibrio: 4 radios de \(10^{-5}\) a \(10^{-2}\) y 12 condiciones por
+radio. Los dos códigos produjeron 40 convergencias al equilibrio, 8 estados
+acotados no triviales y cero contactos con el ciclo. Las
+\KFProbeCount{} clases finales y las \KFProbeCount{} decisiones de contacto
+coincidieron punto por punto.
+Identificamos así un ciclo oculto numérico con respecto a estas 48 condiciones
+iniciales. La estabilidad local del origen explica que las condiciones de su
+vecindad puedan alcanzar un destino diferente del ciclo coexistente.
+\fi
+
+\begin{table}[H]
+\centering
+\caption{Comparación independiente del ciclo de Kalman--Fitts: rechazo del
+cierre directo, mapa de conmutación, periodo y acceso desde la vecindad del origen.}
+\small
+\begin{tabularx}{\textwidth}{@{}lYY@{}}
+\toprule
+Magnitud & Python/\hafo{} & Julia \\
+\midrule
+Ruta directa & Rechazo por \(k<0\) & Rechazo por \(k<0\) \\
+Mapa de conmutación & 135 iteraciones, retorno 2 & 135 iteraciones, retorno 2 \\
+Periodo del ciclo & 11.9169960 & 11.9169380 \\
+\ifHAFOBasinMaterial
+Contactos en 48 sondeos & 0 & 0 \\
+\fi
+\bottomrule
+\end{tabularx}
+\end{table}
+
+
+\section[Caso 3: Van der Pol--Duffing modificado]
+{Caso 3: Van der Pol--Duffing autónomo modificado}
+
+\subsection{Modelo y forma D0 exacta}
+
+El sistema MAVPD de orden entero es
+\begin{align}
+ \dot y_1&=\delta\gamma y_1+\delta y_2-\delta y_1^3,\nonumber\\
+ \dot y_2&=y_1-\xi y_2-y_3,\label{int:eq:mavpd}\\
+ \dot y_3&=\rho y_2,\nonumber
+\end{align}
+con \(\gamma=0.1\), \(\delta=100\) y \(\rho=200\)
+\cite{matouk2023}. Su declaración escalar es
+\[
+ P=\begin{pmatrix}
+ \delta\gamma&\delta&0\\
+ 1&-\xi&-1\\
+ 0&\rho&0
+ \end{pmatrix},\quad
+ b=\begin{pmatrix}-\delta\\0\\0\end{pmatrix},\quad
+ c=\begin{pmatrix}1\\0\\0\end{pmatrix},\quad
+ \psi(\sigma)=\sigma^3,
+\]
+de modo que el Jacobiano y todos los equilibrios reales para \(\gamma>0\) son
+\begin{equation}
+ J(y)=\begin{pmatrix}
+ \delta(\gamma-3y_1^2)&\delta&0\\
+ 1&-\xi&-1\\
+ 0&\rho&0
+ \end{pmatrix},\qquad
+ E_0=(0,0,0),\quad
+ E_\pm=(\pm\sqrt{\gamma},0,\pm\sqrt{\gamma}).
+ \label{int:eq:mavpd-jacobian}
+\end{equation}
+Para obtener los equilibrios, \(\dot y_3=0\) exige \(y_2=0\) porque
+\(\rho>0\); \(\dot y_2=0\) da \(y_3=y_1\); la primera ecuación se reduce
+a \(\delta y_1(\gamma-y_1^2)=0\). Esto produce exactamente los tres puntos
+anteriores cuando \(\gamma>0\).
+
+Sea \(u=(P-sI)^{-1}b\). Las últimas filas de este sistema lineal son
+\[
+ u_1-(\xi+s)u_2-u_3=0,\qquad \rho u_2-su_3=0.
+\]
+Al eliminar \(u_3\), resulta
+\(u_2=su_1/(s^2+\xi s+\rho)\). La primera fila queda
+\[
+ \left[\delta\gamma-s+\frac{\delta s}{s^2+\xi s+\rho}\right]u_1=-\delta.
+\]
+Despejando \(u_1=G(s)\) y expandiendo
+\((s-\delta\gamma)(s^2+\xi s+\rho)-\delta s\), se obtiene
+\begin{equation}
+ G(s)=\frac{\delta(s^2+\xi s+\rho)}
+ {s^3+(\xi-\delta\gamma)s^2+
+ (\rho-\delta-\delta\gamma\xi)s-\delta\gamma\rho}.
+ \label{int:eq:mavpd-transfer}
+\end{equation}
+La convención resolvente con signo opuesto se escribe
+\[
+ W(s)=c^{\mathsf T}(sI-P)^{-1}b=-G(s).
+\]
+Por tanto, su cálculo \(k=1/\operatorname{Re}W(i\omega)\) es exactamente el
+mismo que \(k=-1/\operatorname{Re}G(i\omega)\) en
+\eqref{int:eq:mavpd-direct-scalars}; el signo queda fijado por la derivación
+algebraica.
+La identidad \(\cos^3\theta=(3\cos\theta+\cos3\theta)/4\) separa las
+componentes de \(\psi(a\cos\theta)=a^3\cos^3\theta\). El primer armónico
+tiene amplitud \(3a^3/4\); dividir entre la amplitud de entrada \(a\) da
+\begin{equation}
+  \mathcal N(a)=\frac{3a^2}{4}.
+\end{equation}
+
+Al escribir \(z=\omega^2\), el numerador sin el factor \(\delta\) tiene
+partes \(\rho-z\) y \(\xi\omega\), mientras el denominador tiene partes
+\[
+ C=-\delta\gamma\rho-(\xi-\delta\gamma)z,\qquad
+ D=\omega(\rho-\delta-\delta\gamma\xi-z).
+\]
+Racionalizar el cociente produce
+\[
+ \operatorname{Im}G(i\omega)=
+ \frac{\delta[\xi\omega C-(\rho-z)D]}{C^2+D^2}.
+\]
+Al expandir el numerador, los términos con \(\gamma\) se cancelan y queda
+\[
+ \xi\omega C-(\rho-z)D
+ =-\omega[z^2+(\delta-2\rho+\xi^2)z+\rho(\rho-\delta)].
+\]
+Para \(\omega>0\) y \(C^2+D^2>0\), la condición imaginaria equivale a
+\begin{equation}
+ z^2+(\delta-2\rho+\xi^2)z+\rho(\rho-\delta)=0.
+ \label{int:eq:mavpd-poly}
+\end{equation}
+Así se obtienen todas las ramas sin barrido de frecuencias. Para cada raíz
+positiva \(z_j\), el procedimiento calcula
+\begin{equation}
+ \omega_j=\sqrt{z_j},\qquad
+ k_j=-\frac{1}{\operatorname{Re}G(i\omega_j)},\qquad
+ a_j=\sqrt{\frac{4k_j}{3}},
+ \label{int:eq:mavpd-direct-scalars}
+\end{equation}
+siempre que \(k_j>0\), condición necesaria para una amplitud real positiva.
+Para el modo normalizado \(v_{j,1}=1\), la primera fila de
+\((P+k_jbc^{\mathsf T})v_j=i\omega_jv_j\) es
+\[
+ \delta(\gamma-k_j)+\delta v_{j,2}=i\omega_j,
+\]
+y la tercera es \(\rho v_{j,2}=i\omega_jv_{j,3}\). Despejar ambas da
+\begin{equation}
+ v_j=\begin{pmatrix}
+ 1\\
+ k_j-\gamma+i\omega_j/\delta\\
+ \rho/\delta-i\rho(k_j-\gamma)/\omega_j
+ \end{pmatrix},\qquad
+ y_{0,j}(\theta)=a_j\operatorname{Re}\!\left(v_je^{i\theta}\right).
+ \label{int:eq:mavpd-direct-seed}
+\end{equation}
+Las igualdades de cierre de \eqref{int:eq:mavpd-direct-scalars}, la ecuación modal
+\((P+k_jbc^{\mathsf T})v_j=i\omega_jv_j\) y el residuo del campo se guardan
+para comprobar que la semilla procede del cierre y de la realización del campo.
+
+\subsection{\texorpdfstring{\(\xi=3.1\): ramas, semillas y continuación}{xi=3.1: ramas, semillas y continuación}}
+
+Para \(\xi=3.1\), \eqref{int:eq:mavpd-poly} tiene coeficientes
+\((1,-290.39,20000)\) y produce dos ramas compatibles:
+
+\begin{table}[H]
+\centering
+\caption{Ramas directas MAVPD para \(\xi=3.1\).}
+\small
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+Rama & \(\omega_0\) & \(k\) & \(a_0\) & Semilla con fase \(0\) \\
+\midrule
+0 & 10.5975230311 & 0.1397015948 & 0.4315886851 &
+\((0.4315887,0.0171348,0.8631774)\) \\
+1 & 13.3447557342 & 0.3518790503 & 0.6849613618 &
+\((0.6849614,0.1725274,1.3699227)\) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Se ejecutaron ambas ramas con fases \(0\) y \(\pi\), y 21 valores
+\(\lambda=0,0.05,\ldots,1\). La rama 0 conduce a dos ciclos internos
+simétricos; la rama 1 conduce al conjunto externo. La selección se hizo por
+mayor extensión de estado, sin leer la Tabla 1 de la fuente.
+
+\begin{hafocommonfigure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{mavpd_nyquist_df.png}
+  \caption{Ramas de Nyquist y función descriptiva derivadas.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{mavpd_python_clusters.png}
+  \caption{Dos ciclos internos y candidato externo en Python.}
+\end{subfigure}
+\caption{Ruta directa MAVPD con \(\xi=3.1\).}
+\label{int:fig:mavpd-route}
+\end{hafocommonfigure}
+
+\subsection{Comparación cruzada del caso periódico}
+
+\ifHAFOBasinMaterial
+El conjunto común contiene \MAVPDProbeCount{} condiciones: 3 equilibrios, 3 radios
+\((10^{-5},10^{-3},10^{-2})\) y 12 direcciones explícitas por equilibrio y
+radio. Se usaron \(h=0.005\), transitorio 180 y cola 80.
+\fi
+
+El comparador posterior confirmó:
+
+\begin{itemize}
+  \item diferencia máxima de frecuencias \(2.31\times10^{-14}\), de
+        ganancias \(3.50\times10^{-15}\), de amplitudes
+        \(3.44\times10^{-15}\) y de semillas \(7.45\times10^{-15}\);
+\ifHAFOBasinMaterial
+  \item \MAVPDFullAssignmentMatches{} de \MAVPDProbeCount{} asignaciones de
+        clúster, clases finales y decisiones sobre el candidato externo
+        coincidentes;
+  \item 54 trayectorias hacia el ciclo interno positivo, 54 hacia el negativo
+        y cero hacia el externo en cada implementación;
+\fi
+  \item distancia normalizada entre nubes externas
+        \(\MAVPDFullCloudDistance\);
+  \item periodos \(\MAVPDPythonPeriod\) en Python y
+        \(\MAVPDJuliaFullPeriod\) en Julia;
+  \item ninguna ruta alternativa para \(\xi=3.1\).
+\end{itemize}
+
+\begin{hafocommonfigure}[H]
+\centering
+\includegraphics[width=0.94\textwidth]{mavpd_python_julia_overlay_full.png}
+\caption{Comparación posterior MAVPD \emph{full}. Las localizaciones se
+ejecutaron independientemente.
+\ifHAFOBasinMaterial
+Las 108 coordenadas se compartieron sólo para el control de ocultedad.
+\fi}
+\label{int:fig:mavpd-overlay}
+\end{hafocommonfigure}
+
+\subsection{Clasificación dinámica y discrepancia con la fuente}
+
+En una ventana de 200 unidades temporales, la sección de Poincaré Python
+refinada con DOP853 y eventos densos dio
+405 cruces, rango de los últimos puntos del orden de \(10^{-13}\), periodo
+\(0.493177986749\) y desviación estándar \(1.25\times10^{-14}\).
+El espectro variacional independiente en el cálculo declarado fue
+\[
+ (-0.0017614,\ -0.3887396,\ -51.1886634),
+\]
+y la prueba 0--1 dio mediana \(K=0.000440085726\) sobre 64 valores de \(c\).
+En conjunto con la sección de Poincaré, estos diagnósticos apoyan un ciclo
+estable de periodo uno bajo el protocolo numérico; la prueba 0--1 aislada no
+constituye una demostración analítica de periodicidad. El cálculo independiente
+en Julia obtuvo \((-0.0042733,-0.3910810,-51.1961919)\), consistente con la
+misma clase.
+
+La fuente denomina al conjunto \emph{atractor oculto cuasiperiódico}. Esa
+etiqueta no se reproduce para las ecuaciones declaradas: la conclusión local
+obtenida es un ciclo periódico estable numérico. La diferencia muestra una
+discrepancia reproducible entre la etiqueta de la fuente
+y la dinámica obtenida con integración y sección de mayor precisión.
+
+\begin{hafobasinfigure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{mavpd_python_hiddenness.png}
+  \caption{Python: las vecindades alcanzan sólo los ciclos internos.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{mavpd_julia_candidates.png}
+  \caption{Julia \emph{full}: clúster externo con cero impactos.}
+\end{subfigure}
+\caption{Ciclo externo oculto numérico para \(\xi=3.1\). Las 108 condiciones
+de vecindad alcanzan las dos ramas interiores.}
+\label{int:fig:mavpd-hiddenness}
+\end{hafobasinfigure}
+
+\subsection{Comprobación algebraica de la fuente}
+
+La sustitución en las ecuaciones permite precisar tres diferencias con los
+valores impresos en la fuente:
+
+\begin{enumerate}
+  \item La fuente imprime \(\Theta=-\delta e_1\),
+        \(s=-e_1\) y \(\zeta(\sigma)=\sigma^3\). Juntas producen
+        \(+\delta y_1^3\), mientras que la ecuación del sistema contiene
+        \(-\delta y_1^3\). La formulación evaluada usa la ecuación original y la
+        forma exacta \(b=-\delta e_1\), \(c=e_1\).
+  \item Para \(\xi=3.1\), los valores impresos
+        \(\omega=18.6143\), \(|k|=0.8951\) dejan residuo de cierre
+        \(2.45589\) en la transferencia exacta.
+  \item Para \(\xi=3.5\), los valores impresos
+        \(\omega=10.2344\), \(|k|=0.1136\) dejan residuo \(0.171719\).
+\end{enumerate}
+
+Las semillas impresas sí terminan, en una prueba posterior, en los mismos
+clústeres dinámicos que la búsqueda independiente. Esa coincidencia dinámica
+no elimina la discrepancia algebraica de frecuencia y ganancia.
+
+\ifHAFOBasinMaterial
+\subsection{\texorpdfstring{\(\xi=3.5\): control negativo de ocultedad}{xi=3.5: control negativo de ocultedad}}
+
+La ruta directa recalculó dos ramas:
+\[
+(\omega_0,k,a_0)=
+(10.8359213547,\ 0.1497634046,\ 0.4468607607)
+\]
+y
+\[
+(\omega_0,k,a_0)=
+(13.0511611895,\ 0.3009508811,\ 0.6334570558).
+\]
+Las cuatro fases convergen a dos ciclos internos simétricos. Bajo el mismo
+protocolo de 108 sondeos, Python y Julia observaron 24 contactos
+con cada ciclo; el comparador confirmó la misma decisión negativa. Después
+del primer contacto se habilitó la ruta alternativa, que no encontró clústeres
+nuevos. Por tanto, la etiqueta oculta no se reproduce para \(\xi=3.5\) bajo
+las ecuaciones y controles ensayados.
+
+\fi
+
+\subsection{Extensión caótica: continuación relativa a una frontera candidata de Hopf}
+\label{int:subsec:mavpd-chaos}
+
+\ifHAFOBasinMaterial
+Los dos regímenes anteriores evalúan conjuntos periódicos bajo un protocolo
+común.
+\else
+El régimen periódico anterior establece el punto de comparación dinámico.
+\fi
+La coexistencia de caos y ocultedad se estudió mediante dos cálculos
+independientes, en Python y Julia. Ambos parten de \eqref{int:eq:mavpd},
+obtienen las dos semillas directas y recorren 21 niveles de continuación.
+Los parámetros y las semillas publicados se reservan para el contraste
+posterior.
+
+En el punto base $(\xi,\gamma)=(3.1,0.1)$, los espectros variacionales cortos
+de las ramas 0 y 1 fueron, respectivamente,
+\[
+ (-0.0012506,-1.0123389,-13.1096006),\qquad
+ (-0.0029948,-0.3930260,-51.1769818).
+\]
+Por tanto, ninguna rama superó el cribado finito declarado
+$\widehat\lambda_1>0.02$. Este resultado habilita la ruta alternativa; el cribado de tiempo finito
+no establece regularidad asintótica.
+
+La ruta alternativa selecciona, entre las ramas integradas, la de
+menor frecuencia armónica directa. La regla eligió aquí la rama 0,
+$\omega_0=10.5975230$; su estado final de continuación $\lambda$ alimentó el
+transporte en parámetros. La rama 1 se evalúa en el punto base y queda pendiente su transporte por A1.
+
+En $E_\pm=(\pm\sqrt{\gamma},0,\pm\sqrt{\gamma})$, el Jacobiano de las
+ecuaciones activas produce
+\begin{equation}
+ p(\lambda)=\lambda^3+a_1\lambda^2+a_2\lambda+a_3,
+ \label{int:eq:mavpd-characteristic}
+\end{equation}
+con
+\begin{equation}
+ a_1=\xi+2\delta\gamma,\qquad
+ a_2=\rho-\delta+2\delta\gamma\xi,\qquad
+ a_3=2\delta\gamma\rho.
+ \label{int:eq:mavpd-routh-coefficients}
+\end{equation}
+Al imponer la igualdad de cruce imaginario de Routh--Hurwitz
+$a_1a_2=a_3$ y escribir \(g=2\delta\gamma\), la diferencia se desarrolla como
+\[
+ a_1a_2-a_3=(\xi+g)(\rho-\delta+\xi g)-\rho g
+ =\xi g^2+(\xi^2-\delta)g+\xi(\rho-\delta).
+\]
+Por tanto, la frontera satisface
+\begin{equation}
+ \xi g^2+(\xi^2-\delta)g+\xi(\rho-\delta)=0.
+ \label{int:eq:mavpd-hopf}
+\end{equation}
+Esta igualdad determina una frontera candidata de Hopf; aquí no se afirma
+haber verificado transversalidad ni no degeneración. Para
+$\xi=\MAVPDChaosXi$, la raíz alta de \eqref{int:eq:mavpd-hopf} es
+$\gamma_H=\MAVPDChaosHopf$. El valor $\xi=\MAVPDChaosXi$ es el extremo local
+declarado de la ruta, no una coordenada elegida por el cribado. El procedimiento
+transporta primero el estado desde $\xi=3.10$ hasta ese extremo en pasos de
+$-0.01$ y después continúa
+$\gamma$, reconstruyendo las ecuaciones, el Jacobiano y la forma Lur'e en cada
+nodo. La inspección se restringe a desplazamientos declarados respecto de
+$\gamma_H$; no es un barrido de frecuencias ni una exploración arbitraria de
+condiciones iniciales.
+
+\ifHAFOBasinMaterial
+\begin{table}[H]
+\centering
+\caption{Cribado local MAVPD alrededor de la frontera alta candidata de Hopf. Los
+contactos se cuentan sobre 12 sondeos preliminares alrededor de $E_0$; la tabla
+redondea $\widehat\lambda_1$ a un máximo de seis decimales, pero los cálculos
+conservan la precisión completa.}
+\label{int:tab:mavpd-chaos-screen}
+\small
+\begin{tabular}{@{}C{1.8cm}C{2.0cm}C{2.3cm}L{8.7cm}@{}}
+\toprule
+$\gamma-\gamma_H$ & $\widehat\lambda_1$ & Contactos desde $E_0$ & Lectura del cribado \\
+\midrule
+\input{mavpd_chaos_screening_rows.tex}
+\end{tabular}
+\end{table}
+\fi
+
+La regla selecciona el mayor desplazamiento declarado con cálculo de Lyapunov
+válido y $\widehat\lambda_1>0.5$
+\ifHAFOBasinMaterial
+, cero contactos preliminares, cero casos ambiguos y cero fallos numéricos
+\else
+y con separación respecto de los controles de equilibrio
+\fi
+: así se obtiene
+\[
+ (\xi,\gamma,\delta,\rho)=
+ (\MAVPDChaosXi,\MAVPDChaosGamma,100,200),\qquad
+ \gamma=\gamma_H+0.010.
+\]
+El desplazamiento $0.010$ es el resultado de la regla de selección aplicada en
+esta continuación numérica local; no se lee como valor esperado ni es un
+parámetro publicado en \cite{matouk2023}. Por tanto, sólo $\gamma$ se selecciona
+en este cribado: la tupla completa no se presenta como una optimización conjunta
+de $\xi$ y $\gamma$.
+
+\begin{hafobasinfigure}[H]
+\centering
+\includegraphics[width=0.90\textwidth]{mavpd_chaos_screen.png}
+\caption{Continuación en parámetros y cribado conjunto de exponente máximo y
+contactos desde $E_0$. La selección ocurre después del fallo dinámico de las
+ramas directas, no mediante una malla de frecuencias.}
+\label{int:fig:mavpd-chaos-screen}
+\end{hafobasinfigure}
+
+\begin{table}[H]
+\centering
+\caption{Protocolo numérico de la extensión MAVPD caótica.}
+\label{int:tab:mavpd-chaos-contract}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}L{0.19\textwidth}L{0.34\textwidth}Y@{}}
+\toprule
+Fase & Horizonte y muestreo & Integrador y tolerancias \\
+\midrule
+Cribado D0 por rama & $t_b=100$, $t_{LE}=250$, QR $0.5$ &
+DOP853, $(\mathrm{rtol},\mathrm{atol})=(2\,10^{-10},2\,10^{-12})$,
+$\Delta t_{\max}=0.02$ \\
+Transporte A1 por nodo & $t_b=60$, $t_k=10$, muestra $0.02$ &
+DOP853, $(2\,10^{-10},2\,10^{-12})$, $\Delta t_{\max}=0.02$ \\
+Referencia del cribado & duración 360, descarte 160, muestra $0.05$,
+600 puntos máximos & DOP853, $\Delta t_{\max}=0.03$; factor de seguridad 3 \\
+\ifHAFOBasinMaterial
+Sondeos preliminares $E_0$ & $t_b=500$, $t_k=100$, muestra $0.05$;
+2 radios, 6 direcciones & DOP853, $(2\,10^{-10},2\,10^{-12})$,
+$\Delta t_{\max}=0.03$ \\
+\fi
+Trayectoria estricta & $t_f=900$, $t_b=300$, muestra $0.02$ &
+DOP853, $(2\,10^{-11},2\,10^{-13})$, $\Delta t_{\max}=0.01$ \\
+Lyapunov estricto & $t_b=300$, $t_{LE}=1200$, QR $0.5$ &
+DOP853 variacional, $(2\,10^{-12},2\,10^{-14})$,
+$\Delta t_{\max}=0.01$ \\
+Control Lyapunov combinado & estado candidato perturbado; $t_b=200$,
+$t_{LE}=600$, QR $0.5$ & DOP853 variacional,
+$(2\,10^{-10},2\,10^{-12})$, $\Delta t_{\max}=0.02$ \\
+\ifHAFOBasinMaterial
+Ocultedad final & $t_b=400$, $t_k=100$, muestra $0.05$;
+108 sondeos principales + 4 dirigidos & DOP853, $(2\,10^{-10},2\,10^{-12})$,
+$\Delta t_{\max}=0.03$; referencia máxima 1000 puntos \\
+\fi
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsubsection*{Refinamiento dinámico y controles de caos}
+
+La trayectoria candidata se integró con DOP853, $t_f=900$, transitorio 300,
+muestreo $0.02$, tolerancias $(\mathrm{rtol},\mathrm{atol})=(2\times10^{-11},
+2\times10^{-13})$ y paso máximo $0.01$ \cite{scipy2020}. Sobre un problema
+variacional separado, DOP853 con QR, transitorio 300 y acumulación 1200 produjo
+el espectro finito. Con $Q_0=I$, en cada segmento se integra
+\begin{equation}
+ \dot Y_m=J(y(t))Y_m,\qquad Y_m(t_{m-1})=Q_{m-1},
+ \qquad Y_m(t_m)=Q_mR_m,
+ \quad
+ \widehat\lambda_i(T)=\frac{1}{T}\sum_{m=1}^{M}
+ \log\left|R_{m,ii}\right|,
+ \label{int:eq:mavpd-variational-qr}
+\end{equation}
+donde cada $R_m$ contiene sólo el crecimiento del segmento correspondiente;
+la base se reinicia con $Q_m$ antes del segmento siguiente
+\cite{Benettin1980a}. El resultado fue
+\begin{equation}
+ \begin{aligned}
+  \widehat\lambda_1&=\MAVPDChaosLEOne,
+  &\widehat\lambda_2&=\MAVPDChaosLETwo,\\
+  \widehat\lambda_3&=\MAVPDChaosLEThree,
+  &D_{KY}&=\MAVPDChaosKY.
+ \end{aligned}
+ \label{int:eq:mavpd-chaos-lyapunov}
+\end{equation}
+Aquí \(D_{KY}=2+(\widehat\lambda_1+\widehat\lambda_2)/
+|\widehat\lambda_3|\), pues las dos primeras suman positivamente y la suma de
+las tres es negativa.
+El control de Lyapunov perturbó el extremo de la continuación y cambió simultáneamente las
+tolerancias, el paso máximo y los horizontes de transitorio y acumulación. El cálculo conservó $\widehat\lambda_1=\MAVPDChaosLEControlOne$. El residuo de
+consistencia
+$r_{\mathrm{div}}=\sum_i\widehat\lambda_i(T_{LE})-
+\overline{\nabla\!\cdot f}_{[t_a,t_b]}$ fue
+$\MAVPDChaosDivergenceResidual$, con
+\begin{equation}
+ \nabla\!\cdot f(y)=\delta\gamma-\xi-3\delta y_1^2,
+ \qquad
+ \overline{\nabla\!\cdot f}_{[t_a,t_b]}=\frac{1}{t_b-t_a}
+ \int_{t_a}^{t_b}\!\left(\delta\gamma-\xi-3\delta y_1(t)^2\right)\,dt.
+ \label{int:eq:mavpd-divergence-control}
+\end{equation}
+La relación con el espectro se obtiene de la fórmula de Jacobi. Para una
+matriz fundamental invertible \(\Phi\),
+\[
+ \frac{\dd}{\dd t}\log|\det\Phi(t)|
+ =\operatorname{tr}(\Phi^{-1}J\Phi)=\operatorname{tr}J
+ =\nabla\!\cdot f.
+\]
+En la descomposición por segmentos, los determinantes de las matrices
+ortogonales \(Q_m\) tienen módulo uno y cada matriz triangular satisface
+\(\det R_m=\prod_iR_{m,ii}\). Por tanto, sobre una misma trayectoria y
+ventana de longitud \(T\),
+\[
+ \sum_i\widehat\lambda_i(T)
+ =\frac1T\log|\det\Phi(T)|
+ =\frac1T\int_0^T\nabla\!\cdot f(y(t))\,\dd t,
+\]
+con \(\Phi(0)=I\). Esta identidad justifica la comparación de la suma de
+exponentes con el promedio de la divergencia.
+Aquí $T_{LE}=1200$ pertenece a la integración variacional, mientras que la
+divergencia se promedia sobre la trayectoria muestreada independiente
+$[t_a,t_b]=[300,900]$. El residuo compara, por tanto, promedios de trayectorias y ventanas
+distintas. Como control de integrador, una
+trayectoria EFORK de paso fijo $h=0.002$ alcanzó la misma nube de referencia
+calibrada.
+
+\begin{hafocommonfigure}[H]
+\centering
+\begin{subfigure}[t]{0.98\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{mavpd_chaos_phase_portraits.png}
+  \caption{Proyecciones postransitorias del candidato seleccionado.}
+\end{subfigure}
+
+\vspace{0.35em}
+\begin{subfigure}[t]{0.86\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{mavpd_chaos_time_series.png}
+  \caption{Series temporales en la ventana conservada.}
+\end{subfigure}
+\caption{Geometría y evolución temporal del candidato MAVPD caótico. Ventana postransitoria acotada.}
+\label{int:fig:mavpd-chaos-trajectory}
+\end{hafocommonfigure}
+
+La sección $y_2=0$ con orientación positiva retuvo
+\MAVPDChaosPoincareCount{} cruces no duplicados. Los cruces se obtuvieron por
+interpolación lineal entre muestras de la trayectoria, con el error temporal
+asociado a esa aproximación
+\cite{henon1982}. La prueba 0--1 sobre dos coordenadas de la secuencia de
+retorno dio medianas $K=\MAVPDChaosReturnKOne$ y
+$K=\MAVPDChaosReturnKTwo$ \cite{gottwald2009}. En cambio, la prueba 0--1 sobre
+el flujo fue sensible al submuestreo: 3 de 10 pasos dieron etiqueta de
+candidato caótico, 1 dio etiqueta regular y 6 quedaron inconclusos. El criterio conjunto usa la secuencia de retorno con
+el paso fijado antes de la clasificación.
+
+\begin{hafocommonfigure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{mavpd_chaos_lyapunov.png}
+\caption{Convergencia temporal del espectro variacional: expansión positiva,
+una dirección aproximadamente neutra y una dirección contractiva.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{mavpd_chaos_poincare.png}
+  \caption{Sección muestreada e interpolada linealmente.}
+\end{subfigure}
+\caption{Diagnósticos dinámicos principales del candidato caótico.}
+\label{int:fig:mavpd-chaos-diagnostics}
+\end{hafocommonfigure}
+
+El espectro de potencia FFT normalizado tiene líneas dominantes y resulta
+inconcluso para clasificar el régimen. Se interpreta junto con los
+exponentes variacionales y los retornos de Poincaré.
+
+\begin{hafocommonfigure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{mavpd_chaos_fft.png}
+\caption{Potencia FFT normalizada del candidato.}
+\label{int:fig:mavpd-chaos-fft}
+\end{hafocommonfigure}
+
+\ifHAFOBasinMaterial
+\subsubsection*{Ocultedad bajo vecindades ensayadas}
+
+El clasificador de la nube candidata se calibró con tres ventanas temporales
+disjuntas de la misma trayectoria y verificó su separación usando los tres
+equilibrios como controles negativos. Para dos nubes finitas \(A,B\), usa la
+mediana simétrica de vecinos más cercanos, normalizada por la extensión \(S\)
+de la referencia:
+\begin{equation}
+ d_N(A,B)=\frac{1}{S}\operatorname{mediana}\!\left(
+ \{\min_{b\in B}\|a-b\|:a\in A\}\cup
+ \{\min_{a\in A}\|b-a\|:b\in B\}\right).
+ \label{int:eq:mavpd-cloud-distance}
+\end{equation}
+Si $R_1,R_2,R_3$ son las ventanas y \(R=R_1\cup R_2\cup R_3\), la escala es
+\begin{equation}
+ S=\left[\sum_{k=1}^{3}
+ \left(\max_{x\in R}x_k-\min_{x\in R}x_k\right)^2\right]^{1/2},
+ \qquad
+ D(A)=\operatorname{mediana}_{j=1,2,3}d_N(A,R_j).
+ \label{int:eq:mavpd-cloud-classifier}
+\end{equation}
+Si $b$ es el cuantil 0.95 de las distancias entre ventanas, el umbral es
+$\tau=3b$ y el margen ambiguo es $m=\max(0.25\tau,b)$. En esta configuración,
+$m=b=\tau/3$. Los controles negativos no fijan $\tau$: exigen
+$\min_j d_N(N_\ell,R_j)>\tau+m$; de lo contrario se concluye que los controles
+se solapan y la calibración se rechaza.
+
+El protocolo principal contiene \MAVPDChaosMainProbes{} trayectorias:
+3 equilibrios, radios $(10^{-5},10^{-3},10^{-2})$ y 12 direcciones esféricas
+deterministas por radio. Se añadieron \MAVPDChaosTargetedProbes{} controles
+dirigidos sobre ambos signos del autovector inestable de $E_0$, en radios
+$10^{-7}$ y $10^{-4}$. En total hubo \MAVPDChaosTotalProbes{} trayectorias,
+\MAVPDChaosHits{} contactos con la nube candidata, cero ambigüedades y cero
+fallos numéricos; todas terminaron en un equilibrio.
+
+\begin{hafobasinfigure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{mavpd_chaos_hiddenness.png}
+\caption{Resultados de los sondeos alrededor de $E_0$, $E_+$ y $E_-$, junto
+con los controles dirigidos del autovector inestable. Cero contactos es una
+conclusión finita restringida a este protocolo.}
+\label{int:fig:mavpd-chaos-hiddenness}
+\end{hafobasinfigure}
+
+Las 112 trayectorias se reparten en 56 llegadas a cada equilibrio externo,
+mientras que la trayectoria localizada conserva el régimen caótico. La
+coexistencia con ambos equilibrios estables, la ausencia de contacto en las
+vecindades ensayadas y los diagnósticos dinámicos independientes sustentan
+la identificación de un atractor caótico oculto numérico para este punto
+de parámetros.
+\fi
+
+\subsubsection*{Comparación numérica independiente}
+
+El cálculo independiente en Julia partió de las ecuaciones y el Jacobiano, recalculó las
+dos ramas D0 sin malla de frecuencias y sólo activó A1 después de que ambas
+fallaron el umbral dinámico. La regla de menor $\omega_0$ volvió a seleccionar
+la rama 0; después transportó el estado de $\xi=3.10$ a $2.85$, derivó la misma
+frontera de Routh--Hurwitz y seleccionó de nuevo el desplazamiento $0.010$.
+Durante esa localización no leyó la semilla, el estado terminal ni $\gamma$ de
+Python.
+\ifHAFOBasinMaterial
+El intercambio de las condiciones de ocultedad ocurrió únicamente en la fase
+posterior de comparación.
+\fi
+
+Python empleó DOP853 adaptativo para la trayectoria y la ecuación
+variacional. Julia empleó RK4 de paso fijo para las trayectorias y los sondeos,
+y reortogonalización QR para el cálculo variacional.
+
+\begin{table}[H]
+\centering
+\caption{Comparación independiente del MAVPD caótico con parámetros comunes.
+Los dos integradores concuerdan en los diagnósticos y en las 112 decisiones
+de acceso desde las vecindades.}
+\label{int:tab:mavpd-chaos-cross-runtime}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.31\textwidth}YY@{}}
+\toprule
+Magnitud & Python/\hafo{} & Julia \\
+\midrule
+$\xi$ & \MAVPDChaosXi & \MAVPDChaosXi \\
+$\gamma$ & \MAVPDChaosGamma & \MAVPDChaosGamma \\
+$\widehat\lambda_1$ & \MAVPDChaosLEOne & \MAVPDChaosJuliaLEOne \\
+$\widehat\lambda_2$ & \MAVPDChaosLETwo & \MAVPDChaosJuliaLETwo \\
+$\widehat\lambda_3$ & \MAVPDChaosLEThree & \MAVPDChaosJuliaLEThree \\
+$D_{KY}$ & \MAVPDChaosKY & \MAVPDChaosJuliaKY \\
+Cruces de Poincaré & \MAVPDChaosPoincareCount & \MAVPDChaosJuliaPoincareCount \\
+Mediana $K$ sobre retornos & \MAVPDChaosReturnKOne & \MAVPDChaosJuliaReturnK \\
+\ifHAFOBasinMaterial
+Decisiones de sondeo coincidentes &
+\MAVPDChaosTotalProbes/\MAVPDChaosTotalProbes &
+\MAVPDChaosJuliaProbeMatches/\MAVPDChaosTotalProbes \\
+\fi
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Los cálculos coinciden en $\xi$, $\gamma$ y el desplazamiento respecto de la
+frontera candidata de Hopf. La concordancia de los exponentes se evalúa dentro
+de las tolerancias declaradas, pues las trayectorias caóticas pierden
+proximidad de fase. La comparación geométrica utiliza por ello las
+distribuciones de la nube y de los retornos, junto con las decisiones de
+acceso, en lugar de exigir igualdad punto a punto durante todo el horizonte.
+\ifHAFOBasinMaterial
+Además, coincidieron las
+\MAVPDChaosTotalProbes{} condiciones iniciales, estados, destinos y decisiones
+de contacto.
+\fi
+
+\begin{hafobasinfigure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{julia_mavpd_chaos_gamma_screen.png}
+  \caption{Cribado y selección de $\gamma$ recalculados en Julia.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{julia_mavpd_chaos_hiddenness_outcomes.png}
+  \caption{Decisión de los 112 sondeos finitos en Julia.}
+\end{subfigure}
+\caption{Artefactos de la reproducción Julia MAVPD. El primer panel es un
+diagnóstico de continuación; el segundo resume un protocolo finito de cuenca.}
+\label{int:fig:mavpd-chaos-julia}
+\end{hafobasinfigure}
+
+\begin{hafocommonfigure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{julia_mavpd_chaos_nyquist_diagnostic.png}
+  \caption{Nyquist de la transferencia ya derivada.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{julia_mavpd_chaos_amplitude_spectrum.png}
+  \caption{Espectro de amplitud FFT postransitorio.}
+\end{subfigure}
+\caption{Diagnósticos intermedios Julia MAVPD. Nyquist no suministra una malla
+de búsqueda ni selecciona $\omega_0$; la FFT no se denomina PSD.}
+\label{int:fig:mavpd-chaos-julia-spectral}
+\end{hafocommonfigure}
+
+
+\section{Caso 4: PLL bifásico con filtro lead--lag}
+
+\subsection{Transformación T1 y obstrucción directa}
+
+El modelo publicado es
+\begin{align}
+ \dot x&=-\frac{x}{T}+\frac{\tau_1}{2T}\sin\theta,\nonumber\\
+ \dot\theta&=\omega_\Delta-\frac{Lx}{T}
+ -\frac{\tau_2L}{2T}\sin\theta,\qquad T=\tau_1+\tau_2,
+ \label{int:eq:pll}
+\end{align}
+con \(\tau_1=0.0448\), \(\tau_2=0.0185\), \(L=500\) y
+\(\omega_\Delta=178.9\) \cite{pll2015}. El desplazamiento de un equilibrio
+bloqueado elimina el término afín, de modo que el sistema es T1. Como
+\(\theta\) es angular, la recurrencia y las distancias se calculan módulo
+\(2\pi\), no con una norma euclidiana sin envolver.
+
+En un equilibrio, la primera ecuación da
+\(x_e=(\tau_1/2)\sin\theta_e\). Sustituir en la segunda y usar
+\(T=\tau_1+\tau_2\) conduce a
+\[
+ 0=\omega_\Delta-\frac{L(\tau_1+\tau_2)}{2T}\sin\theta_e,
+ \qquad \sin\theta_e=\frac{2\omega_\Delta}{L}=0.7156.
+\]
+En una vuelta del cilindro hay dos soluciones:
+\[
+ x_e=0.01602944,\qquad
+ \theta_f=0.797482699882,\qquad
+ \theta_s=2.344109953708.
+\]
+El Jacobiano en cualquiera de ellas es
+\[
+ J_e=\begin{pmatrix}
+ -1/T&\tau_1\cos\theta_e/(2T)\\
+ -L/T&-\tau_2L\cos\theta_e/(2T)
+ \end{pmatrix},
+\]
+con
+\[
+ \operatorname{tr}J_e=-\frac{1+\tau_2L\cos\theta_e/2}{T},\qquad
+ \det J_e=\frac{L\cos\theta_e}{2T}.
+\]
+En \(\theta_f\), la traza es negativa, el determinante positivo y el
+discriminante \((\operatorname{tr}J_e)^2-4\det J_e\) es negativo para estos
+parámetros: se obtiene un foco estable. En \(\theta_s\), el determinante es
+negativo y el equilibrio es una silla.
+
+El cambio \(u=x-x_e\), \(v=\theta-\theta_e\) transforma el campo en
+\[
+ \begin{pmatrix}\dot u\\\dot v\end{pmatrix}
+ =P\begin{pmatrix}u\\v\end{pmatrix}+b\psi(v),
+\]
+\[
+ P=\begin{pmatrix}-1/T&0\\-L/T&0\end{pmatrix},\quad
+ b=\begin{pmatrix}\tau_1/(2T)\\-\tau_2L/(2T)\end{pmatrix},
+ \quad c=\begin{pmatrix}0\\1\end{pmatrix},
+\]
+con \(\psi(v)=\sin(v+\theta_e)-\sin\theta_e\). Las identidades del
+equilibrio cancelan los términos constantes. Para una entrada \(\psi\),
+la primera fila del resolvente \((sI-P)^{-1}b\) da
+\[
+ u=\frac{\tau_1}{2(1+Ts)}\psi,
+\]
+y la segunda da
+\[
+ sv=-\frac L{2T}\left[\frac{\tau_1}{1+Ts}+\tau_2\right]\psi
+    =-\frac L2\frac{1+\tau_2s}{1+Ts}\psi.
+\]
+Por tanto, las dos convenciones de transferencia se relacionan mediante
+\begin{equation}
+ W(s)=c^{\mathsf T}(sI-P)^{-1}b
+     =-\frac L2\frac{1+\tau_2s}{s(1+Ts)}=-G(s).
+ \label{int:eq:pll-transfer}
+\end{equation}
+Al multiplicar el cociente en \(s=i\omega\) por el conjugado de su
+denominador,
+\[
+ W(i\omega)=\frac{L\tau_1}{2(1+T^2\omega^2)}
+ +i\,\frac{L(1+\tau_2T\omega^2)}{2\omega(1+T^2\omega^2)}.
+\]
+Así, \(\operatorname{Im}W(i\omega)>0\) y
+\(\operatorname{Im}G(i\omega)<0\) para todo \(\omega>0\). Ninguna
+convención admite el cruce real requerido por una ganancia descriptiva real;
+la ruta directa no produce candidatos.
+
+\subsection{Ruta A1 de Andronov}
+
+Para \(L>0\), definir \(y=\dot\theta\) permite recuperar la variable
+original mediante
+\begin{equation}
+ x=\frac T L(\omega_\Delta-y)-\frac{\tau_2}{2}\sin\theta.
+ \label{int:eq:pll-inverse-andronov}
+\end{equation}
+Derivando la segunda ecuación de \eqref{int:eq:pll},
+\[
+ \dot y=-\frac L T\dot x-\frac{\tau_2L}{2T}\cos\theta\,y
+        =\frac L{T^2}x-\frac{L\tau_1}{2T^2}\sin\theta
+         -\frac{\tau_2L}{2T}\cos\theta\,y.
+\]
+Sustituir \eqref{int:eq:pll-inverse-andronov} y agrupar
+\(\tau_1+\tau_2=T\) produce
+\begin{equation}
+ T\dot y=\omega_\Delta-\frac{L}{2}\sin\theta
+ -\left(1+\frac{\tau_2L}{2}\cos\theta\right)y.
+ \label{int:eq:pll-andronov}
+\end{equation}
+Para una rotación positiva se exige \(y(\theta)>0\) durante toda la
+vuelta. Entonces \(\theta\) puede usarse como variable independiente:
+\begin{equation}
+ \frac{\dd y}{\dd\theta}=H_L(\theta,y)
+ =\frac{\omega_\Delta-(L/2)\sin\theta}{Ty}
+  -\frac{1+(\tau_2L/2)\cos\theta}{T}.
+ \label{int:eq:pll-angle-flow}
+\end{equation}
+Con \(y(0)=y_0>0\), el mapa de retorno es
+\(P_L(y_0)=y(2\pi;y_0)\). Una órbita rotatoria cumple
+\(P_L(y_0)-y_0=0\), y su periodo físico es
+\[
+ \mathcal T(y_0)=\int_0^{2\pi}\frac{\dd\theta}{y(\theta;y_0)}.
+\]
+La derivada del retorno se calcula diferenciando la ecuación respecto de
+\(y_0\). Si \(z=\partial y/\partial y_0\),
+\[
+ \frac{\dd z}{\dd\theta}
+ =-\frac{\omega_\Delta-(L/2)\sin\theta}{Ty^2}z,
+ \qquad z(0)=1,\qquad P_L'(y_0)=z(2\pi).
+\]
+El multiplicador transversal es \(P_L'(y_0)\): módulo menor que uno indica
+estabilidad local, y módulo mayor que uno inestabilidad. El mapa queda
+indefinido para esta construcción si la solución pierde la rotación positiva
+antes de completar \(2\pi\).
+
+En \(L=0\), la ecuación reducida admite \(y(\theta)\equiv\omega_\Delta\),
+con
+\[
+ \mathcal T_0=\frac{2\pi}{\omega_\Delta},\qquad
+ P_0'(\omega_\Delta)=\exp\!\left(-\frac{2\pi}{T\omega_\Delta}\right).
+\]
+En las coordenadas originales, \(\theta(t)=\omega_\Delta t\) y el filtro
+satisface una ecuación lineal forzada. Una solución particular periódica
+\(x_p=A\sin\theta+B\cos\theta\) cumple
+\(A-\omega_\Delta TB=\tau_1/2\) y
+\(\omega_\Delta TA+B=0\). Por tanto,
+\[
+ x_p(\theta)=\frac{\tau_1}{2[1+(\omega_\Delta T)^2]}
+             [\sin\theta-\omega_\Delta T\cos\theta].
+\]
+Las restantes soluciones difieren de ella en \(C\e^{-t/T}\), lo cual
+concuerda con el multiplicador transversal calculado.
+Esta solución inicia la continuación de la ecuación reducida en 101 valores
+hasta \(L=500\). La reconstrucción de \(x\) mediante
+\eqref{int:eq:pll-inverse-andronov} se aplica sólo en los niveles \(L>0\),
+pues el cambio de variables es singular en \(L=0\). Las condiciones iniciales
+publicadas se reservan para la comparación posterior.
+
+El análisis localizó:
+
+\begin{table}[H]
+\centering
+\caption{Órbitas de retorno PLL en \(L=500\).}
+\small
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Órbita & \(y_0\) & \(x_0\) & Periodo & Multiplicador \\
+\midrule
+Ciclo estable &
+140.125084913 & 0.004908904250 &
+\PLLPythonStablePeriod & \PLLPythonStableMultiplier \\
+Separatriz inestable &
+135.172047420 & 0.005535958797 &
+\PLLPythonSeparatrixPeriod & \PLLPythonSeparatrixMultiplier \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Los errores de retorno Python sobre el cilindro fueron
+\(2.68\times10^{-15}\) para el ciclo estable y
+\(6.18\times10^{-14}\) para la separatriz. Julia reprodujo los periodos
+\(\PLLJuliaStablePeriod\) y \(\PLLJuliaSeparatrixPeriod\), con multiplicadores
+\(\PLLJuliaStableMultiplier\) y \(\PLLJuliaSeparatrixMultiplier\). Las tres
+condiciones iniciales publicadas quedaron fuera del flujo de localización: el
+control posterior confirmó que dos alcanzan el ciclo y una el foco.
+
+\begin{hafocommonfigure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{pll_transfer_obstruction.png}
+  \caption{Obstrucción analítica de la ruta directa.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{pll_phase_cylinder_cycles.png}
+  \caption{Ciclo estable y separatriz en \(\mathbb R\times S^1\).}
+\end{subfigure}
+\caption{Localización T1 + A1 del PLL lead--lag.}
+\label{int:fig:pll-route}
+\end{hafocommonfigure}
+
+\ifHAFOBasinMaterial
+\subsection{Acceso desde las vecindades cilíndricas}
+
+El sondeo común usó \PLLProbeCount{} condiciones:
+2 equilibrios, 4 radios \((10^{-5},10^{-4},10^{-3},10^{-2})\) y 12
+muestras por radio, uniformes en bolas de las coordenadas escaladas.
+Usamos $s_u=\tau_1/2$ y $s_v=\pi$, con distancia
+\[
+ d_{\mathrm{cil}}(X,Y)^2=
+ \left(\frac{u_X-u_Y}{s_u}\right)^2+
+ \left(\frac{\operatorname{wrap}(v_X-v_Y)}{\pi}\right)^2,
+\]
+donde $\operatorname{wrap}$ toma valores en $[-\pi,\pi)$. Las trayectorias
+se integraron hasta $t_f=5$, con cola final de duración 1. Ninguna alcanzó
+el ciclo. Las 48 condiciones alrededor
+del foco y las 48 alrededor del punto silla terminaron en el foco. Por tanto,
+el ciclo estable se identifica como oculto numérico bajo el sondeo
+cilíndrico declarado.
+
+\begin{hafobasinfigure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{julia_pll_cylindrical_hiddenness_probes.png}
+\caption{Condiciones iniciales comunes del control Julia
+PLL, expresadas en las coordenadas envueltas del cilindro.}
+\label{int:fig:pll-hiddenness}
+\end{hafobasinfigure}
+\fi
+
+Julia implementó independientemente la misma distancia angular, el mapa de
+retorno y la continuación desde la solución exacta en $L=0$; no leyó estados
+Python ni las condiciones publicadas para localizar las órbitas.
+\ifHAFOBasinMaterial
+Coincidieron
+\PLLJuliaProbeMatches{} de \PLLProbeCount{} estados y decisiones de contacto,
+así como los destinos de las \PLLJuliaDestinationMatches{} trayectorias.
+\fi
+Las órbitas interpoladas sobre una fase normalizada difirieron como máximo
+\PLLStableOrbitMaxDistance{} (estable) y
+\PLLSeparatorOrbitMaxDistance{} (separatriz) en la métrica cilíndrica escalada.
+
+
+\begin{hafocommonfigure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{julia_pll_loop_gain_continuation.png}
+  \caption{Continuación Julia desde $L=0$ hasta $L=500$.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{julia_pll_phase_cylinder_cycles.png}
+  \caption{Ciclo estable y separatriz Julia en el cilindro.}
+\end{subfigure}
+\caption{Continuación y órbitas de la ruta PLL T1 + A1 calculadas en Julia.}
+\label{int:fig:pll-julia}
+\end{hafocommonfigure}
+
+\section{Comparación de estructuras y rutas de localización}
+
+\subsection{Taxonomía D0/T1/A1/M1}
+
+\begin{table}[H]
+\centering
+\caption{Clases estructurales y condiciones de aplicación de las rutas.}
+\small
+\begin{tabularx}{\textwidth}{@{}C{1.1cm}p{0.24\textwidth}Yp{0.25\textwidth}@{}}
+\toprule
+Clase & Definición & Qué permite & Restricción \\
+\midrule
+D0 & Forma escalar directa \(\dot X=PX+b\psi(c^{\mathsf T}X)\) &
+Ruta de transferencia y función descriptiva sin cambio de variables. &
+Un solo canal no lineal escalar. \\
+T1 & Transformación compatible e invertible, desplazamiento de equilibrio,
+variedad invariante documentada o PWA de rango uno &
+Lleva el sistema a D0 conservando la interpretación dinámica necesaria. &
+La transformación registra la inversa y la métrica correspondiente, por ejemplo angular. \\
+A1 & La forma escalar existe, pero la ruta directa se rechaza con una razón
+matemática &
+Habilita mapa de conmutación, homotopía publicada u otra alternativa. &
+Conserva el diagnóstico de incompatibilidad directa y excluye semillas
+publicadas de la inicialización. \\
+M1 & Varios canales no lineales independientes &
+Balance mediante coeficientes de Fourier de los distintos canales. &
+Requiere conservar sus interacciones y los armónicos generados. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Cobertura de los casos de estudio}
+
+La \cref{int:tab:catalog} distingue los sistemas integrados de los candidatos
+cuya formulación o evaluación numérica está pendiente.
+
+\begin{longtable}{@{}C{1.2cm}L{0.29\textwidth}C{1.65cm}L{0.42\textwidth}@{}}
+\caption{Sistemas de prueba de orden entero.}
+\label{int:tab:catalog}\\
+\toprule
+Prior. & Sistema & Clase & Estado y papel científico \\
+\midrule
+\endfirsthead
+\toprule
+Prior. & Sistema & Clase & Estado y papel científico \\
+\midrule
+\endhead
+Base & Chua no suave entero & D0 &
+Compatible con ocultedad bajo el protocolo finito; reproducido en Python y Julia. \\
+Base & Kalman--Fitts de cuarto orden & D0 + A1 &
+No Chua; ciclo límite localizado por mapa de conmutación y continuación,
+compatible con ocultedad bajo el sondeo; reproducido en Python y Julia. \\
+1 & Van der Pol--Duffing autónomo modificado & D0 &
+\(\xi=3.1\): 108/108 coincidencias entre cálculos y cero
+contactos externos.
+\ifHAFOBasinMaterial
+\(\xi=3.5\): control negativo, 24/24 contactos con el ciclo seleccionado.
+\fi
+\(\xi=\MAVPDChaosXi\): atractor caótico oculto numérico bajo
+\MAVPDChaosTotalProbes{} sondeos en las vecindades declaradas;
+coincidencia Python--Julia en todos los destinos evaluados. \\
+2 & PLL bifásico con filtro lead--lag & T1 + A1 &
+Comparación Python--Julia con 96 sondeos; las órbitas, su estabilidad
+y las decisiones coinciden. \\
+3 & Leonov--Kuznetsov, sistema (162) & D0 + A1 &
+Ecuaciones y ruta de saturación disponibles; falta verificar la fórmula
+completa por tramos y fijar los parámetros de integración. \\
+4 & Jerk exponencial de Fischer, \(q=1\) & D0 con balance DC &
+Control bibliográfico y de Lyapunov: equilibrio inestable; se conserva la
+discrepancia del tercer exponente. Sin una campaña de cuenca local, la evidencia
+disponible no permite clasificarlo como autoexcitado ni oculto. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Otras estructuras escalares y multicanal}
+
+Leonov--Kuznetsov, sistema (162), es el siguiente candidato D0 + A1. La
+fuente usa una familia de saturaciones, transporta el estado terminal entre
+etapas y luego continúa la no linealidad hasta \(\tanh\)
+\cite{LeonovKuznetsov2013}. Su evaluación requiere verificar la fórmula
+completa por tramos y fijar los parámetros de integración.
+
+El jerk exponencial de Fischer se conserva como control D0 con balance DC y
+como banco de exponentes con discrepancias documentadas \cite{fischer2020}.
+Falta un sondeo de vecindades para evaluar
+la clasificación de cuenca. La inestabilidad del equilibrio, por sí sola, no
+implica autoexcitación. La evaluación entera requiere los parámetros del caso bibliográfico correspondiente.
+
+Quedan en reserva Genesio--Tesi, un oscilador memristivo cúbico, el jerk
+hiperbólico de Joshi--Ranjan, un jerk PWA y los jerks de Rech y
+Rasul--Salih. Faltan parámetros, condiciones iniciales o la verificación de
+la ecuación exacta en su fuente primaria.
+
+Lorenz, Rabinovich--Fabrikant, el sistema financiero, el sistema \emph{four
+wing} y los modelos con productos no lineales independientes son M1. Su estudio
+con Julia queda fuera de las hipótesis de la ruta Lur'e escalar D0/T1.
+
+\section{Comparación metodológica}
+
+\begin{table}[H]
+\centering
+\caption{Características de los métodos de localización y comparación.}
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}YY@{}}
+\toprule
+Aspecto & Python/\hafo{} & Julia/\juliads--\attractorsjl{} \\
+\midrule
+Entrada científica & Ecuaciones, Jacobiano, equilibrios, forma Lur'e,
+transferencia y función descriptiva & Ecuaciones y dominio para búsqueda
+global; las mismas declaraciones Lur'e cuando se replica la ruta teórica \\
+Localización & Dirigida por balance armónico y continuación & Global por
+recurrencias en Chua; ruta teórica equivalente en Kalman--Fitts y en el MAVPD
+periódico y caótico; ruta A1 cilíndrica equivalente en PLL \\
+Frecuencia y semilla & Produce \(\omega_0,k,a_0,X_0\) con residuos & Puede
+obtener esos valores mediante la ruta teórica; la búsqueda por recurrencias
+no utiliza ese balance \\
+Generalidad & Restringida a D0/T1 y a las alternativas A1 registradas &
+Más amplia para mapas, flujos, cuencas y recurrencias \\
+Ocultedad & Flujo explícito de equilibrios y nube candidata & Protocolo
+añadido al ejemplo; no es una etiqueta automática de la biblioteca \\
+Valores publicados & Regresión posterior & Regresión posterior \\
+Fallo típico & No hay ganancia/amplitud compatible o se pierde la rama &
+La cuenca no es muestreada, la partición no resuelve el conjunto o el
+clasificador agrupa mal \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+La forma Lur'e relaciona explícitamente el campo, la transferencia y la semilla. La búsqueda por recurrencias aporta generalidad y no necesita una
+transformación Lur'e, pero
+su éxito depende del dominio, partición, número de muestras y tamaño de la
+cuenca. La comparación de los candidatos requiere un protocolo común de integración
+y sondeo de cuenca.
+
+
+\section{Conclusiones}
+
+El balance armónico y la continuación localizaron candidatos en Chua,
+Kalman--Fitts y MAVPD; el PLL requirió un mapa de retorno sobre el cilindro.
+Las obstrucciones de ganancia en Kalman--Fitts y de fase en el PLL determinaron
+las rutas alternativas. La búsqueda por recurrencias localizó además el
+candidato de Chua a partir de un muestreo global independiente.
+
+En MAVPD, el ciclo externo de \(\xi=3.1\) se distingue del atractor caótico
+obtenido por continuación hacia \(\xi=\MAVPDChaosXi\). El primero presenta
+retornos de periodo uno y un espectro con una dirección aproximadamente
+neutra; el segundo mantiene expansión positiva, retornos irregulares y
+concordancia entre Python y Julia. La diferencia con la etiqueta
+cuasiperiódica publicada para el primer caso procede de esa comparación
+dinámica, no de un cambio en sus ecuaciones.
+\ifHAFOBasinMaterial
+Los sondeos comunes coincidieron entre cálculos y no alcanzaron las nubes
+candidatas en los casos positivos. MAVPD en \(\xi=3.5\) proporcionó el
+control negativo, con contactos desde vecindades de los equilibrios.
+\fi
+
+La cobertura incluye sistemas escalares D0, transformaciones T1 y
+alternativas A1. Los modelos multicanal requieren otra formulación; para los
+candidatos enteros pendientes faltan especificaciones del modelo o sondeos
+de cuenca, según la \cref{int:tab:catalog}.

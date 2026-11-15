@@ -1,0 +1,700 @@
+{
+  "scope": "Inventario completo de references.bib; recorrido estatico reconciliado con AUX de compilacion cuando existen; cotejo actual de metadatos Zotero. No implica lectura cientifica integral.",
+  "references_bib_sha256": "3a8a2ca32abdf9f336ab76360abc7af83fc682289532b6e3fc2c8624a73da4e1",
+  "bib_entries": 141,
+  "unique_bib_keys": 141,
+  "cited_keys_by_edition": {
+    "monografia": 97,
+    "guia_estudio": 114
+  },
+  "common_cited_keys": 97,
+  "only_monografia": [],
+  "only_guia_estudio": [
+    "AlligoodSauerYorke1996Chaos",
+    "Das2020Kindergarten",
+    "Davies2004ExploringChaos",
+    "Devaney1989Chaotic",
+    "Diethelm2010AnalysisFDE",
+    "Falconer2014Fractal",
+    "GuckenheimerHolmes1983",
+    "Herrmann2014Fractional",
+    "Hilborn2000Chaos",
+    "KuznetsovEtAl2023ChuaExperiments",
+    "LiChenPodlubny2010",
+    "OldhamSpanier1974Fractional",
+    "SlotineLi1991",
+    "Sprott2003ChaosTimeSeries",
+    "SprottXiong2015Basins",
+    "Strogatz2015Nonlinear",
+    "datseris2022"
+  ],
+  "missing_bib_keys": {
+    "monografia": [],
+    "guia_estudio": []
+  },
+  "duplicate_bib_keys": {},
+  "duplicate_bib_dois": {},
+  "zotero_collection_items": 176,
+  "zotero_library_regular_items": 254,
+  "matching_zotero_collection": 131,
+  "matching_zotero_library_only": 10,
+  "not_in_zotero_library": 0,
+  "cited_not_in_thesis_collection": [
+    "AthertonTanYerogluKavuranYuce2014",
+    "Danca2016HiddenTransient",
+    "KaslikSivasundaram2012",
+    "KuznetsovEtAl2023ChuaExperiments",
+    "LiChenPodlubny2009",
+    "LiChenPodlubny2010",
+    "Lin2013GeneralizedGronwall",
+    "NagChowdhuryGhosh2020"
+  ],
+  "cited_not_in_library": [],
+  "metadata_discrepancies": [
+    {
+      "key": "kuznetsov2017localization",
+      "title_bib": "Localization of hidden Chua attractors by the describing function method",
+      "doi_bib": "",
+      "zotero_item_key": "GEEIAWXG",
+      "title_zotero": "Localization of hidden Chua attractors by the describing function method",
+      "doi_zotero": "10.48550/arxiv.1705.02311",
+      "metadata_differences": "DOI_ausente_en_bib"
+    }
+  ],
+  "reading_coverage": {
+    "solo_cotejo_metadatos_Zotero": 127,
+    "primaria_resumen_o_metadatos": 8,
+    "primaria_texto_selectivo": 6
+  },
+  "duplicate_zotero_dois_for_report_entries": {
+    "10.1016/j.sigpro.2014.05.012": [
+      "CZQ77YEK",
+      "NWCGP4Z2"
+    ],
+    "10.1007/s11071-017-3472-7": [
+      "FUB2YWCV",
+      "29C7UECB"
+    ],
+    "10.1016/j.ifacol.2017.08.470": [
+      "RIACCCFZ",
+      "ZLWBXCMJ"
+    ],
+    "10.1063/5.0068626": [
+      "LJTBFNJZ",
+      "E7FH27LJ"
+    ],
+    "10.1016/j.rinp.2023.106866": [
+      "G4I8N687",
+      "ILLQX2UB"
+    ],
+    "10.1016/j.automatica.2009.04.001": [
+      "QK82GVSD",
+      "ZYEKYQCY"
+    ],
+    "10.1142/s0218127413300024": [
+      "M2HDQWGD",
+      "DQ5RX8W8"
+    ],
+    "10.1016/j.physrep.2016.05.002": [
+      "A7MCYAIL",
+      "4YHGIXNL"
+    ],
+    "10.3390/sym13061099": [
+      "PN63EGUP",
+      "HWN3VBXI"
+    ],
+    "10.3934/math.2022326": [
+      "T6VGY8GL",
+      "K3JFCFBT"
+    ],
+    "10.1007/s11071-025-11327-5": [
+      "2MUY5ZFB",
+      "V4RYSWKS"
+    ],
+    "10.1142/s0218127417500377": [
+      "ICBIHFV7",
+      "WVRBGM7Z"
+    ],
+    "10.1063/1.4927643": [
+      "CDXA7B9E",
+      "VRGPDHCZ"
+    ],
+    "10.1063/5.0076568": [
+      "967VWKD7",
+      "XSZDQMSW"
+    ]
+  },
+  "walker_warnings": {
+    "monografia": [],
+    "guia_estudio": []
+  },
+  "walked_files": {
+    "monografia": [
+      "mavpd_chaos_screening_rows.tex",
+      "report_diagrams\\caputo_01_kernel_memoria.tex",
+      "report_diagrams\\caputo_02_estado_historia.tex",
+      "report_diagrams\\caputo_03_semigrupo_funcional.tex",
+      "report_diagrams\\caputo_04_cuenca_funcional.tex",
+      "report_diagrams\\caputo_05_poincare_funcional.tex",
+      "report_diagrams\\caputo_06_fppa_fpph.tex",
+      "report_diagrams\\entero_01_flujo_invariancia.tex",
+      "report_diagrams\\entero_02_cuencas_ocultedad.tex",
+      "report_diagrams\\entero_03_grado_indice.tex",
+      "report_diagrams\\entero_04_variedades_invariantes.tex",
+      "report_diagrams\\entero_05_poincare_floquet.tex",
+      "report_diagrams\\entero_06_homoclinica_herradura.tex",
+      "report_diagrams\\entero_07_ciclo_oculto_exacto.tex",
+      "report_sections\\00_alcance_inventario.tex",
+      "report_sections\\01_introduccion_antecedentes.tex",
+      "report_sections\\02_modelos_y_fundamentos.tex",
+      "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "report_sections\\04_integracion_continuacion.tex",
+      "report_sections\\05A_diagnosticos_espectrales.tex",
+      "report_sections\\05_protocolos_experimentales.tex",
+      "report_sections\\06_resultados.tex",
+      "report_sections\\07_discusion_conclusiones.tex",
+      "report_sections\\08_enteros_reproducidos.tex",
+      "report_sections\\09A_bancos_dinamicos_no_chua.tex",
+      "report_sections\\09_fraccionarios_no_chua.tex",
+      "report_sections\\10_propuestas_teoricas.tex",
+      "report_sections\\11_candidatos_compatibles.tex",
+      "report_sections\\12_machado_funcion_descriptiva.tex",
+      "report_sections\\13_puntos_perpetuos.tex",
+      "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "report_sections\\15_geometria_topologia_caputo.tex",
+      "report_sections\\16_tarjetas_estudio_secuencial.tex",
+      "report_sections\\17_metodos_topologicos_existencia.tex",
+      "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "report_sections\\20_resultados_geometrico_topologicos_casos.tex",
+      "report_sections\\21_campana_dinamica_geometrico_topologica.tex",
+      "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "report_sections\\24_cobertura_comparativa_sistemas.tex",
+      "report_sections\\25_contraste_metodologico_revision.tex",
+      "report_sections\\A_derivaciones_algebraicas.tex",
+      "report_sections\\C_validacion_wolfram.tex",
+      "report_sections\\D_validacion_maestra.tex",
+      "report_sections\\E_atlas_figuras.tex",
+      "report_sections\\F_wolfram_no_chua.tex",
+      "reporte_maestro_atractores_ocultos.tex"
+    ],
+    "guia_estudio": [
+      "report_diagrams\\caputo_01_kernel_memoria.tex",
+      "report_diagrams\\caputo_02_estado_historia.tex",
+      "report_diagrams\\caputo_03_semigrupo_funcional.tex",
+      "report_diagrams\\caputo_04_cuenca_funcional.tex",
+      "report_diagrams\\caputo_05_poincare_funcional.tex",
+      "report_diagrams\\caputo_06_fppa_fpph.tex",
+      "report_diagrams\\entero_01_flujo_invariancia.tex",
+      "report_diagrams\\entero_02_cuencas_ocultedad.tex",
+      "report_diagrams\\entero_03_grado_indice.tex",
+      "report_diagrams\\entero_04_variedades_invariantes.tex",
+      "report_diagrams\\entero_05_poincare_floquet.tex",
+      "report_diagrams\\entero_06_homoclinica_herradura.tex",
+      "report_diagrams\\entero_07_ciclo_oculto_exacto.tex",
+      "report_sections\\00_alcance_inventario.tex",
+      "report_sections\\01_introduccion_antecedentes.tex",
+      "report_sections\\02_modelos_y_fundamentos.tex",
+      "report_sections\\03_lure_transferencia_funcion_descriptiva.tex",
+      "report_sections\\04_integracion_continuacion.tex",
+      "report_sections\\05A_diagnosticos_espectrales.tex",
+      "report_sections\\05_protocolos_experimentales.tex",
+      "report_sections\\06_resultados.tex",
+      "report_sections\\07_discusion_conclusiones.tex",
+      "report_sections\\08_enteros_reproducidos.tex",
+      "report_sections\\09A_bancos_dinamicos_no_chua.tex",
+      "report_sections\\09_fraccionarios_no_chua.tex",
+      "report_sections\\10_propuestas_teoricas.tex",
+      "report_sections\\11_candidatos_compatibles.tex",
+      "report_sections\\12_machado_funcion_descriptiva.tex",
+      "report_sections\\13_puntos_perpetuos.tex",
+      "report_sections\\14_guia_geometrica_topologica_entera.tex",
+      "report_sections\\15_geometria_topologia_caputo.tex",
+      "report_sections\\16_programa_estudio_bibliografico.tex",
+      "report_sections\\16_tarjetas_estudio_secuencial.tex",
+      "report_sections\\17_metodos_topologicos_existencia.tex",
+      "report_sections\\19_localizacion_geometrico_topologica.tex",
+      "report_sections\\20_resultados_geometrico_topologicos_casos.tex",
+      "report_sections\\21_campana_dinamica_geometrico_topologica.tex",
+      "report_sections\\22_resultados_piloto_geometrico_topologico.tex",
+      "report_sections\\23_confiabilidad_predictibilidad_transitorios.tex",
+      "report_sections\\24_cobertura_comparativa_sistemas.tex",
+      "report_sections\\25_contraste_metodologico_revision.tex",
+      "report_sections\\A_derivaciones_algebraicas.tex",
+      "reporte_maestro_atractores_ocultos.tex"
+    ]
+  },
+  "edition_citations": {
+    "monografia": [
+      "Amster2021MetodosTopologicos",
+      "AreaLosadaNieto2014",
+      "Atherton1975",
+      "AthertonTanYerogluKavuranYuce2014",
+      "BarbosaMachado2002BacklashImpact",
+      "Benettin1980a",
+      "ClementeLopezEtAl2022Poincare",
+      "Cong2023Semigroup",
+      "CongDoanSiegmundTuan2016",
+      "CongTuan2017Nonlocal",
+      "CongTuanTrinh2020Asymptotic",
+      "CuiKloedenXin2026CaputoDynamics",
+      "Danca2016HiddenTransient",
+      "Danca2017",
+      "Danca2017HiddenFO",
+      "Danca2026ImprovedLyapunov",
+      "DancaFeckan2024MemoryPrinciple",
+      "DancaKuznetsov2018Lyapunov",
+      "DatserisParlitz2022Nonlinear",
+      "DayJungeMischaikow2004InfiniteDimensional",
+      "DazaEtAl2015Wada",
+      "DazaEtAl2016BasinEntropy",
+      "Deimling1985",
+      "DellnitzHohmann1997Subdivision",
+      "DiethelmFordFreed2002",
+      "DoanKloeden2021Semidynamical",
+      "DoanKloeden2022Triangular",
+      "DoanKloeden2024Attractors",
+      "DuanLanLi2022WeylCaputo",
+      "DuarteMachado2009Coulomb",
+      "DudkowskiEtAl2016",
+      "DudkowskiPrasadKapitaniak2015",
+      "DudkowskiPrasadKapitaniak2017",
+      "DudkowskiPrasadKapitaniak2018",
+      "GelbVanderVelde1968",
+      "GilmoreEtAl2010Connecting",
+      "GodaraEtAl2018CriticalSurfaces",
+      "Gomoyunov2018Convex",
+      "GuanXie2021Connecting",
+      "GuanXie2025",
+      "HirschSmaleDevaney2013",
+      "JafariNazarimehrSprott2015",
+      "JaurezEtAl2021TGEDI",
+      "JaurezEtAl2021TGEDII",
+      "JiangZhangZhangZhang2017FastCaputo",
+      "Jost2005Dynamical",
+      "KaliesEtAl2005ChainRecurrence",
+      "KaslikSivasundaram2012",
+      "KhristenkoWohlmuth2023Rational",
+      "Kuznetsov2023Bifurcation",
+      "KuznetsovEtAl2017",
+      "Leonov2013HiddenAttractors",
+      "LeonovKuznetsov2013",
+      "LeonovKuznetsovVagaitsev2011",
+      "LiChenPodlubny2009",
+      "Lin2013GeneralizedGronwall",
+      "Machado2015FDF",
+      "Matignon1996",
+      "MischaikowEtAl2016Conley",
+      "Monje2010",
+      "NagChowdhuryGhosh2020",
+      "NahmadAchar2022Topologia",
+      "NazarimehrSaediJafari2017",
+      "Oliveira2019SolvedFractional",
+      "OrtigueiraMachadoTrujillo2017Periodic",
+      "Ott2002Chaos",
+      "PhamEtAl2018HiddenAttractors",
+      "PhamVolosKapitaniak2017Systems",
+      "Podlubny1999",
+      "Prasad2015Perpetual",
+      "RoyRayChowdhury2024KCC",
+      "Sabatier2021InfiniteMemory",
+      "ShchedrinEtAl2018Composite",
+      "Skokos2010",
+      "StephensWanner2014IsolatingBlocks",
+      "SunHeWang2022FractionalChaos",
+      "TavazoeiHaeri2009",
+      "TelGruiz2006Chaotic",
+      "VallejoSanjuan2017Predictability",
+      "Vigue2019",
+      "WangKuznetsovChen2021Multistability",
+      "Wu2023ArctanChua",
+      "ZhuLi2026PeriodicAlmostPeriodic",
+      "bonani1999",
+      "debbouche2021",
+      "fischer2020",
+      "gottwald2009",
+      "henon1982",
+      "kalman2019",
+      "liu2021",
+      "matouk2023",
+      "munoz2018",
+      "pll2015",
+      "rogov2019",
+      "sayed2020",
+      "scipy2020",
+      "wang2020"
+    ],
+    "guia_estudio": [
+      "AlligoodSauerYorke1996Chaos",
+      "Amster2021MetodosTopologicos",
+      "AreaLosadaNieto2014",
+      "Atherton1975",
+      "AthertonTanYerogluKavuranYuce2014",
+      "BarbosaMachado2002BacklashImpact",
+      "Benettin1980a",
+      "ClementeLopezEtAl2022Poincare",
+      "Cong2023Semigroup",
+      "CongDoanSiegmundTuan2016",
+      "CongTuan2017Nonlocal",
+      "CongTuanTrinh2020Asymptotic",
+      "CuiKloedenXin2026CaputoDynamics",
+      "Danca2016HiddenTransient",
+      "Danca2017",
+      "Danca2017HiddenFO",
+      "Danca2026ImprovedLyapunov",
+      "DancaFeckan2024MemoryPrinciple",
+      "DancaKuznetsov2018Lyapunov",
+      "Das2020Kindergarten",
+      "DatserisParlitz2022Nonlinear",
+      "Davies2004ExploringChaos",
+      "DayJungeMischaikow2004InfiniteDimensional",
+      "DazaEtAl2015Wada",
+      "DazaEtAl2016BasinEntropy",
+      "Deimling1985",
+      "DellnitzHohmann1997Subdivision",
+      "Devaney1989Chaotic",
+      "Diethelm2010AnalysisFDE",
+      "DiethelmFordFreed2002",
+      "DoanKloeden2021Semidynamical",
+      "DoanKloeden2022Triangular",
+      "DoanKloeden2024Attractors",
+      "DuanLanLi2022WeylCaputo",
+      "DuarteMachado2009Coulomb",
+      "DudkowskiEtAl2016",
+      "DudkowskiPrasadKapitaniak2015",
+      "DudkowskiPrasadKapitaniak2017",
+      "DudkowskiPrasadKapitaniak2018",
+      "Falconer2014Fractal",
+      "GelbVanderVelde1968",
+      "GilmoreEtAl2010Connecting",
+      "GodaraEtAl2018CriticalSurfaces",
+      "Gomoyunov2018Convex",
+      "GuanXie2021Connecting",
+      "GuanXie2025",
+      "GuckenheimerHolmes1983",
+      "Herrmann2014Fractional",
+      "Hilborn2000Chaos",
+      "HirschSmaleDevaney2013",
+      "JafariNazarimehrSprott2015",
+      "JaurezEtAl2021TGEDI",
+      "JaurezEtAl2021TGEDII",
+      "JiangZhangZhangZhang2017FastCaputo",
+      "Jost2005Dynamical",
+      "KaliesEtAl2005ChainRecurrence",
+      "KaslikSivasundaram2012",
+      "KhristenkoWohlmuth2023Rational",
+      "Kuznetsov2023Bifurcation",
+      "KuznetsovEtAl2017",
+      "KuznetsovEtAl2023ChuaExperiments",
+      "Leonov2013HiddenAttractors",
+      "LeonovKuznetsov2013",
+      "LeonovKuznetsovVagaitsev2011",
+      "LiChenPodlubny2009",
+      "LiChenPodlubny2010",
+      "Lin2013GeneralizedGronwall",
+      "Machado2015FDF",
+      "Matignon1996",
+      "MischaikowEtAl2016Conley",
+      "Monje2010",
+      "NagChowdhuryGhosh2020",
+      "NahmadAchar2022Topologia",
+      "NazarimehrSaediJafari2017",
+      "OldhamSpanier1974Fractional",
+      "Oliveira2019SolvedFractional",
+      "OrtigueiraMachadoTrujillo2017Periodic",
+      "Ott2002Chaos",
+      "PhamEtAl2018HiddenAttractors",
+      "PhamVolosKapitaniak2017Systems",
+      "Podlubny1999",
+      "Prasad2015Perpetual",
+      "RoyRayChowdhury2024KCC",
+      "Sabatier2021InfiniteMemory",
+      "ShchedrinEtAl2018Composite",
+      "Skokos2010",
+      "SlotineLi1991",
+      "Sprott2003ChaosTimeSeries",
+      "SprottXiong2015Basins",
+      "StephensWanner2014IsolatingBlocks",
+      "Strogatz2015Nonlinear",
+      "SunHeWang2022FractionalChaos",
+      "TavazoeiHaeri2009",
+      "TelGruiz2006Chaotic",
+      "VallejoSanjuan2017Predictability",
+      "Vigue2019",
+      "WangKuznetsovChen2021Multistability",
+      "Wu2023ArctanChua",
+      "ZhuLi2026PeriodicAlmostPeriodic",
+      "bonani1999",
+      "datseris2022",
+      "debbouche2021",
+      "fischer2020",
+      "gottwald2009",
+      "henon1982",
+      "kalman2019",
+      "liu2021",
+      "matouk2023",
+      "munoz2018",
+      "pll2015",
+      "rogov2019",
+      "sayed2020",
+      "scipy2020",
+      "wang2020"
+    ]
+  },
+  "this_audit_script_zotero_write_operations": 0,
+  "aux_reconciliation": {
+    "monografia": {
+      "aux_file": "build\\reporte_maestro_atractores_ocultos.aux",
+      "aux_sha256": "5a5eac4524329e67af9c01f0f6acc0dc4d076e7912bf6809842be55e78571764",
+      "aux_unique_citations": 97,
+      "static_minus_aux": [],
+      "aux_minus_static": [],
+      "missing_from_bib": [],
+      "exact_match": true
+    },
+    "guia_estudio": {
+      "aux_file": "build\\reporte_maestro_lectura_estudio.aux",
+      "aux_sha256": "f91a89ced3a0f5e4d9fb97da07eedbdec8a41b5d99838cec4c7554f47523e6cf",
+      "aux_unique_citations": 114,
+      "static_minus_aux": [],
+      "aux_minus_static": [],
+      "missing_from_bib": [],
+      "exact_match": true
+    }
+  },
+  "audited_key_rows": 141,
+  "bib_entries_matching_thesis_collection": 131,
+  "bib_entries_matching_library_only": 10,
+  "bib_entries_not_in_library": 0,
+  "citation_keys_missing_from_bib": [],
+  "uncited_bib_keys_by_edition": {
+    "monografia": [
+      "Agarwal2025",
+      "AlligoodSauerYorke1996Chaos",
+      "BarbosaJesusMachado2015",
+      "Benettin1980b",
+      "CafagnaGrassi2010",
+      "CaponettoEtAl2013Relay",
+      "ChristiansenRugh1997",
+      "Cicogna2020Exercises",
+      "Das2020Kindergarten",
+      "Davies2004ExploringChaos",
+      "Deng2007",
+      "Devaney1989Chaotic",
+      "Diethelm2010AnalysisFDE",
+      "Falconer2014Fractal",
+      "Fuchs2013",
+      "Ghoreishi2023",
+      "GottwaldMelbourne2004",
+      "GuckenheimerHolmes1983",
+      "Haacker2026",
+      "HaiYuXuRen2022",
+      "Herrmann2014Fractional",
+      "Hilborn2000Chaos",
+      "Hoppensteadt2000Chaotic",
+      "Kantorovich2022Fundamentals",
+      "Kantorovich2024Advanced",
+      "Khalil2002",
+      "KrylovBogoliubov1950",
+      "KuznetsovEtAl2023ChuaExperiments",
+      "LiChenPodlubny2010",
+      "LiMa2013",
+      "MendesSalgadoAguirre2019",
+      "OldhamSpanier1974Fractional",
+      "Petras2022",
+      "SlotineLi1991",
+      "Sprott2003ChaosTimeSeries",
+      "SprottXiong2015Basins",
+      "Strogatz2015Nonlinear",
+      "Wimberger2022Nonlinear",
+      "YerogluTan2015",
+      "attractorsapi",
+      "datseris2022",
+      "kochenburger1950frequency",
+      "kuznetsov2017localization",
+      "nuij2006hosidf"
+    ],
+    "guia_estudio": [
+      "Agarwal2025",
+      "BarbosaJesusMachado2015",
+      "Benettin1980b",
+      "CafagnaGrassi2010",
+      "CaponettoEtAl2013Relay",
+      "ChristiansenRugh1997",
+      "Cicogna2020Exercises",
+      "Deng2007",
+      "Fuchs2013",
+      "Ghoreishi2023",
+      "GottwaldMelbourne2004",
+      "Haacker2026",
+      "HaiYuXuRen2022",
+      "Hoppensteadt2000Chaotic",
+      "Kantorovich2022Fundamentals",
+      "Kantorovich2024Advanced",
+      "Khalil2002",
+      "KrylovBogoliubov1950",
+      "LiMa2013",
+      "MendesSalgadoAguirre2019",
+      "Petras2022",
+      "Wimberger2022Nonlinear",
+      "YerogluTan2015",
+      "attractorsapi",
+      "kochenburger1950frequency",
+      "kuznetsov2017localization",
+      "nuij2006hosidf"
+    ]
+  },
+  "zotero_library_duplicate_doi_groups": {
+    "10.1016/j.sigpro.2014.05.012": [
+      "CZQ77YEK",
+      "NWCGP4Z2"
+    ],
+    "10.1007/s11071-017-3472-7": [
+      "FUB2YWCV",
+      "29C7UECB"
+    ],
+    "10.1016/j.ifacol.2017.08.470": [
+      "RIACCCFZ",
+      "ZLWBXCMJ"
+    ],
+    "10.1063/5.0068626": [
+      "LJTBFNJZ",
+      "E7FH27LJ"
+    ],
+    "10.1016/j.rinp.2023.106866": [
+      "G4I8N687",
+      "ILLQX2UB"
+    ],
+    "10.1016/j.automatica.2009.04.001": [
+      "QK82GVSD",
+      "ZYEKYQCY"
+    ],
+    "10.1142/s0218127413300024": [
+      "M2HDQWGD",
+      "DQ5RX8W8"
+    ],
+    "10.1016/j.physrep.2016.05.002": [
+      "A7MCYAIL",
+      "4YHGIXNL"
+    ],
+    "10.3390/sym13061099": [
+      "PN63EGUP",
+      "HWN3VBXI"
+    ],
+    "10.3934/math.2022326": [
+      "T6VGY8GL",
+      "K3JFCFBT"
+    ],
+    "10.1007/s11071-025-11327-5": [
+      "2MUY5ZFB",
+      "V4RYSWKS"
+    ],
+    "10.1142/s0218127417500377": [
+      "ICBIHFV7",
+      "WVRBGM7Z"
+    ],
+    "10.1016/0005-1098(92)90177-h": [
+      "8ULUJACK",
+      "Y8QIINN4"
+    ],
+    "10.1007/s11071-008-9447-y": [
+      "2JN3EVGD",
+      "WD2SVQBM"
+    ],
+    "10.1007/s11071-009-9647-0": [
+      "3NADRS5F",
+      "9DZH6UTX"
+    ],
+    "10.1134/s0012266114130023": [
+      "JYDAPDDE",
+      "MYNMRSTG"
+    ],
+    "10.1063/1.4927643": [
+      "CDXA7B9E",
+      "VRGPDHCZ"
+    ],
+    "10.1016/j.engappai.2015.12.002": [
+      "3WJAZ322",
+      "VXUYQQK4"
+    ],
+    "10.1142/s0218127417501152": [
+      "VZUA2CCD",
+      "52CSMBE2"
+    ],
+    "10.1063/1.5007925": [
+      "PD635I8R",
+      "C48KH39K"
+    ],
+    "10.1142/s0217984920501468": [
+      "WIRG49U4",
+      "9UY8MHDY"
+    ],
+    "10.1016/j.chaos.2021.110791": [
+      "3K9FQD5M",
+      "7HLG3RVE"
+    ],
+    "10.1063/5.0076568": [
+      "967VWKD7",
+      "XSZDQMSW"
+    ]
+  },
+  "zotero_library_duplicate_doi_groups_matching_report": {
+    "10.1016/j.sigpro.2014.05.012": [
+      "CZQ77YEK",
+      "NWCGP4Z2"
+    ],
+    "10.1007/s11071-017-3472-7": [
+      "FUB2YWCV",
+      "29C7UECB"
+    ],
+    "10.1016/j.ifacol.2017.08.470": [
+      "RIACCCFZ",
+      "ZLWBXCMJ"
+    ],
+    "10.1063/5.0068626": [
+      "LJTBFNJZ",
+      "E7FH27LJ"
+    ],
+    "10.1016/j.rinp.2023.106866": [
+      "G4I8N687",
+      "ILLQX2UB"
+    ],
+    "10.1016/j.automatica.2009.04.001": [
+      "QK82GVSD",
+      "ZYEKYQCY"
+    ],
+    "10.1142/s0218127413300024": [
+      "M2HDQWGD",
+      "DQ5RX8W8"
+    ],
+    "10.1016/j.physrep.2016.05.002": [
+      "A7MCYAIL",
+      "4YHGIXNL"
+    ],
+    "10.3390/sym13061099": [
+      "PN63EGUP",
+      "HWN3VBXI"
+    ],
+    "10.3934/math.2022326": [
+      "T6VGY8GL",
+      "K3JFCFBT"
+    ],
+    "10.1007/s11071-025-11327-5": [
+      "2MUY5ZFB",
+      "V4RYSWKS"
+    ],
+    "10.1142/s0218127417500377": [
+      "ICBIHFV7",
+      "WVRBGM7Z"
+    ],
+    "10.1063/1.4927643": [
+      "CDXA7B9E",
+      "VRGPDHCZ"
+    ],
+    "10.1063/5.0076568": [
+      "967VWKD7",
+      "XSZDQMSW"
+    ]
+  },
+  "reading_scope_caution": "No se atribuye lectura integral ni verificacion de demostraciones a entradas sin evidencia de lectura primaria selectiva. El cotejo de metadatos con Zotero no certifica exactitud cientifica editorial."
+}

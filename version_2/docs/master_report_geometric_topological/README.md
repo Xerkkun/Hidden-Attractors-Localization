@@ -1,9 +1,18 @@
 # Monografía y guía de estudio geométrico--topológicas
 
-Esta carpeta contiene una fuente científica común y dos salidas editoriales:
-una monografía digital y una guía autónoma para lectura e impresión.
+Esta carpeta conserva las fuentes y los apoyos de una edición anterior,
+necesarios para la regresión algebraica y el generador de figuras. Las dos
+ediciones vigentes para lectura, revisión de tesis y compilación están en
+[reportes_revision_tesis](../reportes_revision_tesis/README.md).
 
-## Ediciones
+Los PDF anteriores de 308 y 236 páginas se retiraron del árbol activo después
+de verificar su respaldo íntegro en
+`Codes/Respaldos_limpieza/Tesis_HAFO_rastreados_20261109/archivos_rastreados_retirados.zip`.
+El manifiesto de limpieza conserva rutas y SHA-256; los PDF actuales tienen
+338 y 274 páginas. Las fuentes y los artefactos científicos de esta carpeta
+se mantienen con sus bytes anteriores.
+
+## Ediciones históricas archivadas
 
 - `reporte_maestro_atractores_ocultos.pdf`: monografía científica digital.
 - `reporte_maestro_lectura_estudio.pdf`: guía secuencial destinada a estudio e
@@ -41,9 +50,10 @@ resultados representativos de PLL, MAVPD y Wu. Las figuras
 numéricas restantes se declaran individualmente como digitales; el atlas
 extenso no se imprime.
 
-## Compilación
+## Compilación de la edición histórica
 
-Desde esta carpeta:
+Para la edición vigente, seguir el README de `../reportes_revision_tesis/`.
+Sólo si se necesita reconstruir la edición histórica, desde esta carpeta:
 
 ```powershell
 latexmk -pdf -interaction=nonstopmode -halt-on-error reporte_maestro_atractores_ocultos.tex

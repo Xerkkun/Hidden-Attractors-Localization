@@ -1,0 +1,122 @@
+\section{Balance armónico y espectros locales}
+\label{app:wolfram-master}
+
+\subsection{Funciones descriptivas y obstrucciones de balance}
+
+Con la convención \(W_+\), se obtiene
+\begin{align}
+ r^{\mathsf T}(zI-P)^{-1}b
+ &=-\frac{\alpha Q(z)}{\Delta_\ell(z)},&
+ \det(zI-P)&=\Delta_\ell(z),\\
+ N_{\mathrm{cub}}(A)&=\frac34A^2,&
+ N_{\mathrm{sat}}(A)
+ &=\frac{2\Delta}{\pi}
+ \left[
+ \arcsin\frac1A+\frac{\sqrt{A^2-1}}{A^2}
+ \right],\\
+ N_{\arctan}(A)&=
+ \frac{2a_2}{\rho A^2}
+ \left(\sqrt{1+\rho^2A^2}-1\right).
+\end{align}
+La expresión cúbica corresponde a \(\psi(u)=u^3\), con \(A>0\); la de
+saturación usa \(\Delta=m_0-m_1\) y se aplica a \(A>1\). Para la arctangente se supone
+\(A>0\) y \(\rho>0\). Las dos últimas expresiones se obtienen de la
+proyección \cref{eq:df_centrada}, mediante la integración por tramos y por
+partes desarrollada junto a \cref{eq:df_saturacion,eq:df_arctan}.
+En el caso cúbico,
+\[
+ N_{\mathrm{cub}}(A)=\frac{2A^2}{\pi}\int_0^\pi\sin^4\theta\,\mathrm d\theta
+ =\frac{2A^2}{\pi}\frac{3\pi}{8}=\frac34A^2,
+\]
+pues \(\sin^4\theta=(3-4\cos2\theta+\cos4\theta)/8\).
+
+Para Kalman--Fitts,
+\[
+ W(s)=-\frac{s^2}{p(s)},\qquad
+ \omega_0^2=\frac{2\beta^2+m_1^2+m_2^2}{2},
+\]
+y
+\[
+ k=-\left[
+ 4\beta^2+
+ \frac{(m_1^2-m_2^2)^2}
+ {2(2\beta^2+m_1^2+m_2^2)}
+ \right]
+ =-0.0431687011573845.
+\]
+Para PLL,
+\[
+ \Im W_+(\mathrm i\omega)=
+ \frac{L[1+\omega^2\tau_2(\tau_1+\tau_2)]}
+ {2\omega[1+\omega^2(\tau_1+\tau_2)^2]}>0.
+\]
+Se supone \(L,\tau_1,\tau_2,\omega>0\); en la convención alternativa,
+\(\Im W_-=-\Im W_+<0\). En ambas convenciones la parte imaginaria conserva
+su signo y no se anula a frecuencia positiva.
+La ganancia negativa de Kalman--Fitts y el signo de la parte imaginaria
+del PLL obstruyen el cierre directo de función descriptiva en los casos
+considerados.
+
+\subsection{Espectro del Lorenz generalizado}
+
+En el origen, el jacobiano se descompone en un bloque de dimensión dos y la
+dirección \(z\). Por ello,
+\[
+ p_0(\lambda)=(\lambda+1)
+ \bigl[(\lambda+3.4)(\lambda+1)-3.4\cdot6.8\bigr]
+ =(\lambda+1)(\lambda^2+4.4\lambda-19.72).
+\]
+Las raíces del segundo factor son \(-2.2\pm\sqrt{24.56}\).
+El espectro en el origen es
+\[
+ \{-7.15580467734555,\ 2.75580467734555,\ -1\},
+\]
+y en los dos equilibrios no nulos,
+\[
+ \{-5.37029951773135,\
+ -0.0148502411343243\pm3.83248917224188\,\mathrm i\}.
+\]
+El origen es inestable por el autovalor positivo
+\(2.75580467734555\). En los dos equilibrios no nulos, todas las partes reales
+son negativas y el margen de Matignon es
+\[
+ m_{0.995}
+ =\frac{(1-0.995)\pi}{2}
+  +\arctan\!\left(\frac{0.0148502411343243}{3.83248917224188}\right)
+ =0.0117287914887683>0.
+\]
+Aquí se ha utilizado
+\(\arg(-\delta+\mathrm i\omega)=\pi/2+\arctan(\delta/\omega)\),
+con \(\delta,\omega>0\). El autovalor real negativo tiene argumento de
+módulo \(\pi\), de modo que el mínimo corresponde al par complejo. El campo
+es polinomial y satisface las hipótesis de linealización de los fundamentos;
+ambos equilibrios son localmente asintóticamente estables para \(q=0.995\).
+
+\subsection{Machado y puntos perpetuos}
+
+En Chua PWL, \(q=0.9998\), \(\mu=2\), los residuos de
+\cref{eq:machado-rho-aux,eq:machado-rho-phys} dan
+\begin{align}
+ W_q(\mathrm i\omega_0)
+ &=4.761387970782572-1.52\times10^{-13}\mathrm i,\\
+ N(A_2)&=0.458282437981291,\\
+ \rho_{\mathrm{aux}}&=2.16\times10^{-13},\\
+ \rho_{\mathrm{fis}}&=1.182060487425029.
+\end{align}
+El residuo auxiliar es pequeño, mientras el residuo físico permanece del
+orden de la unidad. Por ello, esta amplitud resuelve el cierre auxiliar, pero
+no el balance armónico del campo original.
+
+Para MAVPD y para las raíces suaves de Muñoz--Pacheco, la sustitución de las
+coordenadas de \cref{sec:pp-case-audit} en \(J_f f\) da cero exacto. La diferencia entre
+esta ecuación y la aceleración temporal se observa en el campo constante
+\(f(x)=c\ne0\). Para \(0<q<1\), su solución es
+\(x(t)=x_0+ct^q/\Gamma(q+1)\), de donde
+\begin{align*}
+ J_ff&=0,\qquad {}^{\mathrm C}D^q[f(x(t))]={}^{\mathrm C}D^q[c]=0,\\
+ x''(t)&=\frac{cq(q-1)t^{q-2}}{\Gamma(q+1)}
+       =\frac{ct^{q-2}}{\Gamma(q-1)}\ne0,\qquad t>0.
+\end{align*}
+La última igualdad usa dos veces \(\Gamma(z+1)=z\Gamma(z)\).
+Por tanto, la cancelación de \(J_ff\) o de la derivada secuencial no equivale
+a aceleración ordinaria nula.

@@ -76,8 +76,12 @@ claim is attached to this validation.
 
 ## Geometric-topological master report
 
-The repository also carries the source and compiled study editions under
-`docs/master_report_geometric_topological/`. They integrate the integer and
+The current theory and study editions are under
+[`docs/reportes_revision_tesis/`](reportes_revision_tesis/README.md). The prior
+`docs/master_report_geometric_topological/` sources and supporting artifacts
+remain available for algebraic regression and figure generation; its superseded
+compiled PDFs were archived during the tracked-file cleanup of 2026-11-09.
+The reports integrate the integer and
 fractional algebra, the geometric/topological framework, the unified reading
 sequence, the Machado theory/validation-only route (not a promoted public
 workflow), the perpetual-point route, and the preregistered TG0-TG8 campaign.

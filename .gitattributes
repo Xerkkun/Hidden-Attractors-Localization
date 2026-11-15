@@ -3,3 +3,6 @@ version_2/examples/modified_van_der_pol_duffing_integer_lure_audit/input/mavpd_i
 version_2/benchmarks/bench_tempered_convolution_quadrature.py text eol=lf
 # Preserve the exact recovered Paper07 JSON digest across Windows checkouts.
 version_2/validation/paper07_chua/evidence/c590_reconstruction/caputo_seed9/q_scan/summary.json -text
+
+# Preserve copied report/audit sources and their recorded byte-level hashes.
+version_2/docs/reportes_revision_tesis/** -text

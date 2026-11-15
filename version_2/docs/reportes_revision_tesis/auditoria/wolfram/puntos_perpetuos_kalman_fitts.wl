@@ -1,0 +1,23 @@
+pa={al->218493569066/10^10,be->190818408409/10^10,ga->73780120/10^10,a1->422897934/10^10,a2->-33367815123/10^10,rho->17984259333/10^10};
+hfun[x_]=a1 x+a2 ArcTan[rho x];
+f={al(y-x-hfun[x]),x-y+z,-be y-ga z}; j=D[f,{{x,y,z}}];
+ppx2=(a2 rho/(-be/(be+ga)-a1)-1)/rho^2;
+px=N[Sqrt[ppx2/.pa],60]; ppSlope=-be/(be+ga);
+ppU=-(be x+(be+ga)hfun[x])/(ga+(1+ga)ppSlope+(be+ga)/al);
+py=x+hfun[x]+ppU/al;pz=hfun[x]+(1+ppSlope)ppU+ppU/al;
+pp=N[{x,py,pz}/.pa/.x->px,45];
+pres=N[(j.f)/.pa/.Thread[{x,y,z}->pp],35];
+fpp=N[f/.pa/.Thread[{x,y,z}->pp],35];
+branchIdentity=FullSimplify[Det[j]+al(be+(be+ga)D[hfun[x],x])];
+mp={al->84562/10000,be->120732/10000,ga->52/10000};
+pwlDet[m_]=-al(be+(be+ga)m);
+bd=3/100;m1=9/10;m2=11/10;eps=1/100;
+a0=(m1^2+bd^2)(m2^2+bd^2); a1k=2bd(m1^2+m2^2+2bd^2);a2k=m1^2+m2^2+6bd^2;a3=4bd;
+ak={{0,1,0,0},{0,0,1,0},{0,0,0,1},{-a0,-a1k,-a2k,-a3}};bk={0,0,0,1};ck={0,0,-1,0};
+poly=(s+bd-I m1)(s+bd+I m1)(s+bd-I m2)(s+bd+I m2);
+kw=Together[ck.Inverse[s IdentityMatrix[4]-ak].bk];
+jac=ak+Outer[Times,bk,ck]/eps;
+w02=a1k/a3;kval=Together[(w02^2-a2k w02+a0)/w02];
+rh1=a3(a2k+1/eps)-a1k;rh2=a3(a2k+1/eps)a1k-a1k^2-a3^2 a0;
+checks=<|"arctan_singular_determinant"->TrueQ[branchIdentity===0],"arctan_PP_residual_below_1e_30"->TrueQ[Norm[pres]<10^-30],"arctan_PP_non_equilibrium"->TrueQ[Norm[fpp]>1],"PWL_two_regions_nonsingular"->TrueQ[Times@@(pwlDet[#]/.mp&/@{-1768/10000,-11468/10000})!=0],"KF_polynomial"->TrueQ[Expand[Det[s IdentityMatrix[4]-ak]-poly]===0],"KF_transfer"->TrueQ[Together[kw+s^2/poly]===0],"KF_jacobian_polynomial"->TrueQ[Expand[Det[s IdentityMatrix[4]-jac]-(s^4+a3 s^3+(a2k+1/eps)s^2+a1k s+a0)]===0],"KF_Routh_positive"->TrueQ[rh1>0&&rh2>0],"KF_direct_gain_negative"->TrueQ[kval<0]|>;
+<|"checks"->checks,"c590_PP_positive_x"->pp,"c590_PP_JF_residual_norm"->Norm[pres],"c590_PP_field_norm"->Norm[fpp],"PWL_determinants"->N[pwlDet[#]/.mp&/@{-1768/10000,-11468/10000},18],"KF_coefficients"->N[{a0,a1k,a2k,a3},18],"KF_Routh_differences"->N[{rh1,rh2},18],"KF_direct_frequency"->N[Sqrt[w02],18],"KF_direct_gain"->N[kval,18],"scope"->"PP algebra and scalar Lure admissibility only; no asymptotic destination follows."|>

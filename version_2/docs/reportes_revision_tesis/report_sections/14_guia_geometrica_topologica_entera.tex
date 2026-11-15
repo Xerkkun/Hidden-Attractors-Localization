@@ -1,0 +1,2028 @@
+% Selectores de bloques geométricos. Sin
+% \HAFOGeoBlockSelect se muestra el contenido completo. Si el
+% selector está activo, pueden habilitarse uno o varios bloques mediante
+% \HAFOGeoBlockIntroFlow, \HAFOGeoBlockBasins, \HAFOGeoBlockDegree,
+% \HAFOGeoBlockLinear, \HAFOGeoBlockPoincare y \HAFOGeoBlockChaos.
+\ifdefined\ifHAFOGeoRenderBlock\else
+  \newif\ifHAFOGeoRenderBlock
+\fi
+
+\ifdefined\HAFOGeoPosteriorOnly\else
+\HAFOGeoRenderBlocktrue
+\ifdefined\HAFOGeoBlockSelect
+  \HAFOGeoRenderBlockfalse
+  \ifdefined\HAFOGeoBlockIntroFlow\HAFOGeoRenderBlocktrue\fi
+\fi
+\ifHAFOGeoRenderBlock
+\section{Geometría y topología de la dinámica}
+\label{sec:geo-proposito}
+
+La geometría relaciona el campo vectorial con las curvas que genera; la
+topología permite describir la organización de esas curvas sin depender de
+una elección particular de coordenadas. Consideramos conjuntamente el espacio
+de fases, los conjuntos invariantes y las cuencas, porque la localización de
+una trayectoria recurrente y la separación de su cuenca respecto de los
+equilibrios son problemas distintos de una misma dinámica.
+
+En Chua, MAVPD y Kalman--Fitts el espacio natural es euclídeo; en el PLL la
+fase angular conduce al cilindro. Esta diferencia determina qué significa
+cerrarse una órbita, cómo se calcula una distancia y sobre qué conjunto se
+define un retorno. A partir del campo construimos el flujo; su acción
+transporta condiciones iniciales, y los límites de esas trayectorias permiten
+definir atracción y cuencas. La linealización describe la geometría local,
+mientras que las regiones atrapantes, los mapas de retorno y las variedades
+invariantes conectan ese análisis con la organización global.
+
+\subsection{Objetos locales, órbitas y dominios invariantes}
+\label{geo:subsec:jerarquia-evidencia}
+
+Las distintas herramientas actúan sobre dominios diferentes. Una proyección
+de una trayectoria conserva sólo los observables representados; un teorema
+local controla una vecindad; una región atrapante contiene trayectorias para
+todo tiempo positivo. La tabla relaciona esas construcciones con las
+propiedades matemáticas que permiten estudiar.
+
+\begin{table}[H]
+\centering
+\caption{Dominios del análisis geométrico de una dinámica.}
+\label{geo:tab:niveles-evidencia}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.20\textwidth}YYY@{}}
+\toprule
+Objeto & Construcción & Propiedad estudiada & Dominio \\
+\midrule
+Proyección & Observables de una trayectoria & Forma y recurrencia proyectadas
+& Coordenadas y tiempo representados. \\
+Órbita aproximada & Integración del campo y control del error & Evolución de
+un dato inicial & Intervalo finito de integración. \\
+Vecindad de un equilibrio o ciclo & Linealización y retorno transversal &
+Estabilidad y variedades locales & Entorno donde se cumplen las hipótesis. \\
+Conjunto invariante & Región atrapante, grado o intersección transversal &
+Existencia, atracción o dinámica simbólica & Dominio contenido en el argumento. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Evaluar el Jacobiano en los ceros regulares del campo permite determinar sus
+índices. Para estudiar un atractor no estacionario necesitamos además
+el flujo o su mapa de retorno: los ceros del campo y los puntos fijos del
+retorno representan objetos diferentes.
+
+\HAFOStudyNeedspace
+\section{Lenguaje mínimo de topología y geometría diferencial}
+\label{sec:geo-lenguaje}
+
+\HAFOCardTopology
+
+Considérese una ecuación autónoma de orden entero
+\begin{equation}
+  \dot x=f(x),\qquad x\in M,
+  \label{geo:eq:edo-manifold}
+\end{equation}
+donde \(M\) es una variedad diferenciable, usualmente \(\R^n\) o el cilindro
+\(\R\times S^1\). Su flujo actúa sobre estados puntuales; en un PVI causal
+de Caputo, la memoria exige un espacio funcional para formular la evolución.
+El lenguaje topológico y diferencial se apoya en
+\cite{NahmadAchar2022Topologia}; la teoría de flujo y estabilidad se apoya en
+\cite{JaurezEtAl2021TGEDI,JaurezEtAl2021TGEDII,HirschSmaleDevaney2013}.
+
+\subsection{Topología: proximidad sin fijar una regla de medida}
+
+\begin{definition}[Espacio topológico]
+Un espacio topológico es un par \((M,\mathcal T)\), donde \(\mathcal T\) es una
+familia de subconjuntos llamados \emph{abiertos} que contiene a
+\(\varnothing\) y \(M\), es cerrada bajo uniones arbitrarias y bajo
+intersecciones finitas. Una \emph{vecindad} de \(x\) es un conjunto que
+contiene un abierto que contiene a \(x\).
+\end{definition}
+
+\begin{definition}[Base, separación, compacidad y conexidad]
+Una familia \(\mathcal B\subset\mathcal T\) es una \emph{base} si todo abierto
+es unión de elementos de \(\mathcal B\); una subbase genera una base mediante
+intersecciones finitas. El espacio es \emph{Hausdorff} si dos puntos distintos
+poseen vecindades disjuntas. Es \emph{compacto} si toda cubierta abierta admite
+una subcubierta finita, y es \emph{conexo} si sus únicos subconjuntos que son a
+la vez abiertos y cerrados son \(\varnothing\) y el espacio completo.
+\end{definition}
+
+En espacios métricos la compacidad equivale a que toda sucesión posea una
+subsucesión convergente; esa equivalencia no debe trasladarse sin hipótesis a
+un espacio topológico arbitrario. Compacidad controla argumentos de
+extracción, mientras conexidad impide separar el objeto en dos abiertos
+disjuntos no vacíos.
+
+\begin{definition}[Producto y cociente]
+La topología producto en \(M\times N\) tiene como base los conjuntos
+\(U\times V\), con \(U\subset M\) y \(V\subset N\) abiertos. Dada una relación
+de equivalencia \(\sim\), el cociente \(M/{\sim}\) lleva la topología para la
+cual un conjunto \(W\) es abierto si \(\pi^{-1}(W)\) es abierto, donde
+\(\pi:M\to M/{\sim}\) es la proyección canónica.
+\end{definition}
+
+Así, \(S^1\simeq\R/(2\pi\mathbb Z)\) identifica ángulos que difieren por una
+vuelta completa, y el cilindro del PLL usa la topología producto
+\(\R\times S^1\).
+\ifHAFOPedagogy
+Como ejercicio de dominio, pruebe que la proyección
+\(\theta\mapsto(\cos\theta,\sin\theta)\) induce un homeomorfismo del cociente
+sobre el círculo; señale dónde usa compacidad y la propiedad de Hausdorff.
+\fi
+
+Una métrica \(d\) produce una topología mediante sus bolas abiertas, pero la
+topología conserva menos información que la métrica. Continuidad, compacidad,
+conexidad y frontera son nociones topológicas; longitudes, ángulos y radios
+numéricos requieren estructura adicional.
+
+\begin{definition}[Continuidad y homeomorfismo]
+Una función \(h:M\to N\) es continua si la preimagen de todo abierto de \(N\)
+es abierta en \(M\). Es un \emph{homeomorfismo} si es biyectiva y tanto \(h\)
+como \(h^{-1}\) son continuas.
+\end{definition}
+
+Un homeomorfismo puede estirar una bola hasta convertirla en un elipsoide, sin
+romper conexidad ni vecindades. Ésta es la razón por la cual la ocultedad,
+formulada mediante vecindades, puede transportarse topológicamente, mientras
+que una especificación de «radio \(10^{-3}\)» no se transporta conservando el mismo
+número.
+
+\begin{definition}[Interior, clausura y frontera]
+Para \(A\subset M\), su interior \(\operatorname{int}A\) es el mayor abierto
+contenido en \(A\); su clausura \(\overline A\) es el menor cerrado que lo
+contiene; y
+\begin{equation}
+  \partial A=\overline A\setminus\operatorname{int}A
+  \label{geo:eq:boundary}
+\end{equation}
+es su frontera.
+\end{definition}
+
+La frontera de una cuenca no es la última curva coloreada por una malla. Es el
+conjunto definido por~\eqref{geo:eq:boundary}; cualquier vecindad de uno de sus
+puntos encuentra tanto puntos de la cuenca como puntos fuera de ella.
+
+\subsection{Variedades, vectores tangentes y campos}
+
+\begin{definition}[Variedad diferenciable y campo vectorial]
+Una variedad diferenciable \(M\) de dimensión \(n\) es un espacio Hausdorff
+y segundo numerable que localmente posee coordenadas en abiertos de
+\(\R^n\), con un atlas de cambios de carta de clase \(C^r\), \(r\ge1\).
+El espacio tangente en \(x\) se denota \(T_xM\). Un campo
+vectorial es una asignación \(f(x)\in T_xM\) que varía con la regularidad
+declarada.
+\end{definition}
+
+En \(\R^n\) se identifica \(T_x\R^n\simeq\R^n\), por lo que el vector
+\(f(x)\) se dibuja con origen en \(x\). En el PLL, en cambio,
+\begin{equation}
+  M_{\mathrm{PLL}}=\R\times S^1,
+  \label{geo:eq:pll-phase-space}
+\end{equation}
+y los pares \((x,\theta)\) y \((x,\theta+2\pi k)\) representan el mismo estado.
+El rectángulo dibujado en el plano es sólo una carta cortada y pegada por sus
+bordes angulares.
+
+Una distancia compatible útil para visualización y comparación numérica es
+\begin{equation}
+ d_{\mathrm{cil}}((x,\theta),(\tilde x,\tilde\theta))
+ =\sqrt{(x-\tilde x)^2+
+ \operatorname{wrap}_{-\pi\le\,\cdot\,<\pi}(\theta-\tilde\theta)^2}.
+ \label{geo:eq:cylindrical-distance}
+\end{equation}
+La diferencia angular envuelta evita el salto artificial de coordenadas en
+\(\pm\pi\).
+
+\paragraph{De cartas a formas.}
+Una carta es un homeomorfismo \(\phi:U\to\phi(U)\subset\R^n\); un atlas de
+clase \(C^r\) exige que los cambios \(\psi\circ\phi^{-1}\) sean \(C^r\). Una
+subvariedad se reconoce localmente por coordenadas en las que queda descrita
+por la anulación de algunas componentes. El cotangente \(T_x^*M\) es el dual
+de \(T_xM\): sus elementos actúan linealmente sobre vectores tangentes.
+En coordenadas \((x_1,\ldots,x_n)\), las formas \(\dd x_i\) satisfacen
+\(\dd x_i(\partial/\partial x_j)=\delta_{ij}\). Una \(k\)-forma es una
+aplicación multilineal alternante, que localmente escribimos
+\[
+ \omega=\sum_{i_1<\cdots<i_k}\omega_{i_1\cdots i_k}(x)
+ \dd x_{i_1}\wedge\cdots\wedge\dd x_{i_k}.
+\]
+El producto exterior cambia de signo al intercambiar dos factores y se anula
+si alguno se repite. Para un cambio \(h\), el pull-back queda definido por
+\((h^*\omega)_x(v_1,\ldots,v_k)=
+\omega_{h(x)}(Dh_xv_1,\ldots,Dh_xv_k)\); por tanto incorpora tanto el
+cambio de punto como el de vectores. La derivada exterior y una orientación
+permiten integrar estas formas y aplicar Stokes independientemente de la
+carta \cite{NahmadAchar2022Topologia}. Usaremos esta construcción para
+expresar la divergencia como un balance de flujo.
+
+\ifHAFOPedagogy
+\paragraph{Ejercicio de enlace.}
+Para \(h(r,\theta)=(r\cos\theta,r\sin\theta)\), calcule
+\(h^*(\dd x\wedge\dd y)\), identifique dónde deja de ser una carta y explique
+qué información de orientación contiene el signo del jacobiano.
+\fi
+
+\subsection{Cambio de coordenadas como transporte de un campo}
+
+Sea \(h:M\to N\) un difeomorfismo y \(y=h(x)\). Por la regla de la cadena,
+el campo transformado es
+\begin{equation}
+  g(y)=D h(h^{-1}(y))f(h^{-1}(y)).
+  \label{geo:eq:pushforward}
+\end{equation}
+Esta ecuación es el \emph{empuje hacia delante} del campo, \(g=h_*f\). No
+basta cambiar los nombres de las variables: el diferencial \(Dh\) es parte de
+la transformación.
+
+\begin{proposition}[Transporte de curvas integrales]
+Supóngase que \(h\) es un difeomorfismo y que \(x(t)\) resuelve
+\(\dot x=f(x)\). Entonces \(y(t)=h(x(t))\) resuelve
+\(\dot y=g(y)\), con \(g\) dado por~\eqref{geo:eq:pushforward}.
+\end{proposition}
+
+\begin{proof}
+La regla de la cadena da
+\[
+ \dot y(t)=Dh(x(t))\dot x(t)=Dh(x(t))f(x(t))=g(h(x(t))).
+\]
+Como \(y(t)=h(x(t))\), se obtiene la ecuación afirmada.
+\end{proof}
+
+Para una transformación afín \(x=Tz+c\), una bola física alrededor de
+\(x_e\) se convierte en
+\begin{equation}
+ (z-z_e)^{\mathsf T}T^{\mathsf T}T(z-z_e)\le r^2.
+ \label{geo:eq:ball-to-ellipsoid}
+\end{equation}
+En efecto, \(x_e=Tz_e+c\) implica \(x-x_e=T(z-z_e)\); al elevar la
+norma al cuadrado aparece exactamente \(T^{\mathsf T}T\). Si
+\(\sigma_{\min}\) y \(\sigma_{\max}\) son los valores singulares extremos
+de \(T\), entonces
+\[
+ \sigma_{\min}\|z-z_e\|\le\|T(z-z_e)\|
+ \le\sigma_{\max}\|z-z_e\|.
+\]
+Así, la imagen inversa de la bola contiene la bola de radio
+\(r/\sigma_{\max}\) y está contenida en la de radio
+\(r/\sigma_{\min}\). La equivalencia afín de las realizaciones D0/T1
+preserva la separación cualitativa de cuencas, aunque cambia la geometría
+de una muestra esférica.
+
+\subsection{Regularidad de los cuatro casos enteros}
+
+\begin{table}[H]
+\centering
+\caption{Espacio de fases y regularidad relevante.}
+\label{geo:tab:regularity-cases}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.18\textwidth}L{0.16\textwidth}L{0.25\textwidth}Y@{}}
+\toprule
+Caso & Espacio & Regularidad & Precaución geométrica \\
+\midrule
+Chua PWL & \(\R^3\) & Campo continuo y globalmente Lipschitz; suave por
+regiones & \(Df\) salta en \(x=\pm1\); los teoremas \(C^1\) deben aplicarse por
+regiones o con una versión no suave. \\
+MAVPD & \(\R^3\) & Campo polinómico \(C^\infty\) & La existencia global no se
+deduce de que el campo sea polinómico; se requieren cotas de no explosión o
+una región atrapante para la órbita considerada. \\
+Kalman--Fitts & \(\R^4\) & Campo \(C^\infty\), con no linealidad
+\(\tanh\) globalmente Lipschitz & Una sección de Poincaré es tridimensional;
+un retrato en dos coordenadas es sólo una proyección. \\
+PLL lead--lag & \(\R\times S^1\) & Campo \(C^\infty\) en el cilindro & Deben
+envolverse ángulos, retornos y vecindades; una órbita corredora es cerrada en
+el cilindro aunque no lo parezca en el recubrimiento \(\R^2\). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\HAFOStudyNeedspace
+\section{Del problema de valor inicial al flujo}
+\label{sec:geo-flujo}
+
+\HAFOCardFlow
+
+\subsection{Existencia, unicidad y dependencia de la condición inicial}
+
+\begin{proposition}[Picard--Lindelöf local]
+Sea \(U\subset\R^n\) abierto y \(f:U\to\R^n\) localmente Lipschitz. Para cada
+\(x_0\in U\) existe una única solución maximal
+\(x(\,\cdot\,;x_0)\) de~\eqref{geo:eq:edo-manifold} definida en un intervalo
+abierto que contiene a \(0\). La solución depende continuamente de \(x_0\) en
+cualquier rectángulo compacto donde permanezcan las soluciones.
+\end{proposition}
+
+Para ver el papel de las hipótesis, escribimos el PVI como
+\(x(t)=x_0+\int_0^tf(x(s))\,\dd s\). En una bola donde \(f\) está
+acotada por \(M\) y es Lipschitz con constante \(L\), elegimos \(\tau\)
+de modo que \(M\tau\) no exceda el radio de la bola y \(L\tau<1\).
+El operador integral conserva entonces el conjunto cerrado de curvas de esa
+bola y es una contracción en la norma uniforme. Para dos soluciones del
+mismo dominio,
+\[
+ \|x(t;x_0)-x(t;y_0)\|
+ \le\|x_0-y_0\|+L\int_0^t\|x(s;x_0)-x(s;y_0)\|\,\dd s
+ \le e^{Lt}\|x_0-y_0\|,
+\]
+por Grönwall, en tiempos positivos dentro del intervalo común. Esta cota
+demuestra unicidad y dependencia continua; para tiempos negativos aplicamos
+el mismo argumento al campo \(-f\).
+
+La hipótesis de unicidad es el fundamento de la geometría de órbitas: dos
+trayectorias distintas no pueden cruzarse en el mismo instante y estado. La
+existencia local no implica existencia para todo \(t\in\R\). Un campo con
+crecimiento a lo sumo lineal sí proporciona una vía estándar hacia completitud
+global; para campos polinómicos de grado mayor se necesitan cotas adicionales.
+
+\begin{definition}[Flujo local y flujo completo]
+El flujo local asociado con~\eqref{geo:eq:edo-manifold} es
+\begin{equation}
+ \varphi_t(x_0)=x(t;x_0),
+ \label{geo:eq:flow}
+\end{equation}
+en el dominio donde existe la solución. Es un flujo completo si está definido
+para todo \((t,x)\in\R\times M\) y satisface
+\begin{equation}
+ \varphi_0=\operatorname{id},\qquad
+ \varphi_{t+s}=\varphi_t\circ\varphi_s,
+ \qquad \varphi_{-t}=\varphi_t^{-1}.
+ \label{geo:eq:flow-group}
+\end{equation}
+\end{definition}
+
+\begin{proposition}[La unicidad produce la propiedad de flujo]
+Si las dos composiciones están definidas, entonces
+\(\varphi_{t+s}(x)=\varphi_t(\varphi_s(x))\).
+\end{proposition}
+
+\begin{proof}
+Las curvas \(u(t)=\varphi_{t+s}(x)\) y
+\(v(t)=\varphi_t(\varphi_s(x))\) resuelven la misma ecuación autónoma y
+satisfacen \(u(0)=v(0)=\varphi_s(x)\). La unicidad implica \(u=v\).
+\end{proof}
+
+\begin{remark}[Papel de la autonomía en la propiedad de flujo]
+En una ecuación no autónoma \(\dot x=f(t,x)\) se usa un proceso de dos tiempos
+\(\varphi(t,t_0,x_0)\). La identidad~\eqref{geo:eq:flow-group} no puede
+escribirse eliminando \(t_0\) a menos que se amplíe el espacio con una variable
+de fase temporal.
+\end{remark}
+
+\subsection{Órbitas y conjuntos invariantes}
+
+\begin{definition}[Órbita, equilibrio y órbita periódica]
+La órbita positiva, negativa y completa de \(x\) son
+\begin{align}
+ \mathcal O^+(x)&=\{\varphi_t(x):t\ge0\},\nonumber\\
+ \mathcal O^-(x)&=\{\varphi_t(x):t\le0\},\nonumber\\
+ \mathcal O(x)&=\{\varphi_t(x):t\in\R\}.
+ \label{geo:eq:orbits}
+\end{align}
+Un punto \(e\) es un equilibrio si \(f(e)=0\), equivalentemente
+\(\varphi_t(e)=e\). Una órbita no estacionaria es periódica si existe
+\(T>0\) tal que \(\varphi_T(x)=x\); el menor \(T>0\) es su periodo mínimo.
+Los equilibrios son órbitas constantes: aunque satisfacen esa igualdad para
+todo \(T>0\), no tienen periodo mínimo positivo.
+\end{definition}
+
+\begin{definition}[Invariancia]
+Un conjunto \(A\subset M\) es positivamente invariante si
+\(\varphi_t(A)\subset A\) para \(t\ge0\); negativamente invariante si ocurre
+para \(t\le0\); e invariante si \(\varphi_t(A)=A\) para todo \(t\in\R\).
+\end{definition}
+
+Un retrato de fase dentro de una caja durante tiempo finito no demuestra que
+la caja sea invariante. Para un dominio suave sí existe una prueba elemental.
+
+\begin{proposition}[Criterio de entrada estricta]
+Sea \(N=\{x:h(x)\le0\}\) compacto, con \(h\in C^1\) y
+\(\nabla h\ne0\) sobre \(\partial N\). Si
+\begin{equation}
+ \nabla h(x)\cdot f(x)<0
+ \quad\text{para todo }x\in\partial N,
+ \label{geo:eq:strict-inward}
+\end{equation}
+y las soluciones son únicas, entonces \(N\) es positivamente invariante.
+\end{proposition}
+
+\begin{proof}
+Si la solución empieza sobre la frontera, la continuidad de
+\(\nabla h\cdot f\) y su valor estrictamente negativo la llevan al interior
+durante un intervalo positivo. Supongamos entonces que una solución
+interior alcanza por primera vez la frontera en \(t_*>0\). Para
+\(t<t_*\) próximo a \(t_*\),
+\[
+ \frac{h(x(t_*))-h(x(t))}{t_*-t}\ge0.
+\]
+Al pasar al límite, su derivada izquierda es no negativa. Como la
+composición es diferenciable, esa derivada coincide con
+\(\nabla h(x(t_*))\cdot f(x(t_*))<0\), contradicción.
+La solución permanece en el compacto \(N\); la continuación local del PVI
+la prolonga para todo tiempo positivo.
+\end{proof}
+
+\input{report_diagrams/entero_01_flujo_invariancia}
+
+La desigualdad no estricta requiere una formulación de tangencia o viabilidad
+más cuidadosa; reemplazar \(<0\) por \(\le0\) sin revisar hipótesis puede
+invalidar el argumento de primer cruce.
+
+\subsection{Ejemplo resuelto: las superficies de conmutación de Chua}
+
+En~\eqref{int:eq:chua}, las superficies de conmutación son
+\(S_\pm=\{x=\pm1\}\). Con \(h_+(x,y,z)=x-1\) y
+\(h_-(x,y,z)=x+1\), ambas derivadas a lo largo del campo son
+\(\dot x=\alpha[y-x-\phi(x)]\). La continuidad de la característica PWL
+da \(\phi(1)=m_0\) y \(\phi(-1)=-m_0\). Sustituyendo por separado cada
+valor de \(x\), encontramos
+\begin{align}
+ \dot h_+\big|_{S_+}&=\alpha(y-1-m_0),\nonumber\\
+ \dot h_-\big|_{S_-}&=\alpha(y+1+m_0).
+ \label{geo:eq:chua-switch-lie}
+\end{align}
+Por tanto, el cruce es transversal salvo sobre las rectas de tangencia
+\begin{equation}
+ S_+\cap\{y=1+m_0\},\qquad
+ S_-\cap\{y=-1-m_0\}.
+ \label{geo:eq:chua-grazing-lines}
+\end{equation}
+Las tres regiones PWL no son, en general, invariantes: el signo de
+\(\dot h_\pm\) depende de \(y\). Una figura que coloree cada región no debe
+interpretarse como una partición en componentes dinámicamente cerradas.
+
+\subsection{Simetría como propiedad del flujo}
+
+\begin{proposition}[Simetría por una involución]
+Sea \(R:M\to M\) un difeomorfismo con \(R^2=\operatorname{id}\). Si
+\begin{equation}
+ f(Rx)=DR(x)f(x),
+ \label{geo:eq:equivariant-field}
+\end{equation}
+entonces \(R\varphi_t(x)=\varphi_t(Rx)\) siempre que ambas expresiones estén
+definidas. En consecuencia, \(R\) transporta órbitas, conjuntos invariantes y
+cuencas.
+\end{proposition}
+
+\begin{proof}
+La curva \(R\varphi_t(x)\) tiene derivada
+\(DR(\varphi_t(x))f(\varphi_t(x))=f(R\varphi_t(x))\) y empieza en \(Rx\).
+Por unicidad coincide con \(\varphi_t(Rx)\).
+\end{proof}
+
+Para \(R(x)=-x\), la condición es simplemente \(f(-x)=-f(x)\). Chua PWL,
+MAVPD y Kalman--Fitts poseen esta simetría impar. Por ejemplo, si
+\(\mathcal A\) es un atractor MAVPD, entonces \(-\mathcal A\) también lo es y
+\begin{equation}
+ \mathcal B(-\mathcal A)=-\mathcal B(\mathcal A).
+ \label{geo:eq:symmetric-basins}
+\end{equation}
+Los dos conjuntos pueden coincidir o formar un par distinto; la simetría por
+sí sola no decide cuál alternativa ocurre. En el caso MAVPD, los ciclos
+internos aparecen como un par simétrico, mientras que la extensión externa
+debe comprobarse por sus propias trayectorias.
+
+\fi
+\HAFOGeoRenderBlocktrue
+\ifdefined\HAFOGeoBlockSelect
+  \HAFOGeoRenderBlockfalse
+  \ifdefined\HAFOGeoBlockBasins\HAFOGeoRenderBlocktrue\fi
+\fi
+\ifHAFOGeoRenderBlock
+\HAFOStudyNeedspace
+\section{Conjuntos límite, atracción y cuencas}
+\label{sec:geo-limit-basins}
+
+\HAFOCardBasins
+
+\subsection{Conjuntos límite después del transitorio}
+
+\begin{definition}[Conjunto \texorpdfstring{\(\omega\)-límite}{omega-límite}]
+Para una órbita positiva completa,
+\begin{equation}
+ \omega(x)=
+ \bigcap_{s\ge0}\overline{\{\varphi_t(x):t\ge s\}}.
+ \label{geo:eq:omega-limit}
+\end{equation}
+Equivalentemente, \(y\in\omega(x)\) si existe una sucesión
+\(t_k\to+\infty\) tal que \(\varphi_{t_k}(x)\to y\). El conjunto
+\(\alpha(x)\) se define análogamente con \(t_k\to-\infty\).
+\end{definition}
+
+\begin{proposition}[Estructura básica de \texorpdfstring{\(\omega(x)\)}{omega(x)}]
+Sea \(\varphi\) un flujo continuo y completo. Si
+\(\mathcal O^+(x)\) tiene clausura compacta, entonces \(\omega(x)\) es no
+vacío, compacto, conexo e invariante.
+\end{proposition}
+
+\begin{proof}
+Los conjuntos
+\(K_s=\overline{\{\varphi_t(x):t\ge s\}}\) son compactos no vacíos y
+anidados. Son conexos porque la cola de la órbita es imagen continua del
+intervalo conexo \([s,\infty)\), y la clausura conserva conexidad.
+La propiedad de intersección de compactos conexos anidados muestra que
+\(\bigcap_{s\ge0}K_s\) es no vacía, compacta y conexa. Si
+\(y=\lim_k\varphi_{t_k}(x)\), la continuidad da
+\(\varphi_\tau(y)=\lim_k\varphi_{t_k+\tau}(x)\in\omega(x)\). Usando
+completitud y \(t_k-\tau\to\infty\) se obtiene también la inclusión inversa,
+de modo que el conjunto es invariante.
+\end{proof}
+
+La precompacidad es una hipótesis, no una consecuencia de que la gráfica
+quepa en una ventana. Una rutina que detiene la integración al llegar a un
+umbral de divergencia tampoco construye un conjunto \(\omega\)-límite.
+
+\subsection{Atrayente, atractor y cuenca}
+
+Para un conjunto \(A\) en un espacio métrico, se escribe
+\(\operatorname{dist}(x,A)=\inf_{a\in A}d(x,a)\).
+
+\begin{definition}[Atracción y cuenca]
+Un compacto invariante \(A\) atrae a \(x\) si
+\begin{equation}
+ \operatorname{dist}(\varphi_t(x),A)\longrightarrow0
+ \quad(t\to\infty).
+ \label{geo:eq:attraction}
+\end{equation}
+Su cuenca es
+\begin{equation}
+ \mathcal B(A)=\{x\in M:
+ \operatorname{dist}(\varphi_t(x),A)\to0\}.
+ \label{geo:eq:basin}
+\end{equation}
+Se adopta como atractor asintóticamente estable un compacto invariante
+que atrae una vecindad y es estable en el sentido de Lyapunov.
+\end{definition}
+
+La estabilidad de Lyapunov significa: para cada vecindad \(U\) de \(A\)
+existe una vecindad \(V\) de \(A\) tal que
+\(\varphi_t(V)\subset U\) para todo \(t\ge0\). Atracción y estabilidad son
+propiedades distintas; una definición de atractor debe declarar cuál de las
+convenciones adopta.
+
+\begin{proposition}[La cuenca de un atractor asintóticamente estable es abierta]
+Bajo las hipótesis de la definición anterior y continuidad del flujo,
+\(\mathcal B(A)\) es abierta.
+\end{proposition}
+
+\begin{proof}
+Sea \(x\in\mathcal B(A)\) y elija una vecindad abierta atractora \(V\)
+de \(A\). Como \(A\) es compacto, existe \(\varepsilon>0\) tal que
+\(\{z:\operatorname{dist}(z,A)<\varepsilon\}\subset V\).
+La convergencia de \(x\) a \(A\) proporciona entonces un tiempo
+\(T\) con \(\varphi_T(x)\in V\). La continuidad de
+\(\varphi_T\) produce una vecindad \(O\) de \(x\) tal que
+\(\varphi_T(O)\subset V\). Todo punto de \(O\) converge a \(A\), por lo que
+\(O\subset\mathcal B(A)\).
+\end{proof}
+
+\begin{definition}[Atractor oculto, formulación topológica]
+Sea \(\mathcal E\) el conjunto de equilibrios. Un atractor \(A\) es oculto si,
+para cada \(e\in\mathcal E\), existe una vecindad abierta \(U_e\) tal que
+\begin{equation}
+ U_e\cap\mathcal B(A)=\varnothing.
+ \label{geo:eq:hidden-topological}
+\end{equation}
+Es autoexcitado si su cuenca intersecta toda vecindad suficientemente pequeña
+de al menos un equilibrio en la convención adoptada.
+\end{definition}
+
+La condición~\eqref{geo:eq:hidden-topological} excluye todos los datos de
+un abierto \(U_e\). La ausencia de contactos en 48, 108 o 504 lanzamientos
+describe, en cambio, un subconjunto finito de ese entorno. La diferencia
+entre ambos cuantificadores es la que separa el sondeo de una vecindad de
+su exclusión topológica completa.
+
+\subsection{Fronteras de cuenca y separatrices}
+
+\begin{proposition}[Invariancia de la frontera de cuenca]
+Sea \(\varphi\) un flujo completo de homeomorfismos y sea \(A\) un atractor.
+Entonces
+\begin{equation}
+ \varphi_t(\mathcal B(A))=\mathcal B(A),\qquad
+ \varphi_t(\partial\mathcal B(A))=\partial\mathcal B(A)
+ \quad(t\in\R).
+ \label{geo:eq:basin-boundary-invariance}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Desplazar una órbita una cantidad finita no cambia su límite cuando
+\(t\to\infty\), de modo que la cuenca es invariante. Todo
+\(\varphi_t\) es un homeomorfismo; los homeomorfismos transportan interior,
+clausura y, por~\eqref{geo:eq:boundary}, frontera. Esto da la segunda igualdad.
+\end{proof}
+
+\input{report_diagrams/entero_02_cuencas_ocultedad}
+
+En muchos ejemplos una parte de la frontera coincide con la variedad estable
+de una silla o de un ciclo inestable. Ésta es una posibilidad estructural, no
+una identidad automática. Para demostrar
+\(\partial\mathcal B(A)=W^s(S)\) hay que excluir otros conjuntos invariantes en
+la frontera y controlar su extensión global.
+
+En el PLL, el ciclo corredor inestable localizado por el mapa de retorno es un
+candidato natural a separatriz entre el foco bloqueado y el ciclo corredor
+estable. El multiplicador y la figura establecen estabilidad transversal local
+y evidencia geométrica; la igualdad global con toda la frontera de cuenca
+requiere todavía un argumento en el cilindro.
+
+\subsection{Regiones atrapantes}
+
+\begin{proposition}[Un bloque de entrada produce un conjunto invariante]
+Sea \(N\) compacto no vacío y supóngase que el campo apunta estrictamente hacia su
+interior en \(\partial N\). Para un flujo completo, los conjuntos
+\(\varphi_t(N)\), \(t\ge0\), son compactos y anidados, y
+\begin{equation}
+ A_N=\bigcap_{t\ge0}\varphi_t(N)
+ \label{geo:eq:maximal-invariant-trapping}
+\end{equation}
+es compacto, no vacío, invariante y atrae \(N\).
+\end{proposition}
+
+\begin{proof}
+El criterio de entrada hace \(N\) positivamente invariante. Por tanto,
+\[
+ \varphi_{t+s}(N)=\varphi_t(\varphi_s(N))\subset\varphi_t(N).
+\]
+La intersección anidada de compactos no vacíos es compacta y no vacía.
+Como cada \(\varphi_s\) es un homeomorfismo, para \(s\ge0\)
+\[
+ \varphi_s(A_N)=\bigcap_{t\ge0}\varphi_{t+s}(N)
+ =\bigcap_{t\ge s}\varphi_t(N)=A_N;
+\]
+la última igualdad usa que suprimir un tramo inicial de una familia anidada
+no cambia la intersección. Aplicando \(\varphi_{-s}\), la invariancia se
+extiende a tiempos negativos.
+La atracción significa
+\(\sup_{x\in\varphi_t(N)}\operatorname{dist}(x,A_N)\to0\).
+Si fallara, existirían \(\varepsilon>0\), \(t_j\to\infty\) y
+\(x_j\in\varphi_{t_j}(N)\) con distancia al menos \(\varepsilon\).
+Por compacidad de \(N\), una subsucesión converge a \(x_*\). Para cada
+\(s\ge0\), eventualmente \(t_j\ge s\), de modo que
+\(x_j\in\varphi_s(N)\); al ser este conjunto cerrado,
+\(x_*\in\varphi_s(N)\). Luego \(x_*\in A_N\), en contradicción con
+la continuidad de la distancia a un conjunto cerrado.
+\end{proof}
+
+Un bloque de este tipo alrededor de un candidato demuestra acotación y
+existencia de un conjunto invariante. La clasificación de ese conjunto como
+ciclo, conjunto caótico o atractor oculto requiere estudiar su dinámica y su
+cuenca.
+
+\fi
+\HAFOGeoRenderBlocktrue
+\ifdefined\HAFOGeoBlockSelect
+  \HAFOGeoRenderBlockfalse
+  \ifdefined\HAFOGeoBlockDegree\HAFOGeoRenderBlocktrue\fi
+\fi
+\ifHAFOGeoRenderBlock
+\HAFOStudyNeedspace
+\section{Métodos topológicos: índice, grado y disparo}
+\label{sec:geo-degree}
+
+\HAFOCardDegree
+
+El grado topológico es un entero que relaciona la existencia de soluciones
+con el comportamiento de un mapa sobre la frontera de un dominio. Permanece
+constante durante una homotopía admisible, aunque las soluciones individuales
+no se conozcan explícitamente \cite{Amster2021MetodosTopologicos}.
+
+\subsection{Grado de Brouwer}
+
+\begin{definition}[Grado de Brouwer, datos admisibles]
+Sean \(\Omega\subset\R^n\) un abierto acotado,
+\(F:\overline\Omega\to\R^n\) continua y
+\(y\notin F(\partial\Omega)\). El grado
+\(\deg(F,\Omega,y)\in\mathbb Z\) es el entero caracterizado por normalización,
+aditividad y invariancia por homotopías que no llevan la frontera sobre \(y\).
+\end{definition}
+
+Se emplean las dos consecuencias siguientes.
+
+\begin{proposition}[Existencia e invariancia homotópica]
+Con los datos anteriores:
+\begin{enumerate}
+  \item si \(\deg(F,\Omega,y)\ne0\), existe \(x\in\Omega\) tal que
+        \(F(x)=y\);
+  \item si \(H:[0,1]\times\overline\Omega\to\R^n\) es continua y
+        \(y\notin H(\lambda,\partial\Omega)\) para todo \(\lambda\), entonces
+        \(\deg(H(0,\cdot),\Omega,y)=
+        \deg(H(1,\cdot),\Omega,y)\).
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Idea]
+La propiedad de localización permite calcular el grado en un subabierto que
+contenga todas las preimágenes de \(y\). Si no hay preimágenes en
+\(\Omega\), el grado coincide con el del dominio vacío y es cero. Esto
+prueba la primera afirmación por contraposición. La segunda es la invariancia
+homotópica del grado: la condición de frontera impide que una raíz entre o
+salga del dominio durante la deformación.
+\end{proof}
+
+Si \(F\in C^1\) y sus raíces en \(\Omega\) son finitas y no degeneradas,
+entonces
+\begin{equation}
+ \deg(F,\Omega,0)=
+ \sum_{x_j\in\Omega:\,F(x_j)=0}\operatorname{sgn}\det DF(x_j).
+ \label{geo:eq:degree-sum}
+\end{equation}
+El sumando es el índice local de la raíz.
+
+\input{report_diagrams/entero_03_grado_indice}
+
+\subsection{Ejemplo resuelto: índices de los equilibrios de Chua}
+
+En una región de pendiente \(m\), el Jacobiano es
+\[
+ J_m=\begin{pmatrix}
+ -\alpha(1+m)&\alpha&0\\
+ 1&-1&1\\
+ 0&-\beta&-\gamma
+ \end{pmatrix}.
+\]
+Al expandir por la primera fila calculamos los dos menores no nulos:
+\[
+ \det\begin{pmatrix}-1&1\\-\beta&-\gamma\end{pmatrix}=\gamma+\beta,
+ \qquad
+ \det\begin{pmatrix}1&1\\0&-\gamma\end{pmatrix}=-\gamma.
+\]
+El signo del segundo cofactor es negativo; por eso
+\(\det J_m=-\alpha(1+m)(\beta+\gamma)-\alpha(-\gamma)\).
+Al agrupar los términos con \(\gamma\), resulta
+\begin{equation}
+ \det J_m=-\alpha[\beta+(\beta+\gamma)m].
+ \label{geo:eq:chua-index-det}
+\end{equation}
+Con los parámetros de~\eqref{int:eq:chua}, la región central \(m=m_0\)
+produce \(\det J_{m_0}=-84.035507517056\), mientras las regiones exteriores
+\(m=m_1\) producen \(\det J_{m_1}=15.037737580544\). Como los equilibrios no
+están sobre \(x=\pm1\), sus índices locales son
+\begin{equation}
+ \operatorname{ind}(E_0)=-1,\qquad
+ \operatorname{ind}(E_+)=\operatorname{ind}(E_-)=+1.
+ \label{geo:eq:chua-equilibrium-indices}
+\end{equation}
+Por tanto, cualquier dominio \(\Omega\) que contenga exactamente esos tres
+ceros y satisfaga \(0\notin f(\partial\Omega)\) tiene
+\begin{equation}
+ \deg(f,\Omega,0)=1.
+ \label{geo:eq:chua-degree}
+\end{equation}
+La conclusión certifica existencia algebraico--topológica de al menos un
+equilibrio bajo deformaciones admisibles. No detecta el atractor caótico ni
+su cuenca.
+
+El uso del grado sigue siendo válido para el campo Chua continuo aunque no sea
+diferenciable en las superficies de conmutación. La fórmula local con
+determinantes se aplica porque cada cero está dentro de una región suave.
+
+\subsection{Ejemplo resuelto: índices en MAVPD, Kalman--Fitts y PLL}
+
+Para MAVPD escribimos explícitamente el Jacobiano de
+\eqref{int:eq:mavpd-jacobian}:
+\[
+ J(y)=\begin{pmatrix}
+ \delta(\gamma-3y_1^2)&\delta&0\\
+ 1&-\xi&-1\\
+ 0&\rho&0
+ \end{pmatrix}.
+\]
+La única entrada no nula de la tercera fila ocupa la columna dos, cuyo
+cofactor tiene signo \((-1)^{3+2}=-1\). Su menor vale
+\(-\delta(\gamma-3y_1^2)\); multiplicar ambos signos y \(\rho\) da
+\begin{equation}
+ \det J(y)=\delta\rho(\gamma-3y_1^2).
+ \label{geo:eq:mavpd-jacobian-det}
+\end{equation}
+En \(E_0\), \(y_1=0\) y el determinante es \(\delta\rho\gamma>0\).
+En \(E_\pm\), \(y_1^2=\gamma\) y vale
+\(-2\delta\rho\gamma<0\). Por la fórmula de grado para ceros regulares,
+\begin{equation}
+ \operatorname{ind}(E_0)=+1,\qquad
+ \operatorname{ind}(E_\pm)=-1,\qquad
+ \sum\operatorname{ind}=-1.
+ \label{geo:eq:mavpd-indices}
+\end{equation}
+El signo sólo es índice; no indica por sí mismo estabilidad. Una matriz de
+dimensión tres puede tener determinante negativo y, sin embargo, diferentes
+combinaciones de dimensiones estable e inestable.
+
+Para Kalman--Fitts, el cálculo simbólico produce
+\(\det Df(X)=0.98191881>0\). El origen, único equilibrio, tiene índice \(+1\)
+y el Jacobiano nunca se hace singular. Esto explica a la vez por qué la criba
+de puntos perpetuos no produce raíces y por qué el grado del equilibrio no
+localiza el ciclo candidato ni establece su ocultedad.
+
+En el PLL, el Jacobiano del campo~\eqref{int:eq:pll} satisface
+\begin{equation}
+ \det J(x,\theta)=\frac{L}{2T}\cos\theta.
+ \label{geo:eq:pll-jacobian-det}
+\end{equation}
+El equilibrio de fase \(\theta_f\), con \(\cos\theta_f>0\), tiene índice
+\(+1\); el equilibrio silla \(\theta_s=\pi-\theta_f\) tiene índice \(-1\).
+La suma nula en una celda angular es compatible con la topología cilíndrica,
+pero invocar un teorema global de Poincaré--Hopf exigiría además compactificar
+o controlar las fronteras en \(x\).
+
+\subsection{Disparo y puntos fijos de Poincaré}
+
+Una órbita periódica puede buscarse como un cero. Si \(P:\Sigma\to\Sigma\) es
+un mapa de retorno, se define
+\begin{equation}
+ F(u)=P(u)-u.
+ \label{geo:eq:fixed-point-residual}
+\end{equation}
+En una carta de \(\Sigma\), sea \(U\) abierto acotado, con \(P\) definido
+y continuo en \(\overline U\) y \(P(u)\ne u\) sobre \(\partial U\).
+Un grado no nulo de \(F\) en \(U\) prueba que \(P\) tiene un
+punto fijo dentro de \(U\). Esto convierte el método de disparo en un problema
+topológico de existencia.
+
+Para la homotopía Kalman--Fitts
+\(\psi_\lambda=(1-\lambda)\operatorname{sign}+\lambda\tanh\), sea
+\(P_\lambda\) el mapa de retorno correspondiente. La continuación numérica en
+51 niveles aproxima una rama. Para demostrar persistencia por grado se
+requiere un dominio común \(U\), continuidad conjunta de
+\((\lambda,u)\mapsto P_\lambda(u)\) sobre
+\([0,1]\times\overline U\), y que
+\begin{equation}
+ P_\lambda(u)\ne u
+ \quad\text{para todo }u\in\partial U,
+ \quad 0\le\lambda\le1,
+ \label{geo:eq:kalman-degree-boundary}
+\end{equation}
+y verificar
+\(\deg(P_0-I,U,0)\ne0\). La invariancia homotópica obligaría a conservar al
+menos un punto fijo hasta \(\lambda=1\). La condición
+\eqref{geo:eq:kalman-degree-boundary} excluye la pérdida de todas las
+soluciones por la frontera y debe verificarse para el continuo de parámetros.
+
+En un enfoque de dimensión infinita, una solución periódica se formula como
+punto fijo de un operador integral sobre un espacio de funciones. El grado de
+Leray--Schauder extiende esta estrategia cuando el operador es una
+perturbación compacta de la identidad y se tienen cotas a priori. Su aplicación
+requiere probar compacidad y ausencia de soluciones sobre la frontera
+funcional.
+
+\section{Conjugación, equivalencia orbital y propiedades invariantes}
+\label{sec:geo-equivalence}
+
+\begin{definition}[Conjugación topológica]
+Dos flujos \(\varphi\) en \(M\) y \(\psi\) en \(N\) son topológicamente
+conjugados si existe un homeomorfismo \(h:M\to N\) tal que
+\begin{equation}
+ h\circ\varphi_t=\psi_t\circ h
+ \quad\text{para todo }t.
+ \label{geo:eq:topological-conjugacy}
+\end{equation}
+La igualdad conserva la parametrización temporal.
+\end{definition}
+
+\begin{definition}[Equivalencia orbital orientada]
+Los flujos son orbitalmente equivalentes si \(h\) lleva cada órbita sobre una
+órbita preservando su orientación, pero permite un cambio de reloj
+\(\tau(t,x)\), continuo y estrictamente creciente en \(t\):
+\begin{equation}
+ h(\varphi_t(x))=\psi_{\tau(t,x)}(h(x)).
+ \label{geo:eq:orbital-equivalence}
+\end{equation}
+\end{definition}
+
+\begin{proposition}[Qué transporta una conjugación]
+Una conjugación topológica lleva equilibrios a equilibrios, órbitas periódicas
+a órbitas periódicas con el mismo periodo, conjuntos invariantes a conjuntos
+invariantes, conjuntos \(\omega\)-límite a conjuntos \(\omega\)-límite y
+cuencas a cuencas. En particular,
+\ifHAFOBasinMaterial
+la ocultedad definida por \eqref{geo:eq:hidden-topological}
+\else
+la separación topológica entre las vecindades de los equilibrios y la cuenca
+\fi
+se conserva.
+\end{proposition}
+
+\begin{proof}
+Si \(e\) es un equilibrio, \(\varphi_t(e)=e\) implica
+\(\psi_t(h(e))=h(e)\); la aplicación inversa da la correspondencia
+recíproca. Si \(x\) tiene periodo \(T\), entonces
+\(\psi_T(h(x))=h(\varphi_T(x))=h(x)\). Un periodo menor de \(h(x)\)
+produciría, al aplicar \(h^{-1}\), un periodo menor de \(x\); por ello se
+conserva el periodo mínimo. Asimismo,
+\(\psi_t(h(A))=h(\varphi_t(A))\), de donde se transporta la invariancia.
+
+Para los conjuntos límite, si \(\varphi_{t_j}(x)\to a\), con
+\(t_j\to\infty\), la continuidad da
+\(\psi_{t_j}(h(x))\to h(a)\); la inversa prueba la otra inclusión.
+En particular, \(\omega(h(x))=h(\omega(x))\). Si \(A\) es compacto y
+\(\operatorname{dist}(\varphi_t(x),A)\to0\), la continuidad de \(h\)
+es uniforme en un entorno suficientemente pequeño de \(A\): cubrimos el
+compacto con un número finito de vecindades de continuidad. Esto convierte
+la aproximación a \(A\) en aproximación a \(h(A)\). La misma construcción
+para \(h^{-1}\) demuestra
+\(h(\mathcal B(A))=\mathcal B(h(A))\). Finalmente, un homeomorfismo
+transporta abiertos; por ello transporta también las vecindades de equilibrio
+que no intersecan la cuenca.
+\end{proof}
+
+Una equivalencia orbital conserva la curva geométrica y sus sentidos, pero no
+el periodo ni velocidades. Multiplicar un campo por una función positiva
+\begin{equation}
+ g(x)=a(x)f(x),\qquad a(x)>0,
+ \label{geo:eq:positive-time-rescaling}
+\end{equation}
+mantiene las órbitas orientadas y cambia el reloj. Por ello, periodos,
+velocidades, exponentes de Lyapunov por unidad de tiempo y puntos perpetuos no
+son invariantes puramente orbitales.
+
+\subsection{Dos contraejemplos instructivos}
+
+\paragraph{Las tasas lineales no son invariantes topológicas.}
+Los sistemas \(\dot x=-x\) y \(\dot y=-2y\) son conjugados mediante
+\(h(x)=x|x|\), pues
+\[
+ h(e^{-t}x)=e^{-2t}h(x).
+\]
+Ambos tienen la misma organización topológica ---un sumidero y dos
+semiórbitas no estacionarias---, aunque sus autovalores son distintos.
+
+\paragraph{Una bola numérica no es un objeto topológico rígido.}
+La transformación \(x=Tz+c\) preserva la ocultedad cualitativa, pero la bola
+euclidiana se convierte en el elipsoide~\eqref{geo:eq:ball-to-ellipsoid}. Si se
+usa otra bola con el mismo radio en \(z\), se ha cambiado el experimento. Esta
+distinción explica por qué una equivalencia algebraica de realizaciones no
+autoriza a copiar literalmente un sondeo de cuenca.
+
+La sección de puntos perpetuos ofrece otro contraejemplo: su condición es
+covariante bajo cambios afines, pero una transformación no lineal introduce
+términos Hessianos. En consecuencia, un punto perpetuo es un localizador
+dependiente de la representación, no una clase topológica del flujo.
+
+\fi
+\HAFOGeoRenderBlocktrue
+\ifdefined\HAFOGeoBlockSelect
+  \HAFOGeoRenderBlockfalse
+  \ifdefined\HAFOGeoBlockLinear\HAFOGeoRenderBlocktrue\fi
+\fi
+\ifHAFOGeoRenderBlock
+\HAFOStudyNeedspace
+\section{Geometría lineal local y variedades invariantes}
+\label{sec:geo-stable-manifolds}
+
+\HAFOCardLinearGeometry
+
+Estos resultados requieren declarar regularidad e
+hiperbolicidad; una gráfica de trayectorias no reemplaza esas hipótesis
+\cite{JaurezEtAl2021TGEDI,JaurezEtAl2021TGEDII,HirschSmaleDevaney2013}.
+
+\subsection{Primera variación y flujo tangente}
+
+Supongamos \(f\in C^1\) y que las soluciones próximas permanecen en un
+compacto durante el intervalo considerado. Partimos de
+\[
+ \varphi_t(x_0)=x_0+\int_0^t f(\varphi_s(x_0))\,\dd s.
+\]
+Al derivar respecto de \(x_0\), la continuidad de \(Df\) y la dependencia
+continua de las soluciones permiten pasar al límite los cocientes
+incrementales uniformemente en el intervalo. Resulta
+\[
+ \Phi(t)=I+\int_0^t Df(\varphi_s(x_0))\Phi(s)\,\dd s.
+\]
+Derivando ahora respecto del tiempo y aplicando la matriz a un vector inicial
+\(v\), definimos \(\xi(t)=\Phi(t)v\) y obtenemos la ecuación variacional
+\begin{equation}
+ \dot\xi=Df(\varphi_t(x_0))\xi,
+ \qquad \Phi(0)=I,\qquad
+ \Phi(t)=D\varphi_t(x_0).
+ \label{geo:eq:variational}
+\end{equation}
+Así, \(D\varphi_t\) transporta vectores tangentes. Los exponentes de Lyapunov
+y los multiplicadores de Floquet se construyen a partir de esta dinámica en
+el fibrado tangente, no a partir de la apariencia de una proyección.
+
+\begin{definition}[Exponente de Lyapunov direccional]
+Para \(v\in T_{x_0}M\setminus\{0\}\), se define
+\begin{equation}
+ \lambda(x_0,v)=\limsup_{t\to\infty}
+ \frac{1}{t}\log\frac{\|D\varphi_t(x_0)v\|}{\|v\|}.
+ \label{geo:eq:lyapunov-definition}
+\end{equation}
+El exponente máximo toma el supremo sobre direcciones. En una corrida finita
+se estima la cantidad a tiempo \(T\), con renormalizaciones y tolerancias
+declaradas; ese estimador no es por sí solo el límite de
+\cref{geo:eq:lyapunov-definition} ni una prueba topológica de caos
+\cite{Skokos2010,DatserisParlitz2022Nonlinear}.
+\end{definition}
+
+\begin{definition}[Equilibrio hiperbólico]
+Un equilibrio \(e\) es hiperbólico si ningún autovalor de \(Df(e)\) tiene
+parte real cero. Los subespacios espectrales estable e inestable son
+\begin{align}
+ E^s&=\bigoplus_{\Re\lambda<0}E_\lambda,
+ &E^u&=\bigoplus_{\Re\lambda>0}E_\lambda.
+ \label{geo:eq:spectral-splitting}
+\end{align}
+\end{definition}
+
+\begin{proposition}[Hartman--Grobman, alcance local]
+Sea \(f\in C^1\) y \(e\) un equilibrio hiperbólico. En una vecindad de \(e\),
+el flujo no lineal es topológicamente conjugado al flujo lineal
+\(\dot\xi=Df(e)\xi\), restringiendo tiempo y vecindades cuando sea necesario.
+\end{proposition}
+
+La demostración completa requiere construir una corrección continua a la
+dinámica lineal; la idea clave es que la dicotomía exponencial de la matriz
+hiperbólica permite resolver una ecuación integral por punto fijo. El teorema
+clasifica la geometría local de órbitas, pero no afirma conjugación
+diferenciable, no conserva autovalores y no describe la cuenca global.
+
+\begin{definition}[Conjuntos estable e inestable]
+Para un conjunto compacto invariante \(A\),
+\begin{align}
+ W^s(A)&=\{x:\operatorname{dist}(\varphi_t(x),A)\to0
+                    \text{ cuando }t\to+\infty\},\nonumber\\
+ W^u(A)&=\{x:\operatorname{dist}(\varphi_t(x),A)\to0
+                    \text{ cuando }t\to-\infty\}.
+ \label{geo:eq:stable-unstable-sets}
+\end{align}
+\end{definition}
+
+Para un atractor \(A\), \(W^s(A)\) coincide con su cuenca bajo la convención
+de convergencia usada. Para una silla, \(W^s\) suele tener interior vacío y
+actuar como separatriz.
+
+\begin{proposition}[Teorema local de la variedad estable]
+Sea \(f\in C^r\), \(r\ge1\), y sea \(e\) hiperbólico. Existen variedades
+locales \(W^s_{\mathrm{loc}}(e)\) y \(W^u_{\mathrm{loc}}(e)\), de clase
+\(C^r\), tangentes en \(e\) a \(E^s\) y \(E^u\), respectivamente. Sus
+dimensiones son \(\dim E^s\) y \(\dim E^u\).
+\end{proposition}
+
+\begin{proof}[Idea]
+Trasladamos \(e\) al origen y usamos la descomposición espectral para
+escribir \(x=(s,u)\), con
+\[
+ \dot s=A_ss+R_s(s,u),\qquad
+ \dot u=A_uu+R_u(s,u),\qquad R(0)=DR(0)=0.
+\]
+Hay constantes \(C_s,C_u,a_s,a_u>0\) tales que
+\(\|e^{A_st}\|\le C_se^{-a_st}\) y
+\(\|e^{-A_ut}\|\le C_ue^{-a_ut}\) para \(t\ge0\).
+Para una solución que decae hacia el origen, variación de constantes da
+\begin{align*}
+ s(t)&=e^{A_st}s_0+\int_0^te^{A_s(t-r)}R_s(s(r),u(r))\,\dd r,\\
+ u(t)&=-\int_t^\infty e^{A_u(t-r)}R_u(s(r),u(r))\,\dd r.
+\end{align*}
+La segunda identidad procede de resolver hacia atrás desde \(T>t\):
+el término \(e^{A_u(t-T)}u(T)\) tiende a cero por la cota exponencial
+y la acotación de la curva. Elegimos \(0<\eta<a_s\) y la norma
+\(\|x\|_\eta=\sup_{t\ge0}e^{\eta t}\|x(t)\|\). Tras restringir el
+resto a una vecindad mediante un corte suave, su constante Lipschitz
+\(\ell\) puede hacerse suficientemente pequeña para que
+\[
+ \ell\left(\frac{C_s}{a_s-\eta}+\frac{C_u}{a_u+\eta}\right)<1.
+\]
+Estas constantes resultan de integrar las dos exponenciales en las
+ecuaciones anteriores. El operador integral es entonces contractivo para
+cada \(s_0\) pequeño y determina \(u(0)=h_s(s_0)\).
+La dependencia respecto de \(s_0\) proporciona la gráfica estable;
+\(R(0)=DR(0)=0\) implica \(h_s(0)=Dh_s(0)=0\), es decir, tangencia
+a \(E^s\). Al invertir el tiempo se construye la variedad inestable.
+El corte no cambia la dinámica local mientras la curva permanezca en la
+vecindad original; la regularidad de la gráfica es la del teorema citado.
+\end{proof}
+
+\input{report_diagrams/entero_04_variedades_invariantes}
+
+\subsection{Variedad central y el límite de la linealización}
+
+Si \(Df(e)\) tiene autovalores sobre el eje imaginario, el equilibrio no es
+hiperbólico y Hartman--Grobman no decide su dinámica. Se añade entonces el
+subespacio
+\begin{equation}
+ E^c=\bigoplus_{\Re\lambda=0}E_\lambda,\qquad
+ T_eM=E^s\oplus E^c\oplus E^u.
+ \label{geo:eq:center-splitting}
+\end{equation}
+
+\begin{proposition}[Teorema local de la variedad central, alcance]
+Sea \(f\in C^r\), \(r\ge1\), con \(f(e)=0\). Existe localmente una variedad
+invariante \(W^c_{\mathrm{loc}}(e)\), tangente a \(E^c\) en \(e\), cuya
+regularidad está limitada por la de \(f\). La dinámica local relevante que no
+se contrae ni expande exponencialmente puede reducirse a ella. En general la
+variedad central no es única fuera del orden local necesario.
+\end{proposition}
+
+La construcción se realiza, como en la variedad estable, escribiendo una
+gráfica y resolviendo una ecuación de invariancia; la ausencia de contracción
+en \(E^c\) explica por qué la unicidad y la regularidad son más delicadas.
+Conocer sólo \(Df(e)\) no basta. Por ejemplo,
+\begin{equation}
+ \dot x=-x^3
+ \qquad\text{y}\qquad
+ \dot x=x^3
+ \label{geo:eq:center-counterexample}
+\end{equation}
+tienen la misma linealización nula en el origen. Para \(x_0\ne0\),
+separamos variables en \(\dot x=\pm x^3\):
+\[
+ -\frac1{2x(t)^2}+\frac1{2x_0^2}=\pm t,
+ \qquad x(t)=\frac{x_0}{\sqrt{1\mp2x_0^2t}}.
+\]
+Con el signo negativo del campo, el denominador crece y
+\(|x(t)|\le|x_0|\), con límite cero. Con el signo positivo disminuye
+hasta anularse en \(t=1/(2x_0^2)\), y cualquier dato no nulo sale de una
+vecindad fija del origen. Así, el primero es asintóticamente estable y el
+segundo inestable, aunque sus matrices lineales coincidan.
+
+\subsection{Bifurcaciones locales elementales}
+
+En una familia escalar \(\dot x=f(x,\mu)\), una silla--nodo genérica en
+\((x_*,\mu_*)\) requiere
+\begin{equation}
+ f=0,\qquad f_x=0,\qquad f_{xx}\ne0,\qquad f_\mu\ne0.
+ \label{geo:eq:saddle-node-conditions}
+\end{equation}
+La forma normal \(\dot x=\mu-x^2\) permite comprobar que dos equilibrios
+colisionan y desaparecen. Una bifurcación de Hopf exige en cambio un par simple
+de autovalores imaginarios, cruce transversal y no degeneración del primer
+coeficiente de Lyapunov. La igualdad espectral localiza sólo un candidato al
+evento; las condiciones restantes deciden si nace una órbita y su estabilidad
+\cite{Kuznetsov2023Bifurcation,JaurezEtAl2021TGEDII}.
+
+Para el polinomio MAVPD
+\(p(\lambda)=\lambda^3+a_1\lambda^2+a_2\lambda+a_3\), la condición
+\(a_1a_2=a_3\), junto con \(a_1>0\) y \(a_2>0\), permite factorizar
+\[
+ p(\lambda)=(\lambda+a_1)(\lambda^2+a_2).
+\]
+Los autovalores son \(-a_1\) y \(\pm\mathrm i\sqrt{a_2}\): el par
+es simple, el centro tiene dimensión real dos y la dirección restante es
+estable. Para afirmar una bifurcación de Hopf aún deben comprobarse el
+cruce transversal al variar el parámetro y la no degeneración del primer
+coeficiente de Lyapunov. La igualdad de Routh--Hurwitz, sin estas
+verificaciones, identifica una frontera espectral candidata.
+
+\subsection{Alcance caso por caso}
+
+\begin{table}[H]
+\centering
+\caption{Hipótesis y alcance del teorema de la variedad estable en los casos analizados.}
+\label{geo:tab:stable-manifold-scope}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.17\textwidth}YY@{}}
+\toprule
+Caso & Estructura local & Extensión global \\
+\midrule
+Chua PWL & En cada equilibrio interior a una región suave, si su espectro es
+hiperbólico, existen variedades locales clásicas. & Al cruzar \(x=\pm1\), la
+continuación global es por tramos; en un roce no puede suponerse suavidad del
+mapa de paso. \\
+MAVPD & El campo es suave; cada equilibrio hiperbólico admite variedades con
+dimensiones dadas por su espectro. & El determinante o Routh--Hurwitz aislado
+no determina toda la geometría global ni una conexión homoclínica. \\
+Kalman--Fitts & Si el espectro del origen queda estrictamente en el
+semiplano izquierdo, su variedad estable local tiene dimensión cuatro. Un
+ciclo hiperbólico posee variedades en torno de su órbita. & El
+origen no tiene rama inestable que conduzca al ciclo candidato. Los 48 sondeos
+disponibles no identifican la frontera global de su cuenca; ésta debe buscarse
+en otros conjuntos invariantes. \\
+PLL & El foco y la silla se estudian en cartas del cilindro. La silla posee
+separatrices unidimensionales. & Una curva dibujada en el recubrimiento debe
+pegarse módulo \(2\pi\); no toda separatriz local es toda la frontera global.
+\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Divergencia y cambio de volumen}
+
+La geometría diferencial permite seguir elementos de volumen mediante el
+determinante de \(D\varphi_t\).
+
+\begin{proposition}[Fórmula de Liouville]
+Sea \(f\in C^1\) y supóngase definido el flujo. Entonces
+\begin{equation}
+ \det D\varphi_t(x)=
+ \exp\!\left(
+   \int_0^t\operatorname{div}f(\varphi_s(x))\,ds
+ \right).
+ \label{geo:eq:liouville-volume}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+La matriz \(\Phi=D\varphi_t(x)\) satisface
+\(\dot\Phi=A(t)\Phi\), con \(A(t)=Df(\varphi_t(x))\). Es invertible
+porque \(D\varphi_{-t}(\varphi_t(x))\Phi(t)=I\) en el dominio del flujo.
+La fórmula de Jacobi y la invariancia cíclica de la traza dan
+\[
+ \frac{\dd}{\dd t}\det\Phi
+ =\det\Phi\,\operatorname{tr}(\Phi^{-1}\dot\Phi)
+ =\det\Phi\,\operatorname{tr}(\Phi^{-1}A\Phi)
+ =\det\Phi\,\operatorname{tr}A.
+\]
+El problema escalar \(d'=\operatorname{tr}A(t)d\), \(d(0)=1\), tiene
+solución \(d(t)=\exp(\int_0^t\operatorname{tr}A(s)\,\dd s)\).
+Como la traza de \(Df\) es la divergencia, esta solución es
+\eqref{geo:eq:liouville-volume}.
+\end{proof}
+
+Para MAVPD,
+\begin{equation}
+ \operatorname{div}f(y)=\delta(\gamma-3y_1^2)-\xi.
+ \label{geo:eq:mavpd-divergence}
+\end{equation}
+Su signo puede variar con \(y_1\), por lo que una afirmación de disipatividad
+uniforme necesita acotar la región visitada. Incluso
+\(\operatorname{div}f<0\) en todas partes sólo implica contracción de volumen;
+el sistema \(\dot x=-x,\dot y=-y\) contrae área y no es caótico. Contracción,
+acotación y caos son tres afirmaciones diferentes.
+
+\subsection{Formas diferenciales, flujo y teorema de Stokes}
+
+En una variedad orientada de dimensión \(n\), una forma diferencial de grado
+\(k\) asigna alternadamente un número a \(k\) vectores tangentes. En
+\(\R^n\), la forma de volumen estándar es
+\begin{equation}
+ \Omega=dx_1\wedge\cdots\wedge dx_n.
+ \label{geo:eq:volume-form}
+\end{equation}
+La contracción interior \(\iota_f\Omega\) es una forma de grado \(n-1\) que
+mide flujo a través de hipersuperficies. La derivada de Lie de \(\Omega\) a lo
+largo de \(f\) satisface
+\begin{equation}
+ \mathcal L_f\Omega=(\operatorname{div}f)\Omega,\qquad
+ d(\iota_f\Omega)=(\operatorname{div}f)\Omega.
+ \label{geo:eq:cartan-divergence}
+\end{equation}
+Para ver los términos, escribimos
+\[
+ \iota_f\Omega=\sum_{i=1}^n(-1)^{i-1}f_i\,
+ \dd x_1\wedge\cdots\wedge\widehat{\dd x_i}\wedge\cdots\wedge\dd x_n.
+\]
+Al aplicar \(d\), cada término \(\partial_jf_i\,\dd x_j\) con
+\(j\ne i\) repite un factor y se anula. Para \(j=i\), ordenar las
+formas introduce otro signo \((-1)^{i-1}\), que cancela el primero.
+Por eso queda \(\sum_i\partial_if_i\,\Omega\).
+La identidad de Cartan \(\mathcal L_f=d\iota_f+\iota_fd\), junto con
+\(d\Omega=0\), proporciona la primera igualdad.
+
+\begin{proposition}[Stokes como balance de flujo]
+Sea \(N\) una región compacta orientada con frontera suave y \(f\in C^1\).
+Entonces
+\begin{equation}
+ \int_{\partial N}\iota_f\Omega
+ =\int_N d(\iota_f\Omega)
+ =\int_N(\operatorname{div}f)\Omega.
+ \label{geo:eq:stokes-flux}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+La primera igualdad es el teorema de Stokes aplicado a la forma
+\(\iota_f\Omega\); la segunda es~\eqref{geo:eq:cartan-divergence}.
+\end{proof}
+
+Este lenguaje enlaza el criterio puntual de entrada
+\eqref{geo:eq:strict-inward} con un balance integral. Sin embargo, flujo total
+negativo a través de \(\partial N\) no implica que el campo apunte hacia
+dentro en cada punto: regiones de salida pueden compensarse con regiones de
+entrada. Por ello, Stokes no sustituye la desigualdad puntual necesaria para
+una región atrapante.
+
+En el PLL se usa la forma global \(dx\wedge d\theta\) sobre el cilindro; en
+Chua, el campo es continuo pero sólo suave por regiones, de modo que el balance
+se aplica por piezas y las contribuciones internas deben emparejarse en
+\(x=\pm1\). Esta formulación relaciona la teoría de topología y geometría
+diferencial con los cálculos de divergencia presentados.
+
+\fi
+\HAFOGeoRenderBlocktrue
+\ifdefined\HAFOGeoBlockSelect
+  \HAFOGeoRenderBlockfalse
+  \ifdefined\HAFOGeoBlockPoincare\HAFOGeoRenderBlocktrue\fi
+\fi
+\ifHAFOGeoRenderBlock
+\HAFOStudyNeedspace
+\section{Mapas de Poincaré, monodromía y teoría de Floquet}
+\label{sec:geo-poincare-floquet}
+
+\HAFOCardPoincare
+
+El paso flujo--retorno reduce la estabilidad orbital a dinámica discreta, pero
+sólo después de verificar transversalidad, existencia del primer retorno y
+dependencia regular respecto del punto inicial
+\cite{JaurezEtAl2021TGEDII,HirschSmaleDevaney2013,Kuznetsov2023Bifurcation}.
+
+\subsection{Reducir una órbita periódica a un punto fijo}
+
+Sea \(\gamma\) una órbita periódica de periodo mínimo \(T\) y
+\(p\in\gamma\). Una sección local \(\Sigma\) de codimensión uno es transversal
+si
+\begin{equation}
+ T_pM=T_p\Sigma\oplus\operatorname{span}\{f(p)\}.
+ \label{geo:eq:transverse-section}
+\end{equation}
+Bajo \(f\in C^1\), escriba localmente
+\(\Sigma=\{x:H(x)=0\}\), con \(H\in C^1\) y
+\(n=\nabla H(p)\). La transversalidad equivale a
+\(n^{\mathsf T}f(p)\ne0\). La función
+\(G(t,x)=H(\varphi_t(x))\) satisface
+\(G(T,p)=0\) y \(\partial_tG(T,p)=n^{\mathsf T}f(p)\ne0\).
+El teorema de la función implícita produce así un único tiempo
+\(\tau(x)\) cercano a \(T\), de clase \(C^1\), con
+\(\tau(p)=T\) y \(G(\tau(x),x)=0\).
+Al reducir la sección alrededor de \(p\), el teorema del flujo tubular
+excluye un segundo cruce inmediato; el arco compacto restante de
+\(\gamma\) entre esos cruces queda separado de la sección.
+La dependencia continua excluye también retornos intermedios para puntos
+próximos. Por ello \(\tau\) es el primer retorno positivo local y define
+\begin{equation}
+ P(x)=\varphi_{\tau(x)}(x),\qquad P:\Sigma\to\Sigma.
+ \label{geo:eq:poincare-map}
+\end{equation}
+La órbita \(\gamma\) se convierte en el punto fijo \(P(p)=p\).
+
+\begin{proposition}[Estabilidad mediante el mapa de retorno]
+Si todos los autovalores de \(DP(p)\) tienen módulo menor que uno, \(p\) es un
+punto fijo localmente asintóticamente estable de \(P\) y \(\gamma\) es una
+órbita periódica orbitalmente asintóticamente estable. Si alguno tiene módulo
+mayor que uno, la órbita es inestable.
+\end{proposition}
+
+\begin{proof}
+Elija \(\rho(DP(p))<\kappa_0<\kappa<1\). En dimensión finita existe una
+norma adaptada con \(\|DP(p)\|_*<\kappa_0\). Por continuidad de \(DP\),
+en una bola convexa suficientemente pequeña de la carta de \(\Sigma\) se
+tiene \(\|DP(x)\|_*\le\kappa\). Integrar la derivada sobre el segmento
+entre \(x\) e \(y\) da
+\(\|P(x)-P(y)\|_*\le\kappa\|x-y\|_*\).
+Como \(P(p)=p\), la bola queda en sí misma y
+\(\|P^j(x)-p\|_*\le\kappa^j\|x-p\|_*\).
+Además, \(\tau(x)\to T\) cuando \(x\to p\), y los tramos de flujo
+entre retornos dependen uniformemente de su punto inicial en un intervalo
+temporal compacto. Sus distancias a \(\gamma\) tienden por ello a cero.
+El flujo tubular extiende esta estabilidad de la sección a una vecindad de
+la órbita, permitiendo un cambio de fase.
+Si algún autovalor tiene módulo mayor que uno, el teorema de inestabilidad
+por linealización para mapas \(C^1\) se aplica a \(P\); su inestabilidad
+se transporta por la misma sección a la órbita
+\cite{HirschSmaleDevaney2013,Kuznetsov2023Bifurcation}.
+\end{proof}
+
+La sección debe registrar orientación de cruce y eliminar el transitorio.
+Contar puntos cercanos generados varias veces por interpolación no equivale a
+iterar un mapa de primer retorno.
+
+\subsection{Floquet y los multiplicadores}
+
+Sobre \(\gamma(t)\), la ecuación variacional posee coeficientes periódicos
+\begin{equation}
+ \dot\xi=A(t)\xi,\qquad A(t)=Df(\gamma(t)),\qquad A(t+T)=A(t).
+ \label{geo:eq:periodic-variational}
+\end{equation}
+Con \(\Phi(0)=I\), la matriz \(M=\Phi(T)\) es la matriz de monodromía y sus autovalores son los
+multiplicadores de Floquet. La teoría de Floquet proporciona, en general con
+matrices complejas, la factorización
+\begin{equation}
+ \Phi(t)=Q(t)e^{tR},\qquad Q(t+T)=Q(t).
+ \label{geo:eq:floquet-factorization}
+\end{equation}
+La factorización se construye a partir de la periodicidad de \(A\).
+Las matrices \(\Phi(t+T)\) y \(\Phi(t)M\) satisfacen la misma ecuación y
+toman el valor \(M\) en \(t=0\); la unicidad implica
+\(\Phi(t+T)=\Phi(t)M\). Como \(M\) es invertible, posee un logaritmo
+complejo: elegimos \(R\) con \(e^{TR}=M\) y ponemos
+\(Q(t)=\Phi(t)e^{-tR}\). Entonces
+\[
+ Q(t+T)=\Phi(t)Me^{-tR}e^{-TR}=\Phi(t)e^{-tR}=Q(t),
+\]
+pues \(M=e^{TR}\) conmuta con \(e^{-tR}\). Una factorización real puede
+requerir una matriz periódica de periodo
+\(2T\). Los multiplicadores siguen siendo los autovalores de la monodromía
+en el periodo original \(T\).
+
+\begin{proposition}[Relación Poincaré--Floquet]
+Para una órbita periódica regular de un sistema autónomo \(C^1\), \(M\) tiene
+un multiplicador trivial \(1\), asociado con la dirección \(f(\gamma(t))\).
+Los otros \(n-1\) multiplicadores coinciden, contando multiplicidad, con los
+autovalores de \(DP(p)\).
+\end{proposition}
+
+\begin{proof}
+Derivar \(\gamma(t+s)\) respecto de \(s\) en \(s=0\) muestra que
+\(f(\gamma(t))\) resuelve la ecuación variacional y vuelve a sí mismo después
+de \(T\); así \(Mf(p)=f(p)\), de donde resulta el multiplicador \(1\).
+Para \(v\in T_p\Sigma\), la regla de la cadena aplicada al retorno da
+\[
+ DP(p)v=Mv+f(p)D\tau(p)v.
+\]
+Como \(P(x)\in\Sigma\), el vector de la izquierda es tangente a la
+sección. Multiplicando por \(n^{\mathsf T}\) y usando
+\(n^{\mathsf T}f(p)\ne0\), se obtiene
+\[
+ D\tau(p)v=-\frac{n^{\mathsf T}Mv}{n^{\mathsf T}f(p)},\qquad
+ DP(p)v=\left(I-\frac{f(p)n^{\mathsf T}}
+ {n^{\mathsf T}f(p)}\right)Mv.
+\]
+El factor entre paréntesis proyecta sobre \(T_p\Sigma\) a lo largo de la
+dirección del flujo. En una base que empieza por \(f(p)\) y continúa con
+una base de \(T_p\Sigma\), la matriz \(M\) tiene la forma por bloques
+\(\left(\begin{smallmatrix}1&*\\0&DP(p)\end{smallmatrix}\right)\).
+Su polinomio característico es, por tanto,
+\((\lambda-1)\det(\lambda I_{n-1}-DP(p))\), lo que prueba la
+coincidencia con multiplicidades.
+\end{proof}
+
+\input{report_diagrams/entero_05_poincare_floquet}
+
+Una órbita periódica es hiperbólica si ninguno de sus multiplicadores no
+triviales está sobre el círculo unitario. La proximidad numérica de un
+multiplicador a \(1\) exige un análisis de error: puede indicar bifurcación,
+convergencia lenta o simplemente integración insuficiente.
+
+\subsection{Ejemplo resuelto: multiplicador transversal del PLL}
+
+En dimensión dos hay un solo multiplicador no trivial. Por
+\eqref{geo:eq:liouville-volume}, el producto de los dos multiplicadores es
+\begin{equation}
+ \det\Phi(T)=
+ \exp\!\left(\int_0^T\operatorname{div}f(\gamma(t))\,dt\right).
+\end{equation}
+Como el multiplicador tangente es \(1\), el transversal es exactamente
+\begin{equation}
+ \mu_\perp=
+ \exp\!\left[\int_0^T
+ \left(-\frac1{T_{\!f}}
+ -\frac{\tau_2L}{2T_{\!f}}\cos\theta(t)\right)dt\right],
+ \qquad T_{\!f}=\tau_1+\tau_2.
+ \label{geo:eq:pll-floquet-divergence}
+\end{equation}
+Se usa \(T_f\) para el parámetro del filtro y \(T\) para el periodo de la
+órbita. Si la integral es negativa, \(0<\mu_\perp<1\) y el ciclo es estable;
+si es positiva, \(\mu_\perp>1\) y es inestable. Esta identidad explica
+geométricamente los multiplicadores del ciclo corredor estable
+y la órbita separadora inestable.
+
+\subsection{Interpretación geométrica de los casos analizados}
+
+\begin{table}[H]
+\centering
+\caption{Aplicaciones y requisitos del análisis de Poincaré.}
+\label{geo:tab:poincare-cases}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.17\textwidth}YY@{}}
+\toprule
+Caso & Comportamiento observado & Verificación geométrica \\
+\midrule
+Chua PWL & La recurrencia y las nubes apoyan un conjunto caótico; las órbitas
+cruzan regiones PWL. & Declarar sección y orientación; propagar la primera
+variación por tramos; estudiar si existe una órbita periódica silla y sus
+variedades. \\
+MAVPD \(\xi=3.1\) & Los últimos retornos colapsan numéricamente a un punto y el
+periodo es estable: evidencia fuerte de ciclo de periodo uno. & Encerrar el
+punto fijo de \(P\) y sus multiplicadores no triviales. \\
+MAVPD caótico & La nube de Poincaré, los exponentes y la prueba \(0\)--\(1\)
+son diagnósticos compatibles con un régimen caótico. & Buscar estructura hiperbólica,
+órbitas periódicas silla y cruces de variedades; una nube no es una herradura.
+\\
+Kalman--Fitts & El mapa de conmutación de la aproximación signo tiene retorno
+de periodo dos; la homotopía llega a un ciclo suave estable. & Construir una
+sección tridimensional para el sistema final y calcular los tres
+multiplicadores transversales. \\
+PLL & El retorno escalar sobre \(\theta=0\pmod{2\pi}\) localiza ciclos
+corredores estable e inestable con multiplicadores. & Encerrar los puntos
+fijos y demostrar qué componente de la frontera de cuenca genera el ciclo
+inestable. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+En Chua, la falta de diferenciabilidad de \(f\) en \(x=\pm1\) exige una
+formulación de Floquet por tramos. Con cruces transversales
+se integra la ecuación variacional en cada región y se tratan explícitamente
+los tiempos de evento; en un roce, la diferenciabilidad del retorno puede
+fallar.
+
+\subsection{Alcance dimensional del teorema de Poincaré--Bendixson}
+
+\begin{proposition}[Poincaré--Bendixson, versión planar]
+Sea \(f\in C^1\) en un abierto del plano y sea una semiórbita positiva
+contenida en un compacto. Si su conjunto \(\omega\)-límite no contiene
+equilibrios, entonces ese conjunto \(\omega\)-límite es una órbita periódica.
+\end{proposition}
+
+\begin{proof}[Idea geométrica]
+Se toma una sección transversal pequeña. Si la órbita regresara desordenada,
+la unicidad y el orden lineal de los puntos sobre la sección obligarían a
+cruces de trayectorias. Los retornos quedan ordenados y convergen a un punto
+fijo del retorno, que genera una órbita periódica. La demostración completa
+controla la recurrencia y los arcos de Jordan.
+\end{proof}
+
+El teorema explica por qué un flujo autónomo planar suave no alberga un
+atractor extraño en una región compacta bajo esas hipótesis. No se aplica a
+Chua ni MAVPD, que son tridimensionales, ni a Kalman--Fitts, que es
+cuatridimensional. Tampoco se traslada literalmente a toda superficie: el
+flujo lineal de pendiente irracional en el toro no tiene equilibrios ni
+órbitas periódicas y puede ser denso.
+
+El PLL vive en un cilindro no compacto, no en el plano entero. Si la dinámica
+queda confinada a un anillo compacto y se verifican las hipótesis de una
+versión anular de Poincaré--Bendixson, su organización por focos, sillas y
+ciclos corredores es la esperada. El devanado angular debe conservarse: una
+órbita que aumenta \(2\pi\) por vuelta es periódica en el cilindro, aunque no
+sea cerrada en el recubrimiento. Esta limitación dimensional hace al PLL un
+caso adecuado para estudiar cuencas y separatrices, pero no para establecer
+inicialmente una herradura de flujo.
+
+\begin{remark}[Límites del teorema]
+Compacidad, unicidad, autonomía, dimensión y topología del espacio son
+hipótesis sustantivas. Un mapa discreto bidimensional puede ser caótico; una
+ecuación planar forzada se convierte en un sistema autónomo de dimensión tres
+al añadir la fase; y un campo no único puede tener cruces que destruyen el
+argumento planar.
+\end{remark}
+
+\fi
+\HAFOGeoRenderBlocktrue
+\ifdefined\HAFOGeoBlockSelect
+  \HAFOGeoRenderBlockfalse
+  \ifdefined\HAFOGeoBlockChaos\HAFOGeoRenderBlocktrue\fi
+\fi
+\ifHAFOGeoRenderBlock
+\HAFOStudyNeedspace
+\section{Homoclinicidad, herraduras y significados de caos}
+\label{sec:geo-homoclinic-chaos}
+
+\HAFOCardChaos
+
+Una intersección homoclínica transversal proporciona un mecanismo de dinámica
+simbólica bajo las hipótesis de Smale--Birkhoff. Su construcción relaciona
+variedades invariantes, recurrencia y caos
+\cite{HirschSmaleDevaney2013,DatserisParlitz2022Nonlinear}.
+
+\subsection{Conexiones entre variedades}
+
+\begin{definition}[Órbita homoclínica y heteroclínica]
+Sea \(S\) un equilibrio o una órbita periódica hiperbólica. Una órbita no
+trivial es homoclínica a \(S\) si está contenida en
+\(W^s(S)\cap W^u(S)\). Una conexión de \(S_-\) a \(S_+\) es heteroclínica si
+está en \(W^u(S_-)\cap W^s(S_+)\). Una intersección es transversal en \(q\)
+si
+\begin{equation}
+ T_qW^s+T_qW^u=T_qM
+ \label{geo:eq:transverse-intersection}
+\end{equation}
+con la adaptación correspondiente en una sección de Poincaré.
+\end{definition}
+
+Una proximidad visual entre dos curvas no prueba que se intersecten; una
+intersección numérica no prueba transversalidad; y una conexión no transversal
+no activa automáticamente el teorema de herradura.
+
+\begin{proposition}[Teorema de Smale--Birkhoff]
+Sea \(P\) un difeomorfismo \(C^1\) con un punto periódico hiperbólico. Si sus
+variedades estable e inestable poseen un punto homoclínico transversal,
+entonces algún iterado de \(P\) posee un conjunto compacto invariante sobre el
+cual la dinámica contiene una herradura y es conjugada a un desplazamiento
+simbólico sobre un número finito de símbolos, al menos dos.
+\end{proposition}
+
+La demostración completa construye tiras que se estiran, contraen y cruzan,
+define rectángulos de Markov y codifica cada órbita por la sucesión de tiras
+visitadas. Su aplicación exige verificar esa construcción global en el sistema
+analizado; el teorema fija con precisión las hipótesis necesarias.
+
+\input{report_diagrams/entero_06_homoclinica_herradura}
+
+Para un flujo tridimensional como Chua o MAVPD, la búsqueda puede hacerse en
+un mapa de Poincaré bidimensional: las curvas estable e inestable de un punto
+silla periódico pueden cruzarse transversalmente. En Kalman--Fitts, la
+sección es tridimensional y la geometría puede involucrar curvas y
+superficies. En un flujo autónomo bidimensional como PLL sobre el cilindro, la
+unicidad impide que separatrices distintas se crucen transversalmente como
+trayectorias del flujo; su teoría natural es la organización por ciclos,
+sillas y fronteras, junto con versiones de Poincaré--Bendixson en una región
+compacta apropiada.
+
+\subsection{Dinámica simbólica y entropía}
+
+\begin{definition}[Desplazamiento completo en dos símbolos]
+Sea
+\begin{equation}
+ \Sigma_2=\{0,1\}^{\mathbb Z},\qquad
+ (\sigma s)_j=s_{j+1}.
+ \label{geo:eq:full-shift}
+\end{equation}
+Con la topología producto, \(\Sigma_2\) es compacto. Una secuencia codifica qué
+rectángulo de una herradura visita una órbita en cada iteración. Decir que
+\(P^k|_\Lambda\) es conjugado a \(\sigma\) significa que existe un
+homeomorfismo entre \(\Lambda\) y \(\Sigma_2\) que entrelaza exactamente ambos
+mapas.
+\end{definition}
+
+Un abierto básico de \(\Sigma_2\) fija un bloque finito de símbolos.
+Repetir periódicamente un bloque que lo contenga produce una sucesión
+periódica dentro de ese abierto; así se prueba su densidad. Dados dos
+abiertos básicos, desplazamos uno hasta que sus bloques prescritos ocupen
+posiciones disjuntas. Una sucesión que contenga ambos bloques pertenece a
+la intersección apropiada, lo que demuestra transitividad.
+Para la entropía, la partición según el símbolo de posición cero produce
+\(2^n\) bloques distintos en \(n\) iteraciones y tasa
+\(n^{-1}\log(2^n)=\log2\). Cualquier cubierta abierta del compacto tiene
+un refinamiento por cilindros que fijan un número finito de coordenadas;
+sus \(n\) iteraciones distinguen a lo sumo \(2^{n+c}\) bloques, con
+\(c\) independiente de \(n\). La cota superior tiene la misma tasa, por
+lo que \(h_{\mathrm{top}}(\sigma)=\log2\).
+Para aplicar la fórmula de entropía a un retorno que puede ser parcial,
+supóngase que \(P^k|_\Lambda\) es conjugado a ese desplazamiento y que los
+iterados intermedios están definidos. El conjunto
+\[
+ K=\bigcup_{j=0}^{k-1}P^j(\Lambda)
+\]
+es compacto e invariante para \(P\): la continuidad conserva compacidad y
+\(P^k(\Lambda)=\Lambda\) da \(P(K)=K\). Para el mapa continuo
+\(P|_K:K\to K\), la invariancia por conjugación, la monotonía respecto de
+subconjuntos compactos invariantes y la fórmula de iteración implican
+\begin{equation}
+ h_{\mathrm{top}}(P|_K)\ge\frac{\log2}{k},
+ \label{geo:eq:horseshoe-entropy-bound}
+\end{equation}
+porque
+\(k\,h_{\mathrm{top}}(P|_K)
+=h_{\mathrm{top}}((P|_K)^k)
+\ge h_{\mathrm{top}}(P^k|_\Lambda)=\log2\).
+No se atribuye sin especificación una entropía global a un retorno parcial
+o a un dominio no compacto. Esta cota relaciona de manera
+demostrable la geometría de variedades, la codificación simbólica y la complejidad
+topológica; una estimación espectral o una FFT no proporciona esta cota.
+
+\begin{definition}[Transitividad y caos de Devaney]
+Un mapa continuo \(P:\Lambda\to\Lambda\) es topológicamente transitivo si para
+cualesquiera abiertos relativos no vacíos \(U,V\subset\Lambda\) existe
+\(n\ge0\) tal que \(P^n(U)\cap V\ne\varnothing\). Es caótico en el sentido de
+Devaney si es transitivo y sus puntos periódicos son densos; usualmente se
+incluye sensibilidad a condiciones iniciales, que se deduce de las dos
+propiedades anteriores cuando \(\Lambda\) es un espacio métrico infinito sin
+puntos aislados.
+\end{definition}
+
+La transitividad es una afirmación sobre todos los pares de abiertos, no sobre
+una única trayectoria larga. La densidad de órbitas periódicas tampoco se
+demuestra encontrando unas cuantas. Por eso la conjugación simbólica es mucho
+más fuerte que una nube visual: entrega ambas propiedades sobre un conjunto
+invariante bien definido.
+
+\subsection{Nociones no equivalentes de caos}
+
+\begin{table}[H]
+\centering
+\caption{Propiedades dinámicas y sus formulaciones matemáticas.}
+\label{geo:tab:chaos-notions}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.20\textwidth}Y Y@{}}
+\toprule
+Propiedad & Definición & Construcción matemática \\
+\midrule
+Exponente máximo positivo & Expansión asintótica de vectores tangentes para
+una órbita o medida, bajo hipótesis de existencia. & Convergencia y robustez
+numérica describen un intervalo finito; el exponente asintótico requiere controlar el límite y la órbita o medida.
+\\
+Transitividad topológica & Para abiertos no vacíos \(U,V\) del conjunto
+invariante existe \(t>0\) con \(\varphi_t(U)\cap V\ne\varnothing\). & No se
+deduce de que una sola órbita parezca llenar una proyección. \\
+Caos de Devaney & Transitividad y densidad de órbitas periódicas; en espacios
+perfectos, la sensibilidad se sigue bajo hipótesis estándar. & Exige un
+conjunto invariante y argumentos sobre todos sus abiertos. \\
+Entropía topológica positiva & Crecimiento exponencial de órbitas
+distinguibles. & Puede acotarse mediante una herradura o técnicas rigurosas;
+una FFT de banda ancha no la calcula. \\
+Herradura & Conjunto hiperbólico con codificación simbólica. & Intersección
+homoclínica transversal o cobertura de conos/rectángulos verificada. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Análisis homoclínico de Chua y MAVPD}
+
+Consideremos un retorno \(P:D\subset\Sigma\to\Sigma\) y un punto
+periódico \(u_*\) de periodo mínimo \(k\). Resolvemos
+\(P^k(u_*)-u_*=0\) y excluimos los periodos divisores para identificar la
+órbita. Si el espectro de \(DP^k(u_*)\) evita el círculo unitario y contiene
+direcciones estables e inestables, los autovectores proporcionan las tangentes
+de las variedades locales. La invariancia permite prolongar esas variedades
+con \(P^k\) y su inversa en el dominio donde ambas están definidas.
+
+Un encuentro de \(W^s(u_*)\) y \(W^u(u_*)\) produce el mecanismo de
+Smale--Birkhoff cuando satisface la condición transversal
+\eqref{geo:eq:transverse-intersection}. La distancia entre segmentos y el
+ángulo entre tangentes permiten aproximar ese encuentro; para establecerlo
+en un continuo se necesitan cotas de error que excluyan tanto una separación
+pequeña como una tangencia. Una inclusión por intervalos, combinada con conos
+invariantes, es una forma de obtener esas cotas. El teorema identifica entonces
+un subconjunto invariante y un iterado concretos con dinámica simbólica.
+
+En Chua, el dominio del retorno incorpora los eventos \(x=\pm1\) y evita
+los roces que destruyen su diferenciabilidad. En MAVPD, la suavidad del campo
+permite estudiar directamente el retorno bidimensional y las variedades de
+sus puntos silla. Esta construcción relaciona el régimen caótico con un
+mecanismo geométrico, además de sus indicadores temporales.
+
+\section{Comparación geométrica de los cuatro casos}
+\label{sec:geo-four-cases}
+
+\begin{table}[H]
+\centering
+\caption{Estructuras geométricas de los cuatro sistemas.}
+\label{geo:tab:four-cases-map}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.16\textwidth}Y Y@{}}
+\toprule
+Caso & Objetos geométricos & Problema global \\
+\midrule
+Chua PWL & Tres equilibrios, dos superficies de conmutación, simetría impar,
+nubes recurrentes, candidato caótico y sondeos de cuenca. & ¿Qué conjuntos
+invariantes forman la frontera de la cuenca oculta y existe una órbita silla
+con entrelazamiento homoclínico? \\
+MAVPD & Tres equilibrios, simetría impar, ciclos internos y externo, sección de
+Poincaré, frontera candidata de Hopf y candidato caótico. & ¿Cómo cambian las
+variedades invariantes al cruzar la frontera de Hopf y qué mecanismo crea el
+conjunto caótico local? \\
+Kalman--Fitts & Un sumidero, mapa de conmutación, homotopía y ciclo estable
+compatible con ocultedad bajo 48 sondeos finitos en \(\R^4\). & ¿Qué conjunto
+invariante separa las cuencas observadas y qué argumento permitiría certificar
+esa separación durante la homotopía? \\
+PLL & Cilindro, foco, silla, ciclo corredor estable, ciclo corredor inestable,
+retorno escalar y multiplicadores. & ¿Coincide el ciclo inestable con una
+componente completa de la frontera y cómo se conectan sus regiones con las
+separatrices de la silla? \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Reformulación geométrica de la ocultedad}
+
+La metodología de función descriptiva, puntos perpetuos o mapa de conmutación
+localiza una semilla. El análisis geométrico complementario identifica después:
+\begin{equation}
+ \text{semilla}
+ \longrightarrow
+ \omega(x_0)
+ \longrightarrow
+ \text{conjunto invariante}
+ \longrightarrow
+ \mathcal B(A),\ \partial\mathcal B(A)
+ \longrightarrow
+ \text{mecanismo local/global}.
+ \label{geo:eq:geometry-workflow}
+\end{equation}
+Ningún localizador sustituye esos pasos. A la inversa, conocer una separatriz
+o un índice topológico puede producir semillas nuevas y complementar los
+métodos algebraicos analizados.
+
+\subsection{Fronteras suaves, fractales y de Wada}
+
+\HAFOCardFractal
+
+Si dos cuencas coexisten, una malla puede sugerir una frontera suave o
+irregular. Para estudiar esa sugerencia se puede medir la fracción de pares
+de condiciones a distancia \(\varepsilon\) que terminan en destinos distintos.
+Una ley
+\begin{equation}
+ f_{\mathrm{inc}}(\varepsilon)\sim C\varepsilon^\eta
+ \label{geo:eq:uncertainty-exponent}
+\end{equation}
+produce un exponente de incertidumbre numérico. Su estabilización en varias
+resoluciones caracteriza la rugosidad observada. Su relación con una dimensión fractal requiere, además, una ley de escala asintótica para la frontera.
+
+Una frontera tiene la propiedad de Wada si cada punto de frontera de una de
+tres o más cuencas pertenece simultáneamente a las fronteras de todas. Una
+imagen con tres colores entremezclados no basta: se requieren algoritmos de
+refinamiento y, para una prueba, una caracterización del conjunto invariante
+que genera la frontera. Chua y MAVPD son candidatos naturales si se confirman
+tres destinos coexistentes. En Kalman--Fitts se identifican el origen y el
+ciclo; los estados sin destino clasificado no constituyen una tercera cuenca
+con la que establecer la propiedad de Wada.
+
+\fi
+
+% Los ejercicios se habilitan mediante \ifHAFOPedagogy. Al seleccionar bloques,
+% el bloque de actividades se incorpora una sola vez, al terminar el bloque de
+% caos; las demostraciones y los ejemplos científicos anteriores son comunes.
+\HAFOGeoRenderBlocktrue
+\ifdefined\HAFOGeoBlockSelect
+  \HAFOGeoRenderBlockfalse
+  \ifdefined\HAFOGeoBlockChaos\HAFOGeoRenderBlocktrue\fi
+\fi
+\ifHAFOPedagogy
+\ifHAFOGeoRenderBlock
+\section{Ejemplos cortos, contraejemplos y actividades guiadas}
+\label{sec:geo-activities}
+
+Los problemas siguientes conectan soluciones explícitas, propiedades locales
+y estructuras globales de los sistemas estudiados.
+
+\subsection{Flujo lineal y conjunto límite}
+Para \(\dot x=-x\), \(\dot y=-2y\), integramos cada ecuación y encontramos
+\[
+ \varphi_t(x_0,y_0)=(e^{-t}x_0,e^{-2t}y_0),\qquad
+ \omega(x_0,y_0)=\{(0,0)\}.
+\]
+El signo de cada coordenada permanece constante; por ello cada eje y cada
+cuadrante cerrado son positivamente invariantes. Para \(x_0\ne0\), eliminar
+\(t\) da \(y=y_0(x/x_0)^2\) en la rama con el signo de \(x_0\).
+Esta ecuación describe la órbita como conjunto, mientras la expresión
+exponencial conserva su parametrización temporal. Estudie cómo cambian las
+velocidades al multiplicar el campo por una función positiva.
+
+\subsection{Cruces y tangencias de Chua}
+En \(x=1\), la igualdad \(\phi(1)=m_0\) reduce la velocidad normal a
+\(\alpha(y-1-m_0)\); en \(x=-1\), resulta
+\(\alpha(y+1+m_0)\). Con \(m_0=-0.1768\), las tangencias están en
+\(y=0.8232\) y \(y=-0.8232\), respectivamente. Para \(\alpha>0\), el
+signo del factor entre paréntesis determina el sentido del cruce. Analice
+una trayectoria a cada lado de esas rectas y compruebe que los planos de
+conmutación no son superficies invariantes completas.
+
+\subsection{Índices y objetos recurrentes}
+Recalcule los menores de los Jacobianos de Chua y MAVPD para reproducir
+\eqref{geo:eq:chua-equilibrium-indices} y \eqref{geo:eq:mavpd-indices}.
+La suma de signos es el grado del campo en un dominio que aísla esos ceros.
+Un ciclo no estacionario satisface \(f\ne0\) sobre toda su órbita; por ello
+no contribuye como cero a esa suma. Compare dos campos con el mismo grado y
+distintas cuencas para identificar qué información dinámica queda fuera del
+índice de los equilibrios.
+
+\subsection{Simetría de los ciclos MAVPD}
+La imparidad de \eqref{int:eq:mavpd} da \(f(-y)=-f(y)\). Si
+\(z(t)=-\varphi_t(y_0)\), entonces
+\(\dot z=-f(\varphi_t(y_0))=f(z)\) y \(z(0)=-y_0\).
+La unicidad implica \(\varphi_t(-y_0)=-\varphi_t(y_0)\). Como la reflexión
+es una isometría,
+\[
+ \operatorname{dist}(\varphi_t(-y_0),-C_+)
+ =\operatorname{dist}(\varphi_t(y_0),C_+).
+\]
+Así se relacionan exactamente las cuencas de los ciclos simétricos.
+Determine cuándo \(-C_+=C_+\) y cuándo la reflexión produce dos ciclos
+distintos, como ocurre con el par reproducido.
+
+\subsection{El ciclo corredor del PLL}
+Un retorno sobre el cilindro identifica fases separadas por \(2\pi\).
+Reconstruya el determinante \eqref{geo:eq:pll-jacobian-det} y aplique
+Liouville a una vuelta completa. El multiplicador tangencial vale uno y el
+transversal viene dado por \eqref{geo:eq:pll-floquet-divergence}. Su módulo
+menor que uno explica la estabilidad orbital del ciclo corredor estable;
+el mayor que uno explica la repulsión transversal del ciclo inestable.
+Compare esta clasificación con el bloqueo de fase y la separación de sus
+cuencas. Una órbita abierta en el recubrimiento angular puede ser cerrada
+en el cilindro.
+
+\subsection{Centro y frontera de Hopf}
+En la frontera MAVPD \(a_1a_2=a_3\), con \(a_1,a_2>0\), factorice
+\[
+ \lambda^3+a_1\lambda^2+a_2\lambda+a_3
+ =(\lambda+a_1)(\lambda^2+a_2).
+\]
+El par \(\pm i\sqrt{a_2}\) genera un centro real bidimensional y la raíz
+\(-a_1\) una dirección estable. Una bifurcación de Hopf genérica exige que
+el par sea simple, cruce transversalmente el eje imaginario al variar el
+parámetro y tenga primer coeficiente de Lyapunov no nulo. Calcule qué datos
+del campo intervienen en cada condición; la igualdad de Routh--Hurwitz sólo
+determina la frontera espectral candidata.
+
+\subsection{Flujo integral y entrada puntual}
+En el disco unidad tomemos \(f(x,y)=(2-x,-y)\). Su divergencia es \(-2\),
+de modo que Stokes da \(\int_{\partial N}f\cdot n\,\dd s=-2\pi\).
+Parametrizando la frontera por \((\cos\theta,\sin\theta)\),
+\[
+ f\cdot n=(2-\cos\theta)\cos\theta-\sin^2\theta
+ =2\cos\theta-1.
+\]
+Esta cantidad es positiva cuando \(|\theta|<\pi/3\) módulo \(2\pi\),
+aunque su integral sea negativa. Verifique el balance mediante integración
+directa y explique por qué el disco no es positivamente invariante.
+
+\subsection{Dimensión y topología en Poincaré--Bendixson}
+Compare una órbita PLL confinada en un anillo con una trayectoria MAVPD en
+\(\R^3\). Identifique el conjunto compacto que contiene cada cola y los
+equilibrios que puede contener su conjunto límite. Contraste después con el
+flujo de pendiente irracional sobre el toro: sus órbitas son densas y no
+periódicas, de modo que la dimensión dos sin la topología adecuada no
+reproduce la conclusión planar de Poincaré--Bendixson.
+
+\subsection{Retorno del ciclo MAVPD}
+Para el caso \(\xi=3.1\), elija \(H(y)=0\) y un cruce con
+\(\nabla H\cdot f>0\). Construya la sucesión de primeros retornos después
+del transitorio y aproxime el punto fijo del ciclo externo estable.
+Compare tres pasos máximos y dos tolerancias, conservando la misma sección
+y orientación. El periodo procede de los tiempos entre cruces; la derivada
+del retorno procede de la variación de condiciones iniciales dentro de la
+sección. Estudie por separado la dispersión de la cola de retornos y el error
+de integración, para relacionar la convergencia observada con los
+multiplicadores transversales.
+
+\subsection{Continuación del retorno Kalman--Fitts}
+Para la homotopía signo--tanh escribimos \(F_\lambda=P_\lambda-I\).
+Busque un dominio común \(U\) en la sección y estudie la continuidad conjunta
+en \([0,1]\times\overline U\). La exclusión
+\(0\notin F_\lambda(\partial U)\) conserva el grado y, si es no nulo,
+la existencia de un retorno fijo. Relacione esa condición con la ausencia
+de tangencias y con cotas uniformes del tiempo de retorno. Los 51 valores
+de la continuación aproximan la rama; una cota en todo el intervalo de
+parámetros conecta esa aproximación con el argumento de grado.
+
+\subsection{Frontera de cuenca y conexiones homoclínicas}
+Bisecte un segmento cuyos extremos tengan destinos distintos. Al aumentar
+el horizonte y reducir la tolerancia, compare las trayectorias próximas al
+punto de separación con una silla o un ciclo inestable. La bisección aproxima
+una intersección de ese segmento con la frontera; su estructura global se
+estudia siguiendo el conjunto organizador. En el caso caótico MAVPD,
+busque además un punto silla de \(P^k\) y continúe sus variedades estable e
+inestable. Compare distancia y ángulo en los encuentros: una intersección
+transversal requiere controlar ambas magnitudes con el error del cálculo.
+
+\subsection{Relación entre existencia, estabilidad y cuenca}
+Formule cuatro problemas para los casos estudiados: el retorno fijo del
+ciclo externo MAVPD, el mecanismo de caos de Chua, la cuenca del ciclo PLL y
+la persistencia periódica en Kalman--Fitts. En cada uno identifique el
+objeto matemático que resuelve el problema: un cero de \(P-I\), el espectro
+de \(DP\), una cuenca o una homotopía admisible. Construya un ejemplo en
+el que exista un ciclo estable con una cuenca pequeña, y otro en el que un
+equilibrio estable coexista con un ciclo oculto. El sistema radial de
+\cref{subsec:guide-hidden-cycle-topology} permite hacer ambos cálculos
+de manera explícita.
+
+\fi
+\fi
+\fi
+
+\ifdefined\HAFONoGeoPosterior\else
+\ifdefined\HAFOGeoBlockSelect\else
+\section{Problemas de profundización e investigación}
+\label{sec:geo-study-plan}
+
+\HAFOCardFuture
+
+\subsection{Estructuras geométricas de los casos estudiados}
+
+\begin{table}[H]
+\centering
+\caption{Problemas geométricos asociados a la localización algebraica.}
+\label{geo:tab:projects}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.21\textwidth}L{0.20\textwidth}YY@{}}
+\toprule
+Estructura & Sistema & Construcción & Condición matemática \\
+\midrule
+Frontera cilíndrica & PLL & Mapa de cuenca refinado y ciclo separador con
+multiplicador & Encierro del retorno y caracterización de la componente de
+frontera. \\
+Persistencia por homotopía & Kalman--Fitts & Rama periódica y dominio común de
+retorno & Grado de \(P_\lambda-I\) con frontera excluida para todo \(\lambda\).
+\\
+Mecanismo del ciclo externo & MAVPD \(\xi=3.1\) & Punto fijo y multiplicadores
+de Poincaré & Encierro validado de órbita y estabilidad. \\
+Mecanismo de caos & MAVPD caótico & Órbita silla y aproximación de sus
+variedades & Intersección homoclínica transversal asistida por intervalos. \\
+Geometría no suave & Chua PWL & Retorno con eventos y superficies de cruce &
+Mapa por tramos con dominios de transversalidad y, después, entrelazamiento
+encerrado. \\
+Topología de cuencas & Chua/MAVPD & Exponente de incertidumbre multirresolución
+& Caracterización de conjunto invariante de frontera; Wada sólo si se prueba.
+\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{De la geometría local a la organización de cuencas}
+
+El espacio de fases y la regularidad del campo determinan las herramientas
+disponibles. En una región suave de Chua aplicamos la linealización clásica;
+al atravesar una superficie de conmutación seguimos el flujo continuo y
+reconstruimos el retorno por tramos. En MAVPD la suavidad permite estudiar
+las variedades de los puntos periódicos directamente. En el PLL la
+identificación angular forma parte de la definición de órbita, sección y
+distancia. Estas diferencias explican por qué un mismo algoritmo de
+localización necesita una interpretación geométrica específica para cada
+modelo.
+
+La transformación afín usada en una realización de Lur'e transporta las
+cuencas y sus vecindades, pero modifica las distancias de muestreo. Por ello,
+la estabilidad local, la recurrencia de una trayectoria y la separación de
+una cuenca se conectan mediante el flujo y el retorno, sin identificarse
+entre sí. Las construcciones de \cref{geo:tab:niveles-evidencia} expresan
+esa relación entre el dominio de cada cálculo y el objeto que describe.
+
+\begin{hallazgo}{Conexión entre localización y teoría geométrica}
+La teoría geométrica no reemplaza la función descriptiva, la continuación ni
+los puntos perpetuos. Estos métodos proporcionan condiciones iniciales en una
+región del espacio de fases. El flujo determina la órbita; el conjunto
+\(\omega\)-límite identifica el destino; las variedades y los mapas de retorno
+explican su organización local; las cuencas y sus fronteras formulan la
+ocultedad; y una estructura como una intersección homoclínica transversal
+puede, con hipótesis verificadas, convertir evidencia de caos en un mecanismo
+topológico demostrado. La relación entre estos objetos conecta los sistemas
+analizados con la teoría geométrica de ecuaciones diferenciales.
+\end{hallazgo}
+\fi
+\fi

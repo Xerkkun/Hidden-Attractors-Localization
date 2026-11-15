@@ -1,0 +1,114 @@
+{
+  "status": "auditoria_bibliografica_y_cobertura_actual_completadas",
+  "scispace_searches": 5,
+  "selected_papers": 15,
+  "new_candidates_for_reports": 10,
+  "existing_anchors": 5,
+  "evidence_boundary": "Las fichas y extract_data de SciSpace sirven para localizar y comparar textos; no constituyen demostraciones. Los limites de lectura se declaran por articulo en el CSV.",
+  "findings": [
+    {
+      "priority": "P1",
+      "source": "CuiKloedenXin2026CaputoDynamics",
+      "location": "arXiv2607.05799v1, ecuacion1.2; Th4.5-4.9; Remark4.7",
+      "claim": "El resultado disponible es un atractor D precompacto del semiflujo de Volterra. La compactitud del atractor se deja abierta de manera explicita.",
+      "action": "Usar precompacto y declarar universo D, metrica y proyeccion; no deducir ocultedad de estos resultados.",
+      "url": "https://arxiv.org/html/2607.05799v1"
+    },
+    {
+      "priority": "P1",
+      "source": "DancaFeckan2024MemoryPrinciple; Danca2026ImprovedLyapunov",
+      "location": "arXiv2406.04686v1, seccion4/Prop4.1; arXiv2604.09334v1, seccion4 y conclusion",
+      "claim": "La denominacion full memory en estos trabajos se vincula a un esquema impulsivo changing-lower-limit; el codigo integra segmentos sucesivos.",
+      "action": "No usar la cita para afirmar sin demostracion que QR o Gram-Schmidt preservan el IVP causal desde t0. Presentar los LE calculados como diagnosticos de tiempo finito, con contrato de memoria declarado.",
+      "url": "https://arxiv.org/html/2406.04686v1"
+    },
+    {
+      "priority": "P1",
+      "source": "DuanLanLi2022WeylCaputo",
+      "location": "Texto editorial, secciones2-3, ecuaciones15-16 y52-54",
+      "claim": "El oscilador lineal forzado distingue componente periodica Weyl y transitorios de Caputo con cola algebraica.",
+      "action": "Usarlo como ejemplo y prueba de control; no como teorema de persistencia de una orbita no lineal autonoma obtenida con balance armonico.",
+      "url": "https://www.mdpi.com/2504-3110/6/12/692"
+    },
+    {
+      "priority": "P1",
+      "source": "DoanKloeden2022Triangular",
+      "location": "arXiv2108.11715, seccion3, Th3.1, Remark3.3",
+      "claim": "El teorema exige campo triangular de forma producto, disipacion y no degeneracion; no abarca triangular general.",
+      "action": "Verificar esas hipotesis antes de invocar equivalencia con un atractor entero. Corregir los autores de SciSpace: Thai Son Doan y Peter E.Kloeden, sin John Wyver.",
+      "url": "https://arxiv.org/pdf/2108.11715"
+    },
+    {
+      "priority": "P1",
+      "source": "StephensWanner2014IsolatingBlocks; DayJungeMischaikow2004InfiniteDimensional",
+      "location": "Resumene editoriales y extraccion SciSpace; demostraciones completas no auditadas",
+      "claim": "Los bloques aislantes requieren pruebas de salida/entrada y cotas validadas; un indice en una discretizacion no certifica automaticamente el sistema original con memoria.",
+      "action": "Separar agenda de certificacion futura del clasificador finito existente. Conservar EV-TG como evidencia experimental si no hay enclosure y transferencia rigurosa.",
+      "url": "https://epubs.siam.org/doi/abs/10.1137/140971075"
+    },
+    {
+      "priority": "P1",
+      "source": "JiangZhangZhangZhang2017FastCaputo",
+      "location": "arXiv1511.03453, seccion1 y separacion local/historia",
+      "claim": "SOE comprime una aproximacion de toda la convolucion con tolerancia de nucleo en un intervalo declarado.",
+      "action": "Distinguir compresion de historia de eliminar una cola. Las cotas de difusion lineal no certifican shadowing caotico ni invariantes del modelo no lineal.",
+      "url": "https://arxiv.org/pdf/1511.03453"
+    },
+    {
+      "priority": "DISCUSION",
+      "source": "Fazzino2026MemoryLyapunovPreprint",
+      "location": "Zenodo registro23367741 y DataCite concepto23287805; manuscrito no auditado",
+      "claim": "Es un preprint y no un articulo arbitrado, aunque SciSpace indique Journal Article.",
+      "action": "Mantener como lectura critica futura; no adoptar sus afirmaciones sobre espectro esencial, truncamiento o positividad como resultados demostrados en la tesis.",
+      "url": "https://zenodo.org/records/23367741"
+    },
+    {
+      "priority": "P2",
+      "source": "ZhuLi2026PeriodicAlmostPeriodic",
+      "location": "Resumen editorial y metadatos primarios; texto de pago no leido",
+      "claim": "Novedad editorial2026 pertinente a operadores periodicos y casi periodicos.",
+      "action": "Obtener y leer hipotesis antes de sustituir los resultados clasicos de periodicidad por una afirmacion mas general.",
+      "url": "https://link.springer.com/article/10.1007/s13540-026-00582-x"
+    }
+  ],
+  "selection_in_current_report_bib": 14,
+  "candidate_not_cited": 1,
+  "zotero_current_library_regular_items": 254,
+  "zotero_current_thesis_collection_regular_items": 176,
+  "zotero_imported_local_missing_records": 92,
+  "report_bib_entries_matched_in_zotero": 141,
+  "report_bib_entries_library_only": 10,
+  "bibliography_integrity": {
+    "entries": 141,
+    "unique_keys": 141,
+    "missing_cited_keys": 0,
+    "duplicate_bib_keys": 0,
+    "duplicate_bib_dois": 0,
+    "monografia_citations": 97,
+    "study_citations": 114,
+    "aux_reconciliation": "exacta en ambas ediciones",
+    "corrected_source_entries": [
+      "Ghoreishi2023",
+      "Danca2017HiddenFO",
+      "ChristiansenRugh1997",
+      "bonani1999",
+      "Falconer2014Fractal"
+    ]
+  },
+  "reading_coverage_current_corpus": {
+    "solo_cotejo_metadatos_Zotero": 127,
+    "primaria_resumen_o_metadatos": 8,
+    "primaria_texto_selectivo": 6
+  },
+  "full_integral_reading_claimed": false,
+  "remaining_metadata_cautions": [
+    {
+      "key": "scipy2020",
+      "issue": "111 autores personales correctos importados; el credito colectivo SciPy1.0Contributors no se conservo como creador corporativo en la traduccion. Discrepancia puntual registrada en verificacion_importacion_zotero.json."
+    },
+    {
+      "key": "kuznetsov2017localization",
+      "issue": "Zotero existente incluye DOIarXiv mientras la entrada local corresponde al articulo IFAC sinDOI; no se agrego DOI ni se fusionaron manifestaciones."
+    }
+  ]
+}
