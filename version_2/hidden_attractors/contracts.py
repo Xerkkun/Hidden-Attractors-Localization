@@ -5,7 +5,7 @@ import numpy as np
 
 VALID_SEED_MODES = {"integer", "fractional"}
 VALID_CONTINUATION_MODES = {"integer", "fractional"}
-VALID_INTEGRATORS = {"abm", "efork3", "efork_q1", "adm_wu2023", "rk4"}
+VALID_INTEGRATORS = {"abm", "efork3", "efork_q1", "adm_wu2023", "rk4", "l1_implicit", "abm_stable"}
 VALID_MEMORY_POLICIES = {"none", "full_caputo", "finite_window"}
 VALID_TRANSFER_CONVENTIONS = {"standard", "opposite_sign"}
 VALID_HARMONIC_CONDITIONS = {"1_minus_WN", "1_plus_WN"}
@@ -27,6 +27,7 @@ def validate_contracts(config: Dict[str, Any], resolved: bool = False) -> None:
     integrator = config.get("integrator")
     if integrator is not None and integrator not in VALID_INTEGRATORS:
         raise ValueError(f"Invalid integrator contract: {integrator}. Must be one of {VALID_INTEGRATORS}.")
+    validate_diagnostic_integrator_contract(config)
         
     mem_policy = config.get("memory_policy")
     if mem_policy is not None and mem_policy not in VALID_MEMORY_POLICIES:
@@ -98,6 +99,8 @@ def validate_contracts(config: Dict[str, Any], resolved: bool = False) -> None:
 
         if integrator == "abm" and abs(q_dyn_eff - 1.0) < 1e-9:
             raise ValueError("ABM integrator is not allowed for integer-order dynamics (q_dynamics = 1.0). Use 'rk4' or 'efork_q1'.")
+        if integrator in {"l1_implicit", "abm_stable"} and not 0 < q_dyn_eff < 1:
+            raise ValueError("Diagnostic Caputo integrators require 0 < q_dynamics < 1.")
 
         if integrator in {"rk4", "efork_q1"} and q_dyn_eff < 1.0:
             raise ValueError(f"Integrator '{integrator}' is not allowed for fractional-order dynamics (q_dynamics < 1.0). Use 'abm' or 'efork3'.")
@@ -113,3 +116,19 @@ def validate_contracts(config: Dict[str, Any], resolved: bool = False) -> None:
 
         if mem_policy == "none" and q_dyn_eff < 1.0:
             raise ValueError("memory_policy cannot be 'none' when q_dynamics < 1.0.")
+
+
+def validate_diagnostic_integrator_contract(config: Dict[str, Any]) -> None:
+    """Reject unsupported history transport for the new diagnostic methods."""
+    if config.get("integrator") not in {"l1_implicit", "abm_stable"}:
+        return
+    if (config.get("memory_mode") not in {None, "full"}
+            or config.get("memory_policy") not in {None, "full_caputo"}
+            or config.get("memory_window_length") is not None
+            or config.get("memory_window_steps") is not None):
+        raise ValueError("Diagnostic Caputo integrators require full memory from t=0 without a window.")
+    if config.get("run_continuation"):
+        raise ValueError("Diagnostic Caputo integrators do not implement continuation or transported history; use standalone integration from t=0.")
+    early_stop = config.get("early_stop") or {}
+    if early_stop.get("enabled", False):
+        raise ValueError("Diagnostic Caputo integrators do not support early_stop; use the declared divergence_norm only.")

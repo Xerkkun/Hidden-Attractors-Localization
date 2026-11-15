@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include "native_validation.h"
+#include "chua_equilibrium_classifier.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -15,7 +16,7 @@
 #endif
 
 API_EXPORT int chua_basin_abi_version(void) {
-    return 3;
+    return 4;
 }
 #if defined(__GNUC__) || defined(__clang__)
   #define INTERNAL_UNUSED static __attribute__((unused))
@@ -55,6 +56,8 @@ static int chua_parameters_are_valid(void) {
 #define CLS_HIDDEN_NEG 2
 #define CLS_DIV        3
 #define CLS_UNKNOWN    4
+#define CLS_NUMERICAL_FAILURE 5
+#define CLS_EQ_VISIT 6
 
 // ============================================================
 // Utilidades
@@ -200,7 +203,8 @@ static int classify_point(
     double R_BOUND,
     double EPS_EQ,
     int CAP_WIN,
-    double MEAN_X_GAP
+    double MEAN_X_GAP,
+    int classifier_policy
 ) {
     int N = 0;
     int burn = 0;
@@ -217,6 +221,14 @@ static int classify_point(
 
     double eq[9];
     chua_equilibria_internal(eq);
+    HafoEquilibriumObservation observation = hafo_eq_observation_init();
+    if (classifier_policy == HAFO_EQ_TERMINAL_V2) {
+        const double initial[3] = {x0, y0, z0};
+        hafo_eq_observe(&observation, initial, 0, eq, 3, eps2,
+                        CAP_WIN, Rdiv2, burn == 0);
+        if (observation.first_nonfinite_index >= 0) return CLS_NUMERICAL_FAILURE;
+        if (observation.first_threshold_index >= 0) return CLS_DIV;
+    }
 
     double *t = (double*)malloc(allocation_bytes);
     double *x = (double*)malloc(allocation_bytes);
@@ -224,7 +236,7 @@ static int classify_point(
     double *z = (double*)malloc(allocation_bytes);
     if (!t || !x || !y || !z) {
         free(t); free(x); free(y); free(z);
-        return CLS_UNKNOWN;
+        return classifier_policy == HAFO_EQ_TERMINAL_V2 ? CLS_NUMERICAL_FAILURE : CLS_UNKNOWN;
     }
 
     EFORKCoeffs c = efork_coeffs(q);
@@ -261,10 +273,17 @@ static int classify_point(
     double mean_r2 = 0.0;
     int cnt_tail = 0;
 
+    if (classifier_policy == HAFO_EQ_TERMINAL_V2) {
+        const double first[3] = {x[1], y[1], z[1]};
+        hafo_eq_observe(&observation, first, 1, eq, 3, eps2,
+                        CAP_WIN, Rdiv2, 1 >= burn);
+    }
+
     if (!hafo_isfinite(x[1]) || !hafo_isfinite(y[1]) ||
         !hafo_isfinite(z[1]) || nrm2(x[1], y[1], z[1]) > Rdiv2) {
         free(t); free(x); free(y); free(z);
-        return CLS_DIV;
+        return classifier_policy == HAFO_EQ_TERMINAL_V2 &&
+               observation.first_nonfinite_index >= 0 ? CLS_NUMERICAL_FAILURE : CLS_DIV;
     }
 
     for (int n = 1; n < N; ++n) {
@@ -296,11 +315,18 @@ static int classify_point(
         z[n + 1] = z[n] + c.w1*K1z + c.w2*K2z + c.w3*K3z;
         t[n + 1] = (n + 1 == N) ? TMAX : (double)(n + 1) * h;
 
+        if (classifier_policy == HAFO_EQ_TERMINAL_V2) {
+            const double current[3] = {x[n + 1], y[n + 1], z[n + 1]};
+            hafo_eq_observe(&observation, current, n + 1, eq, 3, eps2,
+                            CAP_WIN, Rdiv2, n + 1 >= burn);
+        }
+
         if (!hafo_isfinite(x[n + 1]) || !hafo_isfinite(y[n + 1]) ||
             !hafo_isfinite(z[n + 1]) ||
             nrm2(x[n + 1], y[n + 1], z[n + 1]) > Rdiv2) {
             free(t); free(x); free(y); free(z);
-            return CLS_DIV;
+            return classifier_policy == HAFO_EQ_TERMINAL_V2 &&
+                   observation.first_nonfinite_index >= 0 ? CLS_NUMERICAL_FAILURE : CLS_DIV;
         }
 
         if (n >= burn) {
@@ -323,7 +349,8 @@ static int classify_point(
             hitp = (dp <= eps2) ? (hitp + 1) : 0;
             hitm = (dm <= eps2) ? (hitm + 1) : 0;
 
-            if (hit0 >= CAP_WIN || hitp >= CAP_WIN || hitm >= CAP_WIN) {
+            if (classifier_policy == HAFO_EQ_LEGACY_V1 &&
+                (hit0 >= CAP_WIN || hitp >= CAP_WIN || hitm >= CAP_WIN)) {
                 free(t); free(x); free(y); free(z);
                 return CLS_EQ;
             }
@@ -332,13 +359,18 @@ static int classify_point(
 
     free(t); free(x); free(y); free(z);
 
+    if (classifier_policy == HAFO_EQ_TERMINAL_V2) {
+        if (observation.terminal_equilibrium >= 0) return CLS_EQ;
+        if (observation.visited) return CLS_EQ_VISIT;
+    }
+
     if (cnt_tail <= 0) return CLS_UNKNOWN;
     if (mean_r2 < Rbnd2) {
         if (mean_x >  MEAN_X_GAP) return CLS_HIDDEN_POS;
         if (mean_x < -MEAN_X_GAP) return CLS_HIDDEN_NEG;
         return CLS_UNKNOWN;
     }
-    return CLS_DIV;
+    return classifier_policy == HAFO_EQ_TERMINAL_V2 ? CLS_UNKNOWN : CLS_DIV;
 }
 
 // ============================================================
@@ -380,7 +412,7 @@ API_EXPORT void get_equilibria(double *eq_out9) {
     chua_equilibria_internal(eq_out9);
 }
 
-API_EXPORT int classify_basin_point(
+API_EXPORT int classify_basin_point_with_policy(
     double x0,
     double y0,
     double z0,
@@ -393,11 +425,14 @@ API_EXPORT int classify_basin_point(
     double R_BOUND,
     double EPS_EQ,
     int CAP_WIN,
-    double MEAN_X_GAP
+    double MEAN_X_GAP,
+    int classifier_policy
 ) {
     int steps = 0;
     int burn_steps = 0;
     const double seed[3] = {x0, y0, z0};
+    if (classifier_policy != HAFO_EQ_LEGACY_V1 &&
+        classifier_policy != HAFO_EQ_TERMINAL_V2) return -5;
     if (!(q > 0.0 && q <= 1.0) || !hafo_isfinite(q) ||
         !hafo_values_are_finite(seed, 3u) ||
         !chua_parameters_are_valid()) return -3;
@@ -410,8 +445,19 @@ API_EXPORT int classify_basin_point(
         !hafo_isfinite(MEAN_X_GAP) || !(MEAN_X_GAP > 0.0)) return -4;
     return classify_point(
         x0, y0, z0, q, h, Lm, TMAX, TBURN,
-        R_DIV, R_BOUND, EPS_EQ, CAP_WIN, MEAN_X_GAP
+        R_DIV, R_BOUND, EPS_EQ, CAP_WIN, MEAN_X_GAP, classifier_policy
     );
+}
+
+/* Retain the original symbol and argument list for deliberate legacy replay. */
+API_EXPORT int classify_basin_point(
+    double x0, double y0, double z0, double q, double h, double Lm,
+    double TMAX, double TBURN, double R_DIV, double R_BOUND,
+    double EPS_EQ, int CAP_WIN, double MEAN_X_GAP
+) {
+    return classify_basin_point_with_policy(
+        x0, y0, z0, q, h, Lm, TMAX, TBURN, R_DIV, R_BOUND,
+        EPS_EQ, CAP_WIN, MEAN_X_GAP, HAFO_EQ_LEGACY_V1);
 }
 
 INTERNAL_UNUSED int compute_basin_xy(
@@ -468,7 +514,7 @@ INTERNAL_UNUSED int compute_basin_xy(
             const double x = xmin + (double)j * dx;
             out_classes[(size_t)i * (size_t)nx + (size_t)j] = classify_point(
                 x, y, z0, q, h, Lm, TMAX, TBURN,
-                R_DIV, R_BOUND, EPS_EQ, CAP_WIN, MEAN_X_GAP
+                R_DIV, R_BOUND, EPS_EQ, CAP_WIN, MEAN_X_GAP, HAFO_EQ_LEGACY_V1
             );
         }
 
@@ -557,7 +603,7 @@ INTERNAL_UNUSED int compute_basin_plane(
             }
             out_classes[(size_t)i * (size_t)nx + (size_t)j] = classify_point(
                 x0, y0, z0, q, h, Lm, TMAX, TBURN,
-                R_DIV, R_BOUND, EPS_EQ, CAP_WIN, MEAN_X_GAP
+                R_DIV, R_BOUND, EPS_EQ, CAP_WIN, MEAN_X_GAP, HAFO_EQ_LEGACY_V1
             );
         }
 

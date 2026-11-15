@@ -9,6 +9,7 @@ CANONICAL_ATTRACTOR_STATUS = {
     "hidden_under_tested_neighborhoods",
     "compatible_with_hiddenness",
     "self_excited",
+    "reference_contact_detected",
     "nonchaotic",
     "diverged",
     "inconclusive",

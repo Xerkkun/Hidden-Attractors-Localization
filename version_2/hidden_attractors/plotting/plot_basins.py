@@ -39,26 +39,27 @@ def plot_basin_slice_file(
     fig_dir = os.path.join(output_dir, "figures")
     os.makedirs(fig_dir, exist_ok=True)
     
-    colors = ['#3b82f6', '#10b981', '#a855f7', '#1e293b', '#cbd5e1']
+    colors = ['#3b82f6', '#10b981', '#a855f7', '#1e293b', '#cbd5e1', '#fde68a']
     cmap = ListedColormap(colors)
     
     fig, ax = plt.subplots(figsize=(8, 7), dpi=300)
     
-    mesh = ax.pcolormesh(u, v, mat.T, cmap=cmap, vmin=0, vmax=4, shading='auto', alpha=0.92)
+    mesh = ax.pcolormesh(u, v, mat.T, cmap=cmap, vmin=0, vmax=5, shading='auto', alpha=0.92)
     
     labels = [
-        "Stable Equilibrium",
-        "Target Attractor",
-        "Other Attractor",
-        "Divergence",
-        "Numerical Failure"
+        "Terminal equilibrium",
+        "Finite reference contact",
+        "Other finite",
+        "Norm threshold crossed",
+        "Numerical failure",
+        "Inconclusive"
     ]
     
-    patches = [plt.Rectangle((0, 0), 1, 1, color=colors[c]) for c in range(5)]
+    patches = [plt.Rectangle((0, 0), 1, 1, color=colors[c]) for c in range(6)]
     ax.legend(patches, labels, loc='upper right', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
     
     center_label = f"Local Centered ({eq_name})" if eq_name != "global" else "Global Scan"
-    ax.set_title(f"Basin of Attraction: {plane.upper()} | {center_label}\n{config['system_id']}", fontsize=11, fontweight='bold', pad=12)
+    ax.set_title(f"Finite destination map: {plane.upper()} | {center_label}\n{config['system_id']}", fontsize=11, fontweight='bold', pad=12)
     ax.set_xlabel(plane[0], fontsize=10)
     ax.set_ylabel(plane[1], fontsize=10)
     

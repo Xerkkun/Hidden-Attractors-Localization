@@ -1,0 +1,124 @@
+method_id: fractional_cloned_dynamics_abm_gs_published
+benchmark_type: published
+reference:
+  authors:
+  - C. Fischer
+  - K. L. A. Zourmba
+  - A. Mohamadou
+  year: 2020
+  title: Lyapunov exponents spectrum estimation of fractional order nonlinear systems
+    using Cloned Dynamics
+  journal: Applied Numerical Mathematics 154, 187-204
+  doi: 10.1016/j.apnum.2020.03.027
+  table: Table 5
+  data_complete: true
+system:
+  kind: financial
+  dimension: 3
+  equations:
+  - D^alpha1 x = z + (y-a)x
+  - D^alpha2 y = 1 - b y - |x|
+  - D^alpha3 z = -x - c z
+  parameters:
+    a: 1.0
+    b: 0.15
+    c: 1.0
+  x0:
+  - 1.0
+  - 1.0
+  - 1.0
+  nonsmooth_rhs: true
+integration:
+  integrator: abm_predictor_corrector
+  memory_protocol: published_block_restart
+  h: 0.05
+  T_ref: 5000
+  N: 100000
+  t_clone: 10
+  n_clone: 1000
+  h_clone: 0.01
+  K: 500
+  delta: 0.001
+  execution_protocol: fischer_reference_rail_v1
+  reference_sampling: grid_exact
+  reference_convolution_block_size: 256
+  reference_memory_policy: fixed_lower_limit_full_history
+expected:
+  rows:
+  - orders:
+    - 1.0
+    - 1.0
+    - 1.0
+    type: Comm
+    lyapunov:
+    - 0.0891
+    - 0.0058
+    - -0.4348
+    K01: 0.9984
+  - orders:
+    - 0.9
+    - 0.9
+    - 0.9
+    type: Comm
+    lyapunov:
+    - 0.1133
+    - -0.003
+    - -0.337
+    K01: 0.9974
+  - orders:
+    - 0.8
+    - 0.8
+    - 0.8
+    type: Comm
+    lyapunov:
+    - -0.0407
+    - -0.0406
+    - -0.2648
+    K01: 0.1325
+  - orders:
+    - 0.7
+    - 0.7
+    - 0.7
+    type: Comm
+    lyapunov:
+    - -0.2125
+    - -0.4539
+    - -0.4539
+    K01: 0.2491
+  tolerance_abs_initial: 0.15
+  tolerance_abs_target: 0.05
+  sign_pattern_required: true
+  validation_level: quantitative_initial_or_sign_pattern
+  evaluation_criteria_version: published_tolerance_and_required_sign_v2
+execution_contract_version: fischer2020_reference_rail_article_v1
+provenance:
+  derived_at_date: '2026-11-09'
+  original_case: validation/lyapunov_benchmarks/fractional_cloned_dynamics_abm_gs_published/fischer2020_financial_commensurate.yaml
+  original_case_sha256: bddde93747da20aba000c26b71bb7ef35831120e47d30f22eaffff473027ca7d
+  original_case_modified: false
+  original_integration:
+    integrator: abm_predictor_corrector
+    memory_protocol: published_block_restart
+    h: 0.05
+    T_ref: 5000
+    N: 100000
+    t_clone: 10
+    n_clone: 1000
+    h_clone: 0.01
+    K: 500
+    delta: 0.001
+  primary_reference_doi: 10.1016/j.apnum.2020.03.027
+  reference_rail_source: Section 2.2, printed pages 189-191, equations 10,20,21
+  reference_sampling_interpretation: Physical time k*T_clone on the reference grid,
+    preserving distinct h_ref and h_clone
+  reference_memory_choice: Single full-history reference from t0; paper also discusses
+    an approximate chained-block alternative
+  clone_memory_choice: Restart each short fiducial/clone block, then reanchor to separate
+    reference
+  jerk_interval_source: null
+  equations_parameters_initial_conditions_orders_and_target_spectra_preserved: true
+  legacy_execution_and_evaluation: Use original case directory with explicit legacy_block_restart_v1
+    and published_tolerance_first_v1
+  acceptance_criterion_note: Absolute component errors plus required strict signs;
+    near-zero diagnostic never changes verdict
+  not_a_claim_of_complete_published_reproduction: true

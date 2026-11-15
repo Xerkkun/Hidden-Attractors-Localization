@@ -15,6 +15,7 @@ from hidden_attractors.reproducibility import (
 
 HIDDENNESS_SUPPORTED_LABEL = "hidden_under_tested_neighborhoods"
 SELF_EXCITED_CONTACT_LABEL = "self_excited"
+FINITE_REFERENCE_CONTACT_LABEL = "reference_contact_detected"
 REQUIRED_BASIN_PLANES = {"xy_close", "xy_large", "xz_close", "xz_large", "yz_close", "yz_large"}
 
 
@@ -117,10 +118,13 @@ def verify_hiddenness_contract(
             "radii_tested_by_equilibrium": {},
             "missing_radii_by_equilibrium": {eq: list(required_radii) for eq in equilibria},
             "target_hits_total": 0,
+            "reference_contact_detected": False,
+            "operational_reference_contacts_total": 0,
             "numerical_failures_total": 0,
             "other_attractor_total": 0,
             "divergence_total": 0,
             "stable_equilibrium_total": 0,
+            "inconclusive_total": 0,
             "samples_total": 0,
             "run_metadata": metadata_to_jsonable(run_metadata) if run_metadata is not None else None,
             "metadata_validation_errors": validate_hiddenness_promotion_metadata(
@@ -178,29 +182,45 @@ def verify_hiddenness_contract(
 
     # 3. Calculate totals from probe runs or summary records
     target_hits_total = 0
+    operational_reference_contacts_total = 0
+    legacy_target_hits_total = 0
     numerical_failures_total = 0
     other_attractor_total = 0
     divergence_total = 0
     stable_equilibrium_total = 0
+    inconclusive_total = 0
     samples_total = 0
 
     if probe_runs:
         for run in probe_runs:
             dest = run.get("destination")
             samples_total += 1
-            if dest == "target_attractor":
+            if dest in ("target_attractor", "reference_contact"):
                 target_hits_total += 1
+                if dest == "reference_contact":
+                    operational_reference_contacts_total += 1
+                else:
+                    legacy_target_hits_total += 1
             elif dest == "numerical_failure":
                 numerical_failures_total += 1
-            elif dest == "other_attractor":
+            elif dest in ("other_attractor", "other_finite"):
                 other_attractor_total += 1
-            elif dest == "divergence":
+            elif dest in ("divergence", "threshold_crossed"):
                 divergence_total += 1
-            elif dest == "stable_equilibrium":
+            elif dest in ("stable_equilibrium", "equilibrium_terminal"):
                 stable_equilibrium_total += 1
+            else:
+                inconclusive_total += 1
 
             # Validate probe tail length for persistent dynamics
-            if dest in ("target_attractor", "other_attractor"):
+            if dest in ("reference_contact", "other_finite", "equilibrium_terminal"):
+                tail_points = run.get("diagnostics", {}).get("tail_samples", 0)
+                if tail_points < min_probe_tail_points:
+                    failed_reqs.append(
+                        f"Probe terminal tail has fewer than min_probe_tail_points ({tail_points} < {min_probe_tail_points}).")
+                if run.get("classification_policy") != "neighborhood_terminal_v2":
+                    failed_reqs.append("Operational probe classification policy is missing or unsupported.")
+            elif dest in ("target_attractor", "other_attractor"):
                 traj = run.get("trajectory")
                 # If trajectory is available as numpy array or sequence, check its size
                 if traj is not None:
@@ -220,13 +240,24 @@ def verify_hiddenness_contract(
         for rec in sphere_summary_records:
             samples_total += rec.get("samples", 0)
             target_hits_total += rec.get("TARGET", 0)
+            if rec.get("classification_policy") == "neighborhood_terminal_v2":
+                operational_reference_contacts_total += rec.get("TARGET", 0)
+            else:
+                legacy_target_hits_total += rec.get("TARGET", 0)
             numerical_failures_total += rec.get("FAIL", 0)
             other_attractor_total += rec.get("OTHER", 0)
             divergence_total += rec.get("DIV", 0)
             stable_equilibrium_total += rec.get("EQ", 0)
+            inconclusive_total += rec.get("INCONCLUSIVE", 0)
 
     # 4. Check requirements for complete protocol
     protocol_complete = True
+    if inconclusive_total:
+        protocol_complete = False
+        failed_reqs.append(f"Inconclusive or unsupported probe destinations: {inconclusive_total}.")
+    if samples_total == 0:
+        protocol_complete = False
+        failed_reqs.append("No neighborhood trajectories were tested.")
     
     # Require all equilibria
     if require_all_equilibria:
@@ -269,7 +300,12 @@ def verify_hiddenness_contract(
     hidden_compatible = False
     self_excited_contact_detected = False
 
-    if target_hits_total > 0:
+    if operational_reference_contacts_total > 0:
+        hiddenness_status = FINITE_REFERENCE_CONTACT_LABEL
+        failed_reqs.append(
+            f"Finite reference contact observed: {operational_reference_contacts_total}; "
+            "this does not establish identity of attractors or self-excitation.")
+    elif legacy_target_hits_total > 0:
         hiddenness_status = HiddennessVerificationStatus.SELF_EXCITED_CONTACT_DETECTED.value
         self_excited_contact_detected = True
         failed_reqs.append(f"Self-excited contact detected: {target_hits_total} probe trajectory hits on target attractor.")
@@ -293,7 +329,9 @@ def verify_hiddenness_contract(
         hidden_compatible = True
 
     promotion_verdict = (
-        HIDDENNESS_SUPPORTED_LABEL
+        FINITE_REFERENCE_CONTACT_LABEL
+        if operational_reference_contacts_total > 0
+        else HIDDENNESS_SUPPORTED_LABEL
         if hidden_verified
         else SELF_EXCITED_CONTACT_LABEL
         if self_excited_contact_detected
@@ -315,10 +353,13 @@ def verify_hiddenness_contract(
         "radii_tested_by_equilibrium": {eq: list(rads) for eq, rads in radii_tested_by_eq.items()},
         "missing_radii_by_equilibrium": missing_radii_by_eq,
         "target_hits_total": target_hits_total,
+        "reference_contact_detected": operational_reference_contacts_total > 0,
+        "operational_reference_contacts_total": operational_reference_contacts_total,
         "numerical_failures_total": numerical_failures_total,
         "other_attractor_total": other_attractor_total,
         "divergence_total": divergence_total,
         "stable_equilibrium_total": stable_equilibrium_total,
+        "inconclusive_total": inconclusive_total,
         "samples_total": samples_total,
         "failed_requirements": failed_reqs,
         "run_metadata": metadata_to_jsonable(run_metadata) if run_metadata is not None else None,

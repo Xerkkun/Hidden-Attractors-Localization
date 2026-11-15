@@ -207,7 +207,7 @@ def plot_neighborhood_control_spheres(
         indices = np.linspace(0, len(target_pts) - 1, max_target_points, dtype=int)
         target_pts = target_pts[indices]
         
-    ax.plot(target_pts[:, 0], target_pts[:, 1], target_pts[:, 2], color='#10b981', lw=0.8, alpha=0.9, label='Target Attractor')
+    ax.plot(target_pts[:, 0], target_pts[:, 1], target_pts[:, 2], color='#10b981', lw=0.8, alpha=0.9, label='Reference trajectory')
     
     plotted_hit = False
     plotted_miss = False
@@ -223,9 +223,9 @@ def plot_neighborhood_control_spheres(
         else:
             traj_sampled = traj
             
-        if r["destination"] == "target_attractor":
+        if r["destination"] in ("target_attractor", "reference_contact"):
             color = '#ef4444'
-            label = "Probe (Target Hit)" if not plotted_hit else ""
+            label = "Probe (Finite Reference Contact)" if not plotted_hit else ""
             plotted_hit = True
             alpha = 0.8
             lw = 0.5

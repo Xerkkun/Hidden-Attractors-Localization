@@ -35,13 +35,13 @@ from .._rhs import bind_rhs
 # ---------------------------------------------------------------------------
 
 # Set of integrator names valid for q < 1 (fractional)
-_FRACTIONAL_INTEGRATORS = {"abm", "efork3", "efork", "adm_wu2023"}
+_FRACTIONAL_INTEGRATORS = {"abm", "efork3", "efork", "adm_wu2023", "l1_implicit", "abm_stable"}
 
 # Set of integrator names valid for q == 1 (integer-order)
 _INTEGER_INTEGRATORS = {"rk4", "efork_q1", "efork3", "efork"}
 
 # Integrators that are ONLY for fractional order (fail at q=1)
-_FRACTIONAL_ONLY = {"abm", "adm_wu2023"}
+_FRACTIONAL_ONLY = {"abm", "adm_wu2023", "l1_implicit", "abm_stable"}
 
 # Integrators that are ONLY for integer order (fail at q<1)
 _INTEGER_ONLY = {"rk4", "efork_q1"}
@@ -163,6 +163,9 @@ def integrate(
     allow_python_fallback: bool = True,
     early_stop_config: Optional[dict] = None,
     equilibria: Optional[List[np.ndarray]] = None,
+    jacobian: Optional[Callable] = None,
+    solver_options: Optional[dict] = None,
+    diagnostics: Optional[dict] = None,
 ) -> Tuple[np.ndarray, np.ndarray, str]:
     """Validated unified integrator entry point.
 
@@ -202,6 +205,11 @@ def integrate(
         Early-stop configuration (divergence + equilibrium checks).
     equilibria : list of ndarray, optional
         Known equilibria for equilibrium early-stop checks.
+    jacobian, solver_options, diagnostics : optional
+        Options for the independent full-history ``l1_implicit`` and
+        ``abm_stable`` diagnostic solvers. ``diagnostics`` is populated in
+        place while the established three-value return stays unchanged.
+        Other solvers reject these options rather than silently ignoring them.
 
     Returns
     -------
@@ -271,4 +279,7 @@ def integrate(
         allow_python_fallback=allow_python_fallback,
         early_stop_config=early_stop_config,
         equilibria=equilibria,
+        jacobian=jacobian,
+        solver_options=solver_options,
+        diagnostics=diagnostics,
     )

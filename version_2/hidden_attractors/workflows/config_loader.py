@@ -870,6 +870,9 @@ def _validate_explicit_stage_contracts(cfg: Dict[str, Any]) -> None:
 def _validate(cfg: Dict[str, Any]) -> None:
     """Raise ValueError / UserWarning for invalid combinations."""
     from hidden_attractors.integrations.selector import validate_integrator_compatibility
+    from hidden_attractors.contracts import validate_diagnostic_integrator_contract
+
+    validate_diagnostic_integrator_contract(cfg)
 
     integrator = cfg.get("integrator")
     q = cfg.get("q")

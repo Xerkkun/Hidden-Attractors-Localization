@@ -72,10 +72,7 @@ def plot_basin_slice_file(
     fig_dir = output_dir / "figures"
     fig_dir.mkdir(parents=True, exist_ok=True)
 
-    # 0: Stable Equilibrium (soft blue)
-    # 1: Target Attractor (soft green)
-    # 2: Other Attractor / Unclassified (soft purple)
-    # 3: Divergence (soft yellow/black depending on style, let's use dark gray/black or soft red)
+    # Operational finite classes. Colors retain the previous class IDs.
     # 4: Numerical Failure (soft gray)
     colors = ['#3b82f6', '#10b981', '#a855f7', '#1e293b', '#cbd5e1']
     cmap = ListedColormap(colors)
@@ -87,20 +84,25 @@ def plot_basin_slice_file(
 
     # Custom premium legend
     labels = [
-        "Stable Equilibrium",
-        "Target Attractor",
-        "Other Attractor",
-        "Divergence",
+        "Terminal equilibrium (finite)",
+        "Reference contact (finite)",
+        "Other finite response",
+        "Norm threshold crossed",
         "Numerical Failure"
     ]
 
     patches = [plt.Rectangle((0, 0), 1, 1, color=colors[c]) for c in range(5)]
-    ax.legend(patches, labels, loc='upper right', fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
+    ax.legend(patches, labels, loc='upper left', bbox_to_anchor=(1.02, 1.0),
+              fontsize=8, framealpha=0.9, facecolor='#f8fafc', edgecolor='#e2e8f0')
 
     center_label = f"Local Centered ({eq_name})" if eq_name != "global" else "Global Scan"
-    ax.set_title(f"Basin of Attraction: {plane.upper()} | {center_label}\n{system_id}", fontsize=11, fontweight='bold', pad=12)
+    ax.set_title(f"Finite destination map: {plane.upper()} | {center_label}\n{system_id}", fontsize=11, fontweight='bold', pad=12)
     ax.set_xlabel(plane[0], fontsize=10)
     ax.set_ylabel(plane[1], fontsize=10)
+    if len(u) > 1:
+        ax.set_xlim(float(np.min(u)), float(np.max(u)))
+    if len(v) > 1:
+        ax.set_ylim(float(np.min(v)), float(np.max(v)))
 
     fig_name = f"basin_{plane}_{eq_name}.png"
     fig_path = fig_dir / fig_name

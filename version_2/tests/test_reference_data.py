@@ -306,6 +306,7 @@ class TestBasinLabelsReference:
         t_final=300.0, t_burn=100.0,
         divergence_norm=120.0, r_bound=60.0,
         equilibrium_tol=0.01, cap_win=200, mean_x_gap=0.5,
+        classifier_policy="legacy_v1",
     )
 
     @pytest.fixture(scope="class")

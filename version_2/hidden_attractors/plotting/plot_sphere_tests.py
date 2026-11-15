@@ -32,6 +32,8 @@ def plot_sphere_test_results(
         "unclassified": "purple"
     }
     
+    color_map.update(reference_contact="red", equilibrium_terminal="blue",
+                     threshold_crossed="black", other_finite="orange", inconclusive="purple")
     labels_map = {
         "target_attractor": "Target Attractor",
         "stable_equilibrium": "Stable Equilibrium",
@@ -41,6 +43,9 @@ def plot_sphere_test_results(
         "unclassified": "Unclassified"
     }
 
+    labels_map.update(reference_contact="Finite reference contact", equilibrium_terminal="Terminal equilibrium",
+                      threshold_crossed="Norm threshold crossed", other_finite="Other finite",
+                      inconclusive="Inconclusive")
     ax.scatter([eq_pt[0]], [eq_pt[1]], [eq_pt[2]], color='#ef4444' if eq_name != 'E0' else '#3b82f6',
                marker='*', s=150, edgecolors='black', zorder=10, label=f"Equilibrium {eq_name}")
 
@@ -72,13 +77,13 @@ def plot_sphere_test_results(
             else:
                 segment = traj[:n_plot, :]
             
-            alpha = 0.55 if dest == "target_attractor" else 0.3
-            lw = 0.8 if dest == "target_attractor" else 0.5
+            alpha = 0.55 if dest in ("target_attractor", "reference_contact") else 0.3
+            lw = 0.8 if dest in ("target_attractor", "reference_contact") else 0.5
             
             ax.plot(segment[:, 0], segment[:, 1], segment[:, 2], color=color, lw=lw, alpha=alpha)
             plotted_trajectories_count += 1
 
-    ax.set_title(f"Sphere Test: {eq_name} | Radius: {radius}", fontsize=12, fontweight='bold', pad=15)
+    ax.set_title(f"Finite neighborhood test: {eq_name} | Radius: {radius}", fontsize=12, fontweight='bold', pad=15)
     ax.set_xlabel('x', fontsize=10)
     ax.set_ylabel('y', fontsize=10)
     ax.set_zlabel('z', fontsize=10)

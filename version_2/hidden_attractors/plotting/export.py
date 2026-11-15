@@ -466,6 +466,74 @@ def export_figure(fig, figure_id, kind, metadata_dict, run_id="default_run", exp
     
     return pdf_path, png_path
 
+def _claimed_run_for_figure(output_path):
+    """Find a valid enclosing run; malformed markers never enable promotion.
+
+    Checking the lexical path also prevents an owned run's symlink from
+    redirecting a figure outside that run and bypassing local-only export.
+    """
+    import os
+    import uuid
+    from hidden_attractors._run_output import RUN_MARKER, RunOutputClaim
+
+    lexical = Path(os.path.abspath(output_path))
+    resolved = lexical.resolve()
+    visited = set()
+    for path in (lexical, resolved):
+        for parent in path.parents:
+            if parent in visited:
+                continue
+            visited.add(parent)
+            marker = parent / RUN_MARKER
+            if not marker.exists() and not marker.is_symlink():
+                continue
+            try:
+                record = json.loads(marker.read_text(encoding="utf-8"))
+                if not isinstance(record, dict):
+                    raise ValueError("Run marker must contain an object")
+                run_id, run_kind = record.get("run_id"), record.get("run_kind")
+                uuid.UUID(run_id)
+                if (record.get("schema_version") != "1.0"
+                        or record.get("status") not in {"in_progress", "completed"}
+                        or not isinstance(run_kind, str) or not run_kind.strip()
+                        or not isinstance(record.get("output_directory"), str)
+                        or Path(record["output_directory"]).resolve() != parent.resolve()):
+                    raise ValueError("Invalid run ownership fields")
+            except (OSError, ValueError, TypeError, AttributeError) as exc:
+                raise ValueError(f"Invalid enclosing run marker: {marker}") from exc
+            if not resolved.is_relative_to(parent.resolve()):
+                raise ValueError("Figure output resolves outside its enclosing claimed run")
+            return RunOutputClaim(parent.resolve(), run_id, run_kind), record["status"]
+    return None
+
+
+def _save_claimed_figure_pair(fig, output_path, claim):
+    """Write a fresh local pair exclusively, without modifying a figure bank."""
+    from contextlib import ExitStack
+    from hidden_attractors._run_output import require_output_claim
+
+    require_output_claim(claim.path, claim)
+    output_path = Path(output_path)
+    pdf_path, png_path = output_path.with_suffix(".pdf"), output_path.with_suffix(".png")
+    destinations = [pdf_path, png_path]
+    if output_path.suffix.lower() not in {".png", ".pdf"}:
+        destinations.append(output_path)
+    if any(path.exists() or path.is_symlink() for path in destinations):
+        raise FileExistsError("Figure output already exists in this run; choose a new figure name or run directory")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    _prepare_figure_for_export(fig)
+    # Exclusive reservations protect against competing figure writers too.
+    # A failed export retains partial evidence under its active run marker.
+    with ExitStack() as stack:
+        streams = [stack.enter_context(path.open("xb")) for path in destinations]
+        fig.savefig(streams[0], format="pdf", bbox_inches="tight", facecolor="white", transparent=False)
+        fig.savefig(streams[1], format="png", dpi=300, bbox_inches="tight", facecolor="white", transparent=False)
+        if len(streams) > 2:
+            fig.savefig(streams[2], format=output_path.suffix.lstrip(".") or fig.canvas.get_default_filetype(), dpi=300,
+                        facecolor="white", transparent=False)
+    return str(output_path)
+
+
 def intercept_and_export_path(
     fig,
     output_path,
@@ -474,10 +542,21 @@ def intercept_and_export_path(
     export_targets=None,
 ):
     """
-    Intercept a save operation, export it to the central figure store, update
-    the manifest, and write it to the caller's requested location.
+    Save claimed-run figures locally; preserve legacy interception elsewhere.
+
+    Active claimed runs write new local PNG/PDF pairs exclusively. Completed
+    runs and invalid markers reject writes. Explicit global promotion remains
+    available through ``export_figure`` or the batch promotion API.
     """
     output_path = Path(output_path)
+    ownership = _claimed_run_for_figure(output_path)
+    if ownership is not None:
+        claim, status = ownership
+        if status != "in_progress":
+            raise FileExistsError("This run is completed; regenerate figures in a newly claimed run directory")
+        if export_targets:
+            raise ValueError("Claimed-run figures require explicit promotion after local export; use the promotion API")
+        return _save_claimed_figure_pair(fig, output_path, claim)
     figure_id = output_path.stem
     
     # Try to parse run_id from path

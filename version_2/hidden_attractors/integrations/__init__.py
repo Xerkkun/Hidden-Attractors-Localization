@@ -34,6 +34,7 @@ _EXPORT_GROUPS = {
     ".adm_wu2023": ("adm_wu2023_integrate",),
     ".fractional_c": ("fractional_integrate",),
     ".abm_fractional": ("integrate_fractional_abm",),
+    ".caputo_diagnostics": ("integrate_l1_implicit", "integrate_abm_stable", "integrate_caputo_diagnostic"),
     ".external_tools": (
         "EXTERNAL_TOOLS",
         "ExternalTool",
@@ -77,6 +78,9 @@ __all__ = [
     "adm_wu2023_integrate",
     "fractional_integrate",
     "integrate_fractional_abm",
+    "integrate_l1_implicit",
+    "integrate_abm_stable",
+    "integrate_caputo_diagnostic",
     # external adapters
     "EXTERNAL_TOOLS",
     "ExternalTool",

@@ -83,7 +83,10 @@ def integrate_general(
     use_c_backend: bool = True,
     allow_python_fallback: bool = True,
     early_stop_config: Optional[dict] = None,
-    equilibria: Optional[List[np.ndarray]] = None
+    equilibria: Optional[List[np.ndarray]] = None,
+    jacobian: Optional[Callable] = None,
+    solver_options: Optional[dict] = None,
+    diagnostics: Optional[dict] = None,
 ) -> Tuple[np.ndarray, np.ndarray, str]:
     """
     Unified general solver facade for integrating any system (fractional or integer).
@@ -101,6 +104,27 @@ def integrate_general(
     # Normalize rhs to rhs_t(t, x) once without using callback exceptions to
     # infer arity.
     bound_rhs = bind_rhs(rhs)
+
+    if integrator.lower() in {"l1_implicit", "abm_stable"}:
+        from .caputo_diagnostics import integrate_caputo_diagnostic
+        if memory_mode != "full" or memory_window_length is not None:
+            raise ValueError("diagnostic Caputo solvers require full memory without a memory window")
+        # These methods stop only on a numerical failure or the declared norm
+        # threshold. A nearby equilibrium never restarts/truncates a history.
+        if early_stop_config and early_stop_config.get("enabled", True):
+            raise ValueError("diagnostic Caputo solvers do not support early_stop_config; use divergence_norm only")
+        options = dict(solver_options or {})
+        allowed = {"newton_tol", "newton_maxiter", "fd_relative_step", "use_numba"}
+        unknown = set(options) - allowed
+        if unknown:
+            raise ValueError(f"Unknown diagnostic solver options: {sorted(unknown)}")
+        return integrate_caputo_diagnostic(
+            bound_rhs, x0_arr, q, h, t_final, method=integrator.lower(),
+            jacobian=jacobian, divergence_norm=divergence_norm,
+            diagnostics=diagnostics, **options,
+        )
+    if jacobian is not None or solver_options is not None or diagnostics is not None:
+        raise ValueError("jacobian, solver_options and diagnostics are supported only by l1_implicit and abm_stable")
 
     def rhs_t(t: float, x: np.ndarray) -> np.ndarray:
         return np.asarray(bound_rhs(t, x), dtype=float)

@@ -1101,7 +1101,11 @@ class FullHistoryABMBackend:
 
 @dataclass
 class BasinBackend:
-    """Wrapper for ``chua_basin_lib.c`` classification routines."""
+    """Finite Chua classification with terminal_v2 or explicit legacy_v1.
+
+    Terminal equilibrium proximity is an observation over the final ``cap_win``
+    samples after burn, not an asymptotic convergence certificate.
+    """
 
     lib: Any
 
@@ -1119,8 +1123,9 @@ class BasinBackend:
                 "set_chua_model",
                 "get_equilibria",
                 "classify_basin_point",
+                "classify_basin_point_with_policy",
             ),
-            expected_abi_version=3,
+            expected_abi_version=4,
             abi_version_symbol="chua_basin_abi_version",
         )
         lib.set_chua_params.argtypes = [ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double]
@@ -1147,6 +1152,10 @@ class BasinBackend:
             ctypes.c_double,
         ]
         lib.classify_basin_point.restype = ctypes.c_int
+        lib.classify_basin_point_with_policy.argtypes = [
+            *lib.classify_basin_point.argtypes, ctypes.c_int
+        ]
+        lib.classify_basin_point_with_policy.restype = ctypes.c_int
         backend = cls(lib=lib)
         backend._transaction_lock = _library_transaction_lock(result.path)
         backend._thread_parameters = threading.local()
@@ -1233,7 +1242,19 @@ class BasinBackend:
         equilibrium_tol: float = 1.0e-3,
         cap_win: int = 150,
         mean_x_gap: float = 0.75,
+        classifier_policy: str = "terminal_v2",
     ) -> int:
+        """Return a finite class ID under the explicitly versioned policy.
+
+        ``terminal_v2`` observes the whole horizon before assigning equilibrium
+        class 0, separates numerical failure (5), qualified earlier visits (6),
+        and unresolved finite trajectories (4). Classes 1/2 retain the bounded
+        mean-sign heuristic; they do not establish target attraction/hiddenness.
+        Use ``legacy_v1`` only to replay the early-capture historical rule.
+        """
+        policy_ids = {"legacy_v1": 0, "terminal_v2": 1}
+        if classifier_policy not in policy_ids:
+            raise ValueError("classifier_policy must be 'terminal_v2' or 'legacy_v1'.")
         seed = _finite_state(x0, 3, "x0")
         q = _finite_scalar(q, "q")
         if not 0.0 < q <= 1.0:
@@ -1274,9 +1295,10 @@ class BasinBackend:
                 self._current_parameter_selection()
             )
             result = int(
-                self.lib.classify_basin_point(
+                self.lib.classify_basin_point_with_policy(
                     seed[0], seed[1], seed[2], q, h, Lm, t_final, t_burn,
                     divergence_norm, r_bound, equilibrium_tol, cap_win, mean_x_gap,
+                    policy_ids[classifier_policy],
                 )
             )
         if result < 0:

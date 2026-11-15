@@ -606,8 +606,6 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         
     system_id = config["system_id"]
     output_dir = config["output_dir"]
-    os.makedirs(output_dir, exist_ok=True)
-    
     run_id = config.get("run_id", "no_run_id")
     
     print(f"[{run_id}][{system_id}] Fase 1/7: cargando configuración... 0%")
@@ -704,6 +702,8 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     validation_config["q"] = q
     validate_contracts(validation_config, resolved=True)
     
+    from .._run_output import claim_output_directory, complete_output_claim
+    output_claim = claim_output_directory(output_dir, run_kind="centered_lure_df")
     effective_config_path = os.path.join(output_dir, "effective_config.yaml")
     effective_config = config.copy()
     effective_config["q"] = q
@@ -825,6 +825,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         summary["transfer_grid_evaluation"] = transfer_grid_evaluation
         summary["metadata_validation_errors"] = validate_run_metadata(run_metadata)
         _save_summary(summary, output_dir)
+        complete_output_claim(output_claim)
         return summary
         
     if config["plot_enabled"] and n_candidates > 0:
@@ -1072,9 +1073,12 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                 
     ref_tail = np.empty((0, 3))
     if final_status == "ok" and final_traj is not None:
-        n_burn = int(np.ceil(t_burn / config["h"]))
-        if len(final_traj) > n_burn:
-            ref_tail = final_traj[n_burn:, 1:]
+        from ..verification.terminal_policy import completion_tail
+        try:
+            _, ref_tail = completion_tail(final_traj[:, 0], final_traj[:, 1:], t_final, t_burn)
+        except ValueError:
+            final_status = "incomplete_reference_horizon"
+            ref_tail = np.empty((0, 3))
             
     print(f"[{run_id}][{system_id}] Fase 7/7: pruebas de ocultedad y cuencas... 90%")
     
@@ -1098,11 +1102,12 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                 ref_tail=ref_tail,
                 output_dir=output_dir,
                 workers=config["workers"],
-                q_dynamics_effective=q_dynamics
+                q_dynamics_effective=q_dynamics,
+                output_claim=output_claim
             )
             probe_results = sphere_results["probe_runs"]
-            target_hits = sum(1 for r in probe_results if r["destination"] == "target_attractor")
-            numerical_fails = sum(1 for r in probe_results if r["destination"] == "numerical_failure")
+            target_hits = sum(1 for r in probe_results if r["destination"] in ("reference_contact", "target_attractor"))
+            numerical_fails = sum(1 for r in probe_results if r["destination"] in ("numerical_failure", "inconclusive"))
             
             verdict = classify_hiddenness_verdict(
                 target_hits_from_equilibria=target_hits,
@@ -1148,11 +1153,12 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
             target_match_nn_percentile=target_nn_pct,
             run_metadata=run_metadata,
             reference_was_robust=bool(config.get("run_robustness", False)),
-            neighborhood_sampling_mode="ball",
+            neighborhood_sampling_mode=sphere_results.get("metadata", {}).get("sampling_domain", "unknown"),
             basin_planes=(),
         )
         
     basin_data_accum = []
+    basin_diagnostics = []
     if config["run_basin_slices"] and seed_reached_attractor:
         basin_cfg = config.get("basin", {})
         planes = basin_cfg["planes"]
@@ -1173,7 +1179,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
         if around_eq:
             for eq_name, eq_pt in selected_eq_basin.items():
                 for plane in planes:
-                    u, v, mat = generate_basin_slice(
+                    u, v, mat, point_diagnostics = generate_basin_slice(
                         plane=plane,
                         system=system,
                         transfer_mode=config["transfer_mode"],
@@ -1200,8 +1206,13 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                         system_id=system_id,
                         early_stop_config=config.get("early_stop"),
                         equilibria_dict=equilibria,
-                        q_dynamics_effective=q_dynamics
+                        q_dynamics_effective=q_dynamics,
+                        classification_policy=basin_cfg.get("classification_policy", "neighborhood_terminal_v2"),
+                        terminal_window=basin_cfg.get("terminal_window"),
+                        equilibrium_span_tol=basin_cfg.get("equilibrium_span_tol"),
+                        return_diagnostics=True
                     )
+                    basin_diagnostics.extend({"plane": plane, "equilibrium": eq_name, **record} for record in point_diagnostics)
                     if config["plot_enabled"]:
                         from ..plotting.plot_basins import plot_basin_slice_file
                         plot_basin_slice_file(plane, u, v, mat, eq_name, config, output_dir)
@@ -1216,7 +1227,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                 axis=0,
             ).tolist()
             for plane in planes:
-                u, v, mat = generate_basin_slice(
+                u, v, mat, point_diagnostics = generate_basin_slice(
                     plane=plane,
                     system=system,
                     transfer_mode=config["transfer_mode"],
@@ -1245,8 +1256,13 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                     system_id=system_id,
                     early_stop_config=config.get("early_stop"),
                     equilibria_dict=equilibria,
-                    q_dynamics_effective=q_dynamics
+                    q_dynamics_effective=q_dynamics,
+                    classification_policy=basin_cfg.get("classification_policy", "neighborhood_terminal_v2"),
+                    terminal_window=basin_cfg.get("terminal_window"),
+                    equilibrium_span_tol=basin_cfg.get("equilibrium_span_tol"),
+                    return_diagnostics=True
                 )
+                basin_diagnostics.extend({"plane": plane, "equilibrium": "global", **record} for record in point_diagnostics)
                 if config["plot_enabled"]:
                     from ..plotting.plot_basins import plot_basin_slice_file
                     plot_basin_slice_file(plane, u, v, mat, "global", config, output_dir)
@@ -1261,7 +1277,12 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
                 writer.writerow(["plane", "equilibrium", "u_val", "v_val", "classification_code"])
                 writer.writerows(basin_data_accum)
                 
+        with open(os.path.join(output_dir, "basin_point_diagnostics.json"), "w", encoding="utf-8") as handle:
+            json.dump(basin_diagnostics, handle, indent=2)
         basin_meta = {
+            "classification_policy": basin_cfg.get("classification_policy", "neighborhood_terminal_v2"),
+            "code_labels": {0: "equilibrium_terminal", 1: "reference_contact", 2: "other_finite", 3: "threshold_crossed", 4: "numerical_failure", 5: "inconclusive"},
+            "meaning": "finite_horizon_observations_only",
             "system_id": system_id,
             "grid_n": basin_cfg["grid_n"],
             "planes": planes,
@@ -1362,6 +1383,7 @@ def run_centered_lure_df_workflow(config: dict) -> dict:
     print("Resultados guardados en:")
     print(f"    {output_dir}/\n")
     
+    complete_output_claim(output_claim)
     return summary
 
 def _build_summary_dict(
@@ -1386,7 +1408,7 @@ def _build_summary_dict(
     bib_res: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     n_candidates = len(candidates)
-    target_hits = sum(1 for r in probe_results if r["destination"] == "target_attractor")
+    target_hits = sum(1 for r in probe_results if r["destination"] in ("reference_contact", "target_attractor"))
     
     final_class = "numerical_failure"
     if final_traj is not None:
@@ -1396,7 +1418,7 @@ def _build_summary_dict(
         else:
             final_class = "simulation_bounded"
             
-    notes = "El balance armónico (DF) es una heurística tipo Weyl; la ocultedad fue probada bajo radios, muestras, tiempo e integrador especificados."
+    notes = "El balance armónico (DF) es una heurística tipo Weyl; los contactos se evaluaron en horizontes finitos con los radios, muestras e integrador especificados."
     
     def _c_str(val: Optional[complex]) -> str:
         if val is None:

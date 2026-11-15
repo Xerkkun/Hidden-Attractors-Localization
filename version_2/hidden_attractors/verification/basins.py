@@ -2,8 +2,9 @@ import numpy as np
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Dict, List, Tuple, Optional
 from .hiddenness import run_neighborhood_probe
+from .terminal_policy import PROBE_POLICY, OPERATIONAL_DESTINATIONS
 
-def _classify_point_worker(args: Tuple) -> Tuple[int, int, int]:
+def _classify_point_worker(args: Tuple) -> Tuple[int, int, int, Dict[str, Any]]:
     """Helper worker to run a single point simulation in parallel."""
     args_list = list(args)
     i = args_list[0]
@@ -27,6 +28,7 @@ def _classify_point_worker(args: Tuple) -> Tuple[int, int, int]:
     early_stop_config = args_list[18]
     equilibria_dict = args_list[19]
     q_dynamics_effective = args_list[20] if len(args_list) > 20 else None
+    policy = args_list[21] if len(args_list) > 21 else {}
     
     try:
         res = run_neighborhood_probe(
@@ -48,22 +50,22 @@ def _classify_point_worker(args: Tuple) -> Tuple[int, int, int]:
             memory_window_length=memory_window_length,
             early_stop_config=early_stop_config,
             equilibria_dict=equilibria_dict,
-            q_dynamics_effective=q_dynamics_effective
+            q_dynamics_effective=q_dynamics_effective,
+            **policy
         )
-        dest = res["destination"]
-        if dest in ("stable_equilibrium", "equilibrium_stable"):
-            code = 0
-        elif dest == "target_attractor":
-            code = 1
-        elif dest == "other_attractor":
-            code = 2
-        elif dest == "divergence":
-            code = 3
-        else:
-            code = 4
-    except Exception:
+        destination = res["destination"]
+        mapping = {name: code for code, name in OPERATIONAL_DESTINATIONS.items()}
+        mapping.update(stable_equilibrium=0, equilibrium_stable=0, target_attractor=1,
+                       other_attractor=2, divergence=3)
+        code = mapping.get(destination, 5)
+        diagnostics = {**res.get("diagnostics", {}), "destination": destination,
+                       "status": res["status"], "x0": np.asarray(x0).tolist()}
+    except Exception as exc:
         code = 4
-    return i, j, code
+        diagnostics = {"classification_policy": policy.get("classification_policy", PROBE_POLICY),
+                       "destination": "numerical_failure", "reason": f"{type(exc).__name__}:{exc}",
+                       "x0": np.asarray(x0).tolist()}
+    return i, j, code, diagnostics
 
 def generate_basin_slice(
     plane: str,
@@ -96,16 +98,29 @@ def generate_basin_slice(
     system_id: str = "chua",
     early_stop_config: Optional[dict] = None,
     equilibria_dict: Optional[Dict[str, np.ndarray]] = None,
-    q_dynamics_effective: Optional[float] = None
+    q_dynamics_effective: Optional[float] = None, *,
+    classification_policy: str = PROBE_POLICY,
+    terminal_window: Optional[float] = None,
+    equilibrium_span_tol: Optional[float] = None,
+    target_match_nn_percentile: float = 90.0,
+    return_diagnostics: bool = False
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Generate a 2D basin slice mesh grid and evaluation matrix of classifications,
     with configurable intervals, centering, and real-time terminal progress printing.
+    ``return_diagnostics=True`` appends per-point finite-policy diagnostics.
     """
     if q_dynamics_effective is None:
         import warnings
         warnings.warn("q_dynamics_effective is omitted, falling back to legacy dynamics_mode logic", UserWarning)
+    if isinstance(grid_n, bool) or int(grid_n) != grid_n or grid_n < 2:
+        raise ValueError("grid_n must be an integer at least 2.")
     grid_n = int(grid_n)
+    policy = {"classification_policy": classification_policy,
+              "terminal_window": terminal_window,
+              "equilibrium_span_tol": equilibrium_span_tol,
+              "target_match_nn_percentile": target_match_nn_percentile}
+    diagnostic_records = []
     cx, cy, cz = center
     
     if around_equilibria:
@@ -146,20 +161,20 @@ def generate_basin_slice(
             
             payloads.append((
                 i, j, x0, system, transfer_mode, integrator, t_final, t_burn, h, ref_tail, stable_eqs, eq_tol, div_norm, metric, tol,
-                dynamics_mode, memory_mode, memory_window_length, early_stop_config, equilibria_dict, q_dynamics_effective
+                dynamics_mode, memory_mode, memory_window_length, early_stop_config, equilibria_dict, q_dynamics_effective, policy
             ))
             
     total_points = len(payloads)
     completed_points = 0
     
-    stats = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0}
+    stats = {code: 0 for code in OPERATIONAL_DESTINATIONS}
     last_printed_pct = -5.0
     
     def log_progress(count, force=False):
         nonlocal last_printed_pct
         pct = (count / total_points) * 100.0
         if force or (pct - last_printed_pct >= 5.0) or count == total_points:
-            print(f"[{system_id}] Cuenca {plane} {eq_name}: {count}/{total_points}, {pct:.1f}%, TARGET={stats[1]}, EQ={stats[0]}, DIV={stats[3]}, OTHER={stats[2]}, FAIL={stats[4]}")
+            print(f"[{system_id}] Cuenca {plane} {eq_name}: {count}/{total_points}, {pct:.1f}%, TARGET={stats[1]}, EQ={stats[0]}, DIV={stats[3]}, OTHER={stats[2]}, FAIL={stats[4]}, INCONCLUSIVE={stats[5]}")
             last_printed_pct = pct
         
     log_progress(0, force=True)
@@ -168,14 +183,16 @@ def generate_basin_slice(
         with ThreadPoolExecutor(max_workers=workers) as executor:
             futures = [executor.submit(_classify_point_worker, payload) for payload in payloads]
             for fut in as_completed(futures):
-                i, j, code = fut.result()
+                i, j, code, diagnostics = fut.result()
+                diagnostic_records.append({"i": i, "j": j, **diagnostics})
                 matrix[i, j] = code
                 stats[code] += 1
                 completed_points += 1
                 log_progress(completed_points)
     else:
         for payload in payloads:
-            i, j, code = _classify_point_worker(payload)
+            i, j, code, diagnostics = _classify_point_worker(payload)
+            diagnostic_records.append({"i": i, "j": j, **diagnostics})
             matrix[i, j] = code
             stats[code] += 1
             completed_points += 1
@@ -183,4 +200,7 @@ def generate_basin_slice(
                 
     log_progress(total_points, force=True)
             
+    if return_diagnostics:
+        diagnostic_records.sort(key=lambda record: (record["i"], record["j"]))
+        return u_grid, v_grid, matrix, diagnostic_records
     return u_grid, v_grid, matrix

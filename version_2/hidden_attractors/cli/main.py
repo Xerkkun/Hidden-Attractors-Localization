@@ -31,6 +31,7 @@ GROUPS = {
     "chaos-test": ["zero-one", "inspect"],
     "seed": ["lure-centered", "lure-biased"],
     "continuation": ["run", "multiparameter"],
+    "integrate": ["compare"],
 }
 
 
@@ -119,6 +120,11 @@ def dispatch(group: str, cmd: str | None, argv: Sequence[str]) -> None:
             from .continuation import run_multiparameter_continuation
             run_multiparameter_continuation(argv)
             
+    elif group == "integrate":
+        if cmd == "compare":
+            from .integrate import compare_integrators
+            compare_integrators(argv)
+
     else:
         print(f"Unknown command group: {group}")
         sys.exit(1)
@@ -197,6 +203,11 @@ def main(argv: Sequence[str] | None = None) -> None:
     cont_sub = cont_parser.add_subparsers(dest="cmd", required=True)
     cont_sub.add_parser("run", help="Run scalar continuation")
     cont_sub.add_parser("multiparameter", help="Run multiparameter continuation")
+
+    integration_parser = subparsers.add_parser("integrate", help="Full-history Caputo numerical diagnostics")
+    integration_sub = integration_parser.add_subparsers(dest="cmd", required=True)
+    integration_sub.add_parser("compare", add_help=False, allow_abbrev=False,
+                               help="Compare maintained L1 and stable PECE solvers")
 
     args, extra_args = parser.parse_known_args(argv)
     dispatch(args.group, getattr(args, "cmd", None), extra_args)

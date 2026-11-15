@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <limits.h>
 #include "native_validation.h"
+#include "chua_equilibrium_classifier.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -15,9 +16,15 @@
 #define CLS_TARGET 2
 #define CLS_OTHER 3
 #define CLS_UNKNOWN 4
+#define CLS_EQ_VISIT 5
+#define CLS_NUMERICAL_FAILURE 6
 #define CLS_NONE (-1)
 
 static const char *CLASS_NAMES[] = {"EQ", "DIV", "TARGET", "OTHER", "UNKNOWN"};
+static const char *TERMINAL_CLASS_NAMES[] = {
+    "EQ_TERMINAL", "THRESHOLD_CROSSED", "TARGET_CONTACT", "OTHER_FINITE",
+    "INCONCLUSIVE", "EQ_VISIT", "NUMERICAL_FAILURE"
+};
 
 typedef struct { double alpha_chua, beta, gamma_chua, m0, m1, a1, a2, rho; int model; } ChuaParams;
 typedef struct {
@@ -27,11 +34,13 @@ typedef struct { double h, Lm, TMAX_REF, TMAX_TEST, TBURN_REF, TBURN_TEST; } Int
 typedef struct {
     double R_DIV, EPS_EQ, SEC_TOL, HIT_FRAC_REQ;
     int CAP_WIN, MIN_SEC_MATCH, TEST_MAX_SEC;
+    int CLASSIFIER_POLICY;
 } ThresholdCfg;
 typedef struct { int n_radii, nsamples; double *radii; uint64_t random_seed; char eq_filter[64]; } SamplingCfg;
 typedef struct { char csv_out[512], ref_out[512], summary_csv_out[512]; } FileCfg;
 typedef struct { int n_eq; char names[3][3]; double val[3][3]; } EqSet;
-typedef struct { double x0, y0, z0; int cls, sec_total, sec_hits; double hit_frac; } SampleRow;
+typedef struct { double x0, y0, z0; int cls, sec_total, sec_hits; double hit_frac;
+    HafoEquilibriumObservation observation; } SampleRow;
 typedef struct { int ref_points, total_target_hits; } RunStats;
 
 static void die(const char *msg) {
@@ -580,7 +589,7 @@ static int efork_chua_caputo(
     return 1;
 }
 
-static int classify_equilibrium_or_divergence(
+static int classify_equilibrium_or_divergence_legacy(
     const double *states,
     int sample_count,
     const EqSet *equilibria,
@@ -613,6 +622,37 @@ static int classify_equilibrium_or_divergence(
         }
     }
     return CLS_NONE;
+}
+
+static int classify_equilibrium_or_divergence_observed(
+    const double *states, int sample_count, const EqSet *equilibria,
+    const ThresholdCfg *thresholds, HafoEquilibriumObservation *observation
+) {
+    *observation = hafo_eq_observation_init();
+    if (thresholds->CLASSIFIER_POLICY == HAFO_EQ_LEGACY_V1)
+        return classify_equilibrium_or_divergence_legacy(
+            states, sample_count, equilibria, thresholds);
+    for (int index = 0; index < sample_count; ++index)
+        hafo_eq_observe(observation, states + 3*index, index,
+            &equilibria->val[0][0], equilibria->n_eq,
+            thresholds->EPS_EQ*thresholds->EPS_EQ, thresholds->CAP_WIN,
+            thresholds->R_DIV*thresholds->R_DIV, 1);
+    if (observation->first_threshold_index >= 0 &&
+        (observation->first_nonfinite_index < 0 ||
+         observation->first_threshold_index < observation->first_nonfinite_index))
+        return CLS_DIV;
+    if (observation->first_nonfinite_index >= 0) return CLS_NUMERICAL_FAILURE;
+    if (observation->terminal_equilibrium >= 0) return CLS_EQ;
+    return CLS_NONE;
+}
+
+static int classify_equilibrium_or_divergence(
+    const double *states, int sample_count, const EqSet *equilibria,
+    const ThresholdCfg *thresholds
+) {
+    HafoEquilibriumObservation observation;
+    return classify_equilibrium_or_divergence_observed(
+        states, sample_count, equilibria, thresholds, &observation);
 }
 
 static int section_points(
@@ -742,7 +782,7 @@ static int build_reference_section(
     classification = classify_equilibrium_or_divergence(
         states, sample_count, equilibria, thresholds
     );
-    if (classification == CLS_EQ || classification == CLS_DIV) {
+    if (classification != CLS_NONE) {
         free(times);
         free(states);
         return classification;
@@ -775,7 +815,8 @@ static int classify_to_target(
     const double x0[3],
     int *section_total,
     int *section_hits,
-    double *hit_fraction
+    double *hit_fraction,
+    HafoEquilibriumObservation *observation
 ) {
     double *times = NULL;
     double *states = NULL;
@@ -790,10 +831,17 @@ static int classify_to_target(
             parameters, seed, fractional_order, integration->h,
             integration->TMAX_TEST, integration->Lm,
             &times, &states, &sample_count)) {
+        if (thresholds->CLASSIFIER_POLICY == HAFO_EQ_TERMINAL_V2) {
+            *observation = hafo_eq_observation_init();
+            *section_total = 0;
+            *section_hits = 0;
+            *hit_fraction = 0.0;
+            return CLS_NUMERICAL_FAILURE;
+        }
         die("No se pudo integrar una trayectoria de prueba");
     }
-    classification = classify_equilibrium_or_divergence(
-        states, sample_count, equilibria, thresholds
+    classification = classify_equilibrium_or_divergence_observed(
+        states, sample_count, equilibria, thresholds, observation
     );
     if (classification != CLS_NONE) {
         *section_total = 0;
@@ -818,7 +866,7 @@ static int classify_to_target(
         *section_hits = 0;
         *hit_fraction = 0.0;
         free(section);
-        return CLS_UNKNOWN;
+        return observation->visited ? CLS_EQ_VISIT : CLS_UNKNOWN;
     }
     for (int index = 0; index < count; ++index) {
         const double distance = min_dist_to_ref(
@@ -909,12 +957,16 @@ static void run_backend(
     fprintf(
         samples_file,
         "equilibrium,radius,sample_id,x0,y0,z0,class,"
-        "sec_total,sec_hits,hit_frac\n"
+        "sec_total,sec_hits,hit_frac,classifier_version,equilibrium_visit,"
+        "terminal_equilibrium_index,first_threshold_index,first_nonfinite_index\n"
     );
     summary_file = fopen(files->summary_csv_out, "w");
     if (!summary_file) die_errno("No se pudo abrir summary_csv_out");
     fprintf(
-        summary_file, "equilibrium,radius,EQ,DIV,TARGET,OTHER,UNKNOWN\n"
+        summary_file,
+        thresholds->CLASSIFIER_POLICY == HAFO_EQ_LEGACY_V1
+            ? "equilibrium,radius,EQ,DIV,TARGET,OTHER,UNKNOWN,classifier_version\n"
+            : "equilibrium,radius,EQ_TERMINAL,THRESHOLD_CROSSED,TARGET_CONTACT,OTHER_FINITE,INCONCLUSIVE,EQ_VISIT,NUMERICAL_FAILURE,classifier_version\n"
     );
 
     for (int equilibrium = 0; equilibrium < equilibria.n_eq; ++equilibrium) {
@@ -928,7 +980,7 @@ static void run_backend(
              ++radius_index) {
             const double radius = sampling->radii[radius_index];
             const int sample_count = sampling->nsamples;
-            int counts[5] = {0, 0, 0, 0, 0};
+            int counts[7] = {0, 0, 0, 0, 0, 0, 0};
             SampleRow *rows = (SampleRow *)calloc(
                 (size_t)sample_count, sizeof(SampleRow)
             );
@@ -951,30 +1003,39 @@ static void run_backend(
                     parameters, &equilibria, integration, thresholds,
                     fractional_order, reference, reference_count, x0,
                     &rows[sample].sec_total, &rows[sample].sec_hits,
-                    &rows[sample].hit_frac
+                    &rows[sample].hit_frac, &rows[sample].observation
                 );
             }
             for (int sample = 0; sample < sample_count; ++sample) {
                 int classification = rows[sample].cls;
-                if (classification < 0 || classification > 4) {
+                if (classification < 0 || classification > 6) {
                     classification = CLS_UNKNOWN;
                 }
                 ++counts[classification];
                 fprintf(
                     samples_file,
-                    "%s,%.17g,%d,%.17g,%.17g,%.17g,%s,%d,%d,%.17g\n",
+                    "%s,%.17g,%d,%.17g,%.17g,%.17g,%s,%d,%d,%.17g,%s,%d,%d,%d,%d\n",
                     equilibria.names[equilibrium], radius, sample,
                     rows[sample].x0, rows[sample].y0, rows[sample].z0,
-                    CLASS_NAMES[classification], rows[sample].sec_total,
-                    rows[sample].sec_hits, rows[sample].hit_frac
+                    thresholds->CLASSIFIER_POLICY == HAFO_EQ_LEGACY_V1
+                        ? CLASS_NAMES[classification] : TERMINAL_CLASS_NAMES[classification],
+                    rows[sample].sec_total, rows[sample].sec_hits, rows[sample].hit_frac,
+                    hafo_eq_classifier_version(thresholds->CLASSIFIER_POLICY),
+                    rows[sample].observation.visited,
+                    rows[sample].observation.terminal_equilibrium,
+                    rows[sample].observation.first_threshold_index,
+                    rows[sample].observation.first_nonfinite_index
                 );
             }
             fprintf(
-                summary_file, "%s,%.17g,%d,%d,%d,%d,%d\n",
+                summary_file, "%s,%.17g,%d,%d,%d,%d,%d",
                 equilibria.names[equilibrium], radius, counts[CLS_EQ],
                 counts[CLS_DIV], counts[CLS_TARGET], counts[CLS_OTHER],
                 counts[CLS_UNKNOWN]
             );
+            if (thresholds->CLASSIFIER_POLICY == HAFO_EQ_TERMINAL_V2)
+                fprintf(summary_file, ",%d,%d", counts[CLS_EQ_VISIT], counts[CLS_NUMERICAL_FAILURE]);
+            fprintf(summary_file, ",%s\n", hafo_eq_classifier_version(thresholds->CLASSIFIER_POLICY));
             total_target_hits += counts[CLS_TARGET];
             printf(
                 "r=%-8.1e  EQ=%3d  DIV=%3d  TARGET=%3d  OTHER=%3d  "
@@ -1045,6 +1106,8 @@ static void validated_run_backend(
         !(thr->R_DIV > 0.0) || !(thr->EPS_EQ > 0.0) ||
         !(thr->SEC_TOL > 0.0) ||
         !(thr->HIT_FRAC_REQ >= 0.0 && thr->HIT_FRAC_REQ <= 1.0) ||
+        (thr->CLASSIFIER_POLICY != HAFO_EQ_LEGACY_V1 &&
+         thr->CLASSIFIER_POLICY != HAFO_EQ_TERMINAL_V2) ||
         thr->CAP_WIN < 1 || thr->MIN_SEC_MATCH < 1 ||
         thr->TEST_MAX_SEC < 1 || thr->MIN_SEC_MATCH > thr->TEST_MAX_SEC ||
         thr->TEST_MAX_SEC > INT_MAX / 8 ||
@@ -1070,6 +1133,7 @@ static void usage(const char *program) {
         "  --TBURN_REF br --TBURN_TEST bt\n"
         "  --R_DIV rdiv --EPS_EQ epseq --CAP_WIN cap --SEC_TOL stol\n"
         "  --MIN_SEC_MATCH msec --TEST_MAX_SEC tsec --HIT_FRAC_REQ hreq\n"
+        "  [--classifier-policy terminal_v2|legacy_v1] (default: terminal_v2)\n"
         "  --radii r1,r2,... --nsamples N --random_seed S\n"
         "  --csv_out out.csv --ref_out ref.csv "
         "--summary_csv_out summary.csv\n",
@@ -1127,6 +1191,14 @@ int main(int argc, char **argv) {
     thresholds.MIN_SEC_MATCH = parse_int_arg(argc, argv, "--MIN_SEC_MATCH");
     thresholds.TEST_MAX_SEC = parse_int_arg(argc, argv, "--TEST_MAX_SEC");
     thresholds.HIT_FRAC_REQ = parse_double_arg(argc, argv, "--HIT_FRAC_REQ");
+    {
+        const char *policy = find_arg(argc, argv, "--classifier-policy");
+        if (!policy || strcmp(policy, "terminal_v2") == 0)
+            thresholds.CLASSIFIER_POLICY = HAFO_EQ_TERMINAL_V2;
+        else if (strcmp(policy, "legacy_v1") == 0)
+            thresholds.CLASSIFIER_POLICY = HAFO_EQ_LEGACY_V1;
+        else die("--classifier-policy debe ser terminal_v2 o legacy_v1");
+    }
 
     parse_radii_arg(argc, argv, "--radii", &sampling);
     sampling.nsamples = parse_int_arg(argc, argv, "--nsamples");

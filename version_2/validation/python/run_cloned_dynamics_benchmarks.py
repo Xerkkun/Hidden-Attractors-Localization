@@ -11,12 +11,23 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from cloned_dynamics_benchmarks import load_benchmark_case, run_benchmark_row, write_results
+from cloned_dynamics_benchmarks import (
+    EVALUATION_CRITERIA_VERSIONS, CLONED_EXECUTION_PROTOCOLS,
+    load_benchmark_case, run_benchmark_row, write_results,
+)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--fast", action="store_true", help="Run reduced smoke integrations.")
+    parser.add_argument(
+        "--evaluation-criteria-version", choices=EVALUATION_CRITERIA_VERSIONS,
+        help="Explicit V2 or historical V1 evaluator; otherwise use YAML/default V2.",
+    )
+    parser.add_argument(
+        "--execution-protocol", choices=CLONED_EXECUTION_PROTOCOLS,
+        help="Use a separate full-history reference rail or explicit legacy chained fiducial.",
+    )
     parser.add_argument(
         "--benchmarks-dir",
         type=Path,
@@ -25,7 +36,8 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=PROJECT_ROOT / "validation" / "outputs" / "lyapunov_benchmarks" / "fractional_cloned_dynamics_abm_gs_published",
+        required=True,
+        help="New output directory; existing recorded benchmark results are never overwritten.",
     )
     parser.add_argument(
         "--official-summary-dir",
@@ -33,6 +45,10 @@ def main() -> None:
         help="Also write the conservative tracked summary to this directory.",
     )
     args = parser.parse_args()
+    if any((args.output_dir / filename).exists() for filename in (
+        "validation_summary.json", "published_benchmark_results.csv", "published_benchmark_all_rows_results.csv",
+    )):
+        parser.error("Output already contains recorded benchmark results; choose a new --output-dir.")
     rows = []
     executions = []
     global_parameters = []
@@ -52,6 +68,8 @@ def main() -> None:
                 fast=args.fast,
                 case_file=path.name,
                 row_index=row_index,
+                criteria_version=args.evaluation_criteria_version,
+                execution_protocol=args.execution_protocol,
             )
             rows.append(record)
             executions.append((record, result))
